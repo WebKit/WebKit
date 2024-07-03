@@ -121,8 +121,8 @@ void EVP_tls_cbc_copy_mac(uint8_t *out, size_t md_size, const uint8_t *in,
   size_t mac_end = in_len;
   size_t mac_start = mac_end - md_size;
 
-  assert(orig_len >= in_len);
-  assert(in_len >= md_size);
+  declassify_assert(orig_len >= in_len);
+  declassify_assert(in_len >= md_size);
   assert(md_size <= EVP_MAX_MD_SIZE);
   assert(md_size > 0);
 

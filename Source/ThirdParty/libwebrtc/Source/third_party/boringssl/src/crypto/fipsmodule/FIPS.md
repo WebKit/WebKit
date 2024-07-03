@@ -8,11 +8,11 @@ Please note that we cannot answer questions about FIPS, nor about using BoringSS
 
 BoringCrypto has undergone the following validations:
 
-1. 2017-06-15: certificate [#2964](https://csrc.nist.gov/Projects/Cryptographic-Module-Validation-Program/Certificate/2964), [security policy](/crypto/fipsmodule/policydocs/BoringCrypto-Security-Policy-20170615.docx) (in docx format).
-1. 2018-07-30: certificate [#3318](https://csrc.nist.gov/Projects/Cryptographic-Module-Validation-Program/Certificate/3318), [security policy](/crypto/fipsmodule/policydocs/BoringCrypto-Security-Policy-20180730.docx) (in docx format).
-1. 2019-08-08: certificate [#3678](https://csrc.nist.gov/Projects/Cryptographic-Module-Validation-Program/Certificate/3678), [security policy](/crypto/fipsmodule/policydocs/BoringCrypto-Security-Policy-20190808.docx) (in docx format).
-1. 2019-10-20: certificate [#3753](https://csrc.nist.gov/Projects/Cryptographic-Module-Validation-Program/Certificate/3753), [security policy](/crypto/fipsmodule/policydocs/BoringCrypto-Android-Security-Policy-20191020.docx) (in docx format).
-1. 2021-01-28: certificate [#4156](https://csrc.nist.gov/Projects/Cryptographic-Module-Validation-Program/Certificate/4156), [security policy](/crypto/fipsmodule/policydocs/BoringCrypto-Android-Security-Policy-20210319.docx) (in docx format).
+1. 2017-06-15: certificate [#2964](https://csrc.nist.gov/Projects/Cryptographic-Module-Validation-Program/Certificate/2964), [security policy](./policydocs/BoringCrypto-Security-Policy-20170615.docx) (in docx format).
+1. 2018-07-30: certificate [#3318](https://csrc.nist.gov/Projects/Cryptographic-Module-Validation-Program/Certificate/3318), [security policy](./policydocs/BoringCrypto-Security-Policy-20180730.docx) (in docx format).
+1. 2019-08-08: certificate [#3678](https://csrc.nist.gov/Projects/Cryptographic-Module-Validation-Program/Certificate/3678), [security policy](./policydocs/BoringCrypto-Security-Policy-20190808.docx) (in docx format).
+1. 2019-10-20: certificate [#3753](https://csrc.nist.gov/Projects/Cryptographic-Module-Validation-Program/Certificate/3753), [security policy](./policydocs/BoringCrypto-Android-Security-Policy-20191020.docx) (in docx format).
+1. 2021-01-28: certificate [#4156](https://csrc.nist.gov/Projects/Cryptographic-Module-Validation-Program/Certificate/4156), [security policy](./policydocs/BoringCrypto-Android-Security-Policy-20210319.docx) (in docx format).
 1. 2021-04-29: certificate [#4407](https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4407).
 
 ## Running ACVP tests
@@ -89,7 +89,7 @@ The most obvious cause of relocations are out-calls from the module to non-crypt
 
 Offsets to these functions cannot be known until the final link because only the linker sees the object files containing them. Thus calls to these functions are rewritten into an IP-relative jump to a redirector function. The redirector functions contain a single jump instruction to the real function and are placed outside of the module and are thus not hashed (see diagram).
 
-![module structure](/crypto/fipsmodule/intcheck1.png)
+![module structure](./intcheck1.png)
 
 In this diagram, the integrity check hashes from `module_start` to `module_end`. Since this does not cover the jump to `memcpy`, it's fine that the linker will poke the final offset into that instruction.
 
@@ -121,7 +121,7 @@ In order to actually implement the integrity test, a constructor function within
 
 Initially the known-good value will be incorrect. Another script (`inject_hash.go`) calculates the correct value from the assembled object and injects it back into the object.
 
-![build process](/crypto/fipsmodule/intcheck2.png)
+![build process](./intcheck2.png)
 
 ### Comparison with OpenSSL's method
 
@@ -141,4 +141,4 @@ Some of the similarities are worth noting:
 
 1.  OpenSSL has all out-calls from the module indirecting via the PLT, which is equivalent to the redirector functions described above.
 
-![OpenSSL build process](/crypto/fipsmodule/intcheck3.png)
+![OpenSSL build process](./intcheck3.png)

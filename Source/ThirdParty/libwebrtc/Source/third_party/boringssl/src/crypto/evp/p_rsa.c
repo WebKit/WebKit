@@ -97,12 +97,10 @@ typedef struct {
 } RSA_OAEP_LABEL_PARAMS;
 
 static int pkey_rsa_init(EVP_PKEY_CTX *ctx) {
-  RSA_PKEY_CTX *rctx;
-  rctx = OPENSSL_malloc(sizeof(RSA_PKEY_CTX));
+  RSA_PKEY_CTX *rctx = OPENSSL_zalloc(sizeof(RSA_PKEY_CTX));
   if (!rctx) {
     return 0;
   }
-  OPENSSL_memset(rctx, 0, sizeof(RSA_PKEY_CTX));
 
   rctx->nbits = 2048;
   rctx->pad_mode = RSA_PKCS1_PADDING;

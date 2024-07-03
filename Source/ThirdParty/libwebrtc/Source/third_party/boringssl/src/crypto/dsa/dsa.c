@@ -88,18 +88,14 @@ static int dsa_sign_setup(const DSA *dsa, BN_CTX *ctx_in, BIGNUM **out_kinv,
 static CRYPTO_EX_DATA_CLASS g_ex_data_class = CRYPTO_EX_DATA_CLASS_INIT;
 
 DSA *DSA_new(void) {
-  DSA *dsa = OPENSSL_malloc(sizeof(DSA));
+  DSA *dsa = OPENSSL_zalloc(sizeof(DSA));
   if (dsa == NULL) {
     return NULL;
   }
 
-  OPENSSL_memset(dsa, 0, sizeof(DSA));
-
   dsa->references = 1;
-
   CRYPTO_MUTEX_init(&dsa->method_mont_lock);
   CRYPTO_new_ex_data(&dsa->ex_data);
-
   return dsa;
 }
 
@@ -278,6 +274,8 @@ int DSA_generate_parameters_ex(DSA *dsa, unsigned bits, const uint8_t *seed_in,
         if (!RAND_bytes(seed, qsize)) {
           goto err;
         }
+        // DSA parameters are public.
+        CONSTTIME_DECLASSIFY(seed, qsize);
       } else {
         // If we come back through, use random seed next time.
         seed_in = NULL;
@@ -517,6 +515,9 @@ int DSA_generate_key(DSA *dsa) {
     goto err;
   }
 
+  // The public key is computed from the private key, but is public.
+  bn_declassify(pub_key);
+
   dsa->priv_key = priv_key;
   dsa->pub_key = pub_key;
   ok = 1;
@@ -533,16 +534,7 @@ err:
   return ok;
 }
 
-DSA_SIG *DSA_SIG_new(void) {
-  DSA_SIG *sig;
-  sig = OPENSSL_malloc(sizeof(DSA_SIG));
-  if (!sig) {
-    return NULL;
-  }
-  sig->r = NULL;
-  sig->s = NULL;
-  return sig;
-}
+DSA_SIG *DSA_SIG_new(void) { return OPENSSL_zalloc(sizeof(DSA_SIG)); }
 
 void DSA_SIG_free(DSA_SIG *sig) {
   if (!sig) {
@@ -662,6 +654,10 @@ redo:
     goto err;
   }
 
+  // The signature is computed from the private key, but is public.
+  bn_declassify(r);
+  bn_declassify(s);
+
   // Redo if r or s is zero as required by FIPS 186-3: this is
   // very unlikely.
   if (BN_is_zero(r) || BN_is_zero(s)) {
@@ -694,7 +690,7 @@ err:
   return ret;
 }
 
-int DSA_do_verify(const uint8_t *digest, size_t digest_len, DSA_SIG *sig,
+int DSA_do_verify(const uint8_t *digest, size_t digest_len, const DSA_SIG *sig,
                   const DSA *dsa) {
   int valid;
   if (!DSA_do_check_signature(&valid, digest, digest_len, sig, dsa)) {
@@ -704,7 +700,8 @@ int DSA_do_verify(const uint8_t *digest, size_t digest_len, DSA_SIG *sig,
 }
 
 int DSA_do_check_signature(int *out_valid, const uint8_t *digest,
-                           size_t digest_len, DSA_SIG *sig, const DSA *dsa) {
+                           size_t digest_len, const DSA_SIG *sig,
+                           const DSA *dsa) {
   *out_valid = 0;
   if (!dsa_check_key(dsa)) {
     return 0;
@@ -912,15 +909,19 @@ static int dsa_sign_setup(const DSA *dsa, BN_CTX *ctx, BIGNUM **out_kinv,
                               ctx) ||
       // Compute r = (g^k mod p) mod q
       !BN_mod_exp_mont_consttime(r, dsa->g, &k, dsa->p, ctx,
-                                 dsa->method_mont_p) ||
-      // Note |BN_mod| below is not constant-time and may leak information about
-      // |r|. |dsa->p| may be significantly larger than |dsa->q|, so this is not
-      // easily performed in constant-time with Montgomery reduction.
-      //
-      // However, |r| at this point is g^k (mod p). It is almost the value of
-      // |r| revealed in the signature anyway (g^k (mod p) (mod q)), going from
-      // it to |k| would require computing a discrete log.
-      !BN_mod(r, r, dsa->q, ctx) ||
+                                 dsa->method_mont_p)) {
+    OPENSSL_PUT_ERROR(DSA, ERR_R_BN_LIB);
+    goto err;
+  }
+  // Note |BN_mod| below is not constant-time and may leak information about
+  // |r|. |dsa->p| may be significantly larger than |dsa->q|, so this is not
+  // easily performed in constant-time with Montgomery reduction.
+  //
+  // However, |r| at this point is g^k (mod p). It is almost the value of |r|
+  // revealed in the signature anyway (g^k (mod p) (mod q)), going from it to
+  // |k| would require computing a discrete log.
+  bn_declassify(r);
+  if (!BN_mod(r, r, dsa->q, ctx) ||
       // Compute part of 's = inv(k) (m + xr) mod q' using Fermat's Little
       // Theorem.
       !bn_mod_inverse_prime(kinv, &k, dsa->q, ctx, dsa->method_mont_q)) {
@@ -947,12 +948,7 @@ err:
 
 int DSA_get_ex_new_index(long argl, void *argp, CRYPTO_EX_unused *unused,
                          CRYPTO_EX_dup *dup_unused, CRYPTO_EX_free *free_func) {
-  int index;
-  if (!CRYPTO_get_ex_new_index(&g_ex_data_class, &index, argl, argp,
-                               free_func)) {
-    return -1;
-  }
-  return index;
+  return CRYPTO_get_ex_new_index_ex(&g_ex_data_class, argl, argp, free_func);
 }
 
 int DSA_set_ex_data(DSA *dsa, int idx, void *arg) {

@@ -117,10 +117,7 @@ int bn_uadd_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *b) {
 
   BN_ULONG carry = bn_add_words(r->d, a->d, b->d, min);
   for (int i = min; i < max; i++) {
-    // |r| and |a| may alias, so use a temporary.
-    BN_ULONG tmp = carry + a->d[i];
-    carry = tmp < a->d[i];
-    r->d[i] = tmp;
+    r->d[i] = CRYPTO_addc_w(a->d[i], 0, carry, &carry);
   }
 
   r->d[max] = carry;
@@ -241,10 +238,7 @@ int bn_usub_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *b) {
 
   BN_ULONG borrow = bn_sub_words(r->d, a->d, b->d, b_width);
   for (int i = b_width; i < a->width; i++) {
-    // |r| and |a| may alias, so use a temporary.
-    BN_ULONG tmp = a->d[i];
-    r->d[i] = a->d[i] - borrow;
-    borrow = tmp < r->d[i];
+    r->d[i] = CRYPTO_subc_w(a->d[i], 0, borrow, &borrow);
   }
 
   if (borrow) {

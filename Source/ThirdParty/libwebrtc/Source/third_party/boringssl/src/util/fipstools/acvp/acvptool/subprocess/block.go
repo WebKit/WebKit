@@ -299,6 +299,7 @@ func (b *blockCipher) Process(vectorSet []byte, m Transactable) (any, error) {
 	// http://usnistgov.github.io/ACVP/artifacts/draft-celi-acvp-block-ciph-00.html#rfc.section.5.2
 	// for details about the tests.
 	for _, group := range parsed.Groups {
+		group := group
 		response := blockCipherTestGroupResponse{
 			ID: group.ID,
 		}
@@ -346,6 +347,8 @@ func (b *blockCipher) Process(vectorSet []byte, m Transactable) (any, error) {
 		}
 
 		for _, test := range group.Tests {
+			test := test
+
 			if len(test.KeyHex) == 0 && len(test.Key1Hex) > 0 {
 				// 3DES encodes the key differently.
 				test.KeyHex = test.Key1Hex + test.Key2Hex + test.Key3Hex

@@ -79,9 +79,18 @@ int rsa_check_public_key(const RSA *rsa) {
     return 0;
   }
 
+  // TODO(davidben): 16384-bit RSA is huge. Can we bring this down to a limit of
+  // 8192-bit?
   unsigned n_bits = BN_num_bits(rsa->n);
   if (n_bits > 16 * 1024) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_MODULUS_TOO_LARGE);
+    return 0;
+  }
+
+  // TODO(crbug.com/boringssl/607): Raise this limit. 512-bit RSA was factored
+  // in 1999.
+  if (n_bits < 512) {
+    OPENSSL_PUT_ERROR(RSA, RSA_R_KEY_SIZE_TOO_SMALL);
     return 0;
   }
 
@@ -122,21 +131,15 @@ int rsa_check_public_key(const RSA *rsa) {
         OPENSSL_PUT_ERROR(RSA, RSA_R_BAD_E_VALUE);
         return 0;
       }
+
+      // The upper bound on |e_bits| and lower bound on |n_bits| imply e is
+      // bounded by n.
+      assert(BN_ucmp(rsa->n, rsa->e) > 0);
     }
   } else if (!(rsa->flags & RSA_FLAG_NO_PUBLIC_EXPONENT)) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_VALUE_MISSING);
     return 0;
   }
-
-  // Verify |n > e|. Comparing |n_bits| to |kMaxExponentBits| is a small
-  // shortcut to comparing |n| and |e| directly. In reality, |kMaxExponentBits|
-  // is much smaller than the minimum RSA key size that any application should
-  // accept.
-  if (n_bits <= kMaxExponentBits) {
-    OPENSSL_PUT_ERROR(RSA, RSA_R_KEY_SIZE_TOO_SMALL);
-    return 0;
-  }
-  assert(rsa->e == NULL || BN_ucmp(rsa->n, rsa->e) > 0);
 
   return 1;
 }
@@ -152,7 +155,7 @@ static int ensure_fixed_copy(BIGNUM **out, const BIGNUM *in, int width) {
     return 0;
   }
   *out = copy;
-  CONSTTIME_SECRET(copy->d, sizeof(BN_ULONG) * width);
+  bn_secret(copy);
 
   return 1;
 }
@@ -173,6 +176,11 @@ static int freeze_private_key(RSA *rsa, BN_CTX *ctx) {
   CRYPTO_MUTEX_lock_write(&rsa->lock);
   if (rsa->private_key_frozen) {
     ret = 1;
+    goto err;
+  }
+
+  // Check the public components are within DoS bounds.
+  if (!rsa_check_public_key(rsa)) {
     goto err;
   }
 
@@ -235,37 +243,23 @@ static int freeze_private_key(RSA *rsa, BN_CTX *ctx) {
       }
 
       // CRT components are only publicly bounded by their corresponding
-      // moduli's bit lengths. |rsa->iqmp| is unused outside of this one-time
-      // setup, so we do not compute a fixed-width version of it.
+      // moduli's bit lengths.
       if (!ensure_fixed_copy(&rsa->dmp1_fixed, rsa->dmp1, p_fixed->width) ||
           !ensure_fixed_copy(&rsa->dmq1_fixed, rsa->dmq1, q_fixed->width)) {
         goto err;
       }
 
-      // Compute |inv_small_mod_large_mont|. Note that it is always modulo the
-      // larger prime, independent of what is stored in |rsa->iqmp|.
-      if (rsa->inv_small_mod_large_mont == NULL) {
-        BIGNUM *inv_small_mod_large_mont = BN_new();
-        int ok;
-        if (BN_cmp(rsa->p, rsa->q) < 0) {
-          ok = inv_small_mod_large_mont != NULL &&
-               bn_mod_inverse_secret_prime(inv_small_mod_large_mont, rsa->p,
-                                           rsa->q, ctx, rsa->mont_q) &&
-               BN_to_montgomery(inv_small_mod_large_mont,
-                                inv_small_mod_large_mont, rsa->mont_q, ctx);
-        } else {
-          ok = inv_small_mod_large_mont != NULL &&
-               BN_to_montgomery(inv_small_mod_large_mont, rsa->iqmp,
-                                rsa->mont_p, ctx);
-        }
-        if (!ok) {
-          BN_free(inv_small_mod_large_mont);
+      // Compute |iqmp_mont|, which is |iqmp| in Montgomery form and with the
+      // correct bit width.
+      if (rsa->iqmp_mont == NULL) {
+        BIGNUM *iqmp_mont = BN_new();
+        if (iqmp_mont == NULL ||
+            !BN_to_montgomery(iqmp_mont, rsa->iqmp, rsa->mont_p, ctx)) {
+          BN_free(iqmp_mont);
           goto err;
         }
-        rsa->inv_small_mod_large_mont = inv_small_mod_large_mont;
-        CONSTTIME_SECRET(
-            rsa->inv_small_mod_large_mont->d,
-            sizeof(BN_ULONG) * rsa->inv_small_mod_large_mont->width);
+        rsa->iqmp_mont = iqmp_mont;
+        bn_secret(rsa->iqmp_mont);
       }
     }
   }
@@ -294,8 +288,8 @@ void rsa_invalidate_key(RSA *rsa) {
   rsa->dmp1_fixed = NULL;
   BN_free(rsa->dmq1_fixed);
   rsa->dmq1_fixed = NULL;
-  BN_free(rsa->inv_small_mod_large_mont);
-  rsa->inv_small_mod_large_mont = NULL;
+  BN_free(rsa->iqmp_mont);
+  rsa->iqmp_mont = NULL;
 
   for (size_t i = 0; i < rsa->num_blindings; i++) {
     BN_BLINDING_free(rsa->blindings[i]);
@@ -381,7 +375,7 @@ static BN_BLINDING *rsa_blinding_get(RSA *rsa, size_t *index_used,
   assert(new_num_blindings > rsa->num_blindings);
 
   BN_BLINDING **new_blindings =
-      OPENSSL_malloc(sizeof(BN_BLINDING *) * new_num_blindings);
+      OPENSSL_calloc(new_num_blindings, sizeof(BN_BLINDING *));
   uint8_t *new_blindings_inuse = OPENSSL_malloc(new_num_blindings);
   if (new_blindings == NULL || new_blindings_inuse == NULL) {
     goto err;
@@ -627,7 +621,9 @@ int rsa_default_private_transform(RSA *rsa, uint8_t *out, const uint8_t *in,
     goto err;
   }
 
-  if (BN_ucmp(f, rsa->n) >= 0) {
+  // The input to the RSA private transform may be secret, but padding is
+  // expected to construct a value within range, so we can leak this comparison.
+  if (constant_time_declassify_int(BN_ucmp(f, rsa->n) >= 0)) {
     // Usually the padding functions would catch this.
     OPENSSL_PUT_ERROR(RSA, RSA_R_DATA_TOO_LARGE_FOR_MODULUS);
     goto err;
@@ -790,42 +786,37 @@ static int mod_exp(BIGNUM *r0, const BIGNUM *I, RSA *rsa, BN_CTX *ctx) {
     goto err;
   }
 
-  // Implementing RSA with CRT in constant-time is sensitive to which prime is
-  // larger. Canonicalize fields so that |p| is the larger prime.
-  const BIGNUM *dmp1 = rsa->dmp1_fixed, *dmq1 = rsa->dmq1_fixed;
-  const BN_MONT_CTX *mont_p = rsa->mont_p, *mont_q = rsa->mont_q;
-  if (BN_cmp(rsa->p, rsa->q) < 0) {
-    mont_p = rsa->mont_q;
-    mont_q = rsa->mont_p;
-    dmp1 = rsa->dmq1_fixed;
-    dmq1 = rsa->dmp1_fixed;
-  }
-
   // Use the minimal-width versions of |n|, |p|, and |q|. Either works, but if
   // someone gives us non-minimal values, these will be slightly more efficient
   // on the non-Montgomery operations.
   const BIGNUM *n = &rsa->mont_n->N;
-  const BIGNUM *p = &mont_p->N;
-  const BIGNUM *q = &mont_q->N;
+  const BIGNUM *p = &rsa->mont_p->N;
+  const BIGNUM *q = &rsa->mont_q->N;
 
   // This is a pre-condition for |mod_montgomery|. It was already checked by the
   // caller.
-  assert(BN_ucmp(I, n) < 0);
+  declassify_assert(BN_ucmp(I, n) < 0);
 
   if (// |m1| is the result modulo |q|.
-      !mod_montgomery(r1, I, q, mont_q, p, ctx) ||
-      !BN_mod_exp_mont_consttime(m1, r1, dmq1, q, ctx, mont_q) ||
+      !mod_montgomery(r1, I, q, rsa->mont_q, p, ctx) ||
+      !BN_mod_exp_mont_consttime(m1, r1, rsa->dmq1_fixed, q, ctx,
+                                 rsa->mont_q) ||
       // |r0| is the result modulo |p|.
-      !mod_montgomery(r1, I, p, mont_p, q, ctx) ||
-      !BN_mod_exp_mont_consttime(r0, r1, dmp1, p, ctx, mont_p) ||
-      // Compute r0 = r0 - m1 mod p. |p| is the larger prime, so |m1| is already
-      // fully reduced mod |p|.
-      !bn_mod_sub_consttime(r0, r0, m1, p, ctx) ||
+      !mod_montgomery(r1, I, p, rsa->mont_p, q, ctx) ||
+      !BN_mod_exp_mont_consttime(r0, r1, rsa->dmp1_fixed, p, ctx,
+                                 rsa->mont_p) ||
+      // Compute r0 = r0 - m1 mod p. |m1| is reduced mod |q|, not |p|, so we
+      // just run |mod_montgomery| again for simplicity. This could be more
+      // efficient with more cases: if |p > q|, |m1| is already reduced. If
+      // |p < q| but they have the same bit width, |bn_reduce_once| suffices.
+      // However, compared to over 2048 Montgomery multiplications above, this
+      // difference is not measurable.
+      !mod_montgomery(r1, m1, p, rsa->mont_p, q, ctx) ||
+      !bn_mod_sub_consttime(r0, r0, r1, p, ctx) ||
       // r0 = r0 * iqmp mod p. We use Montgomery multiplication to compute this
-      // in constant time. |inv_small_mod_large_mont| is in Montgomery form and
-      // r0 is not, so the result is taken out of Montgomery form.
-      !BN_mod_mul_montgomery(r0, r0, rsa->inv_small_mod_large_mont, mont_p,
-                             ctx) ||
+      // in constant time. |iqmp_mont| is in Montgomery form and r0 is not, so
+      // the result is taken out of Montgomery form.
+      !BN_mod_mul_montgomery(r0, r0, rsa->iqmp_mont, rsa->mont_p, ctx) ||
       // r0 = r0 * q + m1 gives the final result. Reducing modulo q gives m1, so
       // it is correct mod p. Reducing modulo p gives (r0-m1)*iqmp*q + m1 = r0,
       // so it is correct mod q. Finally, the result is bounded by [m1, n + m1),
@@ -840,7 +831,7 @@ static int mod_exp(BIGNUM *r0, const BIGNUM *I, RSA *rsa, BN_CTX *ctx) {
   // bound the width slightly higher, so fix it. This trips constant-time checks
   // because a naive data flow analysis does not realize the excess words are
   // publicly zero.
-  assert(BN_cmp(r0, n) < 0);
+  declassify_assert(BN_cmp(r0, n) < 0);
   bn_assert_fits_in_bytes(r0, BN_num_bytes(n));
   if (!bn_resize_words(r0, n->width)) {
     goto err;
@@ -1012,20 +1003,25 @@ static int generate_prime(BIGNUM *out, int bits, const BIGNUM *e,
     // retrying. That is, we reject a negligible fraction of primes that are
     // within the FIPS bound, but we will never accept a prime outside the
     // bound, ensuring the resulting RSA key is the right size.
-    if (BN_cmp(out, sqrt2) <= 0) {
+    //
+    // Values over the threshold are discarded, so it is safe to leak this
+    // comparison.
+    if (constant_time_declassify_int(BN_cmp(out, sqrt2) <= 0)) {
       continue;
     }
 
     // RSA key generation's bottleneck is discarding composites. If it fails
     // trial division, do not bother computing a GCD or performing Miller-Rabin.
     if (!bn_odd_number_is_obviously_composite(out)) {
-      // Check gcd(out-1, e) is one (steps 4.5 and 5.6).
+      // Check gcd(out-1, e) is one (steps 4.5 and 5.6). Leaking the final
+      // result of this comparison is safe because, if not relatively prime, the
+      // value will be discarded.
       int relatively_prime;
-      if (!BN_sub(tmp, out, BN_value_one()) ||
+      if (!bn_usub_consttime(tmp, out, BN_value_one()) ||
           !bn_is_relatively_prime(&relatively_prime, tmp, e, ctx)) {
         goto err;
       }
-      if (relatively_prime) {
+      if (constant_time_declassify_int(relatively_prime)) {
         // Test |out| for primality (steps 4.5.1 and 5.6.1).
         int is_probable_prime;
         if (!BN_primality_test(&is_probable_prime, out,
@@ -1183,8 +1179,9 @@ static int rsa_generate_key_impl(RSA *rsa, int bits, const BIGNUM *e_value,
     }
 
     // Retry if |rsa->d| <= 2^|prime_bits|. See appendix B.3.1's guidance on
-    // values for d.
-  } while (BN_cmp(rsa->d, pow2_prime_bits) <= 0);
+    // values for d. When we retry, p and q are discarded, so it is safe to leak
+    // this comparison.
+  } while (constant_time_declassify_int(BN_cmp(rsa->d, pow2_prime_bits) <= 0));
 
   assert(BN_num_bits(pm1) == (unsigned)prime_bits);
   assert(BN_num_bits(qm1) == (unsigned)prime_bits);
@@ -1197,6 +1194,9 @@ static int rsa_generate_key_impl(RSA *rsa, int bits, const BIGNUM *e_value,
     goto bn_err;
   }
   bn_set_minimal_width(rsa->n);
+
+  // |rsa->n| is computed from the private key, but is public.
+  bn_declassify(rsa->n);
 
   // Sanity-check that |rsa->n| has the specified size. This is implied by
   // |generate_prime|'s bounds.
@@ -1250,6 +1250,11 @@ static int RSA_generate_key_ex_maybe_fips(RSA *rsa, int bits,
                                           int check_fips) {
   boringssl_ensure_rsa_self_test();
 
+  if (rsa == NULL) {
+    OPENSSL_PUT_ERROR(EC, ERR_R_PASSED_NULL_PARAMETER);
+    return 0;
+  }
+
   RSA *tmp = NULL;
   uint32_t err;
   int ret = 0;
@@ -1300,8 +1305,7 @@ static int RSA_generate_key_ex_maybe_fips(RSA *rsa, int bits,
   replace_bignum(&rsa->d_fixed, &tmp->d_fixed);
   replace_bignum(&rsa->dmp1_fixed, &tmp->dmp1_fixed);
   replace_bignum(&rsa->dmq1_fixed, &tmp->dmq1_fixed);
-  replace_bignum(&rsa->inv_small_mod_large_mont,
-                 &tmp->inv_small_mod_large_mont);
+  replace_bignum(&rsa->iqmp_mont, &tmp->iqmp_mont);
   rsa->private_key_frozen = tmp->private_key_frozen;
   ret = 1;
 

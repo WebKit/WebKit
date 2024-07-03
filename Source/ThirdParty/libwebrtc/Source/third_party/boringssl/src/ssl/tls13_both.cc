@@ -391,8 +391,7 @@ bool tls13_process_finished(SSL_HANDSHAKE *hs, const SSLMessage &msg,
 
 bool tls13_add_certificate(SSL_HANDSHAKE *hs) {
   SSL *const ssl = hs->ssl;
-  CERT *const cert = hs->config->cert.get();
-  DC *const dc = cert->dc.get();
+  const SSL_CREDENTIAL *cred = hs->credential.get();
 
   ScopedCBB cbb;
   CBB *body, body_storage, certificate_list;
@@ -416,11 +415,12 @@ bool tls13_add_certificate(SSL_HANDSHAKE *hs) {
     return false;
   }
 
-  if (!ssl_has_certificate(hs)) {
+  if (hs->credential == nullptr) {
     return ssl_add_message_cbb(ssl, cbb.get());
   }
 
-  CRYPTO_BUFFER *leaf_buf = sk_CRYPTO_BUFFER_value(cert->chain.get(), 0);
+  assert(hs->credential->UsesX509());
+  CRYPTO_BUFFER *leaf_buf = sk_CRYPTO_BUFFER_value(cred->chain.get(), 0);
   CBB leaf, extensions;
   if (!CBB_add_u24_length_prefixed(&certificate_list, &leaf) ||
       !CBB_add_bytes(&leaf, CRYPTO_BUFFER_data(leaf_buf),
@@ -430,51 +430,49 @@ bool tls13_add_certificate(SSL_HANDSHAKE *hs) {
     return false;
   }
 
-  if (hs->scts_requested && cert->signed_cert_timestamp_list != nullptr) {
+  if (hs->scts_requested && cred->signed_cert_timestamp_list != nullptr) {
     CBB contents;
     if (!CBB_add_u16(&extensions, TLSEXT_TYPE_certificate_timestamp) ||
         !CBB_add_u16_length_prefixed(&extensions, &contents) ||
         !CBB_add_bytes(
             &contents,
-            CRYPTO_BUFFER_data(cert->signed_cert_timestamp_list.get()),
-            CRYPTO_BUFFER_len(cert->signed_cert_timestamp_list.get())) ||
+            CRYPTO_BUFFER_data(cred->signed_cert_timestamp_list.get()),
+            CRYPTO_BUFFER_len(cred->signed_cert_timestamp_list.get())) ||
         !CBB_flush(&extensions)) {
       OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
       return false;
     }
   }
 
-  if (hs->ocsp_stapling_requested && cert->ocsp_response != NULL) {
+  if (hs->ocsp_stapling_requested && cred->ocsp_response != NULL) {
     CBB contents, ocsp_response;
     if (!CBB_add_u16(&extensions, TLSEXT_TYPE_status_request) ||
         !CBB_add_u16_length_prefixed(&extensions, &contents) ||
         !CBB_add_u8(&contents, TLSEXT_STATUSTYPE_ocsp) ||
         !CBB_add_u24_length_prefixed(&contents, &ocsp_response) ||
         !CBB_add_bytes(&ocsp_response,
-                       CRYPTO_BUFFER_data(cert->ocsp_response.get()),
-                       CRYPTO_BUFFER_len(cert->ocsp_response.get())) ||
+                       CRYPTO_BUFFER_data(cred->ocsp_response.get()),
+                       CRYPTO_BUFFER_len(cred->ocsp_response.get())) ||
         !CBB_flush(&extensions)) {
       OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
       return false;
     }
   }
 
-  if (ssl_signing_with_dc(hs)) {
-    const CRYPTO_BUFFER *raw = dc->raw.get();
+  if (cred->type == SSLCredentialType::kDelegated) {
     CBB child;
     if (!CBB_add_u16(&extensions, TLSEXT_TYPE_delegated_credential) ||
         !CBB_add_u16_length_prefixed(&extensions, &child) ||
-        !CBB_add_bytes(&child, CRYPTO_BUFFER_data(raw),
-                       CRYPTO_BUFFER_len(raw)) ||
+        !CBB_add_bytes(&child, CRYPTO_BUFFER_data(cred->dc.get()),
+                       CRYPTO_BUFFER_len(cred->dc.get())) ||
         !CBB_flush(&extensions)) {
       OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
       return false;
     }
-    ssl->s3->delegated_credential_used = true;
   }
 
-  for (size_t i = 1; i < sk_CRYPTO_BUFFER_num(cert->chain.get()); i++) {
-    CRYPTO_BUFFER *cert_buf = sk_CRYPTO_BUFFER_value(cert->chain.get(), i);
+  for (size_t i = 1; i < sk_CRYPTO_BUFFER_num(cred->chain.get()); i++) {
+    CRYPTO_BUFFER *cert_buf = sk_CRYPTO_BUFFER_value(cred->chain.get(), i);
     CBB child;
     if (!CBB_add_u24_length_prefixed(&certificate_list, &child) ||
         !CBB_add_bytes(&child, CRYPTO_BUFFER_data(cert_buf),
@@ -555,23 +553,18 @@ bool tls13_add_certificate(SSL_HANDSHAKE *hs) {
 
 enum ssl_private_key_result_t tls13_add_certificate_verify(SSL_HANDSHAKE *hs) {
   SSL *const ssl = hs->ssl;
-  uint16_t signature_algorithm;
-  if (!tls1_choose_signature_algorithm(hs, &signature_algorithm)) {
-    ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_HANDSHAKE_FAILURE);
-    return ssl_private_key_failure;
-  }
-
+  assert(hs->signature_algorithm != 0);
   ScopedCBB cbb;
   CBB body;
   if (!ssl->method->init_message(ssl, cbb.get(), &body,
                                  SSL3_MT_CERTIFICATE_VERIFY) ||
-      !CBB_add_u16(&body, signature_algorithm)) {
+      !CBB_add_u16(&body, hs->signature_algorithm)) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return ssl_private_key_failure;
   }
 
   CBB child;
-  const size_t max_sig_len = EVP_PKEY_size(hs->local_pubkey.get());
+  const size_t max_sig_len = EVP_PKEY_size(hs->credential->pubkey.get());
   uint8_t *sig;
   size_t sig_len;
   if (!CBB_add_u16_length_prefixed(&body, &child) ||
@@ -589,7 +582,7 @@ enum ssl_private_key_result_t tls13_add_certificate_verify(SSL_HANDSHAKE *hs) {
   }
 
   enum ssl_private_key_result_t sign_result = ssl_private_key_sign(
-      hs, sig, &sig_len, max_sig_len, signature_algorithm, msg);
+      hs, sig, &sig_len, max_sig_len, hs->signature_algorithm, msg);
   if (sign_result != ssl_private_key_success) {
     return sign_result;
   }

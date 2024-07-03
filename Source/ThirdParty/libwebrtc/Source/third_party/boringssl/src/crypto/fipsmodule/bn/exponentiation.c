@@ -724,7 +724,7 @@ void bn_mod_exp_mont_small(BN_ULONG *r, const BN_ULONG *a, size_t num,
                            const BN_ULONG *p, size_t num_p,
                            const BN_MONT_CTX *mont) {
   if (num != (size_t)mont->N.width || num > BN_SMALL_MAX_WORDS ||
-      num_p > ((size_t)-1) / BN_BITS2) {
+      num_p > SIZE_MAX / BN_BITS2) {
     abort();
   }
   assert(BN_is_odd(&mont->N));
@@ -898,7 +898,9 @@ int BN_mod_exp_mont_consttime(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
     OPENSSL_PUT_ERROR(BN, BN_R_NEGATIVE_NUMBER);
     return 0;
   }
-  if (a->neg || BN_ucmp(a, m) >= 0) {
+  // |a| is secret, but it is required to be in range, so these comparisons may
+  // be leaked.
+  if (a->neg || constant_time_declassify_int(BN_ucmp(a, m) >= 0)) {
     OPENSSL_PUT_ERROR(BN, BN_R_INPUT_NOT_REDUCED);
     return 0;
   }
@@ -1011,7 +1013,7 @@ int BN_mod_exp_mont_consttime(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
 
   // Prepare a^1 in the Montgomery domain.
   assert(!a->neg);
-  assert(BN_ucmp(a, m) < 0);
+  declassify_assert(BN_ucmp(a, m) < 0);
   if (!BN_to_montgomery(&am, a, mont, ctx) ||
       !bn_resize_words(&am, top)) {
     goto err;

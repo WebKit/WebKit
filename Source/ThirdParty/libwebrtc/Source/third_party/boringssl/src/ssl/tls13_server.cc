@@ -17,6 +17,7 @@
 #include <assert.h>
 #include <string.h>
 
+#include <algorithm>
 #include <tuple>
 
 #include <openssl/aead.h>
@@ -109,18 +110,18 @@ static int ssl_ext_supported_versions_add_serverhello(SSL_HANDSHAKE *hs,
 }
 
 static const SSL_CIPHER *choose_tls13_cipher(
-    const SSL *ssl, const SSL_CLIENT_HELLO *client_hello, uint16_t group_id) {
+    const SSL *ssl, const SSL_CLIENT_HELLO *client_hello) {
   CBS cipher_suites;
   CBS_init(&cipher_suites, client_hello->cipher_suites,
            client_hello->cipher_suites_len);
 
   const uint16_t version = ssl_protocol_version(ssl);
 
-  return ssl_choose_tls13_cipher(
-      cipher_suites,
-      ssl->config->aes_hw_override ? ssl->config->aes_hw_override_value
-                                   : EVP_has_aes_hardware(),
-      version, group_id, ssl->config->tls13_cipher_policy);
+  return ssl_choose_tls13_cipher(cipher_suites,
+                                 ssl->config->aes_hw_override
+                                     ? ssl->config->aes_hw_override_value
+                                     : EVP_has_aes_hardware(),
+                                 version, ssl->config->tls13_cipher_policy);
 }
 
 static bool add_new_session_tickets(SSL_HANDSHAKE *hs, bool *out_sent_tickets) {
@@ -206,6 +207,28 @@ static bool add_new_session_tickets(SSL_HANDSHAKE *hs, bool *out_sent_tickets) {
   return true;
 }
 
+static bool check_credential(SSL_HANDSHAKE *hs, const SSL_CREDENTIAL *cred,
+                             uint16_t *out_sigalg) {
+  switch (cred->type) {
+    case SSLCredentialType::kX509:
+      break;
+    case SSLCredentialType::kDelegated:
+      // Check that the peer supports the signature over the delegated
+      // credential.
+      if (std::find(hs->peer_sigalgs.begin(), hs->peer_sigalgs.end(),
+                    cred->dc_algorithm) == hs->peer_sigalgs.end()) {
+        OPENSSL_PUT_ERROR(SSL, SSL_R_NO_COMMON_SIGNATURE_ALGORITHMS);
+        return false;
+      }
+      break;
+  }
+
+  // All currently supported credentials require a signature. If |cred| is a
+  // delegated credential, this also checks that the peer supports delegated
+  // credentials and matched |dc_cert_verify_algorithm|.
+  return tls1_choose_signature_algorithm(hs, cred, out_sigalg);
+}
+
 static enum ssl_hs_wait_t do_select_parameters(SSL_HANDSHAKE *hs) {
   // At this point, most ClientHello extensions have already been processed by
   // the common handshake logic. Resolve the remaining non-PSK parameters.
@@ -225,15 +248,34 @@ static enum ssl_hs_wait_t do_select_parameters(SSL_HANDSHAKE *hs) {
                  client_hello.session_id_len);
   hs->session_id_len = client_hello.session_id_len;
 
-  uint16_t group_id;
-  if (!tls1_get_shared_group(hs, &group_id)) {
-    OPENSSL_PUT_ERROR(SSL, SSL_R_NO_SHARED_GROUP);
+  Array<SSL_CREDENTIAL *> creds;
+  if (!ssl_get_credential_list(hs, &creds)) {
+    return ssl_hs_error;
+  }
+  if (creds.empty()) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_NO_CERTIFICATE_SET);
+    ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_INTERNAL_ERROR);
+    return ssl_hs_error;
+  }
+
+  // Select the credential to use.
+  for (SSL_CREDENTIAL *cred : creds) {
+    ERR_clear_error();
+    uint16_t sigalg;
+    if (check_credential(hs, cred, &sigalg)) {
+      hs->credential = UpRef(cred);
+      hs->signature_algorithm = sigalg;
+      break;
+    }
+  }
+  if (hs->credential == nullptr) {
+    // The error from the last attempt is in the error queue.
     ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_HANDSHAKE_FAILURE);
     return ssl_hs_error;
   }
 
   // Negotiate the cipher suite.
-  hs->new_cipher = choose_tls13_cipher(ssl, &client_hello, group_id);
+  hs->new_cipher = choose_tls13_cipher(ssl, &client_hello);
   if (hs->new_cipher == NULL) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_NO_SHARED_CIPHER);
     ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_HANDSHAKE_FAILURE);
@@ -557,7 +599,6 @@ static enum ssl_hs_wait_t do_send_hello_retry_request(SSL_HANDSHAKE *hs) {
 
   ScopedCBB cbb;
   CBB body, session_id, extensions;
-  uint16_t group_id;
   if (!ssl->method->init_message(ssl, cbb.get(), &body, SSL3_MT_SERVER_HELLO) ||
       !CBB_add_u16(&body, TLS1_2_VERSION) ||
       !CBB_add_bytes(&body, kHelloRetryRequest, SSL3_RANDOM_SIZE) ||
@@ -565,14 +606,13 @@ static enum ssl_hs_wait_t do_send_hello_retry_request(SSL_HANDSHAKE *hs) {
       !CBB_add_bytes(&session_id, hs->session_id, hs->session_id_len) ||
       !CBB_add_u16(&body, SSL_CIPHER_get_protocol_id(hs->new_cipher)) ||
       !CBB_add_u8(&body, 0 /* no compression */) ||
-      !tls1_get_shared_group(hs, &group_id) ||
       !CBB_add_u16_length_prefixed(&body, &extensions) ||
       !CBB_add_u16(&extensions, TLSEXT_TYPE_supported_versions) ||
       !CBB_add_u16(&extensions, 2 /* length */) ||
       !CBB_add_u16(&extensions, ssl->version) ||
       !CBB_add_u16(&extensions, TLSEXT_TYPE_key_share) ||
       !CBB_add_u16(&extensions, 2 /* length */) ||
-      !CBB_add_u16(&extensions, group_id)) {
+      !CBB_add_u16(&extensions, hs->new_session->group_id)) {
     return ssl_hs_error;
   }
   if (hs->ech_is_inner) {
@@ -860,11 +900,6 @@ static enum ssl_hs_wait_t do_send_server_hello(SSL_HANDSHAKE *hs) {
 
   // Send the server Certificate message, if necessary.
   if (!ssl->s3->session_reused) {
-    if (!ssl_has_certificate(hs)) {
-      OPENSSL_PUT_ERROR(SSL, SSL_R_NO_CERTIFICATE_SET);
-      return ssl_hs_error;
-    }
-
     if (!tls13_add_certificate(hs)) {
       return ssl_hs_error;
     }
@@ -1051,7 +1086,11 @@ static enum ssl_hs_wait_t do_read_client_encrypted_extensions(
       return ssl_hs_error;
     }
 
-    SSLExtension application_settings(TLSEXT_TYPE_application_settings);
+    uint16_t extension_type = TLSEXT_TYPE_application_settings_old;
+    if (hs->config->alps_use_new_codepoint) {
+      extension_type = TLSEXT_TYPE_application_settings;
+    }
+    SSLExtension application_settings(extension_type);
     uint8_t alert = SSL_AD_DECODE_ERROR;
     if (!ssl_parse_extensions(&extensions, &alert, {&application_settings},
                               /*ignore_unknown=*/false)) {

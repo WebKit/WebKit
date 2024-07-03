@@ -39,7 +39,7 @@ static uint16_t mod_u16(uint32_t n, uint16_t d, uint32_t p, uint32_t m) {
 
   // Multiply and subtract to get the remainder.
   n -= d * t;
-  assert(n < d);
+  declassify_assert(n < d);
   return n;
 }
 

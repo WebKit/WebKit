@@ -721,7 +721,7 @@ bool ssl_tls13_cipher_meets_policy(uint16_t cipher_id,
 }
 
 const SSL_CIPHER *ssl_choose_tls13_cipher(CBS cipher_suites, bool has_aes_hw,
-                                          uint16_t version, uint16_t group_id,
+                                          uint16_t version,
                                           enum ssl_compliance_policy_t policy) {
   if (CBS_len(&cipher_suites) % 2 != 0) {
     return nullptr;

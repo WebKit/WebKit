@@ -68,6 +68,7 @@ func (k *kdfPrimitive) Process(vectorSet []byte, m Transactable) (any, error) {
 
 	var respGroups []kdfTestGroupResponse
 	for _, group := range parsed.Groups {
+		group := group
 		groupResp := kdfTestGroupResponse{ID: group.ID}
 
 		if group.OutputBits%8 != 0 {
@@ -91,6 +92,7 @@ func (k *kdfPrimitive) Process(vectorSet []byte, m Transactable) (any, error) {
 		outputBytes := uint32le(group.OutputBits / 8)
 
 		for _, test := range group.Tests {
+			test := test
 			testResp := kdfTestResponse{ID: test.ID}
 
 			var key []byte

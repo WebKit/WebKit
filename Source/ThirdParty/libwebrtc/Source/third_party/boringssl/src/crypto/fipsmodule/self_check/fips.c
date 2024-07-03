@@ -94,12 +94,11 @@ void boringssl_fips_inc_counter(enum fips_counter_t counter) {
       CRYPTO_get_thread_local(OPENSSL_THREAD_LOCAL_FIPS_COUNTERS);
   if (!array) {
     const size_t num_bytes = sizeof(size_t) * (fips_counter_max + 1);
-    array = OPENSSL_malloc(num_bytes);
+    array = OPENSSL_zalloc(num_bytes);
     if (!array) {
       return;
     }
 
-    OPENSSL_memset(array, 0, num_bytes);
     if (!CRYPTO_set_thread_local(OPENSSL_THREAD_LOCAL_FIPS_COUNTERS, array,
                                  OPENSSL_free)) {
       // |OPENSSL_free| has already been called by |CRYPTO_set_thread_local|.

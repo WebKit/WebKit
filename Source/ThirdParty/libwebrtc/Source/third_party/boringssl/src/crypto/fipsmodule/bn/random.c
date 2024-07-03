@@ -281,8 +281,14 @@ int bn_rand_range_words(BN_ULONG *out, BN_ULONG min_inclusive,
     out[words - 1] &= mask;
 
     // If out >= max_exclusive or out < min_inclusive, retry. This implements
-    // the equivalent of steps 6 and 7 without leaking the value of |out|.
-  } while (!bn_in_range_words(out, min_inclusive, max_exclusive, words));
+    // the equivalent of steps 6 and 7 without leaking the value of |out|. The
+    // result of this comparison may be treated as public. It only reveals how
+    // many attempts were needed before we found a value in range. This is
+    // independent of the final secret output, and has a distribution that
+    // depends only on |min_inclusive| and |max_exclusive|, both of which are
+    // public.
+  } while (!constant_time_declassify_int(
+      bn_in_range_words(out, min_inclusive, max_exclusive, words)));
   return 1;
 }
 
@@ -333,7 +339,8 @@ int bn_rand_secret_range(BIGNUM *r, int *out_is_uniform, BN_ULONG min_inclusive,
   // If the value is not in range, force it to be in range.
   r->d[0] |= constant_time_select_w(in_range, 0, min_inclusive);
   r->d[words - 1] &= constant_time_select_w(in_range, BN_MASK2, mask >> 1);
-  assert(bn_in_range_words(r->d, min_inclusive, max_exclusive->d, words));
+  declassify_assert(
+      bn_in_range_words(r->d, min_inclusive, max_exclusive->d, words));
 
   r->neg = 0;
   r->width = (int)words;

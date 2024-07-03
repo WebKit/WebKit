@@ -116,8 +116,7 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
   // it.
   int paramtype =
       (EVP_PKEY_id(pkey) == EVP_PKEY_RSA) ? V_ASN1_NULL : V_ASN1_UNDEF;
-  X509_ALGOR_set0(algor, OBJ_nid2obj(sign_nid), paramtype, NULL);
-  return 1;
+  return X509_ALGOR_set0(algor, OBJ_nid2obj(sign_nid), paramtype, NULL);
 }
 
 int x509_digest_verify_init(EVP_MD_CTX *ctx, const X509_ALGOR *sigalg,

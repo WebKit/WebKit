@@ -1,0 +1,32 @@
+# Copyright (c) 2024, Google Inc.
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+# SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
+# OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+# CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+# When publishing to BCR, replace the version field below with
+# 0.0.0-YYYYMMDD-HASH, e.g. "0.0.0-20240126-22d349c".
+module(
+    name = "boringssl",
+    version = "0.0.0-dev",
+    compatibility_level = 2,
+)
+
+# In principle, googletest is only needed for tests and could be a
+# dev_dependency. But it would then be impossible for downstream modules to run
+# BoringSSL's tests. The downstream module provides the toolchain, so we may
+# need to request they run tests when triaging issues. If
+# https://github.com/bazelbuild/bazel/issues/22187 is ever fixed, we can change
+# this.
+bazel_dep(name = "googletest", version = "1.14.0.bcr.1")
+
+bazel_dep(name = "platforms", version = "0.0.9")
+bazel_dep(name = "rules_cc", version = "0.0.9")

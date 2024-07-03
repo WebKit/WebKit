@@ -64,17 +64,7 @@
 #include "../internal.h"
 
 
-BUF_MEM *BUF_MEM_new(void) {
-  BUF_MEM *ret;
-
-  ret = OPENSSL_malloc(sizeof(BUF_MEM));
-  if (ret == NULL) {
-    return NULL;
-  }
-
-  OPENSSL_memset(ret, 0, sizeof(BUF_MEM));
-  return ret;
-}
+BUF_MEM *BUF_MEM_new(void) { return OPENSSL_zalloc(sizeof(BUF_MEM)); }
 
 void BUF_MEM_free(BUF_MEM *buf) {
   if (buf == NULL) {

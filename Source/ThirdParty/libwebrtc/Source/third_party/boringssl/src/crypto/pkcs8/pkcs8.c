@@ -85,15 +85,15 @@ static int pkcs12_encode_password(const char *in, size_t in_len, uint8_t **out,
   CBS_init(&cbs, (const uint8_t *)in, in_len);
   while (CBS_len(&cbs) != 0) {
     uint32_t c;
-    if (!cbs_get_utf8(&cbs, &c) ||
-        !cbb_add_ucs2_be(&cbb, c)) {
+    if (!CBS_get_utf8(&cbs, &c) ||
+        !CBB_add_ucs2_be(&cbb, c)) {
       OPENSSL_PUT_ERROR(PKCS8, PKCS8_R_INVALID_CHARACTERS);
       goto err;
     }
   }
 
   // Terminate the result with a UCS-2 NUL.
-  if (!cbb_add_ucs2_be(&cbb, 0) ||
+  if (!CBB_add_ucs2_be(&cbb, 0) ||
       !CBB_finish(&cbb, out, out_len)) {
     goto err;
   }
@@ -106,7 +106,7 @@ err:
 }
 
 int pkcs12_key_gen(const char *pass, size_t pass_len, const uint8_t *salt,
-                   size_t salt_len, uint8_t id, unsigned iterations,
+                   size_t salt_len, uint8_t id, uint32_t iterations,
                    size_t out_len, uint8_t *out, const EVP_MD *md) {
   // See https://tools.ietf.org/html/rfc7292#appendix-B. Quoted parts of the
   // specification have errata applied and other typos fixed.
@@ -182,7 +182,7 @@ int pkcs12_key_gen(const char *pass, size_t pass_len, const uint8_t *salt,
         !EVP_DigestFinal_ex(&ctx, A, &A_len)) {
       goto err;
     }
-    for (unsigned iter = 1; iter < iterations; iter++) {
+    for (uint32_t iter = 1; iter < iterations; iter++) {
       if (!EVP_DigestInit_ex(&ctx, md, NULL) ||
           !EVP_DigestUpdate(&ctx, A, A_len) ||
           !EVP_DigestFinal_ex(&ctx, A, &A_len)) {
@@ -229,7 +229,7 @@ err:
 }
 
 static int pkcs12_pbe_cipher_init(const struct pbe_suite *suite,
-                                  EVP_CIPHER_CTX *ctx, unsigned iterations,
+                                  EVP_CIPHER_CTX *ctx, uint32_t iterations,
                                   const char *pass, size_t pass_len,
                                   const uint8_t *salt, size_t salt_len,
                                   int is_encrypt) {
@@ -271,7 +271,7 @@ static int pkcs12_pbe_decrypt_init(const struct pbe_suite *suite,
     return 0;
   }
 
-  return pkcs12_pbe_cipher_init(suite, ctx, (unsigned)iterations, pass,
+  return pkcs12_pbe_cipher_init(suite, ctx, (uint32_t)iterations, pass,
                                 pass_len, CBS_data(&salt), CBS_len(&salt),
                                 0 /* decrypt */);
 }
@@ -329,7 +329,7 @@ static const struct pbe_suite *get_pkcs12_pbe_suite(int pbe_nid) {
 }
 
 int pkcs12_pbe_encrypt_init(CBB *out, EVP_CIPHER_CTX *ctx, int alg,
-                            unsigned iterations, const char *pass,
+                            uint32_t iterations, const char *pass,
                             size_t pass_len, const uint8_t *salt,
                             size_t salt_len) {
   const struct pbe_suite *suite = get_pkcs12_pbe_suite(alg);
@@ -489,10 +489,10 @@ int PKCS8_marshal_encrypted_private_key(CBB *out, int pbe_nid,
   // it. See 5693a30813a031d3921a016a870420e7eb93ec90 in OpenSSL.
   int alg_ok;
   if (pbe_nid == -1) {
-    alg_ok = PKCS5_pbe2_encrypt_init(&epki, &ctx, cipher, (unsigned)iterations,
+    alg_ok = PKCS5_pbe2_encrypt_init(&epki, &ctx, cipher, (uint32_t)iterations,
                                      pass, pass_len, salt, salt_len);
   } else {
-    alg_ok = pkcs12_pbe_encrypt_init(&epki, &ctx, pbe_nid, (unsigned)iterations,
+    alg_ok = pkcs12_pbe_encrypt_init(&epki, &ctx, pbe_nid, (uint32_t)iterations,
                                      pass, pass_len, salt, salt_len);
   }
   if (!alg_ok) {

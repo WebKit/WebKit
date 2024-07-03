@@ -63,7 +63,7 @@
 
 
 int PKCS5_PBKDF2_HMAC(const char *password, size_t password_len,
-                      const uint8_t *salt, size_t salt_len, unsigned iterations,
+                      const uint8_t *salt, size_t salt_len, uint32_t iterations,
                       const EVP_MD *digest, size_t key_len, uint8_t *out_key) {
   // See RFC 8018, section 5.2.
   int ret = 0;
@@ -98,7 +98,7 @@ int PKCS5_PBKDF2_HMAC(const char *password, size_t password_len,
     }
 
     OPENSSL_memcpy(out_key, digest_tmp, todo);
-    for (unsigned j = 1; j < iterations; j++) {
+    for (uint32_t j = 1; j < iterations; j++) {
       // Compute the remaining U_* values and XOR.
       if (!HMAC_Init_ex(&hctx, NULL, 0, NULL, NULL) ||
           !HMAC_Update(&hctx, digest_tmp, md_len) ||
@@ -139,7 +139,7 @@ err:
 
 int PKCS5_PBKDF2_HMAC_SHA1(const char *password, size_t password_len,
                            const uint8_t *salt, size_t salt_len,
-                           unsigned iterations, size_t key_len,
+                           uint32_t iterations, size_t key_len,
                            uint8_t *out_key) {
   return PKCS5_PBKDF2_HMAC(password, password_len, salt, salt_len, iterations,
                            EVP_sha1(), key_len, out_key);

@@ -123,7 +123,7 @@ void X509_ALGOR_get0(const ASN1_OBJECT **out_obj, int *out_param_type,
 
 // Set up an X509_ALGOR DigestAlgorithmIdentifier from an EVP_MD
 
-void X509_ALGOR_set_md(X509_ALGOR *alg, const EVP_MD *md) {
+int X509_ALGOR_set_md(X509_ALGOR *alg, const EVP_MD *md) {
   int param_type;
 
   if (EVP_MD_flags(md) & EVP_MD_FLAG_DIGALGID_ABSENT) {
@@ -132,7 +132,7 @@ void X509_ALGOR_set_md(X509_ALGOR *alg, const EVP_MD *md) {
     param_type = V_ASN1_NULL;
   }
 
-  X509_ALGOR_set0(alg, OBJ_nid2obj(EVP_MD_type(md)), param_type, NULL);
+  return X509_ALGOR_set0(alg, OBJ_nid2obj(EVP_MD_type(md)), param_type, NULL);
 }
 
 // X509_ALGOR_cmp returns 0 if |a| and |b| are equal and non-zero otherwise.

@@ -26,6 +26,7 @@
 #include <openssl/dh.h>
 #include <openssl/ec_key.h>
 #include <openssl/ecdsa.h>
+#include <openssl/err.h>
 #include <openssl/hkdf.h>
 #include <openssl/hmac.h>
 #include <openssl/nid.h>
@@ -54,7 +55,8 @@ int main(int argc, char **argv) {
     printf("No module version set\n");
     goto err;
   }
-  printf("Module version: %" PRIu32 "\n", module_version);
+  printf("Module: '%s', version: %" PRIu32 "\n", FIPS_module_name(),
+         module_version);
 
   static const uint8_t kAESKey[16] = "BoringCrypto Key";
   static const uint8_t kPlaintext[64] =
@@ -216,6 +218,18 @@ int main(int argc, char **argv) {
 
   RSA_free(rsa_key);
 
+  /* Generating a key with a null output parameter. */
+  printf("About to generate RSA key with null output\n");
+  if (!RSA_generate_key_fips(NULL, 2048, NULL)) {
+    printf("RSA_generate_key_fips failed with null output parameter\n");
+    ERR_clear_error();
+  } else {
+    printf(
+        "RSA_generate_key_fips unexpectedly succeeded with null output "
+        "parameter\n");
+    goto err;
+  }
+
   EC_KEY *ec_key = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
   if (ec_key == NULL) {
     printf("invalid ECDSA key\n");
@@ -261,6 +275,30 @@ int main(int argc, char **argv) {
   ECDSA_SIG_free(sig);
   EC_KEY_free(ec_key);
 
+  /* Generating a key with a null output pointer. */
+  printf("About to generate P-256 key with NULL output\n");
+  if (!EC_KEY_generate_key_fips(NULL)) {
+    printf("EC_KEY_generate_key_fips failed with a NULL output pointer.\n");
+    ERR_clear_error();
+  } else {
+    printf(
+        "EC_KEY_generate_key_fips unexpectedly succeeded with a NULL output "
+        "pointer.\n");
+    goto err;
+  }
+
+  /* ECDSA with an invalid public key. */
+  ec_key = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
+  static const uint8_t kNotValidX926[] = {1,2,3,4,5,6};
+  if (!EC_KEY_oct2key(ec_key, kNotValidX926, sizeof(kNotValidX926),
+                      /*ctx=*/NULL)) {
+    printf("Error while parsing invalid ECDSA public key");
+  } else {
+    printf("Unexpected success while parsing invalid ECDSA public key");
+    goto err;
+  }
+  EC_KEY_free(ec_key);
+
   /* DBRG */
   CTR_DRBG_STATE drbg;
   printf("About to seed CTR-DRBG with ");
@@ -290,6 +328,19 @@ int main(int argc, char **argv) {
   }
   printf("  got ");
   hexdump(hkdf_output, sizeof(hkdf_output));
+
+  /* TLS v1.0 KDF */
+  printf("About to run TLS v1.0 KDF\n");
+  uint8_t tls10_output[32];
+  if (!CRYPTO_tls1_prf(EVP_md5_sha1(), tls10_output, sizeof(tls10_output),
+                       kAESKey, sizeof(kAESKey), "foo", 3, kPlaintextSHA256,
+                       sizeof(kPlaintextSHA256), kPlaintextSHA256,
+                       sizeof(kPlaintextSHA256))) {
+    fprintf(stderr, "TLS v1.0 KDF failed.\n");
+    goto err;
+  }
+  printf("  got ");
+  hexdump(tls10_output, sizeof(tls10_output));
 
   /* TLS v1.2 KDF */
   printf("About to run TLS v1.2 KDF\n");

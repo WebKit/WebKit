@@ -93,7 +93,7 @@ static int bn_gcd_consttime(BIGNUM *r, unsigned *out_shift, const BIGNUM *x,
     // At least one of |u| and |v| is now even.
     BN_ULONG u_is_odd = word_is_odd_mask(u->d[0]);
     BN_ULONG v_is_odd = word_is_odd_mask(v->d[0]);
-    assert(!(u_is_odd & v_is_odd));
+    declassify_assert(!(u_is_odd & v_is_odd));
 
     // If both are even, the final GCD gains a factor of two.
     shift += 1 & (~u_is_odd & ~v_is_odd);
@@ -106,7 +106,7 @@ static int bn_gcd_consttime(BIGNUM *r, unsigned *out_shift, const BIGNUM *x,
   // One of |u| or |v| is zero at this point. The algorithm usually makes |u|
   // zero, unless |y| was already zero on input. Fix this by combining the
   // values.
-  assert(BN_is_zero(u) || BN_is_zero(v));
+  declassify_assert(BN_is_zero(u) | BN_is_zero(v));
   for (size_t i = 0; i < width; i++) {
     v->d[i] |= u->d[i];
   }
@@ -289,7 +289,7 @@ int bn_mod_inverse_consttime(BIGNUM *r, int *out_no_inverse, const BIGNUM *a,
     // and |v| is now even.
     BN_ULONG u_is_even = ~word_is_odd_mask(u->d[0]);
     BN_ULONG v_is_even = ~word_is_odd_mask(v->d[0]);
-    assert(u_is_even != v_is_even);
+    declassify_assert(u_is_even != v_is_even);
 
     // Halve the even one and adjust the corresponding coefficient.
     maybe_rshift1_words(u->d, u_is_even, tmp->d, n_width);
@@ -313,8 +313,11 @@ int bn_mod_inverse_consttime(BIGNUM *r, int *out_no_inverse, const BIGNUM *a,
     maybe_rshift1_words_carry(D->d, D_carry, v_is_even, tmp->d, a_width);
   }
 
-  assert(BN_is_zero(v));
-  if (!BN_is_one(u)) {
+  declassify_assert(BN_is_zero(v));
+  // While the inputs and output are secret, this function considers whether the
+  // input was invertible to be public. It is used as part of RSA key
+  // generation, where inputs are chosen to already be invertible.
+  if (constant_time_declassify_int(!BN_is_one(u))) {
     *out_no_inverse = 1;
     OPENSSL_PUT_ERROR(BN, BN_R_NO_INVERSE);
     goto err;

@@ -62,9 +62,7 @@
 
 #include <openssl/base.h>
 
-#include <openssl/engine.h>
 #include <openssl/ex_data.h>
-#include <openssl/thread.h>
 
 #if defined(__cplusplus)
 extern "C" {
@@ -80,6 +78,12 @@ extern "C" {
 
 
 // Allocation and destruction.
+//
+// A |DSA| object represents a DSA key or group parameters. A given object may
+// be used concurrently on multiple threads by non-mutating functions, provided
+// no other thread is concurrently calling a mutating function. Unless otherwise
+// documented, functions which take a |const| pointer are non-mutating and
+// functions which take a non-|const| pointer are mutating.
 
 // DSA_new returns a new, empty DSA object or NULL on error.
 OPENSSL_EXPORT DSA *DSA_new(void);
@@ -88,7 +92,8 @@ OPENSSL_EXPORT DSA *DSA_new(void);
 // reference count drops to zero.
 OPENSSL_EXPORT void DSA_free(DSA *dsa);
 
-// DSA_up_ref increments the reference count of |dsa| and returns one.
+// DSA_up_ref increments the reference count of |dsa| and returns one. It does
+// not mutate |dsa| for thread-safety purposes and may be used concurrently.
 OPENSSL_EXPORT int DSA_up_ref(DSA *dsa);
 
 
@@ -218,7 +223,7 @@ OPENSSL_EXPORT DSA_SIG *DSA_do_sign(const uint8_t *digest, size_t digest_len,
 //
 // TODO(fork): deprecate.
 OPENSSL_EXPORT int DSA_do_verify(const uint8_t *digest, size_t digest_len,
-                                 DSA_SIG *sig, const DSA *dsa);
+                                 const DSA_SIG *sig, const DSA *dsa);
 
 // DSA_do_check_signature sets |*out_valid| to zero. Then it verifies that |sig|
 // is a valid signature, by the public key in |dsa| of the hash in |digest|
@@ -227,7 +232,7 @@ OPENSSL_EXPORT int DSA_do_verify(const uint8_t *digest, size_t digest_len,
 // It returns one if it was able to verify the signature as valid or invalid,
 // and zero on error.
 OPENSSL_EXPORT int DSA_do_check_signature(int *out_valid, const uint8_t *digest,
-                                          size_t digest_len, DSA_SIG *sig,
+                                          size_t digest_len, const DSA_SIG *sig,
                                           const DSA *dsa);
 
 
@@ -396,25 +401,6 @@ OPENSSL_EXPORT DSA *DSA_generate_parameters(int bits, unsigned char *seed,
                                             unsigned long *h_ret,
                                             void (*callback)(int, int, void *),
                                             void *cb_arg);
-
-
-struct dsa_st {
-  long version;
-  BIGNUM *p;
-  BIGNUM *q;  // == 20
-  BIGNUM *g;
-
-  BIGNUM *pub_key;   // y public key
-  BIGNUM *priv_key;  // x private key
-
-  int flags;
-  // Normally used to cache montgomery values
-  CRYPTO_MUTEX method_mont_lock;
-  BN_MONT_CTX *method_mont_p;
-  BN_MONT_CTX *method_mont_q;
-  CRYPTO_refcount_t references;
-  CRYPTO_EX_DATA ex_data;
-};
 
 
 #if defined(__cplusplus)

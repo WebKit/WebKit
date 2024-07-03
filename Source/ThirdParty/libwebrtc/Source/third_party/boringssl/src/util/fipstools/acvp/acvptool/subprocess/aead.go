@@ -32,12 +32,13 @@ type aeadVectorSet struct {
 }
 
 type aeadTestGroup struct {
-	ID        uint64 `json:"tgId"`
-	Type      string `json:"testType"`
-	Direction string `json:"direction"`
-	KeyBits   int    `json:"keyLen"`
-	TagBits   int    `json:"tagLen"`
-	Tests     []struct {
+	ID          uint64 `json:"tgId"`
+	Type        string `json:"testType"`
+	Direction   string `json:"direction"`
+	KeyBits     int    `json:"keyLen"`
+	TagBits     int    `json:"tagLen"`
+	NonceSource string `json:"ivGen"`
+	Tests       []struct {
 		ID            uint64 `json:"tcId"`
 		PlaintextHex  string `json:"pt"`
 		CiphertextHex string `json:"ct"`
@@ -57,6 +58,7 @@ type aeadTestResponse struct {
 	ID            uint64  `json:"tcId"`
 	CiphertextHex *string `json:"ct,omitempty"`
 	TagHex        string  `json:"tag,omitempty"`
+	NonceHex      string  `json:"iv,omitempty"`
 	PlaintextHex  *string `json:"pt,omitempty"`
 	Passed        *bool   `json:"testPassed,omitempty"`
 }
@@ -72,6 +74,7 @@ func (a *aead) Process(vectorSet []byte, m Transactable) (any, error) {
 	// versions of the ACVP documents. You can find fragments in
 	// https://github.com/usnistgov/ACVP.)
 	for _, group := range parsed.Groups {
+		group := group
 		response := aeadTestGroupResponse{
 			ID: group.ID,
 		}
@@ -86,9 +89,24 @@ func (a *aead) Process(vectorSet []byte, m Transactable) (any, error) {
 			return nil, fmt.Errorf("test group %d has unknown direction %q", group.ID, group.Direction)
 		}
 
-		op := a.algo + "/seal"
-		if !encrypt {
-			op = a.algo + "/open"
+		var randnonce bool
+		switch group.NonceSource {
+		case "internal":
+			randnonce = true
+		case "external", "":
+			randnonce = false
+		default:
+			return nil, fmt.Errorf("test group %d has unknown nonce source %q", group.ID, group.NonceSource)
+		}
+
+		op := a.algo
+		if randnonce {
+			op += "-randnonce"
+		}
+		if encrypt {
+			op += "/seal"
+		} else {
+			op += "/open"
 		}
 
 		if group.KeyBits%8 != 0 || group.KeyBits < 0 {
@@ -102,6 +120,8 @@ func (a *aead) Process(vectorSet []byte, m Transactable) (any, error) {
 		tagBytes := group.TagBits / 8
 
 		for _, test := range group.Tests {
+			test := test
+
 			if len(test.KeyHex) != keyBytes*2 {
 				return nil, fmt.Errorf("test case %d/%d contains key %q of length %d, but expected %d-bit key", group.ID, test.ID, test.KeyHex, len(test.KeyHex), group.KeyBits)
 			}
@@ -170,17 +190,27 @@ func (a *aead) Process(vectorSet []byte, m Transactable) (any, error) {
 						ciphertextHex := hex.EncodeToString(result[0])
 						testResp.CiphertextHex = &ciphertextHex
 					} else {
-						ciphertext := result[0][:len(result[0])-tagBytes]
+						ciphertext := result[0]
+						if randnonce {
+							var nonce []byte
+							ciphertext, nonce = splitOffRight(ciphertext, 12)
+							testResp.NonceHex = hex.EncodeToString(nonce)
+						}
+						ciphertext, tag := splitOffRight(ciphertext, tagBytes)
 						ciphertextHex := hex.EncodeToString(ciphertext)
 						testResp.CiphertextHex = &ciphertextHex
-						tag := result[0][len(result[0])-tagBytes:]
 						testResp.TagHex = hex.EncodeToString(tag)
 					}
 					response.Tests = append(response.Tests, testResp)
 					return nil
 				})
 			} else {
-				m.TransactAsync(op, 2, [][]byte{uint32le(uint32(tagBytes)), key, append(input, tag...), nonce, aad}, func(result [][]byte) error {
+				ciphertext := append(input, tag...)
+				if randnonce {
+					ciphertext = append(ciphertext, nonce...)
+					nonce = []byte{}
+				}
+				m.TransactAsync(op, 2, [][]byte{uint32le(uint32(tagBytes)), key, ciphertext, nonce, aad}, func(result [][]byte) error {
 					if len(result[0]) != 1 || (result[0][0]&0xfe) != 0 {
 						return fmt.Errorf("invalid AEAD status result from subprocess")
 					}
@@ -206,4 +236,12 @@ func (a *aead) Process(vectorSet []byte, m Transactable) (any, error) {
 	}
 
 	return ret, nil
+}
+
+func splitOffRight(in []byte, suffixSize int) ([]byte, []byte) {
+	if len(in) < suffixSize {
+		panic("input too small to split")
+	}
+	split := len(in) - suffixSize
+	return in[:split], in[split:]
 }

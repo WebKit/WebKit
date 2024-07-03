@@ -63,26 +63,31 @@
 
 void bn_big_endian_to_words(BN_ULONG *out, size_t out_len, const uint8_t *in,
                             size_t in_len) {
-  for (size_t i = 0; i < out_len; i++) {
-    if (in_len < sizeof(BN_ULONG)) {
-      // Load the last partial word.
-      BN_ULONG word = 0;
-      for (size_t j = 0; j < in_len; j++) {
-        word = (word << 8) | in[j];
-      }
-      in_len = 0;
-      out[i] = word;
-      // Fill the remainder with zeros.
-      OPENSSL_memset(out + i + 1, 0, (out_len - i - 1) * sizeof(BN_ULONG));
-      break;
-    }
+  // The caller should have sized |out| to fit |in| without truncating. This
+  // condition ensures we do not overflow |out|, so use a runtime check.
+  BSSL_CHECK(in_len <= out_len * sizeof(BN_ULONG));
 
+  // Load whole words.
+  while (in_len >= sizeof(BN_ULONG)) {
     in_len -= sizeof(BN_ULONG);
-    out[i] = CRYPTO_load_word_be(in + in_len);
+    out[0] = CRYPTO_load_word_be(in + in_len);
+    out++;
+    out_len--;
   }
 
-  // The caller should have sized the output to avoid truncation.
-  assert(in_len == 0);
+  // Load the last partial word.
+  if (in_len != 0) {
+    BN_ULONG word = 0;
+    for (size_t i = 0; i < in_len; i++) {
+      word = (word << 8) | in[i];
+    }
+    out[0] = word;
+    out++;
+    out_len--;
+  }
+
+  // Fill the remainder with zeros.
+  OPENSSL_memset(out, 0, out_len * sizeof(BN_ULONG));
 }
 
 BIGNUM *BN_bin2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
@@ -116,7 +121,7 @@ BIGNUM *BN_bin2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
   return ret;
 }
 
-BIGNUM *BN_le2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
+BIGNUM *BN_lebin2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
   BIGNUM *bn = NULL;
   if (ret == NULL) {
     bn = BN_new();
@@ -149,6 +154,10 @@ BIGNUM *BN_le2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
   return ret;
 }
 
+BIGNUM *BN_le2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
+  return BN_lebin2bn(in, len, ret);
+}
+
 // fits_in_bytes returns one if the |num_words| words in |words| can be
 // represented in |num_bytes| bytes.
 static int fits_in_bytes(const BN_ULONG *words, size_t num_words,
@@ -177,7 +186,7 @@ void bn_assert_fits_in_bytes(const BIGNUM *bn, size_t num) {
 void bn_words_to_big_endian(uint8_t *out, size_t out_len, const BN_ULONG *in,
                             size_t in_len) {
   // The caller should have selected an output length without truncation.
-  assert(fits_in_bytes(in, in_len, out_len));
+  declassify_assert(fits_in_bytes(in, in_len, out_len));
 
   // We only support little-endian platforms, so the internal representation is
   // also little-endian as bytes. We can simply copy it in reverse.

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf-8
 # Copyright (c) 2020, Google Inc.
 #
@@ -14,7 +14,7 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-import StringIO
+from io import StringIO
 import subprocess
 
 # Base field Z_p
@@ -76,12 +76,7 @@ def point_mul(s, P):
     return Q
 
 def to_bytes(x):
-    ret = bytearray(32)
-    for i in range(len(ret)):
-        ret[i] = x % 256
-        x >>= 8
-    assert x == 0
-    return ret
+    return x.to_bytes(32, "little")
 
 def to_ge_precomp(P):
     # typedef struct {
@@ -108,6 +103,9 @@ def to_base_51(x):
         x >>= 51
     assert x == 0
     return ret
+
+def to_bytes_literal(x):
+    return "{" + ", ".join(map(hex, to_bytes(x))) + "}"
 
 def to_literal(x):
     ret = "{{\n#if defined(OPENSSL_64_BIT)\n"
@@ -140,7 +138,7 @@ def main():
         bi_precomp.append(to_ge_precomp(P))
 
 
-    buf = StringIO.StringIO()
+    buf = StringIO()
     buf.write("""/* Copyright (c) 2020, Google Inc.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -190,14 +188,14 @@ static const uint8_t k25519SmallPrecomp[15 * 2 * 32] = {""")
 #else
 
 // k25519Precomp[i][j] = (j+1)*256^i*B
-static const ge_precomp k25519Precomp[32][8] = {
+static const uint8_t k25519Precomp[32][8][3][32] = {
 """)
     for child in large_precomp:
         buf.write("{\n")
         for val in child:
             buf.write("{\n")
             for term in val:
-                buf.write(to_literal(term) + ",\n")
+                buf.write(to_bytes_literal(term) + ",\n")
             buf.write("},\n")
         buf.write("},\n")
     buf.write("""};
@@ -216,7 +214,7 @@ static const ge_precomp Bi[8] = {
 """)
 
     proc = subprocess.Popen(["clang-format"], stdin=subprocess.PIPE)
-    proc.communicate(buf.getvalue())
+    proc.communicate(buf.getvalue().encode("utf8"))
 
 if __name__ == "__main__":
     main()

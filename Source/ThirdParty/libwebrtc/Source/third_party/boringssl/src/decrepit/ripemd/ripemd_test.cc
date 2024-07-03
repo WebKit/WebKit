@@ -90,7 +90,7 @@ TEST(RIPEMDTest, RunTest) {
   }
 
   static const size_t kLargeBufSize = 1000000;
-  std::unique_ptr<uint8_t[]> buf(new uint8_t[kLargeBufSize]);
+  auto buf = std::make_unique<uint8_t[]>(kLargeBufSize);
   OPENSSL_memset(buf.get(), 'a', kLargeBufSize);
   uint8_t digest[RIPEMD160_DIGEST_LENGTH];
   RIPEMD160(buf.get(), kLargeBufSize, digest);

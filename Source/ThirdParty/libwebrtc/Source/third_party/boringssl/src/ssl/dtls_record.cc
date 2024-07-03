@@ -127,26 +127,26 @@ BSSL_NAMESPACE_BEGIN
 // |bitmap| or is stale. Otherwise it returns zero.
 static bool dtls1_bitmap_should_discard(DTLS1_BITMAP *bitmap,
                                         uint64_t seq_num) {
-  const unsigned kWindowSize = sizeof(bitmap->map) * 8;
+  const size_t kWindowSize = bitmap->map.size();
 
   if (seq_num > bitmap->max_seq_num) {
     return false;
   }
   uint64_t idx = bitmap->max_seq_num - seq_num;
-  return idx >= kWindowSize || (bitmap->map & (((uint64_t)1) << idx));
+  return idx >= kWindowSize || bitmap->map[idx];
 }
 
 // dtls1_bitmap_record updates |bitmap| to record receipt of sequence number
 // |seq_num|. It slides the window forward if needed. It is an error to call
 // this function on a stale sequence number.
 static void dtls1_bitmap_record(DTLS1_BITMAP *bitmap, uint64_t seq_num) {
-  const unsigned kWindowSize = sizeof(bitmap->map) * 8;
+  const size_t kWindowSize = bitmap->map.size();
 
   // Shift the window if necessary.
   if (seq_num > bitmap->max_seq_num) {
     uint64_t shift = seq_num - bitmap->max_seq_num;
     if (shift >= kWindowSize) {
-      bitmap->map = 0;
+      bitmap->map.reset();
     } else {
       bitmap->map <<= shift;
     }
@@ -155,7 +155,7 @@ static void dtls1_bitmap_record(DTLS1_BITMAP *bitmap, uint64_t seq_num) {
 
   uint64_t idx = bitmap->max_seq_num - seq_num;
   if (idx < kWindowSize) {
-    bitmap->map |= ((uint64_t)1) << idx;
+    bitmap->map[idx] = true;
   }
 }
 

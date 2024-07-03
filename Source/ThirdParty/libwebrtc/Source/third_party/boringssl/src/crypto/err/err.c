@@ -146,13 +146,13 @@ struct err_error_st {
 
 // ERR_STATE contains the per-thread, error queue.
 typedef struct err_state_st {
-  // errors contains the ERR_NUM_ERRORS most recent errors, organised as a ring
-  // buffer.
+  // errors contains up to ERR_NUM_ERRORS - 1 most recent errors, organised as a
+  // ring buffer.
   struct err_error_st errors[ERR_NUM_ERRORS];
-  // top contains the index one past the most recent error. If |top| equals
-  // |bottom| then the queue is empty.
+  // top contains the index of the most recent error. If |top| equals |bottom|
+  // then the queue is empty.
   unsigned top;
-  // bottom contains the index of the last error in the queue.
+  // bottom contains the index before the least recent error in the queue.
   unsigned bottom;
 
   // to_free, if not NULL, contains a pointer owned by this structure that was
@@ -164,6 +164,17 @@ extern const uint32_t kOpenSSLReasonValues[];
 extern const size_t kOpenSSLReasonValuesLen;
 extern const char kOpenSSLReasonStringData[];
 
+static char *strdup_libc_malloc(const char *str) {
+  // |strdup| is not in C until C23, so MSVC triggers deprecation warnings, and
+  // glibc and musl gate it on a feature macro. Reimplementing it is easier.
+  size_t len = strlen(str);
+  char *ret = malloc(len + 1);
+  if (ret != NULL) {
+    memcpy(ret, str, len + 1);
+  }
+  return ret;
+}
+
 // err_clear clears the given queued error.
 static void err_clear(struct err_error_st *error) {
   free(error->data);
@@ -174,13 +185,9 @@ static void err_copy(struct err_error_st *dst, const struct err_error_st *src) {
   err_clear(dst);
   dst->file = src->file;
   if (src->data != NULL) {
-    // Disable deprecated functions on msvc so it doesn't complain about strdup.
-    OPENSSL_MSVC_PRAGMA(warning(push))
-    OPENSSL_MSVC_PRAGMA(warning(disable : 4996))
     // We can't use OPENSSL_strdup because we don't want to call OPENSSL_malloc,
     // which can affect the error stack.
-    dst->data = strdup(src->data);
-    OPENSSL_MSVC_PRAGMA(warning(pop))
+    dst->data = strdup_libc_malloc(src->data);
   }
   dst->packed = src->packed;
   dst->line = src->line;
@@ -192,8 +199,7 @@ static int global_next_library = ERR_NUM_LIBS;
 
 // global_next_library_mutex protects |global_next_library| from concurrent
 // updates.
-static struct CRYPTO_STATIC_MUTEX global_next_library_mutex =
-    CRYPTO_STATIC_MUTEX_INIT;
+static CRYPTO_MUTEX global_next_library_mutex = CRYPTO_MUTEX_INIT;
 
 static void err_state_free(void *statep) {
   ERR_STATE *state = statep;
@@ -367,9 +373,9 @@ void ERR_remove_thread_state(const CRYPTO_THREADID *tid) {
 int ERR_get_next_error_library(void) {
   int ret;
 
-  CRYPTO_STATIC_MUTEX_lock_write(&global_next_library_mutex);
+  CRYPTO_MUTEX_lock_write(&global_next_library_mutex);
   ret = global_next_library++;
-  CRYPTO_STATIC_MUTEX_unlock_write(&global_next_library_mutex);
+  CRYPTO_MUTEX_unlock_write(&global_next_library_mutex);
 
   return ret;
 }
@@ -429,50 +435,52 @@ static const char *err_string_lookup(uint32_t lib, uint32_t key,
   return &string_data[(*result) & 0x7fff];
 }
 
-static const char *const kLibraryNames[ERR_NUM_LIBS] = {
-    "invalid library (0)",
-    "unknown library",              // ERR_LIB_NONE
-    "system library",               // ERR_LIB_SYS
-    "bignum routines",              // ERR_LIB_BN
-    "RSA routines",                 // ERR_LIB_RSA
-    "Diffie-Hellman routines",      // ERR_LIB_DH
-    "public key routines",          // ERR_LIB_EVP
-    "memory buffer routines",       // ERR_LIB_BUF
-    "object identifier routines",   // ERR_LIB_OBJ
-    "PEM routines",                 // ERR_LIB_PEM
-    "DSA routines",                 // ERR_LIB_DSA
-    "X.509 certificate routines",   // ERR_LIB_X509
-    "ASN.1 encoding routines",      // ERR_LIB_ASN1
-    "configuration file routines",  // ERR_LIB_CONF
-    "common libcrypto routines",    // ERR_LIB_CRYPTO
-    "elliptic curve routines",      // ERR_LIB_EC
-    "SSL routines",                 // ERR_LIB_SSL
-    "BIO routines",                 // ERR_LIB_BIO
-    "PKCS7 routines",               // ERR_LIB_PKCS7
-    "PKCS8 routines",               // ERR_LIB_PKCS8
-    "X509 V3 routines",             // ERR_LIB_X509V3
-    "random number generator",      // ERR_LIB_RAND
-    "ENGINE routines",              // ERR_LIB_ENGINE
-    "OCSP routines",                // ERR_LIB_OCSP
-    "UI routines",                  // ERR_LIB_UI
-    "COMP routines",                // ERR_LIB_COMP
-    "ECDSA routines",               // ERR_LIB_ECDSA
-    "ECDH routines",                // ERR_LIB_ECDH
-    "HMAC routines",                // ERR_LIB_HMAC
-    "Digest functions",             // ERR_LIB_DIGEST
-    "Cipher functions",             // ERR_LIB_CIPHER
-    "HKDF functions",               // ERR_LIB_HKDF
-    "Trust Token functions",        // ERR_LIB_TRUST_TOKEN
-    "User defined functions",       // ERR_LIB_USER
+typedef struct library_name_st {
+  const char *str;
+  const char *symbol;
+  const char *reason_symbol;
+} LIBRARY_NAME;
+
+static const LIBRARY_NAME kLibraryNames[ERR_NUM_LIBS] = {
+    {"invalid library (0)", NULL, NULL},
+    {"unknown library", "NONE", "NONE_LIB"},
+    {"system library", "SYS", "SYS_LIB"},
+    {"bignum routines", "BN", "BN_LIB"},
+    {"RSA routines", "RSA", "RSA_LIB"},
+    {"Diffie-Hellman routines", "DH", "DH_LIB"},
+    {"public key routines", "EVP", "EVP_LIB"},
+    {"memory buffer routines", "BUF", "BUF_LIB"},
+    {"object identifier routines", "OBJ", "OBJ_LIB"},
+    {"PEM routines", "PEM", "PEM_LIB"},
+    {"DSA routines", "DSA", "DSA_LIB"},
+    {"X.509 certificate routines", "X509", "X509_LIB"},
+    {"ASN.1 encoding routines", "ASN1", "ASN1_LIB"},
+    {"configuration file routines", "CONF", "CONF_LIB"},
+    {"common libcrypto routines", "CRYPTO", "CRYPTO_LIB"},
+    {"elliptic curve routines", "EC", "EC_LIB"},
+    {"SSL routines", "SSL", "SSL_LIB"},
+    {"BIO routines", "BIO", "BIO_LIB"},
+    {"PKCS7 routines", "PKCS7", "PKCS7_LIB"},
+    {"PKCS8 routines", "PKCS8", "PKCS8_LIB"},
+    {"X509 V3 routines", "X509V3", "X509V3_LIB"},
+    {"random number generator", "RAND", "RAND_LIB"},
+    {"ENGINE routines", "ENGINE", "ENGINE_LIB"},
+    {"OCSP routines", "OCSP", "OCSP_LIB"},
+    {"UI routines", "UI", "UI_LIB"},
+    {"COMP routines", "COMP", "COMP_LIB"},
+    {"ECDSA routines", "ECDSA", "ECDSA_LIB"},
+    {"ECDH routines", "ECDH", "ECDH_LIB"},
+    {"HMAC routines", "HMAC", "HMAC_LIB"},
+    {"Digest functions", "DIGEST", "DIGEST_LIB"},
+    {"Cipher functions", "CIPHER", "CIPHER_LIB"},
+    {"HKDF functions", "HKDF", "HKDF_LIB"},
+    {"Trust Token functions", "TRUST_TOKEN", "TRUST_TOKEN_LIB"},
+    {"User defined functions", "USER", "USER_LIB"},
 };
 
 static const char *err_lib_error_string(uint32_t packed_error) {
   const uint32_t lib = ERR_GET_LIB(packed_error);
-
-  if (lib >= ERR_NUM_LIBS) {
-    return NULL;
-  }
-  return kLibraryNames[lib];
+  return lib >= ERR_NUM_LIBS ? NULL : kLibraryNames[lib].str;
 }
 
 const char *ERR_lib_error_string(uint32_t packed_error) {
@@ -480,49 +488,65 @@ const char *ERR_lib_error_string(uint32_t packed_error) {
   return ret == NULL ? "unknown library" : ret;
 }
 
+const char *ERR_lib_symbol_name(uint32_t packed_error) {
+  const uint32_t lib = ERR_GET_LIB(packed_error);
+  return lib >= ERR_NUM_LIBS ? NULL : kLibraryNames[lib].symbol;
+}
+
 const char *ERR_func_error_string(uint32_t packed_error) {
   return "OPENSSL_internal";
 }
 
-static const char *err_reason_error_string(uint32_t packed_error) {
+static const char *err_reason_error_string(uint32_t packed_error, int symbol) {
   const uint32_t lib = ERR_GET_LIB(packed_error);
   const uint32_t reason = ERR_GET_REASON(packed_error);
 
   if (lib == ERR_LIB_SYS) {
-    if (reason < 127) {
+    if (!symbol && reason < 127) {
       return strerror(reason);
     }
     return NULL;
   }
 
   if (reason < ERR_NUM_LIBS) {
-    return kLibraryNames[reason];
+    return symbol ? kLibraryNames[reason].reason_symbol
+                  : kLibraryNames[reason].str;
   }
 
   if (reason < 100) {
+    // TODO(davidben): All our other reason strings match the symbol name. Only
+    // the common ones differ. Should we just consistently return the symbol
+    // name?
     switch (reason) {
       case ERR_R_MALLOC_FAILURE:
-        return "malloc failure";
+        return symbol ? "MALLOC_FAILURE" : "malloc failure";
       case ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED:
-        return "function should not have been called";
+        return symbol ? "SHOULD_NOT_HAVE_BEEN_CALLED"
+                      : "function should not have been called";
       case ERR_R_PASSED_NULL_PARAMETER:
-        return "passed a null parameter";
+        return symbol ? "PASSED_NULL_PARAMETER" : "passed a null parameter";
       case ERR_R_INTERNAL_ERROR:
-        return "internal error";
+        return symbol ? "INTERNAL_ERROR" : "internal error";
       case ERR_R_OVERFLOW:
-        return "overflow";
+        return symbol ? "OVERFLOW" : "overflow";
       default:
         return NULL;
     }
   }
 
+  // Unlike OpenSSL, BoringSSL's reason strings already match symbol name, so we
+  // do not need to check |symbol|.
   return err_string_lookup(lib, reason, kOpenSSLReasonValues,
                            kOpenSSLReasonValuesLen, kOpenSSLReasonStringData);
 }
 
 const char *ERR_reason_error_string(uint32_t packed_error) {
-  const char *ret = err_reason_error_string(packed_error);
+  const char *ret = err_reason_error_string(packed_error, /*symbol=*/0);
   return ret == NULL ? "unknown error" : ret;
+}
+
+const char *ERR_reason_symbol_name(uint32_t packed_error) {
+  return err_reason_error_string(packed_error, /*symbol=*/1);
 }
 
 char *ERR_error_string(uint32_t packed_error, char *ret) {
@@ -551,24 +575,23 @@ char *ERR_error_string_n(uint32_t packed_error, char *buf, size_t len) {
   unsigned reason = ERR_GET_REASON(packed_error);
 
   const char *lib_str = err_lib_error_string(packed_error);
-  const char *reason_str = err_reason_error_string(packed_error);
+  const char *reason_str = err_reason_error_string(packed_error, /*symbol=*/0);
 
-  char lib_buf[64], reason_buf[64];
+  char lib_buf[32], reason_buf[32];
   if (lib_str == NULL) {
-    BIO_snprintf(lib_buf, sizeof(lib_buf), "lib(%u)", lib);
+    snprintf(lib_buf, sizeof(lib_buf), "lib(%u)", lib);
     lib_str = lib_buf;
   }
 
- if (reason_str == NULL) {
-    BIO_snprintf(reason_buf, sizeof(reason_buf), "reason(%u)", reason);
+  if (reason_str == NULL) {
+    snprintf(reason_buf, sizeof(reason_buf), "reason(%u)", reason);
     reason_str = reason_buf;
   }
 
-  BIO_snprintf(buf, len, "error:%08" PRIx32 ":%s:OPENSSL_internal:%s",
-               packed_error, lib_str, reason_str);
-
-  if (strlen(buf) == len - 1) {
-    // output may be truncated; make sure we always have 5 colon-separated
+  int ret = snprintf(buf, len, "error:%08" PRIx32 ":%s:OPENSSL_internal:%s",
+                     packed_error, lib_str, reason_str);
+  if (ret >= 0 && (size_t)ret >= len) {
+    // The output was truncated; make sure we always have 5 colon-separated
     // fields, i.e. 4 colons.
     static const unsigned num_colons = 4;
     unsigned i;
@@ -618,8 +641,8 @@ void ERR_print_errors_cb(ERR_print_errors_callback_t callback, void *ctx) {
     }
 
     ERR_error_string_n(packed_error, buf, sizeof(buf));
-    BIO_snprintf(buf2, sizeof(buf2), "%lu:%s:%s:%d:%s\n", thread_hash, buf,
-                 file, line, (flags & ERR_FLAG_STRING) ? data : "");
+    snprintf(buf2, sizeof(buf2), "%lu:%s:%s:%d:%s\n", thread_hash, buf, file,
+             line, (flags & ERR_FLAG_STRING) ? data : "");
     if (callback(buf2, strlen(buf2), ctx) <= 0) {
       break;
     }
@@ -751,13 +774,9 @@ void ERR_set_error_data(char *data, int flags) {
     assert(0);
     return;
   }
-  // Disable deprecated functions on msvc so it doesn't complain about strdup.
-  OPENSSL_MSVC_PRAGMA(warning(push))
-  OPENSSL_MSVC_PRAGMA(warning(disable : 4996))
   // We can not use OPENSSL_strdup because we don't want to call OPENSSL_malloc,
   // which can affect the error stack.
-  char *copy = strdup(data);
-  OPENSSL_MSVC_PRAGMA(warning(pop))
+  char *copy = strdup_libc_malloc(data);
   if (copy != NULL) {
     err_set_error_data(copy);
   }
@@ -867,6 +886,10 @@ void ERR_restore_state(const ERR_SAVE_STATE *state) {
     return;
   }
 
+  if (state->num_errors >= ERR_NUM_ERRORS) {
+    abort();
+  }
+
   ERR_STATE *const dst = err_get_state();
   if (dst == NULL) {
     return;
@@ -875,6 +898,6 @@ void ERR_restore_state(const ERR_SAVE_STATE *state) {
   for (size_t i = 0; i < state->num_errors; i++) {
     err_copy(&dst->errors[i], &state->errors[i]);
   }
-  dst->top = state->num_errors - 1;
+  dst->top = (unsigned)(state->num_errors - 1);
   dst->bottom = ERR_NUM_ERRORS - 1;
 }

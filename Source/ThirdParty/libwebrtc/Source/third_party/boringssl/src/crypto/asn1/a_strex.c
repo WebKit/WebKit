@@ -68,6 +68,7 @@
 #include <openssl/mem.h>
 
 #include "../bytestring/internal.h"
+#include "../internal.h"
 #include "internal.h"
 
 
@@ -89,18 +90,18 @@ static int do_esc_char(uint32_t c, unsigned long flags, char *do_quotes,
   char buf[16];  // Large enough for "\\W01234567".
   unsigned char u8 = (unsigned char)c;
   if (c > 0xffff) {
-    BIO_snprintf(buf, sizeof(buf), "\\W%08" PRIX32, c);
+    snprintf(buf, sizeof(buf), "\\W%08" PRIX32, c);
   } else if (c > 0xff) {
-    BIO_snprintf(buf, sizeof(buf), "\\U%04" PRIX32, c);
+    snprintf(buf, sizeof(buf), "\\U%04" PRIX32, c);
   } else if ((flags & ASN1_STRFLGS_ESC_MSB) && c > 0x7f) {
-    BIO_snprintf(buf, sizeof(buf), "\\%02X", c);
+    snprintf(buf, sizeof(buf), "\\%02X", c);
   } else if ((flags & ASN1_STRFLGS_ESC_CTRL) && is_control_character(c)) {
-    BIO_snprintf(buf, sizeof(buf), "\\%02X", c);
+    snprintf(buf, sizeof(buf), "\\%02X", c);
   } else if (flags & ASN1_STRFLGS_ESC_2253) {
     // See RFC 2253, sections 2.4 and 4.
     if (c == '\\' || c == '"') {
       // Quotes and backslashes are always escaped, quoted or not.
-      BIO_snprintf(buf, sizeof(buf), "\\%c", (int)c);
+      snprintf(buf, sizeof(buf), "\\%c", (int)c);
     } else if (c == ',' || c == '+' || c == '<' || c == '>' || c == ';' ||
                (is_first && (c == ' ' || c == '#')) ||
                (is_last && (c == ' '))) {
@@ -111,13 +112,13 @@ static int do_esc_char(uint32_t c, unsigned long flags, char *do_quotes,
         }
         return maybe_write(out, &u8, 1) ? 1 : -1;
       }
-      BIO_snprintf(buf, sizeof(buf), "\\%c", (int)c);
+      snprintf(buf, sizeof(buf), "\\%c", (int)c);
     } else {
       return maybe_write(out, &u8, 1) ? 1 : -1;
     }
   } else if ((flags & ESC_FLAGS) && c == '\\') {
     // If any escape flags are set, also escape backslashes.
-    BIO_snprintf(buf, sizeof(buf), "\\%c", (int)c);
+    snprintf(buf, sizeof(buf), "\\%c", (int)c);
   } else {
     return maybe_write(out, &u8, 1) ? 1 : -1;
   }
@@ -137,19 +138,19 @@ static int do_buf(const unsigned char *buf, int buflen, int encoding,
   int get_char_error;
   switch (encoding) {
     case MBSTRING_UNIV:
-      get_char = cbs_get_utf32_be;
+      get_char = CBS_get_utf32_be;
       get_char_error = ASN1_R_INVALID_UNIVERSALSTRING;
       break;
     case MBSTRING_BMP:
-      get_char = cbs_get_ucs2_be;
+      get_char = CBS_get_ucs2_be;
       get_char_error = ASN1_R_INVALID_BMPSTRING;
       break;
     case MBSTRING_ASC:
-      get_char = cbs_get_latin1;
+      get_char = CBS_get_latin1;
       get_char_error = ERR_R_INTERNAL_ERROR;  // Should not be possible.
       break;
     case MBSTRING_UTF8:
-      get_char = cbs_get_utf8;
+      get_char = CBS_get_utf8;
       get_char_error = ASN1_R_INVALID_UTF8STRING;
       break;
     default:
@@ -172,7 +173,7 @@ static int do_buf(const unsigned char *buf, int buflen, int encoding,
       uint8_t utf8_buf[6];
       CBB utf8_cbb;
       CBB_init_fixed(&utf8_cbb, utf8_buf, sizeof(utf8_buf));
-      if (!cbb_add_utf8(&utf8_cbb, c)) {
+      if (!CBB_add_utf8(&utf8_cbb, c)) {
         OPENSSL_PUT_ERROR(ASN1, ERR_R_INTERNAL_ERROR);
         return 1;
       }
@@ -238,22 +239,8 @@ static int do_dump(unsigned long flags, BIO *out, const ASN1_STRING *str) {
   // Placing the ASN1_STRING in a temporary ASN1_TYPE allows the DER encoding
   // to readily obtained.
   ASN1_TYPE t;
-  t.type = str->type;
-  // Negative INTEGER and ENUMERATED values are the only case where
-  // |ASN1_STRING| and |ASN1_TYPE| types do not match.
-  //
-  // TODO(davidben): There are also some type fields which, in |ASN1_TYPE|, do
-  // not correspond to |ASN1_STRING|. It is unclear whether those are allowed
-  // in |ASN1_STRING| at all, or what the space of allowed types is.
-  // |ASN1_item_ex_d2i| will never produce such a value so, for now, we say
-  // this is an invalid input. But this corner of the library in general
-  // should be more robust.
-  if (t.type == V_ASN1_NEG_INTEGER) {
-    t.type = V_ASN1_INTEGER;
-  } else if (t.type == V_ASN1_NEG_ENUMERATED) {
-    t.type = V_ASN1_ENUMERATED;
-  }
-  t.value.asn1_string = (ASN1_STRING *)str;
+  OPENSSL_memset(&t, 0, sizeof(ASN1_TYPE));
+  asn1_type_set0_string(&t, (ASN1_STRING *)str);
   unsigned char *der_buf = NULL;
   int der_len = i2d_ASN1_TYPE(&t, &der_buf);
   if (der_len < 0) {

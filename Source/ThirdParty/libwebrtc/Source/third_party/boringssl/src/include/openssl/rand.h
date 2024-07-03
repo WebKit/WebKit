@@ -29,6 +29,42 @@ extern "C" {
 // event that sufficient random data can not be obtained, |abort| is called.
 OPENSSL_EXPORT int RAND_bytes(uint8_t *buf, size_t len);
 
+
+// Obscure functions.
+
+#if !defined(OPENSSL_WINDOWS)
+// RAND_enable_fork_unsafe_buffering indicates that clones of the address space,
+// e.g. via |fork|, will never call into BoringSSL. It may be used to disable
+// BoringSSL's more expensive fork-safety measures. However, calling this
+// function and then using BoringSSL across |fork| calls will leak secret keys.
+// |fd| must be -1.
+//
+// WARNING: This function affects BoringSSL for the entire address space. Thus
+// this function should never be called by library code, only by code with
+// global knowledge of the application's use of BoringSSL.
+//
+// Do not use this function unless a performance issue was measured with the
+// default behavior. BoringSSL can efficiently detect forks on most platforms,
+// in which case this function is a no-op and is unnecessary. In particular,
+// Linux kernel versions 4.14 or later provide |MADV_WIPEONFORK|. Future
+// versions of BoringSSL will remove this functionality when older kernels are
+// sufficiently rare.
+//
+// This function has an unusual name because it historically controlled internal
+// buffers, but no longer does.
+OPENSSL_EXPORT void RAND_enable_fork_unsafe_buffering(int fd);
+
+// RAND_disable_fork_unsafe_buffering restores BoringSSL's default fork-safety
+// protections. See also |RAND_enable_fork_unsafe_buffering|.
+OPENSSL_EXPORT void RAND_disable_fork_unsafe_buffering(void);
+#endif
+
+#if defined(BORINGSSL_UNSAFE_DETERMINISTIC_MODE)
+// RAND_reset_for_fuzzing resets the fuzzer-only deterministic RNG. This
+// function is only defined in the fuzzer-only build configuration.
+OPENSSL_EXPORT void RAND_reset_for_fuzzing(void);
+#endif
+
 // RAND_get_system_entropy_for_custom_prng writes |len| bytes of random data
 // from a system entropy source to |buf|. The maximum length of entropy which
 // may be requested is 256 bytes. If more than 256 bytes of data is requested,
@@ -38,32 +74,6 @@ OPENSSL_EXPORT int RAND_bytes(uint8_t *buf, size_t len);
 // from BoringSSL. This function is not FIPS compliant.
 OPENSSL_EXPORT void RAND_get_system_entropy_for_custom_prng(uint8_t *buf,
                                                             size_t len);
-
-// RAND_cleanup frees any resources used by the RNG. This is not safe if other
-// threads might still be calling |RAND_bytes|.
-OPENSSL_EXPORT void RAND_cleanup(void);
-
-
-// Obscure functions.
-
-#if !defined(OPENSSL_WINDOWS)
-// RAND_enable_fork_unsafe_buffering enables efficient buffered reading of
-// /dev/urandom. It adds an overhead of a few KB of memory per thread. It must
-// be called before the first call to |RAND_bytes|.
-//
-// |fd| must be -1. We no longer support setting the file descriptor with this
-// function.
-//
-// It has an unusual name because the buffer is unsafe across calls to |fork|.
-// Hence, this function should never be called by libraries.
-OPENSSL_EXPORT void RAND_enable_fork_unsafe_buffering(int fd);
-#endif
-
-#if defined(BORINGSSL_UNSAFE_DETERMINISTIC_MODE)
-// RAND_reset_for_fuzzing resets the fuzzer-only deterministic RNG. This
-// function is only defined in the fuzzer-only build configuration.
-OPENSSL_EXPORT void RAND_reset_for_fuzzing(void);
-#endif
 
 
 // Deprecated functions
@@ -92,6 +102,9 @@ OPENSSL_EXPORT int RAND_poll(void);
 
 // RAND_status returns one.
 OPENSSL_EXPORT int RAND_status(void);
+
+// RAND_cleanup does nothing.
+OPENSSL_EXPORT void RAND_cleanup(void);
 
 // rand_meth_st is typedefed to |RAND_METHOD| in base.h. It isn't used; it
 // exists only to be the return type of |RAND_SSLeay|. It's

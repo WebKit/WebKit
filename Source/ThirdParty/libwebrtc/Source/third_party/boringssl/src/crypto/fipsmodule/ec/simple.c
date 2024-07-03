@@ -88,16 +88,6 @@
 // used, it is a Montgomery representation (i.e. 'encoding' means multiplying
 // by some factor R).
 
-int ec_GFp_simple_group_init(EC_GROUP *group) {
-  BN_init(&group->field);
-  group->a_is_minus3 = 0;
-  return 1;
-}
-
-void ec_GFp_simple_group_finish(EC_GROUP *group) {
-  BN_free(&group->field);
-}
-
 int ec_GFp_simple_group_set_curve(EC_GROUP *group, const BIGNUM *p,
                                   const BIGNUM *a, const BIGNUM *b,
                                   BN_CTX *ctx) {
@@ -114,17 +104,11 @@ int ec_GFp_simple_group_set_curve(EC_GROUP *group, const BIGNUM *p,
     goto err;
   }
 
-  // group->field
-  if (!BN_copy(&group->field, p)) {
-    goto err;
-  }
-  BN_set_negative(&group->field, 0);
-  // Store the field in minimal form, so it can be used with |BN_ULONG| arrays.
-  bn_set_minimal_width(&group->field);
-
-  if (!ec_bignum_to_felem(group, &group->a, a) ||
+  if (!BN_MONT_CTX_set(&group->field, p, ctx) ||
+      !ec_bignum_to_felem(group, &group->a, a) ||
       !ec_bignum_to_felem(group, &group->b, b) ||
-      !ec_bignum_to_felem(group, &group->one, BN_value_one())) {
+      // Reuse Z from the generator to cache the value one.
+      !ec_bignum_to_felem(group, &group->generator.raw.Z, BN_value_one())) {
     goto err;
   }
 
@@ -133,7 +117,7 @@ int ec_GFp_simple_group_set_curve(EC_GROUP *group, const BIGNUM *p,
       !BN_add_word(tmp, 3)) {
     goto err;
   }
-  group->a_is_minus3 = (0 == BN_cmp(tmp, &group->field));
+  group->a_is_minus3 = (0 == BN_cmp(tmp, &group->field.N));
 
   ret = 1;
 
@@ -144,7 +128,7 @@ err:
 
 int ec_GFp_simple_group_get_curve(const EC_GROUP *group, BIGNUM *p, BIGNUM *a,
                                   BIGNUM *b) {
-  if ((p != NULL && !BN_copy(p, &group->field)) ||
+  if ((p != NULL && !BN_copy(p, &group->field.N)) ||
       (a != NULL && !ec_felem_to_bignum(group, a, &group->a)) ||
       (b != NULL && !ec_felem_to_bignum(group, b, &group->b))) {
     return 0;
@@ -329,21 +313,21 @@ int ec_GFp_simple_cmp_x_coordinate(const EC_GROUP *group, const EC_JACOBIAN *p,
 
 void ec_GFp_simple_felem_to_bytes(const EC_GROUP *group, uint8_t *out,
                                   size_t *out_len, const EC_FELEM *in) {
-  size_t len = BN_num_bytes(&group->field);
-  bn_words_to_big_endian(out, len, in->words, group->field.width);
+  size_t len = BN_num_bytes(&group->field.N);
+  bn_words_to_big_endian(out, len, in->words, group->field.N.width);
   *out_len = len;
 }
 
 int ec_GFp_simple_felem_from_bytes(const EC_GROUP *group, EC_FELEM *out,
                                    const uint8_t *in, size_t len) {
-  if (len != BN_num_bytes(&group->field)) {
+  if (len != BN_num_bytes(&group->field.N)) {
     OPENSSL_PUT_ERROR(EC, EC_R_DECODE_ERROR);
     return 0;
   }
 
-  bn_big_endian_to_words(out->words, group->field.width, in, len);
+  bn_big_endian_to_words(out->words, group->field.N.width, in, len);
 
-  if (!bn_less_than_words(out->words, group->field.d, group->field.width)) {
+  if (!bn_less_than_words(out->words, group->field.N.d, group->field.N.width)) {
     OPENSSL_PUT_ERROR(EC, EC_R_DECODE_ERROR);
     return 0;
   }

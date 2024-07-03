@@ -171,7 +171,6 @@ static int is_md_fips_approved_for_signing(int md_type) {
 // type is FIPS approved for verifying, and zero otherwise.
 static int is_md_fips_approved_for_verifying(int md_type) {
   switch (md_type) {
-    case NID_sha1:
     case NID_sha224:
     case NID_sha256:
     case NID_sha384:
@@ -184,7 +183,6 @@ static int is_md_fips_approved_for_verifying(int md_type) {
 }
 
 static void evp_md_ctx_verify_service_indicator(const EVP_MD_CTX *ctx,
-                                                int rsa_1024_ok,
                                                 int (*md_ok)(int md_type)) {
   if (EVP_MD_CTX_md(ctx) == NULL) {
     // Signature schemes without a prehash are currently never FIPS approved.
@@ -232,8 +230,7 @@ static void evp_md_ctx_verify_service_indicator(const EVP_MD_CTX *ctx,
 
     // Check if the MD type and the RSA key size are approved.
     if (md_ok(md_type) &&
-        ((rsa_1024_ok && pkey_size == 128) || pkey_size == 256 ||
-         pkey_size == 384 || pkey_size == 512)) {
+        (pkey_size == 256 || pkey_size == 384 || pkey_size == 512)) {
       FIPS_service_indicator_update_state();
     }
   } else if (pkey_type == EVP_PKEY_EC) {
@@ -280,12 +277,12 @@ void EVP_Cipher_verify_service_indicator(const EVP_CIPHER_CTX *ctx) {
 }
 
 void EVP_DigestVerify_verify_service_indicator(const EVP_MD_CTX *ctx) {
-  return evp_md_ctx_verify_service_indicator(ctx, /*rsa_1024_ok=*/1,
+  return evp_md_ctx_verify_service_indicator(ctx,
                                              is_md_fips_approved_for_verifying);
 }
 
 void EVP_DigestSign_verify_service_indicator(const EVP_MD_CTX *ctx) {
-  return evp_md_ctx_verify_service_indicator(ctx, /*rsa_1024_ok=*/0,
+  return evp_md_ctx_verify_service_indicator(ctx,
                                              is_md_fips_approved_for_signing);
 }
 
@@ -303,14 +300,11 @@ void HMAC_verify_service_indicator(const EVP_MD *evp_md) {
 }
 
 void TLSKDF_verify_service_indicator(const EVP_MD *md) {
-  // HMAC-MD5, HMAC-SHA1, and HMAC-MD5/HMAC-SHA1 (both used concurrently) are
-  // approved for use in the KDF in TLS 1.0/1.1.
-  // HMAC-SHA{256, 384, 512} are approved for use in the KDF in TLS 1.2.
-  // These Key Derivation functions are to be used in the context of the TLS
-  // protocol.
+  // HMAC-MD5/HMAC-SHA1 (both used concurrently) is approved for use in the KDF
+  // in TLS 1.0/1.1. HMAC-SHA{256, 384, 512} are approved for use in the KDF in
+  // TLS 1.2. These Key Derivation functions are to be used in the context of
+  // the TLS protocol.
   switch (EVP_MD_type(md)) {
-    case NID_md5:
-    case NID_sha1:
     case NID_md5_sha1:
     case NID_sha256:
     case NID_sha384:

@@ -361,7 +361,7 @@ int bn_wexpand(BIGNUM *bn, size_t words) {
     return 0;
   }
 
-  a = OPENSSL_malloc(sizeof(BN_ULONG) * words);
+  a = OPENSSL_calloc(words, sizeof(BN_ULONG));
   if (a == NULL) {
     return 0;
   }

@@ -143,17 +143,13 @@ static BN_ULONG bn_sub_part_words(BN_ULONG *r, const BN_ULONG *a,
     // in |a| were zeros.
     dl = -dl;
     for (int i = 0; i < dl; i++) {
-      r[i] = 0u - b[i] - borrow;
-      borrow |= r[i] != 0;
+      r[i] = CRYPTO_subc_w(0, b[i], borrow, &borrow);
     }
   } else {
     // |b| is shorter than |a|. Complete the subtraction as if the excess words
     // in |b| were zeros.
     for (int i = 0; i < dl; i++) {
-      // |r| and |a| may alias, so use a temporary.
-      BN_ULONG tmp = a[i];
-      r[i] = a[i] - borrow;
-      borrow = tmp < r[i];
+      r[i] = CRYPTO_subc_w(a[i], 0, borrow, &borrow);
     }
   }
 
@@ -296,7 +292,7 @@ static void bn_mul_recursive(BN_ULONG *r, const BN_ULONG *a, const BN_ULONG *b,
   }
 
   // The product should fit without carries.
-  assert(c == 0);
+  declassify_assert(c == 0);
 }
 
 // bn_mul_part_recursive sets |r| to |a| * |b|, using |t| as scratch space. |r|
@@ -410,7 +406,7 @@ static void bn_mul_part_recursive(BN_ULONG *r, const BN_ULONG *a,
   }
 
   // The product should fit without carries.
-  assert(c == 0);
+  declassify_assert(c == 0);
 }
 
 // bn_mul_impl implements |BN_mul| and |bn_mul_consttime|. Note this function

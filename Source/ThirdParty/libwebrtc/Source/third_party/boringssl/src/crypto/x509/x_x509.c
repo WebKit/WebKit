@@ -65,7 +65,6 @@
 #include <openssl/pool.h>
 #include <openssl/thread.h>
 #include <openssl/x509.h>
-#include <openssl/x509v3.h>
 
 #include "../asn1/internal.h"
 #include "../bytestring/internal.h"
@@ -92,11 +91,10 @@ IMPLEMENT_ASN1_FUNCTIONS(X509_CINF)
 // x509_new_null returns a new |X509| object where the |cert_info|, |sig_alg|,
 // and |signature| fields are not yet filled in.
 static X509 *x509_new_null(void) {
-  X509 *ret = OPENSSL_malloc(sizeof(X509));
+  X509 *ret = OPENSSL_zalloc(sizeof(X509));
   if (ret == NULL) {
     return NULL;
   }
-  OPENSSL_memset(ret, 0, sizeof(X509));
 
   ret->references = 1;
   ret->ex_pathlen = -1;
@@ -343,7 +341,6 @@ static int x509_i2d_cb(ASN1_VALUE **pval, unsigned char **out,
 static const ASN1_EXTERN_FUNCS x509_extern_funcs = {
     x509_new_cb,
     x509_free_cb,
-    /*asn1_ex_clear=*/NULL,
     x509_d2i_cb,
     x509_i2d_cb,
 };
@@ -383,12 +380,7 @@ int X509_up_ref(X509 *x) {
 int X509_get_ex_new_index(long argl, void *argp, CRYPTO_EX_unused *unused,
                           CRYPTO_EX_dup *dup_unused,
                           CRYPTO_EX_free *free_func) {
-  int index;
-  if (!CRYPTO_get_ex_new_index(&g_ex_data_class, &index, argl, argp,
-                               free_func)) {
-    return -1;
-  }
-  return index;
+  return CRYPTO_get_ex_new_index_ex(&g_ex_data_class, argl, argp, free_func);
 }
 
 int X509_set_ex_data(X509 *r, int idx, void *arg) {

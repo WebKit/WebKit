@@ -249,11 +249,12 @@ static EC_KEY *self_test_ecdsa_key(void) {
       0x93, 0x8b, 0x74, 0xf2, 0xbc, 0xc5, 0x30, 0x52, 0xb0, 0x77,
   };
 
-  EC_KEY *ec_key = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
+  EC_KEY *ec_key = EC_KEY_new();
   BIGNUM *qx = BN_bin2bn(kQx, sizeof(kQx), NULL);
   BIGNUM *qy = BN_bin2bn(kQy, sizeof(kQy), NULL);
   BIGNUM *d = BN_bin2bn(kD, sizeof(kD), NULL);
   if (ec_key == NULL || qx == NULL || qy == NULL || d == NULL ||
+      !EC_KEY_set_group(ec_key, EC_group_p256()) ||
       !EC_KEY_set_public_key_affine_coordinates(ec_key, qx, qy) ||
       !EC_KEY_set_private_key(ec_key, d)) {
     EC_KEY_free(ec_key);
@@ -411,7 +412,6 @@ err:
 static int boringssl_self_test_ecc(void) {
   int ret = 0;
   EC_KEY *ec_key = NULL;
-  EC_GROUP *ec_group = NULL;
   EC_POINT *ec_point_in = NULL;
   EC_POINT *ec_point_out = NULL;
   BIGNUM *ec_scalar = NULL;
@@ -506,11 +506,7 @@ static int boringssl_self_test_ecc(void) {
       0x7c, 0x41, 0x8f, 0xaf, 0x9c, 0x40, 0xaf, 0x2e, 0x4a, 0x0c,
   };
 
-  ec_group = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1);
-  if (ec_group == NULL) {
-    fprintf(stderr, "Failed to create P-256 group.\n");
-    goto err;
-  }
+  const EC_GROUP *ec_group = EC_group_p256();
   ec_point_in = EC_POINT_new(ec_group);
   ec_point_out = EC_POINT_new(ec_group);
   ec_scalar = BN_new();
@@ -535,7 +531,6 @@ err:
   EC_KEY_free(ec_key);
   EC_POINT_free(ec_point_in);
   EC_POINT_free(ec_point_out);
-  EC_GROUP_free(ec_group);
   BN_free(ec_scalar);
   ECDSA_SIG_free(sig);
 
@@ -918,11 +913,6 @@ static int boringssl_self_test_fast(void) {
   }
 
   // TLS KDF KAT
-  static const uint8_t kTLSSecret[32] = {
-      0xab, 0xc3, 0x65, 0x7b, 0x09, 0x4c, 0x76, 0x28, 0xa0, 0xb2, 0x82,
-      0x99, 0x6f, 0xe7, 0x5a, 0x75, 0xf4, 0x98, 0x4f, 0xd9, 0x4d, 0x4e,
-      0xcc, 0x2f, 0xcf, 0x53, 0xa2, 0xc4, 0x69, 0xa3, 0xf7, 0x31,
-  };
   static const char kTLSLabel[] = "FIPS self test";
   static const uint8_t kTLSSeed1[16] = {
       0x8f, 0x0d, 0xe8, 0xb6, 0x90, 0x8f, 0xb1, 0xd2,
@@ -932,17 +922,45 @@ static int boringssl_self_test_fast(void) {
       0x7d, 0x24, 0x1a, 0x9d, 0x3c, 0x59, 0xbf, 0x3c,
       0x31, 0x1e, 0x2b, 0x21, 0x41, 0x8d, 0x32, 0x81,
   };
-  static const uint8_t kTLSOutput[32] = {
-      0xe2, 0x1d, 0xd6, 0xc2, 0x68, 0xc7, 0x57, 0x03, 0x2c, 0x2c, 0xeb,
-      0xbb, 0xb8, 0xa9, 0x7d, 0xe9, 0xee, 0xe6, 0xc9, 0x47, 0x83, 0x0a,
-      0xbd, 0x11, 0x60, 0x5d, 0xd5, 0x2c, 0x47, 0xb6, 0x05, 0x88,
+
+  static const uint8_t kTLS10Secret[32] = {
+      0xab, 0xc3, 0x65, 0x7b, 0x09, 0x4c, 0x76, 0x28, 0xa0, 0xb2, 0x82,
+      0x99, 0x6f, 0xe7, 0x5a, 0x75, 0xf4, 0x98, 0x4f, 0xd9, 0x4d, 0x4e,
+      0xcc, 0x2f, 0xcf, 0x53, 0xa2, 0xc4, 0x69, 0xa3, 0xf7, 0x31,
   };
-  uint8_t tls_output[sizeof(kTLSOutput)];
-  if (!CRYPTO_tls1_prf(EVP_sha256(), tls_output, sizeof(tls_output), kTLSSecret,
-                       sizeof(kTLSSecret), kTLSLabel, sizeof(kTLSLabel),
-                       kTLSSeed1, sizeof(kTLSSeed1), kTLSSeed2,
-                       sizeof(kTLSSeed2)) ||
-      !check_test(kTLSOutput, tls_output, sizeof(kTLSOutput), "TLS-KDF KAT")) {
+  static const uint8_t kTLS10Output[32] = {
+      0x69, 0x7c, 0x4e, 0x2c, 0xee, 0x82, 0xb1, 0xd2, 0x8b, 0xac, 0x90,
+      0x7a, 0xa1, 0x8a, 0x81, 0xfe, 0xc5, 0x58, 0x45, 0x57, 0x61, 0x2f,
+      0x7a, 0x8d, 0x80, 0xfb, 0x44, 0xd8, 0x81, 0x60, 0xe5, 0xf8,
+  };
+  uint8_t tls10_output[sizeof(kTLS10Output)];
+  if (!CRYPTO_tls1_prf(EVP_md5_sha1(), tls10_output, sizeof(tls10_output),
+                       kTLS10Secret, sizeof(kTLS10Secret), kTLSLabel,
+                       sizeof(kTLSLabel), kTLSSeed1, sizeof(kTLSSeed1),
+                       kTLSSeed2, sizeof(kTLSSeed2)) ||
+      !check_test(kTLS10Output, tls10_output, sizeof(kTLS10Output),
+                  "TLS10-KDF KAT")) {
+    fprintf(stderr, "TLS KDF failed.\n");
+    goto err;
+  }
+
+  static const uint8_t kTLS12Secret[32] = {
+      0xc5, 0x43, 0x8e, 0xe2, 0x6f, 0xd4, 0xac, 0xbd, 0x25, 0x9f, 0xc9,
+      0x18, 0x55, 0xdc, 0x69, 0xbf, 0x88, 0x4e, 0xe2, 0x93, 0x22, 0xfc,
+      0xbf, 0xd2, 0x96, 0x6a, 0x46, 0x23, 0xd4, 0x2e, 0xc7, 0x81,
+  };
+  static const uint8_t kTLS12Output[32] = {
+      0xee, 0x4a, 0xcd, 0x3f, 0xa3, 0xd3, 0x55, 0x89, 0x9e, 0x6f, 0xf1,
+      0x38, 0x46, 0x9d, 0x2b, 0x33, 0xaa, 0x7f, 0xc4, 0x7f, 0x51, 0x85,
+      0x8a, 0xf3, 0x13, 0x84, 0xbf, 0x53, 0x6a, 0x65, 0x37, 0x51,
+  };
+  uint8_t tls12_output[sizeof(kTLS12Output)];
+  if (!CRYPTO_tls1_prf(EVP_sha256(), tls12_output, sizeof(tls12_output),
+                       kTLS12Secret, sizeof(kTLS12Secret), kTLSLabel,
+                       sizeof(kTLSLabel), kTLSSeed1, sizeof(kTLSSeed1),
+                       kTLSSeed2, sizeof(kTLSSeed2)) ||
+      !check_test(kTLS12Output, tls12_output, sizeof(kTLS12Output),
+                  "TLS12-KDF KAT")) {
     fprintf(stderr, "TLS KDF failed.\n");
     goto err;
   }
@@ -983,7 +1001,7 @@ static int boringssl_self_test_fast(void) {
       !check_test(kTLS13ExpandLabelOutput, tls13_expand_label_output,
                   sizeof(kTLS13ExpandLabelOutput),
                   "CRYPTO_tls13_hkdf_expand_label")) {
-    fprintf(stderr, "TLSv1.3 KDF failed.\n");
+    fprintf(stderr, "TLS13-KDF failed.\n");
     goto err;
   }
 

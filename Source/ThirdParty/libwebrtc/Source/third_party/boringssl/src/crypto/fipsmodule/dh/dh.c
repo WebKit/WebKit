@@ -70,20 +70,14 @@
 #include "internal.h"
 
 
-#define OPENSSL_DH_MAX_MODULUS_BITS 10000
-
 DH *DH_new(void) {
-  DH *dh = OPENSSL_malloc(sizeof(DH));
+  DH *dh = OPENSSL_zalloc(sizeof(DH));
   if (dh == NULL) {
     return NULL;
   }
 
-  OPENSSL_memset(dh, 0, sizeof(DH));
-
   CRYPTO_MUTEX_init(&dh->method_mont_p_lock);
-
   dh->references = 1;
-
   return dh;
 }
 
@@ -191,15 +185,14 @@ int DH_set_length(DH *dh, unsigned priv_length) {
 int DH_generate_key(DH *dh) {
   boringssl_ensure_ffdh_self_test();
 
+  if (!dh_check_params_fast(dh)) {
+    return 0;
+  }
+
   int ok = 0;
   int generate_new_key = 0;
   BN_CTX *ctx = NULL;
-  BIGNUM *pub_key = NULL, *priv_key = NULL;
-
-  if (BN_num_bits(dh->p) > OPENSSL_DH_MAX_MODULUS_BITS) {
-    OPENSSL_PUT_ERROR(DH, DH_R_MODULUS_TOO_LARGE);
-    goto err;
-  }
+  BIGNUM *pub_key = NULL, *priv_key = NULL, *priv_key_limit = NULL;
 
   ctx = BN_CTX_new();
   if (ctx == NULL) {
@@ -232,22 +225,44 @@ int DH_generate_key(DH *dh) {
 
   if (generate_new_key) {
     if (dh->q) {
-      if (!BN_rand_range_ex(priv_key, 2, dh->q)) {
+      // Section 5.6.1.1.4 of SP 800-56A Rev3 generates a private key uniformly
+      // from [1, min(2^N-1, q-1)].
+      //
+      // Although SP 800-56A Rev3 now permits a private key length N,
+      // |dh->priv_length| historically was ignored when q is available. We
+      // continue to ignore it and interpret such a configuration as N = len(q).
+      if (!BN_rand_range_ex(priv_key, 1, dh->q)) {
         goto err;
       }
     } else {
-      // secret exponent length
-      unsigned priv_bits = dh->priv_length;
-      if (priv_bits == 0) {
-        const unsigned p_bits = BN_num_bits(dh->p);
-        if (p_bits == 0) {
+      // If q is unspecified, we expect p to be a safe prime, with g generating
+      // the (p-1)/2 subgroup. So, we use q = (p-1)/2. (If g generates a smaller
+      // prime-order subgroup, q will still divide (p-1)/2.)
+      //
+      // We set N from |dh->priv_length|. Section 5.6.1.1.4 of SP 800-56A Rev3
+      // says to reject N > len(q), or N > num_bits(p) - 1. However, this logic
+      // originally aligned with PKCS#3, which allows num_bits(p). Instead, we
+      // clamp |dh->priv_length| before invoking the algorithm.
+
+      // Compute M = min(2^N, q).
+      priv_key_limit = BN_new();
+      if (priv_key_limit == NULL) {
+        goto err;
+      }
+      if (dh->priv_length == 0 || dh->priv_length >= BN_num_bits(dh->p) - 1) {
+        // M = q = (p - 1) / 2.
+        if (!BN_rshift1(priv_key_limit, dh->p)) {
           goto err;
         }
-
-        priv_bits = p_bits - 1;
+      } else {
+        // M = 2^N.
+        if (!BN_set_bit(priv_key_limit, dh->priv_length)) {
+          goto err;
+        }
       }
 
-      if (!BN_rand(priv_key, priv_bits, BN_RAND_TOP_ONE, BN_RAND_BOTTOM_ANY)) {
+      // Choose a private key uniformly from [1, M-1].
+      if (!BN_rand_range_ex(priv_key, 1, priv_key_limit)) {
         goto err;
       }
     }
@@ -273,14 +288,14 @@ err:
   if (dh->priv_key == NULL) {
     BN_free(priv_key);
   }
+  BN_free(priv_key_limit);
   BN_CTX_free(ctx);
   return ok;
 }
 
 static int dh_compute_key(DH *dh, BIGNUM *out_shared_key,
                           const BIGNUM *peers_key, BN_CTX *ctx) {
-  if (BN_num_bits(dh->p) > OPENSSL_DH_MAX_MODULUS_BITS) {
-    OPENSSL_PUT_ERROR(DH, DH_R_MODULUS_TOO_LARGE);
+  if (!dh_check_params_fast(dh)) {
     return 0;
   }
 
@@ -379,7 +394,7 @@ int DH_compute_key(unsigned char *out, const BIGNUM *peers_key, DH *dh) {
 int DH_compute_key_hashed(DH *dh, uint8_t *out, size_t *out_len,
                           size_t max_out_len, const BIGNUM *peers_key,
                           const EVP_MD *digest) {
-  *out_len = (size_t)-1;
+  *out_len = SIZE_MAX;
 
   const size_t digest_len = EVP_MD_size(digest);
   if (digest_len > max_out_len) {

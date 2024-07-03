@@ -126,16 +126,16 @@ extern void aesgcmsiv_htable_polyval(const uint8_t htable[16 * 8],
                                      uint8_t in_out_poly[16]);
 
 // aes128gcmsiv_dec decrypts |in_len| & ~15 bytes from |out| and writes them to
-// |in|. (The full value of |in_len| is still used to find the authentication
-// tag appended to the ciphertext, however, so must not be pre-masked.)
+// |in|. |in| and |out| may be equal, but must not otherwise alias.
 //
-// |in| and |out| may be equal, but must not otherwise overlap.
+// |in_out_calculated_tag_and_scratch|, on entry, must contain:
+//    1. The current value of the calculated tag, which will be updated during
+//       decryption and written back to the beginning of this buffer on exit.
+//    2. The claimed tag, which is needed to derive counter values.
 //
-// While decrypting, it updates the POLYVAL value found at the beginning of
-// |in_out_calculated_tag_and_scratch| and writes the updated value back before
-// return. During executation, it may use the whole of this space for other
-// purposes. In order to decrypt and update the POLYVAL value, it uses the
-// expanded key from |key| and the table of powers in |htable|.
+// While decrypting, the whole of |in_out_calculated_tag_and_scratch| may be
+// used for other purposes. In order to decrypt and update the POLYVAL value, it
+// uses the expanded key from |key| and the table of powers in |htable|.
 extern void aes128gcmsiv_dec(const uint8_t *in, uint8_t *out,
                              uint8_t in_out_calculated_tag_and_scratch[16 * 8],
                              const uint8_t htable[16 * 6],
@@ -393,14 +393,10 @@ static int aead_aes_gcm_siv_asm_seal_scatter(
   return 1;
 }
 
-// TODO(martinkr): Add aead_aes_gcm_siv_asm_open_gather. N.B. aes128gcmsiv_dec
-// expects ciphertext and tag in a contiguous buffer.
-
-static int aead_aes_gcm_siv_asm_open(const EVP_AEAD_CTX *ctx, uint8_t *out,
-                                     size_t *out_len, size_t max_out_len,
-                                     const uint8_t *nonce, size_t nonce_len,
-                                     const uint8_t *in, size_t in_len,
-                                     const uint8_t *ad, size_t ad_len) {
+static int aead_aes_gcm_siv_asm_open_gather(
+    const EVP_AEAD_CTX *ctx, uint8_t *out, const uint8_t *nonce,
+    size_t nonce_len, const uint8_t *in, size_t in_len, const uint8_t *in_tag,
+    size_t in_tag_len, const uint8_t *ad, size_t ad_len) {
   const uint64_t ad_len_64 = ad_len;
   if (ad_len_64 >= (UINT64_C(1) << 61)) {
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_TOO_LARGE);
@@ -408,8 +404,8 @@ static int aead_aes_gcm_siv_asm_open(const EVP_AEAD_CTX *ctx, uint8_t *out,
   }
 
   const uint64_t in_len_64 = in_len;
-  if (in_len < EVP_AEAD_AES_GCM_SIV_TAG_LEN ||
-      in_len_64 > (UINT64_C(1) << 36) + AES_BLOCK_SIZE) {
+  if (in_len_64 > UINT64_C(1) << 36 ||
+      in_tag_len != EVP_AEAD_AES_GCM_SIV_TAG_LEN) {
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_BAD_DECRYPT);
     return 0;
   }
@@ -420,13 +416,6 @@ static int aead_aes_gcm_siv_asm_open(const EVP_AEAD_CTX *ctx, uint8_t *out,
   }
 
   const struct aead_aes_gcm_siv_asm_ctx *gcm_siv_ctx = asm_ctx_from_ctx(ctx);
-  const size_t plaintext_len = in_len - EVP_AEAD_AES_GCM_SIV_TAG_LEN;
-  const uint8_t *const given_tag = in + plaintext_len;
-
-  if (max_out_len < plaintext_len) {
-    OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_BUFFER_TOO_SMALL);
-    return 0;
-  }
 
   alignas(16) uint64_t record_auth_key[2];
   alignas(16) uint64_t record_enc_key[4];
@@ -459,27 +448,27 @@ static int aead_aes_gcm_siv_asm_open(const EVP_AEAD_CTX *ctx, uint8_t *out,
   alignas(16) uint8_t htable[16 * 6];
   aesgcmsiv_htable6_init(htable, (const uint8_t *)record_auth_key);
 
+  // aes[128|256]gcmsiv_dec needs access to the claimed tag. So it's put into
+  // its scratch space.
+  memcpy(calculated_tag + 16, in_tag, EVP_AEAD_AES_GCM_SIV_TAG_LEN);
   if (gcm_siv_ctx->is_128_bit) {
-    aes128gcmsiv_dec(in, out, calculated_tag, htable, &expanded_key,
-                     plaintext_len);
+    aes128gcmsiv_dec(in, out, calculated_tag, htable, &expanded_key, in_len);
   } else {
-    aes256gcmsiv_dec(in, out, calculated_tag, htable, &expanded_key,
-                     plaintext_len);
+    aes256gcmsiv_dec(in, out, calculated_tag, htable, &expanded_key, in_len);
   }
 
-  if (plaintext_len & 15) {
+  if (in_len & 15) {
     aead_aes_gcm_siv_asm_crypt_last_block(gcm_siv_ctx->is_128_bit, out, in,
-                                          plaintext_len, given_tag,
-                                          &expanded_key);
+                                          in_len, in_tag, &expanded_key);
     OPENSSL_memset(scratch, 0, sizeof(scratch));
-    OPENSSL_memcpy(scratch, out + (plaintext_len & ~15), plaintext_len & 15);
+    OPENSSL_memcpy(scratch, out + (in_len & ~15), in_len & 15);
     aesgcmsiv_polyval_horner(calculated_tag, (const uint8_t *)record_auth_key,
                              scratch, 1);
   }
 
   uint8_t length_block[16];
   CRYPTO_store_u64_le(length_block, ad_len * 8);
-  CRYPTO_store_u64_le(length_block + 8, plaintext_len * 8);
+  CRYPTO_store_u64_le(length_block + 8, in_len * 8);
   aesgcmsiv_polyval_horner(calculated_tag, (const uint8_t *)record_auth_key,
                            length_block, 1);
 
@@ -495,13 +484,12 @@ static int aead_aes_gcm_siv_asm_open(const EVP_AEAD_CTX *ctx, uint8_t *out,
     aes256gcmsiv_ecb_enc_block(calculated_tag, calculated_tag, &expanded_key);
   }
 
-  if (CRYPTO_memcmp(calculated_tag, given_tag, EVP_AEAD_AES_GCM_SIV_TAG_LEN) !=
+  if (CRYPTO_memcmp(calculated_tag, in_tag, EVP_AEAD_AES_GCM_SIV_TAG_LEN) !=
       0) {
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_BAD_DECRYPT);
     return 0;
   }
 
-  *out_len = in_len - EVP_AEAD_AES_GCM_SIV_TAG_LEN;
   return 1;
 }
 
@@ -515,9 +503,9 @@ static const EVP_AEAD aead_aes_128_gcm_siv_asm = {
     aead_aes_gcm_siv_asm_init,
     NULL /* init_with_direction */,
     aead_aes_gcm_siv_asm_cleanup,
-    aead_aes_gcm_siv_asm_open,
+    NULL /* open */,
     aead_aes_gcm_siv_asm_seal_scatter,
-    NULL /* open_gather */,
+    aead_aes_gcm_siv_asm_open_gather,
     NULL /* get_iv */,
     NULL /* tag_len */,
 };
@@ -532,9 +520,9 @@ static const EVP_AEAD aead_aes_256_gcm_siv_asm = {
     aead_aes_gcm_siv_asm_init,
     NULL /* init_with_direction */,
     aead_aes_gcm_siv_asm_cleanup,
-    aead_aes_gcm_siv_asm_open,
+    NULL /* open */,
     aead_aes_gcm_siv_asm_seal_scatter,
-    NULL /* open_gather */,
+    aead_aes_gcm_siv_asm_open_gather,
     NULL /* get_iv */,
     NULL /* tag_len */,
 };
@@ -647,8 +635,8 @@ static void gcm_siv_polyval(
   }
 
   uint8_t length_block[16];
-  CRYPTO_store_u64_le(length_block, ad_len * 8);
-  CRYPTO_store_u64_le(length_block + 8, in_len * 8);
+  CRYPTO_store_u64_le(length_block, ((uint64_t) ad_len) * 8);
+  CRYPTO_store_u64_le(length_block + 8, ((uint64_t) in_len) * 8);
   CRYPTO_POLYVAL_update_blocks(&polyval_ctx, length_block,
                                sizeof(length_block));
 

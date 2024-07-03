@@ -120,7 +120,6 @@ $do4xaggr=1;
 
 $code=<<___;
 .text
-.extern	OPENSSL_ia32cap_P
 ___
 
 
@@ -206,6 +205,7 @@ $code.=<<___;
 gcm_init_clmul:
 .cfi_startproc
 .seh_startproc
+	_CET_ENDBR
 .L_init_clmul:
 ___
 $code.=<<___ if ($win64);
@@ -288,6 +288,7 @@ $code.=<<___;
 .align	16
 gcm_gmult_clmul:
 .cfi_startproc
+	_CET_ENDBR
 .L_gmult_clmul:
 	movdqu		($Xip),$Xi
 	movdqa		.Lbswap_mask(%rip),$T3
@@ -340,6 +341,7 @@ $code.=<<___;
 gcm_ghash_clmul:
 .cfi_startproc
 .seh_startproc
+	_CET_ENDBR
 .L_ghash_clmul:
 ___
 $code.=<<___ if ($win64);
@@ -384,14 +386,8 @@ if ($do4xaggr) {
 my ($Xl,$Xm,$Xh,$Hkey3,$Hkey4)=map("%xmm$_",(11..15));
 
 $code.=<<___;
-	leaq		OPENSSL_ia32cap_P(%rip),%rax
-	mov		4(%rax),%eax
 	cmp		\$0x30,$len
 	jb		.Lskip4x
-
-	and		\$`1<<26|1<<22`,%eax	# isolate MOVBE+XSAVE
-	cmp		\$`1<<22`,%eax		# check for MOVBE without XSAVE
-	je		.Lskip4x
 
 	sub		\$0x30,$len
 	mov		\$0xA040608020C0E000,%rax	# ((7..0)·0xE0)&0xff
@@ -708,6 +704,7 @@ $code.=<<___;
 .align	32
 gcm_init_avx:
 .cfi_startproc
+	_CET_ENDBR
 ___
 if ($avx) {
 my ($Htbl,$Xip)=@_4args;
@@ -853,6 +850,7 @@ $code.=<<___;
 .align	32
 gcm_gmult_avx:
 .cfi_startproc
+	_CET_ENDBR
 	jmp	.L_gmult_clmul
 .cfi_endproc
 .size	gcm_gmult_avx,.-gcm_gmult_avx
@@ -864,6 +862,7 @@ $code.=<<___;
 .align	32
 gcm_ghash_avx:
 .cfi_startproc
+	_CET_ENDBR
 ___
 if ($avx) {
 my ($Xip,$Htbl,$inp,$len)=@_4args;

@@ -57,29 +57,42 @@
 #include <openssl/stack.h>
 
 #include <assert.h>
+#include <limits.h>
 
+#include <openssl/err.h>
 #include <openssl/mem.h>
 
 #include "../internal.h"
 
 
+struct stack_st {
+  // num contains the number of valid pointers in |data|.
+  size_t num;
+  void **data;
+  // sorted is non-zero if the values pointed to by |data| are in ascending
+  // order, based on |comp|.
+  int sorted;
+  // num_alloc contains the number of pointers allocated in the buffer pointed
+  // to by |data|, which may be larger than |num|.
+  size_t num_alloc;
+  // comp is an optional comparison function.
+  OPENSSL_sk_cmp_func comp;
+};
+
 // kMinSize is the number of pointers that will be initially allocated in a new
 // stack.
 static const size_t kMinSize = 4;
 
-_STACK *sk_new(OPENSSL_sk_cmp_func comp) {
-  _STACK *ret = OPENSSL_malloc(sizeof(_STACK));
+OPENSSL_STACK *OPENSSL_sk_new(OPENSSL_sk_cmp_func comp) {
+  OPENSSL_STACK *ret = OPENSSL_zalloc(sizeof(OPENSSL_STACK));
   if (ret == NULL) {
     return NULL;
   }
-  OPENSSL_memset(ret, 0, sizeof(_STACK));
 
-  ret->data = OPENSSL_malloc(sizeof(void *) * kMinSize);
+  ret->data = OPENSSL_calloc(kMinSize, sizeof(void *));
   if (ret->data == NULL) {
     goto err;
   }
-
-  OPENSSL_memset(ret->data, 0, sizeof(void *) * kMinSize);
 
   ret->comp = comp;
   ret->num_alloc = kMinSize;
@@ -91,16 +104,16 @@ err:
   return NULL;
 }
 
-_STACK *sk_new_null(void) { return sk_new(NULL); }
+OPENSSL_STACK *OPENSSL_sk_new_null(void) { return OPENSSL_sk_new(NULL); }
 
-size_t sk_num(const _STACK *sk) {
+size_t OPENSSL_sk_num(const OPENSSL_STACK *sk) {
   if (sk == NULL) {
     return 0;
   }
   return sk->num;
 }
 
-void sk_zero(_STACK *sk) {
+void OPENSSL_sk_zero(OPENSSL_STACK *sk) {
   if (sk == NULL || sk->num == 0) {
     return;
   }
@@ -109,21 +122,21 @@ void sk_zero(_STACK *sk) {
   sk->sorted = 0;
 }
 
-void *sk_value(const _STACK *sk, size_t i) {
+void *OPENSSL_sk_value(const OPENSSL_STACK *sk, size_t i) {
   if (!sk || i >= sk->num) {
     return NULL;
   }
   return sk->data[i];
 }
 
-void *sk_set(_STACK *sk, size_t i, void *value) {
+void *OPENSSL_sk_set(OPENSSL_STACK *sk, size_t i, void *value) {
   if (!sk || i >= sk->num) {
     return NULL;
   }
   return sk->data[i] = value;
 }
 
-void sk_free(_STACK *sk) {
+void OPENSSL_sk_free(OPENSSL_STACK *sk) {
   if (sk == NULL) {
     return;
   }
@@ -131,8 +144,9 @@ void sk_free(_STACK *sk) {
   OPENSSL_free(sk);
 }
 
-void sk_pop_free_ex(_STACK *sk, OPENSSL_sk_call_free_func call_free_func,
-                    OPENSSL_sk_free_func free_func) {
+void OPENSSL_sk_pop_free_ex(OPENSSL_STACK *sk,
+                            OPENSSL_sk_call_free_func call_free_func,
+                            OPENSSL_sk_free_func free_func) {
   if (sk == NULL) {
     return;
   }
@@ -142,7 +156,7 @@ void sk_pop_free_ex(_STACK *sk, OPENSSL_sk_call_free_func call_free_func,
       call_free_func(free_func, sk->data[i]);
     }
   }
-  sk_free(sk);
+  OPENSSL_sk_free(sk);
 }
 
 // Historically, |sk_pop_free| called the function as |OPENSSL_sk_free_func|
@@ -152,12 +166,17 @@ static void call_free_func_legacy(OPENSSL_sk_free_func func, void *ptr) {
   func(ptr);
 }
 
-void sk_pop_free(_STACK *sk, OPENSSL_sk_free_func free_func) {
-  sk_pop_free_ex(sk, call_free_func_legacy, free_func);
+void sk_pop_free(OPENSSL_STACK *sk, OPENSSL_sk_free_func free_func) {
+  OPENSSL_sk_pop_free_ex(sk, call_free_func_legacy, free_func);
 }
 
-size_t sk_insert(_STACK *sk, void *p, size_t where) {
+size_t OPENSSL_sk_insert(OPENSSL_STACK *sk, void *p, size_t where) {
   if (sk == NULL) {
+    return 0;
+  }
+
+  if (sk->num >= INT_MAX) {
+    OPENSSL_PUT_ERROR(CRYPTO, ERR_R_OVERFLOW);
     return 0;
   }
 
@@ -201,7 +220,7 @@ size_t sk_insert(_STACK *sk, void *p, size_t where) {
   return sk->num;
 }
 
-void *sk_delete(_STACK *sk, size_t where) {
+void *OPENSSL_sk_delete(OPENSSL_STACK *sk, size_t where) {
   void *ret;
 
   if (!sk || where >= sk->num) {
@@ -219,22 +238,23 @@ void *sk_delete(_STACK *sk, size_t where) {
   return ret;
 }
 
-void *sk_delete_ptr(_STACK *sk, const void *p) {
+void *OPENSSL_sk_delete_ptr(OPENSSL_STACK *sk, const void *p) {
   if (sk == NULL) {
     return NULL;
   }
 
   for (size_t i = 0; i < sk->num; i++) {
     if (sk->data[i] == p) {
-      return sk_delete(sk, i);
+      return OPENSSL_sk_delete(sk, i);
     }
   }
 
   return NULL;
 }
 
-void sk_delete_if(_STACK *sk, OPENSSL_sk_call_delete_if_func call_func,
-                  OPENSSL_sk_delete_if_func func, void *data) {
+void OPENSSL_sk_delete_if(OPENSSL_STACK *sk,
+                          OPENSSL_sk_call_delete_if_func call_func,
+                          OPENSSL_sk_delete_if_func func, void *data) {
   if (sk == NULL) {
     return;
   }
@@ -249,8 +269,8 @@ void sk_delete_if(_STACK *sk, OPENSSL_sk_call_delete_if_func call_func,
   sk->num = new_num;
 }
 
-int sk_find(const _STACK *sk, size_t *out_index, const void *p,
-            OPENSSL_sk_call_cmp_func call_cmp_func) {
+int OPENSSL_sk_find(const OPENSSL_STACK *sk, size_t *out_index, const void *p,
+                    OPENSSL_sk_call_cmp_func call_cmp_func) {
   if (sk == NULL) {
     return 0;
   }
@@ -272,10 +292,9 @@ int sk_find(const _STACK *sk, size_t *out_index, const void *p,
     return 0;
   }
 
-  if (!sk_is_sorted(sk)) {
+  if (!OPENSSL_sk_is_sorted(sk)) {
     for (size_t i = 0; i < sk->num; i++) {
-      const void *elem = sk->data[i];
-      if (call_cmp_func(sk->comp, &p, &elem) == 0) {
+      if (call_cmp_func(sk->comp, p, sk->data[i]) == 0) {
         if (out_index) {
           *out_index = i;
         }
@@ -294,8 +313,7 @@ int sk_find(const _STACK *sk, size_t *out_index, const void *p,
     // Bias |mid| towards |lo|. See the |r == 0| case below.
     size_t mid = lo + (hi - lo - 1) / 2;
     assert(lo <= mid && mid < hi);
-    const void *elem = sk->data[mid];
-    int r = call_cmp_func(sk->comp, &p, &elem);
+    int r = call_cmp_func(sk->comp, p, sk->data[mid]);
     if (r > 0) {
       lo = mid + 1;  // |mid| is too low.
     } else if (r < 0) {
@@ -320,98 +338,134 @@ int sk_find(const _STACK *sk, size_t *out_index, const void *p,
   return 0;  // Not found.
 }
 
-void *sk_shift(_STACK *sk) {
+void *OPENSSL_sk_shift(OPENSSL_STACK *sk) {
   if (sk == NULL) {
     return NULL;
   }
   if (sk->num == 0) {
     return NULL;
   }
-  return sk_delete(sk, 0);
+  return OPENSSL_sk_delete(sk, 0);
 }
 
-size_t sk_push(_STACK *sk, void *p) { return (sk_insert(sk, p, sk->num)); }
+size_t OPENSSL_sk_push(OPENSSL_STACK *sk, void *p) {
+  return OPENSSL_sk_insert(sk, p, sk->num);
+}
 
-void *sk_pop(_STACK *sk) {
+void *OPENSSL_sk_pop(OPENSSL_STACK *sk) {
   if (sk == NULL) {
     return NULL;
   }
   if (sk->num == 0) {
     return NULL;
   }
-  return sk_delete(sk, sk->num - 1);
+  return OPENSSL_sk_delete(sk, sk->num - 1);
 }
 
-_STACK *sk_dup(const _STACK *sk) {
+OPENSSL_STACK *OPENSSL_sk_dup(const OPENSSL_STACK *sk) {
   if (sk == NULL) {
     return NULL;
   }
 
-  _STACK *ret = OPENSSL_malloc(sizeof(_STACK));
+  OPENSSL_STACK *ret = OPENSSL_zalloc(sizeof(OPENSSL_STACK));
   if (ret == NULL) {
     return NULL;
   }
-  OPENSSL_memset(ret, 0, sizeof(_STACK));
 
-  ret->data = OPENSSL_malloc(sizeof(void *) * sk->num_alloc);
+  ret->data = OPENSSL_memdup(sk->data, sizeof(void *) * sk->num_alloc);
   if (ret->data == NULL) {
     goto err;
   }
 
   ret->num = sk->num;
-  OPENSSL_memcpy(ret->data, sk->data, sizeof(void *) * sk->num);
   ret->sorted = sk->sorted;
   ret->num_alloc = sk->num_alloc;
   ret->comp = sk->comp;
   return ret;
 
 err:
-  sk_free(ret);
+  OPENSSL_sk_free(ret);
   return NULL;
 }
 
-#if defined(_MSC_VER)
-struct sort_compare_ctx {
-  OPENSSL_sk_call_cmp_func call_cmp_func;
-  OPENSSL_sk_cmp_func cmp_func;
-};
-
-static int sort_compare(void *ctx_v, const void *a, const void *b) {
-  struct sort_compare_ctx *ctx = ctx_v;
-  return ctx->call_cmp_func(ctx->cmp_func, a, b);
+static size_t parent_idx(size_t idx) {
+  assert(idx > 0);
+  return (idx - 1) / 2;
 }
-#endif
 
-void sk_sort(_STACK *sk, OPENSSL_sk_call_cmp_func call_cmp_func) {
+static size_t left_idx(size_t idx) {
+  // The largest possible index is |PTRDIFF_MAX|, not |SIZE_MAX|. If
+  // |ptrdiff_t|, a signed type, is the same size as |size_t|, this cannot
+  // overflow.
+  assert(idx <= PTRDIFF_MAX);
+  static_assert(PTRDIFF_MAX <= (SIZE_MAX - 1) / 2, "2 * idx + 1 may oveflow");
+  return 2 * idx + 1;
+}
+
+// down_heap fixes the subtree rooted at |i|. |i|'s children must each satisfy
+// the heap property. Only the first |num| elements of |sk| are considered.
+static void down_heap(OPENSSL_STACK *sk, OPENSSL_sk_call_cmp_func call_cmp_func,
+                      size_t i, size_t num) {
+  assert(i < num && num <= sk->num);
+  for (;;) {
+    size_t left = left_idx(i);
+    if (left >= num) {
+      break;  // No left child.
+    }
+
+    // Swap |i| with the largest of its children.
+    size_t next = i;
+    if (call_cmp_func(sk->comp, sk->data[next], sk->data[left]) < 0) {
+      next = left;
+    }
+    size_t right = left + 1;  // Cannot overflow because |left < num|.
+    if (right < num &&
+        call_cmp_func(sk->comp, sk->data[next], sk->data[right]) < 0) {
+      next = right;
+    }
+
+    if (i == next) {
+      break;  // |i| is already larger than its children.
+    }
+
+    void *tmp = sk->data[i];
+    sk->data[i] = sk->data[next];
+    sk->data[next] = tmp;
+    i = next;
+  }
+}
+
+void OPENSSL_sk_sort(OPENSSL_STACK *sk,
+                     OPENSSL_sk_call_cmp_func call_cmp_func) {
   if (sk == NULL || sk->comp == NULL || sk->sorted) {
     return;
   }
 
   if (sk->num >= 2) {
-#if defined(_MSC_VER)
-    // MSVC's |qsort_s| is different from the C11 one.
-    // https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/qsort-s?view=msvc-170
-    struct sort_compare_ctx ctx = {call_cmp_func, sk->comp};
-    qsort_s(sk->data, sk->num, sizeof(void *), sort_compare, &ctx);
-#else
-    // sk->comp is a function that takes pointers to pointers to elements, but
-    // qsort take a comparison function that just takes pointers to elements.
-    // However, since we're passing an array of pointers to qsort, we can just
-    // cast the comparison function and everything works.
-    //
-    // TODO(davidben): This is undefined behavior, but the call is in libc so,
-    // e.g., CFI does not notice. |qsort| is missing a void* parameter in its
-    // callback, while no one defines |qsort_r| or |qsort_s| consistently. See
+    // |qsort| lacks a context parameter in the comparison function for us to
+    // pass in |call_cmp_func| and |sk->comp|. While we could cast |sk->comp| to
+    // the expected type, it is undefined behavior in C can trip sanitizers.
+    // |qsort_r| and |qsort_s| avoid this, but using them is impractical. See
     // https://stackoverflow.com/a/39561369
-    int (*comp_func)(const void *, const void *) =
-        (int (*)(const void *, const void *))(sk->comp);
-    qsort(sk->data, sk->num, sizeof(void *), comp_func);
-#endif
+    //
+    // Use our own heap sort instead. This is not performance-sensitive, so we
+    // optimize for simplicity and size. First, build a max-heap in place.
+    for (size_t i = parent_idx(sk->num - 1); i < sk->num; i--) {
+      down_heap(sk, call_cmp_func, i, sk->num);
+    }
+
+    // Iteratively remove the maximum element to populate the result in reverse.
+    for (size_t i = sk->num - 1; i > 0; i--) {
+      void *tmp = sk->data[0];
+      sk->data[0] = sk->data[i];
+      sk->data[i] = tmp;
+      down_heap(sk, call_cmp_func, 0, i);
+    }
   }
   sk->sorted = 1;
 }
 
-int sk_is_sorted(const _STACK *sk) {
+int OPENSSL_sk_is_sorted(const OPENSSL_STACK *sk) {
   if (!sk) {
     return 1;
   }
@@ -419,7 +473,8 @@ int sk_is_sorted(const _STACK *sk) {
   return sk->sorted || (sk->comp != NULL && sk->num < 2);
 }
 
-OPENSSL_sk_cmp_func sk_set_cmp_func(_STACK *sk, OPENSSL_sk_cmp_func comp) {
+OPENSSL_sk_cmp_func OPENSSL_sk_set_cmp_func(OPENSSL_STACK *sk,
+                                            OPENSSL_sk_cmp_func comp) {
   OPENSSL_sk_cmp_func old = sk->comp;
 
   if (sk->comp != comp) {
@@ -430,11 +485,12 @@ OPENSSL_sk_cmp_func sk_set_cmp_func(_STACK *sk, OPENSSL_sk_cmp_func comp) {
   return old;
 }
 
-_STACK *sk_deep_copy(const _STACK *sk, OPENSSL_sk_call_copy_func call_copy_func,
-                     OPENSSL_sk_copy_func copy_func,
-                     OPENSSL_sk_call_free_func call_free_func,
-                     OPENSSL_sk_free_func free_func) {
-  _STACK *ret = sk_dup(sk);
+OPENSSL_STACK *OPENSSL_sk_deep_copy(const OPENSSL_STACK *sk,
+                                    OPENSSL_sk_call_copy_func call_copy_func,
+                                    OPENSSL_sk_copy_func copy_func,
+                                    OPENSSL_sk_call_free_func call_free_func,
+                                    OPENSSL_sk_free_func free_func) {
+  OPENSSL_STACK *ret = OPENSSL_sk_dup(sk);
   if (ret == NULL) {
     return NULL;
   }
@@ -450,10 +506,29 @@ _STACK *sk_deep_copy(const _STACK *sk, OPENSSL_sk_call_copy_func call_copy_func,
           call_free_func(free_func, ret->data[j]);
         }
       }
-      sk_free(ret);
+      OPENSSL_sk_free(ret);
       return NULL;
     }
   }
 
   return ret;
+}
+
+OPENSSL_STACK *sk_new_null(void) { return OPENSSL_sk_new_null(); }
+
+size_t sk_num(const OPENSSL_STACK *sk) { return OPENSSL_sk_num(sk); }
+
+void *sk_value(const OPENSSL_STACK *sk, size_t i) {
+  return OPENSSL_sk_value(sk, i);
+}
+
+void sk_free(OPENSSL_STACK *sk) { OPENSSL_sk_free(sk); }
+
+size_t sk_push(OPENSSL_STACK *sk, void *p) { return OPENSSL_sk_push(sk, p); }
+
+void *sk_pop(OPENSSL_STACK *sk) { return OPENSSL_sk_pop(sk); }
+
+void sk_pop_free_ex(OPENSSL_STACK *sk, OPENSSL_sk_call_free_func call_free_func,
+                    OPENSSL_sk_free_func free_func) {
+  OPENSSL_sk_pop_free_ex(sk, call_free_func, free_func);
 }

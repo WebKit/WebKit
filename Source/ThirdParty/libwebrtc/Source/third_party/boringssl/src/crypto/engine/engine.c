@@ -31,15 +31,7 @@ struct engine_st {
   ECDSA_METHOD *ecdsa_method;
 };
 
-ENGINE *ENGINE_new(void) {
-  ENGINE *engine = OPENSSL_malloc(sizeof(ENGINE));
-  if (engine == NULL) {
-    return NULL;
-  }
-
-  OPENSSL_memset(engine, 0, sizeof(ENGINE));
-  return engine;
-}
+ENGINE *ENGINE_new(void) { return OPENSSL_zalloc(sizeof(ENGINE)); }
 
 int ENGINE_free(ENGINE *engine) {
   // Methods are currently required to be static so are not unref'ed.

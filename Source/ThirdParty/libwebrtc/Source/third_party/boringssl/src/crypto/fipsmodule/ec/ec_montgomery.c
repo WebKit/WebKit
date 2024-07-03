@@ -76,67 +76,35 @@
 #include "internal.h"
 
 
-int ec_GFp_mont_group_init(EC_GROUP *group) {
-  int ok;
-
-  ok = ec_GFp_simple_group_init(group);
-  group->mont = NULL;
-  return ok;
-}
-
-void ec_GFp_mont_group_finish(EC_GROUP *group) {
-  BN_MONT_CTX_free(group->mont);
-  group->mont = NULL;
-  ec_GFp_simple_group_finish(group);
-}
-
-int ec_GFp_mont_group_set_curve(EC_GROUP *group, const BIGNUM *p,
-                                const BIGNUM *a, const BIGNUM *b, BN_CTX *ctx) {
-  BN_MONT_CTX_free(group->mont);
-  group->mont = BN_MONT_CTX_new_for_modulus(p, ctx);
-  if (group->mont == NULL) {
-    OPENSSL_PUT_ERROR(EC, ERR_R_BN_LIB);
-    return 0;
-  }
-
-  if (!ec_GFp_simple_group_set_curve(group, p, a, b, ctx)) {
-    BN_MONT_CTX_free(group->mont);
-    group->mont = NULL;
-    return 0;
-  }
-
-  return 1;
-}
-
 static void ec_GFp_mont_felem_to_montgomery(const EC_GROUP *group,
                                             EC_FELEM *out, const EC_FELEM *in) {
-  bn_to_montgomery_small(out->words, in->words, group->field.width,
-                         group->mont);
+  bn_to_montgomery_small(out->words, in->words, group->field.N.width,
+                         &group->field);
 }
 
 static void ec_GFp_mont_felem_from_montgomery(const EC_GROUP *group,
                                               EC_FELEM *out,
                                               const EC_FELEM *in) {
-  bn_from_montgomery_small(out->words, group->field.width, in->words,
-                           group->field.width, group->mont);
+  bn_from_montgomery_small(out->words, group->field.N.width, in->words,
+                           group->field.N.width, &group->field);
 }
 
 static void ec_GFp_mont_felem_inv0(const EC_GROUP *group, EC_FELEM *out,
                                    const EC_FELEM *a) {
-  bn_mod_inverse0_prime_mont_small(out->words, a->words, group->field.width,
-                                   group->mont);
+  bn_mod_inverse0_prime_mont_small(out->words, a->words, group->field.N.width,
+                                   &group->field);
 }
 
 void ec_GFp_mont_felem_mul(const EC_GROUP *group, EC_FELEM *r,
                            const EC_FELEM *a, const EC_FELEM *b) {
-  bn_mod_mul_montgomery_small(r->words, a->words, b->words, group->field.width,
-                              group->mont);
+  bn_mod_mul_montgomery_small(r->words, a->words, b->words,
+                              group->field.N.width, &group->field);
 }
 
 void ec_GFp_mont_felem_sqr(const EC_GROUP *group, EC_FELEM *r,
                            const EC_FELEM *a) {
-  bn_mod_mul_montgomery_small(r->words, a->words, a->words, group->field.width,
-                              group->mont);
+  bn_mod_mul_montgomery_small(r->words, a->words, a->words,
+                              group->field.N.width, &group->field);
 }
 
 void ec_GFp_mont_felem_to_bytes(const EC_GROUP *group, uint8_t *out,
@@ -159,8 +127,8 @@ int ec_GFp_mont_felem_from_bytes(const EC_GROUP *group, EC_FELEM *out,
 void ec_GFp_mont_felem_reduce(const EC_GROUP *group, EC_FELEM *out,
                               const BN_ULONG *words, size_t num) {
   // Convert "from" Montgomery form so the value is reduced mod p.
-  bn_from_montgomery_small(out->words, group->field.width, words, num,
-                           group->mont);
+  bn_from_montgomery_small(out->words, group->field.N.width, words, num,
+                           &group->field);
   // Convert "to" Montgomery form to remove the R^-1 factor added.
   ec_GFp_mont_felem_to_montgomery(group, out, out);
   // Convert to Montgomery form to match this implementation's representation.
@@ -170,14 +138,15 @@ void ec_GFp_mont_felem_reduce(const EC_GROUP *group, EC_FELEM *out,
 void ec_GFp_mont_felem_exp(const EC_GROUP *group, EC_FELEM *out,
                            const EC_FELEM *a, const BN_ULONG *exp,
                            size_t num_exp) {
-  bn_mod_exp_mont_small(out->words, a->words, group->field.width, exp, num_exp,
-                        group->mont);
+  bn_mod_exp_mont_small(out->words, a->words, group->field.N.width, exp,
+                        num_exp, &group->field);
 }
 
 static int ec_GFp_mont_point_get_affine_coordinates(const EC_GROUP *group,
                                                     const EC_JACOBIAN *point,
                                                     EC_FELEM *x, EC_FELEM *y) {
-  if (ec_GFp_simple_is_at_infinity(group, point)) {
+  if (constant_time_declassify_int(
+          ec_GFp_simple_is_at_infinity(group, point))) {
     OPENSSL_PUT_ERROR(EC, EC_R_POINT_AT_INFINITY);
     return 0;
   }
@@ -317,7 +286,7 @@ void ec_GFp_mont_add(const EC_GROUP *group, EC_JACOBIAN *out,
 
   // This case will never occur in the constant-time |ec_GFp_mont_mul|.
   BN_ULONG is_nontrivial_double = ~xneq & ~yneq & z1nz & z2nz;
-  if (is_nontrivial_double) {
+  if (constant_time_declassify_w(is_nontrivial_double)) {
     ec_GFp_mont_dbl(group, out, a);
     return;
   }
@@ -456,7 +425,7 @@ static int ec_GFp_mont_cmp_x_coordinate(const EC_GROUP *group,
                                         const EC_JACOBIAN *p,
                                         const EC_SCALAR *r) {
   if (!group->field_greater_than_order ||
-      group->field.width != group->order.width) {
+      group->field.N.width != group->order.N.width) {
     // Do not bother optimizing this case. p > order in all commonly-used
     // curves.
     return ec_GFp_simple_cmp_x_coordinate(group, p, r);
@@ -472,7 +441,7 @@ static int ec_GFp_mont_cmp_x_coordinate(const EC_GROUP *group,
   EC_FELEM r_Z2, Z2_mont, X;
   ec_GFp_mont_felem_mul(group, &Z2_mont, &p->Z, &p->Z);
   // r < order < p, so this is valid.
-  OPENSSL_memcpy(r_Z2.words, r->words, group->field.width * sizeof(BN_ULONG));
+  OPENSSL_memcpy(r_Z2.words, r->words, group->field.N.width * sizeof(BN_ULONG));
   ec_GFp_mont_felem_mul(group, &r_Z2, &r_Z2, &Z2_mont);
   ec_GFp_mont_felem_from_montgomery(group, &X, &p->X);
 
@@ -484,10 +453,11 @@ static int ec_GFp_mont_cmp_x_coordinate(const EC_GROUP *group,
   // Therefore there is a small possibility, less than 1/2^128, that group_order
   // < p.x < P. in that case we need not only to compare against |r| but also to
   // compare against r+group_order.
-  if (bn_less_than_words(r->words, group->field_minus_order.words,
-                         group->field.width)) {
-    // We can ignore the carry because: r + group_order < p < 2^256.
-    bn_add_words(r_Z2.words, r->words, group->order.d, group->field.width);
+  BN_ULONG carry = bn_add_words(r_Z2.words, r->words, group->order.N.d,
+                                group->field.N.width);
+  if (carry == 0 &&
+      bn_less_than_words(r_Z2.words, group->field.N.d, group->field.N.width)) {
+    // r + group_order < p, so compare (r + group_order) * Z^2 against X.
     ec_GFp_mont_felem_mul(group, &r_Z2, &r_Z2, &Z2_mont);
     if (ec_felem_equal(group, &r_Z2, &X)) {
       return 1;
@@ -498,9 +468,6 @@ static int ec_GFp_mont_cmp_x_coordinate(const EC_GROUP *group,
 }
 
 DEFINE_METHOD_FUNCTION(EC_METHOD, EC_GFp_mont_method) {
-  out->group_init = ec_GFp_mont_group_init;
-  out->group_finish = ec_GFp_mont_group_finish;
-  out->group_set_curve = ec_GFp_mont_group_set_curve;
   out->point_get_affine_coordinates = ec_GFp_mont_point_get_affine_coordinates;
   out->jacobian_to_affine_batch = ec_GFp_mont_jacobian_to_affine_batch;
   out->add = ec_GFp_mont_add;

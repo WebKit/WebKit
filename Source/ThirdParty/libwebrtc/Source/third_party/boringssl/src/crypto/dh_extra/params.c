@@ -337,6 +337,11 @@ int DH_generate_parameters_ex(DH *dh, int prime_bits, int generator,
   // It's just as OK (and in some sense better) to use a generator of the
   // order-q subgroup.
 
+  if (prime_bits <= 0 || prime_bits > OPENSSL_DH_MAX_MODULUS_BITS) {
+    OPENSSL_PUT_ERROR(DH, DH_R_MODULUS_TOO_LARGE);
+    return 0;
+  }
+
   BIGNUM *t1, *t2;
   int g, ok = 0;
   BN_CTX *ctx = NULL;

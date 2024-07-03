@@ -236,6 +236,13 @@ OPENSSL_EXPORT int RSA_generate_key_fips(RSA *rsa, int bits, BN_GENCB *cb);
 
 // RSA_PKCS1_PADDING denotes PKCS#1 v1.5 padding. When used with encryption,
 // this is RSAES-PKCS1-v1_5. When used with signing, this is RSASSA-PKCS1-v1_5.
+//
+// WARNING: The RSAES-PKCS1-v1_5 encryption scheme is vulnerable to a
+// chosen-ciphertext attack. Decrypting attacker-supplied ciphertext with
+// RSAES-PKCS1-v1_5 may give the attacker control over your private key. This
+// does not impact the RSASSA-PKCS1-v1_5 signature scheme. See "Chosen
+// Ciphertext Attacks Against Protocols Based on the RSA Encryption Standard
+// PKCS #1", Daniel Bleichenbacher, Advances in Cryptology (Crypto '98).
 #define RSA_PKCS1_PADDING 1
 
 // RSA_NO_PADDING denotes a raw RSA operation.
@@ -256,8 +263,7 @@ OPENSSL_EXPORT int RSA_generate_key_fips(RSA *rsa, int bits, BN_GENCB *cb);
 // It returns 1 on success or zero on error.
 //
 // The |padding| argument must be one of the |RSA_*_PADDING| values. If in
-// doubt, use |RSA_PKCS1_OAEP_PADDING| for new protocols but
-// |RSA_PKCS1_PADDING| is most common.
+// doubt, use |RSA_PKCS1_OAEP_PADDING| for new protocols.
 OPENSSL_EXPORT int RSA_encrypt(RSA *rsa, size_t *out_len, uint8_t *out,
                                size_t max_out, const uint8_t *in, size_t in_len,
                                int padding);
@@ -271,12 +277,16 @@ OPENSSL_EXPORT int RSA_encrypt(RSA *rsa, size_t *out_len, uint8_t *out,
 // The |padding| argument must be one of the |RSA_*_PADDING| values. If in
 // doubt, use |RSA_PKCS1_OAEP_PADDING| for new protocols.
 //
-// Passing |RSA_PKCS1_PADDING| into this function is deprecated and insecure. If
-// implementing a protocol using RSAES-PKCS1-V1_5, use |RSA_NO_PADDING| and then
-// check padding in constant-time combined with a swap to a random session key
-// or other mitigation. See "Chosen Ciphertext Attacks Against Protocols Based
-// on the RSA Encryption Standard PKCS #1", Daniel Bleichenbacher, Advances in
-// Cryptology (Crypto '98).
+// WARNING: Passing |RSA_PKCS1_PADDING| into this function is deprecated and
+// insecure. RSAES-PKCS1-v1_5 is vulnerable to a chosen-ciphertext attack.
+// Decrypting attacker-supplied ciphertext with RSAES-PKCS1-v1_5 may give the
+// attacker control over your private key. See "Chosen Ciphertext Attacks
+// Against Protocols Based on the RSA Encryption Standard PKCS #1", Daniel
+// Bleichenbacher, Advances in Cryptology (Crypto '98).
+//
+// In some limited cases, such as TLS RSA key exchange, it is possible to
+// mitigate this flaw with custom, protocol-specific padding logic. This
+// should be implemented with |RSA_NO_PADDING|, not |RSA_PKCS1_PADDING|.
 OPENSSL_EXPORT int RSA_decrypt(RSA *rsa, size_t *out_len, uint8_t *out,
                                size_t max_out, const uint8_t *in, size_t in_len,
                                int padding);
@@ -285,8 +295,7 @@ OPENSSL_EXPORT int RSA_decrypt(RSA *rsa, size_t *out_len, uint8_t *out,
 // |rsa| and writes the encrypted data to |to|. The |to| buffer must have at
 // least |RSA_size| bytes of space. It returns the number of bytes written, or
 // -1 on error. The |padding| argument must be one of the |RSA_*_PADDING|
-// values. If in doubt, use |RSA_PKCS1_OAEP_PADDING| for new protocols but
-// |RSA_PKCS1_PADDING| is most common.
+// values. If in doubt, use |RSA_PKCS1_OAEP_PADDING| for new protocols.
 //
 // WARNING: this function is dangerous because it breaks the usual return value
 // convention. Use |RSA_encrypt| instead.
@@ -815,67 +824,6 @@ struct rsa_meth_st {
                            size_t len);
 
   int flags;
-};
-
-
-// Private functions.
-
-typedef struct bn_blinding_st BN_BLINDING;
-
-struct rsa_st {
-  RSA_METHOD *meth;
-
-  // Access to the following fields was historically allowed, but
-  // deprecated. Use |RSA_get0_*| and |RSA_set0_*| instead. Access to all other
-  // fields is forbidden and will cause threading errors.
-  BIGNUM *n;
-  BIGNUM *e;
-  BIGNUM *d;
-  BIGNUM *p;
-  BIGNUM *q;
-  BIGNUM *dmp1;
-  BIGNUM *dmq1;
-  BIGNUM *iqmp;
-
-  // be careful using this if the RSA structure is shared
-  CRYPTO_EX_DATA ex_data;
-  CRYPTO_refcount_t references;
-  int flags;
-
-  CRYPTO_MUTEX lock;
-
-  // Used to cache montgomery values. The creation of these values is protected
-  // by |lock|.
-  BN_MONT_CTX *mont_n;
-  BN_MONT_CTX *mont_p;
-  BN_MONT_CTX *mont_q;
-
-  // The following fields are copies of |d|, |dmp1|, and |dmq1|, respectively,
-  // but with the correct widths to prevent side channels. These must use
-  // separate copies due to threading concerns caused by OpenSSL's API
-  // mistakes. See https://github.com/openssl/openssl/issues/5158 and
-  // the |freeze_private_key| implementation.
-  BIGNUM *d_fixed, *dmp1_fixed, *dmq1_fixed;
-
-  // inv_small_mod_large_mont is q^-1 mod p in Montgomery form, using |mont_p|,
-  // if |p| >= |q|. Otherwise, it is p^-1 mod q in Montgomery form, using
-  // |mont_q|.
-  BIGNUM *inv_small_mod_large_mont;
-
-  // num_blindings contains the size of the |blindings| and |blindings_inuse|
-  // arrays. This member and the |blindings_inuse| array are protected by
-  // |lock|.
-  size_t num_blindings;
-  // blindings is an array of BN_BLINDING structures that can be reserved by a
-  // thread by locking |lock| and changing the corresponding element in
-  // |blindings_inuse| from 0 to 1.
-  BN_BLINDING **blindings;
-  unsigned char *blindings_inuse;
-  uint64_t blinding_fork_generation;
-
-  // private_key_frozen is one if the key has been used for a private key
-  // operation and may no longer be mutated.
-  unsigned private_key_frozen:1;
 };
 
 

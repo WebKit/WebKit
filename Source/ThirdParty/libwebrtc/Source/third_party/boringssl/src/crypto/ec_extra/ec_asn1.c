@@ -72,6 +72,16 @@ static const CBS_ASN1_TAG kParametersTag =
 static const CBS_ASN1_TAG kPublicKeyTag =
     CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 1;
 
+// TODO(https://crbug.com/boringssl/497): Allow parsers to specify a list of
+// acceptable groups, so parsers don't have to pull in all four.
+typedef const EC_GROUP *(*ec_group_func)(void);
+static const ec_group_func kAllGroups[] = {
+    &EC_group_p224,
+    &EC_group_p256,
+    &EC_group_p384,
+    &EC_group_p521,
+};
+
 EC_KEY *EC_KEY_parse_private_key(CBS *cbs, const EC_GROUP *group) {
   CBS ec_private_key, private_key;
   uint64_t version;
@@ -84,7 +94,6 @@ EC_KEY *EC_KEY_parse_private_key(CBS *cbs, const EC_GROUP *group) {
   }
 
   // Parse the optional parameters field.
-  EC_GROUP *inner_group = NULL;
   EC_KEY *ret = NULL;
   BIGNUM *priv_key = NULL;
   if (CBS_peek_asn1_tag(&ec_private_key, kParametersTag)) {
@@ -97,7 +106,7 @@ EC_KEY *EC_KEY_parse_private_key(CBS *cbs, const EC_GROUP *group) {
       OPENSSL_PUT_ERROR(EC, EC_R_DECODE_ERROR);
       goto err;
     }
-    inner_group = EC_KEY_parse_parameters(&child);
+    const EC_GROUP *inner_group = EC_KEY_parse_parameters(&child);
     if (inner_group == NULL) {
       goto err;
     }
@@ -179,13 +188,11 @@ EC_KEY *EC_KEY_parse_private_key(CBS *cbs, const EC_GROUP *group) {
   }
 
   BN_free(priv_key);
-  EC_GROUP_free(inner_group);
   return ret;
 
 err:
   EC_KEY_free(ret);
   BN_free(priv_key);
-  EC_GROUP_free(inner_group);
   return NULL;
 }
 
@@ -244,9 +251,12 @@ int EC_KEY_marshal_private_key(CBB *cbb, const EC_KEY *key,
 // kPrimeFieldOID is the encoding of 1.2.840.10045.1.1.
 static const uint8_t kPrimeField[] = {0x2a, 0x86, 0x48, 0xce, 0x3d, 0x01, 0x01};
 
-static int parse_explicit_prime_curve(CBS *in, CBS *out_prime, CBS *out_a,
-                                      CBS *out_b, CBS *out_base_x,
-                                      CBS *out_base_y, CBS *out_order) {
+struct explicit_prime_curve {
+  CBS prime, a, b, base_x, base_y, order;
+};
+
+static int parse_explicit_prime_curve(CBS *in,
+                                      struct explicit_prime_curve *out) {
   // See RFC 3279, section 2.3.5. Note that RFC 3279 calls this structure an
   // ECParameters while RFC 5480 calls it a SpecifiedECDomain.
   CBS params, field_id, field_type, curve, base, cofactor;
@@ -260,18 +270,18 @@ static int parse_explicit_prime_curve(CBS *in, CBS *out_prime, CBS *out_a,
       CBS_len(&field_type) != sizeof(kPrimeField) ||
       OPENSSL_memcmp(CBS_data(&field_type), kPrimeField, sizeof(kPrimeField)) !=
           0 ||
-      !CBS_get_asn1(&field_id, out_prime, CBS_ASN1_INTEGER) ||
-      !CBS_is_unsigned_asn1_integer(out_prime) ||
+      !CBS_get_asn1(&field_id, &out->prime, CBS_ASN1_INTEGER) ||
+      !CBS_is_unsigned_asn1_integer(&out->prime) ||
       CBS_len(&field_id) != 0 ||
       !CBS_get_asn1(&params, &curve, CBS_ASN1_SEQUENCE) ||
-      !CBS_get_asn1(&curve, out_a, CBS_ASN1_OCTETSTRING) ||
-      !CBS_get_asn1(&curve, out_b, CBS_ASN1_OCTETSTRING) ||
+      !CBS_get_asn1(&curve, &out->a, CBS_ASN1_OCTETSTRING) ||
+      !CBS_get_asn1(&curve, &out->b, CBS_ASN1_OCTETSTRING) ||
       // |curve| has an optional BIT STRING seed which we ignore.
       !CBS_get_optional_asn1(&curve, NULL, NULL, CBS_ASN1_BITSTRING) ||
       CBS_len(&curve) != 0 ||
       !CBS_get_asn1(&params, &base, CBS_ASN1_OCTETSTRING) ||
-      !CBS_get_asn1(&params, out_order, CBS_ASN1_INTEGER) ||
-      !CBS_is_unsigned_asn1_integer(out_order) ||
+      !CBS_get_asn1(&params, &out->order, CBS_ASN1_INTEGER) ||
+      !CBS_is_unsigned_asn1_integer(&out->order) ||
       !CBS_get_optional_asn1(&params, &cofactor, &has_cofactor,
                              CBS_ASN1_INTEGER) ||
       CBS_len(&params) != 0) {
@@ -300,25 +310,33 @@ static int parse_explicit_prime_curve(CBS *in, CBS *out_prime, CBS *out_a,
     return 0;
   }
   size_t field_len = CBS_len(&base) / 2;
-  CBS_init(out_base_x, CBS_data(&base), field_len);
-  CBS_init(out_base_y, CBS_data(&base) + field_len, field_len);
+  CBS_init(&out->base_x, CBS_data(&base), field_len);
+  CBS_init(&out->base_y, CBS_data(&base) + field_len, field_len);
 
   return 1;
 }
 
-// integers_equal returns one if |a| and |b| are equal, up to leading zeros, and
+// integers_equal returns one if |bytes| is a big-endian encoding of |bn|, and
 // zero otherwise.
-static int integers_equal(const CBS *a, const uint8_t *b, size_t b_len) {
-  // Remove leading zeros from |a| and |b|.
-  CBS a_copy = *a;
-  while (CBS_len(&a_copy) > 0 && CBS_data(&a_copy)[0] == 0) {
-    CBS_skip(&a_copy, 1);
+static int integers_equal(const CBS *bytes, const BIGNUM *bn) {
+  // Although, in SEC 1, Field-Element-to-Octet-String has a fixed width,
+  // OpenSSL mis-encodes the |a| and |b|, so we tolerate any number of leading
+  // zeros. (This matters for P-521 whose |b| has a leading 0.)
+  CBS copy = *bytes;
+  while (CBS_len(&copy) > 0 && CBS_data(&copy)[0] == 0) {
+    CBS_skip(&copy, 1);
   }
-  while (b_len > 0 && b[0] == 0) {
-    b++;
-    b_len--;
+
+  if (CBS_len(&copy) > EC_MAX_BYTES) {
+    return 0;
   }
-  return CBS_mem_equal(&a_copy, b, b_len);
+  uint8_t buf[EC_MAX_BYTES];
+  if (!BN_bn2bin_padded(buf, CBS_len(&copy), bn)) {
+    ERR_clear_error();
+    return 0;
+  }
+
+  return CBS_mem_equal(&copy, buf, CBS_len(&copy));
 }
 
 EC_GROUP *EC_KEY_parse_curve_name(CBS *cbs) {
@@ -329,13 +347,10 @@ EC_GROUP *EC_KEY_parse_curve_name(CBS *cbs) {
   }
 
   // Look for a matching curve.
-  const struct built_in_curves *const curves = OPENSSL_built_in_curves();
-  for (size_t i = 0; i < OPENSSL_NUM_BUILT_IN_CURVES; i++) {
-    const struct built_in_curve *curve = &curves->curves[i];
-    if (CBS_len(&named_curve) == curve->oid_len &&
-        OPENSSL_memcmp(CBS_data(&named_curve), curve->oid, curve->oid_len) ==
-            0) {
-      return EC_GROUP_new_by_curve_name(curve->nid);
+  for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(kAllGroups); i++) {
+    const EC_GROUP *group = kAllGroups[i]();
+    if (CBS_mem_equal(&named_curve, group->oid, group->oid_len)) {
+      return (EC_GROUP *)group;
     }
   }
 
@@ -344,25 +359,15 @@ EC_GROUP *EC_KEY_parse_curve_name(CBS *cbs) {
 }
 
 int EC_KEY_marshal_curve_name(CBB *cbb, const EC_GROUP *group) {
-  int nid = EC_GROUP_get_curve_name(group);
-  if (nid == NID_undef) {
+  if (group->oid_len == 0) {
     OPENSSL_PUT_ERROR(EC, EC_R_UNKNOWN_GROUP);
     return 0;
   }
 
-  const struct built_in_curves *const curves = OPENSSL_built_in_curves();
-  for (size_t i = 0; i < OPENSSL_NUM_BUILT_IN_CURVES; i++) {
-    const struct built_in_curve *curve = &curves->curves[i];
-    if (curve->nid == nid) {
-      CBB child;
-      return CBB_add_asn1(cbb, &child, CBS_ASN1_OBJECT) &&
-             CBB_add_bytes(&child, curve->oid, curve->oid_len) &&
-             CBB_flush(cbb);
-    }
-  }
-
-  OPENSSL_PUT_ERROR(EC, EC_R_UNKNOWN_GROUP);
-  return 0;
+  CBB child;
+  return CBB_add_asn1(cbb, &child, CBS_ASN1_OBJECT) &&
+         CBB_add_bytes(&child, group->oid, group->oid_len) &&  //
+         CBB_flush(cbb);
 }
 
 EC_GROUP *EC_KEY_parse_parameters(CBS *cbs) {
@@ -374,34 +379,56 @@ EC_GROUP *EC_KEY_parse_parameters(CBS *cbs) {
   // of named curves.
   //
   // TODO(davidben): Remove support for this.
-  CBS prime, a, b, base_x, base_y, order;
-  if (!parse_explicit_prime_curve(cbs, &prime, &a, &b, &base_x, &base_y,
-                                  &order)) {
+  struct explicit_prime_curve curve;
+  if (!parse_explicit_prime_curve(cbs, &curve)) {
     return NULL;
   }
 
-  // Look for a matching prime curve.
-  const struct built_in_curves *const curves = OPENSSL_built_in_curves();
-  for (size_t i = 0; i < OPENSSL_NUM_BUILT_IN_CURVES; i++) {
-    const struct built_in_curve *curve = &curves->curves[i];
-    const unsigned param_len = curve->param_len;
-    // |curve->params| is ordered p, a, b, x, y, order, each component
-    // zero-padded up to the field length. Although SEC 1 states that the
-    // Field-Element-to-Octet-String conversion also pads, OpenSSL mis-encodes
-    // |a| and |b|, so this comparison must allow omitting leading zeros. (This
-    // is relevant for P-521 whose |b| has a leading 0.)
-    if (integers_equal(&prime, curve->params, param_len) &&
-        integers_equal(&a, curve->params + param_len, param_len) &&
-        integers_equal(&b, curve->params + param_len * 2, param_len) &&
-        integers_equal(&base_x, curve->params + param_len * 3, param_len) &&
-        integers_equal(&base_y, curve->params + param_len * 4, param_len) &&
-        integers_equal(&order, curve->params + param_len * 5, param_len)) {
-      return EC_GROUP_new_by_curve_name(curve->nid);
-    }
+  const EC_GROUP *ret = NULL;
+  BIGNUM *p = BN_new(), *a = BN_new(), *b = BN_new(), *x = BN_new(),
+         *y = BN_new();
+  if (p == NULL || a == NULL || b == NULL || x == NULL || y == NULL) {
+    goto err;
   }
 
-  OPENSSL_PUT_ERROR(EC, EC_R_UNKNOWN_GROUP);
-  return NULL;
+  for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(kAllGroups); i++) {
+    const EC_GROUP *group = kAllGroups[i]();
+    if (!integers_equal(&curve.order, EC_GROUP_get0_order(group))) {
+      continue;
+    }
+
+    // The order alone uniquely identifies the group, but we check the other
+    // parameters to avoid misinterpreting the group.
+    if (!EC_GROUP_get_curve_GFp(group, p, a, b, NULL)) {
+      goto err;
+    }
+    if (!integers_equal(&curve.prime, p) || !integers_equal(&curve.a, a) ||
+        !integers_equal(&curve.b, b)) {
+      break;
+    }
+    if (!EC_POINT_get_affine_coordinates_GFp(
+            group, EC_GROUP_get0_generator(group), x, y, NULL)) {
+      goto err;
+    }
+    if (!integers_equal(&curve.base_x, x) ||
+        !integers_equal(&curve.base_y, y)) {
+      break;
+    }
+    ret = group;
+    break;
+  }
+
+  if (ret == NULL) {
+    OPENSSL_PUT_ERROR(EC, EC_R_UNKNOWN_GROUP);
+  }
+
+err:
+  BN_free(p);
+  BN_free(a);
+  BN_free(b);
+  BN_free(x);
+  BN_free(y);
+  return (EC_GROUP *)ret;
 }
 
 int EC_POINT_point2cbb(CBB *out, const EC_GROUP *group, const EC_POINT *point,
@@ -458,18 +485,16 @@ EC_KEY *d2i_ECParameters(EC_KEY **out_key, const uint8_t **inp, long len) {
 
   CBS cbs;
   CBS_init(&cbs, *inp, (size_t)len);
-  EC_GROUP *group = EC_KEY_parse_parameters(&cbs);
+  const EC_GROUP *group = EC_KEY_parse_parameters(&cbs);
   if (group == NULL) {
     return NULL;
   }
 
   EC_KEY *ret = EC_KEY_new();
   if (ret == NULL || !EC_KEY_set_group(ret, group)) {
-    EC_GROUP_free(group);
     EC_KEY_free(ret);
     return NULL;
   }
-  EC_GROUP_free(group);
 
   if (out_key != NULL) {
     EC_KEY_free(*out_key);
@@ -531,4 +556,17 @@ int i2o_ECPublicKey(const EC_KEY *key, uint8_t **outp) {
   int ret = CBB_finish_i2d(&cbb, outp);
   // Historically, this function used the wrong return value on error.
   return ret > 0 ? ret : 0;
+}
+
+size_t EC_get_builtin_curves(EC_builtin_curve *out_curves,
+                             size_t max_num_curves) {
+  if (max_num_curves > OPENSSL_ARRAY_SIZE(kAllGroups)) {
+    max_num_curves = OPENSSL_ARRAY_SIZE(kAllGroups);
+  }
+  for (size_t i = 0; i < max_num_curves; i++) {
+    const EC_GROUP *group = kAllGroups[i]();
+    out_curves[i].nid = group->curve_name;
+    out_curves[i].comment = group->comment;
+  }
+  return OPENSSL_ARRAY_SIZE(kAllGroups);
 }

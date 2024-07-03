@@ -567,37 +567,6 @@ void bn_sqr_comba4(BN_ULONG r[8], const BN_ULONG a[4]) {
 
 #if !defined(BN_ADD_ASM)
 
-// bn_add_with_carry returns |x + y + carry|, and sets |*out_carry| to the
-// carry bit. |carry| must be zero or one.
-static inline BN_ULONG bn_add_with_carry(BN_ULONG x, BN_ULONG y, BN_ULONG carry,
-                                         BN_ULONG *out_carry) {
-  assert(carry == 0 || carry == 1);
-#if defined(BN_ULLONG)
-  BN_ULLONG ret = carry;
-  ret += (BN_ULLONG)x + y;
-  *out_carry = (BN_ULONG)(ret >> BN_BITS2);
-  return (BN_ULONG)ret;
-#else
-  x += carry;
-  carry = x < carry;
-  BN_ULONG ret = x + y;
-  carry += ret < x;
-  *out_carry = carry;
-  return ret;
-#endif
-}
-
-// bn_sub_with_borrow returns |x - y - borrow|, and sets |*out_borrow| to the
-// borrow bit. |borrow| must be zero or one.
-static inline BN_ULONG bn_sub_with_borrow(BN_ULONG x, BN_ULONG y,
-                                          BN_ULONG borrow,
-                                          BN_ULONG *out_borrow) {
-  assert(borrow == 0 || borrow == 1);
-  BN_ULONG ret = x - y - borrow;
-  *out_borrow = (x < y) | ((x == y) & borrow);
-  return ret;
-}
-
 BN_ULONG bn_add_words(BN_ULONG *r, const BN_ULONG *a, const BN_ULONG *b,
                       size_t n) {
   if (n == 0) {
@@ -606,17 +575,17 @@ BN_ULONG bn_add_words(BN_ULONG *r, const BN_ULONG *a, const BN_ULONG *b,
 
   BN_ULONG carry = 0;
   while (n & ~3) {
-    r[0] = bn_add_with_carry(a[0], b[0], carry, &carry);
-    r[1] = bn_add_with_carry(a[1], b[1], carry, &carry);
-    r[2] = bn_add_with_carry(a[2], b[2], carry, &carry);
-    r[3] = bn_add_with_carry(a[3], b[3], carry, &carry);
+    r[0] = CRYPTO_addc_w(a[0], b[0], carry, &carry);
+    r[1] = CRYPTO_addc_w(a[1], b[1], carry, &carry);
+    r[2] = CRYPTO_addc_w(a[2], b[2], carry, &carry);
+    r[3] = CRYPTO_addc_w(a[3], b[3], carry, &carry);
     a += 4;
     b += 4;
     r += 4;
     n -= 4;
   }
   while (n) {
-    r[0] = bn_add_with_carry(a[0], b[0], carry, &carry);
+    r[0] = CRYPTO_addc_w(a[0], b[0], carry, &carry);
     a++;
     b++;
     r++;
@@ -633,17 +602,17 @@ BN_ULONG bn_sub_words(BN_ULONG *r, const BN_ULONG *a, const BN_ULONG *b,
 
   BN_ULONG borrow = 0;
   while (n & ~3) {
-    r[0] = bn_sub_with_borrow(a[0], b[0], borrow, &borrow);
-    r[1] = bn_sub_with_borrow(a[1], b[1], borrow, &borrow);
-    r[2] = bn_sub_with_borrow(a[2], b[2], borrow, &borrow);
-    r[3] = bn_sub_with_borrow(a[3], b[3], borrow, &borrow);
+    r[0] = CRYPTO_subc_w(a[0], b[0], borrow, &borrow);
+    r[1] = CRYPTO_subc_w(a[1], b[1], borrow, &borrow);
+    r[2] = CRYPTO_subc_w(a[2], b[2], borrow, &borrow);
+    r[3] = CRYPTO_subc_w(a[3], b[3], borrow, &borrow);
     a += 4;
     b += 4;
     r += 4;
     n -= 4;
   }
   while (n) {
-    r[0] = bn_sub_with_borrow(a[0], b[0], borrow, &borrow);
+    r[0] = CRYPTO_subc_w(a[0], b[0], borrow, &borrow);
     a++;
     b++;
     r++;

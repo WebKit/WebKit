@@ -62,17 +62,13 @@ typedef struct {
 
 static const uint8_t kDefaultAdditionalData[32] = {0};
 
-static int pmbtoken_init_method(PMBTOKEN_METHOD *method, int curve_nid,
+static int pmbtoken_init_method(PMBTOKEN_METHOD *method, const EC_GROUP *group,
                                 const uint8_t *h_bytes, size_t h_len,
                                 hash_t_func_t hash_t, hash_s_func_t hash_s,
                                 hash_c_func_t hash_c,
                                 hash_to_scalar_func_t hash_to_scalar,
                                 int prefix_point) {
-  method->group = EC_GROUP_new_by_curve_name(curve_nid);
-  if (method->group == NULL) {
-    return 0;
-  }
-
+  method->group = group;
   method->hash_t = hash_t;
   method->hash_s = hash_s;
   method->hash_c = hash_c;
@@ -86,7 +82,7 @@ static int pmbtoken_init_method(PMBTOKEN_METHOD *method, int curve_nid,
   ec_affine_to_jacobian(method->group, &method->h, &h);
 
   if (!ec_init_precomp(method->group, &method->g_precomp,
-                       &method->group->generator->raw) ||
+                       &method->group->generator.raw) ||
       !ec_init_precomp(method->group, &method->h_precomp, &method->h)) {
     return 0;
   }
@@ -160,7 +156,7 @@ static int cbs_get_prefixed_point(CBS *cbs, const EC_GROUP *group,
       return 0;
     }
   } else {
-    size_t plen = 1 + 2 * BN_num_bytes(&group->field);
+    size_t plen = ec_point_byte_len(group, POINT_CONVERSION_UNCOMPRESSED);
     if (!CBS_get_bytes(cbs, &child, plen)) {
       return 0;
     }
@@ -201,7 +197,7 @@ static int pmbtoken_compute_keys(const PMBTOKEN_METHOD *method,
   }
 
   const EC_SCALAR *scalars[] = {x0, y0, x1, y1, xs, ys};
-  size_t scalar_len = BN_num_bytes(&group->order);
+  size_t scalar_len = BN_num_bytes(EC_GROUP_get0_order(group));
   for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(scalars); i++) {
     uint8_t *buf;
     if (!CBB_add_space(out_private, &buf, scalar_len)) {
@@ -290,7 +286,7 @@ static int pmbtoken_issuer_key_from_bytes(const PMBTOKEN_METHOD *method,
   const EC_GROUP *group = method->group;
   CBS cbs, tmp;
   CBS_init(&cbs, in, len);
-  size_t scalar_len = BN_num_bytes(&group->order);
+  size_t scalar_len = BN_num_bytes(EC_GROUP_get0_order(group));
   EC_SCALAR *scalars[] = {&key->x0, &key->y0, &key->x1,
                           &key->y1, &key->xs, &key->ys};
   for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(scalars); i++) {
@@ -390,7 +386,7 @@ err:
 static int scalar_to_cbb(CBB *out, const EC_GROUP *group,
                          const EC_SCALAR *scalar) {
   uint8_t *buf;
-  size_t scalar_len = BN_num_bytes(&group->order);
+  size_t scalar_len = BN_num_bytes(EC_GROUP_get0_order(group));
   if (!CBB_add_space(out, &buf, scalar_len)) {
     return 0;
   }
@@ -399,7 +395,7 @@ static int scalar_to_cbb(CBB *out, const EC_GROUP *group,
 }
 
 static int scalar_from_cbs(CBS *cbs, const EC_GROUP *group, EC_SCALAR *out) {
-  size_t scalar_len = BN_num_bytes(&group->order);
+  size_t scalar_len = BN_num_bytes(EC_GROUP_get0_order(group));
   CBS tmp;
   if (!CBS_get_bytes(cbs, &tmp, scalar_len)) {
     OPENSSL_PUT_ERROR(TRUST_TOKEN, TRUST_TOKEN_R_DECODE_FAILURE);
@@ -679,7 +675,7 @@ static int dleq_verify(const PMBTOKEN_METHOD *method, CBS *cbs,
                        const EC_JACOBIAN *S, const EC_JACOBIAN *W,
                        const EC_JACOBIAN *Ws) {
   const EC_GROUP *group = method->group;
-  const EC_JACOBIAN *g = &group->generator->raw;
+  const EC_JACOBIAN *g = &group->generator.raw;
 
   // We verify a DLEQ proof for the validity token and a DLEQOR2 proof for the
   // private metadata token. To allow amortizing Jacobian-to-affine conversions,
@@ -803,18 +799,12 @@ static int pmbtoken_sign(const PMBTOKEN_METHOD *method,
     return 0;
   }
 
-  if (num_to_issue > ((size_t)-1) / sizeof(EC_JACOBIAN) ||
-      num_to_issue > ((size_t)-1) / sizeof(EC_SCALAR)) {
-    OPENSSL_PUT_ERROR(TRUST_TOKEN, ERR_R_OVERFLOW);
-    return 0;
-  }
-
   int ret = 0;
-  EC_JACOBIAN *Tps = OPENSSL_malloc(num_to_issue * sizeof(EC_JACOBIAN));
-  EC_JACOBIAN *Sps = OPENSSL_malloc(num_to_issue * sizeof(EC_JACOBIAN));
-  EC_JACOBIAN *Wps = OPENSSL_malloc(num_to_issue * sizeof(EC_JACOBIAN));
-  EC_JACOBIAN *Wsps = OPENSSL_malloc(num_to_issue * sizeof(EC_JACOBIAN));
-  EC_SCALAR *es = OPENSSL_malloc(num_to_issue * sizeof(EC_SCALAR));
+  EC_JACOBIAN *Tps = OPENSSL_calloc(num_to_issue, sizeof(EC_JACOBIAN));
+  EC_JACOBIAN *Sps = OPENSSL_calloc(num_to_issue, sizeof(EC_JACOBIAN));
+  EC_JACOBIAN *Wps = OPENSSL_calloc(num_to_issue, sizeof(EC_JACOBIAN));
+  EC_JACOBIAN *Wsps = OPENSSL_calloc(num_to_issue, sizeof(EC_JACOBIAN));
+  EC_SCALAR *es = OPENSSL_calloc(num_to_issue, sizeof(EC_SCALAR));
   CBB batch_cbb;
   CBB_zero(&batch_cbb);
   if (!Tps ||
@@ -912,7 +902,7 @@ static int pmbtoken_sign(const PMBTOKEN_METHOD *method,
   }
 
   // Skip over any unused requests.
-  size_t point_len = 1 + 2 * BN_num_bytes(&group->field);
+  size_t point_len = ec_point_byte_len(group, POINT_CONVERSION_UNCOMPRESSED);
   size_t token_len = point_len;
   if (method->prefix_point) {
     token_len += 2;
@@ -944,19 +934,13 @@ static STACK_OF(TRUST_TOKEN) *pmbtoken_unblind(
     return NULL;
   }
 
-  if (count > ((size_t)-1) / sizeof(EC_JACOBIAN) ||
-      count > ((size_t)-1) / sizeof(EC_SCALAR)) {
-    OPENSSL_PUT_ERROR(TRUST_TOKEN, ERR_R_OVERFLOW);
-    return NULL;
-  }
-
   int ok = 0;
   STACK_OF(TRUST_TOKEN) *ret = sk_TRUST_TOKEN_new_null();
-  EC_JACOBIAN *Tps = OPENSSL_malloc(count * sizeof(EC_JACOBIAN));
-  EC_JACOBIAN *Sps = OPENSSL_malloc(count * sizeof(EC_JACOBIAN));
-  EC_JACOBIAN *Wps = OPENSSL_malloc(count * sizeof(EC_JACOBIAN));
-  EC_JACOBIAN *Wsps = OPENSSL_malloc(count * sizeof(EC_JACOBIAN));
-  EC_SCALAR *es = OPENSSL_malloc(count * sizeof(EC_SCALAR));
+  EC_JACOBIAN *Tps = OPENSSL_calloc(count, sizeof(EC_JACOBIAN));
+  EC_JACOBIAN *Sps = OPENSSL_calloc(count, sizeof(EC_JACOBIAN));
+  EC_JACOBIAN *Wps = OPENSSL_calloc(count, sizeof(EC_JACOBIAN));
+  EC_JACOBIAN *Wsps = OPENSSL_calloc(count, sizeof(EC_JACOBIAN));
+  EC_SCALAR *es = OPENSSL_calloc(count, sizeof(EC_SCALAR));
   CBB batch_cbb;
   CBB_zero(&batch_cbb);
   if (ret == NULL ||
@@ -1015,7 +999,7 @@ static STACK_OF(TRUST_TOKEN) *pmbtoken_unblind(
     // Serialize the token. Include |key_id| to avoid an extra copy in the layer
     // above.
     CBB token_cbb;
-    size_t point_len = 1 + 2 * BN_num_bytes(&group->field);
+    size_t point_len = ec_point_byte_len(group, POINT_CONVERSION_UNCOMPRESSED);
     if (!CBB_init(&token_cbb,
                   4 + TRUST_TOKEN_NONCE_SIZE + 3 * (2 + point_len)) ||
         !CBB_add_u32(&token_cbb, key_id) ||
@@ -1230,7 +1214,7 @@ static void pmbtoken_exp1_init_method_impl(void) {
   };
 
   pmbtoken_exp1_ok = pmbtoken_init_method(
-      &pmbtoken_exp1_method, NID_secp384r1, kH, sizeof(kH),
+      &pmbtoken_exp1_method, EC_group_p384(), kH, sizeof(kH),
       pmbtoken_exp1_hash_t, pmbtoken_exp1_hash_s, pmbtoken_exp1_hash_c,
       pmbtoken_exp1_hash_to_scalar, 1);
 }
@@ -1403,7 +1387,7 @@ static void pmbtoken_exp2_init_method_impl(void) {
   };
 
   pmbtoken_exp2_ok = pmbtoken_init_method(
-      &pmbtoken_exp2_method, NID_secp384r1, kH, sizeof(kH),
+      &pmbtoken_exp2_method, EC_group_p384(), kH, sizeof(kH),
       pmbtoken_exp2_hash_t, pmbtoken_exp2_hash_s, pmbtoken_exp2_hash_c,
       pmbtoken_exp2_hash_to_scalar, 0);
 }
@@ -1577,7 +1561,7 @@ static void pmbtoken_pst1_init_method_impl(void) {
   };
 
   pmbtoken_pst1_ok = pmbtoken_init_method(
-      &pmbtoken_pst1_method, NID_secp384r1, kH, sizeof(kH),
+      &pmbtoken_pst1_method, EC_group_p384(), kH, sizeof(kH),
       pmbtoken_pst1_hash_t, pmbtoken_pst1_hash_s, pmbtoken_pst1_hash_c,
       pmbtoken_pst1_hash_to_scalar, 0);
 }

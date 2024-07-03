@@ -126,6 +126,8 @@ func processKeyGen(vectorSet []byte, m Transactable) (any, error) {
 	var ret []rsaKeyGenTestGroupResponse
 
 	for _, group := range parsed.Groups {
+		group := group
+
 		// GDT means "Generated data test", i.e. "please generate an RSA key".
 		const expectedType = "GDT"
 		if group.Type != expectedType {
@@ -137,6 +139,8 @@ func processKeyGen(vectorSet []byte, m Transactable) (any, error) {
 		}
 
 		for _, test := range group.Tests {
+			test := test
+
 			m.TransactAsync("RSA/keyGen", 5, [][]byte{uint32le(group.ModulusBits)}, func(result [][]byte) error {
 				response.Tests = append(response.Tests, rsaKeyGenTestResponse{
 					ID: test.ID,
@@ -171,6 +175,8 @@ func processSigGen(vectorSet []byte, m Transactable) (any, error) {
 	var ret []rsaSigGenTestGroupResponse
 
 	for _, group := range parsed.Groups {
+		group := group
+
 		// GDT means "Generated data test", i.e. "please generate an RSA signature".
 		const expectedType = "GDT"
 		if group.Type != expectedType {
@@ -184,6 +190,8 @@ func processSigGen(vectorSet []byte, m Transactable) (any, error) {
 		operation := "RSA/sigGen/" + group.Hash + "/" + group.SigType
 
 		for _, test := range group.Tests {
+			test := test
+
 			msg, err := hex.DecodeString(test.MessageHex)
 			if err != nil {
 				return nil, fmt.Errorf("test case %d/%d contains invalid hex: %s", group.ID, test.ID, err)
@@ -226,6 +234,8 @@ func processSigVer(vectorSet []byte, m Transactable) (any, error) {
 	var ret []rsaSigVerTestGroupResponse
 
 	for _, group := range parsed.Groups {
+		group := group
+
 		// GDT means "Generated data test", which makes no sense in this context.
 		const expectedType = "GDT"
 		if group.Type != expectedType {
@@ -248,6 +258,7 @@ func processSigVer(vectorSet []byte, m Transactable) (any, error) {
 		operation := "RSA/sigVer/" + group.Hash + "/" + group.SigType
 
 		for _, test := range group.Tests {
+			test := test
 			msg, err := hex.DecodeString(test.MessageHex)
 			if err != nil {
 				return nil, fmt.Errorf("test case %d/%d contains invalid hex: %s", group.ID, test.ID, err)

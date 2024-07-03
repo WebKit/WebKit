@@ -211,7 +211,8 @@ void OPENSSL_cpuid_setup(void) {
 
     // Clear the XSAVE bit on Knights Landing to mimic Silvermont. This enables
     // some Silvermont-specific codepaths which perform better. See OpenSSL
-    // commit 64d92d74985ebb3d0be58a9718f9e080a14a8e7f.
+    // commit 64d92d74985ebb3d0be58a9718f9e080a14a8e7f and
+    // |CRYPTO_cpu_perf_is_like_silvermont|.
     if ((eax & 0x0fff0ff0) == 0x00050670 /* Knights Landing */ ||
         (eax & 0x0fff0ff0) == 0x00080650 /* Knights Mill (per SDE) */) {
       ecx &= ~(1u << 26);
@@ -238,7 +239,8 @@ void OPENSSL_cpuid_setup(void) {
     // Clear AVX2 and AVX512* bits.
     //
     // TODO(davidben): Should bits 17 and 26-28 also be cleared? Upstream
-    // doesn't clear those.
+    // doesn't clear those. See the comments in
+    // |CRYPTO_hardware_supports_XSAVE|.
     extended_features[0] &=
         ~((1u << 5) | (1u << 16) | (1u << 21) | (1u << 30) | (1u << 31));
   }

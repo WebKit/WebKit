@@ -67,6 +67,7 @@ func (h *xts) Process(vectorSet []byte, m Transactable) (any, error) {
 
 	var ret []xtsTestGroupResponse
 	for _, group := range parsed.Groups {
+		group := group
 		response := xtsTestGroupResponse{
 			ID: group.ID,
 		}
@@ -88,6 +89,7 @@ func (h *xts) Process(vectorSet []byte, m Transactable) (any, error) {
 		funcName := "AES-XTS/" + group.Direction
 
 		for _, test := range group.Tests {
+			test := test
 			if group.KeyLen != len(test.KeyHex)*4/2 {
 				return nil, fmt.Errorf("test case %d/%d contains hex message of length %d but specifies a key length of %d (remember that XTS keys are twice the length of the underlying key size)", group.ID, test.ID, len(test.KeyHex), group.KeyLen)
 			}

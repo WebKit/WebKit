@@ -56,7 +56,7 @@
 
 #include <openssl/bio.h>
 
-#if !defined(OPENSSL_TRUSTY)
+#if !defined(OPENSSL_NO_SOCK)
 
 #include <assert.h>
 #include <errno.h>
@@ -233,7 +233,7 @@ static int conn_state(BIO *bio, BIO_CONNECT *c) {
         BIO_clear_retry_flags(bio);
         ret = connect(bio->num, (struct sockaddr*) &c->them, c->them_length);
         if (ret < 0) {
-          if (bio_fd_should_retry(ret)) {
+          if (bio_socket_should_retry(ret)) {
             BIO_set_flags(bio, (BIO_FLAGS_IO_SPECIAL | BIO_FLAGS_SHOULD_RETRY));
             c->state = BIO_CONN_S_BLOCKED_CONNECT;
             bio->retry_reason = BIO_RR_CONNECT;
@@ -252,7 +252,7 @@ static int conn_state(BIO *bio, BIO_CONNECT *c) {
       case BIO_CONN_S_BLOCKED_CONNECT:
         i = bio_sock_error(bio->num);
         if (i) {
-          if (bio_fd_should_retry(ret)) {
+          if (bio_socket_should_retry(ret)) {
             BIO_set_flags(bio, (BIO_FLAGS_IO_SPECIAL | BIO_FLAGS_SHOULD_RETRY));
             c->state = BIO_CONN_S_BLOCKED_CONNECT;
             bio->retry_reason = BIO_RR_CONNECT;
@@ -296,13 +296,10 @@ end:
 }
 
 static BIO_CONNECT *BIO_CONNECT_new(void) {
-  BIO_CONNECT *ret = OPENSSL_malloc(sizeof(BIO_CONNECT));
-
+  BIO_CONNECT *ret = OPENSSL_zalloc(sizeof(BIO_CONNECT));
   if (ret == NULL) {
     return NULL;
   }
-  OPENSSL_memset(ret, 0, sizeof(BIO_CONNECT));
-
   ret->state = BIO_CONN_S_BEFORE;
   return ret;
 }
@@ -366,7 +363,7 @@ static int conn_read(BIO *bio, char *out, int out_len) {
   ret = (int)recv(bio->num, out, out_len, 0);
   BIO_clear_retry_flags(bio);
   if (ret <= 0) {
-    if (bio_fd_should_retry(ret)) {
+    if (bio_socket_should_retry(ret)) {
       BIO_set_retry_read(bio);
     }
   }
@@ -390,7 +387,7 @@ static int conn_write(BIO *bio, const char *in, int in_len) {
   ret = (int)send(bio->num, in, in_len, 0);
   BIO_clear_retry_flags(bio);
   if (ret <= 0) {
-    if (bio_fd_should_retry(ret)) {
+    if (bio_socket_should_retry(ret)) {
       BIO_set_retry_write(bio);
     }
   }
@@ -532,7 +529,7 @@ int BIO_set_conn_port(BIO *bio, const char *port_str) {
 
 int BIO_set_conn_int_port(BIO *bio, const int *port) {
   char buf[DECIMAL_SIZE(int) + 1];
-  BIO_snprintf(buf, sizeof(buf), "%d", *port);
+  snprintf(buf, sizeof(buf), "%d", *port);
   return BIO_set_conn_port(bio, buf);
 }
 
@@ -544,4 +541,4 @@ int BIO_do_connect(BIO *bio) {
   return (int)BIO_ctrl(bio, BIO_C_DO_STATE_MACHINE, 0, NULL);
 }
 
-#endif  // OPENSSL_TRUSTY
+#endif  // OPENSSL_NO_SOCK

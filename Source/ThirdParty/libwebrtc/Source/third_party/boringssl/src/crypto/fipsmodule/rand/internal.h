@@ -26,9 +26,21 @@ extern "C" {
 #endif
 
 
-#if !defined(OPENSSL_WINDOWS) && !defined(OPENSSL_FUCHSIA) && \
-    !defined(BORINGSSL_UNSAFE_DETERMINISTIC_MODE) && !defined(OPENSSL_TRUSTY)
-#define OPENSSL_URANDOM
+#if defined(BORINGSSL_UNSAFE_DETERMINISTIC_MODE)
+#define OPENSSL_RAND_DETERMINISTIC
+#elif defined(OPENSSL_TRUSTY)
+#define OPENSSL_RAND_TRUSTY
+#elif defined(OPENSSL_WINDOWS)
+#define OPENSSL_RAND_WINDOWS
+#elif defined(OPENSSL_LINUX)
+#define OPENSSL_RAND_URANDOM
+#elif defined(OPENSSL_APPLE) && !defined(OPENSSL_MACOS)
+// Unlike macOS, iOS and similar hide away getentropy().
+#define OPENSSL_RAND_IOS
+#else
+// By default if you are integrating BoringSSL we expect you to
+// provide getentropy from the <unistd.h> header file.
+#define OPENSSL_RAND_GETENTROPY
 #endif
 
 // RAND_bytes_with_additional_data samples from the RNG after mixing 32 bytes
@@ -70,11 +82,15 @@ void CRYPTO_sysrand(uint8_t *buf, size_t len);
 // depending on the vendor's configuration.
 void CRYPTO_sysrand_for_seed(uint8_t *buf, size_t len);
 
-#if defined(OPENSSL_URANDOM)
+#if defined(OPENSSL_RAND_URANDOM) || defined(OPENSSL_RAND_WINDOWS)
 // CRYPTO_init_sysrand initializes long-lived resources needed to draw entropy
 // from the operating system.
 void CRYPTO_init_sysrand(void);
+#else
+OPENSSL_INLINE void CRYPTO_init_sysrand(void) {}
+#endif  // defined(OPENSSL_RAND_URANDOM) || defined(OPENSSL_RAND_WINDOWS)
 
+#if defined(OPENSSL_RAND_URANDOM)
 // CRYPTO_sysrand_if_available fills |len| bytes at |buf| with entropy from the
 // operating system, or early /dev/urandom data, and returns 1, _if_ the entropy
 // pool is initialized or if getrandom() is not available and not in FIPS mode.
@@ -82,13 +98,11 @@ void CRYPTO_init_sysrand(void);
 // return 0.
 int CRYPTO_sysrand_if_available(uint8_t *buf, size_t len);
 #else
-OPENSSL_INLINE void CRYPTO_init_sysrand(void) {}
-
 OPENSSL_INLINE int CRYPTO_sysrand_if_available(uint8_t *buf, size_t len) {
   CRYPTO_sysrand(buf, len);
   return 1;
 }
-#endif
+#endif  // defined(OPENSSL_RAND_URANDOM)
 
 // rand_fork_unsafe_buffering_enabled returns whether fork-unsafe buffering has
 // been enabled via |RAND_enable_fork_unsafe_buffering|.

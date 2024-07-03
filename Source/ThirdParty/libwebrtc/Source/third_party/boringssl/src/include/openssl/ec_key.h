@@ -259,8 +259,15 @@ OPENSSL_EXPORT int EC_KEY_marshal_private_key(CBB *cbb, const EC_KEY *key,
                                               unsigned enc_flags);
 
 // EC_KEY_parse_curve_name parses a DER-encoded OBJECT IDENTIFIER as a curve
-// name from |cbs| and advances |cbs|. It returns a newly-allocated |EC_GROUP|
-// or NULL on error.
+// name from |cbs| and advances |cbs|. It returns the decoded |EC_GROUP| or NULL
+// on error.
+//
+// This function returns a non-const pointer which may be passed to
+// |EC_GROUP_free|. However, the resulting object is actually static and calling
+// |EC_GROUP_free| is optional.
+//
+// TODO(davidben): Make this return a const pointer, if it does not break too
+// many callers.
 OPENSSL_EXPORT EC_GROUP *EC_KEY_parse_curve_name(CBS *cbs);
 
 // EC_KEY_marshal_curve_name marshals |group| as a DER-encoded OBJECT IDENTIFIER
@@ -269,10 +276,16 @@ OPENSSL_EXPORT EC_GROUP *EC_KEY_parse_curve_name(CBS *cbs);
 OPENSSL_EXPORT int EC_KEY_marshal_curve_name(CBB *cbb, const EC_GROUP *group);
 
 // EC_KEY_parse_parameters parses a DER-encoded ECParameters structure (RFC
-// 5480) from |cbs| and advances |cbs|. It returns a newly-allocated |EC_GROUP|
-// or NULL on error. It supports the namedCurve and specifiedCurve options, but
-// use of specifiedCurve is deprecated. Use |EC_KEY_parse_curve_name|
-// instead.
+// 5480) from |cbs| and advances |cbs|. It returns the resulting |EC_GROUP| or
+// NULL on error. It supports the namedCurve and specifiedCurve options, but use
+// of specifiedCurve is deprecated. Use |EC_KEY_parse_curve_name| instead.
+//
+// This function returns a non-const pointer which may be passed to
+// |EC_GROUP_free|. However, the resulting object is actually static and calling
+// |EC_GROUP_free| is optional.
+//
+// TODO(davidben): Make this return a const pointer, if it does not break too
+// many callers.
 OPENSSL_EXPORT EC_GROUP *EC_KEY_parse_parameters(CBS *cbs);
 
 

@@ -425,7 +425,7 @@ BN_ULONG bn_reduce_once(BN_ULONG *r, const BN_ULONG *a, BN_ULONG carry,
   //
   // Although |carry| may be one if it was one on input and |bn_sub_words|
   // returns zero, this would give |r| > |m|, violating our input assumptions.
-  assert(carry == 0 || carry == (BN_ULONG)-1);
+  declassify_assert(carry + 1 <= 1);
   bn_select_words(r, carry, a /* r < 0 */, r /* r >= 0 */, num);
   return carry;
 }
@@ -434,7 +434,7 @@ BN_ULONG bn_reduce_once_in_place(BN_ULONG *r, BN_ULONG carry, const BN_ULONG *m,
                                  BN_ULONG *tmp, size_t num) {
   // See |bn_reduce_once| for why this logic works.
   carry -= bn_sub_words(tmp, r, m, num);
-  assert(carry == 0 || carry == (BN_ULONG)-1);
+  declassify_assert(carry + 1 <= 1);
   bn_select_words(r, carry, r /* tmp < 0 */, tmp /* tmp >= 0 */, num);
   return carry;
 }
@@ -504,7 +504,7 @@ int bn_div_consttime(BIGNUM *quotient, BIGNUM *remainder,
   // |divisor_min_bits| bits, the top |divisor_min_bits - 1| can be incorporated
   // without reductions. This significantly speeds up |RSA_check_key|. For
   // simplicity, we round down to a whole number of words.
-  assert(divisor_min_bits <= BN_num_bits(divisor));
+  declassify_assert(divisor_min_bits <= BN_num_bits(divisor));
   int initial_words = 0;
   if (divisor_min_bits > 0) {
     initial_words = (divisor_min_bits - 1) / BN_BITS2;
@@ -711,15 +711,22 @@ int BN_mod_lshift(BIGNUM *r, const BIGNUM *a, int n, const BIGNUM *m,
 
 int bn_mod_lshift_consttime(BIGNUM *r, const BIGNUM *a, int n, const BIGNUM *m,
                             BN_CTX *ctx) {
-  if (!BN_copy(r, a)) {
+  if (!BN_copy(r, a) ||
+      !bn_resize_words(r, m->width)) {
     return 0;
   }
-  for (int i = 0; i < n; i++) {
-    if (!bn_mod_lshift1_consttime(r, r, m, ctx)) {
-      return 0;
+
+  BN_CTX_start(ctx);
+  BIGNUM *tmp = bn_scratch_space_from_ctx(m->width, ctx);
+  int ok = tmp != NULL;
+  if (ok) {
+    for (int i = 0; i < n; i++) {
+      bn_mod_add_words(r->d, r->d, r->d, m->d, tmp->d, m->width);
     }
+    r->neg = 0;
   }
-  return 1;
+  BN_CTX_end(ctx);
+  return ok;
 }
 
 int BN_mod_lshift_quick(BIGNUM *r, const BIGNUM *a, int n, const BIGNUM *m) {

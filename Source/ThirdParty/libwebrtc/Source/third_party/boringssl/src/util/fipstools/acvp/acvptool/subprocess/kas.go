@@ -77,6 +77,7 @@ func (k *kas) Process(vectorSet []byte, m Transactable) (any, error) {
 	// See https://pages.nist.gov/ACVP/draft-fussell-acvp-kas-ecc.html#name-test-vectors
 	var ret []kasTestGroupResponse
 	for _, group := range parsed.Groups {
+		group := group
 		response := kasTestGroupResponse{
 			ID: group.ID,
 		}
@@ -119,6 +120,8 @@ func (k *kas) Process(vectorSet []byte, m Transactable) (any, error) {
 		method := "ECDH/" + group.Curve
 
 		for _, test := range group.Tests {
+			test := test
+
 			var xHex, yHex, privateKeyHex string
 			if useStaticNamedFields {
 				xHex, yHex, privateKeyHex = test.StaticXHex, test.StaticYHex, test.StaticPrivateKeyHex

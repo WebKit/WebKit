@@ -94,7 +94,7 @@ static int eckey_pub_decode(EVP_PKEY *out, CBS *params, CBS *key) {
 
   // The parameters are a named curve.
   EC_KEY *eckey = NULL;
-  EC_GROUP *group = EC_KEY_parse_curve_name(params);
+  const EC_GROUP *group = EC_KEY_parse_curve_name(params);
   if (group == NULL || CBS_len(params) != 0) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);
     goto err;
@@ -107,12 +107,10 @@ static int eckey_pub_decode(EVP_PKEY *out, CBS *params, CBS *key) {
     goto err;
   }
 
-  EC_GROUP_free(group);
   EVP_PKEY_assign_EC_KEY(out, eckey);
   return 1;
 
 err:
-  EC_GROUP_free(group);
   EC_KEY_free(eckey);
   return 0;
 }
@@ -135,15 +133,13 @@ static int eckey_pub_cmp(const EVP_PKEY *a, const EVP_PKEY *b) {
 
 static int eckey_priv_decode(EVP_PKEY *out, CBS *params, CBS *key) {
   // See RFC 5915.
-  EC_GROUP *group = EC_KEY_parse_parameters(params);
+  const EC_GROUP *group = EC_KEY_parse_parameters(params);
   if (group == NULL || CBS_len(params) != 0) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);
-    EC_GROUP_free(group);
     return 0;
   }
 
   EC_KEY *ec_key = EC_KEY_parse_private_key(key, group);
-  EC_GROUP_free(group);
   if (ec_key == NULL || CBS_len(key) != 0) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);
     EC_KEY_free(ec_key);
@@ -215,7 +211,7 @@ static int ec_bits(const EVP_PKEY *pkey) {
     ERR_clear_error();
     return 0;
   }
-  return BN_num_bits(EC_GROUP_get0_order(group));
+  return EC_GROUP_order_bits(group);
 }
 
 static int ec_missing_parameters(const EVP_PKEY *pkey) {
@@ -304,3 +300,33 @@ const EVP_PKEY_ASN1_METHOD ec_asn1_meth = {
 
     int_ec_free,
 };
+
+int EVP_PKEY_set1_EC_KEY(EVP_PKEY *pkey, EC_KEY *key) {
+  if (EVP_PKEY_assign_EC_KEY(pkey, key)) {
+    EC_KEY_up_ref(key);
+    return 1;
+  }
+  return 0;
+}
+
+int EVP_PKEY_assign_EC_KEY(EVP_PKEY *pkey, EC_KEY *key) {
+  evp_pkey_set_method(pkey, &ec_asn1_meth);
+  pkey->pkey = key;
+  return key != NULL;
+}
+
+EC_KEY *EVP_PKEY_get0_EC_KEY(const EVP_PKEY *pkey) {
+  if (pkey->type != EVP_PKEY_EC) {
+    OPENSSL_PUT_ERROR(EVP, EVP_R_EXPECTING_AN_EC_KEY_KEY);
+    return NULL;
+  }
+  return pkey->pkey;
+}
+
+EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey) {
+  EC_KEY *ec_key = EVP_PKEY_get0_EC_KEY(pkey);
+  if (ec_key != NULL) {
+    EC_KEY_up_ref(ec_key);
+  }
+  return ec_key;
+}
