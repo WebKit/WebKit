@@ -1,0 +1,47 @@
+<style>
+div {
+  font-family: Ahem;
+  font-size: 20px;
+}
+</style>
+<div>
+  X<span>
+   <div class=replace_this>Y</div>
+ </span>
+ <div></div>
+</div>
+
+<div>
+ <div></div>
+  X<span>
+   <div class=replace_this>Y</div>
+ </span>
+</div>
+
+<div>
+  X<span>
+   <div class=replace_this>Y</div>
+ </span>
+ <div></div>
+ <div></div>
+</div>
+
+<div>
+  X<span>
+    <span>
+      <div class=replace_this>Y</div>
+    </span>
+ </span>
+</div>
+
+<div>
+  <span>
+   <div class=replace_this>Y</div>
+ </span>X
+</div>
+<script>
+document.body.offsetHeight;
+[...document.getElementsByClassName("replace_this")].forEach(replaceThis => {
+  replaceThis.replaceWith(document.createElement("span").textContent = "X");
+});
+</script>
