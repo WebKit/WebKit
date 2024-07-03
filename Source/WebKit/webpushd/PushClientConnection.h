@@ -98,7 +98,6 @@ private:
 
     // PushClientConnectionMessages
     void setPushAndNotificationsEnabledForOrigin(const String& originString, bool, CompletionHandler<void()>&& replySender);
-    void deletePushAndNotificationRegistration(const String& originString, CompletionHandler<void(const String&)>&& replySender);
     void injectPushMessageForTesting(PushMessageForTesting&&, CompletionHandler<void(const String&)>&&);
     void injectEncryptedPushMessageForTesting(const String&, CompletionHandler<void(bool)>&&);
     void getPendingPushMessages(CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender);

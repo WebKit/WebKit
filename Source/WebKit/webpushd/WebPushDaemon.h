@@ -76,7 +76,6 @@ public:
 
     // Message handlers
     void setPushAndNotificationsEnabledForOrigin(PushClientConnection&, const String& originString, bool, CompletionHandler<void()>&& replySender);
-    void deletePushAndNotificationRegistration(PushClientConnection&, const String& originString, CompletionHandler<void(const String&)>&& replySender);
     void injectPushMessageForTesting(PushClientConnection&, PushMessageForTesting&&, CompletionHandler<void(const String&)>&&);
     void injectEncryptedPushMessageForTesting(PushClientConnection&, const String&, CompletionHandler<void(bool)>&&);
     void getPendingPushMessages(PushClientConnection&, CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender);
@@ -95,8 +94,6 @@ public:
 private:
     WebPushDaemon();
 
-    bool canRegisterForNotifications(PushClientConnection&);
-
     void notifyClientPushMessageIsAvailable(const WebCore::PushSubscriptionSetIdentifier&);
 
     void setPushService(std::unique_ptr<PushService>&&);
@@ -105,8 +102,6 @@ private:
     void ensureIncomingPushTransaction();
     void releaseIncomingPushTransaction();
     void incomingPushTransactionTimerFired();
-
-    void deletePushRegistration(const WebCore::PushSubscriptionSetIdentifier&, const String&, CompletionHandler<void()>&&);
 
     PushClientConnection* toPushClientConnection(xpc_connection_t);
     HashMap<xpc_connection_t, Ref<PushClientConnection>> m_connectionMap;
