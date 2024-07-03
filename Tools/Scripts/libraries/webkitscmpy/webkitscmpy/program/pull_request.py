@@ -439,6 +439,11 @@ class PullRequest(Command):
             for commit in commits
             for issue in commit.issues
         ]
+        if not issues:
+            sys.stderr.write('Could not find any issues associated with this commit.\n')
+            sys.stderr.write('Run `git-webkit commit --amend` to populate the commit template.\n')
+            sys.stderr.write('Aborting pull request.\n')
+            return 1
 
         radar_issue = next(iter(filter(lambda issue: isinstance(issue.tracker, radar.Tracker), issues)), None)
         not_radar = next(iter(filter(lambda issue: not isinstance(issue.tracker, radar.Tracker), issues)), None)
