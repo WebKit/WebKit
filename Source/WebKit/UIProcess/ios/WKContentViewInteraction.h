@@ -512,6 +512,7 @@ struct ImageAnalysisContextMenuActionData {
     BOOL _isHandlingActiveKeyEvent;
     BOOL _isHandlingActivePressesEvent;
     BOOL _isDeferringKeyEventsToInputMethod;
+    BOOL _isUpdatingAccessoryView;
 
     BOOL _focusRequiresStrongPasswordAssistance;
     BOOL _waitingForEditDragSnapshot;
