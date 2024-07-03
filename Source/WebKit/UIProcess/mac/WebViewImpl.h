@@ -672,7 +672,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     void takeFocus(WebCore::FocusDirection);
     void clearPromisedDragImage();
 
-    void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const WebCore::IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&);
+    void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, const WebCore::IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&);
     void handleDOMPasteRequestForCategoryWithResult(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteAccessResponse);
     NSMenu *domPasteMenu() const { return m_domPasteMenu.get(); }
     void hideDOMPasteMenuWithResult(WebCore::DOMPasteAccessResponse);

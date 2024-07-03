@@ -1,0 +1,65 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ DOMPasteAllowed=false useFlexibleViewport=true ignoreSynchronousMessagingTimeouts=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    margin: 0;
+}
+
+#copy, #paste {
+    width: 100%;
+    text-align: center;
+    height: 50px;
+    border: 1px dashed black;
+    font-size: 40px;
+    padding: 1em 0;
+}
+</style>
+</head>
+<body>
+<div id="copy">Click to copy</div>
+<div id="paste">Click to paste</div>
+<iframe></iframe>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+jsTestIsAsync = true;
+copiedText = false;
+pastedText = false;
+description("Verifies that programmatic paste in a child frame with the same origin as the parent does not crash.");
+
+const copy = document.getElementById("copy");
+copy.addEventListener("click", () => {
+    getSelection().selectAllChildren(copy);
+    document.execCommand("Copy");
+    getSelection().removeAllRanges();
+    copiedText = true;
+});
+
+const paste = document.getElementById("paste");
+paste.addEventListener("click", () => {
+    let subframe = document.querySelector("iframe");
+    subframe.contentDocument.designMode = "on";
+    subframe.contentDocument.execCommand("Paste");
+    subframe.contentDocument.designMode = "off";
+    pastedText = true;
+});
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.activateElement(copy);
+    await UIHelper.ensurePresentationUpdate();
+    await shouldBecomeEqual("copiedText", "true");
+    await UIHelper.activateElement(paste);
+    await shouldBecomeEqual("pastedText", "true");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

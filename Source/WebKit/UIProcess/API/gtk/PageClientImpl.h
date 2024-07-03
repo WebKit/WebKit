@@ -162,7 +162,7 @@ private:
     void isPlayingAudioWillChange() final { }
     void isPlayingAudioDidChange() final { }
 
-    void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
+    void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 
