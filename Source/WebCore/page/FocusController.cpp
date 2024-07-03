@@ -45,6 +45,7 @@
 #include "FrameTree.h"
 #include "HTMLAreaElement.h"
 #include "HTMLImageElement.h"
+#include "HTMLFormControlElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
@@ -392,16 +393,37 @@ static inline void dispatchEventsOnWindowAndFocusedElement(Document* document, b
     // https://bugs.webkit.org/show_bug.cgi?id=27105
 
     // Do not fire events while modal dialogs are up.  See https://bugs.webkit.org/show_bug.cgi?id=33962
+    
+
     if (Page* page = document->page()) {
         if (page->defersLoading())
             return;
     }
 
+
+
+
     if (!focused && document->focusedElement())
-        document->focusedElement()->dispatchBlurEvent(nullptr);
-    document->dispatchWindowEvent(Event::create(focused ? eventNames().focusEvent : eventNames().blurEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    {    
+        document->focusedElement()->dispatchBlurEvent(nullptr); 
+        
+        if (RefPtr formControlElement = dynamicDowncast<HTMLFormControlElement>(*document->focusedElement())) 
+        {
+                if (formControlElement->wasChangedSinceLastFormControlChangeEvent())
+                    formControlElement->dispatchFormControlChangeEvent();
+        }  
+    }
+
+     document->dispatchWindowEvent(Event::create(focused ? eventNames().focusEvent : eventNames().blurEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    
     if (focused && document->focusedElement())
+    {
         document->focusedElement()->dispatchFocusEvent(nullptr, { });
+    }
+
+ 
+
+    
 }
 
 static inline bool isFocusableElementOrScopeOwner(Element& element, KeyboardEvent* event)
@@ -933,6 +955,7 @@ bool FocusController::setFocusedElement(Element* element, LocalFrame& newFocused
     RefPtr oldFocusedElement = oldDocument ? oldDocument->focusedElement() : nullptr;
     Ref page = m_page.get();
     if (oldFocusedElement == element) {
+        
         if (element)
             page->chrome().client().elementDidRefocus(*element, options);
         return true;
