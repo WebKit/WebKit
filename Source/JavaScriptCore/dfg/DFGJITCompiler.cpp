@@ -377,15 +377,20 @@ void JITCompiler::exceptionJumpWithCallFrameRollback()
 }
 
 #if USE(JSVALUE32_64)
-void* JITCompiler::addressOfDoubleConstant(Node* node)
+void* JITCompiler::addressOfDoubleConstant(double value)
 {
-    double value = node->asNumber();
     int64_t valueBits = bitwise_cast<int64_t>(value);
     return m_graph.m_doubleConstantsMap.ensure(valueBits, [&]{
         double* addressInConstantPool = m_graph.m_doubleConstants.add();
         *addressInConstantPool = value;
         return addressInConstantPool;
     }).iterator->value;
+}
+
+void* JITCompiler::addressOfDoubleConstant(Node* node)
+{
+    double value = node->asNumber();
+    return addressOfDoubleConstant(value);
 }
 #endif
 

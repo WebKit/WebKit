@@ -178,6 +178,7 @@ public:
     }
 
 #if USE(JSVALUE32_64)
+    void* addressOfDoubleConstant(double);
     void* addressOfDoubleConstant(Node*);
 #endif
 

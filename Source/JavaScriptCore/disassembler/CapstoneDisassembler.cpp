@@ -46,6 +46,8 @@ bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, vo
         return false;
     if (cs_option(handle, CS_OPT_SYNTAX, CS_OPT_SYNTAX_NOREGNAME) != CS_ERR_OK)
         return false;
+    if (cs_option(handle, CS_OPT_SKIPDATA, CS_OPT_ON) != CS_ERR_OK)
+        return false;
 #elif CPU(ARM64)
     if (cs_open(CS_ARCH_ARM64, CS_MODE_ARM, &handle) != CS_ERR_OK)
         return false;

@@ -459,9 +459,6 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
 #if DUMP_LINK_STATISTICS
     dumpLinkStatistics(codeOutData, initialSize, m_size);
 #endif
-#if DUMP_CODE
-    dumpCode(codeOutData, m_size);
-#endif
 }
 #endif // ENABLE(BRANCH_COMPACTION)
 
@@ -600,22 +597,20 @@ void LinkBuffer::dumpCode(void* code, size_t size)
 #if CPU(ARM_THUMB2)
     // Dump the generated code in an asm file format that can be assembled and then disassembled
     // for debugging purposes. For example, save this output as jit.s:
-    //   gcc -arch armv7 -c jit.s
-    //   otool -tv jit.o
-    static unsigned codeCount = 0;
+    //    export FILE=jit && gcc -march=armv7 -c "$FILE.s" && objdump -D "$FILE.o" --disassembler-options=force-thumb > "$FILE.txt"
     unsigned short* tcode = static_cast<unsigned short*>(code);
     size_t tsize = size / sizeof(short);
     char nameBuf[128];
-    snprintf(nameBuf, sizeof(nameBuf), "_jsc_jit%u", codeCount++);
+    snprintf(nameBuf, sizeof(nameBuf), "_jsc_jit_%p", code);
     dataLogF("\t.syntax unified\n"
-            "\t.section\t__TEXT,__text,regular,pure_instructions\n"
+            "\t.thumb\n"
             "\t.globl\t%s\n"
             "\t.align 2\n"
             "\t.code 16\n"
-            "\t.thumb_func\t%s\n"
+            "\t.thumb_func\n"
             "# %p\n"
-            "%s:\n", nameBuf, nameBuf, code, nameBuf);
-        
+            "%s:\n", nameBuf, code, nameBuf);
+
     for (unsigned i = 0; i < tsize; i++)
         dataLogF("\t.short\t0x%x\n", tcode[i]);
 #endif

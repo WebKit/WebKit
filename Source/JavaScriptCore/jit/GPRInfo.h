@@ -483,9 +483,8 @@ public:
     static constexpr GPRReg nonPreservedNonReturnGPR = ARMRegisters::r5;
     static constexpr GPRReg nonPreservedNonArgumentGPR0 = ARMRegisters::r5;
     static constexpr GPRReg nonPreservedNonArgumentGPR1 = ARMRegisters::r4;
-    static constexpr GPRReg nonPreservedNonArgumentGPR2 = ARMRegisters::r9;
 
-    static constexpr GPRReg handlerGPR = GPRInfo::nonPreservedNonArgumentGPR2;
+    static constexpr GPRReg handlerGPR = ARMRegisters::lr;
 
     static constexpr GPRReg wasmScratchGPR0 = regT5;
     static constexpr GPRReg wasmScratchGPR1 = regT6;
@@ -1066,7 +1065,7 @@ struct StaticScratchRegisterAllocator {
         unsigned resultIndex = 0;
         for (unsigned index = 0; index < RegisterBank::numberOfRegisters; ++index) {
             auto reg = RegisterBank::toRegister(index);
-            if (noOverlap(registers..., reg))
+            if (resultIndex < size && noOverlap(registers..., reg))
                 array[resultIndex++] = reg;
         }
         return array;

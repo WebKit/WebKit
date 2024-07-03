@@ -4132,7 +4132,7 @@ private:
             GPRReg scratch2GPR = params.gpScratch(1);
             GPRReg scratch3GPR = params.gpScratch(2);
 
-            CCallHelpers::JumpList slowCases = jit.loadMegamorphicProperty(state->vm(), baseGPR, InvalidGPRReg, uid, resultGPR, scratch1GPR, scratch2GPR, scratch3GPR);
+            CCallHelpers::JumpList slowCases = jit.loadMegamorphicProperty(state->vm(), baseGPR, InvalidGPRReg, uid, JSValueRegs { resultGPR }, scratch1GPR, scratch2GPR, scratch3GPR);
             CCallHelpers::Label doneForSlow = jit.label();
 
             params.addLatePath([=](CCallHelpers& jit) {
@@ -4196,7 +4196,7 @@ private:
             slowCases.append(jit.branchIfRopeStringImpl(scratch4GPR));
             slowCases.append(jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch4GPR, StringImpl::flagsOffset()), CCallHelpers::TrustedImm32(StringImpl::flagIsAtom())));
 
-            slowCases.append(jit.loadMegamorphicProperty(state->vm(), baseGPR, scratch4GPR, nullptr, resultGPR, scratch1GPR, scratch2GPR, scratch3GPR));
+            slowCases.append(jit.loadMegamorphicProperty(state->vm(), baseGPR, scratch4GPR, nullptr, JSValueRegs { resultGPR }, scratch1GPR, scratch2GPR, scratch3GPR));
             CCallHelpers::Label doneForSlow = jit.label();
 
             params.addLatePath([=](CCallHelpers& jit) {
@@ -4293,7 +4293,7 @@ private:
             GPRReg scratch2GPR = params.gpScratch(1);
             GPRReg scratch3GPR = params.gpScratch(2);
 
-            CCallHelpers::JumpList slowCases = jit.loadMegamorphicProperty(state->vm(), baseGPR, InvalidGPRReg, uid, resultGPR, scratch1GPR, scratch2GPR, scratch3GPR);
+            CCallHelpers::JumpList slowCases = jit.loadMegamorphicProperty(state->vm(), baseGPR, InvalidGPRReg, uid, JSValueRegs { resultGPR }, scratch1GPR, scratch2GPR, scratch3GPR);
             CCallHelpers::Label doneForSlow = jit.label();
 
             params.addLatePath([=](CCallHelpers& jit) {
@@ -4467,7 +4467,7 @@ private:
             slowCases.append(jit.branchIfRopeStringImpl(scratch4GPR));
             slowCases.append(jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch4GPR, StringImpl::flagsOffset()), CCallHelpers::TrustedImm32(StringImpl::flagIsAtom())));
 
-            slowCases.append(jit.loadMegamorphicProperty(state->vm(), baseGPR, scratch4GPR, nullptr, resultGPR, scratch1GPR, scratch2GPR, scratch3GPR));
+            slowCases.append(jit.loadMegamorphicProperty(state->vm(), baseGPR, scratch4GPR, nullptr, JSValueRegs { resultGPR }, scratch1GPR, scratch2GPR, scratch3GPR));
             CCallHelpers::Label doneForSlow = jit.label();
 
             params.addLatePath([=](CCallHelpers& jit) {
@@ -4803,7 +4803,8 @@ private:
             slowCases.append(jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch4GPR, StringImpl::flagsOffset()), CCallHelpers::TrustedImm32(StringImpl::flagIsAtom())));
 
             CCallHelpers::JumpList slow, reallocating;
-            std::tie(slow, reallocating) = jit.storeMegamorphicProperty(state->vm(), baseGPR, scratch4GPR, nullptr, valueGPR, scratch1GPR, scratch2GPR, scratch3GPR);
+            GPRReg storeEntryGPR = InvalidGPRReg;
+            std::tie(slow, reallocating, storeEntryGPR) = jit.storeMegamorphicProperty(state->vm(), baseGPR, { scratch4GPR }, JSValueRegs { valueGPR }, scratch1GPR, scratch2GPR, scratch3GPR);
             slowCases.append(WTFMove(slow));
             CCallHelpers::Label doneForSlow = jit.label();
 
@@ -4820,7 +4821,7 @@ private:
                 callOperation(
                     *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                     exceptions.get(), operationPutByMegamorphicReallocating, InvalidGPRReg,
-                    CCallHelpers::TrustedImmPtr(&state->vm()), baseGPR, valueGPR, scratch3GPR).call();
+                    CCallHelpers::TrustedImmPtr(&state->vm()), baseGPR, valueGPR, storeEntryGPR).call();
                 jit.jump().linkTo(doneForSlow, &jit);
             });
         });
@@ -5349,7 +5350,8 @@ private:
             GPRReg scratch3GPR = params.gpScratch(2);
 
             CCallHelpers::JumpList slow, reallocating;
-            std::tie(slow, reallocating) = jit.storeMegamorphicProperty(state->vm(), baseGPR, InvalidGPRReg, uid, valueGPR, scratch1GPR, scratch2GPR, scratch3GPR);
+            GPRReg storeEntryGPR = InvalidGPRReg;
+            std::tie(slow, reallocating, storeEntryGPR) = jit.storeMegamorphicProperty(state->vm(), baseGPR, { uid }, JSValueRegs { valueGPR }, scratch1GPR, scratch2GPR, scratch3GPR);
             CCallHelpers::Label doneForSlow = jit.label();
 
             params.addLatePath([=](CCallHelpers& jit) {
@@ -14533,7 +14535,7 @@ IGNORE_CLANG_WARNINGS_END
             GPRReg scratch2GPR = params.gpScratch(1);
             GPRReg scratch3GPR = params.gpScratch(2);
 
-            CCallHelpers::JumpList slowCases = jit.hasMegamorphicProperty(state->vm(), baseGPR, InvalidGPRReg, uid, resultGPR, scratch1GPR, scratch2GPR, scratch3GPR);
+            CCallHelpers::JumpList slowCases = jit.hasMegamorphicProperty(state->vm(), baseGPR, InvalidGPRReg, uid, JSValueRegs { resultGPR }, scratch1GPR, scratch2GPR, scratch3GPR);
             CCallHelpers::Label doneForSlow = jit.label();
 
             params.addLatePath([=](CCallHelpers& jit) {
@@ -14597,7 +14599,7 @@ IGNORE_CLANG_WARNINGS_END
             slowCases.append(jit.branchIfRopeStringImpl(scratch4GPR));
             slowCases.append(jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch4GPR, StringImpl::flagsOffset()), CCallHelpers::TrustedImm32(StringImpl::flagIsAtom())));
 
-            slowCases.append(jit.hasMegamorphicProperty(state->vm(), baseGPR, scratch4GPR, nullptr, resultGPR, scratch1GPR, scratch2GPR, scratch3GPR));
+            slowCases.append(jit.hasMegamorphicProperty(state->vm(), baseGPR, scratch4GPR, nullptr, JSValueRegs { resultGPR }, scratch1GPR, scratch2GPR, scratch3GPR));
             CCallHelpers::Label doneForSlow = jit.label();
 
             params.addLatePath([=](CCallHelpers& jit) {

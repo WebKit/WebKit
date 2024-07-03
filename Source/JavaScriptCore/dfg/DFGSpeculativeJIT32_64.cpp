@@ -4272,6 +4272,56 @@ void SpeculativeJIT::compile(Node* node)
         noResult(node);
         break;
 
+    case FunctionBind:
+        compileFunctionBind(node);
+        break;
+
+    case NewBoundFunction:
+        compileNewBoundFunction(node);
+        break;
+
+    case EnumeratorPutByVal: {
+        compileEnumeratorPutByVal(node);
+        break;
+    }
+
+    case GetByIdMegamorphic: {
+        compileGetByIdMegamorphic(node);
+        break;
+    }
+
+    case GetByValMegamorphic: {
+        compileGetByValMegamorphic(node);
+        break;
+    }
+
+    case GetByIdWithThisMegamorphic:
+        compileGetByIdWithThisMegamorphic(node);
+        break;
+
+    case GetByValWithThisMegamorphic: {
+        compileGetByValWithThisMegamorphic(node);
+        break;
+    }
+
+    case PutByIdMegamorphic: {
+        compilePutByIdMegamorphic(node);
+        break;
+    }
+
+    case PutByValMegamorphic: {
+        compilePutByValMegamorphic(node);
+        break;
+    }
+
+    case InByIdMegamorphic:
+        compileInByIdMegamorphic(node);
+        break;
+
+    case InByValMegamorphic:
+        compileInByValMegamorphic(node);
+        break;
+
     case LastNodeType:
     case Phi:
     case Upsilon:
@@ -4336,17 +4386,6 @@ void SpeculativeJIT::compile(Node* node)
     case DateSetTime:
     case StringCodePointAt:
     case CallWasm:
-    case FunctionBind:
-    case NewBoundFunction:
-    case EnumeratorPutByVal:
-    case GetByIdMegamorphic:
-    case GetByIdWithThisMegamorphic:
-    case GetByValMegamorphic:
-    case GetByValWithThisMegamorphic:
-    case PutByIdMegamorphic:
-    case PutByValMegamorphic:
-    case InByIdMegamorphic:
-    case InByValMegamorphic:
         DFG_CRASH(m_graph, node, "unexpected node in DFG backend");
         break;
     }

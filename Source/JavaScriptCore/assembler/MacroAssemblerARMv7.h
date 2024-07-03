@@ -2974,6 +2974,11 @@ public:
         done.link(this);
     }
 
+    void moveConditionallyPtr(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        return moveConditionally32(cond, left, right, thenCase, elseCase, dest);
+    }
+
     ALWAYS_INLINE DataLabel32 moveWithPatch(TrustedImm32 imm, RegisterID dst)
     {
         padBeforePatch();

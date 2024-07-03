@@ -83,4 +83,28 @@ void MegamorphicCache::clearEntries()
     m_epoch = 1;
 }
 
+void MegamorphicCache::StoreEntry::dump(PrintStream& out) const
+{
+    if (m_epoch == MegamorphicCache::invalidEpoch) {
+        out.print("<invalid epoch>");
+        return;
+    }
+    out.print("Case: ", m_uid, " ", *m_oldStructureID.decode(), " ", *m_newStructureID.decode(), " ", m_offset, " reallocating: ", m_reallocating);
+}
+
+void MegamorphicCache::dump(PrintStream& out) const
+{
+    for (auto& entry : m_storeCachePrimaryEntries) {
+        if (entry.m_epoch == MegamorphicCache::invalidEpoch)
+            continue;
+        out.println(RawPointer(&entry), ": ", entry);
+    }
+    out.println("secondary:");
+    for (auto& entry : m_storeCacheSecondaryEntries) {
+        if (entry.m_epoch == MegamorphicCache::invalidEpoch)
+            continue;
+        out.println(RawPointer(&entry), ": ", entry);
+    }
+}
+
 } // namespace JSC
