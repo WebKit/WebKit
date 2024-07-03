@@ -52,7 +52,7 @@ public:
     virtual void didReceiveMotionEvent(const WebCore::FloatPoint&) { };
 
 protected:
-    void handleMotion(WebCore::FloatSize&&);
+    void handleMotion(const WebCore::FloatSize&);
 
     WebPageProxy& m_webPage;
     WebCore::FloatPoint m_position;
