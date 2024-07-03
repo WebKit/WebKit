@@ -412,6 +412,7 @@ static inline void dispatchEventsOnWindowAndFocusedElement(Document* document, b
                 if (formControlElement->wasChangedSinceLastFormControlChangeEvent())
                     formControlElement->dispatchFormControlChangeEvent();
         }  
+        
     }
 
      document->dispatchWindowEvent(Event::create(focused ? eventNames().focusEvent : eventNames().blurEvent, Event::CanBubble::No, Event::IsCancelable::No));
