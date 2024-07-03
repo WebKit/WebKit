@@ -5597,12 +5597,13 @@ bool Document::setFocusedElement(Element* element)
 
 bool Document::setFocusedElement(Element* newFocusedElement, const FocusOptions& options)
 {
+   
     // Make sure newFocusedElement is actually in this document
     if (newFocusedElement && (&newFocusedElement->document() != this))
         return true;
 
     if (m_focusedElement == newFocusedElement)
-        return true;
+         return true;
 
     if (backForwardCacheState() != NotInBackForwardCache)
         return false;
@@ -5757,6 +5758,7 @@ bool Document::setFocusedElement(Element* newFocusedElement, const FocusOptions&
 
     return true;
 }
+
 
 static bool shouldResetFocusNavigationStartingNode(Node& node)
 {

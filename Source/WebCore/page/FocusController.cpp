@@ -409,8 +409,8 @@ static inline void dispatchEventsOnWindowAndFocusedElement(Document* document, b
         
         if (RefPtr formControlElement = dynamicDowncast<HTMLFormControlElement>(*document->focusedElement())) 
         {
-                if (formControlElement->wasChangedSinceLastFormControlChangeEvent())
-                    formControlElement->dispatchFormControlChangeEvent();
+               if (formControlElement->wasChangedSinceLastFormControlChangeEvent())
+                   formControlElement->dispatchFormControlChangeEvent();
         }  
         
     }

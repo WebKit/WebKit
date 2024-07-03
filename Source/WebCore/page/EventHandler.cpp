@@ -63,6 +63,7 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLButtonElement.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "HTMLVideoElement.h"
@@ -691,6 +692,7 @@ static uint64_t textDistance(const Position& start, const Position& end)
 
 bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestResults& event)
 {
+   
     Ref frame = m_frame.get();
     frame->protectedDocument()->updateLayoutIgnorePendingStylesheets();
     RefPtr targetNode = event.targetNode();
@@ -877,8 +879,10 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
         swallowEvent = handleMousePressEventDoubleClick(event);
     else if (event.event().clickCount() >= 3)
         swallowEvent = handleMousePressEventTripleClick(event);
-    else
+    else{
+       
         swallowEvent = handleMousePressEventSingleClick(event);
+    }
     
     m_mouseDownMayStartAutoscroll = mouseDownMayStartSelect()
         || (m_mousePressNode && m_mousePressNode->renderBox() && m_mousePressNode->renderBox()->canBeProgramaticallyScrolled());
@@ -2885,11 +2889,16 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
     Ref frame = m_frame.get();
 
     updateMouseEventTargetNode(eventType, targetNode, platformMouseEvent, fireMouseOverOut);
-
+    
     bool isMouseDownEvent = eventType == eventNames().mousedownEvent;
 
+  
+
     if (auto elementUnderMouse = m_elementUnderMouse) {
+
+        
         auto [eventIsDispatched, eventIsDefaultPrevented] = elementUnderMouse->dispatchMouseEvent(platformMouseEvent, eventType, clickCount, nullptr, IsSyntheticClick::No);
+        
         m_capturesDragging = CapturesDragging::InabilityReason::Unknown;
         if (eventIsDefaultPrevented == Element::EventIsDefaultPrevented::Yes) {
             if (isMouseDownEvent)
@@ -2899,6 +2908,8 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
         }
         if (eventIsDispatched == Element::EventIsDispatched::No)
             return false;
+
+            
     }
 
     if (!isMouseDownEvent)
@@ -2959,12 +2970,17 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
 
     // If focus shift is blocked, we eat the event.
     RefPtr page = frame->page();
+
+
+
     if (page && !page->checkedFocusController()->setFocusedElement(element.get(), protectedFrame(), { { }, { }, { }, FocusTrigger::Click, { } }))
         return false;
 
     if (element && m_mouseDownDelegatedFocus)
         element->findTargetAndUpdateFocusAppearance(SelectionRestorationMode::SelectAll);
 
+    
+      
     return true;
 }
 
