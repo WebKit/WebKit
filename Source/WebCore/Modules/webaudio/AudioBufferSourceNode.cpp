@@ -423,11 +423,13 @@ ExceptionOr<void> AudioBufferSourceNode::setBufferForBindings(RefPtr<AudioBuffer
     ASSERT(isMainThread());
     DEBUG_LOG(LOGIDENTIFIER);
 
+    // This synchronizes with process(), it is important to acquire the processLock before the
+    // graphLock to avoid a deadlock given that this is the order process() acquires the locks
+    // in.
+    Locker locker { m_processLock };
+
     // The context must be locked since changing the buffer can re-configure the number of channels that are output.
     Locker contextLocker { context().graphLock() };
-    
-    // This synchronizes with process().
-    Locker locker { m_processLock };
 
     if (buffer && m_wasBufferSet)
         return Exception { ExceptionCode::InvalidStateError, "The buffer was already set"_s };
