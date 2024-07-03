@@ -27,6 +27,7 @@
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
+#include "ColorBlending.h"
 #include "ComputedStyleExtractor.h"
 #include "ContentData.h"
 #include "CursorList.h"
@@ -3093,15 +3094,22 @@ Color RenderStyle::colorWithColorFilter(const StyleColor& color) const
     return colorByApplyingColorFilter(colorResolvingCurrentColor(color));
 }
 
-Color RenderStyle::usedAccentColor() const
+Color RenderStyle::usedAccentColor(OptionSet<StyleColorOptions> styleColorOptions) const
 {
     if (hasAutoAccentColor())
         return { };
 
-    if (hasAppleColorFilter())
-        return colorByApplyingColorFilter(colorResolvingCurrentColor(accentColor()));
+    auto resolvedAccentColor = colorResolvingCurrentColor(accentColor());
 
-    return colorResolvingCurrentColor(accentColor());
+    if (!resolvedAccentColor.isOpaque()) {
+        auto computedCanvasColor = RenderTheme::singleton().systemColor(CSSValueCanvas, styleColorOptions);
+        resolvedAccentColor = blendSourceOver(computedCanvasColor, resolvedAccentColor);
+    }
+
+    if (hasAppleColorFilter())
+        return colorByApplyingColorFilter(resolvedAccentColor);
+
+    return resolvedAccentColor;
 }
 
 Color RenderStyle::usedScrollbarThumbColor() const
