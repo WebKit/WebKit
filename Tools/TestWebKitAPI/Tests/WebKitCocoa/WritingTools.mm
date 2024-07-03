@@ -1658,7 +1658,9 @@ TEST(WritingTools, WantsInlineEditing)
 TEST(WritingTools, WritingToolsBehaviorNonEditableWithSelection)
 {
     auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body>Hello World</body>" writingToolsBehavior:PlatformWritingToolsBehaviorComplete]);
-    [webView focusDocumentBodyAndSelectAll];
+
+    [webView selectAll:nil];
+    [webView waitForNextPresentationUpdate];
 
     EXPECT_EQ([webView writingToolsBehaviorForTesting], PlatformWritingToolsBehaviorLimited);
 }
