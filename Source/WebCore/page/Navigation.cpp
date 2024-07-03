@@ -310,7 +310,7 @@ Navigation::Result Navigation::navigate(const String& url, NavigateOptions&& opt
     // If the load() call never made it to the point that NavigateEvent was emitted, thus promoteUpcomingAPIMethodTracker() called, this will be true.
     if (m_upcomingNonTraverseMethodTracker == apiMethodTracker) {
         m_upcomingNonTraverseMethodTracker = nullptr;
-        // FIXME: This should return an early error.
+        return createErrorResult(WTFMove(apiMethodTracker->committedPromise), WTFMove(apiMethodTracker->finishedPromise), ExceptionCode::AbortError, "Navigation aborted"_s);
     }
 
     return apiMethodTrackerDerivedResult(*apiMethodTracker);
