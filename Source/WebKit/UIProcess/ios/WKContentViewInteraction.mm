@@ -1423,6 +1423,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if USE(UICONTEXTMENU)
     _isDisplayingContextMenuWithAnimation = NO;
 #endif
+    _isUpdatingAccessoryView = NO;
 
 #if ENABLE(DATALIST_ELEMENT)
     _dataListTextSuggestionsInputView = nil;
@@ -5931,6 +5932,11 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 
 - (void)_updateAccessory
 {
+    if (_isUpdatingAccessoryView)
+        return;
+
+    SetForScope updateAccessoryScope { _isUpdatingAccessoryView, YES };
+
     auto* accessoryView = self.formAccessoryView; // Creates one, if needed.
 
     if ([accessoryView respondsToSelector:@selector(setNextPreviousItemsVisible:)])
