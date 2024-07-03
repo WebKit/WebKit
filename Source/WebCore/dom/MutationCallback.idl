@@ -23,7 +23,4 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    CallbackThisObject=MutationObserver,
-    IsWeakCallback,
-] callback MutationCallback = undefined (sequence<MutationRecord> mutations, MutationObserver observer);
+[ CallbackThisObject=MutationObserver ] callback MutationCallback = undefined (sequence<MutationRecord> mutations, MutationObserver observer);

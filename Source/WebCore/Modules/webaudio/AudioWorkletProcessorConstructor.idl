@@ -28,4 +28,5 @@
 
 [
     Conditional=WEB_AUDIO,
+    IsStrongCallback
 ] callback AudioWorkletProcessorConstructor = AudioWorkletProcessor (object options);

@@ -19,9 +19,10 @@
 */
 
 #include "config.h"
-#include "JSTestCallbackFunctionWithVariadic.h"
+#include "JSTestCallbackFunctionStrong.h"
 
 #include "ContextDestructionObserverInlines.h"
+#include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
 #include "ScriptExecutionContext.h"
@@ -30,13 +31,13 @@
 namespace WebCore {
 using namespace JSC;
 
-JSTestCallbackFunctionWithVariadic::JSTestCallbackFunctionWithVariadic(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : TestCallbackFunctionWithVariadic(globalObject->scriptExecutionContext())
-    , m_data(new JSCallbackDataWeak(callback, globalObject, this))
+JSTestCallbackFunctionStrong::JSTestCallbackFunctionStrong(JSObject* callback, JSDOMGlobalObject* globalObject)
+    : TestCallbackFunctionStrong(globalObject->scriptExecutionContext())
+    , m_data(new JSCallbackDataStrong(callback, globalObject, this))
 {
 }
 
-JSTestCallbackFunctionWithVariadic::~JSTestCallbackFunctionWithVariadic()
+JSTestCallbackFunctionStrong::~JSTestCallbackFunctionStrong()
 {
     ScriptExecutionContext* context = scriptExecutionContext();
     // When the context is destroyed, all tasks with a reference to a callback
@@ -50,12 +51,12 @@ JSTestCallbackFunctionWithVariadic::~JSTestCallbackFunctionWithVariadic()
 #endif
 }
 
-CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunctionWithVariadic::handleEvent(VariadicArguments<IDLAny>&& arguments)
+CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunctionStrong::handleEvent(typename IDLLong::ParameterType argument)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;
 
-    Ref<JSTestCallbackFunctionWithVariadic> protectedThis(*this);
+    Ref<JSTestCallbackFunctionStrong> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
     auto& vm = globalObject.vm();
@@ -64,9 +65,7 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunction
     auto& lexicalGlobalObject = globalObject;
     JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
-    for (auto&& argumentsItem : WTFMove(arguments)) {
-        args.append(toJS<IDLAny>(WTFMove(argumentsItem)));
-    }
+    args.append(toJS<IDLLong>(argument));
     ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
@@ -84,22 +83,12 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunction
     return { returnValue.releaseReturnValue() };
 }
 
-void JSTestCallbackFunctionWithVariadic::visitJSFunction(JSC::AbstractSlotVisitor& visitor)
+JSC::JSValue toJS(TestCallbackFunctionStrong& impl)
 {
-    m_data->visitJSFunction(visitor);
-}
-
-void JSTestCallbackFunctionWithVariadic::visitJSFunction(JSC::SlotVisitor& visitor)
-{
-    m_data->visitJSFunction(visitor);
-}
-
-JSC::JSValue toJS(TestCallbackFunctionWithVariadic& impl)
-{
-    if (!static_cast<JSTestCallbackFunctionWithVariadic&>(impl).callbackData())
+    if (!static_cast<JSTestCallbackFunctionStrong&>(impl).callbackData())
         return jsNull();
 
-    return static_cast<JSTestCallbackFunctionWithVariadic&>(impl).callbackData()->callback();
+    return static_cast<JSTestCallbackFunctionStrong&>(impl).callbackData()->callback();
 }
 
 } // namespace WebCore

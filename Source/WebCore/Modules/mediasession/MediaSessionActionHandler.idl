@@ -23,7 +23,4 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=MEDIA_SESSION,
-    IsWeakCallback
-] callback MediaSessionActionHandler = undefined (MediaSessionActionDetails details);
+[ Conditional=MEDIA_SESSION ] callback MediaSessionActionHandler = undefined (MediaSessionActionDetails details);

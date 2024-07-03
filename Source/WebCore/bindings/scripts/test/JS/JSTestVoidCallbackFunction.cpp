@@ -45,7 +45,7 @@ using namespace JSC;
 
 JSTestVoidCallbackFunction::JSTestVoidCallbackFunction(JSObject* callback, JSDOMGlobalObject* globalObject)
     : TestVoidCallbackFunction(globalObject->scriptExecutionContext())
-    , m_data(new JSCallbackDataStrong(callback, globalObject, this))
+    , m_data(new JSCallbackDataWeak(callback, globalObject, this))
 {
 }
 
@@ -94,6 +94,16 @@ CallbackResult<typename IDLUndefined::ImplementationType> JSTestVoidCallbackFunc
      }
 
     return { };
+}
+
+void JSTestVoidCallbackFunction::visitJSFunction(JSC::AbstractSlotVisitor& visitor)
+{
+    m_data->visitJSFunction(visitor);
+}
+
+void JSTestVoidCallbackFunction::visitJSFunction(JSC::SlotVisitor& visitor)
+{
+    m_data->visitJSFunction(visitor);
 }
 
 JSC::JSValue toJS(TestVoidCallbackFunction& impl)

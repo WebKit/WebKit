@@ -25,4 +25,5 @@
 
 [
     Conditional=WEB_CODECS,
+    IsStrongCallback
 ] callback WebCodecsEncodedVideoChunkOutputCallback = undefined (WebCodecsEncodedVideoChunk chunk, optional WebCodecsEncodedVideoChunkMetadata metadata = {});

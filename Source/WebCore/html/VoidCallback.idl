@@ -24,5 +24,6 @@
  */
 
 [
-    ExportMacro=WEBCORE_EXPORT
+    ExportMacro=WEBCORE_EXPORT,
+    IsStrongCallback
 ] callback VoidCallback = undefined ();

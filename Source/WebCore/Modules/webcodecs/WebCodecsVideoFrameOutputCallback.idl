@@ -25,4 +25,5 @@
 
 [
     Conditional=WEB_CODECS,
+    IsStrongCallback
 ] callback WebCodecsVideoFrameOutputCallback = undefined(WebCodecsVideoFrame output);

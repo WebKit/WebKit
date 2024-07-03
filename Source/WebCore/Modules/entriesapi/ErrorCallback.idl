@@ -23,4 +23,4 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-callback ErrorCallback = undefined (DOMException error);
+[ IsStrongCallback ] callback ErrorCallback = undefined (DOMException error);

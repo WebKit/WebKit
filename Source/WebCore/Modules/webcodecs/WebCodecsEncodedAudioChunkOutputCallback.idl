@@ -26,4 +26,5 @@
 
 [
     Conditional=WEB_CODECS,
+    IsStrongCallback
 ] callback WebCodecsEncodedAudioChunkOutputCallback = undefined (WebCodecsEncodedAudioChunk chunk, optional WebCodecsEncodedAudioChunkMetadata metadata = {});

@@ -23,5 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[EnabledBySetting=NavigationAPIEnabled] 
-callback NavigationInterceptHandler = Promise<undefined> ();
+[
+    EnabledBySetting=NavigationAPIEnabled,
+    IsStrongCallback
+] callback NavigationInterceptHandler = Promise<undefined> ();

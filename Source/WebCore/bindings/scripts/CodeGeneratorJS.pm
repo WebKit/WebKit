@@ -6701,7 +6701,7 @@ sub GenerateCallbackHeaderContent
     my ($object, $interfaceOrCallback, $operations, $constants, $contentRef, $includesRef) = @_;
 
     my $name = $interfaceOrCallback->type->name;
-    my $callbackDataType = $interfaceOrCallback->extendedAttributes->{IsWeakCallback} ? "JSCallbackDataWeak" : "JSCallbackDataStrong";
+    my $callbackDataType = $interfaceOrCallback->extendedAttributes->{IsStrongCallback} ? "JSCallbackDataStrong" : "JSCallbackDataWeak";
     my $className = GetCallbackClassName($name);
 
     $includesRef->{"IDLTypes.h"} = 1;
@@ -6766,12 +6766,12 @@ sub GenerateCallbackHeaderContent
 
     push(@$contentRef, "    ${className}(JSC::JSObject*, JSDOMGlobalObject*);\n\n");
 
-    if ($interfaceOrCallback->extendedAttributes->{IsWeakCallback}) {
+    if (!$interfaceOrCallback->extendedAttributes->{IsStrongCallback}) {
         push(@$contentRef, "    bool hasCallback() const final { return m_data && m_data->callback(); }\n\n");
     }
 
-    push(@$contentRef, "    void visitJSFunction(JSC::AbstractSlotVisitor&) override;\n\n") if $interfaceOrCallback->extendedAttributes->{IsWeakCallback};
-    push(@$contentRef, "    void visitJSFunction(JSC::SlotVisitor&) override;\n\n") if $interfaceOrCallback->extendedAttributes->{IsWeakCallback};
+    push(@$contentRef, "    void visitJSFunction(JSC::AbstractSlotVisitor&) override;\n\n") if !$interfaceOrCallback->extendedAttributes->{IsStrongCallback};
+    push(@$contentRef, "    void visitJSFunction(JSC::SlotVisitor&) override;\n\n") if !$interfaceOrCallback->extendedAttributes->{IsStrongCallback};
 
     push(@$contentRef, "    ${callbackDataType}* m_data;\n");
     push(@$contentRef, "};\n\n");
@@ -6791,7 +6791,7 @@ sub GenerateCallbackImplementationContent
     my ($object, $interfaceOrCallback, $operations, $constants, $contentRef, $includesRef) = @_;
 
     my $name = $interfaceOrCallback->type->name;
-    my $callbackDataType = $interfaceOrCallback->extendedAttributes->{IsWeakCallback} ? "JSCallbackDataWeak" : "JSCallbackDataStrong";
+    my $callbackDataType = $interfaceOrCallback->extendedAttributes->{IsStrongCallback} ? "JSCallbackDataStrong" : "JSCallbackDataWeak";
     my $visibleName = $codeGenerator->GetVisibleInterfaceName($interfaceOrCallback);
     my $className = "JS${name}";
 
@@ -6983,7 +6983,7 @@ sub GenerateCallbackImplementationContent
         }
     }
 
-    if ($interfaceOrCallback->extendedAttributes->{IsWeakCallback}) {
+    if (!$interfaceOrCallback->extendedAttributes->{IsStrongCallback}) {
         push(@$contentRef, "void ${className}::visitJSFunction(JSC::AbstractSlotVisitor& visitor)\n");
         push(@$contentRef, "{\n");
         push(@$contentRef, "    m_data->visitJSFunction(visitor);\n");

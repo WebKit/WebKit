@@ -22,42 +22,36 @@
 
 #include "IDLTypes.h"
 #include "JSCallbackData.h"
-#include "TestCallbackFunction.h"
+#include "TestCallbackFunctionStrong.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-class JSTestCallbackFunction final : public TestCallbackFunction {
+class JSTestCallbackFunctionStrong final : public TestCallbackFunctionStrong {
 public:
-    static Ref<JSTestCallbackFunction> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+    static Ref<JSTestCallbackFunctionStrong> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {
-        return adoptRef(*new JSTestCallbackFunction(callback, globalObject));
+        return adoptRef(*new JSTestCallbackFunctionStrong(callback, globalObject));
     }
 
     ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
-    ~JSTestCallbackFunction() final;
-    JSCallbackDataWeak* callbackData() { return m_data; }
+    ~JSTestCallbackFunctionStrong() final;
+    JSCallbackDataStrong* callbackData() { return m_data; }
 
     // Functions
     CallbackResult<typename IDLDOMString::ImplementationType> handleEvent(typename IDLLong::ParameterType argument) override;
 
 private:
-    JSTestCallbackFunction(JSC::JSObject*, JSDOMGlobalObject*);
+    JSTestCallbackFunctionStrong(JSC::JSObject*, JSDOMGlobalObject*);
 
-    bool hasCallback() const final { return m_data && m_data->callback(); }
-
-    void visitJSFunction(JSC::AbstractSlotVisitor&) override;
-
-    void visitJSFunction(JSC::SlotVisitor&) override;
-
-    JSCallbackDataWeak* m_data;
+    JSCallbackDataStrong* m_data;
 };
 
-JSC::JSValue toJS(TestCallbackFunction&);
-inline JSC::JSValue toJS(TestCallbackFunction* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
+JSC::JSValue toJS(TestCallbackFunctionStrong&);
+inline JSC::JSValue toJS(TestCallbackFunctionStrong* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
 
-template<> struct JSDOMCallbackConverterTraits<JSTestCallbackFunction> {
-    using Base = TestCallbackFunction;
+template<> struct JSDOMCallbackConverterTraits<JSTestCallbackFunctionStrong> {
+    using Base = TestCallbackFunctionStrong;
 };
 } // namespace WebCore
