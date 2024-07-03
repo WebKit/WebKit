@@ -59,8 +59,6 @@ private:
 
     void clearWheelEventTestMonitor();
 
-    void clearOpener();
-
     const WebCore::PageIdentifier m_identifier;
     WeakRef<WebPage> m_page;
 };

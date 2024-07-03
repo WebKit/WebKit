@@ -103,10 +103,4 @@ void WebPageTesting::clearWheelEventTestMonitor()
     page->clearWheelEventTestMonitor();
 }
 
-void WebPageTesting::clearOpener()
-{
-    if (RefPtr mainFrame = m_page->mainFrame())
-        mainFrame->setOpener(nullptr);
-}
-
 } // namespace WebKit

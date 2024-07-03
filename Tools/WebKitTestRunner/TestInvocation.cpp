@@ -167,15 +167,18 @@ void TestInvocation::invoke()
 {
     TestController::singleton().configureViewForTest(*this);
 
-    auto page = TestController::singleton().mainWebView()->page();
-
-    WKPageSetAddsVisitedLinks(page, false);
+    WKPageSetAddsVisitedLinks(TestController::singleton().mainWebView()->page(), false);
 
     m_textOutput.clear();
 
     TestController::singleton().setShouldLogHistoryClientCallbacks(shouldLogHistoryClientCallbacks());
 
     WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKWebsiteDataStoreGetHTTPCookieStore(TestController::singleton().websiteDataStore()), kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain, nullptr, nullptr);
+
+    // FIXME: We should clear out visited links here.
+
+    WKPageSetPageZoomFactor(TestController::singleton().mainWebView()->page(), 1);
+    WKPageSetTextZoomFactor(TestController::singleton().mainWebView()->page(), 1);
 
     postPageMessage("BeginTest", createTestSettingsDictionary());
 

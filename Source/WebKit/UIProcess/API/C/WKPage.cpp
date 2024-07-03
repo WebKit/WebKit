@@ -3296,9 +3296,3 @@ void WKPageSetPermissionLevelForTesting(WKPageRef pageRef, WKStringRef origin, b
     if (auto* pageForTesting = toImpl(pageRef)->pageForTesting())
         pageForTesting->setPermissionLevel(toImpl(origin)->string(), allowed);
 }
-
-void WKPageClearOpenerForTesting(WKPageRef pageRef)
-{
-    if (auto* pageForTesting = toImpl(pageRef)->pageForTesting())
-        pageForTesting->clearOpener();
-}

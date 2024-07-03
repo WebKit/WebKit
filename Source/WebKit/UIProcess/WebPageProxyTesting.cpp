@@ -195,11 +195,4 @@ void WebPageProxyTesting::setSystemCanPromptForGetDisplayMediaForTesting(bool ca
 }
 #endif
 
-void WebPageProxyTesting::clearOpener()
-{
-    m_page->forEachWebContentProcess([](auto& webProcess, auto pageID) {
-        webProcess.send(Messages::WebPageTesting::ClearOpener(), pageID);
-    });
-}
-
 } // namespace WebKit
