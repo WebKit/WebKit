@@ -63,6 +63,11 @@ TEST_F(GStreamerTest, gstStructureGetters)
     ASSERT_TRUE(!gstStructureGet<uint64_t>(structure.get(), "uint64-val-noexist"_s).has_value());
     ASSERT_EQ(gstStructureGet<double>(structure.get(), "double-val"_s), 1.0);
     ASSERT_TRUE(!gstStructureGet<double>(structure.get(), "double-val-noexist"_s).has_value());
+
+    // webkit.org/b/276224
+    auto emptyIntOpt = gstStructureGet<int>(structure.get(), "int-val-noexist2"_s);
+    if (emptyIntOpt && *emptyIntOpt > 0)
+        FAIL() << "emptyIntOpt should be empty, but has value " << *emptyIntOpt;
 }
 
 TEST_F(GStreamerTest, gstStructureJSONSerializing)
