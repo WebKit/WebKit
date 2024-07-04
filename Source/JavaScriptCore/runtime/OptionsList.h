@@ -599,6 +599,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useStringWellFormed, true, Normal, "Expose the String well-formed methods."_s) \
     v(Bool, useTemporal, false, Normal, "Expose the Temporal object."_s) \
     v(Bool, useTrustedTypes, false, Normal, "Enable trusted types eval protection feature."_s) \
+    v(Bool, useUint8ArrayBase64Methods, false, Normal, "Expose methods for converting Uint8Array to/from base64 and hex."_s) \
     v(Bool, useWebAssemblyTypedFunctionReferences, true, Normal, "Allow function types from the wasm typed function references spec."_s) \
     v(Bool, useWebAssemblyGC, false, Normal, "Allow gc types from the wasm gc proposal."_s) \
     v(Bool, useWebAssemblySIMD, true, Normal, "Allow the new simd instructions and types from the wasm simd spec."_s) \

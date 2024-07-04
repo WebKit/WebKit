@@ -917,6 +917,7 @@ runtime/JSFinalizationRegistry.cpp
 runtime/JSFunction.cpp
 runtime/JSGenerator.cpp
 runtime/JSGeneratorFunction.cpp
+runtime/JSGenericTypedArrayViewPrototype.cpp
 runtime/JSGlobalLexicalEnvironment.cpp
 runtime/JSGlobalObject.cpp
 runtime/JSGlobalObjectDebuggable.cpp
