@@ -5924,7 +5924,7 @@ void WebViewImpl::updateTouchBar()
 
     NSTouchBar *touchBar = nil;
     bool userActionRequirementsHaveBeenMet = !requiresUserActionForEditingControlsManager() || m_page->hasHadSelectionChangesFromUserInteraction();
-    if (m_page->editorState().isContentEditable && !m_page->isTouchBarUpdateSupressedForHiddenContentEditable()) {
+    if (m_page->editorState().isContentEditable && !m_page->isTouchBarUpdateSuppressedForHiddenContentEditable()) {
         updateTextTouchBar();
         if (userActionRequirementsHaveBeenMet)
             touchBar = textTouchBar();

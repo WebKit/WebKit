@@ -1916,7 +1916,7 @@ public:
     bool hasHadSelectionChangesFromUserInteraction() const { return m_hasHadSelectionChangesFromUserInteraction; }
 
 #if HAVE(TOUCH_BAR)
-    bool isTouchBarUpdateSupressedForHiddenContentEditable() const { return m_isTouchBarUpdateSupressedForHiddenContentEditable; }
+    bool isTouchBarUpdateSuppressedForHiddenContentEditable() const { return m_isTouchBarUpdateSuppressedForHiddenContentEditable; }
     bool isNeverRichlyEditableForTouchBar() const { return m_isNeverRichlyEditableForTouchBar; }
 #endif
 
@@ -2679,7 +2679,7 @@ private:
     void setHasHadSelectionChangesFromUserInteraction(bool);
 
 #if HAVE(TOUCH_BAR)
-    void setIsTouchBarUpdateSupressedForHiddenContentEditable(bool);
+    void setIsTouchBarUpdateSuppressedForHiddenContentEditable(bool);
     void setIsNeverRichlyEditableForTouchBar(bool);
 #endif
 
@@ -3442,7 +3442,7 @@ private:
     bool m_hasHadSelectionChangesFromUserInteraction { false };
 
 #if HAVE(TOUCH_BAR)
-    bool m_isTouchBarUpdateSupressedForHiddenContentEditable { false };
+    bool m_isTouchBarUpdateSuppressedForHiddenContentEditable { false };
     bool m_isNeverRichlyEditableForTouchBar { false };
 #endif
 

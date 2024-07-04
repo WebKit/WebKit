@@ -33,7 +33,7 @@
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, PAL_EXPORT)
 #else
-@interface AVPlayerItem (DisableKVOOnSupressesVideoLayers)
+@interface AVPlayerItem (DisableKVOOnSuppressesVideoLayers)
 + (BOOL)automaticallyNotifiesObserversOfSuppressesVideoLayers;
 @end
 

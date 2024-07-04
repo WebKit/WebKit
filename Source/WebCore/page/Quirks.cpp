@@ -256,7 +256,7 @@ bool Quirks::shouldHideSearchFieldResultsButton() const
 }
 
 // docs.google.com https://bugs.webkit.org/show_bug.cgi?id=161984
-bool Quirks::isTouchBarUpdateSupressedForHiddenContentEditable() const
+bool Quirks::isTouchBarUpdateSuppressedForHiddenContentEditable() const
 {
 #if PLATFORM(MAC)
     if (!needsQuirks())

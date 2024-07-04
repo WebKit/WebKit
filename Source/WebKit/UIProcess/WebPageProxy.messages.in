@@ -247,7 +247,7 @@ messages -> WebPageProxy {
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
 #if HAVE(TOUCH_BAR)
-    SetIsTouchBarUpdateSupressedForHiddenContentEditable(bool isTouchBarUpdateSupressed)
+    SetIsTouchBarUpdateSuppressedForHiddenContentEditable(bool isTouchBarUpdateSuppressed)
     SetIsNeverRichlyEditableForTouchBar(bool isNeverRichlyEditable)
 #endif
 

@@ -8500,9 +8500,9 @@ void WebPageProxy::setHasHadSelectionChangesFromUserInteraction(bool hasHadUserS
 
 #if HAVE(TOUCH_BAR)
 
-void WebPageProxy::setIsTouchBarUpdateSupressedForHiddenContentEditable(bool ignoreTouchBarUpdate)
+void WebPageProxy::setIsTouchBarUpdateSuppressedForHiddenContentEditable(bool ignoreTouchBarUpdate)
 {
-    m_isTouchBarUpdateSupressedForHiddenContentEditable = ignoreTouchBarUpdate;
+    m_isTouchBarUpdateSuppressedForHiddenContentEditable = ignoreTouchBarUpdate;
 }
 
 void WebPageProxy::setIsNeverRichlyEditableForTouchBar(bool isNeverRichlyEditable)
