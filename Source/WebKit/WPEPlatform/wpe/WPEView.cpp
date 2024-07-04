@@ -31,8 +31,10 @@
 #include "WPEDisplayPrivate.h"
 #include "WPEEnumTypes.h"
 #include "WPEEvent.h"
+#include "WPEGestureControllerImpl.h"
 #include "WPEToplevelPrivate.h"
 #include "WPEViewPrivate.h"
+#include <optional>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -58,6 +60,7 @@ struct _WPEViewPrivate {
         guint button { 0 };
         guint32 time { 0 };
     } lastButtonPress;
+    std::optional<GRefPtr<WPEGestureController>> gestureController;
 };
 
 WEBKIT_DEFINE_ABSTRACT_TYPE(WPEView, wpe_view, G_TYPE_OBJECT)
@@ -999,4 +1002,39 @@ void wpe_view_set_opaque_rectangles(WPEView* view, WPERectangle* rects, guint re
     auto* viewClass = WPE_VIEW_GET_CLASS(view);
     if (viewClass->set_opaque_rectangles)
         viewClass->set_opaque_rectangles(view, rects, rectsCount);
+}
+
+/**
+ * wpe_view_set_gesture_controller:
+ * @view: a #WPEView
+ * @controller: (nullable): a #WPEGestureController, or %NULL
+ *
+ * Set @controller as #WPEGestureController of @view.
+ * When supplied with %NULL, the default #WPEGestureController will be removed
+ * and thus default gesture handling will be disabled for the @view.
+ */
+void wpe_view_set_gesture_controller(WPEView* view, WPEGestureController* controller)
+{
+    g_return_if_fail(WPE_IS_VIEW(view));
+    g_return_if_fail(WPE_IS_GESTURE_CONTROLLER(controller));
+
+    view->priv->gestureController = controller;
+}
+
+/**
+ * wpe_view_get_gesture_controller:
+ * @view: a #WPEView
+ *
+ * Get the #WPEGestureController of @view.
+ *
+ * Returns: (transfer none) (nullable): a #WPEGestureController or %NULL
+ */
+WPEGestureController* wpe_view_get_gesture_controller(WPEView* view)
+{
+    g_return_val_if_fail(WPE_IS_VIEW(view), nullptr);
+
+    if (!view->priv->gestureController)
+        view->priv->gestureController = adoptGRef(wpeGestureControllerImplNew());
+
+    return view->priv->gestureController->get();
 }

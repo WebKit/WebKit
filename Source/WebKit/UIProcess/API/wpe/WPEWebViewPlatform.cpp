@@ -342,32 +342,88 @@ gboolean ViewPlatform::handleEvent(WPEEvent* event)
         return TRUE;
     }
     case WPE_EVENT_TOUCH_DOWN:
-        // FIXME: gestures
 #if ENABLE(TOUCH_EVENTS)
         m_touchEvents.add(wpe_event_touch_get_sequence_id(event), event);
         page().handleTouchEvent(NativeWebTouchEvent(event, touchPointsForEvent(event)));
 #endif
+        handleGesture(event);
         return TRUE;
     case WPE_EVENT_TOUCH_UP:
     case WPE_EVENT_TOUCH_CANCEL: {
-        // FIXME: gestures
 #if ENABLE(TOUCH_EVENTS)
         m_touchEvents.set(wpe_event_touch_get_sequence_id(event), event);
         auto points = touchPointsForEvent(event);
         m_touchEvents.remove(wpe_event_touch_get_sequence_id(event));
         page().handleTouchEvent(NativeWebTouchEvent(event, WTFMove(points)));
 #endif
+        handleGesture(event);
         return TRUE;
     }
     case WPE_EVENT_TOUCH_MOVE:
-        // FIXME: gestures
 #if ENABLE(TOUCH_EVENTS)
         m_touchEvents.set(wpe_event_touch_get_sequence_id(event), event);
         page().handleTouchEvent(NativeWebTouchEvent(event, touchPointsForEvent(event)));
 #endif
+        handleGesture(event);
         return TRUE;
     };
     return FALSE;
+}
+
+void ViewPlatform::handleGesture(WPEEvent* event)
+{
+    auto* gestureController = wpe_view_get_gesture_controller(m_wpeView.get());
+    if (!gestureController)
+        return;
+
+    wpe_gesture_controller_handle_event(gestureController, event);
+
+    if (wpe_event_get_event_type(event) == WPE_EVENT_TOUCH_DOWN)
+        return;
+
+    switch (wpe_gesture_controller_get_gesture(gestureController)) {
+    case WPE_GESTURE_NONE:
+        break;
+    case WPE_GESTURE_TAP:
+        if (wpe_event_get_event_type(event) == WPE_EVENT_TOUCH_MOVE)
+            return;
+        if (double x, y; wpe_gesture_controller_get_gesture_position(gestureController, &x, &y)) {
+            // Mouse motion towards the point of the click.
+            {
+                GRefPtr<WPEEvent> simulatedEvent = adoptGRef(wpe_event_pointer_move_new(
+                    WPE_EVENT_POINTER_MOVE, m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0, static_cast<WPEModifiers>(0), x, y, 0, 0
+                ));
+                page().handleMouseEvent(WebKit::NativeWebMouseEvent(simulatedEvent.get()));
+            }
+
+            // Mouse down on the point of the click.
+            {
+                GRefPtr<WPEEvent> simulatedEvent = adoptGRef(wpe_event_pointer_button_new(
+                    WPE_EVENT_POINTER_DOWN, m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0, WPE_MODIFIER_POINTER_BUTTON1, 1, x, y, 1
+                ));
+                page().handleMouseEvent(WebKit::NativeWebMouseEvent(simulatedEvent.get()));
+            }
+
+            // Mouse up on the same location.
+            {
+                GRefPtr<WPEEvent> simulatedEvent = adoptGRef(wpe_event_pointer_button_new(
+                    WPE_EVENT_POINTER_UP, m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0, static_cast<WPEModifiers>(0), 1, x, y, 0
+                ));
+                page().handleMouseEvent(WebKit::NativeWebMouseEvent(simulatedEvent.get()));
+            }
+        }
+        break;
+    case WPE_GESTURE_DRAG:
+        if (double x, y, dx, dy; wpe_gesture_controller_get_gesture_position(gestureController, &x, &y) && wpe_gesture_controller_get_gesture_delta(gestureController, &dx, &dy)) {
+            GRefPtr<WPEEvent> simulatedScrollEvent = adoptGRef(wpe_event_scroll_new(
+                m_wpeView.get(), WPE_INPUT_SOURCE_MOUSE, 0, static_cast<WPEModifiers>(0), dx, dy, TRUE, FALSE, x, y
+            ));
+            auto phase = wpe_gesture_controller_is_drag_begin(gestureController)
+                ? WebWheelEvent::Phase::PhaseBegan
+                : (wpe_event_get_event_type(event) == WPE_EVENT_TOUCH_UP) ? WebWheelEvent::Phase::PhaseEnded : WebWheelEvent::Phase::PhaseChanged;
+            page().handleNativeWheelEvent(WebKit::NativeWebWheelEvent(simulatedScrollEvent.get(), phase));
+        }
+    }
 }
 
 void ViewPlatform::synthesizeCompositionKeyPress(const String&, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&)

@@ -32,6 +32,7 @@
 
 #include <glib-object.h>
 #include <wpe/WPEDefines.h>
+#include <wpe/WPEGestureController.h>
 #include <wpe/WPEToplevel.h>
 
 G_BEGIN_DECLS
@@ -137,6 +138,9 @@ WPE_API WPEBufferDMABufFormats *wpe_view_get_preferred_dma_buf_formats (WPEView 
 WPE_API void                    wpe_view_set_opaque_rectangles         (WPEView            *view,
                                                                         WPERectangle       *rects,
                                                                         guint               n_rects);
+WPE_API void                    wpe_view_set_gesture_controller        (WPEView            *view,
+                                                                        WPEGestureController *controller);
+WPE_API WPEGestureController   *wpe_view_get_gesture_controller        (WPEView            *view);
 
 G_END_DECLS
 

@@ -77,6 +77,7 @@ private:
 #endif
 
     gboolean handleEvent(WPEEvent*);
+    void handleGesture(WPEEvent*);
 
     GRefPtr<WPEView> m_wpeView;
     std::unique_ptr<WebKit::AcceleratedBackingStoreDMABuf> m_backingStore;
