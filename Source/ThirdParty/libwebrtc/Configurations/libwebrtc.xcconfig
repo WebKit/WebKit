@@ -83,4 +83,4 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=xrsimulator*][arch=arm64*] = $(EXCLUDED_SOURCE_FI
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(EXCLUDED_SOURCE_FILE_NAMES_macosx);
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*][arch=arm64*] = $(EXCLUDED_SOURCE_FILE_NAMES_macosx) $(EXCLUDED_SOURCE_FILE_NAMES_arm);
 
-OTHER_LDFLAGS = $(inherited) $(SOURCE_VERSION_LDFLAGS) $(WEBRTC_LDFLAGS_ENABLE_LIBFUZZER_$(ENABLE_LIBFUZZER)) -framework CoreGraphics;
+OTHER_LDFLAGS = $(inherited) $(SOURCE_VERSION_LDFLAGS) $(WEBRTC_LDFLAGS_ENABLE_LIBFUZZER_$(ENABLE_LIBFUZZER)) -framework CoreGraphics -allowable_client WebCore -allowable_client WebCoreTestSupport -allowable_client WebKit;
