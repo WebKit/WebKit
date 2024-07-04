@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS pixelColor(1920 ,540)[0] is within 5 of 0
-PASS pixelColor(1920 ,540)[1] is within 5 of 174
+PASS pixelColor(1920 ,540)[1] is within 5 of 206
 PASS pixelColor(1920 ,540)[2] is within 5 of 0
 PASS pixelColor(1920 ,540)[3] is within 5 of 255
 PASS successfullyParsed is true

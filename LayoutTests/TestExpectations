@@ -4976,6 +4976,7 @@ http/tests/media/video-canplaythrough-webm.html [ Skip ]
 media/media-session/mock-coordinator.html [ Skip ]
 media/track/track-description-cue.html [ Skip ]
 media/track/track-extended-descriptions.html [ Skip ]
+fast/canvas/canvas-drawImage-hdr-video.html [ Skip ]
 
 # Soon Cocoa-only (currently only macOS)
 fast/forms/switch/ [ Skip ]

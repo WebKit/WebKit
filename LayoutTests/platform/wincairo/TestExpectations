@@ -173,7 +173,6 @@ compositing/self-painting-layers2.html [ Skip ] # Timeout
 compositing/shared-backing/clipping-and-shared-backing.html [ Skip ] # Timeout
 compositing/video-page-visibility.html [ Skip ] # Timeout
 compositing/visibility/visibility-simple-video-layer.html [ Skip ] # Timeout
-fast/canvas/canvas-drawImage-hdr-video.html [ Skip ] # Timeout
 fast/events/media-focus-in-standalone-media-document.html [ Skip ]
 http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ] # Timeout
 http/tests/navigation/page-cache-video.html [ Skip ] # Timeout

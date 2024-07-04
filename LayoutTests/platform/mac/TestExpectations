@@ -773,6 +773,9 @@ platform/mac/fast/loader/file-url-mimetypes.html [ Failure ]
 # This test rarely times out with color being (0, 0, 0, 0), so far only on macOS Ventura.
 http/tests/media/hls/hls-hdr-switch.html [ Pass Timeout ]
 
+# This test works correctly only on Cocoa platforms.
+[ Sequoia+ ] fast/canvas/canvas-drawImage-hdr-video.html [ Pass ]
+ 
 # rdar://94184618 (REGRESSION): [ Mac Ventura Debug ] 5* editing/secure-input/* (layout-tests) are constant failures)
 editing/secure-input/password-input-changed-type.html [ Pass Failure ]
 editing/secure-input/password-input-focusing-to-different-frame.html [ Pass Failure ]
