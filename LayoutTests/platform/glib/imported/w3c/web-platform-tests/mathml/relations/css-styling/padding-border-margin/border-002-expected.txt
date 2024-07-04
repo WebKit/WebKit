@@ -5,8 +5,8 @@ FAIL Border properties on menclose assert_approx_equals: bottom border expected 
 FAIL Border properties on menclose (rtl) assert_approx_equals: bottom border expected 60 +/- 1 but got -4.96875
 PASS Border properties on merror
 PASS Border properties on merror (rtl)
-FAIL Border properties on mfrac assert_approx_equals: left border expected 30 +/- 1 but got 0
-FAIL Border properties on mfrac (rtl) assert_approx_equals: left border expected 30 +/- 1 but got 0
+PASS Border properties on mfrac
+PASS Border properties on mfrac (rtl)
 PASS Border properties on mi
 PASS Border properties on mi (rtl)
 FAIL Border properties on mmultiscripts assert_approx_equals: left border expected 30 +/- 1 but got 0
@@ -27,7 +27,7 @@ PASS Border properties on mrow
 PASS Border properties on mrow (rtl)
 PASS Border properties on ms
 PASS Border properties on ms (rtl)
-FAIL Border properties on mspace assert_approx_equals: left/right border expected 70 +/- 1 but got 0
+PASS Border properties on mspace
 FAIL Border properties on msqrt assert_approx_equals: bottom border expected 60 +/- 1 but got -7.625
 FAIL Border properties on msqrt (rtl) assert_approx_equals: bottom border expected 60 +/- 1 but got -7.625
 PASS Border properties on mstyle

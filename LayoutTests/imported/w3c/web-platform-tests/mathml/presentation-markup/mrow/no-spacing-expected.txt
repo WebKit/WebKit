@@ -1,5 +1,5 @@
 
-FAIL Spacing inside <mfrac>. assert_less_than_equal: expected a number less than or equal to 100 but got 225
+FAIL Spacing inside <mfrac>. assert_less_than_equal: expected a number less than or equal to 100 but got 227
 PASS Spacing around <mfrac>.
 FAIL Spacing inside <msub>. assert_less_than_equal: expected a number less than or equal to 100 but got 455
 PASS Spacing around <msub>.
