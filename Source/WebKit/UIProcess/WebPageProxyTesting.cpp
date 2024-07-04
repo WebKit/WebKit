@@ -50,12 +50,12 @@ WebPageProxyTesting::WebPageProxyTesting(WebPageProxy& page)
 
 bool WebPageProxyTesting::sendMessage(UniqueRef<IPC::Encoder>&& encoder, OptionSet<IPC::SendOption> sendOptions)
 {
-    return m_page->protectedLegacyMainFrameProcess()->sendMessage(WTFMove(encoder), sendOptions);
+    return protectedPage()->protectedLegacyMainFrameProcess()->sendMessage(WTFMove(encoder), sendOptions);
 }
 
 bool WebPageProxyTesting::sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&& encoder, AsyncReplyHandler handler, OptionSet<IPC::SendOption> sendOptions)
 {
-    return m_page->protectedLegacyMainFrameProcess()->sendMessage(WTFMove(encoder), sendOptions, WTFMove(handler));
+    return protectedPage()->protectedLegacyMainFrameProcess()->sendMessage(WTFMove(encoder), sendOptions, WTFMove(handler));
 }
 
 IPC::Connection* WebPageProxyTesting::messageSenderConnection() const
@@ -88,21 +88,21 @@ void WebPageProxyTesting::isLayerTreeFrozen(CompletionHandler<void(bool)>&& comp
 
 void WebPageProxyTesting::setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, bool wasFiltered, CompletionHandler<void()>&& completionHandler)
 {
-    m_page->websiteDataStore().protectedNetworkProcess()->setCrossSiteLoadWithLinkDecorationForTesting(m_page->sessionID(), WebCore::RegistrableDomain { fromURL }, WebCore::RegistrableDomain { toURL }, wasFiltered, WTFMove(completionHandler));
+    protectedPage()->protectedWebsiteDataStore()->protectedNetworkProcess()->setCrossSiteLoadWithLinkDecorationForTesting(m_page->sessionID(), WebCore::RegistrableDomain { fromURL }, WebCore::RegistrableDomain { toURL }, wasFiltered, WTFMove(completionHandler));
 }
 
 void WebPageProxyTesting::setPermissionLevel(const String& origin, bool allowed)
 {
-    m_page->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+    protectedPage()->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         webProcess.send(Messages::WebPageTesting::SetPermissionLevel(origin, allowed), pageID);
     });
 }
 
 bool WebPageProxyTesting::isEditingCommandEnabled(const String& commandName)
 {
-    auto* focusedOrMainFrame = m_page->focusedOrMainFrame();
+    RefPtr focusedOrMainFrame = m_page->focusedOrMainFrame();
     auto targetFrameID = focusedOrMainFrame ? std::optional(focusedOrMainFrame->frameID()) : std::nullopt;
-    auto sendResult = m_page->sendSyncToProcessContainingFrame(targetFrameID, Messages::WebPageTesting::IsEditingCommandEnabled(commandName), Seconds::infinity());
+    auto sendResult = protectedPage()->sendSyncToProcessContainingFrame(targetFrameID, Messages::WebPageTesting::IsEditingCommandEnabled(commandName), Seconds::infinity());
     if (!sendResult.succeeded())
         return false;
     auto [result] = sendResult.takeReply();
@@ -111,62 +111,62 @@ bool WebPageProxyTesting::isEditingCommandEnabled(const String& commandName)
 
 void WebPageProxyTesting::dumpPrivateClickMeasurement(CompletionHandler<void(const String&)>&& completionHandler)
 {
-    m_page->websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::DumpPrivateClickMeasurement(m_page->websiteDataStore().sessionID()), WTFMove(completionHandler));
+    protectedPage()->protectedWebsiteDataStore()->protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::DumpPrivateClickMeasurement(m_page->websiteDataStore().sessionID()), WTFMove(completionHandler));
 }
 
 void WebPageProxyTesting::clearPrivateClickMeasurement(CompletionHandler<void()>&& completionHandler)
 {
-    m_page->websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::ClearPrivateClickMeasurement(m_page->websiteDataStore().sessionID()), WTFMove(completionHandler));
+    protectedPage()->protectedWebsiteDataStore()->protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::ClearPrivateClickMeasurement(m_page->websiteDataStore().sessionID()), WTFMove(completionHandler));
 }
 
 void WebPageProxyTesting::setPrivateClickMeasurementOverrideTimer(bool value, CompletionHandler<void()>&& completionHandler)
 {
-    m_page->websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementOverrideTimerForTesting(m_page->websiteDataStore().sessionID(), value), WTFMove(completionHandler));
+    protectedPage()->protectedWebsiteDataStore()->protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementOverrideTimerForTesting(m_page->websiteDataStore().sessionID(), value), WTFMove(completionHandler));
 }
 
 void WebPageProxyTesting::markAttributedPrivateClickMeasurementsAsExpired(CompletionHandler<void()>&& completionHandler)
 {
-    m_page->websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::MarkAttributedPrivateClickMeasurementsAsExpiredForTesting(m_page->websiteDataStore().sessionID()), WTFMove(completionHandler));
+    protectedPage()->protectedWebsiteDataStore()->protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::MarkAttributedPrivateClickMeasurementsAsExpiredForTesting(m_page->websiteDataStore().sessionID()), WTFMove(completionHandler));
 }
 
 void WebPageProxyTesting::setPrivateClickMeasurementEphemeralMeasurement(bool value, CompletionHandler<void()>&& completionHandler)
 {
-    m_page->websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementEphemeralMeasurementForTesting(m_page->websiteDataStore().sessionID(), value), WTFMove(completionHandler));
+    protectedPage()->protectedWebsiteDataStore()->protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementEphemeralMeasurementForTesting(m_page->websiteDataStore().sessionID(), value), WTFMove(completionHandler));
 }
 
 void WebPageProxyTesting::simulatePrivateClickMeasurementSessionRestart(CompletionHandler<void()>&& completionHandler)
 {
-    m_page->websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::SimulatePrivateClickMeasurementSessionRestart(m_page->websiteDataStore().sessionID()), WTFMove(completionHandler));
+    protectedPage()->protectedWebsiteDataStore()->protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::SimulatePrivateClickMeasurementSessionRestart(m_page->websiteDataStore().sessionID()), WTFMove(completionHandler));
 }
 
 void WebPageProxyTesting::setPrivateClickMeasurementTokenPublicKeyURL(const URL& url, CompletionHandler<void()>&& completionHandler)
 {
-    m_page->websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementTokenPublicKeyURLForTesting(m_page->websiteDataStore().sessionID(), url), WTFMove(completionHandler));
+    protectedPage()->protectedWebsiteDataStore()->protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementTokenPublicKeyURLForTesting(m_page->websiteDataStore().sessionID(), url), WTFMove(completionHandler));
 }
 
 void WebPageProxyTesting::setPrivateClickMeasurementTokenSignatureURL(const URL& url, CompletionHandler<void()>&& completionHandler)
 {
-    m_page->websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementTokenSignatureURLForTesting(m_page->websiteDataStore().sessionID(), url), WTFMove(completionHandler));
+    protectedPage()->protectedWebsiteDataStore()->protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementTokenSignatureURLForTesting(m_page->websiteDataStore().sessionID(), url), WTFMove(completionHandler));
 }
 
 void WebPageProxyTesting::setPrivateClickMeasurementAttributionReportURLs(const URL& sourceURL, const URL& destinationURL, CompletionHandler<void()>&& completionHandler)
 {
-    m_page->websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementAttributionReportURLsForTesting(m_page->websiteDataStore().sessionID(), sourceURL, destinationURL), WTFMove(completionHandler));
+    protectedPage()->protectedWebsiteDataStore()->protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementAttributionReportURLsForTesting(m_page->websiteDataStore().sessionID(), sourceURL, destinationURL), WTFMove(completionHandler));
 }
 
 void WebPageProxyTesting::markPrivateClickMeasurementsAsExpired(CompletionHandler<void()>&& completionHandler)
 {
-    m_page->websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::MarkPrivateClickMeasurementsAsExpiredForTesting(m_page->websiteDataStore().sessionID()), WTFMove(completionHandler));
+    protectedPage()->protectedWebsiteDataStore()->protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::MarkPrivateClickMeasurementsAsExpiredForTesting(m_page->websiteDataStore().sessionID()), WTFMove(completionHandler));
 }
 
 void WebPageProxyTesting::setPCMFraudPreventionValues(const String& unlinkableToken, const String& secretToken, const String& signature, const String& keyID, CompletionHandler<void()>&& completionHandler)
 {
-    m_page->websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::SetPCMFraudPreventionValuesForTesting(m_page->websiteDataStore().sessionID(), unlinkableToken, secretToken, signature, keyID), WTFMove(completionHandler));
+    protectedPage()->protectedWebsiteDataStore()->protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::SetPCMFraudPreventionValuesForTesting(m_page->websiteDataStore().sessionID(), unlinkableToken, secretToken, signature, keyID), WTFMove(completionHandler));
 }
 
 void WebPageProxyTesting::setPrivateClickMeasurementAppBundleID(const String& appBundleIDForTesting, CompletionHandler<void()>&& completionHandler)
 {
-    m_page->websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementAppBundleIDForTesting(m_page->websiteDataStore().sessionID(), appBundleIDForTesting), WTFMove(completionHandler));
+    protectedPage()->protectedWebsiteDataStore()->protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementAppBundleIDForTesting(m_page->websiteDataStore().sessionID(), appBundleIDForTesting), WTFMove(completionHandler));
 }
 
 #if ENABLE(NOTIFICATIONS)
@@ -194,5 +194,10 @@ void WebPageProxyTesting::setSystemCanPromptForGetDisplayMediaForTesting(bool ca
     DisplayCaptureSessionManager::singleton().setSystemCanPromptForTesting(canPrompt);
 }
 #endif
+
+Ref<WebPageProxy> WebPageProxyTesting::protectedPage() const
+{
+    return m_page.get();
+}
 
 } // namespace WebKit

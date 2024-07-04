@@ -78,6 +78,8 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
+    Ref<WebPageProxy> protectedPage() const;
+
     const WebCore::PageIdentifier m_webPageIDInMainFrameProcess;
     WeakRef<WebPageProxy> m_page;
 };
