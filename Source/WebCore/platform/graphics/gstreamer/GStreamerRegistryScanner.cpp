@@ -1165,7 +1165,7 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::isRtpPa
         return { };
     }
 
-    auto factories = ElementFactories({ ElementFactories::Type::RtpPayloader });
+    ElementFactories factories(ElementFactories::Type::RtpPayloader);
     return factories.hasElementForMediaType(ElementFactories::Type::RtpPayloader, *gstCapsName);
 }
 
