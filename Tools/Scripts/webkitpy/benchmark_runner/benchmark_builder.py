@@ -55,6 +55,8 @@ class BenchmarkBuilder(object):
                     self._apply_patch(self._plan['signpost_patch'])
                 else:
                     _log.warning('Signposts are enabled but a signpost patch was not found in the test plan. Skipping.')
+            for extra_patch in self._plan.get('extra_patches', []):
+                self._apply_patch(extra_patch)
             return self._web_root
         except Exception:
             self._clean()

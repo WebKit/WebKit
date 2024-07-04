@@ -79,6 +79,12 @@ class BenchmarkRunner(object):
             with open(plan_file, 'r') as fp:
                 plan_name = os.path.split(os.path.splitext(plan_file)[0])[1]
                 plan = json.load(fp)
+                if 'import_plan_file' in plan:
+                    imported_plan_file = BenchmarkRunner._find_plan_file(plan.pop('import_plan_file'))
+                    with open(imported_plan_file, 'r') as ifp:
+                        imported_plan = json.load(ifp)
+                    imported_plan.update(plan)
+                    plan = imported_plan
                 return plan_name, plan
         except IOError as error:
             _log.error('Can not open plan file: {plan_file} - Error {error}'.format(plan_file=plan_file, error=error))

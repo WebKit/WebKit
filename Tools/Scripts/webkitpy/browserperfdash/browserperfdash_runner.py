@@ -166,13 +166,26 @@ class BrowserPerfDashRunner(object):
             plan_content = plan_fd.read().encode('utf-8', errors='ignore')
             version_hash.update(plan_content)
             plan_dict = json.loads(plan_content)
+            if 'import_plan_file' in plan_dict:
+                imported_plan_file = os.path.join(self._plandir, plan_dict.pop('import_plan_file'))
+                with open(imported_plan_file, 'r') as imported_plan_fd:
+                    imported_plan_content = imported_plan_fd.read().encode('utf-8', errors='ignore')
+                    version_hash.update(imported_plan_content)
+                    imported_plan_dict = json.loads(imported_plan_content)
+                imported_plan_dict.update(plan_dict)
+                plan_dict = imported_plan_dict
+            plan_patches = []
             for plan_key in plan_dict:
                 if plan_key.endswith('_patch'):
-                    patch_file_path = get_path_from_project_root(plan_dict[plan_key])
-                    if not os.path.isfile(patch_file_path):
-                        raise Exception('Can not find patch file "{patch_file_path}" referenced in plan "{plan_file_path}"'.format(patch_file_path=patch_file_path, plan_file_path=plan_file_path))
-                    with open(patch_file_path, 'r') as patch_fd:
-                        version_hash.update(patch_fd.read().encode('utf-8', errors='ignore'))
+                    plan_patches.append(get_path_from_project_root(plan_dict[plan_key]))
+                if plan_key.endswith('_patches'):
+                    for plan_patch in plan_dict[plan_key]:
+                        plan_patches.append(get_path_from_project_root(plan_patch))
+            for patch_file_path in plan_patches:
+                if not os.path.isfile(patch_file_path):
+                    raise Exception('Can not find patch file "{patch_file_path}" referenced in plan "{plan_file_path}"'.format(patch_file_path=patch_file_path, plan_file_path=plan_file_path))
+                with open(patch_file_path, 'r') as patch_fd:
+                    version_hash.update(patch_fd.read().encode('utf-8', errors='ignore'))
         return version_hash.hexdigest()
 
     def _get_test_data_json_string(self, temp_result_file):
