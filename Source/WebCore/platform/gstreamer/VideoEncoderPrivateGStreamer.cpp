@@ -280,12 +280,12 @@ static bool videoEncoderSetEncoder(WebKitVideoEncoder* self, EncoderId encoderId
     auto* structure = gst_caps_get_structure(encodedCaps.get(), 0);
     if (structure) {
         auto width = gstStructureGet<int>(structure, "width"_s);
-        if (width && *width > MAX_WIDTH) {
+        if (width && (*width > MAX_WIDTH)) {
             GST_WARNING_OBJECT(self, "Encoded width (%d) is too high. Maximum allowed: %d.", *width, MAX_WIDTH);
             return false;
         }
         auto height = gstStructureGet<int>(structure, "height"_s);
-        if (height && *height > MAX_HEIGHT) {
+        if (height && (*height > MAX_HEIGHT)) {
             GST_WARNING_OBJECT(self, "Encoded height (%d) is too high. Maximum allowed: %d.", *height, MAX_HEIGHT);
             return false;
         }
