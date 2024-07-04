@@ -116,7 +116,7 @@ public:
     virtual void processDidBecomeResponsive(WebKit::WebPageProxy&) { }
     virtual void processDidBecomeUnresponsive(WebKit::WebPageProxy&) { }
 
-    virtual RefPtr<Data> webCryptoMasterKey(WebKit::WebPageProxy&) { return nullptr; }
+    virtual void legacyWebCryptoMasterKey(WebKit::WebPageProxy&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler) { completionHandler(std::nullopt); }
 
 #if USE(QUICK_LOOK)
     virtual void didStartLoadForQuickLookDocumentInMainFrame(const WTF::String& fileName, const WTF::String& uti) { }

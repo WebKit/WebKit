@@ -239,6 +239,7 @@
 #include <WebCore/TextIndicator.h>
 #include <WebCore/ValidationBubble.h>
 #include <WebCore/WindowFeatures.h>
+#include <WebCore/WrappedCryptoKey.h>
 #include <WebCore/WritingDirection.h>
 #include <optional>
 #include <stdio.h>
@@ -11575,42 +11576,38 @@ void WebPageProxy::setOverlayScrollbarStyle(std::optional<WebCore::ScrollbarOver
         legacyMainFrameProcess().send(Messages::WebPage::SetScrollbarOverlayStyle(scrollbarStyleForMessage), internals().webPageID);
 }
 
-std::optional<Vector<uint8_t>> WebPageProxy::getWebCryptoMasterKey()
+void WebPageProxy::getWebCryptoMasterKey(CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
-    if (auto keyData = m_websiteDataStore->client().webCryptoMasterKey())
-        return keyData;
-    if (auto keyData = m_navigationClient->webCryptoMasterKey(*this))
-        return Vector(keyData->span());
-    return std::nullopt;
+    m_websiteDataStore->client().webCryptoMasterKey([completionHandler = WTFMove(completionHandler), protectedThis = Ref { *this }](std::optional<Vector<uint8_t>>&& key) mutable {
+        if (key)
+            return completionHandler(WTFMove(key));
+        protectedThis->m_navigationClient->legacyWebCryptoMasterKey(protectedThis, WTFMove(completionHandler));
+    });
+
 }
 
-void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
+void WebPageProxy::wrapCryptoKey(Vector<uint8_t>&& key, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
-    Ref protectedPageClient { pageClient() };
-
-    std::optional<Vector<uint8_t>> masterKey = getWebCryptoMasterKey();
-    if (masterKey) {
-        Vector<uint8_t> wrappedKey;
-        if (wrapSerializedCryptoKey(*masterKey, key, wrappedKey)) {
-            completionHandler(WTFMove(wrappedKey));
-            return;
+    getWebCryptoMasterKey([key = WTFMove(key), completionHandler = WTFMove(completionHandler)](std::optional<Vector<uint8_t>> && masterKey) mutable {
+        if (masterKey) {
+            Vector<uint8_t> wrappedKey;
+            if (wrapSerializedCryptoKey(*masterKey, key, wrappedKey))
+                return completionHandler(WTFMove(wrappedKey));
         }
-    }
-    completionHandler(std::optional<Vector<uint8_t>>());
+        completionHandler(std::nullopt);
+    });
 }
 
-void WebPageProxy::unwrapCryptoKey(const struct WrappedCryptoKey& wrappedKey, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
+void WebPageProxy::unwrapCryptoKey(WrappedCryptoKey&& wrappedKey, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
-    Ref protectedPageClient { pageClient() };
-
-    std::optional<Vector<uint8_t>> masterKey = getWebCryptoMasterKey();
-    if (masterKey) {
-        if (auto key = WebCore::unwrapCryptoKey(*masterKey, wrappedKey)) {
-            completionHandler(WTFMove(key));
-            return;
+    getWebCryptoMasterKey([wrappedKey = WTFMove(wrappedKey), completionHandler = WTFMove(completionHandler)](std::optional<Vector<uint8_t>> && masterKey) mutable {
+        if (masterKey) {
+            if (auto key = WebCore::unwrapCryptoKey(*masterKey, wrappedKey))
+                return completionHandler(WTFMove(key));
         }
-    }
-    completionHandler(std::nullopt);
+        completionHandler(std::nullopt);
+    });
+
 }
 
 void WebPageProxy::changeFontAttributes(WebCore::FontAttributeChanges&& changes)
