@@ -476,18 +476,33 @@ private:
     // `LChar` parser.
     String scanText()
     {
-        using UnsignedType = std::make_unsigned_t<CharacterType>;
-        constexpr auto quoteMask = SIMD::splat<UnsignedType>('<');
-        constexpr auto escapeMask = SIMD::splat<UnsignedType>('&');
-        constexpr auto newlineMask = SIMD::splat<UnsignedType>('\r');
-        constexpr auto zeroMask = SIMD::splat<UnsignedType>(0);
         auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
-            auto quotes = SIMD::equal(input, quoteMask);
-            auto escapes = SIMD::equal(input, escapeMask);
-            auto newlines = SIMD::equal(input, newlineMask);
-            auto zeros = SIMD::equal(input, zeroMask);
-            auto mask = SIMD::bitOr(zeros, quotes, escapes, newlines);
-            return SIMD::findFirstNonZeroIndex(mask);
+            using UnsignedType = std::make_unsigned_t<CharacterType>;
+            if constexpr (sizeof(UnsignedType) == 1) {
+                // https://lemire.me/blog/2024/06/08/scan-html-faster-with-simd-instructions-chrome-edition/
+                // By looking up the table via lower 4bit, we can identify the category.
+                // '\0' => 0000 0000
+                // '&'  => 0010 0110
+                // '<'  => 0011 1100
+                // '\r' => 0000 1101
+                using VectorType = decltype(input);
+                constexpr VectorType lowNibbleMask { '\0', 0, 0, 0, 0, 0, '&', 0, 0, 0, 0, 0, '<', '\r', 0, 0 };
+                constexpr VectorType v0f = SIMD::splat<UnsignedType>(0x0f);
+                auto lowpart = simde_vqtbl1q_u8(lowNibbleMask, SIMD::bitAnd(input, v0f));
+                return SIMD::findFirstNonZeroIndex(SIMD::equal(lowpart, input));
+            } else {
+                constexpr auto quoteMask = SIMD::splat<UnsignedType>('<');
+                constexpr auto escapeMask = SIMD::splat<UnsignedType>('&');
+                constexpr auto newlineMask = SIMD::splat<UnsignedType>('\r');
+                constexpr auto zeroMask = SIMD::splat<UnsignedType>(0);
+
+                auto quotes = SIMD::equal(input, quoteMask);
+                auto escapes = SIMD::equal(input, escapeMask);
+                auto newlines = SIMD::equal(input, newlineMask);
+                auto zeros = SIMD::equal(input, zeroMask);
+                auto mask = SIMD::bitOr(zeros, quotes, escapes, newlines);
+                return SIMD::findFirstNonZeroIndex(mask);
+            }
         };
 
         auto scalarMatch = [&](auto character) ALWAYS_INLINE_LAMBDA {
@@ -617,25 +632,53 @@ private:
         if (m_parsingBuffer.hasCharactersRemaining() && isQuoteCharacter(*m_parsingBuffer)) {
             auto quoteChar = m_parsingBuffer.consume();
 
-            using UnsignedType = std::make_unsigned_t<CharacterType>;
-            const auto quoteMask = SIMD::splat<UnsignedType>(quoteChar);
-            constexpr auto escapeMask = SIMD::splat<UnsignedType>('&');
-            constexpr auto newlineMask = SIMD::splat<UnsignedType>('\r');
-            auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
-                auto quotes = SIMD::equal(input, quoteMask);
-                auto escapes = SIMD::equal(input, escapeMask);
-                auto newlines = SIMD::equal(input, newlineMask);
-                auto mask = SIMD::bitOr(quotes, escapes, newlines);
-                return SIMD::findFirstNonZeroIndex(mask);
-            };
+            auto find = [&]<CharacterType quoteChar>(std::span<const CharacterType> span) ALWAYS_INLINE_LAMBDA {
+                auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
+                    using UnsignedType = std::make_unsigned_t<CharacterType>;
+                    if constexpr (sizeof(UnsignedType) == 1) {
+                        // https://lemire.me/blog/2024/06/08/scan-html-faster-with-simd-instructions-chrome-edition/
+                        // By looking up the table via lower 4bit, we can identify the category.
+                        // '\0' => 0000 0000
+                        // '&'  => 0010 0110
+                        // '\'' => 0010 0111
+                        // '\r' => 0000 1101
+                        //
+                        // OR
+                        //
+                        // '\0' => 0000 0000
+                        // '"'  => 0010 0010
+                        // '&'  => 0010 0110
+                        // '\r' => 0000 1101
+                        using VectorType = decltype(input);
+                        constexpr auto lowNibbleMask  = quoteChar == '\'' ? VectorType { '\0', 0, 0, 0, 0, 0, '&', '\'', 0, 0, 0, 0, 0, '\r', 0, 0 } : VectorType { '\0', 0, '"', 0, 0, 0, '&', 0, 0, 0, 0, 0, 0, '\r', 0, 0 };
+                        constexpr auto v0f = SIMD::splat<UnsignedType>(0x0f);
+                        auto lowpart = simde_vqtbl1q_u8(lowNibbleMask, SIMD::bitAnd(input, v0f));
+                        return SIMD::findFirstNonZeroIndex(SIMD::equal(lowpart, input));
+                    } else {
+                        constexpr auto quoteMask = SIMD::splat<UnsignedType>(quoteChar);
+                        constexpr auto escapeMask = SIMD::splat<UnsignedType>('&');
+                        constexpr auto newlineMask = SIMD::splat<UnsignedType>('\r');
+                        constexpr auto zeroMask = SIMD::splat<UnsignedType>(0);
 
-            auto scalarMatch = [&](auto character) ALWAYS_INLINE_LAMBDA {
-                return character == quoteChar || character == '&' || character == '\r';
+                        auto quotes = SIMD::equal(input, quoteMask);
+                        auto escapes = SIMD::equal(input, escapeMask);
+                        auto newlines = SIMD::equal(input, newlineMask);
+                        auto zeros = SIMD::equal(input, zeroMask);
+                        auto mask = SIMD::bitOr(zeros, quotes, escapes, newlines);
+                        return SIMD::findFirstNonZeroIndex(mask);
+                    }
+                };
+
+                auto scalarMatch = [&](auto character) ALWAYS_INLINE_LAMBDA {
+                    return character == quoteChar || character == '&' || character == '\r' || character == '\0';
+                };
+
+                return SIMD::find(span, vectorMatch, scalarMatch);
             };
 
             start = m_parsingBuffer.position();
             const auto* end = start + m_parsingBuffer.lengthRemaining();
-            auto* cursor = SIMD::find(std::span { start, end }, vectorMatch, scalarMatch);
+            const auto* cursor = quoteChar == '\'' ? find.template operator()<'\''>(std::span { start, end }) : find.template operator()<'"'>(std::span { start, end });
             if (UNLIKELY(cursor == end))
                 return didFail(HTMLFastPathResult::FailedParsingQuotedAttributeValue, emptyAtom());
 
