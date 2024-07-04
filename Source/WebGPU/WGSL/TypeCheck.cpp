@@ -1935,9 +1935,10 @@ const Type* TypeChecker::chooseOverload(ASCIILiteral kind, const SourceSpan& spa
             callArguments[i].m_inferredType = overload->parameters[i];
         inferred(overload->result);
 
-        if (expression && it->value.kind == OverloadedDeclaration::Constructor) {
-            if (auto* call = dynamicDowncast<AST::CallExpression>(*expression))
-                call->m_isConstructor = true;
+        if (expression && is<AST::CallExpression>(*expression)) {
+            auto& call = uncheckedDowncast<AST::CallExpression>(*expression);
+            call.m_isConstructor = it->value.kind == OverloadedDeclaration::Constructor;
+            call.m_visibility = it->value.visibility;
         }
 
         unsigned argumentCount = callArguments.size();
