@@ -1193,6 +1193,13 @@ static void dispatchInputEvents(RefPtr<Element> startRoot, RefPtr<Element> endRo
 
 bool Editor::willApplyEditing(CompositeEditCommand& command, Vector<RefPtr<StaticRange>>&& targetRanges)
 {
+#if ENABLE(WRITING_TOOLS)
+    if (suppressEditingForWritingTools()) {
+        RELEASE_LOG(Editing, "Editor %p suppressed editing for Writing Tools", this);
+        return false;
+    }
+#endif
+
     m_hasHandledAnyEditing = true;
 
     if (!command.shouldDispatchInputEvents())

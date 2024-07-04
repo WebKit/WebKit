@@ -48,6 +48,20 @@
 
 namespace WebCore {
 
+#pragma mark - EditingScope
+
+WritingToolsController::EditingScope::EditingScope(Document& document)
+    : m_document(&document)
+    , m_editingWasSuppressed(document.editor().suppressEditingForWritingTools())
+{
+    document.editor().setSuppressEditingForWritingTools(false);
+}
+
+WritingToolsController::EditingScope::~EditingScope()
+{
+    m_document->editor().setSuppressEditingForWritingTools(m_editingWasSuppressed);
+}
+
 #pragma mark - Overloaded TextIterator-based static functions.
 
 // To maintain consistency between the traversals of `TextIterator` and `HTMLConverter` within the controller,
@@ -202,6 +216,8 @@ void WritingToolsController::willBeginWritingToolsSession(const std::optional<Wr
         return;
     }
 
+    document->editor().setSuppressEditingForWritingTools(true);
+
     completionHandler({ { WTF::UUID { 0 }, attributedStringFromRange, selectedTextCharacterRange } });
 }
 
@@ -267,8 +283,10 @@ void WritingToolsController::proofreadingSessionDidReceiveSuggestions(const Writ
         state->replacementLocationOffset += static_cast<int>(suggestion.replacement.length()) - static_cast<int>(suggestion.originalRange.length);
     }
 
-    if (finished)
+    if (finished) {
+        document->editor().setSuppressEditingForWritingTools(false);
         document->selection().setSelection({ sessionRange });
+    }
 }
 
 void WritingToolsController::proofreadingSessionDidUpdateStateForSuggestion(const WritingTools::Session& session, WritingTools::TextSuggestion::State newTextSuggestionState, const WritingTools::TextSuggestion& textSuggestion, const WritingTools::Context&)
@@ -556,6 +574,8 @@ void WritingToolsController::didEndWritingToolsSession(const WritingTools::Sessi
         return;
     }
 
+    document->editor().setSuppressEditingForWritingTools(false);
+
     switch (session.type) {
     case WritingTools::Session::Type::Proofreading:
         didEndWritingToolsSession<WritingTools::Session::Type::Proofreading>(session, accepted);
@@ -827,7 +847,10 @@ void WritingToolsController::replaceContentsOfRangeInSession(ProofreadingState& 
 
     document->selection().setSelection({ range });
 
-    document->editor().replaceSelectionWithText(replacementText, Editor::SelectReplacement::Yes, Editor::SmartReplace::No, EditAction::InsertReplacement);
+    {
+        EditingScope editingScope { *document };
+        document->editor().replaceSelectionWithText(replacementText, Editor::SelectReplacement::Yes, Editor::SmartReplace::No, EditAction::InsertReplacement);
+    }
 
     auto selection = document->selection().selection();
 
@@ -853,6 +876,7 @@ void WritingToolsController::replaceContentsOfRangeInSession(CompositionState& s
     });
     auto matchStyle = hasAttributes ? WritingToolsCompositionCommand::MatchStyle::No : WritingToolsCompositionCommand::MatchStyle::Yes;
 
+    EditingScope editingScope { *document() };
     state.reappliedCommands.last()->replaceContentsOfRangeWithFragment(WTFMove(fragment), range, matchStyle, commandState);
 }
 

@@ -221,6 +221,13 @@
     return attachmentIdentifier.autorelease();
 }
 
+- (void)attemptEditingForTesting
+{
+    [self stringByEvaluatingJavaScript:@"document.execCommand('selectAll', false, null)"];
+    [self _synchronouslyExecuteEditCommand:@"DeleteBackward" argument:nil];
+    [self _synchronouslyExecuteEditCommand:@"InsertText" argument:@"Test"];
+}
+
 @end
 
 struct ColorExpectation {
@@ -597,6 +604,93 @@ TEST(WritingTools, ProofreadingWithImage)
             EXPECT_WK_STREQ(proofreadText, [string.string _withVisibleReplacementCharacters]);
             finished = true;
         }];
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
+TEST(WritingTools, ProofreadingWithAttemptedEditing)
+{
+    auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
+
+    NSString *originalText = @"I frequetly misspell thigs.";
+    NSString *proofreadText = @"I frequently misspell things.";
+
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:[NSString stringWithFormat:@"<body contenteditable><p>%@</p></body>", originalText]]);
+
+    [webView focusDocumentBodyAndSelectAll];
+
+    __block bool finished = false;
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+
+        [webView attemptEditingForTesting];
+        EXPECT_WK_STREQ(originalText, [webView contentsAsString]);
+
+        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:@[ adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(2, 9) replacement:@"frequently"]).get() ] processedRange:NSMakeRange(0, 9) inContext:contexts.firstObject finished:NO];
+
+        [webView attemptEditingForTesting];
+        EXPECT_WK_STREQ([originalText stringByReplacingOccurrencesOfString:@"frequetly" withString:@"frequently"], [webView contentsAsString]);
+
+        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:@[ adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(21, 5) replacement:@"things"]).get() ] processedRange:NSMakeRange(0, 27) inContext:contexts.firstObject finished:YES];
+
+        EXPECT_WK_STREQ(proofreadText, [webView contentsAsString]);
+
+        [webView attemptEditingForTesting];
+        EXPECT_WK_STREQ("Test", [webView contentsAsString]);
+
+        [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
+        EXPECT_WK_STREQ("Test", [webView contentsAsString]);
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
+TEST(WritingTools, CompositionWithAttemptedEditing)
+{
+    auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+
+    NSString *source = @"<html><head></head><body contenteditable dir=\"auto\" style=\"overflow-wrap: break-word; -webkit-nbsp-mode: space; line-break: after-white-space;\"><div>An NSAttributedString object manage character strings and associated sets of attributes (for example, font and kerning) that apply to individual characters or ranges of characters in the string. An association of characters and their attributes is called an attributed string. The cluster's two public classes, NSAttributedString and NSMutableAttributedString, declare the programmatic interface for read-only attbuted strings and modifiable attributed strings, respectively.</div><div><br></div><div>An attributed string identifies attributes by name, using an NSDictionary object to store a value under the specified name. You can assign any attribute name/value pair you wish to a range of characters—it is up to your application to interpret custom attributes (see Attributed String Programming Guide). If you are using attributed strings with the Core Text framework, you can also use the attribute keys defined by that framework</div></body></html>";
+
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:source]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    __block bool finished = false;
+
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        NSString *originalText = @"An NSAttributedString object manage character strings and associated sets of attributes (for example, font and kerning) that apply to individual characters or ranges of characters in the string. An association of characters and their attributes is called an attributed string. The cluster's two public classes, NSAttributedString and NSMutableAttributedString, declare the programmatic interface for read-only attbuted strings and modifiable attributed strings, respectively.\n\nAn attributed string identifies attributes by name, using an NSDictionary object to store a value under the specified name. You can assign any attribute name/value pair you wish to a range of characters—it is up to your application to interpret custom attributes (see Attributed String Programming Guide). If you are using attributed strings with the Core Text framework, you can also use the attribute keys defined by that framework";
+        EXPECT_WK_STREQ(originalText, contexts.firstObject.attributedText.string);
+
+        [webView attemptEditingForTesting];
+        EXPECT_WK_STREQ(originalText, [webView contentsAsStringWithoutNBSP]);
+
+        [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
+
+        auto attributedText = adoptNS([[NSAttributedString alloc] initWithString:@"NSAttributedString is a class in the Objective-C programming language that represents a string with attributes. It allows you to set and retrieve attributes for individual characters or ranges of characters in the string. NSAttributedString is a subclass of NSMutableAttributedString, which is a class that allows you to modify the attributes of an attributed string."]);
+
+        [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 476) inContext:contexts.firstObject finished:NO];
+
+        [webView attemptEditingForTesting];
+        EXPECT_WK_STREQ("NSAttributedString is a class in the Objective-C programming language that represents a string with attributes. It allows you to set and retrieve attributes for individual characters or ranges of characters in the string. NSAttributedString is a subclass of NSMutableAttributedString, which is a class that allows you to modify the attributes of an attributed string.\nAn attributed string identifies attributes by name, using an NSDictionary object to store a value under the specified name. You can assign any attribute name/value pair you wish to a range of characters—it is up to your application to interpret custom attributes (see Attributed String Programming Guide). If you are using attributed strings with the Core Text framework, you can also use the attribute keys defined by that framework", [webView contentsAsStringWithoutNBSP]);
+
+        NSString *result = @"NSAttributedString is a class in the Objective-C programming language that represents a string with attributes. It allows you to set and retrieve attributes for individual characters or ranges of characters in the string. NSAttributedString is a subclass of NSMutableAttributedString, which is a class that allows you to modify the attributes of an attributed string.\n\nAn attributed string is a type of string that can contain attributes. Attributes are properties that can be set on a string and can be accessed and manipulated by other code. The attributes can be used to add custom information to a string, such as colors, fonts, or images. The Core Text framework provides a set of attribute keys that can be used to define the attributes that can be used in attributed strings.";
+
+        auto longerAttributedText = adoptNS([[NSAttributedString alloc] initWithString:result]);
+
+        [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:longerAttributedText.get() replacementRange:NSMakeRange(0, 910) inContext:contexts.firstObject finished:YES];
+
+        EXPECT_WK_STREQ(result, [webView contentsAsStringWithoutNBSP]);
+
+        [webView attemptEditingForTesting];
+        EXPECT_WK_STREQ(result, [webView contentsAsStringWithoutNBSP]);
+
+        [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
+        [webView attemptEditingForTesting];
+        EXPECT_WK_STREQ("Test", [webView contentsAsStringWithoutNBSP]);
+
+        finished = true;
     }];
 
     TestWebKitAPI::Util::run(&finished);

@@ -116,6 +116,17 @@ private:
         using Value = CompositionState;
     };
 
+    class EditingScope {
+        WTF_MAKE_NONCOPYABLE(EditingScope); WTF_MAKE_FAST_ALLOCATED;
+    public:
+        EditingScope(Document&);
+        ~EditingScope();
+
+    private:
+        RefPtr<Document> m_document;
+        bool m_editingWasSuppressed;
+    };
+
     static CharacterRange characterRange(const SimpleRange& scope, const SimpleRange&);
     static SimpleRange resolveCharacterRange(const SimpleRange& scope, CharacterRange);
     static uint64_t characterCount(const SimpleRange&);
