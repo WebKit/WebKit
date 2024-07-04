@@ -100,6 +100,8 @@ public:
     Path path() const;
     size_t approximateMemoryCost() const final { return m_pathSegList->approximateMemoryCost(); }
 
+    void pathDidChange();
+
     static void clearCache();
 
 private:
