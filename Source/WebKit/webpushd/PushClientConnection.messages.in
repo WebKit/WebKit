@@ -25,7 +25,6 @@
 messages -> WebPushD::PushClientConnection NotUsingIPCConnection {
     SetPushAndNotificationsEnabledForOrigin(String originString, bool enabled) -> ()
     GetPendingPushMessages() -> (Vector<WebKit::WebPushMessage> messages)
-    SetDebugModeIsEnabled(bool enabled)
     UpdateConnectionConfiguration(WebKit::WebPushD::WebPushDaemonConnectionConfiguration configuration)
     InjectPushMessageForTesting(WebKit::WebPushD::PushMessageForTesting message) -> (String error)
     InjectEncryptedPushMessageForTesting(String encryptedMessage) -> (bool injected)

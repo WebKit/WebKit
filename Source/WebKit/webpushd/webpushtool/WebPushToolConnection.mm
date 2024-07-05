@@ -154,8 +154,8 @@ void Connection::sendPushMessage()
 
 void Connection::startDebugStreamAction()
 {
-    sendWithoutUsingIPCConnection(Messages::PushClientConnection::SetDebugModeIsEnabled(true));
-    printf("Now streaming debug messages\n");
+    printf("Now streaming debug messages via: log stream --debug --info --process webpushd");
+    system("log stream --debug --info --process webpushd");
 }
 
 void Connection::sendAuditToken()

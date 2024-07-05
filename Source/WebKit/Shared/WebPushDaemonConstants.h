@@ -37,7 +37,6 @@ constexpr unsigned maxSilentPushCount = 3;
 constexpr auto protocolVersionKey = "protocol version"_s;
 constexpr uint64_t protocolVersionValue = 3;
 constexpr auto protocolEncodedMessageKey = "encoded message"_s;
-constexpr auto protocolDebugMessageKey = "debug message"_s;
 
 // FIXME: ConnectionToMachService traits requires we have a message type, so keep this placeholder here
 // until we can remove that requirement.

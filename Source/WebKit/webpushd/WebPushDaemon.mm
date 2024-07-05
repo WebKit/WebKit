@@ -53,6 +53,9 @@
 #import <UIKit/UIApplication.h>
 #endif
 
+#define WEBPUSHDAEMON_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%{public}s [connection=%p, app=%{public}s]: " fmt, __func__, &connection, connection.subscriptionSetIdentifier().debugDescription().utf8().data(), ##__VA_ARGS__)
+#define WEBPUSHDAEMON_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%{public}s [connection=%p, app=%{public}s]: " fmt, __func__, &connection, connection.subscriptionSetIdentifier().debugDescription().utf8().data(), ##__VA_ARGS__)
+
 using namespace WebKit::WebPushD;
 using WebCore::PushSubscriptionSetIdentifier;
 
@@ -135,28 +138,6 @@ void WebPushDaemon::incomingPushTransactionTimerFired()
     m_incomingPushTransaction = nullptr;
 }
 
-void WebPushDaemon::broadcastDebugMessage(const String& message)
-{
-    for (auto& iterator : m_connectionMap) {
-        if (iterator.value->debugModeIsEnabled())
-            iterator.value->sendDebugMessage(message);
-    }
-}
-
-void WebPushDaemon::broadcastAllConnectionIdentities()
-{
-    broadcastDebugMessage("===\nCurrent connections:"_s);
-
-    auto connections = copyToVector(m_connectionMap.values());
-    std::sort(connections.begin(), connections.end(), [] (const Ref<PushClientConnection>& a, const Ref<PushClientConnection>& b) {
-        return a->identifier() < b->identifier();
-    });
-
-    for (auto& iterator : connections)
-        iterator->broadcastDebugMessage(""_s);
-    broadcastDebugMessage("==="_s);
-}
-
 static void tryCloseRequestConnection(xpc_object_t request)
 {
     if (auto connection = xpc_dictionary_get_remote_connection(request))
@@ -212,8 +193,6 @@ void WebPushDaemon::connectionEventHandler(xpc_object_t request)
 
 void WebPushDaemon::connectionAdded(xpc_connection_t connection)
 {
-    broadcastDebugMessage(makeString("New connection: 0x"_s, hex(reinterpret_cast<uint64_t>(connection), WTF::HexConversionMode::Lowercase)));
-
     RELEASE_ASSERT(!m_connectionMap.contains(connection));
     m_connectionMap.set(connection, PushClientConnection::create(connection));
 }
@@ -239,18 +218,16 @@ void WebPushDaemon::setPushAndNotificationsEnabledForOrigin(PushClientConnection
 
 void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection, PushMessageForTesting&& message, CompletionHandler<void(const String&)>&& replySender)
 {
-    if (!connection.hostAppHasPushInjectEntitlement()) {
-        String error = "Attempting to inject a push message from an unentitled process"_s;
-        connection.broadcastDebugMessage(error);
-        replySender(error);
-        return;
-    }
-
-    if (message.targetAppCodeSigningIdentifier.isEmpty() || !message.registrationURL.isValid()) {
-        String error = "Attempting to inject an invalid push message"_s;
-        connection.broadcastDebugMessage(error);
-        replySender(error);
-        return;
+    auto checkConnectionAndInjectedMessage = [&]() -> ASCIILiteral {
+        if (!connection.hostAppHasPushInjectEntitlement())
+            return "Attempting to inject a push message from an unentitled process"_s;
+        if (message.targetAppCodeSigningIdentifier.isEmpty() || !message.registrationURL.isValid())
+            return "Attempting to inject an invalid push message"_s;
+        return nullptr;
+    };
+    if (auto errorMessage = checkConnectionAndInjectedMessage()) {
+        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "%{public}s", errorMessage.characters());
+        return replySender(errorMessage);
     }
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
@@ -273,8 +250,7 @@ void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection
         return Deque<PushMessageForTesting> { };
     });
 
-    connection.broadcastDebugMessage(makeString("Injected a test push message for "_s, message.targetAppCodeSigningIdentifier, " at "_s, message.registrationURL.string(), ", there are now "_s, addResult.iterator->value.size() + 1, " pending messages"_s));
-    connection.broadcastDebugMessage(message.payload);
+    WEBPUSHDAEMON_RELEASE_LOG(Push, "Injected a test push message for %{public}s at %{public}s with %zu pending messages, payload: %{public}s", message.targetAppCodeSigningIdentifier.utf8().data(), message.registrationURL.string().utf8().data(), addResult.iterator->value.size() + 1, message.payload.utf8().data());
 
     addResult.iterator->value.append(WTFMove(message));
 
@@ -286,25 +262,20 @@ void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection
 void WebPushDaemon::injectEncryptedPushMessageForTesting(PushClientConnection& connection, const String& message, CompletionHandler<void(bool)>&& replySender)
 {
     if (!connection.hostAppHasPushInjectEntitlement()) {
-        connection.broadcastDebugMessage("Attempting to inject a push message from an unentitled process"_s);
-        replySender(false);
-        return;
+        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "Attempting to inject a push message from an unentitled process");
+        return replySender(false);
     }
 
     runAfterStartingPushService([this, message = message, replySender = WTFMove(replySender)]() mutable {
-        if (!m_pushService) {
-            replySender(false);
-            return;
-        }
+        if (!m_pushService)
+            return replySender(false);
 
         auto bytes = message.utf8();
         RetainPtr data = toNSData(bytes.span());
 
         id obj = [NSJSONSerialization JSONObjectWithData:data.get() options:0 error:nullptr];
-        if (!obj || ![obj isKindOfClass:[NSDictionary class]]) {
-            replySender(false);
-            return;
-        }
+        if (!obj || ![obj isKindOfClass:[NSDictionary class]])
+            return replySender(false);
 
         m_pushService->didReceivePushMessage(obj[@"topic"], obj[@"userInfo"], [replySender = WTFMove(replySender)]() mutable {
             replySender(true);
@@ -361,7 +332,7 @@ void WebPushDaemon::notifyClientPushMessageIsAvailable(const WebCore::PushSubscr
 
     [[LSApplicationWorkspace defaultWorkspace] openURL:launchURL configuration:configuration completionHandler:^(NSDictionary<NSString *, id> *result, NSError *error) {
         if (error)
-            RELEASE_LOG_ERROR(Push, "Failed to open app to handle push");
+            RELEASE_LOG_ERROR(Push, "Failed to open app to handle push: %{public}@", error);
     }];
 #endif
 }
@@ -394,8 +365,7 @@ void WebPushDaemon::getPendingPushMessages(PushClientConnection& connection, Com
         m_testingPushMessages.remove(iterator);
     }
 
-    RELEASE_LOG(Push, "Fetched %zu pending push messages for %{public}s", resultMessages.size(), connection.subscriptionSetIdentifier().debugDescription().utf8().data());
-    connection.broadcastDebugMessage(makeString("Fetching "_s, resultMessages.size(), " pending push messages"_s));
+    WEBPUSHDAEMON_RELEASE_LOG(Push, "Fetched %zu pending push messages", resultMessages.size());
 
     replySender(WTFMove(resultMessages));
     
@@ -403,8 +373,13 @@ void WebPushDaemon::getPendingPushMessages(PushClientConnection& connection, Com
         releaseIncomingPushTransaction();
 }
 
-void WebPushDaemon::getPushTopicsForTesting(CompletionHandler<void(Vector<String>, Vector<String>)>&& completionHandler)
+void WebPushDaemon::getPushTopicsForTesting(PushClientConnection& connection, CompletionHandler<void(Vector<String>, Vector<String>)>&& completionHandler)
 {
+    if (!connection.hostAppHasPushInjectEntitlement()) {
+        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "Need entitlement to get push topics");
+        return completionHandler({ }, { });
+    }
+
     runAfterStartingPushService([this, completionHandler = WTFMove(completionHandler)]() mutable {
         if (!m_pushService) {
             completionHandler({ }, { });
@@ -486,8 +461,13 @@ void WebPushDaemon::removePushSubscriptionsForOrigin(PushClientConnection& conne
     });
 }
 
-void WebPushDaemon::setPublicTokenForTesting(const String& publicToken, CompletionHandler<void()>&& replySender)
+void WebPushDaemon::setPublicTokenForTesting(PushClientConnection& connection, const String& publicToken, CompletionHandler<void()>&& replySender)
 {
+    if (!connection.hostAppHasPushInjectEntitlement()) {
+        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "Need entitlement to set public token");
+        return replySender();
+    }
+
     runAfterStartingPushService([this, publicToken, replySender = WTFMove(replySender)]() mutable {
         if (!m_pushService) {
             replySender();

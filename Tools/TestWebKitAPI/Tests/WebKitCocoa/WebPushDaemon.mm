@@ -328,40 +328,18 @@ TEST(WebPushD, BasicCommunication)
             interrupted = true;
             return;
         }
-        if (xpc_get_type(request) != XPC_TYPE_DICTIONARY)
-            return;
-        const char* debugMessage = xpc_dictionary_get_string(request, WebKit::WebPushD::protocolDebugMessageKey);
-        if (!debugMessage)
-            return;
-
-        NSString *nsMessage = [NSString stringWithUTF8String:debugMessage];
-
-        // Ignore possible connections/messages from webpushtool
-        if ([nsMessage hasPrefix:@"[webpushtool "])
-            return;
-
-        bool stringMatches = [nsMessage hasPrefix:@"[com.apple.WebKit.TestWebKitAPI"] || [nsMessage hasPrefix:@"[TestWebKitAPI"];
-        stringMatches = stringMatches && [nsMessage hasSuffix:@" Turned Debug Mode on"];
-
-        EXPECT_TRUE(stringMatches);
-        if (!stringMatches)
-            WTFLogAlways("String does not match, actual string was %@", nsMessage);
-
-        done = true;
     });
-
     xpc_connection_activate(connection.get());
     sendConfigurationWithAuditToken(connection.get());
 
-    // Enable debug messages, and wait for the resulting debug message
-    {
-        auto sender = WebPushXPCConnectionMessageSender { connection.get() };
-        sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::SetDebugModeIsEnabled(true));
-        TestWebKitAPI::Util::run(&done);
-    }
-
-    // Sending a message with a higher protocol version should cause the connection to be terminated
+    // Send a basic message and make sure its reply handler ran.
     auto sender = WebPushXPCConnectionMessageSender { connection.get() };
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushTopicsForTesting(), ^(Vector<String>, Vector<String>) {
+        done = true;
+    });
+    TestWebKitAPI::Util::run(&done);
+
+    // Sending a message with a higher protocol version should cause the connection to be terminated.
     sender.setShouldIncrementProtocolVersionForTesting();
     __block bool messageReplied = false;
     sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::RemoveAllPushSubscriptions(), ^(bool result) {

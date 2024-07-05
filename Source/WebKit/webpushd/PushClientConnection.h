@@ -81,15 +81,9 @@ public:
     const String& pushPartitionString() const { return m_pushPartitionString; }
     std::optional<WTF::UUID> dataStoreIdentifier() const { return m_dataStoreIdentifier; }
 
-    bool debugModeIsEnabled() const { return m_debugModeEnabled; }
-    void setDebugModeIsEnabled(bool);
-
     bool useMockBundlesForTesting() const { return m_useMockBundlesForTesting; }
 
     void connectionClosed();
-
-    void broadcastDebugMessage(const String&);
-    void sendDebugMessage(const String&);
 
     void didReceiveMessageWithReplyHandler(IPC::Decoder&, Function<void(UniqueRef<IPC::Encoder>&&)>&&) override;
 

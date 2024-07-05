@@ -88,12 +88,11 @@ void PushClientConnection::setHostAppAuditTokenData(const Vector<uint8_t>& token
     }
 
     m_hostAppAuditToken = WTFMove(token);
-    WebPushDaemon::singleton().broadcastAllConnectionIdentities();
 }
 
 void PushClientConnection::getPushTopicsForTesting(CompletionHandler<void(Vector<String>, Vector<String>)>&& completionHandler)
 {
-    WebPushDaemon::singleton().getPushTopicsForTesting(WTFMove(completionHandler));
+    WebPushDaemon::singleton().getPushTopicsForTesting(*this, WTFMove(completionHandler));
 }
 
 WebCore::PushSubscriptionSetIdentifier PushClientConnection::subscriptionSetIdentifier()
@@ -165,37 +164,8 @@ bool PushClientConnection::hostHasEntitlement(ASCIILiteral entitlement)
 #endif
 }
 
-void PushClientConnection::setDebugModeIsEnabled(bool enabled)
-{
-    if (enabled == m_debugModeEnabled)
-        return;
-
-    m_debugModeEnabled = enabled;
-    broadcastDebugMessage(makeString("Turned Debug Mode "_s, m_debugModeEnabled ? "on"_s : "off"_s));
-}
-
-void PushClientConnection::broadcastDebugMessage(const String& message)
-{
-    String messageIdentifier;
-    auto signingIdentifier = hostAppCodeSigningIdentifier();
-    if (signingIdentifier.isEmpty())
-        messageIdentifier = makeString("[(0x"_s, hex(reinterpret_cast<uint64_t>(m_xpcConnection.get()), WTF::HexConversionMode::Lowercase), ") ("_s, identifier().toUInt64(), " )] "_s);
-    else
-        messageIdentifier = makeString('[', signingIdentifier, " ("_s, identifier().toUInt64(), ")] "_s);
-
-    WebPushDaemon::singleton().broadcastDebugMessage(makeString(messageIdentifier, message));
-}
-
-void PushClientConnection::sendDebugMessage(const String& message)
-{
-    auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
-    xpc_dictionary_set_string(dictionary.get(), WebKit::WebPushD::protocolDebugMessageKey, message.utf8().data());
-    xpc_connection_send_message(m_xpcConnection.get(), dictionary.get());
-}
-
 void PushClientConnection::connectionClosed()
 {
-    broadcastDebugMessage("Connection closed"_s);
 
     RELEASE_ASSERT(m_xpcConnection);
     m_xpcConnection = nullptr;
@@ -253,7 +223,7 @@ void PushClientConnection::removePushSubscriptionsForOrigin(WebCore::SecurityOri
 
 void PushClientConnection::setPublicTokenForTesting(const String& publicToken, CompletionHandler<void()>&& replySender)
 {
-    WebPushDaemon::singleton().setPublicTokenForTesting(publicToken, WTFMove(replySender));
+    WebPushDaemon::singleton().setPublicTokenForTesting(*this, publicToken, WTFMove(replySender));
 }
 
 void PushClientConnection::getPushPermissionState(URL&&, CompletionHandler<void(const Expected<uint8_t, WebCore::ExceptionData>&)>&& replySender)
