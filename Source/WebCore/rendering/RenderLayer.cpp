@@ -1732,7 +1732,9 @@ bool RenderLayer::updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* flags
     auto layerRect = computeLayerPositionAndIntegralSize(renderer());
     auto localPoint = layerRect.location();
 
+    bool geometryChanged = false;
     if (IntSize newSize(layerRect.width().toInt(), layerRect.height().toInt()); newSize != size()) {
+        geometryChanged = true;
         setSize(newSize);
 
         if (flags && renderer().hasNonVisibleOverflow())
@@ -1793,29 +1795,30 @@ bool RenderLayer::updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* flags
     } else if (!m_contentsScrollingScope || m_contentsScrollingScope != m_boxScrollingScope)
         m_contentsScrollingScope = m_boxScrollingScope;
 
-    bool positionOrOffsetChanged = false;
     if (renderer().isInFlowPositioned()) {
         if (auto* boxModelObject = dynamicDowncast<RenderBoxModelObject>(renderer())) {
             auto newOffset = boxModelObject->offsetForInFlowPosition();
-            positionOrOffsetChanged = newOffset != m_offsetForPosition;
+            geometryChanged |= newOffset != m_offsetForPosition;
             m_offsetForPosition = newOffset;
             localPoint.move(m_offsetForPosition);
         }
     }
 
-    positionOrOffsetChanged |= location() != localPoint;
+    geometryChanged |= location() != localPoint;
     setLocation(localPoint);
     
-    if (positionOrOffsetChanged && compositor().hasContentCompositingLayers()) {
+    if (geometryChanged && compositor().hasContentCompositingLayers()) {
         if (isComposited())
             setNeedsCompositingGeometryUpdate();
-        // This layer's position can affect the location of a composited descendant (which may be a sibling in z-order),
-        // so trigger a descendant walk from the paint-order parent.
-        if (auto* paintParent = paintOrderParent())
-            paintParent->setDescendantsNeedUpdateBackingAndHierarchyTraversal();
+        // This layer's footprint can affect the location of a composited descendant (which may be a sibling in z-order),
+        // so trigger a descendant walk from the enclosing stacking context.
+        if (auto* sc = stackingContext()) {
+            sc->setDescendantsNeedCompositingRequirementsTraversal();
+            sc->setDescendantsNeedUpdateBackingAndHierarchyTraversal();
+        }
     }
 
-    return positionOrOffsetChanged;
+    return geometryChanged;
 }
 
 TransformationMatrix RenderLayer::perspectiveTransform() const
