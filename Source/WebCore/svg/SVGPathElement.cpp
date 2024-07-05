@@ -179,11 +179,15 @@ void SVGPathElement::removedFromAncestor(RemovalType removalType, ContainerNode&
 
 float SVGPathElement::getTotalLength() const
 {
+    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
+
     return getTotalLengthOfSVGPathByteStream(pathByteStream());
 }
 
 ExceptionOr<Ref<SVGPoint>> SVGPathElement::getPointAtLength(float distance) const
 {
+    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
+
     // Spec: Clamp distance to [0, length].
     distance = clampTo<float>(distance, 0, getTotalLength());
 
@@ -193,6 +197,8 @@ ExceptionOr<Ref<SVGPoint>> SVGPathElement::getPointAtLength(float distance) cons
 
 unsigned SVGPathElement::getPathSegAtLength(float length) const
 {
+    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
+
     return getSVGPathSegAtLengthFromSVGPathByteStream(pathByteStream(), length);
 }
 
@@ -219,6 +225,18 @@ RenderPtr<RenderElement> SVGPathElement::createElementRenderer(RenderStyle&& sty
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGPath>(*this, WTFMove(style));
     return createRenderer<LegacyRenderSVGPath>(*this, WTFMove(style));
+}
+
+const SVGPathByteStream& SVGPathElement::pathByteStream() const
+{
+    if (CheckedPtr renderer = this->renderer()) {
+        if (RefPtr basicShapePath = renderer->style().d()) {
+            if (WeakPtr pathData = basicShapePath->pathData())
+                return *pathData;
+        }
+    }
+
+    return Ref { m_pathSegList }->currentPathByteStream();
 }
 
 Path SVGPathElement::path() const
