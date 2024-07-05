@@ -194,6 +194,7 @@ enum class MouseEventPolicy : uint8_t;
 enum class PermissionName : uint8_t;
 enum class PermissionState : uint8_t;
 enum class PlatformEventModifier : uint8_t;
+enum class PlatformMediaSessionRemoteControlCommandType : uint8_t;
 enum class PolicyAction : uint8_t;
 enum class ReasonForDismissingAlternativeText : uint8_t;
 enum class ReloadOption : uint8_t;
@@ -2469,6 +2470,11 @@ public:
 
     void hasActiveNowPlayingSessionChanged(bool);
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    void playPredominantOrNowPlayingMediaSession(CompletionHandler<void(bool)>&&);
+    void pauseNowPlayingMediaSession(CompletionHandler<void(bool)>&&);
+#endif
+
     void updateActivityState();
     void dispatchActivityStateChange();
 
@@ -3017,6 +3023,7 @@ private:
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     void updateFullscreenVideoTextRecognition();
     void fullscreenVideoTextRecognitionTimerFired();
+    bool tryToSendCommandToActiveControlledVideo(WebCore::PlatformMediaSessionRemoteControlCommandType);
 #endif
 
 #if ENABLE(WEB_ARCHIVE)

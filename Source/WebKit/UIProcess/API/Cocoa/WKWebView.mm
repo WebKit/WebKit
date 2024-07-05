@@ -4659,6 +4659,26 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
     });
 }
 
+- (void)_playPredominantOrNowPlayingMediaSession:(void(^)(BOOL))completionHandler
+{
+    if (!self._isValid)
+        return completionHandler(NO);
+
+    _page->playPredominantOrNowPlayingMediaSession([completionHandler = makeBlockPtr(completionHandler)](bool success) {
+        completionHandler(static_cast<BOOL>(success));
+    });
+}
+
+- (void)_pauseNowPlayingMediaSession:(void(^)(BOOL))completionHandler
+{
+    if (!self._isValid)
+        return completionHandler(NO);
+
+    _page->pauseNowPlayingMediaSession([completionHandler = makeBlockPtr(completionHandler)](bool success) {
+        completionHandler(static_cast<BOOL>(success));
+    });
+}
+
 @end
 
 @implementation WKWebView (WKDeprecated)

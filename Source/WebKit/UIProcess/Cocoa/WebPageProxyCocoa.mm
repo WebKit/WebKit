@@ -69,6 +69,10 @@
 #import <WebCore/NetworkExtensionContentFilter.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/NowPlayingInfo.h>
+#import <WebCore/NullPlaybackSessionInterface.h>
+#import <WebCore/PlatformPlaybackSessionInterface.h>
+#import <WebCore/PlaybackSessionInterfaceAVKit.h>
+#import <WebCore/PlaybackSessionInterfaceMac.h>
 #import <WebCore/RunLoopObserver.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
 #import <WebCore/TextAlternativeWithRange.h>
@@ -1279,6 +1283,39 @@ void WebPageProxy::proofreadingSessionUpdateStateForSuggestionWithID(IPC::Connec
 }
 
 #endif // ENABLE(WRITING_TOOLS)
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+
+void WebPageProxy::playPredominantOrNowPlayingMediaSession(CompletionHandler<void(bool)>&& completion)
+{
+    if (tryToSendCommandToActiveControlledVideo(PlatformMediaSession::RemoteControlCommandType::PlayCommand)) {
+        completion(true);
+        return;
+    }
+
+    // FIXME: Fall back by automatically playing the largest video or audio element in the viewport, if possible.
+    completion(false);
+}
+
+void WebPageProxy::pauseNowPlayingMediaSession(CompletionHandler<void(bool)>&& completion)
+{
+    completion(tryToSendCommandToActiveControlledVideo(PlatformMediaSession::RemoteControlCommandType::PauseCommand));
+}
+
+bool WebPageProxy::tryToSendCommandToActiveControlledVideo(PlatformMediaSession::RemoteControlCommandType command)
+{
+    if (!hasActiveVideoForControlsManager())
+        return false;
+
+    WeakPtr model = m_playbackSessionManager->controlsManagerInterface()->playbackSessionModel();
+    if (!model)
+        return false;
+
+    model->sendRemoteCommand(command, { });
+    return true;
+}
+
+#endif // ENABLE(VIDEO_PRESENTATION_MODE)
 
 } // namespace WebKit
 

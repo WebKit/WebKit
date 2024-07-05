@@ -119,6 +119,50 @@
     _isDoneQueryingControlledElementID = true;
 }
 
+- (BOOL)_playPredominantOrNowPlayingMediaSession
+{
+    __block bool done = false;
+    __block BOOL result = NO;
+    [self _playPredominantOrNowPlayingMediaSession:^(BOOL success) {
+        result = success;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result;
+}
+
+- (BOOL)_pauseNowPlayingMediaSession
+{
+    __block bool done = false;
+    __block BOOL result = NO;
+    [self _pauseNowPlayingMediaSession:^(BOOL success) {
+        result = success;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result;
+}
+
+- (void)waitForVideoToPlay
+{
+    while (true) {
+        __auto_type scriptToRun = @"(function() {"
+            "  let video = document.querySelector('video');"
+            "  return !video.paused && video.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA;"
+            "})();";
+        if ([[self objectByEvaluatingJavaScript:scriptToRun] boolValue])
+            return;
+    }
+}
+
+- (void)waitForVideoToPause
+{
+    while (true) {
+        if ([[self objectByEvaluatingJavaScript:@"document.querySelector('video').paused"] boolValue])
+            return;
+    }
+}
+
 @end
 
 namespace TestWebKitAPI {
@@ -500,6 +544,21 @@ TEST(VideoControlsManager, VideoControlsManagerDoesNotChangeValuesExposedToJavaS
 
     EXPECT_EQ(2.0, [[webView objectByEvaluatingJavaScript:@"document.getElementsByTagName('video')[0].playbackRate"] doubleValue]);
     EXPECT_EQ(1.0, [[webView objectByEvaluatingJavaScript:@"document.getElementsByTagName('video')[0].defaultPlaybackRate"] doubleValue]);
+}
+
+TEST(VideoControlsManager, TogglePlaybackForControlledVideo)
+{
+    RetainPtr webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
+    [webView synchronouslyLoadTestPageNamed:@"large-video-with-audio"];
+    [webView waitForMediaControlsToShow];
+
+    BOOL paused = [webView _pauseNowPlayingMediaSession];
+    EXPECT_TRUE(paused);
+    [webView waitForVideoToPause];
+
+    BOOL played = [webView _playPredominantOrNowPlayingMediaSession];
+    EXPECT_TRUE(played);
+    [webView waitForVideoToPlay];
 }
 
 } // namespace TestWebKitAPI
