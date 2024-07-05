@@ -27,11 +27,11 @@
 #import "AccessibilityTextMarkerRange.h"
 
 namespace WTR {
-    
+
 bool AccessibilityTextMarkerRange::isEqual(AccessibilityTextMarkerRange* other)
 {
     return [(__bridge id)platformTextMarkerRange() isEqual:(__bridge id)other->platformTextMarkerRange()];
 }
-    
+
 } // namespace WTR
 
