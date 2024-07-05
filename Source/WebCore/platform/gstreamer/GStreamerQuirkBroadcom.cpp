@@ -39,7 +39,7 @@ GStreamerQuirkBroadcom::GStreamerQuirkBroadcom()
 
 void GStreamerQuirkBroadcom::configureElement(GstElement* element, const OptionSet<ElementRuntimeCharacteristics>& characteristics)
 {
-    if (g_str_has_prefix(GST_ELEMENT_NAME(element), "brcmaudiosink"))
+    if (!g_strcmp0(G_OBJECT_TYPE_NAME(element), "Gstbrcmaudiosink"))
         g_object_set(G_OBJECT(element), "async", TRUE, nullptr);
     else if (g_str_has_prefix(GST_ELEMENT_NAME(element), "brcmaudiodecoder")) {
         // Limit BCM audio decoder buffering to 1sec so live progressive playback can start faster.
