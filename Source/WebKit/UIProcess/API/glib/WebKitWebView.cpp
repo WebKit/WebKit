@@ -905,8 +905,11 @@ static void webkitWebViewConstructed(GObject* object)
 
 #if ENABLE(2022_GLIB_API)
 #if ENABLE(REMOTE_INSPECTOR)
-    if (priv->isControlledByAutomation)
+    if (priv->isControlledByAutomation) {
+        if (!webkit_web_context_is_automation_allowed(priv->context.get()))
+            g_critical("WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.");
         priv->networkSession = webkit_web_context_get_network_session_for_automation(priv->context.get());
+    }
 #endif
     if (!priv->networkSession)
         priv->networkSession = webkit_network_session_get_default();

@@ -514,6 +514,8 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
     WPEDisplay* wpeDisplay = headlessMode && useWPEPlatformAPI ? wpe_display_headless_new() : nullptr;
 #endif
 
+    webkit_web_context_set_automation_allowed(webContext, automationMode);
+
     auto* defaultWebsitePolicies = webkit_website_policies_new_with_policies(
         "autoplay", WEBKIT_AUTOPLAY_ALLOW,
         nullptr);
@@ -564,7 +566,6 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
 
     openViews = g_hash_table_new_full(nullptr, nullptr, g_object_unref, nullptr);
 
-    webkit_web_context_set_automation_allowed(webContext, automationMode);
     g_signal_connect(webContext, "automation-started", G_CALLBACK(automationStartedCallback), webView);
     g_signal_connect(webView, "permission-request", G_CALLBACK(decidePermissionRequest), nullptr);
     g_signal_connect(webView, "create", G_CALLBACK(createWebView), application);
