@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <limits>
 #include <utility>
 #include <vector>
 
@@ -81,6 +82,16 @@ bool HasSps(const H26xPacketBuffer::Packet& packet) {
   });
 }
 
+int64_t* GetContinuousSequence(rtc::ArrayView<int64_t> last_continuous,
+                               int64_t unwrapped_seq_num) {
+  for (int64_t& last : last_continuous) {
+    if (unwrapped_seq_num - 1 == last) {
+      return &last;
+    }
+  }
+  return nullptr;
+}
+
 #ifdef RTC_ENABLE_H265
 bool HasVps(const H26xPacketBuffer::Packet& packet) {
   std::vector<H265::NaluIndex> nalu_indices = H265::FindNaluIndices(
@@ -97,7 +108,9 @@ bool HasVps(const H26xPacketBuffer::Packet& packet) {
 }  // namespace
 
 H26xPacketBuffer::H26xPacketBuffer(bool h264_idr_only_keyframes_allowed)
-    : h264_idr_only_keyframes_allowed_(h264_idr_only_keyframes_allowed) {}
+    : h264_idr_only_keyframes_allowed_(h264_idr_only_keyframes_allowed) {
+  last_continuous_in_sequence_.fill(std::numeric_limits<int64_t>::min());
+}
 
 H26xPacketBuffer::InsertResult H26xPacketBuffer::InsertPacket(
     std::unique_ptr<Packet> packet) {
@@ -147,18 +160,25 @@ H26xPacketBuffer::InsertResult H26xPacketBuffer::FindFrames(
 
   // Check if the packet is continuous or the beginning of a new coded video
   // sequence.
-  if (unwrapped_seq_num - 1 != last_continuous_unwrapped_seq_num_) {
-    if (unwrapped_seq_num <= last_continuous_unwrapped_seq_num_ ||
-        !BeginningOfStream(*packet)) {
+  int64_t* last_continuous_unwrapped_seq_num =
+      GetContinuousSequence(last_continuous_in_sequence_, unwrapped_seq_num);
+  if (last_continuous_unwrapped_seq_num == nullptr) {
+    if (!BeginningOfStream(*packet)) {
       return result;
     }
 
-    last_continuous_unwrapped_seq_num_ = unwrapped_seq_num;
+    last_continuous_in_sequence_[last_continuous_in_sequence_index_] =
+        unwrapped_seq_num;
+    last_continuous_unwrapped_seq_num =
+        &last_continuous_in_sequence_[last_continuous_in_sequence_index_];
+    last_continuous_in_sequence_index_ =
+        (last_continuous_in_sequence_index_ + 1) %
+        last_continuous_in_sequence_.size();
   }
 
   for (int64_t seq_num = unwrapped_seq_num;
        seq_num < unwrapped_seq_num + kBufferSize;) {
-    RTC_DCHECK_GE(seq_num, *last_continuous_unwrapped_seq_num_);
+    RTC_DCHECK_GE(seq_num, *last_continuous_unwrapped_seq_num);
 
     // Packets that were never assembled into a completed frame will stay in
     // the 'buffer_'. Check that the `packet` sequence number match the expected
@@ -167,7 +187,7 @@ H26xPacketBuffer::InsertResult H26xPacketBuffer::FindFrames(
       return result;
     }
 
-    last_continuous_unwrapped_seq_num_ = seq_num;
+    *last_continuous_unwrapped_seq_num = seq_num;
     // Last packet of the frame, try to assemble the frame.
     if (packet->marker_bit) {
       uint32_t rtp_timestamp = packet->timestamp;
