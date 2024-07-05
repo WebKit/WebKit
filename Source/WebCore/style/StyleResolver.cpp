@@ -239,19 +239,9 @@ void Resolver::addKeyframeStyle(Ref<StyleRuleKeyframes>&& rule)
     document().keyframesRuleDidChange(animationName);
 }
 
-BuilderContext Resolver::builderContext(const State& state)
+auto Resolver::initializeStateAndStyle(const Element& element, const ResolutionContext& context) -> State
 {
-    return {
-        document(),
-        *state.parentStyle(),
-        state.rootElementStyle(),
-        state.element()
-    };
-}
-
-ResolvedStyle Resolver::styleForElement(Element& element, const ResolutionContext& context, RuleMatchingBehavior matchingBehavior)
-{
-    auto state = State(element, context.parentStyle, context.documentElementStyle);
+    auto state = State { element, context.parentStyle, context.documentElementStyle };
 
     if (state.parentStyle()) {
         state.setStyle(RenderStyle::createPtrWithRegisteredInitialValues(document().customPropertyRegistry()));
@@ -265,9 +255,8 @@ ResolvedStyle Resolver::styleForElement(Element& element, const ResolutionContex
         state.setParentStyle(RenderStyle::clonePtr(*state.style()));
     }
 
-    auto& style = *state.style();
-
     if (element.isLink()) {
+        auto& style = *state.style();
         style.setIsLink(true);
         InsideLink linkState = document().visitedLinkState().determineLinkState(element);
         if (linkState != InsideLink::NotInside) {
@@ -277,6 +266,24 @@ ResolvedStyle Resolver::styleForElement(Element& element, const ResolutionContex
         }
         style.setInsideLink(linkState);
     }
+
+    return state;
+}
+
+BuilderContext Resolver::builderContext(const State& state)
+{
+    return {
+        document(),
+        *state.parentStyle(),
+        state.rootElementStyle(),
+        state.element()
+    };
+}
+
+ResolvedStyle Resolver::styleForElement(Element& element, const ResolutionContext& context, RuleMatchingBehavior matchingBehavior)
+{
+    auto state = initializeStateAndStyle(element, context);
+    auto& style = *state.style();
 
     UserAgentStyle::ensureDefaultStyleSheetsForElement(element);
 
@@ -300,12 +307,31 @@ ResolvedStyle Resolver::styleForElement(Element& element, const ResolutionContex
     applyMatchedProperties(state, collector.matchResult());
 
     Adjuster adjuster(document(), *state.parentStyle(), context.parentBoxStyle, &element);
-    adjuster.adjust(*state.style(), state.userAgentAppearanceStyle());
+    adjuster.adjust(style, state.userAgentAppearanceStyle());
 
-    if (state.style()->usesViewportUnits())
+    if (style.usesViewportUnits())
         document().setHasStyleWithViewportUnits();
 
     return { state.takeStyle(), WTFMove(elementStyleRelations), collector.releaseMatchResult() };
+}
+
+ResolvedStyle Resolver::styleForElementWithCachedMatchResult(Element& element, const ResolutionContext& context, const MatchResult& matchResult, const RenderStyle& existingRenderStyle)
+{
+    auto state = initializeStateAndStyle(element, context);
+    auto& style = *state.style();
+
+    style.copyPseudoElementBitsFrom(existingRenderStyle);
+    copyRelations(style, existingRenderStyle);
+
+    applyMatchedProperties(state, matchResult);
+
+    Adjuster adjuster(document(), *state.parentStyle(), context.parentBoxStyle, &element);
+    adjuster.adjust(style, state.userAgentAppearanceStyle());
+
+    if (style.usesViewportUnits())
+        document().setHasStyleWithViewportUnits();
+
+    return { state.takeStyle(), { }, makeUnique<MatchResult>(matchResult) };
 }
 
 std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, const StyleRuleKeyframe& keyframe, BlendingKeyframe& blendingKeyframe)

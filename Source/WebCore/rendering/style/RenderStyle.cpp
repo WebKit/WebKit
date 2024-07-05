@@ -435,6 +435,11 @@ void RenderStyle::copyPseudoElementsFrom(const RenderStyle& other)
         addCachedPseudoStyle(makeUnique<RenderStyle>(cloneIncludingPseudoElements(*pseudoElementStyle)));
 }
 
+void RenderStyle::copyPseudoElementBitsFrom(const RenderStyle& other)
+{
+    m_nonInheritedFlags.pseudoBits = other.m_nonInheritedFlags.pseudoBits;
+}
+
 bool RenderStyle::operator==(const RenderStyle& other) const
 {
     // compare everything except the pseudoStyle pointer
@@ -1417,11 +1422,7 @@ bool RenderStyle::outOfFlowPositionStyleDidChange(const RenderStyle* other) cons
     // https://drafts.csswg.org/css-scroll-anchoring/#suppression-triggers
     // Determine if there is a style change that causes an element to become or stop
     // being absolutely or fixed positioned
-    if (other && m_nonInheritedData.ptr() != other->m_nonInheritedData.ptr()) {
-        if (hasOutOfFlowPosition() != other->hasOutOfFlowPosition())
-            return true;
-    }
-    return false;
+    return other && hasOutOfFlowPosition() != other->hasOutOfFlowPosition();
 }
 
 StyleDifference RenderStyle::diff(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties) const
