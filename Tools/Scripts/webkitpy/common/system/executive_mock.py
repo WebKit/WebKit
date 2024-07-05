@@ -132,7 +132,8 @@ class MockExecutive(object):
                     return_exit_code=False,
                     return_stderr=True,
                     decode_output=False,
-                    env=None):
+                    env=None,
+                    pass_fds=()):
 
         self.calls.append(args)
 
