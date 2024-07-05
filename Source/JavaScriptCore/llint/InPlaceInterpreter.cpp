@@ -43,8 +43,8 @@ namespace JSC { namespace IPInt {
 do { \
     void* base = reinterpret_cast<void*>(ipint_unreachable_validate); \
     void* ptr = reinterpret_cast<void*>(ipint_ ## name ## _validate); \
-    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr(); \
-    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr(); \
+    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr<>(); \
+    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr<>(); \
     RELEASE_ASSERT_WITH_MESSAGE((char*)(untaggedPtr) - (char*)(untaggedBase) == opcode * 256, #name); \
 } while (false);
 
@@ -52,8 +52,8 @@ do { \
 do { \
     void* base = reinterpret_cast<void*>(ipint_i32_trunc_sat_f32_s_validate); \
     void* ptr = reinterpret_cast<void*>(ipint_ ## name ## _validate); \
-    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr(); \
-    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr(); \
+    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr<>(); \
+    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr<>(); \
     RELEASE_ASSERT_WITH_MESSAGE((char*)(untaggedPtr) - (char*)(untaggedBase) == opcode * 256, #name); \
 } while (false);
 
@@ -61,8 +61,8 @@ do { \
 do { \
     void* base = reinterpret_cast<void*>(ipint_simd_v128_load_mem_validate); \
     void* ptr = reinterpret_cast<void*>(ipint_ ## name ## _validate); \
-    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr(); \
-    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr(); \
+    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr<>(); \
+    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr<>(); \
     RELEASE_ASSERT_WITH_MESSAGE((char*)(untaggedPtr) - (char*)(untaggedBase) == opcode * 256, #name); \
 } while (false);
 
@@ -70,8 +70,8 @@ do { \
 do { \
     void* base = reinterpret_cast<void*>(ipint_memory_atomic_notify_validate); \
     void* ptr = reinterpret_cast<void*>(ipint_ ## name ## _validate); \
-    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr(); \
-    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr(); \
+    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr<>(); \
+    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr<>(); \
     RELEASE_ASSERT_WITH_MESSAGE((char*)(untaggedPtr) - (char*)(untaggedBase) == opcode * 256, #name); \
 } while (false);
 
@@ -79,8 +79,8 @@ do { \
 do { \
     void* base = reinterpret_cast<void*>(ipint_argumINT_a0_validate); \
     void* ptr = reinterpret_cast<void*>(ipint_ ## name ## _validate); \
-    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr(); \
-    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr(); \
+    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr<>(); \
+    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr<>(); \
     RELEASE_ASSERT_WITH_MESSAGE((char*)(untaggedPtr) - (char*)(untaggedBase) == opcode * 64, #name); \
 } while (false);
 
@@ -88,8 +88,8 @@ do { \
 do { \
     void* base = reinterpret_cast<void*>(ipint_local_get_slow_path_validate); \
     void* ptr = reinterpret_cast<void*>(ipint_ ## name ## _validate); \
-    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr(); \
-    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr(); \
+    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr<>(); \
+    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr<>(); \
     RELEASE_ASSERT_WITH_MESSAGE((char*)(untaggedPtr) - (char*)(untaggedBase) == opcode * 256, #name); \
 } while (false);
 
@@ -97,8 +97,8 @@ do { \
 do { \
     void* base = reinterpret_cast<void*>(ipint_mint_a0_validate); \
     void* ptr = reinterpret_cast<void*>(ipint_ ## name ## _validate); \
-    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr(); \
-    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr(); \
+    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr<>(); \
+    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr<>(); \
     RELEASE_ASSERT_WITH_MESSAGE((char*)(untaggedPtr) - (char*)(untaggedBase) == opcode * 64, #name); \
 } while (false);
 
@@ -106,8 +106,8 @@ do { \
 do { \
     void* base = reinterpret_cast<void*>(ipint_mint_r0_validate); \
     void* ptr = reinterpret_cast<void*>(ipint_ ## name ## _validate); \
-    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr(); \
-    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr(); \
+    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr<>(); \
+    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr<>(); \
     RELEASE_ASSERT_WITH_MESSAGE((char*)(untaggedPtr) - (char*)(untaggedBase) == opcode * 64, #name); \
 } while (false);
 
@@ -115,8 +115,8 @@ do { \
 do { \
     void* base = reinterpret_cast<void*>(ipint_uint_r0_validate); \
     void* ptr = reinterpret_cast<void*>(ipint_ ## name ## _validate); \
-    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr(); \
-    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr(); \
+    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr<>(); \
+    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr<>(); \
     RELEASE_ASSERT_WITH_MESSAGE((char*)(untaggedPtr) - (char*)(untaggedBase) == opcode * 64, #name); \
 } while (false);
 
@@ -125,8 +125,8 @@ do { \
 do { \
     void* base = reinterpret_cast<void*>(js_to_wasm_wrapper_entry_interp_LoadI32_validate); \
     void* ptr = reinterpret_cast<void*>(js_to_wasm_wrapper_entry_interp_ ## name ## _validate); \
-    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr(); \
-    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr(); \
+    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr<>(); \
+    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr<>(); \
     RELEASE_ASSERT_WITH_MESSAGE((char*)(untaggedPtr) - (char*)(untaggedBase) == ((opcode) * 8 * 4), (#name)); \
 } while (false);
 #else

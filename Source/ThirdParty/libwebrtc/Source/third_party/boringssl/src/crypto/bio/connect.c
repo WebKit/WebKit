@@ -487,7 +487,10 @@ static long conn_callback_ctrl(BIO *bio, int cmd, bio_info_cb fp) {
       // convention.
       OPENSSL_MSVC_PRAGMA(warning(push))
       OPENSSL_MSVC_PRAGMA(warning(disable : 4191))
+      OPENSSL_CLANG_PRAGMA("clang diagnostic push")
+      OPENSSL_CLANG_PRAGMA("clang diagnostic ignored \"-Wcast-function-type-mismatch\"")
       data->info_callback = (int (*)(const struct bio_st *, int, int))fp;
+      OPENSSL_CLANG_PRAGMA("clang diagnostic pop")
       OPENSSL_MSVC_PRAGMA(warning(pop))
       break;
     default:

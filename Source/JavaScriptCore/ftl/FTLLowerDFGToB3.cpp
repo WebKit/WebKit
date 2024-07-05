@@ -23174,8 +23174,10 @@ IGNORE_CLANG_WARNINGS_END
         return m_out.shl(m_out.zeroExtPtr(structureID), m_out.constIntPtr(StructureID::encodeShiftAmount));
 #else
         LValue maskedStructureID = structureID;
-        if constexpr (structureHeapAddressSize < 4 * GB)
-            maskedStructureID = m_out.bitAnd(structureID, m_out.constInt32(StructureID::structureIDMask));
+        if constexpr (structureHeapAddressSize < 4 * GB) {
+            static_assert(static_cast<uint32_t>(StructureID::structureIDMask) == StructureID::structureIDMask);
+            maskedStructureID = m_out.bitAnd(structureID, m_out.constInt32(static_cast<uint32_t>(StructureID::structureIDMask)));
+        }
         return m_out.bitOr(m_out.constIntPtr(startOfStructureHeap()), m_out.zeroExtPtr(maskedStructureID));
 #endif
     }
