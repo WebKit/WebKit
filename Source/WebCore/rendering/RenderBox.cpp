@@ -4307,18 +4307,40 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Length lo
     computeLogicalLeftPositionedOffset(computedValues.m_position, this, computedValues.m_extent + bordersPlusPadding, containerBlock, containerLogicalWidth, style().logicalLeft().isAuto(), style().logicalRight().isAuto());
 }
 
+static bool shouldFlipStaticPositionInParent(const RenderBox& outOfFlowBox, const RenderBoxModelObject& containerBlock)
+{
+    ASSERT(outOfFlowBox.isOutOfFlowPositioned());
+
+    auto* parent = outOfFlowBox.parent();
+    if (!parent || parent == &containerBlock || !is<RenderBlock>(*parent))
+        return false;
+    if (is<RenderGrid>(parent)) {
+        // FIXME: Out-of-flow grid item's static position computation is non-existent and enabling proper flipping
+        // without implementing the logic in grid layout makes us fail a couple of WPT tests -we pass them now accidentally.
+        return false;
+    }
+    // FIXME: While this ensures flipping when parent is a writing root, computeBlockStaticDistance still does not
+    // properly flip when the parent itself is not a writing root but an ancestor between this parent and out-of-flow's containing block.
+    return parent->style().isFlippedBlocksWritingMode() && parent->isWritingModeRoot();
+}
+
 static void computeBlockStaticDistance(Length& logicalTop, Length& logicalBottom, const RenderBox* child, const RenderBoxModelObject& containerBlock)
 {
     if (!logicalTop.isAuto() || !logicalBottom.isAuto())
         return;
     
     auto* parent = child->parent();
-
+    bool haveOrthogonalWritingModes = isOrthogonal(*child, *parent);
     // The static positions from the child's layer are relative to the container block's coordinate space (which is determined
     // by the writing mode and text direction), meaning that for orthogonal flows the logical top of the child (which depends on
     // the child's writing mode) is retrieved from the static inline position instead of the static block position.
-    bool haveOrthogonalWritingModes = isOrthogonal(*child, *parent);
-    LayoutUnit staticLogicalTop = haveOrthogonalWritingModes ? child->layer()->staticInlinePosition() - containerBlock.borderLogicalLeft() : child->layer()->staticBlockPosition() - containerBlock.borderBefore();
+    auto staticLogicalTop = haveOrthogonalWritingModes ? child->layer()->staticInlinePosition() : child->layer()->staticBlockPosition();
+    if (shouldFlipStaticPositionInParent(*child, containerBlock)) {
+        // Note that at this point we can't resolve static top position completely in flipped case as at this point the height of the child box has not been computed yet.
+        // What we can compute here is essentially the "bottom position".
+        staticLogicalTop = downcast<RenderBox>(*parent).flipForWritingMode(staticLogicalTop);
+    }
+    staticLogicalTop -= haveOrthogonalWritingModes ? containerBlock.borderLogicalLeft() : containerBlock.borderBefore();
     for (RenderElement* container = child->parent(); container && container != &containerBlock; container = container->container()) {
         auto* renderBox = dynamicDowncast<RenderBox>(*container);
         if (!renderBox)
@@ -4462,6 +4484,11 @@ static void computeLogicalTopPositionedOffset(LayoutUnit& logicalTopPos, const R
     // Deal with differing writing modes here.  Our offset needs to be in the containing block's coordinate space. If the containing block is flipped
     // along this axis, then we need to flip the coordinate.  This can only happen if the containing block is both a flipped mode and perpendicular to us.
     if (!isOverconstrained) {
+        if (logicalTopIsAuto && logicalBottomIsAuto && shouldFlipStaticPositionInParent(*child, containerBlock)) {
+            // Let's finish computing static top postion inside parents with flipped writing mode now that we've got final height value.
+            // see details in computeBlockStaticDistance.
+            logicalTopPos -= logicalHeightValue;
+        }
         if ((haveOrthogonalWritingModes && !logicalTopAndBottomAreAuto && child->style().isFlippedBlocksWritingMode())
             || (haveFlippedBlockAxis && !haveOrthogonalWritingModes))
             logicalTopPos = containerLogicalHeightForPositioned - logicalHeightValue - logicalTopPos;
