@@ -2276,9 +2276,6 @@ webkit.org/b/261911 media/media-source/media-managedmse-seek.html [ Pass ImageOn
 
 webkit.org/b/261958 [ Release ] inspector/console/timestamp.html [ Pass Failure ]
 
-# Results changed with Sonoma
-[ Ventura ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType.html [ Failure ]
-
 # webkit.org/b/262595 (REGRESSION(Sonoma): 2X lookup menu-related tests are constant text failures.)
 editing/mac/dictionary-lookup/dictionary-lookup.html [ Pass Failure ]
 editing/selection/context-menu-text-selection-lookup.html [ Pass Failure ]
