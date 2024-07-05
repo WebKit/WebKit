@@ -954,6 +954,21 @@ public:
         ASSERT(term.type == ByteTerm::Type::BackReference);
         BackTrackInfoBackReference* backTrack = reinterpret_cast<BackTrackInfoBackReference*>(context->frame + term.frameLocation);
 
+        // Initialize backtracking info first before we check for possible null matches.
+        switch (term.atom.quantityType) {
+        case QuantifierType::NonGreedy:
+            backTrack->matchAmount = 0;
+            FALLTHROUGH;
+
+        case QuantifierType::FixedCount:
+            backTrack->begin = input.getPos();
+            break;
+
+        case QuantifierType::Greedy:
+            backTrack->matchAmount = 0;
+            break;
+        }
+
         unsigned subpatternId;
 
         if (auto duplicateNamedGroupId = term.duplicateNamedGroupId()) {
@@ -984,7 +999,6 @@ public:
 
         switch (term.atom.quantityType) {
         case QuantifierType::FixedCount: {
-            backTrack->begin = input.getPos();
             for (unsigned matchAmount = 0; matchAmount < term.atom.quantityMaxCount; ++matchAmount) {
                 if (!tryConsumeBackReference(matchBegin, matchEnd, term)) {
                     input.setPos(backTrack->begin);
@@ -999,13 +1013,10 @@ public:
             while ((matchAmount < term.atom.quantityMaxCount) && tryConsumeBackReference(matchBegin, matchEnd, term))
                 ++matchAmount;
             backTrack->matchAmount = matchAmount;
-            backTrack->backReferenceSize = matchEnd - matchBegin;
             return true;
         }
 
         case QuantifierType::NonGreedy:
-            backTrack->begin = input.getPos();
-            backTrack->matchAmount = 0;
             return true;
         }
 
@@ -1018,8 +1029,19 @@ public:
         ASSERT(term.type == ByteTerm::Type::BackReference);
         BackTrackInfoBackReference* backTrack = reinterpret_cast<BackTrackInfoBackReference*>(context->frame + term.frameLocation);
 
-        unsigned matchBegin = output[(term.subpatternId() << 1)];
-        unsigned matchEnd = output[(term.subpatternId() << 1) + 1];
+        unsigned subpatternId;
+
+        if (auto duplicateNamedGroupId = term.duplicateNamedGroupId()) {
+            subpatternId = output[pattern->offsetForDuplicateNamedGroupId(duplicateNamedGroupId)];
+            if (subpatternId < 1) {
+                // If we don't have a subpattern that matched, then the string to match is empty.
+                return false;
+            }
+        } else
+            subpatternId = term.subpatternId();
+
+        unsigned matchBegin = output[(subpatternId << 1)];
+        unsigned matchEnd = output[(subpatternId << 1) + 1];
 
         if (matchBegin == offsetNoMatch)
             return false;
