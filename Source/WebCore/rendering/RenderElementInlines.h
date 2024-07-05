@@ -142,4 +142,15 @@ inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const Render
     return adjustLayoutUnitForAbsoluteZoom(value, renderer.style());
 }
 
+inline void RenderElement::setChildNeedsLayout(MarkingBehavior markParents)
+{
+    ASSERT(!isSetNeedsLayoutForbidden());
+    if (normalChildNeedsLayout())
+        return;
+    setNormalChildNeedsLayoutBit(true);
+
+    if (markParents == MarkContainingBlockChain)
+        scheduleLayout(markContainingBlocksForLayout());
+}
+
 } // namespace WebCore

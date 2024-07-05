@@ -36,6 +36,7 @@
 #include "MathMLNames.h"
 #include "MathMLPresentationElement.h"
 #include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderTableInlines.h"
 #include "RenderView.h"
 #include <wtf/IsoMallocInlines.h>

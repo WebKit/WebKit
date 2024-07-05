@@ -24,7 +24,7 @@
 
 #include "HitTestRequest.h"
 #include "LengthFunctions.h"
-#include "RenderObject.h"
+#include "RenderObjectInlines.h"
 #include <wtf/Packed.h>
 
 namespace WebCore {
@@ -140,7 +140,7 @@ public:
     bool ancestorLineBoxDirty() const { return m_ancestorLineBoxDirty; }
     void setAncestorLineBoxDirty(bool f = true);
 
-    void setChildNeedsLayout(MarkingBehavior = MarkContainingBlockChain);
+    inline void setChildNeedsLayout(MarkingBehavior = MarkContainingBlockChain);
     void setOutOfFlowChildNeedsStaticPositionLayout();
     void clearChildNeedsLayout();
     void setNeedsPositionedMovementLayout(const RenderStyle* oldStyle);
@@ -437,16 +437,6 @@ inline void RenderElement::setAncestorLineBoxDirty(bool f)
     m_ancestorLineBoxDirty = f;
     if (m_ancestorLineBoxDirty)
         setNeedsLayout();
-}
-
-inline void RenderElement::setChildNeedsLayout(MarkingBehavior markParents)
-{
-    ASSERT(!isSetNeedsLayoutForbidden());
-    if (normalChildNeedsLayout())
-        return;
-    setNormalChildNeedsLayoutBit(true);
-    if (markParents == MarkContainingBlockChain)
-        scheduleLayout(markContainingBlocksForLayout());
 }
 
 inline Element* RenderElement::generatingElement() const

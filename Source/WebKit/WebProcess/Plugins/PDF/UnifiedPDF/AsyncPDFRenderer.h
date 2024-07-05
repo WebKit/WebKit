@@ -31,6 +31,7 @@
 #include "PDFPageCoverage.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/GraphicsLayer.h>
+#include <WebCore/ImageBuffer.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/TiledBacking.h>
 #include <wtf/HashMap.h>

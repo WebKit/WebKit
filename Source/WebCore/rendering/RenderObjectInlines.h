@@ -32,4 +32,23 @@ inline bool RenderObject::isTransformed() const { return hasTransformRelatedProp
 inline bool RenderObject::preservesNewline() const { return !isRenderSVGInlineText() && style().preserveNewline(); }
 inline Ref<Document> RenderObject::protectedDocument() const { return document(); }
 
+inline void RenderObject::setNeedsLayout(MarkingBehavior markParents)
+{
+    ASSERT(!isSetNeedsLayoutForbidden());
+    if (selfNeedsLayout())
+        return;
+    m_stateBitfields.setFlag(StateFlag::NeedsLayout);
+
+    if (markParents == MarkContainingBlockChain)
+        scheduleLayout(markContainingBlocksForLayout());
+    if (hasLayer())
+        setLayerNeedsFullRepaint();
+}
+
+inline void RenderObject::setNeedsLayoutAndPrefWidthsRecalc()
+{
+    setNeedsLayout();
+    setPreferredLogicalWidthsDirty(true);
+}
+
 } // namespace WebCore

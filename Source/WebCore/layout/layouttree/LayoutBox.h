@@ -26,6 +26,7 @@
 #pragma once
 
 #include "LayoutUnits.h"
+#include "RenderObject.h"
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include <wtf/CheckedPtr.h>

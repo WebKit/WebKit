@@ -26,7 +26,8 @@
 #pragma once
 
 #include "FloatRoundedRect.h"
-#include "RenderLayerModelObject.h"
+#include "Path.h"
+#include "RenderStyle.h"
 
 namespace WebCore {
 
