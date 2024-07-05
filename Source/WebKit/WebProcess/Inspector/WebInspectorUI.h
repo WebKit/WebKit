@@ -178,6 +178,8 @@ public:
 private:
     explicit WebInspectorUI(WebPage&);
 
+    void didEstablishConnection();
+
     WebPage& m_page;
     Ref<WebCore::InspectorFrontendAPIDispatcher> m_frontendAPIDispatcher;
     RefPtr<WebCore::InspectorFrontendHost> m_frontendHost;

@@ -183,6 +183,8 @@ else ()
 endif ()
 endif ()
 
+EXPOSE_STRING_VARIABLE_TO_BUILD(WPE_API_VERSION)
+
 if (ENABLE_2022_GLIB_API)
     set(GLIB_MINIMUM_VERSION 2.70.0)
 else ()

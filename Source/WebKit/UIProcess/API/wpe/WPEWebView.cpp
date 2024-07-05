@@ -51,6 +51,7 @@ View::~View()
     if (m_accessible)
         webkitWebViewAccessibleSetWebView(m_accessible.get(), nullptr);
 #endif
+    m_pageProxy->close();
 }
 
 void View::createWebPage(const API::PageConfiguration& configuration)

@@ -186,6 +186,11 @@ static gboolean wpeViewEventCallback(WPEView* view, WPEEvent* event, WebKitWebVi
             webkit_web_view_reload(webView);
             return TRUE;
         }
+
+        if ((modifiers & WPE_MODIFIER_KEYBOARD_SHIFT) && keyval == WPE_KEY_I) {
+            webkit_web_view_toggle_inspector(webView);
+            return TRUE;
+        }
     }
 
     if (modifiers & WPE_MODIFIER_KEYBOARD_ALT) {
