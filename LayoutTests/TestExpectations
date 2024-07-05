@@ -7045,8 +7045,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/scroller.html [ ImageOn
 imported/w3c/web-platform-tests/css/css-view-transitions/iframe-and-main-frame-transition-old-main-new-iframe.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/iframe-and-main-frame-transition-old-main-old-iframe.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/paint-holding-in-iframe.html [ ImageOnlyFailure ]
-webkit.org/b/276236 imported/w3c/web-platform-tests/css/css-view-transitions/shadow-part-with-name-nested.html [ ImageOnlyFailure ]
-webkit.org/b/276236 imported/w3c/web-platform-tests/css/css-view-transitions/shadow-part-with-name.html [ ImageOnlyFailure ]
 
 # Timeouts
 imported/w3c/web-platform-tests/css/css-view-transitions/iframe-transition.sub.html [ Skip ]
