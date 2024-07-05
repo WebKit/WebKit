@@ -2207,6 +2207,7 @@ platform/SleepDisabler.cpp
 platform/SleepDisablerClient.cpp
 platform/SystemSoundManager.cpp
 platform/StaticPasteboard.cpp
+platform/StyleAppearance.cpp
 platform/Theme.cpp
 platform/ThemeTypes.cpp
 platform/ThermalMitigationNotifier.cpp
@@ -2961,7 +2962,6 @@ style/RuleFeature.cpp
 style/RuleSet.cpp
 style/RuleSetBuilder.cpp
 style/StyleAdjuster.cpp
-style/StyleAppearance.cpp
 style/StyleBuilder.cpp
 style/StyleBuilderState.cpp
 style/StyleChange.cpp
