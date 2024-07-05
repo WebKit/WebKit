@@ -28,7 +28,6 @@
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
-#include "SoupVersioning.h"
 #include "URLSoup.h"
 #include <unicode/uset.h>
 #include <wtf/text/CString.h>

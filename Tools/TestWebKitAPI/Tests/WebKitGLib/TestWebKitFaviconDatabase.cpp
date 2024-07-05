@@ -202,11 +202,7 @@ public:
     bool m_waitingForFaviconURI { false };
 };
 
-#if USE(SOUP2)
-static void serverCallback(SoupServer*, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
-#else
 static void serverCallback(SoupServer*, SoupServerMessage* message, const char* path, GHashTable* query, gpointer)
-#endif
 {
     if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
         soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);

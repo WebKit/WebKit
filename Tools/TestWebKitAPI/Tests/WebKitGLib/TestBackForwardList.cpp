@@ -30,11 +30,7 @@ static const int kBackForwardListLimit = 100;
 
 static WebKitTestServer* kServer;
 
-#if USE(SOUP2)
-static void serverCallback(SoupServer* server, SoupMessage* msg, const char* path, GHashTable*, SoupClientContext*, gpointer)
-#else
 static void serverCallback(SoupServer* server, SoupServerMessage* msg, const char* path, GHashTable*, gpointer)
-#endif
 {
     if (soup_server_message_get_method(msg) != SOUP_METHOD_GET) {
         soup_server_message_set_status(msg, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);

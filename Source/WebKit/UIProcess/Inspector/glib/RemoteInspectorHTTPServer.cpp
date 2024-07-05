@@ -29,7 +29,6 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "RemoteInspectorClient.h"
-#include <WebCore/SoupVersioning.h>
 #include <wtf/FileSystem.h>
 #include <wtf/URL.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -54,22 +53,14 @@ bool RemoteInspectorHTTPServer::start(GRefPtr<GSocketAddress>&& socketAddress, u
     }
 
     soup_server_add_handler(m_server.get(), nullptr,
-#if USE(SOUP2)
-        [](SoupServer*, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer userData) {
-#else
         [](SoupServer*, SoupServerMessage* message, const char* path, GHashTable*, gpointer userData) {
-#endif
             auto& httpServer = *static_cast<RemoteInspectorHTTPServer*>(userData);
             auto status = httpServer.handleRequest(path, soup_server_message_get_response_headers(message), soup_server_message_get_response_body(message));
             soup_server_message_set_status(message, status, nullptr);
         }, this, nullptr);
 
     soup_server_add_websocket_handler(m_server.get(), "/socket", nullptr, nullptr,
-#if USE(SOUP2)
-        [](SoupServer*, SoupWebsocketConnection* connection, const char* path, SoupClientContext*, gpointer userData) {
-#else
         [](SoupServer*, SoupServerMessage*, const char* path, SoupWebsocketConnection* connection, gpointer userData) {
-#endif
             auto& httpServer = *static_cast<RemoteInspectorHTTPServer*>(userData);
             httpServer.handleWebSocket(path, connection);
         }, this, nullptr);

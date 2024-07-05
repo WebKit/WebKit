@@ -521,11 +521,7 @@ static void testWebContextLanguages(WebViewTest* test, gconstpointer)
     g_assert_cmpstr(locale.get(), !=, "A");
 }
 
-#if USE(SOUP2)
-static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext* context, gpointer)
-#else
 static void serverCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
-#endif
 {
     if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
         soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);
@@ -545,11 +541,7 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
         soup_message_body_complete(responseBody);
         soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else if (g_str_equal(path, "/echoPort")) {
-#if USE(SOUP2)
-        char* port = g_strdup_printf("%u", g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(soup_client_context_get_local_address(context))));
-#else
         char* port = g_strdup_printf("%u", g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(soup_server_message_get_local_address(message))));
-#endif
         soup_message_body_append(responseBody, SOUP_MEMORY_TAKE, port, strlen(port));
         soup_message_body_complete(responseBody);
         soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
@@ -731,11 +723,7 @@ public:
         Proxy
     };
 
-#if USE(SOUP2)
-    static void webSocketProxyServerCallback(SoupServer*, SoupWebsocketConnection*, const char* path, SoupClientContext*, gpointer userData)
-#else
     static void webSocketProxyServerCallback(SoupServer*, SoupServerMessage*, const char* path, SoupWebsocketConnection*, gpointer userData)
-#endif
     {
         static_cast<ProxyTest*>(userData)->webSocketConnected(ProxyTest::WebSocketServerType::Proxy);
     }
@@ -796,11 +784,7 @@ public:
 
 #if !ENABLE(2022_GLIB_API)
 #if SOUP_CHECK_VERSION(2, 61, 90)
-#if USE(SOUP2)
-static void webSocketServerCallback(SoupServer*, SoupWebsocketConnection*, const char*, SoupClientContext*, gpointer userData)
-#else
 static void webSocketServerCallback(SoupServer*, SoupServerMessage*, const char*, SoupWebsocketConnection*, gpointer userData)
-#endif
 {
     static_cast<ProxyTest*>(userData)->webSocketConnected(ProxyTest::WebSocketServerType::NoProxy);
 }

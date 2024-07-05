@@ -357,11 +357,7 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
         // Cap lifetime of persistent, client-side cookies to a week.
         if (cappedLifetime) {
             if (auto* expiresDate = soup_cookie_get_expires(cookie.get())) {
-#if USE(SOUP2)
-                auto timeIntervalSinceNow = Seconds(static_cast<double>(soup_date_to_time_t(expiresDate))) - WallTime::now().secondsSinceEpoch();
-#else
                 auto timeIntervalSinceNow = Seconds(static_cast<double>(g_date_time_to_unix(expiresDate))) - WallTime::now().secondsSinceEpoch();
-#endif
                 if (timeIntervalSinceNow > cappedLifetime.value())
                     soup_cookie_set_max_age(cookie.get(), cappedLifetime->secondsAs<int>());
             }

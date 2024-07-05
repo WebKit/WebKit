@@ -49,13 +49,6 @@ if (ENABLE_COG)
     # TODO Use GIT_REMOTE_UPDATE_STRATEGY with 3.18 to allow switching between
     # conflicting branches without having to delete the repo
 
-    # Convert a few options to their Meson equivalents
-    if (USE_SOUP2)
-        set(COG_MESON_SOUP2 enabled)
-    else ()
-        set(COG_MESON_SOUP2 disabled)
-    endif ()
-
     string(TOLOWER "${CMAKE_BUILD_TYPE}" COG_MESON_BUILDTYPE)
     if (COG_MESON_BUILDTYPE STREQUAL "relwithdebinfo")
         set(COG_MESON_BUILDTYPE debugoptimized)

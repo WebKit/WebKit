@@ -476,11 +476,7 @@ public:
         "    socket.removeEventListener('open', onOpen);"
         "}";
 
-#if USE(SOUP2)
-    static void serverWebSocketCallback(SoupServer*, SoupWebsocketConnection*, const char*, SoupClientContext*, gpointer userData)
-#else
     static void serverWebSocketCallback(SoupServer*, SoupServerMessage*, const char*, SoupWebsocketConnection*, gpointer userData)
-#endif
     {
         static_cast<WebSocketTest*>(userData)->m_events |= WebSocketTest::EventFlags::DidServerCompleteHandshake;
     }
@@ -594,7 +590,6 @@ static void testTLSErrorsEphemeral(EphemeralSSLTest* test, gconstpointer)
     g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::LoadCommitted));
 }
 
-#if !USE(SOUP2)
 class ClientSideCertificateTestBase {
 public:
     static gboolean acceptCertificateCallback(SoupServerMessage* message, GTlsCertificate* certificate, GTlsCertificateFlags errors, ClientSideCertificateTestBase* test)
@@ -835,13 +830,8 @@ static void testWebSocketClientSideCertificate(WebSocketClientSideCertificateTes
     webkit_website_data_manager_set_tls_errors_policy(websiteDataManager, originalPolicy);
 #endif
 }
-#endif
 
-#if USE(SOUP2)
-static void httpsServerCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
-#else
 static void httpsServerCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
-#endif
 {
     if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
         soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);
@@ -879,11 +869,7 @@ static void httpsServerCallback(SoupServer* server, SoupServerMessage* message, 
         soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
 }
 
-#if USE(SOUP2)
-static void httpServerCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
-#else
 static void httpServerCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
-#endif
 {
     if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
         soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);
@@ -937,10 +923,8 @@ void beforeAll()
     TLSErrorsTest::add("WebKitWebView", "load-failed-with-tls-errors", testLoadFailedWithTLSErrors);
     WebSocketTest::add("WebKitWebView", "web-socket-tls-errors", testWebSocketTLSErrors);
     EphemeralSSLTest::add("WebKitWebView", "ephemeral-tls-errors", testTLSErrorsEphemeral);
-#if !USE(SOUP2)
     ClientSideCertificateTest::add("WebKitWebView", "client-side-certificate", testClientSideCertificate);
     WebSocketClientSideCertificateTest::add("WebKitWebView", "web-socket-client-side-certificate", testWebSocketClientSideCertificate);
-#endif
 }
 
 void afterAll()

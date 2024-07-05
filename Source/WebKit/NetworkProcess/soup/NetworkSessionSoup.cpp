@@ -97,26 +97,6 @@ void NetworkSessionSoup::clearCredentials(WallTime)
 #endif
 }
 
-#if USE(SOUP2)
-static gboolean webSocketAcceptCertificateCallback(GTlsConnection* connection, GTlsCertificate* certificate, GTlsCertificateFlags errors, NetworkSessionSoup* session)
-{
-    if (DeprecatedGlobalSettings::allowsAnySSLCertificate())
-        return TRUE;
-
-    auto* soupMessage = static_cast<SoupMessage*>(g_object_get_data(G_OBJECT(connection), "wk-soup-message"));
-    return !session->soupNetworkSession().checkTLSErrors(soupURIToURL(soup_message_get_uri(soupMessage)), certificate, errors);
-}
-
-static void webSocketMessageNetworkEventCallback(SoupMessage* soupMessage, GSocketClientEvent event, GIOStream* connection, NetworkSessionSoup* session)
-{
-    if (event != G_SOCKET_CLIENT_TLS_HANDSHAKING)
-        return;
-
-    g_object_set_data(G_OBJECT(connection), "wk-soup-message", soupMessage);
-    g_signal_connect(connection, "accept-certificate", G_CALLBACK(webSocketAcceptCertificateCallback), session);
-}
-#endif
-
 std::unique_ptr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(WebPageProxyIdentifier, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, NetworkSocketChannel& channel, const ResourceRequest& request, const String& protocol, const ClientOrigin&, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, StoredCredentialsPolicy)
 {
     GRefPtr<SoupMessage> soupMessage = request.createSoupMessage(blobRegistry());
@@ -124,16 +104,12 @@ std::unique_ptr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(WebPagePr
         return nullptr;
 
     if (request.url().protocolIs("wss"_s)) {
-#if USE(SOUP2)
-        g_signal_connect(soupMessage.get(), "network-event", G_CALLBACK(webSocketMessageNetworkEventCallback), this);
-#else
         g_signal_connect(soupMessage.get(), "accept-certificate", G_CALLBACK(+[](SoupMessage* message, GTlsCertificate* certificate, GTlsCertificateFlags errors,  NetworkSessionSoup* session) -> gboolean {
             if (DeprecatedGlobalSettings::allowsAnySSLCertificate())
                 return TRUE;
 
             return !session->soupNetworkSession().checkTLSErrors(soup_message_get_uri(message), certificate, errors);
         }), this);
-#endif
     }
 
     bool shouldBlockCookies = networkStorageSession()->shouldBlockCookies(request, frameID, pageID, shouldRelaxThirdPartyCookieBlocking);
