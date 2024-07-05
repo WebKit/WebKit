@@ -829,6 +829,9 @@ http/tests/resourceLoadStatistics/omit-document-referrer-third-party-iframe-ephe
 http/tests/resourceLoadStatistics/omit-referrer-for-navigation-ephemeral.html [ Failure ]
 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py [ Failure ]
 
+# mac-wk2 and ios skip this flaky test
+http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Skip ] # Pass Failure
+
 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-filtered-link-decoration-after-long-deletion.html [ Failure ]
 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-js-cookie-checking.html [ Failure ]
 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-unfiltered-link-decoration-after-short-deletion.html [ Failure ]
@@ -4066,8 +4069,6 @@ webkit.org/b/266205 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/
 imported/w3c/web-platform-tests/scroll-animations/view-timelines/animation-events.html [ Failure Pass ]
 
 webkit.org/b/48997 animations/animation-iteration-event-destroy-renderer.html [ Pass Timeout ]
-
-webkit.org/b/229584 animations/fill-mode-forwards.html [ Pass Failure Timeout ]
 
 imported/w3c/web-platform-tests/css/selectors/selectors-4/lang-020.html [ Pass ]
 
