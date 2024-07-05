@@ -31,6 +31,7 @@
 #include "RendererBufferFormat.h"
 #include <WebCore/IntSize.h>
 #include <WebCore/RefPtrCairo.h>
+#include <WebCore/Region.h>
 #include <gtk/gtk.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
@@ -79,7 +80,7 @@ private:
     void didCreateBuffer(uint64_t id, const WebCore::IntSize&, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier, DMABufRendererBufferFormat::Usage);
     void didCreateBufferSHM(uint64_t id, WebCore::ShareableBitmapHandle&&);
     void didDestroyBuffer(uint64_t id);
-    void frame(uint64_t id, const std::optional<WebCore::Region>&);
+    void frame(uint64_t id, std::optional<WebCore::Region>&&);
     void frameDone();
     void ensureGLContext();
     bool prepareForRendering();
@@ -109,7 +110,7 @@ private:
         };
 
         virtual Type type() const = 0;
-        virtual void didUpdateContents() = 0;
+        virtual void didUpdateContents(Buffer*, const std::optional<WebCore::Region>&) = 0;
 #if USE(GTK4)
         virtual GdkTexture* texture() const { return nullptr; }
 #else
@@ -144,7 +145,7 @@ private:
         BufferDMABuf(uint64_t id, const WebCore::IntSize&, float deviceScaleFactor, DMABufRendererBufferFormat::Usage, Vector<WTF::UnixFileDescriptor>&&, GRefPtr<GdkDmabufTextureBuilder>&&);
 
         Buffer::Type type() const override { return Buffer::Type::DmaBuf; }
-        void didUpdateContents() override;
+        void didUpdateContents(Buffer*, const std::optional<WebCore::Region>&) override;
         GdkTexture* texture() const override { return m_texture.get(); }
         RendererBufferFormat format() const override;
 
@@ -163,7 +164,7 @@ private:
         BufferEGLImage(uint64_t id, const WebCore::IntSize&, float deviceScaleFactor, DMABufRendererBufferFormat::Usage, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, uint64_t modifier, EGLImage);
 
         Buffer::Type type() const override { return Buffer::Type::EglImage; }
-        void didUpdateContents() override;
+        void didUpdateContents(Buffer*, const std::optional<WebCore::Region>&) override;
 #if USE(GTK4)
         GdkTexture* texture() const override { return m_texture.get(); }
 #else
@@ -192,7 +193,7 @@ private:
         BufferGBM(uint64_t id, const WebCore::IntSize&, float deviceScaleFactor, DMABufRendererBufferFormat::Usage, WTF::UnixFileDescriptor&&, struct gbm_bo*);
 
         Buffer::Type type() const override { return Buffer::Type::Gbm; }
-        void didUpdateContents() override;
+        void didUpdateContents(Buffer*, const std::optional<WebCore::Region>&) override;
         cairo_surface_t* surface() const override { return m_surface.get(); }
         RendererBufferFormat format() const override;
 
@@ -211,7 +212,7 @@ private:
         BufferSHM(uint64_t id, RefPtr<WebCore::ShareableBitmap>&&, float deviceScaleFactor);
 
         Buffer::Type type() const override { return Buffer::Type::SharedMemory; }
-        void didUpdateContents() override;
+        void didUpdateContents(Buffer*, const std::optional<WebCore::Region>&) override;
         cairo_surface_t* surface() const override { return m_surface.get(); }
         RendererBufferFormat format() const override;
 
@@ -243,6 +244,7 @@ private:
     Renderer m_renderer;
     RefPtr<Buffer> m_pendingBuffer;
     RefPtr<Buffer> m_committedBuffer;
+    std::optional<WebCore::Region> m_pendingDamageRegion;
     HashMap<uint64_t, RefPtr<Buffer>> m_buffers;
 };
 
