@@ -318,6 +318,7 @@ void MediaPlayerPrivateWebM::seekInternal()
 
     auto pendingSeek = std::exchange(m_pendingSeek, { }).value();
     m_lastSeekTime = pendingSeek.time;
+    [m_synchronizer setRate:0 time:PAL::toCMTime(m_lastSeekTime)];
 
     m_seekState = Seeking;
 
@@ -335,7 +336,6 @@ void MediaPlayerPrivateWebM::seekInternal()
     }
 
     flush();
-    [m_synchronizer setRate:0 time:PAL::toCMTime(m_lastSeekTime)];
 
     for (auto& trackBufferPair : m_trackBufferMap) {
         TrackBuffer& trackBuffer = trackBufferPair.second;
