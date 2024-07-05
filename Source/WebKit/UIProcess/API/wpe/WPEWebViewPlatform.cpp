@@ -63,6 +63,10 @@ ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& co
 
     if (wpe_view_get_mapped(m_wpeView.get()))
         m_viewStateFlags.add(WebCore::ActivityState::IsVisible);
+    if (wpe_view_get_has_focus(m_wpeView.get())) {
+        m_viewStateFlags.add(WebCore::ActivityState::IsFocused);
+        m_inputMethodFilter.notifyFocusedIn();
+    }
     if (auto* toplevel = wpe_view_get_toplevel(m_wpeView.get())) {
         m_viewStateFlags.add(WebCore::ActivityState::IsInWindow);
         if (wpe_toplevel_get_state(toplevel) & WPE_TOPLEVEL_STATE_ACTIVE)
@@ -94,14 +98,15 @@ ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& co
         auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
         webView.activityStateChanged(WebCore::ActivityState::IsInWindow, !!wpe_view_get_toplevel(view));
     }), this);
-    g_signal_connect(m_wpeView.get(), "focus-in", G_CALLBACK(+[](WPEView* view, gpointer userData) {
+    g_signal_connect(m_wpeView.get(), "notify::has-focus", G_CALLBACK(+[](WPEView* view, GParamSpec*, gpointer userData) {
         auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
-        if (webView.activityStateChanged(WebCore::ActivityState::IsFocused, true))
+        auto focused = wpe_view_get_has_focus(view);
+        if (!webView.activityStateChanged(WebCore::ActivityState::IsFocused, focused))
+            return;
+
+        if (focused)
             webView.m_inputMethodFilter.notifyFocusedIn();
-    }), this);
-    g_signal_connect(m_wpeView.get(), "focus-out", G_CALLBACK(+[](WPEView* view, gpointer userData) {
-        auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
-        if (webView.activityStateChanged(WebCore::ActivityState::IsFocused, false))
+        else
             webView.m_inputMethodFilter.notifyFocusedOut();
     }), this);
     g_signal_connect_after(m_wpeView.get(), "event", G_CALLBACK(+[](WPEView* view, WPEEvent* event, gpointer userData) -> gboolean {
