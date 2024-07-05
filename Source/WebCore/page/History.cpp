@@ -278,6 +278,12 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
             return Exception { ExceptionCode::SecurityError, makeString("Attempt to use history.pushState() more than "_s, perStateObjectTimeSpanLimit, " times per "_s, stateObjectTimeSpan.seconds(), " seconds"_s) };
         }
 
+        if (RefPtr document = frame->document(); document && document->settings().navigationAPIEnabled()) {
+            Ref navigation = document->domWindow()->navigation();
+            if (!navigation->dispatchPushReplaceReloadNavigateEvent(fullURL, stateObjectType == StateObjectType::Push ? NavigationNavigationType::Push : NavigationNavigationType::Replace, true, nullptr, data.get()))
+                return { };
+        }
+
         Checked<uint64_t> newTotalUsage = mainHistory->m_totalStateObjectUsage;
 
         if (stateObjectType == StateObjectType::Replace)
@@ -292,12 +298,6 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
 
         mainHistory->m_totalStateObjectUsage = newTotalUsage;
         ++mainHistory->m_currentStateObjectTimeSpanObjectsAdded;
-    }
-
-    if (RefPtr document = frame->document(); document && document->settings().navigationAPIEnabled()) {
-        auto& navigation = document->domWindow()->navigation();
-        if (!navigation.dispatchPushReplaceReloadNavigateEvent(fullURL, stateObjectType == StateObjectType::Push ? NavigationNavigationType::Push : NavigationNavigationType::Replace, true, nullptr, data.get()))
-            return { };
     }
 
     m_mostRecentStateObjectUsage = payloadSize;
