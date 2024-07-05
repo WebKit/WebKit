@@ -1043,7 +1043,7 @@ static std::optional<RefPtr<JSON::Value>> gstStructureValueToJSON(const GValue* 
         return JSON::Value::create(g_value_get_int(value))->asValue();
 
     if (valueType == G_TYPE_UINT)
-        return JSON::Value::create(static_cast<int>(g_value_get_uint(value)))->asValue();
+        return JSON::Value::create(static_cast<double>(g_value_get_uint(value)))->asValue();
 
     if (valueType == G_TYPE_DOUBLE)
         return JSON::Value::create(g_value_get_double(value))->asValue();
