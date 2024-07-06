@@ -2412,6 +2412,15 @@ static RetainPtr<NSFileWrapper> fileWrapperForElement(const HTMLAttachmentElemen
     return wrapper;
 }
 
+static RetainPtr<NSAttributedString> attributedStringWithAttachmentForFileWrapper(NSFileWrapper *fileWrapper)
+{
+    if (!fileWrapper)
+        return adoptNS([[NSAttributedString alloc] initWithString:@" "]).autorelease();
+
+    RetainPtr attachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper]);
+    return [NSAttributedString attributedStringWithAttachment:attachment.get()];
+}
+
 static RetainPtr<NSAttributedString> attributedStringWithAttachmentForElement(const HTMLImageElement& element)
 {
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
@@ -2428,15 +2437,13 @@ static RetainPtr<NSAttributedString> attributedStringWithAttachmentForElement(co
 #endif
 
     RetainPtr fileWrapper = fileWrapperForElement(element);
-    RetainPtr attachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper.get()]);
-    return [NSAttributedString attributedStringWithAttachment:attachment.get()];
+    return attributedStringWithAttachmentForFileWrapper(fileWrapper.get());
 }
 
 static RetainPtr<NSAttributedString> attributedStringWithAttachmentForElement(const HTMLAttachmentElement& element)
 {
     RetainPtr fileWrapper = fileWrapperForElement(element);
-    RetainPtr attachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper.get()]);
-    return [NSAttributedString attributedStringWithAttachment:attachment.get()];
+    return attributedStringWithAttachmentForFileWrapper(fileWrapper.get());
 }
 
 #if ENABLE(WRITING_TOOLS)
