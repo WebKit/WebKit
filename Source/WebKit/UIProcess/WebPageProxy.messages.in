@@ -233,7 +233,7 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
-    HandleContextMenuWritingTools(WebCore::IntRect selectionBoundsInRootView)
+    HandleContextMenuWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView)
 #endif
 
 #if ENABLE(WRITING_TOOLS)

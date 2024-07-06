@@ -37,6 +37,7 @@
 #import "NativeWebMouseEvent.h"
 #import "NativeWebWheelEvent.h"
 #import "NavigationState.h"
+#import "PlatformWritingToolsUtilities.h"
 #import "RemoteLayerTreeNode.h"
 #import "UndoOrRedo.h"
 #import "ViewGestureController.h"
@@ -79,6 +80,7 @@
 #import <WebCore/TextUndoInsertionMarkupMac.h>
 #import <WebCore/ValidationBubble.h>
 #import <WebCore/WebCoreCALayerExtras.h>
+#import <pal/spi/cocoa/WritingToolsSPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
@@ -89,6 +91,8 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #import <WebCore/WebMediaSessionManager.h>
 #endif
+
+#import <pal/cocoa/WritingToolsUISoftLink.h>
 
 static NSString * const kAXLoadCompleteNotification = @"AXLoadComplete";
 
@@ -1103,9 +1107,15 @@ bool PageClientImpl::canHandleContextMenuWritingTools() const
     return m_impl->canHandleContextMenuWritingTools();
 }
 
-void PageClientImpl::handleContextMenuWritingTools(IntRect selectionBoundsInRootView)
+void PageClientImpl::handleContextMenuWritingToolsDeprecated(IntRect selectionBoundsInRootView)
 {
-    m_impl->handleContextMenuWritingTools(selectionBoundsInRootView);
+    m_impl->handleContextMenuWritingToolsDeprecated(selectionBoundsInRootView);
+}
+
+void PageClientImpl::handleContextMenuWritingTools(WebCore::WritingTools::RequestedTool tool, WebCore::IntRect selectionRect)
+{
+    RetainPtr webView = this->webView();
+    [[PAL::getWTWritingToolsClass() sharedInstance] showTool:WebKit::convertToPlatformRequestedTool(tool) forSelectionRect:selectionRect ofView:m_view forDelegate:webView.get() smartReplyConfiguration:nil];
 }
 
 #endif

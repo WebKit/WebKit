@@ -825,6 +825,20 @@ void WebPageProxy::handleContextMenuCopySubject(const String& preferredMIMEType)
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
+#if ENABLE(WRITING_TOOLS)
+
+void WebPageProxy::handleContextMenuWritingTools(WebCore::WritingTools::RequestedTool tool)
+{
+    auto& editorState = this->editorState();
+    if (!editorState.hasPostLayoutData())
+        return;
+
+    auto selectionRect = editorState.postLayoutData->selectionBoundingRect;
+    protectedPageClient()->handleContextMenuWritingTools(tool, selectionRect);
+}
+
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

@@ -6457,10 +6457,10 @@ void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContext
 
 bool WebViewImpl::canHandleContextMenuWritingTools() const
 {
-    return [PAL::getWTWritingToolsViewControllerClass() isAvailable] && m_page->configuration().writingToolsBehavior() != WebCore::WritingTools::Behavior::None;
+    return [PAL::getWTWritingToolsViewControllerClass() isAvailable] && m_page->writingToolsBehavior() != WebCore::WritingTools::Behavior::None;
 }
 
-void WebViewImpl::handleContextMenuWritingTools(IntRect selectionBoundsInRootView)
+void WebViewImpl::handleContextMenuWritingToolsDeprecated(IntRect selectionBoundsInRootView)
 {
     if (!canHandleContextMenuWritingTools()) {
         ASSERT_NOT_REACHED();

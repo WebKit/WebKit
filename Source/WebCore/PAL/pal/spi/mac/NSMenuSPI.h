@@ -31,6 +31,12 @@
 
 #import <AppKit/NSMenu_Private.h>
 
+@interface NSMenuItem (Staging_129192954)
+
++ (NSMenuItem *)standardWritingToolsMenuItem;
+
+@end
+
 #elif USE(APPLE_INTERNAL_SDK)
 
 WTF_EXTERN_C_BEGIN
@@ -64,6 +70,7 @@ enum {
 @interface NSMenuItem ()
 + (QLPreviewMenuItem *)standardQuickLookMenuItem;
 + (NSMenuItem *)standardShareMenuItemForItems:(NSArray *)items;
++ (NSMenuItem *)standardWritingToolsMenuItem;
 @end
 
 #endif

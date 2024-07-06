@@ -81,12 +81,12 @@ void WebContextMenuClient::handleTranslation(const WebCore::TranslationContextMe
 
 #if ENABLE(WRITING_TOOLS)
 
-void WebContextMenuClient::handleWritingTools(WebCore::IntRect selectionBoundsInRootView)
+void WebContextMenuClient::handleWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView)
 {
     if (!m_page)
         return;
 
-    m_page->send(Messages::WebPageProxy::HandleContextMenuWritingTools(selectionBoundsInRootView));
+    m_page->send(Messages::WebPageProxy::HandleContextMenuWritingToolsDeprecated(selectionBoundsInRootView));
 }
 
 #endif

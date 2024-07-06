@@ -77,7 +77,7 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    void handleWritingTools(WebCore::IntRect selectionBoundsInRootView) final;
+    void handleWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView) final;
 #endif
 
 private:

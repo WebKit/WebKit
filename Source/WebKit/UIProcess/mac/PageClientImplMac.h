@@ -309,7 +309,8 @@ private:
 
 #if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
     bool canHandleContextMenuWritingTools() const override;
-    void handleContextMenuWritingTools(WebCore::IntRect selectionBoundsInRootView) override;
+    void handleContextMenuWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView) override;
+    void handleContextMenuWritingTools(WebCore::WritingTools::RequestedTool, WebCore::IntRect) override;
 #endif
 
 #if ENABLE(DATA_DETECTION)

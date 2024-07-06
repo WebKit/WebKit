@@ -2088,18 +2088,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
 - (PlatformWritingToolsBehavior)writingToolsBehavior
 {
-    if ([self _isEditable])
-        return PlatformWritingToolsBehaviorComplete;
-
-    auto& editorState = _page->editorState();
-
-    if ([_configuration writingToolsBehavior] == PlatformWritingToolsBehaviorNone || editorState.selectionIsNone || editorState.isInPasswordField)
-        return PlatformWritingToolsBehaviorNone;
-
-    if ([_configuration writingToolsBehavior] == PlatformWritingToolsBehaviorComplete && editorState.isContentEditable)
-        return PlatformWritingToolsBehaviorComplete;
-
-    return PlatformWritingToolsBehaviorLimited;
+    return WebKit::convertToPlatformWritingToolsBehavior(_page->writingToolsBehavior());
 }
 
 - (void)willBeginWritingToolsSession:(WTSession *)session requestContexts:(void (^)(NSArray<WTContext *> *))completion

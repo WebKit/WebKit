@@ -9197,9 +9197,9 @@ void WebPage::handleContextMenuTranslation(const TranslationContextMenuInfo& inf
 #endif
 
 #if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
-void WebPage::handleContextMenuWritingTools(WebCore::IntRect selectionBoundsInRootView)
+void WebPage::handleContextMenuWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView)
 {
-    send(Messages::WebPageProxy::HandleContextMenuWritingTools(selectionBoundsInRootView));
+    send(Messages::WebPageProxy::HandleContextMenuWritingToolsDeprecated(selectionBoundsInRootView));
 }
 #endif
 

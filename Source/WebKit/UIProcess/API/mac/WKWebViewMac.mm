@@ -1314,6 +1314,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _impl->endPreviewPanelControl(panel);
 }
 
+#pragma mark - NSTextCheckingClient_WritingTools
+
+- (BOOL)providesWritingToolsContextMenu
+{
+    return YES;
+}
+
 @end
 
 #pragma mark -

@@ -306,6 +306,8 @@ struct Item;
 #if ENABLE(WRITING_TOOLS)
 namespace WritingTools {
 enum class Action : uint8_t;
+enum class Behavior : uint8_t;
+enum class RequestedTool : uint16_t;
 enum class TextSuggestionState : uint8_t;
 
 struct Context;
@@ -2248,7 +2250,8 @@ public:
 #if ENABLE(WRITING_TOOLS)
 #if ENABLE(CONTEXT_MENUS)
     bool canHandleContextMenuWritingTools() const;
-    void handleContextMenuWritingTools(WebCore::IntRect selectionBoundsInRootView);
+    void handleContextMenuWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView);
+    void handleContextMenuWritingTools(WebCore::WritingTools::RequestedTool);
 #endif
 #endif
 
@@ -2395,6 +2398,8 @@ public:
 
 #if ENABLE(WRITING_TOOLS)
     void setWritingToolsActive(bool);
+
+    WebCore::WritingTools::Behavior writingToolsBehavior() const;
 
     void willBeginWritingToolsSession(const std::optional<WebCore::WritingTools::Session>&, CompletionHandler<void(const Vector<WebCore::WritingTools::Context>&)>&&);
 
