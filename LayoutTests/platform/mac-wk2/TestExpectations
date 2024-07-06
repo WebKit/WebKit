@@ -826,8 +826,9 @@ webkit.org/b/187649 editing/selection/update-selection-by-style-change.html [ Pa
 # Touch events are not available on open source bots, thus only tested on Mac.
 http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Pass ]
 http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal.html [ Pass ]
+
 http/tests/storageAccess/ [ Pass ]
-http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html [ Pass Timeout ]
+#http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html [ Pass Timeout ]
 http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture.html [ Skip ]
 
 # Enable again when fixing https://bugs.webkit.org/show_bug.cgi?id=208400.
@@ -861,7 +862,7 @@ http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction.html
 http/tests/resourceLoadStatistics/cookie-deletion.html [ Pass ]
 http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html [ Pass ]
 http/tests/resourceLoadStatistics/add-blocking-to-redirect.html [ Pass ]
-http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Pass ]
+#http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Pass ]
 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store.html [ Pass ]
 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Pass ]
 http/tests/resourceLoadStatistics/grandfathering.html [ Pass ]
@@ -870,7 +871,7 @@ http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-reque
 http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource.html [ Pass ]
 
 # The SameSite cookie API is only available in macOS Catalina and above.
-http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Pass ]
+#http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Pass ]
 http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to.html [ Pass ]
 
 # Skipped in general expectations since they only work on iOS and Mac, WK2.
@@ -926,7 +927,7 @@ webkit.org/b/194826 http/tests/resourceLoadStatistics/do-not-block-top-level-nav
 
 webkit.org/b/187391 accessibility/mac/async-increment-decrement-action.html [ Skip ]
 
-http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.html [ Pass Timeout ]
+#http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.html [ Pass Timeout ]
 
 webkit.org/b/197207 http/wpt/resource-timing/rt-resources-per-frame.html [ Pass Failure ]
 
@@ -936,7 +937,7 @@ webkit.org/b/198195 fast/css/sticky/sticky-left-percentage.html [ Pass ImageOnly
 
 webkit.org/b/187828 [ Release ] fast/css-grid-layout/flex-content-sized-columns-resize.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/198663 http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html [ Pass Timeout ]
+#webkit.org/b/198663 http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html [ Pass Timeout ]
 
 webkit.org/b/199089 [ Debug ] plugins/window-open.html [ Skip ]
 
@@ -1796,3 +1797,38 @@ webkit.org/b/275913 [ Debug ] imported/w3c/web-platform-tests/media-source/dedic
 [ Ventura ] imported/w3c/web-platform-tests/css/css-view-transitions/no-raf-while-render-blocked.html [ Pass Failure ]
 
 webkit.org/b/275873 storage/indexeddb/database-transaction-cycle.html [ Pass Failure ]
+
+# rdar://124363343 ([ Sequoia+ ] Multiple WebKit tests failing after explicit "SameSite" attribute change)
+# Some of these tests have expectations set elsewhere (marked with inline comment). Please uncomment those when this issue is resolved.
+[ Sequoia+ ] http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Failure ]
+[ Sequoia+ ] http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Failure Timeout ] # expectation exists above
+[ Sequoia+ ] http/tests/cache/disk-cache/disk-cache-vary-cookie-private.html [ Failure ]
+[ Sequoia+ ] http/tests/cache/disk-cache/disk-cache-vary-cookie.html [ Failure ]
+[ Sequoia+ ] http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
+[ Sequoia+ ] http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure Timeout ]
+[ Sequoia+ ] http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
+[ Sequoia+ ] http/tests/cookies/third-party-cookie-relaxing.html [ Failure ]
+[ Sequoia+ ] http/tests/privateClickMeasurement/send-attribution-conversion-request.html [ Failure Timeout ]
+[ Sequoia+ ] http/tests/resourceLoadStatistics/ping-to-prevalent-resource.html [ Failure ]
+[ Sequoia+ ] http/tests/storageAccess/aggregate-sorted-data-with-storage-access.html [ Failure ]
+[ Sequoia+ ] http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture-ephemeral.html [ Failure ]
+[ Sequoia+ ] http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture.html [ Failure ]
+[ Sequoia+ ] http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking.html [ Failure ]
+[ Sequoia+ ] http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies.html [ Failure ]
+[ Sequoia+ ] http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-with-cookie.html [ Failure ]
+[ Sequoia+ ] http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe-ephemeral.html [ Failure ]
+[ Sequoia+ ] http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame.html [ Failure ]
+[ Sequoia+ ] http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.html [ Failure ] # expectation exists above
+[ Sequoia+ ] http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-nested-iframe.html [ Failure ]
+[ Sequoia+ ] http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html [ Failure ]
+[ Sequoia+ ] http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html [ Failure ] # expectation exists above
+[ Sequoia+ ] http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html [ Failure ] # expectation exists above
+[ Sequoia+ ] http/tests/storageAccess/request-and-grant-access-with-per-page-scope-access-from-another-frame.html [ Failure ]
+[ Sequoia+ ] http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.html [ Failure ]
+[ Sequoia+ ] http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Failure ]
+[ Sequoia+ ] http/tests/xmlhttprequest/cross-origin-authorization.html [ Failure ]
+[ Sequoia+ ] http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure ]
+[ Sequoia+ ] imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.html [ Failure ]
+[ Sequoia+ ] imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.worker.html [ Failure ]
+[ Sequoia+ ] imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
+[ Sequoia+ ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
