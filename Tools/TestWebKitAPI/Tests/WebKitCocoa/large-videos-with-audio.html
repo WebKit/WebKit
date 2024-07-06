@@ -9,10 +9,20 @@
             } catch(e) { }
         }, 0);
     }
+
+    function handleCanPlayThrough(event) {
+        event.target.canPlayThrough = true;
+    }
 </script>
 <body onload=handleLoaded()>
     <video id="foo" style="width: 480px; height: 320px;"><source src="large-video-with-audio.mp4"></video>
     <video id="bar" style="width: 480px; height: 320px;"><source src="large-video-with-audio.mp4"></video>
     <video id="baz" style="width: 480px; height: 320px;"><source src="large-video-with-audio.mp4"></video>
+    <script>
+        [...document.querySelectorAll("video")].map(video => {
+            video.canPlayThrough = false;
+            video.addEventListener("canplaythrough", handleCanPlayThrough);
+        });
+    </script>
 </body>
 <html>

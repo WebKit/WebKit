@@ -183,7 +183,7 @@ public:
 
     virtual bool isVideo() const { return false; }
     bool hasVideo() const override { return false; }
-    bool hasAudio() const override;
+    WEBCORE_EXPORT bool hasAudio() const override;
     bool hasRenderer() const { return static_cast<bool>(renderer()); }
 
     WEBCORE_EXPORT static HashSet<WeakRef<HTMLMediaElement>>& allMediaElements();
@@ -572,7 +572,7 @@ public:
     RenderMedia* renderer() const;
 
     void resetPlaybackSessionState();
-    bool isVisibleInViewport() const;
+    WEBCORE_EXPORT bool isVisibleInViewport() const;
     bool hasEverNotifiedAboutPlaying() const;
     void setShouldDelayLoadEvent(bool);
 

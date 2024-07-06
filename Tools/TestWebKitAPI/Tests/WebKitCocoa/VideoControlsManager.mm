@@ -145,20 +145,30 @@
 
 - (void)waitForVideoToPlay
 {
+    [self waitForVideoToPlay:@"video"];
+}
+
+- (void)waitForVideoToPlay:(NSString *)selector
+{
     while (true) {
-        __auto_type scriptToRun = @"(function() {"
-            "  let video = document.querySelector('video');"
+        __auto_type scriptToRun = [NSString stringWithFormat:@"(function() {"
+            "  let video = document.querySelector('%@');"
             "  return !video.paused && video.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA;"
-            "})();";
+            "})();", selector];
         if ([[self objectByEvaluatingJavaScript:scriptToRun] boolValue])
             return;
     }
 }
 
+- (BOOL)isVideoPaused:(NSString *)selector
+{
+    return [[self objectByEvaluatingJavaScript:[NSString stringWithFormat:@"document.querySelector('%@').paused", selector]] boolValue];
+}
+
 - (void)waitForVideoToPause
 {
     while (true) {
-        if ([[self objectByEvaluatingJavaScript:@"document.querySelector('video').paused"] boolValue])
+        if ([self isVideoPaused:@"video"])
             return;
     }
 }
@@ -559,6 +569,22 @@ TEST(VideoControlsManager, TogglePlaybackForControlledVideo)
     BOOL played = [webView _playPredominantOrNowPlayingMediaSession];
     EXPECT_TRUE(played);
     [webView waitForVideoToPlay];
+}
+
+TEST(VideoControlsManager, StartPlayingLargestVideoInViewport)
+{
+    RetainPtr webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 640, 480));
+    [webView synchronouslyLoadTestPageNamed:@"large-videos-with-audio"];
+
+    Util::waitForConditionWithLogging([webView] -> bool {
+        return [[webView stringByEvaluatingJavaScript:@"!!document.getElementById('foo')?.canPlayThrough"] boolValue];
+    }, 5, @"Expected first video to finish loading.");
+
+    BOOL played = [webView _playPredominantOrNowPlayingMediaSession];
+    EXPECT_TRUE(played);
+    [webView waitForVideoToPlay:@"#foo"];
+    EXPECT_TRUE([webView isVideoPaused:@"#bar"]);
+    EXPECT_TRUE([webView isVideoPaused:@"#baz"]);
 }
 
 } // namespace TestWebKitAPI

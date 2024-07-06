@@ -5175,7 +5175,79 @@ void WebPage::videoControlsManagerDidChange()
 #endif
 }
 
-#endif
+void WebPage::startPlayingPredominantVideo(CompletionHandler<void(bool)>&& completion)
+{
+    RefPtr mainFrame = m_mainFrame->coreLocalFrame();
+    if (!mainFrame) {
+        completion(false);
+        return;
+    }
+
+    RefPtr view = mainFrame->view();
+    if (!view) {
+        completion(false);
+        return;
+    }
+
+    RefPtr document = mainFrame->document();
+    if (!document) {
+        completion(false);
+        return;
+    }
+
+    Vector<Ref<HTMLMediaElement>> candidates;
+    document->updateLayoutIgnorePendingStylesheets();
+    document->forEachMediaElement([&candidates](auto& element) {
+        if (!element.canPlay())
+            return;
+
+        if (!element.isVisibleInViewport())
+            return;
+
+        candidates.append(element);
+    });
+
+    RefPtr<HTMLMediaElement> largestElement;
+    float largestArea = 0;
+    auto unobscuredContentRect = view->unobscuredContentRect();
+    auto unobscuredArea = unobscuredContentRect.area<RecordOverflow>();
+    if (unobscuredArea.hasOverflowed()) {
+        completion(false);
+        return;
+    }
+
+    constexpr auto minimumViewportRatioForLargestMediaElement = 0.25;
+    float minimumAreaForLargestElement = minimumViewportRatioForLargestMediaElement * unobscuredArea.value();
+    for (auto& candidate : candidates) {
+        auto intersectionRect = intersection(unobscuredContentRect, candidate->boundingBoxInRootViewCoordinates());
+        if (intersectionRect.isEmpty())
+            continue;
+
+        auto area = intersectionRect.area<RecordOverflow>();
+        if (area.hasOverflowed())
+            continue;
+
+        if (area <= largestArea)
+            continue;
+
+        if (area < minimumAreaForLargestElement)
+            continue;
+
+        largestArea = area;
+        largestElement = candidate.ptr();
+    }
+
+    if (!largestElement) {
+        completion(false);
+        return;
+    }
+
+    UserGestureIndicator userGesture { IsProcessingUserGesture::Yes, document.get() };
+    largestElement->play();
+    completion(true);
+}
+
+#endif // ENABLE(VIDEO_PRESENTATION_MODE)
 
 #if PLATFORM(IOS_FAMILY)
 void WebPage::setSceneIdentifier(String&& sceneIdentifier)
