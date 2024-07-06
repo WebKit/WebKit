@@ -2477,4 +2477,58 @@ TEST(WritingTools, BlockquoteAndPreContentsAreIgnored)
     TestWebKitAPI::Util::run(&finished);
 }
 
+TEST(WritingTools, SmartReplyWithInsertedSpace)
+{
+    auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+    [session setCompositionSessionType:WTCompositionSessionTypeSmartReply];
+
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable></body>"]);
+
+    NSString *script = @"document.body.focus()";
+#if PLATFORM(IOS_FAMILY)
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:script];
+#else
+    [webView stringByEvaluatingJavaScript:script];
+#endif
+    [webView waitForNextPresentationUpdate];
+
+#if PLATFORM(IOS_FAMILY)
+    [[webView textInputContentView] insertText:@" "];
+#else
+    [webView insertText:@" "];
+#endif
+
+    NSString *modifySelectionJavascript = @""
+        "(() => {"
+        "  const first = document.querySelector('body').childNodes[0];"
+        "  const range = document.createRange();"
+        "  range.setStart(first, 0);"
+        "  range.setEnd(first, 1);"
+        "  "
+        "  var selection = window.getSelection();"
+        "  selection.removeAllRanges();"
+        "  selection.addRange(range);"
+        "})();";
+
+    [webView stringByEvaluatingJavaScript:modifySelectionJavascript];
+    [webView waitForNextPresentationUpdate];
+
+    __block bool finished = false;
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        [webView _synchronouslyExecuteEditCommand:@"DeleteBackward" argument:nil];
+
+        EXPECT_EQ(1UL, contexts.count);
+
+        RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:@"I want ice cream."]);
+
+        [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:contexts.firstObject.range inContext:contexts.firstObject finished:NO];
+
+        EXPECT_WK_STREQ(@"I want ice cream.", [webView contentsAsString]);
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
 #endif
