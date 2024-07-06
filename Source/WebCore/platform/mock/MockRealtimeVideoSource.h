@@ -157,6 +157,7 @@ private:
     MonotonicTime m_delayUntil;
 
     unsigned m_frameNumber { 0 };
+    Ref<RunLoop> m_runLoop;
     RunLoop::Timer m_emitFrameTimer;
     std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;
