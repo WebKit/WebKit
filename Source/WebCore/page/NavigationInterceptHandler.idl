@@ -25,5 +25,6 @@
 
 [
     EnabledBySetting=NavigationAPIEnabled,
-    IsStrongCallback
+    IsStrongCallback,
+    SkipCallbackInvokeCheck
 ] callback NavigationInterceptHandler = Promise<undefined> ();
