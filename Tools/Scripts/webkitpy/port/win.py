@@ -161,6 +161,9 @@ class WinPort(ApplePort):
             self._copy_value_from_environ_if_set(env, variable)
         return env
 
+    def driver_name(self):
+        return "WebKitTestRunnerWS"
+
     def run_minibrowser(self, args):
         miniBrowser = self._build_path('MiniBrowser.exe')
         return self._executive.run_command([miniBrowser] + args, stdout=None, cwd=self.webkit_base(), return_stderr=False, decode_output=False, ignore_errors=True, env=self.setup_environ_for_server())
