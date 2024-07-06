@@ -22,6 +22,7 @@ skip:
     - Float16Array
     - explicit-resource-management
     - regexp-modifiers
+    - Intl.Locale-info
   paths:
     - test/built-ins/Temporal/Calendar
     - test/built-ins/Temporal/Instant/prototype/toZonedDateTime
