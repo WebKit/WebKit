@@ -756,10 +756,9 @@ std::optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(Rende
             return child.maxPreferredLogicalWidth() - child.borderAndPaddingLogicalWidth();
         }
     }
-    
-    // FIXME: Figure out how this should work for regions and pass in the appropriate values.
-    RenderFragmentContainer* fragment = nullptr;
-    return child.computeLogicalWidthInFragmentUsing(sizeType, size, contentLogicalWidth(), *this, fragment) - child.borderAndPaddingLogicalWidth();
+
+    auto mainAxisWidth = isColumnFlow() ? availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding) : contentLogicalWidth();
+    return child.computeLogicalWidthInFragmentUsing(sizeType, size, mainAxisWidth, *this, { }) - child.borderAndPaddingLogicalWidth();
 }
 
 BlockFlowDirection RenderFlexibleBox::transformedBlockFlowDirection() const
