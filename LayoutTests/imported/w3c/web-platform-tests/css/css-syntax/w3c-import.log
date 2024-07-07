@@ -33,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/missing-semicolon.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/non-ascii-codepoints.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/serialize-consecutive-tokens.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/serialize-escape-identifiers.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/trailing-braces.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/unclosed-constructs.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/unclosed-url-at-eof.html
