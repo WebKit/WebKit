@@ -478,6 +478,9 @@ public:
     Interleave(const Interleave&) = delete;
     Interleave& operator=(const Interleave&) = delete;
 
+    Interleave(Interleave&&) = default;
+    Interleave& operator=(Interleave&&) = default;
+
     template<typename Accumulator> void writeUsing(Accumulator& accumulator) const
     {
         auto begin = std::begin(container);

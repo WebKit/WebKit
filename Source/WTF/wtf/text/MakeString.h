@@ -34,47 +34,59 @@
 
 namespace WTF {
 
+template<typename StringTypeAdapter> constexpr bool makeStringSlowPathRequiredForAdapter = requires(const StringTypeAdapter& adapter) {
+    { adapter.writeUsing(std::declval<StringBuilder&>) } -> std::same_as<void>;
+};
+template<typename... StringTypeAdapters> constexpr bool makeStringSlowPathRequired = (... || makeStringSlowPathRequiredForAdapter<StringTypeAdapters>);
+
 template<typename... StringTypeAdapters>
 RefPtr<StringImpl> tryMakeStringImplFromAdaptersInternal(unsigned length, bool areAllAdapters8Bit, StringTypeAdapters... adapters)
 {
     ASSERT(length <= String::MaxLength);
     if (areAllAdapters8Bit) {
         LChar* buffer;
-        RefPtr resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
-        if (!resultImpl)
+        RefPtr result = StringImpl::tryCreateUninitialized(length, buffer);
+        if (!result)
             return nullptr;
 
         if (buffer)
             stringTypeAdapterAccumulator(buffer, adapters...);
 
-        return resultImpl;
+        return result;
     }
 
     UChar* buffer;
-    RefPtr resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
-    if (!resultImpl)
+    RefPtr result = StringImpl::tryCreateUninitialized(length, buffer);
+    if (!result)
         return nullptr;
 
     if (buffer)
         stringTypeAdapterAccumulator(buffer, adapters...);
 
-    return resultImpl;
+    return result;
 }
 
 template<typename... StringTypeAdapters>
-String tryMakeStringFromAdapters(StringTypeAdapters... adapters)
+String tryMakeStringFromAdapters(StringTypeAdapters&&... adapters)
 {
     static_assert(String::MaxLength == std::numeric_limits<int32_t>::max());
-    auto sum = checkedSum<int32_t>(adapters.length()...);
-    if (sum.hasOverflowed())
-        return String();
 
-    bool areAllAdapters8Bit = are8Bit(adapters...);
-    return tryMakeStringImplFromAdaptersInternal(sum, areAllAdapters8Bit, adapters...);
+    if constexpr (makeStringSlowPathRequired<StringTypeAdapters...>) {
+        StringBuilder builder;
+        builder.appendFromAdapters(std::forward<StringTypeAdapters>(adapters)...);
+        return builder.toString();
+    } else {
+        auto sum = checkedSum<int32_t>(adapters.length()...);
+        if (sum.hasOverflowed())
+            return String();
+
+        bool areAllAdapters8Bit = are8Bit(adapters...);
+        return tryMakeStringImplFromAdaptersInternal(sum, areAllAdapters8Bit, adapters...);
+    }
 }
 
 template<StringTypeAdaptable... StringTypes>
-String tryMakeString(StringTypes ...strings)
+String tryMakeString(const StringTypes& ...strings)
 {
     return tryMakeStringFromAdapters(StringTypeAdapter<StringTypes>(strings)...);
 }
@@ -92,26 +104,33 @@ template<typename... StringTypeAdapters>
 AtomString tryMakeAtomStringFromAdapters(StringTypeAdapters ...adapters)
 {
     static_assert(String::MaxLength == std::numeric_limits<int32_t>::max());
-    auto sum = checkedSum<int32_t>(adapters.length()...);
-    if (sum.hasOverflowed())
-        return AtomString();
 
-    unsigned length = sum;
-    ASSERT(length <= String::MaxLength);
+    if constexpr (makeStringSlowPathRequired<StringTypeAdapters...>) {
+        StringBuilder builder;
+        builder.appendFromAdapters(adapters...);
+        return builder.toAtomString();
+    } else {
+        auto sum = checkedSum<int32_t>(adapters.length()...);
+        if (sum.hasOverflowed())
+            return AtomString();
 
-    bool areAllAdapters8Bit = are8Bit(adapters...);
-    constexpr size_t maxLengthToUseStackVariable = 64;
-    if (length < maxLengthToUseStackVariable) {
-        if (areAllAdapters8Bit) {
-            LChar buffer[maxLengthToUseStackVariable];
+        unsigned length = sum;
+        ASSERT(length <= String::MaxLength);
+
+        bool areAllAdapters8Bit = are8Bit(adapters...);
+        constexpr size_t maxLengthToUseStackVariable = 64;
+        if (length < maxLengthToUseStackVariable) {
+            if (areAllAdapters8Bit) {
+                LChar buffer[maxLengthToUseStackVariable];
+                stringTypeAdapterAccumulator(buffer, adapters...);
+                return std::span<const LChar> { buffer, length };
+            }
+            UChar buffer[maxLengthToUseStackVariable];
             stringTypeAdapterAccumulator(buffer, adapters...);
-            return std::span<const LChar> { buffer, length };
+            return std::span<const UChar> { buffer, length };
         }
-        UChar buffer[maxLengthToUseStackVariable];
-        stringTypeAdapterAccumulator(buffer, adapters...);
-        return std::span<const UChar> { buffer, length };
+        return tryMakeStringImplFromAdaptersInternal(length, areAllAdapters8Bit, adapters...).get();
     }
-    return tryMakeStringImplFromAdaptersInternal(length, areAllAdapters8Bit, adapters...).get();
 }
 
 template<StringTypeAdaptable... StringTypes>
@@ -134,6 +153,15 @@ inline String WARN_UNUSED_RETURN makeStringByInserting(StringView originalString
     return makeString(originalString.left(position), stringToInsert, originalString.substring(position));
 }
 
+// Helper functor useful in generic contexts where both makeString() and StringBuilder are being used.
+struct SerializeUsingMakeString {
+    using Result = String;
+    template<typename... T> String operator()(T&&... args)
+    {
+        return makeString(std::forward<T>(args)...);
+    }
+};
+
 } // namespace WTF
 
 using WTF::makeAtomString;
@@ -141,3 +169,4 @@ using WTF::makeString;
 using WTF::makeStringByInserting;
 using WTF::tryMakeAtomString;
 using WTF::tryMakeString;
+using WTF::SerializeUsingMakeString;

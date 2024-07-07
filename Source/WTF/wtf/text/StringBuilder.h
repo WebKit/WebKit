@@ -65,6 +65,8 @@ public:
     void append(LChar);
     void append(char character) { append(byteCast<LChar>(character)); }
 
+    template<typename... StringTypeAdapters> void appendFromAdapters(const StringTypeAdapters&...);
+
     // FIXME: Add a StringTypeAdapter so we can append one string builder to another with variadic append.
     void append(const StringBuilder&);
 
@@ -112,7 +114,6 @@ private:
     WTF_EXPORT_PRIVATE void reifyString() const;
 
     void appendFromAdapters() { /* empty base case */ }
-    template<typename... StringTypeAdapters> void appendFromAdapters(const StringTypeAdapters&...);
     template<typename StringTypeAdapter, typename... StringTypeAdapters> void appendFromAdaptersSlow(const StringTypeAdapter&, const StringTypeAdapters&...);
     template<typename StringTypeAdapter> void appendFromAdapterSlow(const StringTypeAdapter&);
 
@@ -349,6 +350,18 @@ template<> struct IntegerToStringConversionTrait<StringBuilder> {
     static void flush(std::span<const LChar> characters, StringBuilder* builder) { builder->append(characters); }
 };
 
+// Helper functor useful in generic contexts where both makeString() and StringBuilder are being used.
+struct SerializeUsingStringBuilder {
+    StringBuilder& builder;
+
+    using Result = void;
+    template<typename... T> void operator()(T&&... args)
+    {
+        return builder.append(std::forward<T>(args)...);
+    }
+};
+
 } // namespace WTF
 
 using WTF::StringBuilder;
+using WTF::SerializeUsingStringBuilder;

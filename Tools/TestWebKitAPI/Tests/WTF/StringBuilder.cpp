@@ -38,28 +38,6 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/unicode/CharacterNames.h>
 
-namespace WTF {
-
-template<> class StringTypeAdapter<MoveOnly, void> {
-public:
-    StringTypeAdapter(const MoveOnly& moveOnly)
-        : m_moveOnly { moveOnly }
-    {
-    }
-
-    unsigned length() const { return StringTypeAdapter<unsigned>(m_moveOnly.value()).length(); }
-    bool is8Bit() const { return StringTypeAdapter<unsigned>(m_moveOnly.value()).is8Bit(); }
-    template<typename CharacterType> void writeTo(CharacterType* destination) const
-    {
-        StringTypeAdapter<unsigned>(m_moveOnly.value()).writeTo(destination);
-    }
-
-private:
-    const MoveOnly& m_moveOnly;
-};
-
-} // namespace WTF
-
 namespace TestWebKitAPI {
 
 static String builderContent(const StringBuilder& builder)
