@@ -28,9 +28,7 @@
 
 namespace WebCore {
 
-StyleFilterData::StyleFilterData()
-{
-}
+StyleFilterData::StyleFilterData() = default;
 
 inline StyleFilterData::StyleFilterData(const StyleFilterData& other)
     : RefCounted<StyleFilterData>()

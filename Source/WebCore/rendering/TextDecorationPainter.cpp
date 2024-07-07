@@ -191,7 +191,7 @@ bool TextDecorationPainter::Styles::operator==(const Styles& other) const
         && underline.decorationStyle == other.underline.decorationStyle && overline.decorationStyle == other.overline.decorationStyle && linethrough.decorationStyle == other.linethrough.decorationStyle;
 }
 
-TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, const FontCascade& font, const ShadowData* shadow, const FilterOperations* colorFilter, bool isPrinting, bool isHorizontal)
+TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, const FontCascade& font, const ShadowData* shadow, const Style::FilterOperations* colorFilter, bool isPrinting, bool isHorizontal)
     : m_context(context)
     , m_isPrinting(isPrinting)
     , m_isHorizontal(isHorizontal)

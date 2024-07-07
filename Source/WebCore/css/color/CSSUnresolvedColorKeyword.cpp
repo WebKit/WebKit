@@ -45,25 +45,12 @@ String serializationForCSS(const CSSUnresolvedColorKeyword& unresolved)
 
 StyleColor createStyleColor(const CSSUnresolvedColorKeyword& unresolved, const Document& document, RenderStyle& style, Style::ForVisitedLink forVisitedLink)
 {
-    return Style::colorFromValueID(document, style, unresolved.valueID, forVisitedLink);
+    return Style::styleColorFromValueID(document, style, unresolved.valueID, forVisitedLink);
 }
 
 Color createColor(const CSSUnresolvedColorKeyword& unresolved, const CSSUnresolvedColorResolutionContext& context)
 {
-    switch (unresolved.valueID) {
-    case CSSValueInternalDocumentTextColor:
-        return context.internalDocumentTextColor();
-    case CSSValueWebkitLink:
-        return context.forVisitedLink == Style::ForVisitedLink::Yes ? context.webkitLinkVisited() : context.webkitLink();
-    case CSSValueWebkitActivelink:
-        return context.webkitActiveLink();
-    case CSSValueWebkitFocusRingColor:
-        return context.webkitFocusRingColor();
-    case CSSValueCurrentcolor:
-        return context.currentColor();
-    default:
-        return StyleColor::colorFromKeyword(unresolved.valueID, context.keywordOptions);
-    }
+    return Style::colorFromValueID(unresolved.valueID, context);
 }
 
 bool containsCurrentColor(const CSSUnresolvedColorKeyword& unresolved)

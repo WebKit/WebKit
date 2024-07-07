@@ -20,7 +20,6 @@
 #include "config.h"
 #include "SVGResources.h"
 
-#include "FilterOperation.h"
 #include "LegacyRenderSVGResourceClipperInlines.h"
 #include "LegacyRenderSVGResourceFilterInlines.h"
 #include "LegacyRenderSVGResourceMarkerInlines.h"
@@ -235,10 +234,10 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
         }
 
         if (style.hasFilter()) {
-            const FilterOperations& filterOperations = style.filter();
+            const auto& filterOperations = style.filter();
             if (filterOperations.size() == 1) {
-                if (RefPtr referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(*filterOperations.at(0))) {
-                    AtomString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation->url(), document);
+                if (auto* referenceFilterOperation = std::get_if<Style::FilterOperations::Reference>(&filterOperations[0])) {
+                    AtomString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation->url, document);
                     if (auto* filter = getRenderSVGResourceById<LegacyRenderSVGResourceFilter>(treeScope, id))
                         ensureResources(foundResources).setFilter(filter);
                     else

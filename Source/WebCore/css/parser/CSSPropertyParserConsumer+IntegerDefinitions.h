@@ -43,15 +43,15 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-template<typename IntType, IntegerValueRange integerRange>
-std::optional<IntegerRaw<IntType, integerRange>> validatedRange(IntegerRaw<IntType, integerRange> value, CSSPropertyParserOptions)
+template<IntegerRawValueRange R>
+std::optional<IntegerRaw<R>> validatedRange(IntegerRaw<R> value, CSSPropertyParserOptions)
 {
     return value;
 }
 
-template<typename IntType, IntegerValueRange integerRange>
+template<IntegerRawValueRange R>
 struct IntegerKnownTokenTypeFunctionConsumer {
-    using RawType = IntegerRaw<IntType, integerRange>;
+    using RawType = IntegerRaw<R>;
 
     static constexpr CSSParserTokenType tokenType = FunctionToken;
     static std::optional<UnevaluatedCalc<RawType>> consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
@@ -67,28 +67,28 @@ struct IntegerKnownTokenTypeFunctionConsumer {
     }
 };
 
-template<typename IntType, IntegerValueRange integerRange>
+template<IntegerRawValueRange R>
 struct IntegerKnownTokenTypeNumberConsumer {
-    using RawType = IntegerRaw<IntType, integerRange>;
+    using RawType = IntegerRaw<R>;
 
     static constexpr CSSParserTokenType tokenType = NumberToken;
     static std::optional<RawType> consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions)
     {
         ASSERT(range.peek().type() == NumberToken);
 
-        if (range.peek().numericValueType() == NumberValueType || range.peek().numericValue() < computeMinimumValue(integerRange))
+        if (range.peek().numericValueType() == NumberValueType || range.peek().numericValue() < computeMinimumValue<R>())
             return std::nullopt;
-        return RawType { clampTo<IntType>(range.consumeIncludingWhitespace().numericValue()) };
+        return RawType { clampTo<typename RawType::IntType>(range.consumeIncludingWhitespace().numericValue()) };
     }
 };
 
-template<typename IntType, IntegerValueRange integerRange>
-struct ConsumerDefinition<IntegerRaw<IntType, integerRange>> {
-    using RawType = IntegerRaw<IntType, integerRange>;
+template<IntegerRawValueRange R>
+struct ConsumerDefinition<IntegerRaw<R>> {
+    using RawType = IntegerRaw<R>;
     using type = brigand::list<RawType, UnevaluatedCalc<RawType>>;
 
-    using FunctionToken = IntegerKnownTokenTypeFunctionConsumer<IntType, integerRange>;
-    using NumberToken = IntegerKnownTokenTypeNumberConsumer<IntType, integerRange>;
+    using FunctionToken = IntegerKnownTokenTypeFunctionConsumer<R>;
+    using NumberToken = IntegerKnownTokenTypeNumberConsumer<R>;
 };
 
 } // namespace CSSPropertyParserHelpers

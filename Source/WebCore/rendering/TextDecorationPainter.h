@@ -30,17 +30,20 @@
 
 namespace WebCore {
 
-class FilterOperations;
 class FontCascade;
 class GraphicsContext;
 class RenderObject;
 class RenderStyle;
 class ShadowData;
 class TextRun;
-    
+
+namespace Style {
+class FilterOperations;
+}
+
 class TextDecorationPainter {
 public:
-    TextDecorationPainter(GraphicsContext&, const FontCascade&, const ShadowData*, const FilterOperations*, bool isPrinting, bool isHorizontal);
+    TextDecorationPainter(GraphicsContext&, const FontCascade&, const ShadowData*, const Style::FilterOperations*, bool isPrinting, bool isHorizontal);
 
     struct Styles {
         bool operator==(const Styles&) const;
@@ -88,7 +91,7 @@ private:
     bool m_isPrinting { false };
     bool m_isHorizontal { true };
     const ShadowData* m_shadow { nullptr };
-    const FilterOperations* m_shadowColorFilter { nullptr };
+    const Style::FilterOperations* m_shadowColorFilter { nullptr };
     const FontCascade& m_font;
 };
 

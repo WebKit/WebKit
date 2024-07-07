@@ -89,7 +89,7 @@ String PlatformCAAnimation::makeGroupKeyPath()
     return emptyString();
 }
 
-String PlatformCAAnimation::makeKeyPath(AnimatedProperty animatedProperty, FilterOperation::Type filterOperationType, int index)
+String PlatformCAAnimation::makeKeyPath(AnimatedProperty animatedProperty, std::optional<FilterOperations::Type> filterOperationType, int index)
 {
     switch (animatedProperty) {
     case AnimatedProperty::Translate:
@@ -102,7 +102,7 @@ String PlatformCAAnimation::makeKeyPath(AnimatedProperty animatedProperty, Filte
     case AnimatedProperty::BackgroundColor:
         return backgroundColorKeyPath;
     case AnimatedProperty::Filter:
-        return makeString(filterKeyPathPrefix, index, '.', PlatformCAFilters::animatedFilterPropertyName(filterOperationType));
+        return makeString(filterKeyPathPrefix, index, '.', filterOperationType ? PlatformCAFilters::animatedFilterPropertyName(*filterOperationType) : ""_s);
     case AnimatedProperty::WebkitBackdropFilter:
         return backdropFiltersKeyPath;
     case AnimatedProperty::Invalid:

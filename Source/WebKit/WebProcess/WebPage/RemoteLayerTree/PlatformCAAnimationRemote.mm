@@ -99,9 +99,9 @@ static NSString * const WKExplicitBeginTimeFlag = @"WKPlatformCAAnimationExplici
 namespace WebKit {
 using namespace WebCore;
 
-template<typename T> static Vector<PlatformCAAnimationRemote::KeyframeValue> toKeyframeValueVector(const Vector<T>& values)
+template<typename Container> static Vector<PlatformCAAnimationRemote::KeyframeValue> toKeyframeValueVector(const Container& values)
 {
-    return values.map([](auto& value) {
+    return WTF::map(values, [](auto& value) {
         return PlatformCAAnimationRemote::KeyframeValue { value };
     });
 }
@@ -312,13 +312,13 @@ void PlatformCAAnimationRemote::setFromValue(const Color& value)
     m_properties.keyValues[0] = KeyframeValue(value);
 }
 
-void PlatformCAAnimationRemote::setFromValue(const FilterOperation& operation)
+void PlatformCAAnimationRemote::setFromValue(const FilterOperations::FilterOperation& operation)
 {
     if (animationType() != AnimationType::Basic)
         return;
 
     m_properties.keyValues.resize(2);
-    m_properties.keyValues[0] = KeyframeValue(operation.clone());
+    m_properties.keyValues[0] = KeyframeValue(operation);
 }
 
 void PlatformCAAnimationRemote::copyFromValueFrom(const PlatformCAAnimation& value)
@@ -368,13 +368,13 @@ void PlatformCAAnimationRemote::setToValue(const Color& value)
     m_properties.keyValues[1] = KeyframeValue(value);
 }
 
-void PlatformCAAnimationRemote::setToValue(const FilterOperation& operation)
+void PlatformCAAnimationRemote::setToValue(const FilterOperations::FilterOperation& operation)
 {
     if (animationType() != AnimationType::Basic)
         return;
     
     m_properties.keyValues.resize(2);
-    m_properties.keyValues[1] = KeyframeValue(operation.clone());
+    m_properties.keyValues[1] = KeyframeValue(operation);
 }
 
 void PlatformCAAnimationRemote::copyToValueFrom(const PlatformCAAnimation& value)
@@ -420,7 +420,7 @@ void PlatformCAAnimationRemote::setValues(const Vector<Color>& values)
     m_properties.keyValues = toKeyframeValueVector(values);
 }
 
-void PlatformCAAnimationRemote::setValues(const Vector<Ref<FilterOperation>>& values)
+void PlatformCAAnimationRemote::setValues(const FilterOperations& values)
 {
     if (animationType() != AnimationType::Keyframe)
         return;
@@ -488,8 +488,8 @@ static RetainPtr<NSObject> animationValueFromKeyframeValue(const PlatformCAAnima
         [&](const WebCore::TransformationMatrix matrix) -> RetainPtr<NSObject> {
             return [NSValue valueWithCATransform3D:matrix];
         },
-        [&](const Ref<WebCore::FilterOperation> filter) -> RetainPtr<NSObject> {
-            return PlatformCAFilters::filterValueForOperation(filter.get());
+        [&](const WebCore::FilterOperations::FilterOperation& filter) -> RetainPtr<NSObject> {
+            return PlatformCAFilters::filterValueForOperation(filter);
         }
     );
 }
@@ -708,7 +708,7 @@ TextStream& operator<<(TextStream& ts, const PlatformCAAnimationRemote::Properti
                 [&](const WebCore::Color color) { ts << "color=" << color; },
                 [&](const WebCore::FloatPoint3D point) { ts << "point=" << point; },
                 [&](const WebCore::TransformationMatrix matrix) { ts << "transform=" << matrix; },
-                [&](const Ref<WebCore::FilterOperation> filter) { ts << "filter=" << filter; }
+                [&](const WebCore::FilterOperations::FilterOperation& filter) { ts << "filter=" << filter; }
             );
             ts.endGroup();
         }

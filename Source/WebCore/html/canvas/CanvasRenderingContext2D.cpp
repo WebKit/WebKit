@@ -35,9 +35,13 @@
 
 #include "CSSFilter.h"
 #include "CSSFontSelector.h"
+#include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
+#include "CSSPropertyParserConsumer+Color.h"
+#include "CSSPropertyParserConsumer+Filter.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSPropertyParserWorkerSafe.h"
+#include "CSSUnresolvedFilterResolutionContext.h"
 #include "DocumentInlines.h"
 #include "Gradient.h"
 #include "ImageBuffer.h"
@@ -86,6 +90,77 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(CanvasBase& canvas, CanvasRen
 
 CanvasRenderingContext2D::~CanvasRenderingContext2D() = default;
 
+class CanvasURLResolutionDelegate final : public CSSUnresolvedURLResolutionDelegate {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static std::unique_ptr<CanvasURLResolutionDelegate> create(Ref<HTMLCanvasElement> canvasElement)
+    {
+        return WTF::makeUnique<CanvasURLResolutionDelegate>(WTFMove(canvasElement));
+    }
+
+    CanvasURLResolutionDelegate(Ref<HTMLCanvasElement> canvasElement)
+        : m_canvasElement { WTFMove(canvasElement) }
+    {
+    }
+
+    URL completeURL(const String& string) const final
+    {
+        return m_canvasElement->document().completeURL(string);
+    }
+
+    Ref<HTMLCanvasElement> m_canvasElement;
+};
+
+// FIXME: Share this with copy in CanvasStyle.h
+class CanvasColorResolutionDelegate final : public CSSUnresolvedColorResolutionDelegate {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static std::unique_ptr<CanvasColorResolutionDelegate> create(Ref<HTMLCanvasElement> canvasElement)
+    {
+        return WTF::makeUnique<CanvasColorResolutionDelegate>(WTFMove(canvasElement));
+    }
+
+    CanvasColorResolutionDelegate(Ref<HTMLCanvasElement> canvasElement)
+        : m_canvasElement { WTFMove(canvasElement) }
+    {
+    }
+
+    Color currentColor() const final
+    {
+        if (!m_canvasElement->isConnected() || !m_canvasElement->inlineStyle())
+            return Color::black;
+
+        auto colorString = m_canvasElement->inlineStyle()->getPropertyValue(CSSPropertyColor);
+        auto color = CSSPropertyParserHelpers::parseColorRaw(WTFMove(colorString), m_canvasElement->cssParserContext(), { });
+        if (!color.isValid())
+            return Color::black;
+        return color;
+    }
+
+    Ref<HTMLCanvasElement> m_canvasElement;
+};
+
+class CanvasLengthResolutionDelegate final : public CSSUnresolvedLengthResolutionDelegate {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static std::unique_ptr<CanvasLengthResolutionDelegate> create(CSSToLengthConversionData conversionData)
+    {
+        return WTF::makeUnique<CanvasLengthResolutionDelegate>(WTFMove(conversionData));
+    }
+
+    CanvasLengthResolutionDelegate(CSSToLengthConversionData conversionData)
+        : m_cssToLengthConversionData { WTFMove(conversionData) }
+    {
+    }
+
+    Length resolveLength(const CSSPrimitiveValue& value) const final
+    {
+        return value.convertToLength<FixedFloatConversion | CalculatedConversion>(m_cssToLengthConversionData);
+    }
+
+    CSSToLengthConversionData m_cssToLengthConversionData;
+};
+
 std::optional<FilterOperations> CanvasRenderingContext2D::setFilterStringWithoutUpdatingStyle(const String& filterString)
 {
     Ref document = canvas().document();
@@ -98,8 +173,23 @@ std::optional<FilterOperations> CanvasRenderingContext2D::setFilterStringWithout
     if (!style)
         return std::nullopt;
 
-    auto parserMode = strictToCSSParserMode(!usesCSSCompatibilityParseMode());
-    return CSSPropertyParserWorkerSafe::parseFilterString(document, const_cast<RenderStyle&>(*style), filterString, parserMode);
+    return CSSPropertyParserHelpers::parseFilterValueListOrNoneRaw(
+        filterString,
+        canvas().cssParserContext(),
+        CSSPropertyParserHelpers::AllowedFilterFunctions::PixelFilters,
+        CSSUnresolvedFilterResolutionContext {
+            .color = CSSUnresolvedColorResolutionContext {
+                .delegate = CanvasColorResolutionDelegate::create(canvas())
+            },
+            .length = CSSUnresolvedLengthResolutionContext {
+                // FIXME: CSSToLengthConversionData should be constructed appropriately.
+                .delegate = CanvasLengthResolutionDelegate::create(CSSToLengthConversionData { *style, nullptr, nullptr, nullptr })
+            },
+            .url = CSSUnresolvedURLResolutionContext {
+                .delegate = CanvasURLResolutionDelegate::create(canvas())
+            }
+        }
+    );
 }
 
 RefPtr<Filter> CanvasRenderingContext2D::createFilter(const FloatRect& bounds) const

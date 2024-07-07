@@ -429,7 +429,7 @@ void PlatformCAAnimationCocoa::setFromValue(const Color& value)
     [static_cast<CABasicAnimation *>(m_animation.get()) setFromValue:@[@(r), @(g), @(b), @(a)]];
 }
 
-void PlatformCAAnimationCocoa::setFromValue(const FilterOperation& operation)
+void PlatformCAAnimationCocoa::setFromValue(const FilterOperations::FilterOperation& operation)
 {
     auto value = PlatformCAFilters::filterValueForOperation(operation);
     [static_cast<CABasicAnimation *>(m_animation.get()) setFromValue:value.get()];
@@ -472,7 +472,7 @@ void PlatformCAAnimationCocoa::setToValue(const Color& value)
     [static_cast<CABasicAnimation *>(m_animation.get()) setToValue:@[@(r), @(g), @(b), @(a)]];
 }
 
-void PlatformCAAnimationCocoa::setToValue(const FilterOperation& operation)
+void PlatformCAAnimationCocoa::setToValue(const FilterOperations::FilterOperation& operation)
 {
     auto value = PlatformCAFilters::filterValueForOperation(operation);
     [static_cast<CABasicAnimation *>(m_animation.get()) setToValue:value.get()];
@@ -530,7 +530,7 @@ void PlatformCAAnimationCocoa::setValues(const Vector<Color>& value)
     }).get()];
 }
 
-void PlatformCAAnimationCocoa::setValues(const Vector<Ref<FilterOperation>>& values)
+void PlatformCAAnimationCocoa::setValues(const WebCore::FilterOperations& values)
 {
     if (animationType() != AnimationType::Keyframe)
         return;

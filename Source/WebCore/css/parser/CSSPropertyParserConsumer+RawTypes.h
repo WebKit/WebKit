@@ -24,10 +24,12 @@
 
 #pragma once
 
+#include "CSSUnits.h"
+#include "CSSUnits.h"
 #include <optional>
 #include <variant>
 #include <wtf/Brigand.h>
-#include <wtf/Forward.h>
+#include <wtf/Ref.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -42,34 +44,87 @@ using VariantOrSingle = std::conditional_t<
     brigand::wrap<TypeList, VariantWrapper>
 >;
 
-namespace CSSPropertyParserHelpers {
-enum class IntegerValueRange : uint8_t { All, Positive, NonNegative };
-}
-
-enum class CSSUnitType : uint8_t;
 enum CSSValueID : uint16_t;
 
 class CSSCalcSymbolTable;
+class CSSPrimitiveValue;
+class CSSToLengthConversionData;
 
-struct NoneRaw {
-    bool operator==(const NoneRaw&) const = default;
+// MARK: Integer
+
+enum class IntegerRawValueRange : uint8_t { All, NonNegative, Positive };
+
+template<IntegerRawValueRange range> constexpr double computeMinimumValue()
+{
+    if constexpr (range == IntegerRawValueRange::All)
+        return -std::numeric_limits<double>::infinity();
+    else if constexpr (range == IntegerRawValueRange::NonNegative)
+        return 0;
+    else if constexpr (range == IntegerRawValueRange::Positive)
+        return 1.0;
+}
+
+template<IntegerRawValueRange> struct IntegerRawTypeMap;
+template<> struct IntegerRawTypeMap<IntegerRawValueRange::All> { using type = int; };
+template<> struct IntegerRawTypeMap<IntegerRawValueRange::NonNegative> { using type = int; };
+template<> struct IntegerRawTypeMap<IntegerRawValueRange::Positive> { using type = unsigned; };
+
+template<IntegerRawValueRange R>
+struct IntegerRaw {
+    using IntType = typename IntegerRawTypeMap<R>::type;
+
+    static constexpr CSSUnitType type = CSSUnitType::CSS_INTEGER;
+    IntType value;
+
+    bool operator==(const IntegerRaw<R>&) const = default;
 };
+template<IntegerRawValueRange R> using CanonicalIntegerRaw = IntegerRaw<R>; // IntegerRaw is already canonical, so it can be its own canonical type.
+template<IntegerRawValueRange R> constexpr CanonicalIntegerRaw<R> canonicalize(const IntegerRaw<R>& value) { return value; };
 
-void serializationForCSS(StringBuilder&, const NoneRaw&);
+// Out-of-line implementations for concrete integer values.
+void serializationIntegerForCSS(StringBuilder&, int);
+void serializationIntegerForCSS(StringBuilder&, unsigned);
+Ref<CSSPrimitiveValue> createCSSPrimitiveValueForInteger(int);
+Ref<CSSPrimitiveValue> createCSSPrimitiveValueForInteger(unsigned);
+
+template<IntegerRawValueRange R> void serializationForCSS(StringBuilder& builder, const IntegerRaw<R>& value)
+{
+    serializationIntegerForCSS(builder, value.value);
+}
+template<IntegerRawValueRange R> Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const IntegerRaw<R>& value)
+{
+    return createCSSPrimitiveValueForInteger(value.value);
+}
+
+// MARK: Number
 
 struct NumberRaw {
+    static constexpr CSSUnitType type = CSSUnitType::CSS_NUMBER;
     double value;
 
     bool operator==(const NumberRaw&) const = default;
 };
 void serializationForCSS(StringBuilder&, const NumberRaw&);
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const NumberRaw&);
+
+using CanonicalNumberRaw = NumberRaw; // NumberRaw is already canonical, so it can be its own canonical type.
+constexpr CanonicalNumberRaw canonicalize(const NumberRaw& value) { return value; };
+
+// MARK: Percent
 
 struct PercentRaw {
+    static constexpr CSSUnitType type = CSSUnitType::CSS_PERCENTAGE;
     double value;
 
     bool operator==(const PercentRaw&) const = default;
 };
 void serializationForCSS(StringBuilder&, const PercentRaw&);
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const PercentRaw&);
+
+using CanonicalPercentRaw = PercentRaw; // PercentRaw is already canonical, so it can be its own canonical type.
+constexpr CanonicalPercentRaw canonicalize(const PercentRaw& value) { return value; };
+
+// MARK: Angle
 
 struct AngleRaw {
     CSSUnitType type;
@@ -78,6 +133,19 @@ struct AngleRaw {
     bool operator==(const AngleRaw&) const = default;
 };
 void serializationForCSS(StringBuilder&, const AngleRaw&);
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const AngleRaw&);
+
+struct CanonicalAngleRaw {
+    static constexpr CSSUnitType type = CSSUnitType::CSS_DEG;
+    double value;
+
+    bool operator==(const CanonicalAngleRaw&) const = default;
+};
+void serializationForCSS(StringBuilder&, const CanonicalAngleRaw&);
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const CanonicalAngleRaw&);
+CanonicalAngleRaw canonicalize(const AngleRaw&);
+
+// MARK: Length
 
 struct LengthRaw {
     CSSUnitType type;
@@ -86,6 +154,19 @@ struct LengthRaw {
     bool operator==(const LengthRaw&) const = default;
 };
 void serializationForCSS(StringBuilder&, const LengthRaw&);
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const LengthRaw&);
+
+struct CanonicalLengthRaw {
+    static constexpr CSSUnitType type = CSSUnitType::CSS_PX;
+    double value;
+
+    bool operator==(const CanonicalLengthRaw&) const = default;
+};
+void serializationForCSS(StringBuilder&, const CanonicalLengthRaw&);
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const CanonicalLengthRaw&);
+CanonicalLengthRaw canonicalize(const LengthRaw&, const CSSToLengthConversionData&);
+
+// MARK: Resolution
 
 struct ResolutionRaw {
     CSSUnitType type;
@@ -94,6 +175,19 @@ struct ResolutionRaw {
     bool operator==(const ResolutionRaw&) const = default;
 };
 void serializationForCSS(StringBuilder&, const ResolutionRaw&);
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const ResolutionRaw&);
+
+struct CanonicalResolutionRaw {
+    static constexpr CSSUnitType type = CSSUnitType::CSS_DPPX;
+    double value;
+
+    bool operator==(const CanonicalResolutionRaw&) const = default;
+};
+void serializationForCSS(StringBuilder&, const CanonicalResolutionRaw&);
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const CanonicalResolutionRaw&);
+CanonicalResolutionRaw canonicalize(const ResolutionRaw&);
+
+// MARK: Time
 
 struct TimeRaw {
     CSSUnitType type;
@@ -102,6 +196,20 @@ struct TimeRaw {
     bool operator==(const TimeRaw&) const = default;
 };
 void serializationForCSS(StringBuilder&, const TimeRaw&);
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const TimeRaw&);
+
+struct CanonicalTimeRaw {
+    static constexpr CSSUnitType type = CSSUnitType::CSS_S;
+    double value;
+
+    bool operator==(const CanonicalTimeRaw&) const = default;
+};
+void serializationForCSS(StringBuilder&, const CanonicalTimeRaw&);
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const CanonicalTimeRaw&);
+CanonicalTimeRaw canonicalize(const TimeRaw&);
+
+
+// MARK: Symbol
 
 struct SymbolRaw {
     CSSValueID value;
@@ -109,6 +217,15 @@ struct SymbolRaw {
     bool operator==(const SymbolRaw&) const = default;
 };
 void serializationForCSS(StringBuilder&, const SymbolRaw&);
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const SymbolRaw&);
+
+// MARK: None
+
+struct NoneRaw {
+    bool operator==(const NoneRaw&) const = default;
+};
+void serializationForCSS(StringBuilder&, const NoneRaw&);
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const NoneRaw&);
 
 // MARK: - Utility templates
 
@@ -153,29 +270,6 @@ auto replaceSymbol(const std::optional<std::variant<Ts...>>& component, const CS
         return replaceSymbol(*component, symbolTable);
     return std::nullopt;
 }
-
-constexpr double computeMinimumValue(CSSPropertyParserHelpers::IntegerValueRange range)
-{
-    switch (range) {
-    case CSSPropertyParserHelpers::IntegerValueRange::All:
-        return -std::numeric_limits<double>::infinity();
-    case CSSPropertyParserHelpers::IntegerValueRange::NonNegative:
-        return 0.0;
-    case CSSPropertyParserHelpers::IntegerValueRange::Positive:
-        return 1.0;
-    }
-
-    RELEASE_ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-
-    return 0.0;
-}
-
-template<typename IntType, CSSPropertyParserHelpers::IntegerValueRange Range>
-struct IntegerRaw {
-    IntType value;
-
-    bool operator==(const IntegerRaw<IntType, Range>&) const = default;
-};
 
 using LengthOrPercentRaw = std::variant<LengthRaw, PercentRaw>;
 using PercentOrNumberRaw = std::variant<PercentRaw, NumberRaw>;

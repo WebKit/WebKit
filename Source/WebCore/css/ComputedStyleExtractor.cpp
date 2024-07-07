@@ -80,6 +80,7 @@
 #include "ScaleTransformOperation.h"
 #include "ScrollTimeline.h"
 #include "SkewTransformOperation.h"
+#include "StyleFilterOperations.h"
 #include "StylePropertyShorthand.h"
 #include "StylePropertyShorthandFunctions.h"
 #include "StyleReflection.h"
@@ -952,7 +953,7 @@ static inline Ref<CSSPrimitiveValue> adjustLengthForZoom(const Length& length, c
     return adjust == ComputedStyleExtractor::AdjustPixelValuesForComputedStyle::Yes ? zoomAdjustedPixelValue(length.value(), style) : CSSPrimitiveValue::create(length);
 }
 
-Ref<CSSValue> ComputedStyleExtractor::valueForShadow(const ShadowData* shadow, CSSPropertyID propertyID, const RenderStyle& style, AdjustPixelValuesForComputedStyle adjust)
+static Ref<CSSValue> valueForShadow(const ShadowData* shadow, CSSPropertyID propertyID, const RenderStyle& style, ComputedStyleExtractor::AdjustPixelValuesForComputedStyle adjust = ComputedStyleExtractor::AdjustPixelValuesForComputedStyle::Yes)
 {
     if (!shadow)
         return CSSPrimitiveValue::create(CSSValueNone);
@@ -971,77 +972,47 @@ Ref<CSSValue> ComputedStyleExtractor::valueForShadow(const ShadowData* shadow, C
     return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
-Ref<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderStyle& style, const FilterOperations& filterOperations, AdjustPixelValuesForComputedStyle adjust)
+static Ref<CSSValue> valueForFilterOperation(const Style::FilterOperations::FilterOperation& filterOperation, const RenderStyle& style, ComputedStyleExtractor::AdjustPixelValuesForComputedStyle adjust)
+{
+    return WTF::switchOn(filterOperation,
+        [&](const Style::FilterOperations::Reference& op) -> Ref<CSSValue> {
+            return CSSPrimitiveValue::createURI(op.url);
+        },
+        [&](const Style::FilterOperations::Blur& op) -> Ref<CSSValue> {
+            return CSSFunctionValue::create(op.functionID, adjustLengthForZoom(op.stdDeviation, style, adjust));
+        },
+        [&](const Style::FilterOperations::DropShadow& op) -> Ref<CSSValue> {
+            // We want our computed style to look like that of a text shadow (has neither spread nor inset style).
+            ShadowData shadowData {
+                op.location,
+                op.stdDeviation,
+                Length(0, LengthType::Fixed),
+                ShadowStyle::Normal,
+                false,
+                op.color
+            };
+            auto shadowValue = valueForShadow(&shadowData, CSSPropertyTextShadow, style, adjust);
+            return CSSFunctionValue::create(op.functionID, WTFMove(shadowValue));
+        },
+        [&](const Style::FilterOperations::AppleInvertLightness& op) -> Ref<CSSValue> {
+            return CSSFunctionValue::create(op.functionID);
+        },
+        [&](const auto& op) -> Ref<CSSValue> {
+            return CSSFunctionValue::create(op.functionID, createCSSPrimitiveValue(op.amount));
+        }
+    );
+}
+
+Ref<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderStyle& style, const Style::FilterOperations& filterOperations, AdjustPixelValuesForComputedStyle adjust)
 {
     if (filterOperations.isEmpty())
         return CSSPrimitiveValue::create(CSSValueNone);
 
-    CSSValueListBuilder list;
-
-    for (auto& filterOperationRef : filterOperations) {
-        auto& filterOperation = filterOperationRef.get();
-
-        if (auto* referenceOperation = dynamicDowncast<ReferenceFilterOperation>(filterOperation))
-            list.append(CSSPrimitiveValue::createURI(referenceOperation->url()));
-        else {
-            RefPtr<CSSFunctionValue> filterValue;
-            switch (filterOperation.type()) {
-            case FilterOperation::Type::Grayscale:
-                filterValue = CSSFunctionValue::create(CSSValueGrayscale,
-                    CSSPrimitiveValue::create(downcast<BasicColorMatrixFilterOperation>(filterOperation).amount()));
-                break;
-            case FilterOperation::Type::Sepia:
-                filterValue = CSSFunctionValue::create(CSSValueSepia,
-                    CSSPrimitiveValue::create(downcast<BasicColorMatrixFilterOperation>(filterOperation).amount()));
-                break;
-            case FilterOperation::Type::Saturate:
-                filterValue = CSSFunctionValue::create(CSSValueSaturate,
-                    CSSPrimitiveValue::create(downcast<BasicColorMatrixFilterOperation>(filterOperation).amount()));
-                break;
-            case FilterOperation::Type::HueRotate:
-                filterValue = CSSFunctionValue::create(CSSValueHueRotate,
-                    CSSPrimitiveValue::create(downcast<BasicColorMatrixFilterOperation>(filterOperation).amount(), CSSUnitType::CSS_DEG));
-                break;
-            case FilterOperation::Type::Invert:
-                filterValue = CSSFunctionValue::create(CSSValueInvert,
-                    CSSPrimitiveValue::create(downcast<BasicComponentTransferFilterOperation>(filterOperation).amount()));
-                break;
-            case FilterOperation::Type::AppleInvertLightness:
-                filterValue = CSSFunctionValue::create(CSSValueAppleInvertLightness);
-                break;
-            case FilterOperation::Type::Opacity:
-                filterValue = CSSFunctionValue::create(CSSValueOpacity,
-                    CSSPrimitiveValue::create(downcast<BasicComponentTransferFilterOperation>(filterOperation).amount()));
-                break;
-            case FilterOperation::Type::Brightness:
-                filterValue = CSSFunctionValue::create(CSSValueBrightness,
-                    CSSPrimitiveValue::create(downcast<BasicComponentTransferFilterOperation>(filterOperation).amount()));
-                break;
-            case FilterOperation::Type::Contrast:
-                filterValue = CSSFunctionValue::create(CSSValueContrast,
-                    CSSPrimitiveValue::create(downcast<BasicComponentTransferFilterOperation>(filterOperation).amount()));
-                break;
-            case FilterOperation::Type::Blur:
-                filterValue = CSSFunctionValue::create(CSSValueBlur,
-                    adjustLengthForZoom(uncheckedDowncast<BlurFilterOperation>(filterOperation).stdDeviation(), style, adjust));
-                break;
-            case FilterOperation::Type::DropShadow: {
-                // We want our computed style to look like that of a text shadow (has neither spread nor inset style).
-                auto& dropShadowOperation = uncheckedDowncast<DropShadowFilterOperation>(filterOperation);
-                ShadowData shadowData({ Length(dropShadowOperation.location().x(), LengthType::Fixed), Length(dropShadowOperation.location().y(), LengthType::Fixed) }, Length(dropShadowOperation.stdDeviation(), LengthType::Fixed), Length(0, LengthType::Fixed), ShadowStyle::Normal, false, dropShadowOperation.color());
-                filterValue = CSSFunctionValue::create(CSSValueDropShadow,
-                    valueForShadow(&shadowData, CSSPropertyTextShadow, style, adjust));
-                break;
-            }
-            default:
-                ASSERT_NOT_REACHED();
-                filterValue = CSSFunctionValue::create(CSSValueInvalid);
-                break;
-            }
-            list.append(filterValue.releaseNonNull());
-        }
-    }
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
+    return CSSValueList::createSpaceSeparated(
+        WTF::map<CSSValueListBuilderInlineCapacity>(filterOperations, [&](const auto& op) -> Ref<CSSValue> {
+            return valueForFilterOperation(op, style, adjust);
+        })
+    );
 }
 
 static Ref<CSSValue> specifiedValueForGridTrackBreadth(const GridLength& trackBreadth, const RenderStyle& style)

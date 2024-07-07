@@ -1397,7 +1397,14 @@ bool CoordinatedGraphicsLayer::shouldHaveBackingStore() const
 
     // Check if there's a filter that sets the opacity to zero.
     bool hasOpacityZeroFilter = std::ranges::any_of(filters(), [](auto& operation) {
-        return operation->type() == FilterOperation::Type::Opacity && !downcast<BasicComponentTransferFilterOperation>(operation.get()).amount();
+        return WTF::switchOn(operation,
+            [](const FilterOperations::Opacity& op) -> bool {
+                return !op.amount;
+            },
+            [](const auto&) -> bool {
+                return false;
+            }
+        );
     });
 
     // If there's a filter that sets opacity to 0 and the filters are not being animated, the layer is invisible.

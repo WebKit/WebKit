@@ -79,7 +79,7 @@ inline void RenderStyle::setAlignSelf(const StyleSelfAlignmentData& data) { SET_
 inline void RenderStyle::setAlignSelfPosition(ItemPosition position) { m_nonInheritedData.access().miscData.access().alignSelf.setPosition(position); }
 inline void RenderStyle::setAnchorNames(const Vector<AtomString>& names) { SET_NESTED(m_nonInheritedData, rareData, anchorNames, names); }
 inline void RenderStyle::setAppearance(StyleAppearance appearance) { SET_NESTED_PAIR(m_nonInheritedData, miscData, appearance, static_cast<unsigned>(appearance), usedAppearance, static_cast<unsigned>(appearance)); }
-inline void RenderStyle::setAppleColorFilter(FilterOperations&& ops) { SET_NESTED(m_rareInheritedData, appleColorFilter, operations, WTFMove(ops)); }
+inline void RenderStyle::setAppleColorFilter(Style::FilterOperations&& ops) { SET_NESTED(m_rareInheritedData, appleColorFilter, operations, WTFMove(ops)); }
 inline void RenderStyle::setAspectRatio(double width, double height) { SET_NESTED_PAIR(m_nonInheritedData, miscData, aspectRatioWidth, width, aspectRatioHeight, height); }
 inline void RenderStyle::setAspectRatioType(AspectRatioType aspectRatioType) { SET_NESTED(m_nonInheritedData, miscData, aspectRatioType, static_cast<unsigned>(aspectRatioType)); }
 inline void RenderStyle::setBackfaceVisibility(BackfaceVisibility b) { SET_NESTED(m_nonInheritedData, rareData, backfaceVisibility, static_cast<unsigned>(b)); }
@@ -154,7 +154,7 @@ inline void RenderStyle::setUsedAppearance(StyleAppearance a) { SET_NESTED(m_non
 inline void RenderStyle::setEffectiveInert(bool effectiveInert) { SET(m_rareInheritedData, effectiveInert, effectiveInert); }
 inline void RenderStyle::setUsedTouchActions(OptionSet<TouchAction> touchActions) { SET(m_rareInheritedData, usedTouchActions, touchActions); }
 inline void RenderStyle::setEventListenerRegionTypes(OptionSet<EventListenerRegionType> eventListenerTypes) { SET(m_rareInheritedData, eventListenerRegionTypes, eventListenerTypes); }
-inline void RenderStyle::setFilter(FilterOperations&& ops) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, filter, operations, WTFMove(ops)); }
+inline void RenderStyle::setFilter(Style::FilterOperations&& ops) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, filter, operations, WTFMove(ops)); }
 inline void RenderStyle::setFlexBasis(Length&& length) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, flexibleBox, flexBasis, WTFMove(length)); }
 inline void RenderStyle::setFlexDirection(FlexDirection direction) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, flexibleBox, flexDirection, static_cast<unsigned>(direction)); }
 inline void RenderStyle::setFlexWrap(FlexWrap wrap) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, flexibleBox, flexWrap, static_cast<unsigned>(wrap)); }
@@ -359,7 +359,7 @@ inline void RenderStyle::setColorScheme(StyleColorScheme scheme) { SET(m_rareInh
 inline void RenderStyle::setHasExplicitlySetColorScheme() { SET_NESTED(m_nonInheritedData, miscData, hasExplicitlySetColorScheme, true); }
 #endif
 
-inline void RenderStyle::setBackdropFilter(FilterOperations&& ops) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, backdropFilter, operations, WTFMove(ops)); }
+inline void RenderStyle::setBackdropFilter(Style::FilterOperations&& ops) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, backdropFilter, operations, WTFMove(ops)); }
 
 #if PLATFORM(IOS_FAMILY)
 inline void RenderStyle::setTouchCalloutEnabled(bool value) { SET(m_rareInheritedData, touchCalloutEnabled, value); }

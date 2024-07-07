@@ -39,7 +39,6 @@ class Document;
 class LegacyRenderSVGResourceClipper;
 class LegacyRenderSVGResourceContainer;
 class QualifiedName;
-class ReferenceFilterOperation;
 class ReferencePathOperation;
 class RenderElement;
 class RenderSVGResourceFilter;
@@ -66,7 +65,7 @@ public:
 
     // Legacy: Clipping needs a renderer, filters use an element.
     static LegacyRenderSVGResourceClipper* referencedClipperRenderer(TreeScope&, const ReferencePathOperation&);
-    static RefPtr<SVGFilterElement> referencedFilterElement(TreeScope&, const ReferenceFilterOperation&);
+    static RefPtr<SVGFilterElement> referencedFilterElement(TreeScope&, const AtomString& fragment);
 
     static LegacyRenderSVGResourceContainer* referencedRenderResource(TreeScope&, const AtomString& fragment);
 

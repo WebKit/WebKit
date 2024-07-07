@@ -317,7 +317,7 @@ private:
     bool setTransformAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, TransformOperation::Type, bool isMatrixAnimation, const FloatSize& boxSize, bool keyframesShouldUseAnimationWideTimingFunction);
     
     bool setFilterAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex);
-    bool setFilterAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, FilterOperation::Type, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool setFilterAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, FilterOperations::Type, bool keyframesShouldUseAnimationWideTimingFunction);
 
     bool isRunningTransformAnimation() const;
 
@@ -562,8 +562,8 @@ private:
         moveOrCopyAnimations(Copy, fromLayer, toLayer);
     }
 
-    bool appendToUncommittedAnimations(const KeyframeValueList&, const TransformOperation::Type, const Animation*, const String& animationName, const FloatSize& boxSize, unsigned animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction);
-    bool appendToUncommittedAnimations(const KeyframeValueList&, const FilterOperation&, const Animation*, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool appendToUncommittedAnimations(const KeyframeValueList&, TransformOperation::Type, const Animation*, const String& animationName, const FloatSize& boxSize, unsigned animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool appendToUncommittedAnimations(const KeyframeValueList&, FilterOperations::Type, const Animation*, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
 
     enum LayerChange : uint64_t {
         NoChange                                = 0,

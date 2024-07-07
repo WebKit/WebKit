@@ -25,7 +25,6 @@
 
 #include "DisplayListRecorderImpl.h"
 #include "DisplayListReplayer.h"
-#include "FilterOperations.h"
 #include "GraphicsContext.h"
 #include "InlineIteratorTextBox.h"
 #include "LayoutIntegrationInlineContent.h"
@@ -33,11 +32,12 @@
 #include "RenderCombineText.h"
 #include "RenderLayer.h"
 #include "ShadowData.h"
+#include "StyleFilterOperations.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-ShadowApplier::ShadowApplier(const RenderStyle& style, GraphicsContext& context, const ShadowData* shadow, const FilterOperations* colorFilter, const FloatRect& textRect, bool lastShadowIterationShouldDrawText, bool opaque, FontOrientation orientation)
+ShadowApplier::ShadowApplier(const RenderStyle& style, GraphicsContext& context, const ShadowData* shadow, const Style::FilterOperations* colorFilter, const FloatRect& textRect, bool lastShadowIterationShouldDrawText, bool opaque, FontOrientation orientation)
     : m_context { context }
     , m_shadow { shadow }
     , m_onlyDrawsShadow { !isLastShadowIteration() || !lastShadowIterationShouldDrawText }
@@ -126,7 +126,7 @@ void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRu
     m_glyphDisplayList = nullptr;
 }
 
-void TextPainter::paintTextWithShadows(const ShadowData* shadow, const FilterOperations* colorFilter, const FontCascade& font, const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset, const AtomString& emphasisMark, float emphasisMarkOffset, bool stroked)
+void TextPainter::paintTextWithShadows(const ShadowData* shadow, const Style::FilterOperations* colorFilter, const FontCascade& font, const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset, const AtomString& emphasisMark, float emphasisMarkOffset, bool stroked)
 {
     if (!shadow) {
         paintTextOrEmphasisMarks(font, textRun, emphasisMark, emphasisMarkOffset, textOrigin, startOffset, endOffset);
@@ -153,7 +153,7 @@ void TextPainter::paintTextWithShadows(const ShadowData* shadow, const FilterOpe
 }
 
 void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset,
-    const TextPaintStyle& paintStyle, const ShadowData* shadow, const FilterOperations* shadowColorFilter)
+    const TextPaintStyle& paintStyle, const ShadowData* shadow, const Style::FilterOperations* shadowColorFilter)
 {
     if (paintStyle.paintOrder == PaintOrder::Normal) {
         // FIXME: Truncate right-to-left text correctly.

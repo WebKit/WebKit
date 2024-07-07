@@ -77,23 +77,23 @@ void RenderLayerFilters::notifyFinished(CachedResource&, const NetworkLoadMetric
     m_layer.renderer().repaint();
 }
 
-void RenderLayerFilters::updateReferenceFilterClients(const FilterOperations& operations)
+void RenderLayerFilters::updateReferenceFilterClients(const Style::FilterOperations& operations)
 {
     removeReferenceFilterClients();
 
     for (auto& operation : operations) {
-        RefPtr referenceOperation = dynamicDowncast<ReferenceFilterOperation>(operation);
+        auto* referenceOperation = std::get_if<Style::FilterOperations::Reference>(&operation);
         if (!referenceOperation)
             continue;
 
-        auto* documentReference = referenceOperation->cachedSVGDocumentReference();
+        auto* documentReference = referenceOperation->cachedSVGDocumentReference.get();
         if (auto* cachedSVGDocument = documentReference ? documentReference->document() : nullptr) {
             // Reference is external; wait for notifyFinished().
             cachedSVGDocument->addClient(*this);
             m_externalSVGReferences.append(cachedSVGDocument);
         } else {
             // Reference is internal; add layer as a client so we can trigger filter repaint on SVG attribute change.
-            RefPtr filterElement = m_layer.renderer().document().getElementById(referenceOperation->fragment());
+            RefPtr filterElement = m_layer.renderer().document().getElementById(referenceOperation->fragment);
             if (!filterElement)
                 continue;
             CheckedPtr renderer = dynamicDowncast<LegacyRenderSVGResourceFilter>(filterElement->renderer());
@@ -159,7 +159,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
     if (!m_filter || m_targetBoundingBox != targetBoundingBox) {
         m_targetBoundingBox = targetBoundingBox;
         // FIXME: This rebuilds the entire effects chain even if the filter style didn't change.
-        m_filter = CSSFilter::create(renderer, renderer.style().filter(), m_preferredFilterRenderingModes, m_filterScale, m_targetBoundingBox, context);
+        m_filter = CSSFilter::create(renderer, renderer.style(), renderer.style().filter(), m_preferredFilterRenderingModes, m_filterScale, m_targetBoundingBox, context);
     }
 
     if (!m_filter)

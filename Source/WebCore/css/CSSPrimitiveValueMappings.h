@@ -34,6 +34,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
+#include "CalculationValue.h"
 #include "FontSizeAdjust.h"
 #include "GraphicsTypes.h"
 #include "Length.h"

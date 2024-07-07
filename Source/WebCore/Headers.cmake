@@ -1479,6 +1479,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/cache/CachedResourceHandle.h
     loader/cache/CachedResourceLoader.h
     loader/cache/CachedResourceRequest.h
+    loader/cache/CachedSVGDocumentClient.h
+    loader/cache/CachedSVGDocumentReference.h
     loader/cache/CachedStyleSheetClient.h
     loader/cache/KeepaliveRequestTracker.h
     loader/cache/MemoryCache.h
@@ -2164,7 +2166,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/filters/FilterFunction.h
     platform/graphics/filters/FilterImage.h
     platform/graphics/filters/FilterImageVector.h
-    platform/graphics/filters/FilterOperation.h
     platform/graphics/filters/FilterOperations.h
     platform/graphics/filters/FilterRenderingMode.h
     platform/graphics/filters/FilterResults.h
@@ -2504,6 +2505,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/PseudoElementIdentifier.h
     style/ScopedName.h
     style/StyleChange.h
+    style/StyleFilterOperations.h
     style/StyleScope.h
     style/StyleScopeOrdinal.h
     style/StyleUpdate.h

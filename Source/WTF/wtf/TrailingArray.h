@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <concepts>
 #include <type_traits>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -63,8 +62,7 @@ protected:
         VectorTypeOperations<T>::initializeIfNonPOD(begin(), end());
     }
 
-    template<typename InputIterator>
-    TrailingArray(unsigned size, InputIterator first, InputIterator last)
+    template<typename InputIterator> TrailingArray(unsigned size, InputIterator first, InputIterator last)
         : m_size(size)
     {
         static_assert(std::is_final_v<Derived>);
@@ -72,16 +70,31 @@ protected:
         std::uninitialized_copy(first, last, begin());
     }
 
-    template<typename... Args>
-    TrailingArray(unsigned size, Args&&... args) // create with given size and constructor arguments for all elements
+    template<typename U, size_t Extent> TrailingArray(std::span<U, Extent> span)
+        : m_size(span.size())
+    {
+        static_assert(std::is_final_v<Derived>);
+        VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(span.data(), span.data() + span.size(), begin());
+    }
+
+    template<typename... Args> TrailingArray(unsigned size, Args&&... args) // create with given size and constructor arguments for all elements
         : m_size(size)
     {
         static_assert(std::is_final_v<Derived>);
         VectorTypeOperations<T>::initializeWithArgs(begin(), end(), std::forward<Args>(args)...);
     }
 
-    // This constructor, which is used via the `Failable` token, will attempt
-    // to initialize the array from the generator. The generator returns
+    template<Generator<T> G> explicit TrailingArray(unsigned size, G&& generator)
+        : m_size(size)
+    {
+        static_assert(std::is_final_v<Derived>);
+
+        for (size_t i = 0; i < m_size; ++i)
+            new (NotNull, std::addressof(begin()[i])) T(generator(i));
+    }
+
+    // This constructor, which is used via passing a `FailableGenerator`, will attempt
+    // to initialize the array from the failable generator. The generator returns
     // `std::optional` values, and if one is `nullopt`, that indicates a failure.
     // The constructor sets `m_size` to the index of the most recently successful
     // item to be added in order for the destructor to destroy the right number
@@ -90,9 +103,7 @@ protected:
     // It is the responsibility of the caller to check that `size()` is equal
     // to the `size` the caller passed in. If it is not, that is failure, and
     // should be used as appropriate.
-    struct Failable { };
-    template<std::invocable<size_t> Generator>
-    explicit TrailingArray(Failable, unsigned size, Generator&& generator)
+    template<FailableGenerator<T> G> explicit TrailingArray(unsigned size, G&& generator)
         : m_size(size)
     {
         static_assert(std::is_final_v<Derived>);

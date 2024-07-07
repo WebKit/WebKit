@@ -3637,19 +3637,18 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
     return appendToUncommittedAnimations(valueList, TransformOperation::Type::Matrix3D, animation, animationName, boxSize, primitives.size(), timeOffset, true /* isMatrixAnimation */, keyframesShouldUseAnimationWideTimingFunction);
 }
 
-bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const FilterOperation& operation, const Animation* animation, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
+bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, FilterOperations::Type operationType, const Animation* animation, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
 {
-    auto filterOp = operation.type();
-    if (!PlatformCAFilters::isAnimatedFilterProperty(filterOp))
+    if (!PlatformCAFilters::isAnimatedFilterProperty(operationType))
         return true;
 
     bool valuesOK;
     RefPtr<PlatformCAAnimation> caAnimation;
-    auto keyPath = PlatformCAAnimation::makeKeyPath(AnimatedProperty::Filter, filterOp, animationIndex);
+    auto keyPath = PlatformCAAnimation::makeKeyPath(AnimatedProperty::Filter, operationType, animationIndex);
 
     if (isKeyframe(valueList)) {
         caAnimation = createKeyframeAnimation(animation, keyPath, false, keyframesShouldUseAnimationWideTimingFunction);
-        valuesOK = setFilterAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, filterOp, keyframesShouldUseAnimationWideTimingFunction);
+        valuesOK = setFilterAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, operationType, keyframesShouldUseAnimationWideTimingFunction);
     } else {
         caAnimation = createBasicAnimation(animation, keyPath, false, keyframesShouldUseAnimationWideTimingFunction);
         valuesOK = setFilterAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex);
@@ -3676,14 +3675,15 @@ bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const KeyframeValueLis
         return false;
 
     // FIXME: We can't currently hardware animate shadows.
-    if (operations.hasFilterOfType<FilterOperation::Type::DropShadow>())
+    // FIXME: This contradicts filtersCanBeComposited(), which checks that if there is a DropShadow, it is last.
+    if (operations.hasFilterOfType<FilterOperations::DropShadow>())
         return false;
 
     removeAnimation(animationName, valueList.property());
 
     int numberOfAnimations = operations.size();
     for (int animationIndex = 0; animationIndex < numberOfAnimations; ++animationIndex) {
-        if (!appendToUncommittedAnimations(valueList, operations[animationIndex], animation, animationName, animationIndex, timeOffset, keyframesShouldUseAnimationWideTimingFunction))
+        if (!appendToUncommittedAnimations(valueList, FilterOperations::type(operations[animationIndex]), animation, animationName, animationIndex, timeOffset, keyframesShouldUseAnimationWideTimingFunction))
             return false;
     }
 
@@ -3957,62 +3957,49 @@ bool GraphicsLayerCA::setFilterAnimationEndpoints(const KeyframeValueList& value
     unsigned fromIndex = !forwards;
     unsigned toIndex = forwards;
 
-    const FilterAnimationValue& fromValue = static_cast<const FilterAnimationValue&>(valueList.at(fromIndex));
-    const FilterAnimationValue& toValue = static_cast<const FilterAnimationValue&>(valueList.at(toIndex));
+    const auto& fromValue = static_cast<const FilterAnimationValue&>(valueList.at(fromIndex));
+    const auto& toValue = static_cast<const FilterAnimationValue&>(valueList.at(toIndex));
 
-    const FilterOperation* fromOperation = fromValue.value().at(functionIndex);
-    const FilterOperation* toOperation = toValue.value().at(functionIndex);
-
-    RefPtr<DefaultFilterOperation> defaultFromOperation;
-    RefPtr<DefaultFilterOperation> defaultToOperation;
+    const auto* fromOperation = fromValue.value().at(functionIndex);
+    const auto* toOperation = toValue.value().at(functionIndex);
 
     ASSERT(fromOperation || toOperation);
 
-    if (!fromOperation) {
-        defaultFromOperation = DefaultFilterOperation::create(toOperation->type());
-        fromOperation = defaultFromOperation.get();
-    }
-
-    if (!toOperation) {
-        defaultToOperation = DefaultFilterOperation::create(fromOperation->type());
-        toOperation = defaultToOperation.get();
-    }
-
-    basicAnim->setFromValue(*fromOperation);
-    basicAnim->setToValue(*toOperation);
+    basicAnim->setFromValue(fromOperation ? *fromOperation : FilterOperations::initialValueForInterpolationMatchingType(*toOperation));
+    basicAnim->setToValue(toOperation ? *toOperation : FilterOperations::initialValueForInterpolationMatchingType(*fromOperation));
 
     return true;
 }
 
-bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* keyframeAnim, int functionIndex, FilterOperation::Type filterOp, bool keyframesShouldUseAnimationWideTimingFunction)
+bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* keyframeAnim, int functionIndex, FilterOperations::Type filterOp, bool keyframesShouldUseAnimationWideTimingFunction)
 {
-    Vector<float> keyTimes;
-    Vector<Ref<FilterOperation>> values;
-    Vector<Ref<const TimingFunction>> timingFunctions;
-    RefPtr<DefaultFilterOperation> defaultOperation;
-
     bool forwards = animation->directionIsForwards();
+
+    Vector<float> keyTimes;
+    Vector<Ref<const TimingFunction>> timingFunctions;
 
     for (unsigned i = 0; i < valueList.size(); ++i) {
         unsigned index = forwards ? i : (valueList.size() - i - 1);
         const FilterAnimationValue& curValue = static_cast<const FilterAnimationValue&>(valueList.at(index));
-        keyTimes.append(forwards ? curValue.keyTime() : (1 - curValue.keyTime()));
 
-        if (curValue.value().size() > static_cast<size_t>(functionIndex))
-            values.append(curValue.value()[functionIndex].copyRef());
-        else {
-            if (!defaultOperation)
-                defaultOperation = DefaultFilterOperation::create(filterOp);
-            values.append(*defaultOperation);
-        }
+        keyTimes.append(forwards ? curValue.keyTime() : (1 - curValue.keyTime()));
 
         if (i < (valueList.size() - 1))
             timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation, keyframesShouldUseAnimationWideTimingFunction));
     }
-    
-    keyframeAnim->setKeyTimes(keyTimes);
-    keyframeAnim->setValues(values);
-    keyframeAnim->setTimingFunctions(timingFunctions, !forwards);
+
+    auto values = FilterOperations { FilterOperations::Storage { valueList.size(), [&](size_t i) -> FilterOperations::FilterOperation {
+        unsigned index = forwards ? i : (valueList.size() - i - 1);
+        const FilterAnimationValue& curValue = static_cast<const FilterAnimationValue&>(valueList.at(index));
+
+        if (curValue.value().size() > static_cast<size_t>(functionIndex))
+            return curValue.value()[functionIndex];
+        return FilterOperations::initialValueForInterpolationMatchingType(filterOp);
+    } } };
+
+    keyframeAnim->setKeyTimes(WTFMove(keyTimes));
+    keyframeAnim->setValues(WTFMove(values));
+    keyframeAnim->setTimingFunctions(WTFMove(timingFunctions), !forwards);
 
     return true;
 }

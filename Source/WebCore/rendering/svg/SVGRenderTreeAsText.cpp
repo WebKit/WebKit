@@ -67,6 +67,7 @@
 #include "SVGRootInlineBox.h"
 #include "SVGStopElement.h"
 #include "StyleCachedImage.h"
+#include "StyleFilterOperations.h"
 #include <math.h>
 
 namespace WebCore {
@@ -611,11 +612,11 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
         }
     }
     if (style.hasFilter()) {
-        const FilterOperations& filterOperations = style.filter();
+        const auto& filterOperations = style.filter();
         if (filterOperations.size() == 1) {
-            if (RefPtr referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(*filterOperations.at(0))) {
-                AtomString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation->url(), renderer.protectedDocument());
-                if (LegacyRenderSVGResourceFilter* filter = getRenderSVGResourceById<LegacyRenderSVGResourceFilter>(renderer.treeScopeForSVGReferences(), id)) {
+            if (auto* referenceFilterOperation = std::get_if<Style::FilterOperations::Reference>(&filterOperations[0])) {
+                auto id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation->url, renderer.protectedDocument());
+                if (auto* filter = getRenderSVGResourceById<LegacyRenderSVGResourceFilter>(renderer.treeScopeForSVGReferences(), id)) {
                     ts << indent << ' ';
                     writeNameAndQuotedValue(ts, "filter"_s, id);
                     ts << ' ';

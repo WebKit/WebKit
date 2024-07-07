@@ -35,7 +35,6 @@
 
 namespace WebCore {
 
-class FilterOperations;
 class FontCascadeDescription;
 class RenderStyle;
 class StyleColor;
@@ -46,6 +45,7 @@ namespace Style {
 
 class Builder;
 class BuilderState;
+class FilterOperations;
 
 void maybeUpdateFontForLetterSpacing(BuilderState&, CSSValue&);
 
@@ -93,7 +93,7 @@ public:
     ScopeOrdinal styleScopeOrdinal() const { return m_currentProperty->styleScopeOrdinal; }
 
     RefPtr<StyleImage> createStyleImage(const CSSValue&);
-    std::optional<FilterOperations> createFilterOperations(const CSSValue&);
+    FilterOperations createStyleFilterOperations(const CSSValue&);
 
     static bool isColorFromPrimitiveValueDerivedFromElement(const CSSPrimitiveValue&);
     StyleColor colorFromPrimitiveValue(const CSSPrimitiveValue&, ForVisitedLink = ForVisitedLink::No) const;

@@ -27,7 +27,7 @@
 #pragma once
 
 #include "ClipStack.h"
-#include "FilterOperation.h"
+#include "FilterOperations.h"
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "IntSize.h"
@@ -75,8 +75,8 @@ public:
 
     int numberOfBytes() const { return size().width() * size().height() * 32 >> 3; }
 
-    RefPtr<const FilterOperation> filterOperation() const { return m_filterOperation; }
-    void setFilterOperation(RefPtr<const FilterOperation>&& filterOperation) { m_filterOperation = WTFMove(filterOperation); }
+    const std::optional<FilterOperations::FilterOperation>& filterOperation() const { return m_filterOperation; }
+    void setFilterOperation(FilterOperations::FilterOperation filterOperation) { m_filterOperation = { WTFMove(filterOperation) }; }
 
     ClipStack& clipStack() { return m_clipStack; }
 
@@ -102,7 +102,7 @@ private:
     bool m_shouldClear { true };
     ClipStack m_clipStack;
     OptionSet<TextureMapperFlags> m_colorConvertFlags;
-    RefPtr<const FilterOperation> m_filterOperation;
+    std::optional<FilterOperations::FilterOperation> m_filterOperation;
     GLint m_internalFormat { 0 };
     GLenum m_format { 0 };
 };

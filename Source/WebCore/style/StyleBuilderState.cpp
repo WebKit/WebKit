@@ -46,7 +46,6 @@
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "ElementInlines.h"
-#include "FilterOperationsBuilder.h"
 #include "FontCache.h"
 #include "HTMLElement.h"
 #include "RenderStyleSetters.h"
@@ -60,6 +59,7 @@
 #include "StyleCrossfadeImage.h"
 #include "StyleCursorImage.h"
 #include "StyleFilterImage.h"
+#include "StyleFilterOperationsBuilder.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleGeneratedImage.h"
 #include "StyleGradientImage.h"
@@ -133,9 +133,9 @@ RefPtr<StyleImage> BuilderState::createStyleImage(const CSSValue& value)
     return nullptr;
 }
 
-std::optional<FilterOperations> BuilderState::createFilterOperations(const CSSValue& inValue)
+FilterOperations BuilderState::createStyleFilterOperations(const CSSValue& inValue)
 {
-    return WebCore::Style::createFilterOperations(document(), m_style, m_cssToLengthConversionData, inValue);
+    return WebCore::Style::createStyleFilterOperations(inValue, *this);
 }
 
 bool BuilderState::isColorFromPrimitiveValueDerivedFromElement(const CSSPrimitiveValue& value)
@@ -147,7 +147,7 @@ StyleColor BuilderState::colorFromPrimitiveValue(const CSSPrimitiveValue& value,
 {
     if (!element() || !element()->isLink())
         forVisitedLink = ForVisitedLink::No;
-    return { WebCore::Style::colorFromPrimitiveValue(document(), m_style, value, forVisitedLink) };
+    return { WebCore::Style::styleColorFromPrimitiveValue(document(), m_style, value, forVisitedLink) };
 }
 
 void BuilderState::registerContentAttribute(const AtomString& attributeLocalName)

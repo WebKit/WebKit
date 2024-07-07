@@ -25,33 +25,143 @@
 
 #pragma once
 
-#include "CompositeOperation.h"
-#include "FilterOperation.h"
+#include "Color.h"
+#include "LengthPoint.h"
+#include "RectEdges.h"
 #include <algorithm>
 #include <wtf/ArgumentCoder.h>
-#include <wtf/Ref.h>
-#include <wtf/Vector.h>
+#include <wtf/FixedVector.h>
+#include <wtf/text/AtomString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct BlendingContext;
+enum class CompositeOperation : uint8_t;
 
 class FilterOperations {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using const_iterator = Vector<Ref<FilterOperation>>::const_iterator;
-    using const_reverse_iterator = Vector<Ref<FilterOperation>>::const_reverse_iterator;
-    using value_type = Vector<Ref<FilterOperation>>::value_type;
+    enum class Type : uint8_t {
+        Reference, // url(#somefilter)
+        Grayscale,
+        Sepia,
+        Saturate,
+        HueRotate,
+        Invert,
+        AppleInvertLightness,
+        Opacity,
+        Brightness,
+        Contrast,
+        Blur,
+        DropShadow
+    };
+    struct Reference {
+        static constexpr auto type = Type::Reference;
+
+        String url;
+        AtomString fragment;
+        bool operator==(const Reference&) const = default;
+    };
+    struct Grayscale {
+        static constexpr auto type = Type::Grayscale;
+        static constexpr auto identity = double { 0 };
+
+        double amount;
+        bool operator==(const Grayscale&) const = default;
+    };
+    struct Sepia {
+        static constexpr auto type = Type::Sepia;
+        static constexpr auto identity = double { 0 };
+
+        double amount;
+        bool operator==(const Sepia&) const = default;
+    };
+    struct Saturate {
+        static constexpr auto type = Type::Saturate;
+        static constexpr auto identity = double { 1 };
+
+        double amount;
+        bool operator==(const Saturate&) const = default;
+    };
+    struct HueRotate {
+        static constexpr auto type = Type::HueRotate;
+        static constexpr auto identity = double { 0 };
+
+        double amount;
+        bool operator==(const HueRotate&) const = default;
+    };
+    struct Invert {
+        static constexpr auto type = Type::Invert;
+        static constexpr auto identity = double { 0 };
+
+        double amount;
+        bool operator==(const Invert&) const = default;
+    };
+    struct Opacity {
+        static constexpr auto type = Type::Opacity;
+        static constexpr auto identity = double { 1 };
+
+        double amount;
+        bool operator==(const Opacity&) const = default;
+    };
+    struct Brightness {
+        static constexpr auto type = Type::Brightness;
+        static constexpr auto identity = double { 1 };
+
+        double amount;
+        bool operator==(const Brightness&) const = default;
+    };
+    struct Contrast {
+        static constexpr auto type = Type::Contrast;
+        static constexpr auto identity = double { 1 };
+
+        double amount;
+        bool operator==(const Contrast&) const = default;
+    };
+    struct Blur {
+        static constexpr auto type = Type::Blur;
+
+        Length stdDeviation;
+        bool operator==(const Blur&) const = default;
+    };
+    struct DropShadow {
+        static constexpr auto type = Type::DropShadow;
+
+        LengthPoint location;
+        Length stdDeviation;
+        Color color;
+        bool operator==(const DropShadow&) const = default;
+    };
+    struct AppleInvertLightness {
+        static constexpr auto type = Type::AppleInvertLightness;
+
+        bool operator==(const AppleInvertLightness&) const = default;
+    };
+
+    using FilterOperation = std::variant<Reference, Grayscale, Sepia, Saturate, HueRotate, Invert, Opacity, Brightness, Contrast, Blur, DropShadow, AppleInvertLightness>;
+    using Storage = FixedVector<FilterOperation>;
+
+    using value_type = typename Storage::value_type;
+    using pointer = typename Storage::pointer;
+    using reference = typename Storage::reference;
+    using const_reference = typename Storage::const_reference;
+    using const_pointer = typename Storage::const_pointer;
+    using size_type = typename Storage::size_type;
+    using difference_type = typename Storage::difference_type;
+    using iterator = typename Storage::iterator;
+    using const_iterator = typename Storage::const_iterator;
+    using reverse_iterator = typename Storage::reverse_iterator;
+    using const_reverse_iterator = typename Storage::const_reverse_iterator;
 
     FilterOperations() = default;
-    WEBCORE_EXPORT explicit FilterOperations(Vector<Ref<FilterOperation>>&&);
+    WEBCORE_EXPORT FilterOperations(Storage&&);
 
     WEBCORE_EXPORT bool operator==(const FilterOperations&) const;
 
-    FilterOperations clone() const
-    {
-        return FilterOperations { m_operations.map([](const auto& op) { return op->clone(); }) };
-    }
+    FilterOperations clone() const { return *this; }
+
+    bool operationsMatch(const FilterOperations&) const; // GraphicsLayer
 
     const_iterator begin() const { return m_operations.begin(); }
     const_iterator end() const { return m_operations.end(); }
@@ -60,45 +170,54 @@ public:
 
     bool isEmpty() const { return m_operations.isEmpty(); }
     size_t size() const { return m_operations.size(); }
-    const FilterOperation* at(size_t index) const { return index < m_operations.size() ? m_operations[index].ptr() : nullptr; }
+    const FilterOperation* at(size_t index) const { return index < m_operations.size() ? &m_operations[index] : nullptr; }
 
-    const Ref<FilterOperation>& operator[](size_t i) const { return m_operations[i]; }
-    const Ref<FilterOperation>& first() const { return m_operations.first(); }
-    const Ref<FilterOperation>& last() const { return m_operations.last(); }
+    const FilterOperation& operator[](size_t i) const { return m_operations[i]; }
+    const FilterOperation& first() const { return m_operations.first(); }
+    const FilterOperation& last() const { return m_operations.last(); }
 
-    bool operationsMatch(const FilterOperations&) const;
+    template<typename T> bool hasFilterOfType() const;
+    static Type type(const FilterOperation&);
 
-    bool hasOutsets() const { return !outsets().isZero(); }
-    IntOutsets outsets() const;
+    bool hasReferenceFilter() const;
 
     bool hasFilterThatAffectsOpacity() const;
     bool hasFilterThatMovesPixels() const;
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const;
 
-    template<FilterOperation::Type Type>
-    bool hasFilterOfType() const;
+    static bool filterAffectsOpacity(const FilterOperation&);
+    static bool filterMovesPixels(const FilterOperation&);
+    static bool filterShouldBeRestrictedBySecurityOrigin(const FilterOperation&);
 
-    bool hasReferenceFilter() const;
-    bool isReferenceFilter() const;
+    WEBCORE_EXPORT static bool canInterpolate(const FilterOperations&, const FilterOperations&, CompositeOperation);
+    WEBCORE_EXPORT static FilterOperations blend(const FilterOperations&, const FilterOperations&, const BlendingContext&);
 
-    bool transformColor(Color&) const;
-    bool inverseTransformColor(Color&) const;
+    static FilterOperation initialValueForInterpolationMatchingType(const FilterOperation&);
+    static FilterOperation initialValueForInterpolationMatchingType(Type);
 
-    WEBCORE_EXPORT bool canInterpolate(const FilterOperations&, CompositeOperation) const;
-    WEBCORE_EXPORT FilterOperations blend(const FilterOperations&, const BlendingContext&) const;
+    static bool isIdentity(const FilterOperation&);
+
+    bool hasOutsets() const;
+    RectEdges<int> outsets() const;
+    static RectEdges<int> calculateOutsets(const FilterOperation&);
 
 private:
     friend struct IPC::ArgumentCoder<FilterOperations, void>;
-    WEBCORE_EXPORT friend WTF::TextStream& operator<<(WTF::TextStream&, const FilterOperations&);
 
-    Vector<Ref<FilterOperation>> m_operations;
+    Storage m_operations;
 };
 
-template<FilterOperation::Type type> bool FilterOperations::hasFilterOfType() const
+template<typename T> bool FilterOperations::hasFilterOfType() const
 {
-    return std::ranges::any_of(m_operations, [](auto& op) { return op->type() == type; });
+    return std::ranges::any_of(m_operations, [](auto& op) { return std::holds_alternative<T>(op); });
 }
 
+inline FilterOperations::Type FilterOperations::type(const FilterOperations::FilterOperation& operation)
+{
+    return WTF::switchOn(operation, [](const auto& op) { return op.type; });
+}
+
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FilterOperations::FilterOperation&);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FilterOperations&);
 
 } // namespace WebCore

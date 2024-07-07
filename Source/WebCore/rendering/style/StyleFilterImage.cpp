@@ -44,7 +44,7 @@ namespace WebCore {
 
 // MARK: - StyleFilterImage
 
-StyleFilterImage::StyleFilterImage(RefPtr<StyleImage>&& image, FilterOperations&& filterOperations)
+StyleFilterImage::StyleFilterImage(RefPtr<StyleImage>&& image, Style::FilterOperations&& filterOperations)
     : StyleGeneratedImage { Type::FilterImage, StyleFilterImage::isFixedSize }
     , m_image { WTFMove(image) }
     , m_filterOperations { WTFMove(filterOperations) }
@@ -76,7 +76,10 @@ bool StyleFilterImage::equalInputImages(const StyleFilterImage& other) const
 
 Ref<CSSValue> StyleFilterImage::computedStyleValue(const RenderStyle& style) const
 {
-    return CSSFilterImageValue::create(m_image ? m_image->computedStyleValue(style) : static_reference_cast<CSSValue>(CSSPrimitiveValue::create(CSSValueNone)), ComputedStyleExtractor::valueForFilter(style, m_filterOperations));
+    return CSSFilterImageValue::create(
+        m_image ? m_image->computedStyleValue(style) : static_reference_cast<CSSValue>(CSSPrimitiveValue::create(CSSValueNone)),
+        m_filterOperations.computedStyleValue(style)
+    );
 }
 
 bool StyleFilterImage::isPending() const
@@ -101,10 +104,7 @@ void StyleFilterImage::load(CachedResourceLoader& cachedResourceLoader, const Re
             m_cachedImage->addClient(*this);
     }
 
-    for (auto& filterOperation : m_filterOperations) {
-        if (RefPtr referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(filterOperation))
-            referenceFilterOperation->loadExternalDocumentIfNeeded(cachedResourceLoader, options);
-    }
+    m_filterOperations.load(cachedResourceLoader, options);
 
     m_inputImageIsReady = true;
 }
@@ -127,7 +127,9 @@ RefPtr<Image> StyleFilterImage::image(const RenderElement* renderer, const Float
     auto preferredFilterRenderingModes = renderer->page().preferredFilterRenderingModes();
     auto sourceImageRect = FloatRect { { }, size };
 
-    auto cssFilter = CSSFilter::create(const_cast<RenderElement&>(*renderer), m_filterOperations, preferredFilterRenderingModes, FloatSize { 1, 1 }, sourceImageRect, NullGraphicsContext());
+    auto& style = isForFirstLine ? renderer->firstLineStyle() : renderer->style();
+
+    auto cssFilter = CSSFilter::create(const_cast<RenderElement&>(*renderer), style, m_filterOperations, preferredFilterRenderingModes, FloatSize { 1, 1 }, sourceImageRect, NullGraphicsContext());
     if (!cssFilter)
         return &Image::nullImage();
 

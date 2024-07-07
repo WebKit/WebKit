@@ -28,12 +28,7 @@ namespace Nicosia {
 
 using namespace WebCore;
 
-static RefPtr<FilterOperation> blendFunc(FilterOperation* fromOp, FilterOperation& toOp, double progress, const FloatSize&, bool blendToPassthrough = false)
-{
-    return toOp.blend(fromOp, progress, blendToPassthrough);
-}
-
-static FilterOperations applyFilterAnimation(const FilterOperations& from, const FilterOperations& to, double progress, const FloatSize& boxSize)
+static FilterOperations applyFilterAnimation(const FilterOperations& from, const FilterOperations& to, double progress)
 {
     // First frame of an animation.
     if (!progress)
@@ -43,38 +38,10 @@ static FilterOperations applyFilterAnimation(const FilterOperations& from, const
     if (progress == 1)
         return to;
 
-    if (!from.isEmpty() && !to.isEmpty() && !from.operationsMatch(to))
+    if (!FilterOperations::canInterpolate(from, to, CompositeOperation::Replace))
         return to;
 
-    size_t fromSize = from.size();
-    size_t toSize = to.size();
-    size_t size = std::max(fromSize, toSize);
-
-    Vector<Ref<FilterOperation>> operations;
-    operations.reserveInitialCapacity(size);
-
-    for (size_t i = 0; i < size; i++) {
-        RefPtr<FilterOperation> fromOp = (i < fromSize) ? from[i].ptr() : nullptr;
-        RefPtr<FilterOperation> toOp = (i < toSize) ? to[i].ptr() : nullptr;
-        RefPtr<FilterOperation> blendedOp = toOp ? blendFunc(fromOp.get(), *toOp, progress, boxSize) : (fromOp ? blendFunc(nullptr, *fromOp, progress, boxSize, true) : nullptr);
-        if (blendedOp)
-            operations.append(blendedOp.releaseNonNull());
-        else {
-            if (progress > 0.5) {
-                if (toOp)
-                    operations.append(toOp.releaseNonNull());
-                else
-                    operations.append(PassthroughFilterOperation::create());
-            } else {
-                if (fromOp)
-                    operations.append(fromOp.releaseNonNull());
-                else
-                    operations.append(PassthroughFilterOperation::create());
-            }
-        }
-    }
-
-    return FilterOperations { WTFMove(operations) };
+    return FilterOperations::blend(from, to, progress);
 }
 
 static bool shouldReverseAnimationValue(WebCore::Animation::Direction direction, int loopCount)
@@ -327,7 +294,7 @@ void Animation::applyInternal(ApplicationResult& applicationResults, const Anima
         return;
     case AnimatedProperty::Filter:
     case AnimatedProperty::WebkitBackdropFilter:
-        applicationResults.filters = applyFilterAnimation(static_cast<const FilterAnimationValue&>(from).value(), static_cast<const FilterAnimationValue&>(to).value(), progress, m_boxSize);
+        applicationResults.filters = applyFilterAnimation(static_cast<const FilterAnimationValue&>(from).value(), static_cast<const FilterAnimationValue&>(to).value(), progress);
         return;
     default:
         ASSERT_NOT_REACHED();

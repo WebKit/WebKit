@@ -34,58 +34,58 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-template<typename IntType, IntegerValueRange integerRange>
-static std::optional<IntType> consumeIntegerTypeRaw(CSSParserTokenRange& range)
+template<IntegerRawValueRange R>
+static std::optional<typename IntegerRaw<R>::IntType> consumeIntegerTypeRaw(CSSParserTokenRange& range)
 {
-    if (auto result = RawResolver<IntegerRaw<IntType, integerRange>>::consumeAndResolve(range, { }, { }, { }))
+    if (auto result = RawResolver<IntegerRaw<R>>::consumeAndResolve(range, { }, { }, { }))
         return result->value;
     return std::nullopt;
 }
 
-template<typename IntType, IntegerValueRange integerRange>
+template<IntegerRawValueRange R>
 static RefPtr<CSSPrimitiveValue> consumeIntegerType(CSSParserTokenRange& range)
 {
-    return CSSPrimitiveValueResolver<IntegerRaw<IntType, integerRange>>::consumeAndResolve(range, { }, { }, { });
+    return CSSPrimitiveValueResolver<IntegerRaw<R>>::consumeAndResolve(range, { }, { }, { });
 }
 
 std::optional<int> consumeIntegerRaw(CSSParserTokenRange& range)
 {
-    return consumeIntegerTypeRaw<int, IntegerValueRange::All>(range);
+    return consumeIntegerTypeRaw<IntegerRawValueRange::All>(range);
 }
 
 RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange& range)
 {
-    return consumeIntegerType<int, IntegerValueRange::All>(range);
+    return consumeIntegerType<IntegerRawValueRange::All>(range);
 }
 
 std::optional<int> consumeNonNegativeIntegerRaw(CSSParserTokenRange& range)
 {
-    return consumeIntegerTypeRaw<int, IntegerValueRange::NonNegative>(range);
+    return consumeIntegerTypeRaw<IntegerRawValueRange::NonNegative>(range);
 }
 
 RefPtr<CSSPrimitiveValue> consumeNonNegativeInteger(CSSParserTokenRange& range)
 {
-    return consumeIntegerType<int, IntegerValueRange::NonNegative>(range);
+    return consumeIntegerType<IntegerRawValueRange::NonNegative>(range);
 }
 
 std::optional<unsigned> consumePositiveIntegerRaw(CSSParserTokenRange& range)
 {
-    return consumeIntegerTypeRaw<unsigned, IntegerValueRange::Positive>(range);
+    return consumeIntegerTypeRaw<IntegerRawValueRange::Positive>(range);
 }
 
 RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange& range)
 {
-    return consumeIntegerType<unsigned, IntegerValueRange::Positive>(range);
+    return consumeIntegerType<IntegerRawValueRange::Positive>(range);
 }
 
-RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange& range, IntegerValueRange valueRange)
+RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange& range, IntegerRawValueRange valueRange)
 {
     switch (valueRange) {
-    case IntegerValueRange::All:
+    case IntegerRawValueRange::All:
         return consumeInteger(range);
-    case IntegerValueRange::Positive:
+    case IntegerRawValueRange::Positive:
         return consumePositiveInteger(range);
-    case IntegerValueRange::NonNegative:
+    case IntegerRawValueRange::NonNegative:
         return consumeNonNegativeInteger(range);
     }
     RELEASE_ASSERT_NOT_REACHED();

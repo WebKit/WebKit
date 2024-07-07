@@ -48,8 +48,7 @@ struct RawResolverBase {
     // FIXME: SymbolRaw is special cased to return NumberRaw. This works for now, as all symbols are defined to be numbers, but that if symbols are used anywhere else by CSS Color, this may not be true.
     static std::optional<NumberRaw> resolve(SymbolRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
 
-    template<typename IntType, IntegerValueRange integerRange>
-    static std::optional<IntegerRaw<IntType, integerRange>> resolve(IntegerRaw<IntType, integerRange> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
+    template<IntegerRawValueRange R> static std::optional<IntegerRaw<R>> resolve(IntegerRaw<R> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
     {
         return value;
     }
@@ -61,12 +60,11 @@ struct RawResolverBase {
     static std::optional<ResolutionRaw> resolve(UnevaluatedCalc<ResolutionRaw>, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
     static std::optional<TimeRaw> resolve(UnevaluatedCalc<TimeRaw>, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
 
-    template<typename IntType, IntegerValueRange integerRange>
-    static std::optional<IntegerRaw<IntType, integerRange>> resolve(UnevaluatedCalc<IntegerRaw<IntType, integerRange>> calc, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions)
+    template<IntegerRawValueRange R> static std::optional<IntegerRaw<R>> resolve(UnevaluatedCalc<IntegerRaw<R>> calc, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions)
     {
         // https://drafts.csswg.org/css-values-4/#integers
         // Rounding to the nearest integer requires rounding in the direction of +∞ when the fractional portion is exactly 0.5.
-        return {{ clampTo<IntType>(std::floor(std::max(calc.calc->doubleValue(symbolTable), computeMinimumValue(integerRange)) + 0.5)) }};
+        return { { clampTo<typename IntegerRaw<R>::IntType>(std::floor(std::max(calc.calc->doubleValue(symbolTable), computeMinimumValue<R>()) + 0.5)) } };
     }
 };
 

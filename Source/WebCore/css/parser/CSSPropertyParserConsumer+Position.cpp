@@ -25,12 +25,14 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+Position.h"
 
+#include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Length.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePair.h"
+#include "CSSValuePool.h"
 #include "RenderStyleConstants.h"
 
 namespace WebCore {

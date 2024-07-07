@@ -42,7 +42,6 @@
 #include "EditingBehavior.h"
 #include "ElementIteratorInlines.h"
 #include "EventNames.h"
-#include "FilterOperations.h"
 #include "FrameSelection.h"
 #include "HTMLBRElement.h"
 #include "HTMLBaseElement.h"
@@ -578,8 +577,8 @@ static bool fragmentNeedsColorTransformed(ReplacementFragment& fragment, const P
             return false;
 
         const auto& colorFilter = editableRootRenderer->style().appleColorFilter();
-        for (const auto& colorFilterOperation : colorFilter) {
-            if (colorFilterOperation->type() != FilterOperation::Type::AppleInvertLightness)
+        for (const auto& op : colorFilter) {
+            if (!std::holds_alternative<Style::FilterOperations::AppleInvertLightness>(op))
                 return false;
         }
     }

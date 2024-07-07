@@ -56,6 +56,7 @@
 #include "SVGTextElement.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
+#include "StyleFilterOperations.h"
 #include "StyleScrollSnapPoints.h"
 #include "TransformOperationData.h"
 #include "TransformState.h"
@@ -485,19 +486,20 @@ RenderSVGResourceFilter* RenderLayerModelObject::svgFilterResourceFromStyle() co
     if (operations.size() != 1)
         return nullptr;
 
-    RefPtr referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(operations.at(0));
-    if (!referenceFilterOperation)
-        return nullptr;
+    return WTF::switchOn(operations[0],
+        [&](const Style::FilterOperations::Reference& reference) -> RenderSVGResourceFilter* {
+            if (RefPtr referencedFilterElement = ReferencedSVGResources::referencedFilterElement(treeScopeForSVGReferences(), reference.fragment)) {
+                if (auto* referencedFilterRenderer = dynamicDowncast<RenderSVGResourceFilter>(referencedFilterElement->renderer()))
+                    return referencedFilterRenderer;
+            }
 
-    if (RefPtr referencedFilterElement = ReferencedSVGResources::referencedFilterElement(treeScopeForSVGReferences(), *referenceFilterOperation)) {
-        if (auto* referencedFilterRenderer = dynamicDowncast<RenderSVGResourceFilter>(referencedFilterElement->renderer()))
-            return referencedFilterRenderer;
-    }
+            if (auto* svgElement = dynamicDowncast<SVGElement>(this->element()))
+                document().addPendingSVGResource(reference.fragment, *svgElement);
 
-    if (auto* svgElement = dynamicDowncast<SVGElement>(this->element()))
-        document().addPendingSVGResource(referenceFilterOperation->fragment(), *svgElement);
-
-    return nullptr;
+            return nullptr;
+        },
+        [](const auto&) -> RenderSVGResourceFilter* { return nullptr; }
+    );
 }
 
 RenderSVGResourceMasker* RenderLayerModelObject::svgMaskerResourceFromStyle() const

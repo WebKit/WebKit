@@ -25,6 +25,7 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+Image.h"
 
+#include "CSSCalcSymbolTable.h"
 #include "CSSCanvasValue.h"
 #include "CSSCrossfadeValue.h"
 #include "CSSCursorImageValue.h"
@@ -39,8 +40,11 @@
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+Angle.h"
 #include "CSSPropertyParserConsumer+AngleDefinitions.h"
+#include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+Color.h"
 #include "CSSPropertyParserConsumer+ColorInterpolationMethod.h"
+#include "CSSPropertyParserConsumer+Filter.h"
+#include "CSSPropertyParserConsumer+Length.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+MetaTransformer.h"
 #include "CSSPropertyParserConsumer+Number.h"
@@ -53,6 +57,8 @@
 #include "CSSPropertyParserConsumer+String.h"
 #include "CSSPropertyParserConsumer+URL.h"
 #include "CSSValueList.h"
+#include "StyleImage.h"
+#include <wtf/SortedArrayMap.h>
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
@@ -929,7 +935,7 @@ static RefPtr<CSSValue> consumeFilterImage(CSSParserTokenRange& args, const CSSP
     auto imageValueOrNone = consumeImageOrNone(args, context);
     if (!imageValueOrNone || !consumeCommaIncludingWhitespace(args))
         return nullptr;
-    auto filterValue = consumeFilter(args, context, AllowedFilterFunctions::PixelFilters);
+    auto filterValue = consumeFilterValueListOrNone(args, context, AllowedFilterFunctions::PixelFilters);
     if (!filterValue)
         return nullptr;
     return CSSFilterImageValue::create(imageValueOrNone.releaseNonNull(), filterValue.releaseNonNull());

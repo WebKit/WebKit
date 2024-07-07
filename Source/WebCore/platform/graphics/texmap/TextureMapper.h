@@ -24,7 +24,7 @@
 #include "BitmapTexturePool.h"
 #include "ClipStack.h"
 #include "Color.h"
-#include "FilterOperation.h"
+#include "FilterOperations.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include "TextureMapperGLHeaders.h"
@@ -40,7 +40,6 @@ namespace WebCore {
 
 class TextureMapperGLData;
 class TextureMapperShaderProgram;
-class FilterOperations;
 class FloatRoundedRect;
 enum class TextureMapperFlags : uint16_t;
 
@@ -100,14 +99,14 @@ private:
 
     enum class Direction { X, Y };
 
-    RefPtr<BitmapTexture> applyFilter(RefPtr<BitmapTexture>&, const Ref<const FilterOperation>&, bool defersLastPass);
-    RefPtr<BitmapTexture> applyBlurFilter(RefPtr<BitmapTexture>&, const BlurFilterOperation&);
-    RefPtr<BitmapTexture> applyDropShadowFilter(RefPtr<BitmapTexture>&, const DropShadowFilterOperation&);
-    RefPtr<BitmapTexture> applySinglePassFilter(RefPtr<BitmapTexture>&, const Ref<const FilterOperation>&, bool shouldDefer);
+    RefPtr<BitmapTexture> applyFilter(RefPtr<BitmapTexture>&, const FilterOperations::FilterOperation&, bool defersLastPass);
+    RefPtr<BitmapTexture> applyBlurFilter(RefPtr<BitmapTexture>&, const FilterOperations::Blur&);
+    RefPtr<BitmapTexture> applyDropShadowFilter(RefPtr<BitmapTexture>&, const FilterOperations::DropShadow&);
+    RefPtr<BitmapTexture> applySinglePassFilter(RefPtr<BitmapTexture>&, const FilterOperations::FilterOperation&, bool shouldDefer);
 
     void drawTextureCopy(const BitmapTexture& sourceTexture, const FloatRect& sourceRect, const FloatRect& targetRect);
     void drawBlurred(const BitmapTexture& sourceTexture, const FloatRect&, float radius, Direction, bool alphaBlur = false);
-    void drawFilterPass(const BitmapTexture& sourceTexture, const BitmapTexture* contentTexture, const FilterOperation&, int pass);
+    void drawFilterPass(const BitmapTexture& sourceTexture, const BitmapTexture* contentTexture, const FilterOperations::FilterOperation&, int pass);
     void drawTexturedQuadWithProgram(TextureMapperShaderProgram&, uint32_t texture, OptionSet<TextureMapperFlags>, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
     void drawTexturedQuadWithProgram(TextureMapperShaderProgram&, const Vector<std::pair<GLuint, GLuint> >& texturesAndSamplers, OptionSet<TextureMapperFlags>, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
     void draw(const FloatRect&, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram&, GLenum drawingMode, OptionSet<TextureMapperFlags>);

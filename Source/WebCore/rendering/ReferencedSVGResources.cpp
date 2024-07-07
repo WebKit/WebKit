@@ -27,7 +27,6 @@
 #include "config.h"
 #include "ReferencedSVGResources.h"
 
-#include "FilterOperations.h"
 #include "LegacyRenderSVGResourceClipper.h"
 #include "PathOperation.h"
 #include "RenderLayer.h"
@@ -40,6 +39,7 @@
 #include "SVGMaskElement.h"
 #include "SVGRenderStyle.h"
 #include "SVGResourceElementClient.h"
+#include "StyleFilterOperations.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -124,9 +124,9 @@ ReferencedSVGResources::SVGElementIdentifierAndTagPairs ReferencedSVGResources::
     if (style.hasFilter()) {
         const auto& filterOperations = style.filter();
         for (auto& operation : filterOperations) {
-            if (RefPtr referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(operation)) {
-                if (!referenceFilterOperation->fragment().isEmpty())
-                    referencedResources.append({ referenceFilterOperation->fragment(), { SVGNames::filterTag } });
+            if (auto* referenceFilterOperation = std::get_if<Style::FilterOperations::Reference>(&operation)) {
+                if (!referenceFilterOperation->fragment.isEmpty())
+                    referencedResources.append({ referenceFilterOperation->fragment, { SVGNames::filterTag } });
             }
         }
     }
@@ -272,11 +272,11 @@ RefPtr<SVGElement> ReferencedSVGResources::referencedPaintServerElement(TreeScop
     return elementForResourceIDs(treeScope, resourceID, { SVGNames::linearGradientTag, SVGNames::radialGradientTag, SVGNames::patternTag });
 }
 
-RefPtr<SVGFilterElement> ReferencedSVGResources::referencedFilterElement(TreeScope& treeScope, const ReferenceFilterOperation& referenceFilter)
+RefPtr<SVGFilterElement> ReferencedSVGResources::referencedFilterElement(TreeScope& treeScope, const AtomString& fragment)
 {
-    if (referenceFilter.fragment().isEmpty())
+    if (fragment.isEmpty())
         return nullptr;
-    RefPtr element = elementForResourceID(treeScope, referenceFilter.fragment(), SVGNames::filterTag);
+    RefPtr element = elementForResourceID(treeScope, fragment, SVGNames::filterTag);
     return element ? downcast<SVGFilterElement>(WTFMove(element)) : nullptr;
 }
 

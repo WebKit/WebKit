@@ -78,6 +78,7 @@
 #include "SVGGraphicsElement.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
+#include "StyleFilterOperations.h"
 #include "StyleResolver.h"
 #include "Styleable.h"
 #include "TiledBacking.h"
@@ -765,12 +766,12 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
 
 void RenderLayerBacking::updateFilters(const RenderStyle& style)
 {
-    m_canCompositeFilters = m_graphicsLayer->setFilters(style.filter());
+    m_canCompositeFilters = m_graphicsLayer->setFilters(style.filter().resolve(style));
 }
 
 void RenderLayerBacking::updateBackdropFilters(const RenderStyle& style)
 {
-    m_canCompositeBackdropFilters = m_graphicsLayer->setBackdropFilters(style.backdropFilter());
+    m_canCompositeBackdropFilters = m_graphicsLayer->setBackdropFilters(style.backdropFilter().resolve(style));
 }
 
 void RenderLayerBacking::updateBackdropFiltersGeometry()
@@ -4062,10 +4063,10 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
             opacityVector.insert(makeUnique<FloatAnimationValue>(offset, keyframeStyle->opacity(), tf));
 
         if (currentKeyframe.animatesProperty(CSSPropertyFilter))
-            filterVector.insert(makeUnique<FilterAnimationValue>(offset, keyframeStyle->filter(), tf));
+            filterVector.insert(makeUnique<FilterAnimationValue>(offset, keyframeStyle->filter().resolve(*keyframeStyle), tf));
 
         if (currentKeyframe.animatesProperty(CSSPropertyWebkitBackdropFilter) || currentKeyframe.animatesProperty(CSSPropertyBackdropFilter))
-            backdropFilterVector.insert(makeUnique<FilterAnimationValue>(offset, keyframeStyle->backdropFilter(), tf));
+            backdropFilterVector.insert(makeUnique<FilterAnimationValue>(offset, keyframeStyle->backdropFilter().resolve(*keyframeStyle), tf));
     }
 
     if (!renderer().settings().acceleratedCompositedAnimationsEnabled())

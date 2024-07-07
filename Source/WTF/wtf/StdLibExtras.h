@@ -26,8 +26,10 @@
 
 #pragma once
 
+#include <concepts>
 #include <cstring>
 #include <memory>
+#include <optional>
 #include <span>
 #include <type_traits>
 #include <utility>
@@ -764,6 +766,12 @@ template<ByteType T, typename U> constexpr auto byteCast(const U& value)
 {
     return ByteCastTraits<U>::template cast<T>(value);
 }
+
+template<typename F, typename T>
+concept Generator = std::invocable<F, size_t> && std::same_as<std::invoke_result_t<F, size_t>, T>;
+
+template<typename F, typename T>
+concept FailableGenerator = std::invocable<F, size_t> && std::same_as<std::invoke_result_t<F, size_t>, std::optional<T>>;
 
 } // namespace WTF
 

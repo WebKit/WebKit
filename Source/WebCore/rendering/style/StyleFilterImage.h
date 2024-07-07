@@ -28,14 +28,14 @@
 
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
-#include "FilterOperations.h"
+#include "StyleFilterOperations.h"
 #include "StyleGeneratedImage.h"
 
 namespace WebCore {
 
 class StyleFilterImage final : public StyleGeneratedImage, private CachedImageClient {
 public:
-    static Ref<StyleFilterImage> create(RefPtr<StyleImage> image, FilterOperations filterOperations)
+    static Ref<StyleFilterImage> create(RefPtr<StyleImage> image, Style::FilterOperations filterOperations)
     {
         return adoptRef(*new StyleFilterImage(WTFMove(image), WTFMove(filterOperations)));
     }
@@ -46,12 +46,12 @@ public:
     bool equalInputImages(const StyleFilterImage&) const;
 
     RefPtr<StyleImage> inputImage() const { return m_image; }
-    const FilterOperations& filterOperations() const { return m_filterOperations; }
+    const Style::FilterOperations& filterOperations() const { return m_filterOperations; }
 
     static constexpr bool isFixedSize = true;
 
 private:
-    explicit StyleFilterImage(RefPtr<StyleImage>&&, FilterOperations&&);
+    explicit StyleFilterImage(RefPtr<StyleImage>&&, Style::FilterOperations&&);
 
     Ref<CSSValue> computedStyleValue(const RenderStyle&) const final;
     bool isPending() const final;
@@ -66,7 +66,7 @@ private:
     void imageChanged(CachedImage*, const IntRect* = nullptr) final;
 
     RefPtr<StyleImage> m_image;
-    FilterOperations m_filterOperations;
+    Style::FilterOperations m_filterOperations;
 
     // FIXME: Rather than caching and tracking the input image via CachedImages, we should
     // instead use a new, StyleImage specific notification, to allow correct tracking of

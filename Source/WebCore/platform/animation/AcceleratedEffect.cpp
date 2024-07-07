@@ -339,10 +339,10 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
         output.offsetRotate = from.offsetRotate.blend(to.offsetRotate, blendingContext);
         break;
     case AcceleratedEffectProperty::Filter:
-        output.filter = to.filter.blend(from.filter, blendingContext);
+        output.filter = FilterOperations::blend(from.filter, to.filter, blendingContext);
         break;
     case AcceleratedEffectProperty::BackdropFilter:
-        output.backdropFilter = to.backdropFilter.blend(from.backdropFilter, blendingContext);
+        output.backdropFilter = FilterOperations::blend(from.backdropFilter, to.backdropFilter, blendingContext);
         break;
     case AcceleratedEffectProperty::Invalid:
         ASSERT_NOT_REACHED();
@@ -455,7 +455,7 @@ void AcceleratedEffect::validateFilters(const AcceleratedEffectValues& baseValue
             auto& fromFilters = filterOperations(*values[i - 1], property);
             auto& toFilters = filterOperations(*values[i], property);
             // FIXME: we should provide the actual composite operation here.
-            if (!fromFilters.canInterpolate(toFilters, CompositeOperation::Replace))
+            if (!FilterOperations::canInterpolate(fromFilters, toFilters, CompositeOperation::Replace))
                 return false;
             if (!longestFilterList || fromFilters.size() > longestFilterList->size())
                 longestFilterList = &fromFilters;
@@ -468,7 +468,7 @@ void AcceleratedEffect::validateFilters(const AcceleratedEffectValues& baseValue
         // from the other filter operations and it will be applied to the layer as the last filer.
         ASSERT(longestFilterList);
         for (auto& operation : *longestFilterList) {
-            if (operation->type() == FilterOperation::Type::DropShadow && operation != longestFilterList->last())
+            if (std::holds_alternative<FilterOperations::DropShadow>(operation) && operation != longestFilterList->last())
                 return false;
         }
 

@@ -693,7 +693,8 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
 
         if (!inheritedStyleEqual) {
             includedProperties.add(PropertyCascade::PropertyType::Inherited);
-            // FIXME: See colorFromPrimitiveValueWithResolvedCurrentColor().
+
+            // FIXME: Can this be removed? Does the colorAndSVGPaintType code path need this?
             bool mayContainResolvedCurrentcolor = style.disallowsFastPathInheritance() && hasExplicitlyInherited;
             if (mayContainResolvedCurrentcolor && parentStyle.color() != cacheEntry->parentRenderStyle->color())
                 includedProperties.add(PropertyCascade::PropertyType::NonInherited);

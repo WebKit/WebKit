@@ -62,7 +62,27 @@ public:
     }
 
     template<typename InputIterator> FixedVector(InputIterator begin, InputIterator end)
-        : m_storage(begin == end ? nullptr : Storage::create(begin, end).moveToUniquePtr())
+        : m_storage(begin != end ? Storage::create(begin, end).moveToUniquePtr() : nullptr)
+    {
+    }
+
+    template<typename U, size_t Extent> explicit FixedVector(std::span<U, Extent> span)
+        : m_storage(span.size() ? Storage::create(span).moveToUniquePtr() : nullptr)
+    {
+    }
+
+    template<typename U, size_t Extent> explicit FixedVector(std::array<U, Extent> array)
+        : FixedVector(std::span { array })
+    {
+    }
+
+    template<Generator<T> G> explicit FixedVector(size_t size, G&& generator)
+        : m_storage(size ? Storage::createWithSizeFromGenerator(size, std::forward<G>(generator)).moveToUniquePtr() : nullptr)
+    {
+    }
+
+    template<FailableGenerator<T> G> explicit FixedVector(size_t size, G&& generator)
+        : m_storage(size ? Storage::createWithSizeFromGenerator(size, std::forward<G>(generator)) : nullptr)
     {
     }
 
@@ -117,16 +137,9 @@ public:
         return *this;
     }
 
-    template<typename... Args>
-    static FixedVector createWithSizeAndConstructorArguments(size_t size, Args&&... args)
+    template<typename... Args> static FixedVector createWithSizeAndConstructorArguments(size_t size, Args&&... args)
     {
         return FixedVector<T> { size ? Storage::createWithSizeAndConstructorArguments(size, std::forward<Args>(args)...).moveToUniquePtr() : std::unique_ptr<Storage> { nullptr } };
-    }
-
-    template<std::invocable<size_t> Generator>
-    static FixedVector createWithSizeFromGenerator(size_t size, Generator&& generator)
-    {
-        return FixedVector<T> { Storage::createWithSizeFromGenerator(size, std::forward<Generator>(generator)) };
     }
 
     size_t size() const { return m_storage ? m_storage->size() : 0; }

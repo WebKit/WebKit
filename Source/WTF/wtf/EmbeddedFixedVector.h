@@ -48,39 +48,43 @@ public:
         return UniqueRef { *new (NotNull, EmbeddedFixedVectorMalloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size) };
     }
 
-    template<typename InputIterator>
-    static UniqueRef<EmbeddedFixedVector> create(InputIterator first, InputIterator last)
+    template<typename InputIterator> static UniqueRef<EmbeddedFixedVector> create(InputIterator first, InputIterator last)
     {
         unsigned size = Checked<uint32_t> { std::distance(first, last) };
         return UniqueRef { *new (NotNull, EmbeddedFixedVectorMalloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, first, last) };
     }
 
-    template<size_t inlineCapacity, typename OverflowHandler>
-    static UniqueRef<EmbeddedFixedVector> createFromVector(const Vector<T, inlineCapacity, OverflowHandler>& other)
+    template<typename U, size_t Extent> static UniqueRef<EmbeddedFixedVector> create(std::span<U, Extent> span)
+    {
+        return UniqueRef { *new (NotNull, EmbeddedFixedVectorMalloc::malloc(Base::allocationSize(span.size()))) EmbeddedFixedVector(span) };
+    }
+
+    template<size_t inlineCapacity, typename OverflowHandler> static UniqueRef<EmbeddedFixedVector> createFromVector(const Vector<T, inlineCapacity, OverflowHandler>& other)
     {
         unsigned size = Checked<uint32_t> { other.size() }.value();
         return UniqueRef { *new (NotNull, EmbeddedFixedVectorMalloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, other.begin(), other.end()) };
     }
 
-    template<size_t inlineCapacity, typename OverflowHandler>
-    static UniqueRef<EmbeddedFixedVector> createFromVector(Vector<T, inlineCapacity, OverflowHandler>&& other)
+    template<size_t inlineCapacity, typename OverflowHandler> static UniqueRef<EmbeddedFixedVector> createFromVector(Vector<T, inlineCapacity, OverflowHandler>&& other)
     {
         Vector<T, inlineCapacity, OverflowHandler> container = WTFMove(other);
         unsigned size = Checked<uint32_t> { container.size() }.value();
         return UniqueRef { *new (NotNull, EmbeddedFixedVectorMalloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, std::move_iterator { container.begin() }, std::move_iterator { container.end() }) };
     }
 
-    template<typename... Args>
-    static UniqueRef<EmbeddedFixedVector> createWithSizeAndConstructorArguments(unsigned size, Args&&... args)
+    template<typename... Args> static UniqueRef<EmbeddedFixedVector> createWithSizeAndConstructorArguments(unsigned size, Args&&... args)
     {
         return UniqueRef { *new (NotNull, EmbeddedFixedVectorMalloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, std::forward<Args>(args)...) };
     }
 
-    template<std::invocable<size_t> Generator>
-    static std::unique_ptr<EmbeddedFixedVector> createWithSizeFromGenerator(unsigned size, Generator&& generator)
+    template<Generator<T> G> static UniqueRef<EmbeddedFixedVector> createWithSizeFromGenerator(unsigned size, G&& generator)
     {
+        return UniqueRef { *new (NotNull, EmbeddedFixedVectorMalloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, std::forward<G>(generator)) };
+    }
 
-        auto result = std::unique_ptr<EmbeddedFixedVector> { new (NotNull, EmbeddedFixedVectorMalloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(typename Base::Failable { }, size, std::forward<Generator>(generator)) };
+    template<FailableGenerator<T> G> static std::unique_ptr<EmbeddedFixedVector> createWithSizeFromGenerator(unsigned size, G&& generator)
+    {
+        auto result = std::unique_ptr<EmbeddedFixedVector> { new (NotNull, EmbeddedFixedVectorMalloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, std::forward<G>(generator)) };
         if (result->size() != size)
             return nullptr;
         return result;
@@ -108,22 +112,28 @@ private:
     {
     }
 
-
-    template<typename InputIterator>
-    EmbeddedFixedVector(unsigned size, InputIterator first, InputIterator last)
+    template<typename InputIterator> EmbeddedFixedVector(unsigned size, InputIterator first, InputIterator last)
         : Base(size, first, last)
     {
     }
 
-    template<typename... Args>
-    explicit EmbeddedFixedVector(unsigned size, Args&&... args) // create with given size and constructor arguments for all elements
+    template<typename U, size_t Extent> EmbeddedFixedVector(std::span<U, Extent> span)
+        : Base(span)
+    {
+    }
+
+    template<typename... Args> EmbeddedFixedVector(unsigned size, Args&&... args) // create with given size and constructor arguments for all elements
         : Base(size, std::forward<Args>(args)...)
     {
     }
 
-    template<std::invocable<size_t> FailableGenerator>
-    EmbeddedFixedVector(typename Base::Failable failable, unsigned size, FailableGenerator&& generator)
-        : Base(failable, size, std::forward<FailableGenerator>(generator))
+    template<Generator<T> G> EmbeddedFixedVector(unsigned size, G&& generator)
+        : Base(size, std::forward<G>(generator))
+    {
+    }
+
+    template<FailableGenerator<T> G> EmbeddedFixedVector(unsigned size, G&& generator)
+        : Base(size, std::forward<G>(generator))
     {
     }
 };

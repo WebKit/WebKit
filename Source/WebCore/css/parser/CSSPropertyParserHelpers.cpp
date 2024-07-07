@@ -32,8 +32,6 @@
 #include "CSSPropertyParserHelpers.h"
 #include "CSSPropertyParser.h"
 #include "CSSPropertyParserConsumer+Angle.h"
-#include "CSSPropertyParserConsumer+AngleDefinitions.h"
-#include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+Color.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Image.h"
@@ -44,7 +42,6 @@
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
 #include "CSSPropertyParserConsumer+Percent.h"
-#include "CSSPropertyParserConsumer+PercentDefinitions.h"
 #include "CSSPropertyParserConsumer+Position.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserConsumer+RawResolver.h"
@@ -165,126 +162,6 @@ RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange& range)
     if (auto result = consumeFontWeightNumberRaw(range))
         return CSSPrimitiveValue::create(*result);
     return nullptr;
-}
-
-static bool isPixelFilterFunction(CSSValueID filterFunction)
-{
-    switch (filterFunction) {
-    case CSSValueBlur:
-    case CSSValueBrightness:
-    case CSSValueContrast:
-    case CSSValueDropShadow:
-    case CSSValueGrayscale:
-    case CSSValueHueRotate:
-    case CSSValueInvert:
-    case CSSValueOpacity:
-    case CSSValueSaturate:
-    case CSSValueSepia:
-        return true;
-    default:
-        return false;
-    }
-}
-
-static bool isColorFilterFunction(CSSValueID filterFunction)
-{
-    switch (filterFunction) {
-    case CSSValueBrightness:
-    case CSSValueContrast:
-    case CSSValueGrayscale:
-    case CSSValueHueRotate:
-    case CSSValueInvert:
-    case CSSValueOpacity:
-    case CSSValueSaturate:
-    case CSSValueSepia:
-    case CSSValueAppleInvertLightness:
-        return true;
-    default:
-        return false;
-    }
-}
-
-static bool allowsValuesGreaterThanOne(CSSValueID filterFunction)
-{
-    switch (filterFunction) {
-    case CSSValueBrightness:
-    case CSSValueContrast:
-    case CSSValueSaturate:
-        return true;
-    default:
-        return false;
-    }
-}
-
-static RefPtr<CSSFunctionValue> consumeFilterFunction(CSSParserTokenRange& range, const CSSParserContext& context, AllowedFilterFunctions allowedFunctions)
-{
-    CSSValueID filterType = range.peek().functionId();
-    switch (allowedFunctions) {
-    case AllowedFilterFunctions::PixelFilters:
-        if (!isPixelFilterFunction(filterType))
-            return nullptr;
-        break;
-    case AllowedFilterFunctions::ColorFilters:
-        if (!isColorFilterFunction(filterType))
-            return nullptr;
-        break;
-    }
-
-    auto args = consumeFunction(range);
-
-    if (filterType == CSSValueAppleInvertLightness) {
-        if (!args.atEnd())
-            return nullptr;
-        return CSSFunctionValue::create(filterType);
-    }
-
-    RefPtr<CSSValue> parsedValue;
-    if (filterType == CSSValueDropShadow)
-        parsedValue = consumeSingleShadow(args, context, false, false);
-    else {
-        if (args.atEnd())
-            return CSSFunctionValue::create(filterType);
-
-        if (filterType == CSSValueHueRotate)
-            parsedValue = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
-        else if (filterType == CSSValueBlur)
-            parsedValue = consumeLength(args, HTMLStandardMode, ValueRange::NonNegative);
-        else {
-            RefPtr primitiveValue = consumePercent(args, ValueRange::NonNegative);
-            if (!primitiveValue)
-                primitiveValue = consumeNumber(args, ValueRange::NonNegative);
-            if (primitiveValue && !allowsValuesGreaterThanOne(filterType)) {
-                bool isPercentage = primitiveValue->isPercentage();
-                double maxAllowed = isPercentage ? 100.0 : 1.0;
-                if (primitiveValue->doubleValue() > maxAllowed)
-                    primitiveValue = CSSPrimitiveValue::create(maxAllowed, isPercentage ? CSSUnitType::CSS_PERCENTAGE : CSSUnitType::CSS_NUMBER);
-            }
-            parsedValue = WTFMove(primitiveValue);
-        }
-    }
-    if (!parsedValue || !args.atEnd())
-        return nullptr;
-
-    return CSSFunctionValue::create(filterType, parsedValue.releaseNonNull());
-}
-
-RefPtr<CSSValue> consumeFilter(CSSParserTokenRange& range, const CSSParserContext& context, AllowedFilterFunctions allowedFunctions)
-{
-    if (range.peek().id() == CSSValueNone)
-        return consumeIdent(range);
-
-    bool referenceFiltersAllowed = allowedFunctions == AllowedFilterFunctions::PixelFilters;
-    CSSValueListBuilder list;
-    do {
-        RefPtr<CSSValue> filterValue = referenceFiltersAllowed ? consumeURL(range) : nullptr;
-        if (!filterValue) {
-            filterValue = consumeFilterFunction(range, context, allowedFunctions);
-            if (!filterValue)
-                return nullptr;
-        }
-        list.append(filterValue.releaseNonNull());
-    } while (!range.atEnd());
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
 RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, const CSSParserContext& context, bool allowInset, bool allowSpread)
