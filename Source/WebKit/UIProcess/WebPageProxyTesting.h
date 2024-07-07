@@ -80,7 +80,6 @@ private:
 
     Ref<WebPageProxy> protectedPage() const;
 
-    const WebCore::PageIdentifier m_webPageIDInMainFrameProcess;
     WeakRef<WebPageProxy> m_page;
 };
 

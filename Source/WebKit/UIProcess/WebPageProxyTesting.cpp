@@ -43,8 +43,7 @@ namespace WebKit {
 using namespace WebCore;
 
 WebPageProxyTesting::WebPageProxyTesting(WebPageProxy& page)
-    : m_webPageIDInMainFrameProcess(page.webPageIDInMainFrameProcess())
-    , m_page(page)
+    : m_page(page)
 {
 }
 
@@ -65,7 +64,7 @@ IPC::Connection* WebPageProxyTesting::messageSenderConnection() const
 
 uint64_t WebPageProxyTesting::messageSenderDestinationID() const
 {
-    return m_webPageIDInMainFrameProcess.toUInt64();
+    return m_page->webPageIDInMainFrameProcess().toUInt64();
 }
 
 void WebPageProxyTesting::setDefersLoading(bool defersLoading)
