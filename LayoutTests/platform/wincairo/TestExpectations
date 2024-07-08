@@ -759,6 +759,8 @@ http/tests/loading/oauth.html [ Failure ]
 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
 http/tests/loading/promote-img-preload-priority.html [ Failure ]
 
+http/tests/loading/main-resource-delegates-on-back-navigation.html [ Failure Pass ]
+
 http/tests/loading/307-after-303-after-post.html [ Skip ] # Timeout
 
 http/tests/local/blob [ Skip ]
@@ -1293,12 +1295,13 @@ imported/w3c/web-platform-tests/cookies/samesite/form-post-blank.https.html [ Sk
 ############################   End Storage Issues   ############################
 ################################################################################
 
-webkit.org/b/159755 fast/text/emoji-gender-3.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-4.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-5.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-6.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-8.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-9.html [ Pass ]
+# Passes on Win10, fails on Win11
+webkit.org/b/159755 fast/text/emoji-gender-3.html [ Pass ImageOnlyFailure ]
+webkit.org/b/159755 fast/text/emoji-gender-4.html [ Pass ImageOnlyFailure ]
+webkit.org/b/159755 fast/text/emoji-gender-5.html [ Pass ImageOnlyFailure ]
+webkit.org/b/159755 fast/text/emoji-gender-6.html [ Pass ImageOnlyFailure ]
+webkit.org/b/159755 fast/text/emoji-gender-8.html [ Pass ImageOnlyFailure ]
+webkit.org/b/159755 fast/text/emoji-gender-9.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/199186 fonts/use-typo-metrics-1.html [ Skip ]
 
@@ -2036,7 +2039,6 @@ fast/text/emoji-variation-selector.html [ ImageOnlyFailure ]
 fast/text/emoji-with-joiner.html [ Failure ]
 fast/text/emphasis-overlap.html [ Failure ]
 fast/text/fallback-language-han-2.html [ ImageOnlyFailure ]
-fast/text/flag-codepoint.html [ ImageOnlyFailure ]
 fast/text/font-collection-2.html [ ImageOnlyFailure ]
 fast/text/font-collection.html [ ImageOnlyFailure ]
 fast/text/font-cursive-italic-cjk.html [ ImageOnlyFailure ]
@@ -2140,6 +2142,10 @@ webgl/webgl-via-metal-flag-off.html [ Skip ]
 webgl/webgl-backend-type.html [ Skip ]
 
 fast/text/text-overflow-over-64k.html [ ImageOnlyFailure ]
+
+# Fails on Win10, Passes on Win11
+fast/text/flag-codepoint.html [ ImageOnlyFailure Pass ]
+fast/text/fitzpatrick-combination.html [ ImageOnlyFailure Pass ]
 
 webgl/lose-context-after-context-lost.html [ Failure ]
 webgl/max-active-contexts-gc.html [ Failure Pass ]
@@ -3847,7 +3853,6 @@ editing/selection/shift-click.html [ Failure ]
 editing/selection/user-select-all-with-shift.html [ Failure ]
 editing/style/preserve-selection-direction.html [ Failure ]
 fast/canvas/canvas-blending-text.html [ Failure ]
-fast/canvas/canvas-composite-text-alpha.html [ Failure ]
 fast/canvas/canvas-pattern-from-modified-canvas.html [ Failure ]
 fast/constructors/event-source-caching.html [ Failure ]
 fast/dom/HTMLLinkElement/link-stylesheet-load-once.html [ Failure ]
@@ -3874,6 +3879,8 @@ fast/text/web-font-load-fallback-during-loading-no-multiple.html [ Failure ]
 imported/w3c/web-platform-tests/permissions/all-permissions.html [ Failure ]
 loader/go-back-cached-main-resource.html [ Failure ]
 streams/pipe-to.html [ Failure ]
+
+fast/canvas/canvas-composite-text-alpha.html [ Failure Pass ]
 
 animations/stacking-context-not-fill-forwards.html [ ImageOnlyFailure ]
 fast/box-shadow/inset-box-shadow.html [ ImageOnlyFailure ]
@@ -3913,6 +3920,8 @@ fast/html/body-color-legacy-parsing-3.html [ Pass ImageOnlyFailure ]
 fast/picture/viewport-resize.html [ Pass Failure ]
 
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-multiple-001.html [ Skip ]
+
+imported/w3c/web-platform-tests/css/css-viewport/zoom/iframe-zoom-nested.html [ ImageOnlyFailure Pass ]
 
 fast/text/backslash-to-yen-sign.html [ Pass Failure ]
 
@@ -4008,7 +4017,6 @@ fast/forms/listbox-zero-item-height.html [ Failure ]
 
 fast/css/unicode-escape-in-8bit-string.html [ ImageOnlyFailure ]
 fast/text/complex-first-glyph-with-initial-advance.html [ ImageOnlyFailure ]
-fast/text/fitzpatrick-combination.html [ ImageOnlyFailure ]
 fast/text/font-face-fall-off-end.html [ ImageOnlyFailure ]
 fast/text/otsvg-spacing.html [ ImageOnlyFailure ]
 fast/text/simple-line-layout-line-box-contain-glyphs.html [ ImageOnlyFailure ]
