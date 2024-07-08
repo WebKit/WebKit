@@ -8,13 +8,13 @@
       (children 1
         (GraphicsLayer
           (position 8.00 8.00)
-          (bounds 402.00 117.00)
+          (bounds 402.00 102.00)
           (drawsContent 1)
           (children 1
             (GraphicsLayer
               (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
-              (bounds 400.00 115.00)
+              (bounds 400.00 100.00)
               (children 1
                 (GraphicsLayer
                   (offsetFromRenderer width=1 height=1)

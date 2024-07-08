@@ -41,6 +41,8 @@ public:
     int scrollbarThickness(ScrollbarWidth = ScrollbarWidth::Auto, ScrollbarExpansionState = ScrollbarExpansionState::Expanded) override;
     
     bool supportsControlTints() const override { return true; }
+    bool usesOverlayScrollbars() const override { return true; }
+    bool allowsCustomScrollbars() const override { return false; }
 
     Seconds initialAutoscrollTimerDelay() override;
     Seconds autoscrollTimerDelay() override;

@@ -11,7 +11,7 @@ layer at (0,0) size 800x606
         RenderText {#text} at (0,1) size 175x111
           text run at (0,1) width 170: "This text"
           text run at (0,58) width 175: "overlaps."
-layer at (8,48) size 300x300 clip at (8,48) size 285x300 scrollHeight 940
+layer at (8,48) size 300x300 scrollHeight 940
   RenderBlock {DIV} at (0,40) size 300x300 [bgcolor=#00FF00]
     RenderText {#text} at (0,0) size 77x19
       text run at (0,0) width 77: "Hello world"

@@ -31,13 +31,13 @@
               (bounds 316.00 316.00)
               (children 2
                 (GraphicsLayer
-                  (position 0.00 301.00)
-                  (bounds 316.00 15.00)
+                  (position 0.00 316.00)
+                  (bounds 316.00 0.00)
                   (drawsContent 1)
                 )
                 (GraphicsLayer
-                  (position 301.00 0.00)
-                  (bounds 15.00 316.00)
+                  (position 316.00 0.00)
+                  (bounds 0.00 316.00)
                   (drawsContent 1)
                 )
               )

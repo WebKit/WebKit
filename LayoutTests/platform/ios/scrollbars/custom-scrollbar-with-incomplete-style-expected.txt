@@ -12,7 +12,7 @@ layer at (0,0) size 800x1418
           text run at (0,0) width 591: "Note that Safari doesn't allow to customize the outermost scdrollbars and just show Cocoa's."
       RenderBlock {PRE} at (0,228) size 784x1169 [bgcolor=#008000]
       RenderBlock {PRE} at (0,1409) size 1568x0 [bgcolor=#008000]
-layer at (8,124) size 100x100 clip at (8,124) size 87x87 scrollWidth 1396 scrollHeight 98
+layer at (8,124) size 100x100 scrollWidth 1396
   RenderBlock {PRE} at (0,115) size 100x101 [bgcolor=#008000]
     RenderText {#text} at (0,0) size 1397x98
       text run at (0,0) width 1397: "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."

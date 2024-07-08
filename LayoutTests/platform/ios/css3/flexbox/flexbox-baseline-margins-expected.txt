@@ -62,7 +62,7 @@ layer at (0,0) size 800x569
           RenderFlexibleBox {DIV} at (0,0) size 50x50
         RenderText {#text} at (237,35) size 281x19
           text run at (237,35) width 281: " of the horizontal scrollbar, if one is visible."
-layer at (247,396) size 50x46 clip at (247,405) size 35x22
+layer at (247,396) size 50x46 clip at (247,405) size 50x37
   RenderBlock {DIV} at (24,28) size 50x46 [bgcolor=#D3D3D3] [border: (9px solid #FFC0CB) none]
-layer at (196,506) size 50x50 clip at (196,506) size 35x25
+layer at (196,506) size 50x50 clip at (196,506) size 50x40
   RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#D3D3D3] [border: none (10px solid #FFC0CB) none]

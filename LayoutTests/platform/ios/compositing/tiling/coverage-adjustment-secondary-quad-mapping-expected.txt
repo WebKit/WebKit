@@ -23,15 +23,14 @@
                 (GraphicsLayer
                   (offsetFromRenderer width=1 height=1)
                   (position 1.00 1.00)
-                  (anchor 0.51 0.50)
-                  (bounds 583.00 578.00)
+                  (bounds 598.00 578.00)
                   (backingStoreAttached 1)
                   (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [-300.00 -290.00 1.00 -1.00] [0.00 0.00 0.00 1.00])
                   (children 1
                     (GraphicsLayer
                       (position 0.00 -400.00)
                       (anchor 0.00 0.00)
-                      (bounds 583.00 12800.00)
+                      (bounds 598.00 12800.00)
                       (usingTiledLayer 1)
                       (preserves3D 1)
                       (drawsContent 1)
@@ -40,13 +39,13 @@
                         (GraphicsLayer
                           (position 20.00 0.00)
                           (anchor 0.50 0.50)
-                          (bounds 466.50 1300.00)
+                          (bounds 478.50 1300.00)
                           (backingStoreAttached 1)
                           (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 -220.00 -2.00 1.00])
                         )
                         (GraphicsLayer
                           (position 0.00 200.00)
-                          (bounds 583.00 600.00)
+                          (bounds 598.00 600.00)
                           (contentsOpaque 1)
                           (drawsContent 1)
                           (backingStoreAttached 1)
