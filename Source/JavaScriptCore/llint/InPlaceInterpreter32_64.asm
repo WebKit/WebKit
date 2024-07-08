@@ -1,654 +1,165 @@
-#
-# IPInt: the WASM in-place interpreter
-# DISCLAIMER: not tested on x86 yet (as of 05 Jul 2023); IPInt may break *very* badly.
-#
-# docs by Daniel Liu <daniel_liu4@apple.com / danlliu@umich.edu>; 2023 intern project
-#
-# 0. OfflineASM:
-# --------------
-#
-# For a crash course on OfflineASM, check out LowLevelInterpreter.asm.
-#
-# 1. Code Structure
-# -----------------
-#
-# IPInt is designed to start up quickly and interpret WASM code efficiently. To optimize for speed, we utilize a jump
-# table, using the opcode's first byte as an offset. This jump table is set up in _ipint_setup. 
-# For more complex opcodes (ex. SIMD), we define additional jump tables that utilize further bytes as indices.
-#
-# 2. Setting Up
-# -------------
-#
-# Before we can execute WebAssembly, we have to handle the call frame that is given to us. This is handled in _ipint_entry.
-# We start by saving registers to the stack as per the system calling convention. Then, we have IPInt specific logic:
-#
-# 2.1. Locals
-# -----------
-#
-# To ensure that we are able to access local variables quickly, we allocate a section of the stack to store local variables.
-# We allocate 8 bytes for each local variable on the stack.
-#
-# Additionally, we need to load the parameters to the function into local variables. As per the calling convention, arguments
-# are passed via registers, and then on the stack if all argument registers have been exhausted. Thus, we need to handle those
-# cases. We keep track of the number of arguments in IPIntCallee, allowing us to know exactly where to load arguments from.
-#
-# Finally, we set the value of the `PL` (pointer to locals) register to the position of the first local. This allows us to quickly
-# index into locals.
-#
-# 2.2. Bytecode and Metadata
-# --------------------------
-#
-# The final step before executing is to load the bytecode to execute, as well as the metadata. For an explanation of why we use
-# metadata in IPInt, check out WasmIPIntGenerator.cpp. We load these into registers `PB` (pointer to bytecode) and `PM` (pointer
-# to metadata). Additionally, registers `PC` (program counter) and `MC` (metadata counter) are set to 0.
-#
-# 3. Executing WebAssembly
-# ------------------------
-#
-# WebAssembly execution revolves around a stack machine, which we run on the program stack. We work with the constraint
-# that the stack must be 16B aligned by ensuring that pushes and pops are always 16B. This makes certain opcodes (ex. drop)
-# much easier as well.
-#
-# For each instruction, we align its assembly to a 256B boundary. Thus, we can take (address of instruction 0) + opcode * 256
-# to find the exact point where we need to jump for each opcode without any dependent loads.
-#
-# 4. Returning
-# ------------
-#
-# To return values to the caller, IPInt uses the standard WebAssembly calling convention. Return values are passed in the
-# system return registers, and on the stack if not possible. After this, we perform cleanup logic to reset the stack to its
-# original state, and return to the caller.
-#
-
-#################################
-# Register and Size Definitions #
-#################################
-
-# PC = t4
-if X86_64 or ARM64 or ARM64E or RISCV64
-    const MC = t5  # Metadata counter (index into metadata)
-    const PL = t6  # Pointer to locals (index into locals)
-elsif ARMv7
-    const MC = t6
-    const PL = t7
-else
-    const MC = invalidGPR
-    const PL = invalidGPR
-end
-const PM = metadataTable
-
-if ARM64 or ARM64E
-    const IB = t7  # instruction base
-end
-
-# TODO: SIMD support, since locals will need double the space. Can we do it only sometimes?
-# May just need to write metadata that rewrites offsets. May be worth the space savings.
-# Actually, what if we just use the same thing but have a SIMD section separately allocated that
-# is "pointed" to by the 8B entries on the stack? Easier and we only need to allocate SIMD when we need
-# instead of blowing up the stack. Argument copying a little trickier though.
-
-const PtrSize = constexpr (sizeof(void*))
-const MachineRegisterSize = constexpr (sizeof(CPURegister))
-const SlotSize = constexpr (sizeof(Register))
-const LocalSize = SlotSize
-const StackValueSize = 16
-
-const wasmInstance = csr0
-if X86_64 or ARM64 or ARM64E or RISCV64
-    const memoryBase = csr3
-    const boundsCheckingSize = csr4
-else
-    const memoryBase = invalidGPR
-    const boundsCheckingSize = invalidGPR
-end
-
-const UnboxedWasmCalleeStackSlot = CallerFrame - constexpr Wasm::numberOfIPIntCalleeSaveRegisters * SlotSize - MachineRegisterSize
-
 ##########
 # Macros #
 ##########
 
 # Callee Save
 
-# FIXME: This happens to work because UnboxedWasmCalleeStackSlot sits in the extra space we should be more precise in case we want to use an even number of callee saves in the future.
-const IPIntCalleeSaveSpaceStackAligned = 2*CalleeSaveSpaceStackAligned
-
-# Get IPIntCallee object at startup
-
-macro getIPIntCallee()
-    loadp Callee[cfr], ws0
-if JSVALUE64
-    andp ~(constexpr JSValue::NativeCalleeTag), ws0
+macro saveIPIntRegisters()
+    subp IPIntCalleeSaveSpaceStackAligned, sp
+    store2ia PM, PB, -8[cfr]
+    storep wasmInstance, -16[cfr]
 end
-    leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
-    loadp [ws1], ws1
-    addp ws1, ws0
-    storep ws0, UnboxedWasmCalleeStackSlot[cfr]
+
+macro restoreIPIntRegisters()
+    load2ia -8[cfr], PM, PB
+    loadp -16[cfr], wasmInstance
+    addp IPIntCalleeSaveSpaceStackAligned, sp
 end
 
 # Tail-call dispatch
 
-macro advancePC(amount)
-    addp amount, PC
+macro nextIPIntInstruction()
+    # Consistency check
+    # move MC, t0
+    # andp 7, t0
+    # bpeq t0, 0, .fine
+    # break
+# .fine:
+    loadb [PB, PC, 1], t0
+if ARMv7
+    lshiftp 8, t0
+    leap (_ipint_unreachable + 1), t1
+    addp t1, t0
+    emit "bx r0"
+else
+    break
+end
 end
 
-macro advancePCByReg(amount)
-    addp amount, PC
+# Stack operations
+# Every value on the stack is always 16 bytes! This makes life easy.
+
+macro pushQuad(reg)
+    break
 end
 
-macro advanceMC(amount)
-    addp amount, MC
+macro pushQuadPair(reg1, reg2)
+    break
 end
 
-macro advanceMCByReg(amount)
-    addp amount, MC
+macro popQuad(reg, scratch)
+    break
+end
+
+macro pushVectorReg0()
+    break
+end
+
+macro pushVectorReg1()
+    break
+end
+
+macro pushVectorReg2()
+    break
+end
+
+macro popVectorReg0()
+    break
+end
+
+macro popVectorReg1()
+    break
+end
+
+macro popVectorReg2()
+    break
+end
+
+# Pushes ft0 because macros
+macro pushFPR()
+    break
+end
+
+macro pushFPR1()
+    break
+end
+
+macro popFPR()
+    break
+end
+
+macro popFPR1()
+    break
 end
 
 # Typed push/pop to make code pretty
 
-macro pushFloat32FT0()
-    pushFPR()
-end
-
-macro pushFloat32FT1()
-    pushFPR1()
-end
-
-macro popFloat32FT0()
-    popFPR()
-end
-
-macro popFloat32FT1()
-    popFPR1()
-end
-
-macro pushFloat64FT0()
-    pushFPR()
-end
-
-macro pushFloat64FT1()
-    pushFPR1()
-end
-
-macro popFloat64FT0()
-    popFPR()
-end
-
-macro popFloat64FT1()
-    popFPR1()
-end
-
-# Instruction labels
-# Important Note: If you don't use the unaligned global label from C++ (in our case we use the
-# labels in InPlaceInterpreter.cpp) then some linkers will still remove the definition which
-# causes all kinds of problems.
-
-macro instructionLabel(instrname)
-    aligned _ipint%instrname%_validate 256
-    _ipint%instrname%_validate:
-    _ipint%instrname%:
-end
-
-macro slowPathLabel(instrname)
-    aligned _ipint%instrname%_slow_path_validate 256
-    _ipint%instrname%_slow_path_validate:
-    _ipint%instrname%_slow_path:
-end
-
-macro unimplementedInstruction(instrname)
-    instructionLabel(instrname)
+macro pushInt32(reg)
     break
 end
 
-macro reservedOpcode(opcode)
-    unimplementedInstruction(_reserved_%opcode%)
+macro popInt32(reg)
+    break
 end
 
-# Memory
-
-macro ipintReloadMemory()
-    if ARM64 or ARM64E
-        loadpairq Wasm::Instance::m_cachedMemory[wasmInstance], memoryBase, boundsCheckingSize
-    elsif X86_64
-        loadp Wasm::Instance::m_cachedMemory[wasmInstance], memoryBase
-        loadp Wasm::Instance::m_cachedBoundsCheckingSize[wasmInstance], boundsCheckingSize
-    end
-    if not ARMv7
-        cagedPrimitiveMayBeNull(memoryBase, t2)
-    end
+macro pushInt64(reg)
+    break
 end
 
-# Operation Calls
-
-macro operationCall(fn)
-    move wasmInstance, a0
-    push PC, MC
-    push PL, ws0
-    fn()
-    pop ws0, PL
-    pop MC, PC
-    if ARM64 or ARM64E
-        pcrtoaddr _ipint_unreachable, IB
-    end
+macro popInt64(reg, scratch)
+    break
 end
 
-macro operationCallMayThrow(fn)
-    storei PC, CallSiteIndex[cfr]
+# Entry
 
-    move wasmInstance, a0
-    push PC, MC
-    push PL, ws0
-    fn()
-    bqneq r0, 1, .continuation
-    storei r1, ArgumentCountIncludingThis + PayloadOffset[cfr]
-    jmp _wasm_throw_from_slow_path_trampoline
-.continuation:
-    pop ws0, PL
-    pop MC, PC
-    if ARM64 or ARM64E
-        pcrtoaddr _ipint_unreachable, IB
-    end
-end
+# PM = location in argumINT bytecode
+# csr1 = tmp
+# t4 = dst
+# t5 = src
+# t6 = end
+# t7 = for dispatch
 
-# Exception handling
+const argumINTDest = t4
+const argumINTSrc = t5
 
-macro ipintException(exception)
-    storei constexpr Wasm::ExceptionType::%exception%, ArgumentCountIncludingThis + PayloadOffset[cfr]
-    jmp _wasm_throw_from_slow_path_trampoline
-end
-
-# OSR
-
-macro ipintPrologueOSR(increment)
-if JIT and not ARMv7
-    loadp UnboxedWasmCalleeStackSlot[cfr], ws0
-    baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::LLIntTierUpCounter::m_counter[ws0], .continue
-
-    subq (NumberOfWasmArgumentJSRs + NumberOfWasmArgumentFPRs) * 8, sp
-if ARM64 or ARM64E
-    forEachArgumentJSR(macro (offset, gpr1, gpr2)
-        storepairq gpr2, gpr1, offset[sp]
-    end)
-elsif JSVALUE64
-    forEachArgumentJSR(macro (offset, gpr)
-        storeq gpr, offset[sp]
-    end)
-else
-    forEachArgumentJSR(macro (offset, gprMsw, gpLsw)
-        store2ia gpLsw, gprMsw, offset[sp]
-    end)
-end
-if ARM64 or ARM64E
-    forEachArgumentFPR(macro (offset, fpr1, fpr2)
-        storepaird fpr2, fpr1, offset[sp]
-    end)
-else
-    forEachArgumentFPR(macro (offset, fpr)
-        stored fpr, offset[sp]
-    end)
-end
-
-    ipintReloadMemory()
-    push memoryBase, boundsCheckingSize
-
-    move cfr, a1
-    operationCall(macro() cCall2(_ipint_extern_prologue_osr) end)
-    move r0, ws0
-
-    pop boundsCheckingSize, memoryBase
-
-if ARM64 or ARM64E
-    forEachArgumentFPR(macro (offset, fpr1, fpr2)
-        loadpaird offset[sp], fpr2, fpr1
-    end)
-else
-    forEachArgumentFPR(macro (offset, fpr)
-        loadd offset[sp], fpr
-    end)
-end
-
-if ARM64 or ARM64E
-    forEachArgumentJSR(macro (offset, gpr1, gpr2)
-        loadpairq offset[sp], gpr2, gpr1
-    end)
-elsif JSVALUE64
-    forEachArgumentJSR(macro (offset, gpr)
-        loadq offset[sp], gpr
-    end)
-else
-    forEachArgumentJSR(macro (offset, gprMsw, gpLsw)
-        load2ia offset[sp], gpLsw, gpMsw
-    end)
-end
-    addq (NumberOfWasmArgumentJSRs + NumberOfWasmArgumentFPRs) * 8, sp
-
-    btpz ws0, .recover
-
-    restoreIPIntRegisters()
-    restoreCallerPCAndCFR()
-
-    if ARM64E
-        leap _g_config, ws1
-        jmp JSCConfigGateMapOffset + (constexpr Gate::wasmOSREntry) * PtrSize[ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
-    else
-        jmp ws0, WasmEntryPtrTag
-    end
-
-.recover:
-    loadp UnboxedWasmCalleeStackSlot[cfr], ws0
-.continue:
-end
-end
-
-macro ipintLoopOSR(increment)
-if JIT and not ARMv7
-    loadp UnboxedWasmCalleeStackSlot[cfr], ws0
-    baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::LLIntTierUpCounter::m_counter[ws0], .continue
-
-    move cfr, a1
-    move PC, a2
-    # Add 1 to the index due to WTF::HashMap not supporting 0 as a key
-    addq 1, a2
-    move PL, a3
-    operationCall(macro() cCall4(_ipint_extern_loop_osr) end)
-    btpz r1, .recover
-    restoreIPIntRegisters()
-    restoreCallerPCAndCFR()
-    move r0, a0
-
-    if ARM64E
-        move r1, ws0
-        leap _g_config, ws1
-        jmp JSCConfigGateMapOffset + (constexpr Gate::wasmOSREntry) * PtrSize[ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
-    else
-        jmp r1, WasmEntryPtrTag
-    end
-
-.recover:
-    loadp UnboxedWasmCalleeStackSlot[cfr], ws0
-.continue:
-end
-end
-
-macro ipintEpilogueOSR(increment)
-if JIT and not ARMv7
-    loadp UnboxedWasmCalleeStackSlot[cfr], ws0
-    baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::LLIntTierUpCounter::m_counter[ws0], .continue
-
-    move cfr, a1
-    operationCall(macro() cCall2(_ipint_extern_epilogue_osr) end)
-.continue:
-end
-end
-
-
-
-macro decodeLEBVarUInt32(offset, dst, scratch1, scratch2, scratch3, scratch4)
-    # if it's a single byte, fastpath it
-    const tempPC = scratch4
-    leap offset[PC], tempPC
-    loadb [PB, tempPC], dst
-
-    bbb dst, 0x80, .fastpath
-    # otherwise, set up for second iteration
-    # next shift is 7
-    move 7, scratch1
-    # take off high bit
-    subi 0x80, dst
-.loop:
-    addp 1, tempPC
-    loadb [PB, tempPC], scratch2
-    # scratch3 = high bit 7
-    # leave scratch2 with low bits 6-0
-    move 0x80, scratch3
-    andi scratch2, scratch3
-    xori scratch3, scratch2
-    lshifti scratch1, scratch2
-    addi 7, scratch1
-    ori scratch2, dst
-    bbneq scratch3, 0, .loop
-.fastpath:
-end
-
-########################
-# In-Place Interpreter #
-########################
-
-macro argumINTAlign(instrname)
-    aligned _ipint_argumINT%instrname%_validate 64
-    _ipint_argumINT%instrname%_validate:
-    _argumINT%instrname%:
-end
-
-macro mintAlign(instrname)
-    aligned _ipint_mint%instrname%_validate 64
-    _ipint_mint%instrname%_validate:
-    _mint%instrname%:
-end
-
-macro uintAlign(instrname)
-    aligned _ipint_uint%instrname%_validate 64
-    _ipint_uint%instrname%_validate:
-    _uint%instrname%:
-end
-
-macro checkStackOverflow(callee, scratch)
-    loadi Wasm::IPIntCallee::m_maxFrameSizeInV128[callee], scratch
-    lshiftp 4, scratch
-    subp cfr, scratch, scratch
-
-    bpa scratch, cfr, .stackOverflow
-    bpbeq Wasm::Instance::m_softStackLimit[wasmInstance], scratch, .stackHeightOK
-
-.stackOverflow:
-    ipintException(StackOverflow)
-
-.stackHeightOK:
-end
-
-global _ipint_entry
-_ipint_entry:
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
-    preserveCallerPCAndCFR()
-    saveIPIntRegisters()
-    storep wasmInstance, CodeBlock[cfr]
-    getIPIntCallee()
-
-    ipintEntry()
-
-.ipint_entry_end_local:
-    argumINTEnd()
-
-    jmp .ipint_entry_end_local
-.ipint_entry_finish_zero:
-    argumINTFinish()
-
-    loadp CodeBlock[cfr], wasmInstance
-    # OSR Check
-    ipintPrologueOSR(5)
-
-    move sp, PL
-
-    if ARM64 or ARM64E
-        pcrtoaddr _ipint_unreachable, IB
-    end
-    loadp Wasm::IPIntCallee::m_bytecode[ws0], PB
-    move 0, PC
-    loadp Wasm::IPIntCallee::m_metadata[ws0], PM
-    move 0, MC
-    # Load memory
-    ipintReloadMemory()
-
-    nextIPIntInstruction()
-
-.ipint_exit:
-    # Clean up locals
-    # Don't overwrite the return registers
-    # Will use PM as a temp because we don't want to use the actual temps.
-    # move PL, sp
-    # loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], PM
-    # mulq LocalSize, PM
-    # addq PM, sp
-    ipintReloadMemory()
-
-    restoreIPIntRegisters()
-    restoreCallerPCAndCFR()
-    ret
-else
-    ret
-end
-
-global _ipint_entry_simd
-_ipint_entry_simd:
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
-    preserveCallerPCAndCFR()
-    saveIPIntRegisters()
-    storep wasmInstance, CodeBlock[cfr]
-    getIPIntCallee()
-
-    checkStackOverflow(ws0, csr3)
+macro ipintEntry()
+    checkStackOverflow(ws0, t6)
 
     # Allocate space for locals and rethrow values
-    if ARM64 or ARM64E
-        loadpairi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0, csr3
-    else
-        loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0
-        loadi Wasm::IPIntCallee::m_numRethrowSlotsToAlloc[ws0], csr3
-    end
-    addq csr3, csr0
-    mulq LocalSize, csr0
-    move sp, csr3
-    subq csr0, sp
-    move sp, csr4
+    load2ia Wasm::IPIntCallee::m_localSizeToAlloc[ws0], t7, t6
+    addp t6, t7
+    mulp LocalSize, t7
+    move sp, t6
+    subp t7, sp
+    move sp, t7
     loadp Wasm::IPIntCallee::m_argumINTBytecodePointer[ws0], PM
 
-    push csr0, csr1, csr2, csr3
+    push csr1, t4, t5
 
-    # PM = location in argumINT bytecode
-    # csr0 = tmp
-    # csr1 = dst
-    # csr2 = src
-    # csr3 = end
-    # csr4 = for dispatch
-
-const argumINTDest = csr1
-const argumINTSrc = csr2
-    move csr4, argumINTDest
+    move t7, argumINTDest
     leap FirstArgumentOffset[cfr], argumINTSrc
 
     argumINTDispatch()
+end
 
-.ipint_entry_end_local_simd:
+macro argumINTDispatch()
+    loadb [PM], csr1
+    addp 1, PM
+    lshiftp 6, csr1
+    leap (_argumINT_begin + 1), t7
+    addp csr1, t7
+    emit "bx r9"
+end
+
+macro argumINTEnd()
     # zero out remaining locals
-    bqeq argumINTDest, csr3, .ipint_entry_finish_zero_simd
-    storeq 0, [argumINTDest]
-    addq 8, argumINTDest
-
-    jmp .ipint_entry_end_local_simd
-.ipint_entry_finish_zero_simd:
-    pop csr3, csr2, csr1, csr0
-
-    loadp CodeBlock[cfr], wasmInstance
-    # OSR Check
-    ipintPrologueOSR(5)
-
-    move sp, PL
-
-    if ARM64 or ARM64E
-        pcrtoaddr _ipint_unreachable, IB
-    end
-    loadp Wasm::IPIntCallee::m_bytecode[ws0], PB
-    move 0, PC
-    loadp Wasm::IPIntCallee::m_metadata[ws0], PM
-    move 0, MC
-    # Load memory
-    ipintReloadMemory()
-
-    nextIPIntInstruction()
-else
+    bpeq argumINTDest, t6, .ipint_entry_finish_zero
     break
 end
 
-macro ipintCatchCommon()
-    getVMFromCallFrame(t3, t0)
-    restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
-
-    loadp VM::callFrameForCatch[t3], cfr
-    storep 0, VM::callFrameForCatch[t3]
-
-    loadp VM::targetInterpreterPCForThrow[t3], PC
-    loadp VM::targetInterpreterMetadataPCForThrow[t3], MC
-
-    getIPIntCallee()
-
-    loadp CodeBlock[cfr], wasmInstance
-    if ARM64 or ARM64E
-        pcrtoaddr _ipint_unreachable, IB
-    end
-    loadp Wasm::IPIntCallee::m_bytecode[ws0], PB
-    loadp Wasm::IPIntCallee::m_metadata[ws0], PM
-
-    # Recompute PL
-    if ARM64 or ARM64E
-        loadpairi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], t0, t1
-    else
-        loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], t0
-        loadi Wasm::IPIntCallee::m_numRethrowSlotsToAlloc[ws0], t1
-    end
-    addq t1, t0
-    # FIXME: Can this be an leaq?
-    mulq LocalSize, t0
-    addq IPIntCalleeSaveSpaceStackAligned, t0
-    subq cfr, t0, PL
-
-    loadi [PM, MC], t0
-    # 1 << 4 == StackValueSize
-    lshiftq 4, t0
-    addq IPIntCalleeSaveSpaceStackAligned, t0
-    subp cfr, t0, sp
+macro argumINTFinish()
+    pop t5, t4, csr1
 end
-
-global _ipint_catch_entry
-_ipint_catch_entry:
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
-    ipintCatchCommon()
-
-    move cfr, a1
-    move sp, a2
-    move PL, a3
-    operationCall(macro() cCall4(_ipint_extern_retrieve_and_clear_exception) end)
-
-    ipintReloadMemory()
-    advanceMC(4)
-    nextIPIntInstruction()
-else
-    break
-end
-
-global _ipint_catch_all_entry
-_ipint_catch_all_entry:
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
-    ipintCatchCommon()
-
-    move cfr, a1
-    move 0, a2
-    move PL, a3
-    operationCall(macro() cCall4(_ipint_extern_retrieve_and_clear_exception) end)
-
-    ipintReloadMemory()
-    advanceMC(4)
-    nextIPIntInstruction()
-else
-    break
-end
-
-# Value-representation-specific code.
-if JSVALUE64 and (ARM64 or ARM64E or X86_64)
-    include InPlaceInterpreter64
-elsif ARMv7
-    include InPlaceInterpreter32_64
-else
-# For unimplemented architectures: make sure that the assertions can still find the labels
 
     #############################
     # 0x00 - 0x11: control flow #
@@ -665,7 +176,33 @@ unimplementedInstruction(_catch)
 unimplementedInstruction(_throw)
 unimplementedInstruction(_rethrow)
 reservedOpcode(0xa)
-unimplementedInstruction(_end)
+
+
+macro uintDispatch()
+    loadb [PM], t6
+    addp 1, PM
+    bilt t6, 5, .safe
+    break
+.safe:
+    lshiftp 6, t6
+    leap (_uint_begin + 1), t7
+    addp t6, t7
+    # t7 = r9
+    emit "bx r9"
+end
+
+instructionLabel(_end)
+    #loadp UnboxedWasmCalleeStackSlot[cfr], ws0
+    loadi Wasm::IPIntCallee::m_bytecodeLength[ws0], t0
+    subp 1, t0
+    bpeq PC, t0, .ipint_end_ret
+    advancePC(1)
+    nextIPIntInstruction()
+.ipint_end_ret:
+    ipintEpilogueOSR(10)
+    addp MC, PM
+    uintDispatch()
+
 unimplementedInstruction(_br)
 unimplementedInstruction(_br_if)
 unimplementedInstruction(_br_table)
@@ -1404,4 +941,179 @@ unimplementedInstruction(_i32_atomic_rmw16_cmpxchg_u)
 unimplementedInstruction(_i64_atomic_rmw8_cmpxchg_u)
 unimplementedInstruction(_i64_atomic_rmw16_cmpxchg_u)
 unimplementedInstruction(_i64_atomic_rmw32_cmpxchg_u)
-end
+
+#######################################
+## ULEB128 decoding logic for locals ##
+#######################################
+
+slowPathLabel(_local_get)
+    break
+
+slowPathLabel(_local_set)
+    break
+
+slowPathLabel(_local_tee)
+    break
+
+    break
+
+mintAlign(_a0)
+_mint_begin:
+    break
+
+mintAlign(_a1)
+    break
+
+mintAlign(_a2)
+    break
+
+mintAlign(_a3)
+    break
+
+mintAlign(_a4)
+    break
+
+mintAlign(_a5)
+    break
+
+mintAlign(_a6)
+    break
+
+mintAlign(_a7)
+    break
+
+mintAlign(_fa0)
+    break
+
+mintAlign(_fa1)
+    break
+
+mintAlign(_fa2)
+    break
+
+mintAlign(_fa3)
+    break
+
+mintAlign(_stackzero)
+    break
+
+mintAlign(_stackeight)
+    break
+
+mintAlign(_gap)
+    break
+
+mintAlign(_call)
+    break
+
+mintAlign(_r0)
+_mint_begin_return:
+    break
+
+mintAlign(_r1)
+    break
+
+mintAlign(_r2)
+    break
+
+mintAlign(_r3)
+    break
+
+mintAlign(_r4)
+    break
+
+mintAlign(_r5)
+    break
+
+mintAlign(_r6)
+    break
+
+mintAlign(_r7)
+    break
+
+mintAlign(_fr0)
+    break
+
+mintAlign(_fr1)
+    break
+
+mintAlign(_fr2)
+    break
+
+mintAlign(_fr3)
+    break
+
+mintAlign(_stack)
+    break
+
+mintAlign(_end)
+    break
+
+uintAlign(_r0)
+_uint_begin:
+    break
+
+uintAlign(_r1)
+    break
+
+uintAlign(_fr1)
+    break
+
+uintAlign(_stack)
+    break
+
+uintAlign(_ret)
+    jmp .ipint_exit
+
+# PM = location in argumINT bytecode
+# t5 = tmp
+# t6 = dst
+# t7 = src
+# cfr
+# r12 = for dispatch
+
+# const argumINTDest = t6
+# const argumINTSrc = t7
+
+argumINTAlign(_a0)
+_argumINT_begin:
+    break
+
+argumINTAlign(_a1)
+    break
+
+argumINTAlign(_a2)
+    break
+
+argumINTAlign(_a3)
+    break
+
+argumINTAlign(_a4)
+    break
+
+argumINTAlign(_a5)
+    break
+
+argumINTAlign(_a6)
+    break
+
+argumINTAlign(_a7)
+    break
+
+argumINTAlign(_fa0)
+    break
+
+argumINTAlign(_fa1)
+    break
+
+argumINTAlign(_fa2)
+    break
+
+argumINTAlign(_fa3)
+    break
+
+argumINTAlign(_stack)
+    break
+
+argumINTAlign(_end)
+    jmp .ipint_entry_end_local
