@@ -302,7 +302,6 @@ private:
     MonotonicTime m_processStart;
     ProcessThrottler m_throttler;
 #if USE(RUNNINGBOARD)
-    ProcessThrottler::TimedActivity m_timedActivityForIPC;
 #if PLATFORM(MAC)
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_lifetimeActivity;
     RefPtr<ProcessAssertion> m_boostedJetsamAssertion;
