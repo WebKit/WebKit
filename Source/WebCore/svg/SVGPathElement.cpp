@@ -241,12 +241,12 @@ const SVGPathByteStream& SVGPathElement::pathByteStream() const
 
 Path SVGPathElement::path() const
 {
-    if (auto* renderer = this->renderer()) {
-        if (auto* basicShapePath = renderer->style().d())
+    if (CheckedPtr renderer = this->renderer()) {
+        if (RefPtr basicShapePath = renderer->style().d())
             return basicShapePath->path({ });
     }
 
-    return m_pathSegList->currentPath();
+    return Ref { m_pathSegList }->currentPath();
 }
 
 void SVGPathElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
@@ -254,9 +254,9 @@ void SVGPathElement::collectPresentationalHintsForAttribute(const QualifiedName&
     if (name == SVGNames::dAttr && document().settings().cssDPropertyEnabled()) {
         // In the case of the `d` property, we want to avoid providing a string value since it will require
         // the path data to be parsed again and path data can be unwieldy.
-        auto property = cssPropertyIdForSVGAttributeName(name, document().settings());
+        auto property = cssPropertyIdForSVGAttributeName(name, document().protectedSettings());
         // The WindRule value passed here is not relevant for the `d` property.
-        auto cssPathValue = CSSPathValue::create(m_pathSegList->currentPathByteStream(), WindRule::NonZero);
+        auto cssPathValue = CSSPathValue::create(Ref { m_pathSegList }->currentPathByteStream(), WindRule::NonZero);
         addPropertyToPresentationalHintStyle(style, property, WTFMove(cssPathValue));
     } else
         SVGGeometryElement::collectPresentationalHintsForAttribute(name, value, style);
