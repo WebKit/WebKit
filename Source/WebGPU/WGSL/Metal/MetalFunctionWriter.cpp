@@ -2275,7 +2275,22 @@ void FunctionDefinitionWriter::visit(AST::CallStatement& statement)
 
 void FunctionDefinitionWriter::visit(AST::CompoundAssignmentStatement& statement)
 {
-    visit(statement.leftExpression());
+    bool serialized = false;
+    auto* leftExpression = &statement.leftExpression();
+    if (auto* identity = dynamicDowncast<AST::IdentityExpression>(*leftExpression))
+        leftExpression = &identity->expression();
+    if (auto* call = dynamicDowncast<AST::CallExpression>(*leftExpression)) {
+        auto& target = call->target();
+        if (auto* identifier = dynamicDowncast<AST::IdentifierExpression>(target)) {
+            if (identifier->identifier() == "__unpack"_s) {
+                serialized = true;
+                visit(call->arguments()[0]);
+            }
+        }
+    }
+    if (!serialized)
+        visit(statement.leftExpression());
+
     m_stringBuilder.append(" = "_s);
     serializeBinaryExpression(statement.leftExpression(), statement.operation(), statement.rightExpression());
 }

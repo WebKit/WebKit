@@ -447,6 +447,12 @@ fn testRuntimeArray()
     s.y[0] = 0;
 }
 
+@group(0) @binding(11) var<storage,read_write> D: array<vec3f>;
+fn testPackedVec3CompoundAssignment()
+{
+    D[0] += vec3f(1);
+}
+
 @compute @workgroup_size(1)
 fn main()
 {
@@ -458,4 +464,5 @@ fn main()
     _ = testUnaryOperations();
     _ = testCall();
     testRuntimeArray();
+    testPackedVec3CompoundAssignment();
 }
