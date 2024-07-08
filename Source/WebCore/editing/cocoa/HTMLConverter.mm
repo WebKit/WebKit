@@ -82,16 +82,15 @@
 #import "DataDetection.h"
 #endif
 
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#import "PlatformNSAdaptiveImageGlyph.h"
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #import "UIFoundationSoftLink.h"
 #import "WAKAppKitStubs.h"
 #import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/UIKitSPI.h>
-#endif
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebMultiRepresentationHEICAttachmentAdditions.h>
-#include <WebKitAdditions/WebMultiRepresentationHEICAttachmentDeclarationsAdditions.h>
 #endif
 
 using namespace WebCore;
@@ -1219,7 +1218,7 @@ BOOL HTMLConverter::_addMultiRepresentationHEICAttachmentForImageElement(HTMLIma
     if (!image)
         return NO;
 
-    WebMultiRepresentationHEICAttachment *attachment = image->adapter().multiRepresentationHEIC();
+    NSAdaptiveImageGlyph *attachment = image->adapter().multiRepresentationHEIC();
     if (!attachment)
         return NO;
 
@@ -1233,7 +1232,7 @@ BOOL HTMLConverter::_addMultiRepresentationHEICAttachmentForImageElement(HTMLIma
     if (rangeToReplace.location < _domRangeStartIndex)
         _domRangeStartIndex += rangeToReplace.length;
 
-    [_attrStr addAttribute:WebMultiRepresentationHEICAttachmentAttributeName value:attachment range:rangeToReplace];
+    [_attrStr addAttribute:NSAdaptiveImageGlyphAttributeName value:attachment range:rangeToReplace];
 
     _flags.isSoft = NO;
     return YES;
@@ -1305,9 +1304,9 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
         if (RetainPtr data = [fileWrapper regularFileContents]) {
             RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element);
             if (imageElement && imageElement->isMultiRepresentationHEIC())
-                attachment = adoptNS([[PlatformWebMultiRepresentationHEICAttachment alloc] initWithImageContent:data.get()]);
+                attachment = adoptNS([[PlatformNSAdaptiveImageGlyph alloc] initWithImageContent:data.get()]);
             if (attachment)
-                attributeName = WebMultiRepresentationHEICAttachmentAttributeName;
+                attributeName = NSAdaptiveImageGlyphAttributeName;
         }
 #endif
 
@@ -2426,10 +2425,10 @@ static RetainPtr<NSAttributedString> attributedStringWithAttachmentForElement(co
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     if (element.isMultiRepresentationHEIC()) {
         if (RefPtr image = element.image()) {
-            if (WebMultiRepresentationHEICAttachment *attachment = image->adapter().multiRepresentationHEIC()) {
+            if (NSAdaptiveImageGlyph *attachment = image->adapter().multiRepresentationHEIC()) {
                 RetainPtr attachmentString = adoptNS([[NSString alloc] initWithFormat:@"%C", static_cast<unichar>(NSAttachmentCharacter)]);
                 RetainPtr attributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:attachmentString.get()]);
-                [attributedString addAttribute:WebMultiRepresentationHEICAttachmentAttributeName value:attachment range:NSMakeRange(0, 1)];
+                [attributedString addAttribute:NSAdaptiveImageGlyphAttributeName value:attachment range:NSMakeRange(0, 1)];
                 return attributedString;
             }
         }

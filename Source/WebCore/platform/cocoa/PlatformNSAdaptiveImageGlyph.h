@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,29 +25,20 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY)
-
-#import <pal/spi/ios/UIKitSPI.h>
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, UIFoundation)
-
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSColor)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextAttachment)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSMutableParagraphStyle)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextList)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextBlock)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTableBlock)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTable)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTab)
-
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSAdaptiveImageGlyph)
+#if USE(APPKIT)
 
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, UIFoundation, NSAdaptiveImageGlyphAttributeName, NSString *)
-#define NSAdaptiveImageGlyphAttributeName WebCore::get_UIFoundation_NSAdaptiveImageGlyphAttributeName()
+#import <AppKit/NSAdaptiveImageGlyph.h>
+
+#define PlatformNSAdaptiveImageGlyph NSAdaptiveImageGlyph.class
+
+#else
+
+#import <UIKit/NSAdaptiveImageGlyph.h>
+
+#define PlatformNSAdaptiveImageGlyph getNSAdaptiveImageGlyphClass()
 
 #endif
 
-#endif
+#endif // ENABLE(MULTI_REPRESENTATION_HEIC)

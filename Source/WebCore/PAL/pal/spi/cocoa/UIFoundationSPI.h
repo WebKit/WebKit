@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,29 +25,30 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(APPLE_INTERNAL_SDK)
 
-#import <pal/spi/ios/UIKitSPI.h>
-#import <wtf/SoftLinking.h>
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#import <UIFoundation/NSAdaptiveImageGlyph_Private.h>
+#import <UIFoundation/NSEmojiImageAsset.h>
+#endif
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, UIFoundation)
-
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSColor)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextAttachment)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSMutableParagraphStyle)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextList)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextBlock)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTableBlock)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTable)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTab)
+#else
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSAdaptiveImageGlyph)
-
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, UIFoundation, NSAdaptiveImageGlyphAttributeName, NSString *)
-#define NSAdaptiveImageGlyphAttributeName WebCore::get_UIFoundation_NSAdaptiveImageGlyphAttributeName()
-
+#if USE(APPKIT)
+#import <AppKit/NSAdaptiveImageGlyph.h>
+#else
+#import <UIKit/NSAdaptiveImageGlyph.h>
 #endif
 
-#endif
+@interface NSEmojiImageStrike : CTEmojiImageStrike
+@end
+
+@interface NSAdaptiveImageGlyph ()
+@property (readonly) NSArray<NSEmojiImageStrike *> *strikes;
+@end
+
+#endif // ENABLE(MULTI_REPRESENTATION_HEIC)
+
+#endif // USE(APPLE_INTERNAL_SDK)

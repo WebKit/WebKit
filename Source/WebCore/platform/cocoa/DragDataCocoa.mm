@@ -44,10 +44,6 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/MultiRepresentationHEICAdditions.h>
-#endif
-
 namespace WebCore {
 
 static inline String rtfPasteboardType()
@@ -181,7 +177,7 @@ bool DragData::shouldMatchStyleOnDrop() const
     Vector<String> types;
     auto context = createPasteboardContext();
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName, context.get());
-    return types.contains(MULTI_REPRESENTATION_HEIC_PASTEBOARD_TYPE_STRING);
+    return types.contains("com.apple.sticker"_s);
 #else
     return false;
 #endif

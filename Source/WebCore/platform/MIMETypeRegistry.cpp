@@ -64,10 +64,6 @@
 #include "ImageDecoderGStreamer.h"
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/MultiRepresentationHEICAdditions.h>
-#endif
-
 namespace WebCore {
 
 static String normalizedImageMIMEType(const String&);
@@ -136,7 +132,7 @@ constexpr ComparableCaseFoldingASCIILiteral supportedImageMIMETypeArray[] = {
 #endif
     "image/webp",
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    MULTI_REPRESENTATION_HEIC_MIME_TYPE,
+    "image/x-apple-adaptive-glyph",
 #endif
 #if PLATFORM(IOS_FAMILY)
     "image/x-bmp",

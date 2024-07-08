@@ -193,10 +193,6 @@
 #import "PepperUICoreSPI.h"
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKContentViewInteractionAdditionsBefore.mm>
-#endif
-
 #if HAVE(AVKIT)
 #import <pal/spi/cocoa/AVKitSPI.h>
 #endif
@@ -13242,8 +13238,21 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.mm>
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+
+- (BOOL)supportsAdaptiveImageGlyph
+{
+    if (self.webView._isEditable || self.webView.configuration._multiRepresentationHEICInsertionEnabled)
+        return _page->editorState().isContentRichlyEditable;
+
+    return NO;
+}
+
+- (void)insertAdaptiveImageGlyph:(NSAdaptiveImageGlyph *)adaptiveImageGlyph replacementRange:(UITextRange *)replacementRange
+{
+    _page->insertMultiRepresentationHEIC(adaptiveImageGlyph.imageContent, adaptiveImageGlyph.contentDescription);
+}
+
 #endif
 
 @end
