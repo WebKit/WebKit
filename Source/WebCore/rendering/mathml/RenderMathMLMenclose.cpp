@@ -162,12 +162,10 @@ void RenderMathMLMenclose::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
-    RenderMathMLRow::computePreferredLogicalWidths();
-
-    LayoutUnit preferredWidth = m_maxPreferredLogicalWidth;
+    LayoutUnit preferredWidth = preferredLogicalWidthOfRowItems();
     SpaceAroundContent space = spaceAroundContent(preferredWidth, 0);
-    m_maxPreferredLogicalWidth = space.left + preferredWidth + space.right;
-    m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth;
+    preferredWidth += space.left + space.right + borderAndPaddingLogicalWidth();
+    m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = preferredWidth;
 
     setPreferredLogicalWidthsDirty(false);
 }
@@ -179,18 +177,22 @@ void RenderMathMLMenclose::layoutBlock(bool relayoutChildren, LayoutUnit)
     if (!relayoutChildren && simplifiedLayout())
         return;
 
+    recomputeLogicalWidth();
+    computeAndSetBlockDirectionMarginsOfChildren();
+
     LayoutUnit contentWidth, contentAscent, contentDescent;
     stretchVerticalOperatorsAndLayoutChildren();
     getContentBoundingBox(contentWidth, contentAscent, contentDescent);
     layoutRowItems(contentWidth, contentAscent);
 
     SpaceAroundContent space = spaceAroundContent(contentWidth, contentAscent + contentDescent);
+    space.left += borderLeft() + paddingLeft();
+    space.right += borderRight() + paddingRight();
+    space.top += borderAndPaddingBefore();
+    space.bottom += borderAndPaddingAfter();
     setLogicalWidth(space.left + contentWidth + space.right);
     setLogicalHeight(space.top + contentAscent + contentDescent + space.bottom);
-
-    LayoutPoint contentLocation(space.left, space.top);
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
-        child->setLocation(child->location() + contentLocation);
+    shiftRowItems(space.left, space.top);
 
     m_contentRect = LayoutRect(space.left, space.top, contentWidth, contentAscent + contentDescent);
 

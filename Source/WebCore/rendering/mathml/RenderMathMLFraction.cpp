@@ -237,8 +237,7 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     numerator().layoutIfNeeded();
     denominator().layoutIfNeeded();
-    numerator().computeAndSetBlockDirectionMargins(*this);
-    denominator().computeAndSetBlockDirectionMargins(*this);
+    computeAndSetBlockDirectionMarginsOfChildren();
 
     LayoutUnit numeratorMarginBoxInlineSize = numerator().marginStart() + numerator().logicalWidth() + numerator().marginEnd();
     LayoutUnit denominatorMarginBoxInlineSize = denominator().marginStart() + denominator().logicalWidth() + denominator().marginEnd();
