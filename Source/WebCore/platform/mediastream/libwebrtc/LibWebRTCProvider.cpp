@@ -30,6 +30,7 @@
 
 #include "ContentType.h"
 #include "LibWebRTCAudioModule.h"
+#include "LibWebRTCLogSink.h"
 #include "LibWebRTCUtils.h"
 #include "Logging.h"
 #include "MediaCapabilitiesDecodingInfo.h"
