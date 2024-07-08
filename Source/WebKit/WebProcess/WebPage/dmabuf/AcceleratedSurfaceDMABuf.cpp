@@ -147,13 +147,10 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
     }
 
     struct gbm_bo* bo = nullptr;
-    uint64_t modifier = DRM_FORMAT_MOD_INVALID;
     uint32_t flags = dmabufFormat.usage == DMABufRendererBufferFormat::Usage::Scanout ? GBM_BO_USE_SCANOUT : GBM_BO_USE_RENDERING;
-    if (!dmabufFormat.modifiers.isEmpty() && dmabufFormat.modifiers[0] != DRM_FORMAT_MOD_INVALID) {
+    bool disableModifiers = dmabufFormat.modifiers.size() == 1 && dmabufFormat.modifiers[0] == DRM_FORMAT_MOD_INVALID;
+    if (!disableModifiers && !dmabufFormat.modifiers.isEmpty())
         bo = gbm_bo_create_with_modifiers2(device, size.width(), size.height(), dmabufFormat.fourcc, dmabufFormat.modifiers.data(), dmabufFormat.modifiers.size(), flags);
-        if (bo)
-            modifier = gbm_bo_get_modifier(bo);
-    }
 
     if (!bo) {
         if (dmabufFormat.usage == DMABufRendererBufferFormat::Usage::Mapping)
@@ -171,6 +168,7 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
     Vector<uint32_t> strides;
     uint32_t format = gbm_bo_get_format(bo);
     int planeCount = gbm_bo_get_plane_count(bo);
+    uint64_t modifier = disableModifiers ? DRM_FORMAT_MOD_INVALID : gbm_bo_get_modifier(bo);
 
     Vector<EGLAttrib> attributes = {
         EGL_WIDTH, static_cast<EGLAttrib>(gbm_bo_get_width(bo)),
