@@ -755,6 +755,10 @@ protected:
     bool videoFullscreenStandby() const { return m_videoFullscreenStandby; }
     void setVideoFullscreenStandbyInternal(bool videoFullscreenStandby) { m_videoFullscreenStandby = videoFullscreenStandby; }
 
+protected:
+    // ActiveDOMObject
+    void stop() override;
+
 private:
     friend class Internals;
 
@@ -777,7 +781,6 @@ private:
     // ActiveDOMObject.
     void suspend(ReasonForSuspension) override;
     void resume() override;
-    void stop() override;
     bool virtualHasPendingActivity() const override;
 
     void stopWithoutDestroyingMediaPlayer();

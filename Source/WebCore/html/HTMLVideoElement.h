@@ -129,6 +129,9 @@ public:
     bool isGStreamerHolePunchingEnabled() const final { return m_enableGStreamerHolePunching; }
 #endif
 
+    // ActiveDOMObject
+    void stop() final;
+
 private:
     HTMLVideoElement(const QualifiedName&, Document&, bool createdByParser);
 

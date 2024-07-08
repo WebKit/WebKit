@@ -686,6 +686,13 @@ void HTMLVideoElement::cancelVideoFrameCallback(unsigned identifier)
     }
 }
 
+void HTMLVideoElement::stop()
+{
+    m_videoFrameRequests.clear();
+    m_servicedVideoFrameRequests.clear();
+    HTMLMediaElement::stop();
+}
+
 static void processVideoFrameMetadataTimestamps(VideoFrameMetadata& metadata, Performance& performance)
 {
     metadata.presentationTime = performance.relativeTimeFromTimeOriginInReducedResolution(MonotonicTime::fromRawSeconds(metadata.presentationTime));
