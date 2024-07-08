@@ -914,6 +914,12 @@
         (allow mach-message-send
             (kernel-mig-routine-in-use-watchos))
 #endif
+#if ASAN_ENABLED
+        (allow mach-message-send
+            (kernel-mig-routine
+                mach_vm_region_recurse
+                task_set_exc_guard_behavior))
+#endif
         (allow mach-message-send
             (kernel-mig-routine
                 _mach_make_memory_entry
