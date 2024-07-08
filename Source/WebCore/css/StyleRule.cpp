@@ -323,11 +323,28 @@ Vector<Ref<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorCompo
     return rules;
 }
 
+String StyleRule::debugDescription() const
+{
+    StringBuilder builder;
+    builder.append("StyleRule ["_s, m_properties->asText(), ']');
+    return builder.toString();
+}
+
 StyleRuleWithNesting::~StyleRuleWithNesting() = default;
 
 Ref<StyleRuleWithNesting> StyleRuleWithNesting::copy() const
 {
     return adoptRef(*new StyleRuleWithNesting(*this));
+}
+
+String StyleRuleWithNesting::debugDescription() const
+{
+    StringBuilder builder;
+    builder.append("StyleRuleWithNesting ["_s, properties().asText(), " "_s);
+    for (const auto& rule : m_nestedRules)
+        builder.append(rule->debugDescription());
+    builder.append(']');
+    return builder.toString();
 }
 
 StyleRuleWithNesting::StyleRuleWithNesting(const StyleRuleWithNesting& other)
@@ -477,6 +494,16 @@ void StyleRuleGroup::wrapperRemoveRule(unsigned index)
     m_childRules.remove(index);
 }
 
+String StyleRuleGroup::debugDescription() const
+{
+    StringBuilder builder;
+    builder.append("StyleRuleGroup ["_s);
+    for (const auto& rule : m_childRules)
+        builder.append(rule->debugDescription());
+    builder.append(']');
+    return builder.toString();
+}
+
 StyleRuleMedia::StyleRuleMedia(MQ::MediaQueryList&& mediaQueries, Vector<Ref<StyleRuleBase>>&& rules)
     : StyleRuleGroup(StyleRuleType::Media, WTFMove(rules))
     , m_mediaQueries(WTFMove(mediaQueries))
@@ -497,6 +524,13 @@ Ref<StyleRuleMedia> StyleRuleMedia::create(MQ::MediaQueryList&& mediaQueries, Ve
 Ref<StyleRuleMedia> StyleRuleMedia::copy() const
 {
     return adoptRef(*new StyleRuleMedia(*this));
+}
+
+String StyleRuleMedia::debugDescription() const
+{
+    StringBuilder builder;
+    builder.append("StyleRuleMedia ["_s, StyleRuleGroup::debugDescription(), ']');
+    return builder.toString();
 }
 
 StyleRuleSupports::StyleRuleSupports(const String& conditionText, bool conditionIsSupported, Vector<Ref<StyleRuleBase>>&& rules)
@@ -611,6 +645,22 @@ StyleRuleNamespace::StyleRuleNamespace(const AtomString& prefix, const AtomStrin
 Ref<StyleRuleNamespace> StyleRuleNamespace::create(const AtomString& prefix, const AtomString& uri)
 {
     return adoptRef(*new StyleRuleNamespace(prefix, uri));
+}
+
+String StyleRuleBase::debugDescription() const
+{
+    return visitDerived([]<typename RuleType> (const RuleType& rule) -> String {
+        // FIXME: implement debugDescription() for all classes which inherit StyleRuleBase.
+        if constexpr (std::is_same_v<decltype(&RuleType::debugDescription), decltype(&StyleRuleBase::debugDescription)>)
+            return "StyleRuleBase"_s;
+        return rule.debugDescription();
+    });
+}
+
+WTF::TextStream& operator<<(WTF::TextStream& ts, const StyleRuleBase& rule)
+{
+    ts << rule.debugDescription();
+    return ts;
 }
 
 } // namespace WebCore
