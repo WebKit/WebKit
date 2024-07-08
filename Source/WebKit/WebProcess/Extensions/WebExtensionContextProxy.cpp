@@ -182,12 +182,12 @@ void WebExtensionContextProxy::setStorageAccessLevel(bool allowedInContentScript
 
 void WebExtensionContextProxy::enumerateFramesAndNamespaceObjects(const Function<void(WebFrame&, WebExtensionAPINamespace&)>& function, DOMWrapperWorld& world)
 {
-    for (Ref frame : m_extensionContentFrames) {
-        RefPtr page = frame->page() ? frame->page()->corePage() : nullptr;
+    m_extensionContentFrames.forEach([&](auto& frame) {
+        RefPtr page = frame.page() ? frame.page()->corePage() : nullptr;
         if (!page)
-            continue;
+            return;
 
-        auto context = page->isServiceWorkerPage() ? frame->jsContextForServiceWorkerWorld(world) : frame->jsContextForWorld(world);
+        auto context = page->isServiceWorkerPage() ? frame.jsContextForServiceWorkerWorld(world) : frame.jsContextForWorld(world);
         auto globalObject = JSContextGetGlobalObject(context);
 
         RefPtr<WebExtensionAPINamespace> namespaceObjectImpl;
@@ -202,10 +202,10 @@ void WebExtensionContextProxy::enumerateFramesAndNamespaceObjects(const Function
         }
 
         if (!namespaceObjectImpl)
-            continue;
+            return;
 
         function(frame, *namespaceObjectImpl);
-    }
+    });
 }
 
 } // namespace WebKit

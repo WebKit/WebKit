@@ -64,7 +64,6 @@ public:
     ~WebExtensionContextProxy();
 
     using WeakFrameSet = WeakHashSet<WebFrame>;
-    using WeakPageSet = WeakHashSet<WebPage>;
     using TabWindowIdentifierPair = std::pair<std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>>;
     using WeakPageTabWindowMap = WeakHashMap<WebPage, TabWindowIdentifierPair>;
     using PermissionsMap = WebExtensionContext::PermissionsMap;
