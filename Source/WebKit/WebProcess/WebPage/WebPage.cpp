@@ -5549,6 +5549,16 @@ void WebPage::didRemoveEditCommand(WebUndoStepID commandID)
     removeWebEditCommand(commandID);
 }
 
+void WebPage::closeCurrentTypingCommand()
+{
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    if (RefPtr document = frame->document())
+        document->editor().closeTyping();
+}
+
 void WebPage::setActivePopupMenu(WebPopupMenu* menu)
 {
     m_activePopupMenu = menu;

@@ -2275,6 +2275,11 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     }
 }
 
+void Editor::closeTyping()
+{
+    TypingCommand::closeTyping(m_document);
+}
+
 RenderInline* Editor::writingSuggestionRenderer() const
 {
     return m_writingSuggestionRenderer.get();

@@ -13255,6 +13255,14 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 
 #endif
 
+- (void)_closeCurrentTypingCommand
+{
+    if (!_page)
+        return;
+
+    _page->closeCurrentTypingCommand();
+}
+
 @end
 
 @implementation WKContentView (WKTesting)

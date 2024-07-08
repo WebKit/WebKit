@@ -14300,6 +14300,12 @@ void WebPageProxy::setAllowsLayoutViewportHeightExpansion(bool value)
     pageClient().scheduleVisibleContentRectUpdate();
 }
 
+void WebPageProxy::closeCurrentTypingCommand()
+{
+    if (hasRunningProcess())
+        send(Messages::WebPage::CloseCurrentTypingCommand());
+}
+
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG

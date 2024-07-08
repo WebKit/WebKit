@@ -624,6 +624,8 @@ public:
     RenderInline* writingSuggestionRenderer() const;
     void setWritingSuggestionRenderer(RenderInline&);
 
+    WEBCORE_EXPORT void closeTyping();
+
 private:
     Document& document() const { return m_document.get(); }
     Ref<Document> protectedDocument() const { return m_document.get(); }

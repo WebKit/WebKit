@@ -2483,6 +2483,8 @@ public:
     void updateActivityState();
     void dispatchActivityStateChange();
 
+    void closeCurrentTypingCommand();
+
 private:
     void getWebCryptoMasterKey(CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);

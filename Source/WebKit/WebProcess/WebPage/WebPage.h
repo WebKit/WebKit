@@ -597,6 +597,8 @@ public:
     void removeWebEditCommand(WebUndoStepID);
     bool isInRedo() const { return m_isInRedo; }
 
+    void closeCurrentTypingCommand();
+
     void setActivePopupMenu(WebPopupMenu*);
 
     inline void setHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds);

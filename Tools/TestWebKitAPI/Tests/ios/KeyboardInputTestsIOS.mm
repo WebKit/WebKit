@@ -904,6 +904,49 @@ TEST(KeyboardInputTests, DoNotRegisterActionsInOverriddenUndoManager)
     EXPECT_FALSE([overrideUndoManager canUndo]);
 }
 
+TEST(KeyboardInputTests, NewUndoGroupClosesPreviousTypingCommand)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    auto inputDelegate = adoptNS([TestInputDelegate new]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[](WKWebView *, id<_WKFocusedElementInfo>) {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+    __block bool didStartInputSession = false;
+    [inputDelegate setDidStartInputSessionHandler:^(WKWebView *, id<_WKFormInputSession>) {
+        didStartInputSession = true;
+    }];
+    [webView _setInputDelegate:inputDelegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<body contenteditable>"];
+    [webView objectByEvaluatingJavaScript:@"document.body.focus()"];
+    Util::run(&didStartInputSession);
+
+    RetainPtr contentView = [webView textInputContentView];
+    auto insertText = ^(NSString *text) {
+        [contentView insertText:text];
+        [webView waitForNextPresentationUpdate];
+    };
+
+    insertText(@"Foo");
+
+    [[contentView undoManager] beginUndoGrouping];
+    [webView waitForNextPresentationUpdate];
+
+    insertText(@" ");
+    insertText(@"bar");
+
+    [[contentView undoManager] endUndoGrouping];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ("Foo bar", [webView contentsAsString]);
+
+    [[contentView undoManager] undo];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ("Foo", [webView contentsAsString]);
+
+    [[contentView undoManager] undo];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ("", [webView contentsAsString]);
+}
+
 static UIView * nilResizableSnapshotViewFromRect(id, SEL, CGRect, BOOL, UIEdgeInsets)
 {
     return nil;

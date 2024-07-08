@@ -815,4 +815,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     StartPlayingPredominantVideo() -> (bool success)
 #endif
+
+    CloseCurrentTypingCommand()
 }
