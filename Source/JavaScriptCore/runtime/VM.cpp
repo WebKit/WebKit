@@ -57,7 +57,6 @@
 #include "GetterSetterInlines.h"
 #include "GigacageAlignedMemoryAllocator.h"
 #include "HasOwnPropertyCache.h"
-#include "HashMapImplInlines.h"
 #include "Heap.h"
 #include "HeapProfiler.h"
 #include "IncrementalSweeper.h"
@@ -323,14 +322,12 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     moduleProgramCodeBlockStructure.setWithoutWriteBarrier(ModuleProgramCodeBlock::createStructure(*this, nullptr, jsNull()));
     evalCodeBlockStructure.setWithoutWriteBarrier(EvalCodeBlock::createStructure(*this, nullptr, jsNull()));
     functionCodeBlockStructure.setWithoutWriteBarrier(FunctionCodeBlock::createStructure(*this, nullptr, jsNull()));
-    hashMapBucketSetStructure.setWithoutWriteBarrier(HashMapBucket<HashMapBucketDataKey>::createStructure(*this, nullptr, jsNull()));
-    hashMapBucketMapStructure.setWithoutWriteBarrier(HashMapBucket<HashMapBucketDataKeyValue>::createStructure(*this, nullptr, jsNull()));
     bigIntStructure.setWithoutWriteBarrier(JSBigInt::createStructure(*this, nullptr, jsNull()));
 
     // Eagerly initialize constant cells since the concurrent compiler can access them.
     if (Options::useJIT()) {
-        sentinelMapBucket();
-        sentinelSetBucket();
+        orderedHashTableDeletedValue();
+        orderedHashTableSentinel();
         emptyPropertyNameEnumerator();
         ensureMegamorphicCache();
     }
@@ -1488,19 +1485,19 @@ Ref<Waiter> VM::syncWaiter()
     return m_syncWaiter;
 }
 
-JSCell* VM::sentinelSetBucketSlow()
+JSCell* VM::orderedHashTableDeletedValueSlow()
 {
-    ASSERT(!m_sentinelSetBucket);
-    auto* sentinel = JSSet::BucketType::createSentinel(*this);
-    m_sentinelSetBucket.setWithoutWriteBarrier(sentinel);
-    return sentinel;
+    ASSERT(!m_orderedHashTableDeletedValue);
+    Symbol* deleted = OrderedHashMap::createDeletedValue(*this);
+    m_orderedHashTableDeletedValue.setWithoutWriteBarrier(deleted);
+    return deleted;
 }
 
-JSCell* VM::sentinelMapBucketSlow()
+JSCell* VM::orderedHashTableSentinelSlow()
 {
-    ASSERT(!m_sentinelMapBucket);
-    auto* sentinel = JSMap::BucketType::createSentinel(*this);
-    m_sentinelMapBucket.setWithoutWriteBarrier(sentinel);
+    ASSERT(!m_orderedHashTableSentinel);
+    JSCell* sentinel = OrderedHashMap::createSentinel(*this);
+    m_orderedHashTableSentinel.setWithoutWriteBarrier(sentinel);
     return sentinel;
 }
 
@@ -1671,8 +1668,8 @@ void VM::visitAggregateImpl(Visitor& visitor)
     visitor.append(bigIntStructure);
 
     visitor.append(m_emptyPropertyNameEnumerator);
-    visitor.append(m_sentinelSetBucket);
-    visitor.append(m_sentinelMapBucket);
+    visitor.append(m_orderedHashTableDeletedValue);
+    visitor.append(m_orderedHashTableSentinel);
     visitor.append(m_fastCanConstructBoundExecutable);
     visitor.append(m_slowCanConstructBoundExecutable);
     visitor.append(lastCachedString);

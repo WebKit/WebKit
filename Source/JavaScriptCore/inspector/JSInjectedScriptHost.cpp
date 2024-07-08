@@ -607,15 +607,23 @@ static JSObject* cloneArrayIteratorObject(JSGlobalObject* globalObject, VM& vm, 
 
 static JSObject* cloneMapIteratorObject(JSGlobalObject* globalObject, VM& vm, JSMapIterator* iteratorObject)
 {
-    JSMapIterator* clone = JSMapIterator::create(vm, globalObject->mapIteratorStructure(), jsCast<JSMap*>(iteratorObject->iteratedObject()), iteratorObject->kind());
-    clone->internalField(JSMapIterator::Field::MapBucket).set(vm, clone, iteratorObject->internalField(JSMapIterator::Field::MapBucket).get());
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSMapIterator* clone = JSMapIterator::create(globalObject, globalObject->mapIteratorStructure(), jsCast<JSMap*>(iteratorObject->iteratedObject()), iteratorObject->kind());
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    clone->internalField(JSMapIterator::Field::Entry).set(vm, clone, iteratorObject->internalField(JSMapIterator::Field::Entry).get());
     return clone;
 }
 
 static JSObject* cloneSetIteratorObject(JSGlobalObject* globalObject, VM& vm, JSSetIterator* iteratorObject)
 {
-    JSSetIterator* clone = JSSetIterator::create(vm, globalObject->setIteratorStructure(), jsCast<JSSet*>(iteratorObject->iteratedObject()), iteratorObject->kind());
-    clone->internalField(JSSetIterator::Field::SetBucket).set(vm, clone, iteratorObject->internalField(JSSetIterator::Field::SetBucket).get());
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSSetIterator* clone = JSSetIterator::create(globalObject, globalObject->setIteratorStructure(), jsCast<JSSet*>(iteratorObject->iteratedObject()), iteratorObject->kind());
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    clone->internalField(JSSetIterator::Field::Entry).set(vm, clone, iteratorObject->internalField(JSSetIterator::Field::Entry).get());
     return clone;
 }
 
@@ -644,11 +652,15 @@ JSValue JSInjectedScriptHost::iteratorEntries(JSGlobalObject* globalObject, Call
                     iterator = cloneArrayIteratorObject(globalObject, vm, arrayIterator);
             }
         } else if (auto* mapIterator = jsDynamicCast<JSMapIterator*>(iteratorObject)) {
-            if (jsCast<JSMap*>(mapIterator->iteratedObject())->isIteratorProtocolFastAndNonObservable())
+            if (jsCast<JSMap*>(mapIterator->iteratedObject())->isIteratorProtocolFastAndNonObservable()) {
                 iterator = cloneMapIteratorObject(globalObject, vm, mapIterator);
+                RETURN_IF_EXCEPTION(scope, { });
+            }
         } else if (auto* setIterator = jsDynamicCast<JSSetIterator*>(iteratorObject)) {
-            if (jsCast<JSSet*>(setIterator->iteratedObject())->isIteratorProtocolFastAndNonObservable())
+            if (jsCast<JSSet*>(setIterator->iteratedObject())->isIteratorProtocolFastAndNonObservable()) {
                 iterator = cloneSetIteratorObject(globalObject, vm, setIterator);
+                RETURN_IF_EXCEPTION(scope, { });
+            }
         }
     }
     RETURN_IF_EXCEPTION(scope, { });

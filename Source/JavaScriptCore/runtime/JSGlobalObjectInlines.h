@@ -318,6 +318,16 @@ inline JSArray* constructArrayNegativeIndexed(JSGlobalObject* globalObject, Arra
     return ArrayAllocationProfile::updateLastAllocationFor(profile, array);
 }
 
+template<typename... Args>
+inline JSArray* createTuple(JSGlobalObject* globalObject, Args&&... args)
+{
+    MarkedArgumentBuffer buffer;
+    (buffer.append(std::forward<Args>(args)), ...);
+
+    ASSERT(!buffer.hasOverflowed());
+    return constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), buffer);
+}
+
 inline OptionSet<CodeGenerationMode> JSGlobalObject::defaultCodeGenerationMode() const
 {
     OptionSet<CodeGenerationMode> codeGenerationMode;

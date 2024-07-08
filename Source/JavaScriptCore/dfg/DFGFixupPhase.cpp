@@ -2723,7 +2723,12 @@ private:
             break;
         }
 
-        case GetMapBucket:
+        case MapValue:
+            fixEdge<MapObjectUse>(node->child1());
+            fixEdge<Int32Use>(node->child2());
+            break;
+
+        case MapKeyIndex:
             if (node->child1().useKind() == MapObjectUse)
                 fixEdge<MapObjectUse>(node->child1());
             else if (node->child1().useKind() == SetObjectUse)
@@ -2759,7 +2764,7 @@ private:
             fixEdge<Int32Use>(node->child3());
             break;
 
-        case GetMapBucketHead:
+        case MapStorage:
             if (node->child1().useKind() == MapObjectUse)
                 fixEdge<MapObjectUse>(node->child1());
             else if (node->child1().useKind() == SetObjectUse)
@@ -2768,10 +2773,26 @@ private:
                 RELEASE_ASSERT_NOT_REACHED();
             break;
 
-        case GetMapBucketNext:
-        case LoadKeyFromMapBucket:
-        case LoadValueFromMapBucket:
+        case MapIterationNext:
             fixEdge<CellUse>(node->child1());
+            fixEdge<Int32Use>(node->child2());
+            break;
+
+        case MapIterationEntry:
+        case MapIterationEntryKey:
+        case MapIterationEntryValue:
+            fixEdge<CellUse>(node->child1());
+            break;
+
+        case MapIteratorNext:
+        case MapIteratorKey:
+        case MapIteratorValue:
+            if (node->child1().useKind() == MapIteratorObjectUse)
+                fixEdge<MapIteratorObjectUse>(node->child1());
+            else if (node->child1().useKind() == SetIteratorObjectUse)
+                fixEdge<SetIteratorObjectUse>(node->child1());
+            else
+                RELEASE_ASSERT_NOT_REACHED();
             break;
 
         case MapHash: {

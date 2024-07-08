@@ -100,9 +100,14 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
     m_arrayIteratorFieldIteratedObject.set(m_vm, jsNumber(static_cast<int32_t>(JSArrayIterator::Field::IteratedObject)));
     m_arrayIteratorFieldIndex.set(m_vm, jsNumber(static_cast<int32_t>(JSArrayIterator::Field::Index)));
     m_arrayIteratorFieldKind.set(m_vm, jsNumber(static_cast<int32_t>(JSArrayIterator::Field::Kind)));
-    m_mapIteratorFieldMapBucket.set(m_vm, jsNumber(static_cast<int32_t>(JSMapIterator::Field::MapBucket)));
+
+    m_mapIteratorFieldEntry.set(m_vm, jsNumber(static_cast<int32_t>(JSMapIterator::Field::Entry)));
+    m_mapIteratorFieldIteratedObject.set(m_vm, jsNumber(static_cast<int32_t>(JSMapIterator::Field::IteratedObject)));
+    m_mapIteratorFieldStorage.set(m_vm, jsNumber(static_cast<int32_t>(JSMapIterator::Field::Storage)));
     m_mapIteratorFieldKind.set(m_vm, jsNumber(static_cast<int32_t>(JSMapIterator::Field::Kind)));
-    m_setIteratorFieldSetBucket.set(m_vm, jsNumber(static_cast<int32_t>(JSSetIterator::Field::SetBucket)));
+    m_setIteratorFieldEntry.set(m_vm, jsNumber(static_cast<int32_t>(JSSetIterator::Field::Entry)));
+    m_setIteratorFieldIteratedObject.set(m_vm, jsNumber(static_cast<int32_t>(JSSetIterator::Field::IteratedObject)));
+    m_setIteratorFieldStorage.set(m_vm, jsNumber(static_cast<int32_t>(JSSetIterator::Field::Storage)));
     m_setIteratorFieldKind.set(m_vm, jsNumber(static_cast<int32_t>(JSSetIterator::Field::Kind)));
     m_stringIteratorFieldIndex.set(m_vm, jsNumber(static_cast<int32_t>(JSStringIterator::Field::Index)));
     m_stringIteratorFieldIteratedString.set(m_vm, jsNumber(static_cast<int32_t>(JSStringIterator::Field::IteratedString)));
@@ -138,14 +143,9 @@ std::optional<BytecodeIntrinsicRegistry::Entry> BytecodeIntrinsicRegistry::looku
     JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_SIMPLE_EACH_NAME(JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS)
 #undef JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS
 
-JSValue BytecodeIntrinsicRegistry::sentinelMapBucketValue(BytecodeGenerator& generator)
+JSValue BytecodeIntrinsicRegistry::orderedHashTableSentinelValue(BytecodeGenerator& generator)
 {
-    return generator.vm().sentinelMapBucket();
-}
-
-JSValue BytecodeIntrinsicRegistry::sentinelSetBucketValue(BytecodeGenerator& generator)
-{
-    return generator.vm().sentinelSetBucket();
+    return generator.vm().orderedHashTableSentinel();
 }
 
 } // namespace JSC

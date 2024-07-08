@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function next() {
-    "use strict";
+#include "config.h"
+#include "OrderedHashTable.h"
 
-    if (!@isMapIterator(this))
-        @throwTypeError("%MapIteratorPrototype%.next requires that |this| be an Map Iterator instance");
+namespace JSC {
 
-    var value;
-    var done = @mapIteratorNext(this);
+template<typename Traits>
+template<typename Visitor>
+void OrderedHashTable<Traits>::visitChildrenImpl(JSCell* cell, Visitor& visitor)
+{
+    OrderedHashTable<Traits>* thisObject = jsCast<OrderedHashTable<Traits>*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
 
-    if (!done) {
-        var kind = @getMapIteratorInternalField(this, @mapIteratorFieldKind);
-        if (kind === @iterationKindKey)
-            value = @mapIteratorKey(this);
-        else if (kind === @iterationKindValue)
-            value = @mapIteratorValue(this);
-        else
-            value = [@mapIteratorKey(this), @mapIteratorValue(this)];
-    }
-    return { value, done };
+    visitor.append(thisObject->m_storage);
 }
+
+DEFINE_VISIT_CHILDREN_WITH_MODIFIER(template<typename Traits>, OrderedHashTable<Traits>);
+
+template class OrderedHashTable<MapTraits>;
+template class OrderedHashTable<SetTraits>;
+
+} // namespace JSC

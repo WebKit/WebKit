@@ -39,7 +39,7 @@
 #include "FunctionPrototype.h"
 #include "GetByStatus.h"
 #include "GetterSetter.h"
-#include "HashMapImplInlines.h"
+#include "HashMapHelper.h"
 #include "JITOperations.h"
 #include "JSAsyncGenerator.h"
 #include "JSGenerator.h"
@@ -1545,37 +1545,31 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case LoadKeyFromMapBucket:
-    case LoadValueFromMapBucket:
+    case MapIterationEntryKey:
+    case MapIterationEntryValue:
+    case MapIteratorKey:
+    case MapIteratorValue:
+    case MapValue:
     case ExtractValueFromWeakMapGet:
         makeHeapTopForNode(node);
         break;
 
-    case GetMapBucket:
-    case GetMapBucketHead:
-        if (node->child1().useKind() == MapObjectUse)
-            setForNode(node, m_vm.hashMapBucketMapStructure.get());
-        else {
-            ASSERT(node->child1().useKind() == SetObjectUse);
-            setForNode(node, m_vm.hashMapBucketSetStructure.get());
-        }
-        break;
-
-    case GetMapBucketNext:
-        if (node->bucketOwnerType() == BucketOwnerType::Map)
-            setForNode(node, m_vm.hashMapBucketMapStructure.get());
-        else {
-            ASSERT(node->bucketOwnerType() == BucketOwnerType::Set);
-            setForNode(node, m_vm.hashMapBucketSetStructure.get());
-        }
-        break;
-
     case SetAdd:
-        setForNode(node, m_vm.hashMapBucketSetStructure.get());
+    case MapSet:
         break;
 
-    case MapSet:
-        setForNode(node, m_vm.hashMapBucketMapStructure.get());
+    case MapIterationEntry:
+    case MapKeyIndex:
+        setTypeForNode(node, SpecInt32Only);
+        break;
+
+    case MapStorage:
+    case MapIterationNext:
+        setTypeForNode(node, SpecCellOther);
+        break;
+
+    case MapIteratorNext:
+        setTypeForNode(node, SpecBoolean);
         break;
 
     case MapOrSetDelete:

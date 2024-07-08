@@ -1518,26 +1518,47 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::Map)].initLater([] (const Initializer<JSCell>& init) {
             init.set(jsCast<JSGlobalObject*>(init.owner)->mapConstructor());
         });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapBucketHead)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapBucketHead"_s, mapPrivateFuncMapBucketHead, ImplementationVisibility::Private, JSMapBucketHeadIntrinsic));
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapIterationNext)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapIterationNext"_s, mapPrivateFuncMapIterationNext, ImplementationVisibility::Private, JSMapIterationNextIntrinsic));
         });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapBucketNext)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapBucketNext"_s, mapPrivateFuncMapBucketNext, ImplementationVisibility::Private, JSMapBucketNextIntrinsic));
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapIterationEntry)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapIterationEntry"_s, mapPrivateFuncMapIterationEntry, ImplementationVisibility::Private, JSMapIterationEntryIntrinsic));
         });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapBucketKey)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapBucketKey"_s, mapPrivateFuncMapBucketKey, ImplementationVisibility::Private, JSMapBucketKeyIntrinsic));
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapStorage)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapStorage"_s, mapPrivateFuncMapStorage, ImplementationVisibility::Private, JSMapStorageIntrinsic));
         });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapBucketValue)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapBucketValue"_s, mapPrivateFuncMapBucketValue, ImplementationVisibility::Private, JSMapBucketValueIntrinsic));
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapIteratorNext)].initLater([](const Initializer<JSCell>& init) {
+        init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapIteratorNext"_s, mapIteratorPrivateFuncMapIteratorNext, ImplementationVisibility::Private, JSMapIteratorNextIntrinsic));
+    });
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapIteratorKey)].initLater([](const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapIteratorKey"_s, mapIteratorPrivateFuncMapIteratorKey, ImplementationVisibility::Private, JSMapIteratorKeyIntrinsic));
         });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setBucketHead)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "setBucketHead"_s, setPrivateFuncSetBucketHead, ImplementationVisibility::Private, JSSetBucketHeadIntrinsic));
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapIteratorValue)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapIteratorValue"_s, mapIteratorPrivateFuncMapIteratorValue, ImplementationVisibility::Private, JSMapIteratorValueIntrinsic));
         });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setBucketNext)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "setBucketNext"_s, setPrivateFuncSetBucketNext, ImplementationVisibility::Private, JSSetBucketNextIntrinsic));
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapIterationEntryKey)].initLater([](const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapIterationEntryKey"_s, mapPrivateFuncMapIterationEntryKey, ImplementationVisibility::Private, JSMapIterationEntryKeyIntrinsic));
         });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setBucketKey)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "setBucketKey"_s, setPrivateFuncSetBucketKey, ImplementationVisibility::Private, JSSetBucketKeyIntrinsic));
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapIterationEntryValue)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapIterationEntryValue"_s, mapPrivateFuncMapIterationEntryValue, ImplementationVisibility::Private, JSMapIterationEntryValueIntrinsic));
+        });
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setIterationNext)].initLater([](const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "setIterationNext"_s, setPrivateFuncSetIterationNext, ImplementationVisibility::Private, JSSetIterationNextIntrinsic));
+        });
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setIterationEntry)].initLater([](const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "setIterationEntry"_s, setPrivateFuncSetIterationEntry, ImplementationVisibility::Private, JSSetIterationEntryIntrinsic));
+        });
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setIterationEntryKey)].initLater([](const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "setIterationEntryKey"_s, setPrivateFuncSetIterationEntryKey, ImplementationVisibility::Private, JSSetIterationEntryKeyIntrinsic));
+        });
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setIteratorNext)].initLater([](const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "setIteratorNext"_s, setIteratorPrivateFuncSetIteratorNext, ImplementationVisibility::Private, JSSetIteratorNextIntrinsic));
+        });
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setIteratorKey)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "setIteratorKey"_s, setIteratorPrivateFuncSetIteratorKey, ImplementationVisibility::Private, JSSetIteratorKeyIntrinsic));
+        });
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setStorage)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "setStorage"_s, setPrivateFuncSetStorage, ImplementationVisibility::Private, JSSetStorageIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setClone)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "setClone"_s, setPrivateFuncClone, ImplementationVisibility::Private));

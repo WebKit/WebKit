@@ -234,8 +234,8 @@ JSC_DECLARE_JIT_OPERATION(operationCreateClonedArgumentsDuringExit, JSCell*, (VM
 JSC_DECLARE_JIT_OPERATION(operationCreateClonedArguments, JSCell*, (JSGlobalObject*, Structure*, Register* argumentStart, uint32_t length, JSFunction* callee, Butterfly*));
 JSC_DECLARE_JIT_OPERATION(operationCreateRest, JSCell*, (JSGlobalObject*, Register* argumentStart, unsigned numberOfArgumentsToSkip, unsigned arraySize));
 JSC_DECLARE_JIT_OPERATION(operationNewArrayBuffer, JSCell*, (VM*, Structure*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationSetAdd, JSCell*, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
-JSC_DECLARE_JIT_OPERATION(operationMapSet, JSCell*, (JSGlobalObject*, JSCell*, EncodedJSValue, EncodedJSValue, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationSetAdd, void, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationMapSet, void, (JSGlobalObject*, JSCell*, EncodedJSValue, EncodedJSValue, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationMapDelete, size_t, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationSetDelete, size_t, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationWeakSetAdd, void, (JSGlobalObject*, JSCell*, JSCell*, int32_t));
@@ -291,8 +291,30 @@ JSC_DECLARE_JIT_OPERATION(operationNewBoundFunction, JSBoundFunction*, (JSGlobal
 JSC_DECLARE_JIT_OPERATION(operationNormalizeMapKeyHeapBigInt, EncodedJSValue, (VM*, JSBigInt*));
 JSC_DECLARE_JIT_OPERATION(operationMapHash, UCPUStrictInt32, (JSGlobalObject*, EncodedJSValue input));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMapHashHeapBigInt, UCPUStrictInt32, (VM*, JSBigInt*));
-JSC_DECLARE_JIT_OPERATION(operationJSMapFindBucket, JSCell*, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
-JSC_DECLARE_JIT_OPERATION(operationJSSetFindBucket, JSCell*, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
+
+JSC_DECLARE_JIT_OPERATION(operationMapKeyIndex, UCPUStrictInt32, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationSetKeyIndex, UCPUStrictInt32, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationMapValue, EncodedJSValue, (JSGlobalObject*, JSCell*, int32_t));
+
+JSC_DECLARE_JIT_OPERATION(operationMapStorage, EncodedJSValue, (JSGlobalObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationSetStorage, EncodedJSValue, (JSGlobalObject*, JSCell*));
+
+JSC_DECLARE_JIT_OPERATION(operationMapIterationNext, EncodedJSValue, (JSGlobalObject*, JSCell*, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationMapIterationEntry, EncodedJSValue, (JSGlobalObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationMapIterationEntryKey, EncodedJSValue, (JSGlobalObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationMapIterationEntryValue, EncodedJSValue, (JSGlobalObject*, JSCell*));
+
+JSC_DECLARE_JIT_OPERATION(operationSetIterationNext, EncodedJSValue, (JSGlobalObject*, JSCell*, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationSetIterationEntry, EncodedJSValue, (JSGlobalObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationSetIterationEntryKey, EncodedJSValue, (JSGlobalObject*, JSCell*));
+
+JSC_DECLARE_JIT_OPERATION(operationMapIteratorNext, EncodedJSValue, (JSGlobalObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationMapIteratorKey, EncodedJSValue, (JSGlobalObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationMapIteratorValue, EncodedJSValue, (JSGlobalObject*, JSCell*));
+
+JSC_DECLARE_JIT_OPERATION(operationSetIteratorNext, EncodedJSValue, (JSGlobalObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationSetIteratorKey, EncodedJSValue, (JSGlobalObject*, JSCell*));
+
 JSC_DECLARE_JIT_OPERATION(operationNewMap, JSMap*, (VM*, Structure*));
 JSC_DECLARE_JIT_OPERATION(operationNewSet, JSSet*, (VM*, Structure*));
 
