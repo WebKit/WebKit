@@ -36,6 +36,7 @@
 #include "DataTransfer.h"
 #include "DocumentInlines.h"
 #include "DocumentType.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "ElementIterator.h"
 #include "ElementRareData.h"
 #include "ElementTraversal.h"
@@ -46,12 +47,14 @@
 #include "GCReachableRef.h"
 #include "HTMLAreaElement.h"
 #include "HTMLBodyElement.h"
+#include "HTMLDetailsElement.h"
 #include "HTMLDialogElement.h"
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLScriptElement.h"
 #include "HTMLSlotElement.h"
 #include "HTMLStyleElement.h"
+#include "HTMLSummaryElement.h"
 #include "InputEvent.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
@@ -2188,6 +2191,23 @@ Element* Node::enclosingLinkEventParentOrSelf()
     }
 
     return nullptr;
+}
+
+void Node::expandAllDetailsAncestors()
+{
+    if (!document().settings().detailsAutoExpandEnabled())
+        return;
+    Vector<RefPtr<HTMLDetailsElement>> detailsElements;
+    for (auto& element : lineageOfType<HTMLElement>(*this)) {
+        if (is<HTMLSummaryElement>(element))
+            break;
+        if (RefPtr details = dynamicDowncast<HTMLDetailsElement>(element)) {
+            if (!details->hasAttributeWithoutSynchronization(HTMLNames::openAttr))
+                detailsElements.append(details);
+        }
+    }
+    for (auto& element : detailsElements)
+        element->toggleOpen();
 }
 
 enum EventTargetInterfaceType Node::eventTargetInterface() const

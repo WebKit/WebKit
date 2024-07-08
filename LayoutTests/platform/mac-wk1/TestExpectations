@@ -1586,6 +1586,10 @@ fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Skip ]
 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate.html [ Skip ]
 http/tests/download/convert-cached-load-to-download.html [ Skip ]
 
+# testRunner.findInPage function is WK2-only, not implemented for WK1
+editing/text-iterator/find-in-page-in-closed-details.html
+editing/text-iterator/find-in-page-in-summary-of-closed-details.html
+
 # dumpPolicyDelegateCallbacks is not supported in DumpRenderTree
 fast/loader/iframe-src-invalid-url.html [ Skip ]
 

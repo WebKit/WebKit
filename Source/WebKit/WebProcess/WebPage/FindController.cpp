@@ -309,6 +309,9 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
         found = idOfFrameContainingString.has_value();
     }
 
+    if (RefPtr selectedFrame = frameWithSelection(m_webPage->corePage()); selectedFrame && found)
+        selectedFrame->selection().selection().start().anchorNode()->expandAllDetailsAncestors();
+
     if (found && !options.contains(FindOptions::DoNotSetSelection)) {
         didFindString();
 

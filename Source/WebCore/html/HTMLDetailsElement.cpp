@@ -114,6 +114,11 @@ void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     root.appendChild(summarySlot);
 
     m_defaultSlot = HTMLSlotElement::create(slotTag, document());
+    if (document().settings().detailsAutoExpandEnabled()) {
+        m_defaultSlot->setInlineStyleProperty(CSSPropertyContentVisibility, CSSValueHidden);
+        m_defaultSlot->setInlineStyleProperty(CSSPropertyDisplay, CSSValueBlock);
+        root.appendChild(*m_defaultSlot);
+    }
     ASSERT(!hasAttribute(openAttr));
 }
 
@@ -156,7 +161,13 @@ void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomS
             RefPtr root = shadowRoot();
             ASSERT(root);
             if (!newValue.isNull()) {
-                root->appendChild(*m_defaultSlot);
+                if (document().settings().detailsAutoExpandEnabled()) {
+                    m_defaultSlot->removeInlineStyleProperty(CSSPropertyContentVisibility);
+                    m_defaultSlot->removeInlineStyleProperty(CSSPropertyDisplay);
+                    if (CheckedPtr renderer = this->renderer())
+                        renderer->repaint(); // Repaints disclosure triangle
+                } else
+                    root->appendChild(*m_defaultSlot);
                 queueDetailsToggleEventTask(DetailsState::Closed, DetailsState::Open);
                 if (document().settings().detailsNameAttributeEnabled() && !attributeWithoutSynchronization(nameAttr).isEmpty()) {
                     ShouldNotFireMutationEventsScope scope(document());
@@ -164,7 +175,14 @@ void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomS
                         otherDetailsElement->removeAttribute(openAttr);
                 }
             } else {
-                root->removeChild(*m_defaultSlot);
+                if (document().settings().detailsAutoExpandEnabled()) {
+                    m_defaultSlot->setInlineStyleProperty(CSSPropertyContentVisibility, CSSValueHidden);
+                    m_defaultSlot->setInlineStyleProperty(CSSPropertyDisplay, CSSValueBlock);
+                    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
+                    if (CheckedPtr renderer = this->renderer())
+                        renderer->repaint(); // Repaints disclosure triangle
+                } else
+                    root->removeChild(*m_defaultSlot);
                 queueDetailsToggleEventTask(DetailsState::Open, DetailsState::Closed);
             }
         }

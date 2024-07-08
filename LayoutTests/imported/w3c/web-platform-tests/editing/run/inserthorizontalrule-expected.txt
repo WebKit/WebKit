@@ -673,9 +673,9 @@ PASS [["inserthorizontalrule",""]] "<del>foo[bar]baz</del>" queryCommandValue("i
 PASS [["inserthorizontalrule",""]] "<del>foo[bar]baz</del>" queryCommandIndeterm("inserthorizontalrule") after
 PASS [["inserthorizontalrule",""]] "<del>foo[bar]baz</del>" queryCommandState("inserthorizontalrule") after
 PASS [["inserthorizontalrule",""]] "<del>foo[bar]baz</del>" queryCommandValue("inserthorizontalrule") after
-FAIL [["inserthorizontalrule",""]] "<details>foo[bar]baz</details>": execCommand("inserthorizontalrule", false, "") return value assert_equals: expected true but got false
+PASS [["inserthorizontalrule",""]] "<details>foo[bar]baz</details>": execCommand("inserthorizontalrule", false, "") return value
 PASS [["inserthorizontalrule",""]] "<details>foo[bar]baz</details>" checks for modifications to non-editable content
-FAIL [["inserthorizontalrule",""]] "<details>foo[bar]baz</details>" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "<details>foo<hr>baz</details>" but got "<details>foobarbaz</details>"
+FAIL [["inserthorizontalrule",""]] "<details>foo[bar]baz</details>" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "<details>foo<hr>baz</details>" but got "<details></details>"
 PASS [["inserthorizontalrule",""]] "<details>foo[bar]baz</details>" queryCommandIndeterm("inserthorizontalrule") before
 PASS [["inserthorizontalrule",""]] "<details>foo[bar]baz</details>" queryCommandState("inserthorizontalrule") before
 PASS [["inserthorizontalrule",""]] "<details>foo[bar]baz</details>" queryCommandValue("inserthorizontalrule") before

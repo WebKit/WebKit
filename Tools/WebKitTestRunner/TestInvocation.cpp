@@ -690,6 +690,14 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "FindString")) {
+        auto messageBodyDictionary = dictionaryValue(messageBody);
+        auto string = stringValue(messageBodyDictionary, "String");
+        auto findOptions = static_cast<WKFindOptions>(uint64Value(messageBodyDictionary, "FindOptions"));
+        WKPageFindString(TestController::singleton().mainWebView()->page(), string, findOptions, 0);
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "DumpBackForwardList"))
         return postPageMessage("DumpBackForwardList");
 

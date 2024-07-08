@@ -17,4 +17,7 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 Custom summary text
-display:contents custom summary text
+Extra details one
+
+Extra details twodisplay:contents custom summary text
+

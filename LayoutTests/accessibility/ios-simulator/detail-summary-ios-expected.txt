@@ -5,6 +5,8 @@ Detail1
 link
 Summary2
 
+Detail2
+
 This tests the details element on iOS.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

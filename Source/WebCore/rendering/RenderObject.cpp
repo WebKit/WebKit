@@ -36,6 +36,7 @@
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "HTMLBRElement.h"
+#include "HTMLDetailsElement.h"
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
 #include "HTMLTableElement.h"
@@ -2796,6 +2797,18 @@ bool RenderObject::isSkippedContent() const
 
 bool RenderObject::isSkippedContentForLayout() const
 {
+    // Per https://html.spec.whatwg.org/#interaction-with-details-and-hidden=until-found
+    // we need to prevent the contents of closed details elements from being treated as
+    // skipped content, because we want find-in-page to find matches in them. But without
+    // special-casing here, find-in-page won't work with them — because the contents of
+    // closed details elements all have their content-visibility set to "hidden", which
+    // for layout purposes would otherwise cause them to be treated as skipped content.
+    if (document().settings().detailsAutoExpandEnabled()) {
+        for (auto& ancestor : ancestorsOfType<RenderElement>(*this)) {
+            if (auto* element = dynamicDowncast<HTMLElement>(ancestor.element()); element && is<HTMLDetailsElement>(*element))
+                return false;
+        }
+    }
     return isSkippedContent() && !view().frameView().layoutContext().needsSkippedContentLayout();
 }
 

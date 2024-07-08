@@ -271,6 +271,9 @@ imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-f
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-worker-owner.https.html
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-document.https.html [ Skip ]
 
+# https://github.com/web-platform-tests/wpt/pull/45242
+imported/w3c/web-platform-tests/css/css-animations/animation-canceled-by-parent-details-element-being-closed.html [ Skip ]
+
 # This test is a bit slow.
 fast/frames/frame-append-body-child-crash.html [ Slow ]
 

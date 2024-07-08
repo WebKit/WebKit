@@ -2155,6 +2155,20 @@ DeprecationReportingEnabled:
     WebCore:
       default: false
 
+DetailsAutoExpandEnabled:
+  type: bool
+  status: preview
+  category: html
+  humanReadableName: "HTML <details> autoexpand"
+  humanReadableDescription: "Enable HTML <details> autoexpand"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 DetailsNameAttributeEnabled:
   type: bool
   status: stable
