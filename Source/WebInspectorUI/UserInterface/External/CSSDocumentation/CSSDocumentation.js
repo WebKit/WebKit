@@ -157,8 +157,7 @@ CSSDocumentation = {
     },
     "-webkit-line-clamp": {
         "description": "The -webkit-line-clamp CSS property allows limiting of the contents of a block container to the specified number of lines.",
-        "syntax": "none | <integer>",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/-webkit-line-clamp"
+        "syntax": "none | <integer>"
     },
     "-webkit-mask": {
         "description": "The mask CSS property alters the visibility of an element by either partially or fully hiding it. This is accomplished by either masking or clipping the image at specific points.",
@@ -339,6 +338,15 @@ CSSDocumentation = {
     "alt": {
         "description": "Provides alternative text for assistive technology to replace the generated content of a ::before or ::after element.",
         "url": "https://developer.mozilla.org/docs/Web/CSS/alt"
+    },
+    "anchor-name": {
+        "description": "The anchor-name property declares that an element is an anchor element, and gives it a list of anchor names to be targeted by.",
+        "syntax": "none | <dashed-ident>#",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/anchor-name"
+    },
+    "anchor-scope": {
+        "description": "This property scopes the specified anchor names, and lookups for these anchor names, to this element\u2019s subtree",
+        "syntax": "none | all | <dashed-ident>#"
     },
     "animation": {
         "description": "Shorthand property combines six of the animation properties into a single property.",
@@ -1094,6 +1102,10 @@ CSSDocumentation = {
         "description": "@counter-style descriptor. Specifies a fallback counter style to be used when the current counter style can't create a representation for a given counter value.",
         "syntax": "<counter-style-name>"
     },
+    "field-sizing": {
+        "description": "The field-sizing CSS property enables you to control the sizing behavior of elements that are given a default preferred size, such as form control elements. This property enables you to override the default sizing behavior, allowing form controls to adjust in size to fit their contents.",
+        "syntax": "content | fixed"
+    },
     "fill": {
         "description": "Paints the interior of the given graphical element."
     },
@@ -1220,8 +1232,13 @@ CSSDocumentation = {
     },
     "font-synthesis": {
         "description": "Controls whether user agents are allowed to synthesize bold or oblique font faces when a font family lacks bold or italic faces.",
-        "syntax": "none | [ weight || style || small-caps ]",
+        "syntax": "none | [ weight || style || small-caps || position]",
         "url": "https://developer.mozilla.org/docs/Web/CSS/font-synthesis"
+    },
+    "font-synthesis-position": {
+        "description": "The font-synthesis-position CSS property lets you specify whether or not a browser may synthesize the subscript and superscript \"position\" typefaces when they are missing in a font family, while using font-variant-position to set the positions.",
+        "syntax": "auto | none",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/font-synthesis-position"
     },
     "font-synthesis-small-caps": {
         "description": "The font-synthesis-small-caps CSS property lets you specify whether or not the browser may synthesize small-caps typeface when it is missing in a font family. Small-caps glyphs typically use the form of uppercase letters but are reduced to the size of lowercase letters.",
@@ -1240,7 +1257,7 @@ CSSDocumentation = {
     },
     "font-variant": {
         "description": "Specifies variant representations of the font",
-        "syntax": "normal | none | [ <common-lig-values> || <discretionary-lig-values> || <historical-lig-values> || <contextual-alt-values> || stylistic(<feature-value-name>) || historical-forms || styleset(<feature-value-name>#) || character-variant(<feature-value-name>#) || swash(<feature-value-name>) || ornaments(<feature-value-name>) || annotation(<feature-value-name>) || [ small-caps | all-small-caps | petite-caps | all-petite-caps | unicase | titling-caps ] || <numeric-figure-values> || <numeric-spacing-values> || <numeric-fraction-values> || ordinal || slashed-zero || <east-asian-variant-values> || <east-asian-width-values> || ruby ]",
+        "syntax": "normal | none | [ <common-lig-values> || <discretionary-lig-values> || <historical-lig-values> || <contextual-alt-values> || stylistic( <feature-value-name> ) || historical-forms || styleset( <feature-value-name># ) || character-variant( <feature-value-name># ) || swash( <feature-value-name> ) || ornaments( <feature-value-name> ) || annotation( <feature-value-name> ) || [ small-caps | all-small-caps | petite-caps | all-petite-caps | unicase | titling-caps ] || <numeric-figure-values> || <numeric-spacing-values> || <numeric-fraction-values> || ordinal || slashed-zero || <east-asian-variant-values> || <east-asian-width-values> || ruby ]",
         "url": "https://developer.mozilla.org/docs/Web/CSS/font-variant"
     },
     "font-variant-alternates": {
@@ -1398,7 +1415,7 @@ CSSDocumentation = {
     },
     "height": {
         "description": "Specifies the height of the content area, padding area or border area (depending on 'box-sizing') of certain boxes.",
-        "syntax": "<viewport-length>{1,2}",
+        "syntax": "auto | <length> | <percentage> | min-content | max-content | fit-content | fit-content(<length-percentage>)",
         "url": "https://developer.mozilla.org/docs/Web/CSS/height"
     },
     "hyphenate-character": {
@@ -1450,7 +1467,7 @@ CSSDocumentation = {
     },
     "initial-value": {
         "description": "Specifies the initial value of the custom property registration represented by the @property rule, controlling the property\u2019s initial value.",
-        "syntax": "<string>"
+        "syntax": "<declaration-value>?"
     },
     "inline-size": {
         "description": "Size of an element in the direction specified by 'writing-mode'.",
@@ -1465,6 +1482,11 @@ CSSDocumentation = {
         "description": "The inset CSS property defines the logical block and inline start and end offsets of an element, which map to physical offsets depending on the element's writing mode, directionality, and text orientation. It corresponds to the top and bottom, or right and left properties depending on the values defined for writing-mode, direction, and text-orientation.",
         "syntax": "<'top'>{1,4}",
         "url": "https://developer.mozilla.org/docs/Web/CSS/inset"
+    },
+    "inset-area": {
+        "description": "Most common use-cases of anchor positioning only need to worry about the edges of the positioned element\u2019s containing block, and the edges of the default anchor element. These lines can be thought of as defining a 3x3 grid; inset-area lets you easily set up the positioned element\u2019s inset properties by specifying what area of this inset-area grid you want the positioned element to be in",
+        "syntax": "none | <inset-area>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/inset-area"
     },
     "inset-block": {
         "description": "The inset-block CSS property defines the logical block start and end offsets of an element, which maps to physical offsets depending on the element's writing mode, directionality, and text orientation. It corresponds to the top and bottom, or right and left properties depending on the values defined for writing-mode, direction, and text-orientation.",
@@ -1544,7 +1566,8 @@ CSSDocumentation = {
     },
     "line-clamp": {
         "description": "The line-clamp property allows limiting the contents of a block container to the specified number of lines; remaining content is fragmented away and neither rendered nor measured. Optionally, it also allows inserting content into the last line box to indicate the continuity of truncated/interrupted content.",
-        "syntax": "none | <integer>"
+        "syntax": "none | <integer>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/-webkit-line-clamp"
     },
     "line-gap-override": {
         "description": "Describes the line-gap metric of a font.",
@@ -1767,7 +1790,7 @@ CSSDocumentation = {
     },
     "max-height": {
         "description": "Allows authors to constrain content height to a certain range.",
-        "syntax": "<viewport-length>",
+        "syntax": "none | <length-percentage> | min-content | max-content | fit-content | fit-content(<length-percentage>)",
         "url": "https://developer.mozilla.org/docs/Web/CSS/max-height"
     },
     "max-inline-size": {
@@ -1781,12 +1804,8 @@ CSSDocumentation = {
     },
     "max-width": {
         "description": "Allows authors to constrain content width to a certain range.",
-        "syntax": "<viewport-length>",
+        "syntax": "none | <length-percentage> | min-content | max-content | fit-content | fit-content(<length-percentage>)",
         "url": "https://developer.mozilla.org/docs/Web/CSS/max-width"
-    },
-    "max-zoom": {
-        "description": "The max-zoom CSS descriptor sets the maximum zoom factor of a document defined by the @viewport at-rule. The browser will not zoom in any further than this, whether automatically or at the user's request.\n\nA zoom factor of 1.0 or 100% corresponds to no zooming. Larger values are zoomed in. Smaller values are zoomed out.",
-        "syntax": "auto | <number> | <percentage>"
     },
     "min-block-size": {
         "description": "Minimal size of an element in the direction opposite that of the direction specified by 'writing-mode'.",
@@ -1795,7 +1814,7 @@ CSSDocumentation = {
     },
     "min-height": {
         "description": "Allows authors to constrain content height to a certain range.",
-        "syntax": "<viewport-length>",
+        "syntax": "auto | <length> | <percentage> | min-content | max-content | fit-content | fit-content(<length-percentage>)",
         "url": "https://developer.mozilla.org/docs/Web/CSS/min-height"
     },
     "min-inline-size": {
@@ -1805,12 +1824,8 @@ CSSDocumentation = {
     },
     "min-width": {
         "description": "Allows authors to constrain content width to a certain range.",
-        "syntax": "<viewport-length>",
+        "syntax": "auto | <length> | <percentage> | min-content | max-content | fit-content | fit-content(<length-percentage>)",
         "url": "https://developer.mozilla.org/docs/Web/CSS/min-width"
-    },
-    "min-zoom": {
-        "description": "The min-zoom CSS descriptor sets the minimum zoom factor of a document defined by the @viewport at-rule. The browser will not zoom out any further than this, whether automatically or at the user's request.\n\nA zoom factor of 1.0 or 100% corresponds to no zooming. Larger values are zoomed in. Smaller values are zoomed out.",
-        "syntax": "auto | <number> | <percentage>"
     },
     "mix-blend-mode": {
         "description": "Defines the formula that must be used to mix the colors with the backdrop.",
@@ -1910,10 +1925,6 @@ CSSDocumentation = {
         "syntax": "<integer>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/order"
     },
-    "orientation": {
-        "description": "The orientation CSS @media media feature can be used to apply styles based on the orientation of the viewport (or the page box, for paged media).",
-        "syntax": "auto | portrait | landscape"
-    },
     "orphans": {
         "description": "Specifies the minimum number of line boxes in a block container that must be left in a fragment before a fragmentation break.",
         "syntax": "<integer>",
@@ -1926,7 +1937,7 @@ CSSDocumentation = {
     },
     "outline-color": {
         "description": "The color of the outline.",
-        "syntax": "<color> | invert",
+        "syntax": "auto | <color>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/outline-color"
     },
     "outline-offset": {
@@ -1987,6 +1998,11 @@ CSSDocumentation = {
         "description": "Specifies the handling of overflow in the vertical direction.",
         "syntax": "visible | hidden | clip | scroll | auto",
         "url": "https://developer.mozilla.org/docs/Web/CSS/overflow-y"
+    },
+    "overlay": {
+        "description": "The overlay CSS property specifies whether an element appearing in the top layer (for example, a shown popover or modal <dialog> element) is actually rendered in the top layer. This property is only relevant within a list of transition-property values, and only if allow-discrete is set as the transition-behavior.",
+        "syntax": "none | auto",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/overlay"
     },
     "override-colors": {
         "description": "The override-colors CSS descriptor is used to override colors in the chosen base-palette for a color font.",
@@ -2139,6 +2155,31 @@ CSSDocumentation = {
         "description": "The position CSS property sets how an element is positioned in a document. The top, right, bottom, and left properties determine the final location of positioned elements.",
         "syntax": "static | relative | absolute | sticky | fixed",
         "url": "https://developer.mozilla.org/docs/Web/CSS/position"
+    },
+    "position-anchor": {
+        "description": "The position-anchor property defines the default anchor specifier for all anchor functions on the element, allowing multiple elements to use the same set of anchor functions (and position options lists!) while changing which anchor element each is referring to.",
+        "syntax": "<anchor-element>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/position-anchor"
+    },
+    "position-try": {
+        "description": "This shorthand sets both position-try-options and position-try-order. If <'position-try-order'> is omitted, it\u2019s set to the property\u2019s initial value.",
+        "syntax": "<'position-try-order'>? <'position-try-options'>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/position-try"
+    },
+    "position-try-options": {
+        "description": "This property provides a list of alternate positioning styles to try when the absolutely positioned box overflows its inset-modified containing block. This position options list is initially empty.",
+        "syntax": "none | [ [<dashed-ident> || <try-tactic>] | inset-area( <'inset-area'> ) ]#",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/position-try-options"
+    },
+    "position-try-order": {
+        "description": "This property specifies the order in which the position options list will be tried.",
+        "syntax": "normal | <try-size>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/position-try-order"
+    },
+    "position-visibility": {
+        "description": "There are times when an element\u2019s anchors are not appropriate for positioning the element with, and it would be better to simply not display the element at all. position-visibility provides several conditions where this could be the case.",
+        "syntax": "always | [ anchors-valid || anchors-visible || no-overflow ]",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/position-visibility"
     },
     "prefix": {
         "description": "@counter-style descriptor. Specifies a <symbol> that is prepended to the marker representation.",
@@ -2636,6 +2677,14 @@ CSSDocumentation = {
         "syntax": "wrap | nowrap | balance | stable | pretty",
         "url": "https://developer.mozilla.org/docs/Web/CSS/text-wrap"
     },
+    "text-wrap-mode": {
+        "description": "The text-wrap-mode CSS property controls whether the text inside an element is wrapped. The different values provide alternate ways of wrapping the content of a block element. It can also be set, and reset, using the text-wrap shorthand.",
+        "syntax": "auto | wrap | nowrap"
+    },
+    "text-wrap-style": {
+        "description": "The text-wrap-style CSS property controls how text inside an element is wrapped. The different values provide alternate ways of wrapping the content of a block element. It can also be set, and reset, using the text-wrap shorthand.",
+        "syntax": "auto | balance | stable | pretty"
+    },
     "timeline-scope": {
         "description": "The timeline-scope CSS property modifies the scope of a named animation timeline.",
         "syntax": "none | <dashed-ident>#",
@@ -2676,6 +2725,11 @@ CSSDocumentation = {
         "syntax": "<single-transition>#",
         "url": "https://developer.mozilla.org/docs/Web/CSS/transition"
     },
+    "transition-behavior": {
+        "description": "The transition-behavior CSS property specifies whether transitions will be started for properties whose animation behavior is discrete.",
+        "syntax": "<transition-behavior-value>#",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/transition-behavior"
+    },
     "transition-delay": {
         "description": "Defines when the transition will start. It allows a transition to begin execution some period of time from when it is applied.",
         "syntax": "<time>#",
@@ -2715,10 +2769,6 @@ CSSDocumentation = {
         "syntax": "auto | text | none | contain | all",
         "url": "https://developer.mozilla.org/docs/Web/CSS/user-select"
     },
-    "user-zoom": {
-        "description": "The user-zoom CSS descriptor controls whether or not the user can change the zoom factor of a document defined by @viewport.",
-        "syntax": "zoom | fixed"
-    },
     "vertical-align": {
         "description": "Affects the vertical positioning of the inline boxes generated by an inline-level element inside a line box.",
         "syntax": "baseline | sub | super | text-top | text-bottom | middle | top | bottom | <percentage> | <length>",
@@ -2749,10 +2799,6 @@ CSSDocumentation = {
         "syntax": "none | <custom-ident>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/view-transition-name"
     },
-    "viewport-fit": {
-        "description": "The border-block-style CSS property defines the style of the logical block borders of an element, which maps to a physical border style depending on the element's writing mode, directionality, and text orientation.",
-        "syntax": "auto | contain | cover"
-    },
     "visibility": {
         "description": "Specifies whether the boxes generated by an element are rendered. Invisible boxes still affect layout (set the 'display' property to 'none' to suppress box generation altogether).",
         "syntax": "visible | hidden | collapse",
@@ -2768,9 +2814,6 @@ CSSDocumentation = {
         "syntax": "collapse | discard | preserve | preserve-breaks | preserve-spaces | break-spaces",
         "url": "https://developer.mozilla.org/docs/Web/CSS/white-space-collapse"
     },
-    "white-space-trim": {
-        "syntax": "none | discard-before || discard-after || discard-inner"
-    },
     "widows": {
         "description": "Specifies the minimum number of line boxes of a block container that must be left in a fragment after a break.",
         "syntax": "<integer>",
@@ -2778,7 +2821,7 @@ CSSDocumentation = {
     },
     "width": {
         "description": "Specifies the width of the content area, padding area or border area (depending on 'box-sizing') of certain boxes.",
-        "syntax": "<viewport-length>{1,2}",
+        "syntax": "auto | <length> | <percentage> | min-content | max-content | fit-content | fit-content(<length-percentage>)",
         "url": "https://developer.mozilla.org/docs/Web/CSS/width"
     },
     "will-change": {
@@ -2812,7 +2855,7 @@ CSSDocumentation = {
     },
     "zoom": {
         "description": "Non-standard. Specifies the magnification scale of the object. See 'transform: scale()' for a standards-based alternative.",
-        "syntax": "auto | <number> | <percentage>",
+        "syntax": "normal | reset | <number> | <percentage>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/zoom"
     }
 };
