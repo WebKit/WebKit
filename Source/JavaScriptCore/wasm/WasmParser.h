@@ -295,7 +295,7 @@ ALWAYS_INLINE typename ParserBase::PartialResult ParserBase::parseBlockSignature
         TypeKind typeKind = static_cast<TypeKind>(kindByte);
 
         if (UNLIKELY(Options::useWebAssemblyTypedFunctionReferences())) {
-            if ((isValidHeapTypeKind(typeKind) || typeKind == TypeKind::Ref || typeKind == TypeKind::RefNull))
+            if ((isValidHeapTypeKind(kindByte) || typeKind == TypeKind::Ref || typeKind == TypeKind::RefNull))
                 return parseReftypeSignature(info, result);
         }
 
@@ -339,7 +339,7 @@ ALWAYS_INLINE bool ParserBase::parseHeapType(const ModuleInformation& info, int3
         return false;
 
     if (heapType < 0) {
-        if (isValidHeapTypeKind(static_cast<TypeKind>(heapType))) {
+        if (isValidHeapTypeKind(heapType)) {
             result = heapType;
             return true;
         }
@@ -363,7 +363,7 @@ ALWAYS_INLINE bool ParserBase::parseValueType(const ModuleInformation& info, Typ
 
     TypeKind typeKind = static_cast<TypeKind>(kind);
     TypeIndex typeIndex = 0;
-    if (Options::useWebAssemblyTypedFunctionReferences() && isValidHeapTypeKind(typeKind)) {
+    if (Options::useWebAssemblyTypedFunctionReferences() && isValidHeapTypeKind(kind)) {
         typeIndex = static_cast<TypeIndex>(typeKind);
         typeKind = TypeKind::RefNull;
     } else if (typeKind == TypeKind::Ref || typeKind == TypeKind::RefNull) {
