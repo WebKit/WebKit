@@ -38,15 +38,6 @@
 #include <wtf/ThreadAssertions.h>
 #include <wtf/WeakRef.h>
 
-namespace WebKit {
-class RemoteSampleBufferDisplayLayer;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteSampleBufferDisplayLayer> : std::true_type { };
-}
-
 namespace WebCore {
 class ImageTransferSessionVT;
 class LocalSampleBufferDisplayLayer;
@@ -56,10 +47,10 @@ enum class VideoFrameRotation : uint16_t;
 namespace WebKit {
 class GPUConnectionToWebProcess;
 
-class RemoteSampleBufferDisplayLayer : public WebCore::SampleBufferDisplayLayerClient, public IPC::MessageReceiver, private IPC::MessageSender {
+class RemoteSampleBufferDisplayLayer : public RefCounted<RemoteSampleBufferDisplayLayer>, public WebCore::SampleBufferDisplayLayerClient, public IPC::MessageReceiver, private IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<RemoteSampleBufferDisplayLayer> create(GPUConnectionToWebProcess&, SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&);
+    static RefPtr<RemoteSampleBufferDisplayLayer> create(GPUConnectionToWebProcess&, SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&);
     ~RemoteSampleBufferDisplayLayer();
 
     using WebCore::SampleBufferDisplayLayerClient::weakPtrFactory;
@@ -74,6 +65,9 @@ public:
 
     CGRect bounds() const;
     void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRight>&&);
+
+    void ref() final { RefCounted::ref(); }
+    void deref() final { RefCounted::deref(); }
 
 private:
     RemoteSampleBufferDisplayLayer(GPUConnectionToWebProcess&, SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&);

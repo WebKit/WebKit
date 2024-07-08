@@ -82,7 +82,7 @@ private:
     Ref<IPC::Connection> m_connection;
     Ref<WorkQueue> m_queue;
     mutable Lock m_layersLock;
-    HashMap<SampleBufferDisplayLayerIdentifier, std::unique_ptr<RemoteSampleBufferDisplayLayer>> m_layers WTF_GUARDED_BY_LOCK(m_layersLock);
+    HashMap<SampleBufferDisplayLayerIdentifier, Ref<RemoteSampleBufferDisplayLayer>> m_layers WTF_GUARDED_BY_LOCK(m_layersLock);
 };
 
 }

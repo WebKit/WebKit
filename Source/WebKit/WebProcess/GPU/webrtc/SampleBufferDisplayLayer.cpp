@@ -158,16 +158,15 @@ PlatformLayer* SampleBufferDisplayLayer::rootLayer()
 void SampleBufferDisplayLayer::setDidFail(bool value)
 {
     m_didFail = value;
-    if (m_client && m_didFail)
-        m_client->sampleBufferDisplayLayerStatusDidFail();
+    RefPtr client = m_client.get();
+    if (client && m_didFail)
+        client->sampleBufferDisplayLayerStatusDidFail();
 }
 
 void SampleBufferDisplayLayer::gpuProcessConnectionDidClose(GPUProcessConnection&)
 {
     m_sharedVideoFrameWriter.disable();
-    m_didFail = true;
-    if (m_client)
-        m_client->sampleBufferDisplayLayerStatusDidFail();
+    setDidFail(true);
 }
 
 void SampleBufferDisplayLayer::setShouldMaintainAspectRatio(bool shouldMaintainAspectRatio)
