@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/Makefile
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/api-attr.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/api.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/changelog.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/comparison.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/conf.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/examples.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/extending.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/glossary.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/hashing.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/how-does-it-work.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/index.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/init.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/license.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/names.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/overview.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/types.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/why.md

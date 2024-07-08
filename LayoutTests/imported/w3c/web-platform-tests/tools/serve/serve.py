@@ -30,7 +30,7 @@ from wptserve import config
 from wptserve.handlers import filesystem_path, wrap_pipeline
 from wptserve.response import ResponseHeaders
 from wptserve.utils import get_port, HTTPException, http2_compatible
-from mod_pywebsocket import standalone as pywebsocket
+from pywebsocket3 import standalone as pywebsocket
 
 
 EDIT_HOSTS_HELP = ("Please ensure all the necessary WPT subdomains "
@@ -315,6 +315,20 @@ class WindowHandler(HtmlWrapperHandler):
 """
 
 
+class WindowModulesHandler(HtmlWrapperHandler):
+    global_type = "window-module"
+    path_replace = [(".any.window-module.html", ".any.js")]
+    wrapper = """<!doctype html>
+<meta charset=utf-8>
+%(meta)s
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+%(script)s
+<div id=log></div>
+<script type=module src="%(path)s"></script>
+"""
+
+
 class AnyHtmlHandler(HtmlWrapperHandler):
     global_type = "window"
     path_replace = [(".any.html", ".any.js")]
@@ -424,6 +438,17 @@ class ShadowRealmHandler(HtmlWrapperHandler):
 (async function() {
   const r = new ShadowRealm();
   r.evaluate("globalThis.self = globalThis; undefined;");
+  r.evaluate(`func => {
+    globalThis.fetch_json = (resource) => {
+      const thenMethod = func(resource);
+      return new Promise((resolve, reject) => thenMethod((s) => resolve(JSON.parse(s)), reject));
+    };
+  }`)((resource) => function (resolve, reject) {
+    fetch(resource).then(res => res.text(), String).then(resolve, reject);
+  });
+  r.evaluate(`s => {
+    globalThis.location = { search: s };
+  }`)(location.search);
   await new Promise(r.evaluate(`
     (resolve, reject) => {
       (async () => {
@@ -566,6 +591,7 @@ class RoutesBuilder:
             ("GET", "*.any.serviceworker.html", ServiceWorkersHandler),
             ("GET", "*.any.serviceworker-module.html", ServiceWorkerModulesHandler),
             ("GET", "*.any.shadowrealm.html", ShadowRealmHandler),
+            ("GET", "*.any.window-module.html", WindowModulesHandler),
             ("GET", "*.any.worker.js", ClassicWorkerHandler),
             ("GET", "*.any.worker-module.js", ModuleWorkerHandler),
             ("GET", "*.asis", handlers.AsIsHandler),
@@ -573,7 +599,9 @@ class RoutesBuilder:
             ("*", "/.well-known/attribution-reporting/debug/report-event-attribution", handlers.PythonScriptHandler),
             ("*", "/.well-known/attribution-reporting/report-aggregate-attribution", handlers.PythonScriptHandler),
             ("*", "/.well-known/attribution-reporting/debug/report-aggregate-attribution", handlers.PythonScriptHandler),
+            ("*", "/.well-known/attribution-reporting/debug/report-aggregate-debug", handlers.PythonScriptHandler),
             ("*", "/.well-known/attribution-reporting/debug/verbose", handlers.PythonScriptHandler),
+            ("GET", "/.well-known/interest-group/permissions/", handlers.PythonScriptHandler),
             ("*", "/.well-known/private-aggregation/*", handlers.PythonScriptHandler),
             ("*", "/.well-known/web-identity", handlers.PythonScriptHandler),
             ("*", "*.py", handlers.PythonScriptHandler),
@@ -652,7 +680,7 @@ class ServerProc:
         try:
             self.daemon = init_func(logger, host, port, paths, routes, bind_address, config, **kwargs)
         except OSError:
-            logger.critical("Socket error on port %s" % port, file=sys.stderr)
+            logger.critical("Socket error on port %s" % port)
             raise
         except Exception:
             logger.critical(traceback.format_exc())
@@ -802,7 +830,8 @@ def start_http_server(logger, host, port, paths, routes, bind_address, config, *
                                      key_file=None,
                                      certificate=None,
                                      latency=kwargs.get("latency"))
-    except Exception:
+    except Exception as error:
+        logger.critical(f"start_http_server: Caught exception from wptserve.WebTestHttpd: {error}")
         startup_failed(logger)
 
 
@@ -820,7 +849,8 @@ def start_https_server(logger, host, port, paths, routes, bind_address, config, 
                                      certificate=config.ssl_config["cert_path"],
                                      encrypt_after_connect=config.ssl_config["encrypt_after_connect"],
                                      latency=kwargs.get("latency"))
-    except Exception:
+    except Exception as error:
+        logger.critical(f"start_https_server: Caught exception from wptserve.WebTestHttpd: {error}")
         startup_failed(logger)
 
 
@@ -841,7 +871,8 @@ def start_http2_server(logger, host, port, paths, routes, bind_address, config, 
                                      encrypt_after_connect=config.ssl_config["encrypt_after_connect"],
                                      latency=kwargs.get("latency"),
                                      http2=True)
-    except Exception:
+    except Exception as error:
+        logger.critical(f"start_http2_server: Caught exception from wptserve.WebTestHttpd: {error}")
         startup_failed(logger)
 
 
@@ -869,7 +900,7 @@ class WebSocketDaemon:
             # TODO: Fix the logging configuration in WebSockets processes
             # see https://github.com/web-platform-tests/wpt/issues/22719
             logger.critical("Failed to start websocket server on port %s, "
-                            "is something already using that port?" % port, file=sys.stderr)
+                            "is something already using that port?" % port)
             raise OSError()
         assert all(item == ports[0] for item in ports)
         self.port = ports[0]
@@ -908,7 +939,8 @@ def start_ws_server(logger, host, port, paths, routes, bind_address, config, **k
                                config.paths["ws_doc_root"],
                                bind_address,
                                ssl_config=None)
-    except Exception:
+    except Exception as error:
+        logger.critical(f"start_ws_server: Caught exception from WebSocketDomain: {error}")
         startup_failed(logger)
 
 
@@ -920,7 +952,8 @@ def start_wss_server(logger, host, port, paths, routes, bind_address, config, **
                                config.paths["ws_doc_root"],
                                bind_address,
                                config.ssl_config)
-    except Exception:
+    except Exception as error:
+        logger.critical(f"start_wss_server: Caught exception from WebSocketDomain: {error}")
         startup_failed(logger)
 
 

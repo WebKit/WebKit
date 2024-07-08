@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/howto/autoreload.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/howto/cheatsheet.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/howto/django.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/howto/extensions.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/howto/fly.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/howto/haproxy.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/howto/heroku.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/howto/index.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/howto/kubernetes.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/howto/nginx.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/howto/patterns.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/howto/quickstart.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/howto/render.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/howto/sansio.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/howto/supervisor.rst

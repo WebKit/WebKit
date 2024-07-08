@@ -530,6 +530,7 @@ def get_test_queue_builder(**kwargs: Any) -> Tuple[TestQueueBuilder, Mapping[str
 
 
 TestGroup = namedtuple("TestGroup", ["group", "subsuite", "test_type", "metadata"])
+GroupMetadata = Mapping[str, Any]
 
 
 class TestQueueBuilder:
@@ -552,13 +553,14 @@ class TestQueueBuilder:
         processes = self.process_count(self.kwargs["processes"], len(groups))
         if processes > 1:
             groups.sort(key=lambda group: (
-                # Place groups of the same test type together to minimize
-                # browser restarts.
+                # Place groups of the same subsuite, test type together to
+                # minimize browser restarts.
+                group.subsuite,
                 group.test_type,
                 # Next, run larger groups first to avoid straggler runners. Use
                 # timeout to give slow tests greater relative weight.
-                -sum(test.timeout for test in group.group),
-            ))
+                sum(test.timeout for test in group.group),
+            ), reverse=True)
         for item in groups:
             test_queue.put(item)
 
@@ -573,7 +575,7 @@ class TestQueueBuilder:
     def tests_by_group(self, tests_by_type: TestsByType) -> Mapping[str, List[str]]:
         pass
 
-    def group_metadata(self, state: Mapping[str, Any]) -> Mapping[str, Any]:
+    def group_metadata(self, state: Mapping[str, Any]) -> GroupMetadata:
         return {"scope": "/"}
 
     def process_count(self, requested_processes: int, num_test_groups: int) -> int:
@@ -654,7 +656,7 @@ class PathGroupedSource(TestQueueBuilder):
                 groups[group_name].append(test.id)
         return groups
 
-    def group_metadata(self, state: Mapping[str, Any]) -> Mapping[str, Any]:
+    def group_metadata(self, state: Mapping[str, Any]) -> GroupMetadata:
         return {"scope": "/%s" % "/".join(state["prev_group_key"][2])}
 
 
