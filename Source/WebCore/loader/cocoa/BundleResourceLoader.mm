@@ -42,8 +42,8 @@ namespace BundleResourceLoader {
 
 static WorkQueue& loadQueue()
 {
-    static auto& queue = WorkQueue::create("org.WebKit.BundleResourceLoader"_s, WorkQueue::QOS::Utility).leakRef();
-    return queue;
+    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("org.WebKit.BundleResourceLoader"_s, WorkQueue::QOS::Utility));
+    return queue.get();
 }
 
 void loadResourceFromBundle(ResourceLoader& loader, const String& subdirectory)
