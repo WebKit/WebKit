@@ -469,6 +469,21 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
     if (const RenderBoxModelObject* offsetParent = this->offsetParent()) {
         if (auto* renderBox = dynamicDowncast<RenderBox>(*offsetParent); renderBox && !offsetParent->isBody() && !is<RenderTable>(*offsetParent))
             referencePoint.move(-renderBox->borderLeft(), -renderBox->borderTop());
+        else if (auto* renderInline = dynamicDowncast<RenderInline>(*offsetParent)) {
+            // Inside inline formatting context both inflow and statically positioned out-of-flow boxes are positioned relative to the root block container.
+            auto topLeft = renderInline->firstInlineBoxTopLeft();
+            if (isOutOfFlowPositioned()) {
+                auto& outOfFlowStyle = style();
+                ASSERT(containingBlock());
+                auto isHorizontalWritingMode = containingBlock() ? containingBlock()->style().isHorizontalWritingMode() : true;
+                if (!outOfFlowStyle.hasStaticInlinePosition(isHorizontalWritingMode))
+                    topLeft.setX(LayoutUnit { });
+                if (!outOfFlowStyle.hasStaticBlockPosition(isHorizontalWritingMode))
+                    topLeft.setY(LayoutUnit { });
+            }
+            referencePoint.move(-topLeft.x(), -topLeft.y());
+        }
+
         if (!isOutOfFlowPositioned() || enclosingFragmentedFlow()) {
             if (isRelativelyPositioned())
                 referencePoint.move(relativePositionOffset());
