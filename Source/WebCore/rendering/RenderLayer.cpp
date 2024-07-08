@@ -1219,7 +1219,7 @@ void RenderLayer::recursiveUpdateLayerPositionsAfterScroll(OptionSet<UpdateLayer
     // If we have no visible content and no visible descendants, there is no point recomputing
     // our rectangles as they will be empty. If our visibility changes, we are expected to
     // recompute all our positions anyway.
-    if (!m_hasVisibleDescendant && !m_hasVisibleContent)
+    if (subtreeIsInvisible())
         return;
 
     bool positionChanged = updateLayerPosition();
@@ -5030,7 +5030,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
         return LayoutRect();
 
     // FIXME: This could be improved to do a check like hasVisibleNonCompositingDescendantLayers() (bug 92580).
-    if ((flags & ExcludeHiddenDescendants) && this != ancestorLayer && !hasVisibleContent() && !hasVisibleDescendant())
+    if ((flags & ExcludeHiddenDescendants) && this != ancestorLayer && subtreeIsInvisible())
         return LayoutRect();
 
     if (isRenderViewLayer()) {

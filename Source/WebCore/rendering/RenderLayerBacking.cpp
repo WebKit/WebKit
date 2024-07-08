@@ -2328,6 +2328,13 @@ bool RenderLayerBacking::requiresScrollCornerLayer() const
 
 bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScrollbarLayer, bool needsVerticalScrollbarLayer, bool needsScrollCornerLayer)
 {
+    // If the subtree is invisible, we don't actually need scrollbar layers.
+    if (m_owningLayer.subtreeIsInvisible()) {
+        needsHorizontalScrollbarLayer = false;
+        needsVerticalScrollbarLayer = false;
+        needsScrollCornerLayer = false;
+    }
+
     auto createOrDestroyLayer = [&](RefPtr<GraphicsLayer>& layer, bool needLayer, bool drawsContent, ASCIILiteral layerName) {
         if (needLayer == !!layer)
             return false;

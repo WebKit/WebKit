@@ -1175,6 +1175,8 @@ private:
 
     inline bool hasNonOpacityTransparency() const;
 
+    bool subtreeIsInvisible() const { return !hasVisibleContent() && !hasVisibleDescendant(); }
+
     void updatePagination();
 
     void setHasCompositingDescendant(bool b)  { m_hasCompositingDescendant = b; }
