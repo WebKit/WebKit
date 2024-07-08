@@ -353,16 +353,25 @@ class MediaController
 
         this.controls.shouldUseSingleBarLayout = this.controls instanceof InlineMediaControls && this.isYouTubeEmbedWithTitle;
 
-        if (this.host && this.host.inWindowFullscreen) {
-            this._stopPropagationOnClickEvents();
-            if (!this.host.supportsSeeking)
-                this.controls.timeControl.scrubber.disabled = true;
-
-            if (!this.host.supportsRewind)
-                this.controls.rewindButton.dropped = true;
-        }
+        this._updateControlsForInWindowFullscreenIfNeeded();
 
         this._updateControlsAvailability();
+    }
+
+    _updateControlsForInWindowFullscreenIfNeeded()
+    {
+        if (!this.host || !this.host.inWindowFullscreen)
+            return;
+
+        this.media.parentNode.setAttribute("draggable", "false");
+
+        this._stopPropagationOnClickEvents();
+
+        if (!this.host.supportsSeeking)
+            this.controls.timeControl.scrubber.disabled = true;
+
+        if (!this.host.supportsRewind)
+            this.controls.rewindButton.dropped = true;
     }
 
     _stopPropagationOnClickEvents()
