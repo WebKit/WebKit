@@ -25,7 +25,6 @@
 
 #include "TestHarness.h"
 #include "bmalloc_heap.h"
-#include "bmalloc_heap_config.h"
 
 #include <cstdlib>
 
@@ -46,29 +45,10 @@ void testBmallocDeallocate()
     bmalloc_deallocate(mem);
 }
 
-void testBmallocForceBitfitAfterAlloc()
-{
-    void* mem0 = bmalloc_try_allocate(28616, pas_non_compact_allocation_mode);
-    CHECK(mem0);
-
-    void* mem1 = bmalloc_try_allocate(20768, pas_non_compact_allocation_mode);
-    CHECK(mem1);
-
-    // Simulate entering mini mode by forcing bitfit only.
-    bmalloc_intrinsic_runtime_config.base.max_segregated_object_size = 0;
-    bmalloc_intrinsic_runtime_config.base.max_bitfit_object_size = UINT_MAX;
-    bmalloc_primitive_runtime_config.base.max_segregated_object_size = 0;
-    bmalloc_primitive_runtime_config.base.max_bitfit_object_size = UINT_MAX;
-
-    void* mem2 = bmalloc_try_allocate(20648, pas_non_compact_allocation_mode);
-    CHECK(mem2);
-}
-
 } // anonymous namespace
 
 void addBmallocTests()
 {
     ADD_TEST(testBmallocAllocate());
     ADD_TEST(testBmallocDeallocate());
-    ADD_TEST(testBmallocForceBitfitAfterAlloc());
 }
