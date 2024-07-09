@@ -1629,6 +1629,8 @@ std::optional<LayoutUnit> RenderFlexibleBox::usedChildOverridingMainSizeForPerce
 {
     ASSERT(!mainAxisIsChildInlineAxis(child));
 
+    if (m_inPostFlexing && child.style().flexBasis().isFixed())
+        return LayoutUnit { child.style().flexBasis().value() };
     // The main size of a fully inflexible item with a definite flex basis is, by definition, definite.
     if (child.style().flexGrow() == 0.0 && child.style().flexShrink() == 0.0 && childMainSizeIsDefinite(child, flexBasisForChild(child)))
         return child.overridingLogicalHeight();
@@ -2236,6 +2238,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Flex
     std::optional<BaselineAlignmentState> baselineAlignmentState;
     LayoutUnit maxChildCrossAxisExtent;
     ContentDistribution distribution = style().resolvedJustifyContentDistribution(contentAlignmentNormalBehavior());
+    auto inPostFlexing = SetForScope { m_inPostFlexing, true };
     bool shouldFlipMainAxis = !isColumnFlow() && !isLeftToRightFlow();
     for (size_t i = 0; i < flexItems.size(); ++i) {
         const auto& flexItem = flexItems[i];
