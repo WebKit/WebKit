@@ -24,6 +24,7 @@
 #include "BaseTarget-libaom.xcconfig"
 
 PRODUCT_NAME = aom;
+SKIP_INSTALL = YES;
 
 COMBINE_HIDPI_IMAGES = NO;
 
