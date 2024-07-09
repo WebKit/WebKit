@@ -11991,7 +11991,7 @@ IGNORE_CLANG_WARNINGS_END
                     jit.move(rep.gpr(), result);
                 };
 
-                auto callWithExceptionCheck = [&] (OperationReturnType<void>(*callee)(JSGlobalObject*)) {
+                auto callWithExceptionCheck = [&] (OperationReturnType<void>(SYSV_ABI *callee)(JSGlobalObject*)) {
                     jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(callee)), GPRInfo::nonPreservedNonArgumentGPR0);
                     jit.call(GPRInfo::nonPreservedNonArgumentGPR0, OperationPtrTag);
                     exceptions->append(jit.emitExceptionCheck(*vm, AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth, CCallHelpers::operationExceptionRegister<OperationReturnType<void>>()));

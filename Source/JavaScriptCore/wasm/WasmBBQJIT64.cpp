@@ -3973,7 +3973,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDV_V(SIMDLaneOperation op, SIMDIn
             m_jit.vectorXor(SIMDInfo { SIMDLane::v128, SIMDSignMode::None }, valueLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
             break;
         case SIMDLane::f64x2:
-            m_jit.move64ToDouble(TrustedImm64(-0x8000000000000000ll), wasmScratchFPR);
+            m_jit.move64ToDouble(TrustedImm64(-0x8000000000000000), wasmScratchFPR);
             m_jit.vectorSplatFloat64(wasmScratchFPR, wasmScratchFPR);
             m_jit.vectorXor(SIMDInfo { SIMDLane::v128, SIMDSignMode::None }, valueLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
             break;

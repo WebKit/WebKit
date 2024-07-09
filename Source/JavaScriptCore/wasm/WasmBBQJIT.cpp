@@ -385,7 +385,9 @@ RegisterBinding RegisterBinding::fromValue(Value value)
 
 RegisterBinding RegisterBinding::none()
 {
-    return RegisterBinding();
+    RegisterBinding binding;
+    binding.m_kind = None;
+    return binding;
 }
 
 RegisterBinding RegisterBinding::scratch()
@@ -1399,7 +1401,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayNewDefault(uint32_t typeIndex, 
     return { };
 }
 
-using arraySegmentOperation = EncodedJSValue (&)(JSC::Wasm::Instance*, uint32_t, uint32_t, uint32_t, uint32_t);
+using arraySegmentOperation = EncodedJSValue SYSV_ABI (&)(JSC::Wasm::Instance*, uint32_t, uint32_t, uint32_t, uint32_t);
 void BBQJIT::pushArrayNewFromSegment(arraySegmentOperation operation, uint32_t typeIndex, uint32_t segmentIndex, ExpressionType arraySize, ExpressionType offset, ExceptionType exceptionType, ExpressionType& result)
 {
     Vector<Value, 8> arguments = {

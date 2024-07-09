@@ -276,7 +276,7 @@ RegisterSet RegisterSetBuilder::ftlCalleeSaveRegisters()
 {
     RegisterSet result;
 #if ENABLE(FTL_JIT)
-#if CPU(X86_64) && !OS(WINDOWS)
+#if CPU(X86_64)
     result.add(GPRInfo::regCS0, IgnoreVectors);
     result.add(GPRInfo::regCS1, IgnoreVectors);
     static_assert(GPRInfo::regCS2 == GPRInfo::jitDataRegister);

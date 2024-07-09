@@ -1530,7 +1530,7 @@ macro prologue(osrSlowPath, traceSlowPath)
     subp cfr, t0, t0
 
 .stackHeightOK:
-    if X86_64 or ARM64
+    if X86_64 or X86_64_WIN or ARM64
         # We need to start zeroing from sp as it has been adjusted after saving callee saves.
         move sp, t2
         move t0, sp
