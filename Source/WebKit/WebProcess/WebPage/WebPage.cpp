@@ -9232,9 +9232,9 @@ void WebPage::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&& comp
 
 #if ENABLE(WRITING_TOOLS_UI)
 
-void WebPage::addTextAnimationForAnimationID(const WTF::UUID& uuid, const WebKit::TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData)
+void WebPage::addTextAnimationForAnimationID(const WTF::UUID& uuid, const WebKit::TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData, CompletionHandler<void()>&& completionHandler)
 {
-    send(Messages::WebPageProxy::AddTextAnimationForAnimationID(uuid, styleData, indicatorData));
+    sendWithAsyncReply(Messages::WebPageProxy::AddTextAnimationForAnimationID(uuid, styleData, indicatorData), WTFMove(completionHandler));
 }
 
 void WebPage::removeTextAnimationForAnimationID(const WTF::UUID& uuid)
@@ -9258,14 +9258,19 @@ void WebPage::addInitialTextAnimation(const WTF::UUID& uuid)
 }
 
 
-void WebPage::addSourceTextAnimation(const WTF::UUID& uuid, const CharacterRange& range)
+void WebPage::addSourceTextAnimation(const WTF::UUID& uuid, const CharacterRange& range, const String string, WTF::CompletionHandler<void(void)>&& completionHandler)
 {
-    m_textAnimationController->addSourceTextAnimation(uuid, range);
+    m_textAnimationController->addSourceTextAnimation(uuid, range, string, WTFMove(completionHandler));
 }
 
-void WebPage::addDestinationTextAnimation(const WTF::UUID& uuid, const CharacterRange& range)
+void WebPage::addDestinationTextAnimation(const WTF::UUID& uuid, const CharacterRange& range, const String string)
 {
-    m_textAnimationController->addDestinationTextAnimation(uuid, range);
+    m_textAnimationController->addDestinationTextAnimation(uuid, range, string);
+}
+
+void WebPage::clearAnimationsForSessionID(const WTF::UUID& uuid)
+{
+    m_textAnimationController->clearAnimationsForSessionID(uuid);
 }
 
 #endif

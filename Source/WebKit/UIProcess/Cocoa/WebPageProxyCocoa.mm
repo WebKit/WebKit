@@ -1237,13 +1237,25 @@ void WebPageProxy::enableTextAnimationTypeForElementWithID(const String& element
     legacyMainFrameProcess().send(Messages::WebPage::EnableTextAnimationTypeForElementWithID(elementID, uuid), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::addTextAnimationForAnimationID(IPC::Connection& connection, const WTF::UUID& uuid, const TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData)
+void WebPageProxy::addTextAnimationForAnimationID(IPC::Connection& connection, const WTF::UUID& uuid, const TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData, CompletionHandler<void()>&& completionHandler)
 {
     MESSAGE_CHECK(uuid.isValid());
 
-    internals().textIndicatorDataForChunk.add(uuid, indicatorData);
+    internals().textIndicatorDataForAnimationID.add(uuid, indicatorData);
+
+    if (completionHandler)
+        internals().completionHandlerForAnimationID.add(uuid, WTFMove(completionHandler));
 
     protectedPageClient()->addTextAnimationForAnimationID(uuid, styleData);
+}
+
+void WebPageProxy::callCompletionHandlerForAnimationID(const WTF::UUID& uuid)
+{
+    if (!hasRunningProcess())
+        return;
+
+    if (auto completionHandler = internals().completionHandlerForAnimationID.take(uuid))
+        completionHandler();
 }
 
 void WebPageProxy::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
@@ -1253,7 +1265,7 @@ void WebPageProxy::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandle
         return;
     }
 
-    auto textIndicatorData = internals().textIndicatorDataForChunk.getOptional(uuid);
+    auto textIndicatorData = internals().textIndicatorDataForAnimationID.getOptional(uuid);
 
     if (textIndicatorData) {
         completionHandler(*textIndicatorData);

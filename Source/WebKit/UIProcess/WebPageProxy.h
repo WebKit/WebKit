@@ -2422,11 +2422,12 @@ public:
 #endif // ENABLE(WRITING_TOOLS)
 
 #if ENABLE(WRITING_TOOLS_UI)
-    void addTextAnimationForAnimationID(IPC::Connection&, const WTF::UUID&, const WebKit::TextAnimationData&, const WebCore::TextIndicatorData&);
+    void addTextAnimationForAnimationID(IPC::Connection&, const WTF::UUID&, const WebKit::TextAnimationData&, const WebCore::TextIndicatorData&, WTF::CompletionHandler<void(void)>&&);
     void removeTextAnimationForAnimationID(IPC::Connection&, const WTF::UUID&);
     void enableSourceTextAnimationAfterElementWithID(const String& elementID, const WTF::UUID&);
     void enableTextAnimationTypeForElementWithID(const String& elementID, const WTF::UUID&);
 
+    void callCompletionHandlerForAnimationID(const WTF::UUID&);
     void getTextIndicatorForID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
     void updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID&, bool, CompletionHandler<void()>&& = [] { });
 #endif

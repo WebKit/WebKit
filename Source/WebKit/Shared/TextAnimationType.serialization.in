@@ -32,7 +32,7 @@ header: "TextAnimationType.h"
 header: "TextAnimationType.h"
 [CustomHeader] struct WebKit::TextAnimationData {
     WebKit::TextAnimationType style;
-    WTF::UUID remainingRangeUUID;
+    WTF::UUID unanimatedRangeUUID;
 };
 
 #endif

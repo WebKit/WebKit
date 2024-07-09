@@ -13171,6 +13171,12 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
     return self;
 }
 
+- (void)callCompletionHandlerForAnimationID:(NSUUID *)uuid
+{
+    auto animationUUID = WTF::UUID::fromNSUUID(uuid);
+    _page->callCompletionHandlerForAnimationID(*animationUUID);
+}
+
 #endif
 
 #pragma mark - BETextInteractionDelegate

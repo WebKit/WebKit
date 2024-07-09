@@ -1885,14 +1885,19 @@ void WebChromeClient::addInitialTextAnimation(const WritingTools::Session::ID& s
     protectedPage()->addInitialTextAnimation(sessionID);
 }
 
-void WebChromeClient::addSourceTextAnimation(const WritingTools::Session::ID& sessionID, const CharacterRange& range)
+void WebChromeClient::addSourceTextAnimation(const WritingTools::Session::ID& sessionID, const CharacterRange& range, const String string, WTF::CompletionHandler<void(void)>&& completionHandler)
 {
-    protectedPage()->addSourceTextAnimation(sessionID, range);
+    protectedPage()->addSourceTextAnimation(sessionID, range, string, WTFMove(completionHandler));
 }
 
-void WebChromeClient::addDestinationTextAnimation(const WritingTools::Session::ID& sessionID, const CharacterRange& range)
+void WebChromeClient::addDestinationTextAnimation(const WritingTools::Session::ID& sessionID, const CharacterRange& range, const String string)
 {
-    protectedPage()->addDestinationTextAnimation(sessionID, range);
+    protectedPage()->addDestinationTextAnimation(sessionID, range, string);
+}
+
+void WebChromeClient::clearAnimationsForSessionID(const WritingTools::Session::ID& sessionID)
+{
+    protectedPage()->clearAnimationsForSessionID(sessionID);
 }
 
 #endif

@@ -224,10 +224,6 @@ void WritingToolsController::willBeginWritingToolsSession(const std::optional<Wr
 void WritingToolsController::didBeginWritingToolsSession(const WritingTools::Session& session, const Vector<WritingTools::Context>& contexts)
 {
     RELEASE_LOG(WritingTools, "WritingToolsController::didBeginWritingToolsSession (%s) [received contexts: %zu]", session.identifier.toString().utf8().data(), contexts.size());
-
-    // Don't animate smart replies, they are animated by UIKit/AppKit.
-    if (session.compositionType != WebCore::WritingTools::Session::CompositionType::SmartReply)
-        m_page->chrome().client().addInitialTextAnimation(session.identifier);
 }
 
 void WritingToolsController::proofreadingSessionDidReceiveSuggestions(const WritingTools::Session& session, const Vector<WritingTools::TextSuggestion>& suggestions, const WritingTools::Context& context, bool finished)
@@ -413,12 +409,9 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 
     // The character count delta is `sessionRangeCharacterCount - contextTextCharacterCount`;
     // the above check ensures that the full range length expression will never underflow.
-
     auto characterCountDelta = sessionRangeCharacterCount - contextTextCharacterCount;
     auto adjustedCharacterRange = CharacterRange { range.location, range.length + characterCountDelta };
     auto resolvedRange = resolveCharacterRange(sessionRange, adjustedCharacterRange);
-
-    m_page->chrome().client().addSourceTextAnimation(session.identifier, range);
 
     // Prefer using any attributes that `attributedText` may have; however, if it has none,
     // just conduct the replacement so that it matches the style of its surrounding text.
@@ -428,9 +421,38 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 
     auto commandState = finished ? WritingToolsCompositionCommand::State::Complete : WritingToolsCompositionCommand::State::InProgress;
 
-    replaceContentsOfRangeInSession(*state, resolvedRange, attributedText, commandState);
+    auto addDestinationTextAnimation = [weakThis = WeakPtr { *this }, state, resolvedRange, attributedText, commandState, identifier = session.identifier, sessionRange]() mutable {
+        if (!weakThis)
+            return;
 
-    m_page->chrome().client().addDestinationTextAnimation(session.identifier, adjustedCharacterRange);
+        RefPtr document = weakThis->document();
+        if (!document) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+
+        weakThis->replaceContentsOfRangeInSession(*state, resolvedRange, attributedText, commandState);
+
+        // FIXME: We won't be setting the selection after every replace, we need a different way to
+        // caluculate this range.
+        auto selectionRange = document->selection().selection().firstRange();
+        if (!selectionRange)
+            return;
+
+
+        auto rangeAfterReplace = characterRange(sessionRange, *selectionRange);
+
+        if (!weakThis->m_page)
+            return;
+
+        weakThis->m_page->chrome().client().addDestinationTextAnimation(identifier, rangeAfterReplace, attributedText.string);
+    };
+
+#if PLATFORM(MAC)
+    m_page->chrome().client().addSourceTextAnimation(session.identifier, range, attributedText.string, WTFMove(addDestinationTextAnimation));
+#else
+    addDestinationTextAnimation();
+#endif
 }
 
 template<>
@@ -785,6 +807,11 @@ void WritingToolsController::restartCompositionForSession(const WritingTools::Se
         ASSERT_NOT_REACHED();
         return;
     }
+
+    m_page->chrome().client().clearAnimationsForSessionID(session.identifier);
+    // Don't animate smart replies, they are animated by UIKit/AppKit.
+    if (session.compositionType != WebCore::WritingTools::Session::CompositionType::SmartReply)
+        m_page->chrome().client().addInitialTextAnimation(session.identifier);
 
     // The stack will never be empty as the sentinel command always exists.
     auto currentContextRange = state->reappliedCommands.last()->endingContextRange();

@@ -10060,6 +10060,10 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     setMediaCapability(std::nullopt);
 #endif
 
+#if ENABLE(WRITING_TOOLS)
+    internals().completionHandlerForAnimationID.clear();
+#endif
+
     m_nowPlayingMetadataObservers.clear();
     m_nowPlayingMetadataObserverForTesting = nullptr;
 

@@ -1771,17 +1771,18 @@ public:
     void enableSourceTextAnimationAfterElementWithID(const String&, const WTF::UUID&);
     void enableTextAnimationTypeForElementWithID(const String&, const WTF::UUID&);
 
-    void addTextAnimationForAnimationID(const WTF::UUID&, const WebKit::TextAnimationData&, const WebCore::TextIndicatorData&);
+    void addTextAnimationForAnimationID(const WTF::UUID&, const WebKit::TextAnimationData&, const WebCore::TextIndicatorData&, CompletionHandler<void()>&& = nil);
 
     void removeTextAnimationForAnimationID(const WTF::UUID&);
     void removeTransparentMarkersForSessionID(const WebCore::WritingTools::SessionID&);
 
     void removeInitialTextAnimation(const WebCore::WritingTools::SessionID&);
     void addInitialTextAnimation(const WebCore::WritingTools::SessionID&);
-    void addSourceTextAnimation(const WebCore::WritingTools::SessionID&, const WebCore::CharacterRange&);
-    void addDestinationTextAnimation(const WebCore::WritingTools::SessionID&, const WebCore::CharacterRange&);
+    void addSourceTextAnimation(const WebCore::WritingTools::SessionID&, const WebCore::CharacterRange&, const String, WTF::CompletionHandler<void(void)>&&);
+    void addDestinationTextAnimation(const WebCore::WritingTools::SessionID&, const WebCore::CharacterRange&, const String);
+    void clearAnimationsForSessionID(const WebCore::WritingTools::SessionID&);
 
-    void createTextIndicatorForRange(const WebCore::SimpleRange&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
+    std::optional<WebCore::TextIndicatorData> createTextIndicatorForRange(const WebCore::SimpleRange&);
     void createTextIndicatorForTextAnimationID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
 #endif
 

@@ -30,6 +30,9 @@
 #import "Range.h"
 #import "WritingToolsCompositionCommand.h"
 #import "WritingToolsTypes.h"
+#import <wtf/CheckedPtr.h>
+#import <wtf/FastMalloc.h>
+#import <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -43,9 +46,10 @@ class Page;
 
 struct SimpleRange;
 
-class WritingToolsController final {
+class WritingToolsController final : public CanMakeWeakPtr<WritingToolsController>, public CanMakeCheckedPtr<WritingToolsController> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WritingToolsController);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WritingToolsController);
 
 public:
     explicit WritingToolsController(Page&);
