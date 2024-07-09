@@ -1049,7 +1049,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
         },
         [&](const Struct& structure) {
             m_stringBuilder.append(structure.structure.name());
-            if (shouldPackType() && type->isConstructible() && structure.structure.role() == AST::StructureRole::UserDefinedResource)
+            if (shouldPackType() && structure.structure.role() == AST::StructureRole::UserDefinedResource)
                 m_stringBuilder.append("::PackedType"_s);
         },
         [&](const PrimitiveStruct& structure) {
