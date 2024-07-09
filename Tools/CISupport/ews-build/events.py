@@ -531,6 +531,11 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
             log.msg(f"PR #{pr_number} ({head_sha}) was updated by '{sender}', ignoring it")
             return defer.returnValue(([], 'git'))
 
+        if custom_suffix != '' and pr_number % 10 != 0:
+            # To trigger testing environment on every PR, please comment out this if block and restart buildbot
+            log.msg(f'Ignoring PR {pr_number} ({head_sha}) on testing environment.')
+            return defer.returnValue(([], 'git'))
+
         if action == 'labeled' and GitHub.UNSAFE_MERGE_QUEUE_LABEL in labels:
             log.msg(f'PR #{pr_number} ({head_sha}) was labeled for unsafe-merge-queue')
             # 'labeled' is usually an ignored action, override it to force build
