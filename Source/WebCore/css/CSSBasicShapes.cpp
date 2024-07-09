@@ -36,6 +36,7 @@
 #include "CSSValuePool.h"
 #include "SVGPathByteStream.h"
 #include "SVGPathUtilities.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

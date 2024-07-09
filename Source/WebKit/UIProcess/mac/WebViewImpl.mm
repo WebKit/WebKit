@@ -155,7 +155,7 @@
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/OSVariantSPI.h>
-#import <wtf/text/StringConcatenate.h>
+#import <wtf/text/MakeString.h>
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 #include "MediaSessionCoordinatorProxyPrivate.h"
@@ -5924,7 +5924,7 @@ void WebViewImpl::updateTouchBar()
 
     NSTouchBar *touchBar = nil;
     bool userActionRequirementsHaveBeenMet = !requiresUserActionForEditingControlsManager() || m_page->hasHadSelectionChangesFromUserInteraction();
-    if (m_page->editorState().isContentEditable && !m_page->isTouchBarUpdateSupressedForHiddenContentEditable()) {
+    if (m_page->editorState().isContentEditable && !m_page->isTouchBarUpdateSuppressedForHiddenContentEditable()) {
         updateTextTouchBar();
         if (userActionRequirementsHaveBeenMet)
             touchBar = textTouchBar();
@@ -6457,10 +6457,10 @@ void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContext
 
 bool WebViewImpl::canHandleContextMenuWritingTools() const
 {
-    return [PAL::getWTWritingToolsViewControllerClass() isAvailable] && m_page->configuration().writingToolsBehavior() != WebCore::WritingTools::Behavior::None;
+    return [PAL::getWTWritingToolsViewControllerClass() isAvailable] && m_page->writingToolsBehavior() != WebCore::WritingTools::Behavior::None;
 }
 
-void WebViewImpl::handleContextMenuWritingTools(IntRect selectionBoundsInRootView)
+void WebViewImpl::handleContextMenuWritingToolsDeprecated(IntRect selectionBoundsInRootView)
 {
     if (!canHandleContextMenuWritingTools()) {
         ASSERT_NOT_REACHED();

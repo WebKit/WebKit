@@ -78,7 +78,6 @@
 #include <wtf/FileSystem.h>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"
@@ -743,7 +742,7 @@ ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderObject& ren
         extractControlStyleStatesForRendererInternal(*renderer),
         renderer->style().computedFontSize(),
         renderer->style().usedZoom(),
-        renderer->style().usedAccentColor(),
+        renderer->style().usedAccentColor(renderObject.styleColorOptions()),
         renderer->style().visitedDependentColorWithColorFilter(CSSPropertyColor),
         renderer->style().borderWidth()
     };
@@ -810,7 +809,7 @@ bool RenderTheme::paint(const RenderBox& box, const PaintInfo& paintInfo, const 
     case StyleAppearance::Button:
     case StyleAppearance::InnerSpinButton: {
         auto states = extractControlStyleStatesForRenderer(box);
-        Theme::singleton().paint(appearance, states, paintInfo.context(), devicePixelSnappedRect, box.useDarkAppearance(), box.style().usedAccentColor());
+        Theme::singleton().paint(appearance, states, paintInfo.context(), devicePixelSnappedRect, box.useDarkAppearance(), box.style().usedAccentColor(box.styleColorOptions()));
         return false;
     }
 #else // !USE(THEME_ADWAITA)

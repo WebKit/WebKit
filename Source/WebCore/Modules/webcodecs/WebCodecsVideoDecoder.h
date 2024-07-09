@@ -61,6 +61,9 @@ public:
     WebCodecsCodecState state() const { return m_state; }
     size_t decodeQueueSize() const { return m_decodeQueueSize; }
 
+    WebCodecsVideoFrameOutputCallback& outputCallbackConcurrently() { return m_output.get(); }
+    WebCodecsErrorCallback& errorCallbackConcurrently() { return m_error.get(); }
+
     ExceptionOr<void> configure(ScriptExecutionContext&, WebCodecsVideoDecoderConfig&&);
     ExceptionOr<void> decode(Ref<WebCodecsEncodedVideoChunk>&&);
     ExceptionOr<void> flush(Ref<DeferredPromise>&&);

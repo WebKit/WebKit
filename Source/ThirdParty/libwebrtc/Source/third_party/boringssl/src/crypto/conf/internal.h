@@ -17,10 +17,22 @@
 
 #include <openssl/base.h>
 
+#include "../lhash/internal.h"
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
+
+typedef struct conf_section_st CONF_SECTION;
+
+DEFINE_LHASH_OF(CONF_SECTION)
+DEFINE_LHASH_OF(CONF_VALUE)
+
+struct conf_st {
+  LHASH_OF(CONF_VALUE) *values;
+  LHASH_OF(CONF_SECTION) *sections;
+};
 
 // CONF_VALUE_new returns a freshly allocated and zeroed |CONF_VALUE|.
 CONF_VALUE *CONF_VALUE_new(void);

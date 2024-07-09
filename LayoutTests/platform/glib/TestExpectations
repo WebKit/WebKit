@@ -1150,6 +1150,8 @@ imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.
 
 imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worker.html [ Pass ]
 
+http/wpt/webcodecs/encode-bitrate-change.html [ Failure ]
+
 # Our MP3 decoder is not yet spec-compliant (reverse decoding, mostly).
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?mp3 [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?mp3 [ Failure ]
@@ -3373,8 +3375,6 @@ fast/canvas/canvas-color-space-display-p3-ImageData.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/ [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/ [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/ [ Skip ]
-
-webkit.org/b/254415 fast/canvas/canvas-drawImage-hdr-video.html [ Failure ]
 
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Skip ]
 

@@ -1,4 +1,4 @@
 
 
-FAIL navigate() event ordering for cross-document navigation assert_array_equals: lengths differ, expected array ["onnavigate", "onunload", "readystateinteractive", "domcontentloaded", "readystatecomplete", "onload", "onpageshow"] length 7, got ["onnavigate", "onnavigate", "onunload", "readystateinteractive", "domcontentloaded", "readystatecomplete", "onload", "onpageshow"] length 8
+PASS navigate() event ordering for cross-document navigation
 

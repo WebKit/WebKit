@@ -43,6 +43,7 @@
 #include <mutex>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

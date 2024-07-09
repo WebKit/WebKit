@@ -36,7 +36,7 @@ DEFINE_LHASH_OF(char)
 
 static std::unique_ptr<char[]> RandString(void) {
   unsigned len = 1 + (rand() % 3);
-  std::unique_ptr<char[]> ret(new char[len + 1]);
+  auto ret = std::make_unique<char[]>(len + 1);
 
   for (unsigned i = 0; i < len; i++) {
     ret[i] = '0' + (rand() & 7);

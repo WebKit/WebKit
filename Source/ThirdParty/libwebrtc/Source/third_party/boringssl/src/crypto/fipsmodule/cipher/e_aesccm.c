@@ -55,6 +55,7 @@
 #include <openssl/mem.h>
 
 #include "../delocate.h"
+#include "../modes/internal.h"
 #include "../service_indicator/internal.h"
 #include "internal.h"
 
@@ -66,10 +67,8 @@ struct ccm128_context {
 };
 
 struct ccm128_state {
-  union {
-    uint64_t u[2];
-    uint8_t c[16];
-  } nonce, cmac;
+  alignas(16) uint8_t nonce[16];
+  alignas(16) uint8_t cmac[16];
 };
 
 static int CRYPTO_ccm128_init(struct ccm128_context *ctx, const AES_KEY *key,
@@ -86,7 +85,7 @@ static int CRYPTO_ccm128_init(struct ccm128_context *ctx, const AES_KEY *key,
 }
 
 static size_t CRYPTO_ccm128_max_input(const struct ccm128_context *ctx) {
-  return ctx->L >= sizeof(size_t) ? (size_t)-1
+  return ctx->L >= sizeof(size_t) ? SIZE_MAX
                                   : (((size_t)1) << (ctx->L * 8)) - 1;
 }
 
@@ -107,16 +106,16 @@ static int ccm128_init_state(const struct ccm128_context *ctx,
 
   // Assemble the first block for computing the MAC.
   OPENSSL_memset(state, 0, sizeof(*state));
-  state->nonce.c[0] = (uint8_t)((L - 1) | ((M - 2) / 2) << 3);
+  state->nonce[0] = (uint8_t)((L - 1) | ((M - 2) / 2) << 3);
   if (aad_len != 0) {
-    state->nonce.c[0] |= 0x40;  // Set AAD Flag
+    state->nonce[0] |= 0x40;  // Set AAD Flag
   }
-  OPENSSL_memcpy(&state->nonce.c[1], nonce, nonce_len);
+  OPENSSL_memcpy(&state->nonce[1], nonce, nonce_len);
   for (unsigned i = 0; i < L; i++) {
-    state->nonce.c[15 - i] = (uint8_t)(plaintext_len >> (8 * i));
+    state->nonce[15 - i] = (uint8_t)(plaintext_len >> (8 * i));
   }
 
-  (*block)(state->nonce.c, state->cmac.c, key);
+  (*block)(state->nonce, state->cmac, key);
   size_t blocks = 1;
 
   if (aad_len != 0) {
@@ -124,38 +123,38 @@ static int ccm128_init_state(const struct ccm128_context *ctx,
     // Cast to u64 to avoid the compiler complaining about invalid shifts.
     uint64_t aad_len_u64 = aad_len;
     if (aad_len_u64 < 0x10000 - 0x100) {
-      state->cmac.c[0] ^= (uint8_t)(aad_len_u64 >> 8);
-      state->cmac.c[1] ^= (uint8_t)aad_len_u64;
+      state->cmac[0] ^= (uint8_t)(aad_len_u64 >> 8);
+      state->cmac[1] ^= (uint8_t)aad_len_u64;
       i = 2;
     } else if (aad_len_u64 <= 0xffffffff) {
-      state->cmac.c[0] ^= 0xff;
-      state->cmac.c[1] ^= 0xfe;
-      state->cmac.c[2] ^= (uint8_t)(aad_len_u64 >> 24);
-      state->cmac.c[3] ^= (uint8_t)(aad_len_u64 >> 16);
-      state->cmac.c[4] ^= (uint8_t)(aad_len_u64 >> 8);
-      state->cmac.c[5] ^= (uint8_t)aad_len_u64;
+      state->cmac[0] ^= 0xff;
+      state->cmac[1] ^= 0xfe;
+      state->cmac[2] ^= (uint8_t)(aad_len_u64 >> 24);
+      state->cmac[3] ^= (uint8_t)(aad_len_u64 >> 16);
+      state->cmac[4] ^= (uint8_t)(aad_len_u64 >> 8);
+      state->cmac[5] ^= (uint8_t)aad_len_u64;
       i = 6;
     } else {
-      state->cmac.c[0] ^= 0xff;
-      state->cmac.c[1] ^= 0xff;
-      state->cmac.c[2] ^= (uint8_t)(aad_len_u64 >> 56);
-      state->cmac.c[3] ^= (uint8_t)(aad_len_u64 >> 48);
-      state->cmac.c[4] ^= (uint8_t)(aad_len_u64 >> 40);
-      state->cmac.c[5] ^= (uint8_t)(aad_len_u64 >> 32);
-      state->cmac.c[6] ^= (uint8_t)(aad_len_u64 >> 24);
-      state->cmac.c[7] ^= (uint8_t)(aad_len_u64 >> 16);
-      state->cmac.c[8] ^= (uint8_t)(aad_len_u64 >> 8);
-      state->cmac.c[9] ^= (uint8_t)aad_len_u64;
+      state->cmac[0] ^= 0xff;
+      state->cmac[1] ^= 0xff;
+      state->cmac[2] ^= (uint8_t)(aad_len_u64 >> 56);
+      state->cmac[3] ^= (uint8_t)(aad_len_u64 >> 48);
+      state->cmac[4] ^= (uint8_t)(aad_len_u64 >> 40);
+      state->cmac[5] ^= (uint8_t)(aad_len_u64 >> 32);
+      state->cmac[6] ^= (uint8_t)(aad_len_u64 >> 24);
+      state->cmac[7] ^= (uint8_t)(aad_len_u64 >> 16);
+      state->cmac[8] ^= (uint8_t)(aad_len_u64 >> 8);
+      state->cmac[9] ^= (uint8_t)aad_len_u64;
       i = 10;
     }
 
     do {
       for (; i < 16 && aad_len != 0; i++) {
-        state->cmac.c[i] ^= *aad;
+        state->cmac[i] ^= *aad;
         aad++;
         aad_len--;
       }
-      (*block)(state->cmac.c, state->cmac.c, key);
+      (*block)(state->cmac, state->cmac, key);
       blocks++;
       i = 0;
     } while (aad_len != 0);
@@ -174,7 +173,7 @@ static int ccm128_init_state(const struct ccm128_context *ctx,
   // Assemble the first block for encrypting and decrypting. The bottom |L|
   // bytes are replaced with a counter and all bit the encoding of |L| is
   // cleared in the first byte.
-  state->nonce.c[0] &= 7;
+  state->nonce[0] &= 7;
   return 1;
 }
 
@@ -183,17 +182,17 @@ static int ccm128_encrypt(const struct ccm128_context *ctx,
                           uint8_t *out, const uint8_t *in, size_t len) {
   // The counter for encryption begins at one.
   for (unsigned i = 0; i < ctx->L; i++) {
-    state->nonce.c[15 - i] = 0;
+    state->nonce[15 - i] = 0;
   }
-  state->nonce.c[15] = 1;
+  state->nonce[15] = 1;
 
   uint8_t partial_buf[16];
   unsigned num = 0;
   if (ctx->ctr != NULL) {
-    CRYPTO_ctr128_encrypt_ctr32(in, out, len, key, state->nonce.c, partial_buf,
+    CRYPTO_ctr128_encrypt_ctr32(in, out, len, key, state->nonce, partial_buf,
                                 &num, ctx->ctr);
   } else {
-    CRYPTO_ctr128_encrypt(in, out, len, key, state->nonce.c, partial_buf, &num,
+    CRYPTO_ctr128_encrypt(in, out, len, key, state->nonce, partial_buf, &num,
                           ctx->block);
   }
   return 1;
@@ -209,34 +208,28 @@ static int ccm128_compute_mac(const struct ccm128_context *ctx,
   }
 
   // Incorporate |in| into the MAC.
-  union {
-    uint64_t u[2];
-    uint8_t c[16];
-  } tmp;
   while (len >= 16) {
-    OPENSSL_memcpy(tmp.c, in, 16);
-    state->cmac.u[0] ^= tmp.u[0];
-    state->cmac.u[1] ^= tmp.u[1];
-    (*block)(state->cmac.c, state->cmac.c, key);
+    CRYPTO_xor16(state->cmac, state->cmac, in);
+    (*block)(state->cmac, state->cmac, key);
     in += 16;
     len -= 16;
   }
   if (len > 0) {
     for (size_t i = 0; i < len; i++) {
-      state->cmac.c[i] ^= in[i];
+      state->cmac[i] ^= in[i];
     }
-    (*block)(state->cmac.c, state->cmac.c, key);
+    (*block)(state->cmac, state->cmac, key);
   }
 
   // Encrypt the MAC with counter zero.
   for (unsigned i = 0; i < ctx->L; i++) {
-    state->nonce.c[15 - i] = 0;
+    state->nonce[15 - i] = 0;
   }
-  (*block)(state->nonce.c, tmp.c, key);
-  state->cmac.u[0] ^= tmp.u[0];
-  state->cmac.u[1] ^= tmp.u[1];
+  alignas(16) uint8_t tmp[16];
+  (*block)(state->nonce, tmp, key);
+  CRYPTO_xor16(state->cmac, state->cmac, tmp);
 
-  OPENSSL_memcpy(out_tag, state->cmac.c, tag_len);
+  OPENSSL_memcpy(out_tag, state->cmac, tag_len);
   return 1;
 }
 

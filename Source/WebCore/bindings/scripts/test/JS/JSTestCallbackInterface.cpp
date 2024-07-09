@@ -135,7 +135,7 @@ template<> ConversionResult<IDLDictionary<TestCallbackInterface::Dictionary>> co
 
 JSTestCallbackInterface::JSTestCallbackInterface(JSObject* callback, JSDOMGlobalObject* globalObject)
     : TestCallbackInterface(globalObject->scriptExecutionContext())
-    , m_data(new JSCallbackDataStrong(callback, globalObject, this))
+    , m_data(new JSCallbackDataWeak(callback, globalObject, this))
 {
 }
 
@@ -451,6 +451,16 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
     if (UNLIKELY(returnValue.hasException(throwScope)))
         return CallbackResultType::ExceptionThrown;
     return { returnValue.releaseReturnValue() };
+}
+
+void JSTestCallbackInterface::visitJSFunction(JSC::AbstractSlotVisitor& visitor)
+{
+    m_data->visitJSFunction(visitor);
+}
+
+void JSTestCallbackInterface::visitJSFunction(JSC::SlotVisitor& visitor)
+{
+    m_data->visitJSFunction(visitor);
 }
 
 JSC::JSValue toJS(TestCallbackInterface& impl)

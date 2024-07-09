@@ -32,6 +32,7 @@
 #include "ResourceError.h"
 #include "URLSoup.h"
 #include <libsoup/soup.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

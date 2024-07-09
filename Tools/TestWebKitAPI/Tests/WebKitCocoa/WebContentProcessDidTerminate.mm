@@ -180,12 +180,7 @@ TEST(WKNavigation, FailureToStartWebProcessAfterCrashRecovery)
     EXPECT_TRUE(receivedScriptMessage);
 }
 
-// FIXME: <rdar://130762747> Investigate why 280261@main seems to have made this time out on open source iOS.
-#if PLATFORM(IOS_FAMILY) && !USE(APPLE_INTERNAL_SDK)
-TEST(WKNavigation, DISABLED_AutomaticVisibleViewReloadAfterWebProcessCrash)
-#else
 TEST(WKNavigation, AutomaticVisibleViewReloadAfterWebProcessCrash)
-#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get() addToWindow:YES]);
@@ -220,12 +215,7 @@ TEST(WKNavigation, AutomaticVisibleViewReloadAfterWebProcessCrash)
     EXPECT_FALSE(startedLoad);
 }
 
-// FIXME: <rdar://130762747> Investigate why 280261@main seems to have made this time out on open source iOS.
-#if PLATFORM(IOS_FAMILY) && !USE(APPLE_INTERNAL_SDK)
-TEST(WKNavigation, DISABLEDAutomaticHiddenViewDelayedReloadAfterWebProcessCrash)
-#else
 TEST(WKNavigation, AutomaticHiddenViewDelayedReloadAfterWebProcessCrash)
-#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get() addToWindow:YES]);

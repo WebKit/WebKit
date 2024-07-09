@@ -58,6 +58,7 @@
 #define OPENSSL_HEADER_DES_INTERNAL_H
 
 #include <openssl/base.h>
+#include <openssl/des.h>
 
 #include "../internal.h"
 
@@ -65,6 +66,9 @@
 extern "C" {
 #endif
 
+
+// TODO(davidben): Ideally these macros would be replaced with
+// |CRYPTO_load_u32_le| and |CRYPTO_store_u32_le|.
 
 #define c2l(c, l)                         \
   do {                                    \
@@ -145,90 +149,39 @@ extern "C" {
     }                                                     \
   } while (0)
 
-/* IP and FP
- * The problem is more of a geometric problem that random bit fiddling.
- 0  1  2  3  4  5  6  7      62 54 46 38 30 22 14  6
- 8  9 10 11 12 13 14 15      60 52 44 36 28 20 12  4
-16 17 18 19 20 21 22 23      58 50 42 34 26 18 10  2
-24 25 26 27 28 29 30 31  to  56 48 40 32 24 16  8  0
 
-32 33 34 35 36 37 38 39      63 55 47 39 31 23 15  7
-40 41 42 43 44 45 46 47      61 53 45 37 29 21 13  5
-48 49 50 51 52 53 54 55      59 51 43 35 27 19 11  3
-56 57 58 59 60 61 62 63      57 49 41 33 25 17  9  1
+// Correctly-typed versions of DES functions.
+//
+// See https://crbug.com/boringssl/683.
 
-The output has been subject to swaps of the form
-0 1 -> 3 1 but the odd and even bits have been put into
-2 3    2 0
-different words.  The main trick is to remember that
-t=((l>>size)^r)&(mask);
-r^=t;
-l^=(t<<size);
-can be used to swap and move bits between words.
+void DES_set_key_ex(const uint8_t key[8], DES_key_schedule *schedule);
+void DES_ecb_encrypt_ex(const uint8_t in[8], uint8_t out[8],
+                        const DES_key_schedule *schedule, int is_encrypt);
+void DES_ncbc_encrypt_ex(const uint8_t *in, uint8_t *out, size_t len,
+                         const DES_key_schedule *schedule, uint8_t ivec[8],
+                         int enc);
+void DES_ecb3_encrypt_ex(const uint8_t input[8], uint8_t output[8],
+                         const DES_key_schedule *ks1,
+                         const DES_key_schedule *ks2,
+                         const DES_key_schedule *ks3, int enc);
+void DES_ede3_cbc_encrypt_ex(const uint8_t *in, uint8_t *out, size_t len,
+                             const DES_key_schedule *ks1,
+                             const DES_key_schedule *ks2,
+                             const DES_key_schedule *ks3, uint8_t ivec[8],
+                             int enc);
 
-So l =  0  1  2  3  r = 16 17 18 19
-        4  5  6  7      20 21 22 23
-        8  9 10 11      24 25 26 27
-       12 13 14 15      28 29 30 31
-becomes (for size == 2 and mask == 0x3333)
-   t =   2^16  3^17 -- --   l =  0  1 16 17  r =  2  3 18 19
-         6^20  7^21 -- --        4  5 20 21       6  7 22 23
-        10^24 11^25 -- --        8  9 24 25      10 11 24 25
-        14^28 15^29 -- --       12 13 28 29      14 15 28 29
 
-Thanks for hints from Richard Outerbridge - he told me IP&FP
-could be done in 15 xor, 10 shifts and 5 ands.
-When I finally started to think of the problem in 2D
-I first got ~42 operations without xors.  When I remembered
-how to use xors :-) I got it to its final state.
-*/
-#define PERM_OP(a, b, t, n, m)          \
-  do {                                  \
-    (t) = ((((a) >> (n)) ^ (b)) & (m)); \
-    (b) ^= (t);                         \
-    (a) ^= ((t) << (n));                \
-  } while (0)
+// Private functions.
+//
+// These functions are only exported for use in |decrepit|.
 
-#define IP(l, r)                        \
-  do {                                  \
-    uint32_t tt;                        \
-    PERM_OP(r, l, tt, 4, 0x0f0f0f0fL);  \
-    PERM_OP(l, r, tt, 16, 0x0000ffffL); \
-    PERM_OP(r, l, tt, 2, 0x33333333L);  \
-    PERM_OP(l, r, tt, 8, 0x00ff00ffL);  \
-    PERM_OP(r, l, tt, 1, 0x55555555L);  \
-  } while (0)
+OPENSSL_EXPORT void DES_decrypt3(uint32_t data[2], const DES_key_schedule *ks1,
+                                 const DES_key_schedule *ks2,
+                                 const DES_key_schedule *ks3);
 
-#define FP(l, r)                        \
-  do {                                  \
-    uint32_t tt;                        \
-    PERM_OP(l, r, tt, 1, 0x55555555L);  \
-    PERM_OP(r, l, tt, 8, 0x00ff00ffL);  \
-    PERM_OP(l, r, tt, 2, 0x33333333L);  \
-    PERM_OP(r, l, tt, 16, 0x0000ffffL); \
-    PERM_OP(l, r, tt, 4, 0x0f0f0f0fL);  \
-  } while (0)
-
-#define LOAD_DATA(ks, R, S, u, t, E0, E1) \
-  do {                                    \
-    (u) = (R) ^ (ks)->subkeys[S][0];      \
-    (t) = (R) ^ (ks)->subkeys[S][1];      \
-  } while (0)
-
-#define D_ENCRYPT(ks, LL, R, S)                                                \
-  do {                                                                         \
-    LOAD_DATA(ks, R, S, u, t, E0, E1);                                         \
-    t = CRYPTO_rotr_u32(t, 4);                                                 \
-    (LL) ^=                                                                    \
-        DES_SPtrans[0][(u >> 2L) & 0x3f] ^ DES_SPtrans[2][(u >> 10L) & 0x3f] ^ \
-        DES_SPtrans[4][(u >> 18L) & 0x3f] ^                                    \
-        DES_SPtrans[6][(u >> 26L) & 0x3f] ^ DES_SPtrans[1][(t >> 2L) & 0x3f] ^ \
-        DES_SPtrans[3][(t >> 10L) & 0x3f] ^                                    \
-        DES_SPtrans[5][(t >> 18L) & 0x3f] ^ DES_SPtrans[7][(t >> 26L) & 0x3f]; \
-  } while (0)
-
-#define ITERATIONS 16
-#define HALF_ITERATIONS 8
+OPENSSL_EXPORT void DES_encrypt3(uint32_t data[2], const DES_key_schedule *ks1,
+                                 const DES_key_schedule *ks2,
+                                 const DES_key_schedule *ks3);
 
 
 #if defined(__cplusplus)

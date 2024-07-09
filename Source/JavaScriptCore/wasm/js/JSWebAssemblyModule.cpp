@@ -36,6 +36,7 @@
 #include "WasmModule.h"
 #include "WasmModuleInformation.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

@@ -123,6 +123,7 @@ public:
         std::optional<double> zoom;
         std::optional<bool> torch;
         std::optional<bool> backgroundBlur;
+        std::optional<bool> powerEfficient;
     };
     TrackSettings getSettings() const;
 

@@ -67,6 +67,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/ResourceUsage.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/text/MakeString.h>
 
 #if PLATFORM(COCOA)
 #include "ResourceUsageThread.h"

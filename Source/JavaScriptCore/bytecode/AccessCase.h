@@ -81,7 +81,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(DirectArgumentsLength) \
     macro(ScopedArgumentsLength) \
     macro(ModuleNamespaceLoad) \
-    macro(ProxyObjectHas) \
+    macro(ProxyObjectIn) \
     macro(ProxyObjectLoad) \
     macro(ProxyObjectStore) \
     macro(InstanceOfHit) \
@@ -117,6 +117,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IndexedResizableTypedArrayFloat64Load) \
     macro(IndexedStringLoad) \
     macro(IndexedNoIndexingMiss) \
+    macro(IndexedProxyObjectStore) \
     macro(IndexedMegamorphicStore) \
     macro(IndexedInt32Store) \
     macro(IndexedDoubleStore) \
@@ -166,6 +167,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IndexedResizableTypedArrayFloat64InHit) \
     macro(IndexedStringInHit) \
     macro(IndexedNoIndexingInMiss) \
+    macro(IndexedProxyObjectIn) \
     macro(IndexedMegamorphicIn) \
 
 class AccessCase : public ThreadSafeRefCounted<AccessCase> {

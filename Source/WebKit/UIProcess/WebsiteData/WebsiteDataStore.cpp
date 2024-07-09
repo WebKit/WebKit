@@ -75,6 +75,7 @@
 #include <wtf/FileSystem.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
+#include <wtf/text/MakeString.h>
 
 #if OS(DARWIN)
 #include <wtf/spi/darwin/OSVariantSPI.h>

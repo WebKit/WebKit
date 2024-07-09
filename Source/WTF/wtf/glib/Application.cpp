@@ -27,6 +27,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/UUID.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {

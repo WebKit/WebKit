@@ -205,8 +205,6 @@ PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception 
 SETUP: paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: 'USD', value:'-10.00'} };
 PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Total currency values cannot be negative..
 
-SETUP: paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: 'USD', value: '10000000000.00' } }; request = new PaymentRequest([validPaymentMethod()], paymentDetails)
-PASS request.show() rejected promise  with TypeError: Total amount is too big..
 
 
 Testing PaymentDetails.displayItems

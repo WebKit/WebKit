@@ -156,6 +156,14 @@ void HTMLVideoElement::computeAcceleratedRenderingStateAndUpdateMediaPlayer()
     player->acceleratedRenderingStateChanged(); // This call will trigger a call back to `mediaPlayerRenderingCanBeAccelerated()` from the MediaPlayer.
 }
 
+#if PLATFORM(IOS_FAMILY)
+bool HTMLVideoElement::canShowWhileLocked() const
+{
+    RefPtr page = document().page();
+    return page && page->canShowWhileLocked();
+}
+#endif
+
 void HTMLVideoElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr) {
@@ -684,6 +692,13 @@ void HTMLVideoElement::cancelVideoFrameCallback(unsigned identifier)
         if (RefPtr player = this->player())
             player->stopVideoFrameMetadataGathering();
     }
+}
+
+void HTMLVideoElement::stop()
+{
+    m_videoFrameRequests.clear();
+    m_servicedVideoFrameRequests.clear();
+    HTMLMediaElement::stop();
 }
 
 static void processVideoFrameMetadataTimestamps(VideoFrameMetadata& metadata, Performance& performance)

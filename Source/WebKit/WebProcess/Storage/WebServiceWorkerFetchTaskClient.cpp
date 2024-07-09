@@ -331,7 +331,7 @@ void WebServiceWorkerFetchTaskClient::contextIsStopping()
         return;
     }
 
-    m_connection->send(Messages::ServiceWorkerFetchTask::ContextClosed { }, m_fetchIdentifier);
+    m_connection->send(Messages::ServiceWorkerFetchTask::WorkerClosed { }, m_fetchIdentifier);
     cleanup();
 }
 

@@ -34,6 +34,7 @@
 #include <wtf/SharedTask.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

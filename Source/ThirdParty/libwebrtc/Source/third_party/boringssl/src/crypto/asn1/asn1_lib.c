@@ -102,6 +102,15 @@ OPENSSL_DECLARE_ERROR_REASON(ASN1, UNKNOWN_FORMAT)
 OPENSSL_DECLARE_ERROR_REASON(ASN1, UNKNOWN_TAG)
 OPENSSL_DECLARE_ERROR_REASON(ASN1, UNSUPPORTED_TYPE)
 
+// Limit |ASN1_STRING|s to 64 MiB of data. Most of this module, as well as
+// downstream code, does not correctly handle overflow. We cap string fields
+// more tightly than strictly necessary to fit in |int|. This is not expected to
+// impact real world uses of this field.
+//
+// In particular, this limit is small enough that the bit count of a BIT STRING
+// comfortably fits in an |int|, with room for arithmetic.
+#define ASN1_STRING_MAX (64 * 1024 * 1024)
+
 static void asn1_put_length(unsigned char **pp, int length);
 
 int ASN1_get_object(const unsigned char **inp, long *out_len, int *out_tag,
@@ -273,9 +282,8 @@ int ASN1_STRING_set(ASN1_STRING *str, const void *_data, ossl_ssize_t len_s) {
     len = (size_t)len_s;
   }
 
-  // |ASN1_STRING| cannot represent strings that exceed |int|, and we must
-  // reserve space for a trailing NUL below.
-  if (len > INT_MAX || len + 1 < len) {
+  static_assert(ASN1_STRING_MAX < INT_MAX, "len will not overflow int");
+  if (len > ASN1_STRING_MAX) {
     OPENSSL_PUT_ERROR(ASN1, ERR_R_OVERFLOW);
     return 0;
   }

@@ -41,6 +41,7 @@
 #include <wtf/glib/Sandbox.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
 #if HAVE(GTK_UNIX_PRINTING)

@@ -30,6 +30,8 @@
 #include "config.h"
 #include "WindowsKeyNames.h"
 
+#include <wtf/text/MakeString.h>
+
 namespace WebCore {
 
 enum class WindowsKeyNames::KeyModifier : uint8_t {

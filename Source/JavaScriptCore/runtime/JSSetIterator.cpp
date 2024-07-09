@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple, Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -9,7 +9,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- *
+*
  * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -41,11 +41,19 @@ JSSetIterator* JSSetIterator::createWithInitialValues(VM& vm, Structure* structu
     return iterator;
 }
 
-void JSSetIterator::finishCreation(VM& vm, JSSet* iteratedObject, IterationKind kind)
+void JSSetIterator::finishCreation(JSGlobalObject* globalObject,  JSSet* iteratedObject, IterationKind kind)
 {
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     Base::finishCreation(vm);
-    internalField(Field::SetBucket).set(vm, this, iteratedObject->head());
-    internalField(Field::IteratedObject).set(vm, this, iteratedObject);
+    setEntry(vm, 0);
+    setIteratedObject(vm, iteratedObject);
+
+    iteratedObject->materializeIfNeeded(globalObject);
+    RETURN_IF_EXCEPTION(scope, void());
+    setStorage(vm, iteratedObject->m_storage.get());
+
     internalField(Field::Kind).set(vm, this, jsNumber(static_cast<int32_t>(kind)));
 }
 
@@ -67,13 +75,30 @@ void JSSetIterator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(JSSetIterator);
 
-JSValue JSSetIterator::createPair(JSGlobalObject* globalObject, JSValue key, JSValue value)
+JSC_DEFINE_HOST_FUNCTION(setIteratorPrivateFuncSetIteratorNext, (JSGlobalObject * globalObject, CallFrame* callFrame))
 {
-    MarkedArgumentBuffer args;
-    args.append(key);
-    args.append(value);
-    ASSERT(!args.hasOverflowed());
-    return constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), args);
+    ASSERT(callFrame->argument(0).isCell());
+
+    VM& vm = globalObject->vm();
+    JSCell* cell = callFrame->uncheckedArgument(0).asCell();
+    if (cell == vm.orderedHashTableSentinel())
+        return JSValue::encode(cell);
+
+    JSSetIterator* iterator = jsCast<JSSetIterator*>(cell);
+    return JSValue::encode(iterator->next(vm));
+}
+
+JSC_DEFINE_HOST_FUNCTION(setIteratorPrivateFuncSetIteratorKey, (JSGlobalObject * globalObject, CallFrame* callFrame))
+{
+    ASSERT(callFrame->argument(0).isCell());
+
+    VM& vm = globalObject->vm();
+    JSCell* cell = callFrame->uncheckedArgument(0).asCell();
+    if (cell == vm.orderedHashTableSentinel())
+        return JSValue::encode(cell);
+
+    JSSetIterator* iterator = jsCast<JSSetIterator*>(cell);
+    return JSValue::encode(iterator->nextKey(vm));
 }
 
 }

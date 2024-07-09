@@ -221,6 +221,8 @@ inline JSFunction* JSGlobalObject::performPromiseThenFunction() const { return j
 inline JSFunction* JSGlobalObject::regExpProtoExecFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::regExpBuiltinExec)); }
 inline JSFunction* JSGlobalObject::stringProtoSubstringFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::stringSubstring)); }
 inline JSFunction* JSGlobalObject::performProxyObjectHasFunction() const { return m_performProxyObjectHasFunction.get(); }
+inline JSFunction* JSGlobalObject::performProxyObjectHasByValFunction() const { return m_performProxyObjectHasByValFunction.get(); }
+inline JSFunction* JSGlobalObject::performProxyObjectHasByValFunctionConcurrently() const { return performProxyObjectHasByValFunction(); }
 inline JSFunction* JSGlobalObject::performProxyObjectGetFunction() const { return m_performProxyObjectGetFunction.get(); }
 inline JSFunction* JSGlobalObject::performProxyObjectGetFunctionConcurrently() const { return performProxyObjectGetFunction(); }
 inline JSFunction* JSGlobalObject::performProxyObjectGetByValFunction() const { return m_performProxyObjectGetByValFunction.get(); }
@@ -229,6 +231,10 @@ inline JSFunction* JSGlobalObject::performProxyObjectSetSloppyFunction() const {
 inline JSFunction* JSGlobalObject::performProxyObjectSetSloppyFunctionConcurrently() const { return performProxyObjectSetSloppyFunction(); }
 inline JSFunction* JSGlobalObject::performProxyObjectSetStrictFunction() const { return m_performProxyObjectSetStrictFunction.get(); }
 inline JSFunction* JSGlobalObject::performProxyObjectSetStrictFunctionConcurrently() const { return performProxyObjectSetStrictFunction(); }
+inline JSFunction* JSGlobalObject::performProxyObjectSetByValSloppyFunction() const { return m_performProxyObjectSetByValSloppyFunction.get(); }
+inline JSFunction* JSGlobalObject::performProxyObjectSetByValSloppyFunctionConcurrently() const { return performProxyObjectSetByValSloppyFunction(); }
+inline JSFunction* JSGlobalObject::performProxyObjectSetByValStrictFunction() const { return m_performProxyObjectSetByValStrictFunction.get(); }
+inline JSFunction* JSGlobalObject::performProxyObjectSetByValStrictFunctionConcurrently() const { return performProxyObjectSetByValStrictFunction(); }
 inline GetterSetter* JSGlobalObject::regExpProtoGlobalGetter() const { return bitwise_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoGlobalGetter)); }
 inline GetterSetter* JSGlobalObject::regExpProtoUnicodeGetter() const { return bitwise_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoUnicodeGetter)); }
 inline GetterSetter* JSGlobalObject::regExpProtoUnicodeSetsGetter() const { return bitwise_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoUnicodeSetsGetter)); }
@@ -311,6 +317,16 @@ inline JSArray* constructArrayNegativeIndexed(JSGlobalObject* globalObject, Arra
     if (UNLIKELY(!array))
         return nullptr;
     return ArrayAllocationProfile::updateLastAllocationFor(profile, array);
+}
+
+template<typename... Args>
+inline JSArray* createTuple(JSGlobalObject* globalObject, Args&&... args)
+{
+    MarkedArgumentBuffer buffer;
+    (buffer.append(std::forward<Args>(args)), ...);
+
+    ASSERT(!buffer.hasOverflowed());
+    return constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), buffer);
 }
 
 inline OptionSet<CodeGenerationMode> JSGlobalObject::defaultCodeGenerationMode() const

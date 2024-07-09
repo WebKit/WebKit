@@ -41,6 +41,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/UUID.h>
+#import <wtf/text/MakeString.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
 SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);

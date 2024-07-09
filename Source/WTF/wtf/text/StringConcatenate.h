@@ -478,6 +478,9 @@ public:
     Interleave(const Interleave&) = delete;
     Interleave& operator=(const Interleave&) = delete;
 
+    Interleave(Interleave&&) = default;
+    Interleave& operator=(Interleave&&) = default;
+
     template<typename Accumulator> void writeUsing(Accumulator& accumulator) const
     {
         auto begin = std::begin(container);
@@ -640,110 +643,10 @@ inline void stringTypeAdapterAccumulator(ResultType* result, StringTypeAdapter a
     stringTypeAdapterAccumulator(result + adapter.length(), adapters...);
 }
 
-template<typename... StringTypeAdapters>
-RefPtr<StringImpl> tryMakeStringImplFromAdaptersInternal(unsigned length, bool areAllAdapters8Bit, StringTypeAdapters ...adapters)
-{
-    ASSERT(length <= String::MaxLength);
-    if (areAllAdapters8Bit) {
-        LChar* buffer;
-        RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
-        if (!resultImpl)
-            return nullptr;
-
-        if (buffer)
-            stringTypeAdapterAccumulator(buffer, adapters...);
-
-        return resultImpl;
-    }
-
-    UChar* buffer;
-    RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
-    if (!resultImpl)
-        return nullptr;
-
-    if (buffer)
-        stringTypeAdapterAccumulator(buffer, adapters...);
-
-    return resultImpl;
-}
-
 template<typename Func, StringTypeAdaptable... StringTypes>
 auto handleWithAdapters(Func&& func, StringTypes&& ...strings) -> decltype(auto)
 {
     return func(StringTypeAdapter<StringTypes>(std::forward<StringTypes>(strings))...);
-}
-
-template<typename... StringTypeAdapters>
-String tryMakeStringFromAdapters(StringTypeAdapters ...adapters)
-{
-    static_assert(String::MaxLength == std::numeric_limits<int32_t>::max());
-    auto sum = checkedSum<int32_t>(adapters.length()...);
-    if (sum.hasOverflowed())
-        return String();
-
-    bool areAllAdapters8Bit = are8Bit(adapters...);
-    return tryMakeStringImplFromAdaptersInternal(sum, areAllAdapters8Bit, adapters...);
-}
-
-template<StringTypeAdaptable... StringTypes>
-String tryMakeString(StringTypes ...strings)
-{
-    return tryMakeStringFromAdapters(StringTypeAdapter<StringTypes>(strings)...);
-}
-
-template<StringTypeAdaptable... StringTypes>
-String makeString(StringTypes... strings)
-{
-    String result = tryMakeString(strings...);
-    if (!result)
-        CRASH();
-    return result;
-}
-
-template<typename... StringTypeAdapters>
-AtomString tryMakeAtomStringFromAdapters(StringTypeAdapters ...adapters)
-{
-    static_assert(String::MaxLength == std::numeric_limits<int32_t>::max());
-    auto sum = checkedSum<int32_t>(adapters.length()...);
-    if (sum.hasOverflowed())
-        return AtomString();
-
-    unsigned length = sum;
-    ASSERT(length <= String::MaxLength);
-
-    bool areAllAdapters8Bit = are8Bit(adapters...);
-    constexpr size_t maxLengthToUseStackVariable = 64;
-    if (length < maxLengthToUseStackVariable) {
-        if (areAllAdapters8Bit) {
-            LChar buffer[maxLengthToUseStackVariable];
-            stringTypeAdapterAccumulator(buffer, adapters...);
-            return std::span<const LChar> { buffer, length };
-        }
-        UChar buffer[maxLengthToUseStackVariable];
-        stringTypeAdapterAccumulator(buffer, adapters...);
-        return std::span<const UChar> { buffer, length };
-    }
-    return tryMakeStringImplFromAdaptersInternal(length, areAllAdapters8Bit, adapters...).get();
-}
-
-template<StringTypeAdaptable... StringTypes>
-AtomString tryMakeAtomString(StringTypes ...strings)
-{
-    return tryMakeAtomStringFromAdapters(StringTypeAdapter<StringTypes>(strings)...);
-}
-
-template<StringTypeAdaptable... StringTypes>
-AtomString makeAtomString(StringTypes... strings)
-{
-    AtomString result = tryMakeAtomString(strings...);
-    if (result.isNull())
-        CRASH();
-    return result;
-}
-
-inline String WARN_UNUSED_RETURN makeStringByInserting(StringView originalString, StringView stringToInsert, unsigned position)
-{
-    return makeString(originalString.left(position), stringToInsert, originalString.substring(position));
 }
 
 } // namespace WTF
@@ -753,11 +656,4 @@ using WTF::IndentationScope;
 using WTF::asASCIILowercase;
 using WTF::asASCIIUppercase;
 using WTF::interleave;
-using WTF::makeAtomString;
-using WTF::makeString;
-using WTF::makeStringByInserting;
 using WTF::pad;
-using WTF::tryMakeAtomString;
-using WTF::tryMakeString;
-
-#include <wtf/text/StringOperators.h>

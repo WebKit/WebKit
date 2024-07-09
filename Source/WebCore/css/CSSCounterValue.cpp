@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,7 @@
 #include "CSSMarkup.h"
 #include "CSSPrimitiveValue.h"
 #include <wtf/PointerComparison.h> 
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

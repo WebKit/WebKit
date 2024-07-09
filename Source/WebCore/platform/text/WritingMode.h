@@ -104,16 +104,27 @@ struct TextFlow {
     }
 };
 
+constexpr inline TextFlow makeTextFlow(WritingMode writingMode, TextDirection direction)
+{
+    auto textDirection = direction;
+
+    // FIXME: Remove this erronous logic and remove `makeTextFlow` helper (webkit.org/b/276028).
+    if (writingMode == WritingMode::SidewaysLr)
+        textDirection = direction == TextDirection::RTL ? TextDirection::LTR : TextDirection::RTL;
+
+    return { writingModeToBlockFlowDirection(writingMode), textDirection };
+}
+
 // Lines have vertical orientation; modes vertical-lr or vertical-rl.
 constexpr inline bool isVerticalWritingMode(WritingMode writingMode)
 {
-    return TextFlow { writingModeToBlockFlowDirection(writingMode), TextDirection::LTR }.isVertical();
+    return makeTextFlow(writingMode, TextDirection::LTR).isVertical();
 }
 
 // Block progression increases in the opposite direction to normal; modes vertical-rl or horizontal-bt.
 constexpr inline bool isFlippedWritingMode(WritingMode writingMode)
 {
-    return TextFlow { writingModeToBlockFlowDirection(writingMode), TextDirection::LTR }.isFlipped();
+    return makeTextFlow(writingMode, TextDirection::LTR).isFlipped();
 }
 
 // Lines have horizontal orientation; modes horizontal-tb or horizontal-bt.
@@ -125,7 +136,7 @@ constexpr inline bool isHorizontalWritingMode(WritingMode writingMode)
 // Bottom of the line occurs earlier in the block; modes vertical-lr or horizontal-bt.
 constexpr inline bool isFlippedLinesWritingMode(WritingMode writingMode)
 {
-    return TextFlow { writingModeToBlockFlowDirection(writingMode), TextDirection::LTR }.isFlippedLines();
+    return makeTextFlow(writingMode, TextDirection::LTR).isFlippedLines();
 }
 
 enum class LogicalBoxSide : uint8_t {
@@ -186,7 +197,7 @@ constexpr BoxSide mapLogicalSideToPhysicalSide(WritingMode writingMode, LogicalB
 {
     // Set the direction such that side is mirrored if isFlippedWritingMode() is true
     auto direction = isFlippedWritingMode(writingMode) ? TextDirection::RTL : TextDirection::LTR;
-    return mapLogicalSideToPhysicalSide({ writingModeToBlockFlowDirection(writingMode), direction }, logicalSide);
+    return mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), logicalSide);
 }
 
 constexpr LogicalBoxSide mapPhysicalSideToLogicalSide(TextFlow flow, BoxSide side)

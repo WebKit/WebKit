@@ -35,6 +35,7 @@
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore::ContentExtensions {

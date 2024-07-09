@@ -46,7 +46,9 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Automate the browser based performance benchmarks')
     # browserperfdash specific arguments.
     parser.add_argument('--config-file', dest='config_file', default=None, required=True, help='Configuration file for sending the results to the performance dashboard server(s).')
-    parser.add_argument('--browser-version', dest='browser_version', default=None, required=True, help='A string that identifies the browser version.')
+    parser_group_browser_version = parser.add_mutually_exclusive_group(required=True)
+    parser_group_browser_version.add_argument('--browser-version', dest='browser_version', default=None, help='A string that identifies the browser version.')
+    parser_group_browser_version.add_argument('--query-browser-version', dest='query_browser_version', action='store_true', help='Try to automatically query the browser version.')
     # arguments shared with run-benchmark.
     parser.add_argument('--build-directory', dest='buildDir', help='Path to the browser executable (e.g. WebKitBuild/Release/).')
     parser.add_argument('--platform', dest='platform', default=None, choices=BrowserDriverFactory.available_platforms())
@@ -164,13 +166,26 @@ class BrowserPerfDashRunner(object):
             plan_content = plan_fd.read().encode('utf-8', errors='ignore')
             version_hash.update(plan_content)
             plan_dict = json.loads(plan_content)
+            if 'import_plan_file' in plan_dict:
+                imported_plan_file = os.path.join(self._plandir, plan_dict.pop('import_plan_file'))
+                with open(imported_plan_file, 'r') as imported_plan_fd:
+                    imported_plan_content = imported_plan_fd.read().encode('utf-8', errors='ignore')
+                    version_hash.update(imported_plan_content)
+                    imported_plan_dict = json.loads(imported_plan_content)
+                imported_plan_dict.update(plan_dict)
+                plan_dict = imported_plan_dict
+            plan_patches = []
             for plan_key in plan_dict:
                 if plan_key.endswith('_patch'):
-                    patch_file_path = get_path_from_project_root(plan_dict[plan_key])
-                    if not os.path.isfile(patch_file_path):
-                        raise Exception('Can not find patch file "{patch_file_path}" referenced in plan "{plan_file_path}"'.format(patch_file_path=patch_file_path, plan_file_path=plan_file_path))
-                    with open(patch_file_path, 'r') as patch_fd:
-                        version_hash.update(patch_fd.read().encode('utf-8', errors='ignore'))
+                    plan_patches.append(get_path_from_project_root(plan_dict[plan_key]))
+                if plan_key.endswith('_patches'):
+                    for plan_patch in plan_dict[plan_key]:
+                        plan_patches.append(get_path_from_project_root(plan_patch))
+            for patch_file_path in plan_patches:
+                if not os.path.isfile(patch_file_path):
+                    raise Exception('Can not find patch file "{patch_file_path}" referenced in plan "{plan_file_path}"'.format(patch_file_path=patch_file_path, plan_file_path=plan_file_path))
+                with open(patch_file_path, 'r') as patch_fd:
+                    version_hash.update(patch_fd.read().encode('utf-8', errors='ignore'))
         return version_hash.hexdigest()
 
     def _get_test_data_json_string(self, temp_result_file):
@@ -288,7 +303,7 @@ class BrowserPerfDashRunner(object):
             _log.error('No benchmarks plans available to run in directory {plan_directory}'.format(plan_directory=self._plandir))
             return max(1, len(failed))
 
-        _log.info('Starting benchmark for browser {browser} and version {browser_version}'.format(browser=self._args.browser, browser_version=self._args.browser_version))
+        _log.info('Starting benchmark for browser {browser}'.format(browser=self._args.browser))
 
         iteration_count = 0
         for plan in plan_list:
@@ -311,6 +326,11 @@ class BrowserPerfDashRunner(object):
                                                     self._args.browser,
                                                     None,
                                                     browser_args=self._args.browser_args)
+                    if self._args.query_browser_version:
+                        self._result_data['browser_version'] = runner._browser_driver.browser_version()
+                        if not self._result_data['browser_version']:
+                            raise NotImplementedError('The driver for browser {browser} does not implement a way to automatically obtain the version. Please specify the version manually.'.format(browser=self._args.browser))
+                    _log.info('Browser version is: {browser_version}'.format(browser_version=self._result_data['browser_version']))
                     self._result_data['local_timestamp_teststart'] = datetime.now().strftime('%s')
                     runner.execute()
                     self._result_data['local_timestamp_testend'] = datetime.now().strftime('%s')
@@ -322,7 +342,7 @@ class BrowserPerfDashRunner(object):
                     self._result_data['test_data'] = self._get_test_data_json_string(temp_result_file)
 
                 # Now upload data to server(s)
-                _log.info('Uploading results for plan: {plan_name} and browser {browser} version {browser_version}'.format(plan_name=plan, browser=self._args.browser, browser_version=self._args.browser_version))
+                _log.info('Uploading results for plan: {plan_name} and browser {browser} version {browser_version}'.format(plan_name=plan, browser=self._args.browser, browser_version=self._result_data['browser_version']))
                 if self._upload_result():
                     worked.append(plan)
                 else:

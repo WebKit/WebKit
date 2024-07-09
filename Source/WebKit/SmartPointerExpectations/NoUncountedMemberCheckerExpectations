@@ -52,7 +52,6 @@ WebProcess/WebCoreSupport/WebScreenOrientationManager.h
 WebProcess/WebPage/FindController.h
 WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.h
 WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.h
-WebProcess/WebPage/ViewGestureGeometryCollector.h
 WebProcess/WebPage/WebURLSchemeHandlerProxy.h
 WebProcess/WebPage/WebURLSchemeTaskProxy.h
 WebProcess/WebStorage/StorageAreaMap.h

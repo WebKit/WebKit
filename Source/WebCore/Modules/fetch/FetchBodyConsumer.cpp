@@ -42,6 +42,7 @@
 #include "TextResourceDecoder.h"
 #include <wtf/StringExtras.h>
 #include <wtf/URLParser.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

@@ -64,6 +64,7 @@ PlatformWebView::PlatformWebView(WKPageRef relatedPage)
 
 PlatformWebView::~PlatformWebView()
 {
+    WKRelease(m_view);
     delete m_window;
 }
 

@@ -773,6 +773,9 @@ platform/mac/fast/loader/file-url-mimetypes.html [ Failure ]
 # This test rarely times out with color being (0, 0, 0, 0), so far only on macOS Ventura.
 http/tests/media/hls/hls-hdr-switch.html [ Pass Timeout ]
 
+# This test works correctly only on Cocoa platforms.
+[ Sequoia+ ] fast/canvas/canvas-drawImage-hdr-video.html [ Pass ]
+ 
 # rdar://94184618 (REGRESSION): [ Mac Ventura Debug ] 5* editing/secure-input/* (layout-tests) are constant failures)
 editing/secure-input/password-input-changed-type.html [ Pass Failure ]
 editing/secure-input/password-input-focusing-to-different-frame.html [ Pass Failure ]
@@ -2273,12 +2276,9 @@ webkit.org/b/261911 media/media-source/media-managedmse-seek.html [ Pass ImageOn
 
 webkit.org/b/261958 [ Release ] inspector/console/timestamp.html [ Pass Failure ]
 
-# Results changed with Sonoma
-[ Ventura ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType.html [ Failure ]
-
-# webkit.org/b/262595 (REGRESSION(Sonoma): [ Sonoma ] 2 lookup menu-related tests are constant text failures.)
-[ Sonoma ] editing/mac/dictionary-lookup/dictionary-lookup.html [ Failure ]
-[ Sonoma ] editing/selection/context-menu-text-selection-lookup.html [ Failure ]
+# webkit.org/b/262595 (REGRESSION(Sonoma): 2X lookup menu-related tests are constant text failures.)
+editing/mac/dictionary-lookup/dictionary-lookup.html [ Pass Failure ]
+editing/selection/context-menu-text-selection-lookup.html [ Pass Failure ]
 
 # webkit.org/b/263226 (REGRESSION(268692@main?): [ macOS ] 7 tests under imported/w3c/web-platform-tests/media-source/mediasource-* are flaky failures.)
 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-audio-bitrate.html [ Pass Failure ]
@@ -2458,3 +2458,9 @@ imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-l
 webkit.org/b/275713 fast/text/international/system-language/declarative-language.html [ Failure ]
 
 webkit.org/b/275962 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/no-referrer-dynamic-url-censored.html [ Failure ]
+
+# rdar://124307254 ([ Sequoia+ ]: Bad rendering of EmojiImage)
+[ Sequoia+ ] fast/css/font-fallback-private-use-area-apple-logo-exception.html [ ImageOnlyFailure ]
+
+# rdar://124314393 ([ Sequoia+ ] fast/text/combining-mark-paint.html is a consistent image failure)
+[ Sequoia+ ] fast/text/combining-mark-paint.html [ ImageOnlyFailure ]

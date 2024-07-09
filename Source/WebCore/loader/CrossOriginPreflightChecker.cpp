@@ -46,6 +46,7 @@
 #include "NetworkLoadMetrics.h"
 #include "Quirks.h"
 #include "SharedBuffer.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

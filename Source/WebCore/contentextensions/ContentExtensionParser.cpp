@@ -38,6 +38,7 @@
 #include "ProcessWarming.h"
 #include <wtf/Expected.h>
 #include <wtf/JSONValues.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore::ContentExtensions {

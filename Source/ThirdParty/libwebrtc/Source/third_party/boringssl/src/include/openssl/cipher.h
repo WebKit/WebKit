@@ -542,6 +542,7 @@ OPENSSL_EXPORT void EVP_CIPHER_CTX_set_flags(const EVP_CIPHER_CTX *ctx,
 #define EVP_CTRL_AEAD_SET_MAC_KEY 0x17
 // EVP_CTRL_GCM_SET_IV_INV sets the GCM invocation field, decrypt only
 #define EVP_CTRL_GCM_SET_IV_INV 0x18
+#define EVP_CTRL_GET_IVLEN 0x19
 
 // The following constants are unused.
 #define EVP_GCM_TLS_FIXED_IV_LEN 4

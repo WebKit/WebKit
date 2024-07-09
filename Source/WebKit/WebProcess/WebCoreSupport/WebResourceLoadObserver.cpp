@@ -38,6 +38,7 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/Page.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 

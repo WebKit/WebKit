@@ -37,6 +37,7 @@
 #include "RenderBlock.h"
 #include "RenderStyleSetters.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {

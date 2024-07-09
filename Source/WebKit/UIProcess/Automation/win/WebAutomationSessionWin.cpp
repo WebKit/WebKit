@@ -32,6 +32,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/WindowsKeyboardCodes.h>
 #include <WebKit/WKEvent.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -349,7 +350,7 @@ OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(We
 void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const String& keySequence)
 {
     // https://www.w3.org/TR/uievents-code/#key-alphanumeric-writing-system
-    String keyIdentifier = "Key"_s + keySequence.convertToASCIIUppercase();
+    auto keyIdentifier = makeString("Key"_s, keySequence.convertToASCIIUppercase());
 
     auto hwnd = reinterpret_cast<HWND>(page.viewWidget());
     String key = (m_currentModifiers & kWKEventModifiersShiftKey) ? keySequence.convertToASCIIUppercase() : keySequence;

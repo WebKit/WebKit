@@ -23,6 +23,7 @@
 
 #include "GStreamerCommon.h"
 #include "GStreamerRegistryScanner.h"
+#include <wtf/text/MakeString.h>
 
 GST_DEBUG_CATEGORY(webkit_webrtc_incoming_track_processor_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_incoming_track_processor_debug

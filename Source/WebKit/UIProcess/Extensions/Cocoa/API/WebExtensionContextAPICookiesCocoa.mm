@@ -44,6 +44,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <pal/SessionID.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/text/MakeString.h>
 
 namespace WebKit {
 

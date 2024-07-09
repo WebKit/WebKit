@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "SystemVersion.h"
+#import <wtf/text/MakeString.h>
 
 namespace WebCore {
 

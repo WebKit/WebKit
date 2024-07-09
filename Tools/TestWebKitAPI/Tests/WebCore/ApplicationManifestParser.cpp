@@ -30,6 +30,7 @@
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/ApplicationManifestParser.h>
 #include <wtf/RunLoop.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 using namespace WebCore;

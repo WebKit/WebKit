@@ -56,7 +56,7 @@ TEST(RandTest, NotObviouslyBroken) {
 
 #if !defined(OPENSSL_WINDOWS) && !defined(OPENSSL_IOS) && \
     !defined(OPENSSL_FUCHSIA) && !defined(BORINGSSL_UNSAFE_DETERMINISTIC_MODE)
-static bool ForkAndRand(bssl::Span<uint8_t> out) {
+static bool ForkAndRand(bssl::Span<uint8_t> out, bool fork_unsafe_buffering) {
   int pipefds[2];
   if (pipe(pipefds) < 0) {
     perror("pipe");
@@ -76,6 +76,9 @@ static bool ForkAndRand(bssl::Span<uint8_t> out) {
   if (child == 0) {
     // This is the child. Generate entropy and write it to the parent.
     close(pipefds[0]);
+    if (fork_unsafe_buffering) {
+      RAND_enable_fork_unsafe_buffering(-1);
+    }
     RAND_bytes(out.data(), out.size());
     while (!out.empty()) {
       ssize_t ret = write(pipefds[1], out.data(), out.size());
@@ -136,18 +139,27 @@ TEST(RandTest, Fork) {
   // intentionally uses smaller buffers than the others, to minimize the chance
   // of sneaking by with a large enough buffer that we've since reseeded from
   // the OS.
-  uint8_t buf1[16], buf2[16], buf3[16];
-  ASSERT_TRUE(ForkAndRand(buf1));
-  ASSERT_TRUE(ForkAndRand(buf2));
-  RAND_bytes(buf3, sizeof(buf3));
+  //
+  // All child processes should have different PRNGs, including the ones that
+  // disavow fork-safety. Although they are produced by fork, they themselves do
+  // not fork after that call.
+  uint8_t bufs[5][16];
+  ASSERT_TRUE(ForkAndRand(bufs[0], /*fork_unsafe_buffering=*/false));
+  ASSERT_TRUE(ForkAndRand(bufs[1], /*fork_unsafe_buffering=*/false));
+  ASSERT_TRUE(ForkAndRand(bufs[2], /*fork_unsafe_buffering=*/true));
+  ASSERT_TRUE(ForkAndRand(bufs[3], /*fork_unsafe_buffering=*/true));
+  RAND_bytes(bufs[4], sizeof(bufs[4]));
 
-  // All should be different.
-  EXPECT_NE(Bytes(buf1), Bytes(buf2));
-  EXPECT_NE(Bytes(buf2), Bytes(buf3));
-  EXPECT_NE(Bytes(buf1), Bytes(buf3));
-  EXPECT_NE(Bytes(buf1), Bytes(kZeros));
-  EXPECT_NE(Bytes(buf2), Bytes(kZeros));
-  EXPECT_NE(Bytes(buf3), Bytes(kZeros));
+  // All should be different and non-zero.
+  for (const auto &buf : bufs) {
+    EXPECT_NE(Bytes(buf), Bytes(kZeros));
+  }
+  for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(bufs); i++) {
+    for (size_t j = 0; j < i; j++) {
+      EXPECT_NE(Bytes(bufs[i]), Bytes(bufs[j]))
+          << "buffers " << i << " and " << j << " matched";
+    }
+  }
 }
 #endif  // !OPENSSL_WINDOWS && !OPENSSL_IOS &&
         // !OPENSSL_FUCHSIA && !BORINGSSL_UNSAFE_DETERMINISTIC_MODE

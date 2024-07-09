@@ -594,6 +594,12 @@ String SizeFrameRateAndZoom::toJSONString() const
 }
 #endif
 
+bool RealtimeVideoCaptureSource::canBePowerEfficient()
+{
+    return anyOf(presets(), [] (auto& preset) { return preset.isEfficient(); }) && anyOf(presets(), [] (auto& preset) { return !preset.isEfficient(); });
+}
+
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

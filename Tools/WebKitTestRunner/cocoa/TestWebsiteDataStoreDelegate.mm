@@ -153,12 +153,11 @@
     [_windowProxyAccessDomains removeAllObjects];
 }
 
-- (NSData *)webCryptoMasterKey
+- (void)webCryptoMasterKey:(void (^)(NSData *))completionHandler
 {
     // Not so random key
     constexpr size_t keyLength = 16;
     uint8_t keyBytes[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf };
-    NSData *key = [NSData dataWithBytes:keyBytes length:(keyLength)];
-    return key;
+    completionHandler([NSData dataWithBytes:keyBytes length:(keyLength)]);
 }
 @end

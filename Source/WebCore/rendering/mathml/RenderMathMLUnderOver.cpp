@@ -108,7 +108,7 @@ void RenderMathMLUnderOver::stretchHorizontalOperatorsAndLayoutChildren()
         } else {
             isAllStretchyOperators = false;
             child->layoutIfNeeded();
-            stretchWidth = std::max(stretchWidth, child->logicalWidth());
+            stretchWidth = std::max(stretchWidth, child->logicalWidth() + child->marginLogicalWidth());
         }
     }
 
@@ -116,7 +116,7 @@ void RenderMathMLUnderOver::stretchHorizontalOperatorsAndLayoutChildren()
         for (size_t i = 0; i < embellishedOperators.size(); i++) {
             stretchyOperators[i]->resetStretchSize();
             fixLayoutAfterStretch(*embellishedOperators[i], *stretchyOperators[i]);
-            stretchWidth = std::max(stretchWidth, embellishedOperators[i]->logicalWidth());
+            stretchWidth = std::max(stretchWidth, embellishedOperators[i]->logicalWidth() + embellishedOperators[i]->marginLogicalWidth());
         }
     }
 
@@ -197,22 +197,24 @@ void RenderMathMLUnderOver::computePreferredLogicalWidths()
         return;
     }
 
-    LayoutUnit preferredWidth = base().maxPreferredLogicalWidth();
+    LayoutUnit preferredWidth = base().maxPreferredLogicalWidth() + base().marginLogicalWidth();
 
     if (scriptType() == MathMLScriptsElement::ScriptType::Under || scriptType() == MathMLScriptsElement::ScriptType::UnderOver)
-        preferredWidth = std::max(preferredWidth, under().maxPreferredLogicalWidth());
+        preferredWidth = std::max(preferredWidth, under().maxPreferredLogicalWidth() + under().marginLogicalWidth());
 
     if (scriptType() == MathMLScriptsElement::ScriptType::Over || scriptType() == MathMLScriptsElement::ScriptType::UnderOver)
-        preferredWidth = std::max(preferredWidth, over().maxPreferredLogicalWidth());
+        preferredWidth = std::max(preferredWidth, over().maxPreferredLogicalWidth() + over().marginLogicalWidth());
 
-    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = preferredWidth;
+    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = preferredWidth + borderAndPaddingLogicalWidth();
 
     setPreferredLogicalWidthsDirty(false);
 }
 
 LayoutUnit RenderMathMLUnderOver::horizontalOffset(const RenderBox& child) const
 {
-    return (logicalWidth() - child.logicalWidth()) / 2;
+    LayoutUnit contentBoxInlineSize = logicalWidth() - borderAndPaddingLogicalWidth();
+    LayoutUnit childMarginBoxInlineSize = child.logicalWidth() + child.marginLogicalWidth();
+    return borderLeft() + paddingLeft() + (contentBoxInlineSize - childMarginBoxInlineSize) / 2 + child.marginLeft();
 }
 
 bool RenderMathMLUnderOver::hasAccent(bool accentUnder) const
@@ -314,6 +316,7 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
     }
 
     recomputeLogicalWidth();
+    computeAndSetBlockDirectionMarginsOfChildren();
 
     stretchHorizontalOperatorsAndLayoutChildren();
 
@@ -321,45 +324,52 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
     ASSERT(scriptType() == MathMLScriptsElement::ScriptType::Over || !under().needsLayout());
     ASSERT(scriptType() == MathMLScriptsElement::ScriptType::Under || !over().needsLayout());
 
-    LayoutUnit logicalWidth = base().logicalWidth();
+    LayoutUnit logicalWidth = base().logicalWidth() + base().marginLogicalWidth();
     if (scriptType() == MathMLScriptsElement::ScriptType::Under || scriptType() == MathMLScriptsElement::ScriptType::UnderOver)
-        logicalWidth = std::max(logicalWidth, under().logicalWidth());
+        logicalWidth = std::max(logicalWidth, under().logicalWidth() + under().marginLogicalWidth());
     if (scriptType() == MathMLScriptsElement::ScriptType::Over || scriptType() == MathMLScriptsElement::ScriptType::UnderOver)
-        logicalWidth = std::max(logicalWidth, over().logicalWidth());
-    setLogicalWidth(logicalWidth);
+        logicalWidth = std::max(logicalWidth, over().logicalWidth() + over().marginLogicalWidth());
+    setLogicalWidth(logicalWidth + borderAndPaddingLogicalWidth());
 
     VerticalParameters parameters = verticalParameters();
-    LayoutUnit verticalOffset;
+    LayoutUnit verticalOffset = borderAndPaddingBefore();
     if (scriptType() == MathMLScriptsElement::ScriptType::Over || scriptType() == MathMLScriptsElement::ScriptType::UnderOver) {
         verticalOffset += parameters.overExtraAscender;
+        verticalOffset += over().marginBefore();
         over().setLocation(LayoutPoint(horizontalOffset(over()), verticalOffset));
         if (parameters.useUnderOverBarFallBack) {
             verticalOffset += over().logicalHeight();
+            verticalOffset += over().marginAfter();
             if (hasAccent()) {
-                LayoutUnit baseAscent = ascentForChild(base());
+                LayoutUnit baseAscent = ascentForChild(base()) + base().marginBefore();
                 if (baseAscent < parameters.accentBaseHeight)
                     verticalOffset += parameters.accentBaseHeight - baseAscent;
             } else
                 verticalOffset += parameters.overGapMin;
         } else {
-            LayoutUnit overAscent = ascentForChild(over());
-            verticalOffset += std::max(over().logicalHeight() + parameters.overGapMin, overAscent + parameters.overShiftMin);
+            LayoutUnit overAscent = ascentForChild(over()) + over().marginBefore();
+            verticalOffset += std::max(over().logicalHeight() + over().marginAfter() + parameters.overGapMin, overAscent + parameters.overShiftMin);
         }
     }
+    verticalOffset += base().marginBefore();
     base().setLocation(LayoutPoint(horizontalOffset(base()), verticalOffset));
     verticalOffset += base().logicalHeight();
+    verticalOffset += base().marginAfter();
     if (scriptType() == MathMLScriptsElement::ScriptType::Under || scriptType() == MathMLScriptsElement::ScriptType::UnderOver) {
         if (parameters.useUnderOverBarFallBack) {
             if (!hasAccentUnder())
                 verticalOffset += parameters.underGapMin;
         } else {
-            LayoutUnit underAscent = ascentForChild(under());
+            LayoutUnit underAscent = ascentForChild(under()) + under().marginBefore();
             verticalOffset += std::max(parameters.underGapMin, parameters.underShiftMin - underAscent);
         }
+        verticalOffset += under().marginBefore();
         under().setLocation(LayoutPoint(horizontalOffset(under()), verticalOffset));
         verticalOffset += under().logicalHeight();
+        verticalOffset += under().marginAfter();
         verticalOffset += parameters.underExtraDescender;
     }
+    verticalOffset += borderAndPaddingAfter();
 
     setLogicalHeight(verticalOffset);
 

@@ -39,6 +39,7 @@
 #include "PhaseTimer.h"
 #include "PointerRewriter.h"
 #include "TypeCheck.h"
+#include "VisibilityValidator.h"
 #include "WGSLShaderModule.h"
 
 namespace WGSL {
@@ -77,6 +78,7 @@ std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const
     CHECK_PASS(validateAttributes, shaderModule);
     RUN_PASS(buildCallGraph, shaderModule);
     CHECK_PASS(validateIO, shaderModule);
+    CHECK_PASS(validateVisibility, shaderModule);
 
     Vector<Warning> warnings { };
     return std::variant<SuccessfulCheck, FailedCheck>(std::in_place_type<SuccessfulCheck>, WTFMove(warnings), WTFMove(shaderModule));

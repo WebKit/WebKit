@@ -56,6 +56,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/UUID.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

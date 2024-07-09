@@ -27,6 +27,7 @@
 #include "CSSCanvasValue.h"
 
 #include "StyleCanvasImage.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

@@ -38,6 +38,7 @@
 #include "CSSValue.h"
 #include "CSSVariableParser.h"
 #include "MediaQueryParserContext.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 namespace MQ {
@@ -89,9 +90,9 @@ std::optional<Feature> FeatureParser::consumeBooleanOrPlainFeature(CSSParserToke
         if (name.startsWith("max-"_s))
             return { StringView(name).substring(4).toAtomString(), ComparisonOperator::LessThanOrEqual };
         if (name.startsWith("-webkit-min-"_s))
-            return { "-webkit-"_s + StringView(name).substring(12), ComparisonOperator::GreaterThanOrEqual };
+            return { makeAtomString("-webkit-"_s, StringView(name).substring(12)), ComparisonOperator::GreaterThanOrEqual };
         if (name.startsWith("-webkit-max-"_s))
-            return { "-webkit-"_s + StringView(name).substring(12), ComparisonOperator::LessThanOrEqual };
+            return { makeAtomString("-webkit-"_s, StringView(name).substring(12)), ComparisonOperator::LessThanOrEqual };
 
         return { name, ComparisonOperator::Equal };
     };

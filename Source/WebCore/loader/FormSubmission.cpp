@@ -51,6 +51,7 @@
 #include "ScriptDisallowedScope.h"
 #include <pal/text/TextEncoding.h>
 #include <wtf/WallTime.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

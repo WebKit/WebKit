@@ -23,5 +23,6 @@
  */
 
 [
-    RethrowException
+    RethrowException,
+    IsStrongCallback
 ] callback WebLockGrantedCallback = Promise<any> (WebLock? webLock);

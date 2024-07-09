@@ -1176,6 +1176,10 @@ public:
     void hasActiveNowPlayingSessionChanged();
     void activeNowPlayingSessionUpdateTimerFired();
 
+#if PLATFORM(IOS_FAMILY)
+    bool canShowWhileLocked() const { return m_canShowWhileLocked; }
+#endif
+
 private:
     explicit Page(PageConfiguration&&);
 
@@ -1316,6 +1320,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     bool m_enclosedInScrollableAncestorView { false };
+    bool m_canShowWhileLocked { false };
 #endif
     
     bool m_useSystemAppearance { false };

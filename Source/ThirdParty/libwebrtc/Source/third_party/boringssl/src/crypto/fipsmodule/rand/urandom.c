@@ -20,7 +20,7 @@
 
 #include "internal.h"
 
-#if defined(OPENSSL_URANDOM)
+#if defined(OPENSSL_RAND_URANDOM)
 
 #include <assert.h>
 #include <errno.h>
@@ -57,22 +57,6 @@
 #include <sys/auxv.h>
 #endif
 #endif  // OPENSSL_LINUX
-
-#if defined(OPENSSL_MACOS)
-// getentropy exists in any supported version of MacOS (Sierra and later)
-#include <sys/random.h>
-#endif
-
-#if defined(OPENSSL_OPENBSD)
-// getentropy exists in any supported version of OpenBSD
-#include <unistd.h>
-#endif
-
-#if defined(OPENSSL_FREEBSD) && __FreeBSD__ >= 12
-// getrandom is supported in FreeBSD 12 and up.
-#define FREEBSD_GETRANDOM
-#include <sys/random.h>
-#endif
 
 #include <openssl/thread.h>
 #include <openssl/mem.h>
@@ -178,11 +162,6 @@ static void init_once(void) {
     return;
   }
 #endif  // USE_NR_getrandom
-
-#if defined(OPENSSL_MACOS) || defined(OPENSSL_OPENBSD) || defined(FREEBSD_GETRANDOM)
-    *urandom_fd_bss_get() = kHaveGetrandom;
-    return;
-#endif
 
   // FIPS builds must support getrandom.
   //
@@ -295,12 +274,6 @@ static int fill_with_entropy(uint8_t *out, size_t len, int block, int seed) {
     if (*urandom_fd_bss_get() == kHaveGetrandom) {
 #if defined(USE_NR_getrandom)
       r = boringssl_getrandom(out, len, getrandom_flags);
-#elif defined(FREEBSD_GETRANDOM)
-      r = getrandom(out, len, getrandom_flags);
-#elif defined(OPENSSL_MACOS) || defined(OPENSSL_OPENBSD)
-      // |getentropy| can only request 256 bytes at a time.
-      size_t todo = len <= 256 ? len : 256;
-      r = getentropy(out, todo) != 0 ? -1 : (ssize_t)todo;
 #else  // USE_NR_getrandom
       fprintf(stderr, "urandom fd corrupt.\n");
       abort();
@@ -352,4 +325,4 @@ int CRYPTO_sysrand_if_available(uint8_t *out, size_t requested) {
   }
 }
 
-#endif  // OPENSSL_URANDOM
+#endif  // OPENSSL_RAND_URANDOM

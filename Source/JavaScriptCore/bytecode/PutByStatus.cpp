@@ -34,7 +34,6 @@
 #include "ICStatusUtils.h"
 #include "InlineCacheCompiler.h"
 #include "InlineCallFrame.h"
-#include "ProxyObjectAccessCase.h"
 #include "StructureInlines.h"
 #include "StructureStubInfo.h"
 #include <wtf/ListDump.h>
@@ -308,11 +307,10 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
                 return PutByStatus(MakesCalls);
 
             case AccessCase::ProxyObjectStore: {
-                auto& accessCase = access.as<ProxyObjectAccessCase>();
                 auto callLinkStatus = makeUnique<CallLinkStatus>();
                 if (CallLinkInfo* callLinkInfo = stubInfo->callLinkInfoAt(locker, i, access))
                     *callLinkStatus = CallLinkStatus::computeFor(locker, profiledBlock, *callLinkInfo, callExitSiteData);
-                auto variant = PutByVariant::proxy(accessCase.identifier(), access.structure(), WTFMove(callLinkStatus));
+                auto variant = PutByVariant::proxy(access.identifier(), access.structure(), WTFMove(callLinkStatus));
                 if (!result.appendVariant(variant))
                     return PutByStatus(JSC::slowVersion(summary), *stubInfo);
                 break;

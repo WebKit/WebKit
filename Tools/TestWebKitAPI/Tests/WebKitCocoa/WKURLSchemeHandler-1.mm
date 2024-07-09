@@ -52,7 +52,7 @@
 #import <wtf/Threading.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/StringToIntegerConversion.h>
 #import <wtf/text/WTFString.h>

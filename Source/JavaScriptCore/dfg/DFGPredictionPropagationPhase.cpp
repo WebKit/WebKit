@@ -1047,8 +1047,11 @@ private:
         case GetClosureVar:
         case GetInternalField:
         case GetFromArguments:
-        case LoadKeyFromMapBucket:
-        case LoadValueFromMapBucket:
+        case MapValue:
+        case MapIteratorKey:
+        case MapIteratorValue:
+        case MapIterationEntryKey:
+        case MapIterationEntryValue:
         case ToObject:
         case CallNumberConstructor:
         case CallObjectConstructor:
@@ -1114,14 +1117,17 @@ private:
             break;
 
         case MapHash:
+        case MapIterationEntry:
+        case MapKeyIndex:
             setPrediction(SpecInt32Only);
             break;
 
-        case GetMapBucket:
-        case GetMapBucketHead:
-        case GetMapBucketNext:
-        case SetAdd:
-        case MapSet:
+        case MapIteratorNext:
+            setPrediction(SpecBoolean);
+            break;
+
+        case MapStorage:
+        case MapIterationNext:
             setPrediction(SpecCellOther);
             break;
 
@@ -1665,6 +1671,8 @@ private:
         case PutDynamicVar:
         case NukeStructureAndSetButterfly:
         case InitializeEntrypointArguments:
+        case SetAdd:
+        case MapSet:
         case WeakSetAdd:
         case WeakMapSet:
         case FilterCallLinkStatus:

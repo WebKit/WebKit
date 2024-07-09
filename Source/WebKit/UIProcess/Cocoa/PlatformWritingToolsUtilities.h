@@ -33,9 +33,11 @@
 namespace WebCore {
 
 namespace WritingTools {
+enum class Behavior : uint8_t;
 enum class EditAction : uint8_t;
 enum class ReplacementBehavior : uint8_t;
 enum class ReplacementState : uint8_t;
+enum class RequestedTool : uint16_t;
 enum class SessionCompositionType : uint8_t;
 enum class SessionType : uint8_t;
 
@@ -52,6 +54,8 @@ namespace WebKit {
 
 PlatformWritingToolsBehavior convertToPlatformWritingToolsBehavior(WebCore::WritingTools::Behavior);
 
+WTRequestedTool convertToPlatformRequestedTool(WebCore::WritingTools::RequestedTool);
+
 WTTextSuggestionState convertToPlatformTextSuggestionState(WebCore::WritingTools::TextSuggestionState);
 
 RetainPtr<WTContext> convertToPlatformContext(const WebCore::WritingTools::Context&);
@@ -59,6 +63,8 @@ RetainPtr<WTContext> convertToPlatformContext(const WebCore::WritingTools::Conte
 #pragma mark - Conversions from platform types to web types.
 
 WebCore::WritingTools::Behavior convertToWebWritingToolsBehavior(PlatformWritingToolsBehavior);
+
+WebCore::WritingTools::RequestedTool convertToWebRequestedTool(WTRequestedTool);
 
 WebCore::WritingTools::TextSuggestionState convertToWebTextSuggestionState(WTTextSuggestionState);
 

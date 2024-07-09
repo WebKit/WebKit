@@ -41,6 +41,7 @@
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 
 using namespace WTF;
 using namespace WebCore;

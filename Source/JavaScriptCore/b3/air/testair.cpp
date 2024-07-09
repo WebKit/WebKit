@@ -104,11 +104,11 @@ template<typename T, typename... Arguments>
 T invoke(const Compilation& code, Arguments... arguments)
 {
     void* executableAddress;
-    T (*function)(Arguments...);
+    T (SYSV_ABI *function)(Arguments...);
     T result;
 
     executableAddress = untagCFunctionPtr<JITCompilationPtrTag>(code.code().taggedPtr());
-    function = bitwise_cast<T(*)(Arguments...)>(executableAddress);
+    function = bitwise_cast<T(SYSV_ABI *)(Arguments...)>(executableAddress);
     result = function(arguments...);
 
     return result;

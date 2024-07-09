@@ -12,6 +12,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
 
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -19,6 +20,7 @@
 
 #include <openssl/crypto.h>
 #include <openssl/err.h>
+#include <openssl/evp.h>
 #include <openssl/mem.h>
 
 #include "./internal.h"
@@ -249,7 +251,7 @@ TEST(ErrTest, PreservesErrno) {
 
 TEST(ErrTest, String) {
   char buf[128];
-  const uint32_t err = ERR_PACK(ERR_LIB_CRYPTO, ERR_R_INTERNAL_ERROR);
+  uint32_t err = ERR_PACK(ERR_LIB_CRYPTO, ERR_R_INTERNAL_ERROR);
 
   EXPECT_STREQ(
       "error:0e000044:common libcrypto routines:OPENSSL_internal:internal "
@@ -293,6 +295,34 @@ TEST(ErrTest, String) {
 
   // A buffer length of zero should not touch the buffer.
   ERR_error_string_n(err, nullptr, 0);
+
+  EXPECT_STREQ(ERR_lib_error_string(err), "common libcrypto routines");
+  EXPECT_STREQ(ERR_lib_symbol_name(err), "CRYPTO");
+  EXPECT_STREQ(ERR_reason_error_string(err), "internal error");
+  EXPECT_STREQ(ERR_reason_symbol_name(err), "INTERNAL_ERROR");
+
+  // Check a normal error.
+  err = ERR_PACK(ERR_LIB_EVP, EVP_R_DECODE_ERROR);
+  EXPECT_STREQ(ERR_lib_error_string(err), "public key routines");
+  EXPECT_STREQ(ERR_lib_symbol_name(err), "EVP");
+  EXPECT_STREQ(ERR_reason_error_string(err), "DECODE_ERROR");
+  EXPECT_STREQ(ERR_reason_symbol_name(err), "DECODE_ERROR");
+
+  // Check an error that forwards to another library.
+  err = ERR_PACK(ERR_LIB_EVP, ERR_R_BN_LIB);
+  EXPECT_STREQ(ERR_lib_error_string(err), "public key routines");
+  EXPECT_STREQ(ERR_lib_symbol_name(err), "EVP");
+  EXPECT_STREQ(ERR_reason_error_string(err), "bignum routines");
+  EXPECT_STREQ(ERR_reason_symbol_name(err), "BN_LIB");
+
+  // Errors in |ERR_LIB_SYS| are |errno| values, so we don't have their symbolic
+  // names. Their human-readable strings are OS- and even locale-dependent.
+  err = ERR_PACK(ERR_LIB_SYS, ERANGE);
+  EXPECT_STREQ(ERR_lib_error_string(err), "system library");
+  EXPECT_STREQ(ERR_lib_symbol_name(err), "SYS");
+  EXPECT_NE(ERR_reason_error_string(err), nullptr);
+  EXPECT_STRNE(ERR_reason_error_string(err), "unknown error");
+  EXPECT_EQ(ERR_reason_symbol_name(err), nullptr);
 }
 
 // Error-printing functions should return something with unknown errors.

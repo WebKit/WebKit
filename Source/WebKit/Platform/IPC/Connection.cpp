@@ -34,6 +34,7 @@
 #include "WorkQueueMessageReceiver.h"
 #include <memory>
 #include <wtf/ArgumentCoder.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
@@ -602,24 +603,37 @@ Error Connection::sendMessageImpl(UniqueRef<Encoder>&& encoder, OptionSet<SendOp
     else if (sendOptions.contains(SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply))
         encoder->setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC);
 
+    bool shouldDispatchMessageSend;
     size_t outgoingMessagesCount;
     bool shouldNotifyOfQueueGrowingLarge;
-    bool shouldDispatchMessageSend;
+    unsigned maxOutgoingMessageNameCount = 0;
+    ASCIILiteral maxOutgoingMessageName;
     {
         Locker locker { m_outgoingMessagesLock };
         shouldDispatchMessageSend = m_outgoingMessages.isEmpty();
         m_outgoingMessages.append(WTFMove(encoder));
         outgoingMessagesCount = m_outgoingMessages.size();
         shouldNotifyOfQueueGrowingLarge = m_outgoingMessageQueueIsGrowingLargeCallback && outgoingMessagesCount > largeOutgoingMessageQueueCountThreshold && (MonotonicTime::now() - m_lastOutgoingMessageQueueIsGrowingLargeCallbackCallTime) >= largeOutgoingMessageQueueTimeThreshold;
-        if (shouldNotifyOfQueueGrowingLarge)
+        if (shouldNotifyOfQueueGrowingLarge) {
+            HashCountedSet<ASCIILiteral> outgoingMessageNameCounts;
+            for (auto& encoder : m_outgoingMessages) {
+                auto name = description(encoder->messageName());
+                auto result = outgoingMessageNameCounts.add(name);
+                auto count = result.iterator->value;
+                if (count > maxOutgoingMessageNameCount) {
+                    maxOutgoingMessageNameCount = count;
+                    maxOutgoingMessageName = name;
+                }
+            }
             m_lastOutgoingMessageQueueIsGrowingLargeCallbackCallTime = MonotonicTime::now();
+        }
     }
 
     if (shouldNotifyOfQueueGrowingLarge) {
 #if OS(DARWIN)
-        RELEASE_LOG_ERROR(IPC, "Connection::sendMessage(): Too many messages (%zu) in the queue to remote PID: %d, notifying client", outgoingMessagesCount, remoteProcessID());
+        RELEASE_LOG_ERROR(IPC, "Connection::sendMessage(): Too many messages (%zu) in the queue to remote PID: %d (most common: %u %" PUBLIC_LOG_STRING " messages), notifying client", outgoingMessagesCount, remoteProcessID(), maxOutgoingMessageNameCount, maxOutgoingMessageName.characters());
 #else
-        RELEASE_LOG_ERROR(IPC, "Connection::sendMessage(): Too many messages (%zu) in the queue, notifying client", outgoingMessagesCount);
+        RELEASE_LOG_ERROR(IPC, "Connection::sendMessage(): Too many messages (%zu) in the queue, notifying client (most common: %u %" PUBLIC_LOG_STRING " messages)", outgoingMessagesCount, maxOutgoingMessageNameCount, maxOutgoingMessageName.characters());
 #endif
         m_outgoingMessageQueueIsGrowingLargeCallback();
     }

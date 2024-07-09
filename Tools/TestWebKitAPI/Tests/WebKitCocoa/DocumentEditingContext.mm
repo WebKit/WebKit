@@ -37,6 +37,7 @@
 #import <pal/spi/ios/BrowserEngineKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
+#import <wtf/text/MakeString.h>
 
 static constexpr auto longTextString = "Here's to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. "
     "The ones who see things differently. They're not fond of rules. And they have no respect for the status quo. "

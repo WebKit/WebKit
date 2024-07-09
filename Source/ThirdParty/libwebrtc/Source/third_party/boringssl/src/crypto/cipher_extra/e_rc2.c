@@ -427,37 +427,29 @@ static int rc2_ctrl(EVP_CIPHER_CTX *ctx, int type, int arg, void *ptr) {
 }
 
 static const EVP_CIPHER rc2_40_cbc = {
-    NID_rc2_40_cbc,
-    8 /* block size */,
-    5 /* 40 bit */,
-    8 /* iv len */,
-    sizeof(EVP_RC2_KEY),
-    EVP_CIPH_CBC_MODE | EVP_CIPH_VARIABLE_LENGTH | EVP_CIPH_CTRL_INIT,
-    NULL /* app_data */,
-    rc2_init_key,
-    rc2_cbc_cipher,
-    NULL,
-    rc2_ctrl,
+    .nid = NID_rc2_40_cbc,
+    .block_size = 8,
+    .key_len = 5 /* 40 bit */,
+    .iv_len = 8,
+    .ctx_size = sizeof(EVP_RC2_KEY),
+    .flags = EVP_CIPH_CBC_MODE | EVP_CIPH_VARIABLE_LENGTH | EVP_CIPH_CTRL_INIT,
+    .init = rc2_init_key,
+    .cipher = rc2_cbc_cipher,
+    .ctrl = rc2_ctrl,
 };
 
-const EVP_CIPHER *EVP_rc2_40_cbc(void) {
-  return &rc2_40_cbc;
-}
+const EVP_CIPHER *EVP_rc2_40_cbc(void) { return &rc2_40_cbc; }
 
 static const EVP_CIPHER rc2_cbc = {
-    NID_rc2_cbc,
-    8 /* block size */,
-    16 /* 128 bit */,
-    8 /* iv len */,
-    sizeof(EVP_RC2_KEY),
-    EVP_CIPH_CBC_MODE | EVP_CIPH_VARIABLE_LENGTH | EVP_CIPH_CTRL_INIT,
-    NULL /* app_data */,
-    rc2_init_key,
-    rc2_cbc_cipher,
-    NULL,
-    rc2_ctrl,
+    .nid = NID_rc2_cbc,
+    .block_size = 8,
+    .key_len = 16 /* 128 bit */,
+    .iv_len = 8,
+    .ctx_size = sizeof(EVP_RC2_KEY),
+    .flags = EVP_CIPH_CBC_MODE | EVP_CIPH_VARIABLE_LENGTH | EVP_CIPH_CTRL_INIT,
+    .init = rc2_init_key,
+    .cipher = rc2_cbc_cipher,
+    .ctrl = rc2_ctrl,
 };
 
-const EVP_CIPHER *EVP_rc2_cbc(void) {
-  return &rc2_cbc;
-}
+const EVP_CIPHER *EVP_rc2_cbc(void) { return &rc2_cbc; }

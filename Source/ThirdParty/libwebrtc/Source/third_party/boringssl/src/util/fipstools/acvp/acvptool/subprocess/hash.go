@@ -73,11 +73,14 @@ func (h *hashPrimitive) Process(vectorSet []byte, m Transactable) (any, error) {
 	// https://pages.nist.gov/ACVP/draft-celi-acvp-sha.html#name-test-vectors
 	// for details about the tests.
 	for _, group := range parsed.Groups {
+		group := group
 		response := hashTestGroupResponse{
 			ID: group.ID,
 		}
 
 		for _, test := range group.Tests {
+			test := test
+
 			if uint64(len(test.MsgHex))*4 != test.BitLength {
 				return nil, fmt.Errorf("test case %d/%d contains hex message of length %d but specifies a bit length of %d", group.ID, test.ID, len(test.MsgHex), test.BitLength)
 			}

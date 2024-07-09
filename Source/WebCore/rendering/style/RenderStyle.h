@@ -198,6 +198,7 @@ enum class ScrollSnapStop : bool;
 enum class ScrollbarWidth : uint8_t;
 enum class SpeakAs : uint8_t;
 enum class StyleAppearance : uint8_t;
+enum class StyleColorOptions : uint8_t;
 enum class StyleDifference : uint8_t;
 enum class StyleDifferenceContextSensitiveProperty : uint8_t;
 enum class TableLayoutType : bool;
@@ -337,6 +338,7 @@ public:
     void copyNonInheritedFrom(const RenderStyle&);
     void copyContentFrom(const RenderStyle&);
     void copyPseudoElementsFrom(const RenderStyle&);
+    void copyPseudoElementBitsFrom(const RenderStyle&);
 
     ContentPosition resolvedJustifyContentPosition(const StyleContentAlignmentData& normalValueBehavior) const;
     ContentDistribution resolvedJustifyContentDistribution(const StyleContentAlignmentData& normalValueBehavior) const;
@@ -2157,7 +2159,7 @@ public:
     inline const StyleColor& floodColor() const;
     inline const StyleColor& lightingColor() const;
 
-    Color usedAccentColor() const;
+    Color usedAccentColor(OptionSet<StyleColorOptions>) const;
     inline const StyleColor& accentColor() const;
     inline bool hasAutoAccentColor() const;
 

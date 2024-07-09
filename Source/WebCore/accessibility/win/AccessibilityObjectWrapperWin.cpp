@@ -31,7 +31,7 @@
 #include "BString.h"
 #include "HTMLNames.h"
 #include "QualifiedName.h"
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

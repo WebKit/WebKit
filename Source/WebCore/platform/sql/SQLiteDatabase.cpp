@@ -42,7 +42,7 @@
 #include <wtf/Scope.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 #if !USE(SYSTEM_MALLOC)
 #include <bmalloc/BPlatform.h>

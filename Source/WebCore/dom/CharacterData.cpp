@@ -37,6 +37,7 @@
 #include "StyleInheritedData.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -116,7 +117,7 @@ void CharacterData::parserAppendData(StringView string)
 
 void CharacterData::appendData(const String& data)
 {
-    setDataAndUpdate(m_data + data, m_data.length(), 0, data.length(), UpdateLiveRanges::No);
+    setDataAndUpdate(makeString(m_data, data), m_data.length(), 0, data.length(), UpdateLiveRanges::No);
 }
 
 ExceptionOr<void> CharacterData::insertData(unsigned offset, const String& data)

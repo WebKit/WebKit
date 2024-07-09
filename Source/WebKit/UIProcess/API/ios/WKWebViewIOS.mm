@@ -70,7 +70,6 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/UserInterfaceLayoutDirection.h>
-#import <pal/ios/ManagedConfigurationSoftLink.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/BlockPtr.h>
@@ -84,6 +83,7 @@
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/MakeString.h>
 
 #if ENABLE(LOCKDOWN_MODE_API)
 #import "_WKSystemPreferencesInternal.h"
@@ -98,6 +98,8 @@
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKWebViewIOSAdditionsBefore.mm>
 #endif
+
+#import <pal/ios/ManagedConfigurationSoftLink.h>
 
 #define FORWARD_ACTION_TO_WKCONTENTVIEW(_action) \
 - (void)_action:(id)sender \

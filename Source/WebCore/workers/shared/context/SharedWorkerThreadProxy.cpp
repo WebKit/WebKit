@@ -50,6 +50,7 @@
 #include "WorkerInitializationData.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

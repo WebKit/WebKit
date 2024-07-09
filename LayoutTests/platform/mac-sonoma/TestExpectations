@@ -1,0 +1,6 @@
+###
+### Test Expectations for macOS Sonoma
+###
+
+# Times out due to missing PKMerchantCategoryCode platform support.
+http/tests/paymentrequest/paymentrequest-merchantCategoryCode.https.html [ Skip ]

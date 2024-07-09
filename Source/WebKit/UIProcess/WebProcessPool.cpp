@@ -111,8 +111,8 @@
 #include <wtf/Scope.h>
 #include <wtf/URLParser.h>
 #include <wtf/WallTime.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 #if ENABLE(SERVICE_CONTROLS)
 #include "ServicesController.h"

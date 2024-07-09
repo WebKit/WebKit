@@ -72,6 +72,7 @@ class H26xPacketBuffer {
   };
 
   static constexpr int kBufferSize = 2048;
+  static constexpr int kNumTrackedSequences = 5;
 
   std::unique_ptr<Packet>& GetPacket(int64_t unwrapped_seq_num);
   bool BeginningOfStream(const Packet& packet) const;
@@ -91,7 +92,8 @@ class H26xPacketBuffer {
   // Indicates whether IDR frames without SPS and PPS are allowed.
   const bool h264_idr_only_keyframes_allowed_;
   std::array<std::unique_ptr<Packet>, kBufferSize> buffer_;
-  absl::optional<int64_t> last_continuous_unwrapped_seq_num_;
+  std::array<int64_t, kNumTrackedSequences> last_continuous_in_sequence_;
+  int64_t last_continuous_in_sequence_index_ = 0;
   SeqNumUnwrapper<uint16_t> seq_num_unwrapper_;
 
   // Map from pps_pic_parameter_set_id to the PPS payload associated with this

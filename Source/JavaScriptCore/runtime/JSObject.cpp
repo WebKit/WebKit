@@ -45,6 +45,7 @@
 #include "VMInlines.h"
 #include "VMTrapsInlines.h"
 #include <wtf/Assertions.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

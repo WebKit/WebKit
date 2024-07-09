@@ -51,6 +51,7 @@
 #include "Settings.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

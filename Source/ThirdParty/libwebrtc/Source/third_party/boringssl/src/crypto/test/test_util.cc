@@ -16,6 +16,8 @@
 
 #include <ostream>
 
+#include <openssl/err.h>
+
 #include "../internal.h"
 
 
@@ -67,3 +69,16 @@ std::string EncodeHex(bssl::Span<const uint8_t> in) {
   return ret;
 }
 
+testing::AssertionResult ErrorEquals(uint32_t err, int lib, int reason) {
+  if (ERR_GET_LIB(err) == lib && ERR_GET_REASON(err) == reason) {
+    return testing::AssertionSuccess();
+  }
+
+  char buf[128], expected[128];
+  return testing::AssertionFailure()
+         << "Got \"" << ERR_error_string_n(err, buf, sizeof(buf))
+         << "\", wanted \""
+         << ERR_error_string_n(ERR_PACK(lib, reason), expected,
+                               sizeof(expected))
+         << "\"";
+}

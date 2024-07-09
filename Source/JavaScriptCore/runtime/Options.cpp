@@ -46,6 +46,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/TranslatedProcess.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/threads/Signals.h>
 
@@ -747,6 +748,13 @@ void Options::notifyOptionsChanged()
             Options::useFTLJIT() = false;
         }
 
+        // Windows: Building with WEBASSEMBLY_BBQJIT and disabling at runtime
+        // Windows: Building with WEBASSEMBLY_OMGJIT and disabling at runtime
+#if OS(WINDOWS)
+        Options::useBBQJIT() = false;
+        Options::useOMGJIT() = false;
+#endif
+
         if (Options::dumpDisassembly()
             || Options::asyncDisassembly()
             || Options::dumpBaselineDisassembly()
@@ -1178,7 +1186,7 @@ bool Options::setAliasedOption(const char* arg, bool verify)
         && !strncasecmp(arg, #aliasedName_, equalStr - arg)) {          \
         auto unaliasedOption = String::fromLatin1(#unaliasedName_);     \
         if (equivalence == SameOption)                                  \
-            unaliasedOption = unaliasedOption + span(equalStr);         \
+            unaliasedOption = makeString(unaliasedOption, span(equalStr)); \
         else {                                                          \
             ASSERT(equivalence == InvertedOption);                      \
             auto invertedValueStr = invertBoolOptionValue(equalStr + 1); \

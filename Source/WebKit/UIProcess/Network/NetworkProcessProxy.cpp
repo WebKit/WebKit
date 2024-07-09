@@ -79,6 +79,7 @@
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/WeakHashSet.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(SEC_ITEM_SHIM)
 #include "SecItemShimProxy.h"
@@ -103,7 +104,7 @@
 #include "WebPrivacyHelpers.h"
 #endif
 
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
 #include <WebCore/DeprecatedGlobalSettings.h>
 #endif
 
@@ -202,7 +203,7 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
     parameters.enablePrivateClickMeasurement = false;
 #endif
 
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
     parameters.builtInNotificationsEnabled = DeprecatedGlobalSettings::builtInNotificationsEnabled();
 #endif
 
@@ -1865,9 +1866,9 @@ void NetworkProcessProxy::setPushAndNotificationsEnabledForOrigin(PAL::SessionID
     sendWithAsyncReply(Messages::NetworkProcess::SetPushAndNotificationsEnabledForOrigin { sessionID, origin, enabled }, WTFMove(callback));
 }
 
-void NetworkProcessProxy::deletePushAndNotificationRegistration(PAL::SessionID sessionID, const SecurityOriginData& origin, CompletionHandler<void(const String&)>&& callback)
+void NetworkProcessProxy::removePushSubscriptionsForOrigin(PAL::SessionID sessionID, const SecurityOriginData& origin, CompletionHandler<void(unsigned)>&& callback)
 {
-    sendWithAsyncReply(Messages::NetworkProcess::DeletePushAndNotificationRegistration { sessionID, origin }, WTFMove(callback));
+    sendWithAsyncReply(Messages::NetworkProcess::RemovePushSubscriptionsForOrigin { sessionID, origin }, WTFMove(callback));
 }
 
 void NetworkProcessProxy::hasPushSubscriptionForTesting(PAL::SessionID sessionID, const URL& scopeURL, CompletionHandler<void(bool)>&& callback)

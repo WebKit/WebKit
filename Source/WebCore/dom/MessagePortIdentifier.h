@@ -28,7 +28,7 @@
 #include "PortIdentifier.h"
 #include "ProcessIdentifier.h"
 #include <wtf/Hasher.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

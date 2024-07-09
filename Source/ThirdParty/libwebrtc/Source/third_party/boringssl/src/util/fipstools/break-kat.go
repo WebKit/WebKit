@@ -1,5 +1,3 @@
-//go:build
-
 // break-kat corrupts a known-answer-test input in a binary and writes the
 // corrupted binary to stdout. This is used to demonstrate that the KATs in the
 // binary notice the error.
@@ -27,7 +25,8 @@ var (
 		"SHA-1":           "132fd9bad5c1826263bafbb699f707a5",
 		"SHA-256":         "ff3b857da7236a2baa0f396b51522217",
 		"SHA-512":         "212512f8d2ad8322781c6c4d69a9daa1",
-		"TLS-KDF":         "abc3657b094c7628a0b282996fe75a75f4984fd94d4ecc2fcf53a2c469a3f731",
+		"TLS10-KDF":       "abc3657b094c7628a0b282996fe75a75f4984fd94d4ecc2fcf53a2c469a3f731",
+		"TLS12-KDF":       "c5438ee26fd4acbd259fc91855dc69bf884ee29322fcbfd2966a4623d42ec781",
 		"TLS13-KDF":       "024a0d80f357f2499a1244dac26dab66fc13ed85fca71dace146211119525874",
 		"RSA-sign":        "d2b56e53306f720d7929d8708bf46f1c22300305582b115bedcac722d8aa5ab2",
 		"RSA-verify":      "abe2cbc13d6bd39d48db5334ddbf8d070a93bdcb104e2cc5d0ee486ee295f6b31bda126c41890b98b73e70e6b65d82f95c663121755a90744c8d1c21148a1960be0eca446e9ff497f1345c537ef8119b9a4398e95c5c6de2b1c955905c5299d8ce7a3b6ab76380d9babdd15f610237e1f3f2aa1c1f1e770b62fbb596381b2ebdd77ecef9c90d4c92f7b6b05fed2936285fa94826e62055322a33b6f04c74ce69e5d8d737fb838b79d2d48e3daf71387531882531a95ac964d02ea413bf85952982bbc089527daff5b845c9a0f4d14ef1956d9c3acae882d12da66da0f35794f5ee32232333517db9315232a183b991654dbea41615345c885325926744a53915",

@@ -62,53 +62,38 @@
 
 #include "internal.h"
 
-#ifndef OPENSSL_NO_STDIO
 
 static int by_file_ctrl(X509_LOOKUP *ctx, int cmd, const char *argc, long argl,
                         char **ret);
-static X509_LOOKUP_METHOD x509_file_lookup = {
-    "Load file into cache",
+static const X509_LOOKUP_METHOD x509_file_lookup = {
     NULL,          // new
     NULL,          // free
-    NULL,          // init
-    NULL,          // shutdown
     by_file_ctrl,  // ctrl
     NULL,          // get_by_subject
 };
 
-X509_LOOKUP_METHOD *X509_LOOKUP_file(void) { return &x509_file_lookup; }
+const X509_LOOKUP_METHOD *X509_LOOKUP_file(void) { return &x509_file_lookup; }
 
 static int by_file_ctrl(X509_LOOKUP *ctx, int cmd, const char *argp, long argl,
                         char **ret) {
-  int ok = 0;
-  const char *file;
-
-  switch (cmd) {
-    case X509_L_FILE_LOAD:
-      if (argl == X509_FILETYPE_DEFAULT) {
-        file = getenv(X509_get_default_cert_file_env());
-        if (file) {
-          ok = (X509_load_cert_crl_file(ctx, file, X509_FILETYPE_PEM) != 0);
-        }
-
-        else {
-          ok = (X509_load_cert_crl_file(ctx, X509_get_default_cert_file(),
-                                        X509_FILETYPE_PEM) != 0);
-        }
-
-        if (!ok) {
-          OPENSSL_PUT_ERROR(X509, X509_R_LOADING_DEFAULTS);
-        }
-      } else {
-        if (argl == X509_FILETYPE_PEM) {
-          ok = (X509_load_cert_crl_file(ctx, argp, X509_FILETYPE_PEM) != 0);
-        } else {
-          ok = (X509_load_cert_file(ctx, argp, (int)argl) != 0);
-        }
-      }
-      break;
+  if (cmd != X509_L_FILE_LOAD) {
+    return 0;
   }
-  return ok;
+  const char *file = argp;
+  int type = argl;
+  if (argl == X509_FILETYPE_DEFAULT) {
+    if ((file = getenv(X509_get_default_cert_file_env())) == NULL) {
+      file = X509_get_default_cert_file();
+    }
+    type = X509_FILETYPE_PEM;
+  }
+  if (X509_load_cert_crl_file(ctx, file, type) != 0) {
+    return 1;
+  }
+  if (argl == X509_FILETYPE_DEFAULT) {
+    OPENSSL_PUT_ERROR(X509, X509_R_LOADING_DEFAULTS);
+  }
+  return 0;
 }
 
 int X509_load_cert_file(X509_LOOKUP *ctx, const char *file, int type) {
@@ -243,7 +228,7 @@ int X509_load_cert_crl_file(X509_LOOKUP *ctx, const char *file, int type) {
   if (type != X509_FILETYPE_PEM) {
     return X509_load_cert_file(ctx, file, type);
   }
-  in = BIO_new_file(file, "r");
+  in = BIO_new_file(file, "rb");
   if (!in) {
     OPENSSL_PUT_ERROR(X509, ERR_R_SYS_LIB);
     return 0;
@@ -279,4 +264,6 @@ err:
   return count;
 }
 
-#endif  // OPENSSL_NO_STDIO
+int X509_LOOKUP_load_file(X509_LOOKUP *lookup, const char *name, int type) {
+  return X509_LOOKUP_ctrl(lookup, X509_L_FILE_LOAD, name, type, NULL);
+}

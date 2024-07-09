@@ -57,6 +57,7 @@ private:
     void flush(Function<void()>&&) final;
     void reset() final;
     void close() final;
+    bool setRates(uint64_t bitRate, double frameRate, Function<void()>&&) final;
 
     Ref<LibWebRTCVPXInternalVideoEncoder> m_internalEncoder;
 };

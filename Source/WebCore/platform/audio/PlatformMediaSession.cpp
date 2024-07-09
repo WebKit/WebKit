@@ -35,6 +35,7 @@
 #include "PlatformMediaSessionManager.h"
 #include <wtf/MediaTime.h>
 #include <wtf/SetForScope.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

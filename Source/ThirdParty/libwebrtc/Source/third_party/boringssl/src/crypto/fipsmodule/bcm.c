@@ -211,7 +211,7 @@ int BORINGSSL_integrity_test(void) {
 #endif
 
   assert_within(rodata_start, kPrimes, rodata_end);
-  assert_within(rodata_start, kP256Params, rodata_end);
+  assert_within(rodata_start, kP256Field, rodata_end);
   assert_within(rodata_start, kPKCS1SigPrefixes, rodata_end);
 
   uint8_t result[SHA256_DIGEST_LENGTH];

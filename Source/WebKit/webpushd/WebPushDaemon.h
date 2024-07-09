@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
 
 #include "PushClientConnection.h"
 #include "PushMessageForTesting.h"
@@ -41,7 +41,9 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/OSObjectPtr.h>
+#include <wtf/StdList.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 
 
@@ -69,33 +71,28 @@ public:
     void connectionAdded(xpc_connection_t);
     void connectionRemoved(xpc_connection_t);
 
-    void setMachServiceName(const String& machServiceName) { m_machServiceName = machServiceName; }
     void startMockPushService();
     void startPushService(const String& incomingPushServiceName, const String& pushDatabasePath);
     void handleIncomingPush(const WebCore::PushSubscriptionSetIdentifier&, WebKit::WebPushMessage&&);
 
     // Message handlers
     void setPushAndNotificationsEnabledForOrigin(PushClientConnection&, const String& originString, bool, CompletionHandler<void()>&& replySender);
-    void deletePushAndNotificationRegistration(PushClientConnection&, const String& originString, CompletionHandler<void(const String&)>&& replySender);
     void injectPushMessageForTesting(PushClientConnection&, PushMessageForTesting&&, CompletionHandler<void(const String&)>&&);
     void injectEncryptedPushMessageForTesting(PushClientConnection&, const String&, CompletionHandler<void(bool)>&&);
+    void getPendingPushMessage(PushClientConnection&, CompletionHandler<void(const std::optional<WebKit::WebPushMessage>&)>&& replySender);
     void getPendingPushMessages(PushClientConnection&, CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender);
-    void getPushTopicsForTesting(CompletionHandler<void(Vector<String>, Vector<String>)>&&);
+    void getPushTopicsForTesting(PushClientConnection&, CompletionHandler<void(Vector<String>, Vector<String>)>&&);
     void subscribeToPushService(PushClientConnection&, const URL& scopeURL, const Vector<uint8_t>& applicationServerKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& replySender);
     void unsubscribeFromPushService(PushClientConnection&, const URL& scopeURL, std::optional<WebCore::PushSubscriptionIdentifier>, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& replySender);
     void getPushSubscription(PushClientConnection&, const URL& scopeURL, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&& replySender);
     void incrementSilentPushCount(PushClientConnection&, const WebCore::SecurityOriginData&, CompletionHandler<void(unsigned)>&&);
     void removeAllPushSubscriptions(PushClientConnection&, CompletionHandler<void(unsigned)>&&);
     void removePushSubscriptionsForOrigin(PushClientConnection&, const WebCore::SecurityOriginData&, CompletionHandler<void(unsigned)>&&);
-    void setPublicTokenForTesting(const String& publicToken, CompletionHandler<void()>&&);
-
-    void broadcastDebugMessage(const String&);
-    void broadcastAllConnectionIdentities();
+    void setPublicTokenForTesting(PushClientConnection&, const String& publicToken, CompletionHandler<void()>&&);
+    void didShowNotificationForTesting(PushClientConnection&, const URL& scopeURL, CompletionHandler<void()>&& replySender);
 
 private:
     WebPushDaemon();
-
-    bool canRegisterForNotifications(PushClientConnection&);
 
     void notifyClientPushMessageIsAvailable(const WebCore::PushSubscriptionSetIdentifier&);
 
@@ -106,24 +103,36 @@ private:
     void releaseIncomingPushTransaction();
     void incomingPushTransactionTimerFired();
 
-    void deletePushRegistration(const WebCore::PushSubscriptionSetIdentifier&, const String&, CompletionHandler<void()>&&);
+    Seconds silentPushTimeout() const;
+    void rescheduleSilentPushTimer();
+    void silentPushTimerFired();
+    void didShowNotificationImpl(const WebCore::PushSubscriptionSetIdentifier&, const String& scope);
 
     PushClientConnection* toPushClientConnection(xpc_connection_t);
     HashMap<xpc_connection_t, Ref<PushClientConnection>> m_connectionMap;
 
     std::unique_ptr<PushService> m_pushService;
+    bool m_usingMockPushService { false };
     bool m_pushServiceStarted { false };
     Deque<Function<void()>> m_pendingPushServiceFunctions;
 
-    HashMap<WebCore::PushSubscriptionSetIdentifier, Vector<WebKit::WebPushMessage>> m_pushMessages;
-    HashMap<String, Deque<PushMessageForTesting>> m_testingPushMessages;
-    
+    HashMap<WebCore::PushSubscriptionSetIdentifier, Deque<WebKit::WebPushMessage>> m_pushMessages;
+
     WebCore::Timer m_incomingPushTransactionTimer;
     OSObjectPtr<os_transaction_t> m_incomingPushTransaction;
-    String m_machServiceName;
+
+    struct PotentialSilentPush {
+        WebCore::PushSubscriptionSetIdentifier identifier;
+        String scope;
+        MonotonicTime expirationTime;
+    };
+
+    WebCore::Timer m_silentPushTimer;
+    OSObjectPtr<os_transaction_t> m_silentPushTransaction;
+    StdList<PotentialSilentPush> m_potentialSilentPushes;
 };
 
 } // namespace WebPushD
 
-#endif // ENABLE(BUILT_IN_NOTIFICATIONS)
+#endif // ENABLE(WEB_PUSH_NOTIFICATIONS)
 

@@ -36,6 +36,7 @@
 #include "SecurityOrigin.h"
 #include "URLSearchParams.h"
 #include <wtf/MainThread.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

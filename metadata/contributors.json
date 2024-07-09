@@ -8233,6 +8233,17 @@
    },
    {
       "emails" : [
+         "z_ridouh@apple.com",
+         "zakr@apple.com"
+      ],
+      "github" : "zakariaridouh",
+      "name" : "Zak Ridouh",
+      "nicks" : [
+         "zakr"
+      ]
+   },
+   {
+      "emails" : [
          "zlieber@chromium.org"
       ],
       "name" : "Zeev Lieber"

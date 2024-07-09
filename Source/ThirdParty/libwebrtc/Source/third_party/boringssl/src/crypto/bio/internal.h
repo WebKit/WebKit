@@ -59,6 +59,7 @@
 
 #include <openssl/base.h>
 
+#if !defined(OPENSSL_NO_SOCK)
 #if !defined(OPENSSL_WINDOWS)
 #if defined(OPENSSL_PNACL)
 // newlib uses u_short in socket.h without defining it.
@@ -72,13 +73,16 @@ OPENSSL_MSVC_PRAGMA(warning(push, 3))
 OPENSSL_MSVC_PRAGMA(warning(pop))
 typedef int socklen_t;
 #endif
+#endif  // !OPENSSL_NO_SOCK
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 
-// BIO_ip_and_port_to_socket_and_addr creates a socket and fills in |*out_addr|
+#if !defined(OPENSSL_NO_SOCK)
+
+// bio_ip_and_port_to_socket_and_addr creates a socket and fills in |*out_addr|
 // and |*out_addr_length| with the correct values for connecting to |hostname|
 // on |port_str|. It returns one on success or zero on error.
 int bio_ip_and_port_to_socket_and_addr(int *out_sock,
@@ -87,21 +91,27 @@ int bio_ip_and_port_to_socket_and_addr(int *out_sock,
                                        const char *hostname,
                                        const char *port_str);
 
-// BIO_socket_nbio sets whether |sock| is non-blocking. It returns one on
+// bio_socket_nbio sets whether |sock| is non-blocking. It returns one on
 // success and zero otherwise.
 int bio_socket_nbio(int sock, int on);
 
-// BIO_clear_socket_error clears the last system socket error.
+// bio_clear_socket_error clears the last system socket error.
 //
 // TODO(fork): remove all callers of this.
 void bio_clear_socket_error(void);
 
-// BIO_sock_error returns the last socket error on |sock|.
+// bio_sock_error returns the last socket error on |sock|.
 int bio_sock_error(int sock);
 
-// BIO_fd_should_retry returns non-zero if |return_value| indicates an error
+// bio_socket_should_retry returns non-zero if |return_value| indicates an error
+// and the last socket error indicates that it's non-fatal.
+int bio_socket_should_retry(int return_value);
+
+#endif  // !OPENSSL_NO_SOCK
+
+// bio_errno_should_retry returns non-zero if |return_value| indicates an error
 // and |errno| indicates that it's non-fatal.
-int bio_fd_should_retry(int return_value);
+int bio_errno_should_retry(int return_value);
 
 
 #if defined(__cplusplus)

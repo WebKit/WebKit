@@ -306,11 +306,15 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
 
 - (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)error
 {
+    if (error)
+        *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil];
     return NO;
 }
 
-- (BOOL)unloadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)outError
+- (BOOL)unloadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)error
 {
+    if (error)
+        *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil];
     return NO;
 }
 
@@ -341,14 +345,17 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
 
 - (void)fetchDataRecordsOfTypes:(NSSet<_WKWebExtensionDataType> *)dataTypes completionHandler:(void (^)(NSArray<_WKWebExtensionDataRecord *> *))completionHandler
 {
+    completionHandler(@[ ]);
 }
 
 - (void)fetchDataRecordOfTypes:(NSSet<_WKWebExtensionDataType> *)dataTypes forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(_WKWebExtensionDataRecord *))completionHandler
 {
+    completionHandler(nil);
 }
 
 - (void)removeDataOfTypes:(NSSet<_WKWebExtensionDataType> *)dataTypes forDataRecords:(NSArray<_WKWebExtensionDataRecord *> *)dataRecords completionHandler:(void (^)())completionHandler
 {
+    completionHandler();
 }
 
 - (void)didOpenWindow:(id<_WKWebExtensionWindow>)newWindow

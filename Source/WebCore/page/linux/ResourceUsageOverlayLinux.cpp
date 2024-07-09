@@ -36,7 +36,7 @@
 #include "ResourceUsageThread.h"
 #include "SystemFontDatabase.h"
 #include <JavaScriptCore/VM.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

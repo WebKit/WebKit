@@ -42,6 +42,7 @@
 #include "RenderEmbeddedObject.h"
 #include "StyleSheetContents.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

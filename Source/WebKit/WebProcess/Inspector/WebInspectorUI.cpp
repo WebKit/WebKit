@@ -80,6 +80,8 @@ void WebInspectorUI::establishConnection(WebPageProxyIdentifier inspectedPageIde
     m_frontendController->setInspectorFrontendClient(this);
 
     updateConnection();
+
+    didEstablishConnection();
 }
 
 void WebInspectorUI::updateConnection()
@@ -463,8 +465,7 @@ WebCore::Page* WebInspectorUI::frontendPage()
     return m_page.corePage();
 }
 
-
-#if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WIN)
+#if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WIN) && !ENABLE(WPE_PLATFORM)
 bool WebInspectorUI::canSave(InspectorFrontendClient::SaveMode)
 {
     notImplemented();
@@ -487,6 +488,11 @@ String WebInspectorUI::localizedStringsURL() const
 {
     notImplemented();
     return emptyString();
+}
+
+void WebInspectorUI::didEstablishConnection()
+{
+    notImplemented();
 }
 #endif // !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WIN)
 

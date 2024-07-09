@@ -270,12 +270,9 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
         RoundedRect border = isBorderFill ? backgroundRoundedRectAdjustedForBleedAvoidance(rect, bleedAvoidance, box, includeLeftEdge, includeRightEdge) : backgroundRoundedRect(rect, box, includeLeftEdge, includeRightEdge);
 
         // Clip to the padding or content boxes as necessary.
-        if (bgLayer.clip() == FillBox::Content) {
-            border = style.getRoundedInnerBorderFor(border.rect(),
-                m_renderer.paddingTop() + m_renderer.borderTop(), m_renderer.paddingBottom() + m_renderer.borderBottom(),
-                m_renderer.paddingLeft() + m_renderer.borderLeft(), m_renderer.paddingRight() + m_renderer.borderRight(),
-                includeLeftEdge, includeRightEdge);
-        } else if (bgLayer.clip() == FillBox::Padding)
+        if (bgLayer.clip() == FillBox::Content)
+            border = m_renderer.roundedContentBoxRect(border.rect(), includeLeftEdge, includeRightEdge);
+        else if (bgLayer.clip() == FillBox::Padding)
             border = style.getRoundedInnerBorderFor(border.rect(), includeLeftEdge, includeRightEdge);
 
         clipRoundedInnerRect(context, pixelSnappedRect, border.pixelSnappedRoundedRectForPainting(deviceScaleFactor));

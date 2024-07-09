@@ -62,7 +62,7 @@ static RefPtr<LibWebRTCAudioModule> audioModuleFromSource(RealtimeMediaSource& s
 std::unique_ptr<AudioMediaStreamTrackRenderer> AudioTrackPrivateMediaStream::createRenderer(AudioTrackPrivateMediaStream& stream)
 {
 #if !RELEASE_LOG_DISABLED
-    auto& track = stream.m_streamTrack.get();
+    auto& track = stream.m_streamTrack;
 #endif
     return AudioMediaStreamTrackRenderer::create(AudioMediaStreamTrackRenderer::Init {
         [stream = WeakPtr { stream }] {
@@ -73,8 +73,8 @@ std::unique_ptr<AudioMediaStreamTrackRenderer> AudioTrackPrivateMediaStream::cre
         , audioModuleFromSource(stream.m_audioSource.get())
 #endif
 #if !RELEASE_LOG_DISABLED
-        , track.logger()
-        , track.logIdentifier()
+        , track->logger()
+        , track->logIdentifier()
 #endif
     });
 }

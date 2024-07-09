@@ -46,6 +46,7 @@
 #include "Text.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

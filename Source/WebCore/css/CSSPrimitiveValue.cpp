@@ -47,8 +47,8 @@
 #include <wtf/Hasher.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -699,7 +699,7 @@ static double lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis logicalA
     if (!style)
         return 0;
 
-    switch (mapLogicalAxisToPhysicalAxis({ style->blockFlowDirection(), style->direction() }, logicalAxis)) {
+    switch (mapLogicalAxisToPhysicalAxis(makeTextFlow(style->writingMode(), style->direction()), logicalAxis)) {
     case BoxAxis::Horizontal:
         return size.width();
 

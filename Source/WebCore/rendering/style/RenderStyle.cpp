@@ -27,6 +27,7 @@
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
+#include "ColorBlending.h"
 #include "ComputedStyleExtractor.h"
 #include "ContentData.h"
 #include "CursorList.h"
@@ -432,6 +433,11 @@ void RenderStyle::copyPseudoElementsFrom(const RenderStyle& other)
 
     for (auto& pseudoElementStyle : other.m_cachedPseudoStyles->styles)
         addCachedPseudoStyle(makeUnique<RenderStyle>(cloneIncludingPseudoElements(*pseudoElementStyle)));
+}
+
+void RenderStyle::copyPseudoElementBitsFrom(const RenderStyle& other)
+{
+    m_nonInheritedFlags.pseudoBits = other.m_nonInheritedFlags.pseudoBits;
 }
 
 bool RenderStyle::operator==(const RenderStyle& other) const
@@ -1416,11 +1422,7 @@ bool RenderStyle::outOfFlowPositionStyleDidChange(const RenderStyle* other) cons
     // https://drafts.csswg.org/css-scroll-anchoring/#suppression-triggers
     // Determine if there is a style change that causes an element to become or stop
     // being absolutely or fixed positioned
-    if (other && m_nonInheritedData.ptr() != other->m_nonInheritedData.ptr()) {
-        if (hasOutOfFlowPosition() != other->hasOutOfFlowPosition())
-            return true;
-    }
-    return false;
+    return other && hasOutOfFlowPosition() != other->hasOutOfFlowPosition();
 }
 
 StyleDifference RenderStyle::diff(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties) const
@@ -3093,15 +3095,22 @@ Color RenderStyle::colorWithColorFilter(const StyleColor& color) const
     return colorByApplyingColorFilter(colorResolvingCurrentColor(color));
 }
 
-Color RenderStyle::usedAccentColor() const
+Color RenderStyle::usedAccentColor(OptionSet<StyleColorOptions> styleColorOptions) const
 {
     if (hasAutoAccentColor())
         return { };
 
-    if (hasAppleColorFilter())
-        return colorByApplyingColorFilter(colorResolvingCurrentColor(accentColor()));
+    auto resolvedAccentColor = colorResolvingCurrentColor(accentColor());
 
-    return colorResolvingCurrentColor(accentColor());
+    if (!resolvedAccentColor.isOpaque()) {
+        auto computedCanvasColor = RenderTheme::singleton().systemColor(CSSValueCanvas, styleColorOptions);
+        resolvedAccentColor = blendSourceOver(computedCanvasColor, resolvedAccentColor);
+    }
+
+    if (hasAppleColorFilter())
+        return colorByApplyingColorFilter(resolvedAccentColor);
+
+    return resolvedAccentColor;
 }
 
 Color RenderStyle::usedScrollbarThumbColor() const

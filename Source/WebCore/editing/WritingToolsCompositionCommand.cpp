@@ -40,9 +40,6 @@ WritingToolsCompositionCommand::WritingToolsCompositionCommand(Ref<Document>&& d
 
 void WritingToolsCompositionCommand::replaceContentsOfRangeWithFragment(RefPtr<DocumentFragment>&& fragment, const SimpleRange& range, MatchStyle matchStyle, State state)
 {
-    if (endingSelection().isNoneOrOrphaned() || !endingSelection().isContentEditable())
-        return;
-
     auto contextRange = m_endingContextRange;
 
     auto contextRangeCount = characterCount(contextRange);

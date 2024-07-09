@@ -28,6 +28,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(JOURNALD_LOG)

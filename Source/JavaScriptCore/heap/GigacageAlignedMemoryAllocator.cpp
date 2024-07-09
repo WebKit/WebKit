@@ -26,6 +26,10 @@
 #include "config.h"
 #include "GigacageAlignedMemoryAllocator.h"
 
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+#include <wtf/text/MakeString.h>
+#endif
+
 namespace JSC {
 
 GigacageAlignedMemoryAllocator::GigacageAlignedMemoryAllocator(Gigacage::Kind kind)

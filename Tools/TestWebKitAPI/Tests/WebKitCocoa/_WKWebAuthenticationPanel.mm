@@ -60,7 +60,7 @@
 #import <wtf/WeakRandomNumber.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
 
 static bool webAuthenticationPanelRan = false;
 static bool webAuthenticationPanelFailed = false;

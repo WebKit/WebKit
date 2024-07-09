@@ -33,6 +33,7 @@
 #include <WebCore/SQLiteStatementAutoResetScope.h>
 #include <wtf/FileSystem.h>
 #include <wtf/RunLoop.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 

@@ -302,6 +302,8 @@ void SVGRenderStyle::conservativelyCollectChangedAnimatableProperties(const SVGR
             changingProperties.m_properties.set(CSSPropertyX);
         if (first.y != second.y)
             changingProperties.m_properties.set(CSSPropertyY);
+        if (first.d != second.d)
+            changingProperties.m_properties.set(CSSPropertyD);
     };
 
     auto conservativelyCollectChangedAnimatablePropertiesViaInheritedResourceData = [&](auto& first, auto& second) {

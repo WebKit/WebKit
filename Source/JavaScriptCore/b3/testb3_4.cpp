@@ -942,7 +942,15 @@ void testLoadFromFramePointer()
             root->appendNew<Value>(proc, FramePointer, Origin())));
 
     void* fp = compileAndRun<void*>(proc);
+#if OS(WINDOWS)
+    // Windows __builtin_frame_address(0) points at the space after the function's local variables
+    void* myFP = ((uintptr_t*) _AddressOfReturnAddress() - 1);
+    void* frameAddressZero = __builtin_frame_address(0);
+    CHECK(frameAddressZero < myFP);
+#else
     void* myFP = __builtin_frame_address(0);
+#endif
+
     CHECK(fp <= myFP);
     CHECK(fp >= bitwise_cast<char*>(myFP) - 10000);
 }

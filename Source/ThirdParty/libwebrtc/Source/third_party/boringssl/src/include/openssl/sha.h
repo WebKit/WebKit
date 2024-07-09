@@ -96,12 +96,29 @@ OPENSSL_EXPORT uint8_t *SHA1(const uint8_t *data, size_t len,
 OPENSSL_EXPORT void SHA1_Transform(SHA_CTX *sha,
                                    const uint8_t block[SHA_CBLOCK]);
 
+// CRYPTO_fips_186_2_prf derives |out_len| bytes from |xkey| using the PRF
+// defined in FIPS 186-2, Appendix 3.1, with change notice 1 applied. The b
+// parameter is 160 and seed, XKEY, is also 160 bits. The optional XSEED user
+// input is all zeros.
+//
+// The PRF generates a sequence of 320-bit numbers. Each number is encoded as a
+// 40-byte string in big-endian and then concatenated to form |out|. If
+// |out_len| is not a multiple of 40, the result is truncated. This matches the
+// construction used in Section 7 of RFC 4186 and Section 7 of RFC 4187.
+//
+// This PRF is based on SHA-1, a weak hash function, and should not be used
+// in new protocols. It is provided for compatibility with some legacy EAP
+// methods.
+OPENSSL_EXPORT void CRYPTO_fips_186_2_prf(
+    uint8_t *out, size_t out_len, const uint8_t xkey[SHA_DIGEST_LENGTH]);
+
 struct sha_state_st {
-#if defined(OPENSSL_WINDOWS)
+#if defined(__cplusplus) || defined(OPENSSL_WINDOWS)
   uint32_t h[5];
 #else
-  // wpa_supplicant accesses |h0|..|h4| so we must support those names
-  // for compatibility with it until it can be updated.
+  // wpa_supplicant accesses |h0|..|h4| so we must support those names for
+  // compatibility with it until it can be updated. Anonymous unions are only
+  // standard in C11, so disable this workaround in C++.
   union {
     uint32_t h[5];
     struct {

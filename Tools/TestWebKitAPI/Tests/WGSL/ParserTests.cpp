@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+
 #include "ASTAttribute.h"
 #include "ASTBinaryExpression.h"
 #include "ASTCompoundStatement.h"
@@ -37,6 +38,7 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/DataLog.h>
+#include <wtf/text/MakeString.h>
 
 static void checkBuiltin(WGSL::AST::Attribute& attr, WGSL::Builtin builtin)
 {

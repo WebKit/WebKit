@@ -31,6 +31,7 @@
 #include <pal/text/TextEncodingDetector.h>
 #include <pal/text/TextEncodingRegistry.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -662,8 +663,8 @@ String TextResourceDecoder::flush()
 
 String TextResourceDecoder::decodeAndFlush(std::span<const uint8_t> data)
 {
-    String decoded = decode(data);
-    return decoded + flush();
+    auto decoded = decode(data);
+    return makeString(decoded, flush());
 }
 
 const PAL::TextEncoding* TextResourceDecoder::encodingForURLParsing()

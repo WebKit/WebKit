@@ -147,6 +147,7 @@
 #include <wtf/NativePromise.h>
 #include <wtf/Ref.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 
 #if USE(AUDIO_SESSION)
 #include "AudioSession.h"

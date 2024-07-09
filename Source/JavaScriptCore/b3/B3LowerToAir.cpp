@@ -27,7 +27,6 @@
 #include "B3LowerToAir.h"
 
 #if ENABLE(B3_JIT)
-#if USE(JSVALUE64)
 
 // On Windows, there's macros for these which interfere with the opcodes
 #pragma push_macro("RotateLeft32")
@@ -46,6 +45,7 @@
 #undef LoadFence
 #undef MemoryFence
 
+#if USE(JSVALUE64)
 #include "AirBlockInsertionSet.h"
 #include "AirCCallSpecial.h"
 #include "AirCode.h"
@@ -5325,6 +5325,8 @@ void lowerToAir(Procedure& procedure)
 IGNORE_RETURN_TYPE_WARNINGS_END
 #endif
 
+#endif // USE(JSVALUE64)
+
 #pragma pop_macro("RotateLeft32")
 #pragma pop_macro("RotateLeft64")
 #pragma pop_macro("RotateRight32")
@@ -5333,5 +5335,4 @@ IGNORE_RETURN_TYPE_WARNINGS_END
 #pragma pop_macro("LoadFence")
 #pragma pop_macro("MemoryFence")
 
-#endif // USE(JSVALUE64)
 #endif // ENABLE(B3_JIT)

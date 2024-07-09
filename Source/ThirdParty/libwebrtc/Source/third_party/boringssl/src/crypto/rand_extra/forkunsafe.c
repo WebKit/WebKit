@@ -17,13 +17,12 @@
 #include <stdlib.h>
 
 #include "../fipsmodule/rand/internal.h"
+#include "../internal.h"
 
 
-// g_buffering_enabled is true if fork-unsafe buffering has been enabled.
-static int g_buffering_enabled = 0;
-
-// g_lock protects |g_buffering_enabled|.
-static struct CRYPTO_STATIC_MUTEX g_lock = CRYPTO_STATIC_MUTEX_INIT;
+// g_buffering_enabled is one if fork-unsafe buffering has been enabled and zero
+// otherwise.
+static CRYPTO_atomic_u32 g_buffering_enabled = 0;
 
 #if !defined(OPENSSL_WINDOWS)
 void RAND_enable_fork_unsafe_buffering(int fd) {
@@ -32,15 +31,14 @@ void RAND_enable_fork_unsafe_buffering(int fd) {
     abort();
   }
 
-  CRYPTO_STATIC_MUTEX_lock_write(&g_lock);
-  g_buffering_enabled = 1;
-  CRYPTO_STATIC_MUTEX_unlock_write(&g_lock);
+  CRYPTO_atomic_store_u32(&g_buffering_enabled, 1);
+}
+
+void RAND_disable_fork_unsafe_buffering(void) {
+  CRYPTO_atomic_store_u32(&g_buffering_enabled, 0);
 }
 #endif
 
 int rand_fork_unsafe_buffering_enabled(void) {
-  CRYPTO_STATIC_MUTEX_lock_read(&g_lock);
-  const int ret = g_buffering_enabled;
-  CRYPTO_STATIC_MUTEX_unlock_read(&g_lock);
-  return ret;
+  return CRYPTO_atomic_load_u32(&g_buffering_enabled) != 0;
 }

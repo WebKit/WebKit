@@ -194,6 +194,7 @@ enum class MouseEventPolicy : uint8_t;
 enum class PermissionName : uint8_t;
 enum class PermissionState : uint8_t;
 enum class PlatformEventModifier : uint8_t;
+enum class PlatformMediaSessionRemoteControlCommandType : uint8_t;
 enum class PolicyAction : uint8_t;
 enum class ReasonForDismissingAlternativeText : uint8_t;
 enum class ReloadOption : uint8_t;
@@ -305,6 +306,8 @@ struct Item;
 #if ENABLE(WRITING_TOOLS)
 namespace WritingTools {
 enum class Action : uint8_t;
+enum class Behavior : uint8_t;
+enum class RequestedTool : uint16_t;
 enum class TextSuggestionState : uint8_t;
 
 struct Context;
@@ -1157,9 +1160,12 @@ public:
     bool scrollPerformanceDataCollectionEnabled() const { return m_scrollPerformanceDataCollectionEnabled; }
     RemoteLayerTreeScrollingPerformanceData* scrollingPerformanceData() { return m_scrollingPerformanceData.get(); }
 
-    void scheduleActivityStateUpdate();
     void addActivityStateUpdateCompletionHandler(CompletionHandler<void()>&&);
 #endif // PLATFORM(COCOA)
+
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
+    void scheduleActivityStateUpdate();
+#endif
 
     void changeFontAttributes(WebCore::FontAttributeChanges&&);
     void changeFont(WebCore::FontChanges&&);
@@ -1767,8 +1773,8 @@ public:
     RefPtr<ViewSnapshot> takeViewSnapshot(std::optional<WebCore::IntRect>&&);
 #endif
 
-    void wrapCryptoKey(const Vector<uint8_t>&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
-    void unwrapCryptoKey(const struct WebCore::WrappedCryptoKey&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
+    void wrapCryptoKey(Vector<uint8_t>&&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
+    void unwrapCryptoKey(WebCore::WrappedCryptoKey&&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
 
     void takeSnapshot(WebCore::IntRect, WebCore::IntSize bitmapSize, SnapshotOptions, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
 
@@ -1913,7 +1919,7 @@ public:
     bool hasHadSelectionChangesFromUserInteraction() const { return m_hasHadSelectionChangesFromUserInteraction; }
 
 #if HAVE(TOUCH_BAR)
-    bool isTouchBarUpdateSupressedForHiddenContentEditable() const { return m_isTouchBarUpdateSupressedForHiddenContentEditable; }
+    bool isTouchBarUpdateSuppressedForHiddenContentEditable() const { return m_isTouchBarUpdateSuppressedForHiddenContentEditable; }
     bool isNeverRichlyEditableForTouchBar() const { return m_isNeverRichlyEditableForTouchBar; }
 #endif
 
@@ -2244,7 +2250,8 @@ public:
 #if ENABLE(WRITING_TOOLS)
 #if ENABLE(CONTEXT_MENUS)
     bool canHandleContextMenuWritingTools() const;
-    void handleContextMenuWritingTools(WebCore::IntRect selectionBoundsInRootView);
+    void handleContextMenuWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView);
+    void handleContextMenuWritingTools(WebCore::WritingTools::RequestedTool);
 #endif
 #endif
 
@@ -2392,6 +2399,8 @@ public:
 #if ENABLE(WRITING_TOOLS)
     void setWritingToolsActive(bool);
 
+    WebCore::WritingTools::Behavior writingToolsBehavior() const;
+
     void willBeginWritingToolsSession(const std::optional<WebCore::WritingTools::Session>&, CompletionHandler<void(const Vector<WebCore::WritingTools::Context>&)>&&);
 
     void didBeginWritingToolsSession(const WebCore::WritingTools::Session&, const Vector<WebCore::WritingTools::Context>&);
@@ -2413,11 +2422,12 @@ public:
 #endif // ENABLE(WRITING_TOOLS)
 
 #if ENABLE(WRITING_TOOLS_UI)
-    void addTextAnimationForAnimationID(IPC::Connection&, const WTF::UUID&, const WebKit::TextAnimationData&, const WebCore::TextIndicatorData&);
+    void addTextAnimationForAnimationID(IPC::Connection&, const WTF::UUID&, const WebKit::TextAnimationData&, const WebCore::TextIndicatorData&, WTF::CompletionHandler<void(void)>&&);
     void removeTextAnimationForAnimationID(IPC::Connection&, const WTF::UUID&);
     void enableSourceTextAnimationAfterElementWithID(const String& elementID, const WTF::UUID&);
     void enableTextAnimationTypeForElementWithID(const String& elementID, const WTF::UUID&);
 
+    void callCompletionHandlerForAnimationID(const WTF::UUID&);
     void getTextIndicatorForID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
     void updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID&, bool, CompletionHandler<void()>&& = [] { });
 #endif
@@ -2466,11 +2476,18 @@ public:
 
     void hasActiveNowPlayingSessionChanged(bool);
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    void playPredominantOrNowPlayingMediaSession(CompletionHandler<void(bool)>&&);
+    void pauseNowPlayingMediaSession(CompletionHandler<void(bool)>&&);
+#endif
+
     void updateActivityState();
     void dispatchActivityStateChange();
 
+    void closeCurrentTypingCommand();
+
 private:
-    std::optional<Vector<uint8_t>> getWebCryptoMasterKey();
+    void getWebCryptoMasterKey(CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
 
@@ -2676,7 +2693,7 @@ private:
     void setHasHadSelectionChangesFromUserInteraction(bool);
 
 #if HAVE(TOUCH_BAR)
-    void setIsTouchBarUpdateSupressedForHiddenContentEditable(bool);
+    void setIsTouchBarUpdateSuppressedForHiddenContentEditable(bool);
     void setIsNeverRichlyEditableForTouchBar(bool);
 #endif
 
@@ -3014,6 +3031,7 @@ private:
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     void updateFullscreenVideoTextRecognition();
     void fullscreenVideoTextRecognitionTimerFired();
+    bool tryToSendCommandToActiveControlledVideo(WebCore::PlatformMediaSessionRemoteControlCommandType);
 #endif
 
 #if ENABLE(WEB_ARCHIVE)
@@ -3439,7 +3457,7 @@ private:
     bool m_hasHadSelectionChangesFromUserInteraction { false };
 
 #if HAVE(TOUCH_BAR)
-    bool m_isTouchBarUpdateSupressedForHiddenContentEditable { false };
+    bool m_isTouchBarUpdateSuppressedForHiddenContentEditable { false };
     bool m_isNeverRichlyEditableForTouchBar { false };
 #endif
 

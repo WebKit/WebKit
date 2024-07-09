@@ -63,8 +63,8 @@ public:
     bool hasUnresolvedAnchorPositionedElements() const { return m_hasUnresolvedAnchorPositionedElements; }
 
 private:
-    enum class ResolutionType : uint8_t { RebuildUsingExisting, AnimationOnly, FastPathInherit, Full };
-    ResolvedStyle styleForStyleable(const Styleable&, ResolutionType, const ResolutionContext&);
+    enum class ResolutionType : uint8_t { RebuildUsingExisting, AnimationOnly, FastPathInherit, FullWithMatchResultCache, Full };
+    ResolvedStyle styleForStyleable(const Styleable&, ResolutionType, const ResolutionContext&, const RenderStyle* existingStyle);
 
     void resolveComposedTree();
 

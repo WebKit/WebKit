@@ -36,6 +36,7 @@
 #include "ServiceWorkerUpdateViaCache.h"
 #include "WorkerFetchResult.h"
 #include "WorkerType.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

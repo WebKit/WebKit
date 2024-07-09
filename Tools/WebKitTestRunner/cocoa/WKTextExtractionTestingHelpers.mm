@@ -29,6 +29,7 @@
 #import "WKTextExtractionItem.h"
 #import <objc/runtime.h>
 #import <wtf/Scope.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/TextStream.h>
 #import <wtf/text/WTFString.h>
 #import <wtf/text/cf/StringConcatenateCF.h>

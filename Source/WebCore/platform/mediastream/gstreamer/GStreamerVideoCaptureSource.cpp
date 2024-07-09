@@ -27,8 +27,8 @@
 
 #include "DisplayCaptureManager.h"
 #include "GStreamerCaptureDeviceManager.h"
-
 #include <gst/app/gstappsink.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

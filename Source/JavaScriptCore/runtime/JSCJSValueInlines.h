@@ -38,6 +38,7 @@
 #include "JSObject.h"
 #include "JSStringInlines.h"
 #include "MathCommon.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringImpl.h>
 
 namespace JSC {

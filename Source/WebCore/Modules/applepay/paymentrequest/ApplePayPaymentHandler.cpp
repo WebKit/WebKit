@@ -72,6 +72,7 @@
 #include "PaymentValidationErrors.h"
 #include "Settings.h"
 #include <JavaScriptCore/JSONObject.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

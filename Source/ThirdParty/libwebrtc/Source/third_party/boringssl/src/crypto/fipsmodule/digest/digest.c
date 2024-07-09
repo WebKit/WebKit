@@ -185,6 +185,10 @@ int EVP_MD_CTX_copy_ex(EVP_MD_CTX *out, const EVP_MD_CTX *in) {
 void EVP_MD_CTX_move(EVP_MD_CTX *out, EVP_MD_CTX *in) {
   EVP_MD_CTX_cleanup(out);
   // While not guaranteed, |EVP_MD_CTX| is currently safe to move with |memcpy|.
+  // bssl-crypto currently relies on this, however, so if we change this, we
+  // need to box the |HMAC_CTX|. (Relying on this is only fine because we assume
+  // BoringSSL and bssl-crypto will always be updated atomically. We do not
+  // allow any version skew between the two.)
   OPENSSL_memcpy(out, in, sizeof(EVP_MD_CTX));
   EVP_MD_CTX_init(in);
 }

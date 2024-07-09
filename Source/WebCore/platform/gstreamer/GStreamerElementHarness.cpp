@@ -27,9 +27,8 @@
 #include <wtf/FileSystem.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenate.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

@@ -96,6 +96,17 @@ static Vector<bool> capabilityBooleanVector(RealtimeMediaSourceCapabilities::Bac
     return result;
 }
 
+static Vector<bool> powerEfficientCapabilityVector(bool powerEfficient)
+{
+    Vector<bool> result;
+    result.reserveInitialCapacity(2);
+    result.append(false);
+    if (powerEfficient)
+        result.append(true);
+
+    return result;
+}
+
 MediaTrackCapabilities toMediaTrackCapabilities(const RealtimeMediaSourceCapabilities& capabilities, const String& groupId)
 {
     MediaTrackCapabilities result;
@@ -131,6 +142,9 @@ MediaTrackCapabilities toMediaTrackCapabilities(const RealtimeMediaSourceCapabil
         result.torch = capabilities.torch();
     if (capabilities.supportsBackgroundBlur())
         result.backgroundBlur = capabilityBooleanVector(capabilities.backgroundBlur());
+
+    if (capabilities.supportsPowerEfficient())
+        result.powerEfficient = powerEfficientCapabilityVector(capabilities.powerEfficient());
 
     return result;
 }

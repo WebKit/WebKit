@@ -29,6 +29,7 @@
 #include "ExecutableBaseInlines.h"
 #include "JSCInlines.h"
 #include "ProxyObject.h"
+#include <wtf/text/MakeString.h>
 
 #include "VMInlines.h"
 

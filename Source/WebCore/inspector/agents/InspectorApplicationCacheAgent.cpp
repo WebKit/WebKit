@@ -35,6 +35,7 @@
 #include "LocalFrame.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

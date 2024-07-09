@@ -1,0 +1,183 @@
+# Copyright (c) 2024, Google Inc.
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+# SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
+# OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+# CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+load(
+    ":gen/sources.bzl",
+    "bcm_internal_headers",
+    "bcm_sources",
+    "bcm_sources_asm",
+    "bssl_internal_headers",
+    "bssl_sources",
+    "crypto_headers",
+    "crypto_internal_headers",
+    "crypto_sources",
+    "crypto_sources_asm",
+    "crypto_test_data",
+    "crypto_test_sources",
+    "decrepit_internal_headers",
+    "decrepit_sources",
+    "decrepit_test_sources",
+    "pki_headers",
+    "pki_internal_headers",
+    "pki_sources",
+    "pki_test_data",
+    "pki_test_sources",
+    "ssl_headers",
+    "ssl_internal_headers",
+    "ssl_sources",
+    "ssl_test_sources",
+    "test_support_internal_headers",
+    "test_support_sources",
+    "test_support_sources_asm",
+    "urandom_test_sources",
+)
+load(":util/util.bzl", "bssl_cc_binary", "bssl_cc_library", "bssl_cc_test")
+
+licenses(["notice"])
+
+exports_files(["LICENSE"])
+
+bssl_cc_library(
+    name = "crypto",
+    srcs = bcm_sources + crypto_sources,
+    hdrs = crypto_headers,
+    asm_srcs = bcm_sources_asm + crypto_sources_asm,
+    copts = ["-DBORINGSSL_IMPLEMENTATION"],
+    includes = ["include"],
+    internal_hdrs = bcm_internal_headers + crypto_internal_headers,
+    linkopts = select({
+        "@platforms//os:windows": [
+            "-defaultlib:advapi32.lib",
+            "-defaultlib:ws2_32.lib",
+        ],
+        "//conditions:default": ["-pthread"],
+    }),
+    visibility = ["//visibility:public"],
+)
+
+bssl_cc_library(
+    name = "ssl",
+    srcs = ssl_sources,
+    hdrs = ssl_headers,
+    copts = ["-DBORINGSSL_IMPLEMENTATION"],
+    internal_hdrs = ssl_internal_headers,
+    visibility = ["//visibility:public"],
+    deps = [":crypto_internal"],
+)
+
+bssl_cc_library(
+    name = "test_support",
+    testonly = True,
+    srcs = test_support_sources,
+    asm_srcs = test_support_sources_asm,
+    copts = ["-DBORINGSSL_USE_BAZEL_RUNFILES"],
+    internal_hdrs = test_support_internal_headers,
+    deps = [
+        ":crypto_internal",
+        "@bazel_tools//tools/cpp/runfiles",
+        "@googletest//:gtest",
+    ],
+)
+
+bssl_cc_test(
+    name = "crypto_test",
+    size = "large",
+    srcs = crypto_test_sources,
+    data = crypto_test_data,
+    # crypto_test references assembly symbols directly and thus must be linked
+    # statically.
+    linkstatic = True,
+    shard_count = 32,
+    deps = [
+        ":crypto_internal",
+        ":test_support",
+        "@googletest//:gtest",
+    ],
+)
+
+bssl_cc_test(
+    name = "urandom_test",
+    srcs = urandom_test_sources,
+    deps = [
+        ":crypto_internal",
+        ":test_support",
+        "@googletest//:gtest",
+    ],
+)
+
+bssl_cc_test(
+    name = "ssl_test",
+    srcs = ssl_test_sources,
+    deps = [
+        ":crypto_internal",
+        ":ssl_internal",
+        ":test_support",
+        "@googletest//:gtest",
+    ],
+)
+
+bssl_cc_binary(
+    name = "bssl",
+    srcs = bssl_sources + bssl_internal_headers,
+    visibility = ["//visibility:public"],
+    deps = [
+        ":crypto_internal",
+        ":ssl_internal",
+    ],
+)
+
+# Build, but do not export libdecrepit.
+bssl_cc_library(
+    name = "decrepit",
+    srcs = decrepit_sources,
+    copts = ["-DBORINGSSL_IMPLEMENTATION"],
+    internal_hdrs = decrepit_internal_headers,
+    deps = [
+        ":crypto_internal",
+        ":ssl_internal",
+    ],
+)
+
+bssl_cc_test(
+    name = "decrepit_test",
+    srcs = decrepit_test_sources,
+    deps = [
+        ":crypto_internal",
+        ":decrepit",
+        ":test_support",
+        "@googletest//:gtest",
+    ],
+)
+
+# Build, but do not (yet) export libpki.
+bssl_cc_library(
+    name = "pki",
+    srcs = pki_sources,
+    hdrs = pki_headers,
+    copts = ["-DBORINGSSL_IMPLEMENTATION"],
+    internal_hdrs = pki_internal_headers,
+    deps = [":crypto"],
+)
+
+bssl_cc_test(
+    name = "pki_test",
+    srcs = pki_test_sources,
+    data = pki_test_data,
+    deps = [
+        ":crypto_internal",
+        ":pki",
+        ":test_support",
+        "@googletest//:gtest",
+    ],
+)

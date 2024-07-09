@@ -30,7 +30,6 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSValuePool);

@@ -144,6 +144,7 @@
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebEventPrivate.h>
 #import <WebCore/WebTextIndicatorLayer.h>
+#import <WebCore/WindowsKeyboardCodes.h>
 #import <WebCore/WritingDirection.h>
 #import <WebKit/WebSelectionRect.h> // FIXME: WebKit should not include WebKitLegacy headers!
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -166,6 +167,7 @@
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/TextStream.h>
 
 #if ENABLE(DRAG_SUPPORT)
@@ -189,10 +191,6 @@
 
 #if HAVE(PEPPER_UI_CORE)
 #import "PepperUICoreSPI.h"
-#endif
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKContentViewInteractionAdditionsBefore.mm>
 #endif
 
 #if HAVE(AVKIT)
@@ -3992,7 +3990,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
         else
             presentationRect = visualData.caretRectAtStart;
         
-        String selectionContext = textBefore + selectedText + textAfter;
+        auto selectionContext = makeString(textBefore, selectedText, textAfter);
         NSRange selectedRangeInContext = NSMakeRange(textBefore.length(), selectedText.length());
 
         if (auto textSelectionAssistant = view->_textInteractionWrapper)
@@ -7208,6 +7206,26 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
         completionHandler(event, NO);
         return;
     }
+
+#if PLATFORM(MACCATALYST)
+    bool hasPendingArrowKey = _keyWebEventHandlers.containsIf([](auto& eventAndCompletion) {
+        switch ([eventAndCompletion.event keyCode]) {
+        case VK_RIGHT:
+        case VK_LEFT:
+        case VK_DOWN:
+        case VK_UP:
+            return true;
+        default:
+            return false;
+        }
+    });
+
+    if (hasPendingArrowKey) {
+        RELEASE_LOG_ERROR(KeyHandling, "Ignoring incoming key event due to pending arrow key event");
+        completionHandler(event, NO);
+        return;
+    }
+#endif // PLATFORM(MACCATALYST)
 
     if (event.type == WebEventKeyDown)
         _isHandlingActiveKeyEvent = YES;
@@ -13153,6 +13171,12 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
     return self;
 }
 
+- (void)callCompletionHandlerForAnimationID:(NSUUID *)uuid
+{
+    auto animationUUID = WTF::UUID::fromNSUUID(uuid);
+    _page->callCompletionHandlerForAnimationID(*animationUUID);
+}
+
 #endif
 
 #pragma mark - BETextInteractionDelegate
@@ -13220,9 +13244,30 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.mm>
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+
+- (BOOL)supportsAdaptiveImageGlyph
+{
+    if (self.webView._isEditable || self.webView.configuration._multiRepresentationHEICInsertionEnabled)
+        return _page->editorState().isContentRichlyEditable;
+
+    return NO;
+}
+
+- (void)insertAdaptiveImageGlyph:(NSAdaptiveImageGlyph *)adaptiveImageGlyph replacementRange:(UITextRange *)replacementRange
+{
+    _page->insertMultiRepresentationHEIC(adaptiveImageGlyph.imageContent, adaptiveImageGlyph.contentDescription);
+}
+
 #endif
+
+- (void)_closeCurrentTypingCommand
+{
+    if (!_page)
+        return;
+
+    _page->closeCurrentTypingCommand();
+}
 
 @end
 

@@ -153,33 +153,70 @@ static uint64_t bn_neg_inv_mod_r_u64(uint64_t n) {
 
   // The invariant now shows that u*r - v*n == 1 since r == 2 * alpha.
 #if BN_BITS2 == 64 && defined(BN_ULLONG)
-  assert(1 == ((BN_ULLONG)u * 2 * alpha) - ((BN_ULLONG)v * beta));
+  declassify_assert(1 == ((BN_ULLONG)u * 2 * alpha) - ((BN_ULLONG)v * beta));
 #endif
 
   return v;
 }
 
-int bn_mod_exp_base_2_consttime(BIGNUM *r, unsigned p, const BIGNUM *n,
-                                BN_CTX *ctx) {
-  assert(!BN_is_zero(n));
-  assert(!BN_is_negative(n));
-  assert(BN_is_odd(n));
+int bn_mont_ctx_set_RR_consttime(BN_MONT_CTX *mont, BN_CTX *ctx) {
+  assert(!BN_is_zero(&mont->N));
+  assert(!BN_is_negative(&mont->N));
+  assert(BN_is_odd(&mont->N));
+  assert(bn_minimal_width(&mont->N) == mont->N.width);
 
-  BN_zero(r);
-
-  unsigned n_bits = BN_num_bits(n);
+  unsigned n_bits = BN_num_bits(&mont->N);
   assert(n_bits != 0);
-  assert(p > n_bits);
   if (n_bits == 1) {
-    return 1;
+    BN_zero(&mont->RR);
+    return bn_resize_words(&mont->RR, mont->N.width);
   }
 
-  // Set |r| to the larger power of two smaller than |n|, then shift with
-  // reductions the rest of the way.
-  if (!BN_set_bit(r, n_bits - 1) ||
-      !bn_mod_lshift_consttime(r, r, p - (n_bits - 1), n, ctx)) {
+  unsigned lgBigR = mont->N.width * BN_BITS2;
+  assert(lgBigR >= n_bits);
+
+  // RR is R, or 2^lgBigR, in the Montgomery domain. We can compute 2 in the
+  // Montgomery domain, 2R or 2^(lgBigR+1), and then use Montgomery
+  // square-and-multiply to exponentiate.
+  //
+  // The square steps take 2^n R to (2^n)*(2^n) R = 2^2n R. This is the same as
+  // doubling 2^n R, n times (doubling any x, n times, computes 2^n * x). When n
+  // is below some threshold, doubling is faster; when above, squaring is
+  // faster. From benchmarking various 32-bit and 64-bit architectures, the word
+  // count seems to work well as a threshold. (Doubling scales linearly and
+  // Montgomery reduction scales quadratically, so the threshold should scale
+  // roughly linearly.)
+  //
+  // The multiply steps take 2^n R to 2*2^n R = 2^(n+1) R. It is faster to
+  // double the value instead, so the square-and-multiply exponentiation would
+  // become square-and-double. However, when using the word count as the
+  // threshold, it turns out that no multiply/double steps will be needed at
+  // all, because squaring any x, i times, computes x^(2^i):
+  //
+  //   (2^threshold)^(2^BN_BITS2_LG) R
+  //   (2^mont->N.width)^BN_BITS2 R
+  // = 2^(mont->N.width*BN_BITS2) R
+  // = 2^lgBigR R
+  // = RR
+  int threshold = mont->N.width;
+
+  // Calculate 2^threshold R = 2^(threshold + lgBigR) by doubling. The
+  // first n_bits - 1 doubles can be skipped because we don't need to reduce.
+  if (!BN_set_bit(&mont->RR, n_bits - 1) ||
+      !bn_mod_lshift_consttime(&mont->RR, &mont->RR,
+                               threshold + (lgBigR - (n_bits - 1)),
+                               &mont->N, ctx)) {
     return 0;
   }
 
-  return 1;
+  // The above steps are the same regardless of the threshold. The steps below
+  // need to be modified if the threshold changes.
+  assert(threshold == mont->N.width);
+  for (unsigned i = 0; i < BN_BITS2_LG; i++) {
+    if (!BN_mod_mul_montgomery(&mont->RR, &mont->RR, &mont->RR, mont, ctx)) {
+      return 0;
+    }
+  }
+
+  return bn_resize_words(&mont->RR, mont->N.width);
 }

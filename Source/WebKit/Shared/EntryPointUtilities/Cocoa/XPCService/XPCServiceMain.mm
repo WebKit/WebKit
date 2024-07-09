@@ -43,6 +43,7 @@
 #import <wtf/spi/cocoa/OSLogSPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/spi/darwin/XPCSPI.h>
+#import <wtf/text/MakeString.h>
 
 #if __has_include(<WebKitAdditions/DyldCallbackAdditions.h>)
 #import <WebKitAdditions/DyldCallbackAdditions.h>

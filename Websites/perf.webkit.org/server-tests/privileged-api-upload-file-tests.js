@@ -121,7 +121,7 @@ describe('/privileged-api/upload-file', function () {
         });
     });
 
-    it('should re-upload the file when the previously uploaded file had been deleted', () => {
+    it('should re-upload the file when the previously uploaded file had been deleted and reuse the file id', () => {
         const db = TestServer.database();
         const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
         let uploadedFile1;
@@ -139,26 +139,21 @@ describe('/privileged-api/upload-file', function () {
             uploadedFile2 = response['uploadedFile'];
             return db.selectAll('uploaded_files', 'id');
         }).then((rows) => {
-            assert.notStrictEqual(uploadedFile1.id, uploadedFile2.id);
-            assert.strictEqual(rows.length, 2);
+            assert.strictEqual(uploadedFile1.id, uploadedFile2.id);
+            assert.strictEqual(rows.length, 1);
             assert.strictEqual(rows[0].id, parseInt(uploadedFile1.id));
-            assert.strictEqual(rows[1].id, parseInt(uploadedFile2.id));
 
             assert.strictEqual(rows[0].filename, 'some.dat');
             assert.strictEqual(rows[0].filename, uploadedFile1.filename);
-            assert.strictEqual(rows[1].filename, 'other.dat');
-            assert.strictEqual(rows[1].filename, uploadedFile2.filename);
 
             assert.strictEqual(parseInt(rows[0].size), limitInMB * 1024 * 1024);
             assert.strictEqual(parseInt(rows[0].size), parseInt(uploadedFile1.size));
             assert.strictEqual(parseInt(rows[0].size), parseInt(uploadedFile2.size));
-            assert.strictEqual(rows[0].size, rows[1].size);
+            assert.strictEqual(rows[0].deleted_at, null);
             assert.strictEqual(rows[0].sha256, '5256ec18f11624025905d057d6befb03d77b243511ac5f77ed5e0221ce6d84b5');
             assert.strictEqual(rows[0].sha256, uploadedFile1.sha256);
             assert.strictEqual(rows[0].sha256, uploadedFile2.sha256);
-            assert.strictEqual(rows[0].sha256, rows[1].sha256);
             assert.strictEqual(rows[0].extension, '.dat');
-            assert.strictEqual(rows[1].extension, '.dat');
         });
     });
 

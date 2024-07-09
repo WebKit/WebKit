@@ -32,6 +32,7 @@
 #include "Exception.h"
 #include "HTTPParsers.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

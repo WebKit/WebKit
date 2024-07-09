@@ -31,8 +31,10 @@
 #include "WPEDisplayPrivate.h"
 #include "WPEEnumTypes.h"
 #include "WPEEvent.h"
+#include "WPEGestureControllerImpl.h"
 #include "WPEToplevelPrivate.h"
 #include "WPEViewPrivate.h"
+#include <optional>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -50,6 +52,7 @@ struct _WPEViewPrivate {
     bool closed;
     bool visible { true };
     bool mapped;
+    bool hasFocus;
 
     struct {
         unsigned pressCount { 0 };
@@ -58,6 +61,7 @@ struct _WPEViewPrivate {
         guint button { 0 };
         guint32 time { 0 };
     } lastButtonPress;
+    std::optional<GRefPtr<WPEGestureController>> gestureController;
 };
 
 WEBKIT_DEFINE_ABSTRACT_TYPE(WPEView, wpe_view, G_TYPE_OBJECT)
@@ -83,6 +87,7 @@ enum {
     PROP_MONITOR,
     PROP_VISIBLE,
     PROP_MAPPED,
+    PROP_HAS_FOCUS,
 
     N_PROPERTIES
 };
@@ -95,8 +100,6 @@ enum {
     BUFFER_RENDERED,
     BUFFER_RELEASED,
     EVENT,
-    FOCUS_IN,
-    FOCUS_OUT,
     TOPLEVEL_STATE_CHANGED,
     PREFERRED_DMA_BUF_FORMATS_CHANGED,
 
@@ -155,6 +158,9 @@ static void wpeViewGetProperty(GObject* object, guint propId, GValue* value, GPa
         break;
     case PROP_MAPPED:
         g_value_set_boolean(value, wpe_view_get_mapped(view));
+        break;
+    case PROP_HAS_FOCUS:
+        g_value_set_boolean(value, wpe_view_get_has_focus(view));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -304,6 +310,18 @@ static void wpe_view_class_init(WPEViewClass* viewClass)
             FALSE,
             WEBKIT_PARAM_READABLE);
 
+    /**
+     * WPEView:has-focus:
+     *
+     * Whether the view has the keyboard focus.
+     */
+    sObjProperties[PROP_HAS_FOCUS] =
+        g_param_spec_boolean(
+            "has-focus",
+            nullptr, nullptr,
+            FALSE,
+            WEBKIT_PARAM_READABLE);
+
     g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties);
 
     /**
@@ -386,34 +404,6 @@ static void wpe_view_class_init(WPEViewClass* viewClass)
         g_cclosure_marshal_generic,
         G_TYPE_BOOLEAN, 1,
         WPE_TYPE_EVENT);
-
-    /**
-     * WPEView::focus-in:
-     * @view: a #WPEView
-     *
-     * Emitted when @view gets the keyboard focus
-     */
-    signals[FOCUS_IN] = g_signal_new(
-        "focus-in",
-        G_TYPE_FROM_CLASS(viewClass),
-        G_SIGNAL_RUN_LAST,
-        0, nullptr, nullptr,
-        g_cclosure_marshal_generic,
-        G_TYPE_NONE, 0);
-
-    /**
-     * WPEView::focus-out:
-     * @view: a #WPEView
-     *
-     * Emitted when @view loses the keyboard focus
-     */
-    signals[FOCUS_OUT] = g_signal_new(
-        "focus-out",
-        G_TYPE_FROM_CLASS(viewClass),
-        G_SIGNAL_RUN_LAST,
-        0, nullptr, nullptr,
-        g_cclosure_marshal_generic,
-        G_TYPE_NONE, 0);
 
     /**
      * WPEView::toplevel-state-changed:
@@ -941,26 +931,55 @@ guint wpe_view_compute_press_count(WPEView* view, gdouble x, gdouble y, guint bu
  * wpe_view_focus_in:
  * @view: a #WPEView
  *
- * Emit #WPEView::focus-in signal to notify that @view has gained the keyboard focus.
+ * Make @view gain the keyboard focus.
+ *
+ * This function should only be called by #WPEView derived classes
+ * in platform implementations.
  */
 void wpe_view_focus_in(WPEView* view)
 {
     g_return_if_fail(WPE_IS_VIEW(view));
 
-    g_signal_emit(view, signals[FOCUS_IN], 0);
+    if (view->priv->hasFocus)
+        return;
+
+    view->priv->hasFocus = true;
+    g_object_notify_by_pspec(G_OBJECT(view), sObjProperties[PROP_HAS_FOCUS]);
 }
 
 /**
  * wpe_view_focus_out:
  * @view: a #WPEView
  *
- * Emit #WPEView::focus-out signal to notify that @view has lost the keyboard focus.
+ * Make @view lose the keyboard focus.
+ *
+ * This function should only be called by #WPEView derived classes
+ * in platform implementations.
  */
 void wpe_view_focus_out(WPEView* view)
 {
     g_return_if_fail(WPE_IS_VIEW(view));
 
-    g_signal_emit(view, signals[FOCUS_OUT], 0);
+    if (!view->priv->hasFocus)
+        return;
+
+    view->priv->hasFocus = false;
+    g_object_notify_by_pspec(G_OBJECT(view), sObjProperties[PROP_HAS_FOCUS]);
+}
+
+/**
+ * wpe_view_get_has_focus:
+ * @view: a #WPEView
+ *
+ * Get whether @view has the keyboard focus.
+ *
+ * Returns: %TRUE if view has the keyboard focus, or %FALSE otherwise
+ */
+gboolean wpe_view_get_has_focus(WPEView* view)
+{
+    g_return_val_if_fail(WPE_IS_VIEW(view), FALSE);
+
+    return !!view->priv->hasFocus;
 }
 
 /**
@@ -999,4 +1018,39 @@ void wpe_view_set_opaque_rectangles(WPEView* view, WPERectangle* rects, guint re
     auto* viewClass = WPE_VIEW_GET_CLASS(view);
     if (viewClass->set_opaque_rectangles)
         viewClass->set_opaque_rectangles(view, rects, rectsCount);
+}
+
+/**
+ * wpe_view_set_gesture_controller:
+ * @view: a #WPEView
+ * @controller: (nullable): a #WPEGestureController, or %NULL
+ *
+ * Set @controller as #WPEGestureController of @view.
+ * When supplied with %NULL, the default #WPEGestureController will be removed
+ * and thus default gesture handling will be disabled for the @view.
+ */
+void wpe_view_set_gesture_controller(WPEView* view, WPEGestureController* controller)
+{
+    g_return_if_fail(WPE_IS_VIEW(view));
+    g_return_if_fail(WPE_IS_GESTURE_CONTROLLER(controller));
+
+    view->priv->gestureController = controller;
+}
+
+/**
+ * wpe_view_get_gesture_controller:
+ * @view: a #WPEView
+ *
+ * Get the #WPEGestureController of @view.
+ *
+ * Returns: (transfer none) (nullable): a #WPEGestureController or %NULL
+ */
+WPEGestureController* wpe_view_get_gesture_controller(WPEView* view)
+{
+    g_return_val_if_fail(WPE_IS_VIEW(view), nullptr);
+
+    if (!view->priv->gestureController)
+        view->priv->gestureController = adoptGRef(wpeGestureControllerImplNew());
+
+    return view->priv->gestureController->get();
 }

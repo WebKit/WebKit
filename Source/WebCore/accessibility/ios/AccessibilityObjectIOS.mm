@@ -38,6 +38,7 @@
 #import "WebAccessibilityObjectWrapperIOS.h"
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/text/MakeString.h>
 
 SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenBlockquoteLevel, NSString *);
 #define AccessibilityTokenBlockquoteLevel getUIAccessibilityTokenBlockquoteLevel()
@@ -155,7 +156,7 @@ void AccessibilityObject::setLastPresentedTextPrediction(Node& previousCompositi
         if (wordStart)
             previousCompositionNodeText = previousCompositionNodeText.substring(wordStart);
 
-        m_lastPresentedTextPredictionComplete = { previousCompositionNodeText + m_lastPresentedTextPrediction.text, wordStart };
+        m_lastPresentedTextPredictionComplete = { makeString(previousCompositionNodeText, m_lastPresentedTextPrediction.text), wordStart };
 
         // Reset last presented prediction since a candidate was accepted.
         m_lastPresentedTextPrediction.reset();

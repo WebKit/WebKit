@@ -134,9 +134,6 @@ struct evp_cipher_st {
   // flags contains the OR of a number of flags. See |EVP_CIPH_*|.
   uint32_t flags;
 
-  // app_data is a pointer to opaque, user data.
-  void *app_data;
-
   int (*init)(EVP_CIPHER_CTX *ctx, const uint8_t *key, const uint8_t *iv,
               int enc);
 

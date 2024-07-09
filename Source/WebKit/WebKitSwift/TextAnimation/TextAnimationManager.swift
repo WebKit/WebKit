@@ -114,8 +114,19 @@ extension TextAnimationManager: UITextEffectView.ReplacementTextEffect.Delegate 
     
     public func replacementEffectDidComplete(_ effect: UITextEffectView.ReplacementTextEffect) {
         self.effectView.removeEffect(effect.id)
-        
-        // FIXME: remove the effect from the chunkToEffect map rdar://126307144
+
+        guard let (animationID, _) = chunkToEffect.first(where: { (_, value) in value == effect.id }) else {
+            return
+        }
+
+        chunkToEffect[animationID] = nil
+
+        guard let delegate = self.delegate else {
+            Self.logger.debug("Can't obtain Targeted Preview. Missing delegate.")
+            return
+        }
+
+        delegate.callCompletionHandler(forAnimationID: animationID)
     }
 }
 

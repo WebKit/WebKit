@@ -70,12 +70,8 @@ static inline Layout::BoxGeometry::Edges flexBoxLogicalPadding(const RenderBoxMo
     UNUSED_PARAM(isLeftToRightInlineDirection);
     UNUSED_PARAM(blockFlowDirection);
 
-    auto paddingLeft = renderer.paddingLeft();
-    auto paddingRight = renderer.paddingRight();
-    auto paddingTop = renderer.paddingTop();
-    auto paddingBottom = renderer.paddingBottom();
-
-    return { { paddingLeft, paddingRight }, { paddingTop, paddingBottom } };
+    auto padding = renderer.padding();
+    return { { padding.left(), padding.right() }, { padding.top(), padding.bottom() } };
 }
 
 void FlexLayout::updateFormattingRootGeometryAndInvalidate()

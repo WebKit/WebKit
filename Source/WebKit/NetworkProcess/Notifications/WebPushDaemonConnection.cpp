@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebPushDaemonConnection.h"
 
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
 
 #include "DaemonDecoder.h"
 #include "DaemonEncoder.h"
@@ -54,4 +54,4 @@ void Connection::debugMessage(const String& message)
 
 } // namespace WebKit::WebPushD
 
-#endif // ENABLE(BUILT_IN_NOTIFICATIONS)
+#endif // ENABLE(WEB_PUSH_NOTIFICATIONS)

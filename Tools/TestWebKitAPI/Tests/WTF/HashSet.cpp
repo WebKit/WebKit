@@ -33,7 +33,7 @@
 #include <functional>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
 
 namespace TestWebKitAPI {

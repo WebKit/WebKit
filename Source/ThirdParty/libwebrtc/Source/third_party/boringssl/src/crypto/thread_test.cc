@@ -57,8 +57,8 @@ TEST(ThreadTest, Once) {
 static CRYPTO_once_t once_init_value = CRYPTO_ONCE_INIT;
 static CRYPTO_once_t once_bss;
 
-static struct CRYPTO_STATIC_MUTEX mutex_init_value = CRYPTO_STATIC_MUTEX_INIT;
-static struct CRYPTO_STATIC_MUTEX mutex_bss;
+static CRYPTO_MUTEX mutex_init_value = CRYPTO_MUTEX_INIT;
+static CRYPTO_MUTEX mutex_bss;
 
 static CRYPTO_EX_DATA_CLASS ex_data_class_value = CRYPTO_EX_DATA_CLASS_INIT;
 static CRYPTO_EX_DATA_CLASS ex_data_class_bss;
@@ -66,8 +66,8 @@ static CRYPTO_EX_DATA_CLASS ex_data_class_bss;
 TEST(ThreadTest, InitZeros) {
   if (FIPS_mode()) {
     // Our FIPS tooling currently requires that |CRYPTO_ONCE_INIT|,
-    // |CRYPTO_STATIC_MUTEX_INIT| and |CRYPTO_EX_DATA_CLASS| are all zeros and
-    // so can be placed in the BSS section.
+    // |CRYPTO_MUTEX_INIT| and |CRYPTO_EX_DATA_CLASS| are all zeros and so can
+    // be placed in the BSS section.
     EXPECT_EQ(Bytes((uint8_t *)&once_bss, sizeof(once_bss)),
               Bytes((uint8_t *)&once_init_value, sizeof(once_init_value)));
     EXPECT_EQ(Bytes((uint8_t *)&mutex_bss, sizeof(mutex_bss)),

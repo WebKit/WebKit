@@ -43,6 +43,7 @@
 #include "WorkerThread.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/RunLoop.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

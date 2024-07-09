@@ -60,6 +60,7 @@
 #include "StyleResolver.h"
 #include "TextIterator.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

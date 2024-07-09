@@ -33,6 +33,7 @@
 #include "JSWebAssemblyException.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyTag.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyExceptionProtoFuncGetArg);

@@ -59,8 +59,8 @@ static int AsyncWrite(BIO *bio, const char *in, int inl) {
     return -1;
   }
 
-  if (!a->datagram && (size_t)inl > a->write_quota) {
-    inl = a->write_quota;
+  if (!a->datagram && static_cast<size_t>(inl) > a->write_quota) {
+    inl = static_cast<int>(a->write_quota);
   }
   int ret = BIO_write(bio->next_bio, in, inl);
   if (ret <= 0) {
@@ -85,8 +85,8 @@ static int AsyncRead(BIO *bio, char *out, int outl) {
     return -1;
   }
 
-  if (!a->datagram && (size_t)outl > a->read_quota) {
-    outl = a->read_quota;
+  if (!a->datagram && static_cast<size_t>(outl) > a->read_quota) {
+    outl = static_cast<int>(a->read_quota);
   }
   int ret = BIO_read(bio->next_bio, out, outl);
   if (ret <= 0) {
@@ -108,11 +108,10 @@ static long AsyncCtrl(BIO *bio, int cmd, long num, void *ptr) {
 }
 
 static int AsyncNew(BIO *bio) {
-  AsyncBio *a = (AsyncBio *)OPENSSL_malloc(sizeof(*a));
+  AsyncBio *a = (AsyncBio *)OPENSSL_zalloc(sizeof(*a));
   if (a == NULL) {
     return 0;
   }
-  OPENSSL_memset(a, 0, sizeof(*a));
   a->enforce_write_quota = true;
   bio->init = 1;
   bio->ptr = (char *)a;

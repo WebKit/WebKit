@@ -75,7 +75,9 @@ static void rand_nonzero(uint8_t *out, size_t len) {
   RAND_bytes(out, len);
 
   for (size_t i = 0; i < len; i++) {
-    while (out[i] == 0) {
+    // Zero values are replaced, and the distribution of zero and non-zero bytes
+    // is public, so leaking this is safe.
+    while (constant_time_declassify_int(out[i] == 0)) {
       RAND_bytes(out + i, 1);
     }
   }

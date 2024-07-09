@@ -68,18 +68,82 @@ OPENSSL_MSVC_PRAGMA(comment(lib, "Ws2_32.lib"))
 
 
 #if !defined(OPENSSL_WINDOWS)
-static int closesocket(int sock) {
-  return close(sock);
-}
+using Socket = int;
+#define INVALID_SOCKET (-1)
+
+static int closesocket(int sock) { return close(sock); }
+static void PrintSocketError(const char *func) { perror(func); }
+#else
+using Socket = SOCKET;
 
 static void PrintSocketError(const char *func) {
-  perror(func);
-}
-#else
-static void PrintSocketError(const char *func) {
-  fprintf(stderr, "%s: %d\n", func, WSAGetLastError());
+  int error = WSAGetLastError();
+  char *buffer;
+  DWORD len = FormatMessageA(
+      FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, 0, error, 0,
+      reinterpret_cast<char *>(&buffer), 0, nullptr);
+  std::string msg = "unknown error";
+  if (len > 0) {
+    msg.assign(buffer, len);
+    while (!msg.empty() && (msg.back() == '\r' || msg.back() == '\n')) {
+      msg.resize(msg.size() - 1);
+    }
+  }
+  LocalFree(buffer);
+  fprintf(stderr, "%s: %s (%d)\n", func, msg.c_str(), error);
 }
 #endif
+
+class OwnedSocket {
+ public:
+  OwnedSocket() = default;
+  explicit OwnedSocket(Socket sock) : sock_(sock) {}
+  OwnedSocket(OwnedSocket &&other) { *this = std::move(other); }
+  ~OwnedSocket() { reset(); }
+  OwnedSocket &operator=(OwnedSocket &&other) {
+    drain_on_close_ = other.drain_on_close_;
+    reset(other.release());
+    return *this;
+  }
+
+  bool is_valid() const { return sock_ != INVALID_SOCKET; }
+  void set_drain_on_close(bool drain) { drain_on_close_ = drain; }
+
+  void reset(Socket sock = INVALID_SOCKET) {
+    if (is_valid()) {
+      if (drain_on_close_) {
+#if defined(OPENSSL_WINDOWS)
+        shutdown(sock_, SD_SEND);
+#else
+        shutdown(sock_, SHUT_WR);
+#endif
+        while (true) {
+          char buf[1024];
+          if (recv(sock_, buf, sizeof(buf), 0) <= 0) {
+            break;
+          }
+        }
+      }
+      closesocket(sock_);
+    }
+
+    drain_on_close_ = false;
+    sock_ = sock;
+  }
+
+  Socket get() const { return sock_; }
+
+  Socket release() {
+    Socket sock = sock_;
+    sock_ = INVALID_SOCKET;
+    drain_on_close_ = false;
+    return sock;
+  }
+
+ private:
+  Socket sock_ = INVALID_SOCKET;
+  bool drain_on_close_ = false;
+};
 
 static int Usage(const char *program) {
   fprintf(stderr, "Usage: %s [flags...]\n", program);
@@ -93,82 +157,55 @@ struct Free {
   }
 };
 
-// Connect returns a new socket connected to localhost on |port| or -1 on
-// error.
-static int Connect(uint16_t port) {
-  for (int af : { AF_INET6, AF_INET }) {
-    int sock = socket(af, SOCK_STREAM, 0);
-    if (sock == -1) {
-      PrintSocketError("socket");
-      return -1;
+// Connect returns a new socket connected to the runner, or -1 on error.
+static OwnedSocket Connect(const TestConfig *config) {
+  sockaddr_storage addr;
+  socklen_t addr_len = 0;
+  if (config->ipv6) {
+    sockaddr_in6 sin6;
+    OPENSSL_memset(&sin6, 0, sizeof(sin6));
+    sin6.sin6_family = AF_INET6;
+    sin6.sin6_port = htons(config->port);
+    if (!inet_pton(AF_INET6, "::1", &sin6.sin6_addr)) {
+      PrintSocketError("inet_pton");
+      return OwnedSocket();
     }
-    int nodelay = 1;
-    if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY,
-            reinterpret_cast<const char*>(&nodelay), sizeof(nodelay)) != 0) {
-      PrintSocketError("setsockopt");
-      closesocket(sock);
-      return -1;
+    addr_len = sizeof(sin6);
+    memcpy(&addr, &sin6, addr_len);
+  } else {
+    sockaddr_in sin;
+    OPENSSL_memset(&sin, 0, sizeof(sin));
+    sin.sin_family = AF_INET;
+    sin.sin_port = htons(config->port);
+    if (!inet_pton(AF_INET, "127.0.0.1", &sin.sin_addr)) {
+      PrintSocketError("inet_pton");
+      return OwnedSocket();
     }
-
-    sockaddr_storage ss;
-    OPENSSL_memset(&ss, 0, sizeof(ss));
-    ss.ss_family = af;
-    socklen_t len = 0;
-
-    if (af == AF_INET6) {
-      sockaddr_in6 *sin6 = (sockaddr_in6 *) &ss;
-      len = sizeof(*sin6);
-      sin6->sin6_port = htons(port);
-      if (!inet_pton(AF_INET6, "::1", &sin6->sin6_addr)) {
-        PrintSocketError("inet_pton");
-        closesocket(sock);
-        return -1;
-      }
-    } else if (af == AF_INET) {
-      sockaddr_in *sin = (sockaddr_in *) &ss;
-      len = sizeof(*sin);
-      sin->sin_port = htons(port);
-      if (!inet_pton(AF_INET, "127.0.0.1", &sin->sin_addr)) {
-        PrintSocketError("inet_pton");
-        closesocket(sock);
-        return -1;
-      }
-    }
-
-    if (connect(sock, reinterpret_cast<const sockaddr*>(&ss), len) == 0) {
-      return sock;
-    }
-    closesocket(sock);
+    addr_len = sizeof(sin);
+    memcpy(&addr, &sin, addr_len);
   }
 
-  PrintSocketError("connect");
-  return -1;
+  OwnedSocket sock(socket(addr.ss_family, SOCK_STREAM, 0));
+  if (!sock.is_valid()) {
+    PrintSocketError("socket");
+    return OwnedSocket();
+  }
+  int nodelay = 1;
+  if (setsockopt(sock.get(), IPPROTO_TCP, TCP_NODELAY,
+                 reinterpret_cast<const char *>(&nodelay),
+                 sizeof(nodelay)) != 0) {
+    PrintSocketError("setsockopt");
+    return OwnedSocket();
+  }
+
+  if (connect(sock.get(), reinterpret_cast<const sockaddr *>(&addr),
+              addr_len) != 0) {
+    PrintSocketError("connect");
+    return OwnedSocket();
+  }
+
+  return sock;
 }
-
-class SocketCloser {
- public:
-  explicit SocketCloser(int sock) : sock_(sock) {}
-  ~SocketCloser() {
-    // Half-close and drain the socket before releasing it. This seems to be
-    // necessary for graceful shutdown on Windows. It will also avoid write
-    // failures in the test runner.
-#if defined(OPENSSL_WINDOWS)
-    shutdown(sock_, SD_SEND);
-#else
-    shutdown(sock_, SHUT_WR);
-#endif
-    while (true) {
-      char buf[1024];
-      if (recv(sock_, buf, sizeof(buf), 0) <= 0) {
-        break;
-      }
-    }
-    closesocket(sock_);
-  }
-
- private:
-  const int sock_;
-};
 
 // DoRead reads from |ssl|, resolving any asynchronous operations. It returns
 // the result value of the final |SSL_read| call.
@@ -206,7 +243,7 @@ static int DoRead(SSL *ssl, uint8_t *out, size_t max_out) {
   } while (RetryAsync(ssl, ret));
 
   if (config->peek_then_read && ret > 0) {
-    std::unique_ptr<uint8_t[]> buf(new uint8_t[static_cast<size_t>(ret)]);
+    auto buf = std::make_unique<uint8_t[]>(static_cast<size_t>(ret));
 
     // SSL_peek should synchronously return the same data.
     int ret2 = SSL_peek(ssl, buf.get(), ret);
@@ -411,6 +448,7 @@ static bool CheckAuthProperties(SSL *ssl, bool is_resume,
 // consistent with the test configuration and invariants.
 static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
                                      const TestConfig *config) {
+  TestState *state = GetTestState(ssl);
   if (!CheckAuthProperties(ssl, is_resume, config)) {
     return false;
   }
@@ -437,9 +475,9 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
 
   bool expect_handshake_done =
       (is_resume || !config->false_start) && !SSL_in_early_data(ssl);
-  if (expect_handshake_done != GetTestState(ssl)->handshake_done) {
+  if (expect_handshake_done != state->handshake_done) {
     fprintf(stderr, "handshake was%s completed\n",
-            GetTestState(ssl)->handshake_done ? "" : " not");
+            state->handshake_done ? "" : " not");
     return false;
   }
 
@@ -449,20 +487,20 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
         (!SSL_session_reused(ssl) || config->expect_ticket_renewal) &&
         // Session tickets are sent post-handshake in TLS 1.3.
         GetProtocolVersion(ssl) < TLS1_3_VERSION;
-    if (expect_new_session != GetTestState(ssl)->got_new_session) {
+    if (expect_new_session != state->got_new_session) {
       fprintf(stderr,
               "new session was%s cached, but we expected the opposite\n",
-              GetTestState(ssl)->got_new_session ? "" : " not");
+              state->got_new_session ? "" : " not");
       return false;
     }
   }
 
   if (!is_resume) {
-    if (config->expect_session_id && !GetTestState(ssl)->got_new_session) {
+    if (config->expect_session_id && !state->got_new_session) {
       fprintf(stderr, "session was not cached on the server.\n");
       return false;
     }
-    if (config->expect_no_session_id && GetTestState(ssl)->got_new_session) {
+    if (config->expect_no_session_id && state->got_new_session) {
       fprintf(stderr, "session was unexpectedly cached on the server.\n");
       return false;
     }
@@ -470,8 +508,7 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
 
   // early_callback_called is updated in the handshaker, so we don't see it
   // here.
-  if (!config->handoff && config->is_server &&
-      !GetTestState(ssl)->early_callback_called) {
+  if (!config->handoff && config->is_server && !state->early_callback_called) {
     fprintf(stderr, "early callback not called\n");
     return false;
   }
@@ -657,11 +694,9 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
     return false;
   }
 
-  if (config->expect_delegated_credential_used !=
-      !!SSL_delegated_credential_used(ssl)) {
-    fprintf(stderr,
-            "Got %s delegated credential usage, but wanted opposite. \n",
-            SSL_delegated_credential_used(ssl) ? "" : "no");
+  if (config->expect_selected_credential != state->selected_credential) {
+    fprintf(stderr, "Credential %d was used, wanted %d\n",
+            state->selected_credential, config->expect_selected_credential);
     return false;
   }
 
@@ -692,9 +727,9 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
           SSL_CIPHER_standard_name(SSL_get_current_cipher(ssl))) ||
       !CheckListContains("OpenSSL cipher name", SSL_get_all_cipher_names,
                          SSL_CIPHER_get_name(SSL_get_current_cipher(ssl))) ||
-      (SSL_get_curve_id(ssl) != 0 &&
-       !CheckListContains("curve", SSL_get_all_curve_names,
-                          SSL_get_curve_name(SSL_get_curve_id(ssl)))) ||
+      (SSL_get_group_id(ssl) != 0 &&
+       !CheckListContains("group", SSL_get_all_group_names,
+                          SSL_get_group_name(SSL_get_group_id(ssl)))) ||
       (SSL_get_peer_signature_algorithm(ssl) != 0 &&
        !CheckListContains(
            "sigalg", SSL_get_all_signature_algorithm_names,
@@ -710,7 +745,6 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
 
   // Test that handshake hints correctly skipped the expected operations.
   if (config->handshake_hints && !config->allow_hint_mismatch) {
-    const TestState *state = GetTestState(ssl);
     // If the private key operation is performed in the first roundtrip, a hint
     // match should have skipped it. This is ECDHE-based cipher suites in TLS
     // 1.2 and non-HRR handshakes in TLS 1.3.
@@ -753,8 +787,8 @@ static bool DoConnection(bssl::UniquePtr<SSL_SESSION> *out_session,
                          SSL_CTX *ssl_ctx, const TestConfig *config,
                          const TestConfig *retry_config, bool is_resume,
                          SSL_SESSION *session, SettingsWriter *writer) {
-  bssl::UniquePtr<SSL> ssl = config->NewSSL(
-      ssl_ctx, session, std::unique_ptr<TestState>(new TestState));
+  bssl::UniquePtr<SSL> ssl =
+      config->NewSSL(ssl_ctx, session, std::make_unique<TestState>());
   if (!ssl) {
     return false;
   }
@@ -775,16 +809,30 @@ static bool DoConnection(bssl::UniquePtr<SSL_SESSION> *out_session,
 #endif
   }
 
-  int sock = Connect(config->port);
-  if (sock == -1) {
+  OwnedSocket sock = Connect(config);
+  if (!sock.is_valid()) {
     return false;
   }
-  SocketCloser closer(sock);
 
-  bssl::UniquePtr<BIO> bio(BIO_new_socket(sock, BIO_NOCLOSE));
+  // Half-close and drain the socket before releasing it. This seems to be
+  // necessary for graceful shutdown on Windows. It will also avoid write
+  // failures in the test runner.
+  sock.set_drain_on_close(true);
+
+  // Windows uses |SOCKET| for socket types, but OpenSSL's API requires casting
+  // them to |int|.
+  bssl::UniquePtr<BIO> bio(
+      BIO_new_socket(static_cast<int>(sock.get()), BIO_NOCLOSE));
   if (!bio) {
     return false;
   }
+
+  uint8_t shim_id[8];
+  CRYPTO_store_u64_le(shim_id, config->shim_id);
+  if (!BIO_write_all(bio.get(), shim_id, sizeof(shim_id))) {
+    return false;
+  }
+
   if (config->is_dtls) {
     bssl::UniquePtr<BIO> packeted = PacketedBioCreate(GetClock());
     if (!packeted) {
@@ -807,8 +855,8 @@ static bool DoConnection(bssl::UniquePtr<SSL_SESSION> *out_session,
     bio = std::move(async_scoped);
   }
   if (config->is_quic) {
-    GetTestState(ssl.get())->quic_transport.reset(
-        new MockQuicTransport(std::move(bio), ssl.get()));
+    GetTestState(ssl.get())->quic_transport =
+        std::make_unique<MockQuicTransport>(std::move(bio), ssl.get());
   } else {
     SSL_set_bio(ssl.get(), bio.get(), bio.get());
     bio.release();  // SSL_set_bio takes ownership.
@@ -1093,7 +1141,7 @@ static bool DoExchange(bssl::UniquePtr<SSL_SESSION> *out_session,
     // This mode writes a number of different record sizes in an attempt to
     // trip up the CBC record splitting code.
     static const size_t kBufLen = 32769;
-    std::unique_ptr<uint8_t[]> buf(new uint8_t[kBufLen]);
+    auto buf = std::make_unique<uint8_t[]>(kBufLen);
     OPENSSL_memset(buf.get(), 0x42, kBufLen);
     static const size_t kRecordSizes[] = {
         0, 1, 255, 256, 257, 16383, 16384, 16385, 32767, 32768, 32769};
@@ -1143,7 +1191,7 @@ static bool DoExchange(bssl::UniquePtr<SSL_SESSION> *out_session,
         if (config->read_size > 0) {
           read_size = config->read_size;
         }
-        std::unique_ptr<uint8_t[]> buf(new uint8_t[read_size]);
+        auto buf = std::make_unique<uint8_t[]>(read_size);
 
         int n = DoRead(ssl, buf.get(), read_size);
         int err = SSL_get_error(ssl, n);

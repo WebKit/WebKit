@@ -91,6 +91,29 @@ describe('/api/test-groups', function () {
             assert.deepStrictEqual(content.commits, []);
             assert.deepStrictEqual(content.uploadedFiles, []);
         });
+
+        it('should list a test group if all test type requests are failed but at least one build type request is still running', async () => {
+            const database = TestServer.database();
+            await MockData.addMockBuildRequestsWithRoots(database, ['running', 'failed', 'failed', 'failed', 'completed', 'completed', 'completed', 'running']);
+            const content = await TestServer.remoteAPI().getJSON('/api/test-groups/ready-for-notification');
+            assert.strictEqual(content.status, 'OK');
+            assert.strictEqual(content.testGroups.length, 1);
+            const testGroup = content.testGroups[0];
+            assert.strictEqual(parseInt(testGroup.id), 700);
+            assert.strictEqual(parseInt(testGroup.task), 600);
+            assert.strictEqual(testGroup.name, 'test with root built');
+            assert.strictEqual(testGroup.author, null);
+            assert.strictEqual(testGroup.hidden, false);
+            assert.strictEqual(testGroup.needsNotification, true);
+            assert.deepStrictEqual(testGroup.buildRequests, ['800', '801', '802', '803']);
+            assert.deepStrictEqual(testGroup.commitSets, ['500', '501', '500', '501']);
+
+            assert.strictEqual(content.buildRequests.length, 4);
+            assert.strictEqual(content.buildRequests[0].status, 'running');
+            assert.strictEqual(content.buildRequests[1].status, 'failed');
+            assert.strictEqual(content.buildRequests[2].status, 'failed');
+            assert.strictEqual(content.buildRequests[3].status, 'failed');
+        });
     });
 
     describe('/api/test-groups/<triggerables>', () => {

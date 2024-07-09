@@ -23,67 +23,38 @@
 #include <stdlib.h>
 #include <string.h>
 
-static_assert(sizeof(CRYPTO_MUTEX) >= sizeof(pthread_rwlock_t),
-              "CRYPTO_MUTEX is too small");
-static_assert(alignof(CRYPTO_MUTEX) >= alignof(pthread_rwlock_t),
-              "CRYPTO_MUTEX has insufficient alignment");
-
 void CRYPTO_MUTEX_init(CRYPTO_MUTEX *lock) {
-  if (pthread_rwlock_init((pthread_rwlock_t *) lock, NULL) != 0) {
+  if (pthread_rwlock_init(lock, NULL) != 0) {
     abort();
   }
 }
 
 void CRYPTO_MUTEX_lock_read(CRYPTO_MUTEX *lock) {
-  if (pthread_rwlock_rdlock((pthread_rwlock_t *) lock) != 0) {
+  if (pthread_rwlock_rdlock(lock) != 0) {
     abort();
   }
 }
 
 void CRYPTO_MUTEX_lock_write(CRYPTO_MUTEX *lock) {
-  if (pthread_rwlock_wrlock((pthread_rwlock_t *) lock) != 0) {
+  if (pthread_rwlock_wrlock(lock) != 0) {
     abort();
   }
 }
 
 void CRYPTO_MUTEX_unlock_read(CRYPTO_MUTEX *lock) {
-  if (pthread_rwlock_unlock((pthread_rwlock_t *) lock) != 0) {
+  if (pthread_rwlock_unlock(lock) != 0) {
     abort();
   }
 }
 
 void CRYPTO_MUTEX_unlock_write(CRYPTO_MUTEX *lock) {
-  if (pthread_rwlock_unlock((pthread_rwlock_t *) lock) != 0) {
+  if (pthread_rwlock_unlock(lock) != 0) {
     abort();
   }
 }
 
 void CRYPTO_MUTEX_cleanup(CRYPTO_MUTEX *lock) {
-  pthread_rwlock_destroy((pthread_rwlock_t *) lock);
-}
-
-void CRYPTO_STATIC_MUTEX_lock_read(struct CRYPTO_STATIC_MUTEX *lock) {
-  if (pthread_rwlock_rdlock(&lock->lock) != 0) {
-    abort();
-  }
-}
-
-void CRYPTO_STATIC_MUTEX_lock_write(struct CRYPTO_STATIC_MUTEX *lock) {
-  if (pthread_rwlock_wrlock(&lock->lock) != 0) {
-    abort();
-  }
-}
-
-void CRYPTO_STATIC_MUTEX_unlock_read(struct CRYPTO_STATIC_MUTEX *lock) {
-  if (pthread_rwlock_unlock(&lock->lock) != 0) {
-    abort();
-  }
-}
-
-void CRYPTO_STATIC_MUTEX_unlock_write(struct CRYPTO_STATIC_MUTEX *lock) {
-  if (pthread_rwlock_unlock(&lock->lock) != 0) {
-    abort();
-  }
+  pthread_rwlock_destroy(lock);
 }
 
 void CRYPTO_once(CRYPTO_once_t *once, void (*init)(void)) {

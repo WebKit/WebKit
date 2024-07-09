@@ -279,6 +279,12 @@ void RenderMathMLBlock::layoutInvalidMarkup(bool relayoutChildren)
     clearNeedsLayout();
 }
 
+void RenderMathMLBlock::computeAndSetBlockDirectionMarginsOfChildren()
+{
+    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
+        child->computeAndSetBlockDirectionMargins(*this);
+}
+
 void RenderMathMLBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);

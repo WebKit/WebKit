@@ -118,6 +118,7 @@ public:
 
     // These functions are used during layout. Table cells and the MathML
     // code override them to include some extra intrinsic padding.
+    virtual inline RectEdges<LayoutUnit> padding() const;
     virtual inline LayoutUnit paddingTop() const;
     virtual inline LayoutUnit paddingBottom() const;
     virtual inline LayoutUnit paddingLeft() const;
@@ -180,6 +181,8 @@ public:
     LayoutUnit horizontalMarginExtent() const { return marginLeft() + marginRight(); }
     LayoutUnit marginLogicalHeight() const { return marginBefore() + marginAfter(); }
     LayoutUnit marginLogicalWidth() const { return marginStart() + marginEnd(); }
+
+    RoundedRect roundedContentBoxRect(const LayoutRect& borderBoxRect, bool includeLeftEdge = true, bool includeRightEdge = true) const;
 
     inline bool hasInlineDirectionBordersPaddingOrMargin() const;
     inline bool hasInlineDirectionBordersOrPadding() const;

@@ -32,6 +32,7 @@
 #include "ServiceWorkerClients.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerThread.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

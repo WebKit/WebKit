@@ -48,13 +48,10 @@ enum class LineRangeType : uint8_t {
     Right,
 };
 
-struct TextMarkerData;
-
-struct RawTextMarkerData {
+struct TextMarkerData {
     unsigned treeID;
     unsigned objectID;
 
-    Node* node;
     unsigned offset;
     Position::AnchorType anchorType;
     Affinity affinity;
@@ -63,16 +60,16 @@ struct RawTextMarkerData {
     unsigned characterOffset;
     bool ignored;
 
-    // Constructors of RawTextMarkerData must zero the struct's block of memory because platform client code may rely on a byte-comparison to determine instances equality.
+    // Constructors of TextMarkerData must zero the struct's block of memory because platform client code may rely on a byte-comparison to determine instances equality.
     // Members initialization alone is not enough to guaranty that all bytes in the struct memeory are initialized, and may cause random inequalities when doing byte-comparisons.
     // For an example of such byte-comparison, see the TestRunner WTR::AccessibilityTextMarker::isEqual.
-    RawTextMarkerData()
+    TextMarkerData()
     {
         memset(static_cast<void*>(this), 0, sizeof(*this));
     }
 
-    RawTextMarkerData(AXID axTreeID, AXID axObjectID,
-        Node* nodeParam = nullptr, unsigned offsetParam = 0,
+    TextMarkerData(AXID axTreeID, AXID axObjectID,
+        unsigned offsetParam = 0,
         Position::AnchorType anchorTypeParam = Position::PositionIsOffsetInAnchor,
         Affinity affinityParam = Affinity::Downstream,
         unsigned charStart = 0, unsigned charOffset = 0, bool ignoredParam = false)
@@ -80,7 +77,6 @@ struct RawTextMarkerData {
         memset(static_cast<void*>(this), 0, sizeof(*this));
         treeID = axTreeID.toUInt64();
         objectID = axObjectID.toUInt64();
-        node = nodeParam;
         offset = offsetParam;
         anchorType = anchorTypeParam;
         affinity = affinityParam;
@@ -89,52 +85,24 @@ struct RawTextMarkerData {
         ignored = ignoredParam;
     }
 
-    TextMarkerData toTextMarkerData() const;
-};
-
-// Safer version of RawTextMarkerData with a WeakPtr for Node.
-// RawTextMarkerData uses a raw pointer for Node because it is
-// used with memset / memcmp.
-struct TextMarkerData {
-    AXID treeID;
-    AXID objectID;
-
-    WeakPtr<Node, WeakPtrImplWithEventTargetData> node;
-    unsigned offset { 0 };
-    Position::AnchorType anchorType { Position::AnchorType::PositionIsOffsetInAnchor };
-    Affinity affinity { Affinity::Upstream };
-
-    unsigned characterStart { 0 };
-    unsigned characterOffset { 0 };
-    bool ignored { false };
-
-    TextMarkerData() = default;
-    TextMarkerData(AXObjectCache&, Node*, const VisiblePosition&, int charStart = 0, int charOffset = 0, bool ignoredParam = false);
-    TextMarkerData(AXID treeID, AXID objectID, Node* node, unsigned offset, Position::AnchorType anchorType = Position::AnchorType::PositionIsOffsetInAnchor, Affinity affinity = Affinity::Upstream, unsigned characterStart = 0, unsigned characterOffset = 0, bool ignored = false)
-        : treeID(treeID)
-        , objectID(objectID)
-        , node(node)
-        , offset(offset)
-        , anchorType(anchorType)
-        , affinity(affinity)
-        , characterStart(characterStart)
-        , characterOffset(characterOffset)
-        , ignored(ignored)
-    { }
+    TextMarkerData(AXObjectCache&, const VisiblePosition&, int charStart = 0, int charOffset = 0, bool ignoredParam = false);
     TextMarkerData(AXObjectCache&, const CharacterOffset&, bool ignoredParam = false);
 
-    RawTextMarkerData toRawTextMarkerData() const;
-};
+    AXID axTreeID() const
+    {
+        return ObjectIdentifier<AXIDType>(treeID);
+    }
 
-inline RawTextMarkerData TextMarkerData::toRawTextMarkerData() const
-{
-    return { treeID, objectID, node.get(), offset, anchorType, affinity, characterStart, characterOffset, ignored };
-}
+    AXID axObjectID() const
+    {
+        return ObjectIdentifier<AXIDType>(objectID);
+    }
+};
 
 #if PLATFORM(MAC)
 using PlatformTextMarkerData = AXTextMarkerRef;
 #elif PLATFORM(IOS_FAMILY)
-using PlatformTextMarkerData = NSData *;;
+using PlatformTextMarkerData = NSData *;
 #endif
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AXTextMarker);
@@ -156,7 +124,7 @@ public:
     AXTextMarker(PlatformTextMarkerData);
 #endif
     AXTextMarker(AXID treeID, AXID objectID, unsigned offset)
-        : m_data({ treeID, objectID, nullptr, offset, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, offset })
+        : m_data({ treeID, objectID, offset, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, offset })
     { }
     AXTextMarker() = default;
 
@@ -171,8 +139,8 @@ public:
     operator PlatformTextMarkerData() const { return platformData().autorelease(); }
 #endif
 
-    AXID treeID() const { return m_data.treeID; }
-    AXID objectID() const { return m_data.objectID; }
+    AXID treeID() const { return AXID { m_data.treeID }; }
+    AXID objectID() const { return AXID { m_data.objectID }; }
     unsigned offset() const { return m_data.offset; }
     bool isNull() const { return !treeID().isValid() || !objectID().isValid(); }
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -181,14 +149,9 @@ public:
 #endif
     RefPtr<AXCoreObject> object() const;
     bool isValid() const { return object(); }
-
-    Node* node() const;
     bool isIgnored() const { return m_data.ignored; }
 
     String debugDescription() const;
-
-    // Sets m_data.node when the marker was created with a PlatformTextMarkerData that lacks the node pointer because it was created off the main thread.
-    void setNodeIfNeeded() const;
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
     AXTextMarker toTextRunMarker(std::optional<AXID> stopAtID = std::nullopt) const;
@@ -285,11 +248,5 @@ private:
     AXTextMarker m_start;
     AXTextMarker m_end;
 };
-
-inline Node* AXTextMarker::node() const
-{
-    ASSERT(isMainThread());
-    return m_data.node.get();
-}
 
 } // namespace WebCore

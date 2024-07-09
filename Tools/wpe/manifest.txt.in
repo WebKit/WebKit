@@ -94,6 +94,7 @@ exclude Tools/wpe/jhbuild.modules
 exclude Tools/wpe/jhbuildrc
 
 file Tools/glib/common.py
+file Tools/glib/fix-glib-resources-depfile.pl
 file Tools/glib/generate-inspector-gresource-manifest.py
 file Tools/glib/generate-modern-media-controls-gresource-manifest.py
 file Tools/glib/generate-pdfjs-resource-manifest.py

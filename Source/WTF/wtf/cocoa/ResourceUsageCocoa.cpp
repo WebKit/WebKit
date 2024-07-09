@@ -30,7 +30,7 @@
 #include <mach/mach_init.h>
 #include <utility>
 #include <wtf/spi/cocoa/MachVMSPI.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WTF {
 

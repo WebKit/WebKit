@@ -51,6 +51,12 @@
 #include <bmalloc/valgrind.h>
 #endif
 
+#if USE(SYSPROF_CAPTURE)
+#include <wtf/text/StringToIntegerConversion.h>
+#include <wtf/text/StringView.h>
+#include <wtf/unix/UnixFileDescriptor.h>
+#endif
+
 namespace WebKit {
 
 #if OS(LINUX)
@@ -210,6 +216,20 @@ void ProcessLauncher::launchProcess()
     // Please keep this comment in sync with the duplicate comment in XDGDBusProxy::launch.
     GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_INHERIT_FDS));
     g_subprocess_launcher_take_fd(launcher.get(), socketPair.client, socketPair.client);
+
+#if USE(SYSPROF_CAPTURE)
+    UnixFileDescriptor sysprofFd;
+
+    if (const char* sysprofFdStr = getenv("SYSPROF_CONTROL_FD"))
+        sysprofFd = UnixFileDescriptor(parseInteger<int>(StringView(span(sysprofFdStr))).value_or(-1), UnixFileDescriptor::Duplicate);
+
+    if (sysprofFd) {
+        int fd = sysprofFd.release();
+        GUniquePtr<char> fdStr(g_strdup_printf("%d", fd));
+        g_subprocess_launcher_setenv(launcher.get(), "SYSPROF_CONTROL_FD", fdStr.get(), TRUE);
+        g_subprocess_launcher_take_fd(launcher.get(), fd, fd);
+    }
+#endif
 
     GUniqueOutPtr<GError> error;
     GRefPtr<GSubprocess> process;

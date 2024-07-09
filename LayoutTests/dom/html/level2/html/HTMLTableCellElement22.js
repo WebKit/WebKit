@@ -75,7 +75,7 @@ function loadComplete() {
 
 /**
 * 
-    The noWrap attribute supresses word wrapping.                    
+    The noWrap attribute suppresses word wrapping.                    
 
     Retrieve the noWrap attribute of the second TD Element and
     examine its value.  

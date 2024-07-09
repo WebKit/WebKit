@@ -29,6 +29,7 @@
 #include "CodeCache.h"
 #include "Debugger.h"
 #include "VMTrapsInlines.h"
+#include <wtf/text/MakeString.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>

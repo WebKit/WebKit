@@ -81,9 +81,14 @@ static int rc4_cipher(EVP_CIPHER_CTX *ctx, uint8_t *out, const uint8_t *in,
 }
 
 static const EVP_CIPHER rc4 = {
-    NID_rc4,             1 /* block_size */, 16 /* key_size */,
-    0 /* iv_len */,      sizeof(RC4_KEY),    EVP_CIPH_VARIABLE_LENGTH,
-    NULL /* app_data */, rc4_init_key,       rc4_cipher,
-    NULL /* cleanup */,  NULL /* ctrl */, };
+    .nid = NID_rc4,
+    .block_size = 1,
+    .key_len = 16,
+    .iv_len = 0,
+    .ctx_size = sizeof(RC4_KEY),
+    .flags = EVP_CIPH_VARIABLE_LENGTH,
+    .init = rc4_init_key,
+    .cipher = rc4_cipher,
+};
 
 const EVP_CIPHER *EVP_rc4(void) { return &rc4; }

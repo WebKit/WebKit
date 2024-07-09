@@ -44,7 +44,7 @@ class JSImmutableButterfly : public JSCell {
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    DECLARE_INFO;
+    DECLARE_EXPORT_INFO;
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue, IndexingType);
 

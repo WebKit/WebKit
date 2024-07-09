@@ -422,7 +422,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
 
     for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
         auto& fontRanges = fallbackRangesAt(i);
-        if (fontRanges.isGeneric() && isPrivateUseAreaCharacter(baseCharacter))
+        if (fontRanges.isGenericFontFamily() && isPrivateUseAreaCharacter(baseCharacter))
             continue;
         const Font* font = fontRanges.fontForCharacter(baseCharacter);
         if (!font)

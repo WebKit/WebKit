@@ -81,20 +81,27 @@ extern "C" {
 // the case of a malloc failure, prior to returning NULL |OPENSSL_malloc| will
 // push |ERR_R_MALLOC_FAILURE| onto the openssl error stack.
 OPENSSL_EXPORT void *OPENSSL_malloc(size_t size);
-#endif // !_BORINGSSL_PROHIBIT_OPENSSL_MALLOC
 
-// OPENSSL_free does nothing if |ptr| is NULL. Otherwise it zeros out the
-// memory allocated at |ptr| and frees it along with the private data.
-// It must only be used on on |ptr| values obtained from |OPENSSL_malloc|
-OPENSSL_EXPORT void OPENSSL_free(void *ptr);
+// OPENSSL_zalloc behaves like |OPENSSL_malloc| except it also initializes the
+// resulting memory to zero.
+OPENSSL_EXPORT void *OPENSSL_zalloc(size_t size);
 
-#ifndef _BORINGSSL_PROHIBIT_OPENSSL_MALLOC
+// OPENSSL_calloc is similar to a regular |calloc|, but allocates data with
+// |OPENSSL_malloc|. On overflow, it will push |ERR_R_OVERFLOW| onto the error
+// queue.
+OPENSSL_EXPORT void *OPENSSL_calloc(size_t num, size_t size);
+
 // OPENSSL_realloc returns a pointer to a buffer of |new_size| bytes that
 // contains the contents of |ptr|. Unlike |realloc|, a new buffer is always
 // allocated and the data at |ptr| is always wiped and freed. Memory is
 // allocated with |OPENSSL_malloc| and must be freed with |OPENSSL_free|.
 OPENSSL_EXPORT void *OPENSSL_realloc(void *ptr, size_t new_size);
 #endif // !_BORINGSSL_PROHIBIT_OPENSSL_MALLOC
+
+// OPENSSL_free does nothing if |ptr| is NULL. Otherwise it zeros out the
+// memory allocated at |ptr| and frees it along with the private data.
+// It must only be used on on |ptr| values obtained from |OPENSSL_malloc|
+OPENSSL_EXPORT void OPENSSL_free(void *ptr);
 
 // OPENSSL_cleanse zeros out |len| bytes of memory at |ptr|. This is similar to
 // |memset_s| from C11.

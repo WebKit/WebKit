@@ -29,6 +29,7 @@
 #include "SourceCode.h"
 #include <algorithm>
 #include <wtf/JSONValues.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 namespace ImportMapInternal {

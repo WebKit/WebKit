@@ -2227,8 +2227,8 @@ void av1_rc_compute_frame_size_bounds(const AV1_COMP *cpi, int frame_target,
     const int tolerance = (int)AOMMAX(
         100, ((int64_t)cpi->sf.hl_sf.recode_tolerance * frame_target) / 100);
     *frame_under_shoot_limit = AOMMAX(frame_target - tolerance, 0);
-    *frame_over_shoot_limit =
-        AOMMIN(frame_target + tolerance, cpi->rc.max_frame_bandwidth);
+    *frame_over_shoot_limit = (int)AOMMIN((int64_t)frame_target + tolerance,
+                                          cpi->rc.max_frame_bandwidth);
   }
 }
 
@@ -2353,9 +2353,9 @@ void av1_rc_postencode_update(AV1_COMP *cpi, uint64_t bytes_used) {
                                                      cm->width, cm->height));
   if (current_frame->frame_type != KEY_FRAME) {
     p_rc->rolling_target_bits = (int)ROUND_POWER_OF_TWO_64(
-        p_rc->rolling_target_bits * 3 + rc->this_frame_target, 2);
+        (int64_t)p_rc->rolling_target_bits * 3 + rc->this_frame_target, 2);
     p_rc->rolling_actual_bits = (int)ROUND_POWER_OF_TWO_64(
-        p_rc->rolling_actual_bits * 3 + rc->projected_frame_size, 2);
+        (int64_t)p_rc->rolling_actual_bits * 3 + rc->projected_frame_size, 2);
   }
 
   // Actual bits spent

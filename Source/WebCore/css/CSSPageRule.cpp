@@ -30,6 +30,7 @@
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

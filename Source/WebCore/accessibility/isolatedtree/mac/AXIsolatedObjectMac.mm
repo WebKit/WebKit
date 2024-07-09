@@ -230,12 +230,8 @@ RetainPtr<NSAttributedString> AXIsolatedObject::attributedStringForTextMarkerRan
     auto attributedText = propertyValue<RetainPtr<NSAttributedString>>(AXPropertyName::AttributedText);
     if (!isConfined || !attributedText) {
         return Accessibility::retrieveValueFromMainThread<RetainPtr<NSAttributedString>>([markerRange = WTFMove(markerRange), &spellCheck, this] () mutable -> RetainPtr<NSAttributedString> {
-            if (RefPtr axObject = associatedAXObject()) {
-                // Ensure that the TextMarkers have valid Node references, in case the range was created on the AX thread.
-                markerRange.start().setNodeIfNeeded();
-                markerRange.end().setNodeIfNeeded();
+            if (RefPtr axObject = associatedAXObject())
                 return axObject->attributedStringForTextMarkerRange(WTFMove(markerRange), spellCheck);
-            }
             return { };
         });
     }

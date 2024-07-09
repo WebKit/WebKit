@@ -26,4 +26,5 @@
 
 [
     Conditional=WEB_CODECS,
+    IsStrongCallback
 ] callback WebCodecsAudioDataOutputCallback = undefined(WebCodecsAudioData output);

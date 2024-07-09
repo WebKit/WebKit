@@ -614,6 +614,12 @@ func writeData(path string, objs *objects) error {
 	// Emit an ASN1_OBJECT for each object.
 	fmt.Fprintf(&b, "\nstatic const ASN1_OBJECT kObjects[NUM_NID] = {\n")
 	for nid, obj := range objs.byNID {
+		// Skip the entry for NID_undef. It is stored separately, so that
+		// OBJ_get_undef avoids pulling in the table.
+		if nid == 0 {
+			continue
+		}
+
 		if len(obj.name) == 0 {
 			fmt.Fprintf(&b, "{NULL, NULL, NID_undef, 0, NULL, 0},\n")
 			continue
@@ -640,7 +646,11 @@ func writeData(path string, objs *objects) error {
 
 	fmt.Fprintf(&b, "\nstatic const uint16_t kNIDsInShortNameOrder[] = {\n")
 	for _, nid := range nids {
-		fmt.Fprintf(&b, "%d /* %s */,\n", nid, objs.byNID[nid].shortName)
+		// Including NID_undef in the table does not do anything. Whether OBJ_sn2nid
+		// finds the object or not, it will return NID_undef.
+		if nid != 0 {
+			fmt.Fprintf(&b, "%d /* %s */,\n", nid, objs.byNID[nid].shortName)
+		}
 	}
 	fmt.Fprintf(&b, "};\n")
 
@@ -656,7 +666,11 @@ func writeData(path string, objs *objects) error {
 
 	fmt.Fprintf(&b, "\nstatic const uint16_t kNIDsInLongNameOrder[] = {\n")
 	for _, nid := range nids {
-		fmt.Fprintf(&b, "%d /* %s */,\n", nid, objs.byNID[nid].longName)
+		// Including NID_undef in the table does not do anything. Whether OBJ_ln2nid
+		// finds the object or not, it will return NID_undef.
+		if nid != 0 {
+			fmt.Fprintf(&b, "%d /* %s */,\n", nid, objs.byNID[nid].longName)
+		}
 	}
 	fmt.Fprintf(&b, "};\n")
 

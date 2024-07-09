@@ -86,7 +86,7 @@ uint8_t *SHA1(const uint8_t *data, size_t len, uint8_t out[SHA_DIGEST_LENGTH]) {
 }
 
 #if !defined(SHA1_ASM)
-static void sha1_block_data_order(uint32_t *state, const uint8_t *data,
+static void sha1_block_data_order(uint32_t state[5], const uint8_t *data,
                                   size_t num);
 #endif
 
@@ -100,17 +100,58 @@ int SHA1_Update(SHA_CTX *c, const void *data, size_t len) {
   return 1;
 }
 
+static void sha1_output_state(uint8_t out[SHA_DIGEST_LENGTH],
+                              const SHA_CTX *ctx) {
+  CRYPTO_store_u32_be(out, ctx->h[0]);
+  CRYPTO_store_u32_be(out + 4, ctx->h[1]);
+  CRYPTO_store_u32_be(out + 8, ctx->h[2]);
+  CRYPTO_store_u32_be(out + 12, ctx->h[3]);
+  CRYPTO_store_u32_be(out + 16, ctx->h[4]);
+}
+
 int SHA1_Final(uint8_t out[SHA_DIGEST_LENGTH], SHA_CTX *c) {
   crypto_md32_final(&sha1_block_data_order, c->h, c->data, SHA_CBLOCK, &c->num,
                     c->Nh, c->Nl, /*is_big_endian=*/1);
 
-  CRYPTO_store_u32_be(out, c->h[0]);
-  CRYPTO_store_u32_be(out + 4, c->h[1]);
-  CRYPTO_store_u32_be(out + 8, c->h[2]);
-  CRYPTO_store_u32_be(out + 12, c->h[3]);
-  CRYPTO_store_u32_be(out + 16, c->h[4]);
+  sha1_output_state(out, c);
   FIPS_service_indicator_update_state();
   return 1;
+}
+
+void CRYPTO_fips_186_2_prf(uint8_t *out, size_t out_len,
+                           const uint8_t xkey[SHA_DIGEST_LENGTH]) {
+  // XKEY and XVAL are 160-bit values, but are internally right-padded up to
+  // block size. See FIPS 186-2, Appendix 3.3. This buffer maintains both the
+  // current value of XKEY and the padding.
+  uint8_t block[SHA_CBLOCK] = {0};
+  OPENSSL_memcpy(block, xkey, SHA_DIGEST_LENGTH);
+
+  while (out_len != 0) {
+    // We always use a zero XSEED, so we can merge the inner and outer loops.
+    // XVAL is also always equal to XKEY.
+    SHA_CTX ctx;
+    SHA1_Init(&ctx);
+    SHA1_Transform(&ctx, block);
+
+    // XKEY = (1 + XKEY + w_i) mod 2^b
+    uint32_t carry = 1;
+    for (int i = 4; i >= 0; i--) {
+      uint32_t tmp = CRYPTO_load_u32_be(block + i * 4);
+      tmp = CRYPTO_addc_u32(tmp, ctx.h[i], carry, &carry);
+      CRYPTO_store_u32_be(block + i * 4, tmp);
+    }
+
+    // Output w_i.
+    if (out_len < SHA_DIGEST_LENGTH) {
+      uint8_t buf[SHA_DIGEST_LENGTH];
+      sha1_output_state(buf, &ctx);
+      OPENSSL_memcpy(out, buf, out_len);
+      break;
+    }
+    sha1_output_state(out, &ctx);
+    out += SHA_DIGEST_LENGTH;
+    out_len -= SHA_DIGEST_LENGTH;
+  }
 }
 
 #define Xupdate(a, ix, ia, ib, ic, id)    \
@@ -191,8 +232,10 @@ int SHA1_Final(uint8_t out[SHA_DIGEST_LENGTH], SHA_CTX *c) {
 #define X(i)  XX##i
 
 #if !defined(SHA1_ASM)
-static void sha1_block_data_order(uint32_t *state, const uint8_t *data,
-                                  size_t num) {
+
+#if !defined(SHA1_ASM_NOHW)
+static void sha1_block_data_order_nohw(uint32_t state[5], const uint8_t *data,
+                                       size_t num) {
   register uint32_t A, B, C, D, E, T;
   uint32_t XX0, XX1, XX2, XX3, XX4, XX5, XX6, XX7, XX8, XX9, XX10,
       XX11, XX12, XX13, XX14, XX15;
@@ -339,7 +382,44 @@ static void sha1_block_data_order(uint32_t *state, const uint8_t *data,
     E = state[4];
   }
 }
+#endif  // !SHA1_ASM_NOHW
+
+static void sha1_block_data_order(uint32_t state[5], const uint8_t *data,
+                                  size_t num) {
+#if defined(SHA1_ASM_HW)
+  if (sha1_hw_capable()) {
+    sha1_block_data_order_hw(state, data, num);
+    return;
+  }
 #endif
+#if defined(SHA1_ASM_AVX2)
+  if (sha1_avx2_capable()) {
+    sha1_block_data_order_avx2(state, data, num);
+    return;
+  }
+#endif
+#if defined(SHA1_ASM_AVX)
+  if (sha1_avx_capable()) {
+    sha1_block_data_order_avx(state, data, num);
+    return;
+  }
+#endif
+#if defined(SHA1_ASM_SSSE3)
+  if (sha1_ssse3_capable()) {
+    sha1_block_data_order_ssse3(state, data, num);
+    return;
+  }
+#endif
+#if defined(SHA1_ASM_NEON)
+  if (CRYPTO_is_NEON_capable()) {
+    sha1_block_data_order_neon(state, data, num);
+    return;
+  }
+#endif
+  sha1_block_data_order_nohw(state, data, num);
+}
+
+#endif  // !SHA1_ASM
 
 #undef Xupdate
 #undef K_00_19

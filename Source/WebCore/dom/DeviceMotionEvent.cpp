@@ -30,6 +30,7 @@
 #include "DeviceOrientationAndMotionAccessController.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

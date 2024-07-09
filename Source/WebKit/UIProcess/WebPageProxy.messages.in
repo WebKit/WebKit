@@ -233,7 +233,7 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
-    HandleContextMenuWritingTools(WebCore::IntRect selectionBoundsInRootView)
+    HandleContextMenuWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView)
 #endif
 
 #if ENABLE(WRITING_TOOLS)
@@ -247,7 +247,7 @@ messages -> WebPageProxy {
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
 #if HAVE(TOUCH_BAR)
-    SetIsTouchBarUpdateSupressedForHiddenContentEditable(bool isTouchBarUpdateSupressed)
+    SetIsTouchBarUpdateSuppressedForHiddenContentEditable(bool isTouchBarUpdateSuppressed)
     SetIsNeverRichlyEditableForTouchBar(bool isNeverRichlyEditable)
 #endif
 
@@ -520,7 +520,7 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)
-    AddTextAnimationForAnimationID(WTF::UUID uuid, struct WebKit::TextAnimationData styleData, struct WebCore::TextIndicatorData indicatorData)
+    AddTextAnimationForAnimationID(WTF::UUID uuid, struct WebKit::TextAnimationData styleData, struct WebCore::TextIndicatorData indicatorData) -> ()
     RemoveTextAnimationForAnimationID(WTF::UUID uuid)
 #endif
 

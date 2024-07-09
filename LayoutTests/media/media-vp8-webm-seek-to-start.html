@@ -1,0 +1,26 @@
+<html>
+<meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-275" />
+<head>
+<title>webm file with vp8</title>
+<script>window.requirePixelDump = true</script>
+<script src="video-test.js"></script>
+<script>
+    async function init()
+    {
+        let v = document.getElementsByTagName('video')[0];
+        v.src = "content/test-vp8.webm";
+        await waitFor(v, 'canplay', true);
+        v.play();
+        // duration of the last frame.
+        v.currentTime = v.duration - 0.02;
+        await Promise.all([ waitFor(v, 'seeked', true), waitFor(v, 'ended', true) ]);
+        v.currentTime = 0;
+        await waitFor(v, 'seeked', true);
+        endTest();
+    }
+</script>
+</head>
+<body onload="init();">
+<video/>
+</body>
+</html>

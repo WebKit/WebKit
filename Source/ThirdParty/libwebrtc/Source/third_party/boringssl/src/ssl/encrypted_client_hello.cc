@@ -1012,18 +1012,12 @@ int SSL_marshal_ech_config(uint8_t **out, size_t *out_len, uint8_t config_id,
 
 SSL_ECH_KEYS *SSL_ECH_KEYS_new() { return New<SSL_ECH_KEYS>(); }
 
-void SSL_ECH_KEYS_up_ref(SSL_ECH_KEYS *keys) {
-  CRYPTO_refcount_inc(&keys->references);
-}
+void SSL_ECH_KEYS_up_ref(SSL_ECH_KEYS *keys) { keys->UpRefInternal(); }
 
 void SSL_ECH_KEYS_free(SSL_ECH_KEYS *keys) {
-  if (keys == nullptr ||
-      !CRYPTO_refcount_dec_and_test_zero(&keys->references)) {
-    return;
+  if (keys != nullptr) {
+    keys->DecRefInternal();
   }
-
-  keys->~ssl_ech_keys_st();
-  OPENSSL_free(keys);
 }
 
 int SSL_ECH_KEYS_add(SSL_ECH_KEYS *configs, int is_retry_config,

@@ -39,23 +39,10 @@ using namespace WebKit;
 
 namespace WKWPE {
 
-View::View(const API::PageConfiguration& baseConfiguration)
+View::View()
     : m_client(makeUnique<API::ViewClient>())
     , m_pageClient(makeUniqueWithoutRefCountedCheck<PageClientImpl>(*this))
 {
-    auto configuration = baseConfiguration.copy();
-    auto& preferences = configuration->preferences();
-    preferences.setAcceleratedCompositingEnabled(true);
-    preferences.setForceCompositingMode(true);
-    preferences.setThreadedScrollingEnabled(true);
-
-    auto& pool = configuration->processPool();
-    m_pageProxy = pool.createWebPage(*m_pageClient, WTFMove(configuration));
-
-#if ENABLE(MEMORY_SAMPLER)
-    if (getenv("WEBKIT_SAMPLE_MEMORY"))
-        pool.startMemorySampler(0);
-#endif
 }
 
 View::~View()
@@ -63,6 +50,18 @@ View::~View()
 #if USE(ATK)
     if (m_accessible)
         webkitWebViewAccessibleSetWebView(m_accessible.get(), nullptr);
+#endif
+    m_pageProxy->close();
+}
+
+void View::createWebPage(const API::PageConfiguration& configuration)
+{
+    auto& pool = configuration.processPool();
+    m_pageProxy = pool.createWebPage(*m_pageClient, configuration.copy());
+
+#if ENABLE(MEMORY_SAMPLER)
+    if (getenv("WEBKIT_SAMPLE_MEMORY"))
+        pool.startMemorySampler(0);
 #endif
 }
 

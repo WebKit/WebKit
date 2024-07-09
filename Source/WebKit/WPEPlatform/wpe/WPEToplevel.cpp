@@ -200,8 +200,8 @@ void wpe_toplevel_foreach_view(WPEToplevel* toplevel, WPEToplevelForeachViewFunc
 {
     g_return_if_fail(WPE_IS_TOPLEVEL(toplevel));
 
-    for (auto* view : toplevel->priv->views) {
-        if (func(toplevel, view, userData))
+    for (auto& view : copyToVectorOf<GRefPtr<WPEView>>(toplevel->priv->views)) {
+        if (func(toplevel, view.get(), userData))
             return;
     }
 }
@@ -223,8 +223,8 @@ void wpe_toplevel_closed(WPEToplevel* toplevel)
         return;
 
     toplevel->priv->closed = true;
-    for (auto* view : toplevel->priv->views)
-        wpe_view_closed(view);
+    for (auto& view : copyToVectorOf<GRefPtr<WPEView>>(toplevel->priv->views))
+        wpe_view_closed(view.get());
 }
 
 /**
@@ -321,8 +321,8 @@ void wpe_toplevel_state_changed(WPEToplevel* toplevel, WPEToplevelState state)
         return;
 
     toplevel->priv->state = state;
-    for (auto* view : toplevel->priv->views)
-        wpeViewToplevelStateChanged(view, state);
+    for (auto& view : copyToVectorOf<GRefPtr<WPEView>>(toplevel->priv->views))
+        wpeViewToplevelStateChanged(view.get(), state);
 }
 
 /**
@@ -359,8 +359,8 @@ void wpe_toplevel_scale_changed(WPEToplevel* toplevel, gdouble scale)
         return;
 
     toplevel->priv->scale = scale;
-    for (auto* view : toplevel->priv->views)
-        wpeViewScaleChanged(view, scale);
+    for (auto& view : copyToVectorOf<GRefPtr<WPEView>>(toplevel->priv->views))
+        wpeViewScaleChanged(view.get(), scale);
 }
 
 /**
@@ -392,8 +392,8 @@ void wpe_toplevel_monitor_changed(WPEToplevel* toplevel)
 {
     g_return_if_fail(WPE_IS_TOPLEVEL(toplevel));
 
-    for (auto* view : toplevel->priv->views)
-        wpeViewMonitorChanged(view);
+    for (auto& view : copyToVectorOf<GRefPtr<WPEView>>(toplevel->priv->views))
+        wpeViewMonitorChanged(view.get());
 }
 
 /**
@@ -528,6 +528,6 @@ void wpe_toplevel_preferred_dma_buf_formats_changed(WPEToplevel* toplevel)
 {
     g_return_if_fail(WPE_IS_TOPLEVEL(toplevel));
 
-    for (auto* view : toplevel->priv->views)
-        wpeViewPreferredDMABufFormatsChanged(view);
+    for (auto& view : copyToVectorOf<GRefPtr<WPEView>>(toplevel->priv->views))
+        wpeViewPreferredDMABufFormatsChanged(view.get());
 }

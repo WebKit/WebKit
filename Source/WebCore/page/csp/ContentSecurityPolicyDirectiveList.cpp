@@ -33,6 +33,7 @@
 #include "LocalFrame.h"
 #include "ParsingUtilities.h"
 #include "SecurityContext.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {

@@ -39,6 +39,7 @@
 #include "ScriptableDocumentParser.h"
 #include "ShadowRoot.h"
 #include <wtf/text/AtomString.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

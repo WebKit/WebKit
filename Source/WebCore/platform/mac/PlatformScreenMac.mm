@@ -128,7 +128,7 @@ ScreenProperties collectScreenProperties()
     auto screenSupportsHighDynamicRange = [](PlatformDisplayID displayID, DynamicRangeMode& dynamicRangeMode) {
         bool supportsHighDynamicRange = false;
 #if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
-        if (PAL::isAVFoundationFrameworkAvailable() && [PAL::getAVPlayerClass() respondsToSelector:@selector(preferredVideoRangeForDisplays:)]) {
+        if (PAL::isAVFoundationFrameworkAvailable()) {
             dynamicRangeMode = convertAVVideoRangeToEnum([PAL::getAVPlayerClass() preferredVideoRangeForDisplays:@[ @(displayID) ]]);
             supportsHighDynamicRange = dynamicRangeMode > DynamicRangeMode::Standard;
         }
@@ -389,7 +389,7 @@ DynamicRangeMode preferredDynamicRangeMode(Widget* widget)
         return data->preferredDynamicRangeMode;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    if (PAL::isAVFoundationFrameworkAvailable() && [PAL::getAVPlayerClass() respondsToSelector:@selector(preferredVideoRangeForDisplays:)]) {
+    if (PAL::isAVFoundationFrameworkAvailable()) {
         auto displayID = WebCore::displayID(screen(widget));
         return convertAVVideoRangeToEnum([PAL::getAVPlayerClass() preferredVideoRangeForDisplays:@[ @(displayID) ]]);
     }

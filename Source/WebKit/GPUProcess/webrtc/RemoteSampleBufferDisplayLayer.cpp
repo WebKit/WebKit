@@ -40,9 +40,9 @@ namespace WebKit {
 
 using namespace WebCore;
 
-std::unique_ptr<RemoteSampleBufferDisplayLayer> RemoteSampleBufferDisplayLayer::create(GPUConnectionToWebProcess& gpuConnection, SampleBufferDisplayLayerIdentifier identifier, Ref<IPC::Connection>&& connection)
+RefPtr<RemoteSampleBufferDisplayLayer> RemoteSampleBufferDisplayLayer::create(GPUConnectionToWebProcess& gpuConnection, SampleBufferDisplayLayerIdentifier identifier, Ref<IPC::Connection>&& connection)
 {
-    auto layer = std::unique_ptr<RemoteSampleBufferDisplayLayer>(new RemoteSampleBufferDisplayLayer(gpuConnection, identifier, WTFMove(connection)));
+    RefPtr layer = adoptRef(*new RemoteSampleBufferDisplayLayer(gpuConnection, identifier, WTFMove(connection)));
     return layer->m_sampleBufferDisplayLayer ? WTFMove(layer) : nullptr;
 }
 
@@ -56,12 +56,22 @@ RemoteSampleBufferDisplayLayer::RemoteSampleBufferDisplayLayer(GPUConnectionToWe
     ASSERT(m_sampleBufferDisplayLayer);
 }
 
-void RemoteSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, bool shouldMaintainAspectRatio, LayerInitializationCallback&& callback)
+void RemoteSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, bool shouldMaintainAspectRatio, bool canShowWhileLocked, LayerInitializationCallback&& callback)
 {
-    m_sampleBufferDisplayLayer->initialize(hideRootLayer, size, shouldMaintainAspectRatio, [this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](bool didSucceed) mutable {
+    LayerHostingContextOptions contextOptions;
+#if USE(EXTENSIONKIT)
+    contextOptions.useHostable = true;
+#endif
+#if PLATFORM(IOS_FAMILY)
+    contextOptions.canShowWhileLocked = canShowWhileLocked;
+#else
+    UNUSED_PARAM(canShowWhileLocked);
+#endif
+    m_sampleBufferDisplayLayer->initialize(hideRootLayer, size, shouldMaintainAspectRatio, [this, weakThis = WeakPtr { *this }, contextOptions, callback = WTFMove(callback)](bool didSucceed) mutable {
         if (!weakThis || !didSucceed)
             return callback({ });
-        m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess();
+
+        m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess(contextOptions);
         m_layerHostingContext->setRootLayer(m_sampleBufferDisplayLayer->rootLayer());
         callback(m_layerHostingContext->contextID());
     });

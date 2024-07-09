@@ -64,6 +64,7 @@ func (k *tlsKDF) Process(vectorSet []byte, m Transactable) (any, error) {
 	// See https://pages.nist.gov/ACVP/draft-celi-acvp-kdf-tls.html
 	var ret []tlsKDFTestGroupResponse
 	for _, group := range parsed.Groups {
+		group := group
 		response := tlsKDFTestGroupResponse{
 			ID: group.ID,
 		}
@@ -82,6 +83,7 @@ func (k *tlsKDF) Process(vectorSet []byte, m Transactable) (any, error) {
 		method := "TLSKDF/1.2/" + group.Hash
 
 		for _, test := range group.Tests {
+			test := test
 			pms, err := hex.DecodeString(test.PMSHex)
 			if err != nil {
 				return nil, err

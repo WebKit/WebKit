@@ -62,6 +62,7 @@
 #include "Settings.h"
 #include "SizesAttributeParser.h"
 #include "StyleResolver.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

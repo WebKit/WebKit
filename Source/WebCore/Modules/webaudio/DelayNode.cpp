@@ -31,6 +31,7 @@
 #include "DelayOptions.h"
 #include "DelayProcessor.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

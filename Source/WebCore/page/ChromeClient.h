@@ -678,9 +678,11 @@ public:
 
     virtual void addInitialTextAnimation(const WritingTools::SessionID&) { }
 
-    virtual void addSourceTextAnimation(const WritingTools::SessionID&, const CharacterRange&) { }
+    virtual void addSourceTextAnimation(const WritingTools::SessionID&, const CharacterRange&, const String, WTF::CompletionHandler<void(void)>&&) { }
 
-    virtual void addDestinationTextAnimation(const WritingTools::SessionID&, const CharacterRange&) { }
+    virtual void addDestinationTextAnimation(const WritingTools::SessionID&, const CharacterRange&, const String) { }
+
+    virtual void clearAnimationsForSessionID(const WritingTools::SessionID&) { };
 #endif
 
     virtual void hasActiveNowPlayingSessionChanged(bool) { }

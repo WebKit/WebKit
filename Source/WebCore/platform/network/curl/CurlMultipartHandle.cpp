@@ -36,6 +36,7 @@
 #include "ParsedContentType.h"
 #include "SharedBuffer.h"
 #include <wtf/StringExtras.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

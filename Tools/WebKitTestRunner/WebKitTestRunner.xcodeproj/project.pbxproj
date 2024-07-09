@@ -79,7 +79,7 @@
 		29A8FCCB145EF02E009045A6 /* JSAccessibilityTextMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EE1144CDE6789815EE5 /* JSAccessibilityTextMarker.cpp */; };
 		29A8FCDD145F0337009045A6 /* JSAccessibilityTextMarkerRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE1345E7021006AA5A6 /* JSAccessibilityTextMarkerRange.cpp */; };
 		29A8FCE2145F037B009045A6 /* AccessibilityTextMarkerRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE1145F037B009045A6 /* AccessibilityTextMarkerRange.cpp */; };
-		29A8FCE5145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */; };
+		29A8FCE5145F0464009045A6 /* AccessibilityTextMarkerRangeCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeCocoa.mm */; };
 		2D058E0922E2EE2200E4C145 /* UIScriptControllerCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D058E0822E2EE2200E4C145 /* UIScriptControllerCocoa.h */; };
 		2D058E0B22E2EF6D00E4C145 /* UIScriptControllerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D058E0A22E2EF6D00E4C145 /* UIScriptControllerMac.h */; };
 		2DB6187E1D7D58D400978D19 /* CoreGraphicsTestSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB6187D1D7D58D400978D19 /* CoreGraphicsTestSPI.h */; };
@@ -325,7 +325,7 @@
 		29A8FCE1145F037B009045A6 /* AccessibilityTextMarkerRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTextMarkerRange.cpp; sourceTree = "<group>"; };
 		29A8FCE1345E7021006AA5A6 /* JSAccessibilityTextMarkerRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAccessibilityTextMarkerRange.cpp; sourceTree = "<group>"; };
 		29A8FCE1345E7021006AA5A7 /* JSAccessibilityTextMarkerRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAccessibilityTextMarkerRange.h; sourceTree = "<group>"; };
-		29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTextMarkerRangeMac.mm; sourceTree = "<group>"; };
+		29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTextMarkerRangeCocoa.mm; sourceTree = "<group>"; };
 		2D058E0822E2EE2200E4C145 /* UIScriptControllerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIScriptControllerCocoa.h; sourceTree = "<group>"; };
 		2D058E0A22E2EF6D00E4C145 /* UIScriptControllerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIScriptControllerMac.h; sourceTree = "<group>"; };
 		2D0BEE1722EAD1360092B738 /* UIScriptControllerIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIScriptControllerIOS.h; sourceTree = "<group>"; };
@@ -474,10 +474,10 @@
 		E1BA671D1742DA5A00C20251 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitTestRunnerPasteboard.mm; sourceTree = "<group>"; };
 		E1C642C517CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitTestRunnerPasteboard.h; sourceTree = "<group>"; };
-		E3660D6A2C2F663800BA7138 /* WebKitTestRunnerApp-visionOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "WebKitTestRunnerApp-visionOS.entitlements"; sourceTree = "<group>"; };
 		E372BC352C08E29C006DFE67 /* NetworkingExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = NetworkingExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		E372BC372C08EB01006DFE67 /* GPUExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = GPUExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		E372BC392C08F323006DFE67 /* WebContentExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = WebContentExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3C2C0312C34DEFC000C7F2E /* WebKitTestRunnerApp-iOS-simulator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "WebKitTestRunnerApp-iOS-simulator.entitlements"; sourceTree = "<group>"; };
 		F4010B7C24DA204800A876E2 /* PoseAsClass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PoseAsClass.mm; path = ../TestRunnerShared/cocoa/PoseAsClass.mm; sourceTree = "<group>"; };
 		F4010B7D24DA204800A876E2 /* PoseAsClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PoseAsClass.h; path = ../TestRunnerShared/cocoa/PoseAsClass.h; sourceTree = "<group>"; };
 		F415C22A27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIPasteboardConsistencyEnforcer.h; sourceTree = "<group>"; };
@@ -678,6 +678,7 @@
 			children = (
 				299E2AA41E3DEE140065DC30 /* AccessibilityCommonCocoa.h */,
 				29210EAB144CACB200835BB6 /* AccessibilityCommonCocoa.mm */,
+				29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeCocoa.mm */,
 				65EB859F11EC67CC0034D300 /* ActivateFontsCocoa.mm */,
 				0FEB909E1905A776000FDBF3 /* InjectedBundlePageCocoa.mm */,
 			);
@@ -816,7 +817,6 @@
 			isa = PBXGroup;
 			children = (
 				8034C6611487636400AC32E9 /* AccessibilityControllerMac.mm */,
-				29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */,
 				29210EAB144CACB200835BB5 /* AccessibilityUIElementMac.mm */,
 				BC8DAD771316D7B900EC96FC /* InjectedBundleMac.mm */,
 			);
@@ -942,8 +942,8 @@
 				BC25197111D15E61002EBC01 /* InjectedBundle.xcconfig */,
 				57A0062C22976E4D00AD08BD /* WebKitTestRunner.entitlements */,
 				A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */,
+				E3C2C0312C34DEFC000C7F2E /* WebKitTestRunnerApp-iOS-simulator.entitlements */,
 				9B0D132E2036D346008FC8FB /* WebKitTestRunnerApp-iOS.entitlements */,
-				E3660D6A2C2F663800BA7138 /* WebKitTestRunnerApp-visionOS.entitlements */,
 				311183AA212B1AC70077BCE0 /* WebKitTestRunnerApp-watchOS.entitlements */,
 				A18510391B9ADFF800744AEB /* WebKitTestRunnerApp.xcconfig */,
 				BC251A1811D16795002EBC01 /* WebKitTestRunnerLibrary.xcconfig */,
@@ -1372,7 +1372,7 @@
 				2E63ED8B1891AD7E002A7AFC /* AccessibilityTextMarkerIOS.mm in Sources */,
 				29210EB5144CACD500835BB5 /* AccessibilityTextMarkerMac.mm in Sources */,
 				29A8FCE2145F037B009045A6 /* AccessibilityTextMarkerRange.cpp in Sources */,
-				29A8FCE5145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm in Sources */,
+				29A8FCE5145F0464009045A6 /* AccessibilityTextMarkerRangeCocoa.mm in Sources */,
 				29210EAE144CACB700835BB5 /* AccessibilityUIElement.cpp in Sources */,
 				2E63EDA11891B291002A7AFC /* AccessibilityUIElementIOS.mm in Sources */,
 				29210EDA144CC3EA00835BB5 /* AccessibilityUIElementMac.mm in Sources */,

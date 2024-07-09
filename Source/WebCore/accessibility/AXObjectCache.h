@@ -40,6 +40,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
+#include <wtf/text/MakeString.h>
 
 OBJC_CLASS NSMutableArray;
 
@@ -73,14 +74,14 @@ struct CharacterOffset {
     int startIndex;
     int offset;
     int remainingOffset;
-    
+
     CharacterOffset(Node* n = nullptr, int startIndex = 0, int offset = 0, int remaining = 0)
         : node(n)
         , startIndex(startIndex)
         , offset(offset)
         , remainingOffset(remaining)
     { }
-    
+
     int remaining() const { return remainingOffset; }
     bool isNull() const { return !node; }
     bool isEqual(const CharacterOffset& other) const
@@ -433,6 +434,7 @@ public:
 
     AccessibilityObject* objectForID(const AXID id) const { return m_objects.get(id); }
     template<typename U> Vector<RefPtr<AXCoreObject>> objectsForIDs(const U&) const;
+    Node* nodeForID(const AXID) const;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void onPaint(const RenderObject&, IntRect&&) const;
@@ -444,7 +446,6 @@ public:
 
     // Text marker utilities.
     std::optional<TextMarkerData> textMarkerDataForVisiblePosition(const VisiblePosition&);
-    std::optional<TextMarkerData> textMarkerDataForFirstPositionInTextControl(HTMLTextFormControlElement&);
     TextMarkerData textMarkerDataForCharacterOffset(const CharacterOffset&);
     TextMarkerData textMarkerDataForNextCharacterOffset(const CharacterOffset&);
     AXTextMarker nextTextMarker(const AXTextMarker&);
@@ -457,7 +458,7 @@ public:
     CharacterOffset previousCharacterOffset(const CharacterOffset&, bool ignorePreviousNodeEnd = true);
     TextMarkerData startOrEndTextMarkerDataForRange(const SimpleRange&, bool);
     CharacterOffset startOrEndCharacterOffsetForRange(const SimpleRange&, bool, bool enterTextControls = false);
-    AccessibilityObject* accessibilityObjectForTextMarkerData(const TextMarkerData&);
+    AccessibilityObject* objectForTextMarkerData(const TextMarkerData&);
     std::optional<SimpleRange> rangeForUnorderedCharacterOffsets(const CharacterOffset&, const CharacterOffset&);
     static SimpleRange rangeForNodeContents(Node&);
     static unsigned lengthForRange(const SimpleRange&);
@@ -573,8 +574,6 @@ public:
     static bool clientIsInTestMode();
 #endif
 
-    bool isNodeInUse(Node& node) const { return m_textMarkerNodes.contains(node); }
-
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void scheduleObjectRegionsUpdate(bool scheduleImmediately = false) { m_geometryManager->scheduleObjectRegionsUpdate(scheduleImmediately); }
     void willUpdateObjectRegions() { m_geometryManager->willUpdateObjectRegions(); }
@@ -624,10 +623,6 @@ protected:
 
     void frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent);
     void handleLabelChanged(AccessibilityObject*);
-
-    // This is a weak reference cache for knowing if Nodes used by TextMarkers are valid.
-    void setNodeInUse(Node& node) { m_textMarkerNodes.add(node); }
-    void removeNodeForUse(Node& node) { m_textMarkerNodes.remove(node); }
 
     // CharacterOffset functions.
     enum TraverseOption { TraverseOptionDefault = 1 << 0, TraverseOptionToNodeEnd = 1 << 1, TraverseOptionIncludeStart = 1 << 2, TraverseOptionValidateOffset = 1 << 3, TraverseOptionDoNotEnterTextControls = 1 << 4 };
@@ -761,8 +756,6 @@ private:
     HashMap<SingleThreadWeakRef<RenderObject>, AXID> m_renderObjectMapping;
     HashMap<SingleThreadWeakRef<Widget>, AXID> m_widgetObjectMapping;
     HashMap<WeakRef<Node, WeakPtrImplWithEventTargetData>, AXID> m_nodeObjectMapping;
-    // The pointers in this HashSet should never be dereferenced.
-    ListHashSet<WeakRef<Node, WeakPtrImplWithEventTargetData>> m_textMarkerNodes;
 
     std::unique_ptr<AXComputedObjectAttributeCache> m_computedObjectAttributeCache;
 
@@ -859,6 +852,15 @@ inline Vector<RefPtr<AXCoreObject>> AXObjectCache::objectsForIDs(const U& axIDs)
             return RefPtr { object };
         return std::nullopt;
     });
+}
+
+inline Node* AXObjectCache::nodeForID(const AXID axID) const
+{
+    if (!axID.isValid())
+        return nullptr;
+
+    auto* object = m_objects.get(axID);
+    return object ? object->node() : nullptr;
 }
 
 inline bool AXObjectCache::accessibilityEnabled()

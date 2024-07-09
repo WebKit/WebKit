@@ -69,6 +69,7 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/cf/VectorCF.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/TextStream.h>
 
 #import "PDFKitSoftLink.h"

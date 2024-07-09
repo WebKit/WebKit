@@ -60,10 +60,8 @@
 #include <openssl/obj.h>
 #include <openssl/stack.h>
 #include <openssl/x509.h>
-#include <openssl/x509v3.h>
 
 #include "../internal.h"
-#include "../x509v3/internal.h"
 #include "internal.h"
 
 
@@ -73,8 +71,6 @@
 #define ADD_HOST 1
 
 static void str_free(char *s) { OPENSSL_free(s); }
-
-#define string_stack_free(sk) sk_OPENSSL_STRING_pop_free(sk, str_free)
 
 static int int_x509_param_set_hosts(X509_VERIFY_PARAM *param, int mode,
                                     const char *name, size_t namelen) {
@@ -92,7 +88,7 @@ static int int_x509_param_set_hosts(X509_VERIFY_PARAM *param, int mode,
   }
 
   if (mode == SET_HOST && param->hosts) {
-    string_stack_free(param->hosts);
+    sk_OPENSSL_STRING_pop_free(param->hosts, str_free);
     param->hosts = NULL;
   }
 
@@ -119,50 +115,12 @@ static int int_x509_param_set_hosts(X509_VERIFY_PARAM *param, int mode,
   return 1;
 }
 
-static void x509_verify_param_zero(X509_VERIFY_PARAM *param) {
-  if (!param) {
-    return;
-  }
-  param->name = NULL;
-  param->purpose = 0;
-  param->trust = 0;
-  // param->inh_flags = X509_VP_FLAG_DEFAULT;
-  param->inh_flags = 0;
-  param->flags = 0;
-  param->depth = -1;
-  if (param->policies) {
-    sk_ASN1_OBJECT_pop_free(param->policies, ASN1_OBJECT_free);
-    param->policies = NULL;
-  }
-  if (param->hosts) {
-    string_stack_free(param->hosts);
-    param->hosts = NULL;
-  }
-  if (param->peername) {
-    OPENSSL_free(param->peername);
-    param->peername = NULL;
-  }
-  if (param->email) {
-    OPENSSL_free(param->email);
-    param->email = NULL;
-    param->emaillen = 0;
-  }
-  if (param->ip) {
-    OPENSSL_free(param->ip);
-    param->ip = NULL;
-    param->iplen = 0;
-  }
-  param->poison = 0;
-}
-
 X509_VERIFY_PARAM *X509_VERIFY_PARAM_new(void) {
-  X509_VERIFY_PARAM *param;
-  param = OPENSSL_malloc(sizeof(X509_VERIFY_PARAM));
+  X509_VERIFY_PARAM *param = OPENSSL_zalloc(sizeof(X509_VERIFY_PARAM));
   if (!param) {
     return NULL;
   }
-  OPENSSL_memset(param, 0, sizeof(X509_VERIFY_PARAM));
-  x509_verify_param_zero(param);
+  param->depth = -1;
   return param;
 }
 
@@ -170,147 +128,105 @@ void X509_VERIFY_PARAM_free(X509_VERIFY_PARAM *param) {
   if (param == NULL) {
     return;
   }
-  x509_verify_param_zero(param);
+  sk_ASN1_OBJECT_pop_free(param->policies, ASN1_OBJECT_free);
+  sk_OPENSSL_STRING_pop_free(param->hosts, str_free);
+  OPENSSL_free(param->email);
+  OPENSSL_free(param->ip);
   OPENSSL_free(param);
 }
 
-//-
-// This function determines how parameters are "inherited" from one structure
-// to another. There are several different ways this can happen.
-//
-// 1. If a child structure needs to have its values initialized from a parent
-//    they are simply copied across. For example SSL_CTX copied to SSL.
-// 2. If the structure should take on values only if they are currently unset.
-//    For example the values in an SSL structure will take appropriate value
-//    for SSL servers or clients but only if the application has not set new
-//    ones.
-//
-// The "inh_flags" field determines how this function behaves.
-//
-// Normally any values which are set in the default are not copied from the
-// destination and verify flags are ORed together.
-//
-// If X509_VP_FLAG_DEFAULT is set then anything set in the source is copied
-// to the destination. Effectively the values in "to" become default values
-// which will be used only if nothing new is set in "from".
-//
-// If X509_VP_FLAG_OVERWRITE is set then all value are copied across whether
-// they are set or not. Flags is still Ored though.
-//
-// If X509_VP_FLAG_RESET_FLAGS is set then the flags value is copied instead
-// of ORed.
-//
-// If X509_VP_FLAG_LOCKED is set then no values are copied.
-//
-// If X509_VP_FLAG_ONCE is set then the current inh_flags setting is zeroed
-// after the next call.
-
-// Macro to test if a field should be copied from src to dest
-
-#define test_x509_verify_param_copy(field, def) \
-  (to_overwrite ||                              \
-   ((src->field != (def)) && (to_default || (dest->field == (def)))))
-
-// Macro to test and copy a field if necessary
-
-#define x509_verify_param_copy(field, def)     \
-  if (test_x509_verify_param_copy(field, def)) \
-  dest->field = src->field
-
-int X509_VERIFY_PARAM_inherit(X509_VERIFY_PARAM *dest,
-                              const X509_VERIFY_PARAM *src) {
-  unsigned long inh_flags;
-  int to_default, to_overwrite;
-  if (!src) {
-    return 1;
-  }
-  inh_flags = dest->inh_flags | src->inh_flags;
-
-  if (inh_flags & X509_VP_FLAG_ONCE) {
-    dest->inh_flags = 0;
+static int should_copy(int dest_is_set, int src_is_set, int prefer_src) {
+  if (prefer_src) {
+    // We prefer the source, so as long as there is a value to copy, copy it.
+    return src_is_set;
   }
 
-  if (inh_flags & X509_VP_FLAG_LOCKED) {
+  // We prefer the destination, so only copy if the destination is unset.
+  return src_is_set && !dest_is_set;
+}
+
+static void copy_int_param(int *dest, const int *src, int default_val,
+                           int prefer_src) {
+  if (should_copy(*dest != default_val, *src != default_val, prefer_src)) {
+    *dest = *src;
+  }
+}
+
+// x509_verify_param_copy copies fields from |src| to |dest|. If both |src| and
+// |dest| have some field set, |prefer_src| determines whether |src| or |dest|'s
+// version is used.
+static int x509_verify_param_copy(X509_VERIFY_PARAM *dest,
+                                  const X509_VERIFY_PARAM *src,
+                                  int prefer_src) {
+  if (src == NULL) {
     return 1;
   }
 
-  if (inh_flags & X509_VP_FLAG_DEFAULT) {
-    to_default = 1;
-  } else {
-    to_default = 0;
-  }
+  copy_int_param(&dest->purpose, &src->purpose, /*default_val=*/0, prefer_src);
+  copy_int_param(&dest->trust, &src->trust, /*default_val=*/0, prefer_src);
+  copy_int_param(&dest->depth, &src->depth, /*default_val=*/-1, prefer_src);
 
-  if (inh_flags & X509_VP_FLAG_OVERWRITE) {
-    to_overwrite = 1;
-  } else {
-    to_overwrite = 0;
-  }
-
-  x509_verify_param_copy(purpose, 0);
-  x509_verify_param_copy(trust, 0);
-  x509_verify_param_copy(depth, -1);
-
-  // If overwrite or check time not set, copy across
-
-  if (to_overwrite || !(dest->flags & X509_V_FLAG_USE_CHECK_TIME)) {
+  // |check_time|, unlike all other parameters, does not honor |prefer_src|.
+  // This means |X509_VERIFY_PARAM_set1| will not overwrite it. This behavior
+  // comes from OpenSSL but may have been a bug.
+  if (!(dest->flags & X509_V_FLAG_USE_CHECK_TIME)) {
     dest->check_time = src->check_time;
-    dest->flags &= ~X509_V_FLAG_USE_CHECK_TIME;
-    // Don't need to copy flag: that is done below
-  }
-
-  if (inh_flags & X509_VP_FLAG_RESET_FLAGS) {
-    dest->flags = 0;
+    // The source |X509_V_FLAG_USE_CHECK_TIME| flag, if set, is copied below.
   }
 
   dest->flags |= src->flags;
 
-  if (test_x509_verify_param_copy(policies, NULL)) {
+  if (should_copy(dest->policies != NULL, src->policies != NULL, prefer_src)) {
     if (!X509_VERIFY_PARAM_set1_policies(dest, src->policies)) {
       return 0;
     }
   }
 
-  // Copy the host flags if and only if we're copying the host list
-  if (test_x509_verify_param_copy(hosts, NULL)) {
-    if (dest->hosts) {
-      string_stack_free(dest->hosts);
-      dest->hosts = NULL;
-    }
+  if (should_copy(dest->hosts != NULL, src->hosts != NULL, prefer_src)) {
+    sk_OPENSSL_STRING_pop_free(dest->hosts, str_free);
+    dest->hosts = NULL;
     if (src->hosts) {
       dest->hosts =
           sk_OPENSSL_STRING_deep_copy(src->hosts, OPENSSL_strdup, str_free);
       if (dest->hosts == NULL) {
         return 0;
       }
+      // Copy the host flags if and only if we're copying the host list. Note
+      // this means mechanisms like |X509_STORE_CTX_set_default| cannot be used
+      // to set host flags. E.g. we cannot change the defaults using
+      // |kDefaultParam| below.
       dest->hostflags = src->hostflags;
     }
   }
 
-  if (test_x509_verify_param_copy(email, NULL)) {
+  if (should_copy(dest->email != NULL, src->email != NULL, prefer_src)) {
     if (!X509_VERIFY_PARAM_set1_email(dest, src->email, src->emaillen)) {
       return 0;
     }
   }
 
-  if (test_x509_verify_param_copy(ip, NULL)) {
+  if (should_copy(dest->ip != NULL, src->ip != NULL, prefer_src)) {
     if (!X509_VERIFY_PARAM_set1_ip(dest, src->ip, src->iplen)) {
       return 0;
     }
   }
 
   dest->poison = src->poison;
-
   return 1;
+}
+
+int X509_VERIFY_PARAM_inherit(X509_VERIFY_PARAM *dest,
+                              const X509_VERIFY_PARAM *src) {
+  // Prefer the destination. That is, this function only changes unset
+  // parameters in |dest|.
+  return x509_verify_param_copy(dest, src, /*prefer_src=*/0);
 }
 
 int X509_VERIFY_PARAM_set1(X509_VERIFY_PARAM *to,
                            const X509_VERIFY_PARAM *from) {
-  unsigned long save_flags = to->inh_flags;
-  int ret;
-  to->inh_flags |= X509_VP_FLAG_DEFAULT;
-  ret = X509_VERIFY_PARAM_inherit(to, from);
-  to->inh_flags = save_flags;
-  return ret;
+  // Prefer the source. That is, values in |to| are only preserved if they were
+  // unset in |from|.
+  return x509_verify_param_copy(to, from, /*prefer_src=*/1);
 }
 
 static int int_x509_param_set1(char **pdest, size_t *pdestlen, const char *src,
@@ -337,17 +253,6 @@ static int int_x509_param_set1(char **pdest, size_t *pdestlen, const char *src,
   return 1;
 }
 
-int X509_VERIFY_PARAM_set1_name(X509_VERIFY_PARAM *param, const char *name) {
-  if (param->name) {
-    OPENSSL_free(param->name);
-  }
-  param->name = OPENSSL_strdup(name);
-  if (param->name) {
-    return 1;
-  }
-  return 0;
-}
-
 int X509_VERIFY_PARAM_set_flags(X509_VERIFY_PARAM *param, unsigned long flags) {
   param->flags |= flags;
   return 1;
@@ -359,16 +264,27 @@ int X509_VERIFY_PARAM_clear_flags(X509_VERIFY_PARAM *param,
   return 1;
 }
 
-unsigned long X509_VERIFY_PARAM_get_flags(X509_VERIFY_PARAM *param) {
+unsigned long X509_VERIFY_PARAM_get_flags(const X509_VERIFY_PARAM *param) {
   return param->flags;
 }
 
 int X509_VERIFY_PARAM_set_purpose(X509_VERIFY_PARAM *param, int purpose) {
-  return X509_PURPOSE_set(&param->purpose, purpose);
+  if (X509_PURPOSE_get0(purpose) == NULL) {
+    OPENSSL_PUT_ERROR(X509V3, X509V3_R_INVALID_PURPOSE);
+    return 0;
+  }
+  param->purpose = purpose;
+  return 1;
 }
 
 int X509_VERIFY_PARAM_set_trust(X509_VERIFY_PARAM *param, int trust) {
-  return X509_TRUST_set(&param->trust, trust);
+  if (!X509_is_valid_trust_id(trust)) {
+    OPENSSL_PUT_ERROR(X509, X509_R_UNKNOWN_TRUST_ID);
+    return 0;
+  }
+
+  param->trust = trust;
+  return 1;
 }
 
 void X509_VERIFY_PARAM_set_depth(X509_VERIFY_PARAM *param, int depth) {
@@ -442,10 +358,6 @@ void X509_VERIFY_PARAM_set_hostflags(X509_VERIFY_PARAM *param,
   param->hostflags = flags;
 }
 
-char *X509_VERIFY_PARAM_get0_peername(X509_VERIFY_PARAM *param) {
-  return param->peername;
-}
-
 int X509_VERIFY_PARAM_set1_email(X509_VERIFY_PARAM *param, const char *email,
                                  size_t emaillen) {
   if (OPENSSL_memchr(email, '\0', emaillen) != NULL ||
@@ -484,68 +396,45 @@ int X509_VERIFY_PARAM_get_depth(const X509_VERIFY_PARAM *param) {
   return param->depth;
 }
 
-const char *X509_VERIFY_PARAM_get0_name(const X509_VERIFY_PARAM *param) {
-  return param->name;
-}
+static const X509_VERIFY_PARAM kDefaultParam = {
+    .flags = X509_V_FLAG_TRUSTED_FIRST,
+    .depth = 100,
+};
 
-#define vpm_empty_id NULL, 0U, NULL, NULL, 0, NULL, 0, 0
+static const X509_VERIFY_PARAM kSMIMESignParam = {
+    .purpose = X509_PURPOSE_SMIME_SIGN,
+    .trust = X509_TRUST_EMAIL,
+    .depth = -1,
+};
 
-// Default verify parameters: these are used for various applications and can
-// be overridden by the user specified table. NB: the 'name' field *must* be
-// in alphabetical order because it will be searched using OBJ_search.
+static const X509_VERIFY_PARAM kSSLClientParam = {
+    .purpose = X509_PURPOSE_SSL_CLIENT,
+    .trust = X509_TRUST_SSL_CLIENT,
+    .depth = -1,
+};
 
-static const X509_VERIFY_PARAM default_table[] = {
-    {(char *)"default",          // X509 default parameters
-     0,                          // Check time
-     0,                          // internal flags
-     X509_V_FLAG_TRUSTED_FIRST,  // flags
-     0,                          // purpose
-     0,                          // trust
-     100,                        // depth
-     NULL,                       // policies
-     vpm_empty_id},
-    {(char *)"pkcs7",          // S/MIME sign parameters
-     0,                        // Check time
-     0,                        // internal flags
-     0,                        // flags
-     X509_PURPOSE_SMIME_SIGN,  // purpose
-     X509_TRUST_EMAIL,         // trust
-     -1,                       // depth
-     NULL,                     // policies
-     vpm_empty_id},
-    {(char *)"smime_sign",     // S/MIME sign parameters
-     0,                        // Check time
-     0,                        // internal flags
-     0,                        // flags
-     X509_PURPOSE_SMIME_SIGN,  // purpose
-     X509_TRUST_EMAIL,         // trust
-     -1,                       // depth
-     NULL,                     // policies
-     vpm_empty_id},
-    {(char *)"ssl_client",     // SSL/TLS client parameters
-     0,                        // Check time
-     0,                        // internal flags
-     0,                        // flags
-     X509_PURPOSE_SSL_CLIENT,  // purpose
-     X509_TRUST_SSL_CLIENT,    // trust
-     -1,                       // depth
-     NULL,                     // policies
-     vpm_empty_id},
-    {(char *)"ssl_server",     // SSL/TLS server parameters
-     0,                        // Check time
-     0,                        // internal flags
-     0,                        // flags
-     X509_PURPOSE_SSL_SERVER,  // purpose
-     X509_TRUST_SSL_SERVER,    // trust
-     -1,                       // depth
-     NULL,                     // policies
-     vpm_empty_id}};
+static const X509_VERIFY_PARAM kSSLServerParam = {
+    .purpose = X509_PURPOSE_SSL_SERVER,
+    .trust = X509_TRUST_SSL_SERVER,
+    .depth = -1,
+};
 
 const X509_VERIFY_PARAM *X509_VERIFY_PARAM_lookup(const char *name) {
-  for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(default_table); i++) {
-    if (strcmp(default_table[i].name, name) == 0) {
-      return &default_table[i];
-    }
+  if (strcmp(name, "default") == 0) {
+    return &kDefaultParam;
+  }
+  if (strcmp(name, "pkcs7") == 0) {
+    // PKCS#7 and S/MIME signing use the same defaults.
+    return &kSMIMESignParam;
+  }
+  if (strcmp(name, "smime_sign") == 0) {
+    return &kSMIMESignParam;
+  }
+  if (strcmp(name, "ssl_client") == 0) {
+    return &kSSLClientParam;
+  }
+  if (strcmp(name, "ssl_server") == 0) {
+    return &kSSLServerParam;
   }
   return NULL;
 }

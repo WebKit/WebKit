@@ -94,6 +94,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Scope.h>
 #include <wtf/Vector.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(OFFSCREEN_CANVAS)

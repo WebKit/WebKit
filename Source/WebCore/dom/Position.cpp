@@ -60,6 +60,7 @@
 #include "VisibleUnits.h"
 #include <stdio.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 #include <wtf/unicode/CharacterNames.h>
 

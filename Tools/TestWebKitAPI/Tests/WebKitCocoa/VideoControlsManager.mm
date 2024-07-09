@@ -119,6 +119,60 @@
     _isDoneQueryingControlledElementID = true;
 }
 
+- (BOOL)_playPredominantOrNowPlayingMediaSession
+{
+    __block bool done = false;
+    __block BOOL result = NO;
+    [self _playPredominantOrNowPlayingMediaSession:^(BOOL success) {
+        result = success;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result;
+}
+
+- (BOOL)_pauseNowPlayingMediaSession
+{
+    __block bool done = false;
+    __block BOOL result = NO;
+    [self _pauseNowPlayingMediaSession:^(BOOL success) {
+        result = success;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result;
+}
+
+- (void)waitForVideoToPlay
+{
+    [self waitForVideoToPlay:@"video"];
+}
+
+- (void)waitForVideoToPlay:(NSString *)selector
+{
+    while (true) {
+        __auto_type scriptToRun = [NSString stringWithFormat:@"(function() {"
+            "  let video = document.querySelector('%@');"
+            "  return !video.paused && video.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA;"
+            "})();", selector];
+        if ([[self objectByEvaluatingJavaScript:scriptToRun] boolValue])
+            return;
+    }
+}
+
+- (BOOL)isVideoPaused:(NSString *)selector
+{
+    return [[self objectByEvaluatingJavaScript:[NSString stringWithFormat:@"document.querySelector('%@').paused", selector]] boolValue];
+}
+
+- (void)waitForVideoToPause
+{
+    while (true) {
+        if ([self isVideoPaused:@"video"])
+            return;
+    }
+}
+
 @end
 
 namespace TestWebKitAPI {
@@ -500,6 +554,37 @@ TEST(VideoControlsManager, VideoControlsManagerDoesNotChangeValuesExposedToJavaS
 
     EXPECT_EQ(2.0, [[webView objectByEvaluatingJavaScript:@"document.getElementsByTagName('video')[0].playbackRate"] doubleValue]);
     EXPECT_EQ(1.0, [[webView objectByEvaluatingJavaScript:@"document.getElementsByTagName('video')[0].defaultPlaybackRate"] doubleValue]);
+}
+
+TEST(VideoControlsManager, TogglePlaybackForControlledVideo)
+{
+    RetainPtr webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
+    [webView synchronouslyLoadTestPageNamed:@"large-video-with-audio"];
+    [webView waitForMediaControlsToShow];
+
+    BOOL paused = [webView _pauseNowPlayingMediaSession];
+    EXPECT_TRUE(paused);
+    [webView waitForVideoToPause];
+
+    BOOL played = [webView _playPredominantOrNowPlayingMediaSession];
+    EXPECT_TRUE(played);
+    [webView waitForVideoToPlay];
+}
+
+TEST(VideoControlsManager, StartPlayingLargestVideoInViewport)
+{
+    RetainPtr webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 640, 480));
+    [webView synchronouslyLoadTestPageNamed:@"large-videos-with-audio"];
+
+    Util::waitForConditionWithLogging([webView] -> bool {
+        return [[webView stringByEvaluatingJavaScript:@"!!document.getElementById('foo')?.canPlayThrough"] boolValue];
+    }, 5, @"Expected first video to finish loading.");
+
+    BOOL played = [webView _playPredominantOrNowPlayingMediaSession];
+    EXPECT_TRUE(played);
+    [webView waitForVideoToPlay:@"#foo"];
+    EXPECT_TRUE([webView isVideoPaused:@"#bar"]);
+    EXPECT_TRUE([webView isVideoPaused:@"#baz"]);
 }
 
 } // namespace TestWebKitAPI

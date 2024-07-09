@@ -59,6 +59,7 @@
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -396,7 +397,7 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
         }
 
         if (!cookie.path.endsWith('/'))
-            cookie.path = cookie.path + '/';
+            cookie.path = makeString(cookie.path, '/');
 
         // FIXME: <rdar://85515842> Obtain the encoded length without allocating and encoding.
         if (cookie.path.utf8().length() > maximumAttributeValueSize) {

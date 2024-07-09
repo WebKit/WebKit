@@ -38,6 +38,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <pal/text/TextEncoding.h>
 #include <wtf/HexNumber.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

@@ -57,6 +57,7 @@
 #include <JavaScriptCore/ScriptArguments.h>
 #include <wtf/SetForScope.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "RuntimeApplicationChecks.h"

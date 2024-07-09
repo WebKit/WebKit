@@ -41,6 +41,7 @@
 #include <WebCore/RunJavaScriptParameters.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <wtf/URL.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 

@@ -33,7 +33,7 @@
 #include <WebCore/MDNSRegisterError.h>
 #include <pal/SessionID.h>
 #include <wtf/UUID.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 

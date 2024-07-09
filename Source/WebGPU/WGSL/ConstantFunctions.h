@@ -32,7 +32,7 @@
 #include <numbers>
 #include <wtf/Assertions.h>
 #include <wtf/DataLog.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WGSL {
 

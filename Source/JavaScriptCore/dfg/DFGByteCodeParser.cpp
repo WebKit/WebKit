@@ -3387,9 +3387,9 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             Node* normalizedKey = addToGraph(NormalizeMapKey, key);
             Node* hash = addToGraph(MapHash, normalizedKey);
-            Node* bucket = addToGraph(GetMapBucket, Edge(map, MapObjectUse), Edge(normalizedKey), Edge(hash));
-            Node* resultNode = addToGraph(LoadValueFromMapBucket, OpInfo(BucketOwnerType::Map), OpInfo(prediction), bucket);
-            setResult(resultNode);
+            Node* keyIndex = addToGraph(MapKeyIndex, Edge(map, MapObjectUse), Edge(normalizedKey), Edge(hash));
+            Node* result = addToGraph(MapValue, OpInfo(0), OpInfo(prediction), Edge(map, MapObjectUse), Edge(keyIndex));
+            setResult(result);
             return CallOptimizationResult::Inlined;
         }
 
@@ -3404,16 +3404,9 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             Node* normalizedKey = addToGraph(NormalizeMapKey, key);
             Node* hash = addToGraph(MapHash, normalizedKey);
             UseKind useKind = intrinsic == JSSetHasIntrinsic ? SetObjectUse : MapObjectUse;
-            Node* bucket = addToGraph(GetMapBucket, OpInfo(0), Edge(mapOrSet, useKind), Edge(normalizedKey), Edge(hash));
-            JSCell* sentinel = nullptr;
-            if (intrinsic == JSMapHasIntrinsic)
-                sentinel = m_vm->sentinelMapBucket();
-            else
-                sentinel = m_vm->sentinelSetBucket();
-
-            FrozenValue* frozenPointer = m_graph.freeze(sentinel);
-            Node* invertedResult = addToGraph(CompareEqPtr, OpInfo(frozenPointer), bucket);
-            Node* resultNode = addToGraph(LogicalNot, invertedResult);
+            Node* keyIndex = addToGraph(MapKeyIndex, Edge(mapOrSet, useKind), Edge(normalizedKey), Edge(hash));
+            Node* isInvalidIndex = addToGraph(SameValue, keyIndex, jsConstant(JSMap::Helper::invalidTableIndex()));
+            Node* resultNode = addToGraph(LogicalNot, isInvalidIndex);
             setResult(resultNode);
             return CallOptimizationResult::Inlined;
         }
@@ -3509,7 +3502,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
 
             Node* base = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
             addToGraph(Check, Edge(base, useKind));
-            Node* bucket = addToGraph(GetMapBucketHead, Edge(base, useKind));
+            Node* storage = addToGraph(MapStorage, Edge(base, useKind));
 
             Node* kindNode = jsConstant(jsNumber(static_cast<uint32_t>(kind)));
 
@@ -3517,13 +3510,15 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             Node* iterator = nullptr;
             if (useKind == MapObjectUse) {
                 iterator = addToGraph(NewInternalFieldObject, OpInfo(m_graph.registerStructure(globalObject->mapIteratorStructure())));
-                addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSMapIterator::Field::MapBucket)), iterator, bucket);
+                addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSMapIterator::Field::Entry)), iterator, jsConstant(jsNumber(0)));
                 addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSMapIterator::Field::IteratedObject)), iterator, base);
+                addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSMapIterator::Field::Storage)), iterator, storage);
                 addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSMapIterator::Field::Kind)), iterator, kindNode);
             } else {
                 iterator = addToGraph(NewInternalFieldObject, OpInfo(m_graph.registerStructure(globalObject->setIteratorStructure())));
-                addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSSetIterator::Field::SetBucket)), iterator, bucket);
+                addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSSetIterator::Field::Entry)), iterator, jsConstant(jsNumber(0)));
                 addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSSetIterator::Field::IteratedObject)), iterator, base);
+                addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSMapIterator::Field::Storage)), iterator, storage);
                 addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSSetIterator::Field::Kind)), iterator, kindNode);
             }
 
@@ -3531,49 +3526,96 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             return CallOptimizationResult::Inlined;
         }
 
-        case JSSetBucketHeadIntrinsic:
-        case JSMapBucketHeadIntrinsic: {
+        case JSSetIterationNextIntrinsic:
+        case JSMapIterationNextIntrinsic: {
+            ASSERT(argumentCountIncludingThis == 3);
+
+            insertChecks();
+            Node* storage = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            Node* entry = get(virtualRegisterForArgumentIncludingThis(2, registerOffset));
+            BucketOwnerType type = intrinsic == JSSetIterationNextIntrinsic ? BucketOwnerType::Set : BucketOwnerType::Map;
+            Node* result = addToGraph(MapIterationNext, OpInfo(type), Edge(storage), Edge(entry));
+            setResult(result);
+            return CallOptimizationResult::Inlined;
+        }
+
+        case JSSetIterationEntryIntrinsic:
+        case JSMapIterationEntryIntrinsic: {
+            ASSERT(argumentCountIncludingThis == 2);
+
+            insertChecks();
+            Node* storage = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            BucketOwnerType type = intrinsic == JSSetIterationEntryIntrinsic ? BucketOwnerType::Set : BucketOwnerType::Map;
+            Node* result = addToGraph(MapIterationEntry, OpInfo(type), Edge(storage));
+            setResult(result);
+            return CallOptimizationResult::Inlined;
+        }
+
+        case JSSetIterationEntryKeyIntrinsic:
+        case JSMapIterationEntryKeyIntrinsic: {
+            ASSERT(argumentCountIncludingThis == 2);
+
+            insertChecks();
+            Node* storage = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            BucketOwnerType type = intrinsic == JSSetIterationEntryKeyIntrinsic ? BucketOwnerType::Set : BucketOwnerType::Map;
+            Node* result = addToGraph(MapIterationEntryKey, OpInfo(type), OpInfo(prediction), Edge(storage));
+            setResult(result);
+            return CallOptimizationResult::Inlined;
+        }
+
+        case JSMapIterationEntryValueIntrinsic: {
+            ASSERT(argumentCountIncludingThis == 2);
+
+            insertChecks();
+            Node* storage = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            Node* result = addToGraph(MapIterationEntryValue, OpInfo(BucketOwnerType::Map), OpInfo(prediction), Edge(storage));
+            setResult(result);
+            return CallOptimizationResult::Inlined;
+        }
+
+        case JSSetIteratorNextIntrinsic:
+        case JSMapIteratorNextIntrinsic: {
+            ASSERT(argumentCountIncludingThis == 2);
+
+            insertChecks();
+            Node* mapIterator = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            UseKind useKind = intrinsic == JSMapIteratorNextIntrinsic ? MapIteratorObjectUse : SetIteratorObjectUse;
+            Node* storage = addToGraph(MapIteratorNext, Edge(mapIterator, useKind));
+            setResult(storage);
+            return CallOptimizationResult::Inlined;
+        }
+
+        case JSSetIteratorKeyIntrinsic:
+        case JSMapIteratorKeyIntrinsic: {
+            ASSERT(argumentCountIncludingThis == 2);
+
+            insertChecks();
+            Node* mapIterator = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            UseKind useKind = intrinsic == JSMapIteratorKeyIntrinsic ? MapIteratorObjectUse : SetIteratorObjectUse;
+            Node* storage = addToGraph(MapIteratorKey, OpInfo(0), OpInfo(prediction), Edge(mapIterator, useKind));
+            setResult(storage);
+            return CallOptimizationResult::Inlined;
+        }
+
+        case JSMapIteratorValueIntrinsic: {
+            ASSERT(argumentCountIncludingThis == 2);
+
+            insertChecks();
+            Node* mapIterator = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            Node* storage = addToGraph(MapIteratorValue, OpInfo(0), OpInfo(prediction), Edge(mapIterator, MapIteratorObjectUse));
+            setResult(storage);
+            return CallOptimizationResult::Inlined;
+        }
+
+        case JSSetStorageIntrinsic:
+        case JSMapStorageIntrinsic: {
             ASSERT(argumentCountIncludingThis == 2);
 
             insertChecks();
             Node* map = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
-            UseKind useKind = intrinsic == JSSetBucketHeadIntrinsic ? SetObjectUse : MapObjectUse;
-            Node* resultNode = addToGraph(GetMapBucketHead, Edge(map, useKind));
-            setResult(resultNode);
-            return CallOptimizationResult::Inlined;
-        }
-
-        case JSSetBucketNextIntrinsic:
-        case JSMapBucketNextIntrinsic: {
-            ASSERT(argumentCountIncludingThis == 2);
-
-            insertChecks();
-            Node* bucket = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
-            BucketOwnerType type = intrinsic == JSSetBucketNextIntrinsic ? BucketOwnerType::Set : BucketOwnerType::Map;
-            Node* resultNode = addToGraph(GetMapBucketNext, OpInfo(type), bucket);
-            setResult(resultNode);
-            return CallOptimizationResult::Inlined;
-        }
-
-        case JSSetBucketKeyIntrinsic:
-        case JSMapBucketKeyIntrinsic: {
-            ASSERT(argumentCountIncludingThis == 2);
-
-            insertChecks();
-            Node* bucket = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
-            BucketOwnerType type = intrinsic == JSSetBucketKeyIntrinsic ? BucketOwnerType::Set : BucketOwnerType::Map;
-            Node* resultNode = addToGraph(LoadKeyFromMapBucket, OpInfo(type), OpInfo(prediction), bucket);
-            setResult(resultNode);
-            return CallOptimizationResult::Inlined;
-        }
-
-        case JSMapBucketValueIntrinsic: {
-            ASSERT(argumentCountIncludingThis == 2);
-
-            insertChecks();
-            Node* bucket = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
-            Node* resultNode = addToGraph(LoadValueFromMapBucket, OpInfo(BucketOwnerType::Map), OpInfo(prediction), bucket);
-            setResult(resultNode);
+            UseKind useKind = intrinsic == JSSetStorageIntrinsic ? SetObjectUse : MapObjectUse;
+            Node* storage = addToGraph(MapStorage, Edge(map, useKind));
+            setResult(storage);
             return CallOptimizationResult::Inlined;
         }
 

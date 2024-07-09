@@ -33,6 +33,7 @@
 #include "ScrollbarsControllerMock.h"
 
 #include "ScrollableArea.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

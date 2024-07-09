@@ -30,6 +30,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/Language.h>
+#import <wtf/text/MakeString.h>
 
 namespace WebKit {
 

@@ -897,7 +897,7 @@ void RenderThemeIOS::adjustButtonLikeControlStyle(RenderStyle& style, const Elem
         return;
 
     if (!style.hasAutoAccentColor()) {
-        auto tintColor = style.usedAccentColor();
+        auto tintColor = style.usedAccentColor(element.document().styleColorOptions(&style));
         if (isSubmitStyleButton(element))
             style.setBackgroundColor(tintColor);
         else
@@ -1234,7 +1234,7 @@ Color RenderThemeIOS::pictureFrameColor(const RenderObject& buttonRenderer)
 Color RenderThemeIOS::controlTintColor(const RenderStyle& style, OptionSet<StyleColorOptions> options) const
 {
     if (!style.hasAutoAccentColor())
-        return style.usedAccentColor();
+        return style.usedAccentColor(options);
 
     return systemColor(CSSValueAppleSystemBlue, options);
 }

@@ -48,31 +48,25 @@ static bool canDropAnonymousBlock(const RenderBlock& anonymousBlock)
     return true;
 }
 
-static bool canMergeContiguousAnonymousBlocks(RenderObject& oldChild, RenderObject* previous, RenderObject* next)
+static bool canMergeContiguousAnonymousBlocks(const RenderObject& rendererToBeRemoved, const RenderObject* previous, const RenderObject* next)
 {
-    ASSERT(!oldChild.renderTreeBeingDestroyed());
+    ASSERT(!rendererToBeRemoved.renderTreeBeingDestroyed());
 
-    if (oldChild.isInline())
+    if (rendererToBeRemoved.isInline())
         return false;
 
-    if (auto* boxModelObject = dynamicDowncast<RenderBoxModelObject>(oldChild); boxModelObject && boxModelObject->continuation())
+    if (previous && (!previous->isAnonymousBlock() || !canDropAnonymousBlock(downcast<RenderBlock>(*previous))))
         return false;
 
-    if (previous) {
-        if (!previous->isAnonymousBlock())
-            return false;
-        RenderBlock& previousAnonymousBlock = downcast<RenderBlock>(*previous);
-        if (!canDropAnonymousBlock(previousAnonymousBlock))
-            return false;
-    }
-    if (next) {
-        if (!next->isAnonymousBlock())
-            return false;
-        RenderBlock& nextAnonymousBlock = downcast<RenderBlock>(*next);
-        if (!canDropAnonymousBlock(nextAnonymousBlock))
-            return false;
-    }
-    return true;
+    if (next && (!next->isAnonymousBlock() || !canDropAnonymousBlock(downcast<RenderBlock>(*next))))
+        return false;
+
+    auto* boxToBeRemoved = dynamicDowncast<RenderBoxModelObject>(rendererToBeRemoved);
+    if (!boxToBeRemoved || !boxToBeRemoved->continuation())
+        return true;
+
+    // Let's merge pre and post anonymous block containers when the continuation triggering box (rendererToBeRemoved) is going away.
+    return previous && next;
 }
 
 static RenderBlock* continuationBefore(RenderBlock& parent, RenderObject* beforeChild)

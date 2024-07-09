@@ -92,6 +92,7 @@ public:
     ~Resolver();
 
     ResolvedStyle styleForElement(Element&, const ResolutionContext&, RuleMatchingBehavior = RuleMatchingBehavior::MatchAllRules);
+    ResolvedStyle styleForElementWithCachedMatchResult(Element&, const ResolutionContext&, const MatchResult&, const RenderStyle& existingRenderStyle);
 
     void keyframeStylesForAnimation(Element&, const RenderStyle& elementStyle, const ResolutionContext&, BlendingKeyframes&);
 
@@ -161,6 +162,7 @@ private:
 
     class State;
 
+    State initializeStateAndStyle(const Element&, const ResolutionContext&);
     BuilderContext builderContext(const State&);
 
     void applyMatchedProperties(State&, const MatchResult&);

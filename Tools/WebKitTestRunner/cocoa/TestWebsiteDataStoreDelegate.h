@@ -48,5 +48,4 @@
 - (NSString*)lastUpdatedBackgroundFetchIdentifier;
 - (NSArray*)reportedWindowProxyAccessDomains;
 - (void)clearReportedWindowProxyAccessDomains;
-- (NSData *)webCryptoMasterKey;
 @end

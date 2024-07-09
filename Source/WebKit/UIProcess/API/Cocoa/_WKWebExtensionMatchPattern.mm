@@ -293,11 +293,15 @@ static OptionSet<WebKit::WebExtensionMatchPattern::Options> toImpl(_WKWebExtensi
 
 - (instancetype)initWithString:(NSString *)string error:(NSError **)error
 {
+    if (error)
+        *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil];
     return nil;
 }
 
 - (instancetype)initWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path error:(NSError **)error
 {
+    if (error)
+        *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil];
     return nil;
 }
 

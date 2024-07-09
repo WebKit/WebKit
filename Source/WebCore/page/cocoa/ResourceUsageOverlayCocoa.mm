@@ -41,7 +41,8 @@
 #import <wtf/MathExtras.h>
 #import <wtf/MemoryFootprint.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
+#import <wtf/text/StringBuilder.h>
 
 using WebCore::ResourceUsageOverlay;
 
@@ -472,15 +473,16 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
         size_t dirty = category.dirtySize.last();
         size_t reclaimable = category.reclaimableSize.last();
         size_t external = category.externalSize.last();
-        
-        auto label = makeString(pad(' ', 11, category.name), ": "_s, formatByteNumber(dirty));
+
+        StringBuilder labelBuilder;
+        labelBuilder.append(pad(' ', 11, category.name), ": "_s, formatByteNumber(dirty));
         if (external)
-            label = label + makeString(" + "_s, formatByteNumber(external));
+            labelBuilder.append(" + "_s, formatByteNumber(external));
         if (reclaimable)
-            label = label + makeString(" ["_s, formatByteNumber(reclaimable), ']');
+            labelBuilder.append(" ["_s, formatByteNumber(reclaimable), ']');
 
         // FIXME: Show size/capacity of GC heap.
-        showText(context, 10, y, category.color.get(), label);
+        showText(context, 10, y, category.color.get(), labelBuilder.toString());
         y += 10;
     }
     y -= 5;

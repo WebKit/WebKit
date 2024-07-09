@@ -230,6 +230,50 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("MapBucketNextLoc");
         return;
 
+    case MapIteratorNextLoc:
+        out.print("MapIteratorNextLoc");
+        return;
+
+    case MapIteratorKeyLoc:
+        out.print("MapIteratorKeyLoc");
+        return;
+
+    case MapIteratorValueLoc:
+        out.print("MapIteratorValueLoc");
+        return;
+
+    case MapStorageLoc:
+        out.print("MapStorageLoc");
+        return;
+
+    case MapIterationNextLoc:
+        out.print("MapIterationNextLoc");
+        return;
+
+    case MapIterationEntryLoc:
+        out.print("MapIterationEntryLoc");
+        return;
+
+    case MapIterationEntryKeyLoc:
+        out.print("MapIterationEntryKeyLoc");
+        return;
+
+    case MapIterationEntryValueLoc:
+        out.print("MapIterationEntryValueLoc");
+        return;
+
+    case MapEntryKeyLoc:
+        out.print("MapEntryKeyLoc");
+        return;
+
+    case MapEntryValueLoc:
+        out.print("MapEntryValueLoc");
+        return;
+
+    case MapValueLoc:
+        out.print("MapValueLoc");
+        return;
+
     case WeakMapGetLoc:
         out.print("WeakMapGetLoc");
         return;

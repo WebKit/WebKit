@@ -59,7 +59,7 @@ bool ShapeValue::canBlend(const ShapeValue& to) const
     if (m_cssBox != to.cssBox())
         return false;
 
-    if (auto* toShape = to.shape())
+    if (RefPtr toShape = to.shape())
         return m_shape && m_shape->canBlend(*toShape);
 
     return false;

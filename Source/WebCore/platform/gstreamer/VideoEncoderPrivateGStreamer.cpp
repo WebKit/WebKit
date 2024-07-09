@@ -28,7 +28,7 @@
 #include "NotImplemented.h"
 #include <wtf/StdMap.h>
 #include <wtf/glib/WTFGType.h>
-#include <wtf/text/StringBuilder.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/StringView.h>
 
@@ -958,16 +958,15 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
                 return;
             setBitrateKbitPerSec(object, propertyName, bitrate);
             auto bitrateMode = GPOINTER_TO_INT(g_object_get_qdata(object, x265BitrateQuark));
-            StringBuilder builder;
+            String options;
             switch (bitrateMode) {
             case CONSTANT_BITRATE_MODE:
-                builder.append("vbv-maxrate="_s, bitrate, ":vbv-bufsize="_s, bitrate / 2);
+                options = makeString("vbv-maxrate="_s, bitrate, ":vbv-bufsize="_s, bitrate / 2);
                 break;
             case VARIABLE_BITRATE_MODE:
-                builder.append("vbv-maxrate=0:vbvbufsize=0"_s);
+                options = "vbv-maxrate=0:vbv-bufsize=0"_s;
                 break;
             };
-            auto options = builder.toString();
             g_object_set(object, "option-string", options.ascii().data(), nullptr);
         }, "key-int-max", [](GstElement* encoder, BitrateMode mode) {
             g_object_set_qdata(G_OBJECT(encoder), x265BitrateQuark, GINT_TO_POINTER(mode));

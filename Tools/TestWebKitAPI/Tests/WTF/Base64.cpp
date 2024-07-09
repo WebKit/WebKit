@@ -29,7 +29,96 @@
 
 namespace TestWebKitAPI {
 
+#define EXPECT_ENCODE(expected, input) EXPECT_STREQ(expected, base64EncodeToString(input, options).utf8().data())
 #define EXPECT_DECODE(expected, input) EXPECT_STREQ(expected, base64DecodeToString(input, options).utf8().data())
+
+TEST(Base64, Encode)
+{
+    static constexpr OptionSet<Base64EncodeOption> options;
+
+    EXPECT_ENCODE("", ""_s.span8());
+    EXPECT_ENCODE("Zg==", "f"_s.span8());
+    EXPECT_ENCODE("Zm8=", "fo"_s.span8());
+    EXPECT_ENCODE("Zm9v", "foo"_s.span8());
+    EXPECT_ENCODE("Zm9vYg==", "foob"_s.span8());
+    EXPECT_ENCODE("Zm9vYmE=", "fooba"_s.span8());
+    EXPECT_ENCODE("Zm9vYmFy", "foobar"_s.span8());
+
+    EXPECT_ENCODE("AA==", Vector<uint8_t>({ 0 }));
+    EXPECT_ENCODE("AQ==", Vector<uint8_t>({ 1 }));
+    EXPECT_ENCODE("gA==", Vector<uint8_t>({ 128 }));
+    EXPECT_ENCODE("/g==", Vector<uint8_t>({ 254 }));
+    EXPECT_ENCODE("/w==", Vector<uint8_t>({ 255 }));
+    EXPECT_ENCODE("AAE=", Vector<uint8_t>({ 0, 1 }));
+    EXPECT_ENCODE("/v8=", Vector<uint8_t>({ 254, 255 }));
+    EXPECT_ENCODE("AAGA/v8=", Vector<uint8_t>({ 0, 1, 128, 254, 255 }));
+}
+
+TEST(Base64, EncodeOmitPadding)
+{
+    static constexpr OptionSet<Base64EncodeOption> options = { Base64EncodeOption::OmitPadding };
+
+    EXPECT_ENCODE("", ""_s.span8());
+    EXPECT_ENCODE("Zg", "f"_s.span8());
+    EXPECT_ENCODE("Zm8", "fo"_s.span8());
+    EXPECT_ENCODE("Zm9v", "foo"_s.span8());
+    EXPECT_ENCODE("Zm9vYg", "foob"_s.span8());
+    EXPECT_ENCODE("Zm9vYmE", "fooba"_s.span8());
+    EXPECT_ENCODE("Zm9vYmFy", "foobar"_s.span8());
+
+    EXPECT_ENCODE("AA", Vector<uint8_t>({ 0 }));
+    EXPECT_ENCODE("AQ", Vector<uint8_t>({ 1 }));
+    EXPECT_ENCODE("gA", Vector<uint8_t>({ 128 }));
+    EXPECT_ENCODE("/g", Vector<uint8_t>({ 254 }));
+    EXPECT_ENCODE("/w", Vector<uint8_t>({ 255 }));
+    EXPECT_ENCODE("AAE", Vector<uint8_t>({ 0, 1 }));
+    EXPECT_ENCODE("/v8", Vector<uint8_t>({ 254, 255 }));
+    EXPECT_ENCODE("AAGA/v8", Vector<uint8_t>({ 0, 1, 128, 254, 255 }));
+}
+
+TEST(Base64, EncodeURL)
+{
+    static constexpr OptionSet<Base64EncodeOption> options = { Base64EncodeOption::URL };
+
+    EXPECT_ENCODE("", ""_s.span8());
+    EXPECT_ENCODE("Zg==", "f"_s.span8());
+    EXPECT_ENCODE("Zm8=", "fo"_s.span8());
+    EXPECT_ENCODE("Zm9v", "foo"_s.span8());
+    EXPECT_ENCODE("Zm9vYg==", "foob"_s.span8());
+    EXPECT_ENCODE("Zm9vYmE=", "fooba"_s.span8());
+    EXPECT_ENCODE("Zm9vYmFy", "foobar"_s.span8());
+
+    EXPECT_ENCODE("AA==", Vector<uint8_t>({ 0 }));
+    EXPECT_ENCODE("AQ==", Vector<uint8_t>({ 1 }));
+    EXPECT_ENCODE("gA==", Vector<uint8_t>({ 128 }));
+    EXPECT_ENCODE("_g==", Vector<uint8_t>({ 254 }));
+    EXPECT_ENCODE("_w==", Vector<uint8_t>({ 255 }));
+    EXPECT_ENCODE("AAE=", Vector<uint8_t>({ 0, 1 }));
+    EXPECT_ENCODE("_v8=", Vector<uint8_t>({ 254, 255 }));
+    EXPECT_ENCODE("AAGA_v8=", Vector<uint8_t>({ 0, 1, 128, 254, 255 }));
+}
+
+TEST(Base64, EncodeURLOmitPadding)
+{
+    static constexpr OptionSet<Base64EncodeOption> options = { Base64EncodeOption::URL, Base64EncodeOption::OmitPadding };
+
+    EXPECT_ENCODE("", ""_s.span8());
+    EXPECT_ENCODE("Zg", "f"_s.span8());
+    EXPECT_ENCODE("Zm8", "fo"_s.span8());
+    EXPECT_ENCODE("Zm9v", "foo"_s.span8());
+    EXPECT_ENCODE("Zm9vYg", "foob"_s.span8());
+    EXPECT_ENCODE("Zm9vYmE", "fooba"_s.span8());
+    EXPECT_ENCODE("Zm9vYmFy", "foobar"_s.span8());
+
+    EXPECT_ENCODE("AA", Vector<uint8_t>({ 0 }));
+    EXPECT_ENCODE("AQ", Vector<uint8_t>({ 1 }));
+    EXPECT_ENCODE("gA", Vector<uint8_t>({ 128 }));
+    EXPECT_ENCODE("_g", Vector<uint8_t>({ 254 }));
+    EXPECT_ENCODE("_w", Vector<uint8_t>({ 255 }));
+    EXPECT_ENCODE("AAE", Vector<uint8_t>({ 0, 1 }));
+    EXPECT_ENCODE("_v8", Vector<uint8_t>({ 254, 255 }));
+    EXPECT_ENCODE("AAGA_v8", Vector<uint8_t>({ 0, 1, 128, 254, 255 }));
+}
 
 TEST(Base64, Decode)
 {

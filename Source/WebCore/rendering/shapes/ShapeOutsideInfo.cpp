@@ -39,6 +39,7 @@
 #include "RenderFragmentContainer.h"
 #include "RenderImage.h"
 #include "RenderView.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

@@ -33,6 +33,7 @@
 #include "TrustedTypePolicyOptions.h"
 #include "WebCoreOpaqueRoot.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

@@ -1559,23 +1559,31 @@ static JSStringIterator::Field stringIteratorInternalFieldIndex(BytecodeIntrinsi
 static JSMapIterator::Field mapIteratorInternalFieldIndex(BytecodeIntrinsicNode* node)
 {
     ASSERT(node->entry().type() == BytecodeIntrinsicRegistry::Type::Emitter);
-    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_mapIteratorFieldMapBucket)
-        return JSMapIterator::Field::MapBucket;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_mapIteratorFieldEntry)
+        return JSMapIterator::Field::Entry;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_mapIteratorFieldIteratedObject)
+        return JSMapIterator::Field::IteratedObject;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_mapIteratorFieldStorage)
+        return JSMapIterator::Field::Storage;
     if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_mapIteratorFieldKind)
         return JSMapIterator::Field::Kind;
     RELEASE_ASSERT_NOT_REACHED();
-    return JSMapIterator::Field::MapBucket;
+    return JSMapIterator::Field::Entry;
 }
 
 static JSSetIterator::Field setIteratorInternalFieldIndex(BytecodeIntrinsicNode* node)
 {
     ASSERT(node->entry().type() == BytecodeIntrinsicRegistry::Type::Emitter);
-    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_setIteratorFieldSetBucket)
-        return JSSetIterator::Field::SetBucket;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_setIteratorFieldEntry)
+        return JSSetIterator::Field::Entry;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_setIteratorFieldIteratedObject)
+        return JSSetIterator::Field::IteratedObject;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_setIteratorFieldStorage)
+        return JSSetIterator::Field::Storage;
     if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_setIteratorFieldKind)
         return JSSetIterator::Field::Kind;
     RELEASE_ASSERT_NOT_REACHED();
-    return JSSetIterator::Field::SetBucket;
+    return JSSetIterator::Field::Entry;
 }
 
 static ProxyObject::Field proxyInternalFieldIndex(BytecodeIntrinsicNode* node)

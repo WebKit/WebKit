@@ -148,7 +148,7 @@ void WebContextMenuClient::handleTranslation(const TranslationContextMenuInfo& i
 
 #if ENABLE(WRITING_TOOLS)
 
-void WebContextMenuClient::handleWritingTools(IntRect selectionBoundsInRootView)
+void WebContextMenuClient::handleWritingToolsDeprecated(IntRect selectionBoundsInRootView)
 {
 }
 

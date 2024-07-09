@@ -76,6 +76,9 @@ void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
 #if USE(EXTENSIONKIT)
         contextOptions.useHostable = true;
 #endif
+#if PLATFORM(IOS_FAMILY)
+        contextOptions.canShowWhileLocked = m_configuration.canShowWhileLocked;
+#endif
         m_inlineLayerHostingContext = LayerHostingContext::createForExternalHostingProcess(contextOptions);
         if (m_configuration.videoLayerSize.isEmpty())
             m_configuration.videoLayerSize = enclosingIntRect(FloatRect(layer.frame)).size();

@@ -42,6 +42,7 @@
 #import "_WKWebExtensionStorageSQLiteStore.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/MakeString.h>
 
 namespace WebKit {
 

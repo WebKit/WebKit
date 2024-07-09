@@ -43,6 +43,7 @@
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjectIdentifier.h>
+#import <wtf/text/MakeString.h>
 
 namespace WebKit {
 

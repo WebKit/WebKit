@@ -38,6 +38,7 @@
 #include "Document.h"
 #include "PaintWorkletGlobalScope.h"
 #include "StylePropertyShorthand.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

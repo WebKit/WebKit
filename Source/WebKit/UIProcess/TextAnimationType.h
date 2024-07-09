@@ -37,7 +37,8 @@ enum class TextAnimationType : uint8_t {
 
 struct TextAnimationData {
     TextAnimationType style;
-    WTF::UUID remainingRangeUUID { WTF::UUID::emptyValue };
+    WTF::UUID unanimatedRangeUUID { WTF::UUID::emptyValue };
+
 };
 
 } // namespace WebKit

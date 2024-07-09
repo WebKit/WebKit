@@ -145,6 +145,7 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
@@ -1783,9 +1784,6 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     if (shouldPerformFragmentNavigation(isFormSubmission, httpMethod, policyChecker().loadType(), newURL)) {
 
-        if (!dispatchNavigateEvent(newURL, type, loader->triggeringAction(), NavigationHistoryBehavior::Auto, true, formState.get()))
-            return;
-
         RefPtr oldDocumentLoader = m_documentLoader;
         NavigationAction action { frame->protectedDocument().releaseNonNull(), loader->request(), InitiatedByMainFrame::Unknown, loader->isRequestFromClientOrUserInput(), policyChecker().loadType(), isFormSubmission };
         action.setNavigationAPIType(determineNavigationType(type, NavigationHistoryBehavior::Auto));
@@ -1800,12 +1798,6 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
             continueFragmentScrollAfterNavigationPolicy(request, requesterOrigin.get(), navigationPolicyDecision == NavigationPolicyDecision::ContinueLoad, NavigationHistoryBehavior::Auto);
         }, PolicyDecisionMode::Synchronous);
         return;
-    }
-
-    auto& action = loader->triggeringAction();
-    if (m_frame->document() && action.requester() && m_frame->document()->securityOrigin().isSameOriginDomain(action.requester()->securityOrigin)) {
-        if (!dispatchNavigateEvent(newURL, type, action, NavigationHistoryBehavior::Auto, false, formState.get()))
-            return;
     }
 
     if (RefPtr parent = dynamicDowncast<LocalFrame>(frame->tree().parent()))

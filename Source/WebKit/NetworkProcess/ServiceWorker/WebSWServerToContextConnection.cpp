@@ -61,11 +61,11 @@ WebSWServerToContextConnection::~WebSWServerToContextConnection()
 {
     auto fetches = WTFMove(m_ongoingFetches);
     for (auto& fetch : fetches.values())
-        fetch->contextClosed();
+        Ref { fetch.get() }->contextClosed();
 
     auto downloads = WTFMove(m_ongoingDownloads);
     for (auto& weakPtr : downloads.values()) {
-        if (auto download = weakPtr.get())
+        if (RefPtr download = weakPtr.get())
             download->contextClosed();
     }
 

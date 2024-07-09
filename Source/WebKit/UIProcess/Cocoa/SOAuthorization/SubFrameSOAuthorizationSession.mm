@@ -39,6 +39,7 @@
 #import <WebCore/ResourceResponse.h>
 #import <wtf/RunLoop.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/MakeString.h>
 
 namespace WebKit {
 using namespace WebCore;

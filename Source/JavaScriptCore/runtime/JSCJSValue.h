@@ -140,6 +140,7 @@ extern JS_EXPORT_PRIVATE const ASCIILiteral SymbolCoercionError;
 extern JS_EXPORT_PRIVATE std::atomic<unsigned> activeJSGlobalObjectSignpostIntervalCount;
 
 class JSValue {
+    friend struct OrderedHashTableTraits;
     friend struct EncodedJSValueHashTraits;
     friend struct EncodedJSValueWithRepresentationHashTraits;
     friend class AssemblyHelpers;
@@ -543,6 +544,43 @@ private:
 
     EncodedValueDescriptor u;
 };
+
+#if USE(JSVALUE32_64)
+struct OrderedHashTableTraits {
+    ALWAYS_INLINE static void set(JSValue* value, uint32_t number)
+    {
+        value->u.asBits.tag = JSValue::Int32Tag;
+        value->u.asBits.payload = number;
+    }
+    ALWAYS_INLINE static void increment(JSValue* value)
+    {
+        ASSERT(value->isInt32());
+        value->u.asBits.payload++;
+    }
+    ALWAYS_INLINE static void decrement(JSValue* value)
+    {
+        ASSERT(value->isInt32());
+        value->u.asBits.payload--;
+    }
+};
+#else
+struct OrderedHashTableTraits {
+    ALWAYS_INLINE static void set(JSValue* value, uint32_t number)
+    {
+        value->u.asInt64 = JSValue::NumberTag | number;
+    }
+    ALWAYS_INLINE static void increment(JSValue* value)
+    {
+        ASSERT(value->isInt32());
+        value->u.asInt64++;
+    }
+    ALWAYS_INLINE static void decrement(JSValue* value)
+    {
+        ASSERT(value->isInt32());
+        value->u.asInt64--;
+    }
+};
+#endif
 
 typedef IntHash<EncodedJSValue> EncodedJSValueHash;
 

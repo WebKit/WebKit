@@ -28,7 +28,7 @@
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/UUID.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebDriver {
 

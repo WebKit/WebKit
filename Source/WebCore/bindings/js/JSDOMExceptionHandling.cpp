@@ -34,6 +34,7 @@
 #include <JavaScriptCore/ExceptionHelpers.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 using namespace JSC;

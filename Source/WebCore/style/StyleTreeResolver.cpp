@@ -134,7 +134,7 @@ void TreeResolver::popScope()
     return m_scopeStack.removeLast();
 }
 
-ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, ResolutionType resolutionType, const ResolutionContext& resolutionContext)
+ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, ResolutionType resolutionType, const ResolutionContext& resolutionContext, const RenderStyle* existingStyle)
 {
     if (resolutionType == ResolutionType::AnimationOnly && styleable.lastStyleChangeEventStyle() && !styleable.hasPropertiesOverridenAfterAnimation())
         return { RenderStyle::clonePtr(*styleable.lastStyleChangeEventStyle()) };
@@ -153,7 +153,7 @@ ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, Resolu
 
     if (resolutionType == ResolutionType::FastPathInherit) {
         // If the only reason we are computing the style is that some parent inherited properties changed, we can just copy them.
-        auto style = RenderStyle::clonePtr(*existingStyle(element));
+        auto style = RenderStyle::clonePtr(*existingStyle);
         style->fastPathInheritFrom(parent().style);
         return { WTFMove(style) };
     }
@@ -161,10 +161,17 @@ ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, Resolu
     if (auto style = scope().sharingResolver.resolve(styleable, *m_update))
         return { WTFMove(style) };
 
+    if (resolutionType == ResolutionType::FullWithMatchResultCache) {
+        if (auto cachedMatchResult = m_document.styleScope().cachedMatchResult(element))
+            return scope().resolver->styleForElementWithCachedMatchResult(element, resolutionContext, *cachedMatchResult, *existingStyle);
+    }
+
     auto elementStyle = scope().resolver->styleForElement(element, resolutionContext);
 
     if (elementStyle.relations)
         commitRelations(WTFMove(elementStyle.relations), *m_update);
+
+    m_document.styleScope().updateCachedMatchResult(element, *elementStyle.matchResult);
 
     return elementStyle;
 }
@@ -263,7 +270,7 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     auto resolutionContext = makeResolutionContext();
 
     Styleable styleable { element, { } };
-    auto resolvedStyle = styleForStyleable(styleable, resolutionType, resolutionContext);
+    auto resolvedStyle = styleForStyleable(styleable, resolutionType, resolutionContext, existingStyle);
     auto update = createAnimatedElementUpdate(WTFMove(resolvedStyle), styleable, parent().change, resolutionContext);
 
     if (!affectsRenderedSubtree(element, *update.style)) {
@@ -919,6 +926,8 @@ auto TreeResolver::determineResolutionType(const Element& element, const RenderS
             return ResolutionType::AnimationOnly;
         if (combinedValidity == Validity::Valid && element.hasInvalidRenderer())
             return existingStyle ? ResolutionType::RebuildUsingExisting : ResolutionType::Full;
+        if (combinedValidity == Validity::InlineStyleInvalid && existingStyle)
+            return ResolutionType::FullWithMatchResultCache;
     }
 
     if (combinedValidity > Validity::Valid)
@@ -1060,7 +1069,7 @@ void TreeResolver::resolveComposedTree()
         if (resolutionType) {
             element.resetComputedStyle();
 
-            if (*resolutionType != ResolutionType::AnimationOnly)
+            if (*resolutionType == ResolutionType::Full)
                 element.resetStyleRelations();
 
             if (element.hasCustomStyleResolveCallbacks())

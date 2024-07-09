@@ -199,8 +199,12 @@ static int add_bio_cert_subjects_to_stack(STACK_OF(X509_NAME) *out, BIO *bio,
   return 1;
 }
 
+int SSL_add_bio_cert_subjects_to_stack(STACK_OF(X509_NAME) *out, BIO *bio) {
+  return add_bio_cert_subjects_to_stack(out, bio, /*allow_empty=*/true);
+}
+
 STACK_OF(X509_NAME) *SSL_load_client_CA_file(const char *file) {
-  bssl::UniquePtr<BIO> in(BIO_new_file(file, "r"));
+  bssl::UniquePtr<BIO> in(BIO_new_file(file, "rb"));
   if (in == nullptr) {
     return nullptr;
   }
@@ -215,15 +219,11 @@ STACK_OF(X509_NAME) *SSL_load_client_CA_file(const char *file) {
 
 int SSL_add_file_cert_subjects_to_stack(STACK_OF(X509_NAME) *out,
                                         const char *file) {
-  bssl::UniquePtr<BIO> in(BIO_new_file(file, "r"));
+  bssl::UniquePtr<BIO> in(BIO_new_file(file, "rb"));
   if (in == nullptr) {
     return 0;
   }
   return SSL_add_bio_cert_subjects_to_stack(out, in.get());
-}
-
-int SSL_add_bio_cert_subjects_to_stack(STACK_OF(X509_NAME) *out, BIO *bio) {
-  return add_bio_cert_subjects_to_stack(out, bio, /*allow_empty=*/true);
 }
 
 int SSL_use_certificate_file(SSL *ssl, const char *file, int type) {

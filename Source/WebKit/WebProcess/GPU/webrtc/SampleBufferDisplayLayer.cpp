@@ -60,7 +60,7 @@ SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerManag
 
 void SampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, bool shouldMaintainAspectRatio, CompletionHandler<void(bool)>&& callback)
 {
-    m_connection->sendWithAsyncReply(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { identifier(), hideRootLayer, size, shouldMaintainAspectRatio }, [this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto contextId) mutable {
+    m_connection->sendWithAsyncReply(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { identifier(), hideRootLayer, size, shouldMaintainAspectRatio, canShowWhileLocked() }, [this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto contextId) mutable {
         if (!weakThis)
             return callback(false);
         m_hostingContextID = contextId;
@@ -158,16 +158,15 @@ PlatformLayer* SampleBufferDisplayLayer::rootLayer()
 void SampleBufferDisplayLayer::setDidFail(bool value)
 {
     m_didFail = value;
-    if (m_client && m_didFail)
-        m_client->sampleBufferDisplayLayerStatusDidFail();
+    RefPtr client = m_client.get();
+    if (client && m_didFail)
+        client->sampleBufferDisplayLayerStatusDidFail();
 }
 
 void SampleBufferDisplayLayer::gpuProcessConnectionDidClose(GPUProcessConnection&)
 {
     m_sharedVideoFrameWriter.disable();
-    m_didFail = true;
-    if (m_client)
-        m_client->sampleBufferDisplayLayerStatusDidFail();
+    setDidFail(true);
 }
 
 void SampleBufferDisplayLayer::setShouldMaintainAspectRatio(bool shouldMaintainAspectRatio)

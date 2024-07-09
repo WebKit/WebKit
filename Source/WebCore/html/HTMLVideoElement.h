@@ -129,6 +129,9 @@ public:
     bool isGStreamerHolePunchingEnabled() const final { return m_enableGStreamerHolePunching; }
 #endif
 
+    // ActiveDOMObject
+    void stop() final;
+
 private:
     HTMLVideoElement(const QualifiedName&, Document&, bool createdByParser);
 
@@ -157,6 +160,9 @@ private:
     void mediaPlayerEngineUpdated() final;
 
     void computeAcceleratedRenderingStateAndUpdateMediaPlayer() final;
+#if PLATFORM(IOS_FAMILY)
+    bool canShowWhileLocked() const final;
+#endif
 
     std::unique_ptr<HTMLImageLoader> m_imageLoader;
 

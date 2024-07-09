@@ -18,13 +18,10 @@
 #include <string.h>
 
 #include "internal.h"
-#include "../internal.h"
 
 
-// kMaxDepth is a just a sanity limit. The code should be such that the length
-// of the input being processes always decreases. None the less, a very large
-// input could otherwise cause the stack to overflow.
-static const uint32_t kMaxDepth = 2048;
+// kMaxDepth limits the recursion depth to avoid overflowing the stack.
+static const uint32_t kMaxDepth = 128;
 
 // is_string_type returns one if |tag| is a string type and zero otherwise. It
 // ignores the constructed bit.
@@ -56,13 +53,11 @@ static int is_string_type(CBS_ASN1_TAG tag) {
 // found. The value of |orig_in| is not changed. It returns one on success (i.e.
 // |*ber_found| was set) and zero on error.
 static int cbs_find_ber(const CBS *orig_in, int *ber_found, uint32_t depth) {
-  CBS in;
-
   if (depth > kMaxDepth) {
     return 0;
   }
 
-  CBS_init(&in, CBS_data(orig_in), CBS_len(orig_in));
+  CBS in = *orig_in;
   *ber_found = 0;
 
   while (CBS_len(&in) > 0) {
@@ -86,6 +81,10 @@ static int cbs_find_ber(const CBS *orig_in, int *ber_found, uint32_t depth) {
       if (!CBS_skip(&contents, header_len) ||
           !cbs_find_ber(&contents, ber_found, depth + 1)) {
         return 0;
+      }
+      if (*ber_found) {
+        // We already found BER. No need to continue parsing.
+        return 1;
       }
     }
   }

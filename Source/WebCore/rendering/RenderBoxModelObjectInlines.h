@@ -88,6 +88,16 @@ inline RectEdges<LayoutUnit> RenderBoxModelObject::borderWidths() const
     };
 }
 
+RectEdges<LayoutUnit> RenderBoxModelObject::padding() const
+{
+    return {
+        computedCSSPaddingTop(),
+        computedCSSPaddingRight(),
+        computedCSSPaddingBottom(),
+        computedCSSPaddingLeft()
+    };
+}
+
 inline LayoutUnit RenderBoxModelObject::resolveLengthPercentageUsingContainerLogicalWidth(const Length& value) const
 {
     LayoutUnit containerWidth;

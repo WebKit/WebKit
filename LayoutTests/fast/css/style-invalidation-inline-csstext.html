@@ -14,7 +14,7 @@ function testInvalidation(cssText, shouldInvalidate, name)
 
         testDiv.style.cssText = cssText;
 
-        assert_equals(internals.styleChangeType(testDiv), shouldInvalidate ? "InlineStyleChange" : "NoStyleChange");
+        assert_equals(internals.styleChangeType(testDiv), shouldInvalidate ? "InlineStyleInvalid" : "NoStyleChange");
         assert_equals(internals.styleChangeType(testDivChild), "NoStyleChange");
     }, name);
 }

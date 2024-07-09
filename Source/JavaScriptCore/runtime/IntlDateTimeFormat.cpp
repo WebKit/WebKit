@@ -37,6 +37,7 @@
 #include <unicode/ucal.h>
 #include <unicode/uenum.h>
 #include <wtf/Range.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/icu/ICUHelpers.h>

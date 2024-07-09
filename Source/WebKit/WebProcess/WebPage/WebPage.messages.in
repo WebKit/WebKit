@@ -811,4 +811,10 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     LoadAndDecodeImage(WebCore::ResourceRequest request, std::optional<WebCore::FloatSize> sizeConstraint, size_t maximumBytesFromNetwork) -> (std::variant<WebCore::ResourceError, Ref<WebCore::ShareableBitmap>> result)
 
     FrameNameWasChangedInAnotherProcess(WebCore::FrameIdentifier frameID, String frameName)
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    StartPlayingPredominantVideo() -> (bool success)
+#endif
+
+    CloseCurrentTypingCommand()
 }

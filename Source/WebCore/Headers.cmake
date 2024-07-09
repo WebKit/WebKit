@@ -1800,6 +1800,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/SleepDisabler.h
     platform/SleepDisablerClient.h
     platform/SleepDisablerIdentifier.h
+    platform/StyleAppearance.h
     platform/SuddenTermination.h
     platform/Supplementable.h
     platform/SystemSoundDelegate.h
@@ -2502,7 +2503,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/AnchorPositionEvaluator.h
     style/PseudoElementIdentifier.h
     style/ScopedName.h
-    style/StyleAppearance.h
     style/StyleChange.h
     style/StyleScope.h
     style/StyleScopeOrdinal.h

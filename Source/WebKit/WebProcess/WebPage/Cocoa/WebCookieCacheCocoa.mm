@@ -29,6 +29,7 @@
 #import "NetworkProcessConnection.h"
 #import "WebProcess.h"
 #import <WebCore/NetworkStorageSession.h>
+#import <wtf/text/MakeString.h>
 
 namespace WebKit {
 

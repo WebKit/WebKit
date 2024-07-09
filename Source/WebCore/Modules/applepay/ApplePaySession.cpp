@@ -66,6 +66,7 @@
 #include "UserGestureIndicator.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/RunLoop.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
 #include <wtf/DateMath.h>

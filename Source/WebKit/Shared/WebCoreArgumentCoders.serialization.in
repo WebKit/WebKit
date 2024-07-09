@@ -5325,6 +5325,7 @@ class WebCore::RealtimeMediaSourceSupportedConstraints {
     bool supportsZoom();
     bool supportsTorch();
     bool supportsBackgroundBlur();
+    bool supportsPowerEfficient();
 };
 
 [Nested] enum class WebCore::RealtimeMediaSource::Type : bool;
@@ -5371,6 +5372,7 @@ class WebCore::RealtimeMediaSourceSettings {
     double zoom();
     bool torch();
     bool backgroundBlur();
+    bool powerEfficient();
     WebCore::RealtimeMediaSourceSupportedConstraints supportedConstraints();
 };
 
@@ -5436,6 +5438,7 @@ class WebCore::RealtimeMediaSourceCapabilities {
     WebCore::DoubleCapabilityRange zoom();
     bool torch();
     WebCore::RealtimeMediaSourceCapabilities::BackgroundBlur backgroundBlur();
+    bool powerEfficient();
     WebCore::RealtimeMediaSourceSupportedConstraints supportedConstraints();
 };
 

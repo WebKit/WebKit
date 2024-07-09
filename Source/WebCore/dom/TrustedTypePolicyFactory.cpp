@@ -39,6 +39,7 @@
 #include "TrustedTypePolicyOptions.h"
 #include "XLinkNames.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

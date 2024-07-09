@@ -27,6 +27,7 @@
 #include "IDBTransactionInfo.h"
 
 #include "IDBTransaction.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

@@ -64,7 +64,7 @@ class ScriptExecutionContext;
 class StyleProperties;
 class StyleRuleFontFace;
 
-enum class ExternalResourceDownloadPolicy;
+enum class ExternalResourceDownloadPolicy : bool;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSFontFace);
 class CSSFontFace final : public RefCounted<CSSFontFace> {

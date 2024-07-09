@@ -28,6 +28,7 @@
 #include "JSGlobalObjectInlines.h"
 #include "JSString.h"
 #include "KeyAtomStringCacheInlines.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

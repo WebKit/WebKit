@@ -53,6 +53,7 @@
 #include <wtf/GraphNodeWorklist.h>
 #include <wtf/SimpleStats.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 namespace JITInternal {

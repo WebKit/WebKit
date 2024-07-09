@@ -61,6 +61,7 @@
 #include "SubresourceLoader.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
 #include "UserContentController.h"

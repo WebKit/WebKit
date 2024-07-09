@@ -31,9 +31,9 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
-#include <wtf/text/StringBuilder.h>
-
 #include <utility>
+#include <wtf/text/MakeString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

@@ -605,9 +605,8 @@ static void addTextMarkerForVisiblePosition(NSMutableDictionary *change, AXObjec
 
 static void addFirstTextMarker(NSMutableDictionary *change, AXObjectCache& cache, AccessibilityObject& object)
 {
-    TextMarkerData textMarkerData { cache.treeID(), object.objectID(), nullptr, 0 };
-    auto rawTextMarkerData = textMarkerData.toRawTextMarkerData();
-    auto textMarkerDataRef = adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&rawTextMarkerData, sizeof(rawTextMarkerData)));
+    TextMarkerData textMarkerData { cache.treeID(), object.objectID(), 0 };
+    auto textMarkerDataRef = adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData)));
     [change setObject:bridge_id_cast(textMarkerDataRef.get()) forKey:NSAccessibilityTextChangeValueStartMarker];
 }
 
@@ -859,13 +858,13 @@ static TextMarkerData getBytesFromAXTextMarker(AXTextMarkerRef textMarker)
     if (CFGetTypeID(textMarker) != AXTextMarkerGetTypeID())
         return { };
 
-    RawTextMarkerData rawTextMarkerData;
-    ASSERT(AXTextMarkerGetLength(textMarker) == sizeof(rawTextMarkerData));
-    if (AXTextMarkerGetLength(textMarker) != sizeof(rawTextMarkerData))
+    TextMarkerData textMarkerData;
+    ASSERT(AXTextMarkerGetLength(textMarker) == sizeof(textMarkerData));
+    if (AXTextMarkerGetLength(textMarker) != sizeof(textMarkerData))
         return { };
 
-    memcpy(&rawTextMarkerData, AXTextMarkerGetBytePtr(textMarker), sizeof(rawTextMarkerData));
-    return rawTextMarkerData.toTextMarkerData();
+    memcpy(&textMarkerData, AXTextMarkerGetBytePtr(textMarker), sizeof(textMarkerData));
+    return textMarkerData;
 }
 
 AccessibilityObject* accessibilityObjectForTextMarker(AXObjectCache* cache, AXTextMarkerRef textMarker)
@@ -875,7 +874,7 @@ AccessibilityObject* accessibilityObjectForTextMarker(AXObjectCache* cache, AXTe
         return nullptr;
 
     auto textMarkerData = getBytesFromAXTextMarker(textMarker);
-    return cache->accessibilityObjectForTextMarkerData(textMarkerData);
+    return cache->objectForTextMarkerData(textMarkerData);
 }
 
 // TextMarker <-> VisiblePosition conversion.
@@ -889,9 +888,7 @@ AXTextMarkerRef textMarkerForVisiblePosition(AXObjectCache* cache, const Visible
     auto textMarkerData = cache->textMarkerDataForVisiblePosition(visiblePos);
     if (!textMarkerData)
         return nil;
-
-    auto rawTextMarkerData = textMarkerData->toRawTextMarkerData();
-    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&rawTextMarkerData, sizeof(rawTextMarkerData))).autorelease();
+    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&(*textMarkerData), sizeof(*textMarkerData))).autorelease();
 }
 
 VisiblePosition visiblePositionForTextMarker(AXObjectCache* cache, AXTextMarkerRef textMarker)
@@ -939,8 +936,7 @@ AXTextMarkerRef textMarkerForCharacterOffset(AXObjectCache* cache, const Charact
     auto textMarkerData = cache->textMarkerDataForCharacterOffset(characterOffset);
     if (!textMarkerData.objectID || textMarkerData.ignored)
         return nil;
-    auto rawTextMarkerData = textMarkerData.toRawTextMarkerData();
-    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&rawTextMarkerData, sizeof(rawTextMarkerData))).autorelease();
+    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData))).autorelease();
 }
 
 CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, AXTextMarkerRef textMarker)
@@ -964,8 +960,7 @@ AXTextMarkerRef startOrEndTextMarkerForRange(AXObjectCache* cache, const std::op
     auto textMarkerData = cache->startOrEndTextMarkerDataForRange(*range, isStart);
     if (!textMarkerData.objectID)
         return nil;
-    auto rawTextMarkerData = textMarkerData.toRawTextMarkerData();
-    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&rawTextMarkerData, sizeof(rawTextMarkerData))).autorelease();
+    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData))).autorelease();
 }
 
 AXTextMarkerRangeRef textMarkerRangeFromRange(AXObjectCache* cache, const std::optional<SimpleRange>& range)

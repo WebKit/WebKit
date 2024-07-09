@@ -44,7 +44,6 @@
 #include "StyleSheetContents.h"
 #include "css/CSSSelectorList.h"
 #include <wtf/CryptographicallyRandomNumber.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 namespace Style {

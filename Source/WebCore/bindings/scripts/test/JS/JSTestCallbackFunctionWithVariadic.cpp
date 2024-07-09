@@ -32,7 +32,7 @@ using namespace JSC;
 
 JSTestCallbackFunctionWithVariadic::JSTestCallbackFunctionWithVariadic(JSObject* callback, JSDOMGlobalObject* globalObject)
     : TestCallbackFunctionWithVariadic(globalObject->scriptExecutionContext())
-    , m_data(new JSCallbackDataStrong(callback, globalObject, this))
+    , m_data(new JSCallbackDataWeak(callback, globalObject, this))
 {
 }
 
@@ -82,6 +82,16 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunction
     if (UNLIKELY(returnValue.hasException(throwScope)))
         return CallbackResultType::ExceptionThrown;
     return { returnValue.releaseReturnValue() };
+}
+
+void JSTestCallbackFunctionWithVariadic::visitJSFunction(JSC::AbstractSlotVisitor& visitor)
+{
+    m_data->visitJSFunction(visitor);
+}
+
+void JSTestCallbackFunctionWithVariadic::visitJSFunction(JSC::SlotVisitor& visitor)
+{
+    m_data->visitJSFunction(visitor);
 }
 
 JSC::JSValue toJS(TestCallbackFunctionWithVariadic& impl)

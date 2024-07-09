@@ -40,6 +40,7 @@
 #include "Quad.h"
 #include "StylePropertiesInlines.h"
 #include "StylePropertyShorthand.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

@@ -63,15 +63,39 @@ namespace WebCore {
 // NSColor, NSBezierPath, and NSGraphicsContext calls do not raise exceptions
 // so we don't block exceptions.
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/GraphicsContextCocoaAdditions.mm>
-#else
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-ImageDrawResult GraphicsContext::drawMultiRepresentationHEIC(Image&, const Font&, const FloatRect&, ImagePaintingOptions)
+
+ImageDrawResult GraphicsContext::drawMultiRepresentationHEIC(Image& image, const Font& font, const FloatRect& destination, ImagePaintingOptions options)
 {
-    return ImageDrawResult::DidNothing;
+    RetainPtr multiRepresentationHEIC = image.adapter().multiRepresentationHEIC();
+    if (!multiRepresentationHEIC)
+        return ImageDrawResult::DidNothing;
+
+    RefPtr imageBuffer = createScaledImageBuffer(destination.size(), scaleFactor(), DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated, RenderingMethod::Local);
+    if (!imageBuffer)
+        return ImageDrawResult::DidNothing;
+
+    CGContextRef cgContext = imageBuffer->context().platformContext();
+
+    CGContextScaleCTM(cgContext, 1, -1);
+    CGContextTranslateCTM(cgContext, 0, -destination.height());
+
+    // FIXME (rdar://123044459): This needs to account for vertical writing modes.
+    CGContextSetTextPosition(cgContext, 0, font.metricsForMultiRepresentationHEIC().descent);
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    CTFontDrawImageFromEmojiImageProviderAtPoint(font.getCTFont(), multiRepresentationHEIC.get(), CGContextGetTextPosition(cgContext), cgContext);
+ALLOW_DEPRECATED_DECLARATIONS_END
+
+    auto orientation = options.orientation();
+    if (orientation == ImageOrientation::Orientation::FromImage)
+        orientation = image.orientation();
+
+    drawImageBuffer(*imageBuffer, destination, { options, orientation });
+
+    return ImageDrawResult::DidDraw;
 }
-#endif
+
 #endif
 
 void GraphicsContextCG::drawFocusRing(const Path& path, float, const Color& color)

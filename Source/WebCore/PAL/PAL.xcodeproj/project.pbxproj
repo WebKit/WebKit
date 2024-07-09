@@ -290,6 +290,7 @@
 		E34F26F62846D0D90076E549 /* PowerLogSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E34F26F52846B7550076E549 /* PowerLogSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E57B44B529AB45F4006069DE /* VisionSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = E57B44B329AB45F4006069DE /* VisionSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E57B44B729AB462E006069DE /* VisionSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = E57B44B429AB45F4006069DE /* VisionSoftLink.mm */; };
+		E5C5B20B2C379AA000838733 /* UIFoundationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E5C5B20A2C379AA000838733 /* UIFoundationSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EB3FE8E12A5DB94A00A20986 /* SQLite3SPI.h in Headers */ = {isa = PBXBuildFile; fileRef = EB3FE8E02A5DB94A00A20986 /* SQLite3SPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EBC13F3C2BD07DA500310E86 /* MobileKeyBagSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = EBC13F3B2BD07DA500310E86 /* MobileKeyBagSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F410F1552ACA2EBA00A79859 /* LinkPresentationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F410F1542ACA2EBA00A79859 /* LinkPresentationSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -696,6 +697,7 @@
 		E34F26F52846B7550076E549 /* PowerLogSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PowerLogSPI.h; sourceTree = "<group>"; };
 		E57B44B329AB45F4006069DE /* VisionSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisionSoftLink.h; sourceTree = "<group>"; };
 		E57B44B429AB45F4006069DE /* VisionSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = VisionSoftLink.mm; sourceTree = "<group>"; };
+		E5C5B20A2C379AA000838733 /* UIFoundationSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIFoundationSPI.h; sourceTree = "<group>"; };
 		E5D45D112106A07400D2B738 /* NSColorWellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSColorWellSPI.h; sourceTree = "<group>"; };
 		E5D45D132106A18700D2B738 /* NSPopoverColorWellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSPopoverColorWellSPI.h; sourceTree = "<group>"; };
 		EB3FE8E02A5DB94A00A20986 /* SQLite3SPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLite3SPI.h; sourceTree = "<group>"; };
@@ -865,6 +867,7 @@
 				EB3FE8E02A5DB94A00A20986 /* SQLite3SPI.h */,
 				4996C0F22717642B002C125D /* TCCSPI.h */,
 				F44C007D29A06BC200211F33 /* TranslationUIServicesSPI.h */,
+				E5C5B20A2C379AA000838733 /* UIFoundationSPI.h */,
 				0C2DA12B1F3BEB4900DBC317 /* URLFormattingSPI.h */,
 				F46B8C4E26740AD8007A6554 /* VisionKitCoreSPI.h */,
 				0C2DA13D1F3BEB4900DBC317 /* WebFilterEvaluatorSPI.h */,
@@ -1532,6 +1535,7 @@
 				DD20DE6427BC90D80093D175 /* ThreadGlobalData.h in Headers */,
 				F44C007B29A06B1C00211F33 /* TranslationUIServicesSoftLink.h in Headers */,
 				F44C007E29A06BC200211F33 /* TranslationUIServicesSPI.h in Headers */,
+				E5C5B20B2C379AA000838733 /* UIFoundationSPI.h in Headers */,
 				DD20DDC427BC90D70093D175 /* UIKitSoftLink.h in Headers */,
 				DD20DE1B27BC90D80093D175 /* UIKitSPI.h in Headers */,
 				DD20DE5D27BC90D80093D175 /* UnencodableHandling.h in Headers */,

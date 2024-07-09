@@ -325,6 +325,10 @@ public:
     virtual const void* mediaPlayerLogIdentifier() { return nullptr; }
     virtual const Logger& mediaPlayerLogger() = 0;
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+    virtual bool canShowWhileLocked() const { return false; }
+#endif
 };
 
 class WEBCORE_EXPORT MediaPlayer : public MediaPlayerEnums, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaPlayer, WTF::DestructionThread::Main> {
@@ -771,6 +775,10 @@ public:
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     bool supportsLinearMediaPlayer() const;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    bool canShowWhileLocked() const;
 #endif
 
 private:

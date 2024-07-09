@@ -44,6 +44,7 @@
 #include <WebCore/UserAgent.h>
 #include <WebCore/VisiblePosition.h>
 #include <WebCore/VisibleUnits.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(2022_GLIB_API)
 #include "WebKitWebProcessExtension.h"
@@ -148,7 +149,7 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
         auto compositionRange = frame.editor().compositionRange();
         if (surroundingRange && compositionRange && contains<ComposedTree>(*surroundingRange, *compositionRange)) {
             auto beforeText = plainText({ surroundingRange->start, compositionRange->start });
-            postLayoutData.surroundingContext = beforeText + plainText({ compositionRange->end, surroundingRange->end });
+            postLayoutData.surroundingContext = makeString(beforeText, plainText({ compositionRange->end, surroundingRange->end }));
             postLayoutData.surroundingContextCursorPosition = beforeText.length();
             postLayoutData.surroundingContextSelectionPosition = postLayoutData.surroundingContextCursorPosition;
         } else {

@@ -41,8 +41,13 @@ SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTableBlock)
 SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTable)
 SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTab)
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/UIFoundationSoftLinkAdditions.h>
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+
+SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSAdaptiveImageGlyph)
+
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, UIFoundation, NSAdaptiveImageGlyphAttributeName, NSString *)
+#define NSAdaptiveImageGlyphAttributeName WebCore::get_UIFoundation_NSAdaptiveImageGlyphAttributeName()
+
 #endif
 
 #endif

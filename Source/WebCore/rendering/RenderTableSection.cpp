@@ -1498,11 +1498,8 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
             // table-specific hit-test method (which we should do for performance reasons anyway),
             // then we can remove this check.
             if (!row->hasSelfPaintingLayer()) {
-                LayoutPoint childPoint = flipForWritingModeForChild(*row, adjustedLocation);
-                if (row->nodeAtPoint(request, result, locationInContainer, childPoint, action)) {
-                    updateHitTestResult(result, toLayoutPoint(locationInContainer.point() - childPoint));
+                if (row->nodeAtPoint(request, result, locationInContainer, adjustedLocation, action))
                     return true;
-                }
             }
         }
         return false;

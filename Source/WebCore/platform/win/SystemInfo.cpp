@@ -27,7 +27,7 @@
 #include "SystemInfo.h"
 
 #include <windows.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -163,7 +163,7 @@ static String architectureTokenForUAString()
 
 String windowsVersionForUAString()
 {
-    return osVersionForUAString() + architectureTokenForUAString();
+    return makeString(osVersionForUAString(), architectureTokenForUAString());
 }
 
 } // namespace WebCore

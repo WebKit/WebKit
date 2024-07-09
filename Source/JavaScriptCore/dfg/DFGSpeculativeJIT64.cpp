@@ -37,6 +37,8 @@
 #include "DFGSlowPathGenerator.h"
 #include "DateInstance.h"
 #include "HasOwnPropertyCache.h"
+#include "JSMap.h"
+#include "JSSet.h"
 #include "MegamorphicCache.h"
 #include "SetupVarargsFrame.h"
 #include "SpillRegistersMode.h"
@@ -2464,6 +2466,223 @@ void SpeculativeJIT::emitBranch(Node* node)
     default:
         DFG_CRASH(m_graph, m_currentNode, "Bad use kind");
     }
+}
+
+template<typename MapOrSet>
+void SpeculativeJIT::compileGetMapIndexImpl(Node* node)
+{
+    constexpr bool isMapObjectUse = std::is_same<MapOrSet, JSMap>::value;
+
+    SpeculateCellOperand map(this, node->child1());
+    JSValueOperand key(this, node->child2(), ManualOperandSpeculation);
+    SpeculateInt32Operand hash(this, node->child3());
+
+    GPRTemporary mapStorageOrData(this);
+    GPRTemporary bucketIndexOrDeletedValue(this);
+    GPRTemporary bucketCount(this);
+
+    JSValueRegsTemporary entryKeyIndex(this);
+    JSValueRegsTemporary entryKey(this);
+
+    GPRReg mapGPR = map.gpr();
+    GPRReg keyGPR = key.gpr();
+    GPRReg hashGPR = hash.gpr();
+
+    GPRReg mapStorageOrDataGPR = mapStorageOrData.gpr();
+    GPRReg bucketIndexOrDeletedValueGPR = bucketIndexOrDeletedValue.gpr();
+    GPRReg bucketCountGPR = bucketCount.gpr();
+
+    JSValueRegs entryKeyIndexRegs = entryKeyIndex.regs();
+    GPRReg entryKeyIndexGPR = entryKeyIndexRegs.payloadGPR();
+    JSValueRegs entryKeyRegs = entryKey.regs();
+    GPRReg entryKeyGPR = entryKeyRegs.payloadGPR();
+
+    if constexpr (isMapObjectUse)
+        speculateMapObject(node->child1(), mapGPR);
+    else
+        speculateSetObject(node->child1(), mapGPR);
+
+    if (node->child2().useKind() != UntypedUse)
+        speculate(node, node->child2());
+
+    JumpList notPresentInTable;
+    JIT_COMMENT(*this, "Get the JSImmutableButterfly first.");
+    loadPtr(Address(mapGPR, MapOrSet::offsetOfButterfly()), mapStorageOrDataGPR);
+    notPresentInTable.append(branchTestPtr(Zero, mapStorageOrDataGPR));
+
+    JIT_COMMENT(*this, "Compute the bucketCount = Capacity / LoadFactor and bucketIndex = hashTableStartIndex + (hash & bucketCount - 1).");
+    addPtr(TrustedImm32(JSImmutableButterfly::offsetOfData()), mapStorageOrDataGPR);
+    static_assert(MapOrSet::Helper::LoadFactor == 1);
+    load32(Address(mapStorageOrDataGPR, MapOrSet::Helper::capacityIndex() * sizeof(uint64_t)), bucketCountGPR);
+    sub32(bucketCountGPR, TrustedImm32(1), bucketIndexOrDeletedValueGPR);
+    and32(hashGPR, bucketIndexOrDeletedValueGPR);
+    add32(TrustedImm32(MapOrSet::Helper::hashTableStartIndex()), bucketIndexOrDeletedValueGPR);
+
+    JIT_COMMENT(*this, "Get the entryKeyIndex JSValue.");
+    loadValue(BaseIndex(mapStorageOrDataGPR, bucketIndexOrDeletedValueGPR, TimesEight), entryKeyIndexRegs);
+    loadLinkableConstant(LinkableConstant(*this, vm().orderedHashTableDeletedValue()), bucketIndexOrDeletedValueGPR);
+
+    JIT_COMMENT(*this, "Try to find the matched entryKey in the chain located in the bucketIndex.");
+    Label loop = label();
+    JumpList done;
+    JumpList slowPathCases;
+    JumpList loopAround;
+    notPresentInTable.append(branchIfEmpty(entryKeyIndexRegs));
+
+    JIT_COMMENT(*this, "Get the entryKey JSValue.");
+    zeroExtend32ToWord(entryKeyIndexGPR, entryKeyIndexGPR);
+    loadValue(BaseIndex(mapStorageOrDataGPR, entryKeyIndexGPR, TimesEight), entryKeyRegs);
+
+    JIT_COMMENT(*this, "Check wether the current entryKey is a deleted one.");
+    loopAround.append(branch64(Equal, entryKeyGPR, bucketIndexOrDeletedValueGPR));
+
+    JIT_COMMENT(*this, "Now the current entryKey is not a deleted value. Then check whether it matches the target key.");
+    switch (node->child2().useKind()) {
+    case BooleanUse:
+#if USE(BIGINT32)
+    case BigInt32Use:
+#endif
+    case Int32Use:
+    case SymbolUse:
+    case ObjectUse: {
+        done.append(branch64(Equal, entryKeyGPR, keyGPR));
+        break;
+    }
+    case CellUse: {
+        // Currently, Cell covers Object, String, Symbol, HeapBigInt, CellOther. See the definition of `SpecCell`.
+        // Since CellOther should not be used in JSMap/JSSet, here we don't check CellOther.
+
+        // This check covers the case whether the target key and entryKey are the equivalent Cells, Objects or Symbols.
+        done.append(branch64(Equal, entryKeyGPR, keyGPR));
+        loopAround.append(branchIfNotCell(entryKeyRegs));
+
+        // The following checks cover String and HeapBigInt.
+        // if (entryKey.isString()) {
+        //     if (key.isString())
+        //         => slow path
+        //     continue;
+        // } else if (entryKey.isHeapBigInt()) {
+        //     if (key.isHeapBigInt())
+        //         => slow path
+        //     continue;
+        // } else
+        //     continue; <-- This is the case for the unmatched pairs in the type set {Object, Symbol}.
+        auto entryKeyIsString = branchIfString(entryKeyGPR);
+        loopAround.append(branchIfNotHeapBigInt(entryKeyGPR));
+
+        // entryKey is HeapBigInt.
+        slowPathCases.append(branchIfHeapBigInt(keyGPR));
+        loopAround.append(jump());
+
+        // entryKey is String.
+        entryKeyIsString.link(this);
+        loopAround.append(branchIfNotString(keyGPR));
+        slowPathCases.append(jump());
+        break;
+    }
+    case StringUse: {
+        done.append(branch64(Equal, entryKeyGPR, keyGPR));
+        loopAround.append(branchIfNotCell(entryKeyRegs));
+
+        // entryKey is Cell here.
+        loopAround.append(branchIfNotString(entryKeyGPR));
+        slowPathCases.append(jump());
+        break;
+    }
+    case HeapBigIntUse: {
+        done.append(branch64(Equal, entryKeyGPR, keyGPR));
+        loopAround.append(branchIfNotCell(entryKeyRegs));
+
+        // entryKey is Cell here.
+        loopAround.append(branchIfNotHeapBigInt(entryKeyGPR));
+        slowPathCases.append(jump());
+        break;
+    }
+    case UntypedUse: {
+        done.append(branch64(Equal, entryKeyGPR, keyGPR));
+        // The input key and entryKey are already normalized. So if 64-bit compare fails
+        // and one is not a cell, they're definitely not equal.
+        loopAround.append(branchIfNotCell(entryKeyRegs));
+
+        // entryKey is Cell here.
+        loopAround.append(branchIfNotCell(key.jsValueRegs()));
+        // Both are Cell here.
+        auto bucketIsString = branchIfString(entryKeyGPR);
+        // entryKey is not String here.
+        loopAround.append(branchIfNotHeapBigInt(entryKeyGPR));
+        // entryKey is HeapBigInt here.
+        slowPathCases.append(branchIfHeapBigInt(keyGPR));
+        loopAround.append(jump());
+        // entryKey is String here.
+        bucketIsString.link(this);
+        loopAround.append(branchIfNotString(keyGPR));
+        slowPathCases.append(jump());
+        break;
+    }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    JIT_COMMENT(*this, "The current entryKey doesn't match the target key. Then, get the next entry in the chain and continue.");
+    loopAround.link(this);
+    add32(TrustedImm32(MapOrSet::Helper::ChainOffset), entryKeyIndexGPR);
+    loadValue(BaseIndex(mapStorageOrDataGPR, entryKeyIndexGPR, TimesEight), entryKeyIndexRegs);
+    jump().linkTo(loop, this);
+
+    if (!slowPathCases.empty()) {
+        JIT_COMMENT(*this, "The slow path should call the operation.");
+        slowPathCases.link(this);
+        auto operation = std::is_same<MapOrSet, JSMap>::value ? operationMapKeyIndex : operationSetKeyIndex;
+        callOperationWithSilentSpill(operation, entryKeyIndexGPR, LinkableConstant::globalObject(*this, node), mapGPR, keyGPR, hashGPR);
+        done.append(jump());
+    }
+
+    JIT_COMMENT(*this, "Didn't find a matched entryKey.");
+    notPresentInTable.link(this);
+    move(TrustedImm32(JSMap::Helper::InvalidTableIndex), entryKeyIndexGPR);
+
+    JIT_COMMENT(*this, "Done, either found or not found.");
+    done.link(this);
+    strictInt32Result(entryKeyIndexGPR, node);
+}
+
+void SpeculativeJIT::compileMapKeyIndex(Node* node)
+{
+    if (node->child1().useKind() == MapObjectUse)
+        compileGetMapIndexImpl<JSMap>(node);
+    else if (node->child1().useKind() == SetObjectUse)
+        compileGetMapIndexImpl<JSSet>(node);
+    else
+        RELEASE_ASSERT_NOT_REACHED();
+}
+
+void SpeculativeJIT::compileMapValue(Node* node)
+{
+    SpeculateCellOperand map(this, node->child1());
+    SpeculateInt32Operand keyIndex(this, node->child2());
+    GPRTemporary mapStorage(this);
+    JSValueRegsTemporary result(this);
+
+    GPRReg mapGPR = map.gpr();
+    GPRReg keyIndexGPR = keyIndex.gpr();
+    GPRReg mapStorageGPR = mapStorage.gpr();
+    JSValueRegs resultRegs = result.regs();
+
+    speculateMapObject(node->child1(), mapGPR);
+
+    Jump notPresentInTable = branch32(Equal, keyIndexGPR, TrustedImm32(JSMap::Helper::InvalidTableIndex));
+
+    loadPtr(Address(mapGPR, JSMap::offsetOfButterfly()), mapStorageGPR);
+    addPtr(TrustedImm32(JSImmutableButterfly::offsetOfData()), mapStorageGPR);
+    add32(TrustedImm32(1), keyIndexGPR);
+    loadValue(BaseIndex(mapStorageGPR, keyIndexGPR, TimesEight), resultRegs);
+    Jump done = jump();
+
+    notPresentInTable.link(this);
+    moveValue(jsUndefined(), resultRegs);
+
+    done.link(this);
+    jsValueResult(resultRegs, node);
 }
 
 void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix)
@@ -5208,175 +5427,45 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case GetMapBucket: {
-        SpeculateCellOperand map(this, node->child1());
-        JSValueOperand key(this, node->child2(), ManualOperandSpeculation);
-        SpeculateInt32Operand hash(this, node->child3());
-        GPRTemporary mask(this);
-        GPRTemporary index(this);
-        GPRTemporary buffer(this);
-        GPRTemporary bucket(this);
-        GPRTemporary result(this);
+    case MapKeyIndex:
+        compileMapKeyIndex(node);
+        break;
 
-        GPRReg hashGPR = hash.gpr();
-        GPRReg mapGPR = map.gpr();
-        GPRReg maskGPR = mask.gpr();
-        GPRReg indexGPR = index.gpr();
-        GPRReg bufferGPR = buffer.gpr();
-        GPRReg bucketGPR = bucket.gpr();
-        GPRReg keyGPR = key.gpr();
-        GPRReg resultGPR = result.gpr();
-
-        if (node->child1().useKind() == MapObjectUse)
-            speculateMapObject(node->child1(), mapGPR);
-        else if (node->child1().useKind() == SetObjectUse)
-            speculateSetObject(node->child1(), mapGPR);
-        else
-            RELEASE_ASSERT_NOT_REACHED();
-
-        if (node->child2().useKind() != UntypedUse)
-            speculate(node, node->child2());
-
-        JumpList notPresentInTable;
-
-        loadPtr(Address(mapGPR, HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfBuffer()), bufferGPR);
-        notPresentInTable.append(branchTestPtr(Zero, bufferGPR));
-        load32(Address(mapGPR, HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfCapacity()), maskGPR);
-        sub32(TrustedImm32(1), maskGPR);
-        move(hashGPR, indexGPR);
-
-        Label loop = label();
-        JumpList done;
-        JumpList slowPathCases;
-        JumpList loopAround;
-
-        and32(maskGPR, indexGPR);
-        loadPtr(BaseIndex(bufferGPR, indexGPR, TimesEight), bucketGPR);
-        move(bucketGPR, resultGPR);
-
-        notPresentInTable.append(branchPtr(Equal,
-            bucketGPR, TrustedImmPtr(bitwise_cast<size_t>(HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::emptyValue()))));
-        loopAround.append(branchPtr(Equal,
-            bucketGPR, TrustedImmPtr(bitwise_cast<size_t>(HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::deletedValue()))));
-
-        load64(Address(bucketGPR, HashMapBucket<HashMapBucketDataKey>::offsetOfKey()), bucketGPR);
-
-        // Perform Object.is()
-        switch (node->child2().useKind()) {
-        case BooleanUse:
-#if USE(BIGINT32)
-        case BigInt32Use:
-#endif
-        case Int32Use:
-        case SymbolUse:
-        case ObjectUse: {
-            done.append(branch64(Equal, bucketGPR, keyGPR)); // They're definitely the same value, we found the bucket we were looking for!
-            // Otherwise, loop around.
-            break;
-        }
-        case CellUse: {
-            // if (bucket.isString()) {
-            //     if (key.isString())
-            //         => slow path
-            // } else if (bucket.isHeapBigInt()) {
-            //     if (key.isHeapBigInt())
-            //         => slow path
-            // }
-            done.append(branch64(Equal, bucketGPR, keyGPR));
-            loopAround.append(branchIfNotCell(JSValueRegs(bucketGPR)));
-
-            auto bucketIsString = branchIfString(bucketGPR);
-            loopAround.append(branchIfNotHeapBigInt(bucketGPR));
-
-            // bucket is HeapBigInt.
-            slowPathCases.append(branchIfHeapBigInt(keyGPR));
-            loopAround.append(jump());
-
-            // bucket is String.
-            bucketIsString.link(this);
-            loopAround.append(branchIfNotString(keyGPR));
-            slowPathCases.append(jump());
-            break;
-        }
-        case StringUse: {
-            done.append(branch64(Equal, bucketGPR, keyGPR)); // They're definitely the same value, we found the bucket we were looking for!
-            loopAround.append(branchIfNotCell(JSValueRegs(bucketGPR)));
-            loopAround.append(branchIfNotString(bucketGPR));
-            slowPathCases.append(jump());
-            break;
-        }
-        case HeapBigIntUse: {
-            done.append(branch64(Equal, bucketGPR, keyGPR)); // They're definitely the same value, we found the bucket we were looking for!
-            loopAround.append(branchIfNotCell(JSValueRegs(bucketGPR)));
-            loopAround.append(branchIfNotHeapBigInt(bucketGPR));
-            slowPathCases.append(jump());
-            break;
-        }
-        case UntypedUse: { 
-            done.append(branch64(Equal, bucketGPR, keyGPR)); // They're definitely the same value, we found the bucket we were looking for!
-            // The input key and bucket's key are already normalized. So if 64-bit compare fails and one is not a cell, they're definitely not equal.
-            loopAround.append(branchIfNotCell(JSValueRegs(bucketGPR)));
-            // first is a cell here.
-            loopAround.append(branchIfNotCell(JSValueRegs(keyGPR)));
-            // Both are cells here.
-            auto bucketIsString = branchIfString(bucketGPR);
-            // bucket is not String.
-            loopAround.append(branchIfNotHeapBigInt(bucketGPR));
-            // bucket is HeapBigInt.
-            slowPathCases.append(branchIfHeapBigInt(keyGPR));
-            loopAround.append(jump());
-            // bucket is String.
-            bucketIsString.link(this);
-            loopAround.append(branchIfNotString(keyGPR));
-            slowPathCases.append(jump());
-            break;
-        }
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-
-            
-        if (!loopAround.empty())
-            loopAround.link(this);
-
-        add32(TrustedImm32(1), indexGPR);
-        jump().linkTo(loop, this);
-
-        if (!slowPathCases.empty()) {
-            slowPathCases.link(this);
-            // TODO: Why is indexGPR saved ???
-            // silentSpillAllRegisters(indexGPR);
-            if (node->child1().useKind() == MapObjectUse)
-                callOperationWithSilentSpill(operationJSMapFindBucket, resultGPR, LinkableConstant::globalObject(*this, node), mapGPR, keyGPR, hashGPR);
-            else
-                callOperationWithSilentSpill(operationJSSetFindBucket, resultGPR, LinkableConstant::globalObject(*this, node), mapGPR, keyGPR, hashGPR);
-            done.append(jump());
-        }
-
-        notPresentInTable.link(this);
-        if (node->child1().useKind() == MapObjectUse)
-            loadLinkableConstant(LinkableConstant(*this, vm().sentinelMapBucket()), resultGPR);
-        else
-            loadLinkableConstant(LinkableConstant(*this, vm().sentinelSetBucket()), resultGPR);
-        done.link(this);
-        cellResult(resultGPR, node);
+    case MapValue: {
+        compileMapValue(node);
         break;
     }
 
-    case GetMapBucketHead:
-        compileGetMapBucketHead(node);
+    case MapStorage:
+        compileMapStorage(node);
         break;
 
-    case GetMapBucketNext:
-        compileGetMapBucketNext(node);
+    case MapIteratorNext:
+        compileMapIteratorNext(node);
         break;
 
-    case LoadKeyFromMapBucket:
-        compileLoadKeyFromMapBucket(node);
+    case MapIteratorKey:
+        compileMapIteratorKey(node);
         break;
 
-    case LoadValueFromMapBucket:
-        compileLoadValueFromMapBucket(node);
+    case MapIteratorValue:
+        compileMapIteratorValue(node);
+        break;
+
+    case MapIterationNext:
+        compileMapIterationNext(node);
+        break;
+
+    case MapIterationEntry:
+        compileMapIterationEntry(node);
+        break;
+
+    case MapIterationEntryKey:
+        compileMapIterationEntryKey(node);
+        break;
+
+    case MapIterationEntryValue:
+        compileMapIterationEntryValue(node);
         break;
 
     case ExtractValueFromWeakMapGet:

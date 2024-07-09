@@ -50,6 +50,7 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/WTFGType.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
 
 #if USE(GSTREAMER_MPEGTS)
@@ -971,6 +972,44 @@ GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads)
     return bin;
 }
 
+#if USE(GSTREAMER_WEBRTC)
+static ASCIILiteral webrtcStatsTypeName(int value)
+{
+    switch (value) {
+    case GST_WEBRTC_STATS_CODEC:
+        return "codec"_s;
+    case GST_WEBRTC_STATS_INBOUND_RTP:
+        return "inbound-rtp"_s;
+    case GST_WEBRTC_STATS_OUTBOUND_RTP:
+        return "outbound-rtp"_s;
+    case GST_WEBRTC_STATS_REMOTE_INBOUND_RTP:
+        return "remote-inbound-rtp"_s;
+    case GST_WEBRTC_STATS_REMOTE_OUTBOUND_RTP:
+        return "remote-outbound-rtp"_s;
+    case GST_WEBRTC_STATS_CSRC:
+        return "csrc"_s;
+    case GST_WEBRTC_STATS_PEER_CONNECTION:
+        return "peer-connection"_s;
+    case GST_WEBRTC_STATS_TRANSPORT:
+        return "transport"_s;
+    case GST_WEBRTC_STATS_STREAM:
+        return "stream"_s;
+    case GST_WEBRTC_STATS_DATA_CHANNEL:
+        return "data-channel"_s;
+    case GST_WEBRTC_STATS_LOCAL_CANDIDATE:
+        return "local-candidate"_s;
+    case GST_WEBRTC_STATS_REMOTE_CANDIDATE:
+        return "remote-candidate"_s;
+    case GST_WEBRTC_STATS_CANDIDATE_PAIR:
+        return "candidate-pair"_s;
+    case GST_WEBRTC_STATS_CERTIFICATE:
+        return "certificate"_s;
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+#endif
+
 static RefPtr<JSON::Value> gstStructureToJSON(const GstStructure*);
 
 static std::optional<RefPtr<JSON::Value>> gstStructureValueToJSON(const GValue* value)
@@ -1004,7 +1043,7 @@ static std::optional<RefPtr<JSON::Value>> gstStructureValueToJSON(const GValue* 
         return JSON::Value::create(g_value_get_int(value))->asValue();
 
     if (valueType == G_TYPE_UINT)
-        return JSON::Value::create(static_cast<int>(g_value_get_uint(value)))->asValue();
+        return JSON::Value::create(static_cast<double>(g_value_get_uint(value)))->asValue();
 
     if (valueType == G_TYPE_DOUBLE)
         return JSON::Value::create(g_value_get_double(value))->asValue();
@@ -1029,8 +1068,9 @@ static std::optional<RefPtr<JSON::Value>> gstStructureValueToJSON(const GValue* 
 
 #if USE(GSTREAMER_WEBRTC)
     if (valueType == GST_TYPE_WEBRTC_STATS_TYPE) {
-        GUniquePtr<char> statsType(g_enum_to_string(GST_TYPE_WEBRTC_STATS_TYPE, g_value_get_enum(value)));
-        return JSON::Value::create(makeString(span(statsType.get())))->asValue();
+        auto name = webrtcStatsTypeName(g_value_get_enum(value));
+        if (LIKELY(name.isEmpty()))
+            return JSON::Value::create(makeString(name))->asValue();
     }
 #endif
 

@@ -1,0 +1,5 @@
+{
+    "import_plan_file": "motionmark1.3.plan",
+    "output_file": "motionmark1.3-15fps.result",
+    "extra_patches": ["data/patches/extra/MotionMark1.3-15FPS.patch"]
+}

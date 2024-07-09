@@ -20,58 +20,13 @@
 
 #include <openssl/bytestring.h>
 #include <openssl/ctrdrbg.h>
-#include <openssl/kyber.h>
+#include <openssl/experimental/kyber.h>
 
 #include "../test/file_test.h"
 #include "../test/test_util.h"
+#include "../keccak/internal.h"
 #include "./internal.h"
 
-
-static void KeccakFileTest(FileTest *t) {
-  std::vector<uint8_t> input, sha3_256_expected, sha3_512_expected,
-      shake128_expected, shake256_expected;
-  ASSERT_TRUE(t->GetBytes(&input, "Input"));
-  ASSERT_TRUE(t->GetBytes(&sha3_256_expected, "SHA3-256"));
-  ASSERT_TRUE(t->GetBytes(&sha3_512_expected, "SHA3-512"));
-  ASSERT_TRUE(t->GetBytes(&shake128_expected, "SHAKE-128"));
-  ASSERT_TRUE(t->GetBytes(&shake256_expected, "SHAKE-256"));
-
-  uint8_t sha3_256_digest[32];
-  BORINGSSL_keccak(sha3_256_digest, sizeof(sha3_256_digest), input.data(),
-                   input.size(), boringssl_sha3_256);
-  uint8_t sha3_512_digest[64];
-  BORINGSSL_keccak(sha3_512_digest, sizeof(sha3_512_digest), input.data(),
-                   input.size(), boringssl_sha3_512);
-  uint8_t shake128_output[512];
-  BORINGSSL_keccak(shake128_output, sizeof(shake128_output), input.data(),
-                   input.size(), boringssl_shake128);
-  uint8_t shake256_output[512];
-  BORINGSSL_keccak(shake256_output, sizeof(shake256_output), input.data(),
-                   input.size(), boringssl_shake256);
-
-  EXPECT_EQ(Bytes(sha3_256_expected), Bytes(sha3_256_digest));
-  EXPECT_EQ(Bytes(sha3_512_expected), Bytes(sha3_512_digest));
-  EXPECT_EQ(Bytes(shake128_expected), Bytes(shake128_output));
-  EXPECT_EQ(Bytes(shake256_expected), Bytes(shake256_output));
-
-  struct BORINGSSL_keccak_st ctx;
-
-  BORINGSSL_keccak_init(&ctx, input.data(), input.size(), boringssl_shake128);
-  for (size_t i = 0; i < sizeof(shake128_output); i++) {
-    BORINGSSL_keccak_squeeze(&ctx, &shake128_output[i], 1);
-  }
-  EXPECT_EQ(Bytes(shake128_expected), Bytes(shake128_output));
-
-  BORINGSSL_keccak_init(&ctx, input.data(), input.size(), boringssl_shake256);
-  for (size_t i = 0; i < sizeof(shake256_output); i++) {
-    BORINGSSL_keccak_squeeze(&ctx, &shake256_output[i], 1);
-  }
-  EXPECT_EQ(Bytes(shake256_expected), Bytes(shake256_output));
-}
-
-TEST(KyberTest, KeccakTestVectors) {
-  FileTestGTest("crypto/kyber/keccak_tests.txt", KeccakFileTest);
-}
 
 template <typename T>
 static std::vector<uint8_t> Marshal(int (*marshal_func)(CBB *, const T *),
@@ -91,9 +46,12 @@ static std::vector<uint8_t> Marshal(int (*marshal_func)(CBB *, const T *),
 }
 
 TEST(KyberTest, Basic) {
+  // This function makes several Kyber keys, which runs up against stack limits.
+  // Heap-allocate them instead.
+
   uint8_t encoded_public_key[KYBER_PUBLIC_KEY_BYTES];
-  KYBER_private_key priv;
-  KYBER_generate_key(encoded_public_key, &priv);
+  auto priv = std::make_unique<KYBER_private_key>();
+  KYBER_generate_key(encoded_public_key, priv.get());
 
   uint8_t first_two_bytes[2];
   OPENSSL_memcpy(first_two_bytes, encoded_public_key, sizeof(first_two_bytes));
@@ -101,26 +59,26 @@ TEST(KyberTest, Basic) {
   CBS encoded_public_key_cbs;
   CBS_init(&encoded_public_key_cbs, encoded_public_key,
            sizeof(encoded_public_key));
-  KYBER_public_key pub;
+  auto pub = std::make_unique<KYBER_public_key>();
   // Parsing should fail because the first coefficient is >= kPrime;
-  ASSERT_FALSE(KYBER_parse_public_key(&pub, &encoded_public_key_cbs));
+  ASSERT_FALSE(KYBER_parse_public_key(pub.get(), &encoded_public_key_cbs));
 
   OPENSSL_memcpy(encoded_public_key, first_two_bytes, sizeof(first_two_bytes));
   CBS_init(&encoded_public_key_cbs, encoded_public_key,
            sizeof(encoded_public_key));
-  ASSERT_TRUE(KYBER_parse_public_key(&pub, &encoded_public_key_cbs));
+  ASSERT_TRUE(KYBER_parse_public_key(pub.get(), &encoded_public_key_cbs));
   EXPECT_EQ(CBS_len(&encoded_public_key_cbs), 0u);
 
   EXPECT_EQ(Bytes(encoded_public_key),
-            Bytes(Marshal(KYBER_marshal_public_key, &pub)));
+            Bytes(Marshal(KYBER_marshal_public_key, pub.get())));
 
-  KYBER_public_key pub2;
-  KYBER_public_from_private(&pub2, &priv);
+  auto pub2 = std::make_unique<KYBER_public_key>();
+  KYBER_public_from_private(pub2.get(), priv.get());
   EXPECT_EQ(Bytes(encoded_public_key),
-            Bytes(Marshal(KYBER_marshal_public_key, &pub2)));
+            Bytes(Marshal(KYBER_marshal_public_key, pub2.get())));
 
   std::vector<uint8_t> encoded_private_key(
-      Marshal(KYBER_marshal_private_key, &priv));
+      Marshal(KYBER_marshal_private_key, priv.get()));
   EXPECT_EQ(encoded_private_key.size(), size_t{KYBER_PRIVATE_KEY_BYTES});
 
   OPENSSL_memcpy(first_two_bytes, encoded_private_key.data(),
@@ -128,24 +86,24 @@ TEST(KyberTest, Basic) {
   OPENSSL_memset(encoded_private_key.data(), 0xff, sizeof(first_two_bytes));
   CBS cbs;
   CBS_init(&cbs, encoded_private_key.data(), encoded_private_key.size());
-  KYBER_private_key priv2;
+  auto priv2 = std::make_unique<KYBER_private_key>();
   // Parsing should fail because the first coefficient is >= kPrime.
-  ASSERT_FALSE(KYBER_parse_private_key(&priv2, &cbs));
+  ASSERT_FALSE(KYBER_parse_private_key(priv2.get(), &cbs));
 
   OPENSSL_memcpy(encoded_private_key.data(), first_two_bytes,
                  sizeof(first_two_bytes));
   CBS_init(&cbs, encoded_private_key.data(), encoded_private_key.size());
-  ASSERT_TRUE(KYBER_parse_private_key(&priv2, &cbs));
+  ASSERT_TRUE(KYBER_parse_private_key(priv2.get(), &cbs));
   EXPECT_EQ(Bytes(encoded_private_key),
-            Bytes(Marshal(KYBER_marshal_private_key, &priv2)));
+            Bytes(Marshal(KYBER_marshal_private_key, priv2.get())));
 
   uint8_t ciphertext[KYBER_CIPHERTEXT_BYTES];
-  uint8_t shared_secret1[64];
-  uint8_t shared_secret2[sizeof(shared_secret1)];
-  KYBER_encap(ciphertext, shared_secret1, sizeof(shared_secret1), &pub);
-  KYBER_decap(shared_secret2, sizeof(shared_secret2), ciphertext, &priv);
+  uint8_t shared_secret1[KYBER_SHARED_SECRET_BYTES];
+  uint8_t shared_secret2[KYBER_SHARED_SECRET_BYTES];
+  KYBER_encap(ciphertext, shared_secret1, pub.get());
+  KYBER_decap(shared_secret2, ciphertext, priv.get());
   EXPECT_EQ(Bytes(shared_secret1), Bytes(shared_secret2));
-  KYBER_decap(shared_secret2, sizeof(shared_secret2), ciphertext, &priv2);
+  KYBER_decap(shared_secret2, ciphertext, priv2.get());
   EXPECT_EQ(Bytes(shared_secret1), Bytes(shared_secret2));
 }
 
@@ -170,8 +128,8 @@ static void KyberFileTest(FileTest *t) {
   uint8_t ciphertext[KYBER_CIPHERTEXT_BYTES];
   uint8_t gen_key_entropy[KYBER_GENERATE_KEY_ENTROPY];
   uint8_t encap_entropy[KYBER_ENCAP_ENTROPY];
-  uint8_t encapsulated_key[32];
-  uint8_t decapsulated_key[32];
+  uint8_t encapsulated_key[KYBER_SHARED_SECRET_BYTES];
+  uint8_t decapsulated_key[KYBER_SHARED_SECRET_BYTES];
   // The test vectors provide a CTR-DRBG seed which is used to generate the
   // input entropy.
   ASSERT_EQ(seed.size(), size_t{CTR_DRBG_ENTROPY_LEN});
@@ -202,9 +160,9 @@ static void KyberFileTest(FileTest *t) {
   CBS_init(&encoded_public_key_cbs, encoded_public_key,
            sizeof(encoded_public_key));
   ASSERT_TRUE(KYBER_parse_public_key(&pub, &encoded_public_key_cbs));
-  KYBER_encap_external_entropy(ciphertext, encapsulated_key,
-                               sizeof(encapsulated_key), &pub, encap_entropy);
-  KYBER_decap(decapsulated_key, sizeof(decapsulated_key), ciphertext, &priv);
+  KYBER_encap_external_entropy(ciphertext, encapsulated_key, &pub,
+                               encap_entropy);
+  KYBER_decap(decapsulated_key, ciphertext, &priv);
 
   EXPECT_EQ(Bytes(encapsulated_key), Bytes(decapsulated_key));
   EXPECT_EQ(Bytes(private_key_expected), Bytes(encoded_private_key));
@@ -215,9 +173,8 @@ static void KyberFileTest(FileTest *t) {
   uint8_t corrupted_ciphertext[KYBER_CIPHERTEXT_BYTES];
   OPENSSL_memcpy(corrupted_ciphertext, ciphertext, KYBER_CIPHERTEXT_BYTES);
   corrupted_ciphertext[3] ^= 0x40;
-  uint8_t corrupted_decapsulated_key[32];
-  KYBER_decap(corrupted_decapsulated_key, sizeof(corrupted_decapsulated_key),
-              corrupted_ciphertext, &priv);
+  uint8_t corrupted_decapsulated_key[KYBER_SHARED_SECRET_BYTES];
+  KYBER_decap(corrupted_decapsulated_key, corrupted_ciphertext, &priv);
   // It would be nice to have actual test vectors for the failure case, but the
   // NIST submission currently does not include those, so we are just testing
   // for inequality.

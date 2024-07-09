@@ -63,7 +63,7 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    virtual void handleWritingTools(IntRect selectionBoundsInRootView) = 0;
+    virtual void handleWritingToolsDeprecated(IntRect selectionBoundsInRootView) = 0;
 #endif
 
 #if PLATFORM(GTK)

@@ -28,6 +28,7 @@
 
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 class MoveOnly {
 public:
@@ -97,6 +98,25 @@ template<> struct DefaultHash<MoveOnly> {
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
     static constexpr bool hasHashInValue = true; // This is not correct, but for debugging of RobinHoodHashSet.
 };
+
+template<> class StringTypeAdapter<MoveOnly, void> {
+public:
+    StringTypeAdapter(const MoveOnly& moveOnly)
+        : m_moveOnly { moveOnly }
+    {
+    }
+
+    unsigned length() const { return StringTypeAdapter<unsigned>(m_moveOnly.value()).length(); }
+    bool is8Bit() const { return StringTypeAdapter<unsigned>(m_moveOnly.value()).is8Bit(); }
+    template<typename CharacterType> void writeTo(CharacterType* destination) const
+    {
+        StringTypeAdapter<unsigned>(m_moveOnly.value()).writeTo(destination);
+    }
+
+private:
+    const MoveOnly& m_moveOnly;
+};
+
 } // namespace WTF
 
 #endif // MoveOnly_h

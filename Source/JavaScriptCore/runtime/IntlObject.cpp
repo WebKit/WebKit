@@ -71,6 +71,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringImpl.h>
 #include <wtf/text/StringParsingBuffer.h>
@@ -692,7 +693,7 @@ unsigned intlDefaultNumberOption(JSGlobalObject* globalObject, JSValue value, Pr
         RETURN_IF_EXCEPTION(scope, 0);
 
         if (!(doubleValue >= minimum && doubleValue <= maximum)) {
-            throwException(globalObject, scope, createRangeError(globalObject, *property.publicName() + " is out of range"_s));
+            throwException(globalObject, scope, createRangeError(globalObject, makeString(property.publicName(), " is out of range"_s)));
             return 0;
         }
         return static_cast<unsigned>(doubleValue);

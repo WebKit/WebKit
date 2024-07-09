@@ -111,9 +111,35 @@
 #
 # Modified from upstream OpenSSL to remove the XOP code.
 
-$flavour = shift;
-$output  = shift;
-if ($flavour =~ /\./) { $output = $flavour; undef $flavour; }
+my ($flavour, $hash, $output) = @ARGV;
+
+if ($hash eq "sha512") {
+	$func="sha512_block_data_order";
+	$TABLE="K512";
+	$SZ=8;
+	@ROT=($A,$B,$C,$D,$E,$F,$G,$H)=("%rax","%rbx","%rcx","%rdx",
+					"%r8", "%r9", "%r10","%r11");
+	($T1,$a0,$a1,$a2,$a3)=("%r12","%r13","%r14","%r15","%rdi");
+	@Sigma0=(28,34,39);
+	@Sigma1=(14,18,41);
+	@sigma0=(1,  8, 7);
+	@sigma1=(19,61, 6);
+	$rounds=80;
+} elsif ($hash eq "sha256") {
+	$func="sha256_block_data_order";
+	$TABLE="K256";
+	$SZ=4;
+	@ROT=($A,$B,$C,$D,$E,$F,$G,$H)=("%eax","%ebx","%ecx","%edx",
+					"%r8d","%r9d","%r10d","%r11d");
+	($T1,$a0,$a1,$a2,$a3)=("%r12d","%r13d","%r14d","%r15d","%edi");
+	@Sigma0=( 2,13,22);
+	@Sigma1=( 6,11,25);
+	@sigma0=( 7,18, 3);
+	@sigma1=(17,19,10);
+	$rounds=64;
+} else {
+	die "unknown hash: $hash";
+}
 
 $win64=0; $win64=1 if ($flavour =~ /[nm]asm|mingw64/ || $output =~ /\.asm$/);
 
@@ -135,32 +161,6 @@ $shaext = 1;
 
 open OUT,"| \"$^X\" \"$xlate\" $flavour \"$output\"";
 *STDOUT=*OUT;
-
-if ($output =~ /512/) {
-	$func="sha512_block_data_order";
-	$TABLE="K512";
-	$SZ=8;
-	@ROT=($A,$B,$C,$D,$E,$F,$G,$H)=("%rax","%rbx","%rcx","%rdx",
-					"%r8", "%r9", "%r10","%r11");
-	($T1,$a0,$a1,$a2,$a3)=("%r12","%r13","%r14","%r15","%rdi");
-	@Sigma0=(28,34,39);
-	@Sigma1=(14,18,41);
-	@sigma0=(1,  8, 7);
-	@sigma1=(19,61, 6);
-	$rounds=80;
-} else {
-	$func="sha256_block_data_order";
-	$TABLE="K256";
-	$SZ=4;
-	@ROT=($A,$B,$C,$D,$E,$F,$G,$H)=("%eax","%ebx","%ecx","%edx",
-					"%r8d","%r9d","%r10d","%r11d");
-	($T1,$a0,$a1,$a2,$a3)=("%r12d","%r13d","%r14d","%r15d","%edi");
-	@Sigma0=( 2,13,22);
-	@Sigma1=( 6,11,25);
-	@sigma0=( 7,18, 3);
-	@sigma1=(17,19,10);
-	$rounds=64;
-}
 
 $ctx="%rdi";	# 1st arg, zapped by $a3
 $inp="%rsi";	# 2nd arg
@@ -257,41 +257,12 @@ ___
 $code=<<___;
 .text
 
-.extern	OPENSSL_ia32cap_P
-.globl	$func
-.type	$func,\@function,3
+.globl	${func}_nohw
+.type	${func}_nohw,\@function,3
 .align	16
-$func:
+${func}_nohw:
 .cfi_startproc
-___
-$code.=<<___ if ($SZ==4 || $avx);
-	leaq	OPENSSL_ia32cap_P(%rip),%r11
-	mov	0(%r11),%r9d
-	mov	4(%r11),%r10d
-	mov	8(%r11),%r11d
-___
-$code.=<<___ if ($SZ==4 && $shaext);
-	test	\$`1<<29`,%r11d		# check for SHA
-	jnz	.Lshaext_shortcut
-___
-    # XOP codepath removed.
-$code.=<<___ if ($avx>1);
-	and	\$`1<<8|1<<5|1<<3`,%r11d	# check for BMI2+AVX2+BMI1
-	cmp	\$`1<<8|1<<5|1<<3`,%r11d
-	je	.Lavx2_shortcut
-___
-$code.=<<___ if ($avx);
-	and	\$`1<<30`,%r9d		# mask "Intel CPU" bit
-	and	\$`1<<28|1<<9`,%r10d	# mask AVX and SSSE3 bits
-	or	%r9d,%r10d
-	cmp	\$`1<<28|1<<9|1<<30`,%r10d
-	je	.Lavx_shortcut
-___
-$code.=<<___ if ($SZ==4);
-	test	\$`1<<9`,%r10d
-	jnz	.Lssse3_shortcut
-___
-$code.=<<___;
+	_CET_ENDBR
 	mov	%rsp,%rax		# copy %rsp
 .cfi_def_cfa_register	%rax
 	push	%rbx
@@ -399,7 +370,7 @@ $code.=<<___;
 .Lepilogue:
 	ret
 .cfi_endproc
-.size	$func,.-$func
+.size	${func}_nohw,.-${func}_nohw
 ___
 
 if ($SZ==4) {
@@ -557,11 +528,12 @@ my ($Wi,$ABEF,$CDGH,$TMP,$BSWAP,$ABEF_SAVE,$CDGH_SAVE)=map("%xmm$_",(0..2,7..10)
 my @MSG=map("%xmm$_",(3..6));
 
 $code.=<<___;
-.type	sha256_block_data_order_shaext,\@function,3
+.globl	sha256_block_data_order_hw
+.type	sha256_block_data_order_hw,\@function,3
 .align	64
-sha256_block_data_order_shaext:
+sha256_block_data_order_hw:
 .cfi_startproc
-.Lshaext_shortcut:
+	_CET_ENDBR
 ___
 $code.=<<___ if ($win64);
 	lea	`-8-5*16`(%rsp),%rsp
@@ -706,7 +678,7 @@ ___
 $code.=<<___;
 	ret
 .cfi_endproc
-.size	sha256_block_data_order_shaext,.-sha256_block_data_order_shaext
+.size	sha256_block_data_order_hw,.-sha256_block_data_order_hw
 ___
 }}}
 {{{
@@ -771,11 +743,12 @@ my @X = map("%xmm$_",(0..3));
 my ($t0,$t1,$t2,$t3, $t4,$t5) = map("%xmm$_",(4..9));
 
 $code.=<<___;
+.globl	${func}_ssse3
 .type	${func}_ssse3,\@function,3
 .align	64
 ${func}_ssse3:
 .cfi_startproc
-.Lssse3_shortcut:
+	_CET_ENDBR
 	mov	%rsp,%rax		# copy %rsp
 .cfi_def_cfa_register	%rax
 	push	%rbx
@@ -1134,11 +1107,12 @@ if ($avx) {{
 local *ror = sub { &shrd(@_[0],@_) };
 
 $code.=<<___;
+.globl	${func}_avx
 .type	${func}_avx,\@function,3
 .align	64
 ${func}_avx:
 .cfi_startproc
-.Lavx_shortcut:
+	_CET_ENDBR
 	mov	%rsp,%rax		# copy %rsp
 .cfi_def_cfa_register	%rax
 	push	%rbx
@@ -2004,14 +1978,14 @@ ___
 $code.=<<___;
 .section	.pdata
 .align	4
-	.rva	.LSEH_begin_$func
-	.rva	.LSEH_end_$func
-	.rva	.LSEH_info_$func
+	.rva	.LSEH_begin_${func}_nohw
+	.rva	.LSEH_end_${func}_nohw
+	.rva	.LSEH_info_${func}_nohw
 ___
 $code.=<<___ if ($SZ==4 && $shaext);
-	.rva	.LSEH_begin_${func}_shaext
-	.rva	.LSEH_end_${func}_shaext
-	.rva	.LSEH_info_${func}_shaext
+	.rva	.LSEH_begin_${func}_hw
+	.rva	.LSEH_end_${func}_hw
+	.rva	.LSEH_info_${func}_hw
 ___
 $code.=<<___ if ($SZ==4);
 	.rva	.LSEH_begin_${func}_ssse3
@@ -2031,13 +2005,13 @@ ___
 $code.=<<___;
 .section	.xdata
 .align	8
-.LSEH_info_$func:
+.LSEH_info_${func}_nohw:
 	.byte	9,0,0,0
 	.rva	se_handler
 	.rva	.Lprologue,.Lepilogue			# HandlerData[]
 ___
 $code.=<<___ if ($SZ==4 && $shaext);
-.LSEH_info_${func}_shaext:
+.LSEH_info_${func}_hw:
 	.byte	9,0,0,0
 	.rva	shaext_handler
 ___

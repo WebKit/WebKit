@@ -173,7 +173,6 @@ compositing/self-painting-layers2.html [ Skip ] # Timeout
 compositing/shared-backing/clipping-and-shared-backing.html [ Skip ] # Timeout
 compositing/video-page-visibility.html [ Skip ] # Timeout
 compositing/visibility/visibility-simple-video-layer.html [ Skip ] # Timeout
-fast/canvas/canvas-drawImage-hdr-video.html [ Skip ] # Timeout
 fast/events/media-focus-in-standalone-media-document.html [ Skip ]
 http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ] # Timeout
 http/tests/navigation/page-cache-video.html [ Skip ] # Timeout
@@ -760,6 +759,8 @@ http/tests/loading/oauth.html [ Failure ]
 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
 http/tests/loading/promote-img-preload-priority.html [ Failure ]
 
+http/tests/loading/main-resource-delegates-on-back-navigation.html [ Failure Pass ]
+
 http/tests/loading/307-after-303-after-post.html [ Skip ] # Timeout
 
 http/tests/local/blob [ Skip ]
@@ -770,7 +771,6 @@ http/tests/media [ Skip ]
 
 # need to implement content sniffing
 http/tests/mime/mime-type-sniff.html [ Skip ]
-http/tests/mime/html-with-nosniff-html.html [ Skip ]
 
 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
 http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
@@ -830,6 +830,9 @@ http/tests/resourceLoadStatistics/omit-document-referrer-nested-third-party-ifra
 http/tests/resourceLoadStatistics/omit-document-referrer-third-party-iframe-ephemeral.html [ Failure ]
 http/tests/resourceLoadStatistics/omit-referrer-for-navigation-ephemeral.html [ Failure ]
 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py [ Failure ]
+
+# mac-wk2 and ios skip this flaky test
+http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Skip ] # Pass Failure
 
 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-filtered-link-decoration-after-long-deletion.html [ Failure ]
 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-js-cookie-checking.html [ Failure ]
@@ -1292,12 +1295,13 @@ imported/w3c/web-platform-tests/cookies/samesite/form-post-blank.https.html [ Sk
 ############################   End Storage Issues   ############################
 ################################################################################
 
-webkit.org/b/159755 fast/text/emoji-gender-3.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-4.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-5.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-6.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-8.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-9.html [ Pass ]
+# Passes on Win10, fails on Win11
+webkit.org/b/159755 fast/text/emoji-gender-3.html [ Pass ImageOnlyFailure ]
+webkit.org/b/159755 fast/text/emoji-gender-4.html [ Pass ImageOnlyFailure ]
+webkit.org/b/159755 fast/text/emoji-gender-5.html [ Pass ImageOnlyFailure ]
+webkit.org/b/159755 fast/text/emoji-gender-6.html [ Pass ImageOnlyFailure ]
+webkit.org/b/159755 fast/text/emoji-gender-8.html [ Pass ImageOnlyFailure ]
+webkit.org/b/159755 fast/text/emoji-gender-9.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/199186 fonts/use-typo-metrics-1.html [ Skip ]
 
@@ -2035,7 +2039,6 @@ fast/text/emoji-variation-selector.html [ ImageOnlyFailure ]
 fast/text/emoji-with-joiner.html [ Failure ]
 fast/text/emphasis-overlap.html [ Failure ]
 fast/text/fallback-language-han-2.html [ ImageOnlyFailure ]
-fast/text/flag-codepoint.html [ ImageOnlyFailure ]
 fast/text/font-collection-2.html [ ImageOnlyFailure ]
 fast/text/font-collection.html [ ImageOnlyFailure ]
 fast/text/font-cursive-italic-cjk.html [ ImageOnlyFailure ]
@@ -2139,6 +2142,10 @@ webgl/webgl-via-metal-flag-off.html [ Skip ]
 webgl/webgl-backend-type.html [ Skip ]
 
 fast/text/text-overflow-over-64k.html [ ImageOnlyFailure ]
+
+# Fails on Win10, Passes on Win11
+fast/text/flag-codepoint.html [ ImageOnlyFailure Pass ]
+fast/text/fitzpatrick-combination.html [ ImageOnlyFailure Pass ]
 
 webgl/lose-context-after-context-lost.html [ Failure ]
 webgl/max-active-contexts-gc.html [ Failure Pass ]
@@ -3846,7 +3853,6 @@ editing/selection/shift-click.html [ Failure ]
 editing/selection/user-select-all-with-shift.html [ Failure ]
 editing/style/preserve-selection-direction.html [ Failure ]
 fast/canvas/canvas-blending-text.html [ Failure ]
-fast/canvas/canvas-composite-text-alpha.html [ Failure ]
 fast/canvas/canvas-pattern-from-modified-canvas.html [ Failure ]
 fast/constructors/event-source-caching.html [ Failure ]
 fast/dom/HTMLLinkElement/link-stylesheet-load-once.html [ Failure ]
@@ -3873,6 +3879,8 @@ fast/text/web-font-load-fallback-during-loading-no-multiple.html [ Failure ]
 imported/w3c/web-platform-tests/permissions/all-permissions.html [ Failure ]
 loader/go-back-cached-main-resource.html [ Failure ]
 streams/pipe-to.html [ Failure ]
+
+fast/canvas/canvas-composite-text-alpha.html [ Failure Pass ]
 
 animations/stacking-context-not-fill-forwards.html [ ImageOnlyFailure ]
 fast/box-shadow/inset-box-shadow.html [ ImageOnlyFailure ]
@@ -3912,6 +3920,8 @@ fast/html/body-color-legacy-parsing-3.html [ Pass ImageOnlyFailure ]
 fast/picture/viewport-resize.html [ Pass Failure ]
 
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-multiple-001.html [ Skip ]
+
+imported/w3c/web-platform-tests/css/css-viewport/zoom/iframe-zoom-nested.html [ ImageOnlyFailure Pass ]
 
 fast/text/backslash-to-yen-sign.html [ Pass Failure ]
 
@@ -4007,7 +4017,6 @@ fast/forms/listbox-zero-item-height.html [ Failure ]
 
 fast/css/unicode-escape-in-8bit-string.html [ ImageOnlyFailure ]
 fast/text/complex-first-glyph-with-initial-advance.html [ ImageOnlyFailure ]
-fast/text/fitzpatrick-combination.html [ ImageOnlyFailure ]
 fast/text/font-face-fall-off-end.html [ ImageOnlyFailure ]
 fast/text/otsvg-spacing.html [ ImageOnlyFailure ]
 fast/text/simple-line-layout-line-box-contain-glyphs.html [ ImageOnlyFailure ]
@@ -4068,8 +4077,6 @@ webkit.org/b/266205 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/
 imported/w3c/web-platform-tests/scroll-animations/view-timelines/animation-events.html [ Failure Pass ]
 
 webkit.org/b/48997 animations/animation-iteration-event-destroy-renderer.html [ Pass Timeout ]
-
-webkit.org/b/229584 animations/fill-mode-forwards.html [ Pass Failure Timeout ]
 
 imported/w3c/web-platform-tests/css/selectors/selectors-4/lang-020.html [ Pass ]
 

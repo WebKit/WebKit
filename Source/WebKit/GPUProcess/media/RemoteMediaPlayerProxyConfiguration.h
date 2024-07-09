@@ -61,6 +61,9 @@ struct RemoteMediaPlayerProxyConfiguration {
     bool renderingCanBeAccelerated { false };
     bool prefersSandboxedParsing { false };
     bool shouldDisableHDR { false };
+#if PLATFORM(IOS_FAMILY)
+    bool canShowWhileLocked { false };
+#endif
 };
 
 } // namespace WebKit

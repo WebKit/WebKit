@@ -31,12 +31,12 @@
 #include "RefLogger.h"
 #include "Test.h"
 #include <functional>
+#include <wtf/DataLog.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RobinHoodHashSet.h>
-#include <wtf/text/StringConcatenateNumbers.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/DataLog.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/text/MakeString.h>
+#include <wtf/text/StringHash.h>
 
 namespace TestWebKitAPI {
 

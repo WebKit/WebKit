@@ -55,7 +55,6 @@
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "MegamorphicCache.h"
 #include "ModuleNamespaceAccessCase.h"
-#include "ProxyObjectAccessCase.h"
 #include "ScopedArguments.h"
 #include "ScratchRegisterAllocator.h"
 #include "SharedJITStubSet.h"
@@ -225,13 +224,15 @@ static bool needsScratchFPR(AccessCase::AccessType type)
     case AccessCase::DirectArgumentsLength:
     case AccessCase::ScopedArgumentsLength:
     case AccessCase::ModuleNamespaceLoad:
-    case AccessCase::ProxyObjectHas:
+    case AccessCase::ProxyObjectIn:
     case AccessCase::ProxyObjectLoad:
     case AccessCase::ProxyObjectStore:
     case AccessCase::InstanceOfHit:
     case AccessCase::InstanceOfMiss:
     case AccessCase::InstanceOfMegamorphic:
+    case AccessCase::IndexedProxyObjectIn:
     case AccessCase::IndexedProxyObjectLoad:
+    case AccessCase::IndexedProxyObjectStore:
     case AccessCase::IndexedMegamorphicLoad:
     case AccessCase::IndexedMegamorphicStore:
     case AccessCase::IndexedMegamorphicIn:
@@ -390,10 +391,10 @@ static bool forInBy(AccessCase::AccessType type)
     case AccessCase::InstanceOfMegamorphic:
     case AccessCase::Getter:
     case AccessCase::Setter:
-    case AccessCase::ProxyObjectHas:
     case AccessCase::ProxyObjectLoad:
     case AccessCase::ProxyObjectStore:
     case AccessCase::IndexedProxyObjectLoad:
+    case AccessCase::IndexedProxyObjectStore:
     case AccessCase::CustomValueGetter:
     case AccessCase::CustomAccessorGetter:
     case AccessCase::CustomValueSetter:
@@ -403,6 +404,7 @@ static bool forInBy(AccessCase::AccessType type)
     case AccessCase::InstanceOfHit:
     case AccessCase::InstanceOfMiss:
         return false;
+    case AccessCase::ProxyObjectIn:
     case AccessCase::InHit:
     case AccessCase::InMiss:
     case AccessCase::InMegamorphic:
@@ -432,6 +434,7 @@ static bool forInBy(AccessCase::AccessType type)
     case AccessCase::IndexedResizableTypedArrayFloat64InHit:
     case AccessCase::IndexedStringInHit:
     case AccessCase::IndexedNoIndexingInMiss:
+    case AccessCase::IndexedProxyObjectIn:
     case AccessCase::IndexedMegamorphicIn:
         return true;
     }
@@ -455,10 +458,9 @@ static bool isStateless(AccessCase::AccessType type)
     case AccessCase::IndexedNoIndexingMiss:
     case AccessCase::Getter:
     case AccessCase::Setter:
-    case AccessCase::ProxyObjectHas:
+    case AccessCase::ProxyObjectIn:
     case AccessCase::ProxyObjectLoad:
     case AccessCase::ProxyObjectStore:
-    case AccessCase::IndexedProxyObjectLoad:
     case AccessCase::CustomValueGetter:
     case AccessCase::CustomAccessorGetter:
     case AccessCase::CustomValueSetter:
@@ -479,6 +481,7 @@ static bool isStateless(AccessCase::AccessType type)
     case AccessCase::StringLength:
     case AccessCase::DirectArgumentsLength:
     case AccessCase::ScopedArgumentsLength:
+    case AccessCase::IndexedProxyObjectLoad:
     case AccessCase::IndexedMegamorphicLoad:
     case AccessCase::IndexedMegamorphicStore:
     case AccessCase::IndexedInt32Load:
@@ -553,8 +556,10 @@ static bool isStateless(AccessCase::AccessType type)
     case AccessCase::IndexedResizableTypedArrayFloat32InHit:
     case AccessCase::IndexedResizableTypedArrayFloat64InHit:
     case AccessCase::IndexedStringInHit:
+    case AccessCase::IndexedProxyObjectIn:
     case AccessCase::IndexedMegamorphicIn:
     case AccessCase::InstanceOfMegamorphic:
+    case AccessCase::IndexedProxyObjectStore:
         return true;
     }
 
@@ -567,10 +572,12 @@ static bool doesJSCalls(AccessCase::AccessType type)
     switch (type) {
     case AccessCase::Getter:
     case AccessCase::Setter:
-    case AccessCase::ProxyObjectHas:
+    case AccessCase::ProxyObjectIn:
     case AccessCase::ProxyObjectLoad:
     case AccessCase::ProxyObjectStore:
+    case AccessCase::IndexedProxyObjectIn:
     case AccessCase::IndexedProxyObjectLoad:
+    case AccessCase::IndexedProxyObjectStore:
         return true;
 
     case AccessCase::LoadMegamorphic:
@@ -699,10 +706,12 @@ static bool isMegamorphic(AccessCase::AccessType type)
 
     case AccessCase::Getter:
     case AccessCase::Setter:
-    case AccessCase::ProxyObjectHas:
+    case AccessCase::ProxyObjectIn:
     case AccessCase::ProxyObjectLoad:
     case AccessCase::ProxyObjectStore:
+    case AccessCase::IndexedProxyObjectIn:
     case AccessCase::IndexedProxyObjectLoad:
+    case AccessCase::IndexedProxyObjectStore:
     case AccessCase::Load:
     case AccessCase::Transition:
     case AccessCase::Delete:
@@ -828,10 +837,12 @@ bool canBeViaGlobalProxy(AccessCase::AccessType type)
     case AccessCase::CheckPrivateBrand:
     case AccessCase::SetPrivateBrand:
     case AccessCase::IndexedNoIndexingMiss:
-    case AccessCase::ProxyObjectHas:
+    case AccessCase::ProxyObjectIn:
     case AccessCase::ProxyObjectLoad:
     case AccessCase::ProxyObjectStore:
+    case AccessCase::IndexedProxyObjectIn:
     case AccessCase::IndexedProxyObjectLoad:
+    case AccessCase::IndexedProxyObjectStore:
     case AccessCase::IntrinsicGetter:
     case AccessCase::ModuleNamespaceLoad:
     case AccessCase::InstanceOfHit:
@@ -1907,12 +1918,14 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
         return;
     }
 
-    case AccessCase::ProxyObjectHas:
+    case AccessCase::ProxyObjectIn:
     case AccessCase::ProxyObjectLoad:
     case AccessCase::ProxyObjectStore:
-    case AccessCase::IndexedProxyObjectLoad: {
+    case AccessCase::IndexedProxyObjectIn:
+    case AccessCase::IndexedProxyObjectLoad:
+    case AccessCase::IndexedProxyObjectStore: {
         ASSERT(!accessCase.viaGlobalProxy());
-        emitProxyObjectAccess(index, accessCase.as<ProxyObjectAccessCase>(), fallThrough);
+        emitProxyObjectAccess(index, accessCase, fallThrough);
         return;
     }
 
@@ -3678,17 +3691,19 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
     case AccessCase::DirectArgumentsLength:
     case AccessCase::ScopedArgumentsLength:
     case AccessCase::ModuleNamespaceLoad:
-    case AccessCase::ProxyObjectHas:
+    case AccessCase::ProxyObjectIn:
     case AccessCase::ProxyObjectLoad:
     case AccessCase::ProxyObjectStore:
     case AccessCase::InstanceOfMegamorphic:
     case AccessCase::LoadMegamorphic:
     case AccessCase::StoreMegamorphic:
     case AccessCase::InMegamorphic:
+    case AccessCase::IndexedProxyObjectIn:
     case AccessCase::IndexedProxyObjectLoad:
+    case AccessCase::IndexedProxyObjectStore:
+    case AccessCase::IndexedMegamorphicIn:
     case AccessCase::IndexedMegamorphicLoad:
     case AccessCase::IndexedMegamorphicStore:
-    case AccessCase::IndexedMegamorphicIn:
     case AccessCase::IndexedInt32Load:
     case AccessCase::IndexedDoubleLoad:
     case AccessCase::IndexedContiguousLoad:
@@ -3923,7 +3938,7 @@ void InlineCacheCompiler::emitModuleNamespaceLoad(ModuleNamespaceAccessCase& acc
     succeed();
 }
 
-void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAccessCase& accessCase, MacroAssembler::JumpList& fallThrough)
+void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, AccessCase& accessCase, MacroAssembler::JumpList& fallThrough)
 {
     CCallHelpers& jit = *m_jit;
     ECMAMode ecmaMode = m_ecmaMode;
@@ -3948,16 +3963,16 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
     unsigned numberOfParameters;
 
     switch (accessCase.m_type) {
-    case AccessCase::ProxyObjectHas:
+    case AccessCase::ProxyObjectIn:
+    case AccessCase::IndexedProxyObjectIn:
         numberOfParameters = 2;
         break;
     case AccessCase::ProxyObjectLoad:
-        numberOfParameters = 3;
-        break;
     case AccessCase::IndexedProxyObjectLoad:
         numberOfParameters = 3;
         break;
     case AccessCase::ProxyObjectStore:
+    case AccessCase::IndexedProxyObjectStore:
         numberOfParameters = 4;
         break;
     default:
@@ -3980,19 +3995,21 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
 
     jit.storeCell(baseGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
 
-    if (!hasConstantIdentifier(m_stubInfo.accessType)) {
-        if (accessCase.m_type != AccessCase::IndexedProxyObjectLoad)
-            RELEASE_ASSERT(accessCase.identifier());
+    if (!hasConstantIdentifier(m_stubInfo.accessType))
         jit.storeValue(m_stubInfo.propertyRegs(), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
-    } else
+    else
         jit.storeTrustedValue(accessCase.identifier().cell(), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
 
     switch (accessCase.m_type) {
+    case AccessCase::ProxyObjectIn:
+    case AccessCase::IndexedProxyObjectIn:
+        break;
     case AccessCase::ProxyObjectLoad:
     case AccessCase::IndexedProxyObjectLoad:
         jit.storeCell(thisGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
         break;
     case AccessCase::ProxyObjectStore:
+    case AccessCase::IndexedProxyObjectStore:
         jit.storeCell(thisGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
         jit.storeValue(valueRegs, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(3).offset() * sizeof(Register)));
         break;
@@ -4001,12 +4018,20 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
     }
 
     switch (accessCase.m_type) {
-    case AccessCase::ProxyObjectHas: {
+    case AccessCase::ProxyObjectIn: {
         if (useHandlerIC()) {
             jit.loadPtr(CCallHelpers::Address(m_stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfGlobalObject()), scratchGPR);
             jit.loadPtr(CCallHelpers::Address(scratchGPR, JSGlobalObject::offsetOfPerformProxyObjectHasFunction()), scratchGPR);
         } else
             jit.move(CCallHelpers::TrustedImmPtr(m_globalObject->performProxyObjectHasFunction()), scratchGPR);
+        break;
+    }
+    case AccessCase::IndexedProxyObjectIn: {
+        if (useHandlerIC()) {
+            jit.loadPtr(CCallHelpers::Address(m_stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfGlobalObject()), scratchGPR);
+            jit.loadPtr(CCallHelpers::Address(scratchGPR, JSGlobalObject::offsetOfPerformProxyObjectHasByValFunction()), scratchGPR);
+        } else
+            jit.move(CCallHelpers::TrustedImmPtr(m_globalObject->performProxyObjectHasByValFunction()), scratchGPR);
         break;
     }
     case AccessCase::ProxyObjectLoad: {
@@ -4034,6 +4059,17 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
                 jit.loadPtr(CCallHelpers::Address(scratchGPR, JSGlobalObject::offsetOfPerformProxyObjectSetSloppyFunction()), scratchGPR);
         } else
             jit.move(CCallHelpers::TrustedImmPtr(ecmaMode.isStrict() ? m_globalObject->performProxyObjectSetStrictFunction() : m_globalObject->performProxyObjectSetSloppyFunction()), scratchGPR);
+        break;
+    }
+    case AccessCase::IndexedProxyObjectStore: {
+        if (useHandlerIC()) {
+            jit.loadPtr(CCallHelpers::Address(m_stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfGlobalObject()), scratchGPR);
+            if (ecmaMode.isStrict())
+                jit.loadPtr(CCallHelpers::Address(scratchGPR, JSGlobalObject::offsetOfPerformProxyObjectSetByValStrictFunction()), scratchGPR);
+            else
+                jit.loadPtr(CCallHelpers::Address(scratchGPR, JSGlobalObject::offsetOfPerformProxyObjectSetByValSloppyFunction()), scratchGPR);
+        } else
+            jit.move(CCallHelpers::TrustedImmPtr(ecmaMode.isStrict() ? m_globalObject->performProxyObjectSetByValStrictFunction() : m_globalObject->performProxyObjectSetByValSloppyFunction()), scratchGPR);
         break;
     }
     default:
@@ -4065,7 +4101,7 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
         CallLinkInfo::emitFastPath(jit, callLinkInfo);
     }
 
-    if (accessCase.m_type != AccessCase::ProxyObjectStore)
+    if (accessCase.m_type != AccessCase::ProxyObjectStore && accessCase.m_type != AccessCase::IndexedProxyObjectStore)
         jit.setupResults(valueRegs);
 
 
@@ -4082,7 +4118,7 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
     }
 
     RegisterSet dontRestore;
-    if (accessCase.m_type != AccessCase::ProxyObjectStore) {
+    if (accessCase.m_type != AccessCase::ProxyObjectStore && accessCase.m_type != AccessCase::IndexedProxyObjectStore) {
         // This is the result value. We don't want to overwrite the result with what we stored to the stack.
         // We sometimes have to store it to the stack just in case we throw an exception and need the original value.
         dontRestore.add(valueRegs, IgnoreVectors);

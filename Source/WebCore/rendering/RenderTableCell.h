@@ -94,6 +94,7 @@ public:
     LayoutUnit intrinsicPaddingBefore() const { return m_intrinsicPaddingBefore; }
     LayoutUnit intrinsicPaddingAfter() const { return m_intrinsicPaddingAfter; }
 
+    RectEdges<LayoutUnit> padding() const override;
     LayoutUnit paddingTop() const override;
     LayoutUnit paddingBottom() const override;
     LayoutUnit paddingLeft() const override;

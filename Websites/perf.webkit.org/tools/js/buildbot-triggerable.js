@@ -93,17 +93,23 @@ class BuildbotTriggerable {
         let rootReuseUpdates = { };
         this._logger.log('Scheduling builds');
         const testGroupList = Array.from(buildRequestsByGroup.values()).sort(function (a, b) { return a.groupOrder - b.groupOrder; });
+        const scheduledRequestIdList = [];
 
         for (const group of testGroupList) {
-            const request = this._nextRequestInGroup(group, updates);
-            if (!validRequests.has(request))
-                continue;
+            const nextRequests = this._nextRequestsInGroup(group, updates);
+            for (const request of nextRequests) {
+                if (!validRequests.has(request))
+                    continue;
 
-            const shouldDefer = this._shouldDeferSequentialTestRequestForNewCommitSet(request);
-            if (shouldDefer)
-                this._logger.log(`Defer scheduling build request "${request.id()}" until completed build requests for previous configuration meet the expectation or exhaust retry.`);
-            else
-                await this._scheduleRequest(group, request, rootReuseUpdates);
+                const shouldDefer = this._shouldDeferSequentialTestRequestForNewCommitSet(request);
+                if (shouldDefer)
+                    this._logger.log(`Defer scheduling build request "${request.id()}" until completed build requests for previous configuration meet the expectation or exhaust retry.`);
+                else {
+                    const scheduled = await this._scheduleRequest(group, request, rootReuseUpdates, scheduledRequestIdList);
+                    if (scheduled)
+                        scheduledRequestIdList.push(parseInt(request.id()));
+                }
+            }
         }
 
         // Pull all buildbots for the second time since the previous step may have scheduled more builds
@@ -120,25 +126,25 @@ class BuildbotTriggerable {
             'buildRequestUpdates': updates});
     }
 
-    async _scheduleRequest(testGroup, buildRequest, updates)
+    async _scheduleRequest(testGroup, buildRequest, updates, scheduledRequestIdList)
     {
-        const buildRequestForRootReuse = await buildRequest.findBuildRequestWithSameRoots();
+        const buildRequestForRootReuse = await buildRequest.findBuildRequestWithSameRoots(scheduledRequestIdList);
         if (buildRequestForRootReuse) {
             if (!buildRequestForRootReuse.hasCompleted()) {
                 this._logger.log(`Found build request ${buildRequestForRootReuse.id()} is building the same root, will wait until it finishes.`);
-                return;
+                return null;
             }
 
             this._logger.log(`Will reuse existing root built from ${buildRequestForRootReuse.id()} for ${buildRequest.id()}`);
             updates[buildRequest.id()] = {status: 'completed', url: buildRequestForRootReuse.statusUrl(),
                 statusDescription: buildRequestForRootReuse.statusDescription(),
                 buildRequestForRootReuse: buildRequestForRootReuse.id()};
-            return;
+            return null;
         }
 
         return this._scheduleRequestIfWorkerIsAvailable(buildRequest, testGroup.requests,
-            buildRequest.isBuild() ? testGroup.buildSyncer : testGroup.testSyncer,
-            buildRequest.isBuild() ? testGroup.buildWorkerName : testGroup.testWorkerName);
+            buildRequest.isBuild() ? null : testGroup.testSyncer,
+            buildRequest.isBuild() ? null : testGroup.testWorkerName);
     }
 
     _shouldDeferSequentialTestRequestForNewCommitSet(buildRequest)
@@ -227,14 +233,7 @@ class BuildbotTriggerable {
 
                 associatedRequests.add(request);
 
-                if (request.isBuild()) {
-                    assert(!info.buildSyncer || info.buildSyncer == syncer);
-                    if (entry.workerName()) {
-                        assert(!info.buildWorkerName || info.buildWorkerName == entry.workerName());
-                        info.buildWorkerName = entry.workerName();
-                    }
-                    info.buildSyncer = syncer;
-                } else {
+                if (request.isTest()) {
                     assert(!info.testSyncer || info.testSyncer == syncer);
                     if (entry.workerName()) {
                         assert(!info.testWorkerName || info.testWorkerName == entry.workerName());
@@ -267,17 +266,27 @@ class BuildbotTriggerable {
         return updates;
     }
 
-    _nextRequestInGroup(groupInfo, pendingUpdates)
+    _nextRequestsInGroup(groupInfo, pendingUpdates)
     {
+        const buildTypeRequests = groupInfo.requests.filter(request => request.isBuild());
+        const pendingBuildTypeRequests = buildTypeRequests.filter(
+            request => request.isPending() && !(request.id() in pendingUpdates));
+        if (pendingBuildTypeRequests.length)
+            return pendingBuildTypeRequests;
+
+        if (!buildTypeRequests.every(request => request.hasCompleted()))
+            return [];
+
         for (const request of groupInfo.requests) {
-            if (request.isScheduled() || (request.id() in pendingUpdates && pendingUpdates[request.id()]['status'] == 'scheduled'))
-                return null;
-            if (request.isPending() && !(request.id() in pendingUpdates))
-                return request;
+            if ((request.isScheduled() || (request.id() in pendingUpdates && pendingUpdates[request.id()]['status'] == 'scheduled')))
+                return [];
+            if (request.isPending() && !(request.id() in pendingUpdates)) {
+                return [request];
+            }
             if (request.isBuild() && !request.hasCompleted())
-                return null; // A build request is still pending, scheduled, running, or failed.
+                return []; // A build request is still pending, scheduled, running, or failed.
         }
-        return null;
+        return [];
     }
 
     _scheduleRequestIfWorkerIsAvailable(nextRequest, requestsInGroup, syncer, workerName)
@@ -286,28 +295,30 @@ class BuildbotTriggerable {
             return null;
 
         const isFirstRequest = nextRequest == requestsInGroup[0] || !nextRequest.order();
-        if (!isFirstRequest) {
+        if (!isFirstRequest && nextRequest.isTest()) {
             if (syncer)
-                return this._scheduleRequestWithLog(syncer, nextRequest, requestsInGroup, workerName);
+                return this._scheduleRequestWithLog(syncer, nextRequest, requestsInGroup, workerName, false);
             this._logger.error(`Could not identify the syncer for ${nextRequest.id()}.`);
         }
 
-        // Pick a new syncer for the first test.
-        for (const syncer of this._syncers) {
-            // Only schedule A/B tests to queues whose last job was successful.
-            if (syncer.isTester() && !nextRequest.order() && !syncer.lastCompletedBuildSuccessful())
-                continue;
+        for (const useWorkerWithoutRequestsInProgress of [true, false]) {
+            // Pick a new syncer for the first test.
+            for (const syncer of this._syncers) {
+                // Only schedule A/B tests to queues whose last job was successful.
+                if (syncer.isTester() && !nextRequest.order() && !syncer.lastCompletedBuildSuccessful())
+                    continue;
 
-            const promise = this._scheduleRequestWithLog(syncer, nextRequest, requestsInGroup, null);
-            if (promise)
-                return promise;
+                const promise = this._scheduleRequestWithLog(syncer, nextRequest, requestsInGroup, null, useWorkerWithoutRequestsInProgress);
+                if (promise)
+                    return promise;
+            }
         }
         return null;
     }
 
-    _scheduleRequestWithLog(syncer, request, requestsInGroup, workerName)
+    _scheduleRequestWithLog(syncer, request, requestsInGroup, workerName, useWorkerWithoutRequestsInProgress)
     {
-        const promise = syncer.scheduleRequestInGroupIfAvailable(request, requestsInGroup, workerName);
+        const promise = syncer.scheduleRequestInGroupIfAvailable(request, requestsInGroup, workerName, useWorkerWithoutRequestsInProgress);
         if (!promise)
             return promise;
         this._logger.log(`Scheduling build request ${request.id()}${workerName ? ' on ' + workerName : ''} in ${syncer.builderName()}`);
@@ -321,7 +332,7 @@ class BuildbotTriggerable {
         for (let request of buildRequests) {
             let groupId = request.testGroupId();
             if (!map.has(groupId)) // Don't use real TestGroup objects to avoid executing postgres query in the server
-                map.set(groupId, {id: groupId, groupOrder: groupOrder++, requests: [request], buildSyncer: null, testSyncer: null, workerName: null});
+                map.set(groupId, {id: groupId, groupOrder: groupOrder++, requests: [request], testSyncer: null, workerName: null});
             else
                 map.get(groupId).requests.push(request);
         }

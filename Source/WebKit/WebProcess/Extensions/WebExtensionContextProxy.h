@@ -64,7 +64,6 @@ public:
     ~WebExtensionContextProxy();
 
     using WeakFrameSet = WeakHashSet<WebFrame>;
-    using WeakPageSet = WeakHashSet<WebPage>;
     using TabWindowIdentifierPair = std::pair<std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>>;
     using WeakPageTabWindowMap = WeakHashMap<WebPage, TabWindowIdentifierPair>;
     using PermissionsMap = WebExtensionContext::PermissionsMap;
@@ -113,6 +112,9 @@ public:
 
     void addInspectorBackgroundPage(WebPage&, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
     bool isInspectorBackgroundPage(WebPage&) const;
+
+    Inspector::ExtensionAppearance inspectorAppearance() const { return m_inspectorAppearance; }
+    void setInspectorAppearance(Inspector::ExtensionAppearance appearance) { m_inspectorAppearance = appearance; }
 #endif
 
     Vector<Ref<WebPage>> popupPages(std::optional<WebExtensionTabIdentifier> = std::nullopt, std::optional<WebExtensionWindowIdentifier> = std::nullopt) const;
@@ -230,6 +232,7 @@ private:
 #if ENABLE(INSPECTOR_EXTENSIONS)
     WeakPageTabWindowMap m_inspectorPageMap;
     WeakPageTabWindowMap m_inspectorBackgroundPageMap;
+    Inspector::ExtensionAppearance m_inspectorAppearance { Inspector::ExtensionAppearance::Light };
 #endif
     WeakPageTabWindowMap m_popupPageMap;
     WeakPageTabWindowMap m_tabPageMap;

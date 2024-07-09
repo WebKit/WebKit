@@ -53,7 +53,7 @@ static const double maximumWaitForWebProcessToCrash = 60;
 
 static LONG WINAPI exceptionFilter(EXCEPTION_POINTERS*)
 {
-    fputs("#CRASHED\n", stderr);
+    fprintf(stderr, "#CRASHED - WebKitTestRunner (pid %lu)\n", GetCurrentProcessId());
     fflush(stderr);
     return EXCEPTION_CONTINUE_SEARCH;
 }

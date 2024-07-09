@@ -32,6 +32,7 @@
 #include <wtf/ArgumentCoder.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
+#include <wtf/text/MakeString.h>
 
 namespace IPC {
 

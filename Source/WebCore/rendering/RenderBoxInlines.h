@@ -96,20 +96,15 @@ inline LayoutRect RenderBox::contentBoxRect() const
             topScrollbarSpace = horizontalScrollbarHeight;
     }
 
-    auto paddingLeft = this->paddingLeft();
-    auto paddingTop = this->paddingTop();
-
-    auto paddingRight = this->paddingRight();
-    auto paddingBottom = this->paddingBottom();
-
+    auto padding = this->padding();
     auto borderWidths = this->borderWidths();
-    auto location = LayoutPoint { borderWidths.left() + paddingLeft + leftScrollbarSpace, borderWidths.top() + paddingTop + topScrollbarSpace };
+    auto location = LayoutPoint { borderWidths.left() + padding.left() + leftScrollbarSpace, borderWidths.top() + padding.top() + topScrollbarSpace };
 
     auto paddingBoxWidth = std::max(0_lu, width() - borderWidths.left() - borderWidths.right() - verticalScrollbarWidth);
     auto paddingBoxHeight = std::max(0_lu, height() - borderWidths.top() - borderWidths.bottom() - horizontalScrollbarHeight);
 
-    auto width = std::max(0_lu, paddingBoxWidth - paddingLeft - paddingRight - leftScrollbarSpace);
-    auto height = std::max(0_lu, paddingBoxHeight - paddingTop - paddingBottom - topScrollbarSpace);
+    auto width = std::max(0_lu, paddingBoxWidth - padding.left() - padding.right() - leftScrollbarSpace);
+    auto height = std::max(0_lu, paddingBoxHeight - padding.top() - padding.bottom() - topScrollbarSpace);
 
     auto size = LayoutSize { width, height };
 

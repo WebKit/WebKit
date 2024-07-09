@@ -26,7 +26,7 @@
 #include "config.h"
 #include "NetworkNotificationManager.h"
 
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
 
 #include "DaemonDecoder.h"
 #include "DaemonEncoder.h"
@@ -65,16 +65,6 @@ void NetworkNotificationManager::setPushAndNotificationsEnabledForOrigin(const S
     }
 
     m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetPushAndNotificationsEnabledForOrigin(origin.toString(), enabled), WTFMove(completionHandler));
-}
-
-void NetworkNotificationManager::deletePushAndNotificationRegistration(const SecurityOriginData& origin, CompletionHandler<void(const String&)>&& completionHandler)
-{
-    if (!m_connection) {
-        completionHandler("No connection to push daemon"_s);
-        return;
-    }
-
-    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::DeletePushAndNotificationRegistration(origin.toString()), WTFMove(completionHandler));
 }
 
 void NetworkNotificationManager::getPendingPushMessages(CompletionHandler<void(const Vector<WebPushMessage>&)>&& completionHandler)
@@ -201,4 +191,4 @@ void NetworkNotificationManager::removePushSubscriptionsForOrigin(WebCore::Secur
 }
 
 } // namespace WebKit
-#endif // ENABLE(BUILT_IN_NOTIFICATIONS)
+#endif // ENABLE(WEB_PUSH_NOTIFICATIONS)

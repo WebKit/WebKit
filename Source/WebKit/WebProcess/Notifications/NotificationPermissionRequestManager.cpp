@@ -42,7 +42,7 @@
 #include "WebNotificationManager.h"
 #endif
 
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
 #include "NetworkProcessConnection.h"
 #include <WebCore/DeprecatedGlobalSettings.h>
 #endif

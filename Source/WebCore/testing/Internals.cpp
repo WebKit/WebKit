@@ -260,8 +260,8 @@
 #include <wtf/ProcessID.h>
 #include <wtf/RunLoop.h>
 #include <wtf/URLHelpers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(CG)
@@ -841,6 +841,8 @@ static String styleValidityToToString(Style::Validity validity)
         return "NoStyleChange"_s;
     case Style::Validity::AnimationInvalid:
         return "AnimationInvalid"_s;
+    case Style::Validity::InlineStyleInvalid:
+        return "InlineStyleInvalid"_s;
     case Style::Validity::ElementInvalid:
         return "InlineStyleChange"_s;
     case Style::Validity::SubtreeInvalid:
@@ -6092,11 +6094,6 @@ bool Internals::isMediaStreamSourceInterrupted(MediaStreamTrack& track) const
 bool Internals::isMediaStreamSourceEnded(MediaStreamTrack& track) const
 {
     return track.source().isEnded();
-}
-
-bool Internals::isMediaStreamTrackPowerEfficient(const MediaStreamTrack& track) const
-{
-    return track.source().isPowerEfficient();
 }
 
 bool Internals::isMockRealtimeMediaSourceCenterEnabled()

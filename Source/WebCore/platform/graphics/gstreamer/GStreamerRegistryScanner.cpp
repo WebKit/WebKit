@@ -31,6 +31,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PrintStream.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(GSTREAMER_WEBRTC)
@@ -1151,6 +1152,21 @@ Vector<RTCRtpCapabilities::HeaderExtensionCapability> GStreamerRegistryScanner::
     if (!m_videoRtpExtensions)
         m_videoRtpExtensions = probeRtpExtensions(m_allVideoRtpExtensions);
     return *m_videoRtpExtensions;
+}
+
+GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::isRtpPacketizerSupported(const String& encoding)
+{
+    static HashMap<String, ASCIILiteral> mapping = { { "h264"_s, "video/x-h264"_s }, { "vp8"_s, "video/x-vp8"_s },
+        { "vp9"_s, "video/x-vp9"_s }, { "av1"_s, "video/x-av1"_s }, { "h265"_s, "video/x-h265"_s }, { "opus"_s, "audio/x-opus"_s },
+        { "g722"_s, "audio/G722"_s }, { "pcma"_s, "audio/x-alaw"_s }, { "pcmu"_s, "audio/x-mulaw"_s } };
+    auto gstCapsName = mapping.getOptional(encoding);
+    if (!gstCapsName) {
+        GST_WARNING("Unhandled RTP encoding-name: %s", encoding.ascii().data());
+        return { };
+    }
+
+    ElementFactories factories(ElementFactories::Type::RtpPayloader);
+    return factories.hasElementForMediaType(ElementFactories::Type::RtpPayloader, *gstCapsName);
 }
 
 #endif // USE(GSTREAMER_WEBRTC)

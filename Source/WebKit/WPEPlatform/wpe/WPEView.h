@@ -32,6 +32,7 @@
 
 #include <glib-object.h>
 #include <wpe/WPEDefines.h>
+#include <wpe/WPEGestureController.h>
 #include <wpe/WPEToplevel.h>
 
 G_BEGIN_DECLS
@@ -133,10 +134,14 @@ WPE_API guint                   wpe_view_compute_press_count           (WPEView 
                                                                         guint32             time);
 WPE_API void                    wpe_view_focus_in                      (WPEView            *view);
 WPE_API void                    wpe_view_focus_out                     (WPEView            *view);
+WPE_API gboolean                wpe_view_get_has_focus                 (WPEView            *view);
 WPE_API WPEBufferDMABufFormats *wpe_view_get_preferred_dma_buf_formats (WPEView            *view);
 WPE_API void                    wpe_view_set_opaque_rectangles         (WPEView            *view,
                                                                         WPERectangle       *rects,
                                                                         guint               n_rects);
+WPE_API void                    wpe_view_set_gesture_controller        (WPEView            *view,
+                                                                        WPEGestureController *controller);
+WPE_API WPEGestureController   *wpe_view_get_gesture_controller        (WPEView            *view);
 
 G_END_DECLS
 

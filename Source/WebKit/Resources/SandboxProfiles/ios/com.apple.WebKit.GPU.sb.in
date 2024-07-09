@@ -572,6 +572,9 @@
         "hw.physicalcpu_max"
         "hw.product" ;; <rdar://problem/81334849>
         "kern.bootargs"
+#if ASAN_ENABLED
+        "kern.osrelease"
+#endif
         "kern.osproductversion"
         "kern.osvariant_status"
         "kern.secure_kernel"
@@ -755,6 +758,12 @@
     (when (defined? 'SYS_crossarch_trap)
         (deny syscall-unix (with no-report) (syscall-number
             SYS_crossarch_trap)))
+#if ASAN_ENABLED
+    (allow syscall-unix
+        (syscall-number
+            SYS_setrlimit
+            SYS_sigaltstack))
+#endif
     (allow syscall-unix (syscall-number
         SYS___disable_threadsignal
         SYS___mac_syscall
@@ -922,6 +931,12 @@
         vm_remap_external))
 
 (deny syscall-mig (with telemetry))
+#if ASAN_ENABLED
+(allow syscall-mig
+    (kernel-mig-routine
+        mach_vm_region_recurse
+        task_set_exc_guard_behavior))
+#endif
 (allow syscall-mig (kernel-mig-routine
     _mach_make_memory_entry
     clock_get_time

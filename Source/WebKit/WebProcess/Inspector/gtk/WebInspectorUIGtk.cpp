@@ -63,4 +63,8 @@ String WebInspectorUI::localizedStringsURL() const
     return "resource:///org/webkit/inspector/Localizations/en.lproj/localizedStrings.js"_s;
 }
 
+void WebInspectorUI::didEstablishConnection()
+{
+}
+
 } // namespace WebKit

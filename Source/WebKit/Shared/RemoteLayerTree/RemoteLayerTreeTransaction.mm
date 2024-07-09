@@ -37,6 +37,7 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/TimingFunction.h>
 #import <wtf/text/CString.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/TextStream.h>
 
 namespace WebKit {

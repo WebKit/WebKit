@@ -41,6 +41,10 @@ class BrowserDriver(object):
         pass
 
     @abstractmethod
+    def browser_version(self):
+        return None
+
+    @abstractmethod
     def restore_env(self):
         pass
 

@@ -37,7 +37,7 @@ using namespace JSC;
 
 JSTestCallbackFunctionWithTypedefs::JSTestCallbackFunctionWithTypedefs(JSObject* callback, JSDOMGlobalObject* globalObject)
     : TestCallbackFunctionWithTypedefs(globalObject->scriptExecutionContext())
-    , m_data(new JSCallbackDataStrong(callback, globalObject, this))
+    , m_data(new JSCallbackDataWeak(callback, globalObject, this))
 {
 }
 
@@ -82,6 +82,16 @@ CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackFunction
      }
 
     return { };
+}
+
+void JSTestCallbackFunctionWithTypedefs::visitJSFunction(JSC::AbstractSlotVisitor& visitor)
+{
+    m_data->visitJSFunction(visitor);
+}
+
+void JSTestCallbackFunctionWithTypedefs::visitJSFunction(JSC::SlotVisitor& visitor)
+{
+    m_data->visitJSFunction(visitor);
 }
 
 JSC::JSValue toJS(TestCallbackFunctionWithTypedefs& impl)

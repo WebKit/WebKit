@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "HashMapImplInlines.h"
+#include "HashMapHelper.h"
 #include "WeakMapImpl.h"
 
 namespace JSC {

@@ -180,7 +180,7 @@ void JITPlan::compileInThread(JITWorklistThread* thread)
         StringPrintStream stream;
         stream.print(m_mode, " ", *m_codeBlock, " instructions size = ", m_codeBlock->instructionsSize());
         signpostMessage = stream.toCString();
-        WTFBeginSignpost(this, JSCJITCompiler, "%" PUBLIC_LOG_STRING, signpostMessage.data());
+        WTFBeginSignpost(this, JSCJITCompiler, "%" PUBLIC_LOG_STRING, signpostMessage.data() ? signpostMessage.data() : "(nullptr)");
     }
 
     CompilationPath path = compileInThreadImpl();
@@ -188,7 +188,7 @@ void JITPlan::compileInThread(JITWorklistThread* thread)
     RELEASE_ASSERT((path == CancelPath) == (m_stage == JITPlanStage::Canceled));
 
     if (UNLIKELY(Options::useCompilerSignpost()))
-        WTFEndSignpost(this, JSCJITCompiler, "%" PUBLIC_LOG_STRING, signpostMessage.data());
+        WTFEndSignpost(this, JSCJITCompiler, "%" PUBLIC_LOG_STRING, signpostMessage.data() ? signpostMessage.data() : "(nullptr)");
 
     if (LIKELY(!computeCompileTimes))
         return;

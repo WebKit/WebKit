@@ -18,6 +18,7 @@
 #ifndef OPENSSL_HEADER_OPENSSLCONF_H
 #define OPENSSL_HEADER_OPENSSLCONF_H
 
+/* Keep in sync with the list in rust/bssl-sys/build.rs */
 
 #define OPENSSL_NO_ASYNC
 #define OPENSSL_NO_BF

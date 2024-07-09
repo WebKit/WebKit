@@ -32,6 +32,7 @@
 #import <wtf/RobinHoodHashMap.h>
 #import <wtf/RobinHoodHashSet.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/MakeString.h>
 
 namespace WebCore {
 

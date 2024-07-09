@@ -137,7 +137,7 @@ private:
         void processDidBecomeResponsive(WebPageProxy&) override;
         void processDidBecomeUnresponsive(WebPageProxy&) override;
 
-        RefPtr<API::Data> webCryptoMasterKey(WebPageProxy&) override;
+        void legacyWebCryptoMasterKey(WebPageProxy&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&) override;
 
         void navigationActionDidBecomeDownload(WebPageProxy&, API::NavigationAction&, DownloadProxy&) final;
         void navigationResponseDidBecomeDownload(WebPageProxy&, API::NavigationResponse&, DownloadProxy&) final;
@@ -256,6 +256,7 @@ private:
         bool webViewWebProcessDidBecomeResponsive : 1;
         bool webViewWebProcessDidBecomeUnresponsive : 1;
         bool webCryptoMasterKeyForWebView : 1;
+        bool webCryptoMasterKeyForWebViewCompletionHandler : 1;
         bool navigationActionDidBecomeDownload : 1;
         bool navigationResponseDidBecomeDownload : 1;
         bool contextMenuDidCreateDownload;

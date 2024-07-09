@@ -42,6 +42,7 @@
 #include "FloatSize.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

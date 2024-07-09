@@ -27,6 +27,7 @@
 #include "GStreamerRegistryScanner.h"
 #include "VideoFrameGStreamer.h"
 #include <wtf/WorkQueue.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

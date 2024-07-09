@@ -49,7 +49,7 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/persistence/PersistentEncoder.h>
-
+#include <wtf/text/MakeString.h>
 
 namespace API {
 using namespace WebKit::NetworkCache;

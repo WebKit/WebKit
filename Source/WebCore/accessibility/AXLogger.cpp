@@ -41,6 +41,7 @@
 #include <algorithm>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/OptionSet.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -657,14 +658,7 @@ TextStream& operator<<(TextStream& stream, AXObjectCache& axObjectCache)
 #if ENABLE(AX_THREAD_TEXT_APIS)
 static void streamTextRuns(TextStream& stream, const AXTextRuns& runs)
 {
-    StringBuilder result;
-    for (size_t i = 0; i < runs.size(); i++) {
-        result.append(makeString(runs[i].lineIndex, ":|", runs[i].text, "|(len: ", runs[i].text.length(), ")"));
-        if (i != runs.size() - 1)
-            result.append(", ");
-    }
-
-    stream.dumpProperty("textRuns", result);
+    stream.dumpProperty("textRuns", makeString(interleave(runs, [](auto& builder, auto& run) { builder.append(run.lineIndex, ":|"_s, run.text, "|(len: "_s, run.text.length(), ')'); }, ", "_s)));
 }
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 

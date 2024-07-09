@@ -30,6 +30,10 @@ namespace WebKit {
 
 void WebPreferences::platformInitializeStore()
 {
+    setAcceleratedCompositingEnabled(true);
+    setForceCompositingMode(true);
+    setThreadedScrollingEnabled(true);
+
 #if USE(SKIA)
     // FIXME: Expose this as a setting when we switch to Skia.
     static const char* disableAccelerated2DCanvas = getenv("WEBKIT_DISABLE_ACCELERATED_2D_CANVAS");

@@ -24,5 +24,6 @@
  */
 
 [
-    EnabledBySetting=ViewTransitionsEnabled
+    EnabledBySetting=ViewTransitionsEnabled,
+    IsStrongCallback
 ] callback ViewTransitionUpdateCallback = Promise<any> ();

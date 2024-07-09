@@ -29,6 +29,7 @@
 #include "ExceptionHelpers.h"
 #include "StringPrototype.h"
 #include <wtf/Range.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringSearch.h>
 
 namespace JSC {

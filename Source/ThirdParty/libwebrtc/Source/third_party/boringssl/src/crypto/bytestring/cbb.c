@@ -155,6 +155,29 @@ static struct cbb_buffer_st *cbb_get_base(CBB *cbb) {
   return &cbb->u.base;
 }
 
+static void cbb_on_error(CBB *cbb) {
+  // Due to C's lack of destructors and |CBB|'s auto-flushing API, a failing
+  // |CBB|-taking function may leave a dangling pointer to a child |CBB|. As a
+  // result, the convention is callers may not write to |CBB|s that have failed.
+  // But, as a safety measure, we lock the |CBB| into an error state. Once the
+  // error bit is set, |cbb->child| will not be read.
+  //
+  // TODO(davidben): This still isn't quite ideal. A |CBB| function *outside*
+  // this file may originate an error while the |CBB| points to a local child.
+  // In that case we don't set the error bit and are reliant on the error
+  // convention. Perhaps we allow |CBB_cleanup| on child |CBB|s and make every
+  // child's |CBB_cleanup| set the error bit if unflushed. That will be
+  // convenient for C++ callers, but very tedious for C callers. So C callers
+  // perhaps should get a |CBB_on_error| function that can be, less tediously,
+  // stuck in a |goto err| block.
+  cbb_get_base(cbb)->error = 1;
+
+  // Clearing the pointer is not strictly necessary, but GCC's dangling pointer
+  // warning does not know |cbb->child| will not be read once |error| is set
+  // above.
+  cbb->child = NULL;
+}
+
 // CBB_flush recurses and then writes out any pending length prefix. The
 // current length of the underlying base is taken to be the length of the
 // length-prefixed data.
@@ -244,7 +267,7 @@ int CBB_flush(CBB *cbb) {
   return 1;
 
 err:
-  base->error = 1;
+  cbb_on_error(cbb);
   return 0;
 }
 
@@ -420,7 +443,7 @@ static int cbb_add_u(CBB *cbb, uint64_t v, size_t len_len) {
 
   // |v| must fit in |len_len| bytes.
   if (v != 0) {
-    cbb_get_base(cbb)->error = 1;
+    cbb_on_error(cbb);
     return 0;
   }
 
@@ -479,7 +502,7 @@ int CBB_add_asn1_uint64(CBB *cbb, uint64_t value) {
 int CBB_add_asn1_uint64_with_tag(CBB *cbb, uint64_t value, CBS_ASN1_TAG tag) {
   CBB child;
   if (!CBB_add_asn1(cbb, &child, tag)) {
-    return 0;
+    goto err;
   }
 
   int started = 0;
@@ -493,21 +516,25 @@ int CBB_add_asn1_uint64_with_tag(CBB *cbb, uint64_t value, CBS_ASN1_TAG tag) {
       // If the high bit is set, add a padding byte to make it
       // unsigned.
       if ((byte & 0x80) && !CBB_add_u8(&child, 0)) {
-        return 0;
+        goto err;
       }
       started = 1;
     }
     if (!CBB_add_u8(&child, byte)) {
-      return 0;
+      goto err;
     }
   }
 
   // 0 is encoded as a single 0, not the empty string.
   if (!started && !CBB_add_u8(&child, 0)) {
-    return 0;
+    goto err;
   }
 
   return CBB_flush(cbb);
+
+err:
+  cbb_on_error(cbb);
+  return 0;
 }
 
 int CBB_add_asn1_int64(CBB *cbb, int64_t value) {
@@ -529,14 +556,18 @@ int CBB_add_asn1_int64_with_tag(CBB *cbb, int64_t value, CBS_ASN1_TAG tag) {
 
   CBB child;
   if (!CBB_add_asn1(cbb, &child, tag)) {
-    return 0;
+    goto err;
   }
   for (int i = start; i >= 0; i--) {
     if (!CBB_add_u8(&child, bytes[i])) {
-      return 0;
+      goto err;
     }
   }
   return CBB_flush(cbb);
+
+err:
+  cbb_on_error(cbb);
+  return 0;
 }
 
 int CBB_add_asn1_octet_string(CBB *cbb, const uint8_t *data, size_t data_len) {
@@ -544,6 +575,7 @@ int CBB_add_asn1_octet_string(CBB *cbb, const uint8_t *data, size_t data_len) {
   if (!CBB_add_asn1(cbb, &child, CBS_ASN1_OCTETSTRING) ||
       !CBB_add_bytes(&child, data, data_len) ||
       !CBB_flush(cbb)) {
+    cbb_on_error(cbb);
     return 0;
   }
 
@@ -555,6 +587,7 @@ int CBB_add_asn1_bool(CBB *cbb, int value) {
   if (!CBB_add_asn1(cbb, &child, CBS_ASN1_BOOLEAN) ||
       !CBB_add_u8(&child, value != 0 ? 0xff : 0) ||
       !CBB_flush(cbb)) {
+    cbb_on_error(cbb);
     return 0;
   }
 
@@ -649,16 +682,13 @@ int CBB_flush_asn1_set_of(CBB *cbb) {
   if (num_children < 2) {
     return 1;  // Nothing to do. This is the common case for X.509.
   }
-  if (num_children > ((size_t)-1) / sizeof(CBS)) {
-    return 0;  // Overflow.
-  }
 
   // Parse out the children and sort. We alias them into a copy of so they
   // remain valid as we rewrite |cbb|.
   int ret = 0;
   size_t buf_len = CBB_len(cbb);
   uint8_t *buf = OPENSSL_memdup(CBB_data(cbb), buf_len);
-  CBS *children = OPENSSL_malloc(num_children * sizeof(CBS));
+  CBS *children = OPENSSL_calloc(num_children, sizeof(CBS));
   if (buf == NULL || children == NULL) {
     goto err;
   }

@@ -59,7 +59,6 @@
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "ModuleNamespaceAccessCase.h"
-#include "ProxyObjectAccessCase.h"
 #include "ScopedArguments.h"
 #include "ScratchRegisterAllocator.h"
 #include "StackAlignment.h"
@@ -488,12 +487,12 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
             case GetByKind::ById:
             case GetByKind::ByIdWithThis: {
                 propertyName.ensureIsCell(vm);
-                newCase = ProxyObjectAccessCase::create(vm, codeBlock, AccessCase::ProxyObjectLoad, propertyName);
+                newCase = AccessCase::create(vm, codeBlock, AccessCase::ProxyObjectLoad, propertyName);
                 break;
             }
             case GetByKind::ByVal:
             case GetByKind::ByValWithThis: {
-                newCase = ProxyObjectAccessCase::create(vm, codeBlock, AccessCase::IndexedProxyObjectLoad, nullptr);
+                newCase = AccessCase::create(vm, codeBlock, AccessCase::IndexedProxyObjectLoad, nullptr);
                 break;
             }
             default:
@@ -746,6 +745,8 @@ static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, Cod
             accessType = AccessCase::IndexedScopedArgumentsLoad;
         else if (base->type() == StringType)
             accessType = AccessCase::IndexedStringLoad;
+        else if (base->type() == ProxyObjectType)
+            accessType = AccessCase::IndexedProxyObjectLoad;
         else if (isTypedView(base->type())) {
             auto* typedArray = jsCast<JSArrayBufferView*>(base);
 #if USE(JSVALUE32_64)
@@ -1191,8 +1192,28 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
                     vm, codeBlock, AccessCase::Setter, oldStructure, propertyName, offset, conditionSet, WTFMove(prototypeAccessChain), isGlobalProxy);
             }
         } else if (!propertyName.isPrivateName() && isProxyObject) {
-            propertyName.ensureIsCell(vm);
-            newCase = ProxyObjectAccessCase::create(vm, codeBlock, AccessCase::ProxyObjectStore, propertyName);
+            switch (putByKind) {
+            case PutByKind::ByIdStrict:
+            case PutByKind::ByIdSloppy: {
+                propertyName.ensureIsCell(vm);
+                newCase = AccessCase::create(vm, codeBlock, AccessCase::ProxyObjectStore, propertyName);
+                break;
+            }
+            case PutByKind::ByValStrict:
+            case PutByKind::ByValSloppy: {
+                newCase = AccessCase::create(vm, codeBlock, AccessCase::IndexedProxyObjectStore, nullptr);
+                break;
+            }
+            case PutByKind::DefinePrivateNameById:
+            case PutByKind::DefinePrivateNameByVal:
+            case PutByKind::ByIdDirectStrict:
+            case PutByKind::ByIdDirectSloppy:
+            case PutByKind::ByValDirectStrict:
+            case PutByKind::ByValDirectSloppy:
+            case PutByKind::SetPrivateNameById:
+            case PutByKind::SetPrivateNameByVal:
+                return GiveUpOnCache;
+            }
         }
 
         LOG_IC((vm, ICEvent::PutByAddAccessCase, oldStructure->classInfoForCells(), ident, slot.base() == baseValue));
@@ -1255,10 +1276,22 @@ static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, Cod
     AccessGenerationResult result;
 
     {
+        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, globalObject->vm());
+
         JSCell* base = baseValue.asCell();
 
-        AccessCase::AccessType accessType;
-        if (isTypedView(base->type())) {
+        RefPtr<AccessCase> newCase;
+        AccessCase::AccessType accessType = AccessCase::IndexedInt32Store;
+        if (base->type() == ProxyObjectType) {
+            switch (putByKind) {
+            case PutByKind::ByValStrict:
+            case PutByKind::ByValSloppy:
+                accessType = AccessCase::IndexedProxyObjectStore;
+                break;
+            default:
+                return RetryCacheLater;
+            }
+        } else if (isTypedView(base->type())) {
             auto* typedArray = jsCast<JSArrayBufferView*>(base);
 #if USE(JSVALUE32_64)
             if (typedArray->isResizableOrGrowableShared())
@@ -1321,8 +1354,10 @@ static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, Cod
             }
         }
 
-        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, globalObject->vm());
-        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ecmaModeFor(putByKind), nullptr, AccessCase::create(vm, codeBlock, accessType, nullptr));
+        if (!newCase)
+            newCase = AccessCase::create(vm, codeBlock, accessType, nullptr);
+
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ecmaModeFor(putByKind), nullptr, WTFMove(newCase));
 
         if (result.generatedSomeCode())
             LOG_IC((vm, ICEvent::PutByReplaceWithJump, baseValue.classInfoOrNull(), Identifier()));
@@ -1508,8 +1543,19 @@ static InlineCacheAction tryCacheInBy(
         RefPtr<PolyProtoAccessChain> prototypeAccessChain;
         ObjectPropertyConditionSet conditionSet;
         if ((kind == InByKind::ById || kind == InByKind::ByVal) && !propertyName.isPrivateName() && base->inherits<ProxyObject>()) {
-            propertyName.ensureIsCell(vm);
-            newCase = ProxyObjectAccessCase::create(vm, codeBlock, AccessCase::ProxyObjectHas, propertyName);
+            switch (kind) {
+            case InByKind::ById: {
+                propertyName.ensureIsCell(vm);
+                newCase = AccessCase::create(vm, codeBlock, AccessCase::ProxyObjectIn, propertyName);
+                break;
+            }
+            case InByKind::ByVal: {
+                newCase = AccessCase::create(vm, codeBlock, AccessCase::IndexedProxyObjectIn, nullptr);
+                break;
+            }
+            default:
+                break;
+            }
         } else if (wasFound) {
             if (!structure->propertyAccessesAreCacheable())
                 return GiveUpOnCache;
@@ -1839,6 +1885,8 @@ static InlineCacheAction tryCacheArrayInByVal(JSGlobalObject* globalObject, Code
             accessType = AccessCase::IndexedScopedArgumentsInHit;
         else if (base->type() == StringType)
             accessType = AccessCase::IndexedStringInHit;
+        else if (base->type() == ProxyObjectType)
+            accessType = AccessCase::IndexedProxyObjectIn;
         else if (isTypedView(base->type())) {
             auto* typedArray = jsCast<JSArrayBufferView*>(base);
 #if USE(JSVALUE32_64)

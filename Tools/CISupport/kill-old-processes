@@ -101,32 +101,18 @@ def are_simulators_booted():
 
 def main(user=None):
     tasksToKillWin = [
-        "cl.exe",
-        "devenv.com",
-        "devenv.exe",
-        "DumpRenderTree.exe",
-        "DumpRenderTree_debug.exe",
+        "clang-cl.exe",
         "httpd.exe",
         "imagediff.exe",
-        "imagediff_debug.exe",
         "jsc.exe",
-        "jsc_debug.exe",
-        "LightTPD.exe",
-        "link.exe",
-        "midl.exe",
+        "lld-link.exe",
         "perl.exe",
-        "Safari.exe",
-        "svn.exe",
         "testapi.exe",
-        "testapi_debug.exe",
-        "VcBuildHelper.exe",
-        "wdiff.exe",
+        "WebKitGPUProcess.exe",
         "WebKitNetworkProcess.exe",
-        "WebKitNetworkProcess_debug.exe",
-        "WebKitWebProcess.exe",
-        "WebKitWebProcess_debug.exe",
         "WebKitTestRunner.exe",
-        "WebKitTestRunner_debug.exe",
+        "WebKitTestRunnerWS.exe",
+        "WebKitWebProcess.exe",
     ]
 
     tasksToKillMac = [

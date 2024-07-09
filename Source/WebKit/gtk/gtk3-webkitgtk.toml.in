@@ -35,6 +35,6 @@ show_index_summary = true
 show_class_hierarchy = true
 
 [source-location]
-base_url = "https://github.com/WebKit/WebKit/tree/main"
+base_url = "https://github.com/WebKit/WebKit/tree/main/"
 
 urlmap_file = "gtk@GTK_API_VERSION@-urlmap.js"

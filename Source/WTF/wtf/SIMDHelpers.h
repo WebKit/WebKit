@@ -499,6 +499,34 @@ ALWAYS_INLINE const CharacterType* find(std::span<const CharacterType> span, con
     return end;
 }
 
+template<typename CharacterType, size_t threshold = SIMD::stride<CharacterType> * 2>
+requires(sizeof(CharacterType) == 2)
+ALWAYS_INLINE const CharacterType* findInterleaved(std::span<const CharacterType> span, const auto& vectorMatch, const auto& scalarMatch)
+{
+    constexpr size_t stride = SIMD::stride<CharacterType> * 2;
+    static_assert(threshold >= stride);
+    const auto* cursor = span.data();
+    const auto* end = span.data() + span.size();
+    if (span.size() >= threshold) {
+        for (; cursor + (stride - 1) < end; cursor += stride) {
+            if (auto index = vectorMatch(simde_vld2q_u8(bitwise_cast<const uint8_t*>(cursor))))
+                return cursor + index.value();
+        }
+        if (cursor < end) {
+            if (auto index = vectorMatch(simde_vld2q_u8(bitwise_cast<const uint8_t*>(end - stride))))
+                return end - stride + index.value();
+        }
+        return end;
+    }
+
+    for (; cursor != end; ++cursor) {
+        auto character = *cursor;
+        if (scalarMatch(character))
+            return cursor;
+    }
+    return end;
+}
+
 }
 
 namespace SIMD = WTF::SIMD;

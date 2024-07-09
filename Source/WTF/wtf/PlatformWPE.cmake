@@ -42,6 +42,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     glib/RunLoopSourcePriority.h
     glib/Sandbox.h
     glib/SocketConnection.h
+    glib/SysprofAnnotator.h
     glib/WTFGType.h
 
     linux/CurrentProcessMemoryStatus.h

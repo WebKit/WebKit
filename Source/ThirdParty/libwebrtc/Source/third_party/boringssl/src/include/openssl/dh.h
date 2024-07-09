@@ -75,6 +75,12 @@ extern "C" {
 
 
 // Allocation and destruction.
+//
+// A |DH| object represents a Diffie-Hellman key or group parameters. A given
+// object may be used concurrently on multiple threads by non-mutating
+// functions, provided no other thread is concurrently calling a mutating
+// function. Unless otherwise documented, functions which take a |const| pointer
+// are non-mutating and functions which take a non-|const| pointer are mutating.
 
 // DH_new returns a new, empty DH object or NULL on error.
 OPENSSL_EXPORT DH *DH_new(void);
@@ -83,7 +89,8 @@ OPENSSL_EXPORT DH *DH_new(void);
 // count drops to zero.
 OPENSSL_EXPORT void DH_free(DH *dh);
 
-// DH_up_ref increments the reference count of |dh| and returns one.
+// DH_up_ref increments the reference count of |dh| and returns one. It does not
+// mutate |dh| for thread-safety purposes and may be used concurrently.
 OPENSSL_EXPORT int DH_up_ref(DH *dh);
 
 
@@ -193,7 +200,9 @@ OPENSSL_EXPORT int DH_generate_parameters_ex(DH *dh, int prime_bits,
 // Diffie-Hellman operations.
 
 // DH_generate_key generates a new, random, private key and stores it in
-// |dh|. It returns one on success and zero on error.
+// |dh|, if |dh| does not already have a private key. Otherwise, it updates
+// |dh|'s public key to match the private key. It returns one on success and
+// zero on error.
 OPENSSL_EXPORT int DH_generate_key(DH *dh);
 
 // DH_compute_key_padded calculates the shared key between |dh| and |peers_key|
@@ -212,6 +221,9 @@ OPENSSL_EXPORT int DH_generate_key(DH *dh);
 // Callers that expect a fixed-width secret should use this function over
 // |DH_compute_key|. Callers that use either function should migrate to a modern
 // primitive such as X25519 or ECDH with P-256 instead.
+//
+// This function does not mutate |dh| for thread-safety purposes and may be used
+// concurrently.
 OPENSSL_EXPORT int DH_compute_key_padded(uint8_t *out, const BIGNUM *peers_key,
                                          DH *dh);
 
@@ -223,6 +235,9 @@ OPENSSL_EXPORT int DH_compute_key_padded(uint8_t *out, const BIGNUM *peers_key,
 //
 // NOTE: this follows the usual BoringSSL return-value convention, but that's
 // different from |DH_compute_key| and |DH_compute_key_padded|.
+//
+// This function does not mutate |dh| for thread-safety purposes and may be used
+// concurrently.
 OPENSSL_EXPORT int DH_compute_key_hashed(DH *dh, uint8_t *out, size_t *out_len,
                                          size_t max_out_len,
                                          const BIGNUM *peers_key,
@@ -325,6 +340,9 @@ OPENSSL_EXPORT int i2d_DHparams(const DH *in, unsigned char **outp);
 // Callers that expect a fixed-width secret should use |DH_compute_key_padded|
 // instead. Callers that use either function should migrate to a modern
 // primitive such as X25519 or ECDH with P-256 instead.
+//
+// This function does not mutate |dh| for thread-safety purposes and may be used
+// concurrently.
 OPENSSL_EXPORT int DH_compute_key(uint8_t *out, const BIGNUM *peers_key,
                                   DH *dh);
 
@@ -351,5 +369,6 @@ BSSL_NAMESPACE_END
 #define DH_R_NO_PRIVATE_VALUE 103
 #define DH_R_DECODE_ERROR 104
 #define DH_R_ENCODE_ERROR 105
+#define DH_R_INVALID_PARAMETERS 106
 
 #endif  // OPENSSL_HEADER_DH_H

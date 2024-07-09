@@ -90,6 +90,7 @@
 #include <wtf/URL.h>
 #include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/Base64.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 

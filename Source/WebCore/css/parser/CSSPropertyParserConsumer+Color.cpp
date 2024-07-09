@@ -54,6 +54,7 @@
 #include "Color.h"
 #include "ColorLuminance.h"
 #include <wtf/SortedArrayMap.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {

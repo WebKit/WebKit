@@ -102,8 +102,9 @@ public:
     virtual void callAfterNextPresentationUpdate(CompletionHandler<void()>&&) = 0;
 
 protected:
-    explicit View(const API::PageConfiguration&);
+    View();
 
+    void createWebPage(const API::PageConfiguration&);
     void setSize(const WebCore::IntSize&);
 
     std::unique_ptr<API::ViewClient> m_client;

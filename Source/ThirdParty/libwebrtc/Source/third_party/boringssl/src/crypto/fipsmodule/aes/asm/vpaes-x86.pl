@@ -62,7 +62,7 @@ $output = pop;
 open OUT,">$output";
 *STDOUT=*OUT;
 
-&asm_init($ARGV[0],$x86only = $ARGV[$#ARGV] eq "386");
+&asm_init($ARGV[0]);
 
 $PREFIX="vpaes";
 

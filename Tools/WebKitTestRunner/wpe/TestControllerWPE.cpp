@@ -32,6 +32,7 @@
 #include <wtf/WTFProcess.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/Base64.h>
+#include <wtf/text/MakeString.h>
 
 #if USE(CAIRO)
 #include <cairo.h>

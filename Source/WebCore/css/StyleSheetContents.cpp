@@ -44,6 +44,7 @@
 #include <wtf/Deque.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
 #include "ContentRuleListResults.h"

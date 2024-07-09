@@ -51,6 +51,11 @@ PlatformWritingToolsBehavior convertToPlatformWritingToolsBehavior(WebCore::Writ
     }
 }
 
+WTRequestedTool convertToPlatformRequestedTool(WebCore::WritingTools::RequestedTool tool)
+{
+    return static_cast<WTRequestedTool>(tool);
+}
+
 WTTextSuggestionState convertToPlatformTextSuggestionState(WebCore::WritingTools::TextSuggestion::State state)
 {
     switch (state) {
@@ -87,6 +92,11 @@ WebCore::WritingTools::Behavior convertToWebWritingToolsBehavior(PlatformWriting
     case PlatformWritingToolsBehaviorComplete:
         return WebCore::WritingTools::Behavior::Complete;
     }
+}
+
+WebCore::WritingTools::RequestedTool convertToWebRequestedTool(WTRequestedTool tool)
+{
+    return static_cast<WebCore::WritingTools::RequestedTool>(tool);
 }
 
 WebCore::WritingTools::TextSuggestion::State convertToWebTextSuggestionState(WTTextSuggestionState state)

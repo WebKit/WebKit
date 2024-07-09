@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<header>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+</header>
+<body>
+<script>
+
+function makeOffscreenCanvas(width, height) {
+  let canvas = new OffscreenCanvas(width, height);
+  let ctx = canvas.getContext('2d');
+  ctx.fillStyle = 'rgba(50, 100, 150, 255)';
+  ctx.fillRect(0, 0, width, height);
+  return new VideoFrame(canvas, { timestamp: 1 });
+}
+
+async function doEncode(test, encoderConfig, updateConfig)
+{
+  let deltaCount = 0;
+  let decoderConfigCount = 0;
+  const encoderInit = {
+    output(chunk, metadata) {
+      if (chunk.type === "delta")
+          deltaCount++;
+
+      // In our current implementation, we create a decoderConfig once per internal encoder.
+      if (metadata.decoderConfig)
+          decoderConfigCount++;
+    },
+    error(e) {
+    }
+  };
+
+  const encoder = new VideoEncoder(encoderInit);
+
+  let actualEncoderConfig = encoderConfig;
+
+  const w = encoderConfig.width;
+  const h = encoderConfig.height;
+  const frame = makeOffscreenCanvas(w, h);
+  test.add_cleanup(() => frame.close());
+
+  encoder.configure(actualEncoderConfig);
+  encoder.encode(frame, { keyFrame: true });
+
+  let cptr;
+  for (cptr = 0; cptr < 5; cptr++) {
+    updateConfig(actualEncoderConfig);
+    encoder.configure(actualEncoderConfig);
+    encoder.encode(frame, { keyFrame: false });
+  }
+
+  await encoder.flush();
+  assert_true(deltaCount > 0 || decoderConfigCount <= 1, "before first flush");
+
+  deltaCount = 0;
+  decoderConfigCount = 0;
+
+  for (cptr = 0; cptr < 20; cptr++ && !deltaCount) {
+    updateConfig(actualEncoderConfig);
+    encoder.configure(actualEncoderConfig);
+    encoder.encode(frame, { keyFrame: false });
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
+
+  await encoder.flush();
+  encoder.close();
+
+  assert_true(deltaCount > 0 || decoderConfigCount <= 1, "after first flush");
+}
+
+function doTest(codec, title)
+{
+  const config = { codec };
+  config.width = 320;
+  config.height = 240;
+  config.bitrate = 1000000;
+  config.framerate = 10;
+
+  promise_test(async t => {
+    return doEncode(t, config, (config) => {
+        config.bitrate += 1;
+    });
+  }, title + " - bitrate");
+
+  promise_test(async t => {
+    return doEncode(t, config, (config) => {
+        config.framerate += 1;
+    });
+  }, title + " - framerate");
+}
+
+doTest('vp8', "VP8");
+doTest('vp09.00.10.08', "VP9");
+doTest('avc1.42001E', "H.264");
+</script>
+</body>
+</html>

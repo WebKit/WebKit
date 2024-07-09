@@ -40,6 +40,7 @@
 #include "VMInlines.h"
 #include <charconv>
 #include <wtf/text/EscapedFormsForJSON.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringCommon.h>
 

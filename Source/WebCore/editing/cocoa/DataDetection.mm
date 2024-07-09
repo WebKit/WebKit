@@ -60,6 +60,7 @@
 #import "VisibleUnits.h"
 #import <wtf/WorkQueue.h>
 #import <wtf/cf/TypeCastsCF.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/StringToIntegerConversion.h>
 

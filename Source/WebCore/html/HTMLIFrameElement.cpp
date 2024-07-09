@@ -43,6 +43,7 @@
 #include "Settings.h"
 #include "TrustedType.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

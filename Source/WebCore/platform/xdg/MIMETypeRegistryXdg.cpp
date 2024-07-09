@@ -26,6 +26,8 @@
 #include "config.h"
 #include "MIMETypeRegistry.h"
 
+#include <wtf/text/MakeString.h>
+
 #define XDG_PREFIX _wk_xdg
 #include "xdgmime.h"
 
@@ -38,7 +40,7 @@ String MIMETypeRegistry::mimeTypeForExtension(StringView string)
         return String();
 
     // Build any filename with the given extension.
-    String filename = makeString("a."_s, string);
+    auto filename = makeString("a."_s, string);
     if (const char* mimeType = xdg_mime_get_mime_type_from_file_name(filename.utf8().data())) {
         if (mimeType != XDG_MIME_TYPE_UNKNOWN)
             return String::fromUTF8(mimeType);

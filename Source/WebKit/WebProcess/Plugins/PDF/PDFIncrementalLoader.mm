@@ -40,6 +40,7 @@
 #import <wtf/Range.h>
 #import <wtf/RangeSet.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/text/MakeString.h>
 
 #import "PDFKitSoftLink.h"
 

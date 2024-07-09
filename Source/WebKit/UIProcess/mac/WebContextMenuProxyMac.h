@@ -37,6 +37,12 @@ OBJC_CLASS NSView;
 OBJC_CLASS NSWindow;
 OBJC_CLASS WKMenuDelegate;
 
+#if ENABLE(WRITING_TOOLS)
+namespace WebCore::WritingTools {
+enum class RequestedTool : uint16_t;
+}
+#endif
+
 namespace WebKit {
 
 class WebContextMenuItemData;
@@ -50,6 +56,10 @@ public:
     ~WebContextMenuProxyMac();
 
     void contextMenuItemSelected(const WebContextMenuItemData&);
+
+#if ENABLE(WRITING_TOOLS)
+    void handleContextMenuWritingTools(WebCore::WritingTools::RequestedTool);
+#endif
 
 #if ENABLE(SERVICE_CONTROLS)
     void clearServicesMenu();

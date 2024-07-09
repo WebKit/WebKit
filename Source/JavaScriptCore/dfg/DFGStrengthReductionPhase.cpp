@@ -44,6 +44,7 @@
 #include "WasmCallingConvention.h"
 #include "WebAssemblyFunction.h"
 #include <cstdlib>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC { namespace DFG {

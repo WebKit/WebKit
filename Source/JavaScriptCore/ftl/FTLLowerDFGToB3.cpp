@@ -112,6 +112,7 @@
 #include <wtf/Box.h>
 #include <wtf/GenericHashKey.h>
 #include <wtf/RecursableLambda.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC { namespace FTL {
 
@@ -1551,20 +1552,35 @@ private:
         case NormalizeMapKey:
             compileNormalizeMapKey();
             break;
-        case GetMapBucket:
-            compileGetMapBucket();
+        case MapKeyIndex:
+            compileMapKeyIndex();
             break;
-        case GetMapBucketHead:
-            compileGetMapBucketHead();
+        case MapValue:
+            compileMapValue();
             break;
-        case GetMapBucketNext:
-            compileGetMapBucketNext();
+        case MapIterationNext:
+            compileMapIterationNext();
             break;
-        case LoadKeyFromMapBucket:
-            compileLoadKeyFromMapBucket();
+        case MapIterationEntry:
+            compileMapIterationEntry();
             break;
-        case LoadValueFromMapBucket:
-            compileLoadValueFromMapBucket();
+        case MapIterationEntryKey:
+            compileMapIterationEntryKey();
+            break;
+        case MapIterationEntryValue:
+            compileMapIterationEntryValue();
+            break;
+        case MapStorage:
+            compileMapStorage();
+            break;
+        case MapIteratorNext:
+            compileMapIteratorNext();
+            break;
+        case MapIteratorKey:
+            compileMapIteratorKey();
+            break;
+        case MapIteratorValue:
+            compileMapIteratorValue();
             break;
         case ExtractValueFromWeakMapGet:
             compileExtractValueFromWeakMapGet();
@@ -11975,7 +11991,7 @@ IGNORE_CLANG_WARNINGS_END
                     jit.move(rep.gpr(), result);
                 };
 
-                auto callWithExceptionCheck = [&] (OperationReturnType<void>(*callee)(JSGlobalObject*)) {
+                auto callWithExceptionCheck = [&] (OperationReturnType<void>(SYSV_ABI *callee)(JSGlobalObject*)) {
                     jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(callee)), GPRInfo::nonPreservedNonArgumentGPR0);
                     jit.call(GPRInfo::nonPreservedNonArgumentGPR0, OperationPtrTag);
                     exceptions->append(jit.emitExceptionCheck(*vm, AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth, CCallHelpers::operationExceptionRegister<OperationReturnType<void>>()));
@@ -13781,17 +13797,21 @@ IGNORE_CLANG_WARNINGS_END
         setJSValue(m_out.phi(Int64, fastResult, bigIntResult, normalizedNaNResult, doubleResult, boxedIntResult));
     }
 
-    void compileGetMapBucket()
+    template<typename MapOrSet>
+    void compileGetMapIndexImpl()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+
+        // blocks
         LBasicBlock indexSetUp = m_out.newBlock();
         LBasicBlock loopStart = m_out.newBlock();
         LBasicBlock loopAround = m_out.newBlock();
         LBasicBlock slowPath = m_out.newBlock();
+        LBasicBlock notEmptyEntry = m_out.newBlock();
         LBasicBlock notPresentInTable = m_out.newBlock();
-        LBasicBlock notEmptyValue = m_out.newBlock();
-        LBasicBlock notDeletedValue = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
+        LBasicBlock presentInTable = m_out.newBlock();
+        LBasicBlock notDeletedKey = m_out.newBlock();
+        LBasicBlock done = m_out.newBlock();
 
         LValue map;
         if (m_node->child1().useKind() == MapObjectUse)
@@ -13807,33 +13827,36 @@ IGNORE_CLANG_WARNINGS_END
 
         LValue hash = lowInt32(m_node->child3());
 
-        LValue buffer = m_out.loadPtr(map, m_heaps.HashMapImpl_buffer);
+        // Get the JSImmutableButterfly first.
+        LValue mapStorage = m_out.loadPtr(map, m_heaps.JSSet_butterfly);
+        m_out.branch(m_out.isNull(mapStorage), unsure(notPresentInTable), unsure(indexSetUp));
 
-        m_out.branch(m_out.isNull(buffer), unsure(notPresentInTable), unsure(indexSetUp));
-
+        // Compute the bucketCount = Capacity / LoadFactor and bucketIndex = hashTableStartIndex + (hash & bucketCount - 1).
         LBasicBlock lastNext = m_out.appendTo(indexSetUp, loopStart);
-        LValue mask = m_out.sub(m_out.load32(map, m_heaps.HashMapImpl_capacity), m_out.int32One);
-        ValueFromBlock indexStart = m_out.anchor(hash);
+        LValue mapStorageData = toButterfly(mapStorage);
+        static_assert(MapOrSet::Helper::LoadFactor == 1);
+        LValue bucketCount = m_out.load32(m_out.baseIndex(m_heaps.indexedContiguousProperties, mapStorageData, m_out.constIntPtr(MapOrSet::Helper::capacityIndex())));
+        LValue bucketIndex = m_out.add(m_out.constInt32(MapOrSet::Helper::hashTableStartIndex()), m_out.bitAnd(hash, m_out.sub(bucketCount, m_out.int32One)));
+
+        // Get the entryKeyIndex JSValue.
+        ValueFromBlock entryKeyIndexStart = m_out.anchor(m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, mapStorageData, m_out.zeroExt(bucketIndex, Int64))));
         m_out.jump(loopStart);
 
-        m_out.appendTo(loopStart, notEmptyValue);
-        LValue unmaskedIndex = m_out.phi(Int32, indexStart);
-        LValue index = m_out.bitAnd(mask, unmaskedIndex);
-        // FIXME: I think these buffers are caged?
-        // https://bugs.webkit.org/show_bug.cgi?id=174925
-        LValue hashMapBucket = m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), buffer, m_out.zeroExt(index, Int64), ScaleEight));
-        ValueFromBlock bucketResult = m_out.anchor(hashMapBucket);
-        m_out.branch(m_out.equal(hashMapBucket, m_out.constIntPtr(bitwise_cast<intptr_t>(HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::emptyValue()))),
-            unsure(notPresentInTable), unsure(notEmptyValue));
+        // Try to find the matched entryKey in the chain located in the bucketIndex.
+        m_out.appendTo(loopStart, notEmptyEntry);
+        LValue entryKeyIndexValue = m_out.phi(Int64, entryKeyIndexStart);
+        m_out.branch(m_out.isZero64(entryKeyIndexValue), unsure(notPresentInTable), unsure(notEmptyEntry));
 
-        m_out.appendTo(notEmptyValue, notDeletedValue);
-        m_out.branch(m_out.equal(hashMapBucket, m_out.constIntPtr(bitwise_cast<intptr_t>(HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::deletedValue()))),
-            unsure(loopAround), unsure(notDeletedValue));
+        // Get the entryKey JSValue.
+        m_out.appendTo(notEmptyEntry, notDeletedKey);
+        LValue entryKeyIndex = m_out.castToInt32(entryKeyIndexValue);
+        LValue entryKey = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, mapStorageData, m_out.zeroExt(entryKeyIndex, Int64)));
 
-        m_out.appendTo(notDeletedValue, loopAround);
-        LValue bucketKey = m_out.load64(hashMapBucket, m_heaps.HashMapBucket_key);
+        // Check wether the current entryKey is a deleted one.
+        m_out.branch(m_out.equal(entryKey,  weakPointer(vm().orderedHashTableDeletedValue())), unsure(loopAround), unsure(notDeletedKey));
 
-        // Perform Object.is()
+        // Now the current entryKey is not a deleted value. Then check whether it matches the target key.
+        m_out.appendTo(notDeletedKey, loopAround);
         switch (m_node->child2().useKind()) {
         case BooleanUse:
 #if USE(BIGINT32)
@@ -13842,138 +13865,197 @@ IGNORE_CLANG_WARNINGS_END
         case Int32Use:
         case SymbolUse:
         case ObjectUse: {
-            m_out.branch(m_out.equal(key, bucketKey),
-                unsure(continuation), unsure(loopAround));
-            break;
-        }
-        case StringUse: {
-            LBasicBlock notBitEqual = m_out.newBlock();
-            LBasicBlock bucketKeyIsCell = m_out.newBlock();
-
-            m_out.branch(m_out.equal(key, bucketKey),
-                unsure(continuation), unsure(notBitEqual));
-
-            m_out.appendTo(notBitEqual, bucketKeyIsCell);
-            m_out.branch(isCell(bucketKey),
-                unsure(bucketKeyIsCell), unsure(loopAround));
-
-            m_out.appendTo(bucketKeyIsCell, loopAround);
-            m_out.branch(isString(bucketKey),
-                unsure(slowPath), unsure(loopAround));
-            break;
-        }
-        case HeapBigIntUse: {
-            LBasicBlock notBitEqual = m_out.newBlock();
-            LBasicBlock bucketKeyIsCell = m_out.newBlock();
-
-            m_out.branch(m_out.equal(key, bucketKey),
-                unsure(continuation), unsure(notBitEqual));
-
-            m_out.appendTo(notBitEqual, bucketKeyIsCell);
-            m_out.branch(isCell(bucketKey),
-                unsure(bucketKeyIsCell), unsure(loopAround));
-
-            m_out.appendTo(bucketKeyIsCell, loopAround);
-            m_out.branch(isHeapBigInt(bucketKey),
-                unsure(slowPath), unsure(loopAround));
+            m_out.branch(m_out.equal(key, entryKey), unsure(presentInTable), unsure(loopAround));
             break;
         }
         case CellUse: {
             LBasicBlock notBitEqual = m_out.newBlock();
-            LBasicBlock bucketKeyIsCell = m_out.newBlock();
-            LBasicBlock bucketKeyIsString = m_out.newBlock();
-            LBasicBlock bucketKeyIsNotString = m_out.newBlock();
-            LBasicBlock bucketKeyIsHeapBigInt = m_out.newBlock();
+            LBasicBlock entryKeyIsCell = m_out.newBlock();
+            LBasicBlock entryKeyIsString = m_out.newBlock();
+            LBasicBlock entryKeyIsNotString = m_out.newBlock();
+            LBasicBlock entryKeyIsHeapBigInt = m_out.newBlock();
 
-            m_out.branch(m_out.equal(key, bucketKey),
-                unsure(continuation), unsure(notBitEqual));
+            m_out.branch(m_out.equal(key, entryKey), unsure(presentInTable), unsure(notBitEqual));
 
-            m_out.appendTo(notBitEqual, bucketKeyIsCell);
-            m_out.branch(isCell(bucketKey),
-                unsure(bucketKeyIsCell), unsure(loopAround));
+            m_out.appendTo(notBitEqual, entryKeyIsCell);
+            m_out.branch(isCell(entryKey), unsure(entryKeyIsCell), unsure(loopAround));
 
-            m_out.appendTo(bucketKeyIsCell, bucketKeyIsString);
-            m_out.branch(isString(bucketKey),
-                unsure(bucketKeyIsString), unsure(bucketKeyIsNotString));
+            m_out.appendTo(entryKeyIsCell, entryKeyIsString);
+            m_out.branch(isString(entryKey), unsure(entryKeyIsString), unsure(entryKeyIsNotString));
 
-            m_out.appendTo(bucketKeyIsString, bucketKeyIsNotString);
-            m_out.branch(isString(key, provenType(m_node->child2())),
-                unsure(slowPath), unsure(loopAround));
+            m_out.appendTo(entryKeyIsString, entryKeyIsNotString);
+            m_out.branch(isString(key, provenType(m_node->child2())), unsure(slowPath), unsure(loopAround));
 
-            m_out.appendTo(bucketKeyIsNotString, bucketKeyIsHeapBigInt);
-            m_out.branch(isHeapBigInt(bucketKey),
-                unsure(bucketKeyIsHeapBigInt), unsure(loopAround));
+            m_out.appendTo(entryKeyIsNotString, entryKeyIsHeapBigInt);
+            m_out.branch(isHeapBigInt(entryKey), unsure(entryKeyIsHeapBigInt), unsure(loopAround));
 
-            m_out.appendTo(bucketKeyIsHeapBigInt, loopAround);
-            m_out.branch(isHeapBigInt(key, provenType(m_node->child2())),
-                unsure(slowPath), unsure(loopAround));
+            m_out.appendTo(entryKeyIsHeapBigInt, loopAround);
+            m_out.branch(isHeapBigInt(key, provenType(m_node->child2())), unsure(slowPath), unsure(loopAround));
+            break;
+        }
+        case StringUse: {
+            LBasicBlock notBitEqual = m_out.newBlock();
+            LBasicBlock entryKeyIsCell = m_out.newBlock();
+
+            m_out.branch(m_out.equal(key, entryKey), unsure(presentInTable), unsure(notBitEqual));
+
+            m_out.appendTo(notBitEqual, entryKeyIsCell);
+            m_out.branch(isCell(entryKey), unsure(entryKeyIsCell), unsure(loopAround));
+
+            m_out.appendTo(entryKeyIsCell, loopAround);
+            m_out.branch(isString(entryKey), unsure(slowPath), unsure(loopAround));
+            break;
+        }
+        case HeapBigIntUse: {
+            LBasicBlock notBitEqual = m_out.newBlock();
+            LBasicBlock entryKeyIsCell = m_out.newBlock();
+
+            m_out.branch(m_out.equal(key, entryKey), unsure(presentInTable), unsure(notBitEqual));
+
+            m_out.appendTo(notBitEqual, entryKeyIsCell);
+            m_out.branch(isCell(entryKey), unsure(entryKeyIsCell), unsure(loopAround));
+
+            m_out.appendTo(entryKeyIsCell, loopAround);
+            m_out.branch(isHeapBigInt(entryKey), unsure(slowPath), unsure(loopAround));
             break;
         }
         case UntypedUse: {
             LBasicBlock notBitEqual = m_out.newBlock();
-            LBasicBlock bucketKeyIsCell = m_out.newBlock();
+            LBasicBlock entryKeyIsCell = m_out.newBlock();
             LBasicBlock bothAreCells = m_out.newBlock();
-            LBasicBlock bucketKeyIsString = m_out.newBlock();
-            LBasicBlock bucketKeyIsNotString = m_out.newBlock();
-            LBasicBlock bucketKeyIsHeapBigInt = m_out.newBlock();
+            LBasicBlock entryKeyIsString = m_out.newBlock();
+            LBasicBlock entryKeyIsNotString = m_out.newBlock();
+            LBasicBlock entryKeyIsHeapBigInt = m_out.newBlock();
 
-            m_out.branch(m_out.equal(key, bucketKey),
-                unsure(continuation), unsure(notBitEqual));
+            m_out.branch(m_out.equal(key, entryKey), unsure(presentInTable), unsure(notBitEqual));
 
-            m_out.appendTo(notBitEqual, bucketKeyIsCell);
-            m_out.branch(isCell(bucketKey),
-                unsure(bucketKeyIsCell), unsure(loopAround));
+            m_out.appendTo(notBitEqual, entryKeyIsCell);
+            m_out.branch(isCell(entryKey), unsure(entryKeyIsCell), unsure(loopAround));
 
-            m_out.appendTo(bucketKeyIsCell, bothAreCells);
-            m_out.branch(isCell(key),
-                unsure(bothAreCells), unsure(loopAround));
+            m_out.appendTo(entryKeyIsCell, bothAreCells);
+            m_out.branch(isCell(key), unsure(bothAreCells), unsure(loopAround));
 
-            m_out.appendTo(bothAreCells, bucketKeyIsString);
-            m_out.branch(isString(bucketKey),
-                unsure(bucketKeyIsString), unsure(bucketKeyIsNotString));
+            m_out.appendTo(bothAreCells, entryKeyIsString);
+            m_out.branch(isString(entryKey), unsure(entryKeyIsString), unsure(entryKeyIsNotString));
 
-            m_out.appendTo(bucketKeyIsString, bucketKeyIsNotString);
-            m_out.branch(isString(key, provenType(m_node->child2())),
-                unsure(slowPath), unsure(loopAround));
+            m_out.appendTo(entryKeyIsString, entryKeyIsNotString);
+            m_out.branch(isString(key, provenType(m_node->child2())), unsure(slowPath), unsure(loopAround));
 
-            m_out.appendTo(bucketKeyIsNotString, bucketKeyIsHeapBigInt);
-            m_out.branch(isHeapBigInt(bucketKey),
-                unsure(bucketKeyIsHeapBigInt), unsure(loopAround));
+            m_out.appendTo(entryKeyIsNotString, entryKeyIsHeapBigInt);
+            m_out.branch(isHeapBigInt(entryKey), unsure(entryKeyIsHeapBigInt), unsure(loopAround));
 
-            m_out.appendTo(bucketKeyIsHeapBigInt, loopAround);
-            m_out.branch(isHeapBigInt(key, provenType(m_node->child2())),
-                unsure(slowPath), unsure(loopAround));
+            m_out.appendTo(entryKeyIsHeapBigInt, loopAround);
+            m_out.branch(isHeapBigInt(key, provenType(m_node->child2())), unsure(slowPath), unsure(loopAround));
             break;
         }
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
 
-        m_out.appendTo(loopAround, slowPath);
-        m_out.addIncomingToPhi(unmaskedIndex, m_out.anchor(m_out.add(index, m_out.int32One)));
+        // The current entryKey doesn't match the target key. Then, get the next entry in the chain and continue.
+        m_out.appendTo(loopAround, presentInTable);
+        LValue entryChainIndex = m_out.add(m_out.constInt32(MapOrSet::Helper::ChainOffset), entryKeyIndex);
+        LValue nextEntry = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, mapStorageData, m_out.zeroExt(entryChainIndex, Int64)));
+        m_out.addIncomingToPhi(entryKeyIndexValue, m_out.anchor(nextEntry));
         m_out.jump(loopStart);
 
+        // Found a matched entryKey.
+        m_out.appendTo(presentInTable, slowPath);
+        ValueFromBlock entryValueResult = m_out.anchor(entryKeyIndex);
+        m_out.jump(done);
+
+        // The slow path should call the operation.
         m_out.appendTo(slowPath, notPresentInTable);
-        ValueFromBlock slowPathResult = m_out.anchor(vmCall(pointerType(),
-            m_node->child1().useKind() == MapObjectUse ? operationJSMapFindBucket : operationJSSetFindBucket, weakPointer(globalObject), map, key, hash));
-        m_out.jump(continuation);
+        auto operation = std::is_same<MapOrSet, JSMap>::value ? operationMapKeyIndex : operationSetKeyIndex;
+        ValueFromBlock slowPathResult = m_out.anchor(vmCall(Int32, operation, weakPointer(globalObject), map, key, hash));
+        m_out.jump(done);
 
-        m_out.appendTo(notPresentInTable, continuation);
-        ValueFromBlock notPresentResult;
-        if (m_node->child1().useKind() == MapObjectUse)
-            notPresentResult = m_out.anchor(weakPointer(vm().sentinelMapBucket()));
-        else if (m_node->child1().useKind() == SetObjectUse)
-            notPresentResult = m_out.anchor(weakPointer(vm().sentinelSetBucket()));
-        else
-            RELEASE_ASSERT_NOT_REACHED();
-        m_out.jump(continuation);
+        // Didn't find a matched entryKey.
+        m_out.appendTo(notPresentInTable, done);
+        ValueFromBlock notPresentResult = m_out.anchor(m_out.constInt32(JSMap::Helper::InvalidTableIndex));
+        m_out.jump(done);
 
-        m_out.appendTo(continuation, lastNext);
-        setJSValue(m_out.phi(pointerType(), bucketResult, slowPathResult, notPresentResult));
+        // Done.
+        m_out.appendTo(done, lastNext);
+        setInt32(m_out.phi(Int32, entryValueResult, slowPathResult, notPresentResult));
     }
 
-    void compileGetMapBucketHead()
+    void compileMapKeyIndex()
     {
+        if (m_node->child1().useKind() == MapObjectUse)
+            compileGetMapIndexImpl<JSMap>();
+        else if (m_node->child1().useKind() == SetObjectUse)
+            compileGetMapIndexImpl<JSSet>();
+        else
+            RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    void compileMapValue()
+    {
+        LBasicBlock presentInTable = m_out.newBlock();
+        LBasicBlock notPresentInTable = m_out.newBlock();
+        LBasicBlock done = m_out.newBlock();
+
+        LValue map = lowMapObject(m_node->child1());
+        LValue keyIndex = lowInt32(m_node->child2());
+
+        LValue isSentinel = m_out.equal(keyIndex, m_out.constInt32(JSMap::Helper::InvalidTableIndex));
+        m_out.branch(isSentinel, unsure(notPresentInTable), unsure(presentInTable));
+
+        LBasicBlock lastNext = m_out.appendTo(notPresentInTable, presentInTable);
+        ValueFromBlock notPresentResult = m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined())));
+        m_out.jump(done);
+
+        m_out.appendTo(presentInTable, done);
+        LValue butterflyStorage = toButterfly(m_out.loadPtr(map, m_heaps.JSSet_butterfly));
+        LValue valueIndex = m_out.add(m_out.int32One, keyIndex);
+        ValueFromBlock presentResult = m_out.anchor(m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, butterflyStorage, m_out.zeroExt(valueIndex, Int64))));
+        m_out.jump(done);
+
+        m_out.appendTo(done, lastNext);
+        setJSValue(m_out.phi(Int64, notPresentResult, presentResult));
+    }
+
+    void compileMapIterationNext()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        LValue mapStorage = lowCell(m_node->child1());
+        LValue entry = lowInt32(m_node->child2());
+
+        LValue result = vmCall(Int64, m_node->bucketOwnerType() == BucketOwnerType::Map ? operationMapIterationNext : operationSetIterationNext, weakPointer(globalObject), mapStorage, entry);
+        setJSValue(result);
+    }
+
+    void compileMapIterationEntry()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        LValue storage = lowCell(m_node->child1());
+        auto operation = m_node->bucketOwnerType() == BucketOwnerType::Map ? operationMapIterationEntry : operationSetIterationEntry;
+        LValue result = vmCall(Int64, operation, weakPointer(globalObject), storage);
+        setJSValue(result);
+    }
+
+    void compileMapIterationEntryKey()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        LValue storage = lowCell(m_node->child1());
+        auto operation = m_node->bucketOwnerType() == BucketOwnerType::Map ? operationMapIterationEntryKey : operationSetIterationEntryKey;
+        LValue result = vmCall(Int64, operation, weakPointer(globalObject), storage);
+        setJSValue(result);
+    }
+
+    void compileMapIterationEntryValue()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        LValue storage = lowCell(m_node->child1());
+        LValue result = vmCall(Int64, operationMapIterationEntryValue, weakPointer(globalObject), storage);
+        setJSValue(result);
+    }
+
+    void compileMapStorage()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+
         LValue map;
         if (m_node->child1().useKind() == MapObjectUse)
             map = lowMapObject(m_node->child1());
@@ -13982,56 +14064,52 @@ IGNORE_CLANG_WARNINGS_END
         else
             RELEASE_ASSERT_NOT_REACHED();
 
-        static_assert(HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfHead() == HashMapImpl<HashMapBucket<HashMapBucketDataKeyValue>>::offsetOfHead());
-        setJSValue(m_out.loadPtr(map, m_heaps.HashMapImpl_head));
+        auto operation = m_node->child1().useKind() == MapObjectUse ? operationMapStorage : operationSetStorage;
+        LValue result = vmCall(Int64, operation, weakPointer(globalObject), map);
+        setJSValue(result);
     }
 
-    void compileGetMapBucketNext()
+    void compileMapIteratorNext()
     {
-        LBasicBlock loopStart = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
-        LBasicBlock noBucket = m_out.newBlock();
-        LBasicBlock hasBucket = m_out.newBlock();
-        LBasicBlock nextBucket = m_out.newBlock();
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
 
-        LBasicBlock lastNext = m_out.insertNewBlocksBefore(loopStart);
+        LValue mapIterator;
+        if (m_node->child1().useKind() == MapIteratorObjectUse)
+            mapIterator = lowMapIteratorObject(m_node->child1());
+        else if (m_node->child1().useKind() == SetIteratorObjectUse)
+            mapIterator = lowSetIteratorObject(m_node->child1());
+        else
+            RELEASE_ASSERT_NOT_REACHED();
 
-        static_assert(HashMapBucket<HashMapBucketDataKey>::offsetOfNext() == HashMapBucket<HashMapBucketDataKeyValue>::offsetOfNext());
-        static_assert(HashMapBucket<HashMapBucketDataKey>::offsetOfKey() == HashMapBucket<HashMapBucketDataKeyValue>::offsetOfKey());
-        LValue mapBucketPrev = lowCell(m_node->child1());
-        ValueFromBlock mapBucketStart = m_out.anchor(m_out.loadPtr(mapBucketPrev, m_heaps.HashMapBucket_next));
-        m_out.jump(loopStart);
-
-        m_out.appendTo(loopStart, noBucket);
-        LValue mapBucket = m_out.phi(pointerType(), mapBucketStart);
-        m_out.branch(m_out.isNull(mapBucket), unsure(noBucket), unsure(hasBucket));
-
-        m_out.appendTo(noBucket, hasBucket);
-        ValueFromBlock noBucketResult;
-        if (m_node->bucketOwnerType() == BucketOwnerType::Map)
-            noBucketResult = m_out.anchor(weakPointer(vm().sentinelMapBucket()));
-        else {
-            ASSERT(m_node->bucketOwnerType() == BucketOwnerType::Set);
-            noBucketResult = m_out.anchor(weakPointer(vm().sentinelSetBucket()));
-        }
-        m_out.jump(continuation);
-
-        m_out.appendTo(hasBucket, nextBucket);
-        ValueFromBlock bucketResult = m_out.anchor(mapBucket);
-        m_out.branch(m_out.isZero64(m_out.load64(mapBucket, m_heaps.HashMapBucket_key)), unsure(nextBucket), unsure(continuation));
-
-        m_out.appendTo(nextBucket, continuation);
-        m_out.addIncomingToPhi(mapBucket, m_out.anchor(m_out.loadPtr(mapBucket, m_heaps.HashMapBucket_next)));
-        m_out.jump(loopStart);
-
-        m_out.appendTo(continuation, lastNext);
-        setJSValue(m_out.phi(pointerType(), noBucketResult, bucketResult));
+        auto operation = m_node->child1().useKind() == MapIteratorObjectUse ? operationMapIteratorNext : operationSetIteratorNext;
+        LValue result = vmCall(Int64, operation, weakPointer(globalObject), mapIterator);
+        setJSValue(result);
     }
 
-    void compileLoadValueFromMapBucket()
+    void compileMapIteratorKey()
     {
-        LValue mapBucket = lowCell(m_node->child1());
-        setJSValue(m_out.load64(mapBucket, m_heaps.HashMapBucket_value));
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+
+        LValue mapIterator;
+        if (m_node->child1().useKind() == MapIteratorObjectUse)
+            mapIterator = lowMapIteratorObject(m_node->child1());
+        else if (m_node->child1().useKind() == SetIteratorObjectUse)
+            mapIterator = lowSetIteratorObject(m_node->child1());
+        else
+            RELEASE_ASSERT_NOT_REACHED();
+
+        auto operation = m_node->child1().useKind() == MapIteratorObjectUse ? operationMapIteratorKey : operationSetIteratorKey;
+        LValue result = vmCall(Int64, operation, weakPointer(globalObject), mapIterator);
+        setJSValue(result);
+    }
+
+    void compileMapIteratorValue()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        ASSERT(m_node->child1().useKind() == MapIteratorObjectUse);
+        LValue mapIterator = lowMapIteratorObject(m_node->child1());
+        LValue result = vmCall(Int64, operationMapIteratorValue, weakPointer(globalObject), mapIterator);
+        setJSValue(result);
     }
 
     void compileExtractValueFromWeakMapGet()
@@ -14042,12 +14120,6 @@ IGNORE_CLANG_WARNINGS_END
             value));
     }
 
-    void compileLoadKeyFromMapBucket()
-    {
-        LValue mapBucket = lowCell(m_node->child1());
-        setJSValue(m_out.load64(mapBucket, m_heaps.HashMapBucket_key));
-    }
-
     void compileSetAdd()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
@@ -14055,7 +14127,7 @@ IGNORE_CLANG_WARNINGS_END
         LValue key = lowJSValue(m_node->child2());
         LValue hash = lowInt32(m_node->child3());
 
-        setJSValue(vmCall(pointerType(), operationSetAdd, weakPointer(globalObject), set, key, hash));
+        vmCall(Void, operationSetAdd, weakPointer(globalObject), set, key, hash);
     }
 
     void compileMapSet()
@@ -14066,7 +14138,7 @@ IGNORE_CLANG_WARNINGS_END
         LValue value = lowJSValue(m_graph.varArgChild(m_node, 2));
         LValue hash = lowInt32(m_graph.varArgChild(m_node, 3));
 
-        setJSValue(vmCall(pointerType(), operationMapSet, weakPointer(globalObject), map, key, value, hash));
+        vmCall(Void, operationMapSet, weakPointer(globalObject), map, key, value, hash);
     }
 
     void compileMapOrSetDelete()
@@ -14135,11 +14207,11 @@ IGNORE_CLANG_WARNINGS_END
             bucket = m_out.add(buffer, m_out.shl(m_out.zeroExt(index, Int64), m_out.constInt32(getLSBSet(sizeof(WeakMapBucket<WeakMapBucketDataKey>)))));
         }
 
-        LValue bucketKey = m_out.load64(bucket, m_heaps.WeakMapBucket_key);
-        m_out.branch(m_out.equal(key, bucketKey), unsure(continuation), unsure(notEqualValue));
+        LValue entryKey = m_out.load64(bucket, m_heaps.WeakMapBucket_key);
+        m_out.branch(m_out.equal(key, entryKey), unsure(continuation), unsure(notEqualValue));
 
         m_out.appendTo(notEqualValue, loopAround);
-        m_out.branch(m_out.isNull(bucketKey), unsure(continuation), unsure(loopAround));
+        m_out.branch(m_out.isNull(entryKey), unsure(continuation), unsure(loopAround));
 
         m_out.appendTo(loopAround, continuation);
         m_out.addIncomingToPhi(unmaskedIndex, m_out.anchor(m_out.add(index, m_out.int32One)));
@@ -14150,7 +14222,7 @@ IGNORE_CLANG_WARNINGS_END
         if (m_node->child1().useKind() == WeakMapObjectUse)
             result = m_out.load64(bucket, m_heaps.WeakMapBucket_value);
         else
-            result = bucketKey;
+            result = entryKey;
         setJSValue(result);
     }
 
@@ -16562,35 +16634,8 @@ IGNORE_CLANG_WARNINGS_END
 
     void compileNewMap()
     {
-        RegisteredStructure structure = m_node->structure();
-
-        LBasicBlock slowCase = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
-
-        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowCase);
-
-        ASSERT(JSValue::encode(JSValue()) == 0);
-        Allocator allocator = allocatorForConcurrently<JSMap::BucketType>(vm(), sizeof(JSMap::BucketType), AllocatorForMode::AllocatorIfExists);
-        LValue head = allocateCell(m_out.constIntPtr(allocator.localAllocator()), vm().hashMapBucketMapStructure.get(), slowCase);
-        m_out.store64(m_out.intPtrZero, head, m_heaps.HashMapBucket_next);
-        m_out.store64(m_out.intPtrZero, head, m_heaps.HashMapBucket_prev);
-        m_out.store64(m_out.intPtrZero, head, m_heaps.HashMapBucket_key);
-        m_out.store64(m_out.intPtrZero, head, m_heaps.HashMapBucket_value);
-        mutatorFence();
-
-        LValue fastResultValue = allocateObject<JSMap>(structure, m_out.intPtrZero, slowCase);
-        m_out.store64(head, fastResultValue, m_heaps.HashMapImpl_head);
-        m_out.store64(head, fastResultValue, m_heaps.HashMapImpl_tail);
-        m_out.store64(m_out.intPtrZero, fastResultValue, m_heaps.HashMapImpl_buffer);
-        m_out.store32(m_out.int32Zero, fastResultValue, m_heaps.HashMapImpl_keyCount);
-        m_out.store32(m_out.int32Zero, fastResultValue, m_heaps.HashMapImpl_deleteCount);
-        m_out.store32(m_out.int32Zero, fastResultValue, m_heaps.HashMapImpl_capacity);
-        mutatorFence();
-        ValueFromBlock fastResult = m_out.anchor(fastResultValue);
-        m_out.jump(continuation);
-
-        m_out.appendTo(slowCase, continuation);
         VM& vm = this->vm();
+        RegisteredStructure structure = m_node->structure();
         LValue slowResultValue = lazySlowPath(
             [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
                 return createLazyCallGenerator(vm,
@@ -16598,43 +16643,13 @@ IGNORE_CLANG_WARNINGS_END
                     CCallHelpers::TrustedImmPtr(structure.get()));
             },
             m_vmValue);
-        ValueFromBlock slowResult = m_out.anchor(slowResultValue);
-        m_out.jump(continuation);
-
-        m_out.appendTo(continuation, lastNext);
-        setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
+        setJSValue(slowResultValue);
     }
 
     void compileNewSet()
     {
-        RegisteredStructure structure = m_node->structure();
-
-        LBasicBlock slowCase = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
-
-        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowCase);
-
-        ASSERT(JSValue::encode(JSValue()) == 0);
-        Allocator allocator = allocatorForConcurrently<JSSet::BucketType>(vm(), sizeof(JSSet::BucketType), AllocatorForMode::AllocatorIfExists);
-        LValue head = allocateCell(m_out.constIntPtr(allocator.localAllocator()), vm().hashMapBucketSetStructure.get(), slowCase);
-        m_out.store64(m_out.intPtrZero, head, m_heaps.HashMapBucket_next);
-        m_out.store64(m_out.intPtrZero, head, m_heaps.HashMapBucket_prev);
-        m_out.store64(m_out.intPtrZero, head, m_heaps.HashMapBucket_key);
-        mutatorFence();
-
-        LValue fastResultValue = allocateObject<JSSet>(structure, m_out.intPtrZero, slowCase);
-        m_out.store64(head, fastResultValue, m_heaps.HashMapImpl_head);
-        m_out.store64(head, fastResultValue, m_heaps.HashMapImpl_tail);
-        m_out.store64(m_out.intPtrZero, fastResultValue, m_heaps.HashMapImpl_buffer);
-        m_out.store32(m_out.int32Zero, fastResultValue, m_heaps.HashMapImpl_keyCount);
-        m_out.store32(m_out.int32Zero, fastResultValue, m_heaps.HashMapImpl_deleteCount);
-        m_out.store32(m_out.int32Zero, fastResultValue, m_heaps.HashMapImpl_capacity);
-        mutatorFence();
-        ValueFromBlock fastResult = m_out.anchor(fastResultValue);
-        m_out.jump(continuation);
-
-        m_out.appendTo(slowCase, continuation);
         VM& vm = this->vm();
+        RegisteredStructure structure = m_node->structure();
         LValue slowResultValue = lazySlowPath(
             [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
                 return createLazyCallGenerator(vm,
@@ -16642,11 +16657,7 @@ IGNORE_CLANG_WARNINGS_END
                     CCallHelpers::TrustedImmPtr(structure.get()));
             },
             m_vmValue);
-        ValueFromBlock slowResult = m_out.anchor(slowResultValue);
-        m_out.jump(continuation);
-
-        m_out.appendTo(continuation, lastNext);
-        setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
+        setJSValue(slowResultValue);
     }
 
     void compileSetFunctionName()
@@ -20916,10 +20927,24 @@ IGNORE_CLANG_WARNINGS_END
         return result;
     }
 
+    LValue lowMapIteratorObject(Edge edge)
+    {
+        LValue result = lowCell(edge);
+        speculateMapIteratorObject(edge, result);
+        return result;
+    }
+
     LValue lowSetObject(Edge edge)
     {
         LValue result = lowCell(edge);
         speculateSetObject(edge, result);
+        return result;
+    }
+
+    LValue lowSetIteratorObject(Edge edge)
+    {
+        LValue result = lowCell(edge);
+        speculateSetIteratorObject(edge, result);
         return result;
     }
 
@@ -22209,6 +22234,17 @@ IGNORE_CLANG_WARNINGS_END
         speculateMapObject(edge, lowCell(edge));
     }
 
+    void speculateMapIteratorObject(Edge edge, LValue cell)
+    {
+        FTL_TYPE_CHECK(
+            jsValueValue(cell), edge, SpecObjectOther, isNotType(cell, JSMapIteratorType));
+    }
+
+    void speculateMapIteratorObject(Edge edge)
+    {
+        speculateMapObject(edge, lowCell(edge));
+    }
+
     void speculateSetObject(Edge edge, LValue cell)
     {
         FTL_TYPE_CHECK(
@@ -22218,6 +22254,17 @@ IGNORE_CLANG_WARNINGS_END
     void speculateSetObject(Edge edge)
     {
         speculateSetObject(edge, lowCell(edge));
+    }
+
+    void speculateSetIteratorObject(Edge edge, LValue cell)
+    {
+        FTL_TYPE_CHECK(
+            jsValueValue(cell), edge, SpecObjectOther, isNotType(cell, JSSetIteratorType));
+    }
+
+    void speculateSetIteratorObject(Edge edge)
+    {
+        speculateMapObject(edge, lowCell(edge));
     }
 
     void speculateWeakMapObject(Edge edge, LValue cell)
@@ -23234,8 +23281,10 @@ IGNORE_CLANG_WARNINGS_END
         return m_out.shl(m_out.zeroExtPtr(structureID), m_out.constIntPtr(StructureID::encodeShiftAmount));
 #else
         LValue maskedStructureID = structureID;
-        if constexpr (structureHeapAddressSize < 4 * GB)
-            maskedStructureID = m_out.bitAnd(structureID, m_out.constInt32(StructureID::structureIDMask));
+        if constexpr (structureHeapAddressSize < 4 * GB) {
+            static_assert(static_cast<uint32_t>(StructureID::structureIDMask) == StructureID::structureIDMask);
+            maskedStructureID = m_out.bitAnd(structureID, m_out.constInt32(static_cast<uint32_t>(StructureID::structureIDMask)));
+        }
         return m_out.bitOr(m_out.constIntPtr(startOfStructureHeap()), m_out.zeroExtPtr(maskedStructureID));
 #endif
     }

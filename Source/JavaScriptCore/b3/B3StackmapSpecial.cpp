@@ -293,7 +293,7 @@ bool StackmapSpecial::isArgValidForRep(Air::Code& code, const Air::Arg& arg, con
     case ValueRep::SomeRegisterPairWithClobber:
     case ValueRep::SomeEarlyRegisterPair:
     case ValueRep::SomeLateRegisterPair:
-        return arg.isTmp();
+        return arg.isTmpPair();
     case ValueRep::LateRegisterPair:
     case ValueRep::RegisterPair:
         return arg == Arg(Tmp(rep.regHi()), Tmp(rep.regLo()));

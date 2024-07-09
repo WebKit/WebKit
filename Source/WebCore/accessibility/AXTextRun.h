@@ -26,6 +26,9 @@
 #pragma once
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
+
+#include <wtf/text/MakeString.h>
+
 namespace WebCore {
 
 class RenderBlock;

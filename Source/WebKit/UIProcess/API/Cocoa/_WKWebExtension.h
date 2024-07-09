@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,36 +80,16 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 /*!
  @abstract Returns a web extension initialized with a specified app extension bundle.
  @param appExtensionBundle The bundle to use for the new web extension.
- @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
- @seealso initWithAppExtensionBundle:error:
+ @param completionHandler A block to be called with an initialized web extension, or \c nil if the object could not be initialized due to an error.
  */
-+ (nullable instancetype)extensionWithAppExtensionBundle:(NSBundle *)appExtensionBundle;
++ (void)extensionWithAppExtensionBundle:(NSBundle *)appExtensionBundle completionHandler:(void (^)(_WKWebExtension * _Nullable extension, NSError * _Nullable error))completionHandler WK_SWIFT_ASYNC_THROWS_ON_FALSE(1);
 
 /*!
  @abstract Returns a web extension initialized with a specified resource base URL.
  @param resourceBaseURL The directory URL to use for the new web extension.
- @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
- @seealso initWithResourceBaseURL:error:
+ @param completionHandler A block to be called with an initialized web extension, or \c nil if the object could not be initialized due to an error.
  */
-+ (nullable instancetype)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL;
-
-/*!
- @abstract Returns a web extension initialized with a specified app extension bundle.
- @param appExtensionBundle The bundle to use for the new web extension.
- @param error Set to \c nil or an \c NSError instance if an error occurred.
- @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
- @discussion This is a designated initializer.
- */
-- (nullable instancetype)initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error NS_DESIGNATED_INITIALIZER;
-
-/*!
- @abstract Returns a web extension initialized with a specified resource base URL.
- @param resourceBaseURL The directory URL to use for the new web extension.
- @param error Set to \c nil or an \c NSError instance if an error occurred.
- @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
- @discussion This is a designated initializer. The URL must be a file URL that points to a directory containing a `manifest.json` file.
- */
-- (nullable instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error NS_DESIGNATED_INITIALIZER;
++ (void)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL completionHandler:(void (^)(_WKWebExtension * _Nullable extension, NSError * _Nullable error))completionHandler WK_SWIFT_ASYNC_THROWS_ON_FALSE(1);
 
 /*!
  @abstract The active errors for the extension.

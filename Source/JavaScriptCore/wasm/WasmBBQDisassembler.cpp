@@ -33,6 +33,7 @@
 #include <wtf/HexNumber.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 namespace Wasm {

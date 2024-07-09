@@ -36,7 +36,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/FastCharacterComparison.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/MakeString.h>
 
 #include "KeywordLookup.h"
 

@@ -29,6 +29,7 @@
 
 #include "PageClient.h"
 #include "WebKitWebResourceLoadManager.h"
+#include "WebPageProxyInternals.h"
 #include "WebPreferences.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SearchPopupMenu.h>
@@ -83,6 +84,14 @@ void WebPageProxy::didFinishLoadForResource(WebCore::ResourceLoaderIdentifier re
 {
     if (auto* manager = pageClient().webResourceLoadManager())
         manager->didFinishLoad(resourceID, frameID, WTFMove(error));
+}
+
+void WebPageProxy::scheduleActivityStateUpdate()
+{
+    if (internals().activityStateChangeTimer.isActive())
+        return;
+
+    internals().activityStateChangeTimer.startOneShot(0_s);
 }
 
 } // namespace WebKit

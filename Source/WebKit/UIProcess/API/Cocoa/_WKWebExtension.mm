@@ -44,35 +44,55 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 
 WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtension, WebExtension, _webExtension);
 
-+ (instancetype)extensionWithAppExtensionBundle:(NSBundle *)appExtensionBundle
++ (void)extensionWithAppExtensionBundle:(NSBundle *)appExtensionBundle completionHandler:(void (^)(_WKWebExtension *extension, NSError *error))completionHandler
 {
     NSParameterAssert([appExtensionBundle isKindOfClass:NSBundle.class]);
 
-    NSError * __autoreleasing internalError;
-    auto result = WebKit::WebExtension::create(appExtensionBundle, &internalError);
+    // FIXME: <https://webkit.org/b/276194> Make the WebExtension class load data on a background thread.
+    // Use an async dispatch in the meantime to prevent clients from expecting synchronous results.
 
-    if (internalError)
-        return nil;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSError * __autoreleasing error;
+        Ref result = WebKit::WebExtension::create(appExtensionBundle, &error);
 
-    return result->wrapper();
+        if (error) {
+            completionHandler(nil, error);
+            return;
+        }
+
+        completionHandler(result->wrapper(), nil);
+    });
 }
 
-+ (instancetype)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL
++ (void)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL completionHandler:(void (^)(_WKWebExtension *extension, NSError *error))completionHandler
 {
     NSParameterAssert([resourceBaseURL isKindOfClass:NSURL.class]);
     NSParameterAssert([resourceBaseURL isFileURL]);
     NSParameterAssert([resourceBaseURL hasDirectoryPath]);
 
-    NSError * __autoreleasing internalError;
-    auto result = WebKit::WebExtension::create(resourceBaseURL, &internalError);
+    // FIXME: <https://webkit.org/b/276194> Make the WebExtension class load data on a background thread.
+    // Use an async dispatch in the meantime to prevent clients from expecting synchronous results.
 
-    if (internalError)
-        return nil;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSError * __autoreleasing error;
+        Ref result = WebKit::WebExtension::create(resourceBaseURL, &error);
 
-    return result->wrapper();
+        if (error) {
+            completionHandler(nil, error);
+            return;
+        }
+
+        completionHandler(result->wrapper(), nil);
+    });
 }
 
+// FIXME: Remove after Safari has adopted new methods.
 - (instancetype)initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error
+{
+    return [self _initWithAppExtensionBundle:appExtensionBundle error:error];
+}
+
+- (instancetype)_initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error
 {
     NSParameterAssert([appExtensionBundle isKindOfClass:NSBundle.class]);
 
@@ -94,7 +114,13 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtension, WebExtension, _webExtensi
     return self;
 }
 
+// FIXME: Remove after Safari has adopted new methods.
 - (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
+{
+    return [self _initWithResourceBaseURL:resourceBaseURL error:error];
+}
+
+- (instancetype)_initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
 {
     NSParameterAssert([resourceBaseURL isKindOfClass:NSURL.class]);
     NSParameterAssert([resourceBaseURL isFileURL]);
@@ -298,23 +324,37 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtension, WebExtension, _webExtensi
 
 #else // ENABLE(WK_WEB_EXTENSIONS)
 
-+ (instancetype)extensionWithAppExtensionBundle:(NSBundle *)appExtensionBundle
++ (void)extensionWithAppExtensionBundle:(NSBundle *)appExtensionBundle completionHandler:(void (^)(_WKWebExtension *extension, NSError *error))completionHandler
 {
-    return nil;
+    completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil]);
 }
 
-+ (instancetype)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL
++ (void)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL completionHandler:(void (^)(_WKWebExtension *extension, NSError *error))completionHandler
 {
-    return nil;
+    completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil]);
 }
 
 - (instancetype)initWithAppExtensionBundle:(NSBundle *)bundle error:(NSError **)error
 {
+    return [self _initWithAppExtensionBundle:bundle error:error];
+}
+
+- (instancetype)_initWithAppExtensionBundle:(NSBundle *)bundle error:(NSError **)error
+{
+    if (error)
+        *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil];
     return nil;
 }
 
 - (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
 {
+    return [self _initWithResourceBaseURL:resourceBaseURL error:error];
+}
+
+- (instancetype)_initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
+{
+    if (error)
+        *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil];
     return nil;
 }
 

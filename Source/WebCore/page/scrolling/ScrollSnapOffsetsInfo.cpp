@@ -36,7 +36,6 @@
 #include "RenderView.h"
 #include "ScrollableArea.h"
 #include "StyleScrollSnapPoints.h"
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

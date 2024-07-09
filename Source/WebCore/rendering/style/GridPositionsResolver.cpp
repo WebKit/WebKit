@@ -38,6 +38,7 @@
 #include "RenderStyleInlines.h"
 #include "StyleGridData.h"
 #include <cstdlib>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

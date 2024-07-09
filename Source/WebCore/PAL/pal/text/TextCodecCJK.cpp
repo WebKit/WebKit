@@ -29,6 +29,7 @@
 #include "EncodingTables.h"
 #include <mutex>
 #include <wtf/text/CodePointIterator.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 

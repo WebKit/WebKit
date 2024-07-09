@@ -121,7 +121,7 @@ boringssl_copts = [
 }) + asm_copts
 
 boringssl_copts_c11 = boringssl_copts + select({
-    "@platforms//os:windows": [],
+    "@platforms//os:windows": ["/std:c11"],
     "//conditions:default": gcc_copts_c11,
 })
 

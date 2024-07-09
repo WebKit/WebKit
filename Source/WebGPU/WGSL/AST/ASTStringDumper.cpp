@@ -30,12 +30,13 @@
 #include "WGSLShaderModule.h"
 #include <wtf/DataLog.h>
 #include <wtf/SetForScope.h>
+#include <wtf/text/MakeString.h>
 
 namespace WGSL::AST {
 
 struct Indent {
     Indent(StringDumper& dumper)
-        : scope(dumper.m_indent, dumper.m_indent + "    "_s)
+        : scope(dumper.m_indent, makeString(dumper.m_indent, "    "_s))
     { }
     SetForScope<String> scope;
 };
