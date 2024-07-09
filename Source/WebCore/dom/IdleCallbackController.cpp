@@ -82,6 +82,12 @@ void IdleCallbackController::removeIdleCallback(int signedIdentifier)
     });
 }
 
+void IdleCallbackController::removeAllIdleCallbacks()
+{
+    m_idleRequestCallbacks.clear();
+    m_runnableIdleCallbacks.clear();
+}
+
 void IdleCallbackController::queueTaskToStartIdlePeriod()
 {
     Ref document = *m_document;

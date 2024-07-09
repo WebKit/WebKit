@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+function createParagraph()
+{
+    let d = document;
+    let p = d.createElement("p");
+    p.innerText = "This should not leak the document.";
+    d.body.appendChild(p);
+    window.requestIdleCallback(createParagraph);
+}
+
+requestIdleCallback(createParagraph);
+parent.postMessage("iframeLoaded");
+
+</script>
+</body>
+</html>

@@ -886,6 +886,9 @@ void Document::commonTeardown()
             resizeObserver->disconnect();
     }
 
+    if (m_idleCallbackController)
+        m_idleCallbackController->removeAllIdleCallbacks();
+
     scriptRunner().clearPendingScripts();
 
     if (RefPtr highlightRegistry = m_highlightRegistry)

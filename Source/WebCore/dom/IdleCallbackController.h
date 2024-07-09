@@ -53,6 +53,7 @@ public:
 
     int queueIdleCallback(Ref<IdleRequestCallback>&&, Seconds timeout);
     void removeIdleCallback(int);
+    void removeAllIdleCallbacks();
 
     void startIdlePeriod();
     bool isEmpty() const { return m_idleRequestCallbacks.isEmpty() && m_runnableIdleCallbacks.isEmpty(); }
