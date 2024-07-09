@@ -1103,9 +1103,8 @@ void WebPage::getFrameInfo(WebCore::FrameIdentifier frameID, CompletionHandler<v
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return completionHandler(std::nullopt);
-    frame->getFrameInfo([completionHandler = WTFMove(completionHandler)](auto&& frameInfo) mutable {
-        completionHandler(WTFMove(frameInfo));
-    });
+
+    completionHandler(frame->info());
 }
 
 void WebPage::getFrameTree(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler)
