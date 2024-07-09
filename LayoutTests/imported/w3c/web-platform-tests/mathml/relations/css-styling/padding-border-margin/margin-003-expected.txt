@@ -2,7 +2,7 @@
 FAIL Margin properties on the children of menclose assert_approx_equals: preferred width expected 58 +/- 1 but got 33
 FAIL Margin properties on the children of merror assert_approx_equals: preferred width expected 49 +/- 1 but got 24
 FAIL Margin properties on the children of mfrac assert_approx_equals: preferred width expected 49 +/- 1 but got 24
-FAIL Margin properties on the children of mmultiscripts assert_approx_equals: inline size expected 90.625 +/- 1 but got 40.625
+FAIL Margin properties on the children of mmultiscripts assert_approx_equals: preferred width expected 93 +/- 1 but got 43
 FAIL Margin properties on the children of mover assert_approx_equals: preferred width expected 47 +/- 1 but got 22
 FAIL Margin properties on the children of mpadded assert_approx_equals: preferred width expected 47 +/- 1 but got 22
 FAIL Margin properties on the children of mphantom assert_approx_equals: preferred width expected 47 +/- 1 but got 22
@@ -10,9 +10,9 @@ FAIL Margin properties on the children of mroot assert_approx_equals: inline siz
 FAIL Margin properties on the children of mrow assert_approx_equals: preferred width expected 47 +/- 1 but got 22
 FAIL Margin properties on the children of msqrt assert_approx_equals: preferred width expected 66 +/- 1 but got 41
 FAIL Margin properties on the children of mstyle assert_approx_equals: preferred width expected 47 +/- 1 but got 22
-FAIL Margin properties on the children of msub assert_approx_equals: inline size expected 90.625 +/- 1 but got 40.625
-FAIL Margin properties on the children of msubsup assert_approx_equals: inline size expected 90.625 +/- 1 but got 40.625
-FAIL Margin properties on the children of msup assert_approx_equals: inline size expected 90.625 +/- 1 but got 40.625
+FAIL Margin properties on the children of msub assert_approx_equals: preferred width expected 93 +/- 1 but got 43
+FAIL Margin properties on the children of msubsup assert_approx_equals: preferred width expected 93 +/- 1 but got 43
+FAIL Margin properties on the children of msup assert_approx_equals: preferred width expected 93 +/- 1 but got 43
 FAIL Margin properties on the children of munder assert_approx_equals: preferred width expected 47 +/- 1 but got 22
 FAIL Margin properties on the children of munderover assert_approx_equals: preferred width expected 47 +/- 1 but got 22
 
