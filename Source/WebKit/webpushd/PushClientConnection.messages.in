@@ -24,6 +24,7 @@
 
 messages -> WebPushD::PushClientConnection NotUsingIPCConnection {
     SetPushAndNotificationsEnabledForOrigin(String originString, bool enabled) -> ()
+    GetPendingPushMessage() -> (std::optional<WebKit::WebPushMessage> message)
     GetPendingPushMessages() -> (Vector<WebKit::WebPushMessage> messages)
     UpdateConnectionConfiguration(WebKit::WebPushD::WebPushDaemonConnectionConfiguration configuration)
     InjectPushMessageForTesting(WebKit::WebPushD::PushMessageForTesting message) -> (String error)
@@ -37,6 +38,7 @@ messages -> WebPushD::PushClientConnection NotUsingIPCConnection {
     RemovePushSubscriptionsForOrigin(WebCore::SecurityOriginData origin) -> (unsigned removed)
     SetPublicTokenForTesting(String token) -> ()
     GetPushTopicsForTesting() -> (Vector<String> enabled, Vector<String> ignored)
+    DidShowNotificationForTesting(URL scopeURL) -> ()
 }
 
 #endif // ENABLE(WEB_PUSH_NOTIFICATIONS)

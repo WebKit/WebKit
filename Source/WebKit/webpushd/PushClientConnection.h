@@ -94,6 +94,7 @@ private:
     void setPushAndNotificationsEnabledForOrigin(const String& originString, bool, CompletionHandler<void()>&& replySender);
     void injectPushMessageForTesting(PushMessageForTesting&&, CompletionHandler<void(const String&)>&&);
     void injectEncryptedPushMessageForTesting(const String&, CompletionHandler<void(bool)>&&);
+    void getPendingPushMessage(CompletionHandler<void(const std::optional<WebKit::WebPushMessage>&)>&& replySender);
     void getPendingPushMessages(CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender);
     void subscribeToPushService(URL&& scopeURL, const Vector<uint8_t>& applicationServerKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& replySender);
     void unsubscribeFromPushService(URL&& scopeURL, std::optional<WebCore::PushSubscriptionIdentifier>, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& replySender);
@@ -106,6 +107,7 @@ private:
     void getPushPermissionState(URL&& scopeURL, CompletionHandler<void(const Expected<uint8_t, WebCore::ExceptionData>&)>&&);
     void setHostAppAuditTokenData(const Vector<uint8_t>&);
     void getPushTopicsForTesting(CompletionHandler<void(Vector<String>, Vector<String>)>&&);
+    void didShowNotificationForTesting(URL&& scopeURL, CompletionHandler<void()>&&);
     String bundleIdentifierFromAuditToken(audit_token_t);
     bool hostHasEntitlement(ASCIILiteral);
 

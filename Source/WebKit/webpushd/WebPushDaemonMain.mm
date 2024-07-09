@@ -155,8 +155,6 @@ int WebPushDaemonMain(int argc, char** argv)
 
         WebKit::startListeningForMachServiceConnections(machServiceName, entitlementName, connectionAdded, connectionRemoved, connectionEventHandler);
 
-        ::WebPushD::WebPushDaemon::singleton().setMachServiceName(String::fromUTF8(machServiceName));
-
         if (useMockPushService)
             ::WebPushD::WebPushDaemon::singleton().startMockPushService();
         else {

@@ -186,6 +186,11 @@ void PushClientConnection::injectEncryptedPushMessageForTesting(const String& me
     WebPushDaemon::singleton().injectEncryptedPushMessageForTesting(*this, message, WTFMove(replySender));
 }
 
+void PushClientConnection::getPendingPushMessage(CompletionHandler<void(const std::optional<WebKit::WebPushMessage>&)>&& replySender)
+{
+    WebPushDaemon::singleton().getPendingPushMessage(*this, WTFMove(replySender));
+}
+
 void PushClientConnection::getPendingPushMessages(CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender)
 {
     WebPushDaemon::singleton().getPendingPushMessages(*this, WTFMove(replySender));
@@ -224,6 +229,11 @@ void PushClientConnection::removePushSubscriptionsForOrigin(WebCore::SecurityOri
 void PushClientConnection::setPublicTokenForTesting(const String& publicToken, CompletionHandler<void()>&& replySender)
 {
     WebPushDaemon::singleton().setPublicTokenForTesting(*this, publicToken, WTFMove(replySender));
+}
+
+void PushClientConnection::didShowNotificationForTesting(URL&& scopeURL, CompletionHandler<void()>&& replySender)
+{
+    WebPushDaemon::singleton().didShowNotificationForTesting(*this, WTFMove(scopeURL), WTFMove(replySender));
 }
 
 void PushClientConnection::getPushPermissionState(URL&&, CompletionHandler<void(const Expected<uint8_t, WebCore::ExceptionData>&)>&& replySender)

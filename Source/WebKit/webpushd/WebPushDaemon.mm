@@ -61,7 +61,7 @@ using WebCore::PushSubscriptionSetIdentifier;
 
 namespace WebPushD {
 
-static constexpr Seconds s_incomingPushTransactionTimeout { 10_s };\
+static constexpr Seconds s_incomingPushTransactionTimeout { 10_s };
 
 WebPushDaemon& WebPushDaemon::singleton()
 {
@@ -71,11 +71,13 @@ WebPushDaemon& WebPushDaemon::singleton()
 
 WebPushDaemon::WebPushDaemon()
     : m_incomingPushTransactionTimer { *this, &WebPushDaemon::incomingPushTransactionTimerFired }
+    , m_silentPushTimer { *this, &WebPushDaemon::silentPushTimerFired }
 {
 }
 
 void WebPushDaemon::startMockPushService()
 {
+    m_usingMockPushService = true;
     auto messageHandler = [this](const PushSubscriptionSetIdentifier& identifier, WebKit::WebPushMessage&& message) {
         handleIncomingPush(identifier, WTFMove(message));
     };
@@ -233,7 +235,7 @@ void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     // Validate a Notification disposition message now by trying to parse it
     // Only for the testing/development push service for now
-    if (m_machServiceName == "org.webkit.webpushtestdaemon.service"_s) {
+    if (m_usingMockPushService) {
         if (message.disposition == PushMessageDisposition::Notification) {
             auto exceptionOrPayload = WebCore::NotificationPayload::parseJSON(message.payload);
             if (exceptionOrPayload.hasException()) {
@@ -246,15 +248,21 @@ void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection
     }
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)
 
-    auto addResult = m_testingPushMessages.ensure(message.targetAppCodeSigningIdentifier, [] {
-        return Deque<PushMessageForTesting> { };
+    PushSubscriptionSetIdentifier identifier { .bundleIdentifier = message.targetAppCodeSigningIdentifier, .pushPartition = message.pushPartitionString };
+    auto addResult = m_pushMessages.ensure(identifier, [] {
+        return Deque<WebKit::WebPushMessage> { };
     });
+    auto data = message.payload.utf8();
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    WebKit::WebPushMessage pushMessage { Vector(data.span()), message.pushPartitionString, message.registrationURL, WTFMove(message.parsedPayload) };
+#else
+    WebKit::WebPushMessage pushMessage { Vector(data.span()), message.pushPartitionString, message.registrationURL, { } };
+#endif
+    addResult.iterator->value.append(pushMessage);
 
-    WEBPUSHDAEMON_RELEASE_LOG(Push, "Injected a test push message for %{public}s at %{public}s with %zu pending messages, payload: %{public}s", message.targetAppCodeSigningIdentifier.utf8().data(), message.registrationURL.string().utf8().data(), addResult.iterator->value.size() + 1, message.payload.utf8().data());
+    WEBPUSHDAEMON_RELEASE_LOG(Push, "Injected a test push message for %{public}s at %{public}s with %zu pending messages, payload: %{public}s", message.targetAppCodeSigningIdentifier.utf8().data(), message.registrationURL.string().utf8().data(), addResult.iterator->value.size(), message.payload.utf8().data());
 
-    addResult.iterator->value.append(WTFMove(message));
-
-    notifyClientPushMessageIsAvailable(PushSubscriptionSetIdentifier { .bundleIdentifier = message.targetAppCodeSigningIdentifier, .pushPartition = message.pushPartitionString });
+    notifyClientPushMessageIsAvailable(identifier);
 
     replySender({ });
 }
@@ -288,7 +296,7 @@ void WebPushDaemon::handleIncomingPush(const PushSubscriptionSetIdentifier& iden
     ensureIncomingPushTransaction();
 
     auto addResult = m_pushMessages.ensure(identifier, [] {
-        return Vector<WebKit::WebPushMessage> { };
+        return Deque<WebKit::WebPushMessage> { };
     });
     addResult.iterator->value.append(WTFMove(message));
 
@@ -298,7 +306,7 @@ void WebPushDaemon::handleIncomingPush(const PushSubscriptionSetIdentifier& iden
 void WebPushDaemon::notifyClientPushMessageIsAvailable(const WebCore::PushSubscriptionSetIdentifier& subscriptionSetIdentifier)
 {
     const auto& bundleIdentifier = subscriptionSetIdentifier.bundleIdentifier;
-    RELEASE_LOG(Push, "Launching %{public}s in response to push", bundleIdentifier.utf8().data());
+    RELEASE_LOG(Push, "Launching %{public}s in response to push for %{public}s", bundleIdentifier.utf8().data(), subscriptionSetIdentifier.debugDescription().utf8().data());
 
 #if PLATFORM(MAC)
     CFArrayRef urls = (__bridge CFArrayRef)@[ [NSURL URLWithString:@"x-webkit-app-launch://1"] ];
@@ -337,37 +345,113 @@ void WebPushDaemon::notifyClientPushMessageIsAvailable(const WebCore::PushSubscr
 #endif
 }
 
-void WebPushDaemon::getPendingPushMessages(PushClientConnection& connection, CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender)
+Seconds WebPushDaemon::silentPushTimeout() const
 {
-    auto hostAppCodeSigningIdentifier = connection.hostAppCodeSigningIdentifier();
-    if (hostAppCodeSigningIdentifier.isEmpty()) {
-        replySender({ });
+    return m_usingMockPushService ? silentPushTimeoutForTesting : silentPushTimeoutForProduction;
+}
+
+// This only needs to be called if the first entry in m_potentialSilentPushes was changed or removed.
+void WebPushDaemon::rescheduleSilentPushTimer()
+{
+    if (m_potentialSilentPushes.empty()) {
+        m_silentPushTimer.stop();
+        m_silentPushTransaction = nullptr;
         return;
     }
 
-    Vector<WebKit::WebPushMessage> resultMessages;
+    auto expirationTime = m_potentialSilentPushes.front().expirationTime;
+    auto delay = std::max(expirationTime - MonotonicTime::now(), 0_s);
+    m_silentPushTimer.startOneShot(delay);
 
-    if (auto iterator = m_pushMessages.find(connection.subscriptionSetIdentifier()); iterator != m_pushMessages.end()) {
-        resultMessages = WTFMove(iterator->value);
-        m_pushMessages.remove(iterator);
+    if (!m_silentPushTransaction)
+        m_silentPushTransaction = adoptOSObject(os_transaction_create("com.apple.webkit.webpushd.daemon.awaiting-show-notification"));
+}
+
+void WebPushDaemon::silentPushTimerFired()
+{
+    auto now = MonotonicTime::now();
+    for (auto it = m_potentialSilentPushes.begin(); it != m_potentialSilentPushes.end();) {
+        if (it->expirationTime > now)
+            break;
+
+        auto origin = WebCore::SecurityOriginData::fromURL(URL { it->scope }).toString();
+        m_pushService->incrementSilentPushCount(it->identifier, origin, [identifier = it->identifier, origin](unsigned newSilentPushCount) {
+            RELEASE_LOG(Push, "showNotification not called in time for %{public}s (origin = %{sensitive}s), silent push count is now %u", identifier.debugDescription().utf8().data(), origin.utf8().data(), newSilentPushCount);
+        });
+        it = m_potentialSilentPushes.erase(it);
     }
 
-    auto iterator = m_testingPushMessages.find(hostAppCodeSigningIdentifier);
-    if (iterator != m_testingPushMessages.end()) {
-        for (auto& message : iterator->value) {
-            auto data = message.payload.utf8();
-#if ENABLE(DECLARATIVE_WEB_PUSH)
-            resultMessages.append(WebKit::WebPushMessage { Vector(data.span()), message.pushPartitionString, message.registrationURL, WTFMove(message.parsedPayload) });
-#else
-            resultMessages.append(WebKit::WebPushMessage { Vector(data.span()), message.pushPartitionString, message.registrationURL, { } });
-#endif
+    rescheduleSilentPushTimer();
+}
+
+void WebPushDaemon::didShowNotificationImpl(const WebCore::PushSubscriptionSetIdentifier& identifier, const String& scope)
+{
+    auto now = MonotonicTime::now();
+    bool removedFirst = false;
+
+    for (auto it = m_potentialSilentPushes.begin(); it != m_potentialSilentPushes.end();) {
+        if (it->identifier == identifier && it->scope == scope && it->expirationTime > now) {
+            RELEASE_LOG(Push, "showNotification called in time for %{public}s (origin = %{sensitive}s)", it->identifier.debugDescription().utf8().data(), it->scope.utf8().data());
+            removedFirst = (it == m_potentialSilentPushes.begin());
+            it = m_potentialSilentPushes.erase(it);
+            break;
         }
-        m_testingPushMessages.remove(iterator);
+        ++it;
     }
 
-    WEBPUSHDAEMON_RELEASE_LOG(Push, "Fetched %zu pending push messages", resultMessages.size());
+    if (removedFirst)
+        rescheduleSilentPushTimer();
+}
 
-    replySender(WTFMove(resultMessages));
+void WebPushDaemon::getPendingPushMessage(PushClientConnection& connection, CompletionHandler<void(const std::optional<WebKit::WebPushMessage>&)>&& replySender)
+{
+    auto hostAppCodeSigningIdentifier = connection.hostAppCodeSigningIdentifier();
+    if (hostAppCodeSigningIdentifier.isEmpty())
+        return replySender(std::nullopt);
+
+    auto it = m_pushMessages.find(connection.subscriptionSetIdentifier());
+    if (it == m_pushMessages.end()) {
+        WEBPUSHDAEMON_RELEASE_LOG(Push, "No pending push message");
+        return replySender(std::nullopt);
+    }
+
+    auto& pushMessages = it->value;
+    WebKit::WebPushMessage result = pushMessages.takeFirst();
+    size_t remainingMessageCount = pushMessages.size();
+    if (!remainingMessageCount)
+        m_pushMessages.remove(it);
+
+    m_potentialSilentPushes.push_back(PotentialSilentPush { connection.subscriptionSetIdentifier(), result.registrationURL.string(), MonotonicTime::now() + silentPushTimeout() });
+    if (m_potentialSilentPushes.size() == 1)
+        rescheduleSilentPushTimer();
+
+    WEBPUSHDAEMON_RELEASE_LOG(Push, "Fetched 1 push message, %zu remaining", remainingMessageCount);
+    replySender(WTFMove(result));
+
+    if (m_pushMessages.isEmpty())
+        releaseIncomingPushTransaction();
+}
+
+void WebPushDaemon::getPendingPushMessages(PushClientConnection& connection, CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender)
+{
+    auto hostAppCodeSigningIdentifier = connection.hostAppCodeSigningIdentifier();
+    if (hostAppCodeSigningIdentifier.isEmpty())
+        return replySender({ });
+
+    auto it = m_pushMessages.find(connection.subscriptionSetIdentifier());
+    if (it == m_pushMessages.end()) {
+        WEBPUSHDAEMON_RELEASE_LOG(Push, "No pending push messages");
+        return replySender({ });
+    }
+    auto messages = m_pushMessages.take(it);
+
+    Vector<WebKit::WebPushMessage> result;
+    result.reserveCapacity(messages.size());
+    while (!messages.isEmpty())
+        result.append(messages.takeFirst());
+
+    WEBPUSHDAEMON_RELEASE_LOG(Push, "Fetched %zu pending push messages", result.size());
+    replySender(WTFMove(result));
     
     if (m_pushMessages.isEmpty())
         releaseIncomingPushTransaction();
@@ -476,6 +560,17 @@ void WebPushDaemon::setPublicTokenForTesting(PushClientConnection& connection, c
 
         m_pushService->setPublicTokenForTesting(Vector<uint8_t> { publicToken.utf8().span() });
         replySender();
+    });
+}
+
+void WebPushDaemon::didShowNotificationForTesting(PushClientConnection& connection, const URL& scopeURL, CompletionHandler<void()>&& replySender)
+{
+    runAfterStartingPushService([this, identifier = connection.subscriptionSetIdentifier(), scope = scopeURL.string(), replySender = WTFMove(replySender)]() mutable {
+        if (!m_pushService)
+            return replySender();
+
+        didShowNotificationImpl(identifier, scope);
+        return replySender();
     });
 }
 
