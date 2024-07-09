@@ -2120,6 +2120,7 @@ fast/webgpu/regression/repro_275108.html [ Pass Failure Timeout ]
 [ Debug ] fast/webgpu/nocrash [ Skip ]
 [ Release ] fast/webgpu/nocrash [ Pass Failure Timeout ]
 [ Debug ] fast/webgpu/regression/repro_275624.html [ Skip ]
+[ Debug ] fast/webgpu/texture-supports-blending.html [ Pass Crash ]
 
 # Imported W3C HTML/DOM ref tests that are failing.
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-between-Rs.html [ ImageOnlyFailure ]
