@@ -4250,7 +4250,7 @@ bool RenderLayerCompositor::needsFixedRootBackgroundLayer(const RenderLayer& lay
     if (!layer.isRenderViewLayer())
         return false;
 
-    if (m_renderView.settings().fixedBackgroundsPaintRelativeToDocument())
+    if (!m_renderView.settings().cssFixedBackgroundSupportEnabled())
         return false;
 
     return supportsFixedRootBackgroundCompositing() && m_renderView.rootBackgroundIsEntirelyFixed();
@@ -5617,7 +5617,7 @@ void RenderLayerCompositor::updateSynchronousScrollingNodes()
     if (!hasCoordinatedScrolling())
         return;
 
-    if (m_renderView.settings().fixedBackgroundsPaintRelativeToDocument())
+    if (!m_renderView.settings().cssFixedBackgroundSupportEnabled())
         return;
 
     auto scrollingCoordinator = this->scrollingCoordinator();

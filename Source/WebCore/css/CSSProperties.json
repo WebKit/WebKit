@@ -1610,8 +1610,8 @@
         "background-attachment": {
             "values": [
                 "scroll",
-                "fixed",
-                "local"
+                "local",
+                "fixed"
             ],
             "codegen-properties": {
                 "name-for-methods": "Attachment",
@@ -10521,13 +10521,6 @@
                 "url": "https://www.w3.org/TR/css-shapes-1/#typedef-shape-radius"
             }
         },
-        "<attachment>": {
-            "grammar": "scroll | fixed | local",
-            "specification": {
-                "category": "css-backgrounds",
-                "url": "https://www.w3.org/TR/css-backgrounds-3/#background-attachment"
-            }
-        },
         "<blend-mode>": {
             "grammar": "normal | multiply | screen | overlay | darken | lighten | color-dodge | color-burn | hard-light | soft-light | difference | exclusion | hue | saturation | color | luminosity",
             "exported": true,
@@ -10630,14 +10623,6 @@
             "specification": {
                 "category": "css-compositing",
                 "url": "https://www.w3.org/TR/compositing-1/#propdef-background-blend-mode"
-            }
-        },
-        "<single-background-attachment>": {
-            "grammar": "<attachment>",
-            "exported": true,
-            "specification": {
-                "category": "css-backgrounds",
-                "url": "https://www.w3.org/TR/css-backgrounds-3/#background-attachment"
             }
         },
         "<single-background-clip>": {

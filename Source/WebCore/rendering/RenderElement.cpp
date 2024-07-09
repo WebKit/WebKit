@@ -948,7 +948,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
     }
 
     bool newStyleSlowScroll = false;
-    if (newStyle.hasAnyFixedBackground() && !settings().fixedBackgroundsPaintRelativeToDocument()) {
+    if (newStyle.hasAnyFixedBackground() && settings().cssFixedBackgroundSupportEnabled()) {
         newStyleSlowScroll = true;
         bool drawsRootBackground = isDocumentElementRenderer() || (isBody() && !rendererHasBackground(document().documentElement()->renderer()));
         if (drawsRootBackground && newStyle.hasEntirelyFixedBackground() && view().compositor().supportsFixedRootBackgroundCompositing())
@@ -1127,7 +1127,7 @@ void RenderElement::willBeDestroyed()
     if (!renderTreeBeingDestroyed() && element())
         document().contentChangeObserver().rendererWillBeDestroyed(*element());
 #endif
-    if (m_style.hasAnyFixedBackground() && !settings().fixedBackgroundsPaintRelativeToDocument())
+    if (m_style.hasAnyFixedBackground() && settings().cssFixedBackgroundSupportEnabled())
         view().protectedFrameView()->removeSlowRepaintObject(*this);
 
     unregisterForVisibleInViewportCallback();

@@ -2909,6 +2909,23 @@ RefPtr<CSSValue> consumeRepeatStyle(CSSParserTokenRange& range, const CSSParserC
     return CSSBackgroundRepeatValue::create(*value1, *value2);
 }
 
+RefPtr<CSSValue> consumeSingleBackgroundAttachment(CSSParserTokenRange& range, const CSSParserContext& context, FromShorthand fromShorthand)
+{
+    // https://www.w3.org/TR/css-backgrounds-3/#background-attachment
+    switch (auto keyword = range.peek().id(); keyword) {
+    case CSSValueScroll:
+    case CSSValueLocal:
+    case CSSValueFixed:
+        if (!context.cssFixedBackgroundSupportEnabled && keyword == CSSValueFixed && fromShorthand == FromShorthand::No)
+            return nullptr;
+        range.consumeIncludingWhitespace();
+        return CSSPrimitiveValue::create(keyword);
+    default:
+        return nullptr;
+    }
+    return nullptr;
+}
+
 RefPtr<CSSValue> consumeSingleBackgroundClip(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     switch (auto keyword = range.peek().id(); keyword) {

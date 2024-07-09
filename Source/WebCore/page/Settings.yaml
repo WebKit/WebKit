@@ -61,6 +61,13 @@ BackgroundShouldExtendBeyondPage:
     WebCore:
       default: false
 
+CSSFixedBackgroundSupportEnabled:
+  type: bool
+  defaultValue:
+    WebCore:
+      PLATFORM(IOS_FAMILY): false
+      default: true
+
 ClientCoordinatesRelativeToLayoutViewport:
   type: bool
   webcoreOnChange: setNeedsRecalcStyleInAllFrames
@@ -110,13 +117,6 @@ EditingBehaviorType:
       OS(WINDOWS): EditingBehaviorType::Windows
       OS(UNIX): EditingBehaviorType::Unix
       default: EditingBehaviorType::Mac
-
-FixedBackgroundsPaintRelativeToDocument:
-  type: bool
-  defaultValue:
-    WebCore:
-      PLATFORM(IOS_FAMILY): true
-      default: false
 
 FixedElementsLayoutRelativeToFrame:
   type: bool
