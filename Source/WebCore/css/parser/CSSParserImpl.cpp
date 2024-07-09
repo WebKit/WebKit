@@ -217,7 +217,7 @@ bool CSSParserImpl::parseDeclarationList(MutableStyleProperties* declaration, co
     return declaration->addParsedProperties(results);
 }
 
-RefPtr<StyleRuleBase> CSSParserImpl::parseRule(const String& string, const CSSParserContext& context, StyleSheetContents* styleSheet, AllowedRulesType allowedRules, CSSParserEnum::IsNestedContext isNestedContext)
+RefPtr<StyleRuleBase> CSSParserImpl::parseRule(const String& string, const CSSParserContext& context, StyleSheetContents* styleSheet, AllowedRules allowedRules, CSSParserEnum::IsNestedContext isNestedContext)
 {
     CSSParserImpl parser(context, string, styleSheet, nullptr, isNestedContext);
     CSSParserTokenRange range = parser.tokenizer()->tokenRange();
@@ -240,7 +240,7 @@ RefPtr<StyleRuleBase> CSSParserImpl::parseRule(const String& string, const CSSPa
 void CSSParserImpl::parseStyleSheet(const String& string, const CSSParserContext& context, StyleSheetContents& styleSheet)
 {
     CSSParserImpl parser(context, string, &styleSheet, nullptr);
-    bool firstRuleValid = parser.consumeRuleList(parser.tokenizer()->tokenRange(), TopLevelRuleList, [&](Ref<StyleRuleBase> rule) {
+    bool firstRuleValid = parser.consumeRuleList(parser.tokenizer()->tokenRange(), RuleList::TopLevel, [&](Ref<StyleRuleBase> rule) {
         if (rule->isCharsetRule())
             return;
         if (context.shouldIgnoreImportRules && rule->isImportRule())
@@ -322,7 +322,7 @@ void CSSParserImpl::parseStyleSheetForInspector(const String& string, const CSSP
 {
     CSSParserObserverWrapper wrapper(observer);
     CSSParserImpl parser(context, string, &styleSheet, &wrapper);
-    bool firstRuleValid = parser.consumeRuleList(parser.tokenizer()->tokenRange(), TopLevelRuleList, [&styleSheet](Ref<StyleRuleBase> rule) {
+    bool firstRuleValid = parser.consumeRuleList(parser.tokenizer()->tokenRange(), RuleList::TopLevel, [&styleSheet](Ref<StyleRuleBase> rule) {
         if (rule->isCharsetRule())
             return;
         styleSheet.parserAppendRule(WTFMove(rule));
@@ -330,39 +330,39 @@ void CSSParserImpl::parseStyleSheetForInspector(const String& string, const CSSP
     styleSheet.setHasSyntacticallyValidCSSHeader(firstRuleValid);
 }
 
-static CSSParserImpl::AllowedRulesType computeNewAllowedRules(CSSParserImpl::AllowedRulesType allowedRules, StyleRuleBase* rule)
+static CSSParserImpl::AllowedRules computeNewAllowedRules(CSSParserImpl::AllowedRules allowedRules, StyleRuleBase* rule)
 {
-    if (!rule || allowedRules == CSSParserImpl::FontFeatureValuesRules || allowedRules == CSSParserImpl::KeyframeRules || allowedRules == CSSParserImpl::CounterStyleRules || allowedRules == CSSParserImpl::NoRules)
+    if (!rule || allowedRules == CSSParserImpl::AllowedRules::FontFeatureValuesRules || allowedRules == CSSParserImpl::AllowedRules::KeyframeRules || allowedRules == CSSParserImpl::AllowedRules::CounterStyleRules || allowedRules == CSSParserImpl::AllowedRules::NoRules)
         return allowedRules;
 
-    ASSERT(allowedRules <= CSSParserImpl::RegularRules);
+    ASSERT(allowedRules <= CSSParserImpl::AllowedRules::RegularRules);
     if (rule->isCharsetRule())
-        return CSSParserImpl::AllowLayerStatementRules;
-    if (allowedRules <= CSSParserImpl::AllowLayerStatementRules && rule->isLayerRule() && downcast<StyleRuleLayer>(*rule).isStatement())
-        return CSSParserImpl::AllowLayerStatementRules;
+        return CSSParserImpl::AllowedRules::LayerStatementRules;
+    if (allowedRules <= CSSParserImpl::AllowedRules::LayerStatementRules && rule->isLayerRule() && downcast<StyleRuleLayer>(*rule).isStatement())
+        return CSSParserImpl::AllowedRules::LayerStatementRules;
     if (rule->isImportRule())
-        return CSSParserImpl::AllowImportRules;
+        return CSSParserImpl::AllowedRules::ImportRules;
     if (rule->isNamespaceRule())
-        return CSSParserImpl::AllowNamespaceRules;
-    return CSSParserImpl::RegularRules;
+        return CSSParserImpl::AllowedRules::NamespaceRules;
+    return CSSParserImpl::AllowedRules::RegularRules;
 }
 
 template<typename T>
-bool CSSParserImpl::consumeRuleList(CSSParserTokenRange range, RuleListType ruleListType, const T callback)
+bool CSSParserImpl::consumeRuleList(CSSParserTokenRange range, RuleList ruleListType, const T callback)
 {
-    AllowedRulesType allowedRules = RegularRules;
+    auto allowedRules = AllowedRules::RegularRules;
     switch (ruleListType) {
-    case TopLevelRuleList:
-        allowedRules = AllowCharsetRules;
+    case RuleList::TopLevel:
+        allowedRules = AllowedRules::CharsetRules;
         break;
-    case RegularRuleList:
-        allowedRules = RegularRules;
+    case RuleList::Regular:
+        allowedRules = AllowedRules::RegularRules;
         break;
-    case KeyframesRuleList:
-        allowedRules = KeyframeRules;
+    case RuleList::Keyframes:
+        allowedRules = AllowedRules::KeyframeRules;
         break;
-    case FontFeatureValuesRuleList:
-        allowedRules = FontFeatureValuesRules;
+    case RuleList::FontFeatureValues:
+        allowedRules = AllowedRules::FontFeatureValuesRules;
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -381,7 +381,7 @@ bool CSSParserImpl::consumeRuleList(CSSParserTokenRange range, RuleListType rule
             break;
         case CDOToken:
         case CDCToken:
-            if (ruleListType == TopLevelRuleList) {
+            if (ruleListType == RuleList::TopLevel) {
                 range.consume();
                 continue;
             }
@@ -403,7 +403,7 @@ bool CSSParserImpl::consumeRuleList(CSSParserTokenRange range, RuleListType rule
     return firstRuleValid;
 }
 
-RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, AllowedRulesType allowedRules)
+RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, AllowedRules allowedRules)
 {
     ASSERT(range.peek().type() == AtKeywordToken);
     const StringView name = range.consumeIncludingWhitespace().value();
@@ -416,21 +416,21 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
 
     if (range.atEnd() || range.peek().type() == SemicolonToken) {
         range.consume();
-        if (allowedRules == AllowCharsetRules && id == CSSAtRuleCharset)
+        if (allowedRules == AllowedRules::CharsetRules && id == CSSAtRuleCharset)
             return consumeCharsetRule(prelude);
-        if (allowedRules <= AllowImportRules && id == CSSAtRuleImport)
+        if (allowedRules <= AllowedRules::ImportRules && id == CSSAtRuleImport)
             return consumeImportRule(prelude);
-        if (allowedRules <= AllowNamespaceRules && id == CSSAtRuleNamespace)
+        if (allowedRules <= AllowedRules::NamespaceRules && id == CSSAtRuleNamespace)
             return consumeNamespaceRule(prelude);
-        if (allowedRules <= RegularRules && id == CSSAtRuleLayer)
+        if (allowedRules <= AllowedRules::RegularRules && id == CSSAtRuleLayer)
             return consumeLayerRule(prelude, { });
         return nullptr; // Parse error, unrecognised at-rule without block
     }
 
     CSSParserTokenRange block = range.consumeBlock();
-    if (allowedRules == KeyframeRules)
+    if (allowedRules == AllowedRules::KeyframeRules)
         return nullptr; // Parse error, no at-rules supported inside @keyframes
-    if (allowedRules == NoRules)
+    if (allowedRules == AllowedRules::NoRules)
         return nullptr;
 
     switch (id) {
@@ -448,7 +448,7 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
     case CSSAtRuleSwash:
     case CSSAtRuleOrnaments:
     case CSSAtRuleAnnotation:
-        return allowedRules == FontFeatureValuesRules ? consumeFontFeatureValuesRuleBlock(id, prelude, block) : nullptr;
+        return allowedRules == AllowedRules::FontFeatureValuesRules ? consumeFontFeatureValuesRuleBlock(id, prelude, block) : nullptr;
     case CSSAtRuleFontPaletteValues:
         return consumeFontPaletteValuesRule(prelude, block);
     case CSSAtRuleWebkitKeyframes:
@@ -474,10 +474,10 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
 }
 
 // https://drafts.csswg.org/css-syntax/#consume-a-qualified-rule
-RefPtr<StyleRuleBase> CSSParserImpl::consumeQualifiedRule(CSSParserTokenRange& range, AllowedRulesType allowedRules)
+RefPtr<StyleRuleBase> CSSParserImpl::consumeQualifiedRule(CSSParserTokenRange& range, AllowedRules allowedRules)
 {
     auto isNestedStyleRule = [&] {
-        return isNestedContext() && allowedRules <= RegularRules;
+        return isNestedContext() && allowedRules <= AllowedRules::RegularRules;
     };
 
     const CSSParserToken* preludeStart = &range.peek();
@@ -500,10 +500,10 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeQualifiedRule(CSSParserTokenRange& r
     CSSParserTokenRange prelude = range.makeSubRange(preludeStart, &range.peek());
     CSSParserTokenRange block = range.consumeBlockCheckingForEditability(m_styleSheet.get());
 
-    if (allowedRules <= RegularRules)
+    if (allowedRules <= AllowedRules::RegularRules)
         return consumeStyleRule(prelude, block);
 
-    if (allowedRules == KeyframeRules)
+    if (allowedRules == AllowedRules::KeyframeRules)
         return consumeKeyframeStyleRule(prelude, block);
 
     return nullptr;
@@ -680,7 +680,7 @@ Vector<Ref<StyleRuleBase>> CSSParserImpl::consumeNestedGroupRules(CSSParserToken
                 rules.append(rule);
         });
     } else {
-        consumeRuleList(block, RegularRuleList, [&rules](Ref<StyleRuleBase> rule) {
+        consumeRuleList(block, RuleList::Regular, [&rules](Ref<StyleRuleBase> rule) {
             rules.append(rule);
         });
     }
@@ -854,7 +854,7 @@ RefPtr<StyleRuleFontFeatureValues> CSSParserImpl::consumeFontFeatureValuesRule(C
     }
 
     Vector<Ref<StyleRuleBase>> rules;
-    consumeRuleList(block, FontFeatureValuesRuleList, [&rules](auto rule) {
+    consumeRuleList(block, RuleList::FontFeatureValues, [&rules](auto rule) {
         rules.append(rule);
     });
 
@@ -964,7 +964,7 @@ RefPtr<StyleRuleKeyframes> CSSParserImpl::consumeKeyframesRule(CSSParserTokenRan
     }
 
     auto keyframeRule = StyleRuleKeyframes::create(name);
-    consumeRuleList(block, KeyframesRuleList, [keyframeRule](Ref<StyleRuleBase> keyframe) {
+    consumeRuleList(block, RuleList::Keyframes, [keyframeRule](Ref<StyleRuleBase> keyframe) {
         keyframeRule->parserAppendKeyframe(downcast<const StyleRuleKeyframe>(keyframe.ptr()));
     });
 
@@ -1373,7 +1373,7 @@ void CSSParserImpl::consumeBlockContent(CSSParserTokenRange range, StyleRuleType
     };
 
     auto consumeNestedQualifiedRule = [&] {
-        RefPtr rule = consumeQualifiedRule(range, AllowedRulesType::RegularRules);
+        RefPtr rule = consumeQualifiedRule(range, AllowedRules::RegularRules);
         if (!rule)
             return false;
         if (!rule->isStyleRule())
@@ -1418,14 +1418,14 @@ void CSSParserImpl::consumeBlockContent(CSSParserTokenRange range, StyleRuleType
         }
         case AtKeywordToken: {
             if (nestedRulesAllowed()) {
-                RefPtr rule = consumeAtRule(range, RegularRules);
+                RefPtr rule = consumeAtRule(range, AllowedRules::RegularRules);
                 if (!rule)
                     break;
                 if (!rule->isGroupRule())
                     break;
                 topContext().m_parsedRules.append(rule.releaseNonNull());
             } else {
-                RefPtr rule = consumeAtRule(range, NoRules);
+                RefPtr rule = consumeAtRule(range, AllowedRules::NoRules);
                 ASSERT_UNUSED(rule, !rule);
             }
             break;

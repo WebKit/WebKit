@@ -163,7 +163,7 @@ static bool isValidRuleHeaderText(const String& headerText, StyleRuleType styleR
             return false;
 
         auto tokenRange = parser.tokenizer()->tokenRange();
-        auto rule = parser.consumeAtRule(tokenRange, CSSParserImpl::AllowedRulesType::RegularRules);
+        auto rule = parser.consumeAtRule(tokenRange, CSSParserImpl::AllowedRules::RegularRules);
 
         if (!rule)
             return false;
