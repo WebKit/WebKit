@@ -1875,6 +1875,26 @@ TEST(WritingTools, EphemeralSessionWithDifferingTextLengths)
     TestWebKitAPI::Util::run(&finished);
 }
 
+TEST(WritingTools, EphemeralSessionWithDeeplyNestedContent)
+{
+    NSString *text = @"The oceanic whitetip shark is a large requiem shark inhabiting tropical and warm temperate seas. It has a stocky body with long, white-tipped, rounded fins. The species is typically solitary but can congregate around food concentrations.";
+
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:[NSString stringWithFormat:@"<body><div><div><div><div><div><div><div><div><div><div><p>%@</p></div></div></div></div></div></div></div></div></div></div></body>", text] writingToolsBehavior:PlatformWritingToolsBehaviorDefault]);
+    [webView selectAll:nil];
+
+    [webView waitForNextPresentationUpdate];
+
+    __block bool finished = false;
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:nil requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+        EXPECT_WK_STREQ(text, contexts.firstObject.attributedText.string);
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
 TEST(WritingTools, EphemeralSession)
 {
     auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>This is the first sentence in a paragraph I want to rewrite. Only this sentence is selected.</p><p id='second'>This is the first sentence of the second paragraph. The previous sentence is selected, but this one is not.</p></body>"]);
