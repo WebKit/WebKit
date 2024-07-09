@@ -106,6 +106,7 @@ private:
     void flush(Function<void()>&&) final;
     void reset() final;
     void close() final;
+    bool setRates(uint64_t bitRate, double frameRate, Function<void()>&&) final;
 
     LibWebRTCCodecs::Encoder& m_internalEncoder;
     Ref<RemoteVideoEncoderCallbacks> m_callbacks;
@@ -292,12 +293,18 @@ void RemoteVideoEncoder::encode(RawFrame&& rawFrame, bool shouldGenerateKeyFrame
     });
 }
 
+bool RemoteVideoEncoder::setRates(uint64_t bitRate, double frameRate, Function<void()>&& callback)
+{
+    auto bitRateInKbps = bitRate / 1000;
+    WebProcess::singleton().libWebRTCCodecs().setEncodeRates(m_internalEncoder, bitRateInKbps, frameRate);
+    m_callbacks->postTask(WTFMove(callback));
+    return true;
+}
+
 void RemoteVideoEncoder::flush(Function<void()>&& callback)
 {
     WebProcess::singleton().libWebRTCCodecs().flushEncoder(m_internalEncoder, [callback = WTFMove(callback), callbacks = m_callbacks]() mutable {
-        callbacks->postTask([callback = WTFMove(callback)]() mutable {
-            callback();
-        });
+        callbacks->postTask(WTFMove(callback));
     });
 }
 

@@ -80,6 +80,8 @@ public:
     using EncodeCallback = Function<void(String&&)>;
     virtual void encode(RawFrame&&, bool shouldGenerateKeyFrame, EncodeCallback&&) = 0;
 
+    // FIXME: Evaluate whether we can make it virtual pure and not return a boolean.
+    virtual bool setRates(uint64_t /* bitRate */, double /* frameRate */, Function<void()>&&) { return false; }
     virtual void flush(Function<void()>&&) = 0;
     virtual void reset() = 0;
     virtual void close() = 0;

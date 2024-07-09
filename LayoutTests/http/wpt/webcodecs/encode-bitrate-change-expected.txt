@@ -1,0 +1,8 @@
+
+PASS VP8 - bitrate
+PASS VP8 - framerate
+PASS VP9 - bitrate
+PASS VP9 - framerate
+PASS H.264 - bitrate
+PASS H.264 - framerate
+
