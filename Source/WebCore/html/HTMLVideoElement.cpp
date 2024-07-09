@@ -156,6 +156,14 @@ void HTMLVideoElement::computeAcceleratedRenderingStateAndUpdateMediaPlayer()
     player->acceleratedRenderingStateChanged(); // This call will trigger a call back to `mediaPlayerRenderingCanBeAccelerated()` from the MediaPlayer.
 }
 
+#if PLATFORM(IOS_FAMILY)
+bool HTMLVideoElement::canShowWhileLocked() const
+{
+    RefPtr page = document().page();
+    return page && page->canShowWhileLocked();
+}
+#endif
+
 void HTMLVideoElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr) {

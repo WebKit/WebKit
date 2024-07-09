@@ -75,7 +75,7 @@ private:
     bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
 
     using LayerCreationCallback = CompletionHandler<void(std::optional<LayerHostingContextID>)>&&;
-    void createLayer(SampleBufferDisplayLayerIdentifier, bool hideRootLayer, WebCore::IntSize, bool shouldMaintainAspectRatio, LayerCreationCallback);
+    void createLayer(SampleBufferDisplayLayerIdentifier, bool hideRootLayer, WebCore::IntSize, bool shouldMaintainAspectRatio, bool canShowWhileLocked, LayerCreationCallback);
     void releaseLayer(SampleBufferDisplayLayerIdentifier);
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;

@@ -929,6 +929,13 @@ FloatSize MediaPlayer::videoLayerSize() const
     return client().mediaPlayerVideoLayerSize();
 }
 
+#if PLATFORM(IOS_FAMILY)
+bool MediaPlayer::canShowWhileLocked() const
+{
+    return client().canShowWhileLocked();
+}
+#endif
+
 void MediaPlayer::videoLayerSizeDidChange(const FloatSize& size)
 {
     client().mediaPlayerVideoLayerSizeDidChange(size);

@@ -49,6 +49,9 @@ public:
     virtual void sampleBufferDisplayLayerStatusDidFail() = 0;
     virtual void ref() = 0;
     virtual void deref() = 0;
+#if PLATFORM(IOS_FAMILY)
+    virtual bool canShowWhileLocked() const = 0;
+#endif
 };
 
 class SampleBufferDisplayLayer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SampleBufferDisplayLayer, WTF::DestructionThread::MainRunLoop> {
@@ -90,6 +93,7 @@ public:
 protected:
     explicit SampleBufferDisplayLayer(SampleBufferDisplayLayerClient&);
 
+    bool canShowWhileLocked();
     WeakPtr<SampleBufferDisplayLayerClient> m_client;
 
 private:
@@ -99,6 +103,15 @@ private:
 inline SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerClient& client)
     : m_client(client)
 {
+}
+
+inline bool SampleBufferDisplayLayer::canShowWhileLocked()
+{
+#if PLATFORM(IOS_FAMILY)
+    return m_client && m_client->canShowWhileLocked();
+#else
+    return false;
+#endif
 }
 
 }

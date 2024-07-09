@@ -180,6 +180,9 @@ Ref<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRemoteMediaPlay
     proxyConfiguration.playerContentBoxRect = player->playerContentBoxRect();
 
     proxyConfiguration.prefersSandboxedParsing = player->prefersSandboxedParsing();
+#if PLATFORM(IOS_FAMILY)
+    proxyConfiguration.canShowWhileLocked = player->canShowWhileLocked();
+#endif
 
     auto identifier = MediaPlayerIdentifier::generate();
     auto clientIdentifier = player->clientIdentifier();

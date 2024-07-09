@@ -160,6 +160,9 @@ private:
     void mediaPlayerEngineUpdated() final;
 
     void computeAcceleratedRenderingStateAndUpdateMediaPlayer() final;
+#if PLATFORM(IOS_FAMILY)
+    bool canShowWhileLocked() const final;
+#endif
 
     std::unique_ptr<HTMLImageLoader> m_imageLoader;
 

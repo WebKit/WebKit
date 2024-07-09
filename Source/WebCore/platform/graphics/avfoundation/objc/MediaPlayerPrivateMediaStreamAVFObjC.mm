@@ -352,6 +352,14 @@ void MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferDisplayLayerStatusDidFail
     updateLayersAsNeeded();
 }
 
+#if PLATFORM(IOS_FAMILY)
+bool MediaPlayerPrivateMediaStreamAVFObjC::canShowWhileLocked() const
+{
+    auto player = m_player.get();
+    return player && player->canShowWhileLocked();
+}
+#endif
+
 void MediaPlayerPrivateMediaStreamAVFObjC::applicationDidBecomeActive()
 {
     if (m_sampleBufferDisplayLayer && m_sampleBufferDisplayLayer->didFail()) {

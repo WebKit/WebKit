@@ -46,5 +46,8 @@ struct WebKit::RemoteMediaPlayerProxyConfiguration {
     bool renderingCanBeAccelerated;
     bool prefersSandboxedParsing;
     bool shouldDisableHDR;
+#if PLATFORM(IOS_FAMILY)
+    bool canShowWhileLocked;
+#endif
 };
 #endif

@@ -58,7 +58,7 @@ public:
     using WebCore::SampleBufferDisplayLayerClient::WeakPtrImplType;
 
     using LayerInitializationCallback = CompletionHandler<void(std::optional<LayerHostingContextID>)>;
-    void initialize(bool hideRootLayer, WebCore::IntSize, bool shouldMaintainAspectRatio, LayerInitializationCallback&&);
+    void initialize(bool hideRootLayer, WebCore::IntSize, bool shouldMaintainAspectRatio, bool canShowWhileLocked, LayerInitializationCallback&&);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -92,6 +92,9 @@ private:
 
     // WebCore::SampleBufferDisplayLayerClient
     void sampleBufferDisplayLayerStatusDidFail() final;
+#if PLATFORM(IOS_FAMILY)
+    bool canShowWhileLocked() const final { return false; }
+#endif
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnection WTF_GUARDED_BY_CAPABILITY(m_consumeThread);
     SampleBufferDisplayLayerIdentifier m_identifier;

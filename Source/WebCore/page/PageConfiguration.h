@@ -194,6 +194,10 @@ public:
     bool httpsUpgradeEnabled { true };
     std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureSchemeForTesting;
 
+#if PLATFORM(IOS_FAMILY)
+    bool canShowWhileLocked { false };
+#endif
+
     UniqueRef<StorageProvider> storageProvider;
 
     UniqueRef<ModelPlayerProvider> modelPlayerProvider;
