@@ -193,6 +193,7 @@ SocketProvider* WorkerThread::socketProvider()
 
 WorkerGlobalScope* WorkerThread::globalScope()
 {
+    ASSERT(!thread() || thread() == &Thread::current());
     return downcast<WorkerGlobalScope>(WorkerOrWorkletThread::globalScope());
 }
 
