@@ -5455,28 +5455,29 @@ ExceptionOr<String> Internals::pathStringWithShrinkWrappedRects(const Vector<dou
     for (unsigned i = 0; i < rectComponents.size(); i += 4)
         rects.append(FloatRect(rectComponents[i], rectComponents[i + 1], rectComponents[i + 2], rectComponents[i + 3]));
 
-    SVGPathStringBuilder builder;
-    PathUtilities::pathWithShrinkWrappedRects(rects, radius).applyElements([&builder](const PathElement& element) {
+    StringBuilder builder;
+    SVGPathStringBuilder pathBuilder { builder };
+    PathUtilities::pathWithShrinkWrappedRects(rects, radius).applyElements([&pathBuilder](const PathElement& element) {
         switch (element.type) {
         case PathElement::Type::MoveToPoint:
-            builder.moveTo(element.points[0], false, AbsoluteCoordinates);
+            pathBuilder.moveTo(element.points[0], false, AbsoluteCoordinates);
             return;
         case PathElement::Type::AddLineToPoint:
-            builder.lineTo(element.points[0], AbsoluteCoordinates);
+            pathBuilder.lineTo(element.points[0], AbsoluteCoordinates);
             return;
         case PathElement::Type::AddQuadCurveToPoint:
-            builder.curveToQuadratic(element.points[0], element.points[1], AbsoluteCoordinates);
+            pathBuilder.curveToQuadratic(element.points[0], element.points[1], AbsoluteCoordinates);
             return;
         case PathElement::Type::AddCurveToPoint:
-            builder.curveToCubic(element.points[0], element.points[1], element.points[2], AbsoluteCoordinates);
+            pathBuilder.curveToCubic(element.points[0], element.points[1], element.points[2], AbsoluteCoordinates);
             return;
         case PathElement::Type::CloseSubpath:
-            builder.closePath();
+            pathBuilder.closePath();
             return;
         }
         ASSERT_NOT_REACHED();
     });
-    return builder.result();
+    return builder.toString();
 }
 
 void Internals::systemBeep()

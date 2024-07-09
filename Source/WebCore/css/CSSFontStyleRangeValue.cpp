@@ -30,16 +30,16 @@
 
 namespace WebCore {
 
-String CSSFontStyleRangeValue::customCSSText() const
+void CSSFontStyleRangeValue::customCSSText(StringBuilder& builder) const
 {
-    if (!obliqueValues)
-        return fontStyleValue->cssText();
+    if (!obliqueValues) {
+        fontStyleValue->cssText(builder);
+        return;
+    }
 
-    StringBuilder builder;
-    builder.append(fontStyleValue->cssText());
+    fontStyleValue->cssText(builder);
     builder.append(' ');
-    builder.append(obliqueValues->cssText());
-    return builder.toString();
+    obliqueValues->cssText(builder);
 }
 
 bool CSSFontStyleRangeValue::equals(const CSSFontStyleRangeValue& other) const

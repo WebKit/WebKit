@@ -49,7 +49,7 @@ private:
     CSSFontPaletteValuesRule(StyleRuleFontPaletteValues&, CSSStyleSheet* parent);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::FontPaletteValues; }
-    String cssText() const final;
+    void cssText(StringBuilder&) const final;
     void reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleFontPaletteValues> m_fontPaletteValuesRule;

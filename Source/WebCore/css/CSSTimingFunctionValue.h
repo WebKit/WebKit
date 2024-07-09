@@ -39,7 +39,7 @@ public:
 
     const Vector<LinearTimingFunction::Point>& points() const { return m_points; }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
 
     bool equals(const CSSLinearTimingFunctionValue&) const;
 
@@ -62,6 +62,7 @@ public:
     }
 
     String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
 
     double x1() const { return m_x1; }
     double y1() const { return m_y1; }
@@ -97,6 +98,7 @@ public:
     std::optional<StepsTimingFunction::StepPosition> stepPosition() const { return m_stepPosition; }
 
     String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
 
     bool equals(const CSSStepsTimingFunctionValue&) const;
 
@@ -125,6 +127,7 @@ public:
     double initialVelocity() const { return m_initialVelocity; }
 
     String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
 
     bool equals(const CSSSpringTimingFunctionValue&) const;
 

@@ -161,6 +161,7 @@ public:
 
     String debugDescription() const final;
     String cssTextWithReplacementURLs(const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&);
+    void cssTextWithReplacementURLs(StringBuilder&, const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&);
     void getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>&);
 
     bool isDetached() const;

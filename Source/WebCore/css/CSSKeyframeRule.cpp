@@ -74,15 +74,16 @@ MutableStyleProperties& StyleRuleKeyframe::mutableProperties()
 
 String StyleRuleKeyframe::keyText() const
 {
-    StringBuilder keyText;
-    for (size_t i = 0; i < m_keys.size(); ++i) {
-        if (i)
-            keyText.append(',');
-        keyText.append(m_keys[i] * 100, '%');
-    }
-    return keyText.toString();
+    StringBuilder builder;
+    keyText(builder);
+    return builder.toString();
 }
-    
+
+void StyleRuleKeyframe::keyText(StringBuilder& builder) const
+{
+    builder.append(interleave(m_keys, [](auto& builder, auto& key) { builder.append(key * 100, '%'); }, ','));
+}
+
 bool StyleRuleKeyframe::setKeyText(const String& keyText)
 {
     ASSERT(!keyText.isNull());
@@ -93,11 +94,18 @@ bool StyleRuleKeyframe::setKeyText(const String& keyText)
     return true;
 }
 
-String StyleRuleKeyframe::cssText() const
+void StyleRuleKeyframe::cssText(StringBuilder& builder) const
 {
-    if (auto declarations = m_properties->asText(); !declarations.isEmpty())
-        return makeString(keyText(), " { "_s, declarations, " }"_s);
-    return makeString(keyText(), " { }"_s);
+    keyText(builder);;
+    builder.append(" { "_s);
+
+    if (m_properties->isEmpty()) {
+        builder.append('}');
+        return;
+    }
+
+    m_properties->asText(builder);
+    builder.append(" }"_s);
 }
 
 CSSKeyframeRule::CSSKeyframeRule(StyleRuleKeyframe& keyframe, CSSKeyframesRule* parent)

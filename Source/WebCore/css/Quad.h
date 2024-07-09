@@ -39,6 +39,36 @@ public:
         return serialize(top().cssText(), right().cssText(), bottom().cssText(), left().cssText());
     }
 
+    void cssText(StringBuilder& builder) const
+    {
+        if (!left().equals(right())) {
+            top().cssText(builder);
+            builder.append(' ');
+            right().cssText(builder);
+            builder.append(' ');
+            bottom().cssText(builder);
+            builder.append(' ');
+            left().cssText(builder);
+            return;
+        }
+        if (!bottom().equals(top())) {
+            top().cssText(builder);
+            builder.append(' ');
+            right().cssText(builder);
+            builder.append(' ');
+            bottom().cssText(builder);
+            return;
+        }
+        if (!right().equals(top())) {
+            top().cssText(builder);
+            builder.append(' ');
+            right().cssText(builder);
+            return;
+        }
+
+        top().cssText(builder);
+    }
+
     static String serialize(const String& top, const String& right, const String& bottom, const String& left)
     {
         if (left != right)

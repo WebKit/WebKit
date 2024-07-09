@@ -41,9 +41,11 @@ private:
     CSSFontFaceRule(StyleRuleFontFace&, CSSStyleSheet* parent);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::FontFace; }
-    String cssText() const final;
-    String cssTextWithReplacementURLs(const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const final;
-    String cssTextInternal(const String& declarations) const;
+
+    void cssText(StringBuilder&) const final;
+    void cssTextWithReplacementURLs(StringBuilder&, const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const final;
+    template<typename DeclarationsFunctor> void cssTextInternal(StringBuilder&, bool hasDeclarations, DeclarationsFunctor&&) const;
+
     void reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleFontFace> m_fontFaceRule;

@@ -36,13 +36,35 @@ CSSFontVariantAlternatesValue::CSSFontVariantAlternatesValue(FontVariantAlternat
 {
 }
 
-String CSSFontVariantAlternatesValue::customCSSText() const
+void CSSFontVariantAlternatesValue::customCSSText(StringBuilder& builder) const
 {
-    TextStream ts;
-    // For the moment, the stream operator implements the CSS serialization exactly.
-    // If it changes for whatever reason, we should reimplement the CSS serialization here.
-    ts << m_value;
-    return ts.release();
+    if (m_value.isNormal()) {
+        builder.append("normal"_s);
+        return;
+    }
+
+    auto initialLengthOfBuilder = builder.length();
+
+    auto values = m_value.values();
+    auto append = [&]<typename ...Ts>(Ts&& ...args) {
+        // Separate elements with a space.
+        builder.append(initialLengthOfBuilder == builder.length() ? ""_s: " "_s, std::forward<Ts>(args)...);
+    };
+    // FIXME: These strings needs to be escaped.
+    if (!values.stylistic.isNull())
+        append("stylistic("_s, values.stylistic, ')');
+    if (values.historicalForms)
+        append("historical-forms"_s);
+    if (!values.styleset.isEmpty())
+        append("styleset("_s, interleave(values.styleset, ", "_s), ')');
+    if (!values.characterVariant.isEmpty())
+        append("character-variant("_s, interleave(values.characterVariant, ", "_s), ')');
+    if (!values.swash.isNull())
+        append("swash("_s, values.swash, ')');
+    if (!values.ornaments.isNull())
+        append("ornaments("_s, values.ornaments, ')');
+    if (!values.annotation.isNull())
+        append("annotation("_s, values.annotation, ')');
 }
 
 bool CSSFontVariantAlternatesValue::equals(const CSSFontVariantAlternatesValue& other) const

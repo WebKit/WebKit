@@ -116,7 +116,8 @@ public:
         return adoptRef(*new CSSLinearGradientValue(WTFMove(data), repeating, colorInterpolationMethod, WTFMove(stops)));
     }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSLinearGradientValue&) const;
     RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
@@ -193,7 +194,8 @@ public:
         return adoptRef(*new CSSPrefixedLinearGradientValue(WTFMove(data), repeating, colorInterpolationMethod, WTFMove(stops)));
     }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSPrefixedLinearGradientValue&) const;
     RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
@@ -267,7 +269,8 @@ public:
         return adoptRef(*new CSSDeprecatedLinearGradientValue(WTFMove(data), colorInterpolationMethod, WTFMove(stops)));
     }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSDeprecatedLinearGradientValue&) const;
     RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
@@ -378,7 +381,8 @@ public:
         return adoptRef(*new CSSRadialGradientValue(WTFMove(data), repeating, colorInterpolationMethod, WTFMove(stops)));
     }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSRadialGradientValue&) const;
     RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
@@ -552,7 +556,8 @@ public:
         return adoptRef(*new CSSPrefixedRadialGradientValue(WTFMove(data), repeating, colorInterpolationMethod, WTFMove(stops)));
     }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSPrefixedRadialGradientValue&) const;
     RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
@@ -636,7 +641,8 @@ public:
         return adoptRef(*new CSSDeprecatedRadialGradientValue(WTFMove(data), colorInterpolationMethod, WTFMove(stops)));
     }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSDeprecatedRadialGradientValue&) const;
     RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
@@ -735,7 +741,8 @@ public:
         return adoptRef(*new CSSConicGradientValue(WTFMove(data), repeating, colorInterpolationMethod, WTFMove(stops)));
     }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSConicGradientValue&) const;
     RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 

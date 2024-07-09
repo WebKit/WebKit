@@ -31,22 +31,18 @@
 
 namespace WebCore {
 
-String CSSLinearTimingFunctionValue::customCSSText() const
+void CSSLinearTimingFunctionValue::customCSSText(StringBuilder& builder) const
 {
-    if (m_points.isEmpty())
-        return "linear"_s;
-
-    StringBuilder builder;
-    builder.append("linear("_s);
-    for (size_t i = 0; i < m_points.size(); ++i) {
-        if (i)
-            builder.append(", "_s);
-
-        const auto& point = m_points[i];
-        builder.append(FormattedNumber::fixedPrecision(point.value), ' ', FormattedNumber::fixedPrecision(point.progress * 100.0), '%');
+    if (m_points.isEmpty()) {
+        builder.append("linear"_s);
+        return;
     }
-    builder.append(')');
-    return builder.toString();
+
+    auto serializePoint = [](auto& builder, auto& point) {
+        builder.append(FormattedNumber::fixedPrecision(point.value), ' ', FormattedNumber::fixedPrecision(point.progress * 100.0), '%');
+    };
+
+    builder.append("linear("_s, interleave(m_points, serializePoint, ", "_s), ')');
 }
 
 bool CSSLinearTimingFunctionValue::equals(const CSSLinearTimingFunctionValue& other) const
@@ -59,34 +55,45 @@ String CSSCubicBezierTimingFunctionValue::customCSSText() const
     return makeString("cubic-bezier("_s, m_x1, ", "_s, m_y1, ", "_s, m_x2, ", "_s, m_y2, ')');
 }
 
+void CSSCubicBezierTimingFunctionValue::customCSSText(StringBuilder& builder) const
+{
+    builder.append("cubic-bezier("_s, m_x1, ", "_s, m_y1, ", "_s, m_x2, ", "_s, m_y2, ')');
+}
+
 bool CSSCubicBezierTimingFunctionValue::equals(const CSSCubicBezierTimingFunctionValue& other) const
 {
     return m_x1 == other.m_x1 && m_x2 == other.m_x2 && m_y1 == other.m_y1 && m_y2 == other.m_y2;
 }
 
-String CSSStepsTimingFunctionValue::customCSSText() const
+static constexpr ASCIILiteral serializeStepPosition(std::optional<StepsTimingFunction::StepPosition> stepPosition)
 {
-    ASCIILiteral position = ""_s;
-    if (m_stepPosition) {
-        switch (m_stepPosition.value()) {
+    if (stepPosition) {
+        switch (stepPosition.value()) {
         case StepsTimingFunction::StepPosition::JumpStart:
-            position = ", jump-start"_s;
-            break;
+            return ", jump-start"_s;
         case StepsTimingFunction::StepPosition::JumpNone:
-            position = ", jump-none"_s;
-            break;
+            return ", jump-none"_s;
         case StepsTimingFunction::StepPosition::JumpBoth:
-            position = ", jump-both"_s;
-            break;
+            return  ", jump-both"_s;
         case StepsTimingFunction::StepPosition::Start:
-            position = ", start"_s;
-            break;
+            return ", start"_s;
         case StepsTimingFunction::StepPosition::JumpEnd:
         case StepsTimingFunction::StepPosition::End:
             break;
         }
     }
-    return makeString("steps("_s, m_steps, position, ')');
+
+    return ""_s;
+}
+
+String CSSStepsTimingFunctionValue::customCSSText() const
+{
+    return makeString("steps("_s, m_steps, serializeStepPosition(m_stepPosition), ')');
+}
+
+void CSSStepsTimingFunctionValue::customCSSText(StringBuilder& builder) const
+{
+    builder.append("steps("_s, m_steps, serializeStepPosition(m_stepPosition), ')');
 }
 
 bool CSSStepsTimingFunctionValue::equals(const CSSStepsTimingFunctionValue& other) const
@@ -97,6 +104,11 @@ bool CSSStepsTimingFunctionValue::equals(const CSSStepsTimingFunctionValue& othe
 String CSSSpringTimingFunctionValue::customCSSText() const
 {
     return makeString("spring("_s, FormattedNumber::fixedPrecision(m_mass), ' ', FormattedNumber::fixedPrecision(m_stiffness), ' ', FormattedNumber::fixedPrecision(m_damping), ' ', FormattedNumber::fixedPrecision(m_initialVelocity), ')');
+}
+
+void CSSSpringTimingFunctionValue::customCSSText(StringBuilder& builder) const
+{
+    builder.append("spring("_s, FormattedNumber::fixedPrecision(m_mass), ' ', FormattedNumber::fixedPrecision(m_stiffness), ' ', FormattedNumber::fixedPrecision(m_damping), ' ', FormattedNumber::fixedPrecision(m_initialVelocity), ')');
 }
 
 bool CSSSpringTimingFunctionValue::equals(const CSSSpringTimingFunctionValue& other) const

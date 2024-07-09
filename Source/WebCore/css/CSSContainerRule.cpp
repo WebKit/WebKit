@@ -49,13 +49,11 @@ const StyleRuleContainer& CSSContainerRule::styleRuleContainer() const
     return downcast<StyleRuleContainer>(groupRule());
 }
 
-String CSSContainerRule::cssText() const
+void CSSContainerRule::cssText(StringBuilder& builder) const
 {
-    StringBuilder builder;
     builder.append("@container "_s);
     CQ::serialize(builder, styleRuleContainer().containerQuery());
     appendCSSTextForItems(builder);
-    return builder.toString();
 }
 
 String CSSContainerRule::conditionText() const
@@ -71,7 +69,7 @@ String CSSContainerRule::containerName() const
 
     auto name = styleRuleContainer().containerQuery().name;
     if (!name.isEmpty())
-        serializeIdentifier(name, builder);
+        serializeIdentifier(builder, name);
 
     return builder.toString();
 }

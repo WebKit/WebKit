@@ -53,10 +53,10 @@ String CSSFontPaletteValuesRule::name() const
 
 String CSSFontPaletteValuesRule::fontFamily() const
 {
-    auto serialize = [] (auto& family) {
-        return serializeFontFamily(family.string());
+    auto serialize = [](auto& builder, auto& family) {
+        return serializeFontFamily(builder, family.string());
     };
-    return makeStringByJoining(m_fontPaletteValuesRule->fontFamilies().map(serialize).span(), ", "_s);
+    return makeString(interleave(m_fontPaletteValuesRule->fontFamilies(), serialize, ", "_s));
 }
 
 String CSSFontPaletteValuesRule::basePalette() const
@@ -87,9 +87,8 @@ String CSSFontPaletteValuesRule::overrideColors() const
     return result.toString();
 }
 
-String CSSFontPaletteValuesRule::cssText() const
+void CSSFontPaletteValuesRule::cssText(StringBuilder& builder) const
 {
-    StringBuilder builder;
     builder.append("@font-palette-values "_s, name(), " { "_s);
     if (!m_fontPaletteValuesRule->fontFamilies().isEmpty())
         builder.append("font-family: "_s, fontFamily(), "; "_s);
@@ -113,12 +112,12 @@ String CSSFontPaletteValuesRule::cssText() const
         for (size_t i = 0; i < m_fontPaletteValuesRule->overrideColors().size(); ++i) {
             if (i)
                 builder.append(',');
-            builder.append(' ', m_fontPaletteValuesRule->overrideColors()[i].first, ' ', serializationForCSS(m_fontPaletteValuesRule->overrideColors()[i].second));
+            builder.append(' ', m_fontPaletteValuesRule->overrideColors()[i].first, ' ');
+            serializationForCSS(builder, m_fontPaletteValuesRule->overrideColors()[i].second);
         }
         builder.append("; "_s);
     }
     builder.append('}');
-    return builder.toString();
 }
 
 void CSSFontPaletteValuesRule::reattach(StyleRuleBase& rule)

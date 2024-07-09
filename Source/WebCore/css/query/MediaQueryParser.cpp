@@ -206,7 +206,7 @@ void serialize(StringBuilder& builder, const MediaQuery& query)
     }
 
     if (!query.mediaType.isEmpty() && (!query.condition || query.prefix || query.mediaType != allAtom())) {
-        serializeIdentifier(query.mediaType, builder);
+        serializeIdentifier(builder, query.mediaType);
         if (query.condition)
             builder.append(" and "_s);
     }

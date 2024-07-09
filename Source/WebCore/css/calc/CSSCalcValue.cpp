@@ -326,11 +326,9 @@ void CSSCalcValue::collectComputedStyleDependencies(ComputedStyleDependencies& d
     protectedExpressionNode()->collectComputedStyleDependencies(dependencies);
 }
 
-String CSSCalcValue::customCSSText() const
+void CSSCalcValue::customCSSText(StringBuilder& builder) const
 {
-    StringBuilder builder;
     CSSCalcOperationNode::buildCSSText(protectedExpressionNode().get(), builder);
-    return builder.toString();
 }
 
 bool CSSCalcValue::equals(const CSSCalcValue& other) const

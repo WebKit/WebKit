@@ -55,7 +55,7 @@ Ref<CSSGridTemplateAreasValue> CSSGridTemplateAreasValue::create(NamedGridAreaMa
     return adoptRef(*new CSSGridTemplateAreasValue(WTFMove(map), rowCount, columnCount));
 }
 
-static String stringForPosition(const NamedGridAreaMap& gridAreaMap, size_t row, size_t column)
+static void serializePosition(StringBuilder& builder, const NamedGridAreaMap& gridAreaMap, size_t row, size_t column)
 {
     HashSet<String> candidates;
     for (auto& it : gridAreaMap.map) {
@@ -65,10 +65,13 @@ static String stringForPosition(const NamedGridAreaMap& gridAreaMap, size_t row,
     }
     for (auto& it : gridAreaMap.map) {
         auto& area = it.value;
-        if (column >= area.columns.startLine() && column < area.columns.endLine() && candidates.contains(it.key))
-            return it.key;
+        if (column >= area.columns.startLine() && column < area.columns.endLine() && candidates.contains(it.key)) {
+            builder.append(it.key);
+            return;
+        }
     }
-    return "."_s;
+
+    builder.append('.');;
 }
 
 String CSSGridTemplateAreasValue::stringForRow(size_t row) const
@@ -95,13 +98,12 @@ String CSSGridTemplateAreasValue::stringForRow(size_t row) const
     return builder.toString();
 }
 
-String CSSGridTemplateAreasValue::customCSSText() const
+void CSSGridTemplateAreasValue::customCSSText(StringBuilder& builder) const
 {
-    StringBuilder builder;
     for (size_t row = 0; row < m_rowCount; ++row) {
         builder.append('"');
         for (size_t column = 0; column < m_columnCount; ++column) {
-            builder.append(stringForPosition(m_map, row, column));
+            serializePosition(builder, m_map, row, column);
             if (column != m_columnCount - 1)
                 builder.append(' ');
         }
@@ -109,7 +111,6 @@ String CSSGridTemplateAreasValue::customCSSText() const
         if (row != m_rowCount - 1)
             builder.append(' ');
     }
-    return builder.toString();
 }
 
 bool CSSGridTemplateAreasValue::equals(const CSSGridTemplateAreasValue& other) const

@@ -35,16 +35,6 @@
 
 namespace WebCore {
 
-String CSSSubgridValue::customCSSText() const
-{
-    if (!length())
-        return "subgrid"_s;
-    StringBuilder result;
-    result.append("subgrid "_s);
-    serializeItems(result);
-    return result.toString();
-}
-
 CSSSubgridValue::CSSSubgridValue(CSSValueListBuilder builder)
     : CSSValueContainingVector(SubgridClass, SpaceSeparator, WTFMove(builder))
 {
@@ -53,6 +43,17 @@ CSSSubgridValue::CSSSubgridValue(CSSValueListBuilder builder)
 Ref<CSSSubgridValue> CSSSubgridValue::create(CSSValueListBuilder builder)
 {
     return adoptRef(*new CSSSubgridValue(WTFMove(builder)));
+}
+
+void CSSSubgridValue::customCSSText(StringBuilder& builder) const
+{
+    if (!length()) {
+        builder.append("subgrid"_s);
+        return;
+    }
+
+    builder.append("subgrid "_s);
+    serializeItems(builder);
 }
 
 }

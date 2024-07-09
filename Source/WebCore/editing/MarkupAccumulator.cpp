@@ -230,7 +230,7 @@ bool MarkupAccumulator::appendContentsForNode(StringBuilder& result, const Node&
     if (!cssStyleSheet)
         return false;
 
-    result.append(cssStyleSheet->cssTextWithReplacementURLs(m_urlReplacementData->replacementURLStrings, m_urlReplacementData->replacementURLStringsForCSSStyleSheet));
+    cssStyleSheet->cssTextWithReplacementURLs(result, m_urlReplacementData->replacementURLStrings, m_urlReplacementData->replacementURLStringsForCSSStyleSheet);
     return true;
 }
 

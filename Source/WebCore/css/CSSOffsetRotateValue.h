@@ -37,7 +37,7 @@ public:
         return adoptRef(*new CSSOffsetRotateValue(WTFMove(modifier), WTFMove(angle)));
     }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
 
     CSSPrimitiveValue* modifier() const { return m_modifier.get(); }
     CSSPrimitiveValue* angle() const { return m_angle.get(); }

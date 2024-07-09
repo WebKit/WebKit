@@ -30,9 +30,11 @@
 
 namespace WebCore {
 
-String CSSFontPaletteValuesOverrideColorsValue::customCSSText() const
+void CSSFontPaletteValuesOverrideColorsValue::customCSSText(StringBuilder& builder) const
 {
-    return makeString(m_key->cssText(), ' ', m_color->cssText());
+    m_key->cssText(builder);
+    builder.append(' ');
+    m_color->cssText(builder);
 }
 
 bool CSSFontPaletteValuesOverrideColorsValue::equals(const CSSFontPaletteValuesOverrideColorsValue& other) const

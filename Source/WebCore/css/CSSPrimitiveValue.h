@@ -188,6 +188,7 @@ public:
     const CSSAnchorValue* cssAnchorValue() const { return isAnchor() ? m_value.anchor : nullptr; }
 
     String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
 
     bool equals(const CSSPrimitiveValue&) const;
 
@@ -235,6 +236,7 @@ private:
     bool addDerivedHash(Hasher&) const;
 
     ALWAYS_INLINE String serializeInternal() const;
+    ALWAYS_INLINE String serializeInternalWithCaching() const;
     NEVER_INLINE String formatNumberValue(ASCIILiteral suffix) const;
     NEVER_INLINE String formatIntegerValue(ASCIILiteral suffix) const;
     static constexpr bool isFontIndependentLength(CSSUnitType);

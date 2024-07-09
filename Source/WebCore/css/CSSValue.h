@@ -70,6 +70,7 @@ public:
     bool hasAtLeastOneRef() const { return m_refCount; }
 
     String cssText() const;
+    void cssText(StringBuilder&) const;
 
     bool isAnchorValue() const { return m_classType == AnchorClass; }
     bool isAspectRatioValue() const { return m_classType == AspectRatioClass; }

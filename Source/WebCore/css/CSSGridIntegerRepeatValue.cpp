@@ -47,13 +47,11 @@ Ref<CSSGridIntegerRepeatValue> CSSGridIntegerRepeatValue::create(size_t repetiti
     return adoptRef(*new CSSGridIntegerRepeatValue(repetitions, WTFMove(builder)));
 }
 
-String CSSGridIntegerRepeatValue::customCSSText() const
+void CSSGridIntegerRepeatValue::customCSSText(StringBuilder& builder) const
 {
-    StringBuilder result;
-    result.append("repeat("_s, repetitions(), ", "_s);
-    serializeItems(result);
-    result.append(')');
-    return result.toString();
+    builder.append("repeat("_s, m_repetitions, ", "_s);
+    serializeItems(builder);
+    builder.append(')');
 }
 
 bool CSSGridIntegerRepeatValue::equals(const CSSGridIntegerRepeatValue& other) const

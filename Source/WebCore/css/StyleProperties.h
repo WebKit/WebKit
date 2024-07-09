@@ -57,6 +57,7 @@ public:
 
         String cssName() const;
         String cssText() const;
+        void cssText(StringBuilder&) const;
 
         const CSSValue* value() const { return m_value; }
         // FIXME: We should try to remove this mutable overload.
@@ -123,6 +124,7 @@ public:
 
     Ref<MutableStyleProperties> copyProperties(std::span<const CSSPropertyID>) const;
     
+    void asText(StringBuilder&) const;
     String asText() const;
     AtomString asTextAtom() const;
 
@@ -154,13 +156,16 @@ protected:
     unsigned m_arraySize : 28 { 0 };
 
 private:
-    StringBuilder asTextInternal() const;
     String serializeLonghandValue(CSSPropertyID) const;
+    void serializeLonghandValue(StringBuilder&, CSSPropertyID) const;
     String serializeShorthandValue(CSSPropertyID) const;
+    void serializeShorthandValue(StringBuilder&, CSSPropertyID) const;
 };
 
 String serializeLonghandValue(CSSPropertyID, const CSSValue&);
+void serializeLonghandValue(StringBuilder&, CSSPropertyID, const CSSValue&);
 inline String serializeLonghandValue(CSSPropertyID, const CSSValue*);
+inline void serializeLonghandValue(StringBuilder&, CSSPropertyID, const CSSValue*);
 inline CSSValueID longhandValueID(CSSPropertyID, const CSSValue&);
 inline std::optional<CSSValueID> longhandValueID(CSSPropertyID, const CSSValue*);
 

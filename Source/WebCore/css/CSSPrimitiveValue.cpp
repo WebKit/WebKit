@@ -1370,6 +1370,12 @@ ASCIILiteral CSSPrimitiveValue::unitTypeString(CSSUnitType unitType)
 
 ALWAYS_INLINE String CSSPrimitiveValue::serializeInternal() const
 {
+    auto callWithStringBuilder = [](auto& value) -> String {
+        StringBuilder builder;
+        value.customCSSText(builder);
+        return builder.toString();
+    };
+
     auto type = primitiveUnitType();
     switch (type) {
     case CSSUnitType::CSS_CAP:
@@ -1439,11 +1445,11 @@ ALWAYS_INLINE String CSSPrimitiveValue::serializeInternal() const
         return formatNumberValue(unitTypeString(type));
 
     case CSSUnitType::CSS_ANCHOR:
-        return m_value.anchor->customCSSText();
+        return callWithStringBuilder(*m_value.anchor);
     case CSSUnitType::CSS_ATTR:
         return makeString("attr("_s, m_value.string, ')');
     case CSSUnitType::CSS_CALC:
-        return m_value.calc->cssText();
+        return callWithStringBuilder(*m_value.calc);
     case CSSUnitType::CSS_DIMENSION:
         // FIXME: This isn't correct.
         return formatNumberValue(""_s);
@@ -1461,11 +1467,8 @@ ALWAYS_INLINE String CSSPrimitiveValue::serializeInternal() const
         return m_value.unresolvedColor->serializationForCSS();
     case CSSUnitType::CSS_URI:
         return serializeURL(m_value.string);
-    case CSSUnitType::CustomIdent: {
-        StringBuilder builder;
-        serializeIdentifier(m_value.string, builder);
-        return builder.toString();
-    }
+    case CSSUnitType::CustomIdent:
+        return serializeIdentifier(m_value.string);
 
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
@@ -1479,6 +1482,18 @@ ALWAYS_INLINE String CSSPrimitiveValue::serializeInternal() const
     return String();
 }
 
+String CSSPrimitiveValue::serializeInternalWithCaching() const
+{
+    auto& map = serializedPrimitiveValues();
+    ASSERT(map.contains(this) == m_hasCachedCSSText);
+    if (m_hasCachedCSSText)
+        return map.get(this);
+    auto serializedValue = serializeInternal();
+    m_hasCachedCSSText = true;
+    map.add(this, serializedValue);
+    return serializedValue;
+}
+
 String CSSPrimitiveValue::customCSSText() const
 {
     switch (primitiveUnitType()) {
@@ -1489,14 +1504,24 @@ String CSSPrimitiveValue::customCSSText() const
     case CSSUnitType::CSS_PROPERTY_ID:
         return nameString(m_value.propertyID);
     default:
-        auto& map = serializedPrimitiveValues();
-        ASSERT(map.contains(this) == m_hasCachedCSSText);
-        if (m_hasCachedCSSText)
-            return map.get(this);
-        String serializedValue = serializeInternal();
-        m_hasCachedCSSText = true;
-        map.add(this, serializedValue);
-        return serializedValue;
+        return serializeInternalWithCaching();
+    }
+}
+
+void CSSPrimitiveValue::customCSSText(StringBuilder& builder) const
+{
+    switch (primitiveUnitType()) {
+    case CSSUnitType::CSS_UNKNOWN:
+        return;
+    case CSSUnitType::CSS_VALUE_ID:
+        builder.append(nameLiteralForSerialization(m_value.valueID));
+        return;
+    case CSSUnitType::CSS_PROPERTY_ID:
+        builder.append(nameLiteral(m_value.propertyID));
+        return;
+    default:
+        builder.append(serializeInternalWithCaching());
+        return;
     }
 }
 

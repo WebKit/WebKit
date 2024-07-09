@@ -126,6 +126,15 @@ bool buildStringFromByteStream(const SVGPathByteStream& stream, String& result, 
     return SVGPathParser::parseToString(source, result, parsingMode, checkForInitialMoveTo);
 }
 
+bool buildStringFromByteStream(const SVGPathByteStream& stream, StringBuilder& builder, PathParsingMode parsingMode, bool checkForInitialMoveTo)
+{
+    if (stream.isEmpty())
+        return true;
+
+    SVGPathByteStreamSource source(stream);
+    return SVGPathParser::parseToString(source, builder, parsingMode, checkForInitialMoveTo);
+}
+
 bool buildSVGPathByteStreamFromString(StringView d, SVGPathByteStream& result, PathParsingMode parsingMode)
 {
     result.clear();

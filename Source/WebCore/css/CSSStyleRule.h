@@ -62,16 +62,16 @@ private:
     CSSStyleRule(StyleRuleWithNesting&, CSSStyleSheet*);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Style; }
-    String cssText() const final;
-    String cssTextWithReplacementURLs(const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const final;
-    String cssTextInternal(StringBuilder& declarations, StringBuilder& rules) const;
+    void cssText(StringBuilder&) const final;
+    void cssTextWithReplacementURLs(StringBuilder&, const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const final;
     void reattach(StyleRuleBase&) final;
     void getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>&) final;
 
+    template<typename F> void cssTextForRules(StringBuilder&, F&&) const;
+    template<typename DeclarationsFunctor, typename RulesFunctor> void cssTextInternal(StringBuilder&, bool hasDeclarations, DeclarationsFunctor&&, bool hasRules, RulesFunctor&&) const;
+
     String generateSelectorText() const;
     Vector<Ref<StyleRuleBase>> nestedRules() const;
-    void cssTextForRules(StringBuilder& rules) const;
-    void cssTextForRulesWithReplacementURLs(StringBuilder& rules, const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const;
 
     Ref<StyleRule> m_styleRule;
     Ref<DeclaredStylePropertyMap> m_styleMap;

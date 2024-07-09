@@ -45,6 +45,8 @@ public:
     ~CSSNamedImageValue();
 
     String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSNamedImageValue&) const;
 
     RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;

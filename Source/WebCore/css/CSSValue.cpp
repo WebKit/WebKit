@@ -344,10 +344,28 @@ bool CSSValue::isCSSLocalURL(StringView relativeURL)
     return relativeURL.isEmpty() || relativeURL.startsWith('#');
 }
 
+template<typename T> concept HasCustomCSSTextReturningString = requires(T t)
+{
+    { t.customCSSText() } -> std::same_as<String>;
+};
+
 String CSSValue::cssText() const
 {
-    return visitDerived([](auto& value) {
-        return value.customCSSText();
+    return visitDerived([]<typename T>(T& value) {
+        if constexpr (HasCustomCSSTextReturningString<T>)
+            return value.customCSSText();
+        else {
+            StringBuilder builder;
+            value.customCSSText(builder);
+            return builder.toString();
+        }
+    });
+}
+
+void CSSValue::cssText(StringBuilder& builder) const
+{
+    visitDerived([&](auto& value) {
+        value.customCSSText(builder);
     });
 }
 

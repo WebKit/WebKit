@@ -38,9 +38,8 @@ CSSFontFeatureValue::CSSFontFeatureValue(FontTag&& tag, int value)
 {
 }
 
-String CSSFontFeatureValue::customCSSText() const
+void CSSFontFeatureValue::customCSSText(StringBuilder& builder) const
 {
-    StringBuilder builder;
     builder.append('"');
     for (char c : m_tag)
         builder.append(c);
@@ -48,7 +47,6 @@ String CSSFontFeatureValue::customCSSText() const
     // Omit the value if it's 1 as 1 is implied by default.
     if (m_value != 1)
         builder.append(' ', m_value);
-    return builder.toString();
 }
 
 bool CSSFontFeatureValue::equals(const CSSFontFeatureValue& other) const

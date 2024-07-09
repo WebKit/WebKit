@@ -60,7 +60,8 @@ public:
     RefPtr<CSSValue> protectedBottomRightRadius() const { return m_bottomRightRadius; }
     RefPtr<CSSValue> protectedBottomLeftRadius() const { return m_bottomLeftRadius; }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSInsetShapeValue&) const;
 
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
@@ -117,7 +118,8 @@ public:
     RefPtr<CSSValue> protectedCenterX() const { return m_centerX; }
     RefPtr<CSSValue> protectedCenterY() const { return m_centerY; }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSCircleValue&) const;
 
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
@@ -158,7 +160,8 @@ public:
     RefPtr<CSSValue> protectedCenterX() const { return m_centerX; }
     RefPtr<CSSValue> protectedCenterY() const { return m_centerY; }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSEllipseValue&) const;
 
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
@@ -197,7 +200,8 @@ public:
 
     WindRule windRule() const { return m_windRule; }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSPolygonValue&) const;
 
 private:
@@ -228,7 +232,8 @@ public:
     RefPtr<CSSValue> protectedBottomRightRadius() const { return m_bottomRightRadius; }
     RefPtr<CSSValue> protectedBottomLeftRadius() const { return m_bottomLeftRadius; }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSRectShapeValue&) const;
 
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
@@ -296,7 +301,8 @@ public:
     RefPtr<CSSValue> protectedBottomRightRadius() const { return m_bottomRightRadius; }
     RefPtr<CSSValue> protectedBottomLeftRadius() const { return m_bottomLeftRadius; }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSXywhValue&) const;
 
 
@@ -350,7 +356,8 @@ public:
     const SVGPathByteStream& pathData() const { return m_pathData; }
     WindRule windRule() const { return m_windRule; }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSPathValue&) const;
 
 private:

@@ -42,6 +42,11 @@ String CSSFontVariationValue::customCSSText() const
     return makeString('"', m_tag[0], m_tag[1], m_tag[2], m_tag[3], "\" "_s, m_value);
 }
 
+void CSSFontVariationValue::customCSSText(StringBuilder& builder) const
+{
+    builder.append('"', m_tag[0], m_tag[1], m_tag[2], m_tag[3], "\" "_s, m_value);
+}
+
 bool CSSFontVariationValue::equals(const CSSFontVariationValue& other) const
 {
     return m_tag == other.m_tag && m_value == other.m_value;

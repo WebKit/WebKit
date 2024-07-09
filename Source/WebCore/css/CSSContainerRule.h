@@ -35,7 +35,7 @@ class CSSContainerRule final : public CSSConditionRule {
 public:
     static Ref<CSSContainerRule> create(StyleRuleContainer&, CSSStyleSheet* parent);
 
-    String cssText() const final;
+    void cssText(StringBuilder&) const final;
     String conditionText() const final;
     String containerName() const;
     String containerQuery() const;

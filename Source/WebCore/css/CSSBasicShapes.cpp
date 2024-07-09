@@ -59,11 +59,14 @@ struct SerializablePositionOffset {
     Ref<const CSSValue> amount;
 };
 
-static String serializePositionOffset(const SerializablePositionOffset& offset, const SerializablePositionOffset& other)
+static void serializePositionOffset(StringBuilder& builder, const SerializablePositionOffset& offset, const SerializablePositionOffset& other)
 {
-    if ((offset.side == CSSValueLeft && other.side == CSSValueTop) || (offset.side == CSSValueTop && other.side == CSSValueLeft))
-        return offset.amount->cssText();
-    return makeString(nameLiteral(offset.side), ' ', offset.amount->cssText());
+    if ((offset.side == CSSValueLeft && other.side == CSSValueTop) || (offset.side == CSSValueTop && other.side == CSSValueLeft)) {
+        offset.amount->cssText(builder);
+        return;
+    }
+    builder.append(nameLiteral(offset.side), ' ');
+    offset.amount->cssText(builder);
 }
 
 static bool isZeroLength(const CSSValue& value)
@@ -106,21 +109,34 @@ static SerializablePositionOffset buildSerializablePositionOffset(CSSValue* offs
     return { side, amount.releaseNonNull() };
 }
 
-String CSSCircleValue::customCSSText() const
+void CSSCircleValue::customCSSText(StringBuilder& builder) const
 {
-    String radius;
-    if (m_radius && m_radius->valueID() != CSSValueClosestSide)
-        radius = m_radius->cssText();
+    builder.append("circle("_s);
 
-    if (!m_centerX) {
-        ASSERT(!m_centerY);
-        return makeString("circle("_s, radius, ')');
+    bool needsSeparator = false;
+
+    if (m_radius && m_radius->valueID() != CSSValueClosestSide) {
+        m_radius->cssText(builder);
+        needsSeparator = true;
     }
 
-    auto x = buildSerializablePositionOffset(m_centerX.get(), CSSValueLeft);
-    auto y = buildSerializablePositionOffset(m_centerY.get(), CSSValueTop);
-    return makeString("circle("_s, radius, radius.isNull() ? ""_s : " "_s,
-        "at "_s, serializePositionOffset(x, y), ' ', serializePositionOffset(y, x), ')');
+    if (m_centerX) {
+        ASSERT(m_centerY);
+
+        if (needsSeparator)
+            builder.append(" at "_s);
+        else
+            builder.append("at "_s);
+
+        auto x = buildSerializablePositionOffset(m_centerX.get(), CSSValueLeft);
+        auto y = buildSerializablePositionOffset(m_centerY.get(), CSSValueTop);
+
+        serializePositionOffset(builder, x, y);
+        builder.append(' ');
+        serializePositionOffset(builder, y, x);
+    }
+
+    builder.append(')');
 }
 
 bool CSSCircleValue::equals(const CSSCircleValue& other) const
@@ -144,51 +160,40 @@ Ref<CSSEllipseValue> CSSEllipseValue::create(RefPtr<CSSValue>&& radiusX, RefPtr<
     return adoptRef(*new CSSEllipseValue(WTFMove(radiusX), WTFMove(radiusY), WTFMove(centerX), WTFMove(centerY)));
 }
 
-static String buildEllipseString(const String& radiusX, const String& radiusY, const String& centerX, const String& centerY)
+void CSSEllipseValue::customCSSText(StringBuilder& builder) const
 {
-    StringBuilder result;
-    result.append("ellipse("_s);
-    bool needsSeparator = false;
-    if (!radiusX.isNull()) {
-        result.append(radiusX);
-        needsSeparator = true;
-    }
-    if (!radiusY.isNull()) {
-        if (needsSeparator)
-            result.append(' ');
-        result.append(radiusY);
-        needsSeparator = true;
-    }
-    if (!centerX.isNull() || !centerY.isNull()) {
-        if (needsSeparator)
-            result.append(' ');
-        result.append("at "_s, centerX, ' ', centerY);
-    }
-    result.append(')');
-    return result.toString();
-}
+    builder.append("ellipse("_s);
 
-String CSSEllipseValue::customCSSText() const
-{
-    String radiusX;
-    String radiusY;
+    bool needsSeparator = false;
+
     if (m_radiusX) {
         ASSERT(m_radiusY);
         bool radiusXClosestSide = m_radiusX->valueID() == CSSValueClosestSide;
         bool radiusYClosestSide = m_radiusY->valueID() == CSSValueClosestSide;
         if (!radiusXClosestSide || !radiusYClosestSide) {
-            radiusX = m_radiusX->cssText();
-            radiusY = m_radiusY->cssText();
+            m_radiusX->cssText(builder);
+            builder.append(' ');
+            m_radiusY->cssText(builder);
+            needsSeparator = true;
         }
     }
-    if (!m_centerX) {
-        ASSERT(!m_centerY);
-        return buildEllipseString(radiusX, radiusY, nullString(), nullString());
+
+    if (m_centerX) {
+        ASSERT(m_centerY);
+
+        auto x = buildSerializablePositionOffset(m_centerX.get(), CSSValueLeft);
+        auto y = buildSerializablePositionOffset(m_centerY.get(), CSSValueTop);
+
+        if (needsSeparator)
+            builder.append(" at "_s);
+        else
+            builder.append("at "_s);
+        serializePositionOffset(builder, x, y);
+        builder.append(' ');
+        serializePositionOffset(builder, y, x);
     }
 
-    auto x = buildSerializablePositionOffset(m_centerX.get(), CSSValueLeft);
-    auto y = buildSerializablePositionOffset(m_centerY.get(), CSSValueTop);
-    return buildEllipseString(radiusX, radiusY, serializePositionOffset(x, y), serializePositionOffset(y, x));
+    builder.append(')');
 }
 
 bool CSSEllipseValue::equals(const CSSEllipseValue& other) const
@@ -229,92 +234,115 @@ bool CSSXywhValue::equals(const CSSXywhValue& other) const
         && compareCSSValuePtr(m_bottomLeftRadius, other.m_bottomLeftRadius);
 }
 
-static inline void updateCornerRadiusWidthAndHeight(const CSSValue* corner, String& width, String& height)
+static std::optional<std::pair<Ref<const CSSValue>, Ref<const CSSValue>>> extractCornerRadiusWidthAndHeight(const CSSValue* corner)
 {
     if (!corner)
-        return;
-    width = corner->first().cssText();
-    height = corner->second().cssText();
+        return std::nullopt;
+    return { { Ref { corner->first() }, Ref { corner->second() } } };
 }
 
-static bool buildRadii(Vector<String>& radii, const String& topLeftRadius, const String& topRightRadius, const String& bottomRightRadius, const String& bottomLeftRadius)
+static bool isZeroPX(const CSSValue& value)
 {
-    bool showBottomLeft = topRightRadius != bottomLeftRadius;
-    bool showBottomRight = showBottomLeft || (bottomRightRadius != topLeftRadius);
-    bool showTopRight = showBottomRight || (topRightRadius != topLeftRadius);
-
-    radii.append(topLeftRadius);
-    if (showTopRight)
-        radii.append(topRightRadius);
-    if (showBottomRight)
-        radii.append(bottomRightRadius);
-    if (showBottomLeft)
-        radii.append(bottomLeftRadius);
-
-    return radii.size() == 1 && radii[0] == "0px"_s;
+    if (auto primitive = dynamicDowncast<CSSPrimitiveValue>(value))
+        return primitive->isPx() && *primitive->isZero();
+    return false;
 }
 
-static void buildRadiiString(StringBuilder& result, const String& topLeftRadiusWidth, const String& topLeftRadiusHeight,
-    const String& topRightRadiusWidth, const String& topRightRadiusHeight,
-    const String& bottomRightRadiusWidth, const String& bottomRightRadiusHeight,
-    const String& bottomLeftRadiusWidth, const String& bottomLeftRadiusHeight)
+static void serializeRadii(StringBuilder& builder, std::array<const CSSValue*, 4> corners)
 {
-    if (!topLeftRadiusWidth.isNull() && !topLeftRadiusHeight.isNull()) {
-        Vector<String> horizontalRadii;
-        bool areDefaultCornerRadii = buildRadii(horizontalRadii, topLeftRadiusWidth, topRightRadiusWidth, bottomRightRadiusWidth, bottomLeftRadiusWidth);
+    RefPtr<const CSSValue> horizontalRadii[4];
+    RefPtr<const CSSValue> verticalRadii[4];
 
-        Vector<String> verticalRadii;
-        areDefaultCornerRadii &= buildRadii(verticalRadii, topLeftRadiusHeight, topRightRadiusHeight, bottomRightRadiusHeight, bottomLeftRadiusHeight);
-
-        if (!areDefaultCornerRadii) {
-            result.append(" round"_s);
-
-            for (auto& radius : horizontalRadii)
-                result.append(' ', radius);
-
-            if (verticalRadii != horizontalRadii) {
-                result.append(" /"_s);
-                for (auto& radius : verticalRadii)
-                    result.append(' ', radius);
-            }
+    unsigned numberOfCorners = 4;
+    for (unsigned i = 0; i < 4; ++i) {
+        auto value = extractCornerRadiusWidthAndHeight(corners[i]);
+        if (!value) {
+            numberOfCorners = i;
+            break;
         }
+
+        horizontalRadii[i] = value->first.ptr();
+        verticalRadii[i] = value->second.ptr();
+    }
+
+    if (!numberOfCorners)
+        return;
+
+    ASSERT(numberOfCorners == 4);
+
+    auto areDefaultCornerRadii = [&](const auto (&r)[4]) {
+        if (!r[3]->equals(*r[1]))
+            return false;
+        else if (!r[2]->equals(*r[0]))
+            return false;
+        else if (!r[1]->equals(*r[0]))
+            return false;
+        else
+            return isZeroPX(*r[0]);
+    };
+
+    if (areDefaultCornerRadii(horizontalRadii) && areDefaultCornerRadii(verticalRadii))
+        return;
+
+    builder.append(" round "_s);
+
+    // Beyond this point, the logic in this function is identical to that
+    // of ShorthandSerializer::serializeBorderRadius(). It would be good to
+    // find a way to share.
+
+    bool serializeBoth = false;
+    for (unsigned i = 0; i < 4; ++i) {
+        if (!horizontalRadii[i]->equals(*verticalRadii[i])) {
+            serializeBoth = true;
+            break;
+        }
+    }
+
+    auto serializeRadiiAxis = [&](const auto (&r)[4]) {
+        if (!r[3]->equals(*r[1])) {
+            r[0]->cssText(builder);
+            builder.append(' ');
+            r[1]->cssText(builder);
+            builder.append(' ');
+            r[2]->cssText(builder);
+            builder.append(' ');
+            r[3]->cssText(builder);
+        } else if (!r[2]->equals(*r[0])) {
+            r[0]->cssText(builder);
+            builder.append(' ');
+            r[1]->cssText(builder);
+            builder.append(' ');
+            r[2]->cssText(builder);
+        } else if (!r[1]->equals(*r[0])) {
+            r[0]->cssText(builder);
+            builder.append(' ');
+            r[1]->cssText(builder);
+        } else
+            r[0]->cssText(builder);
+    };
+
+    serializeRadiiAxis(horizontalRadii);
+    if (serializeBoth) {
+        builder.append(" / "_s);
+        serializeRadiiAxis(verticalRadii);
     }
 }
 
-static String buildXywhString(const String& insetX, const String& insetY, const String& width, const String& height,
-    const String& topLeftRadiusWidth, const String& topLeftRadiusHeight,
-    const String& topRightRadiusWidth, const String& topRightRadiusHeight,
-    const String& bottomRightRadiusWidth, const String& bottomRightRadiusHeight,
-    const String& bottomLeftRadiusWidth, const String& bottomLeftRadiusHeight)
+void CSSXywhValue::customCSSText(StringBuilder& builder) const
 {
-    StringBuilder result;
-    result.append("xywh("_s, insetX, ' ', insetY, ' ', width, ' ', height);
+    builder.append("xywh("_s);
 
-    buildRadiiString(result, topLeftRadiusWidth, topLeftRadiusHeight, topRightRadiusWidth, topRightRadiusHeight, bottomRightRadiusWidth, bottomRightRadiusHeight, bottomLeftRadiusWidth, bottomLeftRadiusHeight);
+    m_insetX->cssText(builder);
+    builder.append(' ');
+    m_insetY->cssText(builder);
+    builder.append(' ');
+    m_width->cssText(builder);
+    builder.append(' ');
+    m_height->cssText(builder);
 
-    result.append(')');
-    return result.toString();
-}
+    serializeRadii(builder, { topLeftRadius(), topRightRadius(), bottomRightRadius(), bottomLeftRadius() });
 
-String CSSXywhValue::customCSSText() const
-{
-    String topLeftRadiusWidth;
-    String topLeftRadiusHeight;
-    String topRightRadiusWidth;
-    String topRightRadiusHeight;
-    String bottomRightRadiusWidth;
-    String bottomRightRadiusHeight;
-    String bottomLeftRadiusWidth;
-    String bottomLeftRadiusHeight;
-
-    updateCornerRadiusWidthAndHeight(topLeftRadius(), topLeftRadiusWidth, topLeftRadiusHeight);
-    updateCornerRadiusWidthAndHeight(topRightRadius(), topRightRadiusWidth, topRightRadiusHeight);
-    updateCornerRadiusWidthAndHeight(bottomRightRadius(), bottomRightRadiusWidth, bottomRightRadiusHeight);
-    updateCornerRadiusWidthAndHeight(bottomLeftRadius(), bottomLeftRadiusWidth, bottomLeftRadiusHeight);
-
-    return buildXywhString(m_insetX->cssText(), m_insetY->cssText(), m_width->cssText(), m_height->cssText(),
-        topLeftRadiusWidth, topLeftRadiusHeight, topRightRadiusWidth, topRightRadiusHeight,
-        bottomRightRadiusWidth, bottomRightRadiusHeight, bottomLeftRadiusWidth, bottomLeftRadiusHeight);
+    builder.append(')');
 }
 
 CSSRectShapeValue::CSSRectShapeValue(Ref<CSSValue>&& top, Ref<CSSValue>&& right, Ref<CSSValue>&& bottom, Ref<CSSValue>&& left, RefPtr<CSSValue>&& topLeftRadius, RefPtr<CSSValue>&& topRightRadius, RefPtr<CSSValue>&& bottomRightRadius, RefPtr<CSSValue>&& bottomLeftRadius)
@@ -347,40 +375,21 @@ bool CSSRectShapeValue::equals(const CSSRectShapeValue& other) const
         && compareCSSValuePtr(m_bottomLeftRadius, other.m_bottomLeftRadius);
 }
 
-static String buildRectString(const String& top, const String& right, const String& bottom, const String& left,
-    const String& topLeftRadiusWidth, const String& topLeftRadiusHeight,
-    const String& topRightRadiusWidth, const String& topRightRadiusHeight,
-    const String& bottomRightRadiusWidth, const String& bottomRightRadiusHeight,
-    const String& bottomLeftRadiusWidth, const String& bottomLeftRadiusHeight)
+void CSSRectShapeValue::customCSSText(StringBuilder& builder) const
 {
-    StringBuilder result;
-    result.append("rect("_s, top, ' ', right, ' ', bottom, ' ', left);
+    builder.append("rect("_s);
 
-    buildRadiiString(result, topLeftRadiusWidth, topLeftRadiusHeight, topRightRadiusWidth, topRightRadiusHeight, bottomRightRadiusWidth, bottomRightRadiusHeight, bottomLeftRadiusWidth, bottomLeftRadiusHeight);
+    m_top->cssText(builder);
+    builder.append(' ');
+    m_right->cssText(builder);
+    builder.append(' ');
+    m_bottom->cssText(builder);
+    builder.append(' ');
+    m_left->cssText(builder);
 
-    result.append(')');
-    return result.toString();
-}
+    serializeRadii(builder, { topLeftRadius(), topRightRadius(), bottomRightRadius(), bottomLeftRadius() });
 
-String CSSRectShapeValue::customCSSText() const
-{
-    String topLeftRadiusWidth;
-    String topLeftRadiusHeight;
-    String topRightRadiusWidth;
-    String topRightRadiusHeight;
-    String bottomRightRadiusWidth;
-    String bottomRightRadiusHeight;
-    String bottomLeftRadiusWidth;
-    String bottomLeftRadiusHeight;
-
-    updateCornerRadiusWidthAndHeight(topLeftRadius(), topLeftRadiusWidth, topLeftRadiusHeight);
-    updateCornerRadiusWidthAndHeight(topRightRadius(), topRightRadiusWidth, topRightRadiusHeight);
-    updateCornerRadiusWidthAndHeight(bottomRightRadius(), bottomRightRadiusWidth, bottomRightRadiusHeight);
-    updateCornerRadiusWidthAndHeight(bottomLeftRadius(), bottomLeftRadiusWidth, bottomLeftRadiusHeight);
-
-    return buildRectString(m_top->cssText(), m_right->cssText(), m_bottom->cssText(), m_left->cssText(),
-        topLeftRadiusWidth, topLeftRadiusHeight, topRightRadiusWidth, topRightRadiusHeight,
-        bottomRightRadiusWidth, bottomRightRadiusHeight, bottomLeftRadiusWidth, bottomLeftRadiusHeight);
+    builder.append(')');
 }
 
 CSSPathValue::CSSPathValue(SVGPathByteStream data, WindRule rule)
@@ -395,18 +404,16 @@ Ref<CSSPathValue> CSSPathValue::create(SVGPathByteStream data, WindRule rule)
     return adoptRef(*new CSSPathValue(WTFMove(data), rule));
 }
 
-String CSSPathValue::customCSSText() const
+void CSSPathValue::customCSSText(StringBuilder& builder) const
 {
-    String pathString;
-    buildStringFromByteStream(m_pathData, pathString, UnalteredParsing);
-    StringBuilder result;
     if (m_windRule == WindRule::EvenOdd)
-        result.append("path(evenodd, "_s);
+        builder.append("path(evenodd, \""_s);
     else
-        result.append("path("_s);
-    serializeString(pathString, result);
-    result.append(')');
-    return result.toString();
+        builder.append("path(\""_s);
+
+    buildStringFromByteStream(m_pathData, builder, UnalteredParsing);
+
+    builder.append("\")"_s);
 }
 
 bool CSSPathValue::equals(const CSSPathValue& other) const
@@ -425,18 +432,23 @@ Ref<CSSPolygonValue> CSSPolygonValue::create(CSSValueListBuilder values, WindRul
     return adoptRef(*new CSSPolygonValue(WTFMove(values), rule));
 }
 
-String CSSPolygonValue::customCSSText() const
+void CSSPolygonValue::customCSSText(StringBuilder& builder) const
 {
     ASSERT(!(length() % 2));
-    StringBuilder result;
+
     if (m_windRule == WindRule::EvenOdd)
-        result.append("polygon(evenodd, "_s);
+        builder.append("polygon(evenodd, "_s);
     else
-        result.append("polygon("_s);
-    for (size_t i = 0; i < length(); i += 2)
-        result.append(i ? ", "_s : ""_s, item(i)->cssText(), ' ', item(i + 1)->cssText());
-    result.append(')');
-    return result.toString();
+        builder.append("polygon("_s);
+
+    for (size_t i = 0; i < length(); i += 2) {
+        builder.append(i ? ", "_s : ""_s);
+        item(i)->cssText(builder);
+        builder.append(' ');
+        item(i + 1)->cssText(builder);
+    }
+
+    builder.append(')');
 }
 
 bool CSSPolygonValue::equals(const CSSPolygonValue& other) const
@@ -464,50 +476,31 @@ Ref<CSSInsetShapeValue> CSSInsetShapeValue::create(Ref<CSSValue>&& top, Ref<CSSV
         WTFMove(topLeftRadius), WTFMove(topRightRadius), WTFMove(bottomRightRadius), WTFMove(bottomLeftRadius)));
 }
 
-static String buildInsetString(const String& top, const String& right, const String& bottom, const String& left,
-    const String& topLeftRadiusWidth, const String& topLeftRadiusHeight,
-    const String& topRightRadiusWidth, const String& topRightRadiusHeight,
-    const String& bottomRightRadiusWidth, const String& bottomRightRadiusHeight,
-    const String& bottomLeftRadiusWidth, const String& bottomLeftRadiusHeight)
+void CSSInsetShapeValue::customCSSText(StringBuilder& builder) const
 {
-    StringBuilder result;
-    result.append("inset("_s, top);
+    bool showLeftArg = !compareCSSValue(m_left, m_right);
+    bool showBottomArg = (!compareCSSValue(m_bottom, m_top) || showLeftArg);
+    bool showRightArg = (!compareCSSValue(m_right, m_top) || showBottomArg);
 
-    bool showLeftArg = !left.isNull() && left != right;
-    bool showBottomArg = !bottom.isNull() && (bottom != top || showLeftArg);
-    bool showRightArg = !right.isNull() && (right != top || showBottomArg);
-    if (showRightArg)
-        result.append(' ', right);
-    if (showBottomArg)
-        result.append(' ', bottom);
-    if (showLeftArg)
-        result.append(' ', left);
+    builder.append("inset("_s);
+    m_top->cssText(builder);
 
-    buildRadiiString(result, topLeftRadiusWidth, topLeftRadiusHeight, topRightRadiusWidth, topRightRadiusHeight, bottomRightRadiusWidth, bottomRightRadiusHeight, bottomLeftRadiusWidth, bottomLeftRadiusHeight);
+    if (showRightArg) {
+        builder.append(' ');
+        m_right->cssText(builder);
+    }
+    if (showBottomArg) {
+        builder.append(' ');
+        m_bottom->cssText(builder);
+    }
+    if (showLeftArg) {
+        builder.append(' ');
+        m_left->cssText(builder);
+    }
 
-    result.append(')');
-    return result.toString();
-}
+    serializeRadii(builder, { topLeftRadius(), topRightRadius(), bottomRightRadius(), bottomLeftRadius() });
 
-String CSSInsetShapeValue::customCSSText() const
-{
-    String topLeftRadiusWidth;
-    String topLeftRadiusHeight;
-    String topRightRadiusWidth;
-    String topRightRadiusHeight;
-    String bottomRightRadiusWidth;
-    String bottomRightRadiusHeight;
-    String bottomLeftRadiusWidth;
-    String bottomLeftRadiusHeight;
-
-    updateCornerRadiusWidthAndHeight(topLeftRadius(), topLeftRadiusWidth, topLeftRadiusHeight);
-    updateCornerRadiusWidthAndHeight(topRightRadius(), topRightRadiusWidth, topRightRadiusHeight);
-    updateCornerRadiusWidthAndHeight(bottomRightRadius(), bottomRightRadiusWidth, bottomRightRadiusHeight);
-    updateCornerRadiusWidthAndHeight(bottomLeftRadius(), bottomLeftRadiusWidth, bottomLeftRadiusHeight);
-
-    return buildInsetString(m_top->cssText(), m_right->cssText(), m_bottom->cssText(), m_left->cssText(),
-        topLeftRadiusWidth, topLeftRadiusHeight, topRightRadiusWidth, topRightRadiusHeight,
-        bottomRightRadiusWidth, bottomRightRadiusHeight, bottomLeftRadiusWidth, bottomLeftRadiusHeight);
+    builder.append(')');
 }
 
 bool CSSInsetShapeValue::equals(const CSSInsetShapeValue& other) const

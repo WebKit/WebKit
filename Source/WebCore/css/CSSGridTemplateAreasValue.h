@@ -40,7 +40,7 @@ class CSSGridTemplateAreasValue final : public CSSValue {
 public:
     static Ref<CSSGridTemplateAreasValue> create(NamedGridAreaMap, size_t rowCount, size_t columnCount);
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
 
     const NamedGridAreaMap& gridAreaMap() const { return m_map; }
     size_t rowCount() const { return m_rowCount; }

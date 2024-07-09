@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "StyleRule.h"
 #include <wtf/text/MakeString.h>
 
@@ -76,11 +77,17 @@ void CSSPageRule::setSelectorText(const String& selectorText)
     m_pageRule->wrapperAdoptSelectorList(WTFMove(*selectorList));
 }
 
-String CSSPageRule::cssText() const
+void CSSPageRule::cssText(StringBuilder& builder) const
 {
-    if (auto declarations = m_pageRule->properties().asText(); !declarations.isEmpty())
-        return makeString(selectorText(), " { "_s, declarations, " }"_s);
-    return makeString(selectorText(), " { }"_s);
+    builder.append(selectorText(), " { "_s);
+
+    if (m_pageRule->properties().isEmpty()) {
+        builder.append('}');
+        return;
+    }
+
+    m_pageRule->properties().asText(builder);
+    builder.append(" }"_s);
 }
 
 void CSSPageRule::reattach(StyleRuleBase& rule)

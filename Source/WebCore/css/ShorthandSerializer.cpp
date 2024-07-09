@@ -1183,13 +1183,15 @@ String ShorthandSerializer::serializeGridTemplate() const
         if (!result.isEmpty())
             result.append(' ');
         if (auto lineNames = dynamicDowncast<CSSGridLineNamesValue>(currentValue))
-            result.append(lineNames->customCSSText());
+            lineNames->customCSSText(result);
         else {
             result.append('"', areasValue->stringForRow(row), '"');
             if (!isValidTrackSize(currentValue))
                 return String();
-            if (!isValueID(currentValue, CSSValueAuto))
-                result.append(' ', currentValue.cssText());
+            if (!isValueID(currentValue, CSSValueAuto)) {
+                result.append(' ');
+                currentValue.cssText(result);
+            }
             row++;
         }
     }
@@ -1296,9 +1298,21 @@ String serializeShorthandValue(const StyleProperties& properties, CSSPropertyID 
     return ShorthandSerializer(properties, shorthand).serialize();
 }
 
+void serializeShorthandValue(StringBuilder& builder, const StyleProperties& properties, CSSPropertyID shorthand)
+{
+    // FIXME: Pass the builder to ShorthandSerializer to avoid intermediate object allocations.
+    builder.append(serializeShorthandValue(properties, shorthand));
+}
+
 String serializeShorthandValue(const ComputedStyleExtractor& extractor, CSSPropertyID shorthand)
 {
     return ShorthandSerializer(extractor, shorthand).serialize();
+}
+
+void serializeShorthandValue(StringBuilder& builder, const ComputedStyleExtractor& extractor, CSSPropertyID shorthand)
+{
+    // FIXME: Pass the builder to ShorthandSerializer to avoid intermediate object allocations.
+    builder.append(serializeShorthandValue(extractor, shorthand));
 }
 
 }

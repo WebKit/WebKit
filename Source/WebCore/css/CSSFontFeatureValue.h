@@ -39,7 +39,8 @@ public:
 
     const FontTag& tag() const { return m_tag; }
     int value() const { return m_value; }
-    String customCSSText() const;
+
+    void customCSSText(StringBuilder&) const;
 
     bool equals(const CSSFontFeatureValue&) const;
 

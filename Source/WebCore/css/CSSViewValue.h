@@ -47,7 +47,7 @@ public:
         return adoptRef(*new CSSViewValue(WTFMove(axis), WTFMove(startInset), WTFMove(endInset)));
     }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
 
     RefPtr<CSSValue> axis() const { return m_axis; }
     RefPtr<CSSValue> startInset() const { return m_startInset; }

@@ -38,6 +38,11 @@ String CSSAspectRatioValue::customCSSText() const
     return makeString(m_numeratorValue, " / "_s, m_denominatorValue);
 }
 
+void CSSAspectRatioValue::customCSSText(StringBuilder& builder) const
+{
+    builder.append(m_numeratorValue, " / "_s, m_denominatorValue);
+}
+
 bool CSSAspectRatioValue::equals(const CSSAspectRatioValue& other) const
 {
     return m_numeratorValue == other.m_numeratorValue && m_denominatorValue == other.m_denominatorValue;

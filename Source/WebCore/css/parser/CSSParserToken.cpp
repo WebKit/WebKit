@@ -635,26 +635,26 @@ void CSSParserToken::serialize(StringBuilder& builder, const CSSParserToken* nex
 
     switch (type()) {
     case IdentToken:
-        serializeIdentifier(value().toString(), builder);
+        serializeIdentifier(builder, value().toString());
         appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken, NumberToken, PercentageToken, DimensionToken, CDCToken, LeftParenthesisToken }, '-');
         break;
     case FunctionToken:
-        serializeIdentifier(value().toString(), builder);
+        serializeIdentifier(builder, value().toString());
         builder.append('(');
         break;
     case AtKeywordToken:
         builder.append('@');
-        serializeIdentifier(value().toString(), builder);
+        serializeIdentifier(builder, value().toString());
         appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken, NumberToken, PercentageToken, DimensionToken, CDCToken }, '-');
         break;
     case HashToken:
         builder.append('#');
-        serializeIdentifier(value().toString(), builder, (getHashTokenType() == HashTokenUnrestricted));
+        serializeIdentifier(builder, value().toString(), (getHashTokenType() == HashTokenUnrestricted));
         appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken, NumberToken, PercentageToken, DimensionToken, CDCToken }, '-');
         break;
     case UrlToken:
         builder.append("url("_s);
-        serializeIdentifier(value().toString(), builder);
+        serializeIdentifier(builder, value().toString());
         builder.append(')');
         break;
     case DelimiterToken:
@@ -713,12 +713,12 @@ void CSSParserToken::serialize(StringBuilder& builder, const CSSParserToken* nex
             builder.append(originalText());
         else {
             builder.append(numericValue());
-            serializeIdentifier(unitString().toString(), builder);
+            serializeIdentifier(builder, unitString().toString());
         }
         appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken, NumberToken, PercentageToken, DimensionToken, CDCToken }, '-');
         break;
     case StringToken:
-        serializeString(value().toString(), builder);
+        serializeString(builder, value().toString());
         break;
 
     case IncludeMatchToken:

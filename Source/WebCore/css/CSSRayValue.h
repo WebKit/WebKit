@@ -48,7 +48,7 @@ public:
         return adoptRef(*new CSSRayValue(WTFMove(angle), size, isContaining, WTFMove(position), coordinateBox));
     }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
 
     Ref<CSSPrimitiveValue> angle() const { return m_angle; }
     CSSValueID size() const { return m_size; }

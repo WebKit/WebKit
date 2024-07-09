@@ -30,27 +30,31 @@
 #include "CSSRayValue.h"
 
 #include "CSSPrimitiveValueMappings.h"
-#include <wtf/text/MakeString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-String CSSRayValue::customCSSText() const
+void CSSRayValue::customCSSText(StringBuilder& builder) const
 {
-    bool isNonDefaultSize = m_size != CSSValueClosestSide;
-    bool hasPosition = m_position;
-    bool hasCustomCoordinateBox = m_coordinateBox != CSSBoxType::BoxMissing;
+    builder.append("ray("_s);
 
-    return makeString(
-        "ray("_s, m_angle->cssText(),
-        isNonDefaultSize ? " "_s : ""_s,
-        isNonDefaultSize ? nameLiteral(m_size) : ""_s,
-        m_isContaining ? " contain"_s : ""_s,
-        hasPosition ? " at "_s : ""_s,
-        hasPosition ? m_position->cssText() : ""_s,
-        ')',
-        hasCustomCoordinateBox ? " "_s : ""_s,
-        hasCustomCoordinateBox ? nameLiteral(toCSSValueID(m_coordinateBox)) : ""_s
-    );
+    m_angle->cssText(builder);
+
+    if (m_size != CSSValueClosestSide)
+        builder.append(' ', nameLiteral(m_size));
+
+    if (m_isContaining)
+        builder.append(" contain"_s);
+
+    if (m_position) {
+        builder.append(" at "_s);
+        m_position->cssText(builder);
+    }
+
+    builder.append(')');
+
+    if (m_coordinateBox != CSSBoxType::BoxMissing)
+        builder.append(' ', nameLiteral(toCSSValueID(m_coordinateBox)));
 }
 
 bool CSSRayValue::equals(const CSSRayValue& other) const

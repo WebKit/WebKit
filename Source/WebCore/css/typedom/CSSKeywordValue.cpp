@@ -71,7 +71,7 @@ ExceptionOr<void> CSSKeywordValue::setValue(const String& value)
 void CSSKeywordValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments>) const
 {
     // https://drafts.css-houdini.org/css-typed-om/#keywordvalue-serialization
-    serializeIdentifier(m_value, builder);
+    serializeIdentifier(builder, m_value);
 }
 
 RefPtr<CSSValue> CSSKeywordValue::toCSSValue() const

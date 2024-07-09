@@ -63,9 +63,11 @@ void CSSFontFaceSrcLocalValue::setSVGFontFaceElement(SVGFontFaceElement& element
     m_element = &element;
 }
 
-String CSSFontFaceSrcLocalValue::customCSSText() const
+void CSSFontFaceSrcLocalValue::customCSSText(StringBuilder& builder) const
 {
-    return makeString("local("_s, serializeString(m_fontFaceName), ')');
+    builder.append("local("_s);
+    serializeString(builder, m_fontFaceName);
+    builder.append(')');
 }
 
 bool CSSFontFaceSrcLocalValue::equals(const CSSFontFaceSrcLocalValue& other) const
@@ -143,29 +145,23 @@ bool CSSFontFaceSrcResourceValue::customMayDependOnBaseURL() const
     return WebCore::mayDependOnBaseURL(m_location);
 }
 
-String CSSFontFaceSrcResourceValue::customCSSText() const
+void CSSFontFaceSrcResourceValue::customCSSText(StringBuilder& builder) const
 {
-    StringBuilder builder;
     if (!m_replacementURLString.isEmpty())
-        builder.append(serializeURL(m_replacementURLString));
+        serializeURL(builder, m_replacementURLString);
     else {
         if (m_shouldUseResolvedURLInCSSText)
-            builder.append(serializeURL(m_location.resolvedURL.string()));
+            serializeURL(builder, m_location.resolvedURL.string());
         else
-            builder.append(serializeURL(m_location.specifiedURLString));
+            serializeURL(builder, m_location.specifiedURLString);
     }
-    if (!m_format.isEmpty())
-        builder.append(" format("_s, serializeString(m_format), ')');
-    if (!m_technologies.isEmpty()) {
-        builder.append(" tech("_s);
-        for (size_t i = 0; i < m_technologies.size(); ++i) {
-            if (i)
-                builder.append(", "_s);
-            builder.append(cssTextFromFontTech(m_technologies[i]));
-        }
+    if (!m_format.isEmpty()) {
+        builder.append(" format("_s);
+        serializeString(builder, m_format);
         builder.append(')');
     }
-    return builder.toString();
+    if (!m_technologies.isEmpty())
+        builder.append(" tech("_s, interleave(m_technologies, cssTextFromFontTech, ", "_s), ')');
 }
 
 bool CSSFontFaceSrcResourceValue::equals(const CSSFontFaceSrcResourceValue& other) const

@@ -73,6 +73,11 @@ String CSSVariableReferenceValue::customCSSText() const
     return m_stringValue;
 }
 
+void CSSVariableReferenceValue::customCSSText(StringBuilder& builder) const
+{
+    m_data->serialize(builder);
+}
+
 const CSSParserContext& CSSVariableReferenceValue::context() const
 {
     return m_data->context();

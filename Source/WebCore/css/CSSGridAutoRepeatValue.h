@@ -51,7 +51,8 @@ public:
 
     CSSValueID autoRepeatID() const;
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSGridAutoRepeatValue&) const;
 
 private:

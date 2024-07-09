@@ -40,7 +40,7 @@ public:
         return adoptRef(*new CSSShadowValue(WTFMove(x), WTFMove(y), WTFMove(blur), WTFMove(spread), WTFMove(style), WTFMove(color)));
     }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
 
     bool equals(const CSSShadowValue&) const;
 

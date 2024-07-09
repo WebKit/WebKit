@@ -218,19 +218,12 @@ CSSValueListBuilder CSSValueContainingVector::copyValues() const
 
 void CSSValueContainingVector::serializeItems(StringBuilder& builder) const
 {
-    builder.append(interleave(*this, [](auto& value) { return value.cssText(); }, separatorCSSText()));
+    builder.append(interleave(*this, [](auto& builder, auto& value) { value.cssText(builder); }, separatorCSSText()));
 }
 
-String CSSValueContainingVector::serializeItems() const
+void CSSValueList::customCSSText(StringBuilder& builder) const
 {
-    StringBuilder result;
-    serializeItems(result);
-    return result.toString();
-}
-
-String CSSValueList::customCSSText() const
-{
-    return serializeItems();
+    serializeItems(builder);
 }
 
 bool CSSValueContainingVector::itemsEqual(const CSSValueContainingVector& other) const

@@ -77,15 +77,13 @@ bool CSSImageSetOptionValue::equals(const CSSImageSetOptionValue& other) const
     return true;
 }
 
-String CSSImageSetOptionValue::customCSSText() const
+void CSSImageSetOptionValue::customCSSText(StringBuilder& builder) const
 {
-    StringBuilder result;
-    result.append(m_image->cssText());
-    result.append(' ', m_resolution->cssText());
+    m_image->cssText(builder);
+    builder.append(' ');
+    m_resolution->cssText(builder);
     if (!m_mimeType.isNull())
-        result.append(" type(\""_s, m_mimeType, "\")"_s);
-
-    return result.toString();
+        builder.append(" type(\""_s, m_mimeType, "\")"_s);
 }
 
 void CSSImageSetOptionValue::setResolution(Ref<CSSPrimitiveValue>&& resolution)

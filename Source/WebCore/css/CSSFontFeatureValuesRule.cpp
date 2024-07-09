@@ -36,28 +36,21 @@ CSSFontFeatureValuesRule::CSSFontFeatureValuesRule(StyleRuleFontFeatureValues& f
 {
 }
 
-String CSSFontFeatureValuesRule::cssText() const
+void CSSFontFeatureValuesRule::cssText(StringBuilder& builder) const
 {
-    StringBuilder builder;
-    builder.append("@font-feature-values "_s);
-    auto joinFontFamiliesWithSeparator = [&builder] (const auto& elements, ASCIILiteral separator) {
-        bool first = true;
-        for (auto element : elements) {
-            if (!first)
-                builder.append(separator);
-            builder.append(serializeFontFamily(element));
-            first = false;
-        }
-    };
-    joinFontFamiliesWithSeparator(m_fontFeatureValuesRule->fontFamilies(), ", "_s);
-    builder.append(" { "_s);
+    builder.append(
+        "@font-feature-values "_s,
+        interleave(m_fontFeatureValuesRule->fontFamilies(), [](auto& builder, auto& fontFamily) { serializeFontFamily(builder, fontFamily); }, ", "_s),
+        " { "_s
+    );
+
     const auto& value = m_fontFeatureValuesRule->value();
-    
-    auto addVariant = [&builder] (const String& variantName, const auto& tags) {
+
+    auto addVariant = [&builder](const String& variantName, const auto& tags) {
         if (!tags.isEmpty()) {
             builder.append('@', variantName, " { "_s);
             for (auto tag : tags) {
-                serializeIdentifier(tag.key, builder);
+                serializeIdentifier(builder, tag.key);
                 builder.append(':');
                 for (auto integer : tag.value)
                     builder.append(' ', integer);
@@ -77,7 +70,6 @@ String CSSFontFeatureValuesRule::cssText() const
     addVariant("styleset"_s, value->styleset());
     
     builder.append('}');
-    return builder.toString();
 }
 
 void CSSFontFeatureValuesRule::reattach(StyleRuleBase& rule)
@@ -91,13 +83,12 @@ CSSFontFeatureValuesBlockRule::CSSFontFeatureValuesBlockRule(StyleRuleFontFeatur
 {
 }
 
-String CSSFontFeatureValuesBlockRule::cssText() const
+void CSSFontFeatureValuesBlockRule::cssText(StringBuilder&) const
 {
     // This rule is always contained inside a FontFeatureValuesRule,
     // which is the only one we are expected to serialize to CSS.
     // We should never serialize a Block by itself.
     ASSERT_NOT_REACHED();
-    return { };
 }
 
 void CSSFontFeatureValuesBlockRule::reattach(StyleRuleBase& rule)

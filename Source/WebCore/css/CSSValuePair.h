@@ -42,6 +42,8 @@ public:
     Ref<CSSValue> protectedSecond() const { return m_second; }
 
     String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSValuePair&) const;
     bool canBeCoalesced() const;
 

@@ -39,7 +39,9 @@ public:
 
     const FontTag& tag() const { return m_tag; }
     float value() const { return m_value; }
+
     String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
 
     bool equals(const CSSFontVariationValue&) const;
 

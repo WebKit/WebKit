@@ -37,39 +37,24 @@ CSSShadowValue::CSSShadowValue(RefPtr<CSSPrimitiveValue>&& x, RefPtr<CSSPrimitiv
 {
 }
 
-String CSSShadowValue::customCSSText() const
+void CSSShadowValue::customCSSText(StringBuilder& builder) const
 {
-    StringBuilder text;
+    auto initialLengthOfBuilder = builder.length();
 
-    if (color)
-        text.append(color->cssText());
-    if (x) {
-        if (!text.isEmpty())
-            text.append(' ');
-        text.append(x->cssText());
-    }
-    if (y) {
-        if (!text.isEmpty())
-            text.append(' ');
-        text.append(y->cssText());
-    }
-    if (blur) {
-        if (!text.isEmpty())
-            text.append(' ');
-        text.append(blur->cssText());
-    }
-    if (spread) {
-        if (!text.isEmpty())
-            text.append(' ');
-        text.append(spread->cssText());
-    }
-    if (style) {
-        if (!text.isEmpty())
-            text.append(' ');
-        text.append(style->cssText());
-    }
+    auto append = [&](auto& arg) {
+        if (!arg)
+            return;
+        if (initialLengthOfBuilder != builder.length())
+            builder.append(' ');
+        arg->cssText(builder);
+    };
 
-    return text.toString();
+    append(color);
+    append(x);
+    append(y);
+    append(blur);
+    append(spread);
+    append(style);
 }
 
 bool CSSShadowValue::equals(const CSSShadowValue& other) const

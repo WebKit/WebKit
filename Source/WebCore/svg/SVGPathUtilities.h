@@ -44,6 +44,7 @@ bool buildSVGPathByteStreamFromString(StringView, SVGPathByteStream&, PathParsin
 
 // SVGPathByteStream -> String
 bool buildStringFromByteStream(const SVGPathByteStream&, String&, PathParsingMode, bool checkForInitialMoveTo = true);
+bool buildStringFromByteStream(const SVGPathByteStream&, StringBuilder&, PathParsingMode, bool checkForInitialMoveTo = true);
 
 // SVGPathByteStream -> SVGPathSegList
 bool buildSVGPathSegListFromByteStream(const SVGPathByteStream&, SVGPathSegList&, PathParsingMode);

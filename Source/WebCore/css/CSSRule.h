@@ -43,8 +43,13 @@ public:
 
     virtual StyleRuleType styleRuleType() const = 0;
     virtual bool isGroupingRule() const { return false; }
-    virtual String cssText() const = 0;
-    virtual String cssTextWithReplacementURLs(const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const { return cssText(); }
+
+    WEBCORE_EXPORT String cssText() const;
+    String cssTextWithReplacementURLs(const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const;
+
+    virtual void cssText(StringBuilder&) const = 0;
+    virtual void cssTextWithReplacementURLs(StringBuilder&, const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const;
+
     virtual void reattach(StyleRuleBase&) = 0;
 
     void setParentStyleSheet(CSSStyleSheet*);

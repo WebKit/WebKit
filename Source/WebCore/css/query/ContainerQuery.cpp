@@ -54,7 +54,7 @@ void serialize(StringBuilder& builder, const ContainerQuery& query)
 {
     auto name = query.name;
     if (!name.isEmpty()) {
-        serializeIdentifier(name, builder);
+        serializeIdentifier(builder, name);
         builder.append(' ');
     }
 

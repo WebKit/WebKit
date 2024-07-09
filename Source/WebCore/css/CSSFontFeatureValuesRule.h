@@ -61,7 +61,7 @@ private:
     CSSFontFeatureValuesRule(StyleRuleFontFeatureValues&, CSSStyleSheet* parent);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::FontFeatureValues; }
-    String cssText() const final;
+    void cssText(StringBuilder&) const final;
     void reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleFontFeatureValues> m_fontFeatureValuesRule;
@@ -76,7 +76,7 @@ private:
     CSSFontFeatureValuesBlockRule(StyleRuleFontFeatureValuesBlock&, CSSStyleSheet* parent);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::FontFeatureValuesBlock; }
-    String cssText() const final;
+    void cssText(StringBuilder&) const final;
     void reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleFontFeatureValuesBlock> m_fontFeatureValuesBlockRule;

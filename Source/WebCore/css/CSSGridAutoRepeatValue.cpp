@@ -53,13 +53,11 @@ CSSValueID CSSGridAutoRepeatValue::autoRepeatID() const
     return m_isAutoFit ? CSSValueAutoFit : CSSValueAutoFill;
 }
 
-String CSSGridAutoRepeatValue::customCSSText() const
+void CSSGridAutoRepeatValue::customCSSText(StringBuilder& builder) const
 {
-    StringBuilder result;
-    result.append("repeat("_s, nameLiteral(autoRepeatID()), ", "_s);
-    serializeItems(result);
-    result.append(')');
-    return result.toString();
+    builder.append("repeat("_s, nameLiteral(autoRepeatID()), ", "_s);
+    serializeItems(builder);
+    builder.append(')');
 }
 
 bool CSSGridAutoRepeatValue::equals(const CSSGridAutoRepeatValue& other) const

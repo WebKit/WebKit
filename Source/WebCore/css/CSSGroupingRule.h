@@ -52,9 +52,8 @@ protected:
 
 private:
     bool isGroupingRule() const final { return true; }
-    void appendCSSTextForItemsInternal(StringBuilder&, StringBuilder&) const;
-    void cssTextForRules(StringBuilder&) const;
-    void cssTextForRulesWithReplacementURLs(StringBuilder&, const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const;
+
+    template<typename F> void appendCSSTextForItemsInternal(StringBuilder&, F&&) const;
 
     Ref<StyleRuleGroup> m_groupRule;
     mutable Vector<RefPtr<CSSRule>> m_childRuleCSSOMWrappers;

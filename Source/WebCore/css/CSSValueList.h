@@ -57,7 +57,6 @@ public:
     bool hasValue(CSSValueID) const;
 
     void serializeItems(StringBuilder&) const;
-    String serializeItems() const;
 
     bool itemsEqual(const CSSValueContainingVector&) const;
     bool containsSingleEqualItem(const CSSValue&) const;
@@ -116,7 +115,8 @@ public:
     static Ref<CSSValueList> createSlashSeparated(Ref<CSSValue>); // FIXME: Upgrade callers to not use a list at all.
     static Ref<CSSValueList> createSlashSeparated(Ref<CSSValue>, Ref<CSSValue>);
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSValueList&) const;
 
 private:

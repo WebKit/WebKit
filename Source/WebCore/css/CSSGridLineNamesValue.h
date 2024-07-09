@@ -42,7 +42,8 @@ public:
 
     std::span<const String> names() const { return m_names; }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSGridLineNamesValue& other) const { return m_names == other.m_names; }
 
 private:

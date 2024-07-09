@@ -83,9 +83,7 @@ bool DOMCSSNamespace::supports(Document& document, const String& conditionText)
 
 String DOMCSSNamespace::escape(const String& ident)
 {
-    StringBuilder builder;
-    serializeIdentifier(ident, builder);
-    return builder.toString();
+    return serializeIdentifier(ident);
 }
 
 HighlightRegistry& DOMCSSNamespace::highlights(Document& document)

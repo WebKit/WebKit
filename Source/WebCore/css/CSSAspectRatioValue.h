@@ -40,6 +40,7 @@ public:
     }
 
     String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
 
     float numeratorValue() const { return m_numeratorValue; }
     float denominatorValue() const { return m_denominatorValue; }

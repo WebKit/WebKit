@@ -30,25 +30,32 @@
 #include "CSSViewValue.h"
 
 #include "CSSPrimitiveValueMappings.h"
-#include <wtf/text/MakeString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-String CSSViewValue::customCSSText() const
+void CSSViewValue::customCSSText(StringBuilder& builder) const
 {
     auto hasAxis = m_axis && m_axis->valueID() != CSSValueBlock;
     auto hasEndInset = m_endInset && m_endInset != m_startInset;
     auto hasStartInset = (m_startInset && m_startInset->valueID() != CSSValueAuto) || (m_startInset && m_startInset->valueID() == CSSValueAuto && hasEndInset);
 
-    return makeString(
-        "view("_s,
-        hasAxis ? m_axis->cssText() : ""_s,
-        hasAxis && hasStartInset ? " "_s : ""_s,
-        hasStartInset ? m_startInset->cssText() : ""_s,
-        hasStartInset && hasEndInset ? " "_s : ""_s,
-        hasEndInset ? m_endInset->cssText() : ""_s,
-        ")"_s
-    );
+    builder.append("view("_s);
+    if (hasAxis) {
+        m_axis->cssText(builder);
+        if (hasStartInset)
+            builder.append(' ');
+    }
+
+    if (hasStartInset) {
+        m_startInset->cssText(builder);
+        if (hasEndInset)
+            builder.append(' ');
+    }
+    if (hasEndInset)
+        m_endInset->cssText(builder);
+
+    builder.append(')');
 }
 
 bool CSSViewValue::equals(const CSSViewValue& other) const

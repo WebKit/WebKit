@@ -54,7 +54,7 @@ public:
     const CSSCounterStyleDescriptors::Ranges& ranges() const { return m_descriptors.m_ranges; }
     const CSSCounterStyleDescriptors::Pad& pad() const { return m_descriptors.m_pad; }
     const CSSCounterStyleDescriptors::Name& fallbackName() const { return m_descriptors.m_fallbackName; }
-    const Vector<CSSCounterStyleDescriptors::Symbol>& symbols() const { return m_descriptors.m_symbols; }
+    const CSSCounterStyleDescriptors::Symbols& symbols() const { return m_descriptors.m_symbols; }
     const CSSCounterStyleDescriptors::AdditiveSymbols& additiveSymbols() const { return m_descriptors.m_additiveSymbols; }
     CSSCounterStyleDescriptors::SpeakAs speakAs() const { return m_descriptors.m_speakAs; }
     const CSSCounterStyleDescriptors::Name extendsName() const { return m_descriptors.m_extendsName; }
@@ -68,7 +68,7 @@ public:
     void setRanges(const CSSCounterStyleDescriptors::Ranges& ranges) { m_descriptors.m_ranges = ranges; }
     void setPad(const CSSCounterStyleDescriptors::Pad& pad) { m_descriptors.m_pad = pad; }
     void setFallbackName(const CSSCounterStyleDescriptors::Name& fallbackName) { m_descriptors.m_fallbackName = fallbackName; }
-    void setSymbols(const Vector<CSSCounterStyleDescriptors::Symbol>& symbols) { m_descriptors.m_symbols = symbols; }
+    void setSymbols(const CSSCounterStyleDescriptors::Symbols& symbols) { m_descriptors.m_symbols = symbols; }
     void setAdditiveSymbols(const CSSCounterStyleDescriptors::AdditiveSymbols& additiveSymbols) { m_descriptors.m_additiveSymbols = additiveSymbols; }
     void setSpeakAs(CSSCounterStyleDescriptors::SpeakAs speakAs) { m_descriptors.m_speakAs = speakAs; }
     void setFirstSymbolValueForFixedSystem(int firstSymbolValue) { m_descriptors.m_fixedSystemFirstSymbolValue = firstSymbolValue; }

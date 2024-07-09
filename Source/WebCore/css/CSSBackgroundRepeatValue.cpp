@@ -44,17 +44,27 @@ Ref<CSSBackgroundRepeatValue> CSSBackgroundRepeatValue::create(CSSValueID repeat
     return adoptRef(*new CSSBackgroundRepeatValue(repeatXValue, repeatYValue));
 }
 
-String CSSBackgroundRepeatValue::customCSSText() const
+template<typename Maker> decltype(auto) CSSBackgroundRepeatValue::serialize(Maker&& maker) const
 {
     // background-repeat/mask-repeat behave a little like a shorthand, but `repeat no-repeat` is transformed to `repeat-x`.
     if (m_xValue != m_yValue) {
         if (m_xValue == CSSValueRepeat && m_yValue == CSSValueNoRepeat)
-            return nameString(CSSValueRepeatX);
+            return maker(nameString(CSSValueRepeatX));
         if (m_xValue == CSSValueNoRepeat && m_yValue == CSSValueRepeat)
-            return nameString(CSSValueRepeatY);
-        return makeString(nameLiteral(m_xValue), ' ', nameLiteral(m_yValue));
+            return maker(nameString(CSSValueRepeatY));
+        return maker(nameString(m_xValue), ' ', nameString(m_yValue));
     }
-    return nameString(m_xValue);
+    return maker(nameString(m_xValue));
+}
+
+String CSSBackgroundRepeatValue::customCSSText() const
+{
+    return serialize(SerializeUsingMakeString { });
+}
+
+void CSSBackgroundRepeatValue::customCSSText(StringBuilder& builder) const
+{
+    serialize(SerializeUsingStringBuilder { builder });
 }
 
 bool CSSBackgroundRepeatValue::equals(const CSSBackgroundRepeatValue& other) const

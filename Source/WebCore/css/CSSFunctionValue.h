@@ -42,7 +42,8 @@ public:
 
     CSSValueID name() const { return m_name; }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSFunctionValue& other) const { return m_name == other.m_name && itemsEqual(other); }
 
 private:

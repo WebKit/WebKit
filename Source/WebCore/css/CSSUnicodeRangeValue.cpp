@@ -39,6 +39,16 @@ String CSSUnicodeRangeValue::customCSSText() const
     return makeString("U+"_s, hex(m_from, Lowercase), '-', hex(m_to, Lowercase));
 }
 
+void CSSUnicodeRangeValue::customCSSText(StringBuilder& builder) const
+{
+    if (m_from == m_to) {
+        builder.append("U+"_s, hex(m_from, Lowercase));
+        return;
+    }
+
+    builder.append("U+"_s, hex(m_from, Lowercase), '-', hex(m_to, Lowercase));
+}
+
 bool CSSUnicodeRangeValue::equals(const CSSUnicodeRangeValue& other) const
 {
     return m_from == other.m_from && m_to == other.m_to;

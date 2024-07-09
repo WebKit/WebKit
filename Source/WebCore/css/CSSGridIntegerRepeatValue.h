@@ -48,7 +48,8 @@ public:
 
     size_t repetitions() const { return m_repetitions; }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSGridIntegerRepeatValue&) const;
 
 private:

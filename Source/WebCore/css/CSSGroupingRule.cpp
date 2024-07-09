@@ -117,47 +117,37 @@ ExceptionOr<void> CSSGroupingRule::deleteRule(unsigned index)
     return { };
 }
 
-void CSSGroupingRule::appendCSSTextForItemsInternal(StringBuilder& builder, StringBuilder& rules) const
+template<typename F> void CSSGroupingRule::appendCSSTextForItemsInternal(StringBuilder& builder, F&& childAppender) const
 {
     builder.append(" {"_s);
-    if (rules.isEmpty()) {
+
+    auto& childRules = m_groupRule->childRules();
+
+    if (childRules.isEmpty()) {
         builder.append("\n}"_s);
         return;
     }
 
-    builder.append(static_cast<StringView>(rules), "\n}"_s);
+    for (unsigned index = 0; index < childRules.size(); index++) {
+        builder.append("\n  "_s);
+        childAppender(builder, *item(index));
+    }
+
+    builder.append("\n}"_s);
 }
 
 void CSSGroupingRule::appendCSSTextForItems(StringBuilder& builder) const
 {
-    StringBuilder rules;
-    cssTextForRules(rules);
-    appendCSSTextForItemsInternal(builder, rules);
-}
-
-void CSSGroupingRule::cssTextForRules(StringBuilder& rules) const
-{
-    auto& childRules = m_groupRule->childRules();
-    for (unsigned index = 0; index < childRules.size(); index++) {
-        auto wrappedRule = item(index);
-        rules.append("\n  "_s, wrappedRule->cssText());
-    }
+    appendCSSTextForItemsInternal(builder, [&](StringBuilder& builder, CSSRule& rule) {
+        rule.cssText(builder);
+    });
 }
 
 void CSSGroupingRule::appendCSSTextWithReplacementURLsForItems(StringBuilder& builder, const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
 {
-    StringBuilder rules;
-    cssTextForRulesWithReplacementURLs(rules, replacementURLStrings, replacementURLStringsForCSSStyleSheet);
-    appendCSSTextForItemsInternal(builder, rules);
-}
-
-void CSSGroupingRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
-{
-    auto& childRules = m_groupRule->childRules();
-    for (unsigned index = 0; index < childRules.size(); index++) {
-        auto wrappedRule = item(index);
-        rules.append("\n  "_s, wrappedRule->cssTextWithReplacementURLs(replacementURLStrings, replacementURLStringsForCSSStyleSheet));
-    }
+    appendCSSTextForItemsInternal(builder, [&](StringBuilder& builder, CSSRule& rule) {
+        rule.cssTextWithReplacementURLs(builder, replacementURLStrings, replacementURLStringsForCSSStyleSheet);
+    });
 }
 
 RefPtr<StyleRuleWithNesting> CSSGroupingRule::prepareChildStyleRuleForNesting(StyleRule& styleRule)

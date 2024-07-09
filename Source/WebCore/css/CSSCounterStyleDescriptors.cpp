@@ -148,7 +148,7 @@ CSSCounterStyleDescriptors::NegativeSymbols negativeSymbolsFromCSSValue(Ref<CSSV
     return result;
 }
 
-static Vector<CSSCounterStyleDescriptors::Symbol> symbolsFromStyleProperties(const StyleProperties& properties)
+static CSSCounterStyleDescriptors::Symbols symbolsFromStyleProperties(const StyleProperties& properties)
 {
     auto symbolsValues = properties.getPropertyCSSValue(CSSPropertySymbols);
     if (!symbolsValues)
@@ -156,9 +156,9 @@ static Vector<CSSCounterStyleDescriptors::Symbol> symbolsFromStyleProperties(con
     return symbolsFromCSSValue(symbolsValues.releaseNonNull());
 }
 
-Vector<CSSCounterStyleDescriptors::Symbol> symbolsFromCSSValue(Ref<CSSValue> value)
+CSSCounterStyleDescriptors::Symbols symbolsFromCSSValue(Ref<CSSValue> value)
 {
-    Vector<CSSCounterStyleDescriptors::Symbol> result;
+    CSSCounterStyleDescriptors::Symbols result;
     for (auto& symbolValue : downcast<CSSValueList>(value.get())) {
         auto symbol = symbolFromCSSValue(&symbolValue);
         if (!symbol.text.isNull())
@@ -281,7 +281,7 @@ CSSCounterStyleDescriptors CSSCounterStyleDescriptors::create(AtomString name, c
     return descriptors;
 }
 
-bool CSSCounterStyleDescriptors::areSymbolsValidForSystem(CSSCounterStyleDescriptors::System system, const Vector<CSSCounterStyleDescriptors::Symbol>& symbols, const CSSCounterStyleDescriptors::AdditiveSymbols& additiveSymbols)
+bool CSSCounterStyleDescriptors::areSymbolsValidForSystem(CSSCounterStyleDescriptors::System system, const CSSCounterStyleDescriptors::Symbols& symbols, const CSSCounterStyleDescriptors::AdditiveSymbols& additiveSymbols)
 {
     switch (system) {
     case System::Cyclic:
@@ -377,7 +377,7 @@ void CSSCounterStyleDescriptors::setFallbackName(CSSCounterStyleDescriptors::Nam
     m_explicitlySetDescriptors.set(ExplicitlySetDescriptors::Fallback, true);
 }
 
-void CSSCounterStyleDescriptors::setSymbols(Vector<CSSCounterStyleDescriptors::Symbol> symbols)
+void CSSCounterStyleDescriptors::setSymbols(CSSCounterStyleDescriptors::Symbols symbols)
 {
     if (m_symbols == symbols || !areSymbolsValidForSystem(m_system, symbols, m_additiveSymbols))
         return;
@@ -393,14 +393,11 @@ void CSSCounterStyleDescriptors::setAdditiveSymbols(CSSCounterStyleDescriptors::
     m_explicitlySetDescriptors.set(ExplicitlySetDescriptors::AdditiveSymbols, true);
 }
 
-String CSSCounterStyleDescriptors::Symbol::cssText() const
+// MARK: - Name
+
+bool CSSCounterStyleDescriptors::hasNameCSSText() const
 {
-    StringBuilder builder;
-    if (isCustomIdent)
-        serializeIdentifier(text, builder);
-    else
-        serializeString(text, builder);
-    return builder.toString();
+    return !m_name.isEmpty();
 }
 
 String CSSCounterStyleDescriptors::nameCSSText() const
@@ -408,28 +405,63 @@ String CSSCounterStyleDescriptors::nameCSSText() const
     return m_name;
 }
 
-String CSSCounterStyleDescriptors::systemCSSText() const
+void CSSCounterStyleDescriptors::nameCSSText(StringBuilder& builder) const
+{
+    builder.append(m_name);
+}
+
+// MARK: - System
+
+template<typename Maker> static decltype(auto) serialize(CSSCounterStyleDescriptors::System system, bool isExtendedResolved, CSSCounterStyleDescriptors::Name extendsName, int fixedSystemFirstSymbolValue, Maker&& maker)
+{
+    if (isExtendedResolved)
+        return maker("extends "_s, extendsName);
+
+    switch (system) {
+    case CSSCounterStyleDescriptors::System::Cyclic:
+        return maker("cyclic"_s);
+    case CSSCounterStyleDescriptors::System::Numeric:
+        return maker("numeric"_s);
+    case CSSCounterStyleDescriptors::System::Alphabetic:
+        return maker("alphabetic"_s);
+    case CSSCounterStyleDescriptors::System::Symbolic:
+        return maker("symbolic"_s);
+    case CSSCounterStyleDescriptors::System::Additive:
+        return maker("additive"_s);
+    case CSSCounterStyleDescriptors::System::Fixed:
+        return maker("fixed "_s, fixedSystemFirstSymbolValue);
+    case CSSCounterStyleDescriptors::System::Extends:
+        return maker("extends "_s, extendsName);
+    // Internal values should not be exposed.
+    case CSSCounterStyleDescriptors::System::SimplifiedChineseInformal:
+    case CSSCounterStyleDescriptors::System::SimplifiedChineseFormal:
+    case CSSCounterStyleDescriptors::System::TraditionalChineseInformal:
+    case CSSCounterStyleDescriptors::System::TraditionalChineseFormal:
+    case CSSCounterStyleDescriptors::System::EthiopicNumeric:
+    case CSSCounterStyleDescriptors::System::DisclosureClosed:
+    case CSSCounterStyleDescriptors::System::DisclosureOpen:
+        break;
+    }
+
+    return maker(emptyString());
+}
+
+bool CSSCounterStyleDescriptors::hasSystemCSSText() const
 {
     if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::System))
-        return emptyString();
+        return false;
     if (m_isExtendedResolved)
-        return makeString("extends "_s, m_extendsName);
+        return true;
 
     switch (m_system) {
     case System::Cyclic:
-        return "cyclic"_s;
     case System::Numeric:
-        return "numeric"_s;
     case System::Alphabetic:
-        return "alphabetic"_s;
     case System::Symbolic:
-        return "symbolic"_s;
     case System::Additive:
-        return "additive"_s;
     case System::Fixed:
-        return makeString("fixed "_s, m_fixedSystemFirstSymbolValue);
     case System::Extends:
-        return makeString("extends "_s, m_extendsName);
+        return true;
     // Internal values should not be exposed.
     case System::SimplifiedChineseInformal:
     case System::SimplifiedChineseFormal:
@@ -438,16 +470,72 @@ String CSSCounterStyleDescriptors::systemCSSText() const
     case System::EthiopicNumeric:
     case System::DisclosureClosed:
     case System::DisclosureOpen:
-        return emptyString();
+        break;
     }
-    return emptyString();
+    return false;
+}
+
+String CSSCounterStyleDescriptors::systemCSSText() const
+{
+    if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::System))
+        return emptyString();
+    return serialize(m_system, m_isExtendedResolved, m_extendsName, m_fixedSystemFirstSymbolValue, SerializeUsingMakeString { });
+}
+
+void CSSCounterStyleDescriptors::systemCSSText(StringBuilder& builder) const
+{
+    if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::System))
+        return;
+    return serialize(m_system, m_isExtendedResolved, m_extendsName, m_fixedSystemFirstSymbolValue, SerializeUsingStringBuilder { builder });
+}
+
+// MARK: - Negative
+
+bool CSSCounterStyleDescriptors::NegativeSymbols::hasCSSText() const
+{
+    return true;
+}
+
+String CSSCounterStyleDescriptors::NegativeSymbols::cssText() const
+{
+    StringBuilder builder;
+    cssText(builder);
+    return builder.toString();
+}
+
+void CSSCounterStyleDescriptors::NegativeSymbols::cssText(StringBuilder& builder) const
+{
+    m_prefix.cssText(builder);
+    builder.append(' ');
+    m_suffix.cssText(builder);
+}
+
+bool CSSCounterStyleDescriptors::hasNegativeCSSText() const
+{
+    return m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Negative);
 }
 
 String CSSCounterStyleDescriptors::negativeCSSText() const
 {
     if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Negative))
         return emptyString();
-    return makeString(m_negativeSymbols.m_prefix.cssText(), " "_s, m_negativeSymbols.m_suffix.cssText());
+    return m_negativeSymbols.cssText();
+}
+
+void CSSCounterStyleDescriptors::negativeCSSText(StringBuilder& builder) const
+{
+    if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Negative))
+        return;
+    return m_negativeSymbols.cssText(builder);
+}
+
+// MARK: - Prefix
+
+bool CSSCounterStyleDescriptors::hasPrefixCSSText() const
+{
+    if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Prefix))
+        return false;
+    return m_prefix.hasCSSText();
 }
 
 String CSSCounterStyleDescriptors::prefixCSSText() const
@@ -457,6 +545,22 @@ String CSSCounterStyleDescriptors::prefixCSSText() const
     return m_prefix.cssText();
 }
 
+void CSSCounterStyleDescriptors::prefixCSSText(StringBuilder& builder) const
+{
+    if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Prefix))
+        return;
+    m_prefix.cssText(builder);
+}
+
+// MARK: - Suffix
+
+bool CSSCounterStyleDescriptors::hasSuffixCSSText() const
+{
+    if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Suffix))
+        return false;
+    return m_suffix.hasCSSText();
+}
+
 String CSSCounterStyleDescriptors::suffixCSSText() const
 {
     if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Suffix))
@@ -464,34 +568,79 @@ String CSSCounterStyleDescriptors::suffixCSSText() const
     return m_suffix.cssText();
 }
 
+void CSSCounterStyleDescriptors::suffixCSSText(StringBuilder& builder) const
+{
+    if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Suffix))
+        return;
+    m_suffix.cssText(builder);
+}
+
+// MARK: - Ranges
+
+static void serializeRangeForCSS(StringBuilder& builder, const CSSCounterStyleDescriptors::Range& range)
+{
+    if (range.first == std::numeric_limits<int>::min())
+        builder.append("infinite "_s);
+    else
+        builder.append(range.first, ' ');
+
+    if (range.second == std::numeric_limits<int>::max())
+        builder.append("infinite"_s);
+    else
+        builder.append(range.second);
+}
+
+template<typename Maker> static decltype(auto) serialize(const CSSCounterStyleDescriptors::Ranges& ranges, Maker&& maker)
+{
+    if (ranges.isEmpty())
+        return maker("auto"_s);
+    return maker(interleave(ranges, serializeRangeForCSS, ", "_s));
+}
+
+bool CSSCounterStyleDescriptors::hasRangesCSSText() const
+{
+    return m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Range);
+}
+
 String CSSCounterStyleDescriptors::rangesCSSText() const
 {
     if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Range))
         return emptyString();
-    if (m_ranges.isEmpty())
-        return "auto"_s;
+    return serialize(m_ranges, SerializeUsingMakeString { });
+}
 
-    StringBuilder builder;
-    for (size_t i = 0; i < m_ranges.size(); ++i) {
-        if (i)
-            builder.append(", "_s);
-        auto& range = m_ranges[i];
-        if (range.first == std::numeric_limits<int>::min())
-            builder.append("infinite"_s);
-        else
-            builder.append(range.first);
-        builder.append(" "_s);
-        if (range.second== std::numeric_limits<int>::max())
-            builder.append("infinite"_s);
-        else
-            builder.append(range.second);
-    }
-    return builder.toString();
+void CSSCounterStyleDescriptors::rangesCSSText(StringBuilder& builder) const
+{
+    if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Range))
+        return;
+    return serialize(m_ranges, SerializeUsingStringBuilder { builder });
+}
+
+// MARK: - Pad
+
+bool CSSCounterStyleDescriptors::Pad::hasCSSText() const
+{
+    return true;
 }
 
 String CSSCounterStyleDescriptors::Pad::cssText() const
 {
-    return makeString(m_padMinimumLength, ' ', m_padSymbol.cssText());
+    StringBuilder builder;
+    cssText(builder);
+    return builder.toString();
+}
+
+void CSSCounterStyleDescriptors::Pad::cssText(StringBuilder& builder) const
+{
+    builder.append(m_padMinimumLength, ' ');
+    m_padSymbol.cssText(builder);
+}
+
+bool CSSCounterStyleDescriptors::hasPadCSSText() const
+{
+    if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Pad))
+        return false;
+    return m_pad.hasCSSText();
 }
 
 String CSSCounterStyleDescriptors::padCSSText() const
@@ -501,36 +650,131 @@ String CSSCounterStyleDescriptors::padCSSText() const
     return m_pad.cssText();
 }
 
+void CSSCounterStyleDescriptors::padCSSText(StringBuilder& builder) const
+{
+    if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Pad))
+        return;
+    m_pad.cssText(builder);
+}
+
+// MARK: - Fallback
+
+template<typename Maker> static decltype(auto) serializeFallback(const CSSCounterStyleDescriptors::Name& fallbackName, Maker&& maker)
+{
+    return maker(fallbackName);
+}
+
+bool CSSCounterStyleDescriptors::hasFallbackCSSText() const
+{
+    if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Fallback))
+        return false;
+    return !m_fallbackName.isEmpty();
+}
+
 String CSSCounterStyleDescriptors::fallbackCSSText() const
 {
     if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Fallback))
         return emptyString();
-    return makeString(m_fallbackName);
+    return serializeFallback(m_fallbackName, SerializeUsingMakeString { });
+}
+
+void CSSCounterStyleDescriptors::fallbackCSSText(StringBuilder& builder) const
+{
+    if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Fallback))
+        return;
+    serializeFallback(m_fallbackName, SerializeUsingStringBuilder { builder });
+}
+
+// MARK: - Symbols
+
+bool CSSCounterStyleDescriptors::Symbol::hasCSSText() const
+{
+    if (isCustomIdent)
+        return !text.isEmpty();
+
+    // If the symbol is not a custom ident, it is serialized as a string, which
+    // will always at least include quotation marks, even for empty strings.
+    return true;
+}
+
+String CSSCounterStyleDescriptors::Symbol::cssText() const
+{
+    StringBuilder builder;
+    cssText(builder);
+    return builder.toString();
+}
+
+void CSSCounterStyleDescriptors::Symbol::cssText(StringBuilder& builder) const
+{
+    if (isCustomIdent)
+        serializeIdentifier(builder, text);
+    else
+        serializeString(builder, text);
+}
+
+static void serializeSymbolForCSS(StringBuilder& builder, const CSSCounterStyleDescriptors::Symbol& symbol)
+{
+    symbol.cssText(builder);
+}
+
+template<typename Maker> static decltype(auto) serialize(const CSSCounterStyleDescriptors::Symbols& symbols, Maker&& maker)
+{
+    return maker(interleave(symbols, serializeSymbolForCSS, ' '));
+}
+
+bool CSSCounterStyleDescriptors::hasSymbolsCSSText() const
+{
+    if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Symbols))
+        return false;
+    return !m_symbols.isEmpty();
 }
 
 String CSSCounterStyleDescriptors::symbolsCSSText() const
 {
     if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Symbols))
         return emptyString();
-    StringBuilder builder;
-    for (size_t i = 0; i < m_symbols.size(); ++i) {
-        if (i)
-            builder.append(' ');
-        builder.append(m_symbols[i].cssText());
-    }
-    return builder.toString();
+    return serialize(m_symbols, SerializeUsingMakeString { });
+}
+
+void CSSCounterStyleDescriptors::symbolsCSSText(StringBuilder& builder) const
+{
+    if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::Symbols))
+        return;
+    serialize(m_symbols, SerializeUsingStringBuilder { builder });
+}
+
+// MARK: - AdditiveSymbols
+
+static void serializeAdditiveSymbolForCSS(StringBuilder& builder, const CSSCounterStyleDescriptors::AdditiveSymbol& additiveSymbol)
+{
+    builder.append(additiveSymbol.second, ' ');
+    additiveSymbol.first.cssText(builder);
+}
+
+template<typename Maker> static decltype(auto) serialize(const CSSCounterStyleDescriptors::AdditiveSymbols& additiveSymbols, Maker&& maker)
+{
+    return maker(interleave(additiveSymbols, serializeAdditiveSymbolForCSS, ", "_s));
+}
+
+bool CSSCounterStyleDescriptors::hasAdditiveSymbolsCSSText() const
+{
+    if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::AdditiveSymbols))
+        return false;
+    return !m_additiveSymbols.isEmpty();
 }
 
 String CSSCounterStyleDescriptors::additiveSymbolsCSSText() const
 {
     if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::AdditiveSymbols))
         return emptyString();
-    StringBuilder builder;
-    for (size_t i = 0; i < m_additiveSymbols.size(); ++i) {
-        if (i)
-            builder.append(", "_s);
-        builder.append(m_additiveSymbols[i].second, ' ', m_additiveSymbols[i].first.cssText());
-    }
-    return builder.toString();
+    return serialize(m_additiveSymbols, SerializeUsingMakeString { });
 }
+
+void CSSCounterStyleDescriptors::additiveSymbolsCSSText(StringBuilder& builder) const
+{
+    if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::AdditiveSymbols))
+        return;
+    serialize(m_additiveSymbols, SerializeUsingStringBuilder { builder });
+}
+
 } // namespace WebCore

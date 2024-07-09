@@ -63,11 +63,21 @@ bool CSSValuePair::canBeCoalesced() const
 
 String CSSValuePair::customCSSText() const
 {
-    String first = m_first->cssText();
-    String second = m_second->cssText();
-    if (m_coalesceIdenticalValues && first == second)
+    auto first = m_first->cssText();
+    if (canBeCoalesced())
         return first;
-    return makeString(first, separatorCSSText(), second);
+    return makeString(first, separatorCSSText(), m_second->cssText());
+}
+
+void CSSValuePair::customCSSText(StringBuilder& builder) const
+{
+    m_first->cssText(builder);
+
+    if (canBeCoalesced())
+        return;
+
+    builder.append(separatorCSSText());
+    m_second->cssText(builder);
 }
 
 bool CSSValuePair::equals(const CSSValuePair& other) const

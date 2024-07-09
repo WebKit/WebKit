@@ -36,18 +36,9 @@
 
 namespace WebCore {
 
-String CSSGridLineNamesValue::customCSSText() const
+void CSSGridLineNamesValue::customCSSText(StringBuilder& builder) const
 {
-    StringBuilder result;
-    result.append('[');
-    bool first = true;
-    for (auto& name : m_names) {
-        if (!std::exchange(first, false))
-            result.append(' ');
-        serializeIdentifier(name, result);
-    }
-    result.append(']');
-    return result.toString();
+    builder.append('[', interleave(m_names, [](auto& builder, auto& name) { serializeIdentifier(builder, name); }, ' '), ']');
 }
 
 CSSGridLineNamesValue::CSSGridLineNamesValue(std::span<const String> names)

@@ -42,6 +42,7 @@ public:
     static RefPtr<CSSCalcPrimitiveValueNode> create(double value, CSSUnitType);
 
     String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
 
     CSSUnitType primitiveType() const final;
 

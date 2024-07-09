@@ -56,7 +56,7 @@ public:
         return m_color.get();
     }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
 
     bool equals(const CSSFontPaletteValuesOverrideColorsValue&) const;
 

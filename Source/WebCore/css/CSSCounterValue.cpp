@@ -52,31 +52,49 @@ bool CSSCounterValue::equals(const CSSCounterValue& other) const
     return m_identifier == other.m_identifier && m_separator == other.m_separator && arePointingToEqualData(m_counterStyle, other.m_counterStyle);
 }
 
-String CSSCounterValue::customCSSText() const
+void CSSCounterValue::customCSSText(StringBuilder& builder) const
 {
-    bool isDecimal = m_counterStyle->valueID() == CSSValueDecimal || (m_counterStyle->isCustomIdent() && m_counterStyle->customIdent() == "decimal"_s);
-    auto listStyleSeparator = isDecimal ? ""_s : ", "_s;
-    auto listStyleLiteral = isDecimal ? ""_s : counterStyleCSSText();
     if (m_separator.isEmpty())
-        return makeString("counter("_s, m_identifier, listStyleSeparator, listStyleLiteral, ')');
-    StringBuilder result;
-    result.append("counters("_s, m_identifier, ", "_s);
-    serializeString(m_separator, result);
-    result.append(listStyleSeparator, listStyleLiteral, ')');
-    return result.toString();
+        builder.append("counter("_s, m_identifier);
+    else {
+        builder.append("counters("_s, m_identifier, ", "_s);
+        serializeString(builder, m_separator);
+    }
+
+    bool isDecimal = m_counterStyle->valueID() == CSSValueDecimal || (m_counterStyle->isCustomIdent() && m_counterStyle->customIdent() == "decimal"_s);
+    if (!isDecimal) {
+        builder.append(", "_s);
+        counterStyleCSSText(builder);
+    }
+
+    builder.append(')');
 }
 
 String CSSCounterValue::counterStyleCSSText() const
 {
     if (!m_counterStyle)
         return emptyString();
-
     if (m_counterStyle->isValueID())
         return nameString(m_counterStyle->valueID()).string();
     if (m_counterStyle->isCustomIdent())
         return m_counterStyle->customIdent();
-
     ASSERT_NOT_REACHED();
     return emptyString();
 }
+
+void CSSCounterValue::counterStyleCSSText(StringBuilder& builder) const
+{
+    if (!m_counterStyle)
+        return;
+    if (m_counterStyle->isValueID()) {
+        builder.append(nameString(m_counterStyle->valueID()));
+        return;
+    }
+    if (m_counterStyle->isCustomIdent()) {
+        builder.append(m_counterStyle->customIdent());
+        return;
+    }
+    ASSERT_NOT_REACHED();
+}
+
 } // namespace WebCore

@@ -49,6 +49,12 @@ String CSSPaintImageValue::customCSSText() const
     return makeString("paint("_s, m_name, ')');
 }
 
+void CSSPaintImageValue::customCSSText(StringBuilder& builder) const
+{
+    // FIXME: This should include the arguments too.
+    builder.append("paint("_s, m_name, ')');
+}
+
 RefPtr<StyleImage> CSSPaintImageValue::createStyleImage(Style::BuilderState&) const
 {
     return StylePaintImage::create(m_name, m_arguments);

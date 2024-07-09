@@ -46,18 +46,13 @@ CSSImageSetValue::CSSImageSetValue(CSSValueListBuilder builder)
 {
 }
 
-String CSSImageSetValue::customCSSText() const
+void CSSImageSetValue::customCSSText(StringBuilder& builder) const
 {
-    StringBuilder result;
-    result.append("image-set("_s);
-    for (size_t i = 0; i < this->length(); ++i) {
-        if (i > 0)
-            result.append(", "_s);
-        ASSERT(is<CSSImageSetOptionValue>(item(i)));
-        result.append(item(i)->cssText());
-    }
-    result.append(')');
-    return result.toString();
+    builder.append(
+        "image-set("_s,
+        interleave(*this, [](auto& builder, auto& value) { value.cssText(builder); }, ", "_s),
+        ')'
+    );
 }
 
 RefPtr<StyleImage> CSSImageSetValue::createStyleImage(Style::BuilderState& state) const

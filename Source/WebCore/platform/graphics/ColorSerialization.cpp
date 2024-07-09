@@ -36,121 +36,210 @@
 
 namespace WebCore {
 
-static String numericComponent(float value)
+struct CSSColorNumericComponent { float value; };
+
+static CSSColorNumericComponent numericComponent(float value)
 {
-    if (std::isnan(value))
-        return "none"_s;
-    if (std::isfinite(value))
-        return makeString(FormattedCSSNumber::create(value));
-    return makeString(
-        "calc("_s,
-        FormattedCSSNumber::create(value),
-        ")"_s
-    );
+    return { value };
 }
 
-static String serializationForCSS(const A98RGB<float>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const A98RGB<float>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const A98RGB<float>&, bool useColorFunctionSerialization);
+}
 
-static String serializationForCSS(const DisplayP3<float>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const DisplayP3<float>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const DisplayP3<float>&, bool useColorFunctionSerialization);
+namespace WTF {
 
-static String serializationForCSS(const ExtendedA98RGB<float>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const ExtendedA98RGB<float>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const ExtendedA98RGB<float>&, bool useColorFunctionSerialization);
+template<> class StringTypeAdapter<WebCore::CSSColorNumericComponent, void> {
+public:
+    struct NaN {
+        static constexpr ASCIILiteral text = "none"_s;
+        unsigned length() const { return text.length(); }
+        template<typename CharacterType> void writeTo(CharacterType* destination) const
+        {
+            StringImpl::copyCharacters(destination, text.span8());
+        }
+    };
+    struct Finite {
+        unsigned length() const { return number.length(); }
+        template<typename CharacterType> void writeTo(CharacterType* destination) const
+        {
+            StringImpl::copyCharacters(destination, number.span());
+        }
 
-static String serializationForCSS(const ExtendedDisplayP3<float>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const ExtendedDisplayP3<float>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const ExtendedDisplayP3<float>&, bool useColorFunctionSerialization);
+        FormattedCSSNumber number;
+    };
+    struct NonFinite {
+        static constexpr ASCIILiteral prefix = "calc("_s;
+        static constexpr ASCIILiteral suffix = ")"_s;
+        unsigned length() const { return prefix.length() + number.length() + suffix.length(); }
+        template<typename CharacterType> void writeTo(CharacterType* destination) const
+        {
+            StringImpl::copyCharacters(destination, prefix.span8());
+            destination += prefix.length();
+            StringImpl::copyCharacters(destination, number.span());
+            destination += number.length();
+            StringImpl::copyCharacters(destination, suffix.span8());
+        }
 
-static String serializationForCSS(const ExtendedLinearSRGBA<float>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const ExtendedLinearSRGBA<float>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const ExtendedLinearSRGBA<float>&, bool useColorFunctionSerialization);
+        FormattedCSSNumber number;
+    };
 
-static String serializationForCSS(const ExtendedProPhotoRGB<float>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const ExtendedProPhotoRGB<float>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const ExtendedProPhotoRGB<float>&, bool useColorFunctionSerialization);
+    static std::variant<NaN, Finite, NonFinite> compute(WebCore::CSSColorNumericComponent value)
+    {
+        if (std::isnan(value.value))
+            return NaN { };
+        if (std::isfinite(value.value))
+            return Finite { FormattedCSSNumber::create(value.value) };
+        return NonFinite { FormattedCSSNumber::create(value.value) };
+    }
 
-static String serializationForCSS(const ExtendedRec2020<float>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const ExtendedRec2020<float>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const ExtendedRec2020<float>&, bool useColorFunctionSerialization);
+    StringTypeAdapter(WebCore::CSSColorNumericComponent component)
+        : m_value { compute(component) }
+    {
+    }
 
-static String serializationForCSS(const ExtendedSRGBA<float>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const ExtendedSRGBA<float>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const ExtendedSRGBA<float>&, bool useColorFunctionSerialization);
+    bool is8Bit() const { return true; }
 
-static String serializationForCSS(const HSLA<float>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const HSLA<float>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const HSLA<float>&, bool useColorFunctionSerialization);
+    unsigned length() const
+    {
+        return WTF::switchOn(m_value, [](const auto& value) { return value.length(); });
+    }
 
-static String serializationForCSS(const HWBA<float>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const HWBA<float>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const HWBA<float>&, bool useColorFunctionSerialization);
+    template<typename CharacterType> void writeTo(CharacterType* destination) const
+    {
+        WTF::switchOn(m_value, [&](auto& value) { value.writeTo(destination); });
+    }
 
-static String serializationForCSS(const LCHA<float>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const LCHA<float>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const LCHA<float>&, bool useColorFunctionSerialization);
+private:
+    std::variant<NaN, Finite, NonFinite> m_value;
+};
 
-static String serializationForCSS(const Lab<float>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const Lab<float>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const Lab<float>&, bool useColorFunctionSerialization);
+}
 
-static String serializationForCSS(const LinearSRGBA<float>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const LinearSRGBA<float>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const LinearSRGBA<float>&, bool useColorFunctionSerialization);
+namespace WebCore {
 
-static String serializationForCSS(const OKLCHA<float>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const OKLCHA<float>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const OKLCHA<float>&, bool useColorFunctionSerialization);
 
-static String serializationForCSS(const OKLab<float>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const OKLab<float>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const OKLab<float>&, bool useColorFunctionSerialization);
+template<typename Maker> static typename Maker::Result serializationForCSS(const A98RGB<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const A98RGB<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const A98RGB<float>&, bool useColorFunctionSerialization, Maker&&);
 
-static String serializationForCSS(const ProPhotoRGB<float>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const ProPhotoRGB<float>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const ProPhotoRGB<float>&, bool useColorFunctionSerialization);
+template<typename Maker> static typename Maker::Result serializationForCSS(const DisplayP3<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const DisplayP3<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const DisplayP3<float>&, bool useColorFunctionSerialization, Maker&&);
 
-static String serializationForCSS(const Rec2020<float>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const Rec2020<float>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const Rec2020<float>&, bool useColorFunctionSerialization);
+template<typename Maker> static typename Maker::Result serializationForCSS(const ExtendedA98RGB<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const ExtendedA98RGB<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const ExtendedA98RGB<float>&, bool useColorFunctionSerialization, Maker&&);
 
-static String serializationForCSS(const SRGBA<float>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const SRGBA<float>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const SRGBA<float>&, bool useColorFunctionSerialization);
+template<typename Maker> static typename Maker::Result serializationForCSS(const ExtendedDisplayP3<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const ExtendedDisplayP3<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const ExtendedDisplayP3<float>&, bool useColorFunctionSerialization, Maker&&);
 
-static String serializationForCSS(SRGBA<uint8_t>, bool useColorFunctionSerialization);
-static String serializationForHTML(SRGBA<uint8_t>, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(SRGBA<uint8_t>, bool useColorFunctionSerialization);
+template<typename Maker> static typename Maker::Result serializationForCSS(const ExtendedLinearSRGBA<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const ExtendedLinearSRGBA<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const ExtendedLinearSRGBA<float>&, bool useColorFunctionSerialization, Maker&&);
 
-static String serializationForCSS(const XYZA<float, WhitePoint::D50>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const XYZA<float, WhitePoint::D50>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const XYZA<float, WhitePoint::D50>&, bool useColorFunctionSerialization);
+template<typename Maker> static typename Maker::Result serializationForCSS(const ExtendedProPhotoRGB<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const ExtendedProPhotoRGB<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const ExtendedProPhotoRGB<float>&, bool useColorFunctionSerialization, Maker&&);
 
-static String serializationForCSS(const XYZA<float, WhitePoint::D65>&, bool useColorFunctionSerialization);
-static String serializationForHTML(const XYZA<float, WhitePoint::D65>&, bool useColorFunctionSerialization);
-static String serializationForRenderTreeAsText(const XYZA<float, WhitePoint::D65>&, bool useColorFunctionSerialization);
+template<typename Maker> static typename Maker::Result serializationForCSS(const ExtendedRec2020<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const ExtendedRec2020<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const ExtendedRec2020<float>&, bool useColorFunctionSerialization, Maker&&);
+
+template<typename Maker> static typename Maker::Result serializationForCSS(const ExtendedSRGBA<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const ExtendedSRGBA<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const ExtendedSRGBA<float>&, bool useColorFunctionSerialization, Maker&&);
+
+template<typename Maker> static typename Maker::Result serializationForCSS(const HSLA<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const HSLA<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const HSLA<float>&, bool useColorFunctionSerialization, Maker&&);
+
+template<typename Maker> static typename Maker::Result serializationForCSS(const HWBA<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const HWBA<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const HWBA<float>&, bool useColorFunctionSerialization, Maker&&);
+
+template<typename Maker> static typename Maker::Result serializationForCSS(const LCHA<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const LCHA<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const LCHA<float>&, bool useColorFunctionSerialization, Maker&&);
+
+template<typename Maker> static typename Maker::Result serializationForCSS(const Lab<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const Lab<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const Lab<float>&, bool useColorFunctionSerialization, Maker&&);
+
+template<typename Maker> static typename Maker::Result serializationForCSS(const LinearSRGBA<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const LinearSRGBA<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const LinearSRGBA<float>&, bool useColorFunctionSerialization, Maker&&);
+
+template<typename Maker> static typename Maker::Result serializationForCSS(const OKLCHA<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const OKLCHA<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const OKLCHA<float>&, bool useColorFunctionSerialization, Maker&&);
+
+template<typename Maker> static typename Maker::Result serializationForCSS(const OKLab<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const OKLab<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const OKLab<float>&, bool useColorFunctionSerialization, Maker&&);
+
+template<typename Maker> static typename Maker::Result serializationForCSS(const ProPhotoRGB<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const ProPhotoRGB<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const ProPhotoRGB<float>&, bool useColorFunctionSerialization, Maker&&);
+
+template<typename Maker> static typename Maker::Result serializationForCSS(const Rec2020<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const Rec2020<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const Rec2020<float>&, bool useColorFunctionSerialization, Maker&&);
+
+template<typename Maker> static typename Maker::Result serializationForCSS(const SRGBA<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const SRGBA<float>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const SRGBA<float>&, bool useColorFunctionSerialization, Maker&&);
+
+template<typename Maker> static typename Maker::Result serializationForCSS(SRGBA<uint8_t>, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(SRGBA<uint8_t>, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(SRGBA<uint8_t>, bool useColorFunctionSerialization, Maker&&);
+
+template<typename Maker> static typename Maker::Result serializationForCSS(const XYZA<float, WhitePoint::D50>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const XYZA<float, WhitePoint::D50>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const XYZA<float, WhitePoint::D50>&, bool useColorFunctionSerialization, Maker&&);
+
+template<typename Maker> static typename Maker::Result serializationForCSS(const XYZA<float, WhitePoint::D65>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForHTML(const XYZA<float, WhitePoint::D65>&, bool useColorFunctionSerialization, Maker&&);
+template<typename Maker> static typename Maker::Result serializationForRenderTreeAsText(const XYZA<float, WhitePoint::D65>&, bool useColorFunctionSerialization, Maker&&);
 
 String serializationForCSS(const Color& color)
 {
-    return color.callOnUnderlyingType([&] (auto underlyingColor) {
-        return serializationForCSS(underlyingColor, color.usesColorFunctionSerialization());
+    return color.callOnUnderlyingType([&](auto underlyingColor) {
+        return serializationForCSS(underlyingColor, color.usesColorFunctionSerialization(), SerializeUsingMakeString { });
+    });
+}
+
+void serializationForCSS(StringBuilder& builder, const Color& color)
+{
+    color.callOnUnderlyingType([&](auto underlyingColor) {
+        serializationForCSS(underlyingColor, color.usesColorFunctionSerialization(), SerializeUsingStringBuilder { builder });
     });
 }
 
 String serializationForHTML(const Color& color)
 {
-    return color.callOnUnderlyingType([&] (auto underlyingColor) {
-        return serializationForHTML(underlyingColor, color.usesColorFunctionSerialization());
+    return color.callOnUnderlyingType([&](auto underlyingColor) {
+        return serializationForHTML(underlyingColor, color.usesColorFunctionSerialization(), SerializeUsingMakeString { });
+    });
+}
+
+void serializationForHTML(StringBuilder& builder, const Color& color)
+{
+    color.callOnUnderlyingType([&](auto underlyingColor) {
+        serializationForHTML(underlyingColor, color.usesColorFunctionSerialization(), SerializeUsingStringBuilder { builder });
     });
 }
 
 String serializationForRenderTreeAsText(const Color& color)
 {
     return color.callOnUnderlyingType([&] (auto underlyingColor) {
-        return serializationForRenderTreeAsText(underlyingColor, color.usesColorFunctionSerialization());
+        return serializationForRenderTreeAsText(underlyingColor, color.usesColorFunctionSerialization(), SerializeUsingMakeString { });
+    });
+}
+
+void serializationForRenderTreeAsText(StringBuilder& builder, const Color& color)
+{
+    color.callOnUnderlyingType([&](auto underlyingColor) {
+        serializationForRenderTreeAsText(underlyingColor, color.usesColorFunctionSerialization(), SerializeUsingStringBuilder { builder });
     });
 }
 
@@ -197,33 +286,38 @@ ASCIILiteral serialization(ColorSpace colorSpace)
     return ""_s;
 }
 
-template<typename ColorType> static String serializationUsingColorFunction(const ColorType& color)
+void serialization(StringBuilder& builder, ColorSpace colorSpace)
+{
+    builder.append(serialization(colorSpace));
+}
+
+template<typename ColorType, typename Maker> static typename Maker::Result serializationUsingColorFunction(const ColorType& color, Maker&& maker)
 {
     static_assert(std::is_same_v<typename ColorType::ComponentType, float>);
 
     auto [c1, c2, c3, alpha] = color.unresolved();
     if (WTF::areEssentiallyEqual(alpha, 1.0f))
-        return makeString("color("_s, serialization(ColorSpaceFor<ColorType>), ' ', numericComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), ')');
-    return makeString("color("_s, serialization(ColorSpaceFor<ColorType>), ' ', numericComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), " / "_s, numericComponent(alpha), ')');
+        return maker("color("_s, serialization(ColorSpaceFor<ColorType>), ' ', numericComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), ')');
+    return maker("color("_s, serialization(ColorSpaceFor<ColorType>), ' ', numericComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), " / "_s, numericComponent(alpha), ')');
 }
 
-static String serializationUsingColorFunction(const SRGBA<uint8_t>& color)
+template<typename Maker> static typename Maker::Result serializationUsingColorFunction(const SRGBA<uint8_t>& color, Maker&& maker)
 {
-    return serializationUsingColorFunction(convertColor<SRGBA<float>>(color));
+    return serializationUsingColorFunction(convertColor<SRGBA<float>>(color), std::forward<Maker>(maker));
 }
 
-template<typename ColorType> static String serializationOfLabLikeColorsForCSS(const ColorType& color)
+template<typename ColorType, typename Maker> static typename Maker::Result serializationOfLabLikeColorsForCSS(const ColorType& color, Maker&& maker)
 {
     static_assert(std::is_same_v<typename ColorType::ComponentType, float>);
 
     // https://www.w3.org/TR/css-color-4/#serializing-lab-lch
     auto [c1, c2, c3, alpha] = color.unresolved();
     if (WTF::areEssentiallyEqual(alpha, 1.0f))
-        return makeString(serialization(ColorSpaceFor<ColorType>), '(', numericComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), ')');
-    return makeString(serialization(ColorSpaceFor<ColorType>), '(', numericComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), " / "_s, numericComponent(alpha), ')');
+        return maker(serialization(ColorSpaceFor<ColorType>), '(', numericComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), ')');
+    return maker(serialization(ColorSpaceFor<ColorType>), '(', numericComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(c3), " / "_s, numericComponent(alpha), ')');
 }
 
-template<typename ColorType> static String serializationOfLCHLikeColorsForCSS(const ColorType& color)
+template<typename ColorType, typename Maker> static typename Maker::Result serializationOfLCHLikeColorsForCSS(const ColorType& color, Maker&& maker)
 {
     static_assert(std::is_same_v<typename ColorType::ComponentType, float>);
 
@@ -234,331 +328,331 @@ template<typename ColorType> static String serializationOfLCHLikeColorsForCSS(co
 
     auto [c1, c2, c3, alpha] = color.unresolved();
     if (WTF::areEssentiallyEqual(alpha, 1.0f))
-        return makeString(serialization(ColorSpaceFor<ColorType>), '(', numericComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(normalizeHue(c3)), ')');
-    return makeString(serialization(ColorSpaceFor<ColorType>), '(', numericComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(normalizeHue(c3)), " / "_s, numericComponent(alpha), ')');
+        return maker(serialization(ColorSpaceFor<ColorType>), '(', numericComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(normalizeHue(c3)), ')');
+    return maker(serialization(ColorSpaceFor<ColorType>), '(', numericComponent(c1), ' ', numericComponent(c2), ' ', numericComponent(normalizeHue(c3)), " / "_s, numericComponent(alpha), ')');
 }
 
 // MARK: A98RGB<float> overloads
 
-String serializationForCSS(const A98RGB<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForCSS(const A98RGB<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const A98RGB<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForHTML(const A98RGB<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const A98RGB<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const A98RGB<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
 // MARK: DisplayP3<float> overloads
 
-String serializationForCSS(const DisplayP3<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForCSS(const DisplayP3<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const DisplayP3<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForHTML(const DisplayP3<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const DisplayP3<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const DisplayP3<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
 // MARK: ExtendedA98RGB<float> overloads
 
-String serializationForCSS(const ExtendedA98RGB<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForCSS(const ExtendedA98RGB<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const ExtendedA98RGB<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForHTML(const ExtendedA98RGB<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const ExtendedA98RGB<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const ExtendedA98RGB<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
 // MARK: ExtendedDisplayP3<float> overloads
 
-String serializationForCSS(const ExtendedDisplayP3<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForCSS(const ExtendedDisplayP3<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const ExtendedDisplayP3<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForHTML(const ExtendedDisplayP3<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const ExtendedDisplayP3<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const ExtendedDisplayP3<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
 // MARK: ExtendedLinearSRGBA<float> overloads
 
-String serializationForCSS(const ExtendedLinearSRGBA<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForCSS(const ExtendedLinearSRGBA<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const ExtendedLinearSRGBA<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForHTML(const ExtendedLinearSRGBA<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const ExtendedLinearSRGBA<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const ExtendedLinearSRGBA<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
 // MARK: ExtendedProPhotoRGB<float> overloads
 
-String serializationForCSS(const ExtendedProPhotoRGB<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForCSS(const ExtendedProPhotoRGB<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const ExtendedProPhotoRGB<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForHTML(const ExtendedProPhotoRGB<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const ExtendedProPhotoRGB<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const ExtendedProPhotoRGB<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
 // MARK: ExtendedRec2020<float> overloads
 
-String serializationForCSS(const ExtendedRec2020<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForCSS(const ExtendedRec2020<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const ExtendedRec2020<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForHTML(const ExtendedRec2020<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const ExtendedRec2020<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const ExtendedRec2020<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
 // MARK: ExtendedSRGBA<float> overloads
 
-String serializationForCSS(const ExtendedSRGBA<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForCSS(const ExtendedSRGBA<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const ExtendedSRGBA<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForHTML(const ExtendedSRGBA<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const ExtendedSRGBA<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const ExtendedSRGBA<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
 // MARK: HSLA<float> overloads
 
-String serializationForCSS(const HSLA<float>& color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForCSS(const HSLA<float>& color, bool useColorFunctionSerialization, Maker&& maker)
 {
     // FIXME: The spec is not completely clear on whether missing components should be
     // carried forward here, but it seems like people are leaning toward thinking they
     // should be. See https://github.com/w3c/csswg-drafts/issues/10254.
 
     if (useColorFunctionSerialization)
-        return serializationForCSS(convertColorCarryingForwardMissing<ExtendedSRGBA<float>>(color), true);
+        return serializationForCSS(convertColorCarryingForwardMissing<ExtendedSRGBA<float>>(color), true, std::forward<Maker>(maker));
 
-    return serializationForCSS(convertColor<SRGBA<uint8_t>>(color), false);
+    return serializationForCSS(convertColor<SRGBA<uint8_t>>(color), false, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const HSLA<float>& color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForHTML(const HSLA<float>& color, bool useColorFunctionSerialization, Maker&& maker)
 {
-    return serializationForHTML(convertColor<SRGBA<uint8_t>>(color), useColorFunctionSerialization);
+    return serializationForHTML(convertColor<SRGBA<uint8_t>>(color), useColorFunctionSerialization, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const HSLA<float>& color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const HSLA<float>& color, bool useColorFunctionSerialization, Maker&& maker)
 {
-    return serializationForRenderTreeAsText(convertColor<SRGBA<uint8_t>>(color), useColorFunctionSerialization);
+    return serializationForRenderTreeAsText(convertColor<SRGBA<uint8_t>>(color), useColorFunctionSerialization, std::forward<Maker>(maker));
 }
 
 // MARK: HWBA<float> overloads
 
-String serializationForCSS(const HWBA<float>& color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForCSS(const HWBA<float>& color, bool useColorFunctionSerialization, Maker&& maker)
 {
     // FIXME: The spec is not completely clear on whether missing components should be
     // carried forward here, but it seems like people are leaning toward thinking they
     // should be. See https://github.com/w3c/csswg-drafts/issues/10254.
 
     if (useColorFunctionSerialization)
-        return serializationForCSS(convertColorCarryingForwardMissing<ExtendedSRGBA<float>>(color), true);
+        return serializationForCSS(convertColorCarryingForwardMissing<ExtendedSRGBA<float>>(color), true, std::forward<Maker>(maker));
 
-    return serializationForCSS(convertColor<SRGBA<uint8_t>>(color), false);
+    return serializationForCSS(convertColor<SRGBA<uint8_t>>(color), false, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const HWBA<float>& color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForHTML(const HWBA<float>& color, bool useColorFunctionSerialization, Maker&& maker)
 {
-    return serializationForHTML(convertColor<SRGBA<uint8_t>>(color), useColorFunctionSerialization);
+    return serializationForHTML(convertColor<SRGBA<uint8_t>>(color), useColorFunctionSerialization, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const HWBA<float>& color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const HWBA<float>& color, bool useColorFunctionSerialization, Maker&& maker)
 {
-    return serializationForRenderTreeAsText(convertColor<SRGBA<uint8_t>>(color), useColorFunctionSerialization);
+    return serializationForRenderTreeAsText(convertColor<SRGBA<uint8_t>>(color), useColorFunctionSerialization, std::forward<Maker>(maker));
 }
 
 // MARK: LCHA<float> overloads
 
-String serializationForCSS(const LCHA<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForCSS(const LCHA<float>& color, bool, Maker&& maker)
 {
-    return serializationOfLCHLikeColorsForCSS(color);
+    return serializationOfLCHLikeColorsForCSS(color, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const LCHA<float>& color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForHTML(const LCHA<float>& color, bool useColorFunctionSerialization, Maker&& maker)
 {
-    return serializationForCSS(color, useColorFunctionSerialization);
+    return serializationForCSS(color, useColorFunctionSerialization, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const LCHA<float>& color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const LCHA<float>& color, bool useColorFunctionSerialization, Maker&& maker)
 {
-    return serializationForCSS(color, useColorFunctionSerialization);
+    return serializationForCSS(color, useColorFunctionSerialization, std::forward<Maker>(maker));
 }
 
 // MARK: Lab<float> overloads
 
-String serializationForCSS(const Lab<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForCSS(const Lab<float>& color, bool, Maker&& maker)
 {
-    return serializationOfLabLikeColorsForCSS(color);
+    return serializationOfLabLikeColorsForCSS(color, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const Lab<float>& color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForHTML(const Lab<float>& color, bool useColorFunctionSerialization, Maker&& maker)
 {
-    return serializationForCSS(color, useColorFunctionSerialization);
+    return serializationForCSS(color, useColorFunctionSerialization, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const Lab<float>& color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const Lab<float>& color, bool useColorFunctionSerialization, Maker&& maker)
 {
-    return serializationForCSS(color, useColorFunctionSerialization);
+    return serializationForCSS(color, useColorFunctionSerialization, std::forward<Maker>(maker));
 }
 
 // MARK: LinearSRGBA<float> overloads
 
-String serializationForCSS(const LinearSRGBA<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForCSS(const LinearSRGBA<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const LinearSRGBA<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForHTML(const LinearSRGBA<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const LinearSRGBA<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const LinearSRGBA<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
 // MARK: OKLCHA<float> overloads
 
-String serializationForCSS(const OKLCHA<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForCSS(const OKLCHA<float>& color, bool, Maker&& maker)
 {
-    return serializationOfLCHLikeColorsForCSS(color);
+    return serializationOfLCHLikeColorsForCSS(color, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const OKLCHA<float>& color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForHTML(const OKLCHA<float>& color, bool useColorFunctionSerialization, Maker&& maker)
 {
-    return serializationForCSS(color, useColorFunctionSerialization);
+    return serializationForCSS(color, useColorFunctionSerialization, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const OKLCHA<float>& color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const OKLCHA<float>& color, bool useColorFunctionSerialization, Maker&& maker)
 {
-    return serializationForCSS(color, useColorFunctionSerialization);
+    return serializationForCSS(color, useColorFunctionSerialization, std::forward<Maker>(maker));
 }
 
 // MARK: OKLab<float> overloads
 
-String serializationForCSS(const OKLab<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForCSS(const OKLab<float>& color, bool, Maker&& maker)
 {
-    return serializationOfLabLikeColorsForCSS(color);
+    return serializationOfLabLikeColorsForCSS(color, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const OKLab<float>& color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForHTML(const OKLab<float>& color, bool useColorFunctionSerialization, Maker&& maker)
 {
-    return serializationForCSS(color, useColorFunctionSerialization);
+    return serializationForCSS(color, useColorFunctionSerialization, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const OKLab<float>& color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const OKLab<float>& color, bool useColorFunctionSerialization, Maker&& maker)
 {
-    return serializationForCSS(color, useColorFunctionSerialization);
+    return serializationForCSS(color, useColorFunctionSerialization, std::forward<Maker>(maker));
 }
 
 // MARK: ProPhotoRGB<float> overloads
 
-String serializationForCSS(const ProPhotoRGB<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForCSS(const ProPhotoRGB<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const ProPhotoRGB<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForHTML(const ProPhotoRGB<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const ProPhotoRGB<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const ProPhotoRGB<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
 // MARK: Rec2020<float> overloads
 
-String serializationForCSS(const Rec2020<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForCSS(const Rec2020<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const Rec2020<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForHTML(const Rec2020<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const Rec2020<float>& color, bool)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const Rec2020<float>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
 // MARK: SRGBA<float> overloads
 
-String serializationForCSS(const SRGBA<float>& color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForCSS(const SRGBA<float>& color, bool useColorFunctionSerialization, Maker&& maker)
 {
     if (useColorFunctionSerialization)
-        return serializationUsingColorFunction(color);
+        return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 
-    return serializationForCSS(convertColor<SRGBA<uint8_t>>(color), false);
+    return serializationForCSS(convertColor<SRGBA<uint8_t>>(color), false, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const SRGBA<float>& color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForHTML(const SRGBA<float>& color, bool useColorFunctionSerialization, Maker&& maker)
 {
-    return serializationForCSS(color, useColorFunctionSerialization);
+    return serializationForCSS(color, useColorFunctionSerialization, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const SRGBA<float>& color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const SRGBA<float>& color, bool useColorFunctionSerialization, Maker&& maker)
 {
-    return serializationForCSS(color, useColorFunctionSerialization);
+    return serializationForCSS(color, useColorFunctionSerialization, std::forward<Maker>(maker));
 }
 
 // MARK: SRGBA<uint8_t> overloads
@@ -580,76 +674,76 @@ static std::array<char, 4> fractionDigitsForFractionalAlphaValue(uint8_t alpha)
     return { { decimalDigit((alpha * 10 + 0x7F) / 0xFF), '\0', '\0', '\0' } };
 }
 
-String serializationForCSS(SRGBA<uint8_t> color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForCSS(SRGBA<uint8_t> color, bool useColorFunctionSerialization, Maker&& maker)
 {
     if (useColorFunctionSerialization)
-        return serializationUsingColorFunction(color);
+        return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 
     auto [red, green, blue, alpha] = color.resolved();
     switch (alpha) {
     case 0:
-        return makeString("rgba("_s, red, ", "_s, green, ", "_s, blue, ", 0)"_s);
+        return maker("rgba("_s, red, ", "_s, green, ", "_s, blue, ", 0)"_s);
     case 0xFF:
-        return makeString("rgb("_s, red, ", "_s, green, ", "_s, blue, ')');
+        return maker("rgb("_s, red, ", "_s, green, ", "_s, blue, ')');
     default:
-        return makeString("rgba("_s, red, ", "_s, green, ", "_s, blue, ", 0."_s, span(fractionDigitsForFractionalAlphaValue(alpha).data()), ')');
+        return maker("rgba("_s, red, ", "_s, green, ", "_s, blue, ", 0."_s, span(fractionDigitsForFractionalAlphaValue(alpha).data()), ')');
     }
 }
 
-String serializationForHTML(SRGBA<uint8_t> color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForHTML(SRGBA<uint8_t> color, bool useColorFunctionSerialization, Maker&& maker)
 {
     if (useColorFunctionSerialization)
-        return serializationUsingColorFunction(color);
+        return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 
     auto [red, green, blue, alpha] = color.resolved();
     if (alpha == 0xFF)
-        return makeString('#', hex(red, 2, Lowercase), hex(green, 2, Lowercase), hex(blue, 2, Lowercase));
-    return serializationForCSS(color);
+        return maker('#', hex(red, 2, Lowercase), hex(green, 2, Lowercase), hex(blue, 2, Lowercase));
+    return serializationForCSS(color, false, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(SRGBA<uint8_t> color, bool useColorFunctionSerialization)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(SRGBA<uint8_t> color, bool useColorFunctionSerialization, Maker&& maker)
 {
     if (useColorFunctionSerialization)
-        return serializationUsingColorFunction(color);
+        return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 
     auto [red, green, blue, alpha] = color.resolved();
     if (alpha < 0xFF)
-        return makeString('#', hex(red, 2), hex(green, 2), hex(blue, 2), hex(alpha, 2));
-    return makeString('#', hex(red, 2), hex(green, 2), hex(blue, 2));
+        return maker('#', hex(red, 2), hex(green, 2), hex(blue, 2), hex(alpha, 2));
+    return maker('#', hex(red, 2), hex(green, 2), hex(blue, 2));
 }
 
 // MARK: XYZA<float, WhitePoint::D50> overloads
 
-String serializationForCSS(const XYZA<float, WhitePoint::D50>& color, bool)
+template<typename Maker> typename Maker::Result serializationForCSS(const XYZA<float, WhitePoint::D50>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const XYZA<float, WhitePoint::D50>& color, bool)
+template<typename Maker> typename Maker::Result serializationForHTML(const XYZA<float, WhitePoint::D50>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const XYZA<float, WhitePoint::D50>& color, bool)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const XYZA<float, WhitePoint::D50>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
 // MARK: XYZA<float, WhitePoint::D65> overloads
 
-String serializationForCSS(const XYZA<float, WhitePoint::D65>& color, bool)
+template<typename Maker> typename Maker::Result serializationForCSS(const XYZA<float, WhitePoint::D65>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForHTML(const XYZA<float, WhitePoint::D65>& color, bool)
+template<typename Maker> typename Maker::Result serializationForHTML(const XYZA<float, WhitePoint::D65>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
-String serializationForRenderTreeAsText(const XYZA<float, WhitePoint::D65>& color, bool)
+template<typename Maker> typename Maker::Result serializationForRenderTreeAsText(const XYZA<float, WhitePoint::D65>& color, bool, Maker&& maker)
 {
-    return serializationUsingColorFunction(color);
+    return serializationUsingColorFunction(color, std::forward<Maker>(maker));
 }
 
 }

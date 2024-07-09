@@ -42,7 +42,9 @@ public:
     std::optional<IntPoint> hotSpot() const { return m_hotSpot; }
 
     const URL& imageURL() const { return m_originalURL; }
-    String customCSSText() const;
+
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSCursorImageValue&) const;
 
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
