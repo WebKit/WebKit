@@ -580,7 +580,7 @@ public:
         auto result = transitAndNext(vm, storage, entry);
         if (!result.storage)
             return vm.orderedHashTableSentinel();
-        set(storage, iterationEntryIndex(), result.entry);
+        set(*result.storage, iterationEntryIndex(), result.entry);
         return result.storage;
     }
     ALWAYS_INLINE static JSValue getIterationEntry(Storage& storage) { return toJSValue(iterationEntry(storage)); }
