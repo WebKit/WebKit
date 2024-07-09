@@ -1619,7 +1619,7 @@ void LocalFrameView::removeViewportConstrainedObject(RenderLayerModelObject& obj
         // why isn't the same check being made here?
         updateCanBlitOnScrollRecursively();
 
-        if (RefPtr page = m_frame->page())
+        if (RefPtrAllowingPartiallyDestroyed<Page> page = m_frame->page())
             page->chrome().client().didAddOrRemoveViewportConstrainedObjects();
     }
 }
