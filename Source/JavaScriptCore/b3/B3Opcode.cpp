@@ -234,6 +234,12 @@ void printInternal(PrintStream& out, Opcode opcode)
     case Trunc:
         out.print("Trunc");
         return;
+    case TruncHigh:
+        out.print("TruncHigh");
+        return;
+    case Stitch:
+        out.print("Stitch");
+        return;
     case IToD:
         out.print("IToD");
         return;

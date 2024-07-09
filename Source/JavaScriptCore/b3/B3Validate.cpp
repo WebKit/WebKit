@@ -300,6 +300,20 @@ public:
                     || (value->type() == Float && value->child(0)->type() == Double),
                     ("At ", *value));
                 break;
+            case TruncHigh:
+                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
+                VALIDATE(value->numChildren() == 1, ("At ", *value));
+                VALIDATE(
+                    (value->type() == Int32 && value->child(0)->type() == Int64),
+                    ("At ", *value));
+                break;
+            case Stitch:
+                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
+                VALIDATE(value->numChildren() == 2, ("At ", *value));
+                VALIDATE(value->type() == Int64, ("At ", *value));
+                VALIDATE(value->child(0)->type() == Int32, ("At ", *value));
+                VALIDATE(value->child(1)->type() == Int32, ("At ", *value));
+                break;
             case Abs:
             case Ceil:
             case Floor:

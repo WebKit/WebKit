@@ -39,6 +39,7 @@
 #include "B3HoistLoopInvariantValues.h"
 #include "B3InferSwitches.h"
 #include "B3LegalizeMemoryOffsets.h"
+#include "B3LowerInt64.h"
 #include "B3LowerMacros.h"
 #include "B3LowerMacrosAfterOptimizations.h"
 #include "B3LowerToAir.h"
@@ -102,6 +103,9 @@ void generateToAir(Procedure& procedure)
         reduceStrength(procedure);
     }
 
+#if USE(JSVALUE32_64)
+    lowerInt64(procedure);
+#endif
     // This puts the IR in quirks mode.
     lowerMacros(procedure);
 
