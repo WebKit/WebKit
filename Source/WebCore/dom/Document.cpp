@@ -10716,7 +10716,7 @@ PermissionsPolicy Document::permissionsPolicy() const
     // because Document may not be set on Frame yet, and it would affect the computation
     // of PermissionsPolicy.
     if (!m_permissionsPolicy)
-        m_permissionsPolicy = makeUnique<PermissionsPolicy>(ownerElement(), securityOrigin().data());
+        m_permissionsPolicy = makeUnique<PermissionsPolicy>(*this);
 
     return *m_permissionsPolicy;
 }
