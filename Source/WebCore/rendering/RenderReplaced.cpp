@@ -302,8 +302,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         if (!completelyClippedOut) {
             // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
             paintInfo.context().save();
-            auto pixelSnappedRoundedRect = style().getRoundedInnerBorderFor(paintRect,
-                paddingTop() + borderTop(), paddingBottom() + borderBottom(), paddingLeft() + borderLeft(), paddingRight() + borderRight(), true, true).pixelSnappedRoundedRectForPainting(document().deviceScaleFactor());
+            auto pixelSnappedRoundedRect = roundedContentBoxRect(paintRect).pixelSnappedRoundedRectForPainting(document().deviceScaleFactor());
             BackgroundPainter::clipRoundedInnerRect(paintInfo.context(), paintRect, pixelSnappedRoundedRect);
         }
     }
@@ -525,13 +524,6 @@ double RenderReplaced::computeIntrinsicAspectRatio() const
     FloatSize intrinsicSize;
     computeAspectRatioInformationForRenderBox(embeddedContentBox(), intrinsicSize, intrinsicRatio);
     return intrinsicRatio.aspectRatioDouble();
-}
-
-RoundedRect RenderReplaced::roundedContentBoxRect() const
-{
-    return style().getRoundedInnerBorderFor(borderBoxRect(),
-        borderTop() + paddingTop(), borderBottom() + paddingBottom(),
-        borderLeft() + paddingLeft(), borderRight() + paddingRight());
 }
 
 void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, FloatSize& intrinsicRatio) const

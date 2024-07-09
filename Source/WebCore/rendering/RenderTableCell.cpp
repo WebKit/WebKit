@@ -324,6 +324,31 @@ void RenderTableCell::layout()
     setCellWidthChanged(false);
 }
 
+RectEdges<LayoutUnit> RenderTableCell::padding() const
+{
+    auto top = computedCSSPaddingTop();
+    auto right = computedCSSPaddingRight();
+    auto bottom = computedCSSPaddingBottom();
+    auto left = computedCSSPaddingLeft();
+
+    if (isHorizontalWritingMode()) {
+        bool isTopToBottom = style().blockFlowDirection() == BlockFlowDirection::TopToBottom;
+        top += isTopToBottom ? intrinsicPaddingBefore() : intrinsicPaddingAfter();
+        bottom += isTopToBottom ? intrinsicPaddingAfter() : intrinsicPaddingBefore();
+    } else {
+        bool isLeftToRight = style().blockFlowDirection() == BlockFlowDirection::LeftToRight;
+        left += isLeftToRight ? intrinsicPaddingBefore() : intrinsicPaddingAfter();
+        right += isLeftToRight ? intrinsicPaddingAfter() : intrinsicPaddingBefore();
+    }
+
+    return {
+        top,
+        right,
+        bottom,
+        left
+    };
+}
+
 LayoutUnit RenderTableCell::paddingTop() const
 {
     LayoutUnit result = computedCSSPaddingTop();

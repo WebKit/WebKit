@@ -867,6 +867,16 @@ bool RenderBoxModelObject::borderObscuresBackground() const
     return true;
 }
 
+RoundedRect RenderBoxModelObject::roundedContentBoxRect(const LayoutRect& borderBoxRect, bool includeLeftEdge, bool includeRightEdge) const
+{
+    auto borderWidths = this->borderWidths();
+    auto padding = this->padding();
+    return style().getRoundedInnerBorderFor(borderBoxRect,
+        borderWidths.top() + padding.top(), borderWidths.bottom() + padding.bottom(),
+        borderWidths.left() + padding.left(), borderWidths.right() + padding.right(),
+        includeLeftEdge, includeRightEdge);
+}
+
 LayoutUnit RenderBoxModelObject::containingBlockLogicalWidthForContent() const
 {
     if (auto* containingBlock = this->containingBlock())
