@@ -41,6 +41,7 @@
 #include "ThreadTimers.h"
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/RunLoop.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

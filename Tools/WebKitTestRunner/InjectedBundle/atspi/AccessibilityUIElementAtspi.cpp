@@ -39,6 +39,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/unicode/CharacterNames.h>

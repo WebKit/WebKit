@@ -28,7 +28,7 @@
 #include "ProcessIdentifier.h"
 #include <wtf/Hasher.h>
 #include <wtf/Markable.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

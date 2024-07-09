@@ -31,6 +31,4 @@ messages -> WebPageTesting NotRefCounted {
 #endif
 
     ClearWheelEventTestMonitor()
-
-    ClearOpener()
 }

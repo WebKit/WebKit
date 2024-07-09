@@ -895,9 +895,6 @@ test/built-ins/TypedArray/prototype/includes/index-compared-against-initial-leng
 test/built-ins/TypedArrayConstructors/ctors/object-arg/iterated-array-changed-by-tonumber.js:
   default: 'Test262Error: Expected SameValue(«NaN», «2») to be true (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected SameValue(«NaN», «2») to be true (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/object-arg/iterated-array-with-modified-array-iterator.js:
-  default: 'Test262Error: Expected SameValue(«1», «4») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected SameValue(«1», «4») to be true (Testing with Float64Array.)'
 test/harness/temporalHelpers-sample-time-zones.js:
   default: "TypeError: realTz.getOffsetNanosecondsFor is not a function. (In 'realTz.getOffsetNanosecondsFor(shiftInstant)', 'realTz.getOffsetNanosecondsFor' is undefined)"
   strict mode: "TypeError: realTz.getOffsetNanosecondsFor is not a function. (In 'realTz.getOffsetNanosecondsFor(shiftInstant)', 'realTz.getOffsetNanosecondsFor' is undefined)"
@@ -949,6 +946,9 @@ test/intl402/Locale/prototype/firstDayOfWeek/valid-options.js:
 test/intl402/Locale/prototype/getWeekInfo/firstDay-by-option.js:
   default: 'Test262Error: new Intl.Locale("en", { firstDayOfWeek: mon }).getWeekInfo().firstDay returns "1" Expected SameValue(«7», «1») to be true'
   strict mode: 'Test262Error: new Intl.Locale("en", { firstDayOfWeek: mon }).getWeekInfo().firstDay returns "1" Expected SameValue(«7», «1») to be true'
+test/intl402/NumberFormat/prototype/format/useGrouping-extended-en-IN.js:
+  default: 'Test262Error: notation: "compact" Expected SameValue(«1K», «1T») to be true'
+  strict mode: 'Test262Error: notation: "compact" Expected SameValue(«1K», «1T») to be true'
 test/intl402/Temporal/Duration/compare/relativeto-sub-minute-offset.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
@@ -1109,8 +1109,6 @@ test/language/expressions/yield/star-rhs-iter-rtrn-res-done-no-value.js:
 test/language/expressions/yield/star-rhs-iter-thrw-res-done-no-value.js:
   default: 'Test262Error: access count (second iteration) Expected SameValue(«1», «0») to be true'
   strict mode: 'Test262Error: access count (second iteration) Expected SameValue(«1», «0») to be true'
-test/language/global-code/script-decl-lex-var-declared-via-eval.js:
-  default: "SyntaxError: Can't create duplicate variable: 'test262Var'"
 test/language/identifier-resolution/assign-to-global-undefined.js:
   strict mode: Expected uncaught exception with name 'ReferenceError' but none was thrown
 test/language/import/import-assertions/json-extensibility-array.js:

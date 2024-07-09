@@ -156,6 +156,13 @@ void ServiceWorkerFetchTask::start(WebSWServerToContextConnection& serviceWorker
     startFetch();
 }
 
+void ServiceWorkerFetchTask::workerClosed()
+{
+    if (CheckedPtr serviceWorkerConnection = m_serviceWorkerConnection.get())
+        serviceWorkerConnection->unregisterFetch(*this);
+    contextClosed();
+}
+
 void ServiceWorkerFetchTask::contextClosed()
 {
     SWFETCH_RELEASE_LOG("contextClosed: (m_isDone=%d, m_wasHandled=%d)", m_isDone, m_wasHandled);

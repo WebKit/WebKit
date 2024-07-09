@@ -443,14 +443,14 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
         successHandler(success);
     });
     auto alert = WebKit::createUIAlertController(WEB_UI_NSSTRING(@"Open this 3D model?", "Open this 3D model?"), nil);
-    UIAlertAction* allowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING(@"Allow (usdz QuickLook Preview)", "Allow") style:UIAlertActionStyleDefault handler:[weakThis = WeakPtr { *this }](UIAlertAction *) mutable {
+    UIAlertAction* allowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING_KEY(@"Allow", @"Allow (usdz QuickLook Preview)", "Allow displaying QuickLook Preview of 3D model") style:UIAlertActionStyleDefault handler:[weakThis = WeakPtr { *this }](UIAlertAction *) mutable {
         if (!weakThis)
             return;
 
         std::exchange(weakThis->m_allowPreviewCallback, nullptr)(true);
     }];
 
-    UIAlertAction* doNotAllowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING(@"Cancel (usdz QuickLook Preview)", "Cancel") style:UIAlertActionStyleCancel handler:[weakThis = WeakPtr { *this }](UIAlertAction *) mutable {
+    UIAlertAction* doNotAllowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING_KEY(@"Cancel", @"Cancel (usdz QuickLook Preview)", "Cancel displaying QuickLook Preview of 3D model") style:UIAlertActionStyleCancel handler:[weakThis = WeakPtr { *this }](UIAlertAction *) mutable {
         if (!weakThis)
             return;
 

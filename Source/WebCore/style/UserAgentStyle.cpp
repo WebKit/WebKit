@@ -65,6 +65,7 @@
 #include "StyleSheetContents.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 namespace Style {
@@ -205,7 +206,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
     if (is<HTMLElement>(element)) {
         if (is<HTMLObjectElement>(element) || is<HTMLEmbedElement>(element)) {
             if (!plugInsStyleSheet && element.document().page()) {
-                String plugInsRules = RenderTheme::singleton().extraPlugInsStyleSheet() + element.document().page()->chrome().client().plugInExtraStyleSheet();
+                auto plugInsRules = makeString(RenderTheme::singleton().extraPlugInsStyleSheet(),  element.document().page()->chrome().client().plugInExtraStyleSheet());
                 if (plugInsRules.isEmpty())
                     plugInsRules = String(StringImpl::createWithoutCopying(plugInsUserAgentStyleSheet));
                 plugInsStyleSheet = parseUASheet(plugInsRules);
@@ -217,10 +218,9 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
             if (!mediaControlsStyleSheet) {
                 String mediaRules = RenderTheme::singleton().mediaControlsStyleSheet();
                 if (mediaRules.isEmpty())
-                    mediaRules = String(StringImpl::createWithoutCopying(mediaControlsUserAgentStyleSheet)) + RenderTheme::singleton().extraMediaControlsStyleSheet();
+                    mediaRules = makeString(String(StringImpl::createWithoutCopying(mediaControlsUserAgentStyleSheet)), RenderTheme::singleton().extraMediaControlsStyleSheet());
                 mediaControlsStyleSheet = parseUASheet(mediaRules);
                 addToDefaultStyle(*mediaControlsStyleSheet);
-
             }
         }
 #endif // ENABLE(VIDEO) && !ENABLE(MODERN_MEDIA_CONTROLS)

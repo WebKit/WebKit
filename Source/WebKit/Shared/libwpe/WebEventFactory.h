@@ -58,6 +58,7 @@ public:
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     static WebMouseEvent createWebMouseEvent(WPEEvent*);
     static WebWheelEvent createWebWheelEvent(WPEEvent*);
+    static WebWheelEvent createWebWheelEvent(WPEEvent*, WebWheelEvent::Phase);
     static WebKeyboardEvent createWebKeyboardEvent(WPEEvent*, const String&, bool isAutoRepeat);
 #if ENABLE(TOUCH_EVENTS)
     static WebTouchEvent createWebTouchEvent(WPEEvent*, Vector<WebPlatformTouchPoint>&&);

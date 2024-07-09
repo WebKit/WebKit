@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
 
 #include "NotificationManagerMessageHandler.h"
 #include "WebPushDaemonConnection.h"
@@ -56,7 +56,6 @@ public:
     NetworkSession& networkSession() const { return m_networkSession; }
 
     void setPushAndNotificationsEnabledForOrigin(const WebCore::SecurityOriginData&, bool, CompletionHandler<void()>&&);
-    void deletePushAndNotificationRegistration(const WebCore::SecurityOriginData&, CompletionHandler<void(const String&)>&&);
     void getPendingPushMessages(CompletionHandler<void(const Vector<WebPushMessage>&)>&&);
 
     void subscribeToPushService(URL&& scopeURL, Vector<uint8_t>&& applicationServerKey, CompletionHandler<void(Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&)>&&);
@@ -82,4 +81,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(BUILT_IN_NOTIFICATIONS)
+#endif // ENABLE(WEB_PUSH_NOTIFICATIONS)

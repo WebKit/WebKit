@@ -72,10 +72,7 @@
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/cocoa/NSURLExtras.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/MultiRepresentationHEICAdditions.h>
-#endif
+#import <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -401,7 +398,7 @@ void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data,
 {
     auto document = protectedDocument();
 
-    String primaryType = MULTI_REPRESENTATION_HEIC_MIME_TYPE_STRING;
+    String primaryType = "image/x-apple-adaptive-glyph"_s;
     auto primaryBuffer = FragmentedSharedBuffer::create(data);
 
     String fallbackType = "image/png"_s;
@@ -424,7 +421,7 @@ void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data,
     auto fragment = document->createDocumentFragment();
     fragment->appendChild(WTFMove(picture));
 
-    ReplaceSelectionCommand::create(document.get(), WTFMove(fragment), ReplaceSelectionCommand::PreventNesting, EditAction::Insert)->apply();
+    ReplaceSelectionCommand::create(document.get(), WTFMove(fragment), { ReplaceSelectionCommand::MatchStyle, ReplaceSelectionCommand::PreventNesting }, EditAction::Insert)->apply();
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (DeprecatedGlobalSettings::attachmentElementEnabled()) {

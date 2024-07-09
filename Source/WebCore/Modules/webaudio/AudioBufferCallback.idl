@@ -30,4 +30,5 @@
 [
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
+    IsStrongCallback
 ] callback AudioBufferCallback = undefined (AudioBuffer? audioBuffer);

@@ -47,6 +47,7 @@
 #import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/text/MakeString.h>
 
 namespace TestWebKitAPI {
 

@@ -45,19 +45,16 @@ Arg <- QuotedArg / [[0-9a-z%+\-*_@.]]*
 QuotedArg <- '"' QuotedText '"'
 QuotedText <- (EscapedChar / [^"])*
 LabelContainingDirective <- LabelContainingDirectiveName WS SymbolArgs
-LabelContainingDirectiveName <- ".xword" / ".word" / ".long" / ".set" / ".byte" / ".8byte" / ".4byte" / ".quad" / ".tc" / ".localentry" / ".size" / ".type" / ".uleb128" / ".sleb128"
+LabelContainingDirectiveName <- ".xword" / ".word" / ".hword" / ".long" / ".set" / ".byte" / ".8byte" / ".4byte" / ".quad" / ".tc" / ".localentry" / ".size" / ".type" / ".uleb128" / ".sleb128"
 SymbolArgs <- SymbolArg ((WS? ',' WS?) SymbolArg)*
-SymbolShift <- ('<<' / '>>') WS? [0-9]+
-SymbolArg <- (OpenParen WS?)? (
-               Offset /
-               SymbolType /
-               (Offset / LocalSymbol / SymbolName / Dot) (WS? Operator WS? (Offset / LocalSymbol / SymbolName))* /
-               LocalSymbol TCMarker? /
-               SymbolName Offset /
-               SymbolName TCMarker?)
-             (WS? CloseParen)? (WS? SymbolShift)?
+
+SymbolArg <- SymbolExpr
+SymbolExpr <- SymbolAtom (WS? SymbolOperator WS? SymbolExpr)?
+SymbolAtom <- Offset / SymbolType / LocalSymbol TCMarker? / SymbolName Offset / SymbolName TCMarker? / Dot / OpenParen WS? SymbolExpr WS? CloseParen
+SymbolOperator <- '+' / '-' / '|' / '<<' / '>>'
 OpenParen <- '('
 CloseParen <- ')'
+
 SymbolType <- [@%] ('function' / 'object')
 Dot <- '.'
 TCMarker <- '[TC]'
@@ -71,8 +68,9 @@ LocalLabel <- [0-9][0-9$]*
 LocalLabelRef <- [0-9][0-9$]*[bf]
 Instruction <- InstructionName (WS InstructionArg ((WS? ',' WS?) InstructionArg)*)?
 InstructionName <- [[A-Z]][[A-Z.0-9]]* [.+\-]?
-InstructionArg <- IndirectionIndicator? (ARMConstantTweak / RegisterOrConstant / LocalLabelRef / TOCRefHigh / TOCRefLow / GOTLocation / GOTSymbolOffset / MemoryRef) AVX512Token*
+InstructionArg <- IndirectionIndicator? (ARMConstantTweak / RegisterOrConstant / LocalLabelRef / TOCRefHigh / TOCRefLow / GOTLocation / GOTAddress / GOTSymbolOffset / MemoryRef) AVX512Token*
 GOTLocation <- '$_GLOBAL_OFFSET_TABLE_-' LocalSymbol
+GOTAddress <- '_GLOBAL_OFFSET_TABLE_(%rip)'
 GOTSymbolOffset <- ('$' SymbolName '@GOT' 'OFF'?) / (":got:" SymbolName)
 AVX512Token <- WS? '{' '%'? [0-9a-z]* '}'
 TOCRefHigh <- '.TOC.-' ('0b' / ('.L' [a-zA-Z_0-9]+)) "@ha"
@@ -84,9 +82,17 @@ RegisterOrConstant <- (('%'[[A-Z]][[A-Z0-9]]*) /
                        ('#' '~'? '(' [0-9] WS? "<<" WS? [0-9] ')' ) /
                        ARMRegister)
                       ![fb:(+\-]
-ARMConstantTweak <- (([us] "xt" [xwhb]) / "lsl" / "lsr" / "ror" / "asr") (WS '#' Offset)?
-ARMRegister <- "sp" / ([xwdqshb] [0-9] [0-9]?) / "xzr" / "wzr" / "NZCV" / ARMVectorRegister / ('{' WS? ARMVectorRegister (',' WS? ARMVectorRegister)* WS? '}' ('[' [0-9] [0-9]? ']')? )
-ARMVectorRegister <- "v" [0-9] [0-9]? ('.' [0-9]* [bsdhq] ('[' [0-9] [0-9]? ']')? )?
+ARMConstantTweak <- ((([us] "xt" [xwhb]) / "lsl" / "lsr" / "ror" / "asr") (WS '#' Offset)?) /
+                    "mul vl"  / # multiply offset by the hardware's vector length
+                    "mul #" [0-9]
+ARMRegister <- "sp" /
+               ([xwdqshb] [0-9] [0-9]?) /
+               "xzr" / "wzr" / "NZCV" / SVE2PredicateRegister / ARMVectorRegister / SVE2SpecialValue /
+               ('{' WS? ARMVectorRegister (',' WS? ARMVectorRegister)* WS? '}' ('[' [0-9] [0-9]? ']')? )
+ARMVectorRegister <- [pvz] [0-9] [0-9]? ![[0-9a-z_]] ('.' [0-9]* [bsdhq] ('[' [0-9] [0-9]? ']')? )?
+SVE2PredicateRegister <- "p" [0-9] [0-9]? "/" [[mz]]
+# https://developer.arm.com/documentation/ddi0596/2020-12/SVE-Instructions/INCD--INCH--INCW--vector---Increment-vector-by-multiple-of-predicate-constraint-element-count-
+SVE2SpecialValue <- ("pow2" / ("vl" [12345678] ![0-9] ) / "vl16" / "vl32" / "vl64" / "vl128" / "vl256" / "mul3" / "mul4" / "all") ![[0-9a-z_]]
 # Compilers only output a very limited number of expression forms. Rather than
 # implement a full expression parser, this enumerate those forms plus a few
 # that appear in our hand-written assembly.

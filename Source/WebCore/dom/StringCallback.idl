@@ -29,5 +29,6 @@
  */
 
 [
-    ExportMacro=WEBCORE_EXPORT
+    ExportMacro=WEBCORE_EXPORT,
+    IsStrongCallback
 ] callback StringCallback = undefined (DOMString data);

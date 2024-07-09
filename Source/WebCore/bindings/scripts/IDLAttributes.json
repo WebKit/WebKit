@@ -269,7 +269,7 @@
         "IsImmutablePrototypeExoticObjectOnPrototype": {
             "contextsAllowed": ["interface"]
         },
-        "IsWeakCallback": {
+        "IsStrongCallback": {
             "contextsAllowed": ["callback-function", "interface"]
         },
         "JSBuiltin": {

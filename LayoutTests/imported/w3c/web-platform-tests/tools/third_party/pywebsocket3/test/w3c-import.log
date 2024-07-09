@@ -1,0 +1,32 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/client_for_testing.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/mock.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/run_all.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/set_sys_path.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/test_dispatch.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/test_endtoend.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/test_extensions.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/test_handshake.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/test_handshake_hybi.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/test_http_header_util.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/test_memorizingfile.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/test_mock.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/test_msgutil.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/test_stream.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/test_util.py

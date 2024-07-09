@@ -36,7 +36,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/SetForScope.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WGSL {
 
@@ -366,8 +366,7 @@ void RewriteGlobalVariables::visit(AST::CompoundStatement& statement)
 
 void RewriteGlobalVariables::visit(AST::CompoundAssignmentStatement& statement)
 {
-    Packing lhsPacking = pack(Packing::Either, statement.leftExpression());
-    ASSERT(lhsPacking != Packing::Either);
+    Packing lhsPacking = pack(Packing::Unpacked, statement.leftExpression());
     pack(lhsPacking, statement.rightExpression());
 }
 

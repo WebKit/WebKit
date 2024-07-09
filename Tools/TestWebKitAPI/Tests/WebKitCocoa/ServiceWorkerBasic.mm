@@ -63,7 +63,7 @@
 #import <wtf/URL.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 

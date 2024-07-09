@@ -1,0 +1,44 @@
+# Copyright (c) 2024, Google Inc.
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+# SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
+# OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+# CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+# This is a bazelrc file, documented in https://bazel.build/run/bazelrc and
+# specifies default flags when BoringSSL is the root project. It has no effect
+# on downstream projects, which define their own toolchains and configs.
+
+# See https://bazel.build/run/bazelrc#enable_platform_specific_config.
+# This expands to --config=osname which, in turn, expands to the options
+# specified below.
+build --enable_platform_specific_config
+
+# Enable additional checks.
+build --features=layering_check
+build --features=parse_headers
+
+# Bazel has no abstractions for setting C++ versions and expects the root
+# project to use the compiler-specific options for their toolchains. (Bazel only
+# wants the root to set the C++ version for the sake of projects like Abseil
+# whose ABI depends on the C++ version.)
+build:linux --cxxopt=-std=c++17
+build:macos --cxxopt=-std=c++17
+build:windows --cxxopt=/std:c++17
+
+# Without setting a minimum macOS version, std::optional does not work.
+build:macos --cxxopt=-mmacosx-version-min=10.15
+
+# Without /Zc:__cplusplus, MSVC does not define the right value for
+# __cplusplus. See https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
+build:windows --cxxopt=/Zc:__cplusplus
+
+# https://bazel.build/configure/best-practices#bazelrc-file
+try-import %workspace%/user.bazelrc

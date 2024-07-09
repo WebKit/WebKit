@@ -31,6 +31,7 @@
 #include "StorageAreaRegistry.h"
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/FileSystem.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 

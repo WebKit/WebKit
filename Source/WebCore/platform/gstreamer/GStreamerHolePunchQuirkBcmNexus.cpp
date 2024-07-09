@@ -22,6 +22,7 @@
 #include "GStreamerHolePunchQuirkBcmNexus.h"
 
 #include "GStreamerCommon.h"
+#include <wtf/text/MakeString.h>
 
 #if USE(GSTREAMER)
 

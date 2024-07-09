@@ -35,6 +35,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RunLoop.h>
+#import <wtf/text/MakeString.h>
 
 namespace TestWebKitAPI {
 

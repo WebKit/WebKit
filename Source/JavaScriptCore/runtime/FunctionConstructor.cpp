@@ -30,6 +30,7 @@
 #include "JSGeneratorFunction.h"
 #include "JSGlobalObject.h"
 #include "JSCInlines.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {

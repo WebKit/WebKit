@@ -18,11 +18,12 @@
 
 
 static int is_valid_code_point(uint32_t v) {
-  // References in the following are to Unicode 9.0.0.
+  // References in the following are to Unicode 15.0.0.
   if (// The Unicode space runs from zero to 0x10ffff (3.4 D9).
       v > 0x10ffff ||
       // Values 0x...fffe, 0x...ffff, and 0xfdd0-0xfdef are permanently reserved
-      // (3.4 D14)
+      // as noncharacters (3.4 D14). See also 23.7. As our APIs are intended for
+      // "open interchange", such as ASN.1, we reject them.
       (v & 0xfffe) == 0xfffe ||
       (v >= 0xfdd0 && v <= 0xfdef) ||
       // Surrogate code points are invalid (3.2 C1).
@@ -38,7 +39,7 @@ static int is_valid_code_point(uint32_t v) {
 // TOP_BITS returns a byte with the top |n| bits set.
 #define TOP_BITS(n) ((uint8_t)~BOTTOM_BITS(8 - (n)))
 
-int cbs_get_utf8(CBS *cbs, uint32_t *out) {
+int CBS_get_utf8(CBS *cbs, uint32_t *out) {
   uint8_t c;
   if (!CBS_get_u8(cbs, &c)) {
     return 0;
@@ -80,7 +81,7 @@ int cbs_get_utf8(CBS *cbs, uint32_t *out) {
   return 1;
 }
 
-int cbs_get_latin1(CBS *cbs, uint32_t *out) {
+int CBS_get_latin1(CBS *cbs, uint32_t *out) {
   uint8_t c;
   if (!CBS_get_u8(cbs, &c)) {
     return 0;
@@ -89,7 +90,7 @@ int cbs_get_latin1(CBS *cbs, uint32_t *out) {
   return 1;
 }
 
-int cbs_get_ucs2_be(CBS *cbs, uint32_t *out) {
+int CBS_get_ucs2_be(CBS *cbs, uint32_t *out) {
   // Note UCS-2 (used by BMPString) does not support surrogates.
   uint16_t c;
   if (!CBS_get_u16(cbs, &c) ||
@@ -100,11 +101,11 @@ int cbs_get_ucs2_be(CBS *cbs, uint32_t *out) {
   return 1;
 }
 
-int cbs_get_utf32_be(CBS *cbs, uint32_t *out) {
+int CBS_get_utf32_be(CBS *cbs, uint32_t *out) {
   return CBS_get_u32(cbs, out) && is_valid_code_point(*out);
 }
 
-size_t cbb_get_utf8_len(uint32_t u) {
+size_t CBB_get_utf8_len(uint32_t u) {
   if (u <= 0x7f) {
     return 1;
   }
@@ -117,7 +118,7 @@ size_t cbb_get_utf8_len(uint32_t u) {
   return 4;
 }
 
-int cbb_add_utf8(CBB *cbb, uint32_t u) {
+int CBB_add_utf8(CBB *cbb, uint32_t u) {
   if (!is_valid_code_point(u)) {
     return 0;
   }
@@ -142,14 +143,14 @@ int cbb_add_utf8(CBB *cbb, uint32_t u) {
   return 0;
 }
 
-int cbb_add_latin1(CBB *cbb, uint32_t u) {
+int CBB_add_latin1(CBB *cbb, uint32_t u) {
   return u <= 0xff && CBB_add_u8(cbb, (uint8_t)u);
 }
 
-int cbb_add_ucs2_be(CBB *cbb, uint32_t u) {
+int CBB_add_ucs2_be(CBB *cbb, uint32_t u) {
   return u <= 0xffff && is_valid_code_point(u) && CBB_add_u16(cbb, (uint16_t)u);
 }
 
-int cbb_add_utf32_be(CBB *cbb, uint32_t u) {
+int CBB_add_utf32_be(CBB *cbb, uint32_t u) {
   return is_valid_code_point(u) && CBB_add_u32(cbb, u);
 }

@@ -197,6 +197,7 @@
 		AD89B6B71E6415080090707F /* MemoryPressureHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD89B6B51E6415080090707F /* MemoryPressureHandler.cpp */; };
 		AD89B6BA1E64150F0090707F /* MemoryPressureHandlerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AD89B6B91E64150F0090707F /* MemoryPressureHandlerCocoa.mm */; };
 		ADF2CE671E39F106006889DB /* MemoryFootprintCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ADF2CE651E39F106006889DB /* MemoryFootprintCocoa.cpp */; };
+		BC5267672C2726D600E422DD /* MakeString.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5267662C2726D600E422DD /* MakeString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2BCFC401F61D13000C9222C /* Language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2BCFC3E1F61D13000C9222C /* Language.cpp */; };
 		C2BCFC421F61D61600C9222C /* LanguageCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2BCFC411F61D61600C9222C /* LanguageCF.cpp */; };
 		C2BCFC551F621F3F00C9222C /* LineEnding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2BCFC531F621F3F00C9222C /* LineEnding.cpp */; };
@@ -595,7 +596,6 @@
 		DDF307D427C086DF006A526F /* TextBreakIteratorICU.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CCDB14D1E566898006C73C0 /* TextBreakIteratorICU.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307D527C086DF006A526F /* LineEnding.h in Headers */ = {isa = PBXBuildFile; fileRef = C2BCFC541F621F3F00C9222C /* LineEnding.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307D627C086DF006A526F /* NullTextBreakIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = DD4901ED27B474D900D7E50D /* NullTextBreakIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF307D727C086DF006A526F /* StringOperators.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4732A151A825B004123FF /* StringOperators.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307D827C086DF006A526F /* StringBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47323151A825B004123FF /* StringBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307D927C086DF006A526F /* StringBuilderInternals.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47325151A825B004123EE /* StringBuilderInternals.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307DA27C086DF006A526F /* SymbolImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA60B1B02426800449739 /* SymbolImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1472,7 +1472,6 @@
 		A8A47327151A825B004123FF /* StringHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringHash.h; sourceTree = "<group>"; };
 		A8A47328151A825B004123FF /* StringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringImpl.cpp; sourceTree = "<group>"; };
 		A8A47329151A825B004123FF /* StringImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringImpl.h; sourceTree = "<group>"; };
-		A8A4732A151A825B004123FF /* StringOperators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringOperators.h; sourceTree = "<group>"; };
 		A8A4732C151A825B004123FF /* TextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextPosition.h; sourceTree = "<group>"; };
 		A8A4732D151A825B004123FF /* WTFString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WTFString.cpp; sourceTree = "<group>"; };
 		A8A4732E151A825B004123FF /* WTFString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WTFString.h; sourceTree = "<group>"; };
@@ -1503,6 +1502,7 @@
 		AD89B6B91E64150F0090707F /* MemoryPressureHandlerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryPressureHandlerCocoa.mm; sourceTree = "<group>"; };
 		ADF2CE641E39F106006889DB /* MemoryFootprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryFootprint.h; sourceTree = "<group>"; };
 		ADF2CE651E39F106006889DB /* MemoryFootprintCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryFootprintCocoa.cpp; sourceTree = "<group>"; };
+		BC5267662C2726D600E422DD /* MakeString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MakeString.h; sourceTree = "<group>"; };
 		C2BCFC3E1F61D13000C9222C /* Language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Language.cpp; sourceTree = "<group>"; };
 		C2BCFC3F1F61D13000C9222C /* Language.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Language.h; sourceTree = "<group>"; };
 		C2BCFC411F61D61600C9222C /* LanguageCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LanguageCF.cpp; sourceTree = "<group>"; };
@@ -2589,6 +2589,7 @@
 				93AC91A718942FC400244939 /* LChar.h */,
 				C2BCFC531F621F3F00C9222C /* LineEnding.cpp */,
 				C2BCFC541F621F3F00C9222C /* LineEnding.h */,
+				BC5267662C2726D600E422DD /* MakeString.h */,
 				DD4901ED27B474D900D7E50D /* NullTextBreakIterator.h */,
 				14E785E71DFB330100209BD1 /* OrdinalNumber.h */,
 				0F95B63620CB5EFD00479635 /* StringBuffer.cpp */,
@@ -2606,7 +2607,6 @@
 				FF8CB4022A88C125004AF498 /* StringHasherInlines.h */,
 				A8A47328151A825B004123FF /* StringImpl.cpp */,
 				A8A47329151A825B004123FF /* StringImpl.h */,
-				A8A4732A151A825B004123FF /* StringOperators.h */,
 				7C3B06E824A116E600FD26C7 /* StringParsingBuffer.h */,
 				E324FAA228C9ADBA007089DF /* StringSearch.h */,
 				CD00360D21501F7800F4ED4C /* StringToIntegerConversion.h */,
@@ -3309,6 +3309,7 @@
 				DD3DC8B627A4BF8E007E5B61 /* MainThread.h in Headers */,
 				DD4901EC27B4748A00D7E50D /* MainThreadData.h in Headers */,
 				5187AC962C08570600549EFE /* MainThreadDispatcher.h in Headers */,
+				BC5267672C2726D600E422DD /* MakeString.h in Headers */,
 				DD3DC8D427A4BF8E007E5B61 /* MallocPtr.h in Headers */,
 				DD3DC89727A4BF8E007E5B61 /* Markable.h in Headers */,
 				DD3DC89427A4BF8E007E5B61 /* MathExtras.h in Headers */,
@@ -3480,7 +3481,6 @@
 				DDF307C927C086DF006A526F /* StringHasher.h in Headers */,
 				FF8CB4032A88C125004AF498 /* StringHasherInlines.h in Headers */,
 				DDF307CB27C086DF006A526F /* StringImpl.h in Headers */,
-				DDF307D727C086DF006A526F /* StringOperators.h in Headers */,
 				DDF307C727C086DF006A526F /* StringParsingBuffer.h in Headers */,
 				DD3DC90427A4BF8E007E5B61 /* StringPrintStream.h in Headers */,
 				E324FAA328C9ADBA007089DF /* StringSearch.h in Headers */,

@@ -60,13 +60,13 @@
 #include <openssl/digest.h>
 #include <openssl/err.h>
 #include <openssl/mem.h>
+#include <openssl/md5.h>
 #include <openssl/obj.h>
+#include <openssl/sha.h>
 #include <openssl/stack.h>
 #include <openssl/x509.h>
-#include <openssl/x509v3.h>
 
 #include "../internal.h"
-#include "../x509v3/internal.h"
 #include "internal.h"
 
 
@@ -90,11 +90,11 @@ X509_NAME *X509_get_issuer_name(const X509 *a) {
   return a->cert_info->issuer;
 }
 
-unsigned long X509_issuer_name_hash(X509 *x) {
-  return (X509_NAME_hash(x->cert_info->issuer));
+uint32_t X509_issuer_name_hash(X509 *x) {
+  return X509_NAME_hash(x->cert_info->issuer);
 }
 
-unsigned long X509_issuer_name_hash_old(X509 *x) {
+uint32_t X509_issuer_name_hash_old(X509 *x) {
   return (X509_NAME_hash_old(x->cert_info->issuer));
 }
 
@@ -110,12 +110,12 @@ const ASN1_INTEGER *X509_get0_serialNumber(const X509 *x509) {
   return x509->cert_info->serialNumber;
 }
 
-unsigned long X509_subject_name_hash(X509 *x) {
-  return (X509_NAME_hash(x->cert_info->subject));
+uint32_t X509_subject_name_hash(X509 *x) {
+  return X509_NAME_hash(x->cert_info->subject);
 }
 
-unsigned long X509_subject_name_hash_old(X509 *x) {
-  return (X509_NAME_hash_old(x->cert_info->subject));
+uint32_t X509_subject_name_hash_old(X509 *x) {
+  return X509_NAME_hash_old(x->cert_info->subject);
 }
 
 // Compare two certificates: they must be identical for this to work. NB:
@@ -167,44 +167,29 @@ int X509_NAME_cmp(const X509_NAME *a, const X509_NAME *b) {
   return OPENSSL_memcmp(a->canon_enc, b->canon_enc, a->canon_enclen);
 }
 
-unsigned long X509_NAME_hash(X509_NAME *x) {
-  unsigned long ret = 0;
-  unsigned char md[SHA_DIGEST_LENGTH];
-
-  // Make sure X509_NAME structure contains valid cached encoding
-  i2d_X509_NAME(x, NULL);
-  if (!EVP_Digest(x->canon_enc, x->canon_enclen, md, NULL, EVP_sha1(), NULL)) {
+uint32_t X509_NAME_hash(X509_NAME *x) {
+  // Make sure the X509_NAME structure contains a valid cached encoding.
+  if (i2d_X509_NAME(x, NULL) < 0) {
     return 0;
   }
 
-  ret = (((unsigned long)md[0]) | ((unsigned long)md[1] << 8L) |
-         ((unsigned long)md[2] << 16L) | ((unsigned long)md[3] << 24L)) &
-        0xffffffffL;
-  return ret;
+  uint8_t md[SHA_DIGEST_LENGTH];
+  SHA1(x->canon_enc, x->canon_enclen, md);
+  return CRYPTO_load_u32_le(md);
 }
 
 // I now DER encode the name and hash it.  Since I cache the DER encoding,
 // this is reasonably efficient.
 
-unsigned long X509_NAME_hash_old(X509_NAME *x) {
-  EVP_MD_CTX md_ctx;
-  unsigned long ret = 0;
-  unsigned char md[16];
-
-  // Make sure X509_NAME structure contains valid cached encoding
-  i2d_X509_NAME(x, NULL);
-  EVP_MD_CTX_init(&md_ctx);
-  // EVP_MD_CTX_set_flags(&md_ctx, EVP_MD_CTX_FLAG_NON_FIPS_ALLOW);
-  if (EVP_DigestInit_ex(&md_ctx, EVP_md5(), NULL) &&
-      EVP_DigestUpdate(&md_ctx, x->bytes->data, x->bytes->length) &&
-      EVP_DigestFinal_ex(&md_ctx, md, NULL)) {
-    ret = (((unsigned long)md[0]) | ((unsigned long)md[1] << 8L) |
-           ((unsigned long)md[2] << 16L) | ((unsigned long)md[3] << 24L)) &
-          0xffffffffL;
+uint32_t X509_NAME_hash_old(X509_NAME *x) {
+  // Make sure the X509_NAME structure contains a valid cached encoding.
+  if (i2d_X509_NAME(x, NULL) < 0) {
+    return 0;
   }
-  EVP_MD_CTX_cleanup(&md_ctx);
 
-  return ret;
+  uint8_t md[SHA_DIGEST_LENGTH];
+  MD5((const uint8_t *)x->bytes->data, x->bytes->length, md);
+  return CRYPTO_load_u32_le(md);
 }
 
 X509 *X509_find_by_issuer_and_serial(const STACK_OF(X509) *sk, X509_NAME *name,
@@ -233,11 +218,18 @@ X509 *X509_find_by_subject(const STACK_OF(X509) *sk, X509_NAME *name) {
   return NULL;
 }
 
-EVP_PKEY *X509_get_pubkey(X509 *x) {
-  if ((x == NULL) || (x->cert_info == NULL)) {
+EVP_PKEY *X509_get0_pubkey(const X509 *x) {
+  if (x == NULL) {
     return NULL;
   }
-  return (X509_PUBKEY_get(x->cert_info->key));
+  return X509_PUBKEY_get0(x->cert_info->key);
+}
+
+EVP_PKEY *X509_get_pubkey(const X509 *x) {
+  if (x == NULL) {
+    return NULL;
+  }
+  return X509_PUBKEY_get(x->cert_info->key);
 }
 
 ASN1_BIT_STRING *X509_get0_pubkey_bitstr(const X509 *x) {
@@ -247,36 +239,29 @@ ASN1_BIT_STRING *X509_get0_pubkey_bitstr(const X509 *x) {
   return x->cert_info->key->public_key;
 }
 
-int X509_check_private_key(X509 *x, const EVP_PKEY *k) {
-  EVP_PKEY *xk;
-  int ret;
-
-  xk = X509_get_pubkey(x);
-
-  if (xk) {
-    ret = EVP_PKEY_cmp(xk, k);
-  } else {
-    ret = -2;
+int X509_check_private_key(const X509 *x, const EVP_PKEY *k) {
+  const EVP_PKEY *xk = X509_get0_pubkey(x);
+  if (xk == NULL) {
+    return 0;
   }
 
-  switch (ret) {
-    case 1:
-      break;
-    case 0:
-      OPENSSL_PUT_ERROR(X509, X509_R_KEY_VALUES_MISMATCH);
-      break;
-    case -1:
-      OPENSSL_PUT_ERROR(X509, X509_R_KEY_TYPE_MISMATCH);
-      break;
-    case -2:
-      OPENSSL_PUT_ERROR(X509, X509_R_UNKNOWN_KEY_TYPE);
-  }
-  if (xk) {
-    EVP_PKEY_free(xk);
-  }
+  int ret = EVP_PKEY_cmp(xk, k);
   if (ret > 0) {
     return 1;
   }
+
+  switch (ret) {
+    case 0:
+      OPENSSL_PUT_ERROR(X509, X509_R_KEY_VALUES_MISMATCH);
+      return 0;
+    case -1:
+      OPENSSL_PUT_ERROR(X509, X509_R_KEY_TYPE_MISMATCH);
+      return 0;
+    case -2:
+      OPENSSL_PUT_ERROR(X509, X509_R_UNKNOWN_KEY_TYPE);
+      return 0;
+  }
+
   return 0;
 }
 

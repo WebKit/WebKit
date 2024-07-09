@@ -38,14 +38,15 @@
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
-#import <pal/cocoa/AppSSOSoftLink.h>
 #import <pal/spi/cocoa/AuthKitSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StringPrintStream.h>
 #import <wtf/URL.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/WTFString.h>
+
+#import <pal/cocoa/AppSSOSoftLink.h>
 
 static bool navigationCompleted = false;
 static bool appSSONavigationFailed = false;

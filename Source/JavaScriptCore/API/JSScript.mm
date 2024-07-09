@@ -47,6 +47,7 @@
 #import <wtf/Scope.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/spi/darwin/DataVaultSPI.h>
+#import <wtf/text/MakeString.h>
 
 #if JSC_OBJC_API_ENABLED
 

@@ -31,17 +31,28 @@
 #include "GPUProcess.h"
 #endif
 
+#if USE(SYSPROF_CAPTURE)
+#include <wtf/SystemTracing.h>
+#endif
+
 namespace WebKit {
 
 #if ENABLE(GPU_PROCESS) && (PLATFORM(GTK) || PLATFORM(WPE))
-class GPUProcessMainGStreamer final: public AuxiliaryProcessMainBase<GPUProcess> {
+class GPUProcessMainGLib final: public AuxiliaryProcessMainBase<GPUProcess> {
+public:
+    bool platformInitialize() override
+    {
+#if USE(SYSPROF_CAPTURE)
+        SysprofAnnotator::createIfNeeded("WebKit (GPU)"_s);
+#endif
+    }
 };
 #endif
 
 int GPUProcessMain(int argc, char** argv)
 {
 #if ENABLE(GPU_PROCESS) && (PLATFORM(GTK) || PLATFORM(WPE))
-    return AuxiliaryProcessMain<GPUProcessMainGStreamer>(argc, argv);
+    return AuxiliaryProcessMain<GPUProcessMainGLib>(argc, argv);
 #else
     return 0;
 #endif

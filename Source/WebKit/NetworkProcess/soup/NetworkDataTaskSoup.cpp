@@ -49,6 +49,7 @@
 #include <pal/text/TextEncoding.h>
 #include <wtf/MainThread.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 using namespace WebCore;

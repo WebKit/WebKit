@@ -492,8 +492,11 @@ TEST(HRSS, ABI) {
   uint8_t kCanary[256];
   static_assert(sizeof(kCanary) % 32 == 0, "needed for alignment");
   memset(kCanary, 42, sizeof(kCanary));
-  alignas(32) uint8_t
-      scratch[sizeof(kCanary) + POLY_MUL_RQ_SCRATCH_SPACE + sizeof(kCanary)];
+
+  auto scratch_buf = std::make_unique<uint8_t[]>(
+      32 + sizeof(kCanary) + POLY_MUL_RQ_SCRATCH_SPACE + sizeof(kCanary));
+  uint8_t *scratch =
+      static_cast<uint8_t *>(align_pointer(scratch_buf.get(), 32));
   OPENSSL_memcpy(scratch, kCanary, sizeof(kCanary));
   OPENSSL_memcpy(scratch + sizeof(kCanary) + POLY_MUL_RQ_SCRATCH_SPACE, kCanary,
                  sizeof(kCanary));

@@ -82,6 +82,7 @@
 #import <wtf/URL.h>
 #import <wtf/WeakHashMap.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/MakeString.h>
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 #import "WKWebViewConfigurationPrivate.h"
@@ -209,6 +210,7 @@ void NavigationState::setNavigationDelegate(id<WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewWebProcessDidBecomeResponsive = [delegate respondsToSelector:@selector(_webViewWebProcessDidBecomeResponsive:)];
     m_navigationDelegateMethods.webViewWebProcessDidBecomeUnresponsive = [delegate respondsToSelector:@selector(_webViewWebProcessDidBecomeUnresponsive:)];
     m_navigationDelegateMethods.webCryptoMasterKeyForWebView = [delegate respondsToSelector:@selector(_webCryptoMasterKeyForWebView:)];
+    m_navigationDelegateMethods.webCryptoMasterKeyForWebViewCompletionHandler = [delegate respondsToSelector:@selector(_webCryptoMasterKeyForWebView:completionHandler:)];
     m_navigationDelegateMethods.navigationActionDidBecomeDownload = [delegate respondsToSelector:@selector(webView:navigationAction:didBecomeDownload:)];
     m_navigationDelegateMethods.navigationResponseDidBecomeDownload = [delegate respondsToSelector:@selector(webView:navigationResponse:didBecomeDownload:)];
     m_navigationDelegateMethods.contextMenuDidCreateDownload = [delegate respondsToSelector:@selector(_webView:contextMenuDidCreateDownload:)];
@@ -1268,25 +1270,34 @@ void NavigationState::NavigationClient::processDidBecomeUnresponsive(WebPageProx
     [static_cast<id<WKNavigationDelegatePrivate>>(navigationDelegate) _webViewWebProcessDidBecomeUnresponsive:m_navigationState->webView().get()];
 }
 
-RefPtr<API::Data> NavigationState::NavigationClient::webCryptoMasterKey(WebPageProxy&)
+void NavigationState::NavigationClient::legacyWebCryptoMasterKey(WebPageProxy&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
     if (!m_navigationState)
-        return nullptr;
-
-    if (!m_navigationState->m_navigationDelegateMethods.webCryptoMasterKeyForWebView) {
-        auto masterKey = defaultWebCryptoMasterKey();
-        if (!masterKey)
-            return nullptr;
-
-        return API::Data::create(WTFMove(*masterKey));
-    }
-
+        return completionHandler(std::nullopt);
+    if (!(m_navigationState->m_navigationDelegateMethods.webCryptoMasterKeyForWebView || m_navigationState->m_navigationDelegateMethods.webCryptoMasterKeyForWebViewCompletionHandler))
+        return completionHandler(WebCore::defaultWebCryptoMasterKey());
     auto navigationDelegate = m_navigationState->navigationDelegate();
     if (!navigationDelegate)
-        return nullptr;
+        return completionHandler(std::nullopt);
 
-    NSData *data = [static_cast<id<WKNavigationDelegatePrivate>>(navigationDelegate) _webCryptoMasterKeyForWebView:m_navigationState->webView().get()];
-    return API::Data::createWithoutCopying(data);
+    if (m_navigationState->m_navigationDelegateMethods.webCryptoMasterKeyForWebView) {
+        if (NSData *data = [static_cast<id<WKNavigationDelegatePrivate>>(navigationDelegate) _webCryptoMasterKeyForWebView:m_navigationState->webView().get()])
+            return completionHandler(makeVector(data));
+        return completionHandler(std::nullopt);
+    }
+    if (m_navigationState->m_navigationDelegateMethods.webCryptoMasterKeyForWebViewCompletionHandler) {
+        auto checker = WebKit::CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(_webCryptoMasterKeyForWebView:completionHandler:));
+        [static_cast<id<WKNavigationDelegatePrivate>>(navigationDelegate) _webCryptoMasterKeyForWebView:m_navigationState->webView().get() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (NSData *result) mutable {
+            if (checker->completionHandlerHasBeenCalled())
+                return;
+            checker->didCallCompletionHandler();
+            if (result)
+                return completionHandler(makeVector(result));
+            return completionHandler(std::nullopt);
+        }).get()];
+        return;
+    }
+    return completionHandler(std::nullopt);
 }
 
 void NavigationState::NavigationClient::navigationActionDidBecomeDownload(WebPageProxy&, API::NavigationAction& navigationAction, DownloadProxy& download)

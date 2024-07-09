@@ -173,6 +173,7 @@
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/dyldSPI.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringToIntegerConversion.h>
 #import <wtf/text/TextStream.h>
 
@@ -2087,18 +2088,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
 - (PlatformWritingToolsBehavior)writingToolsBehavior
 {
-    if ([self _isEditable])
-        return PlatformWritingToolsBehaviorComplete;
-
-    auto& editorState = _page->editorState();
-
-    if ([_configuration writingToolsBehavior] == PlatformWritingToolsBehaviorNone || editorState.selectionIsNone || editorState.isInPasswordField)
-        return PlatformWritingToolsBehaviorNone;
-
-    if ([_configuration writingToolsBehavior] == PlatformWritingToolsBehaviorComplete && editorState.isContentEditable)
-        return PlatformWritingToolsBehaviorComplete;
-
-    return PlatformWritingToolsBehaviorLimited;
+    return WebKit::convertToPlatformWritingToolsBehavior(_page->writingToolsBehavior());
 }
 
 - (void)willBeginWritingToolsSession:(WTSession *)session requestContexts:(void (^)(NSArray<WTContext *> *))completion
@@ -4655,6 +4645,26 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
 {
     _page->numberOfVisibilityAdjustmentRects([completion = makeBlockPtr(completion)](uint64_t count) {
         completion(static_cast<NSUInteger>(count));
+    });
+}
+
+- (void)_playPredominantOrNowPlayingMediaSession:(void(^)(BOOL))completionHandler
+{
+    if (!self._isValid)
+        return completionHandler(NO);
+
+    _page->playPredominantOrNowPlayingMediaSession([completionHandler = makeBlockPtr(completionHandler)](bool success) {
+        completionHandler(static_cast<BOOL>(success));
+    });
+}
+
+- (void)_pauseNowPlayingMediaSession:(void(^)(BOOL))completionHandler
+{
+    if (!self._isValid)
+        return completionHandler(NO);
+
+    _page->pauseNowPlayingMediaSession([completionHandler = makeBlockPtr(completionHandler)](bool success) {
+        completionHandler(static_cast<BOOL>(success));
     });
 }
 

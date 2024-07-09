@@ -42,6 +42,7 @@
 #include "ScrollAnimator.h"
 #include "Settings.h"
 #include <wtf/MainThread.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

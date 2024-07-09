@@ -47,7 +47,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/URL.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
 
 static bool finishedNavigation = false;
 

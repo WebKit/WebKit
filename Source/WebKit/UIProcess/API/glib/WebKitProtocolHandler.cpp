@@ -43,6 +43,7 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
 #if OS(UNIX)

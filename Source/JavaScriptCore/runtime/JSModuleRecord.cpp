@@ -33,6 +33,7 @@
 #include "JSModuleLoader.h"
 #include "JSModuleNamespaceObject.h"
 #include "UnlinkedModuleProgramCodeBlock.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

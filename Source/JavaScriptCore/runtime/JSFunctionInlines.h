@@ -31,6 +31,7 @@
 #include "JSFunction.h"
 #include "JSRemoteFunction.h"
 #include "NativeExecutable.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

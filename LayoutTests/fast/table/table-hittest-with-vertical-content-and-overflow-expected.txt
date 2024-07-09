@@ -1,0 +1,6 @@
+not ruby
+ruby 1annotation
+not ruby
+ruby 2annotation
+pass
+Hover over "ruby 2" and try selecting it.

@@ -38,6 +38,7 @@
 #include "WorkerOrWorkletGlobalScope.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

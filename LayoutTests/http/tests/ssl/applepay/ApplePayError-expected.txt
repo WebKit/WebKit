@@ -9,10 +9,10 @@ SETUP:
 PASS new ApplePayError() threw exception TypeError: Not enough arguments.
 
 SETUP:
-PASS new ApplePayError([]) threw exception TypeError: Argument 1 ('errorCode') to the ApplePayError constructor must be one of: "unknown", "shippingContactInvalid", "billingContactInvalid", "addressUnserviceable", "couponCodeInvalid", "couponCodeExpired".
+PASS new ApplePayError([]) threw exception TypeError: Argument 1 ('errorCode') to the ApplePayError constructor must be one of: "unknown", "shippingContactInvalid", "billingContactInvalid", "addressUnserviceable", "couponCodeInvalid", "couponCodeExpired", "unsupportedCard", "recipientContactInvalid".
 
 SETUP:
-PASS new ApplePayError('') threw exception TypeError: Argument 1 ('errorCode') to the ApplePayError constructor must be one of: "unknown", "shippingContactInvalid", "billingContactInvalid", "addressUnserviceable", "couponCodeInvalid", "couponCodeExpired".
+PASS new ApplePayError('') threw exception TypeError: Argument 1 ('errorCode') to the ApplePayError constructor must be one of: "unknown", "shippingContactInvalid", "billingContactInvalid", "addressUnserviceable", "couponCodeInvalid", "couponCodeExpired", "unsupportedCard", "recipientContactInvalid".
 
 SETUP:
 PASS new ApplePayError('unknown') did not throw exception.

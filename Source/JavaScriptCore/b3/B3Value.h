@@ -424,6 +424,7 @@ protected:
         case SExt8:
         case SExt16:
         case Trunc:
+        case TruncHigh:
         case SExt8To64:
         case SExt16To64:
         case SExt32:
@@ -542,6 +543,7 @@ protected:
         case VectorMulByElement:
         case VectorShiftByVector:
         case VectorRelaxedSwizzle:
+        case Stitch:
             return 2 * sizeof(Value*);
         case Select:
         case AtomicWeakCAS:
@@ -664,6 +666,7 @@ private:
         case SExt8:
         case SExt16:
         case Trunc:
+        case TruncHigh:
         case SExt8To64:
         case SExt16To64:
         case SExt32:
@@ -764,6 +767,7 @@ private:
         case VectorMulByElement:
         case VectorShiftByVector:
         case VectorRelaxedSwizzle:
+        case Stitch:
             if (UNLIKELY(numArgs != 2))
                 badKind(kind, numArgs);
             return Two;

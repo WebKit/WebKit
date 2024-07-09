@@ -32,6 +32,7 @@
 #include "HTMLInputElement.h"
 #include "RenderObject.h"
 #include "TextIterator.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AXTextMarker);
@@ -43,33 +44,37 @@ static AXID nodeID(AXObjectCache& cache, Node* node)
     return { };
 }
 
-TextMarkerData::TextMarkerData(AXObjectCache& cache, Node* node, const VisiblePosition& visiblePosition, int charStart, int charOffset, bool ignoredParam)
-    : treeID(cache.treeID())
-    , objectID(nodeID(cache, node))
-    , node(node)
-    , affinity(visiblePosition.affinity())
-    , characterStart(std::max(charStart, 0))
-    , characterOffset(std::max(charOffset, 0))
-    , ignored(ignoredParam)
+TextMarkerData::TextMarkerData(AXObjectCache& cache, const VisiblePosition& visiblePosition, int charStart, int charOffset, bool ignoredParam)
 {
+    ASSERT(isMainThread());
+
+    memset(static_cast<void*>(this), 0, sizeof(*this));
+    treeID = cache.treeID().toUInt64();
     auto position = visiblePosition.deepEquivalent();
+    objectID = nodeID(cache, position.anchorNode()).toUInt64();
     offset = !visiblePosition.isNull() ? std::max(position.deprecatedEditingOffset(), 0) : 0;
     anchorType = position.anchorType();
+    affinity = visiblePosition.affinity();
+    characterStart = std::max(charStart, 0);
+    characterOffset = std::max(charOffset, 0);
+    ignored = ignoredParam;
 }
 
-TextMarkerData::TextMarkerData(AXObjectCache& cache, const CharacterOffset& characterOffset, bool ignoredParam)
-    : treeID(cache.treeID())
-    , objectID(nodeID(cache, characterOffset.node.get()))
-    , node(characterOffset.node.get())
-    , anchorType(Position::PositionIsOffsetInAnchor)
-    , characterStart(std::max(characterOffset.startIndex, 0))
-    , characterOffset(std::max(characterOffset.offset, 0))
-    , ignored(ignoredParam)
+TextMarkerData::TextMarkerData(AXObjectCache& cache, const CharacterOffset& characterOffsetParam, bool ignoredParam)
 {
-    auto visiblePosition = cache.visiblePositionFromCharacterOffset(characterOffset);
+    ASSERT(isMainThread());
+
+    memset(static_cast<void*>(this), 0, sizeof(*this));
+    treeID = cache.treeID().toUInt64();
+    objectID = nodeID(cache, characterOffsetParam.node.get()).toUInt64();
+    auto visiblePosition = cache.visiblePositionFromCharacterOffset(characterOffsetParam);
     auto position = visiblePosition.deepEquivalent();
     offset = !visiblePosition.isNull() ? std::max(position.deprecatedEditingOffset(), 0) : 0;
+    anchorType = Position::PositionIsOffsetInAnchor;
     affinity = visiblePosition.affinity();
+    characterStart = std::max(characterOffsetParam.startIndex, 0);
+    characterOffset = std::max(characterOffsetParam.offset, 0);
+    ignored = ignoredParam;
 }
 
 AXTextMarker::AXTextMarker(const VisiblePosition& visiblePosition)
@@ -103,28 +108,6 @@ AXTextMarker::AXTextMarker(const CharacterOffset& characterOffset)
         m_data = cache->textMarkerDataForCharacterOffset(characterOffset);
 }
 
-void AXTextMarker::setNodeIfNeeded() const
-{
-    ASSERT(isMainThread());
-    if (m_data.node)
-        return;
-
-    WeakPtr cache = std::get<WeakPtr<AXObjectCache>>(axTreeForID(treeID()));
-    if (!cache)
-        return;
-
-    auto* object = cache->objectForID(objectID());
-    if (!object)
-        return;
-
-    RefPtr node = object->node();
-    if (!node)
-        return;
-
-    const_cast<AXTextMarker*>(this)->m_data.node = *node;
-    cache->setNodeInUse(*node);
-}
-
 AXTextMarker::operator VisiblePosition() const
 {
     ASSERT(isMainThread());
@@ -133,7 +116,6 @@ AXTextMarker::operator VisiblePosition() const
     if (!cache)
         return { };
 
-    setNodeIfNeeded();
     return cache->visiblePositionForTextMarkerData(m_data);
 }
 
@@ -144,18 +126,15 @@ AXTextMarker::operator CharacterOffset() const
     if (isIgnored() || isNull())
         return { };
 
-    WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(m_data.treeID);
+    WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(m_data.axTreeID());
     if (!cache)
         return { };
 
-    if (RefPtr node = m_data.node.get()) {
-        // Make sure that this node is still in cache->m_textMarkerNodes. Since this method can be called as a result of a dispatch from the AX thread, the Node may have gone away in a previous main loop cycle.
-        if (!cache->isNodeInUse(*node))
-            return { };
-    } else
-        setNodeIfNeeded();
+    RefPtr object = cache->objectForID(m_data.axObjectID());
+    if (!object)
+        return { };
 
-    CharacterOffset result((RefPtr { m_data.node.get() }).get(), m_data.characterStart, m_data.characterOffset);
+    CharacterOffset result(object->node(), m_data.characterStart, m_data.characterOffset);
     // When we are at a line wrap and the VisiblePosition is upstream, it means the text marker is at the end of the previous line.
     // We use the previous CharacterOffset so that it will match the Range.
     if (m_data.affinity == Affinity::Upstream)
@@ -226,7 +205,6 @@ String AXTextMarker::debugDescription() const
         , separator, "objectID "_s, objectID().loggingString()
         , separator, "role "_s, object ? accessibilityRoleToString(object->roleValue()) : "no object"_str
         , isIgnored() ? makeString(separator, "ignored"_s) : ""_s
-        , isMainThread() && node() ? makeString(separator, node()->debugDescription()) : ""_s
         , separator, "anchor "_s, m_data.anchorType
         , separator, "affinity "_s, m_data.affinity
         , separator, "offset "_s, m_data.offset
@@ -275,8 +253,8 @@ AXTextMarkerRange::AXTextMarkerRange(AXID treeID, AXID objectID, unsigned start,
 {
     if (start > end)
         std::swap(start, end);
-    m_start = AXTextMarker({ treeID, objectID, nullptr, start, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, start });
-    m_end = AXTextMarker({ treeID, objectID, nullptr, end, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, end });
+    m_start = AXTextMarker({ treeID, objectID, start, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, start });
+    m_end = AXTextMarker({ treeID, objectID, end, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, end });
 }
 
 AXTextMarkerRange::operator VisiblePositionRange() const
@@ -317,9 +295,8 @@ std::optional<AXTextMarkerRange> AXTextMarkerRange::intersectionWith(const AXTex
 {
     if (UNLIKELY(m_start.m_data.treeID != m_end.m_data.treeID
         || other.m_start.m_data.treeID != other.m_end.m_data.treeID
-        || m_start.m_data.treeID != other.m_start.m_data.treeID)) {
+        || m_start.m_data.treeID != other.m_start.m_data.treeID))
         return std::nullopt;
-    }
 
     // Fast path: both ranges span one object
     if (m_start.m_data.objectID == m_end.m_data.objectID
@@ -334,8 +311,8 @@ std::optional<AXTextMarkerRange> AXTextMarkerRange::intersectionWith(const AXTex
             return std::nullopt;
 
         return { {
-            AXTextMarker({ m_start.treeID(), m_start.objectID(), nullptr, startOffset, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, startOffset }),
-            AXTextMarker({ m_start.treeID(), m_start.objectID(), nullptr, endOffset, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, endOffset })
+            AXTextMarker({ m_start.treeID(), m_start.objectID(), startOffset, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, startOffset }),
+            AXTextMarker({ m_start.treeID(), m_start.objectID(), endOffset, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, endOffset })
         } };
     }
 
@@ -910,16 +887,5 @@ std::partial_ordering AXTextMarker::partialOrderByTraversal(const AXTextMarker& 
     return std::partial_ordering::unordered;
 }
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
-
-TextMarkerData RawTextMarkerData::toTextMarkerData() const
-{
-    ObjectIdentifier<AXIDType> axTreeID(treeID);
-    WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(axTreeID);
-    // Make sure the node is not stale before storing it in a WeakPtr.
-    Node* validNode = nullptr;
-    if (node && cache && cache->isNodeInUse(*node))
-        validNode = node;
-    return { axTreeID, ObjectIdentifier<AXIDType>(objectID), validNode, offset, anchorType, affinity, characterStart, characterOffset, ignored };
-}
 
 } // namespace WebCore

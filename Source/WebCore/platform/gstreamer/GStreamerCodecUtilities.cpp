@@ -27,6 +27,7 @@
 #include "VP9Utilities.h"
 #include <gst/pbutils/codec-utils.h>
 #include <gst/video/video.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/WTFString.h>

@@ -20,6 +20,7 @@ JSTestCEReactionsStringifier.h:
 JSTestCallTracer.h: 
 JSTestCallbackFunction.h: 
 JSTestCallbackFunctionRethrow.h: 
+JSTestCallbackFunctionStrong.h: 
 JSTestCallbackFunctionWithThisObject.h: 
 JSTestCallbackFunctionWithTypedefs.h: 
 JSTestCallbackFunctionWithVariadic.h: 

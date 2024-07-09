@@ -661,6 +661,7 @@
             }
         },
         "text-box-edge": {
+            "inherited": true,
             "values": [
                 "leading",
                 "text",

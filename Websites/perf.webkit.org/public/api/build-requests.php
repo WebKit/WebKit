@@ -76,8 +76,7 @@ function update_builds($db, $updates) {
             $is_build = $request_row['request_order'] < 0;
             if ($is_build) {
                 $db->query_and_fetch_all('UPDATE build_requests SET request_status = \'failed\'
-                    WHERE request_group = $1 AND request_order > $2',
-                    array($request_row['request_group'], $request_row['request_order']));
+                    WHERE request_group = $1 AND request_order >= 0', array($request_row['request_group']));
             }
             $fields_to_update['status'] = 'failed';
             $db->update_row('build_requests', 'request', array('id' => $id), $fields_to_update);

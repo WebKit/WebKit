@@ -171,7 +171,6 @@ SSL3_STATE::SSL3_STATE()
       has_message(false),
       initial_handshake_complete(false),
       session_reused(false),
-      delegated_credential_used(false),
       send_connection_binding(false),
       channel_id_valid(false),
       key_update_pending(false),

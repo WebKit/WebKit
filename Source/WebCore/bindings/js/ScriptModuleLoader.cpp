@@ -61,6 +61,7 @@
 #include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/SourceProvider.h>
 #include <JavaScriptCore/Symbol.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

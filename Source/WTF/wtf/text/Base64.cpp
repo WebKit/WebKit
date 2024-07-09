@@ -26,6 +26,7 @@
 
 #include <limits.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/MakeString.h>
 
 namespace WTF {
 
@@ -94,12 +95,12 @@ static const char base64URLDecMap[decodeMapSize] = {
     0x31, 0x32, 0x33, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet
 };
 
-template<typename CharacterType> static void base64EncodeInternal(std::span<const uint8_t> inputDataBuffer, std::span<CharacterType> destinationDataBuffer, Base64EncodeMode mode)
+template<typename CharacterType> static void base64EncodeInternal(std::span<const uint8_t> inputDataBuffer, std::span<CharacterType> destinationDataBuffer, OptionSet<Base64EncodeOption> options)
 {
     ASSERT(destinationDataBuffer.size() > 0);
-    ASSERT(calculateBase64EncodedSize(inputDataBuffer.size(), mode) == destinationDataBuffer.size());
+    ASSERT(calculateBase64EncodedSize(inputDataBuffer.size(), options) == destinationDataBuffer.size());
 
-    auto encodeMap = (mode == Base64EncodeMode::URL) ? base64URLEncMap : base64EncMap;
+    auto encodeMap = options.contains(Base64EncodeOption::URL) ? base64URLEncMap : base64EncMap;
 
     unsigned sidx = 0;
     unsigned didx = 0;
@@ -123,55 +124,57 @@ template<typename CharacterType> static void base64EncodeInternal(std::span<cons
             destinationDataBuffer[didx++] = encodeMap[ (inputDataBuffer[sidx    ] << 4) & 077];
     }
 
-    ASSERT(mode != Base64EncodeMode::URL || didx == destinationDataBuffer.size());
+    if (!options.contains(Base64EncodeOption::OmitPadding)) {
+        while (didx < destinationDataBuffer.size())
+            destinationDataBuffer[didx++] = '=';
+    }
 
-    while (didx < destinationDataBuffer.size())
-        destinationDataBuffer[didx++] = '=';
+    ASSERT(didx == destinationDataBuffer.size());
 }
 
-template<typename CharacterType> static void base64EncodeInternal(std::span<const std::byte> input, std::span<CharacterType> destinationDataBuffer, Base64EncodeMode mode)
+template<typename CharacterType> static void base64EncodeInternal(std::span<const std::byte> input, std::span<CharacterType> destinationDataBuffer, OptionSet<Base64EncodeOption> options)
 {
-    base64EncodeInternal(asBytes(input), destinationDataBuffer, mode);
+    base64EncodeInternal(asBytes(input), destinationDataBuffer, options);
 }
 
-static Vector<uint8_t> base64EncodeInternal(std::span<const std::byte> input, Base64EncodeMode mode)
+static Vector<uint8_t> base64EncodeInternal(std::span<const std::byte> input, OptionSet<Base64EncodeOption> options)
 {
-    auto destinationLength = calculateBase64EncodedSize(input.size(), mode);
+    auto destinationLength = calculateBase64EncodedSize(input.size(), options);
     if (!destinationLength)
         return { };
 
     Vector<uint8_t> destinationVector(destinationLength);
-    base64EncodeInternal(input, std::span(destinationVector), mode);
+    base64EncodeInternal(input, std::span(destinationVector), options);
     return destinationVector;
 }
 
-void base64Encode(std::span<const std::byte> input, std::span<UChar> destination, Base64EncodeMode mode)
+void base64Encode(std::span<const std::byte> input, std::span<UChar> destination, OptionSet<Base64EncodeOption> options)
 {
     if (!destination.size())
         return;
-    base64EncodeInternal(input, destination, mode);
+    base64EncodeInternal(input, destination, options);
 }
 
-void base64Encode(std::span<const std::byte> input, std::span<LChar> destination, Base64EncodeMode mode)
+void base64Encode(std::span<const std::byte> input, std::span<LChar> destination, OptionSet<Base64EncodeOption> options)
 {
     if (!destination.size())
         return;
-    base64EncodeInternal(input, destination, mode);
+    base64EncodeInternal(input, destination, options);
 }
 
-Vector<uint8_t> base64EncodeToVector(std::span<const std::byte> input, Base64EncodeMode mode)
+Vector<uint8_t> base64EncodeToVector(std::span<const std::byte> input, OptionSet<Base64EncodeOption> options)
 {
-    return base64EncodeInternal(input, mode);
+    return base64EncodeInternal(input, options);
 }
 
-String base64EncodeToString(std::span<const std::byte> input, Base64EncodeMode mode)
+String base64EncodeToString(std::span<const std::byte> input, OptionSet<Base64EncodeOption> options)
 {
-    return makeString(base64Encoded(input, mode));
+    return makeString(base64Encoded(input, options));
 }
 
-String base64EncodeToStringReturnNullIfOverflow(std::span<const std::byte> input, Base64EncodeMode mode)
+String base64EncodeToStringReturnNullIfOverflow(std::span<const std::byte> input, OptionSet<Base64EncodeOption> options)
 {
-    return tryMakeString(base64Encoded(input, mode));
+    return tryMakeString(base64Encoded(input, options));
 }
 
 template<typename T, typename Malloc = VectorBufferMalloc>

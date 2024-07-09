@@ -2067,7 +2067,7 @@ static int decode_b(Dav1dTaskContext *const t,
             f->frame_hdr->loopfilter.level_y[1])
         {
             const int is_globalmv =
-                b->inter_mode == (is_comp ? GLOBALMV_GLOBALMV : GLOBALMV);
+                is_comp ? (b->inter_mode == GLOBALMV_GLOBALMV) : (b->inter_mode == GLOBALMV);
             const uint8_t (*const lf_lvls)[8][2] = (const uint8_t (*)[8][2])
                 &ts->lflvl[b->seg_id][0][b->ref[0] + 1][!is_globalmv];
             const uint16_t tx_split[2] = { b->tx_split0, b->tx_split1 };

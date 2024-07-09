@@ -50,6 +50,7 @@
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/cf/TypeCastsCF.h>
+#import <wtf/text/MakeString.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>

@@ -124,18 +124,14 @@ imported/w3c/web-platform-tests/webxr/light-estimation [ Skip ]
 # rdar://125739629 [ visionOS ] Multiple tests in imported/w3c/web-platform-tests/webxr are consistent failing
 imported/w3c/web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https.html [ Failure ]
 imported/w3c/web-platform-tests/webxr/webxr_feature_policy.https.html [ Failure ]
-imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace_features.https.html [ Failure ]
 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_scale.https.html [ Failure ]
 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer.https.html [ Failure ]
 imported/w3c/web-platform-tests/webxr/xr_viewport_scale.https.html [ Failure ]
-imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_draw.https.html [ Failure ]
 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer_stencil.https.html [ Failure ]
-
-webkit.org/b/274931 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_viewports.https.html [ Failure ]
 
 webkit.org/b/274980 imported/w3c/web-platform-tests/webxr/xrViewport_valid.https.html [ Failure ]
 
-imported/w3c/web-platform-tests/webxr/getInputPose_pointer.https.html275009 [VisionOS] 3 tests in fast/events/pointer/iOS tests are timing out constantly
+# webkit.org/b/275009 [VisionOS] 3 tests in fast/events/pointer/iOS tests are timing out constantly
 fast/events/pointer/ios/drag-gives-pointerdown-pointermove-pointerup.html [ Timeout ]
 fast/events/pointer/ios/drag-populates-pointer-events-with-movementxy-fields.html [ Timeout ]
 fast/events/pointer/ios/tap-gives-pointerdown-pointerup.html [ Timeout ]
@@ -148,6 +144,11 @@ webkit.org/b/275115 imported/w3c/web-platform-tests/webxr/getInputPose_pointer.h
 ###################################################################################################
 ### START OF Undiagnosed failures
 
+# FIXME: Needs bug.
+interaction-region/text-input-focused-edited-empty.html [ Pass Failure ]
+interaction-region/text-input-focused-edited.html [ Pass Failure ]
+interaction-region/textarea-focused-edited-empty.html [ Pass Failure ]
+interaction-region/textarea-focused-edited.html [ Pass Failure ]
 
 ### END OF Undiagnosed failures
 ###################################################################################################

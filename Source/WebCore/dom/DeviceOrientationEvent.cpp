@@ -32,6 +32,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "LocalDOMWindow.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

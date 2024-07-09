@@ -32,7 +32,7 @@
 #include <wtf/glib/Application.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/Sandbox.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/RunLoopSourcePriority.h>

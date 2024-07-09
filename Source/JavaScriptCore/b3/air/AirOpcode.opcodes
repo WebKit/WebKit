@@ -159,7 +159,7 @@ x86: Add16 U:G:16, UD:G:16
 # change anything to disrupt the carry flag between the two adc instructions;
 # so, for now, they are fused as this Add64
 
-32: Add64 U:G:32, U:G:32, U:G:32, U:G:32, D:G:32, D:G:32
+32: Add64 U:G:32, U:G:32, U:G:32, U:G:32, D:G:32, ED:G:32
     Tmp, Tmp, Tmp, Tmp, Tmp, Tmp
 
 AddDouble U:F:64, U:F:64, D:F:64
@@ -211,7 +211,7 @@ arm64: Sub64 U:G:64, U:G:64, D:G:64
     Tmp, Imm, Tmp
 
 # note see note above, on Add64
-32: Sub64 U:G:32, U:G:32, U:G:32, U:G:32, D:G:32, D:G:32
+32: Sub64 U:G:32, U:G:32, U:G:32, U:G:32, D:G:32, ED:G:32
     Tmp, Tmp, Tmp, Tmp, Tmp, Tmp
 
 SubDouble U:F:64, U:F:64, D:F:64

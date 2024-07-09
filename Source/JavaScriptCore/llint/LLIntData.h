@@ -208,7 +208,7 @@ ALWAYS_INLINE MacroAssemblerCodeRef<tag> getWide32CodeRef(OpcodeID opcodeID)
 template<PtrTag tag>
 ALWAYS_INLINE LLIntCode getCodeFunctionPtr(OpcodeID opcodeID)
 {
-    return reinterpret_cast<LLIntCode>(getCodePtr<tag>(opcodeID).template taggedPtr());
+    return reinterpret_cast<LLIntCode>(getCodePtr<tag>(opcodeID).template taggedPtr<>());
 }
 
 #if ENABLE(JIT)
@@ -216,13 +216,13 @@ ALWAYS_INLINE LLIntCode getCodeFunctionPtr(OpcodeID opcodeID)
 template<PtrTag tag>
 ALWAYS_INLINE LLIntCode getWide16CodeFunctionPtr(OpcodeID opcodeID)
 {
-    return reinterpret_cast<LLIntCode>(getWide16CodePtr<tag>(opcodeID).template taggedPtr());
+    return reinterpret_cast<LLIntCode>(getWide16CodePtr<tag>(opcodeID).template taggedPtr<>());
 }
 
 template<PtrTag tag>
 ALWAYS_INLINE LLIntCode getWide32CodeFunctionPtr(OpcodeID opcodeID)
 {
-    return reinterpret_cast<LLIntCode>(getWide32CodePtr<tag>(opcodeID).template taggedPtr());
+    return reinterpret_cast<LLIntCode>(getWide32CodePtr<tag>(opcodeID).template taggedPtr<>());
 }
 #else // not ENABLE(JIT)
 ALWAYS_INLINE void* getCodePtr(OpcodeID id)
@@ -341,7 +341,7 @@ ALWAYS_INLINE MacroAssemblerCodeRef<tag> getWide32CodeRef(WasmOpcodeID opcodeID)
 template<PtrTag tag>
 ALWAYS_INLINE LLIntCode getCodeFunctionPtr(WasmOpcodeID opcodeID)
 {
-    return reinterpret_cast<LLIntCode>(getCodePtr<tag>(opcodeID).template taggedPtr());
+    return reinterpret_cast<LLIntCode>(getCodePtr<tag>(opcodeID).template taggedPtr<>());
 }
 
 #if ENABLE(JIT)
@@ -349,13 +349,13 @@ ALWAYS_INLINE LLIntCode getCodeFunctionPtr(WasmOpcodeID opcodeID)
 template<PtrTag tag>
 ALWAYS_INLINE LLIntCode getWide16CodeFunctionPtr(WasmOpcodeID opcodeID)
 {
-    return reinterpret_cast<LLIntCode>(getWide16CodePtr<tag>(opcodeID).template taggedPtr());
+    return reinterpret_cast<LLIntCode>(getWide16CodePtr<tag>(opcodeID).template taggedPtr<>());
 }
 
 template<PtrTag tag>
 ALWAYS_INLINE LLIntCode getWide32CodeFunctionPtr(WasmOpcodeID opcodeID)
 {
-    return reinterpret_cast<LLIntCode>(getWide32CodePtr<tag>(opcodeID).template taggedPtr());
+    return reinterpret_cast<LLIntCode>(getWide32CodePtr<tag>(opcodeID).template taggedPtr<>());
 }
 #else // not ENABLE(JIT)
 ALWAYS_INLINE void* getCodePtr(WasmOpcodeID id)

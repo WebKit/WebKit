@@ -38,6 +38,7 @@
 #include <wpe/WPEDefines.h>
 #include <wpe/WPEDisplay.h>
 #include <wpe/WPEEGLError.h>
+#include <wpe/WPEGestureController.h>
 #include <wpe/WPEInputMethodContext.h>
 #include <wpe/WPEKeymap.h>
 #include <wpe/WPEKeyUnicode.h>

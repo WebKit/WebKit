@@ -76,6 +76,7 @@
 #import <wtf/UUID.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/TextStream.h>
 #import <wtf/threads/BinarySemaphore.h>
 #import "AppKitSoftLink.h"
@@ -128,18 +129,53 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
 
 @end
 
-@interface WKQuirkyNSUndoManager : NSUndoManager
+@interface WKNSUndoManager : NSUndoManager
 @property (readonly, weak) WKContentView *contentView;
 @end
 
-@implementation WKQuirkyNSUndoManager
+@implementation WKNSUndoManager {
+    BOOL _isRegisteringUndoCommand;
+}
+
 - (instancetype)initWithContentView:(WKContentView *)contentView
 {
     if (!(self = [super init]))
         return nil;
+
+    _isRegisteringUndoCommand = NO;
     _contentView = contentView;
     return self;
 }
+
+- (void)beginUndoGrouping
+{
+    if (!_isRegisteringUndoCommand)
+        [_contentView _closeCurrentTypingCommand];
+
+    [super beginUndoGrouping];
+}
+
+- (void)registerUndoWithTarget:(id)target selector:(SEL)selector object:(id)object
+{
+    SetForScope registrationScope { _isRegisteringUndoCommand, YES };
+
+    [super registerUndoWithTarget:target selector:selector object:object];
+}
+
+- (void)registerUndoWithTarget:(id)target handler:(void (^)(id))undoHandler
+{
+    SetForScope registrationScope { _isRegisteringUndoCommand, YES };
+
+    [super registerUndoWithTarget:target handler:undoHandler];
+}
+
+@end
+
+@interface WKNSKeyEventSimulatorUndoManager : WKNSUndoManager
+
+@end
+
+@implementation WKNSKeyEventSimulatorUndoManager
 
 - (BOOL)canUndo 
 {
@@ -201,8 +237,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     WebCore::HistoricalVelocityData _historicalKinematicData;
 
-    RetainPtr<NSUndoManager> _undoManager;
-    RetainPtr<WKQuirkyNSUndoManager> _quirkyUndoManager;
+    RetainPtr<WKNSUndoManager> _undoManager;
+    RetainPtr<WKNSKeyEventSimulatorUndoManager> _undoManagerForSimulatingKeyEvents;
 
     Lock _pendingBackgroundPrintFormattersLock;
     RetainPtr<NSMutableSet> _pendingBackgroundPrintFormatters;
@@ -728,12 +764,12 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
 - (NSUndoManager *)undoManagerForWebView
 {
     if (self.focusedElementInformation.shouldSynthesizeKeyEventsForEditing && self.hasHiddenContentEditable) {
-        if (!_quirkyUndoManager)
-            _quirkyUndoManager = adoptNS([[WKQuirkyNSUndoManager alloc] initWithContentView:self]);
-        return _quirkyUndoManager.get();
+        if (!_undoManagerForSimulatingKeyEvents)
+            _undoManagerForSimulatingKeyEvents = adoptNS([[WKNSKeyEventSimulatorUndoManager alloc] initWithContentView:self]);
+        return _undoManagerForSimulatingKeyEvents.get();
     }
     if (!_undoManager)
-        _undoManager = adoptNS([[NSUndoManager alloc] init]);
+        _undoManager = adoptNS([[WKNSUndoManager alloc] initWithContentView:self]);
     return _undoManager.get();
 }
 

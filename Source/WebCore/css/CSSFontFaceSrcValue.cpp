@@ -35,6 +35,7 @@
 #include "FontCustomPlatformData.h"
 #include "SVGFontFaceElement.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

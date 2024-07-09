@@ -65,10 +65,10 @@
 #include <openssl/x509.h>
 
 static int do_pk8pkey(BIO *bp, const EVP_PKEY *x, int isder, int nid,
-                      const EVP_CIPHER *enc, char *kstr, int klen,
+                      const EVP_CIPHER *enc, const char *pass, int pass_len,
                       pem_password_cb *cb, void *u);
 static int do_pk8pkey_fp(FILE *bp, const EVP_PKEY *x, int isder, int nid,
-                         const EVP_CIPHER *enc, char *kstr, int klen,
+                         const EVP_CIPHER *enc, const char *pass, int pass_len,
                          pem_password_cb *cb, void *u);
 
 // These functions write a private key in PKCS#8 format: it is a "drop in"
@@ -77,30 +77,31 @@ static int do_pk8pkey_fp(FILE *bp, const EVP_PKEY *x, int isder, int nid,
 // uses PKCS#5 v1.5 PBE algorithms whereas the others use PKCS#5 v2.0.
 
 int PEM_write_bio_PKCS8PrivateKey_nid(BIO *bp, const EVP_PKEY *x, int nid,
-                                      char *kstr, int klen, pem_password_cb *cb,
-                                      void *u) {
-  return do_pk8pkey(bp, x, 0, nid, NULL, kstr, klen, cb, u);
+                                      const char *pass, int pass_len,
+                                      pem_password_cb *cb, void *u) {
+  return do_pk8pkey(bp, x, 0, nid, NULL, pass, pass_len, cb, u);
 }
 
 int PEM_write_bio_PKCS8PrivateKey(BIO *bp, const EVP_PKEY *x,
-                                  const EVP_CIPHER *enc, char *kstr, int klen,
-                                  pem_password_cb *cb, void *u) {
-  return do_pk8pkey(bp, x, 0, -1, enc, kstr, klen, cb, u);
+                                  const EVP_CIPHER *enc, const char *pass,
+                                  int pass_len, pem_password_cb *cb, void *u) {
+  return do_pk8pkey(bp, x, 0, -1, enc, pass, pass_len, cb, u);
 }
 
 int i2d_PKCS8PrivateKey_bio(BIO *bp, const EVP_PKEY *x, const EVP_CIPHER *enc,
-                            char *kstr, int klen, pem_password_cb *cb,
+                            const char *pass, int pass_len, pem_password_cb *cb,
                             void *u) {
-  return do_pk8pkey(bp, x, 1, -1, enc, kstr, klen, cb, u);
+  return do_pk8pkey(bp, x, 1, -1, enc, pass, pass_len, cb, u);
 }
 
-int i2d_PKCS8PrivateKey_nid_bio(BIO *bp, const EVP_PKEY *x, int nid, char *kstr,
-                                int klen, pem_password_cb *cb, void *u) {
-  return do_pk8pkey(bp, x, 1, nid, NULL, kstr, klen, cb, u);
+int i2d_PKCS8PrivateKey_nid_bio(BIO *bp, const EVP_PKEY *x, int nid,
+                                const char *pass, int pass_len,
+                                pem_password_cb *cb, void *u) {
+  return do_pk8pkey(bp, x, 1, nid, NULL, pass, pass_len, cb, u);
 }
 
 static int do_pk8pkey(BIO *bp, const EVP_PKEY *x, int isder, int nid,
-                      const EVP_CIPHER *enc, char *kstr, int klen,
+                      const EVP_CIPHER *enc, const char *pass, int pass_len,
                       pem_password_cb *cb, void *u) {
   X509_SIG *p8;
   PKCS8_PRIV_KEY_INFO *p8inf;
@@ -111,23 +112,23 @@ static int do_pk8pkey(BIO *bp, const EVP_PKEY *x, int isder, int nid,
     return 0;
   }
   if (enc || (nid != -1)) {
-    if (!kstr) {
-      klen = 0;
+    if (!pass) {
+      pass_len = 0;
       if (!cb) {
         cb = PEM_def_callback;
       }
-      klen = cb(buf, PEM_BUFSIZE, 1, u);
-      if (klen <= 0) {
+      pass_len = cb(buf, PEM_BUFSIZE, 1, u);
+      if (pass_len <= 0) {
         OPENSSL_PUT_ERROR(PEM, PEM_R_READ_KEY);
         PKCS8_PRIV_KEY_INFO_free(p8inf);
         return 0;
       }
 
-      kstr = buf;
+      pass = buf;
     }
-    p8 = PKCS8_encrypt(nid, enc, kstr, klen, NULL, 0, 0, p8inf);
-    if (kstr == buf) {
-      OPENSSL_cleanse(buf, klen);
+    p8 = PKCS8_encrypt(nid, enc, pass, pass_len, NULL, 0, 0, p8inf);
+    if (pass == buf) {
+      OPENSSL_cleanse(buf, pass_len);
     }
     PKCS8_PRIV_KEY_INFO_free(p8inf);
     if (isder) {
@@ -152,7 +153,7 @@ EVP_PKEY *d2i_PKCS8PrivateKey_bio(BIO *bp, EVP_PKEY **x, pem_password_cb *cb,
                                   void *u) {
   PKCS8_PRIV_KEY_INFO *p8inf = NULL;
   X509_SIG *p8 = NULL;
-  int klen;
+  int pass_len;
   EVP_PKEY *ret;
   char psbuf[PEM_BUFSIZE];
   p8 = d2i_PKCS8_bio(bp, NULL);
@@ -160,19 +161,19 @@ EVP_PKEY *d2i_PKCS8PrivateKey_bio(BIO *bp, EVP_PKEY **x, pem_password_cb *cb,
     return NULL;
   }
 
-  klen = 0;
+  pass_len = 0;
   if (!cb) {
     cb = PEM_def_callback;
   }
-  klen = cb(psbuf, PEM_BUFSIZE, 0, u);
-  if (klen <= 0) {
+  pass_len = cb(psbuf, PEM_BUFSIZE, 0, u);
+  if (pass_len <= 0) {
     OPENSSL_PUT_ERROR(PEM, PEM_R_BAD_PASSWORD_READ);
     X509_SIG_free(p8);
     return NULL;
   }
-  p8inf = PKCS8_decrypt(p8, psbuf, klen);
+  p8inf = PKCS8_decrypt(p8, psbuf, pass_len);
   X509_SIG_free(p8);
-  OPENSSL_cleanse(psbuf, klen);
+  OPENSSL_cleanse(psbuf, pass_len);
   if (!p8inf) {
     return NULL;
   }
@@ -192,29 +193,31 @@ EVP_PKEY *d2i_PKCS8PrivateKey_bio(BIO *bp, EVP_PKEY **x, pem_password_cb *cb,
 
 
 int i2d_PKCS8PrivateKey_fp(FILE *fp, const EVP_PKEY *x, const EVP_CIPHER *enc,
-                           char *kstr, int klen, pem_password_cb *cb, void *u) {
-  return do_pk8pkey_fp(fp, x, 1, -1, enc, kstr, klen, cb, u);
+                           const char *pass, int pass_len, pem_password_cb *cb,
+                           void *u) {
+  return do_pk8pkey_fp(fp, x, 1, -1, enc, pass, pass_len, cb, u);
 }
 
-int i2d_PKCS8PrivateKey_nid_fp(FILE *fp, const EVP_PKEY *x, int nid, char *kstr,
-                               int klen, pem_password_cb *cb, void *u) {
-  return do_pk8pkey_fp(fp, x, 1, nid, NULL, kstr, klen, cb, u);
+int i2d_PKCS8PrivateKey_nid_fp(FILE *fp, const EVP_PKEY *x, int nid,
+                               const char *pass, int pass_len,
+                               pem_password_cb *cb, void *u) {
+  return do_pk8pkey_fp(fp, x, 1, nid, NULL, pass, pass_len, cb, u);
 }
 
 int PEM_write_PKCS8PrivateKey_nid(FILE *fp, const EVP_PKEY *x, int nid,
-                                  char *kstr, int klen, pem_password_cb *cb,
-                                  void *u) {
-  return do_pk8pkey_fp(fp, x, 0, nid, NULL, kstr, klen, cb, u);
+                                  const char *pass, int pass_len,
+                                  pem_password_cb *cb, void *u) {
+  return do_pk8pkey_fp(fp, x, 0, nid, NULL, pass, pass_len, cb, u);
 }
 
 int PEM_write_PKCS8PrivateKey(FILE *fp, const EVP_PKEY *x,
-                              const EVP_CIPHER *enc, char *kstr, int klen,
-                              pem_password_cb *cb, void *u) {
-  return do_pk8pkey_fp(fp, x, 0, -1, enc, kstr, klen, cb, u);
+                              const EVP_CIPHER *enc, const char *pass,
+                              int pass_len, pem_password_cb *cb, void *u) {
+  return do_pk8pkey_fp(fp, x, 0, -1, enc, pass, pass_len, cb, u);
 }
 
 static int do_pk8pkey_fp(FILE *fp, const EVP_PKEY *x, int isder, int nid,
-                         const EVP_CIPHER *enc, char *kstr, int klen,
+                         const EVP_CIPHER *enc, const char *pass, int pass_len,
                          pem_password_cb *cb, void *u) {
   BIO *bp;
   int ret;
@@ -222,7 +225,7 @@ static int do_pk8pkey_fp(FILE *fp, const EVP_PKEY *x, int isder, int nid,
     OPENSSL_PUT_ERROR(PEM, ERR_R_BUF_LIB);
     return 0;
   }
-  ret = do_pk8pkey(bp, x, isder, nid, enc, kstr, klen, cb, u);
+  ret = do_pk8pkey(bp, x, isder, nid, enc, pass, pass_len, cb, u);
   BIO_free(bp);
   return ret;
 }

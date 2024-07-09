@@ -41,6 +41,7 @@
 #include <variant>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC { namespace Wasm {
 

@@ -35,6 +35,7 @@
 #include "WebErrors.h"
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/SecurityOrigin.h>
+#include <wtf/text/MakeString.h>
 
 #define CORS_CHECKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - NetworkCORSPreflightChecker::" fmt, this, ##__VA_ARGS__)
 

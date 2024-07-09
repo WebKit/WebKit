@@ -37,6 +37,7 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
+#include <wtf/text/MakeString.h>
 
 /**
  * JSCValue:

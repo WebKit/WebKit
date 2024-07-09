@@ -72,6 +72,8 @@ enum UseKind : uint8_t {
     DateObjectUse,
     MapObjectUse,
     SetObjectUse,
+    MapIteratorObjectUse,
+    SetIteratorObjectUse,
     WeakMapObjectUse,
     WeakSetObjectUse,
     DataViewObjectUse,
@@ -172,6 +174,9 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
         return SpecMapObject;
     case SetObjectUse:
         return SpecSetObject;
+    case MapIteratorObjectUse:
+    case SetIteratorObjectUse:
+        return SpecObjectOther;
     case WeakMapObjectUse:
         return SpecWeakMapObject;
     case WeakSetObjectUse:
@@ -267,6 +272,8 @@ inline bool isCell(UseKind kind)
     case DateObjectUse:
     case MapObjectUse:
     case SetObjectUse:
+    case MapIteratorObjectUse:
+    case SetIteratorObjectUse:
     case WeakMapObjectUse:
     case WeakSetObjectUse:
     case DataViewObjectUse:

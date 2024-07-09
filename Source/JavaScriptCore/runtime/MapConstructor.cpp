@@ -131,43 +131,61 @@ JSC_DEFINE_HOST_FUNCTION(constructMap, (JSGlobalObject* globalObject, CallFrame*
     return JSValue::encode(map);
 }
 
-JSC_DEFINE_HOST_FUNCTION(mapPrivateFuncMapBucketHead, (JSGlobalObject*, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(mapPrivateFuncMapIterationNext, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    ASSERT(callFrame->argument(0).isCell() && (callFrame->argument(1).isInt32()));
+
+    VM& vm = globalObject->vm();
+    JSCell* cell = callFrame->uncheckedArgument(0).asCell();
+    if (cell == vm.orderedHashTableSentinel())
+        return JSValue::encode(vm.orderedHashTableSentinel());
+
+    JSMap::Storage& storage = *jsCast<JSMap::Storage*>(cell);
+    JSMap::Helper::Entry entry = JSMap::Helper::toNumber(callFrame->uncheckedArgument(1));
+    return JSValue::encode(JSMap::Helper::nextAndUpdateIterationEntry(vm, storage, entry));
+}
+
+JSC_DEFINE_HOST_FUNCTION(mapPrivateFuncMapIterationEntry, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    ASSERT(callFrame->argument(0).isCell());
+
+    VM& vm = globalObject->vm();
+    JSCell* cell = callFrame->uncheckedArgument(0).asCell();
+    ASSERT_UNUSED(vm, cell != vm.orderedHashTableSentinel());
+
+    JSMap::Storage& storage = *jsCast<JSMap::Storage*>(cell);
+    return JSValue::encode(JSMap::Helper::getIterationEntry(storage));
+}
+
+JSC_DEFINE_HOST_FUNCTION(mapPrivateFuncMapIterationEntryKey, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    ASSERT(callFrame->argument(0).isCell());
+
+    VM& vm = globalObject->vm();
+    JSCell* cell = callFrame->uncheckedArgument(0).asCell();
+    ASSERT_UNUSED(vm, cell != vm.orderedHashTableSentinel());
+
+    JSMap::Storage& storage = *jsCast<JSMap::Storage*>(cell);
+    return JSValue::encode(JSMap::Helper::getIterationEntryKey(storage));
+}
+
+JSC_DEFINE_HOST_FUNCTION(mapPrivateFuncMapIterationEntryValue, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    ASSERT(callFrame->argument(0).isCell());
+
+    VM& vm = globalObject->vm();
+    JSCell* cell = callFrame->uncheckedArgument(0).asCell();
+    ASSERT_UNUSED(vm, cell != vm.orderedHashTableSentinel());
+
+    JSMap::Storage& storage = *jsCast<JSMap::Storage*>(cell);
+    return JSValue::encode(JSMap::Helper::getIterationEntryValue(storage));
+}
+
+JSC_DEFINE_HOST_FUNCTION(mapPrivateFuncMapStorage, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(jsDynamicCast<JSMap*>(callFrame->argument(0)));
     JSMap* map = jsCast<JSMap*>(callFrame->uncheckedArgument(0));
-    auto* head = map->head();
-    ASSERT(head);
-    return JSValue::encode(head);
-}
-
-JSC_DEFINE_HOST_FUNCTION(mapPrivateFuncMapBucketNext, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    ASSERT(jsDynamicCast<JSMap::BucketType*>(callFrame->argument(0)));
-    auto* bucket = jsCast<JSMap::BucketType*>(callFrame->uncheckedArgument(0));
-    ASSERT(bucket);
-    bucket = bucket->next();
-    while (bucket) {
-        if (!bucket->deleted())
-            return JSValue::encode(bucket);
-        bucket = bucket->next();
-    }
-    return JSValue::encode(globalObject->vm().sentinelMapBucket());
-}
-
-JSC_DEFINE_HOST_FUNCTION(mapPrivateFuncMapBucketKey, (JSGlobalObject*, CallFrame* callFrame))
-{
-    ASSERT(jsDynamicCast<JSMap::BucketType*>(callFrame->argument(0)));
-    auto* bucket = jsCast<JSMap::BucketType*>(callFrame->uncheckedArgument(0));
-    ASSERT(bucket);
-    return JSValue::encode(bucket->key());
-}
-
-JSC_DEFINE_HOST_FUNCTION(mapPrivateFuncMapBucketValue, (JSGlobalObject*, CallFrame* callFrame))
-{
-    ASSERT(jsDynamicCast<JSMap::BucketType*>(callFrame->argument(0)));
-    auto* bucket = jsCast<JSMap::BucketType*>(callFrame->uncheckedArgument(0));
-    ASSERT(bucket);
-    return JSValue::encode(bucket->value());
+    return JSValue::encode(map->storageOrSentinel(getVM(globalObject)));
 }
 
 }

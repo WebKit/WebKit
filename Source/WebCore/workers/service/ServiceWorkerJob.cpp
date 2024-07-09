@@ -37,6 +37,7 @@
 #include "ServiceWorkerRegistration.h"
 #include "WorkerFetchResult.h"
 #include "WorkerRunLoop.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

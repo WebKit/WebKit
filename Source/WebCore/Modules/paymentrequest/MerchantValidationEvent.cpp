@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "PaymentRequest.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

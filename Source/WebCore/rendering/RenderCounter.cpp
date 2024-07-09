@@ -472,7 +472,7 @@ String RenderCounter::originalText() const
 
         if (m_counter.listStyleType().type == ListStyleType::Type::CounterStyle) {
             ASSERT(counterStyle());
-            return counterStyle()->text(value, { style().blockFlowDirection(), style().direction() });
+            return counterStyle()->text(value, makeTextFlow(style().writingMode(), style().direction()));
         }
 
         ASSERT_NOT_REACHED();
@@ -483,8 +483,7 @@ String RenderCounter::originalText() const
         if (!child->actsAsReset())
             child = child->parent();
         while (CounterNode* parent = child->parent()) {
-            text = counterText(child->countInParent())
-                + m_counter.separator() + text;
+            text = makeString(counterText(child->countInParent()), m_counter.separator(), text);
             child = parent;
         }
     }

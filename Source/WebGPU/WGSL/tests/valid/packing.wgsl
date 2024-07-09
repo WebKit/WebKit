@@ -447,6 +447,26 @@ fn testRuntimeArray()
     s.y[0] = 0;
 }
 
+@group(0) @binding(11) var<storage,read_write> D: array<vec3f>;
+fn testPackedVec3CompoundAssignment()
+{
+    D[0] += vec3f(1);
+}
+
+struct InconstructibleS {
+    x: vec3f,
+    y: atomic<u32>
+}
+struct InconstructibleT {
+    x: InconstructibleS,
+}
+
+@group(0) @binding(12) var<storage, read_write> global: InconstructibleT;
+
+fn testInconstructible() {
+    var x = global.x.x;
+}
+
 @compute @workgroup_size(1)
 fn main()
 {
@@ -458,4 +478,6 @@ fn main()
     _ = testUnaryOperations();
     _ = testCall();
     testRuntimeArray();
+    testPackedVec3CompoundAssignment();
+    testInconstructible();
 }

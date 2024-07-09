@@ -69,6 +69,10 @@
 #import <WebCore/NetworkExtensionContentFilter.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/NowPlayingInfo.h>
+#import <WebCore/NullPlaybackSessionInterface.h>
+#import <WebCore/PlatformPlaybackSessionInterface.h>
+#import <WebCore/PlaybackSessionInterfaceAVKit.h>
+#import <WebCore/PlaybackSessionInterfaceMac.h>
 #import <WebCore/RunLoopObserver.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
 #import <WebCore/TextAlternativeWithRange.h>
@@ -870,9 +874,9 @@ bool WebPageProxy::canHandleContextMenuWritingTools() const
     return protectedPageClient()->canHandleContextMenuWritingTools();
 }
 
-void WebPageProxy::handleContextMenuWritingTools(WebCore::IntRect selectionBoundsInRootView)
+void WebPageProxy::handleContextMenuWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView)
 {
-    protectedPageClient()->handleContextMenuWritingTools(selectionBoundsInRootView);
+    protectedPageClient()->handleContextMenuWritingToolsDeprecated(selectionBoundsInRootView);
 }
 
 #endif // ENABLE(WRITING_TOOLS)
@@ -1161,6 +1165,23 @@ void WebPageProxy::setWritingToolsActive(bool active)
     protectedPageClient()->writingToolsActiveDidChange();
 }
 
+WebCore::WritingTools::Behavior WebPageProxy::writingToolsBehavior() const
+{
+    if (isEditable())
+        return WebCore::WritingTools::Behavior::Complete;
+
+    auto& editorState = this->editorState();
+    auto& configuration = this->configuration();
+
+    if (configuration.writingToolsBehavior() == WebCore::WritingTools::Behavior::None || editorState.selectionIsNone || editorState.isInPasswordField)
+        return WebCore::WritingTools::Behavior::None;
+
+    if (configuration.writingToolsBehavior() == WebCore::WritingTools::Behavior::Complete && editorState.isContentEditable)
+        return WebCore::WritingTools::Behavior::Complete;
+
+    return WebCore::WritingTools::Behavior::Limited;
+}
+
 void WebPageProxy::willBeginWritingToolsSession(const std::optional<WebCore::WritingTools::Session>& session, CompletionHandler<void(const Vector<WebCore::WritingTools::Context>&)>&& completionHandler)
 {
     legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::WillBeginWritingToolsSession(session), WTFMove(completionHandler), webPageIDInMainFrameProcess());
@@ -1216,13 +1237,25 @@ void WebPageProxy::enableTextAnimationTypeForElementWithID(const String& element
     legacyMainFrameProcess().send(Messages::WebPage::EnableTextAnimationTypeForElementWithID(elementID, uuid), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::addTextAnimationForAnimationID(IPC::Connection& connection, const WTF::UUID& uuid, const TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData)
+void WebPageProxy::addTextAnimationForAnimationID(IPC::Connection& connection, const WTF::UUID& uuid, const TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData, CompletionHandler<void()>&& completionHandler)
 {
     MESSAGE_CHECK(uuid.isValid());
 
-    internals().textIndicatorDataForChunk.add(uuid, indicatorData);
+    internals().textIndicatorDataForAnimationID.add(uuid, indicatorData);
+
+    if (completionHandler)
+        internals().completionHandlerForAnimationID.add(uuid, WTFMove(completionHandler));
 
     protectedPageClient()->addTextAnimationForAnimationID(uuid, styleData);
+}
+
+void WebPageProxy::callCompletionHandlerForAnimationID(const WTF::UUID& uuid)
+{
+    if (!hasRunningProcess())
+        return;
+
+    if (auto completionHandler = internals().completionHandlerForAnimationID.take(uuid))
+        completionHandler();
 }
 
 void WebPageProxy::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
@@ -1232,7 +1265,7 @@ void WebPageProxy::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandle
         return;
     }
 
-    auto textIndicatorData = internals().textIndicatorDataForChunk.getOptional(uuid);
+    auto textIndicatorData = internals().textIndicatorDataForAnimationID.getOptional(uuid);
 
     if (textIndicatorData) {
         completionHandler(*textIndicatorData);
@@ -1279,6 +1312,38 @@ void WebPageProxy::proofreadingSessionUpdateStateForSuggestionWithID(IPC::Connec
 }
 
 #endif // ENABLE(WRITING_TOOLS)
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+
+void WebPageProxy::playPredominantOrNowPlayingMediaSession(CompletionHandler<void(bool)>&& completion)
+{
+    if (tryToSendCommandToActiveControlledVideo(PlatformMediaSession::RemoteControlCommandType::PlayCommand)) {
+        completion(true);
+        return;
+    }
+
+    legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::StartPlayingPredominantVideo(), WTFMove(completion), webPageIDInMainFrameProcess());
+}
+
+void WebPageProxy::pauseNowPlayingMediaSession(CompletionHandler<void(bool)>&& completion)
+{
+    completion(tryToSendCommandToActiveControlledVideo(PlatformMediaSession::RemoteControlCommandType::PauseCommand));
+}
+
+bool WebPageProxy::tryToSendCommandToActiveControlledVideo(PlatformMediaSession::RemoteControlCommandType command)
+{
+    if (!hasActiveVideoForControlsManager())
+        return false;
+
+    WeakPtr model = m_playbackSessionManager->controlsManagerInterface()->playbackSessionModel();
+    if (!model)
+        return false;
+
+    model->sendRemoteCommand(command, { });
+    return true;
+}
+
+#endif // ENABLE(VIDEO_PRESENTATION_MODE)
 
 } // namespace WebKit
 

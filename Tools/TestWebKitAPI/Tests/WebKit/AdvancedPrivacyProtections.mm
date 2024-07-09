@@ -47,6 +47,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPIForTesting.h"
@@ -662,7 +663,7 @@ TEST(AdvancedPrivacyProtections, DoNotHideReferrerAfterReducingPrivacyProtection
         { "/index2.html"_s, { "<script>window.result = document.referrer;</script>"_s } },
     }, HTTPServer::Protocol::Http);
 
-    server.addResponse("/index1.html"_s, { "<a href='http://127.0.0.1:"_s + server.port() + "/index2.html'>Link</a>"_s });
+    server.addResponse("/index1.html"_s, { makeString("<a href='http://127.0.0.1:"_s, server.port(), "/index2.html'>Link</a>"_s) });
 
     auto webView = webViewAfterCrossSiteNavigationWithReducedPrivacy(makeString("http://localhost:"_s, server.port(), "/index1.html"_s));
 

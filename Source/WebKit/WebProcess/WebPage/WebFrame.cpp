@@ -99,6 +99,7 @@
 #include <WebCore/SubresourceLoader.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/TextResourceDecoder.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(COCOA)

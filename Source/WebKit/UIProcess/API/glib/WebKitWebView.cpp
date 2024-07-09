@@ -338,7 +338,7 @@ struct _WebKitWebViewPrivate {
 #if ENABLE(WPE_PLATFORM)
     GRefPtr<WPEDisplay> display;
 #endif
-    std::unique_ptr<WKWPE::View> view;
+    RefPtr<WKWPE::View> view;
     Vector<FrameDisplayedCallback> frameDisplayedCallbacks;
     bool inFrameDisplayed;
     HashSet<unsigned> frameDisplayedCallbacksToRemove;
@@ -838,13 +838,13 @@ static void webkitWebViewCreatePage(WebKitWebView* webView, Ref<API::PageConfigu
 #elif PLATFORM(WPE)
 #if ENABLE(WPE_PLATFORM)
     if (!webView->priv->backend) {
-        webView->priv->view.reset(WKWPE::ViewPlatform::create(webkit_web_view_get_display(webView), configuration.get()));
+        webView->priv->view = WKWPE::ViewPlatform::create(webkit_web_view_get_display(webView), configuration.get());
         if (auto* wpeView = webView->priv->view->wpeView())
             g_signal_connect_object(wpeView, "closed", G_CALLBACK(webkitWebViewClosePage), webView, G_CONNECT_SWAPPED);
         return;
     }
 #endif
-    webView->priv->view.reset(WKWPE::ViewLegacy::create(webkit_web_view_backend_get_wpe_backend(webView->priv->backend.get()), configuration.get()));
+    webView->priv->view = WKWPE::ViewLegacy::create(webkit_web_view_backend_get_wpe_backend(webView->priv->backend.get()), configuration.get());
 #endif
 }
 
@@ -905,8 +905,11 @@ static void webkitWebViewConstructed(GObject* object)
 
 #if ENABLE(2022_GLIB_API)
 #if ENABLE(REMOTE_INSPECTOR)
-    if (priv->isControlledByAutomation)
+    if (priv->isControlledByAutomation) {
+        if (!webkit_web_context_is_automation_allowed(priv->context.get()))
+            g_critical("WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.");
         priv->networkSession = webkit_web_context_get_network_session_for_automation(priv->context.get());
+    }
 #endif
     if (!priv->networkSession)
         priv->networkSession = webkit_network_session_get_default();

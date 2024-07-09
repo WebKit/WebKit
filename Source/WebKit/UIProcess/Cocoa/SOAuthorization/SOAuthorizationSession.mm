@@ -45,6 +45,7 @@
 #import <WebCore/ContentSecurityPolicy.h>
 #import <WebCore/HTTPParsers.h>
 #import <WebCore/ResourceResponse.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SecurityOrigin.h>
 #import <pal/cocoa/AppSSOSoftLink.h>
 #import <wtf/BlockPtr.h>
@@ -253,7 +254,8 @@ void SOAuthorizationSession::continueStartAfterDecidePolicy(const SOAuthorizatio
     [m_soAuthorization setAuthorizationOptions:authorizationOptions];
 
 #if PLATFORM(VISION)
-    if (![[m_page->cocoaView() UIDelegate] respondsToSelector:@selector(_presentingViewControllerForWebView:)])
+    // rdar://130904577 - Investigate supporting embedded authorization view controller on visionOS.
+    if (![[m_page->cocoaView() UIDelegate] respondsToSelector:@selector(_presentingViewControllerForWebView:)] || IOSApplication::isSafariViewService())
         [m_soAuthorization setEnableEmbeddedAuthorizationViewController:NO];
 #endif
 

@@ -86,6 +86,7 @@
 #include "UserStyleSheet.h"
 #include <pal/SessionID.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(APPLICATION_MANIFEST)

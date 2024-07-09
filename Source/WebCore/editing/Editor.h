@@ -284,6 +284,11 @@ public:
     WEBCORE_EXPORT void applyStyleToSelection(Ref<EditingStyle>&&, EditAction, ColorFilterMode);
     void applyParagraphStyleToSelection(StyleProperties*, EditAction);
 
+#if ENABLE(WRITING_TOOLS)
+    bool suppressEditingForWritingTools() const { return m_suppressEditingForWritingTools; }
+    void setSuppressEditingForWritingTools(bool suppress) { m_suppressEditingForWritingTools = suppress; }
+#endif
+
     // Returns whether or not we should proceed with editing.
     bool willApplyEditing(CompositeEditCommand&, Vector<RefPtr<StaticRange>>&&);
     bool willUnapplyEditing(const EditCommandComposition&) const;
@@ -619,6 +624,8 @@ public:
     RenderInline* writingSuggestionRenderer() const;
     void setWritingSuggestionRenderer(RenderInline&);
 
+    WEBCORE_EXPORT void closeTyping();
+
 private:
     Document& document() const { return m_document.get(); }
     Ref<Document> protectedDocument() const { return m_document.get(); }
@@ -693,6 +700,10 @@ private:
     const std::unique_ptr<AlternativeTextController> m_alternativeTextController;
     EditorParagraphSeparator m_defaultParagraphSeparator { EditorParagraphSeparator::div };
     bool m_overwriteModeEnabled { false };
+
+#if ENABLE(WRITING_TOOLS)
+    bool m_suppressEditingForWritingTools { false };
+#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     MemoryCompactRobinHoodHashSet<String> m_insertedAttachmentIdentifiers;

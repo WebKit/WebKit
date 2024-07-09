@@ -35,6 +35,7 @@ from .protocol import (BaseProtocolPart,
                        RPHRegistrationsProtocolPart,
                        FedCMProtocolPart,
                        VirtualSensorProtocolPart,
+                       DevicePostureProtocolPart,
                        merge_dicts)
 
 from webdriver.client import Session
@@ -52,9 +53,9 @@ class WebDriverBaseProtocolPart(BaseProtocolPart):
     def setup(self):
         self.webdriver = self.parent.webdriver
 
-    def execute_script(self, script, asynchronous=False):
+    def execute_script(self, script, asynchronous=False, args=None):
         method = self.webdriver.execute_async_script if asynchronous else self.webdriver.execute_script
-        return method(script)
+        return method(script, args=args)
 
     def set_timeout(self, timeout):
         try:
@@ -431,6 +432,16 @@ class WebDriverVirtualSensorPart(VirtualSensorProtocolPart):
     def get_virtual_sensor_information(self, sensor_type):
         return self.webdriver.send_session_command("GET", "sensor/%s" % sensor_type)
 
+class WebDriverDevicePostureProtocolPart(DevicePostureProtocolPart):
+    def setup(self):
+        self.webdriver = self.parent.webdriver
+
+    def set_device_posture(self, posture):
+        body = {"posture": posture}
+        return self.webdriver.send_session_command("POST", "deviceposture", body)
+
+    def clear_device_posture(self):
+        return self.webdriver.send_session_command("DELETE", "deviceposture")
 
 class WebDriverProtocol(Protocol):
     implements = [WebDriverBaseProtocolPart,
@@ -450,7 +461,8 @@ class WebDriverProtocol(Protocol):
                   WebDriverRPHRegistrationsProtocolPart,
                   WebDriverFedCMProtocolPart,
                   WebDriverDebugProtocolPart,
-                  WebDriverVirtualSensorPart]
+                  WebDriverVirtualSensorPart,
+                  WebDriverDevicePostureProtocolPart]
 
     def __init__(self, executor, browser, capabilities, **kwargs):
         super().__init__(executor, browser)
@@ -497,7 +509,9 @@ class WebDriverProtocol(Protocol):
             self.logger.debug(message)
         self.webdriver = None
 
-    def is_alive(self):
+    def is_alive(self) -> bool:
+        if not self.webdriver:
+            return False
         try:
             # Get a simple property over the connection, with 2 seconds of timeout
             # that should be more than enough to check if the WebDriver its
@@ -505,7 +519,7 @@ class WebDriverProtocol(Protocol):
             # 5 seconds of extra_timeout we have as maximum to end the test before
             # the external timeout from testrunner triggers.
             self.webdriver.send_session_command("GET", "window", timeout=2)
-        except (socket.timeout, error.UnknownErrorException, error.InvalidSessionIdException):
+        except (OSError, error.WebDriverException):
             return False
         return True
 
@@ -527,7 +541,9 @@ class WebDriverRun(TimedRunner):
             self.result = True, self.func(self.protocol, self.url, self.timeout)
         except (error.TimeoutException, error.ScriptTimeoutException):
             self.result = False, ("EXTERNAL-TIMEOUT", None)
-        except (socket.timeout, error.UnknownErrorException):
+        except socket.timeout:
+            # Checking if the browser is alive below is likely to hang, so mark
+            # this case as a CRASH unconditionally.
             self.result = False, ("CRASH", None)
         except Exception as e:
             if (isinstance(e, error.WebDriverException) and
@@ -536,11 +552,12 @@ class WebDriverRun(TimedRunner):
                 # workaround for https://bugs.chromium.org/p/chromedriver/issues/detail?id=2001
                 self.result = False, ("EXTERNAL-TIMEOUT", None)
             else:
+                status = "INTERNAL-ERROR" if self.protocol.is_alive() else "CRASH"
                 message = str(getattr(e, "message", ""))
                 if message:
                     message += "\n"
                 message += traceback.format_exc()
-                self.result = False, ("INTERNAL-ERROR", message)
+                self.result = False, (status, message)
         finally:
             self.result_flag.set()
 
@@ -586,11 +603,9 @@ class WebDriverTestharnessExecutor(TestharnessExecutor):
         if success:
             return self.convert_result(test, data)
 
-        return (test.result_cls(*data), [])
+        return (test.make_result(*data), [])
 
     def do_testharness(self, protocol, url, timeout):
-        format_map = {"url": strip_server(url)}
-
         # The previous test may not have closed its old windows (if something
         # went wrong or if cleanup_after_test was False), so clean up here.
         parent_window = protocol.testharness.close_old_windows()
@@ -610,20 +625,26 @@ class WebDriverTestharnessExecutor(TestharnessExecutor):
 
         while True:
             result = protocol.base.execute_script(
-                self.script_resume % format_map, asynchronous=True)
+                self.script_resume, asynchronous=True, args=[strip_server(url)])
 
             # As of 2019-03-29, WebDriver does not define expected behavior for
             # cases where the browser crashes during script execution:
             #
             # https://github.com/w3c/webdriver/issues/1308
-            if not isinstance(result, list) or len(result) != 2:
-                try:
-                    is_alive = self.is_alive()
-                except error.WebDriverException:
-                    is_alive = False
-
+            if not isinstance(result, list) or len(result) != 3:
+                is_alive = self.is_alive()
                 if not is_alive:
                     raise Exception("Browser crashed during script execution.")
+
+            # A user prompt created after starting execution of the resume
+            # script will resolve the script with `null` [1, 2]. In that case,
+            # cycle this event loop and handle the prompt the next time the
+            # resume script executes.
+            #
+            # [1]: Step 5.3 of https://www.w3.org/TR/webdriver/#execute-async-script
+            # [2]: https://www.w3.org/TR/webdriver/#dfn-execute-a-function-body
+            if result is None:
+                continue
 
             done, rv = handler(result)
             if done:
@@ -677,6 +698,9 @@ class WebDriverRefTestExecutor(RefTestExecutor):
             """return [window.outerWidth - window.innerWidth,
                        window.outerHeight - window.innerHeight];"""
         )
+        # width_offset and height_offset should never be negative
+        width_offset = max(width_offset, 0)
+        height_offset = max(height_offset, 0)
         try:
             self.protocol.webdriver.window.position = (0, 0)
         except error.InvalidArgumentException:
@@ -754,7 +778,7 @@ class WebDriverCrashtestExecutor(CrashtestExecutor):
         if success:
             return self.convert_result(test, data)
 
-        return (test.result_cls(*data), [])
+        return (test.make_result(*data), [])
 
     def do_crashtest(self, protocol, url, timeout):
         protocol.base.load(url)

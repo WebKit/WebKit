@@ -736,10 +736,8 @@ void WebPageProxy::setSmartInsertDeleteEnabled(bool)
 
 void WebPageProxy::registerWebProcessAccessibilityToken(std::span<const uint8_t> data, FrameIdentifier frameID)
 {
-    RefPtr webFrame = WebFrameProxy::webFrame(frameID);
-    if (!webFrame)
-        return;
-    pageClient().accessibilityWebProcessTokenReceived(data, frameID, webFrame->process().connection()->remoteProcessID());
+    // Note: The WebFrameProxy with this FrameIdentifier might not exist in the UI process. See rdar://130998804.
+    pageClient().accessibilityWebProcessTokenReceived(data, frameID, legacyMainFrameProcess().connection()->remoteProcessID());
 }
 
 void WebPageProxy::relayAccessibilityNotification(const String& notificationName, std::span<const uint8_t> data)

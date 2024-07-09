@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmIndexOrName.h"
 
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC { namespace Wasm {
 

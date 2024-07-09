@@ -408,22 +408,6 @@ static void aes_gcm_cleanup(EVP_CIPHER_CTX *c) {
   }
 }
 
-// increment counter (64-bit int) by 1
-static void ctr64_inc(uint8_t *counter) {
-  int n = 8;
-  uint8_t c;
-
-  do {
-    --n;
-    c = counter[n];
-    ++c;
-    counter[n] = c;
-    if (c) {
-      return;
-    }
-  } while (n);
-}
-
 static int aes_gcm_ctrl(EVP_CIPHER_CTX *c, int type, int arg, void *ptr) {
   EVP_AES_GCM_CTX *gctx = aes_gcm_from_cipher_ctx(c);
   switch (type) {
@@ -454,6 +438,10 @@ static int aes_gcm_ctrl(EVP_CIPHER_CTX *c, int type, int arg, void *ptr) {
       gctx->ivlen = arg;
       return 1;
 
+    case EVP_CTRL_GET_IVLEN:
+      *(int *)ptr = gctx->ivlen;
+      return 1;
+
     case EVP_CTRL_AEAD_SET_TAG:
       if (arg <= 0 || arg > 16 || c->encrypt) {
         return 0;
@@ -481,9 +469,7 @@ static int aes_gcm_ctrl(EVP_CIPHER_CTX *c, int type, int arg, void *ptr) {
       if (arg < 4 || (gctx->ivlen - arg) < 8) {
         return 0;
       }
-      if (arg) {
-        OPENSSL_memcpy(gctx->iv, ptr, arg);
-      }
+      OPENSSL_memcpy(gctx->iv, ptr, arg);
       if (c->encrypt) {
         // |RAND_bytes| calls within the fipsmodule should be wrapped with state
         // lock functions to avoid updating the service indicator with the DRBG
@@ -495,7 +481,7 @@ static int aes_gcm_ctrl(EVP_CIPHER_CTX *c, int type, int arg, void *ptr) {
       gctx->iv_gen = 1;
       return 1;
 
-    case EVP_CTRL_GCM_IV_GEN:
+    case EVP_CTRL_GCM_IV_GEN: {
       if (gctx->iv_gen == 0 || gctx->key_set == 0) {
         return 0;
       }
@@ -504,12 +490,13 @@ static int aes_gcm_ctrl(EVP_CIPHER_CTX *c, int type, int arg, void *ptr) {
         arg = gctx->ivlen;
       }
       OPENSSL_memcpy(ptr, gctx->iv + gctx->ivlen - arg, arg);
-      // Invocation field will be at least 8 bytes in size and
-      // so no need to check wrap around or increment more than
-      // last 8 bytes.
-      ctr64_inc(gctx->iv + gctx->ivlen - 8);
+      // Invocation field will be at least 8 bytes in size, so no need to check
+      // wrap around or increment more than last 8 bytes.
+      uint8_t *ctr = gctx->iv + gctx->ivlen - 8;
+      CRYPTO_store_u64_be(ctr, CRYPTO_load_u64_be(ctr) + 1);
       gctx->iv_set = 1;
       return 1;
+    }
 
     case EVP_CTRL_GCM_SET_IV_INV:
       if (gctx->iv_gen == 0 || gctx->key_set == 0 || c->encrypt) {

@@ -33,6 +33,7 @@
 #include "NumberPrototype.h"
 #include "ParseInt.h"
 #include "TypeError.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

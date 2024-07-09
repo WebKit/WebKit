@@ -296,14 +296,11 @@ TEST(X509TimeTest, TestCmpTime) {
   for (auto &test : kX509CmpTests) {
     SCOPED_TRACE(test.data);
 
-    ASN1_TIME t;
+    bssl::UniquePtr<ASN1_STRING> t(ASN1_STRING_type_new(test.type));
+    ASSERT_TRUE(t);
+    ASSERT_TRUE(ASN1_STRING_set(t.get(), test.data, strlen(test.data)));
 
-    memset(&t, 0, sizeof(t));
-    t.type = test.type;
-    t.data = (unsigned char*) test.data;
-    t.length = strlen(test.data);
-
-    EXPECT_EQ(test.expected, X509_cmp_time_posix(&t, test.cmp_time));
+    EXPECT_EQ(test.expected, X509_cmp_time_posix(t.get(), test.cmp_time));
   }
 }
 

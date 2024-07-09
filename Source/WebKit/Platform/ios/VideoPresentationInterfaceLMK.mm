@@ -41,6 +41,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/UUID.h>
+#import <wtf/text/MakeString.h>
 
 @interface WKLinearMediaKitCaptionsLayer : CALayer {
     ThreadSafeWeakPtr<WebKit::VideoPresentationInterfaceLMK> _parent;

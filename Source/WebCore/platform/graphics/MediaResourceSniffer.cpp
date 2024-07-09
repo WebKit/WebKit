@@ -31,6 +31,7 @@
 #include "MIMESniffer.h"
 #include "ResourceRequest.h"
 #include <limits.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

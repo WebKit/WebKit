@@ -34,6 +34,7 @@
 #include <wtf/Scope.h>
 #include <wtf/StringExtras.h>
 #include <wtf/WorkQueue.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuffer.h>
 
 // Note: Disabling iOS since 'system' is not available on that platform.

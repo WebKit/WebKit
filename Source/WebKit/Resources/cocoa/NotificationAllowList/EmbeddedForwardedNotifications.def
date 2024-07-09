@@ -1,6 +1,11 @@
 WK_NOTIFICATION_COMMENT("These notifyd notifications are forwarded from the UIProcess to the WebProcess on embedded platforms.")
 
 WK_NOTIFICATION("com.apple.ManagedConfiguration.profileListChanged")
+WK_NOTIFICATION("com.apple.UIKit.InternalPreferences")
+WK_NOTIFICATION("com.apple.managedconfiguration.appwhitelistdidchange")
+WK_NOTIFICATION("com.apple.managedconfiguration.defaultsdidchange")
+WK_NOTIFICATION("com.apple.managedconfiguration.effectivesettingschanged")
+WK_NOTIFICATION("com.apple.managedconfiguration.keyboardsettingschanged")
 WK_NOTIFICATION("com.apple.managedconfiguration.passcodechanged")
 WK_NOTIFICATION("com.apple.managedconfiguration.restrictionchanged")
 WK_NOTIFICATION("com.apple.managedconfiguration.settingschanged")

@@ -332,6 +332,36 @@ TEST(AdaptiveImageGlyph, InsertAdaptiveImageGlyphAtLargerFontSize)
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('picture').children[1]).height"], "84px");
 }
 
+TEST(AdaptiveImageGlyph, InsertAdaptiveImageGlyphMatchStyle)
+{
+    RetainPtr webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setEditable:YES];
+
+    [webView synchronouslyLoadHTMLString:@"<body><span style='font-size: 64px;'>Test</span></body>"];
+    [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
+
+    NSString *setSelectionJavaScript = @""
+        "(() => {"
+        "  const range = document.createRange();"
+        "  range.setStart(document.querySelector('span').firstChild, 4);"
+        "  range.setEnd(document.querySelector('span').firstChild, 4);"
+        "  "
+        "  var selection = window.getSelection();"
+        "  selection.removeAllRanges();"
+        "  selection.addRange(range);"
+        "})();";
+    [webView stringByEvaluatingJavaScript:setSelectionJavaScript];
+
+    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
+
+    RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
+
+    [webView insertAdaptiveImageGlyph:adaptiveImageGlyph.get()];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('picture').children[1]).fontSize"], "64px");
+}
+
 TEST(AdaptiveImageGlyph, InsertAndRemoveWKAttachments)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

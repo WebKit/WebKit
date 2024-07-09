@@ -35,6 +35,7 @@
 #include "WebErrors.h"
 #include <WebCore/BackgroundFetchRequest.h>
 #include <WebCore/ClientOrigin.h>
+#include <wtf/text/MakeString.h>
 
 #define BGLOAD_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - BackgroundFetchLoad::" fmt, this, ##__VA_ARGS__)
 

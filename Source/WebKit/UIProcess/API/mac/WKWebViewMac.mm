@@ -46,10 +46,6 @@
 #import <pal/spi/mac/NSViewSPI.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebMultiRepresentationHEICAttachmentAdditions.h>
-#endif
-
 _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> coreScrollbarStyle)
 {
     if (!coreScrollbarStyle)
@@ -1081,8 +1077,23 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 #endif // HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewMacAdditionsAfter.mm>
+#pragma mark – NSAdaptiveImageGlyph
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+
+- (BOOL)supportsAdaptiveImageGlyph
+{
+    if ([self _isEditable] || [_configuration _multiRepresentationHEICInsertionEnabled])
+        return _impl->isContentRichlyEditable();
+
+    return NO;
+}
+
+- (void)insertAdaptiveImageGlyph:(NSAdaptiveImageGlyph *)adaptiveImageGlyph replacementRange:(NSRange)replacementRange
+{
+    _impl->insertMultiRepresentationHEIC(adaptiveImageGlyph.imageContent, adaptiveImageGlyph.contentDescription);
+}
+
 #endif
 
 @end
@@ -1312,6 +1323,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)endPreviewPanelControl:(QLPreviewPanel *)panel
 {
     _impl->endPreviewPanelControl(panel);
+}
+
+#pragma mark - NSTextCheckingClient_WritingTools
+
+- (BOOL)providesWritingToolsContextMenu
+{
+    return YES;
 }
 
 @end
@@ -1757,16 +1775,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_simulateMouseMove:(NSEvent *)event
 {
     return _impl->mouseMoved(event);
-}
-
-- (void)_createFlagsChangedEventMonitorForTesting
-{
-    _impl->createFlagsChangedEventMonitor();
-}
-
-- (void)_removeFlagsChangedEventMonitorForTesting
-{
-    _impl->removeFlagsChangedEventMonitor();
 }
 
 - (void)_setFont:(NSFont *)font sender:(id)sender

@@ -127,7 +127,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/AtomString.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 #if COMPILER(MSVC)
 // See https://msdn.microsoft.com/en-us/library/1wea5zwe.aspx
@@ -1103,7 +1103,6 @@ void AXObjectCache::remove(Node& node)
 {
     AXTRACE(makeString("AXObjectCache::remove Node& 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
 
-    removeNodeForUse(node);
     remove(m_nodeObjectMapping.take(&node));
     remove(node.renderer());
 
@@ -2799,14 +2798,14 @@ Ref<Document> AXObjectCache::protectedDocument() const
 
 VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(const TextMarkerData& textMarkerData)
 {
-    if (!textMarkerData.node)
+    RefPtr node = nodeForID(textMarkerData.axObjectID());
+    if (!node)
         return { };
 
-    Ref node = *textMarkerData.node;
-    if (!isNodeInUse(node) || node->isPseudoElement())
+    if (node->isPseudoElement())
         return { };
 
-    auto visiblePosition = VisiblePosition({ node.ptr(), textMarkerData.offset, textMarkerData.anchorType }, textMarkerData.affinity);
+    auto visiblePosition = VisiblePosition({ node.get(), textMarkerData.offset, textMarkerData.anchorType }, textMarkerData.affinity);
     auto deepPosition = visiblePosition.deepEquivalent();
     if (deepPosition.isNull())
         return { };
@@ -2816,7 +2815,7 @@ VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(const TextMarker
         return { };
 
     auto* cache = renderer->document().axObjectCache();
-    if (cache && !cache->m_idsInUse.contains(textMarkerData.objectID))
+    if (cache && !cache->m_idsInUse.contains(textMarkerData.axObjectID()))
         return { };
 
     return visiblePosition;
@@ -2824,14 +2823,14 @@ VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(const TextMarker
 
 CharacterOffset AXObjectCache::characterOffsetForTextMarkerData(const TextMarkerData& textMarkerData)
 {
-    if (textMarkerData.ignored || !textMarkerData.node)
+    if (textMarkerData.ignored)
         return { };
 
-    RefAllowingPartiallyDestroyed<Node> node = *textMarkerData.node;
-    if (!isNodeInUse(node))
+    RefPtr node = nodeForID(textMarkerData.axObjectID());
+    if (!node)
         return { };
 
-    CharacterOffset result(node.ptr(), textMarkerData.characterStart, textMarkerData.characterOffset);
+    CharacterOffset result(node.get(), textMarkerData.characterStart, textMarkerData.characterOffset);
     // When we are at a line wrap and the VisiblePosition is upstream, it means the text marker is at the end of the previous line.
     // We use the previous CharacterOffset so that it will match the Range.
     if (textMarkerData.affinity == Affinity::Upstream)
@@ -3103,7 +3102,6 @@ TextMarkerData AXObjectCache::textMarkerDataForCharacterOffset(const CharacterOf
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(characterOffset.node.get()); input && input->isSecureField())
         return { *this, { }, true };
 
-    setNodeInUse(Ref { *characterOffset.node });
     return { *this, characterOffset, false };
 }
 
@@ -3363,16 +3361,20 @@ CharacterOffset AXObjectCache::characterOffsetFromVisiblePosition(const VisibleP
     return result;
 }
 
-AccessibilityObject* AXObjectCache::accessibilityObjectForTextMarkerData(const TextMarkerData& textMarkerData)
+AccessibilityObject* AXObjectCache::objectForTextMarkerData(const TextMarkerData& textMarkerData)
 {
     if (textMarkerData.ignored)
         return nullptr;
 
-    RefPtr domNode = textMarkerData.node.get();
-    if (!domNode || !isNodeInUse(*domNode))
+    RefPtr object = m_objects.get(textMarkerData.axObjectID());
+    if (!object)
         return nullptr;
 
-    return getOrCreate(*domNode);
+    Node* node = object->node();
+    if (!node)
+        return nullptr;
+    ASSERT(object.get() == getOrCreate(*node));
+    return getOrCreate(*node);
 }
 
 std::optional<TextMarkerData> AXObjectCache::textMarkerDataForVisiblePosition(const VisiblePosition& visiblePosition)
@@ -3398,22 +3400,8 @@ std::optional<TextMarkerData> AXObjectCache::textMarkerDataForVisiblePosition(co
     CheckedPtr cache = node->document().axObjectCache();
     if (!cache)
         return std::nullopt;
-    cache->setNodeInUse(*node);
-    return { { *cache, node.get(), visiblePosition,
+    return { { *cache, visiblePosition,
         characterOffset.startIndex, characterOffset.offset, false } };
-}
-
-// This function exists as a performance optimization to avoid a synchronous layout.
-std::optional<TextMarkerData> AXObjectCache::textMarkerDataForFirstPositionInTextControl(HTMLTextFormControlElement& textControl)
-{
-    if (RefPtr input = dynamicDowncast<HTMLInputElement>(textControl); input && input->isSecureField())
-        return std::nullopt;
-
-    CheckedPtr cache = textControl.document().axObjectCache();
-    if (!cache)
-        return std::nullopt;
-    cache->setNodeInUse(textControl);
-    return { { *cache, &textControl, { }, false } };
 }
 
 CharacterOffset AXObjectCache::nextCharacterOffset(const CharacterOffset& characterOffset, bool ignoreNextNodeStart)
@@ -4031,7 +4019,6 @@ static void filterWeakHashMapForRemoval(WeakHashMapType& map, const Document& do
 void AXObjectCache::prepareForDocumentDestruction(const Document& document)
 {
     HashSet<Ref<Node>> nodesToRemove;
-    filterListForRemoval(m_textMarkerNodes, document, nodesToRemove);
     filterWeakListHashSetForRemoval(m_deferredTextChangedList, document, nodesToRemove);
     filterWeakListHashSetForRemoval(m_deferredNodeAddedOrRemovedList, document, nodesToRemove);
     filterWeakHashSetForRemoval(m_deferredRecomputeIsIgnoredList, document, nodesToRemove);

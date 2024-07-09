@@ -38,7 +38,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
 
 @interface ProxyDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
 - (NSString *)waitForAlert;

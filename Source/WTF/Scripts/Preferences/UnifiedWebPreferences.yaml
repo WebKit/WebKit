@@ -856,7 +856,7 @@ BuiltInNotificationsEnabled:
   humanReadableName: "Built-In Web Notifications"
   humanReadableDescription: "Enable built-in WebKit managed notifications"
   webcoreBinding: DeprecatedGlobalSettings
-  condition: ENABLE(BUILT_IN_NOTIFICATIONS)
+  condition: ENABLE(WEB_PUSH_NOTIFICATIONS)
   defaultValue:
     WebCore:
       default: false

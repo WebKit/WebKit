@@ -300,7 +300,7 @@ static void removePushSubscriptionsForOrigins(const Vector<WebCore::SecurityOrig
     WebsiteDataStore::forEachWebsiteDataStore([&origins](WebsiteDataStore& dataStore) {
         if (dataStore.isPersistent()) {
             for (auto& origin : origins)
-                dataStore.networkProcess().deletePushAndNotificationRegistration(dataStore.sessionID(), origin, [originString = origin.toString()](auto&&) { });
+                dataStore.networkProcess().removePushSubscriptionsForOrigin(dataStore.sessionID(), origin, [originString = origin.toString()](auto&&) { });
         }
     });
 }

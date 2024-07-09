@@ -40,6 +40,7 @@
 #include "XMLDocument.h"
 #include "markup.h"
 #include <wtf/Assertions.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

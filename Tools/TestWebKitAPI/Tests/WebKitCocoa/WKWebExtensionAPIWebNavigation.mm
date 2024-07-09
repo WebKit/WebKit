@@ -31,6 +31,7 @@
 #import "WebExtensionUtilities.h"
 
 #import <WebKit/_WKWebExtensionWebNavigationURLFilter.h>
+#import <wtf/text/MakeString.h>
 
 namespace TestWebKitAPI {
 

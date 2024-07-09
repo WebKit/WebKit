@@ -32,6 +32,7 @@
 #include "WasmOps.h"
 #include "WasmParser.h"
 #include <wtf/text/ASCIILiteral.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC { namespace Wasm {
 

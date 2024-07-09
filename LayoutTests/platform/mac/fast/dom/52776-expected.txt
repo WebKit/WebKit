@@ -1,9 +1,9 @@
-layer at (0,0) size 785x1696
+layer at (0,0) size 785x1694
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1696
-  RenderBlock {HTML} at (0,0) size 785x1696
-    RenderBody {BODY} at (8,16) size 769x1664
-      RenderBlock {DIV} at (0,0) size 769x807
+layer at (0,0) size 785x1694
+  RenderBlock {HTML} at (0,0) size 785x1694
+    RenderBody {BODY} at (8,16) size 769x1662
+      RenderBlock {DIV} at (0,0) size 769x806
         RenderBlock {P} at (0,0) size 769x18
           RenderText {#text} at (682,0) size 87x18
             text run at (682,0) width 87: "Right To Left"
@@ -123,10 +123,10 @@ layer at (0,0) size 785x1696
           RenderText {#text} at (746,0) size 23x18
             text run at (746,0) width 1 RTL: "\x{202C}\x{202A}"
             text run at (746,0) width 23: "abc"
-        RenderBlock {DIV} at (0,788) size 769x19
-          RenderText {#text} at (749,1) size 20x18
-            text run at (749,1) width 20 RTL: "\x{5D0}\x{5D1}\x{202C}\x{202A}"
-      RenderBlock {DIV} at (0,823) size 769x807
+        RenderBlock {DIV} at (0,788) size 769x18
+          RenderText {#text} at (754,0) size 15x18
+            text run at (754,0) width 15 RTL: "\x{5D0}\x{5D1}\x{202C}\x{202A}"
+      RenderBlock {DIV} at (0,822) size 769x806
         RenderBlock {P} at (0,0) size 769x18
           RenderText {#text} at (0,0) size 87x18
             text run at (0,0) width 87: "Left To Right"
@@ -231,11 +231,11 @@ layer at (0,0) size 785x1696
         RenderBlock {DIV} at (0,770) size 769x18
           RenderText {#text} at (0,0) size 23x18
             text run at (0,0) width 23: "abc\x{202C}\x{202A}"
-        RenderBlock {DIV} at (0,788) size 769x19
-          RenderText {#text} at (0,1) size 20x18
-            text run at (0,1) width 20 RTL: "\x{5D0}\x{5D1}"
-            text run at (19,1) width 1: "\x{202C}\x{202A}"
-      RenderBlock {UL} at (0,1646) size 769x18
+        RenderBlock {DIV} at (0,788) size 769x18
+          RenderText {#text} at (0,0) size 15x18
+            text run at (0,0) width 15 RTL: "\x{5D0}\x{5D1}"
+            text run at (14,0) width 1: "\x{202C}\x{202A}"
+      RenderBlock {UL} at (0,1644) size 769x18
         RenderListItem {LI} at (40,0) size 729x18
           RenderListMarker at (-17,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 717x18

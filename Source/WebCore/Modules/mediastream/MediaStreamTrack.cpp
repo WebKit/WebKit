@@ -294,6 +294,9 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
     if (settings.supportsBackgroundBlur())
         result.backgroundBlur = settings.backgroundBlur();
 
+    if (settings.supportsPowerEfficient())
+        result.powerEfficient = settings.powerEfficient();
+
     return result;
 }
 

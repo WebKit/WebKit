@@ -43,7 +43,6 @@
 #include "LLIntThunks.h"
 #include "LinkBuffer.h"
 #include "ModuleNamespaceAccessCase.h"
-#include "ProxyObjectAccessCase.h"
 #include "ScopedArguments.h"
 #include "ScratchRegisterAllocator.h"
 #include "StructureStubInfo.h"
@@ -81,12 +80,11 @@ Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, Cache
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
-    case ProxyObjectHas:
+    case Replace:
+    case ProxyObjectIn:
     case ProxyObjectLoad:
     case ProxyObjectStore:
-    case Replace:
     case InstanceOfMegamorphic:
-    case IndexedProxyObjectLoad:
     case IndexedMegamorphicLoad:
     case IndexedMegamorphicStore:
     case IndexedMegamorphicIn:
@@ -164,6 +162,9 @@ Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, Cache
     case IndexedResizableTypedArrayFloat64InHit:
     case IndexedStringInHit:
     case IndexedNoIndexingInMiss:
+    case IndexedProxyObjectIn:
+    case IndexedProxyObjectLoad:
+    case IndexedProxyObjectStore:
         RELEASE_ASSERT(!prototypeAccessChain);
         break;
     case Load:
@@ -332,16 +333,18 @@ bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
-    case ProxyObjectHas:
+    case ProxyObjectIn:
     case ProxyObjectLoad:
     case ProxyObjectStore:
     case InstanceOfHit:
     case InstanceOfMiss:
     case InstanceOfMegamorphic:
+    case IndexedProxyObjectIn:
     case IndexedProxyObjectLoad:
+    case IndexedProxyObjectStore:
+    case IndexedMegamorphicIn:
     case IndexedMegamorphicLoad:
     case IndexedMegamorphicStore:
-    case IndexedMegamorphicIn:
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
@@ -470,7 +473,7 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
-    case ProxyObjectHas:
+    case ProxyObjectIn:
     case ProxyObjectLoad:
     case ProxyObjectStore:
     case CheckPrivateBrand:
@@ -479,10 +482,12 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case InstanceOfHit:
     case InstanceOfMiss:
     case InstanceOfMegamorphic:
+    case IndexedProxyObjectIn:
     case IndexedProxyObjectLoad:
+    case IndexedProxyObjectStore:
+    case IndexedMegamorphicIn:
     case IndexedMegamorphicLoad:
     case IndexedMegamorphicStore:
-    case IndexedMegamorphicIn:
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
@@ -590,7 +595,7 @@ bool AccessCase::requiresInt32PropertyCheck() const
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
-    case ProxyObjectHas:
+    case ProxyObjectIn:
     case ProxyObjectLoad:
     case ProxyObjectStore:
     case InstanceOfHit:
@@ -598,10 +603,12 @@ bool AccessCase::requiresInt32PropertyCheck() const
     case InstanceOfMegamorphic:
     case CheckPrivateBrand:
     case SetPrivateBrand:
+    case IndexedProxyObjectIn:
     case IndexedProxyObjectLoad:
+    case IndexedProxyObjectStore:
+    case IndexedMegamorphicIn:
     case IndexedMegamorphicLoad:
     case IndexedMegamorphicStore:
-    case IndexedMegamorphicIn:
         return false;
     case IndexedInt32Load:
     case IndexedDoubleLoad:
@@ -719,12 +726,6 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
             functor(accessCase.moduleEnvironment());
         break;
     }
-    case ProxyObjectHas:
-    case ProxyObjectLoad:
-    case ProxyObjectStore:
-    case IndexedProxyObjectLoad: {
-        break;
-    }
     case InstanceOfHit:
     case InstanceOfMiss:
         if (as<InstanceOfAccessCase>().prototype())
@@ -751,6 +752,9 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
     case StringLength:
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
+    case ProxyObjectIn:
+    case ProxyObjectLoad:
+    case ProxyObjectStore:
     case InstanceOfMegamorphic:
     case IndexedMegamorphicLoad:
     case IndexedMegamorphicStore:
@@ -829,6 +833,9 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
     case IndexedResizableTypedArrayFloat64InHit:
     case IndexedStringInHit:
     case IndexedNoIndexingInMiss:
+    case IndexedProxyObjectIn:
+    case IndexedProxyObjectLoad:
+    case IndexedProxyObjectStore:
         break;
     }
 }
@@ -846,10 +853,12 @@ bool AccessCase::doesCalls(VM&) const
     case CustomAccessorGetter:
     case CustomValueSetter:
     case CustomAccessorSetter:
-    case ProxyObjectHas:
+    case ProxyObjectIn:
     case ProxyObjectLoad:
     case ProxyObjectStore:
+    case IndexedProxyObjectIn:
     case IndexedProxyObjectLoad:
+    case IndexedProxyObjectStore:
     case StoreMegamorphic:
     case IndexedMegamorphicStore:
         doesCalls = true;
@@ -1066,10 +1075,12 @@ bool AccessCase::canReplace(const AccessCase& other) const
     case IndexedResizableTypedArrayUint32Store:
     case IndexedResizableTypedArrayFloat32Store:
     case IndexedResizableTypedArrayFloat64Store:
-    case ProxyObjectHas:
+    case ProxyObjectIn:
     case ProxyObjectLoad:
     case ProxyObjectStore:
+    case IndexedProxyObjectIn:
     case IndexedProxyObjectLoad:
+    case IndexedProxyObjectStore:
     case IndexedInt32InHit:
     case IndexedDoubleInHit:
     case IndexedContiguousInHit:
@@ -1342,6 +1353,12 @@ inline void AccessCase::runWithDowncast(const Func& func)
     case IndexedStringInHit:
     case IndexedNoIndexingInMiss:
     case InstanceOfMegamorphic:
+    case ProxyObjectIn:
+    case ProxyObjectLoad:
+    case ProxyObjectStore:
+    case IndexedProxyObjectIn:
+    case IndexedProxyObjectLoad:
+    case IndexedProxyObjectStore:
         func(static_cast<AccessCase*>(this));
         break;
 
@@ -1371,13 +1388,6 @@ inline void AccessCase::runWithDowncast(const Func& func)
     case InstanceOfHit:
     case InstanceOfMiss:
         func(static_cast<InstanceOfAccessCase*>(this));
-        break;
-
-    case ProxyObjectHas:
-    case ProxyObjectLoad:
-    case ProxyObjectStore:
-    case IndexedProxyObjectLoad:
-        func(static_cast<ProxyObjectAccessCase*>(this));
         break;
     }
 }
@@ -1434,6 +1444,9 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     case GetGetter:
     case InHit:
     case InMiss:
+    case ProxyObjectIn:
+    case ProxyObjectLoad:
+    case ProxyObjectStore:
     case ArrayLength:
     case StringLength:
     case DirectArgumentsLength:
@@ -1518,6 +1531,9 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     case IndexedStringInHit:
     case IndexedNoIndexingInMiss:
     case InstanceOfMegamorphic:
+    case IndexedProxyObjectIn:
+    case IndexedProxyObjectLoad:
+    case IndexedProxyObjectStore:
         return true;
 
     case CustomValueGetter:
@@ -1531,12 +1547,7 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
 
     case Getter:
     case Setter:
-    case ProxyObjectHas:
-    case ProxyObjectLoad:
-    case ProxyObjectStore:
-    case IndexedProxyObjectLoad: {
         return true;
-    }
 
     case IntrinsicGetter: {
         auto& lhsd = lhs.as<IntrinsicGetterAccessCase>();

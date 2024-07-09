@@ -44,6 +44,14 @@ set(WPEPlatformWayland_LIBRARIES
     ${WPEPlatform_LIBRARIES}
 )
 
+check_function_exists(shm_open SHM_OPEN_EXISTS)
+if (NOT SHM_OPEN_EXISTS)
+    check_function_exists(shm_open SHM_OPEN_REQUIRES_LIBRT)
+    if (SHM_OPEN_REQUIRES_LIBRT)
+        list(APPEND WPEPlatformWayland_LIBRARIES rt)
+    endif ()
+endif ()
+
 set(WPEPlatformWayland_SOURCES_FOR_INTROSPECTION
     ${WPEPlatformWayland_INSTALLED_HEADERS}
     ${WPEPlatformWayland_SOURCES}

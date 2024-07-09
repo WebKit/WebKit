@@ -92,7 +92,7 @@ bool PointerLockManager::unlock()
     return true;
 }
 
-void PointerLockManager::handleMotion(FloatSize&& delta)
+void PointerLockManager::handleMotion(const FloatSize& delta)
 {
     m_webPage.handleMouseEvent(NativeWebMouseEvent(WebEventType::MouseMove, m_button, m_buttons, IntPoint(m_position), IntPoint(m_initialPoint), 0, m_modifiers, delta, mousePointerID, mousePointerEventType(), PlatformMouseEvent::IsTouch::No));
 }

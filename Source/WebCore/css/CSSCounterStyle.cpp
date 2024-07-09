@@ -30,6 +30,7 @@
 #include "CSSCounterStyleRegistry.h"
 #include <cmath>
 #include <wtf/Assertions.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>

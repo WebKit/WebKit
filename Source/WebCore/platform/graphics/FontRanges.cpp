@@ -39,9 +39,9 @@ const Font* FontRanges::Range::font(ExternalResourceDownloadPolicy policy) const
     return m_fontAccessor->font(policy);
 }
 
-FontRanges::FontRanges(FontRanges&& other, bool isGeneric)
+FontRanges::FontRanges(FontRanges&& other, IsGenericFontFamily isGenericFontFamily)
 : m_ranges { WTFMove(other.m_ranges) }
-, m_isGeneric { isGeneric }
+, m_isGenericFontFamily { isGenericFontFamily }
 {
 }
 
@@ -82,7 +82,7 @@ FontRanges::~FontRanges() = default;
 GlyphData FontRanges::glyphDataForCharacter(char32_t character, ExternalResourceDownloadPolicy policy) const
 {
     const Font* resultFont = nullptr;
-    if (isGeneric() && isPrivateUseAreaCharacter(character))
+    if (isGenericFontFamily() && isPrivateUseAreaCharacter(character))
         return GlyphData();
 
     for (auto& range : m_ranges) {

@@ -34,6 +34,7 @@
 #include "LocalDOMWindow.h"
 #include "Quirks.h"
 #include "SecurityOrigin.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

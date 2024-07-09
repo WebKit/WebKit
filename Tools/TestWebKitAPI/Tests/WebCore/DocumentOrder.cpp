@@ -38,6 +38,7 @@
 #include <WebCore/SimpleRange.h>
 #include <WebCore/TextControlInnerElements.h>
 #include <WebCore/WebKitFontFamilyNames.h>
+#include <wtf/text/MakeString.h>
 
 // FIXME(https://webkit.org/b/228175): Expose the functions tested here in WebKit internals object, then replace this test with one written in JavaScript.
 // FIXME: When doing the above, don't forget to remove the many WEBCORE_EXPORT that were added so we could compile and link this test.

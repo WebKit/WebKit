@@ -39,6 +39,7 @@
 #include <wtf/DateMath.h>
 #include <wtf/HashMap.h>
 #include <wtf/Language.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/win/WCharStringExtras.h>

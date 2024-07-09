@@ -56,4 +56,7 @@ private:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
+JSC_DECLARE_HOST_FUNCTION(uint8ArrayPrototypeToBase64);
+JSC_DECLARE_HOST_FUNCTION(uint8ArrayPrototypeToHex);
+
 } // namespace JSC

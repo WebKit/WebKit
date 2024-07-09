@@ -28,6 +28,7 @@
 #include "GStreamerVideoCaptureSource.h"
 #include <gio/gunixfdlist.h>
 #include <wtf/UUID.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

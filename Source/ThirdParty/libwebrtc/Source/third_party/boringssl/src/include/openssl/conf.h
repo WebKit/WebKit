@@ -67,7 +67,9 @@ extern "C" {
 #endif
 
 
-// Config files look like:
+// Config files.
+//
+// This library handles OpenSSL's config files, which look like:
 //
 //   # Comment
 //
@@ -77,7 +79,11 @@ extern "C" {
 //   [section_name]
 //   key2=value2
 //
-// Config files are represented by a |CONF|.
+// Config files are represented by a |CONF|. Use of this module is strongly
+// discouraged. It is a remnant of the OpenSSL command-line tool. Parsing an
+// untrusted input as a config file risks string injection and denial of service
+// vulnerabilities.
+
 
 struct conf_value_st {
   char *section;
@@ -166,5 +172,6 @@ BSSL_NAMESPACE_END
 #define CONF_R_UNABLE_TO_CREATE_NEW_SECTION 104
 #define CONF_R_VARIABLE_HAS_NO_VALUE 105
 #define CONF_R_VARIABLE_EXPANSION_TOO_LONG 106
+#define CONF_R_VARIABLE_EXPANSION_NOT_SUPPORTED 107
 
 #endif  // OPENSSL_HEADER_THREAD_H

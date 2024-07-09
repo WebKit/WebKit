@@ -175,8 +175,8 @@
 /* Allow button title in speech recognition prompt */
 "Allow (speechrecognition)" = "Allow";
 
-/* Display USDZ file */
-"Allow (usdz QuickLook Preview)" = "Allow (usdz QuickLook Preview)";
+/* Allow displaying QuickLook Preview of 3D model */
+"Allow (usdz QuickLook Preview)" = "Allow";
 
 /* Allow button title in user media prompt */
 "Allow (usermedia)" = "Allow";
@@ -289,8 +289,8 @@
 /* Button title in Device Orientation Permission API prompt */
 "Cancel (device motion and orientation access)" = "Cancel";
 
-/* Cancel USDZ file */
-"Cancel (usdz QuickLook Preview)" = "Cancel (usdz QuickLook Preview)";
+/* Cancel displaying QuickLook Preview of 3D model */
+"Cancel (usdz QuickLook Preview)" = "Cancel";
 
 /* Title for Cancel button label in button bar */
 "Cancel button label in button bar" = "Cancel";
@@ -1102,7 +1102,7 @@
 /* Title for Open in External Application Link action button */
 "Open in “%@”" = "Open in “%@”";
 
-/* Open 3D object in a new window? */
+/* Open this 3D model? */
 "Open this 3D model?" = "Open this 3D model?";
 
 /* context menu item for PDF */

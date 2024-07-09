@@ -45,6 +45,7 @@
 #include "WorkerScriptLoaderClient.h"
 #include "WorkerThreadableLoader.h"
 #include <wtf/Ref.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

@@ -43,6 +43,7 @@
 #include "StepRange.h"
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

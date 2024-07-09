@@ -237,11 +237,10 @@ int PKCS7_bundle_CRLs(CBB *out, const STACK_OF(X509_CRL) *crls) {
 }
 
 static PKCS7 *pkcs7_new(CBS *cbs) {
-  PKCS7 *ret = OPENSSL_malloc(sizeof(PKCS7));
+  PKCS7 *ret = OPENSSL_zalloc(sizeof(PKCS7));
   if (ret == NULL) {
     return NULL;
   }
-  OPENSSL_memset(ret, 0, sizeof(PKCS7));
   ret->type = OBJ_nid2obj(NID_pkcs7_signed);
   ret->d.sign = OPENSSL_malloc(sizeof(PKCS7_SIGNED));
   if (ret->d.sign == NULL) {
@@ -326,11 +325,10 @@ int i2d_PKCS7(const PKCS7 *p7, uint8_t **out) {
   }
 
   if (*out == NULL) {
-    *out = OPENSSL_malloc(p7->ber_len);
+    *out = OPENSSL_memdup(p7->ber_bytes, p7->ber_len);
     if (*out == NULL) {
       return -1;
     }
-    OPENSSL_memcpy(*out, p7->ber_bytes, p7->ber_len);
   } else {
     OPENSSL_memcpy(*out, p7->ber_bytes, p7->ber_len);
     *out += p7->ber_len;

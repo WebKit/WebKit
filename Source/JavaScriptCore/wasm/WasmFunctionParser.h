@@ -34,6 +34,7 @@
 #include <wtf/DataLog.h>
 #include <wtf/ListDump.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC { namespace Wasm {
 

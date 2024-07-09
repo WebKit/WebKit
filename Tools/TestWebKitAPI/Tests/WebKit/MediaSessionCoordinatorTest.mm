@@ -40,6 +40,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringHash.h>
 
 @interface _WKMockMediaSessionCoordinator : NSObject <_WKMediaSessionCoordinator>

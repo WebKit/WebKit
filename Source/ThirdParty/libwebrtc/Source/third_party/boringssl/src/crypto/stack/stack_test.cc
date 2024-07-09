@@ -24,6 +24,7 @@
 #include <gtest/gtest.h>
 
 #include <openssl/mem.h>
+#include <openssl/rand.h>
 
 
 // Define a custom stack type for testing.
@@ -480,4 +481,51 @@ TEST(StackTest, IsSorted) {
   // Without a comparison function, the list cannot be sorted.
   sk_TEST_INT_set_cmp_func(sk.get(), nullptr);
   EXPECT_FALSE(sk_TEST_INT_is_sorted(sk.get()));
+}
+
+TEST(StackTest, Sort) {
+  constexpr size_t kMaxLength = 100;
+  constexpr int kIterations = 500;
+  for (size_t len = 0; len < kMaxLength; len++) {
+    SCOPED_TRACE(len);
+    for (int iter = 0; iter < kIterations; iter++) {
+      // Make a random input list.
+      std::vector<int> vec(len);
+      RAND_bytes(reinterpret_cast<uint8_t *>(vec.data()),
+                 sizeof(int) * vec.size());
+      SCOPED_TRACE(testing::PrintToString(vec));
+
+      // Convert it to a |STACK_OF(TEST_INT)|.
+      bssl::UniquePtr<STACK_OF(TEST_INT)> sk(sk_TEST_INT_new(compare));
+      ASSERT_TRUE(sk);
+      for (int v : vec) {
+        auto value = TEST_INT_new(v);
+        ASSERT_TRUE(value);
+        ASSERT_TRUE(bssl::PushToStack(sk.get(), std::move(value)));
+      }
+
+      // Sort it with our sort implementation.
+      sk_TEST_INT_sort(sk.get());
+      std::vector<int> result;
+      for (const TEST_INT *v : sk.get()) {
+        result.push_back(*v);
+      }
+
+      // The result must match the STL's version.
+      std::sort(vec.begin(), vec.end());
+      EXPECT_EQ(vec, result);
+    }
+  }
+}
+
+TEST(StackTest, NullIsEmpty) {
+  EXPECT_EQ(0u, sk_TEST_INT_num(nullptr));
+
+  EXPECT_EQ(nullptr, sk_TEST_INT_value(nullptr, 0));
+  EXPECT_EQ(nullptr, sk_TEST_INT_value(nullptr, 1));
+
+  bssl::UniquePtr<TEST_INT> value = TEST_INT_new(6);
+  ASSERT_TRUE(value);
+  size_t index;
+  EXPECT_FALSE(sk_TEST_INT_find(nullptr, &index, value.get()));
 }

@@ -36,7 +36,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {

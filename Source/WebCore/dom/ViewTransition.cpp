@@ -50,6 +50,7 @@
 #include "StyleScope.h"
 #include "Styleable.h"
 #include "WebAnimation.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -244,12 +245,15 @@ void ViewTransition::setupViewTransition()
     });
 }
 
-static AtomString effectiveViewTransitionName(RenderLayerModelObject& renderer)
+static AtomString effectiveViewTransitionName(RenderLayerModelObject& renderer, Element& originatingElement, Style::Scope& documentScope)
 {
     if (renderer.isSkippedContent())
         return nullAtom();
     auto transitionName = renderer.style().viewTransitionName();
     if (!transitionName)
+        return nullAtom();
+    auto scope = Style::Scope::forOrdinal(originatingElement, transitionName->scopeOrdinal);
+    if (!scope || scope != &documentScope)
         return nullAtom();
     return transitionName->name;
 }
@@ -369,10 +373,10 @@ ExceptionOr<void> ViewTransition::captureOldState()
 
         auto result = forEachRendererInPaintOrder([&](RenderLayerModelObject& renderer) -> ExceptionOr<void> {
             auto styleable = Styleable::fromRenderer(renderer);
-            if (!styleable || &styleable->element.treeScope() != document())
+            if (!styleable)
                 return { };
 
-            if (auto name = effectiveViewTransitionName(renderer); !name.isNull()) {
+            if (auto name = effectiveViewTransitionName(renderer, styleable->element, document()->styleScope()); !name.isNull()) {
                 if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
                     return check.releaseException();
 
@@ -400,9 +404,8 @@ ExceptionOr<void> ViewTransition::captureOldState()
         m_namedElements.add(transitionName->name, capture);
     }
 
-    for (auto& renderer : captureRenderers) {
+    for (auto& renderer : captureRenderers)
         renderer->setCapturedInViewTransition(false);
-    }
 
     return { };
 }
@@ -416,10 +419,10 @@ ExceptionOr<void> ViewTransition::captureNewState()
     if (CheckedPtr view = document()->renderView()) {
         auto result = forEachRendererInPaintOrder([&](RenderLayerModelObject& renderer) -> ExceptionOr<void> {
             auto styleable = Styleable::fromRenderer(renderer);
-            if (!styleable || &styleable->element.treeScope() != document())
+            if (!styleable)
                 return { };
 
-            if (auto name = effectiveViewTransitionName(renderer); !name.isNull()) {
+            if (auto name = effectiveViewTransitionName(renderer, styleable->element, document()->styleScope()); !name.isNull()) {
                 if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
                     return check.releaseException();
 
@@ -787,11 +790,11 @@ void ViewTransition::stop()
 
 bool ViewTransition::documentElementIsCaptured() const
 {
-    RefPtr doc = document();
-    if (!doc)
+    RefPtr document = this->document();
+    if (!document)
         return false;
 
-    RefPtr documentElement = doc->documentElement();
+    RefPtr documentElement = document->documentElement();
     if (!documentElement)
         return false;
 

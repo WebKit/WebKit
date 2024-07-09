@@ -31,6 +31,7 @@
 #undef GST_USE_UNSTABLE_API
 
 #include <wtf/UUID.h>
+#include <wtf/text/MakeString.h>
 
 GST_DEBUG_CATEGORY(webkit_webrtc_outgoing_media_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_outgoing_media_debug

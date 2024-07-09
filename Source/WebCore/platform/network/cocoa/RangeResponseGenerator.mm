@@ -36,6 +36,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/FunctionDispatcher.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringBuilder.h>
 
 namespace WebCore {

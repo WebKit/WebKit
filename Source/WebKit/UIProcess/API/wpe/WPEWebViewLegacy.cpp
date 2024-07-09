@@ -51,9 +51,8 @@ static Vector<ViewLegacy*>& viewsVector()
     return vector;
 }
 
-ViewLegacy::ViewLegacy(struct wpe_view_backend* backend, const API::PageConfiguration& baseConfiguration)
-    : View(baseConfiguration)
-    , m_backend(backend)
+ViewLegacy::ViewLegacy(struct wpe_view_backend* backend, const API::PageConfiguration& configuration)
+    : m_backend(backend)
 #if ENABLE(TOUCH_EVENTS)
     , m_touchGestureController(makeUnique<TouchGestureController>())
 #endif
@@ -61,7 +60,9 @@ ViewLegacy::ViewLegacy(struct wpe_view_backend* backend, const API::PageConfigur
     ASSERT(m_backend);
 
     m_size = { 800, 600 };
-    setViewState({ WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsFocused, WebCore::ActivityState::IsVisible, WebCore::ActivityState::IsInWindow });
+    m_viewStateFlags = { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsFocused, WebCore::ActivityState::IsVisible, WebCore::ActivityState::IsInWindow };
+
+    createWebPage(configuration);
 
     static struct wpe_view_backend_client s_backendClient = {
         // set_size

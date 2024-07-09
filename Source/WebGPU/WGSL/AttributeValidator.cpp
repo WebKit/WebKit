@@ -31,7 +31,7 @@
 #include "Constraints.h"
 #include "WGSLShaderModule.h"
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WGSL {
 
@@ -316,13 +316,20 @@ void AttributeValidator::visit(AST::Structure& structure)
         member.m_offset = offset;
 
         alignment = std::max(alignment, *fieldAlignment);
-        size = UNLIKELY(size.hasOverflowed()) ? currentSize : offset + *fieldSize;
+        size = offset;
+        size += *fieldSize;
+        if (UNLIKELY(size.hasOverflowed()))
+            size = currentSize;
 
         if (previousMember)
             previousMember->m_padding = offset - previousSize;
 
         previousMember = &member;
-        previousSize = UNLIKELY(size.hasOverflowed()) ? currentSize : offset + typeSize;
+
+        previousSize = offset;
+        previousSize += typeSize;
+        if (UNLIKELY(previousSize.hasOverflowed()))
+            previousSize = currentSize;
     }
     unsigned finalSize;
     if (UNLIKELY(size.hasOverflowed()))

@@ -56,6 +56,7 @@
 #include "WheelEventTestMonitor.h"
 #include "pal/HysteresisActivity.h"
 #include <wtf/ProcessID.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

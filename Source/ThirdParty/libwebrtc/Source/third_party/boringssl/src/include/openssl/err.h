@@ -244,6 +244,19 @@ OPENSSL_EXPORT const char *ERR_lib_error_string(uint32_t packed_error);
 // |packed_error|, or a placeholder string if the reason is unrecognized.
 OPENSSL_EXPORT const char *ERR_reason_error_string(uint32_t packed_error);
 
+// ERR_lib_symbol_name returns the symbol name of library that generated
+// |packed_error|, or NULL if unrecognized. For example, an error from
+// |ERR_LIB_EVP| would return "EVP".
+OPENSSL_EXPORT const char *ERR_lib_symbol_name(uint32_t packed_error);
+
+// ERR_reason_symbol_name returns the symbol name of the reason for
+// |packed_error|, or NULL if unrecognized. For example, |ERR_R_INTERNAL_ERROR|
+// would return "INTERNAL_ERROR".
+//
+// Errors from the |ERR_LIB_SYS| library are typically |errno| values and will
+// return NULL. User-defined errors will also return NULL.
+OPENSSL_EXPORT const char *ERR_reason_symbol_name(uint32_t packed_error);
+
 // ERR_print_errors_callback_t is the type of a function used by
 // |ERR_print_errors_cb|. It takes a pointer to a human readable string (and
 // its length) that describes an entry in the error queue. The |ctx| argument

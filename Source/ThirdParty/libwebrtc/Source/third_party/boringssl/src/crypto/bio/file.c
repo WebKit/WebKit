@@ -73,8 +73,7 @@
 
 #include <openssl/bio.h>
 
-#if !defined(OPENSSL_TRUSTY)
-
+#include <assert.h>
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -84,16 +83,29 @@
 
 #include "../internal.h"
 
+#if defined(OPENSSL_WINDOWS)
+#include <fcntl.h>
+#include <io.h>
+#endif
 
 #define BIO_FP_READ 0x02
 #define BIO_FP_WRITE 0x04
 #define BIO_FP_APPEND 0x08
 
+#if !defined(OPENSSL_NO_FILESYSTEM)
+#define fopen_if_available fopen
+#else
+static FILE *fopen_if_available(const char *path, const char *mode) {
+  errno = ENOENT;
+  return NULL;
+}
+#endif
+
 BIO *BIO_new_file(const char *filename, const char *mode) {
   BIO *ret;
   FILE *file;
 
-  file = fopen(filename, mode);
+  file = fopen_if_available(filename, mode);
   if (file == NULL) {
     OPENSSL_PUT_SYSTEM_ERROR();
 
@@ -115,14 +127,13 @@ BIO *BIO_new_file(const char *filename, const char *mode) {
   return ret;
 }
 
-BIO *BIO_new_fp(FILE *stream, int close_flag) {
+BIO *BIO_new_fp(FILE *stream, int flags) {
   BIO *ret = BIO_new(BIO_s_file());
-
   if (ret == NULL) {
     return NULL;
   }
 
-  BIO_set_fp(ret, stream, close_flag);
+  BIO_set_fp(ret, stream, flags);
   return ret;
 }
 
@@ -172,7 +183,6 @@ static long file_ctrl(BIO *b, int cmd, long num, void *ptr) {
   long ret = 1;
   FILE *fp = (FILE *)b->ptr;
   FILE **fpp;
-  char p[4];
 
   switch (cmd) {
     case BIO_CTRL_RESET:
@@ -190,6 +200,17 @@ static long file_ctrl(BIO *b, int cmd, long num, void *ptr) {
       break;
     case BIO_C_SET_FILE_PTR:
       file_free(b);
+      static_assert((BIO_CLOSE & BIO_FP_TEXT) == 0,
+                    "BIO_CLOSE and BIO_FP_TEXT must not collide");
+#if defined(OPENSSL_WINDOWS)
+      // If |BIO_FP_TEXT| is not set, OpenSSL will switch the file to binary
+      // mode. BoringSSL intentionally diverges here because it means code
+      // tested under POSIX will inadvertently change the state of |FILE|
+      // objects when wrapping them in a |BIO|.
+      if (num & BIO_FP_TEXT) {
+        _setmode(_fileno(ptr), _O_TEXT);
+      }
+#endif
       b->shutdown = (int)num & BIO_CLOSE;
       b->ptr = ptr;
       b->init = 1;
@@ -197,27 +218,28 @@ static long file_ctrl(BIO *b, int cmd, long num, void *ptr) {
     case BIO_C_SET_FILENAME:
       file_free(b);
       b->shutdown = (int)num & BIO_CLOSE;
+      const char *mode;
       if (num & BIO_FP_APPEND) {
         if (num & BIO_FP_READ) {
-          OPENSSL_strlcpy(p, "a+", sizeof(p));
+          mode = "ab+";
         } else {
-          OPENSSL_strlcpy(p, "a", sizeof(p));
+          mode = "ab";
         }
       } else if ((num & BIO_FP_READ) && (num & BIO_FP_WRITE)) {
-        OPENSSL_strlcpy(p, "r+", sizeof(p));
+        mode = "rb+";
       } else if (num & BIO_FP_WRITE) {
-        OPENSSL_strlcpy(p, "w", sizeof(p));
+        mode = "wb";
       } else if (num & BIO_FP_READ) {
-        OPENSSL_strlcpy(p, "r", sizeof(p));
+        mode = "rb";
       } else {
         OPENSSL_PUT_ERROR(BIO, BIO_R_BAD_FOPEN_MODE);
         ret = 0;
         break;
       }
-      fp = fopen(ptr, p);
+      fp = fopen_if_available(ptr, mode);
       if (fp == NULL) {
         OPENSSL_PUT_SYSTEM_ERROR();
-        ERR_add_error_data(5, "fopen('", ptr, "','", p, "')");
+        ERR_add_error_data(5, "fopen('", ptr, "','", mode, "')");
         OPENSSL_PUT_ERROR(BIO, ERR_R_SYS_LIB);
         ret = 0;
         break;
@@ -280,8 +302,8 @@ int BIO_get_fp(BIO *bio, FILE **out_file) {
   return (int)BIO_ctrl(bio, BIO_C_GET_FILE_PTR, 0, (char *)out_file);
 }
 
-int BIO_set_fp(BIO *bio, FILE *file, int close_flag) {
-  return (int)BIO_ctrl(bio, BIO_C_SET_FILE_PTR, close_flag, (char *)file);
+int BIO_set_fp(BIO *bio, FILE *file, int flags) {
+  return (int)BIO_ctrl(bio, BIO_C_SET_FILE_PTR, flags, (char *)file);
 }
 
 int BIO_read_filename(BIO *bio, const char *filename) {
@@ -310,5 +332,3 @@ long BIO_tell(BIO *bio) { return BIO_ctrl(bio, BIO_C_FILE_TELL, 0, NULL); }
 long BIO_seek(BIO *bio, long offset) {
   return BIO_ctrl(bio, BIO_C_FILE_SEEK, offset, NULL);
 }
-
-#endif  // OPENSSL_TRUSTY

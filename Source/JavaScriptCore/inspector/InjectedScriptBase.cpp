@@ -39,6 +39,7 @@
 #include "JSNativeStdFunction.h"
 #include "ScriptFunctionCall.h"
 #include <wtf/JSONValues.h>
+#include <wtf/text/MakeString.h>
 
 namespace Inspector {
 

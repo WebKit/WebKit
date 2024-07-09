@@ -30,8 +30,8 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "SecurityOrigin.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
-
 
 namespace WebCore {
 using namespace JSC;

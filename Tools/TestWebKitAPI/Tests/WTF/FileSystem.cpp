@@ -31,6 +31,7 @@
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/StringExtras.h>
+#include <wtf/text/MakeString.h>
 
 namespace TestWebKitAPI {
 

@@ -36,7 +36,6 @@
 #include "InlineCallFrame.h"
 #include "IntrinsicGetterAccessCase.h"
 #include "ModuleNamespaceAccessCase.h"
-#include "ProxyObjectAccessCase.h"
 #include "StructureStubInfo.h"
 #include <wtf/ListDump.h>
 
@@ -224,12 +223,6 @@ GetByStatus::GetByStatus(const ModuleNamespaceAccessCase& accessCase)
 {
 }
 
-GetByStatus::GetByStatus(const ProxyObjectAccessCase&)
-    : m_state(ProxyObject)
-    , m_wasSeenInJIT(true)
-{
-}
-
 GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CallLinkStatus::ExitSiteData callExitSiteData, CodeOrigin codeOrigin)
 {
     StubInfoSummary summary = StructureStubInfo::summary(profiledBlock->vm(), stubInfo);
@@ -273,12 +266,11 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurr
             case AccessCase::ModuleNamespaceLoad:
                 return GetByStatus(access.as<ModuleNamespaceAccessCase>());
             case AccessCase::ProxyObjectLoad: {
-                auto& accessCase = access.as<ProxyObjectAccessCase>();
-                auto status = GetByStatus(accessCase);
+                auto status = GetByStatus(GetByStatus::ProxyObject, true);
                 auto callLinkStatus = makeUnique<CallLinkStatus>();
                 if (CallLinkInfo* callLinkInfo = stubInfo->callLinkInfoAt(locker, 0, access))
                     *callLinkStatus = CallLinkStatus::computeFor(locker, profiledBlock, *callLinkInfo, callExitSiteData);
-                status.appendVariant(GetByVariant(accessCase.identifier(), { }, invalidOffset, { }, WTFMove(callLinkStatus)));
+                status.appendVariant(GetByVariant(access.identifier(), { }, invalidOffset, { }, WTFMove(callLinkStatus)));
                 return status;
             }
             case AccessCase::LoadMegamorphic:

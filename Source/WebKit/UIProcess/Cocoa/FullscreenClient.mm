@@ -55,6 +55,7 @@ void FullscreenClient::setDelegate(id <_WKFullscreenDelegate> delegate)
     m_delegateMethods.webViewDidEnterElementFullscreen = [delegate respondsToSelector:@selector(_webViewDidEnterElementFullscreen:)];
     m_delegateMethods.webViewWillExitElementFullscreen = [delegate respondsToSelector:@selector(_webViewWillExitElementFullscreen:)];
     m_delegateMethods.webViewDidExitElementFullscreen = [delegate respondsToSelector:@selector(_webViewDidExitElementFullscreen:)];
+    m_delegateMethods.webViewRequestPresentingViewController = [delegate respondsToSelector:@selector(_webView:requestPresentingViewControllerWithCompletionHandler:)];
 #endif
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     m_delegateMethods.webViewDidFullscreenImageWithQuickLook = [delegate respondsToSelector:@selector(_webView:didFullscreenImageWithQuickLook:)];
@@ -120,5 +121,15 @@ void FullscreenClient::didExitFullscreen(WebPageProxy*)
         [m_delegate.get() _webViewDidExitElementFullscreen:m_webView];
 #endif
 }
+
+#if PLATFORM(IOS_FAMILY)
+void FullscreenClient::requestPresentingViewController(CompletionHandler<void(UIViewController *, NSError *)>&& completionHandler)
+{
+    if (!m_delegateMethods.webViewRequestPresentingViewController)
+        return completionHandler(nil, nil);
+
+    [m_delegate _webView:m_webView requestPresentingViewControllerWithCompletionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
+}
+#endif
 
 } // namespace WebKit

@@ -29,7 +29,6 @@
 #include "RenderBox.h"
 #include "RenderView.h"
 #include <wtf/HexNumber.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

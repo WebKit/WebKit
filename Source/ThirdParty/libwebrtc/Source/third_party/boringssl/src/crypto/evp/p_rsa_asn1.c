@@ -209,3 +209,33 @@ const EVP_PKEY_ASN1_METHOD rsa_asn1_meth = {
 
     int_rsa_free,
 };
+
+int EVP_PKEY_set1_RSA(EVP_PKEY *pkey, RSA *key) {
+  if (EVP_PKEY_assign_RSA(pkey, key)) {
+    RSA_up_ref(key);
+    return 1;
+  }
+  return 0;
+}
+
+int EVP_PKEY_assign_RSA(EVP_PKEY *pkey, RSA *key) {
+  evp_pkey_set_method(pkey, &rsa_asn1_meth);
+  pkey->pkey = key;
+  return key != NULL;
+}
+
+RSA *EVP_PKEY_get0_RSA(const EVP_PKEY *pkey) {
+  if (pkey->type != EVP_PKEY_RSA) {
+    OPENSSL_PUT_ERROR(EVP, EVP_R_EXPECTING_AN_RSA_KEY);
+    return NULL;
+  }
+  return pkey->pkey;
+}
+
+RSA *EVP_PKEY_get1_RSA(const EVP_PKEY *pkey) {
+  RSA *rsa = EVP_PKEY_get0_RSA(pkey);
+  if (rsa != NULL) {
+    RSA_up_ref(rsa);
+  }
+  return rsa;
+}

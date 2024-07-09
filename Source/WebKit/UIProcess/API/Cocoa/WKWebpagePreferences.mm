@@ -463,7 +463,7 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 {
 #if PLATFORM(IOS_FAMILY)
     // On iOS, the web browser entitlement is required to disable Lockdown mode.
-    if (!enabled && !WTF::processHasEntitlement("com.apple.developer.web-browser"_s))
+    if (!enabled && !WTF::processHasEntitlement("com.apple.developer.web-browser"_s) && !WTF::processHasEntitlement("com.apple.private.allow-ldm-exempt-webview"_s))
         [NSException raise:NSInternalInconsistencyException format:@"The 'com.apple.developer.web-browser' restricted entitlement is required to disable Lockdown mode"];
 #endif
 
@@ -560,7 +560,7 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 #if ENABLE(LOCKDOWN_MODE_API)
 #if PLATFORM(IOS_FAMILY)
     // On iOS, the web browser entitlement is required to disable lockdown mode.
-    if (!lockdownModeEnabled && !WTF::processHasEntitlement("com.apple.developer.web-browser"_s))
+    if (!lockdownModeEnabled && !WTF::processHasEntitlement("com.apple.developer.web-browser"_s) && !WTF::processHasEntitlement("com.apple.private.allow-ldm-exempt-webview"_s))
         [NSException raise:NSInternalInconsistencyException format:@"The 'com.apple.developer.web-browser' restricted entitlement is required to disable lockdown mode"];
 #endif
 

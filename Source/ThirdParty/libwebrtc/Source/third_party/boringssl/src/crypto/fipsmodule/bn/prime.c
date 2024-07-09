@@ -359,14 +359,7 @@ static int probable_prime_dh(BIGNUM *rnd, int bits, const BIGNUM *add,
 static int probable_prime_dh_safe(BIGNUM *rnd, int bits, const BIGNUM *add,
                                   const BIGNUM *rem, BN_CTX *ctx);
 
-BN_GENCB *BN_GENCB_new(void) {
-  BN_GENCB *callback = OPENSSL_malloc(sizeof(BN_GENCB));
-  if (callback == NULL) {
-    return NULL;
-  }
-  OPENSSL_memset(callback, 0, sizeof(BN_GENCB));
-  return callback;
-}
+BN_GENCB *BN_GENCB_new(void) { return OPENSSL_zalloc(sizeof(BN_GENCB)); }
 
 void BN_GENCB_free(BN_GENCB *callback) { OPENSSL_free(callback); }
 
@@ -494,7 +487,10 @@ err:
 static int bn_trial_division(uint16_t *out, const BIGNUM *bn) {
   const size_t num_primes = num_trial_division_primes(bn);
   for (size_t i = 1; i < num_primes; i++) {
-    if (bn_mod_u16_consttime(bn, kPrimes[i]) == 0) {
+    // During RSA key generation, |bn| may be secret, but only if |bn| was
+    // prime, so it is safe to leak failed trial divisions.
+    if (constant_time_declassify_int(bn_mod_u16_consttime(bn, kPrimes[i]) ==
+                                     0)) {
       *out = kPrimes[i];
       return 1;
     }
@@ -580,7 +576,8 @@ int bn_miller_rabin_iteration(const BN_MILLER_RABIN *miller_rabin,
   // To avoid leaking |a|, we run the loop to |w_bits| and mask off all
   // iterations once |j| = |a|.
   for (int j = 1; j < miller_rabin->w_bits; j++) {
-    if (constant_time_eq_int(j, miller_rabin->a) & ~is_possibly_prime) {
+    if (constant_time_declassify_w(constant_time_eq_int(j, miller_rabin->a) &
+                                   ~is_possibly_prime)) {
       // If the loop is done and we haven't seen z = 1 or z = w-1 yet, the
       // value is composite and we can break in variable time.
       break;
@@ -600,12 +597,14 @@ int bn_miller_rabin_iteration(const BN_MILLER_RABIN *miller_rabin,
     // Step 4.5.3. If z = 1 and the loop is not done, the previous value of z
     // was not -1. There are no non-trivial square roots of 1 modulo a prime, so
     // w is composite and we may exit in variable time.
-    if (BN_equal_consttime(z, miller_rabin->one_mont) & ~is_possibly_prime) {
+    if (constant_time_declassify_w(
+            BN_equal_consttime(z, miller_rabin->one_mont) &
+            ~is_possibly_prime)) {
       break;
     }
   }
 
-  *out_is_possibly_prime = is_possibly_prime & 1;
+  *out_is_possibly_prime = constant_time_declassify_w(is_possibly_prime) & 1;
   ret = 1;
 
 err:
@@ -743,8 +742,9 @@ int BN_primality_test(int *out_is_probably_prime, const BIGNUM *w, int checks,
   crypto_word_t uniform_iterations = 0;
   // Using |constant_time_lt_w| seems to prevent the compiler from optimizing
   // this into two jumps.
-  for (int i = 1; (i <= BN_PRIME_CHECKS_BLINDED) |
-                  constant_time_lt_w(uniform_iterations, checks);
+  for (int i = 1; constant_time_declassify_w(
+           (i <= BN_PRIME_CHECKS_BLINDED) |
+           constant_time_lt_w(uniform_iterations, checks));
        i++) {
     // Step 4.1-4.2
     int is_uniform;
@@ -773,7 +773,7 @@ int BN_primality_test(int *out_is_probably_prime, const BIGNUM *w, int checks,
     }
   }
 
-  assert(uniform_iterations >= (crypto_word_t)checks);
+  declassify_assert(uniform_iterations >= (crypto_word_t)checks);
   *out_is_probably_prime = 1;
   ret = 1;
 

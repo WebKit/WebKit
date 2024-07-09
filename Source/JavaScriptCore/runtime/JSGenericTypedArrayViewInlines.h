@@ -35,7 +35,7 @@
 #include "TypeError.h"
 #include "TypedArrays.h"
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

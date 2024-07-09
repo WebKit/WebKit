@@ -87,13 +87,13 @@ int pkcs8_pbe_decrypt(uint8_t **out, size_t *out_len, CBS *algorithm,
 // key material to |out| and returns one. Otherwise, it returns zero. |id|
 // should be one of the |PKCS12_*_ID| values.
 int pkcs12_key_gen(const char *pass, size_t pass_len, const uint8_t *salt,
-                   size_t salt_len, uint8_t id, unsigned iterations,
+                   size_t salt_len, uint8_t id, uint32_t iterations,
                    size_t out_len, uint8_t *out, const EVP_MD *md);
 
 // pkcs12_pbe_encrypt_init configures |ctx| for encrypting with a PBES1 scheme
 // defined in PKCS#12. It writes the corresponding AlgorithmIdentifier to |out|.
 int pkcs12_pbe_encrypt_init(CBB *out, EVP_CIPHER_CTX *ctx, int alg,
-                            unsigned iterations, const char *pass,
+                            uint32_t iterations, const char *pass,
                             size_t pass_len, const uint8_t *salt,
                             size_t salt_len);
 
@@ -121,7 +121,7 @@ int PKCS5_pbe2_decrypt_init(const struct pbe_suite *suite, EVP_CIPHER_CTX *ctx,
 // as defined in RFC 2998, with the specified parameters. It writes the
 // corresponding AlgorithmIdentifier to |out|.
 int PKCS5_pbe2_encrypt_init(CBB *out, EVP_CIPHER_CTX *ctx,
-                            const EVP_CIPHER *cipher, unsigned iterations,
+                            const EVP_CIPHER *cipher, uint32_t iterations,
                             const char *pass, size_t pass_len,
                             const uint8_t *salt, size_t salt_len);
 

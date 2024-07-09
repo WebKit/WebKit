@@ -1,8 +1,9 @@
 # BoringSSL API Conventions
 
 This document describes conventions for BoringSSL APIs. The [style
-guide](/STYLE.md) also includes guidelines, but this document is targeted at
-both API consumers and developers.
+guide](./STYLE.md) also includes guidelines, but this document is targeted at
+both API consumers and developers. API documentation in BoringSSL may assume
+these conventions by default, rather than repeating them for every function.
 
 
 ## Documentation
@@ -11,11 +12,9 @@ All supported public APIs are documented in the public header files, found in
 `include/openssl`. The API documentation is also available
 [online](https://commondatastorage.googleapis.com/chromium-boringssl-docs/headers.html).
 
-Some headers lack documention comments. These are functions and structures from
-OpenSSL's legacy ASN.1, X.509, and PEM implementation. If possible, avoid using
-them. These are left largely unmodified from upstream and are retained only for
-compatibility with existing OpenSSL consumers.
-
+Experimental public APIs are found in `include/openssl/experimental`. Use of
+these will likely be incompatible with changes in the near future as they are
+finalized.
 
 ## Forward declarations
 
@@ -62,6 +61,74 @@ functions will fail gracefully on allocation error, but it is recommended to use
 a `malloc` implementation that `abort`s on failure.
 
 
+## Pointers and slices
+
+Unless otherwise specified, pointer parameters that refer to a single object,
+either as an input or output parameter, may not be `NULL`. In this case,
+BoringSSL often will not check for `NULL` before dereferencing, so passing
+`NULL` may crash or exhibit other undefined behavior. (Sometimes the function
+will check for `NULL` anyway, for OpenSSL compatibility, but we still consider
+passing `NULL` to be a caller error.)
+
+Pointer parameters may also refer to a contiguous sequence of objects, sometimes
+referred to as a *slice*. These will typically be a pair of pointer and length
+parameters named like `plaintext` and `plaintext_len`, or `objs` and `num_objs`.
+We prefer the former for byte buffers and the latter for sequences of other
+types. The documentation will usually refer to both parameters together, e.g.
+"`EVP_DigestUpdate` hashes `len` bytes from `data`."
+
+Parameters in C and C++ that use array syntax, such as
+`uint8_t out[SHA256_DIGEST_LENGTH]`, are really pointers. In BoringSSL's uses of
+this syntax, the pointer must point to the specified number of values.
+
+In other cases, the documentation will describe how the function parameters
+determine the slice's length. For example, a slice's length may be measured in
+units other than element count, multiple slice parameters may share a length, or
+a slice's length may be implicitly determined by other means like RSA key size.
+
+By default, BoringSSL follows C++'s
+[slice conventions](https://davidben.net/2024/01/15/empty-slices.html)
+for pointers. That is, unless otherwise specified, pointers for non-empty
+(non-zero length) slices must be represented by a valid pointer to that many
+objects in memory. Pointers for empty (zero length) slices must either be `NULL`
+or point within some sequence of objects of a compatible type.
+
+WARNING: The dangling, non-null pointer used by Rust empty slices may *not* be
+passed into BoringSSL. Rust FFIs must adjust such pointers to before passing to
+BoringSSL. For example, see the `FfiSlice` abstraction in `bssl-crypto`. (We may
+relax this if pointer arithmetic rules in C/C++ are adjusted to permit Rust's
+pointers. Until then, it is impractical for a C/C++ library to act on such a
+slice representation. See
+[this document](https://davidben.net/2024/01/15/empty-slices.html) for more
+discussion.)
+
+In some cases, OpenSSL compatibility requires that a function will treat `NULL`
+slice pointers differently from non-`NULL` pointers. Such behavior will be
+described in documentation. For examples, see `EVP_EncryptUpdate`,
+`EVP_DigestSignFinal`, and `HMAC_Init_ex`. Callers passing potentially empty
+slices into such functions should take care that the `NULL` case is either
+unreachable or still has the desired behavior.
+
+If a `const char *` parameter is described as a "NUL-terminated string" or a
+"C string", it must point to a sequence of `char` values containing a NUL (zero)
+value, which determines the length. Unless otherwise specified, the pointer may
+not be `NULL`, matching the C standard library.
+
+For purposes of C and C++'s
+[strict aliasing](https://en.cppreference.com/w/c/language/object#Strict_aliasing)
+requirements, objects passed by pointers must be accessible as the specified
+type. `uint8_t` may be assumed to be the same type as `unsigned char` and thus
+may be the pointer type for all object types. BoringSSL does not support
+platforms where `uint8_t` is a non-character type. However, there is no
+strict aliasing sanitizer, very few C and C++ codebases are valid by strict
+aliasing, and BoringSSL itself has some
+[known strict aliasing bugs](https://crbug.com/boringssl/444), thus we strongly
+recommend consumers build with `-fno-strict-aliasing`.
+
+Pointer parameters additionally have ownership and lifetime requirements,
+discussed in the section below.
+
+
 ## Object initialization and cleanup
 
 BoringSSL defines a number of structs for use in its APIs. It is a C library,
@@ -83,8 +150,7 @@ For example, `RSA_parse_public_key` is documented to return a newly-allocated
 
 Heap-allocated objects must be released by the corresponding free function,
 named like `RSA_free`. Like C's `free` and C++'s `delete`, all free functions
-internally check for `NULL`. Consumers are not required to check for `NULL`
-before calling.
+internally check for `NULL`. It is redundant to check for `NULL` before calling.
 
 A heap-allocated type may be reference-counted. In this case, a function named
 like `RSA_up_ref` will be available to take an additional reference count. The

@@ -70,10 +70,6 @@
 #include "ImageControlsMac.h"
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/MultiRepresentationHEICAdditions.h>
-#endif
-
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLImageElement);
@@ -956,7 +952,7 @@ bool HTMLImageElement::isMultiRepresentationHEIC() const
         return false;
 
     auto& typeAttribute = m_sourceElement->attributeWithoutSynchronization(typeAttr);
-    return typeAttribute == MULTI_REPRESENTATION_HEIC_MIME_TYPE_STRING;
+    return typeAttribute == "image/x-apple-adaptive-glyph"_s;
 }
 #endif
 

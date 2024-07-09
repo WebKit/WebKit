@@ -196,7 +196,7 @@ T CPUState::sp() const
 }
 
 struct State;
-typedef void (*StackInitializationFunction)(State*);
+typedef void (SYSV_ABI *StackInitializationFunction)(State*);
 
 #if CPU(ARM64E)
 #define PROBE_FUNCTION_PTRAUTH __ptrauth(ptrauth_key_process_dependent_code, 0, JITProbePtrTag)

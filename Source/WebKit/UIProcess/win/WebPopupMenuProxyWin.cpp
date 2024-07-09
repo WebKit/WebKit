@@ -42,6 +42,7 @@
 #include <WebCore/ScrollbarTheme.h>
 #include <windowsx.h>
 #include <wtf/HexNumber.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebKit {

@@ -38,6 +38,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 #if OS(LINUX)

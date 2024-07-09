@@ -35,6 +35,7 @@
 #include "FontCascadeDescription.h"
 #include "GraphicsContext.h"
 #include "Path.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PlatformCAAnimation.h"
 
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/TextStream.h>
 

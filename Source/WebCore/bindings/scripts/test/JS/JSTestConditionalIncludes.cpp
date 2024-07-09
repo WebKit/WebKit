@@ -44,6 +44,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/PointerPreparations.h>
 #include <wtf/URL.h>
+#include <wtf/text/MakeString.h>
 
 #if (ENABLE(Condition11) && ENABLE(Condition12) && ENABLE(Condition22)) || (ENABLE(Condition12) && ENABLE(Condition22)) || (ENABLE(Condition12) && ENABLE(Condition22) && ENABLE(Condition33)) || ENABLE(Condition23)
 #include "IDLTypes.h"
@@ -800,7 +801,7 @@ void JSTestConditionalIncludes::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer
     auto* thisObject = jsCast<JSTestConditionalIncludes*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, "url "_s + thisObject->scriptExecutionContext()->url().string());
+        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 

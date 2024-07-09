@@ -28,7 +28,7 @@
 
 #include "CodeBlock.h"
 #include "JSCellInlines.h"
-#include <wtf/text/StringBuilder.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

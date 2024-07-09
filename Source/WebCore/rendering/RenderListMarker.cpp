@@ -39,7 +39,7 @@
 #include "StyleScope.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -313,7 +313,7 @@ void RenderListMarker::updateContent()
     case ListStyleType::Type::CounterStyle: {
         auto counter = counterStyle();
         ASSERT(counter);
-        auto text = makeString(counter->prefix().text, counter->text(m_listItem->value(), { style().blockFlowDirection(), style().direction() }));
+        auto text = makeString(counter->prefix().text, counter->text(m_listItem->value(), makeTextFlow(style().writingMode(), style().direction())));
         m_textWithSuffix = makeString(text, counter->suffix().text);
         m_textWithoutSuffixLength = text.length();
         m_textIsLeftToRightDirection = u_charDirection(text[0]) != U_RIGHT_TO_LEFT;

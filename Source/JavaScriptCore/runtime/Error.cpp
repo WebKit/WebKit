@@ -30,6 +30,7 @@
 #include "JSGlobalObject.h"
 #include "SourceCode.h"
 #include "StackFrame.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

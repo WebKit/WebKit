@@ -34,6 +34,7 @@
 #include <wtf/HexNumber.h>
 #include <wtf/Int128.h>
 #include <wtf/SHA1.h>
+#include <wtf/text/StringConcatenate.h>
 #include <wtf/text/WTFString.h>
 
 #ifdef __OBJC__

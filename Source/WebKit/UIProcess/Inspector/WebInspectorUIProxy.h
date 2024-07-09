@@ -61,6 +61,10 @@ OBJC_CLASS WKInspectorViewController;
 #include "WebView.h"
 #elif PLATFORM(GTK)
 #include <wtf/glib/GWeakPtr.h>
+#elif PLATFORM(WPE)
+#include "WPEWebView.h"
+#include <wtf/glib/GRefPtr.h>
+typedef struct _WPEToplevel WPEToplevel;
 #endif
 
 namespace WebCore {
@@ -249,6 +253,8 @@ private:
 
 #if PLATFORM(MAC)
     bool platformCanAttach(bool webProcessCanAttach);
+#elif PLATFORM(WPE)
+    bool platformCanAttach(bool) { return false; }
 #else
     bool platformCanAttach(bool webProcessCanAttach) { return webProcessCanAttach; }
 #endif
@@ -343,6 +349,9 @@ private:
     GWeakPtr<GtkWidget> m_inspectorWindow;
     GtkWidget* m_headerBar { nullptr };
     String m_inspectedURLString;
+#elif PLATFORM(WPE)
+    RefPtr<WKWPE::View> m_inspectorView;
+    GRefPtr<WPEToplevel> m_inspectorWindow;
 #elif PLATFORM(WIN)
     HWND m_inspectedViewWindow { nullptr };
     HWND m_inspectedViewParentWindow { nullptr };

@@ -35,7 +35,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/UniqueRef.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
 
 namespace TestWebKitAPI {

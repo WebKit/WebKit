@@ -29,6 +29,7 @@
 
 #include "JSCJSValueInlines.h"
 #include "SymbolObject.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

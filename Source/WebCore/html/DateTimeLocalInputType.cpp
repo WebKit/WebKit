@@ -42,6 +42,7 @@
 #include "InputTypeNames.h"
 #include "PlatformLocale.h"
 #include "StepRange.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

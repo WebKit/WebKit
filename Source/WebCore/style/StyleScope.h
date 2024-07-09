@@ -67,6 +67,7 @@ namespace Style {
 class CustomPropertyRegistry;
 class Resolver;
 class RuleSet;
+struct MatchResult;
 
 class Scope final : public CanMakeWeakPtr<Scope>, public CanMakeCheckedPtr<Scope> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -133,6 +134,9 @@ public:
     void releaseMemory();
 
     void clearViewTransitionStyles();
+
+    const MatchResult* cachedMatchResult(const Element&);
+    void updateCachedMatchResult(const Element&, const MatchResult&);
 
     const Document& document() const { return m_document; }
     Document& document() { return m_document; }
@@ -245,6 +249,7 @@ private:
 
     std::optional<MediaQueryViewportState> m_viewportStateOnPreviousMediaQueryEvaluation;
     WeakHashMap<Element, LayoutSize, WeakPtrImplWithEventTargetData> m_queryContainerStates;
+    mutable WeakHashMap<const Element, UniqueRef<MatchResult>, WeakPtrImplWithEventTargetData> m_cachedMatchResults;
 
     UniqueRef<CustomPropertyRegistry> m_customPropertyRegistry;
     UniqueRef<CSSCounterStyleRegistry> m_counterStyleRegistry;

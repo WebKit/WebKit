@@ -254,7 +254,7 @@ public:
     void reportNetworkIssue(WebPageProxyIdentifier, const URL&);
 #endif
 
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
     NetworkNotificationManager& notificationManager() { return m_notificationManager; }
 #endif
 
@@ -360,7 +360,7 @@ protected:
 
     HashMap<WebPageProxyIdentifier, String> m_attributedBundleIdentifierFromPageIdentifiers;
 
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
     NetworkNotificationManager m_notificationManager;
 #endif
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)

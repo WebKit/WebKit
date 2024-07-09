@@ -75,6 +75,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 #if !ENABLE(WEBASSEMBLY)
 #error ENABLE(WEBASSEMBLY_OMGJIT) is enabled, but ENABLE(WEBASSEMBLY) is not.
@@ -791,7 +792,7 @@ private:
     void emitArraySetUnchecked(uint32_t, Value*, Value*, Value*);
     void emitStructSet(Value*, uint32_t, const StructType&, Value*);
     ExpressionType WARN_UNUSED_RETURN pushArrayNew(uint32_t typeIndex, Value* initValue, ExpressionType size);
-    using arraySegmentOperation = EncodedJSValue (&)(JSC::Wasm::Instance*, uint32_t, uint32_t, uint32_t, uint32_t);
+    using arraySegmentOperation = EncodedJSValue SYSV_ABI (&)(JSC::Wasm::Instance*, uint32_t, uint32_t, uint32_t, uint32_t);
     ExpressionType WARN_UNUSED_RETURN pushArrayNewFromSegment(arraySegmentOperation, uint32_t typeIndex, uint32_t segmentIndex, ExpressionType arraySize, ExpressionType offset, ExceptionType);
     void emitRefTestOrCast(CastKind, ExpressionType, bool, int32_t, bool, ExpressionType&);
     template <typename Generator>

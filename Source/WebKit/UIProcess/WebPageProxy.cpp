@@ -239,6 +239,7 @@
 #include <WebCore/TextIndicator.h>
 #include <WebCore/ValidationBubble.h>
 #include <WebCore/WindowFeatures.h>
+#include <WebCore/WrappedCryptoKey.h>
 #include <WebCore/WritingDirection.h>
 #include <optional>
 #include <stdio.h>
@@ -252,6 +253,7 @@
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/TextStream.h>
 
@@ -400,6 +402,10 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import <pal/system/ios/Device.h>
+#endif
+
+#if USE(GLIB_EVENT_LOOP)
+#include <wtf/glib/RunLoopSourcePriority.h>
 #endif
 
 #define MESSAGE_CHECK(process, assertion) MESSAGE_CHECK_BASE(assertion, process->connection())
@@ -652,7 +658,15 @@ WebPageProxy::Internals::Internals(WebPageProxy& page)
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     , fullscreenVideoTextRecognitionTimer(RunLoop::main(), &page, &WebPageProxy::fullscreenVideoTextRecognitionTimerFired)
 #endif
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    , activityStateChangeTimer(RunLoop::main(), &page, &WebPageProxy::dispatchActivityStateChange)
+#endif
 {
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    activityStateChangeTimer.setName("[WebKit] ActivityStateChange"_s);
+    // Give the events causing activity state changes more priority than the change timer.
+    activityStateChangeTimer.setPriority(RunLoopSourcePriority::RunLoopTimer + 1);
+#endif
 }
 
 WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref<API::PageConfiguration>&& configuration)
@@ -2598,7 +2612,7 @@ void WebPageProxy::setSuppressVisibilityUpdates(bool flag)
     m_suppressVisibilityUpdates = flag;
 
     if (!m_suppressVisibilityUpdates) {
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
         scheduleActivityStateUpdate();
 #else
         dispatchActivityStateChange();
@@ -2692,12 +2706,15 @@ void WebPageProxy::activityStateDidChange(OptionSet<ActivityState> mayHaveChange
         return;
     }
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     bool isNewlyInWindow = !isInWindow() && (mayHaveChanged & ActivityState::IsInWindow) && pageClient->isViewInWindow();
     if (dispatchMode == ActivityStateChangeDispatchMode::Immediate || isNewlyInWindow) {
         dispatchActivityStateChange();
         return;
     }
+    scheduleActivityStateUpdate();
+#elif PLATFORM(GTK) || PLATFORM(WPE)
+    UNUSED_PARAM(dispatchMode);
     scheduleActivityStateUpdate();
 #else
     UNUSED_PARAM(dispatchMode);
@@ -2748,6 +2765,10 @@ void WebPageProxy::dispatchActivityStateChange()
     if (m_activityStateChangeDispatcher->isScheduled())
         m_activityStateChangeDispatcher->invalidate();
     m_hasScheduledActivityStateUpdate = false;
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    internals().activityStateChangeTimer.stop();
 #endif
 
     if (!hasRunningProcess())
@@ -8479,9 +8500,9 @@ void WebPageProxy::setHasHadSelectionChangesFromUserInteraction(bool hasHadUserS
 
 #if HAVE(TOUCH_BAR)
 
-void WebPageProxy::setIsTouchBarUpdateSupressedForHiddenContentEditable(bool ignoreTouchBarUpdate)
+void WebPageProxy::setIsTouchBarUpdateSuppressedForHiddenContentEditable(bool ignoreTouchBarUpdate)
 {
-    m_isTouchBarUpdateSupressedForHiddenContentEditable = ignoreTouchBarUpdate;
+    m_isTouchBarUpdateSuppressedForHiddenContentEditable = ignoreTouchBarUpdate;
 }
 
 void WebPageProxy::setIsNeverRichlyEditableForTouchBar(bool isNeverRichlyEditable)
@@ -10039,6 +10060,10 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     setMediaCapability(std::nullopt);
 #endif
 
+#if ENABLE(WRITING_TOOLS)
+    internals().completionHandlerForAnimationID.clear();
+#endif
+
     m_nowPlayingMetadataObservers.clear();
     m_nowPlayingMetadataObserverForTesting = nullptr;
 
@@ -11555,42 +11580,38 @@ void WebPageProxy::setOverlayScrollbarStyle(std::optional<WebCore::ScrollbarOver
         legacyMainFrameProcess().send(Messages::WebPage::SetScrollbarOverlayStyle(scrollbarStyleForMessage), internals().webPageID);
 }
 
-std::optional<Vector<uint8_t>> WebPageProxy::getWebCryptoMasterKey()
+void WebPageProxy::getWebCryptoMasterKey(CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
-    if (auto keyData = m_websiteDataStore->client().webCryptoMasterKey())
-        return keyData;
-    if (auto keyData = m_navigationClient->webCryptoMasterKey(*this))
-        return Vector(keyData->span());
-    return std::nullopt;
+    m_websiteDataStore->client().webCryptoMasterKey([completionHandler = WTFMove(completionHandler), protectedThis = Ref { *this }](std::optional<Vector<uint8_t>>&& key) mutable {
+        if (key)
+            return completionHandler(WTFMove(key));
+        protectedThis->m_navigationClient->legacyWebCryptoMasterKey(protectedThis, WTFMove(completionHandler));
+    });
+
 }
 
-void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
+void WebPageProxy::wrapCryptoKey(Vector<uint8_t>&& key, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
-    Ref protectedPageClient { pageClient() };
-
-    std::optional<Vector<uint8_t>> masterKey = getWebCryptoMasterKey();
-    if (masterKey) {
-        Vector<uint8_t> wrappedKey;
-        if (wrapSerializedCryptoKey(*masterKey, key, wrappedKey)) {
-            completionHandler(WTFMove(wrappedKey));
-            return;
+    getWebCryptoMasterKey([key = WTFMove(key), completionHandler = WTFMove(completionHandler)](std::optional<Vector<uint8_t>> && masterKey) mutable {
+        if (masterKey) {
+            Vector<uint8_t> wrappedKey;
+            if (wrapSerializedCryptoKey(*masterKey, key, wrappedKey))
+                return completionHandler(WTFMove(wrappedKey));
         }
-    }
-    completionHandler(std::optional<Vector<uint8_t>>());
+        completionHandler(std::nullopt);
+    });
 }
 
-void WebPageProxy::unwrapCryptoKey(const struct WrappedCryptoKey& wrappedKey, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
+void WebPageProxy::unwrapCryptoKey(WrappedCryptoKey&& wrappedKey, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
-    Ref protectedPageClient { pageClient() };
-
-    std::optional<Vector<uint8_t>> masterKey = getWebCryptoMasterKey();
-    if (masterKey) {
-        if (auto key = WebCore::unwrapCryptoKey(*masterKey, wrappedKey)) {
-            completionHandler(WTFMove(key));
-            return;
+    getWebCryptoMasterKey([wrappedKey = WTFMove(wrappedKey), completionHandler = WTFMove(completionHandler)](std::optional<Vector<uint8_t>> && masterKey) mutable {
+        if (masterKey) {
+            if (auto key = WebCore::unwrapCryptoKey(*masterKey, wrappedKey))
+                return completionHandler(WTFMove(key));
         }
-    }
-    completionHandler(std::nullopt);
+        completionHandler(std::nullopt);
+    });
+
 }
 
 void WebPageProxy::changeFontAttributes(WebCore::FontAttributeChanges&& changes)
@@ -14281,6 +14302,12 @@ void WebPageProxy::setAllowsLayoutViewportHeightExpansion(bool value)
 
     internals().allowsLayoutViewportHeightExpansion = value;
     pageClient().scheduleVisibleContentRectUpdate();
+}
+
+void WebPageProxy::closeCurrentTypingCommand()
+{
+    if (hasRunningProcess())
+        send(Messages::WebPage::CloseCurrentTypingCommand());
 }
 
 } // namespace WebKit

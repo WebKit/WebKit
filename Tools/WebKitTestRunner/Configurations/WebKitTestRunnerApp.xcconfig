@@ -38,6 +38,7 @@ STRIP_STYLE = debugging;
 SKIP_INSTALL[sdk=macosx*] = YES;
 
 EXCLUDED_SOURCE_FILE_NAMES[config=Production] = $(inherited) *.appex
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = $(inherited) *.appex;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(inherited) ios/* AppDelegate.m *.appex;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=appletv*] = $(inherited) ios/Launch.storyboard *.appex;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=watch*] = $(inherited) ios/Launch.storyboard *.appex;
@@ -45,9 +46,10 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=xr*] = $(inherited) *.appex;
 
 TARGETED_DEVICE_FAMILY = 1,2,4,7;
 
-CODE_SIGN_ENTITLEMENTS[sdk=iphone*] = Configurations/WebKitTestRunnerApp-iOS.entitlements;
+CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*] = Configurations/WebKitTestRunnerApp-iOS-simulator.entitlements;
+CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*] = Configurations/WebKitTestRunnerApp-iOS.entitlements;
 CODE_SIGN_ENTITLEMENTS[sdk=appletv*] = Configurations/WebKitTestRunnerApp-watchOS.entitlements;
 CODE_SIGN_ENTITLEMENTS[sdk=watch*] = Configurations/WebKitTestRunnerApp-watchOS.entitlements;
-CODE_SIGN_ENTITLEMENTS[sdk=xr*] = Configurations/WebKitTestRunnerApp-visionOS.entitlements;
+CODE_SIGN_ENTITLEMENTS[sdk=xr*] = Configurations/WebKitTestRunnerApp-iOS.entitlements;
 
 APPLY_RULES_IN_COPY_FILES = YES;

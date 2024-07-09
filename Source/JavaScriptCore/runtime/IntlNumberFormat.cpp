@@ -37,6 +37,7 @@
 #include "ObjectConstructor.h"
 #include "ParseInt.h"
 #include <wtf/Range.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 #ifdef U_HIDE_DRAFT_API

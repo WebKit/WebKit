@@ -134,7 +134,6 @@ SSL_HANDSHAKE::SSL_HANDSHAKE(SSL *ssl_arg)
       cert_request(false),
       certificate_status_expected(false),
       ocsp_stapling_requested(false),
-      delegated_credential_requested(false),
       should_ack_sni(false),
       in_false_start(false),
       in_early_data(false),
@@ -564,18 +563,29 @@ bool ssl_send_finished(SSL_HANDSHAKE *hs) {
   return true;
 }
 
-bool ssl_output_cert_chain(SSL_HANDSHAKE *hs) {
+bool ssl_send_tls12_certificate(SSL_HANDSHAKE *hs) {
   ScopedCBB cbb;
-  CBB body;
+  CBB body, certs, cert;
   if (!hs->ssl->method->init_message(hs->ssl, cbb.get(), &body,
                                      SSL3_MT_CERTIFICATE) ||
-      !ssl_add_cert_chain(hs, &body) ||
-      !ssl_add_message_cbb(hs->ssl, cbb.get())) {
-    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+      !CBB_add_u24_length_prefixed(&body, &certs)) {
     return false;
   }
 
-  return true;
+  if (hs->credential != nullptr) {
+    assert(hs->credential->type == SSLCredentialType::kX509);
+    STACK_OF(CRYPTO_BUFFER) *chain = hs->credential->chain.get();
+    for (size_t i = 0; i < sk_CRYPTO_BUFFER_num(chain); i++) {
+      CRYPTO_BUFFER *buffer = sk_CRYPTO_BUFFER_value(chain, i);
+      if (!CBB_add_u24_length_prefixed(&certs, &cert) ||
+          !CBB_add_bytes(&cert, CRYPTO_BUFFER_data(buffer),
+                         CRYPTO_BUFFER_len(buffer))) {
+        return false;
+      }
+    }
+  }
+
+  return ssl_add_message_cbb(hs->ssl, cbb.get());
 }
 
 const SSL_SESSION *ssl_handshake_session(const SSL_HANDSHAKE *hs) {

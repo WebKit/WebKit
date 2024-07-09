@@ -48,6 +48,20 @@
 
 namespace WebCore {
 
+#pragma mark - EditingScope
+
+WritingToolsController::EditingScope::EditingScope(Document& document)
+    : m_document(&document)
+    , m_editingWasSuppressed(document.editor().suppressEditingForWritingTools())
+{
+    document.editor().setSuppressEditingForWritingTools(false);
+}
+
+WritingToolsController::EditingScope::~EditingScope()
+{
+    m_document->editor().setSuppressEditingForWritingTools(m_editingWasSuppressed);
+}
+
 #pragma mark - Overloaded TextIterator-based static functions.
 
 // To maintain consistency between the traversals of `TextIterator` and `HTMLConverter` within the controller,
@@ -202,16 +216,14 @@ void WritingToolsController::willBeginWritingToolsSession(const std::optional<Wr
         return;
     }
 
+    document->editor().setSuppressEditingForWritingTools(true);
+
     completionHandler({ { WTF::UUID { 0 }, attributedStringFromRange, selectedTextCharacterRange } });
 }
 
 void WritingToolsController::didBeginWritingToolsSession(const WritingTools::Session& session, const Vector<WritingTools::Context>& contexts)
 {
     RELEASE_LOG(WritingTools, "WritingToolsController::didBeginWritingToolsSession (%s) [received contexts: %zu]", session.identifier.toString().utf8().data(), contexts.size());
-
-    // Don't animate smart replies, they are animated by UIKit/AppKit.
-    if (session.compositionType != WebCore::WritingTools::Session::CompositionType::SmartReply)
-        m_page->chrome().client().addInitialTextAnimation(session.identifier);
 }
 
 void WritingToolsController::proofreadingSessionDidReceiveSuggestions(const WritingTools::Session& session, const Vector<WritingTools::TextSuggestion>& suggestions, const WritingTools::Context& context, bool finished)
@@ -267,8 +279,10 @@ void WritingToolsController::proofreadingSessionDidReceiveSuggestions(const Writ
         state->replacementLocationOffset += static_cast<int>(suggestion.replacement.length()) - static_cast<int>(suggestion.originalRange.length);
     }
 
-    if (finished)
+    if (finished) {
+        document->editor().setSuppressEditingForWritingTools(false);
         document->selection().setSelection({ sessionRange });
+    }
 }
 
 void WritingToolsController::proofreadingSessionDidUpdateStateForSuggestion(const WritingTools::Session& session, WritingTools::TextSuggestion::State newTextSuggestionState, const WritingTools::TextSuggestion& textSuggestion, const WritingTools::Context&)
@@ -366,6 +380,19 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
         return;
     }
 
+#if PLATFORM(IOS_FAMILY)
+    if (!state->hasReceivedText && session.compositionType == WritingTools::Session::CompositionType::SmartReply) {
+        // UIKit inserts a space prior to `willBegin` and before `didReceiveText`, so the initial session range
+        // becomes invalid and must be re-computed.
+        //
+        // FIXME: (rdar://131197624) Remove this special-case logic if/when UIKit no longer injects a space.
+        if (auto selectedRange = document->selection().selection().firstRange())
+            state->reappliedCommands.last()->setEndingContextRange(*selectedRange);
+    }
+
+    state->hasReceivedText = true;
+#endif
+
     m_page->chrome().client().removeInitialTextAnimation(session.identifier);
 
     document->selection().clear();
@@ -382,12 +409,9 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 
     // The character count delta is `sessionRangeCharacterCount - contextTextCharacterCount`;
     // the above check ensures that the full range length expression will never underflow.
-
     auto characterCountDelta = sessionRangeCharacterCount - contextTextCharacterCount;
     auto adjustedCharacterRange = CharacterRange { range.location, range.length + characterCountDelta };
     auto resolvedRange = resolveCharacterRange(sessionRange, adjustedCharacterRange);
-
-    m_page->chrome().client().addSourceTextAnimation(session.identifier, range);
 
     // Prefer using any attributes that `attributedText` may have; however, if it has none,
     // just conduct the replacement so that it matches the style of its surrounding text.
@@ -397,9 +421,38 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 
     auto commandState = finished ? WritingToolsCompositionCommand::State::Complete : WritingToolsCompositionCommand::State::InProgress;
 
-    replaceContentsOfRangeInSession(*state, resolvedRange, attributedText, commandState);
+    auto addDestinationTextAnimation = [weakThis = WeakPtr { *this }, state, resolvedRange, attributedText, commandState, identifier = session.identifier, sessionRange]() mutable {
+        if (!weakThis)
+            return;
 
-    m_page->chrome().client().addDestinationTextAnimation(session.identifier, adjustedCharacterRange);
+        RefPtr document = weakThis->document();
+        if (!document) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+
+        weakThis->replaceContentsOfRangeInSession(*state, resolvedRange, attributedText, commandState);
+
+        // FIXME: We won't be setting the selection after every replace, we need a different way to
+        // caluculate this range.
+        auto selectionRange = document->selection().selection().firstRange();
+        if (!selectionRange)
+            return;
+
+
+        auto rangeAfterReplace = characterRange(sessionRange, *selectionRange);
+
+        if (!weakThis->m_page)
+            return;
+
+        weakThis->m_page->chrome().client().addDestinationTextAnimation(identifier, rangeAfterReplace, attributedText.string);
+    };
+
+#if PLATFORM(MAC)
+    m_page->chrome().client().addSourceTextAnimation(session.identifier, range, attributedText.string, WTFMove(addDestinationTextAnimation));
+#else
+    addDestinationTextAnimation();
+#endif
 }
 
 template<>
@@ -556,6 +609,8 @@ void WritingToolsController::didEndWritingToolsSession(const WritingTools::Sessi
         return;
     }
 
+    document->editor().setSuppressEditingForWritingTools(false);
+
     switch (session.type) {
     case WritingTools::Session::Type::Proofreading:
         didEndWritingToolsSession<WritingTools::Session::Type::Proofreading>(session, accepted);
@@ -572,12 +627,6 @@ void WritingToolsController::didEndWritingToolsSession(const WritingTools::Sessi
     }
 
     m_page->chrome().client().removeInitialTextAnimation(session.identifier);
-
-    // At this point, the selection will be the replaced text, which is the desired behavior for
-    // Smart Reply sessions. However, for others, the entire session context range should be selected.
-
-    if (session.compositionType != WritingTools::Session::CompositionType::SmartReply)
-        document->selection().setSelection({ *sessionRange });
 
     m_page->chrome().client().removeTransparentMarkersForSessionID(session.identifier);
 
@@ -759,6 +808,11 @@ void WritingToolsController::restartCompositionForSession(const WritingTools::Se
         return;
     }
 
+    m_page->chrome().client().clearAnimationsForSessionID(session.identifier);
+    // Don't animate smart replies, they are animated by UIKit/AppKit.
+    if (session.compositionType != WebCore::WritingTools::Session::CompositionType::SmartReply)
+        m_page->chrome().client().addInitialTextAnimation(session.identifier);
+
     // The stack will never be empty as the sentinel command always exists.
     auto currentContextRange = state->reappliedCommands.last()->endingContextRange();
     state->reappliedCommands.append(WritingToolsCompositionCommand::create(Ref { *document }, currentContextRange));
@@ -833,7 +887,10 @@ void WritingToolsController::replaceContentsOfRangeInSession(ProofreadingState& 
 
     document->selection().setSelection({ range });
 
-    document->editor().replaceSelectionWithText(replacementText, Editor::SelectReplacement::Yes, Editor::SmartReplace::No, EditAction::InsertReplacement);
+    {
+        EditingScope editingScope { *document };
+        document->editor().replaceSelectionWithText(replacementText, Editor::SelectReplacement::Yes, Editor::SmartReplace::No, EditAction::InsertReplacement);
+    }
 
     auto selection = document->selection().selection();
 
@@ -859,6 +916,7 @@ void WritingToolsController::replaceContentsOfRangeInSession(CompositionState& s
     });
     auto matchStyle = hasAttributes ? WritingToolsCompositionCommand::MatchStyle::No : WritingToolsCompositionCommand::MatchStyle::Yes;
 
+    EditingScope editingScope { *document() };
     state.reappliedCommands.last()->replaceContentsOfRangeWithFragment(WTFMove(fragment), range, matchStyle, commandState);
 }
 

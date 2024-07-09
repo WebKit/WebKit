@@ -114,8 +114,8 @@ uint8_t *SHA256(const uint8_t *data, size_t len,
   return out;
 }
 
-#ifndef SHA256_ASM
-static void sha256_block_data_order(uint32_t *state, const uint8_t *in,
+#if !defined(SHA256_ASM)
+static void sha256_block_data_order(uint32_t state[8], const uint8_t *in,
                                     size_t num);
 #endif
 
@@ -172,7 +172,9 @@ int SHA224_Final(uint8_t out[SHA224_DIGEST_LENGTH], SHA256_CTX *ctx) {
   return sha256_final_impl(out, SHA224_DIGEST_LENGTH, ctx);
 }
 
-#ifndef SHA256_ASM
+#if !defined(SHA256_ASM)
+
+#if !defined(SHA256_ASM_NOHW)
 static const uint32_t K256[64] = {
     0x428a2f98UL, 0x71374491UL, 0xb5c0fbcfUL, 0xe9b5dba5UL, 0x3956c25bUL,
     0x59f111f1UL, 0x923f82a4UL, 0xab1c5ed5UL, 0xd807aa98UL, 0x12835b01UL,
@@ -221,8 +223,8 @@ static const uint32_t K256[64] = {
     ROUND_00_15(i, a, b, c, d, e, f, g, h);            \
   } while (0)
 
-static void sha256_block_data_order(uint32_t *state, const uint8_t *data,
-                                    size_t num) {
+static void sha256_block_data_order_nohw(uint32_t state[8], const uint8_t *data,
+                                         size_t num) {
   uint32_t a, b, c, d, e, f, g, h, s0, s1, T1;
   uint32_t X[16];
   int i;
@@ -308,7 +310,39 @@ static void sha256_block_data_order(uint32_t *state, const uint8_t *data,
   }
 }
 
-#endif  // !SHA256_ASM
+#endif  // !defined(SHA256_ASM_NOHW)
+
+static void sha256_block_data_order(uint32_t state[8], const uint8_t *data,
+                                    size_t num) {
+#if defined(SHA256_ASM_HW)
+  if (sha256_hw_capable()) {
+    sha256_block_data_order_hw(state, data, num);
+    return;
+  }
+#endif
+#if defined(SHA256_ASM_AVX)
+  if (sha256_avx_capable()) {
+    sha256_block_data_order_avx(state, data, num);
+    return;
+  }
+#endif
+#if defined(SHA256_ASM_SSSE3)
+  if (sha256_ssse3_capable()) {
+    sha256_block_data_order_ssse3(state, data, num);
+    return;
+  }
+#endif
+#if defined(SHA256_ASM_NEON)
+  if (CRYPTO_is_NEON_capable()) {
+    sha256_block_data_order_neon(state, data, num);
+    return;
+  }
+#endif
+  sha256_block_data_order_nohw(state, data, num);
+}
+
+#endif  // !defined(SHA256_ASM)
+
 
 void SHA256_TransformBlocks(uint32_t state[8], const uint8_t *data,
                             size_t num_blocks) {

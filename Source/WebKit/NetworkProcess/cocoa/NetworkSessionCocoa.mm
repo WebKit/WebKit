@@ -73,6 +73,7 @@
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/darwin/WeakLinking.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/WTFString.h>
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -1088,18 +1089,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         auto privateRelayed = PrivateRelayed::No;
 #endif
         auto tlsVersion = (tls_protocol_version_t)metrics.negotiatedTLSProtocolVersion.unsignedShortValue;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (tlsVersion == tls_protocol_version_TLSv10 || tlsVersion == tls_protocol_version_TLSv11)
             negotiatedLegacyTLS = NegotiatedLegacyTLS::Yes;
-ALLOW_DEPRECATED_DECLARATIONS_END
+        ALLOW_DEPRECATED_DECLARATIONS_END
 
         // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
-        auto isNSHTTPURLResponseClass = [response isKindOfClass:NSHTTPURLResponse.class];
-        int statusCode = isNSHTTPURLResponseClass ? [(NSHTTPURLResponse *)response statusCode] : 0;
-        bool isNoSniff = isNSHTTPURLResponseClass && [[(NSHTTPURLResponse *)response valueForHTTPHeaderField:@"X-Content-Type-Options"] caseInsensitiveCompare:@"nosniff"] == NSOrderedSame;
+        int statusCode = [response isKindOfClass:NSHTTPURLResponse.class] ? [(NSHTTPURLResponse *)response statusCode] : 0;
         if (statusCode != httpStatus304NotModified) {
             bool isMainResourceLoad = networkDataTask->firstRequest().requester() == WebCore::ResourceRequestRequester::Main;
-            WebCore::adjustMIMETypeIfNecessary(response._CFURLResponse, isMainResourceLoad ? WebCore::IsMainResourceLoad::Yes : WebCore::IsMainResourceLoad::No, isNoSniff ? WebCore::IsNoSniffSet::Yes : WebCore::IsNoSniffSet::No);
+            WebCore::adjustMIMETypeIfNecessary(response._CFURLResponse, isMainResourceLoad);
         }
 
         WebCore::ResourceResponse resourceResponse(response);

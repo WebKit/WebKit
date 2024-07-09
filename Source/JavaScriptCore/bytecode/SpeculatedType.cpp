@@ -41,8 +41,10 @@
 #include "JSFunction.h"
 #include "JSGenericTypedArrayViewInlines.h"
 #include "JSMap.h"
+#include "JSMapIterator.h"
 #include "JSPromise.h"
 #include "JSSet.h"
+#include "JSSetIterator.h"
 #include "JSWeakMap.h"
 #include "JSWeakSet.h"
 #include "ProxyObject.h"
@@ -490,9 +492,17 @@ SpeculatedType speculationFromClassInfoInheritance(const ClassInfo* classInfo)
     if (classInfo == JSMap::info())
         return SpecMapObject;
 
+    static_assert(std::is_final_v<JSMapIterator>);
+    if (classInfo == JSMapIterator::info())
+        return SpecObjectOther;
+
     static_assert(std::is_final_v<JSSet>);
     if (classInfo == JSSet::info())
         return SpecSetObject;
+
+    static_assert(std::is_final_v<JSSetIterator>);
+    if (classInfo == JSSetIterator::info())
+        return SpecObjectOther;
 
     static_assert(std::is_final_v<JSWeakMap>);
     if (classInfo == JSWeakMap::info())

@@ -162,7 +162,7 @@ public:
 #if ENABLE(WEB_CODECS)
     void registerEncoderDescriptionCallback(Encoder&, DescriptionCallback&&);
 #endif
-    void setEncodeRates(Encoder&, uint32_t bitRate, uint32_t frameRate);
+    void setEncodeRates(Encoder&, uint32_t bitRateInKbps, uint32_t frameRate);
 
     CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, OSType);
 

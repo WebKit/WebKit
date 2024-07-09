@@ -86,5 +86,17 @@ TEST(SpanTest, Accessor) {
   EXPECT_EQ(s.end(), v.data() + v.size());
 }
 
+TEST(SpanTest, ConstExpr) {
+  static constexpr int v[] = {1, 2, 3, 4};
+  constexpr bssl::Span<const int> span1(v);
+  static_assert(span1.size() == 4u, "wrong size");
+  constexpr bssl::Span<const int> span2 = MakeConstSpan(v);
+  static_assert(span2.size() == 4u, "wrong size");
+  static_assert(span2.subspan(1).size() == 3u, "wrong size");
+  static_assert(span2.first(1).size() == 1u, "wrong size");
+  static_assert(span2.last(1).size() == 1u, "wrong size");
+  static_assert(span2[0] == 1, "wrong value");
+}
+
 }  // namespace
 BSSL_NAMESPACE_END

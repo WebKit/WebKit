@@ -31,6 +31,7 @@
 
 #include <WebCore/GStreamerCodecUtilities.h>
 #include <WebCore/GStreamerCommon.h>
+#include <wtf/text/MakeString.h>
 
 using namespace WebCore;
 
@@ -62,18 +63,23 @@ TEST_F(GStreamerTest, gstStructureGetters)
     ASSERT_TRUE(!gstStructureGet<uint64_t>(structure.get(), "uint64-val-noexist"_s).has_value());
     ASSERT_EQ(gstStructureGet<double>(structure.get(), "double-val"_s), 1.0);
     ASSERT_TRUE(!gstStructureGet<double>(structure.get(), "double-val-noexist"_s).has_value());
+
+    // webkit.org/b/276224
+    auto emptyIntOpt = gstStructureGet<int>(structure.get(), "int-val-noexist2"_s);
+    if (emptyIntOpt && *emptyIntOpt > 0)
+        FAIL() << "emptyIntOpt should be empty, but has value " << *emptyIntOpt;
 }
 
 TEST_F(GStreamerTest, gstStructureJSONSerializing)
 {
-    GUniquePtr<GstStructure> structure(gst_structure_new("foo", "int-val", G_TYPE_INT, 5, "str-val", G_TYPE_STRING, "foo", "bool-val", G_TYPE_BOOLEAN, TRUE, "uint64-val", G_TYPE_UINT64, 18014398509481982, nullptr));
+    GUniquePtr<GstStructure> structure(gst_structure_new("foo", "int-val", G_TYPE_INT, 5, "str-val", G_TYPE_STRING, "foo", "bool-val", G_TYPE_BOOLEAN, TRUE, "uint64-val", G_TYPE_UINT64, 18014398509481982, "uint-val", G_TYPE_UINT, 2147483648, nullptr));
     auto jsonString = gstStructureToJSONString(structure.get());
-    ASSERT_EQ(jsonString, "{\"int-val\":5,\"str-val\":\"foo\",\"bool-val\":1,\"uint64-val\":{\"$bigint\":\"18014398509481982\"}}"_s);
+    ASSERT_EQ(jsonString, "{\"int-val\":5,\"str-val\":\"foo\",\"bool-val\":1,\"uint64-val\":{\"$bigint\":\"18014398509481982\"},\"uint-val\":2147483648}"_s);
 
     GUniquePtr<GstStructure> innerStructure(gst_structure_new("bar", "boo", G_TYPE_BOOLEAN, FALSE, "double-val", G_TYPE_DOUBLE, 2.42, nullptr));
     gst_structure_set(structure.get(), "inner", GST_TYPE_STRUCTURE, innerStructure.get(), nullptr);
     jsonString = gstStructureToJSONString(structure.get());
-    ASSERT_EQ(jsonString, "{\"int-val\":5,\"str-val\":\"foo\",\"bool-val\":1,\"uint64-val\":{\"$bigint\":\"18014398509481982\"},\"inner\":{\"boo\":0,\"double-val\":2.42}}"_s);
+    ASSERT_EQ(jsonString, "{\"int-val\":5,\"str-val\":\"foo\",\"bool-val\":1,\"uint64-val\":{\"$bigint\":\"18014398509481982\"},\"uint-val\":2147483648,\"inner\":{\"boo\":0,\"double-val\":2.42}}"_s);
 
     GUniquePtr<GstStructure> structureWithList(gst_structure_new_from_string("foo, words=(string){ hello, world }"));
     jsonString = gstStructureToJSONString(structureWithList.get());

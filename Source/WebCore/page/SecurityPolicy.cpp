@@ -39,6 +39,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/URL.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

@@ -36,6 +36,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/StoredCredentialsPolicy.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 using namespace WebCore;

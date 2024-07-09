@@ -36,6 +36,7 @@
 #include "WasmCallingConvention.h"
 #include "WasmModuleInformation.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC { namespace Wasm {
 

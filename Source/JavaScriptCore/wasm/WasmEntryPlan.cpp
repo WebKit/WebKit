@@ -33,7 +33,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/SystemTracing.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(WEBASSEMBLY)
 

@@ -108,35 +108,49 @@ JSC_DEFINE_HOST_FUNCTION(constructSet, (JSGlobalObject* globalObject, CallFrame*
     return JSValue::encode(set);
 }
 
-JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetBucketHead, (JSGlobalObject*, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetStorage, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(jsDynamicCast<JSSet*>(callFrame->argument(0)));
     JSSet* set = jsCast<JSSet*>(callFrame->uncheckedArgument(0));
-    auto* head = set->head();
-    ASSERT(head);
-    return JSValue::encode(head);
+    return JSValue::encode(set->storageOrSentinel(getVM(globalObject)));
 }
 
-JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetBucketNext, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetIterationNext, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    ASSERT(jsDynamicCast<JSSet::BucketType*>(callFrame->argument(0)));
-    auto* bucket = jsCast<JSSet::BucketType*>(callFrame->uncheckedArgument(0));
-    ASSERT(bucket);
-    bucket = bucket->next();
-    while (bucket) {
-        if (!bucket->deleted())
-            return JSValue::encode(bucket);
-        bucket = bucket->next();
-    }
-    return JSValue::encode(globalObject->vm().sentinelSetBucket());
+    ASSERT(callFrame->argument(0).isCell() && (callFrame->argument(1).isInt32()));
+
+    VM& vm = globalObject->vm();
+    JSCell* cell = callFrame->uncheckedArgument(0).asCell();
+    if (cell == vm.orderedHashTableSentinel())
+        return JSValue::encode(vm.orderedHashTableSentinel());
+
+    JSSet::Storage& storage = *jsCast<JSSet::Storage*>(cell);
+    JSSet::Helper::Entry entry = JSSet::Helper::toNumber(callFrame->uncheckedArgument(1));
+    return JSValue::encode(JSSet::Helper::nextAndUpdateIterationEntry(vm, storage, entry));
 }
 
-JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetBucketKey, (JSGlobalObject*, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetIterationEntry, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    ASSERT(jsDynamicCast<JSSet::BucketType*>(callFrame->argument(0)));
-    auto* bucket = jsCast<JSSet::BucketType*>(callFrame->uncheckedArgument(0));
-    ASSERT(bucket);
-    return JSValue::encode(bucket->key());
+    ASSERT(callFrame->argument(0).isCell());
+
+    VM& vm = globalObject->vm();
+    JSCell* cell = callFrame->uncheckedArgument(0).asCell();
+    ASSERT_UNUSED(vm, cell != vm.orderedHashTableSentinel());
+
+    JSSet::Storage& storage = *jsCast<JSSet::Storage*>(cell);
+    return JSValue::encode(JSSet::Helper::getIterationEntry(storage));
+}
+
+JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetIterationEntryKey, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    ASSERT(callFrame->argument(0).isCell());
+
+    VM& vm = globalObject->vm();
+    JSCell* cell = callFrame->uncheckedArgument(0).asCell();
+    ASSERT_UNUSED(vm, cell != vm.orderedHashTableSentinel());
+
+    JSSet::Storage& storage = *jsCast<JSSet::Storage*>(cell);
+    return JSValue::encode(JSSet::Helper::getIterationEntryKey(storage));
 }
 
 JSC_DEFINE_HOST_FUNCTION(setPrivateFuncClone, (JSGlobalObject* globalObject, CallFrame* callFrame))

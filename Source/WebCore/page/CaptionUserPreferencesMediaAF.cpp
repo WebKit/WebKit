@@ -46,8 +46,8 @@
 #include <wtf/URL.h>
 #include <wtf/cf/VectorCF.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/cf/StringConcatenateCF.h>
 #include <wtf/unicode/Collator.h>
 

@@ -167,7 +167,7 @@ static void TestDigest(const DigestTestVector *test) {
   for (size_t i = 0; i < test->repeat; i++) {
     ASSERT_TRUE(EVP_DigestUpdate(ctx.get(), test->input, strlen(test->input)));
   }
-  std::unique_ptr<uint8_t[]> digest(new uint8_t[EVP_MD_size(test->md.func())]);
+  auto digest = std::make_unique<uint8_t[]>(EVP_MD_size(test->md.func()));
   unsigned digest_len;
   ASSERT_TRUE(EVP_DigestFinal_ex(ctx.get(), digest.get(), &digest_len));
   CompareDigest(test, digest.get(), digest_len);

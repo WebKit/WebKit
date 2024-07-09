@@ -40,6 +40,7 @@
 #include <wtf/HexNumber.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

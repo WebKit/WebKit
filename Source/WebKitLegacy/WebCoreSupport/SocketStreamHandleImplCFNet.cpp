@@ -48,6 +48,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/cf/TypeCastsCF.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)

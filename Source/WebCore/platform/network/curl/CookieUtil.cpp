@@ -31,6 +31,7 @@
 
 #include <wtf/DateMath.h>
 #include <wtf/WallTime.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/WTFString.h>
 

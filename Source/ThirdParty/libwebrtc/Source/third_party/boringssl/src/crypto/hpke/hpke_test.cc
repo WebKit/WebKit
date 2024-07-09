@@ -93,13 +93,24 @@ class HPKETestVector {
     ScopedEVP_HPKE_KEY base_key;
     ASSERT_TRUE(EVP_HPKE_KEY_init(base_key.get(), kem, secret_key_r_.data(),
                                   secret_key_r_.size()));
-    for (bool copy : {false, true}) {
-      SCOPED_TRACE(copy);
+
+    enum class CopyMode { kOriginal, kCopy, kMove };
+    for (CopyMode copy :
+         {CopyMode::kOriginal, CopyMode::kCopy, CopyMode::kMove}) {
+      SCOPED_TRACE(static_cast<int>(copy));
       const EVP_HPKE_KEY *key = base_key.get();
       ScopedEVP_HPKE_KEY key_copy;
-      if (copy) {
-        ASSERT_TRUE(EVP_HPKE_KEY_copy(key_copy.get(), base_key.get()));
-        key = key_copy.get();
+      switch (copy) {
+        case CopyMode::kOriginal:
+          break;
+        case CopyMode::kCopy:
+          ASSERT_TRUE(EVP_HPKE_KEY_copy(key_copy.get(), base_key.get()));
+          key = key_copy.get();
+          break;
+        case CopyMode::kMove:
+          EVP_HPKE_KEY_move(key_copy.get(), base_key.get());
+          key = key_copy.get();
+          break;
       }
 
       uint8_t public_key[EVP_HPKE_MAX_PUBLIC_KEY_LENGTH];
@@ -543,9 +554,8 @@ TEST(HPKETest, SetupSenderBufferTooSmall) {
       sender_ctx.get(), enc, &enc_len, sizeof(enc),
       EVP_hpke_x25519_hkdf_sha256(), EVP_hpke_hkdf_sha256(),
       EVP_hpke_aes_128_gcm(), public_key_r, sizeof(public_key_r), nullptr, 0));
-  uint32_t err = ERR_get_error();
-  EXPECT_EQ(ERR_LIB_EVP, ERR_GET_LIB(err));
-  EXPECT_EQ(EVP_R_INVALID_BUFFER_SIZE, ERR_GET_REASON(err));
+  EXPECT_TRUE(
+      ErrorEquals(ERR_get_error(), ERR_LIB_EVP, EVP_R_INVALID_BUFFER_SIZE));
   ERR_clear_error();
 }
 
@@ -576,9 +586,8 @@ TEST(HPKETest, SetupRecipientWrongLengthEnc) {
   ASSERT_FALSE(EVP_HPKE_CTX_setup_recipient(
       recipient_ctx.get(), key.get(), EVP_hpke_hkdf_sha256(),
       EVP_hpke_aes_128_gcm(), bogus_enc, sizeof(bogus_enc), nullptr, 0));
-  uint32_t err = ERR_get_error();
-  EXPECT_EQ(ERR_LIB_EVP, ERR_GET_LIB(err));
-  EXPECT_EQ(EVP_R_INVALID_PEER_KEY, ERR_GET_REASON(err));
+  EXPECT_TRUE(
+      ErrorEquals(ERR_get_error(), ERR_LIB_EVP, EVP_R_INVALID_PEER_KEY));
   ERR_clear_error();
 }
 
@@ -592,9 +601,8 @@ TEST(HPKETest, SetupSenderWrongLengthPeerPublicValue) {
       EVP_hpke_x25519_hkdf_sha256(), EVP_hpke_hkdf_sha256(),
       EVP_hpke_aes_128_gcm(), bogus_public_key_r, sizeof(bogus_public_key_r),
       nullptr, 0));
-  uint32_t err = ERR_get_error();
-  EXPECT_EQ(ERR_LIB_EVP, ERR_GET_LIB(err));
-  EXPECT_EQ(EVP_R_INVALID_PEER_KEY, ERR_GET_REASON(err));
+  EXPECT_TRUE(
+      ErrorEquals(ERR_get_error(), ERR_LIB_EVP, EVP_R_INVALID_PEER_KEY));
   ERR_clear_error();
 }
 

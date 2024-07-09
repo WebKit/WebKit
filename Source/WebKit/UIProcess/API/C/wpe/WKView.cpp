@@ -38,13 +38,13 @@ using namespace WebKit;
 #if ENABLE(WPE_PLATFORM)
 WKViewRef WKViewCreate(WPEDisplay* display, WKPageConfigurationRef configuration)
 {
-    return toAPI(WKWPE::ViewPlatform::create(display, *toImpl(configuration)));
+    return toAPI(&WKWPE::ViewPlatform::create(display, *toImpl(configuration)).leakRef());
 }
 #endif
 
 WKViewRef WKViewCreateDeprecated(struct wpe_view_backend* backend, WKPageConfigurationRef configuration)
 {
-    return toAPI(WKWPE::ViewLegacy::create(backend, *toImpl(configuration)));
+    return toAPI(&WKWPE::ViewLegacy::create(backend, *toImpl(configuration)).leakRef());
 }
 
 WKPageRef WKViewGetPage(WKViewRef view)

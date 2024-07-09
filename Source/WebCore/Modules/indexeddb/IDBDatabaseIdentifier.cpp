@@ -29,6 +29,7 @@
 #include "SecurityOrigin.h"
 #include <wtf/FileSystem.h>
 #include <wtf/Ref.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

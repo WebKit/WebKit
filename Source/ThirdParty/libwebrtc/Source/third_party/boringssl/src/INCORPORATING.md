@@ -1,7 +1,12 @@
 # Incorporating BoringSSL into a project
 
 **Note**: if your target project is not a Google project then first read the
-[main README](/README.md) about the purpose of BoringSSL.
+[main README](./README.md) about the purpose of BoringSSL.
+
+If you are porting BoringSSL to a new platform see
+["go/boringssl-on-new-platform"](https://goto.corp.google.com/boringssl-on-new-platform) (Google
+Internal) for information about porting BoringSSL to a new platform for a Google
+project.
 
 ## Which branch to use
 
@@ -63,7 +68,7 @@ outside of the CMake environment, these intermediates are generated once and
 checked into the incorporating project's source repository. This avoids
 incorporating projects needing to support Perl and Go in their build systems.
 
-The script [`util/generate_build_files.py`](/util/generate_build_files.py)
+The script [`util/generate_build_files.py`](./util/generate_build_files.py)
 expects to be run from the `third_party/boringssl` directory and to find the
 BoringSSL source code in `src/`. You should pass it a single argument: the name
 of the build system that you're using. If you don't use any of the supported
@@ -71,7 +76,7 @@ build systems then you should augment `generate_build_files.py` with support
 for it.
 
 The script will pregenerate the intermediate files (see
-[BUILDING.md](/BUILDING.md) for details about which tools will need to be
+[BUILDING.md](./BUILDING.md) for details about which tools will need to be
 installed) and output helper files for that build system. It doesn't generate a
 complete build script, just file and test lists, which change often. For
 example, see the

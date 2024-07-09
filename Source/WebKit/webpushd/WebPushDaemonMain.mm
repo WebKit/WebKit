@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
 
 #import "WebPushDaemonMain.h"
 
@@ -44,6 +44,7 @@
 #import <wtf/OSObjectPtr.h>
 #import <wtf/WTFProcess.h>
 #import <wtf/spi/darwin/XPCSPI.h>
+#import <wtf/text/MakeString.h>
 
 using WebKit::Daemon::EncodedMessage;
 using WebPushD::WebPushDaemon;
@@ -154,8 +155,6 @@ int WebPushDaemonMain(int argc, char** argv)
 
         WebKit::startListeningForMachServiceConnections(machServiceName, entitlementName, connectionAdded, connectionRemoved, connectionEventHandler);
 
-        ::WebPushD::WebPushDaemon::singleton().setMachServiceName(String::fromUTF8(machServiceName));
-
         if (useMockPushService)
             ::WebPushD::WebPushDaemon::singleton().startMockPushService();
         else {
@@ -176,5 +175,5 @@ int WebPushDaemonMain(int argc, char** argv)
 
 } // namespace WebKit
 
-#endif // ENABLE(BUILT_IN_NOTIFICATIONS)
+#endif // ENABLE(WEB_PUSH_NOTIFICATIONS)
 

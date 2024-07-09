@@ -5,6 +5,7 @@
 {"Wrapper": "modulewrapper", "In": "vectors/ACVP-AES-CTR.bz2", "Out": "expected/ACVP-AES-CTR.bz2"},
 {"Wrapper": "modulewrapper", "In": "vectors/ACVP-AES-ECB.bz2", "Out": "expected/ACVP-AES-ECB.bz2"},
 {"Wrapper": "modulewrapper", "In": "vectors/ACVP-AES-GCM.bz2", "Out": "expected/ACVP-AES-GCM.bz2"},
+{"Wrapper": "modulewrapper", "In": "vectors/ACVP-AES-GCM-randnonce.bz2", "Out": "expected/ACVP-AES-GCM-randnonce.bz2"},
 {"Wrapper": "modulewrapper", "In": "vectors/ACVP-AES-GMAC.bz2", "Out": "expected/ACVP-AES-GMAC.bz2"},
 {"Wrapper": "modulewrapper", "In": "vectors/ACVP-AES-KW.bz2", "Out": "expected/ACVP-AES-KW.bz2"},
 {"Wrapper": "modulewrapper", "In": "vectors/ACVP-AES-KWP.bz2", "Out": "expected/ACVP-AES-KWP.bz2"},

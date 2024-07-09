@@ -40,7 +40,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 #if OS(WINDOWS)
 #include "WebCoreBundleWin.h"

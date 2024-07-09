@@ -202,13 +202,17 @@ bool RenderTableRow::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
 {
     // Table rows cannot ever be hit tested.  Effectively they do not exist.
     // Just forward to our children always.
+    auto* section = this->section();
+    if (!section)
+        return false;
+
     for (RenderTableCell* cell = lastCell(); cell; cell = cell->previousCell()) {
         // FIXME: We have to skip over inline flows, since they can show up inside table rows
         // at the moment (a demoted inline <form> for example). If we ever implement a
         // table-specific hit-test method (which we should do for performance reasons anyway),
         // then we can remove this check.
         if (!cell->hasSelfPaintingLayer()) {
-            LayoutPoint cellPoint = flipForWritingModeForChild(*cell, accumulatedOffset);
+            auto cellPoint = section->flipForWritingModeForChild(*cell, accumulatedOffset);
             if (cell->nodeAtPoint(request, result, locationInContainer, cellPoint, action)) {
                 updateHitTestResult(result, locationInContainer.point() - toLayoutSize(cellPoint));
                 return true;

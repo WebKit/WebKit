@@ -18,10 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    IsWeakCallback,
-    Exposed=Window
-] callback interface NodeFilter {
+[ Exposed=Window ] callback interface NodeFilter {
     // Constants for acceptNode().
     const unsigned short FILTER_ACCEPT = 1;
     const unsigned short FILTER_REJECT = 2;

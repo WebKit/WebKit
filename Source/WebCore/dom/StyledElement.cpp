@@ -158,7 +158,7 @@ void StyledElement::styleAttributeChanged(const AtomString& newStyleString, Attr
 
     elementData()->setStyleAttributeIsDirty(false);
 
-    invalidateStyleInternal();
+    Node::invalidateStyle(Style::Validity::InlineStyleInvalid);
     InspectorInstrumentation::didInvalidateStyleAttr(*this);
 }
 
@@ -184,7 +184,8 @@ void StyledElement::invalidateStyleAttribute()
     }
 
     elementData()->setStyleAttributeIsDirty(true);
-    invalidateStyleInternal();
+
+    Node::invalidateStyle(Style::Validity::InlineStyleInvalid);
 
     // In the rare case of selectors like "[style] ~ div" we need to synchronize immediately to invalidate.
     if (styleResolver().ruleSets().hasComplexSelectorsForStyleAttribute()) {
@@ -380,6 +381,11 @@ void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties&
 void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, const String& value)
 {
     style.setProperty(propertyID, value, false, CSSParserContext(document()));
+}
+
+void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, RefPtr<CSSValue>&& value)
+{
+    style.setProperty(propertyID, WTFMove(value), false);
 }
 
 }

@@ -82,14 +82,9 @@ void UnrealizedCoreTextFont::addAttributesForOpticalSizing(CFMutableDictionaryRe
     WTF::switchOn(opticalSizingType, [&](OpticalSizingTypes::None) {
         CFDictionarySetValue(attributes, kCTFontOpticalSizeAttribute, CFSTR("none"));
     }, [&](OpticalSizingTypes::JustVariation) {
-#if USE(VARIABLE_OPTICAL_SIZING)
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=252592 We should never be enabling just the opsz variation without also enabling trak.
         // We should delete this and use the OpticalSizingType::Everything path instead.
         variationsToBeApplied.set({ { 'o', 'p', 's', 'z' } }, size);
-#else
-        UNUSED_PARAM(variationsToBeApplied);
-        UNUSED_PARAM(size);
-#endif
     }, [&](const OpticalSizingTypes::Everything& everything) {
         if (everything.opticalSizingValue) {
             auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &everything.opticalSizingValue.value()));

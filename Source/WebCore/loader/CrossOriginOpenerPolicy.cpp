@@ -41,6 +41,7 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityPolicy.h"
 #include "ViolationReportType.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

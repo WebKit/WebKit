@@ -42,6 +42,7 @@
 #include <wtf/Logger.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/Seconds.h>
+#include <wtf/text/MakeString.h>
 
 static const Seconds CommandTimeTolerance = 50_ms;
 

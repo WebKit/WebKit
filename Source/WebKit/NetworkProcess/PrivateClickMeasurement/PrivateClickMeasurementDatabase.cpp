@@ -33,6 +33,7 @@
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SQLiteStatementAutoResetScope.h>
 #include <WebCore/SQLiteTransaction.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit::PCM {
 

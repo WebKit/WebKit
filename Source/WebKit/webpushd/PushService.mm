@@ -39,6 +39,7 @@
 #import <wtf/WorkQueue.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/Base64.h>
+#import <wtf/text/MakeString.h>
 
 #if HAVE(MOBILE_KEY_BAG)
 #import <pal/spi/ios/MobileKeyBagSPI.h>

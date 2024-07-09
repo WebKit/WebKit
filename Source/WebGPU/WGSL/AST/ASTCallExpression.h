@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ASTExpression.h"
+#include <wtf/OptionSet.h>
 
 namespace WGSL {
 class BoundsCheckVisitor;
@@ -54,6 +55,8 @@ public:
 
     bool isConstructor() const { return m_isConstructor; }
 
+    const OptionSet<ShaderStage>& visibility() const { return m_visibility; }
+
 private:
     CallExpression(SourceSpan span, Expression::Ref&& target, Expression::List&& arguments)
         : Expression(span)
@@ -69,6 +72,7 @@ private:
     Expression::List m_arguments;
 
     bool m_isConstructor { false };
+    OptionSet<ShaderStage> m_visibility { ShaderStage::Compute, ShaderStage::Vertex, ShaderStage::Fragment };
 };
 
 } // namespace AST

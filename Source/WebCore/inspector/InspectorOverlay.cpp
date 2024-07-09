@@ -75,6 +75,7 @@
 #include "StyleResolver.h"
 #include "TextDirection.h"
 #include <wtf/MathExtras.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 

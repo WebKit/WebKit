@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Trusted Types default policy shouldn't be garbage collected</title>
+    <script src="../../resources/gc.js"></script>
+  </head>
+  <body>
+    <div id="result"></div>
+    <script>
+    trustedTypes.createPolicy('default', {createHTML: (s) => s});
+    trustedTypes.defaultPolicy.createHTML('test');
+    window.gc();
+    trustedTypes.defaultPolicy.createHTML('test');
+    result.innerText = 'PASS';
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    </script>
+  </body>
+</html>

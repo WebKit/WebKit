@@ -68,6 +68,7 @@ func (k *kasDH) Process(vectorSet []byte, m Transactable) (any, error) {
 	// See https://pages.nist.gov/ACVP/draft-hammett-acvp-kas-ffc-sp800-56ar3.html
 	var ret []kasDHTestGroupResponse
 	for _, group := range parsed.Groups {
+		group := group
 		response := kasDHTestGroupResponse{
 			ID: group.ID,
 		}
@@ -110,6 +111,8 @@ func (k *kasDH) Process(vectorSet []byte, m Transactable) (any, error) {
 
 		const method = "FFDH"
 		for _, test := range group.Tests {
+			test := test
+
 			if len(test.PeerPublicHex) == 0 {
 				return nil, fmt.Errorf("%d/%d is missing peer's key", group.ID, test.ID)
 			}

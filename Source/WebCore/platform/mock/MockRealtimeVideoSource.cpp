@@ -47,14 +47,10 @@
 #include <math.h>
 #include <wtf/NativePromise.h>
 #include <wtf/UUID.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(EXTENSION_CAPABILITIES)
 #include <wtf/cocoa/Entitlements.h>
-#endif
-
-#if USE(GLIB_EVENT_LOOP)
-#include <wtf/glib/RunLoopSourcePriority.h>
 #endif
 
 namespace WebCore {
@@ -83,12 +79,6 @@ static ThreadSafeWeakHashSet<MockRealtimeVideoSource>& allMockRealtimeVideoSourc
 {
     static NeverDestroyed<ThreadSafeWeakHashSet<MockRealtimeVideoSource>> videoSources;
     return videoSources;
-}
-
-static RunLoop& takePhotoRunLoop()
-{
-    static NeverDestroyed<Ref<RunLoop>> runLoop = RunLoop::create("WebKit::MockRealtimeVideoSource takePhoto runloop"_s);
-    return runLoop.get();
 }
 
 FontCascadeDescription& MockRealtimeVideoSource::DrawingState::fontDescription()
@@ -147,14 +137,10 @@ const FontCascade& MockRealtimeVideoSource::DrawingState::statsFont()
 
 MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
     : RealtimeVideoCaptureSource(CaptureDevice { WTFMove(deviceID), CaptureDevice::DeviceType::Camera, WTFMove(name) }, WTFMove(hashSalts), pageIdentifier)
-    , m_emitFrameTimer(RunLoop::current(), this, &MockRealtimeVideoSource::generateFrame)
+    , m_runLoop(RunLoop::create("WebKit::MockRealtimeVideoSource generateFrame runloop"_s))
+    , m_emitFrameTimer(m_runLoop, [protectedThis = Ref { *this }] { protectedThis->generateFrame(); })
     , m_deviceOrientation { VideoFrameRotation::None }
 {
-#if USE(GLIB_EVENT_LOOP)
-    // Make sure run loop dispatcher sources are higher priority.
-    m_emitFrameTimer.setPriority(RunLoopSourcePriority::RunLoopDispatcher + 1);
-    m_emitFrameTimer.setName("[MockRealtimeVideoSource] Generate frame"_s);
-#endif
 
     allMockRealtimeVideoSource().add(*this);
 
@@ -244,6 +230,9 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
         capabilities.setBackgroundBlur(std::get<MockCameraProperties>(m_device.properties).hasBackgroundBlur ? RealtimeMediaSourceCapabilities::BackgroundBlur::On : RealtimeMediaSourceCapabilities::BackgroundBlur::Off);
         supportedConstraints.setSupportsBackgroundBlur(true);
 
+        capabilities.setPowerEfficient(canBePowerEfficient());
+        supportedConstraints.setSupportsPowerEfficient(true);
+
         capabilities.setSupportedConstraints(supportedConstraints);
     } else if (mockDisplay()) {
         capabilities.setWidth({ 72, std::get<MockDisplayProperties>(m_device.properties).defaultSize.width() });
@@ -267,7 +256,7 @@ auto MockRealtimeVideoSource::takePhotoInternal(PhotoSettings&&) -> Ref<TakePhot
         invalidateDrawingState();
     }
 
-    return invokeAsync(takePhotoRunLoop(), [this, protectedThis = Ref { *this }] () mutable {
+    return invokeAsync(m_runLoop, [this, protectedThis = Ref { *this }] () mutable {
         if (auto currentImage = generatePhoto())
             return TakePhotoNativePromise::createAndResolve(std::make_pair(ImageBuffer::toData(*currentImage, "image/png"_s), "image/png"_s));
         return TakePhotoNativePromise::createAndReject("Failed to capture photo"_s);
@@ -364,6 +353,10 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
             supportedConstraints.setSupportsTorch(true);
             settings.setTorch(torch());
         }
+
+        if (canBePowerEfficient())
+            settings.setPowerEfficient(m_preset ? m_preset->isEfficient() : false);
+        supportedConstraints.setSupportsPowerEfficient(true);
 
         supportedConstraints.setSupportsBackgroundBlur(true);
         settings.setBackgroundBlur(std::get<MockCameraProperties>(m_device.properties).hasBackgroundBlur);
@@ -664,6 +657,8 @@ RefPtr<ImageBuffer> MockRealtimeVideoSource::generateFrameInternal()
 
 void MockRealtimeVideoSource::generateFrame()
 {
+    ASSERT(!isMainThread());
+
     if (m_delayUntil) {
         if (m_delayUntil < MonotonicTime::now())
             return;

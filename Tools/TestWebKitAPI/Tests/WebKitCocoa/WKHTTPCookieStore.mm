@@ -41,6 +41,7 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Seconds.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/WTFString.h>
 
 static bool gotFlag;
@@ -877,21 +878,23 @@ TEST(WKHTTPCookieStore, WebSocketCookiesFromRedirect)
         request.append(0);
         if (path == "/redirect"_s) {
             co_await connection.awaitableSend(
-                "HTTP/1.1 302 Found\r\n"
-                "Location: http://localhost:"_s + serverPort + "/com\r\n"
-                "Content-Length: 0\r\n"
-                "\r\n"_s);
+                makeString(
+                    "HTTP/1.1 302 Found\r\n"
+                    "Location: http://localhost:"_s, serverPort, "/com\r\n"
+                    "Content-Length: 0\r\n"
+                    "\r\n"_s));
         } else if (path == "/com"_s) {
             co_await connection.awaitableSend(
-                "HTTP/1.1 302 Found\r\n"
-                "Location: http://127.0.0.1:"_s + serverPort + "/destination\r\n"_s
-                "Set-Cookie: Default=1\r\n"
-                "Set-Cookie: SameSite_None=1; SameSite=None\r\n"
-                "Set-Cookie: SameSite_None_Secure=1; secure; SameSite=None\r\n"
-                "Set-Cookie: SameSite_Lax=1; SameSite=Lax\r\n"
-                "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
-                "Content-Length: 0\r\n"
-                "\r\n"_s);
+                makeString(
+                    "HTTP/1.1 302 Found\r\n"
+                    "Location: http://127.0.0.1:"_s, serverPort, "/destination\r\n"
+                    "Set-Cookie: Default=1\r\n"
+                    "Set-Cookie: SameSite_None=1; SameSite=None\r\n"
+                    "Set-Cookie: SameSite_None_Secure=1; secure; SameSite=None\r\n"
+                    "Set-Cookie: SameSite_Lax=1; SameSite=Lax\r\n"
+                    "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
+                    "Content-Length: 0\r\n"
+                    "\r\n"_s));
         } else if (path == "/destination"_s) {
             EXPECT_TRUE(strnstr(request.data(), "Host: 127.0.0.1:", request.size()));
             EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
@@ -932,21 +935,23 @@ TEST(WKHTTPCookieStore, WebSocketCookiesThroughRedirect)
         request.append(0);
         if (path == "/redirect"_s) {
             co_await connection.awaitableSend(
-                "HTTP/1.1 302 Found\r\n"
-                "Location: http://localhost:"_s + serverPort + "/com\r\n"
-                "Content-Length: 0\r\n"
-                "\r\n"_s);
+                makeString(
+                    "HTTP/1.1 302 Found\r\n"
+                    "Location: http://localhost:"_s, serverPort, "/com\r\n"
+                    "Content-Length: 0\r\n"
+                    "\r\n"_s));
         } else if (path == "/com"_s) {
             co_await connection.awaitableSend(
-                "HTTP/1.1 302 Found\r\n"
-                "Location: http://127.0.0.1:"_s + serverPort + "/ninja\r\n"_s
-                "Set-Cookie: Default=1\r\n"
-                "Set-Cookie: SameSite_None=1; SameSite=None\r\n"
-                "Set-Cookie: SameSite_None_Secure=1; secure; SameSite=None\r\n"
-                "Set-Cookie: SameSite_Lax=1; SameSite=Lax\r\n"
-                "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
-                "Content-Length: 0\r\n"
-                "\r\n"_s);
+                makeString(
+                    "HTTP/1.1 302 Found\r\n"
+                    "Location: http://127.0.0.1:"_s, serverPort, "/ninja\r\n"
+                    "Set-Cookie: Default=1\r\n"
+                    "Set-Cookie: SameSite_None=1; SameSite=None\r\n"
+                    "Set-Cookie: SameSite_None_Secure=1; secure; SameSite=None\r\n"
+                    "Set-Cookie: SameSite_Lax=1; SameSite=Lax\r\n"
+                    "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
+                    "Content-Length: 0\r\n"
+                    "\r\n"_s));
         } else if (path == "/websocket"_s) {
             EXPECT_TRUE(strnstr(request.data(), "Host: localhost:", request.size()));
             EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
@@ -979,15 +984,16 @@ TEST(WKHTTPCookieStore, WebSocketSetCookiesThroughFirstPartyRedirect)
         request.append(0);
         if (path == "/redirect"_s) {
             co_await connection.awaitableSend(
-                "HTTP/1.1 302 Found\r\n"
-                "Location: ws://localhost:"_s + serverPort + "/websocket\r\n"
-                "Set-Cookie: Default=1\r\n"
-                "Set-Cookie: SameSite_None=1; SameSite=None\r\n"
-                "Set-Cookie: SameSite_None_Secure=1; secure; SameSite=None\r\n"
-                "Set-Cookie: SameSite_Lax=1; SameSite=Lax\r\n"
-                "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
-                "Content-Length: 0\r\n"
-                "\r\n"_s);
+                makeString(
+                    "HTTP/1.1 302 Found\r\n"
+                    "Location: ws://localhost:"_s, serverPort, "/websocket\r\n"
+                    "Set-Cookie: Default=1\r\n"
+                    "Set-Cookie: SameSite_None=1; SameSite=None\r\n"
+                    "Set-Cookie: SameSite_None_Secure=1; secure; SameSite=None\r\n"
+                    "Set-Cookie: SameSite_Lax=1; SameSite=Lax\r\n"
+                    "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
+                    "Content-Length: 0\r\n"
+                    "\r\n"_s));
         } else if (path == "/websocket"_s) {
             EXPECT_TRUE(strnstr(request.data(), "Host: localhost:", request.size()));
             EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
@@ -1020,27 +1026,30 @@ TEST(WKHTTPCookieStore, WebSocketSetCookiesThroughRedirectToThirdParty)
         request.append(0);
         if (path == "/redirect"_s) {
             co_await connection.awaitableSend(
-                "HTTP/1.1 302 Found\r\n"
-                "Location: ws://localhost:"_s + serverPort + "/com\r\n"
-                "Content-Length: 0\r\n"
-                "\r\n"_s);
+                makeString(
+                    "HTTP/1.1 302 Found\r\n"
+                    "Location: ws://localhost:"_s, serverPort, "/com\r\n"
+                    "Content-Length: 0\r\n"
+                    "\r\n"_s));
         } else if (path == "/com"_s) {
             co_await connection.awaitableSend(
-                "HTTP/1.1 302 Found\r\n"
-                "Location: ws://127.0.0.1:"_s + serverPort + "/redirect2\r\n"_s
-                "Set-Cookie: Default=1\r\n"
-                "Set-Cookie: SameSite_None=1; SameSite=None\r\n"
-                "Set-Cookie: SameSite_None_Secure=1; secure; SameSite=None\r\n"
-                "Set-Cookie: SameSite_Lax=1; SameSite=Lax\r\n"
-                "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
-                "Content-Length: 0\r\n"
-                "\r\n"_s);
+                makeString(
+                    "HTTP/1.1 302 Found\r\n"
+                    "Location: ws://127.0.0.1:"_s, serverPort, "/redirect2\r\n"
+                    "Set-Cookie: Default=1\r\n"
+                    "Set-Cookie: SameSite_None=1; SameSite=None\r\n"
+                    "Set-Cookie: SameSite_None_Secure=1; secure; SameSite=None\r\n"
+                    "Set-Cookie: SameSite_Lax=1; SameSite=Lax\r\n"
+                    "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
+                    "Content-Length: 0\r\n"
+                    "\r\n"_s));
         } else if (path == "/redirect2"_s) {
             co_await connection.awaitableSend(
-                "HTTP/1.1 302 Found\r\n"
-                "Location: ws://localhost:"_s + serverPort + "/websocket\r\n"
-                "Content-Length: 0\r\n"
-                "\r\n"_s);
+                makeString(
+                    "HTTP/1.1 302 Found\r\n"
+                    "Location: ws://localhost:"_s, serverPort, "/websocket\r\n"
+                    "Content-Length: 0\r\n"
+                    "\r\n"_s));
         } else if (path == "/websocket"_s) {
             EXPECT_TRUE(strnstr(request.data(), "Host: localhost:", request.size()));
             EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));

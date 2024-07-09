@@ -47,7 +47,6 @@
 #include "Settings.h"
 #include <JavaScriptCore/ObjectConstructor.h>
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

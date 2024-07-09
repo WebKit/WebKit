@@ -35,6 +35,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/text/MakeString.h>
 
 namespace WebKit {
 using namespace WebCore;

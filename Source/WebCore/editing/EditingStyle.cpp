@@ -62,6 +62,7 @@
 #include "StyleRule.h"
 #include "StyledElement.h"
 #include "VisibleUnits.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

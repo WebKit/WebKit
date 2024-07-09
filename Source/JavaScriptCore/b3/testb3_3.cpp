@@ -1676,7 +1676,7 @@ static unsigned countLeadingZero(IntegerType value)
         return bitCount;
 
     unsigned counter = 0;
-    while (!(static_cast<uint64_t>(value) & (1l << (bitCount - 1)))) {
+    while (!(static_cast<uint64_t>(value) & (1ull << (bitCount - 1)))) {
         value <<= 1;
         ++counter;
     }

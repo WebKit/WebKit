@@ -30,6 +30,7 @@
 #include "FetchHeaders.h"
 
 #include "HTTPParsers.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -211,13 +212,7 @@ ExceptionOr<String> FetchHeaders::get(const String& name) const
     if (equalIgnoringASCIICase(name, "set-cookie"_s)) {
         if (m_setCookieValues.isEmpty())
             return String();
-        StringBuilder builder;
-        for (const auto& value : m_setCookieValues) {
-            if (!builder.isEmpty())
-                builder.append(", "_s);
-            builder.append(value);
-        }
-        return builder.toString();
+        return makeString(interleave(m_setCookieValues, ", "_s));
     }
     return m_headers.get(name);
 }

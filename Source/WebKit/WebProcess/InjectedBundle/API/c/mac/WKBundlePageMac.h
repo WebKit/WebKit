@@ -29,6 +29,7 @@
 
 #include <WebKit/WKBase.h>
 #include <WebKit/WKBundlePage.h>
+#include <WebKit/WKDeprecated.h>
 
 @class PDFDocument;
 
@@ -36,7 +37,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT PDFDocument *WKBundlePageGetPDFDocumentInFrame(WKBundlePageRef page, WKBundleFrameRef frame);
+WK_EXPORT PDFDocument *WKBundlePageGetPDFDocumentInFrame(WKBundlePageRef page, WKBundleFrameRef frame) WK_C_API_DEPRECATED;
 
 #ifdef __cplusplus
 }

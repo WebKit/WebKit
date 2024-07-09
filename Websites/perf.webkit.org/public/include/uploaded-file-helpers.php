@@ -102,7 +102,7 @@ function upload_file_in_transaction($db, $input_file, $remote_user, $additional_
 
     $db->begin_transaction();
     $file_row = $db->select_or_insert_row('uploaded_files', 'file',
-        array('sha256' => $uploaded_file['sha256'], 'deleted_at' => null), $uploaded_file, '*');
+        array('sha256' => $uploaded_file['sha256']), $uploaded_file, '*');
     if (!$file_row)
         exit_with_error('FailedToInsertFileData');
 
@@ -125,6 +125,13 @@ function upload_file_in_transaction($db, $input_file, $remote_user, $additional_
     if (!move_uploaded_file($input_file['tmp_name'], $new_path)) {
         $db->rollback_transaction();
         exit_with_error('FailedToMoveUploadedFile');
+    }
+
+    if ($file_row['file_deleted_at']) {
+        if (!$db->update_row('uploaded_files', 'file', array('id' => $file_row['file_id']), array('deleted_at' => null))) {
+            $db->rollback_transaction();
+            exit_with_error('FailedToClearDeletedAtField');
+        }
     }
 
     $db->commit_transaction();

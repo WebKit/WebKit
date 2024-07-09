@@ -913,15 +913,23 @@ bool Font::hasAnyComplexColorFormatGlyphs(const GlyphBufferGlyph* glyphs, unsign
     return false;
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/FontCoreTextAdditions.cpp>
-#else
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
+
 MultiRepresentationHEICMetrics Font::metricsForMultiRepresentationHEIC() const
 {
-    return { };
+    CGFloat ascent;
+    CGFloat descent;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    CGFloat width = CTFontGetTypographicBoundsForEmojiImageProvider(getCTFont(), nullptr, &ascent, &descent);
+ALLOW_DEPRECATED_DECLARATIONS_END
+
+    MultiRepresentationHEICMetrics metrics;
+    metrics.ascent = ascent;
+    metrics.descent = descent;
+    metrics.width = width;
+    return metrics;
 }
-#endif
+
 #endif
 
 } // namespace WebCore

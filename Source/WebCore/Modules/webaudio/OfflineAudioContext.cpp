@@ -38,6 +38,7 @@
 #include "OfflineAudioContextOptions.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Scope.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

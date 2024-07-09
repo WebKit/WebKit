@@ -44,6 +44,7 @@
 #import <WebCore/ElementContext.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/SortedArrayMap.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/TextStream.h>
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)

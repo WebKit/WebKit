@@ -75,7 +75,7 @@ struct NetworkProcessCreationParameters {
 
     bool enablePrivateClickMeasurement { true };
     bool ftpEnabled { false };
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
     bool builtInNotificationsEnabled { false };
 #endif
 

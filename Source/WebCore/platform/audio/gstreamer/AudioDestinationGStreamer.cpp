@@ -33,7 +33,7 @@
 #include <wtf/PrintStream.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

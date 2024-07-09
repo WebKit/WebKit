@@ -80,6 +80,8 @@ protected:
     virtual Ref<TakePhotoNativePromise> takePhotoInternal(PhotoSettings&&);
     bool mutedForPhotoCapture() const { return m_mutedForPhotoCapture; }
 
+    bool canBePowerEfficient();
+
 private:
     struct CaptureSizeFrameRateAndZoom {
         std::optional<VideoPreset> encodingPreset;

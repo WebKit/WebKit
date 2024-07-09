@@ -33,6 +33,7 @@
 #import <GameController/GCControllerElement.h>
 #import <GameController/GameController.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/text/MakeString.h>
 
 #import "GameControllerSoftLink.h"
 

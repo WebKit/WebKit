@@ -30,6 +30,7 @@
 #include "RegistrableDomain.h"
 #include "SecurityOrigin.h"
 #include <wtf/URLHash.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {

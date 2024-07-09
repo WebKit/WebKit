@@ -69,6 +69,7 @@
 #include "XMLDocumentParserScope.h"
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/UTF8Conversion.h>
 

@@ -46,6 +46,7 @@
 #include "UniqueIDBDatabaseManager.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Scope.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 using namespace JSC;

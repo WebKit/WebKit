@@ -36,7 +36,7 @@
 #include "WasmCallee.h"
 #include "WasmIndexOrName.h"
 #include "WebAssemblyFunction.h"
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

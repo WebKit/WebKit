@@ -33,6 +33,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/RunLoop.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 #if PLATFORM(COCOA)

@@ -30,6 +30,7 @@
 #include <sstream>
 #include <wtf/MathExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {

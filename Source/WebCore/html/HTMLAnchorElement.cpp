@@ -61,8 +61,8 @@
 #include "UserGestureIndicator.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/WeakHashMap.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 #if PLATFORM(COCOA)
 #include "DataDetection.h"

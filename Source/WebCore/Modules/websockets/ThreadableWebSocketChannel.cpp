@@ -48,6 +48,7 @@
 #include "WorkerRunLoop.h"
 #include "WorkerThread.h"
 #include "WorkerThreadableWebSocketChannel.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

@@ -35,8 +35,8 @@
 #include <wtf/Deque.h>
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
-
 
 namespace WebCore {
 

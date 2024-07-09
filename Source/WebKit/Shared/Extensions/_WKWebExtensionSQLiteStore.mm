@@ -41,6 +41,7 @@
 #import <wtf/FileSystem.h>
 #import <wtf/RunLoop.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/text/MakeString.h>
 
 using namespace WebKit;
 
@@ -214,7 +215,7 @@ using namespace WebKit;
 
     // -shm and -wal files may not exist, so don't report errors for those.
     for (auto& suffix : databaseFileSuffixes)
-        FileSystem::deleteFile(databaseFilePath + suffix);
+        FileSystem::deleteFile(makeString(databaseFilePath, suffix));
 
     if (FileSystem::fileExists(databaseFilePath) && !FileSystem::deleteFile(databaseFilePath)) {
         RELEASE_LOG_ERROR(Extensions, "Failed to delete database for extension %{private}@", _uniqueIdentifier);

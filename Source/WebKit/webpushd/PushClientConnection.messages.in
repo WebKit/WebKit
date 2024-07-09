@@ -20,13 +20,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
 
 messages -> WebPushD::PushClientConnection NotUsingIPCConnection {
     SetPushAndNotificationsEnabledForOrigin(String originString, bool enabled) -> ()
-    DeletePushAndNotificationRegistration(String registrationURL) -> (String unusedResult)
+    GetPendingPushMessage() -> (std::optional<WebKit::WebPushMessage> message)
     GetPendingPushMessages() -> (Vector<WebKit::WebPushMessage> messages)
-    SetDebugModeIsEnabled(bool enabled)
     UpdateConnectionConfiguration(WebKit::WebPushD::WebPushDaemonConnectionConfiguration configuration)
     InjectPushMessageForTesting(WebKit::WebPushD::PushMessageForTesting message) -> (String error)
     InjectEncryptedPushMessageForTesting(String encryptedMessage) -> (bool injected)
@@ -39,6 +38,7 @@ messages -> WebPushD::PushClientConnection NotUsingIPCConnection {
     RemovePushSubscriptionsForOrigin(WebCore::SecurityOriginData origin) -> (unsigned removed)
     SetPublicTokenForTesting(String token) -> ()
     GetPushTopicsForTesting() -> (Vector<String> enabled, Vector<String> ignored)
+    DidShowNotificationForTesting(URL scopeURL) -> ()
 }
 
-#endif // ENABLE(BUILT_IN_NOTIFICATIONS)
+#endif // ENABLE(WEB_PUSH_NOTIFICATIONS)

@@ -37,6 +37,7 @@
 #include <JavaScriptCore/FrameTracers.h>
 #include <JavaScriptCore/JSPromise.h>
 #include <wtf/RunLoop.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

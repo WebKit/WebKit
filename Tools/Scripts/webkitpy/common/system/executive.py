@@ -403,7 +403,8 @@ class Executive(AbstractExecutive):
                     ignore_errors=False,
                     return_exit_code=False,
                     return_stderr=True,
-                    decode_output=True):
+                    decode_output=True,
+                    pass_fds=()):
         """Popen wrapper for convenience and to work around python bugs."""
         assert(isinstance(args, list) or isinstance(args, tuple))
         start_time = time.time()
@@ -417,7 +418,8 @@ class Executive(AbstractExecutive):
                              stderr=stderr,
                              cwd=cwd,
                              env=env,
-                             close_fds=self._should_close_fds())
+                             close_fds=self._should_close_fds(),
+                             pass_fds=pass_fds)
         with process:
             if not string_to_communicate:
                 output = process.communicate()[0]

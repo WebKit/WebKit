@@ -55,6 +55,7 @@
 #include <wtf/JSONValues.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/WTFString.h>
 

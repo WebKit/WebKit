@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
 #import "WebPushToolConnection.h"
 
 #import "DaemonEncoder.h"
@@ -154,8 +154,8 @@ void Connection::sendPushMessage()
 
 void Connection::startDebugStreamAction()
 {
-    sendWithoutUsingIPCConnection(Messages::PushClientConnection::SetDebugModeIsEnabled(true));
-    printf("Now streaming debug messages\n");
+    printf("Now streaming debug messages via: log stream --debug --info --process webpushd");
+    system("log stream --debug --info --process webpushd");
 }
 
 void Connection::sendAuditToken()
@@ -247,5 +247,5 @@ bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IP
 
 } // namespace WebPushTool
 
-#endif // ENABLE(BUILT_IN_NOTIFICATIONS)
+#endif // ENABLE(WEB_PUSH_NOTIFICATIONS)
 

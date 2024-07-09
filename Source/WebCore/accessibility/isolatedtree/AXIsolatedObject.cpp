@@ -36,6 +36,7 @@
 #include "DateComponents.h"
 #include "HTMLNames.h"
 #include "RenderObject.h"
+#include <wtf/text/MakeString.h>
 
 #if PLATFORM(MAC)
 #import <pal/spi/mac/HIServicesSPI.h>

@@ -56,6 +56,8 @@ public:
 
     SimpleRange endingContextRange() const { return m_endingContextRange; }
 
+    void setEndingContextRange(const SimpleRange& range) { m_endingContextRange = range; }
+
 private:
     WritingToolsCompositionCommand(Ref<Document>&&, const SimpleRange&);
 

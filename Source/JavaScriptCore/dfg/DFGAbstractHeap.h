@@ -74,6 +74,8 @@ namespace JSC { namespace DFG {
     macro(JSDateFields) \
     macro(JSMapFields) \
     macro(JSSetFields) \
+    macro(JSMapIteratorFields) \
+    macro(JSSetIteratorFields) \
     macro(JSWeakMapFields) \
     macro(JSWeakSetFields) \
     macro(JSInternalFields) \

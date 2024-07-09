@@ -40,8 +40,8 @@
 #include <wtf/URL.h>
 #include <wtf/UUID.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

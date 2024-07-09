@@ -52,6 +52,7 @@
 #import <WebCore/ScrollingNodeID.h>
 #import <WebCore/ValidationBubble.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/MakeString.h>
 
 #if PLATFORM(MAC)
 #import "WKWebViewMac.h"

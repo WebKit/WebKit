@@ -30,6 +30,7 @@
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGPreserveAspectRatioValue.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/StringView.h>
 

@@ -72,6 +72,7 @@
     macro(__lookupSetter__) \
     macro(add) \
     macro(additionalJettisonReason) \
+    macro(alphabet) \
     macro(anonymous) \
     macro(arguments) \
     macro(as) \
@@ -222,6 +223,7 @@
     macro(numberingSystem) \
     macro(numeric) \
     macro(of) \
+    macro(omitPadding) \
     macro(opcode) \
     macro(origin) \
     macro(osrExitSites) \

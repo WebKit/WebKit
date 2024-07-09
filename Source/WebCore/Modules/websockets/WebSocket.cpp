@@ -69,6 +69,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 #if USE(WEB_THREAD)

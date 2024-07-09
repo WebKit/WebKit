@@ -30,6 +30,7 @@
 #include "WebPageInspectorTargetFrontendChannel.h"
 #include <WebCore/InspectorController.h>
 #include <WebCore/Page.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 

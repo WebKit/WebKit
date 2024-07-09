@@ -33,6 +33,7 @@
 #include "WebExtensionContextProxy.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 

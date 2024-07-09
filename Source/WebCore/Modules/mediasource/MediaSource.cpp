@@ -71,6 +71,7 @@
 #include <wtf/NativePromise.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

@@ -31,6 +31,7 @@
 #include <WebCore/WindowsKeyboardCodes.h>
 #include <wpe/wpe-platform.h>
 #include <wtf/HexNumber.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebKit {

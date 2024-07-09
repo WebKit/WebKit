@@ -39,6 +39,7 @@
 #include "TemporalDuration.h"
 #include "TemporalObject.h"
 #include "TemporalTimeZone.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

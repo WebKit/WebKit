@@ -30,6 +30,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
 #include <wtf/WindowsExtras.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

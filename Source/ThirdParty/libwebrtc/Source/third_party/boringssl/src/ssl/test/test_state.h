@@ -68,6 +68,7 @@ struct TestState {
   int explicit_renegotiates = 0;
   std::function<bool(const SSL_CLIENT_HELLO*)> get_handshake_hints_cb;
   int last_message_received = -1;
+  int selected_credential = -1;
 };
 
 bool SetTestState(SSL *ssl, std::unique_ptr<TestState> state);

@@ -41,6 +41,7 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

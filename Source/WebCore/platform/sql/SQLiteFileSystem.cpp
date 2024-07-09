@@ -37,6 +37,7 @@
 #include <pal/crypto/CryptoDigest.h>
 #include <sqlite3.h>
 #include <wtf/FileSystem.h>
+#include <wtf/text/MakeString.h>
 
 #if PLATFORM(COCOA)
 #include <pal/spi/cocoa/SQLite3SPI.h>

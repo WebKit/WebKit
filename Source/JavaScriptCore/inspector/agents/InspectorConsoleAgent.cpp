@@ -33,7 +33,7 @@
 #include "ScriptCallStackFactory.h"
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace Inspector {
 

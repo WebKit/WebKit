@@ -29,6 +29,7 @@
 #include "FloatRect.h"
 #include "QualifiedName.h"
 #include "SVGParserUtilities.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

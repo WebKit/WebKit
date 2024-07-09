@@ -74,6 +74,9 @@ public:
     void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
+    WebCodecsEncodedVideoChunkOutputCallback& outputCallbackConcurrently() { return m_output.get(); }
+    WebCodecsErrorCallback& errorCallbackConcurrently() { return m_error.get(); }
+
 private:
     WebCodecsVideoEncoder(ScriptExecutionContext&, Init&&);
 
@@ -96,6 +99,7 @@ private:
     void queueControlMessageAndProcess(Function<void()>&&);
     void processControlMessageQueue();
     WebCodecsEncodedVideoChunkMetadata createEncodedChunkMetadata(std::optional<unsigned>);
+    bool updateRates(const WebCodecsVideoEncoderConfig&);
 
     WebCodecsCodecState m_state { WebCodecsCodecState::Unconfigured };
     size_t m_encodeQueueSize { 0 };

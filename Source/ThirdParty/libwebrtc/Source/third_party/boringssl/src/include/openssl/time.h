@@ -1,4 +1,4 @@
-/* Copyright (c) 2022, Google Inc.
+/* Copyright (c) 2024, Google Inc.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,27 +15,8 @@
 #ifndef OPENSSL_HEADER_TIME_H
 #define OPENSSL_HEADER_TIME_H
 
-#include <openssl/base.h>
+// Compatibility header, to be deprecated. use <openssl/posix_time.h> instead.
 
-#include <time.h>
-
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
-// OPENSSL_posix_to_tm converts a int64_t POSIX time value in |time|, which must
-// be in the range of year 0000 to 9999, to a broken out time value in |tm|. It
-// returns one on success and zero on error.
-OPENSSL_EXPORT int OPENSSL_posix_to_tm(int64_t time, struct tm *out_tm);
-
-// OPENSSL_tm_to_posix converts a time value between the years 0 and 9999 in
-// |tm| to a POSIX time value in |out|. One is returned on success, zero is
-// returned on failure. It is a failure if |tm| contains out of range values.
-OPENSSL_EXPORT int OPENSSL_tm_to_posix(const struct tm *tm, int64_t *out);
-
-
-#if defined(__cplusplus)
-}  // extern C
-#endif
+#include <openssl/posix_time.h>
 
 #endif  // OPENSSL_HEADER_TIME_H

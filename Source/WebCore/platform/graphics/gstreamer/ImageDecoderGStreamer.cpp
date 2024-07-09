@@ -31,6 +31,7 @@
 #include <gst/base/gsttypefindhelper.h>
 #include <wtf/MainThread.h>
 #include <wtf/Scope.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

@@ -103,6 +103,7 @@
 #include <wtf/Ref.h>
 #include <wtf/Scope.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(APPLICATION_MANIFEST)

@@ -26,6 +26,7 @@
 
 #include "LogInitialization.h"
 #include <string.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {

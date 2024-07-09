@@ -30,6 +30,7 @@
 #include "ParsingUtilities.h"
 #include "ResourceCryptographicDigest.h"
 #include "SharedBuffer.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
@@ -202,7 +203,7 @@ bool matchIntegrityMetadataSlow(const CachedResource& resource, const String& in
 String integrityMismatchDescription(const CachedResource& resource, const String& integrityMetadata)
 {
     auto resourceURL = resource.url().stringCenterEllipsizedToLength();
-    if (auto resourceBuffer = resource.resourceBuffer()) {
+    if (RefPtr resourceBuffer = resource.resourceBuffer()) {
         return makeString(resourceURL, ". Failed integrity metadata check. Content length: "_s, resourceBuffer->size(), ", Expected content length: "_s,
             resource.response().expectedContentLength(), ", Expected metadata: "_s, integrityMetadata);
     }

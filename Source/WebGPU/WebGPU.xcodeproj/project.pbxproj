@@ -181,6 +181,8 @@
 		97D398E62B06A85B00D8C4AA /* ASTDiagnosticDirective.h in Headers */ = {isa = PBXBuildFile; fileRef = 97D398E42B06A85B00D8C4AA /* ASTDiagnosticDirective.h */; };
 		97D398E72B06A85B00D8C4AA /* ASTDiagnostic.h in Headers */ = {isa = PBXBuildFile; fileRef = 97D398E52B06A85B00D8C4AA /* ASTDiagnostic.h */; };
 		97D398E92B2387F300D8C4AA /* ASTTypeAlias.h in Headers */ = {isa = PBXBuildFile; fileRef = 97D398E82B2387F300D8C4AA /* ASTTypeAlias.h */; };
+		97DE28472C348D8A00F4DEC3 /* VisibilityValidator.h in Headers */ = {isa = PBXBuildFile; fileRef = 97DE28452C348D8A00F4DEC3 /* VisibilityValidator.h */; };
+		97DE28482C348D8A00F4DEC3 /* VisibilityValidator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97DE28462C348D8A00F4DEC3 /* VisibilityValidator.cpp */; };
 		97E21C8B2A1F5DCC009CEB0E /* ASTDecrementIncrementStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E21C8A2A1F5DCC009CEB0E /* ASTDecrementIncrementStatement.cpp */; };
 		97E21C972A2512F7009CEB0E /* ConstantValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E21C942A2512F7009CEB0E /* ConstantValue.cpp */; };
 		97E21C982A2512F7009CEB0E /* ConstantValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E21C952A2512F7009CEB0E /* ConstantValue.h */; };
@@ -479,6 +481,8 @@
 		97D398E42B06A85B00D8C4AA /* ASTDiagnosticDirective.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTDiagnosticDirective.h; sourceTree = "<group>"; };
 		97D398E52B06A85B00D8C4AA /* ASTDiagnostic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTDiagnostic.h; sourceTree = "<group>"; };
 		97D398E82B2387F300D8C4AA /* ASTTypeAlias.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTTypeAlias.h; sourceTree = "<group>"; };
+		97DE28452C348D8A00F4DEC3 /* VisibilityValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibilityValidator.h; sourceTree = "<group>"; };
+		97DE28462C348D8A00F4DEC3 /* VisibilityValidator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisibilityValidator.cpp; sourceTree = "<group>"; };
 		97E21C8A2A1F5DCC009CEB0E /* ASTDecrementIncrementStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASTDecrementIncrementStatement.cpp; sourceTree = "<group>"; };
 		97E21C942A2512F7009CEB0E /* ConstantValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstantValue.cpp; sourceTree = "<group>"; };
 		97E21C952A2512F7009CEB0E /* ConstantValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstantValue.h; sourceTree = "<group>"; };
@@ -687,6 +691,8 @@
 				978A9131298BBFD300B37E5E /* Types.h */,
 				978A9136298D40F100B37E5E /* TypeStore.cpp */,
 				978A9135298D40F100B37E5E /* TypeStore.h */,
+				97DE28462C348D8A00F4DEC3 /* VisibilityValidator.cpp */,
+				97DE28452C348D8A00F4DEC3 /* VisibilityValidator.h */,
 				1CEBD8022716BF8200A5254D /* WGSL.cpp */,
 				1CEBD7F72716B34400A5254D /* WGSL.h */,
 				97FA1A8729C085A60052D650 /* wgslc.cpp */,
@@ -957,6 +963,7 @@
 				978A912F298AD3DA00B37E5E /* TypeCheck.h in Headers */,
 				978A9133298BBFD300B37E5E /* Types.h in Headers */,
 				978A9137298D40F100B37E5E /* TypeStore.h in Headers */,
+				97DE28472C348D8A00F4DEC3 /* VisibilityValidator.h in Headers */,
 				1CEBD7F82716B34400A5254D /* WGSL.h in Headers */,
 				97099AC72AC49AAB003B41F8 /* WGSLEnums.h in Headers */,
 				9776BE7629957E12002D6D93 /* WGSLShaderModule.h in Headers */,
@@ -1191,6 +1198,7 @@
 				97296766299C09BC001C8BD4 /* TypeDeclarations.rb in Sources */,
 				978A9134298BBFD300B37E5E /* Types.cpp in Sources */,
 				978A9138298D40F100B37E5E /* TypeStore.cpp in Sources */,
+				97DE28482C348D8A00F4DEC3 /* VisibilityValidator.cpp in Sources */,
 				1CEBD8032716BF8200A5254D /* WGSL.cpp in Sources */,
 				97099AC62AC49AAB003B41F8 /* WGSLEnums.cpp in Sources */,
 			);

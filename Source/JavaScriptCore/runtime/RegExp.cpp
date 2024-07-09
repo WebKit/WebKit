@@ -29,7 +29,7 @@
 #include "YarrJIT.h"
 #include <wtf/Assertions.h>
 #include <wtf/DataLog.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

@@ -110,6 +110,7 @@
 #import <wtf/cocoa/CrashReporter.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
 #import <wtf/text/cf/StringConcatenateCF.h>

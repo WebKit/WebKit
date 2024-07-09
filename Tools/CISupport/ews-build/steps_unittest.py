@@ -8090,6 +8090,16 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(self.getProperty('comment_text'), 'Commit message contains (OOPS!) and no reviewer found, blocking PR #1234')
         return rc
 
+    def test_failure_multiple(self):
+        self.setupStep(ValidateCommitMessage())
+        ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
+        self.setUpCommonProperties()
+        self.expectCommonRemoteCommandsWithOutput('No reviewer information in commit message\nFailed to access https://raw.githubusercontent.com/WebKit/WebKit/main/metadata/contributors.json\n')
+        self.expectOutcome(result=FAILURE, state_string='No reviewer information in commit message')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('comment_text'), 'No reviewer information in commit message, blocking PR #1234')
+        return rc
+
     def test_failure_no_reviewer(self):
         self.setupStep(ValidateCommitMessage())
         ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']

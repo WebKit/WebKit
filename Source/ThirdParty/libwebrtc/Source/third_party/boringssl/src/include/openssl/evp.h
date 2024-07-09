@@ -59,7 +59,7 @@
 
 #include <openssl/base.h>
 
-#include <openssl/evp_errors.h>
+#include <openssl/evp_errors.h>  // IWYU pragma: export
 #include <openssl/thread.h>
 
 // OpenSSL included digest and cipher functions in this header so we include
@@ -136,10 +136,6 @@ OPENSSL_EXPORT int EVP_PKEY_bits(const EVP_PKEY *pkey);
 // values.
 OPENSSL_EXPORT int EVP_PKEY_id(const EVP_PKEY *pkey);
 
-// EVP_PKEY_type returns |nid| if |nid| is a known key type and |NID_undef|
-// otherwise.
-OPENSSL_EXPORT int EVP_PKEY_type(int nid);
-
 
 // Getting and setting concrete public key types.
 //
@@ -171,6 +167,11 @@ OPENSSL_EXPORT int EVP_PKEY_assign_EC_KEY(EVP_PKEY *pkey, EC_KEY *key);
 OPENSSL_EXPORT EC_KEY *EVP_PKEY_get0_EC_KEY(const EVP_PKEY *pkey);
 OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
 
+OPENSSL_EXPORT int EVP_PKEY_set1_DH(EVP_PKEY *pkey, DH *key);
+OPENSSL_EXPORT int EVP_PKEY_assign_DH(EVP_PKEY *pkey, DH *key);
+OPENSSL_EXPORT DH *EVP_PKEY_get0_DH(const EVP_PKEY *pkey);
+OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
+
 #define EVP_PKEY_NONE NID_undef
 #define EVP_PKEY_RSA NID_rsaEncryption
 #define EVP_PKEY_RSA_PSS NID_rsassaPss
@@ -179,11 +180,7 @@ OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
 #define EVP_PKEY_ED25519 NID_ED25519
 #define EVP_PKEY_X25519 NID_X25519
 #define EVP_PKEY_HKDF NID_hkdf
-
-// EVP_PKEY_assign sets the underlying key of |pkey| to |key|, which must be of
-// the given type. It returns one if successful or zero if the |type| argument
-// is not one of the |EVP_PKEY_*| values or if |key| is NULL.
-OPENSSL_EXPORT int EVP_PKEY_assign(EVP_PKEY *pkey, int type, void *key);
+#define EVP_PKEY_DH NID_dhKeyAgreement
 
 // EVP_PKEY_set_type sets the type of |pkey| to |type|. It returns one if
 // successful or zero if the |type| argument is not one of the |EVP_PKEY_*|
@@ -480,7 +477,7 @@ OPENSSL_EXPORT int EVP_PKEY_print_params(BIO *out, const EVP_PKEY *pkey,
 // returns one on success and zero on allocation failure or if iterations is 0.
 OPENSSL_EXPORT int PKCS5_PBKDF2_HMAC(const char *password, size_t password_len,
                                      const uint8_t *salt, size_t salt_len,
-                                     unsigned iterations, const EVP_MD *digest,
+                                     uint32_t iterations, const EVP_MD *digest,
                                      size_t key_len, uint8_t *out_key);
 
 // PKCS5_PBKDF2_HMAC_SHA1 is the same as PKCS5_PBKDF2_HMAC, but with |digest|
@@ -488,7 +485,7 @@ OPENSSL_EXPORT int PKCS5_PBKDF2_HMAC(const char *password, size_t password_len,
 OPENSSL_EXPORT int PKCS5_PBKDF2_HMAC_SHA1(const char *password,
                                           size_t password_len,
                                           const uint8_t *salt, size_t salt_len,
-                                          unsigned iterations, size_t key_len,
+                                          uint32_t iterations, size_t key_len,
                                           uint8_t *out_key);
 
 // EVP_PBE_scrypt expands |password| into a secret key of length |key_len| using
@@ -819,11 +816,23 @@ OPENSSL_EXPORT int EVP_PKEY_CTX_set_ec_paramgen_curve_nid(EVP_PKEY_CTX *ctx,
                                                           int nid);
 
 
-// Deprecated functions.
+// Diffie-Hellman-specific control functions.
 
-// EVP_PKEY_DH is defined for compatibility, but it is impossible to create an
-// |EVP_PKEY| of that type.
-#define EVP_PKEY_DH NID_dhKeyAgreement
+// EVP_PKEY_CTX_set_dh_pad configures configures whether |ctx|, which must be an
+// |EVP_PKEY_derive| operation, configures the handling of leading zeros in the
+// Diffie-Hellman shared secret. If |pad| is zero, leading zeros are removed
+// from the secret. If |pad| is non-zero, the fixed-width shared secret is used
+// unmodified, as in PKCS #3. If this function is not called, the default is to
+// remove leading zeros.
+//
+// WARNING: The behavior when |pad| is zero leaks information about the shared
+// secret. This may result in side channel attacks such as
+// https://raccoon-attack.com/, particularly when the same private key is used
+// for multiple operations.
+OPENSSL_EXPORT int EVP_PKEY_CTX_set_dh_pad(EVP_PKEY_CTX *ctx, int pad);
+
+
+// Deprecated functions.
 
 // EVP_PKEY_RSA2 was historically an alternate form for RSA public keys (OID
 // 2.5.8.1.1), but is no longer accepted.
@@ -921,12 +930,6 @@ OPENSSL_EXPORT EVP_PKEY *d2i_AutoPrivateKey(EVP_PKEY **out, const uint8_t **inp,
 // Use |RSA_parse_public_key| instead.
 OPENSSL_EXPORT EVP_PKEY *d2i_PublicKey(int type, EVP_PKEY **out,
                                        const uint8_t **inp, long len);
-
-// EVP_PKEY_get0_DH returns NULL.
-OPENSSL_EXPORT DH *EVP_PKEY_get0_DH(const EVP_PKEY *pkey);
-
-// EVP_PKEY_get1_DH returns NULL.
-OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
 
 // EVP_PKEY_CTX_set_ec_param_enc returns one if |encoding| is
 // |OPENSSL_EC_NAMED_CURVE| or zero with an error otherwise.
@@ -1031,6 +1034,18 @@ OPENSSL_EXPORT int EVP_PKEY_CTX_set_dsa_paramgen_bits(EVP_PKEY_CTX *ctx,
 // EVP_PKEY_CTX_set_dsa_paramgen_q_bits returns zero.
 OPENSSL_EXPORT int EVP_PKEY_CTX_set_dsa_paramgen_q_bits(EVP_PKEY_CTX *ctx,
                                                         int qbits);
+
+// EVP_PKEY_assign sets the underlying key of |pkey| to |key|, which must be of
+// the given type. If successful, it returns one. If the |type| argument
+// is not one of |EVP_PKEY_RSA|, |EVP_PKEY_DSA|, or |EVP_PKEY_EC| values or if
+// |key| is NULL, it returns zero. This function may not be used with other
+// |EVP_PKEY_*| types.
+//
+// Use the |EVP_PKEY_assign_*| functions instead.
+OPENSSL_EXPORT int EVP_PKEY_assign(EVP_PKEY *pkey, int type, void *key);
+
+// EVP_PKEY_type returns |nid|.
+OPENSSL_EXPORT int EVP_PKEY_type(int nid);
 
 
 // Preprocessor compatibility section (hidden).

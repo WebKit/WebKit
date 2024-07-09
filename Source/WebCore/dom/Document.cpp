@@ -314,6 +314,7 @@
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/UUID.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/TextStream.h>
 
@@ -1824,7 +1825,7 @@ void Document::setReadyState(ReadyState readyState)
                 eventTiming->domLoading = now;
             // We do this here instead of in the Document constructor because monotonicTimestamp() is 0 when the Document constructor is running.
             if (!url().isEmpty())
-                WTFBeginSignpostWithTimeDelta(this, NavigationAndPaintTiming, -Seconds(monotonicTimestamp()), "Loading %{public}s | isMainFrame: %d", url().string().utf8().data(), frame() && frame()->isMainFrame());
+                WTFBeginSignpostWithTimeDelta(this, NavigationAndPaintTiming, -Seconds(monotonicTimestamp()), "Loading %" PUBLIC_LOG_STRING " | isMainFrame: %d", url().string().utf8().data(), frame() && frame()->isMainFrame());
             WTFEmitSignpost(this, NavigationAndPaintTiming, "domLoading");
         }
         break;

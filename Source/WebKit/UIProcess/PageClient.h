@@ -157,8 +157,10 @@ struct PromisedAttachmentInfo;
 struct TranslationContextMenuInfo;
 #endif
 
+#if ENABLE(WRITING_TOOLS)
 namespace WritingTools {
 enum class Action : uint8_t;
+enum class RequestedTool : uint16_t;
 enum class TextSuggestionState : uint8_t;
 
 struct Context;
@@ -168,6 +170,7 @@ struct Session;
 using TextSuggestionID = WTF::UUID;
 using SessionID = WTF::UUID;
 }
+#endif
 
 }
 
@@ -739,7 +742,8 @@ public:
 
 #if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
     virtual bool canHandleContextMenuWritingTools() const = 0;
-    virtual void handleContextMenuWritingTools(WebCore::IntRect selectionBoundsInRootView) = 0;
+    virtual void handleContextMenuWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView) = 0;
+    virtual void handleContextMenuWritingTools(WebCore::WritingTools::RequestedTool, WebCore::IntRect) { }
 #endif
 
 #if ENABLE(WRITING_TOOLS)

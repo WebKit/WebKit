@@ -40,7 +40,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SortedArrayMap.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WGSL {
 
@@ -1393,16 +1393,47 @@ void TypeChecker::visit(AST::CallExpression& call)
                 m_shaderModule.setUsesDot4U8Packed();
             else if (targetName == "extractBits"_s)
                 m_shaderModule.setUsesExtractBits();
-            else if (targetName == "textureGather"_s) {
-                auto& component = call.arguments()[0];
-                if (satisfies(component.inferredType(), Constraints::ConcreteInteger)) {
-                    auto& constant = component.constantValue();
-                    if (!constant)
-                        typeError(InferBottom::No, component.span(), "the component argument must be a const-expression"_s);
-                    else {
-                        auto componentValue = constant->integerValue();
-                        if (componentValue < 0 || componentValue > 3)
-                            typeError(InferBottom::No, component.span(), "the component argument must be at least 0 and at most 3. component is "_s, String::number(componentValue));
+            else if (
+                targetName == "textureGather"_s
+                || targetName == "textureGatherCompare"_s
+                || targetName == "textureSample"_s
+                || targetName == "textureSampleBias"_s
+                || targetName == "textureSampleCompare"_s
+                || targetName == "textureSampleCompareLevel"_s
+                || targetName == "textureSampleGrad"_s
+                || targetName == "textureSampleLevel"_s
+            ) {
+                if (targetName == "textureGather"_s) {
+                    auto& component = call.arguments()[0];
+                    if (satisfies(component.inferredType(), Constraints::ConcreteInteger)) {
+                        auto& constant = component.constantValue();
+                        if (!constant)
+                            typeError(InferBottom::No, component.span(), "the component argument must be a const-expression"_s);
+                        else {
+                            auto componentValue = constant->integerValue();
+                            if (componentValue < 0 || componentValue > 3)
+                                typeError(InferBottom::No, component.span(), "the component argument must be at least 0 and at most 3. component is "_s, String::number(componentValue));
+                        }
+                    }
+                }
+
+                auto& lastArg = call.arguments().last();
+                auto* vectorType = std::get_if<Types::Vector>(lastArg.inferredType());
+                if (!vectorType || vectorType->size != 2 || vectorType->element != m_types.i32Type())
+                    return;
+
+                auto& maybeConstant = lastArg.constantValue();
+                if (!maybeConstant.has_value()) {
+                    typeError(InferBottom::No, lastArg.span(), "the offset argument must be a const-expression"_s);
+                    return;
+                }
+
+                auto& vector = std::get<ConstantVector>(*maybeConstant);
+                for (unsigned i = 0; i < 2; ++i) {
+                    auto& i32 = std::get<int32_t>(vector.elements[i]);
+                    if (i32 < -8 || i32 > 7) {
+                        typeError(InferBottom::No, lastArg.span(), "each component of the offset argument must be at least -8 and at most 7. offset component "_s, String::number(i), " is "_s, String::number(i32));
+                        break;
                     }
                 }
             }
@@ -1935,9 +1966,10 @@ const Type* TypeChecker::chooseOverload(ASCIILiteral kind, const SourceSpan& spa
             callArguments[i].m_inferredType = overload->parameters[i];
         inferred(overload->result);
 
-        if (expression && it->value.kind == OverloadedDeclaration::Constructor) {
-            if (auto* call = dynamicDowncast<AST::CallExpression>(*expression))
-                call->m_isConstructor = true;
+        if (expression && is<AST::CallExpression>(*expression)) {
+            auto& call = uncheckedDowncast<AST::CallExpression>(*expression);
+            call.m_isConstructor = it->value.kind == OverloadedDeclaration::Constructor;
+            call.m_visibility = it->value.visibility;
         }
 
         unsigned argumentCount = callArguments.size();

@@ -30,20 +30,21 @@ type Conn struct {
 	isClient bool
 
 	// constant after handshake; protected by handshakeMutex
-	handshakeMutex       sync.Mutex // handshakeMutex < in.Mutex, out.Mutex, errMutex
-	handshakeErr         error      // error resulting from handshake
-	wireVersion          uint16     // TLS wire version
-	vers                 uint16     // TLS version
-	haveVers             bool       // version has been negotiated
-	config               *Config    // configuration passed to constructor
-	handshakeComplete    bool
-	skipEarlyData        bool // On a server, indicates that the client is sending early data that must be skipped over.
-	didResume            bool // whether this connection was a session resumption
-	extendedMasterSecret bool // whether this session used an extended master secret
-	cipherSuite          *cipherSuite
-	ocspResponse         []byte // stapled OCSP response
-	sctList              []byte // signed certificate timestamp list
-	peerCertificates     []*x509.Certificate
+	handshakeMutex          sync.Mutex // handshakeMutex < in.Mutex, out.Mutex, errMutex
+	handshakeErr            error      // error resulting from handshake
+	wireVersion             uint16     // TLS wire version
+	vers                    uint16     // TLS version
+	haveVers                bool       // version has been negotiated
+	config                  *Config    // configuration passed to constructor
+	handshakeComplete       bool
+	skipEarlyData           bool // On a server, indicates that the client is sending early data that must be skipped over.
+	didResume               bool // whether this connection was a session resumption
+	extendedMasterSecret    bool // whether this session used an extended master secret
+	cipherSuite             *cipherSuite
+	ocspResponse            []byte // stapled OCSP response
+	sctList                 []byte // signed certificate timestamp list
+	peerCertificates        []*x509.Certificate
+	peerDelegatedCredential []byte
 	// verifiedChains contains the certificate chains that we built, as
 	// opposed to the ones presented by the server.
 	verifiedChains [][]*x509.Certificate
@@ -74,8 +75,10 @@ type Conn struct {
 	clientProtocolFallback bool
 	usedALPN               bool
 
-	localApplicationSettings, peerApplicationSettings []byte
-	hasApplicationSettings                            bool
+	localApplicationSettings, peerApplicationSettings       []byte
+	hasApplicationSettings                                  bool
+	localApplicationSettingsOld, peerApplicationSettingsOld []byte
+	hasApplicationSettingsOld                               bool
 
 	// verify_data values for the renegotiation extension.
 	clientVerify []byte
@@ -1581,22 +1584,25 @@ func (c *Conn) processTLS13NewSessionTicket(newSessionTicket *newSessionTicketMs
 	}
 
 	session := &ClientSessionState{
-		sessionTicket:            newSessionTicket.ticket,
-		vers:                     c.vers,
-		wireVersion:              c.wireVersion,
-		cipherSuite:              cipherSuite,
-		secret:                   deriveSessionPSK(cipherSuite, c.wireVersion, c.resumptionSecret, newSessionTicket.ticketNonce),
-		serverCertificates:       c.peerCertificates,
-		sctList:                  c.sctList,
-		ocspResponse:             c.ocspResponse,
-		ticketCreationTime:       c.config.time(),
-		ticketExpiration:         c.config.time().Add(time.Duration(newSessionTicket.ticketLifetime) * time.Second),
-		ticketAgeAdd:             newSessionTicket.ticketAgeAdd,
-		maxEarlyDataSize:         newSessionTicket.maxEarlyDataSize,
-		earlyALPN:                c.clientProtocol,
-		hasApplicationSettings:   c.hasApplicationSettings,
-		localApplicationSettings: c.localApplicationSettings,
-		peerApplicationSettings:  c.peerApplicationSettings,
+		sessionTicket:               newSessionTicket.ticket,
+		vers:                        c.vers,
+		wireVersion:                 c.wireVersion,
+		cipherSuite:                 cipherSuite,
+		secret:                      deriveSessionPSK(cipherSuite, c.wireVersion, c.resumptionSecret, newSessionTicket.ticketNonce),
+		serverCertificates:          c.peerCertificates,
+		sctList:                     c.sctList,
+		ocspResponse:                c.ocspResponse,
+		ticketCreationTime:          c.config.time(),
+		ticketExpiration:            c.config.time().Add(time.Duration(newSessionTicket.ticketLifetime) * time.Second),
+		ticketAgeAdd:                newSessionTicket.ticketAgeAdd,
+		maxEarlyDataSize:            newSessionTicket.maxEarlyDataSize,
+		earlyALPN:                   c.clientProtocol,
+		hasApplicationSettings:      c.hasApplicationSettings,
+		localApplicationSettings:    c.localApplicationSettings,
+		peerApplicationSettings:     c.peerApplicationSettings,
+		hasApplicationSettingsOld:   c.hasApplicationSettingsOld,
+		localApplicationSettingsOld: c.localApplicationSettingsOld,
+		peerApplicationSettingsOld:  c.peerApplicationSettingsOld,
 	}
 
 	cacheKey := clientSessionCacheKey(c.conn.RemoteAddr(), c.config)
@@ -1845,6 +1851,7 @@ func (c *Conn) ConnectionState() ConnectionState {
 		state.NegotiatedProtocolFromALPN = c.usedALPN
 		state.CipherSuite = c.cipherSuite.id
 		state.PeerCertificates = c.peerCertificates
+		state.PeerDelegatedCredential = c.peerDelegatedCredential
 		state.VerifiedChains = c.verifiedChains
 		state.OCSPResponse = c.ocspResponse
 		state.ServerName = c.serverName
@@ -1858,6 +1865,8 @@ func (c *Conn) ConnectionState() ConnectionState {
 		state.QUICTransportParamsLegacy = c.quicTransportParamsLegacy
 		state.HasApplicationSettings = c.hasApplicationSettings
 		state.PeerApplicationSettings = c.peerApplicationSettings
+		state.HasApplicationSettingsOld = c.hasApplicationSettingsOld
+		state.PeerApplicationSettingsOld = c.peerApplicationSettingsOld
 		state.ECHAccepted = c.echAccepted
 	}
 
@@ -1983,17 +1992,20 @@ func (c *Conn) SendNewSessionTicket(nonce []byte) error {
 	}
 
 	state := sessionState{
-		vers:                     c.vers,
-		cipherSuite:              c.cipherSuite.id,
-		secret:                   deriveSessionPSK(c.cipherSuite, c.wireVersion, c.resumptionSecret, nonce),
-		certificates:             peerCertificatesRaw,
-		ticketCreationTime:       c.config.time(),
-		ticketExpiration:         c.config.time().Add(time.Duration(m.ticketLifetime) * time.Second),
-		ticketAgeAdd:             uint32(addBuffer[3])<<24 | uint32(addBuffer[2])<<16 | uint32(addBuffer[1])<<8 | uint32(addBuffer[0]),
-		earlyALPN:                []byte(c.clientProtocol),
-		hasApplicationSettings:   c.hasApplicationSettings,
-		localApplicationSettings: c.localApplicationSettings,
-		peerApplicationSettings:  c.peerApplicationSettings,
+		vers:                        c.vers,
+		cipherSuite:                 c.cipherSuite.id,
+		secret:                      deriveSessionPSK(c.cipherSuite, c.wireVersion, c.resumptionSecret, nonce),
+		certificates:                peerCertificatesRaw,
+		ticketCreationTime:          c.config.time(),
+		ticketExpiration:            c.config.time().Add(time.Duration(m.ticketLifetime) * time.Second),
+		ticketAgeAdd:                uint32(addBuffer[3])<<24 | uint32(addBuffer[2])<<16 | uint32(addBuffer[1])<<8 | uint32(addBuffer[0]),
+		earlyALPN:                   []byte(c.clientProtocol),
+		hasApplicationSettings:      c.hasApplicationSettings,
+		localApplicationSettings:    c.localApplicationSettings,
+		peerApplicationSettings:     c.peerApplicationSettings,
+		hasApplicationSettingsOld:   c.hasApplicationSettingsOld,
+		localApplicationSettingsOld: c.localApplicationSettingsOld,
+		peerApplicationSettingsOld:  c.peerApplicationSettingsOld,
 	}
 
 	if !c.config.Bugs.SendEmptySessionTicket {

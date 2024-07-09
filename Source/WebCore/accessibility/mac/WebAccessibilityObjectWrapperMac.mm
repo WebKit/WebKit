@@ -82,6 +82,7 @@
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/MakeString.h>
 
 using namespace WebCore;
 

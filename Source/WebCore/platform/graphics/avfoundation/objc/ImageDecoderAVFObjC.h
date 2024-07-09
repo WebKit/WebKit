@@ -87,7 +87,7 @@ public:
     WEBCORE_EXPORT void setExpectedContentSize(long long) final;
     WEBCORE_EXPORT void setData(const FragmentedSharedBuffer&, bool allDataReceived) final;
     bool isAllDataReceived() const final { return m_isAllDataReceived; }
-    void clearFrameBufferCache(size_t) final { }
+    WEBCORE_EXPORT void clearFrameBufferCache(size_t) final;
 
     bool hasTrack() const { return !!m_track; }
     WEBCORE_EXPORT Vector<ImageDecoder::FrameInfo> frameInfos() const;
@@ -98,7 +98,7 @@ private:
     AVAssetTrack *firstEnabledTrack();
     void readSamples();
     void readTrackMetadata();
-    bool createFrameImageFromSampleBuffer(CMSampleBufferRef, CGImageRef *imageOut);
+    bool storeSampleBuffer(CMSampleBufferRef);
     void advanceCursor();
     void setTrack(AVAssetTrack *);
 

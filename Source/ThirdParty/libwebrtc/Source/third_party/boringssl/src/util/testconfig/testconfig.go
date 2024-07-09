@@ -23,6 +23,7 @@ type Test struct {
 	Cmd     []string `json:"cmd"`
 	Env     []string `json:"env"`
 	SkipSDE bool     `json:"skip_sde"`
+	Shard   bool     `json:"shard"`
 }
 
 func ParseTestConfig(filename string) ([]Test, error) {

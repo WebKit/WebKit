@@ -42,7 +42,6 @@ class CodeBlock;
 class JSModuleEnvironment;
 class JSModuleNamespaceObject;
 class ModuleNamespaceAccessCase;
-class ProxyObjectAccessCase;
 class StructureStubInfo;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(GetByStatus);
@@ -146,7 +145,6 @@ private:
     
 #if ENABLE(JIT)
     GetByStatus(const ModuleNamespaceAccessCase&);
-    GetByStatus(const ProxyObjectAccessCase&);
     static GetByStatus computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker&, CodeBlock* profiledBlock, StructureStubInfo*, CallLinkStatus::ExitSiteData, CodeOrigin);
 #endif
     static GetByStatus computeFromLLInt(CodeBlock*, BytecodeIndex);

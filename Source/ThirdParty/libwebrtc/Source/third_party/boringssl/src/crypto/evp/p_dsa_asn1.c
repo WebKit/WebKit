@@ -306,3 +306,33 @@ int EVP_PKEY_CTX_set_dsa_paramgen_q_bits(EVP_PKEY_CTX *ctx, int qbits) {
   OPENSSL_PUT_ERROR(EVP, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
   return 0;
 }
+
+int EVP_PKEY_set1_DSA(EVP_PKEY *pkey, DSA *key) {
+  if (EVP_PKEY_assign_DSA(pkey, key)) {
+    DSA_up_ref(key);
+    return 1;
+  }
+  return 0;
+}
+
+int EVP_PKEY_assign_DSA(EVP_PKEY *pkey, DSA *key) {
+  evp_pkey_set_method(pkey, &dsa_asn1_meth);
+  pkey->pkey = key;
+  return key != NULL;
+}
+
+DSA *EVP_PKEY_get0_DSA(const EVP_PKEY *pkey) {
+  if (pkey->type != EVP_PKEY_DSA) {
+    OPENSSL_PUT_ERROR(EVP, EVP_R_EXPECTING_A_DSA_KEY);
+    return NULL;
+  }
+  return pkey->pkey;
+}
+
+DSA *EVP_PKEY_get1_DSA(const EVP_PKEY *pkey) {
+  DSA *dsa = EVP_PKEY_get0_DSA(pkey);
+  if (dsa != NULL) {
+    DSA_up_ref(dsa);
+  }
+  return dsa;
+}

@@ -405,7 +405,7 @@ public:
     void clickBackgroundFetch(PAL::SessionID, const String&, CompletionHandler<void()>&&);
 
     void setPushAndNotificationsEnabledForOrigin(PAL::SessionID, const WebCore::SecurityOriginData&, bool, CompletionHandler<void()>&&);
-    void deletePushAndNotificationRegistration(PAL::SessionID, const WebCore::SecurityOriginData&, CompletionHandler<void(const String&)>&&);
+    void removePushSubscriptionsForOrigin(PAL::SessionID, const WebCore::SecurityOriginData&, CompletionHandler<void(unsigned)>&&);
     void hasPushSubscriptionForTesting(PAL::SessionID, URL&&, CompletionHandler<void(bool)>&&);
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)

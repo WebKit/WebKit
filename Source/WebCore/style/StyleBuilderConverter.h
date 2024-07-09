@@ -79,6 +79,7 @@
 #include "TransformFunctions.h"
 #include "ViewTimeline.h"
 #include "WillChangeData.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 namespace Style {
@@ -266,8 +267,8 @@ inline Length BuilderConverter::convertLength(const BuilderState& builderState, 
         return Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData));
 
     if (primitiveValue.isAnchor()) {
-        auto& anchorPositionedElement = *builderState.element();
-        return AnchorPositionEvaluator::resolveAnchorValue(primitiveValue.cssAnchorValue(), anchorPositionedElement);
+        RefPtr anchorPositionedElement = builderState.element();
+        return AnchorPositionEvaluator::resolveAnchorValue(primitiveValue.cssAnchorValue(), anchorPositionedElement.get());
     }
 
     ASSERT_NOT_REACHED();
@@ -756,10 +757,10 @@ inline RefPtr<PathOperation> BuilderConverter::convertRayPathOperation(BuilderSt
     return RayPathOperation::create(rayValue.angle()->computeDegrees(), size, rayValue.isContaining());
 }
 
-inline RefPtr<BasicShapePath> BuilderConverter::convertSVGPath(BuilderState& builderState, const CSSValue& value)
+inline RefPtr<BasicShapePath> BuilderConverter::convertSVGPath(BuilderState&, const CSSValue& value)
 {
     if (auto* pathValue = dynamicDowncast<CSSPathValue>(value))
-        return basicShapePathForValue(*pathValue, builderState.style().usedZoom());
+        return basicShapePathForValue(*pathValue);
 
     ASSERT(is<CSSPrimitiveValue>(value));
     ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
@@ -1312,12 +1313,12 @@ inline void BuilderConverter::createImplicitNamedGridLinesFromGridArea(const Nam
     for (auto& area : namedGridAreas.map) {
         GridSpan areaSpan = direction == GridTrackSizingDirection::ForRows ? area.value.rows : area.value.columns;
         {
-            auto& startVector = namedGridLines.map.add(area.key + "-start"_s, Vector<unsigned>()).iterator->value;
+            auto& startVector = namedGridLines.map.add(makeString(area.key, "-start"_s), Vector<unsigned>()).iterator->value;
             startVector.append(areaSpan.startLine());
             std::sort(startVector.begin(), startVector.end());
         }
         {
-            auto& endVector = namedGridLines.map.add(area.key + "-end"_s, Vector<unsigned>()).iterator->value;
+            auto& endVector = namedGridLines.map.add(makeString(area.key, "-end"_s), Vector<unsigned>()).iterator->value;
             endVector.append(areaSpan.endLine());
             std::sort(endVector.begin(), endVector.end());
         }

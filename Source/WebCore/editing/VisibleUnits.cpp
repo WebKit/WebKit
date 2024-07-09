@@ -48,6 +48,7 @@
 #include "TextIterator.h"
 #include "VisibleSelection.h"
 #include <unicode/ubrk.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {

@@ -84,6 +84,7 @@
 #include <wtf/Language.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Ref.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 #if ENABLE(TOUCH_EVENTS)

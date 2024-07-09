@@ -31,6 +31,7 @@
 #include "WindowsKeyboardCodes.h"
 #include <wpe/wpe.h>
 #include <wtf/HexNumber.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

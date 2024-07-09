@@ -2120,6 +2120,7 @@ fast/webgpu/regression/repro_275108.html [ Pass Failure Timeout ]
 [ Debug ] fast/webgpu/nocrash [ Skip ]
 [ Release ] fast/webgpu/nocrash [ Pass Failure Timeout ]
 [ Debug ] fast/webgpu/regression/repro_275624.html [ Skip ]
+[ Debug ] fast/webgpu/texture-supports-blending.html [ Pass Crash ]
 
 # Imported W3C HTML/DOM ref tests that are failing.
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-between-Rs.html [ ImageOnlyFailure ]
@@ -4976,6 +4977,7 @@ http/tests/media/video-canplaythrough-webm.html [ Skip ]
 media/media-session/mock-coordinator.html [ Skip ]
 media/track/track-description-cue.html [ Skip ]
 media/track/track-extended-descriptions.html [ Skip ]
+fast/canvas/canvas-drawImage-hdr-video.html [ Skip ]
 
 # Soon Cocoa-only (currently only macOS)
 fast/forms/switch/ [ Skip ]
@@ -7043,6 +7045,7 @@ imported/w3c/web-platform-tests/css/css-view-transitions/scroller-child.html [ I
 imported/w3c/web-platform-tests/css/css-view-transitions/scroller.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/iframe-and-main-frame-transition-old-main-new-iframe.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/iframe-and-main-frame-transition-old-main-old-iframe.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/paint-holding-in-iframe.html [ ImageOnlyFailure ]
 
 # Timeouts
 imported/w3c/web-platform-tests/css/css-view-transitions/iframe-transition.sub.html [ Skip ]
@@ -7541,11 +7544,6 @@ imported/w3c/web-platform-tests/svg/painting/reftests/marker-units-strokewidth-n
 imported/w3c/web-platform-tests/svg/painting/reftests/markers-orient-002.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-001.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-002.svg [ ImageOnlyFailure ]
-
-# tests added with webkit.org/b/272414
-webkit.org/b/272415 imported/w3c/web-platform-tests/svg/path/property/marker-path.svg [ ImageOnlyFailure ]
-webkit.org/b/272416 imported/w3c/web-platform-tests/svg/path/property/mpath.svg [ ImageOnlyFailure ]
-webkit.org/b/272417 imported/w3c/web-platform-tests/svg/path/property/priority.svg [ ImageOnlyFailure ]
 
 # re-import css/css-align WPT failure
 webkit.org/b/271692 imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-overflow-020.html [ ImageOnlyFailure ]

@@ -43,6 +43,7 @@
 #include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/StrongInlines.h>
+#include <wtf/text/MakeString.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>

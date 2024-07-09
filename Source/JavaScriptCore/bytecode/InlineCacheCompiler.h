@@ -44,7 +44,6 @@ class GetterSetter;
 class CCallHelpers;
 class CodeBlock;
 class PolymorphicAccess;
-class ProxyObjectAccessCase;
 class StructureStubInfo;
 class InlineCacheHandler;
 
@@ -389,7 +388,7 @@ private:
 
     void emitDOMJITGetter(JSGlobalObject*, const DOMJIT::GetterSetter*, GPRReg baseForGetGPR);
     void emitModuleNamespaceLoad(ModuleNamespaceAccessCase&, MacroAssembler::JumpList& fallThrough);
-    void emitProxyObjectAccess(unsigned index, ProxyObjectAccessCase&, MacroAssembler::JumpList& fallThrough);
+    void emitProxyObjectAccess(unsigned index, AccessCase&, MacroAssembler::JumpList& fallThrough);
     void emitIntrinsicGetter(IntrinsicGetterAccessCase&);
 
     void generateWithConditionChecks(unsigned index, AccessCase&);

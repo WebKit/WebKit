@@ -33,15 +33,15 @@
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/text/WTFString.h>
 
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#import "PlatformNSAdaptiveImageGlyph.h"
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #import "UIFoundationSoftLink.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <ImageIO/ImageIO.h>
 #import <MobileCoreServices/MobileCoreServices.h>
-#endif
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebMultiRepresentationHEICAttachmentAdditions.h>
 #endif
 
 @interface WebCoreBundleFinder : NSObject
@@ -95,7 +95,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-WebMultiRepresentationHEICAttachment *ImageAdapter::multiRepresentationHEIC()
+NSAdaptiveImageGlyph *ImageAdapter::multiRepresentationHEIC()
 {
     if (m_multiRepHEIC)
         return m_multiRepHEIC.get();
@@ -107,7 +107,7 @@ WebMultiRepresentationHEICAttachment *ImageAdapter::multiRepresentationHEIC()
     Vector<uint8_t> data = buffer->copyData();
 
     RetainPtr nsData = toNSData(data.span());
-    m_multiRepHEIC = adoptNS([[PlatformWebMultiRepresentationHEICAttachment alloc] initWithImageContent:nsData.get()]);
+    m_multiRepHEIC = adoptNS([[PlatformNSAdaptiveImageGlyph alloc] initWithImageContent:nsData.get()]);
 
     return m_multiRepHEIC.get();
 }

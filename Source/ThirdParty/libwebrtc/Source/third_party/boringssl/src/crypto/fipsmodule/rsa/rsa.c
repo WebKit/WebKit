@@ -206,12 +206,10 @@ RSA *RSA_new_private_key_large_e(const BIGNUM *n, const BIGNUM *e,
 RSA *RSA_new(void) { return RSA_new_method(NULL); }
 
 RSA *RSA_new_method(const ENGINE *engine) {
-  RSA *rsa = OPENSSL_malloc(sizeof(RSA));
+  RSA *rsa = OPENSSL_zalloc(sizeof(RSA));
   if (rsa == NULL) {
     return NULL;
   }
-
-  OPENSSL_memset(rsa, 0, sizeof(RSA));
 
   if (engine) {
     rsa->meth = ENGINE_get_RSA_method(engine);
@@ -441,12 +439,8 @@ int RSA_is_opaque(const RSA *rsa) {
 
 int RSA_get_ex_new_index(long argl, void *argp, CRYPTO_EX_unused *unused,
                          CRYPTO_EX_dup *dup_unused, CRYPTO_EX_free *free_func) {
-  int index;
-  if (!CRYPTO_get_ex_new_index(g_rsa_ex_data_class_bss_get(), &index, argl,
-                               argp, free_func)) {
-    return -1;
-  }
-  return index;
+  return CRYPTO_get_ex_new_index_ex(g_rsa_ex_data_class_bss_get(), argl, argp,
+                                 free_func);
 }
 
 int RSA_set_ex_data(RSA *rsa, int idx, void *arg) {
@@ -764,7 +758,8 @@ err:
 static int check_mod_inverse(int *out_ok, const BIGNUM *a, const BIGNUM *ainv,
                              const BIGNUM *m, unsigned m_min_bits,
                              BN_CTX *ctx) {
-  if (BN_is_negative(ainv) || BN_cmp(ainv, m) >= 0) {
+  if (BN_is_negative(ainv) ||
+      constant_time_declassify_int(BN_cmp(ainv, m) >= 0)) {
     *out_ok = 0;
     return 1;
   }
@@ -778,7 +773,7 @@ static int check_mod_inverse(int *out_ok, const BIGNUM *a, const BIGNUM *ainv,
             bn_mul_consttime(tmp, a, ainv, ctx) &&
             bn_div_consttime(NULL, tmp, tmp, m, m_min_bits, ctx);
   if (ret) {
-    *out_ok = BN_is_one(tmp);
+    *out_ok = constant_time_declassify_int(BN_is_one(tmp));
   }
   BN_CTX_end(ctx);
   return ret;
@@ -837,8 +832,10 @@ int RSA_check_key(const RSA *key) {
   // bounds, to avoid a DoS vector in |bn_mul_consttime| below. Note that
   // n was bound by |rsa_check_public_key|. This also implicitly checks p and q
   // are odd, which is a necessary condition for Montgomery reduction.
-  if (BN_is_negative(key->p) || BN_cmp(key->p, key->n) >= 0 ||
-      BN_is_negative(key->q) || BN_cmp(key->q, key->n) >= 0) {
+  if (BN_is_negative(key->p) ||
+      constant_time_declassify_int(BN_cmp(key->p, key->n) >= 0) ||
+      BN_is_negative(key->q) ||
+      constant_time_declassify_int(BN_cmp(key->q, key->n) >= 0)) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_N_NOT_EQUAL_P_Q);
     goto out;
   }
@@ -869,7 +866,8 @@ int RSA_check_key(const RSA *key) {
     goto out;
   }
 
-  if (!BN_is_one(&tmp) || !BN_is_one(&de)) {
+  if (constant_time_declassify_int(!BN_is_one(&tmp)) ||
+      constant_time_declassify_int(!BN_is_one(&de))) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_D_E_NOT_CONGRUENT_TO_1);
     goto out;
   }

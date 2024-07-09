@@ -35,6 +35,7 @@
 #include "ScriptSourceCode.h"
 #include "SubresourceIntegrity.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringImpl.h>
 
 namespace WebCore {

@@ -25,7 +25,7 @@
 #include "GStreamerCommon.h"
 #include "GStreamerRegistryScanner.h"
 #include "MediaStreamTrack.h"
-
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 GST_DEBUG_CATEGORY(webkit_webrtc_outgoing_audio_debug);
@@ -61,18 +61,20 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     // FIXME: We use only the first structure of the caps. This not be the right approach specially
     // we don't have a payloader or encoder for that format.
     GUniquePtr<GstStructure> structure(gst_structure_copy(gst_caps_get_structure(caps.get(), 0)));
-    const char* encodingName = gst_structure_get_string(structure.get(), "encoding-name");
-    if (!encodingName) {
+    auto encoding = StringView::fromLatin1(gst_structure_get_string(structure.get(), "encoding-name")).convertToASCIILowercase();
+    if (encoding.isNull()) {
         GST_ERROR_OBJECT(m_bin.get(), "encoding-name not found");
         return false;
     }
 
-    auto encoding = String(WTF::span(encodingName)).convertToASCIILowercase();
-    m_payloader = makeGStreamerElement(makeString("rtp"_s, encoding, "pay"_s).ascii().data(), nullptr);
-    if (UNLIKELY(!m_payloader)) {
-        GST_ERROR_OBJECT(m_bin.get(), "RTP payloader not found for encoding %s", encodingName);
+    auto& registryScanner = GStreamerRegistryScanner::singleton();
+    auto lookupResult = registryScanner.isRtpPacketizerSupported(encoding);
+    if (!lookupResult) {
+        GST_ERROR_OBJECT(m_bin.get(), "RTP payloader not found for encoding %s", encoding.ascii().data());
         return false;
     }
+    m_payloader = gst_element_factory_create(lookupResult.factory.get(), nullptr);
+    GST_DEBUG_OBJECT(m_bin.get(), "Using %" GST_PTR_FORMAT " for %s RTP packetizing", m_payloader.get(), encoding.ascii().data());
 
     m_inputCaps = adoptGRef(gst_caps_new_any());
 
@@ -112,12 +114,12 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     else if (encoding == "pcmu"_s)
         m_encoder = makeGStreamerElement("mulawenc", nullptr);
     else {
-        GST_ERROR_OBJECT(m_bin.get(), "Unsupported outgoing audio encoding: %s", encodingName);
+        GST_ERROR_OBJECT(m_bin.get(), "Unsupported outgoing audio encoding: %s", encoding.ascii().data());
         return false;
     }
 
     if (!m_encoder) {
-        GST_ERROR_OBJECT(m_bin.get(), "Encoder not found for encoding %s", encodingName);
+        GST_ERROR_OBJECT(m_bin.get(), "Encoder not found for encoding %s", encoding.ascii().data());
         return false;
     }
 
@@ -126,8 +128,12 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
 
     if (const char* minPTime = gst_structure_get_string(structure.get(), "minptime")) {
         auto time = String::fromLatin1(minPTime);
-        if (auto value = parseIntegerAllowingTrailingJunk<int64_t>(time))
-            g_object_set(m_payloader.get(), "min-ptime", *value * GST_MSECOND, nullptr);
+        if (auto value = parseIntegerAllowingTrailingJunk<int64_t>(time)) {
+            if (gstObjectHasProperty(m_payloader.get(), "min-ptime"))
+                g_object_set(m_payloader.get(), "min-ptime", *value * GST_MSECOND, nullptr);
+            else
+                GST_WARNING_OBJECT(m_payloader.get(), "min-ptime property not supported");
+        }
         gst_structure_remove_field(structure.get(), "minptime");
     }
 

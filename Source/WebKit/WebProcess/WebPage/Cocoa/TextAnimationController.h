@@ -52,14 +52,19 @@ namespace WebKit {
 
 class WebPage;
 
-struct TextAnimationState {
-    WTF::UUID styleID;
+struct TextAnimationRange {
+    WTF::UUID animationUUID;
     WebCore::CharacterRange range;
 };
 
 struct TextAnimationUnstyledRangeData {
-    WTF::UUID styleID;
+    WTF::UUID animationUUID;
     WebCore::SimpleRange range;
+};
+
+struct ReplacedRangeAndString {
+    WebCore::CharacterRange range;
+    String string;
 };
 
 class TextAnimationController final {
@@ -74,8 +79,10 @@ public:
 
     void removeInitialTextAnimation(const WTF::UUID& sessionUUID);
     void addInitialTextAnimation(const WTF::UUID& sessionUUID);
-    void addSourceTextAnimation(const WTF::UUID& sessionUUID, const WebCore::CharacterRange&);
-    void addDestinationTextAnimation(const WTF::UUID& sessionUUID, const WebCore::CharacterRange&);
+    void addSourceTextAnimation(const WTF::UUID& sessionUUID, const WebCore::CharacterRange&, const String, WTF::CompletionHandler<void(void)>&&);
+    void addDestinationTextAnimation(const WTF::UUID& sessionUUID, const WebCore::CharacterRange&, const String);
+
+    void clearAnimationsForSessionID(const WTF::UUID& sessionUUID);
 
     void updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID&, bool visible, CompletionHandler<void()>&&);
 
@@ -88,14 +95,15 @@ public:
 private:
     std::optional<WebCore::SimpleRange> contextRangeForTextAnimationID(const WTF::UUID&) const;
     std::optional<WebCore::SimpleRange> contextRangeForSessionWithID(const WebCore::WritingTools::SessionID&) const;
+    std::optional<WebCore::SimpleRange> unreplacedRangeForSessionWithID(const WebCore::WritingTools::SessionID&) const;
 
     RefPtr<WebCore::Document> document() const;
     WeakPtr<WebPage> m_webPage;
 
     // All of these HashMap keys are SessionIDs
     HashMap<WTF::UUID, WTF::UUID> m_initialAnimations;
-    HashMap<WTF::UUID, Vector<TextAnimationState>> m_activeTextAnimations;
-    HashMap<WTF::UUID, WebCore::CharacterRange> m_alreadyReplacedRanges;
+    HashMap<WTF::UUID, Vector<TextAnimationRange>> m_textAnimationRanges;
+    HashMap<WTF::UUID, std::optional<ReplacedRangeAndString>> m_alreadyReplacedRanges;
     HashMap<WTF::UUID, std::optional<TextAnimationUnstyledRangeData>> m_unstyledRanges;
     HashMap<WTF::UUID, Ref<WebCore::Range>> m_manuallyEnabledAnimationRanges;
 };

@@ -24,4 +24,5 @@
 
 [
     Conditional=GEOLOCATION,
+    IsStrongCallback
 ] callback PositionCallback = undefined (GeolocationPosition? position); // FIXME: This should not be nullable.

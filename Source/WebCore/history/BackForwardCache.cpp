@@ -59,7 +59,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

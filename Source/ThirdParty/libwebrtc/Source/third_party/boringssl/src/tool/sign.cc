@@ -68,7 +68,7 @@ bool Sign(const std::vector<std::string> &args) {
   }
 
   size_t sig_len = EVP_PKEY_size(key.get());
-  std::unique_ptr<uint8_t[]> sig(new uint8_t[sig_len]);
+  auto sig = std::make_unique<uint8_t[]>(sig_len);
   if (!EVP_DigestSign(ctx.get(), sig.get(), &sig_len, data.data(),
                       data.size())) {
     return false;

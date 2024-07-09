@@ -35,6 +35,7 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/Sandbox.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 
@@ -109,6 +110,8 @@ std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* baseDirector
         WTFMove(dbusAddress), m_accessibilityProxyPath,
         "--filter",
         "--sloppy-names",
+        "--broadcast=org.a11y.atspi.Registry.EventListenerRegistered=@/org/a11y/atspi/registry",
+        "--broadcast=org.a11y.atspi.Registry.EventListenerDeregistered=@/org/a11y/atspi/registry",
         "--call=org.a11y.atspi.Registry=org.a11y.atspi.Socket.Embed@/org/a11y/atspi/accessible/root",
         "--call=org.a11y.atspi.Registry=org.a11y.atspi.Socket.Unembed@/org/a11y/atspi/accessible/root",
         "--call=org.a11y.atspi.Registry=org.a11y.atspi.Registry.GetRegisteredEvents@/org/a11y/atspi/registry",

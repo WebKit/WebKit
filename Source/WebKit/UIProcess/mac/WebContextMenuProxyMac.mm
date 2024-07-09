@@ -34,6 +34,7 @@
 #import "ImageAnalysisUtilities.h"
 #import "MenuUtilities.h"
 #import "PageClientImplMac.h"
+#import "PlatformWritingToolsUtilities.h"
 #import "ServicesController.h"
 #import "WKMenuItemIdentifiersPrivate.h"
 #import "WKSharingServicePickerDelegate.h"
@@ -45,6 +46,7 @@
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/ShareableBitmap.h>
+#import <pal/spi/cocoa/WritingToolsSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <pal/spi/mac/NSWindowSPI.h>
@@ -118,6 +120,11 @@
 - (WebKit::WebContextMenuProxyMac*)menuProxy;
 - (void)setMenuProxy:(WebKit::WebContextMenuProxyMac*)menuProxy;
 - (void)forwardContextMenuAction:(id)sender;
+
+#if ENABLE(WRITING_TOOLS)
+- (void)showWritingTools:(id)sender;
+#endif
+
 @end
 
 @implementation WKMenuTarget
@@ -161,6 +168,18 @@
 
     _menuProxy->contextMenuItemSelected(item);
 }
+
+#if ENABLE(WRITING_TOOLS)
+- (void)showWritingTools:(id)sender
+{
+    if (!_menuProxy)
+        return;
+
+    WTRequestedTool tool = (WTRequestedTool)[sender tag];
+
+    _menuProxy->handleContextMenuWritingTools(WebKit::convertToWebRequestedTool(tool));
+}
+#endif
 
 @end
 
@@ -218,6 +237,13 @@ void WebContextMenuProxyMac::contextMenuItemSelected(const WebContextMenuItemDat
 
     page()->contextMenuItemSelected(item);
 }
+
+#if ENABLE(WRITING_TOOLS)
+void WebContextMenuProxyMac::handleContextMenuWritingTools(WebCore::WritingTools::RequestedTool tool)
+{
+    page()->handleContextMenuWritingTools(tool);
+}
+#endif
 
 #if ENABLE(SERVICE_CONTROLS)
 void WebContextMenuProxyMac::setupServicesMenu()
@@ -830,6 +856,28 @@ void WebContextMenuProxyMac::getContextMenuItem(const WebContextMenuItemData& it
     if (item.action() == ContextMenuItemTagShareMenu) {
         getShareMenuItem(WTFMove(completionHandler));
         return;
+    }
+#endif
+
+#if ENABLE(WRITING_TOOLS)
+    if (item.action() == ContextMenuItemTagWritingTools) {
+        // FIXME: (rdar://127608508) Remove this `respondsToSelector` check when possible.
+        if ([NSMenuItem.class respondsToSelector:@selector(standardWritingToolsMenuItem)]) {
+            RetainPtr menuItem = [NSMenuItem standardWritingToolsMenuItem];
+
+            // FIXME: (rdar://127608508) Use the default identifier once the deprecated menu item is removed.
+            [menuItem setIdentifier:_WKMenuItemIdentifierWritingTools];
+
+            for (NSMenuItem *subItem in [menuItem submenu].itemArray) {
+                if (subItem.isSeparatorItem)
+                    continue;
+
+                subItem.target = WKMenuTarget.sharedMenuTarget;
+            }
+
+            completionHandler(menuItem.get());
+            return;
+        }
     }
 #endif
 

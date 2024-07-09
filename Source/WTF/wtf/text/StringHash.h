@@ -25,6 +25,7 @@
 #include <wtf/HashTraits.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/StringHasher.h>
+#include <wtf/text/StringView.h>
 
 namespace WTF {
 

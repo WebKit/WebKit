@@ -117,6 +117,7 @@ WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer()
     if (RefPtr gl = m_context.graphicsContextGL()) {
         m_drawAttachments.release(*gl);
         m_resolveAttachments.release(*gl);
+        m_displayFBO.release(*gl);
         m_resolvedFBO.release(*gl);
         m_context.deleteFramebuffer(m_drawFramebuffer.ptr());
     } else {

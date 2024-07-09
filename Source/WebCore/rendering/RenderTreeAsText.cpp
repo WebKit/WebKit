@@ -178,43 +178,6 @@ String quoteAndEscapeNonPrintables(StringView s)
     return result.toString();
 }
 
-static inline bool isRenderInlineEmpty(const RenderInline& inlineRenderer)
-{
-    if (isEmptyInline(inlineRenderer))
-        return true;
-
-    for (auto& child : childrenOfType<RenderObject>(inlineRenderer)) {
-        if (child.isFloatingOrOutOfFlowPositioned())
-            continue;
-        auto isChildEmpty = false;
-        if (auto* renderInline = dynamicDowncast<RenderInline>(child))
-            isChildEmpty = isRenderInlineEmpty(*renderInline);
-        else if (auto* text = dynamicDowncast<RenderText>(child))
-            isChildEmpty = !text->linesBoundingBox().height();
-        if (!isChildEmpty)
-            return false;
-    }
-    return true;
-}
-
-static inline bool hasNonEmptySibling(const RenderInline& inlineRenderer)
-{
-    auto* parent = inlineRenderer.parent();
-    if (!parent)
-        return false;
-
-    for (auto& sibling : childrenOfType<RenderObject>(*parent)) {
-        if (&sibling == &inlineRenderer || sibling.isFloatingOrOutOfFlowPositioned())
-            continue;
-        auto* siblingRendererInline = dynamicDowncast<RenderInline>(sibling);
-        if (!siblingRendererInline)
-            return true;
-        if (siblingRendererInline->mayAffectLayout() || !isRenderInlineEmpty(*siblingRendererInline))
-            return true;
-    }
-    return false;
-}
-
 inline bool shouldEnableSubpixelPrecisionForTextDump(const Document& document)
 {
     // If LBSE is activated and the document contains outermost <svg> elements, generate the text

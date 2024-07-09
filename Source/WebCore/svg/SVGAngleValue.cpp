@@ -25,7 +25,7 @@
 #include "SVGParserUtilities.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/FastCharacterComparison.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {

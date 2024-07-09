@@ -116,6 +116,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(APPLE_PAY)
@@ -813,7 +814,7 @@ String AccessibilityRenderObject::stringValue() const
         String value;
         Accessibility::enumerateDescendants(*const_cast<AccessibilityRenderObject*>(this), false, [&value] (const auto& object) {
             if (object.isStaticText())
-                value = value + object.stringValue();
+                value = makeString(value, object.stringValue());
         });
         return value;
     }

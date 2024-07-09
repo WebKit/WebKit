@@ -35,6 +35,7 @@
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <optional>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

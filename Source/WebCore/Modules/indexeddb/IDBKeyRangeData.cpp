@@ -27,6 +27,7 @@
 #include "IDBKeyRangeData.h"
 
 #include "IDBKey.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

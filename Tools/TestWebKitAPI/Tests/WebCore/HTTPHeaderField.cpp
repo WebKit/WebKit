@@ -27,6 +27,7 @@
 
 #include "Test.h"
 #include <WebCore/HTTPHeaderField.h>
+#include <wtf/text/MakeString.h>
 
 static String canonicalizeHTTPHeader(const String& string)
 {

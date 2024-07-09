@@ -51,7 +51,7 @@
 #include <JavaScriptCore/StrongInlines.h>
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {

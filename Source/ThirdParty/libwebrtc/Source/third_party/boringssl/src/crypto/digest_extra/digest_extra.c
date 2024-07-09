@@ -220,6 +220,7 @@ int EVP_marshal_digest_algorithm(CBB *cbb, const EVP_MD *md) {
     return 0;
   }
 
+  // TODO(crbug.com/boringssl/710): Is this correct? See RFC 4055, section 2.1.
   if (!CBB_add_asn1(&algorithm, &null, CBS_ASN1_NULL) ||
       !CBB_flush(cbb)) {
     return 0;

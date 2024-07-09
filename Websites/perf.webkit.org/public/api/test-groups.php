@@ -35,7 +35,7 @@ function main($path) {
     } elseif ($path[0] == 'ready-for-notification') {
         $test_groups = $db->query_and_fetch_all("SELECT * FROM analysis_test_groups
             WHERE EXISTS(SELECT 1 FROM build_requests
-                WHERE request_group = testgroup_id
+                WHERE request_group = testgroup_id AND request_order >= 0
                     AND request_status IN ('pending', 'scheduled', 'running', 'canceled')) IS FALSE
                     AND testgroup_needs_notification IS TRUE AND testgroup_hidden IS FALSE");
 

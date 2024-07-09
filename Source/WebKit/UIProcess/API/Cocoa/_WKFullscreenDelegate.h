@@ -25,6 +25,11 @@
 
 #import <WebKit/WKFoundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
+@class NSError;
+@class UIViewController;
+
 WK_API_AVAILABLE(macos(10.13), ios(11.3))
 @protocol _WKFullscreenDelegate <NSObject>
 
@@ -37,6 +42,7 @@ WK_API_AVAILABLE(macos(10.13), ios(11.3))
 - (void)_webViewDidExitElementFullscreen:(WKWebView *)webView;
 
 - (void)_webView:(WKWebView *)webView didFullscreenImageWithQuickLook:(CGSize)imageDimensions;
+- (void)_webView:(WKWebView *)webView requestPresentingViewControllerWithCompletionHandler:(void (^)(UIViewController * _Nullable, NSError * _Nullable))completionHandler;
 #else
 - (void)_webViewWillEnterFullscreen:(NSView *)webView;
 - (void)_webViewDidEnterFullscreen:(NSView *)webView;
@@ -45,3 +51,5 @@ WK_API_AVAILABLE(macos(10.13), ios(11.3))
 #endif
 
 @end
+
+NS_ASSUME_NONNULL_END

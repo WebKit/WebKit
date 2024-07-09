@@ -37,8 +37,8 @@
 #include "SharedBufferChunkReader.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenate.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

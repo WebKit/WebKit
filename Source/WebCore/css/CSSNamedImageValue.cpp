@@ -27,6 +27,7 @@
 #include "CSSNamedImageValue.h"
 
 #include "StyleNamedImage.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

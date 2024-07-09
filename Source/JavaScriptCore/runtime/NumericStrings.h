@@ -65,6 +65,7 @@ public:
             return entry.value;
         entry.key = d;
         entry.value = String::number(d);
+        entry.jsString = nullptr;
         return entry.value;
     }
 
@@ -94,10 +95,13 @@ public:
     }
 
     JSString* addJSString(VM&, int);
+    JSString* addJSString(VM&, double);
 
     void clearOnGarbageCollection()
     {
         for (auto& entry : m_intCache)
+            entry.jsString = nullptr;
+        for (auto& entry : m_doubleCache)
             entry.jsString = nullptr;
         // 0-9 are managed by SmallStrings. They never die.
         for (unsigned i = 10; i < m_smallIntCache.size(); ++i)
@@ -109,6 +113,8 @@ public:
     {
         for (auto& entry : m_intCache)
             visitor.appendUnbarriered(entry.jsString);
+        for (auto& entry : m_doubleCache)
+            visitor.appendUnbarriered(entry.jsString);
         // 0-9 are managed by SmallStrings. They never die.
         for (unsigned i = 10; i < m_smallIntCache.size(); ++i)
             visitor.appendUnbarriered(m_smallIntCache[i].jsString);
@@ -119,7 +125,7 @@ public:
     void initializeSmallIntCache(VM&);
 
 private:
-    CacheEntry<double>& lookup(double d) { return m_doubleCache[WTF::FloatHash<double>::hash(d) & (cacheSize - 1)]; }
+    CacheEntryWithJSString<double>& lookup(double d) { return m_doubleCache[WTF::FloatHash<double>::hash(d) & (cacheSize - 1)]; }
     CacheEntryWithJSString<int>& lookup(int i) { return m_intCache[WTF::IntHash<int>::hash(i) & (cacheSize - 1)]; }
     CacheEntry<unsigned>& lookup(unsigned i) { return m_unsignedCache[WTF::IntHash<unsigned>::hash(i) & (cacheSize - 1)]; }
     ALWAYS_INLINE StringWithJSString& lookupSmallString(unsigned i)
@@ -132,7 +138,7 @@ private:
 
     std::array<StringWithJSString, cacheSize> m_smallIntCache { };
     std::array<CacheEntryWithJSString<int>, cacheSize> m_intCache { };
-    std::array<CacheEntry<double>, cacheSize> m_doubleCache { };
+    std::array<CacheEntryWithJSString<double>, cacheSize> m_doubleCache { };
     std::array<CacheEntry<unsigned>, cacheSize> m_unsignedCache { };
 };
 

@@ -27,6 +27,7 @@
 
 #include <pal/text/TextCodec.h>
 #include <pal/text/TextEncodingRegistry.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

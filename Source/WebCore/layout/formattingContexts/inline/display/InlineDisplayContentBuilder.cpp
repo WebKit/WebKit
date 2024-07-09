@@ -37,6 +37,7 @@
 #include "TextUtil.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/Range.h>
+#include <wtf/text/MakeString.h>
 
 using WTF::Range;
 

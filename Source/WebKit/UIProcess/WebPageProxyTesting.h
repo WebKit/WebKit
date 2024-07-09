@@ -71,8 +71,6 @@ public:
     void setSystemCanPromptForGetDisplayMediaForTesting(bool);
 #endif
 
-    void clearOpener();
-
 private:
     bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>) final;
     bool sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&&, AsyncReplyHandler, OptionSet<IPC::SendOption>) final;
@@ -80,7 +78,8 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    const WebCore::PageIdentifier m_webPageIDInMainFrameProcess;
+    Ref<WebPageProxy> protectedPage() const;
+
     WeakRef<WebPageProxy> m_page;
 };
 

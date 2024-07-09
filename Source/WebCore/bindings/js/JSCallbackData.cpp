@@ -34,6 +34,7 @@
 #include "JSExecState.h"
 #include "JSExecStateInstrumentation.h"
 #include <JavaScriptCore/Exception.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 using namespace JSC;

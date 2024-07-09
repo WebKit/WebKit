@@ -81,6 +81,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(WEBASSEMBLY)

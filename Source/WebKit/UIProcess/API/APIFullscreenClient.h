@@ -25,6 +25,11 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
+OBJC_CLASS NSError;
+OBJC_CLASS UIViewController;
+
 namespace WebKit {
 class WebPageProxy;
 }
@@ -47,6 +52,10 @@ public:
     virtual void didEnterFullscreen(WebKit::WebPageProxy*) { }
     virtual void willExitFullscreen(WebKit::WebPageProxy*) { }
     virtual void didExitFullscreen(WebKit::WebPageProxy*) { }
+
+#if PLATFORM(IOS_FAMILY)
+    virtual void requestPresentingViewController(CompletionHandler<void(UIViewController *, NSError *)>&&) { }
+#endif
 };
 
 } // namespace API

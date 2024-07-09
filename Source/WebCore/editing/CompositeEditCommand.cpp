@@ -77,6 +77,7 @@
 #include "VisibleUnits.h"
 #include "WrapContentsInDummySpanCommand.h"
 #include "markup.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

@@ -70,6 +70,7 @@
 #include <wtf/Ref.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

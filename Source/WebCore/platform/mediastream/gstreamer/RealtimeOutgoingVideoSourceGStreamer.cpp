@@ -30,6 +30,7 @@
 #include "VP9Utilities.h"
 #include "VideoEncoderPrivateGStreamer.h"
 #include <wtf/glib/WTFGType.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 GST_DEBUG_CATEGORY(webkit_webrtc_outgoing_video_debug);
@@ -111,18 +112,20 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     // FIXME: We use only the first structure of the caps. This not be the right approach specially
     // we don't have a payloader or encoder for that format.
     GUniquePtr<GstStructure> structure(gst_structure_copy(gst_caps_get_structure(caps.get(), 0)));
-    const char* encodingName = gst_structure_get_string(structure.get(), "encoding-name");
-    if (!encodingName) {
+    auto encoding = StringView::fromLatin1(gst_structure_get_string(structure.get(), "encoding-name")).convertToASCIILowercase();
+    if (encoding.isNull()) {
         GST_ERROR_OBJECT(m_bin.get(), "encoding-name not found");
         return false;
     }
 
-    auto encoding = String(WTF::span(encodingName)).convertToASCIILowercase();
-    m_payloader = makeGStreamerElement(makeString("rtp"_s, encoding, "pay"_s).ascii().data(), nullptr);
-    if (UNLIKELY(!m_payloader)) {
-        GST_ERROR_OBJECT(m_bin.get(), "RTP payloader not found for encoding %s", encodingName);
+    auto& registryScanner = GStreamerRegistryScanner::singleton();
+    auto lookupResult = registryScanner.isRtpPacketizerSupported(encoding);
+    if (!lookupResult) {
+        GST_ERROR_OBJECT(m_bin.get(), "RTP payloader not found for encoding %s", encoding.ascii().data());
         return false;
     }
+    m_payloader = gst_element_factory_create(lookupResult.factory.get(), nullptr);
+    GST_DEBUG_OBJECT(m_bin.get(), "Using %" GST_PTR_FORMAT " for %s RTP packetizing", m_payloader.get(), encoding.ascii().data());
 
     auto codec = emptyString();
     if (encoding == "vp8"_s) {
@@ -166,7 +169,7 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     } else if (encoding == "av1"_s)
         codec = createAV1CodecParametersString({ });
     else {
-        GST_ERROR_OBJECT(m_bin.get(), "Unsupported outgoing video encoding: %s", encodingName);
+        GST_ERROR_OBJECT(m_bin.get(), "Unsupported outgoing video encoding: %s", encoding.ascii().data());
         return false;
     }
 

@@ -29,7 +29,6 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {

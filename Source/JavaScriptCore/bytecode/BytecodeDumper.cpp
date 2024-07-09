@@ -38,6 +38,7 @@
 #include "WasmGeneratorTraits.h"
 #include "WasmModuleInformation.h"
 #include "WasmTypeDefinitionInlines.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

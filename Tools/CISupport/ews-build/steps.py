@@ -621,9 +621,12 @@ class Contributors(object):
                 cls.last_update = now
 
         if not contributors_json:
+            errors.append('Loading data from disk...\n')
             contributors_json, error = cls.load_from_disk()
             if error:
                 errors.append(error)
+            if contributors_json:
+                errors = []
 
         for value in contributors_json:
             name = value.get('name')
@@ -6564,28 +6567,24 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
             defer.returnValue(rc)
             return
 
-        retry_attempts = 3
-        for i in range(1, retry_attempts + 1):
-            self.contributors, errors = yield Contributors.load(use_network=True)
-            for error in errors:
-                self._addToLog('stdio', error)
-            self._addToLog('stdio', '\n')
-            if self.contributors:
-                break
-            if i < retry_attempts:
-                self._addToLog('stdio', f'Retrying, attempt {i + 1} of {retry_attempts}...\n')
+        self.contributors, errors = yield Contributors.load(use_network=True)
+        for error in errors:
+            self._addToLog('stdio', error)
+        self._addToLog('stdio', '\n')
 
         reviewers, log_text = self.extract_reviewers(self.log_observer.getStdout())
         log_text = log_text.rstrip()
         author = self.getProperty('author', '')
 
+        self.summary = ''
         if any(os.path.basename(file).startswith('ChangeLog') for file in self._files()):
             self.summary = 'ChangeLog modified, WebKit only allows commit messages'
             rc = FAILURE
         elif log_text:
             self.summary = log_text.split('\n')[0]  # Display the first error if there are multiple
             rc = FAILURE
-        elif rc == SUCCESS:
+
+        if rc == SUCCESS:
             if reviewers and not self.contributors:
                 self.summary = "Failed to load contributors.json, can't validate reviewers"
             elif reviewers and any([not self.is_reviewer(reviewer) for reviewer in reviewers]):
@@ -6599,7 +6598,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
                 rc = FAILURE
             else:
                 self.summary = 'Validated commit message'
-        else:
+        elif not self.summary:
             self.summary = 'Error parsing commit message'
             rc = FAILURE
 

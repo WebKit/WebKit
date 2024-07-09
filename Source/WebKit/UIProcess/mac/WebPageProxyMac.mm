@@ -69,7 +69,6 @@
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/ProcessPrivilege.h>
-#import <wtf/text/StringConcatenate.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &connection)
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(m_legacyMainFrameProcess, url), m_legacyMainFrameProcess->connection())
@@ -305,11 +304,8 @@ void WebPageProxy::registerWebProcessAccessibilityToken(std::span<const uint8_t>
     if (!hasRunningProcess())
         return;
 
-    RefPtr frame = WebFrameProxy::webFrame(frameID);
-    if (!frame)
-        return;
-
-    protectedPageClient()->accessibilityWebProcessTokenReceived(data, frameID, frame->process().connection()->remoteProcessID());
+    // Note: The WebFrameProxy with this FrameIdentifier might not exist in the UI process. See rdar://130998804.
+    protectedPageClient()->accessibilityWebProcessTokenReceived(data, frameID, legacyMainFrameProcess().connection()->remoteProcessID());
 }
 
 void WebPageProxy::makeFirstResponder()
@@ -828,6 +824,20 @@ void WebPageProxy::handleContextMenuCopySubject(const String& preferredMIMEType)
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+#if ENABLE(WRITING_TOOLS)
+
+void WebPageProxy::handleContextMenuWritingTools(WebCore::WritingTools::RequestedTool tool)
+{
+    auto& editorState = this->editorState();
+    if (!editorState.hasPostLayoutData())
+        return;
+
+    auto selectionRect = editorState.postLayoutData->selectionBoundingRect;
+    protectedPageClient()->handleContextMenuWritingTools(tool, selectionRect);
+}
+
+#endif
 
 } // namespace WebKit
 

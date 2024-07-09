@@ -307,24 +307,13 @@ ___
         }
 
         print <<___;
-#if defined(__has_feature)
-#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
-#define OPENSSL_NO_ASM
-#endif
-#endif
+#include <openssl/asm_base.h>
 
-#if !defined(OPENSSL_NO_ASM) && defined(__i386__) && $target
-#if defined(BORINGSSL_PREFIX)
-#include <boringssl_prefix_symbols_asm.h>
-#endif
+#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86) && $target
 ___
         print @out;
         print <<___;
-#endif  // !defined(OPENSSL_NO_ASM) && defined(__i386__) && $target
-#if defined(__ELF__)
-// See https://www.airs.com/blog/archives/518.
-.section .note.GNU-stack,"",\%progbits
-#endif
+#endif  // !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86) && $target
 ___
     }
 }

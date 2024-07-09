@@ -44,6 +44,7 @@
 #include <gst/base/gstflowcombiner.h>
 #include <wtf/UUID.h>
 #include <wtf/glib/WTFGType.h>
+#include <wtf/text/MakeString.h>
 
 using namespace WebCore;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Igalia S.L.
+ * Copyright (C) 2018, 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,11 +58,50 @@ static char* timeZone;
 static const char* featureList = nullptr;
 static gboolean enableITP;
 static gboolean printVersion;
+static guint windowWidth = 0;
+static guint windowHeight = 0;
+static guint defaultWindowWidthLegacyAPI = 1280;
+static guint defaultWindowHeightLegacyAPI = 720;
 static GHashTable* openViews;
 #if ENABLE_WPE_PLATFORM
+static gboolean windowMaximized;
+static gboolean windowFullscreen;
 static gboolean useWPEPlatformAPI;
 static const char* defaultWindowTitle = "WPEWebKit MiniBrowser";
 #endif
+
+static gboolean parseWindowSize(const char*, const char* value, gpointer, GError** error)
+{
+    if (!value)
+        return FALSE;
+
+    g_auto(GStrv) windowSizes = g_strsplit(value, "x", 2);
+    if (!windowSizes || !windowSizes[0] || !windowSizes[1]) {
+        g_set_error(error, G_OPTION_ERROR, G_OPTION_ERROR_FAILED, "Failed to parse --size command line argument \"%s\" - use \"<size>x<height>\" without any additional whitespace.", value);
+        return FALSE;
+    }
+
+    guint64 parsedWidth = 0;
+    if (!g_ascii_string_to_unsigned(windowSizes[0], 10, 0, G_MAXUINT, &parsedWidth, nullptr)) {
+        g_set_error(error, G_OPTION_ERROR, G_OPTION_ERROR_FAILED, "Failed to parse window width as unsigned integer from string \"%s\"", windowSizes[0]);
+        return FALSE;
+    }
+
+    guint64 parsedHeight = 0;
+    if (!g_ascii_string_to_unsigned(windowSizes[1], 10, 0, G_MAXUINT, &parsedHeight, nullptr)) {
+        g_set_error(error, G_OPTION_ERROR, G_OPTION_ERROR_FAILED, "Failed to parse window height as unsigned integer from string \"%s\"", windowSizes[1]);
+        return FALSE;
+    }
+
+    if (!parsedWidth || !parsedHeight) {
+        g_set_error(error, G_OPTION_ERROR, G_OPTION_ERROR_FAILED, "Window width/height needs to be larger than zero.");
+        return FALSE;
+    }
+
+    windowWidth = static_cast<guint>(parsedWidth);
+    windowHeight = static_cast<guint>(parsedHeight);
+    return TRUE;
+}
 
 static const GOptionEntry commandLineOptions[] =
 {
@@ -81,7 +120,10 @@ static const GOptionEntry commandLineOptions[] =
     { "features", 'F', 0, G_OPTION_ARG_STRING, &featureList, "Enable or disable WebKit features (hint: pass 'help' for a list)", "FEATURE-LIST" },
 #if ENABLE_WPE_PLATFORM
     { "use-wpe-platform-api", 0, 0, G_OPTION_ARG_NONE, &useWPEPlatformAPI, "Use the WPE platform API", nullptr },
+    { "maximized", 'm', 0, G_OPTION_ARG_NONE, &windowMaximized, "Start with maximized window", nullptr },
+    { "fullscreen", 'f', 0, G_OPTION_ARG_NONE, &windowFullscreen, "Start with fullscreen window", nullptr },
 #endif
+    { "size", 's', 0, G_OPTION_ARG_CALLBACK, reinterpret_cast<gpointer>(parseWindowSize), "Specify the window size to use, e.g. --size=\"800x600\"", nullptr },
     { "version", 'v', 0, G_OPTION_ARG_NONE, &printVersion, "Print the WPE version", nullptr },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, nullptr, "[URL]" },
     { nullptr, 0, 0, G_OPTION_ARG_NONE, nullptr, nullptr, nullptr }
@@ -142,6 +184,11 @@ static gboolean wpeViewEventCallback(WPEView* view, WPEEvent* event, WebKitWebVi
 
         if (keyval == WPE_KEY_r) {
             webkit_web_view_reload(webView);
+            return TRUE;
+        }
+
+        if ((modifiers & WPE_MODIFIER_KEYBOARD_SHIFT) && keyval == WPE_KEY_I) {
+            webkit_web_view_toggle_inspector(webView);
             return TRUE;
         }
     }
@@ -239,8 +286,7 @@ static void webViewClose(WebKitWebView* webView, gpointer user_data)
 
 static WebKitWebView* createWebView(WebKitWebView* webView, WebKitNavigationAction*, gpointer user_data)
 {
-
-    auto backend = createViewBackend(1280, 720);
+    auto backend = createViewBackend(defaultWindowWidthLegacyAPI, defaultWindowHeightLegacyAPI);
     WebKitWebViewBackend* viewBackend = nullptr;
     if (backend) {
         struct wpe_view_backend* wpeBackend = backend->backend();
@@ -291,6 +337,7 @@ static WebKitWebView* createWebViewForAutomationCallback(WebKitAutomationSession
     auto* newWebView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "settings", webkit_web_view_get_settings(view),
         "web-context", webkit_web_view_get_context(view),
+        "display", webkit_web_view_get_display(view),
         "is-controlled-by-automation", TRUE,
         "user-content-manager", webkit_web_view_get_user_content_manager(view),
         "website-policies", webkit_web_view_get_website_policies(view),
@@ -468,6 +515,8 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
     WPEDisplay* wpeDisplay = headlessMode && useWPEPlatformAPI ? wpe_display_headless_new() : nullptr;
 #endif
 
+    webkit_web_context_set_automation_allowed(webContext, automationMode);
+
     auto* defaultWebsitePolicies = webkit_website_policies_new_with_policies(
         "autoplay", WEBKIT_AUTOPLAY_ALLOW,
         nullptr);
@@ -503,15 +552,21 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
 
 #if ENABLE_WPE_PLATFORM
     if (auto* wpeView = webkit_web_view_get_wpe_view(webView)) {
+        auto* wpeToplevel = wpe_view_get_toplevel(wpeView);
+        if (windowWidth > 0 && windowHeight > 0)
+            wpe_toplevel_resize(wpeToplevel, windowWidth, windowHeight);
+        if (windowMaximized)
+            wpe_toplevel_maximize(wpeToplevel);
+        if (windowFullscreen)
+            wpe_toplevel_fullscreen(wpeToplevel);
         g_signal_connect(wpeView, "event", G_CALLBACK(wpeViewEventCallback), webView);
-        wpe_toplevel_set_title(wpe_view_get_toplevel(wpeView), defaultWindowTitle);
+        wpe_toplevel_set_title(wpeToplevel, defaultWindowTitle);
         g_signal_connect(webView, "notify::title", G_CALLBACK(webViewTitleChanged), wpeView);
     }
 #endif
 
     openViews = g_hash_table_new_full(nullptr, nullptr, g_object_unref, nullptr);
 
-    webkit_web_context_set_automation_allowed(webContext, automationMode);
     g_signal_connect(webContext, "automation-started", G_CALLBACK(automationStartedCallback), webView);
     g_signal_connect(webView, "permission-request", G_CALLBACK(decidePermissionRequest), nullptr);
     g_signal_connect(webView, "create", G_CALLBACK(createWebView), application);
@@ -595,11 +650,35 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    auto backend = createViewBackend(1280, 720);
+    bool setDefaultWindowSize = true;
+
+#if ENABLE_WPE_PLATFORM
+    if (useWPEPlatformAPI)
+        setDefaultWindowSize = false;
+
+    if (windowMaximized && windowFullscreen) {
+        g_printerr("You cannot specify both --maximized and --fullscreen, these options are mutually exclusive.");
+        return 1;
+    }
+
+    if ((windowMaximized || windowFullscreen) && !useWPEPlatformAPI) {
+        g_printerr("You cannot specify either --maximized or --fullscreen, without enabling the new WPE API (--use-wpe-platform-api).");
+        return 1;
+    }
+
+#endif
+
+    if (setDefaultWindowSize) {
+        // Default values used in old API, for legacy reasons.
+        windowWidth = defaultWindowWidthLegacyAPI;
+        windowHeight = defaultWindowHeightLegacyAPI;
+    }
+
+    auto backend = createViewBackend(windowWidth, windowHeight);
     if (backend) {
         struct wpe_view_backend* wpeBackend = backend->backend();
         if (!wpeBackend) {
-            g_warning("Failed to create WPE view backend");
+            g_printerr("Failed to create WPE view backend");
             return 1;
         }
     }

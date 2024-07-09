@@ -92,6 +92,7 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SerializedCryptoKeyWrap.h>
 #include <WebCore/SuddenTermination.h>
+#include <WebCore/WrappedCryptoKey.h>
 #include <optional>
 #include <pal/system/Sound.h>
 #include <stdio.h>
@@ -2556,38 +2557,37 @@ void WebProcessProxy::getNotifications(const URL& registrationURL, const String&
     WebNotificationManagerProxy::sharedServiceWorkerManager().getNotifications(registrationURL, tag, sessionID(), WTFMove(callback));
 }
 
-std::optional<Vector<uint8_t>> WebProcessProxy::getWebCryptoMasterKey()
+void WebProcessProxy::getWebCryptoMasterKey(CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
-    if (auto isKey = m_websiteDataStore->client().webCryptoMasterKey())
-        return isKey;
-    if (auto isKey = defaultWebCryptoMasterKey())
-        return isKey;
-    return std::nullopt;
+    m_websiteDataStore->client().webCryptoMasterKey([completionHandler = WTFMove(completionHandler)](std::optional<Vector<uint8_t>>&& key) mutable {
+        if (key)
+            return completionHandler(WTFMove(key));
+        return completionHandler(WebCore::defaultWebCryptoMasterKey());
+    });
 }
 
-void WebProcessProxy::wrapCryptoKey(const Vector<uint8_t>& key, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
+void WebProcessProxy::wrapCryptoKey(Vector<uint8_t>&& key, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
-    std::optional<Vector<uint8_t>> masterKey(getWebCryptoMasterKey());
-    if (masterKey) {
-        Vector<uint8_t> wrappedKey;
-        if (wrapSerializedCryptoKey(*masterKey, key, wrappedKey)) {
-            completionHandler(WTFMove(wrappedKey));
-            return;
+    getWebCryptoMasterKey([key = WTFMove(key), completionHandler = WTFMove(completionHandler)](std::optional<Vector<uint8_t>> && masterKey) mutable {
+        if (masterKey) {
+            Vector<uint8_t> wrappedKey;
+            if (wrapSerializedCryptoKey(*masterKey, key, wrappedKey))
+                return completionHandler(WTFMove(wrappedKey));
         }
-    }
-    completionHandler(std::nullopt);
+        completionHandler(std::nullopt);
+    });
 }
 
-void WebProcessProxy::unwrapCryptoKey(const struct WrappedCryptoKey& wrappedKey, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
+void WebProcessProxy::unwrapCryptoKey(WrappedCryptoKey&& wrappedKey, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
-    std::optional<Vector<uint8_t>> masterKey(getWebCryptoMasterKey());
-    if (masterKey) {
-        if (auto key = WebCore::unwrapCryptoKey(*masterKey, wrappedKey)) {
-            completionHandler(WTFMove(key));
-            return;
+    getWebCryptoMasterKey([wrappedKey = WTFMove(wrappedKey), completionHandler = WTFMove(completionHandler)](std::optional<Vector<uint8_t>> && masterKey) mutable {
+        if (masterKey) {
+            if (auto key = WebCore::unwrapCryptoKey(*masterKey, wrappedKey))
+                return completionHandler(WTFMove(key));
         }
-    }
-    completionHandler(std::nullopt);
+        completionHandler(std::nullopt);
+    });
+
 }
 void WebProcessProxy::setAppBadge(std::optional<WebPageProxyIdentifier> pageIdentifier, const SecurityOriginData& origin, std::optional<uint64_t> badge)
 {

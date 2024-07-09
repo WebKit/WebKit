@@ -48,6 +48,7 @@
 #include "WebCodecsErrorCallback.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

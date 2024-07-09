@@ -38,6 +38,7 @@
 #include "SecurityOrigin.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/URL.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {

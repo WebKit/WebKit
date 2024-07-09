@@ -42,6 +42,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/UUID.h>
 #import <wtf/Vector.h>
+#import <wtf/text/MakeString.h>
 
 TEST(NetworkProcess, Entitlements)
 {

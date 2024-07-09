@@ -289,6 +289,9 @@ private:
 
     // SampleBufferDisplayLayerClient
     void sampleBufferDisplayLayerStatusDidFail() final;
+#if PLATFORM(IOS_FAMILY)
+    bool canShowWhileLocked() const final;
+#endif
 
     RetainPtr<WebRootSampleBufferBoundsChangeListener> m_boundsChangeListener;
 

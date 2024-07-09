@@ -45,6 +45,7 @@
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSCast.h>
 #include <pal/text/TextEncoding.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -242,7 +243,7 @@ AttributeTypeAndSink trustedTypeForAttribute(const String& elementName, const St
     if (attributeNS.isNull() && !attributeName.isNull()) {
         auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(attribute);
         if (!eventName.isNull()) {
-            returnValues.sink = "Element "_s + attributeName;
+            returnValues.sink = makeString("Element "_s, attributeName);
             returnValues.attributeType = trustedTypeToString(TrustedType::TrustedScript);
             return returnValues;
         }

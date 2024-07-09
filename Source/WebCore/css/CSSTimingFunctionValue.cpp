@@ -26,8 +26,8 @@
 #include "config.h"
 #include "CSSTimingFunctionValue.h"
 
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

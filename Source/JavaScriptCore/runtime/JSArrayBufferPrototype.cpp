@@ -30,6 +30,7 @@
 #include "JSArrayBuffer.h"
 #include "JSArrayBufferPrototypeInlines.h"
 #include "JSCInlines.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

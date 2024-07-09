@@ -26,3 +26,5 @@ list(APPEND TestRunnerInjectedBundle_SOURCES
     InjectedBundle/win/InjectedBundleWin.cpp
     InjectedBundle/win/TestRunnerWin.cpp
 )
+
+add_executable(WebKitTestRunnerWS win/WebKitTestRunnerWS.cpp)

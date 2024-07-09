@@ -29,6 +29,7 @@
 #include <Shlwapi.h>
 #include <wtf/FileSystem.h>
 #include <wtf/URL.h>
+#include <wtf/text/MakeString.h>
 
 namespace TestWebKitAPI {
 namespace Util {

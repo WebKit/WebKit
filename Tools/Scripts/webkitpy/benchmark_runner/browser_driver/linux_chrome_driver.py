@@ -25,6 +25,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import re
+from subprocess import check_output
 
 from webkitpy.benchmark_runner.browser_driver.linux_browser_driver import LinuxBrowserDriver
 
@@ -54,3 +56,12 @@ class LinuxChromeDriver(LinuxBrowserDriver):
         driver = webdriver.Chrome(chrome_options=options, executable_path=driver_executable)
         super().launch_webdriver(url, driver)
         return driver
+
+    def browser_version(self):
+        version_cmd = [self.process_name, '--version']
+        version_output = check_output(version_cmd, timeout=3).decode('utf-8', errors='ignore').strip()
+        m = re.match(r'([a-zA-Z ]*)(Chrome|Chromium)([a-zA-Z ]+)([0-9.]+)', version_output)
+        if m:
+            return m.groups()[-1]
+        version_cmd = ' '.join(version_cmd)
+        raise ValueError(f'Unable to parse browser version. Command "{version_cmd}" returned "{version_output}"')

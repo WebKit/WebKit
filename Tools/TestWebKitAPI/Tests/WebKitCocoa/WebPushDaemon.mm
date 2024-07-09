@@ -60,6 +60,7 @@
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/Base64.h>
+#import <wtf/text/MakeString.h>
 
 // FIXME: Work through enabling on iOS
 #if ENABLE(NOTIFICATIONS) && ENABLE(NOTIFICATION_EVENT) && PLATFORM(MAC)
@@ -286,30 +287,28 @@ bool WebPushXPCConnectionMessageSender::performSendWithAsyncReplyWithoutUsingIPC
     return true;
 }
 
-static void sendConfigurationWithAuditToken(xpc_connection_t connection)
+static WebKit::WebPushD::WebPushDaemonConnectionConfiguration defaultWebPushDaemonConfiguration()
 {
     audit_token_t token = { 0, 0, 0, 0, 0, 0, 0, 0 };
     mach_msg_type_number_t auditTokenCount = TASK_AUDIT_TOKEN_COUNT;
-    kern_return_t result = task_info(mach_task_self(), TASK_AUDIT_TOKEN, (task_info_t)(&token), &auditTokenCount);
-    if (result != KERN_SUCCESS) {
-        EXPECT_TRUE(false);
-        return;
-    }
+    task_info(mach_task_self(), TASK_AUDIT_TOKEN, (task_info_t)(&token), &auditTokenCount);
 
-    WebKit::WebPushD::WebPushDaemonConnectionConfiguration configuration;
-    configuration.hostAppAuditTokenData = Vector<unsigned char>(sizeof(token));
-    memcpy(configuration.hostAppAuditTokenData->data(), &token, sizeof(token));
+    Vector<uint8_t> auditToken(sizeof(token));
+    memcpy(auditToken.data(), &token, sizeof(token));
 
-    auto sender = WebPushXPCConnectionMessageSender { connection };
-    sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::UpdateConnectionConfiguration(configuration));
+    return { .hostAppAuditTokenData = WTFMove(auditToken) };
 }
 
-RetainPtr<xpc_connection_t> createAndConfigureConnectionToService(const char* serviceName)
+RetainPtr<xpc_connection_t> createAndConfigureConnectionToService(const char* serviceName, std::optional<WebKit::WebPushD::WebPushDaemonConnectionConfiguration> configuration = std::nullopt)
 {
     auto connection = adoptNS(xpc_connection_create_mach_service(serviceName, dispatch_get_main_queue(), 0));
     xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t) { });
     xpc_connection_activate(connection.get());
-    sendConfigurationWithAuditToken(connection.get());
+    auto sender = WebPushXPCConnectionMessageSender { connection.get() };
+
+    if (!configuration)
+        configuration = defaultWebPushDaemonConfiguration();
+    sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::UpdateConnectionConfiguration(configuration.value()));
 
     return WTFMove(connection);
 }
@@ -327,40 +326,18 @@ TEST(WebPushD, BasicCommunication)
             interrupted = true;
             return;
         }
-        if (xpc_get_type(request) != XPC_TYPE_DICTIONARY)
-            return;
-        const char* debugMessage = xpc_dictionary_get_string(request, WebKit::WebPushD::protocolDebugMessageKey);
-        if (!debugMessage)
-            return;
+    });
+    xpc_connection_activate(connection.get());
 
-        NSString *nsMessage = [NSString stringWithUTF8String:debugMessage];
-
-        // Ignore possible connections/messages from webpushtool
-        if ([nsMessage hasPrefix:@"[webpushtool "])
-            return;
-
-        bool stringMatches = [nsMessage hasPrefix:@"[com.apple.WebKit.TestWebKitAPI"] || [nsMessage hasPrefix:@"[TestWebKitAPI"];
-        stringMatches = stringMatches && [nsMessage hasSuffix:@" Turned Debug Mode on"];
-
-        EXPECT_TRUE(stringMatches);
-        if (!stringMatches)
-            WTFLogAlways("String does not match, actual string was %@", nsMessage);
-
+    // Send a basic message and make sure its reply handler ran.
+    auto sender = WebPushXPCConnectionMessageSender { connection.get() };
+    sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::UpdateConnectionConfiguration(defaultWebPushDaemonConfiguration()));
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushTopicsForTesting(), ^(Vector<String>, Vector<String>) {
         done = true;
     });
+    TestWebKitAPI::Util::run(&done);
 
-    xpc_connection_activate(connection.get());
-    sendConfigurationWithAuditToken(connection.get());
-
-    // Enable debug messages, and wait for the resulting debug message
-    {
-        auto sender = WebPushXPCConnectionMessageSender { connection.get() };
-        sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::SetDebugModeIsEnabled(true));
-        TestWebKitAPI::Util::run(&done);
-    }
-
-    // Sending a message with a higher protocol version should cause the connection to be terminated
-    auto sender = WebPushXPCConnectionMessageSender { connection.get() };
+    // Sending a message with a higher protocol version should cause the connection to be terminated.
     sender.setShouldIncrementProtocolVersionForTesting();
     __block bool messageReplied = false;
     sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::RemoveAllPushSubscriptions(), ^(bool result) {
@@ -817,6 +794,44 @@ public:
             done = true;
         });
         TestWebKitAPI::Util::run(&done);
+    }
+
+    // FIXME: remove this once we add fetchPushMessage to WKWebsiteDataStore.
+    void didShowNotificationForTesting()
+    {
+        auto configuration = defaultWebPushDaemonConfiguration();
+        configuration.pushPartitionString = m_pushPartition;
+        configuration.dataStoreIdentifier = m_dataStoreIdentifier;
+
+        auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service", WTFMove(configuration));
+        auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
+
+        bool done = false;
+        sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::DidShowNotificationForTesting(m_url.get()), [&]() {
+            done = true;
+        });
+        TestWebKitAPI::Util::run(&done);
+    }
+
+    // FIXME: switch to WKWebsiteDataStore method once we add that.
+    std::optional<WebKit::WebPushMessage> fetchPushMessage()
+    {
+        auto configuration = defaultWebPushDaemonConfiguration();
+        configuration.pushPartitionString = m_pushPartition;
+        configuration.dataStoreIdentifier = m_dataStoreIdentifier;
+
+        auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service", WTFMove(configuration));
+        auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
+
+        std::optional<WebKit::WebPushMessage> result;
+        bool done = false;
+        sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPendingPushMessage(), [&](std::optional<WebKit::WebPushMessage> message) {
+            result = WTFMove(message);
+            done = true;
+        });
+        TestWebKitAPI::Util::run(&done);
+
+        return result;
     }
 
     RetainPtr<NSArray<NSDictionary *>> fetchPushMessages()
@@ -1341,6 +1356,59 @@ TEST_F(WebPushDTest, IgnoresSubscriptionOnPermissionDenied)
 
     ASSERT_TRUE(isEnabled);
     ASSERT_TRUE(v->hasPushSubscription());
+}
+
+TEST_F(WebPushDTest, ImplicitSilentPushTimerCancelledOnShowingNotification)
+{
+    for (auto& v : webViews())
+        v->subscribe();
+    ASSERT_EQ(subscribedTopicsCount(), webViews().size());
+
+    for (auto& v : webViews()) {
+        ASSERT_TRUE(v->hasPushSubscription());
+
+        for (unsigned i = 0; i < WebKit::WebPushD::maxSilentPushCount; i++) {
+            v->injectPushMessage(@{ });
+            auto message = v->fetchPushMessage();
+            ASSERT_TRUE(message.has_value());
+            v->didShowNotificationForTesting();
+        }
+
+        [NSThread sleepForTimeInterval:(WebKit::WebPushD::silentPushTimeoutForTesting.seconds() + 0.5)];
+        ASSERT_TRUE(v->hasPushSubscription());
+    }
+}
+
+TEST_F(WebPushDTest, ImplicitSilentPushTimerCausesUnsubscribe)
+{
+    for (auto& v : webViews()) {
+        v->subscribe();
+        v->disableShowNotifications();
+    }
+    ASSERT_EQ(subscribedTopicsCount(), webViews().size());
+
+    int i = 1;
+    for (auto& v : webViews()) {
+        ASSERT_TRUE(v->hasPushSubscription());
+
+        for (unsigned i = 0; i < WebKit::WebPushD::maxSilentPushCount; i++) {
+            v->injectPushMessage(@{ });
+            auto message = v->fetchPushMessage();
+            ASSERT_TRUE(message.has_value());
+        }
+
+        bool unsubscribed = false;
+        TestWebKitAPI::Util::waitForConditionWithLogging([&] {
+            unsubscribed = !v->hasPushSubscription();
+            [NSThread sleepForTimeInterval:0.25];
+            return unsubscribed;
+        }, 5, @"Timed out waiting for push subscription to be unsubscribed.");
+        ASSERT_TRUE(unsubscribed);
+
+        // Unsubscribing from this data store should not affect subscriptions in other data stores.
+        ASSERT_EQ(subscribedTopicsCount(), webViews().size() - i);
+        i++;
+    }
 }
 
 TEST_F(WebPushDTest, TooManySilentPushesCausesUnsubscribe)

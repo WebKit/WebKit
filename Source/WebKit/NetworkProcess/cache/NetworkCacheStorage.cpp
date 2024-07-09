@@ -40,7 +40,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/persistence/PersistentCoders.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebKit {
@@ -434,7 +434,7 @@ String Storage::recordPathForKey(const Key& key) const
 
 static String blobPathForRecordPath(const String& recordPath)
 {
-    return recordPath + blobSuffix;
+    return makeString(recordPath, blobSuffix);
 }
 
 String Storage::blobPathForKey(const Key& key) const

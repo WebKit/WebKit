@@ -333,7 +333,6 @@ JSStorageManager.cpp
 JSStyleMedia.h
 JSStyleSheetList.cpp
 JSSubtleCrypto.cpp
-JSText.cpp
 JSTextTrack.cpp
 JSTextTrackCue.cpp
 JSTextTrackCueList.cpp
@@ -349,7 +348,6 @@ JSVideoConfiguration.cpp
 JSVideoTrack.cpp
 JSViewTimeline.cpp
 JSVisualViewport.cpp
-JSWakeLock.cpp
 JSWakeLockSentinel.cpp
 JSWaveShaperNode.cpp
 JSWebAnimation.cpp
@@ -1521,7 +1519,6 @@ page/PageSerializer.cpp
 page/PartitionedSecurityOrigin.h
 page/Performance.cpp
 page/PerformanceMark.cpp
-page/PerformanceMeasure.cpp
 page/PerformanceMonitor.cpp
 page/PerformanceObserver.cpp
 page/PerformanceUserTiming.cpp
@@ -1708,7 +1705,6 @@ platform/graphics/cocoa/WebProcessGraphicsContextGLCocoa.mm
 platform/graphics/coreimage/FEComponentTransferCoreImageApplier.mm
 platform/graphics/coreimage/FilterImageCoreImage.mm
 platform/graphics/coretext/FontCascadeCoreText.cpp
-platform/graphics/coretext/FontCoreText.cpp
 platform/graphics/coretext/FontCustomPlatformDataCoreText.cpp
 platform/graphics/coretext/FontPlatformDataCoreText.cpp
 platform/graphics/cv/GraphicsContextGLCVCocoa.cpp
@@ -1760,7 +1756,6 @@ platform/mediastream/mac/AVCaptureDeviceManager.mm
 platform/mediastream/mac/AVVideoCaptureSource.mm
 platform/mediastream/mac/CGDisplayStreamCaptureSource.cpp
 platform/mediastream/mac/CGDisplayStreamScreenCaptureSource.mm
-platform/mediastream/mac/CoreAudioCaptureSource.cpp
 platform/mediastream/mac/CoreAudioSharedUnit.cpp
 platform/mediastream/mac/MediaStreamTrackAudioSourceProviderCocoa.cpp
 platform/mediastream/mac/MockAudioSharedUnit.mm

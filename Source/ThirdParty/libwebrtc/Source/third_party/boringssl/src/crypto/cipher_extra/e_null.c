@@ -78,9 +78,13 @@ static int null_cipher(EVP_CIPHER_CTX *ctx, uint8_t *out,
 }
 
 static const EVP_CIPHER n_cipher = {
-    NID_undef,        1 /* block size */, 0 /* key_len */,     0 /* iv_len */,
-    0 /* ctx_size */, 0 /* flags */,      NULL /* app_data */, null_init_key,
-    null_cipher,      NULL /* cleanup */, NULL /* ctrl */,
+    .nid = NID_undef,
+    .block_size = 1,
+    .key_len = 0,
+    .iv_len = 0,
+    .ctx_size = 0,
+    .init = null_init_key,
+    .cipher = null_cipher,
 };
 
 const EVP_CIPHER *EVP_enc_null(void) { return &n_cipher; }

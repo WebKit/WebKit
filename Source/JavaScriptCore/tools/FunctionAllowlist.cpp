@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <wtf/SafeStrerror.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 
@@ -93,7 +94,7 @@ bool FunctionAllowlist::contains(CodeBlock* codeBlock) const
     if (m_entries.contains(hash))
         return true;
 
-    return m_entries.contains(name + '#' + hash);
+    return m_entries.contains(makeString(name, '#', hash));
 }
 
 bool FunctionAllowlist::shouldDumpWasmFunction(uint32_t index) const

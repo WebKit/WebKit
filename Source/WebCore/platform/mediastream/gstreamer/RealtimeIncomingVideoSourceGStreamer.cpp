@@ -26,6 +26,7 @@
 #include "GStreamerWebRTCUtils.h"
 #include "VideoFrameGStreamer.h"
 #include "VideoFrameMetadataGStreamer.h"
+#include <wtf/text/MakeString.h>
 
 GST_DEBUG_CATEGORY(webkit_webrtc_incoming_video_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_incoming_video_debug

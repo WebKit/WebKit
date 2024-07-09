@@ -30,7 +30,7 @@
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import <wtf/cocoa/VectorCocoa.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 

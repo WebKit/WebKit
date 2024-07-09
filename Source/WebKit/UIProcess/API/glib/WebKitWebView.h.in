@@ -481,6 +481,9 @@ webkit_web_view_get_display                          (WebKitWebView             
 
 WEBKIT_API WPEView *
 webkit_web_view_get_wpe_view                         (WebKitWebView             *web_view);
+
+WEBKIT_API void
+webkit_web_view_toggle_inspector                     (WebKitWebView             *web_view);
 #endif
 #endif
 

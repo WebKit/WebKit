@@ -150,6 +150,7 @@ b3/B3InferSwitches.cpp
 b3/B3InsertionSet.cpp
 b3/B3Kind.cpp
 b3/B3LegalizeMemoryOffsets.cpp
+b3/B3LowerInt64.cpp
 b3/B3LowerMacros.cpp
 b3/B3LowerMacrosAfterOptimizations.cpp
 b3/B3LowerToAir.cpp
@@ -273,7 +274,6 @@ bytecode/PreciseJumpTargets.cpp
 bytecode/ProgramCodeBlock.cpp
 bytecode/PropertyCondition.cpp
 bytecode/ProxyableAccessCase.cpp
-bytecode/ProxyObjectAccessCase.cpp
 bytecode/PutByIdFlags.cpp
 bytecode/PutByStatus.cpp
 bytecode/PutByVariant.cpp
@@ -842,7 +842,6 @@ runtime/GeneratorPrototype.cpp
 runtime/GetPutInfo.cpp
 runtime/GetterSetter.cpp
 runtime/GlobalExecutable.cpp
-runtime/HashMapImpl.cpp
 runtime/HasOwnPropertyCache.cpp
 runtime/Identifier.cpp
 runtime/ImportMap.cpp
@@ -919,6 +918,7 @@ runtime/JSFinalizationRegistry.cpp
 runtime/JSFunction.cpp
 runtime/JSGenerator.cpp
 runtime/JSGeneratorFunction.cpp
+runtime/JSGenericTypedArrayViewPrototype.cpp
 runtime/JSGlobalLexicalEnvironment.cpp
 runtime/JSGlobalObject.cpp
 runtime/JSGlobalObjectDebuggable.cpp
@@ -1000,6 +1000,7 @@ runtime/ObjectInitializationScope.cpp
 runtime/ObjectPrototype.cpp
 runtime/Operations.cpp
 runtime/Options.cpp
+runtime/OrderedHashTable.cpp
 runtime/PageCount.cpp
 runtime/PredictionFileCreatingFuzzerAgent.cpp
 runtime/PrivateFieldPutKind.cpp

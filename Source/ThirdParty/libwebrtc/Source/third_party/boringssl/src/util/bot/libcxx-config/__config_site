@@ -3,4 +3,19 @@
 
 #define _LIBCPP_HAS_NO_VENDOR_AVAILABILITY_ANNOTATIONS
 
+#if defined(__APPLE__)
+#define _LIBCPP_PSTL_CPU_BACKEND_LIBDISPATCH
+#else
+#define _LIBCPP_PSTL_CPU_BACKEND_THREAD
+#endif
+
+// We only use our custom libc++ for testing, so enable all checks.
+#define _LIBCPP_HARDENING_MODE _LIBCPP_HARDENING_MODE_DEBUG
+
+// libc++ headers disable std::string ASan annotations if this is not defined.
+// This is to avoid false positives when libc++'s runtime components are
+// uninstrumented. When building our custom libc++, libc++ will be as
+// instrumented as the caller, so we can safely enable this.
+#define _LIBCPP_INSTRUMENTED_WITH_ASAN
+
 #endif  // BORINGSSL_LIBCXX_CONFIG_SITE_

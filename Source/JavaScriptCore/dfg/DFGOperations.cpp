@@ -93,6 +93,7 @@
 #include "WeakMapImplInlines.h"
 #include "WeakMapPrototype.h"
 #include "WeakSetPrototype.h"
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(JIT)
 #if ENABLE(DFG_JIT)
@@ -4159,52 +4160,191 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMapHashHeapBigInt, UCPUStrictInt32, (
     OPERATION_RETURN(scope, toUCPUStrictInt32(jsMapHash(input)));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationJSMapFindBucket, JSCell*, (JSGlobalObject* globalObject, JSCell* map, EncodedJSValue key, int32_t hash))
+JSC_DEFINE_JIT_OPERATION(operationMapKeyIndex, UCPUStrictInt32, (JSGlobalObject* globalObject, JSCell* map, EncodedJSValue key, int32_t hash))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSMap::BucketType** bucket = jsCast<JSMap*>(map)->findBucket(globalObject, JSValue::decode(key), hash);
-    if (!bucket)
-        OPERATION_RETURN(scope, vm.sentinelMapBucket());
-    OPERATION_RETURN(scope, *bucket);
+    JSMap::TableIndex keyIndex = jsCast<JSMap*>(map)->getKeyIndex(globalObject, JSValue::decode(key), hash);
+    OPERATION_RETURN(scope, toUCPUStrictInt32(keyIndex));
+}
+JSC_DEFINE_JIT_OPERATION(operationSetKeyIndex, UCPUStrictInt32, (JSGlobalObject* globalObject, JSCell* set, EncodedJSValue key, int32_t hash))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSMap::TableIndex keyIndex = jsCast<JSSet*>(set)->getKeyIndex(globalObject, JSValue::decode(key), hash);
+    OPERATION_RETURN(scope, toUCPUStrictInt32(keyIndex));
+}
+JSC_DEFINE_JIT_OPERATION(operationMapValue, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* map, int32_t keyIndex))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSValue value = jsCast<JSMap*>(map)->get(keyIndex);
+    OPERATION_RETURN(scope, JSValue::encode(value));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationJSSetFindBucket, JSCell*, (JSGlobalObject* globalObject, JSCell* map, EncodedJSValue key, int32_t hash))
+JSC_DEFINE_JIT_OPERATION(operationMapStorage, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* cell))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSSet::BucketType** bucket = jsCast<JSSet*>(map)->findBucket(globalObject, JSValue::decode(key), hash);
-    if (!bucket)
-        OPERATION_RETURN(scope, vm.sentinelSetBucket());
-    OPERATION_RETURN(scope, *bucket);
+    OPERATION_RETURN(scope, JSValue::encode(jsCast<JSMap*>(cell)->storageOrSentinel(vm)));
+}
+JSC_DEFINE_JIT_OPERATION(operationSetStorage, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* cell))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, JSValue::encode(jsCast<JSSet*>(cell)->storageOrSentinel(vm)));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationSetAdd, JSCell*, (JSGlobalObject* globalObject, JSCell* set, EncodedJSValue key, int32_t hash))
+JSC_DEFINE_JIT_OPERATION(operationMapIterationNext, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* cell, int32_t index))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* bucket = jsCast<JSSet*>(set)->addNormalized(globalObject, JSValue::decode(key), JSValue(), hash);
-    if (!bucket)
-        OPERATION_RETURN(scope, vm.sentinelSetBucket());
-    OPERATION_RETURN(scope, bucket);
+    if (cell == vm.orderedHashTableSentinel())
+        OPERATION_RETURN(scope, JSValue::encode(vm.orderedHashTableSentinel()));
+
+    JSMap::Storage& storage = *jsCast<JSMap::Storage*>(cell);
+    OPERATION_RETURN(scope, JSValue::encode(JSMap::Helper::nextAndUpdateIterationEntry(vm, storage, index)));
+}
+JSC_DEFINE_JIT_OPERATION(operationMapIterationEntry, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* cell))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(cell != vm.orderedHashTableSentinel());
+    JSMap::Storage& storage = *jsCast<JSMap::Storage*>(cell);
+    OPERATION_RETURN(scope, JSValue::encode(JSMap::Helper::getIterationEntry(storage)));
+}
+JSC_DEFINE_JIT_OPERATION(operationMapIterationEntryKey, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* cell))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(cell != vm.orderedHashTableSentinel());
+    JSMap::Storage& storage = *jsCast<JSMap::Storage*>(cell);
+    OPERATION_RETURN(scope, JSValue::encode(JSMap::Helper::getIterationEntryKey(storage)));
+}
+JSC_DEFINE_JIT_OPERATION(operationMapIterationEntryValue, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* cell))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(cell != vm.orderedHashTableSentinel());
+    JSMap::Storage& storage = *jsCast<JSMap::Storage*>(cell);
+    OPERATION_RETURN(scope, JSValue::encode(JSMap::Helper::getIterationEntryValue(storage)));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMapSet, JSCell*, (JSGlobalObject* globalObject, JSCell* map, EncodedJSValue key, EncodedJSValue value, int32_t hash))
+JSC_DEFINE_JIT_OPERATION(operationSetIterationNext, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* cell, int32_t index))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* bucket = jsCast<JSMap*>(map)->addNormalized(globalObject, JSValue::decode(key), JSValue::decode(value), hash);
-    if (!bucket)
-        OPERATION_RETURN(scope, vm.sentinelMapBucket());
-    OPERATION_RETURN(scope, bucket);
+    if (cell == vm.orderedHashTableSentinel())
+        OPERATION_RETURN(scope, JSValue::encode(vm.orderedHashTableSentinel()));
+
+    JSSet::Storage& storage = *jsCast<JSSet::Storage*>(cell);
+    OPERATION_RETURN(scope, JSValue::encode(JSSet::Helper::nextAndUpdateIterationEntry(vm, storage, index)));
+}
+JSC_DEFINE_JIT_OPERATION(operationSetIterationEntry, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* cell))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(cell != vm.orderedHashTableSentinel());
+    JSSet::Storage& storage = *jsCast<JSSet::Storage*>(cell);
+    OPERATION_RETURN(scope, JSValue::encode(JSSet::Helper::getIterationEntry(storage)));
+}
+JSC_DEFINE_JIT_OPERATION(operationSetIterationEntryKey, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* cell))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(cell != vm.orderedHashTableSentinel());
+    JSSet::Storage& storage = *jsCast<JSSet::Storage*>(cell);
+    OPERATION_RETURN(scope, JSValue::encode(JSSet::Helper::getIterationEntryKey(storage)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationMapIteratorNext, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* cell))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, JSValue::encode(jsCast<JSMapIterator*>(cell)->next(vm)));
+}
+JSC_DEFINE_JIT_OPERATION(operationMapIteratorKey, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* cell))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, JSValue::encode(jsCast<JSMapIterator*>(cell)->nextKey(vm)));
+}
+JSC_DEFINE_JIT_OPERATION(operationMapIteratorValue, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* cell))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, JSValue::encode(jsCast<JSMapIterator*>(cell)->nextValue(vm)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationSetIteratorNext, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* cell))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, JSValue::encode(jsCast<JSSetIterator*>(cell)->next(vm)));
+}
+JSC_DEFINE_JIT_OPERATION(operationSetIteratorKey, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* cell))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, JSValue::encode(jsCast<JSSetIterator*>(cell)->nextKey(vm)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationSetAdd, void, (JSGlobalObject* globalObject, JSCell* set, EncodedJSValue key, int32_t hash))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    jsCast<JSSet*>(set)->addNormalized(globalObject, JSValue::decode(key), JSValue(), hash);
+    OPERATION_RETURN(scope);
+}
+JSC_DEFINE_JIT_OPERATION(operationMapSet, void, (JSGlobalObject* globalObject, JSCell* map, EncodedJSValue key, EncodedJSValue value, int32_t hash))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    jsCast<JSMap*>(map)->addNormalized(globalObject, JSValue::decode(key), JSValue::decode(value), hash);
+    OPERATION_RETURN(scope);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationSetDelete, size_t, (JSGlobalObject* globalObject, JSCell* set, EncodedJSValue key, int32_t hash))

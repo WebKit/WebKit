@@ -32,6 +32,7 @@
 #include "FontLoadRequest.h"
 #include "FontSelectionAlgorithm.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

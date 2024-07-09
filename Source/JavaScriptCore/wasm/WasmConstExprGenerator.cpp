@@ -39,6 +39,7 @@
 #include "WasmTypeDefinition.h"
 #include <wtf/Assertions.h>
 #include <wtf/Expected.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC { namespace Wasm {
 

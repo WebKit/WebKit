@@ -34,6 +34,7 @@
 #include "LocalFrame.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

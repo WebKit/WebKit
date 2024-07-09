@@ -46,6 +46,8 @@ struct CharacterRange {
     CharacterRange() = default;
     constexpr CharacterRange(uint64_t location, uint64_t length);
 
+    bool operator==(const CharacterRange&) const = default;
+
 #if USE(CF)
     constexpr CharacterRange(CFRange);
     constexpr operator CFRange() const;

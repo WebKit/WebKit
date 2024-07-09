@@ -40,6 +40,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WebCoreOpaqueRoot.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

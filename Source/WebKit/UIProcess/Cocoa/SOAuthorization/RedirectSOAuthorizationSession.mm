@@ -33,6 +33,7 @@
 #import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/ResourceResponse.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/text/MakeString.h>
 
 #define AUTHORIZATIONSESSION_RELEASE_LOG(fmt, ...) RELEASE_LOG(AppSSO, "%p - [InitiatingAction=%s][State=%s] RedirectSOAuthorizationSession::" fmt, this, initiatingActionString().characters(), stateString().characters(), ##__VA_ARGS__)
 

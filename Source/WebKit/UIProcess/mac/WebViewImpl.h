@@ -714,7 +714,8 @@ public:
 
 #if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
     bool canHandleContextMenuWritingTools() const;
-    void handleContextMenuWritingTools(WebCore::IntRect selectionBoundsInRootView);
+    // FIXME: (rdar://127608508) Remove all uses of this method when possible, in favor of the non-deprecated implementation.
+    void handleContextMenuWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView);
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)

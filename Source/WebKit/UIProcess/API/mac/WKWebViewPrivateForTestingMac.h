@@ -57,6 +57,10 @@
 
 @property (nonatomic, readonly) BOOL _secureEventInputEnabledForTesting;
 
+- (void)_createFlagsChangedEventMonitorForTesting;
+
+- (void)_removeFlagsChangedEventMonitorForTesting;
+
 @end
 
 #endif // !TARGET_OS_IPHONE

@@ -87,6 +87,8 @@ public:
 
     bool requiresLayer() const override;
 
+    LayoutPoint firstInlineBoxTopLeft() const;
+
 protected:
     void willBeDestroyed() override;
 
@@ -115,7 +117,6 @@ private:
     LayoutUnit offsetTop() const final;
     LayoutUnit offsetWidth() const final { return linesBoundingBox().width(); }
     LayoutUnit offsetHeight() const final { return linesBoundingBox().height(); }
-    LayoutPoint firstInlineBoxTopLeft() const;
 
 protected:
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;

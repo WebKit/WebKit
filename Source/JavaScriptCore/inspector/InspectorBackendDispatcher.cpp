@@ -30,6 +30,7 @@
 #include "InspectorFrontendRouter.h"
 #include <wtf/JSONValues.h>
 #include <wtf/SetForScope.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {

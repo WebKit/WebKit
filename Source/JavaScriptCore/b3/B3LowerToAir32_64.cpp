@@ -265,6 +265,12 @@ private:
     {
         switch (value->opcode()) {
         case Trunc:
+            // Copy propagation returns the tmp of a child for the tmp of a
+            // parent, but that could result in a wide tmp for an Int32.
+            // XXX: be smarter and resolve to the low Tmp
+            if (value->type().kind() == Int32)
+                return false;
+            FALLTHROUGH;
         case Identity:
         case Opaque:
             return true;
@@ -962,9 +968,6 @@ private:
     {
         Air::Opcode opcode = opcodeForType(opcode32, opcode64, opcodeDouble, opcodeFloat, value->type());
 
-        if (appendUnOp32_64(opcode32, value))
-            return;
-
         Tmp result = tmp(m_value);
 
         // Two operand forms like:
@@ -1053,8 +1056,6 @@ private:
     {
         Air::Opcode opcode = opcodeForType(opcode32, opcode64, opcodeDouble, opcodeFloat, left->type());
 
-        if ((m_value->type() == Int64) && appendBinOp32_64(opcode32, opcode64, left, right))
-            return;
         Tmp result = tmp(m_value);
 
         // Three-operand forms like:
@@ -1195,209 +1196,11 @@ private:
             append(kind, std::forward<Arguments>(arguments)...);
     }
 
-    bool appendLoad32_64(MemoryValue *memory)
-    {
-        if (memory->hasFence())
-            return false; // XXX: To be implemented
-        auto* base = memory->lastChild();
-        auto highBytes = effectiveAddr(base, memory->offset() + 4, Width32);
-        auto lowBytes = effectiveAddr(base, memory->offset(), Width32);
-        auto destTmp = someTmp(m_value);
-        append(trappingInst(m_value, Air::Move32, m_value, highBytes, hiTmp(destTmp)));
-        append(trappingInst(m_value, Air::Move32, m_value, lowBytes, loTmp(destTmp)));
-        return true;
-    }
-
-    bool appendUnOp32_64(Air::Opcode opcode32, Value *value)
-    {
-        using namespace Air;
-        ASSERT(m_value->type() == Int64);
-        if (opcode32 == Move32) {
-            auto resultTmp = someTmp(m_value);
-            append(Move, tmp(value), loTmp(resultTmp));
-            append(Move, Arg::imm(0), hiTmp(resultTmp));
-            return true;
-        }
-        return false;
-    }
-
-    bool opcodeIsNaturallyParallel(Air::Opcode opcode)
-    {
-        switch (opcode) {
-        case Air::And64:
-        case Air::Or64:
-        case Air::Xor64:
-        case Air::Not64:
-            return true;
-        default:
-            return false;
-        }
-    }
-
-    bool appendBinOp32_64(Air::Opcode opcode32, Air::Opcode opcode64, Value *left, Value* right)
-    {
-        ASSERT(m_value->type() == Int64);
-
-        if (isValidForm(opcode64, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
-            LogicalTmp leftTmp = someTmp(left);
-            LogicalTmp rightTmp = someTmp(right);
-            LogicalTmp resultTmp = someTmp(m_value);
-            append(opcode64,
-                   hiTmp(leftTmp), loTmp(leftTmp),
-                   hiTmp(rightTmp), loTmp(rightTmp),
-                   hiTmp(resultTmp), loTmp(resultTmp));
-            return true;
-        }
-        if ((left->type() == Int64)
-            && (right->type() == Int64)
-            && opcodeIsNaturallyParallel(opcode64)
-            && isValidForm(opcode32, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
-                auto leftTmp = someTmp(left);
-                auto rightTmp = someTmp(right);
-                auto resultTmp = someTmp(m_value);
-                append(opcode32, loTmp(leftTmp), loTmp(rightTmp), loTmp(resultTmp));
-                append(opcode32, hiTmp(leftTmp), hiTmp(rightTmp), hiTmp(resultTmp));
-                return true;
-        }
-        return false;
-    }
-
-    void appendShiftMask(Air::BasicBlock *block, Tmp amountTmp, LogicalTmp valueTmp, LogicalTmp resultTmp, Arg tmpShift, bool needMask)
-    {
-        using namespace Air;
-        appendToBlock(block, Move, amountTmp, tmpShift);
-        appendToBlock(block, Move, hiTmp(valueTmp), hiTmp(resultTmp));
-        appendToBlock(block, Move, loTmp(valueTmp), loTmp(resultTmp));
-        if (needMask)
-            appendToBlock(block, And32, Arg::imm(63), tmpShift, tmpShift);
-    }
-
-    void appendShiftBelow32(Air::BasicBlock *block, Air::Opcode opcode, LogicalTmp valueTmp, LogicalTmp resultTmp, Arg tmpShift)
-    {
-        using namespace Air;
-        Tmp tmpComplementShift = tmpForType(Int32);
-
-        appendToBlock(block, Move, Arg::imm(32), tmpComplementShift);
-        appendToBlock(block, Sub32, tmpShift, tmpComplementShift);
-        if (opcode == Rshift32) {
-            appendToBlock(block, Urshift32, loTmp(valueTmp), tmpShift, loTmp(resultTmp));
-            appendToBlock(block, Lshift32, hiTmp(valueTmp), tmpComplementShift, tmpComplementShift);
-            appendToBlock(block, Or32, tmpComplementShift, loTmp(resultTmp));
-            appendToBlock(block, Rshift32, hiTmp(valueTmp), tmpShift, hiTmp(resultTmp));
-        } else if (opcode == Urshift32) {
-            appendToBlock(block, Urshift32, loTmp(valueTmp), tmpShift, loTmp(resultTmp));
-            appendToBlock(block, Lshift32, hiTmp(valueTmp), tmpComplementShift, tmpComplementShift);
-            appendToBlock(block, Or32, tmpComplementShift, loTmp(resultTmp));
-            appendToBlock(block, Urshift32, hiTmp(valueTmp), tmpShift, hiTmp(resultTmp));
-        } else { // Lshift32
-            appendToBlock(block, Lshift32, hiTmp(valueTmp), tmpShift, hiTmp(resultTmp));
-            appendToBlock(block, Urshift32, loTmp(valueTmp), tmpComplementShift, tmpComplementShift);
-            appendToBlock(block, Or32, tmpComplementShift, hiTmp(resultTmp));
-            appendToBlock(block, Lshift32, loTmp(valueTmp), tmpShift, loTmp(resultTmp));
-        }
-    }
-
-    void appendShiftAboveEquals32(Air::BasicBlock *block, Air::Opcode opcode, LogicalTmp valueTmp, LogicalTmp resultTmp, Arg tmpShift)
-    {
-        using namespace Air;
-        appendToBlock(block, Sub32, tmpShift, Arg::imm(32), tmpShift);
-        if (opcode == Rshift32) {
-            appendToBlock(block, Rshift32, hiTmp(valueTmp), tmpShift, loTmp(resultTmp));
-            appendToBlock(block, Rshift32, hiTmp(valueTmp), Arg::imm(31), hiTmp(resultTmp));
-        } else if (opcode == Urshift32) {
-            appendToBlock(block, Urshift32, hiTmp(valueTmp), tmpShift, loTmp(resultTmp));
-            appendToBlock(block, Move, Arg::imm(0), hiTmp(resultTmp));
-        } else { // Lshift32
-            appendToBlock(block, Lshift32, loTmp(valueTmp), tmpShift, hiTmp(resultTmp));
-            appendToBlock(block, Move, Arg::imm(0), loTmp(resultTmp));
-        }
-    }
-
-    bool appendShift32_64(Air::Opcode opcode, Value* value, Value* amount)
-    {
-        using namespace Air;
-        auto valueTmp = someTmp(value);
-        Tmp amountTmp;
-        if (amount->type().kind() == Int64)
-            amountTmp = loTmp(someTmp(amount));
-        else {
-            ASSERT(amount->type().kind() == Int32);
-            amountTmp = singularTmp(someTmp(amount));
-        }
-        auto resultTmp = someTmp(m_value);
-        Tmp tmpShift = tmpForType(Int32);
-        if ((value->type() == Int64) && imm(amount) && amount->hasInt()) {
-            uint32_t amountInt = amount->asInt() & 0x3f;
-            // XXX: this only avoids blowing up the CFG by creating
-            // extra blocks that test a constant; it still puts the shift in
-            // a register (i.e. not an immediate) and treats it as a runtime
-            // value.
-            if (!amountInt) {
-                append(Move, loTmp(valueTmp), loTmp(resultTmp));
-                append(Move, hiTmp(valueTmp), hiTmp(resultTmp));
-                return true;
-            }
-            if (amountInt == 32) {
-                if (opcode == Urshift32) {
-                    append(Move, hiTmp(valueTmp), loTmp(resultTmp));
-                    append(Move, Arg::imm(0), hiTmp(resultTmp));
-                    return true;
-                } else if (opcode == Lshift32) {
-                    append(Move, loTmp(valueTmp), hiTmp(resultTmp));
-                    append(Move, Arg::imm(0), loTmp(resultTmp));
-                    return true;
-                }
-            }
-            appendShiftMask(nullptr, amountTmp, valueTmp, resultTmp, tmpShift, false);
-            if (amountInt < 32) {
-                appendShiftBelow32(nullptr, opcode, valueTmp, resultTmp, tmpShift);
-                return true;
-            }
-            appendShiftAboveEquals32(nullptr, opcode, valueTmp, resultTmp, tmpShift);
-            return true;
-        }
-        if ((value->type() == Int64)
-            && isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
-            Air::BasicBlock* beginBlock;
-            Air::BasicBlock* doneBlock;
-            Air::BasicBlock* maskBlock = newBlock();
-            Air::BasicBlock* check = newBlock();
-            Air::BasicBlock* aboveOrEquals32 = newBlock();
-            Air::BasicBlock* below32 = newBlock();
-
-            splitBlock(beginBlock, doneBlock);
-
-            append(Air::Jump);
-            beginBlock->setSuccessors(maskBlock);
-            maskBlock->setSuccessors(doneBlock, check);
-            check->setSuccessors(below32, aboveOrEquals32);
-            below32->setSuccessors(doneBlock);
-            aboveOrEquals32->setSuccessors(doneBlock);
-
-            appendShiftMask(maskBlock, amountTmp, valueTmp, resultTmp, tmpShift, true);
-            maskBlock->append(BranchTest32, m_value, Arg::resCond(MacroAssembler::Zero), tmpShift, tmpShift);
-
-            check->append(Branch32, m_value, Arg::relCond(MacroAssembler::Below), tmpShift, Arg::imm(32));
-
-            appendShiftAboveEquals32(aboveOrEquals32, opcode, valueTmp, resultTmp, tmpShift);
-            aboveOrEquals32->append(Air::Jump, m_value);
-
-            appendShiftBelow32(below32, opcode, valueTmp, resultTmp, tmpShift);
-            below32->append(Air::Jump, m_value);
-
-            return true;
-        }
-        return false;
-    }
-
     template<Air::Opcode opcode32, Air::Opcode opcode64>
     void appendShift(Value* value, Value* amount)
     {
         using namespace Air;
         Air::Opcode opcode = opcodeForType(opcode32, opcode64, value->type());
-
-        if ((m_value->type() == Int64) && appendShift32_64(opcode32, value, amount))
-            return;
 
         if (imm(amount)) {
             if (isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Tmp)) {
@@ -1560,9 +1363,9 @@ private:
             }
             break;
         case Width64:
-            RELEASE_ASSERT(is64Bit());
             switch (bank) {
             case GP:
+                RELEASE_ASSERT(is64Bit());
                 return Move;
             case FP:
                 return MoveDouble;
@@ -3214,8 +3017,6 @@ private:
 
         case Load: {
             MemoryValue* memory = m_value->as<MemoryValue>();
-                if ((memory->type() == Int64) && appendLoad32_64(memory))
-                    return;
             Air::Kind kind = moveForType(memory->type());
             if (memory->hasFence()) {
                 if (isX86())
@@ -3340,6 +3141,14 @@ private:
                 return;
             Value* left = m_value->child(0);
             Value* right = m_value->child(1);
+
+            if (m_value->type() == Int64 && isValidForm(Add64, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+                auto leftArg = someArg(left);
+                auto rightArg = someArg(right);
+                auto result = someArg(m_value);
+                append(Add64, leftArg.tmpHi(), leftArg.tmpLo(), rightArg.tmpHi(), rightArg.tmpLo(), result.tmpHi(), result.tmpLo());
+                return;
+            }
 
             auto tryMultiplyAdd = [&] () -> bool {
                 if (imm(right) && !m_valueToTmp[right])
@@ -4159,6 +3968,16 @@ private:
         }
 
         case BitwiseCast: {
+            if (m_value->child(0)->type().kind() == Int64) {
+                auto arg = someArg(m_value->child(0));
+                append(Move64ToDouble, arg.tmpHi(), arg.tmpLo(), someArg(m_value));
+                return;
+            }
+            if (m_value->type().kind() == Int64) {
+                auto result = someArg(m_value);
+                append(MoveDoubleTo64, someArg(m_value->child(0)), result.tmpHi(), result.tmpLo());
+                return;
+            }
             appendUnOp<Move32ToFloat, Move64ToDouble, MoveDoubleTo64, MoveFloatTo32>(m_value->child(0));
             return;
         }
@@ -4757,10 +4576,28 @@ private:
         }
 
         case Trunc: {
+            if (m_value->type() == Int32) {
+                auto input = someArg(m_value->child(0));
+                append(Move, input.tmpLo(), tmp(m_value));
+                return;
+            }
             ASSERT(tmp(m_value->child(0)) == tmp(m_value));
             return;
         }
+        case TruncHigh: {
+            RELEASE_ASSERT(m_value->type() == Int32);
+            auto input = someArg(m_value->child(0));
+            append(Move, input.tmpHi(), tmp(m_value));
+            return;
+        }
 
+        case Stitch: {
+            RELEASE_ASSERT(m_value->type() == Int64);
+            auto result = someArg(m_value);
+            append(Move, tmp(m_value->child(0)), result.tmpHi());
+            append(Move, tmp(m_value->child(1)), result.tmpLo());
+            return;
+        }
         case SExt8: {
             appendUnOp<SignExtend8To32, Air::Oops>(m_value->child(0));
             return;
@@ -4984,7 +4821,7 @@ private:
 
             if (cCall->type() != Void) {
                 forEachImmOrTmp(cCall, [&] (Arg arg, Type, unsigned) {
-                    inst.args.append(arg.tmp());
+                    inst.args.append(arg);
                 });
             }
 

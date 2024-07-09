@@ -49,6 +49,7 @@
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Locker.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 using namespace JSC;

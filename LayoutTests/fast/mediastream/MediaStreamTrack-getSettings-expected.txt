@@ -11,6 +11,7 @@ video track settings:
   settings.frameRate = 30
   settings.groupId = <UUID>
   settings.height = 480
+  settings.powerEfficient = false
   settings.width = 640
 
 audio track settings:
@@ -29,6 +30,7 @@ PASS "facingMode" in track.getCapabilities() is true
 PASS "frameRate" in track.getCapabilities() is true
 PASS "groupId" in track.getCapabilities() is true
 PASS "height" in track.getCapabilities() is true
+PASS "powerEfficient" in track.getCapabilities() is true
 PASS "width" in track.getCapabilities() is true
 PASS "deviceId" in track.getCapabilities() is true
 PASS "echoCancellation" in track.getCapabilities() is true

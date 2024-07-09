@@ -25,7 +25,8 @@
 
 #include "config.h"
 #include "IDBIterateCursorData.h"
-#include <wtf/text/StringConcatenateNumbers.h>
+
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

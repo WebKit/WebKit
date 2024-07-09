@@ -237,6 +237,8 @@ UIProcess/gstreamer/WebPageProxyGStreamer.cpp
 UIProcess/Inspector/glib/RemoteInspectorClient.cpp
 UIProcess/Inspector/glib/RemoteInspectorHTTPServer.cpp
 
+UIProcess/Inspector/wpe/WebInspectorUIProxyWPE.cpp
+
 UIProcess/Launcher/glib/BubblewrapLauncher.cpp
 UIProcess/Launcher/glib/FlatpakLauncher.cpp
 UIProcess/Launcher/glib/ProcessLauncherGLib.cpp
@@ -275,6 +277,8 @@ WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/WebProcessExtensionManager.cpp @no-unify
 
 WebProcess/InjectedBundle/glib/InjectedBundleGlib.cpp
+
+WebProcess/Inspector/wpe/WebInspectorUIWPE.cpp
 
 WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
 

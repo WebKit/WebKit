@@ -36,6 +36,7 @@
 #include "Document.h"
 #include "StylePropertyShorthand.h"
 #include <wtf/FixedVector.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

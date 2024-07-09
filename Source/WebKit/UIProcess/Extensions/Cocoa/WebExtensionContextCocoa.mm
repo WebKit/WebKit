@@ -86,6 +86,7 @@
 #import <wtf/FileSystem.h>
 #import <wtf/URLParser.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/MakeString.h>
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 #import "WebInspectorUIExtensionControllerProxy.h"

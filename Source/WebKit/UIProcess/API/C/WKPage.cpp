@@ -2340,15 +2340,13 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             return false;
         }
 
-        RefPtr<API::Data> webCryptoMasterKey(WebPageProxy& page) override
+        void legacyWebCryptoMasterKey(WebKit::WebPageProxy& page, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler) override
         {
-            if (m_client.copyWebCryptoMasterKey)
-                return adoptRef(toImpl(m_client.copyWebCryptoMasterKey(toAPI(&page), m_client.base.clientInfo)));
-
-            auto masterKey = defaultWebCryptoMasterKey();
-            if (!masterKey)
-                return nullptr;
-            return API::Data::create(WTFMove(*masterKey));
+            if (m_client.copyWebCryptoMasterKey) {
+                if (auto data = adoptRef(toImpl(m_client.copyWebCryptoMasterKey(toAPI(&page), m_client.base.clientInfo))))
+                    return completionHandler(Vector(data->span()));
+            }
+            return completionHandler(defaultWebCryptoMasterKey());
         }
 
         void navigationActionDidBecomeDownload(WebKit::WebPageProxy& page, API::NavigationAction& action, WebKit::DownloadProxy& download) override
@@ -3295,10 +3293,4 @@ void WKPageSetPermissionLevelForTesting(WKPageRef pageRef, WKStringRef origin, b
 {
     if (auto* pageForTesting = toImpl(pageRef)->pageForTesting())
         pageForTesting->setPermissionLevel(toImpl(origin)->string(), allowed);
-}
-
-void WKPageClearOpenerForTesting(WKPageRef pageRef)
-{
-    if (auto* pageForTesting = toImpl(pageRef)->pageForTesting())
-        pageForTesting->clearOpener();
 }

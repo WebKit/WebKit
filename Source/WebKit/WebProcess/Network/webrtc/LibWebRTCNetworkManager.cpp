@@ -161,7 +161,7 @@ void LibWebRTCNetworkManager::networksChanged(const Vector<RTCNetwork>& networks
                 RegistrableDomain domain { document->url() };
                 bool isFirstParty = domain == RegistrableDomain(document->firstPartyForCookies());
                 bool isRelayDisabled = true;
-                WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkRTCProvider::GetInterfaceName { document->url(), webPage->webPageProxyIdentifier(), isFirstParty, isRelayDisabled, WTFMove(domain) }, [weakThis = WeakPtr { *this }] (auto&& interfaceName) {
+                WebProcess::singleton().ensureNetworkProcessConnection().protectedConnection()->sendWithAsyncReply(Messages::NetworkRTCProvider::GetInterfaceName { document->url(), webPage->webPageProxyIdentifier(), isFirstParty, isRelayDisabled, WTFMove(domain) }, [weakThis = WeakPtr { *this }] (auto&& interfaceName) {
                     RefPtr protectedThis = weakThis.get();
                     if (protectedThis && !interfaceName.isNull())
                         protectedThis->signalUsedInterface(WTFMove(interfaceName));

@@ -85,6 +85,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 using namespace Inspector;

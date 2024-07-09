@@ -70,6 +70,7 @@
 #include <JavaScriptCore/SourceCode.h>
 #include <JavaScriptCore/SourceProvider.h>
 #include <JavaScriptCore/StackVisitor.h>
+#include <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include <pal/system/ios/UserInterfaceIdiom.h>
@@ -255,7 +256,7 @@ bool Quirks::shouldHideSearchFieldResultsButton() const
 }
 
 // docs.google.com https://bugs.webkit.org/show_bug.cgi?id=161984
-bool Quirks::isTouchBarUpdateSupressedForHiddenContentEditable() const
+bool Quirks::isTouchBarUpdateSuppressedForHiddenContentEditable() const
 {
 #if PLATFORM(MAC)
     if (!needsQuirks())

@@ -152,9 +152,6 @@ PASS new ApplePaySession(2, request) threw exception TypeError: "amount" is not 
 SETUP: request = validRequest(); request.total = { label: 'label', amount: '-10.00' };
 PASS new ApplePaySession(2, request) threw exception TypeError: Total amount must not be negative..
 
-SETUP: request = validRequest(); request.total = { label: 'label', amount: '10000000000.00' };
-PASS new ApplePaySession(2, request) threw exception TypeError: Total amount is too big..
-
 SETUP: request = validRequest(); request.total = { label: 'label', amount: '10.00', type: 'invalid' };
 PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
 
