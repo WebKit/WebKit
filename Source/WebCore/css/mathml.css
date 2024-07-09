@@ -172,15 +172,6 @@ mroot > *:last-child {
     font-size: 0.5625em; /* This 0.75^2 since the scriptlevel is incremented by 2 in the index. */
     math-style: compact;
 }
-mi {
-    padding-inline-end: 0.1em;
-}
-msub > mi:first-child, msubsup > mi:first-child {
-    padding-inline-end: 0;
-}
-msubsup > mi:first-child + * + * {
-    margin-inline-start: 0.14em; /* This is larger than 0.1em because the child's font-size is smaller than the <msubsup>'s. */
-}
 
 mphantom {
     visibility: hidden;
