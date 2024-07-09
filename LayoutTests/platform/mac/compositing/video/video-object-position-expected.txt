@@ -17,12 +17,6 @@
             (position 2.00 2.00)
             (bounds 120.00 200.00)
           )
-          (children 1
-            (GraphicsLayer
-              (position 2.00 2.00)
-              (bounds 120.00 200.00)
-            )
-          )
         )
         (GraphicsLayer
           (position 151.00 13.00)
@@ -37,12 +31,6 @@
             (position 22.00 12.00)
             (bounds 120.00 200.00)
           )
-          (children 1
-            (GraphicsLayer
-              (position 2.00 2.00)
-              (bounds 120.00 200.00)
-            )
-          )
         )
         (GraphicsLayer
           (position 289.00 13.00)
@@ -52,12 +40,6 @@
           (contents layer (media)
             (position 2.00 2.00)
             (bounds 120.00 200.00)
-          )
-          (children 1
-            (GraphicsLayer
-              (position 2.00 2.00)
-              (bounds 120.00 200.00)
-            )
           )
         )
         (GraphicsLayer
@@ -73,12 +55,6 @@
             (position -8.00 -8.00)
             (bounds 120.00 200.00)
           )
-          (children 1
-            (GraphicsLayer
-              (position 2.00 2.00)
-              (bounds 120.00 200.00)
-            )
-          )
         )
         (GraphicsLayer
           (position 565.00 13.00)
@@ -89,15 +65,9 @@
             (position 2.00 2.00)
             (bounds 120.00 200.00)
           )
-          (children 1
-            (GraphicsLayer
-              (position 2.00 2.00)
-              (bounds 120.00 200.00)
-            )
-          )
         )
         (GraphicsLayer
-          (position 13.00 232.00)
+          (position 13.00 231.00)
           (bounds 124.00 204.00)
           (contentsOpaque 1)
           (drawsContent 1)
@@ -113,7 +83,7 @@
           )
         )
         (GraphicsLayer
-          (position 151.00 232.00)
+          (position 151.00 231.00)
           (bounds 124.00 204.00)
           (contentsOpaque 1)
           (drawsContent 1)
@@ -133,7 +103,7 @@
           )
         )
         (GraphicsLayer
-          (position 289.00 232.00)
+          (position 289.00 231.00)
           (bounds 124.00 204.00)
           (contentsOpaque 1)
           (drawsContent 1)
@@ -149,7 +119,7 @@
           )
         )
         (GraphicsLayer
-          (position 427.00 232.00)
+          (position 427.00 231.00)
           (bounds 124.00 204.00)
           (contentsOpaque 1)
           (drawsContent 1)
@@ -169,7 +139,7 @@
           )
         )
         (GraphicsLayer
-          (position 565.00 232.00)
+          (position 565.00 231.00)
           (bounds 124.00 204.00)
           (contentsOpaque 1)
           (drawsContent 1)
