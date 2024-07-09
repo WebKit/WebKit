@@ -1363,9 +1363,9 @@ private:
             }
             break;
         case Width64:
-            RELEASE_ASSERT(is64Bit());
             switch (bank) {
             case GP:
+                RELEASE_ASSERT(is64Bit());
                 return Move;
             case FP:
                 return MoveDouble;
@@ -3968,6 +3968,16 @@ private:
         }
 
         case BitwiseCast: {
+            if (m_value->child(0)->type().kind() == Int64) {
+                auto arg = someArg(m_value->child(0));
+                append(Move64ToDouble, arg.tmpHi(), arg.tmpLo(), someArg(m_value));
+                return;
+            }
+            if (m_value->type().kind() == Int64) {
+                auto result = someArg(m_value);
+                append(MoveDoubleTo64, someArg(m_value->child(0)), result.tmpHi(), result.tmpLo());
+                return;
+            }
             appendUnOp<Move32ToFloat, Move64ToDouble, MoveDoubleTo64, MoveFloatTo32>(m_value->child(0));
             return;
         }
@@ -4811,7 +4821,7 @@ private:
 
             if (cCall->type() != Void) {
                 forEachImmOrTmp(cCall, [&] (Arg arg, Type, unsigned) {
-                    inst.args.append(arg.tmp());
+                    inst.args.append(arg);
                 });
             }
 

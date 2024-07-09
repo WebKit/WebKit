@@ -29,12 +29,15 @@
 #if USE(JSVALUE32_64) && ENABLE(B3_JIT)
 #include "B3BasicBlock.h"
 #include "B3BlockInsertionSet.h"
+#include "B3Const32Value.h"
+#include "B3ConstPtrValue.h"
 #include "B3InsertionSet.h"
 #include "B3InsertionSetInlines.h"
 #include "B3PhaseScope.h"
 #include "B3Procedure.h"
 #include "B3StackmapGenerationParams.h"
 #include "B3Value.h"
+#include <wtf/CheckedArithmetic.h>
 
 namespace JSC {
 namespace B3 {
@@ -221,6 +224,30 @@ private:
         return ret;
     }
 
+    template <class Fn>
+    Value* unaryCCall(Fn&& function, Type type, Value* arg)
+    {
+        Value* functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(function));
+        return m_insertionSet.insert<CCallValue>(m_index, type, m_origin, Effects::none(), functionAddress, arg);
+    }
+
+    void splitRange(const HeapRange& original, HeapRange&hi, HeapRange&lo)
+    {
+        if (original.distance() == 1) {
+            // XXX: testb3 uses single-byte range for Int64 access.
+            hi = HeapRange(original.begin() + bytesForWidth(Width32));
+            lo = original;
+        } else if (!original || (original == HeapRange::top())) {
+            hi = original;
+            lo = original;
+        } else {
+            RELEASE_ASSERT(original.distance() == bytesForWidth(Width64));
+            hi = HeapRange(original.begin() + bytesForWidth(Width32), original.end());
+            lo = HeapRange(original.begin(), original.begin() + bytesForWidth(Width32));
+            RELEASE_ASSERT(!lo.overlaps(hi));
+        }
+    }
+
     void processValue()
     {
         switch (m_value->opcode()) {
@@ -269,10 +296,7 @@ private:
             }
             if (!hasInt64Arg && m_value->type() != Int64)
                 return;
-            CCallValue* cCall = insert<CCallValue>(m_index, m_value->type(), m_origin, m_value->child(0));
-            cCall->effects = m_value->effects();
             Vector<Value*> args;
-            RELEASE_ASSERT(cCall->numChildren() == 1);
             for (size_t index = 1; index < m_value->numChildren(); ++index) {
                 Value* child = m_value->child(index);
                 if (child->type() != Int64)
@@ -282,6 +306,9 @@ private:
                     args.append(valueHiLo(childParts.first, childParts.second));
                 }
             }
+            CCallValue* cCall = insert<CCallValue>(m_index, m_value->type(), m_origin, m_value->child(0));
+            RELEASE_ASSERT(cCall->numChildren() == 1);
+            cCall->effects = m_value->effects();
             cCall->appendArgs(args);
             m_value->replaceWithIdentity(cCall);
             if (m_value->type() == Int64)
@@ -628,14 +655,95 @@ private:
             before->updatePredecessorsAfter();
             return;
         }
+        case Clz: {
+            if (m_value->child(0)->type() != Int64)
+                return;
+            auto input = getMapping(m_value->child(0));
+            Value* thirtyTwo = insert<Const32Value>(m_index, m_origin, 32);
+            Value* clzHi = insert<Value>(m_index, Clz, m_origin, input.first);
+            Value* useHi = insert<Value>(m_index, Below, m_origin, clzHi, thirtyTwo);
+            Value* clzLo = insert<Value>(m_index, Clz, m_origin, input.second);
+            Value* clzIfLo = insert<Value>(m_index, Add, m_origin, clzLo, thirtyTwo);
+            Value* result = insert<Value>(m_index, Select, m_origin, useHi, clzHi, clzIfLo);
+            setMapping(m_value, insert<Const32Value>(m_index, m_origin, 0), result);
+            valueReplaced();
+            return;
+        }
+        case Extract: {
+            if (m_proc.typeAtOffset(m_value->child(0)->type(), m_value->as<ExtractValue>()->index()) != Int64)
+                return;
+            setMapping(m_value, valueHi(m_value), valueLo(m_value));
+            return;
+        }
+        case Abs:
+        case BitwiseCast:
+        case BottomTuple:
+        case Ceil:
         case Const32:
+        case ConstDouble:
+        case ConstFloat:
+        case Div:
+        case DoubleToFloat:
+        case EntrySwitch:
+        case EqualOrUnordered:
+        case Fence:
+        case FloatToDouble:
+        case Floor:
+        case FMax:
+        case FMin:
         case FramePointer:
         case ArgumentReg:
+        case Load8Z:
+        case Load8S:
+        case Load16Z:
+        case Load16S:
+        case Mod:
+        case SExt8:
+        case SExt16:
+        case SlotBase:
+        case Sqrt:
+        case Store8:
+        case Store16:
+        case UDiv:
+        case UMod:
         case Jump:
             return;
+        case Switch: {
+            if (m_value->child(0)->type() != Int64)
+                return;
+            RELEASE_ASSERT_NOT_REACHED(); // XXX: TBD
+        }
         case Trunc: {
             auto input = getMapping(m_value->child(0));
             m_value->replaceWithIdentity(input.second);
+            return;
+        }
+        case Identity: {
+            if (m_value->type() != Int64)
+                return;
+            auto input = getMapping(m_value->child(0));
+            setMapping(m_value, input.first, input.second);
+            valueReplaced();
+            return;
+        }
+        case Select: {
+            Value* selector = m_value->child(0);
+            if (selector->type() == Int64) {
+                auto selectorPair = getMapping(selector);
+                selector = insert<Value>(m_index, BitOr, m_origin, selectorPair.first, selectorPair.second);
+            }
+            if (m_value->child(1)->type() != Int64) {
+                if (selector == m_value->child(0))
+                    return;
+                m_value->replaceWithIdentity(insert<Value>(m_index, Select, m_origin, selector, m_value->child(1), m_value->child(2)));
+                return;
+            }
+            auto left = getMapping(m_value->child(1));
+            auto right = getMapping(m_value->child(2));
+            Value* selectHi = insert<Value>(m_index, Select, m_origin, selector, left.first, right.first);
+            Value* selectLo = insert<Value>(m_index, Select, m_origin, selector, left.second, right.second);
+            setMapping(m_value, selectHi, selectLo);
+            valueReplaced();
             return;
         }
         case ZExt32: {
@@ -644,20 +752,58 @@ private:
             valueReplaced();
             return;
         }
+        case SExt32: {
+            Value* signBit = insert<Value>(m_index, BitAnd, m_origin, m_value->child(0), insert<Const32Value>(m_index, m_origin, 0x80000000));
+            Value* hi = insert<Value>(m_index, SShr, m_origin, signBit, insert<Const32Value>(m_index, m_origin, 31));
+            setMapping(m_value, hi, m_value->child(0));
+            valueReplaced();
+            return;
+        }
+        case SExt8To64: {
+            Value* signBit = insert<Value>(m_index, BitAnd, m_origin, m_value->child(0), insert<Const32Value>(m_index, m_origin, 0x00000080));
+            Value* one = insert<Const32Value>(m_index, m_origin, 1);
+            Value* ones = insert<Const32Value>(m_index, m_origin, 0xffffffff);
+            Value* signIntermediate = insert<Value>(m_index, BitXor, m_origin, insert<Value>(m_index, Sub, m_origin, signBit, one), ones);
+            Value* lo = insert<Value>(m_index, BitOr, m_origin, m_value->child(0), signIntermediate);
+            Value* hi = insert<Value>(m_index, SShr, m_origin, signIntermediate, insert<Const32Value>(m_index, m_origin, 8));
+            setMapping(m_value, hi, lo);
+            valueReplaced();
+            return;
+        }
+        case SExt16To64: {
+            Value* signBit = insert<Value>(m_index, BitAnd, m_origin, m_value->child(0), insert<Const32Value>(m_index, m_origin, 0x00008000));
+            Value* one = insert<Const32Value>(m_index, m_origin, 1);
+            Value* ones = insert<Const32Value>(m_index, m_origin, 0xffffffff);
+            Value* signIntermediate = insert<Value>(m_index, BitXor, m_origin, insert<Value>(m_index, Sub, m_origin, signBit, one), ones);
+            Value* lo = insert<Value>(m_index, BitOr, m_origin, m_value->child(0), signIntermediate);
+            Value* hi = insert<Value>(m_index, SShr, m_origin, signIntermediate, insert<Const32Value>(m_index, m_origin, 16));
+            setMapping(m_value, hi, lo);
+            valueReplaced();
+            return;
+        }
         case Load: {
             if (m_value->type() != Int64)
                 return;
             MemoryValue* memory = m_value->as<MemoryValue>();
-            if (memory->range() != HeapRange::top())
-                RELEASE_ASSERT_NOT_REACHED(); // XXX: TBD
-            if (memory->fenceRange() != HeapRange())
-                RELEASE_ASSERT_NOT_REACHED(); // XXX: TBD
-            MemoryValue* hi = insert<MemoryValue>(m_index, Load, Int32, m_origin, memory->child(0));
-            // XXX: overflow!
-            hi->setOffset(memory->offset() + bytesForWidth(Width32));
+            HeapRange rangeHi, rangeLo;
+            splitRange(memory->range(), rangeHi, rangeLo);
+
+            HeapRange fenceRangeHi, fenceRangeLo;
+            splitRange(memory->fenceRange(), fenceRangeHi, fenceRangeLo);
+
             // Assumes little-endian arch.
+            CheckedInt32 offsetHi = CheckedInt32(memory->offset()) + CheckedInt32(bytesForWidth(Width32));
+            RELEASE_ASSERT(!offsetHi.hasOverflowed());
+
+            MemoryValue* hi = insert<MemoryValue>(m_index, Load, Int32, m_origin, memory->child(0));
+            hi->setOffset(offsetHi);
+            hi->setRange(rangeHi);
+            hi->setFenceRange(fenceRangeHi);
+
             MemoryValue* lo = insert<MemoryValue>(m_index, Load, Int32, m_origin, memory->child(0));
             lo->setOffset(memory->offset());
+            lo->setRange(rangeLo);
+            lo->setFenceRange(fenceRangeLo);
             setMapping(m_value, hi, lo);
             valueReplaced();
             return;
@@ -665,7 +811,55 @@ private:
         case Store: {
             if (m_value->child(0)->type() != Int64)
                 return;
-            RELEASE_ASSERT_NOT_REACHED(); // XXX: TBD
+            MemoryValue* memory = m_value->as<MemoryValue>();
+
+            HeapRange rangeHi, rangeLo;
+            splitRange(memory->range(), rangeHi, rangeLo);
+
+            HeapRange fenceRangeHi, fenceRangeLo;
+            splitRange(memory->fenceRange(), fenceRangeHi, fenceRangeLo);
+
+            auto value = getMapping(m_value->child(0));
+
+            MemoryValue* hi = insert<MemoryValue>(m_index, Store, m_origin, value.first, memory->child(1));
+            CheckedInt32 offsetHi = CheckedInt32(memory->offset()) + CheckedInt32(bytesForWidth(Width32));
+            RELEASE_ASSERT(!offsetHi.hasOverflowed());
+            hi->setOffset(offsetHi);
+            hi->setRange(rangeHi);
+            hi->setFenceRange(fenceRangeHi);
+
+            MemoryValue* lo = insert<MemoryValue>(m_index, Store, m_origin, value.second, memory->child(1));
+            lo->setOffset(memory->offset());
+            lo->setRange(rangeLo);
+            lo->setFenceRange(fenceRangeLo);
+            valueReplaced();
+            return;
+        }
+        case IToD: {
+            if (m_value->child(0)->type() != Int64)
+                return;
+            auto input = getMapping(m_value->child(0));
+            Value* arg = valueHiLo(input.first, input.second);
+            m_value->replaceWithIdentity(unaryCCall(Math::f64_convert_s_i64, m_value->type(), arg));
+            return;
+        }
+        case IToF: {
+            if (m_value->child(0)->type() != Int64)
+                return;
+            auto input = getMapping(m_value->child(0));
+            Value* arg = valueHiLo(input.first, input.second);
+            m_value->replaceWithIdentity(unaryCCall(Math::f32_convert_s_i64, m_value->type(), arg));
+            return;
+        }
+        case Neg: {
+            if (m_value->type() != Int64)
+                return;
+            auto input = getMapping(m_value->child(0));
+            Value* zero32 = insert<Const32Value>(m_index, m_origin, 0);
+            Value* zero = valueHiLo(zero32, zero32);
+            m_value->replaceWithIdentity(insert<Value>(m_index, Sub, m_origin, zero, valueHiLo(input.first, input.second)));
+            setMapping(m_value, valueHi(m_value), valueLo(m_value));
+            return;
         }
         default: {
             dataLogLn("Cannot lower ", deepDump(m_value));
