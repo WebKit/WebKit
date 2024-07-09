@@ -1,0 +1,11 @@
+PASS: Got a match at 6,9 as expected.
+PASS: Got a match at 1,1 as expected.
+PASS: Got a match at 3,3 as expected.
+PASS: Got a match at 12,15 as expected.
+PASS: Got a match at 5,8 as expected.
+PASS: Got a match at 6,9 as expected.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

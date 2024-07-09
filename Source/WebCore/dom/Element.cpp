@@ -5353,11 +5353,6 @@ void Element::createUniqueElementData()
         m_elementData = uncheckedDowncast<ShareableElementData>(*m_elementData).makeUniqueCopy();
 }
 
-bool Element::canContainRangeEndPoint() const
-{
-    return !equalLettersIgnoringASCIICase(attributeWithoutSynchronization(roleAttr), "img"_s);
-}
-
 String Element::resolveURLStringIfNeeded(const String& urlString, ResolveURLs resolveURLs, const URL& base) const
 {
     if (resolveURLs == ResolveURLs::No)

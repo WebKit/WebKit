@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="test-content">
+    <div role="img">First foo</div>
+
+    <form>
+      <fieldset>
+        <input type="text" value="foo1">
+        <input type="text" value="foo2">
+      </fieldset>
+    </form>
+
+    Outer foo
+
+    <div role="img">Last foo</div>
+</div>
+
+<script>
+// We should be able to find all instances of "foo", despite the presence of inputs inside a fieldset, and role="img" containers.
+var output = "";
+
+document.body.offsetTop;
+let selection = getSelection();
+selection.empty();
+
+let expectedRange;
+const expectedRanges = [[6, 9], [1, 1], [3, 3], [12, 15], [5, 8], [6, 9]];
+while (expectedRange = expectedRanges.shift()) {
+    testRunner.findString("foo", ["WrapAround"]);
+    const actualRange = [selection.baseOffset, selection.extentOffset];
+    if (expectedRange[0] !== actualRange[0] || expectedRange[1] !== actualRange[1])
+        output += `FAIL: Expected a match at ${expectedRange} but got a match at ${actualRange} instead.\n`;
+    else
+        output += `PASS: Got a match at ${expectedRange} as expected.\n`;
+}
+document.getElementById("test-content").style.display = "none";
+debug(output);
+
+</script>
+</body>
+</html>
