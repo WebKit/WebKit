@@ -729,6 +729,7 @@ bindings/js/JSCSSStyleValueCustom.cpp
 bindings/js/JSCSSTransformComponentCustom.cpp
 bindings/js/JSUndoItemCustom.cpp
 bindings/js/JSWebAnimationCustom.cpp
+bindings/js/JSWebCodecsAudioDecoderCustom.cpp
 bindings/js/JSWebCodecsVideoDecoderCustom.cpp
 bindings/js/JSWebCodecsAudioEncoderCustom.cpp
 bindings/js/JSWebCodecsVideoEncoderCustom.cpp

@@ -6,7 +6,7 @@
 </head>
 <body>
 <script>
-    description("Tests that VideoDecoder error callback does not leak the document object.");
+    description("Tests that VideoDecoder callbacks do not leak the document object.");
     onload = () => runDocumentLeakTest({ frameURL: "./resources/video-decoder-callbacks-frame.html", framesToCreate: 20 });
 </script>
 <script src="../../resources/js-test-post.js"></script>
