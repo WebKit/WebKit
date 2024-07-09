@@ -74,6 +74,9 @@ public:
     void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
+    WebCodecsEncodedVideoChunkOutputCallback& outputCallbackConcurrently() { return m_output.get(); }
+    WebCodecsErrorCallback& errorCallbackConcurrently() { return m_error.get(); }
+
 private:
     WebCodecsVideoEncoder(ScriptExecutionContext&, Init&&);
 

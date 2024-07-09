@@ -75,6 +75,8 @@ public:
     void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
+    WebCodecsEncodedAudioChunkOutputCallback& outputCallbackConcurrently() { return m_output.get(); }
+    WebCodecsErrorCallback& errorCallbackConcurrently() { return m_error.get(); }
 private:
     WebCodecsAudioEncoder(ScriptExecutionContext&, Init&&);
 
