@@ -337,6 +337,7 @@ static WebKitWebView* createWebViewForAutomationCallback(WebKitAutomationSession
     auto* newWebView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "settings", webkit_web_view_get_settings(view),
         "web-context", webkit_web_view_get_context(view),
+        "display", webkit_web_view_get_display(view),
         "is-controlled-by-automation", TRUE,
         "user-content-manager", webkit_web_view_get_user_content_manager(view),
         "website-policies", webkit_web_view_get_website_policies(view),
