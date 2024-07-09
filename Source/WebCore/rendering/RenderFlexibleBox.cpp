@@ -454,7 +454,8 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
         ChildFrameRects oldChildRects;
         appendChildFrameRects(oldChildRects);
 
-        layoutFlexItems(relayoutChildren);
+        m_flexLines.clear();
+        m_flexLines = layoutFlexItems(relayoutChildren);
 
         endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 
@@ -1290,10 +1291,14 @@ LayoutUnit RenderFlexibleBox::computeFlexBaseSizeForChild(RenderBox& child, Layo
     return mainAxisExtent - mainAxisBorderAndPadding;
 }
 
-void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
+RenderFlexibleBox::FlexLineStates RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
 {
-    if (LayoutIntegration::canUseForFlexLayout(*this))
-        return layoutUsingFlexFormattingContext();
+    ASSERT(m_flexLines.isEmpty());
+    if (LayoutIntegration::canUseForFlexLayout(*this)) {
+        layoutUsingFlexFormattingContext();
+        return { };
+    }
+
     FlexLineStates lineStates;
     LayoutUnit sumFlexBaseSize;
     double totalFlexGrow;
@@ -1370,7 +1375,6 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
         // This will std::move lineItems into a newly-created LineState.
         layoutAndPlaceChildren(crossAxisOffset, lineItems, remainingFreeSpace, relayoutChildren, lineStates, gapBetweenItems);
     }
-
     if (hasLineIfEmpty()) {
         // Even if computeNextFlexLine returns true, the flexbox might not have
         // a line because all our children might be out of flow positioned.
@@ -1386,6 +1390,7 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
 
     updateLogicalHeight();
     repositionLogicalHeightDependentFlexItems(lineStates, gapBetweenLines);
+    return lineStates;
 }
 
 LayoutUnit RenderFlexibleBox::autoMarginOffsetInMainAxis(const FlexItems& flexItems, LayoutUnit& availableFreeSpace)
