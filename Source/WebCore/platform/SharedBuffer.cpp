@@ -195,6 +195,10 @@ String FragmentedSharedBuffer::toHexString() const
 
 RefPtr<ArrayBuffer> FragmentedSharedBuffer::tryCreateArrayBuffer() const
 {
+    if (size() > std::numeric_limits<unsigned>::max()) {
+        WTFLogAlways("SharedBuffer::tryCreateArrayBuffer Unable to create buffer. Requested size is too large (%zu)\n", size());
+        return nullptr;
+    }
     auto arrayBuffer = ArrayBuffer::tryCreateUninitialized(static_cast<unsigned>(size()), 1);
     if (!arrayBuffer) {
         WTFLogAlways("SharedBuffer::tryCreateArrayBuffer Unable to create buffer. Requested size was %zu\n", size());
