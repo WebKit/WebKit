@@ -136,6 +136,16 @@ std::optional<DestinationColorSpace> DestinationColorSpace::asRGB() const
 #endif
 }
 
+bool DestinationColorSpace::supportsOutput() const
+{
+#if USE(CG)
+    return CGColorSpaceSupportsOutput(platformColorSpace());
+#else
+    notImplemented();
+    return true;
+#endif
+}
+
 TextStream& operator<<(TextStream& ts, const DestinationColorSpace& colorSpace)
 {
     if (colorSpace == DestinationColorSpace::SRGB())

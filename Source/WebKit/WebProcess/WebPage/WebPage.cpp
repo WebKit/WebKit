@@ -7848,15 +7848,26 @@ void WebPage::loadAndDecodeImage(WebCore::ResourceRequest&& request, std::option
             RefPtr nativeImage = bitmapImage->primaryNativeImage();
             if (!nativeImage)
                 return completionHandler({ });
-            RefPtr<ShareableBitmap> result;
-            if (sizeConstraint) {
-                FloatRect rect = largestRectWithAspectRatioInsideRect(nativeImage->size().aspectRatio(), FloatRect({ }, *sizeConstraint));
-                result = ShareableBitmap::createFromImageDraw(*nativeImage, nativeImage->colorSpace(), flooredIntSize(rect.size()));
-            } else
-                result = ShareableBitmap::createFromImageDraw(*nativeImage);
-            if (!result)
+
+            FloatSize sourceSize = nativeImage->size();
+            FloatSize destinationSize = sourceSize;
+            if (sizeConstraint)
+                destinationSize = largestRectWithAspectRatioInsideRect(sourceSize.aspectRatio(), FloatRect({ }, sizeConstraint->shrunkTo(sourceSize))).size();
+
+            IntSize roundedDestinationSize = flooredIntSize(destinationSize);
+            auto sourceColorSpace = nativeImage->colorSpace();
+            auto destinationColorSpace = sourceColorSpace.supportsOutput() ? sourceColorSpace : DestinationColorSpace::SRGB();
+            auto bitmap = ShareableBitmap::create({ roundedDestinationSize, destinationColorSpace });
+            if (!bitmap)
                 return completionHandler({ });
-            completionHandler(result.releaseNonNull());
+
+            auto context = bitmap->createGraphicsContext();
+            if (!context)
+                return completionHandler({ });
+
+            context->drawNativeImage(*nativeImage, FloatRect({ }, roundedDestinationSize), FloatRect({ }, sourceSize), { CompositeOperator::Copy });
+
+            completionHandler(bitmap.releaseNonNull());
         });
     });
 }
