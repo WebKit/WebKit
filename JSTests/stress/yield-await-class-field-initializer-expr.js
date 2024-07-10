@@ -53,14 +53,14 @@ function expected(c, result, error) {
     if (c.fieldInitExpr === 'await') {
         // 'await' will parse as an identifier.
         if (c.wrapper === 'none' && c.fieldModifier === 'static') {
-            // In this case, 'await' produces a ReferenceError.
-            return result === null && error !== null;
+            // In this case, 'await' as identifier produces a ReferenceError.
+            return result === null && error instanceof ReferenceError;
         }
-        // In these cases, 'await' identifier has value 'undefined').
+        // In these cases, 'await' as identifier has value 'undefined').
         return result === undefined && error === null;
     }
     // All other cases should result in a SyntaxError.
-    return result === null && error !== null;
+    return result === null && error instanceof SyntaxError;
 }
 
 cases = genTestCases();
