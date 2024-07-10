@@ -11,7 +11,7 @@ http/tests/paymentrequest/paymentrequest-merchantCategoryCode.https.html [ Skip 
 # webkit.org/b/267890 REGRESSION (273260@main): [ iOS17 ] 3 tests in fast/forms/switch regularly timeout
 fast/forms/switch/pointer-tracking-there-and-back-again-rtl.html [ Timeout ImageOnlyFailure ]
 fast/forms/switch/pointer-tracking-there-and-back-again.html [ Timeout ImageOnlyFailure ]
-fast/forms/switch/pointer-tracking.html [ Pass ] # passing now
+fast/forms/switch/pointer-tracking.html [ Pass Timeout ] # appears to be timing out only in stress mode
 
 # -- The below regressed on iOS 18 but are passing on iOS 17 --
 
