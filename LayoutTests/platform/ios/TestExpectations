@@ -150,7 +150,6 @@ http/tests/ssl/applepay [ Pass ]
 webkit.org/b/212975 http/tests/ssl/applepay/PaymentRequest.https.html [ Pass Timeout ]
 
 http/tests/paymentrequest/ApplePayModifier-disbursementRequest.https.html [ Skip ]
-http/tests/paymentrequest/paymentrequest-merchantCategoryCode.https.html [ Skip ]
 http/tests/paymentrequest [ Pass ]
 imported/w3c/web-platform-tests/payment-request [ Pass ]
 imported/w3c/web-platform-tests/payment-request/payment-request-hasenrolledinstrument-method.tentative.https.html [ DumpJSConsoleLogInStdErr ]
@@ -2809,19 +2808,19 @@ webkit.org/b/174120 http/tests/resourceLoadStatistics/user-interaction-in-cross-
 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Skip ]
 http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal.html [ Skip ]
 # Skipped in WK2 expectations because cookie partitioning is only available in macOS High Sierra and iOS 11.
-http/tests/resourceLoadStatistics/cookie-deletion.html [ Pass ]
-http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction.html [ Pass ]
-http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html [ Pass ]
-http/tests/resourceLoadStatistics/add-blocking-to-redirect.html [ Pass ]
-http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Pass ]
-http/tests/resourceLoadStatistics/grandfathering.html [ Pass ]
 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store.html [ Pass ]
 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Pass ]
 http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-redirects.html [ Pass ]
 http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-requests.html [ Pass ]
+http/tests/resourceLoadStatistics/add-blocking-to-redirect.html [ Pass ]
+http/tests/resourceLoadStatistics/cookie-deletion.html [ Pass ]
+http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction.html [ Pass ]
+# http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Pass ] # uncomment when rdar://129872343 is resolved.
+http/tests/resourceLoadStatistics/grandfathering.html [ Pass ]
+http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html [ Pass ]
 
 # The SameSite cookie API is only available in macOS Catalina and above, and thus skipped for WK2 in general.
-http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Pass ]
+# http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Pass ] # uncomment when rdar://129872343 is resolved.
 http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to.html [ Pass ]
 
 http/tests/storageAccess/deny-storage-access-under-opener.html [ Pass ]
@@ -6830,9 +6829,13 @@ http/wpt/opener/parent-access-child-via-windowproxy.html [ Pass ]
 http/wpt/opener/same-site-child-access-parent-iframe-via-windowproxy.html [ Pass ]
 
 # webkit.org/b/267890 REGRESSION (273260@main): [ iOS17 ] 3 tests in fast/forms/switch regularly timeout
-fast/forms/switch/pointer-tracking-there-and-back-again-rtl.html [ Timeout ]
-fast/forms/switch/pointer-tracking-there-and-back-again.html [ Timeout ]
-fast/forms/switch/pointer-tracking.html [ Timeout ]
+# fast/forms/switch/pointer-tracking-there-and-back-again-rtl.html [ Timeout ]
+# fast/forms/switch/pointer-tracking-there-and-back-again.html [ Timeout ]
+# fast/forms/switch/pointer-tracking.html [ Timeout ]
+# UNCOMMENT ABOVE AND REMOVE FROM platform/ios-17/TestExpectations WHEN BELOW IS RESOLVED.
+# rdar://130619586 (REGRESSION (278311@main): [ iOS ] 2 fast/forms/switch/pointer-tracking-there-and-back-again*.html tests are constantly failing / timing out.)
+fast/forms/switch/pointer-tracking-there-and-back-again-rtl.html [ ImageOnlyFailure ]
+fast/forms/switch/pointer-tracking-there-and-back-again.html [ ImageOnlyFailure ]
 
 webkit.org/b/267796 [ Release ] imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF-dynamic.html [ Pass Failure ]
 
@@ -7266,3 +7269,47 @@ webkit.org/b/275963 [ x86_64 ] svg/W3C-SVG-1.1/metadata-example-01-b.svg [ Failu
 webkit.org/b/275963 [ x86_64 ] svg/custom/use-on-symbol-inside-pattern.svg [ Failure ]
 
 webkit.org/b/275962 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/no-referrer-dynamic-url-censored.html [ Failure ]
+
+# rdar://130594018 (REGRESSION (278344@main?): [ iOS 18 Release ] 2 http/tests/xmlhttprequest/* layout tests are constantly failing.)
+[ Release ] http/tests/xmlhttprequest/resetting-timeout-to-zero.html [ Failure ]
+[ Release ] http/tests/xmlhttprequest/timeout-greater-than-default-network-timeout.html [ Failure ]
+
+# rdar://129189203 (REGRESSION (279427@main-279418@main?): [ iOS 18 x86_64 ] 11X imported/w3c/web-platform-tests/fetch/api/basic/scheme* (layout-tests) are flaky text failures)
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.sharedworker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-blob.sub.any.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-blob.sub.any.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-data.any.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-data.any.sharedworker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-data.any.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-others.sub.any.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-others.sub.any.sharedworker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-others.sub.any.worker.html [ Pass Failure ]
+
+# rdar://127374397 (REGRESSION: [ iOS 18 ]  18X imported/w3c/web-platform-tests/css/css-counter-styles  test are consistent image failures)
+imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-050.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-045.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/katakana-iroha/css3-counter-styles-040.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/katakana/css3-counter-styles-037.html [ ImageOnlyFailure ]
+
+# rdar://127258636 (REGRESSION: [ iOS 18 ] 8 editing/selection/vertical-lr-ltr-extend-line tests are consistent failures)
+editing/selection/vertical-lr-ltr-extend-line-backward-br.html [ Failure ]
+editing/selection/vertical-lr-ltr-extend-line-forward-br.html [ Failure ]
+editing/selection/vertical-rl-ltr-extend-line-backward-br.html [ Failure ]
+editing/selection/vertical-rl-ltr-extend-line-backward-p.html [ Failure ]
+editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html [ Failure ]
+editing/selection/vertical-rl-ltr-extend-line-forward-br.html [ Failure ]
+editing/selection/vertical-rl-ltr-extend-line-forward-p.html [ Failure ]
+editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html [ Failure ]
+
+# rdar://121281240 -- failure on the old HTTP stack, fixed in the unified HTTP stack
+imported/w3c/web-platform-tests/cookie-store/change_eventhandler_for_http_cookie_and_set_cookie_headers.https.window.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/name/name-ctl.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/value/value-ctl.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/h1-parsing/lone-cr.window.html [ Pass Failure ]
+
+# rdar://129872343 (REGRESSION: [ iOS 18 ] 19x http/tests/resourceLoadStatistics/* layout-tests are constant failures)
+# FIXME: needs new bug.
+http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Failure ]
+http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Failure ]
