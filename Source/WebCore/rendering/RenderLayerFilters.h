@@ -37,9 +37,12 @@
 
 namespace WebCore {
 
+namespace Style {
+class FilterOperations;
+}
+
 class CachedSVGDocument;
 class Element;
-class FilterOperations;
 class GraphicsContextSwitcher;
 
 class RenderLayerFilters final : private CachedSVGDocumentClient {
@@ -58,7 +61,7 @@ public:
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const;
     bool hasSourceImage() const;
 
-    void updateReferenceFilterClients(const FilterOperations&);
+    void updateReferenceFilterClients(const Style::FilterOperations&);
     void removeReferenceFilterClients();
 
     void setPreferredFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) { m_preferredFilterRenderingModes = preferredFilterRenderingModes; }

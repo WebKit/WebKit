@@ -1537,7 +1537,7 @@ class ReferenceTerm:
             BuiltinSchema.OptionalParameter("mode", values={"svg": "SVGAttributeMode", "strict": "HTMLStandardMode"}, default=None),
             BuiltinSchema.OptionalParameter("unitless", values={"unitless-allowed": "UnitlessQuirk::Allow"}, default="UnitlessQuirk::Forbid")),
         BuiltinSchema.Entry("integer", "consumeInteger",
-            BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "IntegerValueRange::NonNegative", "[1,inf]": "IntegerValueRange::Positive"}, default="IntegerValueRange::All")),
+            BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "IntegerRawValueRange::NonNegative", "[1,inf]": "IntegerRawValueRange::Positive"}, default="IntegerRawValueRange::All")),
         BuiltinSchema.Entry("number", "consumeNumber",
             # FIXME: "FontWeight" is not real. Add support for arbitrary ranges.
             BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "ValueRange::NonNegative", "[1,1000]": "ValueRange::FontWeight"}, default="ValueRange::All")),
@@ -3971,6 +3971,7 @@ class GenerateCSSPropertyParsing:
                     "CSSPropertyParser.h",
                     "CSSPropertyParserConsumer+Angle.h",
                     "CSSPropertyParserConsumer+Color.h",
+                    "CSSPropertyParserConsumer+Filter.h",
                     "CSSPropertyParserConsumer+Ident.h",
                     "CSSPropertyParserConsumer+Integer.h",
                     "CSSPropertyParserConsumer+Image.h",

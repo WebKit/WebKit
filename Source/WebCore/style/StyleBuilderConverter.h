@@ -154,7 +154,7 @@ public:
     static MasonryAutoFlow convertMasonryAutoFlow(BuilderState&, const CSSValue&);
     static std::optional<float> convertPerspective(BuilderState&, const CSSValue&);
     static std::optional<Length> convertMarqueeIncrement(BuilderState&, const CSSValue&);
-    static std::optional<FilterOperations> convertFilterOperations(BuilderState&, const CSSValue&);
+    static FilterOperations convertStyleFilterOperations(BuilderState&, const CSSValue&);
     static ListStyleType convertListStyleType(const BuilderState&, const CSSValue&);
 #if PLATFORM(IOS_FAMILY)
     static bool convertTouchCallout(BuilderState&, const CSSValue&);
@@ -1515,9 +1515,9 @@ inline std::optional<Length> BuilderConverter::convertMarqueeIncrement(BuilderSt
     return length;
 }
 
-inline std::optional<FilterOperations> BuilderConverter::convertFilterOperations(BuilderState& builderState, const CSSValue& value)
+inline FilterOperations BuilderConverter::convertStyleFilterOperations(BuilderState& builderState, const CSSValue& value)
 {
-    return builderState.createFilterOperations(value);
+    return builderState.createStyleFilterOperations(value);
 }
 
 inline FontFeatureSettings BuilderConverter::convertFontFeatureSettings(BuilderState&, const CSSValue& value)

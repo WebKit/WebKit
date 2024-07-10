@@ -35,6 +35,7 @@
 #include "RenderElementInlines.h"
 #include "RenderLayerModelObject.h"
 #include "RenderStyleInlines.h"
+#include "StyleFilterOperations.h"
 #include "TransformOperationData.h"
 
 namespace WebCore {
@@ -135,8 +136,8 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
         offsetDistance = { path ? path->length() : 0.0f, LengthType:: Fixed };
     }
 
-    filter = style.filter();
-    backdropFilter = style.backdropFilter();
+    filter = style.filter().resolve(style);
+    backdropFilter = style.backdropFilter().resolve(style);
 }
 
 TransformationMatrix AcceleratedEffectValues::computedTransformationMatrix(const FloatRect& boundingBox) const

@@ -42,21 +42,18 @@ namespace WebCore {
 class PlatformCALayer;
 
 #if PLATFORM(MAC)
-using TypedFilterPresentationModifier = std::pair<FilterOperation::Type, RetainPtr<CAPresentationModifier>>;
+using TypedFilterPresentationModifier = std::pair<FilterOperations::Type, RetainPtr<CAPresentationModifier>>;
 #endif
 
 class PlatformCAFilters {
 public:
     WEBCORE_EXPORT static void setFiltersOnLayer(PlatformLayer*, const FilterOperations&, bool backdropIsOpaque);
     WEBCORE_EXPORT static void setBlendingFiltersOnLayer(PlatformLayer*, const BlendMode);
-    static bool isAnimatedFilterProperty(FilterOperation::Type);
-    static String animatedFilterPropertyName(FilterOperation::Type);
+    static bool isAnimatedFilterProperty(FilterOperations::Type);
+    static ASCIILiteral animatedFilterPropertyName(FilterOperations::Type);
     static bool isValidAnimatedFilterPropertyName(const String&);
 
-    WEBCORE_EXPORT static RetainPtr<NSValue> filterValueForOperation(const FilterOperation&);
-
-    // A null operation indicates that we should make a "no-op" filter of the given type.
-    static RetainPtr<NSValue> colorMatrixValueForFilter(FilterOperation::Type, const FilterOperation*);
+    WEBCORE_EXPORT static RetainPtr<NSValue> filterValueForOperation(const FilterOperations::FilterOperation&);
 
 #if PLATFORM(MAC)
     WEBCORE_EXPORT static void presentationModifiers(const FilterOperations& initialFilters, const FilterOperations* canonicalFilters, Vector<TypedFilterPresentationModifier>& presentationModifiers, RetainPtr<CAPresentationModifierGroup>&);

@@ -62,12 +62,6 @@ namespace CSSPropertyParserHelpers {
 
 RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange&);
 
-enum class AllowedFilterFunctions {
-    PixelFilters,
-    ColorFilters
-};
-
-RefPtr<CSSValue> consumeFilter(CSSParserTokenRange&, const CSSParserContext&, AllowedFilterFunctions);
 RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange&, const CSSParserContext&, bool allowInset, bool allowSpread);
 
 struct FontStyleRaw {

@@ -26,13 +26,16 @@
 
 namespace WebCore {
 
+namespace Style {
+class FilterOperations;
+}
+
 class Animation;
 class CSSFunctionValue;
 class CSSPrimitiveValue;
 class CSSValue;
 class CSSValueList;
 class Element;
-class FilterOperations;
 class MutableStyleProperties;
 class Node;
 class RenderElement;
@@ -80,7 +83,7 @@ public:
     bool propertyMatches(CSSPropertyID, CSSValueID) const;
 
     enum class AdjustPixelValuesForComputedStyle : bool { No, Yes };
-    static Ref<CSSValue> valueForFilter(const RenderStyle&, const FilterOperations&, AdjustPixelValuesForComputedStyle = AdjustPixelValuesForComputedStyle::Yes);
+    static Ref<CSSValue> valueForFilter(const RenderStyle&, const Style::FilterOperations&, AdjustPixelValuesForComputedStyle = AdjustPixelValuesForComputedStyle::Yes);
 
     static Ref<CSSPrimitiveValue> currentColorOrValidColor(const RenderStyle&, const StyleColor&);
     static Ref<CSSFunctionValue> matrixTransformValue(const TransformationMatrix&, const RenderStyle&);
@@ -94,7 +97,6 @@ private:
 
     RefPtr<CSSValue> svgPropertyValue(CSSPropertyID) const;
     Ref<CSSValue> adjustSVGPaint(SVGPaintType, const String& url, Ref<CSSPrimitiveValue> color) const;
-    static Ref<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, const RenderStyle&, AdjustPixelValuesForComputedStyle = AdjustPixelValuesForComputedStyle::Yes);
 
     Ref<CSSValueList> getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand&) const;
     RefPtr<CSSValueList> getCSSPropertyValuesFor2SidesShorthand(const StylePropertyShorthand&) const;

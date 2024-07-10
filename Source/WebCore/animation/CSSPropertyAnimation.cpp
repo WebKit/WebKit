@@ -64,6 +64,7 @@
 #include "StyleCachedImage.h"
 #include "StyleCrossfadeImage.h"
 #include "StyleFilterImage.h"
+#include "StyleFilterOperations.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include <algorithm>
@@ -335,14 +336,14 @@ static inline RefPtr<ShapeValue> blendFunc(ShapeValue* from, ShapeValue* to, con
     return from->blend(*to, context);
 }
 
-static inline FilterOperations blendFunc(const FilterOperations& from, const FilterOperations& to, const CSSPropertyBlendingContext& context)
+static inline Style::FilterOperations blendFunc(const Style::FilterOperations& from, const Style::FilterOperations& to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const CSSPropertyBlendingContext& context)
 {
-    return from.blend(to, context);
+    return Style::FilterOperations::blend(from, to, fromStyle, toStyle, context);
 }
 
-static inline RefPtr<StyleImage> blendFilter(RefPtr<StyleImage> inputImage, const FilterOperations& from, const FilterOperations& to, const CSSPropertyBlendingContext& context)
+static inline RefPtr<StyleImage> blendFilter(RefPtr<StyleImage> inputImage, const Style::FilterOperations& from, const Style::FilterOperations& to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const CSSPropertyBlendingContext& context)
 {
-    auto filterResult = from.blend(to, context);
+    auto filterResult = blendFunc(from, to, fromStyle, toStyle, context);
     return StyleFilterImage::create(WTFMove(inputImage), WTFMove(filterResult));
 }
 
@@ -448,7 +449,7 @@ static inline RefPtr<StyleImage> crossfadeBlend(StyleCachedImage& fromStyleImage
     return StyleCrossfadeImage::create(&fromStyleImage, &toStyleImage, context.progress, false);
 }
 
-static inline RefPtr<StyleImage> blendFunc(StyleImage* from, StyleImage* to, const CSSPropertyBlendingContext& context)
+static inline RefPtr<StyleImage> blendFunc(StyleImage* from, StyleImage* to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const CSSPropertyBlendingContext& context)
 {
     if (!context.progress)
         return from;
@@ -469,7 +470,7 @@ static inline RefPtr<StyleImage> blendFunc(StyleImage* from, StyleImage* to, con
         // Animation of generated images just possible if input images are equal.
         // Otherwise fall back to cross fade animation.
         if (fromFilter->equalInputImages(*toFilter) && is<StyleCachedImage>(fromFilter->inputImage()))
-            return blendFilter(fromFilter->inputImage(), fromFilter->filterOperations(), toFilter->filterOperations(), context);
+            return blendFilter(fromFilter->inputImage(), fromFilter->filterOperations(), toFilter->filterOperations(), fromStyle, toStyle, context);
     } else if (auto [fromCrossfade, toCrossfade] = std::tuple { dynamicDowncast<StyleCrossfadeImage>(*from), dynamicDowncast<StyleCrossfadeImage>(*to) }; fromCrossfade && toCrossfade) {
         if (fromCrossfade->equalInputImages(*toCrossfade)) {
             if (auto crossfadeBlend = toCrossfade->blend(*fromCrossfade, context))
@@ -479,12 +480,12 @@ static inline RefPtr<StyleImage> blendFunc(StyleImage* from, StyleImage* to, con
         RefPtr fromFilterInputImage = dynamicDowncast<StyleCachedImage>(fromFilter->inputImage());
 
         if (fromFilterInputImage && toCachedImage->equals(*fromFilterInputImage))
-            return blendFilter(WTFMove(fromFilterInputImage), fromFilter->filterOperations(), FilterOperations(), context);
+            return blendFilter(WTFMove(fromFilterInputImage), fromFilter->filterOperations(), Style::FilterOperations { }, fromStyle, toStyle, context);
     } else if (auto [fromCachedImage, toFilter] = std::tuple { dynamicDowncast<StyleCachedImage>(*from), dynamicDowncast<StyleFilterImage>(*to) }; fromCachedImage && toFilter) {
         RefPtr toFilterInputImage = dynamicDowncast<StyleCachedImage>(toFilter->inputImage());
 
         if (toFilterInputImage && fromCachedImage->equals(*toFilterInputImage))
-            return blendFilter(WTFMove(toFilterInputImage), FilterOperations(), toFilter->filterOperations(), context);
+            return blendFilter(WTFMove(toFilterInputImage), Style::FilterOperations { }, toFilter->filterOperations(), fromStyle, toStyle, context);
     }
 
     auto* fromCachedImage = dynamicDowncast<StyleCachedImage>(*from);
@@ -501,7 +502,7 @@ static inline RefPtr<StyleImage> blendFunc(StyleImage* from, StyleImage* to, con
     return to;
 }
 
-static inline NinePieceImage blendFunc(const NinePieceImage& from, const NinePieceImage& to, const CSSPropertyBlendingContext& context)
+static inline NinePieceImage blendFunc(const NinePieceImage& from, const NinePieceImage& to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const CSSPropertyBlendingContext& context)
 {
     if (!from.hasImage() || !to.hasImage())
         return to;
@@ -516,7 +517,7 @@ static inline NinePieceImage blendFunc(const NinePieceImage& from, const NinePie
             return to;
     }
 
-    return NinePieceImage(blendFunc(from.image(), to.image(), context),
+    return NinePieceImage(blendFunc(from.image(), to.image(), fromStyle, toStyle, context),
         from.imageSlices(), from.fill(), from.borderSlices(), from.overridesBorderWidths(), from.outset(), from.horizontalRule(), from.verticalRule());
 }
 
@@ -1426,11 +1427,12 @@ private:
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyWrapperShape);
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleImagePropertyWrapper);
-class StyleImagePropertyWrapper final : public RefCountedPropertyWrapper<StyleImage> {
+class StyleImagePropertyWrapper final : public PropertyWrapperGetter<StyleImage*> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleImagePropertyWrapper);
 public:
     StyleImagePropertyWrapper(CSSPropertyID property, StyleImage* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(RefPtr<StyleImage>&&))
-        : RefCountedPropertyWrapper(property, getter, setter)
+        : PropertyWrapperGetter<StyleImage*>(property, getter)
+        , m_setter(setter)
     {
     }
 
@@ -1449,8 +1451,35 @@ private:
     {
         return value(from) && value(to);
     }
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
+    {
+        (destination.*this->m_setter)(blendFunc(this->value(from), this->value(to), from, to, context));
+    }
+
+    void (RenderStyle::*m_setter)(RefPtr<StyleImage>&&);
 };
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleImagePropertyWrapper);
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(NinePieceImagePropertyWrapper);
+class NinePieceImagePropertyWrapper final : public PropertyWrapperGetter<const NinePieceImage&> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(NinePieceImagePropertyWrapper);
+public:
+    NinePieceImagePropertyWrapper(CSSPropertyID property, const NinePieceImage& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const NinePieceImage&))
+        : PropertyWrapperGetter<const NinePieceImage&>(property, getter)
+        , m_setter(setter)
+    {
+    }
+
+private:
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
+    {
+        (destination.*m_setter)(blendFunc(this->value(from), this->value(to), from, to, context));
+    }
+
+    void (RenderStyle::*m_setter)(const NinePieceImage&);
+};
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(NinePieceImagePropertyWrapper);
 
 template <typename T>
 class AcceleratedPropertyWrapper final : public PropertyWrapper<T> {
@@ -1510,11 +1539,11 @@ private:
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyWrapperFilter);
-class PropertyWrapperFilter final : public PropertyWrapperGetter<const FilterOperations&> {
+class PropertyWrapperFilter final : public PropertyWrapperGetter<const Style::FilterOperations&> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(PropertyWrapperFilter);
 public:
-    PropertyWrapperFilter(CSSPropertyID property, const FilterOperations& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(FilterOperations&&))
-        : PropertyWrapperGetter<const FilterOperations&>(property, getter)
+    PropertyWrapperFilter(CSSPropertyID property, const Style::FilterOperations& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(Style::FilterOperations&&))
+        : PropertyWrapperGetter<const Style::FilterOperations&>(property, getter)
         , m_setter(setter)
     {
     }
@@ -1531,15 +1560,15 @@ private:
 
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation compositeOperation) const final
     {
-        return value(from).canInterpolate(value(to), compositeOperation);
+        return Style::FilterOperations::canInterpolate(value(from), value(to), compositeOperation);
     }
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        (destination.*m_setter)(blendFunc(value(from), value(to), context));
+        (destination.*m_setter)(blendFunc(value(from), value(to), from, to, context));
     }
 
-    void (RenderStyle::*m_setter)(FilterOperations&&);
+    void (RenderStyle::*m_setter)(Style::FilterOperations&&);
 };
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyWrapperFilter);
 
@@ -2101,7 +2130,7 @@ public:
     CSSPropertyID property() const { return m_property; }
 
     virtual bool equals(const FillLayer*, const FillLayer*) const = 0;
-    virtual void blend(FillLayer*, const FillLayer*, const FillLayer*, const CSSPropertyBlendingContext&) const = 0;
+    virtual void blend(FillLayer*, const FillLayer*, const FillLayer*, const RenderStyle&, const RenderStyle&, const CSSPropertyBlendingContext&) const = 0;
     virtual bool canInterpolate(const FillLayer*, const FillLayer*) const { return true; }
 
 #if !LOG_DISABLED
@@ -2161,7 +2190,7 @@ public:
     }
 
 private:
-    void blend(FillLayer* destination, const FillLayer* from, const FillLayer* to, const CSSPropertyBlendingContext& context) const final
+    void blend(FillLayer* destination, const FillLayer* from, const FillLayer* to, const RenderStyle&, const RenderStyle&, const CSSPropertyBlendingContext& context) const final
     {
         (destination->*this->m_setter)(blendFunc(this->value(from), this->value(to), context));
     }
@@ -2214,7 +2243,7 @@ private:
         return fromLength == toLength && fromEdge == toEdge;
     }
 
-    void blend(FillLayer* destination, const FillLayer* from, const FillLayer* to, const CSSPropertyBlendingContext& context) const final
+    void blend(FillLayer* destination, const FillLayer* from, const FillLayer* to, const RenderStyle&, const RenderStyle&, const CSSPropertyBlendingContext& context) const final
     {
         auto fromLength = value(from);
         auto toLength = value(to);
@@ -2262,7 +2291,7 @@ public:
     }
 
 private:
-    void blend(FillLayer* destination, const FillLayer* from, const FillLayer* to, const CSSPropertyBlendingContext& context) const final
+    void blend(FillLayer* destination, const FillLayer* from, const FillLayer* to, const RenderStyle&, const RenderStyle&, const CSSPropertyBlendingContext& context) const final
     {
         (destination->*this->m_setter)(blendFunc(this->value(from), this->value(to), context));
     }
@@ -2281,11 +2310,12 @@ private:
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FillLayerStyleImagePropertyWrapper);
-class FillLayerStyleImagePropertyWrapper final : public FillLayerRefCountedPropertyWrapper<StyleImage> {
+class FillLayerStyleImagePropertyWrapper final : public FillLayerPropertyWrapperGetter<StyleImage*> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FillLayerStyleImagePropertyWrapper);
 public:
     FillLayerStyleImagePropertyWrapper(CSSPropertyID property, StyleImage* (FillLayer::*getter)() const, void (FillLayer::*setter)(RefPtr<StyleImage>&&))
-        : FillLayerRefCountedPropertyWrapper(property, getter, setter)
+        : FillLayerPropertyWrapperGetter<StyleImage*>(property, getter)
+        , m_setter(setter)
     {
     }
 
@@ -2312,6 +2342,14 @@ private:
         LOG_WITH_STREAM(Animations, stream << "  blending " << property() << " from " << this->value(from) << " to " << this->value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
     }
 #endif
+
+    void blend(FillLayer* destination, const FillLayer* from, const FillLayer* to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const CSSPropertyBlendingContext& context) const final
+    {
+        (destination->*this->m_setter)(blendFunc(this->value(from), this->value(to), fromStyle, toStyle, context));
+    }
+
+    void (FillLayer::*m_setter)(RefPtr<StyleImage>&&);
+
 };
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FillLayerStyleImagePropertyWrapper);
 
@@ -2341,7 +2379,7 @@ private:
     }
 #endif
 
-    void blend(FillLayer* destination, const FillLayer* from, const FillLayer* to, const CSSPropertyBlendingContext& context) const final
+    void blend(FillLayer* destination, const FillLayer* from, const FillLayer* to, const RenderStyle&, const RenderStyle&, const CSSPropertyBlendingContext& context) const final
     {
         ASSERT(!context.progress || context.progress == 1.0);
         (destination->*m_setter)(((context.progress ? to : from)->*m_getter)());
@@ -2464,7 +2502,7 @@ private:
             }
 
             dstLayer->setSizeType((context.progress ? toLayer : fromLayer)->sizeType());
-            m_fillLayerPropertyWrapper->blend(dstLayer, fromLayer, toLayer, context);
+            m_fillLayerPropertyWrapper->blend(dstLayer, fromLayer, toLayer, from, to, context);
             fromLayer = fromLayer->next();
             toLayer = toLayer->next();
 
@@ -3762,8 +3800,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new LengthBoxPropertyWrapper(CSSPropertyBorderImageOutset, &RenderStyle::borderImageOutset, &RenderStyle::setBorderImageOutset),
 
         new StyleImagePropertyWrapper(CSSPropertyMaskBorderSource, &RenderStyle::maskBorderSource, &RenderStyle::setMaskBorderSource),
-        new PropertyWrapper<const NinePieceImage&>(CSSPropertyMaskBorder, &RenderStyle::maskBorder, &RenderStyle::setMaskBorder),
-        new PropertyWrapper<const NinePieceImage&>(CSSPropertyWebkitMaskBoxImage, &RenderStyle::maskBorder, &RenderStyle::setMaskBorder),
+        new NinePieceImagePropertyWrapper(CSSPropertyMaskBorder, &RenderStyle::maskBorder, &RenderStyle::setMaskBorder),
+        new NinePieceImagePropertyWrapper(CSSPropertyWebkitMaskBoxImage, &RenderStyle::maskBorder, &RenderStyle::setMaskBorder),
 
         new FillLayersPropertyWrapper(CSSPropertyBackgroundPositionX, &RenderStyle::backgroundLayers, &RenderStyle::ensureBackgroundLayers),
         new FillLayersPropertyWrapper(CSSPropertyBackgroundPositionY, &RenderStyle::backgroundLayers, &RenderStyle::ensureBackgroundLayers),

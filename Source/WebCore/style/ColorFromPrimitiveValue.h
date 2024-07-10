@@ -34,13 +34,17 @@ class CSSPrimitiveValue;
 class Document;
 class RenderStyle;
 
+struct CSSUnresolvedColorResolutionContext;
+
 namespace Style {
 
 enum class ForVisitedLink : bool;
 
-StyleColor colorFromValueID(const Document&, RenderStyle&, CSSValueID, Style::ForVisitedLink);
-StyleColor colorFromPrimitiveValue(const Document&, RenderStyle&, const CSSPrimitiveValue&, Style::ForVisitedLink);
-Color colorFromPrimitiveValueWithResolvedCurrentColor(const Document&, RenderStyle&, const CSSPrimitiveValue&);
+StyleColor styleColorFromValueID(const Document&, RenderStyle&, CSSValueID, Style::ForVisitedLink);
+Color colorFromValueID(CSSValueID, const CSSUnresolvedColorResolutionContext&);
+
+StyleColor styleColorFromPrimitiveValue(const Document&, RenderStyle&, const CSSPrimitiveValue&, Style::ForVisitedLink);
+Color colorFromPrimitiveValue(const CSSPrimitiveValue&, const CSSUnresolvedColorResolutionContext&);
 
 } // namespace Style
 

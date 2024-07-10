@@ -25,7 +25,6 @@
 #if USE(TEXTURE_MAPPER)
 
 #include "BitmapTexture.h"
-#include "FilterOperations.h"
 #include "FloatQuad.h"
 #include "FloatRoundedRect.h"
 #include "GLContext.h"
@@ -73,7 +72,7 @@ public:
     double zNear { 0 };
     double zFar { 0 };
     RefPtr<BitmapTexture> currentSurface;
-    RefPtr<const FilterOperation> filterOperation;
+    std::optional<FilterOperations::FilterOperation> filterOperation;
 
 private:
     class SharedGLData : public RefCounted<SharedGLData> {
@@ -302,31 +301,38 @@ void TextureMapper::drawNumber(int number, const Color& color, const FloatPoint&
 #endif
 }
 
-static TextureMapperShaderProgram::Options optionsForFilterType(FilterOperation::Type type)
+static TextureMapperShaderProgram::Options optionsForFilter(const FilterOperations::FilterOperation& operation)
 {
-    switch (type) {
-    case FilterOperation::Type::Grayscale:
-        return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::GrayscaleFilter };
-    case FilterOperation::Type::Sepia:
-        return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::SepiaFilter };
-    case FilterOperation::Type::Saturate:
-        return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::SaturateFilter };
-    case FilterOperation::Type::HueRotate:
-        return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::HueRotateFilter };
-    case FilterOperation::Type::Invert:
-        return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::InvertFilter };
-    case FilterOperation::Type::Brightness:
-        return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::BrightnessFilter };
-    case FilterOperation::Type::Contrast:
-        return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::ContrastFilter };
-    case FilterOperation::Type::Opacity:
-        return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::OpacityFilter };
-    case FilterOperation::Type::DropShadow:
-    case FilterOperation::Type::Blur:
-    default:
-        ASSERT_NOT_REACHED();
-        return { };
-    }
+    return WTF::switchOn(operation,
+        [&](const FilterOperations::Grayscale&) -> TextureMapperShaderProgram::Options {
+            return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::GrayscaleFilter };
+        },
+        [&](const FilterOperations::Sepia&) -> TextureMapperShaderProgram::Options {
+            return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::SepiaFilter };
+        },
+        [&](const FilterOperations::Saturate&) -> TextureMapperShaderProgram::Options {
+            return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::SaturateFilter };
+        },
+        [&](const FilterOperations::HueRotate&) -> TextureMapperShaderProgram::Options {
+            return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::HueRotateFilter };
+        },
+        [&](const FilterOperations::Invert&) -> TextureMapperShaderProgram::Options {
+            return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::InvertFilter };
+        },
+        [&](const FilterOperations::Brightness&) -> TextureMapperShaderProgram::Options {
+            return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::BrightnessFilter };
+        },
+        [&](const FilterOperations::Contrast&) -> TextureMapperShaderProgram::Options {
+            return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::ContrastFilter };
+        },
+        [&](const FilterOperations::Opacity&) -> TextureMapperShaderProgram::Options {
+            return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::OpacityFilter };
+        },
+        [&](const auto&) -> TextureMapperShaderProgram::Options {
+            ASSERT_NOT_REACHED();
+            return { };
+        }
+    );
 }
 
 static const float MinBlurRadius = 0.1;
@@ -403,28 +409,37 @@ static int computeGaussianKernel(float radius, std::array<float, SimplifiedGauss
     return simplifiedKernelHalfSize;
 }
 
-static void prepareFilterProgram(TextureMapperShaderProgram& program, const FilterOperation& operation)
+static void prepareFilterProgram(TextureMapperShaderProgram& program, const FilterOperations::FilterOperation& operation)
 {
     glUseProgram(program.programID());
 
-    switch (operation.type()) {
-    case FilterOperation::Type::Grayscale:
-    case FilterOperation::Type::Sepia:
-    case FilterOperation::Type::Saturate:
-    case FilterOperation::Type::HueRotate:
-        glUniform1f(program.filterAmountLocation(), static_cast<const BasicColorMatrixFilterOperation&>(operation).amount());
-        break;
-    case FilterOperation::Type::Invert:
-    case FilterOperation::Type::Brightness:
-    case FilterOperation::Type::Contrast:
-    case FilterOperation::Type::Opacity:
-        glUniform1f(program.filterAmountLocation(), static_cast<const BasicComponentTransferFilterOperation&>(operation).amount());
-        break;
-    case FilterOperation::Type::DropShadow:
-    case FilterOperation::Type::Blur:
-    default:
-        break;
-    }
+    return WTF::switchOn(operation,
+        [&](const FilterOperations::Grayscale& op) {
+            glUniform1f(program.filterAmountLocation(), op.amount);
+        },
+        [&](const FilterOperations::Sepia& op) {
+            glUniform1f(program.filterAmountLocation(), op.amount);
+        },
+        [&](const FilterOperations::Saturate& op) {
+            glUniform1f(program.filterAmountLocation(), op.amount);
+        },
+        [&](const FilterOperations::HueRotate& op) {
+            glUniform1f(program.filterAmountLocation(), op.amount);
+        },
+        [&](const FilterOperations::Invert& op) {
+            glUniform1f(program.filterAmountLocation(), op.amount);
+        },
+        [&](const FilterOperations::Brightness& op) {
+            glUniform1f(program.filterAmountLocation(), op.amount);
+        },
+        [&](const FilterOperations::Contrast& op) {
+            glUniform1f(program.filterAmountLocation(), op.amount);
+        },
+        [&](const FilterOperations::Opacity& op) {
+            glUniform1f(program.filterAmountLocation(), op.amount);
+        },
+        [&](const auto&) { }
+    );
 }
 
 static TransformationMatrix colorSpaceMatrixForFlags(OptionSet<TextureMapperFlags> flags)
@@ -474,8 +489,8 @@ void TextureMapper::drawTexture(GLuint texture, OptionSet<TextureMapperFlags> fl
 
     auto filter = data().filterOperation;
     if (filter) {
-        options.add(optionsForFilterType(filter->type()));
-        if (filter->affectsOpacity())
+        options.add(optionsForFilter(*filter));
+        if (FilterOperations::filterAffectsOpacity(*filter))
             flags.add(TextureMapperFlags::ShouldBlend);
     } else
         options.add(TextureMapperShaderProgram::TextureRGB);
@@ -494,7 +509,7 @@ void TextureMapper::drawTexture(GLuint texture, OptionSet<TextureMapperFlags> fl
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
 
     if (filter)
-        prepareFilterProgram(program.get(), *filter.get());
+        prepareFilterProgram(program.get(), *filter);
 
     if (clipStack().isRoundedRectClipEnabled())
         prepareRoundedRectClip(program.get(), clipStack().roundedRectComponents(), clipStack().roundedRectInverseTransformComponents(), clipStack().roundedRectCount());
@@ -538,8 +553,8 @@ void TextureMapper::drawTexturePlanarYUV(const std::array<GLuint, 3>& textures, 
 
     auto filter = data().filterOperation;
     if (filter) {
-        options.add(optionsForFilterType(filter->type()));
-        if (filter->affectsOpacity())
+        options.add(optionsForFilter(*filter));
+        if (FilterOperations::filterAffectsOpacity(*filter))
             flags.add(TextureMapperFlags::ShouldBlend);
     }
 
@@ -557,7 +572,7 @@ void TextureMapper::drawTexturePlanarYUV(const std::array<GLuint, 3>& textures, 
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
 
     if (filter)
-        prepareFilterProgram(program.get(), *filter.get());
+        prepareFilterProgram(program.get(), *filter);
 
     if (clipStack().isRoundedRectClipEnabled())
         prepareRoundedRectClip(program.get(), clipStack().roundedRectComponents(), clipStack().roundedRectInverseTransformComponents(), clipStack().roundedRectCount());
@@ -593,8 +608,8 @@ void TextureMapper::drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& textur
 
     auto filter = data().filterOperation;
     if (filter) {
-        options.add(optionsForFilterType(filter->type()));
-        if (filter->affectsOpacity())
+        options.add(optionsForFilter(*filter));
+        if (FilterOperations::filterAffectsOpacity(*filter))
             flags.add(TextureMapperFlags::ShouldBlend);
     }
 
@@ -609,7 +624,7 @@ void TextureMapper::drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& textur
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
 
     if (filter)
-        prepareFilterProgram(program.get(), *filter.get());
+        prepareFilterProgram(program.get(), *filter);
 
     if (clipStack().isRoundedRectClipEnabled())
         prepareRoundedRectClip(program.get(), clipStack().roundedRectComponents(), clipStack().roundedRectInverseTransformComponents(), clipStack().roundedRectCount());
@@ -640,8 +655,8 @@ void TextureMapper::drawTexturePackedYUV(GLuint texture, const std::array<GLfloa
 
     auto filter = data().filterOperation;
     if (filter) {
-        options.add(optionsForFilterType(filter->type()));
-        if (filter->affectsOpacity())
+        options.add(optionsForFilter(*filter));
+        if (FilterOperations::filterAffectsOpacity(*filter))
             flags.add(TextureMapperFlags::ShouldBlend);
     }
 
@@ -656,7 +671,7 @@ void TextureMapper::drawTexturePackedYUV(GLuint texture, const std::array<GLfloa
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
 
     if (filter)
-        prepareFilterProgram(program.get(), *filter.get());
+        prepareFilterProgram(program.get(), *filter);
 
     if (clipStack().isRoundedRectClipEnabled())
         prepareRoundedRectClip(program.get(), clipStack().roundedRectComponents(), clipStack().roundedRectInverseTransformComponents(), clipStack().roundedRectCount());
@@ -900,11 +915,11 @@ void TextureMapper::drawBlurred(const BitmapTexture& sourceTexture, const FloatR
     draw(rect, TransformationMatrix(), program.get(), GL_TRIANGLE_FAN, { });
 }
 
-RefPtr<BitmapTexture> TextureMapper::applyBlurFilter(RefPtr<BitmapTexture>& sourceTexture, const BlurFilterOperation& blurFilter)
+RefPtr<BitmapTexture> TextureMapper::applyBlurFilter(RefPtr<BitmapTexture>& sourceTexture, const FilterOperations::Blur& blurFilter)
 {
     const auto& textureSize = sourceTexture->size();
-    float radiusX = floatValueForLength(blurFilter.stdDeviation(), textureSize.width());
-    float radiusY = floatValueForLength(blurFilter.stdDeviation(), textureSize.height());
+    float radiusX = floatValueForLength(blurFilter.stdDeviation, textureSize.width());
+    float radiusY = floatValueForLength(blurFilter.stdDeviation, textureSize.height());
 
     if (radiusX < MinBlurRadius && radiusY < MinBlurRadius)
         return sourceTexture;
@@ -982,14 +997,14 @@ RefPtr<BitmapTexture> TextureMapper::applyBlurFilter(RefPtr<BitmapTexture>& sour
     return resultTexture;
 }
 
-RefPtr<BitmapTexture> TextureMapper::applyDropShadowFilter(RefPtr<BitmapTexture>& sourceTexture, const DropShadowFilterOperation& dropShadowFilter)
+RefPtr<BitmapTexture> TextureMapper::applyDropShadowFilter(RefPtr<BitmapTexture>& sourceTexture, const FilterOperations::DropShadow& dropShadowFilter)
 {
     const auto& textureSize = sourceTexture->size();
     RefPtr<BitmapTexture> resultTexture = m_texturePool.acquireTexture(textureSize, { BitmapTexture::Flags::SupportsAlpha });
     RefPtr<BitmapTexture> contentTexture = m_texturePool.acquireTexture(textureSize, { BitmapTexture::Flags::SupportsAlpha });
     IntSize currentSize = textureSize;
     IntSize targetSize = currentSize;
-    float radius = float(dropShadowFilter.stdDeviation());
+    float radius = floatValueForLength(dropShadowFilter.stdDeviation, 0);
     bool shouldBlur = radius >= MinBlurRadius;
 
     if (shouldBlur) {
@@ -1011,7 +1026,7 @@ RefPtr<BitmapTexture> TextureMapper::applyDropShadowFilter(RefPtr<BitmapTexture>
             std::max((currentSize.height() + 1) / 2, targetSize.height())
         );
 
-        FloatPoint targetPoint = dropShadowFilter.location();
+        FloatPoint targetPoint = floatPointForLengthPoint(dropShadowFilter.location, { 0, 0 });
 
         if (shouldBlur) {
             float scaleX = float(nextSize.width()) / currentSize.width();
@@ -1088,7 +1103,7 @@ RefPtr<BitmapTexture> TextureMapper::applyDropShadowFilter(RefPtr<BitmapTexture>
 
         glUseProgram(program->programID());
 
-        auto [r, g, b, a] = premultiplied(dropShadowFilter.color().toColorTypeLossy<SRGBA<float>>()).resolved();
+        auto [r, g, b, a] = premultiplied(dropShadowFilter.color.toColorTypeLossy<SRGBA<float>>()).resolved();
         glUniform4f(program->colorLocation(), r, g, b, a);
 
         glUniform2f(program->texelSizeLocation(), 1.f / textureSize.width(), 1.f / textureSize.height());
@@ -1104,10 +1119,10 @@ RefPtr<BitmapTexture> TextureMapper::applyDropShadowFilter(RefPtr<BitmapTexture>
     return resultTexture;
 }
 
-RefPtr<BitmapTexture> TextureMapper::applySinglePassFilter(RefPtr<BitmapTexture>& sourceTexture, const Ref<const FilterOperation>& filter, bool shouldDefer)
+RefPtr<BitmapTexture> TextureMapper::applySinglePassFilter(RefPtr<BitmapTexture>& sourceTexture, const FilterOperations::FilterOperation& filter, bool shouldDefer)
 {
     if (shouldDefer) {
-        sourceTexture->setFilterOperation(filter.copyRef());
+        sourceTexture->setFilterOperation(filter);
         return sourceTexture;
     }
 
@@ -1116,7 +1131,7 @@ RefPtr<BitmapTexture> TextureMapper::applySinglePassFilter(RefPtr<BitmapTexture>
     bindSurface(resultTexture.get());
 
     // For standard filters, we always draw the whole texture without transformations.
-    TextureMapperShaderProgram::Options options = optionsForFilterType(filter->type());
+    TextureMapperShaderProgram::Options options = optionsForFilter(filter);
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
 
     prepareFilterProgram(program.get(), filter);
@@ -1146,28 +1161,43 @@ RefPtr<BitmapTexture> TextureMapper::applyFilters(RefPtr<BitmapTexture>& sourceT
     return surface;
 }
 
-RefPtr<BitmapTexture> TextureMapper::applyFilter(RefPtr<BitmapTexture>& sourceTexture, const Ref<const FilterOperation>& filter, bool defersLastPass)
+RefPtr<BitmapTexture> TextureMapper::applyFilter(RefPtr<BitmapTexture>& sourceTexture, const FilterOperations::FilterOperation& filter, bool defersLastPass)
 {
-    switch (filter->type()) {
-    case FilterOperation::Type::Grayscale:
-    case FilterOperation::Type::Sepia:
-    case FilterOperation::Type::Saturate:
-    case FilterOperation::Type::HueRotate:
-    case FilterOperation::Type::Invert:
-    case FilterOperation::Type::Brightness:
-    case FilterOperation::Type::Contrast:
-    case FilterOperation::Type::Opacity:
-        return applySinglePassFilter(sourceTexture, filter, defersLastPass);
-    case FilterOperation::Type::Blur:
-        return applyBlurFilter(sourceTexture, static_cast<const BlurFilterOperation&>(filter.get()));
-    case FilterOperation::Type::DropShadow:
-        return applyDropShadowFilter(sourceTexture, static_cast<const DropShadowFilterOperation&>(filter.get()));
-    default:
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
-
-    return nullptr;
+    return WTF::switchOn(filter,
+        [&](const FilterOperations::Grayscale&) -> RefPtr<BitmapTexture> {
+            return applySinglePassFilter(sourceTexture, filter, defersLastPass);
+        },
+        [&](const FilterOperations::Sepia&) -> RefPtr<BitmapTexture> {
+            return applySinglePassFilter(sourceTexture, filter, defersLastPass);
+        },
+        [&](const FilterOperations::Saturate&) -> RefPtr<BitmapTexture> {
+            return applySinglePassFilter(sourceTexture, filter, defersLastPass);
+        },
+        [&](const FilterOperations::HueRotate&) -> RefPtr<BitmapTexture> {
+            return applySinglePassFilter(sourceTexture, filter, defersLastPass);
+        },
+        [&](const FilterOperations::Invert&) -> RefPtr<BitmapTexture> {
+            return applySinglePassFilter(sourceTexture, filter, defersLastPass);
+        },
+        [&](const FilterOperations::Brightness&) -> RefPtr<BitmapTexture> {
+            return applySinglePassFilter(sourceTexture, filter, defersLastPass);
+        },
+        [&](const FilterOperations::Contrast&) -> RefPtr<BitmapTexture> {
+            return applySinglePassFilter(sourceTexture, filter, defersLastPass);
+        },
+        [&](const FilterOperations::Opacity&) -> RefPtr<BitmapTexture> {
+            return applySinglePassFilter(sourceTexture, filter, defersLastPass);
+        },
+        [&](const FilterOperations::Blur& op) -> RefPtr<BitmapTexture> {
+            return applyBlurFilter(sourceTexture, op);
+        },
+        [&](const FilterOperations::DropShadow& op) -> RefPtr<BitmapTexture> {
+            return applyDropShadowFilter(sourceTexture, op);
+        },
+        [&](const auto&) -> RefPtr<BitmapTexture> {
+            return nullptr;
+        }
+    );
 }
 
 static inline TransformationMatrix createProjectionMatrix(const IntSize& size, bool flipY, double zNear, double zFar)

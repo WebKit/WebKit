@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "FilterOperations.h"
+#include "StyleFilterOperations.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -38,7 +38,7 @@ public:
 
     bool operator==(const StyleFilterData&) const;
 
-    FilterOperations operations;
+    Style::FilterOperations operations;
 
 private:
     StyleFilterData();

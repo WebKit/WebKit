@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Color.h"
+#include "ColorFromPrimitiveValue.h"
 #include "StyleBuilderState.h"
 #include "StyleColor.h"
 #include <wtf/Forward.h>
@@ -73,6 +74,16 @@ struct CSSUnresolvedColorResolutionContext {
     mutable std::optional<Color> resolvedWebkitLinkVisited = std::nullopt;
     mutable std::optional<Color> resolvedWebkitActiveLink = std::nullopt;
     mutable std::optional<Color> resolvedWebkitFocusRingColor = std::nullopt;
+
+    Color resolveColor(const CSSPrimitiveValue& value) const
+    {
+        return Style::colorFromPrimitiveValue(value, *this);
+    }
+
+    Color resolveColor(const StyleColor& value) const
+    {
+        return value.resolveColor(currentColor());
+    }
 
     Color currentColor() const
     {

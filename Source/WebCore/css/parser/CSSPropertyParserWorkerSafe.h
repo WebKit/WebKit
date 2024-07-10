@@ -28,7 +28,6 @@
 
 #include "CSSParserContext.h"
 #include "CSSPropertyParserHelpers.h"
-#include "FilterOperations.h"
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -45,8 +44,6 @@ class ScriptExecutionContext;
 class CSSPropertyParserWorkerSafe {
 public:
     static std::optional<CSSPropertyParserHelpers::FontRaw> parseFont(const String&, CSSParserMode = HTMLStandardMode);
-
-    static std::optional<FilterOperations> parseFilterString(const Document&, RenderStyle&, const String&, CSSParserMode = HTMLStandardMode);
 
     static RefPtr<CSSValueList> parseFontFaceSrc(const String&, const CSSParserContext&);
     static RefPtr<CSSValue> parseFontFaceStyle(const String&, ScriptExecutionContext&);

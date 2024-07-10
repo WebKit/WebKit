@@ -7126,8 +7126,8 @@
                 "aliases": [
                     "-webkit-filter"
                 ],
-                "conditional-converter": "FilterOperations",
-                "parser-function": "consumeFilter",
+                "converter": "StyleFilterOperations",
+                "parser-function": "consumeFilterValueListOrNone",
                 "parser-function-requires-context": true,
                 "parser-function-requires-additional-parameters": ["AllowedFilterFunctions::PixelFilters"],
                 "parser-grammar-unused": "none | <filter-value-list>",
@@ -7142,8 +7142,8 @@
             "inherited": true,
             "codegen-properties": {
                 "settings-flag": "colorFilterEnabled",
-                "conditional-converter": "FilterOperations",
-                "parser-function": "consumeFilter",
+                "converter": "StyleFilterOperations",
+                "parser-function": "consumeFilterValueListOrNone",
                 "parser-function-requires-context": true,
                 "parser-function-requires-additional-parameters": ["AllowedFilterFunctions::ColorFilters"],
                 "parser-grammar-unused": "none | <color-filter-value-list>",
@@ -7396,8 +7396,8 @@
         "-webkit-backdrop-filter": {
             "codegen-properties": {
                 "related-property": "backdrop-filter",
-                "conditional-converter": "FilterOperations",
-                "parser-function": "consumeFilter",
+                "converter": "StyleFilterOperations",
+                "parser-function": "consumeFilterValueListOrNone",
                 "parser-function-requires-context": true,
                 "parser-function-requires-additional-parameters": ["AllowedFilterFunctions::PixelFilters"],
                 "parser-grammar-unused": "none | <filter-value-list>",
@@ -7414,8 +7414,8 @@
         "backdrop-filter": {
             "codegen-properties": {
                 "related-property": "-webkit-backdrop-filter",
-                "conditional-converter": "FilterOperations",
-                "parser-function": "consumeFilter",
+                "converter": "StyleFilterOperations",
+                "parser-function": "consumeFilterValueListOrNone",
                 "parser-function-requires-context": true,
                 "parser-function-requires-additional-parameters": ["AllowedFilterFunctions::PixelFilters"],
                 "parser-grammar-unused": "none | <filter-value-list>",

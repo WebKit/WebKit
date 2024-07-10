@@ -49,14 +49,14 @@ TEST(PlatformCAAnimation, makeKeyPath)
     auto backgroundColor = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::BackgroundColor);
     EXPECT_STREQ(backgroundColor.ascii().data(), "backgroundColor");
 
-    auto filter = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::Filter, WebCore::FilterOperation::Type::Grayscale, 2);
+    auto filter = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::Filter, WebCore::FilterOperations::Type::Grayscale, 2);
     EXPECT_STREQ(filter.ascii().data(), "filters.filter_2.inputAmount");
 
     auto backdropFilter = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::WebkitBackdropFilter);
     EXPECT_STREQ(backdropFilter.ascii().data(), "backdropFilters");
 }
 
-static void validateGeneratedKeyPath(WebCore::AnimatedProperty animatedProperty, WebCore::FilterOperation::Type filterOperationType = WebCore::FilterOperation::Type::None, int index = 0)
+static void validateGeneratedKeyPath(WebCore::AnimatedProperty animatedProperty, std::optional<WebCore::FilterOperations::Type> filterOperationType = std::nullopt, int index = 0)
 {
     auto keyPath = WebCore::PlatformCAAnimation::makeKeyPath(animatedProperty, filterOperationType, index);
     EXPECT_TRUE(WebCore::PlatformCAAnimation::isValidKeyPath(keyPath));
@@ -67,8 +67,8 @@ TEST(PlatformCAAnimation, isValidKeyPath)
     validateGeneratedKeyPath(WebCore::AnimatedProperty::Transform);
     validateGeneratedKeyPath(WebCore::AnimatedProperty::Opacity);
     validateGeneratedKeyPath(WebCore::AnimatedProperty::BackgroundColor);
-    validateGeneratedKeyPath(WebCore::AnimatedProperty::Filter, WebCore::FilterOperation::Type::Grayscale, 2);
-    validateGeneratedKeyPath(WebCore::AnimatedProperty::Filter, WebCore::FilterOperation::Type::Sepia, 22);
+    validateGeneratedKeyPath(WebCore::AnimatedProperty::Filter, WebCore::FilterOperations::Type::Grayscale, 2);
+    validateGeneratedKeyPath(WebCore::AnimatedProperty::Filter, WebCore::FilterOperations::Type::Sepia, 22);
     validateGeneratedKeyPath(WebCore::AnimatedProperty::WebkitBackdropFilter);
 
     EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("filters.filter_"_s));

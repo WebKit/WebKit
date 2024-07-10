@@ -7169,7 +7169,7 @@ struct WebCore::KeypressCommand {
 
 #if !USE(COORDINATED_GRAPHICS)
 class WebCore::FilterOperations {
-    Vector<Ref<WebCore::FilterOperation>> m_operations;
+    FixedVector<WebCore::FilterOperations::FilterOperation> m_operations;
 }
 #endif // !USE(COORDINATED_GRAPHICS)
 
@@ -7511,36 +7511,44 @@ header: <WebCore/SharedBuffer.h>
 };
 
 #if !USE(COORDINATED_GRAPHICS)
-[RefCounted] class WebCore::FilterOperation subclasses {
-    WebCore::BasicColorMatrixFilterOperation
-    WebCore::BasicComponentTransferFilterOperation
-    WebCore::BlurFilterOperation
-    WebCore::DropShadowFilterOperation
-    WebCore::DefaultFilterOperation
-    WebCore::PassthroughFilterOperation
-}
-
-[CustomHeader, RefCounted] class WebCore::BasicColorMatrixFilterOperation {
-    double amount();
-    [Validator='WebCore::FilterOperation::isBasicColorMatrixFilterOperationType(*type)'] WebCore::FilterOperation::Type type();
+header: <WebCore/FilterOperations.h>
+[Nested, CustomHeader] struct WebCore::FilterOperations::Reference {
+    String url;
+    AtomString fragment;
 };
-[CustomHeader, RefCounted] class WebCore::BasicComponentTransferFilterOperation {
-    double amount();
-    [Validator='WebCore::FilterOperation::isBasicComponentTransferFilterOperationType(*type)'] WebCore::FilterOperation::Type type();
+[Nested, CustomHeader] struct WebCore::FilterOperations::Grayscale {
+    double amount;
 };
-[CustomHeader, RefCounted] class WebCore::BlurFilterOperation {
-    WebCore::Length stdDeviation();
+[Nested, CustomHeader] struct WebCore::FilterOperations::Sepia {
+    double amount;
 };
-[CustomHeader, RefCounted] class WebCore::DropShadowFilterOperation {
-    WebCore::IntPoint location();
-    int stdDeviation();
-    WebCore::Color color();
+[Nested, CustomHeader] struct WebCore::FilterOperations::Saturate {
+    double amount;
 };
-[CustomHeader, RefCounted] class WebCore::DefaultFilterOperation {
-    WebCore::FilterOperation::Type representedType();
+[Nested, CustomHeader] struct WebCore::FilterOperations::HueRotate {
+    double amount;
 };
-[CustomHeader, RefCounted] class WebCore::PassthroughFilterOperation {
-    [NotSerialized] WebCore::FilterOperation::Type type();
+[Nested, CustomHeader] struct WebCore::FilterOperations::Invert {
+    double amount;
+};
+[Nested, CustomHeader] struct WebCore::FilterOperations::Opacity {
+    double amount;
+};
+[Nested, CustomHeader] struct WebCore::FilterOperations::Brightness {
+    double amount;
+};
+[Nested, CustomHeader] struct WebCore::FilterOperations::Contrast {
+    double amount;
+};
+[Nested, CustomHeader] struct WebCore::FilterOperations::Blur {
+    WebCore::Length stdDeviation;
+};
+[Nested, CustomHeader] struct WebCore::FilterOperations::DropShadow {
+    WebCore::LengthPoint location;
+    WebCore::Length stdDeviation;
+    WebCore::Color color;
+};
+[Nested, CustomHeader] struct WebCore::FilterOperations::AppleInvertLightness {
 };
 #endif // !USE(COORDINATED_GRAPHICS)
 
@@ -8034,25 +8042,6 @@ enum class WebCore::EdgeModeType : uint8_t {
     Unknown,
     Duplicate,
     Wrap,
-    None
-};
-
-header: <WebCore/FilterOperation.h>
-[Nested] enum class WebCore::FilterOperation::Type : uint8_t {
-    Reference,
-    Grayscale,
-    Sepia,
-    Saturate,
-    HueRotate,
-    Invert,
-    AppleInvertLightness,
-    Opacity,
-    Brightness,
-    Contrast,
-    Blur,
-    DropShadow,
-    Passthrough,
-    Default,
     None
 };
 

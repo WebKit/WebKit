@@ -28,6 +28,7 @@
 
 #include "CSSPrimitiveValue.h"
 #include "CSSUnresolvedColor.h"
+#include "CSSUnresolvedColorResolutionContext.h"
 #include "Document.h"
 #include "RenderStyle.h"
 #include "RenderTheme.h"
@@ -38,7 +39,7 @@ namespace WebCore {
 
 namespace Style {
 
-StyleColor colorFromValueID(const Document& document, RenderStyle& style, CSSValueID valueID, ForVisitedLink forVisitedLink)
+StyleColor styleColorFromValueID(const Document& document, RenderStyle& style, CSSValueID valueID, ForVisitedLink forVisitedLink)
 {
     switch (valueID) {
     case CSSValueInternalDocumentTextColor:
@@ -56,28 +57,41 @@ StyleColor colorFromValueID(const Document& document, RenderStyle& style, CSSVal
     }
 }
 
-StyleColor colorFromPrimitiveValue(const Document& document, RenderStyle& style, const CSSPrimitiveValue& value, ForVisitedLink forVisitedLink)
+Color colorFromValueID(CSSValueID valueID, const CSSUnresolvedColorResolutionContext& context)
+{
+    switch (valueID) {
+    case CSSValueInternalDocumentTextColor:
+        return context.internalDocumentTextColor();
+    case CSSValueWebkitLink:
+        return context.forVisitedLink == Style::ForVisitedLink::Yes ? context.webkitLinkVisited() : context.webkitLink();
+    case CSSValueWebkitActivelink:
+        return context.webkitActiveLink();
+    case CSSValueWebkitFocusRingColor:
+        return context.webkitFocusRingColor();
+    case CSSValueCurrentcolor:
+        return context.currentColor();
+    default:
+        return StyleColor::colorFromKeyword(valueID, context.keywordOptions);
+    }
+}
+
+StyleColor styleColorFromPrimitiveValue(const Document& document, RenderStyle& style, const CSSPrimitiveValue& value, ForVisitedLink forVisitedLink)
 {
     if (value.isColor())
         return value.color();
     if (value.isUnresolvedColor())
         return value.unresolvedColor().createStyleColor(document, style, forVisitedLink);
-    return colorFromValueID(document, style, value.valueID(), forVisitedLink);
+    return styleColorFromValueID(document, style, value.valueID(), forVisitedLink);
 }
 
-Color colorFromPrimitiveValueWithResolvedCurrentColor(const Document& document, RenderStyle& style, const CSSPrimitiveValue& value)
+Color colorFromPrimitiveValue(const CSSPrimitiveValue& value, const CSSUnresolvedColorResolutionContext& context)
 {
-    // FIXME: 'currentcolor' should be resolved at use time to make it inherit correctly. https://bugs.webkit.org/show_bug.cgi?id=210005
-    if (StyleColor::containsCurrentColor(value)) {
-        // Color is an inherited property so depending on it effectively makes the property inherited.
-        style.setHasExplicitlyInheritedProperties();
-        style.setDisallowsFastPathInheritance();
-    }
-
-    auto color = colorFromPrimitiveValue(document, style, value, ForVisitedLink::No);
-    return style.colorResolvingCurrentColor(color);
+    if (value.isColor())
+        return value.color();
+    if (value.isUnresolvedColor())
+        return value.unresolvedColor().createColor(context);
+    return colorFromValueID(value.valueID(), context);
 }
 
 } // namespace Style
-
 } // namespace WebCore

@@ -47,27 +47,24 @@ struct CSSPrimitiveValueResolverBase {
     static RefPtr<CSSPrimitiveValue> resolve(NoneRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
     static RefPtr<CSSPrimitiveValue> resolve(SymbolRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
 
-    template<typename IntType, IntegerValueRange integerRange>
-    static RefPtr<CSSPrimitiveValue> resolve(IntegerRaw<IntType, integerRange> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
+    template<IntegerRawValueRange R> static RefPtr<CSSPrimitiveValue> resolve(IntegerRaw<R> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
     {
         return CSSPrimitiveValue::createInteger(value.value);
     }
 
-    template<typename RawType>
-    static RefPtr<CSSPrimitiveValue> resolve(UnevaluatedCalc<RawType> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
+    template<typename RawType> static RefPtr<CSSPrimitiveValue> resolve(UnevaluatedCalc<RawType> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
     {
         return CSSPrimitiveValue::create(value.calc);
     }
 
-    template<typename IntType, IntegerValueRange integerRange>
-    static RefPtr<CSSPrimitiveValue> resolve(UnevaluatedCalc<IntegerRaw<IntType, integerRange>> calc, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions)
+    template<IntegerRawValueRange R> static RefPtr<CSSPrimitiveValue> resolve(UnevaluatedCalc<IntegerRaw<R>> calc, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions)
     {
         // FIXME: This should not be eagerly resolving the calc. Instead, callers
         // should resolve and round at style resolution.
 
         // https://drafts.csswg.org/css-values-4/#integers
         // Rounding to the nearest integer requires rounding in the direction of +∞ when the fractional portion is exactly 0.5.
-        auto value = clampTo<IntType>(std::floor(std::max(calc.calc->doubleValue(symbolTable), computeMinimumValue(integerRange)) + 0.5));
+        auto value = clampTo<typename IntegerRaw<R>::IntType>(std::floor(std::max(calc.calc->doubleValue(symbolTable), computeMinimumValue<R>()) + 0.5));
         return CSSPrimitiveValue::createInteger(value);
     }
 };

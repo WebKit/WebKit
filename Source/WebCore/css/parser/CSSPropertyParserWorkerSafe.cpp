@@ -42,6 +42,7 @@
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParser.h"
 #include "CSSPropertyParserConsumer+Angle.h"
+#include "CSSPropertyParserConsumer+Filter.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Integer.h"
 #include "CSSPropertyParserConsumer+List.h"
@@ -53,7 +54,6 @@
 #include "CSSTokenizer.h"
 #include "CSSUnicodeRangeValue.h"
 #include "Document.h"
-#include "FilterOperationsBuilder.h"
 #include "FontCustomPlatformData.h"
 #include "ParsingUtilities.h"
 #include "ScriptExecutionContext.h"
@@ -80,19 +80,6 @@ std::optional<CSSPropertyParserHelpers::FontRaw> CSSPropertyParserWorkerSafe::pa
     range.consumeWhitespace();
 
     return CSSPropertyParserHelpers::consumeFontRaw(range, mode);
-}
-
-std::optional<FilterOperations> CSSPropertyParserWorkerSafe::parseFilterString(const Document& document, RenderStyle& style, const String& string, CSSParserMode mode)
-{
-    CSSTokenizer tokenizer(string);
-    CSSParserTokenRange range(tokenizer.tokenRange());
-    range.consumeWhitespace();
-
-    auto parsedValue = CSSPropertyParserHelpers::consumeFilter(range, CSSParserContext(mode), CSSPropertyParserHelpers::AllowedFilterFunctions::PixelFilters);
-    if (!parsedValue)
-        return std::nullopt;
-
-    return Style::createFilterOperations(document, style, CSSToLengthConversionData(), *parsedValue);
 }
 
 static CSSParserMode parserMode(ScriptExecutionContext& context)

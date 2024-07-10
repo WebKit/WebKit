@@ -898,22 +898,13 @@ void PlatformCALayerCocoa::copyFiltersFrom(const PlatformCALayer& sourceLayer)
 
 bool PlatformCALayerCocoa::filtersCanBeComposited(const FilterOperations& filters)
 {
-    // Return false if there are no filters to avoid needless work
-    if (!filters.size())
-        return false;
-    
     for (unsigned i = 0; i < filters.size(); ++i) {
-        const FilterOperation* filterOperation = filters.at(i);
-        switch (filterOperation->type()) {
-        case FilterOperation::Type::Reference:
+        if (std::holds_alternative<FilterOperations::Reference>(filters[i]))
             return false;
-        case FilterOperation::Type::DropShadow:
+        if (std::holds_alternative<FilterOperations::DropShadow>(filters[i])) {
             // FIXME: For now we can only handle drop-shadow is if it's last in the list
             if (i < (filters.size() - 1))
                 return false;
-            break;
-        default:
-            break;
         }
     }
 

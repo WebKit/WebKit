@@ -73,7 +73,7 @@ inline const AnimationList* RenderStyle::animations() const { return m_nonInheri
 inline AnimationList* RenderStyle::animations() { return m_nonInheritedData->miscData->animations.get(); }
 inline const Vector<AtomString>& RenderStyle::anchorNames() const { return m_nonInheritedData->rareData->anchorNames; }
 inline StyleAppearance RenderStyle::appearance() const { return static_cast<StyleAppearance>(m_nonInheritedData->miscData->appearance); }
-inline const FilterOperations& RenderStyle::appleColorFilter() const { return m_rareInheritedData->appleColorFilter->operations; }
+inline const Style::FilterOperations& RenderStyle::appleColorFilter() const { return m_rareInheritedData->appleColorFilter->operations; }
 inline double RenderStyle::aspectRatioHeight() const { return m_nonInheritedData->miscData->aspectRatioHeight; }
 inline double RenderStyle::aspectRatioLogicalHeight() const { return isHorizontalWritingMode() ? aspectRatioHeight() : aspectRatioWidth(); }
 inline double RenderStyle::aspectRatioLogicalWidth() const { return isHorizontalWritingMode() ? aspectRatioWidth() : aspectRatioHeight(); }
@@ -207,7 +207,7 @@ inline OptionSet<TouchAction> RenderStyle::usedTouchActions() const { return m_r
 inline UserModify RenderStyle::usedUserModify() const { return effectiveInert() ? UserModify::ReadOnly : userModify(); }
 inline float RenderStyle::usedZoom() const { return m_rareInheritedData->usedZoom; }
 inline OptionSet<EventListenerRegionType> RenderStyle::eventListenerRegionTypes() const { return m_rareInheritedData->eventListenerRegionTypes; }
-inline const FilterOperations& RenderStyle::filter() const { return m_nonInheritedData->miscData->filter->operations; }
+inline const Style::FilterOperations& RenderStyle::filter() const { return m_nonInheritedData->miscData->filter->operations; }
 inline IntOutsets RenderStyle::filterOutsets() const { return hasFilter() ? filter().outsets() : IntOutsets(); }
 inline const Length& RenderStyle::flexBasis() const { return m_nonInheritedData->miscData->flexibleBox->flexBasis; }
 inline FlexDirection RenderStyle::flexDirection() const { return static_cast<FlexDirection>(m_nonInheritedData->miscData->flexibleBox->flexDirection); }
@@ -325,7 +325,7 @@ constexpr auto RenderStyle::individualTransformOperations() -> OptionSet<Transfo
 inline const StyleCustomPropertyData& RenderStyle::inheritedCustomProperties() const { return m_rareInheritedData->customProperties.get(); }
 inline Vector<AtomString> RenderStyle::initialAnchorNames() { return { }; }
 constexpr StyleAppearance RenderStyle::initialAppearance() { return StyleAppearance::None; }
-inline FilterOperations RenderStyle::initialAppleColorFilter() { return { }; }
+inline Style::FilterOperations RenderStyle::initialAppleColorFilter() { return { }; }
 constexpr AspectRatioType RenderStyle::initialAspectRatioType() { return AspectRatioType::Auto; }
 constexpr BackfaceVisibility RenderStyle::initialBackfaceVisibility() { return BackfaceVisibility::Visible; }
 inline StyleColor RenderStyle::initialBackgroundColor() { return Color::transparentBlack; }
@@ -366,7 +366,7 @@ constexpr StyleSelfAlignmentData RenderStyle::initialDefaultAlignment() { return
 constexpr TextDirection RenderStyle::initialDirection() { return TextDirection::LTR; }
 constexpr DisplayType RenderStyle::initialDisplay() { return DisplayType::Inline; }
 constexpr EmptyCell RenderStyle::initialEmptyCells() { return EmptyCell::Show; }
-inline FilterOperations RenderStyle::initialFilter() { return { }; }
+inline Style::FilterOperations RenderStyle::initialFilter() { return { }; }
 inline Length RenderStyle::initialFlexBasis() { return LengthType::Auto; }
 constexpr FlexDirection RenderStyle::initialFlexDirection() { return FlexDirection::Row; }
 constexpr FlexWrap RenderStyle::initialFlexWrap() { return FlexWrap::NoWrap; }
@@ -788,9 +788,9 @@ constexpr StyleColorScheme RenderStyle::initialColorScheme() { return { }; }
 inline bool RenderStyle::hasExplicitlySetColorScheme() const { return m_nonInheritedData->miscData->hasExplicitlySetColorScheme; }
 #endif
 
-inline const FilterOperations& RenderStyle::backdropFilter() const { return m_nonInheritedData->rareData->backdropFilter->operations; }
+inline const Style::FilterOperations& RenderStyle::backdropFilter() const { return m_nonInheritedData->rareData->backdropFilter->operations; }
 inline bool RenderStyle::hasBackdropFilter() const { return !backdropFilter().isEmpty(); }
-inline FilterOperations RenderStyle::initialBackdropFilter() { return { }; }
+inline Style::FilterOperations RenderStyle::initialBackdropFilter() { return { }; }
 
 inline bool RenderStyle::hasExplicitlySetDirection() const { return m_nonInheritedData->miscData->hasExplicitlySetDirection; }
 inline bool RenderStyle::hasExplicitlySetWritingMode() const { return m_nonInheritedData->miscData->hasExplicitlySetWritingMode; }

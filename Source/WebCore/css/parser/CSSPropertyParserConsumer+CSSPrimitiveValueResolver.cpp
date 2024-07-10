@@ -52,12 +52,12 @@ RefPtr<CSSPrimitiveValue> CSSPrimitiveValueResolverBase::resolve(LengthRaw value
 
 RefPtr<CSSPrimitiveValue> CSSPrimitiveValueResolverBase::resolve(NumberRaw value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
 {
-    return CSSPrimitiveValue::create(value.value, CSSUnitType::CSS_NUMBER);
+    return CSSPrimitiveValue::create(value.value, value.type);
 }
 
 RefPtr<CSSPrimitiveValue> CSSPrimitiveValueResolverBase::resolve(PercentRaw value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
 {
-    return CSSPrimitiveValue::create(value.value, CSSUnitType::CSS_PERCENTAGE);
+    return CSSPrimitiveValue::create(value.value, value.type);
 }
 
 RefPtr<CSSPrimitiveValue> CSSPrimitiveValueResolverBase::resolve(ResolutionRaw value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)

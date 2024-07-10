@@ -530,8 +530,15 @@ void UnifiedPDFPlugin::updatePageBackgroundLayers()
 
         auto addLayerShadow = [](GraphicsLayer& layer, IntPoint shadowOffset, const Color& shadowColor, int shadowStdDeviation) {
             layer.setFilters(FilterOperations {
-                Vector<Ref<FilterOperation>> {
-                    DropShadowFilterOperation::create(shadowOffset, shadowStdDeviation, shadowColor)
+                FilterOperations::Storage {
+                    FilterOperations::DropShadow {
+                        LengthPoint {
+                            Length { shadowOffset.x(), LengthType::Fixed },
+                            Length { shadowOffset.y(), LengthType::Fixed }
+                        },
+                        Length { shadowStdDeviation, LengthType::Fixed },
+                        shadowColor
+                    }
                 }
             });
         };

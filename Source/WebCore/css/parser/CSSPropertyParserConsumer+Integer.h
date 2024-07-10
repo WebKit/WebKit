@@ -32,9 +32,9 @@ namespace WebCore {
 class CSSParserTokenRange;
 class CSSPrimitiveValue;
 
-namespace CSSPropertyParserHelpers {
+enum class IntegerRawValueRange : uint8_t;
 
-enum class IntegerValueRange : uint8_t;
+namespace CSSPropertyParserHelpers {
 
 std::optional<int> consumeIntegerRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&);
@@ -42,7 +42,7 @@ std::optional<int> consumeNonNegativeIntegerRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeNonNegativeInteger(CSSParserTokenRange&);
 std::optional<unsigned> consumePositiveIntegerRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&, IntegerValueRange);
+RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&, IntegerRawValueRange);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

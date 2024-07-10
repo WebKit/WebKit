@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -16,7 +16,6 @@
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
@@ -25,20 +24,16 @@
 
 #pragma once
 
-#include "FilterOperations.h"
-#include <optional>
+#include "CSSUnresolvedColorResolutionContext.h"
+#include "CSSUnresolvedLengthResolutionContext.h"
+#include "CSSUnresolvedURLResolutionContext.h"
 
 namespace WebCore {
 
-class CSSToLengthConversionData;
-class CSSValue;
-class Document;
-class RenderStyle;
-
-namespace Style {
-
-std::optional<FilterOperations> createFilterOperations(const Document&, RenderStyle&, const CSSToLengthConversionData&, const CSSValue&);
-
-} // namespace Style
+struct CSSUnresolvedFilterResolutionContext {
+    CSSUnresolvedColorResolutionContext color;
+    CSSUnresolvedLengthResolutionContext length;
+    CSSUnresolvedURLResolutionContext url;
+};
 
 } // namespace WebCore

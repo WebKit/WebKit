@@ -3694,8 +3694,7 @@ bool RenderStyle::hasReferenceFilterOnly() const
 {
     if (!hasFilter())
         return false;
-    auto& filterOperations = m_nonInheritedData->miscData->filter->operations;
-    return filterOperations.size() == 1 && filterOperations.at(0)->type() == FilterOperation::Type::Reference;
+    return m_nonInheritedData->miscData->filter->operations.hasReferenceFilterOnly();
 }
 
 float RenderStyle::outlineWidth() const

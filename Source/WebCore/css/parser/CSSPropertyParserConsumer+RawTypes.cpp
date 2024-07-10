@@ -27,39 +27,106 @@
 
 #include "CSSCalcSymbolTable.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSPrimitiveValueMappings.h"
 #include "CSSValueKeywords.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-void serializationForCSS(StringBuilder& builder, const AngleRaw& value)
+// MARK: Canonicalization
+
+CanonicalAngleRaw canonicalize(const AngleRaw& value)
+{
+    return { CSSPrimitiveValue::computeDegrees(value.type, value.value) };
+}
+
+CanonicalLengthRaw canonicalize(const LengthRaw& value, const CSSToLengthConversionData& conversionData)
+{
+    // FIXME: Extract computeLength logic into a free function to allow use without CSSPrimitiveValue construction.
+    Ref temp = CSSPrimitiveValue::create(value.value, value.type);
+    return { temp->computeLength<double>(conversionData) };
+}
+
+CanonicalResolutionRaw canonicalize(const ResolutionRaw& value)
+{
+    return { CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(value.type).value() * value.value };
+}
+
+CanonicalTimeRaw canonicalize(const TimeRaw& value)
+{
+    return { CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(value.type).value() * value.value };
+}
+
+// MARK: Serialization
+
+template<typename RawValueType> static void serializationRawValueForCSS(StringBuilder& builder, const RawValueType& value)
 {
     formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
+}
+
+void serializationIntegerForCSS(StringBuilder& builder, int value)
+{
+    formatCSSNumberValue(builder, static_cast<double>(value), CSSPrimitiveValue::unitTypeString(CSSUnitType::CSS_INTEGER));
+}
+
+void serializationIntegerForCSS(StringBuilder& builder, unsigned value)
+{
+    formatCSSNumberValue(builder, static_cast<double>(value), CSSPrimitiveValue::unitTypeString(CSSUnitType::CSS_INTEGER));
+}
+
+void serializationForCSS(StringBuilder& builder, const AngleRaw& value)
+{
+    serializationRawValueForCSS(builder, value);
+}
+
+void serializationForCSS(StringBuilder& builder, const CanonicalAngleRaw& value)
+{
+    serializationRawValueForCSS(builder, value);
 }
 
 void serializationForCSS(StringBuilder& builder, const NumberRaw& value)
 {
-    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(CSSUnitType::CSS_NUMBER));
+    serializationRawValueForCSS(builder, value);
 }
 
 void serializationForCSS(StringBuilder& builder, const PercentRaw& value)
 {
-    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(CSSUnitType::CSS_PERCENTAGE));
+    serializationRawValueForCSS(builder, value);
 }
 
 void serializationForCSS(StringBuilder& builder, const LengthRaw& value)
 {
-    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
+    serializationRawValueForCSS(builder, value);
+}
+
+void serializationForCSS(StringBuilder& builder, const CanonicalLengthRaw& value)
+{
+    serializationRawValueForCSS(builder, value);
 }
 
 void serializationForCSS(StringBuilder& builder, const TimeRaw& value)
 {
-    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
+    serializationRawValueForCSS(builder, value);
+}
+
+void serializationForCSS(StringBuilder& builder, const CanonicalTimeRaw& value)
+{
+    serializationRawValueForCSS(builder, value);
 }
 
 void serializationForCSS(StringBuilder& builder, const ResolutionRaw& value)
 {
-    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
+    serializationRawValueForCSS(builder, value);
+}
+
+void serializationForCSS(StringBuilder& builder, const CanonicalResolutionRaw& value)
+{
+    serializationRawValueForCSS(builder, value);
+}
+
+void serializationForCSS(StringBuilder& builder, const SymbolRaw& value)
+{
+    builder.append(nameLiteralForSerialization(value.value));
 }
 
 void serializationForCSS(StringBuilder& builder, const NoneRaw&)
@@ -67,10 +134,84 @@ void serializationForCSS(StringBuilder& builder, const NoneRaw&)
     builder.append("none"_s);
 }
 
-void serializationForCSS(StringBuilder& builder, const SymbolRaw& value)
+// MARK: CSSPrimitiveValue construction
+
+template<typename RawValueType> static Ref<CSSPrimitiveValue> createCSSPrimitiveValueFromRawValue(const RawValueType& value)
 {
-    builder.append(nameLiteralForSerialization(value.value));
+    return CSSPrimitiveValue::create(value.value, value.type);
 }
+
+Ref<CSSPrimitiveValue> createCSSPrimitiveValueForInteger(int value)
+{
+    return CSSPrimitiveValue::createInteger(static_cast<double>(value));
+}
+
+Ref<CSSPrimitiveValue> createCSSPrimitiveValueForInteger(unsigned value)
+{
+    return CSSPrimitiveValue::createInteger(static_cast<double>(value));
+}
+
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const AngleRaw& value)
+{
+    return createCSSPrimitiveValueFromRawValue(value);
+}
+
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const CanonicalAngleRaw& value)
+{
+    return createCSSPrimitiveValueFromRawValue(value);
+}
+
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const NumberRaw& value)
+{
+    return createCSSPrimitiveValueFromRawValue(value);
+}
+
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const PercentRaw& value)
+{
+    return createCSSPrimitiveValueFromRawValue(value);
+}
+
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const LengthRaw& value)
+{
+    return createCSSPrimitiveValueFromRawValue(value);
+}
+
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const CanonicalLengthRaw& value)
+{
+    return createCSSPrimitiveValueFromRawValue(value);
+}
+
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const TimeRaw& value)
+{
+    return createCSSPrimitiveValueFromRawValue(value);
+}
+
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const CanonicalTimeRaw& value)
+{
+    return createCSSPrimitiveValueFromRawValue(value);
+}
+
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const ResolutionRaw& value)
+{
+    return createCSSPrimitiveValueFromRawValue(value);
+}
+
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const CanonicalResolutionRaw& value)
+{
+    return createCSSPrimitiveValueFromRawValue(value);
+}
+
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const SymbolRaw& value)
+{
+    return CSSPrimitiveValue::create(value.value);
+}
+
+Ref<CSSPrimitiveValue> createCSSPrimitiveValue(const NoneRaw&)
+{
+    return CSSPrimitiveValue::create(CSSValueNone);
+}
+
+// MARK: SymbolRaw lookup
 
 NumberRaw replaceSymbol(SymbolRaw raw, const CSSCalcSymbolTable& symbolTable)
 {

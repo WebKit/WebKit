@@ -46,7 +46,6 @@ class CounterContent;
 class CursorList;
 class Element;
 class FillLayer;
-class FilterOperations;
 class FloatPoint;
 class FloatPoint3D;
 class FloatRect;
@@ -280,6 +279,7 @@ using LayoutBoxExtent = RectEdges<LayoutUnit>;
 
 namespace Style {
 class CustomPropertyRegistry;
+class FilterOperations;
 struct PseudoElementIdentifier;
 struct ScopedName;
 }
@@ -1074,14 +1074,14 @@ public:
 
     inline OptionSet<SpeakAs> speakAs() const;
 
-    inline const FilterOperations& filter() const;
+    inline const Style::FilterOperations& filter() const;
     inline bool hasFilter() const;
     bool hasReferenceFilterOnly() const;
 
-    inline const FilterOperations& appleColorFilter() const;
+    inline const Style::FilterOperations& appleColorFilter() const;
     inline bool hasAppleColorFilter() const;
 
-    inline const FilterOperations& backdropFilter() const;
+    inline const Style::FilterOperations& backdropFilter() const;
     inline bool hasBackdropFilter() const;
 
     inline void setBlendMode(BlendMode);
@@ -1512,10 +1512,10 @@ public:
     inline void setColorScheme(StyleColorScheme);
 #endif
 
-    inline void setFilter(FilterOperations&&);
-    inline void setAppleColorFilter(FilterOperations&&);
+    inline void setFilter(Style::FilterOperations&&);
+    inline void setAppleColorFilter(Style::FilterOperations&&);
 
-    inline void setBackdropFilter(FilterOperations&&);
+    inline void setBackdropFilter(Style::FilterOperations&&);
 
     inline void setTabSize(const TabSize&);
 
@@ -2095,10 +2095,10 @@ public:
 
     static bool initialUseSmoothScrolling() { return false; }
 
-    static inline FilterOperations initialFilter();
-    static inline FilterOperations initialAppleColorFilter();
+    static inline Style::FilterOperations initialFilter();
+    static inline Style::FilterOperations initialAppleColorFilter();
 
-    static inline FilterOperations initialBackdropFilter();
+    static inline Style::FilterOperations initialBackdropFilter();
 
     static constexpr BlendMode initialBlendMode();
     static constexpr Isolation initialIsolation();

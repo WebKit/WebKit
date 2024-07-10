@@ -48,7 +48,6 @@
 namespace WebCore {
 
 class Element;
-class FilterOperations;
 class MutableStyleProperties;
 class RenderStyle;
 

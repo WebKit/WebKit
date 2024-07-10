@@ -7450,10 +7450,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
 
     ASSERT(m_success.empty());
 
-    auto keys = FixedVector<Ref<AccessCase>>::createWithSizeFromGenerator(1,
-        [&](unsigned) {
-            return std::optional { Ref { accessCase } };
-        });
+    auto keys = FixedVector<Ref<AccessCase>> { 1, [&](unsigned) -> Ref<AccessCase> { return { accessCase }; } };
     dataLogLnIf(InlineCacheCompilerInternal::verbose, FullCodeOrigin(codeBlock, m_stubInfo.codeOrigin), ": Generating polymorphic access stub for ", listDump(keys));
 
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> code = FINALIZE_CODE_FOR(codeBlock, linkBuffer, JITStubRoutinePtrTag, categoryName(m_stubInfo.accessType), "%s", toCString("Access stub for ", *codeBlock, " ", m_stubInfo.codeOrigin, "with start: ", m_stubInfo.startLocation, ": ", listDump(keys)).data());

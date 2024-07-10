@@ -35,6 +35,7 @@
 #include <wtf/Box.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Expected.h>
+#include <wtf/FixedVector.h>
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/OptionSet.h>
@@ -512,6 +513,52 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 };
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> struct ArgumentCoder<Vector<T, inlineCapacity, OverflowHandler, minCapacity>> : VectorArgumentCoder<std::is_arithmetic<T>::value, T, inlineCapacity, OverflowHandler, minCapacity> { };
+
+template<bool fixedSizeElements, typename T> struct FixedVectorArgumentCoder;
+
+template<typename T> struct FixedVectorArgumentCoder<false, T> {
+    template<typename Encoder, typename U> static void encode(Encoder& encoder, U&& fixedVector)
+    {
+        static_assert(std::is_same_v<std::remove_cvref_t<U>, FixedVector<T>>);
+
+        encoder << static_cast<size_t>(fixedVector.size());
+        for (auto&& item : fixedVector)
+            encoder << WTF::forward_like<U>(item);
+    }
+
+    template<typename Decoder> static std::optional<FixedVector<T>> decode(Decoder& decoder)
+    {
+        auto fixedVectorSize = decoder.template decode<size_t>();
+        if (!fixedVectorSize)
+            return std::nullopt;
+
+        auto fixedVector = FixedVector<T> { *fixedVectorSize, [&](size_t) -> std::optional<T> {
+            return decoder.template decode<T>();
+        } };
+
+        if (fixedVector.size() != *fixedVectorSize)
+            return std::nullopt;
+
+        return { WTFMove(fixedVector) };
+    }
+};
+
+template<typename T> struct FixedVectorArgumentCoder<true, T> {
+    template<typename Encoder> static void encode(Encoder& encoder, const FixedVector<T>& fixedVector)
+    {
+        encoder << fixedVector.span();
+    }
+
+    template<typename Decoder> static std::optional<Vector<T>> decode(Decoder& decoder)
+    {
+        auto span = decoder.template decode<std::span<const T>>();
+        if (!span)
+            return std::nullopt;
+        return std::make_optional<FixedVector<T>>(*span);
+    }
+};
+
+template<typename T> struct ArgumentCoder<FixedVector<T>> : FixedVectorArgumentCoder<std::is_arithmetic<T>::value, T> { };
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename HashTableTraits> struct ArgumentCoder<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, HashTableTraits>> {
     typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, HashTableTraits> HashMapType;

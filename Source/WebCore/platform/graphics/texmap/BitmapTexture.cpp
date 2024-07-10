@@ -96,7 +96,7 @@ void BitmapTexture::reset(const IntSize& size, OptionSet<Flags> flags)
     m_flags = flags;
     m_shouldClear = true;
     m_colorConvertFlags = { };
-    m_filterOperation = nullptr;
+    m_filterOperation = { };
     if (m_size != size) {
         m_size = size;
         glBindTexture(GL_TEXTURE_2D, m_id);
