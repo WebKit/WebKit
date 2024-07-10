@@ -2464,3 +2464,5 @@ webkit.org/b/275962 imported/w3c/web-platform-tests/navigation-api/navigation-hi
 
 # rdar://124314393 ([ Sequoia+ ] fast/text/combining-mark-paint.html is a consistent image failure)
 [ Sequoia+ ] fast/text/combining-mark-paint.html [ ImageOnlyFailure ]
+
+webkit.org/b/276434 workers/wasm-hashset-many.html  [ Pass Crash ]
