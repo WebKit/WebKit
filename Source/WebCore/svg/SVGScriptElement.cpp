@@ -80,12 +80,6 @@ void SVGScriptElement::childrenChanged(const ChildChange& change)
     ScriptElement::childrenChanged(change);
 }
 
-void SVGScriptElement::finishParsingChildren()
-{
-    SVGElement::finishParsingChildren();
-    ScriptElement::finishParsingChildren();
-}
-
 void SVGScriptElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     SVGElement::addSubresourceAttributeURLs(urls);

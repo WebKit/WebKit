@@ -93,17 +93,16 @@ void ScriptElement::didFinishInsertingNode()
 
 void ScriptElement::childrenChanged(const ContainerNode::ChildChange& childChange)
 {
+    if (childChange.source != ContainerNode::ChildChange::Source::Parser)
+        m_isTrusted = false;
+
+    if (m_changedByTrustedSink)
+        m_isTrusted = true;
+
+    m_changedByTrustedSink = false;
+
     if (m_parserInserted == ParserInserted::No && childChange.isInsertion() && element().isConnected())
         prepareScript(); // FIXME: Provide a real starting line number here.
-
-    if (childChange.source == ContainerNode::ChildChange::Source::API)
-        m_childrenChangedByAPI = true;
-}
-
-void ScriptElement::finishParsingChildren()
-{
-    if (!m_childrenChangedByAPI)
-        m_trustedScriptText = scriptContent();
 }
 
 void ScriptElement::handleSourceAttribute(const String& sourceURL)
@@ -183,7 +182,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
 
     String sourceText = scriptContent();
     Ref context = *element().scriptExecutionContext();
-    if (context->settingsValues().trustedTypesEnabled && sourceText != m_trustedScriptText) {
+    if (context->settingsValues().trustedTypesEnabled && !m_isTrusted) {
         auto trustedText = trustedTypeCompliantString(TrustedType::TrustedScript, context, sourceText, is<HTMLScriptElement>(element()) ? "HTMLScriptElement text"_s : "SVGScriptElement text"_s);
         if (trustedText.hasException())
             return false;
@@ -618,11 +617,6 @@ bool ScriptElement::ignoresLoadRequest() const
 String ScriptElement::scriptContent() const
 {
     return TextNodeTraversal::childTextContent(protectedElement());
-}
-
-void ScriptElement::setTrustedScriptText(const String& text)
-{
-    m_trustedScriptText = text;
 }
 
 void ScriptElement::ref() const

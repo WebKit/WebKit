@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="/resources/testharness.js"></script>
+  <script src="/resources/testharnessreport.js"></script>
+  <meta http-equiv="Content-Security-Policy" content="require-trusted-types-for 'script'">
+</head>
+<body>
+<script>
+  const policy = trustedTypes.createPolicy("testpolicy", {
+      createScript: x => x});
+  promise_test(t => {
+    const s = document.createElement("script");
+    document.body.appendChild(s);
+    s.text = policy.createScript("window.postMessage('hello');");
+    return new Promise(resolve => {
+      window.addEventListener("message", e => {
+        if (e.data == "hello") resolve();
+      });
+    });
+  }, "Script set via .text executes on a connected HTMLScriptElement.");
+  promise_test(t => {
+    const s = document.createElement("script");
+    s.text = policy.createScript("window.postMessage('world');");
+    document.body.appendChild(s);
+    return new Promise(resolve => {
+      window.addEventListener("message", e => {
+        if (e.data == "world") resolve();
+      });
+    });
+  }, "Script set via .text executes on an unconnected HTMLScriptElement.");
+
+</script>
+</body>
+</html>
