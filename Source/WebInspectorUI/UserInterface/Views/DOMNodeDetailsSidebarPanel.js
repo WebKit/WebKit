@@ -548,7 +548,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
                 }
 
                 let switchState = "";
-                // COMPATIBILITY (macOS X.0, iOS X.0): DOM.AccessibilityProperties.switchState did not exist yet.
+                // COMPATIBILITY (macOS 15.0, iOS 18.0): DOM.AccessibilityProperties.switchState did not exist yet.
                 if (InspectorBackend.Enum.DOM.AccessibilityPropertiesSwitchState) {
                     switch (accessibilityProperties.switchState) {
                     case InspectorBackend.Enum.DOM.AccessibilityPropertiesSwitchState.On:
