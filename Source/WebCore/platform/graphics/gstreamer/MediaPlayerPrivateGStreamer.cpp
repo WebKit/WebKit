@@ -193,6 +193,11 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
 
 MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
 {
+    tearDown(true);
+}
+
+void MediaPlayerPrivateGStreamer::tearDown(bool clearMediaPlayer)
+{
     GST_DEBUG_OBJECT(pipeline(), "Disposing player");
     m_isPlayerShuttingDown.store(true);
 
@@ -210,18 +215,12 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     if (m_fillTimer.isActive())
         m_fillTimer.stop();
 
-    m_pausedTimerHandler.stop();
+    if (m_pausedTimerHandler.isActive())
+        m_pausedTimerHandler.stop();
 
     if (m_videoSink) {
         GRefPtr<GstPad> videoSinkPad = adoptGRef(gst_element_get_static_pad(m_videoSink.get(), "sink"));
         g_signal_handlers_disconnect_matched(videoSinkPad.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-    }
-
-    if (m_pipeline) {
-        auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
-        gst_bus_disable_sync_message_emission(bus.get());
-        disconnectSimpleBusMessageCallback(m_pipeline.get());
-        g_signal_handlers_disconnect_matched(m_pipeline.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
     }
 
 #if USE(GSTREAMER_GL)
@@ -254,11 +253,22 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     if (m_pipeline) {
         unregisterPipeline(m_pipeline);
         gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
+
+        auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
+        gst_bus_disable_sync_message_emission(bus.get());
+        disconnectSimpleBusMessageCallback(m_pipeline.get());
+        g_signal_handlers_disconnect_matched(m_pipeline.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+
+        m_pipeline = nullptr;
     }
 
+    if (!clearMediaPlayer)
+        return;
 
+    //mediaPlayerWillBeDestroyed();
     m_player = nullptr;
-    m_notifier->invalidate();
+    if (m_notifier->isValid())
+        m_notifier->invalidate();
 }
 
 bool MediaPlayerPrivateGStreamer::isAvailable()
@@ -397,6 +407,8 @@ bool MediaPlayerPrivateGStreamer::isPipelineWaitingPreroll(GstState current, Gst
 
 bool MediaPlayerPrivateGStreamer::isPipelineWaitingPreroll() const
 {
+    if (!m_pipeline)
+        return true;
     GstState current, pending;
     GstStateChangeReturn change = gst_element_get_state(m_pipeline.get(), &current, &pending, 0);
     return isPipelineWaitingPreroll(current, pending, change);
@@ -773,7 +785,7 @@ void MediaPlayerPrivateGStreamer::setPreload(MediaPlayer::Preload preload)
 
 const PlatformTimeRanges& MediaPlayerPrivateGStreamer::buffered() const
 {
-    if (m_didErrorOccur || m_isLiveStream.value_or(false))
+    if (m_didErrorOccur || m_isLiveStream.value_or(false) || !m_pipeline)
         return PlatformTimeRanges::emptyRanges();
 
     MediaTime mediaDuration = durationMediaTime();
@@ -3295,7 +3307,7 @@ bool MediaPlayerPrivateGStreamer::canSaveMediaData() const
 void MediaPlayerPrivateGStreamer::pausedTimerFired()
 {
     GST_DEBUG_OBJECT(pipeline(), "In PAUSED for too long. Releasing pipeline resources.");
-    changePipelineState(GST_STATE_NULL);
+    tearDown(true);
 }
 
 void MediaPlayerPrivateGStreamer::acceleratedRenderingStateChanged()
@@ -3402,11 +3414,15 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
         {
             Locker locker { proxy.lock() };
 
-            if (!proxy.isActive())
+            if (!proxy.isActive()) {
+                GST_ERROR_OBJECT(pipeline(), "TextureMapperPlatformLayerProxyGL is inactive");
+                textureMapperPlatformLayerProxyWasInvalidated();
                 return;
+            }
 
             auto frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_videoDecoderPlatform, m_textureMapperFlags, !m_isUsingFallbackVideoSink);
             internalCompositingOperation(proxy, WTFMove(frameHolder));
+            m_hasFirstVideoSampleBeenRendered = true;
         };
 
 #if USE(NICOSIA)
@@ -3522,8 +3538,11 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
     ASSERT(is<TextureMapperPlatformLayerProxyDMABuf>(proxy));
 
     Locker locker { proxy.lock() };
-    if (!proxy.isActive())
+    if (!proxy.isActive()) {
+        GST_ERROR_OBJECT(pipeline(), "TextureMapperPlatformLayerProxyDMABuf is inactive");
+        textureMapperPlatformLayerProxyWasInvalidated();
         return;
+    }
 
     // Currently we have to cover two ways of detecting a DMABuf memory. The most reliable is by detecting
     // the memory:DMABuf feature on the GstCaps object. All sensible decoders yielding DMABufs specify this.
@@ -3603,6 +3622,7 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
                 return WTFMove(object);
             }, textureMapperFlags);
 
+        m_hasFirstVideoSampleBeenRendered = true;
         auto* quarkData = static_cast<DMABufMemoryQuarkData*>(gst_mini_object_get_qdata(GST_MINI_OBJECT_CAST(memory.get()), dmabuf_memory_quark()));
         if (quarkData)
             m_dmabufMemory.add(WTFMove(memory));
@@ -3695,6 +3715,7 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
             object.colorSpace = colorSpaceForColorimetry(&GST_VIDEO_INFO_COLORIMETRY(&videoInfo));
             return object;
         }, textureMapperFlags);
+    m_hasFirstVideoSampleBeenRendered = true;
 }
 #endif // USE(TEXTURE_MAPPER_DMABUF)
 
@@ -3856,6 +3877,20 @@ void MediaPlayerPrivateGStreamer::invalidateCachedPositionOnNextIteration() cons
         if (!weakThis)
             return;
         invalidateCachedPosition();
+    });
+}
+
+void MediaPlayerPrivateGStreamer::textureMapperPlatformLayerProxyWasInvalidated()
+{
+    RELEASE_ASSERT(m_sampleMutex.isHeld());
+    if (!m_hasFirstVideoSampleBeenRendered)
+        return;
+
+    RunLoop::main().dispatch([weakThis = WeakPtr { *this }, this] {
+        RefPtr player = weakThis.get();
+        if (!player)
+            return;
+        tearDown(false);
     });
 }
 
@@ -4028,6 +4063,9 @@ void MediaPlayerPrivateGStreamer::setVisibleInViewport(bool isVisible)
     // this using an environment variable, set from the webkitpy glib port sub-classes.
     const char* allowPlaybackOfInvisibleVideos = g_getenv("WEBKIT_GST_ALLOW_PLAYBACK_OF_INVISIBLE_VIDEOS");
     if (!isVisible && allowPlaybackOfInvisibleVideos && !strcmp(allowPlaybackOfInvisibleVideos, "1"))
+        return;
+
+    if (!m_pipeline)
         return;
 
     RefPtr player = m_player.get();
