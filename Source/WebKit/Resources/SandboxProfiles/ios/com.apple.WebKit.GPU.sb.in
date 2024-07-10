@@ -145,6 +145,9 @@
             "com.apple.coremedia.mediaplaybackd.figcontentkeysession.xpc"
             "com.apple.coremedia.mediaplaybackd.figcontentkeyboss.xpc"
             "com.apple.coremedia.mediaplaybackd.figcpecryptor.xpc"
+#if HAVE(AVMETRICS)
+            "com.apple.coremedia.mediaplaybackd.figmetriceventtimeline.xpc"
+#endif
             "com.apple.coremedia.mediaplaybackd.formatreader.xpc"
             "com.apple.coremedia.mediaplaybackd.player.xpc"
             "com.apple.coremedia.mediaplaybackd.remaker.xpc"
