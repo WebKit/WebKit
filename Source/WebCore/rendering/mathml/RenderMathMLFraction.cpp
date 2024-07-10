@@ -185,8 +185,8 @@ void RenderMathMLFraction::computePreferredLogicalWidths()
     m_maxPreferredLogicalWidth = 0;
 
     if (isValid()) {
-        LayoutUnit numeratorWidth = numerator().maxPreferredLogicalWidth() + numerator().marginLogicalWidth();
-        LayoutUnit denominatorWidth = denominator().maxPreferredLogicalWidth() + denominator().marginLogicalWidth();
+        LayoutUnit numeratorWidth = numerator().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(numerator());
+        LayoutUnit denominatorWidth = denominator().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(denominator());
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = std::max(numeratorWidth, denominatorWidth) + borderAndPaddingLogicalWidth();
     }
 

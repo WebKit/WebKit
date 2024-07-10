@@ -134,7 +134,7 @@ LayoutUnit RenderMathMLRow::preferredLogicalWidthOfRowItems()
     for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         if (child->isOutOfFlowPositioned())
             continue;
-        preferredWidth += child->maxPreferredLogicalWidth() + child->marginLogicalWidth();
+        preferredWidth += child->maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(*child);
     }
     return preferredWidth;
 }

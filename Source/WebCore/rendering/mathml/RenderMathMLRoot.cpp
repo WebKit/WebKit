@@ -173,10 +173,10 @@ void RenderMathMLRoot::computePreferredLogicalWidths()
         ASSERT(rootType() == RootType::RootWithIndex);
         auto horizontal = horizontalParameters();
         preferredWidth += horizontal.kernBeforeDegree;
-        preferredWidth += getIndex().maxPreferredLogicalWidth();
+        preferredWidth += getIndex().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(getIndex());
         preferredWidth += horizontal.kernAfterDegree;
         preferredWidth += m_radicalOperator.maxPreferredWidth();
-        preferredWidth += getBase().maxPreferredLogicalWidth();
+        preferredWidth += getBase().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(getBase());
     }
     preferredWidth += borderAndPaddingLogicalWidth();
 
@@ -234,7 +234,7 @@ void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
         setLogicalWidth(m_radicalOperator.width() + m_baseWidth + borderAndPaddingLogicalWidth());
     else {
         ASSERT(rootType() == RootType::RootWithIndex);
-        setLogicalWidth(horizontal.kernBeforeDegree + getIndex().logicalWidth() + horizontal.kernAfterDegree + m_radicalOperator.width() + m_baseWidth + borderAndPaddingLogicalWidth());
+        setLogicalWidth(horizontal.kernBeforeDegree + getIndex().logicalWidth() + getIndex().marginLogicalWidth() + horizontal.kernAfterDegree + m_radicalOperator.width() + m_baseWidth + borderAndPaddingLogicalWidth());
     }
 
     // For <mroot>, we update the metrics to take into account the index.
@@ -252,14 +252,15 @@ void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
     LayoutUnit horizontalOffset = borderAndPaddingStart() + m_radicalOperator.width();
     if (rootType() == RootType::RootWithIndex)
         horizontalOffset += horizontal.kernBeforeDegree + getIndex().logicalWidth() + getIndex().marginLogicalWidth() + horizontal.kernAfterDegree;
-    LayoutPoint baseLocation(mirrorIfNeeded(horizontalOffset, m_baseWidth), ascent - baseAscent);
     if (rootType() == RootType::SquareRoot) {
+        LayoutPoint baseLocation(mirrorIfNeeded(horizontalOffset, m_baseWidth), ascent - baseAscent);
         for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
             child->setLocation(child->location() + baseLocation);
     } else {
         ASSERT(rootType() == RootType::RootWithIndex);
+        LayoutPoint baseLocation(mirrorIfNeeded(horizontalOffset + getBase().marginStart(), getBase()), ascent - baseAscent + getBase().marginBefore());
         getBase().setLocation(baseLocation);
-        LayoutPoint indexLocation(mirrorIfNeeded(borderAndPaddingStart() + horizontal.kernBeforeDegree, getIndex()), ascent + descent - indexBottomRaise - indexDescent - indexAscent);
+        LayoutPoint indexLocation(mirrorIfNeeded(borderAndPaddingStart() + horizontal.kernBeforeDegree + getIndex().marginStart(), getIndex()), ascent + descent - indexBottomRaise - indexDescent - indexAscent + getIndex().marginBefore());
         getIndex().setLocation(indexLocation);
     }
 
