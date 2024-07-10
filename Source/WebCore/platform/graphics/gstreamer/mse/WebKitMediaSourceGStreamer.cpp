@@ -37,6 +37,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/MainThreadData.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Scope.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
@@ -343,6 +344,13 @@ void webKitMediaSrcEmitStreams(WebKitMediaSrc* source, const Vector<RefPtr<Media
     gst_element_post_message(GST_ELEMENT(source), gst_message_new_stream_collection(GST_OBJECT(source), source->priv->collection.get()));
 
     for (const RefPtr<Stream>& stream: source->priv->streams.values()) {
+        // Block data flow until pad is exposed.
+        gulong blockId = gst_pad_add_probe(
+            GST_PAD(stream->pad.get()), GST_PAD_PROBE_TYPE_BLOCK_DOWNSTREAM,
+            [](GstPad*, GstPadProbeInfo*, gpointer) -> GstPadProbeReturn {
+                return GST_PAD_PROBE_OK;
+            }, nullptr, nullptr);
+
         if (!webkitGstCheckVersion(1, 20, 6)) {
             // Workaround: gst_element_add_pad() should already call gst_pad_set_active() if the element is PAUSED or
             // PLAYING. Unfortunately, as of GStreamer 1.18.2 it does so with the element lock taken, causing a deadlock
@@ -356,6 +364,7 @@ void webKitMediaSrcEmitStreams(WebKitMediaSrc* source, const Vector<RefPtr<Media
         }
         GST_DEBUG_OBJECT(source, "Adding pad '%s' for stream with name '%s'", GST_OBJECT_NAME(stream->pad.get()), stream->track->stringId().string().utf8().data());
         gst_element_add_pad(GST_ELEMENT(source), GST_PAD(stream->pad.get()));
+        gst_pad_remove_probe(GST_PAD(stream->pad.get()), blockId);
     }
     GST_DEBUG_OBJECT(source, "All pads added");
 }
