@@ -630,6 +630,9 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
     RefPtr document = window()->protectedDocument();
 
     RefPtr apiMethodTracker = m_ongoingAPIMethodTracker;
+    // FIXME: this should not be needed, we should pass it into FrameLoader.
+    if (apiMethodTracker && apiMethodTracker->serializedState)
+        destination->setStateObject(apiMethodTracker->serializedState.get());
     bool isSameDocument = destination->sameDocument();
     bool isTraversal = navigationType == NavigationNavigationType::Traverse;
     bool canIntercept = documentCanHaveURLRewritten(*document, destination->url()) && (!isTraversal || isSameDocument);
@@ -782,8 +785,9 @@ bool Navigation::dispatchTraversalNavigateEvent(HistoryItem& historyItem)
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#fire-a-push/replace/reload-navigate-event
 bool Navigation::dispatchPushReplaceReloadNavigateEvent(const URL& url, NavigationNavigationType navigationType, bool isSameDocument, FormState* formState, SerializedScriptValue* classicHistoryAPIState)
 {
-    // FIXME: Set event's classic history API state to classicHistoryAPIState.
     Ref destination = NavigationDestination::create(url, nullptr, isSameDocument);
+    if (classicHistoryAPIState)
+        destination->setStateObject(classicHistoryAPIState);
     return innerDispatchNavigateEvent(navigationType, WTFMove(destination), { }, formState, classicHistoryAPIState);
 }
 

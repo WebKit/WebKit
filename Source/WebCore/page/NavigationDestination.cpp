@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NavigationDestination.h"
 
+#include "JSDOMGlobalObject.h"
+#include "SerializedScriptValue.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
@@ -38,6 +40,14 @@ NavigationDestination::NavigationDestination(const URL& url, RefPtr<NavigationHi
     , m_url(url)
     , m_isSameDocument(isSameDocument)
 {
+}
+
+JSC::JSValue NavigationDestination::getState(JSDOMGlobalObject& globalObject) const
+{
+    if (!m_stateObject)
+        return JSC::jsUndefined();
+
+    return m_stateObject->deserialize(globalObject, &globalObject, SerializationErrorMode::Throwing);
 }
 
 } // namespace WebCore

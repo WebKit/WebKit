@@ -46,7 +46,8 @@ public:
     String id() const { return m_entry ? m_entry->id() : String(); };
     int64_t index() const { return m_entry ? m_entry->index() : -1; };
     bool sameDocument() const { return m_isSameDocument; };
-    const JSC::JSValue& getState() const { return m_state; };
+    JSC::JSValue getState(JSDOMGlobalObject&) const;
+    void setStateObject(SerializedScriptValue* stateObject) { m_stateObject = stateObject; }
 
 private:
     explicit NavigationDestination(const URL&, RefPtr<NavigationHistoryEntry>&&, bool isSameDocument);
@@ -54,7 +55,7 @@ private:
     RefPtr<NavigationHistoryEntry> m_entry;
     URL m_url;
     bool m_isSameDocument;
-    JSC::JSValue m_state;
+    RefPtr<SerializedScriptValue> m_stateObject;
 };
 
 } // namespace WebCore
