@@ -80,6 +80,9 @@ private:
     std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() override;
     void colorSpaceDidChange() override;
 
+    void viewIsBecomingVisible() final;
+    void viewIsBecomingInvisible() final;
+
     void didChangeViewExposedRect() override;
 
     void setDisplayLinkWantsFullSpeedUpdates(bool) override;
@@ -100,6 +103,8 @@ private:
     WebCore::PlatformLayerIdentifier m_pageScrollingLayerID;
 
     bool m_usesOverlayScrollbars { false };
+    bool m_shouldLogNextObserverChange { false };
+    bool m_shouldLogNextDisplayRefresh { false };
 
     std::optional<WebCore::ScrollbarStyle> m_scrollbarStyle;
 

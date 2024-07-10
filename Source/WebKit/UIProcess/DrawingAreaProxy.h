@@ -106,6 +106,9 @@ public:
     virtual void adjustTransientZoom(double, WebCore::FloatPoint) { }
     virtual void commitTransientZoom(double, WebCore::FloatPoint) { }
 
+    virtual void viewIsBecomingVisible() { }
+    virtual void viewIsBecomingInvisible() { }
+
 #if PLATFORM(MAC)
     virtual void didChangeViewExposedRect();
     void viewExposedRectChangedTimerFired();

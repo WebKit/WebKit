@@ -2943,6 +2943,7 @@ private:
     void handleSynchronousMessage(IPC::Connection&, const String& messageName, const UserData& messageBody, CompletionHandler<void(UserData&&)>&&);
 
     void viewIsBecomingVisible();
+    void viewIsBecomingInvisible();
 
     void stopAllURLSchemeTasks(WebProcessProxy* = nullptr);
 
