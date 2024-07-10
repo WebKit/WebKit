@@ -182,7 +182,8 @@ jobs:
         run: |
           Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
           Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
-      - name: Install Ninja
+          Join-Path (Resolve-Path ~).Path "scoop\shims" >> $Env:GITHUB_PATH
+      - name: Install LLVM and Ninja
         run: |
           scoop install ninja
           scoop install llvm@18.1.8
