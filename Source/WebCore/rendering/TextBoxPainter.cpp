@@ -212,9 +212,6 @@ void TextBoxPainter<TextBoxPath>::paintCompositionForeground(const StyledMarkedT
 {
     auto& editor = m_renderer.frame().editor();
 
-    auto highlights = editor.customCompositionHighlights();
-    Vector<CompositionHighlight> highlightsWithForeground;
-
     if (!(editor.compositionUsesCustomHighlights() && m_containsComposition)) {
         paintForeground(markedText);
         return;
@@ -223,6 +220,9 @@ void TextBoxPainter<TextBoxPath>::paintCompositionForeground(const StyledMarkedT
     // The highlight ranges must be "packed" so that there is no non-empty interval between
     // any two adjacent highlight ranges. This is needed since otherwise, `paintForeground`
     // will not be called in those would-be non-empty intervals.
+    auto highlights = editor.customCompositionHighlights();
+
+    Vector<CompositionHighlight> highlightsWithForeground;
     highlightsWithForeground.append({ textBox().start(), highlights[0].startOffset, { }, { } });
 
     for (size_t i = 0; i < highlights.size(); ++i) {

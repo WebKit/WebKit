@@ -1825,6 +1825,9 @@ RenderBlock* FrameSelection::caretRendererWithoutUpdatingLayout() const
 
 RenderBlock* DragCaretController::caretRenderer() const
 {
+    if (m_position.isNull())
+        return nullptr;
+
     return rendererForCaretPainting(m_position.deepEquivalent().deprecatedNode());
 }
 
