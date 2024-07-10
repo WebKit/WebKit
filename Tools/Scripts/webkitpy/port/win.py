@@ -55,6 +55,7 @@ except ImportError:
 
 class WinPort(ApplePort):
     port_name = "win"
+    supports_localhost_aliases = True
 
     VERSION_MIN = Version(5, 1)
     VERSION_MAX = Version(10)
@@ -113,29 +114,6 @@ class WinPort(ApplePort):
             expected_text = delegate_regexp.sub("", expected_text)
             actual_text = delegate_regexp.sub("", actual_text)
         return ApplePort.do_text_results_differ(self, expected_text, actual_text)
-
-    def default_baseline_search_path(self, **kwargs):
-        version_name_map = VersionNameMap.map(self.host.platform)
-        if self._os_version < self.VERSION_MIN or self._os_version > self.VERSION_MAX:
-            fallback_versions = [self._os_version] if self._os_version else []
-        else:
-            sorted_versions = sorted(version_name_map.mapping_for_platform(platform=self.port_name).values())
-            fallback_versions = sorted_versions[sorted_versions.index(self._os_version):]
-
-        fallback_names = ['win-' + version_name_map.to_name(version, platform=self.port_name).lower().replace(' ', '') for version in fallback_versions]
-        fallback_names.append('win')
-
-        # FIXME: The AppleWin port falls back to AppleMac for some results.  Eventually we'll have a shared 'apple' port.
-        if self.get_option('webkit_test_runner'):
-            fallback_names.insert(0, 'win-wk2')
-            fallback_names.append('mac-wk2')
-            # Note we do not add 'wk2' here, even though it's included in _skipped_search_paths().
-        # FIXME: Perhaps we should get this list from MacPort?
-        fallback_names.append('mac')
-        result = list(map(self._webkit_baseline_path, fallback_names))
-        if apple_additions() and getattr(apple_additions(), "layout_tests_path", None):
-            result.insert(0, self._filesystem.join(apple_additions().layout_tests_path(), self.port_name))
-        return result
 
     def setup_environ_for_server(self, server_name=None):
         env = super(WinPort, self).setup_environ_for_server(server_name)
@@ -478,13 +456,6 @@ class WinPort(ApplePort):
 
         return True
 
-
-class WinCairoPort(WinPort):
-    port_name = "wincairo"
-    supports_localhost_aliases = True
-
-    DEFAULT_ARCHITECTURE = 'x86_64'
-
     def default_baseline_search_path(self, **kwargs):
         return list(map(self._webkit_baseline_path, self._search_paths()))
 
@@ -522,6 +493,10 @@ class WinCairoPort(WinPort):
         return paths
 
     def configuration_for_upload(self, host=None):
-        configuration = super(WinCairoPort, self).configuration_for_upload(host=host)
+        configuration = super(WinPort, self).configuration_for_upload(host=host)
         configuration['platform'] = self.port_name
         return configuration
+
+
+class WinCairoPort(WinPort):
+    port_name = "wincairo"
