@@ -67,6 +67,7 @@
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurfacePool.h>
+#import <WebCore/LocalCurrentTraitCollection.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/UserInterfaceLayoutDirection.h>
@@ -647,7 +648,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
         return WebCore::Color::transparentBlack;
 
     WebCore::Color color;
-    [webView.traitCollection performAsCurrentTraitCollection:[&]() {
+    [WebCore::traitCollectionWithAdjustedIdiomForSystemColors(webView.traitCollection) performAsCurrentTraitCollection:[&] {
         color = baseScrollViewBackgroundColor(webView, allowPageBackgroundColorOverride);
 
         if (!color.isValid() && webView->_contentView)

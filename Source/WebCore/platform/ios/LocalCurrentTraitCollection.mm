@@ -31,13 +31,16 @@
 
 namespace WebCore {
 
-static UITraitCollection *adjustedTraitCollection(UITraitCollection *traitCollection)
+UITraitCollection *traitCollectionWithAdjustedIdiomForSystemColors(UITraitCollection *traitCollection)
 {
 #if PLATFORM(VISION)
     // Use the iPad idiom instead of the Vision idiom, since some system colors are transparent
     // in the Vision idiom, and are not web-compatible.
-    if (traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomVision)
-        return [PAL::getUITraitCollectionClass() traitCollectionWithTraitsFromCollections:@[ traitCollection, [PAL::getUITraitCollectionClass() traitCollectionWithUserInterfaceIdiom:UIUserInterfaceIdiomPad] ]];
+    if (traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomVision) {
+        return [traitCollection traitCollectionByModifyingTraits:^(id<UIMutableTraits> traits) {
+            traits.userInterfaceIdiom = UIUserInterfaceIdiomPad;
+        }];
+    }
 #endif
     return traitCollection;
 }
@@ -46,22 +49,22 @@ LocalCurrentTraitCollection::LocalCurrentTraitCollection(bool useDarkAppearance,
 {
     m_savedTraitCollection = [PAL::getUITraitCollectionClass() currentTraitCollection];
 
-    auto userInterfaceStyleTrait = [PAL::getUITraitCollectionClass() traitCollectionWithUserInterfaceStyle:useDarkAppearance ? UIUserInterfaceStyleDark : UIUserInterfaceStyleLight];
-    auto backgroundLevelTrait = [PAL::getUITraitCollectionClass() traitCollectionWithUserInterfaceLevel:useElevatedUserInterfaceLevel ? UIUserInterfaceLevelElevated : UIUserInterfaceLevelBase];
-
     // FIXME: <rdar://problem/96607991> `-[UITraitCollection currentTraitCollection]` is not guaranteed
     // to return a useful set of traits in cases where it has not been explicitly set. Ideally, this
     // method should also take in a base, full-specified trait collection from the view hierarchy, to be
     // used when building the new trait collection.
-    auto newTraitCollection = adjustedTraitCollection([PAL::getUITraitCollectionClass() traitCollectionWithTraitsFromCollections:@[ m_savedTraitCollection.get(), userInterfaceStyleTrait, backgroundLevelTrait ]]);
+    RetainPtr combinedTraits = [m_savedTraitCollection traitCollectionByModifyingTraits:^(id<UIMutableTraits> traits) {
+        traits.userInterfaceStyle = useDarkAppearance ? UIUserInterfaceStyleDark : UIUserInterfaceStyleLight;
+        traits.userInterfaceLevel = useElevatedUserInterfaceLevel ? UIUserInterfaceLevelElevated : UIUserInterfaceLevelBase;
+    }];
 
-    [PAL::getUITraitCollectionClass() setCurrentTraitCollection:newTraitCollection];
+    [PAL::getUITraitCollectionClass() setCurrentTraitCollection:traitCollectionWithAdjustedIdiomForSystemColors(combinedTraits.get())];
 }
 
 LocalCurrentTraitCollection::LocalCurrentTraitCollection(UITraitCollection *traitCollection)
 {
     m_savedTraitCollection = [PAL::getUITraitCollectionClass() currentTraitCollection];
-    auto newTraitCollection = adjustedTraitCollection(traitCollection);
+    auto newTraitCollection = traitCollectionWithAdjustedIdiomForSystemColors(traitCollection);
     [PAL::getUITraitCollectionClass() setCurrentTraitCollection:newTraitCollection];
 }
 
