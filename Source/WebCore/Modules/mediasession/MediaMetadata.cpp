@@ -36,10 +36,12 @@
 #include "GraphicsContext.h"
 #include "Image.h"
 #include "ImageBuffer.h"
+#include "IntSize.h"
 #include "MediaImage.h"
 #include "MediaMetadataInit.h"
 #include "SpaceSplitString.h"
 #include <wtf/URL.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -159,22 +161,99 @@ ExceptionOr<void> MediaMetadata::setArtwork(ScriptExecutionContext& context, Vec
     return { };
 }
 
+// We attempt to give a score to the image dimensions. This score is between 0 and 1.
+// A negative score indicates an invalid image
+// A score of 0 is for images smaller than the minimum size
+// A score of 1 indicates an image of ideal size with an aspect ratio of 1 (square)
+// The closer to the ideal size, the higher the score.
+static float imageDimensionsScore(int width, int height, int minimumSize, int idealSize)
+{
+
+    IntSize size { width, height };
+    if (size.isEmpty())
+        return -1;
+
+    if (size.maxDimension() <= minimumSize)
+        return 0; // Ignore images that are too small.
+
+    // We account for the aspect ratio in scoring the "best" artwork.
+    // We prefer artwork's images with a square AR.
+    double longEdge = size.maxDimension();
+    double shortEdge = size.minDimension();
+    auto aspectRatioCoefficient = shortEdge / longEdge;
+
+    if (longEdge < idealSize)
+        return aspectRatioCoefficient * (0.8 * (longEdge - minimumSize) / (idealSize - minimumSize) + 0.2);
+    return aspectRatioCoefficient * (1.0 * idealSize / longEdge);
+}
+
 void MediaMetadata::refreshArtworkImage()
 {
-    const auto& mediaImages = m_metadata.artwork;
-    if (mediaImages.isEmpty()) {
-        m_artworkLoader = nullptr;
+    static_assert(s_minimumSize < s_idealSize);
+
+    m_artworkImageSrc = String();
+    m_artworkImage = nullptr;
+    m_artworkLoader = nullptr;
+    if (m_metadata.artwork.isEmpty())
         return;
-    }
-    if (!m_session || !m_session->document() || mediaImages[0].src == m_artworkImageSrc)
+    if (!m_session || !m_session->document())
         return;
-    // FIXME: Implement a heuristic to retrieve the "best" image.
-    m_artworkImageSrc = mediaImages[0].src;
-    m_artworkLoader = makeUnique<ArtworkImageLoader>(*m_session->document(), m_artworkImageSrc, [this](Image* image) {
-        if (!image || !image->data())
-            return;
-        setArtworkImage(image);
-        metadataUpdated();
+
+    // First look into the artwork's sizes attributes to attempt to determine the best score.
+    Vector<Pair> artworks(m_metadata.artwork.size(), [&](size_t index) -> Pair {
+        auto size = [&](const String& sizes) -> IntSize {
+            if (sizes.isEmpty())
+                return { };
+            if (equalIgnoringASCIICase(sizes, "any"_s))
+                return { s_idealSize, s_idealSize }; // We prefer image tagged with "any" size.
+            IntSize size;
+            for (auto element : StringView(sizes).split(' ')) {
+                if (element.isEmpty())
+                    continue;
+                auto posX = element.findIgnoringASCIICase("x"_s);
+                if (posX == notFound || !posX)
+                    return { };
+                std::optional<uint32_t> width = parseInteger<uint32_t>(element.left(posX));
+                std::optional<uint32_t> height = parseInteger<uint32_t>(element.right(posX));
+                if (!width || !height)
+                    return { };
+
+                IntSize newSize { int(*width), int(*height) };
+                if (size.maxDimension() < newSize.maxDimension())
+                    size = newSize;
+            }
+            return size;
+        }(m_metadata.artwork[index].sizes);
+        return { imageDimensionsScore(size.width(), size.height(), s_minimumSize, s_idealSize), m_metadata.artwork[index].src };
+    });
+
+    std::sort(artworks.begin(), artworks.end(), [](const Pair& a1, const Pair& a2) {
+        return a1.score > a2.score;
+    });
+
+    tryNextArtworkImage(0, WTFMove(artworks));
+}
+
+void MediaMetadata::tryNextArtworkImage(uint32_t index, Vector<Pair>&& artworks)
+{
+    String artworkImageSrc = artworks[index].src;
+
+    m_artworkLoader = makeUnique<ArtworkImageLoader>(*m_session->document(), artworkImageSrc, [this, index, artworkImageSrc, artworks = WTFMove(artworks)](Image* image) mutable {
+        if (image && image->data() && image->width() && image->height()) {
+            IntSize size { int(image->width()), int(image->height()) };
+            float imageScore = imageDimensionsScore(size.width(), size.height(), s_minimumSize, s_idealSize);
+            if (!index || (m_artworkImage && (imageDimensionsScore(m_artworkImage->width(), m_artworkImage->height(), s_minimumSize, s_idealSize) < imageScore))) {
+                m_artworkImageSrc = artworkImageSrc;
+                setArtworkImage(image);
+                metadataUpdated();
+            }
+            // If selection from `sizes` attribute yielded a valid image, or we have downloaded an image bigger than the ideal size we stop.
+            if (artworks[index].score >= 0 || size.maxDimension() >= s_idealSize)
+                return;
+        }
+
+        if (++index < artworks.size())
+            tryNextArtworkImage(index, WTFMove(artworks));
     });
     m_artworkLoader->requestImageResource();
 }
