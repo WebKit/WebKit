@@ -92,6 +92,9 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
+    // ActiveDOMObject
+    void stop() final;
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger.get(); }
     const void* logIdentifier() const { return m_logIdentifier; }

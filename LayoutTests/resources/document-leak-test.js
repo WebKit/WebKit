@@ -48,6 +48,11 @@ function iframeLeaked()
 
 function iframeSentMessage(message)
 {
+    if (message.data === "testFailed") {
+        testFailed("Error loading the initial frameURL.");
+        return finishJSTest();
+    }
+
     let iframe = iframeForMessage(message);
     let frameDocumentID = internals.documentIdentifier(iframe.contentWindow.document);
     let checkCount = 0;
