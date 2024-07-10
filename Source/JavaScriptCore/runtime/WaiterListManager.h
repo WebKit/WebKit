@@ -74,7 +74,7 @@ public:
     DeferredWorkTimer::Ticket ticket(const AbstractLocker&) const
     {
         ASSERT(m_isAsync);
-        return m_ticket;
+        return m_ticket.get();
     }
 
     void scheduleWorkAndClearTicket(DeferredWorkTimer::Task&&);
@@ -104,7 +104,7 @@ public:
     void dump(PrintStream&) const;
 private:
     VM* m_vm { nullptr };
-    DeferredWorkTimer::Ticket m_ticket { nullptr };
+    WeakPtr<DeferredWorkTimer::TicketData> m_ticket { nullptr };
     RefPtr<RunLoop::DispatchTimer> m_timer { nullptr };
     Condition m_condition;
     bool m_isAsync { false };

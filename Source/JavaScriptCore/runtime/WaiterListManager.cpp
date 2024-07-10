@@ -71,7 +71,7 @@ void Waiter::scheduleWorkAndClearTicket(DeferredWorkTimer::Task&& task)
     if (!m_ticket)
         return;
     auto ticket = std::exchange(m_ticket, nullptr);
-    m_vm->deferredWorkTimer->scheduleWorkSoon(ticket, WTFMove(task));
+    m_vm->deferredWorkTimer->scheduleWorkSoon(ticket.get(), WTFMove(task));
 }
 
 WaiterListManager& WaiterListManager::singleton()
@@ -278,8 +278,9 @@ size_t WaiterListManager::totalWaiterCount()
 void WaiterListManager::cancelAsyncWaiter(const AbstractLocker& listLocker, Waiter* waiter)
 {
     ASSERT(waiter->isAsync());
-    auto ticket = waiter->ticket(listLocker);
-    waiter->vm()->deferredWorkTimer->cancelPendingWork(ticket);
+    RefPtr<DeferredWorkTimer::TicketData> ticket = waiter->ticket(listLocker);
+    if (ticket)
+        waiter->vm()->deferredWorkTimer->cancelPendingWork(ticket.get());
     waiter->cancelTimer(listLocker);
 }
 
@@ -398,7 +399,7 @@ void Waiter::dump(PrintStream& out) const
         return;
     }
 
-    out.print(", ticket=", RawPointer(m_ticket));
+    out.print(", ticket=", RawPointer(m_ticket.get()));
     if (m_ticket && !m_ticket->isCancelled()) {
         out.print(", m_ticket->globalObject=", RawPointer(m_ticket->globalObject()));
         out.print(", m_ticket->target=", RawPointer(jsCast<JSObject*>(m_ticket->dependencies().last().get())));
