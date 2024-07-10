@@ -67,7 +67,8 @@ static RetainPtr<CFArrayRef> variationAxes(CTFontRef font, ShouldLocalizeAxisNam
 {
     if (shouldLocalizeAxisNames == ShouldLocalizeAxisNames::Yes)
         return adoptCF(CTFontCopyVariationAxes(font));
-    return variationAxesWithNonLocalizedAxesNames(CTFontCopyFontDescriptor(font));
+    RetainPtr fontDescriptor = adoptCF(CTFontCopyFontDescriptor(font));
+    return variationAxesWithNonLocalizedAxesNames(fontDescriptor.get());
 }
 
 VariationDefaultsMap defaultVariationValues(CTFontRef font, ShouldLocalizeAxisNames shouldLocalizeAxisNames)
