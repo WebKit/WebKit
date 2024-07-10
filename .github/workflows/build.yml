@@ -178,10 +178,14 @@ jobs:
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 90
     steps:
+      - name: Install Scoop
+        run: |
+          Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+          Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
       - name: Install Ninja
         run: |
-          choco install -y ninja
-          choco install -y llvm --version=18.1.8 --force
+          scoop install ninja
+          scoop install llvm@18.1.8
       - uses: cygwin/cygwin-install-action@006ad0b0946ca6d0a3ea2d4437677fa767392401
       - uses: actions/checkout@v4
         with:
