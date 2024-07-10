@@ -904,6 +904,8 @@ http/tests/security/xss-DENIED-xsl-external-entity.xml [ Skip ] # Failure
 webkit.org/b/255748 [ Debug ] http/tests/security/navigate-when-restoring-cached-page.html [ Skip ] # Crash
 webkit.org/b/255748 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ] # Crash
 
+http/tests/security/cached-cross-origin-preloaded-css-stylesheet.html [ Failure Pass ]
+
 http/tests/ssl/media-stream [ Skip ]
 
 [ Debug ] http/tests/storage/callbacks-are-called-in-correct-context.html [ Skip ]
@@ -919,8 +921,7 @@ http/tests/webshare [ Skip ]
 http/tests/websocket/tests/hybi/contentextensions [ Skip ]
 http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Skip ] # Timeout
 
-# Timeout on local PC
-http/tests/websocket/tests/hybi/frame-lengths.html [ Pass Timeout ]
+http/tests/websocket/tests/hybi/frame-lengths.html [ Slow ]
 
 # Connections need additional validation
 http/tests/security/block-iframe-to-all-zero-address.html [ Failure ]
@@ -1215,6 +1216,9 @@ editing/selection/regional-indicators.html [ Skip ]
 [ Debug ] editing/selection/doubleclick-beside-cr-span.html [ Skip ]
 [ Debug ] editing/selection/move-by-character-brute-force.html [ Skip ]
 [ Debug ] editing/selection/move-by-word-visually-crash-test-5.html [ Skip ]
+
+# Slow under heavy CPU loads
+editing/selection/select-bidi-run.html [ Slow ]
 
 ###### Command enabling
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
@@ -4075,6 +4079,10 @@ webkit.org/b/266205 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/
 webkit.org/b/266205 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-frame-size-changed.html [ Skip ] # Crash
 webkit.org/b/266205 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-inline-orientation.html [ Skip ] # Crash
 
+# waitForCompositorReady().then(takeScreenshot) times out on the internal Buildbot
+imported/w3c/web-platform-tests/scroll-animations/css/animation-range-visual-test.html [ ImageOnlyFailure Timeout ]
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/custom-property.html [ ImageOnlyFailure Timeout ]
+
 imported/w3c/web-platform-tests/scroll-animations/view-timelines/animation-events.html [ Failure Pass ]
 
 webkit.org/b/48997 animations/animation-iteration-event-destroy-renderer.html [ Pass Timeout ]
@@ -4157,7 +4165,7 @@ webkit.org/b/272127 fast/text/remove-renderer-and-select-crash.html [ Skip ]
 
 http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Failure ]
 
-fast/forms/form-submission-crash-4.html [ Timeout Failure Pass ]
+fast/forms/form-submission-crash-4.html [ Skip ] # Timeout Failure Pass
 
 css3/filters/backdrop-filter-page-scale.html [ ImageOnlyFailure ]
 
