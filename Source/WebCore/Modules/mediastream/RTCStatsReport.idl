@@ -205,12 +205,14 @@ enum RTCCodecType {
     "decode"
 };
 
+// https://w3c.github.io/webrtc-stats/#dom-rtccodecstats
+
 [
     JSGenerateToJSObject
 ] dictionary RTCCodecStats : RTCStats {
-    unsigned long payloadType;
-    DOMString transportId;
-    DOMString mimeType;
+    required unsigned long payloadType;
+    required DOMString transportId;
+    required DOMString mimeType;
     unsigned long clockRate;
     unsigned long channels;
     DOMString sdpFmtpLine;

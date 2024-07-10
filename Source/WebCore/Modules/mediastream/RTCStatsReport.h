@@ -397,7 +397,7 @@ public:
         CodecStats(const GstStructure*);
 #endif
 
-        std::optional<uint32_t> payloadType;
+        uint32_t payloadType { 0 };
         String transportId;
         String mimeType;
         std::optional<uint32_t> clockRate;

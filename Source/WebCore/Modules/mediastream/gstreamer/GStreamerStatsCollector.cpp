@@ -69,9 +69,11 @@ RTCStatsReport::SentRtpStreamStats::SentRtpStreamStats(Type type, const GstStruc
 RTCStatsReport::CodecStats::CodecStats(const GstStructure* structure)
     : Stats(Type::Codec, structure)
 {
-    payloadType = gstStructureGet<unsigned>(structure, "payload-type"_s);
     clockRate = gstStructureGet<unsigned>(structure, "clock-rate"_s);
     channels = gstStructureGet<unsigned>(structure, "channels"_s);
+
+    if (auto value = gstStructureGet<unsigned>(structure, "payload-type"_s))
+        payloadType = *value;
 
     if (const char* gstSdpFmtpLine = gst_structure_get_string(structure, "sdp-fmtp-line"))
         sdpFmtpLine = String::fromLatin1(gstSdpFmtpLine);
