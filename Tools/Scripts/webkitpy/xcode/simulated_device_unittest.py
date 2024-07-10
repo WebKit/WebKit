@@ -164,6 +164,7 @@ simctl_json_output = """{
  ],
  "runtimes" : [
    {
+     "runtimeRoot" : "/path/to/RuntimeRoot",
      "buildversion" : "13E233",
      "availability" : "(available)",
      "name" : "iOS 9.3",
@@ -171,6 +172,7 @@ simctl_json_output = """{
      "version" : "9.3"
    },
    {
+     "runtimeRoot" : "/path/to/RuntimeRoot",
      "buildversion" : "15A8401",
      "availability" : "(available)",
      "name" : "iOS 11.0",
@@ -178,6 +180,7 @@ simctl_json_output = """{
      "version" : "11.0.1"
    },
    {
+     "runtimeRoot" : "/path/to/RuntimeRoot",
      "buildversion" : "15J380",
      "availability" : "(available)",
      "name" : "tvOS 11.0",
@@ -185,6 +188,7 @@ simctl_json_output = """{
      "version" : "11.0"
    },
    {
+     "runtimeRoot" : "/path/to/RuntimeRoot",
      "buildversion" : "15R372",
      "availability" : "(available)",
      "name" : "watchOS 4.0",
@@ -192,6 +196,7 @@ simctl_json_output = """{
      "version" : "4.0"
    },
    {
+     "runtimeRoot" : "/path/to/RuntimeRoot",
      "buildversion" : "16A367",
      "isAvailable" : "YES",
      "name" : "iOS 12.0",
