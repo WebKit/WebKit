@@ -480,6 +480,8 @@ void WebPaymentCoordinatorProxy::endApplePaySetup()
     platformEndApplePaySetup();
 }
 
+#if ENABLE(APPLE_PAY_SETUP)
+
 #if PLATFORM(MAC)
 
 void WebPaymentCoordinatorProxy::platformBeginApplePaySetup(const PaymentSetupConfiguration& configuration, const PaymentSetupFeatures& features, CompletionHandler<void(bool)>&& reply)
@@ -510,7 +512,7 @@ void WebPaymentCoordinatorProxy::platformEndApplePaySetup()
 {
 }
 
-#else // PLATFORM(MAC)
+#else
 
 void WebPaymentCoordinatorProxy::platformBeginApplePaySetup(const PaymentSetupConfiguration& configuration, const PaymentSetupFeatures& features, CompletionHandler<void(bool)>&& reply)
 {
@@ -547,7 +549,20 @@ void WebPaymentCoordinatorProxy::platformEndApplePaySetup()
     m_paymentSetupViewController = nil;
 }
 
-#endif // PLATFORM(MAC)
+#endif
+
+#else
+
+void WebPaymentCoordinatorProxy::platformBeginApplePaySetup(const PaymentSetupConfiguration& configuration, const PaymentSetupFeatures& features, CompletionHandler<void(bool)>&& reply)
+{
+    reply(false);
+}
+
+void WebPaymentCoordinatorProxy::platformEndApplePaySetup()
+{
+}
+
+#endif // ENABLE(APPLE_PAY_SETUP)
 
 } // namespace WebKit
 
