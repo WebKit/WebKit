@@ -1,42 +1,5 @@
 
 PASS setup - define tests
-PASS Derived key of type name: AES-CTR length: 128  using long password, short salt, SHA-384, with 1000 iterations with wrong (ECDH) key
-PASS Derived key of type name: AES-CTR length: 192  using long password, short salt, SHA-384, with 1000 iterations
-PASS Derived key of type name: AES-CTR length: 192  using long password, short salt, SHA-384, with 1000 iterations with bad hash name SHA384
-PASS Derived key of type name: AES-CTR length: 192  using long password, short salt, SHA-384, with 1000 iterations with missing deriveKey usage
-PASS Derived key of type name: AES-CTR length: 192  using long password, short salt, SHA-384, with 1000 iterations with wrong (ECDH) key
-PASS Derived key of type name: AES-CTR length: 256  using long password, short salt, SHA-384, with 1000 iterations
-PASS Derived key of type name: AES-CTR length: 256  using long password, short salt, SHA-384, with 1000 iterations with bad hash name SHA384
-PASS Derived key of type name: AES-CTR length: 256  using long password, short salt, SHA-384, with 1000 iterations with missing deriveKey usage
-PASS Derived key of type name: AES-CTR length: 256  using long password, short salt, SHA-384, with 1000 iterations with wrong (ECDH) key
-PASS Derived key of type name: AES-GCM length: 128  using long password, short salt, SHA-384, with 1000 iterations
-PASS Derived key of type name: AES-GCM length: 128  using long password, short salt, SHA-384, with 1000 iterations with bad hash name SHA384
-PASS Derived key of type name: AES-GCM length: 128  using long password, short salt, SHA-384, with 1000 iterations with missing deriveKey usage
-PASS Derived key of type name: AES-GCM length: 128  using long password, short salt, SHA-384, with 1000 iterations with wrong (ECDH) key
-PASS Derived key of type name: AES-GCM length: 192  using long password, short salt, SHA-384, with 1000 iterations
-PASS Derived key of type name: AES-GCM length: 192  using long password, short salt, SHA-384, with 1000 iterations with bad hash name SHA384
-PASS Derived key of type name: AES-GCM length: 192  using long password, short salt, SHA-384, with 1000 iterations with missing deriveKey usage
-PASS Derived key of type name: AES-GCM length: 192  using long password, short salt, SHA-384, with 1000 iterations with wrong (ECDH) key
-PASS Derived key of type name: AES-GCM length: 256  using long password, short salt, SHA-384, with 1000 iterations
-PASS Derived key of type name: AES-GCM length: 256  using long password, short salt, SHA-384, with 1000 iterations with bad hash name SHA384
-PASS Derived key of type name: AES-GCM length: 256  using long password, short salt, SHA-384, with 1000 iterations with missing deriveKey usage
-PASS Derived key of type name: AES-GCM length: 256  using long password, short salt, SHA-384, with 1000 iterations with wrong (ECDH) key
-PASS Derived key of type name: AES-KW length: 128  using long password, short salt, SHA-384, with 1000 iterations
-PASS Derived key of type name: AES-KW length: 128  using long password, short salt, SHA-384, with 1000 iterations with bad hash name SHA384
-PASS Derived key of type name: AES-KW length: 128  using long password, short salt, SHA-384, with 1000 iterations with missing deriveKey usage
-PASS Derived key of type name: AES-KW length: 128  using long password, short salt, SHA-384, with 1000 iterations with wrong (ECDH) key
-PASS Derived key of type name: AES-KW length: 192  using long password, short salt, SHA-384, with 1000 iterations
-PASS Derived key of type name: AES-KW length: 192  using long password, short salt, SHA-384, with 1000 iterations with bad hash name SHA384
-PASS Derived key of type name: AES-KW length: 192  using long password, short salt, SHA-384, with 1000 iterations with missing deriveKey usage
-PASS Derived key of type name: AES-KW length: 192  using long password, short salt, SHA-384, with 1000 iterations with wrong (ECDH) key
-PASS Derived key of type name: AES-KW length: 256  using long password, short salt, SHA-384, with 1000 iterations
-PASS Derived key of type name: AES-KW length: 256  using long password, short salt, SHA-384, with 1000 iterations with bad hash name SHA384
-PASS Derived key of type name: AES-KW length: 256  using long password, short salt, SHA-384, with 1000 iterations with missing deriveKey usage
-PASS Derived key of type name: AES-KW length: 256  using long password, short salt, SHA-384, with 1000 iterations with wrong (ECDH) key
-PASS Derived key of type name: HMAC hash: SHA-1 length: 256  using long password, short salt, SHA-384, with 1000 iterations
-PASS Derived key of type name: HMAC hash: SHA-1 length: 256  using long password, short salt, SHA-384, with 1000 iterations with bad hash name SHA384
-PASS Derived key of type name: HMAC hash: SHA-1 length: 256  using long password, short salt, SHA-384, with 1000 iterations with missing deriveKey usage
-PASS Derived key of type name: HMAC hash: SHA-1 length: 256  using long password, short salt, SHA-384, with 1000 iterations with wrong (ECDH) key
 PASS Derived key of type name: HMAC hash: SHA-256 length: 256  using long password, short salt, SHA-384, with 1000 iterations
 PASS Derived key of type name: HMAC hash: SHA-256 length: 256  using long password, short salt, SHA-384, with 1000 iterations with bad hash name SHA384
 PASS Derived key of type name: HMAC hash: SHA-256 length: 256  using long password, short salt, SHA-384, with 1000 iterations with missing deriveKey usage
@@ -49,7 +12,6 @@ PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long passwo
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-384, with 1000 iterations with bad hash name SHA384
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-384, with 1000 iterations with missing deriveKey usage
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-384, with 1000 iterations with wrong (ECDH) key
-PASS long password, short salt, SHA-384, with 1000 iterations with null length
 PASS long password, short salt, SHA-384, with 1000 iterations with 0 length
 PASS long password, short salt, SHA-384, with 1000 iterations with non-multiple of 8 length
 PASS long password, short salt, SHA-384, with 1000 iterations with bad hash name SHA384
@@ -120,7 +82,6 @@ PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long passwo
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-384, with 100000 iterations with bad hash name SHA384
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-384, with 100000 iterations with missing deriveKey usage
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-384, with 100000 iterations with wrong (ECDH) key
-PASS long password, short salt, SHA-384, with 100000 iterations with null length
 PASS long password, short salt, SHA-384, with 100000 iterations with 0 length
 PASS long password, short salt, SHA-384, with 100000 iterations with non-multiple of 8 length
 PASS long password, short salt, SHA-384, with 100000 iterations with bad hash name SHA384
@@ -208,7 +169,6 @@ PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long passwo
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-512, with 1 iterations with bad hash name SHA512
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-512, with 1 iterations with missing deriveKey usage
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-512, with 1 iterations with wrong (ECDH) key
-PASS long password, short salt, SHA-512, with 1 iterations with null length
 PASS long password, short salt, SHA-512, with 1 iterations with 0 length
 PASS long password, short salt, SHA-512, with 1 iterations with non-multiple of 8 length
 PASS long password, short salt, SHA-512, with 1 iterations with bad hash name SHA512
@@ -279,7 +239,6 @@ PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long passwo
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-512, with 1000 iterations with bad hash name SHA512
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-512, with 1000 iterations with missing deriveKey usage
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-512, with 1000 iterations with wrong (ECDH) key
-PASS long password, short salt, SHA-512, with 1000 iterations with null length
 PASS long password, short salt, SHA-512, with 1000 iterations with 0 length
 PASS long password, short salt, SHA-512, with 1000 iterations with non-multiple of 8 length
 PASS long password, short salt, SHA-512, with 1000 iterations with bad hash name SHA512
@@ -350,7 +309,6 @@ PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long passwo
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-512, with 100000 iterations with bad hash name SHA512
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-512, with 100000 iterations with missing deriveKey usage
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-512, with 100000 iterations with wrong (ECDH) key
-PASS long password, short salt, SHA-512, with 100000 iterations with null length
 PASS long password, short salt, SHA-512, with 100000 iterations with 0 length
 PASS long password, short salt, SHA-512, with 100000 iterations with non-multiple of 8 length
 PASS long password, short salt, SHA-512, with 100000 iterations with bad hash name SHA512
@@ -438,7 +396,6 @@ PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long passwo
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-1, with 1 iterations with bad hash name SHA1
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-1, with 1 iterations with missing deriveKey usage
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-1, with 1 iterations with wrong (ECDH) key
-PASS long password, short salt, SHA-1, with 1 iterations with null length
 PASS long password, short salt, SHA-1, with 1 iterations with 0 length
 PASS long password, short salt, SHA-1, with 1 iterations with non-multiple of 8 length
 PASS long password, short salt, SHA-1, with 1 iterations with bad hash name SHA1
@@ -509,7 +466,6 @@ PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long passwo
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-1, with 1000 iterations with bad hash name SHA1
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-1, with 1000 iterations with missing deriveKey usage
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-1, with 1000 iterations with wrong (ECDH) key
-PASS long password, short salt, SHA-1, with 1000 iterations with null length
 PASS long password, short salt, SHA-1, with 1000 iterations with 0 length
 PASS long password, short salt, SHA-1, with 1000 iterations with non-multiple of 8 length
 PASS long password, short salt, SHA-1, with 1000 iterations with bad hash name SHA1
@@ -580,7 +536,6 @@ PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long passwo
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-1, with 100000 iterations with bad hash name SHA1
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-1, with 100000 iterations with missing deriveKey usage
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-1, with 100000 iterations with wrong (ECDH) key
-PASS long password, short salt, SHA-1, with 100000 iterations with null length
 PASS long password, short salt, SHA-1, with 100000 iterations with 0 length
 PASS long password, short salt, SHA-1, with 100000 iterations with non-multiple of 8 length
 PASS long password, short salt, SHA-1, with 100000 iterations with bad hash name SHA1
@@ -668,7 +623,6 @@ PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long passwo
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-256, with 1 iterations with bad hash name SHA256
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-256, with 1 iterations with missing deriveKey usage
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-256, with 1 iterations with wrong (ECDH) key
-PASS long password, short salt, SHA-256, with 1 iterations with null length
 PASS long password, short salt, SHA-256, with 1 iterations with 0 length
 PASS long password, short salt, SHA-256, with 1 iterations with non-multiple of 8 length
 PASS long password, short salt, SHA-256, with 1 iterations with bad hash name SHA256
@@ -739,7 +693,6 @@ PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long passwo
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-256, with 1000 iterations with bad hash name SHA256
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-256, with 1000 iterations with missing deriveKey usage
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-256, with 1000 iterations with wrong (ECDH) key
-PASS long password, short salt, SHA-256, with 1000 iterations with null length
 PASS long password, short salt, SHA-256, with 1000 iterations with 0 length
 PASS long password, short salt, SHA-256, with 1000 iterations with non-multiple of 8 length
 PASS long password, short salt, SHA-256, with 1000 iterations with bad hash name SHA256
@@ -810,7 +763,6 @@ PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long passwo
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-256, with 100000 iterations with bad hash name SHA256
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-256, with 100000 iterations with missing deriveKey usage
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, short salt, SHA-256, with 100000 iterations with wrong (ECDH) key
-PASS long password, short salt, SHA-256, with 100000 iterations with null length
 PASS long password, short salt, SHA-256, with 100000 iterations with 0 length
 PASS long password, short salt, SHA-256, with 100000 iterations with non-multiple of 8 length
 PASS long password, short salt, SHA-256, with 100000 iterations with bad hash name SHA256
@@ -949,7 +901,6 @@ PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long passwo
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, long salt, SHA-384, with 1 iterations with bad hash name SHA384
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, long salt, SHA-384, with 1 iterations with missing deriveKey usage
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, long salt, SHA-384, with 1 iterations with wrong (ECDH) key
-PASS long password, long salt, SHA-384, with 1 iterations with null length
 PASS long password, long salt, SHA-384, with 1 iterations with 0 length
 PASS long password, long salt, SHA-384, with 1 iterations with non-multiple of 8 length
 PASS long password, long salt, SHA-384, with 1 iterations with bad hash name SHA384
@@ -1000,4 +951,53 @@ PASS Derived key of type name: AES-KW length: 192  using long password, long sal
 PASS Derived key of type name: AES-KW length: 192  using long password, long salt, SHA-384, with 1000 iterations with bad hash name SHA384
 PASS Derived key of type name: AES-KW length: 192  using long password, long salt, SHA-384, with 1000 iterations with missing deriveKey usage
 PASS Derived key of type name: AES-KW length: 192  using long password, long salt, SHA-384, with 1000 iterations with wrong (ECDH) key
+PASS Derived key of type name: AES-KW length: 256  using long password, long salt, SHA-384, with 1000 iterations
+PASS Derived key of type name: AES-KW length: 256  using long password, long salt, SHA-384, with 1000 iterations with bad hash name SHA384
+PASS Derived key of type name: AES-KW length: 256  using long password, long salt, SHA-384, with 1000 iterations with missing deriveKey usage
+PASS Derived key of type name: AES-KW length: 256  using long password, long salt, SHA-384, with 1000 iterations with wrong (ECDH) key
+PASS Derived key of type name: HMAC hash: SHA-1 length: 256  using long password, long salt, SHA-384, with 1000 iterations
+PASS Derived key of type name: HMAC hash: SHA-1 length: 256  using long password, long salt, SHA-384, with 1000 iterations with bad hash name SHA384
+PASS Derived key of type name: HMAC hash: SHA-1 length: 256  using long password, long salt, SHA-384, with 1000 iterations with missing deriveKey usage
+PASS Derived key of type name: HMAC hash: SHA-1 length: 256  using long password, long salt, SHA-384, with 1000 iterations with wrong (ECDH) key
+PASS Derived key of type name: HMAC hash: SHA-256 length: 256  using long password, long salt, SHA-384, with 1000 iterations
+PASS Derived key of type name: HMAC hash: SHA-256 length: 256  using long password, long salt, SHA-384, with 1000 iterations with bad hash name SHA384
+PASS Derived key of type name: HMAC hash: SHA-256 length: 256  using long password, long salt, SHA-384, with 1000 iterations with missing deriveKey usage
+PASS Derived key of type name: HMAC hash: SHA-256 length: 256  using long password, long salt, SHA-384, with 1000 iterations with wrong (ECDH) key
+PASS Derived key of type name: HMAC hash: SHA-384 length: 256  using long password, long salt, SHA-384, with 1000 iterations
+PASS Derived key of type name: HMAC hash: SHA-384 length: 256  using long password, long salt, SHA-384, with 1000 iterations with bad hash name SHA384
+PASS Derived key of type name: HMAC hash: SHA-384 length: 256  using long password, long salt, SHA-384, with 1000 iterations with missing deriveKey usage
+PASS Derived key of type name: HMAC hash: SHA-384 length: 256  using long password, long salt, SHA-384, with 1000 iterations with wrong (ECDH) key
+PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, long salt, SHA-384, with 1000 iterations
+PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, long salt, SHA-384, with 1000 iterations with bad hash name SHA384
+PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, long salt, SHA-384, with 1000 iterations with missing deriveKey usage
+PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using long password, long salt, SHA-384, with 1000 iterations with wrong (ECDH) key
+PASS long password, long salt, SHA-384, with 1000 iterations with 0 length
+PASS long password, long salt, SHA-384, with 1000 iterations with non-multiple of 8 length
+PASS long password, long salt, SHA-384, with 1000 iterations with bad hash name SHA384
+PASS long password, long salt, SHA-384, with 1000 iterations with missing deriveBits usage
+PASS long password, long salt, SHA-384, with 1000 iterations with wrong (ECDH) key
+PASS long password, long salt, SHA-384, with 100000 iterations
+PASS Derived key of type name: AES-CBC length: 128  using long password, long salt, SHA-384, with 100000 iterations
+PASS Derived key of type name: AES-CBC length: 128  using long password, long salt, SHA-384, with 100000 iterations with bad hash name SHA384
+PASS Derived key of type name: AES-CBC length: 128  using long password, long salt, SHA-384, with 100000 iterations with missing deriveKey usage
+PASS Derived key of type name: AES-CBC length: 128  using long password, long salt, SHA-384, with 100000 iterations with wrong (ECDH) key
+PASS Derived key of type name: AES-CBC length: 192  using long password, long salt, SHA-384, with 100000 iterations
+PASS Derived key of type name: AES-CBC length: 192  using long password, long salt, SHA-384, with 100000 iterations with bad hash name SHA384
+PASS Derived key of type name: AES-CBC length: 192  using long password, long salt, SHA-384, with 100000 iterations with missing deriveKey usage
+PASS Derived key of type name: AES-CBC length: 192  using long password, long salt, SHA-384, with 100000 iterations with wrong (ECDH) key
+PASS Derived key of type name: AES-CBC length: 256  using long password, long salt, SHA-384, with 100000 iterations
+PASS Derived key of type name: AES-CBC length: 256  using long password, long salt, SHA-384, with 100000 iterations with bad hash name SHA384
+PASS Derived key of type name: AES-CBC length: 256  using long password, long salt, SHA-384, with 100000 iterations with missing deriveKey usage
+PASS Derived key of type name: AES-CBC length: 256  using long password, long salt, SHA-384, with 100000 iterations with wrong (ECDH) key
+PASS Derived key of type name: AES-CTR length: 128  using long password, long salt, SHA-384, with 100000 iterations
+PASS Derived key of type name: AES-CTR length: 128  using long password, long salt, SHA-384, with 100000 iterations with bad hash name SHA384
+PASS Derived key of type name: AES-CTR length: 128  using long password, long salt, SHA-384, with 100000 iterations with missing deriveKey usage
+PASS Derived key of type name: AES-CTR length: 128  using long password, long salt, SHA-384, with 100000 iterations with wrong (ECDH) key
+PASS Derived key of type name: AES-CTR length: 192  using long password, long salt, SHA-384, with 100000 iterations
+PASS Derived key of type name: AES-CTR length: 192  using long password, long salt, SHA-384, with 100000 iterations with bad hash name SHA384
+PASS Derived key of type name: AES-CTR length: 192  using long password, long salt, SHA-384, with 100000 iterations with missing deriveKey usage
+PASS Derived key of type name: AES-CTR length: 192  using long password, long salt, SHA-384, with 100000 iterations with wrong (ECDH) key
+PASS Derived key of type name: AES-CTR length: 256  using long password, long salt, SHA-384, with 100000 iterations
+PASS Derived key of type name: AES-CTR length: 256  using long password, long salt, SHA-384, with 100000 iterations with bad hash name SHA384
+PASS Derived key of type name: AES-CTR length: 256  using long password, long salt, SHA-384, with 100000 iterations with missing deriveKey usage
 
