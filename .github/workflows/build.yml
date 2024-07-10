@@ -178,13 +178,11 @@ jobs:
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 90
     steps:
-      - name: Install VS2022 BuildTools 17.9.7
-        run: choco install -y visualstudio2022buildtools --version=117.9.7.0 --params "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --installChannelUri https://aka.ms/vs/17/release/180911598_-255012421/channel"
-      - uses: KyleMayes/install-llvm-action@8b37482c5a2997a3ab5dbf6561f8109e2eaa7d3b
-        with:
-          version: 16.0.6
+      - name: Install Ninja
+        run: |
+          choco install -y ninja
+          choco install -y llvm --version=18.1.8 --force
       - uses: cygwin/cygwin-install-action@006ad0b0946ca6d0a3ea2d4437677fa767392401
-      - run: choco install -y ninja
       - uses: actions/checkout@v4
         with:
           sparse-checkout-cone-mode: false
