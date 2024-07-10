@@ -242,7 +242,7 @@ void WebServiceWorkerFetchTaskClient::didNotHandleInternal()
     cleanup();
 }
 
-void WebServiceWorkerFetchTaskClient::cancel()
+void WebServiceWorkerFetchTaskClient::doCancel()
 {
     Locker lock(m_connectionLock);
 

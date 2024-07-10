@@ -58,7 +58,7 @@ private:
     void didFail(const WebCore::ResourceError&) final;
     void didFinish(const WebCore::NetworkLoadMetrics&) final;
     void didNotHandle() final;
-    void cancel() final;
+    void doCancel() final;
     void setCancelledCallback(Function<void()>&&) final;
     void usePreload() final;
     void contextIsStopping() final;
