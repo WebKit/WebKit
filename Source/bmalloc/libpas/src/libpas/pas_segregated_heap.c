@@ -1492,10 +1492,6 @@ pas_segregated_heap_ensure_size_directory_for_size(
     
     result = pas_segregated_heap_size_directory_for_index(heap, index, cached_index, config);
 
-    if (verbose && result) {
-        pas_log("Found result = %p, object_size = %u, min_index = %u\n",
-                result, result->object_size, pas_segregated_size_directory_min_index(result));
-    }
     PAS_ASSERT(
         !result
         || pas_is_aligned(result->object_size, pas_segregated_size_directory_alignment(result))
@@ -1709,17 +1705,9 @@ pas_segregated_heap_ensure_size_directory_for_size(
                 candidate = directory;
         }
 
-        if (verbose && candidate) {
-            pas_log("Found candidate = %p, object_size = %u, min_index = %u\n",
-                    candidate, candidate->object_size, pas_segregated_size_directory_min_index(candidate));
-        }
         /* Figure out the best case scenario if we did create a page directory for this size. */
         best_bytes_dirtied_per_object = PAS_INFINITY;
         best_page_config = NULL;
-
-        if (verbose)
-            pas_log("max_segregated_object_size = %u\n", heap->runtime_config->max_segregated_object_size);
-
         if (object_size <= heap->runtime_config->max_segregated_object_size) {
             for (PAS_EACH_SEGREGATED_PAGE_CONFIG_VARIANT_DESCENDING(variant)) {
                 const pas_segregated_page_config* page_config_ptr;
@@ -1778,8 +1766,6 @@ pas_segregated_heap_ensure_size_directory_for_size(
                 pas_bitfit_heap_select_variant(object_size, config, heap->runtime_config).object_size;
             PAS_ASSERT(!is_utility);
         }
-        if (verbose)
-            pas_log("best_bytes_dirtied_per_object = %f, best_page_config = %p\n", best_bytes_dirtied_per_object, best_page_config);
 
         if (candidate && pas_segregated_size_directory_alignment(candidate) >= alignment) {
             double bytes_dirtied_per_object_by_candidate;
@@ -1798,11 +1784,6 @@ pas_segregated_heap_ensure_size_directory_for_size(
             } else
                 bytes_dirtied_per_object_by_candidate = candidate->object_size;
 
-            if (verbose) {
-                pas_log("bytes_dirtied_per_object_by_candidate = %f, candidate page_config_kind = %s\n",
-                        bytes_dirtied_per_object_by_candidate,
-                        pas_segregated_page_config_kind_get_string(candidate->base.page_config_kind));
-            }
             if (best_bytes_dirtied_per_object * PAS_SIZE_CLASS_PROGRESSION
                 > bytes_dirtied_per_object_by_candidate)
                 result = candidate;
@@ -1813,13 +1794,12 @@ pas_segregated_heap_ensure_size_directory_for_size(
         else {
             pas_compact_atomic_segregated_size_directory_ptr* head;
             pas_segregated_size_directory* basic_size_directory_and_head;
-            size_t ideal_object_size;
 
             if (verbose)
                 pas_log("About to compute ideal object size; object_size = %zu\n", object_size);
 
             if (best_page_config) {
-                ideal_object_size = compute_ideal_object_size(
+                object_size = compute_ideal_object_size(
                     heap,
                     PAS_MAX(object_size,
                             pas_segregated_page_config_min_align(*best_page_config)),
@@ -1829,27 +1809,8 @@ pas_segregated_heap_ensure_size_directory_for_size(
                 
                 /* best_bytes_dirtied_per_object has the right object size computed by the bitfit heap,
                    so just reuse that. */
-                ideal_object_size = (size_t)best_bytes_dirtied_per_object;
+                object_size = (size_t)best_bytes_dirtied_per_object;
             }
-            if (candidate) {
-                size_t ideal_object_index;
-                size_t candidate_min_index;
-
-                ideal_object_index = pas_segregated_heap_index_for_size(ideal_object_size, *config);
-                candidate_min_index = pas_segregated_size_directory_min_index(candidate);
-                if (ideal_object_index < candidate_min_index)
-                    object_size = ideal_object_size;
-                else {
-                    /* Unusual, but the ideal size may be beyond the min_index for the next largest directory.
-                       This can happen, e.g. after the runtime_config has been switched to bitfit only. */
-                    PAS_ASSERT(object_size <= pas_segregated_heap_size_for_index(candidate_min_index - 1, *config));
-                    object_size = pas_segregated_heap_size_for_index(candidate_min_index - 1, *config);
-
-                    if (verbose)
-                        pas_log("Capped object size at next begin_index; object_size = %zu\n", object_size);
-                }
-            } else
-                object_size = ideal_object_size;
 
             if (verbose)
                 pas_log("Did compute ideal object size; object_size = %zu\n", object_size);
@@ -1877,7 +1838,7 @@ pas_segregated_heap_ensure_size_directory_for_size(
                at offset=112 with no gaps, so as to not create internal fragmentation. Had we executed the code
                below, we would have given the 256-size directory alignment=256, and so we would be forced to
                allocate at offset=256, creating a gap of 144 bytes. Yuck!
-               
+
                On the other hand, not executing this code creates this weird situation where if we had once upon
                a time allocated 256 bytes with no particular alignment, and later memaligned 256 bytes with
                256-byte alignment, then we would create a second directory, and the old directory's memory will
@@ -2086,9 +2047,6 @@ pas_segregated_heap_ensure_size_directory_for_size(
                 PAS_ASSERT(begin_index);
                 PAS_ASSERT((pas_segregated_heap_medium_directory_index)begin_index == begin_index);
                 next_tuple->begin_index = (pas_segregated_heap_medium_directory_index)begin_index;
-
-                if (verbose)
-                    pas_log("Updated next_tuple->begin_index = %zu\n", begin_index);
             } else {
                 pas_segregated_heap_medium_directory_tuple* medium_directories;
                 pas_segregated_heap_medium_directory_tuple* medium_directory;
@@ -2097,10 +2055,6 @@ pas_segregated_heap_ensure_size_directory_for_size(
                     &rare_data->medium_directories);
                 
                 if (next_tuple) {
-                    if (verbose) {
-                        pas_log("next_tuple->begin_index = %u, end_index = %u\n",
-                                next_tuple->begin_index, next_tuple->end_index);
-                    }
                     /* Whatever we find has to have a larger object size than what we picked because
                        otherwise we should have just returned that.
                
