@@ -3928,7 +3928,8 @@ static bool isMJSFile(char *filename)
 static NEVER_INLINE void crashPGMUAF()
 {
     WTF::forceEnablePGM();
-    char* result = static_cast<char*>(fastMalloc(10000000));
+    size_t allocSize = getpagesize() * 10000;
+    char* result = static_cast<char*>(fastMalloc(allocSize));
     fastFree(result);
     *result = 'a';
 }
@@ -3937,7 +3938,7 @@ static NEVER_INLINE void crashPGMUpperGuardPage()
 {
     WTF::forceEnablePGM();
     size_t allocSize = getpagesize() * 10000;
-    char* result = static_cast<char*>(fastMalloc(10000000));
+    char* result = static_cast<char*>(fastMalloc(allocSize));
     result = result + allocSize;
     *result = 'a';
 }
@@ -3945,8 +3946,9 @@ static NEVER_INLINE void crashPGMUpperGuardPage()
 static NEVER_INLINE void crashPGMLowerGuardPage()
 {
     WTF::forceEnablePGM();
-    char* result = static_cast<char*>(fastMalloc(10000000));
-    result = result - getpagesize();
+    size_t allocSize = getpagesize() * 10000;
+    char* result = static_cast<char*>(fastMalloc(allocSize));
+    result = result - 1;
     *result = 'a';
 }
 #endif
