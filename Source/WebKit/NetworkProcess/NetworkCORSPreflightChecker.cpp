@@ -153,7 +153,7 @@ void NetworkCORSPreflightChecker::didCompleteWithError(const WebCore::ResourceEr
 
     CORS_CHECKER_RELEASE_LOG("didComplete http_status_code=%d", m_response.httpStatusCode());
 
-    auto result = validatePreflightResponse(m_parameters.sessionID, m_parameters.originalRequest, m_response, m_parameters.storedCredentialsPolicy, m_parameters.sourceOrigin, m_networkResourceLoader.get());
+    auto result = validatePreflightResponse(m_parameters.sessionID, m_parameters.originalRequest, m_response, m_parameters.fetchOptionsCredentials, m_parameters.storedCredentialsPolicy, m_parameters.sourceOrigin, m_networkResourceLoader.get());
     if (!result) {
         CORS_CHECKER_RELEASE_LOG("didComplete, AccessControl error: %s", result.error().utf8().data());
         m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), result.error(), ResourceError::Type::AccessControl });
