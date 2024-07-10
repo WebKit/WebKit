@@ -254,7 +254,12 @@ void WebXROpaqueFramebuffer::resolveMSAAFramebuffer(GraphicsContextGL& gl)
 
 void WebXROpaqueFramebuffer::blitShared(GraphicsContextGL& gl)
 {
-    ASSERT(!m_resolvedFBO, "blitShared should not require intermediate resolve buffers");
+    ensure(gl, m_displayFBO);
+
+    PlatformGLObject readFBO = (m_resolvedFBO && m_attributes.antialias) ? m_resolvedFBO : m_drawFramebuffer->object();
+    ASSERT(readFBO, "readFBO shouldn't be the default framebuffer");
+    PlatformGLObject drawFBO = m_displayFBO;
+    ASSERT(drawFBO, "drawFBO shouldn't be the default framebuffer");
 
     auto displayAttachmentSet = reusableDisplayAttachmentsAtIndex(m_currentDisplayAttachmentIndex);
     ASSERT(displayAttachmentSet);
@@ -263,11 +268,25 @@ void WebXROpaqueFramebuffer::blitShared(GraphicsContextGL& gl)
         return;
     }
 
-    ensure(gl, m_displayFBO);
-    gl.bindFramebuffer(GL::FRAMEBUFFER, m_displayFBO);
-    gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, (*displayAttachmentSet)[0].colorBuffer.renderBufferObject);
-    ASSERT(gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
-    resolveMSAAFramebuffer(gl);
+    const GCGLint width = m_leftPhysicalSize.width();
+    const GCGLint height = m_leftPhysicalSize.height();
+
+    if (m_resolvedFBO && m_attributes.antialias)
+        resolveMSAAFramebuffer(gl);
+
+    gl.bindFramebuffer(GL::READ_FRAMEBUFFER, readFBO);
+    gl.bindFramebuffer(GL::DRAW_FRAMEBUFFER, drawFBO);
+
+    GCGLbitfield buffers = GL::COLOR_BUFFER_BIT;
+    gl.framebufferRenderbuffer(GL::DRAW_FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, (*displayAttachmentSet)[0].colorBuffer.renderBufferObject);
+
+    if ((*displayAttachmentSet)[0].depthStencilBuffer.image) {
+        buffers |= GL::DEPTH_BUFFER_BIT;
+        gl.framebufferRenderbuffer(GL::DRAW_FRAMEBUFFER, GL::DEPTH_STENCIL_ATTACHMENT, GL::RENDERBUFFER, (*displayAttachmentSet)[0].depthStencilBuffer.renderBufferObject);
+    }
+    ASSERT(gl.checkFramebufferStatus(GL::DRAW_FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
+
+    gl.blitFramebuffer(0, 0, width, height, 0, 0, width, height, buffers, GL::NEAREST);
 }
 
 void WebXROpaqueFramebuffer::blitSharedToLayered(GraphicsContextGL& gl)
@@ -381,9 +400,6 @@ bool WebXROpaqueFramebuffer::setupFramebuffer(GraphicsContextGL& gl, const Platf
     m_rightPhysicalSize = rightPhysicalSize;
     m_usingFoveation = usingFoveation;
 
-    const bool layeredLayout = m_displayLayout == PlatformXR::Layout::Layered;
-    const bool needsIntermediateResolve = m_attributes.antialias && layeredLayout;
-
     // Set up recommended samples for WebXR.
     auto sampleCount = m_attributes.antialias ? std::min(4, m_context.maxSamples()) : 0;
 
@@ -409,6 +425,7 @@ bool WebXROpaqueFramebuffer::setupFramebuffer(GraphicsContextGL& gl, const Platf
     }
 
     // Intermediate resolve target
+    const bool needsIntermediateResolve = m_attributes.antialias;
     if ((!m_resolvedFBO || framebufferResize) && needsIntermediateResolve) {
         allocateAttachments(gl, m_resolveAttachments, 0, m_framebufferSize);
 
