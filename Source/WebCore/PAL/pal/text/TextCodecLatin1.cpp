@@ -97,11 +97,16 @@ void TextCodecLatin1::registerCodecs(TextCodecRegistrar registrar)
     });
 }
 
-String TextCodecLatin1::decode(const char* bytes, size_t length, bool, bool, bool&)
+String TextCodecLatin1::decode(const char* bytes, size_t length, bool, bool, bool& sawException)
 {
     LChar* characters;
     if (!length)
         return emptyString();
+    if (UNLIKELY(length > std::numeric_limits<unsigned>::max())) {
+        ASSERT_NOT_REACHED();
+        sawException = true;
+        return emptyString();
+    }
     String result = String::createUninitialized(length, characters);
 
     const uint8_t* source = reinterpret_cast<const uint8_t*>(bytes);
