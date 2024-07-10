@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html class="reftest-wait">
+<title>Flexbox Start-edge Abspos Overflow</title>
+<link rel="help" href="https://www.w3.org/TR/css-align/#overflow-scroll-position">
+<link rel="help" href="https://www.w3.org/TR/css-overflow/#scrollable">
+<link rel="help" href="https://www.w3.org/TR/css-writing-modes/">
+<link rel="author" href="http://fantasai.inkedblade.net/contact" title="Elika J. Etemad">
+<style>
+#scroller {
+  display: flex;
+  flex-flow: row wrap;
+  width: 60px;
+  border: solid black thick;
+  overflow: scroll;
+  justify-content: end;
+}
+.child {
+  width: 80%;
+  flex: none;
+  border: solid orange;
+}
+.child:nth-child(2) {
+  width: 120%;
+}
+</style>
+
+<div id=scroller>
+  <div class=child>1</div>
+  <div class=child>2</div>
+  <div class=child>3</div>
+</div>
+
+<script>
+  function test()
+  {
+    // Trigger layout
+    document.body.offsetHeight;
+
+    // Scroll to the top left
+    var s = document.getElementById('scroller');
+    s.scrollTop = -1000;
+    s.scrollLeft = -1000;
+
+    document.body.offsetHeight; // trigger layout
+
+    document.documentElement.removeAttribute("class");
+  };
+  document.addEventListener("TestRendered", function(){ test(); });
+  window.addEventListener("load", function(){ test(); }); // for manual inspection
+</script>
