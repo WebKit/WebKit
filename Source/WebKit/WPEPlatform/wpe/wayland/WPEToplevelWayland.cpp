@@ -230,6 +230,7 @@ struct _WPEToplevelWaylandPrivate {
 
     bool hasPointer;
     bool isFocused;
+    bool isUnderTouch;
     GWeakPtr<WPEView> visibleView;
 
     Vector<GRefPtr<WPEMonitor>, 1> monitors;
@@ -812,6 +813,20 @@ WPEView* wpeToplevelWaylandGetVisibleFocusedView(WPEToplevelWayland* toplevel)
 {
     auto* priv = toplevel->priv;
     return priv->isFocused ? toplevel->priv->visibleView.get() : nullptr;
+}
+
+void wpeToplevelWaylandSetIsUnderTouch(WPEToplevelWayland* toplevel, bool isUnderTouch)
+{
+    auto* priv = toplevel->priv;
+    priv->isUnderTouch = isUnderTouch;
+    if (isUnderTouch && !priv->visibleView)
+        priv->visibleView.reset(wpeToplevelWaylandFindVisibleView(toplevel));
+}
+
+WPEView* wpeToplevelWaylandGetVisibleViewUnderTouch(WPEToplevelWayland* toplevel)
+{
+    auto* priv = toplevel->priv;
+    return priv->isUnderTouch ? toplevel->priv->visibleView.get() : nullptr;
 }
 
 void wpeToplevelWaylandViewVisibilityChanged(WPEToplevelWayland* toplevel, WPEView* view)
