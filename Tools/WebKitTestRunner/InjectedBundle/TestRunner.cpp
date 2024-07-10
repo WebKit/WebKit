@@ -261,18 +261,6 @@ void TestRunner::notifyDone()
     setWaitUntilDone(false);
 }
 
-void TestRunner::forceImmediateCompletion()
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    if (!injectedBundle.isTestRunning())
-        return;
-
-    if (shouldWaitUntilDone() && injectedBundle.page())
-        injectedBundle.page()->dump(m_forceRepaint);
-
-    setWaitUntilDone(false);
-}
-
 void TestRunner::setShouldDumpFrameLoadCallbacks(bool value)
 {
     postSynchronousMessage("SetDumpFrameLoadCallbacks", value);

@@ -11,6 +11,6 @@ document.querySelector("video").play().catch(() => { });
 if (testRunner.stopLoading)
     testRunner.stopLoading();
 
-requestAnimationFrame(() => testRunner.forceImmediateCompletion());
+requestAnimationFrame(() => testRunner.notifyDone());
 </script>
 </body>

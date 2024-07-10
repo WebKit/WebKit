@@ -125,9 +125,6 @@ interface TestRunner {
     undefined displayOnLoadFinish();
     undefined dontForceRepaint();
 
-    // Failed load condition testing
-    undefined forceImmediateCompletion();
-
     // Printing
     boolean isPageBoxVisible(long pageIndex);
 
