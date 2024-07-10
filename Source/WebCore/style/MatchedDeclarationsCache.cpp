@@ -38,6 +38,7 @@
 #include "RenderStyleInlines.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "style/AnchorPositionEvaluator.h"
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
