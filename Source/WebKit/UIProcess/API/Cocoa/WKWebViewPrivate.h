@@ -379,11 +379,13 @@ for this property.
 
 @property (nonatomic, readonly) BOOL _canTogglePictureInPicture;
 @property (nonatomic, readonly) BOOL _canToggleInWindow;
+@property (nonatomic, readonly) BOOL _canEnterFullscreen WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 @property (nonatomic, readonly) BOOL _isPictureInPictureActive;
 @property (nonatomic, readonly) BOOL _isInWindowActive;
 - (void)_updateMediaPlaybackControlsManager;
 - (void)_togglePictureInPicture;
 - (void)_toggleInWindow;
+- (void)_enterFullscreen WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 - (void)_stopAllMediaPlayback;
 - (void)_suspendAllMediaPlayback;
 - (void)_resumeAllMediaPlayback;

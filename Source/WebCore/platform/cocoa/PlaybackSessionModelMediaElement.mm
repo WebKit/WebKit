@@ -384,6 +384,7 @@ void PlaybackSessionModelMediaElement::enterFullscreen()
     if (!element)
         return;
 
+    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, &element->document() };
     element->webkitEnterFullscreen();
 }
 
@@ -394,6 +395,7 @@ void PlaybackSessionModelMediaElement::exitFullscreen()
     if (!element)
         return;
 
+    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, &element->document() };
     element->webkitExitFullscreen();
 }
 

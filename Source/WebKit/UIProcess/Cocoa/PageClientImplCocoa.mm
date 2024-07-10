@@ -327,4 +327,10 @@ void PageClientImplCocoa::hasActiveNowPlayingSessionChanged(bool hasActiveNowPla
     [m_webView didChangeValueForKey:@"_hasActiveNowPlayingSession"];
 }
 
+void PageClientImplCocoa::videoControlsManagerDidChange()
+{
+    [m_webView willChangeValueForKey:@"_canEnterFullscreen"];
+    [m_webView didChangeValueForKey:@"_canEnterFullscreen"];
+}
+
 } // namespace WebKit

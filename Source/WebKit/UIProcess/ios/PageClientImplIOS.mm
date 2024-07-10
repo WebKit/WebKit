@@ -940,6 +940,7 @@ void PageClientImpl::didChangeBackgroundColor()
 
 void PageClientImpl::videoControlsManagerDidChange()
 {
+    PageClientImplCocoa::videoControlsManagerDidChange();
     [webView() _videoControlsManagerDidChange];
 }
 

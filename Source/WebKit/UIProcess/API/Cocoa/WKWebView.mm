@@ -2835,6 +2835,11 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 #endif
 }
 
+- (BOOL)_canEnterFullscreen
+{
+    return _page->canEnterFullscreen();
+}
+
 - (BOOL)_isPictureInPictureActive
 {
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
@@ -2877,6 +2882,12 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     _impl->toggleInWindowFullscreen();
 #endif
+}
+
+- (void)_enterFullscreen
+{
+    if (RefPtr page = _page)
+        page->enterFullscreen();
 }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)

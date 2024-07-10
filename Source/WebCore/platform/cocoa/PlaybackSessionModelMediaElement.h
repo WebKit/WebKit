@@ -41,13 +41,25 @@ class AudioTrack;
 class HTMLMediaElement;
 class TextTrack;
 
-class PlaybackSessionModelMediaElement final : public PlaybackSessionModel, public EventListener {
+class PlaybackSessionModelMediaElement final
+    : public PlaybackSessionModel
+    , public EventListener
+    , public CanMakeCheckedPtr<PlaybackSessionModelMediaElement> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionModelMediaElement);
 public:
     static Ref<PlaybackSessionModelMediaElement> create()
     {
         return adoptRef(*new PlaybackSessionModelMediaElement());
     }
     WEBCORE_EXPORT virtual ~PlaybackSessionModelMediaElement();
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+
     WEBCORE_EXPORT void setMediaElement(HTMLMediaElement*);
     HTMLMediaElement* mediaElement() const { return m_mediaElement.get(); }
 

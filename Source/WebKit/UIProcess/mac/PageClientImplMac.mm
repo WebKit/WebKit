@@ -944,6 +944,7 @@ void PageClientImpl::didHandleAcceptedCandidate()
 
 void PageClientImpl::videoControlsManagerDidChange()
 {
+    PageClientImplCocoa::videoControlsManagerDidChange();
     m_impl->videoControlsManagerDidChange();
 }
 

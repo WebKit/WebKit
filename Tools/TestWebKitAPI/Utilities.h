@@ -44,4 +44,16 @@ void runFor(Seconds duration);
 // Runs a platform runloop `count` number of spins.
 void spinRunLoop(uint64_t count = 1);
 
+// Waits for 'c' to return true by repeatedly running the platform runloop for 100ms, up to 'maxTries'.
+template <typename Callable>
+void waitFor(Callable&& c, size_t maxTries = 100)
+{
+    size_t tries = 0;
+    do {
+        if (c())
+            break;
+        TestWebKitAPI::Util::runFor(0.1_s);
+    } while (++tries <= maxTries);
 }
+
+} // namespace TestWebKitAPI::Util

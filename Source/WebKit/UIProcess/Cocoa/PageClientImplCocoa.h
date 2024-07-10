@@ -133,6 +133,8 @@ public:
 
     void hasActiveNowPlayingSessionChanged(bool) final;
 
+    void videoControlsManagerDidChange() override;
+
 protected:
     RetainPtr<WKWebView> webView() const { return m_webView.get(); }
 

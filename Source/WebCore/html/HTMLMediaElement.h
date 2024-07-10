@@ -727,7 +727,7 @@ protected:
 
     bool showPosterFlag() const { return m_showPoster; }
     void setShowPosterFlag(bool);
-    
+
     void setChangingVideoFullscreenMode(bool value) { m_changingVideoFullscreenMode = value; }
     bool isChangingVideoFullscreenMode() const { return m_changingVideoFullscreenMode; }
 
