@@ -12010,7 +12010,11 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (UIImage *)previewController:(QLPreviewController *)controller transitionImageForPreviewItem:(id <QLPreviewItem>)item contentRect:(CGRect *)outContentRect
 {
-    *outContentRect = { CGPointZero, [self convertRect:_visualSearchPreviewImageBounds toView:nil].size };
+    // FIXME: We should remove this caching when UIKit doesn't call this delegate method twice, with
+    // the second call being in the midst of an ongoing animation. See <rdar://problem/131368437>.
+    if (!_cachedVisualSearchPreviewImageBoundsInWindowCoordinates)
+        _cachedVisualSearchPreviewImageBoundsInWindowCoordinates = { CGPointZero, [self convertRect:_visualSearchPreviewImageBounds toView:nil].size };
+    *outContentRect = *_cachedVisualSearchPreviewImageBoundsInWindowCoordinates;
     return _visualSearchPreviewImage.get();
 }
 
@@ -12021,6 +12025,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     _visualSearchPreviewImage.clear();
     _visualSearchPreviewTitle.clear();
     _visualSearchPreviewImageURL.clear();
+    _cachedVisualSearchPreviewImageBoundsInWindowCoordinates.reset();
 }
 
 #pragma mark - QLPreviewControllerDataSource
