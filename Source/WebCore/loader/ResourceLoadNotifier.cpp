@@ -143,8 +143,10 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, Resou
     frame->checkedLoader()->client().dispatchWillSendRequest(loader, identifier, request, redirectResponse);
 
     // If the URL changed, then we want to put that new URL in the "did tell client" set too.
-    if (!request.isNull() && oldRequestURL != request.url().string() && frame->loader().documentLoader())
-        frame->loader().protectedDocumentLoader()->didTellClientAboutLoad(request.url().string());
+    if (!request.isNull() && oldRequestURL != request.url().string()) {
+        if (RefPtr documentLoader = m_frame->loader().documentLoader())
+            documentLoader->didTellClientAboutLoad(request.url().string());
+    }
 
     InspectorInstrumentation::willSendRequest(frame.ptr(), identifier, loader, request, redirectResponse, cachedResource, resourceLoader);
 }

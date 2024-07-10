@@ -514,7 +514,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(Loca
 
 RefPtr<LegacyWebArchive> LegacyWebArchive::create(LocalFrame& frame)
 {
-    auto* documentLoader = frame.loader().documentLoader();
+    RefPtr documentLoader = frame.loader().documentLoader();
     if (!documentLoader)
         return nullptr;
 
@@ -698,7 +698,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
             node->getCandidateSubresourceURLs(subresourceURLs);
 
             ASSERT(frame.loader().documentLoader());
-            auto& documentLoader = *frame.loader().documentLoader();
+            Ref documentLoader = *frame.loader().documentLoader();
 
             for (auto& subresourceURL : subresourceURLs) {
                 if (uniqueSubresources.contains(subresourceURL.string()))
@@ -709,7 +709,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
                     continue;
 
                 auto addResult = uniqueSubresources.add(subresourceURL.string(), emptyString());
-                RefPtr<ArchiveResource> resource = documentLoader.subresource(subresourceURL);
+                auto resource = documentLoader->subresource(subresourceURL);
                 if (!resource) {
                     ResourceRequest request(subresourceURL);
                     request.setDomainForCachePartition(frame.document()->domainForCachePartition());
@@ -744,7 +744,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
 
     // If we are archiving the entire page, add any link icons that we have data for.
     if (!nodes.isEmpty() && nodes[0]->isDocumentNode()) {
-        auto* documentLoader = frame.loader().documentLoader();
+        RefPtr documentLoader = frame.loader().documentLoader();
         ASSERT(documentLoader);
         for (auto& icon : documentLoader->linkIcons()) {
             if (auto resource = documentLoader->subresource(icon.url))

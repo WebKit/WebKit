@@ -3283,8 +3283,10 @@ void FrameLoader::updateRequestAndAddExtraFields(Frame& targetFrame, ResourceReq
     }
 
     if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(targetFrame.mainFrame())) {
-        if (shouldUpdate == ShouldUpdateAppInitiatedValue::Yes && localMainFrame->loader().documentLoader())
-            request.setIsAppInitiated(localMainFrame->loader().documentLoader()->lastNavigationWasAppInitiated());
+        if (shouldUpdate == ShouldUpdateAppInitiatedValue::Yes) {
+            if (RefPtr documentLoader = localMainFrame->loader().documentLoader())
+                request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
+        }
     }
 
     if (page && isMainResource) {
@@ -4251,8 +4253,8 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, HistoryItem* from
     URL itemURL = item.url();
     URL itemOriginalURL = item.originalURL();
     URL currentURL;
-    if (documentLoader())
-        currentURL = documentLoader()->url();
+    if (auto* loader = documentLoader())
+        currentURL = loader->url();
     RefPtr formData = item.formData();
 
     ResourceRequest request(itemURL);

@@ -460,7 +460,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
 
     if (m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks) {
         if (createdResourceIdentifier)
-            checkedFrameLoader()->notifier().assignIdentifierToInitialRequest(m_identifier, documentLoader(), request);
+            checkedFrameLoader()->notifier().assignIdentifierToInitialRequest(m_identifier, protectedDocumentLoader().get(), request);
 
 #if PLATFORM(IOS_FAMILY)
         // If this ResourceLoader was stopped as a result of assignIdentifierToInitialRequest, bail out
