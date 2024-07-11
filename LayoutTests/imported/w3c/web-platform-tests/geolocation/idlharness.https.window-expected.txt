@@ -36,6 +36,7 @@ PASS GeolocationPosition interface: existence and properties of interface protot
 PASS GeolocationPosition interface: existence and properties of interface prototype object's @@unscopables property
 PASS GeolocationPosition interface: attribute coords
 PASS GeolocationPosition interface: attribute timestamp
+PASS GeolocationPosition interface: operation toJSON()
 PASS GeolocationCoordinates interface: existence and properties of interface object
 PASS GeolocationCoordinates interface object length
 PASS GeolocationCoordinates interface object name
@@ -49,6 +50,7 @@ PASS GeolocationCoordinates interface: attribute altitude
 PASS GeolocationCoordinates interface: attribute altitudeAccuracy
 PASS GeolocationCoordinates interface: attribute heading
 PASS GeolocationCoordinates interface: attribute speed
+PASS GeolocationCoordinates interface: operation toJSON()
 PASS GeolocationPositionError interface: existence and properties of interface object
 PASS GeolocationPositionError interface object length
 PASS GeolocationPositionError interface object name

@@ -14,4 +14,4 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/resources/iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/resources/iframe.html

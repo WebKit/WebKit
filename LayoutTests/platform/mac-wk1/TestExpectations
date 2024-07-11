@@ -2469,11 +2469,11 @@ css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=249544
 # Generic Permissions API is not supported in WK1
-imported/w3c/web-platform-tests/geolocation-API/permission.https.html [ WontFix ]
-imported/w3c/web-platform-tests/geolocation-API/disabled-by-permissions-policy.https.sub.html [ WontFix Slow ]
-imported/w3c/web-platform-tests/geolocation-API/enabled-by-permission-policy-attribute-redirect-on-load.https.sub.html [ Skip Slow ]
-imported/w3c/web-platform-tests/geolocation-API/enabled-by-permissions-policy.https.sub.html [ Skip Slow ]
-imported/w3c/web-platform-tests/geolocation-API/enabled-on-self-origin-by-permissions-policy.https.sub.html [ Skip Slow ]
+imported/w3c/web-platform-tests/geolocation/permission.https.html [ WontFix ]
+imported/w3c/web-platform-tests/geolocation/disabled-by-permissions-policy.https.sub.html [ WontFix Slow ]
+imported/w3c/web-platform-tests/geolocation/enabled-by-permission-policy-attribute-redirect-on-load.https.sub.html [ Skip Slow ]
+imported/w3c/web-platform-tests/geolocation/enabled-by-permissions-policy.https.sub.html [ Skip Slow ]
+imported/w3c/web-platform-tests/geolocation/enabled-on-self-origin-by-permissions-policy.https.sub.html [ Skip Slow ]
 
 # Per-process limit is only for WK2
 http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Skip ]

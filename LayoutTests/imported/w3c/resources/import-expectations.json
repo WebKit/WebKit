@@ -180,7 +180,7 @@
     "web-platform-tests/fullscreen": "import",
     "web-platform-tests/gamepad": "import",
     "web-platform-tests/generic-sensor": "skip",
-    "web-platform-tests/geolocation-API": "import",
+    "web-platform-tests/geolocation": "import",
     "web-platform-tests/geolocation-sensor": "skip",
     "web-platform-tests/graphics-aam": "skip",
     "web-platform-tests/graphics-aria": "import",
