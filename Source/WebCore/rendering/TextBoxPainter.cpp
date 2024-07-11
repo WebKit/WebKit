@@ -311,9 +311,8 @@ void TextBoxPainter<TextBoxPath>::paintForegroundAndDecorations()
         return !hasBackwardTrunctation ? m_selectableRange.clamp(textBox().end()) : textBox().length();
     };
     if (!contentMayNeedStyledMarkedText()) {
-        auto& lineStyle = m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style();
         auto markedText = MarkedText { startPosition(), endPosition(), MarkedText::Type::Unmarked };
-        auto styledMarkedText = StyledMarkedText { markedText, StyledMarkedText::computeStyleForUnmarkedMarkedText(m_renderer, lineStyle, m_isFirstLine, m_paintInfo) };
+        auto styledMarkedText = StyledMarkedText { markedText, StyledMarkedText::computeStyleForUnmarkedMarkedText(m_renderer, m_style, m_isFirstLine, m_paintInfo) };
         paintCompositionForeground(styledMarkedText);
         return;
     }
@@ -604,7 +603,7 @@ void TextBoxPainter<TextBoxPath>::collectDecoratingBoxesForTextBox(DecoratingBox
     if (ancestorInlineBox->isRootInlineBox() || !textBox->isHorizontal()) {
         decoratingBoxList.append({
             ancestorInlineBox,
-            m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style(),
+            m_style,
             overrideDecorationStyle,
             textBoxLocation
         });
@@ -701,9 +700,8 @@ void TextBoxPainter<TextBoxPath>::paintBackgroundDecorations(TextDecorationPaint
 template<typename TextBoxPath>
 void TextBoxPainter<TextBoxPath>::paintForegroundDecorations(TextDecorationPainter& decorationPainter, const StyledMarkedText& markedText, const FloatRect& textBoxPaintRect)
 {
-    auto& styleToUse = m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style();
     auto computedTextDecorationType = [&] {
-        auto textDecorations = styleToUse.textDecorationsInEffect();
+        auto textDecorations = m_style.textDecorationsInEffect();
         textDecorations.add(TextDecorationPainter::textDecorationsInEffectForStyle(markedText.style.textDecorationStyles));
         return textDecorations;
     }();
@@ -715,13 +713,13 @@ void TextBoxPainter<TextBoxPath>::paintForegroundDecorations(TextDecorationPaint
         m_paintInfo.context().concatCTM(rotation(m_paintRect, RotationDirection::Clockwise));
 
     auto deviceScaleFactor = m_document.deviceScaleFactor();
-    auto textDecorationThickness = computedTextDecorationThickness(styleToUse, deviceScaleFactor);
-    auto linethroughCenter = computedLinethroughCenter(styleToUse, textDecorationThickness, computedAutoTextDecorationThickness(styleToUse, deviceScaleFactor));
+    auto textDecorationThickness = computedTextDecorationThickness(m_style, deviceScaleFactor);
+    auto linethroughCenter = computedLinethroughCenter(m_style, textDecorationThickness, computedAutoTextDecorationThickness(m_style, deviceScaleFactor));
     decorationPainter.paintForegroundDecorations({ textBoxPaintRect.location()
         , textBoxPaintRect.width()
         , textDecorationThickness
         , linethroughCenter
-        , wavyStrokeParameters(styleToUse.computedFontSize()) }, markedText.style.textDecorationStyles);
+        , wavyStrokeParameters(m_style.computedFontSize()) }, markedText.style.textDecorationStyles);
 
     if (m_isCombinedText)
         m_paintInfo.context().concatCTM(rotation(m_paintRect, RotationDirection::Counterclockwise));
@@ -1016,6 +1014,8 @@ template<typename TextBoxPath>
 void TextBoxPainter<TextBoxPath>::paintPlatformDocumentMarkers()
 {
     auto markedTexts = MarkedText::collectForDocumentMarkers(m_renderer, m_selectableRange, MarkedText::PaintPhase::Decoration);
+    if (markedTexts.isEmpty())
+        return;
 
     auto spellingErrorStyle = m_renderer.spellingErrorPseudoStyle();
     if (spellingErrorStyle && !spellingErrorStyle->textDecorationsInEffect().isEmpty()) {
