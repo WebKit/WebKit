@@ -807,6 +807,15 @@
    },
    {
       "emails" : [
+         "aviduya@apple.com",
+         "anferneev@icloud.com"
+      ],
+      "github" : "aviduya",
+      "name" : "Anfernee Viduya",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "a_izquierdogarcia@apple.com",
          "aizquierdogarcia@apple.com"
       ],
