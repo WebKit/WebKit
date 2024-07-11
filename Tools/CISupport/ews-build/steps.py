@@ -2823,7 +2823,7 @@ class Trigger(trigger.Trigger):
 
         properties_to_pass = {prop: properties.Property(prop) for prop in property_names}
         properties_to_pass['retry_count'] = properties.Property('retry_count', default=0)
-        properties_to_pass['os_version_builder'] = properties.Property('os_version1', default='1.1')
+        properties_to_pass['os_version_builder'] = properties.Property('os_version', default='')
         properties_to_pass['xcode_version_builder'] = properties.Property('xcode_version', default='')
         if self.include_revision:
             properties_to_pass['ews_revision'] = properties.Property('got_revision')
