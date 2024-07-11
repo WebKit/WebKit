@@ -2553,10 +2553,7 @@ imported/w3c/web-platform-tests/fetch/metadata/window-open.https.sub.html [ Skip
 # XHR-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-# TestExpectations doesn't seem to support test names containing space characters, so skip the whole
-# xhr test suite for now. See also webkit.org/b/264596.
-webkit.org/b/264596 imported/w3c/web-platform-tests/xhr/ [ Skip ]
-# webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.html [ Failure ]
+webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of XHR-related bugs
