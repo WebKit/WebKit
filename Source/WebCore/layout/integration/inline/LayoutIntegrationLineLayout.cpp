@@ -766,13 +766,13 @@ Vector<LineAdjustment> LineLayout::adjustContentForPagination(const Layout::Bloc
         return { };
 
     bool allowLayoutRestart = !isPartialLayout;
-    auto [adjustments, layoutRestartLineIndex] = computeAdjustmentsForPagination(*m_inlineContent, m_blockFormattingState.placedFloats(), allowLayoutRestart, blockLayoutState, flow());
+    auto [adjustments, layoutRestartLine] = computeAdjustmentsForPagination(*m_inlineContent, m_blockFormattingState.placedFloats(), allowLayoutRestart, blockLayoutState, flow());
 
     adjustLinePositionsForPagination(*m_inlineContent, adjustments);
 
-    if (layoutRestartLineIndex) {
+    if (layoutRestartLine) {
         auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() };
-        auto canRestart = invalidation.restartForPagination(*layoutRestartLineIndex, adjustments[*layoutRestartLineIndex].offset);
+        auto canRestart = invalidation.restartForPagination(layoutRestartLine->index, layoutRestartLine->offset);
         if (!canRestart)
             m_lineDamage = { };
     }
