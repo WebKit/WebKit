@@ -875,8 +875,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged()
 void MediaPlayerPrivateMediaSourceAVFObjC::updateDisplayLayerAndDecompressionSession()
 {
     if (shouldEnsureLayerOrVideoRenderer()) {
-        destroyDecompressionSession();
-        ensureLayerOrVideoRenderer();
+        auto needsRenderingModeChanged = destroyDecompressionSession();
+        ensureLayerOrVideoRenderer(needsRenderingModeChanged);
         return;
     }
 
@@ -1044,10 +1044,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureDecompressionSession()
         player->renderingModeChanged();
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::destroyDecompressionSession()
+MediaPlayerEnums::NeedsRenderingModeChanged MediaPlayerPrivateMediaSourceAVFObjC::destroyDecompressionSession()
 {
     if (!m_decompressionSession)
-        return;
+        return MediaPlayerEnums::NeedsRenderingModeChanged::No;
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -1057,9 +1057,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::destroyDecompressionSession()
     m_decompressionSession->invalidate();
     m_decompressionSession = nullptr;
     setHasAvailableVideoFrame(false);
+    return MediaPlayerEnums::NeedsRenderingModeChanged::Yes;
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayerOrVideoRenderer()
+void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayerOrVideoRenderer(MediaPlayerEnums::NeedsRenderingModeChanged needsRenderingModeChanged)
 {
     switch (acceleratedVideoMode()) {
     case AcceleratedVideoMode::Layer:
@@ -1089,25 +1090,36 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayerOrVideoRenderer()
 
     ALWAYS_LOG(LOGIDENTIFIER, acceleratedVideoMode(), ", renderer=", !!renderer);
 
-    bool needsRenderingModeChanged;
     switch (acceleratedVideoMode()) {
     case AcceleratedVideoMode::Layer:
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+        if (!m_usingLinearMediaPlayer)
+            needsRenderingModeChanged = MediaPlayerEnums::NeedsRenderingModeChanged::Yes;
+#else
+        needsRenderingModeChanged = MediaPlayerEnums::NeedsRenderingModeChanged::Yes;
+#endif
+        FALLTHROUGH;
     case AcceleratedVideoMode::VideoRenderer:
-        needsRenderingModeChanged = true;
         if (mediaSourcePrivate)
             mediaSourcePrivate->setVideoRenderer(renderer.get());
         break;
     case AcceleratedVideoMode::StagedLayer:
+        needsRenderingModeChanged = MediaPlayerEnums::NeedsRenderingModeChanged::Yes;
+        FALLTHROUGH;
     case AcceleratedVideoMode::StagedVideoRenderer:
-        needsRenderingModeChanged = false;
         if (mediaSourcePrivate)
             mediaSourcePrivate->stageVideoRenderer(renderer.get());
         break;
     }
 
-    RefPtr player = m_player.get();
-    if (player && needsRenderingModeChanged)
-        player->renderingModeChanged();
+    switch (needsRenderingModeChanged) {
+    case MediaPlayerEnums::NeedsRenderingModeChanged::Yes:
+        if (RefPtr player = m_player.get())
+            player->renderingModeChanged();
+        break;
+    case MediaPlayerEnums::NeedsRenderingModeChanged::No:
+        break;
+    }
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::destroyLayerOrVideoRenderer()

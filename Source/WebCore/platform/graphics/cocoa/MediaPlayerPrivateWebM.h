@@ -234,11 +234,11 @@ private:
     void ensureLayer();
     void destroyLayer();
     void ensureDecompressionSession();
-    void destroyDecompressionSession();
+    MediaPlayerEnums::NeedsRenderingModeChanged destroyDecompressionSession();
     void ensureVideoRenderer();
     void destroyVideoRenderer();
 
-    void ensureLayerOrVideoRenderer();
+    void ensureLayerOrVideoRenderer(MediaPlayerEnums::NeedsRenderingModeChanged);
     void destroyLayerOrVideoRenderer();
     void configureLayerOrVideoRenderer(WebSampleBufferVideoRendering *);
 
