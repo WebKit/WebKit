@@ -40,14 +40,31 @@ namespace {
 template<typename BankInfo>
 void marshallCCallArgumentImpl(Vector<Arg>& result, unsigned& argumentCount, unsigned& stackOffset, Value* child)
 {
-    const auto registerCount = cCallArgumentRegisterCount(child);
-    if (is32Bit() && child->type() == Int64)
-        argumentCount = WTF::roundUpToMultipleOf<2>(argumentCount);
+    unsigned neededArgumentRegs = cCallArgumentRegisterCount(child);
 
-    if (argumentCount < BankInfo::numberOfArgumentRegisters) {
-        for (unsigned i = 0; i < registerCount; i++)
-            result.append(Tmp(BankInfo::toArgumentRegister(argumentCount++)));
-        return;
+#if CPU(ARM_THUMB2)
+    if (child->type() == Int64) {
+        // On ARMv7, register pairs need to start at an even number.
+        argumentCount = WTF::roundUpToMultipleOf(2, argumentCount);
+        neededArgumentRegs = 2;
+    }
+#endif
+    unsigned baseArgumentRegisterCount = argumentCount;
+    argumentCount += neededArgumentRegs;
+
+    if (argumentCount <= BankInfo::numberOfArgumentRegisters) {
+        switch (neededArgumentRegs) {
+        case 1:
+            result.append(Tmp(BankInfo::toArgumentRegister(baseArgumentRegisterCount)));
+            return;
+#if CPU(ARM_THUMB2)
+        case 2:
+            result.append(Arg(Tmp(BankInfo::toArgumentRegister(baseArgumentRegisterCount + 1)), Tmp(BankInfo::toArgumentRegister(baseArgumentRegisterCount))));
+            return;
+#endif
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
     }
 
     unsigned slotSize, slotAlignment;
@@ -70,7 +87,7 @@ void marshallCCallArgumentImpl(Vector<Arg>& result, unsigned& argumentCount, uns
     }
 
     stackOffset = WTF::roundUpToMultipleOf(slotAlignment, stackOffset);
-    for (unsigned i = 0; i < registerCount; i++) {
+    for (unsigned i = 0; i < neededArgumentRegs; i++) {
         result.append(Arg::callArg(stackOffset));
         stackOffset += slotSize;
     }
@@ -110,8 +127,6 @@ size_t cCallResultCount(Code& code, CCallValue* value)
     case Void:
         return 0;
     case Int64:
-        if constexpr (is32Bit())
-            return 2;
         return 1;
     case Tuple:
         // We only support functions that return each parameter in its own register for now.
@@ -135,8 +150,6 @@ size_t cCallArgumentRegisterCount(const Value* value)
     case Void:
         return 0;
     case Int64:
-        if constexpr (is32Bit())
-            return 2;
         return 1;
     case Tuple:
         RELEASE_ASSERT_NOT_REACHED();
@@ -147,15 +160,10 @@ size_t cCallArgumentRegisterCount(const Value* value)
 
 Width cCallArgumentRegisterWidth(Type type)
 {
-    if constexpr (is32Bit()) {
-        if (type == Int64)
-            return Width32;
-    }
-
     return widthForType(type);
 }
 
-Tmp cCallResult(Code& code, CCallValue* value, unsigned index)
+Arg cCallResult(Code& code, CCallValue* value, unsigned index)
 {
     ASSERT(index < 2);
     switch (value->type().kind()) {
@@ -164,9 +172,11 @@ Tmp cCallResult(Code& code, CCallValue* value, unsigned index)
     case Int32:
         return Tmp(GPRInfo::returnValueGPR);
     case Int64:
-        if (is32Bit() && index == 1)
-            return Tmp(GPRInfo::returnValueGPR2);
+#if USE(JSVALUE32_64)
+        return Arg(Tmp(GPRInfo::returnValueGPR2), Tmp(GPRInfo::returnValueGPR));
+#else
         return Tmp(GPRInfo::returnValueGPR);
+#endif
     case Float:
     case Double:
         ASSERT(!index);

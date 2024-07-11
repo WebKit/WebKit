@@ -56,7 +56,7 @@ size_t cCallArgumentRegisterCount(const Value*);
 // Return the width of the individual Air::Args needed to marshall this value
 Width cCallArgumentRegisterWidth(Type);
 
-Tmp cCallResult(Code&, CCallValue*, unsigned);
+Arg cCallResult(Code&, CCallValue*, unsigned);
 
 Inst buildCCall(Code&, Value* origin, const Vector<Arg>&);
 

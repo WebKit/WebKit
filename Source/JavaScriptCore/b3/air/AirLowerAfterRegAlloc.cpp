@@ -194,7 +194,7 @@ void lowerAfterRegAlloc(Code& code)
                 ScalarRegisterSet preUsed = liveRegs.buildScalarRegisterSet();
                 ScalarRegisterSet postUsed = preUsed;
                 Vector<Arg> destinations = computeCCallingConvention(code, value);
-                Vector<Tmp, 2> results;
+                Vector<Arg, 2> results;
                 Vector<Arg, 2> originalResults;
                 for (unsigned i = 0; i < cCallResultCount(code, value); ++i) {
                     results.append(cCallResult(code, value, i));
