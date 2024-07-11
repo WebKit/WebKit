@@ -24,7 +24,7 @@
  */
 
 #include <wtf/Assertions.h>
-#if HAVE(UNIFIED_ASC_AUTH_UI)
+#if HAVE(UNIFIED_ASC_AUTH_UI) || HAVE(WEB_AUTHN_AS_MODERN)
 
 #import "config.h"
 #import "WebAuthenticatorCoordinatorProxy.h"
@@ -632,6 +632,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
 #endif
 }
 
+#if HAVE(UNIFIED_ASC_AUTH_UI)
 static inline RetainPtr<NSString> toNSString(UserVerificationRequirement userVerificationRequirement)
 {
     switch (userVerificationRequirement) {
@@ -889,7 +890,6 @@ static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestConte
     return requestContext;
 }
 
-#if HAVE(UNIFIED_ASC_AUTH_UI)
 static Vector<WebCore::AuthenticatorTransport> toAuthenticatorTransports(NSArray<NSNumber *> *ascTransports)
 {
     Vector<WebCore::AuthenticatorTransport> transports;
@@ -914,6 +914,7 @@ bool WebAuthenticatorCoordinatorProxy::isASCAvailable()
     return isAuthenticationServicesCoreFrameworkAvailable();
 }
 
+#if HAVE(UNIFIED_ASC_AUTH_UI)
 RetainPtr<ASCCredentialRequestContext> WebAuthenticatorCoordinatorProxy::contextForRequest(WebAuthenticationRequestData&& requestData)
 {
     RetainPtr<ASCCredentialRequestContext> result;
@@ -925,7 +926,6 @@ RetainPtr<ASCCredentialRequestContext> WebAuthenticatorCoordinatorProxy::context
     return result;
 }
 
-#if HAVE(UNIFIED_ASC_AUTH_UI)
 static inline void continueAfterRequest(RetainPtr<id <ASCCredentialProtocol>> credential, RetainPtr<NSError> error, RequestCompletionHandler&& handler)
 {
     AuthenticatorResponseData response = { };
@@ -1175,10 +1175,13 @@ void WebAuthenticatorCoordinatorProxy::cancel(CompletionHandler<void()>&& handle
     } else
         handler();
 
+#if HAVE(UNIFIED_ASC_AUTH_UI)
     if (m_proxy) {
         [m_proxy cancelCurrentRequest];
         m_proxy.clear();
     }
+#endif
+
 #if HAVE(WEB_AUTHN_AS_MODERN)
     if (m_controller)
         [m_controller cancel];
@@ -1187,4 +1190,4 @@ void WebAuthenticatorCoordinatorProxy::cancel(CompletionHandler<void()>&& handle
 
 } // namespace WebKit
 
-#endif // HAVE(UNIFIED_ASC_AUTH_UI)
+#endif // HAVE(UNIFIED_ASC_AUTH_UI) || HAVE(WEB_AUTHN_AS_MODERN)
