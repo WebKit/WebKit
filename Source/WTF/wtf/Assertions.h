@@ -65,6 +65,9 @@
 #include <type_traits>
 #endif
 
+#define _XSTRINGIFY(line) #line
+#define _STRINGIFY(line) _XSTRINGIFY(line)
+
 /* ASSERT_ENABLED is defined in PlatformEnable.h. */
 
 #ifndef BACKTRACE_DISABLED
@@ -656,8 +659,6 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
         sd_journal_send_with_location("CODE_FILE=" file, "CODE_LINE=" line, function, "WEBKIT_SUBSYSTEM=%s", LOG_CHANNEL(channel).subsystem, "WEBKIT_CHANNEL=%s", LOG_CHANNEL(channel).name, "PRIORITY=%i", priority, "MESSAGE=" __VA_ARGS__, nullptr); \
 } while (0)
 
-#define _XSTRINGIFY(line) #line
-#define _STRINGIFY(line) _XSTRINGIFY(line)
 #define RELEASE_LOG(channel, ...) SD_JOURNAL_SEND(channel, LOG_NOTICE, __FILE__, _STRINGIFY(__LINE__), __func__, __VA_ARGS__)
 #define RELEASE_LOG_ERROR(channel, ...) SD_JOURNAL_SEND(channel, LOG_ERR, __FILE__, _STRINGIFY(__LINE__), __func__, __VA_ARGS__)
 #define RELEASE_LOG_FAULT(channel, ...) SD_JOURNAL_SEND(channel, LOG_CRIT, __FILE__, _STRINGIFY(__LINE__), __func__, __VA_ARGS__)
