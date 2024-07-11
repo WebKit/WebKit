@@ -1,0 +1,7 @@
+This test ensures we do not cause a main-thread infinite loop when trying to setSelectedTextRange with a range containing a role='img' element.
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
