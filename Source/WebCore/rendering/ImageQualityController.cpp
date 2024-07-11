@@ -40,7 +40,7 @@ static const Seconds lowQualityTimeThreshold { 500_ms };
 
 ImageQualityController::ImageQualityController(const RenderView& renderView)
     : m_renderView(renderView)
-    , m_timer(*this, &ImageQualityController::highQualityRepaintTimerFired)
+    , m_timer(*this, &ImageQualityController::highQualityRepaintTimerFired, lowQualityTimeThreshold)
 {
 }
 
@@ -95,7 +95,7 @@ void ImageQualityController::highQualityRepaintTimerFired()
 
 void ImageQualityController::restartTimer()
 {
-    m_timer.startOneShot(lowQualityTimeThreshold);
+    m_timer.restart();
 }
 
 std::optional<InterpolationQuality> ImageQualityController::interpolationQualityFromStyle(const RenderStyle& style)
