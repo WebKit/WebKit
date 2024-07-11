@@ -184,9 +184,6 @@ namespace JSC {
         JS_EXPORT_PRIVATE static HashMap<CString, Seconds> compileTimeStats();
         JS_EXPORT_PRIVATE static Seconds totalCompileTime();
 
-        static constexpr GPRReg s_metadataGPR = LLInt::Registers::metadataTableGPR;
-        static constexpr GPRReg s_constantsGPR = LLInt::Registers::pbGPR;
-
     private:
         void privateCompileMainPass();
         void privateCompileLinkPass();
@@ -231,7 +228,7 @@ namespace JSC {
     private:
         void loadGlobalObject(GPRReg);
 
-        // Assuming s_constantsGPR is available.
+        // Assuming GPRInfo::jitDataRegister is available.
         static void loadGlobalObject(CCallHelpers&, GPRReg);
         static void loadConstant(CCallHelpers&, unsigned constantIndex, GPRReg);
         static void loadStructureStubInfo(CCallHelpers&, StructureStubInfoIndex, GPRReg);

@@ -885,12 +885,16 @@ CodeBlock::~CodeBlock()
     });
     if (JSC::JITCode::isOptimizingJIT(jitType())) {
 #if ENABLE(DFG_JIT)
-        if (auto* jitData = dfgJITData())
+        if (auto* jitData = dfgJITData()) {
+            m_jitData = nullptr;
             delete jitData;
+        }
 #endif
     } else {
-        if (auto* jitData = baselineJITData())
+        if (auto* jitData = baselineJITData()) {
+            m_jitData = nullptr;
             delete jitData;
+        }
     }
 #endif // ENABLE(JIT)
 }
@@ -1777,6 +1781,7 @@ void CodeBlock::resetBaselineJITData()
         // there is JIT code.
 
         m_jitData = nullptr;
+        delete jitData;
     }
 }
 #endif

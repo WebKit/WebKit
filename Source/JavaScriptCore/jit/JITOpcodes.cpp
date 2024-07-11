@@ -1259,11 +1259,11 @@ void JIT::emit_op_catch(const JSInstruction* currentInstruction)
     // When the LLInt throws an exception, there is a chance that we've already tiered up
     // the same CodeBlock to baseline, and we'll catch the exception in the baseline JIT (because
     // we updated the exception handlers to point here). Because the LLInt uses a different value
-    // inside s_constantsGPR, the callee saves we restore above may not contain the correct register.
+    // inside GPRInfo::jitDataRegister, the callee saves we restore above may not contain the correct register.
     // So we replenish it here.
     {
         loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
-        loadPtr(Address(regT0, CodeBlock::offsetOfJITData()), s_constantsGPR);
+        loadPtr(Address(regT0, CodeBlock::offsetOfJITData()), GPRInfo::jitDataRegister);
     }
 
     callOperationNoExceptionCheck(operationRetrieveAndClearExceptionIfCatchable, TrustedImmPtr(&vm()));
