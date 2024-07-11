@@ -185,7 +185,8 @@ jobs:
           Join-Path (Resolve-Path ~).Path "scoop\shims" >> $Env:GITHUB_PATH
       - name: Install LLVM and Ninja
         run: |
-          scoop install ninja, llvm@18.1.8
+          scoop install ninja
+          scoop install llvm@18.1.8
       - uses: cygwin/cygwin-install-action@006ad0b0946ca6d0a3ea2d4437677fa767392401
       - uses: actions/checkout@v4
         with:
