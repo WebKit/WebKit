@@ -345,7 +345,7 @@ GPUProcessPreferencesForWebProcess PageConfiguration::preferencesForGPUProcess()
     Ref preferences = m_data.preferences.get();
 
     return {
-        preferences->webGLEnabled(),
+        preferences->webGLEnabled() && preferences->useGPUProcessForWebGLEnabled(),
         preferences->webGPUEnabled(),
         preferences->webXREnabled(),
         preferences->useGPUProcessForDOMRenderingEnabled(),
