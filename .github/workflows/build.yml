@@ -32,7 +32,7 @@ jobs:
             package_json_arch: "arm64"
             CMAKE_BUILD_TYPE: Debug
           - runner: macos-13-large
-            lto_flag: -flto='full'
+            lto_flag: "-flto='full' -fwhole-program-vtables -fforce-emit-vtables"
             cpu: haswell
             label: bun-webkit-macos-amd64-lto
             brew_prefix: /usr/local/opt
@@ -46,7 +46,7 @@ jobs:
             package_json_arch: "x64"
             CMAKE_BUILD_TYPE: Release
           - runner: macos-13-xlarge
-            lto_flag: -flto='full'
+            lto_flag: "-flto='full' -fwhole-program-vtables -fforce-emit-vtables"
             cpu: native
             label: bun-webkit-macos-arm64-lto
             brew_prefix: /opt/homebrew/opt
@@ -113,7 +113,7 @@ jobs:
             os: linux-arm64
             package_json_arch: "arm64"
             CMAKE_BUILD_TYPE: "Debug"
-          - lto_flag: "-flto='full'"
+          - lto_flag: "-flto='full' -fwhole-program-vtables -fforce-emit-vtables"
             label: bun-webkit-linux-arm64-lto
             os: linux-arm64
             package_json_arch: "arm64"
@@ -123,7 +123,7 @@ jobs:
             os: linux-arm64
             package_json_arch: "arm64"
             CMAKE_BUILD_TYPE: "Release"
-          - lto_flag: "-flto='full'"
+          - lto_flag: "-flto='full' -fwhole-program-vtables -fforce-emit-vtables"
             label: bun-webkit-linux-amd64-lto
             os: big-ubuntu
             package_json_arch: "x64"
