@@ -60,7 +60,7 @@ private:
 
     const RenderView& m_renderView;
     ObjectLayerSizeMap m_objectLayerSizeMap;
-    Timer m_timer;
+    DeferrableOneShotTimer m_timer;
     bool m_animatedResizeIsActive { false };
     bool m_liveResizeOptimizationIsActive { false };
 };
