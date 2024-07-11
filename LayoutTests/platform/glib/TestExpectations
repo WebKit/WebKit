@@ -2110,7 +2110,7 @@ webkit.org/b/187064 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-get
 
 webrtc/video-av1.html [ Skip ]
 
-webkit.org/b/269285 webrtc/h265.html [ Pass Timeout Failure ]
+webkit.org/b/269285 webrtc/h265.html [ Failure ]
 
 # Too slow with filtering implemented in WebKit. Should be done directly by GstWebRTC.
 webrtc/datachannel/filter-ice-candidate.html [ Skip ]

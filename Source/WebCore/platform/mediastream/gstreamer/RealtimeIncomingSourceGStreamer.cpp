@@ -76,25 +76,8 @@ bool RealtimeIncomingSourceGStreamer::hasClient(const GRefPtr<GstElement>& appsr
     return false;
 }
 
-std::optional<int> RealtimeIncomingSourceGStreamer::registerClient(GRefPtr<GstElement>&& appsrc)
+void RealtimeIncomingSourceGStreamer::configureAppSink(GstElement* sink)
 {
-    if (!m_tee)
-        return std::nullopt;
-
-    Locker lock { m_clientLock };
-    static Atomic<int> counter = 1;
-    auto clientId = counter.exchangeAdd(1);
-
-    auto* queue = gst_element_factory_make("queue", makeString("queue-"_s, clientId).ascii().data());
-    auto* sink = makeGStreamerElement("appsink", makeString("sink-"_s, clientId).ascii().data());
-    g_object_set(sink, "enable-last-sample", FALSE, nullptr);
-
-    if (!m_clientQuark)
-        m_clientQuark = g_quark_from_static_string("client-id");
-    g_object_set_qdata(G_OBJECT(sink), m_clientQuark, GINT_TO_POINTER(clientId));
-    GST_DEBUG_OBJECT(m_bin.get(), "Client %" GST_PTR_FORMAT " with id %d associated to new sink %" GST_PTR_FORMAT, appsrc.get(), clientId, sink);
-    m_clients.add(clientId, WTFMove(appsrc));
-
     static GstAppSinkCallbacks callbacks = {
         nullptr, // eos
         [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
@@ -140,34 +123,7 @@ std::optional<int> RealtimeIncomingSourceGStreamer::registerClient(GRefPtr<GstEl
                 return false;
 
             auto event = adoptGRef(GST_EVENT_CAST(gst_app_sink_pull_object(sink)));
-            switch (GST_EVENT_TYPE(event.get())) {
-            case GST_EVENT_STREAM_START:
-            case GST_EVENT_CAPS:
-            case GST_EVENT_SEGMENT:
-            case GST_EVENT_STREAM_COLLECTION:
-                return false;
-            case GST_EVENT_LATENCY: {
-                GstClockTime minLatency, maxLatency;
-                if (gst_base_sink_query_latency(GST_BASE_SINK(sink), nullptr, nullptr, &minLatency, &maxLatency)) {
-                    if (int clientId = GPOINTER_TO_INT(g_object_get_qdata(G_OBJECT(sink), strongSource->m_clientQuark))) {
-                        GST_DEBUG_OBJECT(sink, "Setting client latency to min %" GST_TIME_FORMAT " max %" GST_TIME_FORMAT, GST_TIME_ARGS(minLatency), GST_TIME_ARGS(maxLatency));
-                        auto appsrc = strongSource->m_clients.get(clientId);
-                        g_object_set(appsrc, "min-latency", minLatency, "max-latency", maxLatency, nullptr);
-                    }
-                }
-                return false;
-            }
-            default:
-                break;
-            }
-
-            if (int clientId = GPOINTER_TO_INT(g_object_get_qdata(G_OBJECT(sink), strongSource->m_clientQuark))) {
-                GST_DEBUG_OBJECT(sink, "Forwarding event %" GST_PTR_FORMAT " to client", event.get());
-                auto appsrc = strongSource->m_clients.get(clientId);
-                auto pad = adoptGRef(gst_element_get_static_pad(appsrc, "src"));
-                gst_pad_push_event(pad.get(), event.leakRef());
-            }
-
+            strongSource->handleDownstreamEvent(GST_ELEMENT_CAST(sink), WTFMove(event));
             return false;
         },
 #if GST_CHECK_VERSION(1, 24, 0)
@@ -179,12 +135,120 @@ std::optional<int> RealtimeIncomingSourceGStreamer::registerClient(GRefPtr<GstEl
     gst_app_sink_set_callbacks(GST_APP_SINK(sink), &callbacks, new ThreadSafeWeakPtr { *this }, [](void* data) {
         delete static_cast<ThreadSafeWeakPtr<RealtimeIncomingSourceGStreamer>*>(data);
     });
+}
+
+void RealtimeIncomingSourceGStreamer::configureFakeVideoSink(GstElement* sink)
+{
+    g_object_set(sink, "signal-handoffs", TRUE, nullptr);
+
+    auto handoffCallback = G_CALLBACK(+[](GstElement*, GstBuffer* buffer, GstPad* pad, gpointer userData) {
+        auto source = reinterpret_cast<ThreadSafeWeakPtr<RealtimeIncomingSourceGStreamer>*>(userData);
+        auto strongSource = source->get();
+        if (!strongSource)
+            return;
+
+        auto caps = adoptGRef(gst_pad_get_current_caps(pad));
+        auto sample = adoptGRef(gst_sample_new(buffer, caps.get(), nullptr, nullptr));
+        // dispatchSample might trigger RealtimeMediaSource::notifySettingsDidChangeObservers()
+        // which expects to run in the main thread.
+        callOnMainThread([source = ThreadSafeWeakPtr { *strongSource.get() }, sample = WTFMove(sample)]() mutable {
+            auto strongSource = source.get();
+            if (!strongSource)
+                return;
+
+            strongSource->dispatchSample(WTFMove(sample));
+        });
+    });
+    g_signal_connect_data(sink, "preroll-handoff", handoffCallback, new ThreadSafeWeakPtr { *this },
+        [](void* data, GClosure*) {
+            delete static_cast<ThreadSafeWeakPtr<RealtimeIncomingSourceGStreamer>*>(data);
+        }, static_cast<GConnectFlags>(0));
+    g_signal_connect_data(sink, "handoff", handoffCallback, new ThreadSafeWeakPtr { *this },
+        [](void* data, GClosure*) {
+            delete static_cast<ThreadSafeWeakPtr<RealtimeIncomingSourceGStreamer>*>(data);
+        }, static_cast<GConnectFlags>(0));
+
+    auto pad = adoptGRef(gst_element_get_static_pad(sink, "sink"));
+    gst_pad_add_probe(pad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(+[](GstPad* pad, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
+        auto source = reinterpret_cast<ThreadSafeWeakPtr<RealtimeIncomingSourceGStreamer>*>(userData);
+        auto strongSource = source->get();
+        if (!strongSource)
+            return GST_PAD_PROBE_OK;
+        GRefPtr event = GST_PAD_PROBE_INFO_EVENT(info);
+        auto sink = adoptGRef(gst_pad_get_parent_element(pad));
+        strongSource->handleDownstreamEvent(sink.get(), WTFMove(event));
+        return GST_PAD_PROBE_OK;
+    }), new ThreadSafeWeakPtr { *this }, [](void* data) {
+        delete static_cast<ThreadSafeWeakPtr<RealtimeIncomingSourceGStreamer>*>(data);
+    });
+}
+
+void RealtimeIncomingSourceGStreamer::handleDownstreamEvent(GstElement* sink, GRefPtr<GstEvent>&& event)
+{
+    switch (GST_EVENT_TYPE(event.get())) {
+    case GST_EVENT_STREAM_START:
+    case GST_EVENT_CAPS:
+    case GST_EVENT_SEGMENT:
+    case GST_EVENT_STREAM_COLLECTION:
+        return;
+    case GST_EVENT_LATENCY: {
+        GstClockTime minLatency, maxLatency;
+        if (gst_base_sink_query_latency(GST_BASE_SINK(sink), nullptr, nullptr, &minLatency, &maxLatency)) {
+            if (int clientId = GPOINTER_TO_INT(g_object_get_qdata(G_OBJECT(sink), m_clientQuark))) {
+                GST_DEBUG_OBJECT(sink, "Setting client latency to min %" GST_TIME_FORMAT " max %" GST_TIME_FORMAT, GST_TIME_ARGS(minLatency), GST_TIME_ARGS(maxLatency));
+                auto appsrc = m_clients.get(clientId);
+                g_object_set(appsrc, "min-latency", minLatency, "max-latency", maxLatency, nullptr);
+            }
+        }
+        return;
+    }
+    default:
+        break;
+    }
+
+    if (int clientId = GPOINTER_TO_INT(g_object_get_qdata(G_OBJECT(sink), m_clientQuark))) {
+        GST_DEBUG_OBJECT(sink, "Forwarding event %" GST_PTR_FORMAT " to client", event.get());
+        auto appsrc = m_clients.get(clientId);
+        auto pad = adoptGRef(gst_element_get_static_pad(appsrc, "src"));
+        gst_pad_push_event(pad.get(), event.leakRef());
+    }
+}
+
+std::optional<int> RealtimeIncomingSourceGStreamer::registerClient(GRefPtr<GstElement>&& appsrc)
+{
+    if (!m_tee)
+        return std::nullopt;
+
+    Locker lock { m_clientLock };
+    static Atomic<int> counter = 1;
+    auto clientId = counter.exchangeAdd(1);
+
+    auto* queue = gst_element_factory_make("queue", makeString("queue-"_s, clientId).ascii().data());
+
+    ASCIILiteral sinkName = "appsink"_s;
+    if (isIncomingVideoSource() && m_isUpstreamDecoding)
+        sinkName = "fakevideosink"_s;
+    auto* sink = makeGStreamerElement(sinkName.characters(), makeString("sink-"_s, clientId).ascii().data());
+    g_object_set(sink, "enable-last-sample", FALSE, nullptr);
+
+    if (!m_clientQuark)
+        m_clientQuark = g_quark_from_static_string("client-id");
+    g_object_set_qdata(G_OBJECT(sink), m_clientQuark, GINT_TO_POINTER(clientId));
+    GST_DEBUG_OBJECT(m_bin.get(), "Client %" GST_PTR_FORMAT " with id %d associated to new sink %" GST_PTR_FORMAT, appsrc.get(), clientId, sink);
+    m_clients.add(clientId, WTFMove(appsrc));
+
+    if (GST_IS_APP_SINK(sink))
+        configureAppSink(sink);
+    else
+        configureFakeVideoSink(sink);
 
     auto sinkPad = adoptGRef(gst_element_get_static_pad(sink, "sink"));
     gst_pad_add_probe(sinkPad.get(), GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(+[](GstPad* pad, GstPadProbeInfo* info, RealtimeIncomingSourceGStreamer* self) -> GstPadProbeReturn {
         auto query = GST_QUERY_CAST(info->data);
-        if (self->isIncomingVideoSource() && self->m_isUpstreamDecoding && GST_QUERY_TYPE(query) == GST_QUERY_ALLOCATION)
-            gst_query_add_allocation_meta(query, GST_VIDEO_META_API_TYPE, NULL);
+        if (self->isIncomingVideoSource() && self->m_isUpstreamDecoding && GST_QUERY_TYPE(query) == GST_QUERY_ALLOCATION) {
+            // Let fakevideosink handle the allocation query.
+            return GST_PAD_PROBE_OK;
+        }
 
         auto sink = adoptGRef(gst_pad_get_parent_element(pad));
         int clientId = GPOINTER_TO_INT(g_object_get_qdata(G_OBJECT(sink.get()), self->m_clientQuark));

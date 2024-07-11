@@ -59,6 +59,10 @@ private:
     void stopProducingData() final;
     const RealtimeMediaSourceCapabilities& capabilities() final;
 
+    void configureAppSink(GstElement*);
+    void configureFakeVideoSink(GstElement*);
+    void handleDownstreamEvent(GstElement*, GRefPtr<GstEvent>&&);
+
     virtual void dispatchSample(GRefPtr<GstSample>&&) { }
 
     void unregisterClientLocked(int);
