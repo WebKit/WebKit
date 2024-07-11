@@ -802,6 +802,15 @@ void AVVideoCaptureSource::setFrameRateAndZoomWithPreset(double requestedFrameRa
     m_currentZoom = requestedZoom;
 
     setSessionSizeFrameRateAndZoom();
+
+#if PLATFORM(IOS_FAMILY)
+    // Updating the device configuration may switch off the torch. We reenable torch asynchronously if needed.
+    if (torch()) {
+        scheduleDeferredTask([this] {
+            updateTorch();
+        });
+    }
+#endif
 }
 
 static bool isFrameRateMatching(double frameRate, AVCaptureDevice* device)
