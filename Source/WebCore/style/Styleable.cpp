@@ -54,6 +54,7 @@
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "StyleTreeResolver.h"
 #include "ViewTransition.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
@@ -347,7 +348,7 @@ bool Styleable::animationListContainsNewlyValidAnimation(const AnimationList& an
     return false;
 }
 
-void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const RenderStyle& newStyle, const Style::ResolutionContext& resolutionContext, WeakStyleOriginatedAnimations& newStyleOriginatedAnimations) const
+void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const RenderStyle& newStyle, const Style::ResolutionContext& resolutionContext, WeakStyleOriginatedAnimations& newStyleOriginatedAnimations, Style::IsInDisplayNoneTree isInDisplayNoneTree) const
 {
     auto& keyframeEffectStack = ensureKeyframeEffectStack();
 
@@ -411,7 +412,7 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
                 }
             }
 
-            if (!foundMatchingAnimation) {
+            if (!foundMatchingAnimation && isInDisplayNoneTree == Style::IsInDisplayNoneTree::No) {
                 auto cssAnimation = CSSAnimation::create(*this, currentAnimation.get(), currentStyle, newStyle, resolutionContext);
                 newStyleOriginatedAnimations.append(cssAnimation.ptr());
                 newAnimations.add(WTFMove(cssAnimation));

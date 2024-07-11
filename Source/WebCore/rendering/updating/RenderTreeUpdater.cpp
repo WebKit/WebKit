@@ -464,7 +464,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         }
     });
 
-    bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContents && !(element.isInTopLayer() && renderTreePosition().parent().style().hasSkippedContent());
+    bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContentsOrNone && !(element.isInTopLayer() && renderTreePosition().parent().style().hasSkippedContent());
     if (shouldCreateNewRenderer) {
         if (element.hasCustomStyleResolveCallbacks())
             element.willAttachRenderers();
