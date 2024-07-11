@@ -71,15 +71,10 @@ $BUN_WEBKIT_VERSION = if ($env:BUN_WEBKIT_VERSION) { $env:BUN_WEBKIT_VERSION } e
 # Note that Bun works fine when you use this dual library technique.
 # TODO: update to 75.1. It seems that additional CFLAGS need to be passed here.
 $ICU_SOURCE_URL = "https://github.com/unicode-org/icu/releases/download/release-73-2/icu4c-73_2-src.tgz"
-$ICU_SHARED_URL = "https://github.com/unicode-org/icu/releases/download/release-73-2/icu4c-73_2-Win64-MSVC2019.zip"
 
 $ICU_STATIC_ROOT = Join-Path $WebKitBuild "icu"
 $ICU_STATIC_LIBRARY = Join-Path $ICU_STATIC_ROOT "lib"
 $ICU_STATIC_INCLUDE_DIR = Join-Path $ICU_STATIC_ROOT "include"
-
-$ICU_SHARED_ROOT = Join-Path $WebKitBuild "icu-shared"
-$ICU_SHARED_LIBRARY = Join-Path $ICU_SHARED_ROOT "lib64"
-$ICU_SHARED_INCLUDE_DIR = Join-Path $ICU_SHARED_ROOT "include"
 
 $null = mkdir $WebKitBuild -ErrorAction SilentlyContinue
 
@@ -98,25 +93,44 @@ if (!(Test-Path -Path $ICU_STATIC_ROOT)) {
     
     # 1. fix build script to align with bun's compiler requirements
     #    a. replace references to `cl` with `clang-cl` from configure
-    #    b. TODO: use -MT instead of -MD to statically link the C runtime
+    #    b. use -MT instead of -MD to statically link the C runtime
+    #    c. enable debug build for Debug configuration
     $ConfigureFile = Get-Content "$ICU_STATIC_ROOT/source/runConfigureICU" -Raw
-    # Set-Content "$ICU_STATIC_ROOT/source/runConfigureICU" (($ConfigureFile -replace "=cl", "=clang-cl") -replace "-MD'", "-MT'") -NoNewline -Encoding UTF8
-    Set-Content "$ICU_STATIC_ROOT/source/runConfigureICU" (($ConfigureFile -replace "=cl", "=clang-cl")) -NoNewline -Encoding UTF8
-    # 2. hack remove dllimport from platform.h
-    $PlatformFile = Get-Content "$ICU_STATIC_ROOT/source/common/unicode/platform.h" -Raw
-    Set-Content "$ICU_STATIC_ROOT/source/common/unicode/platform.h" ($PlatformFile -replace "__declspec\(dllimport\)", "")
+    $ConfigureFile = $ConfigureFile -replace "=cl", "=clang-cl"
+    if ($CMAKE_BUILD_TYPE -eq "Debug") {
+        $ConfigureFile = $ConfigureFile -replace "debug=0", "debug=1"
+        $ConfigureFile = $ConfigureFile -replace "release=1", "release=0"
+        $ConfigureFile = $ConfigureFile -replace "-MDd", "-MTd /DU_STATIC_IMPLEMENTATION"
+    } else {
+        $ConfigureFile = $ConfigureFile -replace "-MD'", "-MT /DU_STATIC_IMPLEMENTATION'"
+    }
+
+    Set-Content "$ICU_STATIC_ROOT/source/runConfigureICU" $ConfigureFile -NoNewline -Encoding UTF8
     
     Push-Location $ICU_STATIC_ROOT/source
     try {
         Write-Host ":: Configuring ICU Build"
-        bash.exe ./runConfigureICU Cygwin/MSVC `
-            --enable-static `
-            --disable-shared `
-            --with-data-packaging=static `
-            --disable-samples `
-            --disable-tests `
-            --disable-debug `
-            --enable-release
+
+        if ($CMAKE_BUILD_TYPE -eq "Release") {
+            bash.exe ./runConfigureICU Cygwin/MSVC `
+                --enable-static `
+                --disable-shared `
+                --with-data-packaging=static `
+                --disable-samples `
+                --disable-tests `
+                --disable-debug `
+                --enable-release
+        } elseif ($CMAKE_BUILD_TYPE -eq "Debug") {
+            bash.exe ./runConfigureICU Cygwin/MSVC `
+                --enable-static `
+                --disable-shared `
+                --with-data-packaging=static `
+                --disable-samples `
+                --disable-tests `
+                --enable-debug `
+                --disable-release
+        }
+
         if ($LASTEXITCODE -ne 0) { 
             Get-Content "config.log"
             throw "runConfigureICU failed with exit code $LASTEXITCODE"
@@ -133,21 +147,21 @@ if (!(Test-Path -Path $ICU_STATIC_ROOT)) {
     Copy-Item -r $ICU_STATIC_ROOT/source/i18n/unicode/* $ICU_STATIC_INCLUDE_DIR/unicode
     $null = mkdir -Force $ICU_STATIC_LIBRARY
     Copy-Item -r $ICU_STATIC_ROOT/source/lib/* $ICU_STATIC_LIBRARY/
-}
 
-if (!(Test-Path -Path $ICU_SHARED_ROOT)) {
-    # Download and extract URL
-    Write-Host "Downloading shared library ICU from ${ICU_SHARED_URL}"
-    $icuZipPath = Join-Path $WebKitBuild "icu.zip"
-    if (!(Test-Path -Path $icuZipPath)) {
-        Invoke-WebRequest -Uri $ICU_SHARED_URL -OutFile $icuZipPath
+    # JSC expects the static library to be named icudt.lib
+    if ($CMAKE_BUILD_TYPE -eq "Release") {
+        Move-Item -r $ICU_STATIC_LIBRARY/sicudt.lib $ICU_STATIC_LIBRARY/icudt.lib
+        Move-Item -r $ICU_STATIC_LIBRARY/sicutu.lib $ICU_STATIC_LIBRARY/icutu.lib
+        Move-Item -r $ICU_STATIC_LIBRARY/sicuio.lib $ICU_STATIC_LIBRARY/icuio.lib
+        Move-Item -r $ICU_STATIC_LIBRARY/sicuin.lib $ICU_STATIC_LIBRARY/icuin.lib
+        Move-Item -r $ICU_STATIC_LIBRARY/sicuuc.lib $ICU_STATIC_LIBRARY/icuuc.lib
+    } elseif ($CMAKE_BUILD_TYPE -eq "Debug") {
+        Move-Item -r $ICU_STATIC_LIBRARY/sicudtd.lib $ICU_STATIC_LIBRARY/icudt.lib
+        Move-Item -r $ICU_STATIC_LIBRARY/sicutud.lib $ICU_STATIC_LIBRARY/icutu.lib
+        Move-Item -r $ICU_STATIC_LIBRARY/sicuiod.lib $ICU_STATIC_LIBRARY/icuio.lib
+        Move-Item -r $ICU_STATIC_LIBRARY/sicuind.lib $ICU_STATIC_LIBRARY/icuin.lib
+        Move-Item -r $ICU_STATIC_LIBRARY/sicuucd.lib $ICU_STATIC_LIBRARY/icuuc.lib
     }
-    
-    $null = New-Item -ItemType Directory -Path $ICU_SHARED_ROOT -Force
-    $null = Expand-Archive $icuZipPath $ICU_SHARED_ROOT
-    Get-ChildItem $ICU_SHARED_ROOT | Get-ChildItem
-    Expand-Archive (Get-ChildItem $ICU_SHARED_ROOT | Get-ChildItem).FullName $ICU_SHARED_ROOT
-
 }
 
 Write-Host ":: Configuring WebKit"
@@ -156,6 +170,14 @@ $env:PATH = $PathWithPerl
 
 $env:CFLAGS = "/Zi"
 $env:CXXFLAGS = "/Zi"
+
+$CmakeMsvcRuntimeLibrary = "MultiThreaded"
+if ($CMAKE_BUILD_TYPE -eq "Debug") {
+    $CmakeMsvcRuntimeLibrary = "MultiThreadedDebug"
+}
+
+$NoWebassembly = if ($env:NO_WEBASSEMBLY) { $env:NO_WEBASSEMBLY } else { $false }
+$WebAssemblyState = if ($NoWebassembly) { "OFF" } else { "ON" }
 
 cmake -S . -B $WebKitBuild `
     -DPORT="JSCOnly" `
@@ -170,18 +192,21 @@ cmake -S . -B $WebKitBuild `
     -DENABLE_WEBASSEMBLY_BBQJIT=ON `
     -DENABLE_WEBASSEMBLY_OMGJIT=ON `
     -DENABLE_SAMPLING_PROFILER=ON `
-    -DENABLE_WEBASSEMBLY=ON `
+    "-DENABLE_WEBASSEMBLY=${WebAssemblyState}" `
     -DUSE_BUN_JSC_ADDITIONS=ON `
     -DENABLE_BUN_SKIP_FAILING_ASSERTIONS=ON `
     -DUSE_SYSTEM_MALLOC=ON `
-    "-DICU_ROOT=${ICU_SHARED_ROOT}" `
-    "-DICU_LIBRARY=${ICU_SHARED_LIBRARY}" `
-    "-DICU_INCLUDE_DIR=${ICU_SHARED_INCLUDE_DIR}" `
+    "-DICU_ROOT=${ICU_STATIC_ROOT}" `
+    "-DICU_LIBRARY=${ICU_STATIC_LIBRARY}" `
+    "-DICU_INCLUDE_DIR=${ICU_STATIC_INCLUDE_DIR}" `
     "-DCMAKE_C_COMPILER=clang-cl" `
     "-DCMAKE_CXX_COMPILER=clang-cl" `
-    "-DCMAKE_C_FLAGS_RELEASE=/Zi /O2 /Ob2 /DNDEBUG /MT" `
-    "-DCMAKE_CXX_FLAGS_RELEASE=/Zi /O2 /Ob2 /DNDEBUG /MT" `
+    "-DCMAKE_C_FLAGS_RELEASE=/Zi /O2 /Ob2 /DNDEBUG" `
+    "-DCMAKE_CXX_FLAGS_RELEASE=/Zi /O2 /Ob2 /DNDEBUG" `
+    "-DCMAKE_C_FLAGS_DEBUG=/Zi /FS /O0 /Ob0" `
+    "-DCMAKE_CXX_FLAGS_DEBUG=/Zi /FS /O0 /Ob0" `
     -DENABLE_REMOTE_INSPECTOR=ON `
+    "-DCMAKE_MSVC_RUNTIME_LIBRARY=${CmakeMsvcRuntimeLibrary}" `
     -G Ninja
 # TODO: "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded" `
 if ($LASTEXITCODE -ne 0) { throw "cmake failed with exit code $LASTEXITCODE" }
@@ -212,9 +237,25 @@ $null = mkdir -ErrorAction SilentlyContinue $output/include/wtf
 
 Copy-Item $WebKitBuild/cmakeconfig.h $output/include/cmakeconfig.h
 Copy-Item $WebKitBuild/lib64/JavaScriptCore.lib $output/lib/
-# Copy-Item $WebKitBuild/lib64/JavaScriptCore.pdb $output/lib/
 Copy-Item $WebKitBuild/lib64/WTF.lib $output/lib/
-# Copy-Item $WebKitBuild/lib64/WTF.pdb $output/lib/
+# if ($CMAKE_BUILD_TYPE -eq "Debug") {
+#     Copy-Item $WebKitBuild/lib64/JavaScriptCore.pdb $output/lib/
+#     Copy-Item $WebKitBuild/lib64/WTF.pdb $output/lib/
+# }
+
+if ($CMAKE_BUILD_TYPE -eq "Release") {
+    Move-Item -r $ICU_STATIC_LIBRARY/icudt.lib $ICU_STATIC_LIBRARY/sicudt.lib
+    Move-Item -r $ICU_STATIC_LIBRARY/icutu.lib $ICU_STATIC_LIBRARY/sicutu.lib
+    Move-Item -r $ICU_STATIC_LIBRARY/icuio.lib $ICU_STATIC_LIBRARY/sicuio.lib
+    Move-Item -r $ICU_STATIC_LIBRARY/icuin.lib $ICU_STATIC_LIBRARY/sicuin.lib
+    Move-Item -r $ICU_STATIC_LIBRARY/icuuc.lib $ICU_STATIC_LIBRARY/sicuuc.lib
+} elseif ($CMAKE_BUILD_TYPE -eq "Debug") {
+    Move-Item -r $ICU_STATIC_LIBRARY/icudt.lib $ICU_STATIC_LIBRARY/sicudtd.lib
+    Move-Item -r $ICU_STATIC_LIBRARY/icutu.lib $ICU_STATIC_LIBRARY/sicutud.lib
+    Move-Item -r $ICU_STATIC_LIBRARY/icuio.lib $ICU_STATIC_LIBRARY/sicuiod.lib
+    Move-Item -r $ICU_STATIC_LIBRARY/icuin.lib $ICU_STATIC_LIBRARY/sicuind.lib
+    Move-Item -r $ICU_STATIC_LIBRARY/icuuc.lib $ICU_STATIC_LIBRARY/sicuucd.lib
+}
 
 Add-Content -Path $output/include/cmakeconfig.h -Value "`#define BUN_WEBKIT_VERSION `"$BUN_WEBKIT_VERSION`""
 

@@ -187,6 +187,7 @@ jobs:
         run: |
           scoop install ninja
           scoop install llvm@18.1.8
+          Join-Path (Resolve-Path ~).Path "scoop\apps\llvm\current\bin" >> $Env:GITHUB_PATH
       - uses: cygwin/cygwin-install-action@006ad0b0946ca6d0a3ea2d4437677fa767392401
       - uses: actions/checkout@v4
         with:
