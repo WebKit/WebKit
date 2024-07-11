@@ -1010,6 +1010,36 @@ static ASCIILiteral webrtcStatsTypeName(int value)
 }
 #endif
 
+template<typename T>
+std::optional<T> gstStructureGet(const GstStructure* structure, ASCIILiteral key)
+{
+    T value;
+    if constexpr(std::is_same_v<T, int>) {
+        if (gst_structure_get_int(structure, key.characters(), &value))
+            return value;
+    } else if constexpr(std::is_same_v<T, int64_t>) {
+        if (gst_structure_get_int64(structure, key.characters(), &value))
+            return value;
+    } else if constexpr(std::is_same_v<T, unsigned>) {
+        if (gst_structure_get_uint(structure, key.characters(), &value))
+            return value;
+    } else if constexpr(std::is_same_v<T, uint64_t>) {
+        if (gst_structure_get_uint64(structure, key.characters(), &value))
+            return value;
+    } else if constexpr(std::is_same_v<T, double>) {
+        if (gst_structure_get_double(structure, key.characters(), &value))
+            return value;
+    } else
+        static_assert(!std::is_same_v<T, T>, "type not implemented for gstStructureGet");
+    return std::nullopt;
+}
+
+template std::optional<int> gstStructureGet(const GstStructure*, ASCIILiteral key);
+template std::optional<int64_t> gstStructureGet(const GstStructure*, ASCIILiteral key);
+template std::optional<unsigned> gstStructureGet(const GstStructure*, ASCIILiteral key);
+template std::optional<uint64_t> gstStructureGet(const GstStructure*, ASCIILiteral key);
+template std::optional<double> gstStructureGet(const GstStructure*, ASCIILiteral key);
+
 static RefPtr<JSON::Value> gstStructureToJSON(const GstStructure*);
 
 static std::optional<RefPtr<JSON::Value>> gstStructureValueToJSON(const GValue* value)
