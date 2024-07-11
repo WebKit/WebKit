@@ -547,19 +547,29 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
 SocketPair createPlatformConnection(unsigned options)
 {
     int sockets[2];
+
+#if OS(LINUX)
+    if ((options & SetCloexecOnServer) || (options & SetCloexecOnClient)) {
+        RELEASE_ASSERT(socketpair(AF_UNIX, SOCKET_TYPE | SOCK_CLOEXEC, 0, sockets) != -1);
+
+        if (!(options & SetCloexecOnServer))
+            RELEASE_ASSERT(unsetCloseOnExec(sockets[1]));
+
+        if (!(options & SetCloexecOnClient))
+            RELEASE_ASSERT(unsetCloseOnExec(sockets[0]));
+
+        SocketPair socketPair = { sockets[0], sockets[1] };
+        return socketPair;
+    }
+#endif
+
     RELEASE_ASSERT(socketpair(AF_UNIX, SOCKET_TYPE, 0, sockets) != -1);
 
-    if (options & SetCloexecOnServer) {
-        // Don't expose the child socket to the parent process.
-        if (!setCloseOnExec(sockets[1]))
-            RELEASE_ASSERT_NOT_REACHED();
-    }
+    if (options & SetCloexecOnServer)
+        RELEASE_ASSERT(setCloseOnExec(sockets[1]));
 
-    if (options & SetCloexecOnClient) {
-        // Don't expose the parent socket to potential future children.
-        if (!setCloseOnExec(sockets[0]))
-            RELEASE_ASSERT_NOT_REACHED();
-    }
+    if (options & SetCloexecOnClient)
+        RELEASE_ASSERT(setCloseOnExec(sockets[0]));
 
     SocketPair socketPair = { sockets[0], sockets[1] };
     return socketPair;
