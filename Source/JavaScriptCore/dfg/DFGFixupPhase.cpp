@@ -739,14 +739,12 @@ private:
             if (Node::shouldSpeculateHeapBigInt(leftChild.node(), rightChild.node())) {
                 fixEdge<HeapBigIntUse>(leftChild);
                 fixEdge<HeapBigIntUse>(rightChild);
-                node->clearFlags(NodeMustGenerate);
                 break;
             }
 #if USE(BIGINT32)
             if (Node::shouldSpeculateBigInt(leftChild.node(), rightChild.node())) {
                 fixEdge<AnyBigIntUse>(leftChild);
                 fixEdge<AnyBigIntUse>(rightChild);
-                node->clearFlags(NodeMustGenerate);
                 break; 
             }
 #endif
@@ -818,14 +816,12 @@ private:
             if (Node::shouldSpeculateHeapBigInt(node->child1().node(), node->child2().node())) {
                 fixEdge<HeapBigIntUse>(node->child1());
                 fixEdge<HeapBigIntUse>(node->child2());
-                node->clearFlags(NodeMustGenerate);
                 break;
             }
 #if USE(BIGINT32)
             if (Node::shouldSpeculateBigInt(node->child1().node(), node->child2().node())) {
                 fixEdge<AnyBigIntUse>(node->child1());
                 fixEdge<AnyBigIntUse>(node->child2());
-                node->clearFlags(NodeMustGenerate);
                 break;
             }
 #endif

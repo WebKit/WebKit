@@ -1100,6 +1100,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
 
+        bool isBigIntBinaryUsedKind = node->isBinaryUseKind(HeapBigIntUse) || node->isBinaryUseKind(AnyBigIntUse) || node->isBinaryUseKind(BigInt32Use);
+        if (node->mustGenerate() && isBigIntBinaryUsedKind) {
+            if (childY && childY.isBigInt() && !childY.isNegativeBigInt()) {
+                node->clearFlags(NodeMustGenerate);
+                m_state.setShouldTryConstantFolding(true);
+            }
+        }
+
         if (node->isBinaryUseKind(HeapBigIntUse)) {
             // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate
             // the format of our result:
@@ -1186,6 +1194,15 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ValueDiv: {
         if (handleConstantDivOp(node))
             break;
+
+        bool isBigIntBinaryUsedKind = node->isBinaryUseKind(HeapBigIntUse) || node->isBinaryUseKind(AnyBigIntUse) || node->isBinaryUseKind(BigInt32Use);
+        if (node->mustGenerate() && isBigIntBinaryUsedKind) {
+            JSValue left = forNode(node->child2()).value();
+            if (left && left.isBigInt() && !left.isZeroBigInt()) {
+                node->clearFlags(NodeMustGenerate);
+                m_state.setShouldTryConstantFolding(true);
+            }
+        }
 
         if (node->isBinaryUseKind(HeapBigIntUse)) {
             // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate

@@ -493,6 +493,12 @@ public:
 
     static std::optional<double> tryExtractDouble(JSValue);
 
+    inline bool isZero() const
+    {
+        ASSERT(length() || !sign());
+        return !length();
+    }
+
 private:
     JSBigInt(VM&, Structure*, Digit*, unsigned length);
 
@@ -591,12 +597,6 @@ private:
 
     static String toStringBasePowerOfTwo(VM&, JSGlobalObject*, JSBigInt*, unsigned radix);
     static String toStringGeneric(VM&, JSGlobalObject*, JSBigInt*, unsigned radix);
-
-    inline bool isZero() const
-    {
-        ASSERT(length() || !sign());
-        return length() == 0;
-    }
 
     template <typename CharType>
     static JSValue parseInt(JSGlobalObject*, std::span<const CharType> data, ErrorParseMode);

@@ -267,6 +267,8 @@ public:
     bool isBigInt() const;
     bool isHeapBigInt() const;
     bool isBigInt32() const;
+    bool isZeroBigInt() const;
+    bool isNegativeBigInt() const;
     bool isSymbol() const;
     bool isPrimitive() const;
     bool isGetterSetter() const;
