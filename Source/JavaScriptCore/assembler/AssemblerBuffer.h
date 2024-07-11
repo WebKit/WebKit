@@ -29,17 +29,19 @@
 
 #include "ExecutableAllocator.h"
 #include "JITCompilationEffort.h"
-#include "SecureARM64EHashPinsInlines.h"
 #include "stdint.h"
 #include <string.h>
+#include <type_traits>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-#include <wtf/PtrTag.h>
-#endif
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/UnalignedAccess.h>
+
+#if ENABLE(JIT_PAC_SIGN_ASSEMBLER_BUFFER)
+#include "SecureARM64EHashPinsInlines.h"
+#include <wtf/PtrTag.h>
+#endif
 
 namespace JSC {
     enum class AssemblerDataType : uint8_t { Code, Hashes };
@@ -50,7 +52,7 @@ namespace JSC {
     using ThreadSpecificAssemblerData = ThreadSpecific<AssemblerData, WTF::CanBeGCThread::True>;
     JS_EXPORT_PRIVATE ThreadSpecificAssemblerData& threadSpecificAssemblerData();
 
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
     using AssemblerHashes = AssemblerDataImpl<AssemblerDataType::Hashes>;
     using ThreadSpecificAssemblerHashes = ThreadSpecific<AssemblerHashes, WTF::CanBeGCThread::True>;
     JS_EXPORT_PRIVATE ThreadSpecificAssemblerHashes& threadSpecificAssemblerHashes();
@@ -80,7 +82,7 @@ namespace JSC {
 
         inline uint32_t offset() const
         {
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER) && ENABLE(JIT_PAC_SIGN_ASSEMBLER_BUFFER)
             return static_cast<uint32_t>(untagInt(m_offset, bitwise_cast<PtrTag>(this)));
 #else
             return m_offset;
@@ -90,14 +92,14 @@ namespace JSC {
     private:
         inline void setOffset(uint32_t offset)
         {
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER) && ENABLE(JIT_PAC_SIGN_ASSEMBLER_BUFFER)
             m_offset = tagInt(static_cast<uint64_t>(offset), bitwise_cast<PtrTag>(this));
 #else
             m_offset = offset;
 #endif
         }
 
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
         uint64_t m_offset;
 #else
         uint32_t m_offset;
@@ -115,7 +117,7 @@ namespace JSC {
         {
             if constexpr (type == AssemblerDataType::Code)
                 takeBufferIfLarger(*threadSpecificAssemblerData());
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
             if constexpr (type == AssemblerDataType::Hashes)
                 takeBufferIfLarger(*threadSpecificAssemblerHashes());
 #else
@@ -177,7 +179,7 @@ namespace JSC {
         {
             if constexpr (type == AssemblerDataType::Code)
                 threadSpecificAssemblerData()->takeBufferIfLarger(*this);
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
             if constexpr (type == AssemblerDataType::Hashes)
                 threadSpecificAssemblerHashes()->takeBufferIfLarger(*this);
 #else
@@ -216,45 +218,56 @@ namespace JSC {
         unsigned m_capacity;
     };
 
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-    enum class ShouldSign : bool { No, Yes };
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
+    enum class ShouldSign { No, Yes };
     template <ShouldSign shouldSign>
-    class ARM64EHash {
-        WTF_MAKE_NONCOPYABLE(ARM64EHash);
+    class BufferChecksum {
+        WTF_MAKE_NONCOPYABLE(BufferChecksum);
     public:
-        ARM64EHash()
+#if CPU(ARM64)
+        using HashType = uint32_t;
+#else
+        using HashType = uint8_t;
+#endif
+
+
+        BufferChecksum()
         {
             allocatePinForCurrentThreadAndInitializeHash();
         }
 
-        ~ARM64EHash()
+        ~BufferChecksum()
         {
             deallocatePinForCurrentThread();
         }
 
         ALWAYS_INLINE void allocatePinForCurrentThreadAndInitializeHash()
         {
+#if ENABLE(JIT_PAC_SIGN_ASSEMBLER_BUFFER)
             if constexpr (shouldSign == ShouldSign::Yes) {
                 m_initializedPin = true;
                 g_jscConfig.arm64eHashPins.allocatePinForCurrentThread();
                 setUpdatedHash(0, 0);
             } else
+#endif
                 m_hash = 0;
         }
 
         void deallocatePinForCurrentThread()
         {
+#if ENABLE(JIT_PAC_SIGN_ASSEMBLER_BUFFER)
             if (m_initializedPin) {
                 g_jscConfig.arm64eHashPins.deallocatePinForCurrentThread();
                 m_initializedPin = false;
             }
+#endif
         }
 
-        ALWAYS_INLINE uint32_t update(uint32_t instruction, uint32_t index)
+        ALWAYS_INLINE HashType update(HashType instruction, uint32_t index)
         {
-            uint32_t currentHash = this->currentHash(index);
+            HashType currentHash = this->currentHash(index);
             uint64_t nextIndex = index + 1;
-            uint32_t output = nextValue(instruction, nextIndex, currentHash);
+            HashType output = nextValue(instruction, nextIndex, currentHash);
             setUpdatedHash(output, nextIndex);
             return output;
         }
@@ -262,35 +275,59 @@ namespace JSC {
     private:
         static constexpr uint8_t initializationNamespace = 0x11;
 
-        static ALWAYS_INLINE PtrTag makeDiversifier(uint8_t namespaceTag, uint64_t index, uint32_t value)
+        static ALWAYS_INLINE uint64_t makeDiversifier(uint8_t namespaceTag, uint64_t index, HashType value)
         {
+            static_assert(sizeof(HashType) <= 4);
             // <namespaceTag:8><index:24><value:32>
-            return static_cast<PtrTag>((static_cast<uint64_t>(namespaceTag) << 56) + ((index & 0xFFFFFF) << 32) + value);
+            return (static_cast<uint64_t>(namespaceTag) << 56) + ((index & 0xFFFFFF) << 32) + value;
         }
 
-        static ALWAYS_INLINE uint32_t nextValue(uint64_t instruction, uint64_t index, uint32_t currentValue)
+        static ALWAYS_INLINE uint64_t tag(uint64_t n, uint64_t tag)
         {
-            uint64_t a = tagInt<PACKeyType::ProcessIndependent>(instruction, makeDiversifier(0x12, index, currentValue));
-            uint64_t b = tagInt<PACKeyType::ProcessIndependent>(instruction, makeDiversifier(0x13, index, currentValue));
+#if ENABLE(JIT_PAC_SIGN_ASSEMBLER_BUFFER)
+            return tagInt<PACKeyType::ProcessIndependent>(n, static_cast<PtrTag>(tag));
+#else
+            return n ^ tag;
+#endif
+        }
+
+        static ALWAYS_INLINE uint64_t untag(uint64_t n, uint64_t tag)
+        {
+#if ENABLE(JIT_PAC_SIGN_ASSEMBLER_BUFFER)
+            return untagInt<PACKeyType::ProcessIndependent>(n, static_cast<PtrTag>(tag));
+#else
+            return n ^ tag;
+#endif
+        }
+
+        static ALWAYS_INLINE HashType nextValue(HashType instruction, uint64_t index, HashType currentValue)
+        {
+            uint64_t a = tag(instruction, makeDiversifier(0x12, index, currentValue));
+            uint64_t b = tag(instruction, makeDiversifier(0x13, index, currentValue));
             return (a >> 39) ^ (b >> 23);
         }
 
         static ALWAYS_INLINE uint32_t pin()
         {
+#if ENABLE(JIT_PAC_SIGN_ASSEMBLER_BUFFER)
             return g_jscConfig.arm64eHashPins.pinForCurrentThread();
+#else
+            return 1;
+#endif
         }
 
-        ALWAYS_INLINE uint32_t currentHash(uint32_t index)
+
+        ALWAYS_INLINE HashType currentHash(uint32_t index)
         {
             if constexpr (shouldSign == ShouldSign::Yes)
-                return untagInt<PACKeyType::ProcessIndependent>(m_hash, makeDiversifier(initializationNamespace, index, pin()));
+                return untag(m_hash, makeDiversifier(initializationNamespace, index, pin()));
             return m_hash;
         }
 
-        ALWAYS_INLINE void setUpdatedHash(uint32_t value, uint32_t index)
+        ALWAYS_INLINE void setUpdatedHash(HashType value, uint32_t index)
         {
             if constexpr (shouldSign == ShouldSign::Yes)
-                m_hash = tagInt<PACKeyType::ProcessIndependent>(static_cast<uint64_t>(value), makeDiversifier(initializationNamespace, index, pin()));
+                m_hash = tag(static_cast<uint64_t>(value), makeDiversifier(initializationNamespace, index, pin()));
             else
                 m_hash = static_cast<uint64_t>(value);
         }
@@ -298,26 +335,26 @@ namespace JSC {
         uint64_t m_hash;
         bool m_initializedPin { false };
     };
-#endif // ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
+#endif // ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
 
     class AssemblerBuffer {
     public:
         AssemblerBuffer()
             : m_storage()
             , m_index(0)
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
             , m_hash()
             , m_hashes()
 #endif
         {
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
             ASSERT(m_storage.capacity() == m_hashes.capacity());
 #endif
         }
 
         ~AssemblerBuffer()
         {
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
             ASSERT(m_storage.capacity() == m_hashes.capacity());
 #endif
         }
@@ -377,7 +414,7 @@ namespace JSC {
             return WTFMove(m_storage);
         }
 
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
         AssemblerHashes&& releaseAssemblerHashes()
         {
             return WTFMove(m_hashes);
@@ -436,16 +473,18 @@ namespace JSC {
         };
 #endif // !CPU(ARM64)
 
-#if !CPU(ARM64) // If we were to define this on arm64e, we'd need a way to update the hash as we write directly into the buffer.
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
         void* data() const { return m_storage.buffer(); }
 #endif
 
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-        ARM64EHash<ShouldSign::Yes>& arm64eHash() { return m_hash; }
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
+        BufferChecksum<ShouldSign::Yes>& hash() { return m_hash; }
+        using HashType = BufferChecksum<ShouldSign::Yes>::HashType;
 #endif
 
     protected:
         template<typename IntegralType>
+        requires std::is_integral_v<IntegralType> && (!(sizeof(IntegralType) % sizeof(HashType)))
         void putIntegral(IntegralType value)
         {
             unsigned nextIndex = m_index + sizeof(IntegralType);
@@ -455,14 +494,16 @@ namespace JSC {
         }
 
         template<typename IntegralType>
+        requires std::is_integral_v<IntegralType> && (!(sizeof(IntegralType) % sizeof(HashType)))
         void putIntegralUnchecked(IntegralType value)
         {
-#if CPU(ARM64)
-            static_assert(sizeof(value) == 4);
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-            uint32_t hash = m_hash.update(value, m_index / sizeof(IntegralType));
-            WTF::unalignedStore<uint32_t>(m_hashes.buffer() + m_index, hash);
-#endif
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
+            constexpr size_t widthMultiple = sizeof(IntegralType) / sizeof(HashType);
+            for (size_t i = 0; i < widthMultiple; i++) {
+                auto bytewiseIndex = m_index + (i * sizeof(HashType));
+                HashType hash = m_hash.update(value, bytewiseIndex / sizeof(HashType));
+                WTF::unalignedStore<HashType>(m_hashes.buffer() + bytewiseIndex, hash);
+            }
 #endif
             ASSERT(isAvailable(sizeof(IntegralType)));
             WTF::unalignedStore<IntegralType>(m_storage.buffer() + m_index, value);
@@ -473,7 +514,7 @@ namespace JSC {
         void grow(int extraCapacity = 0)
         {
             m_storage.grow(extraCapacity);
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
             m_hashes.grow(extraCapacity);
 #endif
         }
@@ -481,7 +522,7 @@ namespace JSC {
         NEVER_INLINE void outOfLineGrow()
         {
             m_storage.grow();
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
             m_hashes.grow();
 #endif
         }
@@ -493,8 +534,8 @@ namespace JSC {
 
         AssemblerData m_storage;
         unsigned m_index;
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-        ARM64EHash<ShouldSign::Yes> m_hash;
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
+        BufferChecksum<ShouldSign::Yes> m_hash;
         AssemblerHashes m_hashes;
 #endif
     };

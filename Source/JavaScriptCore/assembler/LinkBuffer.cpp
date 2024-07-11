@@ -297,10 +297,11 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     auto& jumpsToLink = macroAssembler.jumpsToLink();
     m_assemblerStorage = macroAssembler.m_assembler.buffer().releaseAssemblerData();
     uint8_t* inData = bitwise_cast<uint8_t*>(m_assemblerStorage.buffer());
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-    ARM64EHash<ShouldSign::No> verifyUncompactedHash;
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
+    BufferChecksum<ShouldSign::No> verifyUncompactedHash;
+    using HashType = BufferChecksum<ShouldSign::No>::HashType;
     m_assemblerHashesStorage = macroAssembler.m_assembler.buffer().releaseAssemblerHashes();
-    uint32_t* inHashes = bitwise_cast<uint32_t*>(m_assemblerHashesStorage.buffer());
+    HashType* inHashes = bitwise_cast<HashType*>(m_assemblerHashesStorage.buffer());
 #endif
 
     uint8_t* codeOutData = m_code.dataLocation<uint8_t*>();
@@ -319,10 +320,13 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
 
     auto read = [&](const InstructionType* ptr) -> InstructionType {
         InstructionType value = *ptr;
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-        unsigned index = (bitwise_cast<uint8_t*>(ptr) - inData) / 4;
-        uint32_t hash = verifyUncompactedHash.update(value, index);
-        RELEASE_ASSERT(inHashes[index] == hash);
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
+        unsigned index = (bitwise_cast<uint8_t*>(ptr) - inData) / sizeof(HashType);
+        constexpr size_t widthMultiple = sizeof(InstructionType) / sizeof(HashType);
+        for (size_t i = 0; i < widthMultiple; i++) {
+            HashType hash = verifyUncompactedHash.update(value, index + i);
+            RELEASE_ASSERT(inHashes[index + i] == hash);
+        }
 #endif
         return value;
     };
@@ -519,8 +523,8 @@ void LinkBuffer::allocate(MacroAssembler& macroAssembler, JITCompilationEffort e
         initialSize = macroAssembler.m_assembler.codeSize();
     }
 
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-    macroAssembler.m_assembler.buffer().arm64eHash().deallocatePinForCurrentThread();
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
+    macroAssembler.m_assembler.buffer().hash().deallocatePinForCurrentThread();
 #endif
 
     m_executableMemory = ExecutableAllocator::singleton().allocate(initialSize, effort);
