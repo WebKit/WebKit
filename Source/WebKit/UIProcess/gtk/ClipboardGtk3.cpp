@@ -99,7 +99,7 @@ struct ReadTextAsyncData {
     CompletionHandler<void(String&&)> completionHandler;
 };
 
-void Clipboard::readText(CompletionHandler<void(String&&)>&& completionHandler)
+void Clipboard::readText(CompletionHandler<void(String&&)>&& completionHandler, ReadMode)
 {
     gtk_clipboard_request_text(m_clipboard, [](GtkClipboard*, const char* text, gpointer userData) {
         std::unique_ptr<ReadTextAsyncData> data(static_cast<ReadTextAsyncData*>(userData));
@@ -118,7 +118,7 @@ struct ReadFilePathsAsyncData {
     CompletionHandler<void(Vector<String>&&)> completionHandler;
 };
 
-void Clipboard::readFilePaths(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void Clipboard::readFilePaths(CompletionHandler<void(Vector<String>&&)>&& completionHandler, ReadMode)
 {
     gtk_clipboard_request_uris(m_clipboard, [](GtkClipboard*, char** uris, gpointer userData) {
         std::unique_ptr<ReadFilePathsAsyncData> data(static_cast<ReadFilePathsAsyncData*>(userData));
@@ -154,7 +154,7 @@ struct ReadURLAsyncData {
     CompletionHandler<void(String&& url, String&& title)> completionHandler;
 };
 
-void Clipboard::readURL(CompletionHandler<void(String&& url, String&& title)>&& completionHandler)
+void Clipboard::readURL(CompletionHandler<void(String&& url, String&& title)>&& completionHandler, ReadMode)
 {
     gtk_clipboard_request_uris(m_clipboard, [](GtkClipboard*, char** uris, gpointer userData) {
         std::unique_ptr<ReadURLAsyncData> data(static_cast<ReadURLAsyncData*>(userData));
@@ -162,7 +162,7 @@ void Clipboard::readURL(CompletionHandler<void(String&& url, String&& title)>&& 
     }, new ReadURLAsyncData(WTFMove(completionHandler)));
 }
 
-void Clipboard::readBuffer(const char* format, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&& completionHandler)
+void Clipboard::readBuffer(const char* format, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&& completionHandler, ReadMode)
 {
     gtk_clipboard_request_contents(m_clipboard, gdk_atom_intern(format, TRUE), [](GtkClipboard*, GtkSelectionData* selection, gpointer userData) {
         std::unique_ptr<ReadBufferAsyncData> data(static_cast<ReadBufferAsyncData*>(userData));
