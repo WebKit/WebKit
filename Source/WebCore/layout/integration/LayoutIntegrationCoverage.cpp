@@ -158,7 +158,8 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
     }
 
     bool shouldBalance = rootBlockContainer.style().textWrapMode() == TextWrapMode::Wrap && rootBlockContainer.style().textWrapStyle() == TextWrapStyle::Balance;
-    if (rootBlockContainer.style().direction() == TextDirection::RTL || shouldBalance)
+    bool shouldPrettify = rootBlockContainer.style().textWrapMode() == TextWrapMode::Wrap && rootBlockContainer.style().textWrapStyle() == TextWrapStyle::Pretty;
+    if (rootBlockContainer.style().direction() == TextDirection::RTL || shouldBalance || shouldPrettify)
         return true;
 
     auto rootHasNonSupportedRenderer = [&] {

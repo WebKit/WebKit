@@ -32,24 +32,30 @@
 #include "InlineLineBuilder.h"
 #include "InlineTextItem.h"
 
+#include <optional>
+
 namespace WebCore {
 namespace Layout {
 
-class InlineContentBalancer {
+class InlineContentConstrainer {
 public:
-    InlineContentBalancer(InlineFormattingContext&, const InlineItemList&, const HorizontalConstraints&);
-    std::optional<Vector<LayoutUnit>> computeBalanceConstraints();
+    InlineContentConstrainer(InlineFormattingContext&, const InlineItemList&, const HorizontalConstraints&);
+    std::optional<Vector<LayoutUnit>> computeParagraphLevelConstraints(TextWrapStyle);
 
 private:
     void initialize();
 
     std::optional<Vector<LayoutUnit>> balanceRangeWithLineRequirement(InlineItemRange, InlineLayoutUnit idealLineWidth, size_t numberOfLines, bool isFirstChunk);
     std::optional<Vector<LayoutUnit>> balanceRangeWithNoLineRequirement(InlineItemRange, InlineLayoutUnit idealLineWidth, bool isFirstChunk);
+    std::optional<Vector<LayoutUnit>> prettifyRange(InlineItemRange, InlineLayoutUnit idealLineWidth, bool isFirstChunk);
 
     InlineLayoutUnit inlineItemWidth(size_t inlineItemIndex, bool useFirstLineStyle) const;
     bool shouldTrimLeading(size_t inlineItemIndex, bool useFirstLineStyle, bool isFirstLineInChunk) const;
     bool shouldTrimTrailing(size_t inlineItemIndex, bool useFirstLineStyle) const;
     Vector<size_t> computeBreakOpportunities(InlineItemRange) const;
+    Vector<LayoutUnit> computeLineWidthsFromBreaks(InlineItemRange, const Vector<size_t>& breaks, bool isFirstChunk) const;
+    InlineLayoutUnit computeTextIndent(std::optional<bool> previousLineEndsWithLineBreak) const;
+
 
     InlineFormattingContext& m_inlineFormattingContext;
     const InlineItemList& m_inlineItemList;
@@ -63,11 +69,11 @@ private:
     size_t m_numberOfLinesInOriginalLayout { 0 };
     size_t m_numberOfInlineItems { 0 };
     double m_maximumLineWidth { 0 };
-    bool m_cannotBalanceContent { false };
+    bool m_cannotConstrainContent { false };
     bool m_hasSingleLineVisibleContent { false };
 
     struct SlidingWidth {
-        SlidingWidth(const InlineContentBalancer&, const InlineItemList&, size_t start, size_t end, bool useFirstLineStyle, bool isFirstLineInChunk);
+        SlidingWidth(const InlineContentConstrainer&, const InlineItemList&, size_t start, size_t end, bool useFirstLineStyle, bool isFirstLineInChunk);
         InlineLayoutUnit width();
         void advanceStart();
         void advanceStartTo(size_t newStart);
@@ -75,7 +81,7 @@ private:
         void advanceEndTo(size_t newEnd);
 
     private:
-        const InlineContentBalancer& m_inlineContentBalancer;
+        const InlineContentConstrainer& m_inlineContentConstrainer;
         const InlineItemList& m_inlineItemList;
         size_t m_start { 0 };
         size_t m_end { 0 };
