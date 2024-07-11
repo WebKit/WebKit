@@ -53,6 +53,7 @@ public:
 
     // Decoding
     bool isLargeForDecoding() const { return m_source->isLargeForDecoding(); }
+    bool isGiganticForDecoding() const { return m_source->isGiganticForDecoding(); }
     void stopDecodingWorkQueue() { m_source->stopDecodingWorkQueue(); }
     void decode(Function<void(DecodingStatus)>&& decodeCallback) { m_source->decode(WTFMove(decodeCallback)); }
 

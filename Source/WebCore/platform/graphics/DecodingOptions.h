@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include "IntRect.h"
 #include "IntSize.h"
 #include <optional>
+#include <variant>
 
 namespace WebCore {
 
@@ -36,11 +38,17 @@ enum class DecodingMode : uint8_t {
     Asynchronous
 };
 
+using DecodingGeometry = std::variant<
+    std::monostate,
+    IntSize,
+    IntRect
+>;
+
 class DecodingOptions {
 public:
-    DecodingOptions(DecodingMode decodingMode = DecodingMode::Synchronous, const std::optional<IntSize>& sizeForDrawing = std::nullopt)
+    DecodingOptions(DecodingMode decodingMode = DecodingMode::Synchronous, const DecodingGeometry& decodingGeometry = { })
         : m_decodingMode(decodingMode)
-        , m_sizeForDrawing(sizeForDrawing)
+        , m_decodingGeometry(decodingGeometry)
     {
     }
 
@@ -51,9 +59,25 @@ public:
     bool isSynchronous() const { return m_decodingMode == DecodingMode::Synchronous; }
     bool isAsynchronous() const { return m_decodingMode == DecodingMode::Asynchronous; }
 
-    std::optional<IntSize> sizeForDrawing() const { return m_sizeForDrawing; }
-    bool hasFullSize() const { return !m_sizeForDrawing; }
-    bool hasSizeForDrawing() const { return !!m_sizeForDrawing; }
+    DecodingGeometry decodingGeometry() const { return m_decodingGeometry; }
+
+    std::optional<IntSize> sizeForDrawing() const
+    {
+        if (const auto* sizeForDrawing = std::get_if<IntSize>(&m_decodingGeometry))
+            return *sizeForDrawing;
+        return std::nullopt;
+    }
+
+    std::optional<IntRect> rectForDrawing() const
+    {
+        if (const auto* rectForDrawing = std::get_if<IntRect>(&m_decodingGeometry))
+            return *rectForDrawing;
+        return std::nullopt;
+    }
+
+    bool hasSizeForDrawing() const { return !!sizeForDrawing(); }
+    bool hasRectForDrawing() const { return !!rectForDrawing(); }
+    bool hasFullSize() const { return !hasSizeForDrawing() && !hasRectForDrawing(); }
 
     bool isCompatibleWith(const DecodingOptions& other) const
     {
@@ -63,15 +87,19 @@ public:
         if (hasFullSize())
             return true;
 
-        if (other.hasFullSize())
+        if (m_decodingGeometry.index() != other.decodingGeometry().index())
             return false;
 
-        return sizeForDrawing()->maxDimension() >= other.sizeForDrawing()->maxDimension();
+        if (auto sizeForDrawing = this->sizeForDrawing())
+            return sizeForDrawing->maxDimension() >= other.sizeForDrawing()->maxDimension();
+
+        auto rectForDrawing = this->rectForDrawing();
+        return rectForDrawing->contains(*other.rectForDrawing());
     }
 
 private:
     DecodingMode m_decodingMode;
-    std::optional<IntSize> m_sizeForDrawing;
+    DecodingGeometry m_decodingGeometry;
 };
 
 TextStream& operator<<(TextStream&, DecodingMode);

@@ -272,7 +272,7 @@ bool BitmapImageSource::startAnimation(SubsamplingLevel subsamplingLevel, const 
     // Handle the case where the current frame has to be decoded synchronously
     // but the next frame can be decoded asynchronously.
     if (options.decodingMode() == DecodingMode::Synchronous && isLargeForDecoding())
-        return frameAnimator->startAnimation(subsamplingLevel, { DecodingMode::Asynchronous, options.sizeForDrawing() });
+        return frameAnimator->startAnimation(subsamplingLevel, { DecodingMode::Asynchronous, options.decodingGeometry() });
 
     return frameAnimator->startAnimation(subsamplingLevel, options);
 }
@@ -325,6 +325,12 @@ bool BitmapImageSource::isLargeForDecoding() const
 {
     size_t sizeInBytes = size(ImageOrientation::Orientation::None).area() * sizeof(uint32_t);
     return sizeInBytes > (isAnimated() ? 100 * KB : 500 * KB);
+}
+
+bool BitmapImageSource::isGiganticForDecoding() const
+{
+    size_t sizeInBytes = size(ImageOrientation::Orientation::None).area() * sizeof(uint32_t);
+    return sizeInBytes > 36 * MB;
 }
 
 bool BitmapImageSource::isDecodingWorkQueueIdle() const
@@ -572,6 +578,13 @@ Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::nativeImageAtIndex
         cacheNativeImageAtIndex(index, subsamplingLevel, DecodingMode::Synchronous, nativeImage.releaseNonNull());
     }
 
+    if (auto rectForDrawing = options.rectForDrawing()) {
+        PlatformImagePtr platformImage = m_decoder->createFrameSubimageAtIndex(index, subsamplingLevel, *rectForDrawing);
+
+        if (RefPtr nativeImage = NativeImage::create(WTFMove(platformImage), RenderingResourceIdentifier::generate(), *rectForDrawing))
+            return nativeImage.releaseNonNull();
+    }
+
     if (RefPtr nativeImage = frameAtIndex(index).nativeImage())
         return nativeImage.releaseNonNull();
 
@@ -604,10 +617,18 @@ Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::nativeImageAtIndex
     return nativeImageAtIndexCacheIfNeeded(index, subsamplingLevel, options);
 }
 
-Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::currentNativeImageForDrawing(SubsamplingLevel subsamplingLevel, const DecodingOptions& options)
+DecodingOptions BitmapImageSource::decodingOptionsForDrawing(const FloatRect& clippedSourceRect, SubsamplingLevel subsamplingLevel, const DecodingOptions& options) const
 {
-    startAnimation(subsamplingLevel, options);
-    return nativeImageAtIndexForDrawing(currentFrameIndex(), subsamplingLevel, options);
+    if (!(subsamplingLevel == SubsamplingLevel::Default && isGiganticForDecoding()))
+        return options;
+    return { DecodingMode::Synchronous, enclosingIntRect(clippedSourceRect) };
+}
+
+Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::currentNativeImageForDrawing(const FloatRect& clippedSourceRect, SubsamplingLevel subsamplingLevel, const DecodingOptions& options)
+{
+    auto optionsForDrawing = decodingOptionsForDrawing(clippedSourceRect, subsamplingLevel, options);
+    startAnimation(subsamplingLevel, optionsForDrawing);
+    return nativeImageAtIndexForDrawing(currentFrameIndex(), subsamplingLevel, optionsForDrawing);
 }
 
 RefPtr<NativeImage> BitmapImageSource::nativeImageAtIndex(unsigned index)

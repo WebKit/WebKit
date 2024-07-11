@@ -96,7 +96,10 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
     auto sizeForDrawing = expandedIntSize(sourceSize * scaleFactorForDrawing);
     auto subsamplingLevel =  m_source->subsamplingLevelForScaleFactor(context, scaleFactorForDrawing, options.allowImageSubsampling());
 
-    auto nativeImage = m_source->currentNativeImageForDrawing(subsamplingLevel, { options.decodingMode(), sizeForDrawing });
+    auto clippedDestinationRect = intersection(context.clipBounds(), destinationRect);
+    auto clippedSourceRect = mapRect(clippedDestinationRect, destinationRect, adjustedSourceRect);
+
+    auto nativeImage = m_source->currentNativeImageForDrawing(clippedSourceRect, subsamplingLevel, { options.decodingMode(), sizeForDrawing });
 
     if (!nativeImage) {
         if (nativeImage.error() != DecodingStatus::Decoding)
@@ -111,16 +114,23 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
     if (auto color = (*nativeImage)->singlePixelSolidColor())
         fillWithSolidColor(context, destinationRect, *color, options.compositeOperator());
     else {
-        // adjustedSourceRect is in the coordinates of the unsubsampled image, so map it to the subsampled image.
-        auto imageSize = (*nativeImage)->size();
-        if (imageSize != sourceSize)
-            adjustedSourceRect.scale(imageSize / sourceSize);
+        auto adjustedDestinationRect = destinationRect;
+
+        if (auto subimageRect = (*nativeImage)->subimageRect()) {
+            adjustedDestinationRect = mapRect(*subimageRect, sourceRect, destinationRect);
+            adjustedSourceRect = { { }, subimageRect->size() };
+        } else {
+            // adjustedSourceRect is in the coordinates of the unsubsampled image, so map it to the subsampled image.
+            auto imageSize = (*nativeImage)->size();
+            if (imageSize != sourceSize)
+                adjustedSourceRect.scale(imageSize / sourceSize);
+        }
 
         auto orientation = options.orientation();
         if (orientation == ImageOrientation::Orientation::FromImage)
             orientation = currentFrameOrientation();
 
-        context.drawNativeImage(*nativeImage, destinationRect, adjustedSourceRect, { options, orientation });
+        context.drawNativeImage(*nativeImage, adjustedDestinationRect, adjustedSourceRect, { options, orientation });
     }
 
     if (auto observer = imageObserver())

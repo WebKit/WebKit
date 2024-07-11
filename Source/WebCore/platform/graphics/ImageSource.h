@@ -52,6 +52,7 @@ public:
 
     // Decoding
     virtual bool isLargeForDecoding() const { return false; }
+    virtual bool isGiganticForDecoding() const { return false; }
     virtual void stopDecodingWorkQueue() { RELEASE_ASSERT_NOT_REACHED(); }
     virtual void decode(Function<void(DecodingStatus)>&&)  { RELEASE_ASSERT_NOT_REACHED(); }
 
@@ -68,8 +69,8 @@ public:
 
     virtual RefPtr<NativeImage> nativeImageAtIndex(unsigned) { return primaryNativeImage(); }
 
-    virtual Expected<Ref<NativeImage>, DecodingStatus> primaryNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&);
-    virtual Expected<Ref<NativeImage>, DecodingStatus> currentNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&);
+    virtual Expected<Ref<NativeImage>, DecodingStatus> primaryNativeImageForDrawing(const FloatRect& clippedSourceRect, SubsamplingLevel, const DecodingOptions&);
+    virtual Expected<Ref<NativeImage>, DecodingStatus> currentNativeImageForDrawing(const FloatRect& clippedSourceRect, SubsamplingLevel, const DecodingOptions&);
 
     // Image Metadata
     virtual IntSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const = 0;

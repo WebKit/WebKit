@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ShareableBitmapUtilities.h"
 
+#include <WebCore/BitmapImage.h>
 #include <WebCore/CachedImage.h>
 #include <WebCore/FrameSnapshotting.h>
 #include <WebCore/GeometryUtilities.h>
@@ -111,6 +112,11 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
     if (options.screenSizeInPixels) {
         auto scaledSize = largestRectWithAspectRatioInsideRect(bitmapSize.width() / bitmapSize.height(), { FloatPoint(), *options.screenSizeInPixels }).size();
         bitmapSize = scaledSize.width() < bitmapSize.width() ? scaledSize : bitmapSize;
+    } else if (auto* bitmapImage = dynamicDowncast<BitmapImage>(image)) {
+        if (bitmapImage->isGiganticForDecoding()) {
+            static constexpr auto maxImageSizeForWholeDecoding = FloatSize { 3000, 3000 };
+            bitmapSize = largestRectWithAspectRatioInsideRect(bitmapSize.width() / bitmapSize.height(), { FloatPoint(), maxImageSizeForWholeDecoding }).size();
+        }
     }
 
     // FIXME: Only select ExtendedColor on images known to need wide gamut.
@@ -122,7 +128,7 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
     if (!graphicsContext)
         return { };
 
-    graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()), { renderImage.imageOrientation() });
+    graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()), { renderImage.imageOrientation(), AllowImageSubsampling::Yes });
     return sharedBitmap;
 }
 

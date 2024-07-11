@@ -598,6 +598,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return maskedImage ? maskedImage : image;
 }
 
+PlatformImagePtr ImageDecoderCG::createFrameSubimageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const IntRect& sourceRect)
+{
+    auto options = imageSourceOptions(subsamplingLevel);
+
+    auto image = adoptCF(CGImageSourceCreateImageAtIndex(m_nativeDecoder.get(), index, options.get()));
+    if (!image)
+        return nullptr;
+
+    return adoptCF(CGImageCreateWithImageInRect(image.get(), sourceRect));
+}
+
 String ImageDecoderCG::decodeUTI(const SharedBuffer& data) const
 {
     return decodeUTI(m_nativeDecoder.get(), data);

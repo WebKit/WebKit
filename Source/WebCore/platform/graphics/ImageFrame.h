@@ -90,7 +90,6 @@ public:
     bool hasAlpha() const { return !hasMetadata() || m_hasAlpha; }
 
     bool hasNativeImage(const std::optional<SubsamplingLevel>& = { }) const;
-    bool hasFullSizeNativeImage(const std::optional<SubsamplingLevel>& = { }) const;
     bool hasDecodedNativeImageCompatibleWithOptions(const std::optional<SubsamplingLevel>&, const DecodingOptions&) const;
     bool hasMetadata() const { return !size().isEmpty(); }
 

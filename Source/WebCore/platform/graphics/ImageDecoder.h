@@ -106,6 +106,7 @@ public:
     WEBCORE_EXPORT virtual bool fetchFrameMetaDataAtIndex(size_t, SubsamplingLevel, const DecodingOptions&, ImageFrame&) const;
 
     virtual PlatformImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingOptions(DecodingMode::Synchronous)) = 0;
+    virtual PlatformImagePtr createFrameSubimageAtIndex(size_t, SubsamplingLevel, const IntRect&) { return nullptr; }
 
     virtual void setExpectedContentSize(long long) { }
     virtual void setData(const FragmentedSharedBuffer&, bool allDataReceived) = 0;

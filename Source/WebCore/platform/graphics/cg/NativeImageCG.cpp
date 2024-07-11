@@ -52,17 +52,17 @@ DestinationColorSpace PlatformImageNativeImageBackend::colorSpace() const
     return DestinationColorSpace(CGImageGetColorSpace(m_platformImage.get()));
 }
 
-RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& image, RenderingResourceIdentifier renderingResourceIdentifier)
+RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& image, RenderingResourceIdentifier renderingResourceIdentifier, const std::optional<IntRect>& subimageRect)
 {
     if (!image)
         return nullptr;
     if (CGImageGetWidth(image.get()) > std::numeric_limits<int>::max() || CGImageGetHeight(image.get()) > std::numeric_limits<int>::max())
         return nullptr;
     UniqueRef<PlatformImageNativeImageBackend> backend { *new PlatformImageNativeImageBackend(WTFMove(image)) };
-    return adoptRef(*new NativeImage(WTFMove(backend), renderingResourceIdentifier));
+    return adoptRef(*new NativeImage(WTFMove(backend), renderingResourceIdentifier, subimageRect));
 }
 
-RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image, RenderingResourceIdentifier identifier)
+RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image, RenderingResourceIdentifier identifier, const std::optional<IntRect>& subimageRect)
 {
     if (!image)
         return nullptr;
@@ -74,7 +74,7 @@ RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image, Rende
         return nullptr;
     image = nullptr;
     CGImageSetCachingFlags(transientImage.get(), kCGImageCachingTransient);
-    return create(WTFMove(transientImage), identifier);
+    return create(WTFMove(transientImage), identifier, subimageRect);
 }
 
 std::optional<Color> NativeImage::singlePixelSolidColor() const

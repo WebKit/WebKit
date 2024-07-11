@@ -115,6 +115,7 @@ private:
 
     // Decoding
     bool isLargeForDecoding() const final;
+    bool isGiganticForDecoding() const final;
     bool isDecodingWorkQueueIdle() const;
     bool isCompatibleWithOptionsAtIndex(unsigned index, SubsamplingLevel, const DecodingOptions&) const;
     void stopDecodingWorkQueue() final;
@@ -139,7 +140,8 @@ private:
     Expected<Ref<NativeImage>, DecodingStatus> nativeImageAtIndexRequestIfNeeded(unsigned index, SubsamplingLevel, const DecodingOptions&);
     Expected<Ref<NativeImage>, DecodingStatus> nativeImageAtIndexForDrawing(unsigned index, SubsamplingLevel, const DecodingOptions&);
 
-    Expected<Ref<NativeImage>, DecodingStatus> currentNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&) final;
+    DecodingOptions decodingOptionsForDrawing(const FloatRect& clippedSourceRect, SubsamplingLevel, const DecodingOptions&) const;
+    Expected<Ref<NativeImage>, DecodingStatus> currentNativeImageForDrawing(const FloatRect& clippedSourceRect, SubsamplingLevel, const DecodingOptions&) final;
 
     RefPtr<NativeImage> nativeImageAtIndex(unsigned index) final;
     RefPtr<NativeImage> preTransformedNativeImageAtIndex(unsigned index, ImageOrientation);
