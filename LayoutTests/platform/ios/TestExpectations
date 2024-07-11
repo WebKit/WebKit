@@ -7313,3 +7313,16 @@ imported/w3c/web-platform-tests/fetch/h1-parsing/lone-cr.window.html [ Pass Fail
 # FIXME: needs new bug.
 http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Failure ]
 http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Failure ]
+
+# webkit.org/b/276499 REGRESSION(https://commits.webkit.org/280643@main): [ iOS EWS ] 11x media* (layout-tests) are constant/flaky failures
+compositing/geometry/video-opacity-overlay.html [ Pass Failure ]
+compositing/layers-inside-overflow-scroll.html [ Pass Failure ]
+compositing/overflow/overflow-compositing-descendant.html [ Pass Failure ]
+compositing/overflow/scroll-ancestor-update.html [ Pass Failure ]
+compositing/reflections/load-video-in-reflection.html [ Pass Failure ]
+compositing/self-painting-layers.html [ Pass Failure ]
+media/media-captions-no-controls.html [ Failure ]
+media/video-aspect-ratio.html [ Failure ]
+media/video-canvas-alpha.html [ Failure ]
+media/video-layer-crash.html [ Failure ]
+media/video-zoom.html [ Failure ]
