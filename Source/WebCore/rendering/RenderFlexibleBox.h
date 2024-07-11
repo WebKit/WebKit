@@ -298,7 +298,6 @@ private:
     // This is SizeIsUnknown outside of layoutBlock()
     SizeDefiniteness m_hasDefiniteHeight { SizeDefiniteness::Unknown };
     bool m_inLayout { false };
-    bool m_inPostFlexing { false };
     bool m_shouldResetChildLogicalHeightBeforeLayout { false };
     bool m_isComputingFlexBaseSizes { false };
 
