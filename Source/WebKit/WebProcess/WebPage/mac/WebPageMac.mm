@@ -1089,6 +1089,11 @@ bool WebPage::shouldAvoidComputingPostLayoutDataForEditorState() const
         return false;
     }
 
+    if (m_hasEverDisplayedContextMenu) {
+        // Some context menu items (like Writing Tools) depend on having post-layout editor state data.
+        return false;
+    }
+
     return true;
 }
 

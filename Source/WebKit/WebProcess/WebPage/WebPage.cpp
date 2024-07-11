@@ -3452,6 +3452,14 @@ void WebPage::didDismissContextMenu()
     corePage()->contextMenuController().didDismissContextMenu();
 }
 
+void WebPage::showContextMenuFromFrame(const WebCore::FrameIdentifier& frameID, const ContextMenuContextData& contextMenuContextData, const UserData& userData)
+{
+    flushPendingEditorStateUpdate();
+    send(Messages::WebPageProxy::ShowContextMenuFromFrame(frameID, contextMenuContextData, userData));
+    m_hasEverDisplayedContextMenu = true;
+    scheduleFullEditorStateUpdate();
+}
+
 #endif // ENABLE(CONTEXT_MENUS)
 
 #if ENABLE(CONTEXT_MENU_EVENT)

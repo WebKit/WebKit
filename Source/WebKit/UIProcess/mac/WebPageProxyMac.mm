@@ -830,8 +830,10 @@ void WebPageProxy::handleContextMenuCopySubject(const String& preferredMIMEType)
 void WebPageProxy::handleContextMenuWritingTools(WebCore::WritingTools::RequestedTool tool)
 {
     auto& editorState = this->editorState();
-    if (!editorState.hasPostLayoutData())
+    if (!editorState.hasPostLayoutData()) {
+        ASSERT_NOT_REACHED();
         return;
+    }
 
     auto selectionRect = editorState.postLayoutData->selectionBoundingRect;
     protectedPageClient()->handleContextMenuWritingTools(tool, selectionRect);

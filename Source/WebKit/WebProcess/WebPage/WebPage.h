@@ -1797,6 +1797,10 @@ public:
 
     OptionSet<LayerTreeFreezeReason> layerTreeFreezeReasons() const { return m_layerTreeFreezeReasons; }
 
+#if ENABLE(CONTEXT_MENUS)
+    void showContextMenuFromFrame(const WebCore::FrameIdentifier&, const ContextMenuContextData&, const UserData&);
+#endif
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -2591,6 +2595,7 @@ private:
     std::optional<WebCore::FloatSize> m_viewportSizeForCSSViewportUnits;
 
     bool m_userIsInteracting { false };
+    bool m_hasEverDisplayedContextMenu { false };
 
 #if HAVE(TOUCH_BAR)
     bool m_hasEverFocusedElementDueToUserInteractionSincePageTransition { false };
