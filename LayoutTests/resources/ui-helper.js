@@ -2180,7 +2180,7 @@ window.UIHelper = class UIHelper {
 
         return new Promise(resolve => {
             testRunner.runUIScript(`(() => {
-                uiController.adjustVisibilityForFrontmostTarget(${x}, ${y}, result => uiController.uiScriptComplete(result));
+                uiController.adjustVisibilityForFrontmostTarget(${x}, ${y}, result => uiController.uiScriptComplete(result || ""));
             })()`, resolve);
         });
     }
