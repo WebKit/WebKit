@@ -265,12 +265,11 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
         removeDirectoryIfExists(thinDirectory)
         copyBuildFiles(binDirectory, thinBinDirectory, ['*.ilk'])
 
-        # Save WinCairoRequirements version for test bot use
-        if platform == 'wincairo':
-            libDirectory = os.getenv('WEBKIT_LIBRARIES') or os.path.join(webkitTopAbsPath, 'WebKitLibraries', 'win')
-            shutil.copy(
-                os.path.join(libDirectory, 'WebKitRequirementsWin64.zip.version'),
-                os.path.join(thinDirectory, 'WebKitRequirementsWin64.zip.config'))
+        # Save WebKitRequirements version for test bot use
+        libDirectory = os.getenv('WEBKIT_LIBRARIES') or os.path.join(webkitTopAbsPath, 'WebKitLibraries', 'win')
+        shutil.copy(
+            os.path.join(libDirectory, 'WebKitRequirementsWin64.zip.version'),
+            os.path.join(thinDirectory, 'WebKitRequirementsWin64.zip.config'))
 
         if createZip(thinDirectory, configuration):
             return 1
@@ -361,8 +360,8 @@ def extractBuiltProduct(configuration, platform):
         if unzipArchive(_configurationBuildDirectory, configuration):
             return 1
 
-        # Restore WinCairoRequirements version for test bot use
-        if platform == 'wincairo':
+        # Restore WebKitRequirements version for test bot use
+        if platform in ('win', 'wincairo'):
             libDirectory = os.getenv('WEBKIT_LIBRARIES') or os.path.join(webkitTopAbsPath, 'WebKitLibraries', 'win')
             os.makedirs(libDirectory, exist_ok=True)
             shutil.copy(os.path.join(_configurationBuildDirectory, 'WebKitRequirementsWin64.zip.config'), libDirectory)
