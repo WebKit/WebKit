@@ -224,6 +224,64 @@ private:
         return ret;
     }
 
+    std::pair<UpsilonValue*, UpsilonValue*> rotateBelow32(BasicBlock* block, Opcode opcode, std::pair<Value*, Value*> input, Value* maskedRotation)
+    {
+        Value* outputHi;
+        Value* outputLo;
+        Value* rotationComplement = appendToBlock<Value>(block, Sub, m_origin, appendToBlock<Const32Value>(block, m_origin, 32), maskedRotation);
+        Value* inputHi = input.first;
+        Value* inputLo = input.second;
+
+        if (opcode == RotR) {
+            Value* rotatedLo = appendToBlock<Value>(block, ZShr, m_origin, inputLo, maskedRotation);
+            Value* rotatedIntoLoFromHi = appendToBlock<Value>(block, Shl, m_origin, inputHi, rotationComplement);
+            outputLo = appendToBlock<Value>(block, BitOr, m_origin, rotatedLo, rotatedIntoLoFromHi);
+            Value* rotatedHi = appendToBlock<Value>(block, ZShr, m_origin, inputHi, maskedRotation);
+            Value* rotatedIntoHiFromLo = appendToBlock<Value>(block, Shl, m_origin, inputLo, rotationComplement);
+            outputHi = appendToBlock<Value>(block, BitOr, m_origin, rotatedHi, rotatedIntoHiFromLo);
+        } else {
+            ASSERT(opcode == RotL);
+            Value* rotatedLo = appendToBlock<Value>(block, Shl, m_origin, inputLo, maskedRotation);
+            Value* rotatedIntoLoFromHi = appendToBlock<Value>(block, ZShr, m_origin, inputHi, rotationComplement);
+            outputLo = appendToBlock<Value>(block, BitOr, m_origin, rotatedLo, rotatedIntoLoFromHi);
+            Value* rotatedHi = appendToBlock<Value>(block, Shl, m_origin, inputHi, maskedRotation);
+            Value* rotatedIntoHiFromLo = appendToBlock<Value>(block, ZShr, m_origin, inputLo, rotationComplement);
+            outputHi = appendToBlock<Value>(block, BitOr, m_origin, rotatedHi, rotatedIntoHiFromLo);
+        }
+        auto ret = std::pair { appendToBlock<UpsilonValue>(block, m_origin, outputHi), appendToBlock<UpsilonValue>(block, m_origin, outputLo) };
+        appendToBlock<Value>(block, Jump, m_origin);
+        return ret;
+    }
+
+    std::pair<UpsilonValue*, UpsilonValue*> rotateAboveEquals32(BasicBlock* block, Opcode opcode, std::pair<Value*, Value*> input, Value* maskedRotation)
+    {
+        Value* outputHi;
+        Value* outputLo;
+        Value* inputHi = input.first;
+        Value* inputLo = input.second;
+        Value* rotation = appendToBlock<Value>(block, Sub, m_origin, maskedRotation, appendToBlock<Const32Value>(block, m_origin, 32));
+        Value* rotationComplement = appendToBlock<Value>(block, Sub, m_origin, appendToBlock<Const32Value>(block, m_origin, 32), rotation);
+        if (opcode == RotR) {
+            Value* rotatedIntoLoFromHi = appendToBlock<Value>(block, ZShr, m_origin, inputHi, rotation);
+            Value* rotatedIntoLoFromLo = appendToBlock<Value>(block, Shl, m_origin, inputLo, rotationComplement);
+            outputLo = appendToBlock<Value>(block, BitOr, m_origin, rotatedIntoLoFromHi, rotatedIntoLoFromLo);
+            Value* rotatedIntoHiFromLo = appendToBlock<Value>(block, ZShr, m_origin, inputLo, rotation);
+            Value* rotatedIntoHiFromHi = appendToBlock<Value>(block, Shl, m_origin, inputHi, rotationComplement);
+            outputHi = appendToBlock<Value>(block, BitOr, m_origin, rotatedIntoHiFromLo, rotatedIntoHiFromHi);
+        } else {
+            ASSERT(opcode == RotL);
+            Value* rotatedIntoLoFromHi = appendToBlock<Value>(block, Shl, m_origin, inputHi, rotation);
+            Value* rotatedIntoLoFromLo = appendToBlock<Value>(block, ZShr, m_origin, inputLo, rotationComplement);
+            outputLo = appendToBlock<Value>(block, BitOr, m_origin, rotatedIntoLoFromHi, rotatedIntoLoFromLo);
+            Value* rotatedIntoHiFromLo = appendToBlock<Value>(block, Shl, m_origin, inputLo, rotation);
+            Value* rotatedIntoHiFromHi = appendToBlock<Value>(block, ZShr, m_origin, inputHi, rotationComplement);
+            outputHi = appendToBlock<Value>(block, BitOr, m_origin, rotatedIntoHiFromLo, rotatedIntoHiFromHi);
+        }
+        auto ret = std::pair { appendToBlock<UpsilonValue>(block, m_origin, outputHi), appendToBlock<UpsilonValue>(block, m_origin, outputLo) };
+        appendToBlock<Value>(block, Jump, m_origin);
+        return ret;
+    }
+
     template <class Fn>
     Value* unaryCCall(Fn&& function, Type type, Value* arg)
     {
@@ -654,6 +712,76 @@ private:
             setMapping(m_value, phis.first, phis.second);
             before->updatePredecessorsAfter();
             return;
+        }
+        case RotR:
+        case RotL: {
+            if (m_value->type() != Int64)
+                return;
+            auto input = getMapping(m_value->child(0));
+            Value* rotationAmount = m_value->child(1);
+            BasicBlock* before = splitForward();
+            BasicBlock* check32 = m_blockInsertionSet.insertBefore(m_block);
+            BasicBlock* swap = m_blockInsertionSet.insertBefore(m_block);
+            BasicBlock* rotationIsZero = m_blockInsertionSet.insertBefore(m_block);
+            BasicBlock* check = m_blockInsertionSet.insertBefore(m_block);
+            BasicBlock* aboveOrEquals32 = m_blockInsertionSet.insertBefore(m_block);
+            BasicBlock* below32 = m_blockInsertionSet.insertBefore(m_block);
+            Value* maskedRotation = appendToBlock<Value>(before, B3::BitAnd, m_origin, rotationAmount, before->replaceLastWithNew<Const32Value>(m_proc, m_origin, 63));
+
+            appendToBlock<Value>(before, Branch, m_origin, maskedRotation);
+            before->setSuccessors(check32, rotationIsZero);
+
+            std::pair<UpsilonValue*, UpsilonValue*> resultRotationIsZero = std::pair {
+                appendToBlock<UpsilonValue>(rotationIsZero, m_origin, input.first),
+                appendToBlock<UpsilonValue>(rotationIsZero, m_origin, input.second)
+            };
+
+            appendToBlock<Value>(rotationIsZero, Jump, m_origin);
+            rotationIsZero->setSuccessors(m_block);
+
+            Value* constant32 = appendToBlock<Const32Value>(check32, m_origin, 32);
+            Value* isRotationBy32 = appendToBlock<Value>(check32, Equal, m_origin, rotationAmount, constant32);
+            appendToBlock<Value>(check32, Branch, m_origin, isRotationBy32);
+            check32->setSuccessors(swap, check);
+
+            appendToBlock<Value>(swap, Stitch, m_origin, input.second, input.first);
+            std::pair<UpsilonValue*, UpsilonValue*> resultRotationBy32 = std::pair {
+                appendToBlock<UpsilonValue>(swap, m_origin, input.second),
+                appendToBlock<UpsilonValue>(swap, m_origin, input.first)
+            };
+            appendToBlock<Value>(swap, Jump, m_origin);
+            swap->setSuccessors(m_block);
+
+            appendToBlock<Value>(check, Branch, m_origin, appendToBlock<Value>(check, Below, m_origin, maskedRotation, constant32));
+            check->setSuccessors(below32, aboveOrEquals32);
+
+            std::pair<UpsilonValue*, UpsilonValue*> resultBelow32 = rotateBelow32(below32, m_value->opcode(), input, maskedRotation);
+            below32->setSuccessors(m_block);
+
+
+            std::pair<UpsilonValue*, UpsilonValue*> resultAboveOrEquals32 = rotateAboveEquals32(aboveOrEquals32, m_value->opcode(), input, maskedRotation);
+            aboveOrEquals32->setSuccessors(m_block);
+
+            std::pair<Value*, Value*> phis = std::pair {
+                insert<Value>(m_index, Phi, Int32, m_origin),
+                insert<Value>(m_index, Phi, Int32, m_origin)
+            };
+            resultBelow32.first->setPhi(phis.first);
+            resultBelow32.second->setPhi(phis.second);
+
+            resultAboveOrEquals32.first->setPhi(phis.first);
+            resultAboveOrEquals32.second->setPhi(phis.second);
+
+            resultRotationIsZero.first->setPhi(phis.first);
+            resultRotationIsZero.second->setPhi(phis.second);
+
+            resultRotationBy32.first->setPhi(phis.first);
+            resultRotationBy32.second->setPhi(phis.second);
+
+            setMapping(m_value, phis.first, phis.second);
+            before->updatePredecessorsAfter();
+            return;
+
         }
         case Clz: {
             if (m_value->child(0)->type() != Int64)
