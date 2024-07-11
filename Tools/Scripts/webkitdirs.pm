@@ -1683,6 +1683,7 @@ sub determinePortName()
         gtk => GTK,
         'jsc-only' => JSCOnly,
         playstation => PlayStation,
+        win => WinCairo,
         wincairo => WinCairo,
         wpe => WPE
     );
