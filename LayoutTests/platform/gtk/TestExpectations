@@ -1832,7 +1832,6 @@ webkit.org/b/234726 imported/w3c/web-platform-tests/css/css-color/parsing/color-
 # Timeout
 animations/animation-end-event-destroy-renderer.html [ Skip ]
 animations/no-style-recalc-during-accelerated-animation.html [ Skip ]
-fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Skip ]
 fast/canvas/canvas-gradient-can-outlive-context.html [ Skip ]
 fast/canvas/canvas-state-stack-gradient.html [ Skip ]
 fast/canvas/webgl/lose-context-on-timeout-async.html [ Skip ]
