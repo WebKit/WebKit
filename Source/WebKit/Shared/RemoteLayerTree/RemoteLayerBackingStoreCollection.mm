@@ -210,6 +210,18 @@ bool RemoteLayerBackingStoreCollection::backingStoreWillBeDisplayed(RemoteLayerB
     return true;
 }
 
+bool RemoteLayerBackingStoreCollection::backingStoreWillBeDisplayedWithRenderingSuppression(RemoteLayerBackingStore& backingStore)
+{
+    ASSERT(m_inLayerFlush);
+    m_reachableBackingStoreInLatestFlush.add(backingStore);
+
+    auto backingStoreIter = m_unparentedBackingStore.find(backingStore);
+    bool wasUnparented = backingStoreIter != m_unparentedBackingStore.end();
+
+    ASSERT_UNUSED(wasUnparented, !wasUnparented);
+    return false;
+}
+
 void RemoteLayerBackingStoreCollection::purgeFrontBufferForTesting(RemoteLayerBackingStore& backingStore)
 {
     if (auto* remoteBackingStore = dynamicDowncast<RemoteLayerWithRemoteRenderingBackingStore>(&backingStore)) {

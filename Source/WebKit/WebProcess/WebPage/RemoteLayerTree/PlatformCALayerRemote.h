@@ -71,7 +71,7 @@ public:
     PlatformLayer* platformLayer() const override { return nullptr; }
 
     void recursiveBuildTransaction(RemoteLayerTreeContext&, RemoteLayerTreeTransaction&);
-    void recursiveMarkWillBeDisplayed();
+    void recursiveMarkWillBeDisplayedWithRenderingSuppresion();
 
     void setNeedsDisplayInRect(const WebCore::FloatRect& dirtyRect) override;
     void setNeedsDisplay() override;

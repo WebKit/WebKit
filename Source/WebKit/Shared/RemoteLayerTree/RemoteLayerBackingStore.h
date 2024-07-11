@@ -130,6 +130,7 @@ public:
 
     // Returns true if we need to encode the buffer.
     bool layerWillBeDisplayed();
+    bool layerWillBeDisplayedWithRenderingSuppression();
     bool needsDisplay() const;
 
     bool performDelegatedLayerDisplay();

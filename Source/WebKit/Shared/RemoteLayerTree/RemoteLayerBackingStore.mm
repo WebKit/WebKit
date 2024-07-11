@@ -231,6 +231,17 @@ bool RemoteLayerBackingStore::layerWillBeDisplayed()
     return collection->backingStoreWillBeDisplayed(*this);
 }
 
+bool RemoteLayerBackingStore::layerWillBeDisplayedWithRenderingSuppression()
+{
+    auto* collection = backingStoreCollection();
+    if (!collection) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    return collection->backingStoreWillBeDisplayedWithRenderingSuppression(*this);
+}
+
 void RemoteLayerBackingStore::setNeedsDisplay(const IntRect rect)
 {
     m_dirtyRegion.unite(intersection(layerBounds(), rect));
