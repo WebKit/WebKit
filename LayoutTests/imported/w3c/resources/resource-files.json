@@ -8056,6 +8056,7 @@
         "web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-border-margin-001-ref.html",
         "web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-border-margin-002-ref.html",
         "web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-border-margin-003-ref.html",
+        "web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-border-margin-004-ref.html",
         "web-platform-tests/mathml/relations/css-styling/presentational-hints-001-ref.html",
         "web-platform-tests/mathml/relations/css-styling/presentational-hints-002-ref.html",
         "web-platform-tests/mathml/relations/css-styling/transform-ref.html",
