@@ -50,6 +50,7 @@ public:
 
     void adjust(RenderStyle&, const RenderStyle* userAgentAppearanceStyle) const;
     void adjustAnimatedStyle(RenderStyle&, OptionSet<AnimationImpact>) const;
+    void adjustTableOverflow(RenderStyle&) const;
 
     static void adjustVisibilityForPseudoElement(RenderStyle&, const Element& host);
     static void adjustSVGElementStyle(RenderStyle&, const SVGElement&);
