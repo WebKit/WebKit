@@ -126,24 +126,30 @@ static void launchWithExtensionKitFallback(ProcessLauncher& processLauncher, Pro
 }
 #endif // USE(LEGACY_EXTENSIONKIT_SPI)
 
-#if !USE(LEGACY_EXTENSIONKIT_SPI)
-static bool hasExtensionInAppBundle(NSString *name)
+bool ProcessLauncher::hasExtensionsInAppBundle()
 {
 #if PLATFORM(IOS_SIMULATOR)
-    NSString *path = [[NSBundle mainBundle] pathForResource:name ofType:@"appex" inDirectory:@"Extensions"];
-    return !!path;
+    static bool hasExtensions = false;
+    static dispatch_once_t flag;
+    dispatch_once(&flag, ^{
+        hasExtensions = [[NSBundle mainBundle] pathForResource:@"WebContentExtension" ofType:@"appex" inDirectory:@"Extensions"]
+            && [[NSBundle mainBundle] pathForResource:@"NetworkingExtension" ofType:@"appex" inDirectory:@"Extensions"]
+            && [[NSBundle mainBundle] pathForResource:@"GPUExtension" ofType:@"appex" inDirectory:@"Extensions"];
+    });
+    return hasExtensions;
 #else
-    UNUSED_PARAM(name);
     return false;
 #endif
 }
-#endif // !USE(LEGACY_EXTENSIONKIT_SPI)
 
 static void launchWithExtensionKit(ProcessLauncher& processLauncher, ProcessLauncher::ProcessType processType, ProcessLauncher::Client* client, WTF::Function<void(ThreadSafeWeakPtr<ProcessLauncher> weakProcessLauncher, ExtensionProcess&& process, ASCIILiteral name, NSError *error)>&& handler)
 {
 #if USE(LEGACY_EXTENSIONKIT_SPI)
-    launchWithExtensionKitFallback(processLauncher, processType, client, WTFMove(handler));
-#else
+    if (!ProcessLauncher::hasExtensionsInAppBundle()) {
+        launchWithExtensionKitFallback(processLauncher, processType, client, WTFMove(handler));
+        return;
+    }
+#endif
     auto [name, identifier] = serviceNameAndIdentifier(processType, client, processLauncher.isRetryingLaunch());
 
     switch (processType) {
@@ -151,7 +157,7 @@ static void launchWithExtensionKit(ProcessLauncher& processLauncher, ProcessLaun
         auto block = makeBlockPtr([handler = WTFMove(handler), weakProcessLauncher = ThreadSafeWeakPtr { processLauncher }, name = name](BEWebContentProcess *_Nullable process, NSError *_Nullable error) {
             handler(WTFMove(weakProcessLauncher), process, name, error);
         });
-        if (hasExtensionInAppBundle(@"WebContentExtension"))
+        if (ProcessLauncher::hasExtensionsInAppBundle())
             [BEWebContentProcess webContentProcessWithInterruptionHandler:^{ } completion:block.get()];
         else
             [BEWebContentProcess webContentProcessWithBundleID:identifier.get() interruptionHandler:^{ } completion:block.get()];
@@ -161,7 +167,7 @@ static void launchWithExtensionKit(ProcessLauncher& processLauncher, ProcessLaun
         auto block = makeBlockPtr([handler = WTFMove(handler), weakProcessLauncher = ThreadSafeWeakPtr { processLauncher }, name = name](BENetworkingProcess *_Nullable process, NSError *_Nullable error) {
             handler(WTFMove(weakProcessLauncher), process, name, error);
         });
-        if (hasExtensionInAppBundle(@"NetworkingExtension"))
+        if (ProcessLauncher::hasExtensionsInAppBundle())
             [BENetworkingProcess networkProcessWithInterruptionHandler:^{ } completion:block.get()];
         else
             [BENetworkingProcess networkProcessWithBundleID:identifier.get() interruptionHandler:^{ } completion:block.get()];
@@ -171,14 +177,13 @@ static void launchWithExtensionKit(ProcessLauncher& processLauncher, ProcessLaun
         auto block = makeBlockPtr([handler = WTFMove(handler), weakProcessLauncher = ThreadSafeWeakPtr { processLauncher }, name = name](BERenderingProcess *_Nullable process, NSError *_Nullable error) {
             handler(WTFMove(weakProcessLauncher), process, name, error);
         });
-        if (hasExtensionInAppBundle(@"GPUExtension"))
+        if (ProcessLauncher::hasExtensionsInAppBundle())
             [BERenderingProcess renderingProcessWithInterruptionHandler:^{ } completion:block.get()];
         else
             [BERenderingProcess renderingProcessWithBundleID:identifier.get() interruptionHandler:^{ } completion:block.get()];
         break;
     }
     }
-#endif
 }
 #endif // USE(EXTENSIONKIT)
 
@@ -218,7 +223,7 @@ Ref<LaunchGrant> LaunchGrant::create(ExtensionProcess& process)
 
 LaunchGrant::LaunchGrant(ExtensionProcess& process)
 {
-    AssertionCapability capability(emptyString(), emptyString(), "Foreground"_s);
+    AssertionCapability capability(emptyString(), "com.apple.webkit"_s, "Foreground"_s);
     auto grant = process.grantCapability(capability.platformCapability());
     m_grant.setPlatformGrant(WTFMove(grant));
 }
