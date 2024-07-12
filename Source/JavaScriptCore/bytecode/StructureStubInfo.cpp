@@ -593,6 +593,9 @@ void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(VM& vm, CodeBloc
 
     usedRegisters = RegisterSetBuilder::stubUnavailableRegisters().buildScalarRegisterSet();
 
+    if (Options::useHandlerIC())
+        usedRegisters.add(GPRInfo::handlerGPR, IgnoreVectors);
+
     m_slowOperation = slowOperationFromUnlinkedStructureStubInfo(unlinkedStubInfo);
 
     switch (accessType) {

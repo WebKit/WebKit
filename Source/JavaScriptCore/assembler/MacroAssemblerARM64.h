@@ -3616,6 +3616,11 @@ public:
         m_assembler.csel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
     }
 
+    void moveConditionallyPtr(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        return moveConditionally64(cond, left, right, thenCase, elseCase, dest);
+    }
+
     void moveConditionallyTest32(ResultCondition cond, RegisterID testReg, RegisterID mask, RegisterID src, RegisterID dest)
     {
         m_assembler.tst<32>(testReg, mask);

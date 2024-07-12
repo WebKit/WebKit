@@ -106,7 +106,7 @@ public:
     ICEvent(VM& vm, Kind kind, const ClassInfo* classInfo, PropertyName propertyName)
         : m_kind(kind)
         , m_classInfo(classInfo)
-        , m_propertyName(Identifier::fromUid(vm, propertyName.uid()))
+        , m_propertyName(propertyName.uid() ? Identifier::fromUid(vm, propertyName.uid()) : Identifier())
         , m_propertyLocation(Unknown)
     {
     }

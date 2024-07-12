@@ -70,13 +70,30 @@ void JITInlineCacheGenerator::finalize(
     m_stubInfo->slowPathStartLocation = slowPath.locationOf<JITStubRoutinePtrTag>(m_slowPathBegin);
 }
 
+static void callHandlerCallTarget(CCallHelpers& jit, GPRReg stubInfoGPR)
+{
+    jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), GPRInfo::handlerGPR);
+#if CPU(ARM_THUMB2)
+        jit.push(GPRInfo::handlerGPR);
+        jit.push(GPRInfo::handlerGPR);
+        jit.push(GPRInfo::handlerGPR);
+        jit.push(GPRInfo::handlerGPR);
+#endif
+        jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
+#if CPU(ARM_THUMB2)
+        jit.pop(GPRInfo::handlerGPR);
+        jit.pop(GPRInfo::handlerGPR);
+        jit.pop(GPRInfo::handlerGPR);
+        jit.pop(GPRInfo::handlerGPR);
+#endif
+}
+
 #if ENABLE(DFG_JIT)
 void JITInlineCacheGenerator::generateDFGDataICFastPath(DFG::JITCompiler& jit, StructureStubInfoIndex stubInfoConstant, GPRReg stubInfoGPR)
 {
     m_start = jit.label();
     jit.loadStructureStubInfo(stubInfoConstant, stubInfoGPR);
-    jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), GPRInfo::handlerGPR);
-    jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
+    callHandlerCallTarget(jit, stubInfoGPR);
     m_done = jit.label();
 }
 #endif
@@ -84,10 +101,9 @@ void JITInlineCacheGenerator::generateDFGDataICFastPath(DFG::JITCompiler& jit, S
 void JITInlineCacheGenerator::generateBaselineDataICFastPath(JIT& jit, GPRReg stubInfoGPR)
 {
     m_start = jit.label();
-    if (Options::useHandlerIC()) {
-        jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), GPRInfo::handlerGPR);
-        jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
-    } else {
+    if (Options::useHandlerIC())
+        callHandlerCallTarget(jit, stubInfoGPR);
+    else {
         jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), jit.scratchRegister());
         jit.farJump(CCallHelpers::Address(jit.scratchRegister(), InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
     }
@@ -143,10 +159,9 @@ static void generateGetByIdInlineAccessBaselineDataIC(CCallHelpers& jit, GPRReg 
     jit.loadProperty(baseJSR.payloadGPR(), scratch1GPR, resultJSR);
     auto done = jit.jump();
     doNotInlineAccess.link(&jit);
-    if (Options::useHandlerIC()) {
-        jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), GPRInfo::handlerGPR);
-        jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
-    } else {
+    if (Options::useHandlerIC())
+        callHandlerCallTarget(jit, stubInfoGPR);
+    else {
         jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), jit.scratchRegister());
         jit.farJump(CCallHelpers::Address(jit.scratchRegister(), InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
     }
@@ -179,8 +194,7 @@ static void generateGetByIdInlineAccessDFGDataIC(CCallHelpers& jit, GPRReg stubI
 {
     jit.load32(CCallHelpers::Address(baseJSR.payloadGPR(), JSCell::structureIDOffset()), scratch1GPR);
     auto doInlineAccess = jit.branch32(CCallHelpers::Equal, scratch1GPR, CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfInlineAccessBaseStructureID()));
-    jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), GPRInfo::handlerGPR);
-    jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
+    callHandlerCallTarget(jit, stubInfoGPR);
     doInlineAccess.link(&jit);
     jit.load32(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfByIdSelfOffset()), scratch1GPR);
     jit.loadProperty(baseJSR.payloadGPR(), scratch1GPR, resultJSR);
@@ -257,10 +271,9 @@ static void generatePutByIdInlineAccessBaselineDataIC(CCallHelpers& jit, GPRReg 
     jit.storeProperty(valueJSR, baseJSR.payloadGPR(), scratch1GPR, scratch2GPR);
     auto done = jit.jump();
     doNotInlineAccess.link(&jit);
-    if (Options::useHandlerIC()) {
-        jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), GPRInfo::handlerGPR);
-        jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
-    } else {
+    if (Options::useHandlerIC())
+        callHandlerCallTarget(jit, stubInfoGPR);
+    else {
         jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), jit.scratchRegister());
         jit.farJump(CCallHelpers::Address(jit.scratchRegister(), InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
     }
@@ -287,8 +300,7 @@ void JITPutByIdGenerator::generateDFGDataICFastPath(DFG::JITCompiler& jit, Struc
     jit.loadStructureStubInfo(stubInfoConstant, stubInfoGPR);
     jit.load32(CCallHelpers::Address(baseJSR.payloadGPR(), JSCell::structureIDOffset()), scratch1GPR);
     auto doInlineAccess = jit.branch32(CCallHelpers::Equal, scratch1GPR, CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfInlineAccessBaseStructureID()));
-    jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), GPRInfo::handlerGPR);
-    jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
+    callHandlerCallTarget(jit, stubInfoGPR);
     doInlineAccess.link(&jit);
     jit.load32(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfByIdSelfOffset()), scratch1GPR);
     // The second scratch can be the same to baseJSR.
@@ -416,8 +428,7 @@ static void generateInByIdInlineAccessBaselineDataIC(CCallHelpers& jit, GPRReg s
     auto finished = jit.jump();
     skipInlineAccess.link(&jit);
     if (Options::useHandlerIC()) {
-        jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), GPRInfo::handlerGPR);
-        jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
+        callHandlerCallTarget(jit, stubInfoGPR);
     } else {
         jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), jit.scratchRegister());
         jit.farJump(CCallHelpers::Address(jit.scratchRegister(), InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
@@ -454,8 +465,7 @@ void JITInByIdGenerator::generateDFGDataICFastPath(DFG::JITCompiler& jit, Struct
     jit.boxBoolean(true, resultJSR);
     auto finished = jit.jump();
     skipInlineAccess.link(&jit);
-    jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), GPRInfo::handlerGPR);
-    jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
+    callHandlerCallTarget(jit, stubInfoGPR);
     finished.link(&jit);
     m_done = jit.label();
 }

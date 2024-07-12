@@ -1413,7 +1413,7 @@ bool canUseJITCage() { return false; }
 
 bool canUseHandlerIC()
 {
-#if CPU(X86_64)
+#if CPU(X86_64) || CPU(ARM_THUMB2)
     return true;
 #elif CPU(ARM64)
     return !isIOS();

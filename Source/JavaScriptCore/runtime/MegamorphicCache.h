@@ -110,6 +110,8 @@ public:
             m_reallocating = reallocating;
         }
 
+        void dump(PrintStream& out) const;
+
         RefPtr<UniquedStringImpl> m_uid;
         StructureID m_oldStructureID { };
         StructureID m_newStructureID { };
@@ -279,6 +281,8 @@ public:
         if (UNLIKELY(m_epoch == invalidEpoch))
             clearEntries();
     }
+
+    void dump(PrintStream& out) const;
 
 private:
     JS_EXPORT_PRIVATE void clearEntries();

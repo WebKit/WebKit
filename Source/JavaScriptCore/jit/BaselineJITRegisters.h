@@ -166,15 +166,12 @@ namespace GetByVal {
     static_assert(noOverlap(baseJSR, propertyJSR, stubInfoGPR, profileGPR), "Required for DataIC");
     static constexpr auto scratchRegisters = allocatedScratchRegisters<GPRInfo, baseJSR, propertyJSR, stubInfoGPR, profileGPR, GPRInfo::handlerGPR>;
     static constexpr GPRReg scratch1GPR { scratchRegisters[0] };
-#if USE(JSVALUE64)
     static constexpr GPRReg scratch2GPR { scratchRegisters[1] };
     static constexpr GPRReg scratch3GPR { scratchRegisters[2] };
     static_assert(noOverlap(baseJSR, propertyJSR, stubInfoGPR, profileGPR, scratch1GPR, scratch2GPR, scratch3GPR), "Required for DataIC");
-#endif
     static_assert(noOverlap(resultJSR, stubInfoGPR));
 }
 
-#if USE(JSVALUE64)
 namespace EnumeratorGetByVal {
     // We rely on using the same registers when linking a CodeBlock and initializing registers
     // for a GetByVal StubInfo.
@@ -189,9 +186,7 @@ namespace EnumeratorGetByVal {
     static_assert(noOverlap(baseJSR, propertyJSR, stubInfoGPR, profileGPR, scratch1GPR, scratch2GPR, scratch3GPR));
     static_assert(noOverlap(resultJSR, stubInfoGPR));
 }
-#endif
 
-#if USE(JSVALUE64)
 namespace GetByValWithThis {
     // Registers used on both Fast and Slow paths
     using SlowOperation = decltype(operationGetByValWithThisOptimize);
@@ -207,7 +202,6 @@ namespace GetByValWithThis {
     static_assert(noOverlap(baseJSR, propertyJSR, thisJSR, stubInfoGPR, profileGPR, GPRInfo::handlerGPR, scratch1GPR), "Required for call to slow operation");
     static_assert(noOverlap(resultJSR, stubInfoGPR));
 }
-#endif
 
 namespace PutById {
     // Registers used on both Fast and Slow paths
@@ -221,12 +215,10 @@ namespace PutById {
     static_assert(noOverlap(baseJSR, valueJSR, stubInfoGPR, scratch1GPR), "Required for DataIC");
     static_assert(noOverlap(baseJSR, valueJSR, stubInfoGPR, GPRInfo::handlerGPR, scratch1GPR), "Required for call to slow operation");
 
-#if USE(JSVALUE64)
     static constexpr GPRReg scratch2GPR { scratchRegisters[1] };
     static constexpr GPRReg scratch3GPR { scratchRegisters[2] };
     static constexpr GPRReg scratch4GPR { scratchRegisters[3] };
     static_assert(noOverlap(baseJSR, valueJSR, stubInfoGPR, GPRInfo::handlerGPR, scratch1GPR, scratch2GPR, scratch3GPR, scratch4GPR), "Required for HandlerIC");
-#endif
 }
 
 namespace PutByVal {
@@ -236,19 +228,17 @@ namespace PutByVal {
     static constexpr JSValueRegs valueJSR { preferredArgumentJSR<SlowOperation, 2>() };
     static constexpr GPRReg stubInfoGPR { preferredArgumentGPR<SlowOperation, 3>() };
     static constexpr GPRReg profileGPR { preferredArgumentGPR<SlowOperation, 4>() };
-#if USE(JSVALUE64)
     static constexpr auto scratchRegisters = allocatedScratchRegisters<GPRInfo, baseJSR, propertyJSR, valueJSR, stubInfoGPR, profileGPR, GPRInfo::handlerGPR>;
     static constexpr GPRReg scratch1GPR { scratchRegisters[0] };
+#if CPU(ARM_THUMB2)
+    static constexpr GPRReg scratch2GPR { GPRInfo::handlerGPR };
+#else
     static constexpr GPRReg scratch2GPR { scratchRegisters[1] };
+#endif
     static_assert(noOverlap(baseJSR, propertyJSR, valueJSR, stubInfoGPR, profileGPR, scratch1GPR, GPRInfo::handlerGPR), "Required for call to slow operation");
     static_assert(noOverlap(baseJSR, propertyJSR, valueJSR, stubInfoGPR, profileGPR, scratch1GPR, scratch2GPR), "Required for HandlerIC");
-#else
-    static constexpr auto scratchRegisters = allocatedScratchRegisters<GPRInfo, baseJSR, propertyJSR, valueJSR, stubInfoGPR, profileGPR>;
-    static constexpr GPRReg scratch1GPR { scratchRegisters[0] };
-#endif
 }
 
-#if USE(JSVALUE64)
 namespace EnumeratorPutByVal {
     // We rely on using the same registers when linking a CodeBlock and initializing registers
     // for a PutByVal StubInfo.
@@ -260,7 +250,6 @@ namespace EnumeratorPutByVal {
     using PutByVal::scratch1GPR;
     using PutByVal::scratch2GPR;
 }
-#endif
 
 namespace InById {
     using GetById::resultJSR;

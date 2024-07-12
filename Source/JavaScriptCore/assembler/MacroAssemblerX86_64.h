@@ -1792,6 +1792,11 @@ public:
             cmov(x86Condition(invert(cond)), elseCase, dest);
     }
 
+    void moveConditionallyPtr(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        return moveConditionally64(cond, left, right, thenCase, elseCase, dest);
+    }
+
     void moveConditionallyTest64(ResultCondition cond, RegisterID testReg, RegisterID mask, RegisterID src, RegisterID dest)
     {
         m_assembler.testq_rr(testReg, mask);
