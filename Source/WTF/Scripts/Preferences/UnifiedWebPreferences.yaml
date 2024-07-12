@@ -1077,17 +1077,17 @@ CSSCounterStyleAtRulesEnabled:
 
 CSSDPropertyEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS d property"
   humanReadableDescription: "Enable support for the CSS d property and SVG d presentation attribute"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSFieldSizingEnabled:
   type: bool

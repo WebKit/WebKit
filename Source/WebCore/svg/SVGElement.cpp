@@ -841,7 +841,7 @@ bool SVGElement::rendererIsNeeded(const RenderStyle& style)
     return false;
 }
 
-CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& attrName, const Settings& settings)
+CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& attrName) const
 {
     if (!attrName.namespaceURI().isNull())
         return CSSPropertyInvalid;
@@ -871,10 +871,6 @@ CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& 
         return CSSPropertyCx;
     case AttributeNames::cyAttr:
         return CSSPropertyCy;
-    case AttributeNames::dAttr:
-        if (settings.cssDPropertyEnabled())
-            return CSSPropertyD;
-        break;
     case AttributeNames::directionAttr:
         return CSSPropertyDirection;
     case AttributeNames::displayAttr:
@@ -1000,14 +996,14 @@ CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& 
 
 bool SVGElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
-    if (cssPropertyIdForSVGAttributeName(name, document().settings()) > 0)
+    if (cssPropertyIdForSVGAttributeName(name) > 0)
         return true;
     return StyledElement::hasPresentationalHintsForAttribute(name);
 }
 
 void SVGElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
-    CSSPropertyID propertyID = cssPropertyIdForSVGAttributeName(name, document().settings());
+    CSSPropertyID propertyID = cssPropertyIdForSVGAttributeName(name);
     if (propertyID > 0)
         addPropertyToPresentationalHintStyle(style, propertyID, value);
 }
@@ -1020,7 +1016,7 @@ void SVGElement::updateSVGRendererForElementChange()
 
 void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    CSSPropertyID propId = cssPropertyIdForSVGAttributeName(attrName, document().settings());
+    CSSPropertyID propId = cssPropertyIdForSVGAttributeName(attrName);
     if (propId > 0) {
         invalidateInstances();
         return;

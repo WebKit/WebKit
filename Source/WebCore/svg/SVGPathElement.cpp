@@ -146,13 +146,22 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
             path->setNeedsShapeUpdate();
 
         updateSVGRendererForElementChange();
-        if (document().settings().cssDPropertyEnabled())
+        if (m_pathDataWasSetByStyle && document().settings().cssDPropertyEnabled())
             setPresentationalHintStyleIsDirty();
         invalidateResourceImageBuffersIfNeeded();
         return;
     }
 
     SVGGeometryElement::svgAttributeChanged(attrName);
+}
+
+CSSPropertyID SVGPathElement::cssPropertyIdForSVGAttributeName(const QualifiedName& attrName) const
+{
+    if (attrName == SVGNames::dAttr) {
+        if (m_pathDataWasSetByStyle && document().settings().cssDPropertyEnabled())
+            return CSSPropertyD;
+    }
+    return SVGGeometryElement::cssPropertyIdForSVGAttributeName(attrName);
 }
 
 void SVGPathElement::invalidateMPathDependencies()
@@ -289,6 +298,7 @@ void SVGPathElement::collectDPresentationalHint(MutableStyleProperties& style)
 
 void SVGPathElement::pathDidChange()
 {
+    m_pathDataWasSetByStyle = true;
     invalidateMPathDependencies();
 }
 
