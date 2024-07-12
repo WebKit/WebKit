@@ -7325,3 +7325,12 @@ media/video-aspect-ratio.html [ Failure ]
 media/video-canvas-alpha.html [ Failure ]
 media/video-layer-crash.html [ Failure ]
 media/video-zoom.html [ Failure ]
+
+# webkit.org/b/276558 ([ iOS18 ] 7 wpt/intersection-observer/* layout tests are flakily failing.)
+imported/w3c/web-platform-tests/intersection-observer/callback-cross-realm-report-exception.html [ Pass Failure ]
+imported/w3c/web-platform-tests/intersection-observer/multiple-targets.html [ Pass Failure ]
+imported/w3c/web-platform-tests/intersection-observer/multiple-thresholds.html [ Pass Failure ]
+imported/w3c/web-platform-tests/intersection-observer/root-margin.html [ Pass Failure ]
+imported/w3c/web-platform-tests/intersection-observer/same-document-no-root.html [ Pass Failure ]
+imported/w3c/web-platform-tests/intersection-observer/same-document-zero-size-target.html [ Pass Failure ]
+imported/w3c/web-platform-tests/intersection-observer/text-target.html [ Pass Failure ]

@@ -59,6 +59,15 @@ imported/w3c/web-platform-tests/fetch/h1-parsing/lone-cr.window.html [ Pass ]
 http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Pass ]
 http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Pass ]
 
+# webkit.org/b/276558 ([ iOS18 ] 7 wpt/intersection-observer/* layout tests are flakily failing.)
+imported/w3c/web-platform-tests/intersection-observer/callback-cross-realm-report-exception.html [ Pass ]
+imported/w3c/web-platform-tests/intersection-observer/multiple-targets.html [ Pass ]
+imported/w3c/web-platform-tests/intersection-observer/multiple-thresholds.html [ Pass ]
+imported/w3c/web-platform-tests/intersection-observer/root-margin.html [ Pass ]
+imported/w3c/web-platform-tests/intersection-observer/same-document-no-root.html [ Pass ]
+imported/w3c/web-platform-tests/intersection-observer/same-document-zero-size-target.html [ Pass ]
+imported/w3c/web-platform-tests/intersection-observer/text-target.html [ Pass ]
+
 ###
 ### NOTICE: Unless you know that the issue for which you're setting expectations specifically only occurs on iOS 17, 
 ### you should probably use the platform/ios/TestExpectations file, NOT this one.
