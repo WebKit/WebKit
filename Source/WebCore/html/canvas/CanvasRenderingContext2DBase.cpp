@@ -1223,7 +1223,7 @@ void CanvasRenderingContext2DBase::strokeInternal(const Path& path)
         c->strokePath(path);
 
     didDraw(repaintEntireCanvas, [&]() {
-        return targetSwitcher ? targetSwitcher->expandedBounds() : path.fastBoundingRect();
+        return targetSwitcher ? targetSwitcher->expandedBounds() : inflatedStrokeRect(path.fastBoundingRect());
     });
 }
 
