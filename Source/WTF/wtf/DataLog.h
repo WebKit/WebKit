@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,6 @@ WTF_EXPORT_PRIVATE void setDataFile(std::unique_ptr<PrintStream>&&);
 
 WTF_EXPORT_PRIVATE void dataLogFV(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
 WTF_EXPORT_PRIVATE void dataLogF(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
-WTF_EXPORT_PRIVATE void dataLogFString(const char*);
 
 template<typename... Types>
 NEVER_INLINE void dataLog(const Types&... values)
@@ -71,4 +70,3 @@ void dataLogLn(const Types&... values)
 using WTF::dataLog;
 using WTF::dataLogLn;
 using WTF::dataLogF;
-using WTF::dataLogFString;

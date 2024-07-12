@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -201,11 +201,6 @@ void dataLogF(const char* format, ...)
     va_start(argList, format);
     dataLogFV(format, argList);
     va_end(argList);
-}
-
-void dataLogFString(const char* str)
-{
-    dataFile().printf("%s", str);
 }
 
 } // namespace WTF
