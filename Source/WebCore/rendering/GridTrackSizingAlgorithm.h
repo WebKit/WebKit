@@ -162,6 +162,28 @@ public:
 #endif
 
 private:
+    struct MasonryIndefiniteItems {
+        // Optimization: Masonry Indefinite Items
+        // Indefinite items need to be considered in each track; this causes a runtime of O(N_track * M_items).
+        // We can simplfiy this to O(N_tracks) if we add some constraints.
+        //
+        // We will precompute the min-content, max-content and min-size for all indefinite items if they meet the below requirements:
+        // - item has a span length of 1
+        // - item is not a sub-grid
+        // - track is not 'fr'
+        //
+        // In case we hit an 'fr' track we will fallback to computing all indefinte items in the track.
+        //
+        // FIXME: Add support for multi-track items.
+        // FIXME: Add support for flex items.
+        SingleThreadWeakListHashSet<RenderBox> indefiniteItems;
+        SingleThreadWeakListHashSet<RenderBox> singleTrackIndefiniteItems;
+
+        LayoutUnit largestMinContentSizeForSingleTrackItems;
+        LayoutUnit largestMaxContentSizeForSingleTrackItems;
+        LayoutUnit largestMinSizeForSingleTrackItems;
+    };
+
     std::optional<LayoutUnit> availableSpace() const;
     bool isRelativeGridLengthAsAuto(const GridLength&, GridTrackSizingDirection) const;
     GridTrackSize calculateGridTrackSize(GridTrackSizingDirection, unsigned translatedIndex) const;
@@ -173,6 +195,8 @@ private:
 
     // Helper methods for step 2. resolveIntrinsicTrackSizes().
     void sizeTrackToFitNonSpanningItem(const GridSpan&, RenderBox& gridItem, GridTrack&);
+    void sizeTrackToFitSingleSpanMasonryGroup(const GridSpan&, MasonryIndefiniteItems&, GridTrack&);
+
     bool spanningItemCrossesFlexibleSizedTracks(const GridSpan&) const;
     typedef struct GridItemsSpanGroupRange GridItemsSpanGroupRange;
     template <TrackSizeComputationVariant variant, TrackSizeComputationPhase phase> void increaseSizesToAccommodateSpanningItems(const GridItemsSpanGroupRange& gridItemsWithSpan);
@@ -202,7 +226,7 @@ private:
     void stretchFlexibleTracks(std::optional<LayoutUnit> freeSpace);
     void stretchAutoTracks();
 
-    void accumulateIntrinsicSizesForTrack(GridTrack&, unsigned trackIndex, GridIterator&, Vector<GridItemWithSpan>& itemsSortedByIncreasingSpan, Vector<GridItemWithSpan>& itemsCrossingFlexibleTracks, SingleThreadWeakHashSet<RenderBox>& itemsSet, SingleThreadWeakListHashSet<RenderBox>& masonryIndefiniteItems, LayoutUnit currentAccumulatedMbp);
+    void accumulateIntrinsicSizesForTrack(GridTrack&, unsigned trackIndex, GridIterator&, Vector<GridItemWithSpan>& itemsSortedByIncreasingSpan, Vector<GridItemWithSpan>& itemsCrossingFlexibleTracks, SingleThreadWeakHashSet<RenderBox>& itemsSet, MasonryIndefiniteItems&, LayoutUnit currentAccumulatedMbp);
 
     bool copyUsedTrackSizesForSubgrid();
 
