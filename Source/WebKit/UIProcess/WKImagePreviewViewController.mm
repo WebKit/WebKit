@@ -57,7 +57,10 @@
     RetainPtr<UIImage> uiImage = adoptNS([[UIImage alloc] initWithCGImage:_image.get()]);
     [_imageView setImage:uiImage.get()];
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME: <rdar://131638772> UIScreen.mainScreen is deprecated.
     CGSize screenSize = [UIScreen mainScreen].bounds.size;
+ALLOW_DEPRECATED_DECLARATIONS_END
     CGSize imageSize = _scaleSizeWithinSize(CGSizeMake(CGImageGetWidth(_image.get()), CGImageGetHeight(_image.get())), screenSize);
     [_imageView setFrame:CGRectMake([_imageView frame].origin.x, [_imageView frame].origin.y, imageSize.width, imageSize.height)];
     [self setPreferredContentSize:imageSize];

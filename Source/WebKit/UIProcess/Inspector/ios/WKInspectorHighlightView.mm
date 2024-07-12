@@ -288,7 +288,10 @@ static void layerPath(CAShapeLayer *layer, const WebCore::FloatQuad& outerQuad)
     [self _removeAllLayers];
 
     _highlight = highlight;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME: <rdar://131638772> UIScreen.mainScreen is deprecated.
     self.contentScaleFactor = UIScreen.mainScreen.scale * scale;
+ALLOW_DEPRECATED_DECLARATIONS_END
     self.frame = frame;
 
     if (highlight.type == WebCore::InspectorOverlay::Highlight::Type::Node || highlight.type == WebCore::InspectorOverlay::Highlight::Type::NodeList)

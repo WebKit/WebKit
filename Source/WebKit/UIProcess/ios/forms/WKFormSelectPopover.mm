@@ -205,8 +205,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)populateCell:(UITableViewCell *)cell withItem:(const OptionItem&)item
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME: <rdar://131638865> UITableViewCell.textLabel is deprecated.
     [cell.textLabel setText:item.text];
     [cell.textLabel setEnabled:!item.disabled];
+ALLOW_DEPRECATED_DECLARATIONS_END
     [cell setSelectionStyle:item.disabled ? UITableViewCellSelectionStyleNone : UITableViewCellSelectionStyleBlue];
     [cell setAccessoryType:item.isSelected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone];
 }
@@ -300,9 +303,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:NO];
         
         UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        // FIXME: <rdar://131638865> UITableViewCell.textLabel is deprecated.
         if (!cell.textLabel.enabled)
             return;
-        
+ALLOW_DEPRECATED_DECLARATIONS_END
+
         BOOL newStateIsSelected = (cell.accessoryType == UITableViewCellAccessoryNone);
         
         cell.accessoryType = newStateIsSelected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
@@ -330,9 +336,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         
         UITableViewCell *newCell = [tableView cellForRowAtIndexPath:indexPath];
         
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        // FIXME: <rdar://131638865> UITableViewCell.textLabel is deprecated.
         if (!newCell.textLabel.enabled)
             return;
-        
+ALLOW_DEPRECATED_DECLARATIONS_END
+
         if (oldIndexPath) {
             UITableViewCell *oldCell = [tableView cellForRowAtIndexPath:oldIndexPath];
             if (oldCell && oldCell.accessoryType == UITableViewCellAccessoryCheckmark)
