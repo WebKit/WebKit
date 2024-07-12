@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+if [ $# -ne 1 ]; then
+    echo "Usage: clangd-check-file <file>"
+    echo
+    echo "Checks if a file reports errors under clangd, and prints PASS or FAIL accordingly."
+    echo "This is a small wrapper around clangd --check."
+    echo "Intended to be used by clangd-check-codebase."
+    echo "Note: This script currently only supports Linux."
+    exit 1
+fi
+
+webkit_root="$(dirname "$0")/../../"
+file_to_check=$1
+
+# Hack to disable diagnostics that can still be useful for developers editing the files but would
+# be over-zealous or provide false-positives when analyzing the entire codebase.
+config_tmp_dir=$(mktemp -d --suffix .clangd-config)
+mkdir "$config_tmp_dir/clangd"
+echo """
+CompileFlags:
+    Add: [-Wno-unknown-pragmas, -Wno-unused-function, -Wno-unused-variable, -Wno-unused-const-variable]
+---
+$(cat "$webkit_root/.clangd")
+""" > "$config_tmp_dir/clangd/config.yaml"
+
+output=$(XDG_CONFIG_HOME="$config_tmp_dir" clangd --enable-config --query-driver='**' --check-locations=false --check="$file_to_check" 2>&1)
+ret_code=$?
+if [[ $ret_code -ne 0 ]]; then
+    echo "$output" >&2
+    prefix="FAIL: "
+else
+    prefix="PASS: "
+fi
+echo "$prefix$file_to_check"
+
+rm -rf "$config_tmp_dir"
