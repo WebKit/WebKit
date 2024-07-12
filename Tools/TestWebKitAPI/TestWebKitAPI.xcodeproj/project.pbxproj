@@ -314,6 +314,7 @@
 		49D2E5C22731E3BC00BCCAED /* file-with-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 49D2E5C12731E37400BCCAED /* file-with-iframe.html */; };
 		49D902B328209B3300E2C3B8 /* emptyTable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 49D902B228209B0500E2C3B8 /* emptyTable.html */; };
 		4BFDFFA71314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */; };
+		4C041C6C2C405622002218A4 /* FontCascade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C041C6B2C405622002218A4 /* FontCascade.cpp */; };
 		4C453A44294A469500D91D2B /* Ahem-10000A.ttf in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4C453A43294A468200D91D2B /* Ahem-10000A.ttf */; };
 		4CC961EC294A36CE00483F06 /* LockdownModeFonts.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4CC961E4294A36A000483F06 /* LockdownModeFonts.html */; };
 		510477721D298DDD009747EB /* IDBDeleteRecovery.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5104776F1D298D85009747EB /* IDBDeleteRecovery.sqlite3 */; };
@@ -2510,6 +2511,7 @@
 		4BB4160316815F9100824238 /* ElementAtPointInWebFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ElementAtPointInWebFrame.mm; sourceTree = "<group>"; };
 		4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestResultNodeHandle_Bundle.cpp; sourceTree = "<group>"; };
 		4BFDFFA8131477770061F24B /* HitTestResultNodeHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestResultNodeHandle.cpp; sourceTree = "<group>"; };
+		4C041C6B2C405622002218A4 /* FontCascade.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontCascade.cpp; sourceTree = "<group>"; };
 		4C453A43294A468200D91D2B /* Ahem-10000A.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Ahem-10000A.ttf"; sourceTree = "<group>"; };
 		4CC961E4294A36A000483F06 /* LockdownModeFonts.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = LockdownModeFonts.html; path = Tests/WebKitCocoa/LockdownModeFonts.html; sourceTree = SOURCE_ROOT; };
 		5102ED872950538D0053243E /* WKPageHasMediaStreamingActivity.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPageHasMediaStreamingActivity.mm; sourceTree = "<group>"; };
@@ -4498,6 +4500,7 @@
 				F4AD183725ED791500B1A19F /* FloatQuadTests.cpp */,
 				7A909A711D877475007E10F8 /* FloatRectTests.cpp */,
 				7A909A721D877475007E10F8 /* FloatSizeTests.cpp */,
+				4C041C6B2C405622002218A4 /* FontCascade.cpp */,
 				95C52728275F35E100DA7E40 /* FontShadowTests.cpp */,
 				8E4A85361E1D1AA100F53B0F /* GridPosition.cpp */,
 				83B88A331C80056D00BB2418 /* HTMLParserIdioms.cpp */,
@@ -6657,6 +6660,7 @@
 				7A909A801D877480007E10F8 /* FloatSizeTests.cpp in Sources */,
 				F4BC0B142146C849002A0478 /* FocusPreservationTests.mm in Sources */,
 				F4A2E64D284541BA0001FEEF /* FocusWebView.mm in Sources */,
+				4C041C6C2C405622002218A4 /* FontCascade.cpp in Sources */,
 				F456AB1C213EDBA300CB2CEF /* FontManagerTests.mm in Sources */,
 				1C81802725FB09E200608B3E /* FontRegistrySandboxCheck.mm in Sources */,
 				95C52729275F35E100DA7E40 /* FontShadowTests.cpp in Sources */,
