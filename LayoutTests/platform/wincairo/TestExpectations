@@ -940,6 +940,8 @@ http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party.
 
 http/tests/webxr [ Skip ]
 
+webkit.org/b/206834 http/tests/workers/service/basic-timeout.https.html [ Pass Failure ]
+
 # Needs curl download support
 http/tests/workers/service/service-worker-download-async-delegates.https.html [ Failure ]
 http/tests/workers/service/service-worker-download.https.html [ Failure ]
@@ -1019,6 +1021,8 @@ http/wpt/service-workers/navigate-iframes-window-client.https.html [ Failure ]
 
 http/wpt/service-workers/fetch-service-worker-preload-changing-request.https.html [ Failure Pass ]
 
+webkit.org/b/212532 http/wpt/service-workers/service-worker-crashing-while-fetching.https.html [ Pass Failure ]
+
 http/wpt/push-api [ Skip ]
 
 http/tests/misc/slow-loading-animated-image.html [ ImageOnlyFailure ]
@@ -1053,6 +1057,8 @@ animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 # Unexpected timeouts tracked in webkit.org/b/172437.
 animations/font-variations/font-stretch.html [ Skip ]
 animations/font-variations/font-style.html [ Skip ]
+
+webkit.org/b/229584 animations/fill-mode-forwards.html [ Failure Pass ]
 
 # TODO Uses showModalDialog
 webkit.org/b/53675 fast/animation/request-animation-frame-during-modal.html [ Skip ]
