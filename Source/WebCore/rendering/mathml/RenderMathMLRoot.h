@@ -65,7 +65,7 @@ private:
         LayoutUnit kernBeforeDegree;
         LayoutUnit kernAfterDegree;
     };
-    HorizontalParameters horizontalParameters();
+    HorizontalParameters horizontalParameters(LayoutUnit indexWidth);
     struct VerticalParameters {
         LayoutUnit verticalGap;
         LayoutUnit ruleThickness;
