@@ -1633,6 +1633,8 @@ html/canvas/WebGLUtilities.cpp
 html/canvas/WebGLVertexArrayObject.cpp
 html/canvas/WebGLVertexArrayObjectBase.cpp
 html/canvas/WebGLVertexArrayObjectOES.cpp
+html/closewatcher/CloseWatcher.cpp
+html/closewatcher/CloseWatcherManager.cpp
 html/forms/FileIconLoader.cpp
 html/parser/CSSPreloadScanner.cpp
 html/parser/HTMLConstructionSite.cpp
@@ -3428,6 +3430,7 @@ JSClipboard.cpp
 JSClipboardEvent.cpp
 JSClipboardItem.cpp
 JSCloseEvent.cpp
+JSCloseWatcher.cpp
 JSColorGamut.cpp
 JSCommandLineAPIHost.cpp
 JSComment.cpp

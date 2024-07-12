@@ -1401,6 +1401,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/WebGLUniformLocation.idl \
     $(WebCore)/html/canvas/WebGLVertexArrayObject.idl \
     $(WebCore)/html/canvas/WebGLVertexArrayObjectOES.idl \
+    $(WebCore)/html/closewatcher/CloseWatcher.idl \
     $(WebCore)/html/track/AudioTrack.idl \
     $(WebCore)/html/track/AudioTrackConfiguration.idl \
     $(WebCore)/html/track/AudioTrackList.idl \

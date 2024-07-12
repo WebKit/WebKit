@@ -61,6 +61,8 @@ class JSValue;
 
 namespace WebCore {
 
+class CloseWatcherManager;
+
 enum class IncludeTargetOrigin : bool { No, Yes };
 
 class LocalDOMWindowObserver : public CanMakeWeakPtr<LocalDOMWindowObserver> {
@@ -363,6 +365,8 @@ public:
 
     CookieStore& cookieStore();
 
+    CloseWatcherManager& closeWatcherManager();
+
 private:
     explicit LocalDOMWindow(Document&);
 
@@ -412,6 +416,7 @@ private:
     mutable RefPtr<BarProp> m_toolbar;
     mutable RefPtr<VisualViewport> m_visualViewport;
     mutable RefPtr<Navigation> m_navigation;
+    mutable RefPtr<CloseWatcherManager> m_closeWatcherManager;
 
     String m_status;
 
