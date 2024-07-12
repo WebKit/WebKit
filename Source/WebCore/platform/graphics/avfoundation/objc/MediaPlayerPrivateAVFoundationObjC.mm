@@ -665,8 +665,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
     m_videoLayerManager->setVideoLayer(m_videoLayer.get(), player->presentationSize());
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-    if ([m_videoLayer respondsToSelector:@selector(setPIPModeEnabled:)])
-        [m_videoLayer setPIPModeEnabled:(player->fullscreenMode() & MediaPlayer::VideoFullscreenModePictureInPicture)];
+    [m_videoLayer setPIPModeEnabled:(player->fullscreenMode() & MediaPlayer::VideoFullscreenModePictureInPicture)];
 #endif
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
@@ -1124,8 +1123,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 
     m_avPlayer.get().appliesMediaSelectionCriteriaAutomatically = NO;
 #if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
-    if ([m_avPlayer respondsToSelector:@selector(setVideoRangeOverride:)])
-        m_avPlayer.get().videoRangeOverride = convertDynamicRangeModeEnumToAVVideoRange(player->preferredDynamicRangeMode());
+    m_avPlayer.get().videoRangeOverride = convertDynamicRangeModeEnumToAVVideoRange(player->preferredDynamicRangeMode());
 #endif
 
     if ([m_videoLayer respondsToSelector:@selector(setToneMapToStandardDynamicRange:)])
@@ -1394,8 +1392,7 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenMode(MediaPlayer::Vid
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS)
     assertIsMainThread();
 
-    if ([m_videoLayer respondsToSelector:@selector(setPIPModeEnabled:)])
-        [m_videoLayer setPIPModeEnabled:(mode & MediaPlayer::VideoFullscreenModePictureInPicture)];
+    [m_videoLayer setPIPModeEnabled:(mode & MediaPlayer::VideoFullscreenModePictureInPicture)];
     updateDisableExternalPlayback();
 #else
     UNUSED_PARAM(mode);
@@ -3529,7 +3526,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateDisableExternalPlayback()
     if (!m_avPlayer)
         return;
 
-    if (RefPtr player = this->player(); player && [m_avPlayer respondsToSelector:@selector(setUsesExternalPlaybackWhileExternalScreenIsActive:)])
+    if (RefPtr player = this->player())
         [m_avPlayer setUsesExternalPlaybackWhileExternalScreenIsActive:(player->fullscreenMode() == MediaPlayer::VideoFullscreenModeStandard) || player->isVideoFullscreenStandby()];
 #endif
 }
@@ -3648,18 +3645,13 @@ void MediaPlayerPrivateAVFoundationObjC::setBufferingPolicy(MediaPlayer::Bufferi
     static_assert(static_cast<size_t>(MediaPlayer::BufferingPolicy::MakeResourcesPurgeable) == AVPlayerResourceConservationLevelReuseActivePlayerResources, "MediaPlayer::BufferingPolicy::MakeResourcesPurgeable is not AVPlayerResourceConservationLevelReuseActivePlayerResources as expected");
     static_assert(static_cast<size_t>(MediaPlayer::BufferingPolicy::PurgeResources) == AVPlayerResourceConservationLevelRecycleBuffer, "MediaPlayer::BufferingPolicy::PurgeResources is not AVPlayerResourceConservationLevelRecycleBuffer as expected");
 
-    if ([m_avPlayer respondsToSelector:@selector(setResourceConservationLevelWhilePaused:)]) {
-        m_avPlayer.get().resourceConservationLevelWhilePaused = static_cast<AVPlayerResourceConservationLevel>(policy);
+    m_avPlayer.get().resourceConservationLevelWhilePaused = static_cast<AVPlayerResourceConservationLevel>(policy);
 
-        // FIXME: Remove this workaround once rdar://123901202 is fixed.
-        if (isMovingFromResourcesPurgeableBufferPolicy && m_provider)
-            m_provider->recreateAudioMixIfNeeded();
+    // FIXME: Remove this workaround once rdar://123901202 is fixed.
+    if (isMovingFromResourcesPurgeableBufferPolicy && m_provider)
+        m_provider->recreateAudioMixIfNeeded();
 
-        updateStates();
-        return;
-    }
-#endif
-
+#else
     switch (policy) {
     case MediaPlayer::BufferingPolicy::Default:
         setAVPlayerItem(m_avPlayerItem.get());
@@ -3673,6 +3665,7 @@ void MediaPlayerPrivateAVFoundationObjC::setBufferingPolicy(MediaPlayer::Bufferi
         setAVPlayerItem(m_avPlayerItem.get());
         break;
     }
+#endif
 
     updateStates();
 }
@@ -3937,7 +3930,7 @@ std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateAVFoundationObjC::v
 
 std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateAVFoundationObjC::videoPlaybackQualityMetrics(AVPlayerLayer* videoLayer) const
 {
-    if (!videoLayer || ![videoLayer respondsToSelector:@selector(videoPerformanceMetrics)])
+    if (!videoLayer)
         return std::nullopt;
 
 #if PLATFORM(WATCHOS)
@@ -3949,16 +3942,12 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if (!metrics)
         return std::nullopt;
 
-    uint32_t displayCompositedFrames = 0;
-    if ([metrics respondsToSelector:@selector(numberOfDisplayCompositedVideoFrames)])
-        displayCompositedFrames = [metrics numberOfDisplayCompositedVideoFrames];
-
     return VideoPlaybackQualityMetrics {
         static_cast<uint32_t>([metrics totalNumberOfVideoFrames]),
         static_cast<uint32_t>([metrics numberOfDroppedVideoFrames]),
         static_cast<uint32_t>([metrics numberOfCorruptedVideoFrames]),
         [metrics totalFrameDelay],
-        displayCompositedFrames,
+        static_cast<uint32_t>([metrics numberOfDisplayCompositedVideoFrames]),
     };
 
 ALLOW_NEW_API_WITHOUT_GUARDS_END
@@ -4019,7 +4008,7 @@ END_BLOCK_OBJC_EXCEPTIONS
 void MediaPlayerPrivateAVFoundationObjC::setPreferredDynamicRangeMode(DynamicRangeMode mode)
 {
 #if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
-    if (m_avPlayer && [m_avPlayer respondsToSelector:@selector(setVideoRangeOverride:)])
+    if (m_avPlayer)
         m_avPlayer.get().videoRangeOverride = convertDynamicRangeModeEnumToAVVideoRange(mode);
 #else
     UNUSED_PARAM(mode);
