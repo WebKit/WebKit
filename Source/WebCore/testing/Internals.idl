@@ -159,6 +159,27 @@ enum AutoplayPolicy {
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     Conditional=VIDEO,
     JSGenerateToJSObject,
+] dictionary NowPlayingInfoArtwork {
+    DOMString src;
+    DOMString mimeType;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    Conditional=VIDEO,
+    JSGenerateToJSObject,
+] dictionary NowPlayingMetadata {
+    DOMString title;
+    DOMString artist;
+    DOMString album;
+    DOMString sourceApplicationIdentifier;
+    NowPlayingInfoArtwork? artwork;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    Conditional=VIDEO,
+    JSGenerateToJSObject,
 ] dictionary MediaUsageState {
     DOMString mediaURL;
     boolean isPlaying;
@@ -964,6 +985,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=VIDEO] undefined endAudioSessionInterruption();
     [Conditional=VIDEO] undefined clearAudioSessionInterruptionFlag();
     [Conditional=VIDEO] undefined suspendAllMediaBuffering();
+    [Conditional=VIDEO] undefined suspendAllMediaPlayback();
+    [Conditional=VIDEO] undefined resumeAllMediaPlayback();
 
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerEnabled(boolean enabled);
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerState(DOMString deviceName, DOMString deviceState);
@@ -1185,6 +1208,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     undefined setMaxCanvasArea(unsigned long size);
 
+    [Conditional=VIDEO] readonly attribute NowPlayingMetadata? nowPlayingMetadata;
     [Conditional=VIDEO] readonly attribute NowPlayingState nowPlayingState;
 
     [Conditional=VIDEO] HTMLMediaElement bestMediaElementForRemoteControls(PlaybackControlsPurpose purpose);

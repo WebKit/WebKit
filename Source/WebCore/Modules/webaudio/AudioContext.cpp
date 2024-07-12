@@ -523,6 +523,13 @@ bool AudioContext::isNowPlayingEligible() const
         return false;
 
     RefPtr document = this->document();
+    if (!document)
+        return false;
+
+    RefPtr page = document->page();
+    if (page && page->mediaPlaybackIsSuspended())
+        return false;
+
     return hasPlayBackAudioSession(document.get());
 }
 
@@ -553,6 +560,9 @@ std::optional<NowPlayingInfo> AudioContext::nowPlayingInfo() const
         isPlaying(),
         !page->isVisibleAndActive()
     };
+
+    if (page->usesEphemeralSession())
+        return nowPlayingInfo;
 
 #if ENABLE(MEDIA_SESSION)
     if (RefPtr mediaSession = NavigatorMediaSession::mediaSessionIfExists(window->protectedNavigator()))
