@@ -43,6 +43,9 @@ public:
     String customCSSText() const;
     bool equals(const CSSAnchorValue&) const;
 
+    String anchorElementString() const;
+    Ref<CSSValue> anchorSide() const;
+
 private:
     CSSAnchorValue(RefPtr<CSSPrimitiveValue>&& anchorElement, Ref<CSSValue>&& anchorSide, RefPtr<CSSPrimitiveValue>&& fallback)
         : CSSValue(AnchorClass)

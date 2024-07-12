@@ -51,8 +51,9 @@ using AnchorPositionedStateMap = WeakHashMap<Element, std::unique_ptr<AnchorPosi
 
 class AnchorPositionEvaluator {
 public:
-    static Length resolveAnchorValue(const CSSAnchorValue*, const BuilderState&);
+    static Length resolveAnchorValue(const BuilderState&, const CSSAnchorValue&);
 };
 
-}
-}
+} // namespace Style
+
+} // namespace WebCore

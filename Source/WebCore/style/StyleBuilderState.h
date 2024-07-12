@@ -113,6 +113,8 @@ public:
         return m_currentProperty && m_currentProperty->cascadeLevel == CascadeLevel::Author;
     }
 
+    CSSPropertyID cssPropertyID() const;
+
 private:
     // See the comment in maybeUpdateFontForLetterSpacing() about why this needs to be a friend.
     friend void maybeUpdateFontForLetterSpacing(BuilderState&, CSSValue&);

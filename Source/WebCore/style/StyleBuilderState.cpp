@@ -276,5 +276,11 @@ void BuilderState::setFontSize(FontCascadeDescription& fontDescription, float si
     fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), useSVGZoomRules(), &style(), document()));
 }
 
+CSSPropertyID BuilderState::cssPropertyID() const
+{
+    ASSERT(m_currentProperty);
+    return m_currentProperty->id;
+}
+
 }
 }

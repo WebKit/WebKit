@@ -67,4 +67,14 @@ bool CSSAnchorValue::equals(const CSSAnchorValue& other) const
         && compareCSSValuePtr(m_fallback, other.m_fallback);
 }
 
+String CSSAnchorValue::anchorElementString() const
+{
+    return m_anchorElement ? m_anchorElement->stringValue() : nullString();
+}
+
+Ref<CSSValue> CSSAnchorValue::anchorSide() const
+{
+    return m_anchorSide;
+}
+
 } // namespace WebCore
