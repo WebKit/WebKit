@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2002 Lars Knoll (knoll@kde.org)
  *           (C) 2002 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc.
+ * Copyright (C) 2003-2024 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -154,7 +154,7 @@ float FixedTableLayout::calcWidthArray()
         while (usedSpan < span && currentColumn < nEffCols) {
             float eSpan = m_table->spanOfEffCol(currentColumn);
             // Only set if no col element has already set it.
-            if (m_width[currentColumn].isAuto() && logicalWidth.type() != LengthType::Auto) {
+            if (m_width[currentColumn].isAuto() && !logicalWidth.isAuto()) {
                 m_width[currentColumn] = logicalWidth;
                 m_width[currentColumn] *= eSpan / span;
                 usedWidth += fixedBorderBoxLogicalWidth * eSpan / span;
