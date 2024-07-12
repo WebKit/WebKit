@@ -582,7 +582,6 @@ public:
 
     WEBCORE_EXPORT Ref<HTMLCollection> images();
     WEBCORE_EXPORT Ref<HTMLCollection> embeds();
-    WEBCORE_EXPORT Ref<HTMLCollection> plugins(); // an alias for embeds() required for the JS DOM bindings.
     WEBCORE_EXPORT Ref<HTMLCollection> applets();
     WEBCORE_EXPORT Ref<HTMLCollection> links();
     WEBCORE_EXPORT Ref<HTMLCollection> forms();

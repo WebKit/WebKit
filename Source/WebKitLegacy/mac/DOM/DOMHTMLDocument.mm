@@ -49,7 +49,7 @@
 - (DOMHTMLCollection *)plugins
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->plugins()));
+    return kit(WTF::getPtr(IMPL->embeds()));
 }
 
 - (DOMHTMLCollection *)scripts

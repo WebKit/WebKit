@@ -7241,12 +7241,6 @@ Ref<HTMLCollection> Document::embeds()
     return ensureCachedCollection<CollectionType::DocEmbeds>();
 }
 
-Ref<HTMLCollection> Document::plugins()
-{
-    // This is an alias for embeds() required for the JS DOM bindings.
-    return ensureCachedCollection<CollectionType::DocEmbeds>();
-}
-
 Ref<HTMLCollection> Document::scripts()
 {
     return ensureCachedCollection<CollectionType::DocScripts>();
