@@ -720,7 +720,7 @@ static inline WebKit::WebExtensionContext::TabSet toImpl(NSSet<id<_WKWebExtensio
     WebKit::WebExtensionContext::TabSet result;
     result.reserveInitialCapacity(tabs.count);
 
-    for (id<_WKWebExtensionTab> tab in tabs) {
+    for (id tab in tabs) {
         NSCParameterAssert([tab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
         result.addVoid(context.getOrCreateTab(tab));
     }

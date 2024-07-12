@@ -113,10 +113,7 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
             return;
         }
 
-        THROW_UNLESS([newWindow conformsToProtocol:@protocol(_WKWebExtensionWindow)], @"Object returned by webExtensionController:openNewWindowWithOptions:forExtensionContext:completionHandler: does not conform to the _WKWebExtensionWindow protocol");
-
         RefPtr window = getOrCreateWindow(newWindow);
-
         completionHandler(window->extensionHasAccess() ? std::optional(window->parameters()) : std::nullopt);
     }).get()];
 }

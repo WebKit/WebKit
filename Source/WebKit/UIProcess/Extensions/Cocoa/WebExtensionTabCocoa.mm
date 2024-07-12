@@ -90,8 +90,6 @@ WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, _WKWebExten
     , m_respondsToClose([delegate respondsToSelector:@selector(closeForWebExtensionContext:completionHandler:)])
     , m_respondsToShouldGrantTabPermissionsOnUserGesture([delegate respondsToSelector:@selector(shouldGrantTabPermissionsOnUserGestureForWebExtensionContext:)])
 {
-    ASSERT([delegate conformsToProtocol:@protocol(_WKWebExtensionTab)]);
-
     // Access to cache the result early, when the window is associated.
     isPrivate();
 }
@@ -273,8 +271,6 @@ RefPtr<WebExtensionWindow> WebExtensionTab::window() const
     if (!window)
         return nullptr;
 
-    THROW_UNLESS([window conformsToProtocol:@protocol(_WKWebExtensionWindow)], @"Object returned by windowForWebExtensionContext: does not conform to the _WKWebExtensionWindow protocol");
-
     return m_extensionContext->getOrCreateWindow(window);
 }
 
@@ -298,8 +294,6 @@ RefPtr<WebExtensionTab> WebExtensionTab::parentTab() const
     auto parentTab = [m_delegate parentTabForWebExtensionContext:m_extensionContext->wrapper()];
     if (!parentTab)
         return nullptr;
-
-    THROW_UNLESS([parentTab conformsToProtocol:@protocol(_WKWebExtensionTab)], @"Object returned by parentTabForWebExtensionContext: does not conform to the _WKWebExtensionTab protocol");
 
     return m_extensionContext->getOrCreateTab(parentTab);
 }
@@ -335,10 +329,11 @@ WKWebView *WebExtensionTab::mainWebView() const
 
     THROW_UNLESS([mainWebView isKindOfClass:WKWebView.class], @"Object returned by mainWebViewForWebExtensionContext: is not a WKWebView");
 
-    auto *configuration = mainWebView.configuration;
-    if (!configuration._webExtensionController || configuration._webExtensionController != extensionContext()->extensionController()->wrapper()) {
-        RELEASE_LOG_ERROR_IF(!configuration._webExtensionController, Extensions, "%{public}@ returned by mainWebViewForWebExtensionContext: is not configured with a _WKWebExtensionController", mainWebView);
-        RELEASE_LOG_ERROR_IF(configuration._webExtensionController && configuration._webExtensionController != extensionContext()->extensionController()->wrapper(), Extensions, "%{public}@ returned by mainWebViewForWebExtensionContext: is not configured with the same _WKWebExtensionController as extension context; %{public}@ != %{public}@", mainWebView, configuration._webExtensionController, extensionContext()->extensionController()->wrapper());
+    auto *configuredExtensionController = mainWebView.configuration._webExtensionController;
+    auto *expectedExtensionController = extensionContext()->extensionController()->wrapper();
+    if (!configuredExtensionController || configuredExtensionController != expectedExtensionController) {
+        RELEASE_LOG_ERROR_IF(!configuredExtensionController, Extensions, "%{public}@ returned by mainWebViewForWebExtensionContext: is not configured with a _WKWebExtensionController", mainWebView);
+        RELEASE_LOG_ERROR_IF(configuredExtensionController && configuredExtensionController != expectedExtensionController, Extensions, "%{public}@ returned by mainWebViewForWebExtensionContext: is not configured with the same _WKWebExtensionController as extension context; %{public}@ != %{public}@", mainWebView, configuredExtensionController, expectedExtensionController);
         ASSERT_NOT_REACHED();
         return nil;
     }
@@ -877,7 +872,6 @@ void WebExtensionTab::duplicate(const WebExtensionTabParameters& parameters, Com
             return;
         }
 
-        THROW_UNLESS([duplicatedTab conformsToProtocol:@protocol(_WKWebExtensionTab)], @"Object passed to completionHandler of duplicateForWebExtensionContext:withOptions:completionHandler: does not conform to the _WKWebExtensionTab protocol");
         completionHandler(RefPtr { m_extensionContext->getOrCreateTab(duplicatedTab).ptr() });
     }).get()];
 }

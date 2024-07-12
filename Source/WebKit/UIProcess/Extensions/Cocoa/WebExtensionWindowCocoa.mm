@@ -58,7 +58,6 @@ WebExtensionWindow::WebExtensionWindow(const WebExtensionContext& context, _WKWe
     , m_respondsToFocus([delegate respondsToSelector:@selector(focusForWebExtensionContext:completionHandler:)])
     , m_respondsToClose([delegate respondsToSelector:@selector(closeForWebExtensionContext:completionHandler:)])
 {
-    ASSERT([delegate conformsToProtocol:@protocol(_WKWebExtensionWindow)]);
 }
 
 WebExtensionContext* WebExtensionWindow::extensionContext() const
@@ -158,23 +157,20 @@ bool WebExtensionWindow::extensionHasAccess() const
 
 WebExtensionWindow::TabVector WebExtensionWindow::tabs(SkipValidation skipValidation) const
 {
-    TabVector result;
-
     if (!isValid() || !m_respondsToTabs || !m_respondsToActiveTab)
-        return result;
+        return { };
 
     auto *tabs = [m_delegate tabsForWebExtensionContext:m_extensionContext->wrapper()];
     THROW_UNLESS([tabs isKindOfClass:NSArray.class], @"Object returned by tabsForWebExtensionContext: is not an array");
 
     if (!tabs.count)
-        return result;
+        return { };
 
+    TabVector result;
     result.reserveInitialCapacity(tabs.count);
 
-    for (id<_WKWebExtensionTab> tab in tabs) {
-        THROW_UNLESS([tab conformsToProtocol:@protocol(_WKWebExtensionTab)], @"Object in array returned by tabsForWebExtensionContext: does not conform to the _WKWebExtensionTab protocol");
+    for (id tab in tabs)
         result.append(m_extensionContext->getOrCreateTab(tab));
-    }
 
     if (skipValidation == SkipValidation::No) {
         // SkipValidation::Yes is needed to avoid reentry, since activeTab() calls tabs().
@@ -197,8 +193,6 @@ RefPtr<WebExtensionTab> WebExtensionWindow::activeTab(SkipValidation skipValidat
     auto activeTab = [m_delegate activeTabForWebExtensionContext:m_extensionContext->wrapper()];
     if (!activeTab)
         return nullptr;
-
-    THROW_UNLESS([activeTab conformsToProtocol:@protocol(_WKWebExtensionTab)], @"Object returned by activeTabForWebExtensionContext: does not conform to the _WKWebExtensionTab protocol");
 
     Ref result = m_extensionContext->getOrCreateTab(activeTab);
 

@@ -589,7 +589,12 @@ private:
 
     void performTasksAfterBackgroundContentLoads();
 
+#ifdef NDEBUG
+    // This is method is a no-op in release builds since it has a performance impact with little benefit to release builds.
+    void reportWebViewConfigurationErrorIfNeeded(const WebExtensionTab&) const { };
+#else
     void reportWebViewConfigurationErrorIfNeeded(const WebExtensionTab&) const;
+#endif
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     URL inspectorBackgroundPageURL() const;

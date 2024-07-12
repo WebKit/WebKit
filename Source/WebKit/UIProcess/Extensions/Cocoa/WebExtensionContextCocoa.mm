@@ -1771,7 +1771,7 @@ Ref<WebExtensionWindow> WebExtensionContext::getOrCreateWindow(_WKWebExtensionWi
 
 RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIdentifier identifier, std::optional<WebPageProxyIdentifier> webPageProxyIdentifier, IgnoreExtensionAccess ignoreExtensionAccess) const
 {
-    if (!isValid(identifier))
+    if (UNLIKELY(!isValid(identifier)))
         return nullptr;
 
     RefPtr<WebExtensionWindow> result;
@@ -1787,7 +1787,7 @@ RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIden
     } else
         result = m_windowMap.get(identifier);
 
-    if (!result) {
+    if (UNLIKELY(!result)) {
         if (isCurrent(identifier)) {
             if (webPageProxyIdentifier)
                 RELEASE_LOG_ERROR(Extensions, "Current window for page %{public}llu was not found", webPageProxyIdentifier.value().toUInt64());
@@ -1799,7 +1799,7 @@ RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIden
         return nullptr;
     }
 
-    if (!result->isValid()) {
+    if (UNLIKELY(!result->isValid())) {
         RELEASE_LOG_ERROR(Extensions, "Window %{public}llu has nil delegate; reference not removed via didCloseWindow: before release", result->identifier().toUInt64());
         forgetWindow(result->identifier());
         return nullptr;
@@ -1849,16 +1849,16 @@ Ref<WebExtensionTab> WebExtensionContext::getOrCreateTab(_WKWebExtensionTab *del
 
 RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebExtensionTabIdentifier identifier, IgnoreExtensionAccess ignoreExtensionAccess) const
 {
-    if (!isValid(identifier))
+    if (UNLIKELY(!isValid(identifier)))
         return nullptr;
 
     RefPtr result = m_tabMap.get(identifier);
-    if (!result) {
+    if (UNLIKELY(!result)) {
         RELEASE_LOG_ERROR(Extensions, "Tab %{public}llu was not found", identifier.toUInt64());
         return nullptr;
     }
 
-    if (!result->isValid()) {
+    if (UNLIKELY(!result->isValid())) {
         RELEASE_LOG_ERROR(Extensions, "Tab %{public}llu has nil delegate; reference not removed via didCloseTab: before release", identifier.toUInt64());
         forgetTab(identifier);
         return nullptr;
@@ -1955,12 +1955,12 @@ RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifie
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 
 finish:
-    if (!result) {
-        RELEASE_LOG_ERROR(Extensions, "Tab for page %{public}llu was not found", webPageProxyIdentifier.toUInt64());
+    if (UNLIKELY(!result)) {
+        RELEASE_LOG_DEBUG(Extensions, "Tab for page %{public}llu was not found", webPageProxyIdentifier.toUInt64());
         return nullptr;
     }
 
-    if (!result->isValid()) {
+    if (UNLIKELY(!result->isValid())) {
         RELEASE_LOG_ERROR(Extensions, "Tab %{public}llu has nil delegate; reference not removed via didCloseTab: before release", result->identifier().toUInt64());
         forgetTab(result->identifier());
         return nullptr;
@@ -2003,15 +2003,12 @@ void WebExtensionContext::populateWindowsAndTabs()
         auto *openWindows = [delegate webExtensionController:extensionController()->wrapper() openWindowsForExtensionContext:wrapper()];
         THROW_UNLESS([openWindows isKindOfClass:NSArray.class], @"Object returned by webExtensionController:openWindowsForExtensionContext: is not an array");
 
-        for (id<_WKWebExtensionWindow> windowDelegate in openWindows) {
-            THROW_UNLESS([windowDelegate conformsToProtocol:@protocol(_WKWebExtensionWindow)], @"Object in array returned by webExtensionController:openWindowsForExtensionContext: does not conform to the _WKWebExtensionWindow protocol");
+        for (id windowDelegate in openWindows)
             didOpenWindow(getOrCreateWindow(windowDelegate), UpdateWindowOrder::No, SuppressEvents::Yes);
-        }
     }
 
     if ([delegate respondsToSelector:@selector(webExtensionController:focusedWindowForExtensionContext:)]) {
-        id<_WKWebExtensionWindow> focusedWindow = [delegate webExtensionController:extensionController()->wrapper() focusedWindowForExtensionContext:wrapper()];
-        THROW_UNLESS(!focusedWindow || [focusedWindow conformsToProtocol:@protocol(_WKWebExtensionWindow)], @"Object returned by webExtensionController:focusedWindowForExtensionContext: does not conform to the _WKWebExtensionWindow protocol");
+        id focusedWindow = [delegate webExtensionController:extensionController()->wrapper() focusedWindowForExtensionContext:wrapper()];
         didFocusWindow(focusedWindow ? getOrCreateWindow(focusedWindow).ptr() : nullptr, SuppressEvents::Yes);
     }
 }
@@ -3533,6 +3530,8 @@ void WebExtensionContext::wakeUpBackgroundContentIfNecessaryToFireEvents(EventLi
     wakeUpBackgroundContentIfNecessary(WTFMove(completionHandler));
 }
 
+#ifndef NDEBUG
+// This is only defined in debug builds since it has a performance impact with little benefit to release builds.
 void WebExtensionContext::reportWebViewConfigurationErrorIfNeeded(const WebExtensionTab& tab) const
 {
     if (!isLoaded())
@@ -3543,6 +3542,7 @@ void WebExtensionContext::reportWebViewConfigurationErrorIfNeeded(const WebExten
 
     tab.mainWebView();
 }
+#endif
 
 bool WebExtensionContext::decidePolicyForNavigationAction(WKWebView *webView, WKNavigationAction *navigationAction)
 {

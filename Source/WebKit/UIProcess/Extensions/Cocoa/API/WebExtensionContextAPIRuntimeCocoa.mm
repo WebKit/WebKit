@@ -108,8 +108,6 @@ void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(Expected
             return;
         }
 
-        THROW_UNLESS([newTab conformsToProtocol:@protocol(_WKWebExtensionTab)], @"Object returned by webExtensionController:openNewTabWithOptions:forExtensionContext:completionHandler: does not conform to the _WKWebExtensionTab protocol");
-
         completionHandler({ });
     }).get()];
 }
