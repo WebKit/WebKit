@@ -470,7 +470,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
             || type == CachedResource::Type::CSSStyleSheet) {
 
             if (RefPtr frame = this->frame())
-                return MixedContentChecker::frameAndAncestorsCanRunInsecureContent(*frame, m_document->securityOrigin(), url);
+                return MixedContentChecker::frameAndAncestorsCanRunInsecureContent(*frame, m_document->protectedSecurityOrigin(), url);
         }
     }
 
@@ -627,9 +627,11 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
     }
 
     // SVG Images have unique security rules that prevent all subresource requests except for data urls.
-    if (type != CachedResource::Type::MainResource && frame() && frame()->page()) {
-        if (frame()->protectedPage()->chrome().client().isSVGImageChromeClient() && !url.protocolIsData())
-            return false;
+    if (type != CachedResource::Type::MainResource && frame()) {
+        if (RefPtr page = frame()->page()) {
+            if (page->chrome().client().isSVGImageChromeClient() && !url.protocolIsData())
+                return false;
+        }
     }
 
     // Last of all, check for insecure content. We do this last so that when folks block insecure content with a CSP policy, they don't get a warning.
@@ -646,7 +648,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
 bool CachedResourceLoader::canRequestAfterRedirection(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options, const URL& preRedirectURL) const
 {
     if (m_document) {
-        if (!m_document->securityOrigin().canDisplay(url, OriginAccessPatternsForWebProcess::singleton())) {
+        if (!m_document->protectedSecurityOrigin()->canDisplay(url, OriginAccessPatternsForWebProcess::singleton())) {
             FrameLoader::reportLocalLoadFailed(protectedFrame().get(), url.stringCenterEllipsizedToLength());
             LOG(ResourceLoading, "CachedResourceLoader::canRequestAfterRedirection URL was not allowed by SecurityOrigin::canDisplay");
             CACHEDRESOURCELOADER_RELEASE_LOG("canRequestAfterRedirection: URL was not allowed by SecurityOrigin::canDisplay");
@@ -802,7 +804,7 @@ bool CachedResourceLoader::canRequestInContentDispositionAttachmentSandbox(Cache
     // FIXME: Do we want to expand this to all resource types that the mixed content checker would consider active content?
     switch (type) {
     case CachedResource::Type::MainResource:
-        if (auto* ownerElement = frame() ? frame()->ownerElement() : nullptr) {
+        if (RefPtr ownerElement = frame() ? frame()->ownerElement() : nullptr) {
             document = &ownerElement->document();
             break;
         }
@@ -947,13 +949,13 @@ void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, Ca
     // FetchMetadata depends on PSL to determine same-site relationships and without this
     // ability it is best to not set any FetchMetadata headers as sites generally expect
     // all of them or none.
-    if (frameLoader.frame().document() && !frameLoader.frame().document()->quirks().shouldDisableFetchMetadata()) {
+    if (frameLoader.frame().document() && !frameLoader.frame().protectedDocument()->quirks().shouldDisableFetchMetadata()) {
         auto site = computeFetchMetadataSite(request.resourceRequest(), type, request.options().mode, frameLoader.frame(), frameLoader.frame().isMainFrame() && m_documentLoader && m_documentLoader->isRequestFromClientOrUserInput());
         updateRequestFetchMetadataHeaders(request.resourceRequest(), request.options(), site);
     }
     request.updateUserAgentHeader(frameLoader);
 
-    if (frameLoader.frame().loader().loadType() == FrameLoadType::ReloadFromOrigin)
+    if (frameLoader.frame().checkedLoader()->loadType() == FrameLoadType::ReloadFromOrigin)
         request.updateCacheModeIfNeeded(cachePolicy(type, request.resourceRequest().url()));
     request.updateAccordingCacheMode();
     request.updateAcceptEncodingHeader();
@@ -1526,7 +1528,7 @@ void CachedResourceLoader::printAccessDeniedMessage(const URL& url) const
     if (!m_document || m_document->url().isNull())
         message = makeString("Unsafe attempt to load URL "_s, url.stringCenterEllipsizedToLength(), '.');
     else
-        message = makeString("Unsafe attempt to load URL "_s, url.stringCenterEllipsizedToLength(), " from origin "_s, m_document->securityOrigin().toString(), ". Domains, protocols and ports must match.\n"_s);
+        message = makeString("Unsafe attempt to load URL "_s, url.stringCenterEllipsizedToLength(), " from origin "_s, m_document->protectedSecurityOrigin()->toString(), ". Domains, protocols and ports must match.\n"_s);
 
     if (RefPtr frameDocument = frame->document())
         frameDocument->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
