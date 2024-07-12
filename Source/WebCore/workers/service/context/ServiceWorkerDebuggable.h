@@ -42,6 +42,9 @@ public:
     ServiceWorkerDebuggable(ServiceWorkerThreadProxy&, const ServiceWorkerContextData&);
     ~ServiceWorkerDebuggable() = default;
 
+    void ref() const final;
+    void deref() const final;
+
     Inspector::RemoteControllableTarget::Type type() const final { return Inspector::RemoteControllableTarget::Type::ServiceWorker; }
 
     String name() const final { return "ServiceWorker"_s; }

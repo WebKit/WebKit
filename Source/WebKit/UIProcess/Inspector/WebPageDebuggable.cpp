@@ -41,6 +41,16 @@ WebPageDebuggable::WebPageDebuggable(WebPageProxy& page)
 {
 }
 
+void WebPageDebuggable::ref() const
+{
+    m_page.ref();
+}
+
+void WebPageDebuggable::deref() const
+{
+    m_page.deref();
+}
+
 String WebPageDebuggable::name() const
 {
     if (!m_page.mainFrame())

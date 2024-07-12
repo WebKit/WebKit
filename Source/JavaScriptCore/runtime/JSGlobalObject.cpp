@@ -823,7 +823,7 @@ void JSGlobalObject::init(VM& vm)
 
 #if ENABLE(REMOTE_INSPECTOR)
     m_inspectorController = makeUnique<Inspector::JSGlobalObjectInspectorController>(*this);
-    m_inspectorDebuggable = makeUnique<JSGlobalObjectDebuggable>(*this);
+    m_inspectorDebuggable = JSGlobalObjectDebuggable::create(*this);
     m_inspectorDebuggable->init();
     m_consoleClient = m_inspectorController->consoleClient();
 #endif

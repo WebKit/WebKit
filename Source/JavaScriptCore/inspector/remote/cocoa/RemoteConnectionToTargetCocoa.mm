@@ -122,7 +122,8 @@ RemoteConnectionToTarget::~RemoteConnectionToTarget()
 
 std::optional<TargetID> RemoteConnectionToTarget::targetIdentifier() const
 {
-    return m_target ? std::optional<TargetID>(m_target->targetIdentifier()) : std::nullopt;
+    RefPtr<RemoteControllableTarget> target = m_target.get();
+    return target ? std::optional<TargetID>(target->targetIdentifier()) : std::nullopt;
 }
 
 NSString *RemoteConnectionToTarget::connectionIdentifier() const
@@ -166,16 +167,17 @@ bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automatica
 
     dispatchAsyncOnTarget([this, targetIdentifier, isAutomaticInspection, automaticallyPause, protectedThis = Ref { *this }]() {
         Locker locker { m_targetMutex };
+        RefPtr<RemoteControllableTarget> target = m_target.get();
 
-        if (!m_target || !m_target->remoteControlAllowed()) {
+        if (!target || !target->remoteControlAllowed()) {
             RemoteInspector::singleton().setupFailed(targetIdentifier);
             m_target = nullptr;
-        } else if (auto* inspectionTarget = dynamicDowncast<RemoteInspectionTarget>(m_target)) {
+        } else if (RefPtr inspectionTarget = dynamicDowncast<RemoteInspectionTarget>(target)) {
             inspectionTarget->connect(*this, isAutomaticInspection, automaticallyPause);
             m_connected = true;
 
             RemoteInspector::singleton().updateTargetListing(targetIdentifier);
-        } else if (auto* automationTarget = dynamicDowncast<RemoteAutomationTarget>(m_target)) {
+        } else if (RefPtr automationTarget = dynamicDowncast<RemoteAutomationTarget>(target)) {
             automationTarget->connect(*this);
             m_connected = true;
 
@@ -195,16 +197,17 @@ void RemoteConnectionToTarget::targetClosed()
 
 void RemoteConnectionToTarget::close()
 {
-    auto targetIdentifier = m_target ? m_target->targetIdentifier() : 0;
+    RefPtr<RemoteControllableTarget> target = m_target.get();
+    auto targetIdentifier = target ? target->targetIdentifier() : 0;
 
-    if (auto* automationTarget = dynamicDowncast<RemoteAutomationTarget>(m_target))
+    if (RefPtr automationTarget = dynamicDowncast<RemoteAutomationTarget>(target))
         automationTarget->setIsPendingTermination();
     
     dispatchAsyncOnTarget([this, targetIdentifier, protectedThis = Ref { *this }]() {
         Locker locker { m_targetMutex };
-        if (m_target) {
+        if (RefPtr<RemoteControllableTarget> target = m_target.get()) {
             if (m_connected)
-                m_target->disconnect(*this);
+                target->disconnect(*this);
 
             m_target = nullptr;
             if (targetIdentifier)
@@ -216,12 +219,12 @@ void RemoteConnectionToTarget::close()
 void RemoteConnectionToTarget::sendMessageToTarget(NSString *message)
 {
     dispatchAsyncOnTarget([this, strongMessage = retainPtr(message), protectedThis = Ref { *this }]() {
-        RemoteControllableTarget* target = nullptr;
+        RefPtr<RemoteControllableTarget> target;
         {
             Locker locker { m_targetMutex };
-            if (!m_target)
+            target = m_target.get();
+            if (!target)
                 return;
-            target = m_target;
         }
 
         target->dispatchMessageFromRemote(strongMessage.get());
@@ -238,7 +241,8 @@ void RemoteConnectionToTarget::sendMessageToFrontend(const String& message)
 
 void RemoteConnectionToTarget::setupRunLoop()
 {
-    CFRunLoopRef targetRunLoop = m_target->targetRunLoop();
+    RefPtr<RemoteControllableTarget> target = m_target.get();
+    CFRunLoopRef targetRunLoop = target->targetRunLoop();
     if (!targetRunLoop) {
         RemoteTargetInitializeGlobalQueue();
         return;

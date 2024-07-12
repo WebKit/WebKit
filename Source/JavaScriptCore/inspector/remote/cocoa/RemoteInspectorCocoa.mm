@@ -623,8 +623,8 @@ void RemoteInspector::receivedSetupMessage(NSDictionary *userInfo)
         return;
 
     // Attempt to create a connection. This may fail if the page already has an inspector or if it disallows inspection.
-    RemoteControllableTarget* target = findResult->value;
-    auto connectionToTarget = adoptRef(*new RemoteConnectionToTarget(target, connectionIdentifier, sender));
+    RefPtr<RemoteControllableTarget> target = findResult->value.get();
+    auto connectionToTarget = adoptRef(*new RemoteConnectionToTarget(target.get(), connectionIdentifier, sender));
 
     if (is<RemoteInspectionTarget>(target)) {
         bool isAutomaticInspection = m_pausedAutomaticInspectionCandidates.contains(target->targetIdentifier());
@@ -715,7 +715,7 @@ void RemoteInspector::receivedIndicateMessage(NSDictionary *userInfo)
         return;
 
     dispatchAsyncOnMainThreadWithWebThreadLockIfNeeded(^{
-        RemoteControllableTarget* target = nullptr;
+        RefPtr<RemoteControllableTarget> target;
         {
             Locker locker { m_mutex };
 
@@ -723,9 +723,9 @@ void RemoteInspector::receivedIndicateMessage(NSDictionary *userInfo)
             if (findResult == m_targetMap.end())
                 return;
 
-            target = findResult->value;
+            target = findResult->value.get();
         }
-        if (auto* inspectionTarget = dynamicDowncast<RemoteInspectionTarget>(target))
+        if (RefPtr inspectionTarget = dynamicDowncast<RemoteInspectionTarget>(target))
             inspectionTarget->setIndicating(indicateEnabled);
     });
 }

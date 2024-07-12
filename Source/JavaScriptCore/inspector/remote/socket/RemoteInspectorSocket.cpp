@@ -228,15 +228,15 @@ void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const Strin
 
 void RemoteInspector::setup(TargetID targetIdentifier)
 {
-    RemoteControllableTarget* target;
+    RefPtr<RemoteControllableTarget> target;
     {
         Locker locker { m_mutex };
-        target = m_targetMap.get(targetIdentifier);
+        target = m_targetMap.get(targetIdentifier).get();
         if (!target)
             return;
     }
 
-    auto connectionToTarget = adoptRef(*new RemoteConnectionToTarget(*target));
+    auto connectionToTarget = adoptRef(*new RemoteConnectionToTarget(target.get()));
     ASSERT(is<RemoteInspectionTarget>(target) || is<RemoteAutomationTarget>(target));
     if (!connectionToTarget->setup()) {
         connectionToTarget->close();
@@ -315,7 +315,7 @@ void RemoteInspector::frontendDidClose(const Event& event)
     RefPtr<RemoteConnectionToTarget> connectionToTarget;
     {
         Locker locker { m_mutex };
-        RemoteControllableTarget* target = m_targetMap.get(event.targetID.value());
+        RefPtr<RemoteControllableTarget> target = m_targetMap.get(event.targetID.value()).get();
         if (!target)
             return;
 

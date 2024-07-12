@@ -227,7 +227,7 @@ TargetListing RemoteInspector::listingForTarget(const RemoteControllableTarget& 
 
 void RemoteInspector::updateTargetListing(TargetID targetIdentifier)
 {
-    auto target = m_targetMap.get(targetIdentifier);
+    RefPtr<RemoteControllableTarget> target = m_targetMap.get(targetIdentifier).get();
     if (!target)
         return;
 

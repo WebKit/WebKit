@@ -700,7 +700,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #endif
     , m_inspectorController(makeUnique<WebPageInspectorController>(*this))
 #if ENABLE(REMOTE_INSPECTOR)
-    , m_inspectorDebuggable(makeUnique<WebPageDebuggable>(*this))
+    , m_inspectorDebuggable(makeUniqueWithoutRefCountedCheck<WebPageDebuggable>(*this))
 #endif
     , m_corsDisablingPatterns(m_configuration->corsDisablingPatterns())
 #if ENABLE(APP_BOUND_DOMAINS)

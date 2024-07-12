@@ -113,6 +113,9 @@ public:
     WebAutomationSession();
     ~WebAutomationSession();
 
+    void ref() const final { API::ObjectImpl<API::Object::Type::AutomationSession>::ref(); }
+    void deref() const final { API::ObjectImpl<API::Object::Type::AutomationSession>::deref(); }
+
     void setClient(std::unique_ptr<API::AutomationSessionClient>&&);
 
     void setSessionIdentifier(const String& sessionIdentifier) { m_sessionIdentifier = sessionIdentifier; }

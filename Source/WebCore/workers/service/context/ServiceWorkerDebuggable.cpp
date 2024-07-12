@@ -41,6 +41,16 @@ ServiceWorkerDebuggable::ServiceWorkerDebuggable(ServiceWorkerThreadProxy& servi
 {
 }
 
+void ServiceWorkerDebuggable::ref() const
+{
+    m_serviceWorkerThreadProxy.ref();
+}
+
+void ServiceWorkerDebuggable::deref() const
+{
+    m_serviceWorkerThreadProxy.deref();
+}
+
 void ServiceWorkerDebuggable::connect(FrontendChannel& channel, bool, bool)
 {
     m_serviceWorkerThreadProxy.inspectorProxy().connectToWorker(channel);

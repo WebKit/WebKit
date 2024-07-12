@@ -45,21 +45,22 @@ RemoteConnectionToTarget::~RemoteConnectionToTarget() = default;
 bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automaticallyPause)
 {
     Locker locker { m_targetMutex };
-    if (!m_target)
+    RefPtr<RemoteControllableTarget> target = m_target.get();
+    if (!target)
         return false;
 
     auto targetIdentifier = this->targetIdentifier().value_or(0);
 
-    if (!m_target || !m_target->remoteControlAllowed()) {
+    if (!target->remoteControlAllowed()) {
         RemoteInspector::singleton().setupFailed(targetIdentifier);
         m_target = nullptr;
-    } else if (auto* target = dynamicDowncast<RemoteInspectionTarget>(m_target)) {
-        target->connect(*this, isAutomaticInspection, automaticallyPause);
+    } else if (RefPtr inspectionTarget = dynamicDowncast<RemoteInspectionTarget>(target)) {
+        inspectionTarget->connect(*this, isAutomaticInspection, automaticallyPause);
         m_connected = true;
 
         RemoteInspector::singleton().updateTargetListing(targetIdentifier);
-    } else if (auto* target = dynamicDowncast<RemoteAutomationTarget>(m_target)) {
-        target->connect(*this);
+    } else if (RefPtr automationTarget = dynamicDowncast<RemoteAutomationTarget>(target)) {
+        automationTarget->connect(*this);
         m_connected = true;
 
         RemoteInspector::singleton().updateTargetListing(targetIdentifier);
@@ -70,12 +71,12 @@ bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automatica
 
 void RemoteConnectionToTarget::sendMessageToTarget(String&& message)
 {
-    RemoteControllableTarget* target = nullptr;
+    RefPtr<RemoteControllableTarget> target;
     {
         Locker locker { m_targetMutex };
-        if (!m_target)
+        target = m_target.get();
+        if (!target)
             return;
-        target = m_target;
     }
 
     target->dispatchMessageFromRemote(WTFMove(message));
@@ -85,13 +86,14 @@ void RemoteConnectionToTarget::close()
 {
     RunLoop::current().dispatch([this, protectThis = Ref { *this }] {
         Locker locker { m_targetMutex };
-        if (!m_target)
+        RefPtr<RemoteControllableTarget> target = m_target.get();
+        if (!target)
             return;
 
-        auto targetIdentifier = m_target->targetIdentifier();
+        auto targetIdentifier = target->targetIdentifier();
 
         if (m_connected)
-            m_target->disconnect(*this);
+            target->disconnect(*this);
 
         m_target = nullptr;
 
@@ -107,15 +109,17 @@ void RemoteConnectionToTarget::targetClosed()
 
 std::optional<TargetID> RemoteConnectionToTarget::targetIdentifier() const
 {
-    return m_target ? std::optional<TargetID>(m_target->targetIdentifier()) : std::nullopt;
+    RefPtr<RemoteControllableTarget> target = m_target.get();
+    return target ? std::optional<TargetID>(target->targetIdentifier()) : std::nullopt;
 }
 
 void RemoteConnectionToTarget::sendMessageToFrontend(const String& message)
 {
-    if (!m_target)
+    RefPtr<RemoteControllableTarget> target = m_target.get();
+    if (!target)
         return;
 
-    RemoteInspector::singleton().sendMessageToRemote(m_target->targetIdentifier(), message);
+    RemoteInspector::singleton().sendMessageToRemote(target->targetIdentifier(), message);
 }
 
 } // namespace Inspector

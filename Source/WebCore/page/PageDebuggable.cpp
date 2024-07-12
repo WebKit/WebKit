@@ -44,6 +44,16 @@ PageDebuggable::PageDebuggable(Page& page)
 {
 }
 
+void PageDebuggable::ref() const
+{
+    m_page.ref();
+}
+
+void PageDebuggable::deref() const
+{
+    m_page.deref();
+}
+
 String PageDebuggable::name() const
 {
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());

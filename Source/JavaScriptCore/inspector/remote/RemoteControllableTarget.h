@@ -28,6 +28,7 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "JSExportMacros.h"
+#include <wtf/CanMakeWeakPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,9 +42,12 @@ class FrontendChannel;
 
 using TargetID = unsigned;
 
-class JS_EXPORT_PRIVATE RemoteControllableTarget {
+class JS_EXPORT_PRIVATE RemoteControllableTarget : public CanMakeWeakPtr<RemoteControllableTarget> {
 public:
     virtual ~RemoteControllableTarget();
+
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
 
     void init();
     void update();

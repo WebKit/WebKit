@@ -271,7 +271,7 @@ private:
     // from any thread.
     Lock m_mutex;
 
-    HashMap<TargetID, RemoteControllableTarget*> m_targetMap;
+    HashMap<TargetID, WeakPtr<RemoteControllableTarget>> m_targetMap;
     HashMap<TargetID, RefPtr<RemoteConnectionToTarget>> m_targetConnectionMap;
     HashMap<TargetID, TargetListing> m_targetListingMap;
 

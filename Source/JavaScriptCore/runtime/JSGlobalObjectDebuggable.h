@@ -28,8 +28,10 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "RemoteInspectionTarget.h"
+#include "Weak.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace Inspector {
 class FrontendChannel;
@@ -40,12 +42,16 @@ namespace JSC {
 
 class JSGlobalObject;
 
-class JSGlobalObjectDebuggable final : public Inspector::RemoteInspectionTarget {
+class JSGlobalObjectDebuggable final : public Inspector::RemoteInspectionTarget, public ThreadSafeRefCounted<JSGlobalObjectDebuggable> {
     WTF_MAKE_TZONE_ALLOCATED(JSGlobalObjectDebuggable);
     WTF_MAKE_NONCOPYABLE(JSGlobalObjectDebuggable);
 public:
-    JSGlobalObjectDebuggable(JSGlobalObject&);
+    static Ref<JSGlobalObjectDebuggable> create(JSGlobalObject&);
+
     ~JSGlobalObjectDebuggable() final { }
+
+    void ref() const final { ThreadSafeRefCounted<JSGlobalObjectDebuggable>::ref(); }
+    void deref() const final { ThreadSafeRefCounted<JSGlobalObjectDebuggable>::deref(); }
 
     Inspector::RemoteControllableTarget::Type type() const final { return m_type; }
     void setIsITML() { m_type = Inspector::RemoteControllableTarget::Type::ITML; }
@@ -61,7 +67,9 @@ public:
     void pauseWaitingForAutomaticInspection() final;
 
 private:
-    JSGlobalObject& m_globalObject;
+    explicit JSGlobalObjectDebuggable(JSGlobalObject&);
+
+    Weak<JSGlobalObject> m_globalObject;
     Inspector::RemoteControllableTarget::Type m_type { Inspector::RemoteControllableTarget::Type::JavaScript };
 };
 

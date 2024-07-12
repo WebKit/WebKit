@@ -29,6 +29,7 @@
 
 #include <JavaScriptCore/RemoteInspectionTarget.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -40,6 +41,9 @@ class WebPageDebuggable final : public Inspector::RemoteInspectionTarget {
 public:
     WebPageDebuggable(WebPageProxy&);
     ~WebPageDebuggable() = default;
+
+    void ref() const final;
+    void deref() const final;
 
     Inspector::RemoteControllableTarget::Type type() const final { return Inspector::RemoteControllableTarget::Type::WebPage; }
 

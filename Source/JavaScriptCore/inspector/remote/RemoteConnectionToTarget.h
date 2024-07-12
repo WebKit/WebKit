@@ -31,6 +31,7 @@
 #include "RemoteControllableTarget.h"
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/Function.h>
@@ -103,7 +104,7 @@ private:
     Lock m_queueMutex;
 #endif
 
-    RemoteControllableTarget* m_target { nullptr };
+    WeakPtr<RemoteControllableTarget> m_target;
     bool m_connected { false };
 
 #if PLATFORM(COCOA)
