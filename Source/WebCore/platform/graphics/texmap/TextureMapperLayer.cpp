@@ -44,6 +44,7 @@ public:
     TextureMapperLayer* backdropLayer { nullptr };
     TextureMapperLayer* replicaLayer { nullptr };
     bool preserves3D { false };
+    Vector<IntRect> holePunchRects;
 };
 
 struct TextureMapperLayer::ComputeTransformData {
@@ -260,7 +261,27 @@ void TextureMapperLayer::paintSelf(TextureMapperPaintOptions& options)
         options.textureMapper.beginClip(transform, m_state.contentsClippingRect);
     }
 
+    bool isHolePunchInPreserve3D = options.preserves3D && contentsLayer->isHolePunchBuffer();
+    if (isHolePunchInPreserve3D) {
+        // If we're in preserve3D mode, then we're painting into an intermediate surface. This means that the
+        // elements are not painted into their final position, as it depends on the offset applied when painting the
+        // intermediate surface. But holepunch buffers need to know the final position in order to position the video
+        // sink and draw the transparent rectangle in the main framebuffer. Options.offset was applied to remove the
+        // offset from the elements that is instead applied to the intermediate surface, so we undo that. That way the
+        // transform shows the final position, and paintToTextureMapper can properly notify the video sink.
+        transform.translate(-options.offset.width(), -options.offset.height());
+    }
+
     contentsLayer->paintToTextureMapper(options.textureMapper, m_state.contentsRect, transform, options.opacity);
+
+    if (isHolePunchInPreserve3D) {
+        // Once the video sink was notified of the position, store the rect in the list of rects that need to be
+        // painted into the main framebuffer and reapply options.offset.
+        // The holepunch rects stored will be painted transparent into the main framebuffer before blending the
+        // intermediate surface.
+        options.holePunchRects.append(enclosingIntRect(transform.mapRect(m_state.contentsRect)));
+        transform.translate(options.offset.width(), options.offset.height());
+    }
 
     if (shouldClip)
         options.textureMapper.endClip();
@@ -831,7 +852,20 @@ void TextureMapperLayer::paintWith3DRenderingContext(TextureMapperPaintOptions& 
                     options.textureMapper.bindSurface(options.surface.get());
                     paintSelfAndChildrenWithReplica(options);
                 }
-                commitSurface(options, *surface, tileRect, options.opacity);
+
+                // Once the subtree is painted into the intermediate surface, we need to blend it into the main framebuffer.
+                tileRect.move(options.offset);
+                options.textureMapper.bindSurface(options.surface.get());
+
+                // There can't be nested preserves3D contexts, so the previous bindSurface always puts us on the
+                // main framebuffer. Draw the holepunch rectangles that we got from the subtree before blending
+                // the intermediate texture.
+                for (auto rect : options.holePunchRects)
+                    options.textureMapper.drawSolidColor(rect, { }, Color::transparentBlack, false);
+                options.holePunchRects.clear();
+
+                // And finally, blend the intermediate surface.
+                options.textureMapper.drawTexture(*surface, tileRect, { }, options.opacity);
             }
         }
     }

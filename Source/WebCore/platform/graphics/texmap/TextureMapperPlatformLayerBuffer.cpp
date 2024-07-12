@@ -158,6 +158,14 @@ void TextureMapperPlatformLayerBuffer::paintToTextureMapper(TextureMapper& textu
         });
 }
 
+bool TextureMapperPlatformLayerBuffer::isHolePunchBuffer() const
+{
+    // Holepunch buffers are the only ones that have the ShouldNotBlend flag.
+    // All of the other buffers have to be blended, but holepunch ones need
+    // to overwrite the existent content to render the transparent rectangle.
+    return m_extraFlags.contains(TextureMapperFlags::ShouldNotBlend);
+}
+
 } // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)

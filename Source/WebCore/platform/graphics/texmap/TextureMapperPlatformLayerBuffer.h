@@ -70,6 +70,8 @@ public:
 
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
 
+    bool isHolePunchBuffer() const override;
+
     bool canReuseWithoutReset(const IntSize&, GLint internalFormat);
     BitmapTexture& texture() { return *m_texture; }
 
