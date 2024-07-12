@@ -116,7 +116,6 @@ public:
     RefPtr<EditCommandComposition> protectedComposition() const { return composition(); }
     EditCommandComposition& ensureComposition();
 
-    virtual bool isCreateLinkCommand() const;
     virtual bool isTypingCommand() const;
     virtual bool isDictationCommand() const { return false; }
     virtual bool preservesTypingStyle() const;
