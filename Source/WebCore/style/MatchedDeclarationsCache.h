@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AnchorPositionEvaluator.h"
 #include "MatchResult.h"
 #include "RenderStyle.h"
 #include "Timer.h"
@@ -42,7 +43,7 @@ public:
     explicit MatchedDeclarationsCache(const Resolver&);
     ~MatchedDeclarationsCache();
 
-    static bool isCacheable(const Element&, const RenderStyle&, const RenderStyle& parentStyle);
+    static bool isCacheable(const Element&, const RenderStyle&, const RenderStyle& parentStyle, const AnchorPositionedStateMap*);
     static unsigned computeHash(const MatchResult&, const StyleCustomPropertyData& inheritedCustomProperties);
 
     struct Entry {

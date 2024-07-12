@@ -565,7 +565,8 @@ ResolutionContext TreeResolver::makeResolutionContext()
         &parent().style,
         parentBoxStyle(),
         m_documentElementStyle.get(),
-        &scope().selectorMatchingState
+        &scope().selectorMatchingState,
+        &m_anchorPositionedStateMap
     };
 }
 
@@ -1235,7 +1236,7 @@ std::unique_ptr<Update> TreeResolver::resolve()
 
         // We also need to ensure that style resolution visits any unresolved
         // anchor-positioned elements.
-        for (auto elementAndState : m_document.styleScope().anchorPositionedStateMap()) {
+        for (auto elementAndState : m_anchorPositionedStateMap) {
             if (!elementAndState.value->hasBeenResolved)
                 elementAndState.key.invalidateForResumingAnchorPositionedElementResolution();
         }
@@ -1339,7 +1340,7 @@ auto TreeResolver::updateAnchorPositioningState(Element& element, const RenderSt
     }
 
     // Check if this element is anchor-positioned
-    auto* anchorPositionedElementState = m_document.styleScope().anchorPositionedStateMap().get(element);
+    auto* anchorPositionedElementState = m_anchorPositionedStateMap.get(element);
     if (!anchorPositionedElementState)
         return AnchorPositionedElementAction::None;
 
@@ -1383,7 +1384,7 @@ auto TreeResolver::updateAnchorPositioningState(Element& element, const RenderSt
 // Precondition: containingBlock is nullptr if and only if containingBlock is the initial containing block.
 void TreeResolver::findAnchorsForAnchorPositionedElement(const Element& anchorPositionedElement, const Element* containingBlock)
 {
-    auto* anchorPositionedElementState = m_document.styleScope().anchorPositionedStateMap().get(anchorPositionedElement);
+    auto* anchorPositionedElementState = m_anchorPositionedStateMap.get(anchorPositionedElement);
     ASSERT(anchorPositionedElementState);
 
     // Check if we have already found the anchors for this anchor-positioned element

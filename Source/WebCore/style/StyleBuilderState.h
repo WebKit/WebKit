@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AnchorPositionEvaluator.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSToStyleMap.h"
 #include "CascadeLevel.h"
@@ -57,6 +58,7 @@ struct BuilderContext {
     const RenderStyle& parentStyle;
     const RenderStyle* rootElementStyle = nullptr;
     RefPtr<const Element> element = nullptr;
+    AnchorPositionedStateMap* anchorPositionedStateMap = nullptr;
 };
 
 class BuilderState {

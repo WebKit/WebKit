@@ -35,6 +35,8 @@ class Element;
 
 namespace Style {
 
+class BuilderState;
+
 struct AnchorPositionedElementState {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -49,7 +51,7 @@ using AnchorPositionedStateMap = WeakHashMap<Element, std::unique_ptr<AnchorPosi
 
 class AnchorPositionEvaluator {
 public:
-    static Length resolveAnchorValue(const CSSAnchorValue*, const Element*);
+    static Length resolveAnchorValue(const CSSAnchorValue*, const BuilderState&);
 };
 
 }
