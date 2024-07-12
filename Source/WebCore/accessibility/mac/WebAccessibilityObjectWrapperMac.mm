@@ -491,6 +491,31 @@ static id parameterizedAttributeValueForTesting(const RefPtr<AXCoreObject>&, NSS
 #define kAXConvertRelativeFrameParameterizedAttribute @"AXConvertRelativeFrame"
 #endif
 
+// Static C helper functions.
+
+// The CFAttributedStringType representation of the text associated with this accessibility
+// object that is specified by the given range.
+static NSAttributedString *attributedStringForNSRange(const AXCoreObject& backingObject, NSRange range)
+{
+    if (!range.length)
+        return nil;
+
+    auto markerRange = backingObject.textMarkerRangeForNSRange(range);
+    if (!markerRange)
+        return nil;
+
+    auto attributedString = backingObject.attributedStringForTextMarkerRange(WTFMove(markerRange), AXCoreObject::SpellCheck::Yes);
+    return [attributedString length] ? attributedString.autorelease() : nil;
+}
+
+// The RTF representation of the text associated with this accessibility object that is
+// specified by the given range.
+static NSData *rtfForNSRange(const AXCoreObject& backingObject, NSRange range)
+{
+    NSAttributedString *attrString = attributedStringForNSRange(backingObject, range);
+    return [attrString RTFFromRange:NSMakeRange(0, attrString.length) documentAttributes:@{ }];
+}
+
 // Date time helpers.
 
 // VO requests a bit-wise combination of these constants via the API
@@ -2896,21 +2921,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return NSAccessibilityActionDescription(action);
 }
 
-// The CFAttributedStringType representation of the text associated with this accessibility
-// object that is specified by the given range.
-- (NSAttributedString *)attributedStringForNSRange:(const NSRange&)range
-{
-    if (!range.length)
-        return nil;
-
-    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
-    if (!backingObject)
-        return nil;
-
-    auto attributedString = backingObject->attributedStringForTextMarkerRange(backingObject->textMarkerRangeForNSRange(range), AXCoreObject::SpellCheck::Yes);
-    return [attributedString length] ? attributedString.autorelease() : nil;
-}
-
 - (NSInteger)_indexForTextMarker:(AXTextMarkerRef)markerRef
 {
     if (!markerRef)
@@ -2948,14 +2958,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
         return textMarkerForCharacterOffset(cache, characterOffset);
     });
-}
-
-// The RTF representation of the text associated with this accessibility object that is
-// specified by the given range.
-- (NSData *)rtfForNSRange:(const NSRange&)range
-{
-    NSAttributedString *attrString = [self attributedStringForNSRange:range];
-    return [attrString RTFFromRange:NSMakeRange(0, attrString.length) documentAttributes:@{ }];
 }
 
 #if ENABLE(TREE_DEBUGGING)
@@ -3754,10 +3756,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         }
 
         if ([attribute isEqualToString:(NSString *)kAXRTFForRangeParameterizedAttribute])
-            return rangeSet ? [self rtfForNSRange:range] : nil;
+            return rangeSet ? rtfForNSRange(*backingObject, range) : nil;
 
         if ([attribute isEqualToString:(NSString *)kAXAttributedStringForRangeParameterizedAttribute])
-            return rangeSet ? [self attributedStringForNSRange:range] : nil;
+            return rangeSet ? attributedStringForNSRange(*backingObject, range) : nil;
 
         if ([attribute isEqualToString:(NSString *)kAXStyleRangeForIndexParameterizedAttribute]) {
             auto textRange = backingObject->doAXStyleRangeForIndex([number intValue]);
