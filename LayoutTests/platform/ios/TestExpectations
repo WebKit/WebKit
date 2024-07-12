@@ -1448,7 +1448,6 @@ webkit.org/b/178487 compositing/repaint/iframes/compositing-iframe-with-fixed-ba
 webkit.org/b/178487 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
 webkit.org/b/178487 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
 webkit.org/b/178487 compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
-webkit.org/b/178487 compositing/video/video-object-fit.html [ Failure ]
 webkit.org/b/178487 compositing/masks/compositing-clip-path-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/178487 compositing/video/video-clip-change-src.html [ ImageOnlyFailure ]
 
