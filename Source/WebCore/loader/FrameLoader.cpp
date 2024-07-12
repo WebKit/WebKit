@@ -81,7 +81,6 @@
 #include "HTTPParsers.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
-#include "IgnoreOpensDuringUnloadCountIncrementer.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "LinkLoader.h"
@@ -132,6 +131,7 @@
 #include "SubframeLoader.h"
 #include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"
+#include "UnloadCountIncrementer.h"
 #include "UserContentController.h"
 #include "UserGestureIndicator.h"
 #include "WindowFeatures.h"
@@ -2986,7 +2986,7 @@ void FrameLoader::detachChildren()
     // HTML specification states that the parent document's ignore-opens-during-unload counter while
     // this event is being fired in its subframes:
     // https://html.spec.whatwg.org/multipage/browsers.html#unload-a-document
-    IgnoreOpensDuringUnloadCountIncrementer ignoreOpensDuringUnloadCountIncrementer(m_frame->document());
+    UnloadCountIncrementer UnloadCountIncrementer(m_frame->document());
 
     // detachChildren() will fire the unload event in each subframe and the
     // HTML specification states that navigations should be prevented during the prompt to unload algorithm:
@@ -3656,7 +3656,7 @@ bool FrameLoader::shouldClose()
     bool shouldClose = false;
     {
         NavigationDisabler navigationDisabler(frame.ptr());
-        IgnoreOpensDuringUnloadCountIncrementer ignoreOpensDuringUnloadCountIncrementer(frame->protectedDocument().get());
+        UnloadCountIncrementer UnloadCountIncrementer(frame->protectedDocument().get());
         size_t i;
 
         for (i = 0; i < targetFrames.size(); i++) {
@@ -3688,7 +3688,7 @@ void FrameLoader::dispatchUnloadEvents(UnloadEventPolicy unloadEventPolicy)
     // We store the frame's page in a local variable because the frame might get detached inside dispatchEvent.
     ForbidPromptsScope forbidPrompts(m_frame->page());
     ForbidSynchronousLoadsScope forbidSynchronousLoads(m_frame->page());
-    IgnoreOpensDuringUnloadCountIncrementer ignoreOpensDuringUnloadCountIncrementer(m_frame->document());
+    UnloadCountIncrementer UnloadCountIncrementer(m_frame->document());
 
     if (m_didCallImplicitClose && !m_wasUnloadEventEmitted) {
         if (RefPtr input = dynamicDowncast<HTMLInputElement>(m_frame->document()->focusedElement()))

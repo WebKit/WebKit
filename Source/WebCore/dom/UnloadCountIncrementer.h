@@ -29,26 +29,26 @@
 
 namespace WebCore {
 
-class IgnoreOpensDuringUnloadCountIncrementer {
-    WTF_MAKE_NONCOPYABLE(IgnoreOpensDuringUnloadCountIncrementer);
+class UnloadCountIncrementer {
+    WTF_MAKE_NONCOPYABLE(UnloadCountIncrementer);
 public:
-    explicit IgnoreOpensDuringUnloadCountIncrementer(Document* document)
-        : m_count(document ? &document->m_ignoreOpensDuringUnloadCount : nullptr)
+    explicit UnloadCountIncrementer(Document* document)
+        : m_document(document)
     {
-        if (!m_count)
+        if (!m_document)
             return;
-        ++(*m_count);
+        ++(m_document->m_unloadCounter);
     }
 
-    ~IgnoreOpensDuringUnloadCountIncrementer()
+    ~UnloadCountIncrementer()
     {
-        if (!m_count)
+        if (!m_document)
             return;
-        --(*m_count);
+        --(m_document->m_unloadCounter);
     }
 
 private:
-    unsigned* m_count;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
 } // namespace WebCore

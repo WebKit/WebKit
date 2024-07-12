@@ -1940,6 +1940,8 @@ public:
 
     PermissionsPolicy permissionsPolicy() const;
 
+    unsigned unloadCounter() const { return m_unloadCounter; }
+
 protected:
     enum class ConstructionFlag : uint8_t {
         Synthesized = 1 << 0,
@@ -1955,7 +1957,7 @@ private:
     friend class DocumentParserYieldToken;
     friend class Node;
     friend class ThrowOnDynamicMarkupInsertionCountIncrementer;
-    friend class IgnoreOpensDuringUnloadCountIncrementer;
+    friend class UnloadCountIncrementer;
     friend class IgnoreDestructiveWriteCountIncrementer;
 
     void updateTitleElement(Element& changingTitleElement);
@@ -2453,8 +2455,8 @@ private:
     // https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#throw-on-dynamic-markup-insertion-counter
     unsigned m_throwOnDynamicMarkupInsertionCount { 0 };
 
-    // https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#ignore-opens-during-unload-counter
-    unsigned m_ignoreOpensDuringUnloadCount { 0 };
+    // https://html.spec.whatwg.org/multipage/document-lifecycle.html#unload-counter
+    unsigned m_unloadCounter { 0 };
 
     // https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#ignore-destructive-writes-counter
     unsigned m_ignoreDestructiveWriteCount { 0 };
