@@ -363,6 +363,7 @@ void HTMLFormElement::submit(Event* event, bool processingUserGesture, FormSubmi
 {
     // The submitIfPossible function also does this check, but we need to do it here
     // too, since there are some code paths that bypass that function.
+
     if (!isConnected())
         return;
 
@@ -374,7 +375,7 @@ void HTMLFormElement::submit(Event* event, bool processingUserGesture, FormSubmi
     if (!view || !frame)
         return;
 
-    if (m_isSubmittingOrPreparingForSubmission) {
+    if (trigger != SubmittedByJavaScript && m_isSubmittingOrPreparingForSubmission) {
         m_shouldSubmit = true;
         return;
     }
@@ -524,7 +525,7 @@ unsigned HTMLFormElement::formElementIndexWithFormAttribute(Element* element, un
         else
             left = middle + 1;
     }
-    
+
     ASSERT(left < m_listedElementsBeforeIndex || left >= m_listedElementsAfterIndex);
     position = element->compareDocumentPosition(*m_listedElements[left]);
     if (position & DOCUMENT_POSITION_FOLLOWING)
@@ -968,15 +969,15 @@ RefPtr<DOMFormData> HTMLFormElement::constructEntryList(RefPtr<HTMLFormControlEl
 {
     // https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#constructing-form-data-set
     ASSERT(isMainThread());
-    
+
     if (m_isConstructingEntryList)
         return nullptr;
-    
+
     SetForScope isConstructingEntryListScope(m_isConstructingEntryList, true);
 
     if (submitter)
         submitter->setActivatedSubmit(true);
-    
+
     for (auto& control : this->copyListedElementsVector()) {
         auto& element = control->asHTMLElement();
         if (!element.isDisabledFormControl())
@@ -988,12 +989,12 @@ RefPtr<DOMFormData> HTMLFormElement::constructEntryList(RefPtr<HTMLFormControlEl
             }
         }
     }
-    
+
     dispatchEvent(FormDataEvent::create(eventNames().formdataEvent, Event::CanBubble::Yes, Event::IsCancelable::No, Event::IsComposed::No, domFormData.copyRef()));
 
     if (submitter)
         submitter->setActivatedSubmit(false);
-    
+
     return domFormData->clone();
 }
 
