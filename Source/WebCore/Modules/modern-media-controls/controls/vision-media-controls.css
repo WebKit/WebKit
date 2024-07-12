@@ -134,6 +134,8 @@
 
 .media-controls.vision .controls-bar.simple-layout.top-right > .overflow {
     margin: 0 0 0 5px;
+    /* Needs compositing layer for InteractionRegion hit-testing. */
+    will-change: opacity;
 }
 
 .media-controls.vision .volume-container {
