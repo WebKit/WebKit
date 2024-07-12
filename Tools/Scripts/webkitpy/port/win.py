@@ -149,19 +149,12 @@ class WinPort(ApplePort):
     def operating_system(self):
         return 'win'
 
-    def _port_flag_for_scripts(self):
-        if self.architecture() == 'x86_64':
-            return '--64-bit'
-        return None
-
     def _build_path(self, *comps):
         """Returns the full path to the test driver (DumpRenderTree)."""
         root_directory = self.get_option('_cached_root') or self.get_option('root')
         if not root_directory:
             ApplePort._build_path(self, *comps)  # Sets option _cached_root
-            binary_directory = 'bin32'
-            if self.architecture() == 'x86_64':
-                binary_directory = 'bin64'
+            binary_directory = 'bin64'
             root_directory = self._filesystem.join(self.get_option('_cached_root'), binary_directory)
             self.set_option('_cached_root', root_directory)
 
