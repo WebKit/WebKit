@@ -1014,6 +1014,9 @@ public:
         Printing                = 1 << 4,
         ProcessSwap             = 1 << 5,
         SwipeAnimation          = 1 << 6,
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+        OutOfProcessFullscreen  = 1 << 7,
+#endif
     };
     void freezeLayerTree(LayerTreeFreezeReason);
     void unfreezeLayerTree(LayerTreeFreezeReason);
