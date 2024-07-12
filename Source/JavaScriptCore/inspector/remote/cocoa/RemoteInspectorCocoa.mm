@@ -346,6 +346,13 @@ void RemoteInspector::setupXPCConnectionIfNeeded()
         pushListingsSoon();
 }
 
+void RemoteInspector::connectToWebInspector()
+{
+    dispatch_async(m_xpcQueue, ^{
+        RemoteInspector::singleton().setupXPCConnectionIfNeeded();
+    });
+}
+
 #pragma mark - Proxy Application Information
 
 void RemoteInspector::setParentProcessInformation(pid_t pid, RetainPtr<CFDataRef> auditData)
