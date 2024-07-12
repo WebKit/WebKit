@@ -63,8 +63,6 @@ layer at (412,10) size 130x36
       text run at (0,0) width 108: "4 green box with"
       text run at (0,18) width 58: "word ok:"
     RenderText {#text} at (0,0) size 0x0
-layer at (412,46) size 130x34
-  RenderBlock (positioned) {DIV} at (0,36) size 130x34 [border: (2px solid #FF0000)]
 layer at (414,48) size 126x30
   RenderBlock (positioned) {DIV} at (2,2) size 126x30 [border: (2px solid #008000)]
     RenderText {#text} at (2,2) size 16x18
@@ -87,8 +85,6 @@ layer at (10,114) size 130x36
       text run at (0,0) width 108: "6 green box with"
       text run at (0,18) width 58: "word ok:"
     RenderText {#text} at (0,0) size 0x0
-layer at (10,150) size 130x34
-  RenderBlock (positioned) {DIV} at (0,36) size 130x34 [border: (2px solid #FF0000)]
 layer at (12,152) size 126x30
   RenderBlock (positioned) {DIV} at (2,2) size 126x30 [border: (2px solid #FF0000)]
     RenderBlock {DIV} at (2,2) size 122x22 [border: (2px solid #008000)]
@@ -100,10 +96,6 @@ layer at (144,114) size 130x36
       text run at (0,0) width 108: "7 green box with"
       text run at (0,18) width 58: "word ok:"
     RenderText {#text} at (0,0) size 0x0
-layer at (144,150) size 130x34
-  RenderBlock (positioned) {DIV} at (0,36) size 130x34 [border: (2px solid #FF0000)]
-layer at (146,152) size 126x30
-  RenderBlock (positioned) {DIV} at (2,2) size 126x30 [border: (2px solid #FF0000)]
 layer at (148,154) size 122x26
   RenderBlock (positioned) {DIV} at (2,2) size 122x26 [border: (2px solid #008000)]
     RenderText {#text} at (2,2) size 16x18
@@ -116,8 +108,6 @@ layer at (278,114) size 130x36
     RenderText {#text} at (0,0) size 0x0
 layer at (278,150) size 130x34
   RenderBlock (positioned) {DIV} at (0,36) size 130x34 [border: (2px solid #008000)]
-layer at (280,152) size 126x30
-  RenderBlock (positioned) {DIV} at (2,2) size 126x30 [border: (2px solid #FF0000)]
 layer at (282,154) size 122x26
   RenderBlock (positioned) {DIV} at (2,2) size 122x26 [border: (2px solid #008000)]
     RenderText {#text} at (2,2) size 16x18
@@ -128,10 +118,6 @@ layer at (412,114) size 130x36
       text run at (0,0) width 108: "9 green box with"
       text run at (0,18) width 58: "word ok:"
     RenderText {#text} at (0,0) size 0x0
-layer at (412,150) size 130x34
-  RenderBlock (positioned) {DIV} at (0,36) size 130x34 [border: (2px solid #FF0000)]
-layer at (414,152) size 126x30
-  RenderBlock (positioned) {DIV} at (2,2) size 126x30 [border: (2px solid #FF0000)]
 layer at (416,154) size 122x26
   RenderBlock (positioned) {DIV} at (2,2) size 122x26 [border: (2px solid #008000)]
     RenderText {#text} at (2,2) size 16x18
@@ -141,14 +127,8 @@ layer at (546,114) size 130x18
     RenderText {#text} at (0,0) size 88x18
       text run at (0,0) width 88: "10 green box:"
     RenderText {#text} at (0,0) size 0x0
-layer at (546,132) size 130x34
-  RenderBlock (positioned) {DIV} at (0,18) size 130x34 [border: (2px solid #FF0000)]
 layer at (548,134) size 126x30
   RenderBlock (positioned) {DIV} at (2,2) size 126x30 [border: (2px solid #008000)]
-layer at (550,136) size 122x26
-  RenderBlock (positioned) {DIV} at (2,2) size 122x26 [border: (2px solid #FF0000)]
-    RenderText {#text} at (2,2) size 37x18
-      text run at (2,2) width 37: "failed"
 layer at (10,218) size 130x36
   RenderBlock (relative positioned) {DIV} at (2,2) size 130x36
     RenderText {#text} at (0,0) size 116x36
@@ -201,8 +181,6 @@ layer at (546,218) size 130x36
       text run at (0,0) width 116: "15 green box with"
       text run at (0,18) width 58: "word ok:"
     RenderText {#text} at (0,0) size 0x0
-layer at (546,254) size 130x30
-  RenderBlock (positioned) {DIV} at (0,36) size 130x30
 layer at (546,254) size 130x30
   RenderBlock (positioned) {DIV} at (0,0) size 130x30 [border: (2px solid #008000)]
     RenderText {#text} at (2,2) size 16x18
@@ -304,8 +282,6 @@ layer at (144,426) size 130x36
       text run at (0,0) width 116: "22 green box with"
       text run at (0,18) width 58: "word ok:"
     RenderText {#text} at (0,0) size 0x0
-layer at (144,462) size 130x34
-  RenderBlock (positioned) {DIV} at (0,36) size 130x34 [border: (2px solid #FF0000)]
 layer at (146,464) size 126x30
   RenderBlock (positioned) {DIV} at (2,2) size 126x30 [border: (2px solid #008000)]
     RenderText {#text} at (2,2) size 16x18
@@ -318,8 +294,6 @@ layer at (278,426) size 130x36
     RenderText {#text} at (0,0) size 0x0
 layer at (278,462) size 130x34
   RenderBlock (positioned) zI: 1 {DIV} at (0,36) size 130x34 [border: (2px solid #FF0000)]
-layer at (280,464) size 126x30
-  RenderBlock (positioned) {DIV} at (2,2) size 126x30 [border: (2px solid #FF0000)]
 layer at (282,466) size 122x26
   RenderBlock (positioned) {DIV} at (2,2) size 122x26 [border: (2px solid #008000)]
     RenderText {#text} at (2,2) size 16x18

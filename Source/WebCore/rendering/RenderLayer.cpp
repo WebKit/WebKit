@@ -704,6 +704,15 @@ void RenderLayer::dirtyStackingContextZOrderLists()
         sc->dirtyZOrderLists();
 }
 
+void RenderLayer::dirtyHiddenStackingContextAncestorZOrderLists()
+{
+    for (auto* sc = stackingContext(); sc; sc = sc->stackingContext()) {
+        sc->dirtyZOrderLists();
+        if (sc->hasVisibleContent())
+            break;
+    }
+}
+
 bool RenderLayer::willCompositeClipPath() const
 {
     if (!isComposited())
@@ -785,10 +794,9 @@ void RenderLayer::rebuildZOrderLists()
 
 void RenderLayer::rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>& posZOrderList, std::unique_ptr<Vector<RenderLayer*>>& negZOrderList, OptionSet<Compositing>& accumulatedDirtyFlags)
 {
-    bool includeHiddenLayers = compositor().usesCompositing();
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
         if (!isReflectionLayer(*child))
-            child->collectLayers(includeHiddenLayers, posZOrderList, negZOrderList, accumulatedDirtyFlags);
+            child->collectLayers(posZOrderList, negZOrderList, accumulatedDirtyFlags);
     }
 
     auto compareZIndex = [] (const RenderLayer* first, const RenderLayer* second) -> bool {
@@ -823,7 +831,7 @@ void RenderLayer::rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>& posZ
     }
 }
 
-void RenderLayer::collectLayers(bool includeHiddenLayers, std::unique_ptr<Vector<RenderLayer*>>& positiveZOrderList, std::unique_ptr<Vector<RenderLayer*>>& negativeZOrderList, OptionSet<Compositing>& accumulatedDirtyFlags)
+void RenderLayer::collectLayers(std::unique_ptr<Vector<RenderLayer*>>& positiveZOrderList, std::unique_ptr<Vector<RenderLayer*>>& negativeZOrderList, OptionSet<Compositing>& accumulatedDirtyFlags)
 {
     updateDescendantDependentFlags();
 
@@ -832,7 +840,8 @@ void RenderLayer::collectLayers(bool includeHiddenLayers, std::unique_ptr<Vector
 
     bool isStacking = isStackingContext();
     // Overflow layers are just painted by their enclosing layers, so they don't get put in zorder lists.
-    bool includeHiddenLayer = includeHiddenLayers || (m_hasVisibleContent || (m_hasVisibleDescendant && isStacking));
+    bool includeHiddenLayer = (m_hasVisibleContent || m_intrinsicallyComposited) || ((m_hasVisibleDescendant || m_hasIntrinsicallyCompositedDescendants) && isStacking);
+    includeHiddenLayer |= page().hasEverSetVisibilityAdjustment();
     if (includeHiddenLayer && !isNormalFlowOnly()) {
         auto& layerList = (zIndex() >= 0) ? positiveZOrderList : negativeZOrderList;
         if (!layerList)
@@ -843,11 +852,11 @@ void RenderLayer::collectLayers(bool includeHiddenLayers, std::unique_ptr<Vector
 
     // Recur into our children to collect more layers, but only if we don't establish
     // a stacking context/container.
-    if ((includeHiddenLayers || m_hasVisibleDescendant) && !isStacking) {
+    if ((m_hasIntrinsicallyCompositedDescendants || m_hasVisibleDescendant) && !isStacking) {
         for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
             // Ignore reflections.
             if (!isReflectionLayer(*child))
-                child->collectLayers(includeHiddenLayers, positiveZOrderList, negativeZOrderList, accumulatedDirtyFlags);
+                child->collectLayers(positiveZOrderList, negativeZOrderList, accumulatedDirtyFlags);
         }
     }
 }
@@ -1306,6 +1315,39 @@ void RenderLayer::dirtyAncestorChainHasBlendingDescendants()
     }
 }
 
+void RenderLayer::setIntrinsicallyComposited(bool composited)
+{
+    if (m_intrinsicallyComposited != composited) {
+        m_intrinsicallyComposited = composited;
+        if (composited)
+            updateAncestorChainHasIntrinsicallyCompositedDescendants();
+        else
+            dirtyAncestorChainHasIntrinsicallyCompositedDescendants();
+        if (!hasVisibleContent() && !isNormalFlowOnly())
+            dirtyHiddenStackingContextAncestorZOrderLists();
+    }
+}
+
+void RenderLayer::updateAncestorChainHasIntrinsicallyCompositedDescendants()
+{
+    for (auto* layer = this; layer; layer = layer->parent()) {
+        if (!layer->m_hasIntrinsicallyCompositedDescendantsStatusDirty && layer->m_hasIntrinsicallyCompositedDescendants)
+            break;
+        layer->m_hasIntrinsicallyCompositedDescendants = true;
+        layer->m_hasIntrinsicallyCompositedDescendantsStatusDirty = false;
+    }
+}
+
+void RenderLayer::dirtyAncestorChainHasIntrinsicallyCompositedDescendants()
+{
+    for (auto* layer = this; layer; layer = layer->parent()) {
+        if (layer->m_hasIntrinsicallyCompositedDescendantsStatusDirty)
+            break;
+
+        layer->m_hasIntrinsicallyCompositedDescendantsStatusDirty = true;
+    }
+}
+
 FloatRect RenderLayer::referenceBoxRectForClipPath(CSSBoxType boxType, const LayoutSize& offsetFromRoot, const LayoutRect& rootRelativeBounds) const
 {
     bool isReferenceBox = false;
@@ -1521,14 +1563,10 @@ void RenderLayer::setHasVisibleContent()
     m_hasVisibleContent = true;
     computeRepaintRects(renderer().containerForRepaint().renderer.get());
     if (!isNormalFlowOnly()) {
-        // We don't collect invisible layers in z-order lists if we are not in compositing mode.
+        // We don't collect invisible layers in z-order lists if they are not composited.
         // As we became visible, we need to dirty our stacking containers ancestors to be properly
-        // collected. FIXME: When compositing, we could skip this dirtying phase.
-        for (auto* sc = stackingContext(); sc; sc = sc->stackingContext()) {
-            sc->dirtyZOrderLists();
-            if (sc->hasVisibleContent())
-                break;
-        }
+        // collected.
+        dirtyHiddenStackingContextAncestorZOrderLists();
     }
 
     if (parent())
@@ -1587,6 +1625,7 @@ void RenderLayer::updateDescendantDependentFlags()
         bool hasVisibleDescendant = false;
         bool hasSelfPaintingLayerDescendant = false;
         bool hasNotIsolatedBlendingDescendants = false;
+        bool hasIntrinsicallyCompositedDescendants = false;
 
         auto firstLayerChild = [&] () -> RenderLayer* {
             if (renderer().isSkippedContentRoot())
@@ -1599,6 +1638,7 @@ void RenderLayer::updateDescendantDependentFlags()
             hasVisibleDescendant |= child->m_hasVisibleContent || child->m_hasVisibleDescendant;
             hasSelfPaintingLayerDescendant |= child->isSelfPaintingLayer() || child->hasSelfPaintingLayerDescendant();
             hasNotIsolatedBlendingDescendants |= child->hasBlendMode() || (child->hasNotIsolatedBlendingDescendants() && !child->isolatesBlending());
+            hasIntrinsicallyCompositedDescendants |= child->isIntrinsicallyComposited() || child->m_hasIntrinsicallyCompositedDescendants;
 
             bool allFlagsSet = hasVisibleDescendant && hasSelfPaintingLayerDescendant;
             allFlagsSet &= hasNotIsolatedBlendingDescendants;
@@ -1610,6 +1650,8 @@ void RenderLayer::updateDescendantDependentFlags()
         m_visibleDescendantStatusDirty = false;
         m_hasSelfPaintingLayerDescendant = hasSelfPaintingLayerDescendant;
         m_hasSelfPaintingLayerDescendantDirty = false;
+        m_hasIntrinsicallyCompositedDescendants = hasIntrinsicallyCompositedDescendants;
+        m_hasIntrinsicallyCompositedDescendantsStatusDirty = false;
 
         m_hasNotIsolatedBlendingDescendants = hasNotIsolatedBlendingDescendants;
         if (m_hasNotIsolatedBlendingDescendantsStatusDirty) {
