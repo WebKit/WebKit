@@ -42,7 +42,7 @@
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/256557"}}
             },
             "/webkit/WebKitAccessibility/text/state-changed": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/256557"}}
+                "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/256557"}}
             },
             "/webkit/WebKitAccessibility/selection/menulist": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/273682"}}
@@ -90,7 +90,7 @@
     "TestWebKitWebContext": {
         "subtests": {
             "/webkit/WebKitWebContext/memory-pressure": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/274345"}}
+                "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/274345"}}
             }
         }
     },
@@ -138,7 +138,7 @@
               "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/216646"}}
            },
            "/webkit/WebKitWebInspectorServer/http-test-page-list": {
-              "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/269586"}}
+              "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/269586"}}
            }
         },
         "expected": {"all": {"slow": true}}
