@@ -3309,7 +3309,7 @@ void JSGlobalObject::addWeakTicket(DeferredWorkTimer::Ticket ticket)
 {
     Locker locker { cellLock() };
     if (!m_weakTickets) {
-        auto weakTickets = makeUnique<WeakHashSet<DeferredWorkTimer::TicketData>>();
+        auto weakTickets = makeUnique<ThreadSafeWeakHashSet<DeferredWorkTimer::TicketData>>();
         WTF::storeStoreFence();
         m_weakTickets = WTFMove(weakTickets);
     }

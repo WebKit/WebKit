@@ -61,7 +61,7 @@ StreamingCompiler::~StreamingCompiler()
 {
     if (m_ticket) {
         auto ticket = std::exchange(m_ticket, nullptr);
-        m_vm.deferredWorkTimer->scheduleWorkSoon(ticket, [](DeferredWorkTimer::Ticket) mutable { });
+        m_vm.deferredWorkTimer->scheduleWorkSoon(ticket, [](DeferredWorkTimer::Ticket) { });
     }
 }
 

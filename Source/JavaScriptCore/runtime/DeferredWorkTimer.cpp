@@ -208,6 +208,9 @@ void DeferredWorkTimer::scheduleWorkSoon(Ticket ticket, Task&& task)
         setTimeUntilFire(0_s);
 }
 
+// Since TicketData is ThreadSafeWeakPtr now, we should optimize the DeferredWorkTimer's
+// workflow, e.g. directly clear the TicketData from cancelPendingWork.
+// https://bugs.webkit.org/show_bug.cgi?id=276538
 bool DeferredWorkTimer::cancelPendingWork(Ticket ticket)
 {
     ASSERT(m_pendingTickets.contains(ticket));
@@ -229,7 +232,7 @@ void DeferredWorkTimer::cancelPendingWorkSafe(JSGlobalObject* globalObject)
     for (Ref<TicketData> ticket : *globalObject->m_weakTickets) {
         if (!ticket->isCancelled())
             cancelPendingWork(ticket.ptr());
-        m_tasks.append(std::make_tuple(ticket.ptr(), [](DeferredWorkTimer::Ticket) mutable { }));
+        m_tasks.append(std::make_tuple(ticket.ptr(), [](DeferredWorkTimer::Ticket) { }));
     }
     if (!isScheduled() && !m_currentlyRunningTask)
         setTimeUntilFire(0_s);
