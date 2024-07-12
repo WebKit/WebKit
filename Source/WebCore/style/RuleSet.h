@@ -29,6 +29,7 @@
 #include "StyleRule.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/VectorHash.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
@@ -74,7 +75,7 @@ public:
     ~RuleSet();
 
     typedef Vector<RuleData, 1> RuleDataVector;
-    typedef HashMap<AtomString, std::unique_ptr<RuleDataVector>> AtomRuleMap;
+    typedef FastRobinHoodHashMap<AtomString, std::unique_ptr<RuleDataVector>> AtomRuleMap;
 
     void addRule(const StyleRule&, unsigned selectorIndex, unsigned selectorListIndex);
     void addPageRule(StyleRulePage&);
