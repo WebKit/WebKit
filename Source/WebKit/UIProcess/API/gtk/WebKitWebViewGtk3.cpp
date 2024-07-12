@@ -148,4 +148,40 @@ guint createShowOptionMenuSignal(WebKitWebViewClass* webViewClass)
         GDK_TYPE_EVENT | G_SIGNAL_TYPE_STATIC_SCOPE,
         GDK_TYPE_RECTANGLE | G_SIGNAL_TYPE_STATIC_SCOPE);
 }
+
+/**
+ * webkit_web_view_set_background_color:
+ * @web_view: a #WebKitWebView
+ * @rgba: a #GdkRGBA
+ *
+ * Sets the color that will be used to draw the @web_view background.
+ *
+ * Sets the color that will be used to draw the @web_view background before
+ * the actual contents are rendered. Note that if the web page loaded in @web_view
+ * specifies a background color, it will take precedence over the @rgba color.
+ * By default the @web_view background color is opaque white.
+ * Note that the parent window must have a RGBA visual and
+ * #GtkWidget:app-paintable property set to %TRUE for backgrounds colors to work.
+ *
+ * ```c
+ * static void browser_window_set_background_color (BrowserWindow *window,
+ *                                                  const GdkRGBA *rgba)
+ * {
+ *     WebKitWebView *web_view;
+ *     GdkScreen *screen = gtk_window_get_screen (GTK_WINDOW (window));
+ *     GdkVisual *rgba_visual = gdk_screen_get_rgba_visual (screen);
+ *
+ *     if (!rgba_visual)
+ *          return;
+ *
+ *     gtk_widget_set_visual (GTK_WIDGET (window), rgba_visual);
+ *     gtk_widget_set_app_paintable (GTK_WIDGET (window), TRUE);
+ *
+ *     web_view = browser_window_get_web_view (window);
+ *     webkit_web_view_set_background_color (web_view, rgba);
+ * }
+ * ```
+ *
+ * Since: 2.8
+ */
 #endif
