@@ -48,6 +48,7 @@ platform/audio/gstreamer/PlatformRawAudioDataGStreamer.cpp
 platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp @no-unify
 
 platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp
+platform/graphics/gstreamer/DMABufUtilities.cpp
 platform/graphics/gstreamer/DMABufVideoSinkGStreamer.cpp @no-unify
 platform/graphics/gstreamer/GLVideoSinkGStreamer.cpp @no-unify
 platform/graphics/gstreamer/GRefPtrGStreamer.cpp
