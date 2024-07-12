@@ -3280,7 +3280,7 @@ enum class ForcedLayout : uint8_t { No, Yes, ParentDocument };
 
 RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID, UpdateLayout updateLayout, PropertyValueType valueType) const
 {
-    auto* styledElement = m_element.get();
+    RefPtr styledElement = m_element.get();
     if (!styledElement)
         return nullptr;
 
@@ -3295,6 +3295,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
 
     if (updateLayout == UpdateLayout::Yes) {
         Ref document = m_element->document();
+
+        if (RefPtr actualStyledElement = dynamicDowncast<StyledElement>(styledElement))
+            actualStyledElement->willUpdateStyleForComputedProperty(propertyID);
 
         updateStyleIfNeededForProperty(*styledElement, propertyID);
         if (propertyID == CSSPropertyDisplay && !styledRenderer()) {

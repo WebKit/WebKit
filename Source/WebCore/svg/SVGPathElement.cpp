@@ -294,6 +294,12 @@ void SVGPathElement::collectDPresentationalHint(MutableStyleProperties& style)
     // The WindRule value passed here is not relevant for the `d` property.
     auto cssPathValue = CSSPathValue::create(Ref { m_pathSegList }->currentPathByteStream(), WindRule::NonZero);
     addPropertyToPresentationalHintStyle(style, property, WTFMove(cssPathValue));
+
+void SVGPathElement::willUpdateStyleForComputedProperty(CSSPropertyID property)
+{
+    if (property == CSSPropertyD && document().settings().cssDPropertyEnabled())
+        setPresentationalHintStyleIsDirty();
+    SVGGeometryElement::willUpdateStyleForComputedProperty(property);
 }
 
 void SVGPathElement::pathDidChange()

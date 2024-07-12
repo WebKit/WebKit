@@ -127,6 +127,7 @@ private:
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
     void collectExtraStyleForPresentationalHints(MutableStyleProperties&) override;
     void collectDPresentationalHint(MutableStyleProperties&);
+    void willUpdateStyleForComputedProperty(CSSPropertyID) final;
 
     Ref<SVGAnimatedPathSegList> m_pathSegList { SVGAnimatedPathSegList::create(this) };
     bool m_pathDataWasSetByStyle { false };
