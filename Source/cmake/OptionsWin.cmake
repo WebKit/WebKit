@@ -1,5 +1,3 @@
-set(PORT Win)
-
 # Use Release DLL CRT even for Debug build
 set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreadedDLL)
 

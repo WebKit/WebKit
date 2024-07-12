@@ -37,10 +37,10 @@ use Cwd qw(abs_path);
 use File::Path qw(rmtree);
 use File::Temp qw(tempfile);
 use File::Compare qw(compare);
-use webkitdirs qw(isWindows isCygwin isWinCairo);
+use webkitdirs qw(isAnyWindows);
 
 # The test262-harness script is not written for compatiblity with Windows
-if (isWindows() || isCygwin() || isWinCairo()) {
+if (isAnyWindows()) {
     plan(tests => 1);
     is(1, 1, 'do nothing for Windows builds.');
     exit 0;

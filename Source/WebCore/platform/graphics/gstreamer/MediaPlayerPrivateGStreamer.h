@@ -195,12 +195,7 @@ public:
 
 #if USE(TEXTURE_MAPPER)
     PlatformLayer* platformLayer() const override;
-#if PLATFORM(WIN)
-    // FIXME: Accelerated rendering has not been implemented for WinCairo yet.
-    bool supportsAcceleratedRendering() const override { return false; }
-#else
     bool supportsAcceleratedRendering() const override { return true; }
-#endif
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)

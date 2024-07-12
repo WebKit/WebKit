@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -68,6 +68,7 @@
 		1CF18F3B26BB579E004B1722 /* LogChannels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CF18F3926BB579E004B1722 /* LogChannels.cpp */; };
 		1CFD5D3D2851AB3E00A0E30B /* EnumeratedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CFD5D3B2851AB3E00A0E30B /* EnumeratedArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1FA47C8A152502DA00568D1B /* WebCoreThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1FA47C88152502DA00568D1B /* WebCoreThread.cpp */; };
+		27C793CF2C40909D000E1BE8 /* PlatformEnableWin.h in Headers */ = {isa = PBXBuildFile; fileRef = 27C793CE2C40909D000E1BE8 /* PlatformEnableWin.h */; };
 		2CCD892A15C0390200285083 /* GregorianDateTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CCD892915C0390200285083 /* GregorianDateTime.cpp */; };
 		2CDED0EF18115C38004DBA70 /* RunLoopCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0EE18115C38004DBA70 /* RunLoopCF.cpp */; };
 		2CDED0F318115C85004DBA70 /* RunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0F118115C85004DBA70 /* RunLoop.cpp */; };
@@ -527,7 +528,6 @@
 		DD4901EB27B4748A00D7E50D /* ParallelJobsOpenMP.h in Headers */ = {isa = PBXBuildFile; fileRef = DD4901E427B4748A00D7E50D /* ParallelJobsOpenMP.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4901EC27B4748A00D7E50D /* MainThreadData.h in Headers */ = {isa = PBXBuildFile; fileRef = DD4901E527B4748A00D7E50D /* MainThreadData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDA35E4A29CA9B68006C1018 /* PlatformEnablePlayStation.h in Headers */ = {isa = PBXBuildFile; fileRef = DD4901E127B4748A00D7E50D /* PlatformEnablePlayStation.h */; };
-		DDA35E4B29CA9B68006C1018 /* PlatformEnableWinCairo.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C98CDC923E7AFC80012F232 /* PlatformEnableWinCairo.h */; };
 		DDCAF31D27B1E7C500C45308 /* GenericHashKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FD6D6627A1F6AD00935000 /* GenericHashKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF306D827C08654006A526F /* CFStringSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF306C127C08654006A526F /* CFStringSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF306D927C08654006A526F /* CFRunLoopSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF306C227C08654006A526F /* CFRunLoopSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1146,6 +1146,7 @@
 		26299B6D17A9E5B800ADEBE5 /* Ref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ref.h; sourceTree = "<group>"; };
 		2684D4351C000D400081D663 /* IndexSparseSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexSparseSet.h; sourceTree = "<group>"; };
 		275DFB6B238BDF72001230E2 /* OptionSetHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionSetHash.h; sourceTree = "<group>"; };
+		27C793CE2C40909D000E1BE8 /* PlatformEnableWin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformEnableWin.h; sourceTree = "<group>"; };
 		2C05385315BC819000F21B96 /* GregorianDateTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GregorianDateTime.h; sourceTree = "<group>"; };
 		2CCD892915C0390200285083 /* GregorianDateTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GregorianDateTime.cpp; sourceTree = "<group>"; };
 		2CDED0EE18115C38004DBA70 /* RunLoopCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoopCF.cpp; sourceTree = "<group>"; };
@@ -1284,7 +1285,6 @@
 		7C595FFC252A96E000E42168 /* StdFilesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdFilesystem.h; sourceTree = "<group>"; };
 		7C9692941F66306E00267A9E /* KeyValuePair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyValuePair.h; sourceTree = "<group>"; };
 		7C98CDC723E7A9B80012F232 /* PlatformEnableCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformEnableCocoa.h; sourceTree = "<group>"; };
-		7C98CDC923E7AFC80012F232 /* PlatformEnableWinCairo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformEnableWinCairo.h; sourceTree = "<group>"; };
 		7CBBA07319BB7FDC00BBF025 /* OSObjectPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSObjectPtr.h; sourceTree = "<group>"; };
 		7CD4C26F1E2C82B900929470 /* StringConcatenateNumbers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringConcatenateNumbers.h; sourceTree = "<group>"; };
 		7CDD7FF7186D291E007433CD /* IteratorAdaptors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorAdaptors.h; sourceTree = "<group>"; };
@@ -2315,7 +2315,7 @@
 				7C98CDC723E7A9B80012F232 /* PlatformEnableCocoa.h */,
 				7AAF9CA32AC4C39100E73DD3 /* PlatformEnableGlib.h */,
 				DD4901E127B4748A00D7E50D /* PlatformEnablePlayStation.h */,
-				7C98CDC923E7AFC80012F232 /* PlatformEnableWinCairo.h */,
+				27C793CE2C40909D000E1BE8 /* PlatformEnableWin.h */,
 				7C3A45D023CFA883007DE3A6 /* PlatformHave.h */,
 				7C42307423CEB187006E54D0 /* PlatformLegacy.h */,
 				7C42307323CE2D8B006E54D0 /* PlatformOS.h */,
@@ -3370,7 +3370,7 @@
 				DD3DC91127A4BF8E007E5B61 /* PlatformEnableCocoa.h in Headers */,
 				7AAF9CA42AC4C39100E73DD3 /* PlatformEnableGlib.h in Headers */,
 				DDA35E4A29CA9B68006C1018 /* PlatformEnablePlayStation.h in Headers */,
-				DDA35E4B29CA9B68006C1018 /* PlatformEnableWinCairo.h in Headers */,
+				27C793CF2C40909D000E1BE8 /* PlatformEnableWin.h in Headers */,
 				DD3DC8B927A4BF8E007E5B61 /* PlatformHave.h in Headers */,
 				DD3DC93827A4BF8E007E5B61 /* PlatformLegacy.h in Headers */,
 				DD3DC8C527A4BF8E007E5B61 /* PlatformOS.h in Headers */,

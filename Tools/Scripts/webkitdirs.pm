@@ -136,7 +136,7 @@ BEGIN {
        &isMacCatalystWebKit
        &isPlayStation
        &isWPE
-       &isWinCairo
+       &isWin
        &isWin64
        &isWindows
        &isX86_64
@@ -227,7 +227,7 @@ use constant {
     MacCatalyst => "MacCatalyst",
     JSCOnly     => "JSCOnly",
     PlayStation => "PlayStation",
-    WinCairo    => "WinCairo",
+    Win         => "Win",
     WPE         => "WPE",
     Unknown     => "Unknown"
 };
@@ -843,7 +843,7 @@ sub argumentsForConfiguration()
     push(@args, '--gtk') if isGtk();
     push(@args, '--wpe') if isWPE();
     push(@args, '--jsc-only') if isJSCOnly();
-    push(@args, '--wincairo') if isWinCairo();
+    push(@args, '--win') if isWin();
     push(@args, '--playstation') if isPlayStation();
     return @args;
 }
@@ -851,7 +851,7 @@ sub argumentsForConfiguration()
 sub extractNonMacOSHostConfiguration
 {
     my @args = ();
-    my @extract = ('--device', '--gtk', '--ios', '--platform', '--sdk', '--simulator', '--wincairo', '--tvos', '--visionos', '--watchos', 'SDKROOT', 'ARCHS');
+    my @extract = ('--device', '--gtk', '--ios', '--platform', '--sdk', '--simulator', '--win', '--tvos', '--visionos', '--watchos', 'SDKROOT', 'ARCHS');
     foreach (@{$_[0]}) {
         my $line = $_;
         my $flag = 0;
@@ -1135,7 +1135,7 @@ sub determineConfigurationProductDir
     return if defined $configurationProductDir;
     determineBaseProductDir();
     determineConfiguration();
-    if (isWinCairo() || isPlayStation()) {
+    if (isWin() || isPlayStation()) {
         $configurationProductDir = File::Spec->catdir($baseProductDir, $configuration);
     } else {
         if (usesPerConfigurationBuildDirectory()) {
@@ -1683,8 +1683,8 @@ sub determinePortName()
         gtk => GTK,
         'jsc-only' => JSCOnly,
         playstation => PlayStation,
-        win => WinCairo,
-        wincairo => WinCairo,
+        win => Win,
+        wincairo => Win,
         wpe => WPE
     );
 
@@ -1702,7 +1702,7 @@ sub determinePortName()
     # Port was not selected via command line, use appropriate default value
 
     if (isAnyWindows()) {
-        $portName = WinCairo;
+        $portName = Win;
     } elsif (isDarwin()) {
         determineXcodeSDKPlatformName();
         if (willUseIOSDeviceSDK() || willUseIOSSimulatorSDK()) {
@@ -1772,9 +1772,9 @@ sub isFedoraBased()
     return -e "/etc/fedora-release";
 }
 
-sub isWinCairo()
+sub isWin()
 {
-    return portName() eq WinCairo;
+    return portName() eq Win;
 }
 
 sub shouldBuild32Bit()
@@ -1834,21 +1834,6 @@ sub winVersion()
 {
     determineWinVersion();
     return $winVersion;
-}
-
-sub isWindows7SP0()
-{
-    return isAnyWindows() && winVersion()->{major} == 6 && winVersion()->{minor} == 1 && winVersion()->{build} == 7600;
-}
-
-sub isWindowsVista()
-{
-    return isAnyWindows() && winVersion()->{major} == 6 && winVersion()->{minor} == 0;
-}
-
-sub isWindowsXP()
-{
-    return isAnyWindows() && winVersion()->{major} == 5 && winVersion()->{minor} == 1;
 }
 
 sub isDarwin()
@@ -2958,8 +2943,8 @@ sub setPathForRunningWebKitApp
 
     if (isAnyWindows()) {
         my $productBinaryDir = executableProductDir();
-        my $winCairoBin = sourceDir() . "/WebKitLibraries/win/" . (isWin64() ? "bin64/" : "bin32/");
-        $env->{PATH} = join(':', $productBinaryDir, $winCairoBin, $env->{PATH} || "");
+        my $winBin = sourceDir() . "/WebKitLibraries/win/" . (isWin64() ? "bin64/" : "bin32/");
+        $env->{PATH} = join(':', $productBinaryDir, $winBin, $env->{PATH} || "");
     }
 }
 
