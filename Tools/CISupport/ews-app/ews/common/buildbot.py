@@ -57,6 +57,7 @@ class Buildbot():
         'wpe-wk2': 'wpe',
         'wincairo-tests': 'wincairo',
         'jsc-armv7-tests': 'jsc-armv7',
+        'vision-sim': 'vision-wk2',
     }
 
     @classmethod
