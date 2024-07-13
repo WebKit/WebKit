@@ -52,13 +52,13 @@ class WinPortTest(port_testcase.PortTestCase):
         self.assertEqual(relative_search_paths, expected_search_paths)
 
     def test_baseline_search_path(self):
-        self._assert_search_path(['wincairo-xp-wk1', 'wincairo-xp', 'wincairo-vista-wk1', 'wincairo-vista', 'wincairo-7sp0-wk1', 'wincairo-7sp0', 'wincairo-8-wk1', 'wincairo-8', 'wincairo-8.1-wk1', 'wincairo-8.1', 'wincairo-win10-wk1', 'wincairo-win10', 'wincairo-wk1', 'wincairo'], Version.from_name('XP'))
-        self._assert_search_path(['wincairo-vista-wk1', 'wincairo-vista', 'wincairo-7sp0-wk1', 'wincairo-7sp0', 'wincairo-8-wk1', 'wincairo-8', 'wincairo-8.1-wk1', 'wincairo-8.1', 'wincairo-win10-wk1', 'wincairo-win10', 'wincairo-wk1', 'wincairo'], Version.from_name('Vista'))
-        self._assert_search_path(['wincairo-7sp0-wk1', 'wincairo-7sp0', 'wincairo-8-wk1', 'wincairo-8', 'wincairo-8.1-wk1', 'wincairo-8.1', 'wincairo-win10-wk1', 'wincairo-win10', 'wincairo-wk1', 'wincairo'], Version.from_name('7sp0'))
+        self._assert_search_path(['win-xp-wk1', 'win-xp', 'win-vista-wk1', 'win-vista', 'win-7sp0-wk1', 'win-7sp0', 'win-8-wk1', 'win-8', 'win-8.1-wk1', 'win-8.1', 'win-win10-wk1', 'win-win10', 'win-wk1', 'win'], Version.from_name('XP'))
+        self._assert_search_path(['win-vista-wk1', 'win-vista', 'win-7sp0-wk1', 'win-7sp0', 'win-8-wk1', 'win-8', 'win-8.1-wk1', 'win-8.1', 'win-win10-wk1', 'win-win10', 'win-wk1', 'win'], Version.from_name('Vista'))
+        self._assert_search_path(['win-7sp0-wk1', 'win-7sp0', 'win-8-wk1', 'win-8', 'win-8.1-wk1', 'win-8.1', 'win-win10-wk1', 'win-win10', 'win-wk1', 'win'], Version.from_name('7sp0'))
 
-        self._assert_search_path(['wincairo-xp-wk2', 'wincairo-xp', 'wincairo-vista-wk2', 'wincairo-vista', 'wincairo-7sp0-wk2', 'wincairo-7sp0', 'wincairo-8-wk2', 'wincairo-8', 'wincairo-8.1-wk2', 'wincairo-8.1', 'wincairo-win10-wk2', 'wincairo-win10', 'wincairo-wk2', 'wincairo', 'wk2'], Version.from_name('XP'), use_webkit2=True)
-        self._assert_search_path(['wincairo-vista-wk2', 'wincairo-vista', 'wincairo-7sp0-wk2', 'wincairo-7sp0', 'wincairo-8-wk2', 'wincairo-8', 'wincairo-8.1-wk2', 'wincairo-8.1', 'wincairo-win10-wk2', 'wincairo-win10', 'wincairo-wk2', 'wincairo', 'wk2'], Version.from_name('Vista'), use_webkit2=True)
-        self._assert_search_path(['wincairo-7sp0-wk2', 'wincairo-7sp0', 'wincairo-8-wk2', 'wincairo-8', 'wincairo-8.1-wk2', 'wincairo-8.1', 'wincairo-win10-wk2', 'wincairo-win10', 'wincairo-wk2', 'wincairo', 'wk2'], Version.from_name('7sp0'), use_webkit2=True)
+        self._assert_search_path(['win-xp-wk2', 'win-xp', 'win-vista-wk2', 'win-vista', 'win-7sp0-wk2', 'win-7sp0', 'win-8-wk2', 'win-8', 'win-8.1-wk2', 'win-8.1', 'win-win10-wk2', 'win-win10', 'win-wk2', 'win', 'wk2'], Version.from_name('XP'), use_webkit2=True)
+        self._assert_search_path(['win-vista-wk2', 'win-vista', 'win-7sp0-wk2', 'win-7sp0', 'win-8-wk2', 'win-8', 'win-8.1-wk2', 'win-8.1', 'win-win10-wk2', 'win-win10', 'win-wk2', 'win', 'wk2'], Version.from_name('Vista'), use_webkit2=True)
+        self._assert_search_path(['win-7sp0-wk2', 'win-7sp0', 'win-8-wk2', 'win-8', 'win-8.1-wk2', 'win-8.1', 'win-win10-wk2', 'win-win10', 'win-wk2', 'win', 'wk2'], Version.from_name('7sp0'), use_webkit2=True)
 
     def _assert_version(self, port_name, expected_version):
         host = MockSystemHost(os_name='win', os_version=expected_version)
@@ -90,20 +90,20 @@ class WinPortTest(port_testcase.PortTestCase):
             self.make_port().expectations_files(),
             [
                 "/mock-checkout/LayoutTests/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-wk1/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-win10/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-win10-wk1/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-8.1/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-8.1-wk1/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-8/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-8-wk1/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-7sp0/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-7sp0-wk1/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-vista/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-vista-wk1/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-xp/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-xp-wk1/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-wk1/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-win10/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-win10-wk1/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-8.1/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-8.1-wk1/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-8/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-8-wk1/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-7sp0/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-7sp0-wk1/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-vista/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-vista-wk1/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-xp/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-xp-wk1/TestExpectations",
             ],
         )
 
@@ -114,20 +114,20 @@ class WinPortTest(port_testcase.PortTestCase):
             [
                 "/mock-checkout/LayoutTests/TestExpectations",
                 "/mock-checkout/LayoutTests/platform/wk2/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-wk2/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-win10/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-win10-wk2/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-8.1/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-8.1-wk2/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-8/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-8-wk2/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-7sp0/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-7sp0-wk2/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-vista/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-vista-wk2/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-xp/TestExpectations",
-                "/mock-checkout/LayoutTests/platform/wincairo-xp-wk2/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-wk2/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-win10/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-win10-wk2/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-8.1/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-8.1-wk2/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-8/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-8-wk2/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-7sp0/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-7sp0-wk2/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-vista/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-vista-wk2/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-xp/TestExpectations",
+                "/mock-checkout/LayoutTests/platform/win-xp-wk2/TestExpectations",
             ],
         )
 

@@ -469,19 +469,16 @@ class WinPort(ApplePort):
 
         wk_version = 'wk2' if self.get_option('webkit_test_runner') else 'wk1'
 
-        # FIXME: LayoutTests/platform/wincairo directory should be renamed to LayoutTests/platform/win
-        port_name_for_test = 'wincairo'
-
         for version in versions:
             version_name = to_name(version)
             if not version_name:
                 continue
-            name = port_name_for_test + '-' + normalize(version_name)
+            name = self.port_name + '-' + normalize(version_name)
             paths.append(name + '-' + wk_version)
             paths.append(name)
 
-        paths.append(port_name_for_test + '-' + wk_version)
-        paths.append(port_name_for_test)
+        paths.append(self.port_name + '-' + wk_version)
+        paths.append(self.port_name)
         if self.get_option('webkit_test_runner'):
             paths.append('wk2')
         paths.extend(self.get_option("additional_platform_directory", []))
