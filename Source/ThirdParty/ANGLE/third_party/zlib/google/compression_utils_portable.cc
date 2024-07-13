@@ -11,12 +11,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// WebKit-specific change: the WinCairo port seems to have a system
-// zlib.h, but doesn't define z_const.
-#if !defined(z_const)
-#    define z_const
-#endif
-
 namespace zlib_internal
 {
 
