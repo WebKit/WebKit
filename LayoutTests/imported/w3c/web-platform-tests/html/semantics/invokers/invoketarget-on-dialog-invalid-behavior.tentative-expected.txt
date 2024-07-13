@@ -1,5 +1,9 @@
 
 
+PASS invoking (as ) on dialog does nothing
+PASS invoking (as ) on open dialog does nothing
+PASS invoking (as ) on open modal dialog does nothing
+PASS invoking (as ) on open modal while changing the attributer does nothing
 PASS invoking (as foo) on dialog does nothing
 PASS invoking (as foo) on open dialog does nothing
 PASS invoking (as foo) on open modal dialog does nothing
@@ -32,6 +36,4 @@ PASS invoking (as showmodal) dialog as open popover=manual is noop
 PASS invoking (as showmodal) dialog as open popover=auto is noop
 PASS invoking (as close) dialog as open popover=manual is noop
 PASS invoking (as close) dialog as open popover=auto is noop
-PASS invoking (as explicit empty) dialog as open popover=manual is noop
-PASS invoking (as explicit empty) dialog as open popover=auto is noop
 

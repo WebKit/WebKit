@@ -1,15 +1,16 @@
 
 
-PASS invokeTargetElement reflects invokee HTML element
-PASS invokeTargetElement reflects set value
-PASS invokeTargetElement reflects set value across shadow root into light dom
-PASS invokeTargetElement does not reflect set value inside shadowroot
-PASS invokeTargetElement throws error on assignment of non Element
-PASS invokeAction reflects '' when attribute not present
-PASS invokeAction reflects '' when attribute empty, setAttribute version
-PASS invokeAction reflects same casing
-PASS invokeAction reflects '' when attribute empty, IDL version
-PASS invokeAction reflects tostring value
-PASS invokeAction reflects '' when attribute set to []
-PASS invokeAction reflects tostring value 2
+FAIL commandForElement reflects invokee HTML element assert_equals: expected (object) Element node <div id="invokee"></div> but got (undefined) undefined
+FAIL commandForElement reflects set value assert_equals: expected "" but got "invokee"
+FAIL commandForElement reflects set value across shadow root into light dom assert_equals: expected "" but got "invokee"
+FAIL commandForElement does not reflect set value inside shadowroot assert_equals: expected null but got Element node <div></div>
+FAIL commandForElement throws error on assignment of non Element assert_throws_js: commandForElement attribute must be an instance of Element function "function () {
+        invoker.commandForElement = {};
+      }" did not throw
+FAIL command reflects '' when attribute empty, setAttribute version assert_equals: expected (string) "" but got (undefined) undefined
+FAIL command reflects same casing assert_equals: expected "fooBarBaz" but got ""
+PASS command reflects '' when attribute empty, IDL version
+FAIL command reflects tostring value assert_equals: expected "1,2,3" but got ""
+FAIL command reflects '' when attribute set to [] assert_equals: expected (string) "" but got (object) []
+FAIL command reflects tostring value 2 assert_equals: expected (string) "[object Object]" but got (object) object "[object Object]"
 

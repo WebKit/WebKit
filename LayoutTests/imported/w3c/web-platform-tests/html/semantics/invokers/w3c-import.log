@@ -16,6 +16,13 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/idlharness.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/interestelement-interface.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/interestevent-dispatch-shadow.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/interestevent-interface.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/interesttarget-anchor-event-dispatch.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/interesttarget-area-event-dispatch.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/interesttarget-button-event-dispatch.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/interesttarget-on-popover-behavior.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/interesttarget-svg-a-event-dispatch.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invokeelement-interface.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invokeevent-dispatch-shadow.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invokeevent-interface.tentative.html
@@ -28,6 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-details-invalid-behavior.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-dialog-behavior.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-dialog-invalid-behavior.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-input-number.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-popover-behavior.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-popover-invalid-behavior.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-video-behavior.tentative.html
