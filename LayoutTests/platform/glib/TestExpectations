@@ -2108,8 +2108,6 @@ webkit.org/b/235885 webrtc/datachannel/getStats-no-prflx-remote-candidate.html [
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-statsSelector.html [ Skip ]
 webkit.org/b/187064 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html [ Skip ]
 
-webrtc/video-av1.html [ Skip ]
-
 webkit.org/b/269285 webrtc/h265.html [ Failure ]
 
 # Too slow with filtering implemented in WebKit. Should be done directly by GstWebRTC.
@@ -2140,9 +2138,6 @@ webrtc/video-sframe.html [ Skip ]
 webkit.org/b/219825 webrtc/sframe-keys.html [ Skip ]
 webkit.org/b/229055 http/wpt/webrtc/sframe-transform-error.html [ Skip ]
 http/wpt/webrtc/video-script-transform-simulcast.html [ Skip ]
-
-imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpReceiver-jitterBufferTarget-stats.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpTransceiver-headerExtensionControl.html [ Failure ]
 
 # GStreamerRtpReceiverBackend::getSynchronizationSources() unimplemented and also hitting srtpenc errors.
 webkit.org/b/235885 webrtc/video-addTransceiver.html [ Skip ]
@@ -2208,6 +2203,8 @@ webkit.org/b/252878 webrtc/audio-peer-connection-webaudio.html [ Failure Pass Ti
 webkit.org/b/252878 webrtc/audio-samplerate-change.html [ Pass Timeout ]
 webkit.org/b/252878 webrtc/datachannel/bufferedAmountLowThreshold-default.html [ Failure Pass ]
 webkit.org/b/252878 webrtc/video-h264.html [ Pass Timeout ]
+imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpReceiver-jitterBufferTarget-stats.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpTransceiver-headerExtensionControl.html [ Failure ]
 
 imported/w3c/web-platform-tests/mediacapture-streams/GUM-required-constraint-with-ideal-value.https.html [ Failure ]
 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none.https.html [ Failure ]
