@@ -18,6 +18,10 @@ fast/forms/switch/pointer-tracking.html [ Pass Timeout ] # appears to be timing 
 # rdar://130594018 (REGRESSION (278344@main?): [ iOS 18 Release ] 2 http/tests/xmlhttprequest/* layout tests are constantly failing.)
 [ Release ] http/tests/xmlhttprequest/resetting-timeout-to-zero.html [ Pass ]
 [ Release ] http/tests/xmlhttprequest/timeout-greater-than-default-network-timeout.html [ Pass ]
+imported/w3c/web-platform-tests/xhr/access-control-basic-post-success-no-content-type.htm [ Pass ]
+imported/w3c/web-platform-tests/xhr/content-type-unmodified.any.worker.html [ Pass ]
+imported/w3c/web-platform-tests/xhr/request-content-length.any.html [ Pass ]
+imported/w3c/web-platform-tests/xhr/request-content-length.any.worker.html [ Pass ]
 
 # rdar://129189203 (REGRESSION (279427@main-279418@main?): [ iOS 18 x86_64 ] 11X imported/w3c/web-platform-tests/fetch/api/basic/scheme* (layout-tests) are flaky text failures)
 imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.html [ Pass ]
