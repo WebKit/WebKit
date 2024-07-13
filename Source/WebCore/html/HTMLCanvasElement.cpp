@@ -593,7 +593,7 @@ void HTMLCanvasElement::reset()
     IntSize newSize(w, h);
     // If the size of an existing buffer matches, we can just clear it instead of reallocating.
     // This optimization is only done for 2D canvases for now.
-    if (m_hasCreatedImageBuffer && oldSize == newSize && m_context && m_context->is2d() && buffer() && m_context->colorSpace() == buffer()->colorSpace() && m_context->pixelFormat() == buffer()->pixelFormat()) {
+    if (hasCreatedImageBuffer() && oldSize == newSize && m_context && m_context->is2d() && buffer() && m_context->colorSpace() == buffer()->colorSpace() && m_context->pixelFormat() == buffer()->pixelFormat()) {
         if (!m_didClearImageBuffer)
             clearImageBuffer();
         return;
@@ -655,7 +655,7 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
 void HTMLCanvasElement::setSurfaceSize(const IntSize& size)
 {
     CanvasBase::setSize(size);
-    m_hasCreatedImageBuffer = false;
+    setHasCreatedImageBuffer(false);
     setImageBuffer(nullptr);
     clearCopiedImage();
 }
@@ -859,7 +859,7 @@ void HTMLCanvasElement::createImageBuffer() const
 {
     ASSERT(!hasCreatedImageBuffer());
 
-    m_hasCreatedImageBuffer = true;
+    const_cast<HTMLCanvasElement*>(this)->setHasCreatedImageBuffer(true);
     m_didClearImageBuffer = true;
     setImageBuffer(allocateImageBuffer());
 
@@ -874,7 +874,7 @@ void HTMLCanvasElement::createImageBuffer() const
 void HTMLCanvasElement::setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&& buffer)
 {
     IntSize oldSize = size();
-    m_hasCreatedImageBuffer = true;
+    setHasCreatedImageBuffer(true);
     setImageBuffer(WTFMove(buffer));
 
     if (isControlledByOffscreen() && oldSize != size()) {
@@ -904,7 +904,7 @@ Image* HTMLCanvasElement::copiedImage() const
 
 void HTMLCanvasElement::clearImageBuffer() const
 {
-    ASSERT(m_hasCreatedImageBuffer);
+    ASSERT(hasCreatedImageBuffer());
     ASSERT(!m_didClearImageBuffer);
     ASSERT(m_context);
 

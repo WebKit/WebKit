@@ -136,8 +136,6 @@ public:
     Image* copiedImage() const final;
     void clearCopiedImage() const final;
 
-    bool hasCreatedImageBuffer() const final { return m_hasCreatedImageBuffer; }
-
     SecurityOrigin* securityOrigin() const final;
 
     bool canDetach() const;
@@ -178,8 +176,6 @@ private:
     std::unique_ptr<CanvasRenderingContext> m_context;
     RefPtr<PlaceholderRenderingContextSource> m_placeholderSource;
     mutable RefPtr<Image> m_copiedImage;
-    // m_hasCreatedImageBuffer means we tried to malloc the buffer. We didn't necessarily get it.
-    mutable bool m_hasCreatedImageBuffer { false };
     bool m_detached { false };
     bool m_hasScheduledCommit { false };
 

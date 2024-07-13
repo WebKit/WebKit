@@ -414,13 +414,13 @@ void OffscreenCanvas::scheduleCommitToPlaceholderCanvas()
 
 void OffscreenCanvas::createImageBuffer() const
 {
-    m_hasCreatedImageBuffer = true;
+    const_cast<OffscreenCanvas*>(this)->setHasCreatedImageBuffer(true);
     setImageBuffer(allocateImageBuffer());
 }
 
 void OffscreenCanvas::setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&& buffer)
 {
-    m_hasCreatedImageBuffer = true;
+    setHasCreatedImageBuffer(true);
     setImageBuffer(WTFMove(buffer));
 
     CanvasBase::didDraw(FloatRect(FloatPoint(), size()));
@@ -432,7 +432,7 @@ void OffscreenCanvas::reset()
     if (RefPtr context = dynamicDowncast<OffscreenCanvasRenderingContext2D>(m_context.get()))
         context->reset();
 
-    m_hasCreatedImageBuffer = false;
+    setHasCreatedImageBuffer(false);
     setImageBuffer(nullptr);
     clearCopiedImage();
 

@@ -170,8 +170,6 @@ private:
     void createImageBuffer() const final;
     void clearImageBuffer() const;
 
-    bool hasCreatedImageBuffer() const final { return m_hasCreatedImageBuffer; }
-
     void setSurfaceSize(const IntSize&);
 
     bool usesContentsAsLayerContents() const;
@@ -187,8 +185,6 @@ private:
     mutable RefPtr<Image> m_copiedImage; // FIXME: This is temporary for platforms that have to copy the image buffer to render (and for CSSCanvasValue).
     mutable std::unique_ptr<CSSParserContext> m_cssParserContext;
     bool m_ignoreReset { false };
-    // m_hasCreatedImageBuffer means we tried to malloc the buffer. We didn't necessarily get it.
-    mutable bool m_hasCreatedImageBuffer { false };
     mutable bool m_didClearImageBuffer { false };
 #if ENABLE(WEBGL)
     bool m_hasRelevantWebGLEventListener { false };
