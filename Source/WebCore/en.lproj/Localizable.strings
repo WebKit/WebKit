@@ -565,6 +565,21 @@
 /* Validation message for input form controls of type 'email' that have an invalid value */
 "Enter an email address" = "Enter an email address";
 
+/* Fallback label text for unlabeled telephone number input field. */
+"Phone number" = "Phone number";
+
+/* Fallback label text for unlabeled email address field. */
+"Email address" = "Email address";
+
+/* Fallback label text for unlabeled URL input field. */
+"URL" = "URL";
+
+/* Fallback label text for unlabeled text field. */
+"Enter text" = "Enter text";
+
+/* Fallback label text for password field. */
+"Password" = "Password";
+
 /* Custom protocol synchronous load failure description */
 "Error handling synchronous load with custom protocol" = "Error handling synchronous load with custom protocol";
 

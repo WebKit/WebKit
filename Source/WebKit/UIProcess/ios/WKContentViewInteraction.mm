@@ -9131,6 +9131,58 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 #endif
 }
 
+#if PLATFORM(WATCHOS)
+static String fallbackLabelTextForUnlabeledInputFieldInZoomedFormControls(WebCore::InputMode inputMode, WebKit::InputType elementType)
+{
+    bool isPasswordField = false;
+
+    auto elementTypeIsAnyOf = [elementType](const std::initializer_list<WebKit::InputType>& elementTypes) {
+        return WTF::anyOf(elementTypes, [elementType](auto type) {
+            return elementType == type;
+        });
+    };
+
+    // If unspecified, try to infer the input mode from the input type
+    if (inputMode == WebCore::InputMode::Unspecified) {
+        if (elementTypeIsAnyOf({ WebKit::InputType::ContentEditable, WebKit::InputType::Text, WebKit::InputType::TextArea }))
+            inputMode = WebCore::InputMode::Text;
+        if (elementTypeIsAnyOf({ WebKit::InputType::URL }))
+            inputMode = WebCore::InputMode::Url;
+        if (elementTypeIsAnyOf({ WebKit::InputType::Number, WebKit::InputType::NumberPad }))
+            inputMode = WebCore::InputMode::Numeric;
+        if (elementTypeIsAnyOf({ WebKit::InputType::Search }))
+            inputMode = WebCore::InputMode::Search;
+        if (elementTypeIsAnyOf({ WebKit::InputType::Email }))
+            inputMode = WebCore::InputMode::Email;
+        if (elementTypeIsAnyOf({ WebKit::InputType::Phone }))
+            inputMode = WebCore::InputMode::Telephone;
+        if (elementTypeIsAnyOf({ WebKit::InputType::Password }))
+            isPasswordField = true;
+    }
+
+    if (isPasswordField)
+        return WEB_UI_STRING("Password", "Fallback label text for unlabeled password field.");
+
+    switch (inputMode) {
+    case WebCore::InputMode::Telephone:
+        return WEB_UI_STRING("Phone number", "Fallback label text for unlabeled telephone number input field.");
+    case WebCore::InputMode::Url:
+        return WEB_UI_STRING("URL", "Fallback label text for unlabeled URL input field.");
+    case WebCore::InputMode::Email:
+        return WEB_UI_STRING("Email address", "Fallback label text for unlabeled email address field.");
+    case WebCore::InputMode::Numeric:
+    case WebCore::InputMode::Decimal:
+        return WEB_UI_STRING("Enter a number", "Fallback label text for unlabeled numeric field.");
+    case WebCore::InputMode::Search:
+        return WEB_UI_STRING("Search", "Fallback label text for unlabeled search field");
+    case WebCore::InputMode::Unspecified:
+    case WebCore::InputMode::None:
+    case WebCore::InputMode::Text:
+        return WEB_UI_STRING("Enter text", "Fallback label text for unlabeled text field.");
+    }
+}
+#endif
+
 - (NSString *)inputLabelText
 {
     if (!_focusedElementInformation.label.isEmpty())
@@ -9141,6 +9193,11 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
     if (!_focusedElementInformation.title.isEmpty())
         return _focusedElementInformation.title;
+
+#if PLATFORM(WATCHOS)
+    if (_focusedElementInformation.placeholder.isEmpty())
+        return fallbackLabelTextForUnlabeledInputFieldInZoomedFormControls(_focusedElementInformation.inputMode, _focusedElementInformation.elementType);
+#endif
 
     return _focusedElementInformation.placeholder;
 }
