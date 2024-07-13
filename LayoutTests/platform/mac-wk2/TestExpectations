@@ -1199,8 +1199,6 @@ webkit.org/b/221011 fast/selectors/selection-window-inactive-text-shadow.html [ 
 
 webkit.org/b/223014 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/media_fragment_seek.html [ Pass Failure ]
 
-webkit.org/b/222210 imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-updating.html [ Pass Failure ]
-
 webkit.org/b/223131 [ Debug ] imported/w3c/web-platform-tests/wasm/webapi/instantiateStreaming-bad-imports.any.worker.html [ Pass Failure ]
 
 webkit.org/b/229832 imported/w3c/web-platform-tests/beacon/beacon-redirect.https.window.html [ Pass Failure ]
