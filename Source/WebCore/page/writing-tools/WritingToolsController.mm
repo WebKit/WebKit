@@ -380,19 +380,6 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
         return;
     }
 
-#if PLATFORM(IOS_FAMILY)
-    if (!state->hasReceivedText && session.compositionType == WritingTools::Session::CompositionType::SmartReply) {
-        // UIKit inserts a space prior to `willBegin` and before `didReceiveText`, so the initial session range
-        // becomes invalid and must be re-computed.
-        //
-        // FIXME: (rdar://131197624) Remove this special-case logic if/when UIKit no longer injects a space.
-        if (auto selectedRange = document->selection().selection().firstRange())
-            state->reappliedCommands.last()->setEndingContextRange(*selectedRange);
-    }
-
-    state->hasReceivedText = true;
-#endif
-
     m_page->chrome().client().removeInitialTextAnimation(session.identifier);
 
     document->selection().clear();

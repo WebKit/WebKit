@@ -91,7 +91,6 @@ private:
         // These two vectors should never have the same command in both of them.
         Vector<Ref<WritingToolsCompositionCommand>> unappliedCommands;
         Vector<Ref<WritingToolsCompositionCommand>> reappliedCommands;
-        bool hasReceivedText { false };
     };
 
     struct ProofreadingState : CanMakeCheckedPtr<ProofreadingState> {
