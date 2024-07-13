@@ -125,7 +125,6 @@ void HTMLIFrameElement::attributeChanged(const QualifiedName& name, const AtomSt
 
         String invalidTokens;
         setSandboxFlags(newValue.isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(newValue, invalidTokens));
-        m_permissionsPolicyDirective = std::nullopt;
         if (!invalidTokens.isNull())
             document().addConsoleMessage(MessageSource::Other, MessageLevel::Error, makeString("Error while parsing the 'sandbox' attribute: "_s, invalidTokens));
         break;
@@ -133,7 +132,6 @@ void HTMLIFrameElement::attributeChanged(const QualifiedName& name, const AtomSt
     case AttributeNames::allowAttr:
     case AttributeNames::allowfullscreenAttr:
     case AttributeNames::webkitallowfullscreenAttr:
-        m_permissionsPolicyDirective = std::nullopt;
         break;
     case AttributeNames::loadingAttr:
         // Allow loading=eager to load the frame immediately if the lazy load was started, but
@@ -145,7 +143,6 @@ void HTMLIFrameElement::attributeChanged(const QualifiedName& name, const AtomSt
         break;
     case AttributeNames::srcdocAttr:
     case AttributeNames::srcAttr:
-        m_permissionsPolicyDirective = std::nullopt;
         FALLTHROUGH;
     default:
         HTMLFrameElementBase::attributeChanged(name, oldValue, newValue, attributeModificationReason);
@@ -250,14 +247,6 @@ LazyLoadFrameObserver& HTMLIFrameElement::lazyLoadFrameObserver()
     if (!m_lazyLoadFrameObserver)
         m_lazyLoadFrameObserver = makeUnique<LazyLoadFrameObserver>(*this);
     return *m_lazyLoadFrameObserver;
-}
-
-PermissionsPolicy::PolicyDirective HTMLIFrameElement::permissionsPolicyDirective() const
-{
-    if (!m_permissionsPolicyDirective)
-        m_permissionsPolicyDirective = PermissionsPolicy::processPermissionsPolicyAttribute(*this);
-
-    return *m_permissionsPolicyDirective;
 }
 
 }

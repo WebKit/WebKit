@@ -30,7 +30,6 @@
 #include "AdjustViewSizeOrNot.h"
 #include "Document.h"
 #include "Frame.h"
-#include "OwnerPermissionsPolicyData.h"
 #include "ScrollTypes.h"
 #include "UserScriptTypes.h"
 #include <wtf/CheckedRef.h>
@@ -320,9 +319,6 @@ public:
     String customNavigatorPlatform() const final;
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final;
 
-    void setOwnerPermissionsPolicy(OwnerPermissionsPolicyData&& policy) { m_ownerPermisssionsPolicy = WTFMove(policy); }
-    std::optional<OwnerPermissionsPolicyData> ownerPermissionsPolicy() const { return m_ownerPermisssionsPolicy; }
-
 protected:
     void frameWasDisconnectedFromOwner() const final;
 
@@ -393,7 +389,6 @@ private:
     const WeakRef<const LocalFrame> m_rootFrame;
     UniqueRef<EventHandler> m_eventHandler;
     HashSet<RegistrableDomain> m_storageAccessExceptionDomains;
-    std::optional<OwnerPermissionsPolicyData> m_ownerPermisssionsPolicy;
 };
 
 inline LocalFrameView* LocalFrame::view() const

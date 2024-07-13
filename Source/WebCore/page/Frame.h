@@ -27,6 +27,7 @@
 
 #include "FrameIdentifier.h"
 #include "FrameTree.h"
+#include "OwnerPermissionsPolicyData.h"
 #include "PageIdentifier.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
@@ -115,6 +116,9 @@ public:
 
     WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.
 
+    WEBCORE_EXPORT void setOwnerPermissionsPolicy(OwnerPermissionsPolicyData&&);
+    WEBCORE_EXPORT std::optional<OwnerPermissionsPolicyData> ownerPermissionsPolicy() const;
+
 protected:
     Frame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, Frame* parent, Frame* opener);
     void resetWindowProxy();
@@ -137,6 +141,7 @@ private:
     WeakPtr<Frame> m_opener;
     WeakHashSet<Frame> m_openedFrames;
     mutable UniqueRef<HistoryController> m_history;
+    std::optional<OwnerPermissionsPolicyData> m_ownerPermisssionsPolicyOverride;
 };
 
 } // namespace WebCore

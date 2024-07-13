@@ -139,6 +139,7 @@ public:
 
     WTF::String clientRedirectSourceForHistory() const { return m_lastNavigationAction.clientRedirectSourceForHistory; }
     WebCore::SandboxFlags effectiveSandboxFlags() const { return m_lastNavigationAction.effectiveSandboxFlags; }
+    std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy() const { return m_lastNavigationAction.ownerPermissionsPolicy; }
 
     void setLastNavigationAction(const WebKit::NavigationActionData& navigationAction) { m_lastNavigationAction = navigationAction; }
     const WebKit::NavigationActionData& lastNavigationAction() const { return m_lastNavigationAction; }

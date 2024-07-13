@@ -46,6 +46,7 @@ enum class WebKit::NavigatingToAppBoundDomain : bool;
     WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility
     String clientRedirectSourceForHistory;
     WebCore::SandboxFlags effectiveSandboxFlags;
+    std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy;
     std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
     std::optional<WebKit::NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
     bool isServiceWorkerLoad;

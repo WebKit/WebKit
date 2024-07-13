@@ -36,6 +36,7 @@ class Allowlist;
 class Document;
 class HTMLFrameOwnerElement;
 class HTMLIFrameElement;
+struct OwnerPermissionsPolicyData;
 
 class PermissionsPolicy {
     WTF_MAKE_FAST_ALLOCATED;
@@ -86,8 +87,7 @@ public:
     static PolicyDirective processPermissionsPolicyAttribute(const HTMLIFrameElement&);
 
 private:
-    bool computeInheritedPolicyValueInContainer(Feature, const HTMLFrameOwnerElement*, const SecurityOriginData&) const;
-    bool computeInheritedPolicyValueInContainer(Feature, const SecurityOriginData&, const PermissionsPolicy&, const PolicyDirective&, const SecurityOriginData&) const;
+    bool computeInheritedPolicyValueInContainer(Feature, const std::optional<OwnerPermissionsPolicyData>&, const SecurityOriginData&) const;
 
     InheritedPolicy m_inheritedPolicy;
 };

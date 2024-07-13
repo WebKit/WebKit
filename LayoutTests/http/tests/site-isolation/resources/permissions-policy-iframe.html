@@ -1,0 +1,20 @@
+<script>
+
+try {
+	const xhr = new XMLHttpRequest();
+	xhr.open("GET", "/site-isolation/resources/simple.html", false);
+	xhr.onload = (e) => {
+	  if (xhr.readyState === 4) {
+	    if (xhr.status === 200)
+	    	window.top.postMessage("pass", "*");
+	    else
+	    	window.top.postMessage("error", "*");
+	  }
+	};
+	xhr.onerror = (e) => { window.top.postMessage("onerror:" + xhr.statusText, "*"); };
+	xhr.send(null);
+} catch(e) {
+	window.top.postMessage("exception", "*"); 
+}
+
+</script>

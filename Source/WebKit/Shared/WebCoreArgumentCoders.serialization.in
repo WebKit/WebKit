@@ -8287,3 +8287,47 @@ enum class WebCore::EventMakesGamepadsVisible : bool
 enum class WebCore::WillInternallyHandleFailure : bool
 enum class WebCore::ApplyTrackingPrevention : bool
 enum class WebCore::ShouldSample : bool
+
+[Nested] struct WebCore::Allowlist::AllowAllOrigins {
+};
+
+class WebCore::Allowlist {
+    std::variant<HashSet<WebCore::SecurityOriginData>, WebCore::Allowlist::AllowAllOrigins> origins()
+};
+
+struct WebCore::OwnerPermissionsPolicyData {
+    WebCore::SecurityOriginData documentOrigin;
+    WebCore::PermissionsPolicy documentPolicy;
+    WebCore::OwnerPermissionsPolicyData::PolicyDirective containerPolicy;
+};
+
+[Nested] enum class WebCore::PermissionsPolicy::Feature : uint8_t {
+    Camera,
+    Microphone,
+    SpeakerSelection,
+    DisplayCapture,
+    Gamepad,
+    Geolocation,
+    Payment,
+    ScreenWakeLock,
+    SyncXHR,
+    Fullscreen,
+    WebShare,
+#if ENABLE(DEVICE_ORIENTATION)
+    Gyroscope,
+    Accelerometer,
+    Magnetometer,
+#endif
+#if ENABLE(WEB_AUTHN)
+    PublickeyCredentialsGetRule,
+#endif
+#if ENABLE(WEBXR)
+    XRSpatialTracking,
+#endif
+    PrivateToken,
+    Invalid
+};
+
+class WebCore::PermissionsPolicy {
+    WebCore::PermissionsPolicy::InheritedPolicy inheritedPolicy()
+};

@@ -489,6 +489,7 @@ void WebLocalFrameLoaderClient::didSameDocumentNavigationForFrameViaJSHistoryAPI
         WebCore::LockBackForwardList::No,
         { }, /* clientRedirectSourceForHistory */
         0, /* effectiveSandboxFlags */
+        std::nullopt, /* ownerPermissionsPolicy */
         std::nullopt, /* privateClickMeasurement */
         { }, /* advancedPrivacyProtections */
         { }, /* originatorAdvancedPrivacyProtections */
@@ -965,6 +966,7 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Nav
         WebCore::LockBackForwardList::No,
         { }, /* clientRedirectSourceForHistory */
         0, /* effectiveSandboxFlags */
+        std::nullopt, /* ownerPermissionsPolicy */
         navigationAction.privateClickMeasurement(),
         { }, /* advancedPrivacyProtections */
         { }, /* originatorAdvancedPrivacyProtections */

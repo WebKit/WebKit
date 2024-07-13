@@ -27,6 +27,7 @@
 #include "Frame.h"
 
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLIFrameElement.h"
 #include "HistoryController.h"
 #include "NavigationScheduler.h"
 #include "Page.h"
@@ -255,6 +256,28 @@ void Frame::setOwnerElement(HTMLFrameOwnerElement* element)
         element->clearContentFrame();
         element->setContentFrame(*this);
     }
+}
+
+void Frame::setOwnerPermissionsPolicy(OwnerPermissionsPolicyData&& ownerPermissionsPolicy)
+{
+    m_ownerPermisssionsPolicyOverride = WTFMove(ownerPermissionsPolicy);
+}
+
+std::optional<OwnerPermissionsPolicyData> Frame::ownerPermissionsPolicy() const
+{
+    if (m_ownerPermisssionsPolicyOverride)
+        return m_ownerPermisssionsPolicyOverride;
+
+    RefPtr owner = ownerElement();
+    if (!owner)
+        return std::nullopt;
+
+    auto documentOrigin = owner->document().securityOrigin().data();
+    auto documentPolicy = owner->document().permissionsPolicy();
+
+    RefPtr iframe = dynamicDowncast<HTMLIFrameElement>(owner);
+    auto containerPolicy = iframe ? PermissionsPolicy::processPermissionsPolicyAttribute(*iframe) : PermissionsPolicy::PolicyDirective { };
+    return OwnerPermissionsPolicyData { WTFMove(documentOrigin), WTFMove(documentPolicy), WTFMove(containerPolicy) };
 }
 
 } // namespace WebCore
