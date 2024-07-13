@@ -106,6 +106,21 @@
 
 @end
 
+// FIXME: (rdar://130540028) Remove uses of the old WritingToolsAllowedInputOptions API in favor of the new WritingToolsResultOptions API, and remove staging.
+#if PLATFORM(IOS_FAMILY)
+@protocol UITextInput_Staging130540028 <UITextInput>
+
+- (PlatformWritingToolsResultOptions)allowedWritingToolsResultOptions;
+
+@end
+#else
+@protocol NSTextInputTraits_Staging130540028 <NSTextInputTraits>
+
+- (PlatformWritingToolsResultOptions)allowedWritingToolsResultOptions;
+
+@end
+#endif
+
 @interface WritingToolsWKWebView : TestWKWebView
 
 @end
@@ -171,12 +186,12 @@
 #endif
 }
 
-- (PlatformWritingToolsAllowedInputOptions)writingToolsAllowedInputOptionsForTesting
+- (PlatformWritingToolsResultOptions)allowedWritingToolsResultOptionsForTesting
 {
 #if PLATFORM(IOS_FAMILY)
-    return [(id<UITextInput>)[self textInputContentView] writingToolsAllowedInputOptions];
+    return [(id<UITextInput_Staging130540028>)[self textInputContentView] allowedWritingToolsResultOptions];
 #else
-    return [(id<NSTextInputTraits>)self writingToolsAllowedInputOptions];
+    return [(id<NSTextInputTraits_Staging130540028>)self allowedWritingToolsResultOptions];
 #endif
 }
 
@@ -1835,7 +1850,7 @@ TEST(WritingTools, AllowedInputOptionsNonEditable)
 {
     auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body></body>"]);
 
-    EXPECT_EQ(PlatformWritingToolsAllowedInputOptionsPlainText | PlatformWritingToolsAllowedInputOptionsRichText | PlatformWritingToolsAllowedInputOptionsList | PlatformWritingToolsAllowedInputOptionsTable, [webView writingToolsAllowedInputOptionsForTesting]);
+    EXPECT_EQ(PlatformWritingToolsResultPlainText | PlatformWritingToolsResultRichText | PlatformWritingToolsResultList | PlatformWritingToolsResultTable, [webView allowedWritingToolsResultOptionsForTesting]);
 }
 
 TEST(WritingTools, AllowedInputOptionsEditable)
@@ -1844,7 +1859,7 @@ TEST(WritingTools, AllowedInputOptionsEditable)
     [webView _setEditable:YES];
     [webView focusDocumentBodyAndSelectAll];
 
-    EXPECT_EQ(PlatformWritingToolsAllowedInputOptionsPlainText | PlatformWritingToolsAllowedInputOptionsRichText | PlatformWritingToolsAllowedInputOptionsList | PlatformWritingToolsAllowedInputOptionsTable, [webView writingToolsAllowedInputOptionsForTesting]);
+    EXPECT_EQ(PlatformWritingToolsResultPlainText | PlatformWritingToolsResultRichText | PlatformWritingToolsResultList | PlatformWritingToolsResultTable, [webView allowedWritingToolsResultOptionsForTesting]);
 }
 
 TEST(WritingTools, AllowedInputOptionsRichText)
@@ -1852,7 +1867,7 @@ TEST(WritingTools, AllowedInputOptionsRichText)
     auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
-    EXPECT_EQ(PlatformWritingToolsAllowedInputOptionsPlainText | PlatformWritingToolsAllowedInputOptionsRichText | PlatformWritingToolsAllowedInputOptionsList | PlatformWritingToolsAllowedInputOptionsTable, [webView writingToolsAllowedInputOptionsForTesting]);
+    EXPECT_EQ(PlatformWritingToolsResultPlainText | PlatformWritingToolsResultRichText | PlatformWritingToolsResultList | PlatformWritingToolsResultTable, [webView allowedWritingToolsResultOptionsForTesting]);
 }
 
 TEST(WritingTools, AllowedInputOptionsPlainText)
@@ -1860,7 +1875,7 @@ TEST(WritingTools, AllowedInputOptionsPlainText)
     auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable=\"plaintext-only\"></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
-    EXPECT_EQ(PlatformWritingToolsAllowedInputOptionsPlainText, [webView writingToolsAllowedInputOptionsForTesting]);
+    EXPECT_EQ(PlatformWritingToolsResultPlainText, [webView allowedWritingToolsResultOptionsForTesting]);
 }
 
 TEST(WritingTools, EphemeralSessionWithDifferingTextLengths)

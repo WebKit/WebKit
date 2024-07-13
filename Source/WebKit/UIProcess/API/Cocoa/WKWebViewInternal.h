@@ -407,9 +407,13 @@ struct PerWebProcessState {
 - (void)_proofreadingSessionWithUUID:(NSUUID *)sessionUUID updateState:(WebCore::WritingTools::TextSuggestionState)state forSuggestionWithUUID:(NSUUID *)replacementUUID;
 
 #if PLATFORM(MAC)
-- (NSWritingToolsAllowedInputOptions)writingToolsAllowedInputOptions;
+// FIXME: (rdar://130540028) Remove uses of the old WritingToolsAllowedInputOptions API in favor of the new WritingToolsResultOptions API, and remove staging.
+- (PlatformWritingToolsResultOptions)writingToolsAllowedInputOptions;
+- (PlatformWritingToolsResultOptions)allowedWritingToolsResultOptions;
 #else
-- (UIWritingToolsAllowedInputOptions)writingToolsAllowedInputOptions;
+// FIXME: (rdar://130540028) Remove uses of the old WritingToolsAllowedInputOptions API in favor of the new WritingToolsResultOptions API, and remove staging.
+- (PlatformWritingToolsResultOptions)writingToolsAllowedInputOptions;
+- (PlatformWritingToolsResultOptions)allowedWritingToolsResultOptions;
 #endif
 
 #endif // ENABLE(WRITING_TOOLS)

@@ -2079,14 +2079,19 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
 #pragma mark - WTWritingToolsDelegate conformance
 
-- (PlatformWritingToolsAllowedInputOptions)writingToolsAllowedInputOptions {
+- (PlatformWritingToolsResultOptions)allowedWritingToolsResultOptions
+{
     auto& editorState = _page->editorState();
     if (editorState.isContentEditable && !editorState.isContentRichlyEditable)
-        return PlatformWritingToolsAllowedInputOptionsPlainText;
+        return PlatformWritingToolsResultPlainText;
 
-    PlatformWritingToolsAllowedInputOptions listOption = (PlatformWritingToolsAllowedInputOptions)(1 << 2);
+    return PlatformWritingToolsResultPlainText | PlatformWritingToolsResultRichText | PlatformWritingToolsResultList | PlatformWritingToolsResultTable;
+}
 
-    return PlatformWritingToolsAllowedInputOptionsPlainText | PlatformWritingToolsAllowedInputOptionsRichText | listOption | PlatformWritingToolsAllowedInputOptionsTable;
+// FIXME: (rdar://130540028) Remove uses of the old WritingToolsAllowedInputOptions API in favor of the new WritingToolsResultOptions API, and remove staging.
+- (PlatformWritingToolsResultOptions)writingToolsAllowedInputOptions
+{
+    return [self allowedWritingToolsResultOptions];
 }
 
 - (PlatformWritingToolsBehavior)writingToolsBehavior
