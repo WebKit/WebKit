@@ -382,6 +382,7 @@ class Setup(Command):
             sys.stderr.write('Failed to use {} as the merge strategy for this repository\n'.format('merge commits' if args.merge else 'rebase'))
             result += 1
 
+
         need_prompt_auto_update = args.all or not local_config.get('webkitscmpy.auto-rebase-branch')
         if not args.merge and not args.defaults and need_prompt_auto_update:
             log.info('Setting auto update on PR creation...')
@@ -421,15 +422,20 @@ class Setup(Command):
                 sys.stderr.write("Failed to set '{}' as the default history management approach\n".format(pr_history))
                 result += 1
 
+
         # Only configure GitHub if the URL is a GitHub URL
         rmt = repository.remote()
         available_remotes = []
         if isinstance(rmt, wspremote.GitHub):
+            log.info('1')
             forking = True
             username, _ = rmt.credentials(required=True, validate=True, save_in_keyring=True)
+            log.info(username, 1)
         else:
             forking = False
             username = getpass.getuser()
+            log.info(username, 2)
+
 
         if hooks:
             result += InstallHooks.main(args, repository, hooks=hooks, **kwargs)
@@ -465,7 +471,9 @@ class Setup(Command):
             else:
                 log.info("Set git editor to '{}' for this repository".format(editor_name))
 
+
         # Check if we need to define a credential helper
+        log.info(repository.url())
         http_remote = local.Git.HTTP_REMOTE.match(repository.url())
         can_push = not http_remote
         rmt = repository.remote()
