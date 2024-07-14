@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 490: "This tests that when @font-face rules with unicode-range are specified for a "
           text run at (489,0) width 293: "font that exists on the system, the system font"
           text run at (0,18) width 160: "is used for all characters "
-          text run at (159,18) width 159: "not explictly overridden."
+          text run at (159,18) width 159: "not explicitly overridden."
       RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 523x18
           text run at (0,0) width 455: "In the next line, the digits should be in Times, but the letters should be "

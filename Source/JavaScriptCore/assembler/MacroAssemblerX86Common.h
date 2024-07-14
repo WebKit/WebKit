@@ -118,7 +118,7 @@ public:
     //
     // Operations are typically two operand - operation(source, srcDst)
     // For many operations the source may be an TrustedImm32, the srcDst operand
-    // may often be a memory location (explictly described using an Address
+    // may often be a memory location (explicitly described using an Address
     // object).
 
     void add32(RegisterID src, RegisterID dest)

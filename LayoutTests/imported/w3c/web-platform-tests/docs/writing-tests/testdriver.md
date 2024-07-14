@@ -208,7 +208,7 @@ actions.send();
 ```
 
 Note that if an action uses an element reference, the context will be
-derived from that element, and must match any explictly set
+derived from that element, and must match any explicitly set
 context. Using elements in multiple contexts in a single action chain
 is not supported.
 
