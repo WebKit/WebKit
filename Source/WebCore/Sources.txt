@@ -2580,6 +2580,7 @@ platform/network/MIMEHeader.cpp
 platform/network/NetworkLoadMetrics.cpp
 platform/network/NetworkStateNotifier.cpp
 platform/network/NetworkStorageSession.cpp
+platform/network/OrganizationStorageAccessPromptQuirk.cpp
 platform/network/ParsedContentRange.cpp
 platform/network/ParsedContentType.cpp
 platform/network/ParsedRequestRange.cpp

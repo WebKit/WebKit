@@ -1216,7 +1216,13 @@ RefPtr<Document> Quirks::protectedDocument() const
     return m_document.get();
 }
 
-void Quirks::triggerOptionalStorageAccessIframeQuirk(const URL& frameURL, CompletionHandler<void()>&& completionHandler) const
+void Quirks::setSubFrameDomainsForStorageAccessQuirk(Vector<RegistrableDomain>&& domains)
+{
+    m_subFrameDomainsForStorageAccessQuirk = WTFMove(domains);
+    triggerPendingOptionalStorageAccessIframeQuirk();
+}
+
+void Quirks::triggerOptionalStorageAccessIframeQuirk(const URL& frameURL, CompletionHandler<void()>&& completionHandler)
 {
     if (RefPtr document = m_document.get()) {
         if (document->frame() && !m_document->frame()->isMainFrame()) {
@@ -1226,13 +1232,30 @@ void Quirks::triggerOptionalStorageAccessIframeQuirk(const URL& frameURL, Comple
                 return;
             }
         }
-        if (subFrameDomainsForStorageAccessQuirk().contains(RegistrableDomain { frameURL })) {
+        if (!subFrameDomainsForStorageAccessQuirk()) {
+            m_queuedIframeStorageAccessQuirkCheck.append({ frameURL, WTFMove(completionHandler) });
+            return;
+        }
+
+        if (subFrameDomainsForStorageAccessQuirk()->isEmpty()) {
+            completionHandler();
+            return;
+        }
+
+        if (subFrameDomainsForStorageAccessQuirk()->contains(RegistrableDomain { frameURL })) {
             return DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*document, RegistrableDomain { frameURL }, [completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted) mutable {
                 completionHandler();
             });
         }
     }
     completionHandler();
+}
+
+void Quirks::triggerPendingOptionalStorageAccessIframeQuirk()
+{
+    for (auto&& [frameURL, completionHandler] : m_queuedIframeStorageAccessQuirkCheck)
+        triggerOptionalStorageAccessIframeQuirk(frameURL, WTFMove(completionHandler));
+    m_queuedIframeStorageAccessQuirkCheck.clear();
 }
 
 // rdar://64549429

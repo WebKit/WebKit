@@ -304,7 +304,7 @@ static void logProcessPoolState(const WebProcessPool& pool)
     }
 }
 
-String WebProcessPool::userAgentOverrideDirectory()
+String WebProcessPool::quirksResourceDirectory()
 {
     static NeverDestroyed<String> resourceDirectory;
     if (!resourceDirectory->isEmpty())
@@ -325,7 +325,7 @@ String WebProcessPool::userAgentOverrideDirectory()
     return resourceDirectory.get();
 }
 
-String WebProcessPool::additionalUserAgentOverrideDirectoryForTesting()
+String WebProcessPool::additionalQuirksResourceDirectoryForTesting()
 {
     static NeverDestroyed<String> resourceDirectory;
     if (!resourceDirectory->isEmpty())
@@ -566,18 +566,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(IOS_FAMILY)
     parameters.applicationAccessibilityEnabled = _AXSApplicationAccessibilityEnabled();
 #endif
-
-#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    for (auto&& entry : StorageAccessPromptQuirkController::shared().cachedQuirks()) {
-        if (!entry.triggerPages.isEmpty()) {
-            for (auto&& page : entry.triggerPages)
-                parameters.storageAccessPromptQuirksDomains.add(RegistrableDomain { page });
-            continue;
-        }
-        for (auto&& domain : entry.quirkDomains.keys())
-            parameters.storageAccessPromptQuirksDomains.add(domain);
-    }
-#endif
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
@@ -598,10 +586,6 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 
     parameters.enablePrivateClickMeasurement = ![defaults objectForKey:WebPreferencesKey::privateClickMeasurementEnabledKey()] || [defaults boolForKey:WebPreferencesKey::privateClickMeasurementEnabledKey()];
     parameters.ftpEnabled = [defaults objectForKey:WebPreferencesKey::ftpEnabledKey()] && [defaults boolForKey:WebPreferencesKey::ftpEnabledKey()];
-
-#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    parameters.storageAccessPromptQuirksData = StorageAccessPromptQuirkController::shared().cachedQuirks();
-#endif
 }
 
 void WebProcessPool::platformInvalidateContext()

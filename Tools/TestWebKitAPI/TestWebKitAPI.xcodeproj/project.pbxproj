@@ -1081,6 +1081,7 @@
 		CEDA12412437C9FB00C28A9E /* editable-region-composited-and-non-composited-overlap.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CEDA12402437C9EA00C28A9E /* editable-region-composited-and-non-composited-overlap.html */; };
 		D04CF93F285C77CA005D6337 /* MachSendRight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D04CF93E285C77C9005D6337 /* MachSendRight.cpp */; };
 		D20C03B62B704A95004C414A /* download.example.webarchive in Copy Resources */ = {isa = PBXBuildFile; fileRef = D20C03AE2B704A26004C414A /* download.example.webarchive */; };
+		D286F4BC2C2B484C00DA0141 /* StorageAccessPromptOrganizations.json in Copy Resources */ = {isa = PBXBuildFile; fileRef = D286F4B42C2B484B00DA0141 /* StorageAccessPromptOrganizations.json */; };
 		D2A7EEC62C234A7700AED0C5 /* UserAgentStringOverrides.json in Copy Resources */ = {isa = PBXBuildFile; fileRef = D2A7EEBE2C234A7600AED0C5 /* UserAgentStringOverrides.json */; };
 		D84FAD9A29FAC1D0008D338F /* RenderStyleChange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D84FAD9829FAC1D0008D338F /* RenderStyleChange.cpp */; };
 		DD0EDF8D2798A6AD005152AD /* libgtest.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = F3FC3EE213678B7300126A65 /* libgtest.a */; };
@@ -1918,6 +1919,7 @@
 				9342589E255B6A120059EEDD /* speechrecognition-user-permission-persistence.html in Copy Resources */,
 				0721D4592838296C00A95853 /* start-offset.ts in Copy Resources */,
 				E194E1BD177E53C7009C4D4E /* StopLoadingFromDidReceiveResponse.html in Copy Resources */,
+				D286F4BC2C2B484C00DA0141 /* StorageAccessPromptOrganizations.json in Copy Resources */,
 				515BE16F1D428BB100DD7C68 /* StoreBlobToBeDeleted.html in Copy Resources */,
 				9BD6D3A21F7B218300BD4962 /* sunset-in-cupertino-100px.tiff in Copy Resources */,
 				9BD6D3A31F7B218300BD4962 /* sunset-in-cupertino-200px.png in Copy Resources */,
@@ -3447,6 +3449,7 @@
 		CEDA12402437C9EA00C28A9E /* editable-region-composited-and-non-composited-overlap.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "editable-region-composited-and-non-composited-overlap.html"; path = "ios/editable-region-composited-and-non-composited-overlap.html"; sourceTree = SOURCE_ROOT; };
 		D04CF93E285C77C9005D6337 /* MachSendRight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MachSendRight.cpp; sourceTree = "<group>"; };
 		D20C03AE2B704A26004C414A /* download.example.webarchive */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; name = download.example.webarchive; path = Tests/WebKitCocoa/download.example.webarchive; sourceTree = "<group>"; };
+		D286F4B42C2B484B00DA0141 /* StorageAccessPromptOrganizations.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = StorageAccessPromptOrganizations.json; path = Tests/WebKit/StorageAccessPromptOrganizations.json; sourceTree = "<group>"; };
 		D2A7EEBE2C234A7600AED0C5 /* UserAgentStringOverrides.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UserAgentStringOverrides.json; sourceTree = "<group>"; };
 		D3BE5E341E4CE85E00FD563A /* WKWebViewGetContents.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewGetContents.mm; sourceTree = "<group>"; };
 		D84FAD9829FAC1D0008D338F /* RenderStyleChange.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderStyleChange.cpp; sourceTree = "<group>"; };
@@ -3864,6 +3867,7 @@
 		08FB7794FE84155DC02AAC07 /* TestWebKitAPI */ = {
 			isa = PBXGroup;
 			children = (
+				D286F4B42C2B484B00DA0141 /* StorageAccessPromptOrganizations.json */,
 				D20C03AE2B704A26004C414A /* download.example.webarchive */,
 				3AA7856029B6C8AA00C4374A /* TestWebKitAPIPrefix.h */,
 				DDF3A82928930475005920CF /* gtest.xcodeproj */,

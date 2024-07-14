@@ -49,6 +49,8 @@ struct OrganizationStorageAccessPromptQuirk {
         { }
 
     OrganizationStorageAccessPromptQuirk() = default;
+
+    WEBCORE_EXPORT static Vector<OrganizationStorageAccessPromptQuirk> parseOrganizationStorageAccessPromptQuirk(const String& resourcePath);
 };
 
 static bool operator==(const OrganizationStorageAccessPromptQuirk& a, const OrganizationStorageAccessPromptQuirk& b)

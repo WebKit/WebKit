@@ -234,3 +234,15 @@ macro(GENERATE_USER_AGENT_STRING_OVERRIDES _infile)
         COMMAND ${PYTHON_EXECUTABLE} ${OVERRIDES_GENERATOR} --input ${_infile}
         VERBATIM)
 endmacro()
+
+
+macro(VALIDATE_STORAGE_ACCESS_PROMPT_ORGANIZATIONS _infile)
+    set(ORGANIZATION_VALIDATOR ${WEBCORE_DIR}/platform/network/validate-storage-access-prompt-organizations.py)
+
+    add_custom_command(
+        MAIN_DEPENDENCY ${_infile}
+        DEPENDS ${ORGANIZATION_VALIDATOR} ${SCRIPTS_BINDINGS}
+        WORKING_DIRECTORY ${WebCore_DERIVED_SOURCES_DIR}
+        COMMAND ${PYTHON_EXECUTABLE} ${ORGANIZATION_VALIDATOR} --input ${_infile}
+        VERBATIM)
+endmacro()
