@@ -118,9 +118,6 @@ test/built-ins/RegExp/prototype/Symbol.replace/get-flags-err.js:
 test/built-ins/RegExp/prototype/Symbol.replace/get-unicode-error.js:
   default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
-test/built-ins/RegExp/quantifier-integer-limit.js:
-  default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
-  strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
 test/built-ins/Temporal/Duration/compare/argument-duration-out-of-range.js:
   default: 'Test262Error: string with days > max is out of range (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: string with days > max is out of range (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
