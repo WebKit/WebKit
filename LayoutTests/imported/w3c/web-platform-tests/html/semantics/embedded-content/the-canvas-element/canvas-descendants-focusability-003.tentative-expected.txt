@@ -4,9 +4,9 @@ PASS <section hidden="" tabindex="-1" data-focusable="false">
 PASS <div tabindex="-1" data-focusable="false">
 PASS <span tabindex="-1" data-focusable="false">
 PASS <a href="#" data-focusable="false">
-PASS <button style="display: contents" data-focusable="false">
-PASS <section style="display: contents" tabindex="-1" data-focusable="false">
-PASS <div style="display: contents" tabindex="-1" data-focusable="false">
-PASS <span style="display: contents" tabindex="-1" data-focusable="false">
-PASS <a style="display: contents" href="#" data-focusable="false">
+FAIL <button style="display: contents" data-focusable="true"> assert_true: Should be focused expected true got false
+FAIL <section style="display: contents" tabindex="-1" data-focusable="true"> assert_true: Should be focused expected true got false
+FAIL <div style="display: contents" tabindex="-1" data-focusable="true"> assert_true: Should be focused expected true got false
+FAIL <span style="display: contents" tabindex="-1" data-focusable="true"> assert_true: Should be focused expected true got false
+FAIL <a style="display: contents" href="#" data-focusable="true"> assert_true: Should be focused expected true got false
 

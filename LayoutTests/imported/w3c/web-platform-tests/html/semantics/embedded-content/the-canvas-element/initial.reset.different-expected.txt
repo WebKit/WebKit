@@ -1,8 +1,0 @@
-initial.reset.different
-Changing size resets canvas to transparent black
-Actual output:
-Expected output:
-
-
-PASS Changing size resets canvas to transparent black
-
