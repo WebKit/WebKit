@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc.
+ * Copyright (C) 2017-2024 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -119,8 +119,6 @@ static inline webrtc::PeerConnectionInterface::BundlePolicy bundlePolicyfromConf
 static inline webrtc::PeerConnectionInterface::RtcpMuxPolicy rtcpMuxPolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
 {
     switch (configuration.rtcpMuxPolicy) {
-    case RTCPMuxPolicy::Negotiate:
-        return webrtc::PeerConnectionInterface::kRtcpMuxPolicyNegotiate;
     case RTCPMuxPolicy::Require:
         return webrtc::PeerConnectionInterface::kRtcpMuxPolicyRequire;
     }
