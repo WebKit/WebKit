@@ -951,7 +951,7 @@ void GStreamerMediaEndpoint::getStats(RTCRtpReceiver& receiver, Ref<DeferredProm
 
 MediaStream& GStreamerMediaEndpoint::mediaStreamFromRTCStream(String mediaStreamId)
 {
-    auto mediaStream = m_remoteStreamsById.ensure(mediaStreamId, [mediaStreamId, this]() mutable {
+    auto mediaStream = m_remoteStreamsById.ensure(mediaStreamId, [&] {
         auto& document = downcast<Document>(*m_peerConnectionBackend.connection().scriptExecutionContext());
         return MediaStream::create(document, MediaStreamPrivate::create(document.logger(), { }, WTFMove(mediaStreamId)));
     });

@@ -997,7 +997,7 @@ TEST(WTF_RobinHoodHashMap, Ref_Value)
 
         MemoryCompactLookupOnlyRobinHoodHashMap<int, Ref<RefLogger>, RobinHoodHash<int>> map;
 
-        map.ensure(1, [&]() mutable {
+        map.ensure(1, [&] {
             Ref<RefLogger> ref(a);
             return ref;
         });

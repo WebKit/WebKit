@@ -27,6 +27,7 @@
 #pragma once
 
 #include <cstring>
+#include <functional>
 #include <memory>
 #include <span>
 #include <type_traits>
@@ -765,6 +766,13 @@ template<ByteType T, typename U> constexpr auto byteCast(const U& value)
     return ByteCastTraits<U>::template cast<T>(value);
 }
 
+// This is like std::invocable but it takes the expected signature rather than just the arguments.
+template<typename Functor, typename Signature>
+concept Invocable = requires(std::decay_t<Functor>&& f, std::function<Signature> expected)
+{
+    { expected = std::move(f) };
+};
+
 } // namespace WTF
 
 #define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)
@@ -826,3 +834,4 @@ using WTF::tryBinarySearch;
 using WTF::valueOrCompute;
 using WTF::valueOrDefault;
 using WTF::toTwosComplement;
+using WTF::Invocable;

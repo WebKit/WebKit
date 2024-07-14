@@ -175,7 +175,7 @@ public:
         }
 
         for (Variable* variable : m_procedure.variables()) {
-            auto addResult = m_variableToTmps.add(variable, Vector<Tmp, 1>(m_procedure.resultCount(variable->type())));
+            auto addResult = m_variableToTmps.add(variable, Vector<Tmp>(m_procedure.resultCount(variable->type())));
             ASSERT(addResult.isNewEntry);
             for (unsigned i = 0; i < m_procedure.resultCount(variable->type()); ++i)
                 addResult.iterator->value[i] = tmpForType(m_procedure.typeAtOffset(variable->type(), i));

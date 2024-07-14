@@ -167,15 +167,10 @@ void EventRegionContext::uniteInteractionRegions(RenderObject& renderer, const F
 
         m_interactionRectsAndContentHints.add(rectForTracking, interactionRegion->contentHint);
 
-        auto discoveredIterator = m_discoveredRegionsByElement.find(interactionRegion->elementIdentifier);
-        if (discoveredIterator != m_discoveredRegionsByElement.end()) {
-            discoveredIterator->value.append(*interactionRegion);
+        auto discoveredAddResult = m_discoveredRegionsByElement.add(interactionRegion->elementIdentifier, Vector<InteractionRegion>());
+        discoveredAddResult.iterator->value.append(*interactionRegion);
+        if (!discoveredAddResult.isNewEntry)
             return;
-        }
-
-        Vector<InteractionRegion, 1> discoveredRegions;
-        discoveredRegions.append(*interactionRegion);
-        m_discoveredRegionsByElement.add(interactionRegion->elementIdentifier, discoveredRegions);
 
         auto guardRect = guardRectForRegionBounds(*interactionRegion);
         if (guardRect) {
@@ -263,6 +258,7 @@ void EventRegionContext::convertGuardContainersToInterationIfNeeded(float minimu
         if (region.type != InteractionRegion::Type::Guard)
             continue;
 
+        // FIXME: This seems like it could be structured so it doesn't need four hash lookups in the worst case.
         if (!m_discoveredRegionsByElement.contains(region.elementIdentifier)) {
             auto rectForTracking = enclosingIntRect(region.rectInLayerCoordinates);
             if (!m_interactionRectsAndContentHints.contains(rectForTracking)) {
@@ -270,9 +266,7 @@ void EventRegionContext::convertGuardContainersToInterationIfNeeded(float minimu
                 region.cornerRadius = minimumCornerRadius;
 
                 m_interactionRectsAndContentHints.add(rectForTracking, region.contentHint);
-                Vector<InteractionRegion, 1> discoveredRegions;
-                discoveredRegions.append(region);
-                m_discoveredRegionsByElement.add(region.elementIdentifier, discoveredRegions);
+                m_discoveredRegionsByElement.add(region.elementIdentifier, Vector<InteractionRegion>({ region }));
             }
         }
     }

@@ -84,7 +84,7 @@ static ExceptionOr<Vector<Ref<FetchRequest>>> buildBackgroundFetchRequests(Scrip
 Ref<BackgroundFetchRegistration> BackgroundFetchManager::backgroundFetchRegistrationInstance(ScriptExecutionContext& context, BackgroundFetchInformation&& data)
 {
     auto identifier = data.identifier;
-    auto result = m_backgroundFetchRegistrations.ensure(identifier, [&]() mutable {
+    auto result = m_backgroundFetchRegistrations.ensure(identifier, [&] {
         return BackgroundFetchRegistration::create(context, WTFMove(data));
     });
 
