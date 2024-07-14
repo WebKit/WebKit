@@ -1302,7 +1302,7 @@ void RenderLayerScrollableArea::updateScrollbarsAfterLayout()
         // FIXME: This does not belong here.
         auto* parent = renderer.parent();
         if (CheckedPtr parentFlexibleBox = dynamicDowncast<RenderFlexibleBox>(parent); parentFlexibleBox && renderer.isRenderBox())
-            parentFlexibleBox->clearCachedMainSizeForChild(*m_layer.renderBox());
+            parentFlexibleBox->clearCachedMainSizeForFlexItem(*m_layer.renderBox());
     }
 
     // Set up the range.

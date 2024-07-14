@@ -974,8 +974,8 @@ static void resetRendererStateOnDetach(RenderElement& parent, RenderObject& chil
         downcast<RenderBox>(child).removeFloatingOrPositionedChildFromBlockLists();
     else if (CheckedPtr parentFlexibleBox = dynamicDowncast<RenderFlexibleBox>(parent)) {
         if (CheckedPtr childBox = dynamicDowncast<RenderBox>(child)) {
-            parentFlexibleBox->clearCachedChildIntrinsicContentLogicalHeight(*childBox);
-            parentFlexibleBox->clearCachedMainSizeForChild(*childBox);
+            parentFlexibleBox->clearCachedFlexItemIntrinsicContentLogicalHeight(*childBox);
+            parentFlexibleBox->clearCachedMainSizeForFlexItem(*childBox);
         }
     }
 
