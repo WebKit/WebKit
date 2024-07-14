@@ -178,7 +178,7 @@ public:
     bool canBlitOnScroll() const;
 
     // There are at least three types of contentInset. Usually we just care about WebCoreContentInset, which is the inset
-    // that is set on a Page that requires WebCore to move its layers to accomodate the inset. However, there are platform
+    // that is set on a Page that requires WebCore to move its layers to accommodate the inset. However, there are platform
     // concepts that are similar on both iOS and Mac when there is a platformWidget(). Sometimes we need the Mac platform value
     // for topContentInset, so when the TopContentInsetType is WebCoreOrPlatformContentInset, platformTopContentInset()
     // will be returned instead of the value set on Page.
