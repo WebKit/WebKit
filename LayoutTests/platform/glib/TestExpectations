@@ -1521,6 +1521,7 @@ imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-users
 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-userspaceonuse-content-clip.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-001.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-011.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/geometry/reftests/circle-003.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change-root.html [ ImageOnlyFailure ]
 svg/animations/animateMotion-additive-2a.svg [ ImageOnlyFailure ]
 svg/animations/animateMotion-additive-2c.svg [ ImageOnlyFailure ]
