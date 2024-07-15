@@ -76,10 +76,6 @@ public:
     void handleTranslation(const WebCore::TranslationContextMenuInfo&) final;
 #endif
 
-#if ENABLE(WRITING_TOOLS)
-    void handleWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView) final;
-#endif
-
 private:
     NSMenu *contextMenuForEvent(NSEvent *, NSView *, bool& isServicesMenu);
 

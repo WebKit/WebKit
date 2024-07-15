@@ -2253,7 +2253,6 @@ public:
 #if ENABLE(WRITING_TOOLS)
 #if ENABLE(CONTEXT_MENUS)
     bool canHandleContextMenuWritingTools() const;
-    void handleContextMenuWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView);
     void handleContextMenuWritingTools(WebCore::WritingTools::RequestedTool);
 #endif
 #endif

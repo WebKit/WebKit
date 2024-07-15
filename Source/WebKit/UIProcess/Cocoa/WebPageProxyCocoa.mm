@@ -874,11 +874,6 @@ bool WebPageProxy::canHandleContextMenuWritingTools() const
     return protectedPageClient()->canHandleContextMenuWritingTools();
 }
 
-void WebPageProxy::handleContextMenuWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView)
-{
-    protectedPageClient()->handleContextMenuWritingToolsDeprecated(selectionBoundsInRootView);
-}
-
 #endif // ENABLE(WRITING_TOOLS)
 
 #endif // ENABLE(CONTEXT_MENUS)

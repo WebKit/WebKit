@@ -146,14 +146,6 @@ void WebContextMenuClient::handleTranslation(const TranslationContextMenuInfo& i
 
 #endif
 
-#if ENABLE(WRITING_TOOLS)
-
-void WebContextMenuClient::handleWritingToolsDeprecated(IntRect selectionBoundsInRootView)
-{
-}
-
-#endif
-
 #if ENABLE(SERVICE_CONTROLS)
 
 void WebContextMenuClient::sharingServicePickerWillBeDestroyed(WebSharingServicePickerController &)

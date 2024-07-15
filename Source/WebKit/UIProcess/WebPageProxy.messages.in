@@ -232,10 +232,6 @@ messages -> WebPageProxy {
     HandleContextMenuTranslation(struct WebCore::TranslationContextMenuInfo info)
 #endif
 
-#if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
-    HandleContextMenuWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView)
-#endif
-
 #if ENABLE(WRITING_TOOLS)
     ProofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(struct WebCore::WritingTools::Session::ID sessionID, struct WebCore::WritingTools::TextSuggestion::ID replacementID, WebCore::IntRect selectionBoundsInRootView)
 

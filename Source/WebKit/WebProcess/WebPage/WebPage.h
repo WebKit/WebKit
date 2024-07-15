@@ -1628,10 +1628,6 @@ public:
     void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&);
 #endif
 
-#if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
-    void handleContextMenuWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView);
-#endif
-
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
     void showMediaControlsContextMenu(WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&);
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)

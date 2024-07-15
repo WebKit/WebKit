@@ -1108,11 +1108,6 @@ bool PageClientImpl::canHandleContextMenuWritingTools() const
     return m_impl->canHandleContextMenuWritingTools();
 }
 
-void PageClientImpl::handleContextMenuWritingToolsDeprecated(IntRect selectionBoundsInRootView)
-{
-    m_impl->handleContextMenuWritingToolsDeprecated(selectionBoundsInRootView);
-}
-
 void PageClientImpl::handleContextMenuWritingTools(WebCore::WritingTools::RequestedTool tool, WebCore::IntRect selectionRect)
 {
     RetainPtr webView = this->webView();

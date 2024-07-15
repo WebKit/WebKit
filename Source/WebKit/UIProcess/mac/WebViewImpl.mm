@@ -6460,16 +6460,6 @@ bool WebViewImpl::canHandleContextMenuWritingTools() const
     return [PAL::getWTWritingToolsViewControllerClass() isAvailable] && m_page->writingToolsBehavior() != WebCore::WritingTools::Behavior::None;
 }
 
-void WebViewImpl::handleContextMenuWritingToolsDeprecated(IntRect selectionBoundsInRootView)
-{
-    if (!canHandleContextMenuWritingTools()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    auto view = m_view.get();
-    [[PAL::getWTWritingToolsClass() sharedInstance] showPanelForSelectionRect:selectionBoundsInRootView ofView:view.get() forDelegate:(NSObject<WTWritingToolsDelegate> *)view.get()];
-}
 #endif
 
 bool WebViewImpl::acceptsPreviewPanelControl(QLPreviewPanel *)
