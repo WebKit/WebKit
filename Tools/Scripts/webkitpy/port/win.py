@@ -487,5 +487,5 @@ class WinPort(ApplePort):
 
     def configuration_for_upload(self, host=None):
         configuration = super(WinPort, self).configuration_for_upload(host=host)
-        configuration['platform'] = 'wincairo'
+        configuration['platform'] = self.port_name
         return configuration

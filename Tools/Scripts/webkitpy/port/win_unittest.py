@@ -151,6 +151,6 @@ class WinPortTest(port_testcase.PortTestCase):
         configuration = port.configuration_for_upload()
         self.assertEqual(configuration['architecture'], port.architecture())
         self.assertEqual(configuration['is_simulator'], False)
-        self.assertEqual(configuration['platform'], 'wincairo')
+        self.assertEqual(configuration['platform'], 'win')
         self.assertEqual(configuration['style'], 'release')
         self.assertEqual(configuration['version_name'], 'XP')
