@@ -2070,6 +2070,10 @@ imported/w3c/web-platform-tests/svg/extensibility/foreignObject/isolation-with-h
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/isolation-with-svg.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/display-none-mask.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-baseVal-change-invalid.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/shapes/rect-03.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/shapes/rect-04.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-002.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-003.svg [ ImageOnlyFailure ]
 
 webkit.org/b/139595 imported/w3c/web-platform-tests/svg/import/animate-dom-02-f-manual.svg [ Skip ]
 webkit.org/b/201110 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/stacking-context.html [ Skip ]

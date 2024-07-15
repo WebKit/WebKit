@@ -14,10 +14,16 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/reftests/disabled-shapes-01-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/shapes/reftests/disabled-shapes-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-001-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-001-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-002-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-002-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-002.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-003-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-003-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-003.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/reftests/polygon-with-filtered-marker-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/reftests/polygon-with-filtered-marker.html
