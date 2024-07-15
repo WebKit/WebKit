@@ -1,0 +1,10 @@
+<script>
+ if (window.testRunner) { testRunner.dumpAsText() }
+
+ var decoder = new TextDecoder('utf-8');
+ decoder.decode(new Uint8Array(0x7fffffff), { stream: true });
+ try { decoder.decode(new Uint8Array(1), { stream: true }) } catch (e) { console.log('error ' + e) }
+
+ var decoder = new TextDecoder('utf-8');
+ try { decoder.decode(new Uint8Array(0x80000000)) } catch (e) { console.log('error ' + e) }
+ </script>

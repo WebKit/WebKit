@@ -1,0 +1,11 @@
+<html>
+<body>
+<script>
+if (window.testRunner) { testRunner.dumpAsText() }
+const decoder = new TextDecoder('utf-8', { fatal: true });
+decoder.decode(new Uint8Array([0xf0]), {stream: true});
+try { decoder.decode(new Uint8Array(0xffffffff)) } catch (e) { alert('successfully caught exception ' + e); }
+try { decoder.decode(new Uint8Array(0x7fffffff)) } catch (e) { alert('successfully caught exception ' + e); }
+</script>
+</body>
+</html>
