@@ -1120,11 +1120,12 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         && !layer.needsCompositingRequirementsTraversal()
         && !compositingState.fullPaintOrderTraversalRequired
         && !compositingState.descendantsRequireCompositingUpdate) {
-        traverseUnchangedSubtree(ancestorLayer, layer, overlapMap, compositingState, backingSharingState, descendantHas3DTransform);
-        return;
-    }
+        if (traverseUnchangedSubtree(ancestorLayer, layer, overlapMap, compositingState, backingSharingState, descendantHas3DTransform) == TraverseUnchangedSubtreeResult::Success)
+            return;
 
-    LOG_WITH_STREAM(Compositing, stream << TextStream::Repeat(treeDepth * 2, ' ') << &layer << " computeCompositingRequirements (backing provider candidates " << backingSharingState.backingProviderCandidates() << ")");
+        LOG_WITH_STREAM(Compositing, stream << TextStream::Repeat(treeDepth * 2, ' ') << &layer << " computeCompositingRequirements (backing provider candidates " << backingSharingState.backingProviderCandidates() << ") - Error during traverseUnchangedSubtree, continue with full compute");
+    } else
+        LOG_WITH_STREAM(Compositing, stream << TextStream::Repeat(treeDepth * 2, ' ') << &layer << " computeCompositingRequirements (backing provider candidates " << backingSharingState.backingProviderCandidates() << ")");
 
     // FIXME: maybe we can avoid updating all remaining layers in paint order.
     compositingState.fullPaintOrderTraversalRequired |= layer.needsCompositingRequirementsTraversal();
@@ -1383,7 +1384,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 }
 
 // We have to traverse unchanged layers to fill in the overlap map.
-void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer, RenderLayer& layer, LayerOverlapMap& overlapMap, CompositingState& compositingState, BackingSharingState& backingSharingState, bool& descendantHas3DTransform)
+RenderLayerCompositor::TraverseUnchangedSubtreeResult RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer, RenderLayer& layer, LayerOverlapMap& overlapMap, CompositingState& compositingState, BackingSharingState& backingSharingState, bool& descendantHas3DTransform)
 {
 #if !LOG_DISABLED
     unsigned treeDepth = compositingState.depth;
@@ -1418,6 +1419,10 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
     if (layer.paintsIntoProvidedBacking()) {
         auto* provider = backingSharingState.backingProviderCandidateForLayer(layer, *this, overlapMap, layerExtent);
         ASSERT(provider);
+        if (!provider) {
+            LOG_WITH_STREAM(Compositing, stream << "unchangedSubtree: layer " << &layer << " has no backing provider, requires full computeCompositingRequirements");
+            return TraverseUnchangedSubtreeResult::LayerMissingBackingProvider;
+        }
         provider->sharingLayers.add(layer);
         layerPaintsIntoProvidedBacking = true;
     }
@@ -1456,16 +1461,21 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
     bool anyDescendantHas3DTransform = false;
 
     for (auto* childLayer : layer.negativeZOrderLayers()) {
-        traverseUnchangedSubtree(&layer, *childLayer, overlapMap, currentState, backingSharingState, anyDescendantHas3DTransform);
+        if (auto result = traverseUnchangedSubtree(&layer, *childLayer, overlapMap, currentState, backingSharingState, anyDescendantHas3DTransform); result != TraverseUnchangedSubtreeResult::Success)
+            return result;
         if (currentState.subtreeIsCompositing)
             ASSERT(layerIsComposited);
     }
 
-    for (auto* childLayer : layer.normalFlowLayers())
-        traverseUnchangedSubtree(&layer, *childLayer, overlapMap, currentState, backingSharingState, anyDescendantHas3DTransform);
+    for (auto* childLayer : layer.normalFlowLayers()) {
+        if (auto result = traverseUnchangedSubtree(&layer, *childLayer, overlapMap, currentState, backingSharingState, anyDescendantHas3DTransform); result != TraverseUnchangedSubtreeResult::Success)
+            return result;
+    }
 
-    for (auto* childLayer : layer.positiveZOrderLayers())
-        traverseUnchangedSubtree(&layer, *childLayer, overlapMap, currentState, backingSharingState, anyDescendantHas3DTransform);
+    for (auto* childLayer : layer.positiveZOrderLayers()) {
+        if (auto result = traverseUnchangedSubtree(&layer, *childLayer, overlapMap, currentState, backingSharingState, anyDescendantHas3DTransform); result != TraverseUnchangedSubtreeResult::Success)
+            return result;
+    }
 
     // Set the flag to say that this layer has compositing children.
     ASSERT(layer.hasCompositingDescendant() == currentState.subtreeIsCompositing);
@@ -1483,6 +1493,7 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
     overlapMap.geometryMap().popMappingsToAncestor(ancestorLayer);
 
     ASSERT(!layer.needsCompositingRequirementsTraversal());
+    return TraverseUnchangedSubtreeResult::Success;
 }
 
 void RenderLayerCompositor::collectViewTransitionNewContentLayers(RenderLayer& layer, Vector<Ref<GraphicsLayer>>& childList)

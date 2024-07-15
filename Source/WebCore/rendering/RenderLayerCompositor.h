@@ -457,7 +457,9 @@ private:
     void updateCompositingLayersTimerFired();
 
     void computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer&, LayerOverlapMap&, CompositingState&, BackingSharingState&, bool& descendantHas3DTransform);
-    void traverseUnchangedSubtree(RenderLayer* ancestorLayer, RenderLayer&, LayerOverlapMap&, CompositingState&, BackingSharingState&, bool& descendantHas3DTransform);
+
+    enum class TraverseUnchangedSubtreeResult { Success, LayerMissingBackingProvider };
+    TraverseUnchangedSubtreeResult traverseUnchangedSubtree(RenderLayer* ancestorLayer, RenderLayer&, LayerOverlapMap&, CompositingState&, BackingSharingState&, bool& descendantHas3DTransform);
 
     enum class UpdateLevel {
         AllDescendants          = 1 << 0,
