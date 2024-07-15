@@ -25,6 +25,6 @@
 
 [
     EnabledBySetting=NavigationAPIEnabled,
-    IsStrongCallback,
+    GenerateIsReachable=ImplScriptExecutionContext,
     SkipCallbackInvokeCheck
 ] callback NavigationInterceptHandler = Promise<undefined> ();

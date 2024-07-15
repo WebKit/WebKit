@@ -19,7 +19,7 @@
 */
 
 #include "config.h"
-#include "JSTestCallbackFunctionStrong.h"
+#include "JSTestCallbackFunctionGenerateIsReachable.h"
 
 #include "ContextDestructionObserverInlines.h"
 #include "JSDOMConvertNumbers.h"
@@ -31,13 +31,13 @@
 namespace WebCore {
 using namespace JSC;
 
-JSTestCallbackFunctionStrong::JSTestCallbackFunctionStrong(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : TestCallbackFunctionStrong(globalObject->scriptExecutionContext())
-    , m_data(new JSCallbackDataStrong(callback, globalObject, this))
+JSTestCallbackFunctionGenerateIsReachable::JSTestCallbackFunctionGenerateIsReachable(JSObject* callback, JSDOMGlobalObject* globalObject)
+    : TestCallbackFunctionGenerateIsReachable(globalObject->scriptExecutionContext())
+    , m_data(new JSCallbackData(callback, globalObject, globalObject->scriptExecutionContext()))
 {
 }
 
-JSTestCallbackFunctionStrong::~JSTestCallbackFunctionStrong()
+JSTestCallbackFunctionGenerateIsReachable::~JSTestCallbackFunctionGenerateIsReachable()
 {
     ScriptExecutionContext* context = scriptExecutionContext();
     // When the context is destroyed, all tasks with a reference to a callback
@@ -51,12 +51,12 @@ JSTestCallbackFunctionStrong::~JSTestCallbackFunctionStrong()
 #endif
 }
 
-CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunctionStrong::handleEvent(typename IDLLong::ParameterType argument)
+CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunctionGenerateIsReachable::handleEvent(typename IDLLong::ParameterType argument)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;
 
-    Ref<JSTestCallbackFunctionStrong> protectedThis(*this);
+    Ref<JSTestCallbackFunctionGenerateIsReachable> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
     auto& vm = globalObject.vm();
@@ -83,12 +83,12 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunction
     return { returnValue.releaseReturnValue() };
 }
 
-JSC::JSValue toJS(TestCallbackFunctionStrong& impl)
+JSC::JSValue toJS(TestCallbackFunctionGenerateIsReachable& impl)
 {
-    if (!static_cast<JSTestCallbackFunctionStrong&>(impl).callbackData())
+    if (!static_cast<JSTestCallbackFunctionGenerateIsReachable&>(impl).callbackData())
         return jsNull();
 
-    return static_cast<JSTestCallbackFunctionStrong&>(impl).callbackData()->callback();
+    return static_cast<JSTestCallbackFunctionGenerateIsReachable&>(impl).callbackData()->callback();
 }
 
 } // namespace WebCore

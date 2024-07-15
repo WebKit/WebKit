@@ -26,4 +26,4 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[ IsStrongCallback ] callback DatabaseCallback = undefined (Database database);
+[ GenerateIsReachable=ImplScriptExecutionContext ] callback DatabaseCallback = undefined (Database database);

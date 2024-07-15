@@ -32,7 +32,7 @@ using namespace JSC;
 
 JSTestCallbackFunctionWithVariadic::JSTestCallbackFunctionWithVariadic(JSObject* callback, JSDOMGlobalObject* globalObject)
     : TestCallbackFunctionWithVariadic(globalObject->scriptExecutionContext())
-    , m_data(new JSCallbackDataWeak(callback, globalObject, this))
+    , m_data(new JSCallbackData(callback, globalObject, this))
 {
 }
 

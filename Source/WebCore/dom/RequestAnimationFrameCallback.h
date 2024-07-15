@@ -52,6 +52,9 @@ public:
     // Allow a little more than 30fps to make sure we can at least hit that frame rate.
     static constexpr Seconds halfSpeedThrottlingAnimationInterval { 30_ms };
     static constexpr Seconds aggressiveThrottlingAnimationInterval { 10_s };
+
+private:
+    virtual bool hasCallback() const = 0;
 };
 
 } // namespace WebCore

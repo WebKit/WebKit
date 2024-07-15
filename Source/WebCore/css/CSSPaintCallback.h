@@ -48,6 +48,9 @@ public:
     virtual ~CSSPaintCallback()
     {
     }
+
+private:
+    virtual bool hasCallback() const = 0;
 };
 
 } // namespace WebCore

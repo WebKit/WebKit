@@ -23,4 +23,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[ IsStrongCallback ] callback TestCallbackFunctionStrong = DOMString (long argument);
+[ GenerateIsReachable=ImplScriptExecutionContext ] callback TestCallbackFunctionGenerateIsReachable = DOMString (long argument);

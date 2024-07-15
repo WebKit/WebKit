@@ -22,36 +22,39 @@
 
 #include "IDLTypes.h"
 #include "JSCallbackData.h"
-#include "TestCallbackFunctionStrong.h"
+#include "TestCallbackFunctionGenerateIsReachable.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-class JSTestCallbackFunctionStrong final : public TestCallbackFunctionStrong {
+class JSTestCallbackFunctionGenerateIsReachable final : public TestCallbackFunctionGenerateIsReachable {
 public:
-    static Ref<JSTestCallbackFunctionStrong> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+    static Ref<JSTestCallbackFunctionGenerateIsReachable> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {
-        return adoptRef(*new JSTestCallbackFunctionStrong(callback, globalObject));
+        return adoptRef(*new JSTestCallbackFunctionGenerateIsReachable(callback, globalObject));
     }
 
     ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
-    ~JSTestCallbackFunctionStrong() final;
-    JSCallbackDataStrong* callbackData() { return m_data; }
+    ~JSTestCallbackFunctionGenerateIsReachable() final;
+    JSCallbackData* callbackData() { return m_data; }
 
     // Functions
     CallbackResult<typename IDLDOMString::ImplementationType> handleEvent(typename IDLLong::ParameterType argument) override;
 
 private:
-    JSTestCallbackFunctionStrong(JSC::JSObject*, JSDOMGlobalObject*);
+    JSTestCallbackFunctionGenerateIsReachable(JSC::JSObject*, JSDOMGlobalObject*);
 
-    JSCallbackDataStrong* m_data;
+    bool hasCallback() const final { return m_data && m_data->callback(); }
+
+    JSCallbackData* m_data;
 };
 
-JSC::JSValue toJS(TestCallbackFunctionStrong&);
-inline JSC::JSValue toJS(TestCallbackFunctionStrong* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
+JSC::JSValue toJS(TestCallbackFunctionGenerateIsReachable&);
+inline JSC::JSValue toJS(TestCallbackFunctionGenerateIsReachable* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
 
-template<> struct JSDOMCallbackConverterTraits<JSTestCallbackFunctionStrong> {
-    using Base = TestCallbackFunctionStrong;
+template<> struct JSDOMCallbackConverterTraits<JSTestCallbackFunctionGenerateIsReachable> {
+    using Base = TestCallbackFunctionGenerateIsReachable;
 };
 } // namespace WebCore

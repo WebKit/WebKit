@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ RequestIdleCallbackEnabled=true ] -->
+<html>
+<body>
+<script>
+function cb()
+{
+    let d = document;
+    let p = d.createElement("p");
+    p.innerText = "This shouldn't leak the document.";
+    d.body.appendChild(p);
+    window.requestIdleCallback(cb);
+}
+
+requestIdleCallback(cb);
+parent.postMessage("iframeLoaded");
+</script>
+</body>
+</html>

@@ -28,5 +28,5 @@
 
 [
     Conditional=WEB_AUDIO,
-    IsStrongCallback
+    GenerateIsReachable=ImplScriptExecutionContext
 ] callback AudioWorkletProcessorConstructor = AudioWorkletProcessor (object options);
