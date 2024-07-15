@@ -461,7 +461,8 @@ private:
             return;
         }
         case Add:
-        case Sub: {
+        case Sub:
+        case Mul: {
             if (m_value->type() != Int64)
                 return;
             auto left = getMapping(m_value->child(0));
