@@ -1310,6 +1310,19 @@ bool WebPageProxy::shouldUseBackForwardCache() const
         && !m_preferences->siteIsolationEnabled();
 }
 
+void WebPageProxy::setBrowsingContextGroup(BrowsingContextGroup& browsingContextGroup)
+{
+    if (m_browsingContextGroup.ptr() == &browsingContextGroup)
+        return;
+
+    if (m_preferences->siteIsolationEnabled()) {
+        m_browsingContextGroup->removePage(*this);
+        browsingContextGroup.addPage(*this);
+    }
+
+    m_browsingContextGroup = browsingContextGroup;
+}
+
 void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> provisionalPage)
 {
     ASSERT(!m_isClosed);
@@ -1344,7 +1357,7 @@ void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> p
     m_mainFrame = provisionalPage->mainFrame();
     // FIXME: Think about what to do if the provisional page didn't get its browsing context group from the SuspendedPageProxy.
     // We do need to clear it at some point for navigations that aren't from back/forward navigations. Probably in the same place as PSON?
-    m_browsingContextGroup = provisionalPage->browsingContextGroup();
+    setBrowsingContextGroup(provisionalPage->browsingContextGroup());
 
     protectedLegacyMainFrameProcess()->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::No);
     addAllMessageReceivers();

@@ -3085,6 +3085,7 @@ private:
 #endif
 
     void setAllowsLayoutViewportHeightExpansion(bool);
+    void setBrowsingContextGroup(BrowsingContextGroup&);
 
     struct Internals;
     Internals& internals() { return m_internals; }
