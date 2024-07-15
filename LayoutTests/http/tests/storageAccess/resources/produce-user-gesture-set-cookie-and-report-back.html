@@ -12,12 +12,12 @@
                         function (hasAccess) {
                             if (hasAccess) {
                                 clearInterval(intervalID);
-                                document.cookie = "firstPartyCookie=value";
-                                window.opener.postMessage("PASS Cookie created.", "http://127.0.0.1:8000");
+                                document.cookie = "firstPartyCookie=value; SameSite=None; Secure";
+                                window.opener.postMessage("PASS Cookie created.", "https://127.0.0.1:8443");
                             }
                         },
                         function (reason) {
-                            window.opener.postMessage("FAIL Promise was rejected, reason: " + reason, "http://127.0.0.1:8000");
+                            window.opener.postMessage("FAIL Promise was rejected, reason: " + reason, "https://127.0.0.1:8443");
                         }
                     );
                 }, 100);

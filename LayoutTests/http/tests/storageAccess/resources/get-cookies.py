@@ -40,11 +40,11 @@ print('''<p id="output"></p>
 
     function messageToTop(messagePrefix, fetchData) {
         top.postMessage(messagePrefix + " document.cookie == " + document.cookie +
-            (fetchData ? ", cookies seen server-side == " + JSON.stringify(fetchData) : ""), "http://127.0.0.1:8000");
+            (fetchData ? ", cookies seen server-side == " + JSON.stringify(fetchData) : ""), "https://127.0.0.1:8443");
     }
 
     function receiveMessage(event) {
-        if (event.origin === "http://127.0.0.1:8000") {
+        if (event.origin === "https://127.0.0.1:8443") {
             if (event.data.indexOf("reportBackCookies") !== -1) {
                 fetch("echo-incoming-cookies-as-json.py", { credentials: "same-origin" }).then(function(response) {
                     return response.json();
