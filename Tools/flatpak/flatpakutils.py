@@ -835,6 +835,7 @@ class WebkitFlatpak:
                            "--die-with-parent",
                            "--filesystem=host",
                            "--allow=devel",
+                           "--share=network",
                            "--talk-name=org.gtk.vfs",
                            "--talk-name=org.gtk.vfs.*"]
 
@@ -849,17 +850,11 @@ class WebkitFlatpak:
                 if e.errno != errno.EEXIST:
                     raise e
 
-        share_network_option = "--share=network"
-
-        if self.platform == 'WPE':
-            flatpak_command.append(share_network_option)
-
         if not building:
             flatpak_command.extend([
                 "--device=all",
                 "--device=dri",
                 "--share=ipc",
-                "--share=network",
                 "--socket=pulseaudio",
                 "--socket=session-bus",
                 "--socket=system-bus",
@@ -938,9 +933,6 @@ class WebkitFlatpak:
                                       "SCCACHE_GCS_BUCKET", "SCCACHE_AZURE_CONNECTION_STRING",
                                       "WEBKIT_USE_SCCACHE"])
         if remote_sccache_configs.intersection(set(os.environ.keys())) and start_sccache and not building_local_deps:
-            _log.debug("Enabling network access for the remote sccache")
-            flatpak_command.append(share_network_option)
-
             sccache_environment = {}
             if os.path.isfile(self.sccache_config_file) and not self.regenerate_toolchains and \
                "SCCACHE_CONF" not in os.environ.keys():
@@ -955,15 +947,13 @@ class WebkitFlatpak:
                 # Spawn the sccache server in background, and avoid recursing here, using a bool keyword.
                 _log.debug("Pre-starting the SCCache dist server")
                 self.run_in_sandbox("sccache", "--start-server", env=sccache_environment, building_local_deps=building_local_deps,
-                                    extra_flatpak_args=[share_network_option], start_sccache=False)
+                                    start_sccache=False)
 
             # Forward sccache server env vars to sccache clients.
             sandbox_environment.update(sccache_environment)
 
         if self.use_icecream and not skip_icc:
             _log.debug('Enabling the icecream compiler')
-            flatpak_command.extend([share_network_option, "--filesystem=home"])
-
             try:
                 n_cores = os.environ["NUMBER_OF_PROCESSORS"]
             except KeyError:
