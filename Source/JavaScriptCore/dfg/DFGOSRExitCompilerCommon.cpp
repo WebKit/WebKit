@@ -180,8 +180,12 @@ static CodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCodeBlockForCall
                 jumpTarget = LLINT_RETURN_LOCATION(op_get_by_id);
             else if (callInstruction.opcodeID() == op_get_length)
                 jumpTarget = LLINT_RETURN_LOCATION(op_get_length);
+            else if (callInstruction.opcodeID() == op_get_by_id_direct)
+                jumpTarget = LLINT_RETURN_LOCATION(op_get_by_id_direct);
             else if (callInstruction.opcodeID() == op_get_by_val)
                 jumpTarget = LLINT_RETURN_LOCATION(op_get_by_val);
+            else if (callInstruction.opcodeID() == op_enumerator_get_by_val)
+                jumpTarget = LLINT_RETURN_LOCATION(op_enumerator_get_by_val);
             else
                 RELEASE_ASSERT_NOT_REACHED();
             break;
@@ -192,6 +196,21 @@ static CodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCodeBlockForCall
                 jumpTarget = LLINT_RETURN_LOCATION(op_put_by_id);
             else if (callInstruction.opcodeID() == op_put_by_val)
                 jumpTarget = LLINT_RETURN_LOCATION(op_put_by_val);
+            else if (callInstruction.opcodeID() == op_put_by_val_direct)
+                jumpTarget = LLINT_RETURN_LOCATION(op_put_by_val_direct);
+            else if (callInstruction.opcodeID() == op_enumerator_put_by_val)
+                jumpTarget = LLINT_RETURN_LOCATION(op_enumerator_put_by_val);
+            else
+                RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        case InlineCallFrame::ProxyObjectInCall: {
+            if (callInstruction.opcodeID() == op_in_by_id)
+                jumpTarget = LLINT_RETURN_LOCATION(op_in_by_id);
+            else if (callInstruction.opcodeID() == op_in_by_val)
+                jumpTarget = LLINT_RETURN_LOCATION(op_in_by_val);
+            else if (callInstruction.opcodeID() == op_enumerator_in_by_val)
+                jumpTarget = LLINT_RETURN_LOCATION(op_enumerator_in_by_val);
             else
                 RELEASE_ASSERT_NOT_REACHED();
             break;
@@ -216,7 +235,8 @@ static CodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCodeBlockForCall
         case InlineCallFrame::GetterCall:
         case InlineCallFrame::SetterCall:
         case InlineCallFrame::ProxyObjectLoadCall:
-        case InlineCallFrame::ProxyObjectStoreCall: {
+        case InlineCallFrame::ProxyObjectStoreCall:
+        case InlineCallFrame::ProxyObjectInCall: {
             StructureStubInfo* stubInfo = baselineCodeBlockForCaller->findStubInfo(CodeOrigin(callBytecodeIndex));
             RELEASE_ASSERT(stubInfo, callInstruction.opcodeID());
             jumpTarget = stubInfo->doneLocation.retagged<JSEntryPtrTag>();

@@ -707,6 +707,7 @@ public:
     JSFunction* regExpProtoExecFunction() const;
     JSFunction* stringProtoSubstringFunction() const;
     JSFunction* performProxyObjectHasFunction() const;
+    JSFunction* performProxyObjectHasFunctionConcurrently() const;
     JSFunction* performProxyObjectHasByValFunction() const;
     JSFunction* performProxyObjectHasByValFunctionConcurrently() const;
     JSFunction* performProxyObjectGetFunction() const;

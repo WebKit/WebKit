@@ -2097,8 +2097,6 @@ macro llintSlowPathOp(opcodeName)
     end)
 end
 
-llintSlowPathOp(in_by_id)
-llintSlowPathOp(in_by_val)
 llintSlowPathOp(has_private_name)
 llintSlowPathOp(has_private_brand)
 llintSlowPathOp(del_by_id)

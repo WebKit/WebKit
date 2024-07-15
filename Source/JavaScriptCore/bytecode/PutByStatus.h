@@ -55,6 +55,8 @@ public:
         Simple,
         // It's cached for a custom accessor with a possible structure chain.
         CustomAccessor,
+        // It's cached for a proxy object.
+        ProxyObject,
         // It's cached for a megamorphic case.
         Megamorphic,
         // It will likely take the slow path.
@@ -83,6 +85,7 @@ public:
         case MakesCalls:
         case ObservedSlowPathAndMakesCalls:
         case Megamorphic:
+        case ProxyObject:
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -115,6 +118,7 @@ public:
     bool isSimple() const { return m_state == Simple; }
     bool isCustomAccessor() const { return m_state == CustomAccessor; }
     bool isMegamorphic() const { return m_state == Megamorphic; }
+    bool isProxyObject() const { return m_state == ProxyObject; }
     bool takesSlowPath() const
     {
         switch (m_state) {

@@ -265,7 +265,8 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurr
             switch (access.type()) {
             case AccessCase::ModuleNamespaceLoad:
                 return GetByStatus(access.as<ModuleNamespaceAccessCase>());
-            case AccessCase::ProxyObjectLoad: {
+            case AccessCase::ProxyObjectLoad:
+            case AccessCase::IndexedProxyObjectLoad: {
                 auto status = GetByStatus(GetByStatus::ProxyObject, true);
                 auto callLinkStatus = makeUnique<CallLinkStatus>();
                 if (CallLinkInfo* callLinkInfo = stubInfo->callLinkInfoAt(locker, 0, access))

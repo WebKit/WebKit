@@ -215,6 +215,18 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
                     return PutByStatus(Megamorphic);
                 break;
             }
+            case AccessCase::ProxyObjectStore:
+            case AccessCase::IndexedProxyObjectStore: {
+                auto callLinkStatus = makeUnique<CallLinkStatus>();
+                if (CallLinkInfo* callLinkInfo = stubInfo->callLinkInfoAt(locker, 0, access))
+                    *callLinkStatus = CallLinkStatus::computeFor(locker, profiledBlock, *callLinkInfo, callExitSiteData);
+                auto status = PutByStatus(PutByStatus::ProxyObject);
+                auto variant = PutByVariant::proxy(access.identifier(), access.structure(), WTFMove(callLinkStatus));
+                if (!status.appendVariant(variant))
+                    return PutByStatus(JSC::slowVersion(summary), *stubInfo);
+                return status;
+            }
+
             default:
                 break;
             }
@@ -305,16 +317,6 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
 
             case AccessCase::CustomValueSetter:
                 return PutByStatus(MakesCalls);
-
-            case AccessCase::ProxyObjectStore: {
-                auto callLinkStatus = makeUnique<CallLinkStatus>();
-                if (CallLinkInfo* callLinkInfo = stubInfo->callLinkInfoAt(locker, i, access))
-                    *callLinkStatus = CallLinkStatus::computeFor(locker, profiledBlock, *callLinkInfo, callExitSiteData);
-                auto variant = PutByVariant::proxy(access.identifier(), access.structure(), WTFMove(callLinkStatus));
-                if (!result.appendVariant(variant))
-                    return PutByStatus(JSC::slowVersion(summary), *stubInfo);
-                break;
-            }
 
             default:
                 return PutByStatus(JSC::slowVersion(summary), *stubInfo);
@@ -488,6 +490,7 @@ bool PutByStatus::makesCalls() const
     case ObservedSlowPathAndMakesCalls:
     case Megamorphic:
     case CustomAccessor:
+    case ProxyObject:
         return true;
     case Simple: {
         for (unsigned i = m_variants.size(); i--;) {
@@ -496,9 +499,8 @@ bool PutByStatus::makesCalls() const
         }
         return false;
     }
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
     }
+    return false;
 }
 
 PutByStatus PutByStatus::slowVersion() const
@@ -570,6 +572,7 @@ void PutByStatus::merge(const PutByStatus& other)
         
     case Simple:
     case CustomAccessor:
+    case ProxyObject:
         if (other.m_state != m_state)
             return mergeSlow();
         
@@ -613,6 +616,9 @@ void PutByStatus::dump(PrintStream& out) const
         break;
     case CustomAccessor:
         out.print("CustomAccessor");
+        break;
+    case ProxyObject:
+        out.print("ProxyObject");
         break;
     case Megamorphic:
         out.print("Megamorphic");

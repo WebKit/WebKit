@@ -799,10 +799,17 @@ MacroAssemblerCodeRef<JSEntryPtrTag> returnLocationThunk(OpcodeID opcodeID, Opco
     LLINT_RETURN_LOCATION(op_call_varargs)
     LLINT_RETURN_LOCATION(op_construct_varargs)
     LLINT_RETURN_LOCATION(op_get_by_id)
+    LLINT_RETURN_LOCATION(op_get_by_id_direct)
     LLINT_RETURN_LOCATION(op_get_length)
     LLINT_RETURN_LOCATION(op_get_by_val)
     LLINT_RETURN_LOCATION(op_put_by_id)
     LLINT_RETURN_LOCATION(op_put_by_val)
+    LLINT_RETURN_LOCATION(op_put_by_val_direct)
+    LLINT_RETURN_LOCATION(op_in_by_id)
+    LLINT_RETURN_LOCATION(op_in_by_val)
+    LLINT_RETURN_LOCATION(op_enumerator_get_by_val)
+    LLINT_RETURN_LOCATION(op_enumerator_put_by_val)
+    LLINT_RETURN_LOCATION(op_enumerator_in_by_val)
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return { };
