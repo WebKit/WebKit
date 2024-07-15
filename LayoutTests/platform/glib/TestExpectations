@@ -415,8 +415,6 @@ imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientati
 
 imported/w3c/web-platform-tests/css/cssom/css-style-attr-decl-block.html [ Pass ]
 
-imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-016.html [ Pass ]
-
 imported/w3c/web-platform-tests/css/css-position/multicol/static-position/vlr-ltr-ltr-in-multicol.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-position/multicol/static-position/vrl-ltr-ltr-in-multicol.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-position/position-absolute-iframe-print-001.sub.html [ Pass ]

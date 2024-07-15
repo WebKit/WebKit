@@ -1,0 +1,32 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/reference/input-scrollable-region-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/reference/overflow-body-no-propagation-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/reference/overflow-body-propagation-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/reference/overflow-ellipsis-dynamic-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/reference/overflow-inline-block-with-opacity-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/reference/overflow-recalc-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/reference/ref-if-there-is-no-red.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/reference/text-overflow-ellipsis-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/reference/text-overflow-ellipsis-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/reference/text-overflow-ellipsis-rtl-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/reference/text-overflow-ellipsis-vertical-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/reference/text-overflow-ellipsis-vertical-rtl-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/reference/text-overflow-scroll-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/reference/text-overflow-scroll-rtl-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/reference/text-overflow-scroll-vertical-lr-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/reference/text-overflow-scroll-vertical-lr-rtl-001-ref.html

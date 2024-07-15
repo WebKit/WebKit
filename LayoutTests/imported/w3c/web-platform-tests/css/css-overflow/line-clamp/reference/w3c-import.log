@@ -1,0 +1,83 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-010-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-011-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-012-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-013-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-015-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-021-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-022-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-023-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-011-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-016-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-018-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-019-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-020-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-021-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-auto-023-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-abspos-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-abspos-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-abspos-006-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-abspos-007-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-abspos-008-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-abspos-010-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-abspos-011-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-floats-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-floats-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-floats-006-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-floats-007-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-floats-008-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/line-clamp-with-floats-010-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-006-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-007-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-008-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-009-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-010-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-011-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-012-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-013-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-014-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-015-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-016-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-017-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-018-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-019-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-020-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-021-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-022-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-023-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-024-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-025-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-026-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-027-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-029-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-030-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-031-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-032-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-035-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-036-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-037-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-038-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-039-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-040-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-block-in-inline-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-dynamic-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/line-clamp/reference/webkit-line-clamp-with-line-height-ref.html
