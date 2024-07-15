@@ -12217,10 +12217,14 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 }
 
 
-- (void)updateImageAnalysisForContextMenuPresentation:(CocoaImageAnalysis *)analysis
+- (void)updateImageAnalysisForContextMenuPresentation:(CocoaImageAnalysis *)analysis elementBounds:(CGRect)elementBounds
 {
 #if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
     analysis.presentingViewControllerForMrcAction = self._wk_viewControllerForFullScreenPresentation;
+    if ([analysis respondsToSelector:@selector(setRectForMrcActionInPresentingViewController:)]) {
+        CGRect boundsInPresentingViewController = [self convertRect:elementBounds toView:analysis.presentingViewControllerForMrcAction.viewIfLoaded];
+        analysis.rectForMrcActionInPresentingViewController = boundsInPresentingViewController;
+    }
 #endif
 }
 
@@ -12408,8 +12412,9 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
     if (_positionInformation.isPausedVideo)
         [request setImageSource:VKImageAnalyzerRequestImageSourceVideoFrame];
 
+    auto elementBounds = _positionInformation.bounds;
     auto visualSearchAnalysisStartTime = MonotonicTime::now();
-    [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:[requestIdentifier = WTFMove(requestIdentifier), weakSelf, visualSearchAnalysisStartTime, aggregator = aggregator.copyRef(), data] (CocoaImageAnalysis *result, NSError *error) mutable {
+    [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:[requestIdentifier = WTFMove(requestIdentifier), weakSelf, visualSearchAnalysisStartTime, aggregator = aggregator.copyRef(), data, elementBounds] (CocoaImageAnalysis *result, NSError *error) mutable {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
@@ -12424,6 +12429,8 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
         if (!result || error)
             return;
 
+        [strongSelf updateImageAnalysisForContextMenuPresentation:result elementBounds:elementBounds];
+
 #if ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
         if (shouldUseMachineReadableCodeMenuFromImageAnalysisResult(result))
             data->machineReadableCodeMenu = result.mrcMenu;
@@ -12431,7 +12438,6 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 #if USE(QUICK_LOOK)
         data->hasVisualSearchResults = hasVisualSearchResults;
 #endif
-        [strongSelf updateImageAnalysisForContextMenuPresentation:result];
     }];
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
