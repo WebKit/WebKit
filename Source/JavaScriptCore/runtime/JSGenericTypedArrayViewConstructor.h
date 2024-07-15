@@ -141,4 +141,6 @@ private:
     void finishCreation(VM&, JSGlobalObject*, JSObject* prototype, const String& name);
 };
 
+JSC_DECLARE_HOST_FUNCTION(uint8ArrayConstructorFromHex);
+
 } // namespace JSC

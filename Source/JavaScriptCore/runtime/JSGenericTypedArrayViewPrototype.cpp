@@ -31,6 +31,52 @@
 
 namespace JSC {
 
+JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromHex, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSUint8Array* uint8Array = jsDynamicCast<JSUint8Array*>(callFrame->thisValue());
+    if (UNLIKELY(!uint8Array))
+        return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromHex requires that |this| be a Uint8Array"_s);
+
+    IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> byteLengthGetter;
+    if (UNLIKELY(isIntegerIndexedObjectOutOfBounds(uint8Array, byteLengthGetter)))
+        return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+
+    JSString* jsString = jsDynamicCast<JSString*>(callFrame->argument(0));
+    if (UNLIKELY(!jsString))
+        return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromHex requires a string"_s);
+    if (UNLIKELY(jsString->length() % 2))
+        return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.prototype.setFromHex requires a string of even length"_s));
+
+    StringView view = jsString->view(globalObject);
+
+    size_t count = std::min(static_cast<size_t>(view.length() / 2), uint8Array->length());
+    for (size_t i = 0; i < count * 2; ++i) {
+        int digit = parseDigit(view[i], 16);
+        if (UNLIKELY(digit == -1))
+            return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.prototype.setFromHex requires a string containing only \"0123456789abcdefABCDEF\""_s));
+    }
+
+    uint8_t* data = uint8Array->typedVector();
+
+    size_t read = 0;
+    size_t written = 0;
+    for (size_t i = 0; i < count; ++i) {
+        int tens = parseDigit(view[read++], 16);
+        int ones = parseDigit(view[read++], 16);
+        data[written++] = (tens * 16) + ones;
+    }
+    ASSERT(read == count * 2);
+    ASSERT(written == count);
+
+    JSObject* resultObject = constructEmptyObject(globalObject);
+    resultObject->putDirect(vm, vm.propertyNames->read, jsNumber(read));
+    resultObject->putDirect(vm, vm.propertyNames->written, jsNumber(written));
+    return JSValue::encode(resultObject);
+}
+
 JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeToBase64, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
