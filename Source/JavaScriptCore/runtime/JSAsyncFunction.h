@@ -40,9 +40,10 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    static JSAsyncFunction* create(VM&, FunctionExecutable*, JSScope*);
-    static JSAsyncFunction* create(VM&, FunctionExecutable*, JSScope*, Structure*);
-    static JSAsyncFunction* createWithInvalidatedReallocationWatchpoint(VM&, FunctionExecutable*, JSScope*);
+    static JSAsyncFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*);
+    static JSAsyncFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*, Structure*);
+    static JSAsyncFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*);
+    static JSAsyncFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*, Structure*);
 
     static size_t allocationSize(Checked<size_t> inlineCapacity)
     {

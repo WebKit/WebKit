@@ -340,14 +340,20 @@ JSC_DECLARE_JIT_OPERATION(operationCreateLexicalEnvironmentUndefined, EncodedJSV
 JSC_DECLARE_JIT_OPERATION(operationCreateDirectArgumentsBaseline, EncodedJSValue, (JSGlobalObject*));
 JSC_DECLARE_JIT_OPERATION(operationCreateScopedArgumentsBaseline, EncodedJSValue, (JSGlobalObject*, JSLexicalEnvironment*));
 JSC_DECLARE_JIT_OPERATION(operationCreateClonedArgumentsBaseline, EncodedJSValue, (JSGlobalObject*));
-JSC_DECLARE_JIT_OPERATION(operationNewFunction, EncodedJSValue, (VM*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (VM*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewGeneratorFunction, EncodedJSValue, (VM*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewGeneratorFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (VM*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewAsyncFunction, EncodedJSValue, (VM*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewAsyncFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (VM*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewAsyncGeneratorFunction, EncodedJSValue, (VM*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewAsyncGeneratorFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (VM*, JSScope*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewFunction, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewSloppyFunction, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewSloppyFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewStrictFunction, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewStrictFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewArrowFunction, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewArrowFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewGeneratorFunction, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewGeneratorFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewAsyncFunction, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewAsyncFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewAsyncGeneratorFunction, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewAsyncGeneratorFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationSetFunctionName, void, (JSGlobalObject*, JSCell*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationNewObject, JSCell*, (VM*, Structure*));
 JSC_DECLARE_JIT_OPERATION(operationNewPromise, JSCell*, (VM*, Structure*));
@@ -431,6 +437,34 @@ JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationDebuggerWillCallNativeExecutable, vo
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationProcessTypeProfilerLog, void, (VM*));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationProcessShadowChickenLog, void, (VM*));
+
+inline decltype(auto) selectNewFunctionOperation(auto* executable)
+{
+    auto function = operationNewFunction;
+    if (!executable->isBuiltinFunction()) {
+        if (executable->isArrowFunction())
+            function = operationNewArrowFunction;
+        else if (executable->isInStrictContext())
+            function = operationNewStrictFunction;
+        else
+            function = operationNewSloppyFunction;
+    }
+    return function;
+}
+
+inline decltype(auto) selectNewFunctionWithInvalidatedReallocationWatchpointOperation(auto* executable)
+{
+    auto function = operationNewFunctionWithInvalidatedReallocationWatchpoint;
+    if (!executable->isBuiltinFunction()) {
+        if (executable->isArrowFunction())
+            function = operationNewArrowFunctionWithInvalidatedReallocationWatchpoint;
+        else if (executable->isInStrictContext())
+            function = operationNewStrictFunctionWithInvalidatedReallocationWatchpoint;
+        else
+            function = operationNewSloppyFunctionWithInvalidatedReallocationWatchpoint;
+    }
+    return function;
+}
 
 } // namespace JSC
 

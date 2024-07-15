@@ -202,7 +202,7 @@ public:
 inline void ${objectName}BuiltinFunctions::init(JSC::JSGlobalObject& globalObject)
 {
 #define EXPORT_FUNCTION(codeName, functionName, overriddenName, length)\\
-    m_##functionName##Function.set(m_vm, &globalObject, JSC::JSFunction::create(m_vm, codeName##Generator(m_vm), &globalObject));
+    m_##functionName##Function.set(m_vm, &globalObject, JSC::JSFunction::create(m_vm, &globalObject, codeName##Generator(m_vm), &globalObject));
     ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(EXPORT_FUNCTION)
 #undef EXPORT_FUNCTION
 }

@@ -1860,22 +1860,26 @@ void JIT::emitNewFuncCommon(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<Op>();
     VirtualRegister dst = bytecode.m_dst;
+    auto* unlinkedExecutable = m_unlinkedCodeBlock->functionDecl(bytecode.m_functionDecl);
 
+    loadGlobalObject(argumentGPR0);
     emitGetVirtualRegisterPayload(bytecode.m_scope, argumentGPR1);
     auto constant = addToConstantPool(JITConstantPool::Type::FunctionDecl, bitwise_cast<void*>(static_cast<uintptr_t>(bytecode.m_functionDecl)));
     loadConstant(constant, argumentGPR2);
 
     OpcodeID opcodeID = Op::opcodeID;
+    auto function = operationNewFunction;
     if (opcodeID == op_new_func)
-        callOperation(operationNewFunction, dst, TrustedImmPtr(&vm()), argumentGPR1, argumentGPR2);
+        function = selectNewFunctionOperation(unlinkedExecutable);
     else if (opcodeID == op_new_generator_func)
-        callOperation(operationNewGeneratorFunction, dst, TrustedImmPtr(&vm()), argumentGPR1, argumentGPR2);
+        function = operationNewGeneratorFunction;
     else if (opcodeID == op_new_async_func)
-        callOperation(operationNewAsyncFunction, dst, TrustedImmPtr(&vm()), argumentGPR1, argumentGPR2);
+        function = operationNewAsyncFunction;
     else {
         ASSERT(opcodeID == op_new_async_generator_func);
-        callOperation(operationNewAsyncGeneratorFunction, dst, TrustedImmPtr(&vm()), argumentGPR1, argumentGPR2);
+        function = operationNewAsyncGeneratorFunction;
     }
+    callOperationNoExceptionCheck(function, dst, argumentGPR0, argumentGPR1, argumentGPR2);
 }
 
 void JIT::emit_op_new_func(const JSInstruction* currentInstruction)
@@ -1903,22 +1907,26 @@ void JIT::emitNewFuncExprCommon(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<Op>();
     VirtualRegister dst = bytecode.m_dst;
+    auto* unlinkedExecutable = m_unlinkedCodeBlock->functionExpr(bytecode.m_functionDecl);
 
+    loadGlobalObject(argumentGPR0);
     emitGetVirtualRegisterPayload(bytecode.m_scope, argumentGPR1);
     auto constant = addToConstantPool(JITConstantPool::Type::FunctionExpr, bitwise_cast<void*>(static_cast<uintptr_t>(bytecode.m_functionDecl)));
     loadConstant(constant, argumentGPR2);
-    OpcodeID opcodeID = Op::opcodeID;
 
+    OpcodeID opcodeID = Op::opcodeID;
+    auto function = operationNewFunction;
     if (opcodeID == op_new_func_exp)
-        callOperation(operationNewFunction, dst, TrustedImmPtr(&vm()), argumentGPR1, argumentGPR2);
+        function = selectNewFunctionOperation(unlinkedExecutable);
     else if (opcodeID == op_new_generator_func_exp)
-        callOperation(operationNewGeneratorFunction, dst, TrustedImmPtr(&vm()), argumentGPR1, argumentGPR2);
+        function = operationNewGeneratorFunction;
     else if (opcodeID == op_new_async_func_exp)
-        callOperation(operationNewAsyncFunction, dst, TrustedImmPtr(&vm()), argumentGPR1, argumentGPR2);
+        function = operationNewAsyncFunction;
     else {
         ASSERT(opcodeID == op_new_async_generator_func_exp);
-        callOperation(operationNewAsyncGeneratorFunction, dst, TrustedImmPtr(&vm()), argumentGPR1, argumentGPR2);
+        function = operationNewAsyncGeneratorFunction;
     }
+    callOperationNoExceptionCheck(function, dst, argumentGPR0, argumentGPR1, argumentGPR2);
 }
 
 void JIT::emit_op_new_func_exp(const JSInstruction* currentInstruction)

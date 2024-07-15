@@ -236,7 +236,7 @@ void JSModuleRecord::instantiateDeclarations(JSGlobalObject* globalObject, Modul
                     unlinkedFunctionExecutable->unlinkedFunctionStart(),
                     unlinkedFunctionExecutable->unlinkedFunctionEnd());
             }
-            JSFunction* function = JSFunction::create(vm, unlinkedFunctionExecutable->link(vm, moduleProgramExecutable, moduleProgramExecutable->source()), moduleEnvironment);
+            JSFunction* function = JSFunction::create(vm, globalObject, unlinkedFunctionExecutable->link(vm, moduleProgramExecutable, moduleProgramExecutable->source()), moduleEnvironment);
             bool putResult = false;
             symbolTablePutTouchWatchpointSet(moduleEnvironment, globalObject, unlinkedFunctionExecutable->name(), function, /* shouldThrowReadOnlyError */ false, /* ignoreReadOnlyErrors */ true, putResult);
             RETURN_IF_EXCEPTION(scope, void());
