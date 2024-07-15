@@ -175,8 +175,8 @@ public:
         internalCheckTableConsistency();
     }
 
-    AddResult add(const ValueType& value) { return add<IdentityTranslatorType>(Extractor::extract(value), [&] ALWAYS_INLINE_LAMBDA { return value; }); }
-    AddResult add(ValueType&& value) { return add<IdentityTranslatorType>(Extractor::extract(value), [&] ALWAYS_INLINE_LAMBDA { return WTFMove(value); }); }
+    AddResult add(const ValueType& value) { return add<IdentityTranslatorType>(Extractor::extract(value), [&]() ALWAYS_INLINE_LAMBDA { return value; }); }
+    AddResult add(ValueType&& value) { return add<IdentityTranslatorType>(Extractor::extract(value), [&]() ALWAYS_INLINE_LAMBDA { return WTFMove(value); }); }
 
     // A special version of add() that finds the object by hashing and comparing
     // with some other type, to avoid the cost of type conversion if the object is already

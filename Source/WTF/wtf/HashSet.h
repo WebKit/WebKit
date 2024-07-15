@@ -329,7 +329,7 @@ template<typename Value, typename HashFunctions, typename Traits, typename Table
 template<typename HashTranslator>
 inline auto HashSet<Value, HashFunctions, Traits, TableTraits>::add(const auto& value) -> AddResult
 {
-    return m_impl.template addPassingHashCode<HashSetTranslatorAdapter<HashTranslator>>(value, [&] ALWAYS_INLINE_LAMBDA { return value; });
+    return m_impl.template addPassingHashCode<HashSetTranslatorAdapter<HashTranslator>>(value, [&]() ALWAYS_INLINE_LAMBDA { return value; });
 }
 
 template<typename T, typename U, typename V, typename W>
