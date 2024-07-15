@@ -817,4 +817,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
     CloseCurrentTypingCommand()
+
+    SimulateClickOverFirstMatchingTextInViewportWithUserInteraction(String targetText) -> (bool success)
 }

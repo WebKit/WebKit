@@ -14324,6 +14324,11 @@ void WebPageProxy::nowPlayingMetadataChanged(const WebCore::NowPlayingMetadata& 
     });
 }
 
+void WebPageProxy::simulateClickOverFirstMatchingTextInViewportWithUserInteraction(String&& targetText, CompletionHandler<void(bool)>&& completion)
+{
+    sendWithAsyncReply(Messages::WebPage::SimulateClickOverFirstMatchingTextInViewportWithUserInteraction(WTFMove(targetText)), WTFMove(completion));
+}
+
 void WebPageProxy::didAdjustVisibilityWithSelectors(Vector<String>&& selectors)
 {
     m_uiClient->didAdjustVisibilityWithSelectors(*this, WTFMove(selectors));
