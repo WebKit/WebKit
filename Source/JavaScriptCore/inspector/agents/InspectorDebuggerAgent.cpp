@@ -441,16 +441,8 @@ void InspectorDebuggerAgent::didScheduleAsyncCall(JSC::JSGlobalObject* globalObj
     if (!callStack->size())
         return;
 
-    RefPtr<AsyncStackTrace> parentStackTrace;
-    if (!m_currentAsyncCallIdentifierStack.isEmpty()) {
-        auto it = m_pendingAsyncCalls.find(m_currentAsyncCallIdentifierStack.last());
-        ASSERT(it != m_pendingAsyncCalls.end());
-        if (LIKELY(it != m_pendingAsyncCalls.end()))
-            parentStackTrace = it->value;
-    }
-
     auto identifier = asyncCallIdentifier(asyncCallType, callbackId);
-    auto asyncStackTrace = AsyncStackTrace::create(WTFMove(callStack), singleShot, WTFMove(parentStackTrace));
+    auto asyncStackTrace = AsyncStackTrace::create(WTFMove(callStack), singleShot, currentParentStackTrace());
 
     m_pendingAsyncCalls.set(identifier, WTFMove(asyncStackTrace));
 }
@@ -461,11 +453,10 @@ void InspectorDebuggerAgent::didCancelAsyncCall(AsyncCallType asyncCallType, uin
         return;
 
     auto identifier = asyncCallIdentifier(asyncCallType, callbackId);
-    auto it = m_pendingAsyncCalls.find(identifier);
-    if (it == m_pendingAsyncCalls.end())
+    auto asyncStackTrace = m_pendingAsyncCalls.get(identifier);
+    if (!asyncStackTrace)
         return;
 
-    auto& asyncStackTrace = it->value;
     asyncStackTrace->didCancelAsyncCall();
 
     if (m_currentAsyncCallIdentifierStack.contains(identifier))
@@ -482,14 +473,12 @@ void InspectorDebuggerAgent::willDispatchAsyncCall(AsyncCallType asyncCallType, 
     // A call can be scheduled before the Inspector is opened, or while async stack
     // traces are disabled. If no call data exists, do nothing.
     auto identifier = asyncCallIdentifier(asyncCallType, callbackId);
-    auto it = m_pendingAsyncCalls.find(identifier);
-    if (it == m_pendingAsyncCalls.end())
+    auto asyncStackTrace = m_pendingAsyncCalls.get(identifier);
+    if (!asyncStackTrace)
         return;
 
-    auto& asyncStackTrace = it->value;
     asyncStackTrace->willDispatchAsyncCall(m_asyncStackTraceDepth);
 
-    ASSERT(!m_currentAsyncCallIdentifierStack.contains(identifier));
     m_currentAsyncCallIdentifierStack.append(WTFMove(identifier));
 }
 
@@ -498,22 +487,19 @@ void InspectorDebuggerAgent::didDispatchAsyncCall(AsyncCallType asyncCallType, u
     if (!m_asyncStackTraceDepth)
         return;
 
-    if (m_currentAsyncCallIdentifierStack.isEmpty())
-        return;
-
     auto identifier = asyncCallIdentifier(asyncCallType, callbackId);
-    auto it = m_pendingAsyncCalls.find(identifier);
-    if (it == m_pendingAsyncCalls.end())
+    auto asyncStackTrace = m_pendingAsyncCalls.get(identifier);
+    if (!asyncStackTrace)
         return;
 
-    auto& asyncStackTrace = it->value;
     asyncStackTrace->didDispatchAsyncCall();
 
     m_currentAsyncCallIdentifierStack.removeLast(identifier);
-    ASSERT(!m_currentAsyncCallIdentifierStack.contains(identifier));
 
-    if (!asyncStackTrace->isPending())
-        m_pendingAsyncCalls.remove(identifier);
+    if (asyncStackTrace->isPending() || m_currentAsyncCallIdentifierStack.contains(identifier))
+        return;
+
+    m_pendingAsyncCalls.remove(identifier);
 }
 
 AsyncStackTrace* InspectorDebuggerAgent::currentParentStackTrace() const
@@ -1709,11 +1695,8 @@ void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::De
     m_enablePauseWhenIdle = false;
 
     RefPtr<Protocol::Console::StackTrace> asyncStackTrace;
-    if (!m_currentAsyncCallIdentifierStack.isEmpty()) {
-        auto it = m_pendingAsyncCalls.find(m_currentAsyncCallIdentifierStack.last());
-        if (it != m_pendingAsyncCalls.end())
-            asyncStackTrace = it->value->buildInspectorObject();
-    }
+    if (auto* parentStackTrace = currentParentStackTrace())
+        asyncStackTrace = parentStackTrace->buildInspectorObject();
 
     m_frontendDispatcher->paused(currentCallFrames(injectedScript), Protocol::Helpers::getEnumConstantValue(m_pauseReason), m_pauseData.copyRef(), WTFMove(asyncStackTrace));
 
