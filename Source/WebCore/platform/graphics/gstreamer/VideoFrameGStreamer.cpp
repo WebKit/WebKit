@@ -74,11 +74,11 @@ static RefPtr<ImageGStreamer> convertSampleToImage(const GRefPtr<GstSample>& sam
     // These caps must match the internal format of a cairo surface with CAIRO_FORMAT_ARGB32,
     // so we don't need to perform color conversions when painting the video frame.
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-    const char* formatString = GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? "BGRA" : "BGRx";
+    auto format = GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? "BGRA"_s : "BGRx"_s;
 #else
-    const char* formatString = GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? "ARGB" : "xRGB";
+    auto format = GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? "ARGB"_s : "xRGB"_s;
 #endif
-    auto caps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, formatString, "framerate", GST_TYPE_FRACTION, GST_VIDEO_INFO_FPS_N(&videoInfo), GST_VIDEO_INFO_FPS_D(&videoInfo), "width", G_TYPE_INT, GST_VIDEO_INFO_WIDTH(&videoInfo), "height", G_TYPE_INT, GST_VIDEO_INFO_HEIGHT(&videoInfo), nullptr));
+    auto caps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, format.characters(), "framerate", GST_TYPE_FRACTION, GST_VIDEO_INFO_FPS_N(&videoInfo), GST_VIDEO_INFO_FPS_D(&videoInfo), "width", G_TYPE_INT, GST_VIDEO_INFO_WIDTH(&videoInfo), "height", G_TYPE_INT, GST_VIDEO_INFO_HEIGHT(&videoInfo), nullptr));
     auto convertedSample = adoptGRef(gst_video_convert_sample(sample.get(), caps.get(), GST_CLOCK_TIME_NONE, nullptr));
     if (!convertedSample)
         return nullptr;
@@ -322,13 +322,13 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<Pixel
         format = GST_VIDEO_FORMAT_BGRA;
         break;
     }
-    const char* formatName = gst_video_format_to_string(format);
-    GST_TRACE("Creating %s VideoFrame from pixel buffer", formatName);
+    auto formatName = span(gst_video_format_to_string(format));
+    GST_TRACE("Creating %s VideoFrame from pixel buffer", formatName.data());
 
     int frameRateNumerator, frameRateDenominator;
     gst_util_double_to_fraction(frameRate, &frameRateNumerator, &frameRateDenominator);
 
-    auto caps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, formatName, "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, nullptr));
+    auto caps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, formatName.data(), "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, nullptr));
     if (frameRate)
         gst_caps_set_simple(caps.get(), "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr);
 
@@ -344,7 +344,7 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<Pixel
         width = destinationSize.width();
         height = destinationSize.height();
         GST_TRACE("Resizing frame from %dx%d to %dx%d", size.width(), size.height(), width, height);
-        auto outputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, formatName, "width", G_TYPE_INT, width,
+        auto outputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, formatName.data(), "width", G_TYPE_INT, width,
             "height", G_TYPE_INT, height, nullptr));
         if (frameRate)
             gst_caps_set_simple(outputCaps.get(), "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr);
@@ -590,8 +590,8 @@ GRefPtr<GstSample> VideoFrameGStreamer::convert(GstVideoFormat format, const Int
 
     auto width = destinationSize.width();
     auto height = destinationSize.height();
-    const char* formatName = gst_video_format_to_string(format);
-    auto outputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, formatName, "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr));
+    auto formatName = span(gst_video_format_to_string(format));
+    auto outputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, formatName.data(), "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr));
 
     if (gst_caps_is_equal(caps, outputCaps.get()))
         return GRefPtr<GstSample>(m_sample);
@@ -599,7 +599,7 @@ GRefPtr<GstSample> VideoFrameGStreamer::convert(GstVideoFormat format, const Int
     GUniqueOutPtr<GError> error;
     auto convertedSample = adoptGRef(gst_video_convert_sample(m_sample.get(), outputCaps.get(), GST_CLOCK_TIME_NONE, &error.outPtr()));
     if (!convertedSample)
-        GST_ERROR("Conversion to %s failed: %s", formatName, error->message);
+        GST_ERROR("Conversion to %s failed: %s", formatName.data(), error->message);
 
     return convertedSample;
 }
