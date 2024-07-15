@@ -7344,3 +7344,5 @@ imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_an
 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_avc [ Failure DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?h264_annexb [ Failure DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?h264_annexb [ Failure DumpJSConsoleLogInStdErr ]
+
+webkit.org/b/276624 fast/dynamic/layer-hit-test-crash.html [ Pass Failure ]
