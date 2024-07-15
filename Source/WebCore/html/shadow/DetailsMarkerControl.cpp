@@ -61,7 +61,7 @@ RenderPtr<RenderElement> DetailsMarkerControl::createElementRenderer(RenderStyle
 
 bool DetailsMarkerControl::rendererIsNeeded(const RenderStyle& style)
 {
-    return downcast<HTMLSummaryElement>(shadowHost())->isActiveSummary() && HTMLDivElement::rendererIsNeeded(style);
+    return downcast<HTMLSummaryElement>(shadowHost())->isActiveSummary() && HTMLDivElement::rendererIsNeeded(style) && downcast<HTMLSummaryElement>(shadowHost())->computedStyle()->display() == DisplayType::ListItem;
 }
 
 }
