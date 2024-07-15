@@ -433,8 +433,10 @@ void InlineDisplayLineBuilder::addLineClampTrailingLinkBoxIfApplicable(const Inl
         return { };
     }();
 
-    if (!insertionPosition || !*insertionPosition) {
-        ASSERT_NOT_REACHED();
+    if (!insertionPosition || !*insertionPosition || *insertionPosition >= displayBoxes.size() - 1) {
+        // Unexpected cases where the insertion point is at the leading/trailing box. They both indicate incorrect line-clamp
+        // position and would produce incorrect rendering.
+        ASSERT_NOT_REACHED_WITH_SECURITY_IMPLICATION();
         return;
     }
     auto& clampedLine = displayLines[*clampedLineIndex];
