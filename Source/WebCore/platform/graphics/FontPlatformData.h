@@ -297,8 +297,7 @@ public:
     RetainPtr<CFTypeRef> objectForEqualityCheck() const;
     bool hasCustomTracking() const { return isSystemFont(); }
 
-    CTFontRef font() const { return m_font.get(); }
-    CTFontRef ctFont() const;
+    CTFontRef ctFont() const { return m_font.get(); }
 #endif
 
 #if PLATFORM(COCOA)
@@ -408,9 +407,7 @@ private:
 #if PLATFORM(WIN)
     RefPtr<SharedGDIObject<HFONT>> m_font; // FIXME: Delete this in favor of m_ctFont or m_dwFont or m_scaledFont.
 #elif USE(CORE_TEXT)
-    // FIXME: Get rid of one of these. These two fonts are subtly different, and it is not obvious which one to use where.
     RetainPtr<CTFontRef> m_font;
-    mutable RetainPtr<CTFontRef> m_ctFont;
 #endif
 
 #if USE(CAIRO)

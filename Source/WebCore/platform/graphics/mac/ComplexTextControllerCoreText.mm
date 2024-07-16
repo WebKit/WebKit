@@ -177,7 +177,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
             font = &m_font.fallbackRangesAt(0).fontForFirstRange();
         stringAttributes = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 0, font->getCFStringAttributes(m_font.enableKerning(), font->platformData().orientation(), m_font.fontDescription().computedLocale()).get()));
         // We don't know which font should be used to render this grapheme cluster, so enable CoreText's fallback mechanism by using the CTFont which doesn't have CoreText's fallback disabled.
-        CFDictionarySetValue(const_cast<CFMutableDictionaryRef>(stringAttributes.get()), kCTFontAttributeName, font->platformData().font());
+        CFDictionarySetValue(const_cast<CFMutableDictionaryRef>(stringAttributes.get()), kCTFontAttributeName, font->platformData().ctFont());
     } else
         stringAttributes = font->getCFStringAttributes(m_font.enableKerning(), font->platformData().orientation(), m_font.fontDescription().computedLocale());
 
