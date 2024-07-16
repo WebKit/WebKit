@@ -455,7 +455,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
         FlexItemFrameRects oldFlexItemRects;
         appendFlexItemFrameRects(oldFlexItemRects);
 
-        layoutFlexItems(relayoutChildren);
+        performFlexLayout(relayoutChildren);
 
         endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 
@@ -1291,7 +1291,7 @@ LayoutUnit RenderFlexibleBox::computeFlexBaseSizeForFlexItem(RenderBox& flexItem
     return mainAxisExtent - mainAxisBorderAndPadding;
 }
 
-void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
+void RenderFlexibleBox::performFlexLayout(bool relayoutChildren)
 {
     if (LayoutIntegration::canUseForFlexLayout(*this))
         return layoutUsingFlexFormattingContext();
