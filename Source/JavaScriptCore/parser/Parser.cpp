@@ -4326,9 +4326,6 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseYieldExpress
     // http://ecma-international.org/ecma-262/6.0/#sec-generator-function-definitions-static-semantics-early-errors
     failIfTrue(m_parserState.functionParsePhase == FunctionParsePhase::Parameters, "Cannot use yield expression within parameters");
 
-    // https://github.com/tc39/ecma262/issues/3333
-    failIfTrue(m_parserState.isParsingClassFieldInitializer, "Cannot use yield expression inside class field initializer expression");
-
     JSTokenLocation location(tokenLocation());
     JSTextPosition divotStart = tokenStartPosition();
     ASSERT(match(YIELD));
@@ -4355,7 +4352,6 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseAwaitExpress
     ASSERT(currentScope()->isAsyncFunction() || isModuleParseMode(sourceParseMode()));
     ASSERT(isAsyncFunctionParseMode(sourceParseMode()) || isModuleParseMode(sourceParseMode()));
     ASSERT(m_parserState.functionParsePhase != FunctionParsePhase::Parameters);
-    ASSERT(!m_parserState.isParsingClassFieldInitializer);
     JSTokenLocation location(tokenLocation());
     JSTextPosition divotStart = tokenStartPosition();
     next();
@@ -5090,7 +5086,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
         semanticFailIfTrue(currentScope()->isStaticBlock(), "The 'await' keyword is disallowed in the IdentifierReference position within static block");
         if (m_parserState.functionParsePhase == FunctionParsePhase::Parameters)
             semanticFailIfFalse(m_parserState.allowAwait, "Cannot use 'await' within a parameter default expression");
-        else if (!m_parserState.isParsingClassFieldInitializer && (currentFunctionScope()->isAsyncFunctionBoundary() || isModuleParseMode(sourceParseMode())))
+        else if (currentFunctionScope()->isAsyncFunctionBoundary() || isModuleParseMode(sourceParseMode()))
             return parseAwaitExpression(context);
 
         goto identifierExpression;
@@ -5587,7 +5583,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
     bool hasPrefixUpdateOp = false;
     unsigned lastOperator = 0;
 
-    if (UNLIKELY(match(AWAIT) && !m_parserState.isParsingClassFieldInitializer && (currentFunctionScope()->isAsyncFunctionBoundary() || isModuleParseMode(sourceParseMode())))) {
+    if (UNLIKELY(match(AWAIT) && (currentFunctionScope()->isAsyncFunctionBoundary() || isModuleParseMode(sourceParseMode())))) {
         semanticFailIfTrue(currentScope()->isStaticBlock(), "Cannot use 'await' within static block");
         return parseAwaitExpression(context);
     }
