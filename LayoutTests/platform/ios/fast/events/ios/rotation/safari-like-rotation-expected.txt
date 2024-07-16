@@ -1,0 +1,19 @@
+Before rotation
+FAIL window.innerWidth should be 320. Was 390.
+FAIL window.innerHeight should be 548. Was 797.
+In orientationchange event handler:
+FAIL window.innerWidth should be 568. Was 390.
+FAIL window.innerHeight should be 320. Was 797.
+
+In resize event handler:
+FAIL window.innerWidth should be 568. Was 600.
+FAIL window.innerHeight should be 320. Was 800.
+
+In resize event handler:
+FAIL window.innerWidth should be 568. Was 844.
+FAIL window.innerHeight should be 320. Was 390.
+
+After rotation
+FAIL window.innerWidth should be 568. Was 844.
+FAIL window.innerHeight should be 320. Was 390.
+Rotation test.

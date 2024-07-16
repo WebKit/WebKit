@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScrollbarThemeMock_h
-#define ScrollbarThemeMock_h
+#pragma once
 
 #include "ScrollbarThemeComposite.h"
 
@@ -48,9 +47,10 @@ protected:
     int maxOverlapBetweenPages() override { return 40; }
 
     bool usesOverlayScrollbars() const override;
+    bool allowsCustomScrollbars() const override;
+
 private:
     bool isMockTheme() const override { return true; }
 };
 
 }
-#endif // ScrollbarThemeMock_h
