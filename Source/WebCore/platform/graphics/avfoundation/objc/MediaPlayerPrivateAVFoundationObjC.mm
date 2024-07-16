@@ -4080,8 +4080,9 @@ void MediaPlayerPrivateAVFoundationObjC::updateSpatialTrackingLabel()
         return;
     }
 
-    if (m_videoLayer) {
-        // Let AVPlayer manage setting the spatial tracking label in its AVPlayerLayer itself;
+    if (m_videoLayer && isVisible()) {
+        // If the media player has a renderer, and that renderer belongs to a page that is visible,
+        // then let AVPlayer manage setting the spatial tracking label in its AVPlayerLayer itself;
         INFO_LOG(LOGIDENTIFIER, "No videoLayer, set STSLabel: nil");
         [m_avPlayer _setSTSLabel:nil];
         return;

@@ -1776,17 +1776,21 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateSpatialTrackingLabel()
 {
     auto *renderer = m_sampleBufferVideoRenderer ? m_sampleBufferVideoRenderer.get() : [m_sampleBufferDisplayLayer sampleBufferRenderer];
     if (!m_spatialTrackingLabel.isNull()) {
+        INFO_LOG(LOGIDENTIFIER, "Explicitly set STSLabel: ", m_spatialTrackingLabel);
         renderer.STSLabel = m_spatialTrackingLabel;
         return;
     }
 
-    if (renderer) {
-        // Let AVSBRS manage setting the spatial tracking label in its video renderer itself.
+    if (renderer && m_visible) {
+        // If the media player has a renderer, and that renderer belongs to a page that is visible,
+        // then let AVSBRS manage setting the spatial tracking label in its video renderer itself.
+        INFO_LOG(LOGIDENTIFIER, "Has visible renderer, set STSLabel: nil");
         renderer.STSLabel = nil;
         return;
     }
 
     if (m_sampleBufferAudioRendererMap.isEmpty()) {
+        INFO_LOG(LOGIDENTIFIER, "No audio renderers - no-op");
         // If there are no audio renderers, there's nothing to do.
         return;
     }
@@ -1795,7 +1799,14 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateSpatialTrackingLabel()
     // the session's spatial tracking label if not, and set the label directly on each audio
     // renderer.
     AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
-    auto *defaultLabel = !m_defaultSpatialTrackingLabel.isNull() ? (NSString *)m_defaultSpatialTrackingLabel : session.spatialTrackingLabel;
+    String defaultLabel;
+    if (!m_defaultSpatialTrackingLabel.isNull()) {
+        INFO_LOG(LOGIDENTIFIER, "Default STSLabel: ", m_defaultSpatialTrackingLabel);
+        defaultLabel = m_defaultSpatialTrackingLabel;
+    } else {
+        INFO_LOG(LOGIDENTIFIER, "AVAudioSession label: ", session.spatialTrackingLabel);
+        defaultLabel = session.spatialTrackingLabel;
+    }
     for (const auto &key : m_sampleBufferAudioRendererMap.keys())
         [(__bridge AVSampleBufferAudioRenderer *)key.get() setSTSLabel:defaultLabel];
 }
