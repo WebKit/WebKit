@@ -260,7 +260,12 @@ void SVGBoundingBoxComputation::adjustBoxForClippingAndEffects(const SVGBounding
     if (includeFilter) {
         if (auto* referencedFilterRenderer = m_renderer->svgFilterResourceFromStyle()) {
             auto repaintRectCalculation = options.contains(DecorationOption::CalculateFastRepaintRect) ? RepaintRectCalculation::Fast : RepaintRectCalculation::Accurate;
-            box.intersect(referencedFilterRenderer->resourceBoundingBox(m_renderer, repaintRectCalculation));
+
+            auto resourceRect = referencedFilterRenderer->resourceBoundingBox(m_renderer, repaintRectCalculation);
+            if (box.isEmpty() && options.contains(DecorationOption::UseFilterBoxOnEmptyRect))
+                box = resourceRect;
+            else
+                box.intersect(resourceRect);
         }
     }
 
@@ -285,6 +290,20 @@ void SVGBoundingBoxComputation::adjustBoxForClippingAndEffects(const SVGBounding
 
     if (options.contains(DecorationOption::IncludeOutline))
         box.inflate(m_renderer->outlineStyleForRepaint().outlineSize());
+}
+
+LayoutRect SVGBoundingBoxComputation::computeVisualOverflowRect(const RenderLayerModelObject& renderer)
+{
+    DecorationOptions options = repaintBoundingBoxDecoration | DecorationOption::IncludeOutline | DecorationOption::IgnoreTransformations;
+    if (is<RenderSVGContainer>(renderer))
+        options = options | DecorationOption::UseFilterBoxOnEmptyRect;
+    auto repaintBoundingBoxWithoutTransformations = computeDecoratedBoundingBox(renderer, options);
+    if (repaintBoundingBoxWithoutTransformations.isEmpty())
+        return { };
+
+    auto visualOverflowRect = enclosingLayoutRect(repaintBoundingBoxWithoutTransformations);
+    visualOverflowRect.moveBy(-renderer.nominalSVGLayoutLocation());
+    return visualOverflowRect;
 }
 
 }
