@@ -47,7 +47,9 @@ public:
     WEBCORE_EXPORT void removeCaptionsLayer();
 
 protected:
+    bool m_captionsLayerHidden  { false };
     RetainPtr<CALayer> m_captionsLayer;
+    RetainPtr<id> m_captionsLayerContents;
 };
 
 }
