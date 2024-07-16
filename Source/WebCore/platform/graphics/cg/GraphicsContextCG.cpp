@@ -816,8 +816,9 @@ void GraphicsContextCG::fillRect(const FloatRect& rect, Gradient& gradient, cons
 {
     CGContextRef context = platformContext();
 
-    CGContextStateSaver stateSaver(context);
+    CGContextStateSaver stateSaver(context, false);
     if (hasDropShadow()) {
+        stateSaver.save();
         FloatSize layerSize = getCTM().mapSize(rect.size());
 
         auto layer = adoptCF(CGLayerCreateWithContext(context, layerSize, 0));
@@ -832,9 +833,15 @@ void GraphicsContextCG::fillRect(const FloatRect& rect, Gradient& gradient, cons
         gradient.paint(layerContext);
         CGContextDrawLayerInRect(context, rect, layer.get());
     } else {
-        CGContextClipToRect(context, rect);
+        bool skipClip = rect.contains(CGContextGetClipBoundingBox(context));
+        if (!skipClip) {
+            stateSaver.save();
+            CGContextClipToRect(context, rect);
+        }
         CGContextConcatCTM(context, gradientSpaceTransform);
         gradient.paint(*this);
+        if (skipClip)
+            CGContextConcatCTM(context, CGAffineTransformInvert(gradientSpaceTransform));
     }
 }
 
