@@ -71,9 +71,17 @@ void WebDataListSuggestionPicker::displayWithActivationType(WebCore::DataListSug
     }
 
     Ref page { m_page.get() };
+
+    auto elementRectInRootViewCoordinates = m_client.elementRectInRootViewCoordinates();
+    if (RefPtr view = page->localMainFrameView()) {
+        auto unobscuredRootViewRect = view->contentsToRootView(view->unobscuredContentRect());
+        if (!unobscuredRootViewRect.intersects(elementRectInRootViewCoordinates))
+            return close();
+    }
+
     page->setActiveDataListSuggestionPicker(*this);
 
-    WebCore::DataListSuggestionInformation info { type, WTFMove(suggestions), m_client.elementRectInRootViewCoordinates() };
+    WebCore::DataListSuggestionInformation info { type, WTFMove(suggestions), WTFMove(elementRectInRootViewCoordinates) };
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowDataListSuggestions(info), page->identifier());
 }
 

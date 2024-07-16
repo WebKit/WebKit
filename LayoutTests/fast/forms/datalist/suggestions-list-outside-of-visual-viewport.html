@@ -1,0 +1,35 @@
+<!DOCTYPE html style="margin-top: -11;">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+input {
+    margin-top: -60px;
+    width: 500px;
+}
+</style>
+</head>
+<body onload="runTest()">
+<input id="input" list="fruits"/>
+<datalist id="fruits">
+    <option>Apple</option>
+</datalist>
+<pre>Is showing suggestions? <span id="before"></span></pre>
+<br>
+<div>This test verifies that datalist suggestions UI is not shown when the input is outside of the visual viewport.</div>
+</body>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+async function runTest() {
+    document.getElementById("input").focus();
+
+    before.textContent = await UIHelper.isShowingDataListSuggestions();
+
+    testRunner.notifyDone();
+}
+</script>
+</html>
