@@ -69,11 +69,14 @@ RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/
 # the exact version we need. Unfortunately, aarch64 is not pre-built so we have to build it from source.
 ADD https://github.com/unicode-org/icu/releases/download/release-75-1/icu4c-75_1-src.tgz /icu.tgz
 RUN --mount=type=tmpfs,target=/icu \ 
+    export CFLAGS="${DEFAULT_CFLAGS} -fno-pic -fno-pie $CFLAGS -O3 -std=c17 ${LTO_FLAG}" \
+    export CXXFLAGS="${DEFAULT_CFLAGS} -fno-pic -fno-pie $CXXFLAGS -O3 -std=c++20 -fno-exceptions ${LTO_FLAG} " \
+    export LDFLAGS="-fuse-ld=lld $LDFLAGS -Wl,-z,norelro -Wl,-z,lazy -Wl,-no-pie " \
     cd /icu && \
     tar -xf /icu.tgz --strip-components=1 && \
     rm /icu.tgz && \
     cd source && \
-    CFLAGS="${DEFAULT_CFLAGS}  -DU_HIDE_DEPRECATED_API=1 -DU_SHOW_CPLUSPLUS_API=0 $CFLAGS -O3 -std=c17" CXXFLAGS="${DEFAULT_CFLAGS} -DU_HIDE_DEPRECATED_API=1 -DU_SHOW_CPLUSPLUS_API=0 $CXXFLAGS -O3 -std=c++20 -fno-exceptions " ./configure  --enable-static --disable-shared --with-data-packaging=static --disable-samples --disable-debug --disable-tests && \ 
+    ./configure  --enable-static --disable-shared --with-data-packaging=static --disable-samples --disable-debug --disable-tests && \ 
     make -j$(nproc) && \
     make install && cp -r /icu/source/lib/* /output/lib && cp -r /icu/source/i18n/unicode/* /icu/source/common/unicode/* /output/include/unicode
 
@@ -97,6 +100,7 @@ ENV LTO_FLAG=${LTO_FLAG}
 RUN --mount=type=tmpfs,target=/webkitbuild \
     export CFLAGS="${DEFAULT_CFLAGS} $CFLAGS $LTO_FLAG -fno-pic -fno-pie " && \
     export CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS $LTO_FLAG -fno-pic -fno-pie " && \
+    export LDFLAGS="-fuse-ld=lld $LDFLAGS -Wl,-z,norelro -Wl,-z,lazy -Wl,-no-pie " \
     cd /webkitbuild && \
     cmake \
     -DPORT="JSCOnly" \
