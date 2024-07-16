@@ -31,6 +31,69 @@
 
 namespace JSC {
 
+JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromBase64, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSString* jsString = jsDynamicCast<JSString*>(callFrame->argument(0));
+    if (UNLIKELY(!jsString))
+        return throwVMTypeError(globalObject, scope, "Uint8Array.fromBase64 requires a string"_s);
+
+    auto alphabet = Alphabet::Base64;
+    auto lastChunkHandling = LastChunkHandling::Loose;
+
+    JSValue optionsValue = callFrame->argument(1);
+    if (!optionsValue.isUndefined()) {
+        JSObject* optionsObject = jsDynamicCast<JSObject*>(optionsValue);
+        if (UNLIKELY(!optionsValue.isObject()))
+            return throwVMTypeError(globalObject, scope, "Uint8Array.fromBase64 requires that options be an object"_s);
+
+        JSValue alphabetValue = optionsObject->get(globalObject, vm.propertyNames->alphabet);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (!alphabetValue.isUndefined()) {
+            JSString* alphabetString = jsDynamicCast<JSString*>(alphabetValue);
+            if (UNLIKELY(!alphabetString))
+                return throwVMTypeError(globalObject, scope, "Uint8Array.fromBase64 requires that alphabet be \"base64\" or \"base64url\""_s);
+
+            StringView alphabetStringView = alphabetString->view(globalObject);
+            if (alphabetStringView == "base64url"_s)
+                alphabet = Alphabet::Base64URL;
+            else if (alphabetStringView != "base64"_s)
+                return throwVMTypeError(globalObject, scope, "Uint8Array.fromBase64 requires that alphabet be \"base64\" or \"base64url\""_s);
+        }
+
+        JSValue lastChunkHandlingValue = optionsObject->get(globalObject, vm.propertyNames->lastChunkHandling);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (!lastChunkHandlingValue.isUndefined()) {
+            JSString* lastChunkHandlingString = jsDynamicCast<JSString*>(lastChunkHandlingValue);
+            if (UNLIKELY(!lastChunkHandlingString))
+                return throwVMTypeError(globalObject, scope, "Uint8Array.fromBase64 requires that lastChunkHandling be \"loose\", \"strict\", or \"stop-before-partial\""_s);
+
+            StringView lastChunkHandlingStringView = lastChunkHandlingString->view(globalObject);
+            if (lastChunkHandlingStringView == "strict"_s)
+                lastChunkHandling = LastChunkHandling::Strict;
+            else if (lastChunkHandlingStringView == "stop-before-partial"_s)
+                lastChunkHandling = LastChunkHandling::StopBeforePartial;
+            else if (lastChunkHandlingStringView != "loose"_s)
+                return throwVMTypeError(globalObject, scope, "Uint8Array.fromBase64 requires that lastChunkHandling be \"loose\", \"strict\", or \"stop-before-partial\""_s);
+        }
+    }
+
+    StringView view = jsString->view(globalObject);
+
+    auto result = fromBase64(view, std::numeric_limits<size_t>::max(), alphabet, lastChunkHandling);
+    if (!result)
+        return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.fromBase64 requires a valid base64 string"_s));
+
+    ASSERT(result->first <= view.length());
+
+    Structure* structure = globalObject->typedArrayStructure(TypeUint8, false);
+    JSUint8Array* uint8Array = JSUint8Array::create(vm, structure, Uint8Array::create(result->second.span()));
+    RETURN_IF_EXCEPTION(scope, { });
+    RELEASE_AND_RETURN(scope, JSValue::encode(uint8Array));
+}
+
 JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromHex, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -48,7 +111,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromHex, (JSGlobalObject* globalOb
     for (size_t i = 0; i < count * 2; ++i) {
         int digit = parseDigit(view[i], 16);
         if (UNLIKELY(digit == -1))
-            return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.prototype.setFromHex requires a string containing only \"0123456789abcdefABCDEF\""_s));
+            return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.prototype.fromHex requires a string containing only \"0123456789abcdefABCDEF\""_s));
     }
 
     JSUint8Array* uint8Array = JSUint8Array::create(globalObject, globalObject->typedArrayStructure(TypeUint8, false), count);

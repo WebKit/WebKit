@@ -26,10 +26,89 @@
 #include "config.h"
 #include "JSGenericTypedArrayViewPrototype.h"
 
+#include "JSGenericTypedArrayView.h"
+#include "ObjectConstructor.h"
 #include "ParseInt.h"
 #include <wtf/text/Base64.h>
 
 namespace JSC {
+
+JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromBase64, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSUint8Array* uint8Array = jsDynamicCast<JSUint8Array*>(callFrame->thisValue());
+    if (UNLIKELY(!uint8Array))
+        return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires that |this| be a Uint8Array"_s);
+
+    JSString* jsString = jsDynamicCast<JSString*>(callFrame->argument(0));
+    if (UNLIKELY(!jsString))
+        return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires a string"_s);
+
+    auto alphabet = Alphabet::Base64;
+    auto lastChunkHandling = LastChunkHandling::Loose;
+
+    JSValue optionsValue = callFrame->argument(1);
+    if (!optionsValue.isUndefined()) {
+        JSObject* optionsObject = jsDynamicCast<JSObject*>(optionsValue);
+        if (UNLIKELY(!optionsValue.isObject()))
+            return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires that options be an object"_s);
+
+        JSValue alphabetValue = optionsObject->get(globalObject, vm.propertyNames->alphabet);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (!alphabetValue.isUndefined()) {
+            JSString* alphabetString = jsDynamicCast<JSString*>(alphabetValue);
+            if (UNLIKELY(!alphabetString))
+                return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires that alphabet be \"base64\" or \"base64url\""_s);
+
+            StringView alphabetStringView = alphabetString->view(globalObject);
+            if (alphabetStringView == "base64url"_s)
+                alphabet = Alphabet::Base64URL;
+            else if (alphabetStringView != "base64"_s)
+                return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires that alphabet be \"base64\" or \"base64url\""_s);
+        }
+
+        JSValue lastChunkHandlingValue = optionsObject->get(globalObject, vm.propertyNames->lastChunkHandling);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (!lastChunkHandlingValue.isUndefined()) {
+            JSString* lastChunkHandlingString = jsDynamicCast<JSString*>(lastChunkHandlingValue);
+            if (UNLIKELY(!lastChunkHandlingString))
+                return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires that lastChunkHandling be \"loose\", \"strict\", or \"stop-before-partial\""_s);
+
+            StringView lastChunkHandlingStringView = lastChunkHandlingString->view(globalObject);
+            if (lastChunkHandlingStringView == "strict"_s)
+                lastChunkHandling = LastChunkHandling::Strict;
+            else if (lastChunkHandlingStringView == "stop-before-partial"_s)
+                lastChunkHandling = LastChunkHandling::StopBeforePartial;
+            else if (lastChunkHandlingStringView != "loose"_s)
+                return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires that lastChunkHandling be \"loose\", \"strict\", or \"stop-before-partial\""_s);
+        }
+    }
+
+    IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> byteLengthGetter;
+    if (UNLIKELY(isIntegerIndexedObjectOutOfBounds(uint8Array, byteLengthGetter)))
+        return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+
+    StringView view = jsString->view(globalObject);
+
+    auto result = fromBase64(view, uint8Array->length(), alphabet, lastChunkHandling);
+    if (!result)
+        return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires a valid base64 string"_s));
+
+    ASSERT(result->first <= view.length());
+    ASSERT(result->second.size() <= uint8Array->length());
+
+    memmove(uint8Array->typedVector(), result->second.data(), result->second.size());
+
+    JSObject* resultObject = constructEmptyObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    resultObject->putDirect(vm, vm.propertyNames->read, jsNumber(result->first));
+    resultObject->putDirect(vm, vm.propertyNames->written, jsNumber(result->second.size()));
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(resultObject));
+}
 
 JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromHex, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {

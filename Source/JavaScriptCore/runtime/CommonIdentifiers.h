@@ -184,6 +184,7 @@
     macro(language) \
     macro(languageDisplay) \
     macro(largestUnit) \
+    macro(lastChunkHandling) \
     macro(lastIndex) \
     macro(length) \
     macro(line) \

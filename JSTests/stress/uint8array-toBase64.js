@@ -5,6 +5,16 @@ function shouldBe(actual, expected) {
         throw new Error(`FAIL: expected '${expected}' actual '${actual}'`);
 }
 
+function shouldThrow(callback, errorConstructor) {
+    try {
+        callback();
+    } catch (e) {
+        shouldBe(e instanceof errorConstructor, true);
+        return
+    }
+    throw new Error('FAIL: should have thrown');
+}
+
 shouldBe((new Uint8Array([])).toBase64(), "");
 shouldBe((new Uint8Array([0])).toBase64(), "AA==");
 shouldBe((new Uint8Array([1])).toBase64(), "AQ==");
@@ -199,16 +209,14 @@ for (let omitPadding of [true, 42, "test", [], {}]) {
     shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toBase64({get alphabet() { return "base64url"; }, get omitPadding() { return omitPadding; }}), "AAGA_v8");
 }
 
-try {
+shouldThrow(() => {
     let uint8array = new Uint8Array;
     $.detachArrayBuffer(uint8array.buffer);
     uint8array.toBase64();
-} catch (e) {
-    shouldBe(e instanceof TypeError, true);
-}
+}, TypeError);
 
 for (let alphabet of [undefined, "base64", "base64url"]) {
-    try {
+    shouldThrow(() => {
         let uint8array = new Uint8Array;
         uint8array.toBase64({
             get alphabet() {
@@ -216,11 +224,9 @@ for (let alphabet of [undefined, "base64", "base64url"]) {
                 return alphabet;
             },
         });
-    } catch (e) {
-        shouldBe(e instanceof TypeError, true);
-    }
+    }, TypeError);
 
-    try {
+    shouldThrow(() => {
         (new Uint8Array).toBase64({
             alphabet: {
                 toString() {
@@ -228,31 +234,23 @@ for (let alphabet of [undefined, "base64", "base64url"]) {
                 },
             },
         });
-    } catch (e) {
-        shouldBe(e instanceof TypeError, true);
-    }
+    }, TypeError);
 }
 
-for (let options of [undefined, null, false, true, 42, "test", []]) {
-    try {
+for (let options of [null, false, true, 42, "test"]) {
+    shouldThrow(() => {
         (new Uint8Array).toBase64(options);
-    } catch (e) {
-        shouldBe(e instanceof TypeError, true);
-    }
+    }, TypeError);
 }
 
 for (let alphabet of [null, false, true, 42, "invalid", {}, []]) {
-    try {
+    shouldThrow(() => {
         (new Uint8Array).toBase64({alphabet});
-    } catch (e) {
-        shouldBe(e instanceof TypeError, true);
-    }
+    }, TypeError);
 
-    try {
+    shouldThrow(() => {
         (new Uint8Array).toBase64({
             get alphabet() { return alphabet; },
         });
-    } catch (e) {
-        shouldBe(e instanceof TypeError, true);
-    }
+    }, TypeError);
 }

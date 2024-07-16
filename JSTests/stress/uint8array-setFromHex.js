@@ -21,6 +21,16 @@ function shouldBeArray(actual, expected) {
         shouldBe(actual[i], expected[i]);
 }
 
+function shouldThrow(callback, errorConstructor) {
+    try {
+        callback();
+    } catch (e) {
+        shouldBe(e instanceof errorConstructor, true);
+        return
+    }
+    throw new Error('FAIL: should have thrown');
+}
+
 function test(input, expectedResult, expectedValue) {
     let uint8array = new Uint8Array([42, 42, 42, 42, 42]);
 
@@ -48,26 +58,20 @@ test("000180FEFF33", {read: 10, written: 5}, [0, 1, 128, 254, 255]);
 test("000180feff33cc", {read: 10, written: 5}, [0, 1, 128, 254, 255]);
 test("000180FEFF33CC", {read: 10, written: 5}, [0, 1, 128, 254, 255]);
 
-try {
+shouldThrow(() => {
     let uint8array = new Uint8Array;
     $.detachArrayBuffer(uint8array.buffer);
     uint8array.setFromHex("");
-} catch (e) {
-    shouldBe(e instanceof TypeError, true);
-}
+}, TypeError);
 
 for (let invalid of [undefined, null, false, true, 42, {}, []]) {
-    try {
+    shouldThrow(() => {
         (new Uint8Array).setFromHex(invalid);
-    } catch (e) {
-        shouldBe(e instanceof TypeError, true);
-    }
+    }, TypeError);
 }
 
-for (let invalid of ["0", "012", "0g", "g0", "0✅", "✅0"]) {
-    try {
-        (new Uint8Array).setFromHex(invalid);
-    } catch (e) {
-        shouldBe(e instanceof SyntaxError, true);
-    }
+for (let invalid of ["0", "012", "0g", "0G", "g0", "G0", "0✅", "✅0"]) {
+    shouldThrow(() => {
+        (new Uint8Array([42, 42, 42, 42, 42])).setFromHex(invalid);
+    }, SyntaxError);
 }

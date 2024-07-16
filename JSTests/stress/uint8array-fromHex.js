@@ -11,6 +11,16 @@ function shouldBeArray(actual, expected) {
         shouldBe(actual[i], expected[i]);
 }
 
+function shouldThrow(callback, errorConstructor) {
+    try {
+        callback();
+    } catch (e) {
+        shouldBe(e instanceof errorConstructor, true);
+        return
+    }
+    throw new Error('FAIL: should have thrown');
+}
+
 shouldBeArray(Uint8Array.fromHex(""), []);
 shouldBeArray(Uint8Array.fromHex("00"), [0]);
 shouldBeArray(Uint8Array.fromHex("01"), [1]);
@@ -26,17 +36,13 @@ shouldBeArray(Uint8Array.fromHex("000180feff"), [0, 1, 128, 254, 255]);
 shouldBeArray(Uint8Array.fromHex("000180FEFF"), [0, 1, 128, 254, 255]);
 
 for (let invalid of [undefined, null, false, true, 42, {}, []]) {
-    try {
+    shouldThrow(() => {
         Uint8Array.fromHex(invalid);
-    } catch (e) {
-        shouldBe(e instanceof TypeError, true);
-    }
+    }, TypeError);
 }
 
 for (let invalid of ["0", "012", "0g", "0G", "g0", "G0", "0✅", "✅0"]) {
-    try {
+    shouldThrow(() => {
         Uint8Array.fromHex(invalid);
-    } catch (e) {
-        shouldBe(e instanceof SyntaxError, true);
-    }
+    }, SyntaxError);
 }

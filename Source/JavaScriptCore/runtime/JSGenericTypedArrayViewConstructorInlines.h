@@ -54,8 +54,10 @@ void JSGenericTypedArrayViewConstructor<ViewClass>::finishCreation(VM& vm, JSGlo
     putDirectWithoutTransition(vm, vm.propertyNames->BYTES_PER_ELEMENT, jsNumber(ViewClass::elementSize), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete);
 
     if constexpr (std::is_same_v<ViewClass, JSUint8Array>) {
-        if (Options::useUint8ArrayBase64Methods())
+        if (Options::useUint8ArrayBase64Methods()) {
+            JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("fromBase64"_s, uint8ArrayConstructorFromBase64, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
             JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("fromHex"_s, uint8ArrayConstructorFromHex, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+        }
     }
 }
 

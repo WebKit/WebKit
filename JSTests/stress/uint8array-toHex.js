@@ -5,6 +5,16 @@ function shouldBe(actual, expected) {
         throw new Error(`FAIL: expected '${expected}' actual '${actual}'`);
 }
 
+function shouldThrow(callback, errorConstructor) {
+    try {
+        callback();
+    } catch (e) {
+        shouldBe(e instanceof errorConstructor, true);
+        return
+    }
+    throw new Error('FAIL: should have thrown');
+}
+
 shouldBe((new Uint8Array([])).toHex(), "");
 shouldBe((new Uint8Array([0])).toHex(), "00");
 shouldBe((new Uint8Array([1])).toHex(), "01");
@@ -34,10 +44,8 @@ shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toHex(), "000180feff");
     shouldBe(buffer.toHex(), expected);
 }
 
-try {
+shouldThrow(() => {
     let uint8array = new Uint8Array;
     $.detachArrayBuffer(uint8array.buffer);
     uint8array.toHex();
-} catch (e) {
-    shouldBe(e instanceof TypeError, true);
-}
+}, TypeError);
