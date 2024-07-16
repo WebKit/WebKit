@@ -57,6 +57,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromBase64, (JSGlobalObject* globa
                 return throwVMTypeError(globalObject, scope, "Uint8Array.fromBase64 requires that alphabet be \"base64\" or \"base64url\""_s);
 
             StringView alphabetStringView = alphabetString->view(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
             if (alphabetStringView == "base64url"_s)
                 alphabet = Alphabet::Base64URL;
             else if (alphabetStringView != "base64"_s)
@@ -71,6 +72,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromBase64, (JSGlobalObject* globa
                 return throwVMTypeError(globalObject, scope, "Uint8Array.fromBase64 requires that lastChunkHandling be \"loose\", \"strict\", or \"stop-before-partial\""_s);
 
             StringView lastChunkHandlingStringView = lastChunkHandlingString->view(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
             if (lastChunkHandlingStringView == "strict"_s)
                 lastChunkHandling = LastChunkHandling::Strict;
             else if (lastChunkHandlingStringView == "stop-before-partial"_s)
@@ -81,6 +83,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromBase64, (JSGlobalObject* globa
     }
 
     StringView view = jsString->view(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
 
     auto result = fromBase64(view, std::numeric_limits<size_t>::max(), alphabet, lastChunkHandling);
     if (!result)
@@ -90,8 +93,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromBase64, (JSGlobalObject* globa
 
     Structure* structure = globalObject->typedArrayStructure(TypeUint8, false);
     JSUint8Array* uint8Array = JSUint8Array::create(vm, structure, Uint8Array::create(result->second.span()));
-    RETURN_IF_EXCEPTION(scope, { });
-    RELEASE_AND_RETURN(scope, JSValue::encode(uint8Array));
+    return JSValue::encode(uint8Array);
 }
 
 JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromHex, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -106,6 +108,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromHex, (JSGlobalObject* globalOb
         return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.fromHex requires a string of even length"_s));
 
     StringView view = jsString->view(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
 
     size_t count = static_cast<size_t>(view.length() / 2);
     for (size_t i = 0; i < count * 2; ++i) {

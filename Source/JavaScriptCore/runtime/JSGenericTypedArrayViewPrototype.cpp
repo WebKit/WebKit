@@ -63,6 +63,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromBase64, (JSGlobalObject* glob
                 return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires that alphabet be \"base64\" or \"base64url\""_s);
 
             StringView alphabetStringView = alphabetString->view(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
             if (alphabetStringView == "base64url"_s)
                 alphabet = Alphabet::Base64URL;
             else if (alphabetStringView != "base64"_s)
@@ -77,6 +78,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromBase64, (JSGlobalObject* glob
                 return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires that lastChunkHandling be \"loose\", \"strict\", or \"stop-before-partial\""_s);
 
             StringView lastChunkHandlingStringView = lastChunkHandlingString->view(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
             if (lastChunkHandlingStringView == "strict"_s)
                 lastChunkHandling = LastChunkHandling::Strict;
             else if (lastChunkHandlingStringView == "stop-before-partial"_s)
@@ -91,6 +93,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromBase64, (JSGlobalObject* glob
         return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
 
     StringView view = jsString->view(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
 
     auto result = fromBase64(view, uint8Array->length(), alphabet, lastChunkHandling);
     if (!result)
@@ -102,12 +105,10 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromBase64, (JSGlobalObject* glob
     memmove(uint8Array->typedVector(), result->second.data(), result->second.size());
 
     JSObject* resultObject = constructEmptyObject(globalObject);
-    RETURN_IF_EXCEPTION(scope, { });
-
     resultObject->putDirect(vm, vm.propertyNames->read, jsNumber(result->first));
     resultObject->putDirect(vm, vm.propertyNames->written, jsNumber(result->second.size()));
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(resultObject));
+    return JSValue::encode(resultObject);
 }
 
 JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromHex, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -130,6 +131,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromHex, (JSGlobalObject* globalO
         return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.prototype.setFromHex requires a string of even length"_s));
 
     StringView view = jsString->view(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
 
     size_t count = std::min(static_cast<size_t>(view.length() / 2), uint8Array->length());
     for (size_t i = 0; i < count * 2; ++i) {
@@ -181,6 +183,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeToBase64, (JSGlobalObject* globalObj
                 return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.toBase64 requires that alphabet be \"base64\" or \"base64url\""_s);
 
             StringView alphabetStringView = alphabetString->view(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
             if (alphabetStringView == "base64url"_s)
                 options.add(Base64EncodeOption::URL);
             else if (alphabetStringView != "base64"_s)
@@ -199,7 +202,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeToBase64, (JSGlobalObject* globalObj
 
     const uint8_t* data = uint8Array->typedVector();
     size_t length = uint8Array->length();
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, base64EncodeToString({ data, length }, options))));
+    return JSValue::encode(jsString(vm, base64EncodeToString({ data, length }, options)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeToHex, (JSGlobalObject* globalObject, CallFrame* callFrame))
