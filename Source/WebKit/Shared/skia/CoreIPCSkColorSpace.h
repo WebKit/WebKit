@@ -33,12 +33,12 @@ namespace WebKit {
 
 class CoreIPCSkColorSpace {
 public:
-    CoreIPCSkColorSpace(sk_sp<SkColorSpace> skColorSpace)
+    explicit CoreIPCSkColorSpace(sk_sp<SkColorSpace> skColorSpace)
         : m_skColorSpace(WTFMove(skColorSpace))
     {
     }
 
-    CoreIPCSkColorSpace(std::span<const uint8_t> data)
+    explicit CoreIPCSkColorSpace(std::span<const uint8_t> data)
         : m_skColorSpace(SkColorSpace::Deserialize(data.data(), data.size()))
     {
     }
@@ -47,13 +47,16 @@ public:
 
     std::span<const uint8_t> dataReference() const
     {
-        if (auto data = m_skColorSpace->serialize())
-            return { data->bytes(), data->size() };
+        if (!m_serializedColorSpace)
+            m_serializedColorSpace = m_skColorSpace->serialize();
+        if (m_serializedColorSpace)
+            return { m_serializedColorSpace->bytes(), m_serializedColorSpace->size() };
         return { };
     }
 
 private:
     sk_sp<SkColorSpace> m_skColorSpace;
+    mutable sk_sp<SkData> m_serializedColorSpace;
 };
 
 } // namespace WebKit
