@@ -201,11 +201,6 @@ SVGTransformValue SVGTransformDistance::addToSVGTransform(const SVGTransformValu
     return { };
 }
 
-bool SVGTransformDistance::isZero() const
-{
-    return m_transform.isIdentity() && !m_angle;
-}
-
 float SVGTransformDistance::distance() const
 {
     switch (m_type) {
