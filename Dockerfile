@@ -69,9 +69,9 @@ RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/
 # the exact version we need. Unfortunately, aarch64 is not pre-built so we have to build it from source.
 ADD https://github.com/unicode-org/icu/releases/download/release-75-1/icu4c-75_1-src.tgz /icu.tgz
 RUN --mount=type=tmpfs,target=/icu \ 
-    export CFLAGS="${DEFAULT_CFLAGS} -fno-pic -fno-pie $CFLAGS -O3 -std=c17 ${LTO_FLAG}" && \
-    export CXXFLAGS="${DEFAULT_CFLAGS} -fno-pic -fno-pie $CXXFLAGS -O3 -std=c++20 -fno-exceptions ${LTO_FLAG} " && \
-    export LDFLAGS="-fuse-ld=lld $LDFLAGS -Wl,-z,norelro -Wl,-z,lazy -Wl,-no-pie " && \
+    export CFLAGS="${DEFAULT_CFLAGS} $CFLAGS -O3 -std=c17 ${LTO_FLAG}" && \
+    export CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS -O3 -std=c++20 -fno-exceptions ${LTO_FLAG} " && \
+    export LDFLAGS="-fuse-ld=lld " && \
     cd /icu && \
     tar -xf /icu.tgz --strip-components=1 && \
     rm /icu.tgz && \
