@@ -43,18 +43,24 @@ RUN install_packages \
     libc++abi-${LLVM_VERSION}-dev \
     lldb-${LLVM_VERSION} \
     pkg-config \
-    ruby-dev
+    ruby-dev \
+    llvm-${LLVM_VERSION}-runtime \
+    llvm-${LLVM_VERSION}-dev
 
-RUN for f in /usr/lib/llvm-${LLVM_VERSION}/bin/*; do ln -sf "$f" /usr/bin; done && \
-    ln -sf clang /usr/bin/cc && \
-    ln -sf clang /usr/bin/c89 && \
-    ln -sf clang /usr/bin/c99 && \
-    ln -sf clang++ /usr/bin/c++ && \
-    ln -sf clang++ /usr/bin/g++ && \
-    ln -sf llvm-ar /usr/bin/ar && \ 
-    ln -sf llvm-ranlib /usr/bin/ranlib && \
-    ln -sf ld.lld /usr/bin/ld
-
+RUN  for f in /usr/lib/llvm-${LLVM_VERSION}/bin/*; do ln -sf "$f" /usr/bin; done \
+    && ln -sf /usr/bin/clang-${LLVM_VERSION} /usr/bin/clang \
+    && ln -sf /usr/bin/clang++-${LLVM_VERSION} /usr/bin/clang++ \
+    && ln -sf /usr/bin/lld-${LLVM_VERSION} /usr/bin/lld \
+    && ln -sf /usr/bin/lldb-${LLVM_VERSION} /usr/bin/lldb \
+    && ln -sf /usr/bin/clangd-${LLVM_VERSION} /usr/bin/clangd \
+    && ln -sf /usr/bin/llvm-ar-${LLVM_VERSION} /usr/bin/llvm-ar \
+    && ln -sf /usr/bin/ld.lld /usr/bin/ld \
+    && ln -sf /usr/bin/clang /usr/bin/cc \
+    && ln -sf /usr/bin/clang /usr/bin/c89 \
+    && ln -sf /usr/bin/clang /usr/bin/c99 \
+    && ln -sf /usr/bin/clang++ /usr/bin/c++ \
+    && ln -sf /usr/bin/clang++ /usr/bin/g++ \
+    && ln -sf /usr/bin/llvm-ar /usr/bin/ar 
 
 ENV WEBKIT_OUT_DIR=/webkitbuild
 RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/include/wtf /output/include/bmalloc /output/include/unicode
@@ -89,8 +95,8 @@ ENV MARCH_FLAG=${MARCH_FLAG}
 ENV LTO_FLAG=${LTO_FLAG}
 
 RUN --mount=type=tmpfs,target=/webkitbuild \
-    export CFLAGS="${DEFAULT_CFLAGS} $CFLAGS $LTO_FLAG" && \
-    export CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS $LTO_FLAG" && \
+    export CFLAGS="${DEFAULT_CFLAGS} $CFLAGS $LTO_FLAG -fno-pic -no-pic" && \
+    export CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS $LTO_FLAG -fno-pic -no-pic" && \
     cd /webkitbuild && \
     cmake \
     -DPORT="JSCOnly" \
