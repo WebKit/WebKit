@@ -268,6 +268,7 @@ private:
                 if (m_value->isChill())
                     makeDivisionChill(Div);
                 else if (isARM_THUMB2()) {
+#if USE(JSVALUE32_64)
                     BasicBlock* before = m_blockInsertionSet.splitForward(m_block, m_index);
                     before->replaceLastWithNew<Value>(m_proc, Nop, m_origin);
                     Value* result = callDivModHelper(before, Div, m_value->child(0), m_value->child(1));
@@ -275,6 +276,7 @@ private:
                     before->setSuccessors(FrequentedBlock(m_block));
                     m_value->replaceWithIdentity(result);
                     m_changed = true;
+#endif
                 }
                 break;
             }
@@ -641,9 +643,11 @@ private:
             FrequentedBlock(shadyDenCase, FrequencyClass::Rare));
 
         Value* innerResult;
-        if constexpr (isARM_THUMB2())
+        if constexpr (isARM_THUMB2()) {
+#if USE(JSVALUE32_64)
             innerResult = callDivModHelper(normalDivCase, nonChillOpcode, num, den);
-        else
+#endif
+        } else
             innerResult = normalDivCase->appendNew<Value>(m_proc, nonChillOpcode, m_origin, num, den);
         UpsilonValue* normalResult = normalDivCase->appendNew<UpsilonValue>(
             m_proc, m_origin,
