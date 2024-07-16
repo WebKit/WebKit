@@ -3,7 +3,7 @@ ARG WEBKIT_RELEASE_TYPE=Release
 ARG CPU=native
 ARG LTO_FLAG="-flto='full'"
 ARG LLVM_VERSION="16"
-ARG DEFAULT_CFLAGS="-mno-omit-leaf-frame-pointer -fno-omit-frame-pointer -ffunction-sections -fdata-sections -fno-pic -fno-pie -faddrsig -fno-asynchronous-unwind-tables -g1 -DU_STATIC_IMPLEMENTATION=1 "
+ARG DEFAULT_CFLAGS="-mno-omit-leaf-frame-pointer -fno-omit-frame-pointer -ffunction-sections -fdata-sections -faddrsig -fno-asynchronous-unwind-tables -g1 -DU_STATIC_IMPLEMENTATION=1 "
 ARG DEBIAN_VERSION="bullseye"
 
 FROM bitnami/minideb:${DEBIAN_VERSION} as base
@@ -95,8 +95,8 @@ ENV MARCH_FLAG=${MARCH_FLAG}
 ENV LTO_FLAG=${LTO_FLAG}
 
 RUN --mount=type=tmpfs,target=/webkitbuild \
-    export CFLAGS="${DEFAULT_CFLAGS} $CFLAGS $LTO_FLAG " && \
-    export CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS $LTO_FLAG " && \
+    export CFLAGS="${DEFAULT_CFLAGS} $CFLAGS $LTO_FLAG -fno-pic -fno-pie " && \
+    export CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS $LTO_FLAG -fno-pic -fno-pie " && \
     cd /webkitbuild && \
     cmake \
     -DPORT="JSCOnly" \
