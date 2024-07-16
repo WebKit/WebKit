@@ -22,6 +22,9 @@ if (USE_BUN_JSC_ADDITIONS)
 
     if (WIN32)
         SET_AND_EXPOSE_TO_BUILD(JS_NO_EXPORT 1)
+    elseif (APPLE) 
+    else ()
+        set(CMAKE_POSITION_INDEPENDENT_CODE False)
     endif()
 
 endif ()
