@@ -73,7 +73,7 @@ RUN --mount=type=tmpfs,target=/icu \
     tar -xf /icu.tgz --strip-components=1 && \
     rm /icu.tgz && \
     cd source && \
-    CFLAGS="${DEFAULT_CFLAGS} $CFLAGS" CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS" ./runConfigureICU Linux/clang --enable-static --disable-shared --with-data-packaging=static --disable-samples --disable-debug --disable-tests --enable-release && \
+    CFLAGS="${DEFAULT_CFLAGS} $CFLAGS -O3 -std=c17" CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS -O3 -std=c++20" ./configure  --enable-static --disable-shared --with-data-packaging=static --disable-samples --disable-debug --disable-tests && \ 
     make -j$(nproc) && \
     make install && cp -r /icu/source/lib/* /output/lib && cp -r /icu/source/i18n/unicode/* /icu/source/common/unicode/* /output/include/unicode
 
