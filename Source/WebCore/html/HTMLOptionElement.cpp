@@ -183,10 +183,8 @@ void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomSt
         // FIXME: Use PseudoClassChangeInvalidation in other elements that implement matchesDefaultPseudoClass().
         Style::PseudoClassChangeInvalidation defaultInvalidation(*this, CSSSelector::PseudoClass::Default, !newValue.isNull());
         m_isDefault = !newValue.isNull();
-
-        // FIXME: WebKit still need to implement 'dirtiness'. See: https://bugs.webkit.org/show_bug.cgi?id=258073
         // https://html.spec.whatwg.org/multipage/form-elements.html#concept-option-selectedness
-        if (oldValue.isNull() != newValue.isNull())
+        if (oldValue.isNull() != newValue.isNull() && !m_isDirty)
             setSelected(!newValue.isNull());
         break;
     }
@@ -236,6 +234,24 @@ void HTMLOptionElement::setSelected(bool selected)
 
     if (RefPtr select = ownerSelectElement())
         select->optionSelectionStateChanged(*this, selected);
+}
+
+bool HTMLOptionElement::selectedForBinding() const
+{
+    return selected();
+}
+
+void HTMLOptionElement::setSelectedForBinding(bool selected)
+{
+    bool wasSelected = m_isSelected;
+    setSelected(selected);
+
+    // Firefox and Blink seem not to set dirtiness if an option is owned by a select
+    // element and selectedness is not changed.
+    if (ownerSelectElement() && wasSelected == m_isSelected)
+        return;
+
+    m_isDirty = true;
 }
 
 void HTMLOptionElement::setSelectedState(bool selected, AllowStyleInvalidation allowStyleInvalidation)
@@ -341,6 +357,11 @@ String HTMLOptionElement::collectOptionInnerText() const
             node = NodeTraversal::next(*node, this);
     }
     return text.toString();
+}
+
+void HTMLOptionElement::setDirty(bool value)
+{
+    m_isDirty = value;
 }
 
 } // namespace
