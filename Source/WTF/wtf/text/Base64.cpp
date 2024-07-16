@@ -25,6 +25,7 @@
 #include <wtf/text/Base64.h>
 
 #include <limits.h>
+#include <wtf/SIMDUTF.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/MakeString.h>
 
