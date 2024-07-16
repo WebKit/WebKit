@@ -299,6 +299,10 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     } else if (pitchRate == -1 && !needsInterpolation) {
         int readIndex = static_cast<int>(virtualReadIndex);
         int deltaFrames = static_cast<int>(virtualDeltaFrames);
+        int maxFrame = static_cast<int>(virtualMaxFrame);
+        if (readIndex > maxFrame)
+            readIndex = maxFrame;
+
         int minFrame = static_cast<int>(virtualMinFrame) - 1;
         while (framesToProcess > 0) {
             int framesToEnd = readIndex - minFrame;
