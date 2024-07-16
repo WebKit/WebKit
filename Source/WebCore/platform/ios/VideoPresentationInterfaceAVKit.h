@@ -63,6 +63,9 @@ public:
     void presentFullscreen(bool animated, Function<void(BOOL, NSError *)>&&) final;
     void dismissFullscreen(bool animated, Function<void(BOOL, NSError *)>&&) final;
 
+    // VideoFullscreenCaptions:
+    WEBCORE_EXPORT void setupCaptionsLayer(CALayer *parent, const WebCore::FloatSize&) final;
+
 private:
     WEBCORE_EXPORT VideoPresentationInterfaceAVKit(PlaybackSessionInterfaceIOS&);
 

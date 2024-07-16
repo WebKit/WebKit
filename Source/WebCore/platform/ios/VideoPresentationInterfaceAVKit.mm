@@ -794,6 +794,7 @@ void VideoPresentationInterfaceAVKit::setupFullscreen(UIView& videoView, const F
 {
     [playerController() setContentDimensions:videoDimensions];
     VideoPresentationInterfaceIOS::setupFullscreen(videoView, initialRect, videoDimensions, parentView, mode, allowsPictureInPicturePlayback, standby, blocksReturnToFullscreenFromPictureInPicture);
+    playerLayer().captionsLayer = captionsLayer();
 }
 
 void VideoPresentationInterfaceAVKit::updateRouteSharingPolicy()
@@ -918,6 +919,16 @@ bool supportsPictureInPicture()
 #else
     return false;
 #endif
+}
+
+void VideoPresentationInterfaceAVKit::setupCaptionsLayer(CALayer *, const WebCore::FloatSize&)
+{
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    [captionsLayer() removeFromSuperlayer];
+    playerLayer().captionsLayer = captionsLayer();
+    [playerLayer() layoutSublayers];
+    [CATransaction commit];
 }
 
 } // namespace WebCore
