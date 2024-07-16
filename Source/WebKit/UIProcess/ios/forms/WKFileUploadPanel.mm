@@ -1338,7 +1338,7 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
 
 - (BOOL)platformSupportsPickerViewController
 {
-#if PLATFORM(WATCHOS)
+#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
     return NO;
 #else
     return YES;
