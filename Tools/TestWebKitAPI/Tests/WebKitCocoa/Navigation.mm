@@ -172,6 +172,82 @@ TEST(WKNavigation, UserAgentAndAccept)
     TestWebKitAPI::Util::run(&done);
 }
 
+TEST(WKNavigation, UserAgentOverrideQuirks)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer httpsServer({
+        { "/"_s, { { }, "body"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(httpsServer.port())
+    }];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+
+    __block bool done = false;
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+#if OS(MACOS)
+        if ([action.request.URL.host isEqualToString:@"teams.live.com"]) {
+            EXPECT_TRUE([action.request.allHTTPHeaderFields[@"User-Agent"] containsString:@"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"]);
+            EXPECT_TRUE([action.request.allHTTPHeaderFields[@"User-Agent"] containsString:@"Chrome/110.0.0.0"]);
+            done = true;
+        }
+        if ([action.request.URL.host isEqualToString:@"nonexistant.example"]) {
+            EXPECT_WK_STREQ(action.request.allHTTPHeaderFields[@"User-Agent"], @"not a real user agent string");
+            done = true;
+        }
+#endif
+        if ([action.request.URL.host isEqualToString:@"www.nonexistant2.example"]) {
+            EXPECT_TRUE([action.request.allHTTPHeaderFields[@"User-Agent"] containsString:@"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"]);
+            EXPECT_TRUE([action.request.allHTTPHeaderFields[@"User-Agent"] containsString:@"Chrome/110.0.0.0"]);
+            done = true;
+        }
+        if ([action.request.URL.host isEqualToString:@"sub.domain.nonexistant3.example"]) {
+#if OS(MACOS)
+            EXPECT_WK_STREQ(action.request.allHTTPHeaderFields[@"User-Agent"], @"not a real user agent string");
+#else
+            EXPECT_TRUE([action.request.allHTTPHeaderFields[@"User-Agent"] containsString:@"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"]);
+            EXPECT_TRUE([action.request.allHTTPHeaderFields[@"User-Agent"] containsString:@"Chrome/110.0.0.0"]);
+#endif
+            done = true;
+        }
+        decisionHandler(WKNavigationActionPolicyCancel);
+    };
+
+#if OS(MACOS)
+    NSString *quirksFile = [NSString stringWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"UserAgentStringOverrides" withExtension:@"json" subdirectory:@"WebCore.framework/Versions/Current/Resources"] encoding:NSUTF8StringEncoding error:nil];
+#else
+    NSString *quirksFile = [NSString stringWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"UserAgentStringOverrides" withExtension:@"json" subdirectory:@"WebCore.framework"] encoding:NSUTF8StringEncoding error:nil];
+#endif
+    EXPECT_NOT_NULL(quirksFile);
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+#if OS(MACOS)
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://teams.live.com"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+#endif
+
+    // Test entries are defined in Tools/TestWebKitAPI/Tests/WebKit/UserAgentStringOverrides.json
+#if OS(MACOS)
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://nonexistant.example"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+#endif
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.nonexistant2.example"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://sub.domain.nonexistant3.example"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
 @interface FrameNavigationDelegate : NSObject <WKNavigationDelegate>
 - (void)waitForNavigations:(size_t)count;
 - (void)clearState;

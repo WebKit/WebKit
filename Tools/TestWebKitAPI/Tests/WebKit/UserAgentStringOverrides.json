@@ -1,0 +1,6 @@
+{
+    "version": 1,
+    "nonexistant.example": { "macos": "not a real user agent string" },
+    "nonexistant2.example": { "all": [ "macos", "chrome" ] },
+    "nonexistant3.example": { "all": [ "macos", "chrome" ], "macos": "not a real user agent string" }
+}

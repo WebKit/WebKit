@@ -1,0 +1,1 @@
+{ "version": 1, "Microsoft": { "quirkDomains": { "microsoftonline.com": ["live.com", "microsoft.com"], "microsoft.com": ["live.com","microsoftonline.com"], "live.com": ["microsoftonline.com"] }, "triggerPages": ["https://login.microsoftonline.com/common/oauth2/v2.0/authorize"] } }

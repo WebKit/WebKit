@@ -220,3 +220,29 @@ function(GENERATE_DOM_NAME_ENUM _enum)
         COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/dom/make_names.pl --outputDir ${WebCore_DERIVED_SOURCES_DIR} --enum ${_enum} --elements ${WEBCORE_DIR}/html/HTMLTagNames.in --elements ${WEBCORE_DIR}/svg/svgtags.in --elements ${WEBCORE_DIR}/mathml/mathtags.in --attrs ${WEBCORE_DIR}/html/HTMLAttributeNames.in --attrs ${WEBCORE_DIR}/mathml/mathattrs.in --attrs ${WEBCORE_DIR}/svg/svgattrs.in --attrs ${WEBCORE_DIR}/svg/xlinkattrs.in --attrs ${WEBCORE_DIR}/xml/xmlattrs.in --attrs ${WEBCORE_DIR}/xml/xmlnsattrs.in
         VERBATIM)
 endfunction()
+
+
+macro(GENERATE_USER_AGENT_STRING_OVERRIDES _infile)
+    set(OVERRIDES_GENERATOR ${WEBCORE_DIR}/page/make-user-agent-string-overrides.py)
+    set(_outputfiles ${WebCore_DERIVED_SOURCES_DIR}/UserAgentStringOverrides.h ${WebCore_DERIVED_SOURCES_DIR}/UserAgentStringOverridesGenerated.cpp)
+
+    add_custom_command(
+        OUTPUT  ${_outputfiles}
+        MAIN_DEPENDENCY ${_infile}
+        DEPENDS ${OVERRIDES_GENERATOR} ${SCRIPTS_BINDINGS}
+        WORKING_DIRECTORY ${WebCore_DERIVED_SOURCES_DIR}
+        COMMAND ${PYTHON_EXECUTABLE} ${OVERRIDES_GENERATOR} --input ${_infile}
+        VERBATIM)
+endmacro()
+
+
+macro(VALIDATE_STORAGE_ACCESS_PROMPT_ORGANIZATIONS _infile)
+    set(ORGANIZATION_VALIDATOR ${WEBCORE_DIR}/platform/network/validate-storage-access-prompt-organizations.py)
+
+    add_custom_command(
+        MAIN_DEPENDENCY ${_infile}
+        DEPENDS ${ORGANIZATION_VALIDATOR} ${SCRIPTS_BINDINGS}
+        WORKING_DIRECTORY ${WebCore_DERIVED_SOURCES_DIR}
+        COMMAND ${PYTHON_EXECUTABLE} ${ORGANIZATION_VALIDATOR} --input ${_infile}
+        VERBATIM)
+endmacro()

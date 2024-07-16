@@ -1421,43 +1421,6 @@ TEST(ResourceLoadStatistics, UserGestureLogsUserInteraction)
     TestWebKitAPI::Util::run(&done);
 }
 
-TEST(ResourceLoadStatistics, UserAgentStringForSite)
-{
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()]);
-    [configuration setWebsiteDataStore:dataStore.get()];
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
-    auto delegate = adoptNS([TestNavigationDelegate new]);
-    auto userAgent = @"NotARealUserAgent";
-
-    __block bool done = false;
-    [dataStore _setUserAgentStringQuirkForTesting:@"webkit.org" withUserAgent:userAgent completionHandler:^{
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
-        EXPECT_WK_STREQ(action.request.allHTTPHeaderFields[@"User-Agent"], userAgent);
-        decisionHandler(WKNavigationActionPolicyCancel);
-        done = true;
-    };
-    [webView setNavigationDelegate:delegate.get()];
-
-    [webView loadHTMLString:@"" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
-        EXPECT_FALSE([action.request.allHTTPHeaderFields[@"User-Agent"] isEqual:userAgent]);
-        decisionHandler(WKNavigationActionPolicyCancel);
-        done = true;
-    };
-    [webView loadHTMLString:@"" baseURL:[NSURL URLWithString:@"http://not-webkit.org"]];
-    TestWebKitAPI::Util::run(&done);
-}
-
 TEST(ResourceLoadStatistics, StorageAccessPromptSiteWithQuirk)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1473,14 +1436,16 @@ TEST(ResourceLoadStatistics, StorageAccessPromptSiteWithQuirk)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    [dataStore _setStorageAccessPromptQuirkForTesting:@"site1.example" withSubFrameDomains:[NSArray arrayWithObject:@"site2.example"] withTriggerPages:@[] completionHandler:^{
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    // Tools/TestWebKitAPI/Tests/WebKit/StorageAccessPromptOrganizations.json
+#if OS(MACOS)
+    NSString *quirksFile = [NSString stringWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"StorageAccessPromptOrganizations" withExtension:@"json" subdirectory:@"WebCore.framework/Versions/Current/Resources"] encoding:NSUTF8StringEncoding error:nil];
+#else
+    NSString *quirksFile = [NSString stringWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"StorageAccessPromptOrganizations" withExtension:@"json" subdirectory:@"WebCore.framework"] encoding:NSUTF8StringEncoding error:nil];
+#endif
+    EXPECT_NOT_NULL(quirksFile);
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
-    [webView loadHTMLString:@"" baseURL:[NSURL URLWithString:@"http://site1.example"]];
+    [webView loadHTMLString:@"" baseURL:[NSURL URLWithString:@"http://site1.example/trigger/page1"]];
     [webView _test_waitForDidFinishNavigation];
 
     __block bool navigationDelegateDone = false;
@@ -1507,18 +1472,18 @@ TEST(ResourceLoadStatistics, StorageAccessPromptSiteWithTrigger)
 {
     using namespace TestWebKitAPI;
     HTTPServer httpServer({
-        { "http://site1.example/page1"_s, { "<body>Done</body>"_s  } },
-        { "http://site1.example/page2"_s, { "<body>Done</body>"_s  } },
-        { "http://site1.example/page3"_s, { "<body>Done</body>"_s  } },
-        { "http://site2.example/page1"_s, { "<body><script>alert(\"Loaded\");</script></body>"_s  } },
-        { "http://site2.example/page2"_s, { "<body>iframe Body</body>"_s  } },
-        { "http://site3.example/page1"_s, { "<body><script>if (window.internals) { internals.withUserGesture(() => { document.requestStorageAccess(); }); document.body.innerText = \"Requesting storage access\"; } else document.body.innerText = \"Internals not present\";</script></body>"_s  } },
-    });
+        { "/site1/trigger/page1"_s, { "<body>Done</body>"_s  } },
+        { "/site1/page2"_s, { "<body>Done</body>"_s  } },
+        { "/site1/page3"_s, { "<body>Done</body>"_s  } },
+        { "/site2/page1"_s, { "<body><script>alert(\"Loaded\");</script></body>"_s  } },
+        { "/site2/page2"_s, { "<body>iframe Body</body>"_s  } },
+        { "/site4/page1"_s, { "<body><script>if (window.internals) { internals.withUserGesture(() => { document.requestStorageAccess(); }); document.body.innerText = \"Requesting storage access\"; } else document.body.innerText = \"Internals not present\";</script></body>"_s  } },
+    }, HTTPServer::Protocol::HttpsProxy);
 
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     [storeConfiguration setProxyConfiguration:@{
-        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
-        (NSString *)kCFStreamPropertyHTTPProxyPort: @(httpServer.port()),
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(httpServer.port()),
     }];
 
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
@@ -1527,12 +1492,6 @@ TEST(ResourceLoadStatistics, StorageAccessPromptSiteWithTrigger)
 
     __block bool done = false;
     [dataStore _clearResourceLoadStatistics:^(void) {
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    [dataStore _setStorageAccessPromptQuirkForTesting:@"site1.example" withSubFrameDomains:[NSArray arrayWithObject:@"site2.example"] withTriggerPages:@[@"http://site1.example/page2"] completionHandler:^{
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -1553,7 +1512,7 @@ TEST(ResourceLoadStatistics, StorageAccessPromptSiteWithTrigger)
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
     __block bool didReceiveStorageAccessPrompt = false;
     [navigationDelegate setDidPromptForStorageAccess:^(WKWebView *webview, NSString *topFrameDomain, NSString *subFrameDomain, BOOL hasQuirk) {
-        if ([webView.get().URL.absoluteString isEqualToString:@"http://site1.example/page1"] || [webView.get().URL.absoluteString isEqualToString:@"http://site1.example/page2"])
+        if ([webView.get().URL.absoluteString isEqualToString:@"https://site1.example/site1/trigger/page1"] || [webView.get().URL.absoluteString isEqualToString:@"https://site1.example/site1/page2"])
             EXPECT_EQ(hasQuirk, YES);
         else
             EXPECT_EQ(hasQuirk, NO);
@@ -1565,15 +1524,19 @@ TEST(ResourceLoadStatistics, StorageAccessPromptSiteWithTrigger)
         finishedNavigation = true;
     };
 
+    navigationDelegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    };
+
     [webView setNavigationDelegate:navigationDelegate.get()];
     [webView setUIDelegate:uiDelegate.get()];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site1.example/page1"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site1.example/site1/page2"]]];
 
     Util::run(&finishedNavigation);
     finishedNavigation = false;
 
-    [webView evaluateJavaScript:@"let iframe = document.createElement(\"iframe\"); iframe.src = \"http://site2.example/page1\"; document.body.appendChild(iframe);" completionHandler:^(id value, NSError *error) {
+    [webView evaluateJavaScript:@"let iframe = document.createElement(\"iframe\"); iframe.src = \"https://site2.example/site2/page1\"; document.body.appendChild(iframe);" completionHandler:^(id value, NSError *error) {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -1583,11 +1546,11 @@ TEST(ResourceLoadStatistics, StorageAccessPromptSiteWithTrigger)
     EXPECT_FALSE(gotRequestStorageAccessPanelForQuirksForDomain);
     didReceiveStorageAccessPrompt = false;
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site1.example/page2"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site1.example/site1/trigger/page1"]]];
     Util::run(&finishedNavigation);
     finishedNavigation = false;
 
-    [webView evaluateJavaScript:@"let iframe = document.createElement(\"iframe\"); iframe.src = \"http://site2.example/page2\"; document.body.appendChild(iframe);" completionHandler:^(id value, NSError *error) {
+    [webView evaluateJavaScript:@"let iframe = document.createElement(\"iframe\"); iframe.src = \"https://site2.example/site2/page2\"; document.body.appendChild(iframe);" completionHandler:^(id value, NSError *error) {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -1597,16 +1560,16 @@ TEST(ResourceLoadStatistics, StorageAccessPromptSiteWithTrigger)
     didReceiveStorageAccessPrompt = false;
     gotRequestStorageAccessPanelForQuirksForDomain = false;
 
-    [dataStore _logUserInteraction:[NSURL URLWithString:@"http://site3.example/"] completionHandler:^{
+    [dataStore _logUserInteraction:[NSURL URLWithString:@"https://site4.example/"] completionHandler:^{
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site1.example/page3"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site1.example/site1/page3"]]];
     Util::run(&finishedNavigation);
     finishedNavigation = false;
 
-    [webView evaluateJavaScript:@"let iframe = document.createElement(\"iframe\"); iframe.src = \"http://site3.example/page1\"; document.body.appendChild(iframe);" completionHandler:^(id value, NSError *error) {
+    [webView evaluateJavaScript:@"let iframe = document.createElement(\"iframe\"); iframe.src = \"https://site4.example/site4/page1\"; document.body.appendChild(iframe);" completionHandler:^(id value, NSError *error) {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -1620,17 +1583,17 @@ TEST(ResourceLoadStatistics, StorageAccessOnRedirectSitesWithOutQuirk)
 {
     using namespace TestWebKitAPI;
     HTTPServer httpServer({
-        { "http://site1.example/page1"_s, { "<body><script>let iframe = document.createElement(\"iframe\"); iframe.src = \"http://site2.example/page1\"; document.body.appendChild(iframe);</script></body>"_s  } },
-        { "http://site2.example/page1"_s, { 302, {{ "Location"_s, "http://site3.example/page2"_s }}, "Redirecting"_s } },
-        { "http://site3.example/page1"_s, { 200, {{ "Set-Cookie"_s, "exists=1;"_s }}, "Body"_s } },
-        { "http://site3.example/page2"_s, { 200, {{ "Set-Cookie"_s, "exists=2;"_s }}, "Body"_s } },
-        { "http://site3.example/page3"_s, { "<body>Done</body>"_s  } },
-    });
+        { "/site1/trigger/page1"_s, { "<body><script>let iframe = document.createElement(\"iframe\"); iframe.src = \"https://site2.example/site2/page1\"; document.body.appendChild(iframe);</script></body>"_s  } },
+        { "/site2/page1"_s, { 302, {{ "Location"_s, "https://site3.example/site3/page2"_s }}, "Redirecting"_s } },
+        { "/site3/page1"_s, { 200, {{ "Set-Cookie"_s, "exists=1; SameSite=None; Secure;"_s }}, "Body"_s } },
+        { "/site3/page2"_s, { 200, {{ "Set-Cookie"_s, "exists=2; SameSite=None; Secure;"_s }}, "Body"_s } },
+        { "/site3/page3"_s, { "<body>Done</body>"_s  } },
+    }, HTTPServer::Protocol::HttpsProxy);
 
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     [storeConfiguration setProxyConfiguration:@{
-        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
-        (NSString *)kCFStreamPropertyHTTPProxyPort: @(httpServer.port()),
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(httpServer.port()),
     }];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1650,10 +1613,14 @@ TEST(ResourceLoadStatistics, StorageAccessOnRedirectSitesWithOutQuirk)
         finishedNavigation = true;
     };
 
+    delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    };
+
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
     [webView setNavigationDelegate:delegate.get()];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site3.example/page1"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site3.example/site3/page1"]]];
     TestWebKitAPI::Util::run(&done);
     Util::run(&finishedNavigation);
     done = false;
@@ -1668,13 +1635,13 @@ TEST(ResourceLoadStatistics, StorageAccessOnRedirectSitesWithOutQuirk)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site1.example/page1"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site1.example/site1/trigger/page1"]]];
     TestWebKitAPI::Util::run(&done);
     Util::run(&finishedNavigation);
     done = false;
     finishedNavigation = false;
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site3.example/page3"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site3.example/site3/page3"]]];
     TestWebKitAPI::Util::run(&done);
     Util::run(&finishedNavigation);
     done = false;
@@ -1691,21 +1658,21 @@ TEST(ResourceLoadStatistics, StorageAccessOnRedirectSitesWithOutQuirk)
 TEST(ResourceLoadStatistics, StorageAccessOnRedirectSitesWithQuirk)
 {
     using namespace TestWebKitAPI;
-    HTTPServer httpServer({
-        { "http://site1.example/page1"_s, { "<body><script>let iframe = document.createElement(\"iframe\"); iframe.src = \"http://site2.example/page1\"; document.body.appendChild(iframe);</script></body>"_s  } },
-        { "http://site1.example/page2"_s, { "<body><script>let iframe = document.createElement(\"iframe\"); iframe.src = \"http://site4.example/page1\"; document.body.appendChild(iframe);</script></body>"_s  } },
-        { "http://site2.example/page1"_s, { 302, { { "Location"_s, "http://site3.example/page2"_s }}, "Redirecting"_s } },
-        { "http://site3.example/page1"_s, { 200, {{ "Set-Cookie"_s, "exists=1;"_s }}, "Body"_s } },
-        { "http://site3.example/page2"_s, { 200, {{ "Set-Cookie"_s, "exists=2;"_s }}, "Body"_s } },
-        { "http://site3.example/page3"_s, { "<body>Done</body>"_s  } },
-        { "http://site4.example/page1"_s, { 200, {{ "Set-Cookie"_s, "exists=1;"_s }}, "Body"_s } },
-        { "http://site4.example/page2"_s, { "<body>Done</body>"_s  } },
-    });
+    HTTPServer httpsServer({
+        { "/site1/trigger/page1"_s, { "<body><script>let iframe = document.createElement(\"iframe\"); iframe.src = \"https://site2.example/site2/page1\"; document.body.appendChild(iframe);</script></body>"_s  } },
+        { "/site1/page2"_s, { "<body><script>let iframe = document.createElement(\"iframe\"); iframe.src = \"https://site4.example/site4/page1\"; document.body.appendChild(iframe);</script></body>"_s  } },
+        { "/site2/page1"_s, { 302, { { "Location"_s, "https://site3.example/site3/page2"_s }}, "Redirecting"_s } },
+        { "/site3/page1"_s, { 200, {{ "Set-Cookie"_s, "exists=1; SameSite=none; Secure;"_s }}, "Body"_s } },
+        { "/site3/page2"_s, { 200, {{ "Set-Cookie"_s, "exists=2; SameSite=none; Secure;"_s }}, "<body>Body<script>alert(\"Loaded\");</script></body>"_s } },
+        { "/site3/page3"_s, { "<body>Done</body>"_s  } },
+        { "/site4/page1"_s, { 200, {{ "Set-Cookie"_s, "exists=1; SameSite=none; Secure;"_s }}, "Body"_s } },
+        { "/site4/page2"_s, { "<body>Done</body>"_s  } },
+    }, HTTPServer::Protocol::HttpsProxy);
 
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     [storeConfiguration setProxyConfiguration:@{
-        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
-        (NSString *)kCFStreamPropertyHTTPProxyPort: @(httpServer.port()),
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(httpsServer.port())
     }];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1713,14 +1680,8 @@ TEST(ResourceLoadStatistics, StorageAccessOnRedirectSitesWithQuirk)
     [configuration setWebsiteDataStore:dataStore.get()];
     [dataStore _setResourceLoadStatisticsEnabled:YES];
 
-    [dataStore _clearResourceLoadStatistics:^(void) {
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
     __block bool done = false;
-    [dataStore _setStorageAccessPromptQuirkForTesting:@"site1.example" withSubFrameDomains:[NSArray arrayWithObjects:@"site2.example", @"site3.example", nil] withTriggerPages:@[] completionHandler:^{
+    [dataStore _clearResourceLoadStatistics:^(void) {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -1743,10 +1704,16 @@ TEST(ResourceLoadStatistics, StorageAccessOnRedirectSitesWithQuirk)
         finishedNavigation = true;
     };
 
+    delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    };
+
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
     [webView setNavigationDelegate:delegate.get()];
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    [webView setUIDelegate:uiDelegate.get()];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site3.example/page1"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site3.example/site3/page1"]]];
     TestWebKitAPI::Util::run(&done);
     Util::run(&finishedNavigation);
     done = false;
@@ -1761,13 +1728,14 @@ TEST(ResourceLoadStatistics, StorageAccessOnRedirectSitesWithQuirk)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site1.example/page1"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site1.example/site1/trigger/page1"]]];
     TestWebKitAPI::Util::run(&done);
     Util::run(&finishedNavigation);
     done = false;
     finishedNavigation = false;
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], @"Loaded");
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site3.example/page3"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site3.example/site3/page3"]]];
     TestWebKitAPI::Util::run(&done);
     Util::run(&finishedNavigation);
     done = false;
@@ -1781,13 +1749,13 @@ TEST(ResourceLoadStatistics, StorageAccessOnRedirectSitesWithQuirk)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site1.example/page2"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site1.example/site1/page2"]]];
     TestWebKitAPI::Util::run(&done);
     Util::run(&finishedNavigation);
     done = false;
     finishedNavigation = false;
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site4.example/page2"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site4.example/site4/page2"]]];
     TestWebKitAPI::Util::run(&done);
     Util::run(&finishedNavigation);
     done = false;
@@ -1872,13 +1840,12 @@ TEST(ResourceLoadStatistics, StorageAccessSupportMultipleSubFrameDomains)
             auto request = co_await connection.awaitableReceiveHTTPRequest();
 
             URL url { HTTPServer::parsePath(request) };
-
-            if (url.string() == "http://site1.example/"_s) {
+            if (url.string() == "http://site1.example/trigger/page1"_s) {
                 co_await connection.awaitableSend(HTTPResponse("<body></body>"_s).serialize());
                 continue;
             }
 
-            if ((url.host() == "site2.example"_s || url.host() == "site3.example"_s) && url.path() == "/request-storage-access"_s) {
+            if ((url.host() == "site2.example"_s || url.host() == "site4.example"_s) && url.path() == "/request-storage-access"_s) {
                 co_await connection.awaitableSend(HTTPResponse("<body><script>internals.withUserGesture(() => { document.body.innerText = \"User gesture\"; document.requestStorageAccess().then(() => { document.body.innerText = \"Granted access\"; alert(\"Granted\"); }) });</script>site page 1 iframe</body>"_s).serialize());
                 continue;
             }
@@ -1911,13 +1878,7 @@ TEST(ResourceLoadStatistics, StorageAccessSupportMultipleSubFrameDomains)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    [dataStore _logUserInteraction:[NSURL URLWithString:@"http://site3.example/"] completionHandler:^{
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    [dataStore _setStorageAccessPromptQuirkForTesting:@"site1.example" withSubFrameDomains:[NSArray arrayWithObject:@"site2.example"] withTriggerPages:@[] completionHandler:^{
+    [dataStore _logUserInteraction:[NSURL URLWithString:@"http://site4.example/"] completionHandler:^{
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -1929,7 +1890,7 @@ TEST(ResourceLoadStatistics, StorageAccessSupportMultipleSubFrameDomains)
     uiDelegate.get().requestStorageAccessPanelForDomain = ^(WKWebView *, NSString *subFrameDomain, NSString *topFrameDomain, void  (^completionHandler)(BOOL)) {
         EXPECT_NOT_NULL(subFrameDomain);
         EXPECT_NOT_NULL(subFrameDomain);
-        EXPECT_WK_STREQ(@"site3.example", subFrameDomain);
+        EXPECT_WK_STREQ(@"site4.example", subFrameDomain);
         EXPECT_WK_STREQ(@"site1.example", topFrameDomain);
         gotRequestStorageAccessPanelForDomain = true;
         completionHandler(YES);
@@ -1949,7 +1910,7 @@ TEST(ResourceLoadStatistics, StorageAccessSupportMultipleSubFrameDomains)
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration]);
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site1.example/"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site1.example/trigger/page1"]]];
     [webView _test_waitForDidFinishNavigation];
 
     [webView setUIDelegate:uiDelegate.get()];
@@ -1966,7 +1927,7 @@ TEST(ResourceLoadStatistics, StorageAccessSupportMultipleSubFrameDomains)
     gotRequestStorageAccessPanelForQuirksForDomain = false;
     EXPECT_WK_STREQ([uiDelegate waitForAlert], @"Granted");
 
-    [webView evaluateJavaScript:@"let iframeSite3 = document.createElement(\"iframe\"); iframeSite3.src = \"http://site3.example/request-storage-access\"; document.body.appendChild(iframeSite3); true" completionHandler:^(id value, NSError *error) {
+    [webView evaluateJavaScript:@"let iframeSite4 = document.createElement(\"iframe\"); iframeSite4.src = \"http://site4.example/request-storage-access\"; document.body.appendChild(iframeSite4); true" completionHandler:^(id value, NSError *error) {
         EXPECT_NULL(error);
         done = true;
     }];
@@ -2002,44 +1963,44 @@ TEST(ResourceLoadStatistics, StorageAccessGrantMultipleSubFrameDomains)
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
 
-            URL url { HTTPServer::parsePath(request) };
+            String url = HTTPServer::parsePath(request);
 
-            if (url.string() == "http://site2.example/set-cookie"_s) {
-                co_await connection.awaitableSend(HTTPResponse({ { { "Set-Cookie"_s, "exists=1"_s } }, "<body></body>"_s }).serialize());
+            if (url == "/site2/set-cookie"_s) {
+                co_await connection.awaitableSend(HTTPResponse({ { { "Set-Cookie"_s, "exists=1; SameSite=none; Secure;"_s } }, "<body></body>"_s }).serialize());
                 didSetSite2CookieHeader = true;
                 continue;
             }
 
-            if (url.string() == "http://site1.example/"_s) {
+            if (url == "/site1/trigger/page1"_s) {
                 co_await connection.awaitableSend(HTTPResponse("<body></body>"_s).serialize());
                 continue;
             }
 
-            if ((url.host() == "site2.example"_s || url.host() == "site3.example"_s || url.host() == "site4.example"_s) && url.path() == "/get-cookie"_s) {
-                if (url.host() == "site2.example"_s && headerFromRequest(request, "Cookie: "_s) == "exists=1"_s)
+            if ((url.startsWith("/site2"_s) || url.startsWith("/site3"_s) || url.startsWith("/site4"_s)) && url.endsWith("/get-cookie"_s)) {
+                if (url.startsWith("/site2"_s) && headerFromRequest(request, "Cookie: "_s) == "exists=1"_s)
                     didSendSite2CookieHeader = true;
                 co_await connection.awaitableSend(HTTPResponse("<body><script>alert(\"loaded\");</script>site page 1 iframe</body>"_s).serialize());
                 continue;
             }
 
-            if ((url.host() == "site2.example"_s || url.host() == "site3.example"_s || url.host() == "site4.example"_s) && url.path() == "/has-access"_s) {
+            if ((url.startsWith("/site2"_s) || url.startsWith("/site3"_s) || url.startsWith("/site4"_s)) && url.endsWith("/has-access"_s)) {
                 co_await connection.awaitableSend(HTTPResponse("<body><script>document.hasStorageAccess().then((allowed) => alert(allowed), (denied) => alert(denied));</script></body>"_s).serialize());
                 continue;
             }
 
-            if (url.host() == "site2.example"_s && url.path() == "/redirect"_s) {
-                co_await connection.awaitableSend(HTTPResponse({ 302, { { "Location"_s, "http://site3.example/has-access"_s } }, "Redirecting"_s }).serialize());
+            if (url.startsWith("/site2"_s) && url.endsWith("/redirect"_s)) {
+                co_await connection.awaitableSend(HTTPResponse({ 302, { { "Location"_s, "https://site3.example/site3/has-access"_s } }, "Redirecting"_s }).serialize());
                 continue;
             }
 
             EXPECT_FALSE(true);
         }
-    }, HTTPServer::Protocol::Http };
+    }, HTTPServer::Protocol::HttpsProxy };
 
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     [storeConfiguration setProxyConfiguration:@{
-        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
-        (NSString *)kCFStreamPropertyHTTPProxyPort: @(httpServer.port()),
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(httpServer.port()),
     }];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -2054,19 +2015,13 @@ TEST(ResourceLoadStatistics, StorageAccessGrantMultipleSubFrameDomains)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    [dataStore _logUserInteraction:[NSURL URLWithString:@"http://site2.example/"] completionHandler:^{
+    [dataStore _logUserInteraction:[NSURL URLWithString:@"https://site2.example/"] completionHandler:^{
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    [dataStore _logUserInteraction:[NSURL URLWithString:@"http://site3.example/"] completionHandler:^{
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    [dataStore _setStorageAccessPromptQuirkForTesting:@"site1.example" withSubFrameDomains:[NSArray arrayWithObjects:@"site2.example", @"site3.example", nil] withTriggerPages:@[] completionHandler:^{
+    [dataStore _logUserInteraction:[NSURL URLWithString:@"https://site3.example/"] completionHandler:^{
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -2092,18 +2047,40 @@ TEST(ResourceLoadStatistics, StorageAccessGrantMultipleSubFrameDomains)
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site2.example/set-cookie"]]];
-    [webView _test_waitForDidFinishNavigation];
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        decisionHandler(WKNavigationActionPolicyAllow);
+        done = true;
+    };
+
+    __block bool finishedNavigation = false;
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedNavigation = true;
+    };
+
+    delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    };
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site2.example/site2/set-cookie"]]];
+    Util::run(&done);
+    Util::run(&finishedNavigation);
+    done = false;
+    finishedNavigation = false;
     EXPECT_TRUE(didSetSite2CookieHeader);
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site1.example/"]]];
-    [webView _test_waitForDidFinishNavigation];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site1.example/site1/trigger/page1"]]];
+    Util::run(&done);
+    Util::run(&finishedNavigation);
+    done = false;
+    finishedNavigation = false;
 
     [webView setUIDelegate:uiDelegate.get()];
 
     expectedTopFrameDomain = @"site1.example";
     expectedSubFrameDomain = @"site2.example";
-    [webView evaluateJavaScript:@"let iframeSite2 = document.createElement(\"iframe\"); iframeSite2.src = \"http://site2.example/get-cookie\"; document.body.appendChild(iframeSite2); true" completionHandler:^(id value, NSError *error) {
+    [webView evaluateJavaScript:@"let iframeSite2 = document.createElement(\"iframe\"); iframeSite2.src = \"https://site2.example/site2/get-cookie\"; document.body.appendChild(iframeSite2); true" completionHandler:^(id value, NSError *error) {
         EXPECT_NULL(error);
         done = true;
     }];
@@ -2115,7 +2092,7 @@ TEST(ResourceLoadStatistics, StorageAccessGrantMultipleSubFrameDomains)
     EXPECT_TRUE(didSendSite2CookieHeader);
     didSendSite2CookieHeader = false;
 
-    [webView evaluateJavaScript:@"iframeSite2.contentWindow.location = \"http://site2.example/has-access\"; true" completionHandler:^(id value, NSError *error) {
+    [webView evaluateJavaScript:@"iframeSite2.contentWindow.location = \"https://site2.example/site2/has-access\"; true" completionHandler:^(id value, NSError *error) {
         EXPECT_NULL(error);
         done = true;
     }];
@@ -2125,17 +2102,17 @@ TEST(ResourceLoadStatistics, StorageAccessGrantMultipleSubFrameDomains)
 
     expectedTopFrameDomain = @"site1.example";
     expectedSubFrameDomain = @"site3.example";
-    [webView evaluateJavaScript:@"let iframeSite3 = document.createElement(\"iframe\"); iframeSite3.src = \"http://site3.example/get-cookie\"; document.body.appendChild(iframeSite3); true" completionHandler:^(id value, NSError *error) {
+    [webView evaluateJavaScript:@"let iframeSite3 = document.createElement(\"iframe\"); iframeSite3.src = \"https://site3.example/site3/get-cookie\"; document.body.appendChild(iframeSite3); true" completionHandler:^(id value, NSError *error) {
         EXPECT_NULL(error);
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
     done = false;
-    TestWebKitAPI::Util::run(&gotRequestStorageAccessPanelForQuirksForDomain);
+    EXPECT_FALSE(gotRequestStorageAccessPanelForQuirksForDomain);
     gotRequestStorageAccessPanelForQuirksForDomain = false;
     EXPECT_WK_STREQ([uiDelegate waitForAlert], @"loaded");
 
-    [webView evaluateJavaScript:@"iframeSite3.contentWindow.location = \"http://site3.example/has-access\"; true" completionHandler:^(id value, NSError *error) {
+    [webView evaluateJavaScript:@"iframeSite3.contentWindow.location = \"https://site3.example/site3/has-access\"; true" completionHandler:^(id value, NSError *error) {
         EXPECT_NULL(error);
         done = true;
     }];
@@ -2145,7 +2122,7 @@ TEST(ResourceLoadStatistics, StorageAccessGrantMultipleSubFrameDomains)
 
     expectedTopFrameDomain = @"site1.example";
     expectedSubFrameDomain = @"site3.example";
-    [webView evaluateJavaScript:@"let iframeSite4 = document.createElement(\"iframe\"); iframeSite4.src = \"http://site4.example/get-cookie\"; document.body.appendChild(iframeSite4); true" completionHandler:^(id value, NSError *error) {
+    [webView evaluateJavaScript:@"let iframeSite4 = document.createElement(\"iframe\"); iframeSite4.src = \"https://site4.example/site4/get-cookie\"; document.body.appendChild(iframeSite4); true" completionHandler:^(id value, NSError *error) {
         EXPECT_NULL(error);
         done = true;
     }];
@@ -2154,7 +2131,7 @@ TEST(ResourceLoadStatistics, StorageAccessGrantMultipleSubFrameDomains)
     EXPECT_WK_STREQ([uiDelegate waitForAlert], @"loaded");
     EXPECT_FALSE(gotRequestStorageAccessPanelForQuirksForDomain);
 
-    [webView evaluateJavaScript:@"iframeSite4.contentWindow.location = \"http://site4.example/has-access\"; true" completionHandler:^(id value, NSError *error) {
+    [webView evaluateJavaScript:@"iframeSite4.contentWindow.location = \"https://site4.example/site4/has-access\"; true" completionHandler:^(id value, NSError *error) {
         EXPECT_NULL(error);
         done = true;
     }];
@@ -2163,8 +2140,11 @@ TEST(ResourceLoadStatistics, StorageAccessGrantMultipleSubFrameDomains)
     EXPECT_WK_STREQ([uiDelegate waitForAlert], @"false");
 
     [webView reload];
-    [webView _test_waitForDidFinishNavigation];
-    [webView evaluateJavaScript:@"let iframeSite2 = document.createElement(\"iframe\"); iframeSite2.src = \"http://site2.example/redirect\"; document.body.appendChild(iframeSite2); true" completionHandler:^(id value, NSError *error) {
+    Util::run(&done);
+    Util::run(&finishedNavigation);
+    done = false;
+    finishedNavigation = false;
+    [webView evaluateJavaScript:@"let iframeSite2 = document.createElement(\"iframe\"); iframeSite2.src = \"https://site2.example/site2/redirect\"; document.body.appendChild(iframeSite2); true" completionHandler:^(id value, NSError *error) {
         EXPECT_NULL(error);
         done = true;
     }];

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Event.h"
+#include "UserAgentStringOverrides.h"
 #include <optional>
 #include <wtf/WeakPtr.h>
 
@@ -100,8 +101,8 @@ public:
     WEBCORE_EXPORT bool shouldAvoidUsingIOS13ForGmail() const;
     WEBCORE_EXPORT bool shouldDisableWritingSuggestionsByDefault() const;
 
-    WEBCORE_EXPORT static void updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&&);
-    WEBCORE_EXPORT String storageAccessUserAgentStringQuirkForDomain(const URL&);
+    WEBCORE_EXPORT std::optional<String> userAgentStringQuirkForDomain(const URL&, UserAgentStringPlatform);
+    WEBCORE_EXPORT void setUserAgentStringQuirks(const UserAgentOverridesMap&);
     WEBCORE_EXPORT static bool needsIPadMiniUserAgent(const URL&);
     WEBCORE_EXPORT static bool needsIPhoneUserAgent(const URL&);
     WEBCORE_EXPORT static bool needsDesktopUserAgent(const URL&);
@@ -133,10 +134,11 @@ public:
     enum StorageAccessResult : bool { ShouldNotCancelEvent, ShouldCancelEvent };
     enum ShouldDispatchClick : bool { No, Yes };
 
-    void triggerOptionalStorageAccessIframeQuirk(const URL& frameURL, CompletionHandler<void()>&&) const;
+    void triggerOptionalStorageAccessIframeQuirk(const URL& frameURL, CompletionHandler<void()>&&);
+    void triggerPendingOptionalStorageAccessIframeQuirk();
     StorageAccessResult triggerOptionalStorageAccessQuirk(Element&, const PlatformMouseEvent&, const AtomString& eventType, int, Element*, bool isParentProcessAFullWebBrowser, IsSyntheticClick) const;
-    void setSubFrameDomainsForStorageAccessQuirk(Vector<RegistrableDomain>&& domains) { m_subFrameDomainsForStorageAccessQuirk = WTFMove(domains); }
-    const Vector<RegistrableDomain>& subFrameDomainsForStorageAccessQuirk() const { return m_subFrameDomainsForStorageAccessQuirk; }
+    WEBCORE_EXPORT void setSubFrameDomainsForStorageAccessQuirk(Vector<RegistrableDomain>&&);
+    const std::optional<Vector<RegistrableDomain>>& subFrameDomainsForStorageAccessQuirk() const { return m_subFrameDomainsForStorageAccessQuirk; }
 
     bool needsVP9FullRangeFlagQuirk() const;
 
@@ -272,7 +274,9 @@ private:
     mutable std::optional<bool> m_shouldIgnorePlaysInlineRequirementQuirk;
     mutable std::optional<bool> m_needsRelaxedCorsMixedContentCheckQuirk;
 
-    Vector<RegistrableDomain> m_subFrameDomainsForStorageAccessQuirk;
+    std::optional<Vector<RegistrableDomain>> m_subFrameDomainsForStorageAccessQuirk;
+    UserAgentStringOverrides m_userAgentStringOverrides;
+    Vector<std::pair<URL, CompletionHandler<void()>>> m_queuedIframeStorageAccessQuirkCheck;
 };
 
 } // namespace WebCore

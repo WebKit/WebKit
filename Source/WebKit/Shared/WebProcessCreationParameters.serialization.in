@@ -224,7 +224,7 @@
 
     String timeZoneOverride;
 
-    HashMap<WebCore::RegistrableDomain, String> storageAccessUserAgentStringQuirksData;
+    WebCore::UserAgentOverridesMap userAgentStringQuirks;
     HashSet<WebCore::RegistrableDomain> storageAccessPromptQuirksDomains;
 
     Seconds memoryFootprintPollIntervalForTesting;

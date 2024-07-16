@@ -1,0 +1,1 @@
+{ "version": 1, "Example Site 1": { "quirkDomains": { "site1.example": ["site2.example", "site3.example"] }, "triggerPages": ["http://site1.example/trigger/page1" ,"https://site1.example/site1/trigger/page1", "http://site4.example/page1", "http://site4.example/page2"] } }

@@ -2063,6 +2063,7 @@ page/SpatialNavigation.cpp
 page/TextIndicator.cpp
 page/UndoItem.cpp
 page/UndoManager.cpp
+page/UserAgentStringOverrides.cpp
 page/UserContentController.cpp
 page/UserContentProvider.cpp
 page/UserContentURLPattern.cpp
@@ -2584,6 +2585,7 @@ platform/network/MIMEHeader.cpp
 platform/network/NetworkLoadMetrics.cpp
 platform/network/NetworkStateNotifier.cpp
 platform/network/NetworkStorageSession.cpp
+platform/network/OrganizationStorageAccessPromptQuirk.cpp
 platform/network/ParsedContentRange.cpp
 platform/network/ParsedContentType.cpp
 platform/network/ParsedRequestRange.cpp
@@ -3255,6 +3257,7 @@ SVGElementFactory.cpp
 StyleBuilderGenerated.cpp
 StylePropertyShorthandFunctions.cpp
 UserAgentStyleSheetsData.cpp
+UserAgentStringOverridesGenerated.cpp
 WebCoreJSBuiltinInternals.cpp
 WebCoreJSBuiltins.cpp
 

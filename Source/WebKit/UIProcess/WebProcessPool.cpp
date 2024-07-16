@@ -179,6 +179,19 @@ constexpr Seconds resetModelProcessCrashCountDelay { 30_s };
 constexpr unsigned maximumModelProcessRelaunchAttemptsBeforeKillingWebProcesses { 2 };
 #endif
 
+#if !PLATFORM(COCOA)
+String WebProcessPool::quirksResourceDirectory()
+{
+    return { };
+}
+
+String WebProcessPool::additionalQuirksResourceDirectoryForTesting()
+{
+    return { };
+}
+#endif
+
+
 Ref<WebProcessPool> WebProcessPool::create(API::ProcessPoolConfiguration& configuration)
 {
     InitializeWebKit2();
@@ -202,6 +215,49 @@ static HashSet<String, ASCIICaseInsensitiveHash>& globalURLSchemesWithCustomProt
 {
     static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> set;
     return set;
+}
+
+static UserAgentOverridesMap readUserAgentStringOverridesFromFile(const String& resourcePath, const String& additionalResourcePath)
+{
+    static NeverDestroyed overrides = [] {
+        return UserAgentOverridesMap { };
+    }();
+
+    if (!overrides->isEmpty())
+        return overrides.get();
+
+    overrides.get() = UserAgentStringOverrides::parseUserAgentOverrides(resourcePath);
+
+    if (!additionalResourcePath.isEmpty()) {
+        for (auto&& [mapKey, mapValue] : UserAgentStringOverrides::parseUserAgentOverrides(additionalResourcePath))
+            overrides->add(mapKey, mapValue);
+    }
+    return overrides.get();
+}
+
+static Vector<OrganizationStorageAccessPromptQuirk> readStorageAccessPromptOrganizationsFromFile(const String& resourcePath, const String& additionalResourcePath)
+{
+    static NeverDestroyed organizationStorageAccessPromptQuirks = [] {
+        return Vector<OrganizationStorageAccessPromptQuirk> { };
+    }();
+
+    if (!organizationStorageAccessPromptQuirks->isEmpty())
+        return organizationStorageAccessPromptQuirks.get();
+
+    organizationStorageAccessPromptQuirks.get() = OrganizationStorageAccessPromptQuirk::parseOrganizationStorageAccessPromptQuirk(resourcePath);
+
+    if (!additionalResourcePath.isEmpty()) {
+        for (auto&& organizationStorageAccessPromptQuirk : OrganizationStorageAccessPromptQuirk::parseOrganizationStorageAccessPromptQuirk(additionalResourcePath))
+            organizationStorageAccessPromptQuirks->append(organizationStorageAccessPromptQuirk);
+    }
+    return organizationStorageAccessPromptQuirks.get();
+}
+
+Vector<OrganizationStorageAccessPromptQuirk> WebProcessPool::storageAccessPromptOrganizations()
+{
+    if (auto resourceDirectory = quirksResourceDirectory(); !resourceDirectory.isEmpty())
+        return readStorageAccessPromptOrganizationsFromFile(resourceDirectory, additionalQuirksResourceDirectoryForTesting());
+    return { };
 }
 
 bool WebProcessPool::globalDelaysWebProcessLaunchDefaultValue()
@@ -312,35 +368,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
         });
     }
 #endif
-
-#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    m_storageAccessUserAgentStringQuirksDataUpdateObserver = StorageAccessUserAgentStringQuirkController::shared().observeUpdates([weakThis = WeakPtr { *this }] {
-        // FIXME: Filter by process's site when site isolation is enabled
-        if (RefPtr protectedThis = weakThis.get())
-            protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateStorageAccessUserAgentStringQuirks(StorageAccessUserAgentStringQuirkController::shared().cachedQuirks()));
-    });
-
-    m_storageAccessPromptQuirksDataUpdateObserver = StorageAccessPromptQuirkController::shared().observeUpdates([weakThis = WeakPtr { *this }] {
-        if (RefPtr protectedThis = weakThis.get()) {
-            HashSet<WebCore::RegistrableDomain> domainSet;
-            for (auto&& entry : StorageAccessPromptQuirkController::shared().cachedQuirks()) {
-                if (!entry.triggerPages.isEmpty()) {
-                    for (auto&& page : entry.triggerPages)
-                        domainSet.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(page.string()));
-                    continue;
-                }
-                for (auto&& domain : entry.quirkDomains.keys())
-                    domainSet.add(domain);
-            }
-            protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateDomainsWithStorageAccessQuirks(domainSet));
-        }
-    });
-    if (StorageAccessPromptQuirkController::shared().cachedQuirks().isEmpty())
-        StorageAccessPromptQuirkController::shared().initialize();
-    if (StorageAccessUserAgentStringQuirkController::shared().cachedQuirks().isEmpty())
-        StorageAccessUserAgentStringQuirkController::shared().initialize();
-#endif
-
 }
 
 WebProcessPool::~WebProcessPool()
@@ -988,6 +1015,17 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     parameters.memoryFootprintPollIntervalForTesting = m_configuration->memoryFootprintPollIntervalForTesting();
 
     parameters.memoryFootprintNotificationThresholds = m_configuration->memoryFootprintNotificationThresholds();
+
+    if (auto resourceDirectory = quirksResourceDirectory(); !resourceDirectory.isEmpty()) {
+        // FIXME: Filter by process's site when site isolation is enabled
+        parameters.userAgentStringQuirks = readUserAgentStringOverridesFromFile(resourceDirectory, additionalQuirksResourceDirectoryForTesting());
+
+        for (auto&& entry : readStorageAccessPromptOrganizationsFromFile(resourceDirectory, additionalQuirksResourceDirectoryForTesting())) {
+            for (auto&& page : entry.triggerPages)
+                parameters.storageAccessPromptQuirksDomains.add(RegistrableDomain { page });
+        }
+    } else
+        WEBPROCESSPOOL_RELEASE_LOG(Process, "initializeNewWebProcess: Quirks resource directory not set");
 
     // Add any platform specific parameters
     platformInitializeWebProcess(process, parameters);

@@ -1360,12 +1360,12 @@ void WebLocalFrameLoaderClient::loadStorageAccessQuirksIfNeeded()
 
     auto* document = m_localFrame->document();
     URL documentURLWithoutFragmentOrQueries { document->url().viewWithoutQueryOrFragmentIdentifier().toStringWithoutCopying() };
-    if (!WebProcess::singleton().haveStorageAccessQuirksForDomain(RegistrableDomain { documentURLWithoutFragmentOrQueries }))
+    if (!WebProcess::singleton().haveStorageAccessQuirksForDomain(RegistrableDomain { documentURLWithoutFragmentOrQueries })) {
+        document->quirks().setSubFrameDomainsForStorageAccessQuirk({ });
         return;
+    }
 
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::StorageAccessQuirkForTopFrameDomain(documentURLWithoutFragmentOrQueries), [weakDocument = WeakPtr { *document }](Vector<RegistrableDomain>&& domains) {
-        if (!domains.size())
-            return;
         if (!weakDocument)
             return;
         weakDocument->quirks().setSubFrameDomainsForStorageAccessQuirk(WTFMove(domains));
