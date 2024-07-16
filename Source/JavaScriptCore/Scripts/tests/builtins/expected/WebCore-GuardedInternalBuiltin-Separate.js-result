@@ -143,7 +143,7 @@ public:
 inline void GuardedInternalBuiltinBuiltinFunctions::init(JSC::JSGlobalObject& globalObject)
 {
 #define EXPORT_FUNCTION(codeName, functionName, overriddenName, length)\
-    m_##functionName##Function.set(m_vm, &globalObject, JSC::JSFunction::create(m_vm, codeName##Generator(m_vm), &globalObject));
+    m_##functionName##Function.set(m_vm, &globalObject, JSC::JSFunction::create(m_vm, &globalObject, codeName##Generator(m_vm), &globalObject));
     WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_CODE(EXPORT_FUNCTION)
 #undef EXPORT_FUNCTION
 }
