@@ -589,9 +589,7 @@ webkit.org/b/98382 accessibility/visible-elements.html [ Timeout ]
 
 webkit.org/b/215405 accessibility/roles-computedRoleString.html [ Failure ]
 webkit.org/b/215405 [ Release ] accessibility/roles-exposed.html [ Failure ]
-webkit.org/b/215405 [ Debug ] accessibility/canvas-accessibilitynodeobject.html [ Crash ]
 webkit.org/b/215405 [ Debug ] accessibility/canvas-fallback-content-2.html [ Crash ]
-webkit.org/b/215405 [ Debug ] accessibility/canvas-fallback-content.html [ Crash ]
 
 webkit.org/b/207711 [ Debug ] accessibility/roles-exposed.html [ Timeout ]
 
