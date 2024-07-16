@@ -262,7 +262,6 @@ http/wpt/webxr/xrHandInput_gc.html [ Failure ]
 # Pending to create bug.
 fast/canvas/webgl/context-lost-restored-p3.html [ Failure ]
 [ Release ] fast/events/prevent-default-prevents-interaction-with-scrollbars.html [ Failure Pass ]
-fast/rendering/render-style-null-optgroup-crash.html [ Failure Pass ]
 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Failure ]
 media/no-fullscreen-when-hidden.html [ Failure ]
 media/video-background-tab-playback.html [ Failure ]

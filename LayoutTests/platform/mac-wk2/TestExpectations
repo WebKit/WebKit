@@ -1662,8 +1662,6 @@ webkit.org/b/264266 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/css/filt
 
 webkit.org/b/264306 [ Sonoma+ ] fast/scrolling/mac/scrollbars/very-wide-overlay-scrollbar.html [ Pass ImageOnlyFailure Timeout ]
 
-webkit.org/b/264362 [ Sonoma+ ] fast/rendering/render-style-null-optgroup-crash.html [ Pass Failure ]
-
 # rdar://118901410 (NEW TEST (271087@main): [ macOS x86_64 wk2 ] 2 tests in http/wpt/webcodecs are a constant failure)
 http/wpt/webcodecs/h264-encoder-default-config.https.any.html [ Failure ]
 http/wpt/webcodecs/h264-encoder-default-config.https.any.worker.html [ Failure ]
