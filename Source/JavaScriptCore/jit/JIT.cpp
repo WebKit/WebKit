@@ -809,18 +809,33 @@ RefPtr<BaselineJITCode> JIT::compileAndLinkWithoutFinalizing(JITCompilationEffor
             emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, regT2);
             loadPtr(Address(regT2, CodeBlock::offsetOfArgumentValueProfiles() + FixedVector<ArgumentValueProfile>::offsetOfStorage()), regT2);
 
-            for (unsigned argument = 0; argument < m_unlinkedCodeBlock->numParameters(); ++argument) {
-                // If this is a constructor, then we want to put in a dummy profiling site (to
-                // keep things consistent) but we don't actually want to record the dummy value.
-                if (m_unlinkedCodeBlock->isConstructor() && !argument)
-                    continue;
-                int offset = CallFrame::argumentOffsetIncludingThis(argument) * static_cast<int>(sizeof(Register));
-                loadValue(Address(callFrameRegister, offset), jsRegT10);
-                storeValue(jsRegT10, Address(regT2, FixedVector<ArgumentValueProfile>::Storage::offsetOfData() + argument * sizeof(ArgumentValueProfile) + ArgumentValueProfile::offsetOfFirstBucket()));
+            // If this is a constructor, then we want to put in a dummy profiling site (to
+            // keep things consistent) but we don't actually want to record the dummy value.
+            unsigned index = 0;
+            if (m_unlinkedCodeBlock->isConstructor())
+                index = 1;
+
+            if ((m_unlinkedCodeBlock->numParameters() - index) & 1) {
+                loadValue(Address(callFrameRegister, CallFrame::argumentOffsetIncludingThis(index) * static_cast<int>(sizeof(Register))), jsRegT10);
+                storeValue(jsRegT10, Address(regT2, FixedVector<ArgumentValueProfile>::Storage::offsetOfData() + index * sizeof(ArgumentValueProfile) + ArgumentValueProfile::offsetOfFirstBucket()));
+                ++index;
             }
+
+#if CPU(ARM64)
+            for (; index < m_unlinkedCodeBlock->numParameters(); index += 2) {
+                loadPair64(Address(callFrameRegister, CallFrame::argumentOffsetIncludingThis(index) * static_cast<int>(sizeof(Register))), regT0, regT1);
+                store64(regT0, Address(regT2, FixedVector<ArgumentValueProfile>::Storage::offsetOfData() + index * sizeof(ArgumentValueProfile) + ArgumentValueProfile::offsetOfFirstBucket()));
+                store64(regT1, Address(regT2, FixedVector<ArgumentValueProfile>::Storage::offsetOfData() + (index + 1) * sizeof(ArgumentValueProfile) + ArgumentValueProfile::offsetOfFirstBucket()));
+            }
+#else
+            for (; index < m_unlinkedCodeBlock->numParameters(); ++index) {
+                loadValue(Address(callFrameRegister, CallFrame::argumentOffsetIncludingThis(index) * static_cast<int>(sizeof(Register))), jsRegT10);
+                storeValue(jsRegT10, Address(regT2, FixedVector<ArgumentValueProfile>::Storage::offsetOfData() + index * sizeof(ArgumentValueProfile) + ArgumentValueProfile::offsetOfFirstBucket()));
+            }
+#endif
         }
     }
-    
+
     RELEASE_ASSERT(!JITCode::isJIT(m_profiledCodeBlock->jitType()));
 
     if (UNLIKELY(sizeMarker))
