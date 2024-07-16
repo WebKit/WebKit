@@ -95,8 +95,8 @@ ENV MARCH_FLAG=${MARCH_FLAG}
 ENV LTO_FLAG=${LTO_FLAG}
 
 RUN --mount=type=tmpfs,target=/webkitbuild \
-    export CFLAGS="${DEFAULT_CFLAGS} $CFLAGS $LTO_FLAG -fno-pic -no-pic" && \
-    export CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS $LTO_FLAG -fno-pic -no-pic" && \
+    export CFLAGS="${DEFAULT_CFLAGS} $CFLAGS $LTO_FLAG -fno-pic " && \
+    export CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS $LTO_FLAG -fno-pic " && \
     cd /webkitbuild && \
     cmake \
     -DPORT="JSCOnly" \
