@@ -51,11 +51,11 @@ CredentialsContainer::CredentialsContainer(WeakPtr<Document, WeakPtrImplWithEven
 
 ScopeAndCrossOriginParent CredentialsContainer::scopeAndCrossOriginParent() const
 {
-    if (!m_document)
+    RefPtr document = this->document();
+    if (!document)
         return std::pair { WebAuthn::Scope::CrossOrigin, std::nullopt };
 
     bool isSameSite = true;
-    RefPtr document = m_document.get();
     Ref origin = document->securityOrigin();
     auto url = document->url();
     std::optional<SecurityOriginData> crossOriginParent;
@@ -89,14 +89,13 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
         return;
     }
 
-    RefPtr document = m_document.get();
     // The request will be aborted in WebAuthenticatorCoordinatorProxy if conditional mediation is not available.
-    if (options.mediation != MediationRequirement::Conditional && !document->hasFocus()) {
+    if (options.mediation != MediationRequirement::Conditional && !document()->hasFocus()) {
         promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not focused."_s });
         return;
     }
 
-    document->page()->authenticatorCoordinator().discoverFromExternalSource(*document, WTFMove(options), scopeAndCrossOriginParent(), WTFMove(promise));
+    document()->page()->authenticatorCoordinator().discoverFromExternalSource(*document(), WTFMove(options), scopeAndCrossOriginParent(), WTFMove(promise));
 }
 
 void CredentialsContainer::store(const BasicCredential&, CredentialPromise&& promise)
@@ -118,17 +117,17 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
     }
 
     // Extra.
-    if (!m_document->hasFocus()) {
+    if (!document()->hasFocus()) {
         promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not focused."_s });
         return;
     }
 
-    m_document->page()->authenticatorCoordinator().create(*m_document, WTFMove(options), scopeAndCrossOriginParent().first, WTFMove(options.signal), WTFMove(promise));
+    document()->page()->authenticatorCoordinator().create(*document(), WTFMove(options), scopeAndCrossOriginParent().first, WTFMove(options.signal), WTFMove(promise));
 }
 
 void CredentialsContainer::preventSilentAccess(DOMPromiseDeferred<void>&& promise) const
 {
-    if (m_document && !m_document->isFullyActive()) {
+    if (document() && !document()->isFullyActive()) {
         promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not fully active."_s });
         return;
     }
@@ -138,13 +137,12 @@ void CredentialsContainer::preventSilentAccess(DOMPromiseDeferred<void>&& promis
 template<typename Options>
 bool CredentialsContainer::performCommonChecks(const Options& options, CredentialPromise& promise)
 {
-    RefPtr document = m_document.get();
-
-    if (!document) {
+    if (!document()) {
         promise.reject(Exception { ExceptionCode::NotSupportedError });
         return false;
     }
 
+    RefPtr document = this->document();
     if (!document->isFullyActive()) {
         promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not fully active."_s });
         return false;
