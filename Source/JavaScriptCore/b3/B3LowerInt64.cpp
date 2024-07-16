@@ -136,19 +136,28 @@ private:
         }
     }
 
-    Value* valueLo(Value* value)
+    Value* valueLo(Value* value, std::optional<size_t> providedIndex = { })
     {
-        return insert<Value>(m_index, Trunc, m_origin, value);
+        size_t index = m_index;
+        if (providedIndex)
+            index = *providedIndex;
+        return insert<Value>(index, Trunc, m_origin, value);
     }
 
-    Value* valueHi(Value* value)
+    Value* valueHi(Value* value, std::optional<size_t> providedIndex = { })
     {
-        return insert<Value>(m_index, TruncHigh, m_origin, value);
+        size_t index = m_index;
+        if (providedIndex)
+            index = *providedIndex;
+        return insert<Value>(index, TruncHigh, m_origin, value);
     }
 
-    Value* valueHiLo(Value* hi, Value* lo)
+    Value* valueHiLo(Value* hi, Value* lo, std::optional<size_t> providedIndex = { })
     {
-        return insert<Value>(m_index, Stitch, m_origin, hi, lo);
+        size_t index = m_index;
+        if (providedIndex)
+            index = *providedIndex;
+        return insert<Value>(index, Stitch, m_origin, hi, lo);
     }
 
     void valueReplaced()
@@ -368,9 +377,11 @@ private:
             RELEASE_ASSERT(cCall->numChildren() == 1);
             cCall->effects = m_value->effects();
             cCall->appendArgs(args);
-            m_value->replaceWithIdentity(cCall);
-            if (m_value->type() == Int64)
-                setMapping(m_value, valueHi(m_value), valueLo(m_value));
+            if (m_value->type() == Int64) {
+                setMapping(m_value, valueHi(cCall, m_index + 1), valueLo(cCall, m_index + 1));
+                valueReplaced();
+            } else
+                m_value->replaceWithIdentity(cCall);
             return;
         }
         case Check: {
@@ -443,7 +454,7 @@ private:
                 } else
                     args.append(child);
             }
-            PatchpointValue* patchpoint = insert<PatchpointValue>(m_index, originalPatchpoint->type(), m_origin);
+            PatchpointValue* patchpoint = insert<PatchpointValue>(m_index + 1, originalPatchpoint->type(), m_origin);
             patchpoint->clobberEarly(originalPatchpoint->earlyClobbered());
             patchpoint->clobberLate(originalPatchpoint->lateClobbered());
             // XXX: m_usedRegisters?
@@ -455,9 +466,12 @@ private:
             const Vector<ValueRep>& reps = originalPatchpoint->reps();
             for (size_t index = 0; index < originalPatchpoint->numChildren(); ++index)
                 patchpoint->append(args[index], reps[index]);
-            m_value->replaceWithIdentity(patchpoint);
-            if (m_value->type() == Int64)
-                setMapping(m_value, valueHi(m_value), valueLo(m_value));
+            if (m_value->type() == Int64) {
+                setMapping(m_value, valueHi(patchpoint, m_index + 1), valueLo(patchpoint, m_index + 1));
+                valueReplaced();
+            } else
+                m_value->replaceWithIdentity(patchpoint);
+
             return;
         }
         case Add:
@@ -467,14 +481,21 @@ private:
                 return;
             auto left = getMapping(m_value->child(0));
             auto right = getMapping(m_value->child(1));
-            Value* stitchedLeft = valueHiLo(left.first, left.second);
-            Value* stitchedRight = valueHiLo(right.first, right.second);
-            Value* stitched = insert<Value>(m_index, m_value->opcode(), m_origin, stitchedLeft, stitchedRight);
-            m_value->replaceWithIdentity(stitched);
-            setMapping(m_value, valueHi(stitched), valueLo(stitched));
+            Value* stitchedLeft = valueHiLo(left.first, left.second, m_index + 1);
+            Value* stitchedRight = valueHiLo(right.first, right.second, m_index + 1);
+            Value* stitched = insert<Value>(m_index + 1, m_value->opcode(), m_origin, stitchedLeft, stitchedRight);
+            setMapping(m_value, valueHi(stitched, m_index + 1), valueLo(stitched, m_index + 1));
+            valueReplaced();
             return;
         }
 
+        case CheckAdd:
+        case CheckSub:
+        case CheckMul: {
+            if (m_value->type() != Int64)
+                return;
+            RELEASE_ASSERT_NOT_REACHED(); // XXX: TBD
+        }
         case Branch: {
             if (m_value->child(0)->type() != Int64)
                 return;
@@ -653,7 +674,7 @@ private:
             if (!m_value->numChildren() || m_value->child(0)->type() != Int64)
                 return;
             std::pair<Value*, Value*> retValue = getMapping(m_value->child(0));
-            PatchpointValue* patchpoint = insert<PatchpointValue>(m_index, Void, m_origin);
+            PatchpointValue* patchpoint = insert<PatchpointValue>(m_index + 1, Void, m_origin);
             patchpoint->effects = Effects::none();
             patchpoint->effects.terminal = true;
             patchpoint->append(retValue.first, ValueRep::reg(GPRInfo::returnValueGPR2));
@@ -661,7 +682,7 @@ private:
             patchpoint->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 params.context().code->emitEpilogue(jit);
             });
-            m_value->replaceWithIdentity(patchpoint);
+            valueReplaced();
             return;
         }
         case SShr:
@@ -801,11 +822,10 @@ private:
         case Extract: {
             if (m_proc.typeAtOffset(m_value->child(0)->type(), m_value->as<ExtractValue>()->index()) != Int64)
                 return;
-            setMapping(m_value, valueHi(m_value), valueLo(m_value));
+            setMapping(m_value, valueHi(m_value, m_index + 1), valueLo(m_value, m_index + 1));
             return;
         }
         case Abs:
-        case BitwiseCast:
         case BottomTuple:
         case Ceil:
         case Const32:
@@ -837,6 +857,17 @@ private:
         case UMod:
         case Jump:
             return;
+        case BitwiseCast: {
+            if (m_value->type() == Int64) {
+                setMapping(m_value, valueHi(m_value, m_index + 1), valueLo(m_value, m_index + 1));
+            } else if (m_value->child(0)->type() == Int64) {
+                auto input = getMapping(m_value->child(0));
+                Value* cast = insert<Value>(m_index + 1, BitwiseCast, m_origin, valueHiLo(input.first, input.second, m_index + 1));
+                m_value->replaceWithIdentity(cast);
+            }
+
+            return;
+        }
         case Switch: {
             if (m_value->child(0)->type() != Int64)
                 return;
@@ -987,7 +1018,7 @@ private:
             Value* zero32 = insert<Const32Value>(m_index, m_origin, 0);
             Value* zero = valueHiLo(zero32, zero32);
             m_value->replaceWithIdentity(insert<Value>(m_index, Sub, m_origin, zero, valueHiLo(input.first, input.second)));
-            setMapping(m_value, valueHi(m_value), valueLo(m_value));
+            setMapping(m_value, valueHi(m_value, m_index + 1), valueLo(m_value, m_index + 1));
             return;
         }
         default: {
