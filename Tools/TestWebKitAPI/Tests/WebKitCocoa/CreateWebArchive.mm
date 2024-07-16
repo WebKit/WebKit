@@ -216,7 +216,7 @@ TEST(WebArchive, SaveResourcesBasic)
         EXPECT_NULL(error);
         auto htmlPath = [directoryURL URLByAppendingPathComponent:@"host.html"].path;
         EXPECT_TRUE([fileManager fileExistsAtPath:htmlPath]);
-        NSData *htmlDataWithReplacedURLs = [@"<html><head><script src=\"host_files/script.js\"></script></head><body><img src=\"host_files/image.png\" onload=\"onImageLoad()\"><script>function onImageLoad() { notifyTestRunner(); }</script></body></html>" dataUsingEncoding:NSUTF8StringEncoding];
+        NSData *htmlDataWithReplacedURLs = [@"<html><head><meta charset=\"UTF-8\"><!-- Encoding specified by WebKit --><script src=\"host_files/script.js\"></script></head><body><img src=\"host_files/image.png\" onload=\"onImageLoad()\"><script>function onImageLoad() { notifyTestRunner(); }</script></body></html>" dataUsingEncoding:NSUTF8StringEncoding];
         EXPECT_TRUE([[NSData dataWithContentsOfFile:htmlPath] isEqualToData:htmlDataWithReplacedURLs]);
 
         auto scriptPath = [directoryURL URLByAppendingPathComponent:@"host_files/script.js"].path;
@@ -2189,6 +2189,66 @@ TEST(WebArchive, SaveResourcesStyleWithUnloadedResources)
         EXPECT_FALSE([savedMainResource containsString:@"host_files/Ahem-10000A-backup.ttf"]);
         EXPECT_TRUE([savedMainResource containsString:@"webarchivetest://host/Ahem-10000A-backup.ttf"]);
 
+        saved = true;
+    }];
+    Util::run(&saved);
+}
+
+static const char* htmlDataBytesForUTF8Encoding = R"TESTRESOURCE(
+<head>
+<meta http-equiv="content-type" content="text/html; charset=Windows-1252">
+<script>
+function loaded() {
+    window.webkit.messageHandlers.testHandler.postMessage("done");
+}
+</script>
+</head>
+<body onload="loaded()">
+Hello World!
+</body>
+)TESTRESOURCE";
+
+TEST(WebArchive, SaveResourcesWithUTF8Encoding)
+{
+    RetainPtr<NSURL> directoryURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"SaveResourcesTest"] isDirectory:YES];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:directoryURL.get() error:nil];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
+    NSData *htmlData = [NSData dataWithBytes:htmlDataBytesForUTF8Encoding length:strlen(htmlDataBytesForUTF8Encoding)];
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSData *data = nil;
+        NSString *mimeType = nil;
+        if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/main.html"]) {
+            mimeType = @"text/html";
+            data = htmlData;
+        }
+        EXPECT_TRUE(data);
+
+        RetainPtr response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:mimeType expectedContentLength:data.length textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:data];
+        [task didFinish];
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    static bool messageReceived = false;
+    [webView performAfterReceivingMessage:@"done" action:[&] {
+        messageReceived = true;
+    }];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"webarchivetest://host/main.html"]]];
+    Util::run(&messageReceived);
+
+    static bool saved = false;
+    [webView _saveResources:directoryURL.get() suggestedFileName:@"host" completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+        NSString *mainResourcePath = [directoryURL URLByAppendingPathComponent:@"host.html"].path;
+        EXPECT_TRUE([fileManager fileExistsAtPath:mainResourcePath]);
+
+        NSString *savedMainResource = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:mainResourcePath] encoding:NSUTF8StringEncoding];
+        EXPECT_TRUE([savedMainResource containsString:@"<meta charset=\"UTF-8\">"]);
         saved = true;
     }];
     Util::run(&saved);
