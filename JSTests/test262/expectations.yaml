@@ -971,18 +971,12 @@ test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-p
   default: 'Test262Error: globalThis.arguments unchanged Expected SameValue(«param», «undefined») to be true'
 test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-present-arrow-func-declare-arguments-assign.js:
   default: 'Test262Error: globalThis.arguments unchanged Expected SameValue(«param», «undefined») to be true'
-test/language/expressions/assignment/destructuring/iterator-destructuring-property-reference-target-evaluation-order.js:
-  default: 'Test262Error: Expected [source, iterator, iterator-step, iterator-done, target, target-key, target-key-tostring, set] and [source, iterator, target, target-key, iterator-step, iterator-done, target-key-tostring, set] to have the same contents. '
-  strict mode: 'Test262Error: Expected [source, iterator, iterator-step, iterator-done, target, target-key, target-key-tostring, set] and [source, iterator, target, target-key, iterator-step, iterator-done, target-key-tostring, set] to have the same contents. '
-test/language/expressions/assignment/destructuring/keyed-destructuring-property-reference-target-evaluation-order.js:
-  default: 'Test262Error: Expected [source, source-key, source-key-tostring, get, target, target-key, target-key-tostring, set] and [source, source-key, source-key-tostring, target, target-key, get, target-key-tostring, set] to have the same contents. '
-  strict mode: 'Test262Error: Expected [source, source-key, source-key-tostring, get, target, target-key, target-key-tostring, set] and [source, source-key, source-key-tostring, target, target-key, get, target-key-tostring, set] to have the same contents. '
 test/language/expressions/assignment/destructuring/obj-prop-__proto__dup.js:
   default: 'SyntaxError: Attempted to redefine __proto__ property.'
   strict mode: 'SyntaxError: Attempted to redefine __proto__ property.'
 test/language/expressions/assignment/dstr/array-elem-iter-rtrn-close-err.js:
-  default: "TypeError: undefined is not a function (near '...[ {}[ yield ] ]...')"
-  strict mode: "TypeError: undefined is not a function (near '...[ {}[ yield ] ]...')"
+  default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
 test/language/expressions/assignment/dstr/array-elem-iter-rtrn-close-null.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -990,11 +984,11 @@ test/language/expressions/assignment/dstr/array-elem-iter-rtrn-close.js:
   default: 'Test262Error: Expected SameValue(«0», «1») to be true'
   strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/expressions/assignment/dstr/array-elem-iter-thrw-close-err.js:
-  default: 'Test262Error: Expected SameValue(«1», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«1», «0») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/expressions/assignment/dstr/array-elem-iter-thrw-close.js:
-  default: 'Test262Error: Expected SameValue(«1», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«1», «0») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/expressions/assignment/dstr/array-elem-trlg-iter-list-rtrn-close-err.js:
   default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
@@ -1005,11 +999,11 @@ test/language/expressions/assignment/dstr/array-elem-trlg-iter-list-rtrn-close.j
   default: 'Test262Error: Expected SameValue(«0», «1») to be true'
   strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/expressions/assignment/dstr/array-elem-trlg-iter-list-thrw-close-err.js:
-  default: 'Test262Error: Expected SameValue(«1», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«1», «0») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/expressions/assignment/dstr/array-elem-trlg-iter-list-thrw-close.js:
-  default: 'Test262Error: Expected SameValue(«1», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«1», «0») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/expressions/assignment/dstr/array-elem-trlg-iter-rest-rtrn-close-err.js:
   default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
@@ -1017,32 +1011,32 @@ test/language/expressions/assignment/dstr/array-elem-trlg-iter-rest-rtrn-close-n
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/expressions/assignment/dstr/array-elem-trlg-iter-rest-rtrn-close.js:
-  default: 'Test262Error: Expected SameValue(«11», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«11», «1») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/expressions/assignment/dstr/array-elem-trlg-iter-rest-thrw-close-err.js:
-  default: 'Test262Error: Expected SameValue(«11», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«11», «1») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/expressions/assignment/dstr/array-elem-trlg-iter-rest-thrw-close.js:
-  default: 'Test262Error: Expected SameValue(«11», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«11», «1») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/expressions/assignment/dstr/array-rest-iter-rtrn-close-err.js:
-  default: "TypeError: undefined is not a function (near '...[...{}[yield]]...')"
-  strict mode: "TypeError: undefined is not a function (near '...[...{}[yield]]...')"
+  default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
 test/language/expressions/assignment/dstr/array-rest-iter-rtrn-close-null.js:
-  default: "TypeError: undefined is not a function (near '...[...{}[yield]]...')"
-  strict mode: "TypeError: undefined is not a function (near '...[...{}[yield]]...')"
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/expressions/assignment/dstr/array-rest-iter-rtrn-close.js:
-  default: 'Test262Error: '
-  strict mode: 'Test262Error: '
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/expressions/assignment/dstr/array-rest-iter-thrw-close-err.js:
-  default: 'Test262Error: Expected SameValue(«11», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«11», «0») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/expressions/assignment/dstr/array-rest-iter-thrw-close.js:
-  default: 'Test262Error: Expected SameValue(«11», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«11», «0») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/expressions/assignment/dstr/array-rest-lref-err.js:
-  default: 'Test262Error: Expected SameValue(«1», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«1», «0») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/expressions/assignment/fn-name-lhs-cover.js:
   default: 'Test262Error: descriptor value should be ; object value should be '
   strict mode: 'Test262Error: descriptor value should be ; object value should be '
@@ -1158,9 +1152,6 @@ test/language/statements/class/elements/nested-direct-eval-err-contains-argument
 test/language/statements/class/elements/nested-private-direct-eval-err-contains-arguments.js:
   default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-test/language/statements/class/elements/privatefieldset-evaluation-order-1.js:
-  default: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/language/statements/class/subclass/default-constructor-spread-override.js:
   default: 'Test262Error: @@iterator invoked'
   strict mode: 'Test262Error: @@iterator invoked'
@@ -1172,8 +1163,8 @@ test/language/statements/for-in/head-lhs-let.js:
 test/language/statements/for-in/identifier-let-allowed-as-lefthandside-expression-not-strict.js:
   default: "SyntaxError: Cannot use the keyword 'in' as a lexical variable name."
 test/language/statements/for-of/dstr/array-elem-iter-rtrn-close-err.js:
-  default: "TypeError: undefined is not a function (near '...[ {}[ yield ] ]...')"
-  strict mode: "TypeError: undefined is not a function (near '...[ {}[ yield ] ]...')"
+  default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
 test/language/statements/for-of/dstr/array-elem-iter-rtrn-close-null.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -1181,11 +1172,11 @@ test/language/statements/for-of/dstr/array-elem-iter-rtrn-close.js:
   default: 'Test262Error: Expected SameValue(«0», «1») to be true'
   strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/statements/for-of/dstr/array-elem-iter-thrw-close-err.js:
-  default: 'Test262Error: Expected SameValue(«1», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«1», «0») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/statements/for-of/dstr/array-elem-iter-thrw-close.js:
-  default: 'Test262Error: Expected SameValue(«1», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«1», «0») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/statements/for-of/dstr/array-elem-trlg-iter-list-rtrn-close-err.js:
   default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
@@ -1196,11 +1187,11 @@ test/language/statements/for-of/dstr/array-elem-trlg-iter-list-rtrn-close.js:
   default: 'Test262Error: Expected SameValue(«0», «1») to be true'
   strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/statements/for-of/dstr/array-elem-trlg-iter-list-thrw-close-err.js:
-  default: 'Test262Error: Expected SameValue(«1», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«1», «0») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/statements/for-of/dstr/array-elem-trlg-iter-list-thrw-close.js:
-  default: 'Test262Error: Expected SameValue(«1», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«1», «0») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/statements/for-of/dstr/array-elem-trlg-iter-rest-rtrn-close-err.js:
   default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
@@ -1208,31 +1199,31 @@ test/language/statements/for-of/dstr/array-elem-trlg-iter-rest-rtrn-close-null.j
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/statements/for-of/dstr/array-elem-trlg-iter-rest-rtrn-close.js:
-  default: 'Test262Error: Expected SameValue(«11», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«11», «1») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/statements/for-of/dstr/array-elem-trlg-iter-rest-thrw-close-err.js:
-  default: 'Test262Error: Expected SameValue(«11», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«11», «1») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/statements/for-of/dstr/array-elem-trlg-iter-rest-thrw-close.js:
-  default: 'Test262Error: Expected SameValue(«11», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«11», «1») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/statements/for-of/dstr/array-rest-iter-rtrn-close-err.js:
-  default: "TypeError: undefined is not a function (near '...[...{}[yield]]...')"
-  strict mode: "TypeError: undefined is not a function (near '...[...{}[yield]]...')"
+  default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
 test/language/statements/for-of/dstr/array-rest-iter-rtrn-close-null.js:
-  default: "TypeError: undefined is not a function (near '...[...{}[yield]]...')"
-  strict mode: "TypeError: undefined is not a function (near '...[...{}[yield]]...')"
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/statements/for-of/dstr/array-rest-iter-rtrn-close.js:
-  default: 'Test262Error: '
-  strict mode: 'Test262Error: '
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/statements/for-of/dstr/array-rest-iter-thrw-close-err.js:
-  default: 'Test262Error: Expected SameValue(«11», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«11», «0») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/statements/for-of/dstr/array-rest-iter-thrw-close.js:
-  default: 'Test262Error: Expected SameValue(«11», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«11», «0») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/statements/for-of/dstr/array-rest-lref-err.js:
-  default: 'Test262Error: Expected SameValue(«1», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«1», «0») to be true'
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/statements/for/head-lhs-let.js:
   default: "SyntaxError: Unexpected token ';'. Expected a parameter pattern or a ')' in parameter list."

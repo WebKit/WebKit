@@ -2467,6 +2467,8 @@ namespace JSC {
 
     class DestructuringPatternNode : public ParserArenaFreeable {
     public:
+        using BaseAndPropertyName = std::pair<RefPtr<RegisterID>, RefPtr<RegisterID>>;
+
         virtual ~DestructuringPatternNode() { }
         virtual void collectBoundIdentifiers(Vector<Identifier>&) const = 0;
         virtual void bindValue(BytecodeGenerator&, RegisterID* source) const = 0;
@@ -2607,6 +2609,9 @@ namespace JSC {
 
         RegisterID* writableDirectBindingIfPossible(BytecodeGenerator&) const final;
         void finishDirectBindingAssignment(BytecodeGenerator&) const;
+
+        std::optional<BaseAndPropertyName> emitNodesForDestructuring(BytecodeGenerator&, RefPtr<RegisterID> base = nullptr, RefPtr<RegisterID> propertyName = nullptr) const;
+        void bindValueWithEmittedNodes(BytecodeGenerator&, BaseAndPropertyName, RegisterID*) const;
 
     private:
         void collectBoundIdentifiers(Vector<Identifier>&) const final;
