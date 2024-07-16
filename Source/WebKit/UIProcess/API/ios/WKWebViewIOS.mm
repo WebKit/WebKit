@@ -109,10 +109,6 @@
         [_contentView _action ## ForWebView:sender]; \
 }
 
-namespace WebKit {
-enum class UpdateLastKnownWindowSizeResult : bool { Changed, DidNotChange };
-}
-
 #define WKWEBVIEW_RELEASE_LOG(...) RELEASE_LOG(ViewState, __VA_ARGS__)
 
 static const Seconds delayBeforeNoVisibleContentsRectsLogging = 1_s;
@@ -1883,14 +1879,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return false;
 }
 
-- (WebKit::UpdateLastKnownWindowSizeResult)_updateLastKnownWindowSize
+- (void)_updateLastKnownWindowSizeAndOrientation
 {
-    auto size = self.window.bounds.size;
-    if (CGSizeEqualToSize(_lastKnownWindowSize, size))
-        return WebKit::UpdateLastKnownWindowSizeResult::DidNotChange;
-
-    _lastKnownWindowSize = size;
-    return WebKit::UpdateLastKnownWindowSizeResult::Changed;
+    UIWindowScene *scene = self.window.windowScene;
+    _lastKnownWindowSizeAndOrientation = { scene.coordinateSpace.bounds.size, scene.interfaceOrientation };
 }
 
 - (void)didMoveToWindow
@@ -1909,7 +1901,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 #if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
     [self _endLiveResize];
 #endif
-    [self _updateLastKnownWindowSize];
+    [self _updateLastKnownWindowSizeAndOrientation];
 }
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
@@ -2384,6 +2376,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (CGRectIsEmpty(self.bounds))
         return;
 
+    if (_perProcessState.dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing)
+        return;
+
     [self _rescheduleEndLiveResizeTimer];
 
     if (_perProcessState.liveResizeParameters)
@@ -2426,9 +2421,23 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 - (void)_frameOrBoundsWillChange
 {
 #if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
-    if ([self _updateLastKnownWindowSize] == WebKit::UpdateLastKnownWindowSizeResult::Changed)
+    auto [sizeBeforeUpdate, orientationBeforeUpdate] = _lastKnownWindowSizeAndOrientation;
+    [self _updateLastKnownWindowSizeAndOrientation];
+
+    auto [sizeAfterUpdate, orientationAfterUpdate] = _lastKnownWindowSizeAndOrientation;
+    auto shouldScheduleAutomaticLiveResize = [&] {
+        if (sizeBeforeUpdate.width == sizeAfterUpdate.width)
+            return NO;
+
+        if (orientationBeforeUpdate != orientationAfterUpdate)
+            return NO;
+
+        return YES;
+    };
+
+    if (shouldScheduleAutomaticLiveResize())
         [self _beginAutomaticLiveResizeIfNeeded];
-#endif
+#endif // HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
 }
 
 - (void)_updateDrawingAreaSize

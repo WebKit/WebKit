@@ -316,7 +316,7 @@ struct PerWebProcessState {
     RetainPtr<UIView> _resizeAnimationView;
     CGFloat _lastAdjustmentForScroller;
 
-    CGSize _lastKnownWindowSize;
+    std::pair<CGSize, UIInterfaceOrientation> _lastKnownWindowSizeAndOrientation;
     RetainPtr<NSTimer> _endLiveResizeTimer;
 
     WebCore::FloatBoxExtent _obscuredInsetsWhenSaved;
