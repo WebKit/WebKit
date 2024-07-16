@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-bool CSSParserFastPaths::isSimpleLengthPropertyID(CSSPropertyID propertyId, bool& acceptsNegativeNumbers)
+bool CSSParserFastPaths::isSimpleLengthPropertyID(CSSPropertyID propertyId, ValueRange& valueRange)
 {
     switch (propertyId) {
     case CSSPropertyFontSize:
@@ -71,7 +71,7 @@ bool CSSParserFastPaths::isSimpleLengthPropertyID(CSSPropertyID propertyId, bool
     case CSSPropertyRx:
     case CSSPropertyRy:
     case CSSPropertyShapeMargin:
-        acceptsNegativeNumbers = false;
+        valueRange = ValueRange::NonNegative;
         return true;
     case CSSPropertyBottom:
     case CSSPropertyCx:
@@ -93,7 +93,7 @@ bool CSSParserFastPaths::isSimpleLengthPropertyID(CSSPropertyID propertyId, bool
     case CSSPropertyMarginInlineStart:
     case CSSPropertyX:
     case CSSPropertyY:
-        acceptsNegativeNumbers = true;
+        valueRange = ValueRange::All;
         return true;
     default:
         return false;
@@ -150,17 +150,35 @@ static inline bool parseSimpleAngle(std::span<const CharacterType> characters, C
     return parsedNumber.has_value();
 }
 
-static RefPtr<CSSValue> parseSimpleLengthValue(CSSPropertyID propertyId, StringView string, CSSParserMode cssParserMode)
+template <typename CharacterType>
+static inline bool parseSimpleNumberOrPercentage(std::span<const CharacterType> characters, ValueRange valueRange, CSSUnitType& unit, double& number)
+{
+    unit = CSSUnitType::CSS_NUMBER;
+    if (!characters.empty() && characters.back() == '%') {
+        characters = characters.first(characters.size() - 1);
+        unit = CSSUnitType::CSS_PERCENTAGE;
+    }
+
+    auto parsedNumber = parseCSSNumber(characters);
+    if (!parsedNumber)
+        return false;
+
+    number = *parsedNumber;
+    if (number < 0 && valueRange == ValueRange::NonNegative)
+        return false;
+
+    if (std::isinf(number))
+        return false;
+
+    return true;
+}
+
+static RefPtr<CSSValue> parseSimpleLengthValue(StringView string, CSSParserMode cssParserMode, ValueRange valueRange)
 {
     ASSERT(!string.isEmpty());
-    bool acceptsNegativeNumbers = false;
-
-    // In @viewport, width and height are shorthands, not simple length values.
-    if (isCSSViewportParsingEnabledForMode(cssParserMode) || !CSSParserFastPaths::isSimpleLengthPropertyID(propertyId, acceptsNegativeNumbers))
-        return nullptr;
 
     double number;
-    CSSUnitType unit = CSSUnitType::CSS_NUMBER;
+    auto unit = CSSUnitType::CSS_NUMBER;
 
     if (string.is8Bit()) {
         if (!parseSimpleLength(string.span8(), unit, number))
@@ -176,8 +194,9 @@ static RefPtr<CSSValue> parseSimpleLengthValue(CSSPropertyID propertyId, StringV
         unit = CSSUnitType::CSS_PX;
     }
 
-    if (number < 0 && !acceptsNegativeNumbers)
+    if (number < 0 && valueRange == ValueRange::NonNegative)
         return nullptr;
+
     if (std::isinf(number))
         return nullptr;
 
@@ -254,19 +273,22 @@ static size_t parseDouble(std::span<const CharacterType> string, char terminator
 }
 
 template <typename CharacterType>
-static std::optional<uint8_t> parseColorIntOrPercentage(std::span<const CharacterType>& string, char terminator, CSSUnitType& expect)
+static std::optional<uint8_t> parseColorIntOrPercentage(std::span<const CharacterType>& string, char terminator, CSSUnitType& expectedUnitType)
 {
     auto current = string;
     double localValue = 0;
     bool negative = false;
     while (!current.empty() && isASCIIWhitespace<CharacterType>(current.front()))
         current = current.subspan(1);
+
     if (!current.empty() && current.front() == '-') {
         negative = true;
         current = current.subspan(1);
     }
+
     if (current.empty() || !isASCIIDigit(current.front()))
         return std::nullopt;
+
     while (!current.empty() && isASCIIDigit(current.front())) {
         double newValue = localValue * 10 + current.front() - '0';
         current = current.subspan(1);
@@ -283,7 +305,7 @@ static std::optional<uint8_t> parseColorIntOrPercentage(std::span<const Characte
     if (current.empty())
         return std::nullopt;
 
-    if (expect == CSSUnitType::CSS_NUMBER && (current.front() == '.' || current.front() == '%'))
+    if (expectedUnitType == CSSUnitType::CSS_NUMBER && (current.front() == '.' || current.front() == '%'))
         return std::nullopt;
 
     if (current.front() == '.') {
@@ -299,23 +321,25 @@ static std::optional<uint8_t> parseColorIntOrPercentage(std::span<const Characte
         localValue += percentage;
     }
 
-    if (expect == CSSUnitType::CSS_PERCENTAGE && current.front() != '%')
+    if (expectedUnitType == CSSUnitType::CSS_PERCENTAGE && current.front() != '%')
         return std::nullopt;
 
     if (current.front() == '%') {
-        expect = CSSUnitType::CSS_PERCENTAGE;
+        expectedUnitType = CSSUnitType::CSS_PERCENTAGE;
         localValue = localValue / 100.0 * 255.0;
         // Clamp values at 255 for percentages over 100%
         if (localValue > 255)
             localValue = 255;
         current = current.subspan(1);
     } else
-        expect = CSSUnitType::CSS_NUMBER;
+        expectedUnitType = CSSUnitType::CSS_NUMBER;
 
     while (!current.empty() && isASCIIWhitespace<CharacterType>(current.front()))
         current = current.subspan(1);
+
     if (current.empty() || current.front() != terminator)
         return std::nullopt;
+
     current = current.subspan(1);
     string = current;
 
@@ -441,10 +465,12 @@ static std::optional<SRGBA<uint8_t>> finishParsingHexColor(uint32_t value, unsig
     return std::nullopt;
 }
 
-template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseHexColorInternal(std::span<const CharacterType> characters)
+template<typename CharacterType>
+static std::optional<SRGBA<uint8_t>> parseHexColorInternal(std::span<const CharacterType> characters)
 {
     if (characters.size() != 3 && characters.size() != 4 && characters.size() != 6 && characters.size() != 8)
         return std::nullopt;
+
     uint32_t value = 0;
     for (auto digit : characters) {
         if (!isASCIIHexDigit(digit))
@@ -455,7 +481,8 @@ template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseHexCo
     return finishParsingHexColor(value, characters.size());
 }
 
-template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseNumericColor(std::span<const CharacterType> characters, bool strict)
+template<typename CharacterType>
+static std::optional<SRGBA<uint8_t>> parseNumericColor(std::span<const CharacterType> characters, bool strict)
 {
     if (characters.size() >= 4 && characters.front() == '#') {
         if (auto hexColor = parseHexColorInternal(characters.subspan(1)))
@@ -467,18 +494,18 @@ template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseNumer
             return *hexColor;
     }
 
-    auto expect = CSSUnitType::CSS_UNKNOWN;
+    auto expectedUnitType = CSSUnitType::CSS_UNKNOWN;
 
     // Try rgba() syntax.
     if (mightBeRGBA(characters)) {
         auto current = characters.subspan(5);
-        auto red = parseColorIntOrPercentage(current, ',', expect);
+        auto red = parseColorIntOrPercentage(current, ',', expectedUnitType);
         if (!red)
             return std::nullopt;
-        auto green = parseColorIntOrPercentage(current, ',', expect);
+        auto green = parseColorIntOrPercentage(current, ',', expectedUnitType);
         if (!green)
             return std::nullopt;
-        auto blue = parseColorIntOrPercentage(current, ',', expect);
+        auto blue = parseColorIntOrPercentage(current, ',', expectedUnitType);
         if (!blue)
             return std::nullopt;
         auto alpha = parseAlphaValue(current, ')');
@@ -492,13 +519,13 @@ template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseNumer
     // Try rgb() syntax.
     if (mightBeRGB(characters)) {
         auto current = characters.subspan(4);
-        auto red = parseColorIntOrPercentage(current, ',', expect);
+        auto red = parseColorIntOrPercentage(current, ',', expectedUnitType);
         if (!red)
             return std::nullopt;
-        auto green = parseColorIntOrPercentage(current, ',', expect);
+        auto green = parseColorIntOrPercentage(current, ',', expectedUnitType);
         if (!green)
             return std::nullopt;
-        auto blue = parseColorIntOrPercentage(current, ')', expect);
+        auto blue = parseColorIntOrPercentage(current, ')', expectedUnitType);
         if (!blue)
             return std::nullopt;
         if (!current.empty())
@@ -809,68 +836,9 @@ static RefPtr<CSSFunctionValue> parseSimpleTransformValue(CharType*& pos, CharTy
     return nullptr;
 }
 
-template <typename CharType>
-static bool transformCanLikelyUseFastPath(std::span<const CharType> characters)
+template<typename CharacterType>
+static RefPtr<CSSValue> parseSimpleTransformList(std::span<const CharacterType> characters)
 {
-    // Very fast scan that attempts to reject most transforms that couldn't
-    // take the fast path. This avoids doing the malloc and string->double
-    // conversions in parseSimpleTransformValue only to discard them when we
-    // run into a transform component we don't understand.
-    size_t i = 0;
-    while (i < characters.size()) {
-        if (isCSSSpace(characters[i])) {
-            ++i;
-            continue;
-        }
-
-        if (characters.size() - i < kShortestValidTransformStringLength)
-            return false;
-        
-        switch (toASCIILower(characters[i])) {
-        case 't':
-            // translate, translateX, translateY, translateZ, translate3d.
-            if (toASCIILower(characters[i + 8]) != 'e')
-                return false;
-            i += 9;
-            break;
-        case 'm':
-            // matrix3d.
-            if (toASCIILower(characters[i + 7]) != 'd')
-                return false;
-            i += 8;
-            break;
-        case 's':
-            // scale3d.
-            if (toASCIILower(characters[i + 6]) != 'd')
-                return false;
-            i += 7;
-            break;
-        case 'r':
-            // rotate.
-            if (toASCIILower(characters[i + 5]) != 'e')
-                return false;
-            i += 6;
-            // rotateZ
-            if (toASCIILower(characters[i]) == 'z')
-                ++i;
-            break;
-
-        default:
-            return false;
-        }
-        size_t argumentsEnd = find(characters, ')', i);
-        if (argumentsEnd == notFound)
-            return false;
-        // Advance to the end of the arguments.
-        i = argumentsEnd + 1;
-    }
-    return i == characters.size();
-}
-
-template<typename CharacterType> static RefPtr<CSSValue> parseSimpleTransformList(std::span<const CharacterType> characters)
-{
-    if (!transformCanLikelyUseFastPath(characters))
-        return nullptr;
     auto* pos = characters.data();
     auto* end = characters.data() + characters.size();
     CSSValueListBuilder builder;
@@ -889,11 +857,9 @@ template<typename CharacterType> static RefPtr<CSSValue> parseSimpleTransformLis
     return CSSTransformListValue::create(WTFMove(builder));
 }
 
-static RefPtr<CSSValue> parseSimpleTransform(CSSPropertyID propertyID, StringView string)
+static RefPtr<CSSValue> parseSimpleTransform(StringView string)
 {
     ASSERT(!string.isEmpty());
-    if (propertyID != CSSPropertyTransform)
-        return nullptr;
     if (string.is8Bit())
         return parseSimpleTransformList(string.span8());
     return parseSimpleTransformList(string.span16());
@@ -905,6 +871,7 @@ static RefPtr<CSSValue> parseDisplay(StringView string)
     auto valueID = cssValueKeywordID(string);
 
     switch (valueID) {
+    case CSSValueNone:
     // <display-outside>
     case CSSValueBlock:
     case CSSValueInline:
@@ -940,6 +907,22 @@ static RefPtr<CSSValue> parseDisplay(StringView string)
     }
 }
 
+static RefPtr<CSSValue> parseOpacity(StringView string)
+{
+    double number;
+    auto unit = CSSUnitType::CSS_NUMBER;
+
+    if (string.is8Bit()) {
+        if (!parseSimpleNumberOrPercentage(string.span8(), ValueRange::NonNegative, unit, number))
+            return nullptr;
+    } else {
+        if (!parseSimpleNumberOrPercentage(string.span16(), ValueRange::NonNegative, unit, number))
+            return nullptr;
+    }
+
+    return CSSPrimitiveValue::create(number, unit);
+}
+
 static RefPtr<CSSValue> parseColorWithAuto(StringView string, const CSSParserContext& context)
 {
     ASSERT(!string.isEmpty());
@@ -950,17 +933,37 @@ static RefPtr<CSSValue> parseColorWithAuto(StringView string, const CSSParserCon
 
 RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID propertyID, StringView string, const CSSParserContext& context)
 {
-    if (auto result = parseSimpleLengthValue(propertyID, string, context.mode))
-        return result;
-    if (propertyID == CSSPropertyDisplay)
+    switch (propertyID) {
+    case CSSPropertyDisplay:
         return parseDisplay(string);
-    if ((propertyID == CSSPropertyCaretColor || propertyID == CSSPropertyAccentColor) && isExposed(propertyID, &context.propertySettings))
-        return parseColorWithAuto(string, context);
+    case CSSPropertyOpacity:
+        return parseOpacity(string);
+    case CSSPropertyTransform:
+        return parseSimpleTransform(string);
+    case CSSPropertyCaretColor:
+    case CSSPropertyAccentColor:
+        if (isExposed(propertyID, &context.propertySettings))
+            return parseColorWithAuto(string, context);
+        break;
+    default:
+        break;
+    }
+
     if (CSSProperty::isColorProperty(propertyID))
         return parseColor(string, context);
-    if (auto result = parseKeywordValue(propertyID, string, context))
-        return result;
-    return parseSimpleTransform(propertyID, string);
+
+    auto valueRange = ValueRange::All;
+    if (CSSParserFastPaths::isSimpleLengthPropertyID(propertyID, valueRange)) {
+        // In @viewport, width and height are shorthands, not simple length values.
+        if (isCSSViewportParsingEnabledForMode(context.mode))
+            return nullptr;
+
+        auto result = parseSimpleLengthValue(string, context.mode, valueRange);
+        if (result)
+            return result;
+    }
+
+    return parseKeywordValue(propertyID, string, context);
 }
 
 } // namespace WebCore
