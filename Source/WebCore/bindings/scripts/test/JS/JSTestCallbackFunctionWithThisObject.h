@@ -37,7 +37,7 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
     ~JSTestCallbackFunctionWithThisObject() final;
-    JSCallbackDataWeak* callbackData() { return m_data; }
+    JSCallbackData* callbackData() { return m_data; }
 
     // Functions
     CallbackResult<typename IDLUndefined::ImplementationType> handleEvent(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLSequence<IDLInterface<TestNode>>::ParameterType parameter) override;
@@ -51,7 +51,7 @@ private:
 
     void visitJSFunction(JSC::SlotVisitor&) override;
 
-    JSCallbackDataWeak* m_data;
+    JSCallbackData* m_data;
 };
 
 JSC::JSValue toJS(TestCallbackFunctionWithThisObject&);

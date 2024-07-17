@@ -42,6 +42,9 @@ public:
     virtual CallbackResult<void> handleEvent(Blob*) = 0;
 
     void scheduleCallback(ScriptExecutionContext&, RefPtr<Blob>&&);
+
+private:
+    virtual bool hasCallback() const = 0;
 };
 
 } // namespace WebCore

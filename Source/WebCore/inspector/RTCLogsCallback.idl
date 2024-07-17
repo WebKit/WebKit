@@ -35,5 +35,5 @@
 
 [
     Conditional=WEB_RTC,
-    IsStrongCallback
+    GenerateIsReachable=ImplScriptExecutionContext
 ] callback RTCLogsCallback = undefined (RTCLogs logs);

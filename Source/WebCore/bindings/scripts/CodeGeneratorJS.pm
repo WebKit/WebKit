@@ -6700,8 +6700,15 @@ sub GenerateCallbackHeaderContent
 {
     my ($object, $interfaceOrCallback, $operations, $constants, $contentRef, $includesRef) = @_;
 
+    my $generateIsReachable = GetGenerateIsReachable($interfaceOrCallback);
+    if ($generateIsReachable) {
+        if ($generateIsReachable ne "ImplScriptExecutionContext") {
+            assert("\"ImplScriptExecutionContext\" is the only valid value for \"GenerateIsReachable\" for callbacks.");
+        }
+        $includesRef->{"WebCoreOpaqueRootInlines.h"} = 1;
+    }
+
     my $name = $interfaceOrCallback->type->name;
-    my $callbackDataType = $interfaceOrCallback->extendedAttributes->{IsStrongCallback} ? "JSCallbackDataStrong" : "JSCallbackDataWeak";
     my $className = GetCallbackClassName($name);
 
     $includesRef->{"IDLTypes.h"} = 1;
@@ -6724,7 +6731,7 @@ sub GenerateCallbackHeaderContent
 
     push(@$contentRef, "    ~$className() final;\n");
 
-    push(@$contentRef, "    ${callbackDataType}* callbackData() { return m_data; }\n");
+    push(@$contentRef, "    JSCallbackData* callbackData() { return m_data; }\n");
 
     push(@$contentRef, "    static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);\n") if @{$constants};
 
@@ -6766,14 +6773,14 @@ sub GenerateCallbackHeaderContent
 
     push(@$contentRef, "    ${className}(JSC::JSObject*, JSDOMGlobalObject*);\n\n");
 
-    if (!$interfaceOrCallback->extendedAttributes->{IsStrongCallback}) {
-        push(@$contentRef, "    bool hasCallback() const final { return m_data && m_data->callback(); }\n\n");
+    push(@$contentRef, "    bool hasCallback() const final { return m_data && m_data->callback(); }\n\n");
+
+    if (!$generateIsReachable) {
+        push(@$contentRef, "    void visitJSFunction(JSC::AbstractSlotVisitor&) override;\n\n");
+        push(@$contentRef, "    void visitJSFunction(JSC::SlotVisitor&) override;\n\n");
     }
 
-    push(@$contentRef, "    void visitJSFunction(JSC::AbstractSlotVisitor&) override;\n\n") if !$interfaceOrCallback->extendedAttributes->{IsStrongCallback};
-    push(@$contentRef, "    void visitJSFunction(JSC::SlotVisitor&) override;\n\n") if !$interfaceOrCallback->extendedAttributes->{IsStrongCallback};
-
-    push(@$contentRef, "    ${callbackDataType}* m_data;\n");
+    push(@$contentRef, "    JSCallbackData* m_data;\n");
     push(@$contentRef, "};\n\n");
 
     # toJS().
@@ -6790,18 +6797,22 @@ sub GenerateCallbackImplementationContent
 {
     my ($object, $interfaceOrCallback, $operations, $constants, $contentRef, $includesRef) = @_;
 
+    my $generateIsReachable = GetGenerateIsReachable($interfaceOrCallback);
+
     my $name = $interfaceOrCallback->type->name;
-    my $callbackDataType = $interfaceOrCallback->extendedAttributes->{IsStrongCallback} ? "JSCallbackDataStrong" : "JSCallbackDataWeak";
     my $visibleName = $codeGenerator->GetVisibleInterfaceName($interfaceOrCallback);
     my $className = "JS${name}";
 
     $includesRef->{"ScriptExecutionContext.h"} = 1;
     $includesRef->{"ContextDestructionObserverInlines.h"} = 1;
 
+    # We already validated GenerateIsReachable when generating the header file.
+    my $ownerObject = $generateIsReachable ? "globalObject->scriptExecutionContext()" : "this";
+
     # Constructor
     push(@$contentRef, "${className}::${className}(JSObject* callback, JSDOMGlobalObject* globalObject)\n");
     push(@$contentRef, "    : ${name}(globalObject->scriptExecutionContext())\n");
-    push(@$contentRef, "    , m_data(new ${callbackDataType}(callback, globalObject, this))\n");
+    push(@$contentRef, "    , m_data(new JSCallbackData(callback, globalObject, ${ownerObject}))\n");
     push(@$contentRef, "{\n");
     push(@$contentRef, "}\n\n");
 
@@ -6983,7 +6994,7 @@ sub GenerateCallbackImplementationContent
         }
     }
 
-    if (!$interfaceOrCallback->extendedAttributes->{IsStrongCallback}) {
+    if (!$generateIsReachable) {
         push(@$contentRef, "void ${className}::visitJSFunction(JSC::AbstractSlotVisitor& visitor)\n");
         push(@$contentRef, "{\n");
         push(@$contentRef, "    m_data->visitJSFunction(visitor);\n");

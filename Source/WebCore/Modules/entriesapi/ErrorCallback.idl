@@ -23,4 +23,4 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[ IsStrongCallback ] callback ErrorCallback = undefined (DOMException error);
+[ GenerateIsReachable=ImplScriptExecutionContext ] callback ErrorCallback = undefined (DOMException error);

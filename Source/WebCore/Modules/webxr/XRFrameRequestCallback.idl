@@ -29,5 +29,5 @@ typedef double DOMHighResTimeStamp;
 [
     Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
-    IsStrongCallback
+    GenerateIsReachable=ImplScriptExecutionContext
 ] callback XRFrameRequestCallback = undefined (DOMHighResTimeStamp time, WebXRFrame frame);

@@ -39,7 +39,7 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
     ~JSTestCallbackFunctionWithVariadic() final;
-    JSCallbackDataWeak* callbackData() { return m_data; }
+    JSCallbackData* callbackData() { return m_data; }
 
     // Functions
     CallbackResult<typename IDLDOMString::ImplementationType> handleEvent(VariadicArguments<IDLAny>&& arguments) override;
@@ -53,7 +53,7 @@ private:
 
     void visitJSFunction(JSC::SlotVisitor&) override;
 
-    JSCallbackDataWeak* m_data;
+    JSCallbackData* m_data;
 };
 
 JSC::JSValue toJS(TestCallbackFunctionWithVariadic&);

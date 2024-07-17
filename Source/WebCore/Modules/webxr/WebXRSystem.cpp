@@ -620,6 +620,9 @@ public:
     {
         return adoptRef(*new InlineRequestAnimationFrameCallback(scriptExecutionContext, WTFMove(callback)));
     }
+
+    bool hasCallback() const final { return true; }
+
 private:
     InlineRequestAnimationFrameCallback(ScriptExecutionContext& scriptExecutionContext, Function<void()>&& callback)
         : RequestAnimationFrameCallback(&scriptExecutionContext), m_callback(WTFMove(callback)) 

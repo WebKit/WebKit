@@ -41,7 +41,7 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
     ~JSTestCallbackInterface() final;
-    JSCallbackDataWeak* callbackData() { return m_data; }
+    JSCallbackData* callbackData() { return m_data; }
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
 
     // Functions
@@ -65,7 +65,7 @@ private:
 
     void visitJSFunction(JSC::SlotVisitor&) override;
 
-    JSCallbackDataWeak* m_data;
+    JSCallbackData* m_data;
 };
 
 JSC::JSValue toJS(TestCallbackInterface&);

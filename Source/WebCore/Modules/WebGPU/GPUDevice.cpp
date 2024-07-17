@@ -321,6 +321,8 @@ public:
         return adoptRef(*new GPUDeviceVideoFrameRequestCallback(externalTexture, videoElement, gpuDevice, scriptExecutionContext));
     }
 
+    bool hasCallback() const final { return true; }
+
     ~GPUDeviceVideoFrameRequestCallback() final { }
 private:
     GPUDeviceVideoFrameRequestCallback(GPUExternalTexture& externalTexture, HTMLVideoElement& videoElement, GPUDevice& gpuDevice, ScriptExecutionContext* scriptExecutionContext)
