@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2002 Lars Knoll (knoll@kde.org)
  *           (C) 2002 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
- * Copyright (C) 2015 Google Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -219,29 +219,24 @@ static bool shouldScaleColumnsForSelf(RenderTable* table)
 
     // A special case.  If this table is not fixed width and contained inside
     // a cell, then don't bloat the maxwidth by examining percentage growth.
-    bool scale = true;
-    while (table) {
-        Length tableWidth = table->style().width();
-        if ((tableWidth.isAuto() || tableWidth.isPercentOrCalculated()) && !table->isOutOfFlowPositioned()) {
-            RenderBlock* containingBlock = table->containingBlock();
-            while (containingBlock && !is<RenderView>(*containingBlock) && !is<RenderTableCell>(*containingBlock)
-                && containingBlock->style().width().isAuto() && !containingBlock->isOutOfFlowPositioned())
-                containingBlock = containingBlock->containingBlock();
+    while (true) {
+        const auto& tableWidth = table->style().width();
+        if ((!tableWidth.isAuto() && !tableWidth.isPercentOrCalculated()) || table->isOutOfFlowPositioned())
+            return true;
+        auto* containingBlock = table->containingBlock();
+        while (!is<RenderView>(*containingBlock) && !is<RenderTableCell>(*containingBlock)
+            && containingBlock->style().width().isAuto() && !containingBlock->isOutOfFlowPositioned())
+            containingBlock = containingBlock->containingBlock();
+        // FIXME: Should below be check for 'isFixed()'?
+        if (!is<RenderTableCell>(*containingBlock) || (!!containingBlock->style().width().isAuto() && !containingBlock->style().width().isPercentOrCalculated()))
+            return true;
 
-            table = nullptr;
-            CheckedPtr cell = dynamicDowncast<RenderTableCell>(containingBlock);
-            if (cell
-                && (containingBlock->style().width().isAuto() || containingBlock->style().width().isPercentOrCalculated())) {
-                if (cell->colSpan() > 1 || cell->table()->style().width().isAuto())
-                    scale = false;
-                else
-                    table = cell->table();
-            }
-        }
-        else
-            table = nullptr;
+        CheckedPtr cell = dynamicDowncast<RenderTableCell>(containingBlock);
+        if (cell->colSpan() > 1 || cell->table()->style().width().isAuto())
+            return false;
     }
-    return scale;
+    ASSERT_NOT_REACHED();
+    return true;
 }
 
 void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth, TableIntrinsics intrinsics)
