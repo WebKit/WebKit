@@ -620,6 +620,9 @@
 (deny file-write-create
       (vnode-type SYMLINK))
 
+(deny file-read* (with no-report)
+    (literal "/private/etc/group"))
+
 ;; FIXME should be removed when <rdar://problem/30498072> is fixed.
 (allow network* 
     (local udp)
