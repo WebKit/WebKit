@@ -270,7 +270,6 @@ bool Quirks::isTouchBarUpdateSuppressedForHiddenContentEditable() const
 }
 
 // icloud.com rdar://26013388
-// twitter.com rdar://28036205
 // trix-editor.org rdar://28242210
 // onedrive.live.com rdar://26013388
 // added in https://bugs.webkit.org/show_bug.cgi?id=161996
@@ -282,9 +281,6 @@ bool Quirks::isNeverRichlyEditableForTouchBar() const
 
     auto& url = m_document->topDocument().url();
     auto host = url.host();
-
-    if (isDomain("twitter.com"_s))
-        return true;
 
     if (host == "onedrive.live.com"_s)
         return true;
