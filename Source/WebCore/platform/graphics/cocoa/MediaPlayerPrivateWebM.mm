@@ -133,7 +133,7 @@ MediaPlayerPrivateWebM::MediaPlayerPrivateWebM(MediaPlayer* player)
     ALWAYS_LOG(LOGIDENTIFIER, "synchronizer initial rate:", [m_synchronizer rate]);
     [m_synchronizer setRate:0];
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    m_videoTarget = player->videoTarget();
+    setVideoTarget(player->videoTarget());
 #endif
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
