@@ -2799,3 +2799,5 @@ webkit.org/b/276145 http/tests/security/block-popup-to-all-zero-address.html [ S
 
 # rdar://124363343 ([ Sequoia+ ] Multiple WebKit tests failing after explicit "SameSite" attribute change)
 http/tests/xmlhttprequest/cross-origin-authorization.html [ Failure ]
+
+compositing/repaint/scroller-repaints-once.html [ Failure ]

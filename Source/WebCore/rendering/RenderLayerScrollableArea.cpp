@@ -1167,6 +1167,8 @@ void RenderLayerScrollableArea::computeHasCompositedScrollableOverflow(LayoutUpT
         paintParent->setDescendantsNeedUpdateBackingAndHierarchyTraversal();
 
     m_hasCompositedScrollableOverflow = hasCompositedScrollableOverflow;
+    if (m_hasCompositedScrollableOverflow)
+        m_layer.compositor().layerGainedCompositedScrollableOverflow(m_layer);
 }
 
 bool RenderLayerScrollableArea::hasScrollableHorizontalOverflow() const
@@ -1846,7 +1848,7 @@ void RenderLayerScrollableArea::updateAllScrollbarRelatedStyle()
 // FIXME: this is only valid after we've made layers.
 bool RenderLayerScrollableArea::usesCompositedScrolling() const
 {
-    return m_layer.isComposited() && m_layer.backing()->hasScrollingLayer();
+    return hasCompositedScrollableOverflow() && m_layer.isComposited();
 }
 
 static inline int adjustedScrollDelta(int beginningDelta)

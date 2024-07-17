@@ -245,6 +245,7 @@ public:
     void layerWillBeRemoved(RenderLayer& parent, RenderLayer& child);
 
     void layerStyleChanged(StyleDifference, RenderLayer&, const RenderStyle* oldStyle);
+    void layerGainedCompositedScrollableOverflow(RenderLayer&);
 
     void establishesTopLayerWillChangeForLayer(RenderLayer&);
 

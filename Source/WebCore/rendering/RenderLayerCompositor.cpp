@@ -1972,6 +1972,28 @@ static bool recompositeChangeRequiresChildrenGeometryUpdate(const RenderStyle& o
         || oldStyle.usedTransformStyle3D() != newStyle.usedTransformStyle3D();
 }
 
+void RenderLayerCompositor::layerGainedCompositedScrollableOverflow(RenderLayer& layer)
+{
+    RequiresCompositingData queryData;
+    queryData.layoutUpToDate = LayoutUpToDate::No;
+
+    bool layerChanged = updateBacking(layer, queryData, nullptr, BackingRequired::Yes);
+    if (layerChanged) {
+        layer.setChildrenNeedCompositingGeometryUpdate();
+        layer.setNeedsCompositingLayerConnection();
+        layer.setSubsequentLayersNeedCompositingRequirementsTraversal();
+        // Ancestor layers that composited for indirect reasons (things listed in styleChangeMayAffectIndirectCompositingReasons()) need to get updated.
+        // This could be optimized by only setting this flag on layers with the relevant styles.
+        layer.setNeedsPostLayoutCompositingUpdateOnAncestors();
+    }
+
+    auto* backing = layer.backing();
+    if (!backing)
+        return;
+
+    backing->updateConfigurationAfterStyleChange();
+}
+
 void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer& layer, const RenderStyle* oldStyle)
 {
     if (diff == StyleDifference::Equal)
