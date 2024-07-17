@@ -61,7 +61,6 @@ public:
     LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
     std::optional<LayoutUnit> firstLineBaseline() const override;
     std::optional<LayoutUnit> lastLineBaseline() const override;
-    RenderBox* baselineFlexItem(ItemPosition alignment) const;
     std::optional<LayoutUnit> inlineBlockBaseline(LineDirectionMode) const override;
 
     void styleDidChange(StyleDifference, const RenderStyle*) override;
@@ -261,6 +260,10 @@ private:
     bool flexItemHasPercentHeightDescendants(const RenderBox&) const;
 
     void resetHasDefiniteHeight() { m_hasDefiniteHeight = SizeDefiniteness::Unknown; }
+    const RenderBox* flexItemForFirstBaseline() const;
+    const RenderBox* flexItemForLastBaseline() const;
+    const RenderBox* firstLogicalBaselineCandidateOnLine(OrderIterator, ItemPosition baselinePosition, size_t numberOfItemsOnLine) const;
+    const RenderBox* lastLogicalBaselineCandidateOnLine(OrderIterator, ItemPosition baselinePosition, size_t numberOfItemsOnLine) const;
 
     void layoutUsingFlexFormattingContext();
 

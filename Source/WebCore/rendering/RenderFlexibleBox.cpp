@@ -275,8 +275,8 @@ std::optional<LayoutUnit> RenderFlexibleBox::firstLineBaseline() const
 {
     if ((isWritingModeRoot() && !isFlexItem()) || !m_numberOfFlexItemsOnFirstLine || shouldApplyLayoutContainment())
         return { };
-    auto* baselineFlexItem = this->baselineFlexItem(ItemPosition::Baseline);
-    
+
+    auto* baselineFlexItem = flexItemForFirstBaseline();
     if (!baselineFlexItem)
         return { };
 
@@ -300,8 +300,8 @@ std::optional <LayoutUnit> RenderFlexibleBox::lastLineBaseline() const
 {
     if (isWritingModeRoot() || !m_numberOfFlexItemsOnLastLine || shouldApplyLayoutContainment())
         return { };
-    auto* baselineFlexItem = this->baselineFlexItem(ItemPosition::LastBaseline);
-    
+
+    auto* baselineFlexItem = flexItemForLastBaseline();
     if (!baselineFlexItem)
         return { };
 
@@ -319,32 +319,6 @@ std::optional <LayoutUnit> RenderFlexibleBox::lastLineBaseline() const
     }
 
     return LayoutUnit { (baseline.value() + baselineFlexItem->logicalTop()).toInt() };
-}
-
-RenderBox* RenderFlexibleBox::baselineFlexItem(ItemPosition alignment) const
-{
-    ASSERT(alignment == ItemPosition::Baseline || alignment == ItemPosition::LastBaseline);
-
-    RenderBox* baselineFlexItem = nullptr;
-    auto childIterator = (alignment == ItemPosition::Baseline) ? m_orderIterator : m_orderIterator.reverse();
-
-    size_t index = 0;
-    for (auto* flexItem = childIterator.first(); flexItem; flexItem = childIterator.next()) {
-        if (m_orderIterator.shouldSkipChild(*flexItem))
-            continue;
-        if (alignmentForFlexItem(*flexItem) == alignment && !hasAutoMarginsInCrossAxis(*flexItem)) {
-            baselineFlexItem = flexItem;
-            break;
-        }
-        if (!baselineFlexItem)
-            baselineFlexItem = flexItem;
-
-        ++index;
-        auto numberOfFlexItemsOnLine = alignment == ItemPosition::Baseline ? m_numberOfFlexItemsOnFirstLine : m_numberOfFlexItemsOnLastLine;
-        if (index == numberOfFlexItemsOnLine)
-            break;
-    }
-    return baselineFlexItem;
 }
 
 std::optional<LayoutUnit> RenderFlexibleBox::inlineBlockBaseline(LineDirectionMode) const
@@ -1373,8 +1347,12 @@ void RenderFlexibleBox::performFlexLayout(bool relayoutChildren)
     }
 
     if (!lineStates.isEmpty()) {
-        m_numberOfFlexItemsOnFirstLine = lineStates.first().flexLayoutItems.size();
-        m_numberOfFlexItemsOnLastLine = lineStates.last().flexLayoutItems.size();
+        auto isWrapReverse = style().flexWrap() == FlexWrap::Reverse;
+        auto firstLineItemsCountInOriginalOrder = lineStates.first().flexLayoutItems.size();
+        auto lastLineItemsCountInOriginalOrder = lineStates.first().flexLayoutItems.size();
+
+        m_numberOfFlexItemsOnFirstLine = !isWrapReverse ? firstLineItemsCountInOriginalOrder : lastLineItemsCountInOriginalOrder;
+        m_numberOfFlexItemsOnLastLine = !isWrapReverse ? lastLineItemsCountInOriginalOrder : firstLineItemsCountInOriginalOrder;
     }
 
     if (hasLineIfEmpty()) {
@@ -2691,6 +2669,66 @@ void RenderFlexibleBox::layoutUsingFlexFormattingContext()
     m_modernFlexLayout->layout();
     setLogicalHeight(std::max(logicalHeight(), borderBefore() + paddingBefore() + m_modernFlexLayout->contentLogicalHeight() + borderAfter() + paddingAfter()));
     updateLogicalHeight();
+}
+
+const RenderBox* RenderFlexibleBox::firstLogicalBaselineCandidateOnLine(OrderIterator flexItemIterator, ItemPosition baselinePosition, size_t numberOfItemsOnLine) const
+{
+    ASSERT(baselinePosition == ItemPosition::Baseline || baselinePosition == ItemPosition::LastBaseline);
+
+    size_t index = 0;
+    const RenderBox* baselineFlexItem = nullptr;
+    for (auto* flexItem = flexItemIterator.first(); flexItem; flexItem = flexItemIterator.next()) {
+        if (flexItemIterator.shouldSkipChild(*flexItem))
+            continue;
+        if (alignmentForFlexItem(*flexItem) == baselinePosition && !hasAutoMarginsInCrossAxis(*flexItem))
+            return flexItem;
+        if (!baselineFlexItem)
+            baselineFlexItem = flexItem;
+        if (++index == numberOfItemsOnLine)
+            return baselineFlexItem;
+    }
+    return nullptr;
+}
+
+const RenderBox* RenderFlexibleBox::lastLogicalBaselineCandidateOnLine(OrderIterator flexItemIterator, ItemPosition baselinePosition, size_t numberOfItemsOnLine) const
+{
+    ASSERT(baselinePosition == ItemPosition::Baseline || baselinePosition == ItemPosition::LastBaseline);
+
+    size_t index = 0;
+    RenderBox* baselineFlexItem = nullptr;
+    for (auto* flexItem = flexItemIterator.first(); flexItem; flexItem = flexItemIterator.next()) {
+        if (flexItemIterator.shouldSkipChild(*flexItem))
+            continue;
+        if (alignmentForFlexItem(*flexItem) == baselinePosition && !hasAutoMarginsInCrossAxis(*flexItem))
+            baselineFlexItem = flexItem;
+        if (++index == numberOfItemsOnLine)
+            return baselineFlexItem ? baselineFlexItem : flexItem;
+    }
+    return nullptr;
+}
+
+const RenderBox* RenderFlexibleBox::flexItemForFirstBaseline() const
+{
+    auto useLastLine = style().flexWrap() == FlexWrap::Reverse;
+
+    if (!useLastLine) {
+        // Pick the first candidate on the first line.
+        return firstLogicalBaselineCandidateOnLine(m_orderIterator, ItemPosition::Baseline, m_numberOfFlexItemsOnFirstLine);
+    }
+    // Pick the first candidate on the last line.
+    return lastLogicalBaselineCandidateOnLine(m_orderIterator.reverse(), ItemPosition::Baseline, m_numberOfFlexItemsOnLastLine);
+}
+
+const RenderBox* RenderFlexibleBox::flexItemForLastBaseline() const
+{
+    auto useLastLine = style().flexWrap() == FlexWrap::Reverse;
+
+    if (!useLastLine) {
+        // Pick the last candidate on the last line.
+        return firstLogicalBaselineCandidateOnLine(m_orderIterator.reverse(), ItemPosition::LastBaseline, m_numberOfFlexItemsOnLastLine);
+    }
+    // Pick the last candidate on the first line.
+    return lastLogicalBaselineCandidateOnLine(m_orderIterator.reverse(), ItemPosition::LastBaseline, m_numberOfFlexItemsOnFirstLine);
 }
 
 }
