@@ -35,6 +35,7 @@
 #import "AXLogger.h"
 #import "AXObjectCache.h"
 #import "AXRemoteFrame.h"
+#import "AXSearchManager.h"
 #import "AXTextMarker.h"
 #import "AccessibilityARIAGridRow.h"
 #import "AccessibilityLabel.h"
@@ -3274,8 +3275,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             }
         }
 
-        AccessibilityObject::AccessibilityChildrenVector results;
-        backingObject->findMatchingObjects(&criteria, results);
+        auto results = backingObject->findMatchingObjects(WTFMove(criteria));
         if (widgetChildren)
             return [widgetChildren arrayByAddingObjectsFromArray:makeNSArray(results)];
         return makeNSArray(results);
