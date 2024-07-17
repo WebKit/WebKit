@@ -280,8 +280,8 @@ private:
     SingleThreadWeakHashSet<const RenderBox> m_relaidOutFlexItems;
 
     mutable OrderIterator m_orderIterator { *this };
-    std::optional<size_t> m_numberOfFlexItemsOnFirstLine { };
-    std::optional<size_t> m_numberOfFlexItemsOnLastLine { };
+    size_t m_numberOfFlexItemsOnFirstLine { 0 };
+    size_t m_numberOfFlexItemsOnLastLine { 0 };
 
     struct MarginTrimItems {
         SingleThreadWeakHashSet<const RenderBox> m_itemsAtFlexLineStart;

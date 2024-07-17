@@ -274,11 +274,11 @@ LayoutUnit RenderFlexibleBox::baselinePosition(FontBaseline, bool, LineDirection
 std::optional<LayoutUnit> RenderFlexibleBox::firstLineBaseline() const
 {
     if ((isWritingModeRoot() && !isFlexItem()) || !m_numberOfFlexItemsOnFirstLine || shouldApplyLayoutContainment())
-        return std::optional<LayoutUnit>();
+        return { };
     auto* baselineFlexItem = this->baselineFlexItem(ItemPosition::Baseline);
     
     if (!baselineFlexItem)
-        return std::optional<LayoutUnit>();
+        return { };
 
     if (!isColumnFlow() && !mainAxisIsFlexItemInlineAxis(*baselineFlexItem))
         return LayoutUnit { (crossAxisExtentForFlexItem(*baselineFlexItem) + baselineFlexItem->logicalTop()).toInt() };
@@ -299,11 +299,11 @@ std::optional<LayoutUnit> RenderFlexibleBox::firstLineBaseline() const
 std::optional <LayoutUnit> RenderFlexibleBox::lastLineBaseline() const
 {
     if (isWritingModeRoot() || !m_numberOfFlexItemsOnLastLine || shouldApplyLayoutContainment())
-        return std::optional<LayoutUnit>();
+        return { };
     auto* baselineFlexItem = this->baselineFlexItem(ItemPosition::LastBaseline);
     
     if (!baselineFlexItem)
-        return std::optional<LayoutUnit>();
+        return { };
 
     if (!isColumnFlow() && !mainAxisIsFlexItemInlineAxis(*baselineFlexItem))
         return LayoutUnit { (crossAxisExtentForFlexItem(*baselineFlexItem) + baselineFlexItem->logicalTop()).toInt() };
@@ -341,7 +341,7 @@ RenderBox* RenderFlexibleBox::baselineFlexItem(ItemPosition alignment) const
 
         ++index;
         auto numberOfFlexItemsOnLine = alignment == ItemPosition::Baseline ? m_numberOfFlexItemsOnFirstLine : m_numberOfFlexItemsOnLastLine;
-        if (numberOfFlexItemsOnLine && index == numberOfFlexItemsOnLine.value())
+        if (index == numberOfFlexItemsOnLine)
             break;
     }
     return baselineFlexItem;
@@ -1372,6 +1372,11 @@ void RenderFlexibleBox::performFlexLayout(bool relayoutChildren)
         layoutAndPlaceFlexItems(crossAxisOffset, lineItems, remainingFreeSpace, relayoutChildren, lineStates, gapBetweenItems);
     }
 
+    if (!lineStates.isEmpty()) {
+        m_numberOfFlexItemsOnFirstLine = lineStates.first().flexLayoutItems.size();
+        m_numberOfFlexItemsOnLastLine = lineStates.last().flexLayoutItems.size();
+    }
+
     if (hasLineIfEmpty()) {
         // Even if computeNextFlexLine returns true, the flexbox might not have
         // a line because all our children might be out of flow positioned.
@@ -2331,10 +2336,6 @@ void RenderFlexibleBox::layoutAndPlaceFlexItems(LayoutUnit& crossAxisOffset, Fle
         layoutColumnReverse(flexLayoutItems, crossAxisOffset, availableFreeSpace, gapBetweenItems);
     }
 
-    auto numberOfItemsOnLine = flexLayoutItems.size();
-    if (!m_numberOfFlexItemsOnFirstLine)
-        m_numberOfFlexItemsOnFirstLine = numberOfItemsOnLine;
-    m_numberOfFlexItemsOnLastLine = numberOfItemsOnLine;
     lineStates.append(LineState(crossAxisOffset, maxFlexItemCrossAxisExtent, baselineAlignmentState, WTFMove(flexLayoutItems)));
     crossAxisOffset += maxFlexItemCrossAxisExtent;
 }
