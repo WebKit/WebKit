@@ -394,6 +394,8 @@ static void browserWindowTryClose(GSimpleAction *action, GVariant *parameter, gp
     GSList *link;
     for (link = webViews; link; link = link->next)
         webkit_web_view_try_close(link->data);
+    if (webViews)
+        g_slist_free(webViews);
 }
 
 static void backForwardlistChanged(WebKitBackForwardList *backForwardlist, WebKitBackForwardListItem *itemAdded, GList *itemsRemoved, BrowserWindow *window)

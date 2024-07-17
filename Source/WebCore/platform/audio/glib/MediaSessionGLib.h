@@ -60,7 +60,7 @@ public:
     void setMprisRegistrationEligibility(MprisRegistrationEligiblilty eligibility) { m_registrationEligibility = eligibility; }
     MprisRegistrationEligiblilty mprisRegistrationEligibility() const { return m_registrationEligibility; }
 private:
-    void emitPropertiesChanged(GVariant*);
+    void emitPropertiesChanged(GRefPtr<GVariant>&&);
     std::optional<NowPlayingInfo> nowPlayingInfo();
     bool ensureMprisSessionRegistered();
 
