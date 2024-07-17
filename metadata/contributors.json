@@ -988,6 +988,14 @@
    },
    {
       "emails" : [
+         "ari_young@apple.com",
+         "ariyoung@pm.me"
+      ],
+      "github" : "AriYoung00",
+      "name" : "Ari Young"
+   },
+   {
+      "emails" : [
          "ariya.hidayat@gmail.com",
          "ariya@sencha.com",
          "ariya@webkit.org"
