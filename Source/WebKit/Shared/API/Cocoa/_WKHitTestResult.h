@@ -45,14 +45,14 @@ WK_CLASS_AVAILABLE(macos(10.12), ios(16.0))
 
 @property (nonatomic, readonly, copy) NSURL *absolutePDFURL;
 @property (nonatomic, readonly, copy) NSURL *absoluteLinkURL;
-@property (nonatomic, readonly) BOOL hasLocalDataForLinkURL WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
-@property (nonatomic, readonly, copy) NSString *linkLocalDataMIMEType WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, readonly) BOOL hasLocalDataForLinkURL WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
+@property (nonatomic, readonly, copy) NSString *linkLocalDataMIMEType WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 @property (nonatomic, readonly, copy) NSURL *absoluteMediaURL;
 
 @property (nonatomic, readonly, copy) NSString *linkLabel;
 @property (nonatomic, readonly, copy) NSString *linkTitle;
-@property (nonatomic, readonly, copy) NSString *linkSuggestedFilename WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
-@property (nonatomic, readonly, copy) NSString *imageSuggestedFilename WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, readonly, copy) NSString *linkSuggestedFilename WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
+@property (nonatomic, readonly, copy) NSString *imageSuggestedFilename WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 @property (nonatomic, readonly, copy) NSString *lookupText;
 
 @property (nonatomic, readonly, getter=isContentEditable) BOOL contentEditable;

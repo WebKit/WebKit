@@ -664,7 +664,7 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
 /*! @abstract A Boolean value indicating whether Writing Tools is active for the view.
  @discussion @link WKWebView @/link is key-value observing (KVO) compliant for this property.
  */
-@property (nonatomic, readonly, getter=isWritingToolsActive) BOOL writingToolsActive WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)) WK_API_UNAVAILABLE(visionos);
+@property (nonatomic, readonly, getter=isWritingToolsActive) BOOL writingToolsActive WK_API_AVAILABLE(macos(15.0), ios(18.0)) WK_API_UNAVAILABLE(visionos);
 
 @end
 
