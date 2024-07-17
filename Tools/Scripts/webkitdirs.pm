@@ -1189,18 +1189,8 @@ sub productDir
 
 sub executableProductDir
 {
-    my $productDirectory = productDir();
-
-    my $binaryDirectory;
-    if (isAnyWindows() && !isPlayStation()) {
-        $binaryDirectory = "bin64";
-    } elsif (isGtk() || isJSCOnly() || isWPE() || isPlayStation()) {
-        $binaryDirectory = "bin";
-    } else {
-        return $productDirectory;
-    }
-
-    return File::Spec->catdir($productDirectory, $binaryDirectory);
+    return productDir() if isAppleCocoaWebKit();
+    return File::Spec->catdir(productDir(), "bin");
 }
 
 sub jscProductDir

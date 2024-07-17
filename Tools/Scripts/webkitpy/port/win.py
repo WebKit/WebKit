@@ -154,8 +154,7 @@ class WinPort(ApplePort):
         root_directory = self.get_option('_cached_root') or self.get_option('root')
         if not root_directory:
             ApplePort._build_path(self, *comps)  # Sets option _cached_root
-            binary_directory = 'bin64'
-            root_directory = self._filesystem.join(self.get_option('_cached_root'), binary_directory)
+            root_directory = self._filesystem.join(self.get_option('_cached_root'), 'bin')
             self.set_option('_cached_root', root_directory)
 
         return self._filesystem.join(root_directory, *comps)

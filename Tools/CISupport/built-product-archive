@@ -203,7 +203,7 @@ def createZip(directoryToZip, configuration, excludePatterns=None, embedParentDi
         command += [directoryToZip, archiveFile]
         return subprocess.call(command) or addFilesToArchive(archiveFile, PATH_TO_LAUNCHER, PATH_TO_README)
     elif sys.platform == 'cygwin':
-        zipCommand = ["zip", "-r", archiveFile, "bin64"]
+        zipCommand = ["zip", "-r", archiveFile, "bin"]
         if excludePatterns:
             for excludePattern in excludePatterns:
                 zipCommand += ['-x', excludePattern]
@@ -257,9 +257,9 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
         else:
             return createZip(_configurationBuildDirectory, configuration, excludePatterns=ALWAYS_EXCLUDED_PATTERNS, embedParentDirectoryNameOnDarwin=True)
     elif platform in ('win', 'wincairo'):
-        binDirectory = os.path.join(_configurationBuildDirectory, 'bin64')
+        binDirectory = os.path.join(_configurationBuildDirectory, 'bin')
         thinDirectory = os.path.join(_configurationBuildDirectory, 'thin')
-        thinBinDirectory = os.path.join(thinDirectory, 'bin64')
+        thinBinDirectory = os.path.join(thinDirectory, 'bin')
 
         removeDirectoryIfExists(thinDirectory)
         copyBuildFiles(binDirectory, thinBinDirectory, ['*.ilk'])
