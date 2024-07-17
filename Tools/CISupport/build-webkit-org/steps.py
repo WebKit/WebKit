@@ -763,7 +763,7 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
         # high enough.
         self.command += self.commandExtra
         # Currently run-javascriptcore-test doesn't support run javascript core test binaries list below remotely
-        if architecture in ['aarch64'] or platform in ['win']:
+        if architecture in ['aarch64']:
             self.command += ['--no-testmasm', '--no-testair', '--no-testb3', '--no-testdfg', '--no-testapi']
         # Linux bots have currently problems with JSC tests that try to use large amounts of memory.
         # Check: https://bugs.webkit.org/show_bug.cgi?id=175140
@@ -1053,10 +1053,6 @@ class RunPythonTests(TestWithFailureCount):
         # Python tests are flaky on the GTK builders, running them serially
         # helps and does not significantly prolong the cycle time.
         if platform == 'gtk':
-            self.command += ['--child-processes', '1']
-        # Python tests fail on windows bots when running more than one child process
-        # https://bugs.webkit.org/show_bug.cgi?id=97465
-        if platform == 'win':
             self.command += ['--child-processes', '1']
         return super().run()
 
@@ -1932,7 +1928,6 @@ class PrintConfiguration(steps.ShellSequence):
     command_list_generic = [['hostname']]
     command_list_apple = [['df', '-hl'], ['date'], ['sw_vers'], ['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], ['/bin/sh', '-c', 'echo TimezoneVers: $(cat /usr/share/zoneinfo/+VERSION)'], ['xcodebuild', '-sdk', '-version']]
     command_list_linux = [['df', '-hl', '--exclude-type=fuse.portal'], ['date'], ['uname', '-a'], ['uptime']]
-    command_list_win = [['df', '-hl']]
 
     def __init__(self, **kwargs):
         super(PrintConfiguration, self).__init__(timeout=60, **kwargs)
@@ -1949,8 +1944,6 @@ class PrintConfiguration(steps.ShellSequence):
             command_list.extend(self.command_list_apple)
         elif platform in ('gtk', 'wpe', 'jsc-only'):
             command_list.extend(self.command_list_linux)
-        elif platform in ('win'):
-            command_list.extend(self.command_list_win)
 
         for command in command_list:
             self.commands.append(util.ShellArg(command=command, logname='stdio'))
