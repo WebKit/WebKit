@@ -39,6 +39,9 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
+namespace WTF {
+class WorkQueue;
+}
 namespace WebCore {
 
 class DestinatationColorSpace;
@@ -123,6 +126,8 @@ private:
     size_t m_inUseBytesCached WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     size_t m_maximumBytesCached WTF_GUARDED_BY_LOCK(m_lock) { defaultMaximumBytesCached };
 };
+
+WEBCORE_EXPORT WTF::WorkQueue& ioSurfaceCleanupQueue();
 
 }
 #endif // HAVE(IOSURFACE)

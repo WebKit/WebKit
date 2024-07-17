@@ -32,6 +32,7 @@
 #include "GraphicsContextCG.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/WorkQueue.h>
 #include <wtf/text/TextStream.h>
 
 static const Seconds collectionInterval { 500_ms };
@@ -401,6 +402,12 @@ String IOSurfacePool::poolStatistics() const
 #else
     return emptyString();
 #endif
+}
+
+WorkQueue& ioSurfaceCleanupQueue()
+{
+    static auto& queue = WorkQueue::create("org.webkit.IOSurfaceCleanupQueue", WorkQueue::QOS::Utility).leakRef();
+    return queue;
 }
 
 }

@@ -33,6 +33,7 @@
 #include <WebCore/IOSurfacePool.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/WorkQueue.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 
 namespace WebKit {
@@ -71,7 +72,9 @@ ImageBufferShareableMappedIOSurfaceBitmapBackend::ImageBufferShareableMappedIOSu
 ImageBufferShareableMappedIOSurfaceBitmapBackend::~ImageBufferShareableMappedIOSurfaceBitmapBackend()
 {
     releaseGraphicsContext();
-    IOSurface::moveToPool(WTFMove(m_surface), m_ioSurfacePool.get());
+    ioSurfaceCleanupQueue().dispatch([surface = WTFMove(m_surface), pool = WTFMove(m_ioSurfacePool)] () mutable {
+        IOSurface::moveToPool(WTFMove(surface), pool.get());
+    });
 }
 
 bool ImageBufferShareableMappedIOSurfaceBitmapBackend::canMapBackingStore() const

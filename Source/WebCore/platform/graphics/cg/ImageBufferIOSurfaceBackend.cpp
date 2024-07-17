@@ -38,6 +38,7 @@
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 
@@ -101,8 +102,11 @@ ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& param
 ImageBufferIOSurfaceBackend::~ImageBufferIOSurfaceBackend()
 {
     ensureNativeImagesHaveCopiedBackingStore();
-    releaseGraphicsContext();
-    IOSurface::moveToPool(WTFMove(m_surface), m_ioSurfacePool.get());
+    m_context = nullptr;
+    ioSurfaceCleanupQueue().dispatch([context = WTFMove(m_platformContext), surface = WTFMove(m_surface), pool = WTFMove(m_ioSurfacePool)] () mutable {
+        context = nullptr;
+        IOSurface::moveToPool(WTFMove(surface), pool.get());
+    });
 }
 
 
