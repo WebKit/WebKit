@@ -31,14 +31,18 @@
 #include "MessageSenderInlines.h"
 #include "NetworkLoad.h"
 #include "NetworkProcess.h"
+#include "NetworkSession.h"
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/LocalFrameLoaderClient.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, NetworkLoadParameters&& parameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName)
+PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, NetworkLoadParameters&& parameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute)
     : m_networkLoad(makeUnique<NetworkLoad>(*this, WTFMove(parameters), networkSession))
     , m_parentProcessConnection(parentProcessConnection)
+    , m_fromDownloadAttribute(fromDownloadAttribute)
+    , m_isFullWebBrowser(networkSession.networkProcess().isParentProcessFullWebBrowserOrRunningTest())
 {
     m_networkLoad->start();
     m_isAllowedToAskUserForCredentials = parameters.clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials;
@@ -62,8 +66,23 @@ PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, std::
     m_networkLoad->convertTaskToDownload(*this, request, response, WTFMove(completionHandler));
 }
 
+bool PendingDownload::isDownloadTriggeredWithDownloadAttribute() const
+{
+    return m_fromDownloadAttribute == FromDownloadAttribute::Yes;
+}
+
+inline static bool isRedirectCrossOrigin(const WebCore::ResourceRequest& redirectRequest, const WebCore::ResourceResponse& redirectResponse)
+{
+    return !SecurityOrigin::create(redirectResponse.url())->isSameOriginAs(SecurityOrigin::create(redirectRequest.url()));
+}
+
 void PendingDownload::willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
+    if (m_isFullWebBrowser && isDownloadTriggeredWithDownloadAttribute() && isRedirectCrossOrigin(redirectRequest, redirectResponse)) {
+        completionHandler(WebCore::ResourceRequest());
+        m_networkLoad->cancel();
+        return;
+    }
     sendWithAsyncReply(Messages::DownloadProxy::WillSendRequest(WTFMove(redirectRequest), WTFMove(redirectResponse)), WTFMove(completionHandler));
 };
 
@@ -91,7 +110,11 @@ void PendingDownload::didBecomeDownload(const std::unique_ptr<Download>& downloa
 
 void PendingDownload::didFailLoading(const WebCore::ResourceError& error)
 {
-    send(Messages::DownloadProxy::DidFail(error, { }));
+    // FIXME: For Cross Origin redirects Cancellation happens early. So avoid repeating. Maybe there is a better way ?
+    if (!m_isDownloadCancelled) {
+        m_isDownloadCancelled = true;
+        send(Messages::DownloadProxy::DidFail(error, { }));
+    }
 }
     
 IPC::Connection* PendingDownload::messageSenderConnection() const

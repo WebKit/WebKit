@@ -109,7 +109,7 @@ private:
 
     void setMainFrameDocumentReady(bool) final;
 
-    void startDownload(const ResourceRequest&, const String&) final;
+    void startDownload(const ResourceRequest&, const String&, FromDownloadAttribute = FromDownloadAttribute::No) final;
 
     void willChangeTitle(DocumentLoader*) final;
     void didChangeTitle(DocumentLoader*) final;

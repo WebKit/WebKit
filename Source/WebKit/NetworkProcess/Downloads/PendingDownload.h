@@ -45,6 +45,8 @@ class Connection;
 
 namespace WebCore {
 class ResourceResponse;
+
+enum class FromDownloadAttribute : bool;
 }
 
 namespace WebKit {
@@ -57,7 +59,7 @@ class NetworkSession;
 class PendingDownload : public NetworkLoadClient, public IPC::MessageSender, public CanMakeWeakPtr<PendingDownload> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PendingDownload(IPC::Connection*, NetworkLoadParameters&&, DownloadID, NetworkSession&, const String& suggestedName);
+    PendingDownload(IPC::Connection*, NetworkLoadParameters&&, DownloadID, NetworkSession&, const String& suggestedName, WebCore::FromDownloadAttribute);
     PendingDownload(IPC::Connection*, std::unique_ptr<NetworkLoad>&&, ResponseCompletionHandler&&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     void cancel(CompletionHandler<void(std::span<const uint8_t>)>&&);
@@ -77,6 +79,7 @@ private:
     void didReceiveBuffer(const WebCore::FragmentedSharedBuffer&, uint64_t reportedEncodedDataLength) override { };
     void didFinishLoading(const WebCore::NetworkLoadMetrics&) override { };
     void didFailLoading(const WebCore::ResourceError&) override;
+    bool isDownloadTriggeredWithDownloadAttribute() const;
 
     // MessageSender.
     IPC::Connection* messageSenderConnection() const override;
@@ -86,6 +89,10 @@ private:
     std::unique_ptr<NetworkLoad> m_networkLoad;
     RefPtr<IPC::Connection> m_parentProcessConnection;
     bool m_isAllowedToAskUserForCredentials;
+    bool m_isDownloadCancelled = false;
+    WebCore::FromDownloadAttribute m_fromDownloadAttribute;
+    bool m_isFullWebBrowser = false;
+
 
 #if PLATFORM(COCOA)
     URL m_progressURL;
