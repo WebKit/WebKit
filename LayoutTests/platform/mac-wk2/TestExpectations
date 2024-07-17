@@ -7,6 +7,7 @@ compositing/shared-backing/overflow-scroll [ Pass ]
 compositing/scrolling/async-overflow-scrolling [ Pass ]
 compositing/layer-creation/clipping-scope [ Pass ]
 editing/find/cocoa [ Pass ]
+editing/input/cocoa [ Pass ]
 editing/input/mac [ Pass ]
 editing/undo-manager [ Pass ]
 editing/pasteboard/dom-paste [ Pass ]
@@ -1735,8 +1736,8 @@ webkit.org/b/272685 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/svg/pain
 
 # Inline predictions are only supported on Sonoma and later.
 [ Ventura ] editing/input/mac/show-inline-prediction-with-adjacent-text.html [ Skip ]
-[ Ventura ] editing/input/mac/writing-suggestions-textarea-multiple-lines.html [ Skip ]
-[ Ventura ] editing/input/mac/do-not-allow-inline-predictions-if-text-changes.html [ Skip ]
+[ Ventura ] editing/input/cocoa/writing-suggestions-textarea-multiple-lines.html [ Skip ]
+[ Ventura ] editing/input/cocoa/do-not-allow-inline-predictions-if-text-changes.html [ Skip ]
 
 webkit.org/b/273012 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/svg/painting/reftests/percentage.svg [ ImageOnlyFailure ]
 

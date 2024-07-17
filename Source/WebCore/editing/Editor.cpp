@@ -2290,6 +2290,7 @@ void Editor::setWritingSuggestionRenderer(RenderInline& renderer)
     m_writingSuggestionRenderer = renderer;
 }
 
+#if PLATFORM(COCOA)
 void Editor::setWritingSuggestion(const String& fullTextWithPrediction, const CharacterRange& selection)
 {
     Ref document = protectedDocument();
@@ -2302,6 +2303,11 @@ void Editor::setWritingSuggestion(const String& fullTextWithPrediction, const Ch
     if (!selectedElement->hasEditableStyle())
         return;
 
+    auto range = document->selection().selection().firstRange();
+    if (!range)
+        return;
+    range->start.offset = 0;
+
     m_isHandlingAcceptedCandidate = true;
 
     auto newText = fullTextWithPrediction.substring(0, selection.location);
@@ -2309,20 +2315,25 @@ void Editor::setWritingSuggestion(const String& fullTextWithPrediction, const Ch
 
     auto currentText = m_writingSuggestionData ? m_writingSuggestionData->currentText() : emptyString();
 
-    ASSERT(newText.startsWith(currentText));
-    auto textDelta = newText.substring(currentText.length());
+    ASSERT(newText.isEmpty() || newText.startsWith(currentText));
+    auto textDelta = newText.isEmpty() ? emptyString() : newText.substring(currentText.length());
 
-    auto range = document->selection().selection().firstRange();
-    if (!range)
-        return;
-
-    range->start.offset = 0;
     auto offset = WebCore::characterCount(*range);
     auto offsetWithDelta = currentText.isEmpty() ? offset : offset + textDelta.length();
 
-    if (!suggestionText.isEmpty())
-        m_writingSuggestionData = makeUnique<WritingSuggestionData>(WTFMove(suggestionText), WTFMove(newText), WTFMove(offsetWithDelta));
-    else
+    if (!suggestionText.isEmpty()) {
+        String originalPrefix;
+        String originalSuffix;
+        if (m_writingSuggestionData) {
+            originalPrefix = m_writingSuggestionData->originalPrefix();
+            originalSuffix = m_writingSuggestionData->originalSuffix();
+        } else {
+            originalPrefix = WebCore::plainTextReplacingNoBreakSpace(*range);
+            originalSuffix = suggestionText;
+        }
+
+        m_writingSuggestionData = makeUnique<WritingSuggestionData>(WTFMove(suggestionText), WTFMove(newText), WTFMove(offsetWithDelta), WTFMove(originalPrefix), WTFMove(originalSuffix), Editor::writingSuggestionsSupportsSuffix());
+    } else
         m_writingSuggestionData = nullptr;
 
     if (!currentText.isEmpty()) {
@@ -2331,6 +2342,7 @@ void Editor::setWritingSuggestion(const String& fullTextWithPrediction, const Ch
     } else
         selectedElement->invalidateStyleAndRenderersForSubtree();
 }
+#endif
 
 void Editor::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, const Vector<CompositionHighlight>& highlights, const HashMap<String, Vector<CharacterRange>>& annotations, unsigned selectionStart, unsigned selectionEnd)
 {
@@ -3987,6 +3999,39 @@ void Editor::respondToChangedSelection(const VisibleSelection&, OptionSet<FrameS
 #endif
 
     Ref document = protectedDocument();
+
+    auto continueDisplayingSuggestion = [&] {
+        if (!m_writingSuggestionData)
+            return false;
+
+        auto newSelection = document->selection().selection();
+
+        auto range = newSelection.firstRange();
+        if (!range)
+            return false;
+
+        range->start.offset = 0;
+
+        auto completion = makeString(m_writingSuggestionData->originalPrefix(), m_writingSuggestionData->originalSuffix());
+        auto content = plainTextReplacingNoBreakSpace(*range);
+
+        auto currentFullText = makeString(content, m_writingSuggestionData->content());
+
+        if (completion == content)
+            return false;
+
+        if (completion != currentFullText)
+            return false;
+
+        if (content.length() <= m_writingSuggestionData->originalPrefix().length())
+            return false;
+
+        return completion.startsWith(content);
+    }();
+
+    if (m_writingSuggestionData && !continueDisplayingSuggestion)
+        removeWritingSuggestionIfNeeded();
+
     if (client())
         client()->respondToChangedSelection(document->frame());
 

@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x327
+  RenderBlock {HTML} at (0,0) size 800x327
+    RenderBody {BODY} at (8,8) size 784x311
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,8) size 318x306 clip at (9,9) size 316x304
+  RenderTextControl {TEXTAREA} at (0,0) size 318x306 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+    RenderBlock {DIV} at (9,3) size 300x60
+      RenderText {#text} at (0,0) size 106x20
+        text run at (0,0) width 106: "good morning."
+        text run at (105,0) width 1: " "
+      RenderBR {BR} at (0,20) size 0x20
+      RenderText {#text} at (0,40) size 44x20
+        text run at (0,40) width 44: "My na"
+      RenderInline (generated) at (43,40) size 40x20 [color=color(srgb 0 0 0 / 0.5)]
+        RenderText at (43,40) size 40x20
+          text run at (43,40) width 40: "me is"
+caret: position 5 of child 2 {#text} of child 0 {DIV} of {#document-fragment} of child 1 {TEXTAREA} of body

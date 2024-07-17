@@ -6294,6 +6294,32 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
 
 - (void)setAttributedMarkedText:(NSAttributedString *)markedText selectedRange:(NSRange)selectedRange
 {
+    BOOL hasTextCompletion = ^{
+        // UIKit doesn't include the `NSTextCompletionAttributeName`, so the next best way to detect if this method
+        // is being used for a text completion is to check if the attributes match these hard-coded ones.
+        RetainPtr textCompletionAttributes = @{
+            NSForegroundColorAttributeName : UIColor.systemGrayColor,
+            NSBackgroundColorAttributeName : UIColor.clearColor,
+        };
+
+        RetainPtr markedTextAttributes = [markedText attributesAtIndex:0 effectiveRange:nil];
+
+        RetainPtr foregroundColor = [markedTextAttributes objectForKey:NSForegroundColorAttributeName];
+        if (![foregroundColor isEqual:UIColor.systemGrayColor])
+            return NO;
+
+        RetainPtr backgroundColor = [markedTextAttributes objectForKey:NSBackgroundColorAttributeName];
+        if (![backgroundColor isEqual:UIColor.clearColor])
+            return NO;
+
+        return YES;
+    }();
+
+    if (hasTextCompletion) {
+        _page->setWritingSuggestion([markedText string], { 0, 0 });
+        return;
+    }
+
     Vector<WebCore::CompositionUnderline> underlines;
     Vector<WebCore::CompositionHighlight> highlights;
 
