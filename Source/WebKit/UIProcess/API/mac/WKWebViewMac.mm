@@ -701,6 +701,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
     _impl->removeTextPlaceholder(placeholder, willInsertText, completionHandler);
 }
 
+- (void)showContextMenuForSelection:(id)sender
+{
+}
+
 #if ENABLE(DRAG_SUPPORT)
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)draggedImage:(NSImage *)image endedAt:(NSPoint)endPoint operation:(NSDragOperation)operation
