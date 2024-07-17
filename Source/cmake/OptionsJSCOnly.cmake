@@ -120,6 +120,9 @@ if (NOT ENABLE_STATIC_JSC)
     set(WebCore_LIBRARY_TYPE SHARED)
 endif ()
 
+if (USE_BUN_JSC_ADDITIONS)
+    set(CMAKE_POSITION_INDEPENDENT_CODE False)
+endif ()
 
 if (WIN32)
     add_definitions(-DNOMINMAX)
