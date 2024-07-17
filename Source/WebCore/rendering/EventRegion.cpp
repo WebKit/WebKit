@@ -165,6 +165,13 @@ void EventRegionContext::uniteInteractionRegions(RenderObject& renderer, const F
         if (defaultContentHint && shouldConsolidateInteractionRegion(renderer, rectForTracking, interactionRegion->elementIdentifier))
             return;
 
+        // This region might be a container we can remove later.
+        bool hasNoVisualBorders = !renderer.hasVisibleBoxDecorations();
+        if (hasNoVisualBorders) {
+            if (auto* renderElement = dynamicDowncast<RenderElement>(renderer))
+                m_containerRemovalCandidates.add(renderElement->element()->identifier());
+        }
+
         m_interactionRectsAndContentHints.add(rectForTracking, interactionRegion->contentHint);
 
         auto discoveredAddResult = m_discoveredRegionsByElement.add(interactionRegion->elementIdentifier, Vector<InteractionRegion>());
@@ -208,8 +215,12 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(RenderObject& render
 
         auto& ancestorBounds = discoveredIterator->value.first().rectInLayerCoordinates;
 
+        constexpr float looseContainmentMargin = 3.0;
+        FloatRect ancestorBoundsForLooseContainmentCheck = ancestorBounds;
+        ancestorBoundsForLooseContainmentCheck.inflate(looseContainmentMargin);
+
         // The ancestor's InteractionRegion does not contain ours, we don't consolidate and stop the search.
-        if (!ancestorBounds.contains(bounds))
+        if (!ancestorBoundsForLooseContainmentCheck.contains(bounds))
             return false;
 
         constexpr auto maxMargin = 50;
@@ -232,12 +243,6 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(RenderObject& render
             m_containerRemovalCandidates.remove(ancestorElementIdentifier);
             m_containersToRemove.remove(ancestorElementIdentifier);
             return true;
-        }
-
-        // We can't consolidate this region but it might be a container we can remove later.
-        if (hasNoVisualBorders) {
-            if (auto* renderElement = dynamicDowncast<RenderElement>(renderer))
-                m_containerRemovalCandidates.add(renderElement->element()->identifier());
         }
 
         // We found a region nested inside a container candidate for removal, flag it for removal.
