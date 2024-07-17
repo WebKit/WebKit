@@ -1,3 +1,3 @@
 
-FAIL event.intercept() should resolve immediately if the handler doesn't return a promise assert_equals: expected "#1" but got ""
+PASS event.intercept() should resolve immediately if the handler doesn't return a promise
 

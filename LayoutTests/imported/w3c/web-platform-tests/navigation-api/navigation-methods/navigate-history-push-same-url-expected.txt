@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT navigate() to the current URL with history: 'push' and intercept so it remains same-document Test timed out
+PASS navigate() to the current URL with history: 'push' and intercept so it remains same-document
 

@@ -706,7 +706,10 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
         if (navigationType == NavigationNavigationType::Traverse)
             m_suppressNormalScrollRestorationDuringOngoingNavigation = true;
 
-        // FIXME: Step 7: URL and history update
+        if (navigationType == NavigationNavigationType::Push || navigationType == NavigationNavigationType::Replace) {
+            auto historyHandling = navigationType == NavigationNavigationType::Replace ? NavigationHistoryBehavior::Replace : NavigationHistoryBehavior::Push;
+            frame()->loader().updateURLAndHistory(destination->url(), classicHistoryAPIState, historyHandling);
+        }
     }
 
     if (endResultIsSameDocument) {

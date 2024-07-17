@@ -7081,10 +7081,10 @@ imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-b
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-location-reload.html [ Failure ]
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-location-replace-cross-origin.html [ Failure ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-replace-same-document.html [ Failure ]
+imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-replace.html [ Failure ]
 
 # General flakes, almost exclusively on mac-wk2-stress.
 imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-popstate.html [ Pass Timeout Failure ]
-imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-replace.html [ Failure Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/no-referrer-url-censored.html [ Pass Failure ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/back-forward-multiple-frames.html [ Failure Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-state-repeated-await.html [ Timeout Failure Pass ]

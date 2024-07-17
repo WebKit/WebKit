@@ -302,17 +302,8 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
 
     m_mostRecentStateObjectUsage = payloadSize;
 
-    if (!urlString.isEmpty())
-        frame->protectedDocument()->updateURLForPushOrReplaceState(fullURL);
-
-    if (stateObjectType == StateObjectType::Push) {
-        frame->checkedHistory()->pushState(WTFMove(data), fullURL.string());
-        frame->loader().client().dispatchDidPushStateWithinPage();
-    } else if (stateObjectType == StateObjectType::Replace) {
-        frame->checkedHistory()->replaceState(WTFMove(data), fullURL.string());
-        frame->loader().client().dispatchDidReplaceStateWithinPage();
-    }
-
+    auto historyBehavior = stateObjectType == StateObjectType::Replace ? NavigationHistoryBehavior::Replace : NavigationHistoryBehavior::Push;
+    frame->loader().updateURLAndHistory(fullURL, WTFMove(data), historyBehavior);
     return { };
 }
 

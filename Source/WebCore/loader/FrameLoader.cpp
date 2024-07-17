@@ -1219,6 +1219,32 @@ static NavigationNavigationType determineNavigationType(FrameLoadType loadType, 
     return NavigationNavigationType::Push;
 }
 
+// https://html.spec.whatwg.org/multipage/browsing-the-web.html#url-and-history-update-steps
+void FrameLoader::updateURLAndHistory(const URL& newURL, RefPtr<SerializedScriptValue>&& stateObject, NavigationHistoryBehavior historyHandling)
+{
+    ASSERT(m_frame->document() && documentLoader());
+
+    if (documentLoader()->isInitialAboutBlank())
+        historyHandling = NavigationHistoryBehavior::Replace;
+
+    CheckedRef history = m_frame->checkedHistory();
+
+    // https://html.spec.whatwg.org/multipage/browsing-the-web.html#restore-the-history-object-state
+    // FIXME: Implement "restore the history object state" deserializing (step 2).
+    if (!stateObject)
+        stateObject = history->currentItem()->stateObject();
+
+    m_frame->protectedDocument()->updateURLForPushOrReplaceState(newURL);
+
+    if (historyHandling == NavigationHistoryBehavior::Replace) {
+        history->replaceState(WTFMove(stateObject), newURL.string());
+        client().dispatchDidReplaceStateWithinPage();
+    } else {
+        history->pushState(WTFMove(stateObject), newURL.string());
+        client().dispatchDidPushStateWithinPage();
+    }
+}
+
 // This does the same kind of work that didOpenURL does, except it relies on the fact
 // that a higher level already checked that the URLs match and the scrolling is the right thing to do.
 void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stateObject, const SecurityOrigin* requesterOrigin, bool isNewNavigation, NavigationHistoryBehavior historyHandling)
