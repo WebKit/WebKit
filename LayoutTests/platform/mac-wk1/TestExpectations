@@ -27,6 +27,8 @@ editing/pasteboard/file-input-files-access-promise.html [ Pass ]
 fast/shadow-dom/dragging-element-with-shadow-tree.html [ Pass ]
 fast/shadow-dom/dragging-element-inside-shadow-tree.html [ Pass ]
 http/tests/security/clipboard/drag-drop-html-cross-origin-iframe-in-same-origin.html [ Pass ]
+http/tests/download/anchor-download-redirect-cross-origin.html [ Skip ]
+http/tests/download/anchor-download-redirect-same-origin.html [ Skip ]
 
 http/tests/security/xss-DENIED-xsl-external-entity-no-logging.xml [ Pass ]
 
