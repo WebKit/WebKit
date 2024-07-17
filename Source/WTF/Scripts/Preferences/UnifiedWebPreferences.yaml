@@ -4750,6 +4750,20 @@ NotificationsEnabled:
       "PLATFORM(IOS_FAMILY)": false
       default: true
 
+ObservableEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "Observable API"
+  humanReadableDescription: "Support for the Observable API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 OffscreenCanvasDeprecatedCommitEnabled:
   type: bool
   status: testable

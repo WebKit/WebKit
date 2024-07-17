@@ -2066,6 +2066,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOESTextureHalfFloatLinear.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOESTextureHalfFloatLinear.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOESVertexArrayObject.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOESVertexArrayObject.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSObservable.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSObservable.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSObserver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOfflineAudioCompletionEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOfflineAudioCompletionEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOfflineAudioCompletionEventInit.cpp
@@ -2898,6 +2901,16 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStyleSheetList.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStyleSheetList.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubmitEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubmitEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubscribeOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubscribeOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubscriber.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubscriber.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubscriberCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubscriberCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubscriptionObserver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubscriptionObserver.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubscriptionObserverCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubscriptionObserverCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubtleCrypto.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubtleCrypto.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTestReportBody.cpp

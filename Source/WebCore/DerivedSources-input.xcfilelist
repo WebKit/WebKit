@@ -1434,6 +1434,7 @@ $(PROJECT_DIR)/dom/NodeIterator.idl
 $(PROJECT_DIR)/dom/NodeList.idl
 $(PROJECT_DIR)/dom/NonDocumentTypeChildNode.idl
 $(PROJECT_DIR)/dom/NonElementParentNode.idl
+$(PROJECT_DIR)/dom/Observable.idl
 $(PROJECT_DIR)/dom/OverflowEvent.idl
 $(PROJECT_DIR)/dom/PageTransitionEvent.idl
 $(PROJECT_DIR)/dom/ParentNode.idl
@@ -1456,6 +1457,11 @@ $(PROJECT_DIR)/dom/SlotAssignmentMode.idl
 $(PROJECT_DIR)/dom/Slotable.idl
 $(PROJECT_DIR)/dom/StaticRange.idl
 $(PROJECT_DIR)/dom/StringCallback.idl
+$(PROJECT_DIR)/dom/Subscriber.idl
+$(PROJECT_DIR)/dom/SubscribeOptions.idl
+$(PROJECT_DIR)/dom/SubscriberCallback.idl
+$(PROJECT_DIR)/dom/SubscriptionObserver.idl
+$(PROJECT_DIR)/dom/SubscriptionObserverCallback.idl
 $(PROJECT_DIR)/dom/Text.idl
 $(PROJECT_DIR)/dom/TextDecoder.idl
 $(PROJECT_DIR)/dom/TextDecoderStream.idl

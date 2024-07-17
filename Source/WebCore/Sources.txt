@@ -719,6 +719,7 @@ bindings/js/JSShadowRootCustom.cpp
 bindings/js/JSSourceBufferCustom.cpp
 bindings/js/JSStaticRangeCustom.cpp
 bindings/js/JSStyleSheetCustom.cpp
+bindings/js/JSSubscriberCustom.cpp
 bindings/js/JSTextCustom.cpp
 bindings/js/JSTextTrackCueCustom.cpp
 bindings/js/JSTrackCustom.cpp
@@ -1199,6 +1200,7 @@ dom/NodeIterator.cpp
 dom/NodeList.cpp
 dom/NodeRareData.cpp
 dom/NodeTraversal.cpp
+dom/Observable.cpp
 dom/OverflowEvent.cpp
 dom/PageTransitionEvent.cpp
 dom/PendingScript.cpp
@@ -1236,6 +1238,7 @@ dom/StaticNodeList.cpp
 dom/StaticRange.cpp
 dom/StringCallback.cpp
 dom/StyledElement.cpp
+dom/Subscriber.cpp
 dom/TagCollection.cpp
 dom/TemplateContentDocumentFragment.cpp
 dom/Text.cpp
@@ -4040,6 +4043,7 @@ JSOESTextureFloatLinear.cpp
 JSOESTextureHalfFloat.cpp
 JSOESTextureHalfFloatLinear.cpp
 JSOESVertexArrayObject.cpp
+JSObservable.cpp
 JSOfflineAudioCompletionEvent.cpp
 JSOfflineAudioCompletionEventInit.cpp
 JSOfflineAudioContext.cpp
@@ -4433,6 +4437,11 @@ JSStylePropertyMapReadOnly.cpp
 JSStyleSheet.cpp
 JSStyleSheetList.cpp
 JSSubmitEvent.cpp
+JSSubscribeOptions.cpp
+JSSubscriber.cpp
+JSSubscriberCallback.cpp
+JSSubscriptionObserver.cpp
+JSSubscriptionObserverCallback.cpp
 JSSubtleCrypto.cpp
 JSTestReportBody.cpp
 JSText.cpp

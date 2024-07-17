@@ -1,4 +1,4 @@
 
-FAIL takeUntil(): notifier Observable detaches document before source Observable would be subscribed to promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Observable"
-FAIL takeUntil(): Source and notifier internal observers do not crash in a detached document promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Observable"
+FAIL takeUntil(): notifier Observable detaches document before source Observable would be subscribed to promise_test: Unhandled rejection with value: object "TypeError: source.takeUntil is not a function. (In 'source.takeUntil(notifier)', 'source.takeUntil' is undefined)"
+FAIL takeUntil(): Source and notifier internal observers do not crash in a detached document promise_test: Unhandled rejection with value: object "TypeError: sourceComplete.takeUntil is not a function. (In 'sourceComplete.takeUntil(notifier)', 'sourceComplete.takeUntil' is undefined)"
 

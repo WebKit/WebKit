@@ -3744,11 +3744,6 @@ sub AreTypesDistinguishableForOverloadResolution
 {
     my ($typeA, $typeB) = @_;
 
-    my $isCallbackFunctionOrDictionary = sub {
-        my $type = shift;
-        return $codeGenerator->IsCallbackFunction($type) || $codeGenerator->IsDictionaryType($type);
-    };
-
     # Two types are distinguishable for overload resolution if at most one of the two includes a nullable type.
     return 0 if $typeA->isNullable && $typeB->isNullable;
 
@@ -3774,7 +3769,7 @@ sub AreTypesDistinguishableForOverloadResolution
     return 0 if $codeGenerator->IsStringOrEnumType($typeA) && $codeGenerator->IsStringOrEnumType($typeB);
     return 0 if $codeGenerator->IsDictionaryType($typeA) && $codeGenerator->IsDictionaryType($typeB);
     return 0 if $codeGenerator->IsCallbackInterface($typeA) && $codeGenerator->IsCallbackInterface($typeB);
-    return 0 if &$isCallbackFunctionOrDictionary($typeA) && &$isCallbackFunctionOrDictionary($typeB);
+    return 0 if $codeGenerator->IsCallbackFunction($typeA) && $codeGenerator->IsCallbackFunction($typeB);
     return 0 if $codeGenerator->IsSequenceOrFrozenArrayType($typeA) && $codeGenerator->IsSequenceOrFrozenArrayType($typeB);
     # FIXME: return 0 if $typeA and $typeB are both exception types.
     return 1;
