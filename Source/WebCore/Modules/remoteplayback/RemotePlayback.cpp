@@ -161,7 +161,11 @@ void RemotePlayback::cancelWatchAvailability(std::optional<int32_t> id, Ref<Defe
         // 4. If the parameter id is undefined, clear the set of availability callbacks.
         if (!id)
             m_callbackMap.clear();
-        else {
+        else if (!decltype(m_callbackMap)::isValidKey(*id)) {
+            ERROR_LOG(identifier, "promise rejected, invalid identifier");
+            promise->reject(ExceptionCode::NotFoundError);
+            return;
+        } else {
             // 5. Otherwise, if id matches the callbackId for any entry in the set of availability callbacks,
             //    remove the entry from the set.
             if (auto it = m_callbackMap.find(id.value()) != m_callbackMap.end())
