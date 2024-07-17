@@ -32,6 +32,7 @@
 #import "MessageSenderInlines.h"
 #import "PDFIncrementalLoader.h"
 #import "PDFKitSPI.h"
+#import "PDFScriptEvaluation.h"
 #import "PluginView.h"
 #import "WKAccessibilityPDFDocumentObject.h"
 #import "WebEventConversion.h"
@@ -569,7 +570,9 @@ void PDFPluginBase::tryRunScriptsInPDFDocument()
     if (!m_pdfDocument || !m_documentFinishedLoading || m_didRunScripts)
         return;
 
-    PDFScriptEvaluator::runScripts([m_pdfDocument documentRef], *this);
+    PDFScriptEvaluation::runScripts([m_pdfDocument documentRef], [this, protectedThis = Ref { *this }] {
+        print();
+    });
     m_didRunScripts = true;
 }
 
