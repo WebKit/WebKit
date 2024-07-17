@@ -7783,7 +7783,11 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
         return adoptNS([[WKFormSelectControl alloc] initWithView:view]);
 #if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
+#if PLATFORM(APPLETV)
+        return nil;
+#else
         return adoptNS([[WKFormColorControl alloc] initWithView:view]);
+#endif
 #endif // ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Date:
     case WebKit::InputType::DateTimeLocal:
