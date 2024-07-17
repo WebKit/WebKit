@@ -4459,24 +4459,25 @@ RenderObject* InlineMinMaxIterator::next()
     return result;
 }
 
-static LayoutUnit getBPMWidth(LayoutUnit childValue, Length cssUnit)
-{
-    if (cssUnit.type() != LengthType::Auto)
-        return (cssUnit.isFixed() ? LayoutUnit(cssUnit.value()) : childValue);
-    return 0;
-}
-
 static LayoutUnit getBorderPaddingMargin(const RenderBoxModelObject& child, bool endOfInline)
 {
+    auto borderPaddingAndMarginWidth = [](LayoutUnit childValue, const Length& cssUnit) -> LayoutUnit {
+        if (cssUnit.isFixed())
+            return LayoutUnit(cssUnit.value());
+        if (cssUnit.isAuto())
+            return { };
+        return childValue;
+    };
+
     const RenderStyle& childStyle = child.style();
     if (endOfInline) {
-        return getBPMWidth(child.marginEnd(), childStyle.marginEnd()) +
-               getBPMWidth(child.paddingEnd(), childStyle.paddingEnd()) +
-               child.borderEnd();
+        return borderPaddingAndMarginWidth(child.marginEnd(), childStyle.marginEnd()) +
+            borderPaddingAndMarginWidth(child.paddingEnd(), childStyle.paddingEnd()) +
+            child.borderEnd();
     }
-    return getBPMWidth(child.marginStart(), childStyle.marginStart()) +
-               getBPMWidth(child.paddingStart(), childStyle.paddingStart()) +
-               child.borderStart();
+    return borderPaddingAndMarginWidth(child.marginStart(), childStyle.marginStart()) +
+        borderPaddingAndMarginWidth(child.paddingStart(), childStyle.paddingStart()) +
+        child.borderStart();
 }
 
 static inline void stripTrailingSpace(float& inlineMax, float& inlineMin, RenderObject* trailingSpaceChild)
