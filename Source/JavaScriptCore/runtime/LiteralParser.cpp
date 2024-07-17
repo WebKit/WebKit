@@ -1044,41 +1044,71 @@ TokenType LiteralParser<CharType>::Lexer::lexNumber(LiteralParserToken<CharType>
     }
 
     // ('.' [0-9]+)?
-    const int NumberOfDigitsForSafeInt32 = 9;  // The numbers from -99999999 to 999999999 are always in range of Int32.
-    if (m_ptr < m_end && *m_ptr == '.') {
-        ++m_ptr;
-        // [0-9]+
-        if (m_ptr >= m_end || !isASCIIDigit(*m_ptr)) {
-            m_lexErrorMessage = "Invalid digits after decimal point"_s;
-            return TokError;
-        }
-
-        ++m_ptr;
-        while (m_ptr < m_end && isASCIIDigit(*m_ptr))
+    if (LIKELY(m_ptr < m_end)) {
+        if (*m_ptr == '.') {
             ++m_ptr;
-    } else if (m_ptr < m_end && (*m_ptr != 'e' && *m_ptr != 'E') && (m_ptr - start) <= NumberOfDigitsForSafeInt32) {
-        int32_t result = 0;
-        token.type = TokNumber;
-        const CharType* digit = start;
-        bool negative = false;
-        if (*digit == '-') {
-            negative = true;
-            digit++;
-        }
-        
-        ASSERT((m_ptr - digit) <= NumberOfDigitsForSafeInt32);
-        while (digit < m_ptr)
-            result = result * 10 + (*digit++) - '0';
+            // [0-9]+
+            if (m_ptr >= m_end || !isASCIIDigit(*m_ptr)) {
+                m_lexErrorMessage = "Invalid digits after decimal point"_s;
+                return TokError;
+            }
 
-        if (!negative)
-            token.numberToken = result;
-        else {
-            if (!result)
-                token.numberToken = -0.0;
-            else
-                token.numberToken = -result;
+            ++m_ptr;
+            while (m_ptr < m_end && isASCIIDigit(*m_ptr))
+                ++m_ptr;
+        } else if (*m_ptr != 'e' && *m_ptr != 'E') {
+            constexpr int numberOfDigitsForSafeInt32 = 9; // The numbers from -99999999 to 999999999 are always in range of Int32.
+            if (LIKELY((m_ptr - start) <= numberOfDigitsForSafeInt32)) {
+                int32_t result = 0;
+                token.type = TokNumber;
+                const CharType* digit = start;
+                bool negative = false;
+                if (*digit == '-') {
+                    negative = true;
+                    digit++;
+                }
+
+                ASSERT((m_ptr - digit) <= numberOfDigitsForSafeInt32);
+                while (digit < m_ptr)
+                    result = result * 10 + (*digit++) - '0';
+
+                if (!negative)
+                    token.numberToken = result;
+                else {
+                    if (!result)
+                        token.numberToken = -0.0;
+                    else
+                        token.numberToken = -result;
+                }
+                return TokNumber;
+            }
+
+            constexpr int numberOfDigitsForSafeInt52 = 15; // The numbers from -99999999999999 to 999999999999999 are always in range of Int52.
+            if ((m_ptr - start) <= numberOfDigitsForSafeInt52) {
+                int64_t result = 0;
+                token.type = TokNumber;
+                const CharType* digit = start;
+                bool negative = false;
+                if (*digit == '-') {
+                    negative = true;
+                    digit++;
+                }
+
+                ASSERT((m_ptr - digit) <= numberOfDigitsForSafeInt52);
+                while (digit < m_ptr)
+                    result = result * 10 + (*digit++) - '0';
+
+                if (!negative)
+                    token.numberToken = result;
+                else {
+                    if (!result)
+                        token.numberToken = -0.0;
+                    else
+                        token.numberToken = -result;
+                }
+                return TokNumber;
+            }
         }
-        return TokNumber;
     }
 
     //  ([eE][+-]? [0-9]+)?
