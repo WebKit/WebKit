@@ -53,7 +53,7 @@ struct Base64Specification {
 // Rather than being perfectly precise, this is a bit conservative.
 static constexpr unsigned maximumBase64EncoderInputBufferSize = std::numeric_limits<unsigned>::max() / 77 * 76 / 4 * 3 - 2;
 
-unsigned calculateBase64EncodedSize(unsigned inputLength, OptionSet<Base64EncodeOption> options);
+WTF_EXPORT_PRIVATE unsigned calculateBase64EncodedSize(unsigned inputLength, OptionSet<Base64EncodeOption>);
 
 template<typename CharacterType> bool isBase64OrBase64URLCharacter(CharacterType);
 
@@ -160,20 +160,6 @@ inline std::optional<Vector<uint8_t>> base64URLDecode(std::span<const uint8_t> i
 template<typename CharacterType> bool isBase64OrBase64URLCharacter(CharacterType c)
 {
     return isASCIIAlphanumeric(c) || c == '+' || c == '/' || c == '-' || c == '_';
-}
-
-inline unsigned calculateBase64EncodedSize(unsigned inputLength, OptionSet<Base64EncodeOption> options)
-{
-    if (!inputLength)
-        return 0;
-
-    if (inputLength > maximumBase64EncoderInputBufferSize)
-        return 0;
-
-    if (options.contains(Base64EncodeOption::OmitPadding))
-        return ((inputLength * 4) + 2) / 3;
-
-    return ((inputLength + 2) / 3) * 4;
 }
 
 inline Base64Specification base64Encoded(std::span<const std::byte> input, OptionSet<Base64EncodeOption> options)
