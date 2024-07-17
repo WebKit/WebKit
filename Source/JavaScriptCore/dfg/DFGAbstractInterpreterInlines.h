@@ -1566,7 +1566,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case MapIterationEntryValue:
     case MapIteratorKey:
     case MapIteratorValue:
-    case MapValue:
+    case LoadMapValue:
     case ExtractValueFromWeakMapGet:
         makeHeapTopForNode(node);
         break;
@@ -1575,8 +1575,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case MapSet:
         break;
 
+    case MapGet:
+        clearForNode(node);
+        break;
+
     case MapIterationEntry:
-    case MapKeyIndex:
         setTypeForNode(node, SpecInt32Only);
         break;
 
@@ -1586,6 +1589,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case MapIteratorNext:
+    case IsEmptyStorage:
         setTypeForNode(node, SpecBoolean);
         break;
 

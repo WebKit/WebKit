@@ -1047,7 +1047,7 @@ private:
         case GetClosureVar:
         case GetInternalField:
         case GetFromArguments:
-        case MapValue:
+        case LoadMapValue:
         case MapIteratorKey:
         case MapIteratorValue:
         case MapIterationEntryKey:
@@ -1118,7 +1118,6 @@ private:
 
         case MapHash:
         case MapIterationEntry:
-        case MapKeyIndex:
             setPrediction(SpecInt32Only);
             break;
 
@@ -1219,6 +1218,7 @@ private:
         case InstanceOf:
         case InstanceOfCustom:
         case IsEmpty:
+        case IsEmptyStorage:
         case TypeOfIsUndefined:
         case TypeOfIsObject:
         case TypeOfIsFunction:
@@ -1244,6 +1244,7 @@ private:
             setPrediction(SpecStringIdent);
             break;
         }
+        case MapGet:
         case GetButterfly:
         case GetIndexedPropertyStorage:
         case AllocatePropertyStorage:

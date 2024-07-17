@@ -1552,11 +1552,14 @@ private:
         case NormalizeMapKey:
             compileNormalizeMapKey();
             break;
-        case MapKeyIndex:
-            compileMapKeyIndex();
+        case MapGet:
+            compileMapGet();
             break;
-        case MapValue:
-            compileMapValue();
+        case LoadMapValue:
+            compileLoadMapValue();
+            break;
+        case IsEmptyStorage:
+            compileIsEmptyStorage();
             break;
         case MapIterationNext:
             compileMapIterationNext();
@@ -13800,7 +13803,7 @@ IGNORE_CLANG_WARNINGS_END
     }
 
     template<typename MapOrSet>
-    void compileGetMapIndexImpl()
+    void compileMapGetImpl()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
 
@@ -13852,7 +13855,8 @@ IGNORE_CLANG_WARNINGS_END
         // Get the entryKey JSValue.
         m_out.appendTo(notEmptyEntry, notDeletedKey);
         LValue entryKeyIndex = m_out.castToInt32(entryKeyIndexValue);
-        LValue entryKey = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, mapStorageData, m_out.zeroExt(entryKeyIndex, Int64)));
+        TypedPointer entryKeySlot = m_out.baseIndex(m_heaps.indexedContiguousProperties, mapStorageData, m_out.zeroExt(entryKeyIndex, Int64));
+        LValue entryKey = m_out.load64(entryKeySlot);
 
         // Check wether the current entryKey is a deleted one.
         m_out.branch(m_out.equal(entryKey,  weakPointer(vm().orderedHashTableDeletedValue())), unsure(loopAround), unsure(notDeletedKey));
@@ -13956,66 +13960,65 @@ IGNORE_CLANG_WARNINGS_END
 
         // The current entryKey doesn't match the target key. Then, get the next entry in the chain and continue.
         m_out.appendTo(loopAround, presentInTable);
-        LValue entryChainIndex = m_out.add(m_out.constInt32(MapOrSet::Helper::ChainOffset), entryKeyIndex);
-        LValue nextEntry = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, mapStorageData, m_out.zeroExt(entryChainIndex, Int64)));
+        LValue nextEntry = m_out.load64(m_out.address(m_heaps.OrderedHashTableData, entryKeySlot.value(), MapOrSet::Helper::ChainOffset * sizeof(EncodedJSValue)));
         m_out.addIncomingToPhi(entryKeyIndexValue, m_out.anchor(nextEntry));
         m_out.jump(loopStart);
 
         // Found a matched entryKey.
         m_out.appendTo(presentInTable, slowPath);
-        ValueFromBlock entryValueResult = m_out.anchor(entryKeyIndex);
+        ValueFromBlock entryValueResult = m_out.anchor(entryKeySlot.value());
         m_out.jump(done);
 
         // The slow path should call the operation.
         m_out.appendTo(slowPath, notPresentInTable);
-        auto operation = std::is_same<MapOrSet, JSMap>::value ? operationMapKeyIndex : operationSetKeyIndex;
-        ValueFromBlock slowPathResult = m_out.anchor(vmCall(Int32, operation, weakPointer(globalObject), map, key, hash));
+        auto operation = std::is_same<MapOrSet, JSMap>::value ? operationMapGet : operationSetGet;
+        ValueFromBlock slowPathResult = m_out.anchor(vmCall(Int64, operation, weakPointer(globalObject), map, key, hash));
         m_out.jump(done);
 
         // Didn't find a matched entryKey.
         m_out.appendTo(notPresentInTable, done);
-        ValueFromBlock notPresentResult = m_out.anchor(m_out.constInt32(JSMap::Helper::InvalidTableIndex));
+        ValueFromBlock notPresentResult = m_out.anchor(m_out.constInt64(0));
         m_out.jump(done);
 
         // Done.
         m_out.appendTo(done, lastNext);
-        setInt32(m_out.phi(Int32, entryValueResult, slowPathResult, notPresentResult));
+        setStorage(m_out.phi(Int64, entryValueResult, slowPathResult, notPresentResult));
     }
 
-    void compileMapKeyIndex()
+    void compileMapGet()
     {
         if (m_node->child1().useKind() == MapObjectUse)
-            compileGetMapIndexImpl<JSMap>();
+            compileMapGetImpl<JSMap>();
         else if (m_node->child1().useKind() == SetObjectUse)
-            compileGetMapIndexImpl<JSSet>();
+            compileMapGetImpl<JSSet>();
         else
             RELEASE_ASSERT_NOT_REACHED();
     }
 
-    void compileMapValue()
+    void compileLoadMapValue()
     {
         LBasicBlock presentInTable = m_out.newBlock();
         LBasicBlock notPresentInTable = m_out.newBlock();
         LBasicBlock done = m_out.newBlock();
 
-        LValue map = lowMapObject(m_node->child1());
-        LValue keyIndex = lowInt32(m_node->child2());
-
-        LValue isSentinel = m_out.equal(keyIndex, m_out.constInt32(JSMap::Helper::InvalidTableIndex));
-        m_out.branch(isSentinel, unsure(notPresentInTable), unsure(presentInTable));
+        LValue mapKeySlot = lowStorage(m_node->child1());
+        m_out.branch(m_out.isZero64(mapKeySlot), unsure(notPresentInTable), unsure(presentInTable));
 
         LBasicBlock lastNext = m_out.appendTo(notPresentInTable, presentInTable);
         ValueFromBlock notPresentResult = m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined())));
         m_out.jump(done);
 
         m_out.appendTo(presentInTable, done);
-        LValue butterflyStorage = toButterfly(m_out.loadPtr(map, m_heaps.JSSet_butterfly));
-        LValue valueIndex = m_out.add(m_out.int32One, keyIndex);
-        ValueFromBlock presentResult = m_out.anchor(m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, butterflyStorage, m_out.zeroExt(valueIndex, Int64))));
+        ValueFromBlock presentResult = m_out.anchor(m_out.load64(m_out.address(m_heaps.OrderedHashTableData, mapKeySlot, sizeof(EncodedJSValue))));
         m_out.jump(done);
 
         m_out.appendTo(done, lastNext);
         setJSValue(m_out.phi(Int64, notPresentResult, presentResult));
+    }
+
+    void compileIsEmptyStorage()
+    {
+        setBoolean(m_out.isZero64(lowStorage(m_node->child1())));
     }
 
     void compileMapIterationNext()

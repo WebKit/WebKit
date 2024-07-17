@@ -348,6 +348,9 @@ public:
         uint32_t hash;
         TableIndex bucketIndex;
         TableIndex entryKeyIndex;
+        // The keyIndex and keySlot may be redundant here. Let's leave it for now
+        // since the following OpenTable patch can get rid of most of index related info for us.
+        JSValue* entryKeySlot;
     };
     ALWAYS_INLINE static FindResult find(JSGlobalObject* globalObject, Storage& storage, JSValue key)
     {
@@ -356,7 +359,7 @@ public:
         ASSERT(!isObsolete(storage));
 
         if (!aliveEntryCount(storage))
-            return { JSValue(), 0, InvalidTableIndex, InvalidTableIndex };
+            return { JSValue(), 0, InvalidTableIndex, InvalidTableIndex, nullptr };
 
         key = normalizeMapKey(key);
         TableSize hash = jsMapHash(globalObject, vm, key);
@@ -372,13 +375,13 @@ public:
         JSValue keyIndexValue = get(storage, bucketIndex);
         while (!keyIndexValue.isEmpty()) {
             TableIndex entryKeyIndex = toNumber(keyIndexValue);
-            JSValue entryKey = get(storage, entryKeyIndex);
+            JSValue* entryKeySlot = slot(storage, entryKeyIndex);
             // Fixme: Maybe we can compress the searching path by updating the chain with non-deleted entry.
-            if (!isDeleted(vm, entryKey) && areKeysEqual(globalObject, normalizedKey, entryKey))
-                return { normalizedKey, hash, bucketIndex, entryKeyIndex };
+            if (!isDeleted(vm, *entryKeySlot) && areKeysEqual(globalObject, normalizedKey, *entryKeySlot))
+                return { normalizedKey, hash, bucketIndex, entryKeyIndex, entryKeySlot };
             keyIndexValue = get(storage, entryKeyIndex + ChainOffset);
         }
-        return { normalizedKey, hash, bucketIndex, InvalidTableIndex };
+        return { normalizedKey, hash, bucketIndex, InvalidTableIndex, nullptr };
     }
 
     ALWAYS_INLINE static Storage* expandIfNeeded(JSGlobalObject* globalObject, HashTable* owner, Storage& base)

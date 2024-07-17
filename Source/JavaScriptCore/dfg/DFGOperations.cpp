@@ -4160,32 +4160,25 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMapHashHeapBigInt, UCPUStrictInt32, (
     OPERATION_RETURN(scope, toUCPUStrictInt32(jsMapHash(input)));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMapKeyIndex, UCPUStrictInt32, (JSGlobalObject* globalObject, JSCell* map, EncodedJSValue key, int32_t hash))
+JSC_DEFINE_JIT_OPERATION(operationMapGet, JSValue*, (JSGlobalObject* globalObject, JSCell* cell, EncodedJSValue key, int32_t hash))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSMap::TableIndex keyIndex = jsCast<JSMap*>(map)->getKeyIndex(globalObject, JSValue::decode(key), hash);
-    OPERATION_RETURN(scope, toUCPUStrictInt32(keyIndex));
+    JSMap* map = jsCast<JSMap*>(cell);
+    JSValue* keySlot = map->getKeySlot(globalObject, JSValue::decode(key), hash);
+    OPERATION_RETURN(scope, keySlot);
 }
-JSC_DEFINE_JIT_OPERATION(operationSetKeyIndex, UCPUStrictInt32, (JSGlobalObject* globalObject, JSCell* set, EncodedJSValue key, int32_t hash))
+JSC_DEFINE_JIT_OPERATION(operationSetGet, JSValue*, (JSGlobalObject* globalObject, JSCell* cell, EncodedJSValue key, int32_t hash))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSMap::TableIndex keyIndex = jsCast<JSSet*>(set)->getKeyIndex(globalObject, JSValue::decode(key), hash);
-    OPERATION_RETURN(scope, toUCPUStrictInt32(keyIndex));
-}
-JSC_DEFINE_JIT_OPERATION(operationMapValue, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* map, int32_t keyIndex))
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue value = jsCast<JSMap*>(map)->get(keyIndex);
-    OPERATION_RETURN(scope, JSValue::encode(value));
+    JSSet* set = jsCast<JSSet*>(cell);
+    JSValue* keySlot = set->getKeySlot(globalObject, JSValue::decode(key), hash);
+    OPERATION_RETURN(scope, keySlot);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationMapStorage, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* cell))

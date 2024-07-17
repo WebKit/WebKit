@@ -3807,7 +3807,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case MapKeyIndex: {
+    case MapGet: {
         SpeculateCellOperand map(this, node->child1());
         JSValueOperand key(this, node->child2());
         SpeculateInt32Operand hash(this, node->child3());
@@ -3827,34 +3827,19 @@ void SpeculativeJIT::compile(Node* node)
         flushRegisters();
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
-        auto operation = isMapObjectUse ? operationMapKeyIndex : operationSetKeyIndex;
+        auto operation = isMapObjectUse ? operationMapGet : operationSetGet;
         callOperation(operation, resultGPR, LinkableConstant::globalObject(*this, node), mapGPR, keyRegs, hashGPR);
-        strictInt32Result(resultGPR, node);
+        storageResult(resultGPR, node);
         break;
     }
 
-    case MapValue: {
-        SpeculateCellOperand map(this, node->child1());
-        SpeculateInt32Operand keyIndex(this, node->child2());
-        JSValueRegsTemporary result(this);
-
-        GPRReg mapGPR = map.gpr();
-        GPRReg keyIndexGPR = keyIndex.gpr();
-        JSValueRegs resultRegs = result.regs();
-
-        speculateMapObject(node->child1(), mapGPR);
-
-        Jump notPresentInTable = branch32(Equal, keyIndexGPR, TrustedImm32(JSMap::Helper::InvalidTableIndex));
-        callOperationWithSilentSpill(operationMapValue, resultRegs, LinkableConstant::globalObject(*this, node), mapGPR, keyIndexGPR);
-        Jump done = jump();
-
-        notPresentInTable.link(this);
-        moveValue(jsUndefined(), resultRegs);
-
-        done.link(this);
-        jsValueResult(resultRegs, node);
+    case LoadMapValue:
+        compileLoadMapValue(node);
         break;
-    }
+
+    case IsEmptyStorage:
+        compileIsEmptyStorage(node);
+        break;
 
     case MapStorage:
         compileMapStorage(node);

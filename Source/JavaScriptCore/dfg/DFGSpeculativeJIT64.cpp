@@ -2469,7 +2469,7 @@ void SpeculativeJIT::emitBranch(Node* node)
 }
 
 template<typename MapOrSet>
-void SpeculativeJIT::compileGetMapIndexImpl(Node* node)
+void SpeculativeJIT::compileMapGetImpl(Node* node)
 {
     constexpr bool isMapObjectUse = std::is_same<MapOrSet, JSMap>::value;
 
@@ -2481,6 +2481,7 @@ void SpeculativeJIT::compileGetMapIndexImpl(Node* node)
     GPRTemporary bucketIndexOrDeletedValue(this);
     GPRTemporary bucketCount(this);
 
+    GPRTemporary entryKeySlot(this);
     JSValueRegsTemporary entryKeyIndex(this);
     JSValueRegsTemporary entryKey(this);
 
@@ -2492,6 +2493,7 @@ void SpeculativeJIT::compileGetMapIndexImpl(Node* node)
     GPRReg bucketIndexOrDeletedValueGPR = bucketIndexOrDeletedValue.gpr();
     GPRReg bucketCountGPR = bucketCount.gpr();
 
+    GPRReg entryKeySlotGPR = entryKeySlot.gpr();
     JSValueRegs entryKeyIndexRegs = entryKeyIndex.regs();
     GPRReg entryKeyIndexGPR = entryKeyIndexRegs.payloadGPR();
     JSValueRegs entryKeyRegs = entryKey.regs();
@@ -2531,7 +2533,8 @@ void SpeculativeJIT::compileGetMapIndexImpl(Node* node)
 
     JIT_COMMENT(*this, "Get the entryKey JSValue.");
     zeroExtend32ToWord(entryKeyIndexGPR, entryKeyIndexGPR);
-    loadValue(BaseIndex(mapStorageOrDataGPR, entryKeyIndexGPR, TimesEight), entryKeyRegs);
+    getEffectiveAddress(BaseIndex(mapStorageOrDataGPR, entryKeyIndexGPR, TimesEight), entryKeySlotGPR);
+    loadValue(Address(entryKeySlotGPR), entryKeyRegs);
 
     JIT_COMMENT(*this, "Check wether the current entryKey is a deleted one.");
     loopAround.append(branch64(Equal, entryKeyGPR, bucketIndexOrDeletedValueGPR));
@@ -2625,64 +2628,34 @@ void SpeculativeJIT::compileGetMapIndexImpl(Node* node)
 
     JIT_COMMENT(*this, "The current entryKey doesn't match the target key. Then, get the next entry in the chain and continue.");
     loopAround.link(this);
-    add32(TrustedImm32(MapOrSet::Helper::ChainOffset), entryKeyIndexGPR);
-    loadValue(BaseIndex(mapStorageOrDataGPR, entryKeyIndexGPR, TimesEight), entryKeyIndexRegs);
+    loadValue(Address(entryKeySlotGPR, MapOrSet::Helper::ChainOffset * sizeof(EncodedJSValue)), entryKeyIndexRegs);
     jump().linkTo(loop, this);
 
     if (!slowPathCases.empty()) {
         JIT_COMMENT(*this, "The slow path should call the operation.");
         slowPathCases.link(this);
-        auto operation = std::is_same<MapOrSet, JSMap>::value ? operationMapKeyIndex : operationSetKeyIndex;
-        callOperationWithSilentSpill(operation, entryKeyIndexGPR, LinkableConstant::globalObject(*this, node), mapGPR, keyGPR, hashGPR);
+        auto operation = std::is_same<MapOrSet, JSMap>::value ? operationMapGet : operationSetGet;
+        callOperationWithSilentSpill(operation, entryKeySlotGPR, LinkableConstant::globalObject(*this, node), mapGPR, keyGPR, hashGPR);
         done.append(jump());
     }
 
     JIT_COMMENT(*this, "Didn't find a matched entryKey.");
     notPresentInTable.link(this);
-    move(TrustedImm32(JSMap::Helper::InvalidTableIndex), entryKeyIndexGPR);
+    move(TrustedImmPtr(nullptr), entryKeySlotGPR);
 
     JIT_COMMENT(*this, "Done, either found or not found.");
     done.link(this);
-    strictInt32Result(entryKeyIndexGPR, node);
+    storageResult(entryKeySlotGPR, node);
 }
 
-void SpeculativeJIT::compileMapKeyIndex(Node* node)
+void SpeculativeJIT::compileMapGet(Node* node)
 {
     if (node->child1().useKind() == MapObjectUse)
-        compileGetMapIndexImpl<JSMap>(node);
+        compileMapGetImpl<JSMap>(node);
     else if (node->child1().useKind() == SetObjectUse)
-        compileGetMapIndexImpl<JSSet>(node);
+        compileMapGetImpl<JSSet>(node);
     else
         RELEASE_ASSERT_NOT_REACHED();
-}
-
-void SpeculativeJIT::compileMapValue(Node* node)
-{
-    SpeculateCellOperand map(this, node->child1());
-    SpeculateInt32Operand keyIndex(this, node->child2());
-    GPRTemporary mapStorage(this);
-    JSValueRegsTemporary result(this);
-
-    GPRReg mapGPR = map.gpr();
-    GPRReg keyIndexGPR = keyIndex.gpr();
-    GPRReg mapStorageGPR = mapStorage.gpr();
-    JSValueRegs resultRegs = result.regs();
-
-    speculateMapObject(node->child1(), mapGPR);
-
-    Jump notPresentInTable = branch32(Equal, keyIndexGPR, TrustedImm32(JSMap::Helper::InvalidTableIndex));
-
-    loadPtr(Address(mapGPR, JSMap::offsetOfButterfly()), mapStorageGPR);
-    addPtr(TrustedImm32(JSImmutableButterfly::offsetOfData()), mapStorageGPR);
-    add32(TrustedImm32(1), keyIndexGPR);
-    loadValue(BaseIndex(mapStorageGPR, keyIndexGPR, TimesEight), resultRegs);
-    Jump done = jump();
-
-    notPresentInTable.link(this);
-    moveValue(jsUndefined(), resultRegs);
-
-    done.link(this);
-    jsValueResult(resultRegs, node);
 }
 
 void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix)
@@ -5427,14 +5400,17 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case MapKeyIndex:
-        compileMapKeyIndex(node);
+    case MapGet:
+        compileMapGet(node);
         break;
 
-    case MapValue: {
-        compileMapValue(node);
+    case LoadMapValue:
+        compileLoadMapValue(node);
         break;
-    }
+
+    case IsEmptyStorage:
+        compileIsEmptyStorage(node);
+        break;
 
     case MapStorage:
         compileMapStorage(node);

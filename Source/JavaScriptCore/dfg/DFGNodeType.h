@@ -432,6 +432,7 @@ namespace JSC { namespace DFG {
     \
     macro(IsCellWithType, NodeResultBoolean) \
     macro(IsEmpty, NodeResultBoolean) \
+    macro(IsEmptyStorage, NodeResultBoolean) \
     macro(HasStructureWithFlags, NodeResultBoolean) \
     macro(TypeOfIsUndefined, NodeResultBoolean) \
     macro(TypeOfIsObject, NodeResultBoolean) \
@@ -554,8 +555,8 @@ namespace JSC { namespace DFG {
     /* Nodes for JSMap and JSSet */ \
     macro(MapHash, NodeResultInt32) \
     macro(NormalizeMapKey, NodeResultJS) \
-    macro(MapKeyIndex, NodeResultInt32) \
-    macro(MapValue, NodeResultJS) \
+    macro(MapGet, NodeResultStorage) \
+    macro(LoadMapValue, NodeResultJS) \
     macro(MapIteratorNext, NodeResultBoolean) \
     macro(MapIteratorKey, NodeResultJS) \
     macro(MapIteratorValue, NodeResultJS) \

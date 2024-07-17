@@ -263,6 +263,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ToLength:
     case OverridesHasInstance:
     case IsEmpty:
+    case IsEmptyStorage:
     case TypeOfIsUndefined:
     case TypeOfIsObject:
     case TypeOfIsFunction:
@@ -314,8 +315,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case StringSlice:
     case StringSubstring:
     case ToLowerCase:
-    case MapKeyIndex:
-    case MapValue:
+    case MapGet:
+    case LoadMapValue:
     case MapStorage:
     case MapIterationNext:
     case MapIterationEntry:

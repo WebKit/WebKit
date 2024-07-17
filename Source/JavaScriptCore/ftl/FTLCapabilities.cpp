@@ -273,8 +273,8 @@ inline CapabilityLevel canCompile(Node* node)
     case IsCellWithType:
     case MapHash:
     case NormalizeMapKey:
-    case MapKeyIndex:
-    case MapValue:
+    case MapGet:
+    case LoadMapValue:
     case MapIterationNext:
     case MapIterationEntry:
     case MapIterationEntryKey:
@@ -291,6 +291,7 @@ inline CapabilityLevel canCompile(Node* node)
     case WeakSetAdd:
     case WeakMapSet:
     case IsEmpty:
+    case IsEmptyStorage:
     case TypeOfIsUndefined:
     case TypeOfIsObject:
     case TypeOfIsFunction:

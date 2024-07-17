@@ -14357,6 +14357,37 @@ void SpeculativeJIT::compileNormalizeMapKey(Node* node)
     jsValueResult(resultRegs, node);
 }
 
+void SpeculativeJIT::compileLoadMapValue(Node* node)
+{
+    StorageOperand keySlot(this, node->child1());
+    JSValueRegsTemporary result(this);
+
+    GPRReg keySlotGPR = keySlot.gpr();
+    JSValueRegs resultRegs = result.regs();
+
+    Jump notPresentInTable = branchIfEmpty(keySlotGPR);
+    loadValue(Address(keySlotGPR, sizeof(EncodedJSValue)), resultRegs);
+    Jump done = jump();
+
+    notPresentInTable.link(this);
+    moveValue(jsUndefined(), resultRegs);
+
+    done.link(this);
+    jsValueResult(resultRegs, node);
+}
+
+void SpeculativeJIT::compileIsEmptyStorage(Node* node)
+{
+    StorageOperand keySlot(this, node->child1());
+    GPRTemporary result(this, Reuse, keySlot);
+
+    GPRReg keySlotGPR = keySlot.gpr();
+    GPRReg resultGPR = result.gpr();
+
+    comparePtr(Equal, keySlotGPR, TrustedImm32(0), resultGPR);
+    unblessedBooleanResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileMapStorage(Node* node)
 {
     SpeculateCellOperand map(this, node->child1());

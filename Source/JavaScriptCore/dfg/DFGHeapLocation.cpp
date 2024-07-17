@@ -270,8 +270,8 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("MapEntryValueLoc");
         return;
 
-    case MapValueLoc:
-        out.print("MapValueLoc");
+    case LoadMapValueLoc:
+        out.print("LoadMapValueLoc");
         return;
 
     case WeakMapGetLoc:

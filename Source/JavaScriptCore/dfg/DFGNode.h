@@ -1985,8 +1985,8 @@ public:
         case ToObject:
         case CallNumberConstructor:
         case CallObjectConstructor:
-        case MapKeyIndex:
-        case MapValue:
+        case MapGet:
+        case LoadMapValue:
         case MapIteratorKey:
         case MapIteratorValue:
         case MapIterationEntryKey:

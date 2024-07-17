@@ -44,6 +44,7 @@ namespace JSC { namespace FTL {
 #define FOR_EACH_ABSTRACT_HEAP(macro) \
     macro(typedArrayProperties) \
     macro(JSCellHeaderAndNamedProperties) \
+    macro(OrderedHashTableData) \
 
 #define FOR_EACH_ABSTRACT_FIELD(macro) \
     macro(ArrayBuffer_data, ArrayBuffer::offsetOfData()) \

@@ -3389,7 +3389,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
         }
 
         case JSMapGetIntrinsic: {
-            if (argumentCountIncludingThis < 2)
+            if (argumentCountIncludingThis < 2 || !is64Bit())
                 return CallOptimizationResult::DidNothing;
 
             insertChecks();
@@ -3397,15 +3397,16 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             Node* normalizedKey = addToGraph(NormalizeMapKey, key);
             Node* hash = addToGraph(MapHash, normalizedKey);
-            Node* keyIndex = addToGraph(MapKeyIndex, Edge(map, MapObjectUse), Edge(normalizedKey), Edge(hash));
-            Node* result = addToGraph(MapValue, OpInfo(0), OpInfo(prediction), Edge(map, MapObjectUse), Edge(keyIndex));
+
+            Node* keySlot = addToGraph(MapGet, Edge(map, MapObjectUse), Edge(normalizedKey), Edge(hash));
+            Node* result = addToGraph(LoadMapValue, OpInfo(0), OpInfo(prediction), Edge(keySlot));
             setResult(result);
             return CallOptimizationResult::Inlined;
         }
 
         case JSSetHasIntrinsic:
         case JSMapHasIntrinsic: {
-            if (argumentCountIncludingThis < 2)
+            if (argumentCountIncludingThis < 2 || !is64Bit())
                 return CallOptimizationResult::DidNothing;
 
             insertChecks();
@@ -3413,11 +3414,12 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             Node* normalizedKey = addToGraph(NormalizeMapKey, key);
             Node* hash = addToGraph(MapHash, normalizedKey);
+
             UseKind useKind = intrinsic == JSSetHasIntrinsic ? SetObjectUse : MapObjectUse;
-            Node* keyIndex = addToGraph(MapKeyIndex, Edge(mapOrSet, useKind), Edge(normalizedKey), Edge(hash));
-            Node* isInvalidIndex = addToGraph(SameValue, keyIndex, jsConstant(JSMap::Helper::invalidTableIndex()));
-            Node* resultNode = addToGraph(LogicalNot, isInvalidIndex);
-            setResult(resultNode);
+            Node* keySlot = addToGraph(MapGet, Edge(mapOrSet, useKind), Edge(normalizedKey), Edge(hash));
+            Node* invertedResult = addToGraph(IsEmptyStorage, keySlot);
+            Node* result = addToGraph(LogicalNot, invertedResult);
+            setResult(result);
             return CallOptimizationResult::Inlined;
         }
 

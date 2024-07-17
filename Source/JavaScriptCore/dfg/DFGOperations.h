@@ -292,9 +292,8 @@ JSC_DECLARE_JIT_OPERATION(operationNormalizeMapKeyHeapBigInt, EncodedJSValue, (V
 JSC_DECLARE_JIT_OPERATION(operationMapHash, UCPUStrictInt32, (JSGlobalObject*, EncodedJSValue input));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMapHashHeapBigInt, UCPUStrictInt32, (VM*, JSBigInt*));
 
-JSC_DECLARE_JIT_OPERATION(operationMapKeyIndex, UCPUStrictInt32, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
-JSC_DECLARE_JIT_OPERATION(operationSetKeyIndex, UCPUStrictInt32, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
-JSC_DECLARE_JIT_OPERATION(operationMapValue, EncodedJSValue, (JSGlobalObject*, JSCell*, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationMapGet, JSValue*, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationSetGet, JSValue*, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
 
 JSC_DECLARE_JIT_OPERATION(operationMapStorage, EncodedJSValue, (JSGlobalObject*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationSetStorage, EncodedJSValue, (JSGlobalObject*, JSCell*));

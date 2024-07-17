@@ -1479,9 +1479,10 @@ public:
     void compileCallCustomAccessorSetter(Node*);
     void compileNormalizeMapKey(Node*);
     template<typename MapOrSet>
-    ALWAYS_INLINE void compileGetMapIndexImpl(Node*);
-    void compileMapKeyIndex(Node*);
-    void compileMapValue(Node*);
+    ALWAYS_INLINE void compileMapGetImpl(Node*);
+    void compileMapGet(Node*);
+    void compileLoadMapValue(Node*);
+    void compileIsEmptyStorage(Node*);
     void compileMapIteratorNext(Node*);
     void compileMapIteratorKey(Node*);
     void compileMapIteratorValue(Node*);

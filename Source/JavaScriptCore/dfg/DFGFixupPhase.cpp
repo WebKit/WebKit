@@ -2719,12 +2719,12 @@ private:
             break;
         }
 
-        case MapValue:
-            fixEdge<MapObjectUse>(node->child1());
-            fixEdge<Int32Use>(node->child2());
+        case LoadMapValue:
+        case IsEmptyStorage:
+            fixEdge<UntypedUse>(node->child1());
             break;
 
-        case MapKeyIndex:
+        case MapGet:
             if (node->child1().useKind() == MapObjectUse)
                 fixEdge<MapObjectUse>(node->child1());
             else if (node->child1().useKind() == SetObjectUse)

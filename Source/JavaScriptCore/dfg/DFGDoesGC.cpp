@@ -143,6 +143,7 @@ bool doesGC(Graph& graph, Node* node)
     case ProfileControlFlow:
     case OverridesHasInstance:
     case IsEmpty:
+    case IsEmptyStorage:
     case TypeOfIsUndefined:
     case TypeOfIsObject:
     case TypeOfIsFunction:
@@ -167,8 +168,8 @@ bool doesGC(Graph& graph, Node* node)
     case SuperSamplerEnd:
     case CPUIntrinsic:
     case NormalizeMapKey: // HeapBigInt => BigInt32 conversion does not involve GC.
-    case MapKeyIndex:
-    case MapValue:
+    case MapGet:
+    case LoadMapValue:
     case MapIteratorNext:
     case MapIteratorKey:
     case MapIteratorValue:
