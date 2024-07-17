@@ -3121,7 +3121,7 @@ class InstallWinDependencies(shell.ShellCommandNewStyle):
     name = 'win-deps'
     description = ['Updating Win dependencies']
     descriptionDone = ['Updated Win dependencies']
-    command = ['python3', 'Tools/Scripts/update-webkit-wincairo-libs.py']
+    command = ['python3', 'Tools/Scripts/update-webkit-win-libs.py']
     haltOnFailure = True
 
     def __init__(self, **kwargs):

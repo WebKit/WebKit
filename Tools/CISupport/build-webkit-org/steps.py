@@ -358,7 +358,7 @@ class InstallWinCairoDependencies(shell.ShellCommandNewStyle):
     name = 'wincairo-requirements'
     description = ['updating wincairo dependencies']
     descriptionDone = ['updated wincairo dependencies']
-    command = ['python3', './Tools/Scripts/update-webkit-wincairo-libs.py']
+    command = ['python3', './Tools/Scripts/update-webkit-win-libs.py']
     haltOnFailure = True
 
 

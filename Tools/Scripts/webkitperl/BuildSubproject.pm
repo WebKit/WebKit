@@ -136,7 +136,7 @@ if ($buildDir && !isCMakeBuild()) {
 }
 
 if (isWin() || (isJSCOnly() && isWindows())) {
-    (system("python3 Tools/Scripts/update-webkit-wincairo-libs.py") == 0) or die;
+    (system("python3 Tools/Scripts/update-webkit-win-libs.py") == 0) or die;
 }
 
 if ($useCCache == 1) {
