@@ -33,19 +33,19 @@ namespace WebKit {
 
 class WebPage;
 
-class WebMediaKeySystemClient : public WebCore::MediaKeySystemClient {
+class WebMediaKeySystemClient final : public WebCore::MediaKeySystemClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WebMediaKeySystemClient(WebPage&);
     ~WebMediaKeySystemClient() { }
 
 private:
-    void pageDestroyed() override { }
+    void pageDestroyed() final;
 
-    void requestMediaKeySystem(WebCore::MediaKeySystemRequest&) override;
-    void cancelMediaKeySystemRequest(WebCore::MediaKeySystemRequest&) override;
+    void requestMediaKeySystem(WebCore::MediaKeySystemRequest&) final;
+    void cancelMediaKeySystemRequest(WebCore::MediaKeySystemRequest&) final;
 
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
 };
 
 } // namespace WebCore

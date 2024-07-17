@@ -59,7 +59,7 @@ MediaKeySystemController::~MediaKeySystemController()
 
 void provideMediaKeySystemTo(Page& page, MediaKeySystemClient& client)
 {
-    MediaKeySystemController::provideTo(&page, MediaKeySystemController::supplementName(), makeUnique<MediaKeySystemController>(client));
+    Supplement<Page>::provideTo(&page, MediaKeySystemController::supplementName(), makeUnique<MediaKeySystemController>(client));
 }
 
 void MediaKeySystemController::logRequestMediaKeySystemDenial(Document& document)
