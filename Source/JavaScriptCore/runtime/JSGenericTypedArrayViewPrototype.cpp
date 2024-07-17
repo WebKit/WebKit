@@ -133,28 +133,23 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromHex, (JSGlobalObject* globalO
     StringView view = jsString->view(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    size_t count = std::min(static_cast<size_t>(view.length() / 2), uint8Array->length());
-    for (size_t i = 0; i < count * 2; ++i) {
-        int digit = parseDigit(view[i], 16);
-        if (UNLIKELY(digit == -1))
-            return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.prototype.setFromHex requires a string containing only \"0123456789abcdefABCDEF\""_s));
-    }
-
     uint8_t* data = uint8Array->typedVector();
+    size_t writtenCount = std::min(static_cast<size_t>(view.length() / 2), uint8Array->length());
+    size_t readCount = writtenCount * 2;
+    auto result = std::span { data, data + writtenCount };
 
-    size_t read = 0;
-    size_t written = 0;
-    for (size_t i = 0; i < count; ++i) {
-        int tens = parseDigit(view[read++], 16);
-        int ones = parseDigit(view[read++], 16);
-        data[written++] = (tens * 16) + ones;
-    }
-    ASSERT(read == count * 2);
-    ASSERT(written == count);
+    bool success = false;
+    if (view.is8Bit())
+        success = decodeHex(view.span8().subspan(0, readCount), result) == WTF::notFound;
+    else
+        success = decodeHex(view.span16().subspan(0, readCount), result) == WTF::notFound;
+
+    if (UNLIKELY(!success))
+        return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.prototype.setFromHex requires a string containing only \"0123456789abcdefABCDEF\""_s));
 
     JSObject* resultObject = constructEmptyObject(globalObject);
-    resultObject->putDirect(vm, vm.propertyNames->read, jsNumber(read));
-    resultObject->putDirect(vm, vm.propertyNames->written, jsNumber(written));
+    resultObject->putDirect(vm, vm.propertyNames->read, jsNumber(readCount));
+    resultObject->putDirect(vm, vm.propertyNames->written, jsNumber(writtenCount));
     return JSValue::encode(resultObject);
 }
 

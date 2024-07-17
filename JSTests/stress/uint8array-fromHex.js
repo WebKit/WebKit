@@ -35,13 +35,33 @@ shouldBeArray(Uint8Array.fromHex("FEFF"), [254, 255]);
 shouldBeArray(Uint8Array.fromHex("000180feff"), [0, 1, 128, 254, 255]);
 shouldBeArray(Uint8Array.fromHex("000180FEFF"), [0, 1, 128, 254, 255]);
 
+{
+    let expected = ''
+    let buffer = new Uint8Array(16 * 1024 + 15);
+    for (let i = 0; i < buffer.length; ++i) {
+        buffer[i] = i & 0xff;
+        expected += (i & 0xff).toString(16).padStart(2, '0');
+    }
+    shouldBeArray(Uint8Array.fromHex(expected), buffer);
+}
+{
+    let expected = ''
+    let buffer = new Uint8Array(15);
+    for (let i = 0; i < buffer.length; ++i) {
+        buffer[i] = i & 0xff;
+        expected += (i & 0xff).toString(16).padStart(2, '0');
+    }
+    shouldBeArray(Uint8Array.fromHex(expected), buffer);
+}
+
+
 for (let invalid of [undefined, null, false, true, 42, {}, []]) {
     shouldThrow(() => {
         Uint8Array.fromHex(invalid);
     }, TypeError);
 }
 
-for (let invalid of ["0", "012", "0g", "0G", "g0", "G0", "0✅", "✅0"]) {
+for (let invalid of ["0", "012", "0g", "0G", "g0", "G0", "0✅", "✅0", "00000000000000000000000000000000✅0", "00000000000000000000000000000000000000✅0", "00000000000000000000000000000000v0", "00000000000000000000000000000000000000g0"]) {
     shouldThrow(() => {
         Uint8Array.fromHex(invalid);
     }, SyntaxError);
