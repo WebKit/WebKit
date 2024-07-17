@@ -115,6 +115,10 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
     // FIXME: When we receive a redirect after the navigation policy has been decided for the initial request,
     // the provisional load's DocumentLoader needs to receive navigation policy decisions. We need a better model for this state.
 
+    std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy;
+    if (RefPtr coreFrame = m_frame->coreFrame())
+        ownerPermissionsPolicy = coreFrame->ownerPermissionsPolicy();
+
     auto& mouseEventData = navigationAction.mouseEventData();
     return NavigationActionData {
         navigationAction.type(),
@@ -141,6 +145,7 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         navigationAction.lockBackForwardList(),
         clientRedirectSourceForHistory,
         sandboxFlags,
+        WTFMove(ownerPermissionsPolicy),
         navigationAction.privateClickMeasurement(),
         requestingFrame ? requestingFrame->advancedPrivacyProtections() : OptionSet<AdvancedPrivacyProtections> { },
         requestingFrame ? requestingFrame->originatorAdvancedPrivacyProtections() : OptionSet<AdvancedPrivacyProtections> { },

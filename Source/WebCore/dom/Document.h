@@ -274,6 +274,7 @@ struct CSSParserContext;
 struct ClientOrigin;
 struct FocusOptions;
 struct IntersectionObserverData;
+struct OwnerPermissionsPolicyData;
 struct QuerySelectorAllResults;
 struct SecurityPolicyViolationEventInit;
 
@@ -1100,6 +1101,7 @@ public:
     // Returns the owning element in the parent document.
     // Returns nullptr if this is the top level document.
     WEBCORE_EXPORT HTMLFrameOwnerElement* ownerElement() const;
+    WEBCORE_EXPORT std::optional<OwnerPermissionsPolicyData> ownerPermissionsPolicy() const;
 
     // Used by DOM bindings; no direction known.
     const String& title() const { return m_title.string; }

@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: fail
+FAIL: Timed out waiting for notifyDone to be called
+
+Verifies permissions policy is set correctly
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+

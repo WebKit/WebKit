@@ -373,36 +373,20 @@ static bool featureValueForOrigin(PermissionsPolicy::Feature feature, const Perm
 }
 
 // https://w3c.github.io/webappsec-permissions-policy/#algo-define-inherited-policy-in-container
-bool PermissionsPolicy::computeInheritedPolicyValueInContainer(Feature feature, const HTMLFrameOwnerElement* frame, const SecurityOriginData& origin) const
+bool PermissionsPolicy::computeInheritedPolicyValueInContainer(Feature feature, const std::optional<OwnerPermissionsPolicyData>& ownerPermissionsPolicy, const SecurityOriginData& origin) const
 {
-    if (!frame)
+    if (!ownerPermissionsPolicy)
         return true;
 
-    Ref document = frame->document();
-    auto documentOrigin = document->securityOrigin().data();
-    if (!featureValueForOrigin(feature, document->permissionsPolicy(), documentOrigin))
-        return false;
-
-    if (!featureValueForOrigin(feature, document->permissionsPolicy(), origin))
-        return false;
-
-    if (RefPtr iframe = dynamicDowncast<HTMLIFrameElement>(frame)) {
-        auto containerPolicy = iframe->permissionsPolicyDirective();
-        if (auto iterator = containerPolicy.find(feature); iterator != containerPolicy.end())
-            return iterator->value.matches(origin);
-    }
-
-    return isFeatureAllowedByDefaultAllowlist(feature, origin, documentOrigin);
-}
-
-bool PermissionsPolicy::computeInheritedPolicyValueInContainer(Feature feature, const SecurityOriginData& documentOrigin, const PermissionsPolicy& documentPolicy, const  PermissionsPolicy::PolicyDirective& containerPolicy, const SecurityOriginData& origin) const
-{
+    auto documentPolicy = ownerPermissionsPolicy->documentPolicy;
+    auto documentOrigin = ownerPermissionsPolicy->documentOrigin;
     if (!featureValueForOrigin(feature, documentPolicy, documentOrigin))
         return false;
 
     if (!featureValueForOrigin(feature, documentPolicy, origin))
         return false;
 
+    auto containerPolicy = ownerPermissionsPolicy->containerPolicy;
     if (auto iterator = containerPolicy.find(feature); iterator != containerPolicy.end())
         return iterator->value.matches(origin);
 
@@ -419,21 +403,9 @@ bool PermissionsPolicy::inheritedPolicyValueForFeature(Feature feature) const
 // https://w3c.github.io/webappsec-permissions-policy/#algo-create-for-navigable
 PermissionsPolicy::PermissionsPolicy(const Document& document)
 {
-    auto origin = document.securityOrigin().data();
-    auto owner = document.ownerElement();
-    std::optional<OwnerPermissionsPolicyData> ownerPolicy;
-    if (RefPtr frame = document.frame()) {
-        if (auto ownerPolicy = frame->ownerPermissionsPolicy()) {
-            forEachFeature([&](auto feature) {
-                if (computeInheritedPolicyValueInContainer(feature, ownerPolicy->documentOrigin, ownerPolicy->documentPolicy, ownerPolicy->containerPolicy, origin))
-                    m_inheritedPolicy.add(feature);
-            });
-            return;
-        }
-    }
-
+    auto ownerPermissionsPolicy = document.ownerPermissionsPolicy();
     forEachFeature([&](auto feature) {
-        if (computeInheritedPolicyValueInContainer(feature, owner, origin))
+        if (computeInheritedPolicyValueInContainer(feature, ownerPermissionsPolicy, document.securityOrigin().data()))
             m_inheritedPolicy.add(feature);
     });
 }

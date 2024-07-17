@@ -342,6 +342,7 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& win
         WebCore::LockBackForwardList::No,
         { }, /* clientRedirectSourceForHistory */
         0, /* effectiveSandboxFlags */
+        std::nullopt, /* ownerPermissionsPolicy */
         navigationAction.privateClickMeasurement(),
         { }, /* advancedPrivacyProtections */
         { }, /* originatorAdvancedPrivacyProtections */

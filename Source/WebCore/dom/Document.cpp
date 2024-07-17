@@ -6324,6 +6324,14 @@ HTMLFrameOwnerElement* Document::ownerElement() const
     return frame()->ownerElement();
 }
 
+std::optional<OwnerPermissionsPolicyData> Document::ownerPermissionsPolicy() const
+{
+    if (WeakPtr currentFrame = frame())
+        return currentFrame->ownerPermissionsPolicy();
+
+    return std::nullopt;
+}
+
 // https://html.spec.whatwg.org/#cookie-averse-document-object
 bool Document::isCookieAverse() const
 {

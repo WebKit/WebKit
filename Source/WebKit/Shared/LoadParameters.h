@@ -33,6 +33,7 @@
 #include <WebCore/AdvancedPrivacyProtections.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/OwnerPermissionsPolicyData.h>
 #include <WebCore/PublicSuffixStore.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
@@ -78,6 +79,7 @@ struct LoadParameters {
     WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility { WebCore::SubstituteData::SessionHistoryVisibility::Visible };
     String clientRedirectSourceForHistory;
     WebCore::SandboxFlags effectiveSandboxFlags { 0 };
+    std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy;
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
     std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
     bool isServiceWorkerLoad { false };
