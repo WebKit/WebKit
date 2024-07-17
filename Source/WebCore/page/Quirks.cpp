@@ -396,6 +396,8 @@ String Quirks::storageAccessUserAgentStringQuirkForDomain(const URL& url)
     auto iterator = quirks.find(domain);
     if (iterator == quirks.end())
         return { };
+    if (domain == "live.com"_s && url.host() != "teams.live.com"_s)
+        return { };
     return iterator->value;
 }
 
