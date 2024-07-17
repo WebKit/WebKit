@@ -39,7 +39,6 @@
 #include "ElementInlines.h"
 #include "ElementRareData.h"
 #include "HTMLElement.h"
-#include "HTMLImageElement.h"
 #include "HTMLParserIdioms.h"
 #include "InlineStylePropertyMap.h"
 #include "InspectorInstrumentation.h"
@@ -333,9 +332,7 @@ void StyledElement::rebuildPresentationalHintStyle()
     auto style = MutableStyleProperties::create(isSVG ? SVGAttributeMode : HTMLQuirksMode);
     for (auto& attribute : attributesIterator())
         collectPresentationalHintsForAttribute(attribute.name(), attribute.value(), style);
-
-    if (auto* imageElement = dynamicDowncast<HTMLImageElement>(*this))
-        imageElement->collectExtraStyleForPresentationalHints(style);
+    collectExtraStyleForPresentationalHints(style);
 
     // ShareableElementData doesn't store presentation attribute style, so make sure we have a UniqueElementData.
     auto& elementData = ensureUniqueElementData();

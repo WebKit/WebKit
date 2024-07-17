@@ -184,8 +184,6 @@ public:
 
     bool originClean(const SecurityOrigin&) const;
 
-    void collectExtraStyleForPresentationalHints(MutableStyleProperties&);
-
     Image* image() const;
 
 protected:
@@ -203,6 +201,7 @@ private:
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
     void invalidateAttributeMapping();
+    void collectExtraStyleForPresentationalHints(MutableStyleProperties&) override;
 
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document& targetDocument) final;
 
