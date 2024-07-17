@@ -433,6 +433,8 @@ void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& grou
 
     if (dynamicOffsetCount)
         m_bindGroupDynamicOffsets.set(groupIndex, Vector<uint32_t>(std::span { dynamicOffsets, dynamicOffsetCount }));
+    else
+        m_bindGroupDynamicOffsets.remove(groupIndex);
 
     Vector<const BindableResources*> resourceList;
     for (const auto& resource : group.resources()) {

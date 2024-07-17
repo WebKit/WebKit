@@ -1062,6 +1062,8 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group
     m_maxBindGroupSlot = std::max(groupIndex, m_maxBindGroupSlot);
     if (dynamicOffsetCount)
         m_bindGroupDynamicOffsets.set(groupIndex, Vector<uint32_t>(std::span { dynamicOffsets, dynamicOffsetCount }));
+    else
+        m_bindGroupDynamicOffsets.remove(groupIndex);
 
     for (const auto& resource : group.resources()) {
         if ((resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment)) && resource.mtlResources.size())
