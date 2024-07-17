@@ -328,7 +328,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     };
 
     if (g_jscConfig.useFastJITPermissions)
-        threadSelfRestrictRWXToRW();
+        threadSelfRestrict<MemoryRestriction::kRwxToRw>();
 #if ENABLE(MPROTECT_RX_TO_RWX)
     ExecutableAllocator::singleton().startWriting(outData, initialSize);
 #endif
@@ -429,7 +429,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
             Assembler::fillNops<MachineCodeCopyMode::JITMemcpy>(outData + compactSize, nopSizeInBytes);
     }
     if (g_jscConfig.useFastJITPermissions)
-        threadSelfRestrictRWXToRX();
+        threadSelfRestrict<MemoryRestriction::kRwxToRx>();
 
     if (m_executableMemory) {
         m_size = compactSize;

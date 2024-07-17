@@ -423,10 +423,10 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
     if (reservation.pageReservation) {
         ASSERT(reservation.pageReservation.size() == reservation.size);
         reservation.base = reservation.pageReservation.base();
-        g_jscConfig.useFastJITPermissions = threadSelfRestrictSupported();
+        g_jscConfig.useFastJITPermissions = threadSelfRestrictSupported<MemoryRestriction::kRwxToRw>();
 
         if (g_jscConfig.useFastJITPermissions)
-            threadSelfRestrictRWXToRX();
+            threadSelfRestrict<MemoryRestriction::kRwxToRx>();
 
 #if ENABLE(SEPARATED_WX_HEAP)
         if (!g_jscConfig.useFastJITPermissions) {

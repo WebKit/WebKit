@@ -28,6 +28,29 @@
 #include <stdint.h>
 #include <wtf/Platform.h>
 
+enum class MemoryRestriction {
+    kRwxToRw,
+    kRwxToRx,
+};
+
+#if defined(OS_THREAD_SELF_RESTRICT) != defined(OS_THREAD_SELF_RESTRICT_SUPPORTED)
+#error Must override both or neither of OS_THREAD_SELF_RESTRICT and OS_THREAD_SELF_RESTRICT_SUPPORTED
+#endif
+
+#if defined(OS_THREAD_SELF_RESTRICT) && defined(OS_THREAD_SELF_RESTRICT_SUPPORTED)
+template <MemoryRestriction restriction>
+static ALWAYS_INLINE bool threadSelfRestrictSupported()
+{
+    return OS_THREAD_SELF_RESTRICT_SUPPORTED(restriction);
+}
+
+template <MemoryRestriction restriction>
+static ALWAYS_INLINE void threadSelfRestrict()
+{
+    OS_THREAD_SELF_RESTRICT(restriction);
+}
+
+#else // Not defined(OS_THREAD_SELF_RESTRICT) && defined(OS_THREAD_SELF_RESTRICT_SUPPORTED)
 #if OS(DARWIN) && CPU(ARM64)
 
 #include "JSCConfig.h"
@@ -37,79 +60,76 @@
 #if USE(INLINE_JIT_PERMISSIONS_API)
 #include <BrowserEngineCore/BEMemory.h>
 
+template <MemoryRestriction>
 static ALWAYS_INLINE bool threadSelfRestrictSupported()
 {
     return (&be_memory_inline_jit_restrict_with_witness_supported != nullptr
             && !!be_memory_inline_jit_restrict_with_witness_supported());
 }
 
-static ALWAYS_INLINE void threadSelfRestrictRWXToRW()
+template <MemoryRestriction restriction>
+static ALWAYS_INLINE void threadSelfRestrict()
 {
     ASSERT(g_jscConfig.useFastJITPermissions);
-    be_memory_inline_jit_restrict_rwx_to_rw_with_witness();
-}
-
-static ALWAYS_INLINE void threadSelfRestrictRWXToRX()
-{
-    ASSERT(g_jscConfig.useFastJITPermissions);
-    be_memory_inline_jit_restrict_rwx_to_rx_with_witness();
+    if constexpr (restriction == MemoryRestriction::kRwxToRw)
+        be_memory_inline_jit_restrict_rwx_to_rw_with_witness();
+    else if constexpr (restriction == MemoryRestriction::kRwxToRx)
+        be_memory_inline_jit_restrict_rwx_to_rx_with_witness();
+    else
+        RELEASE_ASSERT_NOT_REACHED();
 }
 
 #elif USE(PTHREAD_JIT_PERMISSIONS_API)
 #include <pthread.h>
 
+template <MemoryRestriction>
 static ALWAYS_INLINE bool threadSelfRestrictSupported()
 {
-    return !!pthread_jit_write_protect_supported_np();;
+    return !!pthread_jit_write_protect_supported_np();
 }
 
-static ALWAYS_INLINE void threadSelfRestrictRWXToRW()
+template <MemoryRestriction restriction>
+static ALWAYS_INLINE void threadSelfRestrict()
 {
     ASSERT(g_jscConfig.useFastJITPermissions);
-    pthread_jit_write_protect_np(false);
-}
-
-static ALWAYS_INLINE void threadSelfRestrictRWXToRX()
-{
-    ASSERT(g_jscConfig.useFastJITPermissions);
-    pthread_jit_write_protect_np(true);
+    if constexpr (restriction == MemoryRestriction::kRwxToRw)
+        pthread_jit_write_protect_np(false);
+    else if constexpr (restriction == MemoryRestriction::kRwxToRx)
+        pthread_jit_write_protect_np(true);
+    else
+        RELEASE_ASSERT_NOT_REACHED();
 }
 
 #elif USE(APPLE_INTERNAL_SDK)
 #include <os/thread_self_restrict.h>
 
+template <MemoryRestriction>
 SUPPRESS_ASAN static ALWAYS_INLINE bool threadSelfRestrictSupported()
 {
     return !!os_thread_self_restrict_rwx_is_supported();
 }
 
-SUPPRESS_ASAN static ALWAYS_INLINE void threadSelfRestrictRWXToRW()
+template <MemoryRestriction restriction>
+static ALWAYS_INLINE void threadSelfRestrict()
 {
     ASSERT(g_jscConfig.useFastJITPermissions);
-    os_thread_self_restrict_rwx_to_rw();
-}
-
-SUPPRESS_ASAN static ALWAYS_INLINE void threadSelfRestrictRWXToRX()
-{
-    ASSERT(g_jscConfig.useFastJITPermissions);
-    os_thread_self_restrict_rwx_to_rx();
+    if constexpr (restriction == MemoryRestriction::kRwxToRw)
+        os_thread_self_restrict_rwx_to_rw();
+    else if constexpr (restriction == MemoryRestriction::kRwxToRx)
+        os_thread_self_restrict_rwx_to_rx();
+    else
+        RELEASE_ASSERT_NOT_REACHED();
 }
 
 #else
-
+template <MemoryRestriction>
 static ALWAYS_INLINE bool threadSelfRestrictSupported()
 {
     return false;
 }
 
-static ALWAYS_INLINE void threadSelfRestrictRWXToRW()
-{
-    bool tautologyToIgnoreWarning = true;
-    if (tautologyToIgnoreWarning)
-        RELEASE_ASSERT_NOT_REACHED();
-}
-
-static ALWAYS_INLINE void threadSelfRestrictRWXToRX()
+template <MemoryRestriction>
+static ALWAYS_INLINE void threadSelfRestrict()
 {
     bool tautologyToIgnoreWarning = true;
     if (tautologyToIgnoreWarning)
@@ -117,22 +137,22 @@ static ALWAYS_INLINE void threadSelfRestrictRWXToRX()
 }
 
 #endif
-
 #else // Not OS(DARWIN) && CPU(ARM64)
+#if defined(OS_THREAD_SELF_RESTRICT) || defined(OS_THREAD_SELF_RESTRICT_SUPPORTED)
+#error OS_THREAD_SELF_RESTRICT and OS_THREAD_SELF_RESTRICT_SUPPORTED are only used on ARM64+Darwin-only systems
+#endif
 
+template <MemoryRestriction>
 static ALWAYS_INLINE bool threadSelfRestrictSupported()
 {
     return false;
 }
 
-NO_RETURN_DUE_TO_CRASH ALWAYS_INLINE void threadSelfRestrictRWXToRW()
-{
-    CRASH();
-}
-
-NO_RETURN_DUE_TO_CRASH ALWAYS_INLINE void threadSelfRestrictRWXToRX()
+template <MemoryRestriction>
+NO_RETURN_DUE_TO_CRASH ALWAYS_INLINE void threadSelfRestrict()
 {
     CRASH();
 }
 
 #endif // OS(DARWIN) && CPU(ARM64)
+#endif // defined(OS_THREAD_SELF_RESTRICT) && defined(OS_THREAD_SELF_RESTRICT_SUPPORTED)
