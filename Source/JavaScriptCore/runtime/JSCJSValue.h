@@ -181,7 +181,11 @@ public:
     /* read a JSValue from storage not owned by this thread
      * on 64-bit ports, or when JIT is not enabled, equivalent to
      * JSValue::decode(*ptr) */
-    static JSValue decodeConcurrent(const volatile EncodedJSValue *);
+#if USE(JSVALUE64) || !ENABLE(CONCURRENT_JS)
+    static JSValue decodeConcurrent(const EncodedJSValue*);
+#else
+    static JSValue decodeConcurrent(const volatile EncodedJSValue*);
+#endif
 
     enum JSNullTag { JSNull };
     enum JSUndefinedTag { JSUndefined };
@@ -777,17 +781,17 @@ private:
 
 #if USE(JSVALUE64) || !ENABLE(CONCURRENT_JS)
 
-inline JSValue JSValue::decodeConcurrent(const volatile EncodedJSValue* encodedJSValue)
+ALWAYS_INLINE JSValue JSValue::decodeConcurrent(const EncodedJSValue* encodedJSValue)
 {
     return JSValue::decode(*encodedJSValue);
 }
 
-inline void updateEncodedJSValueConcurrent(EncodedJSValue& dest, EncodedJSValue value)
+ALWAYS_INLINE void updateEncodedJSValueConcurrent(EncodedJSValue& dest, EncodedJSValue value)
 {
     dest = value;
 }
 
-inline void clearEncodedJSValueConcurrent(EncodedJSValue& dest)
+ALWAYS_INLINE void clearEncodedJSValueConcurrent(EncodedJSValue& dest)
 {
     dest = JSValue::encode(JSValue());
 }
