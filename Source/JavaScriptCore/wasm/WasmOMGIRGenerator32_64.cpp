@@ -5642,52 +5642,36 @@ auto OMGIRGenerator::addF32ConvertUI64(ExpressionType argVar, ExpressionType& re
 auto OMGIRGenerator::addF64Nearest(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
-    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Double, origin());
-    patchpoint->append(arg, ValueRep::SomeRegister);
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-        jit.roundTowardNearestIntDouble(params[1].fpr(), params[0].fpr());
-    });
-    patchpoint->effects = Effects::none();
-    result = push(patchpoint);
+    Value* callee = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(Math::f64_roundeven));
+    Value* call = m_currentBlock->appendNew<CCallValue>(m_proc, B3::Double, origin(), callee, arg);
+    result = push(call);
     return { };
 }
 
 auto OMGIRGenerator::addF32Nearest(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
-    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, origin());
-    patchpoint->append(arg, ValueRep::SomeRegister);
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-        jit.roundTowardNearestIntFloat(params[1].fpr(), params[0].fpr());
-    });
-    patchpoint->effects = Effects::none();
-    result = push(patchpoint);
+    Value* callee = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(Math::f32_roundeven));
+    Value* call = m_currentBlock->appendNew<CCallValue>(m_proc, B3::Float, origin(), callee, arg);
+    result = push(call);
     return { };
 }
 
 auto OMGIRGenerator::addF64Trunc(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
-    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Double, origin());
-    patchpoint->append(arg, ValueRep::SomeRegister);
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-        jit.roundTowardZeroDouble(params[1].fpr(), params[0].fpr());
-    });
-    patchpoint->effects = Effects::none();
-    result = push(patchpoint);
+    Value* callee = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(Math::f64_trunc));
+    Value* call = m_currentBlock->appendNew<CCallValue>(m_proc, B3::Double, origin(), callee, arg);
+    result = push(call);
     return { };
 }
 
 auto OMGIRGenerator::addF32Trunc(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
-    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, origin());
-    patchpoint->append(arg, ValueRep::SomeRegister);
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-        jit.roundTowardZeroFloat(params[1].fpr(), params[0].fpr());
-    });
-    patchpoint->effects = Effects::none();
-    result = push(patchpoint);
+    Value* callee = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(Math::f32_trunc));
+    Value* call = m_currentBlock->appendNew<CCallValue>(m_proc, B3::Float, origin(), callee, arg);
+    result = push(call);
     return { };
 }
 

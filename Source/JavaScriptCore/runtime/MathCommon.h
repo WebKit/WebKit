@@ -322,6 +322,10 @@ JSC_DECLARE_NOEXCEPT_JIT_OPERATION(roundFloat, float, (float));
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f32_nearest, float, (float));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f64_nearest, double, (double));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f32_roundeven, float, (float));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f64_roundeven, double, (double));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f32_trunc, float, (float));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f64_trunc, double, (double));
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i32_div_s, int32_t, (int32_t, int32_t));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i32_div_u, uint32_t, (uint32_t, uint32_t));
