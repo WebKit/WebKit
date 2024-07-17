@@ -4099,15 +4099,18 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
         }
     };
     AXLOGDeferredCollection("ReplacedObjectsList"_s, m_deferredReplacedObjects);
+    bool anyRelationsDirty = false;
     for (AXID axID : m_deferredReplacedObjects) {
         // If the replaced object was part of any relation, we need to make sure the relations are updated.
         // Relations for this object may have been removed already (via the renderer being destroyed), so
         // we should check if this axID was recently removed so we can dirty relations.
         if (m_relations.contains(axID) || m_recentlyRemovedRelations.contains(axID))
-            markRelationsDirty();
+            anyRelationsDirty = true;
         remove(axID);
     }
     m_deferredReplacedObjects.clear();
+    if (anyRelationsDirty)
+        markRelationsDirty();
 
     AXLOGDeferredCollection("RecomputeTableIsExposedList"_s, m_deferredRecomputeTableIsExposedList);
     m_deferredRecomputeTableIsExposedList.forEach([this] (auto& tableElement) {
