@@ -79,6 +79,7 @@ enum class FeatureCategory : uint8_t {
     Animation,
     CSS,
     DOM,
+    Extensions,
     HTML,
     Javascript,
     Media,

@@ -257,7 +257,7 @@ class Preferences
   end
 
   # Corresponds to WebFeatureCategory enum cases.
-  CATEGORIES = %w{ animation css dom html javascript media networking privacy security }
+  CATEGORIES = %w{ animation css dom extensions html javascript media networking privacy security }
 
   def initializeParsedPreferences(parsedPreferences)
     result = []
