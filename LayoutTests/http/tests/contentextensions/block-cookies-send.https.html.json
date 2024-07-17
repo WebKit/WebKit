@@ -1,0 +1,10 @@
+[
+    {
+        "action": {
+            "type": "block-cookies"
+        },
+        "trigger": {
+            "url-filter": "https://127.0.0.1:8443/cookies/resources/echo-cookies"
+        }
+    }
+]

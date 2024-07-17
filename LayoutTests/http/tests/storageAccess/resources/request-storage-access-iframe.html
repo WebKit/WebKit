@@ -12,17 +12,17 @@
 
         function messageToTop(messagePrefix, fetchData) {
             if (originIsNull) {
-                top.postMessage(messagePrefix, "http://127.0.0.1:8000");
+                top.postMessage(messagePrefix, "https://127.0.0.1:8443");
             } else {
                 top.postMessage(messagePrefix + " document.cookie == " + document.cookie +
-                    (fetchData ? ", cookies seen server-side == " + JSON.stringify(fetchData) : ""), "http://127.0.0.1:8000");
+                    (fetchData ? ", cookies seen server-side == " + JSON.stringify(fetchData) : ""), "https://127.0.0.1:8443");
             }
         }
 
         window.addEventListener("message", receiveMessage, false);
 
         function receiveMessage(event) {
-            if (event.origin === "http://127.0.0.1:8000") {
+            if (event.origin === "https://127.0.0.1:8443") {
                 if (event.data.indexOf("reportBackCookies") !== -1) {
                     fetch("echo-incoming-cookies-as-json.py", { credentials: "same-origin" }).then(function(response) {
                         return response.json();

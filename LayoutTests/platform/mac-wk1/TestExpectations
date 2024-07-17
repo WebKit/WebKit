@@ -2797,3 +2797,5 @@ webkit.org/b/274792 compositing/repaint/iframes/compositing-iframe-with-fixed-ba
 
 webkit.org/b/276145 http/tests/security/block-popup-to-all-zero-address.html [ Skip ]
 
+# rdar://124363343 ([ Sequoia+ ] Multiple WebKit tests failing after explicit "SameSite" attribute change)
+http/tests/xmlhttprequest/cross-origin-authorization.html [ Failure ]

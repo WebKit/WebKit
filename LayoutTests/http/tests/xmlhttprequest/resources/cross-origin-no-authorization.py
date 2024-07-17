@@ -5,7 +5,7 @@ import sys
 
 sys.stdout.buffer.write(
     b'Content-Type: text/html\r\n'
-    b'Set-Cookie: WK-cross-origin=1\r\n'
+    b'Set-Cookie: WK-cross-origin=1; SameSite=None; Secure\r\n'
     b'Cache-Control: no-store\r\n'
     b'Last-Modified: Thu, 19 Mar 2009 11:22:11 GMT\r\n'
     b'Access-Control-Allow-Origin: http://127.0.0.1:8000\r\n'
