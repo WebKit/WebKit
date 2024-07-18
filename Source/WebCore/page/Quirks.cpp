@@ -1905,4 +1905,13 @@ bool Quirks::shouldIgnoreTextAutoSizing() const
 }
 #endif
 
+// tax.ny.gov https://bugs.webkit.org/show_bug.cgi?id=274224
+bool Quirks::needsToRemoveGetFromAccessor() const
+{
+    if (!needsQuirks())
+        return false;
+
+    return isDomain("ny.gov"_s);
+}
+
 }

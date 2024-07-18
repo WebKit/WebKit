@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSExecState.h"
 
+#include "DocumentInlines.h"
+#include "Quirks.h"
 #include "EventLoop.h"
 #include "RejectedPromiseTracker.h"
 #include "ScriptExecutionContext.h"
@@ -56,6 +58,44 @@ ScriptExecutionContext* executionContext(JSC::JSGlobalObject* globalObject)
     if (!globalObject || !globalObject->inherits<JSDOMGlobalObject>())
         return nullptr;
     return JSC::jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext();
+}
+
+JSC::JSValue JSExecState::profiledCall(JSC::JSGlobalObject* lexicalGlobalObject, JSC::ProfilingReason reason, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
+{
+    JSC::VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    JSC::JSValue returnValue;
+    {
+        JSExecState currentState(lexicalGlobalObject);
+        if (Document* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+            if (UNLIKELY(document->quirks().needsToRemoveGetFromAccessor())) {
+                SetForScope needsToRemoveGetFromAccessorScope(lexicalGlobalObject->vm().m_needsToRemoveGetFromAccessor, true);
+                returnValue = JSC::profiledCall(lexicalGlobalObject, reason, functionObject, callData, thisValue, args, returnedException);
+            }
+        } else
+            returnValue = JSC::profiledCall(lexicalGlobalObject, reason, functionObject, callData, thisValue, args, returnedException);
+    }
+    scope.assertNoExceptionExceptTermination();
+    return returnValue;
+}
+
+JSC::JSValue JSExecState::profiledEvaluate(JSC::JSGlobalObject* lexicalGlobalObject, JSC::ProfilingReason reason, const JSC::SourceCode& source, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException)
+{
+    JSC::VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    JSC::JSValue returnValue;
+    {
+        JSExecState currentState(lexicalGlobalObject);
+        if (Document* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+            if (UNLIKELY(document->quirks().needsToRemoveGetFromAccessor())) {
+                SetForScope needsToRemoveGetFromAccessorScope(lexicalGlobalObject->vm().m_needsToRemoveGetFromAccessor, true);
+                returnValue = JSC::profiledEvaluate(lexicalGlobalObject, reason, source, thisValue, returnedException);
+            }
+        } else
+            returnValue = JSC::profiledEvaluate(lexicalGlobalObject, reason, source, thisValue, returnedException);
+    }
+    scope.assertNoExceptionExceptTermination();
+    return returnValue;
 }
 
 } // namespace WebCore
