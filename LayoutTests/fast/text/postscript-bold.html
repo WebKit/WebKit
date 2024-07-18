@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<meta name="fuzzy" content="maxDifference=0-255; totalPixels=0-300" />
+<style>
+
+@font-face {
+    font-family: 'iBooks_PingFang_TC';
+    src: local('PingFangTC-Light');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'iBooks_PingFang_TC';
+    src: local('PingFangTC-Bold');
+    font-weight: bold;
+}
+
+p { font-synthesis: none; font-size: 60px; margin: 0; }
+</style>
+
+<!-- The current point of this test is to make sure we're not mixing up glyph IDs.
+     In the future, it should also check on correct selection of font weights. -->
+
+<p style="font-family: PingFangSC-Medium">【】
+
+<p style="font-family: PingFangSC-Regular; font-weight: bold">【】
+
+<p style="font-family: iBooks_PingFang_TC">【】
+
+<p style="font-family: iBooks_PingFang_TC; font-weight: bold">【】

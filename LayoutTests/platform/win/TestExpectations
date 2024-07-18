@@ -339,6 +339,7 @@ fast/url/user-visible [ Skip ]
 # These tests reference specific fonts on Mac port.
 fast/text/font-weights.html [ Skip ]
 fast/text/font-weights-zh.html [ Skip ]
+fast/text/postscript-bold.html [ Skip ]
 
 # SoftBank emoji isn't supported
 fast/text/softbank-emoji.html [ Skip ]

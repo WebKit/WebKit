@@ -760,11 +760,11 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
 {
     const FontPlatformData& platformData = originalFontData.platformData();
 
-    auto fullName = String(adoptCF(CTFontCopyFullName(platformData.font())).get());
+    auto fullName = String(adoptCF(CTFontCopyFullName(platformData.ctFont())).get());
     if (!fullName.isEmpty())
         m_fontNamesRequiringSystemFallbackForPrewarming.add(fullName);
 
-    auto result = lookupFallbackFont(platformData.font(), description.weight(), description.computedLocale(), description.shouldAllowUserInstalledFonts(), characterCluster);
+    auto result = lookupFallbackFont(platformData.ctFont(), description.weight(), description.computedLocale(), description.shouldAllowUserInstalledFonts(), characterCluster);
     result = preparePlatformFont(UnrealizedCoreTextFont { WTFMove(result) }, description, { });
 
     if (!result)
@@ -778,7 +778,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
     auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(substituteFont, description, ShouldComputePhysicalTraits::No, isForPlatformFont == IsForPlatformFont::Yes).boldObliquePair();
 
     const FontCustomPlatformData* customPlatformData = nullptr;
-    if (safeCFEqual(platformData.font(), substituteFont))
+    if (safeCFEqual(platformData.ctFont(), substituteFont))
         customPlatformData = platformData.customPlatformData();
     FontPlatformData alternateFont(substituteFont, platformData.size(), syntheticBold, syntheticOblique, platformData.orientation(), platformData.widthVariant(), platformData.textRenderingMode(), customPlatformData);
 

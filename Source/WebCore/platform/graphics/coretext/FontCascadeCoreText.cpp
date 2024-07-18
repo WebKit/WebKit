@@ -397,7 +397,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
 bool FontCascade::primaryFontIsSystemFont() const
 {
     const auto& fontData = primaryFont();
-    return isSystemFont(fontData.platformData().ctFont());
+    return isSystemFont(fontData.getCTFont());
 }
 
 const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView) const

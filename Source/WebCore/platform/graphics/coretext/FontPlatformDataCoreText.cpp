@@ -33,6 +33,26 @@
 
 namespace WebCore {
 
+inline int mapFontWidthVariantToCTFeatureSelector(FontWidthVariant variant)
+{
+    switch (variant) {
+    case FontWidthVariant::RegularWidth:
+        return kProportionalTextSelector;
+
+    case FontWidthVariant::HalfWidth:
+        return kHalfWidthTextSelector;
+
+    case FontWidthVariant::ThirdWidth:
+        return kThirdWidthTextSelector;
+
+    case FontWidthVariant::QuarterWidth:
+        return kQuarterWidthTextSelector;
+    }
+
+    ASSERT_NOT_REACHED();
+    return kProportionalTextSelector;
+}
+
 FontPlatformData::FontPlatformData(RetainPtr<CTFontRef>&& font, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, const FontCustomPlatformData* customPlatformData)
     : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode, customPlatformData)
 {
@@ -46,6 +66,20 @@ FontPlatformData::FontPlatformData(RetainPtr<CTFontRef>&& font, float size, bool
 #if PLATFORM(IOS_FAMILY)
     m_isEmoji = CTFontIsAppleColorEmoji(m_font.get());
 #endif
+
+    if (m_widthVariant != FontWidthVariant::RegularWidth) {
+        // FIXME: Do something smarter than creating the CTFontRef twice <webkit.org/b/276635>
+        int featureTypeValue = kTextSpacingType;
+        int featureSelectorValue = mapFontWidthVariantToCTFeatureSelector(m_widthVariant);
+        RetainPtr<CTFontDescriptorRef> sourceDescriptor = adoptCF(CTFontCopyFontDescriptor(m_font.get()));
+        RetainPtr<CFNumberRef> featureType = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &featureTypeValue));
+        RetainPtr<CFNumberRef> featureSelector = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &featureSelectorValue));
+        RetainPtr<CTFontDescriptorRef> newDescriptor = adoptCF(CTFontDescriptorCreateCopyWithFeature(sourceDescriptor.get(), featureType.get(), featureSelector.get()));
+        RetainPtr<CTFontRef> newFont = adoptCF(CTFontCreateWithFontDescriptor(newDescriptor.get(), m_size, 0));
+
+        if (newFont)
+            m_font = newFont;
+    }
 }
 
 static RetainPtr<CTFontDescriptorRef> findFontDescriptor(CFURLRef url, CFStringRef postScriptName)
@@ -119,72 +153,6 @@ CTFontRef FontPlatformData::registeredFont() const
     return nullptr;
 }
 
-inline int mapFontWidthVariantToCTFeatureSelector(FontWidthVariant variant)
-{
-    switch (variant) {
-    case FontWidthVariant::RegularWidth:
-        return kProportionalTextSelector;
-
-    case FontWidthVariant::HalfWidth:
-        return kHalfWidthTextSelector;
-
-    case FontWidthVariant::ThirdWidth:
-        return kThirdWidthTextSelector;
-
-    case FontWidthVariant::QuarterWidth:
-        return kQuarterWidthTextSelector;
-    }
-
-    ASSERT_NOT_REACHED();
-    return kProportionalTextSelector;
-}
-
-static RetainPtr<CFDictionaryRef> cascadeToLastResortAttributesDictionary()
-{
-    auto lastResort = adoptCF(CTFontDescriptorCreateWithNameAndSize(CFSTR("LastResort"), 0));
-
-    CFTypeRef descriptors[] = { lastResort.get() };
-    RetainPtr<CFArrayRef> array = adoptCF(CFArrayCreate(kCFAllocatorDefault, descriptors, std::size(descriptors), &kCFTypeArrayCallBacks));
-
-    CFTypeRef keys[] = { kCTFontCascadeListAttribute };
-    CFTypeRef values[] = { array.get() };
-    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-}
-
-static CTFontDescriptorRef cascadeToLastResortAndVariationsFontDescriptor()
-{
-    static CTFontDescriptorRef descriptor;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
-        descriptor = CTFontDescriptorCreateWithAttributes(cascadeToLastResortAttributesDictionary().get());
-    });
-    return descriptor;
-}
-
-CTFontRef FontPlatformData::ctFont() const
-{
-    if (m_ctFont)
-        return m_ctFont.get();
-
-    ASSERT(m_font);
-    m_ctFont = adoptCF(CTFontCreateCopyWithAttributes(m_font.get(), m_size, nullptr, cascadeToLastResortAndVariationsFontDescriptor()));
-
-    if (m_widthVariant != FontWidthVariant::RegularWidth) {
-        int featureTypeValue = kTextSpacingType;
-        int featureSelectorValue = mapFontWidthVariantToCTFeatureSelector(m_widthVariant);
-        RetainPtr<CTFontDescriptorRef> sourceDescriptor = adoptCF(CTFontCopyFontDescriptor(m_ctFont.get()));
-        RetainPtr<CFNumberRef> featureType = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &featureTypeValue));
-        RetainPtr<CFNumberRef> featureSelector = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &featureSelectorValue));
-        RetainPtr<CTFontDescriptorRef> newDescriptor = adoptCF(CTFontDescriptorCreateCopyWithFeature(sourceDescriptor.get(), featureType.get(), featureSelector.get()));
-        RetainPtr<CTFontRef> newFont = adoptCF(CTFontCreateWithFontDescriptor(newDescriptor.get(), m_size, 0));
-
-        if (newFont)
-            m_ctFont = newFont;
-    }
-
-    return m_ctFont.get();
-}
-
 RetainPtr<CFTypeRef> FontPlatformData::objectForEqualityCheck(CTFontRef ctFont)
 {
     auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont));
@@ -240,7 +208,6 @@ void FontPlatformData::updateSize(float size)
     m_size = size;
     ASSERT(m_font.get());
     m_font = adoptCF(CTFontCreateCopyWithAttributes(m_font.get(), m_size, nullptr, nullptr));
-    m_ctFont = nullptr;
 }
 
 FontPlatformData::Attributes FontPlatformData::attributes() const
@@ -316,8 +283,8 @@ FontPlatformData::FontPlatformData(float size, WebCore::FontOrientation&& orient
 
 FontPlatformData::IPCData FontPlatformData::toIPCData() const
 {
-    auto ctFont = font();
-    auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont));
+    auto font = ctFont();
+    auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(font));
     auto attributes = adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get()));
 
     const auto& data = creationData();
@@ -325,9 +292,9 @@ FontPlatformData::IPCData FontPlatformData::toIPCData() const
         return FontPlatformSerializedCreationData { { data->fontFaceData->span() }, FontPlatformSerializedAttributes::fromCF(attributes.get()), data->itemInCollection };
 
     auto options = CTFontDescriptorGetOptions(fontDescriptor.get());
-    auto referenceURL = adoptCF(static_cast<CFURLRef>(CTFontCopyAttribute(ctFont, kCTFontReferenceURLAttribute)));
+    auto referenceURL = adoptCF(static_cast<CFURLRef>(CTFontCopyAttribute(font, kCTFontReferenceURLAttribute)));
     auto urlString = CFURLGetString(referenceURL.get());
-    auto postScriptName = adoptCF(CTFontCopyPostScriptName(ctFont)).get();
+    auto postScriptName = adoptCF(CTFontCopyPostScriptName(font)).get();
     return FontPlatformSerializedData { options, urlString, postScriptName, FontPlatformSerializedAttributes::fromCF(attributes.get()) };
 }
 
