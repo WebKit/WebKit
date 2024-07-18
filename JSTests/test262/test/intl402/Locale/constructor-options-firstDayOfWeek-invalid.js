@@ -9,7 +9,10 @@ info: |
     Intl.Locale( tag [, options] )
 
     ...
-    x. Let numberingSystem be ? GetOption(options, "firstDayOfWeek", "string", < *"mon"*, *"tue"*, *"wed"*, *"thu"*, *"fri"*, *"sat"*, *"sun"*, *"0"*, *"1"*, *"2"*, *"3"*, *"4"*, *"5"*, *"6"*, *"7"*> , undefined).
+    x. Let fw be ? GetOption(options, "firstDayOfWeek", "string", undefined, undefined).
+    x. If fw is not undefined, then
+       x. Set fw to !WeekdayToString(fw).
+       x. If fw does not match the type sequence (from UTS 35 Unicode Locale Identifier, section 3.2), throw a RangeError exception.
     ...
 
 features: [Intl.Locale,Intl.Locale-info]
@@ -19,10 +22,7 @@ const invalidFirstDayOfWeekOptions = [
   "",
   "m",
   "mo",
-  "monday",
-  true,
-  false,
-  null,
+  "longerThan8Chars",
 ];
 for (const firstDayOfWeek of invalidFirstDayOfWeekOptions) {
   assert.throws(RangeError, function() {

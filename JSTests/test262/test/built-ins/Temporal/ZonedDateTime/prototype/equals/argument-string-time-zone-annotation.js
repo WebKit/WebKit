@@ -23,8 +23,7 @@ const tests = [
 ];
 
 tests.forEach(([arg, expectedZone, description]) => {
-  const timeZone = new Temporal.TimeZone(expectedZone);
-  const instance = new Temporal.ZonedDateTime(0n, timeZone);
+  const instance = new Temporal.ZonedDateTime(0n, expectedZone);
   const result = instance.equals(arg);
 
   assert.sameValue(

@@ -9,7 +9,7 @@ description: >
     (8.10.5 step 5.a)
 ---*/
 
-var dateObj = new Date();
+var dateObj = new Date(0);
 
 dateObj.value = "DateValue";
 

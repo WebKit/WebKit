@@ -19,11 +19,6 @@ const expected = [
   "get options.smallestUnit.toString",
   "call options.smallestUnit.toString",
   "get options.timeZone",
-  "has options.timeZone.getOffsetNanosecondsFor",
-  "has options.timeZone.getPossibleInstantsFor",
-  "has options.timeZone.id",
-  "get options.timeZone.getOffsetNanosecondsFor",
-  "call options.timeZone.getOffsetNanosecondsFor",
 ];
 const actual = [];
 
@@ -34,8 +29,8 @@ instance.toString(
     fractionalSecondDigits: "auto",
     roundingMode: "halfExpand",
     smallestUnit: "millisecond",
-    timeZone: TemporalHelpers.timeZoneObserver(actual, "options.timeZone"),
-  }, "options"),
+    timeZone: "UTC",
+  }, "options", ["timeZone"]),
 );
 assert.compareArray(actual, expected, "order of operations");
 actual.splice(0); // clear

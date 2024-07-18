@@ -6,7 +6,7 @@ esid: sec-array.prototype.reduceright
 description: Array.prototype.reduceRight applied to Date object
 ---*/
 
-var obj = new Date();
+var obj = new Date(0);
 obj.length = 1;
 obj[0] = 1;
 var accessed = false;

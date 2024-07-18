@@ -28,7 +28,7 @@ flags: [module]
 
 $DONOTEVALUATE();
 
-import "./ensure-linking-error_FIXTURE.js";
+import "../resources/ensure-linking-error_FIXTURE.js";
 
 import x from './import-attribute-1_FIXTURE.js' with {if:''};
 import './import-attribute-2_FIXTURE.js' with {if:''};

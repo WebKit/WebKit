@@ -12,7 +12,7 @@ includes: [propertyHelper.js]
 
 var obj = {};
 
-var descObj = new Date();
+var descObj = new Date(0);
 
 descObj.writable = false;
 

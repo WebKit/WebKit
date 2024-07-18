@@ -16,12 +16,12 @@ features: [Temporal]
 
 // 
 
-let calendar = new Temporal.Calendar("gregory");
+let calendar = "gregory";
 const date = new Temporal.PlainDate(2021, 1, 1, calendar);
 
 assert.sameValue(date.yearOfWeek, 2021);
 
-calendar = new Temporal.Calendar("iso8601");
+calendar = "iso8601";
 const isodate = new Temporal.PlainDate(2021, 1, 1, calendar);
 
 assert.sameValue(isodate.yearOfWeek, 2020);

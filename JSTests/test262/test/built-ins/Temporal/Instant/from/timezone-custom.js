@@ -7,13 +7,5 @@ description: Time zone annotation is ignored in input ISO string
 features: [Temporal]
 ---*/
 
-const dateTimeString = "1975-02-02T14:25:36.123456789";
-
-Object.defineProperty(Temporal.TimeZone, "from", {
-  get() {
-    throw new Test262Error("should not get Temporal.TimeZone.from");
-  },
-});
-
-const instant = Temporal.Instant.from(dateTimeString + "+01:00[Custom/TimeZone]");
+const instant = Temporal.Instant.from("1975-02-02T14:25:36.123456789+01:00[Invalid/TimeZone]");
 assert.sameValue(instant.epochMilliseconds, 160579536123);

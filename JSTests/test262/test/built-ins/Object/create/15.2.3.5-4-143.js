@@ -10,7 +10,7 @@ description: >
 
 var newObj = Object.create({}, {
   prop: {
-    configurable: new Date()
+    configurable: new Date(0)
   }
 });
 

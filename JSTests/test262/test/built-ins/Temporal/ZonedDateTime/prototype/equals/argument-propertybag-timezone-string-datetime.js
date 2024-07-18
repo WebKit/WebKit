@@ -13,6 +13,35 @@ const instance1 = new Temporal.ZonedDateTime(0n, expectedTimeZone);
 let timeZone = "2021-02-19T17:30";
 assert.throws(RangeError, () => instance1.equals({ year: 1970, month: 1, day: 1, timeZone }), "bare date-time string is not a time zone");
 
+[
+  "2021-08-19T17:30-07:00:01",
+  "2021-08-19T17:30-07:00:00",
+  "2021-08-19T17:30-07:00:00.1",
+  "2021-08-19T17:30-07:00:00.0",
+  "2021-08-19T17:30-07:00:00.01",
+  "2021-08-19T17:30-07:00:00.00",
+  "2021-08-19T17:30-07:00:00.001",
+  "2021-08-19T17:30-07:00:00.000",
+  "2021-08-19T17:30-07:00:00.0001",
+  "2021-08-19T17:30-07:00:00.0000",
+  "2021-08-19T17:30-07:00:00.00001",
+  "2021-08-19T17:30-07:00:00.00000",
+  "2021-08-19T17:30-07:00:00.000001",
+  "2021-08-19T17:30-07:00:00.000000",
+  "2021-08-19T17:30-07:00:00.0000001",
+  "2021-08-19T17:30-07:00:00.0000000",
+  "2021-08-19T17:30-07:00:00.00000001",
+  "2021-08-19T17:30-07:00:00.00000000",
+  "2021-08-19T17:30-07:00:00.000000001",
+  "2021-08-19T17:30-07:00:00.000000000",
+].forEach((timeZone) => {
+  assert.throws(
+    RangeError,
+    () => instance1.equals({ year: 2020, month: 5, day: 2, timeZone }),
+    `ISO string ${timeZone} with a sub-minute offset is not a valid time zone`
+  );
+});
+
 // The following are all valid strings so should not throw. They should produce
 // expectedTimeZone, so additionally the operation should return true, because
 // the property bag will produce an instance that's equal to the receiver.

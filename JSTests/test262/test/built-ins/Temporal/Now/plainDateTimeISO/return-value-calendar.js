@@ -8,4 +8,4 @@ features: [Temporal]
 ---*/
 
 const result = Temporal.Now.plainDateTimeISO();
-assert.sameValue(result.getISOFields().calendar, "iso8601", "calendar slot should store a string");
+assert.sameValue(result.calendarId, "iso8601", "calendar string should be iso8601");

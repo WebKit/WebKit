@@ -30,25 +30,24 @@ includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("UTC");
-const datetime = new Temporal.ZonedDateTime(830998861_001_001_001n, timeZone);
+const datetime = new Temporal.ZonedDateTime(830998861_001_001_001n, "UTC");
 const options = { largestUnit: "days" };
 
-const result1 = new Temporal.ZonedDateTime(830995200_000_000_002n, timeZone).until(datetime, options);
+const result1 = new Temporal.ZonedDateTime(830995200_000_000_002n, "UTC").until(datetime, options);
 TemporalHelpers.assertDuration(result1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 999, "nanoseconds balance");
 
-const result2 = new Temporal.ZonedDateTime(830995200_000_002_000n, timeZone).until(datetime, options);
+const result2 = new Temporal.ZonedDateTime(830995200_000_002_000n, "UTC").until(datetime, options);
 TemporalHelpers.assertDuration(result2, 0, 0, 0, 0, 1, 1, 1, 0, 999, 1, "microseconds balance");
 
-const result3 = new Temporal.ZonedDateTime(830995200_002_000_000n, timeZone).until(datetime, options);
+const result3 = new Temporal.ZonedDateTime(830995200_002_000_000n, "UTC").until(datetime, options);
 TemporalHelpers.assertDuration(result3, 0, 0, 0, 0, 1, 1, 0, 999, 1, 1, "milliseconds balance");
 
-const result4 = new Temporal.ZonedDateTime(830995202_000_000_000n, timeZone).until(datetime, options);
+const result4 = new Temporal.ZonedDateTime(830995202_000_000_000n, "UTC").until(datetime, options);
 TemporalHelpers.assertDuration(result4, 0, 0, 0, 0, 1, 0, 59, 1, 1, 1, "seconds balance");
 
-const result5 = new Temporal.ZonedDateTime(830995320_000_000_000n, timeZone).until(datetime, options);
+const result5 = new Temporal.ZonedDateTime(830995320_000_000_000n, "UTC").until(datetime, options);
 TemporalHelpers.assertDuration(result5, 0, 0, 0, 0, 0, 59, 1, 1, 1, 1, "minutes balance");
 
 // This one is different because hours are later balanced again in BalanceDuration
-const result6 = new Temporal.ZonedDateTime(831002400_000_000_000n, timeZone).until(datetime, options);
+const result6 = new Temporal.ZonedDateTime(831002400_000_000_000n, "UTC").until(datetime, options);
 TemporalHelpers.assertDuration(result6, 0, 0, 0, 0, 0, -58, -58, -998, -998, -999, "hours balance");

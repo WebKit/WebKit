@@ -11,5 +11,5 @@ info: |
 ---*/
 
 let timeRegExp = /^[0-9]{2}:[0-9]{2}:[0-9]{2} GMT[+-][0-9]{4}( \(.+\))?$/
-let match = timeRegExp.exec(new Date().toTimeString());
+let match = timeRegExp.exec(new Date(0).toTimeString());
 assert.notSameValue(null, match);

@@ -6,7 +6,7 @@ esid: sec-array.prototype.reduce
 description: Array.prototype.reduce - Date object can be used as accumulator
 ---*/
 
-var objDate = new Date();
+var objDate = new Date(0);
 
 var accessed = false;
 

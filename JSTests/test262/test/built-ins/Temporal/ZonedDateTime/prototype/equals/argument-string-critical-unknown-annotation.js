@@ -13,8 +13,7 @@ const invalidStrings = [
   "1970-01-01T00:00[UTC][u-ca=iso8601][!foo=bar]",
   "1970-01-01T00:00[foo=bar][!_foo-bar0=Dont-Ignore-This-99999999999]",
 ];
-const timeZone = new Temporal.TimeZone("UTC");
-const instance = new Temporal.ZonedDateTime(0n, timeZone);
+const instance = new Temporal.ZonedDateTime(0n, "UTC");
 invalidStrings.forEach((arg) => {
   assert.throws(
     RangeError,

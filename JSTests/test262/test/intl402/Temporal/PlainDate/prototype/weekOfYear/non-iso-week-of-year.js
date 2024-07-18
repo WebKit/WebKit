@@ -11,12 +11,12 @@ features: [Temporal]
 
 // Gregorian calendar has a well defined week-numbering system.
 
-let calendar = new Temporal.Calendar("gregory");
+let calendar = "gregory";
 const date = new Temporal.PlainDate(2024, 1, 1, calendar);
 
 assert.sameValue(date.weekOfYear, 1);
 
-calendar = new Temporal.Calendar("hebrew");
+calendar = "hebrew";
 const nonisodate = new Temporal.PlainDate(2024, 1, 1, calendar);
 
 assert.sameValue(nonisodate.weekOfYear, undefined);

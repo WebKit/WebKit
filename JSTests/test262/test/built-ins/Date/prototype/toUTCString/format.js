@@ -11,7 +11,7 @@ info: |
 ---*/
 
 let utcRegExp = /^(Sun|Mon|Tue|Wed|Thu|Fri|Sat), [0-9]{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2} GMT$/
-let match = utcRegExp.exec(new Date().toUTCString());
+let match = utcRegExp.exec(new Date(0).toUTCString());
 assert.notSameValue(null, match);
 
 // Years are padded to the left with zeroes

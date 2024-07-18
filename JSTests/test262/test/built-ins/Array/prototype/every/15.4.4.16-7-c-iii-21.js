@@ -10,7 +10,7 @@ var accessed = false;
 
 function callbackfn(val, idx, obj) {
   accessed = true;
-  return new Date();
+  return new Date(0);
 }
 
 assert([11].every(callbackfn), '[11].every(callbackfn) !== true');

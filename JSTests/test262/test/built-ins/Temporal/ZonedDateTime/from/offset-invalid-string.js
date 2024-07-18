@@ -23,6 +23,5 @@ features: [Temporal]
 const datetime = new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, "UTC");
 assert.throws(RangeError, () => Temporal.ZonedDateTime.from(datetime, { offset: "other string" }));
 
-const timeZone = new Temporal.TimeZone("UTC");
-const propertyBag = { timeZone, year: 2001, month: 9, day: 9, hour: 1, minute: 46, second: 40, millisecond: 987, microsecond: 654, nanosecond: 321 };
+const propertyBag = { timeZone: "UTC", year: 2001, month: 9, day: 9, hour: 1, minute: 46, second: 40, millisecond: 987, microsecond: 654, nanosecond: 321 };
 assert.throws(RangeError, () => Temporal.ZonedDateTime.from(propertyBag, { offset: "other string" }));

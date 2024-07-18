@@ -9,8 +9,7 @@ features: [BigInt, Temporal]
 
 const instant = new Temporal.Instant(0n);
 
-function test(timeZoneIdentifier, expected, description) {
-  const timeZone = new Temporal.TimeZone(timeZoneIdentifier);
+function test(timeZone, expected, description) {
   assert.sameValue(instant.toString({ timeZone }), expected, description);
 }
 

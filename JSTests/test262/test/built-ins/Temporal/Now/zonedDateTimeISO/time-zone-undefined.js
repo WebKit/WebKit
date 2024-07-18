@@ -4,28 +4,13 @@
 /*---
 esid: sec-temporal.now.zoneddatetimeiso
 description: Functions when time zone argument is omitted
-includes: [compareArray.js]
 features: [Temporal]
 ---*/
-
-const actual = [];
-const expected = [];
-
-Object.defineProperty(Temporal.TimeZone, "from", {
-  get() {
-    actual.push("get Temporal.TimeZone.from");
-    return undefined;
-  },
-});
 
 const systemTimeZone = Temporal.Now.timeZoneId();
 
 const resultExplicit = Temporal.Now.zonedDateTimeISO(undefined);
-assert.sameValue(resultExplicit.getISOFields().timeZone, systemTimeZone, "time zone slot should store a string");
-
-assert.compareArray(actual, expected, "Temporal.TimeZone.from should not be called");
+assert.sameValue(resultExplicit.timeZoneId, systemTimeZone, "time zone string should be the system time zone");
 
 const resultImplicit = Temporal.Now.zonedDateTimeISO();
-assert.sameValue(resultImplicit.getISOFields().timeZone, systemTimeZone, "time zone slot should store a string");
-
-assert.compareArray(actual, expected, "Temporal.TimeZone.from should not be called");
+assert.sameValue(resultImplicit.timeZoneId, systemTimeZone, "time zone string should be the system time zone");

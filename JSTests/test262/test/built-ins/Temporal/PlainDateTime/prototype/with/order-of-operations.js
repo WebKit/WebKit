@@ -13,26 +13,9 @@ const expected = [
   "get fields.calendar",
   "get fields.timeZone",
   // CopyDataProperties
-  "ownKeys options",
-  "getOwnPropertyDescriptor options.overflow",
   "get options.overflow",
-  "getOwnPropertyDescriptor options.extra",
-  "get options.extra",
-  // lookup
-  "get this.calendar.dateFromFields",
-  "get this.calendar.fields",
-  "get this.calendar.mergeFields",
-  // CalendarFields
-  "call this.calendar.fields",
-  // PrepareTemporalFields on receiver
-  "get this.calendar.day",
-  "call this.calendar.day",
-  "get this.calendar.month",
-  "call this.calendar.month",
-  "get this.calendar.monthCode",
-  "call this.calendar.monthCode",
-  "get this.calendar.year",
-  "call this.calendar.year",
+  "get options.overflow.toString",
+  "call options.overflow.toString",
   // PrepareTemporalFields on argument
   "get fields.day",
   "get fields.day.valueOf",
@@ -64,16 +47,10 @@ const expected = [
   "get fields.year",
   "get fields.year.valueOf",
   "call fields.year.valueOf",
-  // CalendarMergeFields
-  "call this.calendar.mergeFields",
-  // InterpretTemporalDateTimeFields
-  "get options.overflow.toString",
-  "call options.overflow.toString",
-  "call this.calendar.dateFromFields",
 ];
 const actual = [];
 
-const calendar = TemporalHelpers.calendarObserver(actual, "this.calendar");
+const calendar = "iso8601";
 const instance = new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321, calendar);
 // clear observable operations that occurred during the constructor call
 actual.splice(0);

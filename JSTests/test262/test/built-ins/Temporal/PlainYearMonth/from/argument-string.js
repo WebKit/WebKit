@@ -11,20 +11,13 @@ features: [Temporal]
 for (const input of TemporalHelpers.ISO.plainYearMonthStringsValid()) {
   const plainYearMonth = Temporal.PlainYearMonth.from(input);
   TemporalHelpers.assertPlainYearMonth(plainYearMonth, 1976, 11, "M11");
-  const fields = plainYearMonth.getISOFields();
-  assert.sameValue(fields.calendar, "iso8601", "calendar slot should store a string");
-  assert.sameValue(fields.isoDay, 1, "isoDay");
-  assert.sameValue(fields.isoMonth, 11, "isoMonth");
-  assert.sameValue(fields.isoYear, 1976, "isoYear");
+  assert.sameValue(plainYearMonth.calendarId, "iso8601", "calendar string should be iso8601");
+  assert.sameValue(plainYearMonth.toString({ calendarName: "always" }), "1976-11-01[u-ca=iso8601]", "iso reference date");
 }
 
 for (const input of TemporalHelpers.ISO.plainYearMonthStringsValidNegativeYear()) {
   const plainYearMonth = Temporal.PlainYearMonth.from(input);
   TemporalHelpers.assertPlainYearMonth(plainYearMonth, -9999, 11, "M11");
-  const fields = plainYearMonth.getISOFields();
-  assert.sameValue(fields.calendar, "iso8601", "calendar slot should store a string");
-  assert.sameValue(fields.isoDay, 1, "isoDay");
-  assert.sameValue(fields.isoMonth, 11, "isoMonth");
-  assert.sameValue(fields.isoYear, -9999, "isoYear");
-  assert.sameValue(plainYearMonth.toString(), "-009999-11");
+  assert.sameValue(plainYearMonth.calendarId, "iso8601", "calendar string should be iso8601");
+  assert.sameValue(plainYearMonth.toString({ calendarName: "always" }), "-009999-11-01[u-ca=iso8601]", "iso reference date");
 }

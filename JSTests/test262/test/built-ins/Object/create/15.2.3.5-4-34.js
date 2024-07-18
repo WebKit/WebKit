@@ -9,7 +9,7 @@ description: >
     5.a)
 ---*/
 
-var props = new Date();
+var props = new Date(0);
 props.prop = {
   value: 12,
   enumerable: true

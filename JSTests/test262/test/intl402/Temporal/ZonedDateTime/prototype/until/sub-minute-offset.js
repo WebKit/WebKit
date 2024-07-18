@@ -8,8 +8,7 @@ includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("Africa/Monrovia");
-const instance = new Temporal.ZonedDateTime(0n, timeZone);
+const instance = new Temporal.ZonedDateTime(0n, "Africa/Monrovia");
 
 let result = instance.until("1970-01-01T00:44:30-00:44:30[Africa/Monrovia]");
 TemporalHelpers.assertDuration(result, 0, 0, 0, 0, 1, 29, 0, 0, 0, 0, "UTC offset rounded to minutes is accepted");
@@ -30,6 +29,6 @@ const properties = {
   day: 1,
   minute: 44,
   second: 30,
-  timeZone
+  timeZone: "Africa/Monrovia"
 };
 assert.throws(RangeError, () => instance.until(properties), "no fuzzy matching is done on offset in property bag");

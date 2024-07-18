@@ -21,9 +21,8 @@ assert.sameValue(`${ Temporal.ZonedDateTime.from("1976-11-18T15:23:30.123456789-
 // variant decimal separator
 assert.sameValue(`${ Temporal.ZonedDateTime.from("1976-11-18T15:23:30,12-08:00[-08:00]") }`, "1976-11-18T15:23:30.12-08:00[-08:00]");
 
-// variant minus sign
-assert.sameValue(`${ Temporal.ZonedDateTime.from("1976-11-18T15:23:30.12\u221208:00[-08:00]") }`, "1976-11-18T15:23:30.12-08:00[-08:00]");
-assert.sameValue(`${ Temporal.ZonedDateTime.from("\u2212009999-11-18T15:23:30.12+00:00[UTC]") }`, "-009999-11-18T15:23:30.12+00:00[UTC]");
+// negative extended year
+assert.sameValue(`${ Temporal.ZonedDateTime.from("-009999-11-18T15:23:30.12+00:00[UTC]") }`, "-009999-11-18T15:23:30.12+00:00[UTC]");
 
 // mixture of basic and extended format
 [

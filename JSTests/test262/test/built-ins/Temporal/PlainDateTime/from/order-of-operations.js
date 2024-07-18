@@ -9,40 +9,12 @@ features: [Temporal]
 ---*/
 
 const expected = [
-  // CopyDataProperties
-  "ownKeys options",
-  "getOwnPropertyDescriptor options.overflow",
+  // GetTemporalOverflowOption
   "get options.overflow",
-  "getOwnPropertyDescriptor options.extra",
-  "get options.extra",
+  "get options.overflow.toString",
+  "call options.overflow.toString",
   // GetTemporalCalendarSlotValueWithISODefault
   "get fields.calendar",
-  "has fields.calendar.dateAdd",
-  "has fields.calendar.dateFromFields",
-  "has fields.calendar.dateUntil",
-  "has fields.calendar.day",
-  "has fields.calendar.dayOfWeek",
-  "has fields.calendar.dayOfYear",
-  "has fields.calendar.daysInMonth",
-  "has fields.calendar.daysInWeek",
-  "has fields.calendar.daysInYear",
-  "has fields.calendar.fields",
-  "has fields.calendar.id",
-  "has fields.calendar.inLeapYear",
-  "has fields.calendar.mergeFields",
-  "has fields.calendar.month",
-  "has fields.calendar.monthCode",
-  "has fields.calendar.monthDayFromFields",
-  "has fields.calendar.monthsInYear",
-  "has fields.calendar.weekOfYear",
-  "has fields.calendar.year",
-  "has fields.calendar.yearMonthFromFields",
-  "has fields.calendar.yearOfWeek",
-  // lookup
-  "get fields.calendar.dateFromFields",
-  "get fields.calendar.fields",
-  // CalendarFields
-  "call fields.calendar.fields",
   // PrepareTemporalFields
   "get fields.day",
   "get fields.day.valueOf",
@@ -74,10 +46,6 @@ const expected = [
   "get fields.year",
   "get fields.year.valueOf",
   "call fields.year.valueOf",
-  // InterpretTemporalDateTimeFields
-  "get options.overflow.toString",
-  "call options.overflow.toString",
-  "call fields.calendar.dateFromFields",
 ];
 const actual = [];
 
@@ -92,8 +60,8 @@ const fields = TemporalHelpers.propertyBagObserver(actual, {
   millisecond: 1.7,
   microsecond: 1.7,
   nanosecond: 1.7,
-  calendar: TemporalHelpers.calendarObserver(actual, "fields.calendar"),
-}, "fields");
+  calendar: "iso8601",
+}, "fields", ["calendar"]);
 
 const options = TemporalHelpers.propertyBagObserver(actual, {
   overflow: "constrain",

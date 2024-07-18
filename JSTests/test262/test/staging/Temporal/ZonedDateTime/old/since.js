@@ -85,34 +85,6 @@ var monthsDifference = laterDateTime.since(zdt, { largestUnit: "months" });
 assert.sameValue(monthsDifference.weeks, 0);
 assert.notSameValue(monthsDifference.months, 0);
 
-// no two different calendars
-var zdt1 = new Temporal.ZonedDateTime(0n, "UTC");
-var fakeJapanese = {
-  dateAdd() {},
-  dateFromFields() {},
-  dateUntil() {},
-  day() {},
-  dayOfWeek() {},
-  dayOfYear() {},
-  daysInMonth() {},
-  daysInWeek() {},
-  daysInYear() {},
-  fields() {},
-  id: "japanese",
-  inLeapYear() {},
-  mergeFields() {},
-  month() {},
-  monthCode() {},
-  monthDayFromFields() {},
-  monthsInYear() {},
-  weekOfYear() {},
-  year() {},
-  yearMonthFromFields() {},
-  yearOfWeek() {},
-};
-var zdt2 = new Temporal.ZonedDateTime(0n, "UTC", fakeJapanese);
-assert.throws(RangeError, () => zdt1.since(zdt2));
-
 var earlier = Temporal.ZonedDateTime.from('2019-01-08T09:22:36.123456789+01:00[+01:00]');
 var later = Temporal.ZonedDateTime.from('2021-09-07T13:39:40.987654321+01:00[+01:00]');
 // assumes a different default for largestUnit if smallestUnit is larger than days

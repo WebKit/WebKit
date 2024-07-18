@@ -9,12 +9,6 @@ features: [Temporal]
 
 const args = [2000, 5];
 
-Object.defineProperty(Temporal.Calendar, "from", {
-  get() {
-    throw new Test262Error("Should not get Calendar.from");
-  },
-});
-
 const dateExplicit = new Temporal.PlainYearMonth(...args, undefined);
 assert.sameValue(dateExplicit.calendarId, "iso8601");
 

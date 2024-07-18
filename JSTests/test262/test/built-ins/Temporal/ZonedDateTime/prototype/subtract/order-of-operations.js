@@ -40,27 +40,13 @@ const expected = [
   "get duration.years",
   "get duration.years.valueOf",
   "call duration.years.valueOf",
-  // lookup
-  "get this.timeZone.getOffsetNanosecondsFor",
-  "get this.timeZone.getPossibleInstantsFor",
-  "get this.calendar.dateAdd",
-  // AddZonedDateTime
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "call this.calendar.dateAdd",
-  // ... inside Calendar.p.dateAdd
   "get options.overflow",
   "get options.overflow.toString",
   "call options.overflow.toString",
-  // AddZonedDateTime again
-  "call this.timeZone.getPossibleInstantsFor",
 ];
 const actual = [];
 
-const timeZone = TemporalHelpers.timeZoneObserver(actual, "this.timeZone");
-const calendar = TemporalHelpers.calendarObserver(actual, "this.calendar");
-const instance = new Temporal.ZonedDateTime(0n, timeZone, calendar);
-// clear observable operations that occurred during the constructor call
-actual.splice(0);
+const instance = new Temporal.ZonedDateTime(0n, "UTC", "iso8601");
 
 const duration = TemporalHelpers.propertyBagObserver(actual, {
   years: 1,

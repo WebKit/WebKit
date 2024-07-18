@@ -28,19 +28,16 @@ info: |
         ii. 1. Set _plainDateTime_ to ? BuiltinTimeZoneGetPlainDateTimeFor(_item_.[[TimeZone]], _instant_, _item_.[[Calendar]]).
     sec-temporal.zoneddatetime.prototype.withplaintime step 4.a:
       a. Let _plainTime_ be ? ToTemporalTime(_plainTimeLike_).
-includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
 // This code path is encountered if the time zone offset is negative and its
 // absolute value in nanoseconds is greater than the nanosecond field of the
 // exact time's epoch parts
-const tz = TemporalHelpers.specificOffsetTimeZone(-2);
-const datetime = new Temporal.ZonedDateTime(3661_001_001_001n, tz);
+const datetime = new Temporal.ZonedDateTime(3661_001_001_001n, "-00:02");
 
-const otherTimeZone = new Temporal.TimeZone("UTC"); // should not be used to convert datetime -> PlainTime
-const zdt = new Temporal.ZonedDateTime(86400_000_000_000n, otherTimeZone);
+const zdt = new Temporal.ZonedDateTime(86400_000_000_000n, "UTC"); // UTC should not be used to convert datetime -> PlainTime
 const newzdt = zdt.withPlainTime(datetime);
 
-assert.sameValue(newzdt.microsecond, 0);
-assert.sameValue(newzdt.nanosecond, 999);
+assert.sameValue(newzdt.hour, 0);
+assert.sameValue(newzdt.minute, 59);

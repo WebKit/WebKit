@@ -35,10 +35,12 @@ function callbackfn(prevVal, curVal, idx, obj) {
   return false;
 }
 
-child.toString = function() {
-  toStringAccessed = true;
-  return '1';
-};
+Object.defineProperty(child, "toString", {
+  value: function() {
+	  toStringAccessed = true;
+	  return '1';
+  }
+});
 
 var obj = {
   0: 12,

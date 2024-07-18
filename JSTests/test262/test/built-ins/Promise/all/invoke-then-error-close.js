@@ -42,9 +42,11 @@ iter[Symbol.iterator] = function() {
   };
 };
 
-promise.then = function() {
-  throw new Test262Error();
-};
+Object.defineProperty(promise, "then", {
+  value: function() {
+    throw new Test262Error();
+  }
+});
 
 Promise.all(iter);
 

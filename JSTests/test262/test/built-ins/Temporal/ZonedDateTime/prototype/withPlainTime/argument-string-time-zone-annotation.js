@@ -34,7 +34,7 @@ const tests = [
   ["1970-01-01T12:34:56.987654321+00:00[!-08:00]", "numeric, with date, offset, and !"],
 ];
 
-const timeZone = new Temporal.TimeZone("UTC");
+const timeZone = "UTC";
 const instance = new Temporal.ZonedDateTime(0n, timeZone);
 
 tests.forEach(([arg, description]) => {

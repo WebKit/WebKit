@@ -15,32 +15,9 @@ includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const calendar = {
-  id: "custom",
-  dateAdd() {},
-  dateFromFields() {},
-  dateUntil() {},
-  day() {},
-  dayOfWeek() {},
-  dayOfYear() {},
-  daysInMonth() {},
-  daysInWeek() {},
-  daysInYear() {},
-  fields() {},
-  inLeapYear() {},
-  mergeFields() {},
-  month() {},
-  monthCode() {},
-  monthDayFromFields() {},
-  monthsInYear() {},
-  weekOfYear() {},
-  year() {},
-  yearMonthFromFields() {},
-  yearOfWeek() {},
-};
-const datetime = new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, "UTC", calendar);
+const datetime = new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, "UTC", "iso8601");
 
 TemporalHelpers.checkStringOptionWrongType("calendarName", "auto",
   (calendarName) => datetime.toString({ calendarName }),
-  (result, descr) => assert.sameValue(result, "2001-09-09T01:46:40.987654321+00:00[UTC][u-ca=custom]", descr),
+  (result, descr) => assert.sameValue(result, "2001-09-09T01:46:40.987654321+00:00[UTC]", descr),
 );

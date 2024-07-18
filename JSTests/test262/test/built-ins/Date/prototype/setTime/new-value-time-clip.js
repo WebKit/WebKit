@@ -17,7 +17,7 @@ info: |
 ---*/
 
 var maxMs = 8.64e15;
-var date = new Date();
+var date = new Date(0);
 var returnValue;
 
 assert.notSameValue(date.getTime(), NaN);

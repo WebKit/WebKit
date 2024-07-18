@@ -13,6 +13,7 @@ flags:
   json-modules: useImportAttributes
   promise-with-resolvers: usePromiseWithResolversMethod
   promise-try: usePromiseTryMethod
+  uint8array-base64: useUint8ArrayBase64Methods
 skip:
   features:
     - callable-boundary-realms
@@ -22,6 +23,9 @@ skip:
     - Float16Array
     - explicit-resource-management
     - regexp-modifiers
+    - source-phase-imports
+    - Atomics.pause
+    - Math.sumPrecise
   paths:
     - test/built-ins/Temporal/Calendar
     - test/built-ins/Temporal/Instant/prototype/toZonedDateTime
