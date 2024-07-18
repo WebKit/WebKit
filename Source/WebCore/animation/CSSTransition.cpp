@@ -40,6 +40,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSTransition);
 
 Ref<CSSTransition> CSSTransition::create(const Styleable& owningElement, const AnimatableCSSProperty& property, MonotonicTime generationTime, const Animation& backingAnimation, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
 {
+    WTFLogAlways("[GRAOUTS] CSSTransition::create() called for element with id = '%s'", owningElement.element.getAttribute(HTMLNames::idAttr).string().ascii().data());
     auto result = adoptRef(*new CSSTransition(owningElement, property, generationTime, backingAnimation, oldStyle, newStyle, reversingAdjustedStartStyle, reversingShorteningFactor));
     result->initialize(&oldStyle, newStyle, { nullptr });
     result->setTimingProperties(delay, duration);

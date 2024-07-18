@@ -255,12 +255,28 @@ static bool styleChangeAffectsRelativeUnits(const RenderStyle& style, const Rend
 
 auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingStyle, ResolutionType resolutionType) -> std::pair<ElementUpdate, DescendantsToResolve>
 {
+    auto elementDebugString = [&]() -> String {
+        if (element.localName() == "div"_s) {
+            auto id = element.getAttribute(HTMLNames::idAttr);
+            if (!id.isNull() && !id.isEmpty()) {
+                TextStream ts;
+                ts << "<" << element.localName() << " id='" << id << "'>";
+                return ts.release();
+            }
+        }
+        return { };
+    }();
+
     if (m_didSeePendingStylesheet && !element.renderOrDisplayContentsStyle() && !m_document->isIgnoringPendingStylesheets()) {
         m_document->setHasNodesWithMissingStyle();
+        if (!elementDebugString.isNull())
+            WTFLogAlways("[GRAOUTS] resolveElement(%s) returning in step 1", elementDebugString.ascii().data());
         return { };
     }
 
     if (resolutionType == ResolutionType::RebuildUsingExisting) {
+        if (!elementDebugString.isNull())
+            WTFLogAlways("[GRAOUTS] resolveElement(%s) returning in step 2", elementDebugString.ascii().data());
         return {
             ElementUpdate { RenderStyle::clonePtr(*existingStyle), Change::Renderer },
             DescendantsToResolve::RebuildAllUsingExisting
@@ -274,6 +290,8 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     auto update = createAnimatedElementUpdate(WTFMove(resolvedStyle), styleable, parent().change, resolutionContext, parent().isInDisplayNoneTree);
 
     if (!affectsRenderedSubtree(element, *update.style)) {
+        if (!elementDebugString.isNull())
+            WTFLogAlways("[GRAOUTS] resolveElement(%s) returning in step 3", elementDebugString.ascii().data());
         styleable.setLastStyleChangeEventStyle(nullptr);
         if (update.style->display() == DisplayType::None && element.hasDisplayNone())
             return { WTFMove(update), DescendantsToResolve::None };
@@ -361,6 +379,9 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     if (update.style->usedUserModify() != UserModify::ReadOnly)
         m_document->setMayHaveEditableElements();
 #endif
+
+    if (!elementDebugString.isNull())
+        WTFLogAlways("[GRAOUTS] resolveElement(%s) returning in step 4. Last style change event color = %s", elementDebugString.ascii().data(), styleable.lastStyleChangeEventStyle() ? styleable.lastStyleChangeEventStyle()->color().debugDescription().ascii().data() : "–––");
 
     return { WTFMove(update), descendantsToResolve };
 }
@@ -674,15 +695,36 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     };
 
     auto applyAnimations = [&]() -> std::pair<std::unique_ptr<RenderStyle>, OptionSet<AnimationImpact>> {
+        auto newLastStyleChangeEventStyle = [&]() {
+            if (styleable.element.getAttribute(HTMLNames::idAttr) == "t6-child"_s)
+                WTFLogAlways("");
+
+            if (auto* parentElement = parent().element) {
+                if (auto* parentLastStyleChangeEventStyle = parentElement->lastStyleChangeEventStyle({ })) {
+                    // FIXME: we need to work out resolutionType and adjust the resolutionContext to have the right parent style.
+                    ResolutionContext afterChangeStyleResolutionContext {
+                        parentLastStyleChangeEventStyle,
+                        parentBoxStyle(),
+                        m_documentElementStyle.get(),
+                        &scope().selectorMatchingState,
+                        &m_anchorPositionedStateMap
+                    };
+                    auto lastStyleChangeEventResolvedStyle = styleForStyleable(styleable, ResolutionType::Full, afterChangeStyleResolutionContext, styleable.lastStyleChangeEventStyle());
+                    return WTFMove(lastStyleChangeEventResolvedStyle.style);
+                }
+            }
+            return RenderStyle::clonePtr(*resolvedStyle.style);
+        }();
+
         if (!styleable.hasKeyframeEffects()) {
-            styleable.setLastStyleChangeEventStyle(nullptr);
+            styleable.setLastStyleChangeEventStyle(WTFMove(newLastStyleChangeEventStyle));
             styleable.setHasPropertiesOverridenAfterAnimation(false);
             return { WTFMove(resolvedStyle.style), OptionSet<AnimationImpact> { } };
         }
 
         auto previousLastStyleChangeEventStyle = styleable.lastStyleChangeEventStyle() ? RenderStyle::clonePtr(*styleable.lastStyleChangeEventStyle()) : nullptr;
         // Record the style prior to applying animations for this style change event.
-        styleable.setLastStyleChangeEventStyle(RenderStyle::clonePtr(*resolvedStyle.style));
+        styleable.setLastStyleChangeEventStyle(WTFMove(newLastStyleChangeEventStyle));
 
         // Apply all keyframe effects to the new style.
         HashSet<AnimatableCSSProperty> animatedProperties;
