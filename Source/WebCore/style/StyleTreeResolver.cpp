@@ -691,12 +691,19 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
             if (auto* parentStyleElement = parent().element) {
                 if (auto* parentLastStyleChangeEventStyle = parentStyleElement->lastStyleChangeEventStyle(styleable.pseudoElementIdentifier)) {
                     // FIXME: we need to work out resolutionType.
+                    auto* boxGeneratingParentStyle = [&]() -> const RenderStyle* {
+                        if (auto* boxGeneratingParent = this->boxGeneratingParent()) {
+                            if (auto* boxGeneratingParentElement = boxGeneratingParent->element)
+                                return boxGeneratingParentElement->lastStyleChangeEventStyle(styleable.pseudoElementIdentifier);
+                        }
+                        return nullptr;
+                    }();
+
                     ResolutionContext afterChangeStyleResolutionContext {
                         parentLastStyleChangeEventStyle,
-                        parentBoxStyle(),
+                        boxGeneratingParentStyle,
                         m_documentElementStyle.get(),
-                        &scope().selectorMatchingState,
-                        &m_anchorPositionedStateMap
+                        &scope().selectorMatchingState
                     };
                     auto lastStyleChangeEventResolvedStyle = styleForStyleable(styleable, ResolutionType::Full, afterChangeStyleResolutionContext, styleable.lastStyleChangeEventStyle());
                     return WTFMove(lastStyleChangeEventResolvedStyle.style);
