@@ -587,7 +587,9 @@ namespace JSC {
         void emitSlow_op_sub(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
 
         void emit_op_resolve_scope(const JSInstruction*);
+        void emitSlow_op_resolve_scope(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emit_op_get_from_scope(const JSInstruction*);
+        void emitSlow_op_get_from_scope(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emit_op_put_to_scope(const JSInstruction*);
         void emit_op_get_from_arguments(const JSInstruction*);
         void emit_op_put_to_arguments(const JSInstruction*);

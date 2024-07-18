@@ -588,6 +588,8 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_del_by_val)
         DEFINE_SLOWCASE_OP(op_del_by_id)
         DEFINE_SLOWCASE_OP(op_sub)
+        DEFINE_SLOWCASE_OP(op_resolve_scope)
+        DEFINE_SLOWCASE_OP(op_get_from_scope)
         DEFINE_SLOWCASE_OP(op_put_to_scope)
 
         DEFINE_SLOWCASE_OP(op_iterator_open)
