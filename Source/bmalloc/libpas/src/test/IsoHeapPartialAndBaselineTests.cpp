@@ -762,29 +762,64 @@ void testTwoBaselinesEvictions(size_t size1, size_t size2, size_t count,
 {
     pas_heap_ref heap1 = ISO_HEAP_REF_INITIALIZER(size1);
     pas_heap_ref heap2 = ISO_HEAP_REF_INITIALIZER(size2);
-    vector<void*> objects;
+    vector<void*> objects_heap1;
+    vector<void*> objects_heap2;
+    vector<void*> objects_pgm;
+    size_t non_pgm = 0;
 
     pas_mock_fast_random = random;
 
     for (size_t index = 0; index < count; ++index) {
-        objects.push_back(iso_allocate(&heap1, pas_non_compact_allocation_mode));
-        objects.push_back(iso_allocate(&heap2, pas_non_compact_allocation_mode));
+        void *allocated_addr1 = iso_allocate(&heap1, pas_non_compact_allocation_mode);
+        if (pas_check_pgm_entry_exists(allocated_addr1)) {
+            // PGM entry so only push as PGM allocation
+            objects_pgm.push_back(allocated_addr1);
+            if (numEvictions)
+                numEvictions--;
+        } else {
+            objects_heap1.push_back(allocated_addr1);
+            non_pgm++;
+        }
+        void * allocated_addr2 = iso_allocate(&heap2, pas_non_compact_allocation_mode);
+        if (pas_check_pgm_entry_exists(allocated_addr2)) {
+            // PGM entry so only push as PGM allocation
+            objects_pgm.push_back(allocated_addr2);
+            if (numEvictions)
+                numEvictions--;
+        } else {
+            objects_heap2.push_back(allocated_addr2);
+            non_pgm++;
+        }
     }
 
     CHECK_EQUAL(pas_num_baseline_allocator_evictions, numEvictions);
 
     scavenge();
 
-    for (void* object : objects)
+    for (void* object : objects_heap1)
+        iso_deallocate(object);
+    for (void* object : objects_heap2)
+        iso_deallocate(object);
+    for (void* object : objects_pgm)
         iso_deallocate(object);
 
     scavenge();
 
-    for (size_t index = 0; index < count; ++index) {
-        CHECK_EQUAL(iso_allocate(&heap1, pas_non_compact_allocation_mode),
-                    objects[index * 2 + 0]);
-        CHECK_EQUAL(iso_allocate(&heap2, pas_non_compact_allocation_mode),
-                    objects[index * 2 + 1]);
+    for (size_t index = 0, id1 = 0, id2 = 0; index < count; ++index) {
+        void *allocated_addr1 = iso_allocate(&heap1, pas_non_compact_allocation_mode);
+        if (pas_check_pgm_entry_exists(allocated_addr1)) {
+            // If PGM allocation skip the check
+            continue;
+        }
+        CHECK_EQUAL(allocated_addr1, objects_heap1[id1]);
+        id1++;
+        void * allocated_addr2 = iso_allocate(&heap2, pas_non_compact_allocation_mode);
+        if (pas_check_pgm_entry_exists(allocated_addr2)) {
+            // If PGM allocation skip the check
+            continue;
+        }
+        CHECK_EQUAL(allocated_addr2, objects_heap2[id2]);
+        id2++;
     }
 }
 

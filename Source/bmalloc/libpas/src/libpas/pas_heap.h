@@ -94,6 +94,8 @@ PAS_API pas_heap_summary pas_heap_compute_summary(pas_heap* heap,
 
 PAS_API void pas_heap_reset_heap_ref(pas_heap* heap);
 
+PAS_API bool pas_check_pgm_entry_exists(void *ptr);
+
 PAS_END_EXTERN_C;
 
 #endif /* PAS_HEAP_H */
