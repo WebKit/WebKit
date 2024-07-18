@@ -1,3 +1,0 @@
-
-PASS IDBCursor.advance() - attempt to pass a count parameter that is not a number
-

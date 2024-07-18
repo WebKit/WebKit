@@ -749,6 +749,9 @@
     "imported/w3c/web-platform-tests/FileAPI/url/sandboxed-iframe.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/IndexedDB/database-names-by-origin.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/IndexedDB/idb-binary-key-roundtrip.htm": [
         "slow"
     ],
@@ -804,6 +807,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/large-requests-abort.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/IndexedDB/nested-cloning-basic.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.html": [

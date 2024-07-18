@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.add() - add with an inline key
-

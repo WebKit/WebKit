@@ -1,3 +1,0 @@
-
-PASS IDBIndex.get() - attempt to retrieve a record that doesn't exist
-

@@ -1,3 +1,0 @@
-
-PASS IDBIndex.getKey() - throw InvalidStateError when the index is deleted
-

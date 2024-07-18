@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.put() - Attempt to put a record where the record's in-line key is not defined
-

@@ -1,0 +1,10 @@
+
+PASS IDBCursor.continue() - index - iterate to the next record
+PASS IDBCursor.continue() - index - attempt to pass a key parameter that is not a valid key
+PASS IDBCursor.continue() - index - attempt to iterate to the previous record when the direction is set for the next record
+PASS IDBCursor.continue() - index - attempt to iterate to the next record when the direction is set for the previous record
+PASS IDBCursor.continue() - index - iterate using 'prevunique'
+PASS IDBCursor.continue() - index - iterate using nextunique
+PASS Calling continue() should throw an exception TransactionInactiveError when the transaction is not active.
+PASS If the cursor's source or effective object store has been deleted, the implementation MUST throw a DOMException of type InvalidStateError
+

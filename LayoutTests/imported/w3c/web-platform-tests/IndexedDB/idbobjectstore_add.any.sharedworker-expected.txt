@@ -1,0 +1,18 @@
+
+PASS add() with an inline key
+PASS add() with an out-of-line key
+PASS add() record with same key already exists
+PASS add() where an index has unique:true specified
+PASS add() object store's key path is an object attribute
+PASS add() autoIncrement and inline keys
+PASS add() autoIncrement and out-of-line keys
+PASS Object store has autoIncrement:true and the key path is an object attribute
+PASS Attempt to 'add()' a record that does not meet the constraints of an   object store's inline key requirements
+PASS Attempt to call 'add()' without a key parameter when the object store uses out-of-line keys
+PASS Attempt to 'add()' a record where the record's key does not meet the constraints of a valid key
+PASS Attempt to 'add()' a record where the record's in-line key is not  defined
+PASS Attempt to 'add()' a record where the out of line key provided does not meet the constraints of a valid key
+PASS add() a record where a value being indexed does not meet the constraints of a valid key
+PASS If the transaction this IDBObjectStore belongs to has its mode set to readonly, throw ReadOnlyError
+PASS If the object store has been deleted, the implementation must throw a DOMException of type InvalidStateError
+

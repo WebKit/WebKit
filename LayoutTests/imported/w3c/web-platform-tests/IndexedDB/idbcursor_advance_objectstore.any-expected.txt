@@ -1,0 +1,7 @@
+
+PASS object store - iterate cursor number of times specified by count
+PASS Calling advance() with count argument 0 should throw TypeError.
+PASS Calling advance() should throws an exception TransactionInactiveError when the transaction is not active
+PASS Calling advance() should throw DOMException when the cursor is currently being iterated.
+PASS If the cursor's source or effective object store has been deleted, the implementation MUST throw a DOMException of type InvalidStateError
+

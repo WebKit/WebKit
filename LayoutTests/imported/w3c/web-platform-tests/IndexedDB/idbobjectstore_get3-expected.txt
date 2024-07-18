@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.get() - key is a Date
-

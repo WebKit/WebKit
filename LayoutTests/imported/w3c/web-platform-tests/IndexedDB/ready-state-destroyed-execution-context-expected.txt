@@ -1,3 +1,5 @@
 
-FAIL readyState accessor is valid after execution context is destroyed assert_equals: expected "done" but got "pending"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT readyState accessor is valid after execution context is destroyed Test timed out
 

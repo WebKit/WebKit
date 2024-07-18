@@ -1,0 +1,7 @@
+
+PASS Attempt to open a transaction with invalid scope
+PASS Opening a transaction defaults to a read-only mode
+PASS Attempt to open a transaction from closed database connection
+PASS Attempt to open a transaction with invalid mode
+PASS If storeNames is an empty list, the implementation must throw a DOMException of type InvalidAccessError
+

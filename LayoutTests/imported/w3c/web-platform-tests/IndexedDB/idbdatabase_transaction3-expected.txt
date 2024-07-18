@@ -1,3 +1,0 @@
-
-PASS IDBDatabase.transaction() - attempt to open a transaction from closed database connection
-
