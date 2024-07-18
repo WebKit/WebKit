@@ -122,6 +122,7 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     -DALLOW_LINE_AND_COLUMN_NUMBER_IN_BUILTINS=ON \
     -DENABLE_SINGLE_THREADED_VM_ENTRY_SCOPE=ON \
     -DENABLE_REMOTE_INSPECTOR=ON \
+    -DCMAKE_POSITION_INDEPENDENT_CODE=OFF \
     -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld" \
     -DCMAKE_AR=$(which llvm-ar) \
     -DCMAKE_RANLIB=$(which llvm-ranlib) \
