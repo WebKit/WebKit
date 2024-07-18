@@ -519,6 +519,10 @@ x86_64: RotateLeft32 U:G:32, UZD:G:32
     Tmp*, Tmp
     Imm, Tmp
 
+armv7: RotateLeft32 U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Tmp
+    Tmp, Imm, Tmp
+
 x86_64: RotateLeft64 U:G:64, UD:G:64
     Tmp*, Tmp
     Imm, Tmp
@@ -1622,10 +1626,10 @@ BranchNeg32 U:G:32, UZD:G:32 /branch
 64: BranchNeg64 U:G:32, UZD:G:64 /branch
     ResCond, Tmp
 
-64: MoveConditionally32 U:G:32, U:G:32, U:G:32, U:G:Ptr, UD:G:Ptr
+64 armv7: MoveConditionally32 U:G:32, U:G:32, U:G:32, U:G:Ptr, UD:G:Ptr
     RelCond, Tmp, Tmp, Tmp, Tmp
 
-64: MoveConditionally32 U:G:32, U:G:32, U:G:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
+64 armv7: MoveConditionally32 U:G:32, U:G:32, U:G:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
     RelCond, Tmp, Tmp, Tmp, Tmp, Tmp
     RelCond, Tmp, Imm, Tmp, Tmp, Tmp
 
@@ -1636,11 +1640,11 @@ BranchNeg32 U:G:32, UZD:G:32 /branch
     RelCond, Tmp, Tmp, Tmp, Tmp, Tmp
     RelCond, Tmp, Imm, Tmp, Tmp, Tmp
 
-64: MoveConditionallyTest32 U:G:32, U:G:32, U:G:32, U:G:Ptr, UD:G:Ptr
+64 armv7: MoveConditionallyTest32 U:G:32, U:G:32, U:G:32, U:G:Ptr, UD:G:Ptr
     ResCond, Tmp, Tmp, Tmp, Tmp
     x86: ResCond, Tmp, Imm, Tmp, Tmp
 
-64: MoveConditionallyTest32 U:G:32, U:G:32, U:G:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
+64 armv7: MoveConditionallyTest32 U:G:32, U:G:32, U:G:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
     ResCond, Tmp, Tmp, Tmp, Tmp, Tmp
     ResCond, Tmp, BitImm, Tmp, Tmp, Tmp
 
@@ -1676,7 +1680,7 @@ arm64: MoveConditionallyFloatWithZero U:G:32, U:F:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
 arm64: MoveConditionallyFloatWithZero U:G:32, U:F:32, U:G:Ptr, UD:G:Ptr
     DoubleCond, Tmp, Tmp, Tmp
 
-64: MoveDoubleConditionally32 U:G:32, U:G:32, U:G:32, U:F:64, U:F:64, D:F:64
+64 armv7: MoveDoubleConditionally32 U:G:32, U:G:32, U:G:32, U:F:64, U:F:64, D:F:64
     RelCond, Tmp, Tmp, Tmp, Tmp, Tmp
     RelCond, Tmp, Imm, Tmp, Tmp, Tmp
     x86: RelCond, Addr, Imm, Tmp, Tmp, Tmp
@@ -1692,7 +1696,7 @@ arm64: MoveConditionallyFloatWithZero U:G:32, U:F:32, U:G:Ptr, UD:G:Ptr
     x86_64: RelCond, Addr, Imm, Tmp, Tmp, Tmp
     x86_64: RelCond, Index, Tmp, Tmp, Tmp, Tmp
 
-64: MoveDoubleConditionallyTest32 U:G:32, U:G:32, U:G:32, U:F:64, U:F:64, D:F:64
+64 armv7: MoveDoubleConditionallyTest32 U:G:32, U:G:32, U:G:32, U:F:64, U:F:64, D:F:64
     ResCond, Tmp, Tmp, Tmp, Tmp, Tmp
     ResCond, Tmp, BitImm, Tmp, Tmp, Tmp
     x86: ResCond, Addr, Imm, Tmp, Tmp, Tmp
