@@ -1,5 +1,5 @@
-//@ requireOptions("--useWebAssemblySIMD=1","--useWebAssemblyTailCalls=1")
-//@ skip
+//@ requireOptions("--useWebAssemblyTailCalls=true", "--maximumWebAssemblyCalleeSIzeForInlining=0")
+//@ skip if !$isSIMDPlatform
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
 

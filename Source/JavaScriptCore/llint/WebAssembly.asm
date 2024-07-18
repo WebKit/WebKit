@@ -275,25 +275,13 @@ macro restoreCalleeSavesUsedByWasm()
 end
 
 macro preserveGPRsUsedByTailCall(gpr0, gpr1)
-    if ARM64 or ARM64E
-        storepairq gpr0, gpr1, CodeBlock[sp]
-    elsif ARMv7 or X86_64 or X86_64_WIN or RISCV64
-        storep gpr0, CodeBlock[sp]
-        storep gpr1, Callee[sp]
-    else
-        error
-    end
+    storep gpr0, CodeBlock[sp]
+    storep gpr1, ArgumentCountIncludingThis[sp]
 end
 
 macro restoreGPRsUsedByTailCall(gpr0, gpr1)
-    if ARM64 or ARM64E
-        loadpairq CodeBlock[sp], gpr0, gpr1
-    elsif ARMv7 or X86_64 or X86_64_WIN or RISCV64
-        loadp CodeBlock[sp], gpr0
-        loadp Callee[sp], gpr1
-    else
-        error
-    end
+    loadp CodeBlock[sp], gpr0
+    loadp ArgumentCountIncludingThis[sp], gpr1
 end
 
 macro preserveReturnAddress(scratch)
@@ -1407,7 +1395,7 @@ macro slowPathForWasmCall(ctx, slowPath, storeWasmInstance)
     # First, prepare the new stack frame
     # We do this before the CCall so it can write stuff into the new frame from CPP
     wgetu(ctx, m_stackOffset, ws1)
-    lshifti 3, ws1
+    muli SlotSize, ws1
 if ARMv7
     subp cfr, ws1, ws1
     move ws1, sp
@@ -1573,7 +1561,31 @@ end
         end)
 end
 
-macro slowPathForWasmTailCall(ctx, slowPath, storeWasmInstance, restoreCalleeSavesPreservedByCaller)
+macro slowPathForWasmTailCall(ctx, slowPath)
+    # First, prepare the new stack frame like a regular call
+    # We do this before the CCall so it can write stuff into the new frame from CPP
+    # Later, we will move the frame up.
+    wgetu(ctx, m_stackOffset, ws1)
+    muli SlotSize, ws1
+    if ARMv7
+        subp cfr, ws1, ws1
+        move ws1, sp
+    else
+        subp cfr, ws1, sp
+    end
+
+    if ASSERT_ENABLED
+        if ARMv7
+            move 0xBEEF, a0
+            storep a0, PayloadOffset + Callee[sp]
+            move 0, a0
+            storep a0, TagOffset + Callee[sp]
+        else
+            move 0xBEEF, a0
+            storep a0, Callee[sp]
+        end
+    end
+
     callWasmCallSlowPath(
         slowPath,
         # callee is r0 and targetWasmInstance is r1
@@ -1585,17 +1597,7 @@ macro slowPathForWasmTailCall(ctx, slowPath, storeWasmInstance, restoreCalleeSav
             # the call might throw (e.g. indirect call with bad signature)
             btpz targetWasmInstance, .throw
 
-            wgetu(ctx, m_stackOffset, ws1)
-            muli SlotSize, ws1
-
-if ARMv7
-            subp cfr, ws1, ws1
-            move ws1, sp
-else
-            subp cfr, ws1, sp
-end
-
-            storeWasmInstance(targetWasmInstance)
+            move targetWasmInstance, wasmInstance
             reloadMemoryRegistersFromInstance(targetWasmInstance, wa0)
 
             wgetu(ctx, m_numberOfCalleeStackArgs, ws1)
@@ -1655,7 +1657,6 @@ end
             # Restore PC
             move ws1, PC
 
-            restoreCalleeSavesPreservedByCaller()
 if ARM64E
             addp CallerFrameAndPCSize, cfr, ws2
 end
@@ -1667,15 +1668,19 @@ if ARMv7
 end
             .copyLoop:
 if JSVALUE64
-             subi MachineRegisterSize, wa1
-             loadq [sp, wa1, 1], ws1
-             storeq ws1, [wa0, wa1, 1]
+            subi MachineRegisterSize, wa1
+            loadq [sp, wa1, 1], ws1
+            storeq ws1, [wa0, wa1, 1]
 else
-             subi PtrSize, wa1
-             loadp [sp, wa1, 1], ws1
-             storep ws1, [wa0, wa1, 1]
+            subi PtrSize, wa1
+            loadp [sp, wa1, 1], ws1
+            storep ws1, [wa0, wa1, 1]
 end
-             btinz wa1, .copyLoop
+            btinz wa1, .copyLoop
+
+            # Store the wasm callee, set by the c slow path above.
+            loadp Callee[sp], ws1
+            storep ws1, Callee[wa0]
 
             move wa0, ws1
             loadp Wasm::Instance::m_owner[wasmInstance], wa0
@@ -1746,37 +1751,12 @@ wasmOp(call_ref, WasmCallRef, macro(ctx)
     slowPathForWasmCall(ctx, _slow_path_wasm_call_ref, macro(targetInstance) move targetInstance, wasmInstance end)
 end)
 
-# In the prologue of every Wasm function, we call preserveCalleeSavesUsedByWasm() which saves
-# the wasmInstance and PB callee save registers. In epilogues, we call restoreCalleeSavesUsedByWasm()
-# to restore them (e.g. see doReturn()). Hence, it follows that when we do a tail_call, that we
-# do the equivalent of restoreCalleeSavesUsedByWasm() and restore the wasmInstance and PB.
-#
-# However, for no_tls mode, the wasmInstance register is pinned and used to point to the Wasm
-# instance currently executing. The callee expects the caller to have set up wasmInstance accordingly
-# before calling it. As such, we should not restore the caller's caller's wasmInstance before tail
-# calling to the callee. Hence, we'll only restore the wasmInstance register for useFastTLS mode.
-#
-# As for PB, slowPathForWasmTailCall already restores it in usePreviousFrame(). Hence, there's
-# nothing more to do for that.
-
 wasmOp(tail_call, WasmTailCall, macro(ctx)
-    slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call,
-    macro(targetInstance)
-        move targetInstance, wasmInstance
-    end,
-    macro()
-        # Nothing to do. See comment on restoring callee saves for tail calls above.
-    end)
+    slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call)
 end)
 
 wasmOp(tail_call_indirect, WasmTailCallIndirect, macro(ctx)
-    slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call_indirect,
-    macro(targetInstance)
-        move targetInstance, wasmInstance
-    end,
-    macro()
-        # Nothing to do. See comment on restoring callee saves for tail calls above.
-    end)
+    slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call_indirect)
 end)
 
 slowWasmOp(call_builtin)

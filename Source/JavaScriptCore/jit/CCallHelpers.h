@@ -902,11 +902,11 @@ public:
         storeWasmCalleeCallee(scratchRegister());
     }
 
-    DataLabelPtr storeWasmCalleeCalleePatchable()
+    DataLabelPtr storeWasmCalleeCalleePatchable(int offset = 0)
     {
         JIT_COMMENT(*this, "Store Callee's wasm callee (patchable)");
         auto patch = moveWithPatch(TrustedImmPtr(nullptr), scratchRegister());
-        auto addr = CCallHelpers::addressOfCalleeCalleeFromCallerPerspective(0);
+        auto addr = CCallHelpers::addressOfCalleeCalleeFromCallerPerspective(offset);
 #if USE(JSVALUE64)
         storePtr(scratchRegister(), addr);
 #elif USE(JSVALUE32_64)

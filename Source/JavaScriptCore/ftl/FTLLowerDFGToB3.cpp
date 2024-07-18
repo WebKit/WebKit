@@ -12672,6 +12672,10 @@ IGNORE_CLANG_WARNINGS_END
                 // https://bugs.webkit.org/show_bug.cgi?id=196570
                 jit.loadPtr(wasmFunction->entrypointLoadLocation(), scratchGPR);
                 jit.call(scratchGPR, WasmEntryPtrTag);
+
+                // Restore stack pointer after call (we may tail call)
+                jit.addPtr(MacroAssembler::TrustedImm32(-static_cast<int32_t>(params.proc().frameSize())), MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
+
             });
 
         if (signature.returnsVoid())

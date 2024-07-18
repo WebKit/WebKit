@@ -99,6 +99,7 @@ static constexpr bool verbose = false;
 static constexpr bool verboseInlining = false;
 static constexpr bool traceExecution = false;
 static constexpr bool traceStackValues = false;
+static constexpr bool verboseTailCalls = false;
 #if ASSERT_ENABLED
 static constexpr bool traceExecutionIncludesConstructionSite = false;
 #endif
@@ -1160,6 +1161,14 @@ OMGIRGenerator::OMGIRGenerator(CalleeGroup& calleeGroup, const ModuleInformation
     m_prologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([=, this] (CCallHelpers& jit, B3::Air::Code& code) {
         RELEASE_ASSERT(m_callee);
         AllowMacroScratchRegisterUsage allowScratch(jit);
+
+        if (WasmOMGIRGeneratorInternal::verboseTailCalls) {
+            int fi = this->m_functionIndex;
+            jit.probeDebugSIMD([fi] (Probe::Context& context) {
+                dataLogLn(" General Before Prologue, fucntion ", fi, " FP: ", RawHex(context.gpr<uint64_t>(GPRInfo::callFrameRegister)), " SP: ", RawHex(context.gpr<uint64_t>(MacroAssembler::stackPointerRegister)));
+            });
+        }
+
         code.emitDefaultPrologue(jit);
         GPRReg scratchGPR = wasmCallingConvention().prologueScratchGPRs[0];
         jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(m_callee)), scratchGPR);
@@ -1409,6 +1418,41 @@ auto OMGIRGenerator::addArguments(const TypeDefinition& signature) -> PartialRes
 
     CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(signature, CallRole::Callee);
 
+    if (WasmOMGIRGeneratorInternal::verboseTailCalls) {
+        PatchpointValue* patch = m_proc.add<PatchpointValue>(B3::Void, Origin());
+        patch->effects = Effects::none();
+        patch->effects.controlDependent = true;
+        patch->effects.fence = true;
+        patch->effects.reads = HeapRange::top();
+        patch->effects.writes = HeapRange::top();
+        m_currentBlock->append(patch);
+        patch->setGenerator([functionIndex = m_functionIndex, signature = signature.as<FunctionSignature>(), wasmCallInfo] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            jit.probeDebugSIMD([functionIndex, signature, wasmCallInfo] (Probe::Context& context) {
+                dataLogLn(" General Add arguments, fucntion ", functionIndex, " FP: ", RawHex(context.gpr<uint64_t>(GPRInfo::callFrameRegister)), " SP: ", RawHex(context.gpr<uint64_t>(MacroAssembler::stackPointerRegister)));
+
+                auto fpl = context.gpr<uint64_t*>(GPRInfo::callFrameRegister);
+                auto fpi = context.gpr<uint32_t*>(GPRInfo::callFrameRegister);
+
+                for (size_t i = 0; i < signature->argumentCount(); ++i) {
+                    auto rep = wasmCallInfo.params[i];
+                    auto src = rep.location;
+                    auto width = rep.width;
+                    dataLog("     Arg source ", i, " located at ", src, " = ");
+
+                    if (src.isGPR())
+                        dataLog(context.gpr(src.jsr().payloadGPR()), " / ", (int) context.gpr(src.jsr().payloadGPR()));
+                    else if (src.isFPR() && width <= Width::Width64)
+                        dataLog(context.fpr(src.fpr(), SavedFPWidth::SaveVectors));
+                    else if (src.isFPR())
+                        dataLog(context.vector(src.fpr()));
+                    else
+                        dataLog(fpl[src.offsetFromFP() / sizeof(uint64_t)], " / ", fpi[src.offsetFromFP() / sizeof(uint32_t)],  " / ", RawHex(fpi[src.offsetFromFP() / sizeof(uint32_t)]), " / ", bitwise_cast<double>(fpl[src.offsetFromFP() / sizeof(uint64_t)]), " at ", RawPointer(&fpi[src.offsetFromFP() / sizeof(uint32_t)]));
+                    dataLogLn();
+                }
+            });
+        });
+    }
+
     for (size_t i = 0; i < signature.as<FunctionSignature>()->argumentCount(); ++i) {
         B3::Type type = toB3Type(signature.as<FunctionSignature>()->argumentType(i));
         B3::Value* argument;
@@ -1624,8 +1668,14 @@ auto OMGIRGenerator::addCrash() -> PartialResult
 
 auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* boxedCalleeCallee, Value* jsCalleeAnchor, const TypeDefinition& signature, const Vector<ExpressionType>& args, ResultList& results, CallType callType) -> PartialResult
 {
-    bool isTailCall = callType == CallType::TailCall;
-    ASSERT(callType == CallType::Call || isTailCall);
+    const bool isTailCallInlineCaller = callType == CallType::TailCall && m_inlineParent;
+    const bool isTailCall = callType == CallType::TailCall && !isTailCallInlineCaller;
+    ASSERT(callType == CallType::Call || isTailCall || isTailCallInlineCaller);
+
+    m_makesCalls = true;
+    if (isTailCall || isTailCallInlineCaller)
+        m_makesTailCalls = true;
+
     // Do a context switch if needed.
     {
         BasicBlock* continuation = m_proc.addBlock();
@@ -1667,12 +1717,12 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
     CallInformation wasmCalleeInfo = callingConvention.callInformationFor(signature, CallRole::Caller);
     CallInformation wasmCalleeInfoAsCallee = callingConvention.callInformationFor(signature, CallRole::Callee);
     Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCalleeInfo.headerAndArgumentStackSizeInBytes);
+    if (isTailCall)
+        calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCalleeInfo.headerAndArgumentStackSizeInBytes * 2 + sizeof(Register));
 
     m_proc.requestCallArgAreaSizeInBytes(calleeStackSize);
 
     if (isTailCall) {
-        m_makesTailCalls = true;
-
         const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
         const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
         CallInformation wasmCallerInfoAsCallee = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
@@ -1680,20 +1730,16 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
         auto [patchpoint, _, prepareForCall] = createTailCallPatchpoint(m_currentBlock, wasmCallerInfoAsCallee, wasmCalleeInfoAsCallee, args, { { calleeCode, ValueRep(GPRInfo::wasmScratchGPR0) } });
         unsigned patchArgsIndex = patchpoint->reps().size();
         patchpoint->append(calleeCode, ValueRep(GPRInfo::nonPreservedNonArgumentGPR0));
+        patchpoint->append(boxedCalleeCallee, ValueRep::SomeRegister);
         patchArgsIndex += m_proc.resultCount(patchpoint->type());
         patchpoint->setGenerator([prepareForCall = prepareForCall, patchArgsIndex](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             prepareForCall->run(jit, params);
-            // In tail-call, we always configure JSWebAssemblyInstance* in |this| to anchor it from conservative GC roots.
-            CCallHelpers::Address thisSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
-            jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfOwner()), GPRInfo::nonPreservedNonArgumentGPR1);
-            jit.storePtr(GPRInfo::nonPreservedNonArgumentGPR1, thisSlot.withOffset(PayloadOffset));
+            jit.storeWasmCalleeCallee(params[patchArgsIndex + 1].gpr(), sizeof(CallerFrameAndPC) - prologueStackPointerDelta());
             jit.farJump(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
         });
         return { };
     }
-
-    m_makesCalls = true;
 
     B3::Type returnType = toB3ResultType(&signature);
     auto [patchpoint, handle, prepareForCall] = createCallPatchpoint(m_currentBlock, jsCalleeAnchor, returnType, wasmCalleeInfo, args);
@@ -1738,6 +1784,15 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
 
     // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
     restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_currentBlock);
+
+    if (isTailCallInlineCaller) {
+        Stack typedResults;
+        typedResults.reserveInitialCapacity(results.size());
+        for (unsigned i = 0; i < results.size(); ++i)
+            typedResults.append(TypedExpression { signature.as<FunctionSignature>()->returnType(i), results[i] });
+        ASSERT(m_returnContinuation);
+        return addInlinedReturn(WTFMove(typedResults));
+    }
 
     return { };
 }
@@ -4700,34 +4755,374 @@ auto OMGIRGenerator::createCallPatchpoint(BasicBlock* block, Value* jsCalleeAnch
     return { patchpoint, exceptionHandle, nullptr };
 }
 
+// See emitTailCallPatchpoint for the setup before this.
+static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& jit, const B3::StackmapGenerationParams& params, CallInformation wasmCallerInfoAsCallee, CallInformation wasmCalleeInfoAsCallee, unsigned firstPatchArg, unsigned lastPatchArg, int32_t newFPOffsetFromFP)
+{
+    const Checked<int32_t> offsetOfFirstSlotFromFP = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCallerInfoAsCallee.headerAndArgumentStackSizeInBytes);
+    JIT_COMMENT(jit, "Set up tail call, new FP offset from FP: ", newFPOffsetFromFP);
+    AllowMacroScratchRegisterUsage allowScratch(jit);
+
+    // Be careful not to clobber this below.
+    // We also need to make sure that we preserve this if it is used by the patchpoint body.
+    bool clobbersTmp = false;
+    auto tmp = jit.scratchRegister();
+    int tmpSpill = 0;
+
+    // Set up a valid frame so that we can clobber this one.
+    RegisterAtOffsetList calleeSaves = params.code().calleeSaveRegisterAtOffsetList();
+    jit.emitRestore(calleeSaves);
+
+    for (unsigned i = 0; i < params.size(); ++i) {
+        auto arg = params[i];
+        if (arg.isGPR()) {
+            ASSERT(!calleeSaves.find(arg.gpr()));
+            if (arg.gpr() == tmp)
+                clobbersTmp = true;
+            continue;
+        }
+        if (arg.isFPR()) {
+            ASSERT(!calleeSaves.find(arg.fpr()));
+            continue;
+        }
+    }
+
+    const unsigned frameSize = params.code().frameSize();
+    ASSERT(WTF::roundUpToMultipleOf<stackAlignmentBytes()>(frameSize) == frameSize);
+    ASSERT(WTF::roundUpToMultipleOf<stackAlignmentBytes()>(std::abs(newFPOffsetFromFP)) == static_cast<size_t>(std::abs(newFPOffsetFromFP)));
+
+    auto fpOffsetToSPOffset = [frameSize](unsigned offset) {
+        return checkedSum<int>(frameSize + offset).value();
+    };
+
+    JIT_COMMENT(jit, "Let's use the caller's frame, so that we always have a valid frame.");
+    if (WasmOMGIRGeneratorInternal::verboseTailCalls) {
+        jit.probeDebugSIMD([frameSize, fpOffsetToSPOffset, newFPOffsetFromFP, wasmCalleeInfoAsCallee, firstPatchArg, params, functionIndex] (Probe::Context& context) {
+            uint64_t sp = context.gpr<uint64_t>(MacroAssembler::stackPointerRegister);
+            uint64_t fp = context.gpr<uint64_t>(GPRInfo::callFrameRegister);
+            dataLogLn("Before tail call in function ", functionIndex, " before changing anything: FP: ", RawHex(fp), " SP: ", RawHex(sp));
+            dataLogLn("New FP will be at ", RawHex(sp + fpOffsetToSPOffset(newFPOffsetFromFP)));
+            CallFrame* fpp = context.gpr<CallFrame*>(GPRInfo::callFrameRegister);
+            dataLogLn("callee original: ", RawPointer(fpp->callee().rawPtr()));
+            auto& wasmCallee = context.gpr<uint64_t*>(GPRInfo::callFrameRegister)[CallFrameSlot::callee * 1];
+            dataLogLn("callee original: ", RawHex(wasmCallee), " at ", RawPointer(&wasmCallee));
+            dataLogLn("retPC original: ", RawPointer(fpp->rawReturnPCForInspection()));
+            auto& retPC = context.gpr<uint64_t*>(GPRInfo::callFrameRegister)[CallFrame::returnPCOffset() / sizeof(uint64_t)];
+            dataLogLn("retPC original: ", RawHex(retPC), " at ", RawPointer(&retPC));
+            dataLogLn("callerFrame original: ", RawPointer(fpp->callerFrame()));
+            ASSERT_UNUSED(frameSize, sp + frameSize == fp);
+
+            auto fpl = context.gpr<uint64_t*>(GPRInfo::callFrameRegister);
+            auto fpi = context.gpr<uint32_t*>(GPRInfo::callFrameRegister);
+
+            for (unsigned i = 0; i < wasmCalleeInfoAsCallee.params.size(); ++i) {
+                auto src = params[firstPatchArg + i];
+                auto dst = wasmCalleeInfoAsCallee.params[i].location;
+                auto width = wasmCalleeInfoAsCallee.params[i].width;
+                dataLog("Arg source ", i, " located at ", src, " = ");
+                if (src.isGPR())
+                    dataLog(context.gpr(src.gpr()), " / ", (int) context.gpr(src.gpr()));
+                else if (src.isFPR() && width <= Width::Width64)
+                    dataLog(context.fpr(src.fpr(), SavedFPWidth::SaveVectors));
+                else if (src.isFPR())
+                    dataLog(context.vector(src.fpr()));
+                else if (src.isConstant())
+                    dataLog(src.value(), " / ", src.doubleValue());
+                else
+                    dataLog(fpl[src.offsetFromFP() / sizeof(uint64_t)], " / ", fpi[src.offsetFromFP() / sizeof(uint32_t)], " / ", bitwise_cast<double>(fpl[src.offsetFromFP() / sizeof(uint64_t)]), " at ", RawPointer(&fpp[src.offsetFromFP() / sizeof(uint64_t)]));
+                dataLogLn(" -> ", dst);
+            }
+        });
+    }
+    jit.loadPtr(CCallHelpers::Address(MacroAssembler::framePointerRegister, CallFrame::callerFrameOffset()), MacroAssembler::framePointerRegister);
+    if (WasmOMGIRGeneratorInternal::verboseTailCalls) {
+        jit.probeDebugSIMD([] (Probe::Context& context) {
+            uint64_t sp = context.gpr<uint64_t>(MacroAssembler::stackPointerRegister);
+            uint64_t fp = context.gpr<uint64_t>(GPRInfo::callFrameRegister);
+            dataLogLn("In the new expanded frame, including F's caller: FP: ", RawHex(fp), " SP: ", RawHex(sp));
+        });
+    }
+
+    auto newReturnPCOffset = fpOffsetToSPOffset(checkedSum<intptr_t>(CallFrame::returnPCOffset(), newFPOffsetFromFP).value());
+
+    JIT_COMMENT(jit, "Copy over args if needed into their final position, clobbering everything.");
+    // This code has a bunch of overlap with CallFrameShuffler and Shuffle in Air/BBQ
+
+    // We requested some extra stack space below via requestCallArgAreaSize
+    // ... FP [initial safe area][caller stack space ] [callArgSpace                    ] SP ...
+    // becomes
+    // ... FP [safe area growing ->    ] [danger           ] [ scratch                  ] SP ...
+    // This scratch space sits at the very bottom of the stack, near sp.
+    // AirLowerStackArgs takes care of adding callArgSpace to our total caller frame size.
+    // BUT, even though we have this extra space, the new frame might be bigger, so we can't
+    // use the new frame as scratch. The new return pc represents the lowest offset from SP we can use.
+    int spillPointer = 0;
+    const int scratchAreaUpperBound = std::min(
+        safeCast<int>(WTF::roundUpToMultipleOf<stackAlignmentBytes()>(static_cast<int>(wasmCalleeInfoAsCallee.headerAndArgumentStackSizeInBytes))),
+        newReturnPCOffset);
+    auto allocateSpill = [&] (Width width) -> int {
+        int offset = spillPointer;
+        spillPointer += bytesForWidth(width);
+        ASSERT(spillPointer <= scratchAreaUpperBound);
+        ASSERT(offset < scratchAreaUpperBound);
+        return offset;
+    };
+
+    auto doMove = [&] (int srcOffset, int dstOffset, Width width) {
+        JIT_COMMENT(jit, "Do move ", srcOffset, " -> ", dstOffset);
+        auto src = CCallHelpers::Address(MacroAssembler::stackPointerRegister, srcOffset);
+        auto dst = CCallHelpers::Address(MacroAssembler::stackPointerRegister, dstOffset);
+        if (width <= Width32)
+            jit.transfer32(src, dst);
+        else if (width <= Width64)
+            jit.transfer64(src, dst);
+        else {
+            jit.transfer64(src, dst);
+            jit.transfer64(src.withOffset(bytesForWidth(Width::Width64)), dst.withOffset(bytesForWidth(Width::Width64)));
+        }
+        if (WasmOMGIRGeneratorInternal::verboseTailCalls) {
+            jit.probeDebugSIMD([tmp, srcOffset, dstOffset, width] (Probe::Context& context) {
+                uint64_t val = context.gpr<uint64_t>(tmp);
+                uint64_t sp = context.gpr<uint64_t>(MacroAssembler::stackPointerRegister);
+                dataLogLn("Move value ", val, " / ", RawHex(val), " at ", RawHex(sp + srcOffset), " -> ", RawHex(sp + dstOffset), " width ", width);
+            });
+        }
+    };
+
+    // This should grow down towards SP (towards 0) as we move stuff out of the way.
+    int safeAreaLowerBound = fpOffsetToSPOffset(CallFrameSlot::codeBlock * sizeof(Register));
+    const int stackUpperBound = fpOffsetToSPOffset(offsetOfFirstSlotFromFP); // ArgN in the stack diagram
+    ASSERT(safeAreaLowerBound > 0);
+    ASSERT(safeAreaLowerBound < stackUpperBound);
+
+    JIT_COMMENT(jit, "SP[", safeAreaLowerBound, "] to SP[", stackUpperBound, "] form the safe portion of the stack to clobber; Scratches go from SP[0] to SP[", scratchAreaUpperBound, "].");
+
+#if ASSERT_ENABLED
+    // Clobber all safe values to make debugging easier.
+    for (int i = safeAreaLowerBound; i < stackUpperBound; i += sizeof(Register)) {
+        jit.storePtr(MacroAssembler::TrustedImmPtr(0xBEEF),
+            CCallHelpers::Address(MacroAssembler::stackPointerRegister, i));
+    }
+#endif
+
+    // srcOffset, dstOffset
+    Vector<std::tuple<int, int, Width>> argsToMove;
+    Vector<std::tuple<int, int, Width>> spillsToMove;
+    argsToMove.reserveInitialCapacity(wasmCalleeInfoAsCallee.params.size() + 1);
+
+    if (clobbersTmp) {
+        tmpSpill = allocateSpill(Width::Width64);
+        jit.storePtr(tmp, CCallHelpers::Address(MacroAssembler::stackPointerRegister, tmpSpill));
+    }
+
+    // We will complete those moves who's source is closest to the danger frontier first.
+    // That will move the danger frontier.
+
+    for (unsigned i = 0; i < wasmCalleeInfoAsCallee.params.size(); ++i) {
+        auto dst = wasmCalleeInfoAsCallee.params[i];
+        if (dst.location.isGPR()) {
+            ASSERT(!calleeSaves.find(dst.location.jsr().payloadGPR()));
+            continue;
+        }
+        if (dst.location.isFPR()) {
+            ASSERT(!calleeSaves.find(dst.location.fpr()));
+            continue;
+        }
+        auto src = params[firstPatchArg + i];
+        ASSERT_UNUSED(lastPatchArg, firstPatchArg + i < lastPatchArg);
+
+        intptr_t srcOffset = -1;
+
+        if (src.isGPR()) {
+            ASSERT(dst.width <= Width::Width64);
+            srcOffset = allocateSpill(dst.width);
+            jit.storePtr(src.gpr(), CCallHelpers::Address(MacroAssembler::stackPointerRegister, srcOffset));
+        } else if (src.isFPR()) {
+            srcOffset = allocateSpill(dst.width);
+            if (dst.width <= Width::Width64)
+                jit.storeDouble(src.fpr(), CCallHelpers::Address(MacroAssembler::stackPointerRegister, srcOffset));
+            else
+                jit.storeVector(src.fpr(), CCallHelpers::Address(MacroAssembler::stackPointerRegister, srcOffset));
+        } else if (src.isConstant()) {
+            srcOffset = allocateSpill(dst.width);
+            ASSERT(dst.width <= Width::Width64);
+            jit.move(MacroAssembler::TrustedImm64(src.value()), tmp);
+            jit.store64(tmp, CCallHelpers::Address(MacroAssembler::stackPointerRegister, srcOffset));
+        } else {
+            ASSERT(src.isStack());
+            srcOffset = fpOffsetToSPOffset(src.offsetFromFP());
+        }
+        intptr_t dstOffset = fpOffsetToSPOffset(checkedSum<int32_t>(dst.location.offsetFromFP(), newFPOffsetFromFP).value());
+        ASSERT(srcOffset >= 0);
+        ASSERT(dstOffset >= 0);
+        JIT_COMMENT(jit, "Arg ", i, " has srcOffset ", srcOffset, " dstOffset ", dstOffset);
+        argsToMove.append({ srcOffset, dstOffset, dst.width });
+    }
+
+    argsToMove.append({
+        fpOffsetToSPOffset(CallFrame::returnPCOffset()),
+        newReturnPCOffset,
+        Width::Width64
+    });
+    JIT_COMMENT(jit, "ReturnPC has srcOffset ", fpOffsetToSPOffset(CallFrame::returnPCOffset()), " dstOffset ", newReturnPCOffset);
+
+    std::sort(
+        argsToMove.begin(), argsToMove.end(),
+        [] (const auto& left, const auto& right) {
+            return std::get<0>(left) > std::get<0>(right);
+        });
+
+    for (unsigned i = 0; i < argsToMove.size(); ++i) {
+        auto [srcOffset, dstOffset, width] = argsToMove[i];
+        // The first arg is the highest-offset arg, and we expect that moving it should
+        // make progress on moving the safe area down.
+        ASSERT_UNUSED(safeAreaLowerBound, srcOffset <= safeAreaLowerBound);
+
+        safeAreaLowerBound = srcOffset;
+        ASSERT(srcOffset < stackUpperBound);
+        ASSERT(dstOffset < stackUpperBound);
+        ASSERT(dstOffset >= scratchAreaUpperBound);
+        ASSERT(srcOffset >= 0);
+        ASSERT(dstOffset >= 0);
+
+        JIT_COMMENT(jit, "SP[", safeAreaLowerBound, "] to SP[", stackUpperBound, "] form the safe portion of the stack to clobber.");
+
+        if (dstOffset >= safeAreaLowerBound)
+            doMove(srcOffset, dstOffset, width);
+        else {
+            JIT_COMMENT(jit, "Must spill.");
+            auto scratch = allocateSpill(width);
+            doMove(srcOffset, scratch, width);
+            spillsToMove.append({ scratch, dstOffset, width });
+        }
+    }
+
+    JIT_COMMENT(jit, "Move spills");
+
+    for (unsigned i = 0; i < spillsToMove.size(); ++i) {
+        auto [srcOffset, dstOffset, width] = spillsToMove[i];
+        ASSERT(srcOffset < stackUpperBound);
+        ASSERT(dstOffset < stackUpperBound);
+        ASSERT(dstOffset >= scratchAreaUpperBound);
+        ASSERT(srcOffset >= 0);
+        ASSERT(dstOffset >= 0);
+
+        doMove(srcOffset, dstOffset, width);
+    }
+
+    JIT_COMMENT(jit, "Now we can restore / resign lr.");
+
+    // Pop our locals, leaving only the new frame behind as though our original caller had called the callee.
+    // Also pop callee.
+    auto newFPOffsetFromSP = fpOffsetToSPOffset(newFPOffsetFromFP);
+    ASSERT(newFPOffsetFromSP > 0);
+    ASSERT(WTF::roundUpToMultipleOf<stackAlignmentBytes()>(std::abs(newFPOffsetFromSP)) == static_cast<size_t>(std::abs(newFPOffsetFromSP)));
+
+    auto newSPAtPrologueOffsetFromSP = newFPOffsetFromSP + prologueStackPointerDelta();
+
+    // The return PC should be at the top of the new stack.
+    // On ARM64E, we load it before changing SP to avoid needing an extra temp register.
+
+#if CPU(ARM) || CPU(ARM64) || CPU(RISCV64)
+    JIT_COMMENT(jit, "Load the return pointer from its saved location.");
+    jit.load64(CCallHelpers::Address(MacroAssembler::stackPointerRegister, newFPOffsetFromSP + OBJECT_OFFSETOF(CallerFrameAndPC, returnPC)), tmp);
+    jit.move(tmp, MacroAssembler::linkRegister);
+    if (WasmOMGIRGeneratorInternal::verboseTailCalls) {
+        jit.probeDebugSIMD([] (Probe::Context& context) {
+            dataLogLn("tagged return pc: ", RawHex(context.gpr<uint64_t>(MacroAssembler::linkRegister)));
+        });
+    }
+#if CPU(ARM64E)
+    JIT_COMMENT(jit, "The return pointer was signed with the stack height before we pushed lr, fp, see emitFunctionPrologue. newFPOffsetFromSP: ", newFPOffsetFromSP, " newFPOffsetFromFP ", newFPOffsetFromFP);
+    jit.addPtr(MacroAssembler::TrustedImm32(sizeof(CallerFrameAndPC)), MacroAssembler::stackPointerRegister, tmp);
+    jit.untagPtr(tmp, MacroAssembler::linkRegister);
+    if (WasmOMGIRGeneratorInternal::verboseTailCalls) {
+        jit.probeDebugSIMD([] (Probe::Context& context) {
+            dataLogLn("untagged return pc: ", RawHex(context.gpr<uint64_t>(MacroAssembler::linkRegister)));
+        });
+    }
+    jit.validateUntaggedPtr(MacroAssembler::linkRegister);
+#endif
+#endif
+
+    jit.addPtr(MacroAssembler::TrustedImm32(newSPAtPrologueOffsetFromSP), MacroAssembler::stackPointerRegister);
+
+#if CPU(X86_64)
+    if (WasmOMGIRGeneratorInternal::verboseTailCalls) {
+        jit.probeDebugSIMD([] (Probe::Context& context) {
+            dataLogLn("return pc on the top of the stack: ", RawHex(*context.gpr<uint64_t*>(MacroAssembler::stackPointerRegister)), " at ", RawHex(context.gpr<uint64_t>(MacroAssembler::stackPointerRegister)));
+        });
+    }
+#endif
+
+#if ASSERT_ENABLED
+    for (unsigned i = 2; i < 50; ++i) {
+        // Everthing after sp might be overwritten anyway.
+        jit.store64(MacroAssembler::TrustedImm32(0xBFFF), CCallHelpers::Address(MacroAssembler::stackPointerRegister, -i * sizeof(uint64_t)));
+    }
+#endif
+
+    JIT_COMMENT(jit, "OK, now we can jump.");
+    if (WasmOMGIRGeneratorInternal::verboseTailCalls) {
+        jit.probeDebugSIMD([wasmCalleeInfoAsCallee] (Probe::Context& context) {
+            dataLogLn("Can now jump: FP: ", RawHex(context.gpr<uint64_t>(GPRInfo::callFrameRegister)), " SP: ", RawHex(context.gpr<uint64_t>(MacroAssembler::stackPointerRegister)));
+            auto* newFP = context.gpr<uint64_t*>(MacroAssembler::stackPointerRegister) - prologueStackPointerDelta() / sizeof(uint64_t);
+            dataLogLn("New (callee) FP at prologue will be at ", RawPointer(newFP));
+            auto fpl = static_cast<uint64_t*>(newFP);
+            auto fpi = reinterpret_cast<uint32_t*>(newFP);
+
+            for (unsigned i = 0; i < wasmCalleeInfoAsCallee.params.size(); ++i) {
+                auto arg = wasmCalleeInfoAsCallee.params[i];
+                auto src = arg.location;
+                dataLog("Arg ", i, " located at ", arg.location, " = ");
+                if (arg.location.isGPR())
+                    dataLog(context.gpr(arg.location.jsr().gpr()), " / ", (int) context.gpr(arg.location.jsr().gpr()));
+                else if (arg.location.isFPR() && arg.width <= Width::Width64)
+                    dataLog(context.fpr(arg.location.fpr(), SavedFPWidth::SaveVectors));
+                else if (arg.location.isFPR())
+                    dataLog(context.vector(arg.location.fpr()));
+                else
+                    dataLog(fpl[src.offsetFromFP() / sizeof(uint64_t)], " / ", fpi[src.offsetFromFP() / sizeof(uint32_t)],  " / ", RawHex(fpi[src.offsetFromFP() / sizeof(uint32_t)]), " / ", bitwise_cast<double>(fpl[src.offsetFromFP() / sizeof(uint64_t)]), " at ", RawPointer(&fpi[src.offsetFromFP() / sizeof(uint32_t)]));
+                dataLogLn();
+            }
+        });
+    }
+
+    if (clobbersTmp)
+        jit.loadPtr(CCallHelpers::Address(MacroAssembler::stackPointerRegister, tmpSpill), tmp);
+}
+
+// See also: https://leaningtech.com/fantastic-tail-calls-and-how-to-implement-them/, a blog post about contributing this feature.
 auto OMGIRGenerator::createTailCallPatchpoint(BasicBlock* block, CallInformation wasmCallerInfoAsCallee, CallInformation wasmCalleeInfoAsCallee, const Vector<ExpressionType>& tmpArgSourceLocations, Vector<B3::ConstrainedValue> patchArgs) -> CallPatchpointData
 {
-    // First slot here is the last argument to the caller, a.k.a the first stack slot that belongs to the caller.
-    const Checked<int32_t> offsetOfFirstSlotFromFP = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCallerInfoAsCallee.headerAndArgumentStackSizeInBytes);
-    const Checked<int32_t> offsetOfNewFPFromFirstSlot = checkedProduct<int32_t>(-1, WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCalleeInfoAsCallee.headerAndArgumentStackSizeInBytes));
-    const Checked<int32_t> newFPOffsetFromFP = checkedSum<int32_t>(offsetOfFirstSlotFromFP + offsetOfNewFPFromFirstSlot);
-    m_tailCallStackOffsetFromFP = std::min(m_tailCallStackOffsetFromFP, newFPOffsetFromFP);
-    //    Layout of stack right before tail call F -> G
+    m_makesTailCalls = true;
+    // Our args are placed in argument registers or locals.
+    // We must:
+    // - Restore callee saves
+    // - Restore and re-sign lr
+    // - Restore our caller's FP so that the stack area we write to is always valid
+    // - Move stack args from our stack to their final resting spots. Note that they might overlap.
+    // - Move argumentCountIncludingThis (a.k.a. callSiteIndex) to its final spot, since WASM uses it for exceptions.
+    // Layout of stack right now, and after this patchpoint.
     //
     //
-    //    |          ......            |                                                                      |          ......            |
-    //    +----------------------------+ <-- 0x5501ff4ff0                                                     +----------------------------+ <-- 0x5501ff4ff0
-    //    |           F.argN           |    |                                    +-------------------->       |           G.argM           |    |
+    //    |          Original Caller   |                                                                      |          ......            |
+    //    +----------------------------+ <--                                                                  +----------------------------+ <--
+    //    |           F.argN           |    |                                    +-------------------->       |           G.argM           |    |                            Safe to clobber
     //    +----------------------------+    | lower address                      |                            +----------------------------+    | lower address
     //    |           F.arg1           |    v                                    |                            |           arg1             |    v
     //    +----------------------------+                                         |                            +----------------------------+
-    //    |           F.arg0           |                                         |                            |           arg0             |
+    //    |           F.arg0           |                                         |                            |           arg0             |                                   .......... < Danger froniter, grows down as args get moved out of the way
     //    +----------------------------+                                         |                            +----------------------------+
-    //    |           F.this           |                                         |                            |           this'            |
+    //    |           F.this           |                                         |                            |           this'            |                                Dangerous to clobber
     //    +----------------------------+                                         |                            +----------------------------+
     //    | argumentCountIncludingThis |                                         |                            |          A.C.I.T.'         |
     //    +----------------------------+                                         |                            +----------------------------+
     //    |  F.callee                  |                                         |                            |        G.callee            |
     //    +----------------------------+                                         |                            +----------------------------+
     //    |        F.codeBlock         |                               (shuffleStackArgs...)                  |        G.codeBlock         |
-    //    +----------------------------+                                         |                            +----------------------------+
+    //    +----------------------------+                                         |                     (arm) >+----------------------------+
     //    | return-address after F     |                                         |                            |   return-address after F   |
-    //    +----------------------------+                                         |        SP at G prologue -> +----------------------------+
+    //    +----------------------------+                                         | SP at G prologue (intel) ->+----------------------------+
     //    |          F.caller.FP       |                                         |                            |          F.caller.FP       |
     //    +----------------------------+  <- F.FP                                |    G.FP after G prologue-> +----------------------------+
     //    |          callee saves      |                                         |                            |          callee saves      |
@@ -4741,59 +5136,69 @@ auto OMGIRGenerator::createTailCallPatchpoint(BasicBlock* block, CallInformation
     //    |          ......            |        |                                                             |          ......            |
     //    +----------------------------|  <- SP |                                       SP after G prologue-> +----------------------------+
     //                                          |
-    //                                          +- New tmp stack slots are eventually allocated here
-    //
-    //  See https://leaningtech.com/fantastic-tail-calls-and-how-to-implement-them/ for a more in-depth explanation.
+    //    Note that F.FP is not the same as G.FP because the number of args may differ.
+    // We must not clobber any local because source args may be located anywhere.
+    // The final resting place of G.argM (F.argN) up to the return address after F is fair game to clobber; we do not permit StackArgument value reps.
 
-    auto shuffleStackArg = [this, block, newFPOffsetFromFP](Value* value, int32_t offsetFromSP) {
-        Checked<int32_t> offsetFromFP = newFPOffsetFromFP + offsetFromSP;
+    // First slot here is the last argument to F, a.k.a the first stack slot that belongs to F.
+    const Checked<int32_t> offsetOfFirstSlotFromFP = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCallerInfoAsCallee.headerAndArgumentStackSizeInBytes);
+    ASSERT(offsetOfFirstSlotFromFP > 0);
+    const Checked<int32_t> offsetOfNewFPFromFirstSlot = checkedProduct<int32_t>(-1, WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCalleeInfoAsCallee.headerAndArgumentStackSizeInBytes));
+    const Checked<int32_t> newFPOffsetFromFP = checkedSum<int32_t>(offsetOfFirstSlotFromFP + offsetOfNewFPFromFirstSlot);
+    m_tailCallStackOffsetFromFP = std::min(m_tailCallStackOffsetFromFP, newFPOffsetFromFP);
 
-        if (offsetFromFP < 0) {
-            Air::StackSlot* stackSlot = m_proc.addStackSlot(sizeof(Register));
-            stackSlot->setOffsetFromFP(offsetFromFP);
-            Value* address = block->appendNew<SlotBaseValue>(m_proc, Origin(), stackSlot);
-            block->appendNew<B3::MemoryValue>(m_proc, B3::Store, Origin(), value, address);
-            return;
-        }
+    RegisterSet scratchRegisters = RegisterSetBuilder::macroClobberedGPRs();
+    RegisterSet forbiddenArgumentRegisters = RegisterSetBuilder::calleeSaveRegisters().merge(scratchRegisters);
 
-        B3::Value* address = block->appendNew<B3::Value>(m_proc, B3::Add, Origin(), framePointer(), constant(pointerType(), offsetFromFP));
-        block->appendNew<B3::MemoryValue>(m_proc, B3::Store, Origin(), value, address);
-    };
+    ASSERT(wasmCalleeInfoAsCallee.params.size() == tmpArgSourceLocations.size());
+#if ASSERT_ENABLED
+    for (unsigned i = 0; i < patchArgs.size(); ++i) {
+        // We will clobber our stack, so we shouldn't be reading any special extra patch args from it after this point.
+        ASSERT(patchArgs[i].rep().isReg() || patchArgs[i].rep().isConstant());
+        ASSERT(!scratchRegisters.contains(patchArgs[i].rep().reg(), IgnoreVectors));
+    }
+#endif
 
-    Value* returnAddress = block->appendNew<MemoryValue>(m_proc, B3::Load, pointerType(), origin(), framePointer(), safeCast<int32_t>(CallFrame::returnPCOffset()));
-    shuffleStackArg(returnAddress, -static_cast<int32_t>(sizeof(Register)));
-    Value* previousFramePointer = block->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), framePointer());
+    ASSERT(wasmCalleeInfoAsCallee.params.size() == tmpArgSourceLocations.size());
+    unsigned firstPatchArg = patchArgs.size();
 
-    Vector<B3::ConstrainedValue> constrainedArguments;
     for (unsigned i = 0; i < tmpArgSourceLocations.size(); ++i) {
-        RELEASE_ASSERT(!tmpArgSourceLocations[i]->type().isVector());
-        if (wasmCalleeInfoAsCallee.params[i].location.isStackArgument()) {
-            shuffleStackArg(get(block, tmpArgSourceLocations[i]), wasmCalleeInfoAsCallee.params[i].location.offsetFromSP());
+        auto src = get(block, tmpArgSourceLocations[i]);
+        auto dst = wasmCalleeInfoAsCallee.params[i];
+        ASSERT(dst.location.isStack() || dst.location.isFPR() || dst.location.isGPR());
+        ASSERT(dst.width >= src->resultWidth());
+        if (!dst.location.isStack()) {
+            // We will restore callee saves before jumping to the callee.
+            // The calling convention should guarantee this anyway, but let's document it just in case.
+            ASSERT_UNUSED(forbiddenArgumentRegisters, !forbiddenArgumentRegisters.contains(dst.location.isGPR() ? Reg(dst.location.jsr().gpr()) : Reg(dst.location.fpr()), IgnoreVectors));
+            patchArgs.append(ConstrainedValue(src, dst));
             continue;
         }
-        constrainedArguments.append(B3::ConstrainedValue(get(block, tmpArgSourceLocations[i]), wasmCalleeInfoAsCallee.params[i]));
+        ASSERT(dst.width >= Width64);
+        patchArgs.append(src);
     }
-    constrainedArguments.append(B3::ConstrainedValue(previousFramePointer, ValueRep(MacroAssembler::framePointerRegister)));
+    unsigned lastPatchArg = patchArgs.size();
 
     PatchpointValue* patchpoint = m_proc.add<PatchpointValue>(B3::Void, origin());
-
     patchpoint->effects.terminal = true;
-    patchpoint->effects.writesPinned = true;
     patchpoint->effects.readsPinned = true;
+    patchpoint->effects.writesPinned = true;
 
     RegisterSetBuilder clobbers;
     clobbers.merge(RegisterSetBuilder::calleeSaveRegisters());
     clobbers.exclude(RegisterSetBuilder::stackRegisters());
-    patchpoint->clobber(clobbers);
-    patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedGPRs());
+    patchpoint->clobberEarly(WTFMove(clobbers));
+    patchpoint->clobberLate(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->appendVector(WTFMove(patchArgs));
-    patchpoint->appendVector(WTFMove(constrainedArguments));
-
+    // See prepareForTailCallImpl for the heart of this patchpoint.
     block->append(patchpoint);
 
-    auto prepareForCall = createSharedTask<B3::StackmapGeneratorFunction>([wasmCalleeInfoAsCallee, wasmCallerInfoAsCallee, newFPOffsetFromFP](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+    firstPatchArg += m_proc.resultCount(patchpoint->type());
+    lastPatchArg += m_proc.resultCount(patchpoint->type());
+
+    auto prepareForCall = createSharedTask<B3::StackmapGeneratorFunction>([wasmCalleeInfoAsCallee, wasmCallerInfoAsCallee, newFPOffsetFromFP, firstPatchArg, lastPatchArg, functionIndex = m_functionIndex](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         ASSERT(newFPOffsetFromFP >= 0 || params.code().frameSize() >= static_cast<uint32_t>(-newFPOffsetFromFP));
-        prepareForTailCall(jit, params, newFPOffsetFromFP);
+        prepareForTailCallImpl(functionIndex, jit, params, wasmCallerInfoAsCallee, wasmCalleeInfoAsCallee, firstPatchArg, lastPatchArg, newFPOffsetFromFP);
     });
 
     return { patchpoint, nullptr, WTFMove(prepareForCall) };
@@ -4847,8 +5252,6 @@ auto OMGIRGenerator::emitInlineDirectCall(uint32_t calleeFunctionIndex, const Ty
 
     irGenerator.m_topLevelBlock->appendNewControlValue(m_proc, B3::Jump, origin(), FrequentedBlock(irGenerator.m_rootBlocks[0]));
     m_makesCalls |= irGenerator.m_makesCalls;
-    m_makesTailCalls |= irGenerator.m_makesTailCalls;
-    ASSERT(!irGenerator.m_makesTailCalls);
     ASSERT(&irGenerator.m_proc == &m_proc);
 
     dataLogLnIf(WasmOMGIRGeneratorInternal::verboseInlining, "Block ", *m_currentBlock, " is going to do an inline call to block ", *irGenerator.m_topLevelBlock, " then continue at ", *continuation);
@@ -4876,8 +5279,10 @@ auto OMGIRGenerator::emitInlineDirectCall(uint32_t calleeFunctionIndex, const Ty
 
 auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results, CallType callType) -> PartialResult
 {
-    bool isTailCall = callType == CallType::TailCall;
-    ASSERT(callType == CallType::Call || isTailCall);
+    const bool isTailCallInlineCaller = callType == CallType::TailCall && m_inlineParent;
+    const bool isTailCall = callType == CallType::TailCall && !isTailCallInlineCaller;
+
+    ASSERT(callType == CallType::Call || isTailCall || isTailCallInlineCaller);
     ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
 
     TRACE_CF("Call: entered with ", signature);
@@ -4887,27 +5292,18 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
     CallInformation wasmCalleeInfo = callingConvention.callInformationFor(signature, CallRole::Caller);
     CallInformation wasmCalleeInfoAsCallee = callingConvention.callInformationFor(signature, CallRole::Callee);
     Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCalleeInfo.headerAndArgumentStackSizeInBytes);
+    if (isTailCall)
+        calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCalleeInfo.headerAndArgumentStackSizeInBytes * 2 + sizeof(Register));
     const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
     const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
     CallInformation wasmCallerInfoAsCallee = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
 
-    B3::Type returnType;
+    B3::Type returnType = toB3ResultType(&signature);
     Value* jumpDestination = nullptr;
 
-    if (isTailCall) {
+    m_makesCalls = true;
+    if (isTailCall || isTailCallInlineCaller)
         m_makesTailCalls = true;
-
-        const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
-        const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
-        CallInformation wasmCallerInfo = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
-        Checked<int32_t> callerStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCallerInfo.headerAndArgumentStackSizeInBytes);
-        tailCallStackOffsetFromFP = callerStackSize - calleeStackSize;
-
-        m_tailCallStackOffsetFromFP = std::min(m_tailCallStackOffsetFromFP, tailCallStackOffsetFromFP);
-    } else {
-        m_makesCalls = true;
-        returnType = toB3ResultType(&signature);
-    }
 
     auto fillResults = [&] (Value* callResult) {
         ASSERT(returnType == callResult->type());
@@ -4949,7 +5345,8 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
                     handle->generate(jit, params, this);
                 if (isTailCall) {
                     // In tail-call, we always configure JSWebAssemblyInstance* in |this| to anchor it from conservative GC roots.
-                    CCallHelpers::Address thisSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
+                    JIT_COMMENT(jit, "Store wasm instance in 'this' to anchor it for gc.");
+                    CCallHelpers::Address thisSlot(CCallHelpers::stackPointerRegister,  (CallFrameSlot::thisArgument - CallerFrameAndPC::sizeInRegisters) * static_cast<int>(sizeof(Register)) + sizeof(CallerFrameAndPC) - prologueStackPointerDelta());
                     jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfOwner()), GPRInfo::nonPreservedNonArgumentGPR1);
                     jit.storePtr(GPRInfo::nonPreservedNonArgumentGPR1, thisSlot.withOffset(PayloadOffset));
                     jit.farJump(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
@@ -4981,6 +5378,15 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
         // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
         restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_currentBlock);
 
+        if (isTailCallInlineCaller) {
+            Stack typedResults;
+            typedResults.reserveInitialCapacity(results.size());
+            for (unsigned i = 0; i < results.size(); ++i)
+                typedResults.append(TypedExpression { signature.as<FunctionSignature>()->returnType(i), results[i] });
+            ASSERT(m_returnContinuation);
+            return addInlinedReturn(WTFMove(typedResults));
+        }
+
         return { };
 
     } // isImportedFunctionFromFunctionIndexSpace
@@ -4994,15 +5400,8 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
                 prepareForCall->run(jit, params);
             if (handle)
                 handle->generate(jit, params, this);
-            if (isTailCall) {
-                // In tail-call, we always configure JSWebAssemblyInstance* in |this| to anchor it from conservative GC roots.
-                CCallHelpers::Address thisSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
-                jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfOwner()), GPRInfo::nonPreservedNonArgumentGPR1);
-                jit.storePtr(GPRInfo::nonPreservedNonArgumentGPR1, thisSlot.withOffset(PayloadOffset));
-            }
 
-            auto calleeMove = jit.storeWasmCalleeCalleePatchable();
-
+            auto calleeMove = jit.storeWasmCalleeCalleePatchable(isTailCall ? sizeof(CallerFrameAndPC) - prologueStackPointerDelta() : 0);
             CCallHelpers::Call call = isTailCall ? jit.threadSafePatchableNearTailCall() : jit.threadSafePatchableNearCall();
             jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex, calleeMove](LinkBuffer& linkBuffer) {
                 unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndex, linkBuffer.locationOf<WasmEntryPtrTag>(calleeMove) });
@@ -5043,6 +5442,15 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
 
     if (m_info.callCanClobberInstance(functionIndex))
         restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_currentBlock);
+
+    if (isTailCallInlineCaller) {
+        Stack typedResults;
+        typedResults.reserveInitialCapacity(results.size());
+        for (unsigned i = 0; i < results.size(); ++i)
+            typedResults.append(TypedExpression { signature.as<FunctionSignature>()->returnType(i), results[i] });
+        ASSERT(m_returnContinuation);
+        return addInlinedReturn(WTFMove(typedResults));
+    }
 
     return { };
 }

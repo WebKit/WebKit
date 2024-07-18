@@ -1,5 +1,4 @@
 //@ requireOptions("--useWebAssemblyTailCalls=true", "--maximumWebAssemblyCalleeSizeForInlining=0")
-//@ skip
 import * as assert from "../assert.js";
 import Builder from "../Builder.js";
 

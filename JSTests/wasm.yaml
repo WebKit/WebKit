@@ -64,7 +64,7 @@
 - path: wasm/threads-spec-tests
   cmd: runWebAssemblyThreadsSpecTest :normal
 - path: wasm/tail-call-spec-tests
-  cmd: skip
+  cmd: runWebAssemblyTailCallSpecTest :normal
 - path: wasm/extended-const-spec-tests
   cmd: runWebAssemblyExtendedConstSpecTest :normal
 
