@@ -147,6 +147,7 @@ def types_that_must_be_moved():
         'WebCore::GraphicsContextGL::ExternalImageSource',
         'WebCore::GraphicsContextGL::ExternalSyncSource',
         'WebCore::ProcessIdentity',
+        'std::optional<WebCore::ProcessIdentity>',
         'WebKit::ConsumerSharedCARingBufferHandle',
         'WebKit::GPUProcessConnectionParameters',
         'WebKit::ModelProcessConnectionParameters',

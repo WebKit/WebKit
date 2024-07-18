@@ -86,6 +86,9 @@ messages -> GPUProcess LegacyReceiver {
 #if USE(EXTENSIONKIT)
     ResolveBookmarkDataForCacheDirectory(std::span<const uint8_t> bookmarkData)
 #endif
+#if ENABLE(WEBXR)
+    WebXRPromptAccepted(std::optional<WebCore::ProcessIdentity> processIdentity) -> (bool accepted)
+#endif
 }
 
 #endif // ENABLE(GPU_PROCESS)
