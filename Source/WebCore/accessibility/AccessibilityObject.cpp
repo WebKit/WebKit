@@ -1813,26 +1813,28 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
     return builder.toString();
 }
 
-VisiblePosition AccessibilityObject::nextLineEndPosition(const VisiblePosition& visiblePos) const
+VisiblePosition AccessibilityObject::nextLineEndPosition(const VisiblePosition& startPosition) const
 {
-    if (visiblePos.isNull())
-        return VisiblePosition();
+    if (startPosition.isNull())
+        return { };
 
-    // to make sure we move off of a line end
-    VisiblePosition nextVisiblePos = visiblePos.next();
-    if (nextVisiblePos.isNull())
-        return VisiblePosition();
+    // Move to the next position to ensure we move off a line end.
+    auto nextPosition = startPosition.next();
+    if (nextPosition.isNull())
+        return { };
 
-    VisiblePosition endPosition = endOfLine(nextVisiblePos);
-
-    // as long as the position hasn't reached the end of the doc,  keep searching for a valid line end position
-    // There are cases like when the position is next to a floating object that'll return null for end of line. This code will avoid returning null.
-    while (endPosition.isNull() && nextVisiblePos.isNotNull()) {
-        nextVisiblePos = nextVisiblePos.next();
-        endPosition = endOfLine(nextVisiblePos);
+    auto lineEndPosition = endOfLine(nextPosition);
+    // As long as the position hasn't reached the end of the document, keep searching for a valid line
+    // end position. Skip past null positions, as there are cases like when the position is next to a
+    // floating object that'll return null for end of line. Also, in certain scenarios, like when one
+    // position is editable and the other isn't (e.g. in mixed-contenteditable-visible-character-range-hang.html),
+    // we may end up back at the same position we started at. This is never valid, so keep moving forward
+    // trying to find the next line end.
+    while ((lineEndPosition.isNull() || lineEndPosition == startPosition) && nextPosition.isNotNull()) {
+        nextPosition = nextPosition.next();
+        lineEndPosition = endOfLine(nextPosition);
     }
-
-    return endPosition;
+    return lineEndPosition;
 }
 
 std::optional<VisiblePosition> AccessibilityObject::previousLineStartPositionInternal(const VisiblePosition& visiblePosition) const

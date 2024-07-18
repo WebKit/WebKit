@@ -1565,6 +1565,8 @@ accessibility/mac/svg-relative-frame.html [ Skip ]
 accessibility/mac/table-relative-frame.html [ Skip ]
 
 # Skip due to lack of DumpRenderTree `AccessibilityUIElement::stringDescriptionOfAttributeValue` implementation.
+accessibility/mixed-contenteditable-visible-character-range-hang.html [ Skip ]
+accessibility/mixed-contenteditable-double-br-visible-character-range-hang.html [ Skip ]
 accessibility/visible-character-range-basic.html [ Skip ]
 accessibility/visible-character-range-height-changes.html [ Skip ]
 accessibility/visible-character-range-scrolling.html [ Skip ]
