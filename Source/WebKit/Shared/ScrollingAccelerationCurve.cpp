@@ -136,7 +136,7 @@ TextStream& operator<<(TextStream& ts, const ScrollingAccelerationCurve& curve)
 
 #if !PLATFORM(MAC)
 
-std::optional<ScrollingAccelerationCurve> ScrollingAccelerationCurve::fromNativeWheelEvent(const NativeWebWheelEvent&)
+std::optional<ScrollingAccelerationCurve> ScrollingAccelerationCurve::fromNativeWheelEvent(const NativeWebWheelEvent&, bool scrollingPerformanceTestingEnabled)
 {
     return std::nullopt;
 }

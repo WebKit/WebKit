@@ -29,6 +29,7 @@
 #include "MessageReceiver.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/NowPlayingMetadataObserver.h>
+#include <WebCore/ScrollingTree.h>
 #include <pal/HysteresisActivity.h>
 #include <wtf/ApproximateTime.h>
 #include <wtf/CheckedRef.h>

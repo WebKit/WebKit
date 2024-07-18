@@ -158,8 +158,22 @@ static std::optional<ScrollingAccelerationCurve> fromIOHIDDevice(IOHIDEventSende
     return fromIOHIDCurveArrayWithAcceleration((NSArray *)curves.get(), *scrollAcceleration, *resolution, frameRate);
 }
 
-std::optional<ScrollingAccelerationCurve> ScrollingAccelerationCurve::fromNativeWheelEvent(const NativeWebWheelEvent& nativeWebWheelEvent)
+std::optional<ScrollingAccelerationCurve> ScrollingAccelerationCurve::fromNativeWheelEvent(const NativeWebWheelEvent& nativeWebWheelEvent, bool scrollingPerformanceTestingEnabled)
 {
+    if (scrollingPerformanceTestingEnabled) {
+        ALWAYS_LOG_WITH_STREAM(stream << "ScrollingPerformance is enabled in fromNativeWheel Event. Returning hard-coded values.");
+        auto gainLinear = 0.92;
+        auto gainParabolic = 0.75;
+        auto gainCubic = 0.00;
+        auto gainQuartic = 0.00;
+        auto tangentSpeedLinear = 6.30;
+        auto tangentSpeedParabolicRoot = 12.00;
+        float resolution = 400.0;
+        float frameRate = 120.0;
+        auto curve = ScrollingAccelerationCurve(gainLinear, gainParabolic, gainCubic, gainQuartic, tangentSpeedLinear, tangentSpeedParabolicRoot, resolution, frameRate);
+        return curve;
+    }
+
     NSEvent *event = nativeWebWheelEvent.nativeEvent();
 
     auto cgEvent = event.CGEvent;

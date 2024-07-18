@@ -164,7 +164,7 @@ void RemoteLayerTreeEventDispatcher::hasNodeWithAnimatedScrollChanged(bool hasAn
     startOrStopDisplayLink();
 }
 
-void RemoteLayerTreeEventDispatcher::cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent& wheelEvent)
+void RemoteLayerTreeEventDispatcher::cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent& wheelEvent, bool scrollingPerformanceTestingEnabled)
 {
     ASSERT(isMainRunLoop());
 
@@ -172,7 +172,7 @@ void RemoteLayerTreeEventDispatcher::cacheWheelEventScrollingAccelerationCurve(c
     if (wheelEvent.momentumPhase() != WebWheelEvent::PhaseBegan)
         return;
 
-    auto curve = ScrollingAccelerationCurve::fromNativeWheelEvent(wheelEvent);
+    auto curve = ScrollingAccelerationCurve::fromNativeWheelEvent(wheelEvent, scrollingPerformanceTestingEnabled);
     m_momentumEventDispatcher->setScrollingAccelerationCurve(m_pageIdentifier, curve);
 #endif
 }

@@ -56,6 +56,7 @@ bool MomentumEventDispatcher::eventShouldStartSyntheticMomentumPhase(WebCore::Pa
         return false;
 
     auto curveIterator = scrollingAccelerationCurveForPage(pageIdentifier);
+
     if (!curveIterator) {
         RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher not using synthetic momentum phase: no acceleration curve");
         return false;
@@ -266,6 +267,7 @@ std::optional<ScrollingAccelerationCurve> MomentumEventDispatcher::scrollingAcce
     auto curveIterator = m_accelerationCurves.find(pageIdentifier);
     if (curveIterator == m_accelerationCurves.end())
         return { };
+
     return curveIterator->value;
 }
 

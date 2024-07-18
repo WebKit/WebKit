@@ -43,7 +43,7 @@ class ScrollingAccelerationCurve {
 public:
     ScrollingAccelerationCurve(float gainLinear, float gainParabolic, float gainCubic, float gainQuartic, float tangentSpeedLinear, float tangentSpeedParabolicRoot, float resolution, float frameRate);
 
-    static std::optional<ScrollingAccelerationCurve> fromNativeWheelEvent(const NativeWebWheelEvent&);
+    static std::optional<ScrollingAccelerationCurve> fromNativeWheelEvent(const NativeWebWheelEvent&, bool scrollingPerformanceTestingEnabled);
 
     static ScrollingAccelerationCurve interpolate(const ScrollingAccelerationCurve& from, const ScrollingAccelerationCurve& to, float amount);
 

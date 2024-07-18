@@ -3820,8 +3820,14 @@ void WebPageProxy::cacheWheelEventScrollingAccelerationCurve(const NativeWebWhee
     if (!preferences().momentumScrollingAnimatorEnabled())
         return;
 
+    bool scrollingPerformanceMode = false;
+    if (m_scrollingCoordinatorProxy) {
+        if (m_scrollingCoordinatorProxy->scrollingPerformanceTestingEnabled())
+            scrollingPerformanceMode = true;
+    }
+
     // FIXME: We should not have to fetch the curve repeatedly, but it can also change occasionally.
-    internals().scrollingAccelerationCurve = ScrollingAccelerationCurve::fromNativeWheelEvent(nativeWheelEvent);
+    internals().scrollingAccelerationCurve = ScrollingAccelerationCurve::fromNativeWheelEvent(nativeWheelEvent, scrollingPerformanceMode);
 #endif
 }
 
@@ -3839,8 +3845,9 @@ void WebPageProxy::sendWheelEventScrollingAccelerationCurveIfNecessary(const Web
     if (!connection)
         return;
 
-    connection->send(Messages::EventDispatcher::SetScrollingAccelerationCurve(webPageIDInMainFrameProcess(), internals().scrollingAccelerationCurve), 0, { }, Thread::QOS::UserInteractive);
-    internals().lastSentScrollingAccelerationCurve = internals().scrollingAccelerationCurve;
+    auto curve = internals().scrollingAccelerationCurve;
+    connection->send(Messages::EventDispatcher::SetScrollingAccelerationCurve(webPageIDInMainFrameProcess(), curve), 0, { }, Thread::QOS::UserInteractive);
+    internals().lastSentScrollingAccelerationCurve = curve;
 #endif
 }
 

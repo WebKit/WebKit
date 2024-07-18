@@ -32,6 +32,7 @@
 #include "NativeWebWheelEvent.h"
 #include <WebCore/PlatformLayerIdentifier.h>
 #include <WebCore/ProcessQualified.h>
+#include <WebCore/ScrollingTree.h>
 #include <pal/HysteresisActivity.h>
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
@@ -76,7 +77,7 @@ public:
     
     void invalidate();
     
-    void cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent&);
+    void cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent&, bool scrollingPerformanceTestingEnabled);
 
     void handleWheelEvent(const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
     void wheelEventHandlingCompleted(const WebCore::PlatformWheelEvent&, std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>, bool wasHandled);

@@ -66,7 +66,7 @@ RemoteScrollingCoordinatorProxyMac::~RemoteScrollingCoordinatorProxyMac()
 void RemoteScrollingCoordinatorProxyMac::cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent& nativeWheelEvent)
 {
 #if ENABLE(SCROLLING_THREAD)
-    m_eventDispatcher->cacheWheelEventScrollingAccelerationCurve(nativeWheelEvent);
+    m_eventDispatcher->cacheWheelEventScrollingAccelerationCurve(nativeWheelEvent, scrollingPerformanceTestingEnabled());
 #else
     UNUSED_PARAM(nativeWheelEvent);
 #endif
