@@ -4643,27 +4643,31 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     adjustVelocityDataForBoundedScale(scrollVelocity, visibleContentRectUpdateInfo.scale(), m_viewportConfiguration.minimumScale(), m_viewportConfiguration.maximumScale());
     frameView.setScrollVelocity(scrollVelocity);
 
-    if (m_isInStableState) {
-        if (visibleContentRectUpdateInfo.unobscuredContentRect() != visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds())
-            frameView.setVisualViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds()));
-        else
-            frameView.setVisualViewportOverrideRect(std::nullopt);
+    bool visualViewportChanged = visibleContentRectUpdateInfo.unobscuredContentRect() != visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds();
+    if (visualViewportChanged)
+        frameView.setVisualViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds()));
+    else if (m_isInStableState) {
+        frameView.setVisualViewportOverrideRect(std::nullopt);
+        visualViewportChanged = true;
+    }
 
-        LOG_WITH_STREAM(VisibleRects, stream << "WebPage::updateVisibleContentRects - setLayoutViewportOverrideRect " << visibleContentRectUpdateInfo.layoutViewportRect());
-        frameView.setLayoutViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.layoutViewportRect()));
+    bool isChangingObscuredInsetsInteractively = visibleContentRectUpdateInfo.viewStability().contains(ViewStabilityFlag::ChangingObscuredInsetsInteractively);
+    bool shouldPerformLayout = m_isInStableState && !isChangingObscuredInsetsInteractively;
+
+    LOG_WITH_STREAM(VisibleRects, stream << "WebPage::updateVisibleContentRects - setLayoutViewportOverrideRect " << visibleContentRectUpdateInfo.layoutViewportRect());
+    frameView.setLayoutViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.layoutViewportRect()), shouldPerformLayout ? LocalFrameView::TriggerLayoutOrNot::Yes : LocalFrameView::TriggerLayoutOrNot::No);
+
+    if (m_isInStableState) {
         if (selectionIsInsideFixedPositionContainer(*localMainFrame)) {
             // Ensure that the next layer tree commit contains up-to-date caret/selection rects.
             frameView.frame().selection().setCaretRectNeedsUpdate();
             scheduleFullEditorStateUpdate();
         }
-
-        frameView.layoutOrVisualViewportChanged();
-    } else if (visibleContentRectUpdateInfo.unobscuredContentRect() != visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds()) {
-        frameView.setVisualViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds()));
-        frameView.layoutOrVisualViewportChanged();
     }
 
-    bool isChangingObscuredInsetsInteractively = visibleContentRectUpdateInfo.viewStability().contains(ViewStabilityFlag::ChangingObscuredInsetsInteractively);
+    if (visualViewportChanged)
+        frameView.layoutOrVisualViewportChanged();
+
     if (!isChangingObscuredInsetsInteractively)
         frameView.setCustomSizeForResizeEvent(expandedIntSize(visibleContentRectUpdateInfo.unobscuredRectInScrollViewCoordinates().size()));
 

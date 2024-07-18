@@ -735,13 +735,11 @@ void AsyncScrollingCoordinator::reconcileScrollingState(LocalFrameView& frameVie
         [&frameView](std::optional<FloatPoint> origin) {
             if (origin)
                 frameView.setBaseLayoutViewportOrigin(LayoutPoint(origin.value()), LocalFrameView::TriggerLayoutOrNot::No);
-        }, [&frameView, &layoutViewportRect, viewportRectStability](std::optional<FloatRect> overrideRect) {
+        }, [&layoutViewportRect](std::optional<FloatRect> overrideRect) {
             if (!overrideRect)
                 return;
 
             layoutViewportRect = overrideRect;
-            if (viewportRectStability != ViewportRectStability::ChangingObscuredInsetsInteractively)
-                frameView.setLayoutViewportOverrideRect(LayoutRect(overrideRect.value()), viewportRectStability == ViewportRectStability::Stable ? LocalFrameView::TriggerLayoutOrNot::Yes : LocalFrameView::TriggerLayoutOrNot::No);
         }
     );
 
