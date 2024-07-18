@@ -91,8 +91,12 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromBase64, (JSGlobalObject* globa
 
     ASSERT(result->first <= view.length());
 
-    Structure* structure = globalObject->typedArrayStructure(TypeUint8, false);
-    JSUint8Array* uint8Array = JSUint8Array::create(vm, structure, Uint8Array::create(result->second.span()));
+    size_t length = result->second.size();
+    JSUint8Array* uint8Array = JSUint8Array::createUninitialized(globalObject, globalObject->typedArrayStructure(TypeUint8, false), length);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    uint8_t* data = uint8Array->typedVector();
+    memcpySpan(std::span { data, data + length }, result->second.span());
     return JSValue::encode(uint8Array);
 }
 
@@ -218,6 +222,8 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromHex, (JSGlobalObject* globalOb
 
     size_t count = static_cast<size_t>(view.length() / 2);
     JSUint8Array* uint8Array = JSUint8Array::createUninitialized(globalObject, globalObject->typedArrayStructure(TypeUint8, false), count);
+    RETURN_IF_EXCEPTION(scope, { });
+
     uint8_t* data = uint8Array->typedVector();
     auto result = std::span { data, data + count };
 
