@@ -336,7 +336,7 @@ static RetainPtr<dispatch_data_t> dataFromString(String&& s)
     }));
 }
 
-static RetainPtr<dispatch_data_t> dataFromVector(Vector<uint8_t>&& v)
+RetainPtr<dispatch_data_t> dataFromVector(Vector<uint8_t>&& v)
 {
     auto bufferSize = v.size();
     auto rawPointer = v.releaseBuffer().leakPtr();
@@ -514,6 +514,11 @@ SendOperation Connection::awaitableSend(Vector<uint8_t>&& message)
 SendOperation Connection::awaitableSend(String&& message)
 {
     return { dataFromString(WTFMove(message)), *this };
+}
+
+SendOperation Connection::awaitableSend(RetainPtr<dispatch_data_t>&& data)
+{
+    return { WTFMove(data), *this };
 }
 
 void Connection::send(String&& message, CompletionHandler<void()>&& completionHandler) const
