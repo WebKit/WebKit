@@ -918,11 +918,19 @@ void VideoPresentationManagerProxy::setupFullscreenWithID(PlaybackSessionContext
     MESSAGE_CHECK(videoFullscreenMode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture); // setupFullscreen() ASSERTs this so catch it here while we can still fail the message
 #endif
 
-    RetainPtr<WKLayerHostView> view = createLayerHostViewWithID(contextId, videoLayerID, initialSize, hostingDeviceScaleFactor);
+#if PLATFORM(IOS_FAMILY)
+    // The video may not have been rendered yet, which would have triggered a call to createViewWithID/createLayerHostViewWithID making the AVPlayerLayer and AVPlayerLayerView not yet set. Create them as needed.
+    if (!model->videoView())
+        createViewWithID(contextId, videoLayerID, initialSize, videoDimensions, hostingDeviceScaleFactor);
+    ASSERT(model->videoView());
+#endif
 
+    RetainPtr view = model->layerHostView() ? static_cast<WKLayerHostView*>(model->layerHostView()) : createLayerHostViewWithID(contextId, videoLayerID, initialSize, hostingDeviceScaleFactor);
 #if USE(EXTENSIONKIT)
-        if (UIView *visibilityPropagationView = m_page->pageClient().createVisibilityPropagationView())
-            [view setVisibilityPropagationView:visibilityPropagationView];
+    if (UIView *visibilityPropagationView = m_page->pageClient().createVisibilityPropagationView())
+        [view setVisibilityPropagationView:visibilityPropagationView];
+#else
+    UNUSED_VARIABLE(view);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
