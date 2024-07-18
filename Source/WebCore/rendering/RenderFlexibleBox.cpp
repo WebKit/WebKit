@@ -233,17 +233,6 @@ private:
     std::optional<LayoutUnit> m_overridingHeight;
 };
 
-static void updateFlexItemDirtyBitsBeforeLayout(bool relayoutFlexItem, RenderBox& flexItem)
-{
-    if (flexItem.isOutOfFlowPositioned())
-        return;
-
-    // FIXME: Technically percentage height objects only need a relayout if their percentage isn't going to be turned into
-    // an auto value. Add a method to determine this, so that we can avoid the relayout.
-    if (relayoutFlexItem || flexItem.hasRelativeLogicalHeight())
-        flexItem.setChildNeedsLayout(MarkOnlyThis);
-}
-
 void RenderFlexibleBox::computeChildIntrinsicLogicalWidths(RenderObject& renderer, LayoutUnit& minPreferredLogicalWidth, LayoutUnit& maxPreferredLogicalWidth) const
 {
     auto& flexItem = downcast<RenderBox>(renderer);
@@ -422,6 +411,8 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     resetLogicalHeightBeforeLayoutIfNeeded();
     m_relaidOutFlexItems.clear();
+
+    invalidateFlexItemsBeforeLayout();
     
     bool oldInLayout = m_inLayout;
     m_inLayout = true;
@@ -1289,6 +1280,20 @@ LayoutUnit RenderFlexibleBox::computeFlexBaseSizeForFlexItem(RenderBox& flexItem
         mainAxisExtent = flexItem.maxPreferredLogicalWidth();
     }
     return mainAxisExtent - mainAxisBorderAndPadding;
+}
+
+void RenderFlexibleBox::invalidateFlexItemsBeforeLayout()
+{
+    for (auto& flexItem : childrenOfType<RenderBox>(*this)) {
+        if (flexItem.needsLayout() || flexItem.isOutOfFlowPositioned() || flexItem.isExcludedFromNormalLayout())
+            continue;
+
+        if (flexItem.hasRelativeLogicalHeight()) {
+            auto computedLogicalHeight = flexItem.computeLogicalHeightWithoutLayout();
+            if (computedLogicalHeight != flexItem.logicalHeight())
+                flexItem.setNeedsLayout(MarkOnlyThis);
+        }
+    }
 }
 
 void RenderFlexibleBox::performFlexLayout(bool relayoutChildren)
@@ -2267,7 +2272,10 @@ void RenderFlexibleBox::layoutAndPlaceFlexItems(LayoutUnit& crossAxisOffset, Fle
             // So, redo it here.
             forceFlexItemRelayout = true;
         }
-        updateFlexItemDirtyBitsBeforeLayout(forceFlexItemRelayout, flexItem);
+
+        if (forceFlexItemRelayout)
+            flexItem.setNeedsLayout(MarkOnlyThis);
+
         if (!flexItem.needsLayout())
             flexItem.markForPaginationRelayoutIfNeeded();
         if (flexItem.needsLayout())
