@@ -698,10 +698,10 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
         auto newLastStyleChangeEventStyle = [&]() {
             if (styleable.element.getAttribute(HTMLNames::idAttr) == "t6-child"_s)
                 WTFLogAlways("");
-
-            if (auto* parentElement = parent().element) {
-                if (auto* parentLastStyleChangeEventStyle = parentElement->lastStyleChangeEventStyle({ })) {
-                    // FIXME: we need to work out resolutionType and adjust the resolutionContext to have the right parent style.
+            RefPtr parentStyleElement = styleable.pseudoElementIdentifier ? &styleable.element : parent().element;
+            if (auto* parentStyleElement = parent().element) {
+                if (auto* parentLastStyleChangeEventStyle = parentStyleElement->lastStyleChangeEventStyle(styleable.pseudoElementIdentifier)) {
+                    // FIXME: we need to work out resolutionType.
                     ResolutionContext afterChangeStyleResolutionContext {
                         parentLastStyleChangeEventStyle,
                         parentBoxStyle(),
