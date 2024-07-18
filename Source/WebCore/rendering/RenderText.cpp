@@ -336,20 +336,31 @@ void RenderText::initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifi
         m_canUseSimplifiedTextMeasuring = fontCascade.codePath(run) == FontCascade::CodePath::Simple;
     }
 
-    m_hasPositionDependentContentWidth = false;
-    m_hasStrongDirectionalityContent = false;
-    auto mayHaveStrongDirectionalityContent = !textContent.is8Bit();
+    bool hasPositionDependentContentWidth = false;
+    bool hasStrongDirectionalityContent = false;
+    bool canUseSimplifiedTextMeasuring = *m_canUseSimplifiedTextMeasuring;
+
     // FIXME: Pre-warm glyph loading in FontCascade with the most common range.
     WTF::BitSet<256> hasSeen;
-    for (char32_t character : StringView(textContent).codePoints()) {
-        if (character < 256) {
-            if (hasSeen.testAndSet(character))
-                continue;
+    StringView(textContent).forEachCodePoint([&](auto codePoint) ALWAYS_INLINE_LAMBDA {
+        if constexpr (sizeof(decltype(codePoint)) == 1) {
+            if (hasSeen.testAndSet(codePoint))
+                return;
+            hasPositionDependentContentWidth |= (codePoint == tabCharacter);
+        } else {
+            if (codePoint < 256) {
+                if (hasSeen.testAndSet(codePoint))
+                    return;
+                hasPositionDependentContentWidth |= (codePoint == tabCharacter);
+            } else
+                hasStrongDirectionalityContent = hasStrongDirectionalityContent || Layout::TextUtil::isStrongDirectionalityCharacter(codePoint);
         }
-        m_canUseSimplifiedTextMeasuring = *m_canUseSimplifiedTextMeasuring && fontCascade.canUseSimplifiedTextMeasuring(character, fontVariant, whitespaceIsCollapsed, primaryFont);
-        m_hasPositionDependentContentWidth = *m_hasPositionDependentContentWidth || character == tabCharacter;
-        m_hasStrongDirectionalityContent = *m_hasStrongDirectionalityContent || (mayHaveStrongDirectionalityContent && Layout::TextUtil::isStrongDirectionalityCharacter(character));
-    }
+        canUseSimplifiedTextMeasuring = canUseSimplifiedTextMeasuring && fontCascade.canUseSimplifiedTextMeasuring(codePoint, fontVariant, whitespaceIsCollapsed, primaryFont);
+    });
+
+    m_hasPositionDependentContentWidth = hasPositionDependentContentWidth;
+    m_hasStrongDirectionalityContent = hasStrongDirectionalityContent;
+    m_canUseSimplifiedTextMeasuring = canUseSimplifiedTextMeasuring;
 }
 
 void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

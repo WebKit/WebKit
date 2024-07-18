@@ -28,6 +28,7 @@
 #include <limits.h>
 #include <unicode/utypes.h>
 #include <wtf/Forward.h>
+#include <wtf/IterationStatus.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
@@ -89,6 +90,7 @@ public:
 
     class CodePoints;
     CodePoints codePoints() const;
+    template<typename Func> void forEachCodePoint(const Func&) const;
 
     class GraphemeClusters;
     GraphemeClusters graphemeClusters() const;
@@ -940,6 +942,36 @@ private:
     StringView m_stringView;
     unsigned m_index;
 };
+
+
+template<typename Func>
+inline void StringView::forEachCodePoint(const Func& func) const
+{
+    if (is8Bit()) {
+        for (LChar codePoint : span8()) {
+            if constexpr (std::is_same_v<IterationStatus, decltype(func(codePoint))>) {
+                if (func(codePoint) == IterationStatus::Done)
+                    return;
+            } else
+                func(codePoint);
+        }
+        return;
+    }
+
+    auto span = span16();
+    const auto* buffer = span.data();
+    size_t length = span.size();
+    size_t index = 0;
+    while (index < length) {
+        char32_t codePoint;
+        U16_NEXT(buffer, index, length, codePoint);
+        if constexpr (std::is_same_v<IterationStatus, decltype(func(codePoint))>) {
+            if (func(codePoint) == IterationStatus::Done)
+                return;
+        } else
+            func(codePoint);
+    }
+}
 
 inline auto StringView::graphemeClusters() const -> GraphemeClusters
 {
