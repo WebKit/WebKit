@@ -90,6 +90,7 @@ static UIMenu *fakeMachineReadableCodeMenuForTesting()
 @interface FakeMachineReadableCodeImageAnalysis : NSObject
 @property (nonatomic, readonly) UIMenu *mrcMenu;
 @property (nonatomic, weak) UIViewController *presentingViewControllerForMrcAction;
+@property (nonatomic) CGRect rectForMrcActionInPresentingViewController;
 @end
 
 @implementation FakeMachineReadableCodeImageAnalysis
