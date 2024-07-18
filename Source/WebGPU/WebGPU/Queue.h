@@ -63,7 +63,7 @@ public:
 
     void onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)>&& callback);
     void submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands);
-    void writeBuffer(const Buffer&, uint64_t bufferOffset, std::span<uint8_t> data);
+    void writeBuffer(Buffer&, uint64_t bufferOffset, std::span<uint8_t> data);
     void writeBuffer(id<MTLBuffer>, uint64_t bufferOffset, std::span<uint8_t> data);
     void writeTexture(const WGPUImageCopyTexture& destination, std::span<uint8_t> data, const WGPUTextureDataLayout&, const WGPUExtent3D& writeSize, bool skipValidation = false);
     void setLabel(String&&);

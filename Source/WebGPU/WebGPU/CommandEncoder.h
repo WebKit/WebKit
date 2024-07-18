@@ -79,7 +79,7 @@ public:
     void insertDebugMarker(String&& markerLabel);
     void popDebugGroup();
     void pushDebugGroup(String&& groupLabel);
-    void resolveQuerySet(const QuerySet&, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset);
+    void resolveQuerySet(const QuerySet&, uint32_t firstQuery, uint32_t queryCount, Buffer& destination, uint64_t destinationOffset);
     void writeTimestamp(QuerySet&, uint32_t queryIndex);
     void setLabel(String&&);
 

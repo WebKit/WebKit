@@ -1870,7 +1870,7 @@ static bool validateResolveQuerySet(const QuerySet& querySet, uint32_t firstQuer
     return true;
 }
 
-void CommandEncoder::resolveQuerySet(const QuerySet& querySet, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset)
+void CommandEncoder::resolveQuerySet(const QuerySet& querySet, uint32_t firstQuery, uint32_t queryCount, Buffer& destination, uint64_t destinationOffset)
 {
     if (!prepareTheEncoderState()) {
         GENERATE_INVALID_ENCODER_STATE_ERROR();
@@ -1884,7 +1884,7 @@ void CommandEncoder::resolveQuerySet(const QuerySet& querySet, uint32_t firstQue
 
     querySet.setCommandEncoder(*this);
     destination.setCommandEncoder(*this);
-
+    destination.indirectBufferInvalidated();
     if (querySet.isDestroyed() || destination.isDestroyed() || !queryCount)
         return;
 

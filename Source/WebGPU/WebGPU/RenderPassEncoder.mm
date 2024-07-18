@@ -612,13 +612,14 @@ RenderPassEncoder::IndexCall RenderPassEncoder::clampIndexBufferToValidValues(ui
     if (!minVertexCount || !minInstanceCount || indexBufferOffsetInBytes >= indexBuffer.length)
         return IndexCall::Skip;
 
-    if (!apiIndexBuffer->indirectBufferRequiresRecomputation(firstIndex, indexCount, minVertexCount, minInstanceCount, indexType))
+    if (!apiIndexBuffer->indirectBufferRequiresRecomputation(firstIndex, indexCount, minVertexCount, minInstanceCount, indexType, firstInstance))
         return IndexCall::IndirectDraw;
 
     auto indexCountInBytes = checkedProduct<NSUInteger>(indexSizeInBytes, indexCount);
     auto indexCountPlusOffsetInBytes = checkedSum<NSUInteger>(indexCountInBytes, indexBufferOffsetInBytes);
     if (indexCountInBytes.hasOverflowed() || indexCountPlusOffsetInBytes.hasOverflowed() || indexCountPlusOffsetInBytes > indexBuffer.length)
         return IndexCall::Skip;
+
     id<MTLBuffer> indexedIndirectBuffer = apiIndexBuffer->indirectIndexedBuffer();
     MTLDrawIndexedPrimitivesIndirectArguments indirectArguments {
         .indexCount = indexCount,
@@ -643,7 +644,7 @@ RenderPassEncoder::IndexCall RenderPassEncoder::clampIndexBufferToValidValues(ui
     [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:indexCount];
 
     [renderCommandEncoder memoryBarrierWithScope:MTLBarrierScopeBuffers afterStages:MTLRenderStageVertex beforeStages:MTLRenderStageVertex];
-    apiIndexBuffer->indirectBufferRecomputed(firstIndex, indexCount, minVertexCount, minInstanceCount, indexType);
+    apiIndexBuffer->indirectBufferRecomputed(firstIndex, indexCount, minVertexCount, minInstanceCount, indexType, firstInstance);
 
     return IndexCall::IndirectDraw;
 }
@@ -918,7 +919,7 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
             auto& hashMap = *icb.minVertexCountForDrawCommand;
             for (auto& [commandIndex, data] : hashMap) {
                 auto* indexBuffer = data.indexBuffer.get();
-                if (!indexBuffer || !indexBuffer->indirectBufferRequiresRecomputation(data.indexData.firstIndex, data.indexData.indexCount, data.indexData.minVertexCount, data.indexData.minInstanceCount, data.indexType))
+                if (!indexBuffer || !indexBuffer->indirectBufferRequiresRecomputation(data.indexData.firstIndex, data.indexData.indexCount, data.indexData.minVertexCount, data.indexData.minInstanceCount, data.indexType, data.indexData.firstInstance))
                     continue;
 
                 id<MTLRenderPipelineState> renderPipelineState = m_device->icbCommandClampPipeline(data.indexType, m_rasterSampleCount);
@@ -928,7 +929,7 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
 
                 [m_renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:data.indexData.indexCount];
                 [m_renderCommandEncoder memoryBarrierWithScope:MTLBarrierScopeBuffers afterStages:MTLRenderStageVertex beforeStages:MTLRenderStageVertex];
-                indexBuffer->indirectBufferRecomputed(data.indexData.firstIndex, data.indexData.indexCount, data.indexData.minVertexCount, data.indexData.minInstanceCount, data.indexType);
+                indexBuffer->indirectBufferRecomputed(data.indexData.firstIndex, data.indexData.indexCount, data.indexData.minVertexCount, data.indexData.minInstanceCount, data.indexType, data.indexData.firstInstance);
             }
 
             if (id<MTLDepthStencilState> depthStencilState = icb.depthStencilState)
