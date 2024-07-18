@@ -136,18 +136,13 @@ def compare_project_results_to_expectations(args, new_path, project):
         with open(f'{new_path}/{project}/UnexpectedIssues{checker}', 'a') as f:
             f.write('\n'.join(unexpected_issues))
 
-        no_unexpected = True
         print(f'\n{checker}:')
-        for type, type_list in {
-            'Unexpected passing files': clean_files,
-            'Unexpected failing files': buggy_files,
-            'Unexpected issues': unexpected_issues
-        }.items():
-            if len(type_list):
-                no_unexpected = False
-                print(f'    {type}: {len(type_list)}')
-        if no_unexpected:
-            print(f'    No unexpected results!')
+        if clean_files or buggy_files or unexpected_issues:
+            print(f'    Unexpected passing files: {len(clean_files)}')
+            print(f'    Unexpected failing files: {len(buggy_files)}')
+            print(f'    Unexpected issues: {len(unexpected_issues)}')
+        else:
+            print('    No unexpected results')
 
     if unexpected_issues_total and args.scan_build:
         create_filtered_results_dir(args, project, unexpected_result_paths_total, STATIC_ANALYZER_UNEXPECTED)
@@ -160,9 +155,10 @@ def compare_project_results_by_run(args, archive_path, new_path, project):
     new_files_total = set()
     fixed_issues_total = set()
     fixed_files_total = set()
+    project_results_passes = {}
+    project_results_failures = {}
 
     for checker in CHECKERS:
-        print(f'{checker}:')
         new_issues, fixed_issues = find_diff(args, f'{archive_path}/{checker}Issues', f'{new_path}/{project}/{checker}Issues')
         new_files, fixed_files = find_diff(args, f'{archive_path}/{checker}Files', f'{new_path}/{project}/{checker}Files')
         fixed_issues_total.update(fixed_issues)
@@ -170,21 +166,29 @@ def compare_project_results_by_run(args, archive_path, new_path, project):
         new_issues_total.update(new_issues)
         new_files_total.update(new_files)
 
-        print(f'    Issues fixed: {len(fixed_issues)}')
-        print(f'    Files fixed: {len(fixed_files)}')
-        print(f'    New issues: {len(new_issues)}')
-        print(f'    New files with issues: {len(new_files)}\n')
+        project_results_passes[checker] = list(fixed_files)
+        project_results_failures[checker] = list(new_files)
+
+        print(f'{checker}:')
+        if fixed_issues or fixed_files or new_issues or new_files:
+            print(f'    Issues fixed: {len(fixed_issues)}')
+            print(f'    Files fixed: {len(fixed_files)}')
+            print(f'    Unexpected issues: {len(new_issues)}')
+            print(f'    Unexpected failing files: {len(new_files)}\n')
+        else:
+            print('    No unexpected results')
 
     if new_issues_total and args.scan_build:
         create_filtered_results_dir(args, project, new_issues_total, 'StaticAnalyzerRegressions')
 
-    return new_issues_total, new_files_total
+    return new_issues_total, new_files_total, fixed_files_total, project_results_passes, project_results_failures
 
 
 def main():
     args = parser()
     new_issues_total = set()
     new_files_total = set()
+    fixed_files_total = set()
     unexpected_passes_total = set()
     unexpected_failures_total = set()
     unexpected_issues_total = set()
@@ -198,14 +202,15 @@ def main():
             unexpected_failures_total.update(unexpected_failures)
             unexpected_passes_total.update(unexpected_passes)
             unexpected_issues_total.update(unexpected_issues)
-            # JSON
-            unexpected_results_data['passes'][project] = project_results_passes
-            unexpected_results_data['failures'][project] = project_results_failures
         else:
             archive_path = os.path.abspath(f'{args.archived_dir}/{project}')
-            new_issues, new_files = compare_project_results_by_run(args, archive_path, new_path, project)
+            new_issues, new_files, fixed_files, project_results_passes, project_results_failures = compare_project_results_by_run(args, archive_path, new_path, project)
             new_issues_total.update(new_issues)
             new_files_total.update(new_files)
+            fixed_files_total.update(fixed_files)
+        # JSON
+        unexpected_results_data['passes'][project] = project_results_passes
+        unexpected_results_data['failures'][project] = project_results_failures
 
     results_data_file = os.path.abspath(f'{args.build_output}/unexpected_results.json')
     with open(results_data_file, "w") as f:
@@ -216,6 +221,7 @@ def main():
     for type, type_total in {
         'new issues': new_issues_total,
         'new files': new_files_total,
+        'fixed files': fixed_files_total,
         'unexpected failing files': unexpected_failures_total,
         'unexpected passing files': unexpected_passes_total,
         'unexpected issues': unexpected_issues_total
