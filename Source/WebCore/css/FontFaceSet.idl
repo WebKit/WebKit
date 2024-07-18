@@ -34,8 +34,6 @@ enum FontFaceSetLoadStatus {
     ActiveDOMObject,
     Exposed=(Window,Worker)
 ] interface FontFaceSet : EventTarget {
-    [CallWith=CurrentScriptExecutionContext] constructor(sequence<FontFace> initialFaces);
-
     boolean has(FontFace font);
 
     // FIXME: We should add support for the setlike declaration (webkit.org/b/230119).
