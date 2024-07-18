@@ -269,14 +269,10 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
 
     if (m_didSeePendingStylesheet && !element.renderOrDisplayContentsStyle() && !m_document->isIgnoringPendingStylesheets()) {
         m_document->setHasNodesWithMissingStyle();
-        if (!elementDebugString.isNull())
-            WTFLogAlways("[GRAOUTS] resolveElement(%s) returning in step 1", elementDebugString.ascii().data());
         return { };
     }
 
     if (resolutionType == ResolutionType::RebuildUsingExisting) {
-        if (!elementDebugString.isNull())
-            WTFLogAlways("[GRAOUTS] resolveElement(%s) returning in step 2", elementDebugString.ascii().data());
         return {
             ElementUpdate { RenderStyle::clonePtr(*existingStyle), Change::Renderer },
             DescendantsToResolve::RebuildAllUsingExisting
@@ -290,8 +286,6 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     auto update = createAnimatedElementUpdate(WTFMove(resolvedStyle), styleable, parent().change, resolutionContext, parent().isInDisplayNoneTree);
 
     if (!affectsRenderedSubtree(element, *update.style)) {
-        if (!elementDebugString.isNull())
-            WTFLogAlways("[GRAOUTS] resolveElement(%s) returning in step 3", elementDebugString.ascii().data());
         styleable.setLastStyleChangeEventStyle(nullptr);
         if (update.style->display() == DisplayType::None && element.hasDisplayNone())
             return { WTFMove(update), DescendantsToResolve::None };
@@ -379,9 +373,6 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     if (update.style->usedUserModify() != UserModify::ReadOnly)
         m_document->setMayHaveEditableElements();
 #endif
-
-    if (!elementDebugString.isNull())
-        WTFLogAlways("[GRAOUTS] resolveElement(%s) returning in step 4. Last style change event color = %s", elementDebugString.ascii().data(), styleable.lastStyleChangeEventStyle() ? styleable.lastStyleChangeEventStyle()->color().debugDescription().ascii().data() : "–––");
 
     return { WTFMove(update), descendantsToResolve };
 }
@@ -696,8 +687,6 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
 
     auto applyAnimations = [&]() -> std::pair<std::unique_ptr<RenderStyle>, OptionSet<AnimationImpact>> {
         auto newLastStyleChangeEventStyle = [&]() {
-            if (styleable.element.getAttribute(HTMLNames::idAttr) == "t6-child"_s)
-                WTFLogAlways("");
             RefPtr parentStyleElement = styleable.pseudoElementIdentifier ? &styleable.element : parent().element;
             if (auto* parentStyleElement = parent().element) {
                 if (auto* parentLastStyleChangeEventStyle = parentStyleElement->lastStyleChangeEventStyle(styleable.pseudoElementIdentifier)) {
