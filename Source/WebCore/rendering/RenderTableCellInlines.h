@@ -26,16 +26,14 @@ namespace WebCore {
 
 inline const BorderValue& RenderTableCell::borderAdjoiningCellAfter(const RenderTableCell& cell)
 {
-    ASSERT_UNUSED(cell, table()->cellBefore(&cell) == this);
-    // FIXME: https://webkit.org/b/79272 - Add support for mixed directionality at the cell level.
-    return style().borderEnd();
+    ASSERT(table()->cellAfter(cell) == this);
+    return isDirectionSame(this, &cell) ? style().borderStart() : style().borderEnd();
 }
 
 inline const BorderValue& RenderTableCell::borderAdjoiningCellBefore(const RenderTableCell& cell)
 {
-    ASSERT_UNUSED(cell, table()->cellAfter(&cell) == this);
-    // FIXME: https://webkit.org/b/79272 - Add support for mixed directionality at the cell level.
-    return style().borderStart();
+    ASSERT(table()->cellBefore(cell) == this);
+    return isDirectionSame(this, &cell) ? style().borderEnd() : style().borderStart();
 }
 
 inline const BorderValue& RenderTableCell::borderAdjoiningTableEnd() const

@@ -417,7 +417,7 @@ auto RenderTableCell::localRectsForRepaint(RepaintOutlineBounds repaintOutlineBo
     if (!table()->collapseBorders() || table()->needsSectionRecalc())
         return RenderBlockFlow::localRectsForRepaint(repaintOutlineBounds);
 
-    bool rtl = !styleForCellFlow().isLeftToRightDirection();
+    bool rtl = !style().isLeftToRightDirection();
     LayoutUnit outlineSize { style().outlineSize() };
     LayoutUnit left = std::max(borderHalfLeft(true), outlineSize);
     LayoutUnit right = std::max(borderHalfRight(true), outlineSize);
@@ -629,8 +629,8 @@ CollapsedBorderValue RenderTableCell::computeCollapsedStartBorder(IncludeBorderC
 {
     // For the start border, we need to check, in order of precedence:
     // (1) Our start border.
-    CSSPropertyID startColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyBorderInlineStartColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : CSSPropertyInvalid;
-    CSSPropertyID endColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyBorderInlineEndColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : CSSPropertyInvalid;
+    CSSPropertyID startColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyBorderInlineStartColor, style().direction(), style().writingMode()) : CSSPropertyInvalid;
+    CSSPropertyID endColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyBorderInlineEndColor, style().direction(), style().writingMode()) : CSSPropertyInvalid;
     CollapsedBorderValue result(style().borderStart(), includeColor ? style().visitedDependentColorWithColorFilter(startColorProperty) : Color(), BorderPrecedence::Cell);
 
     RenderTable* table = this->table();
@@ -740,8 +740,8 @@ CollapsedBorderValue RenderTableCell::computeCollapsedEndBorder(IncludeBorderCol
 {
     // For end border, we need to check, in order of precedence:
     // (1) Our end border.
-    CSSPropertyID startColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyBorderInlineStartColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : CSSPropertyInvalid;
-    CSSPropertyID endColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyBorderInlineEndColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : CSSPropertyInvalid;
+    CSSPropertyID startColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyBorderInlineStartColor, style().direction(), style().writingMode()) : CSSPropertyInvalid;
+    CSSPropertyID endColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyBorderInlineEndColor, style().direction(), style().writingMode()) : CSSPropertyInvalid;
     CollapsedBorderValue result = CollapsedBorderValue(style().borderEnd(), includeColor ? style().visitedDependentColorWithColorFilter(endColorProperty) : Color(), BorderPrecedence::Cell);
 
     RenderTable* table = this->table();
@@ -853,8 +853,8 @@ CollapsedBorderValue RenderTableCell::computeCollapsedBeforeBorder(IncludeBorder
 {
     // For before border, we need to check, in order of precedence:
     // (1) Our before border.
-    CSSPropertyID beforeColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyBorderBlockStartColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : CSSPropertyInvalid;
-    CSSPropertyID afterColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyBorderBlockEndColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : CSSPropertyInvalid;
+    CSSPropertyID beforeColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyBorderBlockStartColor, style().direction(), style().writingMode()) : CSSPropertyInvalid;
+    CSSPropertyID afterColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyBorderBlockEndColor, style().direction(), style().writingMode()) : CSSPropertyInvalid;
     CollapsedBorderValue result = CollapsedBorderValue(style().borderBefore(), includeColor ? style().visitedDependentColorWithColorFilter(beforeColorProperty) : Color(), BorderPrecedence::Cell);
     
     RenderTable* table = this->table();
@@ -950,8 +950,8 @@ CollapsedBorderValue RenderTableCell::computeCollapsedAfterBorder(IncludeBorderC
 {
     // For after border, we need to check, in order of precedence:
     // (1) Our after border.
-    CSSPropertyID beforeColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyBorderBlockStartColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : CSSPropertyInvalid;
-    CSSPropertyID afterColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyBorderBlockEndColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : CSSPropertyInvalid;
+    CSSPropertyID beforeColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyBorderBlockStartColor, style().direction(), style().writingMode()) : CSSPropertyInvalid;
+    CSSPropertyID afterColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyBorderBlockEndColor, style().direction(), style().writingMode()) : CSSPropertyInvalid;
     CollapsedBorderValue result = CollapsedBorderValue(style().borderAfter(), includeColor ? style().visitedDependentColorWithColorFilter(afterColorProperty) : Color(), BorderPrecedence::Cell);
     
     RenderTable* table = this->table();
@@ -1016,32 +1016,32 @@ CollapsedBorderValue RenderTableCell::computeCollapsedAfterBorder(IncludeBorderC
     return result;    
 }
 
-inline CollapsedBorderValue RenderTableCell::cachedCollapsedLeftBorder(const RenderStyle& styleForCellFlow) const
+inline CollapsedBorderValue RenderTableCell::cachedCollapsedLeftBorder(const RenderStyle& style) const
 {
-    if (styleForCellFlow.isHorizontalWritingMode())
-        return styleForCellFlow.isLeftToRightDirection() ? section()->cachedCollapsedBorder(*this, CBSStart) : section()->cachedCollapsedBorder(*this, CBSEnd);
-    return styleForCellFlow.isFlippedBlocksWritingMode() ? section()->cachedCollapsedBorder(*this, CBSAfter) : section()->cachedCollapsedBorder(*this, CBSBefore);
+    if (style.isHorizontalWritingMode())
+        return style.isLeftToRightDirection() ? section()->cachedCollapsedBorder(*this, CBSStart) : section()->cachedCollapsedBorder(*this, CBSEnd);
+    return style.isFlippedBlocksWritingMode() ? section()->cachedCollapsedBorder(*this, CBSAfter) : section()->cachedCollapsedBorder(*this, CBSBefore);
 }
 
-inline CollapsedBorderValue RenderTableCell::cachedCollapsedRightBorder(const RenderStyle& styleForCellFlow) const
+inline CollapsedBorderValue RenderTableCell::cachedCollapsedRightBorder(const RenderStyle& style) const
 {
-    if (styleForCellFlow.isHorizontalWritingMode())
-        return styleForCellFlow.isLeftToRightDirection() ? section()->cachedCollapsedBorder(*this, CBSEnd) : section()->cachedCollapsedBorder(*this, CBSStart);
-    return styleForCellFlow.isFlippedBlocksWritingMode() ? section()->cachedCollapsedBorder(*this, CBSBefore) : section()->cachedCollapsedBorder(*this, CBSAfter);
+    if (style.isHorizontalWritingMode())
+        return style.isLeftToRightDirection() ? section()->cachedCollapsedBorder(*this, CBSEnd) : section()->cachedCollapsedBorder(*this, CBSStart);
+    return style.isFlippedBlocksWritingMode() ? section()->cachedCollapsedBorder(*this, CBSBefore) : section()->cachedCollapsedBorder(*this, CBSAfter);
 }
 
-inline CollapsedBorderValue RenderTableCell::cachedCollapsedTopBorder(const RenderStyle& styleForCellFlow) const
+inline CollapsedBorderValue RenderTableCell::cachedCollapsedTopBorder(const RenderStyle& style) const
 {
-    if (styleForCellFlow.isHorizontalWritingMode())
-        return styleForCellFlow.isFlippedBlocksWritingMode() ? section()->cachedCollapsedBorder(*this, CBSAfter) : section()->cachedCollapsedBorder(*this, CBSBefore);
-    return styleForCellFlow.isLeftToRightDirection() ? section()->cachedCollapsedBorder(*this, CBSStart) : section()->cachedCollapsedBorder(*this, CBSEnd);
+    if (style.isHorizontalWritingMode())
+        return style.isFlippedBlocksWritingMode() ? section()->cachedCollapsedBorder(*this, CBSAfter) : section()->cachedCollapsedBorder(*this, CBSBefore);
+    return style.isLeftToRightDirection() ? section()->cachedCollapsedBorder(*this, CBSStart) : section()->cachedCollapsedBorder(*this, CBSEnd);
 }
 
-inline CollapsedBorderValue RenderTableCell::cachedCollapsedBottomBorder(const RenderStyle& styleForCellFlow) const
+inline CollapsedBorderValue RenderTableCell::cachedCollapsedBottomBorder(const RenderStyle& style) const
 {
-    if (styleForCellFlow.isHorizontalWritingMode())
-        return styleForCellFlow.isFlippedBlocksWritingMode() ? section()->cachedCollapsedBorder(*this, CBSBefore) : section()->cachedCollapsedBorder(*this, CBSAfter);
-    return styleForCellFlow.isLeftToRightDirection() ? section()->cachedCollapsedBorder(*this, CBSEnd) : section()->cachedCollapsedBorder(*this, CBSStart);
+    if (style.isHorizontalWritingMode())
+        return style.isFlippedBlocksWritingMode() ? section()->cachedCollapsedBorder(*this, CBSBefore) : section()->cachedCollapsedBorder(*this, CBSAfter);
+    return style.isLeftToRightDirection() ? section()->cachedCollapsedBorder(*this, CBSEnd) : section()->cachedCollapsedBorder(*this, CBSStart);
 }
 
 RectEdges<LayoutUnit> RenderTableCell::borderWidths() const
@@ -1129,41 +1129,41 @@ LayoutUnit RenderTableCell::borderAfter() const
 
 LayoutUnit RenderTableCell::borderHalfLeft(bool outer) const
 {
-    const RenderStyle& styleForCellFlow = this->styleForCellFlow();
-    if (styleForCellFlow.isHorizontalWritingMode())
-        return styleForCellFlow.isLeftToRightDirection() ? borderHalfStart(outer) : borderHalfEnd(outer);
-    return styleForCellFlow.isFlippedBlocksWritingMode() ? borderHalfAfter(outer) : borderHalfBefore(outer);
+    const RenderStyle& style = this->style();
+    if (style.isHorizontalWritingMode())
+        return style.isLeftToRightDirection() ? borderHalfStart(outer) : borderHalfEnd(outer);
+    return style.isFlippedBlocksWritingMode() ? borderHalfAfter(outer) : borderHalfBefore(outer);
 }
 
 LayoutUnit RenderTableCell::borderHalfRight(bool outer) const
 {
-    const RenderStyle& styleForCellFlow = this->styleForCellFlow();
-    if (styleForCellFlow.isHorizontalWritingMode())
-        return styleForCellFlow.isLeftToRightDirection() ? borderHalfEnd(outer) : borderHalfStart(outer);
-    return styleForCellFlow.isFlippedBlocksWritingMode() ? borderHalfBefore(outer) : borderHalfAfter(outer);
+    const RenderStyle& style = this->style();
+    if (style.isHorizontalWritingMode())
+        return style.isLeftToRightDirection() ? borderHalfEnd(outer) : borderHalfStart(outer);
+    return style.isFlippedBlocksWritingMode() ? borderHalfBefore(outer) : borderHalfAfter(outer);
 }
 
 LayoutUnit RenderTableCell::borderHalfTop(bool outer) const
 {
-    const RenderStyle& styleForCellFlow = this->styleForCellFlow();
-    if (styleForCellFlow.isHorizontalWritingMode())
-        return styleForCellFlow.isFlippedBlocksWritingMode() ? borderHalfAfter(outer) : borderHalfBefore(outer);
-    return styleForCellFlow.isLeftToRightDirection() ? borderHalfStart(outer) : borderHalfEnd(outer);
+    const RenderStyle& style = this->style();
+    if (style.isHorizontalWritingMode())
+        return style.isFlippedBlocksWritingMode() ? borderHalfAfter(outer) : borderHalfBefore(outer);
+    return style.isLeftToRightDirection() ? borderHalfStart(outer) : borderHalfEnd(outer);
 }
 
 LayoutUnit RenderTableCell::borderHalfBottom(bool outer) const
 {
-    const RenderStyle& styleForCellFlow = this->styleForCellFlow();
-    if (styleForCellFlow.isHorizontalWritingMode())
-        return styleForCellFlow.isFlippedBlocksWritingMode() ? borderHalfBefore(outer) : borderHalfAfter(outer);
-    return styleForCellFlow.isLeftToRightDirection() ? borderHalfEnd(outer) : borderHalfStart(outer);
+    const RenderStyle& style = this->style();
+    if (style.isHorizontalWritingMode())
+        return style.isFlippedBlocksWritingMode() ? borderHalfBefore(outer) : borderHalfAfter(outer);
+    return style.isLeftToRightDirection() ? borderHalfEnd(outer) : borderHalfStart(outer);
 }
 
 LayoutUnit RenderTableCell::borderHalfStart(bool outer) const
 {
     CollapsedBorderValue border = collapsedStartBorder(DoNotIncludeBorderColor);
     if (border.exists())
-        return CollapsedBorderValue::adjustedCollapsedBorderWidth(border.width(), document().deviceScaleFactor(), styleForCellFlow().isLeftToRightDirection() ^ outer);
+        return CollapsedBorderValue::adjustedCollapsedBorderWidth(border.width(), document().deviceScaleFactor(), style().isLeftToRightDirection() ^ outer);
     return 0;
 }
     
@@ -1171,7 +1171,7 @@ LayoutUnit RenderTableCell::borderHalfEnd(bool outer) const
 {
     CollapsedBorderValue border = collapsedEndBorder(DoNotIncludeBorderColor);
     if (border.exists())
-        return CollapsedBorderValue::adjustedCollapsedBorderWidth(border.width(), document().deviceScaleFactor(), !(styleForCellFlow().isLeftToRightDirection() ^ outer));
+        return CollapsedBorderValue::adjustedCollapsedBorderWidth(border.width(), document().deviceScaleFactor(), !(style().isLeftToRightDirection() ^ outer));
     return 0;
 }
 
@@ -1179,7 +1179,7 @@ LayoutUnit RenderTableCell::borderHalfBefore(bool outer) const
 {
     CollapsedBorderValue border = collapsedBeforeBorder(DoNotIncludeBorderColor);
     if (border.exists())
-        return CollapsedBorderValue::adjustedCollapsedBorderWidth(border.width(), document().deviceScaleFactor(), !(styleForCellFlow().isFlippedBlocksWritingMode() ^ outer));
+        return CollapsedBorderValue::adjustedCollapsedBorderWidth(border.width(), document().deviceScaleFactor(), !(style().isFlippedBlocksWritingMode() ^ outer));
     return 0;
 }
 
@@ -1187,7 +1187,7 @@ LayoutUnit RenderTableCell::borderHalfAfter(bool outer) const
 {
     CollapsedBorderValue border = collapsedAfterBorder(DoNotIncludeBorderColor);
     if (border.exists())
-        return CollapsedBorderValue::adjustedCollapsedBorderWidth(border.width(), document().deviceScaleFactor(), styleForCellFlow().isFlippedBlocksWritingMode() ^ outer);
+        return CollapsedBorderValue::adjustedCollapsedBorderWidth(border.width(), document().deviceScaleFactor(), style().isFlippedBlocksWritingMode() ^ outer);
     return 0;
 }
 
@@ -1301,11 +1301,11 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
     if (!table()->currentBorderValue() || graphicsContext.paintingDisabled())
         return;
 
-    const RenderStyle& styleForCellFlow = this->styleForCellFlow();
-    CollapsedBorderValue leftVal = cachedCollapsedLeftBorder(styleForCellFlow);
-    CollapsedBorderValue rightVal = cachedCollapsedRightBorder(styleForCellFlow);
-    CollapsedBorderValue topVal = cachedCollapsedTopBorder(styleForCellFlow);
-    CollapsedBorderValue bottomVal = cachedCollapsedBottomBorder(styleForCellFlow);
+    const RenderStyle& style = this->style();
+    CollapsedBorderValue leftVal = cachedCollapsedLeftBorder(style);
+    CollapsedBorderValue rightVal = cachedCollapsedRightBorder(style);
+    CollapsedBorderValue topVal = cachedCollapsedTopBorder(style);
+    CollapsedBorderValue bottomVal = cachedCollapsedBottomBorder(style);
      
     // Adjust our x/y/width/height so that we paint the collapsed borders at the correct location.
     LayoutUnit topWidth = topVal.width();

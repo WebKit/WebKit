@@ -114,16 +114,14 @@ void RenderTableRow::styleDidChange(StyleDifference diff, const RenderStyle* old
 
 const BorderValue& RenderTableRow::borderAdjoiningStartCell(const RenderTableCell& cell) const
 {
-    ASSERT_UNUSED(cell, cell.isFirstOrLastCellInRow());
-    // FIXME: https://webkit.org/b/79272 - Add support for mixed directionality at the cell level.
-    return style().borderStart();
+    ASSERT(cell->isFirstOrLastCellInRow());
+    return isDirectionSame(this, &cell) ? style().borderStart() : style().borderEnd();
 }
 
 const BorderValue& RenderTableRow::borderAdjoiningEndCell(const RenderTableCell& cell) const
 {
-    ASSERT_UNUSED(cell, cell.isFirstOrLastCellInRow());
-    // FIXME: https://webkit.org/b/79272 - Add support for mixed directionality at the cell level.
-    return style().borderEnd();
+    ASSERT(cell->isFirstOrLastCellInRow());
+    return isDirectionSame(this, &cell) ? style().borderEnd() : style().borderStart();
 }
 
 void RenderTableRow::didInsertTableCell(RenderTableCell& child, RenderObject* beforeChild)
