@@ -3,11 +3,10 @@ exclude #$
 exclude ChangeLog
 exclude CMakeLists.txt.user
 exclude Makefile
-exclude PlatformAppleWin.cmake
 exclude PlatformMac.cmake
+exclude PlatformPlayStation.cmake
 exclude PlatformWPE.cmake
 exclude PlatformWin.cmake
-exclude PlatformWinCairo.cmake
 exclude tags$
 exclude ~$
 exclude \.#$
@@ -52,9 +51,9 @@ exclude Source/WebCore/platform/audio/resources
 exclude Source/WebCore/bindings/scripts/test
 exclude Source/WebCore/Resources
 exclude Source/WebKitLegacy/.*
-exclude Source/cmake/OptionsWinCairo.cmake$
-exclude Source/cmake/OptionsWindows.cmake$
-exclude Source/cmake/OptionsAppleWin.cmake$
+exclude Source/cmake/OptionsMac.cmake$
+exclude Source/cmake/OptionsPlayStation.cmake$
+exclude Source/cmake/OptionsWin.cmake$
 exclude Source/cmake/OptionsWPE.cmake$
 exclude Source/WebInspectorUI/Tools
 
