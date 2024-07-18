@@ -129,10 +129,6 @@ class EmptyContextMenuClient final : public ContextMenuClient {
     void handleTranslation(const TranslationContextMenuInfo&) final { }
 #endif
 
-#if ENABLE(WRITING_TOOLS)
-    void handleWritingToolsDeprecated(IntRect) final { };
-#endif
-
 #if PLATFORM(GTK)
     void insertEmoji(LocalFrame&) final { }
 #endif

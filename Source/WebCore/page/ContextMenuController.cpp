@@ -648,10 +648,8 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         break;
 
     case ContextMenuItemTagWritingTools:
-#if ENABLE(WRITING_TOOLS)
-        if (RefPtr view = frame->view())
-            m_client->handleWritingToolsDeprecated(view->contentsToRootView(enclosingIntRect(frame->selection().selectionBounds())));
-#endif
+        // The Writing Tools context menu item action is handled in the client layer.
+        RELEASE_ASSERT_NOT_REACHED();
         break;
 
 #if ENABLE(PDFJS)

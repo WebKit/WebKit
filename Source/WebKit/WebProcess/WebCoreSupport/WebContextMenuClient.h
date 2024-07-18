@@ -61,10 +61,6 @@ private:
     void handleTranslation(const WebCore::TranslationContextMenuInfo&) final;
 #endif
 
-#if ENABLE(WRITING_TOOLS)
-    void handleWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView) final;
-#endif
-
 #if PLATFORM(GTK)
     void insertEmoji(WebCore::LocalFrame&) override;
 #endif

@@ -9307,13 +9307,6 @@ void WebPage::handleContextMenuTranslation(const TranslationContextMenuInfo& inf
 }
 #endif
 
-#if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
-void WebPage::handleContextMenuWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView)
-{
-    send(Messages::WebPageProxy::HandleContextMenuWritingToolsDeprecated(selectionBoundsInRootView));
-}
-#endif
-
 void WebPage::scrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint&)
 {
     RefPtr frameView = localMainFrameView();

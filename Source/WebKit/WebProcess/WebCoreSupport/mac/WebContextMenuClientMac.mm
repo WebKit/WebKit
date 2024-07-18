@@ -79,18 +79,6 @@ void WebContextMenuClient::handleTranslation(const WebCore::TranslationContextMe
 
 #endif // HAVE(TRANSLATION_UI_SERVICES)
 
-#if ENABLE(WRITING_TOOLS)
-
-void WebContextMenuClient::handleWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView)
-{
-    if (!m_page)
-        return;
-
-    m_page->send(Messages::WebPageProxy::HandleContextMenuWritingToolsDeprecated(selectionBoundsInRootView));
-}
-
-#endif
-
 } // namespace WebKit
 
 #endif // ENABLE(CONTEXT_MENUS)
