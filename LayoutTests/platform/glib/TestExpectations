@@ -537,6 +537,10 @@ accessibility/display-contents/end-text-marker.html [ Skip ]
 # Need to implement AccessibilityUIElement::insertText.
 accessibility/insert-text-into-password-field.html [ Skip ]
 
+# These test a Cocoa-only API.
+accessibility/mixed-contenteditable-visible-character-range-hang.html [ Skip ]
+accessibility/mixed-contenteditable-double-br-visible-character-range-hang.html [ Skip ]
+
 # Missing AccessibilityUIElement::brailleLabel and AccessibilityUIElement::brailleRoleDescription implementations.
 accessibility/aria-braillelabel.html [ Skip ]
 accessibility/aria-brailleroledescription.html [ Skip ]

@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+/* All of these styles are critical in reproducing the bug. */
+#content-wrapper {
+    overflow-wrap: break-word;
+    -webkit-line-break: after-white-space;
+}
+p {
+    line-height: 1.7999999999999998;
+    margin-top: 21pt;
+    margin-bottom: 21pt;
+}
+.text-style {
+    font-size: 20pt;
+    white-space: pre;
+}
+</style>
+</head>
+<body id="body" contenteditable="true" role="application" style="margin: 0 !important;">
+
+<div id="content-wrapper">
+<p>
+    <!-- The space character before each presentational-br is intentional, and required to trigger the bug. It triggers
+         the bug because it is the line ending position and is non-editable (contained in a contenteditable="false" span),
+         while the rest of the line *is* editable — this can cause divergent behavior in some editing functions, like
+         WebCore::inSameLine / WebCore::startOfLine, which use VisiblePosition::honorEditingBoundaryAtOrBefore.
+         This is similar markup to that of a Google Docs document. -->
+    <span class="text-style">Line one line one</span><span contenteditable="false"> <br role="presentation"/></span>
+    <!-- In a Google Docs document, each paragraph has lines and lines of text that match this pattern:
+
+             <span>foo bar</span><span contenteditable="false"> <br role="presentation"/></span>
+
+         But the last line in the paragraph does not have the <span contenteditable="false"> <br role="presentation"/></span>.
+         We match this here, as doing so is critical to trigger the bug being tested against.
+    -->
+    <span class="text-style">Line two line two</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line three line three</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line four line four </span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line five line five</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line six line six</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line seven line seven</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line eight line eight </span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line nine line nine</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line ten line ten</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line eleven line eleven</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line twelve line twelve</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line thirteen line thirteen</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line fourteen line fourteen</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line fifteen line fifteen</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line sixteen line sixteen</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line seventeen line seventeen</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line eighteen line eighteen</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line nineteen line nineteen</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line twenty line twenty </span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line twentyone line twentyone</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line twentytwo line twentytwo</span><span contenteditable="false"></span>
+</p>
+</div>
+
+<script>
+var output = "This test ensures we do not hang when getting the visible character range for a multi-paragraph editable document.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    // Use this to force unobscuredContentRect() to be small (required to trigger the bug). In real VoiceOver usage on
+    // Google Docs and other webpages, sometimes this rect is extremely small (e.g. {x: 0, y: 29, width: 625: height: 1}).
+    testRunner.setViewSize(625, 48);
+    // Offset the y-value from 0 by scrolling (required to trigger the bug, as it makes the contentRect intersect
+    // startingElementRect in AccessibilityObject::visibleCharacterRangeInternal).
+    document.body.scrollTop = 29;
+
+    setTimeout(async function() {
+        const body = accessibilityController.accessibleElementById("body");
+        output += `#body AXVisibleCharacterRange: ${body.stringDescriptionOfAttributeValue("AXVisibleCharacterRange")}\n`;
+
+        debug(output);
+        document.getElementById("content-wrapper").style.display = "none";
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

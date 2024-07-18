@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+#content-wrapper {
+    overflow-wrap: break-word;
+    -webkit-line-break: after-white-space;
+}
+p {
+    line-height: 1.7999999999999998;
+    margin-top: 21pt;
+    margin-bottom: 21pt;
+}
+.text-style {
+    font-size: 20pt;
+    white-space: pre;
+}
+</style>
+</head>
+<body id="body" contenteditable="true" role="application" style="margin: 0 !important;">
+
+<div id="content-wrapper">
+<p>
+    <span class="text-style">Line one line one</span><span contenteditable="false"> <br role="presentation"/><br role="presentation"/></span>
+    <span class="text-style">Line two line two</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line three line three</span><span contenteditable="false"> <br role="presentation"/><br role="presentation"/></span>
+    <span class="text-style">Line four line four </span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line five line five</span><span contenteditable="false"> <br role="presentation"/><br role="presentation"/></span>
+    <span class="text-style">Line six line six</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line seven line seven</span><span contenteditable="false"> <br role="presentation"/><br role="presentation"/></span>
+    <span class="text-style">Line eight line eight </span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line nine line nine</span><span contenteditable="false"> <br role="presentation"/><br role="presentation"/></span>
+    <span class="text-style">Line ten line ten</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line eleven line eleven</span><span contenteditable="false"> <br role="presentation"/><br role="presentation"/></span>
+    <span class="text-style">Line twelve line twelve</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line thirteen line thirteen</span><span contenteditable="false"> <br role="presentation"/><br role="presentation"/></span>
+    <span class="text-style">Line fourteen line fourteen</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line fifteen line fifteen</span><span contenteditable="false"> <br role="presentation"/><br role="presentation"/></span>
+    <span class="text-style">Line sixteen line sixteen</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line seventeen line seventeen</span><span contenteditable="false"> <br role="presentation"/><br role="presentation"/></span>
+    <span class="text-style">Line eighteen line eighteen</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line nineteen line nineteen</span><span contenteditable="false"> <br role="presentation"/><br role="presentation"/></span>
+    <span class="text-style">Line twenty line twenty </span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line twentyone line twentyone</span><span contenteditable="false"> <br role="presentation"/><br role="presentation"/></span>
+    <span class="text-style">Line twentytwo line twentytwo</span><span contenteditable="false"></span>
+</p>
+</div>
+
+<script>
+var output = "This test ensures we do not hang when getting the visible character range for a multi-paragraph editable document.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    testRunner.setViewSize(625, 48);
+    document.body.scrollTop = 29;
+
+    setTimeout(async function() {
+        const body = accessibilityController.accessibleElementById("body");
+        output += `#body AXVisibleCharacterRange: ${body.stringDescriptionOfAttributeValue("AXVisibleCharacterRange")}\n`;
+
+        debug(output);
+        document.getElementById("content-wrapper").style.display = "none";
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
