@@ -201,7 +201,7 @@ private:
             }
             case FMax:
             case FMin: {
-                if (isX86()) {
+                if (isX86() || isARM_THUMB2()) {
                     bool isMax = m_value->opcode() == FMax;
 
                     Value* a = m_value->child(0);
@@ -267,8 +267,7 @@ private:
             case Div: {
                 if (m_value->isChill())
                     makeDivisionChill(Div);
-                else if (isARM_THUMB2()) {
-#if USE(JSVALUE32_64)
+                else if (isARM_THUMB2() && (m_value->type() == Int64 || m_value->type() == Int32)) {
                     BasicBlock* before = m_blockInsertionSet.splitForward(m_block, m_index);
                     before->replaceLastWithNew<Value>(m_proc, Nop, m_origin);
                     Value* result = callDivModHelper(before, Div, m_value->child(0), m_value->child(1));
@@ -276,7 +275,6 @@ private:
                     before->setSuccessors(FrequentedBlock(m_block));
                     m_value->replaceWithIdentity(result);
                     m_changed = true;
-#endif
                 }
                 break;
             }
@@ -578,7 +576,8 @@ private:
         m_changed = true;
     }
 
-    Value* callDivModHelper(BasicBlock *block, Opcode nonChillOpcode, Value* num, Value* den)
+#if USE(JSVALUE32_64)
+    Value* callDivModHelper(BasicBlock* block, Opcode nonChillOpcode, Value* num, Value* den)
     {
         Type type = num->type();
         Value* functionAddress;
@@ -595,7 +594,12 @@ private:
         }
         return block->appendNew<CCallValue>(m_proc, type, m_origin, Effects::none(), functionAddress, num, den);
     }
-
+#else
+    Value* callDivModHelper(BasicBlock*, Opcode, Value*, Value*)
+    {
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+#endif
     void makeDivisionChill(Opcode nonChillOpcode)
     {
         ASSERT(nonChillOpcode == Div || nonChillOpcode == Mod);
@@ -643,11 +647,9 @@ private:
             FrequentedBlock(shadyDenCase, FrequencyClass::Rare));
 
         Value* innerResult;
-        if constexpr (isARM_THUMB2()) {
-#if USE(JSVALUE32_64)
+        if (isARM_THUMB2() && (m_value->type() == Int64 || m_value->type() == Int32))
             innerResult = callDivModHelper(normalDivCase, nonChillOpcode, num, den);
-#endif
-        } else
+        else
             innerResult = normalDivCase->appendNew<Value>(m_proc, nonChillOpcode, m_origin, num, den);
         UpsilonValue* normalResult = normalDivCase->appendNew<UpsilonValue>(
             m_proc, m_origin,
