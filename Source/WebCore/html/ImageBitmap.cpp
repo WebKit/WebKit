@@ -30,6 +30,7 @@
 #include "Blob.h"
 #include "CSSStyleImageValue.h"
 #include "CachedImage.h"
+#include "CanvasRenderingContext.h"
 #include "EventLoop.h"
 #include "ExceptionCode.h"
 #include "ExceptionOr.h"
@@ -544,7 +545,13 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), imageForRender->colorSpace());
+    auto renderingMode = bufferRenderingMode(scriptExecutionContext);
+#if USE(SKIA)
+    // Make sure ImageBitmap is unaccelerated when created from unaccelerated canvas.
+    if (renderingMode == RenderingMode::Accelerated && canvas.renderingContext() && !canvas.renderingContext()->isGPUBased())
+        renderingMode = RenderingMode::Unaccelerated;
+#endif
+    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, renderingMode, imageForRender->colorSpace());
 
     const bool originClean = canvas.originClean();
     if (!bitmapData) {
