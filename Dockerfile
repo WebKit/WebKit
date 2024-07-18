@@ -1,9 +1,9 @@
 ARG MARCH_FLAG=""
 ARG WEBKIT_RELEASE_TYPE=Release
 ARG CPU=native
-ARG LTO_FLAG="-flto='full'"
+ARG LTO_FLAG="-flto=full -fwhole-program-vtables -fforce-emit-vtables "
 ARG LLVM_VERSION="16"
-ARG DEFAULT_CFLAGS="-mno-omit-leaf-frame-pointer -fno-omit-frame-pointer -ffunction-sections -fdata-sections -faddrsig -fno-asynchronous-unwind-tables -DU_STATIC_IMPLEMENTATION=1 "
+ARG DEFAULT_CFLAGS="-mno-omit-leaf-frame-pointer -fno-omit-frame-pointer -ffunction-sections -fdata-sections -faddrsig -fno-unwind-tables -fno-asynchronous-unwind-tables -DU_STATIC_IMPLEMENTATION=1 "
 ARG DEBIAN_VERSION="bullseye"
 
 FROM bitnami/minideb:${DEBIAN_VERSION} as base
@@ -60,7 +60,15 @@ RUN  for f in /usr/lib/llvm-${LLVM_VERSION}/bin/*; do ln -sf "$f" /usr/bin; done
     && ln -sf /usr/bin/clang /usr/bin/c99 \
     && ln -sf /usr/bin/clang++ /usr/bin/c++ \
     && ln -sf /usr/bin/clang++ /usr/bin/g++ \
-    && ln -sf /usr/bin/llvm-ar /usr/bin/ar 
+    && ln -sf /usr/bin/llvm-ar /usr/bin/ar \
+    && ln -sf /usr/bin/clang /usr/bin/gcc 
+
+ENV CC clang-${LLVM_VERSION}
+ENV CXX clang++-${LLVM_VERSION}
+ENV AR llvm-ar-${LLVM_VERSION}
+ENV RANLIB llvm-ranlib-${LLVM_VERSION}
+ENV LD lld-${LLVM_VERSION}
+ENV LTO_FLAG="${LTO_FLAG}"
 
 ENV WEBKIT_OUT_DIR=/webkitbuild
 RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/include/wtf /output/include/bmalloc /output/include/unicode
@@ -69,8 +77,8 @@ RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/
 # the exact version we need. Unfortunately, aarch64 is not pre-built so we have to build it from source.
 ADD https://github.com/unicode-org/icu/releases/download/release-75-1/icu4c-75_1-src.tgz /icu.tgz
 RUN --mount=type=tmpfs,target=/icu \ 
-    export CFLAGS="${DEFAULT_CFLAGS} $CFLAGS -O3 -std=c17 ${LTO_FLAG}" && \
-    export CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS -O3 -std=c++20 -fno-exceptions ${LTO_FLAG} " && \
+    export CFLAGS="${DEFAULT_CFLAGS} $CFLAGS -O3 -std=c17 $LTO_FLAG" && \
+    export CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS -O3 -std=c++20 -fno-exceptions $LTO_FLAG -fno-c++-static-destructors " && \
     export LDFLAGS="-fuse-ld=lld " && \
     cd /icu && \
     tar -xf /icu.tgz --strip-components=1 && \
@@ -95,11 +103,11 @@ WORKDIR /webkit
 
 ENV CPU=${CPU}
 ENV MARCH_FLAG=${MARCH_FLAG}
-ENV LTO_FLAG=${LTO_FLAG}
+
 
 RUN --mount=type=tmpfs,target=/webkitbuild \
     export CFLAGS="${DEFAULT_CFLAGS} $CFLAGS $LTO_FLAG -fno-pic -fno-pie " && \
-    export CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS $LTO_FLAG -fno-pic -fno-pie " && \
+    export CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS $LTO_FLAG -fno-pic -fno-pie -fno-c++-static-destructors " && \
     export LDFLAGS="-fuse-ld=lld $LDFLAGS -Wl,-z,norelro -Wl,-z,lazy -Wl,-no-pie " && \
     cd /webkitbuild && \
     cmake \
@@ -114,8 +122,7 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     -DALLOW_LINE_AND_COLUMN_NUMBER_IN_BUILTINS=ON \
     -DENABLE_SINGLE_THREADED_VM_ENTRY_SCOPE=ON \
     -DENABLE_REMOTE_INSPECTOR=ON \
-    -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld -Wl,-z,norelro -Wl,-z,lazy -Wl,-no-pie " \
-    -DCMAKE_POSITION_INDEPENDENT_CODE=OFF \
+    -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld" \
     -DCMAKE_AR=$(which llvm-ar) \
     -DCMAKE_RANLIB=$(which llvm-ranlib) \
     -DCMAKE_C_FLAGS="$CFLAGS" \
