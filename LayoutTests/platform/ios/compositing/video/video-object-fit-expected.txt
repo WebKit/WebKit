@@ -16,12 +16,6 @@
             (position 40.00 40.00)
             (bounds 120.00 200.00)
           )
-          (children 1
-            (GraphicsLayer
-              (position 40.00 40.00)
-              (bounds 120.00 200.00)
-            )
-          )
         )
         (GraphicsLayer
           (position 227.00 13.00)
@@ -36,12 +30,6 @@
             (position -33.00 40.00)
             (bounds 266.00 200.00)
           )
-          (children 1
-            (GraphicsLayer
-              (position 40.00 40.00)
-              (bounds 120.00 200.00)
-            )
-          )
         )
         (GraphicsLayer
           (position 441.00 13.00)
@@ -51,12 +39,6 @@
           (contents layer (media)
             (position 40.00 95.00)
             (bounds 120.00 90.00)
-          )
-          (children 1
-            (GraphicsLayer
-              (position 40.00 40.00)
-              (bounds 120.00 200.00)
-            )
           )
         )
         (GraphicsLayer
@@ -68,12 +50,6 @@
             (position 55.00 70.00)
             (bounds 320.00 240.00)
           )
-          (children 1
-            (GraphicsLayer
-              (position 40.00 40.00)
-              (bounds 350.00 300.00)
-            )
-          )
         )
         (GraphicsLayer
           (position 13.00 723.00)
@@ -83,12 +59,6 @@
           (contents layer (media)
             (position 120.00 40.00)
             (bounds 240.00 180.00)
-          )
-          (children 1
-            (GraphicsLayer
-              (position 40.00 40.00)
-              (bounds 400.00 180.00)
-            )
           )
         )
         (GraphicsLayer
@@ -103,12 +73,6 @@
           (contents layer (media)
             (position -60.00 20.00)
             (bounds 320.00 240.00)
-          )
-          (children 1
-            (GraphicsLayer
-              (position 40.00 40.00)
-              (bounds 120.00 200.00)
-            )
           )
         )
       )
