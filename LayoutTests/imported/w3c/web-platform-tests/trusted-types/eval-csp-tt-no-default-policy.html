@@ -40,5 +40,17 @@
   test(t => {
     assert_throws_js(EvalError, _ => new Function('return 1+1')());
   }, "Function constructor of string fails.");
+
+  test(t => {
+    assert_equals(new Function(p.createScript('val'),p.createScript('return val+1'))(1), 2);
+  }, "Function constructor of all TrustedScripts works.");
+
+  test(t => {
+    assert_throws_js(EvalError, _ => new Function('val', 'return val+1')(1));
+  }, "Function constructor of all strings fails.");
+
+  test(t => {
+    assert_throws_js(EvalError, _ => new Function('val', p.createScript('return val+1'))(1));
+  }, "Function constructor of string and TrustedScript fails.");
 </script>
 

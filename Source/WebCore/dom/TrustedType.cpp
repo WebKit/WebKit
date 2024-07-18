@@ -38,6 +38,7 @@
 #include "WindowOrWorkerGlobalScopeTrustedTypes.h"
 #include "WorkerGlobalScope.h"
 #include "XLinkNames.h"
+#include <JavaScriptCore/ArgList.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
@@ -302,14 +303,33 @@ ExceptionOr<String> requireTrustedTypesForPreNavigationCheckPasses(ScriptExecuti
         : nullString());
 }
 
-ExceptionOr<bool> canCompile(ScriptExecutionContext& scriptExecutionContext, JSC::CompilationType compilationType, String codeString, JSC::JSValue bodyArgument)
+ExceptionOr<bool> canCompile(ScriptExecutionContext& scriptExecutionContext, JSC::CompilationType compilationType, String codeString, const JSC::ArgList& args)
 {
-    VM& vm = scriptExecutionContext.vm();
+    if (compilationType == CompilationType::Function) {
+        VM& vm = scriptExecutionContext.vm();
 
-    if (bodyArgument.isObject())
-        return JSTrustedScript::toWrapped(vm, bodyArgument) ? true : false;
+        bool isTrusted = true;
 
-    ASSERT(bodyArgument.isString());
+        for (size_t i = 0; i < args.size(); i++) {
+            auto arg = args.at(i);
+            if (!arg.isObject()) {
+                isTrusted = false;
+                break;
+            }
+            if (auto trustedScript = JSTrustedScript::toWrapped(vm, args.at(i))) {
+                if (!trustedScript || trustedScript->toString() != arg.toWTFString(scriptExecutionContext.globalObject())) {
+                    isTrusted = false;
+                    break;
+                }
+            } else {
+                isTrusted = false;
+                break;
+            }
+        }
+
+        if (isTrusted)
+            return true;
+    }
 
     auto sink = compilationType == CompilationType::Function ? "Function"_s : "eval"_s;
 

@@ -477,12 +477,21 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncEval, (JSGlobalObject* globalObject, CallFram
 
     JSValue x = callFrame->argument(0);
     JSString* codeString = nullptr;
+    bool isTrusted = false;
     if (LIKELY(x.isString()))
         codeString = asString(x);
     else if (Options::useTrustedTypes()) {
-        auto code = globalObject->globalObjectMethodTable()->codeForEval(globalObject, x);
-        if (!code.isNull())
-            codeString = jsString(vm, code);
+        auto* structure = globalObject->trustedScriptStructure();
+        if (structure == x.structureOrNull()) {
+            codeString = x.toStringOrNull(globalObject);
+            isTrusted = true;
+        } else {
+            auto code = globalObject->globalObjectMethodTable()->codeForEval(globalObject, x);
+            if (!code.isNull()) {
+                codeString = jsString(vm, code);
+                isTrusted = true;
+            }
+        }
     }
 
     if (!codeString)
@@ -491,9 +500,9 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncEval, (JSGlobalObject* globalObject, CallFram
     auto s = codeString->value(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    if (Options::useTrustedTypes() && globalObject->requiresTrustedTypes() && !globalObject->globalObjectMethodTable()->canCompileStrings(globalObject, CompilationType::IndirectEval, s, x)) {
+    if (Options::useTrustedTypes() && globalObject->requiresTrustedTypes() && !isTrusted && !globalObject->globalObjectMethodTable()->canCompileStrings(globalObject, CompilationType::IndirectEval, s, *vm.emptyList)) {
         throwException(globalObject, scope, createEvalError(globalObject, "Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment."_s));
-        return { };
+        return JSValue::encode(jsUndefined());
     }
 
     if (!globalObject->evalEnabled()) {
