@@ -50,7 +50,7 @@ public:
 
 struct CSSUnresolvedColorResolutionContext {
     // Delegate for lazily computing color values.
-    std::unique_ptr<CSSUnresolvedColorResolutionDelegate> delegate = nullptr;
+    CSSUnresolvedColorResolutionDelegate* delegate = nullptr;
 
     // Whether links should be resolved to the visited style.
     Style::ForVisitedLink forVisitedLink = Style::ForVisitedLink::No;
