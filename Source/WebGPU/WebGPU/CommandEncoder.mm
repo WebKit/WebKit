@@ -1118,10 +1118,10 @@ void CommandEncoder::clearTextureIfNeeded(const WGPUImageCopyTexture& destinatio
     CommandEncoder::clearTextureIfNeeded(texture, mipLevel, slice, device, blitCommandEncoder);
 }
 
-void CommandEncoder::waitForCommandBufferCompletion()
+void CommandEncoder::onCommandBufferCompletion(Function<void()>&& completion)
 {
     if (m_cachedCommandBuffer)
-        m_cachedCommandBuffer.get()->waitForCompletion();
+        m_cachedCommandBuffer.get()->onCompletion(WTFMove(completion));
 }
 
 bool CommandEncoder::encoderIsCurrent(id<MTLCommandEncoder> commandEncoder) const

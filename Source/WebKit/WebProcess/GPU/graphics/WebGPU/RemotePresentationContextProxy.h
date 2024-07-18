@@ -67,7 +67,7 @@ private:
     RemotePresentationContextProxy& operator=(RemotePresentationContextProxy&&) = delete;
 
     WebGPUIdentifier backing() const { return m_backing; }
-    RefPtr<WebCore::NativeImage> getMetalTextureAsNativeImage(uint32_t) final;
+    void getMetalTextureAsNativeImage(uint32_t, Function<void(RefPtr<WebCore::NativeImage>&&)>&&) final;
 
     static inline constexpr Seconds defaultSendTimeout = 30_s;
     template<typename T>

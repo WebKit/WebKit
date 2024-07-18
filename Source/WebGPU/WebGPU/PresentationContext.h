@@ -67,7 +67,7 @@ public:
 
     virtual bool isPresentationContextIOSurface() const { return false; }
     virtual bool isPresentationContextCoreAnimation() const { return false; }
-    virtual RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t) { return nullptr; }
+    virtual void getTextureAsNativeImage(uint32_t, Function<void(RetainPtr<CGImageRef>&&)>&& completion) { completion(nullptr); }
 
     virtual bool isValid() { return false; }
 protected:

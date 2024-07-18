@@ -102,7 +102,7 @@ public:
     void decrementBufferMapCount();
     void endEncoding(id<MTLCommandEncoder>);
     void setLastError(NSString*);
-    void waitForCommandBufferCompletion();
+    void onCommandBufferCompletion(Function<void()>&&);
     bool encoderIsCurrent(id<MTLCommandEncoder>) const;
     bool submitWillBeInvalid() const;
 

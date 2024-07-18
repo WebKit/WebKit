@@ -129,7 +129,7 @@ void wgpuSwapChainPresent(WGPUSwapChain swapChain)
     WebGPU::fromAPI(swapChain).present();
 }
 
-RetainPtr<CGImageRef> wgpuSwapChainGetTextureAsNativeImage(WGPUSwapChain swapChain, uint32_t bufferIndex)
+void wgpuSwapChainGetTextureAsNativeImage(WGPUSwapChain swapChain, uint32_t bufferIndex, Function<void(RetainPtr<CGImageRef>&&)>&& completion)
 {
-    return WebGPU::fromAPI(swapChain).getTextureAsNativeImage(bufferIndex);
+    return WebGPU::fromAPI(swapChain).getTextureAsNativeImage(bufferIndex, WTFMove(completion));
 }

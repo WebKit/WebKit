@@ -38,6 +38,7 @@
 
 #ifdef __cplusplus
 #include <optional>
+#include <wtf/Function.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
@@ -134,7 +135,7 @@ WGPU_EXPORT void wgpuExternalTextureUndestroy(WGPUExternalTexture texture) WGPU_
 WGPU_EXPORT WGPULimits wgpuDefaultLimits() WGPU_FUNCTION_ATTRIBUTE;
 
 #ifdef __cplusplus
-WGPU_EXPORT RetainPtr<CGImageRef> wgpuSwapChainGetTextureAsNativeImage(WGPUSwapChain swapChain, uint32_t bufferIndex);
+WGPU_EXPORT void wgpuSwapChainGetTextureAsNativeImage(WGPUSwapChain swapChain, uint32_t bufferIndex, Function<void(RetainPtr<CGImageRef>&&)>&&);
 #endif
 WGPU_EXPORT WGPUBool wgpuExternalTextureIsValid(WGPUExternalTexture externalTexture) WGPU_FUNCTION_ATTRIBUTE;
 

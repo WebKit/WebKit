@@ -52,7 +52,7 @@ public:
     virtual void present(bool = false) = 0;
 
     virtual RefPtr<Texture> getCurrentTexture() = 0;
-    virtual RefPtr<WebCore::NativeImage> getMetalTextureAsNativeImage(uint32_t bufferIndex) = 0;
+    virtual void getMetalTextureAsNativeImage(uint32_t bufferIndex, Function<void(RefPtr<WebCore::NativeImage>&&)>&&) = 0;
 
 protected:
     PresentationContext() = default;

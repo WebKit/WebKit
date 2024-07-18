@@ -26,6 +26,7 @@
 #pragma once
 
 #import "PresentationContext.h"
+#import <wtf/Function.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/Vector.h>
 #import <wtf/spi/cocoa/IOSurfaceSPI.h>
@@ -57,7 +58,7 @@ private:
 
     void renderBuffersWereRecreated(NSArray<IOSurface *> *renderBuffers);
     void onSubmittedWorkScheduled(Function<void()>&&);
-    RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t bufferIndex) final;
+    void getTextureAsNativeImage(uint32_t bufferIndex, Function<void(RetainPtr<CGImageRef>&&)>&&) final;
 
     NSArray<IOSurface *> *m_ioSurfaces { nil };
     struct RenderBuffer {
