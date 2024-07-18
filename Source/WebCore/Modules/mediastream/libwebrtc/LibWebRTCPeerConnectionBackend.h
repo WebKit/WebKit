@@ -109,7 +109,10 @@ private:
 
     void startGatheringStatLogs(Function<void(String&&)>&&) final;
     void stopGatheringStatLogs() final;
+    void startGatheringEventLogs(Function<void(Ref<SharedBuffer>&&)>&&) final;
+    void stopGatheringEventLogs() final;
     void provideStatLogs(String&&);
+    void provideEventLogs(Ref<SharedBuffer>&&);
     friend class RtcEventLogOutput;
 
     template<typename T>
@@ -130,6 +133,7 @@ private:
     Vector<Ref<RTCRtpReceiver>> m_pendingReceivers;
 
     Function<void(String&&)> m_rtcStatsLogCallback;
+    Function<void(Ref<SharedBuffer>&&)> m_rtcEventLogCallback;
 };
 
 } // namespace WebCore

@@ -211,6 +211,8 @@ public:
 
     void startGatheringStatLogs(Function<void(String&&)>&&);
     void stopGatheringStatLogs();
+    void startGatheringEventLogs(Function<void(Ref<SharedBuffer>&&)>&&);
+    void stopGatheringEventLogs();
 
 private:
     RTCPeerConnection(Document&);

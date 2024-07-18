@@ -69,7 +69,7 @@ class MediaStreamTrack;
 class RTCSessionDescription;
 
 class LibWebRTCMediaEndpoint
-    : public ThreadSafeRefCounted<LibWebRTCMediaEndpoint, WTF::DestructionThread::Main>
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<LibWebRTCMediaEndpoint, WTF::DestructionThread::Main>
     , private webrtc::PeerConnectionObserver
     , private webrtc::RTCStatsCollectorCallback
 #if !RELEASE_LOG_DISABLED
@@ -122,8 +122,10 @@ public:
 
     bool isNegotiationNeeded(uint32_t) const;
 
-    void startRTCLogs();
-    void stopRTCLogs();
+    void startStatLogs();
+    void stopStatLogs();
+    void startEventLogs();
+    void stopEventLogs();
 
 private:
     LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend&, LibWebRTCProvider&);
@@ -152,6 +154,7 @@ private:
     void gatherStatsForLogging();
     void startLoggingStats();
     void stopLoggingStats();
+    void provideEventLogs(Ref<SharedBuffer>&&);
 
     rtc::scoped_refptr<LibWebRTCStatsCollector> createStatsCollector(Ref<DeferredPromise>&&);
 
@@ -160,10 +163,8 @@ private:
     void AddRef() const { ref(); }
     rtc::RefCountReleaseStatus Release() const
     {
-        auto result = refCount() - 1;
         deref();
-        return result ? rtc::RefCountReleaseStatus::kOtherRefsRemained
-        : rtc::RefCountReleaseStatus::kDroppedLastRef;
+        return rtc::RefCountReleaseStatus::kOtherRefsRemained;
     }
 
     std::pair<LibWebRTCRtpSenderBackend::Source, rtc::scoped_refptr<webrtc::MediaStreamTrackInterface>> createSourceAndRTCTrack(MediaStreamTrack&);
@@ -204,7 +205,8 @@ private:
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
 #endif
-    bool m_isGatheringRTCLogs { false };
+    bool m_isGatheringStatLogs { false };
+    bool m_isGatheringEventLogs { false };
 };
 
 } // namespace WebCore

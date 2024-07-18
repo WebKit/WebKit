@@ -38,6 +38,7 @@ namespace WebCore {
 
 class Document;
 class RTCPeerConnection;
+class SharedBuffer;
 class WeakPtrImplWithEventTargetData;
 
 #if USE(LIBWEBRTC)
@@ -60,7 +61,7 @@ public:
     WEBCORE_EXPORT void disableICECandidateFilteringForDocument(Document&);
     WEBCORE_EXPORT void enableICECandidateFiltering();
 
-    using LogCallback = Function<void(String&& logType, String&& logMessage, String&& logLevel, RefPtr<RTCPeerConnection>&&)>;
+    using LogCallback = Function<void(String&& logType, String&& logMessage, RefPtr<SharedBuffer>&&, String&& logLevel, RefPtr<RTCPeerConnection>&&)>;
     void startGatheringLogs(Document&, LogCallback&&);
     void stopGatheringLogs();
 #endif
@@ -69,7 +70,8 @@ private:
     RTCController();
 
 #if ENABLE(WEB_RTC)
-    void startGatheringStatLogs(RTCPeerConnection&);
+    void startGatheringConnectionLogs(RTCPeerConnection&);
+    void stopGatheringConnectionLogs(RTCPeerConnection&);
     bool shouldDisableICECandidateFiltering(Document&);
 
     void stopLoggingLibWebRTCLogs();

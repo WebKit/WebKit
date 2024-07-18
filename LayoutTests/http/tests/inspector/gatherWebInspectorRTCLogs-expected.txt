@@ -6,6 +6,11 @@ Stats level: 'true'
 Stats connection: 'true'
 Stats message: 'true'
 -- Running test case: Logs
+Event Logs type: 'events'
+Event Logs level: 'false'
+Event logs connection: 'true'
+Event Logs data: 'true'
+-- Running test case: Logs
 Logs type: 'logs'
 Logs level: 'true'
 Logs connection: 'true'
