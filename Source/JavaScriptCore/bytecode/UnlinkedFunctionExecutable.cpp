@@ -65,7 +65,7 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
     }
 
     function->finishParsing(executable->name(), executable->functionMode());
-    executable->recordParse(function->features(), function->lexicalScopeFeatures(), function->hasCapturedVariables());
+    executable->recordParse(function->features(), function->lexicallyScopedFeatures(), function->hasCapturedVariables());
 
     bool isClassContext = executable->superBinding() == SuperBinding::Needed || executable->parseMode() == SourceParseMode::ClassFieldInitializerMode;
 
@@ -108,7 +108,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM& vm, Structure* struct
     , m_constructorKind(static_cast<unsigned>(node->constructorKind()))
     , m_sourceParseMode(node->parseMode())
     , m_implementationVisibility(static_cast<unsigned>(node->implementationVisibility()))
-    , m_lexicalScopeFeatures(node->lexicalScopeFeatures())
+    , m_lexicallyScopedFeatures(node->lexicallyScopedFeatures())
     , m_functionMode(static_cast<unsigned>(node->functionMode()))
     , m_derivedContextType(static_cast<unsigned>(derivedContextType))
     , m_inlineAttribute(static_cast<unsigned>(inlineAttribute))

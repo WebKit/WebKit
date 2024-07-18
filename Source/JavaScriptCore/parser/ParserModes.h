@@ -319,14 +319,14 @@ inline bool functionNameScopeIsDynamic(bool usesEval, bool isStrictMode)
     return true;
 }
 
-typedef uint8_t LexicalScopeFeatures;
+typedef uint8_t LexicallyScopedFeatures;
 
-const LexicalScopeFeatures NoLexicalFeatures                           = 0;
-const LexicalScopeFeatures StrictModeLexicalFeature               = 1 << 0;
+const LexicallyScopedFeatures NoLexicallyScopedFeatures                     = 0;
+const LexicallyScopedFeatures StrictModeLexicallyScopedFeature         = 1 << 0;
 
-const LexicalScopeFeatures AllLexicalFeatures = NoLexicalFeatures | StrictModeLexicalFeature;
-static constexpr unsigned bitWidthOfLexicalScopeFeatures = 2;
-static_assert(AllLexicalFeatures <= (1 << bitWidthOfLexicalScopeFeatures) - 1, "LexicalScopeFeatures must be 2bits");
+const LexicallyScopedFeatures AllLexicallyScopedFeatures = NoLexicallyScopedFeatures | StrictModeLexicallyScopedFeature;
+static constexpr unsigned bitWidthOfLexicallyScopedFeatures = 2;
+static_assert(AllLexicallyScopedFeatures <= (1 << bitWidthOfLexicallyScopedFeatures) - 1, "LexicallyScopedFeatures must be 2bits");
 
 typedef uint16_t CodeFeatures;
 

@@ -91,7 +91,7 @@ UnlinkedCodeBlockType* generateUnlinkedCodeBlockImpl(VM& vm, const SourceCode& s
     unsigned unlinkedEndColumn = rootNode->endColumn();
     unsigned endColumn = unlinkedEndColumn + (endColumnIsOnStartLine ? startColumn : 1);
     if (executable)
-        executable->recordParse(rootNode->features(), rootNode->lexicalScopeFeatures(), rootNode->hasCapturedVariables(), rootNode->lastLine(), endColumn);
+        executable->recordParse(rootNode->features(), rootNode->lexicallyScopedFeatures(), rootNode->hasCapturedVariables(), rootNode->lastLine(), endColumn);
 
     NeedsClassFieldInitializer needsClassFieldInitializer = NeedsClassFieldInitializer::No;
     PrivateBrandRequirement privateBrandRequirement = PrivateBrandRequirement::None;
@@ -102,7 +102,7 @@ UnlinkedCodeBlockType* generateUnlinkedCodeBlockImpl(VM& vm, const SourceCode& s
     ExecutableInfo executableInfo(false, privateBrandRequirement, false, ConstructorKind::None, scriptMode, SuperBinding::NotNeeded, CacheTypes<UnlinkedCodeBlockType>::parseMode, derivedContextType, needsClassFieldInitializer, isArrowFunctionContext, false, evalContextType);
 
     UnlinkedCodeBlockType* unlinkedCodeBlock = UnlinkedCodeBlockType::create(vm, executableInfo, codeGenerationMode);
-    unlinkedCodeBlock->recordParse(rootNode->features(), rootNode->lexicalScopeFeatures(), rootNode->hasCapturedVariables(), lineCount, unlinkedEndColumn);
+    unlinkedCodeBlock->recordParse(rootNode->features(), rootNode->lexicallyScopedFeatures(), rootNode->hasCapturedVariables(), lineCount, unlinkedEndColumn);
     if (!source.provider()->sourceURLDirective().isNull())
         unlinkedCodeBlock->setSourceURLDirective(source.provider()->sourceURLDirective());
     if (!source.provider()->sourceMappingURLDirective().isNull())
@@ -168,7 +168,7 @@ UnlinkedCodeBlockType* CodeCache::getUnlinkedGlobalCodeBlock(VM& vm, ExecutableT
         unsigned startColumn = unlinkedCodeBlock->startColumn() + source.startColumn().oneBasedInt();
         bool endColumnIsOnStartLine = !lineCount;
         unsigned endColumn = unlinkedCodeBlock->endColumn() + (endColumnIsOnStartLine ? startColumn : 1);
-        executable->recordParse(unlinkedCodeBlock->codeFeatures(), unlinkedCodeBlock->lexicalScopeFeatures(), unlinkedCodeBlock->hasCapturedVariables(), source.firstLine().oneBasedInt() + lineCount, endColumn);
+        executable->recordParse(unlinkedCodeBlock->codeFeatures(), unlinkedCodeBlock->lexicallyScopedFeatures(), unlinkedCodeBlock->hasCapturedVariables(), source.firstLine().oneBasedInt() + lineCount, endColumn);
         if (unlinkedCodeBlock->sourceURLDirective())
             source.provider()->setSourceURLDirective(unlinkedCodeBlock->sourceURLDirective());
         if (unlinkedCodeBlock->sourceMappingURLDirective())

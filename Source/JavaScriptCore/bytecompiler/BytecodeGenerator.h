@@ -370,7 +370,7 @@ namespace JSC {
         bool usesThis() const { return m_scopeNode->usesThis(); }
         bool isFunctionNode() const { return m_scopeNode->isFunctionNode(); }
         bool hasShadowsArgumentsCodeFeature() const { return m_scopeNode->hasShadowsArgumentsFeature(); }
-        LexicalScopeFeatures lexicalScopeFeatures() const { return m_scopeNode->lexicalScopeFeatures(); }
+        LexicallyScopedFeatures lexicallyScopedFeatures() const { return m_scopeNode->lexicallyScopedFeatures(); }
         PrivateBrandRequirement privateBrandRequirement() const { return m_codeBlock->privateBrandRequirement(); }
         ConstructorKind constructorKind() const { return m_codeBlock->constructorKind(); }
         SuperBinding superBinding() const { return m_codeBlock->superBinding(); }

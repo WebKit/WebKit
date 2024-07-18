@@ -208,7 +208,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
 
     FunctionMetadataNode metadata(
         start, end, startColumn, endColumn, source.startOffset() + functionKeywordStart, source.startOffset() + functionNameStart, source.startOffset() + parametersStart, implementationVisibility,
-        isInStrictContext ? StrictModeLexicalFeature : NoLexicalFeatures, constructorKind, constructorKind == ConstructorKind::Extends ? SuperBinding::Needed : SuperBinding::NotNeeded,
+        isInStrictContext ? StrictModeLexicallyScopedFeature : NoLexicallyScopedFeatures, constructorKind, constructorKind == ConstructorKind::Extends ? SuperBinding::Needed : SuperBinding::NotNeeded,
         parameterCount, parseMode, isArrowFunctionBodyExpression);
 
     metadata.finishParsing(newSource, Identifier(), FunctionMode::FunctionExpression);

@@ -150,10 +150,10 @@ struct Scope {
     WTF_MAKE_NONCOPYABLE(Scope);
 
 public:
-    Scope(const VM& vm, ImplementationVisibility implementationVisibility, LexicalScopeFeatures lexicalScopeFeatures, bool isFunction, bool isGeneratorFunction, bool isArrowFunction, bool isAsyncFunction, bool isStaticBlock)
+    Scope(const VM& vm, ImplementationVisibility implementationVisibility, LexicallyScopedFeatures lexicallyScopedFeatures, bool isFunction, bool isGeneratorFunction, bool isArrowFunction, bool isAsyncFunction, bool isStaticBlock)
         : m_vm(vm)
         , m_implementationVisibility(implementationVisibility)
-        , m_lexicalScopeFeatures(lexicalScopeFeatures)
+        , m_lexicallyScopedFeatures(lexicallyScopedFeatures)
         , m_isFunction(isFunction)
         , m_isGeneratorFunction(isGeneratorFunction)
         , m_isArrowFunction(isArrowFunction)
@@ -790,9 +790,9 @@ public:
             capturedVariables.add(impl);
         }
     }
-    LexicalScopeFeatures lexicalScopeFeatures() const { return m_lexicalScopeFeatures; }
-    void setStrictMode() { m_lexicalScopeFeatures |= StrictModeLexicalFeature; }
-    bool strictMode() const { return m_lexicalScopeFeatures & StrictModeLexicalFeature; }
+    LexicallyScopedFeatures lexicallyScopedFeatures() const { return m_lexicallyScopedFeatures; }
+    void setStrictMode() { m_lexicallyScopedFeatures |= StrictModeLexicallyScopedFeature; }
+    bool strictMode() const { return m_lexicallyScopedFeatures & StrictModeLexicallyScopedFeature; }
     bool isValidStrictMode() const { return m_isValidStrictMode; }
     bool shadowsArguments() const { return m_shadowsArguments; }
     void setHasNonSimpleParameterList()
@@ -818,7 +818,7 @@ public:
         ASSERT(m_isFunction);
         parameters.usesEval = m_usesEval;
         parameters.usesImportMeta = m_usesImportMeta;
-        parameters.lexicalScopeFeatures = m_lexicalScopeFeatures;
+        parameters.lexicallyScopedFeatures = m_lexicallyScopedFeatures;
         parameters.needsFullActivation = m_needsFullActivation;
         parameters.innerArrowFunctionFeatures = m_innerArrowFunctionFeatures;
         parameters.needsSuperBinding = m_needsSuperBinding;
@@ -843,7 +843,7 @@ public:
         ASSERT(m_isFunction);
         m_usesEval = info->usesEval;
         m_usesImportMeta = info->usesImportMeta;
-        m_lexicalScopeFeatures = info->lexicalScopeFeatures();
+        m_lexicallyScopedFeatures = info->lexicallyScopedFeatures();
         m_innerArrowFunctionFeatures = info->innerArrowFunctionFeatures;
         m_needsFullActivation = info->needsFullActivation;
         m_needsSuperBinding = info->needsSuperBinding;
@@ -950,7 +950,7 @@ private:
 
     const VM& m_vm;
     ImplementationVisibility m_implementationVisibility;
-    LexicalScopeFeatures m_lexicalScopeFeatures;
+    LexicallyScopedFeatures m_lexicallyScopedFeatures;
     bool m_shadowsArguments : 1 { false };
     bool m_usesEval : 1 { false };
     bool m_usesImportMeta : 1 { false };
@@ -1357,7 +1357,7 @@ private:
     ScopeRef pushScope()
     {
         ImplementationVisibility implementationVisibility = m_implementationVisibility;
-        LexicalScopeFeatures lexicalScopeFeatures = NoLexicalFeatures;
+        LexicallyScopedFeatures lexicallyScopedFeatures = NoLexicallyScopedFeatures;
         bool isFunction = false;
         bool isGeneratorFunction = false;
         bool isArrowFunction = false;
@@ -1365,14 +1365,14 @@ private:
         bool isStaticBlock = false;
         if (!m_scopeStack.isEmpty()) {
             implementationVisibility = m_scopeStack.last().implementationVisibility();
-            lexicalScopeFeatures = m_scopeStack.last().lexicalScopeFeatures();
+            lexicallyScopedFeatures = m_scopeStack.last().lexicallyScopedFeatures();
             isFunction = m_scopeStack.last().isFunction();
             isGeneratorFunction = m_scopeStack.last().isGeneratorFunction();
             isArrowFunction = m_scopeStack.last().isArrowFunction();
             isAsyncFunction = m_scopeStack.last().isAsyncFunction();
             isStaticBlock = m_scopeStack.last().isStaticBlock();
         }
-        m_scopeStack.constructAndAppend(m_vm, implementationVisibility, lexicalScopeFeatures, isFunction, isGeneratorFunction, isArrowFunction, isAsyncFunction, isStaticBlock);
+        m_scopeStack.constructAndAppend(m_vm, implementationVisibility, lexicallyScopedFeatures, isFunction, isGeneratorFunction, isArrowFunction, isAsyncFunction, isStaticBlock);
         return currentScope();
     }
 
@@ -1718,7 +1718,7 @@ private:
     void startSwitch() { currentScope()->startSwitch(); }
     void endSwitch() { currentScope()->endSwitch(); }
     ImplementationVisibility implementationVisibility() { return currentScope()->implementationVisibility(); }
-    LexicalScopeFeatures lexicalScopeFeatures() { return currentScope()->lexicalScopeFeatures(); }
+    LexicallyScopedFeatures lexicallyScopedFeatures() { return currentScope()->lexicallyScopedFeatures(); }
     void setStrictMode() { currentScope()->setStrictMode(); }
     bool strictMode() { return currentScope()->strictMode(); }
     bool isValidStrictMode()
@@ -2217,7 +2217,7 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
                                     parseResult.value().parameters,
                                     *m_source,
                                     parseResult.value().features,
-                                    currentScope()->lexicalScopeFeatures(),
+                                    currentScope()->lexicallyScopedFeatures(),
                                     currentScope()->innerArrowFunctionFeatures(),
                                     parseResult.value().numConstants,
                                     WTFMove(m_moduleScopeData));
