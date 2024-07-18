@@ -571,6 +571,7 @@ animation/AcceleratedTimeline.cpp
 animation/AnimationEffect.cpp
 animation/AnimationEffectTiming.cpp
 animation/AnimationEventBase.cpp
+animation/AnimationMalloc.cpp
 animation/AnimationPlaybackEvent.cpp
 animation/AnimationTimeline.cpp
 animation/BlendingKeyframes.cpp
