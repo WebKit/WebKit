@@ -11,7 +11,7 @@ Do NOT modify or remove this file.
 Properties requiring vendor prefixes:
 ruby-position
 Property values requiring vendor prefixes:
-ruby-text
+None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/META.yml
@@ -53,6 +53,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/improperly-contained-annotation-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/improperly-contained-annotation-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/interlinear-block-margin-box-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/interlinear-block-margin-box-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/interlinear-block-margin-box.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/intra-base-white-space-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/intra-base-white-space-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/line-break-around-ruby-001.html
@@ -60,6 +63,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/nested-ruby-pairing-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/nested-ruby-pairing-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/nested-ruby-pairing-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/position-relative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/pseudo-first-letter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/pseudo-first-letter-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/pseudo-first-letter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/pseudo-first-line-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/pseudo-first-line-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/pseudo-first-line.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/rb-display-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/rb-display-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/rbc-rtc-basic-001-expected.html
@@ -71,6 +81,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/root-ruby.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/rt-display-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/rt-display-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/rt-display-blockified.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-align-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-align-001-ref.html
@@ -82,6 +93,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-align-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-align-002a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-align-002a.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-align-space-around-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-align-space-around-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-align-space-around.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-annotation-pairing-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-annotation-pairing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-autohide-001-expected.html
@@ -174,6 +188,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-inlinize-blocks-005-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-inlinize-blocks-005-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-inlinize-blocks-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-inlinize-recursive-simple-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-inlinize-recursive-simple-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-inlinize-recursive-simple.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-intra-level-whitespace-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-intra-level-whitespace-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-intra-level-whitespace-001.html
@@ -254,6 +271,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-text-combine-upright-002a.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-text-combine-upright-002b-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-text-combine-upright-002b.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-text-dynamic-style-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-text-dynamic-style.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-whitespace-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-whitespace-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ruby/ruby-whitespace-001.html

@@ -1,3 +1,5 @@
+
+baseannotation
 First line
 baseannotation
 Third line
@@ -29,4 +31,5 @@ PASS Consume half-leading of the previous line
 PASS Don't Consume half-leading of the previous line with text-emphasis
 PASS Consume half-leading of the next line
 PASS Don't Consume half-leading of the next line with text-emphasis
+PASS An atomic-inline should not overlap with an annotation in the next line
 

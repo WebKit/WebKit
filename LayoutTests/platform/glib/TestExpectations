@@ -3984,6 +3984,11 @@ webkit.org/b/276086 imported/w3c/web-platform-tests/webvtt/rendering/white-space
 
 # Requires layer tiling
 compositing/repaint/scroller-repaints-once.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-ruby/line-spacing.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-ruby/position-relative.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-ruby/rt-display-blockified.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-bidi-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-text-dynamic-style.html [ ImageOnlyFailure ]
 
 # End: Common failures between GTK and WPE.
 
