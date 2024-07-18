@@ -439,12 +439,14 @@ avifBool avifSequenceHeaderParse(avifSequenceHeader * header, const avifROData *
             return AVIF_FALSE;
 
         if (obu_type == 1) { // Sequence Header
+            avifBits seqHdrBits;
+            avifBitsInit(&seqHdrBits, obus.data + init_byte_pos, obu_size);
             switch (codecType) {
                 case AVIF_CODEC_TYPE_AV1:
-                    return parseAV1SequenceHeader(&bits, header);
+                    return parseAV1SequenceHeader(&seqHdrBits, header);
 #if defined(AVIF_CODEC_AVM)
                 case AVIF_CODEC_TYPE_AV2:
-                    return parseAV2SequenceHeader(&bits, header);
+                    return parseAV2SequenceHeader(&seqHdrBits, header);
 #endif
                 default:
                     return AVIF_FALSE;
