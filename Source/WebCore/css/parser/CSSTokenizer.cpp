@@ -168,7 +168,8 @@ CSSParserToken CSSTokenizer::whiteSpace(UChar /*cc*/)
 {
     auto startOffset = m_input.offset();
     m_input.advanceUntilNonWhitespace();
-    // FIXME: This does not preserve whitespace type (like tabs).
+    // FIXME: This does not preserve whitespace type (like tabs or newline).
+    // https://bugs.webkit.org/show_bug.cgi?id=276431
     auto whitespaceCount = 1 + (m_input.offset() - startOffset);
     return CSSParserToken(whitespaceCount);
 }

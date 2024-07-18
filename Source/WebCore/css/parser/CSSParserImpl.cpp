@@ -42,10 +42,12 @@
 #include "CSSParserIdioms.h"
 #include "CSSParserObserver.h"
 #include "CSSParserObserverWrapper.h"
+#include "CSSParserToken.h"
 #include "CSSPropertyParser.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Integer.h"
 #include "CSSPropertyParserConsumer+Length.h"
+#include "CSSSelector.h"
 #include "CSSSelectorList.h"
 #include "CSSSelectorParser.h"
 #include "CSSStyleSheet.h"
@@ -66,7 +68,6 @@
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
-#include "css/CSSSelector.h"
 #include <bitset>
 #include <memory>
 #include <optional>
@@ -476,6 +477,8 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
 // https://drafts.csswg.org/css-syntax/#consume-a-qualified-rule
 RefPtr<StyleRuleBase> CSSParserImpl::consumeQualifiedRule(CSSParserTokenRange& range, AllowedRules allowedRules)
 {
+    const auto initialRange = range;
+
     auto isNestedStyleRule = [&] {
         return isNestedContext() && allowedRules <= AllowedRules::RegularRules;
     };
@@ -483,18 +486,38 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeQualifiedRule(CSSParserTokenRange& r
     const CSSParserToken* preludeStart = &range.peek();
 
     // Parsing a selector (aka a component value) should stop at the first semicolon (and goes to error recovery)
-    // instead of consuming the whole list of declaration (in nested context).
+    // instead of consuming the whole list of declarations (in nested context).
     // At top level (aka non nested context), it's the normal rule list error recovery and we don't need this.
     while (!range.atEnd() && range.peek().type() != LeftBraceToken && (!isNestedStyleRule() || range.peek().type() != SemicolonToken))
         range.consumeComponentValue();
 
     if (range.atEnd())
-        return nullptr; // Parse error, EOF instead of qualified rule block
+        return { }; // Parse error, EOF instead of qualified rule block
 
     // See comment above
     if (isNestedStyleRule() && range.peek().type() == SemicolonToken) {
         range.consume();
-        return nullptr;
+        return { };
+    }
+
+    // https://github.com/w3c/csswg-drafts/issues/9336#issuecomment-1719806755
+    if (range.peek().type() == LeftBraceToken) {
+        auto rangeCopyForDashedIdent = initialRange;
+        auto customProperty = CSSPropertyParserHelpers::consumeDashedIdent(rangeCopyForDashedIdent);
+        // This rule is ambigous with a custom property because it looks like "--ident: ...."
+        if (customProperty && rangeCopyForDashedIdent.peek().type() == ColonToken) {
+            if (isNestedContext()) {
+                // Error, consume until semicolon or end of block.
+                while (!range.atEnd() && range.peek().type() != SemicolonToken)
+                    range.consumeComponentValue();
+                if (range.peek().type() == SemicolonToken)
+                    range.consume();
+                return { };
+            }
+            // Error, consume until end of block.
+            range.consumeBlock();
+            return { };
+        }
     }
 
     CSSParserTokenRange prelude = range.makeSubRange(preludeStart, &range.peek());
@@ -506,7 +529,7 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeQualifiedRule(CSSParserTokenRange& r
     if (allowedRules == AllowedRules::KeyframeRules)
         return consumeKeyframeStyleRule(prelude, block);
 
-    return nullptr;
+    return { };
 }
 
 // This may still consume tokens if it fails
