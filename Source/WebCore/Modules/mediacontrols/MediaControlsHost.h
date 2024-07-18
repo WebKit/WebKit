@@ -115,11 +115,17 @@ public:
     std::optional<SourceType> sourceType() const;
 #endif // ENABLE(MODERN_MEDIA_CONTROLS)
 
+    void presentationModeChanged();
+
 private:
     explicit MediaControlsHost(HTMLMediaElement&);
 
+    void savePreviouslySelectedTextTrackIfNecessary();
+    void restorePreviouslySelectedTextTrackIfNecessary();
+
     WeakPtr<HTMLMediaElement> m_mediaElement;
     RefPtr<MediaControlTextTrackContainerElement> m_textTrackContainer;
+    RefPtr<TextTrack> m_previouslySelectedTextTrack;
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
     RefPtr<VoidCallback> m_showMediaControlsContextMenuCallback;
