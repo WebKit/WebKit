@@ -51,7 +51,7 @@
   }
 
 </style>
-<!-- <div id="t1" hidden class="color-transition"></div>
+<div id="t1" hidden class="color-transition"></div>
 <div id="t2" hidden class="color-transition"></div>
 <div id="t3" hidden>
   <div class="color-transition"></div>
@@ -61,58 +61,58 @@
 </div>
 <div id="t5" hidden class="color-transition">
   <div class="color-transition"></div>
-</div> -->
+</div>
 <div id="t6" hidden class="color-transition">
-  <div id="t6-child">
-    <div id="t6-leaf" class="color-transition"></div>
+  <div>
+    <div class="color-transition"></div>
   </div>
 </div>
 <script>
-  // setup(() => {
-  //   assert_true(supportsStartingStyle(), "Prerequisite: @starting-style parses");
-  // });
-  //
-  // promise_test(async t => {
-  //   await waitForAnimationFrames(2);
-  //   t1.removeAttribute("hidden");
-  //   await waitForAnimationFrames(2);
-  //   assert_equals(getComputedStyle(t1).color, "rgb(0, 128, 0)",
-  //                 "No transition of color");
-  // }, "Overridden @starting-style - order of appearance");
-  //
-  // promise_test(async t => {
-  //   t2.removeAttribute("hidden");
-  //   await waitForAnimationFrames(2);
-  //   assert_equals(getComputedStyle(t2).color, "rgb(0, 192, 0)",
-  //                 "Transition of color");
-  // }, "@starting-style with higher specificity");
-  //
-  // promise_test(async t => {
-  //   t3.removeAttribute("hidden");
-  //   await waitForAnimationFrames(2);
-  //   assert_equals(getComputedStyle(t3.firstElementChild).color, "rgb(0, 128, 0)",
-  //                 "No transition of color");
-  // }, "Starting style does not inherit from parent starting style");
-  //
-  // promise_test(async t => {
-  //   assert_equals(getComputedStyle(t4).color, "rgb(255, 0, 0)",
-  //                 "Parent transition started");
-  //   t4.removeAttribute("hidden");
-  //   await waitForAnimationFrames(2);
-  //   assert_equals(getComputedStyle(t4).color, "rgb(0, 128, 0)",
-  //                 "Parent changed to green");
-  //   assert_equals(getComputedStyle(t4.firstElementChild).color, "rgb(0, 192, 0)",
-  //                 "Transition started from parent's after-change style color");
-  // }, "Starting style inheriting from parent's after-change style");
-  //
-  // promise_test(async t => {
-  //   t5.removeAttribute("hidden");
-  //   await waitForAnimationFrames(2);
-  //   assert_equals(getComputedStyle(t5).color, "rgb(0, 64, 0)",
-  //                 "Parent transition started");
-  //   assert_equals(getComputedStyle(t5.firstElementChild).color, "rgb(0, 192, 0)",
-  //                 "Transition started from parent's after-change style color");
-  // }, "Starting style inheriting from parent's after-change style while parent transitioning");
+  setup(() => {
+    assert_true(supportsStartingStyle(), "Prerequisite: @starting-style parses");
+  });
+
+  promise_test(async t => {
+    await waitForAnimationFrames(2);
+    t1.removeAttribute("hidden");
+    await waitForAnimationFrames(2);
+    assert_equals(getComputedStyle(t1).color, "rgb(0, 128, 0)",
+                  "No transition of color");
+  }, "Overridden @starting-style - order of appearance");
+
+  promise_test(async t => {
+    t2.removeAttribute("hidden");
+    await waitForAnimationFrames(2);
+    assert_equals(getComputedStyle(t2).color, "rgb(0, 192, 0)",
+                  "Transition of color");
+  }, "@starting-style with higher specificity");
+
+  promise_test(async t => {
+    t3.removeAttribute("hidden");
+    await waitForAnimationFrames(2);
+    assert_equals(getComputedStyle(t3.firstElementChild).color, "rgb(0, 128, 0)",
+                  "No transition of color");
+  }, "Starting style does not inherit from parent starting style");
+
+  promise_test(async t => {
+    assert_equals(getComputedStyle(t4).color, "rgb(255, 0, 0)",
+                  "Parent transition started");
+    t4.removeAttribute("hidden");
+    await waitForAnimationFrames(2);
+    assert_equals(getComputedStyle(t4).color, "rgb(0, 128, 0)",
+                  "Parent changed to green");
+    assert_equals(getComputedStyle(t4.firstElementChild).color, "rgb(0, 192, 0)",
+                  "Transition started from parent's after-change style color");
+  }, "Starting style inheriting from parent's after-change style");
+
+  promise_test(async t => {
+    t5.removeAttribute("hidden");
+    await waitForAnimationFrames(2);
+    assert_equals(getComputedStyle(t5).color, "rgb(0, 64, 0)",
+                  "Parent transition started");
+    assert_equals(getComputedStyle(t5.firstElementChild).color, "rgb(0, 192, 0)",
+                  "Transition started from parent's after-change style color");
+  }, "Starting style inheriting from parent's after-change style while parent transitioning");
 
   promise_test(async t => {
     t6.removeAttribute("hidden");
