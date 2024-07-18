@@ -4746,9 +4746,6 @@ webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-alig
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-004.xhtml [ ImageOnlyFailure ]
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-005.xhtml [ ImageOnlyFailure ]
 
-# Webkit matches other engines, expectation is incorrectly rendered.
-imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-horiz-004.html [ ImageOnlyFailure ]
-
 # Flex item's min|max content contributions
 webkit.org/b/230747 imported/w3c/web-platform-tests/css/css-flexbox/flex-container-max-content-001.html [ ImageOnlyFailure ]
 webkit.org/b/230747 imported/w3c/web-platform-tests/css/css-flexbox/flex-container-min-content-001.html [ ImageOnlyFailure ]

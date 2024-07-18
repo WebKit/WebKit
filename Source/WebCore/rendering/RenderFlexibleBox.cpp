@@ -2671,8 +2671,9 @@ void RenderFlexibleBox::layoutUsingFlexFormattingContext()
     updateLogicalHeight();
 }
 
-const RenderBox* RenderFlexibleBox::firstLogicalBaselineCandidateOnLine(OrderIterator flexItemIterator, ItemPosition baselinePosition, size_t numberOfItemsOnLine) const
+const RenderBox* RenderFlexibleBox::firstBaselineCandidateOnLine(OrderIterator flexItemIterator, ItemPosition baselinePosition, size_t numberOfItemsOnLine) const
 {
+    // Note that "first" here mean in iterator order and not logical flex order (caller can pass in reversed order).
     ASSERT(baselinePosition == ItemPosition::Baseline || baselinePosition == ItemPosition::LastBaseline);
 
     size_t index = 0;
@@ -2690,8 +2691,9 @@ const RenderBox* RenderFlexibleBox::firstLogicalBaselineCandidateOnLine(OrderIte
     return nullptr;
 }
 
-const RenderBox* RenderFlexibleBox::lastLogicalBaselineCandidateOnLine(OrderIterator flexItemIterator, ItemPosition baselinePosition, size_t numberOfItemsOnLine) const
+const RenderBox* RenderFlexibleBox::lastBaselineCandidateOnLine(OrderIterator flexItemIterator, ItemPosition baselinePosition, size_t numberOfItemsOnLine) const
 {
+    // Note that "last" here mean in iterator order and not logical flex order (caller can pass in reversed order).
     ASSERT(baselinePosition == ItemPosition::Baseline || baselinePosition == ItemPosition::LastBaseline);
 
     size_t index = 0;
@@ -2709,26 +2711,48 @@ const RenderBox* RenderFlexibleBox::lastLogicalBaselineCandidateOnLine(OrderIter
 
 const RenderBox* RenderFlexibleBox::flexItemForFirstBaseline() const
 {
+    // Looking for baseline flex candidate on visually first line.
     auto useLastLine = style().flexWrap() == FlexWrap::Reverse;
+    auto useLastItem = style().flexDirection() == FlexDirection::RowReverse || style().flexDirection() == FlexDirection::ColumnReverse;
 
     if (!useLastLine) {
-        // Pick the first candidate on the first line.
-        return firstLogicalBaselineCandidateOnLine(m_orderIterator, ItemPosition::Baseline, m_numberOfFlexItemsOnFirstLine);
+        if (!useLastItem) {
+            // Logically (and visually) first item on logically (and visually) first line.
+            return firstBaselineCandidateOnLine(m_orderIterator, ItemPosition::Baseline, m_numberOfFlexItemsOnFirstLine);
+        }
+        // Logically last (but visually first) item on logically (and visually) first line.
+        return lastBaselineCandidateOnLine(m_orderIterator, ItemPosition::Baseline, m_numberOfFlexItemsOnFirstLine);
     }
-    // Pick the first candidate on the last line.
-    return lastLogicalBaselineCandidateOnLine(m_orderIterator.reverse(), ItemPosition::Baseline, m_numberOfFlexItemsOnLastLine);
+
+    if (!useLastItem) {
+        // Logically (and visually) first item on logically last (but visually first) line.
+        return lastBaselineCandidateOnLine(m_orderIterator.reverse(), ItemPosition::Baseline, m_numberOfFlexItemsOnLastLine);
+    }
+    // Logically last (but visually first) item on logically last (but visually first) line.
+    return firstBaselineCandidateOnLine(m_orderIterator.reverse(), ItemPosition::Baseline, m_numberOfFlexItemsOnLastLine);
 }
 
 const RenderBox* RenderFlexibleBox::flexItemForLastBaseline() const
 {
+    // Looking for baseline flex candidate on visually last line.
     auto useLastLine = style().flexWrap() == FlexWrap::Reverse;
+    auto useLastItem = style().flexDirection() == FlexDirection::RowReverse || style().flexDirection() == FlexDirection::ColumnReverse;
 
     if (!useLastLine) {
-        // Pick the last candidate on the last line.
-        return firstLogicalBaselineCandidateOnLine(m_orderIterator.reverse(), ItemPosition::LastBaseline, m_numberOfFlexItemsOnLastLine);
+        if (!useLastItem) {
+            // Logically (and visually) last item on logically (and visually) last line.
+            return firstBaselineCandidateOnLine(m_orderIterator.reverse(), ItemPosition::LastBaseline, m_numberOfFlexItemsOnLastLine);
+        }
+        // Logically first (but visually last) item  on logically (and visually) last line.
+        return lastBaselineCandidateOnLine(m_orderIterator.reverse(), ItemPosition::LastBaseline, m_numberOfFlexItemsOnLastLine);
     }
-    // Pick the last candidate on the first line.
-    return lastLogicalBaselineCandidateOnLine(m_orderIterator.reverse(), ItemPosition::LastBaseline, m_numberOfFlexItemsOnFirstLine);
+
+    if (!useLastItem) {
+        // Logically (and visually) last item on logically first (but visually last) line.
+        return lastBaselineCandidateOnLine(m_orderIterator, ItemPosition::LastBaseline, m_numberOfFlexItemsOnFirstLine);
+    }
+    // Logically first (but visually last) item on logically last (but visually first) line.
+    return firstBaselineCandidateOnLine(m_orderIterator, ItemPosition::LastBaseline, m_numberOfFlexItemsOnFirstLine);
 }
 
 }
