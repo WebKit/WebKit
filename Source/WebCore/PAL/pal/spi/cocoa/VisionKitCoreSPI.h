@@ -154,7 +154,6 @@ typedef NS_ENUM(NSInteger, VKImageOrientation) {
 @interface VKWKLineInfo : VKWKTextInfo
 @property (nonatomic, readonly) NSArray<VKWKTextInfo *> *children;
 @property (nonatomic, readonly) BOOL shouldWrap;
-@property (nonatomic, readonly) NSUInteger layoutDirection;
 @end
 
 @class DDScannerResult;
@@ -178,6 +177,10 @@ typedef NS_ENUM(NSInteger, VKImageOrientation) {
 NS_ASSUME_NONNULL_END
 
 #endif
+
+@interface VKWKLineInfo (Staging_85139101)
+@property (nonatomic, readonly) NSUInteger layoutDirection;
+@end
 
 #if HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
 @interface VKImageAnalysis (Staging_127892794)
