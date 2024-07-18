@@ -291,12 +291,6 @@ class CheckOutSpecificRevision(shell.ShellCommandNewStyle):
         return super().run()
 
 
-class InstallWin32Dependencies(shell.Compile):
-    description = ["installing dependencies"]
-    descriptionDone = ["installed dependencies"]
-    command = ["perl", "Tools/Scripts/update-webkit-auxiliary-libs"]
-
-
 class KillOldProcesses(shell.Compile):
     name = "kill-old-processes"
     description = ["killing old processes"]
@@ -887,9 +881,6 @@ class RunWebKitTests(shell.TestNewStyle, CustomFlagsMixin):
 
         self.command += ["--results-directory", self.resultDirectory]
         self.command += ['--debug-rwt-logging']
-
-        if platform == "win":
-            self.command += ['--batch-size', '100', '--root=' + os.path.join("WebKitBuild", self.getProperty('configuration'), "bin64")]
 
         if platform in ['gtk', 'wpe']:
             self.command += ['--enable-core-dumps-nolimit']
