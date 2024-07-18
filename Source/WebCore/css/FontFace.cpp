@@ -62,6 +62,11 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const String& fa
     auto result = adoptRef(*new FontFace(*context.cssFontSelector()));
     result->suspendIfNeeded();
 
+#if COMPILER(GCC) && CPU(ARM64)
+    // FIXME: Workaround for GCC bug https://gcc.gnu.org/bugzilla/show_bug.cgi?id=115033
+    // that is related to https://gcc.gnu.org/bugzilla/show_bug.cgi?id=115135 as well.
+    volatile
+#endif
     bool dataRequiresAsynchronousLoading = true;
 
     auto setFamilyResult = result->setFamily(context, family);
