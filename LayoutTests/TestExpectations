@@ -1600,6 +1600,13 @@ imported/w3c/web-platform-tests/css/css-flexbox/stretch-flex-item-radio-input.ht
 imported/w3c/web-platform-tests/css/css-flexbox/webkit-box-vertical-writing-mode.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-width-auto-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-width-auto-006.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-horiz-003.xhtml [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-horiz-004.xhtml [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-vert-003.xhtml [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-vert-004.xhtml [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-spacearound-negative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-020.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/min-size-auto-overflow-clip.html [ ImageOnlyFailure ]
 
 # grid layout tests
 webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-with-dynamic-img.html [ ImageOnlyFailure ]
@@ -1644,12 +1651,26 @@ webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-
 webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-4.html [ ImageOnlyFailure ]
 webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-5.html [ ImageOnlyFailure ]
 webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-6.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-distribution-026.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-distribution-027.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-distribution-029.html [ ImageOnlyFailure ]
 
 webkit.org/b/234879 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-intrinsic-maximums.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.html [ ImageOnlyFailure ]
 webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-size-with-orthogonal-child-dynamic.html [ ImageOnlyFailure ]
 webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-items/percentage-margin-dynamic.html [ ImageOnlyFailure ]
 webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-015.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-gap-006.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/subgrid/standalone-axis-size-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-button.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/firefox-bug-1881495.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/min-size-auto-overflow-clip.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/stretch-grid-item-text-input-overflow.html [ ImageOnlyFailure ]
+
+# Crashes:
+imported/w3c/web-platform-tests/css/css-grid/subgrid/alignment-in-subgridded-axes-002.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-010.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-012.html [ Skip ]
 
 # Masonry
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/alignment/masonry-align-content-001.html [ ImageOnlyFailure ]
@@ -4692,7 +4713,6 @@ webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/scrollbars.h
 
 imported/w3c/web-platform-tests/css/css-flexbox/dynamic-orthogonal-flex-item.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/gap-019.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-flexbox/grid-flex-item-007.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/inline-flexbox-vertical-rl-image-flexitem-crash-print.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-013.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-014.html [ ImageOnlyFailure ]

@@ -1,0 +1,86 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/align-baseline-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/align-content-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/align-content_center-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/align-content_flex-end-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/align-content_flex-start-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/align-content_space-around-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/align-content_space-between-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/align-content_stretch-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/align-items-baseline-overflow-non-visible-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/align-self-015-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/anonymous-block-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/auto-height-column-with-border-and-padding-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/auto-height-with-flex-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/auto-margins-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/content-height-with-scrollbars-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/cross-axis-scrollbar-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/css-box-justify-content-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/css-flexbox-img-expand-evenly-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-align-content-center-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-align-content-end-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-align-content-space-around-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-align-content-space-between-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-align-content-start-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-aspect-ratio-img-row-014-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-box-float-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-box-wrap-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-container-margin-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-direction-column-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-direction-column-reverse-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-direction-modify.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-direction-row-reverse-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-direction-with-element-insert.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-direction.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-inline-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-item-vertical-align-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-item-z-ordering-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-margin-no-collapse-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flex-vertical-align-effect.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flexbox-flex-direction-column-percentage-ignored-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flexbox-flex-direction-ref.htm
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flexbox-flex-wrap-nowrap-ref.htm
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flexbox-min-width-auto-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flexbox-min-width-auto-006-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flexbox-order-only-flexitems-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flexbox-with-multi-column-property-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flexbox_quirks_body-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flexbox_writing_mode_vertical_lays_out_contents_from_top_to_bottom-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flexible-order-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/flexitem-stretch-range-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/item-with-max-height-and-scrollbar-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/justify-content-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/layout-algorithm_algo-cross-line-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/layout-algorithm_algo-cross-line-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/multiline-column-max-height-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/multiline-reverse-wrap-baseline-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/multiline-shrink-to-fit-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/negative-margins-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/nested-orthogonal-flexbox-relayout-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/order-painting-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/overflow-area-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/overflow-area-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/overflow-area-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/overflow-auto-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/overflow-auto-007-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/percentage-descendant-of-anonymous-flex-item-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/percentage-size-subitems-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/position-fixed-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/stretch-input-in-column-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/stretching-orthogonal-flows-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/reference/text-overflow-on-flexbox-001-ref.html

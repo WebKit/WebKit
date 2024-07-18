@@ -45,7 +45,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-dynamic-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-dynamic-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-intrinsic-001.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-max-size-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-max-size-001.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-max-size-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-max-size-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-size-001.html

@@ -50,6 +50,6 @@ PASS e.style['grid-column'] = "1 / two" should set grid-column-end
 PASS e.style['grid-column'] = "1 / two" should set grid-column-start
 PASS e.style['grid-column'] = "1 / two" should not set unrelated longhands
 PASS e.style['grid-column'] = "span 1 two / four 3 span" should set grid-column-end
-PASS e.style['grid-column'] = "span 1 two / four 3 span" should set grid-column-start
+FAIL e.style['grid-column'] = "span 1 two / four 3 span" should set grid-column-start assert_equals: grid-column-start should be canonical expected "span two" but got "span 1 two"
 PASS e.style['grid-column'] = "span 1 two / four 3 span" should not set unrelated longhands
 

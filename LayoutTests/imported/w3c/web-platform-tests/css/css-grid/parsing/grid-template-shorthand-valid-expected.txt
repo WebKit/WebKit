@@ -38,5 +38,5 @@ PASS e.style['grid-template'] = "[a] \"a\" [a] \"b\" [a]" should set the propert
 PASS e.style['grid-template'] = "\"a\" \"a\" [a] \"b\" [a]" should set the property value
 PASS e.style['grid-template'] = "\"a\" [a] \"b\" [a] / 0" should set the property value
 PASS e.style['grid-template'] = "\"a\" \"a\" [a] [a] \"b\" / auto" should set the property value
-FAIL e.style['grid-template'] = "\"a\" auto [a] \"b\" auto [b] / 10px" should set the property value assert_equals: serialization should be canonical expected "\"a\" auto [a] \"b\" auto [b] / 10px" but got "\"a\" [a] \"b\" [b] / 10px"
+PASS e.style['grid-template'] = "\"a\" auto [a] \"b\" auto [b] / 10px" should set the property value
 
