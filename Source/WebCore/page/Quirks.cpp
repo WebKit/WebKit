@@ -110,6 +110,7 @@ static inline bool isYahooMail(Document& document)
 #import <WebKitAdditions/QuirksAdditions.cpp>
 #else
 static inline bool needsDesktopUserAgentInternal(const URL&) { return false; }
+static inline bool shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeInternal(const URL&) { return false; }
 #endif
 
 Quirks::Quirks(Document& document)
@@ -1717,6 +1718,14 @@ bool Quirks::shouldDisableNavigatorStandaloneQuirk() const
         return true;
 #endif
     return false;
+}
+
+bool Quirks::shouldPreventOrientationMediaQueryFromEvaluatingToLandscape() const
+{
+    if (!needsQuirks())
+        return false;
+
+    return shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeInternal(m_document->topDocument().url());
 }
 
 // This section is dedicated to UA override for iPad. iPads (but iPad Mini) are sending a desktop user agent
