@@ -318,7 +318,7 @@ static std::optional<std::pair<RTCSdpType, String>> fetchDescription(GstElement*
     }
 
     GUniquePtr<char> sdpString(gst_sdp_message_as_text(description->sdp));
-    return { { fromSessionDescriptionType(*description.get()), String::fromLatin1(sdpString.get()) } };
+    return { { fromSessionDescriptionType(*description.get()), String::fromUTF8(sdpString.get()) } };
 }
 
 static GstWebRTCSignalingState fetchSignalingState(GstElement* webrtcBin)
@@ -586,7 +586,7 @@ void GStreamerMediaEndpoint::setDescription(const RTCSessionDescription* descrip
             return;
         }
         auto sdp = makeStringByReplacingAll(description->sdp(), "opus"_s, "OPUS"_s);
-        if (gst_sdp_message_new_from_text(reinterpret_cast<const char*>(sdp.span8().data()), &message.outPtr()) != GST_SDP_OK) {
+        if (gst_sdp_message_new_from_text(sdp.utf8().data(), &message.outPtr()) != GST_SDP_OK) {
             failureCallback(nullptr);
             return;
         }
@@ -771,7 +771,7 @@ GRefPtr<GstPad> GStreamerMediaEndpoint::requestPad(const GRefPtr<GstCaps>& allow
 std::optional<bool> GStreamerMediaEndpoint::isIceGatheringComplete(const String& currentLocalDescription)
 {
     GUniqueOutPtr<GstSDPMessage> message;
-    if (gst_sdp_message_new_from_text(reinterpret_cast<const char*>(currentLocalDescription.span8().data()), &message.outPtr()) != GST_SDP_OK)
+    if (gst_sdp_message_new_from_text(currentLocalDescription.utf8().data(), &message.outPtr()) != GST_SDP_OK)
         return { };
 
     unsigned numberOfMedias = gst_sdp_message_medias_len(message.get());
@@ -1537,7 +1537,7 @@ void GStreamerMediaEndpoint::createSessionDescriptionSucceeded(GUniquePtr<GstWeb
             return;
 
         GUniquePtr<char> sdp(gst_sdp_message_as_text(description->sdp));
-        auto sdpString = String::fromLatin1(sdp.get());
+        auto sdpString = String::fromUTF8(sdp.get());
         if (description->type == GST_WEBRTC_SDP_TYPE_OFFER) {
             m_peerConnectionBackend.createOfferSucceeded(WTFMove(sdpString));
             return;
