@@ -491,7 +491,7 @@ private:
             // '<'  => 0011 1100
             // '\r' => 0000 1101
             constexpr simde_uint8x16_t lowNibbleMask { '\0', 0, 0, 0, 0, 0, '&', 0, 0, 0, 0, 0, '<', '\r', 0, 0 };
-            constexpr simde_uint8x16_t v0f = SIMD::splat<uint8_t>(0x0f);
+            constexpr simde_uint8x16_t v0f = SIMD::splat8(0x0f);
             return SIMD::equal(simde_vqtbl1q_u8(lowNibbleMask, SIMD::bitAnd(input, v0f)), input);
         };
 
@@ -503,7 +503,7 @@ private:
             cursor = SIMD::find(std::span { start, end }, vectorMatch, scalarMatch);
         } else {
             auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
-                constexpr simde_uint8x16_t zeros = SIMD::splat<uint8_t>(0);
+                constexpr simde_uint8x16_t zeros = SIMD::splat8(0);
                 return SIMD::findFirstNonZeroIndex(SIMD::bitAnd(vectorEquals8Bit(input.val[0]), SIMD::equal(input.val[1], zeros)));
             };
             cursor = SIMD::findInterleaved(std::span { start, end }, vectorMatch, scalarMatch);
@@ -648,7 +648,7 @@ private:
                     // '&'  => 0010 0110
                     // '\r' => 0000 1101
                     constexpr auto lowNibbleMask  = quoteChar == '\'' ? simde_uint8x16_t { '\0', 0, 0, 0, 0, 0, '&', '\'', 0, 0, 0, 0, 0, '\r', 0, 0 } : simde_uint8x16_t { '\0', 0, '"', 0, 0, 0, '&', 0, 0, 0, 0, 0, 0, '\r', 0, 0 };
-                    constexpr auto v0f = SIMD::splat<uint8_t>(0x0f);
+                    constexpr auto v0f = SIMD::splat8(0x0f);
                     return SIMD::equal(simde_vqtbl1q_u8(lowNibbleMask, SIMD::bitAnd(input, v0f)), input);
                 };
 
@@ -659,7 +659,7 @@ private:
                     return SIMD::find(span, vectorMatch, scalarMatch);
                 } else {
                     auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
-                        constexpr simde_uint8x16_t zeros = SIMD::splat<uint8_t>(0);
+                        constexpr simde_uint8x16_t zeros = SIMD::splat8(0);
                         return SIMD::findFirstNonZeroIndex(SIMD::bitAnd(vectorEquals8Bit(input.val[0]), SIMD::equal(input.val[1], zeros)));
                     };
                     return SIMD::findInterleaved(span, vectorMatch, scalarMatch);
