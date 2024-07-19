@@ -297,8 +297,8 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     auto& jumpsToLink = macroAssembler.jumpsToLink();
     m_assemblerStorage = macroAssembler.m_assembler.buffer().releaseAssemblerData();
     uint8_t* inData = bitwise_cast<uint8_t*>(m_assemblerStorage.buffer());
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-    ARM64EHash<ShouldSign::No> verifyUncompactedHash;
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
+    BufferChecksum<ShouldSign::No> verifyUncompactedHash;
     m_assemblerHashesStorage = macroAssembler.m_assembler.buffer().releaseAssemblerHashes();
     uint32_t* inHashes = bitwise_cast<uint32_t*>(m_assemblerHashesStorage.buffer());
 #endif
@@ -319,10 +319,10 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
 
     auto read = [&](const InstructionType* ptr) -> InstructionType {
         InstructionType value = *ptr;
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-        unsigned index = (bitwise_cast<uint8_t*>(ptr) - inData) / 4;
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
+        unsigned index = bitwise_cast<uint8_t*>(ptr) - inData;
         uint32_t hash = verifyUncompactedHash.update(value, index);
-        RELEASE_ASSERT(inHashes[index] == hash);
+        RELEASE_ASSERT(inHashes[index / 4] == hash);
 #endif
         return value;
     };
@@ -482,6 +482,17 @@ void LinkBuffer::linkCode(MacroAssembler& macroAssembler, JITCompilationEffort e
     ASSERT(m_code);
     AssemblerBuffer& buffer = macroAssembler.m_assembler.buffer();
     void* code = m_code.dataLocation();
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
+    BufferChecksum<ShouldSign::No> verifyUncompactedHash;
+    m_assemblerHashesStorage = macroAssembler.m_assembler.buffer().releaseAssemblerHashes();
+    uint32_t* inHashes = bitwise_cast<uint32_t*>(m_assemblerHashesStorage.buffer());
+    uint32_t* inCode = bitwise_cast<uint32_t*>(buffer.data());
+    // ignore the tail on variable-length ISAs for performance reasons
+    for (size_t i = 0; i < buffer.codeSize(); i += sizeof(uint32_t)) {
+        uint32_t hash = verifyUncompactedHash.update(inCode[i], i);
+        RELEASE_ASSERT(inHashes[i] == hash);
+    }
+#endif
 #if CPU(ARM64)
     RELEASE_ASSERT(roundUpToMultipleOf<Assembler::instructionSize>(code) == code);
 #endif
@@ -519,8 +530,8 @@ void LinkBuffer::allocate(MacroAssembler& macroAssembler, JITCompilationEffort e
         initialSize = macroAssembler.m_assembler.codeSize();
     }
 
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-    macroAssembler.m_assembler.buffer().arm64eHash().deallocatePinForCurrentThread();
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
+    macroAssembler.m_assembler.buffer().checksum().earlyCleanup();
 #endif
 
     m_executableMemory = ExecutableAllocator::singleton().allocate(initialSize, effort);

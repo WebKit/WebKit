@@ -45,7 +45,7 @@ ThreadSpecificAssemblerData& threadSpecificAssemblerData()
     return *threadSpecificAssemblerDataPtr;
 }
 
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
 static ThreadSpecificAssemblerHashes* threadSpecificAssemblerHashesPtr;
 ThreadSpecificAssemblerHashes& threadSpecificAssemblerHashes()
 {
@@ -57,7 +57,7 @@ ThreadSpecificAssemblerHashes& threadSpecificAssemblerHashes()
         });
     return *threadSpecificAssemblerHashesPtr;
 }
-#endif // ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
+#endif // ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
 
 #endif // ENABLE(ASSEMBLER)
 

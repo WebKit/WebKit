@@ -388,11 +388,11 @@ private:
     RefPtr<ExecutableMemoryHandle> m_executableMemory;
     size_t m_size { 0 };
     void* m_ownerUID { nullptr };
-#if ENABLE(BRANCH_COMPACTION)
-    AssemblerData m_assemblerStorage;
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
+#if ENABLE(JIT_CHECKSUM_ASSEMBLER_BUFFER)
     AssemblerHashes m_assemblerHashesStorage;
 #endif
+#if ENABLE(BRANCH_COMPACTION)
+    AssemblerData m_assemblerStorage;
     bool m_shouldPerformBranchCompaction { true };
 #endif
     bool m_didAllocate { false };
