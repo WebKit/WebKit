@@ -1872,7 +1872,6 @@ webkit.org/b/141831 svg/animations/animate-text-nested-transforms.html [ Failure
 webkit.org/b/98653  svg/text/lengthAdjust-text-metrics.html [ Failure ]
 
 webkit.org/b/240934 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-on-span.html [ ImageOnlyFailure ]
-webkit.org/b/240934 imported/w3c/web-platform-tests/css/filter-effects/root-element-with-opacity-filter-001.html [ ImageOnlyFailure ]
 
 webkit.org/b/264583 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-saturate.html [ ImageOnlyFailure ]
 webkit.org/b/264584 imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.sub.tentative.html [ Failure ]
