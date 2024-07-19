@@ -125,14 +125,20 @@ list(APPEND WebKit_PRIVATE_LIBRARIES
 
 list(APPEND WebProcess_SOURCES
     WebProcess/EntryPoint/win/WebProcessMain.cpp
+
+    win/WebKit.manifest
 )
 
 list(APPEND NetworkProcess_SOURCES
     NetworkProcess/EntryPoint/win/NetworkProcessMain.cpp
+
+    win/WebKit.manifest
 )
 
 list(APPEND GPUProcess_SOURCES
     GPUProcess/EntryPoint/win/GPUProcessMain.cpp
+
+    win/WebKit.manifest
 )
 
 if (ENABLE_REMOTE_INSPECTOR)

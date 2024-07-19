@@ -988,11 +988,6 @@ http/wpt/service-workers/mac [ Skip ]
 webkit.org/b/209455 http/wpt/misc/last-modified-parsing.html [ Failure Pass ]
 webkit.org/b/209455 http/wpt/misc/no-last-modified.html [ Failure Pass ]
 
-# Needs long path support
-webkit.org/b/276408 http/tests/IndexedDB/storage-limit-1.https.html [ Failure Pass ]
-webkit.org/b/276408 http/tests/IndexedDB/storage-limit.https.html [ Failure Pass ]
-webkit.org/b/276408 http/tests/workers/service/service-worker-cache-api.https.html [ Failure Pass ]
-
 http/tests/cookies/document-cookie-multiple-cookies.html [ Failure ]
 http/tests/misc/form-post-textplain-cross-site.html [ Failure ]
 http/tests/misc/form-post-textplain.html [ Failure ]
