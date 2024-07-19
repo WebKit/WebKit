@@ -1292,6 +1292,13 @@ webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-values/ch-unit-002.h
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-values/ch-unit-011.html [ ImageOnlyFailure ]
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-border-image.html [ ImageOnlyFailure ]
 
+imported/w3c/web-platform-tests/css/css-images/conic-gradient-angle-negative.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-images/out-of-range-color-stop-conic.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-shape-circle-001.svg [ Pass ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-shape-circle-002.svg [ Pass ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-shape-circle-005.svg [ Pass ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-color-001.xht [ Pass ]
+
 # text-transform: full-width
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-002.xht [ ImageOnlyFailure ]
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-004.xht [ ImageOnlyFailure ]
