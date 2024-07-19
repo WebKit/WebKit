@@ -219,6 +219,8 @@ class MediaController
             event.stopPropagation();
         } else if (event.type === "dragstart" && this.isFullscreen)
             event.preventDefault();
+        else if (event.type === this.fullscreenChangeEventType)
+            this.host?.presentationModeChanged?.();
 
         if (event.currentTarget === this.media) {
             if (event.type === "play")

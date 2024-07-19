@@ -73,6 +73,7 @@ enum DeviceType {
     undefined updateTextTrackContainer();
     undefined enteredFullscreen();
     undefined exitedFullscreen();
+    undefined presentationModeChanged();
 
     DOMString generateUUID();
 
