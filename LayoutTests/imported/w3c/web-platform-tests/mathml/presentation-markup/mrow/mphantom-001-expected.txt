@@ -1,0 +1,5 @@
+
+PASS Default CSS properties on mphantom
+PASS Bounding box is the same as mrow
+AN ERROR
+
