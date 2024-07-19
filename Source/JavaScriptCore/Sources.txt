@@ -1111,6 +1111,7 @@ runtime/WeakSetPrototype.cpp
 runtime/WideningNumberPredictionFuzzerAgent.cpp
 
 tools/CellList.cpp
+tools/CharacterPropertyDataGenerator.cpp
 tools/CompilerTimingScope.cpp
 tools/FunctionAllowlist.cpp
 tools/FunctionOverrides.cpp

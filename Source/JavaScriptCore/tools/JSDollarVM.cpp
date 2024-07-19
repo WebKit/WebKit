@@ -29,6 +29,7 @@
 #include "ArrayPrototype.h"
 #include "BuiltinNames.h"
 #include "CachedCall.h"
+#include "CharacterPropertyDataGenerator.h"
 #include "CodeBlock.h"
 #include "Completion.h"
 #include "ControlFlowProfiler.h"
@@ -2260,6 +2261,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionAssertFrameAligned);
 static JSC_DECLARE_HOST_FUNCTION(functionCallFromCPPAsFirstEntry);
 static JSC_DECLARE_HOST_FUNCTION(functionCallFromCPP);
 static JSC_DECLARE_HOST_FUNCTION(functionCachedCallFromCPP);
+static JSC_DECLARE_HOST_FUNCTION(functionDumpLineBreakData);
 
 const ClassInfo JSDollarVM::s_info = { "DollarVM"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDollarVM) };
 
@@ -4180,6 +4182,13 @@ JSC_DEFINE_HOST_FUNCTION(functionCachedCallFromCPP, (JSGlobalObject* globalObjec
     return JSValue::encode(jsUndefined());
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionDumpLineBreakData, (JSGlobalObject*, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    dumpLineBreakData();
+    return JSValue::encode(jsUndefined());
+}
+
 constexpr unsigned jsDollarVMPropertyAttributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete;
 
 void JSDollarVM::finishCreation(VM& vm)
@@ -4374,6 +4383,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "callFromCPPAsFirstEntry"_s, functionCallFromCPPAsFirstEntry, 2);
     addFunction(vm, "callFromCPP"_s, functionCallFromCPP, 2);
     addFunction(vm, "cachedCallFromCPP"_s, functionCachedCallFromCPP, 2);
+    addFunction(vm, "dumpLineBreakData"_s, functionDumpLineBreakData, 0);
 
     m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }

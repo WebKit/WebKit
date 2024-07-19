@@ -116,7 +116,7 @@ private:
     class LineBreakTable {
     public:
         static constexpr UChar firstCharacter = '!';
-        static constexpr UChar lastCharacter = 127;
+        static constexpr UChar lastCharacter = 0xFF;
         static inline bool unsafeLookup(UChar before, UChar after) // Must range check before calling.
         {
             const unsigned beforeIndex = before - firstCharacter;
@@ -126,7 +126,7 @@ private:
     private:
         static constexpr unsigned rowCount = lastCharacter - firstCharacter + 1;
         static constexpr unsigned columnCount = (lastCharacter - firstCharacter) / 8 + 1;
-        WEBCORE_EXPORT static const unsigned char breakTable[rowCount][columnCount];
+        WEBCORE_EXPORT static const uint8_t breakTable[rowCount][columnCount];
     };
     static const LineBreakTable lineBreakTable;
 };
