@@ -1424,6 +1424,8 @@ imported/w3c/web-platform-tests/css/css-writing-modes/line-box-height-vrl-010.xh
 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-height-vrl-012.xht [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-saturate.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/filtered-html-is-not-container.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/svg-unknown-input-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/filter-effects/svg-unknown-input-002.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-data-url-to-https.html [ Pass ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_avc [ Pass Failure ]
