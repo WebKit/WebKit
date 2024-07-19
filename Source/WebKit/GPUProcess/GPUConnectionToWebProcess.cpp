@@ -204,7 +204,7 @@ private:
         case CaptureDevice::DeviceType::Camera:
             if (!m_process.get()->allowsVideoCapture())
                 return false;
-#if PLATFORM(IOS) || PLATFORM(VISION)
+#if PLATFORM(IOS_FAMILY)
             MediaSessionManageriOS::providePresentingApplicationPID();
 #endif
             return true;

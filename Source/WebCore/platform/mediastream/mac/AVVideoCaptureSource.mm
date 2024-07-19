@@ -1051,7 +1051,9 @@ bool AVVideoCaptureSource::setupSession()
         return false;
     }
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(APPLETV)
+    [m_session setMultitaskingCameraAccessEnabled:YES];
+#elif PLATFORM(IOS_FAMILY)
     PAL::AVCaptureSessionSetAuthorizedToUseCameraInMultipleForegroundAppLayout(m_session.get());
 #endif
     [m_session addObserver:m_objcObserver.get() forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:(void *)nil];
