@@ -29,6 +29,7 @@
 
 #include "RemoteInspectionTarget.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace Inspector {
@@ -44,7 +45,7 @@ class JSGlobalObjectDebuggable final : public Inspector::RemoteInspectionTarget 
     WTF_MAKE_TZONE_ALLOCATED(JSGlobalObjectDebuggable);
     WTF_MAKE_NONCOPYABLE(JSGlobalObjectDebuggable);
 public:
-    JSGlobalObjectDebuggable(JSGlobalObject&);
+    static Ref<JSGlobalObjectDebuggable> create(JSGlobalObject&);
     ~JSGlobalObjectDebuggable() final { }
 
     Inspector::RemoteControllableTarget::Type type() const final { return m_type; }
@@ -60,8 +61,15 @@ public:
     bool automaticInspectionAllowed() const final { return true; }
     void pauseWaitingForAutomaticInspection() final;
 
+    void globalObjectDestroyed();
+
 private:
-    JSGlobalObject& m_globalObject;
+    JSGlobalObjectDebuggable(JSGlobalObject&);
+
+    void callOnGlobalObjectRunLoopAndWait(Function<void()>&&) const;
+
+    JSGlobalObject* m_globalObject;
+    Ref<RunLoop> m_globalObjectRunLoop;
     Inspector::RemoteControllableTarget::Type m_type { Inspector::RemoteControllableTarget::Type::JavaScript };
 };
 
