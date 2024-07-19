@@ -29,6 +29,7 @@ css2.1/20110323/replaced-intrinsic-002.htm [ Pass ]
 fast/events/constructors/keyboard-event-constructor.html [ Pass ]
 
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_flex-natural-mixed-basis-auto.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-flexbox/grid-flex-item-007.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-display/run-in/quotes-applies-to-011.xht [ ImageOnlyFailure ]
