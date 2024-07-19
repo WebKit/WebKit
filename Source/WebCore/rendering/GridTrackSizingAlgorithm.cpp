@@ -865,6 +865,13 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::logicalHeightForChild(RenderBox& ch
     if (hasOverridingContainingBlockContentSizeForChild() && shouldClearOverridingContainingBlockContentSizeForChild(child, GridTrackSizingDirection::ForRows)) {
         setOverridingContainingBlockContentSizeForChild(*renderGrid(), child, childBlockDirection, std::nullopt);
         child.setNeedsLayout(MarkOnlyThis);
+
+        if (auto* gridLayoutState = m_algorithm.m_gridLayoutState.get()) {
+            auto& itemsLayoutRequirements = gridLayoutState->itemsLayoutRequirements();
+
+            if (renderGrid()->canSetColumnAxisStretchRequirementForItem(child))
+                itemsLayoutRequirements.add(child, ItemLayoutRequirement::NeedsColumnAxisStretchAlignment);
+        }
     }
 
     // We need to clear the stretched content size to properly compute logical height during layout.
@@ -1672,11 +1679,13 @@ bool GridTrackSizingAlgorithm::isValidTransition() const
 
 // GridTrackSizingAlgorithm API.
 
-void GridTrackSizingAlgorithm::setup(GridTrackSizingDirection direction, unsigned numTracks, SizingOperation sizingOperation, std::optional<LayoutUnit> availableSpace)
+void GridTrackSizingAlgorithm::setup(GridTrackSizingDirection direction, unsigned numTracks, SizingOperation sizingOperation, std::optional<LayoutUnit> availableSpace, GridLayoutState& gridLayoutState)
 {
     ASSERT(m_needsSetup);
     m_direction = direction;
     setAvailableSpace(direction, availableSpace ? std::max(0_lu, *availableSpace) : availableSpace);
+
+    m_gridLayoutState = &gridLayoutState;
 
     m_sizingOperation = sizingOperation;
     switch (m_sizingOperation) {

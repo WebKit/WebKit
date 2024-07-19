@@ -26,6 +26,7 @@
 
 #include "Grid.h"
 #include "GridBaselineAlignment.h"
+#include "GridLayoutState.h"
 #include "GridTrackSize.h"
 #include "LayoutSize.h"
 #include "RenderBoxInlines.h"
@@ -119,7 +120,7 @@ public:
     GridTrackSizingAlgorithm(const RenderGrid*, Grid&);
     ~GridTrackSizingAlgorithm();
 
-    void setup(GridTrackSizingDirection, unsigned numTracks, SizingOperation, std::optional<LayoutUnit> availableSpace);
+    void setup(GridTrackSizingDirection, unsigned numTracks, SizingOperation, std::optional<LayoutUnit> availableSpace, GridLayoutState&);
     void run();
     void reset();
 
@@ -262,6 +263,8 @@ private:
 
     const RenderGrid* m_renderGrid;
     std::unique_ptr<GridTrackSizingAlgorithmStrategy> m_strategy;
+
+    WeakPtr<GridLayoutState> m_gridLayoutState;
 
     // The track sizing algorithm is used for both layout and intrinsic size
     // computation. We're normally just interested in intrinsic inline sizes
