@@ -1875,9 +1875,20 @@ bool Framebuffer::partialClearNeedsInit(const Context *context,
         return true;
     }
 
-    const auto &depthStencil = glState.getDepthStencilState();
-    if (stencil && (depthStencil.stencilMask != depthStencil.stencilWritemask ||
-                    depthStencil.stencilBackMask != depthStencil.stencilBackWritemask))
+    const Framebuffer *drawFramebuffer = glState.getDrawFramebuffer();
+    const FramebufferAttachment *stencilAttachment =
+        drawFramebuffer ? drawFramebuffer->getStencilOrDepthStencilAttachment() : nullptr;
+    const GLuint stencilBits    = stencilAttachment ? stencilAttachment->getStencilSize() : 0;
+    const GLuint maxStencilMask = (1 << stencilBits) - 1;
+
+    // The least significant |stencilBits| of stencil mask state specify a
+    // mask. Compare the masks for differences only in those bits, ignoring any
+    // difference in the high bits.
+    const auto &depthStencil       = glState.getDepthStencilState();
+    const GLuint differentFwdMasks = depthStencil.stencilMask ^ depthStencil.stencilWritemask;
+    const GLuint differentBackMasks =
+        depthStencil.stencilBackMask ^ depthStencil.stencilBackWritemask;
+    if (stencil && ((differentFwdMasks | differentBackMasks) & maxStencilMask) != 0)
     {
         return true;
     }
