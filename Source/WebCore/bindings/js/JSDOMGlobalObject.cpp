@@ -701,7 +701,7 @@ JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::JSGlo
 
         while (!document->isTopDocument()) {
             auto* candidateDocument = document->parentDocument();
-            if (!candidateDocument || !candidateDocument->securityOrigin().isSameOriginDomain(originalOrigin))
+            if (!candidateDocument || !candidateDocument->protectedSecurityOrigin()->isSameOriginDomain(originalOrigin))
                 break;
 
             document = candidateDocument;
