@@ -58,6 +58,7 @@ class TestScm(testing.PathTestCase):
         self.assertTrue(local.Scm.DEV_BRANCHES.match('jbedard/dev/1234'))
         self.assertTrue(local.Scm.DEV_BRANCHES.match('bug/1234'))
         self.assertTrue(local.Scm.DEV_BRANCHES.match('jbedard/bug/1234'))
+        self.assertTrue(local.Scm.DEV_BRANCHES.match('integration/ci/stuff/safari-606-branch'))
 
         self.assertFalse(local.Scm.DEV_BRANCHES.match('main'))
         self.assertFalse(local.Scm.DEV_BRANCHES.match('random/1234'))
@@ -70,3 +71,4 @@ class TestScm(testing.PathTestCase):
 
         self.assertFalse(local.Scm.PROD_BRANCHES.match('main'))
         self.assertFalse(local.Scm.PROD_BRANCHES.match('eng/1234'))
+        self.assertFalse(local.Scm.PROD_BRANCHES.match('integration/ci/stuff/safari-606-branch'))
