@@ -1,0 +1,8 @@
+اختبر
+
+
+PASS Content of CDATA is ignored for dir=auto in html document
+PASS Text in CDATASection is considered when determining auto directionality
+PASS Directionality is updated when removing CDATASection
+PASS Directionality is updated when changing text of CDATASection
+

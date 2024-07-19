@@ -7,8 +7,21 @@ PASS dynamic changes to subtrees excluded as a result of the dir attribute
 FAIL dynamic changes inside of non-HTML elements assert_true: after dynamic change expected true got false
 FAIL slotted non-HTML elements assert_true: initial state (slot) expected true got false
 FAIL slotted non-HTML elements after dynamically assigning dir=auto, and dir attribute ignored on non-HTML elements assert_true: initial state (element) expected true got false
+PASS dir=auto ancestor considers text in subtree after removing dir=ltr from it
+PASS Slotted content affects multiple dir=auto slots
+FAIL Removing slotted content resets direction on dir=auto slot assert_equals: slot initially rtl expected "rtl" but got "ltr"
+FAIL Removing child of slotted content changes direction on dir=auto slot assert_equals: slot initially rtl expected "rtl" but got "ltr"
+PASS Child directionality gets updated when dir=auto is set on parent
+FAIL dir=auto slot is updated by text in value of input element children assert_equals: expected "rtl" but got "ltr"
+FAIL dir=auto slot is updated if input stops being auto-directionality form-associated assert_equals: expected "rtl" but got "ltr"
+PASS slot provides updated directionality from host to a dir=auto container
 A א
 א
 A
 A א
 A א
+א
+اختبر
+اختبر
+
+ abc

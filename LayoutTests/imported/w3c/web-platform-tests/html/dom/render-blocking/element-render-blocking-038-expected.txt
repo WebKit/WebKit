@@ -1,0 +1,3 @@
+
+FAIL link rel=expect: only connected elements are eligible assert_false: The last element should not be there yet, even though it's created (in a shadow root) expected false got true
+

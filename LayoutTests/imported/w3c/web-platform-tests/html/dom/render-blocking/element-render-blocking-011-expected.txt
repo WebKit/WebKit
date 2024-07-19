@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/dom/render-blocking/element-render-blocking-011.html' because non CSS MIME types are not allowed in strict mode.
+
+PASS changing rel to expect in the head causes it to be blocking
+

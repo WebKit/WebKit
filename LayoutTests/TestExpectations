@@ -2147,8 +2147,6 @@ fast/webgpu/regression/repro_275108.html [ Pass Failure Timeout ]
 [ Debug ] fast/webgpu/texture-supports-blending.html [ Pass Crash ]
 
 # Imported W3C HTML/DOM ref tests that are failing.
-imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-between-Rs.html [ ImageOnlyFailure ]
-
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/viewport-change.html [ Failure ]
 
 # Imported Mozilla SVG tests
@@ -7650,8 +7648,6 @@ webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-att
 webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-36.html [ ImageOnlyFailure ]
 webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-38.html [ ImageOnlyFailure ]
 webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-39.html [ ImageOnlyFailure ]
-webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-41.html [ ImageOnlyFailure ]
-webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-EN.html [ ImageOnlyFailure ]
 
 webkit.org/b/250795 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focusability.html [ Skip ]
 
