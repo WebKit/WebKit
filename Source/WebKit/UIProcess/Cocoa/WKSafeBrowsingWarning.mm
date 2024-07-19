@@ -90,7 +90,7 @@ static WebCore::CocoaFont *fontOfSize(WarningTextSize size)
 #elif HAVE(SAFE_BROWSING)
     switch (size) {
     case WarningTextSize::Title:
-#if PLATFORM(WATCHOS)
+#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
         return [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
 #else
         return [UIFont preferredFontForTextStyle:UIFontTextStyleLargeTitle];
