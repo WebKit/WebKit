@@ -63,6 +63,11 @@
 #include <wtf/cocoa/Entitlements.h>
 #endif
 
+#if OS(LINUX)
+#include <unistd.h>
+extern "C" char **environ;
+#endif
+
 namespace JSC {
 
 bool useOSLogOptionHasChanged = false;
@@ -977,7 +982,7 @@ void Options::initialize()
             overrideDefaults();
 
             // Allow environment vars to override options if applicable.
-            // The evn var should be the name of the option prefixed with
+            // The env var should be the name of the option prefixed with
             // "JSC_".
 #if PLATFORM(COCOA) || OS(LINUX)
             bool hasBadOptions = false;
