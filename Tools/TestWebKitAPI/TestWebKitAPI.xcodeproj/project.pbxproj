@@ -540,6 +540,7 @@
 		6354F4D11F7C3AB500D89DF3 /* ApplicationManifestParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6354F4D01F7C3AB500D89DF3 /* ApplicationManifestParser.cpp */; };
 		636353A71E98665D0009F8AF /* GeolocationGetCurrentPositionResult.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 636353A61E9861940009F8AF /* GeolocationGetCurrentPositionResult.html */; };
 		63A61B8B1FAD251100F06885 /* display-mode.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 63A61B8A1FAD204D00F06885 /* display-mode.html */; };
+		63CAD0572C478A56009CE119 /* GetMatchedCSSRules.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63CAD04F2C478A55009CE119 /* GetMatchedCSSRules.mm */; };
 		6B0A07F721FA9C2B00D57391 /* PrivateClickMeasurement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B0A07F621FA9C2B00D57391 /* PrivateClickMeasurement.cpp */; };
 		6B306106218A372900F5A802 /* ClosingWebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6B306105218A372900F5A802 /* ClosingWebView.mm */; };
 		6B4E861C2220A5520022F389 /* RegistrableDomain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B4E861B2220A5520022F389 /* RegistrableDomain.cpp */; };
@@ -2845,6 +2846,7 @@
 		637281A621AE1386009E0DE6 /* DownloadProgress.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DownloadProgress.mm; sourceTree = "<group>"; };
 		63A33C552A339ED500EF94B8 /* WKWebViewInspection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewInspection.mm; sourceTree = "<group>"; };
 		63A61B8A1FAD204D00F06885 /* display-mode.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "display-mode.html"; sourceTree = "<group>"; };
+		63CAD04F2C478A55009CE119 /* GetMatchedCSSRules.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetMatchedCSSRules.mm; sourceTree = "<group>"; };
 		63F668201F97C3AA0032EE51 /* ApplicationManifest.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ApplicationManifest.mm; sourceTree = "<group>"; };
 		6B0A07F621FA9C2B00D57391 /* PrivateClickMeasurement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurement.cpp; sourceTree = "<group>"; };
 		6B25A75125DC8D4E0070744F /* EventAttribution.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventAttribution.mm; sourceTree = "<group>"; };
@@ -5729,6 +5731,7 @@
 				CDB213BC24EF522800FDE301 /* FullscreenFocus.mm */,
 				CDE77D2425A6591C00D4115E /* FullscreenPointerLeave.mm */,
 				CDBFCC431A9FF44800A7B691 /* FullscreenZoomInitialFrame.mm */,
+				63CAD04F2C478A55009CE119 /* GetMatchedCSSRules.mm */,
 				51EB125824C68589000CB030 /* HIDGamepads.mm */,
 				9B4F8FA3159D52B1002D9F94 /* HTMLCollectionNamedItem.mm */,
 				9B26FC6B159D061000CC3765 /* HTMLFormCollectionNamedItem.mm */,
@@ -6679,6 +6682,7 @@
 				F4636A9A2A0DA61800C88CC0 /* GestureRecognizerTests.mm in Sources */,
 				7CCE7EE11A411A9A00447C4C /* GetBackingScaleFactor.mm in Sources */,
 				7CCE7EF91A411AE600447C4C /* GetInjectedBundleInitializationUserDataCallback.cpp in Sources */,
+				63CAD0572C478A56009CE119 /* GetMatchedCSSRules.mm in Sources */,
 				7CCE7EE21A411A9A00447C4C /* GetPIDAfterAbortedProcessLaunch.cpp in Sources */,
 				41157237234B240C0050A1D1 /* GetUserMedia.mm in Sources */,
 				07CE1CF31F06A7E000BF89F5 /* GetUserMediaNavigation.mm in Sources */,
