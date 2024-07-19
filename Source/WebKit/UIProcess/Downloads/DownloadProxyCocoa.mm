@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import "config.h"
+#import "DownloadProxy.h"
 
-#import <Foundation/NSProgress.h>
-#import <wtf/RefPtr.h>
+#import "NetworkProcessMessages.h"
+#import "NetworkProcessProxy.h"
+#import "WebsiteDataStore.h"
 
-#if HAVE(MODERN_DOWNLOADPROGRESS)
-#import <WebKitAdditions/DownloadProgressAdditions.h>
-#endif
+#import <wtf/cocoa/SpanCocoa.h>
 
 namespace WebKit {
 
-class Download;
-class SandboxExtension;
-
-}
-
-NS_ASSUME_NONNULL_BEGIN
+void DownloadProxy::publishProgress(const URL& url)
+{
+    if (!m_dataStore)
+        return;
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-WKDOWNLOADPROGRESS_ADDITIONS
+    RetainPtr localURL = adoptNS([[NSURL alloc] initFileURLWithPath:url.fileSystemPath() relativeToURL:nil]);
+    NSError *error = nil;
+    RetainPtr bookmark = [localURL bookmarkDataWithOptions:NSURLBookmarkCreationMinimalBookmark includingResourceValuesForKeys:nil relativeToURL:nil error:&error];
+    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, url, span(bookmark.get())), 0);
 #else
-@interface WKDownloadProgress : NSProgress
+    auto handle = SandboxExtension::createHandle(url.fileSystemPath(), SandboxExtension::Type::ReadWrite);
+    ASSERT(handle);
+    if (!handle)
+        return;
 
-- (instancetype)initWithDownloadTask:(NSURLSessionDownloadTask *)task download:(WebKit::Download&)download URL:(NSURL *)fileURL sandboxExtension:(RefPtr<WebKit::SandboxExtension>)sandboxExtension;
-
-@end
+    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, url, WTFMove(*handle)), 0);
 #endif
+}
 
-NS_ASSUME_NONNULL_END
+}

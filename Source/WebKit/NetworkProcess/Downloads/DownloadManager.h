@@ -98,7 +98,11 @@ public:
 
     void cancelDownload(DownloadID, CompletionHandler<void(std::span<const uint8_t>)>&&);
 #if PLATFORM(COCOA)
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    void publishDownloadProgress(DownloadID, const URL&, std::span<const uint8_t> bookmarkData);
+#else
     void publishDownloadProgress(DownloadID, const URL&, SandboxExtension::Handle&&);
+#endif
 #endif
     
     Download* download(DownloadID downloadID) { return m_downloads.get(downloadID); }
