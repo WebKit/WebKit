@@ -7519,7 +7519,13 @@ void SpeculativeJIT::compileArithMinMax(Node* node)
             FPRReg op1FPR = op1.fpr();
             FPRReg op2FPR = op2.fpr();
             FPRReg resultFPR = result.fpr();
-
+#if CPU(ARM64)
+            if (node->op() == ArithMin)
+                doubleMin(op1FPR, op2FPR, resultFPR);
+            else
+                doubleMax(op1FPR, op2FPR, resultFPR);
+            doubleResult(resultFPR, node);
+#else
             JumpList done;
 
             Jump op1Less = branchDouble(node->op() == ArithMin ? DoubleLessThanAndOrdered : DoubleGreaterThanAndOrdered, op1FPR, op2FPR);
@@ -7556,9 +7562,30 @@ void SpeculativeJIT::compileArithMinMax(Node* node)
             done.link(this);
 
             doubleResult(resultFPR, node);
+#endif
             break;
         }
 
+#if CPU(ARM64)
+        SpeculateDoubleOperand op1(this, m_graph.child(node, 0));
+        FPRTemporary result(this);
+
+        FPRReg op1FPR = op1.fpr();
+        FPRReg resultFPR = result.fpr();
+
+        moveDouble(op1FPR, resultFPR);
+
+        for (unsigned index = 1; index < node->numChildren(); ++index) {
+            SpeculateDoubleOperand op2(this, m_graph.child(node, index));
+            FPRReg op2FPR = op2.fpr();
+            if (node->op() == ArithMin)
+                doubleMin(op2FPR, resultFPR, resultFPR);
+            else
+                doubleMax(op2FPR, resultFPR, resultFPR);
+        }
+
+        doubleResult(resultFPR, node);
+#else
         GPRTemporary buffer(this);
 
         GPRReg bufferGPR = buffer.gpr();
@@ -7578,6 +7605,7 @@ void SpeculativeJIT::compileArithMinMax(Node* node)
         FPRReg resultFPR = result.fpr();
         callOperationWithoutExceptionCheck(node->op() == ArithMin ? operationArithMinMultipleDouble : operationArithMaxMultipleDouble, resultFPR, bufferGPR, TrustedImm32(node->numChildren()));
         doubleResult(resultFPR, node);
+#endif
         break;
     }
 

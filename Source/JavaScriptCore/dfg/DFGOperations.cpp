@@ -777,27 +777,19 @@ JSC_DEFINE_JIT_OPERATION(operationArithTrunc, EncodedJSValue, (JSGlobalObject* g
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationArithMinMultipleDouble, double, (const double* buffer, unsigned elementCount))
 {
-    double result = +std::numeric_limits<double>::infinity();
-    for (unsigned index = 0; index < elementCount; ++index) {
-        double val = buffer[index];
-        if (std::isnan(val))
-            return PNaN;
-        if (val < result || (!val && !result && std::signbit(val)))
-            result = val;
-    }
+    ASSERT(0 < elementCount);
+    double result = buffer[0];
+    for (unsigned index = 1; index < elementCount; ++index)
+        result = Math::jsMinDouble(result, buffer[index]);
     return result;
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationArithMaxMultipleDouble, double, (const double* buffer, unsigned elementCount))
 {
-    double result = -std::numeric_limits<double>::infinity();
-    for (unsigned index = 0; index < elementCount; ++index) {
-        double val = buffer[index];
-        if (std::isnan(val))
-            return PNaN;
-        if (val > result || (!val && !result && !std::signbit(val)))
-            result = val;
-    }
+    ASSERT(0 < elementCount);
+    double result = buffer[0];
+    for (unsigned index = 1; index < elementCount; ++index)
+        result = Math::jsMaxDouble(result, buffer[index]);
     return result;
 }
 

@@ -190,7 +190,8 @@ public:
 
     LValue doubleSqrt(LValue);
 
-    LValue doubleLog(LValue);
+    LValue doubleMax(LValue, LValue);
+    LValue doubleMin(LValue, LValue);
 
     LValue doubleToInt(LValue);
     LValue doubleToInt64(LValue);
