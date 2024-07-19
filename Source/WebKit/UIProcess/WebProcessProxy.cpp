@@ -2765,6 +2765,14 @@ TextStream& operator<<(TextStream& ts, const WebProcessProxy& process)
     return ts;
 }
 
+#if ENABLE(WEBXR)
+const WebCore::ProcessIdentity& WebProcessProxy::processIdentity()
+{
+    return m_processIdentity;
+}
+#endif
+
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

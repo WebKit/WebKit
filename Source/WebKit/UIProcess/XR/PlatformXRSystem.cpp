@@ -120,7 +120,7 @@ void PlatformXRSystem::requestPermissionOnSessionFeatures(const WebCore::Securit
 
     if (PlatformXR::isImmersive(mode)) {
         MESSAGE_CHECK(m_immersiveSessionState == ImmersiveSessionState::Idle);
-        setImmersiveSessionState(ImmersiveSessionState::RequestingPermissions);
+        setImmersiveSessionState(ImmersiveSessionState::RequestingPermissions, [](bool) mutable { });
         m_immersiveSessionGrantedFeatures = std::nullopt;
     }
 
@@ -132,11 +132,14 @@ void PlatformXRSystem::requestPermissionOnSessionFeatures(const WebCore::Securit
                 protectedThis->m_immersiveSessionMode = mode;
                 protectedThis->m_immersiveSessionGrantedFeatures = grantedFeatures;
                 protectedThis->m_immersiveSessionSecurityOriginData = securityOriginData;
-                protectedThis->setImmersiveSessionState(ImmersiveSessionState::PermissionsGranted);
-            } else
+                protectedThis->setImmersiveSessionState(ImmersiveSessionState::PermissionsGranted, [grantedFeatures = WTFMove(grantedFeatures), completionHandler = WTFMove(completionHandler)](bool) mutable {
+                    completionHandler(WTFMove(grantedFeatures));
+                });
+            } else {
                 protectedThis->invalidateImmersiveSessionState();
+                completionHandler(WTFMove(grantedFeatures));
+            }
         }
-        completionHandler(WTFMove(grantedFeatures));
     });
 }
 
@@ -152,7 +155,7 @@ void PlatformXRSystem::initializeTrackingAndRendering()
     if (!xrCoordinator)
         return;
 
-    setImmersiveSessionState(ImmersiveSessionState::SessionRunning);
+    setImmersiveSessionState(ImmersiveSessionState::SessionRunning, [](bool) mutable { });
 
     ensureImmersiveSessionActivity();
 
@@ -167,7 +170,7 @@ void PlatformXRSystem::shutDownTrackingAndRendering()
 
     if (auto* xrCoordinator = PlatformXRSystem::xrCoordinator())
         xrCoordinator->endSessionIfExists(m_page);
-    setImmersiveSessionState(ImmersiveSessionState::SessionEndingFromWebContent);
+    setImmersiveSessionState(ImmersiveSessionState::SessionEndingFromWebContent, [](bool) mutable { });
 }
 
 void PlatformXRSystem::requestFrame(CompletionHandler<void(PlatformXR::FrameData&&)>&& completionHandler)
@@ -200,7 +203,7 @@ void PlatformXRSystem::didCompleteShutdownTriggeredBySystem()
 {
     ASSERT(RunLoop::isMain());
     MESSAGE_CHECK(m_immersiveSessionState == ImmersiveSessionState::SessionEndingFromSystem);
-    setImmersiveSessionState(ImmersiveSessionState::Idle);
+    setImmersiveSessionState(ImmersiveSessionState::Idle, [](bool) mutable { });
 }
 
 void PlatformXRSystem::sessionDidEnd(XRDeviceIdentifier deviceIdentifier)
@@ -231,9 +234,27 @@ void PlatformXRSystem::sessionDidUpdateVisibilityState(XRDeviceIdentifier device
     });
 }
 
-void PlatformXRSystem::setImmersiveSessionState(ImmersiveSessionState state)
+void PlatformXRSystem::setImmersiveSessionState(ImmersiveSessionState state, CompletionHandler<void(bool)>&& completion)
 {
     m_immersiveSessionState = state;
+#if PLATFORM(COCOA)
+    switch (state) {
+    case ImmersiveSessionState::Idle:
+    case ImmersiveSessionState::RequestingPermissions:
+        break;
+    case ImmersiveSessionState::PermissionsGranted:
+        GPUProcessProxy::getOrCreate()->webXRPromptAccepted(m_page.ensureRunningProcess().processIdentity(), WTFMove(completion));
+        break;
+    case ImmersiveSessionState::SessionRunning:
+        break;
+    case ImmersiveSessionState::SessionEndingFromWebContent:
+    case ImmersiveSessionState::SessionEndingFromSystem:
+        GPUProcessProxy::getOrCreate()->webXRPromptAccepted(std::nullopt, WTFMove(completion));
+        break;
+    }
+#else
+    completion(true);
+#endif
 }
 
 void PlatformXRSystem::invalidateImmersiveSessionState(ImmersiveSessionState nextSessionState)
@@ -243,7 +264,7 @@ void PlatformXRSystem::invalidateImmersiveSessionState(ImmersiveSessionState nex
     m_immersiveSessionMode = std::nullopt;
     m_immersiveSessionSecurityOriginData = std::nullopt;
     m_immersiveSessionGrantedFeatures = std::nullopt;
-    setImmersiveSessionState(nextSessionState);
+    setImmersiveSessionState(nextSessionState, [](bool) mutable { });
 }
 
 bool PlatformXRSystem::webXREnabled() const

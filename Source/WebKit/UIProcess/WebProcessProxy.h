@@ -516,6 +516,10 @@ public:
     Seconds totalBackgroundTime() const;
     Seconds totalSuspendedTime() const;
 
+#if ENABLE(WEBXR)
+    const WebCore::ProcessIdentity& processIdentity();
+#endif
+
 private:
     Type type() const final { return Type::WebContent; }
 

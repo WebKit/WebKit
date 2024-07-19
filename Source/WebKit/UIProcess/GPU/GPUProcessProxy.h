@@ -113,6 +113,9 @@ public:
     void enablePowerLogging();
     static bool isPowerLoggingInTaskMode();
 #endif
+#if ENABLE(WEBXR)
+    void webXRPromptAccepted(std::optional<WebCore::ProcessIdentity>, CompletionHandler<void(bool)>&&);
+#endif
 
     void updatePreferences(WebProcessProxy&);
     void updateScreenPropertiesIfNeeded();
