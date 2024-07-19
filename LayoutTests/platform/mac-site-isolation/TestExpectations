@@ -4378,7 +4378,6 @@ http/tests/cookies/same-site/popup-same-site-via-same-site-redirect.html [ Skip 
 http/tests/cookies/same-site/popup-same-site-with-post-form.html [ Skip ]
 http/tests/cookies/same-site/popup-same-site.html [ Skip ]
 http/tests/cookies/same-site/post-from-cross-site-popup.html [ Skip ]
-http/tests/cookies/third-party-cookie-relaxing.html [ Skip ]
 http/tests/dom/ready-state-on-javascript-replace.html [ Skip ]
 http/tests/dom/set-document-location-host-to-accepted-values.html [ Skip ]
 http/tests/dom/set-document-location-hostname-to-accepted-values.html [ Skip ]
