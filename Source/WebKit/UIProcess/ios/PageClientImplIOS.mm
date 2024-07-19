@@ -1097,13 +1097,6 @@ void PageClientImpl::hardwareKeyboardAvailabilityChanged()
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
-void PageClientImpl::didExitFullscreen()
-{
-#if ENABLE(FULLSCREEN_API)
-    [[webView() fullScreenWindowController] didExitFullscreen];
-#endif
-}
-
 void PageClientImpl::didCleanupFullscreen()
 {
 #if ENABLE(FULLSCREEN_API)
