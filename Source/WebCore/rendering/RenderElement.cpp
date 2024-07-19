@@ -98,6 +98,7 @@
 #include "Styleable.h"
 #include "TextAutoSizing.h"
 #include "ViewTransition.h"
+#include "WebCore/CSSPropertyNames.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -1754,7 +1755,7 @@ const RenderStyle* RenderElement::textSegmentPseudoStyle(PseudoId pseudoId) cons
     return nullptr;
 }
 
-Color RenderElement::selectionColor(CSSPropertyID colorProperty) const
+template <CSSPropertyID colorProperty> Color RenderElement::selectionColor() const
 {
     // If the element is unselectable, or we are only painting the selection,
     // don't override the foreground color with the selection foreground color.
@@ -1763,9 +1764,9 @@ Color RenderElement::selectionColor(CSSPropertyID colorProperty) const
         return Color();
 
     if (auto pseudoStyle = selectionPseudoStyle()) {
-        Color color = pseudoStyle->visitedDependentColorWithColorFilter(colorProperty);
+        Color color = pseudoStyle->visitedDependentColorWithColorFilter<colorProperty>();
         if (!color.isValid())
-            color = pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyColor);
+            color = pseudoStyle->template visitedDependentColorWithColorFilter<CSSPropertyColor>();
         return color;
     }
 
@@ -1794,12 +1795,12 @@ std::unique_ptr<RenderStyle> RenderElement::selectionPseudoStyle() const
 
 Color RenderElement::selectionForegroundColor() const
 {
-    return selectionColor(CSSPropertyWebkitTextFillColor);
+    return selectionColor<CSSPropertyWebkitTextFillColor>();
 }
 
 Color RenderElement::selectionEmphasisMarkColor() const
 {
-    return selectionColor(CSSPropertyTextEmphasisColor);
+    return selectionColor<CSSPropertyTextEmphasisColor>();
 }
 
 Color RenderElement::selectionBackgroundColor() const

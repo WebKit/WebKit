@@ -46,6 +46,7 @@
 #include "PlatformStrategies.h"
 #include "Quirks.h"
 #include "RenderElement.h"
+#include "RenderStyleResolveColor.h"
 #include "RenderStyleSetters.h"
 #include "RenderView.h"
 #include "ResolvedStyle.h"
@@ -293,7 +294,7 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     // This is needed for resolving color:-webkit-text for subsequent elements.
     // FIXME: We shouldn't mutate document when resolving style.
     if (&element == m_document->body())
-        m_document->setTextColor(update.style->visitedDependentColor(CSSPropertyColor));
+        m_document->setTextColor(update.style->visitedDependentColor<CSSPropertyColor>());
 
     // FIXME: These elements should not change renderer based on appearance property.
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(element); (input && input->isSearchField())

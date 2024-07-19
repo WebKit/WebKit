@@ -40,7 +40,7 @@ Color SVGAnimationColorFunction::colorFromString(SVGElement& targetElement, cons
         return SVGPropertyTraits<Color>::fromString(string);
 
     if (auto* renderer = targetElement.renderer())
-        return renderer->style().visitedDependentColor(CSSPropertyColor);
+        return renderer->style().visitedDependentColor<CSSPropertyColor>();
 
     return { };
 }

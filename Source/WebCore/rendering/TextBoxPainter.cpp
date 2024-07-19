@@ -43,6 +43,7 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderCombineText.h"
 #include "RenderElementInlines.h"
+#include "RenderStyleConstants.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -859,7 +860,7 @@ void TextBoxPainter<TextBoxPath>::fillCompositionUnderline(float start, float wi
         width -= 2;
 
         auto& style = m_renderer.style();
-        auto underlineColor = underline.compositionUnderlineColor == CompositionUnderlineColor::TextColor ? style.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor) : style.colorByApplyingColorFilter(underline.color);
+        auto underlineColor = underline.compositionUnderlineColor == CompositionUnderlineColor::TextColor ? style. template visitedDependentColorWithColorFilter<CSSPropertyWebkitTextFillColor>() : style.colorByApplyingColorFilter(underline.color);
 
         auto& context = m_paintInfo.context();
         context.setStrokeColor(underlineColor);

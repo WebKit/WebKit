@@ -63,7 +63,9 @@
 #include "RenderLayerInlines.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyleConstants.h"
 #include "RenderStyleInlines.h"
+#include "RenderStyleResolveColor.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "RenderViewTransitionCapture.h"
@@ -4624,9 +4626,9 @@ void RenderLayerCompositor::rootOrBodyStyleChanged(RenderElement& renderer, cons
 
     Color oldBackgroundColor;
     if (oldStyle)
-        oldBackgroundColor = oldStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+        oldBackgroundColor = oldStyle->visitedDependentColorWithColorFilter<CSSPropertyBackgroundColor>();
 
-    if (oldBackgroundColor != renderer.style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor))
+    if (oldBackgroundColor != renderer.style().visitedDependentColorWithColorFilter<CSSPropertyBackgroundColor>())
         rootBackgroundColorOrTransparencyChanged();
 
     bool hadFixedBackground = oldStyle && oldStyle->hasEntirelyFixedBackground();

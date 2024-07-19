@@ -417,7 +417,7 @@ void BorderPainter::paintOutline(const LayoutPoint& paintOffset, const Vector<La
     }
 
     auto& graphicsContext = m_paintInfo.context();
-    auto outlineColor = styleToUse.visitedDependentColorWithColorFilter(CSSPropertyOutlineColor);
+    auto outlineColor = styleToUse.template visitedDependentColorWithColorFilter<CSSPropertyOutlineColor>();
     auto useTransparencyLayer = !outlineColor.isOpaque();
     if (useTransparencyLayer) {
         graphicsContext.beginTransparencyLayer(outlineColor.alphaAsFloat());

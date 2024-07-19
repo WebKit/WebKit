@@ -43,6 +43,7 @@
 #include "HTMLTableSectionElement.h"
 #include "NodeRenderStyle.h"
 #include "RenderObject.h"
+#include "RenderStyleResolveColor.h"
 #include "RenderTable.h"
 #include "RenderTableCell.h"
 #include <wtf/Scope.h>
@@ -196,7 +197,7 @@ bool AccessibilityTable::isDataTable() const
 
     // Store the background color of the table to check against cell's background colors.
     const auto* tableStyle = this->style();
-    Color tableBackgroundColor = tableStyle ? tableStyle->visitedDependentColor(CSSPropertyBackgroundColor) : Color::white;
+    Color tableBackgroundColor = tableStyle ? tableStyle->visitedDependentColor<CSSPropertyBackgroundColor>() : Color::white;
     unsigned tableHorizontalBorderSpacing = tableStyle ? tableStyle->horizontalBorderSpacing() : 0;
     unsigned tableVerticalBorderSpacing = tableStyle ? tableStyle->verticalBorderSpacing() : 0;
 
@@ -255,7 +256,7 @@ bool AccessibilityTable::isDataTable() const
                 // For the first 5 rows, cache the background color so we can check if this table has zebra-striped rows.
                 if (alternatingRowColorCount < 5) {
                     if (const auto* rowStyle = styleFrom(*tableRow)) {
-                        alternatingRowColors[alternatingRowColorCount] = rowStyle->visitedDependentColor(CSSPropertyBackgroundColor);
+                        alternatingRowColors[alternatingRowColorCount] = rowStyle->visitedDependentColor<CSSPropertyBackgroundColor>();
                         alternatingRowColorCount++;
                     }
                 }
@@ -321,7 +322,7 @@ bool AccessibilityTable::isDataTable() const
 
                 // If the cell has a different color from the table and there is cell spacing,
                 // then it is probably a data table cell (spacing and colors take the place of borders).
-                Color cellColor = cellStyle ? cellStyle->visitedDependentColor(CSSPropertyBackgroundColor) : Color::white;
+                Color cellColor = cellStyle ? cellStyle->visitedDependentColor<CSSPropertyBackgroundColor>() : Color::white;
                 if (tableHorizontalBorderSpacing > 0 && tableVerticalBorderSpacing > 0 && tableBackgroundColor != cellColor && !cellColor.isOpaque())
                     backgroundDifferenceCellCount++;
 

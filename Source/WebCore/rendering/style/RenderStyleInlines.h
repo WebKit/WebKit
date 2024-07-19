@@ -33,6 +33,7 @@
 #include "HitTestRequest.h"
 #include "ImageOrientation.h"
 #include "RenderStyle.h"
+#include "RenderStyleResolveColor.h"
 #include "ScrollTypes.h"
 #include "ScrollbarColor.h"
 #include "ShadowData.h"
@@ -277,7 +278,7 @@ inline bool RenderStyle::hasAutoSpecifiedZIndex() const { return m_nonInheritedD
 inline bool RenderStyle::hasAutoTopAndBottom() const { return top().isAuto() && bottom().isAuto(); }
 inline bool RenderStyle::hasAutoUsedZIndex() const { return m_nonInheritedData->boxData->hasAutoUsedZIndex(); }
 inline bool RenderStyle::hasAutoWidows() const { return m_rareInheritedData->hasAutoWidows; }
-inline bool RenderStyle::hasBackground() const { return visitedDependentColor(CSSPropertyBackgroundColor).isVisible() || hasBackgroundImage(); }
+inline bool RenderStyle::hasBackground() const { return visitedDependentColor<CSSPropertyBackgroundColor>().isVisible() || hasBackgroundImage(); }
 inline bool RenderStyle::hasBackgroundImage() const { return backgroundLayers().hasImage(); }
 inline bool RenderStyle::hasBlendMode() const { return blendMode() != BlendMode::Normal; }
 inline bool RenderStyle::hasBorder() const { return border().hasBorder(); }
@@ -486,7 +487,7 @@ inline const AtomString& RenderStyle::initialTextEmphasisCustomMark() { return n
 constexpr TextEmphasisFill RenderStyle::initialTextEmphasisFill() { return TextEmphasisFill::Filled; }
 constexpr TextEmphasisMark RenderStyle::initialTextEmphasisMark() { return TextEmphasisMark::None; }
 constexpr OptionSet<TextEmphasisPosition> RenderStyle::initialTextEmphasisPosition() { return { TextEmphasisPosition::Over, TextEmphasisPosition::Right }; }
-inline StyleColor RenderStyle::initialTextFillColor() { return StyleColor::currentColor(); }
+inline const StyleColor& RenderStyle::initialTextFillColor() { return StyleColor::currentColor(); }
 inline bool RenderStyle::hasExplicitlySetColor() const { return m_inheritedFlags.hasExplicitlySetColor; }
 constexpr TextGroupAlign RenderStyle::initialTextGroupAlign() { return TextGroupAlign::None; }
 inline Length RenderStyle::initialTextIndent() { return zeroLength(); }

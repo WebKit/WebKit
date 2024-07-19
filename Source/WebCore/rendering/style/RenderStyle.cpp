@@ -3092,7 +3092,7 @@ Color RenderStyle::colorResolvingCurrentColor(const StyleColor& color, bool visi
 Color RenderStyle::visitedDependentColor(CSSPropertyID colorProperty, OptionSet<PaintBehavior> paintBehavior) const
 {
     Color unvisitedColor = colorResolvingCurrentColor(colorProperty, false);
-    if (insideLink() != InsideLink::InsideVisited)
+    if (LIKELY(insideLink() != InsideLink::InsideVisited))
         return unvisitedColor;
 
     if (paintBehavior.contains(PaintBehavior::DontShowVisitedLinks))

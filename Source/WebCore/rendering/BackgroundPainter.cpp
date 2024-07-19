@@ -81,7 +81,7 @@ void BackgroundPainter::paintBackground(const LayoutRect& paintRect, BleedAvoida
     if (m_renderer.backgroundIsKnownToBeObscured(paintRect.location()) && !boxShadowShouldBeAppliedToBackground(m_renderer, paintRect.location(), bleedAvoidance, { }))
         return;
 
-    auto backgroundColor = m_renderer.style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+    auto backgroundColor = m_renderer.style().template visitedDependentColorWithColorFilter<CSSPropertyBackgroundColor>();
     auto compositeOp = document().compositeOperatorForBackgroundColor(backgroundColor, m_renderer);
 
     paintFillLayers(backgroundColor, m_renderer.style().backgroundLayers(), paintRect, bleedAvoidance, compositeOp);
@@ -98,7 +98,7 @@ void BackgroundPainter::paintRootBoxFillLayers() const
         return;
 
     auto& style = rootBackgroundRenderer->style();
-    auto backgroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+    auto backgroundColor = style.visitedDependentColorWithColorFilter<CSSPropertyBackgroundColor>();
     auto compositeOp = document().compositeOperatorForBackgroundColor(backgroundColor, m_renderer);
 
     paintFillLayers(backgroundColor, style.backgroundLayers(), view().backgroundRect(), BleedAvoidance::None, compositeOp, rootBackgroundRenderer);
@@ -806,7 +806,7 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const Render
     bool hasBorderRadius = style.hasBorderRadius();
     float deviceScaleFactor = document().deviceScaleFactor();
 
-    bool hasOpaqueBackground = style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor).isOpaque();
+    bool hasOpaqueBackground = style.visitedDependentColorWithColorFilter<CSSPropertyBackgroundColor>().isOpaque();
     for (const ShadowData* shadow = style.boxShadow(); shadow; shadow = shadow->next()) {
         if (shadow->style() != shadowStyle)
             continue;
@@ -978,7 +978,7 @@ bool BackgroundPainter::boxShadowShouldBeAppliedToBackground(const RenderBoxMode
     if (!hasOneNormalBoxShadow)
         return false;
 
-    Color backgroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+    Color backgroundColor = style.visitedDependentColorWithColorFilter<CSSPropertyBackgroundColor>();
     if (!backgroundColor.isOpaque())
         return false;
 
