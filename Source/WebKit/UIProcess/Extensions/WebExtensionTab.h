@@ -207,6 +207,7 @@ private:
     mutable bool m_private : 1 { false };
     mutable bool m_cachedPrivate : 1 { false };
     bool m_respondsToWindow : 1 { false };
+    bool m_respondsToIndex : 1 { false };
     bool m_respondsToParentTab : 1 { false };
     bool m_respondsToSetParentTab : 1 { false };
     bool m_respondsToMainWebView : 1 { false };

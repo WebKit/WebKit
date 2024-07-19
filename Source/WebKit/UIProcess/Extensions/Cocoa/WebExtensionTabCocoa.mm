@@ -55,6 +55,7 @@ WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, _WKWebExten
     : m_extensionContext(context)
     , m_delegate(delegate)
     , m_respondsToWindow([delegate respondsToSelector:@selector(windowForWebExtensionContext:)])
+    , m_respondsToIndex([delegate respondsToSelector:@selector(indexInWindowForWebExtensionContext:)])
     , m_respondsToParentTab([delegate respondsToSelector:@selector(parentTabForWebExtensionContext:)])
     , m_respondsToSetParentTab([delegate respondsToSelector:@selector(setParentTab:forWebExtensionContext:completionHandler:)])
     , m_respondsToMainWebView([delegate respondsToSelector:@selector(mainWebViewForWebExtensionContext:)])
@@ -276,14 +277,16 @@ RefPtr<WebExtensionWindow> WebExtensionTab::window() const
 
 size_t WebExtensionTab::index() const
 {
-    if (!isValid() || !m_respondsToWindow)
+    if (!isValid())
         return notFound;
+
+    if (m_respondsToIndex) {
+        auto index = [m_delegate indexInWindowForWebExtensionContext:m_extensionContext->wrapper()];
+        return index != NSNotFound ? index : notFound;
+    }
 
     RefPtr window = this->window();
-    if (!window)
-        return notFound;
-
-    return window->tabs().find(*this);
+    return window ? window->tabs().find(*this) : notFound;
 }
 
 RefPtr<WebExtensionTab> WebExtensionTab::parentTab() const

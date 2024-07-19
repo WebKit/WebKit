@@ -366,6 +366,11 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     return _window;
 }
 
+- (NSUInteger)indexInWindowForWebExtensionContext:(_WKWebExtensionContext *)context
+{
+    return _window ? [_window.tabs indexOfObject:self] : NSNotFound;
+}
+
 - (void)changeWebViewIfNeededForURL:(NSURL *)url forExtensionContext:(_WKWebExtensionContext *)context
 {
     BOOL usingPrivateBrowsing = _window.usingPrivateBrowsing;
