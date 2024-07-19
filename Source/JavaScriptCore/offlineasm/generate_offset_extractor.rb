@@ -121,7 +121,7 @@ File.open(tempFlnm, "w") {
                     | const, index |
                     outp.puts "constexpr int64_t constValue#{index} = static_cast<int64_t>(#{const.value});"
                 }
-                outp.puts "static const int64_t offsetExtractorTable[] = {"
+                outp.puts "static constexpr int64_t offsetExtractorTable[] = {"
                 OFFSET_HEADER_MAGIC_NUMBERS.each {
                     | number |
                     outp.puts "unsigned(#{number}),"
@@ -149,6 +149,6 @@ File.open(tempFlnm, "w") {
         }
     }
 
-    outp.puts "static const int64_t offsetExtractorTable[] = { };" if not configurationList.size
+    outp.puts "static constexpr int64_t offsetExtractorTable[] = { };" if not configurationList.size
 }
 File.rename(tempFlnm, outputFlnm)

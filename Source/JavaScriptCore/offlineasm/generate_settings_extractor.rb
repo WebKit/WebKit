@@ -90,7 +90,7 @@ File.open(tempFlnm, "w") {
     settingsCombinations = computeSettingsCombinations(prunedAST)
     length = settingsCombinations.size * (1 + OFFSET_HEADER_MAGIC_NUMBERS.size)
 
-    outp.puts "static const int64_t settingsExtractorTable[#{length}] = {"
+    outp.puts "static constexpr int64_t settingsExtractorTable[#{length}] = {"
     emitCodeInAllConfigurations(prunedAST) {
         | settings, ast, backend, index |
         OFFSET_HEADER_MAGIC_NUMBERS.each {
