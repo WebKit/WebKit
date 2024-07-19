@@ -40,7 +40,7 @@ namespace JSC {
 const ClassInfo ProgramExecutable::s_info = { "ProgramExecutable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ProgramExecutable) };
 
 ProgramExecutable::ProgramExecutable(JSGlobalObject* globalObject, const SourceCode& source)
-    : Base(globalObject->vm().programExecutableStructure.get(), globalObject->vm(), source, false, DerivedContextType::None, false, false, EvalContextType::None, NoIntrinsic)
+    : Base(globalObject->vm().programExecutableStructure.get(), globalObject->vm(), source, NoLexicallyScopedFeatures, DerivedContextType::None, false, false, EvalContextType::None, NoIntrinsic)
 {
     ASSERT(source.provider()->sourceType() == SourceProviderSourceType::Program);
     VM& vm = globalObject->vm();
@@ -90,10 +90,9 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
     ASSERT(&globalObject->vm() == &vm);
 
     ParserError error;
-    JSParserStrictMode strictMode = isInStrictContext() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
     OptionSet<CodeGenerationMode> codeGenerationMode = globalObject->defaultCodeGenerationMode();
     UnlinkedProgramCodeBlock* unlinkedCodeBlock = vm.codeCache()->getUnlinkedProgramCodeBlock(
-        vm, this, source(), strictMode, codeGenerationMode, error);
+        vm, this, source(), codeGenerationMode, error);
 
     if (globalObject->hasDebugger())
         globalObject->debugger()->sourceParsed(globalObject, source().provider(), error.line(), error.message());

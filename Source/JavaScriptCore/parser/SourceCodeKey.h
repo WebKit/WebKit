@@ -41,17 +41,17 @@ public:
     SourceCodeFlags() = default;
 
     SourceCodeFlags(
-        SourceCodeType codeType, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, 
+        SourceCodeType codeType, LexicallyScopedFeatures lexicallyScopedFeatures, JSParserScriptMode scriptMode,
         DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext,
         OptionSet<CodeGenerationMode> codeGenerationMode)
         : m_flags(
-            (static_cast<unsigned>(codeGenerationMode.toRaw()) << 6) |
-            (static_cast<unsigned>(scriptMode) << 5) |
-            (static_cast<unsigned>(isArrowFunctionContext) << 4) |
-            (static_cast<unsigned>(evalContextType) << 3) |
-            (static_cast<unsigned>(derivedContextType) << 2) |
-            (static_cast<unsigned>(codeType) << 1) |
-            (static_cast<unsigned>(strictMode))
+            (static_cast<unsigned>(codeGenerationMode.toRaw()) << 10) |
+            (static_cast<unsigned>(isArrowFunctionContext) << 9) |
+            (static_cast<unsigned>(evalContextType) << 7) |
+            (static_cast<unsigned>(derivedContextType) << 5) |
+            (static_cast<unsigned>(scriptMode) << 4) |
+            (static_cast<unsigned>(lexicallyScopedFeatures) << 2) |
+            (static_cast<unsigned>(codeType))
         )
     {
     }
@@ -73,12 +73,12 @@ public:
     }
 
     SourceCodeKey(
-        const UnlinkedSourceCode& sourceCode, const String& name, SourceCodeType codeType, JSParserStrictMode strictMode, 
+        const UnlinkedSourceCode& sourceCode, const String& name, SourceCodeType codeType, LexicallyScopedFeatures lexicallyScopedFeatures,
         JSParserScriptMode scriptMode, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext,
         OptionSet<CodeGenerationMode> codeGenerationMode, std::optional<int> functionConstructorParametersEndPosition)
             : m_sourceCode(sourceCode)
             , m_name(name)
-            , m_flags(codeType, strictMode, scriptMode, derivedContextType, evalContextType, isArrowFunctionContext, codeGenerationMode)
+            , m_flags(codeType, lexicallyScopedFeatures, scriptMode, derivedContextType, evalContextType, isArrowFunctionContext, codeGenerationMode)
             , m_functionConstructorParametersEndPosition(functionConstructorParametersEndPosition.value_or(-1))
             , m_hash(sourceCode.hash() ^ m_flags.bits())
     {
