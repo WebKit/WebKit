@@ -153,8 +153,10 @@
 #include <arm/arch.h>
 #endif
 
-#if OS(DARWIN) && PLATFORM(MAC)
+#if OS(DARWIN)
+#if __has_include(<libproc.h>)
 #include <libproc.h>
+#endif
 #endif
 
 #if OS(DARWIN)
@@ -3465,12 +3467,14 @@ int main(int argc, char** argv WTF_TZONE_EXTRA_MAIN_ARGS)
     WTF_TZONE_INIT(boothash);
 #endif
 
-#if OS(DARWIN) && PLATFORM(MAC)
+#if OS(DARWIN)
+#if __has_include(<libproc.h>)
     // Let the kernel kill us when OOM
     {
         int retval = proc_setpcontrol(PROC_SETPC_TERMINATE);
         ASSERT_UNUSED(retval, !retval);
     }
+#endif
 #endif
 
 #if OS(WINDOWS)
