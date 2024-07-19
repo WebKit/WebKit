@@ -82,6 +82,15 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
 - (nullable id <_WKWebExtensionWindow>)windowForWebExtensionContext:(_WKWebExtensionContext *)context;
 
 /*!
+ @abstract Called when the index of the tab in the window is needed.
+ @param context The context in which the web extension is running.
+ @return The index of the tab in the window, or `NSNotFound` if the tab is not currently in a window.
+ @discussion This method should be implemented for better performance. Defaults to the window's
+ `tabsForWebExtensionContext:` method to find the index if not implemented.
+ */
+- (NSUInteger)indexInWindowForWebExtensionContext:(_WKWebExtensionContext *)context;
+
+/*!
  @abstract Called when the parent tab for the tab is needed.
  @param context The context in which the web extension is running.
  @return The parent tab of the tab, if the tab was opened from another tab.
