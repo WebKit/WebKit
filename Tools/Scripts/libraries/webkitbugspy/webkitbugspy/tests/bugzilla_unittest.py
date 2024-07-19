@@ -321,7 +321,7 @@ class TestBugzilla(unittest.TestCase):
         ), projects=mocks.PROJECTS, issues=mocks.ISSUES):
             created = bugzilla.Tracker(self.URL).create(
                 'New bug', 'Creating new bug',
-                project='WebKit', component='Tables', version='Other',
+                project='WebKit', component='Tables', version='Other', keywords=['InRadar']
             )
             self.assertEqual(created.id, 4)
             self.assertEqual(created.title, 'New bug')
@@ -339,6 +339,7 @@ class TestBugzilla(unittest.TestCase):
             self.assertEqual(created.project, 'WebKit')
             self.assertEqual(created.component, 'Tables')
             self.assertEqual(created.version, 'Other')
+            self.assertEqual(created.keywords, ['InRadar'])
 
     def test_create_prompt(self):
         with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
@@ -383,6 +384,19 @@ What component in 'WebKit' should the bug be associated with?:
             self.assertEqual(issue.project, 'WebKit')
             self.assertEqual(issue.component, 'Text')
             self.assertEqual(issue.version, 'Other')
+
+    def test_invalid_keyword(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), projects=mocks.PROJECTS, issues=mocks.ISSUES):
+
+            with self.assertRaises(ValueError) as e:
+                bugzilla.Tracker(self.URL).create(
+                    'New bug', 'Creating new bug',
+                    project='WebKit', component='Tables', version='Other', keywords=['InvalidKeyword']
+                )
+            self.assertEqual(f"'InvalidKeyword' is not a valid keyword for 'WebKit'", str(e.exception))
 
     def test_set_component(self):
         with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
