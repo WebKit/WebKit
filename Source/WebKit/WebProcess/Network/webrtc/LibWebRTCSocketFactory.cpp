@@ -54,9 +54,6 @@ void LibWebRTCSocketFactory::setConnection(RefPtr<IPC::Connection>&& connection)
     if (!m_connection)
         return;
 
-    connection->send(Messages::NetworkRTCProvider::SetPlatformTCPSocketsEnabled(DeprecatedGlobalSettings::webRTCPlatformTCPSocketsEnabled()), 0);
-    connection->send(Messages::NetworkRTCProvider::SetPlatformUDPSocketsEnabled(DeprecatedGlobalSettings::webRTCPlatformUDPSocketsEnabled()), 0);
-
     while (!m_pendingMessageTasks.isEmpty())
         m_pendingMessageTasks.takeFirst()(*connection);
 }
@@ -104,23 +101,6 @@ rtc::AsyncPacketSocket* LibWebRTCSocketFactory::createClientTcpSocket(WebCore::S
             connection.send(Messages::NetworkRTCProvider::CreateClientTCPSocket(identifier, localAddress, remoteAddress, userAgent, opts, pageIdentifier, isFirstParty, isRelayDisabled, domain), 0);
         });
     }
-
-    return socket.release();
-}
-
-rtc::AsyncPacketSocket* LibWebRTCSocketFactory::createNewConnectionSocket(LibWebRTCSocket& serverSocket, LibWebRTCSocketIdentifier newConnectionSocketIdentifier, const rtc::SocketAddress& remoteAddress)
-{
-    ASSERT(!WTF::isMainRunLoop());
-    if (!m_connection) {
-        // No need to enqueue a message in this case since it means the network process handling the incoming socket is gone.
-        RELEASE_LOG(WebRTC, "No connection to create incoming TCP socket");
-        return nullptr;
-    }
-
-    auto socket = makeUnique<LibWebRTCSocket>(*this, serverSocket.contextIdentifier(), LibWebRTCSocket::Type::ServerConnectionTCP, serverSocket.localAddress(), remoteAddress);
-    socket->setState(LibWebRTCSocket::STATE_CONNECTED);
-
-    m_connection->send(Messages::NetworkRTCProvider::WrapNewTCPConnection(socket->identifier(), newConnectionSocketIdentifier), 0);
 
     return socket.release();
 }

@@ -2316,9 +2316,6 @@ void NetworkProcess::processDidResume(bool forForegroundActivity)
 
     m_isSuspended = false;
 
-    for (auto& connection : m_webProcessConnections.values())
-        connection->endSuspension();
-
     WebResourceLoadStatisticsStore::resume();
     PCM::PersistentStore::processDidResume();
 

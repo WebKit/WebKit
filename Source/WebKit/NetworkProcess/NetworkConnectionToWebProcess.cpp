@@ -505,14 +505,6 @@ void NetworkConnectionToWebProcess::removeSocketChannel(WebSocketIdentifier iden
     m_networkSocketChannels.remove(identifier);
 }
 
-void NetworkConnectionToWebProcess::endSuspension()
-{
-#if USE(LIBWEBRTC)
-    if (m_rtcProvider)
-        m_rtcProvider->authorizeListeningSockets();
-#endif
-}
-
 NetworkSession* NetworkConnectionToWebProcess::networkSession()
 {
     return networkProcess().networkSession(m_sessionID);
