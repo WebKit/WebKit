@@ -32,10 +32,13 @@ namespace WebCore {
 class WritingSuggestionData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WritingSuggestionData(String&& content, String&& currentText, uint64_t&& offset)
+    WritingSuggestionData(String&& content, String&& currentText, uint64_t&& offset, String&& originalPrefix, String&& originalSuffix, bool supportsSuffix)
         : m_content(WTFMove(content))
         , m_currentText(WTFMove(currentText))
+        , m_originalPrefix(WTFMove(originalPrefix))
+        , m_originalSuffix(WTFMove(originalSuffix))
         , m_offset(WTFMove(offset))
+        , m_supportsSuffix(supportsSuffix)
     {
         ASSERT(!m_content.isEmpty());
     }
@@ -46,10 +49,21 @@ public:
 
     uint64_t offset() const { return m_offset; }
 
+    String originalPrefix() const { return m_originalPrefix; }
+
+    String originalSuffix() const { return m_originalSuffix; }
+
+    bool supportsSuffix() const { return m_supportsSuffix; }
+
 private:
     String m_content;
     String m_currentText;
-    uint64_t m_offset;
+
+    String m_originalPrefix;
+    String m_originalSuffix;
+
+    uint64_t m_offset { 0 };
+    bool m_supportsSuffix { false };
 };
 
 }

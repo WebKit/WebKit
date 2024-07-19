@@ -354,6 +354,11 @@ void Editor::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping()
     TypingCommand::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping(document, document->selection().selection());
 }
 
+bool Editor::writingSuggestionsSupportsSuffix()
+{
+    return false;
+}
+
 } // namespace WebCore
 
 #endif // PLATFORM(IOS_FAMILY)

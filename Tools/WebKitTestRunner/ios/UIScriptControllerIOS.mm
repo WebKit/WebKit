@@ -1559,8 +1559,9 @@ void UIScriptControllerIOS::setInlinePrediction(JSStringRef text, unsigned start
     NSString *plainText = text->string().substring(startIndex);
     auto attributedText = adoptNS([[NSAttributedString alloc] initWithString:plainText attributes:@{
         NSBackgroundColorAttributeName : UIColor.clearColor,
-        NSForegroundColorAttributeName : UIColor.grayColor,
+        NSForegroundColorAttributeName : UIColor.systemGrayColor,
     }]);
+
     [UIKeyboardImpl.activeInstance setInlineCompletionAsMarkedText:attributedText.get() selectedRange:NSMakeRange(0, 0) inputString:plainText searchString:@""];
 }
 

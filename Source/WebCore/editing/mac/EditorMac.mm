@@ -261,6 +261,11 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     pasteboard.write(pasteboardImage);
 }
 
+bool Editor::writingSuggestionsSupportsSuffix()
+{
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // PLATFORM(MAC)

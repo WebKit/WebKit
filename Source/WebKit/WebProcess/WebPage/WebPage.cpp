@@ -7046,6 +7046,7 @@ void WebPage::setCompositionAsync(const String& text, const Vector<CompositionUn
 
 void WebPage::setWritingSuggestion(const String& fullTextWithPrediction, const EditingRange& selection)
 {
+#if PLATFORM(COCOA)
     platformWillPerformEditingCommand();
 
     RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
@@ -7053,6 +7054,10 @@ void WebPage::setWritingSuggestion(const String& fullTextWithPrediction, const E
         return;
 
     frame->editor().setWritingSuggestion(fullTextWithPrediction, { selection.location, selection.length });
+#else
+    UNUSED_PARAM(fullTextWithPrediction);
+    UNUSED_PARAM(selection);
+#endif
 }
 
 void WebPage::confirmCompositionAsync()

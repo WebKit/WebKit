@@ -318,9 +318,13 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
 
     auto textWithoutSuggestion = nodeBeforeWritingSuggestionsTextRenderer->text();
 
-    auto offset = writingSuggestionData->offset();
-    auto prefix = textWithoutSuggestion.substring(0, offset);
-    auto suffix = textWithoutSuggestion.substring(offset);
+    auto [prefix, suffix] = [&] -> std::pair<String, String> {
+        if (!writingSuggestionData->supportsSuffix())
+            return { textWithoutSuggestion, emptyString() };
+
+        auto offset = writingSuggestionData->offset();
+        return { textWithoutSuggestion.substring(0, offset), textWithoutSuggestion.substring(offset) };
+    }();
 
     nodeBeforeWritingSuggestionsTextRenderer->setText(prefix);
 
