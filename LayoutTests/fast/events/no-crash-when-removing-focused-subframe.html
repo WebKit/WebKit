@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<iframe id="frame_a" loading="lazy"></iframe>
+<iframe id="frame_b" srcdoc="b"></iframe>
+<div id="container" tabindex="0" autofocus></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+let frame = document.getElementById("frame_a");
+addEventListener("load", () => {
+    frame.srcdoc = "a";
+    // This `blur` event listener is only necessary to trigger a release assertion, due to script
+    // execution in the middle of disconnecting a node.
+    frame.contentWindow?.addEventListener("blur", () => { });
+    frame.focus();
+
+    setTimeout(() => {
+        document.writeln("PASS");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+});
+
+container.onfocusin = () => {
+    document.body.innerHTML = "";
+};
+</script>
+</body>
+</html>
