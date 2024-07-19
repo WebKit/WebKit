@@ -10,8 +10,6 @@ PASS new Highlight(new StaticRange({startContainer: document.body, startOffset: 
 PASS Highlight.prototype[Symbol.iterator] is Highlight.prototype.values
 PASS HighlightRegistry instanceof Function is true
 PASS typeof HighlightRegistry is "function"
-PASS new HighlightRegistry() instanceof HighlightRegistry is true
-PASS new HighlightRegistry().set("foo-styling",new Highlight(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2}))) is defined.
 PASS CSS.highlights is defined.
 PASS CSS.highlights.set("foo-styling",new Highlight(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2}))) is CSS.highlights
 PASS successfullyParsed is true

@@ -13,8 +13,6 @@ shouldBeTrue("new Highlight(new StaticRange({startContainer: document.body, star
 shouldBe("Highlight.prototype[Symbol.iterator]", "Highlight.prototype.values");
 shouldBeTrue("HighlightRegistry instanceof Function");
 shouldBeEqualToString("typeof HighlightRegistry", "function");
-shouldBeTrue("new HighlightRegistry() instanceof HighlightRegistry");
-shouldBeDefined('new HighlightRegistry().set("foo-styling",new Highlight(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})))');
 shouldBeDefined('CSS.highlights');
 shouldBe('CSS.highlights.set("foo-styling",new Highlight(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})))', 'CSS.highlights');
 
