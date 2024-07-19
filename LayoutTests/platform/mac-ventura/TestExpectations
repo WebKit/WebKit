@@ -1,3 +1,8 @@
 # Failing after OS migration rdar://112624778 (Migrate macOS Sonoma test expectations to OpenSource, add expectation files to Down-Levels (259373))
 
 webkit.org/b/268789 [ Debug ] imported/w3c/web-platform-tests/css/css-break/table/repeated-section/special-elements-crash.html [ Skip ]
+
+# With CryptoKit, these tests start to work properly, but cryptoKit is macOS 14.5 or higher so we need to mark them fail for 13.X bots
+# This is to still test and have logs, because actually not all the tests are failing, it's a just a few of them.
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Pass Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker.html [ Pass Failure ]

@@ -1818,11 +1818,11 @@ CryptoKitEnabled:
   humanReadableDescription: "Enable CryptoKit for supported Algorithms."
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CursiveFontFamily:
   type: String

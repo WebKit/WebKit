@@ -494,6 +494,7 @@ public class EdKey {
             case .x25519:
                 let priv = try Curve25519.KeyAgreement.PrivateKey(span: priv)
                 rv.result = try priv.sharedSecretFromKeyAgreement(pubSpan: pub)
+                rv.errorCode = .Success
             case .x448:
                 rv.errorCode = .UnsupportedAlgorithm
             }

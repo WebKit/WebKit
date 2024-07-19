@@ -169,8 +169,7 @@ RefPtr<ArrayBuffer> AuthenticatorAttestationResponse::getPublicKey() const
             return nullptr;
         }
         auto y = it->second.getByteString();
-        // FIXME: Enable cryptoKit here after it's enabled in SubtleCryptoAPI rdar://126352502
-        auto peerKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(x, y), true, CryptoKeyUsageDeriveBits, UseCryptoKit::No);
+        auto peerKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(x, y), true, CryptoKeyUsageDeriveBits, UseCryptoKit::Yes);
 
         if (!peerKey)
             return nullptr;

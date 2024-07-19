@@ -51,7 +51,7 @@
 
 namespace fido {
 using namespace WebCore;
-static constexpr auto useCryptoKit = UseCryptoKit::No;
+static constexpr auto useCryptoKit = UseCryptoKit::Yes;
 using CBOR = cbor::CBORValue;
 
 namespace pin {
@@ -171,7 +171,6 @@ std::optional<KeyAgreementResponse> KeyAgreementResponse::parseFromCOSE(const CB
 
     const auto& x = xIt->second.getByteString();
     const auto& y = yIt->second.getByteString();
-    // FIXME: enable cryptoKit when it's enabled for SubtleCryptoAPI rdar://126352502
     auto peerKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(x, y), true, CryptoKeyUsageDeriveBits, useCryptoKit);
     if (!peerKey)
         return std::nullopt;
@@ -248,13 +247,11 @@ std::optional<TokenRequest> TokenRequest::tryCreate(const CString& pin, const Cr
     // The following implements Section 5.5.4 Getting sharedSecret from Authenticator.
     // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#gettingSharedSecret
     // 1. Generate a P256 key pair.
-    // FIXME: enable cryptoKit when it's enabled for SubtleCryptoAPI rdar://126352502
     auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits, useCryptoKit);
     ASSERT(!keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
     // 2. Use ECDH and SHA-256 to compute the shared AES-CBC key.
-    // FIXME: enable cryptoKit when it's enabled for SubtleCryptoAPI rdar://126352502
     auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), peerKey, useCryptoKit);
     if (!sharedKeyResult)
         return std::nullopt;
@@ -267,7 +264,6 @@ std::optional<TokenRequest> TokenRequest::tryCreate(const CString& pin, const Cr
     ASSERT(sharedKey);
 
     // The following encodes the public key of the above key pair into COSE format.
-    // FIXME: enable cryptoKit when it's enabled for SubtleCryptoAPI rdar://126352502
     auto rawPublicKeyResult = downcast<CryptoKeyEC>(*keyPair.publicKey).exportRaw(useCryptoKit);
     ASSERT(!rawPublicKeyResult.hasException());
     auto coseKey = encodeCOSEPublicKey(rawPublicKeyResult.returnValue());
@@ -316,13 +312,11 @@ std::optional<SetPinRequest> SetPinRequest::tryCreate(const String& inputPin, co
     // The following implements Section 5.5.4 Getting sharedSecret from Authenticator.
     // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#gettingSharedSecret
     // 1. Generate a P256 key pair.
-    // FIXME: enable cryptoKit when it's enabled for SubtleCryptoAPI rdar://126352502
     auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits, useCryptoKit);
     ASSERT(!keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
     // 2. Use ECDH and SHA-256 to compute the shared AES-CBC key.
-    // FIXME: enable cryptoKit when it's enabled for SubtleCryptoAPI rdar://126352502
     auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), peerKey, useCryptoKit);
     if (!sharedKeyResult)
         return std::nullopt;
@@ -335,7 +329,6 @@ std::optional<SetPinRequest> SetPinRequest::tryCreate(const String& inputPin, co
     ASSERT(sharedKey);
 
     // The following encodes the public key of the above key pair into COSE format.
-    // FIXME: enable cryptoKit when it's enabled for SubtleCryptoAPI rdar://126352502
     auto rawPublicKeyResult = downcast<CryptoKeyEC>(*keyPair.publicKey).exportRaw(useCryptoKit);
     ASSERT(!rawPublicKeyResult.hasException());
     auto coseKey = encodeCOSEPublicKey(rawPublicKeyResult.returnValue());
