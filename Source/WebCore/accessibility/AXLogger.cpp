@@ -29,11 +29,12 @@
 #include "config.h"
 #include "AXLogger.h"
 
-#include "AXTextRun.h"
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #include "AXIsolatedObject.h"
 #endif
 #include "AXObjectCache.h"
+#include "AXSearchManager.h"
+#include "AXTextRun.h"
 #include "DocumentInlines.h"
 #include "LocalFrameView.h"
 #include "LogInitialization.h"

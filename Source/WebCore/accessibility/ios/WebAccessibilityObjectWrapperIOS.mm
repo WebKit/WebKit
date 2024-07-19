@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "AXSearchManager.h"
 #import "AccessibilityAttachment.h"
 #import "AccessibilityMediaObject.h"
 #import "AccessibilityRenderObject.h"
@@ -2084,10 +2085,8 @@ static RenderObject* rendererForView(WAKView* view)
 
 - (NSArray<WebAccessibilityObjectWrapper *> *)accessibilityFindMatchingObjects:(NSDictionary *)parameters
 {
-    AccessibilitySearchCriteria criteria = accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(parameters);
-    AccessibilityObject::AccessibilityChildrenVector results;
-    self.axBackingObject->findMatchingObjects(&criteria, results);
-    return makeNSArray(results);
+    auto criteria = accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(parameters);
+    return makeNSArray(self.axBackingObject->findMatchingObjects(WTFMove(criteria)));
 }
 
 - (void)accessibilityModifySelection:(TextGranularity)granularity increase:(BOOL)increase

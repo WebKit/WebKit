@@ -531,6 +531,7 @@ accessibility/AXImage.cpp
 accessibility/AXLogger.cpp
 accessibility/AXObjectCache.cpp
 accessibility/AXRemoteFrame.cpp
+accessibility/AXSearchManager.cpp
 accessibility/AXTextMarker.cpp
 accessibility/AXTextRun.cpp
 accessibility/AccessibilityARIAGridCell.cpp

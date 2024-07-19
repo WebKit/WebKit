@@ -33,6 +33,7 @@
 #import "AXIsolatedObject.h"
 #import "AXObjectCache.h"
 #import "AXRemoteFrame.h"
+#import "AXSearchManager.h"
 #import "AccessibilityARIAGridRow.h"
 #import "AccessibilityList.h"
 #import "AccessibilityListBox.h"

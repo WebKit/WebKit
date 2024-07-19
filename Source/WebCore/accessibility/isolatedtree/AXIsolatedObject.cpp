@@ -31,6 +31,7 @@
 #include "AXGeometryManager.h"
 #include "AXIsolatedTree.h"
 #include "AXLogger.h"
+#include "AXSearchManager.h"
 #include "AXTextRun.h"
 #include "AccessibilityNodeObject.h"
 #include "DateComponents.h"
@@ -1332,14 +1333,10 @@ Vector<String> AXIsolatedObject::performTextOperation(const AccessibilityTextOpe
     });
 }
 
-void AXIsolatedObject::findMatchingObjects(AccessibilitySearchCriteria* criteria, AccessibilityChildrenVector& results)
+AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::findMatchingObjects(AccessibilitySearchCriteria&& criteria)
 {
-    ASSERT(criteria);
-    if (!criteria)
-        return;
-
-    criteria->anchorObject = this;
-    Accessibility::findMatchingObjects(*criteria, results);
+    criteria.anchorObject = this;
+    return AXSearchManager().findMatchingObjects(WTFMove(criteria));
 }
 
 String AXIsolatedObject::textUnderElement(TextUnderElementMode) const
@@ -1795,11 +1792,12 @@ bool AXIsolatedObject::isSelectedOptionActive() const
     return false;
 }
 
-bool AXIsolatedObject::hasMisspelling() const
+Vector<CharacterRange> AXIsolatedObject::spellCheckerResultRanges() const
 {
-    return Accessibility::retrieveValueFromMainThread<bool>([this] () {
-        auto* axObject = associatedAXObject();
-        return axObject ? axObject->hasMisspelling() : false;
+    return Accessibility::retrieveValueFromMainThread<Vector<CharacterRange>>([this] () -> Vector<CharacterRange> {
+        if (auto* axObject = associatedAXObject())
+            return axObject->spellCheckerResultRanges();
+        return { };
     });
 }
 
