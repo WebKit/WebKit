@@ -119,7 +119,7 @@ MediaStreamTrackProcessor::VideoFrameObserverWrapper::VideoFrameObserverWrapper(
 
 void MediaStreamTrackProcessor::VideoFrameObserverWrapper::start()
 {
-    callOnMainThread([protectedThis = Ref { *this }] {
+    callOnMainThreadAndWait([protectedThis = Ref { *this }] {
         protectedThis->m_observer->start();
     });
 }
