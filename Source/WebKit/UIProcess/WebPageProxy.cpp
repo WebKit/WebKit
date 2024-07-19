@@ -702,7 +702,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #endif
     , m_inspectorController(makeUnique<WebPageInspectorController>(*this))
 #if ENABLE(REMOTE_INSPECTOR)
-    , m_inspectorDebuggable(makeUnique<WebPageDebuggable>(*this))
+    , m_inspectorDebuggable(WebPageDebuggable::create(*this))
 #endif
     , m_corsDisablingPatterns(m_configuration->corsDisablingPatterns())
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -819,6 +819,10 @@ WebPageProxy::~WebPageProxy()
 
 #if PLATFORM(MACCATALYST)
     EndowmentStateTracker::singleton().removeClient(internals());
+#endif
+
+#if ENABLE(REMOTE_INSPECTOR)
+    ASSERT(!m_inspectorDebuggable);
 #endif
     
     for (auto& callback : m_nextActivityStateChangeCallbacks)
@@ -1607,7 +1611,8 @@ void WebPageProxy::close()
     protectedBackForwardList()->pageClosed();
     m_inspectorController->pageClosed();
 #if ENABLE(REMOTE_INSPECTOR)
-    m_inspectorDebuggable = nullptr;
+    if (RefPtr inspectorDebuggable = std::exchange(m_inspectorDebuggable, nullptr))
+        inspectorDebuggable->detachFromPage();
 #endif
     protectedPageClient()->pageClosed();
 

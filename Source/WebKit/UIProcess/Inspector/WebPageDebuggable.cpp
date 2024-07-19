@@ -31,6 +31,7 @@
 #include "WebFrameProxy.h"
 #include "WebPageInspectorController.h"
 #include "WebPageProxy.h"
+#include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -39,54 +40,83 @@ using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPageDebuggable);
 
-WebPageDebuggable::WebPageDebuggable(WebPageProxy& page)
-    : m_page(page)
+Ref<WebPageDebuggable> WebPageDebuggable::create(WebPageProxy& page)
 {
+    return adoptRef(*new WebPageDebuggable(page));
+}
+
+WebPageDebuggable::WebPageDebuggable(WebPageProxy& page)
+    : m_page(&page)
+{
+}
+
+void WebPageDebuggable::detachFromPage()
+{
+    m_page = nullptr;
 }
 
 String WebPageDebuggable::name() const
 {
-    if (!m_page.mainFrame())
-        return String();
-
-    return m_page.mainFrame()->title();
+    String name;
+    callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, &name] {
+        if (!m_page || !m_page->mainFrame())
+            return;
+        name = m_page->mainFrame()->title().isolatedCopy();
+    });
+    return name;
 }
 
 String WebPageDebuggable::url() const
 {
-    if (!m_page.mainFrame())
-        return aboutBlankURL().string();
+    String url;
+    callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, &url] {
+        if (!m_page || !m_page->mainFrame()) {
+            url = aboutBlankURL().string().isolatedCopy();
+            return;
+        }
 
-    String url = m_page.mainFrame()->url().string();
-    if (url.isEmpty())
-        return aboutBlankURL().string();
-
+        url = m_page->mainFrame()->url().string().isolatedCopy();
+        if (url.isEmpty())
+            url = aboutBlankURL().string().isolatedCopy();
+    });
     return url;
 }
 
 bool WebPageDebuggable::hasLocalDebugger() const
 {
-    return m_page.inspectorController().hasLocalFrontend();
+    bool hasLocalDebugger;
+    callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, &hasLocalDebugger] {
+        hasLocalDebugger = m_page->inspectorController().hasLocalFrontend();
+    });
+    return hasLocalDebugger;
 }
 
 void WebPageDebuggable::connect(FrontendChannel& channel, bool isAutomaticConnection, bool immediatelyPause)
 {
-    m_page.inspectorController().connectFrontend(channel, isAutomaticConnection, immediatelyPause);
+    callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, &channel, isAutomaticConnection, immediatelyPause] {
+        m_page->inspectorController().connectFrontend(channel, isAutomaticConnection, immediatelyPause);
+    });
 }
 
 void WebPageDebuggable::disconnect(FrontendChannel& channel)
 {
-    m_page.inspectorController().disconnectFrontend(channel);
+    callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, &channel] {
+        m_page->inspectorController().disconnectFrontend(channel);
+    });
 }
 
 void WebPageDebuggable::dispatchMessageFromRemote(String&& message)
 {
-    m_page.inspectorController().dispatchMessageFromFrontend(WTFMove(message));
+    callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, message = WTFMove(message).isolatedCopy()] {
+        m_page->inspectorController().dispatchMessageFromFrontend(WTFMove(message));
+    });
 }
 
 void WebPageDebuggable::setIndicating(bool indicating)
 {
-    m_page.inspectorController().setIndicating(indicating);
+    callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, indicating] {
+        m_page->inspectorController().setIndicating(indicating);
+    });
 }
 
 void WebPageDebuggable::setNameOverride(const String& name)

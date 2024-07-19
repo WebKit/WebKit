@@ -35,6 +35,11 @@ namespace WebCore {
 
 using namespace Inspector;
 
+Ref<ServiceWorkerDebuggable> ServiceWorkerDebuggable::create(ServiceWorkerThreadProxy& serviceWorkerThreadProxy, const ServiceWorkerContextData& data)
+{
+    return adoptRef(*new ServiceWorkerDebuggable(serviceWorkerThreadProxy, data));
+}
+
 ServiceWorkerDebuggable::ServiceWorkerDebuggable(ServiceWorkerThreadProxy& serviceWorkerThreadProxy, const ServiceWorkerContextData& data)
     : m_serviceWorkerThreadProxy(serviceWorkerThreadProxy)
     , m_scopeURL(data.registration.scopeURL.string())
@@ -43,17 +48,20 @@ ServiceWorkerDebuggable::ServiceWorkerDebuggable(ServiceWorkerThreadProxy& servi
 
 void ServiceWorkerDebuggable::connect(FrontendChannel& channel, bool, bool)
 {
-    m_serviceWorkerThreadProxy.inspectorProxy().connectToWorker(channel);
+    if (RefPtr serviceWorkerThreadProxy = m_serviceWorkerThreadProxy.get())
+        serviceWorkerThreadProxy->inspectorProxy().connectToWorker(channel);
 }
 
 void ServiceWorkerDebuggable::disconnect(FrontendChannel& channel)
 {
-    m_serviceWorkerThreadProxy.inspectorProxy().disconnectFromWorker(channel);
+    if (RefPtr serviceWorkerThreadProxy = m_serviceWorkerThreadProxy.get())
+        serviceWorkerThreadProxy->inspectorProxy().disconnectFromWorker(channel);
 }
 
 void ServiceWorkerDebuggable::dispatchMessageFromRemote(String&& message)
 {
-    m_serviceWorkerThreadProxy.inspectorProxy().sendMessageToWorker(WTFMove(message));
+    if (RefPtr serviceWorkerThreadProxy = m_serviceWorkerThreadProxy.get())
+        serviceWorkerThreadProxy->inspectorProxy().sendMessageToWorker(WTFMove(message));
 }
 
 } // namespace WebCore
