@@ -30,11 +30,11 @@
 
 namespace WebCore {
 
-GraphicsContextGLImageExtractor::GraphicsContextGLImageExtractor(Image* image, DOMSource imageHtmlDomSource, bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication)
+GraphicsContextGLImageExtractor::GraphicsContextGLImageExtractor(Image* image, DOMSource imageHtmlDomSource, bool premultiplyAlpha, bool preventUnpackColorSpaceConversion, bool ignoreNativeImageAlphaPremultiplication)
 {
     m_image = image;
     m_imageHtmlDomSource = imageHtmlDomSource;
-    m_extractSucceeded = extractImage(premultiplyAlpha, ignoreGammaAndColorProfile, ignoreNativeImageAlphaPremultiplication);
+    m_extractSucceeded = extractImage(premultiplyAlpha, preventUnpackColorSpaceConversion, ignoreNativeImageAlphaPremultiplication);
 }
 
 }

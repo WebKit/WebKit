@@ -45,15 +45,15 @@ namespace WebCore {
 
 GraphicsContextGLImageExtractor::~GraphicsContextGLImageExtractor() = default;
 
-bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication)
+bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool preventUnpackColorSpaceConversion, bool ignoreNativeImageAlphaPremultiplication)
 {
     if (!m_image)
         return false;
 
     PlatformImagePtr platformImage;
     bool hasAlpha = !m_image->currentFrameKnownToBeOpaque();
-    if ((ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) && m_image->data()) {
-        auto image = BitmapImage::create(nullptr,  AlphaOption::NotPremultiplied, ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied);
+    if ((preventUnpackColorSpaceConversion || (hasAlpha && !premultiplyAlpha)) && m_image->data()) {
+        auto image = BitmapImage::create(nullptr,  AlphaOption::NotPremultiplied, preventUnpackColorSpaceConversion ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied);
         image->setData(m_image->data(), true);
         if (!image->frameCount())
             return false;
