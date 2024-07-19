@@ -32,6 +32,7 @@
 #include "GPUProcess.h"
 #include "Logging.h"
 #include <WebCore/AudioUtilities.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if PLATFORM(COCOA)
@@ -70,14 +71,17 @@ class RemoteAudioDestination final
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteAudioDestination(GPUConnectionToWebProcess&, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore)
+    RemoteAudioDestination(GPUConnectionToWebProcess& connection, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore)
         : m_renderSemaphore(WTFMove(renderSemaphore))
+        , m_logger(connection.logger())
+        , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
 #if PLATFORM(COCOA)
         , m_audioOutputUnitAdaptor(*this)
         , m_numOutputChannels(numberOfOutputChannels)
 #endif
     {
         ASSERT(isMainRunLoop());
+        ALWAYS_LOG(LOGIDENTIFIER);
 #if PLATFORM(COCOA)
         m_audioOutputUnitAdaptor.configure(hardwareSampleRate, numberOfOutputChannels);
 #endif
@@ -86,6 +90,7 @@ public:
     ~RemoteAudioDestination()
     {
         ASSERT(isMainRunLoop());
+        ALWAYS_LOG(LOGIDENTIFIER);
         // Make sure we stop audio rendering and wait for it to finish before destruction.
         if (m_isPlaying)
             stop();
@@ -116,9 +121,12 @@ public:
     void start()
     {
 #if PLATFORM(COCOA)
-        if (m_audioOutputUnitAdaptor.start())
+        if (m_audioOutputUnitAdaptor.start()) {
+            ERROR_LOG(LOGIDENTIFIER, "Failed to start AudioOutputUnit");
             return;
+        }
 
+        ALWAYS_LOG(LOGIDENTIFIER);
         m_isPlaying = true;
 #endif
     }
@@ -126,9 +134,12 @@ public:
     void stop()
     {
 #if PLATFORM(COCOA)
-        if (m_audioOutputUnitAdaptor.stop())
+        if (m_audioOutputUnitAdaptor.stop()) {
+            ERROR_LOG(LOGIDENTIFIER, "Failed to stop AudioOutputUnit");
             return;
+        }
 
+        ALWAYS_LOG(LOGIDENTIFIER);
         m_isPlaying = false;
 #endif
     }
@@ -162,8 +173,16 @@ private:
         return status;
     }
 #endif
+
+    Logger& logger() const { return m_logger; }
+    const void* logIdentifier() const { return m_logIdentifier; }
+    ASCIILiteral logClassName() const { return "RemoteAudioDestination"_s; }
+    WTFLogChannel& logChannel() const { return WebKit2LogMedia; }
+
     IPC::Semaphore m_renderSemaphore;
     bool m_isPlaying { false };
+    Ref<Logger> m_logger;
+    const void* m_logIdentifier;
 
 #if PLATFORM(COCOA)
     WebCore::AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
