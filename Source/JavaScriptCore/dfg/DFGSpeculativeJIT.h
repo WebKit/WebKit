@@ -1677,6 +1677,7 @@ public:
     void compileRegExpTest(Node*);
     void compileRegExpTestInline(Node*);
     void compileStringReplace(Node*);
+    void compileStringReplaceAll(Node*);
     void compileStringReplaceString(Node*);
     void compileIsObject(Node*);
     void compileTypeOfIsObject(Node*);

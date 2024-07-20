@@ -954,6 +954,7 @@ private:
         }
 
         case StringReplace:
+        case StringReplaceAll:
         case StringReplaceRegExp: {
             Node* stringNode = m_node->child1().node();
             String string = stringNode->tryGetString(m_graph);

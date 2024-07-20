@@ -377,6 +377,7 @@ inline CapabilityLevel canCompile(Node* node)
     case NewMap:
     case NewSet:
     case StringReplace:
+    case StringReplaceAll:
     case StringReplaceRegExp:
     case StringReplaceString:
     case GetRegExpObjectLastIndex:

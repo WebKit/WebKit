@@ -867,7 +867,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncRepeatCharacter, (JSGlobalObject* global
     return JSValue::encode(repeatCharacter(globalObject, character, repeatCount));
 }
 
-ALWAYS_INLINE JSString* replace(VM& vm, JSGlobalObject* globalObject, JSValue thisValue, JSValue searchValue, JSValue replaceValue)
+ALWAYS_INLINE JSString* replace(VM& vm, JSGlobalObject* globalObject, JSValue thisValue, JSValue searchValue, JSValue replaceValue, StringReplaceMode replaceMode)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -890,13 +890,13 @@ ALWAYS_INLINE JSString* replace(VM& vm, JSGlobalObject* globalObject, JSValue th
         auto searchString = searchJSString->value(globalObject);
         RETURN_IF_EXCEPTION(scope, nullptr);
 
-        RELEASE_AND_RETURN(scope, replaceUsingStringSearch(vm, globalObject, string, thisString, WTFMove(searchString), replaceValue, StringReplaceMode::Single));
+        RELEASE_AND_RETURN(scope, replaceUsingStringSearch(vm, globalObject, string, thisString, WTFMove(searchString), replaceValue, replaceMode));
     }
 
     String searchString = searchValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    RELEASE_AND_RETURN(scope, replaceUsingStringSearch(vm, globalObject, string, thisString, WTFMove(searchString), replaceValue, StringReplaceMode::Single));
+    RELEASE_AND_RETURN(scope, replaceUsingStringSearch(vm, globalObject, string, thisString, WTFMove(searchString), replaceValue, replaceMode));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncReplaceUsingRegExp, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -953,7 +953,17 @@ JSC_DEFINE_JIT_OPERATION(operationStringProtoFuncReplaceGeneric, JSCell*, (JSGlo
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
     
-    OPERATION_RETURN(scope, replace(vm, globalObject, JSValue::decode(thisValue), JSValue::decode(searchValue), JSValue::decode(replaceValue)));
+    OPERATION_RETURN(scope, replace(vm, globalObject, JSValue::decode(thisValue), JSValue::decode(searchValue), JSValue::decode(replaceValue), StringReplaceMode::Single));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationStringProtoFuncReplaceAllGeneric, JSCell*, (JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue searchValue, EncodedJSValue replaceValue))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    OPERATION_RETURN(scope, replace(vm, globalObject, JSValue::decode(thisValue), JSValue::decode(searchValue), JSValue::decode(replaceValue), StringReplaceMode::Global));
 }
 
 IGNORE_WARNINGS_END

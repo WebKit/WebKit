@@ -13828,7 +13828,7 @@ void SpeculativeJIT::compileRegExpTest(Node* node)
 
 void SpeculativeJIT::compileStringReplace(Node* node)
 {
-    ASSERT(node->op() == StringReplace || node->op() == StringReplaceRegExp);
+    ASSERT(node->op() == StringReplace || node->op() == StringReplaceRegExp || node->op() == StringReplaceAll);
     bool sample = false;
     if (sample)
         incrementSuperSamplerCount();
@@ -13886,7 +13886,10 @@ void SpeculativeJIT::compileStringReplace(Node* node)
 
     flushRegisters();
     GPRFlushedCallResult result(this);
-    callOperation(operationStringProtoFuncReplaceGeneric, result.gpr(), LinkableConstant::globalObject(*this, node), stringRegs, searchRegs, replaceRegs);
+    if (node->op() == StringReplaceAll)
+        callOperation(operationStringProtoFuncReplaceAllGeneric, result.gpr(), LinkableConstant::globalObject(*this, node), stringRegs, searchRegs, replaceRegs);
+    else
+        callOperation(operationStringProtoFuncReplaceGeneric, result.gpr(), LinkableConstant::globalObject(*this, node), stringRegs, searchRegs, replaceRegs);
     cellResult(result.gpr(), node);
 }
 

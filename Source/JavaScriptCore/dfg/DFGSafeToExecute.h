@@ -751,6 +751,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case MapSet:
     case MapOrSetDelete:
     case StringReplace:
+    case StringReplaceAll:
     case StringReplaceRegExp:
     case ArithRandom:
     case ArithIMul:
