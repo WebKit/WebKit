@@ -140,7 +140,6 @@
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
-#import <pal/spi/cocoa/WritingToolsSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
@@ -7151,9 +7150,9 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
 
 // Disable Writing Tools in WebKitLegacy.
 
-- (PlatformWritingToolsBehavior)writingToolsBehavior
+- (NSInteger /* PlatformWritingToolsBehavior */)writingToolsBehavior
 {
-    return PlatformWritingToolsBehaviorNone;
+    return -1; // PlatformWritingToolsBehaviorNone
 }
 
 - (BOOL)providesWritingToolsContextMenu
