@@ -1114,34 +1114,25 @@ void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(URL& url, InsecureReq
 
     bool upgradeRequest = m_insecureNavigationRequestsToUpgrade.contains(SecurityOriginData::fromURL(url));
     bool isUpgradeMixedContentEnabled = m_scriptExecutionContext ? m_scriptExecutionContext->settingsValues().upgradeMixedContentEnabled : false;
-    bool shouldUpgradeLocalhost = isUpgradeMixedContentEnabled && m_scriptExecutionContext ? m_scriptExecutionContext->settingsValues().iPAddressAndLocalhostMixedContentUpgradeTestingEnabled : false;
+    bool shouldUpgradeLocalhostAndIPAddressInMixedContext = isUpgradeMixedContentEnabled && m_scriptExecutionContext && m_scriptExecutionContext->settingsValues().iPAddressAndLocalhostMixedContentUpgradeTestingEnabled;
 
     if (requestType == InsecureRequestType::Load || requestType == InsecureRequestType::FormSubmission)
         upgradeRequest |= m_upgradeInsecureRequests;
 
-    if (!upgradeRequest && (alwaysUpgradeRequest == AlwaysUpgradeRequest::No || !isUpgradeMixedContentEnabled))
+    alwaysUpgradeRequest = isUpgradeMixedContentEnabled && alwaysUpgradeRequest == AlwaysUpgradeRequest::Yes ? AlwaysUpgradeRequest::Yes : AlwaysUpgradeRequest::No;
+    if (!upgradeRequest && alwaysUpgradeRequest == AlwaysUpgradeRequest::No)
         return;
 
-    // Do not automatically upgrade locahost connections.
-    if (!upgradeRequest && SecurityOrigin::isLocalhostAddress(url.host()) && !shouldUpgradeLocalhost && alwaysUpgradeRequest == AlwaysUpgradeRequest::Yes)
-        return;
-
-    if (url.protocolIs("http"_s))
-        url.setProtocol("https"_s);
-    else {
-        ASSERT(url.protocolIs("ws"_s));
-        url.setProtocol("wss"_s);
-    }
-
-    if (url.port() == 80)
-        url.setPort(std::nullopt);
-    else if (auto* document = dynamicDowncast<Document>(m_scriptExecutionContext.get()); document && document->page()) {
+    ShouldUpgradeLocalhostAndIPAddress shouldUpgradeLocalhostAndIPAddress = (upgradeRequest || shouldUpgradeLocalhostAndIPAddressInMixedContext) ? ShouldUpgradeLocalhostAndIPAddress::Yes : ShouldUpgradeLocalhostAndIPAddress::No;
+    std::optional<uint16_t> upgradePort;
+    if (auto* document = dynamicDowncast<Document>(m_scriptExecutionContext.get()); document && document->page()) {
         auto portsForUpgradingInsecureScheme = document->page()->portsForUpgradingInsecureSchemeForTesting();
         if (portsForUpgradingInsecureScheme) {
             if (url.port() == portsForUpgradingInsecureScheme->first)
-                url.setPort(portsForUpgradingInsecureScheme->second);
+                upgradePort = portsForUpgradingInsecureScheme->second;
         }
     }
+    ResourceRequest::upgradeInsecureRequestIfNeeded(url, shouldUpgradeLocalhostAndIPAddress, upgradePort);
 }
 
 void ContentSecurityPolicy::setUpgradeInsecureRequests(bool upgradeInsecureRequests)

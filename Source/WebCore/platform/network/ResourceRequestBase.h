@@ -55,6 +55,7 @@ class ResourceRequest;
 class ResourceResponse;
 
 enum class ResourceRequestRequester : uint8_t { Unspecified, Main, XHR, Fetch, Media, Model, ImportScripts, Ping, Beacon, EventSource };
+enum class ShouldUpgradeLocalhostAndIPAddress : bool { No, Yes };
 
 // Do not use this type directly.  Use ResourceRequest instead.
 class ResourceRequestBase {
@@ -250,11 +251,14 @@ public:
     const std::optional<int>& inspectorInitiatorNodeIdentifier() const { return m_inspectorInitiatorNodeIdentifier; }
     void setInspectorInitiatorNodeIdentifier(int inspectorInitiatorNodeIdentifier) { m_inspectorInitiatorNodeIdentifier = inspectorInitiatorNodeIdentifier; }
 
-    void upgradeToHTTPS();
-
 #if !PLATFORM(COCOA) && !USE(SOUP)
     bool encodingRequiresPlatformData() const { return true; }
 #endif
+
+    static void upgradeInsecureRequest(URL&);
+    static void upgradeInsecureRequestIfNeeded(URL&, ShouldUpgradeLocalhostAndIPAddress, const std::optional<uint16_t>&);
+    void upgradeInsecureRequest();
+    void upgradeInsecureRequestIfNeeded(ShouldUpgradeLocalhostAndIPAddress, const std::optional<uint16_t>&);
 
     WEBCORE_EXPORT static double defaultTimeoutInterval(); // May return 0 when using platform default.
     WEBCORE_EXPORT static void setDefaultTimeoutInterval(double);

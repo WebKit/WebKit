@@ -493,7 +493,7 @@ bool FrameLoader::upgradeRequestforHTTPSOnlyIfNeeded(const URL& originalURL, Res
 {
     if (shouldUpgradeRequestforHTTPSOnly(originalURL, request)) {
         FRAMELOADER_RELEASE_LOG(ResourceLoading, "upgradeRequestforHTTPSOnlyIfNeeded: upgrading navigation request");
-        request.upgradeToHTTPS();
+        request.upgradeInsecureRequest();
         // FIXME: Make this timeout adaptive based on network conditions
         request.setTimeoutInterval(10);
         return true;

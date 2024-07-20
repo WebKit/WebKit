@@ -187,6 +187,51 @@ ResourceRequest ResourceRequestBase::redirectedRequest(const ResourceResponse& r
     return request;
 }
 
+void ResourceRequestBase::upgradeInsecureRequest(URL& url)
+{
+    if (!url.protocolIs("http"_s) && !url.protocolIs("ws"_s))
+        return;
+
+    if (url.protocolIs("http"_s))
+        url.setProtocol("https"_s);
+    else {
+        ASSERT(url.protocolIs("ws"_s));
+        url.setProtocol("wss"_s);
+    }
+
+    if (url.port() == 80)
+        url.setPort(std::nullopt);
+}
+
+void ResourceRequestBase::upgradeInsecureRequestIfNeeded(URL& url, ShouldUpgradeLocalhostAndIPAddress shouldUpgradeLocalhostAndIPAddress, const std::optional<uint16_t>& upgradePort)
+{
+    if (!url.protocolIs("http"_s) && !url.protocolIs("ws"_s))
+        return;
+
+    upgradeInsecureRequest(url);
+
+    if (!url.port())
+        return;
+
+    // Do not automatically upgrade localhost or IP address connections unless the CSP policy requires it.
+    bool isHostLocalhostOrIPaddress = SecurityOrigin::isLocalhostAddress(url.host()) || URL::hostIsIPAddress(url.host());
+    if (isHostLocalhostOrIPaddress && shouldUpgradeLocalhostAndIPAddress == ShouldUpgradeLocalhostAndIPAddress::No)
+        return;
+
+    if (upgradePort)
+        url.setPort(*upgradePort);
+}
+
+void ResourceRequestBase::upgradeInsecureRequestIfNeeded(ShouldUpgradeLocalhostAndIPAddress shouldUpgradeLocalhostAndIPAddress, const std::optional<uint16_t>& upgradePort)
+{
+    upgradeInsecureRequestIfNeeded(m_requestData.m_url, shouldUpgradeLocalhostAndIPAddress, upgradePort);
+}
+
+void ResourceRequestBase::upgradeInsecureRequest()
+{
+    upgradeInsecureRequest(m_requestData.m_url);
+}
+
 void ResourceRequestBase::removeCredentials()
 {
     updateResourceRequest(); 
@@ -791,18 +836,6 @@ void ResourceRequestBase::updateResourceRequest(HTTPBodyUpdatePolicy bodyPolicy)
         const_cast<ResourceRequest&>(asResourceRequest()).doUpdateResourceHTTPBody();
         m_resourceRequestBodyUpdated = true;
     }
-}
-
-void ResourceRequestBase::upgradeToHTTPS()
-{
-    const URL& originalURL = url();
-    ASSERT(originalURL.protocolIs("http"_s));
-
-    URL newURL = originalURL;
-    newURL.setProtocol("https"_s);
-    if (originalURL.port() && WTF::isDefaultPortForProtocol(originalURL.port().value(), originalURL.protocol()))
-        newURL.setPort(std::nullopt);
-    setURL(newURL);
 }
 
 #if !PLATFORM(COCOA) && !USE(SOUP)
