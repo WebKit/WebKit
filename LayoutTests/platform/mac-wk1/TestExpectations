@@ -2801,3 +2801,12 @@ webkit.org/b/276145 http/tests/security/block-popup-to-all-zero-address.html [ S
 
 # rdar://124363343 ([ Sequoia+ ] Multiple WebKit tests failing after explicit "SameSite" attribute change)
 http/tests/xmlhttprequest/cross-origin-authorization.html [ Failure ]
+
+# webkit.org/b/276830 Umbrella bug: Mark expectations impacting EWS (276830)
+fast/dynamic/layer-hit-test-crash.html [ Pass ImageOnlyFailure ]
+http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html [ Pass Failure ]
+imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-report-only-sends-reports-on-violation.https.sub.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-006.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-autofocus.html [ Pass Failure ]
+imported/w3c/web-platform-tests/svg/import/metadata-example-01-t-manual.svg  [ Pass ImageOnlyFailure ]
+svg/custom/use-on-symbol-inside-pattern.svg [ Pass Failure ]

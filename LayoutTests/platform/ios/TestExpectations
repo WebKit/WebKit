@@ -7344,3 +7344,7 @@ imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_an
 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_avc [ Failure DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?h264_annexb [ Failure DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?h264_annexb [ Failure DumpJSConsoleLogInStdErr ]
+
+# webkit.org/b/276830 Umbrella bug: Mark expectations impacting EWS (276830)
+imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss [ Skip ]
