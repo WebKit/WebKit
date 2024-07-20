@@ -550,18 +550,46 @@ RegisterID* ObjectLiteralNode::emitBytecode(BytecodeGenerator& generator, Regist
         return generator.emitNewObject(generator.finalDestination(dst));
     }
 
-    // Only one element and it is spread.
-    if (!m_list->m_next && m_list->m_node->m_type & PropertyNode::Spread) {
-        RefPtr<RegisterID> function = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::cloneObject);
-        RefPtr<RegisterID> src = generator.emitNode(static_cast<ObjectSpreadExpressionNode*>(m_list->m_node->m_assign)->expression());
-        CallArguments args(generator, nullptr, 0);
-        generator.move(args.thisRegister(), src.get());
-        return generator.emitCall(generator.finalDestination(dst, function.get()), function.get(), NoExpectedFunction, args, position(), position(), position(), DebuggableCall::No);
+    auto* propertyList = m_list;
+    RefPtr<RegisterID> newObject;
+    if (propertyList->m_node->m_type & PropertyNode::Spread) {
+        // Only one element and it is spread.
+        if (!propertyList->m_next) {
+            RefPtr<RegisterID> function = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::cloneObject);
+            RefPtr<RegisterID> src = generator.emitNode(static_cast<ObjectSpreadExpressionNode*>(propertyList->m_node->m_assign)->expression());
+            CallArguments args(generator, nullptr, 0);
+            generator.move(args.thisRegister(), src.get());
+            return generator.emitCall(generator.finalDestination(dst, function.get()), function.get(), NoExpectedFunction, args, position(), position(), position(), DebuggableCall::No);
+        }
+
+        bool foundNonConstant = false;
+        for (auto* p = propertyList->m_next; p; p = p->m_next) {
+            if (p->m_node->m_type & PropertyNode::Constant)
+                continue;
+            if (p->m_node->m_type & PropertyNode::Computed)
+                continue;
+            if (p->m_node->m_type & PropertyNode::Spread)
+                continue;
+            foundNonConstant = true;
+            break;
+        }
+
+        // All properties are simple constants, and the first property is spread.
+        // Let's first clone an object and materialize the rest.
+        if (!foundNonConstant) {
+            RefPtr<RegisterID> function = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::cloneObject);
+            RefPtr<RegisterID> src = generator.emitNode(static_cast<ObjectSpreadExpressionNode*>(propertyList->m_node->m_assign)->expression());
+            CallArguments args(generator, nullptr, 0);
+            generator.move(args.thisRegister(), src.get());
+            newObject = generator.emitCall(generator.tempDestination(dst), function.get(), NoExpectedFunction, args, position(), position(), position(), DebuggableCall::No);
+            propertyList = propertyList->m_next;
+        }
     }
 
-    RefPtr<RegisterID> newObj = generator.emitNewObject(generator.tempDestination(dst));
-    generator.emitNode(newObj.get(), m_list);
-    return generator.move(dst, newObj.get());
+    if (!newObject)
+        newObject = generator.emitNewObject(generator.tempDestination(dst));
+    generator.emitNode(newObject.get(), propertyList);
+    return generator.move(dst, newObject.get());
 }
 
 // ------------------------------ PropertyListNode -----------------------------
