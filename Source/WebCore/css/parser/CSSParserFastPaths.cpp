@@ -30,6 +30,7 @@
 #include "config.h"
 #include "CSSParserFastPaths.h"
 
+#include "CSSAbsoluteColorResolver.h"
 #include "CSSFunctionValue.h"
 #include "CSSParserContext.h"
 #include "CSSParserIdioms.h"
@@ -41,6 +42,7 @@
 #include "CSSTransformListValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
+#include "ColorConversion.h"
 #include "HashTools.h"
 #include "StyleColor.h"
 #include "StylePropertyShorthand.h"
@@ -129,21 +131,27 @@ static inline bool parseSimpleLength(std::span<const CharacterType> characters, 
     return parsedNumber.has_value();
 }
 
-template <typename CharacterType>
-static inline bool parseSimpleAngle(std::span<const CharacterType> characters, CSSUnitType& unit, double& number)
-{
-    // Just support deg and rad for now.
-    if (characters.size() < 4)
-        return false;
+enum class RequireUnits : bool { No, Yes };
 
-    if (isASCIIAlphaCaselessEqual(characters[characters.size() - 3], 'd') && isASCIIAlphaCaselessEqual(characters[characters.size() - 2], 'e') && isASCIIAlphaCaselessEqual(characters[characters.size() - 1], 'g')) {
-        characters = characters.first(characters.size() - 3);
+template <typename CharacterType>
+static inline bool parseSimpleAngle(std::span<const CharacterType> characters, RequireUnits requireUnits, CSSUnitType& unit, double& number)
+{
+    // "0deg" or "1rad"
+    if (characters.size() >= 4) {
+        if (isASCIIAlphaCaselessEqual(characters[characters.size() - 3], 'd') && isASCIIAlphaCaselessEqual(characters[characters.size() - 2], 'e') && isASCIIAlphaCaselessEqual(characters[characters.size() - 1], 'g')) {
+            characters = characters.first(characters.size() - 3);
+            unit = CSSUnitType::CSS_DEG;
+        } else if (isASCIIAlphaCaselessEqual(characters[characters.size() - 3], 'r') && isASCIIAlphaCaselessEqual(characters[characters.size() - 2], 'a') && isASCIIAlphaCaselessEqual(characters[characters.size() - 1], 'd')) {
+            characters = characters.first(characters.size() - 3);
+            unit = CSSUnitType::CSS_RAD;
+        } else if (requireUnits == RequireUnits::Yes)
+            return false;
+    } else {
+        if (requireUnits == RequireUnits::Yes || !characters.size())
+            return false;
+
         unit = CSSUnitType::CSS_DEG;
-    } else if (isASCIIAlphaCaselessEqual(characters[characters.size() - 3], 'r') && isASCIIAlphaCaselessEqual(characters[characters.size() - 2], 'a') && isASCIIAlphaCaselessEqual(characters[characters.size() - 1], 'd')) {
-        characters = characters.first(characters.size() - 3);
-        unit = CSSUnitType::CSS_RAD;
-    } else
-        return false;
+    }
 
     auto parsedNumber = parseCSSNumber(characters);
     number = parsedNumber.value_or(0);
@@ -212,7 +220,7 @@ static size_t checkForValidDouble(std::span<const CharacterType> string, char te
     if (length < 1)
         return 0;
 
-    bool decimalMarkSeen = false;
+    std::optional<size_t> decimalMarkOffset;
     size_t processedLength = 0;
 
     for (size_t i = 0; i < string.size(); ++i) {
@@ -221,14 +229,15 @@ static size_t checkForValidDouble(std::span<const CharacterType> string, char te
             break;
         }
         if (!isASCIIDigit(string[i])) {
-            if (!decimalMarkSeen && string[i] == '.')
-                decimalMarkSeen = true;
+            if (!decimalMarkOffset && string[i] == '.')
+                decimalMarkOffset = i;
             else
                 return 0;
         }
     }
 
-    if (decimalMarkSeen && processedLength == 1)
+    // CSS disallows a period without a subsequent digit.
+    if (decimalMarkOffset && *decimalMarkOffset == processedLength - 1)
         return 0;
 
     return processedLength;
@@ -363,7 +372,7 @@ static inline bool isTenthAlpha(std::span<const CharacterType> string)
 }
 
 template <typename CharacterType>
-static inline std::optional<uint8_t> parseAlphaValue(std::span<const CharacterType>& string, char terminator)
+static inline std::optional<uint8_t> parseRGBAlphaValue(std::span<const CharacterType>& string, char terminator)
 {
     while (!string.empty() && isASCIIWhitespace<CharacterType>(string.front()))
         string = string.subspan(1);
@@ -434,6 +443,29 @@ static inline bool mightBeRGB(std::span<const CharacterType> characters)
         && isASCIIAlphaCaselessEqual(characters[2], 'b');
 }
 
+template <typename CharacterType>
+static inline bool mightBeHSLA(std::span<const CharacterType> characters)
+{
+    if (characters.size() < 5)
+        return false;
+    return characters[4] == '('
+        && isASCIIAlphaCaselessEqual(characters[0], 'h')
+        && isASCIIAlphaCaselessEqual(characters[1], 's')
+        && isASCIIAlphaCaselessEqual(characters[2], 'l')
+        && isASCIIAlphaCaselessEqual(characters[3], 'a');
+}
+
+template <typename CharacterType>
+static inline bool mightBeHSL(std::span<const CharacterType> characters)
+{
+    if (characters.size() < 4)
+        return false;
+    return characters[3] == '('
+        && isASCIIAlphaCaselessEqual(characters[0], 'h')
+        && isASCIIAlphaCaselessEqual(characters[1], 's')
+        && isASCIIAlphaCaselessEqual(characters[2], 'l');
+}
+
 static std::optional<SRGBA<uint8_t>> finishParsingHexColor(uint32_t value, unsigned length)
 {
     switch (length) {
@@ -481,6 +513,103 @@ static std::optional<SRGBA<uint8_t>> parseHexColorInternal(std::span<const Chara
     return finishParsingHexColor(value, characters.size());
 }
 
+template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseLegacyHSL(std::span<const CharacterType> characters)
+{
+    // Commas only exist in the legacy syntax.
+    size_t delimiter = find({ characters.data(), characters.data() + characters.size() }, ',');
+    if (delimiter == notFound)
+        return std::nullopt;
+
+    auto skipWhitespace = [](std::span<const CharacterType>& characters) ALWAYS_INLINE_LAMBDA {
+        while (!characters.empty() && isCSSSpace(characters.front()))
+            characters = characters.subspan(1);
+    };
+
+    auto parsePercentageWithOptionalLeadingWhitespace = [&](std::span<const CharacterType>& characters) -> std::optional<double> {
+        skipWhitespace(characters);
+
+        double value = 0;
+        size_t numCharactersParsed = parseDouble(characters, '%', value);
+        if (!numCharactersParsed)
+            return std::nullopt;
+
+        characters = characters.subspan(numCharactersParsed);
+        if (characters.empty() || characters.front() != '%')
+            return std::nullopt;
+
+        characters = characters.subspan(1); // Skip the '%'.
+        return value;
+    };
+
+    auto skipComma = [](std::span<const CharacterType>& characters) {
+        if (characters.empty() || characters.front() != ',')
+            return false;
+
+        characters = characters.subspan(1);
+        return true;
+    };
+
+    double hue;
+    auto angleChars = characters.first(delimiter);
+    auto angleUnit = CSSUnitType::CSS_DEG;
+    if (!parseSimpleAngle(angleChars, RequireUnits::No, angleUnit, hue))
+        return std::nullopt;
+
+    characters = characters.subspan(delimiter);
+    if (!skipComma(characters))
+        return std::nullopt;
+
+    auto saturation = parsePercentageWithOptionalLeadingWhitespace(characters);
+    if (!saturation)
+        return std::nullopt;
+
+    if (!skipComma(characters))
+        return std::nullopt;
+
+    auto lightness = parsePercentageWithOptionalLeadingWhitespace(characters);
+    if (!lightness)
+        return std::nullopt;
+
+    auto parseAlpha = [&](std::span<const CharacterType>& characters) -> std::optional<double> {
+        skipWhitespace(characters);
+
+        size_t numCharactersParsed;
+        double alpha = 1;
+        if ((numCharactersParsed = parseDouble(characters, ')', alpha))) {
+            characters = characters.subspan(numCharactersParsed);
+            return alpha;
+        }
+
+        if ((numCharactersParsed = parseDouble(characters, '%', alpha))) {
+            characters = characters.subspan(numCharactersParsed + 1); // Skip the '%'
+            return alpha / 100.0;
+        }
+
+        return std::nullopt;
+    };
+
+    double alpha = 1.0;
+    // Alpha is optional for both hsl() and hsla().
+    if (skipComma(characters)) {
+        auto alphaValue = parseAlpha(characters);
+        if (!alphaValue)
+            return std::nullopt;
+
+        alpha = *alphaValue;
+    }
+
+    skipWhitespace(characters);
+
+    if (characters.empty() || characters.front() != ')')
+        return std::nullopt;
+
+    auto parsedColor = CSSColorParseType<HSLFunctionLegacy>(AngleRaw { angleUnit, hue }, PercentRaw { *saturation }, PercentRaw { *lightness }, NumberRaw { alpha });
+    auto typedColor = convertToTypedColor<HSLFunctionLegacy>(parsedColor, 1.0);
+    auto resultColor = convertToColor<HSLFunctionLegacy, CSSColorFunctionForm::Absolute>(typedColor, 0);
+    return resultColor.tryGetAsSRGBABytes();
+}
+
+
 template<typename CharacterType>
 static std::optional<SRGBA<uint8_t>> parseNumericColor(std::span<const CharacterType> characters, bool strict)
 {
@@ -494,10 +623,10 @@ static std::optional<SRGBA<uint8_t>> parseNumericColor(std::span<const Character
             return *hexColor;
     }
 
-    auto expectedUnitType = CSSUnitType::CSS_UNKNOWN;
-
-    // Try rgba() syntax.
+    // FIXME: rgb() and rgba() are now synonyms, so we should collapse these two clauses together. webkit.org/b/276761
     if (mightBeRGBA(characters)) {
+        auto expectedUnitType = CSSUnitType::CSS_UNKNOWN;
+
         auto current = characters.subspan(5);
         auto red = parseColorIntOrPercentage(current, ',', expectedUnitType);
         if (!red)
@@ -508,7 +637,7 @@ static std::optional<SRGBA<uint8_t>> parseNumericColor(std::span<const Character
         auto blue = parseColorIntOrPercentage(current, ',', expectedUnitType);
         if (!blue)
             return std::nullopt;
-        auto alpha = parseAlphaValue(current, ')');
+        auto alpha = parseRGBAlphaValue(current, ')');
         if (!alpha)
             return std::nullopt;
         if (!current.empty())
@@ -516,8 +645,9 @@ static std::optional<SRGBA<uint8_t>> parseNumericColor(std::span<const Character
         return SRGBA<uint8_t> { *red, *green, *blue, *alpha };
     }
 
-    // Try rgb() syntax.
     if (mightBeRGB(characters)) {
+        auto expectedUnitType = CSSUnitType::CSS_UNKNOWN;
+
         auto current = characters.subspan(4);
         auto red = parseColorIntOrPercentage(current, ',', expectedUnitType);
         if (!red)
@@ -532,6 +662,13 @@ static std::optional<SRGBA<uint8_t>> parseNumericColor(std::span<const Character
             return std::nullopt;
         return SRGBA<uint8_t> { *red, *green, *blue };
     }
+
+    // hsl() and hsla() are synonyms.
+    if (mightBeHSLA(characters))
+        return parseLegacyHSL(characters.subspan(5));
+
+    if (mightBeHSL(characters))
+        return parseLegacyHSL(characters.subspan(4));
 
     return std::nullopt;
 }
@@ -697,8 +834,9 @@ static RefPtr<CSSValue> parseTransformAngleArgument(CharType*& pos, CharType* en
     unsigned argumentLength = static_cast<unsigned>(delimiter);
     CSSUnitType unit = CSSUnitType::CSS_NUMBER;
     double number;
-    if (!parseSimpleAngle(std::span<const CharType> { pos, argumentLength }, unit, number))
+    if (!parseSimpleAngle(std::span<const CharType> { pos, argumentLength }, RequireUnits::Yes, unit, number))
         return nullptr;
+
     if (!number && unit == CSSUnitType::CSS_NUMBER)
         unit = CSSUnitType::CSS_DEG;
 
