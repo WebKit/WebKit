@@ -106,8 +106,8 @@ ENV MARCH_FLAG=${MARCH_FLAG}
 
 
 RUN --mount=type=tmpfs,target=/webkitbuild \
-    export CFLAGS="${DEFAULT_CFLAGS} $CFLAGS $LTO_FLAG -fno-pic " && \
-    export CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS $LTO_FLAG -fno-pic -fno-c++-static-destructors " && \
+    export CFLAGS="${DEFAULT_CFLAGS} $CFLAGS $LTO_FLAG " && \
+    export CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS $LTO_FLAG -fno-c++-static-destructors" && \
     export LDFLAGS="-fuse-ld=lld $LDFLAGS " && \
     cd /webkitbuild && \
     cmake \
@@ -122,7 +122,6 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     -DALLOW_LINE_AND_COLUMN_NUMBER_IN_BUILTINS=ON \
     -DENABLE_SINGLE_THREADED_VM_ENTRY_SCOPE=ON \
     -DENABLE_REMOTE_INSPECTOR=ON \
-    -DCMAKE_POSITION_INDEPENDENT_CODE=OFF \
     -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld" \
     -DCMAKE_AR=$(which llvm-ar) \
     -DCMAKE_RANLIB=$(which llvm-ranlib) \
