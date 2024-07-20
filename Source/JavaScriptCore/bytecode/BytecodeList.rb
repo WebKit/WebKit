@@ -270,7 +270,7 @@ op :call_direct_eval,
         argv: unsigned,
         thisValue: VirtualRegister,
         scope: VirtualRegister,
-        lexicallyScopedFeatures: unsigned,
+        ecmaMode: ECMAMode,
         valueProfile: unsigned,
     },
     metadata: {

@@ -74,7 +74,7 @@ static bool parseScript(VM& vm, const SourceCode& source, ParserError& error)
 {
     return !!parseRootNode<ProgramNode>(
         vm, source, ImplementationVisibility::Public, JSParserBuiltinMode::NotBuiltin,
-        NoLexicallyScopedFeatures, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, error);
+        JSParserStrictMode::NotStrict, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, error);
 }
 
 extern "C" {

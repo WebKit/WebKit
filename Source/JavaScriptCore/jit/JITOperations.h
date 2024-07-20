@@ -31,7 +31,6 @@
 #include "JITOperationValidation.h"
 #include "MegamorphicCache.h"
 #include "OperationResult.h"
-#include "ParserModes.h"
 #include "PrivateFieldPutKind.h"
 #include "UGPRPair.h"
 #include <wtf/Platform.h>
@@ -317,8 +316,6 @@ JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameByIdGeneric, EncodedJSValue, (J
 // These use void* instead of CallFrame* to prevent setupArguments from assuming we want the current call frame.
 JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalSloppy, EncodedJSValue, (void*, JSScope*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalStrict, EncodedJSValue, (void*, JSScope*, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalSloppyTaintedByWithScope, EncodedJSValue, (void*, JSScope*, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalStrictTaintedByWithScope, EncodedJSValue, (void*, JSScope*, EncodedJSValue));
 
 JSC_DECLARE_JIT_OPERATION(operationPolymorphicCall, UCPURegister, (CallFrame*, CallLinkInfo*));
 JSC_DECLARE_JIT_OPERATION(operationVirtualCall, UCPURegister, (CallFrame*, CallLinkInfo*));
@@ -466,21 +463,6 @@ inline decltype(auto) selectNewFunctionWithInvalidatedReallocationWatchpointOper
         else
             function = operationNewSloppyFunctionWithInvalidatedReallocationWatchpoint;
     }
-    return function;
-}
-
-inline decltype(auto) selectCallDirectEvalOperation(LexicallyScopedFeatures features)
-{
-    bool isStrictMode = features & StrictModeLexicallyScopedFeature;
-    bool isTaintedByWithScope = features & TaintedByWithScopeLexicallyScopedFeature;
-
-    auto function = operationCallDirectEvalSloppy;
-    if (isStrictMode && isTaintedByWithScope)
-        function = operationCallDirectEvalStrictTaintedByWithScope;
-    else if (isTaintedByWithScope)
-        function = operationCallDirectEvalSloppyTaintedByWithScope;
-    else if (isStrictMode)
-        function = operationCallDirectEvalStrict;
     return function;
 }
 

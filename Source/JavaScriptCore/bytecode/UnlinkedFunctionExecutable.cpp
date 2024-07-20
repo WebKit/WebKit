@@ -52,11 +52,12 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
     UnlinkedFunctionKind functionKind, ParserError& error, SourceParseMode parseMode)
 {
     JSParserBuiltinMode builtinMode = executable->isBuiltinFunction() ? JSParserBuiltinMode::Builtin : JSParserBuiltinMode::NotBuiltin;
+    JSParserStrictMode strictMode = executable->isInStrictContext() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
     JSParserScriptMode scriptMode = executable->scriptMode();
     ASSERT(isFunctionParseMode(executable->parseMode()));
     auto* classElementDefinitions = executable->classElementDefinitions();
     std::unique_ptr<FunctionNode> function = parse<FunctionNode>(
-        vm, source, executable->name(), executable->implementationVisibility(), builtinMode, executable->lexicallyScopedFeatures(), scriptMode, executable->parseMode(), executable->functionMode(), executable->superBinding(), error, executable->constructorKind(), executable->derivedContextType(), EvalContextType::None, nullptr, classElementDefinitions);
+        vm, source, executable->name(), executable->implementationVisibility(), builtinMode, strictMode, scriptMode, executable->parseMode(), executable->functionMode(), executable->superBinding(), error, executable->constructorKind(), executable->derivedContextType(), EvalContextType::None, nullptr, classElementDefinitions);
 
     if (!function) {
         ASSERT(error.isValid());
@@ -209,9 +210,8 @@ UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(
     ParserError error;
     VM& vm = globalObject->vm();
     CodeCache* codeCache = vm.codeCache();
-    LexicallyScopedFeatures lexicallyScopedFeatures = globalObject->globalScopeExtension() ? TaintedByWithScopeLexicallyScopedFeature : NoLexicallyScopedFeatures;
     OptionSet<CodeGenerationMode> codeGenerationMode = globalObject->defaultCodeGenerationMode();
-    UnlinkedFunctionExecutable* executable = codeCache->getUnlinkedGlobalFunctionExecutable(vm, name, source, lexicallyScopedFeatures, codeGenerationMode, functionConstructorParametersEndPosition, error);
+    UnlinkedFunctionExecutable* executable = codeCache->getUnlinkedGlobalFunctionExecutable(vm, name, source, codeGenerationMode, functionConstructorParametersEndPosition, error);
 
     if (globalObject->hasDebugger())
         globalObject->debugger()->sourceParsed(globalObject, source.provider(), error.line(), error.message());

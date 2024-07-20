@@ -170,7 +170,7 @@ void JIT::compileCallDirectEval(const OpCallDirectEval& bytecode)
 
     emitGetVirtualRegister(bytecode.m_thisValue, thisValueJSR);
     emitGetVirtualRegisterPayload(bytecode.m_scope, scopeGPR);
-    callOperation(selectCallDirectEvalOperation(bytecode.m_lexicallyScopedFeatures), calleeFrameGPR, scopeGPR, thisValueJSR);
+    callOperation(bytecode.m_ecmaMode.isStrict() ? operationCallDirectEvalStrict : operationCallDirectEvalSloppy, calleeFrameGPR, scopeGPR, thisValueJSR);
     addSlowCase(branchIfEmpty(returnValueJSR));
 
     setFastPathResumePoint();

@@ -889,7 +889,7 @@ void SpeculativeJIT::emitCall(Node* node)
         subPtr(TrustedImm32(requiredBytes), stackPointerRegister);
         setupArguments<decltype(operationCallDirectEvalSloppy)>(calleeFrameGPR, evalScopeGPR, evalThisValueJSR);
         prepareForExternalCall();
-        appendCall(selectCallDirectEvalOperation(node->lexicallyScopedFeatures()));
+        appendCall(node->ecmaMode().isStrict() ? operationCallDirectEvalStrict : operationCallDirectEvalSloppy);
         exceptionCheck();
         Jump done = branchIfNotEmpty(GPRInfo::returnValueGPR2);
         

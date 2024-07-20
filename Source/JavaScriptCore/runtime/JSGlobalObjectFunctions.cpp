@@ -516,8 +516,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncEval, (JSGlobalObject* globalObject, CallFram
 
     SourceOrigin sourceOrigin = callFrame->callerSourceOrigin(vm);
     SourceTaintedOrigin sourceTaintedOrigin = computeNewSourceTaintedOriginFromStack(vm, callFrame);
-    LexicallyScopedFeatures lexicallyScopedFeatures = globalObject->globalScopeExtension() ? TaintedByWithScopeLexicallyScopedFeature : NoLexicallyScopedFeatures;
-    EvalExecutable* eval = IndirectEvalExecutable::tryCreate(globalObject, makeSource(s, sourceOrigin, sourceTaintedOrigin), lexicallyScopedFeatures, DerivedContextType::None, false, EvalContextType::None);
+    EvalExecutable* eval = IndirectEvalExecutable::tryCreate(globalObject, makeSource(s, sourceOrigin, sourceTaintedOrigin), DerivedContextType::None, false, EvalContextType::None);
     EXCEPTION_ASSERT(!!scope.exception() == !eval);
     if (!eval)
         return encodedJSValue();

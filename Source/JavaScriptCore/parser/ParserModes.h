@@ -32,6 +32,7 @@
 
 namespace JSC {
 
+enum class JSParserStrictMode { NotStrict, Strict };
 enum class JSParserBuiltinMode { NotBuiltin, Builtin };
 enum class JSParserScriptMode { Classic, Module };
 
@@ -322,9 +323,8 @@ typedef uint8_t LexicallyScopedFeatures;
 
 const LexicallyScopedFeatures NoLexicallyScopedFeatures                     = 0;
 const LexicallyScopedFeatures StrictModeLexicallyScopedFeature         = 1 << 0;
-const LexicallyScopedFeatures TaintedByWithScopeLexicallyScopedFeature = 1 << 1;
 
-const LexicallyScopedFeatures AllLexicallyScopedFeatures = NoLexicallyScopedFeatures | StrictModeLexicallyScopedFeature | TaintedByWithScopeLexicallyScopedFeature;
+const LexicallyScopedFeatures AllLexicallyScopedFeatures = NoLexicallyScopedFeatures | StrictModeLexicallyScopedFeature;
 static constexpr unsigned bitWidthOfLexicallyScopedFeatures = 2;
 static_assert(AllLexicallyScopedFeatures <= (1 << bitWidthOfLexicallyScopedFeatures) - 1, "LexicallyScopedFeatures must be 2bits");
 
