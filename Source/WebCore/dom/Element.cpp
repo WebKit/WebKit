@@ -519,6 +519,7 @@ Element::DispatchMouseEventResult Element::dispatchMouseEvent(const PlatformMous
             mouseEvent->bubbles() ? Event::CanBubble::Yes : Event::CanBubble::No,
             mouseEvent->cancelable() ? Event::IsCancelable::Yes : Event::IsCancelable::No,
             Event::IsComposed::Yes,
+            MonotonicTime::now(),
             mouseEvent->view(), mouseEvent->detail(),
             mouseEvent->screenX(), mouseEvent->screenY(), mouseEvent->clientX(), mouseEvent->clientY(),
             mouseEvent->modifierKeys(), mouseEvent->button(), mouseEvent->buttons(), mouseEvent->syntheticClickType(), relatedTarget);
