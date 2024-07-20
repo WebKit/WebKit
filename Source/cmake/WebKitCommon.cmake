@@ -167,7 +167,9 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     set(WebKit_LIBRARY_TYPE SHARED)
     set(WebCoreTestSupport_LIBRARY_TYPE STATIC)
 
-    set(CMAKE_POSITION_INDEPENDENT_CODE True)
+    if (NOT USE_BUN_JSC_ADDITIONS)
+        set(CMAKE_POSITION_INDEPENDENT_CODE True)
+    endif ()
 
     # -----------------------------------------------------------------------------
     # Install JavaScript shell
