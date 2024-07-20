@@ -1,3 +1,4 @@
+//@ skip if !$isSIMDPlatform
 let tools;
 if (globalThis.callerIsBBQOrOMGCompiled) {
   function instantiateJsc(filename, importObject) {
