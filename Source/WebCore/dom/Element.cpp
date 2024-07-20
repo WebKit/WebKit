@@ -412,10 +412,15 @@ void Element::setTabIndexForBindings(int value)
 
 bool Element::isKeyboardFocusable(KeyboardEvent*) const
 {
-    if (!(isFocusable() && !shouldBeIgnoredInSequentialFocusNavigation() && tabIndexSetExplicitly().value_or(0) >= 0))
+    if (!isFocusable() || shouldBeIgnoredInSequentialFocusNavigation() || tabIndexSetExplicitly().value_or(0) < 0)
         return false;
     if (RefPtr root = shadowRoot()) {
         if (root->delegatesFocus())
+            return false;
+    }
+    // Popovers with invokers delegate focus.
+    if (RefPtr popover = dynamicDowncast<HTMLElement>(*this)) {
+        if (popover->isPopoverShowing() && popover->popoverData()->invoker())
             return false;
     }
     return true;

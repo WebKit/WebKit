@@ -104,6 +104,8 @@ public:
 
     RefPtr<Element> invokeTargetElement() const;
 
+    bool isKeyboardFocusable(KeyboardEvent*) const override;
+
     using Node::ref;
     using Node::deref;
 
@@ -121,7 +123,6 @@ protected:
     void readOnlyStateChanged() override;
     virtual void requiredStateChanged();
 
-    bool isKeyboardFocusable(KeyboardEvent*) const override;
     bool isMouseFocusable() const override;
 
     void didRecalcStyle(Style::Change) override;
