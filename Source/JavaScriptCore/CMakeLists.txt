@@ -430,7 +430,7 @@ set(LLIntOffsetsExtractor_PRIVATE_INCLUDE_DIRECTORIES
 set(LLIntOffsetsExtractor_FRAMEWORKS ${JavaScriptCore_FRAMEWORKS})
 set(LLIntOffsetsExtractor_DEPENDENCIES JavaScriptCore_CopyHeaders JSCBuiltins)
 WEBKIT_EXECUTABLE(LLIntOffsetsExtractor)
-set_target_properties(LLIntSettingsExtractor PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(LLIntOffsetsExtractor PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 # The build system will execute asm.rb every time LLIntOffsetsExtractor's mtime is newer than
 # LLIntAssembly.h's mtime. The problem we have here is: asm.rb has some built-in optimization
