@@ -77,6 +77,8 @@ static ASCIILiteral toFeatureNameForLogging(PermissionsPolicy::Feature feature)
 #if ENABLE(WEB_AUTHN)
     case PermissionsPolicy::Feature::PublickeyCredentialsGetRule:
         return "PublickeyCredentialsGet"_s;
+    case PermissionsPolicy::Feature::DigitalCredentialsGetRule:
+        return "DigitalCredentialsGet"_s;
 #endif
 #if ENABLE(WEBXR)
     case PermissionsPolicy::Feature::XRSpatialTracking:
@@ -117,6 +119,7 @@ static std::pair<PermissionsPolicy::Feature, StringView> readFeatureIdentifier(S
 #endif
 #if ENABLE(WEB_AUTHN)
     constexpr auto publickeyCredentialsGetRuleToken { "publickey-credentials-get"_s };
+    constexpr auto digitalCredentialsGetRuleToken { "digital-credentials-get"_s };
 #endif
 #if ENABLE(WEBXR)
     constexpr auto xrSpatialTrackingToken { "xr-spatial-tracking"_s };
@@ -171,6 +174,9 @@ static std::pair<PermissionsPolicy::Feature, StringView> readFeatureIdentifier(S
     } else if (value.startsWith(publickeyCredentialsGetRuleToken)) {
         feature = PermissionsPolicy::Feature::PublickeyCredentialsGetRule;
         remainingValue = value.substring(publickeyCredentialsGetRuleToken.length());
+    } else if (value.startsWith(digitalCredentialsGetRuleToken)) {
+        feature = PermissionsPolicy::Feature::DigitalCredentialsGetRule;
+        remainingValue = value.substring(digitalCredentialsGetRuleToken.length());
 #endif
 #if ENABLE(WEBXR)
     } else if (value.startsWith(xrSpatialTrackingToken)) {
@@ -213,6 +219,7 @@ static ASCIILiteral defaultAllowlistValue(PermissionsPolicy::Feature feature)
 #endif
 #if ENABLE(WEB_AUTHN)
     case PermissionsPolicy::Feature::PublickeyCredentialsGetRule:
+    case PermissionsPolicy::Feature::DigitalCredentialsGetRule:
 #endif
 #if ENABLE(WEBXR)
     case PermissionsPolicy::Feature::XRSpatialTracking:

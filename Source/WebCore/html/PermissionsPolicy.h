@@ -63,6 +63,7 @@ public:
 #endif
 #if ENABLE(WEB_AUTHN)
         PublickeyCredentialsGetRule,
+        DigitalCredentialsGetRule,
 #endif
 #if ENABLE(WEBXR)
         XRSpatialTracking,

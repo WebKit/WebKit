@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<body></body>
+<script type="module">
+  // @ts-check
+  /**
+   *
+   * @typedef {import('./dc-types').ActionType} IframeActionType
+   * @typedef {import('./dc-types').AbortType} AbortType
+   * @typedef {import('./dc-types').EventData} EventData
+   * @typedef {import('./dc-types').PostData} PostData
+   */
+
+  /**
+   * @param {MessageEvent<EventData>} event
+   */
+  async function messageListener(event) {
+    /** @type {EventData} */
+    const data = event.data ? { ...event.data } : {};
+    /** @type {PostData} */
+    const abortController = new AbortController();
+    if (data.abort) {
+      if (!data.options) {
+        data.options = {};
+      }
+      data.options.signal = abortController.signal;
+    }
+    let result;
+    try {
+      /** @type {CrendetialManager} */
+      const { identity } = navigator;
+      if (abortController && data.abort === "before") {
+        abortController.abort();
+      }
+      switch (data.action) {
+        case "ping":
+          result = "pong";
+          break;
+        case "create":
+          result = await identity.create(data.options);
+          break;
+        case "get":
+          await test_driver.bless("user activation", null, window);
+          assert_true(navigator.userActivation.isActive, "user activation must be active");
+          result = await identity.get(data.options);
+          break;
+        case "preventSilentAccess":
+          result = await identity.preventSilentAccess();
+          break;
+        default:
+          throw new Error(
+            `Unsupported action in ${window.location}: ${data.action}`
+          );
+      }
+    } catch (error) {
+      result = {
+        constructor: error.constructor.name,
+        name: error.name,
+        message: error.message,
+      };
+    } finally {
+      event.source?.postMessage(result, event.origin);
+    }
+  }
+
+  window.addEventListener("message", messageListener);
+</script>
