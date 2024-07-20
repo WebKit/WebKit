@@ -1273,6 +1273,8 @@ private:
     bool m_cachedIsInVisibilityAdjustmentSubtree : 1 { false };
     bool m_requiresTextTrackRepresentation : 1 { false };
 
+    IntRect m_textTrackRepresentationBounds;
+
     enum class ControlsState : uint8_t { None, Initializing, Ready, PartiallyDeinitialized };
     friend String convertEnumerationToString(HTMLMediaElement::ControlsState enumerationValue);
     ControlsState m_controlsState { ControlsState::None };

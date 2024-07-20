@@ -6785,6 +6785,10 @@ void HTMLMediaElement::visibilityStateChanged()
 
 void HTMLMediaElement::setTextTrackRepresentataionBounds(const IntRect& bounds)
 {
+    m_textTrackRepresentationBounds = bounds;
+    if (!m_requiresTextTrackRepresentation)
+        return;
+
     if (!ensureMediaControls())
         return;
 
@@ -6796,9 +6800,18 @@ void HTMLMediaElement::setRequiresTextTrackRepresentation(bool requiresTextTrack
 {
     if (m_requiresTextTrackRepresentation == requiresTextTrackRepresentation)
         return;
+
     m_requiresTextTrackRepresentation = requiresTextTrackRepresentation;
-    if (ensureMediaControls())
-        m_mediaControlsHost->requiresTextTrackRepresentationChanged();
+    if (!ensureMediaControls())
+        return;
+
+    m_mediaControlsHost->requiresTextTrackRepresentationChanged();
+
+    if (m_textTrackRepresentationBounds.isEmpty() || !m_requiresTextTrackRepresentation)
+        return;
+
+    if (auto* textTrackRepresentation = m_mediaControlsHost->textTrackRepresentation())
+        textTrackRepresentation->setBounds(m_textTrackRepresentationBounds);
 }
 
 bool HTMLMediaElement::requiresTextTrackRepresentation() const
