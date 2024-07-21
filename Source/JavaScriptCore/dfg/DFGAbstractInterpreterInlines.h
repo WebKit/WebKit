@@ -3695,7 +3695,20 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
         }
-        setTypeForNode(node, SpecObjectOther);
+
+        switch (node->child1()->op()) {
+        case NewFunction:
+        case NewGeneratorFunction:
+        case NewAsyncGeneratorFunction:
+        case NewAsyncFunction: {
+            m_state.setShouldTryConstantFolding(true);
+            forNode(node) = forNode(node->child1()->child1());
+            break;
+        }
+        default:
+            setTypeForNode(node, SpecObjectOther);
+            break;
+        }
         break;
 
     case SkipScope: {

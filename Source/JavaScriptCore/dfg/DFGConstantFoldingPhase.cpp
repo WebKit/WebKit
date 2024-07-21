@@ -1254,7 +1254,32 @@ private:
 
                 break;
             }
-                
+
+            case GetScope: {
+                if (JSValue base = m_state.forNode(node->child1()).m_value) {
+                    if (JSFunction* function = jsDynamicCast<JSFunction*>(base)) {
+                        m_graph.convertToConstant(node, function->scope());
+                        changed = true;
+                        break;
+                    }
+                }
+
+                switch (node->child1()->op()) {
+                case NewFunction:
+                case NewGeneratorFunction:
+                case NewAsyncGeneratorFunction:
+                case NewAsyncFunction: {
+                    node->convertToIdentityOn(node->child1()->child1().node());
+                    node->child1().setUseKind(KnownCellUse);
+                    eliminated = true;
+                    break;
+                }
+                default:
+                    break;
+                }
+                break;
+            }
+
             case PhantomNewObject:
             case PhantomNewFunction:
             case PhantomNewGeneratorFunction:
