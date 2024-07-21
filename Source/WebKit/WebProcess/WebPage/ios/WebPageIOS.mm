@@ -4688,8 +4688,15 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
 
 void WebPage::updateLayoutViewportHeightExpansionTimerFired()
 {
+    if (m_disallowLayoutViewportHeightExpansionReasons.contains(DisallowLayoutViewportHeightExpansionReason::LargeContainer))
+        return;
+
     RefPtr mainFrame = m_mainFrame->coreLocalFrame();
     if (!mainFrame)
+        return;
+
+    RefPtr document = mainFrame->document();
+    if (!document)
         return;
 
     RefPtr view = mainFrame->view();
@@ -4716,19 +4723,18 @@ void WebPage::updateLayoutViewportHeightExpansionTimerFired()
         if (largeViewportConstrainedElements.isEmpty())
             return false;
 
-        RefPtr hitTestedNode = mainFrame->eventHandler().hitTestResultAtPoint(LayoutPoint { viewportRect.center() }, HitTestRequest::Type::ReadOnly).innerNode();
-        if (!hitTestedNode)
+        auto hitTestResult = HitTestResult { LayoutRect { viewportRect } };
+        if (!document->hitTest({ HitTestSource::User, { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::CollectMultipleElements } }, hitTestResult))
             return false;
 
-        return largeViewportConstrainedElements.containsIf([hitTestedNode](auto& element) {
-            return element->contains(*hitTestedNode);
+        auto& hitTestedNodes = hitTestResult.listBasedTestResult();
+        return std::ranges::any_of(largeViewportConstrainedElements, [&hitTestedNodes](auto& element) {
+            return hitTestedNodes.contains(element);
         });
     }();
 
     if (hitTestedToLargeViewportConstrainedElement)
         addReasonsToDisallowLayoutViewportHeightExpansion(DisallowLayoutViewportHeightExpansionReason::LargeContainer);
-    else
-        removeReasonsToDisallowLayoutViewportHeightExpansion(DisallowLayoutViewportHeightExpansionReason::LargeContainer);
 }
 
 void WebPage::willStartUserTriggeredZooming()
