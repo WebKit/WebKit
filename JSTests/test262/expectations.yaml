@@ -1069,9 +1069,6 @@ test/built-ins/TypedArray/prototype/includes/index-compared-against-initial-leng
 test/built-ins/TypedArrayConstructors/ctors/object-arg/iterated-array-changed-by-tonumber.js:
   default: 'Test262Error: Expected SameValue(«NaN», «2») to be true (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected SameValue(«NaN», «2») to be true (Testing with Float64Array.)'
-test/built-ins/Uint8Array/prototype/setFromBase64/writes-up-to-error.js:
-  default: 'Test262Error: Expected [255, 255, 255, 255, 255] and [50, 54, 50, 255, 255] to have the same contents. decoding from MjYyZm.9v should only write the valid chunks'
-  strict mode: 'Test262Error: Expected [255, 255, 255, 255, 255] and [50, 54, 50, 255, 255] to have the same contents. decoding from MjYyZm.9v should only write the valid chunks'
 test/intl402/DateTimeFormat/canonicalize-calendar.js:
   default: 'Test262Error: calendar ID is canonicalized (option) Expected SameValue(«islamicc», «islamic-civil») to be true'
   strict mode: 'Test262Error: calendar ID is canonicalized (option) Expected SameValue(«islamicc», «islamic-civil») to be true'

@@ -85,18 +85,18 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromBase64, (JSGlobalObject* globa
     StringView view = jsString->view(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto result = fromBase64(view, std::numeric_limits<size_t>::max(), alphabet, lastChunkHandling);
-    if (!result)
+    auto [shouldThrowError, readLength, writeData] = fromBase64(view, std::numeric_limits<size_t>::max(), alphabet, lastChunkHandling);
+    if (shouldThrowError == FromBase64ShouldThrowError::Yes)
         return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.fromBase64 requires a valid base64 string"_s));
 
-    ASSERT(result->first <= view.length());
+    ASSERT(readLength <= view.length());
 
-    size_t length = result->second.size();
+    size_t length = writeData.size();
     JSUint8Array* uint8Array = JSUint8Array::createUninitialized(globalObject, globalObject->typedArrayStructure(TypeUint8, false), length);
     RETURN_IF_EXCEPTION(scope, { });
 
     uint8_t* data = uint8Array->typedVector();
-    memcpySpan(std::span { data, data + length }, result->second.span());
+    memcpySpan(std::span { data, data + length }, writeData.span());
     return JSValue::encode(uint8Array);
 }
 

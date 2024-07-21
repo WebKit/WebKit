@@ -230,6 +230,7 @@ template<typename Adaptor> inline RefPtr<typename Adaptor::ViewType> toUnsharedN
 
 enum class Alphabet : uint8_t { Base64, Base64URL };
 enum class LastChunkHandling : uint8_t { Loose, Strict, StopBeforePartial };
-std::optional<std::pair<size_t, Vector<uint8_t>>> fromBase64(StringView, size_t, Alphabet, LastChunkHandling);
+enum class FromBase64ShouldThrowError: bool { Yes, No };
+std::tuple<FromBase64ShouldThrowError, size_t, Vector<uint8_t>> fromBase64(StringView, size_t, Alphabet, LastChunkHandling);
 
 } // namespace JSC

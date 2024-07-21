@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-std::optional<std::pair<size_t, Vector<uint8_t>>> fromBase64(StringView string, size_t maxLength, Alphabet alphabet, LastChunkHandling lastChunkHandling)
+std::tuple<FromBase64ShouldThrowError, size_t, Vector<uint8_t>> fromBase64(StringView string, size_t maxLength, Alphabet alphabet, LastChunkHandling lastChunkHandling)
 {
     size_t read = 0;
     size_t length = static_cast<size_t>(string.length());
@@ -39,7 +39,7 @@ std::optional<std::pair<size_t, Vector<uint8_t>>> fromBase64(StringView string, 
     bytes.reserveInitialCapacity(std::min(length, maxLength));
 
     if (!maxLength)
-        return { { read, WTFMove(bytes) } };
+        return std::make_tuple(FromBase64ShouldThrowError::No, read, WTFMove(bytes));
 
     UChar chunk[4] = { 0, 0, 0, 0 };
     size_t chunkLength = 0;
@@ -52,7 +52,7 @@ std::optional<std::pair<size_t, Vector<uint8_t>>> fromBase64(StringView string, 
 
         if (c == '=') {
             if (chunkLength < 2)
-                return std::nullopt;
+                return std::make_tuple(FromBase64ShouldThrowError::Yes, read, WTFMove(bytes));
 
             while (i < length && isASCIIWhitespace(string[i]))
                 ++i;
@@ -60,9 +60,9 @@ std::optional<std::pair<size_t, Vector<uint8_t>>> fromBase64(StringView string, 
             if (chunkLength == 2) {
                 if (i == length) {
                     if (lastChunkHandling == LastChunkHandling::StopBeforePartial)
-                        return { { read, WTFMove(bytes) } };
+                        return std::make_tuple(FromBase64ShouldThrowError::No, read, WTFMove(bytes));
 
-                    return std::nullopt;
+                    return std::make_tuple(FromBase64ShouldThrowError::Yes, read, WTFMove(bytes));
                 }
 
                 if (string[i] == '=') {
@@ -73,29 +73,29 @@ std::optional<std::pair<size_t, Vector<uint8_t>>> fromBase64(StringView string, 
             }
 
             if (i < length)
-                return std::nullopt;
+                return std::make_tuple(FromBase64ShouldThrowError::Yes, read, WTFMove(bytes));
 
             for (size_t j = chunkLength; j < 4; ++j)
                 chunk[j] = 'A';
 
             auto decoded = base64Decode(StringView(std::span(chunk, 4)));
             if (!decoded)
-                return std::nullopt;
+                return std::make_tuple(FromBase64ShouldThrowError::Yes, read, WTFMove(bytes));
 
             if (chunkLength == 2 || chunkLength == 3) {
                 if (lastChunkHandling == LastChunkHandling::Strict && decoded->at(chunkLength - 1))
-                    return std::nullopt;
+                    return std::make_tuple(FromBase64ShouldThrowError::Yes, read, WTFMove(bytes));
 
                 decoded->shrink(chunkLength - 1);
             }
 
             bytes.appendVector(WTFMove(*decoded));
-            return { { length, WTFMove(bytes) } };
+            return std::make_tuple(FromBase64ShouldThrowError::No, length, WTFMove(bytes));
         }
 
         if (alphabet == Alphabet::Base64URL) {
             if (c == '+' || c == '/')
-                return std::nullopt;
+                return std::make_tuple(FromBase64ShouldThrowError::Yes, read, WTFMove(bytes));
 
             if (c == '-')
                 c = '+';
@@ -104,11 +104,11 @@ std::optional<std::pair<size_t, Vector<uint8_t>>> fromBase64(StringView string, 
         }
 
         if (!StringView("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"_s).contains(c))
-            return std::nullopt;
+            return std::make_tuple(FromBase64ShouldThrowError::Yes, read, WTFMove(bytes));
 
         auto remaining = maxLength - bytes.size();
         if ((remaining == 1 && chunkLength == 2) || (remaining == 2 && chunkLength == 3))
-            return { { read, WTFMove(bytes) } };
+            return std::make_tuple(FromBase64ShouldThrowError::No, read, WTFMove(bytes));
 
         chunk[chunkLength++] = c;
         if (chunkLength != 4)
@@ -117,13 +117,13 @@ std::optional<std::pair<size_t, Vector<uint8_t>>> fromBase64(StringView string, 
         auto decoded = base64Decode(StringView(std::span(chunk, chunkLength)));
         ASSERT(decoded);
         if (!decoded)
-            return std::nullopt;
+            return std::make_tuple(FromBase64ShouldThrowError::Yes, read, WTFMove(bytes));
 
         read = i;
 
         bytes.appendVector(WTFMove(*decoded));
         if (bytes.size() == maxLength)
-            return { { read, WTFMove(bytes) } };
+            return std::make_tuple(FromBase64ShouldThrowError::No, read, WTFMove(bytes));
 
         for (size_t j = 0; j < 4; ++j)
             chunk[j] = 0;
@@ -132,10 +132,10 @@ std::optional<std::pair<size_t, Vector<uint8_t>>> fromBase64(StringView string, 
 
     if (chunkLength) {
         if (lastChunkHandling == LastChunkHandling::StopBeforePartial)
-            return { { read, WTFMove(bytes) } };
+            return std::make_tuple(FromBase64ShouldThrowError::No, read, WTFMove(bytes));
 
         if (lastChunkHandling == LastChunkHandling::Strict || chunkLength == 1)
-            return std::nullopt;
+            return std::make_tuple(FromBase64ShouldThrowError::Yes, read, WTFMove(bytes));
 
         for (size_t j = chunkLength; j < 4; ++j)
             chunk[j] = 'A';
@@ -143,7 +143,7 @@ std::optional<std::pair<size_t, Vector<uint8_t>>> fromBase64(StringView string, 
         auto decoded = base64Decode(StringView(std::span(chunk, chunkLength)));
         ASSERT(decoded);
         if (!decoded)
-            return std::nullopt;
+            return std::make_tuple(FromBase64ShouldThrowError::Yes, read, WTFMove(bytes));
 
         if (chunkLength == 2 || chunkLength == 3)
             decoded->shrink(chunkLength - 1);
@@ -151,7 +151,7 @@ std::optional<std::pair<size_t, Vector<uint8_t>>> fromBase64(StringView string, 
         bytes.appendVector(WTFMove(*decoded));
     }
 
-    return { { length, WTFMove(bytes) } };
+    return std::make_tuple(FromBase64ShouldThrowError::No, length, WTFMove(bytes));
 }
 
 } // namespace JSC

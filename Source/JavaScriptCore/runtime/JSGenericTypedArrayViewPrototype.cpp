@@ -95,18 +95,20 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromBase64, (JSGlobalObject* glob
     StringView view = jsString->view(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto result = fromBase64(view, uint8Array->length(), alphabet, lastChunkHandling);
-    if (!result)
+    auto [shouldThrowError, readLength, writeData] = fromBase64(view, uint8Array->length(), alphabet, lastChunkHandling);
+
+    ASSERT(readLength <= view.length());
+    ASSERT(writeData.size() <= uint8Array->length());
+
+    if (writeData.size() > 0)
+        memmove(uint8Array->typedVector(), writeData.data(), writeData.size());
+
+    if (shouldThrowError == FromBase64ShouldThrowError::Yes)
         return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires a valid base64 string"_s));
 
-    ASSERT(result->first <= view.length());
-    ASSERT(result->second.size() <= uint8Array->length());
-
-    memmove(uint8Array->typedVector(), result->second.data(), result->second.size());
-
     JSObject* resultObject = constructEmptyObject(globalObject);
-    resultObject->putDirect(vm, vm.propertyNames->read, jsNumber(result->first));
-    resultObject->putDirect(vm, vm.propertyNames->written, jsNumber(result->second.size()));
+    resultObject->putDirect(vm, vm.propertyNames->read, jsNumber(readLength));
+    resultObject->putDirect(vm, vm.propertyNames->written, jsNumber(writeData.size()));
 
     return JSValue::encode(resultObject);
 }
