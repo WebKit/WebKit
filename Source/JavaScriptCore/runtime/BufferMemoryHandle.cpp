@@ -261,14 +261,7 @@ BufferMemoryHandle::~BufferMemoryHandle()
             // nullBasePointer's zero-sized memory is not used for MemoryMode::Signaling.
             constexpr bool readable = true;
             constexpr bool writable = true;
-            if (!OSAllocator::protect(memory, BufferMemoryHandle::fastMappedBytes(), readable, writable)) {
-#if OS(WINDOWS)
-                dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
-#else
-                dataLogLn("mprotect failed: ", safeStrerror(errno).data());
-#endif
-                RELEASE_ASSERT_NOT_REACHED();
-            }
+            OSAllocator::protect(memory, BufferMemoryHandle::fastMappedBytes(), readable, writable);
             BufferMemoryManager::singleton().freeFastMemory(memory);
             break;
         }
@@ -287,14 +280,7 @@ BufferMemoryHandle::~BufferMemoryHandle()
                 }
                 constexpr bool readable = true;
                 constexpr bool writable = true;
-                if (!OSAllocator::protect(memory, m_mappedCapacity, readable, writable)) {
-#if OS(WINDOWS)
-                    dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
-#else
-                    dataLogLn("mprotect failed: ", safeStrerror(errno).data());
-#endif
-                    RELEASE_ASSERT_NOT_REACHED();
-                }
+                OSAllocator::protect(memory, m_mappedCapacity, readable, writable);
                 BufferMemoryManager::singleton().freeGrowableBoundsCheckingMemory(memory, m_mappedCapacity);
                 break;
             }

@@ -104,15 +104,7 @@ static RefPtr<BufferMemoryHandle> tryAllocateResizableMemory(VM* vm, size_t size
 
     constexpr bool readable = false;
     constexpr bool writable = false;
-    if (!OSAllocator::protect(slowMemory + initialBytes, maximumBytes - initialBytes, readable, writable)) {
-#if OS(WINDOWS)
-        dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
-#else
-        dataLogLn("mprotect failed: ", safeStrerror(errno).data());
-#endif
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-
+    OSAllocator::protect(slowMemory + initialBytes, maximumBytes - initialBytes, readable, writable);
     return adoptRef(*new BufferMemoryHandle(slowMemory, initialBytes, maximumBytes, PageCount::fromBytes(initialBytes), PageCount::fromBytes(maximumBytes), MemorySharingMode::Shared, MemoryMode::BoundsChecking));
 }
 
@@ -496,14 +488,7 @@ Expected<int64_t, GrowFailReason> ArrayBuffer::resize(VM& vm, size_t newByteLeng
                 dataLogLnIf(ArrayBufferInternal::verbose, "Marking memory's ", RawPointer(memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + bytesToAdd), ")");
                 constexpr bool readable = true;
                 constexpr bool writable = true;
-                if (!OSAllocator::protect(startAddress, bytesToAdd, readable, writable)) {
-#if OS(WINDOWS)
-                    dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
-#else
-                    dataLogLn("mprotect failed: ", safeStrerror(errno).data());
-#endif
-                    RELEASE_ASSERT_NOT_REACHED();
-                }
+                OSAllocator::protect(startAddress, bytesToAdd, readable, writable);
             } else {
                 size_t bytesToSubtract = memoryHandle->size() - desiredSize;
                 ASSERT(bytesToSubtract);
@@ -519,14 +504,7 @@ Expected<int64_t, GrowFailReason> ArrayBuffer::resize(VM& vm, size_t newByteLeng
                 dataLogLnIf(ArrayBufferInternal::verbose, "Marking memory's ", RawPointer(memory), " as none in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + bytesToSubtract), ")");
                 constexpr bool readable = false;
                 constexpr bool writable = false;
-                if (!OSAllocator::protect(startAddress, bytesToSubtract, readable, writable)) {
-#if OS(WINDOWS)
-                    dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
-#else
-                    dataLogLn("mprotect failed: ", safeStrerror(errno).data());
-#endif
-                    RELEASE_ASSERT_NOT_REACHED();
-                }
+                OSAllocator::protect(startAddress, bytesToSubtract, readable, writable);
             }
             memoryHandle->updateSize(desiredSize);
         }
@@ -606,15 +584,7 @@ Expected<int64_t, GrowFailReason> SharedArrayBufferContents::grow(const Abstract
         dataLogLnIf(ArrayBufferInternal::verbose, "Marking memory's ", RawPointer(memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + extraBytes), ")");
         constexpr bool readable = true;
         constexpr bool writable = true;
-        if (!OSAllocator::protect(startAddress, extraBytes, readable, writable)) {
-#if OS(WINDOWS)
-            dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
-#else
-            dataLogLn("mprotect failed: ", safeStrerror(errno).data());
-#endif
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-
+        OSAllocator::protect(startAddress, extraBytes, readable, writable);
         m_memoryHandle->updateSize(desiredSize);
     }
 

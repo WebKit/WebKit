@@ -152,11 +152,7 @@ static void assertEqualsAsCharactersPtr(JSValueRef value, const char* expectedVa
     }
     
     if (jsLength != (size_t)cfLength) {
-#if OS(WINDOWS)
-        fprintf(stderr, "assertEqualsAsCharactersPtr failed: jsLength(%Iu) != cfLength(%Iu)\n", jsLength, (size_t)cfLength);
-#else
-        fprintf(stderr, "assertEqualsAsCharactersPtr failed: jsLength(%zu) != cfLength(%zu)\n", jsLength, (size_t)cfLength);
-#endif
+        fprintf(stderr, "assertEqualsAsCharactersPtr failed: jsLength(%llu) != cfLength(%llu)\n", (unsigned long long)jsLength, (unsigned long long)cfLength);
         failed = 1;
     }
 

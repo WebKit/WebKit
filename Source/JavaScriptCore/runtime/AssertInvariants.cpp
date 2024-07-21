@@ -72,9 +72,7 @@ void assertInvariants()
         ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 1);
 #elif USE(JSVALUE32_64)
         ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 1);
-#elif (CPU(X86_64) && !OS(WINDOWS))  || CPU(ARM64)
-        ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 4);
-#elif (CPU(X86_64) && OS(WINDOWS))
+#elif CPU(X86_64) || CPU(ARM64)
         ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 4);
 #endif
 

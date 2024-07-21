@@ -680,12 +680,10 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
     case ObjectIsIntrinsic:
         return objectIsThunkGenerator;
 #endif
-#if !OS(WINDOWS)
     case BoundFunctionCallIntrinsic:
         return boundFunctionCallGenerator;
     case RemoteFunctionCallIntrinsic:
         return remoteFunctionCallGenerator;
-#endif
     case NumberConstructorIntrinsic:
         return numberConstructorCallThunkGenerator;
     case StringConstructorIntrinsic:
@@ -780,11 +778,8 @@ NativeExecutable* VM::getRemoteFunction(bool isJSFunction)
             return cached;
 
         Intrinsic intrinsic = NoIntrinsic;
-        if (!slowCase) {
-#if !(OS(WINDOWS) && CPU(X86_64))
+        if (!slowCase)
             intrinsic = RemoteFunctionCallIntrinsic;
-#endif
-        }
 
         NativeExecutable* result = getHostFunction(
             slowCase ? remoteFunctionCallGeneric : remoteFunctionCallForJSFunction,

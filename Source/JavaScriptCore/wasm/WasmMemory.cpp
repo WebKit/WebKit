@@ -179,15 +179,7 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
     if (fastMemory) {
         constexpr bool readable = false;
         constexpr bool writable = false;
-        if (!OSAllocator::protect(fastMemory + initialBytes, BufferMemoryHandle::fastMappedBytes() - initialBytes, readable, writable)) {
-#if OS(WINDOWS)
-            dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
-#else
-            dataLogLn("mprotect failed: ", safeStrerror(errno).data());
-#endif
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-
+        OSAllocator::protect(fastMemory + initialBytes, BufferMemoryHandle::fastMappedBytes() - initialBytes, readable, writable);
         switch (sharingMode) {
         case MemorySharingMode::Default: {
             return Memory::create(adoptRef(*new BufferMemoryHandle(fastMemory, initialBytes, BufferMemoryHandle::fastMappedBytes(), initial, maximum, MemorySharingMode::Default, MemoryMode::Signaling)), WTFMove(growSuccessCallback));
@@ -233,14 +225,7 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
 
         constexpr bool readable = false;
         constexpr bool writable = false;
-        if (!OSAllocator::protect(slowMemory + initialBytes, maximumBytes - initialBytes, readable, writable)) {
-#if OS(WINDOWS)
-            dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
-#else
-            dataLogLn("mprotect failed: ", safeStrerror(errno).data());
-#endif
-            RELEASE_ASSERT_NOT_REACHED();
-        }
+        OSAllocator::protect(slowMemory + initialBytes, maximumBytes - initialBytes, readable, writable);
 
         auto handle = adoptRef(*new BufferMemoryHandle(slowMemory, initialBytes, maximumBytes, initial, maximum, MemorySharingMode::Shared, MemoryMode::BoundsChecking));
         auto span = handle->mutableSpan();
@@ -383,15 +368,7 @@ Expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
         dataLogLnIf(verbose, "Marking WebAssembly memory's ", RawPointer(memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + extraBytes), ")");
         constexpr bool readable = true;
         constexpr bool writable = true;
-        if (!OSAllocator::protect(startAddress, extraBytes, readable, writable)) {
-#if OS(WINDOWS)
-            dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
-#else
-            dataLogLn("mprotect failed: ", safeStrerror(errno).data());
-#endif
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-
+        OSAllocator::protect(startAddress, extraBytes, readable, writable);
         m_handle->updateSize(desiredSize);
         return success();
     }

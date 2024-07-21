@@ -29,8 +29,11 @@
 #include <errno.h>
 #include <sys/mman.h>
 #include <wtf/Assertions.h>
+#include <wtf/DataLog.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PageBlock.h>
+#include <wtf/SafeStrerror.h>
+#include <wtf/text/CString.h>
 
 #if ENABLE(JIT_CAGE)
 #include <WebKitAdditions/JITCageAdditions.h>
@@ -284,7 +287,7 @@ void OSAllocator::releaseDecommitted(void* address, size_t bytes)
         CRASH();
 }
 
-bool OSAllocator::protect(void* address, size_t bytes, bool readable, bool writable)
+bool OSAllocator::tryProtect(void* address, size_t bytes, bool readable, bool writable)
 {
     int protection = 0;
     if (readable) {
@@ -297,6 +300,14 @@ bool OSAllocator::protect(void* address, size_t bytes, bool readable, bool writa
         protection = PROT_NONE;
     }
     return !mprotect(address, bytes, protection);
+}
+
+void OSAllocator::protect(void* address, size_t bytes, bool readable, bool writable)
+{
+    if (bool result = tryProtect(address, bytes, readable, writable); UNLIKELY(!result)) {
+        dataLogLn("mprotect failed: ", safeStrerror(errno).data());
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 }
 
 } // namespace WTF
