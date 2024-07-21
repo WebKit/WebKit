@@ -273,14 +273,14 @@ void PlatformCALayerRemote::ensureBackingStore()
             return true;
 
         // A layer pulled out of a pool may have existing backing store which we mustn't reuse if it lives in the wrong process.
-        if (m_properties.backingStoreOrProperties.store->processModel() != RemoteLayerBackingStore::processModelForLayer(this))
+        if (m_properties.backingStoreOrProperties.store->processModel() != RemoteLayerBackingStore::processModelForLayer(*this))
             return true;
 
         return false;
     }();
 
     if (needsNewBackingStore)
-        m_properties.backingStoreOrProperties.store = RemoteLayerBackingStore::createForLayer(this);
+        m_properties.backingStoreOrProperties.store = RemoteLayerBackingStore::createForLayer(*this);
 
     updateBackingStore();
 }

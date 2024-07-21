@@ -85,10 +85,10 @@ class RemoteLayerBackingStore : public CanMakeWeakPtr<RemoteLayerBackingStore> {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStore);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteLayerBackingStore(PlatformCALayerRemote*);
+    RemoteLayerBackingStore(PlatformCALayerRemote&);
     virtual ~RemoteLayerBackingStore();
 
-    static std::unique_ptr<RemoteLayerBackingStore> createForLayer(PlatformCALayerRemote*);
+    static std::unique_ptr<RemoteLayerBackingStore> createForLayer(PlatformCALayerRemote&);
 
     enum class Type : bool {
         IOSurface,
@@ -104,7 +104,7 @@ public:
 
     enum class ProcessModel : uint8_t { InProcess, Remote };
     virtual ProcessModel processModel() const = 0;
-    static ProcessModel processModelForLayer(PlatformCALayerRemote*);
+    static ProcessModel processModelForLayer(PlatformCALayerRemote&);
 
     struct Parameters {
         Type type { Type::Bitmap };
@@ -152,7 +152,7 @@ public:
     bool supportsPartialRepaint() const;
     bool drawingRequiresClearedPixels() const;
 
-    PlatformCALayerRemote* layer() const { return m_layer; }
+    PlatformCALayerRemote& layer() const { return m_layer; }
 
     void encode(IPC::Encoder&) const;
 
@@ -199,7 +199,7 @@ protected:
 
     WebCore::IntRect layerBounds() const;
 
-    PlatformCALayerRemote* m_layer;
+    PlatformCALayerRemote& m_layer;
 
     Parameters m_parameters;
 
