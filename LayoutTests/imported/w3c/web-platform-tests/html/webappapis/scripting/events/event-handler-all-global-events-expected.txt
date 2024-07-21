@@ -4,10 +4,10 @@ PASS onabort: the default value must be null
 PASS onabort: the content attribute must be compiled into a function as the corresponding property
 PASS onabort: the content attribute must execute when an event is dispatched
 PASS onabort: dispatching an Event at a <meta> element must trigger element.onabort
-FAIL onauxclick: must be on the appropriate locations for GlobalEventHandlers assert_true: Window has an own property named "onauxclick" expected true got false
-FAIL onauxclick: the default value must be null assert_equals: The default value of the property is null for a Window instance expected (object) null but got (undefined) undefined
-FAIL onauxclick: the content attribute must be compiled into a function as the corresponding property assert_equals: The onauxclick property must be a function expected "function" but got "undefined"
-FAIL onauxclick: the content attribute must execute when an event is dispatched assert_true: Dispatching an event must run the code expected true got undefined
+PASS onauxclick: must be on the appropriate locations for GlobalEventHandlers
+PASS onauxclick: the default value must be null
+PASS onauxclick: the content attribute must be compiled into a function as the corresponding property
+PASS onauxclick: the content attribute must execute when an event is dispatched
 PASS onauxclick: dispatching an Event at a <meta> element must trigger element.onauxclick
 PASS onblur: must be on the appropriate locations for GlobalEventHandlers
 PASS onblur: the default value must be null

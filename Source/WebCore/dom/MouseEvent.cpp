@@ -41,6 +41,16 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(MouseEvent);
 
+bool isAnyClick(const AtomString& eventType)
+{
+    return eventType == eventNames().clickEvent || eventType == eventNames().auxclickEvent;
+}
+
+bool isAnyClick(const Event& event)
+{
+    return isAnyClick(event.type());
+}
+
 Ref<MouseEvent> MouseEvent::create(const AtomString& type, const MouseEventInit& initializer)
 {
     return adoptRef(*new MouseEvent(EventInterfaceType::MouseEvent, type, initializer));
@@ -152,7 +162,7 @@ bool MouseEvent::isMouseEvent() const
 
 bool MouseEvent::canTriggerActivationBehavior(const Event& event)
 {
-    if (event.type() != eventNames().clickEvent)
+    if (!isAnyClick(event))
         return false;
     auto* mouseEvent = dynamicDowncast<MouseEvent>(event);
     return !mouseEvent || mouseEvent->button() != MouseButton::Right;

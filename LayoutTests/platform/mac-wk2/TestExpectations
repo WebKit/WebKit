@@ -211,7 +211,6 @@ fast/events/dropzone-002.html
 fast/events/dropzone-003.html
 fast/events/dropzone-005.html
 fast/events/keydown-numpad-keys.html
-fast/events/mouse-click-events.html
 fast/events/mouseup-from-button2.html
 fast/events/node-event-anchor-lock.html
 fast/events/ondragenter.html

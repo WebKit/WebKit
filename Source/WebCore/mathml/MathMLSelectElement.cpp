@@ -34,6 +34,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "MathMLNames.h"
+#include "MouseEvent.h"
 #include "RenderMathMLRow.h"
 #include "RenderTreeUpdater.h"
 #include "SVGElement.h"
@@ -215,7 +216,7 @@ void MathMLSelectElement::updateSelectedChild()
 
 void MathMLSelectElement::defaultEventHandler(Event& event)
 {
-    if (event.type() == eventNames().clickEvent) {
+    if (isAnyClick(event)) {
         if (attributeWithoutSynchronization(MathMLNames::actiontypeAttr) == "toggle"_s) {
             toggle();
             event.setDefaultHandled();

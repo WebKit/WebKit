@@ -722,6 +722,20 @@ AutomaticallyAdjustsViewScaleUsingMinimumEffectiveDeviceWidth:
     WebCore:
       default: false
 
+AuxclickEventEnabled:
+  type: bool
+  status: stable
+  category: dom
+  humanReadableName: "Enable `auxclick` event"
+  humanReadableDescription: "Enable the `auxclick` UI event"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 BackgroundFetchAPIEnabled:
   type: bool
   status: testable

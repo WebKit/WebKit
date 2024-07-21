@@ -446,7 +446,7 @@ static bool isCompatibilityMouseEvent(const MouseEvent& mouseEvent)
     // https://www.w3.org/TR/pointerevents/#compatibility-mapping-with-mouse-events
     const auto& type = mouseEvent.type();
     auto& eventNames = WebCore::eventNames();
-    return type != eventNames.clickEvent && type != eventNames.mouseoverEvent && type != eventNames.mouseoutEvent && type != eventNames.mouseenterEvent && type != eventNames.mouseleaveEvent;
+    return !isAnyClick(mouseEvent) && type != eventNames.mouseoverEvent && type != eventNames.mouseoutEvent && type != eventNames.mouseenterEvent && type != eventNames.mouseleaveEvent;
 }
 
 enum class ShouldIgnoreMouseEvent : bool { No, Yes };
@@ -455,7 +455,7 @@ static ShouldIgnoreMouseEvent dispatchPointerEventIfNeeded(Element& element, con
     if (RefPtr page = element.document().page()) {
         auto& pointerCaptureController = page->pointerCaptureController();
 #if ENABLE(TOUCH_EVENTS)
-        if (platformEvent.pointerId() != mousePointerID && mouseEvent.type() != eventNames().clickEvent && pointerCaptureController.preventsCompatibilityMouseEventsForIdentifier(platformEvent.pointerId()))
+        if (platformEvent.pointerId() != mousePointerID && !isAnyClick(mouseEvent) && pointerCaptureController.preventsCompatibilityMouseEventsForIdentifier(platformEvent.pointerId()))
             return ShouldIgnoreMouseEvent::Yes;
 #else
         UNUSED_PARAM(platformEvent);
@@ -515,6 +515,7 @@ Element::DispatchMouseEventResult Element::dispatchMouseEvent(const PlatformMous
     if (mouseEvent->defaultPrevented() || mouseEvent->defaultHandled())
         didNotSwallowEvent = false;
 
+    // The document should not receive dblclick for non-primary buttons.
     if (mouseEvent->type() == eventNames().clickEvent && mouseEvent->detail() == 2) {
         // Special case: If it's a double click event, we also send the dblclick event. This is not part
         // of the DOM specs, but is used for compatibility with the ondblclick="" attribute. This is treated

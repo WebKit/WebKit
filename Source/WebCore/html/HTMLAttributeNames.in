@@ -211,6 +211,7 @@ onanimationiteration
 onanimationstart
 onautocomplete
 onautocompleteerror
+onauxclick
 onbeforecopy
 onbeforecut
 onbeforeinput

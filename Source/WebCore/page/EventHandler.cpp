@@ -1992,7 +1992,7 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& platfor
 
     m_clickCount = platformMouseEvent.clickCount();
     bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mouseEvent.protectedTargetNode().get(), m_clickCount, platformMouseEvent, FireMouseOverOut::No);
-    bool swallowClickEvent = platformMouseEvent.button() != MouseButton::Right && mouseEvent.targetNode() == m_clickNode && !dispatchMouseEvent(eventNames().clickEvent, mouseEvent.protectedTargetNode().get(), m_clickCount, platformMouseEvent, FireMouseOverOut::Yes);
+    bool swallowClickEvent = swallowAnyClickEvent(platformMouseEvent, mouseEvent, IgnoreAncestorNodesForClickEvent::Yes);
 
     if (m_lastScrollbarUnderMouse)
         swallowMouseUpEvent = m_lastScrollbarUnderMouse->mouseUp(platformMouseEvent);
@@ -2264,6 +2264,38 @@ static RefPtr<Node> targetNodeForClickEvent(Node* mousePressNode, Node* mouseRel
     return nullptr;
 }
 
+bool EventHandler::swallowAnyClickEvent(const PlatformMouseEvent& platformMouseEvent, const MouseEventWithHitTestResults& mouseEvent, IgnoreAncestorNodesForClickEvent ignoreAncestorNodesForClickEvent)
+{
+    if (!m_clickCount)
+        return false;
+
+    auto nodeToClick = [&] -> RefPtr<Node> {
+        if (ignoreAncestorNodesForClickEvent == IgnoreAncestorNodesForClickEvent::Yes) {
+            if (mouseEvent.targetNode() != m_clickNode)
+                return nullptr;
+
+            return m_clickNode;
+        }
+
+        return targetNodeForClickEvent(RefPtr { m_clickNode }.get(), mouseEvent.protectedTargetNode().get());
+    }();
+
+    if (!nodeToClick)
+        return false;
+
+    bool isPrimaryPointerButton = platformMouseEvent.button() == MouseButton::Left;
+    if (!isPrimaryPointerButton && !protectedFrame()->settings().auxclickEventEnabled())
+        return false;
+
+    // The auxclick event should only be fired for the non-primary pointer buttons.
+    // In the case of right button, the auxclick event is dispatched after any contextmenu event.
+    //
+    // The click event should only be fired for the primary pointer button.
+
+    auto& eventName = isPrimaryPointerButton ? eventNames().clickEvent : eventNames().auxclickEvent;
+    return !dispatchMouseEvent(eventName, nodeToClick.get(), m_clickCount, platformMouseEvent, FireMouseOverOut::Yes);
+}
+
 HandleUserInputEventResult EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMouseEvent)
 {
     Ref frame = m_frame.get();
@@ -2333,10 +2365,8 @@ HandleUserInputEventResult EventHandler::handleMouseReleaseEvent(const PlatformM
         return true;
 
     bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mouseEvent.protectedTargetNode().get(), m_clickCount, platformMouseEvent, FireMouseOverOut::No);
-    bool contextMenuEvent = platformMouseEvent.button() == MouseButton::Right;
 
-    auto nodeToClick = targetNodeForClickEvent(RefPtr { m_clickNode }.get(), mouseEvent.protectedTargetNode().get());
-    bool swallowClickEvent = m_clickCount > 0 && !contextMenuEvent && nodeToClick && !dispatchMouseEvent(eventNames().clickEvent, nodeToClick.get(), m_clickCount, platformMouseEvent, FireMouseOverOut::Yes);
+    bool swallowClickEvent = swallowAnyClickEvent(platformMouseEvent, mouseEvent, IgnoreAncestorNodesForClickEvent::No);
 
     if (m_resizeLayer) {
         m_resizeLayer->setInResizeMode(false);

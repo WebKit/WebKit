@@ -23,6 +23,7 @@
     "audiostart": { },
     "autocomplete": { },
     "autocompleteerror": { },
+    "auxclick": { "categories": ["MouseClickRelated"], "defaultEventHandler": true },
     "backgroundfetchsuccess": { },
     "backgroundfetchfail": { },
     "backgroundfetchabort": { },

@@ -136,7 +136,7 @@ static Image* imageFromImageElementNode(Node& node)
 
 bool handleEvent(HTMLElement& element, Event& event)
 {
-    if (event.type() != eventNames().clickEvent)
+    if (!isAnyClick(event))
         return false;
     
     RefPtr frame = element.document().frame();

@@ -93,6 +93,7 @@ CONSOLE MESSAGE: This requires a TrustedScript value else it violates the follow
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
 PASS Event handler onclick should be blocked.
 PASS Event handler onchange should be blocked.
@@ -109,6 +110,7 @@ PASS Non-event handler div.title should not be blocked.
 PASS Non-event handler div.draggable should not be blocked.
 PASS Non-event handler div.inert should not be blocked.
 PASS Event handler div.onabort should be blocked.
+PASS Event handler div.onauxclick should be blocked.
 PASS Event handler div.onbeforetoggle should be blocked.
 PASS Event handler div.onblur should be blocked.
 PASS Event handler div.oncancel should be blocked.

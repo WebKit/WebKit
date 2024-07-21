@@ -140,7 +140,7 @@ bool HTMLLabelElement::isEventTargetedAtInteractiveDescendants(Event& event) con
 }
 void HTMLLabelElement::defaultEventHandler(Event& event)
 {
-    if (event.type() == eventNames().clickEvent && !m_processingClick) {
+    if (isAnyClick(event) && !m_processingClick) {
         auto control = this->control();
 
         // If we can't find a control or if the control received the click

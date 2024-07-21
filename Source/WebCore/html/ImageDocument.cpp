@@ -427,7 +427,7 @@ void ImageDocument::imageClicked(int x, int y)
 void ImageEventListener::handleEvent(ScriptExecutionContext&, Event& event)
 {
     RefPtr document = m_document.get();
-    if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && event.type() == eventNames().clickEvent && document)
+    if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && isAnyClick(event) && document)
         document->imageClicked(mouseEvent->offsetX(), mouseEvent->offsetY());
 }
 

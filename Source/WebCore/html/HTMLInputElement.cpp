@@ -1278,6 +1278,14 @@ void HTMLInputElement::willDispatchEvent(Event& event, InputElementClickState& s
             state.stateful = true;
         }
     }
+
+    if (event.type() == eventNames.auxclickEvent) {
+        auto* mouseEvent = dynamicDowncast<MouseEvent>(event);
+        if (mouseEvent && mouseEvent->button() != MouseButton::Left) {
+            m_inputType->willDispatchClick(state);
+            state.stateful = true;
+        }
+    }
 }
 
 void HTMLInputElement::didDispatchClickEvent(Event& event, const InputElementClickState& state)
@@ -1294,7 +1302,7 @@ void HTMLInputElement::defaultEventHandler(Event& event)
 {
     if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && mouseEvent->button() == MouseButton::Left) {
         auto eventType = mouseEvent->type();
-        if (eventType == eventNames().clickEvent)
+        if (isAnyClick(*mouseEvent))
             m_inputType->handleClickEvent(*mouseEvent);
         else if (eventType == eventNames().mousedownEvent)
             m_inputType->handleMouseDownEvent(*mouseEvent);

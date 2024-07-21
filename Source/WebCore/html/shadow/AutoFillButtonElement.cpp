@@ -59,7 +59,7 @@ void AutoFillButtonElement::defaultEventHandler(Event& event)
         return;
     }
 
-    if (mouseEvent->type() == eventNames().clickEvent) {
+    if (isAnyClick(*mouseEvent)) {
         m_owner.autoFillButtonElementWasClicked();
         event.setDefaultHandled();
     }

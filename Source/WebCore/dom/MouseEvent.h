@@ -45,6 +45,9 @@ class PlatformMouseEvent;
 
 enum class SyntheticClickType : uint8_t;
 
+bool isAnyClick(const AtomString& eventType);
+bool isAnyClick(const Event&);
+
 class MouseEvent : public MouseRelatedEvent {
     WTF_MAKE_ISO_ALLOCATED(MouseEvent);
 public:

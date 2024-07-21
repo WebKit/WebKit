@@ -182,7 +182,7 @@ void MediaDocument::defaultEventHandler(Event& event)
         return;
 
     if (RefPtr video = ancestorVideoElement(targetNode)) {
-        if (event.type() == eventNames().clickEvent) {
+        if (isAnyClick(event)) {
             if (!video->canPlay()) {
                 video->pause();
                 event.setDefaultHandled();
