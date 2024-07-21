@@ -5704,14 +5704,12 @@ LayoutBoxExtent RenderBox::scrollPaddingForViewportRect(const LayoutRect& viewpo
 
 LayoutUnit synthesizedBaseline(const RenderBox& box, const RenderStyle& parentStyle, LineDirectionMode direction, BaselineSynthesisEdge edge)
 {
+    auto textOrientation = parentStyle.textOrientation();
     auto baselineType = [&] {
         // https://drafts.csswg.org/css-inline-3/#alignment-baseline-property
         // https://drafts.csswg.org/css-inline-3/#dominant-baseline-property
-
-        auto isHorizontalWritingMode = parentStyle.isHorizontalWritingMode();
-        auto textOrientation = parentStyle.textOrientation();
-
-        if (isHorizontalWritingMode || textOrientation == TextOrientation::Sideways)
+        auto isInsideHorizontalWritingMode = parentStyle.isHorizontalWritingMode();
+        if (isInsideHorizontalWritingMode || textOrientation == TextOrientation::Sideways)
             return FontBaseline::AlphabeticBaseline;
         if (textOrientation == TextOrientation::Upright || textOrientation == TextOrientation::Mixed)
             return FontBaseline::CentralBaseline;
@@ -5720,18 +5718,16 @@ LayoutUnit synthesizedBaseline(const RenderBox& box, const RenderStyle& parentSt
         return FontBaseline::AlphabeticBaseline;
     }();
 
-    if (baselineType == FontBaseline::AlphabeticBaseline && parentStyle.writingMode() == WritingMode::VerticalLr)
-        return 0_lu;
-
     auto boxSize = direction == HorizontalLine ? box.height() : box.width();
-
     if (edge == ContentBox)
         boxSize -= direction == HorizontalLine ? box.verticalBorderAndPaddingExtent() : box.horizontalBorderAndPaddingExtent();
     else if (edge == MarginBox)
         boxSize += direction == HorizontalLine ? box.verticalMarginExtent() : box.horizontalMarginExtent();
     
-    if (baselineType == FontBaseline::AlphabeticBaseline)
-        return boxSize;
+    if (baselineType == FontBaseline::AlphabeticBaseline) {
+        auto shouldTreatAsHorizontal = direction == HorizontalLine || (textOrientation == TextOrientation::Sideways && parentStyle.writingMode() == WritingMode::VerticalRl);
+        return shouldTreatAsHorizontal ? boxSize : LayoutUnit();
+    }
     return boxSize / 2;
 }
 

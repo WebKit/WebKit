@@ -1879,9 +1879,6 @@ static LayoutUnit alignmentOffset(LayoutUnit availableFreeSpace, ItemPosition po
         return availableFreeSpace / 2;
     case ItemPosition::Baseline:
     case ItemPosition::LastBaseline: 
-        // FIXME: If we get here in columns, we want the use the descent, except
-        // we currently can't get the ascent/descent of orthogonal children.
-        // https://bugs.webkit.org/show_bug.cgi?id=98076
         return maxAscent.value_or(0_lu) - ascent.value_or(0_lu);
     }
     return 0;
@@ -2007,9 +2004,6 @@ ItemPosition RenderFlexibleBox::alignmentForFlexItem(const RenderBox& flexItem) 
     ASSERT(align != ItemPosition::Auto && align != ItemPosition::Normal);
     // Left and Right are only for justify-*.
     ASSERT(align != ItemPosition::Left && align != ItemPosition::Right);
-
-    if (align == ItemPosition::Baseline && !mainAxisIsFlexItemInlineAxis(flexItem))
-        align = ItemPosition::FlexStart;
 
     // We can safely return here because start/end are not affected by a reversed flex-wrap because the
     // alignment container is the flex line, and in a wrap reversed flex container the start and end within
@@ -2673,7 +2667,7 @@ void RenderFlexibleBox::layoutUsingFlexFormattingContext()
 
 const RenderBox* RenderFlexibleBox::firstBaselineCandidateOnLine(OrderIterator flexItemIterator, ItemPosition baselinePosition, size_t numberOfItemsOnLine) const
 {
-    // Note that "first" here mean in iterator order and not logical flex order (caller can pass in reversed order).
+    // Note that "first" here means in iterator order and not logical flex order (caller can pass in reversed order).
     ASSERT(baselinePosition == ItemPosition::Baseline || baselinePosition == ItemPosition::LastBaseline);
 
     size_t index = 0;
@@ -2681,7 +2675,7 @@ const RenderBox* RenderFlexibleBox::firstBaselineCandidateOnLine(OrderIterator f
     for (auto* flexItem = flexItemIterator.first(); flexItem; flexItem = flexItemIterator.next()) {
         if (flexItemIterator.shouldSkipChild(*flexItem))
             continue;
-        if (alignmentForFlexItem(*flexItem) == baselinePosition && !hasAutoMarginsInCrossAxis(*flexItem))
+        if (alignmentForFlexItem(*flexItem) == baselinePosition && mainAxisIsFlexItemInlineAxis(*flexItem) && !hasAutoMarginsInCrossAxis(*flexItem))
             return flexItem;
         if (!baselineFlexItem)
             baselineFlexItem = flexItem;
@@ -2693,7 +2687,7 @@ const RenderBox* RenderFlexibleBox::firstBaselineCandidateOnLine(OrderIterator f
 
 const RenderBox* RenderFlexibleBox::lastBaselineCandidateOnLine(OrderIterator flexItemIterator, ItemPosition baselinePosition, size_t numberOfItemsOnLine) const
 {
-    // Note that "last" here mean in iterator order and not logical flex order (caller can pass in reversed order).
+    // Note that "last" here means in iterator order and not logical flex order (caller can pass in reversed order).
     ASSERT(baselinePosition == ItemPosition::Baseline || baselinePosition == ItemPosition::LastBaseline);
 
     size_t index = 0;
@@ -2701,7 +2695,7 @@ const RenderBox* RenderFlexibleBox::lastBaselineCandidateOnLine(OrderIterator fl
     for (auto* flexItem = flexItemIterator.first(); flexItem; flexItem = flexItemIterator.next()) {
         if (flexItemIterator.shouldSkipChild(*flexItem))
             continue;
-        if (alignmentForFlexItem(*flexItem) == baselinePosition && !hasAutoMarginsInCrossAxis(*flexItem))
+        if (alignmentForFlexItem(*flexItem) == baselinePosition && mainAxisIsFlexItemInlineAxis(*flexItem) && !hasAutoMarginsInCrossAxis(*flexItem))
             baselineFlexItem = flexItem;
         if (++index == numberOfItemsOnLine)
             return baselineFlexItem ? baselineFlexItem : flexItem;
