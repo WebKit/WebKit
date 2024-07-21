@@ -2829,6 +2829,20 @@ GenericCueAPIEnabled:
     WebCore:
       default: false
 
+GetCoalescedEventsEnabled:
+  type: bool
+  status: unstable
+  category: dom
+  humanReadableName: "Pointer Events getCoalescedEvents API"
+  humanReadableDescription: "Enable the `getCoalescedEvents` function of the Pointer Events API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 GetUserMediaRequiresFocus:
   type: bool
   status: internal

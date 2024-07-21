@@ -68,7 +68,12 @@ RefPtr<PointerEvent> PointerEvent::create(MouseButton button, const MouseEvent& 
 
 Ref<PointerEvent> PointerEvent::create(const AtomString& type, MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
 {
-    return adoptRef(*new PointerEvent(type, button, mouseEvent, pointerId, pointerType));
+    return create(type, button, mouseEvent, pointerId, pointerType, typeCanBubble(type), typeIsCancelable(type));
+}
+
+Ref<PointerEvent> PointerEvent::create(const AtomString& type, MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType, CanBubble canBubble, IsCancelable isCancelable)
+{
+    return adoptRef(*new PointerEvent(type, button, mouseEvent, pointerId, pointerType, canBubble, isCancelable));
 }
 
 Ref<PointerEvent> PointerEvent::create(const AtomString& type, PointerID pointerId, const String& pointerType, IsPrimary isPrimary)
@@ -93,11 +98,12 @@ PointerEvent::PointerEvent(const AtomString& type, Init&& initializer)
     , m_twist(initializer.twist)
     , m_pointerType(initializer.pointerType)
     , m_isPrimary(initializer.isPrimary)
+    , m_coalescedEvents(initializer.coalescedEvents)
 {
 }
 
-PointerEvent::PointerEvent(const AtomString& type, MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
-    : MouseEvent(EventInterfaceType::PointerEvent, type, typeCanBubble(type), typeIsCancelable(type), typeIsComposed(type), mouseEvent.timeStamp(), mouseEvent.view(), mouseEvent.detail(), mouseEvent.screenLocation(),
+PointerEvent::PointerEvent(const AtomString& type, MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType, CanBubble canBubble, IsCancelable isCancelable)
+    : MouseEvent(EventInterfaceType::PointerEvent, type, canBubble, isCancelable, typeIsComposed(type), mouseEvent.timeStamp(), mouseEvent.view(), mouseEvent.detail(), mouseEvent.screenLocation(),
         { mouseEvent.clientX(), mouseEvent.clientY() }, mouseEvent.movementX(), mouseEvent.movementY(), mouseEvent.modifierKeys(), button, mouseEvent.buttons(),
         mouseEvent.syntheticClickType(), mouseEvent.relatedTarget())
     , m_pointerId(pointerId)
@@ -121,5 +127,10 @@ PointerEvent::PointerEvent(const AtomString& type, PointerID pointerId, const St
 }
 
 PointerEvent::~PointerEvent() = default;
+
+Vector<Ref<PointerEvent>> PointerEvent::getCoalescedEvents()
+{
+    return m_coalescedEvents;
+}
 
 } // namespace WebCore

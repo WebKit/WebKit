@@ -58,6 +58,7 @@ public:
         long twist { 0 };
         String pointerType { mousePointerEventType() };
         bool isPrimary { false };
+        Vector<Ref<PointerEvent>> coalescedEvents;
     };
 
     enum class IsPrimary : bool { No, Yes };
@@ -84,6 +85,7 @@ public:
 
     static RefPtr<PointerEvent> create(MouseButton, const MouseEvent&, PointerID, const String& pointerType);
     static Ref<PointerEvent> create(const AtomString& type, MouseButton, const MouseEvent&, PointerID, const String& pointerType);
+    static Ref<PointerEvent> create(const AtomString& type, MouseButton, const MouseEvent&, PointerID, const String& pointerType, CanBubble, IsCancelable);
     static Ref<PointerEvent> create(const AtomString& type, PointerID, const String& pointerType, IsPrimary = IsPrimary::No);
 
 #if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE))
@@ -103,6 +105,8 @@ public:
     long twist() const { return m_twist; }
     String pointerType() const { return m_pointerType; }
     bool isPrimary() const { return m_isPrimary; }
+
+    Vector<Ref<PointerEvent>> getCoalescedEvents();
 
     bool isPointerEvent() const final { return true; }
 
@@ -138,7 +142,7 @@ private:
 
     PointerEvent();
     PointerEvent(const AtomString&, Init&&);
-    PointerEvent(const AtomString& type, MouseButton, const MouseEvent&, PointerID, const String& pointerType);
+    PointerEvent(const AtomString& type, MouseButton, const MouseEvent&, PointerID, const String& pointerType, CanBubble, IsCancelable);
     PointerEvent(const AtomString& type, PointerID, const String& pointerType, IsPrimary);
 #if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE))
     PointerEvent(const AtomString& type, const PlatformTouchEvent&, IsCancelable isCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const IntPoint& touchDelta = { });
@@ -154,6 +158,7 @@ private:
     long m_twist { 0 };
     String m_pointerType { mousePointerEventType() };
     bool m_isPrimary { false };
+    Vector<Ref<PointerEvent>> m_coalescedEvents;
 };
 
 inline bool PointerEvent::typeIsEnterOrLeave(const AtomString& type)
