@@ -3074,6 +3074,19 @@ RegisterID* PrefixNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 
 RegisterID* UnaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    if (dst == generator.ignoredResult()) {
+        // op_not is not user-observable. We can skip it completely if the result is not used.
+        // This is used in the wild, for example,
+        // ```
+        //     !(function (a) {
+        //          ...
+        //     })(a);
+        // ```
+        if (opcodeID() == op_not) {
+            generator.emitNodeInIgnoreResultPosition(m_expr);
+            return nullptr;
+        }
+    }
     RefPtr<RegisterID> src = generator.emitNode(m_expr);
     generator.emitExpressionInfo(position(), position(), position());
     return generator.emitUnaryOp(opcodeID(), generator.finalDestination(dst), src.get(), m_expr->resultDescriptor());
@@ -4940,7 +4953,10 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     if (!m_catchBlock && m_finallyBlock)
         finallyTryData = tryData;
 
-    generator.emitNode(tryCatchDst.get(), m_tryBlock);
+    if (tryCatchDst == generator.ignoredResult())
+        generator.emitNodeInIgnoreResultPosition(m_tryBlock);
+    else
+        generator.emitNode(tryCatchDst.get(), m_tryBlock);
 
     if (m_finallyBlock)
         generator.emitJump(*finallyLabel);
@@ -4974,9 +4990,12 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         if (generator.shouldBeConcernedWithCompletionValue())
             generator.emitLoad(tryCatchDst.get(), jsUndefined());
 
-        if (m_finallyBlock)
-            generator.emitNode(tryCatchDst.get(), m_catchBlock);
-        else
+        if (m_finallyBlock) {
+            if (tryCatchDst == generator.ignoredResult())
+                generator.emitNodeInIgnoreResultPosition(m_catchBlock);
+            else
+                generator.emitNode(tryCatchDst.get(), m_catchBlock);
+        } else
             generator.emitNodeInTailPosition(tryCatchDst.get(), m_catchBlock);
         generator.emitLoad(thrownValueRegister.get(), jsUndefined());
 
