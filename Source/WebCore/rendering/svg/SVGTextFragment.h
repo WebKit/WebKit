@@ -21,6 +21,7 @@
 
 #include "AffineTransform.h"
 
+#include "GlyphDisplayListCache.h"
 namespace WebCore {
 
 // A SVGTextFragment describes a text fragment of a RenderSVGInlineText which can be rendered at once.
@@ -35,6 +36,12 @@ struct SVGTextFragment {
         , width(0)
         , height(0)
     {
+    }
+
+    ~SVGTextFragment()
+    {
+        if (inGlyphDisplayListCache)
+            removeFromGlyphDisplayListCache();
     }
 
     enum TransformType {
@@ -74,7 +81,19 @@ struct SVGTextFragment {
     // Contains lengthAdjust related transformations, which are not allowd to influence the SVGTextQuery code.
     AffineTransform lengthAdjustTransform;
 
+    bool isInGlyphDisplayListCache() const { return inGlyphDisplayListCache; }
+    void setIsInGlyphDisplayListCache(bool inCache = true) { inGlyphDisplayListCache = inCache; }
+    void removeFromGlyphDisplayListCache()
+    {
+        if (inGlyphDisplayListCache) {
+            GlyphDisplayListCache::singleton().remove(*this);
+            setIsInGlyphDisplayListCache(false);
+        }
+    }
+
 private:
+    bool inGlyphDisplayListCache = false;
+
     void transformAroundOrigin(AffineTransform& result) const
     {
         // Returns (translate(x, y) * result) * translate(-x, -y).

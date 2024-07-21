@@ -83,10 +83,16 @@ private:
 
     void paintDecoration(GraphicsContext&, OptionSet<TextDecorationLine>, const SVGTextFragment&);
     void paintDecorationWithStyle(GraphicsContext&, OptionSet<TextDecorationLine>, const SVGTextFragment&, RenderBoxModelObject& decorationRenderer);
-    void paintTextWithShadows(GraphicsContext&, const RenderStyle&, TextRun&, const SVGTextFragment&, unsigned startPosition, unsigned endPosition);
-    void paintText(GraphicsContext&, const RenderStyle&, const RenderStyle& selectionStyle, const SVGTextFragment&, bool hasSelection, bool paintSelectedTextOnly);
+    void paintTextWithShadows(const PaintInfo&, GraphicsContext&, const RenderStyle&, TextRun&, SVGTextFragment&, unsigned startPosition, unsigned endPosition);
+    void paintText(const PaintInfo&, GraphicsContext&, const RenderStyle&, const RenderStyle& selectionStyle, SVGTextFragment&, bool hasSelection, bool paintSelectedTextOnly);
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
+
+    static bool shouldUseGlyphDisplayList(const PaintInfo&);
+    void setGlyphDisplayListIfNeeded(SVGTextFragment&, const FontCascade&, GraphicsContext&, const PaintInfo&, const TextRun&);
+    // void getGlyphDisplayList(TextFragment*, const FontCascade&, GraphicsContext&, const PaintInfo&, const TextRun&);
+
+    void drawText(GraphicsContext&, const FontCascade&, const TextRun&, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset);
 
 private:
     float m_logicalHeight { 0 };
@@ -96,6 +102,8 @@ private:
     SVGPaintServerOrColor m_paintServerOrColor { };
 
     Vector<SVGTextFragment> m_textFragments;
+
+    DisplayList::DisplayList* m_glyphDisplayList { nullptr };
 };
 
 } // namespace WebCore
