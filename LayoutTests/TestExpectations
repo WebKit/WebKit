@@ -2087,7 +2087,6 @@ imported/w3c/web-platform-tests/svg/animations/seeking-events-2.html [ Failure P
 imported/w3c/web-platform-tests/svg/animations/dependent-begin-on-syncbase.html [ Failure Pass ]
 imported/w3c/web-platform-tests/svg/animations/dependent-end-on-syncbase.html [ Failure Pass ]
 imported/w3c/web-platform-tests/svg/path/distance/pathlength-rect-mutating.svg [ Failure Pass ]
-imported/w3c/web-platform-tests/svg/animations/seeking-events-1.html [ Failure Pass ]
 imported/w3c/web-platform-tests/svg/animations/pruning-first-interval.html [ Failure Pass ]
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-scale-scroll.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-with-position-under-clip-path.html [ ImageOnlyFailure ]
@@ -4861,8 +4860,6 @@ webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/text-overflow-021
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-menulist-button-002.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/resize-child-will-change-transform.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/resize-generated-content.html [ ImageOnlyFailure ]
-
-webkit.org/b/214387 imported/w3c/web-platform-tests/svg/animations/seeking-events-4.html [ Pass Failure ]
 
 webkit.org/b/214453 imported/w3c/web-platform-tests/css/css-align/baseline-of-scrollable-1b.html [ ImageOnlyFailure ]
 webkit.org/b/214453 imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-number.html [ ImageOnlyFailure ]
