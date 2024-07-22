@@ -31,14 +31,14 @@
 
 @protocol _WKWebExtensionTab;
 
-WK_HEADER_AUDIT_BEGIN(nullability, sendability)
+NS_ASSUME_NONNULL_BEGIN
 
 /*!
  @abstract A `_WKWebExtensionWindowCreationOptions` object encapsulates new window creation options for an extension.
  @discussion This class holds the various options that influence the behavior and initial state of a newly created window.
  The app retains the discretion to disregard any or all of these options, or even opt not to create a new window.
  */
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_SWIFT_UI_ACTOR
+WK_CLASS_AVAILABLE(macos(14.2), ios(17.2))
 @interface _WKWebExtensionWindowCreationOptions : NSObject
 
 + (instancetype)new NS_UNAVAILABLE;
@@ -84,4 +84,4 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 
 @end
 
-WK_HEADER_AUDIT_END(nullability, sendability)
+NS_ASSUME_NONNULL_END

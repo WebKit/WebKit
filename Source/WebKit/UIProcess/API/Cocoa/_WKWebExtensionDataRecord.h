@@ -29,10 +29,10 @@
 
 #import <WebKit/_WKWebExtensionDataType.h>
 
-WK_HEADER_AUDIT_BEGIN(nullability, sendability)
+NS_ASSUME_NONNULL_BEGIN
 
 /*! @abstract Indicates a `_WKWebExtensionDataRecord` error. */
-WK_EXTERN NSErrorDomain const _WKWebExtensionDataRecordErrorDomain WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+WK_EXTERN NSErrorDomain const _WKWebExtensionDataRecordErrorDomain WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
 /*!
  @abstract Constants used by NSError to indicate errors in the `_WKWebExtensionDataRecord` domain.
@@ -48,14 +48,14 @@ typedef NS_ERROR_ENUM(_WKWebExtensionDataRecordErrorDomain, _WKWebExtensionDataR
     _WKWebExtensionDataRecordErrorLocalStorageFailed,
     _WKWebExtensionDataRecordErrorSessionStorageFailed,
     _WKWebExtensionDataRecordErrorSyncStorageFailed,
-} NS_SWIFT_NAME(_WKWebExtensionDataRecord.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+} NS_SWIFT_NAME(_WKWebExtensionDataRecord.Error) WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
 /*!
  @abstract A `_WKWebExtensionDataRecord` object represents a record of stored data for a specific web extension context.
  @discussion Contains properties and methods to query the data types and sizes.
 */
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(_WKWebExtension.DataRecord)
+WK_CLASS_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0))
+NS_SWIFT_NAME(_WKWebExtension.DataRecord)
 @interface _WKWebExtensionDataRecord : NSObject
 
 + (instancetype)new NS_UNAVAILABLE;
@@ -85,4 +85,4 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(_WKWebExtension.DataRecord)
 
 @end
 
-WK_HEADER_AUDIT_END(nullability, sendability)
+NS_ASSUME_NONNULL_END

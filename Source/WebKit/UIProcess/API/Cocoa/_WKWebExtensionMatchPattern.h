@@ -27,12 +27,12 @@
 
 #import <Foundation/Foundation.h>
 
-WK_HEADER_AUDIT_BEGIN(nullability, sendability)
+NS_ASSUME_NONNULL_BEGIN
 
 @class _WKWebExtension;
 
 /*! @abstract Indicates a @link WKWebExtensionMatchPattern @/link error. */
-WK_EXTERN NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+WK_EXTERN NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
 /*!
  @abstract Constants used by NSError to indicate errors in the @link WKWebExtensionMatchPattern @/link domain.
@@ -46,7 +46,7 @@ typedef NS_ERROR_ENUM(_WKWebExtensionMatchPatternErrorDomain, _WKWebExtensionMat
     _WKWebExtensionMatchPatternErrorInvalidScheme,
     _WKWebExtensionMatchPatternErrorInvalidHost,
     _WKWebExtensionMatchPatternErrorInvalidPath,
-} NS_SWIFT_NAME(_WKWebExtensionMatchPattern.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+} NS_SWIFT_NAME(_WKWebExtensionMatchPattern.Error) WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
 /*!
  @abstract Constants used by @link WKWebExtensionMatchPattern @/link to indicate matching options.
@@ -60,15 +60,15 @@ typedef NS_OPTIONS(NSUInteger, _WKWebExtensionMatchPatternOptions) {
     _WKWebExtensionMatchPatternOptionsIgnoreSchemes        = 1 << 0,
     _WKWebExtensionMatchPatternOptionsIgnorePaths          = 1 << 1,
     _WKWebExtensionMatchPatternOptionsMatchBidirectionally = 1 << 2,
-} NS_SWIFT_NAME(_WKWebExtensionMatchPattern.Options) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+} NS_SWIFT_NAME(_WKWebExtensionMatchPattern.Options) WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
 /*!
  @abstract A `WKWebExtensionMatchPattern` object represents a way to specify groups of URLs.
  @discussion All match patterns are specified as strings. Apart from the special `<all_urls>` pattern, match patterns
  consist of three parts: scheme, host, and path.
  */
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(_WKWebExtension.MatchPattern)
+WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
+NS_SWIFT_NAME(_WKWebExtension.MatchPattern)
 @interface _WKWebExtensionMatchPattern : NSObject <NSSecureCoding, NSCopying>
 
 + (instancetype)new NS_UNAVAILABLE;
@@ -172,4 +172,4 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(_WKWebExtension.MatchPattern)
 
 @end
 
-WK_HEADER_AUDIT_END(nullability, sendability)
+NS_ASSUME_NONNULL_END

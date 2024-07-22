@@ -25,7 +25,7 @@
 
 #import <WebKit/_WKWebExtensionControllerConfiguration.h>
 
-WK_HEADER_AUDIT_BEGIN(nullability, sendability)
+NS_ASSUME_NONNULL_BEGIN
 
 @interface _WKWebExtensionControllerConfiguration ()
 
@@ -52,4 +52,4 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @end
 
-WK_HEADER_AUDIT_END(nullability, sendability)
+NS_ASSUME_NONNULL_END
