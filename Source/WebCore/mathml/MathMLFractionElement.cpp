@@ -42,7 +42,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLFractionElement);
 using namespace MathMLNames;
 
 inline MathMLFractionElement::MathMLFractionElement(const QualifiedName& tagName, Document& document)
-    : MathMLRowElement(tagName, document)
+    : MathMLPresentationElement(tagName, document)
 {
 }
 

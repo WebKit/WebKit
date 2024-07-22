@@ -46,7 +46,7 @@ static bool isPrescriptDelimiter(const RenderObject& renderObject)
 }
 
 RenderMathMLScripts::RenderMathMLScripts(Type type, MathMLScriptsElement& element, RenderStyle&& style)
-    : RenderMathMLRow(type, element, WTFMove(style))
+    : RenderMathMLBlock(type, element, WTFMove(style))
 {
 }
 
@@ -64,15 +64,11 @@ MathMLScriptsElement::ScriptType RenderMathMLScripts::scriptType() const
 
 RenderMathMLOperator* RenderMathMLScripts::unembellishedOperator() const
 {
-    auto possibleReference = validateAndGetReferenceChildren();
-    if (!possibleReference)
-        return RenderMathMLRow::unembellishedOperator();
-
-    auto* base = dynamicDowncast<RenderMathMLBlock>(possibleReference.value().base);
+    auto* base = dynamicDowncast<RenderMathMLBlock>(firstChildBox());
     return base ? base->unembellishedOperator() : nullptr;
 }
 
-std::optional<RenderMathMLScripts::ReferenceChildren> RenderMathMLScripts::validateAndGetReferenceChildren() const
+std::optional<RenderMathMLScripts::ReferenceChildren> RenderMathMLScripts::validateAndGetReferenceChildren()
 {
     // All scripted elements must have at least one child.
     // The first child is the base.
@@ -129,10 +125,6 @@ std::optional<RenderMathMLScripts::ReferenceChildren> RenderMathMLScripts::valid
         //
         // https://www.w3.org/TR/MathML3/chapter3.html#presm.mmultiscripts
         //
-        // The base cannot be an <mprescripts> element.
-        if (isPrescriptDelimiter(*base))
-            return std::nullopt;
-
         // We set the first postscript, unless (subscript superscript)* is empty.
         if (base->nextSiblingBox() && !isPrescriptDelimiter(*base->nextSiblingBox()))
             reference.firstPostScript = base->nextSiblingBox();
@@ -189,7 +181,7 @@ void RenderMathMLScripts::computePreferredLogicalWidths()
 
     auto possibleReference = validateAndGetReferenceChildren();
     if (!possibleReference) {
-        RenderMathMLRow::computePreferredLogicalWidths();
+        setPreferredLogicalWidthsDirty(false);
         return;
     }
     auto& reference = possibleReference.value();
@@ -365,7 +357,7 @@ void RenderMathMLScripts::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     auto possibleReference = validateAndGetReferenceChildren();
     if (!possibleReference) {
-        RenderMathMLRow::layoutBlock(relayoutChildren);
+        layoutInvalidMarkup(relayoutChildren);
         return;
     }
     auto& reference = possibleReference.value();
@@ -489,12 +481,10 @@ void RenderMathMLScripts::layoutBlock(bool relayoutChildren, LayoutUnit)
 
 std::optional<LayoutUnit> RenderMathMLScripts::firstLineBaseline() const
 {
-    auto possibleReference = validateAndGetReferenceChildren();
-    if (!possibleReference)
-        return RenderMathMLRow::firstLineBaseline();
-
-    auto& base = *possibleReference.value().base;
-    return LayoutUnit { roundf(ascentForChild(base) + base.marginBefore() + base.logicalTop()) };
+    auto* base = firstChildBox();
+    if (!base)
+        return std::optional<LayoutUnit>();
+    return LayoutUnit { roundf(ascentForChild(*base) + base->marginBefore() + base->logicalTop()) };
 }
 
 }

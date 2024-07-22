@@ -187,7 +187,8 @@ void RenderMathMLUnderOver::computePreferredLogicalWidths()
     ASSERT(preferredLogicalWidthsDirty());
 
     if (!isValid()) {
-        RenderMathMLRow::computePreferredLogicalWidths();
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = 0;
+        setPreferredLogicalWidthsDirty(false);
         return;
     }
 
@@ -305,7 +306,7 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
         return;
 
     if (!isValid()) {
-        RenderMathMLRow::layoutBlock(relayoutChildren);
+        layoutInvalidMarkup(relayoutChildren);
         return;
     }
 

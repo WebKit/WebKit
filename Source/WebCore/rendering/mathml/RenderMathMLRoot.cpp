@@ -161,7 +161,8 @@ void RenderMathMLRoot::computePreferredLogicalWidths()
     ASSERT(preferredLogicalWidthsDirty());
 
     if (!isValid()) {
-        RenderMathMLRow::computePreferredLogicalWidths();
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = 0;
+        setPreferredLogicalWidthsDirty(false);
         return;
     }
 
@@ -196,7 +197,7 @@ void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
     m_baseWidth = 0;
 
     if (!isValid()) {
-        RenderMathMLRow::layoutBlock(relayoutChildren);
+        layoutInvalidMarkup(relayoutChildren);
         return;
     }
 

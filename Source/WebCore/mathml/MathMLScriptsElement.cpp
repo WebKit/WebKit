@@ -57,7 +57,7 @@ static MathMLScriptsElement::ScriptType scriptTypeOf(const QualifiedName& tagNam
 }
 
 MathMLScriptsElement::MathMLScriptsElement(const QualifiedName& tagName, Document& document)
-    : MathMLRowElement(tagName, document)
+    : MathMLPresentationElement(tagName, document)
     , m_scriptType(scriptTypeOf(tagName))
 {
 }

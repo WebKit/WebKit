@@ -44,7 +44,7 @@ FAIL Invalid <mmultiscripts> should lay out as an mrow (count == 2) assert_appro
 FAIL Invalid <mmultiscripts> should lay out as an mrow (count == 4) assert_approx_equals: inline size expected 100 +/- 1 but got 0
 FAIL Invalid <mmultiscripts> should lay out as an mrow (count == 7) assert_approx_equals: inline size expected 220 +/- 1 but got 0
 FAIL Invalid <mmultiscripts> should lay out as an mrow (count == 9) assert_approx_equals: inline size expected 390 +/- 1 but got 0
-FAIL Invalid <mmultiscripts> should lay out as an mrow (first in-flow child is an <mprescripts>) assert_approx_equals: inline size expected 100 +/- 1 but got 61.25
+FAIL Invalid <mmultiscripts> should lay out as an mrow (first in-flow child is an <mprescripts>) assert_approx_equals: inline size expected 100 +/- 1 but got 61.78125
 FAIL Invalid <mmultiscripts> should lay out as an mrow (one of the even number of children after the first <mprescripts> is an <mprescripts>) assert_approx_equals: inline size expected 220 +/- 1 but got 0
 
 

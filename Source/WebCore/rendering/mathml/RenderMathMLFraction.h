@@ -30,13 +30,13 @@
 #if ENABLE(MATHML)
 
 #include "MathMLFractionElement.h"
-#include "RenderMathMLRow.h"
+#include "RenderMathMLBlock.h"
 
 namespace WebCore {
 
 class MathMLFractionElement;
 
-class RenderMathMLFraction final : public RenderMathMLRow {
+class RenderMathMLFraction final : public RenderMathMLBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderMathMLFraction);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLFraction);
 public:

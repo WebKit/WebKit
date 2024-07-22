@@ -44,6 +44,6 @@ FAIL Invalid <mmultiscripts> should fallback to mrow behaviour when computing pr
 FAIL Invalid <mmultiscripts> should fallback to mrow behaviour when computing preferred logical widths (count == 4) assert_approx_equals: expected 100 +/- 1 but got 0
 FAIL Invalid <mmultiscripts> should fallback to mrow behaviour when computing preferred logical widths (count == 7) assert_approx_equals: expected 220 +/- 1 but got 0
 FAIL Invalid <mmultiscripts> should fallback to mrow behaviour when computing preferred logical widths (count == 9) assert_approx_equals: expected 390 +/- 1 but got 0
-FAIL Invalid <mmultiscripts> should fallback to mrow behaviour when computing preferred logical widths (first in-flow child is an <mprescripts>) assert_approx_equals: expected 100 +/- 1 but got 61.25
+FAIL Invalid <mmultiscripts> should fallback to mrow behaviour when computing preferred logical widths (first in-flow child is an <mprescripts>) assert_approx_equals: expected 100 +/- 1 but got 61.78125
 FAIL Invalid <mmultiscripts> should fallback to mrow behaviour when computing preferred logical widths (one of the even number of children after the first <mprescripts> is an <mprescripts>) assert_approx_equals: expected 220 +/- 1 but got 0
 

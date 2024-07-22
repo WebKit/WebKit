@@ -1567,9 +1567,6 @@ inline bool RenderObject::isRenderMathMLRow() const
     case Type::MathMLPadded:
     case Type::MathMLRoot:
     case Type::MathMLRow:
-    case Type::MathMLFraction:
-    case Type::MathMLScripts:
-    case Type::MathMLUnderOver:
         return true;
     default:
         break;
