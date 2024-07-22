@@ -138,5 +138,6 @@ void OSAllocator::protect(void* address, size_t bytes, bool readable, bool writa
         dataLogLn("mprotect failed: ", safeStrerror(errno).data());
         RELEASE_ASSERT_NOT_REACHED();
     }
+}
 
 } // namespace WTF
