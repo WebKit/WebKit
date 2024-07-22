@@ -977,6 +977,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
     , m_thisRegister(CallFrame::thisArgumentOffset())
     , m_codeType(ModuleCode)
     , m_vm(vm)
+    , m_defaultAllowCallIgnoreResultOptimization(true)
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
     , m_isBuiltinFunction(false)
