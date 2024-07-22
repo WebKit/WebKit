@@ -54,6 +54,8 @@ Ref<MathMLRowElement> MathMLRowElement::create(const QualifiedName& tagName, Doc
 
 void MathMLRowElement::childrenChanged(const ChildChange& change)
 {
+    // FIXME: Avoid this invalidation for valid MathMLFractionElement/MathMLScriptsElement.
+    // See https://bugs.webkit.org/show_bug.cgi?id=276828.
     for (RefPtr child = firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(moTag))
             static_cast<MathMLOperatorElement*>(child.get())->setOperatorFormDirty();
