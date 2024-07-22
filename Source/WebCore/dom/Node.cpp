@@ -2907,6 +2907,9 @@ TextDirection Node::effectiveTextDirection() const
 
 void Node::setEffectiveTextDirection(TextDirection direction)
 {
+    // ALWAYS_LOG_WITH_STREAM(stream << *this << "setting effective text direction " << (direction == TextDirection::RTL));
+    // WTFReportBacktrace();
+    // ALWAYS_LOG_WITH_STREAM(stream << "--\n");
     auto bitfields = rareDataBitfields();
     bitfields.effectiveTextDirection = enumToUnderlyingType(direction);
     setRareDataBitfields(bitfields);

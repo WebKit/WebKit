@@ -866,6 +866,7 @@ std::optional<TextDirection> HTMLElement::directionalityIfDirIsAuto() const
     return computeDirectionalityFromText().direction;
 }
 
+// https://html.spec.whatwg.org/#auto-directionality
 auto HTMLElement::computeDirectionalityFromText() const -> TextDirectionWithStrongDirectionalityNode
 {
     if (RefPtr textControl = dynamicDowncast<HTMLTextFormControlElement>(const_cast<HTMLElement*>(this))) {
@@ -877,22 +878,43 @@ auto HTMLElement::computeDirectionalityFromText() const -> TextDirectionWithStro
         }
     }
 
+    if (RefPtr slot = dynamicDowncast<HTMLSlotElement>(this)) {
+        if (auto* assignedNodes = slot->assignedNodes()) {
+            for (auto& childNode : *assignedNodes) {
+                if (childNode->isTextNode()) {
+                    if (auto direction = childNode->textContent(true).defaultWritingDirection())
+                        return { *direction == U_LEFT_TO_RIGHT ? TextDirection::LTR : TextDirection::RTL, RefPtr { childNode.get() } };
+                } else if (RefPtr childElement = dynamicDowncast<HTMLElement>(childNode.get())) {
+                    auto childDirectionality = childElement->computeDirectionalityFromText();
+                    if (childDirectionality.strongDirectionalityNode)
+                        return childDirectionality;
+                }
+            }
+            return { TextDirection::LTR, nullptr };
+        }
+    }
+
     RefPtr node = firstChild();
     while (node) {
-        // Skip bdi, script, style and text form controls.
-        auto* element = dynamicDowncast<Element>(*node);
-        if (node->hasTagName(bdiTag) || node->hasTagName(scriptTag) || node->hasTagName(styleTag)
-            || (element && element->isTextField())) {
-            node = NodeTraversal::nextSkippingChildren(*node, this);
-            continue;
-        }
-
-        // Skip elements with valid dir attribute
+        auto* element = dynamicDowncast<HTMLElement>(*node);
         if (element) {
+            // Skip bdi, script, style and text form controls.
+            if (node->hasTagName(bdiTag) || node->hasTagName(scriptTag) || node->hasTagName(styleTag)
+                || (element && element->isTextField())) {
+                node = NodeTraversal::nextSkippingChildren(*node, this);
+                continue;
+            }
+
+            // Skip elements with valid dir attribute
             if (isValidDirValue(element->attributeWithoutSynchronization(dirAttr))) {
                 node = NodeTraversal::nextSkippingChildren(*element, this);
                 continue;
             }
+        }
+
+        if (RefPtr slot = dynamicDowncast<HTMLSlotElement>(node)) {
+            if (RefPtr host = shadowHost())
+                return { host->effectiveTextDirection(), host };
         }
 
         if (node->isTextNode()) {
@@ -1007,6 +1029,14 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Element* befo
     if (!selfOrPrecedingNodesAffectDirAuto())
         return;
 
+    ALWAYS_LOG_WITH_STREAM(stream << " start --- ");
+    ALWAYS_LOG_WITH_STREAM(stream << dynamicDowncast<HTMLSlotElement>(this));
+    // Children don't affect directionality when there are assigned nodes.
+    if (auto* slot = dynamicDowncast<HTMLSlotElement>(this); slot && slot->assignedNodes())
+        return;
+
+    ALWAYS_LOG_WITH_STREAM(stream << " end --- ");
+
     RefPtr<Node> oldMarkedNode;
     if (beforeChange)
         oldMarkedNode = changeType == ChildChange::Type::ElementInserted ? ElementTraversal::nextSibling(*beforeChange) : beforeChange->nextSibling();
@@ -1015,7 +1045,7 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Element* befo
         oldMarkedNode = oldMarkedNode->nextSibling();
     if (oldMarkedNode)
         setHasDirAutoFlagRecursively(oldMarkedNode.get(), false);
-
+    
     for (Ref elementToAdjust : lineageOfType<HTMLElement>(*this)) {
         if (elementAffectsDirectionality(elementToAdjust)) {
             ASSERT(elementToAdjust->hasDirectionAuto());

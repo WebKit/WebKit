@@ -330,7 +330,15 @@ void ShadowRoot::slotFallbackDidChange(HTMLSlotElement& slot)
 
 const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* ShadowRoot::assignedNodesForSlot(const HTMLSlotElement& slot)
 {
-    return m_slotAssignment ? m_slotAssignment->assignedNodesForSlot(slot, *this) : nullptr;
+    ALWAYS_LOG_WITH_STREAM(stream << "m_slotAssignment -- " << !!m_slotAssignment);
+
+    if (m_slotAssignment) {
+
+        auto nodes = m_slotAssignment->assignedNodesForSlot(slot, *this);
+        ALWAYS_LOG_WITH_STREAM(stream << " --- assigned nodes for slot end");
+        return nodes;
+    }
+    return nullptr;
 }
 
 static std::optional<std::pair<AtomString, AtomString>> parsePartMapping(StringView mappingString)

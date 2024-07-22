@@ -67,7 +67,9 @@ HTMLSlotElement::InsertedIntoAncestorResult HTMLSlotElement::insertedIntoAncesto
             shadowRoot->addSlotElementByName(attributeWithoutSynchronization(nameAttr), *this);
     }
 
-    return InsertedIntoAncestorResult::Done;
+    if (!insertionType.connectedToDocument)
+        return InsertedIntoAncestorResult::Done;
+    return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 
 void HTMLSlotElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
@@ -78,7 +80,33 @@ void HTMLSlotElement::removedFromAncestor(RemovalType removalType, ContainerNode
         oldShadowRoot->removeSlotElementByName(attributeWithoutSynchronization(nameAttr), *this, oldParentOfRemovedTree);
     }
 
+    // FIXME: Add same logic as HTMLElement::removedFromAncestor() but for shadowHost/assignedNodes.
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+}
+
+void HTMLSlotElement::didFinishInsertingNode()
+{
+    ALWAYS_LOG_WITH_STREAM(stream << "HTMLSlotElement::didFinishInsertingNode()");
+    if (auto* shadowRoot = containingShadowRoot()) {
+        ALWAYS_LOG_WITH_STREAM(stream << "has shadow root");
+        if (assignedNodes()) {
+            ALWAYS_LOG_WITH_STREAM(stream << "has assigned nodes");
+            if (RefPtr shadowHost = shadowRoot->host()) {
+                ALWAYS_LOG_WITH_STREAM(stream << "has shadow host");
+                // showTreeForThis();
+                if (shadowHost->usesEffectiveTextDirection()) {
+                    ALWAYS_LOG_WITH_STREAM(stream << "uses effective text direction");
+                    // FIXME: need to use isValidDir() here.
+                    if (!attributeWithoutSynchronization(dirAttr).isNull()) {
+                        ALWAYS_LOG_WITH_STREAM(stream << "dir is not null");
+                        setUsesEffectiveTextDirection(true);
+                        setEffectiveTextDirection(shadowHost->effectiveTextDirection());
+                    }
+                }
+            }
+        }
+    }
+    ALWAYS_LOG_WITH_STREAM(stream << "end HTMLSlotElement::didFinishInsertingNode()");
 }
 
 void HTMLSlotElement::childrenChanged(const ChildChange& childChange)
@@ -104,6 +132,7 @@ void HTMLSlotElement::attributeChanged(const QualifiedName& name, const AtomStri
 const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* HTMLSlotElement::assignedNodes() const
 {
     RefPtr shadowRoot = containingShadowRoot();
+    ALWAYS_LOG_WITH_STREAM(stream << "shadowroot " << shadowRoot);
     if (!shadowRoot)
         return nullptr;
 

@@ -59,6 +59,7 @@ private:
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;
+    void didFinishInsertingNode() final;
     void childrenChanged(const ChildChange&) final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 

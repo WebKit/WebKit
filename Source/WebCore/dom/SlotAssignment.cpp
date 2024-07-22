@@ -312,6 +312,9 @@ void NamedSlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowR
     if (!slotElement)
         return;
 
+    if (slotElement->hasDirectionAuto())
+        slotElement->updateEffectiveDirectionalityOfDirAuto();
+
     if (shadowRoot.shouldFireSlotchangeEvent())
         slotElement->enqueueSlotChangeEvent();
 }
@@ -349,16 +352,20 @@ const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* NamedSlotAssignment
         return nullptr;
     RELEASE_ASSERT(slot);
 
+    ALWAYS_LOG_WITH_STREAM(stream << "!m_slotAssignmentsIsValid " << !m_slotAssignmentsIsValid);
     if (!m_slotAssignmentsIsValid)
         assignSlots(shadowRoot);
 
+    ALWAYS_LOG_WITH_STREAM(stream << "slot->assignedNodes.isEmpty() " << slot->assignedNodes.isEmpty());
     if (slot->assignedNodes.isEmpty())
         return nullptr;
 
     RELEASE_ASSERT(slot->hasSlotElements());
+    ALWAYS_LOG_WITH_STREAM(stream << "has duplicated slots " << (slot->hasDuplicatedSlotElements() && findFirstSlotElement(*slot) != &slotElement));
     if (slot->hasDuplicatedSlotElements() && findFirstSlotElement(*slot) != &slotElement)
         return nullptr;
 
+    ALWAYS_LOG_WITH_STREAM(stream << "assignedNodes " << &slot->assignedNodes);
     return &slot->assignedNodes;
 }
 
@@ -540,8 +547,11 @@ void ManualSlotAssignment::slotManualAssignmentDidChange(HTMLSlotElement& slot, 
         return;
     }
     for (auto& currentSlot : descendantsOfType<HTMLSlotElement>(shadowRoot)) {
-        if (affectedSlots.contains(currentSlot))
+        if (affectedSlots.contains(currentSlot)) {
             currentSlot.enqueueSlotChangeEvent();
+            if (currentSlot.hasDirectionAuto())
+                currentSlot.updateEffectiveDirectionalityOfDirAuto();
+        }
         else if (&currentSlot == &slot)
             scheduleSlotChangeEventIfNeeded();
     }

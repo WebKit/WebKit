@@ -102,6 +102,7 @@ public:
     bool hasDirectionAuto() const;
 
     std::optional<TextDirection> directionalityIfDirIsAuto() const;
+    void updateEffectiveDirectionalityOfDirAuto();
 
     virtual bool isTextControlInnerTextElement() const { return false; }
     virtual bool isSearchFieldResultsButtonElement() const { return false; }
@@ -196,7 +197,6 @@ protected:
 
     void childrenChanged(const ChildChange&) override;
     void updateTextDirectionalityAfterInputTypeChange();
-    void updateEffectiveDirectionalityOfDirAuto();
 
     virtual void effectiveSpellcheckAttributeChanged(bool);
 
