@@ -5,12 +5,6 @@ WEBKIT_OPTION_BEGIN()
 
 SET_PROJECT_VERSION(2 45 5)
 
-# This is required because we use the DEPFILE argument to add_custom_command().
-# Remove after upgrading cmake_minimum_required() to 3.20.
-if (${CMAKE_VERSION} VERSION_LESS "3.20" AND NOT ${CMAKE_GENERATOR} STREQUAL "Ninja")
-    message(FATAL_ERROR "Building with Makefiles requires CMake 3.20 or newer. Either enable Ninja by passing -GNinja, or upgrade CMake.")
-endif ()
-
 set(USER_AGENT_BRANDING "" CACHE STRING "Branding to add to user agent string")
 
 find_package(Cairo 1.16.0 REQUIRED)
@@ -143,7 +137,7 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_RTC PRIVATE ${ENABLE_EXPERIMENTAL_FE
 
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_SYSPROF_CAPTURE PRIVATE ON)
 
-if (CMAKE_VERSION VERSION_LESS "3.20" OR CMAKE_CXX_BYTE_ORDER STREQUAL "LITTLE_ENDIAN")
+if (CMAKE_CXX_BYTE_ORDER STREQUAL "LITTLE_ENDIAN")
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_SKIA PRIVATE ON)
 else ()
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_SKIA PRIVATE OFF)
