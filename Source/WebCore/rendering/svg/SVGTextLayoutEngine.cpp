@@ -360,9 +360,6 @@ bool SVGTextLayoutEngine::currentVisualCharacterMetrics(const SVGInlineTextBox& 
     unsigned boxStart = textBox.start();
     unsigned boxLength = textBox.len();
 
-    if (m_visualMetricsListOffset == textMetricsSize)
-        return false;
-
     while (m_visualMetricsListOffset < textMetricsSize) {
         // Advance to text box start location.
         if (m_visualCharacterOffset < boxStart) {
