@@ -47,7 +47,11 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
 
     // This needs to happen before we use the scratch buffer because this function also uses the scratch buffer.
     adjustFrameAndStackInOSRExitCompilerThunk<DFG::JITCode>(jit, vm, JITType::DFGJIT);
-    
+
+#if USE(JSVALUE64)
+    jit.store32(GPRInfo::numberTagRegister, &vm.osrExitIndex);
+#endif
+
     size_t scratchSize = sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters);
     ScratchBuffer* scratchBuffer = vm.scratchBufferForSize(scratchSize);
     EncodedJSValue* buffer = static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer());
@@ -93,8 +97,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
     // This will implicitly pass GPRInfo::callFrameRegister as the first argument based on the operation type.
     jit.setupArguments<decltype(operationCompileOSRExit)>(bufferGPR);
     jit.prepareCallOperation(vm);
-
-    MacroAssembler::Call functionCall = jit.call(OperationPtrTag);
+    jit.callOperation<OperationPtrTag>(operationCompileOSRExit);
 
     jit.move(CCallHelpers::TrustedImmPtr(buffer), bufferGPR);
     CCallHelpers::LoadRegSpooler loadSpooler(jit, bufferGPR);
@@ -124,9 +127,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
     jit.farJump(MacroAssembler::AbsoluteAddress(&vm.osrExitJumpDestination), OSRExitPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::DFGThunk);
-    
-    patchBuffer.link<OperationPtrTag>(functionCall, operationCompileOSRExit);
-
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, nullptr, "DFG OSR exit generation thunk");
 }
 
