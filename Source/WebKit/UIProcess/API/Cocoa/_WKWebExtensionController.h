@@ -37,14 +37,14 @@
 @class _WKWebExtensionControllerConfiguration;
 @class _WKWebExtensionDataRecord;
 
-NS_ASSUME_NONNULL_BEGIN
+WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*!
  @abstract A `WKWebExtensionController` object manages a set of loaded extension contexts.
  @discussion You can have one or more extension controller instances, allowing different parts of the app to use different sets of extensions.
  A controller is associated with @link WKWebView @/link via the `webExtensionController` property on @link WKWebViewConfiguration @/link.
  */
-WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_SWIFT_UI_ACTOR
 @interface _WKWebExtensionController : NSObject
 
 /*!
@@ -253,4 +253,4 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 
 @end
 
-NS_ASSUME_NONNULL_END
+WK_HEADER_AUDIT_END(nullability, sendability)

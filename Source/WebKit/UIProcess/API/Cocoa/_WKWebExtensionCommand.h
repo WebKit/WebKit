@@ -33,7 +33,7 @@
 
 @class _WKWebExtensionContext;
 
-NS_ASSUME_NONNULL_BEGIN
+WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*!
  @abstract A `WKWebExtensionCommand` object encapsulates the properties for an individual web extension command.
@@ -41,8 +41,8 @@ NS_ASSUME_NONNULL_BEGIN
  can be used by a web extension to perform specific actions within a web extension context, such toggling features, or interacting with
  web content. These commands enhance the functionality of the extension by allowing users to invoke actions quickly.
  */
-WK_CLASS_AVAILABLE(macos(14.4), ios(17.4), visionos(1.1))
-NS_SWIFT_NAME(WKWebExtension.Command)
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.Command)
 @interface _WKWebExtensionCommand : NSObject
 
 + (instancetype)new NS_UNAVAILABLE;
@@ -52,13 +52,13 @@ NS_SWIFT_NAME(WKWebExtension.Command)
 @property (nonatomic, readonly, weak) _WKWebExtensionContext *webExtensionContext;
 
 /*! @abstract A unique identifier for the command. */
-@property (nonatomic, readonly, copy) NSString *identifier;
+@property (nonatomic, readonly, copy) NSString *identifier NS_SWIFT_NAME(id);
 
 /*!
  @abstract Descriptive title for the command aiding discoverability.
  @discussion This title can be displayed in user interface elements such as keyboard shortcuts lists or menu items to help users understand its purpose.
  */
-@property (nonatomic, readonly, copy) NSString *discoverabilityTitle;
+@property (nonatomic, readonly, copy) NSString *title;
 
 /*!
  @abstract The primary key used to trigger the command, distinct from any modifier flags.
@@ -104,4 +104,4 @@ NS_SWIFT_NAME(WKWebExtension.Command)
 
 @end
 
-NS_ASSUME_NONNULL_END
+WK_HEADER_AUDIT_END(nullability, sendability)

@@ -30,14 +30,14 @@
 @protocol _WKWebExtensionTab;
 @protocol _WKWebExtensionWindow;
 
-NS_ASSUME_NONNULL_BEGIN
+WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*!
  @abstract A `_WKWebExtensionTabCreationOptions` object encapsulates new tab creation options for an extension.
  @discussion This class holds the various options that influence the behavior and initial state of a newly created tab.
  The app retains the discretion to disregard any or all of these options, or even opt not to create a new tab.
  */
-WK_CLASS_AVAILABLE(macos(14.2), ios(17.2))
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_SWIFT_UI_ACTOR
 @interface _WKWebExtensionTabCreationOptions : NSObject
 
 + (instancetype)new NS_UNAVAILABLE;
@@ -91,4 +91,4 @@ WK_CLASS_AVAILABLE(macos(14.2), ios(17.2))
 
 @end
 
-NS_ASSUME_NONNULL_END
+WK_HEADER_AUDIT_END(nullability, sendability)

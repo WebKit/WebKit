@@ -763,7 +763,7 @@ TEST(WKWebExtensionContext, CommandsParsing)
         if ([command.identifier isEqualToString:@"toggle-feature"]) {
             testCommand = command;
 
-            EXPECT_NS_EQUAL(command.discoverabilityTitle, @"Send A Thing");
+            EXPECT_NS_EQUAL(command.title, @"Send A Thing");
             EXPECT_NS_EQUAL(command.activationKey, @"u");
 #if PLATFORM(MAC)
             EXPECT_EQ(command.modifierFlags, NSEventModifierFlagOption | NSEventModifierFlagShift);
@@ -771,7 +771,7 @@ TEST(WKWebExtensionContext, CommandsParsing)
             EXPECT_EQ(command.modifierFlags, UIKeyModifierAlternate | UIKeyModifierShift);
 #endif
         } else if ([command.identifier isEqualToString:@"do-another-thing"]) {
-            EXPECT_NS_EQUAL(command.discoverabilityTitle, @"Find A Thing");
+            EXPECT_NS_EQUAL(command.title, @"Find A Thing");
             EXPECT_NS_EQUAL(command.activationKey, @"y");
 #if PLATFORM(MAC)
             EXPECT_EQ(command.modifierFlags, NSEventModifierFlagCommand | NSEventModifierFlagShift);
@@ -779,7 +779,7 @@ TEST(WKWebExtensionContext, CommandsParsing)
             EXPECT_EQ(command.modifierFlags, UIKeyModifierCommand | UIKeyModifierShift);
 #endif
         } else if ([command.identifier isEqualToString:@"special-command"]) {
-            EXPECT_NS_EQUAL(command.discoverabilityTitle, @"Do A Thing");
+            EXPECT_NS_EQUAL(command.title, @"Do A Thing");
             EXPECT_NS_EQUAL(command.activationKey, @"\uF70D");
 #if PLATFORM(MAC)
             EXPECT_EQ(command.modifierFlags, NSEventModifierFlagOption);
@@ -787,7 +787,7 @@ TEST(WKWebExtensionContext, CommandsParsing)
             EXPECT_EQ(command.modifierFlags, UIKeyModifierAlternate);
 #endif
         } else if ([command.identifier isEqualToString:@"escape-command"]) {
-            EXPECT_NS_EQUAL(command.discoverabilityTitle, @"Be A Thing");
+            EXPECT_NS_EQUAL(command.title, @"Be A Thing");
             EXPECT_NS_EQUAL(command.activationKey, @"\uF701");
 #if PLATFORM(MAC)
             EXPECT_EQ(command.modifierFlags, NSEventModifierFlagControl);
@@ -795,11 +795,11 @@ TEST(WKWebExtensionContext, CommandsParsing)
             EXPECT_EQ(command.modifierFlags, UIKeyModifierControl);
 #endif
         } else if ([command.identifier isEqualToString:@"unassigned-command"]) {
-            EXPECT_NS_EQUAL(command.discoverabilityTitle, @"Maybe A Thing");
+            EXPECT_NS_EQUAL(command.title, @"Maybe A Thing");
             EXPECT_NULL(command.activationKey);
             EXPECT_EQ((uint32_t)command.modifierFlags, 0lu);
         } else if ([command.identifier isEqualToString:@"_execute_action"]) {
-            EXPECT_NS_EQUAL(command.discoverabilityTitle, @"Test Action");
+            EXPECT_NS_EQUAL(command.title, @"Test Action");
             EXPECT_NULL(command.activationKey);
             EXPECT_EQ((uint32_t)command.modifierFlags, 0lu);
         }

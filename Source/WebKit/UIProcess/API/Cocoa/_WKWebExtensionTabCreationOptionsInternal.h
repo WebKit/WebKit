@@ -25,7 +25,7 @@
 
 #import "_WKWebExtensionTabCreationOptions.h"
 
-NS_ASSUME_NONNULL_BEGIN
+WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
@@ -47,4 +47,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
 
-NS_ASSUME_NONNULL_END
+WK_HEADER_AUDIT_END(nullability, sendability)

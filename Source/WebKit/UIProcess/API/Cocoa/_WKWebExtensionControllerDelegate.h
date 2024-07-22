@@ -29,8 +29,6 @@
 
 #import <WebKit/_WKWebExtensionPermission.h>
 
-#define HAVE_UPDATED_WEB_EXTENSION_PROMPT_COMPLETION_HANDLER 1
-
 @class _WKWebExtensionAction;
 @class _WKWebExtensionContext;
 @class _WKWebExtensionController;
@@ -41,9 +39,9 @@
 @protocol _WKWebExtensionTab;
 @protocol _WKWebExtensionWindow;
 
-NS_ASSUME_NONNULL_BEGIN
+WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
-WK_API_AVAILABLE(macos(13.3), ios(16.4))
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_SWIFT_UI_ACTOR
 @protocol _WKWebExtensionControllerDelegate <NSObject>
 @optional
 
@@ -196,4 +194,4 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
 
 @end
 
-NS_ASSUME_NONNULL_END
+WK_HEADER_AUDIT_END(nullability, sendability)
