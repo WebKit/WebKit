@@ -77,7 +77,7 @@ std::optional<ThreadableWebSocketChannel::ValidatedURL> ThreadableWebSocketChann
             return { };
 #if ENABLE(CONTENT_EXTENSIONS)
         if (RefPtr documentLoader = document.loader()) {
-            auto results = page->userContentProvider().processContentRuleListsForLoad(*page, validatedURL.url, ContentExtensions::ResourceType::WebSocket, *documentLoader);
+            auto results = page->protectedUserContentProvider()->processContentRuleListsForLoad(*page, validatedURL.url, ContentExtensions::ResourceType::WebSocket, *documentLoader);
             if (results.summary.blockedLoad)
                 return { };
             if (results.summary.madeHTTPS) {

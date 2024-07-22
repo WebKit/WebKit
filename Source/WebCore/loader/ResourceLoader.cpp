@@ -428,7 +428,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
         RefPtr page = frameLoader()->frame().page();
         RefPtr documentLoader = m_documentLoader;
         if (page && documentLoader) {
-            auto results = page->userContentProvider().processContentRuleListsForLoad(*page, request.url(), m_resourceType, *documentLoader, redirectResponse.url());
+            auto results = page->protectedUserContentProvider()->processContentRuleListsForLoad(*page, request.url(), m_resourceType, *documentLoader, redirectResponse.url());
             bool blockedLoad = results.summary.blockedLoad;
             ContentExtensions::applyResultsToRequest(WTFMove(results), page.get(), request);
             if (blockedLoad) {

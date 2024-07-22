@@ -3529,7 +3529,7 @@ ResourceLoaderIdentifier FrameLoader::loadResourceSynchronously(const ResourceRe
     if (error.isNull()) {
         if (RefPtr page = m_frame->page()) {
             if (RefPtr documentLoader = m_documentLoader) {
-                auto results = page->userContentProvider().processContentRuleListsForLoad(*page, newRequest.url(), ContentExtensions::ResourceType::Fetch, *documentLoader);
+                auto results = page->protectedUserContentProvider()->processContentRuleListsForLoad(*page, newRequest.url(), ContentExtensions::ResourceType::Fetch, *documentLoader);
                 bool blockedLoad = results.summary.blockedLoad;
                 ContentExtensions::applyResultsToRequest(WTFMove(results), page.get(), newRequest);
                 if (blockedLoad) {

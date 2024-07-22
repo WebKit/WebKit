@@ -558,7 +558,7 @@ void DocumentLoader::handleSubstituteDataLoadNow()
     if (auto* page = m_frame ? m_frame->page() : nullptr) {
         // We intentionally do nothing with the results of this call.
         // We want the CSS to be loaded for us, but we ignore any attempt to block or upgrade the connection since there is no connection.
-        page->userContentProvider().processContentRuleListsForLoad(*page, response.url(), ContentExtensions::ResourceType::Document, *this);
+        page->protectedUserContentProvider()->processContentRuleListsForLoad(*page, response.url(), ContentExtensions::ResourceType::Document, *this);
     }
 #endif
 
