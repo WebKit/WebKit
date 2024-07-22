@@ -116,15 +116,21 @@ For building WebKit on Windows, see the [WebKit on Windows page](https://docs.we
 
 ## Running WebKit
 
-### With Safari and Other macOS Applications
+### With MiniBrowser/Safari or Other macOS Applications
 
-Run the following command to launch Safari with your local build of WebKit:
+Run the following command to launch the MiniBrowser (simple browser shell) with your local build of WebKit:
+
+```
+Tools/Scripts/run-minibrowser --debug
+```
+
+If you're building with the Apple Internal SDK, run the following to launch Safari with your local build of WebKit:
 
 ```
 Tools/Scripts/run-safari --debug
 ```
 
-The `run-safari` script sets the `DYLD_FRAMEWORK_PATH` environment variable to point to your build products, and then launches `/Applications/Safari.app`. `DYLD_FRAMEWORK_PATH` tells the system loader to prefer your build products over the frameworks installed in `/System/Library/Frameworks`.
+The `run-minibrowser` and `run-safari` scripts set the `DYLD_FRAMEWORK_PATH` environment variable to point to your build products, and then launch `WebKitBuild/Debug/MiniBrowser.app` or `/Applications/Safari.app`. `DYLD_FRAMEWORK_PATH` tells the system loader to prefer your build products over the frameworks installed in `/System/Library/Frameworks`.
 
 To run other applications with your local build of WebKit, run the following command:
 
@@ -144,13 +150,11 @@ In both cases, if you have built release builds instead, use `--release` instead
 
 ### Linux Ports
 
-If you have a development build, you can use the `run-minibrowser` script, e.g.:
+If you have a development build, run the `run-minibrowser` script with one of `--gtk`, `--jsc-only`, or `--wpe` to indicate the port to use; e.g.:
 
 ```
-run-minibrowser --debug --wpe
+Tools/Scripts/run-minibrowser --debug --wpe
 ```
-
-Pass one of `--gtk`, `--jsc-only`, or `--wpe` to indicate the port to use.
 
 ## Contribute
 

@@ -2161,23 +2161,27 @@ sub relativeScriptsDir()
 
 sub launcherPath()
 {
+    return if !isGtk() && !isWPE() && !isAppleMacWebKit();
     my $relativeScriptsPath = relativeScriptsDir();
-    if (isGtk() || isWPE()) {
+    chomp(my $developerDirectory = $ENV{DEVELOPER_DIR} || `xcode-select --print-path`);
+    if (-d File::Spec->catdir("$developerDirectory", "AppleInternal")) {
+        return "$relativeScriptsPath/run-safari";
+    } else {
         if (inFlatpakSandbox()) {
             return "Tools/Scripts/run-minibrowser";
         }
         return "$relativeScriptsPath/run-minibrowser";
-    } elsif (isAppleWebKit()) {
-        return "$relativeScriptsPath/run-safari";
     }
 }
 
 sub launcherName()
 {
-    if (isGtk() || isWPE()) {
-        return "MiniBrowser";
-    } elsif (isAppleMacWebKit()) {
+    return if !isGtk() && !isWPE() && !isAppleMacWebKit();
+    chomp(my $developerDirectory = $ENV{DEVELOPER_DIR} || `xcode-select --print-path`);
+    if (-d File::Spec->catdir("$developerDirectory", "AppleInternal")) {
         return "Safari";
+    } else {
+        return "MiniBrowser";
     }
 }
 
