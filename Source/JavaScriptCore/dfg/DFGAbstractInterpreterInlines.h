@@ -3688,9 +3688,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
-    case GetScope:
-        if (JSValue base = forNode(node->child1()).m_value) {
-            if (JSFunction* function = jsDynamicCast<JSFunction*>(base)) {
+    case GetScope: {
+        JSValue value = forNode(node->child1()).value();
+        if (value) {
+            if (JSFunction* function = jsDynamicCast<JSFunction*>(value)) {
                 setConstant(node, *m_graph.freeze(function->scope()));
                 break;
             }
@@ -3710,6 +3711,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
         break;
+    }
 
     case SkipScope: {
         if (JSValue child = forNode(node->child1()).value()) {
@@ -4568,7 +4570,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setNonCellTypeForNode(node, SpecBoolean);
         break;
     }
-        
+
     case GetExecutable: {
         JSValue value = forNode(node->child1()).value();
         if (value) {
@@ -4578,10 +4580,22 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
         }
-        setTypeForNode(node, SpecCellOther);
+
+        switch (node->child1()->op()) {
+        case NewFunction:
+        case NewGeneratorFunction:
+        case NewAsyncGeneratorFunction:
+        case NewAsyncFunction: {
+            setConstant(node, *node->child1()->cellOperand());
+            break;
+        }
+        default:
+            setTypeForNode(node, SpecCellOther);
+            break;
+        }
         break;
     }
-    
+
     case CheckIsConstant: {
         AbstractValue& value = forNode(node->child1());
         if (value.value() == node->constant()->value() && (value.value() || value.m_type == SpecEmpty)) {
