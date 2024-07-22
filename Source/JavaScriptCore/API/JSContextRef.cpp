@@ -322,6 +322,30 @@ void JSGlobalContextSetUnhandledRejectionCallback(JSGlobalContextRef ctx, JSObje
     globalObject->setUnhandledRejectionCallback(vm, object);
 }
 
+void JSGlobalContextSetUncaughtExceptionAtEventLoopCallback(JSGlobalContextRef ctx, JSUncaughtExceptionAtEventLoop callback)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    JSAPIGlobalObject* thisObject = jsCast<JSAPIGlobalObject*>(globalObject);
+    thisObject->uncaughtExceptionAtEventLoop = callback;
+}
+
+void JSGlobalContextSetUncaughtExceptionHandler(JSGlobalContextRef ctx, JSUncaughtExceptionHandler handler)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    JSAPIGlobalObject* thisObject = jsCast<JSAPIGlobalObject*>(globalObject);
+    thisObject->uncaughtExceptionHandler = handler;
+}
+
 void JSGlobalContextSetEvalEnabled(JSGlobalContextRef ctx, bool enabled, JSStringRef message)
 {
     if (!ctx) {

@@ -246,8 +246,13 @@ void JSLoadAndEvaluateModule(JSContextRef ctx, JSStringRef filename, JSValueRef*
         return JSValue::encode(callFrame->argument(0));
     });
 
-    JSFunction* rejectHandler = JSNativeStdFunction::create(vm, globalObject, 1, String(), [exception](JSGlobalObject* globalObject, CallFrame* callFrame) {
+    JSFunction* rejectHandler = JSNativeStdFunction::create(vm, globalObject, 1, String(), [exception, filename](JSGlobalObject* globalObject, CallFrame* callFrame) {
         *exception = toRef(globalObject, callFrame->argument(0));
+        auto* globalObjectImpl = jsCast<JSAPIGlobalObject*>(globalObject);
+        if (globalObjectImpl->uncaughtExceptionHandler) {
+            JSContextRef contextRef = toRef(globalObject);
+            globalObjectImpl->uncaughtExceptionHandler(contextRef, filename, toRef(globalObject, callFrame->argument(0)));
+        }
         return JSValue::encode(callFrame->argument(0));
     });
     

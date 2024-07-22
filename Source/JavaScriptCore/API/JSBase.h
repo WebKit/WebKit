@@ -166,6 +166,22 @@ typedef struct {
 } JSAPIModuleLoader;
 
 /*!
+@typedef JSUncaughtExceptionAtEventLoop
+@abstract The callback invoked when an exception is not caught in the event loop.
+@param ctx The execution context to use.
+@param exception A JSValue containing the uncaught exception.
+*/
+typedef void (*JSUncaughtExceptionAtEventLoop) (JSContextRef ctx, JSValueRef exception);
+
+/*!
+@typedef JSUncaughtExceptionHandler
+@abstract The callback invoked when an exception is not caught.
+@param ctx The execution context to use.
+@param exception A JSValue containing the uncaught exception.
+*/
+typedef void (*JSUncaughtExceptionHandler) (JSContextRef ctx, JSStringRef filename, JSValueRef exception);
+
+/*!
 @function JSSetAPIModuleLoader
 @abstract Sets the moduleLoader used to load and evaluate modules.
 @param ctx The execution context to use.

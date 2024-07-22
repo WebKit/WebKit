@@ -149,6 +149,22 @@ JS_EXPORT void JSGlobalContextSetUnhandledRejectionCallback(JSGlobalContextRef c
 
 /*!
 @function
+@abstract Sets the callback function that will be called when an uncaught exception occurs on the main thread.
+@param ctx The JSGlobalContext whose uncaught exception callback you want to set.
+@param callback The JSObjectRef to call when an uncaught exception occurs. Pass NULL to remove the callback.
+*/
+JS_EXPORT void JSGlobalContextSetUncaughtExceptionAtEventLoopCallback(JSGlobalContextRef ctx, JSUncaughtExceptionAtEventLoop callback);
+
+/*!
+@function
+@abstract Sets the callback function that will be called when an uncaught exception occurs.
+@param ctx The JSGlobalContext whose uncaught exception callback you want to set.
+@param callback The JSObjectRef to call when an uncaught exception occurs. Pass NULL to remove the callback.
+*/
+JS_EXPORT void JSGlobalContextSetUncaughtExceptionHandler(JSGlobalContextRef ctx, JSUncaughtExceptionHandler handler);
+
+/*!
+@function
 @abstract Gets the context group to which a JavaScript execution context belongs.
 @param ctx The JSContext whose group you want to get.
 @result ctx's group.

@@ -44,6 +44,8 @@ public:
     DECLARE_EXPORT_INFO;
 
     JSAPIModuleLoader api_moduleLoader { };
+    JSUncaughtExceptionAtEventLoop uncaughtExceptionAtEventLoop { nullptr };
+    JSUncaughtExceptionHandler uncaughtExceptionHandler { nullptr };
     HashSet<String> m_syntheticModuleKeys;
 
     static constexpr DestructionMode needsDestruction = NeedsDestruction;

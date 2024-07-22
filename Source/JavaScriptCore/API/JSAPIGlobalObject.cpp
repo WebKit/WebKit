@@ -390,6 +390,11 @@ const GlobalObjectMethodTable* JSAPIGlobalObject::globalObjectMethodTable()
 
 void JSAPIGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* globalObject, Exception* exception)
 {
+    auto* globalObjectImpl = jsCast<JSAPIGlobalObject*>(globalObject);
+    if (globalObjectImpl->uncaughtExceptionAtEventLoop) {
+        JSContextRef contextRef = toRef(globalObject);
+        globalObjectImpl->uncaughtExceptionAtEventLoop(contextRef, toRef(globalObject, exception->value()));
+    }
     Base::reportUncaughtExceptionAtEventLoop(globalObject, exception);
 }
 
