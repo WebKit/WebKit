@@ -744,7 +744,7 @@ private:
 
 template<typename CharacterType, size_t inlineCapacity> void append(Vector<CharacterType, inlineCapacity>& buffer, StringView string)
 {
-    unsigned oldSize = buffer.size();
+    size_t oldSize = buffer.size();
     buffer.grow(oldSize + string.length());
     string.getCharacters(buffer.data() + oldSize);
 }
