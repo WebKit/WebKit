@@ -115,11 +115,21 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     // by calls into the runtime. For debugging we might replace the implementation of any node with a call
     // to the runtime, and that call may walk stack. Therefore, each node must read() anything that a stack
     // scan would read. That's what this does.
-    for (InlineCallFrame* inlineCallFrame = node->origin.semantic.inlineCallFrame(); inlineCallFrame; inlineCallFrame = inlineCallFrame->directCaller.inlineCallFrame()) {
-        if (inlineCallFrame->isClosureCall)
-            read(AbstractHeap(Stack, VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::callee)));
-        if (inlineCallFrame->isVarargs())
-            read(AbstractHeap(Stack, VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis)));
+    switch (node->op()) {
+    // These nodes are particular ones which never requires stack scanning for stack trace generation. Thus we will not need these reads.
+    case ExitOK:
+    case JSConstant:
+    case DoubleConstant:
+    case Int52Constant:
+        break;
+    default:
+        for (InlineCallFrame* inlineCallFrame = node->origin.semantic.inlineCallFrame(); inlineCallFrame; inlineCallFrame = inlineCallFrame->directCaller.inlineCallFrame()) {
+            if (inlineCallFrame->isClosureCall)
+                read(AbstractHeap(Stack, VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::callee)));
+            if (inlineCallFrame->isVarargs())
+                read(AbstractHeap(Stack, VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis)));
+        }
+        break;
     }
 
     // We don't want to specifically account which nodes can read from the scope
