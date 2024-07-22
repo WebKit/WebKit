@@ -46,6 +46,10 @@
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #endif
 
+#if PLATFORM(IOS)
+#import "UIKitSPI.h"
+#endif
+
 using WebKit::Daemon::Encoder;
 
 namespace WebPushD {
@@ -243,6 +247,25 @@ void PushClientConnection::getPushPermissionState(URL&&, CompletionHandler<void(
     // will move the permission check into webpushd when supporting other platforms.
     replySender(static_cast<uint8_t>(WebCore::PushPermissionState::Denied));
 }
+
+void PushClientConnection::showNotification(const WebCore::NotificationData& notificationData, RefPtr<WebCore::NotificationResources> notificationResources, CompletionHandler<void()>&& completionHandler)
+{
+    WebPushDaemon::singleton().showNotification(*this, notificationData, notificationResources, WTFMove(completionHandler));
+}
+
+void PushClientConnection::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    WebPushDaemon::singleton().getNotifications(*this, registrationURL, tag, WTFMove(completionHandler));
+}
+
+#if PLATFORM(IOS)
+String PushClientConnection::associatedWebClipTitle() const
+{
+    if (!m_associatedWebClip)
+        m_associatedWebClip = [UIWebClip webClipWithIdentifier:(NSString *)m_pushPartitionString];
+    return m_associatedWebClip.get().title;
+}
+#endif // PLATFORM(IOS)
 
 } // namespace WebPushD
 

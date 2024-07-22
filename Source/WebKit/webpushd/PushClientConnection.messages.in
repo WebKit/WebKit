@@ -39,6 +39,8 @@ messages -> WebPushD::PushClientConnection NotUsingIPCConnection {
     SetPublicTokenForTesting(String token) -> ()
     GetPushTopicsForTesting() -> (Vector<String> enabled, Vector<String> ignored)
     DidShowNotificationForTesting(URL scopeURL) -> ()
+    ShowNotification(struct WebCore::NotificationData notificationData, RefPtr<WebCore::NotificationResources> notificationResources) -> ()
+    GetNotifications(URL registrationURL, String tag) -> (Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData> result)
 }
 
 #endif // ENABLE(WEB_PUSH_NOTIFICATIONS)

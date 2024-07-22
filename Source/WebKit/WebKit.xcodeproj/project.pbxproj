@@ -1243,6 +1243,7 @@
 		515BE1B51D5917FF00DD7C68 /* UIGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE1AD1D555C5100DD7C68 /* UIGamepad.h */; };
 		5163199416289A6000E22F00 /* NetworkProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51ACC9341628064800342550 /* NetworkProcessMessageReceiver.cpp */; };
 		5163199516289A6300E22F00 /* NetworkProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ACC9351628064800342550 /* NetworkProcessMessages.h */; };
+		51632FDB2C4A1CA30038F759 /* UserNotificationsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 51632FDA2C4A1C960038F759 /* UserNotificationsSPI.h */; };
 		5164658027A9C77400E1F2BA /* ServiceWorkerNotificationHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5164657F27A9C76700E1F2BA /* ServiceWorkerNotificationHandler.h */; };
 		516A4A5D120A2CCD00C05B7F /* APIError.h in Headers */ = {isa = PBXBuildFile; fileRef = 516A4A5B120A2CCD00C05B7F /* APIError.h */; };
 		5179556A162876F300FA43B6 /* NetworkProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 510CC7E016138E2900D03ED3 /* NetworkProcess.h */; };
@@ -5614,6 +5615,7 @@
 		515C415A207D74E000726E02 /* SuspendedPageProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SuspendedPageProxy.cpp; sourceTree = "<group>"; };
 		515C415B207D74E100726E02 /* SuspendedPageProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SuspendedPageProxy.h; sourceTree = "<group>"; };
 		5160BFE013381DF900918999 /* LoggingFoundation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoggingFoundation.mm; sourceTree = "<group>"; };
+		51632FDA2C4A1C960038F759 /* UserNotificationsSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserNotificationsSPI.h; sourceTree = "<group>"; };
 		5164657E27A9C76500E1F2BA /* ServiceWorkerNotificationHandler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerNotificationHandler.cpp; sourceTree = "<group>"; };
 		5164657F27A9C76700E1F2BA /* ServiceWorkerNotificationHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerNotificationHandler.h; sourceTree = "<group>"; };
 		5164C0941B05B757004F102A /* AuxiliaryProcess.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AuxiliaryProcess.messages.in; sourceTree = "<group>"; };
@@ -11247,6 +11249,7 @@
 				5CB6AE432609799C00B6ED5A /* ReasonSPI.h */,
 				0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */,
 				448AC24D267135A600B28921 /* SynapseSPI.h */,
+				51632FDA2C4A1C960038F759 /* UserNotificationsSPI.h */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -16757,6 +16760,7 @@
 				4A3CC18B19B0640F00D14AEF /* UserMediaPermissionRequestManagerProxy.h in Headers */,
 				4A3CC18D19B0641900D14AEF /* UserMediaPermissionRequestProxy.h in Headers */,
 				074E75FE1DF2211900D318EC /* UserMediaProcessManager.h in Headers */,
+				51632FDB2C4A1CA30038F759 /* UserNotificationsSPI.h in Headers */,
 				466BB8682B9C1F2E0010907E /* UserScriptIdentifier.h in Headers */,
 				466BB86A2B9C215B0010907E /* UserStyleSheetIdentifier.h in Headers */,
 				1F6B9F042B7AA5E00051676F /* VideoPresentationInterfaceLMK.h in Headers */,

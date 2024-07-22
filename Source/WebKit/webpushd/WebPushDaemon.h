@@ -91,6 +91,9 @@ public:
     void setPublicTokenForTesting(PushClientConnection&, const String& publicToken, CompletionHandler<void()>&&);
     void didShowNotificationForTesting(PushClientConnection&, const URL& scopeURL, CompletionHandler<void()>&& replySender);
 
+    void showNotification(PushClientConnection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>, CompletionHandler<void()>&&);
+    void getNotifications(PushClientConnection&, const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
+
 private:
     WebPushDaemon();
 

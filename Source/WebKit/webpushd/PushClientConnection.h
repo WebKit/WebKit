@@ -31,6 +31,7 @@
 #include "PushMessageForTesting.h"
 #include "WebPushMessage.h"
 #include <WebCore/ExceptionData.h>
+#include <WebCore/NotificationResources.h>
 #include <WebCore/PushSubscriptionData.h>
 #include <WebCore/PushSubscriptionIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
@@ -44,6 +45,8 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 #include <wtf/text/WTFString.h>
+
+OBJC_CLASS UIWebClip;
 
 namespace WebCore {
 class SecurityOriginData;
@@ -87,6 +90,10 @@ public:
 
     void didReceiveMessageWithReplyHandler(IPC::Decoder&, Function<void(UniqueRef<IPC::Encoder>&&)>&&) override;
 
+#if PLATFORM(IOS)
+    String associatedWebClipTitle() const;
+#endif
+
 private:
     PushClientConnection(xpc_connection_t);
 
@@ -108,10 +115,18 @@ private:
     void setHostAppAuditTokenData(const Vector<uint8_t>&);
     void getPushTopicsForTesting(CompletionHandler<void(Vector<String>, Vector<String>)>&&);
     void didShowNotificationForTesting(URL&& scopeURL, CompletionHandler<void()>&&);
+
+    void showNotification(const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>, CompletionHandler<void()>&&);
+    void getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
+
     String bundleIdentifierFromAuditToken(audit_token_t);
     bool hostHasEntitlement(ASCIILiteral);
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
+
+#if PLATFORM(IOS)
+    mutable RetainPtr<UIWebClip> m_associatedWebClip;
+#endif
 
     std::optional<audit_token_t> m_hostAppAuditToken;
     std::optional<String> m_hostAppCodeSigningIdentifier;

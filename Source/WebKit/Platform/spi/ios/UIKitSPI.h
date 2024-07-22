@@ -86,6 +86,7 @@
 #import <UIKit/UIVisualEffect_Private.h>
 #import <UIKit/UIWKTextInteractionAssistant.h>
 #import <UIKit/UIWebBrowserView.h>
+#import <UIKit/UIWebClip.h>
 #import <UIKit/UIWebDocumentView.h>
 #import <UIKit/UIWebTiledView.h>
 #import <UIKit/UIWindowScene_Private.h>
@@ -143,6 +144,11 @@
 #endif
 
 #else // USE(APPLE_INTERNAL_SDK)
+
+@interface UIWebClip : NSObject
++ (UIWebClip *)webClipWithIdentifier:(NSString *)identifier;
+@property (nonatomic, copy) NSString *title;
+@end
 
 #if ENABLE(DRAG_SUPPORT)
 #import <UIKit/NSItemProvider+UIKitAdditions.h>

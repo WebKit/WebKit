@@ -63,4 +63,8 @@ messages -> WebSWServerConnection NotRefCounted {
     MatchBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String backgroundFetchIdentifier, struct WebCore::RetrieveRecordsOptions options) -> (Vector<WebCore::BackgroundFetchRecordInformation> results)
     RetrieveRecordResponse(WebCore::BackgroundFetchRecordIdentifier recordIdentifier) -> (Expected<WebCore::ResourceResponse, WebCore::ExceptionData> result)
     RetrieveRecordResponseBody(WebCore::BackgroundFetchRecordIdentifier recordIdentifier, WebKit::RetrieveRecordResponseBodyCallbackIdentifier callbackIdentifier)
+
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+    GetNotifications(URL registrationURL, String tag) -> (Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData> result)
+#endif
 }

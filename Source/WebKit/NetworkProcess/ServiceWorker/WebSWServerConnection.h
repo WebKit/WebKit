@@ -150,6 +150,10 @@ private:
 
     void retrieveRecordResponseBody(WebCore::BackgroundFetchRecordIdentifier, RetrieveRecordResponseBodyCallbackIdentifier);
 
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+    void getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
+#endif
+
     URL clientURLFromIdentifier(WebCore::ServiceWorkerOrClientIdentifier);
 
     IPC::Connection* messageSenderConnection() const final { return m_contentConnection.ptr(); }

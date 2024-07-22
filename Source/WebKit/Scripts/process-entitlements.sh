@@ -545,6 +545,9 @@ function ios_family_process_webpushd_entitlements()
     plistbuddy Add :com.apple.private.launchservices.allowopenwithanyhandler bool YES
     plistbuddy Add :com.apple.springboard.opensensitiveurl bool YES
     plistbuddy Add :com.apple.private.launchservices.canspecifysourceapplication bool YES
+    plistbuddy Add :com.apple.usernotification.notificationschedulerproxy bool YES
+    plistbuddy Add :com.apple.uikitservices.app.value-access bool YES
+    plistbuddy Add :com.apple.private.usernotifications.app-management-domain.proxy string com.apple.WebKit.PushBundles
 }
 
 function ios_family_process_network_entitlements()
