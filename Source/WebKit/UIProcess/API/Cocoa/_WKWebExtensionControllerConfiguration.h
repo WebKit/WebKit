@@ -27,7 +27,7 @@
 
 #import <Foundation/Foundation.h>
 
-NS_ASSUME_NONNULL_BEGIN
+WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @class WKWebViewConfiguration;
 @class WKWebsiteDataStore;
@@ -37,8 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
  @abstract A `WKWebExtensionControllerConfiguration` object with which to initialize a web extension controller.
  @discussion Contains properties used to configure a @link WKWebExtensionController @/link.
 */
-WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
-NS_SWIFT_NAME(_WKWebExtensionController.Configuration)
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(_WKWebExtensionController.Configuration)
 @interface _WKWebExtensionControllerConfiguration : NSObject <NSSecureCoding, NSCopying>
 
 + (instancetype)new NS_UNAVAILABLE;
@@ -87,4 +87,4 @@ NS_SWIFT_NAME(_WKWebExtensionController.Configuration)
 
 @end
 
-NS_ASSUME_NONNULL_END
+WK_HEADER_AUDIT_END(nullability, sendability)

@@ -25,7 +25,7 @@
 
 #import <WebKit/_WKWebExtension.h>
 
-NS_ASSUME_NONNULL_BEGIN
+WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @interface _WKWebExtension ()
 
@@ -84,4 +84,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-NS_ASSUME_NONNULL_END
+WK_HEADER_AUDIT_END(nullability, sendability)

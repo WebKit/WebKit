@@ -66,7 +66,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionCommand, WebExtensionComman
 
 - (NSString *)description
 {
-    return self.discoverabilityTitle;
+    return self.title;
 }
 
 - (NSString *)debugDescription
@@ -86,7 +86,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionCommand, WebExtensionComman
     return _webExtensionCommand->identifier();
 }
 
-- (NSString *)discoverabilityTitle
+- (NSString *)title
 {
     return _webExtensionCommand->description();
 }
@@ -167,7 +167,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionCommand, WebExtensionComman
     return nil;
 }
 
-- (NSString *)discoverabilityTitle
+- (NSString *)title
 {
     return nil;
 }

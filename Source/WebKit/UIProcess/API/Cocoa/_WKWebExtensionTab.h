@@ -38,7 +38,7 @@
 @class NSImage;
 #endif
 
-NS_ASSUME_NONNULL_BEGIN
+WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*!
  @abstract Constants used by @link WKWebExtensionController @/link to indicate tab changes.
@@ -66,10 +66,10 @@ typedef NS_OPTIONS(NSUInteger, _WKWebExtensionTabChangedProperties) {
     _WKWebExtensionTabChangedPropertiesURL        = 1 << 8,
     _WKWebExtensionTabChangedPropertiesZoomFactor = 1 << 9,
     _WKWebExtensionTabChangedPropertiesAll        = NSUIntegerMax,
-} WK_API_AVAILABLE(macos(13.3), ios(16.4));
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*! @abstract A class conforming to the `WKWebExtensionTab` protocol represents a tab to web extensions. */
-WK_API_AVAILABLE(macos(13.3), ios(16.4))
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_SWIFT_UI_ACTOR
 @protocol _WKWebExtensionTab <NSObject>
 @optional
 
@@ -424,4 +424,4 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
 
 @end
 
-NS_ASSUME_NONNULL_END
+WK_HEADER_AUDIT_END(nullability, sendability)
