@@ -4606,7 +4606,7 @@ void WebViewImpl::removeTextPlaceholder(NSTextPlaceholder *placeholder, bool wil
 }
 
 #if ENABLE(WRITING_TOOLS_UI)
-void WebViewImpl::addTextAnimationForAnimationID(WTF::UUID uuid, const WebKit::TextAnimationData& data)
+void WebViewImpl::addTextAnimationForAnimationID(WTF::UUID uuid, const WebCore::TextAnimationData& data)
 {
     if (!m_page->preferences().textAnimationsEnabled())
         return;

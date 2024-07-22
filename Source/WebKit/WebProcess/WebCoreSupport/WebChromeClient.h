@@ -523,7 +523,7 @@ private:
 
     void removeTransparentMarkersForSessionID(const WebCore::WritingTools::SessionID&) final;
 
-    void addSourceTextAnimation(const WebCore::WritingTools::SessionID&, const WebCore::CharacterRange&, const String, WTF::CompletionHandler<void(void)>&&) final;
+    void addSourceTextAnimation(const WebCore::WritingTools::SessionID&, const WebCore::CharacterRange&, const String, WTF::CompletionHandler<void(WebCore::TextAnimationRunMode)>&&) final;
 
     void addDestinationTextAnimation(const WebCore::WritingTools::SessionID&, const WebCore::CharacterRange&, const String) final;
 

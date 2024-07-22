@@ -342,6 +342,7 @@ $(PROJECT_DIR)/Shared/SessionState.serialization.in
 $(PROJECT_DIR)/Shared/Shared/EditorState.serialization.in
 $(PROJECT_DIR)/Shared/SyntheticEditingCommandType.serialization.in
 $(PROJECT_DIR)/Shared/TextAnimationType.serialization.in
+$(PROJECT_DIR)/Shared/TextAnimationTypes.serialization.in
 $(PROJECT_DIR)/Shared/TextFlags.serialization.in
 $(PROJECT_DIR)/Shared/TextIndicatorStyle.serialization.in
 $(PROJECT_DIR)/Shared/TextRecognitionResult.serialization.in

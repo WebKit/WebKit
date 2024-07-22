@@ -41,6 +41,7 @@
 #import "Logging.h"
 #import "NodeRenderStyle.h"
 #import "RenderedDocumentMarker.h"
+#import "TextAnimationTypes.h"
 #import "TextIterator.h"
 #import "VisibleUnits.h"
 #import "WebContentReader.h"
@@ -408,7 +409,10 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 
     auto commandState = finished ? WritingToolsCompositionCommand::State::Complete : WritingToolsCompositionCommand::State::InProgress;
 
-    auto addDestinationTextAnimation = [weakThis = WeakPtr { *this }, state, resolvedRange, attributedText, commandState, identifier = session.identifier, sessionRange]() mutable {
+    auto addDestinationTextAnimation = [weakThis = WeakPtr { *this }, state, resolvedRange, attributedText, commandState, identifier = session.identifier, sessionRange](WebCore::TextAnimationRunMode runMode) mutable {
+        if (runMode == WebCore::TextAnimationRunMode::DoNotRun)
+            return;
+
         if (!weakThis)
             return;
 
@@ -420,12 +424,14 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 
         weakThis->replaceContentsOfRangeInSession(*state, resolvedRange, attributedText, commandState);
 
+        if (runMode == WebCore::TextAnimationRunMode::OnlyReplaceText)
+            return;
+
         // FIXME: We won't be setting the selection after every replace, we need a different way to
         // caluculate this range.
         auto selectionRange = document->selection().selection().firstRange();
         if (!selectionRange)
             return;
-
 
         auto rangeAfterReplace = characterRange(sessionRange, *selectionRange);
 
@@ -438,7 +444,7 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 #if PLATFORM(MAC)
     m_page->chrome().client().addSourceTextAnimation(session.identifier, range, attributedText.string, WTFMove(addDestinationTextAnimation));
 #else
-    addDestinationTextAnimation();
+    addDestinationTextAnimation(WebCore::TextAnimationRunMode::RunAnimation);
 #endif
 }
 

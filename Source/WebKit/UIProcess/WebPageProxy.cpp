@@ -10148,7 +10148,10 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    internals().completionHandlerForAnimationID.clear();
+    auto& completionHandlers = internals().completionHandlerForAnimationID;
+    for (auto& completionHandler : completionHandlers.values())
+        completionHandler(WebCore::TextAnimationRunMode::DoNotRun);
+    completionHandlers.clear();
 #endif
 
     m_nowPlayingMetadataObservers.clear();

@@ -31,6 +31,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestInputDelegate.h"
+#import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
@@ -2026,6 +2027,48 @@ TEST(WritingTools, TransparencyMarkersUsingWKWebViewSPI)
     [webView _disableTextIndicatorStylingWithUUID:identifier.get()];
     waitForValue(0U);
     EXPECT_EQ(0U, [webView transparentContentMarkerCount:@"document.getElementById('content').childNodes[0]"]);
+}
+
+TEST(WritingTools, NoCrashWhenWebProcessTerminates)
+{
+    auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable>Early morning in Cupertino</body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    auto waitForValue = [webView](NSUInteger expectedValue) {
+        do {
+            if ([webView transparentContentMarkerCount:@"document.body.childNodes[0]"] == expectedValue)
+                break;
+
+            TestWebKitAPI::Util::runFor(0.1_s);
+        } while (true);
+    };
+
+    [webView waitForNextPresentationUpdate];
+
+    __block bool finished = false;
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+
+        [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
+
+        waitForValue(1U);
+        [webView _killWebContentProcess];
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+
+    __block bool webProcessTerminated = false;
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *) {
+        webProcessTerminated = true;
+    }];
+
+    [webView _killWebContentProcess];
+    TestWebKitAPI::Util::run(&webProcessTerminated);
 }
 
 #endif

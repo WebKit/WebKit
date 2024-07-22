@@ -76,6 +76,7 @@
 #import <WebCore/RunLoopObserver.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
 #import <WebCore/TextAlternativeWithRange.h>
+#import <WebCore/TextAnimationTypes.h>
 #import <WebCore/ValidationBubble.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/BrowserEngineKitSPI.h>
@@ -1232,7 +1233,7 @@ void WebPageProxy::enableTextAnimationTypeForElementWithID(const String& element
     legacyMainFrameProcess().send(Messages::WebPage::EnableTextAnimationTypeForElementWithID(elementID, uuid), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::addTextAnimationForAnimationID(IPC::Connection& connection, const WTF::UUID& uuid, const TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::addTextAnimationForAnimationID(IPC::Connection& connection, const WTF::UUID& uuid, const WebCore::TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
 {
     MESSAGE_CHECK(uuid.isValid());
 
@@ -1244,13 +1245,13 @@ void WebPageProxy::addTextAnimationForAnimationID(IPC::Connection& connection, c
     protectedPageClient()->addTextAnimationForAnimationID(uuid, styleData);
 }
 
-void WebPageProxy::callCompletionHandlerForAnimationID(const WTF::UUID& uuid)
+void WebPageProxy::callCompletionHandlerForAnimationID(const WTF::UUID& uuid, WebCore::TextAnimationRunMode runMode)
 {
     if (!hasRunningProcess())
         return;
 
     if (auto completionHandler = internals().completionHandlerForAnimationID.take(uuid))
-        completionHandler();
+        completionHandler(runMode);
 }
 
 void WebPageProxy::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)

@@ -41,6 +41,7 @@ class Range;
 struct TextIndicatorData;
 
 enum class TextIndicatorOption : uint16_t;
+enum class TextAnimationRunMode : uint8_t;
 
 namespace WritingTools {
 using SessionID = WTF::UUID;
@@ -79,7 +80,7 @@ public:
 
     void removeInitialTextAnimation(const WTF::UUID& sessionUUID);
     void addInitialTextAnimation(const WTF::UUID& sessionUUID);
-    void addSourceTextAnimation(const WTF::UUID& sessionUUID, const WebCore::CharacterRange&, const String, WTF::CompletionHandler<void(void)>&&);
+    void addSourceTextAnimation(const WTF::UUID& sessionUUID, const WebCore::CharacterRange&, const String, WTF::CompletionHandler<void(WebCore::TextAnimationRunMode)>&&);
     void addDestinationTextAnimation(const WTF::UUID& sessionUUID, const WebCore::CharacterRange&, const String);
 
     void clearAnimationsForSessionID(const WTF::UUID& sessionUUID);

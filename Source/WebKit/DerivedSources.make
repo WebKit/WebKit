@@ -662,7 +662,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/SessionState.serialization.in \
 	Shared/SyntheticEditingCommandType.serialization.in \
 	Shared/TextFlags.serialization.in \
-	Shared/TextAnimationType.serialization.in \
+	Shared/TextAnimationTypes.serialization.in \
 	Shared/TextRecognitionResult.serialization.in \
 	Shared/TextRecognitionUpdateResult.serialization.in \
 	Shared/URLSchemeTaskParameters.serialization.in \

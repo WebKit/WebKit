@@ -126,6 +126,7 @@ class Node;
 class Page;
 class PopupMenuClient;
 class SecurityOrigin;
+class SecurityOriginData;
 class ViewportConstraints;
 class Widget;
 
@@ -143,7 +144,6 @@ struct DateTimeChooserParameters;
 struct FocusOptions;
 struct GraphicsDeviceAdapter;
 struct MockWebAuthenticationConfiguration;
-class SecurityOriginData;
 struct ShareDataWithParsedURL;
 struct TextIndicatorData;
 struct TextRecognitionOptions;
@@ -153,6 +153,7 @@ struct WindowFeatures;
 enum class CookieConsentDecisionResult : uint8_t;
 enum class ModalContainerControlType : uint8_t;
 enum class ModalContainerDecision : uint8_t;
+enum class TextAnimationRunMode : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
 
 enum class DidFilterLinkDecoration : bool { No, Yes };
@@ -678,7 +679,7 @@ public:
 
     virtual void addInitialTextAnimation(const WritingTools::SessionID&) { }
 
-    virtual void addSourceTextAnimation(const WritingTools::SessionID&, const CharacterRange&, const String, WTF::CompletionHandler<void(void)>&&) { }
+    virtual void addSourceTextAnimation(const WritingTools::SessionID&, const CharacterRange&, const String, WTF::CompletionHandler<void(TextAnimationRunMode)>&&) { }
 
     virtual void addDestinationTextAnimation(const WritingTools::SessionID&, const CharacterRange&, const String) { }
 

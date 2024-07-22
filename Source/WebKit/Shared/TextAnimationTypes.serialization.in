@@ -22,16 +22,24 @@
 
 #if ENABLE(WRITING_TOOLS)
 
-header: "TextAnimationType.h"
-[CustomHeader] enum class WebKit::TextAnimationType : uint8_t {
+header: <WebCore/TextAnimationTypes.h>
+[CustomHeader] enum class WebCore::TextAnimationType : uint8_t {
     Initial,
     Source,
     Final,
 };
 
-header: "TextAnimationType.h"
-[CustomHeader] struct WebKit::TextAnimationData {
-    WebKit::TextAnimationType style;
+header: <WebCore/TextAnimationTypes.h>
+[CustomHeader] enum class WebCore::TextAnimationRunMode : uint8_t {
+    DoNotRun,
+    OnlyReplaceText,
+    RunAnimation,
+};
+
+header: <WebCore/TextAnimationTypes.h>
+[CustomHeader] struct WebCore::TextAnimationData {
+    WebCore::TextAnimationType style;
+    WebCore::TextAnimationRunMode runMode;
     WTF::UUID unanimatedRangeUUID;
 };
 

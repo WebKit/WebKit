@@ -295,7 +295,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
 
 #if ENABLE(WRITING_TOOLS)
     HashMap<WTF::UUID, WebCore::TextIndicatorData> textIndicatorDataForAnimationID;
-    HashMap<WTF::UUID, CompletionHandler<void()>> completionHandlerForAnimationID;
+    HashMap<WTF::UUID, CompletionHandler<void(WebCore::TextAnimationRunMode)>> completionHandlerForAnimationID;
 #endif
 
     MonotonicTime didFinishDocumentLoadForMainFrameTimestamp;

@@ -26,10 +26,11 @@
 #import "config.h"
 #import "PageClientImplCocoa.h"
 
-#import "TextAnimationType.h"
+
 #import "WKTextAnimationType.h"
 #import "WKWebViewInternal.h"
 #import <WebCore/AlternativeTextUIController.h>
+#import <WebCore/TextAnimationTypes.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <pal/spi/ios/BrowserEngineKitSPI.h>
@@ -157,7 +158,7 @@ void PageClientImplCocoa::storeAppHighlight(const WebCore::AppHighlight &highlig
 #endif // ENABLE(APP_HIGHLIGHTS)
 
 #if ENABLE(WRITING_TOOLS_UI)
-void PageClientImplCocoa::addTextAnimationForAnimationID(const WTF::UUID& uuid, const WebKit::TextAnimationData& data)
+void PageClientImplCocoa::addTextAnimationForAnimationID(const WTF::UUID& uuid, const WebCore::TextAnimationData& data)
 {
     [m_webView _addTextAnimationForAnimationID:uuid withData:data];
 }
