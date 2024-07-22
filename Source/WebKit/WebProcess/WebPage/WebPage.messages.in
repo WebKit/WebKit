@@ -411,9 +411,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidFinishCheckingText(WebKit::TextCheckerRequestID requestID, Vector<WebCore::TextCheckingResult> result)
     DidCancelCheckingText(WebKit::TextCheckerRequestID requestID)
 #if USE(APPKIT)
-    UppercaseWord()
-    LowercaseWord()
-    CapitalizeWord()
+    UppercaseWord(WebCore::FrameIdentifier frameID)
+    LowercaseWord(WebCore::FrameIdentifier frameID)
+    CapitalizeWord(WebCore::FrameIdentifier frameID)
 #endif
 #if PLATFORM(COCOA)
     SetSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled)

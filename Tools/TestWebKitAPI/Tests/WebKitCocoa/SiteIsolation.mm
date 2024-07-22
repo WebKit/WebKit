@@ -40,6 +40,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKURLSchemeTaskPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
@@ -1595,6 +1596,50 @@ TEST(SiteIsolation, OpenerProcessSharing)
     EXPECT_EQ(openerIframePid, openedIframePid);
     EXPECT_NE(openerIframePid, 0);
 }
+
+#if PLATFORM(MAC)
+TEST(SiteIsolation, AppKitText)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe id='iframe' src='https://domain2.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<html><body><input id='input' value='test'></input></body></html>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    __block RetainPtr<WKFrameInfo> childFrameInfo;
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        childFrameInfo = mainFrame.childFrames.firstObject.info;
+    }];
+    while (!childFrameInfo)
+        Util::spinRunLoop();
+    auto textLocation = NSMakePoint(23, 564);
+    while ("TEST"_s != String([webView stringByEvaluatingJavaScript:@"input.value" inFrame:childFrameInfo.get()])) {
+        [webView sendClickAtPoint:textLocation];
+        Util::runFor(10_ms);
+        [webView uppercaseWord:nil];
+        Util::runFor(10_ms);
+    }
+    while ("test"_s != String([webView stringByEvaluatingJavaScript:@"input.value" inFrame:childFrameInfo.get()])) {
+        [webView sendClickAtPoint:textLocation];
+        Util::runFor(10_ms);
+        [webView lowercaseWord:nil];
+        Util::runFor(10_ms);
+    }
+    while ("Test"_s != String([webView stringByEvaluatingJavaScript:@"input.value" inFrame:childFrameInfo.get()])) {
+        [webView sendClickAtPoint:textLocation];
+        Util::runFor(10_ms);
+        [webView capitalizeWord:nil];
+        Util::runFor(10_ms);
+    }
+}
+#endif
 
 TEST(SiteIsolation, SetFocusedFrame)
 {

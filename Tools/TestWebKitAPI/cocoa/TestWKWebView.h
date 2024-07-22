@@ -118,6 +118,7 @@ struct AutocorrectionContext {
 - (void)expectElementTag:(NSString *)tagName toComeBefore:(NSString *)otherTagName;
 - (BOOL)evaluateMediaQuery:(NSString *)query;
 - (NSString *)stringByEvaluatingJavaScript:(NSString *)script;
+- (NSString *)stringByEvaluatingJavaScript:(NSString *)script inFrame:(WKFrameInfo *)frame;
 - (id)objectByEvaluatingJavaScriptWithUserGesture:(NSString *)script;
 - (id)objectByEvaluatingJavaScript:(NSString *)script;
 - (id)objectByEvaluatingJavaScript:(NSString *)script inFrame:(WKFrameInfo *)frame;

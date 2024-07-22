@@ -2152,9 +2152,9 @@ private:
     void changeSpellingToWord(const String& word);
 
 #if USE(APPKIT)
-    void uppercaseWord();
-    void lowercaseWord();
-    void capitalizeWord();
+    void uppercaseWord(WebCore::FrameIdentifier);
+    void lowercaseWord(WebCore::FrameIdentifier);
+    void capitalizeWord(WebCore::FrameIdentifier);
 #endif
 
     bool shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const;

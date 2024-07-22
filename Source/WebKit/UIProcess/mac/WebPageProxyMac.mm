@@ -269,21 +269,6 @@ void WebPageProxy::setPromisedDataForImage(IPC::Connection& connection, const St
 
 #endif
 
-void WebPageProxy::uppercaseWord()
-{
-    legacyMainFrameProcess().send(Messages::WebPage::UppercaseWord(), webPageIDInMainFrameProcess());
-}
-
-void WebPageProxy::lowercaseWord()
-{
-    legacyMainFrameProcess().send(Messages::WebPage::LowercaseWord(), webPageIDInMainFrameProcess());
-}
-
-void WebPageProxy::capitalizeWord()
-{
-    legacyMainFrameProcess().send(Messages::WebPage::CapitalizeWord(), webPageIDInMainFrameProcess());
-}
-
 void WebPageProxy::setSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled)
 {
     if (m_isSmartInsertDeleteEnabled == isSmartInsertDeleteEnabled)
