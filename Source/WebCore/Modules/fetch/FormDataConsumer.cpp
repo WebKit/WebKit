@@ -41,9 +41,7 @@ FormDataConsumer::FormDataConsumer(const FormData& formData, ScriptExecutionCont
     read();
 }
 
-FormDataConsumer::~FormDataConsumer()
-{
-}
+FormDataConsumer::~FormDataConsumer() = default;
 
 void FormDataConsumer::read()
 {

@@ -132,9 +132,7 @@ LocalFrameViewLayoutContext::LocalFrameViewLayoutContext(LocalFrameView& frameVi
 {
 }
 
-LocalFrameViewLayoutContext::~LocalFrameViewLayoutContext()
-{
-}
+LocalFrameViewLayoutContext::~LocalFrameViewLayoutContext() = default;
 
 UpdateScrollInfoAfterLayoutTransaction& LocalFrameViewLayoutContext::updateScrollInfoAfterLayoutTransaction()
 {
