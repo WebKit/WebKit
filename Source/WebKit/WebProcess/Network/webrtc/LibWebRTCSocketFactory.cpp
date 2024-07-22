@@ -41,7 +41,7 @@ using namespace WebCore;
 
 static inline rtc::SocketAddress prepareSocketAddress(const rtc::SocketAddress& address, bool disableNonLocalhostConnections)
 {
-    auto result = RTC::Network::SocketAddress::isolatedCopy(address);
+    auto result = address;
     if (disableNonLocalhostConnections)
         result.SetIP("127.0.0.1");
     return result;

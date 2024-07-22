@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !PLATFORM(COCOA)
+
 #if USE(LIBWEBRTC)
 
 #include "NetworkRTCProvider.h"
@@ -77,3 +79,5 @@ private:
 } // namespace WebKit
 
 #endif // USE(LIBWEBRTC)
+
+#endif // !PLATFORM(COCOA)
