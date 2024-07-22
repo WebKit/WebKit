@@ -6968,10 +6968,9 @@
    },
    {
       "emails" : [
-         "sam@webkit.org",
-         "weinig@apple.com"
+         "sam@webkit.org"
       ],
-      "expertise" : "HTML DOM, Core DOM, DOM Bindings (JavaScript, Objective-C and COM), Security, DumpRenderTree",
+      "expertise" : "HTML DOM, Core DOM, Security, Canvas, JavaScript DOM Bindings, ObjC DOM Bindings, Basic types and data structures, Tools, Color, CSS Properties and Values",
       "github" : "weinig",
       "name" : "Sam Weinig",
       "nicks" : [
