@@ -423,6 +423,7 @@ public:
     void requestBackgroundFetchPermission(PAL::SessionID, const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&);
     void setInspectionForServiceWorkersAllowed(PAL::SessionID, bool);
     void setStorageSiteValidationEnabled(PAL::SessionID, bool);
+    void setPersistedDomains(PAL::SessionID, HashSet<RegistrableDomain>&&);
 
 private:
     // CheckedPtr interface

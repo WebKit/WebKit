@@ -130,6 +130,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     , m_sameSiteStrictEnforcementEnabled(parameters.resourceLoadStatisticsParameters.sameSiteStrictEnforcementEnabled)
     , m_firstPartyWebsiteDataRemovalMode(parameters.resourceLoadStatisticsParameters.firstPartyWebsiteDataRemovalMode)
     , m_standaloneApplicationDomain(parameters.resourceLoadStatisticsParameters.standaloneApplicationDomain)
+    , m_persistedDomains(parameters.resourceLoadStatisticsParameters.persistedDomains)
     , m_privateClickMeasurement(managerOrProxy(*this, networkProcess, parameters))
     , m_privateClickMeasurementDebugModeEnabled(parameters.enablePrivateClickMeasurementDebugMode)
     , m_broadcastChannelRegistry(makeUniqueRef<NetworkBroadcastChannelRegistry>(networkProcess))
@@ -257,6 +258,7 @@ void NetworkSession::forwardResourceLoadStatisticsSettings()
     m_resourceLoadStatistics->setSameSiteStrictEnforcementEnabled(m_sameSiteStrictEnforcementEnabled);
     m_resourceLoadStatistics->setFirstPartyWebsiteDataRemovalMode(m_firstPartyWebsiteDataRemovalMode, [] { });
     m_resourceLoadStatistics->setStandaloneApplicationDomain(m_standaloneApplicationDomain, [] { });
+    m_resourceLoadStatistics->setPersistedDomains(m_persistedDomains);
 }
 
 bool NetworkSession::isTrackingPreventionEnabled() const
@@ -794,6 +796,14 @@ void NetworkSession::setInspectionForServiceWorkersAllowed(bool inspectable)
 
     if (m_swServer)
         m_swServer->setInspectable(inspectable ? ServiceWorkerIsInspectable::Yes : ServiceWorkerIsInspectable::No);
+}
+
+void NetworkSession::setPersistedDomains(HashSet<WebCore::RegistrableDomain>&& domains)
+{
+    m_persistedDomains = WTFMove(domains);
+
+    if (m_resourceLoadStatistics)
+        m_resourceLoadStatistics->setPersistedDomains(m_persistedDomains);
 }
 
 } // namespace WebKit

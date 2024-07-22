@@ -472,6 +472,9 @@ public:
     bool operator==(const WebsiteDataStore& other) const { return (m_sessionID == other.sessionID()); }
     void resolveDirectoriesAsynchronously();
 
+    const HashSet<URL>& persistedSiteURLs() const { return m_persistedSiteURLs; }
+    void setPersistedSiteURLs(HashSet<URL>&&);
+
 private:
     enum class ForceReinitialization : bool { No, Yes };
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -611,6 +614,7 @@ private:
     std::optional<Vector<std::pair<Vector<uint8_t>, WTF::UUID>>> m_proxyConfigData;
 #endif
     bool m_storageSiteValidationEnabled { false };
+    HashSet<URL> m_persistedSiteURLs;
 };
 
 }

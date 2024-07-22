@@ -206,6 +206,7 @@ public:
 #if ENABLE(MANAGED_DOMAINS)
     void setManagedDomains(HashSet<RegistrableDomain>&&, CompletionHandler<void()>&&);
 #endif
+    void setPersistedDomains(const HashSet<RegistrableDomain>&);
     void didCreateNetworkProcess();
 
     void notifyResourceLoadStatisticsProcessed();

@@ -662,6 +662,19 @@ void WebResourceLoadStatisticsStore::setFirstPartyWebsiteDataRemovalMode(FirstPa
     });
 }
 
+void WebResourceLoadStatisticsStore::setPersistedDomains(const HashSet<RegistrableDomain>& domains)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (isEphemeral() || domains.isEmpty())
+        return;
+
+    postTask([this, domains = crossThreadCopy(domains)]() mutable {
+        if (m_statisticsStore)
+            m_statisticsStore->setPersistedDomains(WTFMove(domains));
+    });
+}
+
 void WebResourceLoadStatisticsStore::setStandaloneApplicationDomain(const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());

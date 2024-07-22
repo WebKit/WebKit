@@ -173,6 +173,7 @@ public:
     bool isSameSiteStrictEnforcementEnabled() const { return m_sameSiteStrictEnforcementEnabled == WebCore::SameSiteStrictEnforcementEnabled::Yes; };
     void setFirstPartyWebsiteDataRemovalMode(WebCore::FirstPartyWebsiteDataRemovalMode mode) { m_firstPartyWebsiteDataRemovalMode = mode; }
     WebCore::FirstPartyWebsiteDataRemovalMode firstPartyWebsiteDataRemovalMode() const { return m_firstPartyWebsiteDataRemovalMode; }
+    void setPersistedDomains(HashSet<RegistrableDomain>&& domains) { m_persistedDomains = WTFMove(domains); }
     void setStandaloneApplicationDomain(RegistrableDomain&& domain) { m_standaloneApplicationDomain = WTFMove(domain); }
 #if ENABLE(APP_BOUND_DOMAINS)
     void setAppBoundDomains(HashSet<RegistrableDomain>&&);
@@ -369,6 +370,7 @@ private:
     RegistrableDomain m_standaloneApplicationDomain;
     HashSet<RegistrableDomain> m_appBoundDomains;
     HashSet<RegistrableDomain> m_managedDomains;
+    HashSet<RegistrableDomain> m_persistedDomains;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_observedDomainCountStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_insertObservedDomainStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_domainIDFromStringStatement;

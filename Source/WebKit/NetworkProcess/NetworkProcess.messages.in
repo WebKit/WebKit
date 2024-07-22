@@ -244,4 +244,5 @@ messages -> NetworkProcess LegacyReceiver {
 #endif
 
     SetStorageSiteValidationEnabled(PAL::SessionID sessionID, bool enabled)
+    SetPersistedDomains(PAL::SessionID sessionsID, HashSet<WebCore::RegistrableDomain> domains)
 }

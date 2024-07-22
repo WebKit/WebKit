@@ -1829,6 +1829,18 @@ void WebsiteDataStore::setStorageSiteValidationEnabled(bool enabled)
         networkProcess->send(Messages::NetworkProcess::SetStorageSiteValidationEnabled(sessionID(), m_storageSiteValidationEnabled), 0);
 }
 
+void WebsiteDataStore::setPersistedSiteURLs(HashSet<URL>&& urls)
+{
+    m_persistedSiteURLs = WTFMove(urls);
+
+    HashSet<WebCore::RegistrableDomain> domains;
+    for (auto& url : m_persistedSiteURLs)
+        domains.add(WebCore::RegistrableDomain { url });
+
+    if (RefPtr networkProcess = networkProcessIfExists())
+        networkProcess->send(Messages::NetworkProcess::SetPersistedDomains(sessionID(), domains), 0);
+}
+
 void WebsiteDataStore::closeDatabases(CompletionHandler<void()>&& completionHandler)
 {
     Ref callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
@@ -1951,6 +1963,9 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     if (managedDomainsOptional)
         managedDomains = *managedDomainsOptional;
 #endif
+    HashSet<WebCore::RegistrableDomain> persistedDomains;
+    for (auto& url : m_persistedSiteURLs)
+        persistedDomains.add(WebCore::RegistrableDomain { url });
     WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource;
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters = {
         WTFMove(resourceLoadStatisticsDirectory),
@@ -1965,6 +1980,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         WTFMove(standaloneApplicationDomain),
         WTFMove(appBoundDomains),
         WTFMove(managedDomains),
+        WTFMove(persistedDomains),
         WTFMove(resourceLoadStatisticsManualPrevalentResource),
     };
 

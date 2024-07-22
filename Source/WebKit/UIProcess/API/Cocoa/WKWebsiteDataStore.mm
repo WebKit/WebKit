@@ -660,6 +660,28 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     _websiteDataStore->setStorageSiteValidationEnabled(enabled);
 }
 
+- (NSArray<NSURL *> *)_persistedSites
+{
+    auto urls = _websiteDataStore->persistedSiteURLs();
+    RetainPtr result = adoptNS([[NSMutableArray alloc] initWithCapacity:urls.size()]);
+    for (auto& url : urls)
+        [result addObject:url];
+
+    return result.autorelease();
+}
+
+- (void)_setPersistedSites:(NSArray<NSURL *> *)persistedSites
+{
+    HashSet<URL> urls;
+    for (NSURL *site in persistedSites) {
+        URL url { site };
+        if (url.isValid())
+            urls.add(WTFMove(url));
+    }
+
+    _websiteDataStore->setPersistedSiteURLs(WTFMove(urls));
+}
+
 - (NSUInteger)_perOriginStorageQuota
 {
     return 0;

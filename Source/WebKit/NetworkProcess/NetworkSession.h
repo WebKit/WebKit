@@ -269,6 +269,7 @@ public:
 #endif
 
     void setInspectionForServiceWorkersAllowed(bool);
+    void setPersistedDomains(HashSet<WebCore::RegistrableDomain>&&);
                                     
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
@@ -301,6 +302,7 @@ protected:
     WebCore::SameSiteStrictEnforcementEnabled m_sameSiteStrictEnforcementEnabled { WebCore::SameSiteStrictEnforcementEnabled::No };
     WebCore::FirstPartyWebsiteDataRemovalMode m_firstPartyWebsiteDataRemovalMode { WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies };
     WebCore::RegistrableDomain m_standaloneApplicationDomain;
+    HashSet<WebCore::RegistrableDomain> m_persistedDomains;
     HashMap<String, WebCore::RegistrableDomain> m_firstPartyHostCNAMEDomains;
     HashMap<String, WebCore::IPAddress> m_firstPartyHostIPAddresses;
     std::optional<WebCore::RegistrableDomain> m_thirdPartyCNAMEDomainForTesting;

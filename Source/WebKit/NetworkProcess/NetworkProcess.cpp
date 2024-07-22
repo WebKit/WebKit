@@ -3033,4 +3033,10 @@ void NetworkProcess::setStorageSiteValidationEnabled(PAL::SessionID sessionID, b
         session->protectedStorageManager()->setStorageSiteValidationEnabled(enabled);
 }
 
+void NetworkProcess::setPersistedDomains(PAL::SessionID sessionID, HashSet<RegistrableDomain>&& domains)
+{
+    if (auto* session = networkSession(sessionID))
+        session->setPersistedDomains(WTFMove(domains));
+}
+
 } // namespace WebKit
