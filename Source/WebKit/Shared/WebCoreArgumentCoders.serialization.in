@@ -1609,7 +1609,7 @@ struct WebCore::AuthenticatorResponseData {
 
 [LegacyPopulateFromEmptyConstructor] struct WebCore::AuthenticationExtensionsClientInputs {
     String appid;
-    [NotSerialized] bool credProps;
+    bool credProps;
     std::optional<WebCore::AuthenticationExtensionsClientInputs::LargeBlobInputs> largeBlob;
     std::optional<WebCore::AuthenticationExtensionsClientInputs::PRFInputs> prf;
 }
