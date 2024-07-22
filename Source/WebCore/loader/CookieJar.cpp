@@ -29,7 +29,7 @@
 #include "Cookie.h"
 #include "CookieRequestHeaderFieldProxy.h"
 #include "CookieStoreGetOptions.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"

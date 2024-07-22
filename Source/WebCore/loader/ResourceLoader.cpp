@@ -556,7 +556,7 @@ bool ResourceLoader::shouldAllowResourceToAskForCredentials() const
 {
     RefPtr topFrame = dynamicDowncast<LocalFrame>(m_frame->tree().top());
     return m_canCrossOriginRequestsAskUserForCredentials
-        || (topFrame && topFrame->document()->securityOrigin().canRequest(m_request.url(), OriginAccessPatternsForWebProcess::singleton()));
+        || (topFrame && topFrame->document()->protectedSecurityOrigin()->canRequest(m_request.url(), OriginAccessPatternsForWebProcess::singleton()));
 }
 
 void ResourceLoader::didBlockAuthenticationChallenge()
@@ -846,7 +846,7 @@ bool ResourceLoader::isAllowedToAskUserForCredentials() const
         return false;
     if (!shouldAllowResourceToAskForCredentials())
         return false;
-    return m_options.credentials == FetchOptions::Credentials::Include || (m_options.credentials == FetchOptions::Credentials::SameOrigin && m_frame->document()->securityOrigin().canRequest(originalRequest().url(), OriginAccessPatternsForWebProcess::singleton()));
+    return m_options.credentials == FetchOptions::Credentials::Include || (m_options.credentials == FetchOptions::Credentials::SameOrigin && m_frame->document()->protectedSecurityOrigin()->canRequest(originalRequest().url(), OriginAccessPatternsForWebProcess::singleton()));
 }
 
 bool ResourceLoader::shouldIncludeCertificateInfo() const

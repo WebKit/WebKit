@@ -90,7 +90,7 @@ ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, std::var
         contentSecurityPolicy->upgradeInsecureRequestIfNeeded(url, ContentSecurityPolicy::InsecureRequestType::Load);
 
     // Per the specification, any same-origin URL (including blob: URLs) can be used. data: URLs can also be used, but they create a worker with an opaque origin.
-    if (!document.securityOrigin().canRequest(url, OriginAccessPatternsForWebProcess::singleton()) && !url.protocolIsData())
+    if (!document.protectedSecurityOrigin()->canRequest(url, OriginAccessPatternsForWebProcess::singleton()) && !url.protocolIsData())
         return Exception { ExceptionCode::SecurityError, "URL of the shared worker is cross-origin"_s };
 
     if (contentSecurityPolicy && !contentSecurityPolicy->allowWorkerFromSource(url))

@@ -52,7 +52,7 @@
 #include "ConvolverNode.h"
 #include "DelayNode.h"
 #include "DelayOptions.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "DynamicsCompressorNode.h"
 #include "EventNames.h"
 #include "FFTFrame.h"
@@ -276,7 +276,7 @@ bool BaseAudioContext::wouldTaintOrigin(const URL& url) const
         return false;
 
     if (RefPtr document = this->document())
-        return !document->securityOrigin().canRequest(url, OriginAccessPatternsForWebProcess::singleton());
+        return !document->protectedSecurityOrigin()->canRequest(url, OriginAccessPatternsForWebProcess::singleton());
 
     return false;
 }
