@@ -639,7 +639,10 @@ void WebPushDaemon::showNotification(PushClientConnection& connection, const Web
         content.get().sound = [UNNotificationSound defaultSound];
 
     NSString *notificationCenterBundleIdentifier = platformNotificationCenterBundleIdentifier(connection);
+
+#if HAVE(UNNOTIFICATIONICON)
     content.get().icon = [UNNotificationIcon iconForApplicationIdentifier:notificationCenterBundleIdentifier];
+#endif
 
     NSString *notificationSourceForDisplay = platformNotificationSourceForDisplay(connection);
     if (!notificationSourceForDisplay.length)

@@ -28,18 +28,25 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <UserNotifications/UNNotificationContent_Private.h>
-#import <UserNotifications/UNNotificationIcon_Private.h>
 #import <UserNotifications/UNUserNotificationCenter_Private.h>
 
-#else
+#if HAVE(UNNOTIFICATIONICON)
+#import <UserNotifications/UNNotificationIcon_Private.h>
+#endif
 
+#else // USE(APPLE_INTERNAL_SDK)
+
+#if HAVE(UNNOTIFICATIONICON)
 @interface UNNotificationIcon : NSObject <NSCopying, NSSecureCoding>
 + (instancetype)iconForApplicationIdentifier:(NSString *)applicationIdentifier;
 @end
+#endif
 
 @interface UNMutableNotificationContent ()
 @property (NS_NONATOMIC_IOSONLY, copy) NSString *defaultActionBundleIdentifier;
+#if HAVE(UNNOTIFICATIONICON)
 @property (NS_NONATOMIC_IOSONLY, copy) UNNotificationIcon *icon;
+#endif
 @end
 
 @interface UNUserNotificationCenter ()
