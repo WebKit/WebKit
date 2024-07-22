@@ -4958,10 +4958,12 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     else
         generator.emitNode(tryCatchDst.get(), m_tryBlock);
 
-    if (m_finallyBlock)
-        generator.emitJump(*finallyLabel);
-    else
-        generator.emitJump(*catchEndLabel);
+    if (m_catchBlock) {
+        if (m_finallyBlock)
+            generator.emitJump(*finallyLabel);
+        else
+            generator.emitJump(*catchEndLabel);
+    }
 
     Ref<Label> tryEndLabel = generator.newEmittedLabel();
     generator.popTry(tryData, tryEndLabel.get());
@@ -4997,14 +4999,12 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
                 generator.emitNode(tryCatchDst.get(), m_catchBlock);
         } else
             generator.emitNodeInTailPosition(tryCatchDst.get(), m_catchBlock);
-        generator.emitLoad(thrownValueRegister.get(), jsUndefined());
 
         if (m_catchPattern)
             generator.emitPopCatchScope(m_lexicalVariables);
 
         if (m_finallyBlock) {
             generator.emitLoad(finallyContext->completionTypeRegister(), CompletionType::Normal);
-            generator.emitJump(*finallyLabel);
             generator.popTry(finallyTryData, *finallyLabel);
         }
 
