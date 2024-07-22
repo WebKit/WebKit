@@ -1799,7 +1799,6 @@ webkit.org/b/275873 storage/indexeddb/database-transaction-cycle.html [ Pass Fai
 [ Sequoia+ ] http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Failure Timeout ] # expectation exists above
 [ Sequoia+ ] http/tests/cache/disk-cache/disk-cache-vary-cookie-private.html [ Failure ]
 [ Sequoia+ ] http/tests/cache/disk-cache/disk-cache-vary-cookie.html [ Failure ]
-[ Sequoia+ ] http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
 [ Sequoia+ ] http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure Timeout ]
 [ Sequoia+ ] http/tests/privateClickMeasurement/send-attribution-conversion-request.html [ Failure Timeout ]
 [ Sequoia+ ] http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.html [ Failure ]
