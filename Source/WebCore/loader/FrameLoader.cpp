@@ -501,7 +501,7 @@ bool FrameLoader::upgradeRequestforHTTPSOnlyIfNeeded(const URL& originalURL, Res
     return false;
 }
 
-void FrameLoader::changeLocation(const URL& url, const AtomString& passedTarget, Event* triggeringEvent, const ReferrerPolicy& referrerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, std::optional<NewFrameOpenerPolicy> openerPolicy, const AtomString& downloadAttribute, std::optional<PrivateClickMeasurement>&& privateClickMeasurement)
+void FrameLoader::changeLocation(const URL& url, const AtomString& passedTarget, Event* triggeringEvent, const ReferrerPolicy& referrerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, std::optional<NewFrameOpenerPolicy> openerPolicy, const AtomString& downloadAttribute, std::optional<PrivateClickMeasurement>&& privateClickMeasurement, NavigationHistoryBehavior historyBehavior)
 {
     RefPtr frame = lexicalFrameFromCommonVM();
     auto initiatedByMainFrame = frame && frame->isMainFrame() ? InitiatedByMainFrame::Yes : InitiatedByMainFrame::Unknown;
@@ -512,7 +512,7 @@ void FrameLoader::changeLocation(const URL& url, const AtomString& passedTarget,
     frameLoadRequest.setReferrerPolicy(referrerPolicy);
     frameLoadRequest.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy);
     frameLoadRequest.disableShouldReplaceDocumentIfJavaScriptURL();
-    frameLoadRequest.setNavigationHistoryBehavior(NavigationHistoryBehavior::Push);
+    frameLoadRequest.setNavigationHistoryBehavior(historyBehavior);
     changeLocation(WTFMove(frameLoadRequest), triggeringEvent, WTFMove(privateClickMeasurement));
 }
 
@@ -1209,6 +1209,8 @@ static NavigationNavigationType determineNavigationType(FrameLoadType loadType, 
         return NavigationNavigationType::Push;
     if (historyHandling == NavigationHistoryBehavior::Replace)
         return NavigationNavigationType::Replace;
+    if (historyHandling == NavigationHistoryBehavior::Reload)
+        return NavigationNavigationType::Reload;
 
     if (isBackForwardLoadType(loadType))
         return NavigationNavigationType::Traverse;
@@ -1554,16 +1556,18 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     action.setIsInitialFrameSrcLoad(frameLoadRequest.isInitialFrameSrcLoad());
     action.setNewFrameOpenerPolicy(frameLoadRequest.newFrameOpenerPolicy());
     auto historyHandling = frameLoadRequest.navigationHistoryBehavior();
-    bool isSameOrigin = frameLoadRequest.requesterSecurityOrigin().isSameOriginDomain(frame->document()->securityOrigin());
-    if (historyHandling == NavigationHistoryBehavior::Auto && !isReload(newLoadType)) {
-        RefPtr document = m_frame->document();
-        if ((document->url() == newURL || document->readyState() != Document::ReadyState::Complete) && isSameOrigin)
+    RefPtr document = m_frame->document();
+    bool isSameOrigin = frameLoadRequest.requesterSecurityOrigin().isSameOriginDomain(document->securityOrigin());
+    if (!isReload(newLoadType)) {
+        if (historyHandling == NavigationHistoryBehavior::Auto) {
+            if ((document->url() == newURL || document->readyState() != Document::ReadyState::Complete) && isSameOrigin)
+                historyHandling = NavigationHistoryBehavior::Replace;
+            else
+                historyHandling = NavigationHistoryBehavior::Push;
+        }
+        if (newURL.protocolIsJavaScript() || (documentLoader() && documentLoader()->isInitialAboutBlank()))
             historyHandling = NavigationHistoryBehavior::Replace;
-        else
-            historyHandling = NavigationHistoryBehavior::Push;
     }
-    if (newURL.protocolIsJavaScript() || (documentLoader() && documentLoader()->isInitialAboutBlank()))
-        historyHandling = NavigationHistoryBehavior::Replace;
     action.setNavigationAPIType(determineNavigationType(newLoadType, historyHandling));
     if (privateClickMeasurement && frame->isMainFrame())
         action.setPrivateClickMeasurement(WTFMove(*privateClickMeasurement));
@@ -1579,7 +1583,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
             openerPolicy = NewFrameOpenerPolicy::Suppress;
         }
 
-        if (frame->document()->settingsValues().blobRegistryTopOriginPartitioningEnabled && frameLoadRequest.resourceRequest().url().protocolIsBlob() && !m_frame->document()->protectedSecurityOrigin()->isSameOriginAs(m_frame->document()->protectedTopOrigin())) {
+        if (document->settingsValues().blobRegistryTopOriginPartitioningEnabled && frameLoadRequest.resourceRequest().url().protocolIsBlob() && !document->protectedSecurityOrigin()->isSameOriginAs(document->protectedTopOrigin())) {
             effectiveFrameName = blankTargetFrameName();
             openerPolicy = NewFrameOpenerPolicy::Suppress;
         }

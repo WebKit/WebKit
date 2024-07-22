@@ -210,7 +210,7 @@ uint32_t History::totalStateObjectPayloadLimit() const
     return m_totalStateObjectPayloadLimitOverride.value_or(defaultTotalStateObjectPayloadLimit);
 }
 
-ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data, const String& urlString, StateObjectType stateObjectType)
+ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data, const String& urlString, NavigationHistoryBehavior historyBehavior)
 {
     m_cachedState.clear();
 
@@ -230,7 +230,7 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
     const URL& documentURL = frame->document()->url();
 
     auto createBlockedURLSecurityErrorWithMessageSuffix = [&] (ASCIILiteral suffix) {
-        const auto functionName = stateObjectType == StateObjectType::Replace ? "history.replaceState()"_s : "history.pushState()"_s;
+        const auto functionName = historyBehavior == NavigationHistoryBehavior::Replace ? "history.replaceState()"_s : "history.pushState()"_s;
         return Exception { ExceptionCode::SecurityError, makeString("Blocked attempt to use "_s, functionName, " to change session history URL from "_s, documentURL.stringCenterEllipsizedToLength(), " to "_s, fullURL.stringCenterEllipsizedToLength(), ". "_s, suffix) };
     };
     if (!protocolHostAndPortAreEqual(fullURL, documentURL) || fullURL.user() != documentURL.user() || fullURL.password() != documentURL.password())
@@ -273,25 +273,25 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
         }
 
         if (mainHistory->m_currentStateObjectTimeSpanObjectsAdded >= perStateObjectTimeSpanLimit) {
-            if (stateObjectType == StateObjectType::Replace)
+            if (historyBehavior == NavigationHistoryBehavior::Replace)
                 return Exception { ExceptionCode::SecurityError, makeString("Attempt to use history.replaceState() more than "_s, perStateObjectTimeSpanLimit, " times per "_s, stateObjectTimeSpan.seconds(), " seconds"_s) };
             return Exception { ExceptionCode::SecurityError, makeString("Attempt to use history.pushState() more than "_s, perStateObjectTimeSpanLimit, " times per "_s, stateObjectTimeSpan.seconds(), " seconds"_s) };
         }
 
         if (RefPtr document = frame->document(); document && document->settings().navigationAPIEnabled()) {
             Ref navigation = document->domWindow()->navigation();
-            if (!navigation->dispatchPushReplaceReloadNavigateEvent(fullURL, stateObjectType == StateObjectType::Push ? NavigationNavigationType::Push : NavigationNavigationType::Replace, true, nullptr, data.get()))
+            if (!navigation->dispatchPushReplaceReloadNavigateEvent(fullURL, historyBehavior == NavigationHistoryBehavior::Push ? NavigationNavigationType::Push : NavigationNavigationType::Replace, true, nullptr, data.get()))
                 return { };
         }
 
         Checked<uint64_t> newTotalUsage = mainHistory->m_totalStateObjectUsage;
 
-        if (stateObjectType == StateObjectType::Replace)
+        if (historyBehavior == NavigationHistoryBehavior::Replace)
             newTotalUsage -= m_mostRecentStateObjectUsage;
         newTotalUsage += payloadSize;
 
         if (newTotalUsage > mainHistory->totalStateObjectPayloadLimit()) {
-            if (stateObjectType == StateObjectType::Replace)
+            if (historyBehavior == NavigationHistoryBehavior::Replace)
                 return Exception { ExceptionCode::QuotaExceededError, "Attempt to store more data than allowed using history.replaceState()"_s };
             return Exception { ExceptionCode::QuotaExceededError, "Attempt to store more data than allowed using history.pushState()"_s };
         }
@@ -302,7 +302,6 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
 
     m_mostRecentStateObjectUsage = payloadSize;
 
-    auto historyBehavior = stateObjectType == StateObjectType::Replace ? NavigationHistoryBehavior::Replace : NavigationHistoryBehavior::Push;
     frame->loader().updateURLAndHistory(fullURL, WTFMove(data), historyBehavior);
     return { };
 }

@@ -1,4 +1,4 @@
 
 
-FAIL history.go(0) fires the navigate event assert_equals: expected "reload" but got "push"
+PASS history.go(0) fires the navigate event
 

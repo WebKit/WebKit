@@ -91,7 +91,8 @@ enum class NavigationType : uint8_t {
 enum class NavigationHistoryBehavior : uint8_t {
     Auto,
     Push,
-    Replace
+    Replace,
+    Reload // Internal, not part of the specification
 };
 
 enum class ShouldOpenExternalURLsPolicy : uint8_t {

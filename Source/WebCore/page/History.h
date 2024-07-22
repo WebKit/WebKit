@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include "FrameLoaderTypes.h"
 #include "JSValueInWrappedObject.h"
 #include "LocalDOMWindowProperty.h"
 #include "ScriptWrappable.h"
@@ -73,8 +74,7 @@ public:
 private:
     explicit History(LocalDOMWindow&);
 
-    enum class StateObjectType { Push, Replace };
-    ExceptionOr<void> stateObjectAdded(RefPtr<SerializedScriptValue>&&, const String& url, StateObjectType);
+    ExceptionOr<void> stateObjectAdded(RefPtr<SerializedScriptValue>&&, const String& url, NavigationHistoryBehavior);
     bool stateChanged() const;
 
     URL urlForState(const String& url);
@@ -98,12 +98,12 @@ private:
 
 inline ExceptionOr<void> History::pushState(RefPtr<SerializedScriptValue>&& data, const String&, const String& urlString)
 {
-    return stateObjectAdded(WTFMove(data), urlString, StateObjectType::Push);
+    return stateObjectAdded(WTFMove(data), urlString, NavigationHistoryBehavior::Push);
 }
 
 inline ExceptionOr<void> History::replaceState(RefPtr<SerializedScriptValue>&& data, const String&, const String& urlString)
 {
-    return stateObjectAdded(WTFMove(data), urlString, StateObjectType::Replace);
+    return stateObjectAdded(WTFMove(data), urlString, NavigationHistoryBehavior::Replace);
 }
 
 } // namespace WebCore
