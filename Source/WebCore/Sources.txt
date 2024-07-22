@@ -2656,6 +2656,7 @@ rendering/GridLayoutFunctions.cpp
 rendering/GridMasonryLayout.cpp
 rendering/GridTrackSizingAlgorithm.cpp
 rendering/GlyphDisplayListCache.cpp
+rendering/SVGGlyphDisplayListCache.cpp
 rendering/GlyphDisplayListCacheRemoval.cpp
 rendering/HitTestLocation.cpp
 rendering/HitTestResult.cpp
