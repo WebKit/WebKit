@@ -1,0 +1,7 @@
+child
+done
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Pointer events from touch to slotted element and shadow-host Test timed out
+

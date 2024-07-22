@@ -1,0 +1,8 @@
+Test contextmenu event
+
+Tests that right-clicking fires a contextmenu event.
+
+Right-click here.
+
+PASS Test contextmenu dispatched after mousedown
+

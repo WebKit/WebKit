@@ -16,4 +16,5 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/uievents/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/uievents/README.md
+/LayoutTests/imported/w3c/web-platform-tests/uievents/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/idlharness.window.js

@@ -1,0 +1,6 @@
+Double-click into the blue area.
+Click the "Done" button.
+Done
+
+PASS Click-related events should fire in the correct order
+

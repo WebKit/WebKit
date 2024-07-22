@@ -1,3 +1,7 @@
 
-PASS synthetic click event is a MouseEvent
+FAIL synthetic click event is a PointerEvent assert_equals: Click is a PointerEvent expected function "function PointerEvent() {
+    [native code]
+}" but got function "function MouseEvent() {
+    [native code]
+}"
 

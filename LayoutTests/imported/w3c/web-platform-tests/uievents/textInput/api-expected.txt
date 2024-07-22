@@ -1,0 +1,13 @@
+
+a
+
+PASS No constructor
+PASS document.CreateEvent('TextEvent') prototype chain
+PASS initTextEvent() no arguments
+PASS initTextEvent('foo')
+PASS initTextEvent('foo', true, true, window, 'bar')
+PASS case sensitivity: textInput vs textinput
+PASS execCommand('insertText', false, 'a'), <input>
+PASS execCommand('insertText', false, 'a'), <textarea>
+PASS execCommand('insertText', false, 'a'), <div contenteditable="">
+

@@ -1,0 +1,7 @@
+PASS
+
+ 
+
+
+PASS Clicking on the body element itself should fire a click event targeted at the body element
+

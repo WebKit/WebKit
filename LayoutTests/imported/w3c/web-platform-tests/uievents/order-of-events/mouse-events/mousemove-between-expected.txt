@@ -1,0 +1,7 @@
+Steps:
+
+Move your mouse over the blue <div> element, later over the green one, later back to the blue one.
+Move the mouse from the blue element to the yellow one, later to the white background.
+
+PASS Mousemove events between elements should fire in the correct order.
+

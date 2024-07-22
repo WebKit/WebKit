@@ -1,0 +1,5 @@
+child
+done
+
+PASS Pointer events from mouse to slotted element and shadow-host
+
