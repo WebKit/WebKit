@@ -180,7 +180,7 @@ void Resolver::initialize()
         document().fontSelector().incrementIsComputingRootStyleFont();
         m_rootDefaultStyle->fontCascade().update(&document().fontSelector());
         m_rootDefaultStyle->fontCascade().primaryFont();
-        document().fontSelector().decrementIsComputingRootStyleFont();
+        document().protectedFontSelector()->decrementIsComputingRootStyleFont();
     }
 
     if (m_rootDefaultStyle && view)

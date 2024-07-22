@@ -440,17 +440,17 @@ void RuleSetBuilder::addMutatingRulesToResolver()
 
         auto& rule = collectedRule.rule;
         if (auto* styleRuleFontFace = dynamicDowncast<StyleRuleFontFace>(rule.get())) {
-            m_resolver->document().fontSelector().addFontFaceRule(*styleRuleFontFace, false);
+            m_resolver->document().protectedFontSelector()->addFontFaceRule(*styleRuleFontFace, false);
             m_resolver->invalidateMatchedDeclarationsCache();
             continue;
         }
         if (auto* styleRuleFontPaletteValues = dynamicDowncast<StyleRuleFontPaletteValues>(rule.get())) {
-            m_resolver->document().fontSelector().addFontPaletteValuesRule(*styleRuleFontPaletteValues);
+            m_resolver->document().protectedFontSelector()->addFontPaletteValuesRule(*styleRuleFontPaletteValues);
             m_resolver->invalidateMatchedDeclarationsCache();
             continue;
         }
         if (auto* styleRuleFontFeatureValues = dynamicDowncast<StyleRuleFontFeatureValues>(rule.get())) {
-            m_resolver->document().fontSelector().addFontFeatureValuesRule(*styleRuleFontFeatureValues);
+            m_resolver->document().protectedFontSelector()->addFontFeatureValuesRule(*styleRuleFontFeatureValues);
             m_resolver->invalidateMatchedDeclarationsCache();
             continue;
         }

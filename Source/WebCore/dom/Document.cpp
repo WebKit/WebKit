@@ -8813,7 +8813,7 @@ Ref<DocumentFragment> Document::documentFragmentForInnerOuterHTML()
 
 Ref<FontFaceSet> Document::fonts()
 {
-    return fontSelector().fontFaceSet();
+    return protectedFontSelector()->fontFaceSet();
 }
 
 EditingBehavior Document::editingBehavior() const
