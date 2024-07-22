@@ -77,6 +77,9 @@ struct pas_pgm_storage {
      */
     bool right_align;
 
+    // Mark if the physical memory is freed
+    bool free_status;
+
     pas_large_heap* large_heap;
 };
 
@@ -88,6 +91,9 @@ struct pas_pgm_storage {
  * including guard pages and wasted memory
  */
 #define PAS_PGM_MAX_VIRTUAL_MEMORY (1024 * 1024 * 1024)
+
+/* Total MAX_PGM_HASH_ENTRIES {0 - (MAX_PGM_HASH_ENTRIES - 1)} PGM entries are allowed for which metadata is kept alive */
+#define MAX_PGM_HASH_ENTRIES    10
 
 extern PAS_API pas_ptr_hash_map pas_pgm_hash_map;
 extern PAS_API pas_ptr_hash_map_in_flux_stash pas_pgm_hash_map_in_flux_stash;
@@ -109,6 +115,7 @@ void pas_probabilistic_guard_malloc_deallocate(void* memory);
 
 size_t pas_probabilistic_guard_malloc_get_free_virtual_memory(void);
 size_t pas_probabilistic_guard_malloc_get_free_wasted_memory(void);
+pas_ptr_hash_map_entry** pas_probabilistic_guard_malloc_get_metadata_array(void);
 
 bool pas_probabilistic_guard_malloc_check_exists(uintptr_t mem);
 
