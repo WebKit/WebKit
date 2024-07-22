@@ -265,39 +265,48 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
 
     bool isCbcs = !g_strcmp0(gst_structure_get_string(protectionMeta->info, "cipher-mode"), "cbcs");
 
-    unsigned ivSize;
-    if (!gst_structure_get_uint(protectionMeta->info, "iv_size", &ivSize)) {
+    auto ivSizeFromMeta = WebCore::gstStructureGet<unsigned>(protectionMeta->info, "iv_size"_s);
+    if (!ivSizeFromMeta) {
         GST_ELEMENT_ERROR(self, STREAM, FAILED, ("Failed to get iv_size"), (nullptr));
         return GST_FLOW_NOT_SUPPORTED;
     }
-    if (!ivSize && !gst_structure_get_uint(protectionMeta->info, "constant_iv_size", &ivSize)) {
-        GST_ELEMENT_ERROR(self, STREAM, FAILED, ("No iv_size and failed to get constant_iv_size"), (nullptr));
-        ASSERT(isCbcs);
-        return GST_FLOW_NOT_SUPPORTED;
+
+    unsigned ivSize;
+    if (*ivSizeFromMeta)
+        ivSize = *ivSizeFromMeta;
+    else {
+        auto constantIvSize = WebCore::gstStructureGet<unsigned>(protectionMeta->info, "constant_iv_size"_s);
+        if (!constantIvSize) {
+            GST_ELEMENT_ERROR(self, STREAM, FAILED, ("No iv_size and failed to get constant_iv_size"), (nullptr));
+            ASSERT(isCbcs);
+            return GST_FLOW_NOT_SUPPORTED;
+        }
+        ivSize = *constantIvSize;
     }
 
-    gboolean encrypted;
-    if (!gst_structure_get_boolean(protectionMeta->info, "encrypted", &encrypted)) {
+    auto isEncrypted = WebCore::gstStructureGet<bool>(protectionMeta->info, "encrypted"_s);
+    if (!isEncrypted) {
         GST_ELEMENT_ERROR(self, STREAM, FAILED, ("Failed to get encrypted flag"), (nullptr));
         return GST_FLOW_NOT_SUPPORTED;
     }
 
-    if (!ivSize || !encrypted) {
-        GST_TRACE_OBJECT(self, "iv size %u, encrypted %s, bailing out OK as unencrypted", ivSize, boolForPrinting(encrypted));
+    if (!ivSize || !*isEncrypted) {
+        GST_TRACE_OBJECT(self, "iv size %u, encrypted %s, bailing out OK as unencrypted", ivSize, boolForPrinting(*isEncrypted));
         return GST_FLOW_OK;
     }
 
     GST_DEBUG_OBJECT(base, "protection meta: %" GST_PTR_FORMAT, protectionMeta->info);
 
-    unsigned subSampleCount = 0;
+    auto subSampleCountFromMeta = WebCore::gstStructureGet<unsigned>(protectionMeta->info, "subsample_count"_s);
     // cbcs could not include the subsample_count.
-    if (!gst_structure_get_uint(protectionMeta->info, "subsample_count", &subSampleCount) && !isCbcs) {
+    if (!subSampleCountFromMeta && !isCbcs) {
         GST_ELEMENT_ERROR(self, STREAM, FAILED, ("Failed to get subsample_count"), (nullptr));
         return GST_FLOW_NOT_SUPPORTED;
     }
 
     const GValue* value;
     GstBuffer* subSamplesBuffer = nullptr;
+    auto subSampleCount = subSampleCountFromMeta.value_or(0);
     if (subSampleCount) {
         value = gst_structure_get_value(protectionMeta->info, "subsamples");
         if (!value) {

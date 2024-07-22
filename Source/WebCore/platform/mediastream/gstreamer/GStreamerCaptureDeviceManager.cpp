@@ -41,10 +41,8 @@ static gint sortDevices(gconstpointer a, gconstpointer b)
     GstDevice* adev = GST_DEVICE(a), *bdev = GST_DEVICE(b);
     GUniquePtr<GstStructure> aprops(gst_device_get_properties(adev));
     GUniquePtr<GstStructure> bprops(gst_device_get_properties(bdev));
-    gboolean aIsDefault = FALSE, bIsDefault = FALSE;
-
-    gst_structure_get_boolean(aprops.get(), "is-default", &aIsDefault);
-    gst_structure_get_boolean(bprops.get(), "is-default", &bIsDefault);
+    auto aIsDefault = gstStructureGet<bool>(aprops.get(), "is-default"_s).value_or(false);
+    auto bIsDefault = gstStructureGet<bool>(bprops.get(), "is-default"_s).value_or(false);
 
     if (aIsDefault == bIsDefault) {
         GUniquePtr<char> aName(gst_device_get_display_name(adev));
@@ -206,8 +204,7 @@ void GStreamerCaptureDeviceManager::addDevice(GRefPtr<GstDevice>&& device)
     // itself does that at least for pulseaudio devices).
     GUniquePtr<char> deviceName(gst_device_get_display_name(device.get()));
     GST_INFO("Registering device %s", deviceName.get());
-    gboolean isDefault = FALSE;
-    gst_structure_get_boolean(properties.get(), "is-default", &isDefault);
+    auto isDefault = gstStructureGet<bool>(properties.get(), "is-default"_s).value_or(false);
     auto label = makeString(isDefault ? "default: "_s : ""_s, span(deviceName.get()));
 
     auto identifier = label;

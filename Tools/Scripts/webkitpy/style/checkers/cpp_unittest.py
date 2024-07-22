@@ -1038,6 +1038,14 @@ class CppStyleTest(CppStyleTestBase):
             'instead of static_cast<Text*>'
             '  [readability/check] [4]')
 
+    def test_gst_structure_get(self):
+        error_message = 'Consider using gstStructureGet<T>() instead  [readability/check] [4]'
+        self.assert_lint('gst_structure_get_int(s, "foo", &bar)', error_message)
+        self.assert_lint('gst_structure_get_int64(s, "foo", &bar)', error_message)
+        self.assert_lint('gst_structure_get_uint(s, "foo", &bar)', error_message)
+        self.assert_lint('gst_structure_get_double(s, "foo", &bar)', error_message)
+        self.assert_lint('gst_structure_get_boolean(s, "foo", &bar)', error_message)
+
     # We cannot test this functionality because of difference of
     # function definitions.  Anyway, we may never enable this.
     #

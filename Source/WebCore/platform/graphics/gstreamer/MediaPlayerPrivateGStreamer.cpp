@@ -2113,8 +2113,9 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             GUniqueOutPtr<GstStructure> responseHeaders;
             if (gst_structure_get(structure, "response-headers", GST_TYPE_STRUCTURE, &responseHeaders.outPtr(), nullptr)) {
                 auto contentLengthHeaderName = httpHeaderNameString(HTTPHeaderName::ContentLength);
+                auto contentLengthFromResponse = gstStructureGet<uint64_t>(responseHeaders.get(), contentLengthHeaderName);
                 uint64_t contentLength = 0;
-                if (!gst_structure_get_uint64(responseHeaders.get(), contentLengthHeaderName.characters(), &contentLength)) {
+                if (!contentLengthFromResponse) {
                     // souphttpsrc sets a string for Content-Length, so
                     // handle it here, until we remove the webkit+ protocol
                     // prefix from webkitwebsrc.
@@ -2123,7 +2124,8 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                         if (contentLength == G_MAXUINT64)
                             contentLength = 0;
                     }
-                }
+                } else
+                    contentLength = *contentLengthFromResponse;
                 if (!isRangeRequest) {
                     m_isLiveStream = !contentLength;
                     GST_INFO_OBJECT(pipeline(), "%s stream detected", m_isLiveStream.value_or(false) ? "Live" : "Non-live");
@@ -4291,22 +4293,19 @@ bool MediaPlayerPrivateGStreamer::updateVideoSinkStatistics()
     if (!m_videoSink)
         return false;
 
-    uint64_t totalVideoFrames = 0;
-    uint64_t droppedVideoFrames = 0;
     GUniqueOutPtr<GstStructure> stats;
     g_object_get(m_videoSink.get(), "stats", &stats.outPtr(), nullptr);
+    auto totalVideoFrames = gstStructureGet<uint64_t>(stats.get(), "rendered"_s);
+    auto droppedVideoFrames = gstStructureGet<uint64_t>(stats.get(), "dropped"_s);
 
-    if (!gst_structure_get_uint64(stats.get(), "rendered", &totalVideoFrames))
-        return false;
-
-    if (!gst_structure_get_uint64(stats.get(), "dropped", &droppedVideoFrames))
+    if (!totalVideoFrames || !droppedVideoFrames)
         return false;
 
     // Caching is required so that metrics queries performed after EOS still return valid values.
-    if (totalVideoFrames)
-        m_totalVideoFrames = totalVideoFrames;
-    if (droppedVideoFrames)
-        m_droppedVideoFrames = droppedVideoFrames;
+    if (*totalVideoFrames)
+        m_totalVideoFrames = *totalVideoFrames;
+    if (*droppedVideoFrames)
+        m_droppedVideoFrames = *droppedVideoFrames;
     return true;
 }
 

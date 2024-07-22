@@ -608,9 +608,9 @@ static void videoEncoderConstructed(GObject* encoder)
         if (GST_EVENT_TYPE(event) == GST_EVENT_CUSTOM_DOWNSTREAM_OOB) {
             const auto* structure = gst_event_get_structure(event);
             if (gst_structure_has_name(structure, "encoder-bitrate-change-request")) {
-                uint32_t bitrate;
-                gst_structure_get_uint(structure, "bitrate", &bitrate);
-                g_object_set(parent, "bitrate", bitrate, nullptr);
+                auto bitrate = gstStructureGet<unsigned>(structure, "bitrate"_s);
+                RELEASE_ASSERT(bitrate);
+                g_object_set(parent, "bitrate", static_cast<uint32_t>(*bitrate), nullptr);
                 return TRUE;
             }
         }
