@@ -1426,11 +1426,7 @@ bool canUseJITCage() { return false; }
 
 bool canUseHandlerIC()
 {
-#if CPU(X86_64)
-    return true;
-#elif CPU(ARM64)
-    return !isIOS();
-#elif CPU(RISCV64)
+#if USE(JSVALUE64)
     return true;
 #else
     return false;
