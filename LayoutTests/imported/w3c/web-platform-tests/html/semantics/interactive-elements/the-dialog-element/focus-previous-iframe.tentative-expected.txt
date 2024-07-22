@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Error: assert_equals: expected Element node <input></input> but got Element node <iframe srcdoc="<input><dialog> Dialog in child </dialog>...
 
 
 PASS Focus should move back from parent document to child document

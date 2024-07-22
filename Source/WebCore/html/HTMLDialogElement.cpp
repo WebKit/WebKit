@@ -184,7 +184,7 @@ void HTMLDialogElement::queueCancelTask()
 void HTMLDialogElement::runFocusingSteps()
 {
     RefPtr<Element> control;
-    if (m_isModal && hasAttributeWithoutSynchronization(HTMLNames::autofocusAttr))
+    if (hasAttributeWithoutSynchronization(HTMLNames::autofocusAttr))
         control = this;
     if (!control)
         control = findFocusDelegate();
@@ -203,6 +203,11 @@ void HTMLDialogElement::runFocusingSteps()
     Ref topDocument = control->document().topDocument();
     topDocument->clearAutofocusCandidates();
     topDocument->setAutofocusProcessed();
+}
+
+bool HTMLDialogElement::supportsFocus() const
+{
+    return true;
 }
 
 void HTMLDialogElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)

@@ -57,6 +57,7 @@ private:
 
     void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
     void setIsModal(bool newValue);
+    bool supportsFocus() const final;
 
     String m_returnValue;
     bool m_isModal { false };

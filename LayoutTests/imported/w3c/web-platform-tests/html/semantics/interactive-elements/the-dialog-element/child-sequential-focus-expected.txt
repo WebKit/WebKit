@@ -1,5 +1,5 @@
 
-FAIL dialog element with autofocus should get initial focus. assert_equals: showModal: the target element did not receive initial focus. expected Element node <dialog autofocus="" id="autofocusdialog" data-descriptio... but got Element node <body><dialog autofocus="" id="autofocusdialog" data-desc...
+PASS dialog element with autofocus should get initial focus.
 FAIL Only keyboard-focusable elements should get dialog initial focus. assert_equals: showModal: the target element did not receive initial focus. expected Element node <button class="target">keyboard focusable button</button> but got Element node <button tabindex="-1">mouse focusable button</button>
 PASS Autofocus takes precedence over keyboard-focusable requirement.
 FAIL Only keyboard-focusable elements should get dialog initial focus including in subtrees. assert_equals: showModal: the target element did not receive initial focus. expected Element node <button class="target">keyboard focusable button</button> but got Element node <button tabindex="-1">mouse focusable button</button>

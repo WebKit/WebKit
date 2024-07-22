@@ -3682,6 +3682,9 @@ RefPtr<Element> Element::findFocusDelegateForTarget(ContainerNode& target, Focus
     if (RefPtr element = autoFocusDelegate(target, trigger))
         return element;
     for (Ref element : descendantsOfType<Element>(target)) {
+        if (is<HTMLDialogElement>(&target) && element->isKeyboardFocusable(nullptr))
+            return element;
+
         switch (trigger) {
         case FocusTrigger::Click:
             if (element->isMouseFocusable())
