@@ -127,8 +127,18 @@ void RealtimeIncomingSourceGStreamer::configureAppSink(GstElement* sink)
             return false;
         },
 #if GST_CHECK_VERSION(1, 24, 0)
-        // propose_allocation
-        nullptr,
+        [](GstAppSink*, GstQuery* query, gpointer userData) -> gboolean {
+            auto source = reinterpret_cast<ThreadSafeWeakPtr<RealtimeIncomingSourceGStreamer>*>(userData);
+            auto strongSource = source->get();
+            if (!strongSource)
+                return false;
+
+            if (strongSource->isIncomingVideoSource() && strongSource->m_isUpstreamDecoding) {
+                gst_query_add_allocation_meta(query, GST_VIDEO_META_API_TYPE, nullptr);
+                return true;
+            }
+            return false;
+        },
 #endif
         { nullptr }
     };
@@ -226,8 +236,10 @@ std::optional<int> RealtimeIncomingSourceGStreamer::registerClient(GRefPtr<GstEl
     auto* queue = gst_element_factory_make("queue", makeString("queue-"_s, clientId).ascii().data());
 
     ASCIILiteral sinkName = "appsink"_s;
+#if !GST_CHECK_VERSION(1, 24, 0)
     if (isIncomingVideoSource() && m_isUpstreamDecoding)
         sinkName = "fakevideosink"_s;
+#endif
     auto* sink = makeGStreamerElement(sinkName.characters(), makeString("sink-"_s, clientId).ascii().data());
     g_object_set(sink, "enable-last-sample", FALSE, nullptr);
 
