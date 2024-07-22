@@ -93,7 +93,7 @@ jobs:
           LDFLAGS: "${{env.LDFLAGS}} -L${{matrix.brew_prefix}}/llvm/lib/c++ -Wl,-rpath,${{matrix.brew_prefix}}/llvm/lib/c++"
           CC: "${{matrix.brew_prefix}}/llvm@${{env.LLVM_VERSION}}/bin/clang"
           CXX: "${{matrix.brew_prefix}}/llvm@${{env.LLVM_VERSION}}/bin/clang++"
-          RANLIB: "${{matrix.brew_prefix}}/llvm@${{env.LLVM_VERSION}}/bin/ranlib"
+          RANLIB: "${{matrix.brew_prefix}}/llvm@${{env.LLVM_VERSION}}/bin/llvm-ranlib"
           AR: "${{matrix.brew_prefix}}/llvm@${{env.LLVM_VERSION}}/bin/llvm-ar"
           CMAKE_C_COMPILER: "${{matrix.brew_prefix}}/llvm@${{env.LLVM_VERSION}}/bin/clang"
           CMAKE_CXX_COMPILER: "${{matrix.brew_prefix}}/llvm@${{env.LLVM_VERSION}}/bin/clang++"
