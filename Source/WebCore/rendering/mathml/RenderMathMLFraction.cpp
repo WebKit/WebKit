@@ -42,7 +42,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLFraction);
 
 RenderMathMLFraction::RenderMathMLFraction(MathMLFractionElement& element, RenderStyle&& style)
-    : RenderMathMLBlock(Type::MathMLFraction, element, WTFMove(style))
+    : RenderMathMLRow(Type::MathMLFraction, element, WTFMove(style))
 {
     ASSERT(isRenderMathMLFraction());
 }
@@ -171,7 +171,7 @@ RenderMathMLFraction::FractionParameters RenderMathMLFraction::stackParameters()
 RenderMathMLOperator* RenderMathMLFraction::unembellishedOperator() const
 {
     if (!isValid())
-        return nullptr;
+        return RenderMathMLRow::unembellishedOperator();
 
     auto* mathMLBlock = dynamicDowncast<RenderMathMLBlock>(numerator());
     return mathMLBlock ? mathMLBlock->unembellishedOperator() : nullptr;
@@ -181,14 +181,14 @@ void RenderMathMLFraction::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
-    m_minPreferredLogicalWidth = 0;
-    m_maxPreferredLogicalWidth = 0;
-
-    if (isValid()) {
-        LayoutUnit numeratorWidth = numerator().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(numerator());
-        LayoutUnit denominatorWidth = denominator().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(denominator());
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = std::max(numeratorWidth, denominatorWidth) + borderAndPaddingLogicalWidth();
+    if (!isValid()) {
+        RenderMathMLRow::computePreferredLogicalWidths();
+        return;
     }
+
+    LayoutUnit numeratorWidth = numerator().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(numerator());
+    LayoutUnit denominatorWidth = denominator().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(denominator());
+    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = std::max(numeratorWidth, denominatorWidth) + borderAndPaddingLogicalWidth();
 
     setPreferredLogicalWidthsDirty(false);
 }
@@ -229,7 +229,7 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
         return;
 
     if (!isValid()) {
-        layoutInvalidMarkup(relayoutChildren);
+        RenderMathMLRow::layoutBlock(relayoutChildren);
         return;
     }
 
@@ -276,7 +276,7 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
 
 void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
-    RenderMathMLBlock::paint(info, paintOffset);
+    RenderMathMLRow::paint(info, paintOffset);
     LayoutUnit thickness = lineThickness();
     if (info.context().paintingDisabled() || info.phase != PaintPhase::Foreground || style().usedVisibility() != Visibility::Visible || !isValid() || !thickness)
         return;
@@ -296,7 +296,7 @@ std::optional<LayoutUnit> RenderMathMLFraction::firstLineBaseline() const
 {
     if (isValid())
         return LayoutUnit { roundf(static_cast<float>(fractionAscent())) };
-    return RenderMathMLBlock::firstLineBaseline();
+    return RenderMathMLRow::firstLineBaseline();
 }
 
 }

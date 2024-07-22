@@ -24,9 +24,9 @@ PASS merror layout is not affected by children with "position: fixed" style
 PASS mfrac preferred width calculation is not affected by children with "display: none" style
 PASS mfrac layout is not affected by children with "display: none" style
 PASS mfrac preferred width calculation is not affected by children with "position: absolute" style
-FAIL mfrac layout is not affected by children with "position: absolute" style assert_approx_equals: inline size expected 2 +/- 1 but got 0
+FAIL mfrac layout is not affected by children with "position: absolute" style assert_approx_equals: block size expected 11.8125 +/- 1 but got 0
 PASS mfrac preferred width calculation is not affected by children with "position: fixed" style
-FAIL mfrac layout is not affected by children with "position: fixed" style assert_approx_equals: inline size expected 2 +/- 1 but got 0
+FAIL mfrac layout is not affected by children with "position: fixed" style assert_approx_equals: block size expected 11.8125 +/- 1 but got 0
 PASS mi preferred width calculation is not affected by children with "display: none" style
 PASS mi layout is not affected by children with "display: none" style
 PASS mi preferred width calculation is not affected by children with "position: absolute" style
