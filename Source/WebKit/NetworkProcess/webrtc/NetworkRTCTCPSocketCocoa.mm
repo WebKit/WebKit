@@ -36,6 +36,14 @@
 #include <pal/spi/cocoa/NetworkSPI.h>
 #include <wtf/BlockPtr.h>
 
+ALLOW_COMMA_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+
+#include <webrtc/api/packet_socket_factory.h>
+
+ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_COMMA_END
+
 namespace WebKit {
 
 using namespace WebCore;
