@@ -228,17 +228,6 @@ static bool isValidDirValue(const AtomString& value)
     return parseTextDirection(value) != TextDirectionDirective::Invalid;
 }
 
-static bool elementAffectsDirectionality(const HTMLElement& element)
-{
-    return is<HTMLBDIElement>(element) || isValidDirValue(element.attributeWithoutSynchronization(dirAttr));
-}
-
-static bool elementAffectsDirectionality(const Node& node)
-{
-    auto* htmlElement = dynamicDowncast<HTMLElement>(node);
-    return htmlElement && elementAffectsDirectionality(*htmlElement);
-}
-
 void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     switch (name.nodeName()) {
@@ -452,15 +441,6 @@ Node::InsertedIntoAncestorResult HTMLElement::insertedIntoAncestor(InsertionType
 {
     auto result = StyledElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     hideNonce();
-
-    if (RefPtr parent = parentOrShadowHostElement(); parent && UNLIKELY(parent->usesEffectiveTextDirection())) {
-        auto* input = dynamicDowncast<HTMLInputElement>(*this);
-        if (!elementAffectsDirectionality(*this) && !(input && input->isTelephoneField())) {
-            setUsesEffectiveTextDirection(true);
-            setEffectiveTextDirection(parent->effectiveTextDirection());
-        }
-    }
-
     return result;
 }
 
@@ -833,7 +813,7 @@ static void setHasDirAutoFlagRecursively(Node* firstNode, bool flag, Node* lastN
     RefPtr node = firstNode->firstChild();
 
     while (node) {
-        if (elementAffectsDirectionality(*node)) {
+        if (node->elementAffectsDirectionality()) {
             if (node == lastNode)
                 return;
             node = NodeTraversal::nextSkippingChildren(*node, firstNode);
@@ -851,6 +831,11 @@ void HTMLElement::childrenChanged(const ChildChange& change)
     StyledElement::childrenChanged(change);
     if (UNLIKELY(document().isDirAttributeDirty()))
         adjustDirectionalityIfNeededAfterChildrenChanged(change.previousSiblingElement, change.type);
+}
+
+bool HTMLElement::elementAffectsDirectionality() const
+{
+    return is<HTMLBDIElement>(this) || isValidDirValue(attributeWithoutSynchronization(dirAttr));
 }
 
 bool HTMLElement::hasDirectionAuto() const
@@ -879,16 +864,16 @@ auto HTMLElement::computeDirectionalityFromText() const -> TextDirectionWithStro
 
     RefPtr node = firstChild();
     while (node) {
-        // Skip bdi, script, style and text form controls.
-        auto* element = dynamicDowncast<Element>(*node);
-        if (node->hasTagName(bdiTag) || node->hasTagName(scriptTag) || node->hasTagName(styleTag)
-            || (element && element->isTextField())) {
-            node = NodeTraversal::nextSkippingChildren(*node, this);
-            continue;
-        }
-
-        // Skip elements with valid dir attribute
+        auto* element = dynamicDowncast<HTMLElement>(*node);
         if (element) {
+            // Skip HTML bdi, script, style elements and text form controls.
+            if (node->hasTagName(bdiTag) || node->hasTagName(scriptTag) || node->hasTagName(styleTag)
+                || (element && element->isTextField())) {
+                node = NodeTraversal::nextSkippingChildren(*node, this);
+                continue;
+            }
+
+            // Skip elements with valid dir attribute
             if (isValidDirValue(element->attributeWithoutSynchronization(dirAttr))) {
                 node = NodeTraversal::nextSkippingChildren(*element, this);
                 continue;
@@ -954,23 +939,22 @@ void HTMLElement::updateEffectiveDirectionality(std::optional<TextDirection> dir
         setEffectiveTextDirection(effectiveDirection);
     auto updateEffectiveTextDirectionOfShadowRoot = [&](HTMLElement& element) {
         if (RefPtr shadowRootOfElement = element.shadowRoot()) {
-            for (Ref element : childrenOfType<HTMLElement>(*shadowRootOfElement))
-                element->updateEffectiveDirectionality(direction);
+            // FIXME: Non-HTML elements?
+            for (Ref child : childrenOfType<HTMLElement>(*shadowRootOfElement))
+                child->updateEffectiveDirectionality(direction);
         }
     };
     updateEffectiveTextDirectionOfShadowRoot(*this);
-    for (auto it = descendantsOfType<HTMLElement>(*this).begin(); it;) {
-        Ref element = *it;
-        if (isValidDirValue(element->attributeWithoutSynchronization(dirAttr))) {
-            it.traverseNextSkippingChildren();
-            continue;
+    for (Ref element : descendantsOfType<Element>(*this)) {
+        if (auto htmlElement = dynamicDowncast<HTMLElement>(element)) {
+            if (isValidDirValue(element->attributeWithoutSynchronization(dirAttr))) 
+                continue;
+            updateEffectiveTextDirectionOfShadowRoot(*htmlElement);
         }
-        updateEffectiveTextDirectionOfShadowRoot(element);
         Style::PseudoClassChangeInvalidation styleInvalidation(element, CSSSelector::PseudoClass::Dir, Style::PseudoClassChangeInvalidation::AnyValue);
         element->setUsesEffectiveTextDirection(!!direction);
         if (direction)
             element->setEffectiveTextDirection(effectiveDirection);
-        it.traverseNext();
     }
 }
 
@@ -978,7 +962,7 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildAttributeChanged(Element
 {
     ASSERT(selfOrPrecedingNodesAffectDirAuto());
     for (Ref element : lineageOfType<HTMLElement>(*this)) {
-        if (elementAffectsDirectionality(element)) {
+        if (element->elementAffectsDirectionality()) {
             ASSERT(element->hasDirectionAuto());
             element->updateEffectiveDirectionalityOfDirAuto();
             break;
@@ -1011,13 +995,13 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Element* befo
     if (beforeChange)
         oldMarkedNode = changeType == ChildChange::Type::ElementInserted ? ElementTraversal::nextSibling(*beforeChange) : beforeChange->nextSibling();
 
-    while (oldMarkedNode && elementAffectsDirectionality(*oldMarkedNode))
+    while (oldMarkedNode && oldMarkedNode->elementAffectsDirectionality())
         oldMarkedNode = oldMarkedNode->nextSibling();
     if (oldMarkedNode)
         setHasDirAutoFlagRecursively(oldMarkedNode.get(), false);
 
     for (Ref elementToAdjust : lineageOfType<HTMLElement>(*this)) {
-        if (elementAffectsDirectionality(elementToAdjust)) {
+        if (elementToAdjust->elementAffectsDirectionality()) {
             ASSERT(elementToAdjust->hasDirectionAuto());
             elementToAdjust->updateEffectiveDirectionalityOfDirAuto();
             return;

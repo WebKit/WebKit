@@ -334,6 +334,8 @@ public:
     bool usesEffectiveTextDirection() const { return rareDataBitfields().usesEffectiveTextDirection; }
     void setUsesEffectiveTextDirection(bool);
 
+    virtual bool elementAffectsDirectionality() const { return false; }
+
     // Returns the enclosing event parent Element (or self) that, when clicked, would trigger a navigation.
     WEBCORE_EXPORT Element* enclosingLinkEventParentOrSelf();
 

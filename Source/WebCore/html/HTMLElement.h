@@ -212,6 +212,7 @@ private:
     void updateEffectiveDirectionality(std::optional<TextDirection>);
     void adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child);
     void adjustDirectionalityIfNeededAfterChildrenChanged(Element* beforeChange, ChildChange::Type);
+    bool elementAffectsDirectionality() const override;
 
     struct TextDirectionWithStrongDirectionalityNode {
         TextDirection direction;

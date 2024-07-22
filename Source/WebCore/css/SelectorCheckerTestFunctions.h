@@ -252,10 +252,6 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const FixedVec
 
 ALWAYS_INLINE bool matchesDirPseudoClass(const Element& element, const AtomString& argument)
 {
-    // FIXME: Add support for non-HTML elements.
-    if (!is<HTMLElement>(element))
-        return false;
-
     switch (element.effectiveTextDirection()) {
     case TextDirection::LTR:
         return equalIgnoringASCIICase(argument, "ltr"_s);

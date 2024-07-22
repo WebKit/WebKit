@@ -2833,6 +2833,14 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
     } else if (!hasLanguageAttribute())
         updateEffectiveLangStateFromParent();
 
+    if (RefPtr parent = parentOrShadowHostElement(); parent && UNLIKELY(parent->usesEffectiveTextDirection())) {
+        auto* input = dynamicDowncast<HTMLInputElement>(*this);
+        if (!elementAffectsDirectionality() && !(input && input->isTelephoneField())) {
+            setUsesEffectiveTextDirection(true);
+            setEffectiveTextDirection(parent->effectiveTextDirection());
+        }
+    }
+
     return InsertedIntoAncestorResult::Done;
 }
 

@@ -1,9 +1,9 @@
 
 PASS Root element has a direction
 PASS Element outside the document tree has a direction
-FAIL Non-HTML element outside the document tree has a direction assert_true: expected true got false
+PASS Non-HTML element outside the document tree has a direction
 PASS Element without direction has parent element direction
-FAIL Non-HTML element without direction has parent element direction assert_true: expected true got false
+PASS Non-HTML element without direction has parent element direction
 PASS dir inheritance is correct after insertion and removal from document
 FAIL Non-HTML element text contents influence dir=auto assert_true: is RTL before change expected true got false
 PASS style element text contents do not influence dir=auto
