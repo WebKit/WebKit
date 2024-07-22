@@ -49,11 +49,6 @@ bool WebRTCProvider::webRTCAvailable()
     return true;
 }
 
-void WebRTCProvider::setActive(bool)
-{
-    notImplemented();
-}
-
 std::optional<RTCRtpCapabilities> GStreamerWebRTCProvider::receiverCapabilities(const String& kind)
 {
     if (kind == "audio"_s)

@@ -54,8 +54,6 @@ public:
     static bool webRTCAvailable();
     static void setH264HardwareEncoderAllowed(bool);
 
-    virtual void setActive(bool);
-
     virtual RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection();
 
     using DecodingConfigurationCallback = Function<void(MediaCapabilitiesDecodingInfo&&)>;

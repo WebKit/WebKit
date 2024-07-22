@@ -42,8 +42,6 @@ enum class WebKitVP9 { Off, Profile0, Profile0And2 };
 enum class WebKitVP9VTB { Off, On };
 enum class WebKitAv1 { Off, On };
 
-void setApplicationStatus(bool isActive);
-
 void setH264HardwareEncoderAllowed(bool);
 bool isH264HardwareEncoderAllowed();
 

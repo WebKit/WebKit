@@ -4085,8 +4085,6 @@ void Page::applicationWillResignActive()
 
 void Page::applicationDidEnterBackground()
 {
-    m_webRTCProvider->setActive(false);
-
 #if ENABLE(WEBXR)
     if (auto session = this->activeImmersiveXRSession())
         session->applicationDidEnterBackground();
@@ -4095,8 +4093,6 @@ void Page::applicationDidEnterBackground()
 
 void Page::applicationWillEnterForeground()
 {
-    m_webRTCProvider->setActive(true);
-
 #if ENABLE(WEBXR)
     if (auto session = this->activeImmersiveXRSession())
         session->applicationWillEnterForeground();

@@ -88,10 +88,6 @@ void WebRTCProvider::setH264HardwareEncoderAllowed(bool)
 }
 #endif
 
-void WebRTCProvider::setActive(bool)
-{
-}
-
 static inline rtc::SocketAddress prepareSocketAddress(const rtc::SocketAddress& address, bool disableNonLocalhostConnections)
 {
     auto result = address;

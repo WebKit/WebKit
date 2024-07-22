@@ -32,6 +32,8 @@
 #include "MediaCapabilitiesInfo.h"
 #include "VP9UtilitiesCocoa.h"
 
+#include <webrtc/api/create_peerconnection_factory.h>
+
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN
 #include <webrtc/sdk/WebKit/WebKitDecoder.h>
@@ -43,7 +45,7 @@ ALLOW_COMMA_END
 #include <wtf/MainThread.h>
 #include <wtf/darwin/WeakLinking.h>
 
-WTF_WEAK_LINK_FORCE_IMPORT(webrtc::setApplicationStatus);
+WTF_WEAK_LINK_FORCE_IMPORT(webrtc::CreatePeerConnectionFactory);
 
 namespace WebCore {
 
@@ -94,19 +96,13 @@ bool LibWebRTCProviderCocoa::isVPSoftwareDecoderSmooth(const VideoConfiguration&
     return WebCore::isVPSoftwareDecoderSmooth(configuration);
 }
 
-void LibWebRTCProviderCocoa::setActive(bool value)
-{
-    if (webRTCAvailable())
-        webrtc::setApplicationStatus(value);
-}
-
 bool WebRTCProvider::webRTCAvailable()
 {
 #if PLATFORM(IOS) || PLATFORM(VISION)
-    ASSERT_WITH_MESSAGE(!!webrtc::setApplicationStatus, "Failed to find or load libwebrtc");
+    ASSERT_WITH_MESSAGE(!!webrtc::CreatePeerConnectionFactory, "Failed to find or load libwebrtc");
     return true;
 #else
-    return !!webrtc::setApplicationStatus;
+    return !!webrtc::CreatePeerConnectionFactory;
 #endif
 }
 
