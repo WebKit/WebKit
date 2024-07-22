@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,13 +28,13 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The DOMPointInit constructor exists in https://www.w3.org/TR/geometry-1/ but is removed in https://drafts.fxtf.org/geometry/
+// https://drafts.fxtf.org/geometry/#dompointreadonly
+
 [
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
     TaggedWrapper,
 ] interface DOMPointReadOnly {
-    constructor(DOMPointInit point);
     constructor(optional unrestricted double x = 0, optional unrestricted double y = 0, optional unrestricted double z = 0, optional unrestricted double w = 1);
 
     [NewObject] static DOMPointReadOnly fromPoint(optional DOMPointInit other);
