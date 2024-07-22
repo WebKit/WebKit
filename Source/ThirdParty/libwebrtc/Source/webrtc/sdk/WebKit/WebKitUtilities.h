@@ -40,6 +40,7 @@ class VideoFrame;
 enum class WebKitH265 { Off, On };
 enum class WebKitVP9 { Off, Profile0, Profile0And2 };
 enum class WebKitVP9VTB { Off, On };
+enum class WebKitH264LowLatency { Off, On };
 enum class WebKitAv1 { Off, On };
 
 void setH264HardwareEncoderAllowed(bool);
