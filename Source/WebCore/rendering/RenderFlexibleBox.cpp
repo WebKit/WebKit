@@ -1493,19 +1493,23 @@ LayoutUnit RenderFlexibleBox::marginBoxAscentForFlexItem(const RenderBox& flexIt
 {
     auto isHorizontalFlow = this->isHorizontalFlow();
     auto direction = isHorizontalFlow ? HorizontalLine : VerticalLine;
-    if (crossAxisIsPhysicalWidth() == flexItem.isHorizontalWritingMode())
+
+    if (!mainAxisIsFlexItemInlineAxis(flexItem))
         return synthesizedBaseline(flexItem, style(), direction, BorderBox) + flowAwareMarginBeforeForFlexItem(flexItem);
     auto ascent = alignmentForFlexItem(flexItem) == ItemPosition::LastBaseline ? flexItem.lastLineBaseline() : flexItem.firstLineBaseline();
     if (!ascent)
         return synthesizedBaseline(flexItem, style(), direction, BorderBox) + flowAwareMarginBeforeForFlexItem(flexItem);
 
-    // In either of these cases we require a translation of the ascent because it
-    // was computed in a different coordinate space from the flex container's.
-    // The first scenario below can occur when the flex container has column flex
-    // specified and is in horizontal writing-mode with a vertical-rl flex item *or*
-    // when they are both vertical and the child is flipped blocks.
-    if ((!style().isFlippedBlocksWritingMode() && flexItem.style().isFlippedBlocksWritingMode()) || (style().isFlippedBlocksWritingMode() && flexItem.style().blockFlowDirection() == BlockFlowDirection::LeftToRight))
-        ascent = flexItem.logicalHeight() - ascent.value();
+    if (flexItem.isWritingModeRoot() && style().isFlippedBlocksWritingMode() != flexItem.style().isFlippedBlocksWritingMode() && !flexItem.isHorizontalWritingMode()) {
+        // Baseline from flex item with opposite block direction needs to be resolved as if flex item had the same block direction.
+        //  _____________________________ <- flex box top/left (e.g. writing-mode: vertical-rl)
+        // |        __________________   |
+        // |       |  20px |    80px  |<-- flex item with vertical-lr (top is at visual left)
+        // |       |<----->|<-------->|  |
+        // |       top     baseline   |  |
+        // where computed baseline is 20px and resolved (as if flex item shares the block direction with flex box) is 80px.
+        ascent = flexItem.logicalHeight() - *ascent;
+    }
 
     if (isHorizontalFlow ? flexItem.isScrollContainerY() : flexItem.isScrollContainerX())
         return std::clamp(*ascent, 0_lu, crossAxisExtentForFlexItem(flexItem)) + flowAwareMarginBeforeForFlexItem(flexItem);
@@ -2207,9 +2211,13 @@ void RenderFlexibleBox::layoutAndPlaceFlexItems(LayoutUnit& crossAxisOffset, Fle
     }
 
     LayoutUnit totalMainExtent = mainAxisExtent();
-    LayoutUnit maxAscent, maxDescent, lastBaselineMaxAscent; // Used when align-items: baseline.
-    std::optional<BaselineAlignmentState> baselineAlignmentState;
     LayoutUnit maxFlexItemCrossAxisExtent;
+
+    LayoutUnit maxAscent;
+    LayoutUnit maxDescent;
+    LayoutUnit lastBaselineMaxAscent;
+    std::optional<BaselineAlignmentState> baselineAlignmentState;
+
     ContentDistribution distribution = style().resolvedJustifyContentDistribution(contentAlignmentNormalBehavior());
     bool shouldFlipMainAxis = !isColumnFlow() && !isLeftToRightFlow();
     for (size_t i = 0; i < flexLayoutItems.size(); ++i) {
