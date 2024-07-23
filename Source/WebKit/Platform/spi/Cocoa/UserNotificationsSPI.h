@@ -31,6 +31,7 @@
 #import <UserNotifications/UNUserNotificationCenter_Private.h>
 
 #if HAVE(UNNOTIFICATIONICON)
+#import <UserNotifications/UNNotificationIcon.h>
 #import <UserNotifications/UNNotificationIcon_Private.h>
 #endif
 
