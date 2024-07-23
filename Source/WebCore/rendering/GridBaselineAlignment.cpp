@@ -64,20 +64,18 @@ LayoutUnit GridBaselineAlignment::ascentForChild(const RenderBox& child, GridAxi
     ASSERT(position == ItemPosition::Baseline || position == ItemPosition::LastBaseline);
     auto baseline = 0_lu;
     auto gridItemMargin = alignmentAxis == GridAxis::GridColumnAxis ? child.marginBlockStart(m_writingMode) : child.marginInlineStart(m_writingMode);
+    auto& parentStyle = child.parent()->style();
 
     if (alignmentAxis == GridAxis::GridColumnAxis) {
-        ASSERT(child.parentStyle());
-        auto* parentStyle = child.parentStyle();
-
         auto alignmentContextDirection = [&] {
-            return child.parentStyle()->isHorizontalWritingMode() ? LineDirectionMode::HorizontalLine : LineDirectionMode::VerticalLine;
+            return parentStyle.isHorizontalWritingMode() ? LineDirectionMode::HorizontalLine : LineDirectionMode::VerticalLine;
         };
 
         if (!isParallelToAlignmentAxisForChild(child, alignmentAxis))
-            return gridItemMargin + (parentStyle ? synthesizedBaseline(child, *child.parentStyle(), alignmentContextDirection(), BaselineSynthesisEdge::BorderBox) : 0_lu);
+            return gridItemMargin + synthesizedBaseline(child, parentStyle, alignmentContextDirection(), BaselineSynthesisEdge::BorderBox);
         auto ascent = position == ItemPosition::Baseline ? child.firstLineBaseline() : child.lastLineBaseline();
         if (!ascent)
-            return gridItemMargin + (parentStyle ? synthesizedBaseline(child, *child.parentStyle(), alignmentContextDirection(), BaselineSynthesisEdge::BorderBox) : 0_lu);
+            return gridItemMargin + synthesizedBaseline(child, parentStyle, alignmentContextDirection(), BaselineSynthesisEdge::BorderBox);
         baseline = ascent.value();
     } else {
         auto computedBaselineValue = position == ItemPosition::Baseline ? child.firstLineBaseline() : child.lastLineBaseline();
@@ -87,7 +85,7 @@ LayoutUnit GridBaselineAlignment::ascentForChild(const RenderBox& child, GridAxi
             ASSERT(!child.needsLayout());
             if (isVerticalAlignmentContext(alignmentAxis))
                 return isFlippedWritingMode(m_writingMode) ? gridItemMargin + child.size().width().toInt() : gridItemMargin;
-            return gridItemMargin + child.size().height();
+            return gridItemMargin + synthesizedBaseline(child, parentStyle, LineDirectionMode::HorizontalLine, BaselineSynthesisEdge::BorderBox);
         }
     }
 
