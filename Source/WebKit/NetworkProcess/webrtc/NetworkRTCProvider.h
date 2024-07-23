@@ -123,8 +123,6 @@ public:
     const char* applicationBundleIdentifier() const { return m_applicationBundleIdentifier.data(); }
 #endif
 
-    static rtc::Thread& rtcNetworkThread();
-
 private:
     explicit NetworkRTCProvider(NetworkConnectionToWebProcess&);
     void startListeningForIPC();
@@ -140,7 +138,10 @@ private:
 
     void addSocket(WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<Socket>&&);
 
-#if !PLATFORM(COCOA)
+#if PLATFORM(COCOA)
+    const String& attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier);
+#else
+    static rtc::Thread& rtcNetworkThread();
     void createSocket(WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<rtc::AsyncPacketSocket>&&, Socket::Type, Ref<IPC::Connection>&&);
 #endif
 
@@ -150,10 +151,9 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-#if PLATFORM(COCOA)
-    const String& attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier);
-#endif
     void signalSocketIsClosed(WebCore::LibWebRTCSocketIdentifier);
+
+    void assertIsRTCNetworkThread();
 
     static constexpr size_t maxSockets { 256 };
 
@@ -168,6 +168,7 @@ private:
     HashMap<WebPageProxyIdentifier, String> m_attributedBundleIdentifiers;
     std::optional<audit_token_t> m_sourceApplicationAuditToken;
     CString m_applicationBundleIdentifier;
+    Ref<WorkQueue> m_rtcNetworkThreadQueue;
 #endif
 
 #if !PLATFORM(COCOA)
