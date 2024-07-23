@@ -623,9 +623,9 @@ bool XMLDocumentParser::supportsXMLVersion(const String& version)
     return version == "1.0"_s;
 }
 
-XMLDocumentParser::XMLDocumentParser(Document& document, LocalFrameView* frameView, OptionSet<ParserContentPolicy> policy)
+XMLDocumentParser::XMLDocumentParser(Document& document, IsInFrameView isInFrameView, OptionSet<ParserContentPolicy> policy)
     : ScriptableDocumentParser(document, policy)
-    , m_view(frameView)
+    , m_isInFrameView(isInFrameView)
     , m_pendingCallbacks(makeUnique<PendingCallbacks>())
     , m_currentNode(&document)
     , m_scriptStartPosition(TextPosition::belowRangePosition())
@@ -885,7 +885,7 @@ void XMLDocumentParser::endElementNs()
         return;
     }
 
-    if (!element || !m_view) {
+    if (!element || m_isInFrameView == IsInFrameView::No) {
         popCurrentNode();
         return;
     }

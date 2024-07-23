@@ -3404,7 +3404,7 @@ void Document::setVisuallyOrdered()
 Ref<DocumentParser> Document::createParser()
 {
     // FIXME: this should probably pass the frame instead
-    return XMLDocumentParser::create(*this, protectedView().get(), m_parserContentPolicy);
+    return XMLDocumentParser::create(*this, view() ? XMLDocumentParser::IsInFrameView::Yes : XMLDocumentParser::IsInFrameView::No, m_parserContentPolicy);
 }
 
 bool Document::hasHighlight() const

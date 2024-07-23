@@ -87,13 +87,13 @@ public:
         : m_root(root)
     {
         if (m_root)
-            disabledSubtreeRoots().add(m_root);
+            disabledSubtreeRoots().add(m_root.get());
     }
 
     ~SubframeLoadingDisabler()
     {
         if (m_root)
-            disabledSubtreeRoots().remove(m_root);
+            disabledSubtreeRoots().remove(m_root.get());
     }
 
     static bool canLoadFrame(HTMLFrameOwnerElement&);
@@ -105,7 +105,7 @@ private:
         return nodes;
     }
 
-    ContainerNode* m_root;
+    WeakPtr<ContainerNode, WeakPtrImplWithEventTargetData> m_root;
 };
 
 inline HTMLFrameOwnerElement* Frame::ownerElement() const

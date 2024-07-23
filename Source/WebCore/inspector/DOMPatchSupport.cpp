@@ -88,7 +88,7 @@ void DOMPatchSupport::patchDocument(const String& markup)
     if (newDocument->isHTMLDocument())
         parser = HTMLDocumentParser::create(static_cast<HTMLDocument&>(*newDocument));
     else
-        parser = XMLDocumentParser::create(*newDocument, nullptr);
+        parser = XMLDocumentParser::create(*newDocument, XMLDocumentParser::IsInFrameView::No);
     parser->insert(markup); // Use insert() so that the parser will not yield.
     parser->finish();
     parser->detach();

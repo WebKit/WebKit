@@ -65,7 +65,7 @@ private:
 
     bool canContainRangeEndPoint() const final { return false; }
 
-    ProgressValueElement* m_value;
+    WeakPtr<ProgressValueElement, WeakPtrImplWithEventTargetData> m_value;
     bool m_isDeterminate { false };
 };
 
