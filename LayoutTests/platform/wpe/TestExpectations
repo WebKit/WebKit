@@ -310,7 +310,6 @@ imported/w3c/web-platform-tests/fetch/metadata/trailing-dot.https.sub.any.shared
 imported/w3c/web-platform-tests/fetch/metadata/trailing-dot.https.sub.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/wide-gamut-canvas/2d.color.space.p3.convertToBlobp3.canvas.html [ Failure ]
 imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/Document.currentScript.html [ Failure ]
-imported/w3c/web-platform-tests/html/dom/idlharness.https.html?include=(Document|Window) [ Failure ]
 imported/w3c/web-platform-tests/html/dom/reflection-embedded.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/lone-surrogates.sub.html?encoding=windows-1252 [ Failure ]
 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/lone-surrogates.sub.html [ Skip ]
