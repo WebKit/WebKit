@@ -480,8 +480,6 @@ public:
 
     WebPageGroupProxy* pageGroup() const { return m_pageGroup.get(); }
 
-    void scrollMainFrameIfNotAtMaxScrollPosition(const WebCore::IntSize& scrollOffset);
-
     bool scrollBy(WebCore::ScrollDirection, WebCore::ScrollGranularity);
 
     void centerSelectionInVisibleArea();
