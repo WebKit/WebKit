@@ -69,6 +69,7 @@ void PushClientConnection::updateConnectionConfiguration(WebPushDaemonConnection
     if (configuration.hostAppAuditTokenData)
         setHostAppAuditTokenData(*configuration.hostAppAuditTokenData);
 
+    m_bundleIdentifierOverride = configuration.bundleIdentifierOverride;
     m_pushPartitionString = configuration.pushPartitionString;
     m_dataStoreIdentifier = configuration.dataStoreIdentifier;
     m_useMockBundlesForTesting = configuration.useMockBundlesForTesting;
@@ -117,6 +118,8 @@ const String& PushClientConnection::hostAppCodeSigningIdentifier()
 #else
         if (!m_hostAppAuditToken)
             m_hostAppCodeSigningIdentifier = String();
+        else if (!m_bundleIdentifierOverride.isEmpty() && hostAppHasPushInjectEntitlement())
+            m_hostAppCodeSigningIdentifier = m_bundleIdentifierOverride;
         else
             m_hostAppCodeSigningIdentifier = bundleIdentifierFromAuditToken(*m_hostAppAuditToken);
 #endif
@@ -240,12 +243,9 @@ void PushClientConnection::didShowNotificationForTesting(URL&& scopeURL, Complet
     WebPushDaemon::singleton().didShowNotificationForTesting(*this, WTFMove(scopeURL), WTFMove(replySender));
 }
 
-void PushClientConnection::getPushPermissionState(URL&&, CompletionHandler<void(const Expected<uint8_t, WebCore::ExceptionData>&)>&& replySender)
+void PushClientConnection::getPushPermissionState(URL&& scopeURL, CompletionHandler<void(WebCore::PushPermissionState)>&& replySender)
 {
-    // FIXME: This doesn't actually get called right now, since the permission is currently checked
-    // in WebProcess. However, we've left this stub in for now because there is a chance that we
-    // will move the permission check into webpushd when supporting other platforms.
-    replySender(static_cast<uint8_t>(WebCore::PushPermissionState::Denied));
+    WebPushDaemon::singleton().getPushPermissionState(*this, WTFMove(scopeURL), WTFMove(replySender));
 }
 
 void PushClientConnection::showNotification(const WebCore::NotificationData& notificationData, RefPtr<WebCore::NotificationResources> notificationResources, CompletionHandler<void()>&& completionHandler)

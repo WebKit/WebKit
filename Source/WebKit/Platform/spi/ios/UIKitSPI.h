@@ -148,6 +148,7 @@
 @interface UIWebClip : NSObject
 + (UIWebClip *)webClipWithIdentifier:(NSString *)identifier;
 @property (nonatomic, copy) NSString *title;
+@property (nonatomic, retain) NSURL *pageURL;
 @end
 
 #if ENABLE(DRAG_SUPPORT)

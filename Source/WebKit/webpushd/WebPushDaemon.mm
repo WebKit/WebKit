@@ -53,6 +53,7 @@
 #import <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
+#import "UIKitSPI.h"
 #import <UIKit/UIApplication.h>
 #endif
 
@@ -689,6 +690,43 @@ void WebPushDaemon::getNotifications(PushClientConnection& connection, const URL
 
 
     [center getDeliveredNotificationsWithCompletionHandler:blockPtr.get()];
+}
+
+void WebPushDaemon::getPushPermissionState(PushClientConnection& connection, const URL& scopeURL, CompletionHandler<void(WebCore::PushPermissionState)>&& replySender)
+{
+    auto identifier = connection.subscriptionSetIdentifier();
+    if (identifier.pushPartition.isEmpty()) {
+        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "Denied push permission since no pushPartition specified");
+        return replySender(WebCore::PushPermissionState::Denied);
+    }
+
+#if PLATFORM(IOS)
+    const auto& webClipIdentifier = identifier.pushPartition;
+    RetainPtr webClip = [UIWebClip webClipWithIdentifier:(NSString *)webClipIdentifier];
+    URL webClipURL { [webClip pageURL] };
+
+    if (webClipURL.isEmpty() || scopeURL.isEmpty() || !protocolHostAndPortAreEqual(webClipURL, scopeURL)) {
+        WEBPUSHDAEMON_RELEASE_LOG(Push, "Denied push permission because web clip URL %{sensitive}@ (empty: %d) does not match scope %{sensitive}@ (empty: %d)", (NSURL *)webClipURL, webClipURL.isEmpty(), (NSURL *)scopeURL, scopeURL.isEmpty());
+        return replySender(WebCore::PushPermissionState::Denied);
+    }
+#endif
+
+    NSString *notificationCenterBundleIdentifier = platformNotificationCenterBundleIdentifier(connection);
+    RetainPtr center = adoptNS([[UNUserNotificationCenter alloc] initWithBundleIdentifier:notificationCenterBundleIdentifier]);
+
+    auto blockPtr = makeBlockPtr([replySender = WTFMove(replySender)](UNNotificationSettings *settings) mutable {
+        auto permissionState = [](UNAuthorizationStatus status) {
+            switch (status) {
+            case UNAuthorizationStatusNotDetermined: return WebCore::PushPermissionState::Prompt;
+            case UNAuthorizationStatusDenied: return WebCore::PushPermissionState::Denied;
+            case UNAuthorizationStatusAuthorized: return WebCore::PushPermissionState::Granted;
+            default: return WebCore::PushPermissionState::Prompt;
+            }
+        }(settings.authorizationStatus);
+        replySender(permissionState);
+    });
+
+    [center getNotificationSettingsWithCompletionHandler:blockPtr.get()];
 }
 
 } // namespace WebPushD

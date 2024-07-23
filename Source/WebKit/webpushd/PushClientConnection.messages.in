@@ -32,7 +32,7 @@ messages -> WebPushD::PushClientConnection NotUsingIPCConnection {
     SubscribeToPushService(URL scopeURL, Vector<uint8_t> vapidPublicKey) -> (Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData> result)
     UnsubscribeFromPushService(URL scopeURL, std::optional<WebCore::PushSubscriptionIdentifier> identifier) -> (Expected<bool, WebCore::ExceptionData> result)
     GetPushSubscription(URL scopeURL) -> (Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData> result)
-    GetPushPermissionState(URL scopeURL) -> (Expected<uint8_t, WebCore::ExceptionData> result)
+    GetPushPermissionState(URL scopeURL) -> (enum:uint8_t WebCore::PushPermissionState result)
     IncrementSilentPushCount(WebCore::SecurityOriginData origin) -> (unsigned newCount)
     RemoveAllPushSubscriptions()  -> (unsigned removed)
     RemovePushSubscriptionsForOrigin(WebCore::SecurityOriginData origin) -> (unsigned removed)

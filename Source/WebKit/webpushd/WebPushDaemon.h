@@ -34,6 +34,7 @@
 #include "WebPushDaemonConstants.h"
 #include "WebPushMessage.h"
 #include <WebCore/ExceptionData.h>
+#include <WebCore/PushPermissionState.h>
 #include <WebCore/PushSubscriptionData.h>
 #include <WebCore/Timer.h>
 #include <span>
@@ -93,6 +94,8 @@ public:
 
     void showNotification(PushClientConnection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>, CompletionHandler<void()>&&);
     void getNotifications(PushClientConnection&, const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
+
+    void getPushPermissionState(PushClientConnection&, const URL& scopeURL, CompletionHandler<void(WebCore::PushPermissionState)>&&);
 
 private:
     WebPushDaemon();

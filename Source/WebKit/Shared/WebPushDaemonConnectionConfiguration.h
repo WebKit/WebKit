@@ -34,6 +34,7 @@ namespace WebKit::WebPushD {
 struct WebPushDaemonConnectionConfiguration {
     bool useMockBundlesForTesting { false };
     std::optional<Vector<uint8_t>> hostAppAuditTokenData;
+    String bundleIdentifierOverride;
     String pushPartitionString;
     std::optional<WTF::UUID> dataStoreIdentifier;
 };

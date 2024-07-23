@@ -27,7 +27,9 @@
 
 #include "MessageSenderInlines.h"
 #include "PushMessageForTesting.h"
+#include <WebCore/PushPermissionState.h>
 #include <memory>
+#include <wtf/CompletionHandler.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
@@ -46,16 +48,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebPushTool::Connecti
 
 namespace WebPushTool {
 
-enum class Action {
-    StreamDebugMessages,
-};
-
 enum class PreferTestService : bool {
-    No,
-    Yes,
-};
-
-enum class Reconnect : bool {
     No,
     Yes,
 };
@@ -68,22 +61,16 @@ enum class WaitForServiceToExist : bool {
 class Connection final : public CanMakeWeakPtr<Connection>, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<Connection> create(std::optional<Action>, PreferTestService, Reconnect);
-    Connection(std::optional<Action>, PreferTestService, Reconnect);
+    static std::unique_ptr<Connection> create(PreferTestService, String bundleIdentifier, String pushPartition);
+    Connection(PreferTestService, String bundleIdentifier, String pushPartition);
     ~Connection() final { }
 
     void connectToService(WaitForServiceToExist);
 
-    void setPushMessage(std::unique_ptr<PushMessageForTesting>&& message) { m_pushMessage = WTFMove(message); }
+    void sendPushMessage(PushMessageForTesting&&, CompletionHandler<void(String)>&&);
+    void getPushPermissionState(const String& scope, CompletionHandler<void(WebCore::PushPermissionState)>&&);
 
 private:
-    void messageReceived(xpc_object_t);
-    void connectionDropped();
-
-    void startAction();
-    void startDebugStreamAction();
-    void sendPushMessage();
-
     void sendAuditToken();
 
     bool performSendWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&&) const final;
@@ -91,12 +78,11 @@ private:
     IPC::Connection* messageSenderConnection() const final { return nullptr; }
     uint64_t messageSenderDestinationID() const final { return 0; }
 
-    std::optional<Action> m_action;
-    bool m_reconnect { false };
+    String m_bundleIdentifier;
+    String m_pushPartition;
+
     RetainPtr<xpc_connection_t> m_connection;
     const char* m_serviceName;
-
-    std::unique_ptr<PushMessageForTesting> m_pushMessage;
 };
 
 } // namespace WebPushTool
