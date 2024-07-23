@@ -1078,6 +1078,18 @@
    },
    {
       "emails" : [
+         "ji.chen@vantiva.com",
+         "austin.chen.ji@gmail.com"
+      ],
+      "expertise" : "The WPE port",
+      "github" : "austinchenji",
+      "name" : "Austin Chen",
+      "nicks" : [
+         "achen"
+      ]
+   },
+   {
+      "emails" : [
          "ayumi_kojima@apple.com"
       ],
       "name" : "Ayumi Kojima",
