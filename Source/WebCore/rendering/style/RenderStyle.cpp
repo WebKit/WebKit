@@ -2047,10 +2047,14 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyImageOrientation);
         if (first.textAlignLast != second.textAlignLast)
             changingProperties.m_properties.set(CSSPropertyTextAlignLast);
+        if (first.textBoxEdge != second.textBoxEdge)
+            changingProperties.m_properties.set(CSSPropertyTextBoxEdge);
         if (first.textJustify != second.textJustify)
             changingProperties.m_properties.set(CSSPropertyTextJustify);
         if (first.textDecorationSkipInk != second.textDecorationSkipInk)
             changingProperties.m_properties.set(CSSPropertyTextDecorationSkipInk);
+        if (first.textUnderlinePosition != second.textUnderlinePosition)
+            changingProperties.m_properties.set(CSSPropertyTextUnderlinePosition);
         if (first.rubyPosition != second.rubyPosition)
             changingProperties.m_properties.set(CSSPropertyWebkitRubyPosition);
         if (first.paintOrder != second.paintOrder)
@@ -2067,8 +2071,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyScrollbarColor);
         if (first.listStyleType != second.listStyleType)
             changingProperties.m_properties.set(CSSPropertyListStyleType);
-        if (first.textUnderlinePosition != second.textUnderlinePosition)
-            changingProperties.m_properties.set(CSSPropertyTextUnderlinePosition);
 
         // customProperties is handled separately.
         // Non animated styles are followings.
@@ -2093,7 +2095,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // visitedLinkStrokeColor
         // hasSetStrokeColor
         // usedZoom
-        // textBoxEdge
         // textSecurity
         // userModify
         // speakAs

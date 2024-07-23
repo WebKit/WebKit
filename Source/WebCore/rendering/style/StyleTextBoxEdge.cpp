@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "RenderStyleConstants.h"
+#include "config.h"
+#include "StyleTextBoxEdge.h"
 
 namespace WebCore {
 
-struct TextBoxEdge {
-    TextBoxEdgeType over { TextBoxEdgeType::Leading };
-    TextBoxEdgeType under { TextBoxEdgeType::Leading };
+WTF::TextStream& operator<<(WTF::TextStream& ts, TextBoxEdge edge)
+{
+    if (edge.over == edge.under) {
+        ts << edge.over;
+        return ts;
+    }
 
-    friend bool operator==(const TextBoxEdge&, const TextBoxEdge&) = default;
-};
+    ts << edge.over << ' ' << edge.under;
+    return ts;
+}
 
-WTF::TextStream& operator<<(WTF::TextStream&, TextBoxEdge);
-
-} // namespace WebCore
+}
