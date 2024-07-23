@@ -1487,6 +1487,7 @@ void GraphicsLayerCA::flushCompositingStateForThisLayerOnly()
     CommitState commitState;
 
     FloatPoint offset = computePositionRelativeToBase(pageScaleFactor);
+    commitLayerTypeChangesBeforeSublayers(commitState, pageScaleFactor, layerTypeChanged);
     commitLayerChangesBeforeSublayers(commitState, pageScaleFactor, offset, layerTypeChanged);
     commitLayerChangesAfterSublayers(commitState);
 
@@ -1801,6 +1802,9 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
     if (structuralLayerPurpose() != NoStructuralLayer)
         ++childCommitState.treeDepth;
 
+    bool layerTypeChanged = false;
+    commitLayerTypeChangesBeforeSublayers(childCommitState, pageScaleFactor, layerTypeChanged);
+
     bool affectedByTransformAnimation = commitState.ancestorHasTransformAnimation;
 
     bool accumulateTransform = accumulatesTransform(*this);
@@ -1853,8 +1857,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
         baseRelativePosition += m_position;
 
     bool wasRunningTransformAnimation = isRunningTransformAnimation();
-    bool layerTypeChanged = false;
-    
+
     commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition, layerTypeChanged);
 
     bool nowRunningTransformAnimation = wasRunningTransformAnimation;
@@ -1876,6 +1879,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
 
     if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer.get())) {
         maskLayer->setVisibleAndCoverageRects(rects);
+        maskLayer->commitLayerTypeChangesBeforeSublayers(childCommitState, pageScaleFactor, layerTypeChanged);
         maskLayer->commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition, layerTypeChanged);
     }
 
@@ -2014,15 +2018,9 @@ bool GraphicsLayerCA::platformCALayerNeedsPlatformContext(const PlatformCALayer*
     return client().layerNeedsPlatformContext(this);
 }
 
-void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool& layerChanged)
+void GraphicsLayerCA::commitLayerTypeChangesBeforeSublayers(CommitState&, float pageScaleFactor, bool& layerTypeChanged)
 {
     SetForScope committingChangesChange(m_isCommittingChanges, true);
-
-    if (!m_uncommittedChanges) {
-        // Ensure that we cap layer depth in commitLayerChangesAfterSublayers().
-        if (commitState.treeDepth > cMaxLayerTreeDepth)
-            addUncommittedChanges(ChildrenChanged);
-    }
 
     bool needTiledLayer = requiresTiledLayer(pageScaleFactor);
 
@@ -2036,7 +2034,18 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
 
     if (neededLayerType != m_layer->layerType()) {
         changeLayerTypeTo(neededLayerType);
-        layerChanged = true;
+        layerTypeChanged = true;
+    }
+}
+
+void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool& layerChanged)
+{
+    SetForScope committingChangesChange(m_isCommittingChanges, true);
+
+    if (!m_uncommittedChanges) {
+        // Ensure that we cap layer depth in commitLayerChangesAfterSublayers().
+        if (commitState.treeDepth > cMaxLayerTreeDepth)
+            addUncommittedChanges(ChildrenChanged);
     }
 
     // Need to handle Preserves3DChanged first, because it affects which layers subsequent properties are applied to
@@ -4547,6 +4556,12 @@ bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
 #endif
 }
 
+void GraphicsLayerCA::setTileCoverage(TileCoverage coverage)
+{
+    m_tileCoverage = coverage;
+    GraphicsLayer::setTileCoverage(coverage);
+}
+
 void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
 {
     PlatformCALayer::LayerType oldLayerType = m_layer->layerType();
@@ -4558,6 +4573,9 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
 
     RefPtr<PlatformCALayer> oldLayer = m_layer;
     m_layer = createPlatformCALayer(newLayerType, this);
+
+    if (auto* backing = tiledBacking())
+        backing->setTileCoverage(m_tileCoverage);
 
     m_layer->adoptSublayers(*oldLayer);
 
