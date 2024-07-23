@@ -66,7 +66,7 @@ void ArtworkImageLoader::requestImageResource()
 
     CachedResourceRequest request(ResourceRequest(m_document.completeURL(m_src)), options);
     request.setInitiatorType(AtomString { m_document.documentURI() });
-    m_cachedImage = m_document.cachedResourceLoader().requestImage(WTFMove(request)).value_or(nullptr);
+    m_cachedImage = m_document.protectedCachedResourceLoader()->requestImage(WTFMove(request)).value_or(nullptr);
 
     if (m_cachedImage)
         m_cachedImage->addClient(*this);
