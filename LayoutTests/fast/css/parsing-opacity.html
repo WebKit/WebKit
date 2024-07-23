@@ -54,6 +54,7 @@ testInner("opacity", "100.25%", "1.0025");
 testComputed("opacity", "0", "0");
 testComputed("opacity", "0.5", "0.5");
 testComputed("opacity", "1", "1");
+testComputed("opacity", "1.", "1");
 testComputed("opacity", "1000", "1");
 testComputed("opacity", "-400", "0");
 testComputed("opacity", "25%", "0.25");
@@ -66,6 +67,10 @@ negativeTest("opacity", "2px");
 negativeTest("opacity", "auto");
 negativeTest("opacity", "none");
 negativeTest("opacity", "'str'");
+negativeTest("opacity", "'inf'");
+negativeTest("opacity", "23.4a%");
+negativeTest("opacity", "23.4 a%");
+negativeTest("opacity", "23.4%%");
 
 </script>
 <script src="../../resources/js-test-post.js"></script>
