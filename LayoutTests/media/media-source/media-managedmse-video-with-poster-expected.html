@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true InlineMediaPlaybackRequiresPlaysInlineAttribute=true ] -->
+<html>
+<head>
+<title>MSE and poster</title>
+<script>window.requirePixelDump = true</script>
+<script src="media-source-loader.js"></script>
+<script src="../video-test.js"></script>
+<script>
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    async function init() {
+        findMediaElement();
+        internals.setMediaElementRestrictions(video, 'NoRestrictions');
+
+        const loader = new MediaSourceLoader('content/test-vp8-24fps-manifest.json');
+        await loaderPromise(loader);
+        video.disableRemotePlayback = true;
+
+        const canplayPromise = waitFor(video, 'canplay', true);
+
+        const source = new ManagedMediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen', true);
+
+        const sourceBuffer = source.addSourceBuffer(loader.type());
+        sourceBuffer.appendBuffer(loader.initSegment());
+        await waitFor(sourceBuffer, 'update', true);
+        sourceBuffer.appendBuffer(loader.mediaSegment(0));
+        await waitFor(sourceBuffer, 'update', true);
+        source.endOfStream();
+        await waitFor(source, 'sourceended', true);
+
+        await canplayPromise;
+        video.play();
+        await waitFor(video, 'playing', true);
+        video.pause();
+        if (video.currentTime != 0) {
+            video.currentTime = 0;
+            await waitFor(video, 'seeked', true);
+        }
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="init();">
+    <div>This tests that a video with a poster set when playing fullscreen isn't blanked.</div>
+    <video/>
+</body>
+</html>

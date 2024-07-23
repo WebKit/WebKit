@@ -1,0 +1,32 @@
+<html>
+<head>
+<title>webm file with vp8 and poster</title>
+<script>window.requirePixelDump = true</script>
+<script src="video-test.js"></script>
+<script>
+    async function init()
+    {
+        // WebKitTestRunner doesn't play videos fullscreen on iOS which differs from MobileSafari.
+        internals.settings.setInlineMediaPlaybackRequiresPlaysInlineAttribute(true);
+        let video = document.getElementsByTagName('video')[0];
+        internals.setMediaElementRestrictions(video, 'NoRestrictions');
+
+        video.src = "content/test-vp8.webm";
+        await waitFor(video, 'canplay', true);
+        video.play();
+        await waitFor(video, 'playing', true);
+        video.pause();
+        if (video.currentTime != 0) {
+            video.currentTime = 0;
+            await waitFor(video, 'seeked', true);
+        }
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="init();">
+    <div>This tests that a video with a poster set when playing fullscreen isn't blanked.</div>
+    <video poster="content/test-vp8.webm.png" />
+</body>
+</html>
