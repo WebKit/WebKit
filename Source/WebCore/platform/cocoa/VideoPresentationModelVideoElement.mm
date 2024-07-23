@@ -220,6 +220,8 @@ void VideoPresentationModelVideoElement::waitForPreparedForInlineThen(WTF::Funct
 void VideoPresentationModelVideoElement::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, mode, ", finishedWithMedia: ", finishedWithMedia);
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, &m_videoElement->document());
+
     if (m_videoElement)
         m_videoElement->setPresentationMode(HTMLVideoElement::toPresentationMode(mode));
 
