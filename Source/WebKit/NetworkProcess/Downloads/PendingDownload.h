@@ -29,6 +29,7 @@
 #include "MessageSender.h"
 #include "NetworkLoadClient.h"
 #include "SandboxExtension.h"
+#include <WebCore/ProcessIdentifier.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
@@ -60,7 +61,7 @@ class NetworkSession;
 class PendingDownload : public NetworkLoadClient, public IPC::MessageSender, public CanMakeWeakPtr<PendingDownload> {
     WTF_MAKE_TZONE_ALLOCATED(PendingDownload);
 public:
-    PendingDownload(IPC::Connection*, NetworkLoadParameters&&, DownloadID, NetworkSession&, const String& suggestedName, WebCore::FromDownloadAttribute);
+    PendingDownload(IPC::Connection*, NetworkLoadParameters&&, DownloadID, NetworkSession&, const String& suggestedName, WebCore::FromDownloadAttribute, std::optional<WebCore::ProcessIdentifier>);
     PendingDownload(IPC::Connection*, std::unique_ptr<NetworkLoad>&&, ResponseCompletionHandler&&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
     virtual ~PendingDownload();
 
@@ -97,8 +98,7 @@ private:
     bool m_isAllowedToAskUserForCredentials;
     bool m_isDownloadCancelled = false;
     WebCore::FromDownloadAttribute m_fromDownloadAttribute;
-    bool m_isFullWebBrowser = false;
-
+    std::optional<WebCore::ProcessIdentifier> m_webProcessID;
 
 #if PLATFORM(COCOA)
     URL m_progressURL;
