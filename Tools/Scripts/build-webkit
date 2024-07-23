@@ -431,7 +431,7 @@ exit 0;
 
 sub writeCongrats()
 {
-    my $launcherPath = launcherPath();
+    my $launcherCommand = launcherPath() . ' ' . join(' ', argumentsForConfiguration());
     my $launcherName = launcherName();
     my $endTime = time();
     my $buildTime = formatBuildTime($endTime - $startTime);
@@ -439,9 +439,9 @@ sub writeCongrats()
     print "\n";
     print "====================================================================\n";
     print " WebKit is now built ($buildTime). \n";
-    if ($launcherPath && $launcherName) {
-        print " To run $launcherName with this newly-built code, use the\n";
-        print " \"$launcherPath\" script.\n";
+    if ($launcherCommand && $launcherName) {
+        print " To run $launcherName with this newly-built code, use\n";
+        print " the command \"$launcherCommand\".\n";
     }
     print "====================================================================\n";
 }
