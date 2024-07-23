@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+</script>
+</head>
+<body>
+<a id="a" href="/resources/redirect.py?url=https://localhost:8443/download/resources/sample-render.html" download>Download</a>
+<script>
+    document.getElementById("a").click();
+</script>
+</body>
+</html>

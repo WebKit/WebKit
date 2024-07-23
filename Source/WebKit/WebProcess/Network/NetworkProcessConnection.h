@@ -27,7 +27,9 @@
 
 #include "Connection.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/MessagePortChannelProvider.h>
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/RTCDataChannelIdentifier.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
@@ -91,7 +93,7 @@ public:
     void allCookiesDeleted();
 #endif
     void updateCachedCookiesEnabled();
-
+    void loadCancelledDownloadRedirectRequestInFrame(WebCore::ResourceRequest&&, WebCore::FrameIdentifier, WebCore::PageIdentifier);
 private:
     NetworkProcessConnection(IPC::Connection::Identifier, WebCore::HTTPCookieAcceptPolicy);
 

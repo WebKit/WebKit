@@ -29,6 +29,7 @@
 #include "MessageSender.h"
 #include "NetworkLoadClient.h"
 #include "SandboxExtension.h"
+#include <WebCore/ProcessIdentifier.h>
 
 namespace WebKit {
 class PendingDownload;
@@ -59,7 +60,7 @@ class NetworkSession;
 class PendingDownload : public NetworkLoadClient, public IPC::MessageSender, public CanMakeWeakPtr<PendingDownload> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PendingDownload(IPC::Connection*, NetworkLoadParameters&&, DownloadID, NetworkSession&, const String& suggestedName, WebCore::FromDownloadAttribute);
+    PendingDownload(IPC::Connection*, NetworkLoadParameters&&, DownloadID, NetworkSession&, const String& suggestedName, WebCore::FromDownloadAttribute, std::optional<WebCore::ProcessIdentifier>);
     PendingDownload(IPC::Connection*, std::unique_ptr<NetworkLoad>&&, ResponseCompletionHandler&&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     void cancel(CompletionHandler<void(std::span<const uint8_t>)>&&);
@@ -91,8 +92,7 @@ private:
     bool m_isAllowedToAskUserForCredentials;
     bool m_isDownloadCancelled = false;
     WebCore::FromDownloadAttribute m_fromDownloadAttribute;
-    bool m_isFullWebBrowser = false;
-
+    std::optional<WebCore::ProcessIdentifier> m_webProcessID;
 
 #if PLATFORM(COCOA)
     URL m_progressURL;

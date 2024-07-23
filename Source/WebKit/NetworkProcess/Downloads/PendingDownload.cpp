@@ -29,6 +29,7 @@
 #include "Download.h"
 #include "DownloadProxyMessages.h"
 #include "MessageSenderInlines.h"
+#include "NetworkConnectionToWebProcess.h"
 #include "NetworkLoad.h"
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
@@ -38,11 +39,11 @@
 namespace WebKit {
 using namespace WebCore;
 
-PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, NetworkLoadParameters&& parameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute)
+PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, NetworkLoadParameters&& parameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::ProcessIdentifier> webProcessID)
     : m_networkLoad(makeUnique<NetworkLoad>(*this, WTFMove(parameters), networkSession))
     , m_parentProcessConnection(parentProcessConnection)
     , m_fromDownloadAttribute(fromDownloadAttribute)
-    , m_isFullWebBrowser(networkSession.networkProcess().isParentProcessFullWebBrowserOrRunningTest())
+    , m_webProcessID(webProcessID)
 {
     m_networkLoad->start();
     m_isAllowedToAskUserForCredentials = parameters.clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials;
@@ -78,9 +79,11 @@ inline static bool isRedirectCrossOrigin(const WebCore::ResourceRequest& redirec
 
 void PendingDownload::willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
-    if (m_isFullWebBrowser && isDownloadTriggeredWithDownloadAttribute() && isRedirectCrossOrigin(redirectRequest, redirectResponse)) {
+    if (WTF::linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::BlockCrossOriginRedirectDownloads) && isDownloadTriggeredWithDownloadAttribute() && isRedirectCrossOrigin(redirectRequest, redirectResponse)) {
         completionHandler(WebCore::ResourceRequest());
         m_networkLoad->cancel();
+        if (m_webProcessID && !redirectRequest.url().protocolIsJavaScript() && m_networkLoad->webFrameID() && m_networkLoad->webPageID())
+            m_networkLoad->networkProcess()->webProcessConnection(*m_webProcessID)->loadCancelledDownloadRedirectRequestInFrame(redirectRequest, *m_networkLoad->webFrameID(), *m_networkLoad->webPageID());
         return;
     }
     sendWithAsyncReply(Messages::DownloadProxy::WillSendRequest(WTFMove(redirectRequest), WTFMove(redirectResponse)), WTFMove(completionHandler));
