@@ -8,3 +8,8 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 
+
+============== Back Forward List ==============
+        http://127.0.0.1:8000/navigation/sec-fetch-site-header-on-crossorigin-redirection.html
+curr->  http://127.0.0.1:8000/referrer-policy/resources/check-sec-fetch-site.py?expected=none  **nav target**
+===============================================
