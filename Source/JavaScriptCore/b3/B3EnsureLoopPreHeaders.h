@@ -31,9 +31,10 @@ namespace JSC { namespace B3 {
 
 class Procedure;
 
-// Creates a pre-header for any loop that don't already have one. A loop has a pre-header if its header has
-// exactly one predecessor that isn't in the loop body. If a loop header has more than one out-of-body
-// predecessor, then this creates a new block and rewires those predecessors to it.
+// Creates a unique pre-header for any loop that don't already have one. A loop has a pre-header if its
+// header has exactly one predecessor that isn't in the loop body. If a loop header has more than one
+// out-of-body predecessor, or if its current pre-header is already used by a contained loop, then this
+// creates a new block and rewires those predecessors to it.
 
 bool ensureLoopPreHeaders(Procedure&);
 
