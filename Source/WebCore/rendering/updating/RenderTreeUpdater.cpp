@@ -40,6 +40,7 @@
 #include "NodeRenderStyle.h"
 #include "PseudoElement.h"
 #include "RenderDescendantIterator.h"
+#include "RenderFlexibleBox.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
@@ -143,7 +144,17 @@ void RenderTreeUpdater::updateRebuildRoots()
         if (!renderingAncestor)
             return nullptr;
         auto isInsideContinuation = root.renderer() && root.renderer()->parent()->isContinuation();
-        if (isInsideContinuation || RenderTreeBuilder::isRebuildRootForChildren(*renderingAncestor->renderer()))
+        auto isInsideAnonymousFlexItemWithSiblings = [&] {
+            if (!is<RenderFlexibleBox>(renderingAncestor->renderer()))
+                return false;
+            if (!root.previousSibling() || !root.previousSibling()->renderer() || !root.nextSibling() || !root.nextSibling()->renderer())
+                return false;
+            // Direct children of a flex box are supposed to be individual flex items.
+            if (auto* parent = root.previousSibling()->renderer()->parent(); parent && parent->isAnonymousBlock())
+                return true;
+            return false;
+        };
+        if (isInsideContinuation || isInsideAnonymousFlexItemWithSiblings() || RenderTreeBuilder::isRebuildRootForChildren(*renderingAncestor->renderer()))
             return renderingAncestor;
         return nullptr;
     };
