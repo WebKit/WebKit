@@ -2252,6 +2252,18 @@
    },
    {
       "emails" : [
+         "davidtranhq@gmail.com",
+         "david_tran5@apple.com",
+         "dtran253@uwo.ca"
+      ],
+      "github" : "davidtranhq",
+      "name" : "David Tran",
+      "nicks" : [
+         "davidtranhq"
+      ]
+   },
+   {
+      "emails" : [
          "morningstar@apple.com",
          "dawn_flores@apple.com",
          "matteo_flores@apple.com"
