@@ -97,14 +97,6 @@ public:
     static bool attachmentElementEnabled() { return shared().m_isAttachmentElementEnabled; }
 #endif
 
-#if ENABLE(WEB_RTC)
-    static bool webRTCH264LowLatencyEncoderEnabled() { return shared().m_isWebRTCH264LowLatencyEncoderEnabled; }
-    static void setWebRTCH264LowLatencyEncoderEnabled(bool isEnabled) { shared().m_isWebRTCH264LowLatencyEncoderEnabled = isEnabled; }
-    static bool webRTCPlatformTCPSocketsEnabled() { return shared().m_isWebRTCPlatformTCPSocketsEnabled; }
-    static void setWebRTCPlatformTCPSocketsEnabled(bool isEnabled) { shared().m_isWebRTCPlatformTCPSocketsEnabled = isEnabled; }
-    static bool webRTCPlatformUDPSocketsEnabled() { return shared().m_isWebRTCPlatformUDPSocketsEnabled; }
-    static void setWebRTCPlatformUDPSocketsEnabled(bool isEnabled) { shared().m_isWebRTCPlatformUDPSocketsEnabled = isEnabled; }
-#endif
     static bool webRTCAudioLatencyAdaptationEnabled() { return shared().m_isWebRTCAudioLatencyAdaptationEnabled; }
     static void setWebRTCAudioLatencyAdaptationEnabled(bool isEnabled) { shared().m_isWebRTCAudioLatencyAdaptationEnabled = isEnabled; }
 
@@ -191,11 +183,6 @@ private:
     bool m_isAttachmentElementEnabled { false };
 #endif
 
-#if ENABLE(WEB_RTC)
-    bool m_isWebRTCH264LowLatencyEncoderEnabled { false };
-    bool m_isWebRTCPlatformTCPSocketsEnabled { false };
-    bool m_isWebRTCPlatformUDPSocketsEnabled { false };
-#endif
     bool m_isWebRTCAudioLatencyAdaptationEnabled { true };
 
     bool m_isReadableByteStreamAPIEnabled { false };

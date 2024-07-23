@@ -28,24 +28,10 @@
 #if USE(LIBWEBRTC)
 
 #include "RTCNetwork.h"
-#include <WebCore/LibWebRTCMacros.h>
 #include <wtf/WeakPtr.h>
-
-ALLOW_COMMA_BEGIN
-
-#include <webrtc/rtc_base/thread.h>
-#include <webrtc/rtc_base/network.h>
-
-ALLOW_COMMA_END
-
 
 namespace WebKit {
 class NetworkRTCMonitor;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NetworkRTCMonitor> : std::true_type { };
 }
 
 namespace IPC {
@@ -72,11 +58,13 @@ public:
     const RTCNetwork::IPAddress& ipv4() const;
     const RTCNetwork::IPAddress& ipv6()  const;
 
+    void ref();
+    void deref();
+
 private:
     void startUpdatingIfNeeded();
 
     NetworkRTCProvider& m_rtcProvider;
-    std::unique_ptr<rtc::BasicNetworkManager> m_manager;
     bool m_isStarted { false };
 };
 
