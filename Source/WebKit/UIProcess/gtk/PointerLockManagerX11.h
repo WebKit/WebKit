@@ -43,8 +43,6 @@ private:
     bool lock() override;
     bool unlock() override;
     void didReceiveMotionEvent(const WebCore::FloatPoint&) override;
-
-    WebCore::IntPoint m_x11RootInitialPoint;
 };
 
 } // namespace WebKit
