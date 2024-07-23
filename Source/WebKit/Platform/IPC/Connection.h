@@ -580,7 +580,11 @@ private:
     std::optional<uint8_t> m_incomingMessagesThrottlingLevel;
 
     // Incoming messages.
+#if ENABLE(UNFAIR_LOCK)
+    mutable UnfairLock m_incomingMessagesLock;
+#else
     mutable Lock m_incomingMessagesLock;
+#endif
     Deque<UniqueRef<Decoder>> m_incomingMessages WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
     MessageReceiveQueueMap m_receiveQueues WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
 
