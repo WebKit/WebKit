@@ -59,6 +59,9 @@ void setVideoDecoderCallbacks(VideoDecoderCreateCallback, VideoDecoderReleaseCal
 
 std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory(WebKitH265, WebKitVP9, WebKitVP9VTB, WebKitAv1);
 void videoDecoderTaskComplete(void* callback, uint32_t timeStamp, uint32_t timeStampRTP, CVPixelBufferRef);
+
+typedef CVPixelBufferRef (*GetBufferCallback)(void*);
+typedef void (*ReleaseBufferCallback)(void*);
 void videoDecoderTaskComplete(void* callback, uint32_t timeStamp, uint32_t timeStampRTP, void*, GetBufferCallback, ReleaseBufferCallback, int width, int height);
 
 using LocalDecoder = void*;

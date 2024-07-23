@@ -28,10 +28,17 @@
 #include <VideoToolbox/VideoToolbox.h>
 #include <wtf/SoftLinking.h>
 
-typedef struct OpaqueVTVideoDecoder VTVideoDecoderRef;
+typedef struct OpaqueVTVideoDecoder* VTVideoDecoderRef;
 typedef struct OpaqueVTImageRotationSession* VTImageRotationSessionRef;
 typedef struct OpaqueVTPixelBufferConformer* VTPixelBufferConformerRef;
 typedef struct OpaqueVTPixelTransferSession* VTPixelTransferSessionRef;
+typedef struct OpaqueVTVideoDecoderSession* VTVideoDecoderSession;
+typedef struct OpaqueVTVideoDecoderFrame* VTVideoDecoderFrame;
+typedef struct OpaqueCMBaseClass *CMBaseClassID;
+
+typedef FourCharCode FigVideoCodecType;
+
+typedef OSStatus (*VTVideoDecoderFunction_CreateInstance)(FourCharCode codecType, CFAllocatorRef allocator, VTVideoDecoderRef *instanceOut);
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebCore, VideoToolbox)
 
@@ -93,3 +100,11 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, VideoToolbox, kVTDecoderCapabili
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, VideoToolbox, VTPixelBufferConformerCreateWithAttributes, OSStatus, (CFAllocatorRef allocator, CFDictionaryRef attributes, VTPixelBufferConformerRef* conformerOut), (allocator, attributes, conformerOut));
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, VideoToolbox, VTPixelBufferConformerIsConformantPixelBuffer, Boolean, (VTPixelBufferConformerRef conformer, CVPixelBufferRef pixBuf), (conformer, pixBuf))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, VideoToolbox, VTPixelBufferConformerCopyConformedPixelBuffer, OSStatus, (VTPixelBufferConformerRef conformer, CVPixelBufferRef sourceBuffer, Boolean ensureModifiable, CVPixelBufferRef* conformedBufferOut), (conformer, sourceBuffer, ensureModifiable, conformedBufferOut))
+
+#if PLATFORM(MAC)
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, VideoToolbox, VTDecoderSessionEmitDecodedFrame, OSStatus, (VTVideoDecoderSession session, VTVideoDecoderFrame frame, OSStatus status, VTDecodeInfoFlags infoFlags, CVImageBufferRef imageBuffer), (session, frame, status, infoFlags, imageBuffer))
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, VideoToolbox, VTDecoderSessionGetPixelBufferPool, CVPixelBufferPoolRef, (VTVideoDecoderSession session), (session))
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, VideoToolbox, VTDecoderSessionSetPixelBufferAttributes, OSStatus, (VTVideoDecoderSession session, CFDictionaryRef decompressorPixelBufferAttributes), (session, decompressorPixelBufferAttributes))
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, VideoToolbox, VTRegisterVideoDecoder, OSStatus, (FigVideoCodecType codecType, VTVideoDecoderFunction_CreateInstance decoderCreateMethod), (codecType, decoderCreateMethod))
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, VideoToolbox, VTVideoDecoderGetClassID, CMBaseClassID, (), ())
+#endif
