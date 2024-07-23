@@ -33,6 +33,7 @@
 #include "StyleTextBoxEdge.h"
 #include "TabSize.h"
 #include "TextUnderlineOffset.h"
+#include "TextUnderlinePosition.h"
 #include "TouchAction.h"
 #include <wtf/DataRef.h>
 #include <wtf/OptionSet.h>
@@ -137,7 +138,6 @@ public:
     unsigned textAlignLast : 3; // TextAlignLast
     unsigned textJustify : 2; // TextJustify
     unsigned textDecorationSkipInk : 2; // TextDecorationSkipInk
-    unsigned textUnderlinePosition : 3; // TextUnderlinePosition
     unsigned rubyPosition : 2; // RubyPosition
     unsigned textZoom: 1; // TextZoom
 
@@ -200,6 +200,7 @@ public:
 #endif
 
     ListStyleType listStyleType;
+    TextUnderlinePosition textUnderlinePosition;
 
     Markable<ScrollbarColor> scrollbarColor;
 

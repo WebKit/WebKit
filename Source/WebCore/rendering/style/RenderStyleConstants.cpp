@@ -1186,18 +1186,6 @@ TextStream& operator<<(TextStream& ts, TextTransform textTransform)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, TextUnderlinePosition underlinePosition)
-{
-    switch (underlinePosition) {
-    case TextUnderlinePosition::Auto: ts << "Auto"; break;
-    case TextUnderlinePosition::Under: ts << "Under"; break;
-    case TextUnderlinePosition::FromFont: ts << "FromFont"; break;
-    case TextUnderlinePosition::Left: ts << "Left"; break;
-    case TextUnderlinePosition::Right: ts << "Right"; break;
-    }
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, TextWrapMode wrap)
 {
     switch (wrap) {

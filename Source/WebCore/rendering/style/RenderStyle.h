@@ -221,7 +221,6 @@ enum class TextOrientation : uint8_t;
 enum class TextOverflow : bool;
 enum class TextSecurity : uint8_t;
 enum class TextTransform : uint8_t;
-enum class TextUnderlinePosition : uint8_t;
 enum class TextWrapMode : bool;
 enum class TextWrapStyle : uint8_t;
 enum class TextZoom : bool;
@@ -268,6 +267,7 @@ struct TabSize;
 struct TextAutospace;
 struct TextBoxEdge;
 struct TextSpacingTrim;
+struct TextUnderlinePosition;
 struct TransformOperationData;
 
 template<typename> class FontTaggedSettings;

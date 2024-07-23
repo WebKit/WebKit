@@ -144,7 +144,7 @@ static float computedUnderlineOffset(const UnderlineOffsetArguments& context)
     // FIXME: The code for visual overflow detection passes in a null inline text box. This means it is now
     // broken for the case where auto needs to behave like "under".
     
-    // According to the specification TextUnderlinePosition::Auto should avoid drawing through glyphs in
+    // According to the specification `text-underline-position: auto` should avoid drawing through glyphs in
     // scripts where it would not be appropriate (e.g., ideographs).
     // Strictly speaking this can occur whenever the line contains ideographs
     // even if it is horizontal, but detecting this has performance implications. For now we only work with
@@ -157,7 +157,7 @@ static float computedUnderlineOffset(const UnderlineOffsetArguments& context)
     if (isAlignedForUnder(styleToUse)) {
         ASSERT(context.textUnderlinePositionUnder);
         // FIXME: This needs to be flipped for sideways-lr.
-        if (textUnderlinePosition == TextUnderlinePosition::Right) {
+        if (textUnderlinePosition.side == TextUnderlinePosition::Side::Right) {
             // In vertical typographic modes, the underline is aligned as for under, except it is always aligned to the right edge of the text.
             underlineOffset = 0.f - (styleToUse.textUnderlineOffset().lengthOr(0.f) + defaultGap(styleToUse));
         } else {
@@ -167,16 +167,12 @@ static float computedUnderlineOffset(const UnderlineOffsetArguments& context)
             underlineOffset = std::max<float>(desiredOffset, fontMetrics.intAscent());
         }
     } else {
-        switch (styleToUse.textUnderlinePosition()) {
-        case TextUnderlinePosition::Left:
-        case TextUnderlinePosition::Right:
-            // In horizontal typographic modes, both 'left' and 'right' values are treated as auto.
-            ASSERT(styleToUse.isHorizontalWritingMode());
-            FALLTHROUGH;
-        case TextUnderlinePosition::Auto:
+        switch (styleToUse.textUnderlinePosition().metric) {
+        case TextUnderlinePosition::Metric::Auto:
             underlineOffset = fontMetrics.intAscent() + styleToUse.textUnderlineOffset().lengthOr(defaultGap(styleToUse));
             break;
-        case TextUnderlinePosition::FromFont:
+        case TextUnderlinePosition::Metric::FromFont:
+            // FIXME: Does it make sense to apply the underline position font metric in a vertical typographic mode?
             underlineOffset = fontMetrics.intAscent() + fontMetrics.underlinePosition().value_or(0) + styleToUse.textUnderlineOffset().lengthOr(0.f);
             break;
         default:
@@ -264,19 +260,20 @@ static GlyphOverflow computedVisualOverflowForDecorations(const RenderStyle& lin
     return overflowResult;
 }
 
+// FIXME: Rename this method as this is really about visual overflow.
 bool isAlignedForUnder(const RenderStyle& decoratingBoxStyle)
 {
     auto underlinePosition = decoratingBoxStyle.textUnderlinePosition();
-    if (underlinePosition == TextUnderlinePosition::Under)
+    if (underlinePosition.metric == TextUnderlinePosition::Metric::Under)
         return true;
     if (decoratingBoxStyle.isHorizontalWritingMode())
         return false;
-    if (underlinePosition == TextUnderlinePosition::Left || underlinePosition == TextUnderlinePosition::Right) {
+    if (underlinePosition.side == TextUnderlinePosition::Side::Left || underlinePosition.side == TextUnderlinePosition::Side::Right) {
         // In vertical typographic modes, the underline is aligned as for under for 'left' and 'right'.
         return true;
     }
     // When left/right support is not enabled.
-    return underlinePosition == TextUnderlinePosition::Auto && decoratingBoxStyle.textUnderlineOffset().isAuto();
+    return underlinePosition.isAuto() && decoratingBoxStyle.textUnderlineOffset().isAuto();
 }
 
 GlyphOverflow visualOverflowForDecorations(const InlineIterator::LineBoxIterator& lineBox, const RenderText& renderer, float textBoxLogicalTop, float textBoxLogicalBottom)
@@ -336,14 +333,14 @@ float overlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineBo
     if (style.isHorizontalWritingMode())
         return { };
 
-    auto underlinePosition = style.textUnderlinePosition();
+    auto underlinePositionSide = style.textUnderlinePosition().side;
     auto overBecomesUnder = [&] {
         auto typographicMode = style.typographicMode();
         // If 'right' causes the underline to be drawn on the "over" side of the text, then an overline also switches sides and is drawn on the "under" side.
-        if (underlinePosition == TextUnderlinePosition::Right)
+        if (underlinePositionSide == TextUnderlinePosition::Side::Right)
             return typographicMode == TypographicMode::Vertical || style.blockFlowDirection() == BlockFlowDirection::RightToLeft;
         // If 'left' causes the underline to be drawn on the "over" side of the text, then an overline also switches sides and is drawn on the "under" side.
-        if (underlinePosition == TextUnderlinePosition::Left)
+        if (underlinePositionSide == TextUnderlinePosition::Side::Left)
             return typographicMode == TypographicMode::Horizontal && style.blockFlowDirection() == BlockFlowDirection::LeftToRight;
         return false;
     };

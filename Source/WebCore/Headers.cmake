@@ -2488,6 +2488,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/TextDecorationThickness.h
     rendering/style/TextSizeAdjustment.h
     rendering/style/TextUnderlineOffset.h
+    rendering/style/TextUnderlinePosition.h
     rendering/style/WillChangeData.h
 
     rendering/svg/legacy/LegacyRenderSVGModelObject.h

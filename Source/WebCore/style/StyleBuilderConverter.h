@@ -875,7 +875,30 @@ inline RefPtr<QuotesData> BuilderConverter::convertQuotes(BuilderState&, const C
 
 inline TextUnderlinePosition BuilderConverter::convertTextUnderlinePosition(BuilderState&, const CSSValue& value)
 {
-    return fromCSSValue<TextUnderlinePosition>(value);
+    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
+    if (primitiveValue) {
+        switch (primitiveValue->valueID()) {
+        case CSSValueFromFont:
+        case CSSValueUnder:
+            return { fromCSSValueID<TextUnderlinePosition::Metric>(primitiveValue->valueID()), TextUnderlinePosition::Side::Auto };
+
+        case CSSValueLeft:
+        case CSSValueRight:
+            return { TextUnderlinePosition::Metric::Auto, fromCSSValueID<TextUnderlinePosition::Side>(primitiveValue->valueID()) };
+
+        default:
+            return { TextUnderlinePosition::Metric::Auto, TextUnderlinePosition::Side::Auto };
+        }
+    }
+
+    auto* pair = dynamicDowncast<CSSValuePair>(value);
+    if (!pair)
+        return { TextUnderlinePosition::Metric::Auto, TextUnderlinePosition::Side::Auto };
+
+    return {
+        fromCSSValueID<TextUnderlinePosition::Metric>(downcast<CSSPrimitiveValue>(pair->first()).valueID()),
+        fromCSSValueID<TextUnderlinePosition::Side>(downcast<CSSPrimitiveValue>(pair->second()).valueID()),
+    };
 }
 
 inline TextUnderlineOffset BuilderConverter::convertTextUnderlineOffset(BuilderState& builderState, const CSSValue& value)

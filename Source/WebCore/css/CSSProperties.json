@@ -8321,28 +8321,23 @@
                 "auto",
                 "under",
                 "from-font",
-                {
-                    "value": "left",
-                    "settings-flag": "cssTextUnderlinePositionLeftRightEnabled"
-
-                },
-                {
-                    "value": "right",
-                    "settings-flag": "cssTextUnderlinePositionLeftRightEnabled"
-                }
+                "left",
+                "right"
             ],
             "codegen-properties": {
                 "aliases": [
                     "-webkit-text-underline-position"
                 ],
-                "parser-grammar": "<<values>>",
+                "converter": "TextUnderlinePosition",
+                "parser-function": "consumeTextUnderlinePosition",
+                "parser-function-requires-context": true,
                 "parser-grammar-unused": "auto | [ [ under | from-font ] || [ left | right ] ]",
                 "parser-grammar-unused-reason": "Needs support for '||' groups.",
                 "comment": "Grammar is 'auto | [ [ under | from-font ] || [ left | right ] ]', but we only support 'auto | under | from-font | left | right'."
             },
             "specification": {
                 "category": "css-text-decor",
-                "url": "https://www.w3.org/TR/css-text-decor-3/#text-underline-position-property"
+                "url": "https://drafts.csswg.org/css-text-decor-4/#text-underline-position-property"
             }
         },
         "text-underline-offset": {

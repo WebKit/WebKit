@@ -54,6 +54,7 @@
 #include "StyleSurroundData.h"
 #include "StyleTransformData.h"
 #include "StyleVisitedLinkColorData.h"
+#include "TextUnderlinePosition.h"
 #include "UnicodeBidi.h"
 #include "ViewTimeline.h"
 
@@ -485,7 +486,7 @@ constexpr TextSecurity RenderStyle::initialTextSecurity() { return TextSecurity:
 inline StyleColor RenderStyle::initialTextStrokeColor() { return StyleColor::currentColor(); }
 constexpr OptionSet<TextTransform> RenderStyle::initialTextTransform() { return { }; }
 constexpr TextUnderlineOffset RenderStyle::initialTextUnderlineOffset() { return TextUnderlineOffset::createWithAuto(); }
-constexpr TextUnderlinePosition RenderStyle::initialTextUnderlinePosition() { return TextUnderlinePosition::Auto; }
+constexpr TextUnderlinePosition RenderStyle::initialTextUnderlinePosition() { return { TextUnderlinePosition::Metric::Auto, TextUnderlinePosition::Side::Auto }; }
 constexpr TextWrapMode RenderStyle::initialTextWrapMode() { return TextWrapMode::Wrap; }
 constexpr TextWrapStyle RenderStyle::initialTextWrapStyle() { return TextWrapStyle::Auto; }
 constexpr TextZoom RenderStyle::initialTextZoom() { return TextZoom::Normal; }
@@ -705,7 +706,7 @@ inline const StyleColor& RenderStyle::textStrokeColor() const { return m_rareInh
 inline float RenderStyle::textStrokeWidth() const { return m_rareInheritedData->textStrokeWidth; }
 inline OptionSet<TextTransform> RenderStyle::textTransform() const { return OptionSet<TextTransform>::fromRaw(m_inheritedFlags.textTransform); }
 inline TextUnderlineOffset RenderStyle::textUnderlineOffset() const { return m_rareInheritedData->textUnderlineOffset; }
-inline TextUnderlinePosition RenderStyle::textUnderlinePosition() const { return static_cast<TextUnderlinePosition>(m_rareInheritedData->textUnderlinePosition); }
+inline TextUnderlinePosition RenderStyle::textUnderlinePosition() const { return m_rareInheritedData->textUnderlinePosition; }
 inline TextZoom RenderStyle::textZoom() const { return static_cast<TextZoom>(m_rareInheritedData->textZoom); }
 inline const Length& RenderStyle::top() const { return m_nonInheritedData->surroundData->offset.top(); }
 inline OptionSet<TouchAction> RenderStyle::touchActions() const { return m_nonInheritedData->rareData->touchActions; }
