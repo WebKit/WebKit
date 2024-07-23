@@ -27,6 +27,7 @@
 
 #if PLATFORM(MAC)
 
+#import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
@@ -188,6 +189,51 @@ TEST(MouseEventTests, TerminateWebContentProcessDuringMouseEventHandling)
         Util::runFor(1_ms);
     }
     [webView waitForPendingMouseEvents];
+}
+
+TEST(MouseEventTests, MouseEnterDoesNotDispatchMultipleMouseMoveEvents)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView removeFromSuperview];
+    [webView addToTestWindow];
+
+    RetainPtr trackingAreas = [webView trackingAreas];
+    EXPECT_EQ([trackingAreas count], 3U); // The first two are created by WebKit, and the last created by AppKit.
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html>"
+        "<head>"
+        "<style>"
+        "    body, html { margin: 0; width: 100%; height: 100%; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<script>"
+        "    let eventData = [];"
+        "    addEventListener('mousemove', event => eventData.push({ x: event.clientX, y: event.clientY }));"
+        "</script>"
+        "</body>"
+        "</html>"];
+
+    RetainPtr firstEvent = [NSEvent enterExitEventWithType:NSEventTypeMouseEntered location:NSMakePoint(100, 100) modifierFlags:0 timestamp:[webView eventTimestamp] windowNumber:[[webView window] windowNumber] context:[NSGraphicsContext currentContext] eventNumber:1 trackingNumber:1 userData:nil];
+
+    RetainPtr secondEvent = [NSEvent enterExitEventWithType:NSEventTypeMouseEntered location:NSMakePoint(100, 100) modifierFlags:0 timestamp:[webView eventTimestamp] windowNumber:[[webView window] windowNumber] context:[NSGraphicsContext currentContext] eventNumber:2 trackingNumber:1 userData:nil];
+
+    InstanceMethodSwizzler trackingAreaSwizzler(NSEvent.class, @selector(trackingArea), imp_implementationWithBlock(^(NSEvent *event) {
+        if (event != firstEvent.get() && event != secondEvent.get())
+            return (NSTrackingArea *)nil;
+
+        NSUInteger index = event == firstEvent.get() ? 0 : 1;
+        return [trackingAreas objectAtIndex:index];
+    }));
+
+    [webView _simulateMouseEnter:firstEvent.get()];
+    [webView _simulateMouseEnter:secondEvent.get()];
+
+    [webView waitForPendingMouseEvents];
+
+    RetainPtr mouseEvents = [webView objectByEvaluatingJavaScript:@"eventData"];
+    EXPECT_EQ([mouseEvents count], 1U);
 }
 
 } // namespace TestWebKitAPI

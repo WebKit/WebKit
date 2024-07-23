@@ -1781,6 +1781,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _impl->mouseMoved(event);
 }
 
+- (void)_simulateMouseEnter:(NSEvent *)event
+{
+    _impl->mouseEntered(event);
+}
+
 - (void)_setFont:(NSFont *)font sender:(id)sender
 {
     _impl->setFontForWebView(font, sender);
