@@ -45,25 +45,12 @@ typedef Function<void(ViewportErrorCode, StringView, StringView)> InternalViewpo
 const float ViewportArguments::deprecatedTargetDPI = 160;
 #endif
 
-static const float& compareIgnoringAuto(const float& value1, const float& value2, const float& (*compare) (const float&, const float&))
-{
-    ASSERT(value1 != ViewportArguments::ValueAuto || value2 != ViewportArguments::ValueAuto);
-
-    if (value1 == ViewportArguments::ValueAuto)
-        return value2;
-
-    if (value2 == ViewportArguments::ValueAuto)
-        return value1;
-
-    return compare(value1, value2);
-}
-
 static inline float clampLengthValue(float value)
 {
     ASSERT(value != ViewportArguments::ValueDeviceWidth);
     ASSERT(value != ViewportArguments::ValueDeviceHeight);
 
-    // Limits as defined in the css-device-adapt spec.
+    // Limits as previously defined in the css-device-adapt spec.
     if (value != ViewportArguments::ValueAuto)
         return std::min<float>(10000, std::max<float>(value, 1));
     return value;
@@ -74,7 +61,7 @@ static inline float clampScaleValue(float value)
     ASSERT(value != ViewportArguments::ValueDeviceWidth);
     ASSERT(value != ViewportArguments::ValueDeviceHeight);
 
-    // Limits as defined in the css-device-adapt spec.
+    // Limits as previously defined in the css-device-adapt spec.
     if (value != ViewportArguments::ValueAuto)
         return std::min<float>(10, std::max<float>(value, 0.1));
     return value;
@@ -83,11 +70,7 @@ static inline float clampScaleValue(float value)
 ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSize, const FloatSize& deviceSize, int defaultWidth) const
 {
     float resultWidth = width;
-    float resultMaxWidth = maxWidth;
-    float resultMinWidth = minWidth;
     float resultHeight = height;
-    float resultMinHeight = minHeight;
-    float resultMaxHeight = maxHeight;
     float resultZoom = zoom;
     float resultMinZoom = minZoom;
     float resultMaxZoom = maxZoom;
@@ -110,79 +93,8 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
         break;
     }
 
-    if (type == ViewportArguments::Type::CSSDeviceAdaptation) {
-        switch (int(resultMinWidth)) {
-        case ViewportArguments::ValueDeviceWidth:
-            resultMinWidth = deviceSize.width();
-            break;
-        case ViewportArguments::ValueDeviceHeight:
-            resultMinWidth = deviceSize.height();
-            break;
-        }
-
-        switch (int(resultMaxWidth)) {
-        case ViewportArguments::ValueDeviceWidth:
-            resultMaxWidth = deviceSize.width();
-            break;
-        case ViewportArguments::ValueDeviceHeight:
-            resultMaxWidth = deviceSize.height();
-            break;
-        }
-
-        switch (int(resultMinHeight)) {
-        case ViewportArguments::ValueDeviceWidth:
-            resultMinHeight = deviceSize.width();
-            break;
-        case ViewportArguments::ValueDeviceHeight:
-            resultMinHeight = deviceSize.height();
-            break;
-        }
-
-        switch (int(resultMaxHeight)) {
-        case ViewportArguments::ValueDeviceWidth:
-            resultMaxHeight = deviceSize.width();
-            break;
-        case ViewportArguments::ValueDeviceHeight:
-            resultMaxHeight = deviceSize.height();
-            break;
-        }
-
-        if (resultMinWidth != ViewportArguments::ValueAuto || resultMaxWidth != ViewportArguments::ValueAuto)
-            resultWidth = compareIgnoringAuto(resultMinWidth, compareIgnoringAuto(resultMaxWidth, deviceSize.width(), std::min), std::max);
-
-        if (resultMinHeight != ViewportArguments::ValueAuto || resultMaxHeight != ViewportArguments::ValueAuto)
-            resultHeight = compareIgnoringAuto(resultMinHeight, compareIgnoringAuto(resultMaxHeight, deviceSize.height(), std::min), std::max);
-
-        if (resultMinZoom != ViewportArguments::ValueAuto && resultMaxZoom != ViewportArguments::ValueAuto)
-            resultMaxZoom = std::max(resultMinZoom, resultMaxZoom);
-
-        if (resultZoom != ViewportArguments::ValueAuto)
-            resultZoom = compareIgnoringAuto(resultMinZoom, compareIgnoringAuto(resultMaxZoom, resultZoom, std::min), std::max);
-
-        if (resultWidth == ViewportArguments::ValueAuto && resultZoom == ViewportArguments::ValueAuto)
-            resultWidth = deviceSize.width();
-
-        if (resultWidth == ViewportArguments::ValueAuto && resultHeight == ViewportArguments::ValueAuto)
-            resultWidth = deviceSize.width() / resultZoom;
-
-        if (resultWidth == ViewportArguments::ValueAuto)
-            resultWidth = resultHeight * deviceSize.width() / deviceSize.height();
-
-        if (resultHeight == ViewportArguments::ValueAuto)
-            resultHeight = resultWidth * deviceSize.height() / deviceSize.width();
-
-        if (resultZoom != ViewportArguments::ValueAuto || resultMaxZoom != ViewportArguments::ValueAuto) {
-            resultWidth = compareIgnoringAuto(resultWidth, deviceSize.width() / compareIgnoringAuto(resultZoom, resultMaxZoom, std::min), std::max);
-            resultHeight = compareIgnoringAuto(resultHeight, deviceSize.height() / compareIgnoringAuto(resultZoom, resultMaxZoom, std::min), std::max);
-        }
-
-        resultWidth = std::max<float>(1, resultWidth);
-        resultHeight = std::max<float>(1, resultHeight);
-    }
-
-    if (type != ViewportArguments::Type::CSSDeviceAdaptation && type != ViewportArguments::Type::Implicit) {
-        // Clamp values to a valid range, but not for @viewport since is
-        // not mandated by the specification.
+    // Clamp values to a valid range.
+    if (type != ViewportArguments::Type::Implicit) {
         resultWidth = clampLengthValue(resultWidth);
         resultHeight = clampLengthValue(resultHeight);
         resultZoom = clampScaleValue(resultZoom);
@@ -497,8 +409,7 @@ TextStream& operator<<(TextStream& ts, const ViewportArguments& viewportArgument
 {
     TextStream::IndentScope indentScope(ts);
 
-    ts << "\n" << indent << "(width " << viewportArguments.width << ", minWidth " << viewportArguments.minWidth << ", maxWidth " << viewportArguments.maxWidth << ")";
-    ts << "\n" << indent << "(height " << viewportArguments.height << ", minHeight " << viewportArguments.minHeight << ", maxHeight " << viewportArguments.maxHeight << ")";
+    ts << "\n" << indent << "(width " << viewportArguments.width << ", height " << viewportArguments.height << ")";
     ts << "\n" << indent << "(zoom " << viewportArguments.zoom << ", minZoom " << viewportArguments.minZoom << ", maxZoom " << viewportArguments.maxZoom << ")";
 
     return ts;

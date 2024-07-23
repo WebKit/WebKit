@@ -1926,18 +1926,13 @@ header: <WebCore/RectEdges.h>
     PluginDocument,
     ImageDocument,
 #endif
-    ViewportMeta,
-    CSSDeviceAdaptation
+    ViewportMeta
 };
 
 struct WebCore::ViewportArguments {
     WebCore::ViewportArguments::Type type;
     float width;
-    float minWidth;
-    float maxWidth;
     float height;
-    float minHeight;
-    float maxHeight;
     float zoom;
     float minZoom;
     float maxZoom;

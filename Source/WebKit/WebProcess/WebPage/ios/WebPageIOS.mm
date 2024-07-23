@@ -4166,14 +4166,20 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
     auto updateViewportConfigurationForMobileDocType = [this, document] {
         m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::xhtmlMobileParameters());
 
-        // Do not update the viewport arguments if they are already configured from, say, a meta tag.
-        if (m_viewportConfiguration.viewportArguments().type >= ViewportArguments::Type::CSSDeviceAdaptation)
+        // Do not update the viewport arguments if they are already configured by the website.
+        if (m_viewportConfiguration.viewportArguments().type == ViewportArguments::Type::ViewportMeta)
             return;
 
         if (!document || !document->isViewportDocument())
             return;
 
-        auto viewportArguments = ViewportArguments { ViewportArguments::Type::CSSDeviceAdaptation };
+        // https://www.w3.org/TR/2016/WD-css-device-adapt-1-20160329/#intro
+        // Certain DOCTYPEs (for instance XHTML Mobile Profile) are used to recognize mobile documents which are assumed
+        // to be designed for handheld devices, hence using the viewport size as the initial containing block size.
+        ViewportArguments viewportArguments { ViewportArguments::Type::ViewportMeta };
+        viewportArguments.width = ViewportArguments::ValueDeviceWidth;
+        viewportArguments.height = ViewportArguments::ValueDeviceHeight;
+        viewportArguments.zoom = 1;
         document->setViewportArguments(viewportArguments);
         viewportPropertiesDidChange(viewportArguments);
     };

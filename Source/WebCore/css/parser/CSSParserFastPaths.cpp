@@ -1092,10 +1092,6 @@ RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID propertyID, S
 
     auto valueRange = ValueRange::All;
     if (CSSParserFastPaths::isSimpleLengthPropertyID(propertyID, valueRange)) {
-        // In @viewport, width and height are shorthands, not simple length values.
-        if (isCSSViewportParsingEnabledForMode(context.mode))
-            return nullptr;
-
         auto result = parseSimpleLengthValue(string, context.mode, valueRange);
         if (result)
             return result;
