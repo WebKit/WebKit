@@ -48,6 +48,7 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "RenderLayer.h"
+#include "RenderLayerInlines.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "Settings.h"

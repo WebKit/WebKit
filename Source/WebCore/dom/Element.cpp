@@ -1906,7 +1906,8 @@ std::optional<std::pair<CheckedPtr<RenderObject>, FloatRect>> Element::boundingA
 FloatRect Element::boundingClientRect()
 {
     Ref document = this->document();
-    document->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
+    document->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout , LayoutOptions::CanDeferUpdateLayerPositions }, this);
+    LocalFrameView::AutoPreventLayerAccess preventAccess(*document->view());
     auto pair = boundingAbsoluteRectWithoutLayout();
     if (!pair)
         return { };
