@@ -7808,6 +7808,21 @@ WebRTCH264HardwareEncoderEnabled:
       default: true
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
+WebRTCH264LowLatencyEncoderEnabled:
+  type: bool
+  status: internal
+  category: media
+  humanReadableName: "WebRTC H264 LowLatency encoder"
+  humanReadableDescription: "Enable H264 LowLatency encoder"
+  webcoreBinding: DeprecatedGlobalSettings
+  condition: ENABLE(WEB_RTC)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: true
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 WebRTCH265CodecEnabled:
   type: bool
   status: stable
@@ -7854,6 +7869,30 @@ WebRTCPlatformCodecsInGPUProcessEnabled:
       default: false
     WebCore:
       default: false
+
+WebRTCPlatformTCPSocketsEnabled:
+  type: bool
+  status: internal
+  category: media
+  humanReadableName: "WebRTC Platform TCP Sockets"
+  humanReadableDescription: "Enable WebRTC Platform TCP Sockets"
+  webcoreBinding: DeprecatedGlobalSettings
+  condition: ENABLE(WEB_RTC)
+  defaultValue:
+    WebKit:
+      default: true
+
+WebRTCPlatformUDPSocketsEnabled:
+  type: bool
+  status: internal
+  category: media
+  humanReadableName: "WebRTC Platform UDP Sockets"
+  humanReadableDescription: "Enable WebRTC Platform UDP Sockets"
+  webcoreBinding: DeprecatedGlobalSettings
+  condition: ENABLE(WEB_RTC)
+  defaultValue:
+    WebKit:
+      default: true
 
 WebRTCRemoteVideoFrameEnabled:
   type: bool

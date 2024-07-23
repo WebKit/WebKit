@@ -156,6 +156,8 @@ public:
 
     RefPtr<WebCore::BlobDataFileReference> getBlobDataFileReferenceForPath(const String& path);
 
+    void endSuspension();
+
     void getNetworkLoadInformationResponse(WebCore::ResourceLoaderIdentifier identifier, CompletionHandler<void(const WebCore::ResourceResponse&)>&& completionHandler)
     {
         if (auto* info = m_networkLoadInformationByID.get(identifier))

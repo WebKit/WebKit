@@ -26,8 +26,6 @@
 #include "config.h"
 #include "LibWebRTCSocketClient.h"
 
-#if !PLATFORM(COCOA)
-
 #if USE(LIBWEBRTC)
 
 #include "Connection.h"
@@ -140,5 +138,3 @@ void LibWebRTCSocketClient::signalClose(rtc::AsyncPacketSocket* socket, int erro
 } // namespace WebKit
 
 #endif // USE(LIBWEBRTC)
-
-#endif // !PLATFORM(COCOA)
