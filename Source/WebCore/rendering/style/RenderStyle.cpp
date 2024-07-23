@@ -2067,6 +2067,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyScrollbarColor);
         if (first.listStyleType != second.listStyleType)
             changingProperties.m_properties.set(CSSPropertyListStyleType);
+        if (first.textUnderlinePosition != second.textUnderlinePosition)
+            changingProperties.m_properties.set(CSSPropertyTextUnderlinePosition);
 
         // customProperties is handled separately.
         // Non animated styles are followings.
@@ -2101,7 +2103,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // touchCalloutEnabled
         // lineGrid
         // imageRendering
-        // textUnderlinePosition
         // textZoom
         // lineSnap
         // lineAlign
