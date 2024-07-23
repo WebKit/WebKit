@@ -350,7 +350,8 @@ bool WebExtension::isWebAccessibleResource(const URL& resourceURL, const URL& pa
     resourcePath = resourcePath.substring(1);
 
     for (auto& data : m_webAccessibleResources) {
-        bool allowed = false;
+        // If matchPatterns is empty, these resources are allowed on any page.
+        bool allowed = data.matchPatterns.isEmpty();
         for (auto& matchPattern : data.matchPatterns) {
             if (matchPattern->matchesURL(pageURL)) {
                 allowed = true;
@@ -433,10 +434,8 @@ void WebExtension::populateWebAccessibleResourcesIfNeeded()
                 return !!string.length;
             });
 
-            if (resourcesArray.count) {
-                MatchPatternSet matchPatterns { WebExtensionMatchPattern::allHostsAndSchemesMatchPattern() };
-                m_webAccessibleResources.append({ WTFMove(matchPatterns), makeVector<String>(resourcesArray) });
-            }
+            if (resourcesArray.count)
+                m_webAccessibleResources.append({ { }, makeVector<String>(resourcesArray) });
         } else if ([m_manifest objectForKey:webAccessibleResourcesManifestKey])
             recordError(createError(Error::InvalidWebAccessibleResources));
     }
