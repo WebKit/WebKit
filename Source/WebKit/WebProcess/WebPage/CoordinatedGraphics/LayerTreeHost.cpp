@@ -423,11 +423,21 @@ void LayerTreeHost::clearIfNeeded()
 
 void LayerTreeHost::didRenderFrame(uint32_t compositionResponseID, const WebCore::Damage& damage)
 {
-    std::optional<WebCore::Region> damageRegion;
-    if (!m_scrolledSinceLastFrame && !damage.isInvalid())
-        damageRegion = damage.region();
+    auto damageRegion = [&]() -> WebCore::Region {
+        if (m_scrolledSinceLastFrame || damage.isInvalid())
+            return { };
 
-    m_surface->didRenderFrame(damageRegion);
+        if (damage.isEmpty())
+            return { };
+
+        const auto& region = damage.region();
+        if (region.isRect() && region.contains(IntRect({ }, m_surface->size())))
+            return { };
+
+        return region;
+    }();
+
+    m_surface->didRenderFrame(WTFMove(damageRegion));
 
     m_scrolledSinceLastFrame = false;
 

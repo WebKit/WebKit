@@ -1148,8 +1148,11 @@ void TextureMapperLayer::recordDamage(const FloatRect& rect, const Transformatio
     // Some layers are drawn on an intermediate surface and have this offset applied to convert to the
     // intermediate surface coordinates. In order to translate back to actual coordinates,
     // we have to undo it.
-    if (!options.offset.isZero())
-        transformedRect.move(-options.offset);
+    transformedRect.move(-options.offset);
+    auto clipBounds = options.textureMapper.clipBounds();
+    clipBounds.move(-options.offset);
+    transformedRect.intersect(clipBounds);
+
     m_visitor->recordDamage(transformedRect);
 }
 
