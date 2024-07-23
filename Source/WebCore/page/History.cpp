@@ -172,7 +172,7 @@ ExceptionOr<void> History::go(int distance)
     if (!isDocumentFullyActive(frame.get()))
         return documentNotFullyActive();
 
-    frame->navigationScheduler().scheduleHistoryNavigation(distance);
+    frame->checkedNavigationScheduler()->scheduleHistoryNavigation(distance);
     return { };
 }
 
@@ -189,7 +189,7 @@ ExceptionOr<void> History::go(Document& document, int distance)
     if (!document.canNavigate(frame.get()))
         return { };
 
-    frame->navigationScheduler().scheduleHistoryNavigation(distance);
+    frame->checkedNavigationScheduler()->scheduleHistoryNavigation(distance);
     return { };
 }
 
