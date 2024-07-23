@@ -163,10 +163,10 @@ public:
         auto ensureTupleTmps = [&] (Value* tupleValue, auto& hashTable) {
             hashTable.ensure(tupleValue, [&] {
                 const auto tuple = m_procedure.tupleForType(tupleValue->type());
-                Vector<Tmp> tmps(tuple.size());
+                Vector<LogicalTmp> tmps(tuple.size());
 
                 for (unsigned i = 0; i < tuple.size(); ++i)
-                    tmps[i] = tmpForType(tuple[i]);
+                    tmps[i] = logicalTmpForType(tuple[i]);
                 return tmps;
             });
         };
@@ -199,10 +199,10 @@ public:
         }
 
         for (Variable* variable : m_procedure.variables()) {
-            auto addResult = m_variableToTmps.add(variable, Vector<Tmp>(m_procedure.resultCount(variable->type())));
+            auto addResult = m_variableToTmps.add(variable, Vector<LogicalTmp>(m_procedure.resultCount(variable->type())));
             ASSERT(addResult.isNewEntry);
             for (unsigned i = 0; i < m_procedure.resultCount(variable->type()); ++i)
-                addResult.iterator->value[i] = tmpForType(m_procedure.typeAtOffset(variable->type(), i));
+                addResult.iterator->value[i] = logicalTmpForType(m_procedure.typeAtOffset(variable->type(), i));
         }
 
         // Figure out which blocks are not rare.
@@ -519,7 +519,14 @@ private:
         return m_code.newTmp(bankForType(type));
     }
 
-    const Vector<Tmp>& tmpsForTuple(Value* tupleValue)
+    LogicalTmp logicalTmpForType(Type type)
+    {
+        if (type == Int64)
+            return WideTmp(m_code.newTmp(Bank::GP), m_code.newTmp(Bank::GP));
+        return tmpForType(type);
+    }
+
+    const Vector<LogicalTmp>& tmpsForTuple(Value* tupleValue)
     {
         ASSERT(tupleValue->type().isTuple());
 
@@ -870,8 +877,10 @@ private:
 
         const Vector<Type>& tuple = m_procedure.tupleForType(value->type());
         const auto& tmps = tmpsForTuple(value);
-        for (unsigned i = 0; i < tuple.size(); ++i)
-            func(tmps[i], tuple[i], i);
+        for (unsigned i = 0; i < tuple.size(); ++i) {
+            Arg arg = tmps[i].isWide() ? Arg(hiTmp(tmps[i]), loTmp(tmps[i])) : singularTmp(tmps[i]);
+            func(arg, tuple[i], i);
+        }
     }
 
     template<typename Functor>
@@ -885,8 +894,10 @@ private:
 
         const Vector<Type>& tuple = m_procedure.tupleForType(value->type());
         const auto& tmps = tmpsForTuple(value);
-        for (unsigned i = 0; i < tuple.size(); ++i)
-            func(tmps[i], tuple[i], i);
+        for (unsigned i = 0; i < tuple.size(); ++i) {
+            Arg arg = tmps[i].isWide() ? Arg(hiTmp(tmps[i]), loTmp(tmps[i])) : singularTmp(tmps[i]);
+            func(arg, tuple[i], i);
+        }
     }
 
     void moveToTmp(Air::Opcode opcode, Air::Arg source, Air::Tmp dest)
@@ -976,9 +987,13 @@ private:
         //     b = Op a
 
         ArgPromise addr = loadPromise(value);
-        if (isValidForm(opcode, addr.kind(), Arg::Tmp)) {
-            append(addr.inst(opcode, m_value, addr.consume(*this), result));
-            return;
+        // Don't use this form for FP loads/stores on ARMv7; it might try to
+        // access an unaligned address, which is not supported for FP operands.
+        if (!isARM_THUMB2() || (opcode32 != Air::Move32ToFloat && opcodeFloat != Air::MoveFloatTo32)) {
+            if (isValidForm(opcode, addr.kind(), Arg::Tmp)) {
+                append(addr.inst(opcode, m_value, addr.consume(*this), result));
+                return;
+            }
         }
 
         if (isValidForm(opcode, Arg::Tmp, Arg::Tmp)) {
@@ -4707,11 +4722,12 @@ private:
                 case Int32:
                 case Int64:
                     ASSERT(Arg::isValidImmForm(0));
-                    append(Move, imm(static_cast<int64_t>(0)), tmp.tmp());
+                    append(Move, imm(static_cast<int64_t>(0)), tmp.tmpHi());
+                    append(Move, imm(static_cast<int64_t>(0)), tmp.tmpLo());
                     break;
                 case Float:
                 case Double:
-                    append(MoveZeroToDouble, tmp.tmp());
+                    append(MoveZeroToDouble, tmp);
                     break;
                 }
             });
@@ -4879,7 +4895,11 @@ private:
                 case ValueRep::StackArgument: {
                     Arg callArg = Arg::callArg(rep.offsetFromSP());
                     inst.args.append(callArg);
-                    after.append(Inst(moveForType(type), m_value, callArg, arg.tmp()));
+                    if (type == Int64) {
+                        after.append(Inst(moveForType(Int32), m_value, Arg::callArg(callArg.offset() + 4), arg.tmpHi()));
+                        after.append(Inst(moveForType(Int32), m_value, callArg, arg.tmpLo()));
+                    } else
+                        after.append(Inst(moveForType(type), m_value, callArg, arg.tmp()));
                     return;
                 }
                 case ValueRep::SomeRegisterPair:
@@ -4941,7 +4961,13 @@ private:
             unsigned index = m_value->as<ExtractValue>()->index();
 
             const auto& tmps = tmpsForTuple(tupleValue);
-            append(relaxedMoveForType(m_value->type()), tmps[index], tmp(m_value));
+            if (m_value->type() == Int64) {
+                auto dest = someArg(m_value);
+                append(relaxedMoveForType(Int32), hiTmp(tmps[index]), dest.tmpHi());
+                append(relaxedMoveForType(Int32), loTmp(tmps[index]), dest.tmpLo());
+                return;
+            }
+            append(relaxedMoveForType(m_value->type()), singularTmp(tmps[index]), tmp(m_value));
             return;
         }
 
@@ -5126,8 +5152,13 @@ private:
             const auto& valueTmps = tmpsForTuple(value);
             const auto& phiTmps = m_tuplePhiToTmps.find(phi)->value;
             ASSERT(valueTmps.size() == phiTmps.size());
-            for (unsigned i = 0; i < valueTmps.size(); ++i)
-                append(relaxedMoveForType(tuple[i]), valueTmps[i], phiTmps[i]);
+            for (unsigned i = 0; i < valueTmps.size(); ++i) {
+                if (tuple[i] == Int64) {
+                    append(relaxedMoveForType(Int32), hiTmp(valueTmps[i]), hiTmp(phiTmps[i]));
+                    append(relaxedMoveForType(Int32), loTmp(valueTmps[i]), loTmp(phiTmps[i]));
+                } else
+                    append(relaxedMoveForType(tuple[i]), singularTmp(valueTmps[i]), singularTmp(phiTmps[i]));
+            }
             return;
         }
 
@@ -5146,16 +5177,25 @@ private:
             const auto& valueTmps = tmpsForTuple(m_value);
             const auto& phiTmps = m_tuplePhiToTmps.find(m_value)->value;
             ASSERT(valueTmps.size() == phiTmps.size());
-            for (unsigned i = 0; i < valueTmps.size(); ++i)
-                append(relaxedMoveForType(tuple[i]), phiTmps[i], valueTmps[i]);
+            for (unsigned i = 0; i < valueTmps.size(); ++i) {
+                if (tuple[i] == Int64) {
+                    append(relaxedMoveForType(tuple[i]), hiTmp(phiTmps[i]), hiTmp(valueTmps[i]));
+                    append(relaxedMoveForType(tuple[i]), loTmp(phiTmps[i]), loTmp(valueTmps[i]));
+                } else
+                    append(relaxedMoveForType(tuple[i]), singularTmp(phiTmps[i]), singularTmp(valueTmps[i]));
+            }
             return;
         }
 
         case Set: {
             Value* value = m_value->child(0);
-            const Vector<Tmp>& variableTmps = m_variableToTmps.get(m_value->as<VariableValue>()->variable());
+            const Vector<LogicalTmp>& variableTmps = m_variableToTmps.get(m_value->as<VariableValue>()->variable());
             forEachImmOrTmpOrZeroReg(value, [&] (Arg immOrTmpOrZeroReg, Type type, unsigned index) {
-                moveToTmp(relaxedMoveForType(type), immOrTmpOrZeroReg, variableTmps[index]);
+                if (type == Int64) {
+                    moveToTmp(relaxedMoveForType(Int32), immOrTmpOrZeroReg.tmpHi(), hiTmp(variableTmps[index]));
+                    moveToTmp(relaxedMoveForType(Int32), immOrTmpOrZeroReg.tmpLo(), loTmp(variableTmps[index]));
+                } else
+                    moveToTmp(relaxedMoveForType(type), immOrTmpOrZeroReg, singularTmp(variableTmps[index]));
             });
             return;
         }
@@ -5166,9 +5206,13 @@ private:
             // Set(@x, var)
             // @a => this should get the value of the Get before the Set, i.e. not @x.
 
-            const Vector<Tmp>& variableTmps = m_variableToTmps.get(m_value->as<VariableValue>()->variable());
-            forEachImmOrTmp(m_value, [&] (Arg tmp, Type type, unsigned index) {
-                append(relaxedMoveForType(type), variableTmps[index], tmp.tmp());
+            const Vector<LogicalTmp>& variableTmps = m_variableToTmps.get(m_value->as<VariableValue>()->variable());
+            forEachImmOrTmp(m_value, [&] (Arg arg, Type type, unsigned index) {
+                if (type == Int64) {
+                    append(relaxedMoveForType(type), hiTmp(variableTmps[index]), arg.tmpHi());
+                    append(relaxedMoveForType(type), loTmp(variableTmps[index]), arg.tmpLo());
+                } else
+                    append(relaxedMoveForType(type), singularTmp(variableTmps[index]), arg);
             });
             return;
         }
@@ -5471,10 +5515,10 @@ private:
     IndexSet<Value*> m_locked; // These are values that will have no Tmp in Air.
     IndexMap<Value*, LogicalTmp> m_valueToTmp; // These are values that must have a Tmp in Air. We say that a Value* with a non-null Tmp is "pinned".
     IndexMap<Value*, Tmp> m_phiToTmp; // Each Phi gets its own Tmp.
-    HashMap<Value*, Vector<Tmp>> m_tupleValueToTmps; // This is the same as m_valueToTmp for Values that are Tuples.
-    HashMap<Value*, Vector<Tmp>> m_tuplePhiToTmps; // This is the same as m_phiToTmp for Phis that are Tuples.
+    HashMap<Value*, Vector<LogicalTmp>> m_tupleValueToTmps; // This is the same as m_valueToTmp for Values that are Tuples.
+    HashMap<Value*, Vector<LogicalTmp>> m_tuplePhiToTmps; // This is the same as m_phiToTmp for Phis that are Tuples.
     IndexMap<B3::BasicBlock*, Air::BasicBlock*> m_blockToBlock;
-    HashMap<Variable*, Vector<Tmp>> m_variableToTmps;
+    HashMap<Variable*, Vector<LogicalTmp>> m_variableToTmps;
 
     UseCounts m_useCounts;
     PhiChildren m_phiChildren;
