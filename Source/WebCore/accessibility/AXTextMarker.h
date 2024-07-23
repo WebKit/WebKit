@@ -88,6 +88,8 @@ struct TextMarkerData {
     TextMarkerData(AXObjectCache&, const VisiblePosition&, int charStart = 0, int charOffset = 0, bool ignoredParam = false);
     TextMarkerData(AXObjectCache&, const CharacterOffset&, bool ignoredParam = false);
 
+    friend bool operator==(const TextMarkerData&, const TextMarkerData&) = default;
+
     AXID axTreeID() const
     {
         return ObjectIdentifier<AXIDType>(treeID);
@@ -129,6 +131,7 @@ public:
     AXTextMarker() = default;
 
     operator bool() const { return !isNull(); }
+    bool isEqual(const AXTextMarker& other) const { return m_data == other.m_data; }
     operator VisiblePosition() const;
     operator CharacterOffset() const;
     std::optional<BoundaryPoint> boundaryPoint() const;
@@ -206,6 +209,9 @@ private:
 
 class AXTextMarkerRange {
     WTF_MAKE_FAST_ALLOCATED;
+    friend bool operator==(const AXTextMarkerRange&, const AXTextMarkerRange&);
+    friend bool operator<(const AXTextMarkerRange&, const AXTextMarkerRange&);
+    friend bool operator>(const AXTextMarkerRange&, const AXTextMarkerRange&);
 public:
     // Constructors.
     AXTextMarkerRange(const VisiblePositionRange&);
@@ -215,6 +221,7 @@ public:
 #if PLATFORM(MAC)
     AXTextMarkerRange(AXTextMarkerRangeRef);
 #endif
+    AXTextMarkerRange(AXID treeID, AXID objectID, const CharacterRange&);
     AXTextMarkerRange(AXID treeID, AXID objectID, unsigned offset, unsigned length);
     AXTextMarkerRange() = default;
 
@@ -248,5 +255,46 @@ private:
     AXTextMarker m_start;
     AXTextMarker m_end;
 };
+
+inline AXTextMarkerRange::AXTextMarkerRange(AXID treeID, AXID objectID, const CharacterRange& range)
+    : AXTextMarkerRange(treeID, objectID, range.location, range.location + range.length)
+{ }
+
+inline bool operator==(const AXTextMarker& marker1, const AXTextMarker& marker2)
+{
+    return marker1.isEqual(marker2);
+}
+
+inline bool operator==(const AXTextMarkerRange& range1, const AXTextMarkerRange& range2)
+{
+    return range1.m_start == range2.m_start && range1.m_end == range2.m_end;
+}
+
+inline bool operator!=(const AXTextMarkerRange& range1, const AXTextMarkerRange& range2)
+{
+    return !(range1 == range2);
+}
+
+inline bool operator<(const AXTextMarkerRange& range1, const AXTextMarkerRange& range2)
+{
+    return is_lt(partialOrder(range1.m_start, range2.m_start))
+        || is_lt(partialOrder(range1.m_end, range2.m_end));
+}
+
+inline bool operator>(const AXTextMarkerRange& range1, const AXTextMarkerRange& range2)
+{
+    return is_gt(partialOrder(range1.m_start, range2.m_start))
+        || is_gt(partialOrder(range1.m_end, range2.m_end));
+}
+
+inline bool operator<=(const AXTextMarkerRange& range1, const AXTextMarkerRange& range2)
+{
+    return range1 == range2 || range1 < range2;
+}
+
+inline bool operator>=(const AXTextMarkerRange& range1, const AXTextMarkerRange& range2)
+{
+    return range1 == range2 || range1 > range2;
+}
 
 } // namespace WebCore
