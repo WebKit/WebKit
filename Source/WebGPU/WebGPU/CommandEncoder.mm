@@ -112,6 +112,10 @@ CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, id<MTLSharedE
     , m_abortCommandBuffer(event)
     , m_device(device)
 {
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    m_managedTextures = [NSMutableSet set];
+    m_managedBuffers = [NSMutableSet set];
+#endif
 }
 
 CommandEncoder::CommandEncoder(Device& device)
@@ -1236,6 +1240,26 @@ bool CommandEncoder::submitWillBeInvalid() const
     return m_makeSubmitInvalid;
 }
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+void CommandEncoder::addBuffer(id<MTLBuffer> buffer)
+{
+    if (buffer.storageMode == MTLStorageModeManaged)
+        [m_managedBuffers addObject:buffer];
+}
+void CommandEncoder::addTexture(id<MTLTexture> texture)
+{
+    if (texture.storageMode == MTLStorageModeManaged)
+        [m_managedTextures addObject:texture];
+}
+#else
+void CommandEncoder::addBuffer(id<MTLBuffer>)
+{
+}
+void CommandEncoder::addTexture(id<MTLTexture>)
+{
+}
+#endif
+
 void CommandEncoder::makeSubmitInvalid(NSString* errorString)
 {
     m_makeSubmitInvalid = true;
@@ -1774,6 +1798,17 @@ Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& des
     m_commandBuffer = nil;
 
     commandBuffer.label = fromAPI(descriptor.label);
+
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    if (m_managedBuffers.count || m_managedTextures.count) {
+        id<MTLBlitCommandEncoder> blitCommandEncoder = [commandBuffer blitCommandEncoder];
+        for (id<MTLBuffer> buffer in m_managedBuffers)
+            [blitCommandEncoder synchronizeResource:buffer];
+        for (id<MTLTexture> texture in m_managedTextures)
+            [blitCommandEncoder synchronizeResource:texture];
+        [blitCommandEncoder endEncoding];
+    }
+#endif
 
     auto result = CommandBuffer::create(commandBuffer, m_abortCommandBuffer, m_device);
     m_abortCommandBuffer = nil;

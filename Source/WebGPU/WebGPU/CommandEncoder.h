@@ -105,6 +105,8 @@ public:
     void onCommandBufferCompletion(Function<void()>&&);
     bool encoderIsCurrent(id<MTLCommandEncoder>) const;
     bool submitWillBeInvalid() const;
+    void addBuffer(id<MTLBuffer>);
+    void addTexture(id<MTLTexture>);
 
 private:
     CommandEncoder(id<MTLCommandBuffer>, id<MTLSharedEvent>, Device&);
@@ -138,6 +140,10 @@ private:
     int m_bufferMapCount { 0 };
     bool m_makeSubmitInvalid { false };
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    NSMutableSet<id<MTLTexture>> *m_managedTextures { nil };
+    NSMutableSet<id<MTLBuffer>> *m_managedBuffers { nil };
+#endif
     const Ref<Device> m_device;
 };
 

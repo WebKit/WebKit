@@ -85,13 +85,14 @@ static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, WGPUBufferUsageFl
 {
     if (deviceHasUnifiedMemory)
         return MTLStorageModeShared;
-    if (usage & (WGPUBufferUsage_MapRead | WGPUBufferUsage_MapWrite | WGPUBufferUsage_Index))
-        return MTLStorageModeShared;
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    if (usage & (WGPUBufferUsage_MapRead | WGPUBufferUsage_MapWrite | WGPUBufferUsage_Index))
+        return MTLStorageModeManaged;
     if (mappedAtCreation)
         return MTLStorageModeManaged;
 #else
     UNUSED_PARAM(mappedAtCreation);
+    UNUSED_PARAM(usage);
 #endif
     return MTLStorageModePrivate;
 }
@@ -172,6 +173,7 @@ void Buffer::setCommandEncoder(CommandEncoder& commandEncoder, bool mayModifyBuf
 {
     UNUSED_PARAM(mayModifyBuffer);
     m_commandEncoders.add(commandEncoder);
+    commandEncoder.addBuffer(m_buffer);
     if (m_state == State::Mapped || m_state == State::MappedAtCreation)
         commandEncoder.incrementBufferMapCount();
     if (isDestroyed())
@@ -365,7 +367,7 @@ void Buffer::unmap()
     decrementBufferMapCount();
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    if (m_state == State::MappedAtCreation && m_buffer.storageMode == MTLStorageModeManaged) {
+    if (m_buffer.storageMode == MTLStorageModeManaged) {
         for (const auto& mappedRange : m_mappedRanges)
             [m_buffer didModifyRange:NSMakeRange(static_cast<NSUInteger>(mappedRange.begin()), static_cast<NSUInteger>(mappedRange.end() - mappedRange.begin()))];
     }
