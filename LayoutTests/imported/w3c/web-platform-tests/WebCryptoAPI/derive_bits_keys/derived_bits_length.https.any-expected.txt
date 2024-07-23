@@ -4,20 +4,20 @@ PASS HKDF derivation with 256 as 'length' parameter
 PASS HKDF derivation with 0 as 'length' parameter
 PASS HKDF derivation with null as 'length' parameter
 PASS HKDF derivation with undefined as 'length' parameter
-FAIL HKDF derivation with omitted as 'length' parameter assert_equals: deriveBits correctly threw OperationError: Not enough arguments expected "OperationError" but got "TypeError"
+PASS HKDF derivation with omitted as 'length' parameter
 PASS PBKDF2 derivation with 256 as 'length' parameter
 PASS PBKDF2 derivation with 0 as 'length' parameter
 PASS PBKDF2 derivation with null as 'length' parameter
 PASS PBKDF2 derivation with undefined as 'length' parameter
-FAIL PBKDF2 derivation with omitted as 'length' parameter assert_equals: deriveBits correctly threw OperationError: Not enough arguments expected "OperationError" but got "TypeError"
+PASS PBKDF2 derivation with omitted as 'length' parameter
 PASS ECDH derivation with 256 as 'length' parameter
 FAIL ECDH derivation with 0 as 'length' parameter assert_array_equals: Derived bits do not match the expected result. lengths differ, expected array object "" length 0, got object "87,31,26,232,151,28,227,35,250,17,131,137,203,95,65,196,59,61,181,161" length 32
 PASS ECDH derivation with null as 'length' parameter
 PASS ECDH derivation with undefined as 'length' parameter
-FAIL ECDH derivation with omitted as 'length' parameter promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+PASS ECDH derivation with omitted as 'length' parameter
 PASS X25519 derivation with 256 as 'length' parameter
 FAIL X25519 derivation with 0 as 'length' parameter assert_array_equals: Derived bits do not match the expected result. lengths differ, expected array object "" length 0, got object "63,245,136,2,149,247,97,118,8,143,137,228,61,254,190,126,161,149,0,8" length 32
 PASS X25519 derivation with null as 'length' parameter
 PASS X25519 derivation with undefined as 'length' parameter
-FAIL X25519 derivation with omitted as 'length' parameter promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+PASS X25519 derivation with omitted as 'length' parameter
 

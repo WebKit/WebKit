@@ -32,7 +32,6 @@ var jwkKey = {
 // Not enough arguments.
 shouldReject('crypto.subtle.deriveBits()');
 shouldReject('crypto.subtle.deriveBits(1)');
-shouldReject('crypto.subtle.deriveBits(1, 2)');
 
 crypto.subtle.importKey("raw", rawKey, hmacImportParams, extractable, ["sign", "verify"]).then(function(result) {
     wrongKey = result;
