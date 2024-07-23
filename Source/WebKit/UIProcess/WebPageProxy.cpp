@@ -3631,7 +3631,11 @@ void WebPageProxy::processNextQueuedMouseEvent()
 #endif
 
     LOG_WITH_STREAM(MouseHandling, stream << "UIProcess: sent mouse event " << eventType << " (queue size " << internals().mouseEventQueue.size() << ")");
-    sendMouseEvent(m_mainFrame->frameID(), event, WTFMove(sandboxExtensions));
+
+    auto targetFrameID = m_mainFrame->frameID();
+    if (auto frameIDForTesting = std::exchange(m_frameToTargetForEvents, std::nullopt))
+        targetFrameID = *frameIDForTesting;
+    sendMouseEvent(targetFrameID, event, WTFMove(sandboxExtensions));
 }
 
 void WebPageProxy::doAfterProcessingAllPendingMouseEvents(WTF::Function<void ()>&& action)
@@ -14374,6 +14378,14 @@ void WebPageProxy::closeCurrentTypingCommand()
 {
     if (hasRunningProcess())
         send(Messages::WebPage::CloseCurrentTypingCommand());
+}
+
+void WebPageProxy::targetFrameForEvents(IPC::Connection& connection, FrameIdentifier frameID, CompletionHandler<void()>&& completionHandler)
+{
+    auto* frame = WebFrameProxy::webFrame(frameID);
+    MESSAGE_CHECK_BASE(frame && frame->process().hasConnection(connection), &connection);
+    m_frameToTargetForEvents = frameID;
+    completionHandler();
 }
 
 } // namespace WebKit

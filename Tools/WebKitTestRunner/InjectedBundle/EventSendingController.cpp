@@ -32,6 +32,7 @@
 #include "JSEventSendingController.h"
 #include <WebKit/WKBundle.h>
 #include <WebKit/WKBundleFrame.h>
+#include <WebKit/WKBundleFramePrivate.h>
 #include <WebKit/WKBundlePagePrivate.h>
 #include <WebKit/WKBundlePrivate.h>
 #include <WebKit/WKContextMenuItem.h>
@@ -216,16 +217,19 @@ static WKRetainPtr<WKDictionaryRef> createMouseMessageBody(MouseState state, int
 
 void EventSendingController::mouseDown(JSContextRef context, int button, JSValueRef modifierArray, JSStringRef pointerType)
 {
+    _WKBundleFrameTargetFrameForEvents(WKBundleFrameForJavaScriptContext(context));
     postSynchronousPageMessage("EventSender", createMouseMessageBody(MouseDown, button, parseModifierArray(context, modifierArray), pointerType));
 }
 
 void EventSendingController::mouseUp(JSContextRef context, int button, JSValueRef modifierArray, JSStringRef pointerType)
 {
+    _WKBundleFrameTargetFrameForEvents(WKBundleFrameForJavaScriptContext(context));
     postSynchronousPageMessage("EventSender", createMouseMessageBody(MouseUp, button, parseModifierArray(context, modifierArray), pointerType));
 }
 
-void EventSendingController::mouseMoveTo(int x, int y, JSStringRef pointerType)
+void EventSendingController::mouseMoveTo(JSContextRef context, int x, int y, JSStringRef pointerType)
 {
+    _WKBundleFrameTargetFrameForEvents(WKBundleFrameForJavaScriptContext(context));
     auto body = adoptWK(WKMutableDictionaryCreate());
     setValue(body, "SubMessage", "MouseMoveTo");
     setValue(body, "X", adoptWK(WKDoubleCreate(x)));

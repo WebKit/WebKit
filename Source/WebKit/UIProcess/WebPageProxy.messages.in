@@ -647,4 +647,6 @@ CreateAppHighlightInSelectedRange)
     HasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSessionChanged)
 
     SetAllowsLayoutViewportHeightExpansion(bool newValue)
+
+    TargetFrameForEvents(WebCore::FrameIdentifier frameID) -> () Synchronous
 }

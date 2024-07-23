@@ -3087,6 +3087,8 @@ private:
     void setAllowsLayoutViewportHeightExpansion(bool);
     void setBrowsingContextGroup(BrowsingContextGroup&);
 
+    void targetFrameForEvents(IPC::Connection&, WebCore::FrameIdentifier, CompletionHandler<void()>&&);
+
     struct Internals;
     Internals& internals() { return m_internals; }
     const Internals& internals() const { return m_internals; }
@@ -3628,6 +3630,8 @@ private:
 #endif
 
     std::unique_ptr<WebPageProxyTesting> m_pageForTesting;
+
+    std::optional<WebCore::FrameIdentifier> m_frameToTargetForEvents;
 };
 
 } // namespace WebKit

@@ -1397,4 +1397,13 @@ String WebFrame::frameTextForTesting(bool includeSubframes)
     return builder.toString();
 }
 
+void WebFrame::targetFrameForEvents() const
+{
+    if (!m_coreFrame || !m_coreFrame->settings().siteIsolationEnabled())
+        return;
+
+    if (RefPtr page = m_page.get())
+        page->sendSync(Messages::WebPageProxy::TargetFrameForEvents(m_frameID));
+}
+
 } // namespace WebKit

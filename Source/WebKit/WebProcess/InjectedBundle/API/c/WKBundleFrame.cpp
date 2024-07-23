@@ -299,3 +299,9 @@ void _WKBundleFrameGenerateTestReport(WKBundleFrameRef frameRef, WKStringRef mes
     if (RefPtr document = coreFrame->document())
         document->reportingScope().generateTestReport(WebKit::toWTFString(message), WebKit::toWTFString(group));
 }
+
+void _WKBundleFrameTargetFrameForEvents(WKBundleFrameRef frameRef)
+{
+    if (RefPtr coreFrame = WebKit::toImpl(frameRef))
+        coreFrame->targetFrameForEvents();
+}

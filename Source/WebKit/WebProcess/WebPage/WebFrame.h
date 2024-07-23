@@ -253,6 +253,9 @@ public:
     bool isFocused() const;
 
     String frameTextForTesting(bool);
+
+    void targetFrameForEvents() const;
+
 private:
     WebFrame(WebPage&, WebCore::FrameIdentifier);
 
