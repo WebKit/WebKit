@@ -6938,11 +6938,15 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 
 #if HAVE(INLINE_PREDICTIONS)
     bool allowsInlinePredictions = [&] {
+#if PLATFORM(MACCATALYST)
+        return false;
+#else
         if (self.webView.configuration.allowsInlinePredictions)
             return true;
         if (auto& state = _page->editorState(); state.hasPostLayoutData() && !_isFocusingElementWithKeyboard && !_page->waitingForPostLayoutEditorStateUpdateAfterFocusingElement())
             return state.postLayoutData->canEnableWritingSuggestions;
         return _focusedElementInformation.isWritingSuggestionsEnabled;
+#endif
     }();
     traits.inlinePredictionType = allowsInlinePredictions ? UITextInlinePredictionTypeDefault : UITextInlinePredictionTypeNo;
 #endif
