@@ -1301,6 +1301,27 @@ void LocalFrameView::willDoLayout(SingleThreadWeakPtr<RenderElement> layoutRoot)
     forceLayoutParentViewIfNeeded();
 }
 
+void LocalFrameView::UpdateLayerPositions::merge(const UpdateLayerPositions& other)
+{
+    // FIXME: We could likely use the nearest common ancestor instead of the view,
+    // though we pay the cost of computing that.
+    if (layoutRoot != other.layoutRoot)
+        layoutRoot = &other.layoutRoot->view();
+
+    needsFullRepaint |= other.needsFullRepaint;
+    if (!other.didRunSimplifiedLayout)
+        didRunSimplifiedLayout = false;
+}
+
+void LocalFrameView::scheduleUpdateLayerPositions()
+{
+    UpdateLayerPositions updateLayerPositions { renderView() };
+    if (m_pendingUpdateLayerPositions)
+        m_pendingUpdateLayerPositions->merge(updateLayerPositions);
+    else
+        m_pendingUpdateLayerPositions = updateLayerPositions;
+}
+
 bool LocalFrameView::hasPendingUpdateLayerPositions() const
 {
     return !!m_pendingUpdateLayerPositions;
@@ -1328,10 +1349,10 @@ void LocalFrameView::didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot, bo
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     UpdateLayerPositions updateLayerPositions { layoutRoot, layoutContext().layoutIdentifier(), layoutContext().needsFullRepaint(), didRunSimplifiedLayout };
-    if (!m_pendingUpdateLayerPositions || !m_pendingUpdateLayerPositions->merge(updateLayerPositions)) {
-        flushUpdateLayerPositions();
+    if (m_pendingUpdateLayerPositions)
+        m_pendingUpdateLayerPositions->merge(updateLayerPositions);
+    else
         m_pendingUpdateLayerPositions = updateLayerPositions;
-    }
 
     if (!canDeferUpdateLayerPositions)
         flushUpdateLayerPositions();

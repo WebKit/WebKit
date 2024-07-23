@@ -992,6 +992,12 @@ void RenderLayer::updateLayerPositionsAfterLayout(RenderElement::LayoutIdentifie
 
 void RenderLayer::recursiveUpdateLayerPositions(RenderElement::LayoutIdentifier layoutIdentifier, OptionSet<UpdateLayerPositionsFlag> flags, CanUseSimplifiedRepaintPass canUseSimplifiedRepaintPass)
 {
+    updateDescendantDependentFlags();
+    if (!m_hasVisibleDescendant && !m_hasVisibleContent && !m_hasSkippedContentDescendant && !m_hasSkippedContent) {
+        clearRepaintRects();
+        return;
+    }
+
     updateLayerPosition(&flags);
     if (m_scrollableArea)
         m_scrollableArea->applyPostLayoutScrollPositionIfNeeded();
@@ -1005,8 +1011,6 @@ void RenderLayer::recursiveUpdateLayerPositions(RenderElement::LayoutIdentifier 
         auto offsetFromRoot = offsetFromAncestor(root());
         m_scrollableArea->positionOverflowControls(roundedIntSize(offsetFromRoot));
     }
-
-    updateDescendantDependentFlags();
 
     if (flags & UpdatePagination)
         updatePagination();
@@ -1626,6 +1630,7 @@ void RenderLayer::updateDescendantDependentFlags()
         bool hasSelfPaintingLayerDescendant = false;
         bool hasNotIsolatedBlendingDescendants = false;
         bool hasIntrinsicallyCompositedDescendants = false;
+        bool hasSkippedContentDescendant = false;
 
         auto firstLayerChild = [&] () -> RenderLayer* {
             if (renderer().isSkippedContentRoot())
@@ -1636,6 +1641,7 @@ void RenderLayer::updateDescendantDependentFlags()
             child->updateDescendantDependentFlags();
 
             hasVisibleDescendant |= child->m_hasVisibleContent || child->m_hasVisibleDescendant;
+            hasSkippedContentDescendant |= child->m_hasSkippedContent;
             hasSelfPaintingLayerDescendant |= child->isSelfPaintingLayer() || child->hasSelfPaintingLayerDescendant();
             hasNotIsolatedBlendingDescendants |= child->hasBlendMode() || (child->hasNotIsolatedBlendingDescendants() && !child->isolatesBlending());
             hasIntrinsicallyCompositedDescendants |= child->isIntrinsicallyComposited() || child->m_hasIntrinsicallyCompositedDescendants;
@@ -1647,6 +1653,7 @@ void RenderLayer::updateDescendantDependentFlags()
         }
 
         m_hasVisibleDescendant = hasVisibleDescendant;
+        m_hasSkippedContentDescendant = hasSkippedContentDescendant;
         m_visibleDescendantStatusDirty = false;
         m_hasSelfPaintingLayerDescendant = hasSelfPaintingLayerDescendant;
         m_hasSelfPaintingLayerDescendantDirty = false;
@@ -5550,6 +5557,11 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
             if (visibilityChanged || oldStyle->isOverflowVisible() != renderer().style().isOverflowVisible())
                 m_scrollableArea->computeHasCompositedScrollableOverflow(diff <= StyleDifference::RepaintLayer ? LayoutUpToDate::Yes : LayoutUpToDate::No);
         }
+    }
+
+    if (m_hasSkippedContent != renderer().style().hasSkippedContent()) {
+        m_hasSkippedContent = renderer().style().hasSkippedContent();
+        dirtyAncestorChainVisibleDescendantStatus();
     }
 
     if (m_scrollableArea) {

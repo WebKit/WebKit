@@ -880,6 +880,11 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         if (wasVisible != willBeVisible) {
             if (CheckedPtr layer = enclosingLayer()) {
                 if (willBeVisible) {
+                    // Visibility changes don't trigger layout, but layer positions won't have been updated within hidden
+                    // subtrees, so ensure that there's an update scheduled if this newly became visible.
+                    if (!layer->hasVisibleContent())
+                        view().protectedFrameView()->scheduleUpdateLayerPositions();
+
                     if (m_style.hasSkippedContent() && isSkippedContentRoot())
                         layer->dirtyVisibleContentStatus();
                     else

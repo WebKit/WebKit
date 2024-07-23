@@ -1276,6 +1276,9 @@ private:
     bool m_hasIntrinsicallyCompositedDescendants : 1;
     bool m_hasIntrinsicallyCompositedDescendantsStatusDirty : 1;
 
+    bool m_hasSkippedContent : 1 { false };
+    bool m_hasSkippedContentDescendant : 1 { false };
+
     RenderLayerModelObject& m_renderer;
 
     RenderLayer* m_parent { nullptr };
