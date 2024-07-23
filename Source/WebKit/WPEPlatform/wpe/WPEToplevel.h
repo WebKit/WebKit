@@ -58,6 +58,7 @@ struct _WPEToplevelClass
                                                                gboolean     fullscreen);
     gboolean                (* set_maximized)                 (WPEToplevel *toplevel,
                                                                gboolean     maximized);
+    gboolean                (* set_minimized)                 (WPEToplevel *toplevel);
     WPEBufferDMABufFormats *(* get_preferred_dma_buf_formats) (WPEToplevel *toplevel);
 
     gpointer padding[32];
@@ -123,6 +124,7 @@ WPE_API gboolean                wpe_toplevel_fullscreen                        (
 WPE_API gboolean                wpe_toplevel_unfullscreen                      (WPEToplevel               *toplevel);
 WPE_API gboolean                wpe_toplevel_maximize                          (WPEToplevel               *toplevel);
 WPE_API gboolean                wpe_toplevel_unmaximize                        (WPEToplevel               *toplevel);
+WPE_API gboolean                wpe_toplevel_minimize                          (WPEToplevel               *toplevel);
 WPE_API WPEBufferDMABufFormats *wpe_toplevel_get_preferred_dma_buf_formats     (WPEToplevel               *toplevel);
 WPE_API void                    wpe_toplevel_preferred_dma_buf_formats_changed (WPEToplevel               *toplevel);
 

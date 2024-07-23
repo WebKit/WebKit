@@ -213,6 +213,13 @@ static gboolean wpeViewEventCallback(WPEView* view, WPEEvent* event, WebKitWebVi
                 return TRUE;
             }
         }
+
+        if (keyval == WPE_KEY_Down) {
+            if (auto* toplevel = wpe_view_get_toplevel(view)) {
+                wpe_toplevel_minimize(toplevel);
+                return TRUE;
+            }
+        }
     }
 
     if (keyval == WPE_KEY_F11) {

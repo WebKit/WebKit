@@ -638,6 +638,16 @@ static gboolean wpeToplevelWaylandSetMaximized(WPEToplevel* toplevel, gboolean m
     return TRUE;
 }
 
+static gboolean wpeToplevelWaylandSetMinimized(WPEToplevel* toplevel)
+{
+    auto* priv = WPE_TOPLEVEL_WAYLAND(toplevel)->priv;
+    if (!priv->xdgToplevel)
+        return FALSE;
+
+    xdg_toplevel_set_minimized(priv->xdgToplevel);
+    return TRUE;
+}
+
 static WPEBufferDMABufFormats* wpeToplevelWaylandGetPreferredDMABufFormats(WPEToplevel* toplevel)
 {
     auto* priv = WPE_TOPLEVEL_WAYLAND(toplevel)->priv;
@@ -705,6 +715,7 @@ static void wpe_toplevel_wayland_class_init(WPEToplevelWaylandClass* toplevelWay
     toplevelClass->resize = wpeToplevelWaylandResize;
     toplevelClass->set_fullscreen = wpeToplevelWaylandSetFullscreen;
     toplevelClass->set_maximized = wpeToplevelWaylandSetMaximized;
+    toplevelClass->set_minimized = wpeToplevelWaylandSetMinimized;
     toplevelClass->get_preferred_dma_buf_formats = wpeToplevelWaylandGetPreferredDMABufFormats;
     toplevelClass->set_title = wpeToplevelWaylandSetTitle;
 }

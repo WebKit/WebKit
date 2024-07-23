@@ -463,6 +463,22 @@ gboolean wpe_toplevel_unmaximize(WPEToplevel* toplevel)
 }
 
 /**
+ * wpe_toplevel_minimize:
+ * @toplevel: a #WPEToplevel
+ *
+ * Request that the @toplevel is minimized.
+ *
+ * Returns: %TRUE if minimize is supported, otherwise %FALSE
+ */
+gboolean wpe_toplevel_minimize(WPEToplevel* toplevel)
+{
+    g_return_val_if_fail(WPE_IS_TOPLEVEL(toplevel), FALSE);
+
+    auto* toplevelClass = WPE_TOPLEVEL_GET_CLASS(toplevel);
+    return toplevelClass->set_minimized ? toplevelClass->set_minimized(toplevel) : FALSE;
+}
+
+/**
  * wpe_toplevel_get_preferred_dma_buf_formats:
  * @toplevel: a #WPEToplevel
  *
