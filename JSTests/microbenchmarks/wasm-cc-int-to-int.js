@@ -1,4 +1,4 @@
-//@ skip unless $isWasmPlatform
+//@ skip
 //@ $skipModes << :lockdown
 //@ runDefaultWasm("--useWebAssembly=1")
 

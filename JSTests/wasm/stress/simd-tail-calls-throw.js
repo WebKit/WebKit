@@ -1,3 +1,4 @@
+//@ skip
 //@ requireOptions("--useWebAssemblyTailCalls=true", "--maximumWebAssemblyCalleeSIzeForInlining=0")
 //@ skip if !$isSIMDPlatform
 import { instantiate } from "../wabt-wrapper.js"

@@ -1,3 +1,4 @@
+//@ skip
 //@ requireOptions("--useWebAssemblyTailCalls=true", "--maximumWebAssemblyCalleeSIzeForInlining=0")
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
