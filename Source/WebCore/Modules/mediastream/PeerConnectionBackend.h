@@ -73,7 +73,6 @@ class RTCSctpTransportBackend;
 class RTCSessionDescription;
 class RTCStatsReport;
 class ScriptExecutionContext;
-class SharedBuffer;
 
 struct MediaEndpointConfiguration;
 struct RTCAnswerOptions;
@@ -223,8 +222,6 @@ public:
 
     virtual void startGatheringStatLogs(Function<void(String&&)>&&) { }
     virtual void stopGatheringStatLogs() { }
-    virtual void startGatheringEventLogs(Function<void(Ref<SharedBuffer>&&)>&&) { }
-    virtual void stopGatheringEventLogs() { }
 
 protected:
     void doneGatheringCandidates();

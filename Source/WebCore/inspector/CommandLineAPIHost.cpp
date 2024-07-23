@@ -154,12 +154,11 @@ void CommandLineAPIHost::gatherRTCLogs(JSGlobalObject& globalObject, RefPtr<RTCL
         return;
     }
 
-    document->startGatheringRTCLogs([callback = callback.releaseNonNull()] (auto&& logType, auto&& logMessage, auto&& data, auto&& logLevel, auto&& connection) mutable {
+    document->startGatheringRTCLogs([callback = callback.releaseNonNull()] (auto&& logType, auto&& logMessage, auto&& logLevel, auto&& connection) mutable {
         ASSERT(!logType.isNull());
-        ASSERT(!logMessage.isNull() || !!data);
+        ASSERT(!logMessage.isNull());
 
-        RefPtr<ArrayBuffer> logData = data ? data->tryCreateArrayBuffer() : RefPtr<ArrayBuffer> { };
-        callback->handleEvent({ WTFMove(logType), WTFMove(logMessage), WTFMove(logData), WTFMove(logLevel), WTFMove(connection) });
+        callback->handleEvent({ WTFMove(logType), WTFMove(logMessage), WTFMove(logLevel), WTFMove(connection) });
     });
 }
 #endif

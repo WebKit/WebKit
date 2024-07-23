@@ -449,7 +449,6 @@ void LibWebRTCMediaEndpoint::stop()
         return;
 
     stopLoggingStats();
-    stopEventLogs();
 
     m_backend->Close();
     m_backend = nullptr;
@@ -820,7 +819,7 @@ void LibWebRTCMediaEndpoint::OnStatsDelivered(const rtc::scoped_refptr<const web
 
         for (auto iterator = report->begin(); iterator != report->end(); ++iterator) {
             RTCStatsLogger statsLogger { *iterator };
-            if (m_isGatheringStatLogs)
+            if (m_isGatheringRTCLogs)
                 m_peerConnectionBackend.provideStatLogs(statsLogger.toJSONString());
 
             if (logger().willLog(logChannel(), WTFLogLevel::Debug)) {
@@ -857,7 +856,7 @@ WTFLogChannel& LibWebRTCMediaEndpoint::logChannel() const
 
 Seconds LibWebRTCMediaEndpoint::statsLogInterval(int64_t reportTimestamp) const
 {
-    if (m_isGatheringStatLogs)
+    if (m_isGatheringRTCLogs)
         return 1_s;
 
     if (logger().willLog(logChannel(), WTFLogLevel::Info))
@@ -870,59 +869,15 @@ Seconds LibWebRTCMediaEndpoint::statsLogInterval(int64_t reportTimestamp) const
 }
 #endif
 
-void LibWebRTCMediaEndpoint::startStatLogs()
+void LibWebRTCMediaEndpoint::startRTCLogs()
 {
-    m_isGatheringStatLogs = true;
+    m_isGatheringRTCLogs = true;
     startLoggingStats();
 }
 
-void LibWebRTCMediaEndpoint::stopStatLogs()
+void LibWebRTCMediaEndpoint::stopRTCLogs()
 {
-    m_isGatheringStatLogs = false;
-}
-
-class RtcEventLogOutput final : public webrtc::RtcEventLogOutput {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit RtcEventLogOutput(Function<bool(absl::string_view)>&& callback)
-        : m_callback(WTFMove(callback))
-    {
-    }
-
-private:
-    bool IsActive() const final { return true; };
-    bool Write(absl::string_view output) final { return m_callback(output); }
-
-    Function<bool(absl::string_view)> m_callback;
-};
-
-void LibWebRTCMediaEndpoint::startEventLogs()
-{
-    ASSERT(!m_isGatheringEventLogs);
-    m_isGatheringEventLogs = true;
-    m_backend->StartRtcEventLog(makeUnique<RtcEventLogOutput>([endpoint = ThreadSafeWeakPtr { *this }] (auto&& logs) {
-        std::span<const uint8_t> logsData { reinterpret_cast<const uint8_t*>(logs.data()), logs.size() };
-        callOnMainThread([endpoint, logsData = SharedBuffer::create(logsData)] () mutable {
-            if (RefPtr protectedEndpoint = endpoint.get())
-                protectedEndpoint->provideEventLogs(WTFMove(logsData));
-        });
-        return true;
-    }));
-}
-
-void LibWebRTCMediaEndpoint::stopEventLogs()
-{
-    if (!m_isGatheringEventLogs)
-        return;
-
-    m_isGatheringEventLogs = false;
-    m_backend->StopRtcEventLog();
-}
-
-void LibWebRTCMediaEndpoint::provideEventLogs(Ref<SharedBuffer>&& data)
-{
-    if (m_isGatheringEventLogs)
-        m_peerConnectionBackend.provideEventLogs(WTFMove(data));
+    m_isGatheringRTCLogs = false;
 }
 
 } // namespace WebCore

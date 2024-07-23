@@ -30,10 +30,6 @@
 #include "ContextDestructionObserverInlines.h"
 #include "RTCPeerConnection.h"
 
-namespace JSC {
-class ArrayBuffer;
-}
-
 namespace WebCore {
 
 class RTCLogsCallback : public RefCounted<RTCLogsCallback>, public ActiveDOMCallback {
@@ -43,7 +39,6 @@ public:
     struct Logs {
         String type;
         String message;
-        RefPtr<JSC::ArrayBuffer> data;
         String level;
         RefPtr<RTCPeerConnection> connection;
     };

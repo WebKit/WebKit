@@ -1098,16 +1098,6 @@ void RTCPeerConnection::stopGatheringStatLogs()
     m_backend->stopGatheringStatLogs();
 }
 
-void RTCPeerConnection::startGatheringEventLogs(Function<void(Ref<SharedBuffer>&&)>&& callback)
-{
-    m_backend->startGatheringEventLogs(WTFMove(callback));
-}
-
-void RTCPeerConnection::stopGatheringEventLogs()
-{
-    m_backend->stopGatheringEventLogs();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)

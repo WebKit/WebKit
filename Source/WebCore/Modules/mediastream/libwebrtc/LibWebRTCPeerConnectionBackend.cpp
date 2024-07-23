@@ -411,14 +411,14 @@ std::optional<bool> LibWebRTCPeerConnectionBackend::canTrickleIceCandidates() co
 void LibWebRTCPeerConnectionBackend::startGatheringStatLogs(Function<void(String&&)>&& callback)
 {
     if (!m_rtcStatsLogCallback)
-        m_endpoint->startStatLogs();
+        m_endpoint->startRTCLogs();
     m_rtcStatsLogCallback = WTFMove(callback);
 }
 
 void LibWebRTCPeerConnectionBackend::stopGatheringStatLogs()
 {
     if (m_rtcStatsLogCallback) {
-        m_endpoint->stopStatLogs();
+        m_endpoint->stopRTCLogs();
         m_rtcStatsLogCallback = { };
     }
 }
@@ -427,27 +427,6 @@ void LibWebRTCPeerConnectionBackend::provideStatLogs(String&& stats)
 {
     if (m_rtcStatsLogCallback)
         m_rtcStatsLogCallback(WTFMove(stats));
-}
-
-void LibWebRTCPeerConnectionBackend::startGatheringEventLogs(Function<void(Ref<SharedBuffer>&&)>&& callback)
-{
-    if (!m_rtcEventLogCallback)
-        m_endpoint->startEventLogs();
-    m_rtcEventLogCallback = WTFMove(callback);
-}
-
-void LibWebRTCPeerConnectionBackend::stopGatheringEventLogs()
-{
-    if (m_rtcStatsLogCallback) {
-        m_endpoint->startEventLogs();
-        m_rtcEventLogCallback = { };
-    }
-}
-
-void LibWebRTCPeerConnectionBackend::provideEventLogs(Ref<SharedBuffer>&& eventData)
-{
-    if (m_rtcEventLogCallback)
-        m_rtcEventLogCallback(WTFMove(eventData));
 }
 
 } // namespace WebCore

@@ -95,7 +95,7 @@ void RTCController::add(RTCPeerConnection& connection)
         connection.disableICECandidateFiltering();
 
     if (m_gatheringLogsDocument && connection.scriptExecutionContext() == m_gatheringLogsDocument.get())
-        startGatheringConnectionLogs(connection);
+        startGatheringStatLogs(connection);
 }
 
 void RTCController::disableICECandidateFilteringForAllOrigins()
@@ -175,17 +175,17 @@ void RTCController::startGatheringLogs(Document& document, LogCallback&& callbac
     m_callback = WTFMove(callback);
     for (Ref connection : m_peerConnections) {
         if (connection->scriptExecutionContext() != &document) {
-            stopGatheringConnectionLogs(connection.get());
+            connection->stopGatheringStatLogs();
             continue;
         }
-        startGatheringConnectionLogs(connection);
+        startGatheringStatLogs(connection);
     }
 #if USE(LIBWEBRTC)
     if (!m_logSink) {
         m_logSink = makeUnique<LibWebRTCLogSink>([weakThis = WeakPtr { *this }] (auto&& logLevel, auto&& logMessage) {
             ensureOnMainThread([weakThis, logMessage = fromStdString(logMessage).isolatedCopy(), logLevel] () mutable {
                 if (auto protectedThis = weakThis.get())
-                    protectedThis->m_callback("logs"_s, WTFMove(logMessage), { }, toWebRTCLogLevel(logLevel), nullptr);
+                    protectedThis->m_callback("logs"_s, WTFMove(logMessage), toWebRTCLogLevel(logLevel), nullptr);
             });
         });
         m_logSink->start();
@@ -201,27 +201,17 @@ void RTCController::stopGatheringLogs()
     m_callback = { };
 
     for (Ref connection : m_peerConnections)
-        stopGatheringConnectionLogs(connection.get());
+        connection->stopGatheringStatLogs();
 
     stopLoggingLibWebRTCLogs();
 }
 
-void RTCController::startGatheringConnectionLogs(RTCPeerConnection& connection)
+void RTCController::startGatheringStatLogs(RTCPeerConnection& connection)
 {
     connection.startGatheringStatLogs([weakThis = WeakPtr { *this }, connection = WeakPtr { connection }] (auto&& stats) {
-        if (RefPtr protectedThis = weakThis.get())
-            protectedThis->m_callback("stats"_s, WTFMove(stats), { }, { }, connection.get());
+        if (weakThis)
+            weakThis->m_callback("stats"_s, WTFMove(stats), { }, connection.get());
     });
-    connection.startGatheringEventLogs([weakThis = WeakPtr { *this }, connection = WeakPtr { connection }] (auto&& logs) {
-        if (RefPtr protectedThis = weakThis.get())
-            protectedThis->m_callback("events"_s, { }, WTFMove(logs), { }, connection.get());
-    });
-}
-
-void RTCController::stopGatheringConnectionLogs(RTCPeerConnection& connection)
-{
-    connection.stopGatheringStatLogs();
-    connection.stopGatheringEventLogs();
 }
 
 void RTCController::stopLoggingLibWebRTCLogs()

@@ -50,31 +50,6 @@ async function testStatsLogs()
     TestPage.dispatchEventToFrontend("Continue");
 }
 
-async function testEventLogs()
-{
-    let resolveCallback;
-    let promise = new Promise((resolve, reject) => {
-        resolveCallback = resolve;
-        setTimeout(() => reject("timed out 1"), 5000);
-    });
-
-    gatherRTCLogs(logs => {
-        if (logs.type === "events")
-            resolveCallback(logs);
-    });
-
-    const logs = await promise;
-
-    TestPage.log("Event Logs type: '" + logs.type + "'");
-    TestPage.log("Event Logs level: '" + !!logs.level + "'");
-    TestPage.log("Event logs connection: '" + (logs.connection === pc1 || logs.connection === pc2) + "'");
-
-    TestPage.log("Event Logs data: '" + !!logs.data + "'");
-
-    TestPage.dispatchEventToFrontend("Continue");
-}
-
-
 async function testRTCLogs()
 {
     let resolveCallback;
@@ -118,11 +93,6 @@ function test()
     addTestCase({
         name: "Stats",
         expression: `testStatsLogs()`,
-    });
-
-    addTestCase({
-        name: "Logs",
-        expression: `testEventLogs()`,
     });
 
     addTestCase({

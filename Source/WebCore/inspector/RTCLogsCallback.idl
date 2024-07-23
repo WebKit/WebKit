@@ -30,7 +30,6 @@
     DOMString type;
     DOMString message;
     DOMString level;
-    ArrayBuffer data;
     RTCPeerConnection connection;
 };
 
