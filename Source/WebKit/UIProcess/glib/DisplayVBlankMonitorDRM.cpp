@@ -182,6 +182,46 @@ static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd)
 }
 #endif
 
+struct DrmNodeWithCrtc {
+    UnixFileDescriptor drmNodeFd;
+    std::pair<uint32_t, uint32_t> crtcInfo;
+};
+#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+static std::optional<DrmNodeWithCrtc> findDrmNodeWithCrtc(PlatformMonitor* monitor = nullptr)
+#else
+static std::optional<DrmNodeWithCrtc> findDrmNodeWithCrtc()
+#endif
+{
+    drmDevicePtr devices[64];
+    const int devicesNum = drmGetDevices2(0, devices, std::size(devices));
+    if (devicesNum <= 0)
+        return { };
+    for (int i = 0; i < devicesNum; i++) {
+        if (!(devices[i]->available_nodes & (1 << DRM_NODE_PRIMARY)))
+            continue;
+        auto fd = UnixFileDescriptor { open(devices[i]->nodes[DRM_NODE_PRIMARY], O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
+        if (!fd)
+            continue;
+        std::optional<std::pair<uint32_t, uint32_t>> crtcInfo;
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+        if (monitor)
+            crtcInfo = findCrtc(fd.value(), monitor);
+        else
+            crtcInfo = findCrtc(fd.value());
+#elif PLATFORM(GTK)
+        crtcInfo = findCrtc(fd.value(), monitor);
+#else
+        crtcInfo = findCrtc(fd.value());
+#endif
+        if (crtcInfo) {
+            drmFreeDevices(devices, devicesNum);
+            return DrmNodeWithCrtc { WTFMove(fd), *crtcInfo };
+        }
+    }
+    drmFreeDevices(devices, devicesNum);
+    return { };
+}
+
 static int crtcBitmaskForIndex(uint32_t crtcIndex)
 {
     if (crtcIndex > 1)
@@ -216,63 +256,60 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDi
     }
 #endif
 
+    std::optional<DrmNodeWithCrtc> drmNodeWithCrtcInfo;
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
-    String filename;
-    if (usingWPEPlatformAPI)
-        filename = String::fromUTF8(wpe_display_get_drm_device(wpe_display_get_primary()));
-    else
-        filename = WebCore::PlatformDisplay::sharedDisplay().drmDeviceFile();
-#else
-    auto filename = WebCore::PlatformDisplay::sharedDisplay().drmDeviceFile();
-#endif
-    if (filename.isEmpty()) {
-        RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no DRM device found", displayID);
-        return nullptr;
-    }
+#ifdef WPE_PLATFORM_DRM
+    if (usingWPEPlatformAPI && WPE_IS_MONITOR_DRM(monitor)) {
+        String filename = String::fromUTF8(wpe_display_get_drm_device(wpe_display_get_primary()));
 
-    auto fd = UnixFileDescriptor { open(filename.utf8().data(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
-    if (!fd) {
-        RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: failed to open %s", displayID, filename.utf8().data());
-        return nullptr;
+        if (filename.isEmpty()) {
+            RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no DRM device found", displayID);
+            return nullptr;
+        }
+
+        UnixFileDescriptor fd = UnixFileDescriptor(open(filename.utf8().data(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt);
+        if (!fd) {
+            RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: failed to open %s", displayID, filename.utf8().data());
+            return nullptr;
+        }
+
+        drmNodeWithCrtcInfo = DrmNodeWithCrtc { WTFMove(fd), { wpe_monitor_drm_get_crtc_index(WPE_MONITOR_DRM(monitor)), wpe_monitor_get_refresh_rate(monitor) } };
     }
+#endif
+#endif
 
 #if PLATFORM(GTK)
-    auto crtcInfo = findCrtc(fd.value(), monitor);
+    drmNodeWithCrtcInfo = findDrmNodeWithCrtc(monitor);
 #elif PLATFORM(WPE)
 #if ENABLE(WPE_PLATFORM)
-    std::optional<std::pair<uint32_t, uint32_t>> crtcInfo;
     if (usingWPEPlatformAPI) {
-#ifdef WPE_PLATFORM_DRM
-        if (WPE_IS_MONITOR_DRM(monitor))
-            crtcInfo = { wpe_monitor_drm_get_crtc_index(WPE_MONITOR_DRM(monitor)), wpe_monitor_get_refresh_rate(monitor) };
-        else
-#endif
-            crtcInfo = findCrtc(fd.value(), monitor);
+        if (!drmNodeWithCrtcInfo)
+            drmNodeWithCrtcInfo = findDrmNodeWithCrtc(monitor);
     } else
-        crtcInfo = findCrtc(fd.value());
+        drmNodeWithCrtcInfo = findDrmNodeWithCrtc();
 #else
-    auto crtcInfo = findCrtc(fd.value());
+    drmNodeWithCrtcInfo = findDrmNodeWithCrtc();
 #endif
 #endif
 
-    if (!crtcInfo) {
-        RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no CRTC found", displayID);
+    if (!drmNodeWithCrtcInfo) {
+        RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no drm node with CRTC found", displayID);
         return nullptr;
     }
 
-    auto crtcBitmask = crtcBitmaskForIndex(crtcInfo->first);
+    auto crtcBitmask = crtcBitmaskForIndex(drmNodeWithCrtcInfo->crtcInfo.first);
 
     drmVBlank vblank;
     vblank.request.type = static_cast<drmVBlankSeqType>(DRM_VBLANK_RELATIVE | crtcBitmask);
     vblank.request.sequence = 0;
     vblank.request.signal = 0;
-    auto ret = drmWaitVBlank(fd.value(), &vblank);
+    auto ret = drmWaitVBlank(drmNodeWithCrtcInfo->drmNodeFd.value(), &vblank);
     if (ret) {
         RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: drmWaitVBlank failed: %s", displayID, safeStrerror(-ret).data());
         return nullptr;
     }
 
-    return makeUnique<DisplayVBlankMonitorDRM>(crtcInfo->second / 1000, WTFMove(fd), crtcBitmask);
+    return makeUnique<DisplayVBlankMonitorDRM>(drmNodeWithCrtcInfo->crtcInfo.second / 1000, WTFMove(drmNodeWithCrtcInfo->drmNodeFd), crtcBitmask);
 }
 
 DisplayVBlankMonitorDRM::DisplayVBlankMonitorDRM(unsigned refreshRate, UnixFileDescriptor&& fd, int crtcBitmask)
