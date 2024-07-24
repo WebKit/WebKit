@@ -38,7 +38,7 @@ TextStream& operator<<(TextStream& ts, const PerPageInfo& pageInfo)
 
 TextStream& operator<<(TextStream& ts, const PDFPageCoverageAndScales& coverage)
 {
-    ts << "PDFPageCoverage " << coverage.pages << " pdfDocumentScale " << coverage.pdfDocumentScale << " " << " tiling scale " << coverage.tilingScaleFactor;
+    ts << "PDFPageCoverage " << coverage.pages << " pdfDocumentScale " << coverage.pdfDocumentScale << " " << " tiling scale " << coverage.tilingScaleFactor << " contents offst " << coverage.contentsOffset;
     return ts;
 }
 

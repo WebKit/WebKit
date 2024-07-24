@@ -249,4 +249,23 @@ String TimingFunction::cssText() const
     return stream.release();
 }
 
+Ref<CubicBezierTimingFunction> CubicBezierTimingFunction::create(TimingFunctionPreset preset)
+{
+    switch (preset) {
+    case TimingFunctionPreset::Ease:
+        return create(TimingFunctionPreset::Ease, 0.25, 0.1, 0.25, 1.0);
+    case TimingFunctionPreset::EaseIn:
+        return create(TimingFunctionPreset::EaseIn, 0.42, 0.0, 1.0, 1.0);
+    case TimingFunctionPreset::EaseOut:
+        return create(TimingFunctionPreset::EaseOut, 0.0, 0.0, 0.58, 1.0);
+    case TimingFunctionPreset::EaseInOut:
+        return create(TimingFunctionPreset::EaseInOut, 0.42, 0.0, 0.58, 1.0);
+    case TimingFunctionPreset::Custom:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return create();
+}
+
+
 } // namespace WebCore

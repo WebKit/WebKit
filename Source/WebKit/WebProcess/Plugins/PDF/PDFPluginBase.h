@@ -327,6 +327,7 @@ protected:
     WebCore::ScrollPosition minimumScrollPosition() const final;
     WebCore::ScrollPosition maximumScrollPosition() const final;
     WebCore::IntSize visibleSize() const final { return m_size; }
+    WebCore::IntSize overhangAmount() const final;
     WebCore::IntPoint lastKnownMousePositionInView() const override;
 
     float deviceScaleFactor() const override;
@@ -352,6 +353,8 @@ protected:
     virtual void updateScrollbars();
     virtual Ref<WebCore::Scrollbar> createScrollbar(WebCore::ScrollbarOrientation);
     virtual void destroyScrollbar(WebCore::ScrollbarOrientation);
+
+    void wantsWheelEventsChanged();
 
     virtual void incrementalLoadingDidProgress() { }
     virtual void incrementalLoadingDidCancel() { }

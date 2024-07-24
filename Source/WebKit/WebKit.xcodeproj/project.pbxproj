@@ -3331,6 +3331,12 @@
 		0F850FE41ED7C39F00FB77A7 /* WebPerformanceLoggingClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPerformanceLoggingClient.cpp; sourceTree = "<group>"; };
 		0F850FE51ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPerformanceLoggingClient.h; sourceTree = "<group>"; };
 		0F86361B27BDC2B6006E6D52 /* BufferIdentifierSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BufferIdentifierSet.h; sourceTree = "<group>"; };
+		0F8B2A172BED80DC0006F515 /* PDFPresentationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDFPresentationController.h; sourceTree = "<group>"; };
+		0F8B2A182BED80DC0006F515 /* PDFPresentationController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFPresentationController.mm; sourceTree = "<group>"; };
+		0F8B2A192BED80F10006F515 /* PDFScrollingPresentationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDFScrollingPresentationController.h; sourceTree = "<group>"; };
+		0F8B2A1A2BED80F10006F515 /* PDFScrollingPresentationController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFScrollingPresentationController.mm; sourceTree = "<group>"; };
+		0F8B2A1B2BED8C1B0006F515 /* PDFDiscretePresentationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDFDiscretePresentationController.h; sourceTree = "<group>"; };
+		0F8B2A1C2BED8C1B0006F515 /* PDFDiscretePresentationController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFDiscretePresentationController.mm; sourceTree = "<group>"; };
 		0F931C1A18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeOverflowScrollingNodeIOS.h; sourceTree = "<group>"; };
 		0F931C1A18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeScrollingNodeDelegateIOS.h; sourceTree = "<group>"; };
 		0F931C1B18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeOverflowScrollingNodeIOS.mm; sourceTree = "<group>"; };
@@ -8775,10 +8781,16 @@
 				33DAECED2B99D05A005C596E /* PDFDataDetectorItem.mm */,
 				33DAECEE2B9AAE91005C596E /* PDFDataDetectorOverlayController.h */,
 				33DAECEF2B9AAE92005C596E /* PDFDataDetectorOverlayController.mm */,
+				0F8B2A1B2BED8C1B0006F515 /* PDFDiscretePresentationController.h */,
+				0F8B2A1C2BED8C1B0006F515 /* PDFDiscretePresentationController.mm */,
 				0F3D56732AC651390086D64E /* PDFDocumentLayout.h */,
 				0F3D56722AC651390086D64E /* PDFDocumentLayout.mm */,
 				0F9B0BC22B7DB9BF0003E962 /* PDFPageCoverage.h */,
 				0F9B0BC32B7DB9BF0003E962 /* PDFPageCoverage.mm */,
+				0F8B2A172BED80DC0006F515 /* PDFPresentationController.h */,
+				0F8B2A182BED80DC0006F515 /* PDFPresentationController.mm */,
+				0F8B2A192BED80F10006F515 /* PDFScrollingPresentationController.h */,
+				0F8B2A1A2BED80F10006F515 /* PDFScrollingPresentationController.mm */,
 				0FFACF042AC2453300ED8DB6 /* UnifiedPDFPlugin.h */,
 				0FFACF032AC2453300ED8DB6 /* UnifiedPDFPlugin.mm */,
 			);
