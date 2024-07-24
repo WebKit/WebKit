@@ -559,7 +559,10 @@ inline ImageOrientation BuilderConverter::convertImageOrientation(BuilderState&,
 
 inline TransformOperations BuilderConverter::convertTransform(BuilderState& builderState, const CSSValue& value)
 {
-    auto operations = transformsForValue(value, builderState.cssToLengthConversionData());
+    CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
+        builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
+        : builderState.cssToLengthConversionData();
+    auto operations = transformsForValue(value, conversionData);
     if (!operations)
         return TransformOperations { };
     return *operations;
@@ -567,7 +570,10 @@ inline TransformOperations BuilderConverter::convertTransform(BuilderState& buil
 
 inline RefPtr<TranslateTransformOperation> BuilderConverter::convertTranslate(BuilderState& builderState, const CSSValue& value)
 {
-    return translateForValue(value, builderState.cssToLengthConversionData());
+    CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
+        builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
+        : builderState.cssToLengthConversionData();
+    return translateForValue(value, conversionData);
 }
 
 inline RefPtr<RotateTransformOperation> BuilderConverter::convertRotate(BuilderState&, const CSSValue& value)
