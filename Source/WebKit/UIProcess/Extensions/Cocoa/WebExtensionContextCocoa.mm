@@ -257,6 +257,15 @@ bool WebExtensionContext::load(WebExtensionController& controller, String storag
         return false;
     }
 
+#if PLATFORM(IOS) || PLATFORM(VISION)
+    if (extension().backgroundContentIsPersistent()) {
+        RELEASE_LOG_ERROR(Extensions, "Cannot load persistent background content on this platform");
+        if (outError)
+            *outError = extension().createError(WebExtension::Error::InvalidBackgroundPersistence);
+        return false;
+    }
+#endif
+
     m_storageDirectory = storageDirectory;
     m_extensionController = controller;
     m_contentScriptWorld = API::ContentWorld::sharedWorldWithName(makeString("WebExtension-"_s, m_uniqueIdentifier));

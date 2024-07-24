@@ -60,9 +60,24 @@ TEST(WKWebExtensionController, Configuration)
 TEST(WKWebExtensionController, LoadingAndUnloadingContexts)
 {
     _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
+    NSError *error;
 
     EXPECT_EQ(testController.extensions.count, 0ul);
     EXPECT_EQ(testController.extensionContexts.count, 0ul);
+
+#if TARGET_OS_IPHONE
+    _WKWebExtension *invalidPersistenceExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:@{ @"manifest_version": @2, @"name": @"Invalid Persistence", @"description": @"Invalid Persistence", @"version": @"1.0", @"background": @{ @"page": @"background.html", @"persistent": @YES } }];
+    _WKWebExtensionContext *invalidPersistenceContext = [[_WKWebExtensionContext alloc] initForExtension:invalidPersistenceExtension];
+
+    EXPECT_FALSE(invalidPersistenceContext.loaded);
+    EXPECT_FALSE([testController loadExtensionContext:invalidPersistenceContext error:&error]);
+    EXPECT_NOT_NULL(error);
+    EXPECT_NS_EQUAL(error.domain, _WKWebExtensionErrorDomain);
+    EXPECT_EQ(error.code, _WKWebExtensionErrorInvalidBackgroundPersistence);
+
+    EXPECT_EQ(testController.extensions.count, 0ul);
+    EXPECT_EQ(testController.extensionContexts.count, 0ul);
+#endif // TARGET_OS_IPHONE
 
     _WKWebExtension *testExtensionOne = [[_WKWebExtension alloc] _initWithManifestDictionary:@{ @"manifest_version": @2, @"name": @"Test One", @"description": @"Test One", @"version": @"1.0" }];
     _WKWebExtensionContext *testContextOne = [[_WKWebExtensionContext alloc] initForExtension:testExtensionOne];
@@ -78,7 +93,6 @@ TEST(WKWebExtensionController, LoadingAndUnloadingContexts)
     EXPECT_FALSE(testContextTwo.loaded);
     EXPECT_NULL([testController extensionContextForExtension:testExtensionTwo]);
 
-    NSError *error;
     EXPECT_TRUE([testController loadExtensionContext:testContextOne error:&error]);
     EXPECT_NULL(error);
 
