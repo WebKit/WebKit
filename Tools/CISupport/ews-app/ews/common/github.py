@@ -1,4 +1,4 @@
-# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -38,7 +38,7 @@ GITHUB_URL = 'https://github.com/'
 GITHUB_PROJECTS = ['WebKit/WebKit', 'apple/WebKit', 'WebKit/WebKit-security']
 
 is_test_mode_enabled = util.load_password('EWS_PRODUCTION') is None
-is_dev_instance = (util.load_password('DEV_INSTANCE', default='').lower() == 'true')
+is_dev_instance = (util.get_custom_suffix() != '')
 
 
 class GitHub(object):

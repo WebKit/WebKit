@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@ import os
 import ews.common.util as util
 
 is_test_mode_enabled = util.load_password('EWS_PRODUCTION') is None
-is_dev_instance = (util.load_password('DEV_INSTANCE', default='').lower() == 'true')
+is_dev_instance = (util.get_custom_suffix() != '')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
