@@ -31,6 +31,7 @@
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeEventDispatcher.h"
 #import "WebPageProxy.h"
+#import <WebCore/PerformanceLoggingClient.h>
 #import <WebCore/ScrollingStateFrameScrollingNode.h>
 #import <WebCore/ScrollingStateOverflowScrollProxyNode.h>
 #import <WebCore/ScrollingStateOverflowScrollingNode.h>
@@ -121,9 +122,11 @@ void RemoteScrollingCoordinatorProxyMac::hasNodeWithAnimatedScrollChanged(bool h
 
 void RemoteScrollingCoordinatorProxyMac::setRubberBandingInProgressForNode(ScrollingNodeID nodeID, bool isRubberBanding)
 {
-    if (isRubberBanding)
+    if (isRubberBanding) {
+        if (scrollingTree()->scrollingPerformanceTestingEnabled())
+            webPageProxy().logScrollingEvent(static_cast<uint32_t>(PerformanceLoggingClient::ScrollingEvent::StartedRubberbanding), MonotonicTime::now(), 0);
         m_uiState.addNodeWithActiveRubberband(nodeID);
-    else
+    } else
         m_uiState.removeNodeWithActiveRubberband(nodeID);
 
     sendUIStateChangedIfNecessary();
