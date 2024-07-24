@@ -723,6 +723,12 @@ void Page::setMainFrameURL(const URL& url)
     m_mainFrameURL = url;
 }
 
+void Page::setMainFrameURLFragment(String&& fragment)
+{
+    if (!fragment.isEmpty())
+        m_mainFrameURLFragment = WTFMove(fragment);
+}
+
 bool Page::openedByDOM() const
 {
     return m_openedByDOM;
@@ -1530,6 +1536,8 @@ void Page::didCommitLoad()
 #if ENABLE(EDITABLE_REGION)
     m_isEditableRegionEnabled = false;
 #endif
+
+    m_mainFrameURLFragment = { };
 
     resetSeenPlugins();
     resetSeenMediaEngines();
