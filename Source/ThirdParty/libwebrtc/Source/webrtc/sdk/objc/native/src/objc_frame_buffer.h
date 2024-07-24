@@ -13,8 +13,13 @@
 
 #import <CoreVideo/CoreVideo.h>
 
+#if !defined(WEBRTC_WEBKIT_BUILD)
+#include <webrtc/common_video/include/video_frame_buffer.h>
+#include <webrtc/rtc_base/synchronization/mutex.h>
+#else
 #include "common_video/include/video_frame_buffer.h"
 #include "rtc_base/synchronization/mutex.h"
+#endif
 
 @protocol RTCVideoFrameBuffer;
 

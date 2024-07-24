@@ -10,8 +10,13 @@
 
 #import <AVFoundation/AVFoundation.h>
 
+#if defined(WEBCORE_OR_WEBKIT_INCLUDE)
+#include <webrtc/sdk/objc/base/RTCMacros.h>
+#include <webrtc/sdk/objc/base/RTCVideoFrameBuffer.h>
+#else
 #import "RTCMacros.h"
 #import "RTCVideoFrameBuffer.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
