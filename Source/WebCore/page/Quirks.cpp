@@ -1811,6 +1811,10 @@ bool Quirks::needsIPadMiniUserAgent(const URL& url)
     if (host == "spotify.com"_s || host.endsWith(".spotify.com"_s) || host.endsWith(".spotifycdn.com"_s))
         return true;
 
+    // FIXME: Remove this quirk if seatguru decides to adjust their site. See https://webkit.org/b/276947
+    if (host == "seatguru.com"_s || host.endsWith(".seatguru.com"_s))
+        return true;
+
     return false;
 }
 
