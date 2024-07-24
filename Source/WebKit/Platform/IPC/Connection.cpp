@@ -216,7 +216,7 @@ bool Connection::SyncMessageState::processIncomingMessage(Connection& connection
     {
         Locker locker { m_lock };
         shouldDispatch = m_didScheduleDispatchMessagesWorkSet.add(&connection).isNewEntry;
-        ASSERT(connection.m_incomingMessagesLock.isHeld());
+        connection.m_incomingMessagesLock.assertIsOwner();
         if (message->shouldMaintainOrderingWithAsyncMessages()) {
             // This sync message should maintain ordering with async messages so we need to process the pending async messages first.
             while (!connection.m_incomingMessages.isEmpty())
@@ -1272,7 +1272,7 @@ void Connection::didFailToSendSyncMessage(Error)
 
 void Connection::enqueueIncomingMessage(UniqueRef<Decoder> incomingMessage)
 {
-    ASSERT(m_incomingMessagesLock.isHeld());
+    m_incomingMessagesLock.assertIsOwner();
     {
 #if PLATFORM(COCOA)
         if (m_wasKilled)
@@ -1436,8 +1436,10 @@ SerialFunctionDispatcher& Connection::dispatcher()
     // and must have the incoming message lock held if not being
     // called from the SerialFunctionDispatcher.
     RELEASE_ASSERT(m_syncState);
+#if !ENABLE(UNFAIR_LOCK)
     if (!m_incomingMessagesLock.isLocked())
         assertIsCurrent(m_syncState->dispatcher());
+#endif
 
     // Our syncState is specific to the SerialFunctionDispatcher we have been
     // bound to during open(), so we can retrieve the SerialFunctionDispatcher
