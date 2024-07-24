@@ -1547,4 +1547,6 @@ if (CMAKE_GENERATOR MATCHES "Visual Studio")
     add_dependencies(JavaScriptCoreSharedScripts JSCBuiltins)
 endif ()
 
-add_subdirectory(shell)
+if (ENABLE_JAVASCRIPT_SHELL)
+  add_subdirectory(shell)
+endif ()
