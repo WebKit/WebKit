@@ -65,7 +65,7 @@ void Grid::ensureStorageForRow(unsigned row)
     m_grid[row].grow(m_grid[0].size());
 }
 
-GridArea Grid::insert(RenderBox& child, const GridArea& area)
+GridArea Grid::insert(RenderBox& gridItem, const GridArea& area)
 {
     GridArea clampedArea = area;
     if (m_maxRows)
@@ -79,10 +79,10 @@ GridArea Grid::insert(RenderBox& child, const GridArea& area)
     for (auto row : clampedArea.rows) {
         ensureStorageForRow(row);
         for (auto column : clampedArea.columns)
-            m_grid[row][column].append(child);
+            m_grid[row][column].append(gridItem);
     }
 
-    setGridItemArea(child, clampedArea);
+    setGridItemArea(gridItem, clampedArea);
     return clampedArea;
 }
 
@@ -235,7 +235,7 @@ GridIterator::GridIterator(const Grid& grid, GridTrackSizingDirection direction,
     , m_direction(direction)
     , m_rowIndex((direction == GridTrackSizingDirection::ForColumns) ? varyingTrackIndex : fixedTrackIndex)
     , m_columnIndex((direction == GridTrackSizingDirection::ForColumns) ? fixedTrackIndex : varyingTrackIndex)
-    , m_childIndex(0)
+    , m_gridItemIndex(0)
 {
     if (m_grid.maxRows()) {
         ASSERT(m_grid.numTracks(GridTrackSizingDirection::ForRows));
@@ -256,11 +256,11 @@ RenderBox* GridIterator::nextGridItem()
     unsigned& varyingTrackIndex = (m_direction == GridTrackSizingDirection::ForColumns) ? m_rowIndex : m_columnIndex;
     const unsigned endOfVaryingTrackIndex = (m_direction == GridTrackSizingDirection::ForColumns) ? m_grid.numTracks(GridTrackSizingDirection::ForRows) : m_grid.numTracks(GridTrackSizingDirection::ForColumns);
     for (; varyingTrackIndex < endOfVaryingTrackIndex; ++varyingTrackIndex) {
-        const auto& children = m_grid.cell(m_rowIndex, m_columnIndex);
-        if (m_childIndex < children.size())
-            return children[m_childIndex++].get();
+        const auto& gridItems = m_grid.cell(m_rowIndex, m_columnIndex);
+        if (m_gridItemIndex < gridItems.size())
+            return gridItems[m_gridItemIndex++].get();
 
-        m_childIndex = 0;
+        m_gridItemIndex = 0;
     }
     return 0;
 }
@@ -278,8 +278,8 @@ bool GridIterator::isEmptyAreaEnough(unsigned rowSpan, unsigned columnSpan) cons
     // This adds a O(N^2) behavior that shouldn't be a big deal as we expect spanning areas to be small.
     for (unsigned row = m_rowIndex; row < maxRows; ++row) {
         for (unsigned column = m_columnIndex; column < maxColumns; ++column) {
-            auto& children = m_grid.cell(row, column);
-            if (!children.isEmpty())
+            auto& gridItems = m_grid.cell(row, column);
+            if (!gridItems.isEmpty())
                 return false;
         }
     }
@@ -325,7 +325,7 @@ GridIterator GridIterator::createForSubgrid(const RenderGrid& subgrid, const Gri
     unsigned fixedIndex = (outer.direction() == GridTrackSizingDirection::ForColumns) ? outer.m_columnIndex : outer.m_rowIndex;
     fixedIndex -= subgridSpanInOuter.startLine();
 
-    auto innerDirection = GridLayoutFunctions::flowAwareDirectionForChild(*parent, subgrid, outer.direction());
+    auto innerDirection = GridLayoutFunctions::flowAwareDirectionForGridItem(*parent, subgrid, outer.direction());
     ASSERT(subgrid.isSubgrid(innerDirection));
 
     if (GridLayoutFunctions::isSubgridReversedDirection(*parent, outer.direction(), subgrid)) {

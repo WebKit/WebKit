@@ -132,12 +132,12 @@ public:
     LayoutUnit minContentSize() const { return m_minContentSize; };
     LayoutUnit maxContentSize() const { return m_maxContentSize; };
 
-    LayoutUnit baselineOffsetForChild(const RenderBox&, GridAxis) const;
+    LayoutUnit baselineOffsetForGridItem(const RenderBox&, GridAxis) const;
 
     // The estimated grid area should be use pre-layout versus the grid area, which should be used once
     // layout is complete.
-    std::optional<LayoutUnit> gridAreaBreadthForChild(const RenderBox&, GridTrackSizingDirection) const;
-    std::optional<LayoutUnit> estimatedGridAreaBreadthForChild(const RenderBox&, GridTrackSizingDirection) const;
+    std::optional<LayoutUnit> gridAreaBreadthForGridItem(const RenderBox&, GridTrackSizingDirection) const;
+    std::optional<LayoutUnit> estimatedGridAreaBreadthForGridItem(const RenderBox&, GridTrackSizingDirection) const;
 
     void cacheBaselineAlignedItem(const RenderBox&, GridAxis, bool cachingRowSubgridsForRootGrid);
     void copyBaselineItemsCache(const GridTrackSizingAlgorithm&, GridAxis);
@@ -313,9 +313,9 @@ private:
 class GridTrackSizingAlgorithmStrategy {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual LayoutUnit minContentForChild(RenderBox&) const;
-    LayoutUnit maxContentForChild(RenderBox&) const;
-    LayoutUnit minSizeForChild(RenderBox&) const;
+    virtual LayoutUnit minContentForGridItem(RenderBox&) const;
+    LayoutUnit maxContentForGridItem(RenderBox&) const;
+    LayoutUnit minSizeForGridItem(RenderBox&) const;
 
     virtual ~GridTrackSizingAlgorithmStrategy() = default;
 
@@ -331,11 +331,11 @@ protected:
     GridTrackSizingAlgorithmStrategy(GridTrackSizingAlgorithm& algorithm)
         : m_algorithm(algorithm) { }
 
-    virtual LayoutUnit minLogicalSizeForChild(RenderBox&, const Length& childMinSize, std::optional<LayoutUnit> availableSize) const;
+    virtual LayoutUnit minLogicalSizeForGridItem(RenderBox&, const Length& gridItemMinSize, std::optional<LayoutUnit> availableSize) const;
     virtual void layoutGridItemForMinSizeComputation(RenderBox&, bool overrideSizeHasChanged) const = 0;
 
-    LayoutUnit logicalHeightForChild(RenderBox&) const;
-    bool updateOverridingContainingBlockContentSizeForChild(RenderBox&, GridTrackSizingDirection, std::optional<LayoutUnit> = std::nullopt) const;
+    LayoutUnit logicalHeightForGridItem(RenderBox&) const;
+    bool updateOverridingContainingBlockContentSizeForGridItem(RenderBox&, GridTrackSizingDirection, std::optional<LayoutUnit> = std::nullopt) const;
 
     // GridTrackSizingAlgorithm accessors for subclasses.
     LayoutUnit computeTrackBasedSize() const { return m_algorithm.computeTrackBasedSize(); }

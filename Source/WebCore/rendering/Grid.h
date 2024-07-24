@@ -136,7 +136,7 @@ private:
     GridTrackSizingDirection m_direction;
     unsigned m_rowIndex;
     unsigned m_columnIndex;
-    unsigned m_childIndex;
+    unsigned m_gridItemIndex;
 };
 
 } // namespace WebCore
