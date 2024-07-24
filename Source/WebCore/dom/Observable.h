@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "AbortSignal.h"
 #include "ScriptWrappable.h"
 #include "SubscriberCallback.h"
 #include "VoidCallback.h"
@@ -33,6 +32,7 @@
 
 namespace WebCore {
 
+class InternalObserver;
 class ScriptExecutionContext;
 class JSSubscriptionObserverCallback;
 class SubscriptionObserverCallback;
@@ -50,11 +50,10 @@ public:
     explicit Observable(Ref<SubscriberCallback>);
 
     void subscribe(ScriptExecutionContext&, std::optional<ObserverUnion>, SubscribeOptions);
+    void subscribeInternal(ScriptExecutionContext&, Ref<InternalObserver>, SubscribeOptions);
 
 private:
-    Ref<SubscriberCallback> m_subscriber;
-
-    Ref<Subscriber> makeSubscriber(ScriptExecutionContext&, std::optional<ObserverUnion>);
+    Ref<SubscriberCallback> m_subscriberCallback;
 };
 
 } // namespace WebCore

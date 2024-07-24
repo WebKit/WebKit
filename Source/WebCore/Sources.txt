@@ -1176,6 +1176,8 @@ dom/InlineClassicScript.cpp
 dom/InlineStyleSheetOwner.cpp
 dom/InputEvent.cpp
 dom/InvokeEvent.cpp
+dom/InternalObserver.cpp
+dom/InternalObserverFromScript.cpp
 dom/KeyboardEvent.cpp
 dom/LiveNodeList.cpp
 dom/LoadableClassicScript.cpp

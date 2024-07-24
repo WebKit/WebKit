@@ -25,16 +25,22 @@
 #include "config.h"
 #include "Observable.h"
 
+#include "AbortSignal.h"
 #include "CallbackResult.h"
+#include "Document.h"
 #include "Exception.h"
 #include "ExceptionCode.h"
+#include "InternalObserverFromScript.h"
+#include "JSSubscriptionObserverCallback.h"
 #include "SubscribeOptions.h"
 #include "Subscriber.h"
 #include "SubscriberCallback.h"
 #include "SubscriptionObserver.h"
-#include "SubscriptionObserverCallback.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(Observable);
 
 ExceptionOr<Ref<Observable>> Observable::create(Ref<SubscriberCallback> callback)
 {
@@ -43,11 +49,27 @@ ExceptionOr<Ref<Observable>> Observable::create(Ref<SubscriberCallback> callback
 
 void Observable::subscribe(ScriptExecutionContext& context, std::optional<ObserverUnion> observer, SubscribeOptions options)
 {
+    if (observer) {
+        WTF::switchOn(
+            observer.value(),
+            [&](RefPtr<JSSubscriptionObserverCallback>& next) {
+                subscribeInternal(context, InternalObserverFromScript::create(context, next), options);
+            },
+            [&](SubscriptionObserver& subscription) {
+                subscribeInternal(context, InternalObserverFromScript::create(context, subscription), options);
+            }
+        );
+    } else
+        subscribeInternal(context, InternalObserverFromScript::create(context, nullptr), options);
+}
+
+void Observable::subscribeInternal(ScriptExecutionContext& context, Ref<InternalObserver> observer, SubscribeOptions options)
+{
     RefPtr document = dynamicDowncast<Document>(context);
     if (document && !document->isFullyActive())
         return;
 
-    Ref<Subscriber> subscriber = makeSubscriber(context, observer);
+    auto subscriber = Subscriber::create(context, observer);
 
     if (options.signal)
         subscriber->followSignal(*options.signal.get());
@@ -62,7 +84,7 @@ void Observable::subscribe(ScriptExecutionContext& context, std::optional<Observ
     JSC::Exception* previousException = nullptr;
     {
         auto catchScope = DECLARE_CATCH_SCOPE(vm);
-        m_subscriber->handleEvent(subscriber);
+        m_subscriberCallback->handleEvent(subscriber);
         previousException = catchScope.exception();
         if (previousException) {
             catchScope.clearException();
@@ -71,27 +93,8 @@ void Observable::subscribe(ScriptExecutionContext& context, std::optional<Observ
     }
 }
 
-Ref<Subscriber> Observable::makeSubscriber(ScriptExecutionContext& context, std::optional<ObserverUnion> observer)
-{
-    if (observer.has_value()) {
-        return WTF::switchOn(
-            observer.value(),
-            [&](RefPtr<JSSubscriptionObserverCallback>& next) {
-                return Subscriber::create(context, next);
-            },
-            [&](SubscriptionObserver& subscription) {
-                return Subscriber::create(context, subscription.next, subscription.error, subscription.complete);
-            }
-        );
-    }
-
-    return Subscriber::create(context);
-}
-
-WTF_MAKE_ISO_ALLOCATED_IMPL(Observable);
-
 Observable::Observable(Ref<SubscriberCallback> callback)
-    : m_subscriber(callback)
+    : m_subscriberCallback(callback)
 {
 }
 

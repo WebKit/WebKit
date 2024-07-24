@@ -27,33 +27,22 @@
 
 #include "AbortController.h"
 #include "AbortSignal.h"
+#include "InternalObserver.h"
 #include "SubscriberCallback.h"
 #include "SubscriptionObserverCallback.h"
 #include "VoidCallback.h"
 
 namespace WebCore {
 
-Ref<Subscriber> Subscriber::create(ScriptExecutionContext& context)
+Ref<Subscriber> Subscriber::create(ScriptExecutionContext& context, Ref<InternalObserver> observer)
 {
-    return adoptRef(*new Subscriber(context, nullptr, nullptr, nullptr));
+    return adoptRef(*new Subscriber(context, observer));
 }
 
-Ref<Subscriber> Subscriber::create(ScriptExecutionContext& context, RefPtr<SubscriptionObserverCallback> nextCallback)
-{
-    return adoptRef(*new Subscriber(context, nextCallback, nullptr, nullptr));
-}
-
-Ref<Subscriber> Subscriber::create(ScriptExecutionContext& context, RefPtr<SubscriptionObserverCallback> nextCallback, RefPtr<SubscriptionObserverCallback> errorCallback, RefPtr<VoidCallback> completeCallback)
-{
-    return adoptRef(*new Subscriber(context, nextCallback, errorCallback, completeCallback));
-}
-
-Subscriber::Subscriber(ScriptExecutionContext& context, RefPtr<SubscriptionObserverCallback> nextCallback, RefPtr<SubscriptionObserverCallback> errorCallback, RefPtr<VoidCallback> completeCallback)
+Subscriber::Subscriber(ScriptExecutionContext& context, Ref<InternalObserver> observer)
     : ActiveDOMObject(&context)
     , m_abortController(AbortController::create(context))
-    , m_next(WTFMove(nextCallback))
-    , m_error(WTFMove(errorCallback))
-    , m_complete(WTFMove(completeCallback))
+    , m_observer(observer)
 {
     followSignal(m_abortController->signal());
     suspendIfNeeded();
@@ -64,8 +53,7 @@ void Subscriber::next(JSC::JSValue value)
     if (!isActive())
         return;
 
-    if (m_next)
-        m_next->handleEvent(value);
+    m_observer->next(value);
 }
 
 void Subscriber::error(JSC::JSValue error)
@@ -78,15 +66,9 @@ void Subscriber::error(JSC::JSValue error)
     if (isInactiveDocument())
         return;
 
-    auto errorCallback = m_error;
-
     close(JSC::jsUndefined());
 
-    if (errorCallback)
-        errorCallback->handleEvent(error);
-
-    else
-        reportErrorObject(error);
+    m_observer->error(error);
 }
 
 void Subscriber::complete()
@@ -94,12 +76,9 @@ void Subscriber::complete()
     if (!isActive())
         return;
 
-    auto complete = m_complete;
-
     close(JSC::jsUndefined());
 
-    if (complete)
-        complete->handleEvent();
+    m_observer->complete();
 }
 
 void Subscriber::addTeardown(Ref<VoidCallback> callback)
