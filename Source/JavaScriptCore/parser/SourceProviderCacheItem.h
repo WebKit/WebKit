@@ -79,6 +79,8 @@ public:
         LexicallyScopedFeatures features = NoLexicallyScopedFeatures;
         if (strictMode)
             features |= StrictModeLexicallyScopedFeature;
+        if (taintedByWithScope)
+            features |= TaintedByWithScopeLexicallyScopedFeature;
         return features;
     }
 
@@ -92,6 +94,7 @@ public:
     unsigned lastTokenEndOffset: 31;
     bool needsSuperBinding: 1;
     unsigned parameterCount : 31;
+    bool taintedByWithScope : 1;
     unsigned lastTokenLineStartOffset : 31;
     bool isBodyArrowExpression : 1;
     unsigned usedVariablesCount;
@@ -133,6 +136,7 @@ inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCach
     , lastTokenEndOffset(parameters.lastTokenEndOffset)
     , needsSuperBinding(parameters.needsSuperBinding)
     , parameterCount(parameters.parameterCount)
+    , taintedByWithScope(parameters.lexicallyScopedFeatures & TaintedByWithScopeLexicallyScopedFeature)
     , lastTokenLineStartOffset(parameters.lastTokenLineStartOffset)
     , isBodyArrowExpression(parameters.isBodyArrowExpression)
     , usedVariablesCount(parameters.usedVariables.size())

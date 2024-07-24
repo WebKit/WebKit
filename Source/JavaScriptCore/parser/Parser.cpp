@@ -131,7 +131,7 @@ void Parser<LexerType>::logError(bool shouldPrintToken, Args&&... args)
 }
 
 template <typename LexerType>
-Parser<LexerType>::Parser(VM& vm, const SourceCode& source, ImplementationVisibility implementationVisibility, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, SourceParseMode parseMode, FunctionMode functionMode, SuperBinding superBinding, ConstructorKind constructorKind, DerivedContextType derivedContextType, bool isEvalContext, EvalContextType evalContextType, DebuggerParseData* debuggerParseData, bool isInsideOrdinaryFunction)
+Parser<LexerType>::Parser(VM& vm, const SourceCode& source, ImplementationVisibility implementationVisibility, JSParserBuiltinMode builtinMode, LexicallyScopedFeatures lexicallyScopedFeatures, JSParserScriptMode scriptMode, SourceParseMode parseMode, FunctionMode functionMode, SuperBinding superBinding, ConstructorKind constructorKind, DerivedContextType derivedContextType, bool isEvalContext, EvalContextType evalContextType, DebuggerParseData* debuggerParseData, bool isInsideOrdinaryFunction)
     : m_vm(vm)
     , m_source(&source)
     , m_hasStackOverflow(false)
@@ -157,6 +157,7 @@ Parser<LexerType>::Parser(VM& vm, const SourceCode& source, ImplementationVisibi
     m_expressionErrorClassifier = nullptr;
 
     ScopeRef scope = pushScope();
+    scope->setLexicallyScopedFeatures(lexicallyScopedFeatures);
     scope->setSourceParseMode(parseMode);
     scope->setIsEvalContext(isEvalContext);
     if (isEvalContext)
@@ -170,9 +171,6 @@ Parser<LexerType>::Parser(VM& vm, const SourceCode& source, ImplementationVisibi
     scope->setDerivedContextType(derivedContextType);
     if (derivedContextType != DerivedContextType::None)
         scope->setExpectedSuperBinding(SuperBinding::Needed);
-
-    if (strictMode == JSParserStrictMode::Strict)
-        scope->setStrictMode();
 
     if (isModuleParseMode(parseMode))
         m_moduleScopeData = ModuleScopeData::create();
@@ -1758,11 +1756,18 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseWithStatement
     JSTextPosition end = lastTokenEndPosition();
     int endLine = tokenLine();
     handleProductionOrFail(CLOSEPAREN, ")", "start", "subject of a 'with' statement");
+
+    AutoPopScopeRef withScope(this, pushScope());
+    withScope->setTaintedByWithScope();
+    withScope->preventAllVariableDeclarations();
+
     const Identifier* unused = nullptr;
     TreeStatement statement = parseStatement(context, unused);
     failIfFalse(statement, "A 'with' statement must have a body");
     
-    return context.createWithStatement(location, expr, statement, start, end, startLine, endLine);
+    TreeStatement result = context.createWithStatement(location, expr, statement, start, end, startLine, endLine);
+    popScope(withScope, TreeBuilder::NeedsFreeVariableInfo);
+    return result;
 }
 
 template <typename LexerType>

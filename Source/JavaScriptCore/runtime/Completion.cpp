@@ -46,7 +46,7 @@ static inline bool checkSyntaxInternal(VM& vm, const SourceCode& source, ParserE
 {
     return !!parseRootNode<ProgramNode>(
         vm, source, ImplementationVisibility::Public, JSParserBuiltinMode::NotBuiltin,
-        JSParserStrictMode::NotStrict, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, error);
+        NoLexicallyScopedFeatures, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, error);
 }
 
 bool checkSyntax(JSGlobalObject* globalObject, const SourceCode& source, JSValue* returnedException)
@@ -78,7 +78,7 @@ bool checkModuleSyntax(JSGlobalObject* globalObject, const SourceCode& source, P
     RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
     std::unique_ptr<ModuleProgramNode> moduleProgramNode = parseRootNode<ModuleProgramNode>(
         vm, source, ImplementationVisibility::Public, JSParserBuiltinMode::NotBuiltin,
-        JSParserStrictMode::Strict, JSParserScriptMode::Module, SourceParseMode::ModuleAnalyzeMode, error);
+        StrictModeLexicallyScopedFeature, JSParserScriptMode::Module, SourceParseMode::ModuleAnalyzeMode, error);
     if (!moduleProgramNode)
         return false;
 
@@ -92,18 +92,18 @@ RefPtr<CachedBytecode> generateProgramBytecode(VM& vm, const SourceCode& source,
     JSLockHolder lock(vm);
     RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
 
-    JSParserStrictMode strictMode = JSParserStrictMode::NotStrict;
+    LexicallyScopedFeatures lexicallyScopedFeatures = NoLexicallyScopedFeatures;
     JSParserScriptMode scriptMode = JSParserScriptMode::Classic;
     EvalContextType evalContextType = EvalContextType::None;
 
     ParserError parserError;
-    UnlinkedCodeBlock* unlinkedCodeBlock = recursivelyGenerateUnlinkedCodeBlockForProgram(vm, source, strictMode, scriptMode, { }, parserError, evalContextType);
+    UnlinkedCodeBlock* unlinkedCodeBlock = recursivelyGenerateUnlinkedCodeBlockForProgram(vm, source, lexicallyScopedFeatures, scriptMode, { }, parserError, evalContextType);
     if (parserError.isValid())
         error = parserError;
     if (!unlinkedCodeBlock)
         return nullptr;
 
-    return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ProgramType, strictMode, scriptMode, fd, error, { });
+    return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ProgramType, lexicallyScopedFeatures, scriptMode, fd, error, { });
 }
 
 RefPtr<CachedBytecode> generateModuleBytecode(VM& vm, const SourceCode& source, FileSystem::PlatformFileHandle fd, BytecodeCacheError& error)
@@ -111,17 +111,17 @@ RefPtr<CachedBytecode> generateModuleBytecode(VM& vm, const SourceCode& source, 
     JSLockHolder lock(vm);
     RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
 
-    JSParserStrictMode strictMode = JSParserStrictMode::Strict;
+    LexicallyScopedFeatures lexicallyScopedFeatures = StrictModeLexicallyScopedFeature;
     JSParserScriptMode scriptMode = JSParserScriptMode::Module;
     EvalContextType evalContextType = EvalContextType::None;
 
     ParserError parserError;
-    UnlinkedCodeBlock* unlinkedCodeBlock = recursivelyGenerateUnlinkedCodeBlockForModuleProgram(vm, source, strictMode, scriptMode, { }, parserError, evalContextType);
+    UnlinkedCodeBlock* unlinkedCodeBlock = recursivelyGenerateUnlinkedCodeBlockForModuleProgram(vm, source, lexicallyScopedFeatures, scriptMode, { }, parserError, evalContextType);
     if (parserError.isValid())
         error = parserError;
     if (!unlinkedCodeBlock)
         return nullptr;
-    return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ModuleType, strictMode, scriptMode, fd, error, { });
+    return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ModuleType, lexicallyScopedFeatures, scriptMode, fd, error, { });
 }
 
 JSValue evaluate(JSGlobalObject* globalObject, const SourceCode& source, JSValue thisValue, NakedPtr<Exception>& returnedException)

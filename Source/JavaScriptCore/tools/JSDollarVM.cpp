@@ -2244,6 +2244,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionDumpAndResetPasDebugSpectrum);
 static JSC_DECLARE_HOST_FUNCTION(functionMonotonicTimeNow);
 static JSC_DECLARE_HOST_FUNCTION(functionWallTimeNow);
 static JSC_DECLARE_HOST_FUNCTION(functionApproximateTimeNow);
+static JSC_DECLARE_HOST_FUNCTION(functionEvaluateWithScopeExtension);
 static JSC_DECLARE_HOST_FUNCTION(functionHeapExtraMemorySize);
 #if ENABLE(JIT)
 static JSC_DECLARE_HOST_FUNCTION(functionJITSizeStatistics);
@@ -3978,6 +3979,30 @@ JSC_DEFINE_HOST_FUNCTION(functionApproximateTimeNow, (JSGlobalObject*, CallFrame
     return JSValue::encode(jsNumber(ApproximateTime::now().secondsSinceEpoch().milliseconds()));
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionEvaluateWithScopeExtension, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue scriptValue = callFrame->argument(0);
+    if (!scriptValue.isString())
+        return throwVMTypeError(globalObject, scope, "Expected first argument to be a string"_s);
+
+    String program = asString(scriptValue)->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    SourceCode source = makeSource(WTFMove(program), callFrame->callerSourceOrigin(vm), SourceTaintedOrigin::Untainted);
+    JSObject* scopeExtension = callFrame->argument(1).getObject();
+
+    NakedPtr<Exception> exception;
+    JSValue result = evaluateWithScopeExtension(globalObject, source, scopeExtension, exception);
+    if (exception)
+        return throwVMException(globalObject, scope, exception);
+
+    return JSValue::encode(result);
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionHeapExtraMemorySize, (JSGlobalObject* globalObject, CallFrame*))
 {
     DollarVMAssertScope assertScope;
@@ -4335,6 +4360,8 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "monotonicTimeNow"_s, functionMonotonicTimeNow, 0);
     addFunction(vm, "wallTimeNow"_s, functionWallTimeNow, 0);
     addFunction(vm, "approximateTimeNow"_s, functionApproximateTimeNow, 0);
+
+    addFunction(vm, "evaluateWithScopeExtension"_s, functionEvaluateWithScopeExtension, 1);
 
     addFunction(vm, "heapExtraMemorySize"_s, functionHeapExtraMemorySize, 0);
 

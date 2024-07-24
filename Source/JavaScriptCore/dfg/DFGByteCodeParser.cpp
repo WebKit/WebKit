@@ -8193,7 +8193,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_call_direct_eval: {
             auto bytecode = currentInstruction->as<OpCallDirectEval>();
             int registerOffset = -bytecode.m_argv;
-            addCall(bytecode.m_dst, CallDirectEval, OpInfo(bytecode.m_ecmaMode), get(bytecode.m_callee), bytecode.m_argc, registerOffset, getPrediction(), get(bytecode.m_thisValue), get(bytecode.m_scope));
+            addCall(bytecode.m_dst, CallDirectEval, OpInfo(bytecode.m_lexicallyScopedFeatures), get(bytecode.m_callee), bytecode.m_argc, registerOffset, getPrediction(), get(bytecode.m_thisValue), get(bytecode.m_scope));
             NEXT_OPCODE(op_call_direct_eval);
         }
 

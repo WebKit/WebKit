@@ -2219,7 +2219,7 @@ static inline UGPRPair commonCallDirectEval(CallFrame* callFrame, const JSInstru
     
     JSScope* callerScopeChain = jsCast<JSScope*>(getOperand(callFrame, bytecode.m_scope));
     JSValue thisValue = getOperand(callFrame, bytecode.m_thisValue);
-    JSValue result = eval(calleeFrame, thisValue, callerScopeChain, bytecode.m_ecmaMode);
+    JSValue result = eval(calleeFrame, thisValue, callerScopeChain, bytecode.m_lexicallyScopedFeatures);
     LLINT_CALL_CHECK_EXCEPTION(globalObject);
     if (!result)
         RELEASE_AND_RETURN(throwScope, setUpCall(calleeFrame, CodeForCall, calleeAsValue));

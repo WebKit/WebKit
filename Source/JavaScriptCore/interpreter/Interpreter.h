@@ -121,6 +121,8 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
         uint32_t m_tryDepthForThrow { 0 };
     };
 
+    typedef uint8_t LexicallyScopedFeatures;
+
     class Interpreter {
         WTF_MAKE_TZONE_ALLOCATED(Interpreter);
         friend class CachedCall;
@@ -188,7 +190,7 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
 #endif // ENABLE(COMPUTED_GOTO_OPCODES)
     };
 
-    JSValue eval(CallFrame*, JSValue thisValue, JSScope*, ECMAMode);
+    JSValue eval(CallFrame*, JSValue thisValue, JSScope*, LexicallyScopedFeatures);
 
     inline CallFrame* calleeFrameForVarargs(CallFrame*, unsigned numUsedStackSlots, unsigned argumentCountIncludingThis);
 

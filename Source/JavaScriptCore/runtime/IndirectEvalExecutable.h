@@ -31,13 +31,13 @@ namespace JSC {
 
 class IndirectEvalExecutable final : public EvalExecutable {
 public:
-    static IndirectEvalExecutable* tryCreate(JSGlobalObject*, const SourceCode&, DerivedContextType, bool isArrowFunctionContext, EvalContextType);
-    static IndirectEvalExecutable* create(JSGlobalObject*, const SourceCode&, DerivedContextType, bool isArrowFunctionContext, EvalContextType, NakedPtr<JSObject>&);
+    static IndirectEvalExecutable* tryCreate(JSGlobalObject*, const SourceCode&, LexicallyScopedFeatures, DerivedContextType, bool isArrowFunctionContext, EvalContextType);
+    static IndirectEvalExecutable* create(JSGlobalObject*, const SourceCode&, LexicallyScopedFeatures, DerivedContextType, bool isArrowFunctionContext, EvalContextType, NakedPtr<JSObject>&);
 private:
     template<typename ErrorHandlerFunctor>
-    inline static IndirectEvalExecutable* createImpl(JSGlobalObject*, const SourceCode&, DerivedContextType, bool isArrowFunctionContext, EvalContextType, ErrorHandlerFunctor);
+    inline static IndirectEvalExecutable* createImpl(JSGlobalObject*, const SourceCode&, LexicallyScopedFeatures, DerivedContextType, bool isArrowFunctionContext, EvalContextType, ErrorHandlerFunctor);
 
-    IndirectEvalExecutable(JSGlobalObject*, const SourceCode&, DerivedContextType, bool isArrowFunctionContext, EvalContextType);
+    IndirectEvalExecutable(JSGlobalObject*, const SourceCode&, LexicallyScopedFeatures, DerivedContextType, bool isArrowFunctionContext, EvalContextType);
 };
 
 static_assert(sizeof(IndirectEvalExecutable) == sizeof(EvalExecutable));

@@ -2551,7 +2551,6 @@ public:
     bool hasECMAMode()
     {
         switch (op()) {
-        case CallDirectEval:
         case DeleteById:
         case DeleteByVal:
         case PutById:
@@ -2577,7 +2576,6 @@ public:
     {
         ASSERT(hasECMAMode());
         switch (op()) {
-        case CallDirectEval:
         case DeleteByVal:
         case PutByValWithThis:
         case ToThis:
@@ -2704,6 +2702,12 @@ public:
     {
         ASSERT(op() == InitializeEntrypointArguments);
         return m_opInfo.as<unsigned>();
+    }
+
+    LexicallyScopedFeatures lexicallyScopedFeatures()
+    {
+        ASSERT(op() == CallDirectEval);
+        return m_opInfo.as<uint8_t>();
     }
 
     DataViewData dataViewData()

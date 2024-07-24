@@ -221,7 +221,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
         JSParserBuiltinMode builtinMode = isBuiltinDefaultClassConstructor ? JSParserBuiltinMode::NotBuiltin : JSParserBuiltinMode::Builtin;
         std::unique_ptr<ProgramNode> program = parseRootNode<ProgramNode>(
             vm, source, implementationVisibility, builtinMode,
-            JSParserStrictMode::NotStrict, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, error,
+            NoLexicallyScopedFeatures, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, error,
             constructorKind, &positionBeforeLastNewlineFromParser);
 
         if (program) {

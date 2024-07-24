@@ -3643,6 +3643,20 @@ ExpectedFunction BytecodeGenerator::emitExpectedFunctionSnippet(RegisterID* dst,
     return expectedFunction;
 }
 
+LexicallyScopedFeatures BytecodeGenerator::computeFeaturesForCallDirectEval()
+{
+    LexicallyScopedFeatures features = lexicallyScopedFeatures();
+
+    for (unsigned i = m_lexicalScopeStack.size(); i--; ) {
+        if (m_lexicalScopeStack[i].m_isWithScope) {
+            features |= TaintedByWithScopeLexicallyScopedFeature;
+            break;
+        }
+    }
+
+    return features;
+}
+
 template<typename CallOp>
 RegisterID* BytecodeGenerator::emitCall(RegisterID* dst, RegisterID* func, ExpectedFunction expectedFunction, CallArguments& callArguments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall debuggableCall)
 {
@@ -3697,7 +3711,7 @@ RegisterID* BytecodeGenerator::emitCall(RegisterID* dst, RegisterID* func, Expec
     ASSERT(dst);
     ASSERT(dst != ignoredResult());
     if constexpr (opcodeID == op_call_direct_eval)
-        CallOp::emit(this, dst, func, callArguments.argumentCountIncludingThis(), callArguments.stackOffset(), thisRegister(), scopeRegister(), ecmaMode(), nextValueProfileIndex());
+        CallOp::emit(this, dst, func, callArguments.argumentCountIncludingThis(), callArguments.stackOffset(), thisRegister(), scopeRegister(), computeFeaturesForCallDirectEval(), nextValueProfileIndex());
     else if constexpr (opcodeID == op_call_ignore_result) {
         CallOp::emit(this, func, callArguments.argumentCountIncludingThis(), callArguments.stackOffset());
         if (shouldEmitTypeProfilerHooks())

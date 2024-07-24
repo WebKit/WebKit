@@ -86,6 +86,8 @@ public:
     bool* addressOfDidTryToEnterInLoop() { return &m_didTryToEnterInLoop; }
 
     CodeFeatures features() const { return m_features; }
+    LexicallyScopedFeatures lexicallyScopedFeatures() { return static_cast<LexicallyScopedFeatures>(m_lexicallyScopedFeatures); }
+    void setTaintedByWithScope() { m_lexicallyScopedFeatures |= TaintedByWithScopeLexicallyScopedFeature; }
         
     DECLARE_EXPORT_INFO;
 
