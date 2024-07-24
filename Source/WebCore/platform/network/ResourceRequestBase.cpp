@@ -208,14 +208,14 @@ void ResourceRequestBase::upgradeInsecureRequestIfNeeded(URL& url, ShouldUpgrade
     if (!url.protocolIs("http"_s) && !url.protocolIs("ws"_s))
         return;
 
-    upgradeInsecureRequest(url);
-
-    if (!url.port())
-        return;
-
     // Do not automatically upgrade localhost or IP address connections unless the CSP policy requires it.
     bool isHostLocalhostOrIPaddress = SecurityOrigin::isLocalhostAddress(url.host()) || URL::hostIsIPAddress(url.host());
     if (isHostLocalhostOrIPaddress && shouldUpgradeLocalhostAndIPAddress == ShouldUpgradeLocalhostAndIPAddress::No)
+        return;
+
+    upgradeInsecureRequest(url);
+
+    if (!url.port())
         return;
 
     if (upgradePort)
