@@ -260,19 +260,19 @@ static GlyphOverflow computedVisualOverflowForDecorations(const RenderStyle& lin
     return overflowResult;
 }
 
-// FIXME: Rename this method as this is really about visual overflow.
 bool isAlignedForUnder(const RenderStyle& decoratingBoxStyle)
 {
     auto underlinePosition = decoratingBoxStyle.textUnderlinePosition();
     if (underlinePosition.metric == TextUnderlinePosition::Metric::Under)
         return true;
-    if (decoratingBoxStyle.isHorizontalWritingMode())
+    if (decoratingBoxStyle.typographicMode() == TypographicMode::Horizontal || decoratingBoxStyle.textOrientation() == TextOrientation::Sideways)
         return false;
     if (underlinePosition.side == TextUnderlinePosition::Side::Left || underlinePosition.side == TextUnderlinePosition::Side::Right) {
         // In vertical typographic modes, the underline is aligned as for under for 'left' and 'right'.
         return true;
     }
     // When left/right support is not enabled.
+    // FIXME: The offset check is mostly about visual overflow, consider splitting out.
     return underlinePosition.isAuto() && decoratingBoxStyle.textUnderlineOffset().isAuto();
 }
 
@@ -330,7 +330,7 @@ float overlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineBo
     if (!style.textDecorationsInEffect().contains(TextDecorationLine::Underline))
         return { };
 
-    if (style.isHorizontalWritingMode())
+    if (style.typographicMode() == TypographicMode::Horizontal || style.textOrientation() == TextOrientation::Sideways)
         return { };
 
     auto underlinePositionSide = style.textUnderlinePosition().side;

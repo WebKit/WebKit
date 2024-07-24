@@ -4024,8 +4024,6 @@ imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-open-001.
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-shape-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-string-001.xht [ ImageOnlyFailure ]
 webkit.org/b/230083 imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-001a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-001b.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/invalidation/selection-pseudo-with-decoration-invalidation-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/invalidation/selection-pseudo-with-decoration-invalidation-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-dotted-001.html [ ImageOnlyFailure ]
