@@ -1,5 +1,6 @@
 PASS firstSelector is "DIV.box"
 PASS secondSelector is "DIV.overlay.dimmed"
+PASS thirdSelector is "DIV.bottombox"
 PASS successfullyParsed is true
 
 TEST COMPLETE
