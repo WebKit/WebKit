@@ -54,7 +54,7 @@ JSWebAssemblyStruct* JSWebAssemblyStruct::tryCreate(JSGlobalObject* globalObject
 {
     VM& vm = globalObject->vm();
 
-    Ref<const Wasm::TypeDefinition> type = instance->instance().module().moduleInformation().typeSignatures[typeIndex]->expand();
+    Ref<const Wasm::TypeDefinition> type = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
 
     void* buffer = tryAllocateCell<JSWebAssemblyStruct>(vm);
     if (UNLIKELY(!buffer))

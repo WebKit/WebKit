@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmInstance.h"
+#include "JSWebAssemblyInstance.h"
 #include "WasmTag.h"
 
 namespace JSC {
@@ -58,7 +58,7 @@ void HandlerInfo::initialize(const UnlinkedHandlerInfo& unlinkedInfo, CodePtr<Ex
     }
 }
 
-const HandlerInfo* HandlerInfo::handlerForIndex(Instance& instance, const FixedVector<HandlerInfo>& exeptionHandlers, unsigned index, const Wasm::Tag* exceptionTag)
+const HandlerInfo* HandlerInfo::handlerForIndex(JSWebAssemblyInstance& instance, const FixedVector<HandlerInfo>& exeptionHandlers, unsigned index, const Wasm::Tag* exceptionTag)
 {
     bool delegating = false;
     unsigned delegateTarget = 0;

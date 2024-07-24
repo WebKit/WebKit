@@ -62,7 +62,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyInstance, (JSGlobalObject* global
     Structure* instanceStructure = JSC_GET_DERIVED_STRUCTURE(vm, webAssemblyInstanceStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
-    JSWebAssemblyInstance* instance = JSWebAssemblyInstance::tryCreate(vm, globalObject, JSWebAssemblyInstance::createPrivateModuleKey(), module, importObject, instanceStructure, Ref<Wasm::Module>(module->module()), Wasm::CreationMode::FromJS);
+    JSWebAssemblyInstance* instance = JSWebAssemblyInstance::tryCreate(vm, instanceStructure, globalObject, JSWebAssemblyInstance::createPrivateModuleKey(), module, importObject, Wasm::CreationMode::FromJS);
     RETURN_IF_EXCEPTION(scope, { });
 
     instance->initializeImports(globalObject, importObject, Wasm::CreationMode::FromJS);

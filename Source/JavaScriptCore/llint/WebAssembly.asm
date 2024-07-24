@@ -1,4 +1,4 @@
-# Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -306,8 +306,8 @@ end
 
 macro reloadMemoryRegistersFromInstance(instance, scratch1)
 if not ARMv7
-    loadp Wasm::Instance::m_cachedMemory[instance], memoryBase
-    loadp Wasm::Instance::m_cachedBoundsCheckingSize[instance], boundsCheckingSize
+    loadp JSWebAssemblyInstance::m_cachedMemory[instance], memoryBase
+    loadp JSWebAssemblyInstance::m_cachedBoundsCheckingSize[instance], boundsCheckingSize
     cagedPrimitiveMayBeNull(memoryBase, scratch1) # If boundsCheckingSize is 0, pointer can be a nullptr.
 end
 end
@@ -387,7 +387,7 @@ if TRACING
 end
 
     bpa ws1, cfr, .stackOverflow
-    bpbeq Wasm::Instance::m_softStackLimit[wasmInstance], ws1, .stackHeightOK
+    bpbeq JSWebAssemblyInstance::m_softStackLimit[wasmInstance], ws1, .stackHeightOK
 
 .stackOverflow:
     throwException(StackOverflow)
@@ -484,7 +484,7 @@ if not JSVALUE64
 end
 
     bpa ws1, cfr, .stackOverflow
-    bpbeq Wasm::Instance::m_softStackLimit[wasmInstance], ws1, .stackHeightOK
+    bpbeq JSWebAssemblyInstance::m_softStackLimit[wasmInstance], ws1, .stackHeightOK
 
 .stackOverflow:
     throwException(StackOverflow)
@@ -926,10 +926,10 @@ opcodesEnd()
 
 .memory:
     if ARM64 or ARM64E
-        loadpairq Wasm::Instance::m_cachedMemory[wasmInstance], memoryBase, boundsCheckingSize
+        loadpairq JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase, boundsCheckingSize
     elsif X86_64
-        loadp Wasm::Instance::m_cachedMemory[wasmInstance], memoryBase
-        loadp Wasm::Instance::m_cachedBoundsCheckingSize[wasmInstance], boundsCheckingSize
+        loadp JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase
+        loadp JSWebAssemblyInstance::m_cachedBoundsCheckingSize[wasmInstance], boundsCheckingSize
     end
     if not ARMv7
         cagedPrimitiveMayBeNull(memoryBase, Scratch)
@@ -1197,7 +1197,7 @@ macro jumpToException()
 end
 
 op(wasm_throw_from_slow_path_trampoline, macro ()
-    loadp Wasm::Instance::m_vm[wasmInstance], t5
+    loadp JSWebAssemblyInstance::m_vm[wasmInstance], t5
     loadp VM::topEntryFrame[t5], t5
     copyCalleeSavesToEntryFrameCalleeSavesBuffer(t5)
 
@@ -1212,7 +1212,7 @@ end)
 
 macro wasm_throw_from_fault_handler(instance)
     # instance should be in a2 when we get here
-    loadp Wasm::Instance::m_vm[instance], a0
+    loadp JSWebAssemblyInstance::m_vm[instance], a0
     loadp VM::topEntryFrame[a0], a0
     copyCalleeSavesToEntryFrameCalleeSavesBuffer(a0)
 
@@ -1433,8 +1433,7 @@ end
 
             storeWasmInstance(targetWasmInstance)
             reloadMemoryRegistersFromInstance(targetWasmInstance, wa0)
-            loadp Wasm::Instance::m_owner[wasmInstance], wa0
-            storep wa0, ThisArgumentOffset[sp] # Anchor new JSWebAssemblyInstance in ThisArgumentOffset.
+            storep targetWasmInstance, ThisArgumentOffset[sp] # Anchor new JSWebAssemblyInstance in ThisArgumentOffset.
 
             # Load registers from stack
 if ARM64 or ARM64E
@@ -1683,8 +1682,7 @@ end
             storep ws1, Callee[wa0]
 
             move wa0, ws1
-            loadp Wasm::Instance::m_owner[wasmInstance], wa0
-            storep wa0, ThisArgumentOffset[sp] # Anchor new JSWebAssemblyInstance in ThisArgumentOffset.
+            storep wasmInstance, ThisArgumentOffset[sp] # Anchor new JSWebAssemblyInstance in ThisArgumentOffset.
 
             restoreGPRsUsedByTailCall(wa0, wa1)
 
@@ -2512,7 +2510,7 @@ wasmOp(atomic_fence, WasmDropKeep, macro(ctx)
 end)
 
 wasmOp(throw, WasmThrow, macro(ctx)
-    loadp Wasm::Instance::m_vm[wasmInstance], t5
+    loadp JSWebAssemblyInstance::m_vm[wasmInstance], t5
     loadp VM::topEntryFrame[t5], t5
     copyCalleeSavesToEntryFrameCalleeSavesBuffer(t5)
 
@@ -2521,7 +2519,7 @@ wasmOp(throw, WasmThrow, macro(ctx)
 end)
 
 wasmOp(rethrow, WasmRethrow, macro(ctx)
-    loadp Wasm::Instance::m_vm[wasmInstance], t5
+    loadp JSWebAssemblyInstance::m_vm[wasmInstance], t5
     loadp VM::topEntryFrame[t5], t5
     copyCalleeSavesToEntryFrameCalleeSavesBuffer(t5)
 

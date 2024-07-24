@@ -44,9 +44,9 @@
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEBASSEMBLY)
+#include "JSWebAssemblyInstance.h"
 #include "WasmContext.h"
 #include "WasmMemoryInformation.h"
-#include "WasmInstance.h"
 #endif
 
 namespace JSC {
@@ -1480,7 +1480,7 @@ void AssemblyHelpers::prepareWasmCallOperation(GPRReg instanceGPR)
 {
     UNUSED_PARAM(instanceGPR);
 #if !USE(BUILTIN_FRAME_ADDRESS) || ASSERT_ENABLED
-    storePtr(GPRInfo::callFrameRegister, Address(instanceGPR, Wasm::Instance::offsetOfTemporaryCallFrame()));
+    storePtr(GPRInfo::callFrameRegister, Address(instanceGPR, JSWebAssemblyInstance::offsetOfTemporaryCallFrame()));
 #endif
 }
 
@@ -2016,21 +2016,21 @@ void AssemblyHelpers::loadTypedArrayLength(GPRReg baseGPR, GPRReg valueGPR, GPRR
 AssemblyHelpers::JumpList AssemblyHelpers::checkWasmStackOverflow(GPRReg instanceGPR, TrustedImm32 checkSize, GPRReg framePointerGPR)
 {
 #if CPU(ARM64)
-    loadPtr(Address(instanceGPR, Wasm::Instance::offsetOfSoftStackLimit()), getCachedMemoryTempRegisterIDAndInvalidate());
+    loadPtr(Address(instanceGPR, JSWebAssemblyInstance::offsetOfSoftStackLimit()), getCachedMemoryTempRegisterIDAndInvalidate());
     JumpList overflow;
     // Because address is within 48bit, this addition never causes overflow.
     addPtr(checkSize, memoryTempRegister); // TrustedImm32 would use dataTempRegister. Thus let's have limit in memoryTempRegister.
     overflow.append(branchPtr(Below, framePointerGPR, memoryTempRegister));
     return overflow;
 #elif CPU(X86_64) || CPU(ARM)
-    loadPtr(Address(instanceGPR, Wasm::Instance::offsetOfSoftStackLimit()), scratchRegister());
+    loadPtr(Address(instanceGPR, JSWebAssemblyInstance::offsetOfSoftStackLimit()), scratchRegister());
     JumpList overflow;
     // Because address is within 48bit, this addition never causes overflow.
     addPtr(checkSize, scratchRegister());
     overflow.append(branchPtr(Below, framePointerGPR, scratchRegister()));
     return overflow;
 #elif CPU(RISCV64)
-    loadPtr(Address(instanceGPR, Wasm::Instance::offsetOfSoftStackLimit()), memoryTempRegister);
+    loadPtr(Address(instanceGPR, JSWebAssemblyInstance::offsetOfSoftStackLimit()), memoryTempRegister);
     JumpList overflow;
     // Because address is within 48bit, this addition never causes overflow.
     addPtr(checkSize, memoryTempRegister); // TrustedImm32 would use dataTempRegister. Thus let's have limit in memoryTempRegister.

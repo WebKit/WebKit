@@ -45,9 +45,9 @@ public:
     friend class IsoSubspace;
 
     static PreciseAllocation* tryCreate(Heap&, size_t, Subspace*, unsigned indexInSpace);
+    static PreciseAllocation* tryCreateForLowerTierPrecise(Heap&, size_t, Subspace*, uint8_t lowerTierPreciseIndex);
 
-    static PreciseAllocation* tryCreateForLowerTier(Heap&, size_t, Subspace*, uint8_t lowerTierIndex);
-    PreciseAllocation* reuseForLowerTier();
+    PreciseAllocation* reuseForLowerTierPrecise();
 
     PreciseAllocation* tryReallocate(size_t, Subspace*);
     
@@ -97,8 +97,6 @@ public:
     
     size_t cellSize() const { return m_cellSize; }
 
-    uint8_t lowerTierIndex() const { return m_lowerTierIndex; }
-    
     bool aboveLowerBound(const void* rawPtr)
     {
         char* ptr = bitwise_cast<char*>(rawPtr);
@@ -152,8 +150,9 @@ public:
     
     void dump(PrintStream&) const;
 
-    bool isLowerTier() const { return m_lowerTierIndex != UINT8_MAX; }
-    
+    bool isLowerTierPrecise() const { return m_lowerTierPreciseIndex != UINT8_MAX; }
+    uint8_t lowerTierPreciseIndex() const { return m_lowerTierPreciseIndex; }
+
     static constexpr unsigned alignment = MarkedBlock::atomSize;
     static constexpr unsigned halfAlignment = alignment / 2;
     static constexpr unsigned cacheLineAdjustment = 2 * halfAlignment;
@@ -178,7 +177,7 @@ private:
     unsigned m_adjustment : 5;
     Atomic<bool> m_isMarked;
     CellAttributes m_attributes;
-    uint8_t m_lowerTierIndex { UINT8_MAX };
+    uint8_t m_lowerTierPreciseIndex { UINT8_MAX };
     Subspace* m_subspace;
     WeakSet m_weakSet;
 };

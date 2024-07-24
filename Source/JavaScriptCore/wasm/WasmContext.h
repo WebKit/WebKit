@@ -33,8 +33,6 @@
 
 namespace JSC { namespace Wasm {
 
-class Instance;
-
 struct Context {
     uint64_t* scratchBufferForSize(size_t numberOfSlots);
 

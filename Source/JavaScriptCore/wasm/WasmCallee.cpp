@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -164,7 +164,7 @@ void Callee::destroy(Callee* callee)
     });
 }
 
-const HandlerInfo* Callee::handlerForIndex(Instance& instance, unsigned index, const Tag* tag)
+const HandlerInfo* Callee::handlerForIndex(JSWebAssemblyInstance& instance, unsigned index, const Tag* tag)
 {
     ASSERT(hasExceptionHandlers());
     return HandlerInfo::handlerForIndex(instance, m_exceptionHandlers, index, tag);
@@ -265,7 +265,7 @@ RegisterAtOffsetList* IPIntCallee::calleeSaveRegistersImpl()
     static std::once_flag initializeFlag;
     std::call_once(initializeFlag, [] {
         RegisterSet registers;
-        registers.add(GPRInfo::regCS0, IgnoreVectors); // Wasm::Instance
+        registers.add(GPRInfo::regCS0, IgnoreVectors); // JSWebAssemblyInstance
 #if CPU(X86_64)
         registers.add(GPRInfo::regCS1, IgnoreVectors); // PM (pointer to metadata)
         registers.add(GPRInfo::regCS2, IgnoreVectors); // PB
@@ -330,7 +330,7 @@ RegisterAtOffsetList* LLIntCallee::calleeSaveRegistersImpl()
     static std::once_flag initializeFlag;
     std::call_once(initializeFlag, [] {
         RegisterSet registers;
-        registers.add(GPRInfo::regCS0, IgnoreVectors); // Wasm::Instance
+        registers.add(GPRInfo::regCS0, IgnoreVectors); // JSWebAssemblyInstance
 #if CPU(X86_64)
         registers.add(GPRInfo::regCS2, IgnoreVectors); // PB
 #elif CPU(ARM64) || CPU(RISCV64)

@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2024 Apple Inc. All rights reserved.
 # Copyright (C) 2021 Igalia S.L. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -45,11 +45,11 @@ if ARMv7
     bcs .throw
     addps size - 1, pointer, offset # Use offset as scratch register
     bcs .throw
-    bpb offset, Wasm::Instance::m_cachedBoundsCheckingSize[wasmInstance], .continuation
+    bpb offset, JSWebAssemblyInstance::m_cachedBoundsCheckingSize[wasmInstance], .continuation
 .throw:
     throwException(OutOfBoundsMemoryAccess)
 .continuation:
-    addp Wasm::Instance::m_cachedMemory[wasmInstance], pointer
+    addp JSWebAssemblyInstance::m_cachedMemory[wasmInstance], pointer
 else
     crash()
 end
@@ -64,11 +64,11 @@ if ARMv7
     bcs .throw
     addps size - 1, pointer, offset # Use offset as scratch register
     bcs .throw
-    bpb offset, Wasm::Instance::m_cachedBoundsCheckingSize[wasmInstance], .continuation
+    bpb offset, JSWebAssemblyInstance::m_cachedBoundsCheckingSize[wasmInstance], .continuation
 .throw:
     throwException(OutOfBoundsMemoryAccess)
 .continuation:
-    addp Wasm::Instance::m_cachedMemory[wasmInstance], pointer
+    addp JSWebAssemblyInstance::m_cachedMemory[wasmInstance], pointer
     btpnz pointer, (size - 1), .throw
 else
     crash()
@@ -166,7 +166,7 @@ wasmOp(ref_as_non_null, WasmRefAsNonNull, macro(ctx)
 end)
 
 wasmOp(get_global, WasmGetGlobal, macro(ctx)
-    loadp Wasm::Instance::m_globals[wasmInstance], t0
+    loadp JSWebAssemblyInstance::m_globals[wasmInstance], t0
     wgetu(ctx, m_globalIndex, t1)
     lshiftp 1, t1
     load2ia [t0, t1, 8], t0, t1
@@ -174,7 +174,7 @@ wasmOp(get_global, WasmGetGlobal, macro(ctx)
 end)
 
 wasmOp(set_global, WasmSetGlobal, macro(ctx)
-    loadp Wasm::Instance::m_globals[wasmInstance], t0
+    loadp JSWebAssemblyInstance::m_globals[wasmInstance], t0
     wgetu(ctx, m_globalIndex, t1)
     lshiftp 1, t1
     mload2i(ctx, m_value, t3, t2)
@@ -183,7 +183,7 @@ wasmOp(set_global, WasmSetGlobal, macro(ctx)
 end)
 
 wasmOp(get_global_portable_binding, WasmGetGlobalPortableBinding, macro(ctx)
-    loadp Wasm::Instance::m_globals[wasmInstance], t0
+    loadp JSWebAssemblyInstance::m_globals[wasmInstance], t0
     wgetu(ctx, m_globalIndex, t1)
     lshiftp 1, t1
     loadp [t0, t1, 8], t0
@@ -192,7 +192,7 @@ wasmOp(get_global_portable_binding, WasmGetGlobalPortableBinding, macro(ctx)
 end)
 
 wasmOp(set_global_portable_binding, WasmSetGlobalPortableBinding, macro(ctx)
-    loadp Wasm::Instance::m_globals[wasmInstance], t0
+    loadp JSWebAssemblyInstance::m_globals[wasmInstance], t0
     wgetu(ctx, m_globalIndex, t1)
     lshiftp 1, t1
     mload2i(ctx, m_value, t3, t2)

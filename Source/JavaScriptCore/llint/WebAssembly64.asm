@@ -114,7 +114,7 @@ wasmOp(ref_as_non_null, WasmRefAsNonNull, macro(ctx)
 end)
 
 wasmOp(get_global, WasmGetGlobal, macro(ctx)
-    loadp Wasm::Instance::m_globals[wasmInstance], t0
+    loadp JSWebAssemblyInstance::m_globals[wasmInstance], t0
     wgetu(ctx, m_globalIndex, t1)
     lshiftp 1, t1
     loadq [t0, t1, 8], t0
@@ -122,7 +122,7 @@ wasmOp(get_global, WasmGetGlobal, macro(ctx)
 end)
 
 wasmOp(set_global, WasmSetGlobal, macro(ctx)
-    loadp Wasm::Instance::m_globals[wasmInstance], t0
+    loadp JSWebAssemblyInstance::m_globals[wasmInstance], t0
     wgetu(ctx, m_globalIndex, t1)
     lshiftp 1, t1
     mloadq(ctx, m_value, t2)
@@ -131,7 +131,7 @@ wasmOp(set_global, WasmSetGlobal, macro(ctx)
 end)
 
 wasmOp(get_global_portable_binding, WasmGetGlobalPortableBinding, macro(ctx)
-    loadp Wasm::Instance::m_globals[wasmInstance], t0
+    loadp JSWebAssemblyInstance::m_globals[wasmInstance], t0
     wgetu(ctx, m_globalIndex, t1)
     lshiftp 1, t1
     loadq [t0, t1, 8], t0
@@ -140,7 +140,7 @@ wasmOp(get_global_portable_binding, WasmGetGlobalPortableBinding, macro(ctx)
 end)
 
 wasmOp(set_global_portable_binding, WasmSetGlobalPortableBinding, macro(ctx)
-    loadp Wasm::Instance::m_globals[wasmInstance], t0
+    loadp JSWebAssemblyInstance::m_globals[wasmInstance], t0
     wgetu(ctx, m_globalIndex, t1)
     lshiftp 1, t1
     mloadq(ctx, m_value, t2)

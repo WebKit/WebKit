@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,14 +40,12 @@ template<typename> struct BaseInstruction;
 struct WasmOpcodeTraits;
 using WasmInstruction = BaseInstruction<WasmOpcodeTraits>;
 
-namespace Wasm {
-class Instance;
-}
+class JSWebAssemblyInstance;
 
 namespace LLInt {
 
 #define WASM_SLOW_PATH_DECL(name) \
-    extern "C" UGPRPair SYSV_ABI slow_path_wasm_##name(CallFrame* callFrame, const WasmInstruction* pc, Wasm::Instance* instance)
+    extern "C" UGPRPair SYSV_ABI slow_path_wasm_##name(CallFrame* callFrame, const WasmInstruction* pc, JSWebAssemblyInstance* instance)
 
 #define WASM_SLOW_PATH_HIDDEN_DECL(name) \
     WASM_SLOW_PATH_DECL(name) REFERENCED_FROM_ASM WTF_INTERNAL
@@ -94,8 +92,8 @@ WASM_SLOW_PATH_HIDDEN_DECL(struct_new);
 WASM_SLOW_PATH_HIDDEN_DECL(struct_get);
 WASM_SLOW_PATH_HIDDEN_DECL(struct_set);
 
-extern "C" NO_RETURN void SYSV_ABI wasm_log_crash(CallFrame*, Wasm::Instance* instance) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" UGPRPair SYSV_ABI slow_path_wasm_throw_exception(CallFrame*, Wasm::Instance* instance, Wasm::ExceptionType) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" NO_RETURN void SYSV_ABI wasm_log_crash(CallFrame*, JSWebAssemblyInstance* instance) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UGPRPair SYSV_ABI slow_path_wasm_throw_exception(CallFrame*, JSWebAssemblyInstance* instance, Wasm::ExceptionType) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI slow_path_wasm_popcount(const WasmInstruction* pc, uint32_t) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI slow_path_wasm_popcountll(const WasmInstruction* pc, uint64_t) REFERENCED_FROM_ASM WTF_INTERNAL;
 

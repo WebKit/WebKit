@@ -124,7 +124,7 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
     // GC strongly assumes CodeBlock is not a PreciseAllocation for now.
-    static constexpr uint8_t numberOfLowerTierCells = 0;
+    static constexpr uint8_t numberOfLowerTierPreciseCells = 0;
 
     DECLARE_INFO;
 

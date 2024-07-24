@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,7 +66,7 @@ public:
     RegisterAtOffsetList* calleeSaveRegisters();
     std::tuple<void*, void*> range() const;
 
-    const HandlerInfo* handlerForIndex(Instance&, unsigned, const Tag*);
+    const HandlerInfo* handlerForIndex(JSWebAssemblyInstance&, unsigned, const Tag*);
 
     bool hasExceptionHandlers() const { return !m_exceptionHandlers.isEmpty(); }
 

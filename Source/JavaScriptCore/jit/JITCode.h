@@ -202,7 +202,7 @@ public:
         }
     }
 
-    static bool isLowerTier(JITType expectedLower, JITType expectedHigher)
+    static bool isLowerTierPrecise(JITType expectedLower, JITType expectedHigher)
     {
         RELEASE_ASSERT(isExecutableScript(expectedLower));
         RELEASE_ASSERT(isExecutableScript(expectedHigher));
@@ -211,7 +211,7 @@ public:
     
     static bool isHigherTier(JITType expectedHigher, JITType expectedLower)
     {
-        return isLowerTier(expectedLower, expectedHigher);
+        return isLowerTierPrecise(expectedLower, expectedHigher);
     }
     
     static bool isLowerOrSameTier(JITType expectedLower, JITType expectedHigher)

@@ -30,6 +30,7 @@
 #include "ArrayBuffer.h"
 #include "MemoryMode.h"
 #include "PageCount.h"
+#include "WeakGCSet.h"
 
 #include <wtf/CagedPtr.h>
 #include <wtf/Expected.h>
@@ -50,8 +51,6 @@ class LLIntOffsetsExtractor;
 
 namespace Wasm {
 
-class Instance;
-
 class Memory final : public RefCounted<Memory> {
     WTF_MAKE_NONCOPYABLE(Memory);
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(Memory, JS_EXPORT_PRIVATE);
@@ -63,10 +62,10 @@ public:
     enum SyncTryToReclaim { SyncTryToReclaimTag };
     enum GrowSuccess { GrowSuccessTag };
 
-    static Ref<Memory> create();
-    JS_EXPORT_PRIVATE static Ref<Memory> create(Ref<BufferMemoryHandle>&&, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback);
-    JS_EXPORT_PRIVATE static Ref<Memory> create(Ref<SharedArrayBufferContents>&&, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback);
-    JS_EXPORT_PRIVATE static Ref<Memory> createZeroSized(MemorySharingMode, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback);
+    static Ref<Memory> create(VM&);
+    JS_EXPORT_PRIVATE static Ref<Memory> create(VM&, Ref<BufferMemoryHandle>&&, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback);
+    JS_EXPORT_PRIVATE static Ref<Memory> create(VM&, Ref<SharedArrayBufferContents>&&, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback);
+    JS_EXPORT_PRIVATE static Ref<Memory> createZeroSized(VM&, MemorySharingMode, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback);
     static RefPtr<Memory> tryCreate(VM&, PageCount initial, PageCount maximum, MemorySharingMode, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback);
 
     JS_EXPORT_PRIVATE ~Memory();
@@ -91,7 +90,7 @@ public:
     bool copy(uint32_t, uint32_t, uint32_t);
     bool init(uint32_t, const uint8_t*, uint32_t);
 
-    void registerInstance(Instance&);
+    void registerInstance(JSWebAssemblyInstance&);
 
     void checkLifetime() { ASSERT(!deletionHasBegun()); }
 
@@ -100,17 +99,18 @@ public:
     SharedArrayBufferContents* shared() const { return m_shared.get(); }
 
 private:
-    Memory();
-    Memory(Ref<BufferMemoryHandle>&&, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback);
-    Memory(Ref<BufferMemoryHandle>&&, Ref<SharedArrayBufferContents>&&, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback);
-    Memory(PageCount initial, PageCount maximum, MemorySharingMode, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback);
+    Memory(VM&);
+    Memory(VM&, Ref<BufferMemoryHandle>&&, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback);
+    Memory(VM&, Ref<BufferMemoryHandle>&&, Ref<SharedArrayBufferContents>&&, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback);
+    Memory(VM&, PageCount initial, PageCount maximum, MemorySharingMode, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback);
 
     Expected<PageCount, GrowFailReason> growShared(VM&, PageCount);
 
     Ref<BufferMemoryHandle> m_handle;
     RefPtr<SharedArrayBufferContents> m_shared;
     WTF::Function<void(GrowSuccess, PageCount, PageCount)> m_growSuccessCallback;
-    Vector<ThreadSafeWeakPtr<Instance>> m_instances;
+    // FIXME: If/When merging this into JSWebAssemblyMemory we should just use an unconditionalFinalizer.
+    WeakGCSet<JSWebAssemblyInstance> m_instances;
 };
 
 } } // namespace JSC::Wasm
