@@ -43,20 +43,20 @@ class IsoSubspace;
 class IsoSubspace : public Subspace {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(IsoSubspace, JS_EXPORT_PRIVATE);
 public:
-    JS_EXPORT_PRIVATE IsoSubspace(CString name, Heap&, const HeapCellType&, size_t size, uint8_t numberOfLowerTierCells, std::unique_ptr<IsoMemoryAllocatorBase>&& = nullptr);
+    JS_EXPORT_PRIVATE IsoSubspace(CString name, Heap&, const HeapCellType&, size_t size, bool preciseOnly, uint8_t numberOfLowerTierPreciseCells, std::unique_ptr<IsoMemoryAllocatorBase>&& = nullptr);
     JS_EXPORT_PRIVATE ~IsoSubspace() override;
 
     size_t cellSize() { return m_directory.cellSize(); }
 
-    void sweepLowerTierCell(PreciseAllocation*);
+    void sweepLowerTierPreciseCell(PreciseAllocation*);
     void clearIsoCellSetBit(PreciseAllocation*);
 
-    void* tryAllocateFromLowerTier();
-    void destroyLowerTierFreeList();
+    void* tryAllocatePreciseOrLowerTierPrecise(size_t cellSize);
+    void destroyLowerTierPreciseFreeList();
 
     void sweep();
 
-    template<typename Func> void forEachLowerTierFreeListedPreciseAllocation(const Func&);
+    template<typename Func> void forEachLowerTierPreciseFreeListedPreciseAllocation(const Func&);
 
 private:
     friend class IsoCellSet;
@@ -68,7 +68,7 @@ private:
 
     BlockDirectory m_directory;
     std::unique_ptr<IsoMemoryAllocatorBase> m_isoAlignedMemoryAllocator;
-    SentinelLinkedList<PreciseAllocation, BasicRawSentinelNode<PreciseAllocation>> m_lowerTierFreeList;
+    SentinelLinkedList<PreciseAllocation, BasicRawSentinelNode<PreciseAllocation>> m_lowerTierPreciseFreeList;
     SentinelLinkedList<IsoCellSet, BasicRawSentinelNode<IsoCellSet>> m_cellSets;
 };
 
@@ -100,7 +100,7 @@ ALWAYS_INLINE Allocator IsoSubspace::allocatorFor(size_t size, AllocatorForMode)
 
 } // namespace GCClient
 
-#define ISO_SUBSPACE_INIT(heap, heapCellType, type) ("IsoSpace " #type, (heap), (heapCellType), sizeof(type), type::numberOfLowerTierCells)
+#define ISO_SUBSPACE_INIT(heap, heapCellType, type) ("IsoSpace " #type, (heap), (heapCellType), sizeof(type), type::usePreciseAllocationsOnly, type::numberOfLowerTierPreciseCells)
 
 } // namespace JSC
 

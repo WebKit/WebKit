@@ -31,9 +31,8 @@
 #include <wtf/EnumClassOperatorOverloads.h>
 
 namespace JSC  {
-namespace Wasm {
-class Instance;
-}
+
+class JSWebAssemblyInstance;
 
 template<typename> struct BaseInstruction;
 struct JSOpcodeTraits;
@@ -221,7 +220,7 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         void setCallSiteIndex(CallSiteIndex);
 
 #if ENABLE(WEBASSEMBLY)
-        Wasm::Instance* wasmInstance() const;
+        JSWebAssemblyInstance* wasmInstance() const;
 #endif
 
         JSCell* codeOwnerCell() const;

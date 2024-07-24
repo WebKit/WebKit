@@ -170,9 +170,6 @@ class Database;
 namespace DOMJIT {
 class Signature;
 }
-namespace Wasm {
-class Instance;
-}
 
 struct EntryFrame;
 
@@ -1014,10 +1011,6 @@ public:
 
     Ref<Waiter> syncWaiter();
 
-#if ENABLE(WEBASSEMBLY)
-    void registerWasmInstance(Wasm::Instance&);
-#endif
-
     void notifyDebuggerHookInjected() { m_isDebuggerHookInjected = true; }
     bool isDebuggerHookInjected() const { return m_isDebuggerHookInjected; }
 
@@ -1145,9 +1138,6 @@ private:
     Ref<Waiter> m_syncWaiter;
 
     Vector<Function<void()>> m_didPopListeners;
-#if ENABLE(WEBASSEMBLY)
-    ThreadSafeWeakHashSet<Wasm::Instance> m_wasmInstances;
-#endif
 
 #if ENABLE(DFG_DOES_GC_VALIDATION)
     DoesGCCheck m_doesGC;

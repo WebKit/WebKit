@@ -104,7 +104,6 @@
 #include "SuperSampler.h"
 #include "ThunkGenerators.h"
 #include "VirtualRegister.h"
-#include "WasmInstance.h"
 #include "WasmModuleInformation.h"
 #include "WebAssemblyFunction.h"
 #include "YarrJITRegisters.h"
@@ -12511,16 +12510,16 @@ IGNORE_CLANG_WARNINGS_END
         bool wasmBoundsCheckingSizeRegisterConfiguredAsInputContraints = false;
         bool wasmBaseMemoryPointerConfiguredAsInputContraints = false;
         auto* jsInstance = wasmFunction->instance();
-        arguments.append(ConstrainedValue(m_out.constIntPtr(&jsInstance->instance()), ValueRep::reg(GPRInfo::wasmContextInstancePointer)));
-        if (!!jsInstance->instance().module().moduleInformation().memory) {
+        arguments.append(ConstrainedValue(frozenPointer(m_graph.freeze(jsInstance)), ValueRep::reg(GPRInfo::wasmContextInstancePointer)));
+        if (!!jsInstance->module().moduleInformation().memory) {
             auto mode = jsInstance->memoryMode();
-            if (mode == MemoryMode::Signaling || (mode == MemoryMode::BoundsChecking && jsInstance->instance().memory()->sharingMode() == MemorySharingMode::Shared)) {
+            if (mode == MemoryMode::Signaling || (mode == MemoryMode::BoundsChecking && jsInstance->memory()->sharingMode() == MemorySharingMode::Shared)) {
                 // Capacity and basePointer will not be changed.
                 if (mode == MemoryMode::BoundsChecking) {
-                    arguments.append(ConstrainedValue(m_out.constInt64(jsInstance->instance().memory()->mappedCapacity()), ValueRep::reg(GPRInfo::wasmBoundsCheckingSizeRegister)));
+                    arguments.append(ConstrainedValue(m_out.constInt64(jsInstance->memory()->mappedCapacity()), ValueRep::reg(GPRInfo::wasmBoundsCheckingSizeRegister)));
                     wasmBoundsCheckingSizeRegisterConfiguredAsInputContraints = true;
                 }
-                arguments.append(ConstrainedValue(m_out.constIntPtr(jsInstance->instance().memory()->basePointer()), ValueRep::reg(GPRInfo::wasmBaseMemoryPointer)));
+                arguments.append(ConstrainedValue(m_out.constIntPtr(jsInstance->memory()->basePointer()), ValueRep::reg(GPRInfo::wasmBaseMemoryPointer)));
                 wasmBaseMemoryPointerConfiguredAsInputContraints = true;
             }
         }
@@ -12576,7 +12575,7 @@ IGNORE_CLANG_WARNINGS_END
             clobber.add(GPRInfo::wasmBaseMemoryPointer, IgnoreVectors);
         patchpoint->clobber(WTFMove(clobber));
         auto clobberLate = RegisterSetBuilder::registersToSaveForCCall(RegisterSetBuilder::allScalarRegisters());
-        clobberLate.add(GPRInfo::wasmContextInstancePointer, IgnoreVectors); // Because it is already tied to Wasm::Instance* in patchpoint's input constraint, we should say it is late clobbered.
+        clobberLate.add(GPRInfo::wasmContextInstancePointer, IgnoreVectors); // Because it is already tied to JSWebAssemblyInstance* in patchpoint's input constraint, we should say it is late clobbered.
         if (wasmBoundsCheckingSizeRegisterConfiguredAsInputContraints)
             clobberLate.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
         if (wasmBaseMemoryPointerConfiguredAsInputContraints)
@@ -12599,17 +12598,17 @@ IGNORE_CLANG_WARNINGS_END
                 constexpr GPRReg scratchGPR = GPRInfo::nonPreservedNonArgumentGPR0;
                 static_assert(noOverlap(GPRInfo::wasmBoundsCheckingSizeRegister, GPRInfo::wasmBaseMemoryPointer, scratchGPR));
                 ASSERT(!RegisterSetBuilder::macroClobberedGPRs().contains(scratchGPR, IgnoreVectors));
-                if (!!jsInstance->instance().module().moduleInformation().memory) {
+                if (!!jsInstance->module().moduleInformation().memory) {
                     auto mode = jsInstance->memoryMode();
-                    if (!(mode == MemoryMode::Signaling || (mode == MemoryMode::BoundsChecking && jsInstance->instance().memory()->sharingMode() == MemorySharingMode::Shared))) {
+                    if (!(mode == MemoryMode::Signaling || (mode == MemoryMode::BoundsChecking && jsInstance->memory()->sharingMode() == MemorySharingMode::Shared))) {
                         // We always clobber GPRInfo::wasmBoundsCheckingSizeRegister regardless of mode. It is OK since patchpoint already said it is clobbered.
                         if (isARM64E())
-                            jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
+                            jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(JSWebAssemblyInstance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
                         else {
                             if (mode == MemoryMode::BoundsChecking)
-                                jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
+                                jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(JSWebAssemblyInstance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
                             else
-                                jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Wasm::Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer);
+                                jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer);
                         }
                         jit.cageConditionally(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, scratchGPR);
                     }

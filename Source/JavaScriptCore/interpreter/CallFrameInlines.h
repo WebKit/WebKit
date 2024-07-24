@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,14 +73,6 @@ inline JSGlobalObject* CallFrame::lexicalGlobalObject(VM& vm) const
         return lexicalGlobalObjectFromNativeCallee(vm);
     return jsCallee()->globalObject();
 }
-
-#if ENABLE(WEBASSEMBLY)
-inline Wasm::Instance* CallFrame::wasmInstance() const
-{
-    ASSERT(callee().isNativeCallee());
-    return bitwise_cast<Wasm::Instance*>(const_cast<CallFrame*>(this)->uncheckedR(CallFrameSlot::codeBlock).asanUnsafePointer());
-}
-#endif
 
 inline JSCell* CallFrame::codeOwnerCell() const
 {

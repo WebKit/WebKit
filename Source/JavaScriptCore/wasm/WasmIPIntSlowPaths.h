@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,20 +34,18 @@
 
 namespace JSC {
 
-namespace Wasm {
-class Instance;
-}
+class JSWebAssemblyInstance;
 
 namespace IPInt {
 
 #define WASM_IPINT_EXTERN_CPP_DECL(name, ...) \
-    extern "C" UGPRPair ipint_extern_##name(Wasm::Instance* instance, __VA_ARGS__)
+    extern "C" UGPRPair ipint_extern_##name(JSWebAssemblyInstance* instance, __VA_ARGS__)
 
 #define WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(name, ...) \
     WASM_IPINT_EXTERN_CPP_DECL(name, __VA_ARGS__) REFERENCED_FROM_ASM WTF_INTERNAL
 
 #define WASM_IPINT_EXTERN_CPP_DECL_1P(name) \
-    extern "C" UGPRPair ipint_extern_##name(Wasm::Instance* instance)
+    extern "C" UGPRPair ipint_extern_##name(JSWebAssemblyInstance* instance)
 
 #define WASM_IPINT_EXTERN_CPP_HIDDEN_DECL_1P(name) \
     WASM_IPINT_EXTERN_CPP_DECL_1P(name) REFERENCED_FROM_ASM WTF_INTERNAL

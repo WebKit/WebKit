@@ -33,6 +33,7 @@ namespace JSC {
 IsoCellSet::IsoCellSet(IsoSubspace& subspace)
     : m_subspace(subspace)
 {
+    ASSERT_WITH_MESSAGE(!subspace.isPreciseOnly(), "IsoSubspaces with precise-only allocations are not supported by IsoCellSet");
     size_t size = subspace.m_directory.m_blocks.size();
     m_blocksWithBits.resize(size);
     m_bits.grow(size);

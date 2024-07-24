@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -1427,7 +1427,7 @@ if WEBASSEMBLY
         jmp .loaded
     .isWasmCallee:
         loadp CodeBlock + PayloadOffset[cfr], vm
-        loadp Wasm::Instance::m_vm[vm], vm
+        loadp JSWebAssemblyInstance::m_vm[vm], vm
     .loaded:
 else
     loadp Callee + PayloadOffset[cfr], vm

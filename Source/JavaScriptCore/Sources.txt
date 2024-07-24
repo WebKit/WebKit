@@ -1144,8 +1144,6 @@ wasm/WasmFunctionIPIntMetadataGenerator.cpp
 wasm/WasmGlobal.cpp
 wasm/WasmHandlerInfo.cpp
 wasm/WasmIndexOrName.cpp
-wasm/WasmInstance.cpp
-wasm/WasmInstance.h
 wasm/WasmIPIntGenerator.cpp
 wasm/WasmIPIntPlan.cpp
 wasm/WasmIPIntSlowPaths.cpp @no-unify

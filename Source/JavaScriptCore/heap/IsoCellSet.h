@@ -76,9 +76,9 @@ private:
     void didResizeBits(unsigned newSize);
     void didRemoveBlock(unsigned blockIndex);
     void sweepToFreeList(MarkedBlock::Handle*);
-    void clearLowerTierCell(unsigned);
+    void clearLowerTierPreciseCell(unsigned);
     
-    WTF::BitSet<MarkedBlock::maxNumberOfLowerTierCells> m_lowerTierBits;
+    WTF::BitSet<MarkedBlock::maxNumberOfLowerTierPreciseCells> m_lowerTierPreciseBits;
 
     IsoSubspace& m_subspace;
     
