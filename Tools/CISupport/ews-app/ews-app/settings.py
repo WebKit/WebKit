@@ -32,7 +32,12 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import sys
 import ews.common.util as util
+
+if sys.version_info < (3, 9):
+    print('ERROR: Minimum supported Python version for this code is Python 3.9')
+    sys.exit(1)
 
 is_test_mode_enabled = util.load_password('EWS_PRODUCTION') is None
 is_dev_instance = (util.get_custom_suffix() != '')
