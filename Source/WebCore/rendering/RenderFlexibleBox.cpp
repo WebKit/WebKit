@@ -1823,17 +1823,20 @@ static LayoutUnit initialJustifyContentOffset(const RenderStyle& style, LayoutUn
     if (justifyContent == ContentPosition::Center)
         return availableFreeSpace / 2;
     if (justifyContentDistribution == ContentDistribution::SpaceAround) {
-        if (availableFreeSpace > 0 && numberOfFlexItems)
+        if (!numberOfFlexItems)
+            return availableFreeSpace / 2;
+        if (availableFreeSpace > 0)
             return availableFreeSpace / (2 * numberOfFlexItems);
-        return availableFreeSpace / 2;
+        return { };
     }
     if (justifyContentDistribution == ContentDistribution::SpaceEvenly) {
-        if (availableFreeSpace > 0 && numberOfFlexItems)
+        if (!numberOfFlexItems)
+            return availableFreeSpace / 2;
+        if (availableFreeSpace > 0)
             return availableFreeSpace / (numberOfFlexItems + 1);
-        // Fallback to 'center'
-        return availableFreeSpace / 2;
+        return { };
     }
-    return 0;
+    return { };
 }
 
 static LayoutUnit justifyContentSpaceBetweenFlexItems(LayoutUnit availableFreeSpace, ContentDistribution justifyContentDistribution, unsigned numberOfFlexItems)
@@ -1901,7 +1904,7 @@ LayoutUnit RenderFlexibleBox::staticMainAxisPositionForPositionedFlexItem(const 
     auto flexItemMainExtent = mainAxisMarginExtentForFlexItem(flexItem) + mainAxisExtentForFlexItem(flexItem);
     auto availableSpace = mainAxisContentExtent(contentLogicalHeight()) - flexItemMainExtent;
     auto isReverse = isColumnOrRowReverse();
-    LayoutUnit offset = initialJustifyContentOffset(style(), availableSpace, 1, isReverse);
+    LayoutUnit offset = initialJustifyContentOffset(style(), availableSpace, { }, isReverse);
     if (isReverse)
         offset = availableSpace - offset;
     return offset;

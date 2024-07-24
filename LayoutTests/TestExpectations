@@ -1600,11 +1600,6 @@ imported/w3c/web-platform-tests/css/css-flexbox/stretch-flex-item-radio-input.ht
 imported/w3c/web-platform-tests/css/css-flexbox/webkit-box-vertical-writing-mode.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-width-auto-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-width-auto-006.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-horiz-003.xhtml [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-horiz-004.xhtml [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-vert-003.xhtml [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-vert-004.xhtml [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-spacearound-negative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-020.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/min-size-auto-overflow-clip.html [ ImageOnlyFailure ]
 
