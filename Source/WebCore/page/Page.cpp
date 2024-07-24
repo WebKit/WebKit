@@ -756,6 +756,12 @@ void Page::setMainFrameURL(const URL& url)
     m_mainFrameOrigin = SecurityOrigin::create(url);
 }
 
+void Page::setMainFrameURLFragment(String&& fragment)
+{
+    if (!fragment.isEmpty())
+        m_mainFrameURLFragment = WTFMove(fragment);
+}
+
 SecurityOrigin& Page::mainFrameOrigin() const
 {
     if (!m_mainFrameOrigin)
@@ -1578,6 +1584,8 @@ void Page::didCommitLoad()
 #endif
 
     m_hasEverSetVisibilityAdjustment = false;
+
+    m_mainFrameURLFragment = { };
 
     resetSeenPlugins();
     resetSeenMediaEngines();
