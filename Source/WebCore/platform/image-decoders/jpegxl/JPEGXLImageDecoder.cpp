@@ -32,7 +32,7 @@
 #include "PixelBufferConversion.h"
 
 #if USE(LCMS)
-#include "PlatformDisplay.h"
+#include "LCMSUniquePtr.h"
 #endif
 
 #if PLATFORM(COCOA)
@@ -410,18 +410,14 @@ void JPEGXLImageDecoder::prepareColorTransform()
     if (m_iccTransform)
         return;
 
-    cmsHPROFILE displayProfile = PlatformDisplay::sharedDisplay().colorProfile();
-    if (!displayProfile)
-        return;
-
     auto profile = tryDecodeICCColorProfile();
-    if (!profile)
+    if (!profile || cmsGetColorSpace(profile.get()) != cmsSigRgbData)
         return; // TODO(bugs.webkit.org/show_bug.cgi?id=234222): We should try to use encoded color profile if ICC profile is not available.
 
     // TODO(bugs.webkit.org/show_bug.cgi?id=234221): We should handle CMYK color but it may require two extra channels (Alpha and K)
     // and libjxl has yet to support it.
-    if (cmsGetColorSpace(profile.get()) == cmsSigRgbData && cmsGetColorSpace(displayProfile) == cmsSigRgbData)
-        m_iccTransform = LCMSTransformPtr(cmsCreateTransform(profile.get(), TYPE_BGRA_8, displayProfile, TYPE_BGRA_8, INTENT_RELATIVE_COLORIMETRIC, 0));
+    auto srgbProfile = LCMSProfilePtr(cmsCreate_sRGBProfile());
+    m_iccTransform = LCMSTransformPtr(cmsCreateTransform(profile.get(), TYPE_BGRA_8, srgbProfile.get(), TYPE_BGRA_8, INTENT_RELATIVE_COLORIMETRIC, 0));
 }
 
 LCMSProfilePtr JPEGXLImageDecoder::tryDecodeICCColorProfile()

@@ -60,10 +60,6 @@ private:
 #endif
     void initializeEGLDisplay() override;
 
-#if USE(LCMS)
-    cmsHPROFILE colorProfile() const override;
-#endif
-
 #if USE(ATSPI)
     String platformAccessibilityBusAddress() const override;
 #endif

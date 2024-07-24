@@ -592,15 +592,6 @@ const Vector<PlatformDisplay::DMABufFormat>& PlatformDisplay::dmabufFormats()
 }
 #endif // USE(GBM)
 
-#if USE(LCMS)
-cmsHPROFILE PlatformDisplay::colorProfile() const
-{
-    if (!m_iccProfile)
-        m_iccProfile = LCMSProfilePtr(cmsCreate_sRGBProfile());
-    return m_iccProfile.get();
-}
-#endif
-
 #if USE(ATSPI)
 const String& PlatformDisplay::accessibilityBusAddress() const
 {

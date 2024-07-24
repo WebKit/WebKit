@@ -55,10 +55,6 @@ typedef struct _GstGLContext GstGLContext;
 typedef struct _GstGLDisplay GstGLDisplay;
 #endif // ENABLE(VIDEO) && USE(GSTREAMER_GL)
 
-#if USE(LCMS)
-#include "LCMSUniquePtr.h"
-#endif
-
 #if USE(SKIA)
 #include <skia/gpu/GrDirectContext.h>
 #include <wtf/ThreadSafeWeakHashSet.h>
@@ -148,10 +144,6 @@ public:
     GrDirectContext* skiaGrContext();
 #endif
 
-#if USE(LCMS)
-    virtual cmsHPROFILE colorProfile() const;
-#endif
-
 #if USE(ATSPI)
     const String& accessibilityBusAddress() const;
 #endif
@@ -188,10 +180,6 @@ protected:
 #if ENABLE(WEBGL) && !PLATFORM(WIN)
     std::optional<int> m_anglePlatform;
     void* m_angleNativeDisplay { nullptr };
-#endif
-
-#if USE(LCMS)
-    mutable LCMSProfilePtr m_iccProfile;
 #endif
 
 #if USE(ATSPI)
