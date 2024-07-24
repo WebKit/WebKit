@@ -244,6 +244,7 @@ public:
     AXTextMarker start() const { return m_start; }
     AXTextMarker end() const { return m_end; }
     bool isConfinedTo(AXID) const;
+    bool isConfined() const;
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
     // Traverses from m_start to m_end, collecting all text along the way.

@@ -76,33 +76,26 @@ enum class AccessibilitySearchKey {
     VisitedLink,
 };
 
-struct TextCheckingResult;
-
 struct AccessibilitySearchCriteria {
+    // FIXME: change the object pointers to object IDs.
     AXCoreObject* anchorObject { nullptr };
-    AXCoreObject* startObject;
-    AccessibilitySearchDirection searchDirection;
+    AXCoreObject* startObject { nullptr };
+    CharacterRange startRange;
+    AccessibilitySearchDirection searchDirection { AccessibilitySearchDirection::Next };
     Vector<AccessibilitySearchKey> searchKeys;
     String searchText;
-    unsigned resultsLimit;
-    bool visibleOnly;
-    bool immediateDescendantsOnly;
-
-    AccessibilitySearchCriteria(AXCoreObject* startObject, AccessibilitySearchDirection searchDirection, String searchText, unsigned resultsLimit, bool visibleOnly, bool immediateDescendantsOnly)
-        : startObject(startObject)
-        , searchDirection(searchDirection)
-        , searchText(searchText)
-        , resultsLimit(resultsLimit)
-        , visibleOnly(visibleOnly)
-        , immediateDescendantsOnly(immediateDescendantsOnly)
-    { }
+    unsigned resultsLimit { 0 };
+    bool visibleOnly { false };
+    bool immediateDescendantsOnly { false };
 };
 
 class AXSearchManager {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AXSearchManager);
 public:
     AXCoreObject::AccessibilityChildrenVector findMatchingObjects(AccessibilitySearchCriteria&&);
+    std::optional<AXTextMarkerRange> findMatchingRange(AccessibilitySearchCriteria&&);
 private:
+    AXCoreObject::AccessibilityChildrenVector findMatchingObjectsInternal(const AccessibilitySearchCriteria&);
     bool matchWithResultsLimit(RefPtr<AXCoreObject>, const AccessibilitySearchCriteria&, AXCoreObject::AccessibilityChildrenVector&);
     bool match(RefPtr<AXCoreObject>, const AccessibilitySearchCriteria&);
     bool matchText(RefPtr<AXCoreObject>, const String&);
@@ -111,6 +104,11 @@ private:
     // Keeps the ranges of misspellings for each object.
     HashMap<AXID, Vector<CharacterRange>> m_spellCheckerResultRanges;
 };
+
+inline AXCoreObject::AccessibilityChildrenVector AXSearchManager::findMatchingObjects(AccessibilitySearchCriteria&& criteria)
+{
+    return findMatchingObjectsInternal(std::forward<AccessibilitySearchCriteria>(criteria));
+}
 
 WTF::TextStream& operator<<(WTF::TextStream&, AccessibilitySearchKey);
 WTF::TextStream& operator<<(WTF::TextStream&, const AccessibilitySearchCriteria&);

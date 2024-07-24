@@ -102,12 +102,15 @@ JSValueRef makeValueRefForValue(JSContextRef context, id value)
     return nullptr;
 }
 
-NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRef context, AccessibilityUIElement *startElement, bool isDirectionNext, unsigned resultsLimit, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
+NSDictionary *searchPredicateForSearchCriteria(JSContextRef context, AccessibilityUIElement *startElement, AccessibilityTextMarkerRange* startRange, bool isDirectionNext, unsigned resultsLimit, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
 {
     NSMutableDictionary *parameterizedAttribute = [NSMutableDictionary dictionary];
 
     if (startElement && startElement->platformUIElement())
         [parameterizedAttribute setObject:startElement->platformUIElement() forKey:@"AXStartElement"];
+
+    if (startRange)
+        [parameterizedAttribute setObject:startRange->platformTextMarkerRange() forKey:@"AXStartRange"];
 
     [parameterizedAttribute setObject:(isDirectionNext) ? @"AXDirectionNext" : @"AXDirectionPrevious" forKey:@"AXDirection"];
 

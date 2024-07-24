@@ -323,6 +323,7 @@ public:
     RefPtr<AccessibilityTextMarker> previousLineStartTextMarkerForTextMarker(AccessibilityTextMarker*);
     RefPtr<AccessibilityTextMarker> nextLineEndTextMarkerForTextMarker(AccessibilityTextMarker*);
     int lineIndexForTextMarker(AccessibilityTextMarker*) const;
+    RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForSearchPredicate(JSContextRef, AccessibilityTextMarkerRange* startRange, bool forward, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);
     RefPtr<AccessibilityTextMarkerRange> misspellingTextMarkerRange(AccessibilityTextMarkerRange* start, bool forward);
     RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForElement(AccessibilityUIElement*);
     RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForMarkers(AccessibilityTextMarker*, AccessibilityTextMarker*);

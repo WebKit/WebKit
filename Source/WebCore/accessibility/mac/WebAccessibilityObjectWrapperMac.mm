@@ -3249,7 +3249,24 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute]) {
-        AccessibilitySearchCriteria criteria = accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(dictionary);
+        auto criteria = accessibilitySearchCriteriaForSearchPredicate(*backingObject, dictionary);
+        if (criteria.searchKeys.size() == 1 && criteria.searchKeys[0] == AccessibilitySearchKey::MisspelledWord) {
+            // Request for the next/previous misspelling.
+            auto textMarkerRange = AXSearchManager().findMatchingRange(WTFMove(criteria));
+            if (!textMarkerRange)
+                return nil;
+
+            RefPtr object = textMarkerRange->start().object();
+            if (!object)
+                return nil;
+
+            NSMutableDictionary *result = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+                object->wrapper(), @"AXSearchResultElement",
+                textMarkerRange->platformData().bridgingAutorelease(), @"AXSearchResultRange",
+                nil];
+            return [[NSArray alloc] initWithObjects:result, nil];
+        }
+
         NSArray *widgetChildren = nil;
         if (isMatchingPlugin(*backingObject, criteria)) {
             // FIXME: We should also be searching the tree(s) resulting from `renderWidgetChildren` for matches.
