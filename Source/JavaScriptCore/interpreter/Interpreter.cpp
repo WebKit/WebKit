@@ -704,7 +704,7 @@ public:
                 if (m_catchableFromWasm) {
                     auto* wasmCallee = static_cast<Wasm::Callee*>(nativeCallee);
                     if (wasmCallee->hasExceptionHandlers()) {
-                        JSWebAssemblyInstance* instance = m_callFrame->wasmInstance();
+                        Wasm::Instance* instance = m_callFrame->wasmInstance();
                         unsigned exceptionHandlerIndex = m_callFrame->callSiteIndex().bits();
                         m_handler = { wasmCallee->handlerForIndex(*instance, exceptionHandlerIndex, m_wasmTag), wasmCallee };
                         if (m_handler.m_valid)

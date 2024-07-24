@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "Weak.h"
 #include "WeakGCHashTable.h"
-#include "WeakInlines.h"
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -43,21 +43,7 @@ struct WeakGCSetHashTraits : HashTraits<Weak<T>> {
     }
 };
 
-template<typename T>
-struct WeakGCSetHash {
-    // We only prune stale entries on Full GCs so we have to handle non-Live entries in the table.
-    static unsigned hash(const Weak<T>& p) { return PtrHash<T*>::hash(p.get()); }
-    static bool equal(const Weak<T>& a, const Weak<T>& b)
-    {
-        if (!a || !b)
-            return false;
-        return a.get() == b.get();
-    }
-    static constexpr bool safeToCompareToEmptyOrDeleted = false;
-};
-
-// FIXME: This doesn't currently accept WeakHandleOwners by default... it's probably not hard to add but it's not exactly clear how to handle multiple different handle owners for the same value.
-template<typename ValueArg, typename HashArg = WeakGCSetHash<ValueArg>, typename TraitsArg = WeakGCSetHashTraits<ValueArg>>
+template<typename ValueArg, typename HashArg = DefaultHash<Weak<ValueArg>>, typename TraitsArg = WeakGCSetHashTraits<ValueArg>>
 class WeakGCSet final : public WeakGCHashTable {
     WTF_MAKE_TZONE_ALLOCATED(WeakGCSet);
     using ValueType = Weak<ValueArg>;
@@ -68,40 +54,28 @@ public:
     using iterator = typename HashSetType::iterator;
     using const_iterator = typename HashSetType::const_iterator;
 
-    inline explicit WeakGCSet(VM&);
-    inline ~WeakGCSet() final;
+    explicit WeakGCSet(VM&);
+    ~WeakGCSet() final;
 
     void clear()
     {
         m_set.clear();
     }
 
-    AddResult add(ValueArg* key)
-    {
-        // Constructing a Weak shouldn't trigger a GC but add this ASSERT for good measure.
-        DisallowGC disallowGC;
-        return m_set.add(key);
-    }
-
-    template<typename HashTranslator, typename T>
-    ValueArg* ensureValue(T&& key, const Invocable<ValueType()> auto& functor)
+    template<typename HashTranslator, typename T, typename Functor>
+    ValueArg* ensureValue(T&& key, Functor&& functor)
     {
         // If functor invokes GC, GC can prune WeakGCSet, and manipulate HashSet while we are touching it in the ensure function.
         // The functor must not invoke GC.
         DisallowGC disallowGC;
         
-        auto result = m_set.template ensure<HashTranslator>(std::forward<T>(key), functor);
+        auto result = m_set.template ensure<HashTranslator>(std::forward<T>(key), std::forward<Functor>(functor));
         return result.iterator->get();
     }
 
-    // It's not safe to call into the VM or allocate an object while an iterator is open.
-    inline iterator begin() { return m_set.begin(); }
-    inline const_iterator begin() const { return m_set.begin(); }
-
-    inline iterator end() { return m_set.end(); }
-    inline const_iterator end() const { return m_set.end(); }
-
-    // FIXME: Add support for find/contains/remove from a ValueArg* via a HashTranslator.
+    inline iterator find(const ValueType& key);
+    inline const_iterator find(const ValueType& key) const;
+    inline bool contains(const ValueType&) const;
 
 private:
     void pruneStaleEntries() final;

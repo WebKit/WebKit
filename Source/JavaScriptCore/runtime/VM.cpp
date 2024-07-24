@@ -111,7 +111,6 @@
 #include "StructureChainInlines.h"
 #include "StructureInlines.h"
 #include "StructureStubInfo.h"
-#include "SubspaceInlines.h"
 #include "SymbolInlines.h"
 #include "SymbolTableInlines.h"
 #include "TestRunnerUtils.h"
@@ -128,6 +127,7 @@
 #include "VMInspector.h"
 #include "VariableEnvironment.h"
 #include "WaiterListManager.h"
+#include "WasmInstance.h"
 #include "WasmWorklist.h"
 #include "Watchdog.h"
 #include "WeakGCMapInlines.h"
@@ -152,10 +152,6 @@
 
 #if ENABLE(REGEXP_TRACING)
 #include "RegExp.h"
-#endif
-
-#if ENABLE(WEBASSEMBLY)
-#include "JSWebAssemblyInstance.h"
 #endif
 
 namespace JSC {
@@ -1065,12 +1061,8 @@ void VM::updateStackLimits()
         preCommitStackMemory(m_softStackLimit);
 #endif
 #if ENABLE(WEBASSEMBLY)
-        if (heap.m_webAssemblyInstanceSpace) {
-            heap.m_webAssemblyInstanceSpace->forEachLiveCell([&] (HeapCell* cell, HeapCell::Kind kind) {
-                ASSERT_UNUSED(kind, kind == HeapCell::JSCell);
-                static_cast<JSWebAssemblyInstance*>(cell)->updateSoftStackLimit(m_softStackLimit);
-            });
-        }
+        for (auto& instance : m_wasmInstances.values())
+            instance->updateSoftStackLimit(m_softStackLimit);
 #endif
     }
 }
@@ -1778,6 +1770,14 @@ void VM::invalidateStructureChainIntegrity(StructureChainIntegrityEvent)
     if (auto* megamorphicCache = this->megamorphicCache())
         megamorphicCache->bumpEpoch();
 }
+
+#if ENABLE(WEBASSEMBLY)
+void VM::registerWasmInstance(Wasm::Instance& instance)
+{
+    m_wasmInstances.add(instance);
+}
+#endif
+
 
 VM::DrainMicrotaskDelayScope::DrainMicrotaskDelayScope(VM& vm)
     : m_vm(&vm)

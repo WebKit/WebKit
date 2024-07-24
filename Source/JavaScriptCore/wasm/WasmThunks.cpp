@@ -36,6 +36,7 @@
 #include "ProbeContext.h"
 #include "ScratchRegisterAllocator.h"
 #include "WasmExceptionType.h"
+#include "WasmInstance.h"
 #include "WasmOperations.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -51,7 +52,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromWasmThunkGenerator(const
     // The thing that jumps here must move ExceptionType into the argumentGPR1 before jumping here.
     // We're allowed to use temp registers here. We are not allowed to use callee saves.
     jit.move(GPRInfo::wasmContextInstancePointer, GPRInfo::argumentGPR0);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::argumentGPR2);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, Instance::offsetOfVM()), GPRInfo::argumentGPR2);
     jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR2, VM::topEntryFrameOffset()), GPRInfo::argumentGPR2);
     jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(GPRInfo::argumentGPR2);
 
@@ -132,7 +133,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> catchInWasmThunkGenerator(const AbstractLo
 
     isWasmCallee.link(&jit);
     jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::codeBlock), GPRInfo::regT0);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::regT0);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, Instance::offsetOfVM()), GPRInfo::regT0);
 
     doneCases.link(&jit);
 
@@ -180,7 +181,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> catchInWasmThunkGenerator(const AbstractLo
 
     isWasmCallee.link(&jit);
     jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::codeBlock), GPRInfo::regT0);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::regT0);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, Instance::offsetOfVM()), GPRInfo::regT0);
 
     isJSCallee.link(&jit);
 

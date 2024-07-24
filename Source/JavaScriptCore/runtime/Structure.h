@@ -204,7 +204,7 @@ public:
 
     typedef JSCell Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
-    static constexpr uint8_t numberOfLowerTierPreciseCells = 0;
+    static constexpr uint8_t numberOfLowerTierCells = 0;
 
 #if ENABLE(STRUCTURE_ID_WITH_SHIFT)
     static constexpr size_t atomSize = 32;

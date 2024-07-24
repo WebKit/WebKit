@@ -46,9 +46,7 @@ IsoSubspace& IsoSubspacePerVM::isoSubspaceforHeap(Locker<Lock>&, JSC::Heap& heap
     auto result = m_subspacePerHeap.add(&heap, nullptr);
     if (result.isNewEntry) {
         SubspaceParameters params = m_subspaceParameters(heap);
-        constexpr bool usePreciseAllocationsOnly = false;
-        constexpr uint8_t numberOfLowerTierPreciseCells = 0;
-        result.iterator->value = new IsoSubspace(params.name, heap, *params.heapCellType, params.size, usePreciseAllocationsOnly, numberOfLowerTierPreciseCells);
+        result.iterator->value = new IsoSubspace(params.name, heap, *params.heapCellType, params.size, 0);
 
         Locker locker { heap.lock() };
         heap.perVMIsoSubspaces.append(this);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@
 #include "WasmCallee.h"
 #include "WasmCallingConvention.h"
 #include "WasmFunctionCodeBlockGenerator.h"
+#include "WasmInstance.h"
 #include "WasmLLIntBuiltin.h"
 #include "WasmLLIntGenerator.h"
 #include "WasmModuleInformation.h"
@@ -91,7 +92,7 @@ static inline bool shouldJIT(Wasm::IPIntCallee* callee, RequiredWasmJIT required
     return true;
 }
 
-static inline bool jitCompileAndSetHeuristics(Wasm::IPIntCallee* callee, JSWebAssemblyInstance* instance)
+static inline bool jitCompileAndSetHeuristics(Wasm::IPIntCallee* callee, Wasm::Instance* instance)
 {
     ASSERT(!instance->module().moduleInformation().usesSIMD(callee->functionIndex()));
 
@@ -470,7 +471,7 @@ WASM_IPINT_EXTERN_CPP_DECL(table_grow, int32_t tableIndex, EncodedJSValue fill, 
 WASM_IPINT_EXTERN_CPP_DECL_1P(current_memory)
 {
 #if CPU(ARM64) || CPU(X86_64)
-    size_t size = instance->memory()->memory().handle().size() >> 16;
+    size_t size = instance->memory()->handle().size() >> 16;
     WASM_RETURN_TWO(bitwise_cast<void*>(size), 0);
 #else
     UNUSED_PARAM(instance);
@@ -567,14 +568,14 @@ WASM_IPINT_EXTERN_CPP_DECL(table_size, int32_t tableIndex)
 #endif
 }
 
-static inline UGPRPair doWasmCall(JSWebAssemblyInstance* instance, unsigned functionIndex)
+static inline UGPRPair doWasmCall(Wasm::Instance* instance, unsigned functionIndex)
 {
     uint32_t importFunctionCount = instance->module().moduleInformation().importFunctionCount();
 
     CodePtr<WasmEntryPtrTag> codePtr;
 
     if (functionIndex < importFunctionCount) {
-        JSWebAssemblyInstance::ImportFunctionInfo* functionInfo = instance->importFunctionInfo(functionIndex);
+        Wasm::Instance::ImportFunctionInfo* functionInfo = instance->importFunctionInfo(functionIndex);
         codePtr = functionInfo->importFunctionStub;
     } else {
         // Target is a wasm function within the same instance

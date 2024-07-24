@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@
 #include "WasmCallee.h"
 #include "WasmCallingConvention.h"
 #include "WasmFunctionCodeBlockGenerator.h"
+#include "WasmInstance.h"
 #include "WasmLLIntBuiltin.h"
 #include "WasmLLIntGenerator.h"
 #include "WasmModuleInformation.h"
@@ -88,7 +89,7 @@ namespace JSC { namespace LLInt {
 #if ENABLE(WEBASSEMBLY_BBQJIT)
 enum class RequiredWasmJIT { Any, OMG };
 
-extern "C" void SYSV_ABI wasm_log_crash(CallFrame*, JSWebAssemblyInstance* instance)
+extern "C" void SYSV_ABI wasm_log_crash(CallFrame*, Wasm::Instance* instance)
 {
     dataLogLn("Reached LLInt code that should never have been executed.");
     dataLogLn("Module internal function count: ", instance->module().moduleInformation().internalFunctionCount());
@@ -118,7 +119,7 @@ static inline bool shouldJIT(Wasm::LLIntCallee* callee, RequiredWasmJIT required
     return true;
 }
 
-static inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, JSWebAssemblyInstance* instance)
+static inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, Wasm::Instance* instance)
 {
     ASSERT(!instance->module().moduleInformation().usesSIMD(callee->functionIndex()));
 
@@ -173,7 +174,7 @@ static inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, JSWebAs
     return !!callee->replacement(memoryMode);
 }
 
-static inline std::optional<Wasm::Plan::Error> jitCompileSIMDFunction(Wasm::LLIntCallee* callee, JSWebAssemblyInstance* instance)
+static inline std::optional<Wasm::Plan::Error> jitCompileSIMDFunction(Wasm::LLIntCallee* callee, Wasm::Instance* instance)
 {
     Wasm::LLIntTierUpCounter& tierUpCounter = callee->tierUpCounter();
 
@@ -665,7 +666,7 @@ WASM_SLOW_PATH_DECL(grow_memory)
     WASM_RETURN(Wasm::growMemory(instance, delta));
 }
 
-static inline UGPRPair doWasmCall(Register* partiallyConstructedCalleeFrame, JSWebAssemblyInstance* instance, unsigned functionIndex)
+static inline UGPRPair doWasmCall(Register* partiallyConstructedCalleeFrame, Wasm::Instance* instance, unsigned functionIndex)
 {
     uint32_t importFunctionCount = instance->module().moduleInformation().importFunctionCount();
 
@@ -673,7 +674,7 @@ static inline UGPRPair doWasmCall(Register* partiallyConstructedCalleeFrame, JSW
     EncodedJSValue boxedCallee = CalleeBits::encodeNullCallee();
 
     if (functionIndex < importFunctionCount) {
-        JSWebAssemblyInstance::ImportFunctionInfo* functionInfo = instance->importFunctionInfo(functionIndex);
+        Wasm::Instance::ImportFunctionInfo* functionInfo = instance->importFunctionInfo(functionIndex);
         codePtr = functionInfo->importFunctionStub;
     } else {
         // Target is a wasm function within the same instance
@@ -696,7 +697,7 @@ WASM_SLOW_PATH_DECL(call)
     return doWasmCall(partiallyConstructedCalleeFrame, instance, instruction.m_functionIndex);
 }
 
-static inline UGPRPair doWasmCallIndirect(Register* partiallyConstructedCalleeFrame, CallFrame* callFrame, JSWebAssemblyInstance* instance, unsigned functionIndex, unsigned tableIndex, unsigned typeIndex)
+static inline UGPRPair doWasmCallIndirect(Register* partiallyConstructedCalleeFrame, CallFrame* callFrame, Wasm::Instance* instance, unsigned functionIndex, unsigned tableIndex, unsigned typeIndex)
 {
     Wasm::FuncRefTable* table = instance->table(tableIndex)->asFuncrefTable();
 
@@ -730,7 +731,7 @@ WASM_SLOW_PATH_DECL(call_indirect)
     return doWasmCallIndirect(partiallyConstructedCalleeFrame, callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_typeIndex);
 }
 
-static inline UGPRPair doWasmCallRef(Register* partiallyConstructedCalleeFrame, CallFrame* callFrame, JSWebAssemblyInstance* callerInstance, JSValue targetReference, unsigned typeIndex)
+static inline UGPRPair doWasmCallRef(Register* partiallyConstructedCalleeFrame, CallFrame* callFrame, Wasm::Instance* callerInstance, JSValue targetReference, unsigned typeIndex)
 {
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(callerInstance);
@@ -744,7 +745,7 @@ static inline UGPRPair doWasmCallRef(Register* partiallyConstructedCalleeFrame, 
     ASSERT(referenceAsObject->inherits<WebAssemblyFunctionBase>());
     auto* wasmFunction = jsCast<WebAssemblyFunctionBase*>(referenceAsObject);
     Wasm::WasmToWasmImportableFunction function = wasmFunction->importableFunction();
-    JSWebAssemblyInstance* calleeInstance = wasmFunction->instance();
+    Wasm::Instance* calleeInstance = &wasmFunction->instance()->instance();
 
     Register& calleeStackSlot = partiallyConstructedCalleeFrame[static_cast<int>(CallFrameSlot::callee)];
     ASSERT(calleeStackSlot.unboxedInt64() == 0xBEEF);
@@ -817,7 +818,7 @@ WASM_SLOW_PATH_DECL(call_builtin)
 
     switch (builtin) {
     case Wasm::LLIntBuiltin::CurrentMemory: {
-        size_t size = instance->memory()->memory().handle().size() >> 16;
+        size_t size = instance->memory()->handle().size() >> 16;
         gprStart[0] = static_cast<EncodedJSValue>(size);
         WASM_END();
     }
@@ -1318,7 +1319,7 @@ WASM_SLOW_PATH_DECL(i64_trunc_sat_f64_s)
 }
 #endif
 
-extern "C" UGPRPair SYSV_ABI slow_path_wasm_throw_exception(CallFrame* callFrame, JSWebAssemblyInstance* instance, Wasm::ExceptionType exceptionType)
+extern "C" UGPRPair SYSV_ABI slow_path_wasm_throw_exception(CallFrame* callFrame, Wasm::Instance* instance, Wasm::ExceptionType exceptionType)
 {
     SlowPathFrameTracer tracer(instance->vm(), callFrame);
     WASM_RETURN_TWO(Wasm::throwWasmToJSException(callFrame, exceptionType, instance), nullptr);

@@ -69,7 +69,7 @@ Structure* JSWebAssemblyMemory::createStructure(VM& vm, JSGlobalObject* globalOb
 
 JSWebAssemblyMemory::JSWebAssemblyMemory(VM& vm, Structure* structure)
     : Base(vm, structure)
-    , m_memory(Wasm::Memory::create(vm))
+    , m_memory(Wasm::Memory::create())
 {
 }
 

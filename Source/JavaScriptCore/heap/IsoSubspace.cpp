@@ -36,19 +36,14 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IsoSubspace);
 
-IsoSubspace::IsoSubspace(CString name, JSC::Heap& heap, const HeapCellType& heapCellType, size_t size, bool preciseOnly, uint8_t numberOfLowerTierPreciseCells, std::unique_ptr<IsoMemoryAllocatorBase>&& allocator)
+IsoSubspace::IsoSubspace(CString name, JSC::Heap& heap, const HeapCellType& heapCellType, size_t size, uint8_t numberOfLowerTierCells, std::unique_ptr<IsoMemoryAllocatorBase>&& allocator)
     : Subspace(name, heap)
     , m_directory(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size))
     , m_isoAlignedMemoryAllocator(allocator ? WTFMove(allocator) : makeUnique<IsoAlignedMemoryAllocator>(name))
 {
-    if (preciseOnly)
-        m_isPreciseOnly = true;
-    else {
-        m_remainingLowerTierPreciseCount = numberOfLowerTierPreciseCells;
-        ASSERT(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size) == cellSize());
-        ASSERT(m_remainingLowerTierPreciseCount <= MarkedBlock::maxNumberOfLowerTierPreciseCells);
-    }
-
+    m_remainingLowerTierCellCount = numberOfLowerTierCells;
+    ASSERT(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size) == cellSize());
+    ASSERT(numberOfLowerTierCells <= MarkedBlock::maxNumberOfLowerTierCells);
     m_isIsoSubspace = true;
     initialize(heapCellType, m_isoAlignedMemoryAllocator.get());
 
@@ -85,7 +80,7 @@ void IsoSubspace::didBeginSweepingToFreeList(MarkedBlock::Handle* block)
         });
 }
 
-void* IsoSubspace::tryAllocatePreciseOrLowerTierPrecise(size_t size)
+void* IsoSubspace::tryAllocateFromLowerTier()
 {
     auto revive = [&] (PreciseAllocation* allocation) {
         allocation->setIndexInSpace(m_space.m_preciseAllocations.size());
@@ -98,35 +93,28 @@ void* IsoSubspace::tryAllocatePreciseOrLowerTierPrecise(size_t size)
         return allocation->cell();
     };
 
-    if (UNLIKELY(m_isPreciseOnly)) {
-        PreciseAllocation* allocation = PreciseAllocation::tryCreate(m_space.heap(), size, this, 0);
-        return allocation ? revive(allocation) : nullptr;
-    }
-
-    ASSERT_WITH_MESSAGE(cellSize() == size, "non-preciseOnly IsoSubspaces shouldn't have variable size");
-    if (!m_lowerTierPreciseFreeList.isEmpty()) {
-        PreciseAllocation* allocation = &*m_lowerTierPreciseFreeList.begin();
+    if (!m_lowerTierFreeList.isEmpty()) {
+        PreciseAllocation* allocation = &*m_lowerTierFreeList.begin();
         allocation->remove();
         return revive(allocation);
     }
-    if (m_remainingLowerTierPreciseCount) {
-        PreciseAllocation* allocation = PreciseAllocation::tryCreateForLowerTierPrecise(m_space.heap(), size, this, --m_remainingLowerTierPreciseCount);
+    if (m_remainingLowerTierCellCount) {
+        PreciseAllocation* allocation = PreciseAllocation::tryCreateForLowerTier(m_space.heap(), cellSize(), this, --m_remainingLowerTierCellCount);
         if (allocation)
             return revive(allocation);
     }
     return nullptr;
 }
 
-void IsoSubspace::sweepLowerTierPreciseCell(PreciseAllocation* preciseAllocation)
+void IsoSubspace::sweepLowerTierCell(PreciseAllocation* preciseAllocation)
 {
-    ASSERT(!m_isPreciseOnly);
-    preciseAllocation = preciseAllocation->reuseForLowerTierPrecise();
-    m_lowerTierPreciseFreeList.append(preciseAllocation);
+    preciseAllocation = preciseAllocation->reuseForLowerTier();
+    m_lowerTierFreeList.append(preciseAllocation);
 }
 
-void IsoSubspace::destroyLowerTierPreciseFreeList()
+void IsoSubspace::destroyLowerTierFreeList()
 {
-    m_lowerTierPreciseFreeList.forEach([&](PreciseAllocation* allocation) {
+    m_lowerTierFreeList.forEach([&](PreciseAllocation* allocation) {
         allocation->destroy();
     });
 }

@@ -271,7 +271,7 @@ private:
     , name ISO_SUBSPACE_INIT(*this, heapCellType, type)
 
 #define INIT_SERVER_STRUCTURE_ISO_SUBSPACE(name, heapCellType, type) \
-    , name("IsoSubspace" #name, *this, heapCellType, WTF::roundUpToMultipleOf<type::atomSize>(sizeof(type)), type::usePreciseAllocationsOnly, type::numberOfLowerTierPreciseCells, makeUnique<StructureAlignedMemoryAllocator>("Structure"))
+    , name("IsoSubspace" #name, *this, heapCellType, WTF::roundUpToMultipleOf<type::atomSize>(sizeof(type)), type::numberOfLowerTierCells, makeUnique<StructureAlignedMemoryAllocator>("Structure"))
 
 Heap::Heap(VM& vm, HeapType heapType)
     : m_heapType(heapType)

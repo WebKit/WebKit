@@ -99,7 +99,6 @@ public:
     virtual void didBeginSweepingToFreeList(MarkedBlock::Handle*);
 
     bool isIsoSubspace() const { return m_isIsoSubspace; }
-    bool isPreciseOnly() const { return m_isPreciseOnly; }
 
 protected:
     Subspace(CString name, Heap&);
@@ -116,8 +115,7 @@ protected:
     SentinelLinkedList<PreciseAllocation, BasicRawSentinelNode<PreciseAllocation>> m_preciseAllocations;
 
     bool m_isIsoSubspace { false };
-    bool m_isPreciseOnly { false };
-    uint8_t m_remainingLowerTierPreciseCount { 0 }; // Lower tier is a precise allocation but we use the term lower to avoid confusion with precise-only.
+    uint8_t m_remainingLowerTierCellCount { 0 };
 
     Subspace* m_nextSubspaceInAlignedMemoryAllocator { nullptr };
 

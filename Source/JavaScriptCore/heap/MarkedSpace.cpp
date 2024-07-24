@@ -198,7 +198,7 @@ void MarkedSpace::freeMemory()
         allocation->destroy();
     forEachSubspace([&](Subspace& subspace) {
         if (subspace.isIsoSubspace())
-            static_cast<IsoSubspace&>(subspace).destroyLowerTierPreciseFreeList();
+            static_cast<IsoSubspace&>(subspace).destroyLowerTierFreeList();
         return IterationStatus::Continue;
     });
 }
@@ -236,8 +236,8 @@ void MarkedSpace::sweepPreciseAllocations()
         if (allocation->isEmpty()) {
             if (auto* set = preciseAllocationSet())
                 set->remove(allocation->cell());
-            if (allocation->isLowerTierPrecise())
-                static_cast<IsoSubspace*>(allocation->subspace())->sweepLowerTierPreciseCell(allocation);
+            if (allocation->isLowerTier())
+                static_cast<IsoSubspace*>(allocation->subspace())->sweepLowerTierCell(allocation);
             else {
                 m_capacity -= allocation->cellSize();
                 allocation->destroy();

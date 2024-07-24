@@ -38,10 +38,10 @@ ALWAYS_INLINE void* IsoSubspace::allocate(VM& vm, size_t cellSize, GCDeferralCon
 
 inline void IsoSubspace::clearIsoCellSetBit(PreciseAllocation* preciseAllocation)
 {
-    unsigned lowerTierPreciseIndex = preciseAllocation->lowerTierPreciseIndex();
+    unsigned lowerTierIndex = preciseAllocation->lowerTierIndex();
     m_cellSets.forEach(
         [&](IsoCellSet* set) {
-            set->clearLowerTierPreciseCell(lowerTierPreciseIndex);
+            set->clearLowerTierCell(lowerTierIndex);
         });
 }
 
@@ -56,9 +56,9 @@ inline void IsoSubspace::sweep()
 }
 
 template<typename Func>
-void IsoSubspace::forEachLowerTierPreciseFreeListedPreciseAllocation(const Func& func)
+void IsoSubspace::forEachLowerTierFreeListedPreciseAllocation(const Func& func)
 {
-    m_lowerTierPreciseFreeList.forEach(func);
+    m_lowerTierFreeList.forEach(func);
 }
 
 } // namespace JSC

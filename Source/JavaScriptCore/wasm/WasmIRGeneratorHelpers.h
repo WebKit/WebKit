@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include "JSWebAssemblyInstance.h"
 #include "LinkBuffer.h"
 #include "ProbeContext.h"
+#include "WasmInstance.h"
 #include "WasmOperations.h"
 
 namespace JSC { namespace Wasm {
@@ -139,11 +140,11 @@ static inline void computeExceptionHandlerLocations(Vector<CodeLocationLabel<Exc
 
 static inline void emitRethrowImpl(CCallHelpers& jit)
 {
-    // JSWebAssemblyInstance in argumentGPR0
+    // Instance in argumentGPR0
     // exception pointer in argumentGPR1
 
     GPRReg scratch = GPRInfo::nonPreservedNonArgumentGPR0;
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, JSWebAssemblyInstance::offsetOfVM()), scratch);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, Instance::offsetOfVM()), scratch);
     jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(scratch);
 
     jit.prepareWasmCallOperation(GPRInfo::argumentGPR0);
@@ -154,11 +155,11 @@ static inline void emitRethrowImpl(CCallHelpers& jit)
 static inline void emitThrowImpl(CCallHelpers& jit, unsigned exceptionIndex)
 {
     JIT_COMMENT(jit, "throw impl, index: ", exceptionIndex);
-    // JSWebAssemblyInstance in argumentGPR0
+    // Instance in argumentGPR0
     // arguments to the exception off of stack pointer
 
     GPRReg scratch = GPRInfo::nonPreservedNonArgumentGPR0;
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, JSWebAssemblyInstance::offsetOfVM()), scratch);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, Instance::offsetOfVM()), scratch);
     jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(scratch);
 
     jit.move(MacroAssembler::TrustedImm32(exceptionIndex), GPRInfo::argumentGPR1);
@@ -177,7 +178,7 @@ static inline void buildEntryBufferForCatch(Probe::Context& context)
     CallSiteIndex callSiteIndex = callFrame->callSiteIndex();
     OptimizingJITCallee* callee = bitwise_cast<OptimizingJITCallee*>(callFrame->callee().asNativeCallee());
     const StackMap& stackmap = callee->stackmap(callSiteIndex);
-    JSWebAssemblyInstance* instance = context.gpr<JSWebAssemblyInstance*>(GPRInfo::wasmContextInstancePointer);
+    Instance* instance = context.gpr<Instance*>(GPRInfo::wasmContextInstancePointer);
     EncodedJSValue exception = context.gpr<EncodedJSValue>(GPRInfo::returnValueGPR);
     uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(stackmap.size() * valueSize * 8);
     loadValuesIntoBuffer(context, stackmap, buffer, savedFPWidth);

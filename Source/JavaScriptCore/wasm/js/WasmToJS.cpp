@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@
 #include "WasmCallingConvention.h"
 #include "WasmContext.h"
 #include "WasmExceptionType.h"
+#include "WasmInstance.h"
 #include "WasmOperations.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/FunctionTraits.h>
@@ -47,8 +48,8 @@ using JIT = CCallHelpers;
 
 static void materializeImportJSCell(JIT& jit, unsigned importIndex, GPRReg result)
 {
-    // We're calling out of the current WebAssembly.Instance. That JSWebAssemblyInstance has a list of all its import functions.
-    jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfImportFunction(importIndex)), result);
+    // We're calling out of the current WebAssembly.Instance. That Instance has a list of all its import functions.
+    jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfImportFunction(importIndex)), result);
 }
 
 static Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> handleBadImportTypeUse(JIT& jit, unsigned importIndex, Wasm::ExceptionType exceptionType)
@@ -313,7 +314,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(TypeIn
                 jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
                 jit.setupArguments<Operation>(GPRInfo::wasmContextInstancePointer, valueJSR);
                 jit.callOperation<OperationPtrTag>(operationConvertToBigInt);
-                jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
+                jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
                 exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::Address(GPRInfo::nonPreservedNonReturnGPR, VM::exceptionOffset())));
                 jit.storeValue(JSRInfo::returnValueJSR, calleeFrame.withOffset(calleeFrameOffset));
             }
@@ -335,7 +336,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(TypeIn
 #if USE(JSVALUE32_64)
     jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
 #endif
-    jit.addPtr(JIT::TrustedImm32(JSWebAssemblyInstance::offsetOfCallLinkInfo(importIndex)), GPRInfo::wasmContextInstancePointer, BaselineJITRegisters::Call::callLinkInfoGPR);
+    jit.addPtr(JIT::TrustedImm32(Instance::offsetOfCallLinkInfo(importIndex)), GPRInfo::wasmContextInstancePointer, BaselineJITRegisters::Call::callLinkInfoGPR);
     CallLinkInfo::emitDataICFastPath(jit);
 
     if (signature.returnCount() == 1) {
@@ -348,7 +349,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(TypeIn
             jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
             jit.setupArguments<decltype(operationConvertToI64)>(GPRInfo::wasmContextInstancePointer, JSRInfo::returnValueJSR);
             jit.callOperation<OperationPtrTag>(operationConvertToI64);
-            jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
             exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::Address(GPRInfo::nonPreservedNonReturnGPR, VM::exceptionOffset())));
             jit.moveValueRegs(JSRInfo::returnValueJSR, dest);
             break;
@@ -367,7 +368,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(TypeIn
             jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
             jit.setupArguments<decltype(operationConvertToI32)>(GPRInfo::wasmContextInstancePointer, JSRInfo::returnValueJSR);
             jit.callOperation<OperationPtrTag>(operationConvertToI32);
-            jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
             exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::Address(GPRInfo::nonPreservedNonReturnGPR, VM::exceptionOffset())));
             jit.move(JSRInfo::returnValueJSR.payloadGPR(), destJSR.payloadGPR());
 #if USE(JSVALUE32_64)
@@ -399,7 +400,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(TypeIn
             jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
             jit.setupArguments<decltype(operationConvertToF32)>(GPRInfo::wasmContextInstancePointer, JSRInfo::returnValueJSR);
             jit.callOperation<OperationPtrTag>(operationConvertToF32);
-            jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
             exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::Address(GPRInfo::nonPreservedNonReturnGPR, VM::exceptionOffset())));
             jit.moveDouble(FPRInfo::returnValueFPR , dest);
             done.link(&jit);
@@ -427,7 +428,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(TypeIn
             jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
             jit.setupArguments<decltype(operationConvertToF64)>(GPRInfo::wasmContextInstancePointer, JSRInfo::returnValueJSR);
             jit.callOperation<OperationPtrTag>(operationConvertToF64);
-            jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
             exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::Address(GPRInfo::nonPreservedNonReturnGPR, VM::exceptionOffset())));
             jit.moveDouble(FPRInfo::returnValueFPR, dest);
             done.link(&jit);
@@ -442,14 +443,14 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(TypeIn
                     jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
                     jit.setupArguments<decltype(operationConvertToFuncref)>(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImmPtr(&typeDefinition), JSRInfo::returnValueJSR);
                     jit.callOperation<OperationPtrTag>(operationConvertToFuncref);
-                    jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
+                    jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
                     exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::Address(GPRInfo::nonPreservedNonReturnGPR, VM::exceptionOffset())));
                 } else {
                     ASSERT(Options::useWebAssemblyGC());
                     jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
                     jit.setupArguments<decltype(operationConvertToAnyref)>(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImmPtr(&typeDefinition), JSRInfo::returnValueJSR);
                     jit.callOperation<OperationPtrTag>(operationConvertToAnyref);
-                    jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
+                    jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
                     exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::Address(GPRInfo::nonPreservedNonReturnGPR, VM::exceptionOffset())));
                 }
                 jit.moveValueRegs(JSRInfo::returnValueJSR, wasmCallInfo.results[0].location.jsr());
@@ -471,7 +472,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(TypeIn
         if constexpr (!!maxFrameExtentForSlowPathCall)
             jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
 
-        jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfVM()), GPRInfo::nonPreservedNonReturnGPR);
         exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::Address(GPRInfo::nonPreservedNonReturnGPR, VM::exceptionOffset())));
 
         for (unsigned i = 0; i < signature.returnCount(); ++i) {
@@ -491,7 +492,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(TypeIn
 
     if (!exceptionChecks.empty()) {
         exceptionChecks.link(&jit);
-        jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::argumentGPR0);
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfVM()), GPRInfo::argumentGPR0);
         jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(GPRInfo::argumentGPR0);
         jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
         jit.setupArguments<decltype(operationWasmUnwind)>(GPRInfo::wasmContextInstancePointer);
@@ -510,7 +511,7 @@ void emitThrowWasmToJSException(CCallHelpers& jit, GPRReg wasmInstance, Wasm::Ex
 {
     ASSERT(wasmInstance != GPRInfo::argumentGPR2);
     ASSERT(wasmInstance != InvalidGPRReg);
-    jit.loadPtr(CCallHelpers::Address(wasmInstance, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::argumentGPR2);
+    jit.loadPtr(CCallHelpers::Address(wasmInstance, Wasm::Instance::offsetOfVM()), GPRInfo::argumentGPR2);
     jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(GPRInfo::argumentGPR2);
 
     if (wasmInstance != GPRInfo::argumentGPR0)

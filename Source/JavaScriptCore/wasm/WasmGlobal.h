@@ -41,6 +41,8 @@ class JSWebAssemblyGlobal;
 
 namespace Wasm {
 
+class Instance;
+
 class Global final : public ThreadSafeRefCounted<Global> {
     WTF_MAKE_NONCOPYABLE(Global);
     WTF_MAKE_TZONE_ALLOCATED(Global);

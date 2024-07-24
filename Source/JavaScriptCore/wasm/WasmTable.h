@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@ class JSWebAssemblyTable;
 
 namespace Wasm {
 
+class Instance;
 class FuncRefTable;
 
 class Table : public ThreadSafeRefCounted<Table> {
@@ -126,10 +127,10 @@ public:
 
     JS_EXPORT_PRIVATE ~FuncRefTable();
 
-    // call_indirect needs to do an Instance check to potentially context switch when calling a function to another instance. We can hold raw pointers to JSWebAssemblyInstance here because the js ensures that Table keeps all the instances alive.
+    // call_indirect needs to do an Instance check to potentially context switch when calling a function to another instance. We can hold raw pointers to Instance here because the js ensures that Table keeps all the instances alive. We couldn't hold a Ref here because it would cause cycles.
     struct Function {
         WasmToWasmImportableFunction m_function;
-        JSWebAssemblyInstance* m_instance { nullptr };
+        Instance* m_instance { nullptr };
         WriteBarrier<Unknown> m_value { NullWriteBarrierTag };
 
         static constexpr ptrdiff_t offsetOfFunction() { return OBJECT_OFFSETOF(Function, m_function); }
@@ -137,7 +138,7 @@ public:
         static constexpr ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(Function, m_value); }
     };
 
-    void setFunction(uint32_t, JSObject*, WasmToWasmImportableFunction, JSWebAssemblyInstance*);
+    void setFunction(uint32_t, JSObject*, WasmToWasmImportableFunction, Instance*);
     const Function& function(uint32_t) const;
     void copyFunction(const FuncRefTable* srcTable, uint32_t dstIndex, uint32_t srcIndex);
 
