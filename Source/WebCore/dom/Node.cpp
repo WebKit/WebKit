@@ -82,7 +82,7 @@
 #include "TemplateContentDocumentFragment.h"
 #include "TextEvent.h"
 #include "TextManipulationController.h"
-#include "WebCoreOpaqueRoot.h"
+#include "TouchEvent.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WheelEvent.h"
 #include "XMLNSNames.h"
