@@ -54,7 +54,19 @@ void GStreamerIncomingTrackProcessor::configure(ThreadSafeWeakPtr<GStreamerMedia
     m_data.caps = WTFMove(caps);
 
     g_object_get(m_pad.get(), "transceiver", &m_data.transceiver.outPtr(), nullptr);
-    retrieveMediaStreamAndTrackIdFromSDP();
+
+    auto structure = gst_caps_get_structure(m_data.caps.get(), 0);
+    if (auto ssrc = gstStructureGet<unsigned>(structure, "ssrc"_s)) {
+        auto msIdAttributeName = makeString("ssrc-"_s, *ssrc, "-msid"_s);
+        auto msIdAttribute = gst_structure_get_string(structure, msIdAttributeName.ascii().data());
+        auto components = String::fromUTF8(msIdAttribute).split(' ');
+        if (components.size() == 2)
+            m_sdpMsIdAndTrackId = { components[0], components[1] };
+    }
+
+    if (m_sdpMsIdAndTrackId.second.isEmpty())
+        retrieveMediaStreamAndTrackIdFromSDP();
+
     m_data.mediaStreamId = mediaStreamIdFromPad();
 
     if (!m_sdpMsIdAndTrackId.second.isEmpty())
@@ -130,8 +142,10 @@ GRefPtr<GstElement> GStreamerIncomingTrackProcessor::incomingTrackProcessor()
     if (m_data.type == RealtimeMediaSource::Type::Audio)
         return createParser();
 
-    GST_DEBUG_OBJECT(m_bin.get(), "Requesting a key-frame");
-    gst_pad_send_event(m_pad.get(), gst_video_event_new_upstream_force_key_unit(GST_CLOCK_TIME_NONE, TRUE, 1));
+    if (m_data.type == RealtimeMediaSource::Type::Video) {
+        GST_DEBUG_OBJECT(m_bin.get(), "Requesting a key-frame");
+        gst_pad_send_event(m_pad.get(), gst_video_event_new_upstream_force_key_unit(GST_CLOCK_TIME_NONE, TRUE, 1));
+    }
 
     bool forceEarlyVideoDecoding = !g_strcmp0(g_getenv("WEBKIT_GST_WEBRTC_FORCE_EARLY_VIDEO_DECODING"), "1");
     GST_DEBUG_OBJECT(m_bin.get(), "Configuring for input caps: %" GST_PTR_FORMAT "%s", m_data.caps.get(), forceEarlyVideoDecoding ? " and early decoding" : "");
