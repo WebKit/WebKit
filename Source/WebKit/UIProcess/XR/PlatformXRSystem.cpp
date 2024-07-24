@@ -139,7 +139,8 @@ void PlatformXRSystem::requestPermissionOnSessionFeatures(const WebCore::Securit
                 protectedThis->invalidateImmersiveSessionState();
                 completionHandler(WTFMove(grantedFeatures));
             }
-        }
+        } else
+            completionHandler(WTFMove(grantedFeatures));
     });
 }
 
