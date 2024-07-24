@@ -75,14 +75,6 @@ LibWebRTCProvider::~LibWebRTCProvider()
 }
 
 #if !PLATFORM(COCOA)
-void LibWebRTCProvider::registerWebKitVP9Decoder()
-{
-}
-
-void LibWebRTCProvider::registerWebKitVP8Decoder()
-{
-}
-
 void WebRTCProvider::setH264HardwareEncoderAllowed(bool)
 {
 }

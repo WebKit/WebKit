@@ -39,6 +39,8 @@
 #import "PlatformStrategies.h"
 #import "SharedBuffer.h"
 #import "VP9UtilitiesCocoa.h"
+#import "WebKitVP8Decoder.h"
+#import "WebKitVP9Decoder.h"
 #import <pal/SessionID.h>
 #import <pal/spi/cocoa/AudioToolboxSPI.h>
 #import <wtf/BlockObjCExceptions.h>

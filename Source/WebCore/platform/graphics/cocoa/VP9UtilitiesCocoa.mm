@@ -125,16 +125,6 @@ static ResolutionCategory resolutionCategory(const FloatSize& size)
     return ResolutionCategory::R_480p;
 }
 
-void registerWebKitVP9Decoder()
-{
-    LibWebRTCProvider::registerWebKitVP9Decoder();
-}
-
-void registerWebKitVP8Decoder()
-{
-    LibWebRTCProvider::registerWebKitVP8Decoder();
-}
-
 void registerSupplementalVP9Decoder()
 {
     if (!VideoToolboxLibrary(true))

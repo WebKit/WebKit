@@ -50,6 +50,8 @@
 #include <WebCore/MemoryRelease.h>
 #include <WebCore/NowPlayingManager.h>
 #include <WebCore/RuntimeApplicationChecks.h>
+#include <WebCore/WebKitVP8Decoder.h>
+#include <WebCore/WebKitVP9Decoder.h>
 #include <wtf/Algorithms.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/Language.h>

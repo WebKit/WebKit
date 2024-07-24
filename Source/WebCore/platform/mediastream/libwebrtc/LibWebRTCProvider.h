@@ -69,9 +69,6 @@ public:
 
     virtual ~LibWebRTCProvider();
 
-    static void registerWebKitVP9Decoder();
-    static void registerWebKitVP8Decoder();
-
     static void setRTCLogging(WTFLogLevel);
 
     virtual void setEnableWebRTCEncryption(bool);
