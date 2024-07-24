@@ -28,13 +28,11 @@
 
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
-#include "HTMLScriptElement.h"
+#include "HTMLElement.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSTrustedScript.h"
 #include "LocalDOMWindow.h"
-#include "Node.h"
 #include "SVGNames.h"
-#include "Text.h"
 #include "TrustedTypePolicy.h"
 #include "TrustedTypePolicyFactory.h"
 #include "WindowOrWorkerGlobalScopeTrustedTypes.h"
@@ -302,30 +300,6 @@ ExceptionOr<String> requireTrustedTypesForPreNavigationCheckPasses(ScriptExecuti
     return String(newURL.isValid()
         ? newURL.string()
         : nullString());
-}
-
-ExceptionOr<RefPtr<Text>> processNodeOrStringAsTrustedType(Ref<Document> document, RefPtr<Node> parent, std::variant<RefPtr<Node>, String, RefPtr<TrustedScript>> variant)
-{
-    RefPtr<Text> text;
-    if (std::holds_alternative<String>(variant))
-        text = Text::create(document, WTFMove(std::get<String>(variant)));
-    else if (std::holds_alternative<RefPtr<Node>>(variant)) {
-        if (RefPtr textNode = dynamicDowncast<Text>(std::get<RefPtr<Node>>(variant)))
-            text = textNode;
-    }
-
-    if (text) {
-        if (UNLIKELY(is<HTMLScriptElement>(parent))) {
-            auto holder = trustedTypeCompliantString(TrustedType::TrustedScript, *document->scriptExecutionContext(), text->wholeText(), "HTMLScriptElement text"_s);
-            if (holder.hasException())
-                return holder.releaseException();
-
-            text->replaceWholeText(holder.releaseReturnValue());
-        }
-    } else if (std::holds_alternative<RefPtr<TrustedScript>>(variant))
-        text = Text::create(document, std::get<RefPtr<TrustedScript>>(variant)->toString());
-
-    return text;
 }
 
 ExceptionOr<bool> canCompile(ScriptExecutionContext& scriptExecutionContext, JSC::CompilationType compilationType, String codeString, JSC::JSValue bodyArgument)
