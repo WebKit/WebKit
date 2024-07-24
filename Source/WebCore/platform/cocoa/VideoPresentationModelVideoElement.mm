@@ -219,13 +219,15 @@ void VideoPresentationModelVideoElement::waitForPreparedForInlineThen(WTF::Funct
 
 void VideoPresentationModelVideoElement::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
 {
+    if (!m_videoElement)
+        return;
+
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, mode, ", finishedWithMedia: ", finishedWithMedia);
     UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, &m_videoElement->document());
 
-    if (m_videoElement)
-        m_videoElement->setPresentationMode(HTMLVideoElement::toPresentationMode(mode));
+    m_videoElement->setPresentationMode(HTMLVideoElement::toPresentationMode(mode));
 
-    if (m_videoElement && finishedWithMedia && mode == MediaPlayer::VideoFullscreenModeNone) {
+    if (finishedWithMedia && mode == MediaPlayer::VideoFullscreenModeNone) {
         if (m_videoElement->document().isMediaDocument()) {
             if (auto* window = m_videoElement->document().domWindow())
                 window->history().back();
