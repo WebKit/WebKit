@@ -1,0 +1,18 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<body>
+<p>This test passes if it does not crash.</p>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+onload = () => {
+    if (window.IPC) {
+        IPC.sendMessage('UI', 0, IPC.messages.WebProcessProxy_DidDestroyUserGestureToken.name, [
+            {type: 'uint64_t', value: IPC.webPageProxyID},
+            {type: 'uint64_t', value: 0xffffffffffffffffn},
+            {type: 'uint64_t', value: 0xffffffffffffffffn},
+        ]);
+    }
+}
+</script>
+</body>
