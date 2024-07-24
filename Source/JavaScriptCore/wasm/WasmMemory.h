@@ -30,7 +30,6 @@
 #include "ArrayBuffer.h"
 #include "MemoryMode.h"
 #include "PageCount.h"
-#include "WeakGCSet.h"
 
 #include <wtf/CagedPtr.h>
 #include <wtf/Expected.h>
