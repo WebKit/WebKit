@@ -90,7 +90,7 @@ jobs:
       - name: Run
         env:
           ICU_INCLUDE_DIRS: ${{matrix.brew_prefix}}/icu4c/include
-          LDFLAGS: "${{env.LDFLAGS}} -L${{matrix.brew_prefix}}/llvm/lib/c++ -Wl,-rpath,${{matrix.brew_prefix}}/llvm/lib/c++"
+          LDFLAGS: "${{env.LDFLAGS}} "
           CC: "${{matrix.brew_prefix}}/llvm@${{env.LLVM_VERSION}}/bin/clang"
           CXX: "${{matrix.brew_prefix}}/llvm@${{env.LLVM_VERSION}}/bin/clang++"
           RANLIB: "${{matrix.brew_prefix}}/llvm@${{env.LLVM_VERSION}}/bin/llvm-ranlib"
@@ -98,7 +98,7 @@ jobs:
           CMAKE_C_COMPILER: "${{matrix.brew_prefix}}/llvm@${{env.LLVM_VERSION}}/bin/clang"
           CMAKE_CXX_COMPILER: "${{matrix.brew_prefix}}/llvm@${{env.LLVM_VERSION}}/bin/clang++"
           CMAKE_C_FLAGS: " -fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -fvisibility-inlines-hidden -O3 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -faddrsig "
-          CMAKE_CXX_FLAGS: " -I${{matrix.brew_prefix}}/llvm/include -fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -fvisibility-inlines-hidden -O3 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -faddrsig -fno-c++-static-destructors "
+          CMAKE_CXX_FLAGS: " -fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -fvisibility-inlines-hidden -O3 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -faddrsig -fno-c++-static-destructors "
           CMAKE_OSX_DEPLOYMENT_TARGET: "13.0"
           CMAKE_BUILD_TYPE: ${{matrix.CMAKE_BUILD_TYPE}}
           PACKAGE_JSON_ARCH: ${{matrix.package_json_arch}}
