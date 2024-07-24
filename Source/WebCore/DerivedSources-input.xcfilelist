@@ -1778,6 +1778,7 @@ $(PROJECT_DIR)/page/DOMWindow.idl
 $(PROJECT_DIR)/page/EventSource.idl
 $(PROJECT_DIR)/page/FragmentDirective.idl
 $(PROJECT_DIR)/page/History.idl
+$(PROJECT_DIR)/page/IsLoggedIn.idl
 $(PROJECT_DIR)/page/IntersectionObserver.idl
 $(PROJECT_DIR)/page/IntersectionObserverCallback.idl
 $(PROJECT_DIR)/page/IntersectionObserverEntry.idl

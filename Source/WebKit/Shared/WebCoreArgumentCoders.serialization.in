@@ -1804,6 +1804,12 @@ enum class WebCore::RotationDirection : bool
 [Nested] enum class WebCore::MockContentFilterSettings::Decision : bool
 #endif
 
+header: <WebCore/IsLoggedIn.h>
+enum class WebCore::IsLoggedIn : uint8_t {
+    LoggedOut,
+    LoggedIn
+};
+
 header: <WebCore/AutoplayEvent.h>
 enum class WebCore::AutoplayEvent : uint8_t {
     DidPreventMediaFromPlaying,

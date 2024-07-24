@@ -1377,6 +1377,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/EventSource.idl
     page/FragmentDirective.idl
     page/History.idl
+    page/IsLoggedIn.idl
     page/IntersectionObserver.idl
     page/IntersectionObserverCallback.idl
     page/IntersectionObserverEntry.idl

@@ -1657,6 +1657,16 @@ void WebChromeClient::requestStorageAccess(RegistrableDomain&& subFrameDomain, R
     protectedPage()->requestStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), *webFrame, scope, WTFMove(completionHandler));
 }
 
+void WebChromeClient::setLoginStatus(RegistrableDomain&& domain, IsLoggedIn loggedInStatus, CompletionHandler<void()>&& completionHandler)
+{
+    protectedPage()->setLoginStatus(WTFMove(domain), loggedInStatus, WTFMove(completionHandler));
+}
+
+void WebChromeClient::isLoggedIn(RegistrableDomain&& domain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    protectedPage()->isLoggedIn(WTFMove(domain), WTFMove(completionHandler));
+}
+
 bool WebChromeClient::hasPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain) const
 {
     return protectedPage()->hasPageLevelStorageAccess(topLevelDomain, resourceDomain);

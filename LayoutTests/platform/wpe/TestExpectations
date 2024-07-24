@@ -1615,3 +1615,5 @@ webkit.org/b/272426 http/tests/webxr/webxr-third-party-iframe-requestsession-den
 
 imported/w3c/web-platform-tests/uievents/mouse/mousemove_prevent_default_action.html [ Pass Failure ]
 imported/w3c/web-platform-tests/uievents/interface/keyboard-accesskey-click-event.html [ Pass Failure ]
+
+http/tests/login-status/login-status-api-getter-setter-functions.html [ Failure ]

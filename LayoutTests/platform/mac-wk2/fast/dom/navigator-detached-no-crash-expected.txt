@@ -33,8 +33,7 @@ navigator.requestMediaKeySystemAccess() is OK
 navigator.sendBeacon() threw err TypeError: Not enough arguments
 navigator.serviceWorker is OK
 navigator.setAppBadge() is OK
-navigator.setLoggedIn() is OK
-navigator.setLoggedOut() is OK
+navigator.setStatus() is OK
 navigator.share() is OK
 navigator.standalone is OK
 navigator.storage is OK
@@ -77,8 +76,7 @@ navigator.requestMediaKeySystemAccess() is OK
 navigator.sendBeacon() threw err TypeError: Not enough arguments
 navigator.serviceWorker is OK
 navigator.setAppBadge() is OK
-navigator.setLoggedIn() is OK
-navigator.setLoggedOut() is OK
+navigator.setStatus() is OK
 navigator.share() is OK
 navigator.standalone is OK
 navigator.storage is OK

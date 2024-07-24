@@ -26,8 +26,14 @@
 #include "config.h"
 #include "NavigatorLoginStatus.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "Document.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Navigator.h"
+#include "Page.h"
+#include "RegistrableDomain.h"
+#include "SecurityOrigin.h"
 
 namespace WebCore {
 
@@ -47,14 +53,9 @@ ASCIILiteral NavigatorLoginStatus::supplementName()
     return "NavigatorLoginStatus"_s;
 }
 
-void NavigatorLoginStatus::setLoggedIn(Navigator& navigator, Ref<DeferredPromise>&& promise)
+void NavigatorLoginStatus::setStatus(Navigator& navigator, IsLoggedIn isLoggedIn, Ref<DeferredPromise>&& promise)
 {
-    NavigatorLoginStatus::from(navigator)->setLoggedIn(WTFMove(promise));
-}
-
-void NavigatorLoginStatus::setLoggedOut(Navigator& navigator, Ref<DeferredPromise>&& promise)
-{
-    NavigatorLoginStatus::from(navigator)->setLoggedOut(WTFMove(promise));
+    NavigatorLoginStatus::from(navigator)->setStatus(isLoggedIn, WTFMove(promise));
 }
 
 void NavigatorLoginStatus::isLoggedIn(Navigator& navigator, Ref<DeferredPromise>&& promise)
@@ -62,25 +63,56 @@ void NavigatorLoginStatus::isLoggedIn(Navigator& navigator, Ref<DeferredPromise>
     NavigatorLoginStatus::from(navigator)->isLoggedIn(WTFMove(promise));
 }
 
-void NavigatorLoginStatus::setLoggedIn(Ref<DeferredPromise>&& promise)
+bool NavigatorLoginStatus::hasSameOrigin() const
 {
-    if (m_navigator.cookieEnabled())
-        promise->resolve();
-    else
-        promise->reject();
+    RefPtr document = m_navigator.document();
+    if (!document)
+        return false;
+    Ref origin = document->securityOrigin();
+    bool isSameSite = true;
+    for (RefPtr parentDocument = document->parentDocument(); parentDocument; parentDocument = parentDocument->parentDocument()) {
+        if (!origin->isSameOriginAs(parentDocument->securityOrigin())) {
+            isSameSite = false;
+            break;
+        }
+    }
+    return isSameSite;
 }
 
-void NavigatorLoginStatus::setLoggedOut(Ref<DeferredPromise>&& promise)
+void NavigatorLoginStatus::setStatus(IsLoggedIn isLoggedIn, Ref<DeferredPromise>&& promise)
 {
-    promise->resolve();
+    RefPtr document = m_navigator.document();
+    if (!document || !hasSameOrigin()) {
+        promise->reject();
+        return;
+    }
+
+    RefPtr page = document->page();
+    if (!page) {
+        promise->reject();
+        return;
+    }
+    page->chrome().client().setLoginStatus(RegistrableDomain::uncheckedCreateFromHost(document->securityOrigin().host()), isLoggedIn, [promise = WTFMove(promise)] {
+        promise->resolve();
+    });
 }
 
 void NavigatorLoginStatus::isLoggedIn(Ref<DeferredPromise>&& promise)
 {
-    if (m_navigator.cookieEnabled())
-        promise->resolve<IDLBoolean>(true);
-    else
-        promise->resolve<IDLBoolean>(false);
+    RefPtr document = m_navigator.document();
+    if (!document) {
+        promise->reject();
+        return;
+    }
+
+    RefPtr page = document->page();
+    if (!page) {
+        promise->reject();
+        return;
+    }
+    page->chrome().client().isLoggedIn(RegistrableDomain::uncheckedCreateFromHost(document->securityOrigin().host()), [promise = WTFMove(promise)] (bool isLoggedIn) {
+        promise->resolve<IDLBoolean>(isLoggedIn);
+    });
 }
 
 } // namespace WebCore

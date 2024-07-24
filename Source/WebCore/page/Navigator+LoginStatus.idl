@@ -28,7 +28,6 @@
     EnabledBySetting=LoginStatusAPIEnabled,
     ImplementedBy=NavigatorLoginStatus
 ] partial interface Navigator {
-    Promise<undefined> setLoggedIn();
-    Promise<undefined> setLoggedOut();
+    Promise<undefined> setStatus(IsLoggedIn status);
     Promise<boolean> isLoggedIn();
 };

@@ -2854,3 +2854,5 @@ webkit.org/b/276145 http/tests/security/block-popup-to-all-zero-address.html [ S
 http/tests/xmlhttprequest/cross-origin-authorization.html [ Failure ]
 
 compositing/repaint/scroller-repaints-once.html [ Failure ]
+
+http/tests/login-status/ [ Skip ]

@@ -4204,3 +4204,5 @@ imported/w3c/web-platform-tests/css/css-viewport/zoom/image-intrinsic-size.html 
 
 # Requires layer tiling
 compositing/repaint/scroller-repaints-once.html [ Failure ]
+
+http/tests/login-status/login-status-api-getter-setter-functions.html [ Failure ]

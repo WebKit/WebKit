@@ -1541,6 +1541,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/HandleUserInputEventResult.h
     page/ImageAnalysisQueue.h
     page/InteractionRegion.h
+    page/IsLoggedIn.h
     page/LayoutMilestone.h
     page/LinkDecorationFilteringData.h
     page/LocalDOMWindow.h
@@ -1548,6 +1549,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/LocalFrame.h
     page/LocalFrameView.h
     page/LocalFrameViewLayoutContext.h
+    page/LoginStatus.h
     page/MediaCanStartListener.h
     page/MediaControlsContextMenuItem.h
     page/MediaProducer.h
