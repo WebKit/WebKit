@@ -45,6 +45,7 @@
 #include "JSEventListener.h"
 #include "LayoutUnit.h"
 #include "LocalDOMWindow.h"
+#include "MouseEvent.h"
 #include "NamedNodeMap.h"
 #include "NetworkStorageSession.h"
 #include "OrganizationStorageAccessPromptQuirk.h"
