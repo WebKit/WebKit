@@ -1273,7 +1273,7 @@ webkit.org/b/187804 imported/w3c/web-platform-tests/media-source/mediasource-see
 
 media/video-controls-no-scripting.html [ Failure ]
 media/video-mouse-focus.html [ Failure ]
-media/video-playing-and-pause.html [ Failure ]
+media/video-playing-and-pause.html [ Pass Failure Timeout Crash ]
 
 media/modern-media-controls/scrubber/scrubber-has-correct-ax-label.html [ Timeout ]
 media/modern-media-controls/volume-support/volume-support-click.html [ Timeout ]
@@ -1524,8 +1524,8 @@ imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-001.svg [ Imag
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-011.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/geometry/reftests/circle-003.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change-root.html [ ImageOnlyFailure ]
-svg/animations/animateMotion-additive-2a.svg [ ImageOnlyFailure ]
-svg/animations/animateMotion-additive-2c.svg [ ImageOnlyFailure ]
+svg/animations/animateMotion-additive-2a.svg [ Pass ImageOnlyFailure ]
+svg/animations/animateMotion-additive-2c.svg [ Pass ImageOnlyFailure ]
 svg/as-image/svg-image-with-data-uri-from-canvas.html [ ImageOnlyFailure ]
 svg/filters/feDiffuseLighting-feSpotLight-dynamic-update.svg [ ImageOnlyFailure ]
 svg/filters/feSpecularLighting-fePointLight-dynamic-update.svg [ ImageOnlyFailure ]
@@ -1662,6 +1662,8 @@ imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-018
 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-019.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.jpg.html [ Failure ]
+
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/adopt-from-image-document.html [ Pass ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/svg/import/filters-displace-01-f-manual.svg [ Failure ]
 
@@ -1857,7 +1859,7 @@ webkit.org/b/189739 imported/mozilla/svg/linearGradient-basic-03.svg [ ImageOnly
 webkit.org/b/107018 svg/animations/animate-linear-discrete-additive.svg [ ImageOnlyFailure ]
 webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-b.svg [ ImageOnlyFailure ]
 webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-c.svg [ ImageOnlyFailure ]
-webkit.org/b/107018 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ ImageOnlyFailure ]
+webkit.org/b/107018 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ Pass ImageOnlyFailure ]
 
 webkit.org/b/151267 imported/blink/svg/animations/no-attr-radialgradient-spreadmethod.svg [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/svg/as-image/default-sans-serif-font.html [ ImageOnlyFailure ]
@@ -1878,7 +1880,7 @@ webkit.org/b/264583 imported/w3c/web-platform-tests/css/filter-effects/css-filte
 webkit.org/b/264584 imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.sub.tentative.html [ Failure ]
 
 # SVG Animations Failures on WPT Import
-imported/w3c/web-platform-tests/svg/animations/reinserting-svg-into-document.html [ Failure ]
+imported/w3c/web-platform-tests/svg/animations/reinserting-svg-into-document.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-opacity.html [ ImageOnlyFailure ]
 
@@ -2339,7 +2341,7 @@ webkit.org/b/202736 [ Release ] http/wpt/cache-storage/quota-third-party.https.h
 
 webkit.org/b/203240 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-025.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/207623 imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html [ Failure ]
+webkit.org/b/207623 imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html [ Pass Failure ]
 
 # Failing since deferred async loading enabled until document is loaded enabled.
 webkit.org/b/208104 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Failure Pass ]
@@ -2980,7 +2982,7 @@ webkit.org/b/264582 imported/w3c/web-platform-tests/css/cssom-view/scrollIntoVie
 webkit.org/b/264587 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base-data.html [ Failure ]
 webkit.org/b/264587 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base-javascript.html [ Failure ]
 webkit.org/b/264587 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_block_downloads.sub.tentative.html [ Failure ]
-webkit.org/b/264587 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/select-event.html [ Failure ]
+webkit.org/b/264587 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/select-event.html [ Pass Failure ]
 
 webkit.org/b/264590 imported/w3c/web-platform-tests/navigation-timing/test_timing_xserver_redirect.html [ Failure ]
 
@@ -3361,7 +3363,7 @@ webkit.org/b/168373 media/media-preload-no-delay-loadevent.html [ Failure ]
 webkit.org/b/198830 media/context-menu-actions.html [ Failure ]
 webkit.org/b/193638 media/video-webkit-playsinline.html [ Failure ]
 webkit.org/b/224067 media/media-source/media-source-timestampoffset-trim.html [ Failure ]
-webkit.org/b/254207 media/media-source/media-source-remove-readystate.html [ Failure ]
+webkit.org/b/254207 media/media-source/media-source-remove-readystate.html [ Pass Failure Timeout ]
 webkit.org/b/160119 media/video-object-fit-change.html [ Pass Crash ImageOnlyFailure ]
 
 webkit.org/b/61487 http/tests/media/video-cross-site.html [ Failure Timeout ]
@@ -3699,7 +3701,7 @@ imported/w3c/web-platform-tests/preload/preload-type-match.html [ DumpJSConsoleL
 
 # Tests timing out in Debug only.
 [ Debug ] fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Timeout ]
-[ Debug ] http/tests/xmlhttprequest/simple-cross-origin-progress-events.html [ Timeout ]
+[ Debug ] http/tests/xmlhttprequest/simple-cross-origin-progress-events.html [ Pass Timeout ]
 [ Debug ] imported/blink/transitions/remove-accelerated-transition.html [ Timeout ]
 
 # WPT import failures

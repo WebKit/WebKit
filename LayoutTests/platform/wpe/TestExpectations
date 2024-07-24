@@ -1603,7 +1603,7 @@ compositing/visible-rect/iframe-with-layers-outside-viewport.html [ Failure ]
 compositing/visible-rect/mask-layer-coverage.html [ Failure ]
 compositing/visible-rect/nested-transform.html [ Failure ]
 compositing/visible-rect/scrolled.html [ Failure ]
-compositing/video/video-border-radius-clipping.html [ ImageOnlyFailure ]
+compositing/video/video-border-radius-clipping.html [ Pass ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-visibility-mixed-descendants.html [ ImageOnlyFailure ]
 
