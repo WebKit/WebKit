@@ -39,6 +39,6 @@ printHelpAndExitForRunAndDebugWebKitAppIfNeeded();
 setConfiguration();
 
 # Check to see that all the frameworks are built.
-checkFrameworks();
+checkBuild();
 
 exit exitStatus(runSafari());
