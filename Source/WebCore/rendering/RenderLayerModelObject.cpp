@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
  *           (C) 2005, 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2010-2015 Google Inc. All rights reserved.
  * Copyright (C) 2023, 2024 Igalia S.L.
  *
@@ -93,10 +93,7 @@ void RenderLayerModelObject::willBeDestroyed()
             view().frameView().removeViewportConstrainedObject(*this);
     }
 
-    if (hasLayer()) {
-        setHasLayer(false);
-        destroyLayer();
-    }
+    destroyLayer();
 
     RenderElement::willBeDestroyed();
 }
@@ -112,8 +109,7 @@ void RenderLayerModelObject::willBeRemovedFromTree(IsInternalMove isInternalMove
 
 void RenderLayerModelObject::destroyLayer()
 {
-    ASSERT(!hasLayer());
-    ASSERT(m_layer);
+    setHasLayer(false);
     m_layer = nullptr;
 }
 

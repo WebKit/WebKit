@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
- * Copyright (C) 2014 Google Inc. All rights reserved.
+ * Copyright (C) 2013-2014 Google Inc. All rights reserved.
  * Copyright (C) 2019 Adobe. All rights reserved.
  * Copyright (c) 2020, 2021, 2022 Igalia S.L.
  *
@@ -532,10 +532,6 @@ void RenderLayer::removeOnlyThisLayer(LayerChangeTiming timing)
 
     if (timing == LayerChangeTiming::StyleChange)
         renderer().view().layerChildrenChangedDuringStyleChange(*parent());
-
-    // Mark that we are about to lose our layer. This makes render tree
-    // walks ignore this layer while we're removing it.
-    renderer().setHasLayer(false);
 
     compositor().layerWillBeRemoved(*m_parent, *this);
 
