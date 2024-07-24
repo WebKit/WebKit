@@ -28,6 +28,7 @@ additional_forward_declaration: namespace WebCore { using OpaqueOriginIdentifier
 additional_forward_declaration: namespace WebCore { using PlatformLayerIdentifierID = LegacyNullableObjectIdentifier<PlatformLayerIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using ScrollingNodeIdentifier = LegacyNullableObjectIdentifier<ScrollingNodeIDType>; }
 additional_forward_declaration: namespace WebCore { using SharedWorkerObjectIdentifierID = LegacyNullableObjectIdentifier<SharedWorkerObjectIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using UserGestureTokenIdentifierID = LegacyNullableObjectIdentifier<UserGestureTokenIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using WebLockIdentifierID = LegacyNullableAtomicObjectIdentifier<WebLockIdentifierType>; }
 
 header: <WebCore/ProcessQualified.h>
@@ -58,6 +59,11 @@ header: <WebCore/ProcessQualified.h>
 
 [Alias=class ProcessQualified<SharedWorkerObjectIdentifierID>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::SharedWorkerObjectIdentifier {
     WebCore::SharedWorkerObjectIdentifierID object();
+    WebCore::ProcessIdentifier processIdentifier();
+};
+
+[Alias=class ProcessQualified<UserGestureTokenIdentifierID>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::UserGestureTokenIdentifier {
+    WebCore::UserGestureTokenIdentifierID object();
     WebCore::ProcessIdentifier processIdentifier();
 };
 

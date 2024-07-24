@@ -124,6 +124,7 @@ template: struct WebCore::PlatformLayerIdentifierType
 template: struct WebCore::PlaybackTargetClientContextIdentifierType
 template: struct WebCore::SharedWorkerObjectIdentifierType
 template: struct WebCore::SleepDisablerIdentifierType
+template: struct WebCore::UserGestureTokenIdentifierType
 template: struct WebCore::UserMediaRequestIdentifierType
 template: struct WebCore::ScrollingNodeIDType
 template: struct WebKit::AuthenticationChallengeIdentifierType
