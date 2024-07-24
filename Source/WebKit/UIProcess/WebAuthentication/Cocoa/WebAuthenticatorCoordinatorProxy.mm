@@ -413,9 +413,10 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
             ASSERT(!options.extensions->largeBlob->support);
             ASSERT(!(options.extensions->largeBlob->read && options.extensions->largeBlob->write));
             auto largeBlob = options.extensions->largeBlob;
-            request.get().largeBlob = adoptNS([allocASAuthorizationPublicKeyCredentialLargeBlobAssertionInputInstance() initWithOperation:(largeBlob->read && *largeBlob->read) ? ASAuthorizationPublicKeyCredentialLargeBlobAssertionOperationRead : ASAuthorizationPublicKeyCredentialLargeBlobAssertionOperationWrite]).get();
+            RetainPtr asLargeBlob = adoptNS([allocASAuthorizationPublicKeyCredentialLargeBlobAssertionInputInstance() initWithOperation:(largeBlob->read && *largeBlob->read) ? ASAuthorizationPublicKeyCredentialLargeBlobAssertionOperationRead : ASAuthorizationPublicKeyCredentialLargeBlobAssertionOperationWrite]);
             if (largeBlob->write)
-                request.get().largeBlob.dataToWrite = WebCore::toNSData(*largeBlob->write).get();
+                asLargeBlob.get().dataToWrite = WebCore::toNSData(*largeBlob->write).get();
+            request.get().largeBlob = asLargeBlob.get();
         }
 
         request.get().userVerificationPreference = toASUserVerificationPreference(options.userVerification).get();
