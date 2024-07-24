@@ -151,7 +151,8 @@ void TextTrack::didMoveToNewDocument(Document& newDocument)
 {
     TrackBase::didMoveToNewDocument(newDocument);
     ActiveDOMObject::didMoveToNewDocument(newDocument);
-    protectedCues()->didMoveToNewDocument(newDocument);
+    if (RefPtr cues = protectedCues())
+        cues->didMoveToNewDocument(newDocument);
 }
 
 TextTrackList* TextTrack::textTrackList() const
