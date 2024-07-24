@@ -9765,6 +9765,9 @@ void WebPageProxy::logScrollingEvent(uint32_t eventType, MonotonicTime timestamp
         else
             WTFLogAlways("SCROLLING: Switching to threaded scrolling mode. Time: %f\n", timestamp.secondsSinceEpoch().value());
         break;
+    case PerformanceLoggingClient::ScrollingEvent::StartedRubberbanding:
+        WTFLogAlways("SCROLLING: Started Rubberbanding\n");
+        break;
     }
 }
 
