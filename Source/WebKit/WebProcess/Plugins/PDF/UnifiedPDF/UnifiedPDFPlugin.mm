@@ -1692,53 +1692,6 @@ RetainPtr<PDFAnnotation> UnifiedPDFPlugin::annotationForRootViewPoint(const IntP
     return [page annotationAtPoint:convertDown(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::PDFPage, pointInDocumentSpace, pageIndex.value())];
 }
 
-template <typename T>
-T UnifiedPDFPlugin::convertUp(CoordinateSpace sourceSpace, CoordinateSpace destinationSpace, T sourceValue, std::optional<PDFDocumentLayout::PageIndex> pageIndex) const
-{
-    static_assert(std::is_same<T, FloatPoint>::value || std::is_same<T, FloatRect>::value, "Coordinate conversion should use float types");
-    auto mappedValue = sourceValue;
-
-    switch (sourceSpace) {
-    case CoordinateSpace::PDFPage:
-        if (destinationSpace == CoordinateSpace::PDFPage)
-            return mappedValue;
-
-        ASSERT(pageIndex);
-        ASSERT(*pageIndex < m_documentLayout.pageCount());
-        mappedValue = m_documentLayout.pdfPageToDocument(mappedValue, *pageIndex);
-        FALLTHROUGH;
-
-    case CoordinateSpace::PDFDocumentLayout:
-        if (destinationSpace == CoordinateSpace::PDFDocumentLayout)
-            return mappedValue;
-
-        mappedValue.scale(m_documentLayout.scale());
-        FALLTHROUGH;
-
-    case CoordinateSpace::Contents:
-        if (destinationSpace == CoordinateSpace::Contents)
-            return mappedValue;
-
-        mappedValue.move(centeringOffset());
-        mappedValue.scale(m_scaleFactor);
-        FALLTHROUGH;
-
-    case CoordinateSpace::ScrolledContents:
-        if (destinationSpace == CoordinateSpace::ScrolledContents)
-            return mappedValue;
-
-        mappedValue.moveBy(-WebCore::FloatPoint { m_scrollOffset });
-        FALLTHROUGH;
-
-    case CoordinateSpace::Plugin:
-        if (destinationSpace == CoordinateSpace::Plugin)
-            return mappedValue;
-    }
-
-    ASSERT_NOT_REACHED();
-    return mappedValue;
-}
-
 FloatRect UnifiedPDFPlugin::convertFromContentsToPainting(const FloatRect& rect, std::optional<PDFDocumentLayout::PageIndex> pageIndex) const
 {
     return m_presentationController->convertFromContentsToPainting(rect, pageIndex);
