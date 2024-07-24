@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <svg>
+        <filter id="f" x="0px">
+            <feDropShadow color="white">
+        </filter>
+    </svg>
+    <div style="filter: url(#f); width: 1px; height: 1px"></div>
+    <p>This test passes if it does not crash</p>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+
+            // Let the test run for a bit so WebKitTestRunner could
+            // catch the GPU process crash.
+            setInterval(() => testRunner.notifyDone(), 1000);
+        }
+    </script>
+</body>
+</html>
