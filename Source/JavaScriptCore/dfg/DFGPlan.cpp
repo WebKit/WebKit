@@ -176,10 +176,7 @@ void Plan::cancel()
     m_mustHandleValues.clear();
     m_compilation = nullptr;
     m_finalizer = nullptr;
-    if (m_inlineCallFrames) {
-        for (auto i : *m_inlineCallFrames)
-            i->baselineCodeBlock.clear();
-    }
+    m_inlineCallFrames = nullptr;
     m_watchpoints = DesiredWatchpoints();
     m_identifiers = DesiredIdentifiers();
     m_weakReferences = DesiredWeakReferences();
@@ -689,6 +686,9 @@ bool Plan::checkLivenessAndVisitChildren(AbstractSlotVisitor& visitor)
 
 bool Plan::isKnownToBeLiveDuringGC(AbstractSlotVisitor& visitor)
 {
+    if (safepointKeepsDependenciesLive())
+        return true;
+
     if (!Base::isKnownToBeLiveDuringGC(visitor))
         return false;
     if (!visitor.isMarked(m_codeBlock->alternative()))
@@ -700,6 +700,9 @@ bool Plan::isKnownToBeLiveDuringGC(AbstractSlotVisitor& visitor)
 
 bool Plan::isKnownToBeLiveAfterGC()
 {
+    if (safepointKeepsDependenciesLive())
+        return true;
+
     if (!Base::isKnownToBeLiveAfterGC())
         return false;
     if (!m_vm->heap.isMarked(m_codeBlock->alternative()))
