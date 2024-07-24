@@ -294,6 +294,8 @@ bool gstObjectHasProperty(GstPad*, const char* name);
 
 GRefPtr<GstBuffer> wrapSpanData(const std::span<const uint8_t>&);
 
+std::optional<unsigned> gstGetAutoplugSelectResult(ASCIILiteral);
+
 void registerActivePipeline(const GRefPtr<GstElement>&);
 void unregisterPipeline(const GRefPtr<GstElement>&);
 
