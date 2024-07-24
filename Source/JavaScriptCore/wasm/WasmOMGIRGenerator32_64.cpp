@@ -1432,11 +1432,7 @@ auto OMGIRGenerator::addArguments(const TypeDefinition& signature) -> PartialRes
                 ASSERT(rep.location.jsr().tagGPR() != InvalidGPRReg);
                 Value* argLo = m_currentBlock->appendNew<B3::ArgumentRegValue>(m_proc, Origin(), rep.location.jsr().payloadGPR());
                 Value* argHi = m_currentBlock->appendNew<B3::ArgumentRegValue>(m_proc, Origin(), rep.location.jsr().tagGPR());
-                Value* lowBits = m_currentBlock->appendNew<Value>(m_proc, ZExt32, Origin(), argLo);
-                Value* highBits = m_currentBlock->appendNew<Value>(m_proc, Shl, Origin(),
-                                                                   m_currentBlock->appendNew<Value>(m_proc, ZExt32, Origin(), argHi),
-                                                                   constant(Int32, 32));
-                argument = m_currentBlock->appendNew<Value>(m_proc, BitOr, Origin(), lowBits, highBits);
+                argument = m_currentBlock->appendNew<Value>(m_proc, Stitch, Origin(), argHi, argLo);
             }
         } else if (rep.location.isFPR()) {
             if (type.isVector()) {
@@ -2139,7 +2135,6 @@ inline Value* OMGIRGenerator::emitCheckAndPreparePointer(Value* pointer, uint32_
         checkBounds->setGenerator([=, this] (CCallHelpers& jit, const StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
-        pointer = pointerPlusOffset;
         break;
     }
 
@@ -4147,11 +4142,7 @@ void OMGIRGenerator::connectControlAtEntrypoint(unsigned& indexInBuffer, Value* 
         size_t offset = valueSize * sizeof(uint64_t) * (indexInBuffer++);
         Value* loadLo = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), pointer, offset);
         Value* loadHi = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), pointer, offset + 4);
-        Value* loadLowBits = m_currentBlock->appendNew<Value>(m_proc, ZExt32, Origin(), loadLo);
-        Value* loadHighBits = m_currentBlock->appendNew<Value>(m_proc, Shl, Origin(),
-            m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), loadHi),
-            constant(Int32, 32));
-        Value* load = m_currentBlock->appendNew<Value>(m_proc, BitOr, Origin(), loadLowBits, loadHighBits);
+        Value* load = m_currentBlock->appendNew<Value>(m_proc, Stitch, Origin(), loadHi, loadLo);
         m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), data.exception(), load);
     }
 };
@@ -5500,19 +5491,24 @@ auto OMGIRGenerator::addI32Ctz(ExpressionType argVar, ExpressionType& result) ->
 auto OMGIRGenerator::addI64Ctz(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
-    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, origin());
-    patchpoint->append(arg, ValueRep::SomeRegister);
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-#if OMG_JSVALUE_32_64_NYI
-        UNUSED_PARAM(jit);
-        UNUSED_PARAM(params);
-        RELEASE_ASSERT_NOT_REACHED();
-#else
-        jit.countTrailingZeros64(params[1].gpr(), params[0].gpr());
-#endif // OMG_JSVALUE_32_64_NYI
+    Value* argLo = m_currentBlock->appendNew<Value>(m_proc, Trunc, origin(), arg);
+    Value* argHi = m_currentBlock->appendNew<Value>(m_proc, TruncHigh, origin(), arg);
+    PatchpointValue* ctzLo = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int32, origin());
+    ctzLo->append(argLo, ValueRep::SomeRegister);
+    ctzLo->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        jit.countTrailingZeros32(params[1].gpr(), params[0].gpr());
     });
-    patchpoint->effects = Effects::none();
-    result = push(patchpoint);
+    PatchpointValue* ctzHi = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int32, origin());
+    ctzHi->append(argHi, ValueRep::SomeRegister);
+    ctzHi->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        jit.countTrailingZeros32(params[1].gpr(), params[0].gpr());
+    });
+    ctzHi->effects = Effects::none();
+    Value* thirtyTwo = m_currentBlock->appendNew<Const32Value>(m_proc, origin(), 32);
+    Value* useLo = m_currentBlock->appendNew<Value>(m_proc, Below, origin(), ctzLo, thirtyTwo);
+    Value* ctzIfHi = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), ctzHi, thirtyTwo);
+    Value* select = m_currentBlock->appendNew<Value>(m_proc, B3::Select, origin(), useLo, ctzLo, ctzIfHi);
+    result = push(m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), select));
     return { };
 }
 
@@ -5573,7 +5569,7 @@ auto OMGIRGenerator::addI64Popcnt(ExpressionType argVar, ExpressionType& result)
 auto OMGIRGenerator::addF64ConvertUI64(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
-    Value* call = m_currentBlock->appendNew<CCallValue>(m_proc, B3::Int64, origin(),
+    Value* call = m_currentBlock->appendNew<CCallValue>(m_proc, B3::Double, origin(),
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(Math::f64_convert_u_i64)),
         arg);
 
@@ -5584,7 +5580,7 @@ auto OMGIRGenerator::addF64ConvertUI64(ExpressionType argVar, ExpressionType& re
 auto OMGIRGenerator::addF32ConvertUI64(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
-    Value* call = m_currentBlock->appendNew<CCallValue>(m_proc, B3::Int64, origin(),
+    Value* call = m_currentBlock->appendNew<CCallValue>(m_proc, B3::Float, origin(),
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(Math::f32_convert_u_i64)),
         arg);
     result = push(call);
