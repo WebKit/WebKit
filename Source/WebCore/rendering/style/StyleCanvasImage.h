@@ -27,13 +27,14 @@
 #pragma once
 
 #include "CanvasObserver.h"
+#include "HTMLCanvasElement.h"
 #include "StyleGeneratedImage.h"
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class Document;
-class HTMLCanvasElement;
 
 class StyleCanvasImage final : public StyleGeneratedImage, public CanvasObserver {
 public:
@@ -71,7 +72,7 @@ private:
     // The name of the canvas.
     String m_name;
     // The document supplies the element and owns it.
-    mutable HTMLCanvasElement* m_element;
+    mutable WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> m_element;
 };
 
 } // namespace WebCore
