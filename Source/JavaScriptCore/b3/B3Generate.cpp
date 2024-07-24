@@ -101,11 +101,12 @@ void generateToAir(Procedure& procedure)
         reduceStrength(procedure);
     }
 
+    // This puts the IR in quirks mode.
+    lowerMacros(procedure);
+
 #if USE(JSVALUE32_64)
     lowerInt64(procedure);
 #endif
-    // This puts the IR in quirks mode.
-    lowerMacros(procedure);
 
     if (procedure.optLevel() >= 2) {
         optimizeAssociativeExpressionTrees(procedure);
