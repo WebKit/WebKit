@@ -30,7 +30,6 @@
 
 #include "CVUtilities.h"
 #include "IOSurface.h"
-#include "LibWebRTCVideoFrameUtilities.h"
 #include "Logging.h"
 #include <wtf/Scope.h>
 #include <wtf/persistence/PersistentCoders.h>
@@ -41,6 +40,7 @@ ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN
 
 #include <webrtc/api/video/video_frame.h>
+#include <webrtc/sdk/WebKit/WebKitUtilities.h>
 
 ALLOW_UNUSED_PARAMETERS_END
 ALLOW_COMMA_END
@@ -299,7 +299,7 @@ bool SharedVideoFrameInfo::writeVideoFrameBuffer(webrtc::VideoFrameBuffer& frame
     ASSERT(m_bufferType == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange || m_bufferType == kCVPixelFormatType_420YpCbCr10BiPlanarFullRange);
     encode(data);
     data += sizeof(SharedVideoFrameInfo);
-    return copyVideoFrameBuffer(frameBuffer, data);
+    return webrtc::copyVideoFrameBuffer(frameBuffer, data);
 }
 #endif
 

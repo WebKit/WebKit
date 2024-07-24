@@ -33,11 +33,20 @@
 #include "RemoteVideoFrameProxy.h"
 #include <WebCore/CVUtilities.h>
 #include <WebCore/IOSurface.h>
-#include <WebCore/LibWebRTCVideoFrameUtilities.h>
 #include <WebCore/SharedVideoFrameInfo.h>
 #include <WebCore/VideoFrameCV.h>
 #include <WebCore/VideoFrameLibWebRTC.h>
 #include <wtf/Scope.h>
+
+#if USE(LIBWEBRTC)
+
+ALLOW_COMMA_BEGIN
+
+#include <webrtc/sdk/WebKit/WebKitUtilities.h>
+
+ALLOW_COMMA_END
+
+#endif
 
 #include <pal/cf/CoreMediaSoftLink.h>
 #include <WebCore/CoreVideoSoftLink.h>
@@ -144,10 +153,10 @@ std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(CVPi
 #if USE(LIBWEBRTC)
 std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(const webrtc::VideoFrame& frame, const Function<void(IPC::Semaphore&)>& newSemaphoreCallback, const Function<void(SharedMemory::Handle&&)>& newMemoryCallback)
 {
-    if (auto* provider = WebCore::videoFrameBufferProvider(frame))
+    if (auto* provider = webrtc::videoFrameBufferProvider(frame))
         return writeBuffer(*static_cast<VideoFrame*>(provider), newSemaphoreCallback, newMemoryCallback);
 
-    if (auto pixelBuffer = WebCore::copyPixelBufferForFrame(frame))
+    if (auto pixelBuffer = adoptCF(webrtc::copyPixelBufferForFrame(frame)))
         return writeBuffer(pixelBuffer.get(), newSemaphoreCallback, newMemoryCallback);
 
     return writeBuffer(*frame.video_frame_buffer(), newSemaphoreCallback, newMemoryCallback);

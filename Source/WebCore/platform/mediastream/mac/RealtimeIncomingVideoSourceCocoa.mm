@@ -36,6 +36,10 @@
 #import "VideoFrameLibWebRTC.h"
 #import <wtf/cf/TypeCastsCF.h>
 
+ALLOW_UNUSED_PARAMETERS_BEGIN
+#import <webrtc/sdk/WebKit/WebKitUtilities.h>
+ALLOW_UNUSED_PARAMETERS_END
+
 #import "CoreVideoSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
 
@@ -58,15 +62,15 @@ RealtimeIncomingVideoSourceCocoa::RealtimeIncomingVideoSourceCocoa(rtc::scoped_r
 {
 }
 
-CVPixelBufferPoolRef RealtimeIncomingVideoSourceCocoa::pixelBufferPool(size_t width, size_t height, BufferType bufferType) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+CVPixelBufferPoolRef RealtimeIncomingVideoSourceCocoa::pixelBufferPool(size_t width, size_t height, webrtc::BufferType bufferType) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     if (!m_pixelBufferPool || m_pixelBufferPoolWidth != width || m_pixelBufferPoolHeight != height || m_pixelBufferPoolBufferType != bufferType) {
         OSType poolBufferType;
         switch (bufferType) {
-        case BufferType::I420:
+        case webrtc::BufferType::I420:
             poolBufferType = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
             break;
-        case BufferType::I010:
+        case webrtc::BufferType::I010:
             poolBufferType = kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
             break;
         default:
@@ -111,12 +115,12 @@ RefPtr<VideoFrame> RealtimeIncomingVideoSourceCocoa::toVideoFrame(const webrtc::
     }
 
     // If we already have a CVPixelBufferRef, use it directly.
-    if (auto pixelBuffer = copyPixelBufferForFrame(frame))
+    if (auto pixelBuffer = adoptCF(webrtc::copyPixelBufferForFrame(frame)))
         return createVideoSampleFromCVPixelBuffer(WTFMove(pixelBuffer), rotation, frame.timestamp_us());
 
     // In case of in memory libwebrtc samples, we have non interleaved YUV data, let's lazily create CVPixelBuffers if needed.
     return VideoFrameLibWebRTC::create(MediaTime(frame.timestamp_us(), 1000000), false, rotation, VideoFrameLibWebRTC::colorSpaceFromFrame(frame), frame.video_frame_buffer(), [protectedThis = Ref { *this }, this](auto& buffer) {
-        return createPixelBufferFromFrameBuffer(buffer, [this](size_t width, size_t height, BufferType bufferType) -> CVPixelBufferRef {
+        return adoptCF(webrtc::createPixelBufferFromFrameBuffer(buffer, [this](size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
             Locker lock(m_pixelBufferPoolLock);
             auto pixelBufferPool = this->pixelBufferPool(width, height, bufferType);
             if (!pixelBufferPool)
@@ -128,7 +132,7 @@ RefPtr<VideoFrame> RealtimeIncomingVideoSourceCocoa::toVideoFrame(const webrtc::
                 return nullptr;
             }
             return pixelBuffer;
-        });
+        }));
     });
 }
 

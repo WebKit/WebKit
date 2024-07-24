@@ -44,9 +44,6 @@ class Settings;
 
 std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitH265, WebKitVP9, WebKitAv1);
 
-void setH264HardwareEncoderAllowed(bool allowed);
-bool isH264HardwareEncoderAllowed();
-
 using WebKitVideoEncoder = void*;
 using VideoEncoderCreateCallback = WebKitVideoEncoder(*)(const SdpVideoFormat& format);
 using VideoEncoderReleaseCallback = int32_t(*)(WebKitVideoEncoder);

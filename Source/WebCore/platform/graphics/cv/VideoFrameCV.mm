@@ -30,7 +30,6 @@
 #include "CVUtilities.h"
 #include "GraphicsContext.h"
 #include "ImageTransferSessionVT.h"
-#include "LibWebRTCVideoFrameUtilities.h"
 #include "Logging.h"
 #include "NativeImage.h"
 #include "PixelBuffer.h"
@@ -44,6 +43,16 @@
 #include <pal/cf/CoreMediaSoftLink.h>
 
 #include "CoreVideoSoftLink.h"
+
+#if USE(LIBWEBRTC)
+ALLOW_UNUSED_PARAMETERS_BEGIN
+ALLOW_COMMA_BEGIN
+
+#include <webrtc/sdk/WebKit/WebKitUtilities.h>
+
+ALLOW_UNUSED_PARAMETERS_END
+ALLOW_COMMA_END
+#endif
 
 namespace WebCore {
 
@@ -165,12 +174,12 @@ RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> buffer, size_
 #if USE(LIBWEBRTC)
     size_t offsetLayoutU = layoutY.sourceLeftBytes + layoutY.sourceWidthBytes * height;
     size_t offsetLayoutV = offsetLayoutU + layoutU.sourceLeftBytes + layoutU.sourceWidthBytes * ((height + 1) / 2);
-    I420BufferLayout layout {
+    webrtc::I420BufferLayout layout {
         layoutY.sourceLeftBytes, layoutY.sourceWidthBytes,
         offsetLayoutU, layoutU.sourceWidthBytes,
         offsetLayoutV, layoutV.sourceWidthBytes
     };
-    auto pixelBuffer = createPixelBufferFromI420Buffer(buffer.data(), buffer.size(), width, height, layout);
+    auto pixelBuffer = adoptCF(webrtc::createPixelBufferFromI420Buffer(buffer.data(), buffer.size(), width, height, layout));
 
     if (!pixelBuffer)
         return nullptr;
@@ -194,7 +203,7 @@ RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> buffer, size
     size_t offsetLayoutU = layoutY.sourceLeftBytes + layoutY.sourceWidthBytes * height;
     size_t offsetLayoutV = offsetLayoutU + layoutU.sourceLeftBytes + layoutU.sourceWidthBytes * ((height + 1) / 2);
     size_t offsetLayoutA = offsetLayoutV + layoutV.sourceLeftBytes + layoutV.sourceWidthBytes * ((height + 1) / 2);
-    I420ABufferLayout layout {
+    webrtc::I420ABufferLayout layout {
         {
             layoutY.sourceLeftBytes, layoutY.sourceWidthBytes,
             offsetLayoutU, layoutU.sourceWidthBytes,
@@ -202,7 +211,7 @@ RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> buffer, size
         },
         offsetLayoutA, layoutA.sourceWidthBytes
     };
-    auto pixelBuffer = createPixelBufferFromI420ABuffer(buffer.data(), buffer.size(), width, height, layout);
+    auto pixelBuffer = adoptCF(webrtc::createPixelBufferFromI420ABuffer(buffer.data(), buffer.size(), width, height, layout));
 
     if (!pixelBuffer)
         return nullptr;

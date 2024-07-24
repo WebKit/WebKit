@@ -10,11 +10,7 @@
 
 #import <AVFoundation/AVFoundation.h>
 
-#if defined(WEBCORE_OR_WEBKIT_INCLUDE)
-#import <webrtc/sdk/objc/base/RTCMacros.h>
-#else
 #import "RTCMacros.h"
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

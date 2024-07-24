@@ -30,7 +30,6 @@
 
 #include "CVUtilities.h"
 #include "ImageRotationSessionVT.h"
-#include "LibWebRTCVideoFrameUtilities.h"
 #include "Logging.h"
 #include "RealtimeIncomingVideoSourceCocoa.h"
 #include "RealtimeVideoUtilities.h"
@@ -40,6 +39,7 @@ ALLOW_UNUSED_PARAMETERS_BEGIN
 
 #include <webrtc/api/video/i420_buffer.h>
 #include <webrtc/common_video/libyuv/include/webrtc_libyuv.h>
+#include <webrtc/sdk/WebKit/WebKitUtilities.h>
 
 ALLOW_UNUSED_PARAMETERS_END
 
@@ -91,7 +91,7 @@ void RealtimeOutgoingVideoSourceCocoa::videoFrameAvailable(VideoFrame& videoFram
         if (videoFrame.isRemoteProxy()) {
             Ref remoteVideoFrame { videoFrame };
             auto size = videoFrame.presentationSize();
-            sendFrame(toWebRTCVideoFrameBuffer(&remoteVideoFrame.leakRef(),
+            sendFrame(webrtc::toWebRTCVideoFrameBuffer(&remoteVideoFrame.leakRef(),
                 [](auto* pointer) { return static_cast<VideoFrame*>(pointer)->pixelBuffer(); },
                 [](auto* pointer) { static_cast<VideoFrame*>(pointer)->deref(); },
                 static_cast<int>(size.width() * videoFrameScaling), static_cast<int>(size.height() * videoFrameScaling)));
@@ -115,7 +115,7 @@ void RealtimeOutgoingVideoSourceCocoa::videoFrameAvailable(VideoFrame& videoFram
     if (shouldApplyRotation)
         convertedBuffer = rotatePixelBuffer(convertedBuffer.get(), m_currentRotation);
 
-    auto webrtcBuffer = pixelBufferToFrame(convertedBuffer.get());
+    auto webrtcBuffer = webrtc::pixelBufferToFrame(convertedBuffer.get());
     if (videoFrameScaling != 1)
         webrtcBuffer = webrtcBuffer->Scale(webrtcBuffer->width() * videoFrameScaling, webrtcBuffer->height() * videoFrameScaling);
 
@@ -124,7 +124,7 @@ void RealtimeOutgoingVideoSourceCocoa::videoFrameAvailable(VideoFrame& videoFram
 
 rtc::scoped_refptr<webrtc::VideoFrameBuffer> RealtimeOutgoingVideoSourceCocoa::createBlackFrame(size_t  width, size_t  height)
 {
-    return pixelBufferToFrame(createBlackPixelBuffer(width, height).get());
+    return webrtc::pixelBufferToFrame(createBlackPixelBuffer(width, height).get());
 }
 
 

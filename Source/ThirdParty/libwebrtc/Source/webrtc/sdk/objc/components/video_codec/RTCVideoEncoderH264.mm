@@ -41,7 +41,7 @@
 #include "third_party/libyuv/include/libyuv/convert_from.h"
 
 #include "sdk/WebKit/VideoProcessingSoftLink.h"
-#include "sdk/WebKit/WebKitEncoder.h"
+#include "sdk/WebKit/WebKitUtilities.h"
 
 #import <dlfcn.h>
 #import <objc/runtime.h>

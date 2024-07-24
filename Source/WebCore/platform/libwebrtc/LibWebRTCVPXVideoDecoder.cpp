@@ -73,7 +73,7 @@ private:
     LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXVideoDecoder::Type, const VideoDecoder::Config&, VideoDecoder::OutputCallback&&, VideoDecoder::PostTaskCallback&&);
     int32_t Decoded(webrtc::VideoFrame&) final;
     CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, OSType) WTF_REQUIRES_LOCK(m_pixelBufferPoolLock);
-    CVPixelBufferRef createPixelBuffer(size_t width, size_t height, BufferType);
+    CVPixelBufferRef createPixelBuffer(size_t width, size_t height, webrtc::BufferType);
 
     VideoDecoder::OutputCallback m_outputCallback;
     VideoDecoder::PostTaskCallback m_postTaskCallback;
@@ -203,14 +203,14 @@ CVPixelBufferPoolRef LibWebRTCVPXInternalVideoDecoder::pixelBufferPool(size_t wi
     return m_pixelBufferPool.get();
 }
 
-CVPixelBufferRef LibWebRTCVPXInternalVideoDecoder::createPixelBuffer(size_t width, size_t height, BufferType bufferType)
+CVPixelBufferRef LibWebRTCVPXInternalVideoDecoder::createPixelBuffer(size_t width, size_t height, webrtc::BufferType bufferType)
 {
     OSType pixelBufferType;
     switch (bufferType) {
-    case BufferType::I420:
+    case webrtc::BufferType::I420:
         pixelBufferType = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
         break;
-    case BufferType::I010:
+    case webrtc::BufferType::I010:
         pixelBufferType = kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
         break;
     default:
@@ -246,9 +246,9 @@ int32_t LibWebRTCVPXInternalVideoDecoder::Decoded(webrtc::VideoFrame& frame)
             return;
 
         auto videoFrame = VideoFrameLibWebRTC::create({ }, false, VideoFrame::Rotation::None, WTFMove(colorSpace), WTFMove(buffer), [protectedThis] (auto& buffer) {
-            return createPixelBufferFromFrameBuffer(buffer, [protectedThis] (size_t width, size_t height, BufferType bufferType) -> CVPixelBufferRef {
+            return adoptCF(webrtc::createPixelBufferFromFrameBuffer(buffer, [protectedThis] (size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
                 return protectedThis->createPixelBuffer(width, height, bufferType);
-            });
+            }));
         });
 
         protectedThis->m_outputCallback(VideoDecoder::DecodedFrame { WTFMove(videoFrame), timestamp, duration });
