@@ -23,41 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UserNotifications/UserNotifications.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-
-#import <UserNotifications/UNNotificationContent_Private.h>
-#import <UserNotifications/UNUserNotificationCenter_Private.h>
+#import "UserNotificationsSPI.h"
 
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
-#import <UserNotifications/UNNotificationIcon.h>
-#import <UserNotifications/UNNotificationIcon_Private.h>
-#import <UserNotifications/UNNotification_Private.h>
-#endif
 
-#else // USE(APPLE_INTERNAL_SDK)
-
-#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
-@interface UNNotification ()
-+ (instancetype)notificationWithRequest:(UNNotificationRequest *)request date:(NSDate *)date;
-@end
-
-@interface UNNotificationIcon : NSObject <NSCopying, NSSecureCoding>
-+ (instancetype)iconForApplicationIdentifier:(NSString *)applicationIdentifier;
-@end
-#endif
-
-@interface UNMutableNotificationContent ()
-@property (NS_NONATOMIC_IOSONLY, copy) NSString *defaultActionBundleIdentifier;
-#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
-@property (NS_NONATOMIC_IOSONLY, copy) UNNotificationIcon *icon;
-#endif
-@end
-
-@interface UNUserNotificationCenter ()
+@interface _WKMockUserNotificationCenter : NSObject
 - (instancetype)initWithBundleIdentifier:(NSString *)bundleIdentifier;
+- (void)addNotificationRequest:(UNNotificationRequest *)request withCompletionHandler:(void(^)(NSError *error))completionHandler;
+- (void)getDeliveredNotificationsWithCompletionHandler:(void(^)(NSArray<UNNotification *> *notifications))completionHandler;
 @end
 
-#endif // USE(APPLE_INTERNAL_SDK)
-
+#endif

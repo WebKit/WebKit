@@ -203,6 +203,11 @@
 
 (allow-reading-global-preferences)
 
+;; On-disk WebKit2 framework location, to account for debug installations outside of /System/Library/Frameworks,
+;; and to allow issuing extensions.
+(allow file-read*
+    (subpath (param "WEBKIT2_FRAMEWORK_DIR")))
+
 ; FIXME: This is needed for some security framework calls (that use non-CFPreferences readers)
 (allow file-read-data
     (literal "/Library/Preferences/com.apple.security.plist")

@@ -73,12 +73,19 @@ static bool alertReceived = false;
 }
 -(void)clearMostRecents;
 
+@property BOOL expectsDelegateNotificationCallbacks;
 @property (nonatomic, readonly) RetainPtr<_WKNotificationData> mostRecentNotification;
 @property (nonatomic, readonly) RetainPtr<NSURL> mostRecentActionURL;
 @property (nonatomic, readonly) std::optional<uint64_t> mostRecentAppBadge;
 @end
 
 @implementation PushNotificationDelegate
+
+-(id)init {
+    if (self = [super init])
+        self.expectsDelegateNotificationCallbacks = YES;
+    return self;
+}
 
 -(void)clearMostRecents
 {
@@ -100,6 +107,8 @@ static bool alertReceived = false;
 
 - (void)websiteDataStore:(WKWebsiteDataStore *)dataStore showNotification:(_WKNotificationData *)notificationData
 {
+    RELEASE_ASSERT(_expectsDelegateNotificationCallbacks);
+
     _mostRecentNotification = notificationData;
 }
 
@@ -127,6 +136,7 @@ static RetainPtr<NSURL> testWebPushDaemonLocation()
 
 enum LaunchOnlyOnce : BOOL { No, Yes };
 enum class InstallDataStoreDelegate : bool { No, Yes };
+enum class BuiltInNotificationsEnabled : bool { No, Yes };
 
 static NSDictionary<NSString *, id> *testWebPushDaemonPList(NSURL *storageLocation, LaunchOnlyOnce launchOnlyOnce)
 {
@@ -475,12 +485,27 @@ async function disableShowNotifications()
     globalRegistration.active.postMessage({ message: "disableShowNotifications", port: channel.port2 }, [channel.port2]);
     return await promise;
 }
+
+async function getNotifications()
+{
+    const channel = new MessageChannel();
+    const promise = new Promise((resolve) => {
+        channel.port1.onmessage = (event) => resolve(event.data);
+    });
+    globalRegistration.active.postMessage({ message: "getNotifications", port: channel.port2 }, [channel.port2]);
+    return await promise;
+}
 </script>
 )SRC"_s;
 
 static constexpr auto serviceWorkerScriptSource = R"SWRESOURCE(
 let globalPort;
 let showNotifications = true;
+
+function notificationToString(n)
+{
+    return "title: " + n.title + " body: " + n.body + " tag: " + n.tag + " dir: " + n.dir + " silent: " + n.silent + " data: " + n.data;
+}
 
 self.addEventListener("message", (event) => {
     let { message, port } = event.data;
@@ -490,6 +515,15 @@ self.addEventListener("message", (event) => {
     } else if (message === "disableShowNotifications") {
         showNotifications = false;
         port.postMessage(true);
+    } else if (message === "getNotifications") {
+        registration.getNotifications().then((notifications) => {
+            var result = "";
+            for (n = 0; n < notifications.length; ++n)
+                result += n + " - " + notificationToString(notifications[n]) + " ";
+            port.postMessage(result);
+        }, (exception) => {
+            port.postMessage("getNotifications failed: " + exception);
+        });
     }
 });
 
@@ -555,10 +589,20 @@ self.addEventListener("notificationclick", () => {
 });
 )SWRESOURCE"_s;
 
+static void enableFeatureForPreferences(NSString *featureName, WKPreferences *preferences)
+{
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:featureName]) {
+            [preferences _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+}
+
 class WebPushDTestWebView {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebPushDTestWebView(const String& pushPartition, const std::optional<WTF::UUID>& dataStoreIdentifier, WKProcessPool *processPool, TestNotificationProvider& notificationProvider, ASCIILiteral html, InstallDataStoreDelegate installDataStoreDelegate)
+    WebPushDTestWebView(const String& pushPartition, const std::optional<WTF::UUID>& dataStoreIdentifier, WKProcessPool *processPool, TestNotificationProvider& notificationProvider, ASCIILiteral html, InstallDataStoreDelegate installDataStoreDelegate, BuiltInNotificationsEnabled builtInNotificationsEnabled)
         : m_pushPartition(pushPartition)
         , m_dataStoreIdentifier(dataStoreIdentifier)
         , m_notificationProvider(notificationProvider)
@@ -576,6 +620,12 @@ public:
             { "/"_s, { html } },
             { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, serviceWorkerScriptSource } }
         }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy));
+
+        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        // This step is required early to make sure the first NetworkProcess access has the correct
+        // setting in the NetworkProcessInitializationParameters
+        if (builtInNotificationsEnabled == BuiltInNotificationsEnabled::Yes)
+            enableFeatureForPreferences(@"BuiltInNotificationsEnabled", configuration.get().preferences);
 
         RetainPtr<_WKWebsiteDataStoreConfiguration> dataStoreConfiguration;
         if (dataStoreIdentifier)
@@ -601,6 +651,9 @@ public:
 
         if (installDataStoreDelegate == InstallDataStoreDelegate::Yes) {
             m_delegate = adoptNS([[PushNotificationDelegate alloc] init]);
+            if (builtInNotificationsEnabled == BuiltInNotificationsEnabled::Yes)
+                m_delegate.get().expectsDelegateNotificationCallbacks = NO;
+
             m_dataStore.get()._delegate = m_delegate.get();
         }
 
@@ -618,7 +671,6 @@ public:
         }];
         Util::run(&done);
 
-        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
         [configuration setProcessPool:processPool];
         [configuration setWebsiteDataStore:m_dataStore.get()];
         configuration.get().preferences._appBadgeEnabled = YES;
@@ -630,13 +682,7 @@ public:
         m_notificationProvider.setPermission(m_origin, true);
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-        NSArray<_WKFeature *> * features = WKPreferences._features;
-        for (_WKFeature *feature in features) {
-            if ([feature.key isEqualToString:@"DeclarativeWebPush"]) {
-                [configuration.get().preferences _setEnabled:YES forFeature:feature];
-                break;
-            }
-        }
+        enableFeatureForPreferences(@"DeclarativeWebPush", configuration.get().preferences);
 #endif
 
         m_webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -717,6 +763,13 @@ public:
         id obj = [m_webView objectByCallingAsyncFunction:@"return await disableShowNotifications()" withArguments:@{ } error:&error];
         ASSERT_FALSE(error);
         ASSERT_TRUE([obj isEqual:@YES]);
+    }
+
+    id getNotifications()
+    {
+        NSError *error = nil;
+        id obj = [m_webView objectByCallingAsyncFunction:@"return await getNotifications()" withArguments:@{ } error:&error];
+        return error ?: obj;
     }
 
     void resetPermission()
@@ -945,6 +998,8 @@ public:
         return m_mostRecentMessage;
     }
 
+    NSURL *url() const { return m_url.get(); }
+
 private:
     String m_pushPartition;
     Markable<WTF::UUID> m_dataStoreIdentifier;
@@ -961,9 +1016,10 @@ private:
 
 class WebPushDTest : public ::testing::Test {
 public:
-    WebPushDTest(LaunchOnlyOnce launchOnlyOnce = LaunchOnlyOnce::Yes, ASCIILiteral html = htmlSource, InstallDataStoreDelegate installDataStoreDelegate = InstallDataStoreDelegate::No)
+    WebPushDTest(LaunchOnlyOnce launchOnlyOnce = LaunchOnlyOnce::Yes, ASCIILiteral html = htmlSource, InstallDataStoreDelegate installDataStoreDelegate = InstallDataStoreDelegate::No, BuiltInNotificationsEnabled builtInNotificationsEnabled = BuiltInNotificationsEnabled::No)
         : m_html(html)
         , m_installDataStoreDelegate(installDataStoreDelegate)
+        , m_builtInNotificationsEnabled(builtInNotificationsEnabled)
     {
         m_tempDirectory = retainPtr(setUpTestWebPushD(launchOnlyOnce));
     }
@@ -975,19 +1031,19 @@ public:
 
         m_notificationProvider = makeUnique<TestWebKitAPI::TestNotificationProvider>(Vector<WKNotificationManagerRef> { [processPool _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
 
-        auto webView = makeUniqueRef<WebPushDTestWebView>(emptyString(), std::nullopt, processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate);
+        auto webView = makeUniqueRef<WebPushDTestWebView>(emptyString(), std::nullopt, processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
         m_webViews.append(WTFMove(webView));
 
-        auto webViewWithIdentifier1 = makeUniqueRef<WebPushDTestWebView>(emptyString(), WTF::UUID::parse("0bf5053b-164c-4b7d-8179-832e6bf158df"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate);
+        auto webViewWithIdentifier1 = makeUniqueRef<WebPushDTestWebView>(emptyString(), WTF::UUID::parse("0bf5053b-164c-4b7d-8179-832e6bf158df"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
         m_webViews.append(WTFMove(webViewWithIdentifier1));
 
-        auto webViewWithIdentifier2 = makeUniqueRef<WebPushDTestWebView>(emptyString(), WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate);
+        auto webViewWithIdentifier2 = makeUniqueRef<WebPushDTestWebView>(emptyString(), WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
         m_webViews.append(WTFMove(webViewWithIdentifier2));
 
-        auto webViewWithPartition = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, std::nullopt, processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate);
+        auto webViewWithPartition = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, std::nullopt, processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
         m_webViews.append(WTFMove(webViewWithPartition));
 
-        auto webViewWithPartitionAndIdentifier = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate);
+        auto webViewWithPartitionAndIdentifier = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, WTF::UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider, m_html, m_installDataStoreDelegate, m_builtInNotificationsEnabled);
         m_webViews.append(WTFMove(webViewWithPartitionAndIdentifier));
     }
 
@@ -1023,6 +1079,7 @@ protected:
     Vector<UniqueRef<WebPushDTestWebView>> m_webViews;
     ASCIILiteral m_html;
     InstallDataStoreDelegate m_installDataStoreDelegate { InstallDataStoreDelegate::No };
+    BuiltInNotificationsEnabled m_builtInNotificationsEnabled { BuiltInNotificationsEnabled::No };
 };
 
 class WebPushDMultipleLaunchTest : public WebPushDTest {
@@ -1483,6 +1540,67 @@ TEST_F(WebPushDMultipleLaunchTest, GetPushSubscriptionAfterDaemonRelaunch)
 
     ASSERT_EQ(subscribedTopicsCount(), 0u);
 }
+
+class WebPushDBuiltInTest : public WebPushDTest {
+public:
+    WebPushDBuiltInTest()
+        : WebPushDTest(LaunchOnlyOnce::Yes, htmlSource, InstallDataStoreDelegate::Yes, BuiltInNotificationsEnabled::Yes)
+    {
+    }
+};
+
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+TEST_F(WebPushDBuiltInTest, ShowAndGetNotifications)
+{
+    auto& view = webViews().last();
+    view->subscribe();
+
+    auto dataStore = view->dataStore();
+
+    auto configuration = defaultWebPushDaemonConfiguration();
+    configuration.pushPartitionString = dataStore.get()._webPushPartition;
+    configuration.dataStoreIdentifier = WTF::UUID::fromNSUUID(dataStore.get()._identifier);
+    auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service", WTFMove(configuration));
+    auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
+
+    WebKit::WebPushD::PushMessageForTesting message;
+    message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI"_s;
+    message.pushPartitionString = dataStore.get()._webPushPartition;
+    message.registrationURL = view->url();
+    message.disposition = WebKit::WebPushD::PushMessageDisposition::Legacy;
+    message.payload = @"hello";
+
+    __block bool done = false;
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::EnableMockUserNotificationCenterForTesting(), ^() {
+        done = true;
+    });
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), ^(const String& error) {
+        if (!error.isEmpty())
+            NSLog(@"ERROR: %s", error.utf8().data());
+        done = true;
+    });
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    RetainPtr delegate = (PushNotificationDelegate *)dataStore.get()._delegate;
+    [dataStore _getPendingPushMessages:^(NSArray<NSDictionary *> *messages) {
+        EXPECT_EQ(messages.count, 1u);
+
+        [dataStore _processPushMessage:messages.firstObject completionHandler:^(bool handled) {
+            EXPECT_TRUE(handled);
+            done = true;
+        }];
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    id result = view->getNotifications();
+    EXPECT_TRUE([result isEqualToString:@"0 - title: notification body:  tag:  dir: auto silent: null data: null "]);
+}
+#endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+
 
 class WebPushDInjectedPushTest : public WebPushDTest {
 public:

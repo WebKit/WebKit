@@ -92,10 +92,13 @@ public:
     void setPublicTokenForTesting(PushClientConnection&, const String& publicToken, CompletionHandler<void()>&&);
     void didShowNotificationForTesting(PushClientConnection&, const URL& scopeURL, CompletionHandler<void()>&& replySender);
 
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
     void showNotification(PushClientConnection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>, CompletionHandler<void()>&&);
     void getNotifications(PushClientConnection&, const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
 
     void getPushPermissionState(PushClientConnection&, const URL& scopeURL, CompletionHandler<void(WebCore::PushPermissionState)>&&);
+    void enableMockUserNotificationCenterForTesting(PushClientConnection&);
+#endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
 
 private:
     WebPushDaemon();
@@ -136,6 +139,11 @@ private:
     WebCore::Timer m_silentPushTimer;
     OSObjectPtr<os_transaction_t> m_silentPushTransaction;
     StdList<PotentialSilentPush> m_potentialSilentPushes;
+
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+    Class m_userNotificationCenterClass;
+#endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+
 };
 
 } // namespace WebPushD

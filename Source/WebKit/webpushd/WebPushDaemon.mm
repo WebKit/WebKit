@@ -35,6 +35,7 @@
 #import "HandleMessage.h"
 #import "LaunchServicesSPI.h"
 #import "UserNotificationsSPI.h"
+#import "_WKMockUserNotificationCenter.h"
 
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/NotificationData.h>
@@ -76,6 +77,9 @@ WebPushDaemon& WebPushDaemon::singleton()
 WebPushDaemon::WebPushDaemon()
     : m_incomingPushTransactionTimer { *this, &WebPushDaemon::incomingPushTransactionTimerFired }
     , m_silentPushTimer { *this, &WebPushDaemon::silentPushTimerFired }
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+    , m_userNotificationCenterClass { [UNUserNotificationCenter class] }
+#endif
 {
 }
 
@@ -252,7 +256,7 @@ void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection
     }
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)
 
-    PushSubscriptionSetIdentifier identifier { .bundleIdentifier = message.targetAppCodeSigningIdentifier, .pushPartition = message.pushPartitionString };
+    PushSubscriptionSetIdentifier identifier { .bundleIdentifier = message.targetAppCodeSigningIdentifier, .pushPartition = message.pushPartitionString, .dataStoreIdentifier = connection.dataStoreIdentifier() };
     auto addResult = m_pushMessages.ensure(identifier, [] {
         return Deque<WebKit::WebPushMessage> { };
     });
@@ -585,6 +589,8 @@ PushClientConnection* WebPushDaemon::toPushClientConnection(xpc_connection_t con
     return clientConnection;
 }
 
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+
 static bool platformShouldPlaySound(const WebCore::NotificationData& data)
 {
 #if PLATFORM(IOS)
@@ -611,8 +617,9 @@ static NSString *platformNotificationCenterBundleIdentifier(PushClientConnection
 #if PLATFORM(IOS)
     return [NSString stringWithFormat:@"com.apple.WebKit.PushBundle.%@", (NSString *)connection.pushPartitionString()];
 #else
-    // FIXME: Calculate appropriate value on macOS
-    return nil;
+    // FIXME: Calculate the correct values on macOS in a non-testing environment.
+    RELEASE_ASSERT(connection.hostAppCodeSigningIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s);
+    return [NSString stringWithFormat:@"com.apple.WebKit.PushBundle.%@", (NSString *)connection.pushPartitionString()];
 #endif
 }
 
@@ -624,6 +631,12 @@ static NSString *platformNotificationSourceForDisplay(PushClientConnection& conn
     // FIXME: Calculate appropriate value on macOS
     return nil;
 #endif
+}
+
+void WebPushDaemon::enableMockUserNotificationCenterForTesting(PushClientConnection& connection)
+{
+    RELEASE_ASSERT(connection.hostAppCodeSigningIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s);
+    m_userNotificationCenterClass = [_WKMockUserNotificationCenter class];
 }
 
 void WebPushDaemon::showNotification(PushClientConnection& connection, const WebCore::NotificationData& notificationData, RefPtr<WebCore::NotificationResources> resources, CompletionHandler<void()>&& completionHandler)
@@ -641,7 +654,7 @@ void WebPushDaemon::showNotification(PushClientConnection& connection, const Web
 
     NSString *notificationCenterBundleIdentifier = platformNotificationCenterBundleIdentifier(connection);
 
-#if HAVE(UNNOTIFICATIONICON)
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
     content.get().icon = [UNNotificationIcon iconForApplicationIdentifier:notificationCenterBundleIdentifier];
 #endif
 
@@ -656,7 +669,7 @@ ALLOW_NONLITERAL_FORMAT_END
     content.get().userInfo = notificationData.dictionaryRepresentation();
 
     UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:(NSString *)notificationData.notificationID.toString() content:content.get() trigger:nil];
-    RetainPtr center = adoptNS([[UNUserNotificationCenter alloc] initWithBundleIdentifier:notificationCenterBundleIdentifier]);
+    RetainPtr center = adoptNS([[m_userNotificationCenterClass alloc] initWithBundleIdentifier:notificationCenterBundleIdentifier]);
     if (!center)
         RELEASE_LOG_ERROR(Push, "Failed to instantiate UNUserNotificationCenter center");
 
@@ -671,8 +684,8 @@ ALLOW_NONLITERAL_FORMAT_END
 
 void WebPushDaemon::getNotifications(PushClientConnection& connection, const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
 {
-    NSString *placeholderBundleIdentifier = [NSString stringWithFormat:@"com.apple.WebKit.PushBundle.%@", (NSString *)connection.pushPartitionString()];
-    RetainPtr center = adoptNS([[UNUserNotificationCenter alloc] initWithBundleIdentifier:placeholderBundleIdentifier]);
+    NSString *placeholderBundleIdentifier = platformNotificationCenterBundleIdentifier(connection);
+    RetainPtr center = adoptNS([[m_userNotificationCenterClass alloc] initWithBundleIdentifier:placeholderBundleIdentifier]);
 
     auto blockPtr = makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSArray<UNNotification *> *notifications) mutable {
         Vector<WebCore::NotificationData> notificationDatas;
@@ -728,6 +741,8 @@ void WebPushDaemon::getPushPermissionState(PushClientConnection& connection, con
 
     [center getNotificationSettingsWithCompletionHandler:blockPtr.get()];
 }
+
+#endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
 
 } // namespace WebPushD
 

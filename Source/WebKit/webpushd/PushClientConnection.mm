@@ -35,6 +35,7 @@
 #import "WebPushDaemonConnectionConfiguration.h"
 #import "WebPushDaemonConstants.h"
 #import <JavaScriptCore/ConsoleTypes.h>
+#import <WebCore/NotificationData.h>
 #import <WebCore/PushPermissionState.h>
 #import <wtf/HexNumber.h>
 #import <wtf/Vector.h>
@@ -245,17 +246,29 @@ void PushClientConnection::didShowNotificationForTesting(URL&& scopeURL, Complet
 
 void PushClientConnection::getPushPermissionState(URL&& scopeURL, CompletionHandler<void(WebCore::PushPermissionState)>&& replySender)
 {
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
     WebPushDaemon::singleton().getPushPermissionState(*this, WTFMove(scopeURL), WTFMove(replySender));
+#else
+    replySender({ });
+#endif
 }
 
 void PushClientConnection::showNotification(const WebCore::NotificationData& notificationData, RefPtr<WebCore::NotificationResources> notificationResources, CompletionHandler<void()>&& completionHandler)
 {
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
     WebPushDaemon::singleton().showNotification(*this, notificationData, notificationResources, WTFMove(completionHandler));
+#else
+    completionHandler();
+#endif
 }
 
 void PushClientConnection::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
 {
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
     WebPushDaemon::singleton().getNotifications(*this, registrationURL, tag, WTFMove(completionHandler));
+#else
+    completionHandler({ });
+#endif
 }
 
 #if PLATFORM(IOS)
@@ -266,6 +279,16 @@ String PushClientConnection::associatedWebClipTitle() const
     return m_associatedWebClip.get().title;
 }
 #endif // PLATFORM(IOS)
+
+void PushClientConnection::enableMockUserNotificationCenterForTesting(CompletionHandler<void()>&& completionHandler)
+{
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+    WebPushDaemon::singleton().enableMockUserNotificationCenterForTesting(*this);
+    completionHandler();
+#else
+    completionHandler();
+#endif
+}
 
 } // namespace WebPushD
 
