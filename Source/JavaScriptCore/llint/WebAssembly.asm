@@ -561,7 +561,7 @@ macro boxInt32(r, rTag)
 end
 
 // This is the interpreted analogue to createJSToWasmWrapper
-if JSVALUE64 and (ARM64 or ARM64E or X86_64)
+if JSVALUE64 and (ARM64 or ARM64E or X86_64 or X86_64_WIN)
 op(js_to_wasm_wrapper_entry, macro ()
     if not WEBASSEMBLY or C_LOOP or C_LOOP_WIN
         error
@@ -640,7 +640,7 @@ end
             storep wasmInstance, -3 * SlotSize[cfr]
             # These are just for us to spill things
             # MPCSpill
-        elsif X86_64
+        elsif X86_64 or X86_64_WIN
             # These must match the wasmToJS thunk, since the unwinder won't be able to tell the difference between us and them.
             # See calleeSaveRegistersImpl
             storep boundsCheckingSize, -1 * SlotSize[cfr]
@@ -662,7 +662,7 @@ end
         if ARM64 or ARM64E
             loadpairq -2 * SlotSize[cfr], memoryBase, boundsCheckingSize
             loadp -3 * SlotSize[cfr], wasmInstance
-        elsif X86_64
+        elsif X86_64 or X86_64_WIN
             loadp -1 * SlotSize[cfr], boundsCheckingSize
             loadp -2 * SlotSize[cfr], memoryBase
             loadp -3 * SlotSize[cfr], wasmInstance
@@ -795,7 +795,7 @@ opcode(LoadF64)
 opcode(StoreI32)
     advanceSigned()
     lshiftq 3, Scratch
-if X86_64
+if X86_64 or X86_64_WIN
     addp sp, Scratch
 else
     move sp, Scratch2
@@ -909,7 +909,7 @@ opcodesEnd()
     if ARM64 or ARM64E
         pcrtoaddr _js_to_wasm_wrapper_entry_interp_begin, Scratch2
         addp Scratch2, Scratch
-    elsif X86_64
+    elsif X86_64 or X86_64_WIN
         storeq Accumulator, AccumulatorSpill[cfr]
         leap (_js_to_wasm_wrapper_entry_interp_begin), Accumulator
         addp Accumulator, Scratch
@@ -927,7 +927,7 @@ opcodesEnd()
 .memory:
     if ARM64 or ARM64E
         loadpairq JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase, boundsCheckingSize
-    elsif X86_64
+    elsif X86_64 or X86_64_WIN
         loadp JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase
         loadp JSWebAssemblyInstance::m_cachedBoundsCheckingSize[wasmInstance], boundsCheckingSize
     end

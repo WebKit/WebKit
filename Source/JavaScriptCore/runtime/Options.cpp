@@ -753,10 +753,8 @@ void Options::notifyOptionsChanged()
             Options::useFTLJIT() = false;
         }
 
-        // Windows: Building with WEBASSEMBLY_BBQJIT and disabling at runtime
         // Windows: Building with WEBASSEMBLY_OMGJIT and disabling at runtime
 #if OS(WINDOWS)
-        Options::useBBQJIT() = false;
         Options::useOMGJIT() = false;
 #endif
 

@@ -76,7 +76,9 @@ namespace BBQJITImpl {
 
 Location Location::none()
 {
-    return Location();
+    Location loc;
+    loc.m_kind = None;
+    return loc;
 }
 
 Location Location::fromStack(int32_t stackOffset)
