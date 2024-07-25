@@ -1,17 +1,17 @@
 
 
 PASS invoking (as null) on popover does nothing
-FAIL invoking (as null) on open popover does nothing assert_true: expected true got false
+PASS invoking (as null) on open popover does nothing
 PASS invoking (as ) on popover does nothing
-FAIL invoking (as ) on open popover does nothing assert_true: expected true got false
+PASS invoking (as ) on open popover does nothing
 PASS invoking (as foo-bar) on popover does nothing
-FAIL invoking (as foo-bar) on open popover does nothing assert_true: expected true got false
+PASS invoking (as foo-bar) on open popover does nothing
 PASS invoking (as showmodal) on popover does nothing
-FAIL invoking (as showmodal) on open popover does nothing assert_true: expected true got false
+PASS invoking (as showmodal) on open popover does nothing
 PASS invoking (as showpicker) on popover does nothing
-FAIL invoking (as showpicker) on open popover does nothing assert_true: expected true got false
+PASS invoking (as showpicker) on open popover does nothing
 PASS invoking (as open) on popover does nothing
-FAIL invoking (as open) on open popover does nothing assert_true: expected true got false
+PASS invoking (as open) on open popover does nothing
 PASS invoking (as close) on popover does nothing
-FAIL invoking (as close) on open popover does nothing assert_true: expected true got false
+PASS invoking (as close) on open popover does nothing
 

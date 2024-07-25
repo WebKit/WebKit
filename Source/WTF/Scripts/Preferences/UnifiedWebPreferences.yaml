@@ -3419,8 +3419,8 @@ InvokerAttributesEnabled:
   type: bool
   status: testable
   category: html
-  humanReadableName: "HTML invoketarget & invokeaction attributes"
-  humanReadableDescription: "Enable HTML invoketarget & invokeaction attribute support"
+  humanReadableName: "HTML command & commandfor attributes"
+  humanReadableDescription: "Enable HTML command & commandfor attribute support"
   defaultValue:
     WebKitLegacy:
       default: false

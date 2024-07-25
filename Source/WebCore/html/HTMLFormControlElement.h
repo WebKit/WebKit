@@ -102,7 +102,7 @@ public:
     const AtomString& popoverTargetAction() const;
     void setPopoverTargetAction(const AtomString& value);
 
-    RefPtr<Element> invokeTargetElement() const;
+    RefPtr<Element> commandForElement() const;
 
     bool isKeyboardFocusable(KeyboardEvent*) const override;
 
@@ -131,8 +131,8 @@ protected:
 
     void handlePopoverTargetAction() const;
 
-    InvokeAction invokeAction() const;
-    void handleInvokeAction();
+    CommandType commandType() const;
+    void handleCommand();
 
 private:
     void refFormAssociatedElement() const final { ref(); }

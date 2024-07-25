@@ -1,40 +1,40 @@
 
 
-FAIL invoking (with command property as showmodal) closed dialog opens as modal assert_true: invokee.open expected true got false
+PASS invoking (with command property as showmodal) closed dialog opens as modal
 PASS invoking (with command property as showmodal) closed dialog with preventDefault is noop
-FAIL invoking (with command property as showmodal) while changing command still opens as modal assert_true: invokee.open expected true got false
-FAIL invoking (with command attribute as showmodal) closed dialog opens as modal assert_true: invokee.open expected true got false
+PASS invoking (with command property as showmodal) while changing command still opens as modal
+PASS invoking (with command attribute as showmodal) closed dialog opens as modal
 PASS invoking (with command attribute as showmodal) closed dialog with preventDefault is noop
-FAIL invoking (with command attribute as showmodal) while changing command still opens as modal assert_true: invokee.open expected true got false
-FAIL invoking (with command property as sHoWmOdAl) closed dialog opens as modal assert_true: invokee.open expected true got false
+PASS invoking (with command attribute as showmodal) while changing command still opens as modal
+PASS invoking (with command property as sHoWmOdAl) closed dialog opens as modal
 PASS invoking (with command property as sHoWmOdAl) closed dialog with preventDefault is noop
-FAIL invoking (with command property as sHoWmOdAl) while changing command still opens as modal assert_true: invokee.open expected true got false
-FAIL invoking (with command attribute as sHoWmOdAl) closed dialog opens as modal assert_true: invokee.open expected true got false
+PASS invoking (with command property as sHoWmOdAl) while changing command still opens as modal
+PASS invoking (with command attribute as sHoWmOdAl) closed dialog opens as modal
 PASS invoking (with command attribute as sHoWmOdAl) closed dialog with preventDefault is noop
-FAIL invoking (with command attribute as sHoWmOdAl) while changing command still opens as modal assert_true: invokee.open expected true got false
-FAIL invoking to close (with command property as close) open dialog closes assert_false: invokee.open expected false got true
+PASS invoking (with command attribute as sHoWmOdAl) while changing command still opens as modal
+PASS invoking to close (with command property as close) open dialog closes
 PASS invoking to close (with command property as close) open dialog with preventDefault is no-op
 PASS invoking to close (with command property as close) open modal dialog with preventDefault is no-op
-FAIL invoking to close (with command property as close) open dialog while changing command still closes assert_false: invokee.open expected false got true
-FAIL invoking to close (with command property as close) open modal dialog while changing command still closes assert_false: invokee.open expected false got true
-FAIL invoking to close (with command attribute as close) open dialog closes assert_false: invokee.open expected false got true
+PASS invoking to close (with command property as close) open dialog while changing command still closes
+PASS invoking to close (with command property as close) open modal dialog while changing command still closes
+PASS invoking to close (with command attribute as close) open dialog closes
 PASS invoking to close (with command attribute as close) open dialog with preventDefault is no-op
 PASS invoking to close (with command attribute as close) open modal dialog with preventDefault is no-op
-FAIL invoking to close (with command attribute as close) open dialog while changing command still closes assert_false: invokee.open expected false got true
-FAIL invoking to close (with command attribute as close) open modal dialog while changing command still closes assert_false: invokee.open expected false got true
-FAIL invoking to close (with command property as cLoSe) open dialog closes assert_false: invokee.open expected false got true
+PASS invoking to close (with command attribute as close) open dialog while changing command still closes
+PASS invoking to close (with command attribute as close) open modal dialog while changing command still closes
+PASS invoking to close (with command property as cLoSe) open dialog closes
 PASS invoking to close (with command property as cLoSe) open dialog with preventDefault is no-op
 PASS invoking to close (with command property as cLoSe) open modal dialog with preventDefault is no-op
-FAIL invoking to close (with command property as cLoSe) open dialog while changing command still closes assert_false: invokee.open expected false got true
-FAIL invoking to close (with command property as cLoSe) open modal dialog while changing command still closes assert_false: invokee.open expected false got true
-FAIL invoking to close (with command attribute as cLoSe) open dialog closes assert_false: invokee.open expected false got true
+PASS invoking to close (with command property as cLoSe) open dialog while changing command still closes
+PASS invoking to close (with command property as cLoSe) open modal dialog while changing command still closes
+PASS invoking to close (with command attribute as cLoSe) open dialog closes
 PASS invoking to close (with command attribute as cLoSe) open dialog with preventDefault is no-op
 PASS invoking to close (with command attribute as cLoSe) open modal dialog with preventDefault is no-op
-FAIL invoking to close (with command attribute as cLoSe) open dialog while changing command still closes assert_false: invokee.open expected false got true
-FAIL invoking to close (with command attribute as cLoSe) open modal dialog while changing command still closes assert_false: invokee.open expected false got true
+PASS invoking to close (with command attribute as cLoSe) open dialog while changing command still closes
+PASS invoking to close (with command attribute as cLoSe) open modal dialog while changing command still closes
 PASS invoking (as showmodal) open dialog is noop
 PASS invoking (as showmodal) open modal, while changing command still a no-op
-FAIL invoking (as showmodal) closed popover dialog opens as modal assert_true: invokee.open expected true got false
+PASS invoking (as showmodal) closed popover dialog opens as modal
 PASS invoking (as close) already closed dialog is noop
 PASS invoking (as showmodal) dialog as open popover=manual is noop
 PASS invoking (as showmodal) dialog as open popover=auto is noop

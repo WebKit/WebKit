@@ -593,6 +593,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCloseEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCloseEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSColorGamut.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSColorGamut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCommandEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCommandEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCommandLineAPIHost.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCommandLineAPIHost.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSComment.cpp
@@ -1717,8 +1719,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIntersectionObserverCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIntersectionObserverCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIntersectionObserverEntry.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIntersectionObserverEntry.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInvokeEvent.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInvokeEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInvokerElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInvokerElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIsLoggedIn.cpp

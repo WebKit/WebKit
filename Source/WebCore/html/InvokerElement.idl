@@ -25,6 +25,6 @@
 
 [EnabledBySetting=InvokerAttributesEnabled]
 interface mixin InvokerElement {
-    [CEReactions=NotNeeded, Reflect=invoketarget] attribute Element? invokeTargetElement;
-    [CEReactions=NotNeeded, Reflect=invokeaction] attribute DOMString invokeAction;
+    [CEReactions=NotNeeded, Reflect=commandfor] attribute Element? commandForElement;
+    [CEReactions=NotNeeded, Reflect=command] attribute DOMString command;
 };

@@ -1,5 +1,5 @@
 
 
-FAIL CommandEvent propagates across shadow boundaries retargeting invoker Can't find variable: CommandEvent
-FAIL cross shadow CommandEvent retargets invoker to host element Can't find variable: CommandEvent
+PASS CommandEvent propagates across shadow boundaries retargeting invoker
+PASS cross shadow CommandEvent retargets invoker to host element
 

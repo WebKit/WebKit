@@ -168,6 +168,7 @@ namespace WebCore {
     macro(CSSUnitValue) \
     macro(CSSUnparsedValue) \
     macro(CSSVariableReferenceValue) \
+    macro(CommandEvent) \
     macro(CookieChangeEvent) \
     macro(CookieStore) \
     macro(CookieStoreManager) \
@@ -280,7 +281,6 @@ namespace WebCore {
     macro(InputEvent) \
     macro(IntersectionObserver) \
     macro(IntersectionObserverEntry) \
-    macro(InvokeEvent) \
     macro(KeyframeEffect) \
     macro(Lock) \
     macro(LockManager) \

@@ -1100,6 +1100,7 @@ dom/ChildNodeList.cpp
 dom/ClassCollection.cpp
 dom/ClipboardEvent.cpp
 dom/CollectionIndexCache.cpp
+dom/CommandEvent.cpp
 dom/Comment.cpp
 dom/ComposedTreeIterator.cpp
 dom/CompositionEvent.cpp
@@ -1175,7 +1176,6 @@ dom/ImageOverlay.cpp
 dom/InlineClassicScript.cpp
 dom/InlineStyleSheetOwner.cpp
 dom/InputEvent.cpp
-dom/InvokeEvent.cpp
 dom/InternalObserver.cpp
 dom/InternalObserverFromScript.cpp
 dom/KeyboardEvent.cpp
@@ -3438,6 +3438,7 @@ JSClipboardEvent.cpp
 JSClipboardItem.cpp
 JSCloseEvent.cpp
 JSColorGamut.cpp
+JSCommandEvent.cpp
 JSCommandLineAPIHost.cpp
 JSComment.cpp
 JSCompositeOperation.cpp
@@ -3924,7 +3925,6 @@ JSIntersectionObserver.cpp
 JSIntersectionObserverCallback.cpp
 JSIntersectionObserverEntry.cpp
 JSIterationCompositeOperation.cpp
-JSInvokeEvent.cpp
 JSIsLoggedIn.cpp
 JSJsonWebKey.cpp
 JSKeyboardEvent.cpp

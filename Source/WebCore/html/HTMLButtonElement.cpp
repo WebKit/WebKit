@@ -140,7 +140,13 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
     if (event.type() == eventNames.DOMActivateEvent && !isDisabledFormControl()) {
         RefPtr<HTMLFormElement> protectedForm(form());
 
-        if (protectedForm) {
+        if (commandForElement()) {
+            if (m_type != BUTTON && form())
+                return;
+
+            handleCommand();
+
+        } else if (protectedForm) {
             // Update layout before processing form actions in case the style changes
             // the Form or button relationships.
             protectedDocument()->updateLayoutIgnorePendingStylesheets();
@@ -155,8 +161,6 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
 
             if (m_type == SUBMIT || m_type == RESET)
                 event.setDefaultHandled();
-        } else if (invokeTargetElement()) {
-            handleInvokeAction();
         } else
             handlePopoverTargetAction();
     }

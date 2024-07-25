@@ -933,6 +933,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/CheckVisibilityOptions.h
     dom/CollectionIndexCache.h
     dom/CollectionIndexCacheInlines.h
+    dom/CommandEvent.h
     dom/Comment.h
     dom/ContainerNode.h
     dom/ContextDestructionObserver.h
@@ -1001,7 +1002,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/GetHTMLOptions.h
     dom/ImageOverlay.h
     dom/InlineStyleSheetOwner.h
-    dom/InvokeEvent.h
     dom/KeyboardEvent.h
     dom/LiveNodeList.h
     dom/LiveNodeListInlines.h

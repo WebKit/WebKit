@@ -1333,6 +1333,7 @@ $(PROJECT_DIR)/dom/CharacterData.idl
 $(PROJECT_DIR)/dom/CheckVisibilityOptions.idl
 $(PROJECT_DIR)/dom/ChildNode.idl
 $(PROJECT_DIR)/dom/ClipboardEvent.idl
+$(PROJECT_DIR)/dom/CommandEvent.idl
 $(PROJECT_DIR)/dom/Comment.idl
 $(PROJECT_DIR)/dom/CompositionEvent.idl
 $(PROJECT_DIR)/dom/ContentVisibilityAutoStateChangeEvent.idl
@@ -1414,7 +1415,6 @@ $(PROJECT_DIR)/dom/IdleRequestCallback.idl
 $(PROJECT_DIR)/dom/IdleRequestOptions.idl
 $(PROJECT_DIR)/dom/InnerHTML.idl
 $(PROJECT_DIR)/dom/InputEvent.idl
-$(PROJECT_DIR)/dom/InvokeEvent.idl
 $(PROJECT_DIR)/dom/KeyboardEvent.idl
 $(PROJECT_DIR)/dom/MessageChannel.idl
 $(PROJECT_DIR)/dom/MessageEvent.idl

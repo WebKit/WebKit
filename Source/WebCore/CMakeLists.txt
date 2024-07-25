@@ -1027,6 +1027,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/CheckVisibilityOptions.idl
     dom/ChildNode.idl
     dom/ClipboardEvent.idl
+    dom/CommandEvent.idl
     dom/Comment.idl
     dom/CompositionEvent.idl
     dom/ContentVisibilityAutoStateChangeEvent.idl
@@ -1103,7 +1104,6 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/IdleRequestOptions.idl
     dom/InnerHTML.idl
     dom/InputEvent.idl
-    dom/InvokeEvent.idl
     dom/KeyboardEvent.idl
     dom/MessageChannel.idl
     dom/MessageEvent.idl
