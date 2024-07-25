@@ -38,6 +38,7 @@
 #include "MacroAssemblerHelpers.h"
 #include "Options.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/SetForScope.h>
 #include <wtf/SharedTask.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/TZoneMalloc.h>
@@ -99,6 +100,7 @@ class AbstractMacroAssembler : public AbstractMacroAssemblerBase {
 public:
     typedef AbstractMacroAssembler<AssemblerType> AbstractMacroAssemblerType;
     typedef AssemblerType AssemblerType_T;
+    friend class SuppressRegisetrAllocationValidation;
 
     template<PtrTag tag> using CodeRef = MacroAssemblerCodeRef<tag>;
 
@@ -885,6 +887,22 @@ public:
         return Label(this);
     }
 
+    // DFG register allocation validation is broken in various cases. We need suppression mechanism otherwise, it introduces a new bug rather to bypass the issue.
+    class SuppressRegisetrAllocationValidation {
+    public:
+#if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
+        SuppressRegisetrAllocationValidation(AbstractMacroAssemblerType& assembler)
+            : m_suppressRegisterValidation(assembler.m_suppressRegisterValidation, true)
+        {
+        }
+
+    private:
+        SetForScope<bool> m_suppressRegisterValidation;
+#else
+        SuppressRegisetrAllocationValidation(AbstractMacroAssemblerType&) { }
+#endif
+    };
+
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
     class RegisterAllocationOffset {
     public:
@@ -914,12 +932,14 @@ public:
 
     void checkRegisterAllocationAgainstBranchRange(unsigned offset1, unsigned offset2)
     {
+        if (m_suppressRegisterValidation)
+            return;
+
         if (offset1 > offset2)
             std::swap(offset1, offset2);
 
-        size_t size = m_registerAllocationForOffsets.size();
-        for (size_t i = 0; i < size; ++i)
-            m_registerAllocationForOffsets[i].checkOffsets(offset1, offset2);
+        for (auto& offset : m_registerAllocationForOffsets)
+            offset.checkOffsets(offset1, offset2);
     }
 #endif
 
@@ -1087,6 +1107,7 @@ public:
 protected:
 
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
+    bool m_suppressRegisterValidation { false };
     Vector<RegisterAllocationOffset, 10> m_registerAllocationForOffsets;
 #endif
 
