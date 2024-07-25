@@ -84,7 +84,10 @@ AutoInstall.register(Package('redis', Version(3, 5, 3)))
 if sys.version_info < (3, 8):
     AutoInstall.register(Package('selenium', Version(3, 141, 0)))
 else:
-    AutoInstall.register(Package('selenium', Version(4, 12, 0), wheel=True))
+    if sys.platform == 'linux':
+        AutoInstall.register(Package('selenium', Version(4, 19, 0), wheel=True))
+    else:
+        AutoInstall.register(Package('selenium', Version(4, 12, 0), wheel=True))
 AutoInstall.register(Package('service_identity', Version(21, 1, 0), pypi_name='service-identity'))
 AutoInstall.register(Package('sortedcontainers', Version(2, 4, 0)))
 AutoInstall.register(Package('tornado', Version(4, 5, 3)))

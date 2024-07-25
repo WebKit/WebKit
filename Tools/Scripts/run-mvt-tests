@@ -1,0 +1,343 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2024 Igalia S.L.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+# pylint: disable=missing-docstring,invalid-name
+
+"""MVT WebDriver test runner"""
+
+import os
+import sys
+
+scripts_dir = os.path.dirname(os.path.abspath(__file__))
+if os.path.isdir(os.path.join(scripts_dir, 'webkitpy')):
+    sys.path.insert(0, scripts_dir)
+    import webkitpy
+
+import argparse
+import json
+import subprocess
+import time
+
+import subprocess
+from subprocess import CalledProcessError
+
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.wpewebkit.options import Options
+
+top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
+
+TEST_SUITES = [
+    "codec-support-test",
+    "dash-html5-test",
+    "dash-shaka-test",
+    "dash-dashjs-test",
+    "hls-shaka-test",
+    "hls-hlsjs-test",
+    "hss-html5-test",
+    "hss-dashjs-test",
+    "progressive-html5-test",
+]
+
+COG_PLATFORMS = [
+    "drm",
+    "fdo",
+    "gtk4",
+    "headless",
+    "wl",
+]
+
+DEFAULT_BROWSER = "/usr/bin/cog"
+DEFAULT_WEBDRIVER = "/usr/bin/WPEWebDriver"
+DEFAULT_WEBDRIVER_ADDRESS = "0.0.0.0"
+DEFAULT_WEBDRIVER_PORT = "8088"
+DEFAULT_MVT_INSTANCE_ADDRESS = "https://mvt.rdkcentral.com"
+DEFAULT_PLATFORM = "headless"
+DEFAULT_TEST_SUITE = "dash-shaka-test"
+DEFAULT_CONFIGURATION = "release"
+
+def fatal(*args):
+    print()
+    print("Fatal:", end=' ')
+    print(*args)
+    sys.exit(1)
+
+def parse_args():
+    """Parse command line arguments"""
+
+    parser = argparse.ArgumentParser(
+        description="Run MVT suite with WebDriver.",
+        epilog="""
+            This script connects to a running WPEWebDriver and fires up a MVT
+            test suite, collecting the results in a JSON file.
+
+            It also expects a running MVT instance in the environment
+            variable $MVT_INSTANCE_ADDRESS.
+
+            For more info, check https://github.com/rdkcentral/mvt
+            """,
+    )
+
+    parser.add_argument("--browser", help="Path to Cog browser (i.e: /usr/bin/cog)")
+    parser.add_argument("--webdriver", help="Path to WPEWebDriver (i.e: /usr/bin/WPEWebDriver)")
+    parser.add_argument("--webdriver-address", default="{}:{}".format(DEFAULT_WEBDRIVER_ADDRESS, DEFAULT_WEBDRIVER_PORT), help="Address of the remote WebDriver (i.e: 127.0.0.1)")
+    parser.add_argument("--mvt-instance-address", default=DEFAULT_MVT_INSTANCE_ADDRESS, help="MVT instance address to use".format(DEFAULT_MVT_INSTANCE_ADDRESS))
+    parser.add_argument("--platform", default=DEFAULT_PLATFORM, choices=COG_PLATFORMS, help="Cog platform to use. Default: '{}'".format(DEFAULT_PLATFORM))
+    parser.add_argument("--suite", default=DEFAULT_TEST_SUITE, choices=TEST_SUITES, help="Suite to run. Default: '{}'".format(DEFAULT_TEST_SUITE))
+    parser.add_argument("--configuration", default=DEFAULT_CONFIGURATION, help="In case of using a WebKit build, choose 'release' or 'debug'. Default: '{}'".format(DEFAULT_CONFIGURATION))
+
+    args = parser.parse_args()
+
+    # Append 'port' in 'address' if missing.
+    if args.webdriver_address.find(":") < 0:
+        args.webdriver_address += ":" + DEFAULT_WEBDRIVER_PORT
+    # Store 'port' as separated argument for convenience.
+    args.port = args.webdriver_address.split(":")[1]
+
+    return args
+
+
+def capabilities(browser_path, platform):
+    """Browser configuration passed to webdriver.
+
+    Browser path is usually /usr/bin/cog on the RPi, but it might be a
+    sandbox path like /app/webkit/..../cog when running the test suite
+    on the destkop."""
+
+    if platform not in COG_PLATFORMS:
+        raise ValueError(f"Platform must be one of {COG_PLATFORMS}")
+
+    return {
+        "wpe:browserOptions": {
+            "binary": browser_path,
+            "args": ["--automation", f"--platform={platform}"],
+        }
+    }
+
+
+def options(browser_path, platform):
+    if platform not in COG_PLATFORMS:
+        raise ValueError(f"Platform must be one of {COG_PLATFORMS}")
+
+    options = Options()
+    options.binary_location = browser_path
+    options.add_argument("--automation")
+    options.add_argument(f"--platform={platform}")
+
+    options.set_capability("browserName", os.path.basename(browser_path))
+
+    return options
+
+
+def suite_has_started(driver):
+    """Condition to check whether the MVT suite was properly loaded."""
+    return driver.execute_script(
+        'return !(typeof globalRunner === "undefined" || globalRunner === null);'
+    )
+
+
+def suite_has_finished(driver):
+    """Condition to check whether the MVT suite has finished running."""
+    return driver.execute_script(
+        "return globalRunner.currentTestIdx == globalRunner.testList.length;"
+    )
+
+
+def analyze_results(filename):
+    total, failed, passed = 0, 0, 0
+    with open(filename, 'r') as fd:
+        data = json.load(fd)
+
+    if 'tests' in data:
+        total = len(data['tests'])
+        for item in data['tests']:
+            if 'status' in item:
+                if item['status'] == 'passed':
+                    passed += 1
+        failed = total - passed
+
+    return total, failed, passed
+
+
+def print_tests_failed(filename):
+    with open(filename, 'r') as fd:
+        data = json.load(fd)
+
+    if 'tests' in data:
+        for test in data['tests']:
+            if 'status' in test and test['status'] == "failed":
+                print(test['log'])
+
+
+# Helper class to launch WPEWebDriver.
+class WPEWebDriver:
+    def __init__(self, args):
+        self.address = args.webdriver_address
+        self.configuration = args.configuration
+        self.port = args.port
+        self.binary = args.webdriver
+        if not (self.binary):
+            binary = os.path.join(top_level_directory, "WebKitBuild/WPE/{}/bin/WPEWebDriver".format(self.configuration.capitalize()))
+            if os.path.exists(binary):
+                self.binary = binary
+            elif os.path.exists(DEFAULT_WEBDRIVER):
+                self.binary = DEFAUlt_WEBDRIVER
+            else:
+                fatal("Could not find path to WPEWebDriver")
+        if not os.path.exists(self.binary):
+                fatal("Path to WPEWebDriver binary doesn't exist: {}", self.binary)
+
+    def start(self):
+        if self._isRunning():
+            fatal("Cannot start {}: Address already in use: {}".format(os.path.basename(self.binary), self.address))
+
+        if self._isFlatpakSDK():
+            env = {
+                "WEBKIT_EXEC_PATH": "/app/webkit/WebKitBuild/{}/bin".format(self.configuration.capitalize()),
+                "WEBKIT_INJECTED_BUNDLE_PATH": "/app/webkit/WebKitBuild/{}/lib".format(self.configuration.capitalize()),
+                "COG_MODULEDIR": "/app/webkit/WebKitBuild/{}/Tools/cog-prefix/src/cog-build/platform".format(self.configuration.capitalize()),
+            }
+            cmd = [os.path.join(top_level_directory, "Tools/Scripts/webkit-flatpak"),'--wpe','--{}'.format(self.configuration),'-c','/bin/bash','-c']
+            self._run(cmd, env)
+        elif self._isJHBuild():
+            env = {
+                "WEBKIT_EXEC_PATH": "{}/WebKitBuild/{}/bin".format(top_level_directory, configuration),
+                "WEBKIT_INJECTED_BUNDLE_PATH": "{}/WebKitBuild/{}/lib".format(top_level_directory, configuration),
+                "COG_MODULEDIR": "{}/WebKitBuild/{}/Tools/cog-prefix/src/cog-build/platform".format(top_level_directory, configuration),
+            }
+            cmd = [os.path.join(top_level_directory, "Tools/jhbuild/jhbuild-wrapper"),'--wpe','--{}'.format(self.configuration),'run','/bin/bash','-c']
+            self._run(cmd, env)
+        else:
+            # TODO: Run with system libraries.
+            sys.stderr.writeln("Run on system libraries")
+            pass
+
+    def stop(self):
+        try:
+            command = "pkill {}".format(os.path.basename(self.binary))
+            subprocess.run(command.split(" "))
+        except CalledProcessError:
+            return False
+        return True
+
+    def _isRunning(self):
+        try:
+            command = "pgrep {}".format(os.path.basename(self.binary))
+            subprocess.check_call(command.split(" "), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except CalledProcessError:
+            return False
+        return True
+
+    def _isFlatpakSDK(self):
+        return not os.getenv("WEBKIT_JHBUILD") or os.getenv("WEBKIT_JHBUILD") == 0
+
+    def _isJHBuild(self):
+        return os.getenv("WEBKIT_JHBUILD") and os.getenv("WEBKIT_JHBUILD") == 1
+
+    def _run(self, cmd, env):
+        def dict_flat(d):
+            return " ".join([f"{key}={value}" for key, value in d.items()])
+        try:
+            env = {
+                "WEBKIT_EXEC_PATH": "/app/webkit/WebKitBuild/{}/bin".format(self.configuration.capitalize()),
+                "WEBKIT_INJECTED_BUNDLE_PATH": "/app/webkit/WebKitBuild/{}/lib".format(self.configuration.capitalize()),
+                "COG_MODULEDIR": "/app/webkit/WebKitBuild/{}/Tools/cog-prefix/src/cog-build/platform".format(self.configuration.capitalize()),
+            }
+            subcommand = "{} {} --host=all --port={}".format(dict_flat(env), self.binary, self.port)
+            cmd.append(subcommand)
+            subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except CalledProcessError:
+            sys.exit(1)
+        time.sleep(2)
+
+
+def main():
+    """Script entry point."""
+
+    args = parse_args()
+
+    # 1. Start WPEWebDriver.
+    print("Start WPEWebDriver:", end=' ')
+    wpeWebDriver = WPEWebDriver(args)
+    wpeWebDriver.start()
+    print("OK")
+
+    # 2. Locate Cog browser and connect to WebDriver address.
+    if not args.browser:
+        browser = os.path.join(top_level_directory, "WebKitBuild/WPE/{}/Tools/cog-prefix/src/cog-build/launcher/cog".format(args.configuration.capitalize()))
+        if os.path.exists(browser):
+            args.browser = browser
+        elif os.path.exists(DEFAULT_BROWSER):
+            args.browser = DEFAULT_BROWSER
+        else:
+            fatal("Could not find path to Cog browser")
+    if not os.path.exists(args.browser):
+        fatal("Path to Cog browser doesn't exist: {}", args.browser)
+    print("Connecting to remote driver:", end=' ')
+    driver = webdriver.Remote(
+        command_executor=args.webdriver_address,
+        options=options(args.browser, args.platform),
+    )
+    print("OK")
+
+    print(f"Using MVT server: {args.mvt_instance_address}")
+
+    # 3. Load the test suite with parameter `command=run`
+    print("Loading MVT:", end=' ')
+    driver.get(f"{args.mvt_instance_address}/?test_type={args.suite}&command=run")
+    print("OK")
+    print("Waiting for globalRunner instantiation:", end=' ')
+    WebDriverWait(driver, 20).until(suite_has_started)
+    print("OK")
+
+    # 4. Wait for test to finish
+    print("Waiting for test run to finish:", end=' ')
+    WebDriverWait(driver, 3600).until(suite_has_finished)
+    print("OK")
+
+    # 5. Fetch with getMvtTestResults()
+    print("Fetching the test results:", end=' ')
+    results = driver.execute_script("return getMvtTestResults()")
+    print("OK")
+
+    # 6. Kill WebDriver.
+    print("Stop WPEWebDriver:", end=' ')
+    wpeWebDriver.stop()
+    print("OK")
+
+    # 7. Parse JSON test results
+    print("Saving the test results:", end=' ')
+    with open("results.json", "w", encoding="utf-8") as handle:
+        json.dump(results, handle, indent=True)
+    print("OK")
+    print("")
+
+    # 8. Analyze results.
+    total, failed, passed = analyze_results('results.json')
+    print("Ran {} tests of which {} failed".format(total, failed))
+    print("")
+
+    # 9. Print tests that failed.
+    if failed > 0:
+        print_tests_failed('results.json')
+
+    sys.exit(failed)
+
+
+if __name__ == "__main__":
+    main()
