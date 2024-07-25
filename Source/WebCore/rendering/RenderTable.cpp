@@ -4,7 +4,7 @@
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2014-2019 Google Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -271,7 +271,7 @@ void RenderTable::updateLogicalWidth()
     bool hasPerpendicularContainingBlock = cb.style().isHorizontalWritingMode() != style().isHorizontalWritingMode();
     LayoutUnit containerWidthInInlineDirection = hasPerpendicularContainingBlock ? perpendicularContainingBlockLogicalHeight() : availableLogicalWidth;
 
-    Length styleLogicalWidth = style().logicalWidth();
+    auto& styleLogicalWidth = style().logicalWidth();
     if (auto overridingLogicalWidth = this->overridingLogicalWidth())
         setLogicalWidth(*overridingLogicalWidth);
     else if ((styleLogicalWidth.isSpecified() && styleLogicalWidth.isPositive()) || styleLogicalWidth.isIntrinsic())
@@ -301,7 +301,7 @@ void RenderTable::updateLogicalWidth()
     }
 
     // Ensure we aren't bigger than our max-width style.
-    Length styleMaxLogicalWidth = style().logicalMaxWidth();
+    auto& styleMaxLogicalWidth = style().logicalMaxWidth();
     if ((styleMaxLogicalWidth.isSpecified() && !styleMaxLogicalWidth.isNegative()) || styleMaxLogicalWidth.isIntrinsic()) {
         LayoutUnit computedMaxLogicalWidth = convertStyleLogicalWidthToComputedWidth(styleMaxLogicalWidth, availableLogicalWidth);
         setLogicalWidth(std::min(logicalWidth(), computedMaxLogicalWidth));
@@ -311,7 +311,7 @@ void RenderTable::updateLogicalWidth()
     setLogicalWidth(std::max(logicalWidth(), minPreferredLogicalWidth()));    
 
     // Ensure we aren't smaller than our min-width style.
-    Length styleMinLogicalWidth = style().logicalMinWidth();
+    auto& styleMinLogicalWidth = style().logicalMinWidth();
     if ((styleMinLogicalWidth.isSpecified() && !styleMinLogicalWidth.isNegative()) || styleMinLogicalWidth.isIntrinsic()) {
         LayoutUnit computedMinLogicalWidth = convertStyleLogicalWidthToComputedWidth(styleMinLogicalWidth, availableLogicalWidth);
         setLogicalWidth(std::max(logicalWidth(), computedMinLogicalWidth));
@@ -522,14 +522,14 @@ void RenderTable::layout()
 
         LayoutUnit computedLogicalHeight;
 
-        Length logicalHeightLength = style().logicalHeight();
+        auto& logicalHeightLength = style().logicalHeight();
         if (logicalHeightLength.isIntrinsic() || (logicalHeightLength.isSpecified() && logicalHeightLength.isPositive()))
             computedLogicalHeight = convertStyleLogicalHeightToComputedHeight(logicalHeightLength);
 
         if (auto overridingLogicalHeight = this->overridingLogicalHeight())
             computedLogicalHeight = std::max(computedLogicalHeight, *overridingLogicalHeight - borderAndPaddingAfter - sumCaptionsLogicalHeight());
 
-        Length logicalMaxHeightLength = style().logicalMaxHeight();
+        auto& logicalMaxHeightLength = style().logicalMaxHeight();
         if (logicalMaxHeightLength.isFillAvailable() || (logicalMaxHeightLength.isSpecified() && !logicalMaxHeightLength.isNegative()
             && !logicalMaxHeightLength.isMinContent() && !logicalMaxHeightLength.isMaxContent() && !logicalMaxHeightLength.isFitContent())) {
             LayoutUnit computedMaxLogicalHeight = convertStyleLogicalHeightToComputedHeight(logicalMaxHeightLength);

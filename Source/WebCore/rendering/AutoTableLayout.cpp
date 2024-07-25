@@ -221,7 +221,7 @@ static bool shouldScaleColumnsForSelf(RenderTable* table)
     // a cell, then don't bloat the maxwidth by examining percentage growth.
     bool scale = true;
     while (table) {
-        Length tableWidth = table->style().width();
+        auto& tableWidth = table->style().width();
         if ((tableWidth.isAuto() || tableWidth.isPercentOrCalculated()) && !table->isOutOfFlowPositioned()) {
             RenderBlock* containingBlock = table->containingBlock();
             while (containingBlock && !is<RenderView>(*containingBlock) && !is<RenderTableCell>(*containingBlock)
