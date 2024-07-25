@@ -256,8 +256,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ChangeFont(WebCore::FontChanges changes)
     ChangeFontAttributes(WebCore::FontAttributeChanges changes)
 
-    PreferencesDidChange(struct WebKit::WebPreferencesStore store)
-    PreferencesDidChangeDuringDOMPrintOperation(struct WebKit::WebPreferencesStore store) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
+    PreferencesDidChange(struct WebKit::WebPreferencesStore store, std::optional<uint64_t> sharedPreferencesVersion)
+    PreferencesDidChangeDuringDOMPrintOperation(struct WebKit::WebPreferencesStore store, std::optional<uint64_t> sharedPreferencesVersion) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
 
     SetUserAgent(String userAgent)
     SetHasCustomUserAgent(bool hasCustomUserAgent)

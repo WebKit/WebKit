@@ -90,6 +90,9 @@ def parse(file):
                 match = re.search(r"(?:(?:, |^)+(?:EnabledIf='(.*)'))(?:, |$)?", options_string)
                 if match:
                     runtime_enablement = match.groups()[0]
+                match = re.search(r"(?:(?:, |^)+(?:EnabledBy=([\w,]+)))(?:, |$)?", options_string)
+                if match:
+                    runtime_enablement = ' && '.join(['sharedPreferencesForWebProcess().' + preference[0].lower() + preference[1:] for preference in match.groups()[0].split(',')])
 
             attributes = parse_attributes_string(attributes_string)
 

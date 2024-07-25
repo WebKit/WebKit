@@ -178,6 +178,9 @@ $(PROJECT_DIR)/Resources/cocoa/NotificationAllowList/EmbeddedForwardedNotificati
 $(PROJECT_DIR)/Resources/cocoa/NotificationAllowList/ForwardedNotifications.def
 $(PROJECT_DIR)/Resources/cocoa/NotificationAllowList/MacForwardedNotifications.def
 $(PROJECT_DIR)/Resources/cocoa/NotificationAllowList/NonForwardedNotifications.def
+$(PROJECT_DIR)/Scripts/PreferencesTemplates/SharedPreferencesForWebProcess.cpp.erb
+$(PROJECT_DIR)/Scripts/PreferencesTemplates/SharedPreferencesForWebProcess.h.erb
+$(PROJECT_DIR)/Scripts/PreferencesTemplates/SharedPreferencesForWebProcess.serialization.in.erb
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPageUpdatePreferences.cpp.erb
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesFeatures.cpp.erb
@@ -294,7 +297,6 @@ $(PROJECT_DIR)/Shared/FrameTreeCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/FrameTreeNodeData.serialization.in
 $(PROJECT_DIR)/Shared/FullScreenMediaDetails.serialization.in
 $(PROJECT_DIR)/Shared/GPUProcessConnectionParameters.serialization.in
-$(PROJECT_DIR)/Shared/GPUProcessPreferencesForWebProcess.serialization.in
 $(PROJECT_DIR)/Shared/Gamepad/GamepadData.serialization.in
 $(PROJECT_DIR)/Shared/GoToBackForwardItemParameters.serialization.in
 $(PROJECT_DIR)/Shared/HTTPSUpgrade/HTTPSUpgradeList.txt

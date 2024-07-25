@@ -418,7 +418,6 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/FrameTreeNodeData.serialization.in
     Shared/FullScreenMediaDetails.serialization.in
     Shared/GPUProcessConnectionParameters.serialization.in
-    Shared/GPUProcessPreferencesForWebProcess.serialization.in
     Shared/GoToBackForwardItemParameters.serialization.in
     Shared/InspectorExtensionTypes.serialization.in
     Shared/JavaScriptCore.serialization.in
@@ -792,6 +791,7 @@ endforeach ()
 foreach (in_file ${WebCore_SERIALIZATION_IN_FILES})
     list(APPEND WebKit_SERIALIZATION_DEPENDENCIES "${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore/${in_file}")
 endforeach ()
+list(APPEND WebKit_SERIALIZATION_DEPENDENCIES "${WebKit_DERIVED_SOURCES_DIR}/SharedPreferencesForWebProcess.serialization.in")
 
 list(APPEND WebKit_DERIVED_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.h
@@ -866,6 +866,9 @@ list(APPEND WebKit_HEADERS
 )
 
 set(WebKit_WEB_PREFERENCES_TEMPLATES
+    ${WEBKIT_DIR}/Scripts/PreferencesTemplates/SharedPreferencesForWebProcess.h.erb
+    ${WEBKIT_DIR}/Scripts/PreferencesTemplates/SharedPreferencesForWebProcess.cpp.erb
+    ${WEBKIT_DIR}/Scripts/PreferencesTemplates/SharedPreferencesForWebProcess.serialization.in.erb
     ${WEBKIT_DIR}/Scripts/PreferencesTemplates/WebPageUpdatePreferences.cpp.erb
     ${WEBKIT_DIR}/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb
     ${WEBKIT_DIR}/Scripts/PreferencesTemplates/WebPreferencesFeatures.cpp.erb
@@ -882,18 +885,20 @@ set(WebKit_WEB_PREFERENCES
 set_source_files_properties(${WebKit_WEB_PREFERENCES} PROPERTIES GENERATED TRUE)
 
 add_custom_command(
-    OUTPUT ${WebKit_DERIVED_SOURCES_DIR}/WebPageUpdatePreferences.cpp ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesDefinitions.h ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesFeatures.cpp ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesGetterSetters.cpp ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesKeys.cpp ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesKeys.h ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesStoreDefaultsMap.cpp
+    OUTPUT ${WebKit_DERIVED_SOURCES_DIR}/SharedPreferencesForWebProcess.h ${WebKit_DERIVED_SOURCES_DIR}/SharedPreferencesForWebProcess.cpp ${WebKit_DERIVED_SOURCES_DIR}/SharedPreferencesForWebProcess.serialization.in ${WebKit_DERIVED_SOURCES_DIR}/WebPageUpdatePreferences.cpp ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesDefinitions.h ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesFeatures.cpp ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesGetterSetters.cpp ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesKeys.cpp ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesKeys.h ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesStoreDefaultsMap.cpp
     DEPENDS ${WebKit_WEB_PREFERENCES_TEMPLATES} ${WebKit_WEB_PREFERENCES} WTF_CopyPreferences
     COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/GeneratePreferences.rb --frontend WebKit --outputDir "${WebKit_DERIVED_SOURCES_DIR}" --template "$<JOIN:${WebKit_WEB_PREFERENCES_TEMPLATES},;--template;>" ${WebKit_WEB_PREFERENCES}
     COMMAND_EXPAND_LISTS
     VERBATIM)
 
 list(APPEND WebKit_HEADERS
+    ${WebKit_DERIVED_SOURCES_DIR}/SharedPreferencesForWebProcess.h
     ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesDefinitions.h
     ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesKeys.h
 )
 
 list(APPEND WebKit_SOURCES
+    ${WebKit_DERIVED_SOURCES_DIR}/SharedPreferencesForWebProcess.cpp
     ${WebKit_DERIVED_SOURCES_DIR}/WebPageUpdatePreferences.cpp
     ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesFeatures.cpp
     ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesGetterSetters.cpp

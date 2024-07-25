@@ -26,11 +26,11 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     void CreateRenderingBackend(WebKit::RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnectionHandle connectionHandle) AllowedWhenWaitingForSyncReply
     void ReleaseRenderingBackend(WebKit::RenderingBackendIdentifier renderingBackendIdentifier) AllowedWhenWaitingForSyncReply
 #if ENABLE(WEBGL)
-    [EnabledIf='isWebGLEnabled()'] void CreateGraphicsContextGL(WebKit::GraphicsContextGLIdentifier identifier, struct WebCore::GraphicsContextGLAttributes attributes, WebKit::RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnectionHandle serverConnection) AllowedWhenWaitingForSyncReply
-    [EnabledIf='isWebGLEnabled()'] void ReleaseGraphicsContextGL(WebKit::GraphicsContextGLIdentifier identifier) AllowedWhenWaitingForSyncReply
+    [EnabledBy=WebGLEnabled,UseGPUProcessForWebGLEnabled] void CreateGraphicsContextGL(WebKit::GraphicsContextGLIdentifier identifier, struct WebCore::GraphicsContextGLAttributes attributes, WebKit::RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnectionHandle serverConnection) AllowedWhenWaitingForSyncReply
+    [EnabledBy=WebGLEnabled,UseGPUProcessForWebGLEnabled] void ReleaseGraphicsContextGL(WebKit::GraphicsContextGLIdentifier identifier) AllowedWhenWaitingForSyncReply
 #endif
-    [EnabledIf='isWebGPUEnabled()'] void CreateGPU(WebKit::WebGPUIdentifier identifier, WebKit::RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnectionHandle serverConnection) AllowedWhenWaitingForSyncReply
-    [EnabledIf='isWebGPUEnabled()'] void ReleaseGPU(WebKit::WebGPUIdentifier identifier) AllowedWhenWaitingForSyncReply
+    [EnabledBy=WebGPUEnabled] void CreateGPU(WebKit::WebGPUIdentifier identifier, WebKit::RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnectionHandle serverConnection) AllowedWhenWaitingForSyncReply
+    [EnabledBy=WebGPUEnabled] void ReleaseGPU(WebKit::WebGPUIdentifier identifier) AllowedWhenWaitingForSyncReply
     void ClearNowPlayingInfo()
     void SetNowPlayingInfo(struct WebCore::NowPlayingInfo nowPlayingInfo)
 #if USE(AUDIO_SESSION)

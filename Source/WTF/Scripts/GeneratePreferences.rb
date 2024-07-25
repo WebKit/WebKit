@@ -90,6 +90,7 @@ class Preference
   attr_accessor :hidden
   attr_accessor :defaultValues
   attr_accessor :exposed
+  attr_accessor :sharedPreferenceForWebProcess
 
   def initialize(name, opts, frontend)
     @name = name
@@ -114,6 +115,7 @@ class Preference
     @hidden = opts["hidden"] || false
     @defaultValues = opts["defaultValue"][frontend]
     @exposed = !opts["exposed"] || opts["exposed"].include?(frontend)
+    @sharedPreferenceForWebProcess = opts["sharedPreferenceForWebProcess"] || false
   end
 
   def nameLower
@@ -249,6 +251,7 @@ class Preferences
     @preferences.sort_by! { |p| p.humanReadableName.empty? ? p.name : p.humanReadableName }
     @exposedPreferences = @preferences.select { |p| p.exposed }
     @exposedFeatures = @exposedPreferences.select { |p| p.type == "bool" }
+    @sharedPreferencesForWebProcess = @exposedFeatures.select { |p| p.type == "bool" && p.sharedPreferenceForWebProcess }
 
     @preferencesBoundToSetting = @preferences.select { |p| !p.webcoreBinding }
     @preferencesBoundToDeprecatedGlobalSettings = @preferences.select { |p| p.webcoreBinding == "DeprecatedGlobalSettings" }

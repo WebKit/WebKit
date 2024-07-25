@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * <%= @warning %>
+ *
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +25,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if ENABLE(GPU_PROCESS)
-
+#include "config.h"
 #include "SharedPreferencesForWebProcess.h"
-#include "WebCoreArgumentCoders.h"
-#include <WebCore/ProcessIdentity.h>
-#include <wtf/MachSendRight.h>
 
-#if HAVE(AUDIT_TOKEN)
-#include "CoreIPCAuditToken.h"
-#endif
+#include "WebPreferences.h"
 
 namespace WebKit {
 
-struct GPUProcessConnectionParameters {
-    WebCore::ProcessIdentity webProcessIdentity;
-    SharedPreferencesForWebProcess sharedPreferencesForWebProcess;
-    bool isLockdownModeEnabled { false };
-#if ENABLE(IPC_TESTING_API)
-    bool ignoreInvalidMessageForTesting { false };
+SharedPreferencesForWebProcess sharedPreferencesForWebProcess(const WebPreferences& preferences)
+{
+    SharedPreferencesForWebProcess sharedPreferences;
+<% for @pref in @sharedPreferencesForWebProcess do -%>
+<%- if @pref.condition -%>
+#if <%= @pref.condition %>
+<%- end -%>
+        sharedPreferences.<%= @pref.nameLower %> = preferences.<%= @pref.nameLower %>();
+<%- if @pref.condition -%>
 #endif
-#if HAVE(AUDIT_TOKEN)
-    std::optional<CoreIPCAuditToken> presentingApplicationAuditToken;
-#endif
-#if ENABLE(VP9)
-    std::optional<bool> hasVP9HardwareDecoder;
-#endif
-#if ENABLE(AV1)
-    std::optional<bool> hasAV1HardwareDecoder;
-#endif
-};
+<%- end -%>
+<%- end -%>
+    return sharedPreferences;
+}
 
-}; // namespace WebKit
+bool updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess& sharedPreferences, const WebPreferences& preferences)
+{
+    bool didChange = false;
+<% for @pref in @sharedPreferencesForWebProcess do -%>
+<%- if @pref.condition -%>
+#if <%= @pref.condition %>
+<%- end -%>
+    if (preferences.<%= @pref.nameLower %>() && !sharedPreferences.<%= @pref.nameLower %>) {
+        sharedPreferences.<%= @pref.nameLower %> = true;
+        didChange = true;
+    }
+<%- if @pref.condition -%>
+#endif
+<%- end -%>
+<%- end -%>
+    return didChange;
+}
 
-#endif // ENABLE(GPU_PROCESS)
+} // namespace WebKit

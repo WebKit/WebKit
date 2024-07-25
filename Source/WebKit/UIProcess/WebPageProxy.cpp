@@ -1178,14 +1178,12 @@ void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const S
 
 bool WebPageProxy::hasSameGPUAndNetworkProcessPreferencesAs(const API::PageConfiguration& configuration) const
 {
-#if ENABLE(GPU_PROCESS)
-    if (preferencesForGPUProcess() != configuration.preferencesForGPUProcess())
-        return false;
-#endif
     if (preferencesForNetworkProcess() != configuration.preferencesForNetworkProcess())
         return false;
+    auto sharedPreferences = sharedPreferencesForWebProcess(preferences());
+    if (updateSharedPreferencesForWebProcess(sharedPreferences, configuration.preferences()))
+        return false;
     return true;
-
 }
 
 void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, ProcessLaunchReason reason)
@@ -5879,10 +5877,23 @@ void WebPageProxy::preferencesDidChange()
 
     // Preferences need to be updated during synchronous printing to make "print backgrounds" preference work when toggled from a print dialog checkbox.
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        std::optional<uint64_t> sharedPreferencesVersion;
+        if (auto sharedPreferences = webProcess.updateSharedPreferencesForWebProcess(preferences())) {
+            sharedPreferencesVersion = sharedPreferences->version;
+#if ENABLE(GPU_PROCESS)
+            if (RefPtr gpuProcess = webProcess.processPool().gpuProcess()) {
+                gpuProcess->sharedPreferencesForWebProcessDidChange(webProcess, WTFMove(*sharedPreferences), [weakWebProcess = WeakPtr { webProcess }, syncedVersion = sharedPreferences->version]() {
+                    if (RefPtr webProcess = weakWebProcess.get())
+                        webProcess->didSyncSharedPreferencesForWebProcess(syncedVersion);
+                });
+            }
+#endif
+        }
+
         if (m_isPerformingDOMPrintOperation)
-            webProcess.send(Messages::WebPage::PreferencesDidChangeDuringDOMPrintOperation(preferencesStore()), pageID,  IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+            webProcess.send(Messages::WebPage::PreferencesDidChangeDuringDOMPrintOperation(preferencesStore(), sharedPreferencesVersion), pageID,  IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
         else
-            webProcess.send(Messages::WebPage::PreferencesDidChange(preferencesStore()), pageID);
+            webProcess.send(Messages::WebPage::PreferencesDidChange(preferencesStore(), sharedPreferencesVersion), pageID);
     });
 }
 
@@ -6796,13 +6807,6 @@ void WebPageProxy::didChangeMainDocument(FrameIdentifier frameID)
 
     m_speechRecognitionPermissionManager = nullptr;
 }
-
-#if ENABLE(GPU_PROCESS)
-GPUProcessPreferencesForWebProcess WebPageProxy::preferencesForGPUProcess() const
-{
-    return configuration().preferencesForGPUProcess();
-}
-#endif
 
 NetworkProcessPreferencesForWebProcess WebPageProxy::preferencesForNetworkProcess() const
 {

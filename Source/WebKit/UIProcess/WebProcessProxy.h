@@ -29,7 +29,6 @@
 #include "AuxiliaryProcessProxy.h"
 #include "BackgroundProcessResponsivenessTimer.h"
 #include "GPUProcessConnectionIdentifier.h"
-#include "GPUProcessPreferencesForWebProcess.h"
 #include "MessageReceiverMap.h"
 #include "NetworkProcessPreferencesForWebProcess.h"
 #include "NetworkProcessProxy.h"
@@ -38,6 +37,7 @@
 #include "ProcessThrottler.h"
 #include "RemoteWorkerInitializationData.h"
 #include "ResponsivenessTimer.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "SpeechRecognitionServer.h"
 #include "UserContentControllerIdentifier.h"
 #include "VisibleWebPageCounter.h"
@@ -123,6 +123,7 @@ class WebLockRegistryProxy;
 class WebPageGroup;
 class WebPageProxy;
 class WebPermissionControllerProxy;
+class WebPreferences;
 class WebProcessPool;
 class WebUserContentControllerProxy;
 class WebsiteDataStore;
@@ -189,9 +190,11 @@ public:
     WebProcessPool& processPool() const;
     Ref<WebProcessPool> protectedProcessPool() const;
 
-#if ENABLE(GPU_PROCESS)
-    const std::optional<GPUProcessPreferencesForWebProcess>& preferencesForGPUProcess() const { return m_preferencesForGPUProcess; }
-#endif
+    const std::optional<SharedPreferencesForWebProcess>& sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
+    std::optional<SharedPreferencesForWebProcess> updateSharedPreferencesForWebProcess(const WebPreferences&);
+    void didSyncSharedPreferencesForWebProcess(uint64_t syncedPreferencesVersion);
+    void waitForSharedPreferencesForWebProcessToSync(uint64_t sharedPreferencesVersion, CompletionHandler<void(bool success)>&&);
+
     const std::optional<NetworkProcessPreferencesForWebProcess>& preferencesForNetworkProcess() const { return m_preferencesForNetworkProcess; }
     void initializePreferencesForNetworkProcess(const API::PageConfiguration&);
     void initializePreferencesForNetworkProcess(const WebPreferencesStore&);
@@ -783,9 +786,12 @@ private:
     bool m_platformSuspendDidReleaseNearSuspendedAssertion { false };
 #endif
     mutable String m_environmentIdentifier;
+    mutable std::optional<SharedPreferencesForWebProcess> m_sharedPreferencesForWebProcess;
+    uint64_t m_syncedSharedPreferencesVersion { 0 };
+    uint64_t m_awaitedSharedPreferencesVersion { 0 };
+    CompletionHandler<void(bool success)> m_sharedPreferencesForWebProcessCompletionHandler;
 #if ENABLE(GPU_PROCESS)
     GPUProcessConnectionIdentifier m_gpuProcessConnectionIdentifier;
-    mutable std::optional<GPUProcessPreferencesForWebProcess> m_preferencesForGPUProcess;
 #endif
     mutable std::optional<NetworkProcessPreferencesForWebProcess> m_preferencesForNetworkProcess;
 

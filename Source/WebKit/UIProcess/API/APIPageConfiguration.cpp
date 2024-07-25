@@ -339,25 +339,6 @@ void PageConfiguration::setApplicationManifest(RefPtr<ApplicationManifest>&& app
 }
 #endif
 
-#if ENABLE(GPU_PROCESS)
-GPUProcessPreferencesForWebProcess PageConfiguration::preferencesForGPUProcess() const
-{
-    Ref preferences = m_data.preferences.get();
-
-    return {
-        preferences->webGLEnabled() && preferences->useGPUProcessForWebGLEnabled(),
-        preferences->webGPUEnabled(),
-        preferences->webXREnabled(),
-        preferences->useGPUProcessForDOMRenderingEnabled(),
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-        preferences->useCGDisplayListsForDOMRendering(),
-#endif
-        allowTestOnlyIPC(),
-        preferences->lockdownFontParserEnabled()
-    };
-}
-#endif
-
 NetworkProcessPreferencesForWebProcess PageConfiguration::preferencesForNetworkProcess() const
 {
     Ref preferences = m_data.preferences.get();

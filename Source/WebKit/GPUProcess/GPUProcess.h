@@ -57,19 +57,19 @@
 namespace WebCore {
 class CaptureDevice;
 class NowPlayingManager;
+class SecurityOriginData;
 struct MockMediaDevice;
 struct ScreenProperties;
-class SecurityOriginData;
 }
 
 namespace WebKit {
 
 class GPUConnectionToWebProcess;
+class RemoteAudioSessionProxyManager;
 struct GPUProcessConnectionParameters;
 struct GPUProcessCreationParameters;
-struct GPUProcessPreferencesForWebProcess;
 struct GPUProcessSessionParameters;
-class RemoteAudioSessionProxyManager;
+struct SharedPreferencesForWebProcess;
 
 class GPUProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<GPUProcess> {
     WTF_MAKE_NONCOPYABLE(GPUProcess);
@@ -156,6 +156,7 @@ private:
     void platformInitializeGPUProcess(GPUProcessCreationParameters&);
     void updateGPUProcessPreferences(GPUProcessPreferences&&);
     void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&, CompletionHandler<void()>&&);
+    void sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
     void addSession(PAL::SessionID, GPUProcessSessionParameters&&);
     void removeSession(PAL::SessionID);
     void updateSandboxAccess(const Vector<SandboxExtension::Handle>&);
