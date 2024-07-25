@@ -91,7 +91,7 @@ private:
     void buildCascade();
     bool addNormalMatches(CascadeLevel);
     void addImportantMatches(CascadeLevel);
-    bool addMatch(const MatchedProperties&, CascadeLevel, bool important);
+    bool addMatch(const MatchedProperties&, CascadeLevel, IsImportant);
     bool shouldApplyAfterAnimation(const StyleProperties::PropertyReference&);
 
     void set(CSSPropertyID, CSSValue&, const MatchedProperties&, CascadeLevel);

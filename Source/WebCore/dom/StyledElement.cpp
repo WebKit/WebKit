@@ -208,51 +208,51 @@ void StyledElement::inlineStyleChanged()
     InspectorInstrumentation::didInvalidateStyleAttr(*this);
 }
     
-bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, CSSValueID identifier, bool important)
+bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, CSSValueID identifier, IsImportant important)
 {
     ensureMutableInlineStyle().setProperty(propertyID, CSSPrimitiveValue::create(identifier), important);
     inlineStyleChanged();
     return true;
 }
 
-bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, CSSPropertyID identifier, bool important)
+bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, CSSPropertyID identifier, IsImportant important)
 {
     ensureMutableInlineStyle().setProperty(propertyID, CSSPrimitiveValue::create(identifier), important);
     inlineStyleChanged();
     return true;
 }
 
-bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, double value, CSSUnitType unit, bool important)
+bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, double value, CSSUnitType unit, IsImportant important)
 {
     ensureMutableInlineStyle().setProperty(propertyID, CSSPrimitiveValue::create(value, unit), important);
     inlineStyleChanged();
     return true;
 }
 
-bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, Ref<CSSValue>&& value, bool important)
+bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, Ref<CSSValue>&& value, IsImportant important)
 {
     ensureMutableInlineStyle().setProperty(propertyID, WTFMove(value), important);
     inlineStyleChanged();
     return true;
 }
 
-bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, const String& value, bool important, bool* didFailParsing)
+bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, const String& value, IsImportant important, bool* didFailParsing)
 {
-    bool changes = ensureMutableInlineStyle().setProperty(propertyID, value, important, CSSParserContext(document()), didFailParsing);
+    bool changes = ensureMutableInlineStyle().setProperty(propertyID, value, CSSParserContext(document()), important, didFailParsing);
     if (changes)
         inlineStyleChanged();
     return changes;
 }
 
-bool StyledElement::setInlineStyleCustomProperty(const AtomString& property, const String& value, bool important)
+bool StyledElement::setInlineStyleCustomProperty(const AtomString& property, const String& value, IsImportant important)
 {
-    bool changes = ensureMutableInlineStyle().setCustomProperty(property.string(), value, important, CSSParserContext(document()));
+    bool changes = ensureMutableInlineStyle().setCustomProperty(property.string(), value, CSSParserContext(document()), important);
     if (changes)
         inlineStyleChanged();
     return changes;
 }
 
-bool StyledElement::setInlineStyleCustomProperty(Ref<CSSValue>&& customPropertyValue, bool important)
+bool StyledElement::setInlineStyleCustomProperty(Ref<CSSValue>&& customPropertyValue, IsImportant important)
 {
     ensureMutableInlineStyle().addParsedProperty(CSSProperty(CSSPropertyCustom, WTFMove(customPropertyValue), important));
     inlineStyleChanged();
@@ -377,12 +377,12 @@ void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties&
     
 void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, const String& value)
 {
-    style.setProperty(propertyID, value, false, CSSParserContext(document()));
+    style.setProperty(propertyID, value, CSSParserContext(document()));
 }
 
 void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, RefPtr<CSSValue>&& value)
 {
-    style.setProperty(propertyID, WTFMove(value), false);
+    style.setProperty(propertyID, WTFMove(value));
 }
 
 }

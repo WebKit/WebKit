@@ -24,6 +24,7 @@
 
 #include "CSSParserContext.h"
 #include "CSSParserEnum.h"
+#include "CSSProperty.h"
 #include "CSSSelectorParser.h"
 #include "CSSValue.h"
 #include "ColorTypes.h"
@@ -65,8 +66,8 @@ public:
     static void parseSheetForInspector(const CSSParserContext&, StyleSheetContents&, const String&, CSSParserObserver&);
     static void parseDeclarationForInspector(const CSSParserContext&, const String&, CSSParserObserver&);
 
-    static ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, bool important, const CSSParserContext&);
-    static ParseResult parseCustomPropertyValue(MutableStyleProperties&, const AtomString& propertyName, const String&, bool important, const CSSParserContext&);
+    static ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, IsImportant, const CSSParserContext&);
+    static ParseResult parseCustomPropertyValue(MutableStyleProperties&, const AtomString& propertyName, const String&, IsImportant, const CSSParserContext&);
     
     static RefPtr<CSSValue> parseSingleValue(CSSPropertyID, const String&, const CSSParserContext& = strictCSSParserContext());
 
@@ -83,7 +84,7 @@ public:
     static std::optional<SRGBA<uint8_t>> parseHexColor(StringView);
 
 private:
-    ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, bool important);
+    ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, IsImportant);
 
     CSSParserContext m_context;
 };

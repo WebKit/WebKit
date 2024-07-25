@@ -25,6 +25,7 @@
 #pragma once
 
 #include "CSSPrimitiveValue.h"
+#include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "Element.h"
@@ -50,13 +51,13 @@ public:
     const StyleProperties* inlineStyle() const { return elementData() ? elementData()->m_inlineStyle.get() : nullptr; }
     RefPtr<StyleProperties> protectedInlineStyle() const;
     
-    bool setInlineStyleProperty(CSSPropertyID, CSSValueID identifier, bool important = false);
-    bool setInlineStyleProperty(CSSPropertyID, CSSPropertyID identifier, bool important = false);
-    WEBCORE_EXPORT bool setInlineStyleProperty(CSSPropertyID, double value, CSSUnitType, bool important = false);
-    WEBCORE_EXPORT bool setInlineStyleProperty(CSSPropertyID, const String& value, bool important = false, bool* didFailParsing = nullptr);
-    bool setInlineStyleCustomProperty(const AtomString& property, const String& value, bool important = false);
-    bool setInlineStyleCustomProperty(Ref<CSSValue>&&, bool important = false);
-    bool setInlineStyleProperty(CSSPropertyID, Ref<CSSValue>&&, bool important = false);
+    bool setInlineStyleProperty(CSSPropertyID, CSSValueID identifier, IsImportant = IsImportant::No);
+    bool setInlineStyleProperty(CSSPropertyID, CSSPropertyID identifier, IsImportant = IsImportant::No);
+    WEBCORE_EXPORT bool setInlineStyleProperty(CSSPropertyID, double value, CSSUnitType, IsImportant = IsImportant::No);
+    WEBCORE_EXPORT bool setInlineStyleProperty(CSSPropertyID, const String& value, IsImportant = IsImportant::No, bool* didFailParsing = nullptr);
+    bool setInlineStyleCustomProperty(const AtomString& property, const String& value, IsImportant = IsImportant::No);
+    bool setInlineStyleCustomProperty(Ref<CSSValue>&&, IsImportant = IsImportant::No);
+    bool setInlineStyleProperty(CSSPropertyID, Ref<CSSValue>&&, IsImportant = IsImportant::No);
     bool removeInlineStyleProperty(CSSPropertyID);
     bool removeInlineStyleCustomProperty(const AtomString&);
     void removeAllInlineStyleProperties();

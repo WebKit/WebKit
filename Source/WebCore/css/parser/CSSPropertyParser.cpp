@@ -192,10 +192,10 @@ void CSSPropertyParser::addProperty(CSSPropertyID property, CSSPropertyID curren
     ASSERT(isExposed(property, &m_context.propertySettings) || setFromShorthand || isInternal(property));
 
     if (value && !value->isImplicitInitialValue())
-        m_parsedProperties->append(CSSProperty(property, WTFMove(value), important, setFromShorthand, shorthandIndex, implicit));
+        m_parsedProperties->append(CSSProperty(property, WTFMove(value), important ? IsImportant::Yes : IsImportant::No, setFromShorthand, shorthandIndex, implicit));
     else {
         ASSERT(setFromShorthand);
-        m_parsedProperties->append(CSSProperty(property, Ref { CSSPrimitiveValue::implicitInitialValue() }, important, setFromShorthand, shorthandIndex, true));
+        m_parsedProperties->append(CSSProperty(property, Ref { CSSPrimitiveValue::implicitInitialValue() }, important ? IsImportant::Yes : IsImportant::No, setFromShorthand, shorthandIndex, true));
     }
 }
 

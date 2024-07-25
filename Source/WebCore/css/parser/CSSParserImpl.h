@@ -91,8 +91,8 @@ public:
         NoRules, // For parsing at-rules inside declaration lists (without nesting support)
     };
 
-    static CSSParser::ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, bool important, const CSSParserContext&);
-    static CSSParser::ParseResult parseCustomPropertyValue(MutableStyleProperties&, const AtomString& propertyName, const String&, bool important, const CSSParserContext&);
+    static CSSParser::ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, IsImportant, const CSSParserContext&);
+    static CSSParser::ParseResult parseCustomPropertyValue(MutableStyleProperties&, const AtomString& propertyName, const String&, IsImportant, const CSSParserContext&);
     static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, const Element&);
     static bool parseDeclarationList(MutableStyleProperties*, const String&, const CSSParserContext&);
     static RefPtr<StyleRuleBase> parseRule(const String&, const CSSParserContext&, StyleSheetContents*, AllowedRules, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
@@ -110,7 +110,7 @@ public:
     static void parseDeclarationListForInspector(const String&, const CSSParserContext&, CSSParserObserver&);
     static void parseStyleSheetForInspector(const String&, const CSSParserContext&, StyleSheetContents&, CSSParserObserver&);
 
-    static bool consumeTrailingImportantAndWhitespace(CSSParserTokenRange&);
+    static IsImportant consumeTrailingImportantAndWhitespace(CSSParserTokenRange&);
 
     CSSTokenizer* tokenizer() const { return m_tokenizer.get(); }
 
@@ -174,8 +174,8 @@ private:
     void consumeDeclarationList(CSSParserTokenRange, StyleRuleType);
     void consumeStyleBlock(CSSParserTokenRange, StyleRuleType, ParsingStyleDeclarationsInRuleList = ParsingStyleDeclarationsInRuleList::No);
     bool consumeDeclaration(CSSParserTokenRange, StyleRuleType);
-    void consumeDeclarationValue(CSSParserTokenRange, CSSPropertyID, bool important, StyleRuleType);
-    void consumeCustomPropertyValue(CSSParserTokenRange, const AtomString& propertyName, bool important);
+    void consumeDeclarationValue(CSSParserTokenRange, CSSPropertyID, IsImportant, StyleRuleType);
+    void consumeCustomPropertyValue(CSSParserTokenRange, const AtomString& propertyName, IsImportant);
 
     static Vector<double> consumeKeyframeKeyList(CSSParserTokenRange);
 

@@ -101,8 +101,7 @@ bool InlineStylePropertyMap::setShorthandProperty(CSSPropertyID propertyID, cons
         return false;
     StyleAttributeMutationScope mutationScope { m_element.get() };
     bool didFailParsing = false;
-    bool important = false;
-    m_element->setInlineStyleProperty(propertyID, value, important, &didFailParsing);
+    m_element->setInlineStyleProperty(propertyID, value, IsImportant::No, &didFailParsing);
     if (!didFailParsing)
         mutationScope.enqueueMutationRecord();
     return !didFailParsing;
@@ -114,10 +113,9 @@ bool InlineStylePropertyMap::setProperty(CSSPropertyID propertyID, Ref<CSSValue>
         return false;
     StyleAttributeMutationScope mutationScope { m_element.get() };
     bool didFailParsing = false;
-    bool important = false;
     // FIXME: We should be able to validate CSSValues without having to serialize to text and go through the
     // parser. This is inefficient.
-    m_element->setInlineStyleProperty(propertyID, value->cssText(), important, &didFailParsing);
+    m_element->setInlineStyleProperty(propertyID, value->cssText(), IsImportant::No, &didFailParsing);
     if (!didFailParsing) {
         m_element->setInlineStyleProperty(propertyID, WTFMove(value));
         mutationScope.enqueueMutationRecord();

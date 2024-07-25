@@ -228,7 +228,7 @@ ExceptionOr<DOMMatrixReadOnly::AbstractMatrix> DOMMatrixReadOnly::parseStringInt
         return AbstractMatrix { };
 
     auto styleDeclaration = MutableStyleProperties::create();
-    if (CSSParser::parseValue(styleDeclaration, CSSPropertyTransform, string, true, HTMLStandardMode) == CSSParser::ParseResult::Error)
+    if (CSSParser::parseValue(styleDeclaration, CSSPropertyTransform, string, IsImportant::Yes, HTMLStandardMode) == CSSParser::ParseResult::Error)
         return Exception { ExceptionCode::SyntaxError };
 
     // Convert to TransformOperations. This can fail if a property requires style (i.e., param uses 'ems' or 'exs')

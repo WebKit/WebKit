@@ -261,7 +261,7 @@ ExceptionOr<void> CSSStyleDeclaration::setPropertyValueForCamelCasedIDLAttribute
 {
     auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::ConvertUsingNoDashPrefix>(attribute);
     ASSERT_WITH_MESSAGE(propertyID != CSSPropertyInvalid, "Invalid attribute: %s", attribute.string().utf8().data());
-    return setPropertyInternal(propertyID, value, false);
+    return setPropertyInternal(propertyID, value, IsImportant::No);
 }
 
 String CSSStyleDeclaration::propertyValueForWebKitCasedIDLAttribute(const AtomString& attribute)
@@ -275,7 +275,7 @@ ExceptionOr<void> CSSStyleDeclaration::setPropertyValueForWebKitCasedIDLAttribut
 {
     auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::ConvertUsingDashPrefix>(attribute);
     ASSERT_WITH_MESSAGE(propertyID != CSSPropertyInvalid, "Invalid attribute: %s", attribute.string().utf8().data());
-    return setPropertyInternal(propertyID, value, false);
+    return setPropertyInternal(propertyID, value, IsImportant::No);
 }
 
 String CSSStyleDeclaration::propertyValueForDashedIDLAttribute(const AtomString& attribute)
@@ -289,7 +289,7 @@ ExceptionOr<void> CSSStyleDeclaration::setPropertyValueForDashedIDLAttribute(con
 {
     auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::NoConversion>(attribute);
     ASSERT_WITH_MESSAGE(propertyID != CSSPropertyInvalid, "Invalid attribute: %s", attribute.string().utf8().data());
-    return setPropertyInternal(propertyID, value, false);
+    return setPropertyInternal(propertyID, value, IsImportant::No);
 }
 
 String CSSStyleDeclaration::propertyValueForEpubCasedIDLAttribute(const AtomString& attribute)
@@ -303,7 +303,7 @@ ExceptionOr<void> CSSStyleDeclaration::setPropertyValueForEpubCasedIDLAttribute(
 {
     auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::ConvertUsingDashPrefix>(attribute);
     ASSERT_WITH_MESSAGE(propertyID != CSSPropertyInvalid, "Invalid attribute: %s", attribute.string().utf8().data());
-    return setPropertyInternal(propertyID, value, false);
+    return setPropertyInternal(propertyID, value, IsImportant::No);
 }
 
 String CSSStyleDeclaration::cssFloat()
@@ -313,7 +313,7 @@ String CSSStyleDeclaration::cssFloat()
 
 ExceptionOr<void> CSSStyleDeclaration::setCssFloat(const String& value)
 {
-    return setPropertyInternal(CSSPropertyFloat, value, false /* important */);
+    return setPropertyInternal(CSSPropertyFloat, value, IsImportant::No);
 }
 
 }

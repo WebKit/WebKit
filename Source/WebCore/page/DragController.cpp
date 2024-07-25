@@ -591,7 +591,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
         if (!innerRange)
             return false;
         Ref style = MutableStyleProperties::create();
-        style->setProperty(CSSPropertyColor, serializationForHTML(color), false);
+        style->setProperty(CSSPropertyColor, serializationForHTML(color));
         if (!innerFrame->checkedEditor()->shouldApplyStyle(style, *innerRange))
             return false;
         client().willPerformDragDestinationAction(DragDestinationAction::Edit, dragData);
