@@ -116,6 +116,18 @@ static inline std::pair<LayoutRect, LayoutRect> toMarginAndBorderBoxVisualRect(c
     return { marginBoxVisualRect, borderBoxVisualRect };
 }
 
+static const InlineDisplay::Line& lastLineWithInlineContent(const InlineDisplay::Lines& lines)
+{
+    // Out-of-flow/float content only don't produce lines with inline content. They should not be taken into
+    // account when computing content box height/baselines.
+    for (auto& line : makeReversedRange(lines)) {
+        ASSERT(line.boxCount());
+        if (line.boxCount() > 1)
+            return line;
+    }
+    return lines.first();
+}
+
 LineLayout::LineLayout(RenderBlockFlow& flow)
     : m_boxTree(flow)
     , m_layoutState(flow.view().layoutState())
@@ -658,17 +670,7 @@ LayoutUnit LineLayout::contentBoxLogicalHeight() const
         return { };
     }
 
-    auto lastLineWithInlineContent = [&] {
-        // Out-of-flow/float content only don't produce lines with inline content. They should not be taken into
-        // account when computing content box height.
-        for (auto& line : makeReversedRange(lines)) {
-            ASSERT(line.boxCount());
-            if (line.boxCount() > 1)
-                return line;
-        }
-        return lines.first();
-    };
-    auto contentHeight = lastLineWithInlineContent().lineBoxLogicalRect().maxY() - lines.first().lineBoxLogicalRect().y();
+    auto contentHeight = lastLineWithInlineContent(lines).lineBoxLogicalRect().maxY() - lines.first().lineBoxLogicalRect().y();
     auto additionalHeight = m_inlineContent->firstLinePaginationOffset + m_inlineContent->clearGapBeforeFirstLine + m_inlineContent->clearGapAfterLastLine;
     return LayoutUnit { contentHeight + additionalHeight };
 }
@@ -696,7 +698,7 @@ LayoutUnit LineLayout::firstLinePhysicalBaseline() const
     }
 
     auto& firstLine = m_inlineContent->displayContent().lines.first();
-    return physicalBaselineForLine(firstLine); 
+    return physicalBaselineForLine(firstLine);
 }
 
 LayoutUnit LineLayout::lastLinePhysicalBaseline() const
@@ -705,9 +707,7 @@ LayoutUnit LineLayout::lastLinePhysicalBaseline() const
         ASSERT_NOT_REACHED();
         return { };
     }
-
-    auto lastLine = m_inlineContent->displayContent().lines.last();
-    return physicalBaselineForLine(lastLine);
+    return physicalBaselineForLine(lastLineWithInlineContent(m_inlineContent->displayContent().lines));
 }
 
 LayoutUnit LineLayout::physicalBaselineForLine(const InlineDisplay::Line& line) const
@@ -733,7 +733,7 @@ LayoutUnit LineLayout::lastLineLogicalBaseline() const
         return { };
     }
 
-    auto& lastLine = m_inlineContent->displayContent().lines.last();
+    auto& lastLine = lastLineWithInlineContent(m_inlineContent->displayContent().lines);
     switch (writingModeToBlockFlowDirection(rootLayoutBox().style().writingMode())) {
     case BlockFlowDirection::TopToBottom:
     case BlockFlowDirection::BottomToTop:
