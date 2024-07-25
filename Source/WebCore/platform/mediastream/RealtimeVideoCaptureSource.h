@@ -43,8 +43,6 @@ class WEBCORE_EXPORT RealtimeVideoCaptureSource : public RealtimeMediaSource, pu
 public:
     virtual ~RealtimeVideoCaptureSource();
 
-    void clientUpdatedSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom);
-
     bool supportsSizeFrameRateAndZoom(const VideoPresetConstraints&) override;
     virtual void generatePresets() = 0;
 
