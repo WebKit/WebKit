@@ -64,7 +64,7 @@ private:
     static GDBusInterfaceVTable s_socketFunctions;
     static GDBusInterfaceVTable s_componentFunctions;
 
-    SingleThreadWeakPtr<Page> m_page;
+    WeakPtr<Page> m_page;
     String m_path;
     String m_parentUniqueName;
     String m_parentPath;

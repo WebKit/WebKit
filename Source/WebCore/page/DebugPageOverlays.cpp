@@ -82,7 +82,7 @@ protected:
     virtual bool updateRegion() = 0;
     void drawRegion(GraphicsContext&, const Region&, const Color&, const IntRect& dirtyRect);
     
-    SingleThreadWeakPtr<Page> m_page;
+    WeakPtr<Page> m_page;
     RefPtr<PageOverlay> m_overlay;
     std::unique_ptr<Region> m_region;
     Color m_color;

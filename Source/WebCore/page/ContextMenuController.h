@@ -99,7 +99,7 @@ private:
     void performPDFJSAction(LocalFrame&, const String& action);
 #endif
 
-    SingleThreadWeakRef<Page> m_page;
+    WeakRef<Page> m_page;
     UniqueRef<ContextMenuClient> m_client;
     std::unique_ptr<ContextMenu> m_contextMenu;
     RefPtr<ContextMenuProvider> m_menuProvider;

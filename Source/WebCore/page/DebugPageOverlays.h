@@ -76,7 +76,7 @@ private:
     RegionOverlay* regionOverlayForPage(Page&, RegionType) const;
     RegionOverlay& ensureRegionOverlayForPage(Page&, RegionType);
 
-    SingleThreadWeakHashMap<Page, Vector<RefPtr<RegionOverlay>>> m_pageRegionOverlays;
+    WeakHashMap<Page, Vector<RefPtr<RegionOverlay>>> m_pageRegionOverlays;
 
     static DebugPageOverlays* sharedDebugOverlays;
 };

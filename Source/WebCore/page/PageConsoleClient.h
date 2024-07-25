@@ -88,7 +88,7 @@ private:
 
     Ref<Page> protectedPage() const;
 
-    SingleThreadWeakRef<Page> m_page;
+    WeakRef<Page> m_page;
 };
 
 } // namespace WebCore
