@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  * Copyright (C) 2010 Daniel Bates (dbates@intudata.com)
  *
@@ -256,8 +256,8 @@ void RenderListMarker::layout()
     setMarginStart(0);
     setMarginEnd(0);
 
-    auto& startMargin = style().marginStart();
-    auto& endMargin = style().marginEnd();
+    Length startMargin = style().marginStart();
+    Length endMargin = style().marginEnd();
     if (startMargin.isFixed())
         setMarginStart(LayoutUnit(startMargin.value()));
     if (endMargin.isFixed())

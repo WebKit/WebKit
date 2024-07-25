@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -456,7 +456,7 @@ bool RenderBlock::isSelfCollapsingBlock() const
         || style().logicalMinHeight().isPositive())
         return false;
 
-    auto& logicalHeightLength = style().logicalHeight();
+    Length logicalHeightLength = style().logicalHeight();
     bool hasAutoHeight = logicalHeightLength.isAuto();
     if (logicalHeightLength.isPercentOrCalculated() && !document().inQuirksMode()) {
         hasAutoHeight = true;
@@ -899,8 +899,8 @@ LayoutUnit RenderBlock::marginIntrinsicLogicalWidthForChild(RenderBox& child) co
     // A margin has three types: fixed, percentage, and auto (variable).
     // Auto and percentage margins become 0 when computing min/max width.
     // Fixed margins can be added in as is.
-    auto& marginLeft = child.style().marginStartUsing(&style());
-    auto& marginRight = child.style().marginEndUsing(&style());
+    Length marginLeft = child.style().marginStartUsing(&style());
+    Length marginRight = child.style().marginEndUsing(&style());
     LayoutUnit margin;
     if (marginLeft.isFixed() && !shouldTrimChildMargin(MarginTrimType::InlineStart, child))
         margin += marginLeft.value();
@@ -2298,8 +2298,8 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
         // A margin basically has three types: fixed, percentage, and auto (variable).
         // Auto and percentage margins simply become 0 when computing min/max width.
         // Fixed margins can be added in as is.
-        auto& startMarginLength = childStyle.marginStartUsing(&styleToUse);
-        auto& endMarginLength = childStyle.marginEndUsing(&styleToUse);
+        Length startMarginLength = childStyle.marginStartUsing(&styleToUse);
+        Length endMarginLength = childStyle.marginEndUsing(&styleToUse);
         LayoutUnit margin;
         LayoutUnit marginStart;
         LayoutUnit marginEnd;
@@ -3451,8 +3451,8 @@ bool RenderBlock::computePreferredWidthsForExcludedChildren(LayoutUnit& minWidth
     maxWidth -= scrollbarWidth;
     
     const auto& childStyle = legend->style();
-    auto& startMarginLength = childStyle.marginStartUsing(&style());
-    auto& endMarginLength = childStyle.marginEndUsing(&style());
+    auto startMarginLength = childStyle.marginStartUsing(&style());
+    auto endMarginLength = childStyle.marginEndUsing(&style());
     LayoutUnit margin;
     LayoutUnit marginStart;
     LayoutUnit marginEnd;
