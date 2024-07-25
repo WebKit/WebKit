@@ -164,24 +164,29 @@ async function getCookies()
     return g_cachedCookies;
 }
 
-async function shouldNotHaveCookie(name)
+async function hasCookie(name)
 {
     let cookies = await getCookies();
     let value = cookies[name];
-    if (value === undefined || value === null)
-        testPassed(`Do not have cookie "${name}".`);
-    else
+    return value !== undefined && value !== null;
+}
+
+async function shouldNotHaveCookie(name)
+{
+    let result = await hasCookie(name);
+    if (result)
         testFailed(`Should not have cookie "${name}". But do with value ${value}.`);
+    else
+        testPassed(`Do not have cookie "${name}".`);
 }
 
 async function shouldHaveCookie(name)
 {
-    let cookies = await getCookies();
-    let value = cookies[name];
-    if (value === undefined || value === null)
-        testFailed(`Should have cookie "${name}". But do not.`);
-    else
+    let result = await hasCookie(name);
+    if (result)
         testPassed(`Has cookie "${name}".`);
+    else
+        testFailed(`Should have cookie "${name}". But do not.`);
 }
 
 async function shouldHaveCookieWithValue(name, expectedValue)
@@ -197,24 +202,27 @@ async function shouldHaveCookieWithValue(name, expectedValue)
         testFailed(`Cookie "${name}" should have value ${expectedValue}. Was ${value}.`);
 }
 
-function shouldNotHaveDOMCookie(name)
+function hasDOMCookie(name)
 {
     let cookies = getDOMCookies();
     let value = cookies[name];
-    if (value === undefined || value === null)
-        testPassed(`Do not have DOM cookie "${name}".`);
-    else
+    return value !== undefined && value !== null;
+}
+
+function shouldNotHaveDOMCookie(name)
+{
+    if (hasDOMCookie(name))
         testFailed(`Should not have DOM cookie "${name}". But do with value ${value}.`);
+    else
+        testPassed(`Do not have DOM cookie "${name}".`);
 }
 
 function shouldHaveDOMCookie(name)
 {
-    let cookies = getDOMCookies();
-    let value = cookies[name];
-    if (value === undefined || value === null)
-        testFailed(`Should have DOM cookie "${name}". But do not.`);
-    else
+    if (hasDOMCookie(name))
         testPassed(`Has DOM cookie "${name}".`);
+    else 
+        testFailed(`Should have DOM cookie "${name}". But do not.`);
 }
 
 function shouldHaveDOMCookieWithValue(name, expectedValue)

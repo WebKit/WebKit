@@ -31,15 +31,20 @@ async function checkResult()
 {{
     debug("Cookies sent with HTTP request:");
     await shouldNotHaveCookie("strict");
-    await shouldHaveCookieWithValue("implicit-strict", "6");
-    await shouldHaveCookieWithValue("strict-because-invalid-SameSite-value", "6");
     await shouldNotHaveCookie("lax");
+    await shouldHaveCookie("none");
+    defaultSameSiteValueCookieExists = await hasCookie("default-samesite-value");
+    invalidSameSiteValueCookieExists = await hasCookie("invalid-samesite-value");
+    shouldBe("defaultSameSiteValueCookieExists", "invalidSameSiteValueCookieExists");
 
     debug("<br>Cookies visible in DOM:");
     shouldNotHaveDOMCookie("strict");
-    shouldHaveDOMCookieWithValue("implicit-strict", "6");
-    shouldHaveDOMCookieWithValue("strict-because-invalid-SameSite-value", "6");
     shouldNotHaveDOMCookie("lax");
+    shouldHaveDOMCookie("none");
+    defaultSameSiteValueDOMCookieExists = hasDOMCookie("default-samesite-value");
+    invalidSameSiteValueDOMCookieExists = hasDOMCookie("invalid-samesite-value");
+    shouldBe("defaultSameSiteValueDOMCookieExists", "invalidSameSiteValueDOMCookieExists");
+    shouldBe("defaultSameSiteValueDOMCookieExists", "defaultSameSiteValueCookieExists");
 
     await resetCookies();
     finishJSTest();

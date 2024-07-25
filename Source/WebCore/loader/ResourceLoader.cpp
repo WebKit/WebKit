@@ -555,8 +555,14 @@ static void logResourceResponseSource(LocalFrame* frame, ResourceResponse::Sourc
 bool ResourceLoader::shouldAllowResourceToAskForCredentials() const
 {
     RefPtr topFrame = dynamicDowncast<LocalFrame>(m_frame->tree().top());
-    return m_canCrossOriginRequestsAskUserForCredentials
-        || (topFrame && topFrame->document()->protectedSecurityOrigin()->canRequest(m_request.url(), OriginAccessPatternsForWebProcess::singleton()));
+    auto result = m_canCrossOriginRequestsAskUserForCredentials || (topFrame && topFrame->document()->protectedSecurityOrigin()->canRequest(m_request.url(), OriginAccessPatternsForWebProcess::singleton()));
+
+    if (m_request.url().string().contains("js-test.js"_s) && !result) {
+        WTFLogAlways("WEBKITDEBUG: [%p]ResourceLoader::shouldAllowResourceToAskForCredentials() topOrigin[%s], requestURL[%s] m_canCrossOriginRequestsAskUserForCredentials[%d] result[%d]", this, topFrame?topFrame->document()->securityOrigin().toString().utf8().data():"null"_s, m_request.url().string().utf8().data(), m_canCrossOriginRequestsAskUserForCredentials, result);
+        WTFReportBacktraceWithPrefix("WEBKITDEBUG:");
+    }
+
+    return result;
 }
 
 void ResourceLoader::didBlockAuthenticationChallenge()

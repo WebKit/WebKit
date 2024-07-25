@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/cookie-utilities.js"></script>
+<body>
+<script>
+async function runTest()
+{
+    await resetCookies();
+    await setCookie("strict", "6", {"SameSite": "Strict", "Max-Age": 100, "path": "/"});
+    await setCookie("none", "6", {"SameSite": "None", "Secure" : null, "Max-Age": 100, "path": "/"});
+    await setCookie("default-samesite-value", "6", {"SameSite": null, "Max-Age": 100, "path": "/"});
+    await setCookie("invalid-samesite-value", "6", {"SameSite": "invalid", "Max-Age": 100, "path": "/"});
+    await setCookie("lax", "6", {"SameSite": "Lax", "Max-Age": 100, "path": "/"});
+    window.location.href = "https://localhost:8443/resources/echo-iframe-src.py?src=https%3A//127.0.0.1%3A8443/cookies/same-site/resources/click-hyperlink.py%3Fhref%3Dfetch-after-navigating-iframe-in-cross-origin-page.py";
+}
+runTest();
+</script>
+</body>
+</html>
