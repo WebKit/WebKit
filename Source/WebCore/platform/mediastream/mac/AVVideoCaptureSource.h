@@ -130,9 +130,9 @@ private:
     ASCIILiteral logClassName() const override { return "AVVideoCaptureSource"_s; }
 #endif
 
-    void beginConfiguration();
+    bool beginConfiguration();
     void commitConfiguration();
-    void beginConfigurationForConstraintsIfNeeded();
+    bool beginConfigurationForConstraintsIfNeeded();
     bool lockForConfiguration();
 
     void updateVerifyCapturingTimer();

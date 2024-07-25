@@ -375,22 +375,33 @@ void AVVideoCaptureSource::endApplyingConstraints()
     commitConfiguration();
 }
 
-void AVVideoCaptureSource::beginConfigurationForConstraintsIfNeeded()
+bool AVVideoCaptureSource::beginConfigurationForConstraintsIfNeeded()
 {
     if (m_hasBegunConfigurationForConstraints)
-        return;
+        return true;
+
+    if (!beginConfiguration())
+        return false;
 
     m_hasBegunConfigurationForConstraints = true;
-    beginConfiguration();
+    return true;
 }
 
-void AVVideoCaptureSource::beginConfiguration()
+bool AVVideoCaptureSource::beginConfiguration()
 {
-    if (++m_beginConfigurationCount > 1)
-        return;
+    if (!m_session)
+        return false;
 
-    if (m_session)
+    if (!m_beginConfigurationCount) {
         [m_session beginConfiguration];
+        if (!lockForConfiguration()) {
+            [m_session commitConfiguration];
+            return false;
+        }
+    }
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "done");
+    ++m_beginConfigurationCount;
+    return true;
 }
 
 void AVVideoCaptureSource::commitConfiguration()
@@ -399,8 +410,10 @@ void AVVideoCaptureSource::commitConfiguration()
     if (!m_beginConfigurationCount || --m_beginConfigurationCount > 0)
         return;
 
+    [device() unlockForConfiguration];
     if (m_session)
         [m_session commitConfiguration];
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "done");
 }
 
 void AVVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
@@ -792,7 +805,8 @@ void AVVideoCaptureSource::setFrameRateAndZoomWithPreset(double requestedFrameRa
     if (m_currentFrameRate == requestedFrameRate && m_currentZoom == requestedZoom && preset && m_currentPreset && preset->format() == m_currentPreset->format())
         return;
 
-    beginConfigurationForConstraintsIfNeeded();
+    if (!beginConfigurationForConstraintsIfNeeded())
+        return;
 
     m_currentPreset = WTFMove(preset);
     if (m_currentPreset)
@@ -805,11 +819,13 @@ void AVVideoCaptureSource::setFrameRateAndZoomWithPreset(double requestedFrameRa
 
 #if PLATFORM(IOS_FAMILY)
     // Updating the device configuration may switch off the torch. We reenable torch asynchronously if needed.
-    if (torch()) {
-        scheduleDeferredTask([this] {
-            updateTorch();
-        });
-    }
+    scheduleDeferredTask([this] {
+        if (!torch())
+            return;
+        startApplyingConstraints();
+        updateTorch();
+        endApplyingConstraints();
+    });
 #endif
 }
 
@@ -855,10 +871,6 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
 
     ASSERT(m_currentPreset->format());
 
-    if (!lockForConfiguration())
-        return;
-
-    beginConfiguration();
     @try {
         [device() setActiveFormat:m_currentPreset->format()];
 
@@ -902,9 +914,6 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
         ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "error configuring device ", exception.name, ", reason : ", exception.reason);
         ASSERT_NOT_REACHED();
     }
-
-    [device() unlockForConfiguration];
-    commitConfiguration();
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -957,9 +966,7 @@ void AVVideoCaptureSource::updateWhiteBalanceMode()
         return;
     }
 
-    beginConfigurationForConstraintsIfNeeded();
-
-    if (!lockForConfiguration())
+    if (!beginConfigurationForConstraintsIfNeeded())
         return;
 
     auto* device = this->device();
@@ -968,8 +975,6 @@ void AVVideoCaptureSource::updateWhiteBalanceMode()
     } @catch(NSException *exception) {
         ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "error setting white balance mode ", [[exception name] UTF8String], ", reason : ", exception.reason);
     }
-
-    [device unlockForConfiguration];
 }
 
 void AVVideoCaptureSource::updateTorch()
@@ -979,13 +984,16 @@ void AVVideoCaptureSource::updateTorch()
         return;
     }
 
-    beginConfigurationForConstraintsIfNeeded();
+    bool isTorchOn = [device() torchMode] == AVCaptureTorchModeOn;
+    if (isTorchOn == torch())
+        return;
 
-    if (!lockForConfiguration())
+    if (!beginConfigurationForConstraintsIfNeeded())
         return;
 
     auto* device = this->device();
     @try {
+        ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "setting torch to ", torch());
         if (torch()) {
             NSError *error = nil;
             if (![device setTorchModeOnWithLevel:AVCaptureMaxAvailableTorchLevel error:&error]) {
@@ -998,8 +1006,6 @@ void AVVideoCaptureSource::updateTorch()
     } @catch(NSException *exception) {
         ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "error turning on torch ", exception.name, ", reason : ", exception.reason);
     }
-
-    [device unlockForConfiguration];
 }
 
 IntDegrees AVVideoCaptureSource::sensorOrientationFromVideoOutput()
@@ -1087,9 +1093,6 @@ bool AVVideoCaptureSource::setupCaptureSession()
 {
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
 
-    beginConfiguration();
-    auto scopeExit = WTF::makeScopeExit([&] { commitConfiguration(); });
-
     NSError *error = nil;
     RetainPtr<AVCaptureDeviceInput> videoIn = adoptNS([PAL::allocAVCaptureDeviceInputInstance() initWithDevice:device() error:&error]);
     if (error) {
@@ -1116,7 +1119,12 @@ bool AVVideoCaptureSource::setupCaptureSession()
     }
     [session() addOutput:m_videoOutput.get()];
 
+    if (!beginConfiguration())
+        return false;
+
     setSessionSizeFrameRateAndZoom();
+    commitConfiguration();
+
     m_needsTorchReconfiguration = m_needsTorchReconfiguration || torch();
 
     m_sensorOrientation = sensorOrientationFromVideoOutput();
