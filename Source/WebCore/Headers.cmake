@@ -921,6 +921,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/calc/CSSCalcValue.h
 
     css/color/CSSColorDescriptors.h
+    css/color/ExtendedStyleColor.h
     css/color/StyleAbsoluteColor.h
     css/color/StyleColor.h
     css/color/StyleCurrentColor.h

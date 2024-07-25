@@ -46,12 +46,12 @@ String serializationForCSS(const CSSUnresolvedColorHex&);
 
 inline StyleColor createStyleColor(const CSSUnresolvedColorHex& unresolved, CSSUnresolvedStyleColorResolutionState&)
 {
-    return { StyleAbsoluteColor { Color { unresolved.value } } };
+    return { unresolved.value };
 }
 
 inline Color createColor(const CSSUnresolvedColorHex& unresolved, CSSUnresolvedColorResolutionState&)
 {
-    return Color { unresolved.value };
+    return { unresolved.value };
 }
 
 constexpr bool containsCurrentColor(const CSSUnresolvedColorHex&)

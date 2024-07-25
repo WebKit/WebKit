@@ -1005,6 +1005,7 @@ css/color/CSSUnresolvedColorResolutionState.cpp
 css/color/CSSUnresolvedContrastColor.cpp
 css/color/CSSUnresolvedLightDark.cpp
 css/color/CSSUnresolvedRelativeColor.cpp
+css/color/ExtendedStyleColor.cpp
 css/color/StyleAbsoluteColor.cpp
 css/color/StyleColor.cpp
 css/color/StyleColorLayers.cpp
