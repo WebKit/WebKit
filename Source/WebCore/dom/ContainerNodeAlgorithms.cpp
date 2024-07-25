@@ -212,7 +212,7 @@ static void collectFrameOwners(Vector<Ref<HTMLFrameOwnerElement>>& frameOwners, 
         if (RefPtr frameOwnerElement = dynamicDowncast<HTMLFrameOwnerElement>(element))
             frameOwners.append(frameOwnerElement.releaseNonNull());
 
-        if (ShadowRoot* shadowRoot = element.shadowRoot())
+        if (RefPtr shadowRoot = element.shadowRoot())
             collectFrameOwners(frameOwners, *shadowRoot);
         ++it;
     }
@@ -234,7 +234,7 @@ void disconnectSubframes(ContainerNode& root, SubframeDisconnectPolicy policy)
 
     collectFrameOwners(frameOwners, root);
 
-    if (auto* shadowRoot = root.shadowRoot())
+    if (RefPtr shadowRoot = root.shadowRoot())
         collectFrameOwners(frameOwners, *shadowRoot);
 
     // Must disable frame loading in the subtree so an unload handler cannot
