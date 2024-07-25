@@ -155,7 +155,6 @@ DEFINE_VISIT_CHILDREN(JSWebAssemblyInstance);
 
 void JSWebAssemblyInstance::initializeImports(JSGlobalObject* globalObject, JSObject* importObject, CreationMode creationMode)
 {
-    ASSERT(globalObject == this->globalObject());
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -170,7 +169,6 @@ void JSWebAssemblyInstance::initializeImports(JSGlobalObject* globalObject, JSOb
 
 void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObject, Ref<CalleeGroup>&& wasmCalleeGroup, CreationMode creationMode)
 {
-    ASSERT(globalObject == this->globalObject());
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!wasmCalleeGroup->runnable()) {
