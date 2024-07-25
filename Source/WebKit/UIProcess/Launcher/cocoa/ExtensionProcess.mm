@@ -60,8 +60,17 @@ ExtensionProcess::ExtensionProcess(_SEExtensionProcess *process)
 }
 #endif
 
+ExtensionProcess::~ExtensionProcess()
+{
+    invalidate();
+}
+
 void ExtensionProcess::invalidate() const
 {
+    if (m_didInvalidate)
+        return;
+
+    m_didInvalidate = true;
     WTF::switchOn(m_process, [&] (auto& process) {
         [process invalidate];
     });
