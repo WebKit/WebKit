@@ -7371,4 +7371,6 @@ webkit.org/b/276624 fast/dynamic/layer-hit-test-crash.html [ Pass Failure ]
 
 webkit.org/b/276906 imported/w3c/web-platform-tests/IndexedDB/storage-buckets.https.any.worker.html [ Pass Failure ]
 
-webkit.org/b/276920 fast/events/ios/rotation/basic-rotation.html  [ Pass Failure ]
+webkit.org/b/276920 fast/events/ios/rotation/basic-rotation.html [ Pass Failure ]
+
+webkit.org/b/277067 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Pass Timeout ]
