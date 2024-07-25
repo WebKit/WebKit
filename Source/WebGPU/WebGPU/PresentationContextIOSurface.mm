@@ -307,19 +307,20 @@ void PresentationContextIOSurface::unconfigure()
 
 void PresentationContextIOSurface::present()
 {
-    if (m_ioSurfaces.count != m_renderBuffers.size())
+    auto devicePtr = m_device.get();
+    if (m_ioSurfaces.count != m_renderBuffers.size() || m_currentIndex >= m_renderBuffers.size() || !devicePtr)
         return;
 
     auto& textureRefPtr = m_renderBuffers[m_currentIndex].luminanceClampTexture;
     if (Texture* texturePtr = textureRefPtr.get(); texturePtr && m_computePipelineState) {
         MTLCommandBufferDescriptor *descriptor = [MTLCommandBufferDescriptor new];
         descriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
-        id<MTLCommandBuffer> commandBuffer = m_device->getQueue().commandBufferWithDescriptor(descriptor).first;
+        id<MTLCommandBuffer> commandBuffer = devicePtr->getQueue().commandBufferWithDescriptor(descriptor).first;
         MTLComputePassDescriptor* computeDescriptor = [MTLComputePassDescriptor new];
         computeDescriptor.dispatchType = MTLDispatchTypeSerial;
 
         id<MTLComputeCommandEncoder> computeEncoder = [commandBuffer computeCommandEncoderWithDescriptor:computeDescriptor];
-        m_device->getQueue().setEncoderForBuffer(commandBuffer, computeEncoder);
+        devicePtr->getQueue().setEncoderForBuffer(commandBuffer, computeEncoder);
         [computeEncoder setComputePipelineState:m_computePipelineState];
         id<MTLTexture> inputTexture = texturePtr->texture();
         [computeEncoder setTexture:inputTexture atIndex:0];
@@ -331,8 +332,8 @@ void PresentationContextIOSurface::present()
         threadgroupCount.height = (inputTexture.height + threadgroupSize.height - 1) / threadgroupSize.height;
         threadgroupCount.depth = 1;
         [computeEncoder dispatchThreadgroups:threadgroupCount threadsPerThreadgroup:threadgroupSize];
-        m_device->getQueue().endEncoding(computeEncoder, commandBuffer);
-        m_device->getQueue().commitMTLCommandBuffer(commandBuffer);
+        devicePtr->getQueue().endEncoding(computeEncoder, commandBuffer);
+        devicePtr->getQueue().commitMTLCommandBuffer(commandBuffer);
     }
 
     m_currentIndex = (m_currentIndex + 1) % m_renderBuffers.size();
