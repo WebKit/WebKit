@@ -42,6 +42,7 @@ function checkScroll() {
   let results = {
     scrollPosition: position,
     href: window.location.href,
+    performanceEntry: performance.getEntries()[0].name,
     target: target ? target.id : 'undefined'
   };
 

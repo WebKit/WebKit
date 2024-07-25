@@ -4082,7 +4082,11 @@ void Document::setURL(const URL& url)
     if (newURL == m_url)
         return;
 
-    m_fragmentDirective = newURL.consumeFragmentDirective();
+    if (RefPtr page = protectedPage())
+        m_fragmentDirective = page->mainFrameURLFragment();
+
+    if (m_fragmentDirective.isEmpty())
+        m_fragmentDirective = newURL.consumeFragmentDirective();
 
     if (SecurityOrigin::shouldIgnoreHost(newURL))
         newURL.removeHostAndPort();

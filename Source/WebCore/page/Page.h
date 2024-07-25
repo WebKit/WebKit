@@ -360,6 +360,8 @@ public:
     const URL& mainFrameURL() const { return m_mainFrameURL; }
     SecurityOrigin& mainFrameOrigin() const;
     WEBCORE_EXPORT void setMainFrameURL(const URL&);
+    WEBCORE_EXPORT void setMainFrameURLFragment(String&&);
+    String mainFrameURLFragment() const { return m_mainFrameURLFragment; }
 
     bool openedByDOM() const;
     WEBCORE_EXPORT void setOpenedByDOM();
@@ -1271,6 +1273,7 @@ private:
     Ref<Frame> m_mainFrame;
     URL m_mainFrameURL;
     RefPtr<SecurityOrigin> m_mainFrameOrigin;
+    String m_mainFrameURLFragment;
 
     RefPtr<PluginData> m_pluginData;
 
