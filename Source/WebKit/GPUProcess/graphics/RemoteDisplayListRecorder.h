@@ -98,7 +98,7 @@ public:
     void drawPath(const WebCore::Path&);
     void drawFocusRingPath(const WebCore::Path&, float outlineWidth, const WebCore::Color&);
     void drawFocusRingRects(const Vector<WebCore::FloatRect>&, float outlineOffset, float outlineWidth, const WebCore::Color&);
-    void fillRect(const WebCore::FloatRect&);
+    void fillRect(const WebCore::FloatRect&, WebCore::GraphicsContext::RequiresClipToRect);
     void fillRectWithColor(const WebCore::FloatRect&, const WebCore::Color&);
     void fillRectWithGradient(WebCore::DisplayList::FillRectWithGradient&&);
     void fillRectWithGradientAndSpaceTransform(WebCore::DisplayList::FillRectWithGradientAndSpaceTransform&&);

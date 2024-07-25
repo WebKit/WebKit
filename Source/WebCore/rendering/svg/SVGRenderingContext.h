@@ -60,6 +60,8 @@ public:
     void prepareToRenderSVGContent(RenderElement&, PaintInfo&, NeedsGraphicsContextSave = DontSaveGraphicsContext);
     bool isRenderingPrepared() const { return m_renderingFlags & RenderingPrepared; }
 
+    bool pathClippingIsEntirelyWithinRendererContents() const { return m_pathClippingIsEntirelyWithinRendererContents; }
+
     static void renderSubtreeToContext(GraphicsContext&, RenderElement&, const AffineTransform&);
     static void clipToImageBuffer(GraphicsContext&, const FloatRect& targetRect, const FloatSize& scale, RefPtr<ImageBuffer>&, bool safeToClear);
 
@@ -93,6 +95,8 @@ private:
     LegacyRenderSVGResourceFilter* m_filter  { nullptr };
     LayoutRect m_savedPaintRect;
     int m_renderingFlags { 0 };
+    // True with path-based clipping is known to contrain the clipped area to within the renderer; used to optimize away a context clip.
+    bool m_pathClippingIsEntirelyWithinRendererContents { false };
 };
 
 } // namespace WebCore

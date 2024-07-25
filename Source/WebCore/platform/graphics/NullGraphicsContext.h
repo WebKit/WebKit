@@ -79,8 +79,8 @@ private:
     void drawEllipse(const FloatRect&) final { }
     void fillPath(const Path&) final { }
     void strokePath(const Path&) final { }
-    void fillRect(const FloatRect&) final { }
-    void fillRect(const FloatRect&, Gradient&, const AffineTransform&) final { }
+    void fillRect(const FloatRect&, RequiresClipToRect) final { }
+    void fillRect(const FloatRect&, Gradient&, const AffineTransform&, RequiresClipToRect) final { }
     void fillRect(const FloatRect&, const Color&) final { }
     void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) final { }
     void strokeRect(const FloatRect&, float) final { }

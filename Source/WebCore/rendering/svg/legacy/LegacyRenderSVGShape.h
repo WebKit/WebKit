@@ -107,6 +107,8 @@ protected:
     FloatRect strokeBoundingBox() const final;
     FloatRect approximateStrokeBoundingBox() const;
 
+    bool fillRequiresClip() const { return m_fillRequiresClip; }
+
 private:
     // Hit-detection separated for the fill and the stroke
     bool fillContains(const FloatPoint&, bool requiresFill = true, const WindRule fillRule = WindRule::NonZero);
@@ -152,6 +154,7 @@ private:
     bool m_needsBoundariesUpdate : 1;
     bool m_needsShapeUpdate : 1;
     bool m_needsTransformUpdate : 1;
+    bool m_fillRequiresClip : 1 { true };
 protected:
     ShapeType m_shapeType : 3 { ShapeType::Empty };
 private:

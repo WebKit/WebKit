@@ -267,9 +267,9 @@ void RecorderImpl::recordDrawFocusRingRects(const Vector<FloatRect>& rects, floa
     append(DrawFocusRingRects(rects, outlineOffset, outlineWidth, color));
 }
 
-void RecorderImpl::recordFillRect(const FloatRect& rect)
+void RecorderImpl::recordFillRect(const FloatRect& rect, RequiresClipToRect requiresClipToRect)
 {
-    append(FillRect(rect));
+    append(FillRect(rect, requiresClipToRect));
 }
 
 void RecorderImpl::recordFillRectWithColor(const FloatRect& rect, const Color& color)
@@ -282,9 +282,9 @@ void RecorderImpl::recordFillRectWithGradient(const FloatRect& rect, Gradient& g
     append(FillRectWithGradient(rect, gradient));
 }
 
-void RecorderImpl::recordFillRectWithGradientAndSpaceTransform(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
+void RecorderImpl::recordFillRectWithGradientAndSpaceTransform(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect requiresClipToRect)
 {
-    append(FillRectWithGradientAndSpaceTransform(rect, gradient, gradientSpaceTransform));
+    append(FillRectWithGradientAndSpaceTransform(rect, gradient, gradientSpaceTransform, requiresClipToRect));
 }
 
 void RecorderImpl::recordFillCompositedRect(const FloatRect& rect, const Color& color, CompositeOperator op, BlendMode mode)

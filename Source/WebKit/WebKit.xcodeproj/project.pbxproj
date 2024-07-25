@@ -167,6 +167,7 @@
 		0F5947A7187B517600437857 /* RemoteScrollingCoordinatorMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5947A5187B517600437857 /* RemoteScrollingCoordinatorMessageReceiver.cpp */; };
 		0F5947A8187B517600437857 /* RemoteScrollingCoordinatorMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5947A6187B517600437857 /* RemoteScrollingCoordinatorMessages.h */; };
 		0F5E200418E77051003EC3E5 /* PlatformCAAnimationRemote.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5E200218E77051003EC3E5 /* PlatformCAAnimationRemote.h */; };
+		0F6E7C532C4C386800F1DB85 /* RemoteDisplayListRecorderMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6E7C512C4C386800F1DB85 /* RemoteDisplayListRecorderMessages.h */; };
 		0F850FE71ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F850FE51ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h */; };
 		0F931C1C18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F931C1A18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h */; };
 		0F931C1C18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F931C1A18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.h */; };
@@ -3324,6 +3325,8 @@
 		0F5E200218E77051003EC3E5 /* PlatformCAAnimationRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCAAnimationRemote.h; sourceTree = "<group>"; };
 		0F65956727DB1D5800EE874B /* SwapBuffersDisplayRequirement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwapBuffersDisplayRequirement.h; sourceTree = "<group>"; };
 		0F65956C27E10C2C00EE874B /* PrepareBackingStoreBuffersData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrepareBackingStoreBuffersData.h; sourceTree = "<group>"; };
+		0F6E7C512C4C386800F1DB85 /* RemoteDisplayListRecorderMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteDisplayListRecorderMessages.h; path = RemoteDisplayListRecorderMessages.h; sourceTree = "<group>"; };
+		0F6E7C522C4C386800F1DB85 /* RemoteDisplayListRecorderMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteDisplayListRecorderMessageReceiver.cpp; path = RemoteDisplayListRecorderMessageReceiver.cpp; sourceTree = "<group>"; };
 		0F707C771A1FEE8300DA7A45 /* RemoteLayerTreeScrollingPerformanceData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeScrollingPerformanceData.mm; sourceTree = "<group>"; };
 		0F707C791A1FEEA300DA7A45 /* RemoteLayerTreeScrollingPerformanceData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeScrollingPerformanceData.h; sourceTree = "<group>"; };
 		0F73B767222B38C600805316 /* ScrollingTreeOverflowScrollingNodeRemoteMac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeOverflowScrollingNodeRemoteMac.cpp; sourceTree = "<group>"; };
@@ -15183,6 +15186,8 @@
 				1C55A586275457C700EB7E95 /* RemoteComputePipelineMessages.h */,
 				1C55A588275457C700EB7E95 /* RemoteDeviceMessageReceiver.cpp */,
 				1C55A57C275457C500EB7E95 /* RemoteDeviceMessages.h */,
+				0F6E7C522C4C386800F1DB85 /* RemoteDisplayListRecorderMessageReceiver.cpp */,
+				0F6E7C512C4C386800F1DB85 /* RemoteDisplayListRecorderMessages.h */,
 				1C55A57E275457C500EB7E95 /* RemoteExternalTextureMessageReceiver.cpp */,
 				1C55A57A275457C500EB7E95 /* RemoteExternalTextureMessages.h */,
 				1C55A59D275457CA00EB7E95 /* RemoteGPUMessageReceiver.cpp */,
@@ -16617,6 +16622,7 @@
 				CDAC20B423FB58F20021DEE3 /* RemoteCDMInstanceProxy.h in Headers */,
 				CDAC20CA23FC2F750021DEE3 /* RemoteCDMInstanceSession.h in Headers */,
 				CDAC20C923FC2F750021DEE3 /* RemoteCDMInstanceSessionIdentifier.h in Headers */,
+				0F6E7C532C4C386800F1DB85 /* RemoteDisplayListRecorderMessages.h in Headers */,
 				F451C0FE2703B263002BA03B /* RemoteDisplayListRecorderProxy.h in Headers */,
 				A78A5FE42B0EB39E005036D3 /* RemoteImageBufferSetIdentifier.h in Headers */,
 				2D47B56D1810714E003A3AEE /* RemoteLayerBackingStore.h in Headers */,

@@ -181,13 +181,13 @@ void GraphicsContextCairo::strokePath(const Path& path)
     Cairo::strokePath(*this, path, Cairo::StrokeSource(state), Cairo::ShadowState(state));
 }
 
-void GraphicsContextCairo::fillRect(const FloatRect& rect)
+void GraphicsContextCairo::fillRect(const FloatRect& rect, RequiresClipToRect)
 {
     auto& state = this->state();
     Cairo::fillRect(*this, rect, Cairo::FillSource(state), Cairo::ShadowState(state));
 }
 
-void GraphicsContextCairo::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
+void GraphicsContextCairo::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect)
 {
     auto& state = this->state();
     Cairo::fillRect(*this, rect, Cairo::FillSource(state, gradient, gradientSpaceTransform), Cairo::ShadowState(state));
