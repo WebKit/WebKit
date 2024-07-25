@@ -2005,6 +2005,7 @@ header: <WebCore/ResourceRequest.h>
     [BitField] bool m_useAdvancedPrivacyProtections;
     [BitField] bool m_didFilterLinkDecoration;
     [BitField] bool m_isPrivateTokenUsageByThirdPartyAllowed;
+    [BitField] bool m_wasSchemeOptimisticallyUpgraded;
 };
 
 #if USE(SOUP)

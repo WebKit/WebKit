@@ -1095,7 +1095,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     Ref page = *frame->page();
 
     if (RefPtr documentLoader = m_documentLoader.get()) {
-        bool madeHTTPS { false };
+        bool madeHTTPS { request.resourceRequest().wasSchemeOptimisticallyUpgraded() };
 #if ENABLE(CONTENT_EXTENSIONS)
         const auto& resourceRequest = request.resourceRequest();
         if (request.options().shouldEnableContentExtensionsCheck == ShouldEnableContentExtensionsCheck::Yes) {

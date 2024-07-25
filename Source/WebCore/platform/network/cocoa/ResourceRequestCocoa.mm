@@ -71,6 +71,7 @@ ResourceRequest::ResourceRequest(ResourceRequestPlatformData&& platformData, con
         setUseAdvancedPrivacyProtections(platformData.m_useAdvancedPrivacyProtections);
         setDidFilterLinkDecoration(platformData.m_didFilterLinkDecoration);
         setIsPrivateTokenUsageByThirdPartyAllowed(platformData.m_isPrivateTokenUsageByThirdPartyAllowed);
+        setWasSchemeOptimisticallyUpgraded(platformData.m_wasSchemeOptimisticallyUpgraded);
     }
 
     setCachePartition(cachePartition);
@@ -130,6 +131,7 @@ ResourceRequestPlatformData ResourceRequest::getResourceRequestPlatformData() co
         useAdvancedPrivacyProtections(),
         didFilterLinkDecoration(),
         isPrivateTokenUsageByThirdPartyAllowed(),
+        wasSchemeOptimisticallyUpgraded()
     };
 }
 

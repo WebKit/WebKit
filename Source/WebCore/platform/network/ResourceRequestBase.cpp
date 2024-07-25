@@ -187,10 +187,10 @@ ResourceRequest ResourceRequestBase::redirectedRequest(const ResourceResponse& r
     return request;
 }
 
-void ResourceRequestBase::upgradeInsecureRequest(URL& url)
+bool ResourceRequestBase::upgradeInsecureRequest(URL& url)
 {
     if (!url.protocolIs("http"_s) && !url.protocolIs("ws"_s))
-        return;
+        return false;
 
     if (url.protocolIs("http"_s))
         url.setProtocol("https"_s);
@@ -201,30 +201,33 @@ void ResourceRequestBase::upgradeInsecureRequest(URL& url)
 
     if (url.port() == 80)
         url.setPort(std::nullopt);
+
+    return true;
 }
 
-void ResourceRequestBase::upgradeInsecureRequestIfNeeded(URL& url, ShouldUpgradeLocalhostAndIPAddress shouldUpgradeLocalhostAndIPAddress, const std::optional<uint16_t>& upgradePort)
+bool ResourceRequestBase::upgradeInsecureRequestIfNeeded(URL& url, ShouldUpgradeLocalhostAndIPAddress shouldUpgradeLocalhostAndIPAddress, const std::optional<uint16_t>& upgradePort)
 {
     if (!url.protocolIs("http"_s) && !url.protocolIs("ws"_s))
-        return;
+        return false;
 
     // Do not automatically upgrade localhost or IP address connections unless the CSP policy requires it.
     bool isHostLocalhostOrIPaddress = SecurityOrigin::isLocalhostAddress(url.host()) || URL::hostIsIPAddress(url.host());
     if (isHostLocalhostOrIPaddress && shouldUpgradeLocalhostAndIPAddress == ShouldUpgradeLocalhostAndIPAddress::No)
-        return;
+        return false;
 
-    upgradeInsecureRequest(url);
+    if (!upgradeInsecureRequest(url))
+        return false;
 
-    if (!url.port())
-        return;
-
-    if (upgradePort)
+    if (url.port() && upgradePort)
         url.setPort(*upgradePort);
+
+    return true;
 }
 
 void ResourceRequestBase::upgradeInsecureRequestIfNeeded(ShouldUpgradeLocalhostAndIPAddress shouldUpgradeLocalhostAndIPAddress, const std::optional<uint16_t>& upgradePort)
 {
-    upgradeInsecureRequestIfNeeded(m_requestData.m_url, shouldUpgradeLocalhostAndIPAddress, upgradePort);
+    bool wasUpgraded = upgradeInsecureRequestIfNeeded(m_requestData.m_url, shouldUpgradeLocalhostAndIPAddress, upgradePort);
+    setWasSchemeOptimisticallyUpgraded(wasUpgraded);
 }
 
 void ResourceRequestBase::upgradeInsecureRequest()
@@ -722,6 +725,11 @@ void ResourceRequestBase::setDidFilterLinkDecoration(bool didFilterLinkDecoratio
 void ResourceRequestBase::setIsPrivateTokenUsageByThirdPartyAllowed(bool isPrivateTokenUsageByThirdPartyAllowed)
 {
     m_requestData.m_isPrivateTokenUsageByThirdPartyAllowed = isPrivateTokenUsageByThirdPartyAllowed;
+}
+
+void ResourceRequestBase::setWasSchemeOptimisticallyUpgraded(bool wasSchemeOptimisticallyUpgraded)
+{
+    m_requestData.m_wasSchemeOptimisticallyUpgraded = wasSchemeOptimisticallyUpgraded;
 }
 
 bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceRequestBase& b)
