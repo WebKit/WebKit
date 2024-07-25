@@ -32,8 +32,9 @@
 }
 
 .media-controls.fullscreen.tvos > .controls-bar {
-    --tvos-controls-top-margin: 32px;
     --tvos-controls-horizontal-margin: 24px;
+    --tvos-controls-vertical-margin: 32px;
+    --tvos-controls-bar-height: 56px;
 }
 
 .media-controls.fullscreen.tvos.uses-ltr-user-interface-layout-direction > .controls-bar.top-left,
@@ -41,7 +42,7 @@
     position: absolute;
     left: var(--tvos-controls-horizontal-margin);
     right: auto;
-    top: var(--tvos-controls-top-margin);
+    top: var(--tvos-controls-vertical-margin);
 }
 
 .media-controls.fullscreen.tvos.uses-ltr-user-interface-layout-direction > .controls-bar.top-right,
@@ -49,12 +50,19 @@
     position: absolute;
     left: auto;
     right: var(--tvos-controls-horizontal-margin);
-    top: var(--tvos-controls-top-margin);
+    top: var(--tvos-controls-vertical-margin);
 }
 
-.media-controls.fullscreen.tvos > .controls-bar.center {
+.media-controls.fullscreen.tvos > .controls-bar.bottom {
     position: absolute;
-    top: 50%;
+    bottom: var(--tvos-controls-vertical-margin);
+    left: var(--tvos-controls-horizontal-margin);
+    right: var(--tvos-controls-horizontal-margin);
+    height: var(--tvos-controls-bar-height);
+}
+
+.media-controls.fullscreen.tvos > .controls-bar.bottom > .buttons-container {
+    position: absolute;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%);
 }

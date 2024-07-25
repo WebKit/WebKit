@@ -26,9 +26,10 @@
 class TVOSMediaControls extends MediaControls
 {
     static topButtonsScaleFactor = 1;
-    static backForwardButtonScaleFactor = 2;
-    static playPauseButtonScaleFactor = 3;
-    static centerControlsBarButtonMargin = 48;
+    static backForwardButtonScaleFactor = 1;
+    static playPauseButtonScaleFactor = 2;
+    static bottomControlsBarButtonMargin = 48;
+    static bottomControlsBarMargin = 24;
 
     constructor(options = {})
     {
@@ -39,6 +40,10 @@ class TVOSMediaControls extends MediaControls
         this.element.classList.add("fullscreen");
         this.element.classList.add("tvos");
 
+        this.timeControl.scrubber.allowsRelativeScrubbing = true;
+        this.timeControl.scrubber.knobStyle = Slider.KnobStyle.None;
+        this.timeControl.timeLabelsAttachment = TimeControl.TimeLabelsAttachment.Below;
+
         this.skipBackButton = new SkipBackButton(this);
         this.skipForwardButton = new SkipForwardButton(this);
         
@@ -48,8 +53,8 @@ class TVOSMediaControls extends MediaControls
         this.topRightControlsBar = new ControlsBar("top-right");
         this._topRightControlsBarContainer = this.topRightControlsBar.addChild(new ButtonsContainer);
 
-        this.centerControlsBar = new ControlsBar("center");
-        this._centerControlsBarContainer = this.centerControlsBar.addChild(new ButtonsContainer);
+        this.bottomControlsBar.addChild(this.timeControl);
+        this._bottomControlsBarContainer = this.bottomControlsBar.addChild(new ButtonsContainer);
 
         this.showsStartButton = false;
 
@@ -83,19 +88,25 @@ class TVOSMediaControls extends MediaControls
         this._topRightControlsBarContainer.children = this._topRightContainerButtons();
         this._topRightControlsBarContainer.layout();
 
-        this._centerControlsBarContainer.children = this._centerContainerButtons();
-        this._centerControlsBarContainer.buttonMargin = TVOSMediaControls.centerControlsBarButtonMargin;
-        this._centerControlsBarContainer.layout();
+        this._bottomControlsBarContainer.children = this._bottomContainerButtons();
+        this._bottomControlsBarContainer.buttonMargin = TVOSMediaControls.bottomControlsBarButtonMargin;
+        this._bottomControlsBarContainer.layout();
 
-        this.topLeftControlsBar.with = this._topLeftControlsBarContainer.width;
+        this.topLeftControlsBar.hasBackgroundTint = false;
+        this.topRightControlsBar.hasBackgroundTint = false;
+        this.bottomControlsBar.hasBackgroundTint = false;
+
+        this.topLeftControlsBar.width = this._topLeftControlsBarContainer.width;
         this.topRightControlsBar.width = this._topRightControlsBarContainer.width;
-        this.centerControlsBar.width = this._centerControlsBarContainer.width;
-        
+        this.bottomControlsBar.width = this.width - 2 * TVOSMediaControls.bottomControlsBarMargin;
+
+        this.timeControl.width = this.bottomControlsBar.width;
+
         this.topLeftControlsBar.visible = this._topLeftControlsBarContainer.children.some(button => button.visible);
         this.topRightControlsBar.visible = this._topRightControlsBarContainer.children.some(button => button.visible);
-        this.centerControlsBar.visible = this._centerControlsBarContainer.children.some(button => button.visible);
+        this.bottomControlsBar.visible = true;
 
-        this.children = [this.topLeftControlsBar, this.topRightControlsBar, this.centerControlsBar];
+        this.children = [this.topLeftControlsBar, this.topRightControlsBar, this.bottomControlsBar];
     }
 
     // Private
@@ -114,7 +125,7 @@ class TVOSMediaControls extends MediaControls
         return [this.fullscreenButton];
     }
 
-    _centerContainerButtons()
+    _bottomContainerButtons()
     {
         return [this.skipBackButton, this.playPauseButton, this.skipForwardButton];
     }
