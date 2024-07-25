@@ -97,6 +97,7 @@
 #include <wtf/WallTime.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
+#include <wtf/glib/WTFGType.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
@@ -3414,6 +3415,7 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
 struct DMABufMemoryQuarkData {
     DMABufReleaseFlag releaseFlag;
 };
+WEBKIT_DEFINE_ASYNC_DATA_STRUCT(DMABufMemoryQuarkData);
 
 G_DEFINE_QUARK(DMABufMemoryQuarkData, dmabuf_memory);
 
@@ -3515,11 +3517,10 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
                 // flag is signalled.
                 object.releaseFlag = DMABufReleaseFlag(DMABufReleaseFlag::Initialize);
 
-                gst_mini_object_set_qdata(GST_MINI_OBJECT_CAST(memory.get()), dmabuf_memory_quark(),
-                    new DMABufMemoryQuarkData { object.releaseFlag.dup() },
-                    [](gpointer data) {
-                        delete static_cast<DMABufMemoryQuarkData*>(data);
-                    });
+                auto quarkData = createDMABufMemoryQuarkData();
+                quarkData->releaseFlag = object.releaseFlag.dup();
+                gst_mini_object_set_qdata(GST_MINI_OBJECT_CAST(memory.get()), dmabuf_memory_quark(), quarkData,
+                    reinterpret_cast<GDestroyNotify>(destroyDMABufMemoryQuarkData));
 
                 // For each plane, the relevant data (stride, offset, skip, dmabuf fd) is retrieved and assigned
                 // as appropriate.
