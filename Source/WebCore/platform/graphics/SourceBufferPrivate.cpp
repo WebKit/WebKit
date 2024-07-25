@@ -205,6 +205,8 @@ void SourceBufferPrivate::seekToTime(const MediaTime& time)
         trackBuffer.setNeedsReenqueueing(true);
         reenqueueMediaForTime(trackBuffer, trackID, time);
     }
+
+    computeEvictionData();
 }
 
 void SourceBufferPrivate::clearTrackBuffers(bool shouldReportToClient)
@@ -459,12 +461,13 @@ void SourceBufferPrivate::computeEvictionData(ComputeEvictionDataRule rule)
             return 0;
         size_t evictableSize = 0;
         auto currentTime = mediaSource->currentTime();
+
+        // We can evict everything from the beginning of the buffer to a maximum of timeChunk (3s) before currentTime (or the previous sync sample whichever comes first).
         auto timeChunkAsMilliseconds = evictionAlgorithmTimeChunkLowThreshold;
         const auto timeChunk = MediaTime(timeChunkAsMilliseconds, 1000);
-        const auto maximumRangeEndBeforeCurrentTime = std::min(currentTime - timeChunk, findPreviousSyncSamplePresentationTime(currentTime));
 
-        auto rangeStartBeforeCurrentTime = minimumBufferedTime();
-        auto rangeEndBeforeCurrentTime = std::min(rangeStartBeforeCurrentTime, maximumRangeEndBeforeCurrentTime);
+        const auto rangeStartBeforeCurrentTime = minimumBufferedTime();
+        const auto rangeEndBeforeCurrentTime = std::min(currentTime - timeChunk, findPreviousSyncSamplePresentationTime(currentTime));
 
         if (rangeStartBeforeCurrentTime < rangeEndBeforeCurrentTime) {
             iterateTrackBuffers([&](auto& trackBuffer) {
@@ -472,14 +475,14 @@ void SourceBufferPrivate::computeEvictionData(ComputeEvictionDataRule rule)
             });
         }
 
-        const auto minimumRangeStartAfterCurrentTime = currentTime + timeChunk;
         PlatformTimeRanges buffered { MediaTime::zeroTime(), MediaTime::positiveInfiniteTime() };
         iterateTrackBuffers([&](const TrackBuffer& trackBuffer) {
             buffered.intersectWith(trackBuffer.buffered());
         });
 
-        auto rangeEndAfterCurrentTime = buffered.maximumBufferedTime();
-        auto rangeStartAfterCurrentTime = std::max(minimumRangeStartAfterCurrentTime, rangeEndAfterCurrentTime - timeChunk);
+        // We can evict everything from currentTime+timeChunk (3s) to the end of the buffer, not contiguous in current range.
+        auto rangeStartAfterCurrentTime = currentTime + timeChunk;
+        const auto rangeEndAfterCurrentTime = buffered.maximumBufferedTime();
 
         if (rangeStartAfterCurrentTime >= rangeEndAfterCurrentTime)
             return evictableSize;
