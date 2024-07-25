@@ -761,6 +761,30 @@ FetchMetadataSite CachedResourceLoader::computeFetchMetadataSiteAfterRedirection
     return computeFetchMetadataSiteInternal(request, type, mode, &originalOrigin, nullptr, originalSite, isDirectlyUserInitiatedRequest);
 }
 
+bool CachedResourceLoader::shouldUpgradeRequestforHTTPSOnly(const URL& originalURL, const ResourceRequest& request) const
+{
+    auto& newURL = request.url();
+    const auto& isSameSiteBypassEnabled = (originalURL.isEmpty()
+        || RegistrableDomain(newURL) == RegistrableDomain(originalURL))
+        && m_documentLoader && m_documentLoader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain);
+
+    return m_documentLoader && m_documentLoader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnly)
+        && newURL.protocolIs("http"_s)
+        && !isSameSiteBypassEnabled;
+}
+
+bool CachedResourceLoader::upgradeRequestforHTTPSOnlyIfNeeded(const URL& originalURL, ResourceRequest& request) const
+{
+    if (shouldUpgradeRequestforHTTPSOnly(originalURL, request)) {
+        CACHEDRESOURCELOADER_RELEASE_LOG("upgradeRequestforHTTPSOnlyIfNeeded: upgrading navigation request");
+        request.upgradeInsecureRequest();
+        // FIXME: Make this timeout adaptive based on network conditions
+        request.setTimeoutInterval(10);
+        return true;
+    }
+    return false;
+}
+
 bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type type, ResourceRequest& request, const ResourceLoaderOptions& options, FetchMetadataSite site, const URL& preRedirectURL)
 {
     ASSERT(m_documentLoader);
@@ -1125,7 +1149,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
             }
         }
 #endif
-        if (!madeHTTPS && type == CachedResource::Type::MainResource && frame->checkedLoader()->shouldUpgradeRequestforHTTPSOnly(frame->document() ? frame->document()->url() : URL { }, request.resourceRequest()) && m_documentLoader->frameLoader())
+        if (!madeHTTPS && type == CachedResource::Type::MainResource && shouldUpgradeRequestforHTTPSOnly(frame->document() ? frame->document()->url() : URL { }, request.resourceRequest()) && m_documentLoader->frameLoader())
             return makeUnexpected(protectedDocumentLoader()->checkedFrameLoader()->client().httpNavigationWithHTTPSOnlyError(request.resourceRequest()));
 
         if (madeHTTPS

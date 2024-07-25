@@ -476,31 +476,6 @@ void FrameLoader::checkContentPolicy(const ResourceResponse& response, ContentPo
     client().dispatchDecidePolicyForResponse(response, activeDocumentLoader()->request(), activeDocumentLoader()->downloadAttribute(), WTFMove(function));
 }
 
-bool FrameLoader::shouldUpgradeRequestforHTTPSOnly(const URL& originalURL, ResourceRequest& request) const
-{
-    RefPtr documentLoader = m_provisionalDocumentLoader ? m_provisionalDocumentLoader : m_documentLoader;
-    auto& newURL = request.url();
-    const auto& isSameSiteBypassEnabled = (originalURL.isEmpty()
-        || RegistrableDomain(newURL) == RegistrableDomain(originalURL))
-        && documentLoader && documentLoader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain);
-
-    return documentLoader && documentLoader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnly)
-        && newURL.protocolIs("http"_s)
-        && !isSameSiteBypassEnabled;
-}
-
-bool FrameLoader::upgradeRequestforHTTPSOnlyIfNeeded(const URL& originalURL, ResourceRequest& request) const
-{
-    if (shouldUpgradeRequestforHTTPSOnly(originalURL, request)) {
-        FRAMELOADER_RELEASE_LOG(ResourceLoading, "upgradeRequestforHTTPSOnlyIfNeeded: upgrading navigation request");
-        request.upgradeInsecureRequest();
-        // FIXME: Make this timeout adaptive based on network conditions
-        request.setTimeoutInterval(10);
-        return true;
-    }
-    return false;
-}
-
 void FrameLoader::changeLocation(const URL& url, const AtomString& passedTarget, Event* triggeringEvent, const ReferrerPolicy& referrerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, std::optional<NewFrameOpenerPolicy> openerPolicy, const AtomString& downloadAttribute, std::optional<PrivateClickMeasurement>&& privateClickMeasurement, NavigationHistoryBehavior historyBehavior)
 {
     RefPtr frame = lexicalFrameFromCommonVM();
@@ -527,9 +502,10 @@ void FrameLoader::changeLocation(FrameLoadRequest&& frameRequest, Event* trigger
         frameRequest.setFrameName(frame->document()->baseTarget());
 
     auto currentURL { frame->document() ? frame->document()->url() : URL { } };
-    upgradeRequestforHTTPSOnlyIfNeeded(currentURL, frameRequest.resourceRequest());
-
-    frame->protectedDocument()->checkedContentSecurityPolicy()->upgradeInsecureRequestIfNeeded(frameRequest.resourceRequest(), ContentSecurityPolicy::InsecureRequestType::Navigation);
+    if (RefPtr document = frame->protectedDocument()) {
+        document->cachedResourceLoader().upgradeRequestforHTTPSOnlyIfNeeded(currentURL, frameRequest.resourceRequest());
+        document->checkedContentSecurityPolicy()->upgradeInsecureRequestIfNeeded(frameRequest.resourceRequest(), ContentSecurityPolicy::InsecureRequestType::Navigation);
+    }
 
     loadFrameRequest(WTFMove(frameRequest), triggeringEvent, { }, WTFMove(privateClickMeasurement));
 }

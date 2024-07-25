@@ -165,6 +165,9 @@ public:
     bool updateRequestAfterRedirection(CachedResource::Type, ResourceRequest&, const ResourceLoaderOptions&, FetchMetadataSite, const URL& preRedirectURL);
     bool allowedByContentSecurityPolicy(CachedResource::Type, const URL&, const ResourceLoaderOptions&, ContentSecurityPolicy::RedirectResponseReceived, const URL& preRedirectURL = URL()) const;
 
+    bool shouldUpgradeRequestforHTTPSOnly(const URL& originalURL, const ResourceRequest&) const;
+    bool upgradeRequestforHTTPSOnlyIfNeeded(const URL&, ResourceRequest&) const;
+
     static const ResourceLoaderOptions& defaultCachedResourceOptions();
 
     void documentDidFinishLoadEvent();
