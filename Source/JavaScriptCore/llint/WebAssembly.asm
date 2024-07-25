@@ -1433,7 +1433,6 @@ end
 
             storeWasmInstance(targetWasmInstance)
             reloadMemoryRegistersFromInstance(targetWasmInstance, wa0)
-            storep targetWasmInstance, ThisArgumentOffset[sp] # Anchor new JSWebAssemblyInstance in ThisArgumentOffset.
 
             # Load registers from stack
 if ARM64 or ARM64E
@@ -1682,7 +1681,6 @@ end
             storep ws1, Callee[wa0]
 
             move wa0, ws1
-            storep wasmInstance, ThisArgumentOffset[sp] # Anchor new JSWebAssemblyInstance in ThisArgumentOffset.
 
             restoreGPRsUsedByTailCall(wa0, wa1)
 

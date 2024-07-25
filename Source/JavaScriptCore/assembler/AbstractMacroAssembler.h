@@ -184,6 +184,8 @@ public:
         
         BaseIndex indexedBy(RegisterID index, Scale) const;
         
+        friend bool operator==(const Address&, const Address&) = default;
+
         RegisterID base;
         int32_t offset;
     };
@@ -195,6 +197,8 @@ public:
         {
         }
         
+        friend bool operator==(const ExtendedAddress&, const ExtendedAddress&) = default;
+
         RegisterID base;
         intptr_t offset;
     };
@@ -215,12 +219,6 @@ public:
 #endif
         }
         
-        RegisterID base;
-        RegisterID index;
-        Scale scale;
-        int32_t offset;
-        Extend extend;
-        
         BaseIndex withOffset(int32_t additionalOffset)
         {
             return BaseIndex(base, index, scale, offset + additionalOffset);
@@ -230,6 +228,14 @@ public:
         {
             return BaseIndex(AbstractMacroAssembler::withSwappedRegister(base, left, right), AbstractMacroAssembler::withSwappedRegister(index, left, right), scale, offset);
         }
+
+        friend bool operator==(const BaseIndex&, const BaseIndex&) = default;
+
+        RegisterID base;
+        RegisterID index;
+        Scale scale;
+        int32_t offset;
+        Extend extend;
     };
 
     // PreIndexAddress:

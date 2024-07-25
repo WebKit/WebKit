@@ -4559,41 +4559,38 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& origin
     GPRReg calleePtr;
     GPRReg calleeInstance;
     GPRReg calleeCode;
-    GPRReg jsCalleeAnchor;
     {
         ScratchScope<1, 0> calleeCodeScratch(*this, RegisterSetBuilder::argumentGPRS());
         calleeCode = calleeCodeScratch.gpr(0);
         calleeCodeScratch.unbindPreserved();
 
-        ScratchScope<2, 0> otherScratches(*this);
+        ScratchScope<1, 0> otherScratch(*this);
 
         Location calleeLocation;
         if (callee.isConst()) {
             ASSERT(callee.asI64() == JSValue::encode(jsNull()));
             // This is going to throw anyway. It's suboptimial but probably won't happen in practice anyway.
-            emitMoveConst(callee, calleeLocation = Location::fromGPR(otherScratches.gpr(0)));
+            emitMoveConst(callee, calleeLocation = Location::fromGPR(otherScratch.gpr(0)));
         } else
             calleeLocation = loadIfNecessary(callee);
         emitThrowOnNullReference(ExceptionType::NullReference, calleeLocation);
 
         calleePtr = calleeLocation.asGPR();
-        calleeInstance = otherScratches.gpr(0);
-        jsCalleeAnchor = otherScratches.gpr(1);
+        calleeInstance = otherScratch.gpr(0);
 
         {
-            auto calleeTmp = jsCalleeAnchor;
+            auto calleeTmp = calleeInstance;
             m_jit.loadPtr(Address(calleePtr, WebAssemblyFunctionBase::offsetOfBoxedWasmCalleeLoadLocation()), calleeTmp);
             m_jit.loadPtr(Address(calleeTmp), calleeTmp);
             m_jit.storeWasmCalleeCallee(calleeTmp);
         }
 
-        m_jit.loadPtr(MacroAssembler::Address(calleePtr, WebAssemblyFunctionBase::offsetOfInstance()), jsCalleeAnchor);
+        m_jit.loadPtr(MacroAssembler::Address(calleePtr, WebAssemblyFunctionBase::offsetOfInstance()), calleeInstance);
         m_jit.loadPtr(MacroAssembler::Address(calleePtr, WebAssemblyFunctionBase::offsetOfEntrypointLoadLocation()), calleeCode);
-        m_jit.move(jsCalleeAnchor, calleeInstance);
 
     }
 
-    emitIndirectCall("CallRef", callee, calleeInstance, calleeCode, jsCalleeAnchor, signature, args, results, CallType::Call);
+    emitIndirectCall("CallRef", callee, calleeInstance, calleeCode, signature, args, results, CallType::Call);
     return { };
 }
 

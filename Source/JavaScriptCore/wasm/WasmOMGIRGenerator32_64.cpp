@@ -1702,9 +1702,6 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
         patchpoint->setGenerator([prepareForCall = prepareForCall, patchArgsIndex](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             prepareForCall->run(jit, params);
-            // In tail-call, we always configure JSWebAssemblyInstance* in |this| to anchor it from conservative GC roots.
-            CCallHelpers::Address thisSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
-            jit.storePtr(GPRInfo::wasmContextInstancePointer, thisSlot.withOffset(PayloadOffset));
             jit.farJump(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
         });
         return { };
@@ -4950,12 +4947,9 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
                     prepareForCall->run(jit, params);
                 if (handle)
                     handle->generate(jit, params, this);
-                if (isTailCall) {
-                    // In tail-call, we always configure JSWebAssemblyInstance* in |this| to anchor it from conservative GC roots.
-                    CCallHelpers::Address thisSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
-                    jit.storePtr(GPRInfo::wasmContextInstancePointer, thisSlot.withOffset(PayloadOffset));
+                if (isTailCall)
                     jit.farJump(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
-                } else
+                else
                     jit.call(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
             });
         };
@@ -4996,11 +4990,6 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
                 prepareForCall->run(jit, params);
             if (handle)
                 handle->generate(jit, params, this);
-            if (isTailCall) {
-                // In tail-call, we always configure JSWebAssemblyInstance* in |this| to anchor it from conservative GC roots.
-                CCallHelpers::Address thisSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
-                jit.storePtr(GPRInfo::wasmContextInstancePointer, thisSlot.withOffset(PayloadOffset));
-            }
 
             auto calleeMove = jit.storeWasmCalleeCalleePatchable();
 
