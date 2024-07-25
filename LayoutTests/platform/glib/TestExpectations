@@ -218,6 +218,7 @@ imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullw
 imported/w3c/web-platform-tests/css/css-text/white-space/tab-bidi-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-062.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-keep-all-063.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-transforms/scale-transform-overlap.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-partially-onscreen-new.html [ Pass ]
 imported/w3c/web-platform-tests/css/selectors/selectors-4/lang-020.html [ Pass ]
@@ -501,6 +502,9 @@ imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-conten
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/tall-cross-domain-iframe-in-scrolled.sub.html [ Pass ]
 
 imported/w3c/web-platform-tests/quirks/line-height-in-list-item.tentative.html [ Pass ]
+
+# Test passes after 278960@main
+imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-back-same-document.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
