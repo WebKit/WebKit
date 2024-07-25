@@ -37,6 +37,7 @@
 #include <limits>
 #include <wtf/CheckedRef.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -45,7 +46,9 @@ static const constexpr GlyphBufferGlyph deletedGlyph = 0xFFFF;
 
 class Font;
 
-class GlyphBuffer {
+class GlyphBuffer : public CanMakeCheckedPtr<GlyphBuffer> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(GlyphBuffer);
 public:
     bool isEmpty() const { return m_fonts.isEmpty(); }
     unsigned size() const { return m_fonts.size(); }

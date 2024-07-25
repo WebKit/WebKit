@@ -34,6 +34,7 @@
 #include "LayoutRect.h"
 #include "TextRun.h"
 #include "WidthIterator.h"
+#include "rendering/GlyphBufferCache.h"
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
@@ -158,6 +159,11 @@ GlyphBuffer FontCascade::layoutText(CodePath codePathToUse, const TextRun& run, 
     return layoutComplexText(run, from, to, forTextEmphasis);
 }
 
+GlyphBuffer FontCascade::layoutTextFromCache(CodePath codePathToUse, const TextRun& run, unsigned from, unsigned to, ForTextEmphasisOrNot forTextEmphasis) const
+{
+    return GlyphBufferCache::singleton().glyphBuffer(*this, codePathToUse, forTextEmphasis, run, from, to);
+}
+
 float FontCascade::letterSpacing() const
 {
     switch (m_spacing.letter.type()) {
@@ -191,7 +197,7 @@ float FontCascade::wordSpacing() const
 FloatSize FontCascade::drawText(GraphicsContext& context, const TextRun& run, const FloatPoint& point, unsigned from, std::optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
 {
     unsigned destination = to.value_or(run.length());
-    auto glyphBuffer = layoutText(codePath(run, from, to), run, from, destination);
+    auto glyphBuffer = layoutTextFromCache(codePath(run, from, to), run, from, destination);
     glyphBuffer.flatten();
 
     if (glyphBuffer.isEmpty())
@@ -209,7 +215,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run
 
     unsigned destination = to.value_or(run.length());
 
-    auto glyphBuffer = layoutText(codePath(run, from, to), run, from, destination, ForTextEmphasisOrNot::ForTextEmphasis);
+    auto glyphBuffer = layoutTextFromCache(codePath(run, from, to), run, from, destination, ForTextEmphasisOrNot::ForTextEmphasis);
     glyphBuffer.flatten();
 
     if (glyphBuffer.isEmpty())
@@ -229,7 +235,7 @@ std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(Gra
     if (codePathToUse != CodePath::Complex && (enableKerning() || requiresShaping()) && (from || destination != run.length()))
         codePathToUse = CodePath::Complex;
 
-    auto glyphBuffer = layoutText(codePathToUse, run, from, destination);
+    auto glyphBuffer = layoutTextFromCache(codePathToUse, run, from, destination);
     glyphBuffer.flatten();
 
     if (glyphBuffer.isEmpty())
@@ -1830,7 +1836,7 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
     if (isLoadingCustomFonts())
         return DashArray();
 
-    auto glyphBuffer = layoutText(codePath(run), run, 0, run.length());
+    auto glyphBuffer = layoutTextFromCache(codePath(run), run, 0, run.length());
 
     if (!glyphBuffer.size())
         return DashArray();

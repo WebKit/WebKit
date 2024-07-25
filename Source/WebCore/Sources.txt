@@ -2644,6 +2644,7 @@ rendering/BorderEdge.cpp
 rendering/BorderPainter.cpp
 rendering/BreakLines.cpp
 rendering/CSSFilter.cpp
+rendering/GlyphBufferCache.cpp
 rendering/CaretRectComputation.cpp
 rendering/ClipRect.cpp
 rendering/ContentfulPaintChecker.cpp
