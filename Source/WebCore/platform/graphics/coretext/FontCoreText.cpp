@@ -917,16 +917,12 @@ bool Font::hasAnyComplexColorFormatGlyphs(const GlyphBufferGlyph* glyphs, unsign
 
 MultiRepresentationHEICMetrics Font::metricsForMultiRepresentationHEIC() const
 {
-    CGFloat ascent;
-    CGFloat descent;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    CGFloat width = CTFontGetTypographicBoundsForEmojiImageProvider(getCTFont(), nullptr, &ascent, &descent);
-ALLOW_DEPRECATED_DECLARATIONS_END
+    CGRect bounds = CTFontGetTypographicBoundsForAdaptiveImageProvider(getCTFont(), nullptr);
 
     MultiRepresentationHEICMetrics metrics;
-    metrics.ascent = ascent;
-    metrics.descent = descent;
-    metrics.width = width;
+    metrics.ascent = CGRectGetMaxY(bounds);
+    metrics.descent = -CGRectGetMinY(bounds);
+    metrics.width = CGRectGetMaxX(bounds);
     return metrics;
 }
 
