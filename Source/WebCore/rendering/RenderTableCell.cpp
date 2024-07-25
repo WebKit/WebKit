@@ -4,7 +4,7 @@
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -163,7 +163,7 @@ void RenderTableCell::colSpanOrRowSpanChanged()
         section()->setNeedsCellRecalc();
 }
 
-Length RenderTableCell::logicalWidthFromColumns(RenderTableCol* firstColForThisCell, const Length& widthFromStyle) const
+Length RenderTableCell::logicalWidthFromColumns(RenderTableCol* firstColForThisCell, Length widthFromStyle) const
 {
     ASSERT(firstColForThisCell && firstColForThisCell == table()->colElement(col()));
     RenderTableCol* tableCol = firstColForThisCell;
@@ -171,7 +171,7 @@ Length RenderTableCell::logicalWidthFromColumns(RenderTableCol* firstColForThisC
     unsigned colSpanCount = colSpan();
     LayoutUnit colWidthSum;
     for (unsigned i = 1; i <= colSpanCount; i++) {
-        auto& colWidth = tableCol->style().logicalWidth();
+        Length colWidth = tableCol->style().logicalWidth();
 
         // Percentage value should be returned only for colSpan == 1.
         // Otherwise we return original width for the cell.
@@ -206,7 +206,7 @@ void RenderTableCell::computePreferredLogicalWidths()
     if (!element() || !style().autoWrap() || !element()->hasAttributeWithoutSynchronization(nowrapAttr))
         return;
 
-    const auto& w = styleOrColLogicalWidth();
+    Length w = styleOrColLogicalWidth();
     if (w.isFixed()) {
         // Nowrap is set, but we didn't actually use it because of the
         // fixed width set on the cell. Even so, it is a WinIE/Moz trait

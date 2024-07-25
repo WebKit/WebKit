@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -143,8 +143,8 @@ static LayoutUnit marginWidthForChild(RenderBox* child)
     // A margin basically has three types: fixed, percentage, and auto (variable).
     // Auto and percentage margins simply become 0 when computing min/max width.
     // Fixed margins can be added in as is.
-    auto& marginLeft = child->style().marginLeft();
-    auto& marginRight = child->style().marginRight();
+    Length marginLeft = child->style().marginLeft();
+    Length marginRight = child->style().marginRight();
     LayoutUnit margin;
     if (marginLeft.isFixed())
         margin += marginLeft.value();
@@ -1088,12 +1088,11 @@ LayoutUnit RenderDeprecatedFlexibleBox::allowedChildFlex(RenderBox* child, bool 
             // FIXME: For now just handle fixed values.
             LayoutUnit maxWidth = LayoutUnit::max();
             LayoutUnit width = contentWidthForChild(child);
-            auto& maxWidthLength = child->style().maxWidth();
-            if (!maxWidthLength.isUndefined() && maxWidthLength.isFixed())
-                maxWidth = maxWidthLength.value();
-            else if (maxWidthLength.type() == LengthType::Intrinsic)
+            if (!child->style().maxWidth().isUndefined() && child->style().maxWidth().isFixed())
+                maxWidth = child->style().maxWidth().value();
+            else if (child->style().maxWidth().type() == LengthType::Intrinsic)
                 maxWidth = child->maxPreferredLogicalWidth();
-            else if (maxWidthLength.isMinIntrinsic())
+            else if (child->style().maxWidth().isMinIntrinsic())
                 maxWidth = child->minPreferredLogicalWidth();
             if (maxWidth == LayoutUnit::max())
                 return maxWidth;
@@ -1102,9 +1101,8 @@ LayoutUnit RenderDeprecatedFlexibleBox::allowedChildFlex(RenderBox* child, bool 
             // FIXME: For now just handle fixed values.
             LayoutUnit maxHeight = LayoutUnit::max();
             LayoutUnit height = contentHeightForChild(child);
-            auto& maxHeigthLength = child->style().maxHeight();
-            if (!maxHeigthLength.isUndefined() && maxHeigthLength.isFixed())
-                maxHeight = maxHeigthLength.value();
+            if (!child->style().maxHeight().isUndefined() && child->style().maxHeight().isFixed())
+                maxHeight = child->style().maxHeight().value();
             if (maxHeight == LayoutUnit::max())
                 return maxHeight;
             return std::max<LayoutUnit>(0, maxHeight - height);
@@ -1115,20 +1113,19 @@ LayoutUnit RenderDeprecatedFlexibleBox::allowedChildFlex(RenderBox* child, bool 
     if (isHorizontal()) {
         LayoutUnit minWidth = child->minPreferredLogicalWidth();
         LayoutUnit width = contentWidthForChild(child);
-        auto& minWidthLength = child->style().minWidth();
-        if (minWidthLength.isFixed())
-            minWidth = minWidthLength.value();
-        else if (minWidthLength.type() == LengthType::Intrinsic)
+        if (child->style().minWidth().isFixed())
+            minWidth = child->style().minWidth().value();
+        else if (child->style().minWidth().type() == LengthType::Intrinsic)
             minWidth = child->maxPreferredLogicalWidth();
-        else if (minWidthLength.isMinIntrinsic())
+        else if (child->style().minWidth().isMinIntrinsic())
             minWidth = child->minPreferredLogicalWidth();
-        else if (minWidthLength.isAuto())
+        else if (child->style().minWidth().isAuto())
             minWidth = 0;
 
         LayoutUnit allowedShrinkage = std::min<LayoutUnit>(0, minWidth - width);
         return allowedShrinkage;
     } else {
-        auto& minHeight = child->style().minHeight();
+        Length minHeight = child->style().minHeight();
         if (minHeight.isFixed() || minHeight.isAuto()) {
             LayoutUnit minHeight { child->style().minHeight().value() };
             LayoutUnit height = contentHeightForChild(child);

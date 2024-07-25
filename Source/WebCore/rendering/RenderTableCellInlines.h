@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -72,7 +72,7 @@ inline LayoutUnit RenderTableCell::logicalHeightForRowSizing() const
 
 inline Length RenderTableCell::styleOrColLogicalWidth() const
 {
-    auto& styleWidth = style().logicalWidth();
+    Length styleWidth = style().logicalWidth();
     if (!styleWidth.isAuto())
         return styleWidth;
     if (RenderTableCol* firstColumn = table()->colElement(col()))
