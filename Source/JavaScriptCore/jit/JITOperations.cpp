@@ -1292,8 +1292,8 @@ JSC_DEFINE_JIT_OPERATION(operationPutByMegamorphicReallocating, void, (VM* vmPoi
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Structure* oldStructure = baseObject->structure();
-    Structure* newStructure = entry->m_newStructureID.decode();
+    Structure* oldStructure = WTF::opaque(baseObject->structure());
+    Structure* newStructure = WTF::opaque(entry->m_newStructureID.decode());
     PropertyOffset offset = entry->m_offset;
 
     ASSERT(oldStructure == entry->m_oldStructureID.decode());
@@ -1303,6 +1303,8 @@ JSC_DEFINE_JIT_OPERATION(operationPutByMegamorphicReallocating, void, (VM* vmPoi
     baseObject->setStructure(vm, newStructure);
     ASSERT(newStructure == baseObject->structure());
     dataLogLnIf(verbose, JSValue(baseObject), " ", offset);
+    ensureStillAliveHere(oldStructure);
+    ensureStillAliveHere(newStructure);
     OPERATION_RETURN(scope);
 }
 
@@ -4476,8 +4478,8 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationReallocateButterflyAndTransition, voi
     size_t newSize = handler->newSize() / sizeof(JSValue);
     size_t oldSize = handler->oldSize() / sizeof(JSValue);
     PropertyOffset offset = handler->offset();
-    Structure* oldStructure = handler->structureID().decode();
-    Structure* newStructure = handler->newStructureID().decode();
+    Structure* oldStructure = WTF::opaque(handler->structureID().decode());
+    Structure* newStructure = WTF::opaque(handler->newStructureID().decode());
 
     ASSERT(oldStructure == baseObject->structure());
     Butterfly* newButterfly = baseObject->allocateMoreOutOfLineStorage(vm, oldSize, newSize);
