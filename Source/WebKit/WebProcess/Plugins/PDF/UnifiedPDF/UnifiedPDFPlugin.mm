@@ -1325,8 +1325,8 @@ NSData *UnifiedPDFPlugin::liveData() const
 
 void UnifiedPDFPlugin::releaseMemory()
 {
-    // FIXME: <https://webkit.org/b/276981> Delegate the release of memory to the presentation controller.
-    notImplemented();
+    if (m_presentationController)
+        m_presentationController->releaseMemory();
 }
 
 void UnifiedPDFPlugin::didChangeScrollOffset()

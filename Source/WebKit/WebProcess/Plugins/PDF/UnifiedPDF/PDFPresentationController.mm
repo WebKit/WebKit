@@ -145,6 +145,12 @@ RefPtr<GraphicsLayer> PDFPresentationController::pageBackgroundLayerForPageConta
     return nullptr;
 }
 
+void PDFPresentationController::releaseMemory()
+{
+    if (RefPtr asyncRenderer = asyncRendererIfExists())
+        asyncRenderer->releaseMemory();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(UNIFIED_PDF)

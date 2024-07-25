@@ -97,6 +97,8 @@ public:
     virtual bool wantsWheelEvents() const { return false; }
     virtual bool handleWheelEvent(const WebWheelEvent&) { return false; }
 
+    void releaseMemory();
+
 protected:
     virtual WebCore::GraphicsLayerClient& graphicsLayerClient() = 0;
 
