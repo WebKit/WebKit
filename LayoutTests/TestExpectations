@@ -7887,3 +7887,6 @@ imported/w3c/web-platform-tests/css/css-viewport/zoom/word-spacing.html [ ImageO
 
 # WebRTC Encoded Transform - Test Expectation - Crashes on 'mac-wk2' debug and gtk-wk2 / wpe-wk2
 webkit.org/b/275663 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform-generateKeyFrame-simulcast.https.html [ Skip ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=266843 flakey tests with racey promise console.logs
+imported/w3c/web-platform-tests/dom/observable/tentative/observable-from.any.html [ Skip ]

@@ -1,0 +1,5 @@
+
+FAIL map()'s internal observer's next steps do not crash in a detached document promise_test: Unhandled rejection with value: object "TypeError: source.map is not a function. (In 'source.map(value => {
+      parentResults.push(value);
+    })', 'source.map' is undefined)"
+

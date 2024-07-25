@@ -8,6 +8,7 @@ CONSOLE MESSAGE: not a real error
 CONSOLE MESSAGE: not a real error
 CONSOLE MESSAGE: not a real error
 CONSOLE MESSAGE: Error: assert_false: expected false got true
+CONSOLE MESSAGE: calling error()
 CONSOLE MESSAGE: Error: custom error
 CONSOLE MESSAGE: Error: custom error
 
@@ -38,7 +39,11 @@ PASS Errors thrown by initializer function after subscriber is closed by error a
 PASS Errors pushed by initializer function after subscriber is closed by error are reported
 PASS Subscriber#complete() cannot re-entrantly invoke itself
 PASS Subscriber#error() cannot re-entrantly invoke itself
-FAIL Unsubscription lifecycle assert_array_equals: expected property 1 to be "outer abort handler" but got "inner abort handler" (expected array ["subscribe() callback", "outer abort handler", "teardown 2", "teardown 1", "inner abort handler", "abort() returned"] got ["subscribe() callback", "inner abort handler", "teardown 2", "teardown 1", "outer abort handler", "abort() returned"])
+PASS Unsubscription lifecycle
+PASS Teardowns are called in upstream->downstream order on consumer-initiated unsubscription
+PASS Teardowns are called in downstream->upstream order on consumer-initiated unsubscription with pre-aborted Signal
+PASS Producer-initiated unsubscription in a downstream Observable fires abort events before each teardown, in downstream->upstream order
+FAIL Subscriber#error() value is stored as Subscriber's AbortSignal's reason assert_equals: Reason is set correctly expected (string) "calling error()" but got (object) object "AbortError: The operation was aborted."
 PASS Aborting a subscription should stop emitting values
 PASS Calling subscribe should never throw an error synchronously, initializer throws error
 PASS Calling subscribe should never throw an error synchronously, subscriber pushes error

@@ -1,0 +1,18 @@
+
+FAIL switchMap(): result subscribes to one inner observable at a time, unsubscribing from the previous active one when a new one replaces it source.switchMap is not a function. (In 'source.switchMap((value, index) => {
+    if (value === 1) {
+      return inner1;
+    }
+    if (value === 2) {
+      return inner2;
+    }
+    throw new Error("invalid ");
+  })', 'source.switchMap' is undefined)
+FAIL switchMap(): result does not complete when the source observable completes, if the inner observable is still active source.switchMap is not a function. (In 'source.switchMap(() => inner)', 'source.switchMap' is undefined)
+FAIL switchMap(): result emits an error if Mapper callback throws an error source.switchMap is not a function. (In 'source.switchMap(() => {
+    throw e;
+  })', 'source.switchMap' is undefined)
+FAIL switchMap(): result emits an error if the source observable emits an error source.switchMap is not a function. (In 'source.switchMap(() => inner)', 'source.switchMap' is undefined)
+FAIL switchMap(): result emits an error if the inner observable emits an error source.switchMap is not a function. (In 'source.switchMap(() => inner)', 'source.switchMap' is undefined)
+FAIL switchMap(): should unsubscribe in the correct order when user aborts the subscription source.switchMap is not a function. (In 'source.switchMap(() => inner)', 'source.switchMap' is undefined)
+

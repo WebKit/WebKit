@@ -1,0 +1,79 @@
+
+FAIL inspect(): Provides a pre-subscription subscribe callback source.inspect is not a function. (In 'source.inspect({
+    subscribe: () => {
+      inspectSubscribeCall++;
+      results.push(`inspect() subscribe ${inspectSubscribeCall}`);
+    },
+    next: (value) => results.push(`inspect() next ${value}`),
+    error: (e) => results.push(`inspect() error ${e.message}`),
+    complete: () => results.push(`inspect() complete`),
+  })', 'source.inspect' is undefined)
+FAIL inspect(): Provides a way to tap into the values and completions of the source observable using an observer source.inspect is not a function. (In 'source.inspect({
+    next: value => results.push(value),
+    error: e => results.push(e),
+    complete: () => results.push("complete"),
+  })', 'source.inspect' is undefined)
+FAIL inspect(): Error handler does not stop error from being reported to the global, when subscriber does not pass error handler source.inspect is not a function. (In 'source.inspect({
+    next: value => results.push(value),
+    error: e => results.push(e),
+    complete: () => results.push("complete"),
+  })', 'source.inspect' is undefined)
+FAIL inspect(): Provides a way to tap into the values and errors of the source observable using an observer. Errors are passed through source.inspect is not a function. (In 'source.inspect({
+    next: value => results.push(value),
+    error: e => results.push(e),
+    complete: () => results.push("complete"),
+  })', 'source.inspect' is undefined)
+FAIL inspect(): ObserverCallback passed in source.inspect is not a function. (In 'source.inspect(value => results.push(value))', 'source.inspect' is undefined)
+FAIL inspect(): Throwing an error in the observer next handler is caught and sent to the error callback of the result observable source.inspect is not a function. (In 'source.inspect({
+    next: (value) => {
+      if (value === 2) {
+        throw error;
+      }
+    },
+  })', 'source.inspect' is undefined)
+FAIL inspect(): Throwing an error in the observer error handler in inspect() is caught and sent to the error callback of the result observable source.inspect is not a function. (In 'source.inspect({
+    error: () => {
+      throw inspectError;
+    },
+  })', 'source.inspect' is undefined)
+FAIL inspect(): Throwing an error in the observer complete handler is caught and sent to the error callback of the result observable source.inspect is not a function. (In 'source.inspect({
+    complete: () => {
+      throw error;
+    },
+  })', 'source.inspect' is undefined)
+FAIL inspect(): Throwing an error in the next handler function in do should be caught and sent to the error callback of the result observable source.inspect is not a function. (In 'source.inspect({
+    next: (value) => {
+      if (value === 2) {
+        throw error;
+      }
+    },
+  })', 'source.inspect' is undefined)
+FAIL inspect(): Errors thrown in subscribe() Inspector handler subscribe handler are caught and sent to error callback source.inspect is not a function. (In 'source.inspect({
+    subscribe: () => {
+      throw new Error("error from do subscribe handler");
+    },
+  })', 'source.inspect' is undefined)
+FAIL inspect(): Provides a way to tap into the moment a source observable is unsubscribed from source.inspect is not a function. (In 'source.inspect({
+    abort: (reason) => {
+      doUnsubscribeCall++;
+      results.push(`inspect() abort ${doUnsubscribeCall} ${reason}`);
+    },
+    next: (value) => results.push(`inspect() next ${value}`),
+    error: (e) => results.push(`inspect() error ${e.message}`),
+    complete: () => results.push(`inspect() complete`),
+  })', 'source.inspect' is undefined)
+FAIL inspect(): Inspector abort() handler is not called if the source completes before the result is unsubscribed from source.inspect is not a function. (In 'source.inspect({
+    next: (value) => results.push(`inspect() next ${value}`),
+    complete: () => results.push(`inspect() complete`),
+    abort: (reason) => {
+      inspectUnsubscribeCall++;
+      results.push(`inspect() abort ${inspectUnsubscribeCall} ${reason}`);
+    },
+  })', 'source.inspect' is undefined)
+FAIL inspect(): Errors thrown from inspect()'s abort() handler are caught and reported to the global, because the subscription is already closed by the time the handler runs source.inspect is not a function. (In 'source.inspect({
+    abort: () => {
+      results.push('abort() handler run');
+      throw new Error("error from inspect() subscribe handler");
+    },
+  })', 'source.inspect' is undefined)
+
