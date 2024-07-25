@@ -40,9 +40,13 @@
 #import <PDFKit/PDFPagePriv.h>
 #import <PDFKit/PDFSelectionPriv.h>
 
-#if HAVE(PDFKIT_WITH_NEXT_ACTIONS)
+#if __has_include(<PDFKit/PDFActionPriv.h>)
 #import <PDFKit/PDFActionPriv.h>
-#endif
+#else
+@interface PDFAction(SPI)
+- (NSArray *) nextActions;
+@end
+#endif // __has_include(PDFKIT/PDFActionPriv.h)
 
 #endif // HAVE(PDFKIT)
 
@@ -95,10 +99,6 @@
 - (/*nullable*/ NSData *)webArchive;
 - (NSAttributedString *)attributedStringScaled:(CGFloat)scale;
 - (BOOL)isEmpty;
-@end
-
-@interface PDFAction (PDFActionPriv)
-- (NSArray *)nextActions;
 @end
 
 #endif // HAVE(PDFKIT)
