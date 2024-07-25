@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "ScriptWrappable.h"
 #include "SubscriberCallback.h"
 #include "VoidCallback.h"
