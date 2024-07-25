@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/BitSet.h>
 #include <wtf/CommaPrinter.h>
 #include <wtf/FastBitVector.h>
 #include <wtf/GraphNodeWorklist.h>
@@ -43,27 +44,45 @@ class Dominators {
 public:
     using List = typename Graph::List;
 
+    constexpr static unsigned maxNodesForIterativeDominance = 20000;
+
     Dominators(Graph& graph, bool selfCheck = false)
         : m_graph(graph)
         , m_data(graph.template newMap<BlockData>())
     {
-        LengauerTarjan lengauerTarjan(m_graph);
-        lengauerTarjan.compute();
+        if (LIKELY(m_graph.numNodes() <= maxNodesForIterativeDominance)) {
+            IterativeDominance iterativeDominance(m_graph);
+            iterativeDominance.compute();
+
+            for (unsigned blockIndex = m_graph.numNodes(); blockIndex--;) {
+                typename Graph::Node block = m_graph.node(blockIndex);
+                if (!block)
+                    continue;
+
+                typename Graph::Node idomBlock = iterativeDominance.immediateDominator(block);
+                m_data[block].idomParent = idomBlock;
+                if (idomBlock)
+                    m_data[idomBlock].idomKids.append(block);
+            }
+        } else {
+            LengauerTarjan lengauerTarjan(m_graph);
+            lengauerTarjan.compute();
+
+            for (unsigned blockIndex = m_graph.numNodes(); blockIndex--;) {
+                typename Graph::Node block = m_graph.node(blockIndex);
+                if (!block)
+                    continue;
+
+                typename Graph::Node idomBlock = lengauerTarjan.immediateDominator(block);
+                m_data[block].idomParent = idomBlock;
+                if (idomBlock)
+                    m_data[idomBlock].idomKids.append(block);
+            }
+        }
 
         // From here we want to build a spanning tree with both upward and downward links and we want
         // to do a search over this tree to compute pre and post numbers that can be used for dominance
         // tests.
-    
-        for (unsigned blockIndex = m_graph.numNodes(); blockIndex--;) {
-            typename Graph::Node block = m_graph.node(blockIndex);
-            if (!block)
-                continue;
-        
-            typename Graph::Node idomBlock = lengauerTarjan.immediateDominator(block);
-            m_data[block].idomParent = idomBlock;
-            if (idomBlock)
-                m_data[idomBlock].idomKids.append(block);
-        }
     
         unsigned nextPreNumber = 0;
         unsigned nextPostNumber = 0;
@@ -294,6 +313,129 @@ public:
     }
     
 private:
+    // This implements Cooper, Harvey, and Kennedy's iterative dominance algorithm as described in
+    // "A Simple, Fast Dominance Algorithm" (2001). Compared to Lengauer and Tarjan's method, which is
+    // O(n log n), the iterative method is O(N + E * D), where D is the size of the set of dominators
+    // for a particular node. This is worst-case quadratic, but likely better in practice for real code
+    // where the average number of dominators does not grow nearly as fast as the number of nodes.
+    // Moreover, this algorithm is much simpler, requiring very little auxiliary data and generally
+    // having substantially better constant factors. We prefer this algorithm for most graphs, the
+    // asymptotic complexity only becoming an issue for very large functions (10000s of blocks).
+    // https://www.clear.rice.edu/comp512/Lectures/Papers/TR06-33870-Dom.pdf
+
+    class IterativeDominance {
+        WTF_MAKE_FAST_ALLOCATED;
+        constexpr static uint16_t undefinedIdom = std::numeric_limits<uint16_t>::max();
+    public:
+        IterativeDominance(Graph& graph)
+            : m_graph(graph)
+        {
+            // We only use this for small-ish graphs. So, we exploit that to use
+            // smaller integers for idom information. We mostly use uint16_t for
+            // our analysis, but we exploit int16_t when computing reverse
+            // postorder. We expect Lengauer-Tarjan to beat us beyond a few ten
+            // thousand blocks anyway so this should be fine.
+            RELEASE_ASSERT(graph.numNodes() < std::numeric_limits<int16_t>::max());
+            m_idoms.fill(undefinedIdom, graph.numNodes());
+        }
+
+        void computeReversePostorder()
+        {
+            BitSet<std::numeric_limits<int16_t>::max()> visited;
+            visited.clearAll();
+
+            Vector<int16_t, 64> workList;
+            int16_t rootIndex = m_graph.index(m_graph.root());
+            workList.append(rootIndex);
+            visited.set(rootIndex);
+
+            while (workList.size()) {
+                int16_t index = workList.takeLast();
+                if (index < 0) {
+                    // Negative indices mark nodes we're revisiting.
+                    m_reversePostorderedNodes.append(~index);
+                    continue;
+                }
+                const auto& successors = m_graph.successors(m_graph.node(index));
+                if (!successors.size()) {
+                    m_reversePostorderedNodes.append(index);
+                    continue;
+                }
+                workList.append(~index); // Revisit this index later to add it after visiting all successors.
+                for (unsigned i = 0; i < successors.size(); i ++) {
+                    int16_t index = m_graph.index(successors[i]);
+                    if (!visited.get(index)) {
+                        visited.set(index);
+                        workList.append(index);
+                    }
+                }
+            }
+            m_postorderNumbers.fill(0, m_graph.numNodes());
+            for (unsigned i = 0; i < m_reversePostorderedNodes.size(); i ++)
+                m_postorderNumbers[m_reversePostorderedNodes[i]] = i;
+            std::reverse(m_reversePostorderedNodes.begin(), m_reversePostorderedNodes.end());
+        }
+
+        uint16_t intersect(uint16_t a, uint16_t b)
+        {
+            while (a != b) {
+                while (m_postorderNumbers[a] < m_postorderNumbers[b])
+                    a = m_idoms[a];
+                while (m_postorderNumbers[b] < m_postorderNumbers[a])
+                    b = m_idoms[b];
+            }
+            return a;
+        }
+
+        void compute()
+        {
+            computeReversePostorder();
+
+            bool changed = true;
+            int16_t rootIndex = m_graph.index(m_graph.root());
+            m_idoms[rootIndex] = rootIndex;
+            ASSERT(m_reversePostorderedNodes[0] == rootIndex);
+            while (changed) {
+                changed = false;
+                for (unsigned i = 1; i < m_reversePostorderedNodes.size(); i ++) {
+                    uint16_t node = m_reversePostorderedNodes[i];
+                    uint16_t newIdom = m_idoms[node];
+                    bool isFirstProcessed = true;
+                    const typename Graph::Node& block = m_graph.node(node);
+                    for (auto pred : m_graph.predecessors(block)) {
+                        uint16_t predIndex = m_graph.index(pred);
+                        uint16_t predIdom = m_idoms[predIndex];
+                        if (predIdom == undefinedIdom)
+                            continue;
+                        if (isFirstProcessed) {
+                            newIdom = predIndex;
+                            isFirstProcessed = false;
+                        } else
+                            newIdom = intersect(newIdom, predIndex);
+                    }
+                    if (m_idoms[node] != newIdom) {
+                        ASSERT(newIdom != undefinedIdom);
+                        changed = true;
+                        m_idoms[node] = newIdom;
+                    }
+                }
+            }
+        }
+
+        typename Graph::Node immediateDominator(typename Graph::Node block)
+        {
+            if (block == m_graph.root())
+                return nullptr;
+            return m_graph.node(m_idoms[m_graph.index(block)]);
+        }
+
+    private:
+        Graph& m_graph;
+        Vector<uint16_t, 64> m_idoms;
+        Vector<uint16_t, 64> m_reversePostorderedNodes;
+        Vector<uint16_t, 64> m_postorderNumbers;
+    };
+
     // This implements Lengauer and Tarjan's "A Fast Algorithm for Finding Dominators in a Flowgraph"
     // (TOPLAS 1979). It uses the "simple" implementation of LINK and EVAL, which yields an O(n log n)
     // solution. The full paper is linked below; this code attempts to closely follow the algorithm as
