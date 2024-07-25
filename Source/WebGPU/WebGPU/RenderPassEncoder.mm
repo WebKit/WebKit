@@ -118,7 +118,7 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
             [m_attachmentsToClear setObject:textureWithClearColor forKey:@(i)];
         }
 
-        textureWithClearColor.depthPlane = attachment.depthSlice.value_or(0);
+        textureWithClearColor.depthPlane = texture.isDestroyed() ? 0 : attachment.depthSlice.value_or(0);
         [m_allColorAttachments setObject:textureWithClearColor forKey:@(i)];
     }
 
@@ -1179,7 +1179,8 @@ void RenderPassEncoder::setVertexBuffer(uint32_t slot, const Buffer* optionalBuf
 {
     RETURN_IF_FINISHED()
     if (!optionalBuffer) {
-        m_vertexBuffers.remove(slot);
+        if (slot <= m_device->limits().maxBindGroupsPlusVertexBuffers)
+            m_vertexBuffers.remove(slot);
         return;
     }
 
