@@ -327,7 +327,7 @@ void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identif
             signalSocketIsClosed(identifier);
             return;
         }
-        callOnRTCNetworkThread([this, protectedThis = Ref { *this }, identifier, localAddress = RTC::Network::SocketAddress::isolatedCopy(localAddress.rtcAddress()), remoteAddress = RTC::Network::SocketAddress::isolatedCopy(remoteAddress.rtcAddress()), options]() mutable {
+        callOnRTCNetworkThread([this, protectedThis = Ref { *this }, identifier, localAddress = localAddress.rtcAddress(), remoteAddress = remoteAddress.rtcAddress(), options]() mutable {
 
             rtc::PacketSocketTcpOptions tcpOptions;
             tcpOptions.opts = options;
