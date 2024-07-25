@@ -2352,7 +2352,11 @@ void FunctionDefinitionWriter::visit(AST::DecrementIncrementStatement& statement
 
 void FunctionDefinitionWriter::visit(AST::DiscardStatement&)
 {
+#if CPU(X86_64)
+    m_stringBuilder.append("__asm volatile(\"\"); discard_fragment()"_s);
+#else
     m_stringBuilder.append("discard_fragment()"_s);
+#endif
 }
 
 void FunctionDefinitionWriter::visit(AST::IfStatement& statement)
