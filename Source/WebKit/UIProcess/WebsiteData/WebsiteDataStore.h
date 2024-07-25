@@ -560,7 +560,6 @@ private:
 
 #if PLATFORM(COCOA)
     Vector<uint8_t> m_uiProcessCookieStorageIdentifier;
-    RetainPtr<CFHTTPCookieStorageRef> m_cfCookieStorage;
 #endif
 
 #if USE(CURL)
