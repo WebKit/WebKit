@@ -787,9 +787,6 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
     if (properties == _WKWebExtensionTabChangedPropertiesNone)
         return { };
 
-    if (properties == _WKWebExtensionTabChangedPropertiesAll)
-        return WebKit::WebExtensionTab::allChangedProperties();
-
     OptionSet<WebKit::WebExtensionTab::ChangedProperties> result;
 
     if (properties & _WKWebExtensionTabChangedPropertiesAudible)

@@ -330,10 +330,7 @@ void WebExtensionContext::tabsReload(WebPageProxyIdentifier webPageProxyIdentifi
         return;
     }
 
-    if (reloadFromOrigin == ReloadFromOrigin::Yes)
-        tab->reloadFromOrigin(WTFMove(completionHandler));
-    else
-        tab->reload(WTFMove(completionHandler));
+    tab->reload(reloadFromOrigin, WTFMove(completionHandler));
 }
 
 void WebExtensionContext::tabsGoBack(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)

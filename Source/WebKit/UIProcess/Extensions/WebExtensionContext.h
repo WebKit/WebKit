@@ -214,9 +214,10 @@ public:
     using TabIdentifierWebViewPair = std::pair<WebExtensionTabIdentifier, RetainPtr<WKWebView>>;
 #endif
 
+    using ReloadFromOrigin = WebExtensionTab::ReloadFromOrigin;
+
     enum class EqualityOnly : bool { No, Yes };
     enum class WindowIsClosing : bool { No, Yes };
-    enum class ReloadFromOrigin : bool { No, Yes };
     enum class UserTriggered : bool { No, Yes };
     enum class SuppressEvents : bool { No, Yes };
     enum class UpdateWindowOrder : bool { No, Yes };

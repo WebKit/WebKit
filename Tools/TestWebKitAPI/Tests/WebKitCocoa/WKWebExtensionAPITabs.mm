@@ -830,7 +830,7 @@ TEST(WKWebExtensionAPITabs, ToggleReaderMode)
 
     __block size_t toggleReaderModeCounter = 0;
 
-    manager.get().defaultTab.toggleReaderMode = ^{
+    manager.get().defaultTab.setReaderModeShowing = ^(BOOL showing) {
         ++toggleReaderModeCounter;
     };
 
@@ -865,7 +865,7 @@ TEST(WKWebExtensionAPITabs, DetectLanguage)
 
     __block bool detectWebpageLocaleCalled = false;
 
-    manager.get().defaultTab.detectWebpageLocale = ^{
+    manager.get().defaultTab.webpageLocale = ^{
         detectWebpageLocaleCalled = true;
         return [NSLocale localeWithLocaleIdentifier:@"en-US"];
     };
@@ -915,12 +915,11 @@ TEST(WKWebExtensionAPITabs, Reload)
     __block bool reloadCalled = false;
     __block bool reloadFromOriginCalled = false;
 
-    manager.get().defaultTab.reload = ^{
-        reloadCalled = true;
-    };
-
-    manager.get().defaultTab.reloadFromOrigin = ^{
-        reloadFromOriginCalled = true;
+    manager.get().defaultTab.reload = ^(BOOL fromOrigin) {
+        if (fromOrigin)
+            reloadFromOriginCalled = true;
+        else
+            reloadCalled = true;
     };
 
     [manager loadAndRun];

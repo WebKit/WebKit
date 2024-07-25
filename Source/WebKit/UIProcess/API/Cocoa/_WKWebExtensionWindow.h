@@ -116,6 +116,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  */
 - (BOOL)isUsingPrivateBrowsingForWebExtensionContext:(_WKWebExtensionContext *)context;
 
+#if TARGET_OS_OSX
 /*!
  @abstract Called when the screen frame containing the window is needed.
  @param context The context associated with the running web extension.
@@ -123,6 +124,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @discussion Defaults to `CGRectNull` if not implemented.
  */
 - (CGRect)screenFrameForWebExtensionContext:(_WKWebExtensionContext *)context;
+#endif // TARGET_OS_OSX
 
 /*!
  @abstract Called when the frame of the window is needed.

@@ -417,18 +417,18 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     return _mainWebView;
 }
 
-- (BOOL)isShowingReaderModeForWebExtensionContext:(_WKWebExtensionContext *)context
+- (BOOL)isReaderModeShowingForWebExtensionContext:(_WKWebExtensionContext *)context
 {
     return _showingReaderMode;
 }
 
-- (void)toggleReaderModeForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+- (void)setReaderModeShowing:(BOOL)showing forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (self->_toggleReaderMode)
-            self->_toggleReaderMode();
+        if (self->_setReaderModeShowing)
+            self->_setReaderModeShowing(showing);
 
-        self->_showingReaderMode = !self->_showingReaderMode;
+        self->_showingReaderMode = showing;
 
         [self->_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesReaderMode forTab:self];
 
@@ -436,35 +436,25 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     });
 }
 
-- (void)detectWebpageLocaleForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSLocale *, NSError *))completionHandler
+- (void)webpageLocaleForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSLocale *, NSError *))completionHandler
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (self->_detectWebpageLocale)
-            completionHandler(self->_detectWebpageLocale(), nil);
+        if (self->_webpageLocale)
+            completionHandler(self->_webpageLocale(), nil);
         else
             completionHandler(nil, nil);
     });
 }
 
-- (void)reloadForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+- (void)reloadFromOrigin:(BOOL)fromOrigin forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         if (self->_reload)
-            self->_reload();
+            self->_reload(fromOrigin);
+        else if (fromOrigin)
+            [self->_mainWebView reloadFromOrigin];
         else
             [self->_mainWebView reload];
-
-        completionHandler(nil);
-    });
-}
-
-- (void)reloadFromOriginForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
-{
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (self->_reloadFromOrigin)
-            self->_reloadFromOrigin();
-        else
-            [self->_mainWebView reloadFromOrigin];
 
         completionHandler(nil);
     });
@@ -513,21 +503,10 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     return _pinned;
 }
 
-- (void)pinForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+- (void)setPinned:(BOOL)pinned forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        self->_pinned = YES;
-
-        [self->_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesPinned forTab:self];
-
-        completionHandler(nil);
-    });
-}
-
-- (void)unpinForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
-{
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self->_pinned = NO;
+        self->_pinned = pinned;
 
         [self->_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesPinned forTab:self];
 
@@ -540,21 +519,10 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     return _muted;
 }
 
-- (void)muteForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+- (void)setMuted:(BOOL)muted forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        self->_muted = YES;
-
-        [self->_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesMuted forTab:self];
-
-        completionHandler(nil);
-    });
-}
-
-- (void)unmuteForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
-{
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self->_muted = NO;
+        self->_muted = muted;
 
         [self->_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesMuted forTab:self];
 
@@ -591,23 +559,15 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     return _selected || _window.activeTab == self;
 }
 
-- (void)selectForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+- (void)setSelected:(BOOL)selected forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        self->_selected = YES;
+        self->_selected = selected;
 
-        [self->_extensionController didSelectTabs:[NSSet setWithObject:self]];
-
-        completionHandler(nil);
-    });
-}
-
-- (void)deselectForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
-{
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self->_selected = NO;
-
-        [self->_extensionController didDeselectTabs:[NSSet setWithObject:self]];
+        if (selected)
+            [self->_extensionController didSelectTabs:[NSSet setWithObject:self]];
+        else
+            [self->_extensionController didDeselectTabs:[NSSet setWithObject:self]];
 
         completionHandler(nil);
     });

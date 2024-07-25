@@ -42,7 +42,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
  web content. These commands enhance the functionality of the extension by allowing users to invoke actions quickly.
  */
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.Command)
+WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(_WKWebExtension.Command)
 @interface _WKWebExtensionCommand : NSObject
 
 + (instancetype)new NS_UNAVAILABLE;
