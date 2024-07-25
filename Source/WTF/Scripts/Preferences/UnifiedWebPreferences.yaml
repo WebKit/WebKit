@@ -2915,6 +2915,21 @@ HTTPEquivEnabled:
     WebCore:
       default: true
 
+HTTPSByDefaultEnabled:
+  type: bool
+  status: testable
+  category: security
+  humanReadableName: "HTTPS-by-default (HTTPS-First)"
+  humanReadableDescription: "Enable HTTPS-by-default (HTTPS-First)"
+  webcoreName: httpsByDefault
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 HiddenPageCSSAnimationSuspensionEnabled:
   type: bool
   status: embedder
