@@ -756,7 +756,6 @@ class Port(object):
             # CYGWIN:
             'HOMEDRIVE',
             'HOMEPATH',
-            '_NT_SYMBOL_PATH',
 
             # Windows:
             'COMSPEC',
