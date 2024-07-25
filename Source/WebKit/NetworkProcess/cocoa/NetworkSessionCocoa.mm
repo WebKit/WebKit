@@ -760,10 +760,12 @@ void NetworkSessionCocoa::setClientAuditToken(const WebCore::AuthenticationChall
     
     // Proxy authentication is handled by CFNetwork internally. We can get here if the user cancels
     // CFNetwork authentication dialog, and we shouldn't ask the client to display another one in that case.
-    if (challenge.protectionSpace.isProxy && !sessionCocoa->preventsSystemHTTPProxyAuthentication()) {
-        completionHandler(NSURLSessionAuthChallengeUseCredential, nil);
-        return;
-    }
+    if (challenge.protectionSpace.isProxy
+#if HAVE(NW_PROXY_CONFIG)
+        && sessionCocoa->proxyConfigs().isEmpty()
+#endif
+        && !sessionCocoa->preventsSystemHTTPProxyAuthentication())
+        return completionHandler(NSURLSessionAuthChallengeUseCredential, nil);
 
     NegotiatedLegacyTLS negotiatedLegacyTLS = NegotiatedLegacyTLS::No;
 

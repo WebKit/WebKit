@@ -168,7 +168,7 @@ public:
     void removeBlobDataTask(DataTaskIdentifier);
 
 #if HAVE(NW_PROXY_CONFIG)
-    const Vector<RetainPtr<nw_proxy_config_t>> proxyConfigs() const { return m_nwProxyConfigs; }
+    const Vector<RetainPtr<nw_proxy_config_t>>& proxyConfigs() const { return m_nwProxyConfigs; }
 
     void clearProxyConfigData() final;
     void setProxyConfigData(const Vector<std::pair<Vector<uint8_t>, WTF::UUID>>&) final;

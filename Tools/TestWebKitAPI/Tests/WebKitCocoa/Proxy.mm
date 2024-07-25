@@ -342,6 +342,33 @@ TEST(WebKit, HTTPProxyAuthentication)
     EXPECT_WK_STREQ([delegate waitForAlert], "success!");
 }
 
+#if HAVE(NW_PROXY_CONFIG)
+TEST(WebKit, ProxyConfigurationAuthentication)
+{
+    auto server = proxyAuthenticationServer();
+    auto webView = adoptNS([WKWebView new]);
+
+    auto endpoint = adoptNS(nw_endpoint_create_host("127.0.0.1", std::to_string(server.port()).c_str()));
+    auto proxyConfiguration = adoptNS(nw_proxy_config_create_http_connect(endpoint.get(), nil));
+    webView.get().configuration.websiteDataStore.proxyConfigurations = @[ proxyConfiguration.get() ];
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    __block bool challenged { false };
+    delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust])
+            return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+        challenged = true;
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodHTTPBasic);
+        return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialWithUser:@"testuser" password:@"testpassword" persistence:NSURLCredentialPersistenceNone]);
+    };
+    webView.get().navigationDelegate = delegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "success!");
+    EXPECT_TRUE(challenged);
+}
+#endif
+
 TEST(WebKit, HTTPProxyAuthenticationCrossOrigin)
 {
     auto server = proxyAuthenticationServer();
