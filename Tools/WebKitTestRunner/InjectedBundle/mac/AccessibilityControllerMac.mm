@@ -38,6 +38,7 @@
 #import "JSBasics.h"
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <WebKit/WKBundle.h>
+#import <WebKit/WKBundleFramePrivate.h>
 #import <WebKit/WKBundlePage.h>
 #import <WebKit/WKBundlePagePrivate.h>
 
@@ -56,10 +57,9 @@ void AccessibilityController::platformInitialize()
     _AXSetClientIdentificationOverride((AXClientType)kAXClientTypeWebKitTesting);
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
+RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement(JSContextRef context)
 {
-    auto page = InjectedBundle::singleton().page()->page();
-    if (!WKAccessibilityRootObject(page))
+    if (!WKAccessibilityRootObject(WKBundleFrameForJavaScriptContext(context)))
         return nullptr;
 
     RetainPtr<PlatformUIElement> focus;
@@ -132,10 +132,9 @@ void AccessibilityController::injectAccessibilityPreference(JSStringRef domain, 
     WKAccessibilityTestingInjectPreference(page, toWK(domain).get(), toWK(key).get(), toWK(encodedString).get());
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef idAttribute)
+RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSContextRef context, JSStringRef idAttribute)
 {
-    auto page = InjectedBundle::singleton().page()->page();
-    PlatformUIElement root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
+    PlatformUIElement root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(WKBundleFrameForJavaScriptContext(context)));
 
     NSString *attributeName = [NSString stringWithJSStringRef:idAttribute];
     RetainPtr<id> result;

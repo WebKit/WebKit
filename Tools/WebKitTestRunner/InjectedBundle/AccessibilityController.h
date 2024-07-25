@@ -66,10 +66,10 @@ public:
     JSRetainPtr<JSStringRef> platformName();
 
     // Controller Methods - platform-independent implementations.
-    Ref<AccessibilityUIElement> rootElement();
-    RefPtr<AccessibilityUIElement> focusedElement();
-    RefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
-    RefPtr<AccessibilityUIElement> accessibleElementById(JSStringRef idAttribute);
+    Ref<AccessibilityUIElement> rootElement(JSContextRef);
+    RefPtr<AccessibilityUIElement> focusedElement(JSContextRef);
+    RefPtr<AccessibilityUIElement> elementAtPoint(JSContextRef, int x, int y);
+    RefPtr<AccessibilityUIElement> accessibleElementById(JSContextRef, JSStringRef idAttribute);
     void announce(JSStringRef);
 
 #if PLATFORM(COCOA)
