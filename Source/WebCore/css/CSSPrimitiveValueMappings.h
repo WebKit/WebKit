@@ -44,7 +44,6 @@
 #include "ScrollAxis.h"
 #include "ScrollTypes.h"
 #include "TextFlags.h"
-#include "TextUnderlinePosition.h"
 #include "ThemeTypes.h"
 #include "TouchAction.h"
 #include "UnicodeBidi.h"
@@ -1235,18 +1234,6 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 
 #define TYPE TextDecorationStyle
 #define FOR_EACH(CASE) CASE(Solid) CASE(Double) CASE(Dotted) CASE(Dashed) CASE(Wavy)
-DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
-#undef TYPE
-#undef FOR_EACH
-
-#define TYPE TextUnderlinePosition::Metric
-#define FOR_EACH(CASE) CASE(Auto) CASE(FromFont) CASE(Under)
-DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
-#undef TYPE
-#undef FOR_EACH
-
-#define TYPE TextUnderlinePosition::Side
-#define FOR_EACH(CASE) CASE(Auto) CASE(Left) CASE(Right)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH

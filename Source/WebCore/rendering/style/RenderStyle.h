@@ -221,6 +221,7 @@ enum class TextOrientation : uint8_t;
 enum class TextOverflow : bool;
 enum class TextSecurity : uint8_t;
 enum class TextTransform : uint8_t;
+enum class TextUnderlinePosition : uint8_t;
 enum class TextWrapMode : bool;
 enum class TextWrapStyle : uint8_t;
 enum class TextZoom : bool;
@@ -267,7 +268,6 @@ struct TabSize;
 struct TextAutospace;
 struct TextBoxEdge;
 struct TextSpacingTrim;
-struct TextUnderlinePosition;
 struct TransformOperationData;
 
 template<typename> class FontTaggedSettings;
@@ -568,7 +568,7 @@ public:
     inline OptionSet<TextDecorationLine> textDecorationLine() const;
     inline TextDecorationStyle textDecorationStyle() const;
     inline TextDecorationSkipInk textDecorationSkipInk() const;
-    inline TextUnderlinePosition textUnderlinePosition() const;
+    inline OptionSet<TextUnderlinePosition> textUnderlinePosition() const;
     inline TextUnderlineOffset textUnderlineOffset() const;
     inline TextDecorationThickness textDecorationThickness() const;
 
@@ -1259,7 +1259,7 @@ public:
     inline void setTextDecorationLine(OptionSet<TextDecorationLine>);
     inline void setTextDecorationStyle(TextDecorationStyle);
     inline void setTextDecorationSkipInk(TextDecorationSkipInk);
-    inline void setTextUnderlinePosition(TextUnderlinePosition);
+    inline void setTextUnderlinePosition(OptionSet<TextUnderlinePosition>);
     inline void setTextUnderlineOffset(TextUnderlineOffset);
     inline void setTextDecorationThickness(TextDecorationThickness);
     void setDirection(TextDirection v) { m_inheritedFlags.direction = static_cast<unsigned>(v); }
@@ -1892,7 +1892,7 @@ public:
     static constexpr OptionSet<TextDecorationLine> initialTextDecorationLine();
     static constexpr TextDecorationStyle initialTextDecorationStyle();
     static constexpr TextDecorationSkipInk initialTextDecorationSkipInk();
-    static constexpr TextUnderlinePosition initialTextUnderlinePosition();
+    static constexpr OptionSet<TextUnderlinePosition> initialTextUnderlinePosition();
     static constexpr TextUnderlineOffset initialTextUnderlineOffset();
     static inline TextDecorationThickness initialTextDecorationThickness();
     static float initialZoom() { return 1.0f; }

@@ -108,6 +108,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textOrientation(static_cast<unsigned>(TextOrientation::Mixed))
     , textIndentLine(static_cast<unsigned>(RenderStyle::initialTextIndentLine()))
     , textIndentType(static_cast<unsigned>(RenderStyle::initialTextIndentType()))
+    , textUnderlinePosition(static_cast<unsigned>(RenderStyle::initialTextUnderlinePosition().toRaw()))
     , lineBoxContain(static_cast<unsigned>(RenderStyle::initialLineBoxContain().toRaw()))
     , imageOrientation(RenderStyle::initialImageOrientation())
     , imageRendering(static_cast<unsigned>(RenderStyle::initialImageRendering()))
@@ -154,7 +155,6 @@ StyleRareInheritedData::StyleRareInheritedData()
     , tapHighlightColor(RenderStyle::initialTapHighlightColor())
 #endif
     , listStyleType(RenderStyle::initialListStyleType())
-    , textUnderlinePosition(RenderStyle::initialTextUnderlinePosition())
     , scrollbarColor(RenderStyle::initialScrollbarColor())
 {
 }
@@ -200,6 +200,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , textOrientation(o.textOrientation)
     , textIndentLine(o.textIndentLine)
     , textIndentType(o.textIndentType)
+    , textUnderlinePosition(o.textUnderlinePosition)
     , lineBoxContain(o.lineBoxContain)
     , imageOrientation(o.imageOrientation)
     , imageRendering(o.imageRendering)
@@ -253,7 +254,6 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , tapHighlightColor(o.tapHighlightColor)
 #endif
     , listStyleType(o.listStyleType)
-    , textUnderlinePosition(o.textUnderlinePosition)
     , scrollbarColor(o.scrollbarColor)
 {
 }

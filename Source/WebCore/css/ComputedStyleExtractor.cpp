@@ -2136,6 +2136,27 @@ static Ref<CSSValue> valueForTextEmphasisStyle(const RenderStyle& style)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+static Ref<CSSValue> textUnderlinePositionToCSSValue(OptionSet<TextUnderlinePosition> textUnderlinePosition)
+{
+    ASSERT(!((textUnderlinePosition & TextUnderlinePosition::FromFont) && (textUnderlinePosition & TextUnderlinePosition::Under)));
+    ASSERT(!((textUnderlinePosition & TextUnderlinePosition::Left) && (textUnderlinePosition & TextUnderlinePosition::Right)));
+
+    if (textUnderlinePosition.isEmpty())
+        return CSSPrimitiveValue::create(CSSValueAuto);
+    bool isFromFont = textUnderlinePosition.contains(TextUnderlinePosition::FromFont);
+    bool isUnder = textUnderlinePosition .contains(TextUnderlinePosition::Under);
+    bool isLeft = textUnderlinePosition.contains(TextUnderlinePosition::Left);
+    bool isRight = textUnderlinePosition.contains(TextUnderlinePosition::Right);
+
+    auto metric = isUnder ? CSSValueUnder : CSSValueFromFont;
+    auto side = isLeft ? CSSValueLeft : CSSValueRight;
+    if (!isFromFont && !isUnder)
+        return CSSPrimitiveValue::create(side);
+    if (!isLeft && !isRight)
+        return CSSPrimitiveValue::create(metric);
+    return CSSValuePair::create(CSSPrimitiveValue::create(metric), CSSPrimitiveValue::create(side));
+}
+
 static Ref<CSSValue> speakAsToCSSValue(OptionSet<SpeakAs> speakAs)
 {
     CSSValueListBuilder list;
@@ -3977,16 +3998,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return renderTextDecorationSkipToCSSValue(style.textDecorationSkipInk());
     case CSSPropertyTextDecorationSkipInk:
         return createConvertingToCSSValueID(style.textDecorationSkipInk());
-    case CSSPropertyTextUnderlinePosition: {
-        auto value = style.textUnderlinePosition();
-        if (value.isAuto())
-            return CSSPrimitiveValue::create(CSSValueAuto);
-        if (value.metric == TextUnderlinePosition::Metric::Auto)
-            return createConvertingToCSSValueID(value.side);
-        if (value.side == TextUnderlinePosition::Side::Auto)
-            return createConvertingToCSSValueID(value.metric);
-        return CSSValuePair::create(createConvertingToCSSValueID(value.metric), createConvertingToCSSValueID(value.side));
-    }
+    case CSSPropertyTextUnderlinePosition:
+        return textUnderlinePositionToCSSValue(style.textUnderlinePosition());
     case CSSPropertyTextUnderlineOffset:
         return textUnderlineOffsetToCSSValue(style.textUnderlineOffset());
     case CSSPropertyTextDecorationThickness:

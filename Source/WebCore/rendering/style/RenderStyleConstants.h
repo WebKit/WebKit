@@ -943,6 +943,13 @@ enum class TextEmphasisPosition : uint8_t {
     Right = 1 << 3
 };
 
+enum class TextUnderlinePosition : uint8_t {
+    Under    = 1 << 0,
+    FromFont = 1 << 1,
+    Left     = 1 << 2,
+    Right    = 1 << 3
+};
+
 enum class TextOrientation : uint8_t {
     Mixed,
     Upright,
@@ -1295,6 +1302,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, TextOrientation);
 WTF::TextStream& operator<<(WTF::TextStream&, TextOverflow);
 WTF::TextStream& operator<<(WTF::TextStream&, TextSecurity);
 WTF::TextStream& operator<<(WTF::TextStream&, TextTransform);
+WTF::TextStream& operator<<(WTF::TextStream&, TextUnderlinePosition);
 WTF::TextStream& operator<<(WTF::TextStream&, TextWrapMode);
 WTF::TextStream& operator<<(WTF::TextStream&, TextWrapStyle);
 WTF::TextStream& operator<<(WTF::TextStream&, TextBoxTrim);

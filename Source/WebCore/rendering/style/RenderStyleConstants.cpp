@@ -1186,6 +1186,17 @@ TextStream& operator<<(TextStream& ts, TextTransform textTransform)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, TextUnderlinePosition position)
+{
+    switch (position) {
+    case TextUnderlinePosition::FromFont: ts << "from-font"; break;
+    case TextUnderlinePosition::Under: ts << "under"; break;
+    case TextUnderlinePosition::Left: ts << "left"; break;
+    case TextUnderlinePosition::Right: ts << "right"; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, TextWrapMode wrap)
 {
     switch (wrap) {

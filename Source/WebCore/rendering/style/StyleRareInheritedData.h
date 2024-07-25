@@ -33,7 +33,6 @@
 #include "StyleTextBoxEdge.h"
 #include "TabSize.h"
 #include "TextUnderlineOffset.h"
-#include "TextUnderlinePosition.h"
 #include "TouchAction.h"
 #include <wtf/DataRef.h>
 #include <wtf/OptionSet.h>
@@ -126,6 +125,7 @@ public:
     unsigned textOrientation : 2; // TextOrientation
     unsigned textIndentLine : 1; // TextIndentLine
     unsigned textIndentType : 1; // TextIndentType
+    unsigned textUnderlinePosition : 4; // TextUnderlinePosition
     unsigned lineBoxContain: 7; // OptionSet<LineBoxContain>
     // CSS Image Values Level 3
     unsigned imageOrientation : 1; // ImageOrientation
@@ -200,7 +200,6 @@ public:
 #endif
 
     ListStyleType listStyleType;
-    TextUnderlinePosition textUnderlinePosition;
 
     Markable<ScrollbarColor> scrollbarColor;
 

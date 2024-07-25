@@ -157,7 +157,8 @@ static float computedUnderlineOffset(const UnderlineOffsetArguments& context)
     if (isAlignedForUnder(styleToUse)) {
         ASSERT(context.textUnderlinePositionUnder);
         // FIXME: This needs to be flipped for sideways-lr.
-        if (textUnderlinePosition.side == TextUnderlinePosition::Side::Right) {
+        if (textUnderlinePosition.contains(TextUnderlinePosition::Right)) {
+            ASSERT(!textUnderlinePosition.contains(TextUnderlinePosition::Left));
             // In vertical typographic modes, the underline is aligned as for under, except it is always aligned to the right edge of the text.
             underlineOffset = 0.f - (styleToUse.textUnderlineOffset().lengthOr(0.f) + defaultGap(styleToUse));
         } else {
@@ -166,21 +167,11 @@ static float computedUnderlineOffset(const UnderlineOffsetArguments& context)
             desiredOffset += styleToUse.textUnderlineOffset().lengthOr(0.f) + defaultGap(styleToUse);
             underlineOffset = std::max<float>(desiredOffset, fontMetrics.intAscent());
         }
-    } else {
-        switch (styleToUse.textUnderlinePosition().metric) {
-        case TextUnderlinePosition::Metric::Auto:
-            underlineOffset = fontMetrics.intAscent() + styleToUse.textUnderlineOffset().lengthOr(defaultGap(styleToUse));
-            break;
-        case TextUnderlinePosition::Metric::FromFont:
-            // FIXME: Does it make sense to apply the underline position font metric in a vertical typographic mode?
-            underlineOffset = fontMetrics.intAscent() + fontMetrics.underlinePosition().value_or(0) + styleToUse.textUnderlineOffset().lengthOr(0.f);
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            underlineOffset = fontMetrics.intAscent() + styleToUse.textUnderlineOffset().lengthOr(defaultGap(styleToUse));
-            break;
-        }
-    }
+    } else if (textUnderlinePosition.contains(TextUnderlinePosition::FromFont)) {
+        ASSERT(!textUnderlinePosition.contains(TextUnderlinePosition::Under));
+        underlineOffset = fontMetrics.intAscent() + fontMetrics.underlinePosition().value_or(0) + styleToUse.textUnderlineOffset().lengthOr(0.f);
+    } else
+        underlineOffset = fontMetrics.intAscent() + styleToUse.textUnderlineOffset().lengthOr(defaultGap(styleToUse));
     return underlineOffset;
 }
 
@@ -263,17 +254,17 @@ static GlyphOverflow computedVisualOverflowForDecorations(const RenderStyle& lin
 bool isAlignedForUnder(const RenderStyle& decoratingBoxStyle)
 {
     auto underlinePosition = decoratingBoxStyle.textUnderlinePosition();
-    if (underlinePosition.metric == TextUnderlinePosition::Metric::Under)
+    if (underlinePosition.contains(TextUnderlinePosition::Under))
         return true;
     if (decoratingBoxStyle.typographicMode() == TypographicMode::Horizontal || decoratingBoxStyle.textOrientation() == TextOrientation::Sideways)
         return false;
-    if (underlinePosition.side == TextUnderlinePosition::Side::Left || underlinePosition.side == TextUnderlinePosition::Side::Right) {
+    if (underlinePosition.contains(TextUnderlinePosition::Left) || underlinePosition.contains(TextUnderlinePosition::Right)) {
         // In vertical typographic modes, the underline is aligned as for under for 'left' and 'right'.
         return true;
     }
     // When left/right support is not enabled.
     // FIXME: The offset check is mostly about visual overflow, consider splitting out.
-    return underlinePosition.isAuto() && decoratingBoxStyle.textUnderlineOffset().isAuto();
+    return underlinePosition.isEmpty() && decoratingBoxStyle.textUnderlineOffset().isAuto();
 }
 
 GlyphOverflow visualOverflowForDecorations(const InlineIterator::LineBoxIterator& lineBox, const RenderText& renderer, float textBoxLogicalTop, float textBoxLogicalBottom)
@@ -333,14 +324,14 @@ float overlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineBo
     if (style.typographicMode() == TypographicMode::Horizontal || style.textOrientation() == TextOrientation::Sideways)
         return { };
 
-    auto underlinePositionSide = style.textUnderlinePosition().side;
+    auto underlinePosition = style.textUnderlinePosition();
     auto overBecomesUnder = [&] {
         auto typographicMode = style.typographicMode();
         // If 'right' causes the underline to be drawn on the "over" side of the text, then an overline also switches sides and is drawn on the "under" side.
-        if (underlinePositionSide == TextUnderlinePosition::Side::Right)
+        if (underlinePosition.contains(TextUnderlinePosition::Right))
             return typographicMode == TypographicMode::Vertical || style.blockFlowDirection() == BlockFlowDirection::RightToLeft;
         // If 'left' causes the underline to be drawn on the "over" side of the text, then an overline also switches sides and is drawn on the "under" side.
-        if (underlinePositionSide == TextUnderlinePosition::Side::Left)
+        if (underlinePosition.contains(TextUnderlinePosition::Left))
             return typographicMode == TypographicMode::Horizontal && style.blockFlowDirection() == BlockFlowDirection::LeftToRight;
         return false;
     };
