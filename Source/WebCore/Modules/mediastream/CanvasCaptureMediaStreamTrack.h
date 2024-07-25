@@ -87,7 +87,7 @@ private:
         Timer m_requestFrameTimer;
         Timer m_captureCanvasTimer;
         std::optional<RealtimeMediaSourceSettings> m_currentSettings;
-        HTMLCanvasElement* m_canvas;
+        WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> m_canvas;
         RefPtr<Image> m_currentImage;
 #if USE(GSTREAMER)
         MediaTime m_presentationTimeStamp { MediaTime::zeroTime() };
