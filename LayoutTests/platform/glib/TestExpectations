@@ -1791,7 +1791,6 @@ webkit.org/b/258547 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 
 webkit.org/b/263629 http/tests/multipart/win-boundary-crash.html [ Skip ] # Crash
 
-webkit.org/b/264804 http/tests/cookies/third-party-cookie-relaxing.html [ Failure ]
 webkit.org/b/264804 http/tests/resourceLoadStatistics/blocking-in-web-worker-script-import.https.html [ Failure ]
 webkit.org/b/264804 http/tests/resourceLoadStatistics/no-third-party-cookie-blocking-when-itp-is-off.html [ Failure ]
 webkit.org/b/264804 http/tests/resourceLoadStatistics/ping-to-prevalent-resource.html [ Failure ]
@@ -1812,8 +1811,6 @@ webkit.org/b/264804 http/tests/storageAccess/request-and-grant-access-then-navig
 webkit.org/b/264804 http/tests/storageAccess/request-and-grant-access-with-per-page-scope-access-from-another-frame.html [ Failure ]
 webkit.org/b/264804 http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.html [ Failure ]
 webkit.org/b/264804 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Failure ]
-webkit.org/b/264804 http/tests/xmlhttprequest/cross-origin-authorization.html [ Failure ]
-webkit.org/b/264804 http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure ]
 webkit.org/b/264804 http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-not-removed-with-user-interaction-6-days-ago.html [ Pass Timeout ]
 
 webkit.org/b/264805 imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss [ Failure ]
