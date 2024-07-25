@@ -121,6 +121,7 @@ public:
         Property srcY { 0, 0 };
         Property srcW { 0, 0 };
         Property srcH { 0, 0 };
+        Property fbDamageClips { 0, 0 };
     };
 
     struct Format {
