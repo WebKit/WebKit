@@ -1825,8 +1825,6 @@ rendering/RenderFrame.cpp
 rendering/RenderFrameSet.cpp
 rendering/RenderHTMLCanvas.cpp
 rendering/RenderImage.cpp
-rendering/RenderImageResourceStyleImage.cpp
-rendering/RenderImageResourceStyleImage.h
 rendering/RenderInline.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerBacking.cpp

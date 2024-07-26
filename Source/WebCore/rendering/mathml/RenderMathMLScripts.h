@@ -30,7 +30,7 @@
 #if ENABLE(MATHML)
 
 #include "MathMLScriptsElement.h"
-#include "RenderMathMLBlock.h"
+#include "RenderMathMLRow.h"
 
 namespace WebCore {
 

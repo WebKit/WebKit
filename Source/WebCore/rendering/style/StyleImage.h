@@ -24,6 +24,7 @@
 #pragma once
 
 #include "CSSValue.h"
+#include "CachedImage.h"
 #include "FloatSize.h"
 #include "Image.h"
 #include <wtf/RefCounted.h>
@@ -71,7 +72,7 @@ public:
     virtual bool hasClient(RenderElement&) const = 0;
 
     // Size / scale.
-    virtual FloatSize imageSize(const RenderElement*, float multiplier) const = 0;
+    virtual FloatSize imageSize(const RenderElement*, float multiplier, CachedImage::SizeType = CachedImage::UsedSize) const = 0;
     virtual bool usesImageContainerSize() const = 0;
     virtual void computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) = 0;
     virtual bool imageHasRelativeWidth() const = 0;
@@ -87,7 +88,7 @@ public:
 
     // Rendering.
     virtual bool canRender(const RenderElement*, float /*multiplier*/) const { return true; }
-    virtual void setContainerContextForRenderer(const RenderElement&, const FloatSize&, float) = 0;
+    virtual void setContainerContextForRenderer(const RenderElement&, const FloatSize&, float, const URL& = URL()) = 0;
     virtual bool knownToBeOpaque(const RenderElement&) const = 0;
 
     // Derived type.
