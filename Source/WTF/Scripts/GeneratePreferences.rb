@@ -125,6 +125,8 @@ class Preference
       @name[0..1].downcase + @name[2..@name.length]
     elsif @name.start_with?("CSS", "DOM", "DNS", "FTP", "ICE", "IPC", "PDF", "XSS")
       @name[0..2].downcase + @name[3..@name.length]
+    elsif @name.start_with?("HTTPS")
+      @name[0..4].downcase + @name[5..@name.length]
     elsif @name.start_with?("HTTP")
       @name[0..3].downcase + @name[4..@name.length]
     else

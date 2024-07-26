@@ -220,13 +220,9 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     parameters.networkSessionParameters.enablePrivateClickMeasurementDebugMode = experimentalFeatureEnabled(WebPreferencesKey::privateClickMeasurementDebugModeEnabledKey());
 }
 
-std::optional<bool> WebsiteDataStore::useNetworkLoader()
+static bool isSafari()
 {
-#if !HAVE(NETWORK_LOADER)
-    return false;
-#else
-
-    [[maybe_unused]] const auto isSafari =
+    return
 #if PLATFORM(MAC)
         MacApplication::isSafari();
 #elif PLATFORM(IOS_FAMILY)
@@ -234,6 +230,13 @@ std::optional<bool> WebsiteDataStore::useNetworkLoader()
 #else
         false;
 #endif
+}
+
+std::optional<bool> WebsiteDataStore::useNetworkLoader()
+{
+#if !HAVE(NETWORK_LOADER)
+    return false;
+#else
 
     if (auto isEnabled = optionalExperimentalFeatureEnabled(WebPreferencesKey::cFNetworkNetworkLoaderEnabledKey(), std::nullopt))
         return isEnabled;
@@ -243,11 +246,23 @@ std::optional<bool> WebsiteDataStore::useNetworkLoader()
     if (isRunningTest(WebCore::applicationBundleIdentifier()))
         return true;
     if (nw_settings_get_unified_http_enabled())
-        return isSafari;
+        return isSafari();
 #endif
     return std::nullopt;
 
 #endif // NETWORK_LOADER
+}
+
+static void enableHTTPSByDefault()
+{
+    if (!isSafari())
+        return;
+    if (auto isEnabled = optionalExperimentalFeatureEnabled(WebPreferencesKey::httpsByDefaultEnabledKey(), std::nullopt))
+        return;
+
+    auto defaultsKey = adoptNS([[NSString alloc] initWithFormat:@"WebKitExperimental%@", static_cast<NSString *>(WebPreferencesKey::httpsByDefaultEnabledKey())]);
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:defaultsKey.get()] != nil)
+        return [[NSUserDefaults standardUserDefaults] setBool:YES forKey:defaultsKey.get()];
 }
 
 void WebsiteDataStore::platformInitialize()
@@ -258,6 +273,8 @@ void WebsiteDataStore::platformInitialize()
 #if ENABLE(MANAGED_DOMAINS)
     initializeManagedDomains();
 #endif
+
+    enableHTTPSByDefault();
 }
 
 void WebsiteDataStore::platformDestroy()

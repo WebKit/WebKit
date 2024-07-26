@@ -2927,7 +2927,7 @@ HTTPEquivEnabled:
 
 HTTPSByDefaultEnabled:
   type: bool
-  status: testable
+  status: preview
   category: security
   humanReadableName: "HTTPS-by-default (HTTPS-First)"
   humanReadableDescription: "Enable HTTPS-by-default (HTTPS-First)"
