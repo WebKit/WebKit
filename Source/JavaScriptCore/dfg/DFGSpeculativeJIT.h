@@ -1537,6 +1537,7 @@ public:
     void compileSkipScope(Node*);
     void compileGetGlobalObject(Node*);
     void compileGetGlobalThis(Node*);
+    void compileUnwrapGlobalProxy(Node*);
 
     void compileGetArrayLength(Node*);
 #if USE(LARGE_TYPED_ARRAYS)
@@ -1904,6 +1905,8 @@ public:
     void speculatePromiseObject(Edge, GPRReg cell);
     void speculateProxyObject(Edge, GPRReg cell);
     void speculateProxyObject(Edge);
+    void speculateGlobalProxy(Edge, GPRReg cell);
+    void speculateGlobalProxy(Edge);
     void speculateDerivedArray(Edge, GPRReg cell);
     void speculateDerivedArray(Edge);
     void speculateDateObject(Edge);

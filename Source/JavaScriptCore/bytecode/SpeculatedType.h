@@ -65,26 +65,27 @@ static constexpr SpeculatedType SpecSetObject                         = 1ull << 
 static constexpr SpeculatedType SpecWeakMapObject                     = 1ull << 23; // It's definitely a WeakMap object or one of its subclasses.
 static constexpr SpeculatedType SpecWeakSetObject                     = 1ull << 24; // It's definitely a WeakSet object or one of its subclasses.
 static constexpr SpeculatedType SpecProxyObject                       = 1ull << 25; // It's definitely a Proxy object or one of its subclasses.
-static constexpr SpeculatedType SpecDerivedArray                      = 1ull << 26; // It's definitely a DerivedArray object.
-static constexpr SpeculatedType SpecObjectOther                       = 1ull << 27; // It's definitely an object but not JSFinalObject, JSArray, or JSFunction.
-static constexpr SpeculatedType SpecStringIdent                       = 1ull << 28; // It's definitely a JSString, and it's an identifier.
-static constexpr SpeculatedType SpecStringVar                         = 1ull << 29; // It's definitely a JSString, and it's not an identifier.
+static constexpr SpeculatedType SpecGlobalProxy                       = 1ull << 26; // It's definitely a Proxy object or one of its subclasses.
+static constexpr SpeculatedType SpecDerivedArray                      = 1ull << 27; // It's definitely a DerivedArray object.
+static constexpr SpeculatedType SpecObjectOther                       = 1ull << 28; // It's definitely an object but not JSFinalObject, JSArray, or JSFunction.
+static constexpr SpeculatedType SpecStringIdent                       = 1ull << 29; // It's definitely a JSString, and it's an identifier.
+static constexpr SpeculatedType SpecStringVar                         = 1ull << 30; // It's definitely a JSString, and it's not an identifier.
 static constexpr SpeculatedType SpecString                            = SpecStringIdent | SpecStringVar; // It's definitely a JSString.
-static constexpr SpeculatedType SpecSymbol                            = 1ull << 30; // It's definitely a Symbol.
-static constexpr SpeculatedType SpecCellOther                         = 1ull << 31; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString, BigInt, or Symbol.
-static constexpr SpeculatedType SpecBoolInt32                         = 1ull << 32; // It's definitely an Int32 with value 0 or 1.
-static constexpr SpeculatedType SpecNonBoolInt32                      = 1ull << 33; // It's definitely an Int32 with value other than 0 or 1.
+static constexpr SpeculatedType SpecSymbol                            = 1ull << 31; // It's definitely a Symbol.
+static constexpr SpeculatedType SpecCellOther                         = 1ull << 32; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString, BigInt, or Symbol.
+static constexpr SpeculatedType SpecBoolInt32                         = 1ull << 33; // It's definitely an Int32 with value 0 or 1.
+static constexpr SpeculatedType SpecNonBoolInt32                      = 1ull << 34; // It's definitely an Int32 with value other than 0 or 1.
 static constexpr SpeculatedType SpecInt32Only                         = SpecBoolInt32 | SpecNonBoolInt32; // It's definitely an Int32.
 
-static constexpr SpeculatedType SpecInt32AsInt52                      = 1ull << 34; // It's an Int52 and it can fit in an int32.
-static constexpr SpeculatedType SpecNonInt32AsInt52                   = 1ull << 35; // It's an Int52 and it can't fit in an int32.
+static constexpr SpeculatedType SpecInt32AsInt52                      = 1ull << 35; // It's an Int52 and it can fit in an int32.
+static constexpr SpeculatedType SpecNonInt32AsInt52                   = 1ull << 36; // It's an Int52 and it can't fit in an int32.
 static constexpr SpeculatedType SpecInt52Any                          = SpecInt32AsInt52 | SpecNonInt32AsInt52; // It's any kind of Int52.
 
-static constexpr SpeculatedType SpecAnyIntAsDouble                    = 1ull << 36; // It's definitely an Int52 and it's inside a double.
-static constexpr SpeculatedType SpecNonIntAsDouble                    = 1ull << 37; // It's definitely not an Int52 but it's a real number and it's a double.
+static constexpr SpeculatedType SpecAnyIntAsDouble                    = 1ull << 37; // It's definitely an Int52 and it's inside a double.
+static constexpr SpeculatedType SpecNonIntAsDouble                    = 1ull << 38; // It's definitely not an Int52 but it's a real number and it's a double.
 static constexpr SpeculatedType SpecDoubleReal                        = SpecNonIntAsDouble | SpecAnyIntAsDouble; // It's definitely a non-NaN double.
-static constexpr SpeculatedType SpecDoublePureNaN                     = 1ull << 38; // It's definitely a NaN that is safe to tag (i.e. pure).
-static constexpr SpeculatedType SpecDoubleImpureNaN                   = 1ull << 39; // It's definitely a NaN that is unsafe to tag (i.e. impure).
+static constexpr SpeculatedType SpecDoublePureNaN                     = 1ull << 39; // It's definitely a NaN that is safe to tag (i.e. pure).
+static constexpr SpeculatedType SpecDoubleImpureNaN                   = 1ull << 40; // It's definitely a NaN that is unsafe to tag (i.e. impure).
 static constexpr SpeculatedType SpecDoubleNaN                         = SpecDoublePureNaN | SpecDoubleImpureNaN; // It's definitely some kind of NaN.
 static constexpr SpeculatedType SpecBytecodeDouble                    = SpecDoubleReal | SpecDoublePureNaN; // It's either a non-NaN or a NaN double, but it's definitely not impure NaN.
 static constexpr SpeculatedType SpecFullDouble                        = SpecDoubleReal | SpecDoubleNaN; // It's either a non-NaN or a NaN double.
@@ -94,21 +95,21 @@ static constexpr SpeculatedType SpecBytecodeNumber                    = SpecInt3
 static constexpr SpeculatedType SpecIntAnyFormat                      = SpecInt52Any | SpecInt32Only | SpecAnyIntAsDouble;
 
 static constexpr SpeculatedType SpecFullNumber                        = SpecIntAnyFormat | SpecFullDouble; // It's either an Int32, Int52, or a Double, and the Double can be impure NaN.
-static constexpr SpeculatedType SpecBoolean                           = 1ull << 40; // It's definitely a Boolean.
-static constexpr SpeculatedType SpecOther                             = 1ull << 41; // It's definitely either Null or Undefined.
+static constexpr SpeculatedType SpecBoolean                           = 1ull << 41; // It's definitely a Boolean.
+static constexpr SpeculatedType SpecOther                             = 1ull << 42; // It's definitely either Null or Undefined.
 static constexpr SpeculatedType SpecMisc                              = SpecBoolean | SpecOther; // It's definitely either a boolean, Null, or Undefined.
-static constexpr SpeculatedType SpecEmpty                             = 1ull << 42; // It's definitely an empty value marker.
-static constexpr SpeculatedType SpecHeapBigInt                        = 1ull << 43; // It's definitely a BigInt that is allocated on the heap
-static constexpr SpeculatedType SpecBigInt32                          = 1ull << 44; // It's definitely a small BigInt that is inline the JSValue
+static constexpr SpeculatedType SpecEmpty                             = 1ull << 43; // It's definitely an empty value marker.
+static constexpr SpeculatedType SpecHeapBigInt                        = 1ull << 44; // It's definitely a BigInt that is allocated on the heap
+static constexpr SpeculatedType SpecBigInt32                          = 1ull << 45; // It's definitely a small BigInt that is inline the JSValue
 #if USE(BIGINT32)
 static constexpr SpeculatedType SpecBigInt                            = SpecBigInt32 | SpecHeapBigInt;
 #else
 // We should not include SpecBigInt32. We are using SpecBigInt in various places like prediction. If this includes SpecBigInt32, fixup phase is confused if !USE(BIGINT32) since it is not using AnyBigIntUse.
 static constexpr SpeculatedType SpecBigInt                            = SpecHeapBigInt;
 #endif
-static constexpr SpeculatedType SpecDataViewObject                    = 1ull << 45; // It's definitely a JSDataView.
+static constexpr SpeculatedType SpecDataViewObject                    = 1ull << 46; // It's definitely a JSDataView.
 static constexpr SpeculatedType SpecPrimitive                         = SpecString | SpecSymbol | SpecBytecodeNumber | SpecMisc | SpecBigInt; // It's any non-Object JSValue.
-static constexpr SpeculatedType SpecObject                            = SpecFinalObject | SpecArray | SpecFunction | SpecTypedArrayView | SpecDirectArguments | SpecScopedArguments | SpecStringObject | SpecRegExpObject | SpecDateObject | SpecPromiseObject | SpecMapObject | SpecSetObject | SpecWeakMapObject | SpecWeakSetObject | SpecProxyObject | SpecDerivedArray | SpecObjectOther | SpecDataViewObject; // Bitmask used for testing for any kind of object prediction.
+static constexpr SpeculatedType SpecObject                            = SpecFinalObject | SpecArray | SpecFunction | SpecTypedArrayView | SpecDirectArguments | SpecScopedArguments | SpecStringObject | SpecRegExpObject | SpecDateObject | SpecPromiseObject | SpecMapObject | SpecSetObject | SpecWeakMapObject | SpecWeakSetObject | SpecProxyObject | SpecGlobalProxy | SpecDerivedArray | SpecObjectOther | SpecDataViewObject; // Bitmask used for testing for any kind of object prediction.
 static constexpr SpeculatedType SpecCell                              = SpecObject | SpecString | SpecSymbol | SpecCellOther | SpecHeapBigInt; // It's definitely a JSCell.
 static constexpr SpeculatedType SpecHeapTop                           = SpecCell | SpecBigInt32 | SpecBytecodeNumber | SpecMisc; // It can be any of the above, except for SpecInt52Only and SpecDoubleImpureNaN.
 static constexpr SpeculatedType SpecBytecodeTop                       = SpecHeapTop | SpecEmpty; // It can be any of the above, except for SpecInt52Only and SpecDoubleImpureNaN. Corresponds to what could be found in a bytecode local.
@@ -237,6 +238,11 @@ inline bool isFunctionSpeculation(SpeculatedType value)
 inline bool isProxyObjectSpeculation(SpeculatedType value)
 {
     return value == SpecProxyObject;
+}
+
+inline bool isGlobalProxySpeculation(SpeculatedType value)
+{
+    return value == SpecGlobalProxy;
 }
 
 inline bool isDerivedArraySpeculation(SpeculatedType value)

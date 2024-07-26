@@ -3294,6 +3294,10 @@ void SpeculativeJIT::compile(Node* node)
     case GetGlobalThis:
         compileGetGlobalThis(node);
         break;
+
+    case UnwrapGlobalProxy:
+        compileUnwrapGlobalProxy(node);
+        break;
         
     case GetClosureVar: {
         compileGetClosureVar(node);

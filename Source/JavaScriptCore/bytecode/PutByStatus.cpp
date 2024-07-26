@@ -93,7 +93,7 @@ PutByStatus PutByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeInde
         if (!isValidOffset(offset))
             return PutByStatus(NoInformation);
         
-        return PutByVariant::replace(nullptr, structure, offset);
+        return PutByVariant::replace(nullptr, structure, offset, /* viaGlobalProxy */ false);
     }
 
     Structure* newStructure = newStructureID.decode();
@@ -187,7 +187,7 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
         Structure* structure = stubInfo->inlineAccessBaseStructure();
         PropertyOffset offset = structure->getConcurrently(uid);
         if (isValidOffset(offset))
-            return PutByVariant::replace(WTFMove(identifier), structure, offset);
+            return PutByVariant::replace(WTFMove(identifier), structure, offset, /* viaGlobalProxy */ false);
         return PutByStatus(JSC::slowVersion(summary), *stubInfo);
     }
         
@@ -234,8 +234,8 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
 
         for (unsigned i = 0; i < list->size(); ++i) {
             const AccessCase& access = list->at(i);
-            if (access.viaGlobalProxy())
-                return PutByStatus(JSC::slowVersion(summary), *stubInfo);
+            bool viaGlobalProxy = access.viaGlobalProxy();
+
             if (access.usesPolyProto())
                 return PutByStatus(JSC::slowVersion(summary), *stubInfo);
             
@@ -245,7 +245,7 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
                 PropertyOffset offset = structure->getConcurrently(access.uid());
                 if (!isValidOffset(offset))
                     return PutByStatus(JSC::slowVersion(summary), *stubInfo);
-                auto variant = PutByVariant::replace(access.identifier(), structure, offset);
+                auto variant = PutByVariant::replace(access.identifier(), structure, offset, viaGlobalProxy);
                 if (!result.appendVariant(variant))
                     return PutByStatus(JSC::slowVersion(summary), *stubInfo);
                 break;
@@ -283,7 +283,7 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
                     domAttribute = WTF::makeUnique<DOMAttributeAnnotation>(*access.as<GetterSetterAccessCase>().domAttribute());
                 result.m_state = CustomAccessor;
 
-                auto variant = PutByVariant::customSetter(access.identifier(), access.structure(), WTFMove(conditionSet), customAccessorSetter, WTFMove(domAttribute));
+                auto variant = PutByVariant::customSetter(access.identifier(), access.structure(), viaGlobalProxy, WTFMove(conditionSet), customAccessorSetter, WTFMove(domAttribute));
                 if (!result.appendVariant(variant))
                     return PutByStatus(JSC::slowVersion(summary), *stubInfo);
                 break;
@@ -306,7 +306,7 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
                     if (CallLinkInfo* callLinkInfo = stubInfo->callLinkInfoAt(locker, i, access))
                         *callLinkStatus = CallLinkStatus::computeFor(locker, profiledBlock, *callLinkInfo, callExitSiteData);
 
-                    auto variant = PutByVariant::setter(access.identifier(), structure, complexGetStatus.offset(), complexGetStatus.conditionSet(), WTFMove(callLinkStatus));
+                    auto variant = PutByVariant::setter(access.identifier(), structure, complexGetStatus.offset(), viaGlobalProxy, complexGetStatus.conditionSet(), WTFMove(callLinkStatus));
                     if (!result.appendVariant(variant))
                         return PutByStatus(JSC::slowVersion(summary), *stubInfo);
                     break;
@@ -425,7 +425,7 @@ PutByStatus PutByStatus::computeFor(JSGlobalObject* globalObject, const Structur
                 return PutByStatus(LikelyTakesSlowPath);
             }
 
-            PutByVariant variant = PutByVariant::replace(identifier, structure, offset);
+            PutByVariant variant = PutByVariant::replace(identifier, structure, offset, /* viaGlobalProxy */ false);
             if (!result.appendVariant(variant))
                 return PutByStatus(LikelyTakesSlowPath);
             continue;

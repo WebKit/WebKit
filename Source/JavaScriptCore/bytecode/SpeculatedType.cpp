@@ -40,6 +40,7 @@
 #include "JSDataView.h"
 #include "JSFunction.h"
 #include "JSGenericTypedArrayViewInlines.h"
+#include "JSGlobalProxy.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
 #include "JSPromise.h"
@@ -224,6 +225,11 @@ void dumpSpeculation(PrintStream& outStream, SpeculatedType value)
 
             if (value & SpecProxyObject)
                 strOut.print("ProxyObject");
+            else
+                isTop = false;
+
+            if (value & SpecGlobalProxy)
+                strOut.print("GlobalProxy");
             else
                 isTop = false;
 
@@ -516,6 +522,9 @@ SpeculatedType speculationFromClassInfoInheritance(const ClassInfo* classInfo)
     if (classInfo == ProxyObject::info())
         return SpecProxyObject;
 
+    if (classInfo->isSubClassOf(JSGlobalProxy::info()))
+        return SpecGlobalProxy;
+
     if (classInfo->isSubClassOf(JSDataView::info()))
         return SpecDataViewObject;
 
@@ -683,6 +692,8 @@ std::optional<SpeculatedType> speculationFromJSType(JSType type)
         return SpecDateObject;
     case ProxyObjectType:
         return SpecProxyObject;
+    case GlobalProxyType:
+        return SpecGlobalProxy;
     case JSPromiseType:
         return SpecPromiseObject;
     case JSMapType:
@@ -934,6 +945,8 @@ SpeculatedType speculationFromString(const char* speculation)
         return SpecWeakSetObject;
     if (!strncmp(speculation, "SpecProxyObject", strlen("SpecProxyObject")))
         return SpecProxyObject;
+    if (!strncmp(speculation, "SpecGlobalProxy", strlen("SpecGlobalProxy")))
+        return SpecGlobalProxy;
     if (!strncmp(speculation, "SpecDerivedArray", strlen("SpecDerivedArray")))
         return SpecDerivedArray;
     if (!strncmp(speculation, "SpecDataViewObject", strlen("SpecDataViewObject")))

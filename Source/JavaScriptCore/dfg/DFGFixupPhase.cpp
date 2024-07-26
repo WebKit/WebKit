@@ -1972,6 +1972,11 @@ private:
             fixEdge<KnownCellUse>(node->child1());
             break;
         }
+
+        case UnwrapGlobalProxy: {
+            fixEdge<GlobalProxyUse>(node->child1());
+            break;
+        }
             
         case AllocatePropertyStorage:
         case ReallocatePropertyStorage: {
@@ -3410,6 +3415,17 @@ private:
                         Edge(node->child1().node(), ProxyObjectUse));
                     m_graph.convertToConstant(node, jsBoolean(true));
                     observeUseKindOnNode<ProxyObjectUse>(node);
+                    return;
+                }
+                break;
+
+            case SpecGlobalProxy:
+                if (node->child1()->shouldSpeculateGlobalProxy()) {
+                    m_insertionSet.insertNode(
+                        m_indexInBlock, SpecNone, Check, node->origin,
+                        Edge(node->child1().node(), GlobalProxyUse));
+                    m_graph.convertToConstant(node, jsBoolean(true));
+                    observeUseKindOnNode<GlobalProxyUse>(node);
                     return;
                 }
                 break;

@@ -1262,13 +1262,14 @@ private:
             break;
 
         case SkipScope:
-        case GetGlobalObject: {
+        case GetGlobalObject:
+        case UnwrapGlobalProxy: {
             setPrediction(SpecObjectOther);
             break;
         }
 
         case GetGlobalThis:
-            setPrediction(SpecObject);
+            setPrediction(SpecGlobalProxy);
             break;
 
         case ResolveScope: {

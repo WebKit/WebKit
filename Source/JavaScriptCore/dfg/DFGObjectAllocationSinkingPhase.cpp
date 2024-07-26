@@ -2536,13 +2536,15 @@ private:
                         // nodes. Those nodes were guarded by the appropriate type checks. This means that
                         // at this point, we can simply trust that the incoming value has the right type
                         // for whatever structure we are using.
-                        data->variants.append(PutByVariant::replace(nullptr, currentSet, currentOffset));
+                        // Now, this data is used directly for the base, so viaGlobalProxy or not does not matter.
+                        data->variants.append(PutByVariant::replace(nullptr, currentSet, currentOffset, /* viaGlobalProxy */ false));
                         currentOffset = offset;
                         currentSet.clear();
                     }
                     currentSet.add(structure.get());
                 }
-                data->variants.append(PutByVariant::replace(nullptr, currentSet, currentOffset));
+                // Now, this data is used directly for the base, so viaGlobalProxy or not does not matter.
+                data->variants.append(PutByVariant::replace(nullptr, currentSet, currentOffset, /* viaGlobalProxy */ false));
             }
 
             return m_graph.addNode(

@@ -67,6 +67,7 @@ public:
         case RegExpObjectUse:
         case PromiseObjectUse:
         case ProxyObjectUse:
+        case GlobalProxyUse:
         case DerivedArrayUse:
         case DateObjectUse:
         case MapObjectUse:
@@ -240,6 +241,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case SkipScope:
     case GetGlobalObject:
     case GetGlobalThis:
+    case UnwrapGlobalProxy:
     case GetClosureVar:
     case GetGlobalVar:
     case GetGlobalLexicalVariable:

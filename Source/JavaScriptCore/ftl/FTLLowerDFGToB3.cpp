@@ -1373,6 +1373,9 @@ private:
         case GetGlobalThis:
             compileGetGlobalThis();
             break;
+        case UnwrapGlobalProxy:
+            compileUnwrapGlobalProxy();
+            break;
         case GetClosureVar:
             compileGetClosureVar();
             break;
@@ -10647,6 +10650,12 @@ IGNORE_CLANG_WARNINGS_END
     {
         auto* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         setJSValue(m_out.loadPtr(m_out.absolute(globalObject->addressOfGlobalThis())));
+    }
+
+    void compileUnwrapGlobalProxy()
+    {
+        LValue globalProxy = lowGlobalProxy(m_node->child1());
+        setJSValue(m_out.loadPtr(globalProxy, m_heaps.JSGlobalProxy_target));
     }
 
     void compileGetClosureVar()
@@ -20865,6 +20874,13 @@ IGNORE_CLANG_WARNINGS_END
         return result;
     }
 
+    LValue lowGlobalProxy(Edge edge)
+    {
+        LValue result = lowCell(edge);
+        speculateGlobalProxy(edge, result);
+        return result;
+    }
+
     LValue lowString(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
     {
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == StringUse || edge.useKind() == KnownStringUse || edge.useKind() == StringIdentUse);
@@ -21423,6 +21439,9 @@ IGNORE_CLANG_WARNINGS_END
             break;
         case ProxyObjectUse:
             speculateProxyObject(edge);
+            break;
+        case GlobalProxyUse:
+            speculateGlobalProxy(edge);
             break;
         case DerivedArrayUse:
             speculateDerivedArray(edge);
@@ -22077,6 +22096,16 @@ IGNORE_CLANG_WARNINGS_END
     void speculateProxyObject(Edge edge)
     {
         speculateProxyObject(edge, lowCell(edge));
+    }
+
+    void speculateGlobalProxy(Edge edge, LValue cell)
+    {
+        FTL_TYPE_CHECK(jsValueValue(cell), edge, SpecGlobalProxy, isNotType(cell, GlobalProxyType));
+    }
+
+    void speculateGlobalProxy(Edge edge)
+    {
+        speculateGlobalProxy(edge, lowCell(edge));
     }
 
     void speculateDerivedArray(Edge edge, LValue cell)

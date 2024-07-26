@@ -101,6 +101,9 @@ void printInternal(PrintStream& out, UseKind useKind)
     case ProxyObjectUse:
         out.print("ProxyObject");
         return;
+    case GlobalProxyUse:
+        out.print("GlobalProxy");
+        return;
     case DerivedArrayUse:
         out.print("DerivedArray");
         return;

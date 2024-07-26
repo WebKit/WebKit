@@ -140,7 +140,14 @@ public:
     const PutByVariant& at(size_t index) const { return m_variants[index]; }
     const PutByVariant& operator[](size_t index) const { return at(index); }
     CacheableIdentifier singleIdentifier() const;
-    
+
+    bool viaGlobalProxy() const
+    {
+        if (m_variants.isEmpty())
+            return false;
+        return m_variants.first().viaGlobalProxy();
+    }
+
     DECLARE_VISIT_AGGREGATE;
     template<typename Visitor> void markIfCheap(Visitor&);
     bool finalize(VM&);

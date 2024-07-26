@@ -546,7 +546,7 @@ private:
                     
                     if (variant.kind() == PutByVariant::Transition
                         && variant.oldStructure().onlyStructure() == variant.newStructure()) {
-                        variant = PutByVariant::replace(variant.identifier(), variant.oldStructure(), variant.offset());
+                        variant = PutByVariant::replace(variant.identifier(), variant.oldStructure(), variant.offset(), variant.viaGlobalProxy());
                         changed = true;
                     }
                 }

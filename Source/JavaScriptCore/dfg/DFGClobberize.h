@@ -224,7 +224,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case CompareEqPtr:
         def(PureValue(node, node->cellOperand()->cell()));
         return;
-        
+
+    case UnwrapGlobalProxy:
+        read(JSGlobalProxy_target);
+        def(HeapLocation(GlobalProxyTargetLoc, JSGlobalProxy_target, node->child1()), LazyNode(node));
+        return;
+
     case ArithIMul:
     case ArithPow:
     case GetScope:

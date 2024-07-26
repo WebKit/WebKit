@@ -3753,8 +3753,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case UnwrapGlobalProxy: {
+        setTypeForNode(node, SpecObjectOther);
+        break;
+    }
+
     case GetGlobalThis: {
-        setTypeForNode(node, SpecObject);
+        setTypeForNode(node, SpecGlobalProxy);
         break;
     }
 

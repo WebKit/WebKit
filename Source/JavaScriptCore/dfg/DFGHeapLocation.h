@@ -73,6 +73,7 @@ enum LocationKind {
     PrototypeLoc,
     StackLoc,
     StackPayloadLoc,
+    GlobalProxyTargetLoc,
     DateFieldLoc,
     MapBucketLoc,
     MapBucketHeadLoc,

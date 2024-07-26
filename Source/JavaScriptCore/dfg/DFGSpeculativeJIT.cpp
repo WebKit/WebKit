@@ -9011,6 +9011,19 @@ void SpeculativeJIT::compileGetGlobalThis(Node* node)
     cellResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileUnwrapGlobalProxy(Node* node)
+{
+    SpeculateCellOperand object(this, node->child1());
+    GPRTemporary result(this);
+
+    GPRReg objectGPR = object.gpr();
+    GPRReg resultGPR = result.gpr();
+
+    speculateGlobalProxy(node->child1(), objectGPR);
+    loadPtr(Address(objectGPR, JSGlobalProxy::targetOffset()), resultGPR);
+    cellResult(resultGPR, node);
+}
+
 bool SpeculativeJIT::canBeRope(Edge& edge)
 {
     if (m_state.forNode(edge).isType(SpecStringIdent))
@@ -12332,6 +12345,20 @@ void SpeculativeJIT::speculateProxyObject(Edge edge)
     speculateProxyObject(edge, operand.gpr());
 }
 
+void SpeculativeJIT::speculateGlobalProxy(Edge edge, GPRReg cell)
+{
+    speculateCellType(edge, cell, SpecGlobalProxy, GlobalProxyType);
+}
+
+void SpeculativeJIT::speculateGlobalProxy(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecGlobalProxy))
+        return;
+
+    SpeculateCellOperand operand(this, edge);
+    speculateGlobalProxy(edge, operand.gpr());
+}
+
 void SpeculativeJIT::speculateDerivedArray(Edge edge, GPRReg cell)
 {
     speculateCellType(edge, cell, SpecDerivedArray, DerivedArrayType);
@@ -12937,6 +12964,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case ProxyObjectUse:
         speculateProxyObject(edge);
+        break;
+    case GlobalProxyUse:
+        speculateGlobalProxy(edge);
         break;
     case DerivedArrayUse:
         speculateDerivedArray(edge);

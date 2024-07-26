@@ -93,6 +93,10 @@ void printInternal(PrintStream& out, LocationKind kind)
     case StackPayloadLoc:
         out.print("StackPayloadLoc");
         return;
+
+    case GlobalProxyTargetLoc:
+        out.print("GlobalProxyTargetLoc");
+        return;
         
     case ArrayLengthLoc:
         out.print("ArrayLengthLoc");

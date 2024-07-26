@@ -140,6 +140,7 @@ inline CapabilityLevel canCompile(Node* node)
     case SkipScope:
     case GetGlobalObject:
     case GetGlobalThis:
+    case UnwrapGlobalProxy:
     case CreateActivation:
     case PushWithScope:
     case NewFunction:
@@ -564,6 +565,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case PromiseObjectUse:
                 case RegExpObjectUse:
                 case ProxyObjectUse:
+                case GlobalProxyUse:
                 case DerivedArrayUse:
                 case NotCellUse:
                 case NotCellNorBigIntUse:
