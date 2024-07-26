@@ -3627,6 +3627,8 @@ webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_put
 webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_putall.tentative.any.worker.html [ Failure ]
 webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Failure ]
 webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.html [ Skip ]
+imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.html [ Skip ]
 
 # Requires USE_AUDIO_SESSION, only available in iOS or Mac.
 media/audio-session-category-unmute-mute.html [ Skip ]

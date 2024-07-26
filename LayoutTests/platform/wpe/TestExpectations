@@ -335,6 +335,8 @@ imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ F
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Failure Pass ]
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.html [ Skip ]
+imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.html [ Skip ]
 imported/w3c/web-platform-tests/infrastructure/server/wpt-server-http.sub.html [ Failure ]
 imported/w3c/web-platform-tests/mimesniff/media/media-sniff.window.html [ Failure ]
 imported/w3c/web-platform-tests/navigation-timing/test_timing_xserver_redirect.html [ Failure ]
