@@ -106,7 +106,9 @@ public:
     String pointerType() const { return m_pointerType; }
     bool isPrimary() const { return m_isPrimary; }
 
-    Vector<Ref<PointerEvent>> getCoalescedEvents();
+    Vector<Ref<PointerEvent>> getCoalescedEvents() const;
+
+    void receivedTarget() final;
 
     bool isPointerEvent() const final { return true; }
 

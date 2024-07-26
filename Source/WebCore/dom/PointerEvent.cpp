@@ -102,6 +102,22 @@ PointerEvent::PointerEvent(const AtomString& type, Init&& initializer)
 {
 }
 
+static Vector<Ref<PointerEvent>> createCoalescedPointerEvents(const AtomString& type, MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
+{
+    if (type != eventNames().pointermoveEvent)
+        return { };
+
+    // Populated in accordance with the https://www.w3.org/TR/pointerevents3/#populating-and-maintaining-the-coalesced-and-predicted-events-lists spec.
+
+    Vector<Ref<PointerEvent>> result;
+    for (Ref coalescedMouseEvent : mouseEvent.coalescedEvents()) {
+        Ref pointerEvent = PointerEvent::create(type, button, coalescedMouseEvent.get(), pointerId, pointerType, Event::CanBubble::No, Event::IsCancelable::No);
+        result.append(WTFMove(pointerEvent));
+    }
+
+    return result;
+}
+
 PointerEvent::PointerEvent(const AtomString& type, MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType, CanBubble canBubble, IsCancelable isCancelable)
     : MouseEvent(EventInterfaceType::PointerEvent, type, canBubble, isCancelable, typeIsComposed(type), mouseEvent.timeStamp(), mouseEvent.view(), mouseEvent.detail(), mouseEvent.screenLocation(),
         { mouseEvent.clientX(), mouseEvent.clientY() }, mouseEvent.movementX(), mouseEvent.movementY(), mouseEvent.modifierKeys(), button, mouseEvent.buttons(),
@@ -112,6 +128,7 @@ PointerEvent::PointerEvent(const AtomString& type, MouseButton button, const Mou
     , m_pressure(pointerType != mousePointerEventType() ? std::clamp(mouseEvent.force(), 0., 1.) : pressureForPressureInsensitiveInputDevices(buttons()))
     , m_pointerType(pointerType)
     , m_isPrimary(true)
+    , m_coalescedEvents(createCoalescedPointerEvents(type, button, mouseEvent, pointerId, pointerType))
 {
 }
 
@@ -128,9 +145,25 @@ PointerEvent::PointerEvent(const AtomString& type, PointerID pointerId, const St
 
 PointerEvent::~PointerEvent() = default;
 
-Vector<Ref<PointerEvent>> PointerEvent::getCoalescedEvents()
+Vector<Ref<PointerEvent>> PointerEvent::getCoalescedEvents() const
 {
+#if ASSERT_ENABLED
+    auto timestampsAreMonotonicallyIncreasing = std::ranges::is_sorted(m_coalescedEvents, [](const auto& previousEvent, const auto& newEvent) {
+        return previousEvent->timeStamp() <= newEvent->timeStamp();
+    });
+
+    ASSERT(timestampsAreMonotonicallyIncreasing);
+#endif
+
     return m_coalescedEvents;
+}
+
+void PointerEvent::receivedTarget()
+{
+    MouseRelatedEvent::receivedTarget();
+
+    for (Ref coalescedEvent : m_coalescedEvents)
+        coalescedEvent->setTarget(this->target());
 }
 
 } // namespace WebCore

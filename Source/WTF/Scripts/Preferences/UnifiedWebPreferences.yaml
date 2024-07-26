@@ -2841,7 +2841,7 @@ GenericCueAPIEnabled:
 
 GetCoalescedEventsEnabled:
   type: bool
-  status: unstable
+  status: testable
   category: dom
   humanReadableName: "Pointer Events getCoalescedEvents API"
   humanReadableDescription: "Enable the `getCoalescedEvents` function of the Pointer Events API"

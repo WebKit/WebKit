@@ -184,7 +184,8 @@ class WebKit::WebMouseEvent : WebKit::WebEvent {
 #endif
     WebKit::GestureWasCancelled gestureWasCancelled();
     WebCore::IntPoint unadjustedMovementDelta();
-}
+    Vector<WebKit::WebMouseEvent> coalescedEvents();
+};
 
 #if ENABLE(MAC_GESTURE_EVENTS)
 class WebKit::WebGestureEvent : WebKit::WebEvent {
