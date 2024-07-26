@@ -192,7 +192,7 @@ void AcceleratedBuffer::waitUntilPaintingComplete()
     if (!m_fence)
         return;
 
-    m_fence->wait(WebCore::GLFence::FlushCommands::No);
+    m_fence->serverWait();
     m_fence = nullptr;
 }
 #endif

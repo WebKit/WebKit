@@ -50,15 +50,14 @@ bool GLFence::isSupported()
     return supported;
 }
 
-std::unique_ptr<GLFence> GLFence::create(ShouldFlush shouldFlush)
+std::unique_ptr<GLFence> GLFence::create()
 {
     if (!GLContextWrapper::currentContext())
         return nullptr;
 
     if (isSupported()) {
         if (auto* sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0)) {
-            if (shouldFlush == ShouldFlush::Yes)
-                glFlush();
+            glFlush();
             return makeUnique<GLFence>(sync);
         }
         return nullptr;
@@ -78,9 +77,14 @@ GLFence::~GLFence()
         glDeleteSync(m_sync);
 }
 
-unsigned GLFence::wait(FlushCommands flushCommands)
+void GLFence::serverWait()
 {
-    return glClientWaitSync(m_sync, flushCommands == FlushCommands::Yes ? GL_SYNC_FLUSH_COMMANDS_BIT : 0, GL_TIMEOUT_IGNORED);
+    glWaitSync(m_sync, 0, GL_TIMEOUT_IGNORED);
+}
+
+void GLFence::clientWait()
+{
+    glClientWaitSync(m_sync, 0, GL_TIMEOUT_IGNORED);
 }
 
 } // namespace WebCore

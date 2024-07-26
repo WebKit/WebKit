@@ -606,8 +606,8 @@ void AcceleratedSurfaceDMABuf::didRenderFrame(WebCore::Region&& damage)
     if (!m_target)
         return;
 
-    if (auto fence = WebCore::GLFence::create(WebCore::GLFence::ShouldFlush::No))
-        fence->wait(WebCore::GLFence::FlushCommands::Yes);
+    if (auto fence = WebCore::GLFence::create())
+        fence->clientWait();
     else
         glFlush();
 
