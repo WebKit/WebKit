@@ -1338,9 +1338,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self _createAndConfigureHighlightLongPressGestureRecognizer];
     [self _createAndConfigureLongPressGestureRecognizer];
 
-#if HAVE(LINK_PREVIEW)
     [self _updateLongPressAndHighlightLongPressGestures];
-#endif
 
 #if ENABLE(DRAG_SUPPORT)
     [self setUpDragAndDropInteractions];
@@ -1668,6 +1666,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_updateLongPressAndHighlightLongPressGestures
 {
+#if HAVE(LINK_PREVIEW)
     // We only disable the highlight long press gesture in the case where UIContextMenu is available and we
     // also allow link previews, since the context menu interaction's gestures need to take precedence over
     // highlight long press gestures.
@@ -1676,6 +1675,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // We only enable the long press gesture in the case where the app is linked on iOS 12 or earlier (and
     // therefore prefers the legacy action sheet over context menus), and link previews are also enabled.
     [_longPressGestureRecognizer setEnabled:!self._shouldUseContextMenus && self.webView.allowsLinkPreview];
+#else
+    [_highlightLongPressGestureRecognizer setEnabled:NO];
+    [_longPressGestureRecognizer setEnabled:NO];
+#endif
 }
 
 - (UIView *)unscaledView
