@@ -14,7 +14,7 @@
 <script>
 window.jsTestIsAsync = true;
 [...document.fonts.entries()][0].load().then(function() {
-    shouldBeGreaterThanOrEqual("50", "document.getElementById('target').offsetWidth");
+    shouldBeGreaterThanOrEqual("54", "document.getElementById('target').offsetWidth");
     finishJSTest();
 });
 </script>

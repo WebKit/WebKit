@@ -1,4 +1,4 @@
-PASS 50 is >= document.getElementById('target').offsetWidth
+PASS 54 is >= document.getElementById('target').offsetWidth
 PASS successfullyParsed is true
 
 TEST COMPLETE
