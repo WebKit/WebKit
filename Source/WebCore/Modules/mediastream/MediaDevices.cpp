@@ -122,6 +122,48 @@ bool MediaDevices::computeUserGesturePriviledge(GestureAllowedRequest requestTyp
     return isUserGesturePriviledged;
 }
 
+static std::optional<MediaConstraint> invalidRequiredConstraintForDeviceSelection(const MediaConstraints& constraints)
+{
+    // https://w3c.github.io/mediacapture-main/#dfn-allowed-required-constraints-for-device-selection
+    // The allowed required constraints for device selection contains the following constraint names:
+    // width, height, aspectRatio, frameRate, facingMode, resizeMode, sampleRate, sampleSize,
+    // echoCancellation, autoGainControl, noiseSuppression, latency, channelCount, deviceId, groupId.
+
+    std::optional<MediaConstraint> invalidConstraint;
+    constraints.mandatoryConstraints.filter([&invalidConstraint] (const MediaConstraint& constraint) mutable {
+        switch (constraint.constraintType()) {
+        case MediaConstraintType::Width:
+        case MediaConstraintType::Height:
+        case MediaConstraintType::AspectRatio:
+        case MediaConstraintType::FrameRate:
+        case MediaConstraintType::FacingMode:
+        case MediaConstraintType::SampleRate:
+        case MediaConstraintType::SampleSize:
+        case MediaConstraintType::EchoCancellation:
+        case MediaConstraintType::DeviceId:
+        case MediaConstraintType::GroupId:
+            break;
+
+        case MediaConstraintType::Volume:
+        case MediaConstraintType::FocusDistance:
+        case MediaConstraintType::Zoom:
+        case MediaConstraintType::WhiteBalanceMode:
+        case MediaConstraintType::Unknown:
+            invalidConstraint = { constraint };
+            break;
+
+        case MediaConstraintType::DisplaySurface:
+        case MediaConstraintType::LogicalSurface:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+
+        return invalidConstraint.has_value();
+    });
+
+    return invalidConstraint;
+}
+
 void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promise)
 {
     auto audioConstraints = createMediaConstraints(constraints.audio);
@@ -161,6 +203,11 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
         }
         isUserGesturePriviledged |= computeUserGesturePriviledge(GestureAllowedRequest::Microphone);
         audioConstraints.setDefaultAudioConstraints();
+
+        if (auto invalidConstraint = invalidRequiredConstraintForDeviceSelection(audioConstraints)) {
+            promise.reject(Exception { TypeError, makeString("Invalid required constraint"_s, invalidConstraint->name()) });
+            return;
+        }
     }
     if (videoConstraints.isValid) {
         if (videoConstraints.hasDisallowedRequiredConstraintForDeviceSelection(MediaConstraints::DeviceType::Camera)) {
@@ -173,6 +220,11 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
         }
         isUserGesturePriviledged |= computeUserGesturePriviledge(GestureAllowedRequest::Camera);
         videoConstraints.setDefaultVideoConstraints();
+
+        if (auto invalidConstraint = invalidRequiredConstraintForDeviceSelection(videoConstraints)) {
+            promise.reject(Exception { TypeError, makeString("Invalid required constraint"_s, invalidConstraint->name()) });
+            return;
+        }
     }
 
     auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::UserMedia, WTFMove(audioConstraints), WTFMove(videoConstraints), isUserGesturePriviledged, *document->pageID() }, WTFMove(constraints.audio), WTFMove(constraints.video), WTFMove(promise));

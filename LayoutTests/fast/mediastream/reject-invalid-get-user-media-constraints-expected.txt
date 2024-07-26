@@ -1,0 +1,6 @@
+
+PASS Call getUserMedia with a user gesture to remove the prompt from further calls
+PASS Deny getUserMedia call with required volume constraint
+PASS Deny getUserMedia call with required zoom constraint
+PASS Deny getUserMedia call with required whiteBalanceMode constraint
+

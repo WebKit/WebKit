@@ -1,0 +1,26 @@
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+
+promise_test(() => {
+    let promise;
+    internals.withUserGesture(() => {
+        promise = navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    });
+    return promise;
+}, "Call getUserMedia with a user gesture to remove the prompt from further calls");
+
+promise_test((test) => {
+    return promise_rejects_js(test, TypeError, navigator.mediaDevices.getUserMedia({ audio: { volume: { max: 1 } } }));
+}, "Deny getUserMedia call with required volume constraint");
+
+promise_test((test) => {
+    return promise_rejects_js(test, TypeError, navigator.mediaDevices.getUserMedia({ video: { zoom: { min: 1 } } }));
+}, "Deny getUserMedia call with required zoom constraint");
+
+promise_test((test) => {
+    return promise_rejects_js(test, TypeError, navigator.mediaDevices.getUserMedia({ video: { whiteBalanceMode: { exact: "continuous" } } }));
+}, "Deny getUserMedia call with required whiteBalanceMode constraint");
+
+</script>
