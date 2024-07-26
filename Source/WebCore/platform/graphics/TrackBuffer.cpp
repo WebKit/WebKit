@@ -338,7 +338,7 @@ int64_t TrackBuffer::codedFramesIntervalSize(const MediaTime& start, const Media
         if (sampleIterator == m_samples.presentationOrder().end())
             return 0;
         Ref sample = sampleIterator->second;
-        if (!sample->isDivisable())
+        if (!sample->isDivisable() || sample->presentationTime() > end || (sample->presentationTime() + sample->duration() < start))
             return 0;
         MediaTime microsecond(1, 1000000);
         MediaTime roundedTime = roundTowardsTimeScaleWithRoundingMargin(time, sample->presentationTime().timeScale(), microsecond);

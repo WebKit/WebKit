@@ -290,7 +290,9 @@ bool MediaSampleAVFObjC::isDivisable() const
 
 std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> MediaSampleAVFObjC::divide(const MediaTime& presentationTime, UseEndTime useEndTime)
 {
-    if (!isDivisable())
+    auto endTime = this->presentationTime() + duration();
+
+    if (!isDivisable() || this->presentationTime() > presentationTime || endTime < presentationTime)
         return { nullptr, nullptr };
 
     CFIndex samplesBeforePresentationTime = 0;
