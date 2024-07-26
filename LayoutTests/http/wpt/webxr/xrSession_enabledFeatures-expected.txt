@@ -1,0 +1,5 @@
+
+
+PASS Validate enabledFeatures on XRSession - webgl
+PASS Validate enabledFeatures on XRSession - webgl2
+

@@ -79,6 +79,8 @@ public:
     const WebXRInputSourceArray& inputSources() const;
     RefPtr<PlatformXR::Device> device() const { return m_device.get(); }
 
+    const Vector<String> enabledFeatures() const;
+
     ExceptionOr<void> updateRenderState(const XRRenderStateInit&);
     void requestReferenceSpace(XRReferenceSpaceType, RequestReferenceSpacePromise&&);
 
