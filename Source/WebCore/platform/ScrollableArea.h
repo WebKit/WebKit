@@ -506,6 +506,6 @@ private:
     Markable<ScrollingNodeID> m_scrollingNodeIDForTesting;
 };
 
-WTF::TextStream& operator<<(WTF::TextStream&, const ScrollableArea&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const ScrollableArea&);
 
 } // namespace WebCore

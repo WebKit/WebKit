@@ -298,7 +298,7 @@ private:
 #endif
 
 #if PLATFORM(MAC)
-    void ensureScrollbarsController(WebCore::Page&, WebCore::ScrollableArea&) const final;
+    void ensureScrollbarsController(WebCore::Page&, WebCore::ScrollableArea&, bool update = false) const final;
 #endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)

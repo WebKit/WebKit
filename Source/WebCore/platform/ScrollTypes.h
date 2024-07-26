@@ -387,7 +387,7 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollGranularity);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, NativeScrollbarVisibility);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollPositionChangeOptions);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapPointSelectionMethod);
-WTF::TextStream& operator<<(WTF::TextStream&, ScrollbarWidth);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollbarWidth);
 
 } // namespace WebCore
 

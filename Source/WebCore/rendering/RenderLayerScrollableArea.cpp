@@ -2047,5 +2047,4 @@ FrameIdentifier RenderLayerScrollableArea::rootFrameID() const
     return m_layer.renderer().frame().rootFrame().frameID();
 }
 
-
 } // namespace WebCore

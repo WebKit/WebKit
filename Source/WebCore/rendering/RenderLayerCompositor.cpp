@@ -5433,6 +5433,8 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingRole(Rende
             scrollingCoordinator->setScrollingNodeScrollableAreaGeometry(newNodeID, frameView);
             scrollingCoordinator->setFrameScrollingNodeState(newNodeID, frameView);
         }
+        page().chrome().client().ensureScrollbarsController(page(), frameView, true);
+
     } else {
         newNodeID = attachScrollingNode(layer, ScrollingNodeType::Overflow, treeState);
         if (!newNodeID) {
@@ -5452,7 +5454,7 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingRole(Rende
                 scrollingCoordinator->setScrollingNodeScrollableAreaGeometry(newNodeID, *scrollableArea);
         }
         if (auto* scrollableArea = layer.scrollableArea())
-            page().chrome().client().ensureScrollbarsController(page(), *scrollableArea);
+            page().chrome().client().ensureScrollbarsController(page(), *scrollableArea, true);
     }
 
     return newNodeID;

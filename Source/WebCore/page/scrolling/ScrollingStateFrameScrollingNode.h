@@ -154,6 +154,7 @@ private:
         ScrollbarHoverState&&,
         ScrollbarEnabledState&&,
         UserInterfaceLayoutDirection,
+        ScrollbarWidth,
         RequestedKeyboardScrollData&&,
         float frameScaleFactor,
         EventTrackingRegions&&,

@@ -344,6 +344,10 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         if (auto* scrollableArea = layer()->scrollableArea())
             scrollableArea->scrollbarsController().scrollbarLayoutDirectionChanged(shouldPlaceVerticalScrollbarOnLeft() ? UserInterfaceLayoutDirection::RTL : UserInterfaceLayoutDirection::LTR);
     }
+    if (layer() && oldStyle && oldStyle->scrollbarWidth() != newStyle.scrollbarWidth()) {
+        if (auto* scrollableArea = layer()->scrollableArea())
+            scrollableArea->scrollbarsController().scrollbarWidthChanged(newStyle.scrollbarWidth());
+    }
 
 #if ENABLE(DARK_MODE_CSS)
     if (layer() && oldStyle && oldStyle->colorScheme() != newStyle.colorScheme()) {

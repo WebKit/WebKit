@@ -4090,6 +4090,7 @@ header: <WebCore/ScrollingStateNode.h>
     ScrollbarHoverState
     ScrollbarEnabledState
     ScrollbarLayoutDirection
+    ScrollbarWidth
     FrameScaleFactor
     EventTrackingRegion
     RootContentsLayer

@@ -68,6 +68,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(
     ScrollbarHoverState&& scrollbarHoverState,
     ScrollbarEnabledState&& scrollbarEnabledState,
     UserInterfaceLayoutDirection scrollbarLayoutDirection,
+    ScrollbarWidth scrollbarWidth,
     RequestedKeyboardScrollData&& keyboardScrollData
 ) : ScrollingStateNode(nodeType, nodeID, WTFMove(children), changedProperties, layerID)
     , m_scrollableAreaSize(scrollableAreaSize)
@@ -92,6 +93,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(
     , m_synchronousScrollingReasons(synchronousScrollingReasons)
 #endif
     , m_scrollbarLayoutDirection(scrollbarLayoutDirection)
+    , m_scrollbarWidth(scrollbarWidth)
     , m_isMonitoringWheelEvents(isMonitoringWheelEvents)
     , m_mouseIsOverContentArea(mouseIsOverContentArea)
 {
@@ -120,6 +122,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_synchronousScrollingReasons(stateNode.synchronousScrollingReasons())
 #endif
     , m_scrollbarLayoutDirection(stateNode.scrollbarLayoutDirection())
+    , m_scrollbarWidth(stateNode.scrollbarWidth())
     , m_isMonitoringWheelEvents(stateNode.isMonitoringWheelEvents())
     , m_mouseIsOverContentArea(stateNode.mouseIsOverContentArea())
 {
@@ -383,6 +386,14 @@ void ScrollingStateScrollingNode::setScrollbarLayoutDirection(UserInterfaceLayou
 
     m_scrollbarLayoutDirection = scrollbarLayoutDirection;
     setPropertyChanged(Property::ScrollbarLayoutDirection);
+}
+
+void ScrollingStateScrollingNode::setScrollbarWidth(ScrollbarWidth scrollbarWidth)
+{
+    if (scrollbarWidth == m_scrollbarWidth)
+        return;
+    m_scrollbarWidth = scrollbarWidth;
+    setPropertyChanged(Property::ScrollbarWidth);
 }
 
 void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const

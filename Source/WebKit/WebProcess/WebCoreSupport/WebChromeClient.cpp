@@ -1189,12 +1189,13 @@ RefPtr<WebCore::ScrollingCoordinator> WebChromeClient::createScrollingCoordinato
 #endif
 
 #if PLATFORM(MAC)
-void WebChromeClient::ensureScrollbarsController(Page& corePage, ScrollableArea& area) const
+void WebChromeClient::ensureScrollbarsController(Page& corePage, ScrollableArea& area, bool update) const
 {
     auto page = protectedPage();
     ASSERT(page->corePage() == &corePage);
     auto* currentScrollbarsController = area.existingScrollbarsController();
-    if (area.mockScrollbarsControllerEnabled()) {
+
+    if (area.mockScrollbarsControllerEnabled() || (update && !currentScrollbarsController)) {
         ASSERT(!currentScrollbarsController || is<ScrollbarsControllerMock>(currentScrollbarsController));
         return;
     }

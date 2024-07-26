@@ -499,6 +499,17 @@ void AsyncScrollingCoordinator::setScrollbarEnabled(Scrollbar& scrollbar)
     stateNode->setScrollbarEnabledState(scrollbar.orientation(), scrollbar.enabled());
 }
 
+void AsyncScrollingCoordinator::setScrollbarWidth(ScrollableArea& scrollableArea, ScrollbarWidth scrollbarWidth)
+{
+    ASSERT(isMainThread());
+    ASSERT(page());
+
+    auto stateNode = dynamicDowncast<ScrollingStateScrollingNode>(stateNodeForScrollableArea(scrollableArea));
+    if (!stateNode)
+        return;
+    stateNode->setScrollbarWidth(scrollbarWidth);
+}
+
 void AsyncScrollingCoordinator::applyScrollingTreeLayerPositions()
 {
     m_scrollingTree->applyLayerPositions();
@@ -984,6 +995,7 @@ void AsyncScrollingCoordinator::setFrameScrollingNodeState(ScrollingNodeID nodeI
     frameScrollingNode->setAsyncFrameOrOverflowScrollingEnabled(settings.asyncFrameScrollingEnabled() || settings.asyncOverflowScrollingEnabled());
     frameScrollingNode->setScrollingPerformanceTestingEnabled(settings.scrollingPerformanceTestingEnabled());
     frameScrollingNode->setOverlayScrollbarsEnabled(ScrollbarTheme::theme().usesOverlayScrollbars());
+    frameScrollingNode->setScrollbarWidth(frameView.scrollbarWidthStyle());
     frameScrollingNode->setWheelEventGesturesBecomeNonBlocking(settings.wheelEventGesturesBecomeNonBlocking());
 
     frameScrollingNode->setMinLayoutViewportOrigin(frameView.minStableLayoutViewportOrigin());
@@ -1019,6 +1031,7 @@ void AsyncScrollingCoordinator::setScrollingNodeScrollableAreaGeometry(Scrolling
         scrollingNode->setScrollbarEnabledState(ScrollbarOrientation::Horizontal, horizontalScrollbar->enabled());
     if (verticalScrollbar)
         scrollingNode->setScrollbarEnabledState(ScrollbarOrientation::Vertical, verticalScrollbar->enabled());
+    scrollingNode->setScrollbarWidth(scrollableArea.scrollbarWidthStyle());
 
     scrollingNode->setScrollOrigin(scrollableArea.scrollOrigin());
     scrollingNode->setScrollPosition(scrollableArea.scrollPosition());

@@ -112,6 +112,8 @@ public:
 
     bool mouseInContentArea() const { return m_mouseInContentArea; }
 
+    void setScrollbarWidth(ScrollbarWidth);
+
 private:
     ScrollerPairMac(ScrollingTreeScrollingNode&);
 
@@ -130,6 +132,7 @@ private:
     RetainPtr<NSScrollerImpPair> m_scrollerImpPair;
     RetainPtr<WebScrollerImpPairDelegateMac> m_scrollerImpPairDelegate;
 
+    ScrollbarWidth m_scrollbarWidth { ScrollbarWidth::Auto };
     std::atomic<bool> m_usingPresentationValues { false };
     std::atomic<ScrollbarStyle> m_scrollbarStyle { ScrollbarStyle::AlwaysVisible };
     bool m_inLiveResize { false };

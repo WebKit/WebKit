@@ -285,11 +285,7 @@ bool ScrollerPairMac::useDarkAppearance() const
 
 ScrollbarWidth ScrollerPairMac::scrollbarWidthStyle() const
 {
-    RefPtr node = m_scrollingNode.get();
-    if (!node)
-        return ScrollbarWidth::Auto;
-
-    return node->scrollbarWidthStyle();
+    return m_scrollbarWidth;
 }
 
 ScrollerPairMac::Values ScrollerPairMac::valuesForOrientation(ScrollbarOrientation orientation)
@@ -427,6 +423,16 @@ void ScrollerPairMac::mouseIsInScrollbar(ScrollbarHoverState hoverState)
             horizontalScroller().mouseExitedScrollbar();
     }
     m_scrollbarHoverState = hoverState;
+}
+
+void ScrollerPairMac::setScrollbarWidth(ScrollbarWidth scrollbarWidth)
+{
+    if (m_scrollbarWidth == scrollbarWidth)
+        return;
+    m_scrollbarWidth = scrollbarWidth;
+
+    horizontalScroller().updateScrollbarStyle();
+    verticalScroller().updateScrollbarStyle();
 }
 
 } // namespace WebCore
