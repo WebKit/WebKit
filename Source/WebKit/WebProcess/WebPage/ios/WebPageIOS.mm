@@ -972,6 +972,8 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(location)));
 
     send(Messages::WebPageProxy::DidCompleteSyntheticClick());
+
+    scheduleLayoutViewportHeightExpansionUpdate();
 }
 
 void WebPage::attemptSyntheticClick(const IntPoint& point, OptionSet<WebEventModifier> modifiers, TransactionID lastLayerTreeTransactionId)
@@ -4692,6 +4694,19 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     }
 }
 
+void WebPage::scheduleLayoutViewportHeightExpansionUpdate()
+{
+    if (!m_page->settings().layoutViewportHeightExpansionFactor())
+        return;
+
+    if (m_updateLayoutViewportHeightExpansionTimer.isActive()) {
+        m_shouldRescheduleLayoutViewportHeightExpansionTimer = true;
+        return;
+    }
+
+    m_updateLayoutViewportHeightExpansionTimer.restart();
+}
+
 void WebPage::updateLayoutViewportHeightExpansionTimerFired()
 {
     if (m_disallowLayoutViewportHeightExpansionReasons.contains(DisallowLayoutViewportHeightExpansionReason::LargeContainer))
@@ -4739,8 +4754,13 @@ void WebPage::updateLayoutViewportHeightExpansionTimerFired()
         });
     }();
 
-    if (hitTestedToLargeViewportConstrainedElement)
+    if (hitTestedToLargeViewportConstrainedElement) {
+        RELEASE_LOG(ViewportSizing, "Shrinking viewport down to normal height (found large fixed-position container)");
         addReasonsToDisallowLayoutViewportHeightExpansion(DisallowLayoutViewportHeightExpansionReason::LargeContainer);
+    } else if (m_shouldRescheduleLayoutViewportHeightExpansionTimer) {
+        m_shouldRescheduleLayoutViewportHeightExpansionTimer = false;
+        m_updateLayoutViewportHeightExpansionTimer.restart();
+    }
 }
 
 void WebPage::willStartUserTriggeredZooming()
@@ -5407,7 +5427,21 @@ void WebPage::requestPasswordForQuickLookDocumentInMainFrame(const String& fileN
 
 #endif
 
-void WebPage::animationDidFinishForElement(const WebCore::Element& animatedElement)
+void WebPage::animationDidFinishForElement(const Element& animatedElement)
+{
+    scheduleEditorStateUpdateAfterAnimationIfNeeded(animatedElement);
+
+    if (!m_page->settings().layoutViewportHeightExpansionFactor())
+        return;
+
+    if (!animatedElement.document().isTopDocument())
+        return;
+
+    if (CheckedPtr renderer = animatedElement.renderer(); renderer && renderer->isFixedPositioned())
+        scheduleLayoutViewportHeightExpansionUpdate();
+}
+
+void WebPage::scheduleEditorStateUpdateAfterAnimationIfNeeded(const Element& animatedElement)
 {
     RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
     if (!frame)

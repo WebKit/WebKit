@@ -466,7 +466,7 @@ static const Seconds maximumLayerVolatilityTimerInterval { 2_s };
 
 #if PLATFORM(IOS_FAMILY)
 static constexpr Seconds updateFocusedElementInformationDebounceInterval { 100_ms };
-static constexpr Seconds updateLayoutViewportHeightExpansionTimerInterval { 25_ms };
+static constexpr Seconds updateLayoutViewportHeightExpansionTimerInterval { 200_ms };
 #endif
 
 #define WEBPAGE_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
@@ -7722,6 +7722,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
 
 #if PLATFORM(IOS_FAMILY)
     m_updateLayoutViewportHeightExpansionTimer.stop();
+    m_shouldRescheduleLayoutViewportHeightExpansionTimer = false;
 #endif
     removeReasonsToDisallowLayoutViewportHeightExpansion(m_disallowLayoutViewportHeightExpansionReasons);
 
@@ -9835,11 +9836,8 @@ void WebPage::updateLastNodeBeforeWritingSuggestions(const KeyboardEvent& event)
 
 void WebPage::didAddOrRemoveViewportConstrainedObjects()
 {
-    if (!m_page->settings().layoutViewportHeightExpansionFactor())
-        return;
-
 #if PLATFORM(IOS_FAMILY)
-    m_updateLayoutViewportHeightExpansionTimer.restart();
+    scheduleLayoutViewportHeightExpansionUpdate();
 #endif
 }
 

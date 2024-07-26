@@ -1847,7 +1847,9 @@ private:
     WebAutocorrectionContext autocorrectionContext();
     bool applyAutocorrectionInternal(const String& correction, const String& originalText, bool isCandidate);
     void clearSelectionAfterTapIfNeeded();
-#endif
+    void scheduleLayoutViewportHeightExpansionUpdate();
+    void scheduleEditorStateUpdateAfterAnimationIfNeeded(const WebCore::Element&);
+#endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     void setLinkDecorationFilteringData(Vector<WebCore::LinkDecorationFilteringData>&&);
@@ -2805,6 +2807,7 @@ private:
     OptionSet<DisallowLayoutViewportHeightExpansionReason> m_disallowLayoutViewportHeightExpansionReasons;
 #if PLATFORM(IOS_FAMILY)
     WebCore::DeferrableOneShotTimer m_updateLayoutViewportHeightExpansionTimer;
+    bool m_shouldRescheduleLayoutViewportHeightExpansionTimer { false };
 #endif
 
     WeakPtr<WebCore::Node, WebCore::WeakPtrImplWithEventTargetData> m_lastNodeBeforeWritingSuggestions;
