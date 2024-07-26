@@ -99,18 +99,18 @@ TreeScope::~TreeScope() = default;
 
 void TreeScope::incrementPtrCount() const
 {
-    if (auto* document = dynamicDowncast<Document>(m_rootNode))
+    if (auto* document = dynamicDowncast<Document>(m_rootNode.get()))
         document->incrementPtrCount();
     else
-        downcast<ShadowRoot>(m_rootNode).incrementPtrCount();
+        downcast<ShadowRoot>(m_rootNode.get()).incrementPtrCount();
 }
 
 void TreeScope::decrementPtrCount() const
 {
-    if (auto* document = dynamicDowncast<Document>(m_rootNode))
+    if (auto* document = dynamicDowncast<Document>(m_rootNode.get()))
         document->decrementPtrCount();
     else
-        downcast<ShadowRoot>(m_rootNode).decrementPtrCount();
+        downcast<ShadowRoot>(m_rootNode.get()).decrementPtrCount();
 }
 
 void TreeScope::ref() const
