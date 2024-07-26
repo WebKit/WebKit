@@ -123,7 +123,7 @@ public:
     // quirks mode for historical compatibility reasons.
     RefPtr<Element> findAnchor(StringView name);
 
-    ContainerNode& rootNode() const { return m_rootNode; }
+    inline ContainerNode& rootNode() const; // Defined in ContainerNode.h
     Ref<ContainerNode> protectedRootNode() const;
 
     inline IdTargetObserverRegistry& idTargetObserverRegistry();
@@ -168,7 +168,7 @@ private:
     SVGResourcesMap& svgResourcesMap() const;
     bool isElementWithPendingSVGResources(SVGElement&) const;
 
-    ContainerNode& m_rootNode;
+    CheckedRef<ContainerNode> m_rootNode;
     std::reference_wrapper<Document> m_documentScope;
     TreeScope* m_parentTreeScope;
 

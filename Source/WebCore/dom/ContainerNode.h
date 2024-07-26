@@ -208,6 +208,11 @@ inline Node* Node::lastChild() const
     return containerNode ? containerNode->lastChild() : nullptr;
 }
 
+inline ContainerNode& TreeScope::rootNode() const
+{
+    return m_rootNode.get();
+}
+
 inline Node& Node::rootNode() const
 {
     if (isInTreeScope())
