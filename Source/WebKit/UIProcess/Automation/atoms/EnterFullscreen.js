@@ -26,12 +26,12 @@
 function enterFullscreen() {
 
     let callback = arguments[0];
-    if (!document.webkitFullscreenEnabled) {
+    if (!document.fullscreenEnabled) {
         callback(false);
         return;
     }
 
-    if (document.webkitIsFullScreen) {
+    if (document.fullscreenElement) {
         callback(true);
         return;
     }
@@ -42,11 +42,11 @@ function enterFullscreen() {
         if (e.target !== document.documentElement)
             return;
 
-        if (!document.webkitIsFullScreen)
+        if (!document.fullscreenElement)
             return;
 
-        document.removeEventListener("webkitfullscreenerror", fullscreenChangeListener);
-        document.documentElement.removeEventListener("webkitfullscreenchange", fullscreenErrorListener);
+        document.removeEventListener("fullscreenchange", fullscreenChangeListener);
+        document.documentElement.removeEventListener("fullscreenerror", fullscreenErrorListener);
         callback(true);
     };
     fullscreenErrorListener = (e) => {
@@ -54,13 +54,13 @@ function enterFullscreen() {
         if (e.target !== document.documentElement)
             return;
 
-        document.removeEventListener("webkitfullscreenchange", fullscreenChangeListener);
-        document.documentElement.removeEventListener("webkitfullscreenerror", fullscreenErrorListener);
-        callback(!!document.webkitIsFullScreen);
+        document.removeEventListener("fullscreenchange", fullscreenChangeListener);
+        document.documentElement.removeEventListener("fullscreenerror", fullscreenErrorListener);
+        callback(!!document.fullscreenElement);
     };
 
     // The document fires change events, but the fullscreen element fires error events.
-    document.addEventListener("webkitfullscreenchange", fullscreenChangeListener);
-    document.documentElement.addEventListener("webkitfullscreenerror", fullscreenErrorListener);
-    document.documentElement.webkitRequestFullscreen();
+    document.addEventListener("fullscreenchange", fullscreenChangeListener);
+    document.documentElement.addEventListener("fullscreenerror", fullscreenErrorListener);
+    document.documentElement.requestFullscreen();
 }
