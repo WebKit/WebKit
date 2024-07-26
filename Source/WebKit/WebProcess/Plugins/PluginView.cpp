@@ -28,6 +28,7 @@
 
 #if ENABLE(PDF_PLUGIN)
 
+#include "FrameInfoData.h"
 #include "PDFPlugin.h"
 #include "UnifiedPDFPlugin.h"
 #include "WebCoreArgumentCoders.h"
@@ -117,7 +118,7 @@ private:
     // True if the stream was explicitly cancelled by calling cancel().
     // (As opposed to being cancelled by the user hitting the stop button for example.
     bool m_streamWasCancelled;
-    
+
     RefPtr<NetscapePlugInStreamLoader> m_loader;
 };
 
@@ -127,7 +128,7 @@ PluginView::Stream::~Stream()
         m_loadCallback({ });
     ASSERT(!m_pluginView);
 }
-    
+
 void PluginView::Stream::start()
 {
     ASSERT(!m_loader);
@@ -382,12 +383,12 @@ id PluginView::accessibilityAssociatedPluginParentForElement(Element* element) c
 {
     return protectedPlugin()->accessibilityAssociatedPluginParentForElement(element);
 }
-    
+
 id PluginView::accessibilityObject() const
 {
     if (!m_isInitialized)
         return nil;
-    
+
     return protectedPlugin()->accessibilityObject();
 }
 
@@ -594,7 +595,7 @@ void PluginView::clipRectChanged()
 void PluginView::setParent(ScrollView* scrollView)
 {
     Widget::setParent(scrollView);
-    
+
     if (scrollView)
         initializePlugin();
 }
@@ -692,7 +693,7 @@ bool PluginView::handleEditingCommand(const String& commandName, const String& a
 
     return protectedPlugin()->handleEditingCommand(commandName, argument);
 }
-    
+
 bool PluginView::isEditingCommandEnabled(const String& commandName)
 {
     if (!m_isInitialized)
@@ -1050,6 +1051,16 @@ Vector<WebCore::FloatRect> PluginView::pdfAnnotationRectsForTesting() const
 void PluginView::registerPDFTestCallback(RefPtr<VoidCallback>&& callback)
 {
     protectedPlugin()->registerPDFTest(WTFMove(callback));
+}
+
+PDFPluginIdentifier PluginView::pdfPluginIdentifier() const
+{
+    return protectedPlugin()->identifier();
+}
+
+void PluginView::openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)>&& completionHandler)
+{
+    protectedPlugin()->openWithPreview(WTFMove(completionHandler));
 }
 
 } // namespace WebKit
