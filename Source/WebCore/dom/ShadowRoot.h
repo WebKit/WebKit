@@ -54,6 +54,8 @@ class ShadowRoot final : public DocumentFragment, public TreeScope {
     WTF_MAKE_ISO_ALLOCATED(ShadowRoot);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ShadowRoot);
 public:
+    using DocumentFragment::incrementPtrCount;
+    using DocumentFragment::decrementPtrCount;
 
     enum class DelegatesFocus : bool { No, Yes };
     enum class Clonable : bool { No, Yes };

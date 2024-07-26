@@ -804,7 +804,7 @@ private:
     mutable OptionSet<StateFlag> m_stateFlags;
 
     CheckedPtr<ContainerNode> m_parentNode;
-    TreeScope* m_treeScope { nullptr };
+    CheckedPtr<TreeScope> m_treeScope;
     CompactPointerTuple<Node*, uint16_t> m_previous;
     CheckedPtr<Node> m_next;
     CompactPointerTuple<RenderObject*, uint16_t> m_rendererWithStyleFlags;
@@ -959,7 +959,7 @@ inline void Node::setTreeScopeRecursively(TreeScope& newTreeScope)
 {
     ASSERT(!isDocumentNode());
     ASSERT(!deletionHasBegun());
-    if (m_treeScope != &newTreeScope)
+    if (m_treeScope.get() != &newTreeScope)
         moveTreeToNewScope(*this, *m_treeScope, newTreeScope);
 }
 
