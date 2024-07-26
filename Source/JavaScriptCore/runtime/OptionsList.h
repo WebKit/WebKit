@@ -647,6 +647,43 @@ enum OptionEquivalence {
     v(maximumFTLCandidateInstructionCount, maximumFTLCandidateBytecodeCost, SameOption) \
     v(maximumInliningCallerSize, maximumInliningCallerBytecodeCost, SameOption) \
     v(validateBCE, validateBoundsCheckElimination, SameOption) \
+    /* Wasm -> WebAssembly aliases */ \
+    v(maximumWasmDepthForInlining, maximumWebAssemblyDepthForInlining, SameOption) \
+    v(maximumWasmCalleeSizeForInlining, maximumWebAssemblyCalleeSizeForInlining, SameOption) \
+    v(maximumWasmCallerSizeForInlining, maximumWebAssemblyCallerSizeForInlining, SameOption) \
+    v(useWasm, useWebAssembly, SameOption) \
+    v(failToCompileWasmCode, failToCompileWebAssemblyCode, SameOption) \
+    v(wasmPartialCompileLimit, webAssemblyPartialCompileLimit, SameOption) \
+    v(wasmOMGOptimizationLevel, webAssemblyOMGOptimizationLevel, SameOption) \
+    v(useWasmOSR, useWebAssemblyOSR, SameOption) \
+    v(useWasmFastMemory, useWebAssemblyFastMemory, SameOption) \
+    v(logWasmMemory, logWebAssemblyMemory, SameOption) \
+    v(wasmFastMemoryRedzonePages, webAssemblyFastMemoryRedzonePages, SameOption) \
+    v(crashIfWasmCantFastMemory, crashIfWebAssemblyCantFastMemory, SameOption) \
+    v(crashOnFailedWasmValidate, crashOnFailedWebAssemblyValidate, SameOption) \
+    v(maxNumWasmFastMemories, maxNumWebAssemblyFastMemories, SameOption) \
+    v(useWasmLLInt, useWebAssemblyLLInt, SameOption) \
+    v(useWasmLLIntPrologueOSR, useWebAssemblyLLIntPrologueOSR, SameOption) \
+    v(useWasmLLIntLoopOSR, useWebAssemblyLLIntLoopOSR, SameOption) \
+    v(useWasmLLIntEpilogueOSR, useWebAssemblyLLIntEpilogueOSR, SameOption) \
+    v(wasmFunctionIndexRangeToCompile, webAssemblyFunctionIndexRangeToCompile, SameOption) \
+    v(wasmLLIntTiersUpToBBQ, webAssemblyLLIntTiersUpToBBQ, SameOption) \
+    v(useEagerWasmModuleHashing, useEagerWebAssemblyModuleHashing, SameOption) \
+    v(useWasmFaultSignalHandler, useWebAssemblyFaultSignalHandler, SameOption) \
+    v(dumpWasmOpcodeStatistics, dumpWebAssemblyOpcodeStatistics, SameOption) \
+    v(dumpWasmWarnings, dumpWebAssemblyWarnings, SameOption) \
+    v(useWasmIPInt, useWebAssemblyIPInt, SameOption) \
+    v(useWasmIPIntPrologueOSR, useWebAssemblyIPIntPrologueOSR, SameOption) \
+    v(useWasmIPIntLoopOSR, useWebAssemblyIPIntLoopOSR, SameOption) \
+    v(useWasmIPIntEpilogueOSR, useWebAssemblyIPIntEpilogueOSR, SameOption) \
+    v(wasmIPIntTiersUpToBBQ, webAssemblyIPIntTiersUpToBBQ, SameOption) \
+    v(wasmIPIntTiersUpToOMG, webAssemblyIPIntTiersUpToOMG, SameOption) \
+    v(useWasmTypedFunctionReferences, useWebAssemblyTypedFunctionReferences, SameOption) \
+    v(useWasmGC, useWebAssemblyGC, SameOption) \
+    v(useWasmSIMD, useWebAssemblySIMD, SameOption) \
+    v(useWasmRelaxedSIMD, useWebAssemblyRelaxedSIMD, SameOption) \
+    v(useWasmTailCalls, useWebAssemblyTailCalls, SameOption) \
+    v(useWasmExtendedConstantExpressions, useWebAssemblyExtendedConstantExpressions, SameOption) \
 
 
 enum ExperimentalOptionFlags {
