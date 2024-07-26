@@ -501,11 +501,8 @@ void FrameLoader::changeLocation(FrameLoadRequest&& frameRequest, Event* trigger
     if (frameRequest.frameName().isEmpty())
         frameRequest.setFrameName(frame->document()->baseTarget());
 
-    auto currentURL { frame->document() ? frame->document()->url() : URL { } };
-    if (RefPtr document = frame->protectedDocument()) {
-        document->cachedResourceLoader().upgradeRequestforHTTPSOnlyIfNeeded(currentURL, frameRequest.resourceRequest());
+    if (RefPtr document = frame->protectedDocument())
         document->checkedContentSecurityPolicy()->upgradeInsecureRequestIfNeeded(frameRequest.resourceRequest(), ContentSecurityPolicy::InsecureRequestType::Navigation);
-    }
 
     loadFrameRequest(WTFMove(frameRequest), triggeringEvent, { }, WTFMove(privateClickMeasurement));
 }

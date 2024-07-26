@@ -1218,15 +1218,12 @@ TEST(WKNavigation, HTTPSFirstHTTPDowngrade)
         finishedSuccessfully = true;
     };
     [webView setNavigationDelegate:delegate.get()];
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure"]]];
-    while (!finishedSuccessfully)
-        TestWebKitAPI::Util::spinRunLoop(5);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site.example/secure"]]];
+    TestWebKitAPI::Util::run(&finishedSuccessfully);
 
     EXPECT_EQ(errorCode, 0);
     EXPECT_TRUE(finishedSuccessfully);
     EXPECT_EQ(loadCount, 2);
-
-    [webView waitForNextPresentationUpdate];
 
     __block bool doneEvaluatingJavaScript { false };
     [webView evaluateJavaScript:@"window.location.protocol" completionHandler:^(id value, NSError *error) {
@@ -1272,7 +1269,7 @@ TEST(WKNavigation, HTTPSFirstHTTPDowngrade)
         doneEvaluatingJavaScript = true;
     }];
     TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
-    EXPECT_WK_STREQ(@"http://site.example/secure", [webView _mainFrameURL].absoluteString);
+    EXPECT_WK_STREQ(@"http://site.example/secure", [webView URL].absoluteString);
 }
 
 TEST(WKNavigation, HTTPSFirstHTTPDowngradeRedirect)
@@ -1306,6 +1303,7 @@ TEST(WKNavigation, HTTPSFirstHTTPDowngradeRedirect)
 
     __block int errorCode { 0 };
     __block bool finishedSuccessfully { false };
+    __block bool didFailNavigation { false };
     __block int loadCount { 0 };
     auto delegate = adoptNS([TestNavigationDelegate new]);
     delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
@@ -1315,15 +1313,15 @@ TEST(WKNavigation, HTTPSFirstHTTPDowngradeRedirect)
 
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         errorCode = error.code;
+        didFailNavigation = true;
     };
 
     delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
         finishedSuccessfully = true;
     };
     [webView setNavigationDelegate:delegate.get()];
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure"]]];
-    while (!errorCode)
-        TestWebKitAPI::Util::spinRunLoop(5);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site.example/secure"]]];
+    TestWebKitAPI::Util::run(&didFailNavigation);
 
     EXPECT_EQ(errorCode, NSURLErrorServerCertificateUntrusted);
     EXPECT_FALSE(finishedSuccessfully);
@@ -1449,7 +1447,7 @@ TEST(WKNavigation, HTTPSFirstLocalHostIPAddress)
     EXPECT_TRUE(finishedSuccessfully);
     EXPECT_FALSE(didReceiveAuthenticationChallenge);
     EXPECT_EQ(loadCount, 1);
-    EXPECT_WK_STREQ(url, [webView _mainFrameURL].absoluteString);
+    EXPECT_WK_STREQ(url, [webView URL].absoluteString);
 
     errorCode = 0;
     finishedSuccessfully = false;
@@ -1463,7 +1461,7 @@ TEST(WKNavigation, HTTPSFirstLocalHostIPAddress)
     EXPECT_TRUE(finishedSuccessfully);
     EXPECT_FALSE(didReceiveAuthenticationChallenge);
     EXPECT_EQ(loadCount, 1);
-    EXPECT_WK_STREQ(url, [webView _mainFrameURL].absoluteString);
+    EXPECT_WK_STREQ(url, [webView URL].absoluteString);
 
 }
 
@@ -1498,6 +1496,7 @@ TEST(WKNavigation, HTTPSOnlyInitialLoad)
 
     __block int errorCode { 0 };
     __block bool finishedSuccessfully { false };
+    __block bool didFailNavigation { false };
     __block int loadCount { 0 };
     __block bool didReceiveAuthenticationChallenge { false };
     auto delegate = adoptNS([TestNavigationDelegate new]);
@@ -1513,6 +1512,7 @@ TEST(WKNavigation, HTTPSOnlyInitialLoad)
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         EXPECT_NOT_NULL(error);
         errorCode = error.code;
+        didFailNavigation = true;
     };
 
     delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
@@ -1520,17 +1520,15 @@ TEST(WKNavigation, HTTPSOnlyInitialLoad)
     };
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site.example/notsecure"]]];
+    TestWebKitAPI::Util::run(&finishedSuccessfully);
 
-    while (!errorCode && !finishedSuccessfully)
-        TestWebKitAPI::Util::spinRunLoop(5);
-
-    EXPECT_EQ(errorCode, _WKErrorCodeHTTPNavigationWithHTTPSOnly);
-    EXPECT_FALSE(finishedSuccessfully);
-    EXPECT_FALSE(didReceiveAuthenticationChallenge);
+    EXPECT_EQ(errorCode, 0);
+    EXPECT_TRUE(finishedSuccessfully);
+    EXPECT_TRUE(didReceiveAuthenticationChallenge);
+    EXPECT_FALSE(didFailNavigation);
     EXPECT_EQ(loadCount, 1);
 
-    [webView waitForNextPresentationUpdate];
-    EXPECT_WK_STREQ(@"", [webView _mainFrameURL].absoluteString);
+    EXPECT_WK_STREQ(@"https://site.example/notsecure", [webView URL].absoluteString);
 }
 
 TEST(WKNavigation, HTTPSOnlyHTTPFallback)
@@ -1597,7 +1595,7 @@ TEST(WKNavigation, HTTPSOnlyHTTPFallback)
         doneEvaluatingJavaScript = true;
     }];
     TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
-    EXPECT_WK_STREQ(@"", [webView _mainFrameURL].absoluteString);
+    EXPECT_WK_STREQ(@"", [webView URL].absoluteString);
 }
 
 TEST(WKNavigation, HTTPSOnlyHTTPFallbackBypassEnabledCertificateError)
@@ -1664,7 +1662,7 @@ TEST(WKNavigation, HTTPSOnlyHTTPFallbackBypassEnabledCertificateError)
         doneEvaluatingJavaScript = true;
     }];
     TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
-    EXPECT_WK_STREQ(@"", [webView _mainFrameURL].absoluteString);
+    EXPECT_WK_STREQ(@"", [webView URL].absoluteString);
 }
 
 TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
@@ -1702,6 +1700,7 @@ TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
     // Step 1: Attempt https load without implementing didReceiveAuthenticationChallenge
     __block int errorCode { 0 };
     __block bool finishedSuccessfully { false };
+    __block bool didFailNavigation { false };
     __block int loadCount { 0 };
     auto delegate = adoptNS([TestNavigationDelegate new]);
     delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
@@ -1716,6 +1715,7 @@ TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
         EXPECT_NOT_NULL(error.userInfo[@"NSErrorFailingURLKey"]);
         EXPECT_WK_STREQ(@"https://site.example/secure", ((NSURL *)error.userInfo[@"NSErrorFailingURLKey"]).absoluteString);
         errorCode = error.code;
+        didFailNavigation = true;
     };
 
     delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
@@ -1723,9 +1723,7 @@ TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
     };
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure"]]];
-
-    while (!errorCode)
-        TestWebKitAPI::Util::spinRunLoop(5);
+    TestWebKitAPI::Util::run(&didFailNavigation);
 
     EXPECT_EQ(errorCode, NSURLErrorServerCertificateUntrusted);
     EXPECT_FALSE(finishedSuccessfully);
@@ -1737,22 +1735,19 @@ TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         EXPECT_NULL(error);
         errorCode = error.code;
-    };
-
-    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
-        finishedSuccessfully = true;
+        didFailNavigation = true;
     };
 
     errorCode  = 0;
     finishedSuccessfully = false;
+    didFailNavigation = false;
     loadCount = 0;
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site.example/secure"]]];
-
-    while (!errorCode && !finishedSuccessfully)
-        TestWebKitAPI::Util::spinRunLoop(5);
+    TestWebKitAPI::Util::run(&finishedSuccessfully);
 
     EXPECT_EQ(errorCode, 0);
     EXPECT_TRUE(finishedSuccessfully);
+    EXPECT_FALSE(didFailNavigation);
     EXPECT_EQ(loadCount, 1);
 
     __block bool doneEvaluatingJavaScript { false };
@@ -1763,11 +1758,12 @@ TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
         doneEvaluatingJavaScript = true;
     }];
     TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
-    EXPECT_WK_STREQ(@"http://site.example/secure", [webView _mainFrameURL].absoluteString);
+    EXPECT_WK_STREQ(@"http://site.example/secure", [webView URL].absoluteString);
 
     // Step 3: Attempt http load with same-site HTTPS-bypass enabled
     errorCode  = 0;
     finishedSuccessfully = false;
+    didFailNavigation = false;
     loadCount = 0;
     doneEvaluatingJavaScript = false;
     [webView evaluateJavaScript:@"window.location = \"http://www2.site.example/secure\"" completionHandler:^(id value, NSError *error) {
@@ -1778,14 +1774,12 @@ TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
     }];
     TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
 
-    while (!errorCode && !finishedSuccessfully)
-        TestWebKitAPI::Util::spinRunLoop(5);
+    TestWebKitAPI::Util::run(&finishedSuccessfully);
 
     EXPECT_EQ(errorCode, 0);
     EXPECT_TRUE(finishedSuccessfully);
+    EXPECT_FALSE(didFailNavigation);
     EXPECT_EQ(loadCount, 1);
-
-    [webView waitForNextPresentationUpdate];
 
     doneEvaluatingJavaScript = false;
     [webView evaluateJavaScript:@"window.location.href" completionHandler:^(id value, NSError *error) {
@@ -1795,7 +1789,7 @@ TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
         doneEvaluatingJavaScript = true;
     }];
     TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
-    EXPECT_WK_STREQ(@"http://www2.site.example/secure", [webView _mainFrameURL].absoluteString);
+    EXPECT_WK_STREQ(@"http://www2.site.example/secure", [webView URL].absoluteString);
 
     // Step 4: Attempt cross-site http load with HTTPS-bypass enabled
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
@@ -1805,12 +1799,14 @@ TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
         EXPECT_NOT_NULL(error.userInfo[@"NSErrorFailingURLKey"]);
         EXPECT_WK_STREQ(@"https://site2.example/secure", ((NSURL *)error.userInfo[@"NSErrorFailingURLKey"]).absoluteString);
         errorCode = error.code;
+        didFailNavigation = true;
     };
 
     configuration.get().defaultWebpagePreferences._networkConnectionIntegrityPolicy &= ~_WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnlyExplicitlyBypassedForDomain;
 
     errorCode  = 0;
     finishedSuccessfully = false;
+    didFailNavigation = false;
     loadCount = 0;
     doneEvaluatingJavaScript = false;
     [webView evaluateJavaScript:@"window.location = \"http://site2.example/secure\"" completionHandler:^(id value, NSError *error) {
@@ -1821,14 +1817,12 @@ TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
     }];
     TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
 
-    while (!errorCode && !finishedSuccessfully)
-        TestWebKitAPI::Util::spinRunLoop(5);
+    TestWebKitAPI::Util::run(&didFailNavigation);
 
     EXPECT_EQ(errorCode, NSURLErrorServerCertificateUntrusted);
     EXPECT_FALSE(finishedSuccessfully);
+    EXPECT_TRUE(didFailNavigation);
     EXPECT_EQ(loadCount, 1);
-
-    [webView waitForNextPresentationUpdate];
 
     doneEvaluatingJavaScript = false;
     [webView evaluateJavaScript:@"window.location.href" completionHandler:^(id value, NSError *error) {
@@ -1838,7 +1832,7 @@ TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
         doneEvaluatingJavaScript = true;
     }];
     TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
-    EXPECT_WK_STREQ(@"http://www2.site.example/secure", [webView _mainFrameURL].absoluteString);
+    EXPECT_WK_STREQ(@"http://www2.site.example/secure", [webView URL].absoluteString);
 }
 
 TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
@@ -1876,6 +1870,7 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
 
     __block int errorCode { 0 };
     __block bool finishedSuccessfully { false };
+    __block bool didFailNavigation { false };
     __block int loadCount { 0 };
     auto delegate = adoptNS([TestNavigationDelegate new]);
     delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
@@ -1893,6 +1888,7 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
         EXPECT_NOT_NULL(error.userInfo[@"NSErrorFailingURLKey"]);
         EXPECT_WK_STREQ(@"https://site.example/secure", ((NSURL *)error.userInfo[@"NSErrorFailingURLKey"]).absoluteString);
         errorCode = error.code;
+        didFailNavigation = true;
     };
 
     delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
@@ -1900,9 +1896,7 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
     };
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure"]]];
-
-    while (!errorCode && !finishedSuccessfully)
-        TestWebKitAPI::Util::spinRunLoop(5);
+    TestWebKitAPI::Util::run(&didFailNavigation);
 
     EXPECT_EQ(errorCode, _WKErrorCodeHTTPSUpgradeRedirectLoop);
     EXPECT_FALSE(finishedSuccessfully);
@@ -1913,17 +1907,15 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
         EXPECT_NOT_NULL(error.userInfo[@"NSErrorFailingURLKey"]);
         EXPECT_WK_STREQ(@"https://site2.example/secure2", ((NSURL *)error.userInfo[@"NSErrorFailingURLKey"]).absoluteString);
         errorCode = error.code;
+        didFailNavigation = true;
     };
 
     errorCode = 0;
     finishedSuccessfully = false;
+    didFailNavigation = false;
     loadCount = 0;
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure2"]]];
-
-    while (!errorCode && !finishedSuccessfully)
-        TestWebKitAPI::Util::spinRunLoop(5);
-
-    [webView waitForNextPresentationUpdate];
+    TestWebKitAPI::Util::run(&didFailNavigation);
 
     EXPECT_EQ(errorCode, kCFURLErrorHTTPTooManyRedirects);
     EXPECT_FALSE(finishedSuccessfully);
@@ -1932,6 +1924,7 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
     configuration.get().defaultWebpagePreferences._networkConnectionIntegrityPolicy = _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnly | _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnlyExplicitlyBypassedForDomain;
     errorCode = 0;
     finishedSuccessfully = false;
+    didFailNavigation = false;
     loadCount = 0;
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         EXPECT_NULL(error);
@@ -1939,27 +1932,24 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
             errorCode = error.code;
     };
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure"]]];
-
-    while (!errorCode && !finishedSuccessfully)
-        TestWebKitAPI::Util::spinRunLoop(5);
+    TestWebKitAPI::Util::run(&finishedSuccessfully);
 
     EXPECT_EQ(errorCode, 0);
     EXPECT_TRUE(finishedSuccessfully);
     EXPECT_EQ(loadCount, 2);
-    EXPECT_WK_STREQ(@"http://site.example/secure", [webView _mainFrameURL].absoluteString);
+    EXPECT_WK_STREQ(@"http://site.example/secure", [webView URL].absoluteString);
 
     errorCode = 0;
     finishedSuccessfully = false;
+    didFailNavigation = false;
     loadCount = 0;
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure2"]]];
-
-    while (!errorCode && !finishedSuccessfully)
-        TestWebKitAPI::Util::spinRunLoop(5);
+    TestWebKitAPI::Util::run(&finishedSuccessfully);
 
     EXPECT_EQ(errorCode, 0);
     EXPECT_TRUE(finishedSuccessfully);
-    EXPECT_EQ(loadCount, 2);
-    EXPECT_WK_STREQ(@"http://site2.example/secure3", [webView _mainFrameURL].absoluteString);
+    EXPECT_EQ(loadCount, 3);
+    EXPECT_WK_STREQ(@"http://site2.example/secure2", [webView URL].absoluteString);
 }
 
 TEST(WKNavigation, LeakCheck)

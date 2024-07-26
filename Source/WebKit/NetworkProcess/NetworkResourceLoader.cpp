@@ -405,6 +405,11 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
         m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidSendRequest(m_parameters.webPageProxyID, resourceLoadInfo(), request, httpBody), 0);
     }
 
+    if (request.wasSchemeOptimisticallyUpgraded()) {
+        // FIXME: This timeout should be adaptive based on network conditions
+        request.setTimeoutInterval(10);
+    }
+
     if (networkSession->shouldSendPrivateTokenIPCForTesting())
         m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::DidAllowPrivateTokenUsageByThirdPartyForTesting(sessionID(), request.isPrivateTokenUsageByThirdPartyAllowed(), request.url()), 0);
 

@@ -449,8 +449,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
     }
 
     if (frameLoader() && frameLoader()->frame().isMainFrame() && cachedResource() && cachedResource()->type() == CachedResource::Type::MainResource && !redirectResponse.isNull()) {
-        auto requestURL { redirectResponse.url() };
-        if (documentLoader() && documentLoader()->cachedResourceLoader().upgradeRequestforHTTPSOnlyIfNeeded(requestURL, request) && request.url() == redirectResponse.url()) {
+        if (request.wasSchemeOptimisticallyUpgraded() && request.url() == redirectResponse.url()) {
             RESOURCELOADER_RELEASE_LOG("willSendRequestInternal: resource load canceled because of entering same-URL redirect loop");
             cancel(httpsUpgradeRedirectLoopError());
             completionHandler({ });
