@@ -53,7 +53,4 @@ enum TextTrackKind { "subtitles", "captions", "descriptions", "chapters", "metad
     undefined removeCue(TextTrackCue cue);
 
     attribute EventHandler oncuechange;
-
-    // FIXME: Remove 'non-standard'. See: https://bugs.webkit.org/show_bug.cgi?id=260767 
-    readonly attribute VTTRegionList regions;
 };
