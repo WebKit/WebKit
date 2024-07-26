@@ -60,7 +60,7 @@ jobs:
             package_json_arch: "arm64"
             CMAKE_BUILD_TYPE: Release
           - runner: macos-13-xlarge
-            cpp_flags: "-DLIBCXX_ENABLE_ASSERTIONS=1"
+            cpp_flags: "-DLIBCXX_ENABLE_ASSERTIONS=0"
             cpu: native
             label: bun-webkit-macos-arm64
             brew_prefix: /opt/homebrew/opt
