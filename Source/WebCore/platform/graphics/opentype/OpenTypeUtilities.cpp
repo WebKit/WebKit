@@ -223,7 +223,7 @@ bool renameFont(const SharedBuffer& fontData, const String& fontName, Vector<uin
 
     rewrittenFontData.resize(fontData.size() + nameTableSize);
     auto dataSpan = rewrittenFontData.mutableSpan();
-    memcpySpan(dataSpan.first(fontData.size()), fontData.span());
+    memcpySpan(dataSpan, fontData.span());
 
     // Make the table directory entry point to the new 'name' table.
     sfntHeader* rewrittenSfnt = reinterpret_cast<sfntHeader*>(dataSpan.data());

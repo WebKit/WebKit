@@ -1637,7 +1637,7 @@ JSValueRef JSSharedMemory::writeBytes(JSContextRef context, JSObjectRef, JSObjec
         length = *lengthValue;
     }
 
-    memcpySpan(jsSharedMemory->m_sharedMemory->mutableSpan().subspan(offset, length), span.first(length));
+    memcpySpan(jsSharedMemory->m_sharedMemory->mutableSpan().subspan(offset), span.first(length));
 
     return JSValueMakeUndefined(context);
 }

@@ -524,7 +524,7 @@ bool RenderPassEncoder::executePreDrawCommands(const Buffer* indirectBuffer)
         if (pvertexOffsets && pvertexOffsets->size()) {
             auto& vertexOffsets = *pvertexOffsets;
             auto startIndex = pipelineLayout.vertexOffsetForBindGroup(bindGroupIndex);
-            memcpySpan(m_vertexDynamicOffsets.mutableSpan().subspan(startIndex, vertexOffsets.size()), vertexOffsets.span());
+            memcpySpan(m_vertexDynamicOffsets.mutableSpan().subspan(startIndex), vertexOffsets.span());
         }
 
         auto* pfragmentOffsets = pipelineLayout.fragmentOffsets(bindGroupIndex, kvp.value);
@@ -536,7 +536,7 @@ bool RenderPassEncoder::executePreDrawCommands(const Buffer* indirectBuffer)
                 makeInvalid(@"Invalid offset calculation");
                 return false;
             }
-            memcpySpan(m_fragmentDynamicOffsets.mutableSpan().subspan(startIndexWithOffset, fragmentOffsets.size()), fragmentOffsets.span());
+            memcpySpan(m_fragmentDynamicOffsets.mutableSpan().subspan(startIndexWithOffset), fragmentOffsets.span());
         }
     }
 

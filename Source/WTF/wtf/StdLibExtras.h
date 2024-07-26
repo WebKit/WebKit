@@ -723,11 +723,11 @@ bool equalSpans(std::span<T, TExtent> a, std::span<U, UExtent> b)
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
 void memcpySpan(std::span<T, TExtent> destination, std::span<U, UExtent> source)
 {
-    RELEASE_ASSERT(destination.size() == source.size());
     static_assert(sizeof(T) == sizeof(U));
     static_assert(std::is_trivially_copyable_v<T>);
     static_assert(std::is_trivially_copyable_v<U>);
-    memcpy(destination.data(), source.data(), destination.size_bytes());
+    RELEASE_ASSERT(destination.size() >= source.size());
+    memcpy(destination.data(), source.data(), source.size_bytes());
 }
 
 template<typename T, std::size_t Extent>

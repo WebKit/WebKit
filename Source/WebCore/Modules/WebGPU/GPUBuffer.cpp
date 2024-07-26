@@ -172,7 +172,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> GPUBuffer::getMappedRange(std::optional<GPUSi
 
     RefPtr<JSC::ArrayBuffer> result;
     m_backing->getMappedRange(offset, size, [&] (auto mappedRange) {
-        if (!mappedRange.source) {
+        if (!mappedRange.data()) {
             m_arrayBuffers.clear();
             if (m_mappedAtCreation || !size)
                 result = makeArrayBuffer(static_cast<size_t>(0U), 0, 1, m_arrayBuffers, m_device, *this);
@@ -180,7 +180,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> GPUBuffer::getMappedRange(std::optional<GPUSi
             return;
         }
 
-        result = makeArrayBuffer(mappedRange.source, offset, size, m_arrayBuffers, m_device, *this);
+        result = makeArrayBuffer(mappedRange.data(), offset, size, m_arrayBuffers, m_device, *this);
     });
 
     if (!result)

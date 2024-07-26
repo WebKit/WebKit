@@ -96,7 +96,7 @@ void RemoteImageBuffer::getPixelBuffer(WebCore::PixelBufferFormat destinationFor
     IntRect srcRect(srcPoint, srcSize);
     if (auto pixelBuffer = m_imageBuffer->getPixelBuffer(destinationFormat, srcRect)) {
         MESSAGE_CHECK(pixelBuffer->bytes().size() <= memory->size(), "Shmem for return of getPixelBuffer is too small"_s);
-        memcpySpan(memory->mutableSpan().first(pixelBuffer->bytes().size()), pixelBuffer->bytes());
+        memcpySpan(memory->mutableSpan(), pixelBuffer->bytes());
     } else
         memsetSpan(memory->mutableSpan(), 0);
     completionHandler();

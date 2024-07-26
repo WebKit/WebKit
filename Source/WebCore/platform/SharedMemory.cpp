@@ -49,7 +49,7 @@ RefPtr<SharedMemory> SharedMemory::copyBuffer(const FragmentedSharedBuffer& buff
 
     auto destination = sharedMemory->mutableSpan();
     buffer.forEachSegment([&] (std::span<const uint8_t> segment) mutable {
-        memcpySpan(destination.first(segment.size()), segment);
+        memcpySpan(destination, segment);
         destination = destination.subspan(segment.size());
     });
 
@@ -65,9 +65,7 @@ RefPtr<SharedMemory> SharedMemory::copySpan(std::span<const uint8_t> span)
     if (!sharedMemory)
         return nullptr;
 
-    auto destination = sharedMemory->mutableSpan();
-    memcpySpan(destination, span);
-
+    memcpySpan(sharedMemory->mutableSpan(), span);
     return sharedMemory;
 }
 
