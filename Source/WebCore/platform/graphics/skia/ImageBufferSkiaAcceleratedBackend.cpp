@@ -176,7 +176,7 @@ void ImageBufferSkiaAcceleratedBackend::swapBuffersIfNeeded()
     IntSize textureSize(info.width(), info.height());
     if (!m_texture.back)
         m_texture.back = BitmapTexture::create(textureSize, BitmapTexture::Flags::SupportsAlpha);
-    fence->wait(GLFence::FlushCommands::No);
+    fence->serverWait();
     m_texture.back->copyFromExternalTexture(textureInfo.fID);
     fence = GLFence::create();
     std::swap(m_texture.back, m_texture.front);

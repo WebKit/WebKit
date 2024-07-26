@@ -98,7 +98,7 @@ void TextureMapperPlatformLayerBuffer::paintToTextureMapper(TextureMapper& textu
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
     if (m_fence) {
-        m_fence->wait(WebCore::GLFence::FlushCommands::No);
+        m_fence->serverWait();
         m_fence = nullptr;
     }
 #endif
