@@ -407,10 +407,19 @@ void AVVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettin
 {
     m_currentSettings = std::nullopt;
 
-    if (settings.contains(RealtimeMediaSourceSettings::Flag::WhiteBalanceMode))
-        updateWhiteBalanceMode();
-    if (settings.contains(RealtimeMediaSourceSettings::Flag::Torch))
-        updateTorch();
+    bool whiteBalanceModeChanged = settings.contains(RealtimeMediaSourceSettings::Flag::WhiteBalanceMode);
+    bool torchChanged = settings.contains(RealtimeMediaSourceSettings::Flag::Torch);
+    if (!whiteBalanceModeChanged && !torchChanged)
+        return;
+
+    scheduleDeferredTask([this, whiteBalanceModeChanged, torchChanged] {
+        startApplyingConstraints();
+        if (whiteBalanceModeChanged)
+            updateWhiteBalanceMode();
+        if (torchChanged)
+            updateTorch();
+        endApplyingConstraints();
+    });
 }
 
 static bool isZoomSupported(const Vector<VideoPreset>& presets)
@@ -807,7 +816,9 @@ void AVVideoCaptureSource::setFrameRateAndZoomWithPreset(double requestedFrameRa
     // Updating the device configuration may switch off the torch. We reenable torch asynchronously if needed.
     if (torch()) {
         scheduleDeferredTask([this] {
+            startApplyingConstraints();
             updateTorch();
+            endApplyingConstraints();
         });
     }
 #endif
