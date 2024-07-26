@@ -124,7 +124,7 @@ GradientData::Inputs LegacyRenderSVGResourceGradient::computeInputs(RenderElemen
     return { objectBoundingBox, textPaintingScale };
 }
 
-bool LegacyRenderSVGResourceGradient::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
+auto LegacyRenderSVGResourceGradient::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
 {
     ASSERT(context);
     ASSERT(!resourceMode.isEmpty());
@@ -136,7 +136,7 @@ bool LegacyRenderSVGResourceGradient::applyResource(RenderElement& renderer, con
     if (m_shouldCollectGradientAttributes) {
         gradientElement().synchronizeAllAttributes();
         if (!collectGradientAttributes())
-            return false;
+            return { };
 
         m_shouldCollectGradientAttributes = false;
     }
@@ -145,7 +145,7 @@ bool LegacyRenderSVGResourceGradient::applyResource(RenderElement& renderer, con
     // then the given effect (e.g. a gradient or a filter) will be ignored.
     auto inputs = computeInputs(renderer, resourceMode);
     if (inputs.objectBoundingBox && inputs.objectBoundingBox->isEmpty())
-        return false;
+        return { };
 
     bool isPaintingText = resourceMode.contains(RenderSVGResourceMode::ApplyToText);
 
@@ -184,7 +184,7 @@ bool LegacyRenderSVGResourceGradient::applyResource(RenderElement& renderer, con
 #if USE(CG)
         if (!createMaskAndSwapContextForTextGradient(context, m_savedContext, m_imageBuffer, renderer)) {
             context->restore();
-            return false;
+            return { };
         }
 #endif
         context->setTextDrawingMode(resourceMode.contains(RenderSVGResourceMode::ApplyToFill) ? TextDrawingMode::Fill : TextDrawingMode::Stroke);
@@ -205,7 +205,7 @@ bool LegacyRenderSVGResourceGradient::applyResource(RenderElement& renderer, con
         SVGRenderSupport::applyStrokeStyleToContext(*context, style, renderer);
     }
 
-    return true;
+    return { ApplyResult::ResourceApplied };
 }
 
 void LegacyRenderSVGResourceGradient::postApplyResource(RenderElement& renderer, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const RenderElement* shape)

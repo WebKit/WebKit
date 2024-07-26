@@ -8165,6 +8165,8 @@ using WebCore::EpochTimeStamp = uint64_t
 using WebCore::SharedMemory::Handle = WebCore::SharedMemoryHandle
 using WebCore::ServiceWorkerOrClientIdentifier = std::variant<WebCore::ServiceWorkerIdentifier, WebCore::ScriptExecutionContextIdentifier>
 
+[Nested] enum class WebCore::GraphicsContext::RequiresClipToRect : bool
+
 enum class WebCore::HighlightVisibility : bool
 
 #if OS(WINDOWS)

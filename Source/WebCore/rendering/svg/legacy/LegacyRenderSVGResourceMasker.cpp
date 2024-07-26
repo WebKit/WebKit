@@ -57,7 +57,7 @@ void LegacyRenderSVGResourceMasker::removeClientFromCache(RenderElement& client,
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-bool LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
+auto LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
 {
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, !resourceMode);
@@ -89,17 +89,17 @@ bool LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const
         // FIXME (149470): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks alpha masking, though.
         maskerData->maskImage = context->createScaledImageBuffer(repaintRect, scale, maskColorSpace, RenderingMode::Unaccelerated);
         if (!maskerData->maskImage)
-            return false;
+            return { };
 
         if (!drawContentIntoMaskImage(maskerData, drawColorSpace, &renderer))
             maskerData->maskImage = nullptr;
     }
 
     if (!maskerData->maskImage)
-        return false;
+        return { };
 
     SVGRenderingContext::clipToImageBuffer(*context, repaintRect, scale, maskerData->maskImage, missingMaskerData);
-    return true;
+    return { ApplyResult::ResourceApplied };
 }
 
 bool LegacyRenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, const DestinationColorSpace& colorSpace, RenderObject* object)

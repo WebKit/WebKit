@@ -397,17 +397,17 @@ bool SVGInlineTextBox::acquireLegacyPaintingResource(GraphicsContext*& context, 
     if (!m_legacyPaintingResource)
         return false;
 
-    if (!m_legacyPaintingResource->applyResource(renderer, style, context, paintingResourceMode())) {
+    if (!resourceWasApplied(m_legacyPaintingResource->applyResource(renderer, style, context, paintingResourceMode()))) {
         if (!fallbackColor.isValid()) {
             m_legacyPaintingResource = nullptr;
             return false;
         }
         
-        LegacyRenderSVGResourceSolidColor* fallbackResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
+        auto* fallbackResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
         fallbackResource->setColor(fallbackColor);
 
         m_legacyPaintingResource = fallbackResource;
-        if (!m_legacyPaintingResource->applyResource(renderer, style, context, paintingResourceMode())) {
+        if (!resourceWasApplied(m_legacyPaintingResource->applyResource(renderer, style, context, paintingResourceMode()))) {
             m_legacyPaintingResource = nullptr;
             return false;
         }

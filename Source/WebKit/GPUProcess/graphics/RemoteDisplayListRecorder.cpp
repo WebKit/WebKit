@@ -436,9 +436,9 @@ void RemoteDisplayListRecorder::drawFocusRingRects(const Vector<FloatRect>& rect
     handleItem(DisplayList::DrawFocusRingRects(rects, outlineOffset, outlineWidth, color));
 }
 
-void RemoteDisplayListRecorder::fillRect(const FloatRect& rect)
+void RemoteDisplayListRecorder::fillRect(const FloatRect& rect, GraphicsContext::RequiresClipToRect requiresClipToRect)
 {
-    handleItem(DisplayList::FillRect(rect));
+    handleItem(DisplayList::FillRect(rect, requiresClipToRect));
 }
 
 void RemoteDisplayListRecorder::fillRectWithColor(const FloatRect& rect, const Color& color)

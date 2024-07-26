@@ -104,10 +104,10 @@ private:
     void recordDrawPath(const WebCore::Path&) final;
     void recordDrawFocusRingPath(const WebCore::Path&, float outlineWidth, const WebCore::Color&) final;
     void recordDrawFocusRingRects(const Vector<WebCore::FloatRect>&, float outlineOffset, float outlineWidth, const WebCore::Color&) final;
-    void recordFillRect(const WebCore::FloatRect&) final;
+    void recordFillRect(const WebCore::FloatRect&, RequiresClipToRect) final;
     void recordFillRectWithColor(const WebCore::FloatRect&, const WebCore::Color&) final;
     void recordFillRectWithGradient(const WebCore::FloatRect&, WebCore::Gradient&) final;
-    void recordFillRectWithGradientAndSpaceTransform(const WebCore::FloatRect&, WebCore::Gradient&, const WebCore::AffineTransform&) final;
+    void recordFillRectWithGradientAndSpaceTransform(const WebCore::FloatRect&, WebCore::Gradient&, const WebCore::AffineTransform&, RequiresClipToRect) final;
     void recordFillCompositedRect(const WebCore::FloatRect&, const WebCore::Color&, WebCore::CompositeOperator, WebCore::BlendMode) final;
     void recordFillRoundedRect(const WebCore::FloatRoundedRect&, const WebCore::Color&, WebCore::BlendMode) final;
     void recordFillRectWithRoundedHole(const WebCore::FloatRect&, const WebCore::FloatRoundedRect&, const WebCore::Color&) final;

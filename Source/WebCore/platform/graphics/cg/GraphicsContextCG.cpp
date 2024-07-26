@@ -785,12 +785,12 @@ void GraphicsContextCG::strokePath(const Path& path)
     drawPathWithCGContext(context, kCGPathStroke, path);
 }
 
-void GraphicsContextCG::fillRect(const FloatRect& rect)
+void GraphicsContextCG::fillRect(const FloatRect& rect, RequiresClipToRect requiresClipToRect)
 {
     CGContextRef context = platformContext();
 
     if (auto* fillGradient = this->fillGradient()) {
-        fillRect(rect, *fillGradient, fillGradientSpaceTransform());
+        fillRect(rect, *fillGradient, fillGradientSpaceTransform(), requiresClipToRect);
         return;
     }
 
@@ -812,7 +812,7 @@ void GraphicsContextCG::fillRect(const FloatRect& rect)
     CGContextFillRect(context, rect);
 }
 
-void GraphicsContextCG::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
+void GraphicsContextCG::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect requiresClipToRect)
 {
     CGContextRef context = platformContext();
 
@@ -832,7 +832,9 @@ void GraphicsContextCG::fillRect(const FloatRect& rect, Gradient& gradient, cons
         gradient.paint(layerContext);
         CGContextDrawLayerInRect(context, rect, layer.get());
     } else {
-        CGContextClipToRect(context, rect);
+        if (requiresClipToRect == RequiresClipToRect::Yes)
+            CGContextClipToRect(context, rect);
+
         CGContextConcatCTM(context, gradientSpaceTransform);
         gradient.paint(*this);
     }

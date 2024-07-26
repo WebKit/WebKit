@@ -239,7 +239,7 @@ void CairoOperationRecorder::setMiterLimit(float miterLimit)
     append(createCommand<SetMiterLimit>(miterLimit));
 }
 
-void CairoOperationRecorder::fillRect(const FloatRect& rect)
+void CairoOperationRecorder::fillRect(const FloatRect& rect, RequiresClipToRect)
 {
     struct FillRect final : PaintingOperation, OperationData<FloatRect, Cairo::FillSource, Cairo::ShadowState> {
         virtual ~FillRect() = default;
@@ -301,7 +301,7 @@ void CairoOperationRecorder::fillRect(const FloatRect& rect, Gradient& gradient)
     append(createCommand<FillRect>(rect, gradient.createPattern(1.0, state.fillBrush().gradientSpaceTransform())));
 }
 
-void CairoOperationRecorder::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
+void CairoOperationRecorder::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect)
 {
     struct FillRect final : PaintingOperation, OperationData<FloatRect, Cairo::FillSource, Cairo::ShadowState> {
         virtual ~FillRect() = default;

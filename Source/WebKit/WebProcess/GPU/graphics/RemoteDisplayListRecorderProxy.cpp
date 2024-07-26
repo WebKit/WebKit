@@ -325,9 +325,9 @@ void RemoteDisplayListRecorderProxy::recordDrawFocusRingRects(const Vector<Float
     send(Messages::RemoteDisplayListRecorder::DrawFocusRingRects(rects, outlineOffset, outlineWidth, color));
 }
 
-void RemoteDisplayListRecorderProxy::recordFillRect(const FloatRect& rect)
+void RemoteDisplayListRecorderProxy::recordFillRect(const FloatRect& rect, RequiresClipToRect requiresClipToRect)
 {
-    send(Messages::RemoteDisplayListRecorder::FillRect(rect));
+    send(Messages::RemoteDisplayListRecorder::FillRect(rect, requiresClipToRect));
 }
 
 void RemoteDisplayListRecorderProxy::recordFillRectWithColor(const FloatRect& rect, const Color& color)
@@ -340,9 +340,9 @@ void RemoteDisplayListRecorderProxy::recordFillRectWithGradient(const FloatRect&
     send(Messages::RemoteDisplayListRecorder::FillRectWithGradient(DisplayList::FillRectWithGradient { rect, gradient }));
 }
 
-void RemoteDisplayListRecorderProxy::recordFillRectWithGradientAndSpaceTransform(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
+void RemoteDisplayListRecorderProxy::recordFillRectWithGradientAndSpaceTransform(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect requiresClipToRect)
 {
-    send(Messages::RemoteDisplayListRecorder::FillRectWithGradientAndSpaceTransform(DisplayList::FillRectWithGradientAndSpaceTransform { rect, gradient, gradientSpaceTransform }));
+    send(Messages::RemoteDisplayListRecorder::FillRectWithGradientAndSpaceTransform(DisplayList::FillRectWithGradientAndSpaceTransform { rect, gradient, gradientSpaceTransform, requiresClipToRect }));
 }
 
 void RemoteDisplayListRecorderProxy::recordFillCompositedRect(const FloatRect& rect, const Color& color, CompositeOperator op, BlendMode mode)
