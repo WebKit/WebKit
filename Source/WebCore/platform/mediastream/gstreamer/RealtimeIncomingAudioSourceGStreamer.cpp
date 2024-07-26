@@ -38,9 +38,6 @@ RealtimeIncomingAudioSourceGStreamer::RealtimeIncomingAudioSourceGStreamer(AtomS
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_webrtc_incoming_audio_debug, "webkitwebrtcincomingaudio", 0, "WebKit WebRTC incoming audio");
     });
-    static Atomic<uint64_t> sourceCounter = 0;
-    gst_element_set_name(bin(), makeString("incoming-audio-source-"_s, sourceCounter.exchangeAdd(1)).ascii().data());
-    GST_DEBUG_OBJECT(bin(), "New incoming audio source created with ID %s", persistentID().ascii().data());
 }
 
 RealtimeIncomingAudioSourceGStreamer::~RealtimeIncomingAudioSourceGStreamer()

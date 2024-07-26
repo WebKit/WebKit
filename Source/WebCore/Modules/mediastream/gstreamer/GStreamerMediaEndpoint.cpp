@@ -282,9 +282,8 @@ bool GStreamerMediaEndpoint::setConfiguration(MediaEndpointConfiguration& config
     // WIP: https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/-/merge_requests/302
     GST_FIXME("%zu custom certificates not propagated to webrtcbin", configuration.certificates.size());
 
-    gst_element_set_state(m_pipeline.get(), GST_STATE_READY);
-    GST_DEBUG_OBJECT(m_pipeline.get(), "End-point ready");
     gst_element_set_state(m_pipeline.get(), GST_STATE_PLAYING);
+    GST_DEBUG_OBJECT(m_pipeline.get(), "End-point ready");
     return true;
 }
 
@@ -998,24 +997,17 @@ void GStreamerMediaEndpoint::connectIncomingTrack(WebRTCTrackData& data)
     m_peerConnectionBackend.addPendingTrackEvent({ Ref(transceiver->receiver()), Ref(transceiver->receiver().track()), { }, Ref(*transceiver) });
 
     auto mediaStreamBin = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_pipeline.get()), data.mediaStreamBinName.ascii().data()));
-    auto tee = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(mediaStreamBin.get()), "tee"));
-    GstElement* bin = nullptr;
     auto& track = transceiver->receiver().track();
     auto& source = track.privateTrack().source();
     if (source.isIncomingAudioSource()) {
         auto& audioSource = static_cast<RealtimeIncomingAudioSourceGStreamer&>(source);
-        audioSource.setUpstreamBin(mediaStreamBin);
-        audioSource.setIsUpstreamDecoding(data.isUpstreamDecoding);
-        bin = audioSource.bin();
+        if (!audioSource.setBin(mediaStreamBin))
+            return;
     } else if (source.isIncomingVideoSource()) {
         auto& videoSource = static_cast<RealtimeIncomingVideoSourceGStreamer&>(source);
-        videoSource.setUpstreamBin(mediaStreamBin);
-        videoSource.setIsUpstreamDecoding(data.isUpstreamDecoding);
-        bin = videoSource.bin();
+        if (!videoSource.setBin(mediaStreamBin))
+            return;
     }
-    ASSERT(bin);
-
-    gst_bin_add(GST_BIN_CAST(m_pipeline.get()), bin);
 
     auto& mediaStream = mediaStreamFromRTCStream(data.mediaStreamId);
     mediaStream.addTrackFromPlatform(track);
@@ -1033,6 +1025,7 @@ void GStreamerMediaEndpoint::connectIncomingTrack(WebRTCTrackData& data)
     auto dotFileName = makeString(span(GST_OBJECT_NAME(m_pipeline.get())), ".connected-"_s, data.mediaStreamId);
     GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
 #endif
+    gst_element_set_state(m_pipeline.get(), GST_STATE_PLAYING);
 }
 
 void GStreamerMediaEndpoint::connectPad(GstPad* pad)
@@ -1048,7 +1041,7 @@ void GStreamerMediaEndpoint::connectPad(GstPad* pad)
 
     auto sinkPad = adoptGRef(gst_element_get_static_pad(bin, "sink"));
     gst_pad_link(pad, sinkPad.get());
-    gst_element_sync_state_with_parent(bin);
+    gst_element_set_state(bin, GST_STATE_PAUSED);
 
 #ifndef GST_DISABLE_GST_DEBUG
     auto dotFileName = makeString(span(GST_OBJECT_NAME(m_pipeline.get())), ".pending-"_s, span(GST_OBJECT_NAME(pad)));

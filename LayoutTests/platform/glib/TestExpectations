@@ -2105,7 +2105,8 @@ webkit.org/b/235885 webrtc/datachannel/getStats-no-prflx-remote-candidate.html [
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-statsSelector.html [ Skip ]
 webkit.org/b/187064 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html [ Skip ]
 
-webkit.org/b/269285 webrtc/h265.html [ Failure ]
+# FIXME: Remove Timeout expectation once bug #275685 is fixed.
+webkit.org/b/269285 webrtc/h265.html [ Failure Timeout ]
 
 # Too slow with filtering implemented in WebKit. Should be done directly by GstWebRTC.
 webrtc/datachannel/filter-ice-candidate.html [ Skip ]
