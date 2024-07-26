@@ -824,10 +824,8 @@ void Options::notifyOptionsChanged()
         if (!Options::useBBQJIT() && Options::useOMGJIT())
             Options::webAssemblyLLIntTiersUpToBBQ() = false;
 
-#if CPU(X86_64) && ENABLE(JIT)
-        if (!MacroAssembler::supportsAVX())
+        if (isX86_64() && !isX86_64_AVX())
             Options::useWebAssemblySIMD() = false;
-#endif
 
         if (Options::forceAllFunctionsToUseSIMD() && !Options::useWebAssemblySIMD())
             Options::forceAllFunctionsToUseSIMD() = false;
