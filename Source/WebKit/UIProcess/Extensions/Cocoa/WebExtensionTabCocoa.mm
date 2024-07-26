@@ -773,10 +773,10 @@ void WebExtensionTab::duplicate(const WebExtensionTabParameters& parameters, Com
         index = currentIndex + 1;
 
     _WKWebExtensionTabCreationOptions *duplicateOptions = [[_WKWebExtensionTabCreationOptions alloc] _init];
-    duplicateOptions.shouldActivate = parameters.active.value_or(true);
-    duplicateOptions.shouldSelect = duplicateOptions.shouldActivate ?: parameters.selected.value_or(false);
-    duplicateOptions.desiredWindow = window ? window->delegate() : nil;
-    duplicateOptions.desiredIndex = index;
+    duplicateOptions.active = parameters.active.value_or(true);
+    duplicateOptions.selected = duplicateOptions.active ?: parameters.selected.value_or(false);
+    duplicateOptions.window = window ? window->delegate() : nil;
+    duplicateOptions.index = index;
 
     [m_delegate duplicateForWebExtensionContext:m_extensionContext->wrapper() withOptions:duplicateOptions completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<_WKWebExtensionTab> duplicatedTab, NSError *error) mutable {
         if (error) {

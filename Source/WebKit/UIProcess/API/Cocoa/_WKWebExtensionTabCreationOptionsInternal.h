@@ -33,15 +33,15 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 - (instancetype)_init NS_DESIGNATED_INITIALIZER;
 
-@property (readwrite, setter=_setDesiredWindow:) id <_WKWebExtensionWindow> desiredWindow;
-@property (readwrite, setter=_setDesiredIndex:) NSUInteger desiredIndex;
-@property (readwrite, setter=_setDesiredParentTab:) id <_WKWebExtensionTab> desiredParentTab;
-@property (readwrite, setter=_setDesiredURL:) NSURL *desiredURL;
-@property (readwrite, setter=_setShouldActivate:) BOOL shouldActivate;
-@property (readwrite, setter=_setShouldSelect:) BOOL shouldSelect;
-@property (readwrite, setter=_setShouldPin:) BOOL shouldPin;
-@property (readwrite, setter=_setShouldMute:) BOOL shouldMute;
-@property (readwrite, setter=_setShouldShowReaderMode:) BOOL shouldShowReaderMode;
+@property (readwrite, setter=_setWindow:) id <_WKWebExtensionWindow> window;
+@property (readwrite, setter=_setIndex:) NSUInteger index;
+@property (readwrite, setter=_setParentTab:) id <_WKWebExtensionTab> parentTab;
+@property (readwrite, setter=_setURL:) NSURL *url;
+@property (readwrite, setter=_setActive:) BOOL active;
+@property (readwrite, setter=_setSelected:) BOOL selected;
+@property (readwrite, setter=_setPinned:) BOOL pinned;
+@property (readwrite, setter=_setMuted:) BOOL muted;
+@property (readwrite, setter=_setReaderModeShowing:) BOOL readerModeShowing;
 
 @end
 

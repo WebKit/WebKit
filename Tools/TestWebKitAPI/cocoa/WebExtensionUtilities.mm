@@ -88,13 +88,13 @@
     };
 
     _internalDelegate.openNewWindow = ^(_WKWebExtensionWindowCreationOptions *options, _WKWebExtensionContext *, void (^completionHandler)(id<_WKWebExtensionWindow>, NSError *)) {
-        auto *newWindow = [weakSelf openNewWindowUsingPrivateBrowsing:options.shouldUsePrivateBrowsing];
+        auto *newWindow = [weakSelf openNewWindowUsingPrivateBrowsing:options.usePrivateBrowsing];
 
-        newWindow.windowType = options.desiredWindowType;
-        newWindow.windowState = options.desiredWindowState;
+        newWindow.windowType = options.windowType;
+        newWindow.windowState = options.windowState;
 
         CGRect currentFrame = newWindow.frame;
-        CGRect desiredFrame = options.desiredFrame;
+        CGRect desiredFrame = options.frame;
 
         if (std::isnan(desiredFrame.size.width))
             desiredFrame.size.width = currentFrame.size.width;
@@ -124,21 +124,21 @@
     };
 
     _internalDelegate.openNewTab = ^(_WKWebExtensionTabCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
-        auto *desiredWindow = dynamic_objc_cast<TestWebExtensionWindow>(options.desiredWindow) ?: window;
-        auto *newTab = [desiredWindow openNewTabAtIndex:options.desiredIndex];
+        auto *desiredWindow = dynamic_objc_cast<TestWebExtensionWindow>(options.window) ?: window;
+        auto *newTab = [desiredWindow openNewTabAtIndex:options.index];
 
-        if (options.desiredURL) {
-            [newTab changeWebViewIfNeededForURL:options.desiredURL forExtensionContext:context];
-            [newTab.mainWebView loadRequest:[NSURLRequest requestWithURL:options.desiredURL]];
+        if (options.url) {
+            [newTab changeWebViewIfNeededForURL:options.url forExtensionContext:context];
+            [newTab.mainWebView loadRequest:[NSURLRequest requestWithURL:options.url]];
         }
 
-        newTab.parentTab = options.desiredParentTab;
-        newTab.pinned = options.shouldPin;
-        newTab.muted = options.shouldMute;
-        newTab.showingReaderMode = options.shouldShowReaderMode;
-        newTab.selected = options.shouldSelect;
+        newTab.parentTab = options.parentTab;
+        newTab.pinned = options.pinned;
+        newTab.muted = options.muted;
+        newTab.showingReaderMode = options.readerModeShowing;
+        newTab.selected = options.selected;
 
-        if (options.shouldActivate)
+        if (options.isActive)
             desiredWindow.activeTab = newTab;
 
         completionHandler(newTab, nil);
@@ -685,14 +685,14 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     __weak TestWebExtensionTab *weakTab = newTab;
 
     newTab.duplicate = ^(_WKWebExtensionTabCreationOptions *options, void (^completionHandler)(TestWebExtensionTab *, NSError *)) {
-        auto *desiredWindow = dynamic_objc_cast<TestWebExtensionWindow>(options.desiredWindow) ?: weakTab.window;
-        auto *duplicatedTab = [desiredWindow openNewTabAtIndex:options.desiredIndex];
+        auto *desiredWindow = dynamic_objc_cast<TestWebExtensionWindow>(options.window) ?: weakTab.window;
+        auto *duplicatedTab = [desiredWindow openNewTabAtIndex:options.index];
 
         [duplicatedTab.mainWebView loadRequest:[NSURLRequest requestWithURL:weakTab.mainWebView.URL]];
 
-        duplicatedTab.selected = options.shouldSelect;
+        duplicatedTab.selected = options.selected;
 
-        if (options.shouldActivate)
+        if (options.isActive)
             desiredWindow.activeTab = duplicatedTab;
 
         completionHandler(duplicatedTab, nil);
