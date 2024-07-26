@@ -1514,6 +1514,11 @@ bool SourceBuffer::enabledForContext(ScriptExecutionContext& context)
     return true;
 }
 
+size_t SourceBuffer::evictableSize() const
+{
+    return m_private->evictionData().evictableSize;
+}
+
 } // namespace WebCore
 
 #endif

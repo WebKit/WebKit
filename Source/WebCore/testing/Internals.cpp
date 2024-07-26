@@ -4702,6 +4702,11 @@ void Internals::setMaximumQueueDepthForTrackID(SourceBuffer& buffer, const AtomS
     buffer.setMaximumQueueDepthForTrackID(parseInteger<TrackID>(trackID).value_or(0), maxQueueDepth);
 }
 
+size_t Internals::evictableSize(SourceBuffer& buffer)
+{
+    return buffer.evictableSize();
+}
+
 #endif
 
 void Internals::enableMockMediaCapabilities()

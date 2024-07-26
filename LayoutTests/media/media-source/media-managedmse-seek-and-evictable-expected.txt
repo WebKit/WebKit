@@ -1,0 +1,679 @@
+
+RUN(video.disableRemotePlayback = true)
+EVENT(sourceopen)
+EVENT(updateend)
+EXPECTED (source.duration == '300') OK
+EXPECTED (video.duration == '300') OK
+Appending PTS=0
+EVENT(updateend)
+Appending PTS=1
+EVENT(updateend)
+Appending PTS=2
+EVENT(updateend)
+Appending PTS=3
+EVENT(updateend)
+Appending PTS=4
+EVENT(updateend)
+Appending PTS=5
+EVENT(updateend)
+Appending PTS=6
+EVENT(updateend)
+Appending PTS=7
+EVENT(updateend)
+Appending PTS=8
+EVENT(updateend)
+Appending PTS=9
+EVENT(updateend)
+Appending PTS=10
+EVENT(updateend)
+Appending PTS=11
+EVENT(updateend)
+Appending PTS=12
+EVENT(updateend)
+Appending PTS=13
+EVENT(updateend)
+Appending PTS=14
+EVENT(updateend)
+Appending PTS=15
+EVENT(updateend)
+Appending PTS=16
+EVENT(updateend)
+Appending PTS=17
+EVENT(updateend)
+Appending PTS=18
+EVENT(updateend)
+Appending PTS=19
+EVENT(updateend)
+Appending PTS=20
+EVENT(updateend)
+Appending PTS=21
+EVENT(updateend)
+Appending PTS=22
+EVENT(updateend)
+Appending PTS=23
+EVENT(updateend)
+Appending PTS=24
+EVENT(updateend)
+Appending PTS=25
+EVENT(updateend)
+Appending PTS=26
+EVENT(updateend)
+Appending PTS=27
+EVENT(updateend)
+Appending PTS=28
+EVENT(updateend)
+Appending PTS=29
+EVENT(updateend)
+Appending PTS=30
+EVENT(updateend)
+Appending PTS=31
+EVENT(updateend)
+Appending PTS=32
+EVENT(updateend)
+Appending PTS=33
+EVENT(updateend)
+Appending PTS=34
+EVENT(updateend)
+Appending PTS=35
+EVENT(updateend)
+Appending PTS=36
+EVENT(updateend)
+Appending PTS=37
+EVENT(updateend)
+Appending PTS=38
+EVENT(updateend)
+Appending PTS=39
+EVENT(updateend)
+Appending PTS=40
+EVENT(updateend)
+Appending PTS=41
+EVENT(updateend)
+Appending PTS=42
+EVENT(updateend)
+Appending PTS=43
+EVENT(updateend)
+Appending PTS=44
+EVENT(updateend)
+Appending PTS=45
+EVENT(updateend)
+Appending PTS=46
+EVENT(updateend)
+Appending PTS=47
+EVENT(updateend)
+Appending PTS=48
+EVENT(updateend)
+Appending PTS=49
+EVENT(updateend)
+Appending PTS=50
+EVENT(updateend)
+Appending PTS=51
+EVENT(updateend)
+Appending PTS=52
+EVENT(updateend)
+Appending PTS=53
+EVENT(updateend)
+Appending PTS=54
+EVENT(updateend)
+Appending PTS=55
+EVENT(updateend)
+Appending PTS=56
+EVENT(updateend)
+Appending PTS=57
+EVENT(updateend)
+Appending PTS=58
+EVENT(updateend)
+Appending PTS=59
+EVENT(updateend)
+Appending PTS=60
+EVENT(updateend)
+Appending PTS=61
+EVENT(updateend)
+Appending PTS=62
+EVENT(updateend)
+Appending PTS=63
+EVENT(updateend)
+Appending PTS=64
+EVENT(updateend)
+Appending PTS=65
+EVENT(updateend)
+Appending PTS=66
+EVENT(updateend)
+Appending PTS=67
+EVENT(updateend)
+Appending PTS=68
+EVENT(updateend)
+Appending PTS=69
+EVENT(updateend)
+Appending PTS=70
+EVENT(updateend)
+Appending PTS=71
+EVENT(updateend)
+Appending PTS=72
+EVENT(updateend)
+Appending PTS=73
+EVENT(updateend)
+Appending PTS=74
+EVENT(updateend)
+Appending PTS=75
+EVENT(updateend)
+Appending PTS=76
+EVENT(updateend)
+Appending PTS=77
+EVENT(updateend)
+Appending PTS=78
+EVENT(updateend)
+Appending PTS=79
+EVENT(updateend)
+Appending PTS=80
+EVENT(updateend)
+Appending PTS=81
+EVENT(updateend)
+Appending PTS=82
+EVENT(updateend)
+Appending PTS=83
+EVENT(updateend)
+Appending PTS=84
+EVENT(updateend)
+Appending PTS=85
+EVENT(updateend)
+Appending PTS=86
+EVENT(updateend)
+Appending PTS=87
+EVENT(updateend)
+Appending PTS=88
+EVENT(updateend)
+Appending PTS=89
+EVENT(updateend)
+Appending PTS=90
+EVENT(updateend)
+Appending PTS=91
+EVENT(updateend)
+Appending PTS=92
+EVENT(updateend)
+Appending PTS=93
+EVENT(updateend)
+Appending PTS=94
+EVENT(updateend)
+Appending PTS=95
+EVENT(updateend)
+Appending PTS=96
+EVENT(updateend)
+Appending PTS=97
+EVENT(updateend)
+Appending PTS=98
+EVENT(updateend)
+Appending PTS=99
+EVENT(updateend)
+EXPECTED (exception == 'null') OK
+EXPECTED (internals.evictableSize(sourceBuffer) == '0') OK
+EXPECTED (bufferedRanges() == '[ 0...100 ]') OK
+Appending PTS=101
+EXPECTED (exception == 'QuotaExceededError: The quota has been exceeded.') OK
+EXPECTED (internals.evictableSize(sourceBuffer) == '0') OK
+Appending PTS=200
+EXPECTED (exception == 'QuotaExceededError: The quota has been exceeded.') OK
+EXPECTED (internals.evictableSize(sourceBuffer) == '0') OK
+RUN(video.currentTime = 175)
+EXPECTED (video.currentTime == '175') OK
+Appending PTS=175
+EVENT(updateend)
+Appending PTS=176
+EVENT(updateend)
+Appending PTS=177
+EVENT(updateend)
+Appending PTS=178
+EVENT(updateend)
+Appending PTS=179
+EVENT(updateend)
+Appending PTS=180
+EVENT(updateend)
+Appending PTS=181
+EVENT(updateend)
+Appending PTS=182
+EVENT(updateend)
+Appending PTS=183
+EVENT(updateend)
+Appending PTS=184
+EVENT(updateend)
+Appending PTS=185
+EVENT(updateend)
+Appending PTS=186
+EVENT(updateend)
+Appending PTS=187
+EVENT(updateend)
+Appending PTS=188
+EVENT(updateend)
+Appending PTS=189
+EVENT(updateend)
+Appending PTS=190
+EVENT(updateend)
+Appending PTS=191
+EVENT(updateend)
+Appending PTS=192
+EVENT(updateend)
+Appending PTS=193
+EVENT(updateend)
+Appending PTS=194
+EVENT(updateend)
+Appending PTS=195
+EVENT(updateend)
+Appending PTS=196
+EVENT(updateend)
+Appending PTS=197
+EVENT(updateend)
+Appending PTS=198
+EVENT(updateend)
+Appending PTS=199
+EVENT(updateend)
+Appending PTS=200
+EVENT(updateend)
+EXPECTED (bufferedRanges() == '[ 30...100, 175...201 ]') OK
+EXPECTED (internals.evictableSize(sourceBuffer) == '5040') OK
+EVENT(updateend)
+RUN(video.currentTime = 0)
+EXPECTED (video.currentTime == '0') OK
+Appending PTS=0
+EVENT(updateend)
+Appending PTS=1
+EVENT(updateend)
+Appending PTS=2
+EVENT(updateend)
+Appending PTS=3
+EVENT(updateend)
+Appending PTS=4
+EVENT(updateend)
+Appending PTS=5
+EVENT(updateend)
+Appending PTS=6
+EVENT(updateend)
+Appending PTS=7
+EVENT(updateend)
+Appending PTS=8
+EVENT(updateend)
+Appending PTS=9
+EVENT(updateend)
+Appending PTS=10
+EVENT(updateend)
+Appending PTS=11
+EVENT(updateend)
+Appending PTS=12
+EVENT(updateend)
+Appending PTS=13
+EVENT(updateend)
+Appending PTS=14
+EVENT(updateend)
+Appending PTS=15
+EVENT(updateend)
+Appending PTS=16
+EVENT(updateend)
+Appending PTS=17
+EVENT(updateend)
+Appending PTS=18
+EVENT(updateend)
+Appending PTS=19
+EVENT(updateend)
+Appending PTS=20
+EVENT(updateend)
+Appending PTS=21
+EVENT(updateend)
+Appending PTS=22
+EVENT(updateend)
+Appending PTS=23
+EVENT(updateend)
+Appending PTS=24
+EVENT(updateend)
+Appending PTS=25
+EVENT(updateend)
+Appending PTS=26
+EVENT(updateend)
+Appending PTS=27
+EVENT(updateend)
+Appending PTS=28
+EVENT(updateend)
+Appending PTS=29
+EVENT(updateend)
+Appending PTS=30
+EVENT(updateend)
+Appending PTS=31
+EVENT(updateend)
+Appending PTS=32
+EVENT(updateend)
+Appending PTS=33
+EVENT(updateend)
+Appending PTS=34
+EVENT(updateend)
+Appending PTS=35
+EVENT(updateend)
+Appending PTS=36
+EVENT(updateend)
+Appending PTS=37
+EVENT(updateend)
+Appending PTS=38
+EVENT(updateend)
+Appending PTS=39
+EVENT(updateend)
+Appending PTS=40
+EVENT(updateend)
+Appending PTS=41
+EVENT(updateend)
+Appending PTS=42
+EVENT(updateend)
+Appending PTS=43
+EVENT(updateend)
+Appending PTS=44
+EVENT(updateend)
+Appending PTS=45
+EVENT(updateend)
+Appending PTS=46
+EVENT(updateend)
+Appending PTS=47
+EVENT(updateend)
+Appending PTS=48
+EVENT(updateend)
+Appending PTS=49
+EVENT(updateend)
+EXPECTED (bufferedRanges() == '[ 0...50 ]') OK
+EXPECTED (internals.evictableSize(sourceBuffer) == '0') OK
+Appending PTS=200
+EVENT(updateend)
+Appending PTS=201
+EVENT(updateend)
+Appending PTS=202
+EVENT(updateend)
+Appending PTS=203
+EVENT(updateend)
+Appending PTS=204
+EVENT(updateend)
+Appending PTS=205
+EVENT(updateend)
+Appending PTS=206
+EVENT(updateend)
+Appending PTS=207
+EVENT(updateend)
+Appending PTS=208
+EVENT(updateend)
+Appending PTS=209
+EVENT(updateend)
+Appending PTS=210
+EVENT(updateend)
+Appending PTS=211
+EVENT(updateend)
+Appending PTS=212
+EVENT(updateend)
+Appending PTS=213
+EVENT(updateend)
+Appending PTS=214
+EVENT(updateend)
+Appending PTS=215
+EVENT(updateend)
+Appending PTS=216
+EVENT(updateend)
+Appending PTS=217
+EVENT(updateend)
+Appending PTS=218
+EVENT(updateend)
+Appending PTS=219
+EVENT(updateend)
+Appending PTS=220
+EVENT(updateend)
+Appending PTS=221
+EVENT(updateend)
+Appending PTS=222
+EVENT(updateend)
+Appending PTS=223
+EVENT(updateend)
+Appending PTS=224
+EVENT(updateend)
+Appending PTS=225
+EVENT(updateend)
+Appending PTS=226
+EVENT(updateend)
+Appending PTS=227
+EVENT(updateend)
+Appending PTS=228
+EVENT(updateend)
+Appending PTS=229
+EVENT(updateend)
+Appending PTS=230
+EVENT(updateend)
+Appending PTS=231
+EVENT(updateend)
+Appending PTS=232
+EVENT(updateend)
+Appending PTS=233
+EVENT(updateend)
+Appending PTS=234
+EVENT(updateend)
+Appending PTS=235
+EVENT(updateend)
+Appending PTS=236
+EVENT(updateend)
+Appending PTS=237
+EVENT(updateend)
+Appending PTS=238
+EVENT(updateend)
+Appending PTS=239
+EVENT(updateend)
+Appending PTS=240
+EVENT(updateend)
+Appending PTS=241
+EVENT(updateend)
+Appending PTS=242
+EVENT(updateend)
+Appending PTS=243
+EVENT(updateend)
+Appending PTS=244
+EVENT(updateend)
+Appending PTS=245
+EVENT(updateend)
+Appending PTS=246
+EVENT(updateend)
+Appending PTS=247
+EVENT(updateend)
+Appending PTS=248
+EVENT(updateend)
+Appending PTS=249
+EVENT(updateend)
+EXPECTED (exception == 'null') OK
+EXPECTED (bufferedRanges() == '[ 0...50, 200...250 ]') OK
+EXPECTED (internals.evictableSize(sourceBuffer) == '3600') OK
+RUN(video.currentTime = 60)
+EXPECTED (video.currentTime == '60') OK
+Appending PTS=55
+EVENT(updateend)
+Appending PTS=56
+EVENT(updateend)
+Appending PTS=57
+EVENT(updateend)
+Appending PTS=58
+EVENT(updateend)
+Appending PTS=59
+EVENT(updateend)
+Appending PTS=60
+EVENT(updateend)
+Appending PTS=61
+EVENT(updateend)
+Appending PTS=62
+EVENT(updateend)
+Appending PTS=63
+EVENT(updateend)
+Appending PTS=64
+EVENT(updateend)
+Appending PTS=65
+EVENT(updateend)
+Appending PTS=66
+EVENT(updateend)
+Appending PTS=67
+EVENT(updateend)
+Appending PTS=68
+EVENT(updateend)
+Appending PTS=69
+EVENT(updateend)
+Appending PTS=70
+EVENT(updateend)
+Appending PTS=71
+EVENT(updateend)
+Appending PTS=72
+EVENT(updateend)
+Appending PTS=73
+EVENT(updateend)
+Appending PTS=74
+EVENT(updateend)
+Appending PTS=75
+EVENT(updateend)
+Appending PTS=76
+EVENT(updateend)
+Appending PTS=77
+EVENT(updateend)
+Appending PTS=78
+EVENT(updateend)
+Appending PTS=79
+EVENT(updateend)
+Appending PTS=80
+EVENT(updateend)
+Appending PTS=81
+EVENT(updateend)
+Appending PTS=82
+EVENT(updateend)
+Appending PTS=83
+EVENT(updateend)
+Appending PTS=84
+EVENT(updateend)
+Appending PTS=85
+EVENT(updateend)
+Appending PTS=86
+EVENT(updateend)
+Appending PTS=87
+EVENT(updateend)
+Appending PTS=88
+EVENT(updateend)
+Appending PTS=89
+EVENT(updateend)
+Appending PTS=90
+EVENT(updateend)
+Appending PTS=91
+EVENT(updateend)
+Appending PTS=92
+EVENT(updateend)
+Appending PTS=93
+EVENT(updateend)
+Appending PTS=94
+EVENT(updateend)
+Appending PTS=95
+EVENT(updateend)
+Appending PTS=96
+EVENT(updateend)
+Appending PTS=97
+EVENT(updateend)
+Appending PTS=98
+EVENT(updateend)
+Appending PTS=99
+EVENT(updateend)
+EXPECTED (bufferedRanges() == '[ 45...50, 55...100, 200...250 ]') OK
+EXPECTED (internals.evictableSize(sourceBuffer) == '4104') OK
+RUN(video.currentTime = 0)
+EXPECTED (video.currentTime == '0') OK
+Appending PTS=0
+EVENT(updateend)
+Appending PTS=1
+EVENT(updateend)
+Appending PTS=2
+EVENT(updateend)
+Appending PTS=3
+EVENT(updateend)
+Appending PTS=4
+EVENT(updateend)
+Appending PTS=5
+EVENT(updateend)
+Appending PTS=6
+EVENT(updateend)
+Appending PTS=7
+EVENT(updateend)
+Appending PTS=8
+EVENT(updateend)
+Appending PTS=9
+EVENT(updateend)
+Appending PTS=10
+EVENT(updateend)
+Appending PTS=11
+EVENT(updateend)
+Appending PTS=12
+EVENT(updateend)
+Appending PTS=13
+EVENT(updateend)
+Appending PTS=14
+EVENT(updateend)
+Appending PTS=15
+EVENT(updateend)
+Appending PTS=16
+EVENT(updateend)
+Appending PTS=17
+EVENT(updateend)
+Appending PTS=18
+EVENT(updateend)
+Appending PTS=19
+EVENT(updateend)
+Appending PTS=20
+EVENT(updateend)
+Appending PTS=21
+EVENT(updateend)
+Appending PTS=22
+EVENT(updateend)
+Appending PTS=23
+EVENT(updateend)
+Appending PTS=24
+EVENT(updateend)
+Appending PTS=25
+EVENT(updateend)
+Appending PTS=26
+EVENT(updateend)
+Appending PTS=27
+EVENT(updateend)
+Appending PTS=28
+EVENT(updateend)
+Appending PTS=29
+EVENT(updateend)
+Appending PTS=30
+EVENT(updateend)
+Appending PTS=31
+EVENT(updateend)
+Appending PTS=32
+EVENT(updateend)
+Appending PTS=33
+EVENT(updateend)
+Appending PTS=34
+EVENT(updateend)
+Appending PTS=35
+EVENT(updateend)
+Appending PTS=36
+EVENT(updateend)
+Appending PTS=37
+EVENT(updateend)
+Appending PTS=38
+EVENT(updateend)
+Appending PTS=39
+EVENT(updateend)
+Appending PTS=40
+EVENT(updateend)
+Appending PTS=41
+EVENT(updateend)
+Appending PTS=42
+EVENT(updateend)
+Appending PTS=43
+EVENT(updateend)
+Appending PTS=44
+EVENT(updateend)
+Appending PTS=45
+EVENT(updateend)
+Appending PTS=46
+EVENT(updateend)
+Appending PTS=47
+EVENT(updateend)
+Appending PTS=48
+EVENT(updateend)
+Appending PTS=49
+EVENT(updateend)
+EXPECTED (bufferedRanges() == '[ 0...50, 55...100 ]') OK
+EXPECTED (internals.evictableSize(sourceBuffer) == '3240') OK
+END OF TEST
+
