@@ -57,8 +57,6 @@ class WebProcessPool;
 class WebUserContentControllerProxy;
 class WebsiteDataStore;
 
-struct NetworkProcessPreferencesForWebProcess;
-
 #if ENABLE(WK_WEB_EXTENSIONS)
 class WebExtensionController;
 #endif
@@ -417,8 +415,6 @@ public:
 
     void setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension mode) { m_data.contentSecurityPolicyModeForExtension = mode; }
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_data.contentSecurityPolicyModeForExtension; }
-
-    WebKit::NetworkProcessPreferencesForWebProcess preferencesForNetworkProcess() const;
 
 private:
     struct Data {

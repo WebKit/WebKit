@@ -474,11 +474,6 @@ void WebProcessProxy::initializeWebProcess(WebProcessCreationParameters&& parame
 
 void WebProcessProxy::initializePreferencesForGPUAndNetworkProcesses(const WebPageProxy& page)
 {
-    if (!m_preferencesForNetworkProcess)
-        m_preferencesForNetworkProcess = page.preferencesForNetworkProcess();
-    else
-        ASSERT(*m_preferencesForNetworkProcess == page.preferencesForNetworkProcess());
-
     if (!m_sharedPreferencesForWebProcess) {
         updateSharedPreferencesForWebProcess(page.preferences());
         ASSERT(m_sharedPreferencesForWebProcess);
@@ -491,25 +486,8 @@ void WebProcessProxy::initializePreferencesForGPUAndNetworkProcesses(const WebPa
 
 }
 
-void WebProcessProxy::initializePreferencesForNetworkProcess(const API::PageConfiguration& pageConfiguration)
-{
-    ASSERT(!m_preferencesForNetworkProcess);
-    m_preferencesForNetworkProcess = pageConfiguration.preferencesForNetworkProcess();
-}
-
-void WebProcessProxy::initializePreferencesForNetworkProcess(const WebPreferencesStore& preferences)
-{
-    ASSERT(!m_preferencesForNetworkProcess);
-    m_preferencesForNetworkProcess = NetworkProcessPreferencesForWebProcess {
-        preferences.getBoolValueForKey(WebPreferencesKey::webTransportEnabledKey()),
-        processPool().usesSingleWebProcess(),
-    };
-}
-
 bool WebProcessProxy::hasSameGPUAndNetworkProcessPreferencesAs(const API::PageConfiguration& pageConfiguration) const
 {
-    if (m_preferencesForNetworkProcess && *m_preferencesForNetworkProcess != pageConfiguration.preferencesForNetworkProcess())
-        return false;
     if (m_sharedPreferencesForWebProcess) {
         auto sharedPreferencesForWebProcess = *m_sharedPreferencesForWebProcess;
         if (WebKit::updateSharedPreferencesForWebProcess(sharedPreferencesForWebProcess, pageConfiguration.preferences()))
@@ -2217,10 +2195,14 @@ std::optional<SharedPreferencesForWebProcess> WebProcessProxy::updateSharedPrefe
     return std::nullopt;
 }
 
-void WebProcessProxy::didSyncSharedPreferencesForWebProcess(uint64_t syncedSharedPreferencesVersion)
+void WebProcessProxy::didSyncSharedPreferencesForWebProcessWithNetworkProcess(uint64_t syncedSharedPreferencesVersion)
 {
-    m_syncedSharedPreferencesVersion = syncedSharedPreferencesVersion;
-    if (m_syncedSharedPreferencesVersion < m_awaitedSharedPreferencesVersion)
+    m_sharedPreferencesVersionInNetworkProcess = syncedSharedPreferencesVersion;
+    if (m_sharedPreferencesVersionInNetworkProcess < m_awaitedSharedPreferencesVersion
+#if ENABLE(GPU_PROCESS)
+        || m_sharedPreferencesVersionInGPUProcess < m_awaitedSharedPreferencesVersion
+#endif
+        )
         return;
     auto completionHandler = std::exchange(m_sharedPreferencesForWebProcessCompletionHandler, { });
     if (!completionHandler)
@@ -2229,11 +2211,30 @@ void WebProcessProxy::didSyncSharedPreferencesForWebProcess(uint64_t syncedShare
     m_awaitedSharedPreferencesVersion = 0;
 }
 
+#if ENABLE(GPU_PROCESS)
+void WebProcessProxy::didSyncSharedPreferencesForWebProcessWithGPUProcess(uint64_t syncedSharedPreferencesVersion)
+{
+    m_sharedPreferencesVersionInGPUProcess = syncedSharedPreferencesVersion;
+    if (m_sharedPreferencesVersionInNetworkProcess < m_awaitedSharedPreferencesVersion
+        || m_sharedPreferencesVersionInGPUProcess < m_awaitedSharedPreferencesVersion)
+        return;
+    auto completionHandler = std::exchange(m_sharedPreferencesForWebProcessCompletionHandler, { });
+    if (!completionHandler)
+        return;
+    completionHandler(true);
+    m_awaitedSharedPreferencesVersion = 0;
+}
+#endif
+
 void WebProcessProxy::waitForSharedPreferencesForWebProcessToSync(uint64_t sharedPreferencesVersion, CompletionHandler<void(bool success)>&& completionHandler)
 {
     ASSERT(!m_sharedPreferencesForWebProcessCompletionHandler);
     ASSERT(!m_awaitedSharedPreferencesVersion);
-    if (m_syncedSharedPreferencesVersion >= sharedPreferencesVersion)
+    if (m_sharedPreferencesVersionInNetworkProcess >= sharedPreferencesVersion
+#if ENABLE(GPU_PROCESS)
+        || m_sharedPreferencesVersionInGPUProcess >= m_awaitedSharedPreferencesVersion
+#endif
+        )
         return completionHandler(true);
     m_awaitedSharedPreferencesVersion = sharedPreferencesVersion;
     m_sharedPreferencesForWebProcessCompletionHandler = WTFMove(completionHandler);

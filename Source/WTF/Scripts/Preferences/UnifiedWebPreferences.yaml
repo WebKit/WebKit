@@ -7175,6 +7175,16 @@ UsesEncodingDetector:
     WebCore:
       default: false
 
+UsesSingleWebProcess:
+  type: bool
+  status: embedder
+  exposed: [ WebKit ]
+  webcoreBinding: none
+  defaultValue:
+    WebKit:
+      default: false
+  sharedPreferenceForWebProcess: true
+
 VP8DecoderEnabled:
   type: bool
   status: embedder
@@ -8045,6 +8055,7 @@ WebTransportEnabled:
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 WebXRAugmentedRealityModuleEnabled:
   type: bool

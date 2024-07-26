@@ -429,7 +429,6 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/MonotonicObjectIdentifier.serialization.in
     Shared/NavigationActionData.serialization.in
     Shared/NetworkProcessConnectionParameters.serialization.in
-    Shared/NetworkProcessPreferencesForWebProcess.serialization.in
     Shared/Pasteboard.serialization.in
     Shared/PlatformFontInfo.serialization.in
     Shared/PlatformPopupMenuData.serialization.in

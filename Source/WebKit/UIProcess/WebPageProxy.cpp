@@ -1178,12 +1178,8 @@ void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const S
 
 bool WebPageProxy::hasSameGPUAndNetworkProcessPreferencesAs(const API::PageConfiguration& configuration) const
 {
-    if (preferencesForNetworkProcess() != configuration.preferencesForNetworkProcess())
-        return false;
     auto sharedPreferences = sharedPreferencesForWebProcess(preferences());
-    if (updateSharedPreferencesForWebProcess(sharedPreferences, configuration.preferences()))
-        return false;
-    return true;
+    return !updateSharedPreferencesForWebProcess(sharedPreferences, configuration.preferences());
 }
 
 void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, ProcessLaunchReason reason)
@@ -5894,19 +5890,26 @@ void WebPageProxy::preferencesDidChange()
         std::optional<uint64_t> sharedPreferencesVersion;
         if (auto sharedPreferences = webProcess.updateSharedPreferencesForWebProcess(preferences())) {
             sharedPreferencesVersion = sharedPreferences->version;
+            if (RefPtr networkProcess = websiteDataStore().networkProcessIfExists()) {
+                networkProcess->sharedPreferencesForWebProcessDidChange(webProcess, WTFMove(*sharedPreferences), [weakWebProcess = WeakPtr { webProcess }, syncedVersion = sharedPreferences->version]() {
+                    if (RefPtr webProcess = weakWebProcess.get())
+                        webProcess->didSyncSharedPreferencesForWebProcessWithNetworkProcess(syncedVersion);
+                });
+            }
 #if ENABLE(GPU_PROCESS)
             if (RefPtr gpuProcess = webProcess.processPool().gpuProcess()) {
                 gpuProcess->sharedPreferencesForWebProcessDidChange(webProcess, WTFMove(*sharedPreferences), [weakWebProcess = WeakPtr { webProcess }, syncedVersion = sharedPreferences->version]() {
                     if (RefPtr webProcess = weakWebProcess.get())
-                        webProcess->didSyncSharedPreferencesForWebProcess(syncedVersion);
+                        webProcess->didSyncSharedPreferencesForWebProcessWithGPUProcess(syncedVersion);
                 });
             }
 #endif
         }
 
-        if (m_isPerformingDOMPrintOperation)
-            webProcess.send(Messages::WebPage::PreferencesDidChangeDuringDOMPrintOperation(preferencesStore(), sharedPreferencesVersion), pageID,  IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
-        else
+        if (m_isPerformingDOMPrintOperation) {
+            ASSERT(!sharedPreferencesVersion);
+            webProcess.send(Messages::WebPage::PreferencesDidChangeDuringDOMPrintOperation(preferencesStore(), std::nullopt), pageID,  IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+        } else
             webProcess.send(Messages::WebPage::PreferencesDidChange(preferencesStore(), sharedPreferencesVersion), pageID);
     });
 }
@@ -6820,11 +6823,6 @@ void WebPageProxy::didChangeMainDocument(FrameIdentifier frameID)
     m_isQuotaIncreaseDenied = false;
 
     m_speechRecognitionPermissionManager = nullptr;
-}
-
-NetworkProcessPreferencesForWebProcess WebPageProxy::preferencesForNetworkProcess() const
-{
-    return configuration().preferencesForNetworkProcess();
 }
 
 void WebPageProxy::viewIsBecomingVisible()

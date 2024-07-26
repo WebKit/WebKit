@@ -29,12 +29,12 @@
 #include "DownloadID.h"
 #include "NetworkActivityTracker.h"
 #include "NetworkMDNSRegister.h"
-#include "NetworkProcessPreferencesForWebProcess.h"
 #include "NetworkRTCProvider.h"
 #include "NetworkResourceLoadIdentifier.h"
 #include "NetworkResourceLoadMap.h"
 #include "PolicyDecision.h"
 #include "SandboxExtension.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebPaymentCoordinatorProxy.h"
 #include "WebResourceLoadObserver.h"
@@ -137,7 +137,10 @@ public:
 
     static Ref<NetworkConnectionToWebProcess> create(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&, IPC::Connection::Identifier);
     virtual ~NetworkConnectionToWebProcess();
-    
+
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
+    void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess) { m_sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess); }
+
     PAL::SessionID sessionID() const { return m_sessionID; }
     NetworkSession* networkSession();
 
@@ -146,8 +149,8 @@ public:
     NetworkProcess& networkProcess() { return m_networkProcess.get(); }
     Ref<NetworkProcess> protectedNetworkProcess();
 
-    bool isWebTransportEnabled() const { return m_preferencesForWebProcess.isWebTransportEnabled; }
-    bool usesSingleWebProcess() const { return m_preferencesForWebProcess.usesSingleWebProcess; }
+    bool isWebTransportEnabled() const { return m_sharedPreferencesForWebProcess.webTransportEnabled; }
+    bool usesSingleWebProcess() const { return m_sharedPreferencesForWebProcess.usesSingleWebProcess; }
 
     void didCleanupResourceLoader(NetworkResourceLoader&);
     void transferKeptAliveLoad(NetworkResourceLoader&);
@@ -340,7 +343,7 @@ private:
     void unregisterToRTCDataChannelProxy();
 #endif
         
-    bool allowTestOnlyIPC() const { return m_allowTestOnlyIPC; }
+    bool allowTestOnlyIPC() const { return m_sharedPreferencesForWebProcess.allowTestOnlyIPC; }
 
     void clearPageSpecificData(WebCore::PageIdentifier);
 
@@ -486,11 +489,10 @@ private:
     using BlobURLKey = std::pair<URL, std::optional<WebCore::SecurityOriginData>>;
     HashSet<BlobURLKey> m_blobURLs;
     HashCountedSet<BlobURLKey> m_blobURLHandles;
-    NetworkProcessPreferencesForWebProcess m_preferencesForWebProcess;
+    SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
 #if ENABLE(IPC_TESTING_API)
     IPCTester m_ipcTester;
 #endif
-    bool m_allowTestOnlyIPC { false };
 
     HashMap<WebTransportSessionIdentifier, UniqueRef<NetworkTransportSession>> m_networkTransportSessions;
 };

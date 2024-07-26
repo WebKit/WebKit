@@ -144,8 +144,7 @@ NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(NetworkProcess& net
     , m_webProcessIdentifier(webProcessIdentifier)
     , m_schemeRegistry(NetworkSchemeRegistry::create())
     , m_originAccessPatterns(makeUniqueRef<NetworkOriginAccessPatterns>())
-    , m_preferencesForWebProcess(parameters.preferencesForWebProcess)
-    , m_allowTestOnlyIPC(parameters.allowTestOnlyIPC)
+    , m_sharedPreferencesForWebProcess(parameters.sharedPreferencesForWebProcess)
 {
     RELEASE_ASSERT(RunLoop::isMain());
 

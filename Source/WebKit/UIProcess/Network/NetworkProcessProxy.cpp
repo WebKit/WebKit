@@ -308,14 +308,11 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because a web process is requesting a connection", this);
     startResponsivenessTimer(UseLazyStop::No);
     NetworkProcessConnectionParameters parameters;
-    parameters.allowTestOnlyIPC = webProcessProxy.allowTestOnlyIPC();
 #if ENABLE(IPC_TESTING_API)
     parameters.ignoreInvalidMessageForTesting = webProcessProxy.ignoreInvalidMessageForTesting();
 #endif
-    // The WebProcess shouldn't request a connection to the network process before we've had a chance to
-    // initialize the preferences for the network process.
-    ASSERT(webProcessProxy.preferencesForNetworkProcess());
-    parameters.preferencesForWebProcess = *webProcessProxy.preferencesForNetworkProcess();
+    if (auto sharedPreferences = webProcessProxy.sharedPreferencesForWebProcess())
+        parameters.sharedPreferencesForWebProcess = *sharedPreferences;
     sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), parameters }, [this, weakThis = WeakPtr { *this }, reply = WTFMove(reply)](auto&& identifier, auto cookieAcceptPolicy) mutable {
         if (!weakThis) {
             RELEASE_LOG_ERROR(Process, "NetworkProcessProxy::getNetworkProcessConnection: NetworkProcessProxy deallocated during connection establishment");
@@ -338,6 +335,11 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
         notImplemented();
 #endif
     }, 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+
+void NetworkProcessProxy::sharedPreferencesForWebProcessDidChange(WebProcessProxy& webProcessProxy, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess, CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::NetworkProcess::SharedPreferencesForWebProcessDidChange { webProcessProxy.coreProcessIdentifier(), WTFMove(sharedPreferencesForWebProcess) }, WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::synthesizeAppIsBackground(bool background)

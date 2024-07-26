@@ -339,14 +339,4 @@ void PageConfiguration::setApplicationManifest(RefPtr<ApplicationManifest>&& app
 }
 #endif
 
-NetworkProcessPreferencesForWebProcess PageConfiguration::preferencesForNetworkProcess() const
-{
-    Ref preferences = m_data.preferences.get();
-
-    return {
-        preferences->webTransportEnabled(),
-        processPool().usesSingleWebProcess(),
-    };
-}
-
 } // namespace API
