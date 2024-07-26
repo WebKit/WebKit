@@ -20,12 +20,27 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-enum class WebCore::IndexedDB::IndexRecordType : bool;
+enum class WebCore::IndexedDB::IndexRecordType : bool {
+    Key,
+    Value
+};
 
-enum class WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer : bool;
+enum class WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer : bool {
+    No,
+    Yes
+};
 
-enum class WebCore::IndexedDB::CursorIterateOption : bool;
+enum class WebCore::IndexedDB::CursorIterateOption : bool {
+    DoNotReply,
+    Reply
+};
 
-enum class WebCore::IndexedDB::CursorSource : bool;
+enum class WebCore::IndexedDB::CursorSource : bool {
+    Index,
+    ObjectStore
+};
 
-enum class WebCore::IndexedDB::CursorType : bool;
+enum class WebCore::IndexedDB::CursorType : bool {
+    KeyAndValue,
+    KeyOnly
+};

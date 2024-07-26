@@ -23,9 +23,18 @@
 
 #if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
 
-enum class WebKit::ContextMenuItemEnablement : bool;
-enum class WebKit::ContextMenuItemHasAction : bool;
-enum class WebKit::ContextMenuItemIsSeparator : bool;
+enum class WebKit::ContextMenuItemEnablement : bool {
+    Disabled,
+    Enabled
+};
+enum class WebKit::ContextMenuItemHasAction : bool {
+    No,
+    Yes
+};
+enum class WebKit::ContextMenuItemIsSeparator : bool {
+    No,
+    Yes
+};
 
 [CustomHeader] struct WebKit::PDFContextMenuItem {
     String title;

@@ -278,7 +278,7 @@ constexpr bool messageIsSync(MessageName name)
 
 namespace WTF {
 
-template<> constexpr bool isValidEnum<IPC::MessageName, void>(std::underlying_type_t<IPC::MessageName> messageName)
+template<> constexpr bool isValidEnum<IPC::MessageName>(std::underlying_type_t<IPC::MessageName> messageName)
 {
     return messageName <= WTF::enumToUnderlyingType(IPC::MessageName::Last);
 }

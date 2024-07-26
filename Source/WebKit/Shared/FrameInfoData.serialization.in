@@ -22,7 +22,10 @@
 
 headers: "FrameInfoData.h" "WebCoreArgumentCoders.h"
 
-enum class WebKit::FrameType : bool
+enum class WebKit::FrameType : bool {
+    Local,
+    Remote
+};
 
 struct WebKit::FrameInfoData {
     bool isMainFrame

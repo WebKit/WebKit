@@ -118,4 +118,7 @@ enum class WebKit::InputType : uint8_t {
 }
 #endif
 
-enum class WebKit::ColorControlSupportsAlpha : bool
+enum class WebKit::ColorControlSupportsAlpha : bool {
+    Yes,
+    No
+};

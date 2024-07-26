@@ -20,7 +20,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-enum class WebKit::AllowsCellularAccess : bool;
+enum class WebKit::AllowsCellularAccess : bool {
+    No,
+    Yes
+};
 
 [RValue] struct WebKit::NetworkSessionCreationParameters {
     PAL::SessionID sessionID;
@@ -108,3 +111,11 @@ enum class WebKit::AllowsCellularAccess : bool;
 #endif
     WebKit::ResourceLoadStatisticsParameters resourceLoadStatisticsParameters;
 };
+
+#if USE(SOUP)
+header: "SoupCookiePersistentStorageType.h"
+enum class WebKit::SoupCookiePersistentStorageType : bool {
+    Text,
+    SQLite
+};
+#endif

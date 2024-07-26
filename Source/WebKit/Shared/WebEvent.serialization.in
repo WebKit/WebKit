@@ -94,7 +94,10 @@ class WebKit::WebKeyboardEvent : WebKit::WebEvent {
 };
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(IOS_TOUCH_EVENTS)
-[Nested] enum class WebKit::WebPlatformTouchPoint::TouchType : bool
+[Nested] enum class WebKit::WebPlatformTouchPoint::TouchType : bool {
+    Direct,
+    Stylus
+};
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -160,7 +163,17 @@ class WebKit::WebTouchEvent : WebKit::WebEvent {
     TwoFingerTap
 };
 
-enum class WebKit::GestureWasCancelled : bool;
+enum class WebKit::GestureWasCancelled : bool {
+    No,
+    Yes
+};
+
+#if !PLATFORM(MAC) && PLATFORM(GTK)
+[Nested] enum class WebCore::PlatformMouseEvent::IsTouch : bool {
+    No,
+    Yes
+};
+#endif
 
 class WebKit::WebMouseEvent : WebKit::WebEvent {
     WebKit::WebMouseEventButton button();

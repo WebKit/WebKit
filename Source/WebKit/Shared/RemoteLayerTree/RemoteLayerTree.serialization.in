@@ -94,7 +94,10 @@ enum class WebKit::LayerContentsType : uint8_t {
 };
 
 header: "RemoteLayerBackingStore.h"
-[Nested] enum class WebKit::RemoteLayerBackingStore::Type : bool;
+[Nested] enum class WebKit::RemoteLayerBackingStore::Type : bool {
+    IOSurface,
+    Bitmap
+};
 
 [CustomEncoder, CustomHeader, LegacyPopulateFromEmptyConstructor, Nested] class WebKit::RemoteLayerBackingStoreProperties {
     bool m_isOpaque;

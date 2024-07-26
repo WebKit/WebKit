@@ -22,4 +22,7 @@
 
 header: "InjectUserScriptImmediately.h"
 
-enum class WebKit::InjectUserScriptImmediately : bool;
+enum class WebKit::InjectUserScriptImmediately : bool {
+    No,
+    Yes
+};

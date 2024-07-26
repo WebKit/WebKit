@@ -33,14 +33,20 @@ enum class WebCore::Kerning : uint8_t {
     NoShift
 };
 
-enum class WebCore::FontOpticalSizing : bool;
+enum class WebCore::FontOpticalSizing : bool {
+    Enabled,
+    Disabled
+};
 
 enum class WebCore::FontStyleAxis : uint8_t {
     slnt,
     ital
 };
 
-enum class WebCore::AllowUserInstalledFonts : bool;
+enum class WebCore::AllowUserInstalledFonts : bool {
+    No,
+    Yes
+};
 
 enum class WebCore::FontVariantEastAsianVariant : uint8_t {
     Normal,
@@ -129,9 +135,27 @@ enum class WebCore::FontSmoothingMode : uint8_t {
 #endif
 };
 
-enum class WebCore::FontOrientation : bool
-enum class WebCore::NonCJKGlyphOrientation : bool
-enum class WebCore::FontVariantNumericOrdinal : bool
-enum class WebCore::FontVariantNumericSlashedZero : bool
-enum class WebCore::FontSynthesisLonghandValue : bool
-enum class WebCore::FontSmallCaps : bool
+enum class WebCore::FontOrientation : bool {
+    Horizontal,
+    Vertical
+};
+enum class WebCore::NonCJKGlyphOrientation : bool {
+    Mixed,
+    Upright
+};
+enum class WebCore::FontVariantNumericOrdinal : bool {
+    Normal,
+    Yes
+};
+enum class WebCore::FontVariantNumericSlashedZero : bool {
+    Normal,
+    Yes
+};
+enum class WebCore::FontSynthesisLonghandValue : bool {
+    None,
+    Auto
+};
+enum class WebCore::FontSmallCaps : bool {
+    Off,
+    On
+};

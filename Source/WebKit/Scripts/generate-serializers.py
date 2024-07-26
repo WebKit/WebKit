@@ -262,11 +262,6 @@ class SerializedEnum(object):
             return 'isValidOptionSet'
         return 'isValidEnum'
 
-    def additional_template_parameter(self):
-        if self.is_option_set():
-            return ''
-        return ', void'
-
     def parameter(self):
         if self.is_option_set():
             return 'OptionSet<' + self.namespace_and_name() + '>'
@@ -697,11 +692,9 @@ def generate_header(serialized_types, serialized_enums, additional_forward_decla
     for enum in serialized_enums:
         if enum.is_nested():
             continue
-        if enum.underlying_type == 'bool':
-            continue
         if enum.condition is not None:
             result.append('#if ' + enum.condition)
-        result.append('template<> bool ' + enum.function_name() + '<' + enum.namespace_and_name() + enum.additional_template_parameter() + '>(' + enum.parameter() + ');')
+        result.append('template<> bool ' + enum.function_name() + '<' + enum.namespace_and_name() + '>(' + enum.parameter() + ');')
         if enum.condition is not None:
             result.append('#endif')
     result.append('')
@@ -1170,7 +1163,7 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
         result.append('')
         if type.condition is not None:
             result.append('#if ' + type.condition)
-        result.append('template<> bool ' + type.function_name_for_enum() + '<IPC::' + type.subclass_enum_name() + ', void>(IPC::EncodedVariantIndex value)')
+        result.append('template<> bool ' + type.function_name_for_enum() + '<IPC::' + type.subclass_enum_name() + '>(IPC::EncodedVariantIndex value)')
         result.append('{')
         result.append('IGNORE_WARNINGS_BEGIN("switch-unreachable")')
         result.append('    switch (static_cast<IPC::' + type.subclass_enum_name() + '>(value)) {')
@@ -1191,12 +1184,10 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
     for enum in serialized_enums:
         if enum.is_webkit_platform() != generating_webkit_platform_impl:
             continue
-        if enum.underlying_type == 'bool':
-            continue
         result.append('')
         if enum.condition is not None:
             result.append('#if ' + enum.condition)
-        result.append('template<> bool ' + enum.function_name() + '<' + enum.namespace_and_name() + enum.additional_template_parameter() + '>(' + enum.parameter() + ' value)')
+        result.append('template<> bool ' + enum.function_name() + '<' + enum.namespace_and_name() + '>(' + enum.parameter() + ' value)')
         result.append('{')
         if enum.is_option_set():
             result.append('    constexpr ' + enum.underlying_type + ' allValidBitsValue = 0')
@@ -1375,7 +1366,11 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, u
     result.append('')
     result.append('template<typename E> uint64_t enumValueForIPCTestAPI(E e)')
     result.append('{')
-    result.append('    return static_cast<std::make_unsigned_t<std::underlying_type_t<E>>>(e);')
+    result.append('    using U = std::underlying_type_t<E>;')
+    result.append('    if constexpr (std::is_same_v<U, bool>)')
+    result.append('        return static_cast<U>(e);')
+    result.append('    else')
+    result.append('        return static_cast<std::make_unsigned_t<U>>(e);')
     result.append('}')
     result.append('')
     result.append('Vector<SerializedTypeInfo> allSerializedTypes()')
@@ -1410,15 +1405,12 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, u
         if enum.condition is not None:
             result.append('#if ' + enum.condition)
         result.append('        { "' + enum.namespace_and_name() + '"_s, sizeof(' + enum.namespace_and_name() + '), ' + ('true' if enum.is_option_set() else 'false') + ', {')
-        if enum.underlying_type == 'bool':
-            result.append('            0, 1')
-        else:
-            for valid_value in enum.valid_values:
-                if valid_value.condition is not None:
-                    result.append('#if ' + valid_value.condition)
-                result.append('            enumValueForIPCTestAPI(' + enum.namespace_and_name() + '::' + valid_value.name + '),')
-                if valid_value.condition is not None:
-                    result.append('#endif')
+        for valid_value in enum.valid_values:
+            if valid_value.condition is not None:
+                result.append('#if ' + valid_value.condition)
+            result.append('            enumValueForIPCTestAPI(' + enum.namespace_and_name() + '::' + valid_value.name + '),')
+            if valid_value.condition is not None:
+                result.append('#endif')
         result.append('        } },')
         if enum.condition is not None:
             result.append('#endif')
@@ -1566,17 +1558,15 @@ def parse_serialized_types(file):
         match = re.search(r'(.*)enum class (.*)::(.*) : (.*) {', line)
         if match:
             attributes, namespace, name, underlying_type = match.groups()
-            assert underlying_type != 'bool'
-            continue
-        match = re.search(r'(.*)enum class (.*)::(.*) : bool', line)
-        if match:
-            serialized_enums.append(SerializedEnum(match.groups()[1], match.groups()[2], 'bool', [], type_condition, match.groups()[0]))
             continue
         match = re.search(r'(.*)enum class (.*) : (.*) {', line)
         if match:
             attributes, name, underlying_type = match.groups()
-            assert underlying_type != 'bool'
             continue
+        match = re.search(r'(.*)enum class (.*) : bool', line)
+        assert not match, "Enumerators must be provided, even for underlying type bool:\n" + line
+        match = re.search(r'(.*)enum class (.*) : (.*)', line)
+        assert not match, "Enumerators must be provided:\n" + line
 
         match = re.search(r'\[(.*)\] (struct|class|alias) (.*)::(.*) : (.*) {', line)
         if match:

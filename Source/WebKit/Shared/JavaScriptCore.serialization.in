@@ -58,7 +58,10 @@ enum class JSC::SourceTaintedOrigin : uint8_t {
 };
 
 header: <JavaScriptCore/InspectorFrontendChannel.h>
-[Nested] enum class Inspector::FrontendChannel::ConnectionType : bool;
+[Nested] enum class Inspector::FrontendChannel::ConnectionType : bool {
+    Remote,
+    Local
+};
 
 header: <JavaScriptCore/InspectorTarget.h>
 enum class Inspector::InspectorTargetType : uint8_t {

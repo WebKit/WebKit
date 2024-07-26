@@ -63,7 +63,10 @@ header: "CoreIPCNSURLRequest.h"
 };
 
 header: "CoreIPCNSURLRequest.h"
-[CustomHeader, WebKitPlatform] enum class WebKit::NSURLRequestAttribution : bool;
+[CustomHeader, WebKitPlatform] enum class WebKit::NSURLRequestAttribution : bool {
+    Developer,
+    User
+};
 
 header: "CoreIPCNSURLRequest.h"
 [OptionSet, CustomHeader, WebKitPlatform] enum class WebKit::NSURLRequestFlags : int16_t {

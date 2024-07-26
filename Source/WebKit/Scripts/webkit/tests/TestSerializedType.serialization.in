@@ -58,7 +58,10 @@ class WebCore::InheritanceGrandchild : WebCore::InheritsFrom {
 }
 
 #if ENABLE(BOOL_ENUM)
-enum class EnumNamespace::BoolEnumType : bool
+enum class EnumNamespace::BoolEnumType : bool {
+    No,
+    Yes
+};
 #endif
 
 enum class EnumWithoutNamespace : uint8_t {
@@ -317,7 +320,10 @@ enum class EnumNamespace::InnerEnumType : uint8_t {
 #endif
 }
 #else
-enum class EnumNamespace::InnerBoolType : bool
+enum class EnumNamespace::InnerBoolType : bool {
+    No,
+    Yes
+};
 #endif
 
 #else
