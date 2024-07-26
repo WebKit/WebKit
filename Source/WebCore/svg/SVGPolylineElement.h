@@ -26,6 +26,7 @@ namespace WebCore {
 
 class SVGPolylineElement final : public SVGPolyElement {
     WTF_MAKE_ISO_ALLOCATED(SVGPolylineElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGPolylineElement);
 public:
     static Ref<SVGPolylineElement> create(const QualifiedName&, Document&);
 

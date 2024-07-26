@@ -34,6 +34,7 @@ struct PatternAttributes;
  
 class SVGPatternElement final : public SVGElement, public SVGFitToViewBox, public SVGTests, public SVGURIReference {
     WTF_MAKE_ISO_ALLOCATED(SVGPatternElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGPatternElement);
 public:
     static Ref<SVGPatternElement> create(const QualifiedName&, Document&);
 

@@ -39,6 +39,7 @@ class LoadableTextTrack;
 
 class HTMLTrackElement final : public HTMLElement, public ActiveDOMObject, public TextTrackClient {
     WTF_MAKE_ISO_ALLOCATED(HTMLTrackElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLTrackElement);
 public:
     static Ref<HTMLTrackElement> create(const QualifiedName&, Document&);
 

@@ -31,6 +31,7 @@ namespace WebCore {
 
 class HTMLSlotElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLSlotElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLSlotElement);
 public:
     using ElementOrText = std::variant<RefPtr<Element>, RefPtr<Text>>;
 

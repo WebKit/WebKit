@@ -47,6 +47,8 @@ inline HTMLAreaElement::HTMLAreaElement(const QualifiedName& tagName, Document& 
     ASSERT(hasTagName(areaTag));
 }
 
+HTMLAreaElement::~HTMLAreaElement() = default;
+
 Ref<HTMLAreaElement> HTMLAreaElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new HTMLAreaElement(tagName, document));

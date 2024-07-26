@@ -50,6 +50,7 @@ class MediaControlTextTrackContainerElement final
 #endif
 {
     WTF_MAKE_ISO_ALLOCATED(MediaControlTextTrackContainerElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaControlTextTrackContainerElement);
 public:
     static Ref<MediaControlTextTrackContainerElement> create(Document&, HTMLMediaElement&);
 

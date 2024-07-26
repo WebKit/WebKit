@@ -26,6 +26,7 @@ namespace WebCore {
 
 class SVGAltGlyphItemElement final : public SVGElement {
     WTF_MAKE_ISO_ALLOCATED(SVGAltGlyphItemElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAltGlyphItemElement);
 public:
     static Ref<SVGAltGlyphItemElement> create(const QualifiedName&, Document&);
 

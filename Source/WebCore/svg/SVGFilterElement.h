@@ -31,6 +31,7 @@ namespace WebCore {
 
 class SVGFilterElement final : public SVGElement, public SVGURIReference {
     WTF_MAKE_ISO_ALLOCATED(SVGFilterElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFilterElement);
 public:
     static Ref<SVGFilterElement> create(const QualifiedName&, Document&);
 

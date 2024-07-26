@@ -31,6 +31,7 @@ namespace WebCore {
 
 class HTMLTimeElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLTimeElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLTimeElement);
 public:
     static Ref<HTMLTimeElement> create(const QualifiedName&, Document&);
 

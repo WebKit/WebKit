@@ -30,6 +30,7 @@ class SVGGlyphElement;
 
 class SVGAltGlyphElement final : public SVGTextPositioningElement, public SVGURIReference {
     WTF_MAKE_ISO_ALLOCATED(SVGAltGlyphElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAltGlyphElement);
 public:
     static Ref<SVGAltGlyphElement> create(const QualifiedName&, Document&);
 

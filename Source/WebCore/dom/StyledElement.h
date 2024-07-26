@@ -42,6 +42,7 @@ class StylePropertyMap;
 
 class StyledElement : public Element {
     WTF_MAKE_ISO_ALLOCATED(StyledElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StyledElement);
 public:
     virtual ~StyledElement();
 

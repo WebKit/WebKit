@@ -147,6 +147,8 @@ RemovedSubtreeObservability notifyChildNodeRemoved(ContainerNode& oldParentOfRem
 
 void removeDetachedChildrenInContainer(ContainerNode& container)
 {
+    container.setLastChild(nullptr);
+
     RefPtr<Node> next;
     for (RefPtr node = container.firstChild(); node; node = WTFMove(next)) {
         ASSERT(!node->deletionHasBegun());
@@ -163,8 +165,6 @@ void removeDetachedChildrenInContainer(ContainerNode& container)
             notifyChildNodeRemoved(container, *node);
         ASSERT_WITH_SECURITY_IMPLICATION(!node->isInTreeScope());
     }
-
-    container.setLastChild(nullptr);
 }
 
 #ifndef NDEBUG

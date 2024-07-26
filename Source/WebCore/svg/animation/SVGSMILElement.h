@@ -43,6 +43,7 @@ using SMILEventSender = EventSender<SVGSMILElement, WeakPtrImplWithEventTargetDa
 // This class implements SMIL interval timing model as needed for SVG animation.
 class SVGSMILElement : public SVGElement {
     WTF_MAKE_ISO_ALLOCATED(SVGSMILElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGSMILElement);
 public:
     SVGSMILElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&);
     virtual ~SVGSMILElement();

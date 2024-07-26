@@ -98,6 +98,7 @@ private:
 
 class ImageDocumentElement final : public HTMLImageElement {
     WTF_MAKE_ISO_ALLOCATED_INLINE(ImageDocumentElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ImageDocumentElement);
 public:
     static Ref<ImageDocumentElement> create(ImageDocument&);
 

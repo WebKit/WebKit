@@ -36,9 +36,11 @@ class HTMLTableSectionElement;
 
 class HTMLTableElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLTableElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLTableElement);
 public:
     static Ref<HTMLTableElement> create(Document&);
     static Ref<HTMLTableElement> create(const QualifiedName&, Document&);
+    ~HTMLTableElement();
 
     WEBCORE_EXPORT RefPtr<HTMLTableCaptionElement> caption() const;
     WEBCORE_EXPORT ExceptionOr<void> setCaption(RefPtr<HTMLTableCaptionElement>&&);

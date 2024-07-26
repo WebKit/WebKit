@@ -57,6 +57,8 @@ inline HTMLIFrameElement::HTMLIFrameElement(const QualifiedName& tagName, Docume
     ASSERT(hasTagName(iframeTag));
 }
 
+HTMLIFrameElement::~HTMLIFrameElement() = default;
+
 Ref<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new HTMLIFrameElement(tagName, document));

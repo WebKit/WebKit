@@ -47,6 +47,7 @@ class TextTrackCue;
 
 class TextTrackCueBox : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(TextTrackCueBox);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextTrackCueBox);
 public:
     static Ref<TextTrackCueBox> create(Document&, TextTrackCue&);
 

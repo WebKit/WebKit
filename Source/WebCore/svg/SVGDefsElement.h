@@ -27,6 +27,7 @@ namespace WebCore {
 
 class SVGDefsElement final : public SVGGraphicsElement {
     WTF_MAKE_ISO_ALLOCATED(SVGDefsElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGDefsElement);
 public:
     static Ref<SVGDefsElement> create(const QualifiedName&, Document&);
 

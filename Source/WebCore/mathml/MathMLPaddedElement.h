@@ -33,6 +33,7 @@ namespace WebCore {
 
 class MathMLPaddedElement final : public MathMLRowElement {
     WTF_MAKE_ISO_ALLOCATED(MathMLPaddedElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLPaddedElement);
 public:
     static Ref<MathMLPaddedElement> create(const QualifiedName& tagName, Document&);
     // FIXME: Pseudo-units are not supported yet (https://bugs.webkit.org/show_bug.cgi?id=85730).

@@ -30,6 +30,7 @@ namespace WebCore {
 
 class SVGScriptElement final : public SVGElement, public SVGURIReference, public ScriptElement {
     WTF_MAKE_ISO_ALLOCATED(SVGScriptElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGScriptElement);
 public:
     static Ref<SVGScriptElement> create(const QualifiedName&, Document&, bool wasInsertedByParser);
 

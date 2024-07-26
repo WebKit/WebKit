@@ -77,6 +77,7 @@ struct SVGPropertyTraits<CompositeOperationType> {
 
 class SVGFECompositeElement final : public SVGFilterPrimitiveStandardAttributes {
     WTF_MAKE_ISO_ALLOCATED(SVGFECompositeElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFECompositeElement);
 public:
     static Ref<SVGFECompositeElement> create(const QualifiedName&, Document&);
 

@@ -29,6 +29,7 @@ namespace WebCore {
 
 class HTMLDocument : public Document {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(HTMLDocument, WEBCORE_EXPORT);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLDocument);
 public:
     static Ref<HTMLDocument> create(LocalFrame*, const Settings&, const URL&, ScriptExecutionContextIdentifier = { });
     static Ref<HTMLDocument> createSynthesizedDocument(LocalFrame&, const URL&);

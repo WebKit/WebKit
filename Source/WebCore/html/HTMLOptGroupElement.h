@@ -31,6 +31,7 @@ class HTMLSelectElement;
 
 class HTMLOptGroupElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLOptGroupElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLOptGroupElement);
 public:
     static Ref<HTMLOptGroupElement> create(const QualifiedName&, Document&);
 

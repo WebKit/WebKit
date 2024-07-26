@@ -30,6 +30,7 @@ namespace WebCore {
 
 class HTMLLegendElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLLegendElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLLegendElement);
 public:
     static Ref<HTMLLegendElement> create(const QualifiedName&, Document&);
 

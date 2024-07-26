@@ -28,6 +28,7 @@ namespace WebCore {
 
 class HTMLDListElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLDListElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLDListElement);
 public:
     static Ref<HTMLDListElement> create(const QualifiedName&, Document&);
 

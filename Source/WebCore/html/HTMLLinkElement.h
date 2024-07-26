@@ -46,6 +46,7 @@ using LinkEventSender = EventSender<HTMLLinkElement, WeakPtrImplWithEventTargetD
 
 class HTMLLinkElement final : public HTMLElement, public CachedStyleSheetClient, public LinkLoaderClient {
     WTF_MAKE_ISO_ALLOCATED(HTMLLinkElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLLinkElement);
 public:
     using HTMLElement::weakPtrFactory;
     using HTMLElement::WeakValueType;

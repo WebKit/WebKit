@@ -30,6 +30,7 @@ struct LinearGradientAttributes;
 
 class SVGLinearGradientElement final : public SVGGradientElement {
     WTF_MAKE_ISO_ALLOCATED(SVGLinearGradientElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGLinearGradientElement);
 public:
     static Ref<SVGLinearGradientElement> create(const QualifiedName&, Document&);
 

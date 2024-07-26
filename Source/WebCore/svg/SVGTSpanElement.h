@@ -26,6 +26,7 @@ namespace WebCore {
 
 class SVGTSpanElement final : public SVGTextPositioningElement {
     WTF_MAKE_ISO_ALLOCATED(SVGTSpanElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGTSpanElement);
 public:
     static Ref<SVGTSpanElement> create(const QualifiedName&, Document&);
 

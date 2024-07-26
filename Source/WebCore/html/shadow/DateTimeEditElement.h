@@ -59,6 +59,7 @@ public:
 
 class DateTimeEditElement final : public HTMLDivElement, public DateTimeFieldElementFieldOwner {
     WTF_MAKE_ISO_ALLOCATED(DateTimeEditElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DateTimeEditElement);
 public:
     struct LayoutParameters {
         String dateTimeFormat;

@@ -95,8 +95,9 @@ using NodeOrString = std::variant<RefPtr<Node>, String>;
 const int initialNodeVectorSize = 11; // Covers 99.5%. See webkit.org/b/80706
 typedef Vector<Ref<Node>, initialNodeVectorSize> NodeVector;
 
-class Node : public EventTarget {
+class Node : public EventTarget, public CanMakeCheckedPtr<Node> {
     WTF_MAKE_COMPACT_ISO_ALLOCATED(Node);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Node);
 
     friend class Document;
     friend class TreeScope;
@@ -158,8 +159,8 @@ public:
 #else
     static uintptr_t previousSiblingPointerMask() { return -1; }
 #endif
-    Node* nextSibling() const { return m_next; }
-    RefPtr<Node> protectedNextSibling() const { return m_next; }
+    Node* nextSibling() const { return m_next.get(); }
+    RefPtr<Node> protectedNextSibling() const { return m_next.get(); }
     static constexpr ptrdiff_t nextSiblingMemoryOffset() { return OBJECT_OFFSETOF(Node, m_next); }
     WEBCORE_EXPORT RefPtr<NodeList> childNodes();
     Node* firstChild() const;
@@ -802,10 +803,10 @@ private:
     const uint16_t m_typeBitFields;
     mutable OptionSet<StateFlag> m_stateFlags;
 
-    ContainerNode* m_parentNode { nullptr };
+    CheckedPtr<ContainerNode> m_parentNode;
     TreeScope* m_treeScope { nullptr };
     CompactPointerTuple<Node*, uint16_t> m_previous;
-    Node* m_next { nullptr };
+    CheckedPtr<Node> m_next;
     CompactPointerTuple<RenderObject*, uint16_t> m_rendererWithStyleFlags;
     CompactUniquePtrTuple<NodeRareData, uint16_t> m_rareDataWithBitfields;
 };
@@ -907,7 +908,7 @@ inline void addSubresourceURL(ListHashSet<URL>& urls, const URL& url)
 inline ContainerNode* Node::parentNode() const
 {
     ASSERT(isMainThreadOrGCThread());
-    return m_parentNode;
+    return m_parentNode.get();
 }
 
 inline ContainerNode* Node::parentNodeGuaranteedHostFree() const

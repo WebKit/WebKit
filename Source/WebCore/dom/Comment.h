@@ -28,6 +28,7 @@ namespace WebCore {
 
 class Comment final : public CharacterData {
     WTF_MAKE_ISO_ALLOCATED(Comment);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Comment);
 public:
     static Ref<Comment> create(Document&, String&&);
 

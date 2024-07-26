@@ -31,6 +31,7 @@ namespace WebCore {
 
 class HTMLSpanElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLSpanElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLSpanElement);
 public:
     static Ref<HTMLSpanElement> create(Document&);
     static Ref<HTMLSpanElement> create(const QualifiedName&, Document&);

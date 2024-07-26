@@ -31,6 +31,7 @@ class RenderText;
 
 class Text : public CharacterData {
     WTF_MAKE_ISO_ALLOCATED(Text);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Text);
 public:
     static const unsigned defaultLengthLimit = 1 << 16;
 

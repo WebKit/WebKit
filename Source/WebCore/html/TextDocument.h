@@ -30,6 +30,7 @@ namespace WebCore {
 
 class TextDocument final : public HTMLDocument {
     WTF_MAKE_ISO_ALLOCATED(TextDocument);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextDocument);
 public:
     static Ref<TextDocument> create(LocalFrame* frame, const Settings& settings, const URL& url, ScriptExecutionContextIdentifier identifier)
     {

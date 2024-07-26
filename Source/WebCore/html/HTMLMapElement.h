@@ -31,6 +31,7 @@ class HTMLImageElement;
     
 class HTMLMapElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLMapElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLMapElement);
 public:
     static Ref<HTMLMapElement> create(Document&);
     static Ref<HTMLMapElement> create(const QualifiedName&, Document&);

@@ -28,6 +28,7 @@ namespace WebCore {
 
 class HTMLLIElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLLIElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLLIElement);
 public:
     static Ref<HTMLLIElement> create(Document&);
     static Ref<HTMLLIElement> create(const QualifiedName&, Document&);

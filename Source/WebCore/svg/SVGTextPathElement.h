@@ -99,6 +99,7 @@ struct SVGPropertyTraits<SVGTextPathSpacingType> {
 
 class SVGTextPathElement final : public SVGTextContentElement, public SVGURIReference {
     WTF_MAKE_ISO_ALLOCATED(SVGTextPathElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGTextPathElement);
 public:
     // Forward declare enumerations in the W3C naming scheme, for IDL generation.
     enum {

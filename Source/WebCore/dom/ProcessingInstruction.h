@@ -33,6 +33,7 @@ class CSSStyleSheet;
 
 class ProcessingInstruction final : public CharacterData, private CachedStyleSheetClient {
     WTF_MAKE_ISO_ALLOCATED(ProcessingInstruction);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProcessingInstruction);
 public:
     using CharacterData::weakPtrFactory;
     using CharacterData::WeakValueType;

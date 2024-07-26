@@ -34,6 +34,7 @@ class SVGPoint;
 
 class SVGPathElement final : public SVGGeometryElement {
     WTF_MAKE_ISO_ALLOCATED(SVGPathElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGPathElement);
 public:
     static Ref<SVGPathElement> create(const QualifiedName&, Document&);
 

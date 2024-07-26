@@ -62,6 +62,8 @@ inline SVGAElement::SVGAElement(const QualifiedName& tagName, Document& document
     });
 }
 
+SVGAElement::~SVGAElement() = default;
+
 Ref<SVGAElement> SVGAElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new SVGAElement(tagName, document));

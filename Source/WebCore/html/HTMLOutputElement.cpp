@@ -49,6 +49,8 @@ inline HTMLOutputElement::HTMLOutputElement(const QualifiedName& tagName, Docume
 {
 }
 
+HTMLOutputElement::~HTMLOutputElement() = default;
+
 Ref<HTMLOutputElement> HTMLOutputElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
 {
     return adoptRef(*new HTMLOutputElement(tagName, document, form));

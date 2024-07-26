@@ -56,6 +56,7 @@ class HTMLImageElement
     , public FormAssociatedElement
     , public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(HTMLImageElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLImageElement);
 public:
     static Ref<HTMLImageElement> create(Document&);
     static Ref<HTMLImageElement> create(const QualifiedName&, Document&, HTMLFormElement* = nullptr);

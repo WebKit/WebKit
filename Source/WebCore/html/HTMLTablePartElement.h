@@ -33,6 +33,7 @@ class HTMLTableElement;
 
 class HTMLTablePartElement : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLTablePartElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLTablePartElement);
 public:
     RefPtr<const HTMLTableElement> findParentTable() const;
     bool isHTMLTablePartElement() const override { return true; }

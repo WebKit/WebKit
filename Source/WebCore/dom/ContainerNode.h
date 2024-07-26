@@ -34,16 +34,17 @@ class RenderElement;
 
 class ContainerNode : public Node {
     WTF_MAKE_ISO_ALLOCATED(ContainerNode);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ContainerNode);
 public:
     virtual ~ContainerNode();
 
-    Node* firstChild() const { return m_firstChild; }
-    RefPtr<Node> protectedFirstChild() const { return m_firstChild; }
+    Node* firstChild() const { return m_firstChild.get(); }
+    RefPtr<Node> protectedFirstChild() const { return m_firstChild.get(); }
     static constexpr ptrdiff_t firstChildMemoryOffset() { return OBJECT_OFFSETOF(ContainerNode, m_firstChild); }
-    Node* lastChild() const { return m_lastChild; }
-    RefPtr<Node> protectedLastChild() const { return m_lastChild; }
+    Node* lastChild() const { return m_lastChild.get(); }
+    RefPtr<Node> protectedLastChild() const { return m_lastChild.get(); }
     static constexpr ptrdiff_t lastChildMemoryOffset() { return OBJECT_OFFSETOF(ContainerNode, m_lastChild); }
-    bool hasChildNodes() const { return m_firstChild; }
+    bool hasChildNodes() const { return m_firstChild.get(); }
     bool hasOneChild() const { return m_firstChild && m_firstChild == m_lastChild; }
 
     bool directChildNeedsStyleRecalc() const { return hasStyleFlag(NodeStyleFlag::DirectChildNeedsStyleResolution); }
@@ -173,8 +174,8 @@ private:
 
     bool isContainerNode() const = delete;
 
-    Node* m_firstChild { nullptr };
-    Node* m_lastChild { nullptr };
+    CheckedPtr<Node> m_firstChild;
+    CheckedPtr<Node> m_lastChild;
 };
 
 inline ContainerNode::ContainerNode(Document& document, NodeType type, OptionSet<TypeFlag> typeFlags)

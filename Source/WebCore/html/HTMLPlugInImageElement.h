@@ -32,6 +32,7 @@ enum class CreatePlugins : bool { No, Yes };
 // FIXME: This is the only class that derives from HTMLPlugInElement, so we could merge the two classes.
 class HTMLPlugInImageElement : public HTMLPlugInElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLPlugInImageElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLPlugInImageElement);
 public:
     virtual ~HTMLPlugInImageElement();
 

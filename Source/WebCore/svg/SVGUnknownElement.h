@@ -37,6 +37,7 @@ namespace WebCore {
 // false to make sure we don't attempt to render such elements.
 class SVGUnknownElement final : public SVGElement {
     WTF_MAKE_ISO_ALLOCATED(SVGUnknownElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGUnknownElement);
 public:
     static Ref<SVGUnknownElement> create(const QualifiedName& tagName, Document& document)
     {

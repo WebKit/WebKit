@@ -28,6 +28,7 @@ namespace WebCore {
 
 class SVGRectElement final : public SVGGeometryElement {
     WTF_MAKE_ISO_ALLOCATED(SVGRectElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGRectElement);
 public:
     static Ref<SVGRectElement> create(const QualifiedName&, Document&);
 

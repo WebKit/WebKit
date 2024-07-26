@@ -69,6 +69,7 @@ struct SVGPropertyTraits<ComponentTransferType> {
 
 class SVGComponentTransferFunctionElement : public SVGElement {
     WTF_MAKE_ISO_ALLOCATED(SVGComponentTransferFunctionElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGComponentTransferFunctionElement);
 public:
     virtual ComponentTransferChannel channel() const = 0;
     ComponentTransferFunction transferFunction() const;

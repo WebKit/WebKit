@@ -35,6 +35,7 @@ enum class RootType;
 
 class MathMLRootElement final : public MathMLRowElement {
     WTF_MAKE_ISO_ALLOCATED(MathMLRootElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLRootElement);
 public:
     static Ref<MathMLRootElement> create(const QualifiedName& tagName, Document&);
     RootType rootType() const { return m_rootType; }
