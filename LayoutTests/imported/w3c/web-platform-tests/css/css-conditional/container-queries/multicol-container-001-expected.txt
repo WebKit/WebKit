@@ -1,5 +1,5 @@
 First
 Second
 
-PASS Children of multicol inline-size container should match inline-size of the container
+FAIL Children of multicol inline-size container should match inline-size of the container assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 

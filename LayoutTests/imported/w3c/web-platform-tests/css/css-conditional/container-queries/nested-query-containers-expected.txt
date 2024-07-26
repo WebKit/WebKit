@@ -1,34 +1,34 @@
 
-PASS test1 - inline - 0b000
-PASS test2 - inline - 0b001
-PASS test3 - inline - 0b010
-PASS test4 - inline - 0b011
-PASS test5 - inline - 0b100
-PASS test6 - inline - 0b101
-PASS test7 - inline - 0b110
-PASS test8 - inline - 0b111
-PASS test9 - contents - 0b000
-PASS test10 - contents - 0b001
-PASS test11 - contents - 0b010
-PASS test12 - contents - 0b011
-PASS test13 - contents - 0b100
-PASS test14 - contents - 0b101
-PASS test15 - contents - 0b110
-PASS test16 - contents - 0b111
-PASS test17 - table-cell - 0b000
-PASS test18 - table-cell - 0b001
-PASS test19 - table-cell - 0b010
-PASS test20 - table-cell - 0b011
-PASS test21 - table-cell - 0b100
-PASS test22 - table-cell - 0b101
-PASS test23 - table-cell - 0b110
-PASS test24 - table-cell - 0b111
-PASS test25 - table - 0b000
-PASS test26 - table - 0b001
-PASS test27 - table - 0b010
-PASS test28 - table - 0b011
-PASS test29 - table - 0b100
-PASS test30 - table - 0b101
-PASS test31 - table - 0b110
-PASS test32 - table - 0b111
+FAIL test1 - inline - 0b000 assert_equals: expected "inline" but got "block"
+FAIL test2 - inline - 0b001 assert_equals: expected "inline" but got "block"
+FAIL test3 - inline - 0b010 assert_equals: expected "inline" but got "block"
+FAIL test4 - inline - 0b011 assert_equals: expected "inline" but got "block"
+FAIL test5 - inline - 0b100 assert_equals: expected "inline" but got "block"
+FAIL test6 - inline - 0b101 assert_equals: expected "inline" but got "block"
+FAIL test7 - inline - 0b110 assert_equals: expected "inline" but got "block"
+FAIL test8 - inline - 0b111 assert_equals: expected "inline" but got "block"
+FAIL test9 - contents - 0b000 assert_equals: expected "contents" but got "block"
+FAIL test10 - contents - 0b001 assert_equals: expected "contents" but got "block"
+FAIL test11 - contents - 0b010 assert_equals: expected "contents" but got "block"
+FAIL test12 - contents - 0b011 assert_equals: expected "contents" but got "block"
+FAIL test13 - contents - 0b100 assert_equals: expected "contents" but got "block"
+FAIL test14 - contents - 0b101 assert_equals: expected "contents" but got "block"
+FAIL test15 - contents - 0b110 assert_equals: expected "contents" but got "block"
+FAIL test16 - contents - 0b111 assert_equals: expected "contents" but got "block"
+FAIL test17 - table-cell - 0b000 assert_equals: expected "table-cell" but got "block"
+FAIL test18 - table-cell - 0b001 assert_equals: expected "table-cell" but got "block"
+FAIL test19 - table-cell - 0b010 assert_equals: expected "table-cell" but got "block"
+FAIL test20 - table-cell - 0b011 assert_equals: expected "table-cell" but got "block"
+FAIL test21 - table-cell - 0b100 assert_equals: expected "table-cell" but got "block"
+FAIL test22 - table-cell - 0b101 assert_equals: expected "table-cell" but got "block"
+FAIL test23 - table-cell - 0b110 assert_equals: expected "table-cell" but got "block"
+FAIL test24 - table-cell - 0b111 assert_equals: expected "table-cell" but got "block"
+FAIL test25 - table - 0b000 assert_equals: expected "table" but got "block"
+FAIL test26 - table - 0b001 assert_equals: expected "table" but got "block"
+FAIL test27 - table - 0b010 assert_equals: expected "table" but got "block"
+FAIL test28 - table - 0b011 assert_equals: expected "table" but got "block"
+FAIL test29 - table - 0b100 assert_equals: expected "table" but got "block"
+FAIL test30 - table - 0b101 assert_equals: expected "table" but got "block"
+FAIL test31 - table - 0b110 assert_equals: expected "table" but got "block"
+FAIL test32 - table - 0b111 assert_equals: expected "table" but got "block"
 

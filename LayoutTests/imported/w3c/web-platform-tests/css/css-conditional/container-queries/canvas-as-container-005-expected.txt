@@ -2,5 +2,5 @@ Test passes if there is a filled green square.
 
 
 PASS Initially display:none, not focusable
-PASS Focusable after container size change
+FAIL Focusable after container size change assert_equals: expected Element node <div id="target" tabindex="1"></div> but got Element node <body><p>Test passes if there is a filled green square.</...
 

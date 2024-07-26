@@ -1,4 +1,4 @@
 Test
 
-PASS Animated container creating new container
+FAIL Animated container creating new container assert_equals: expected "rgb(0, 0, 255)" but got "rgb(255, 0, 0)"
 

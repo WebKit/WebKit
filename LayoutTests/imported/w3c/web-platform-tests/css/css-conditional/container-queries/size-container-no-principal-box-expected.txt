@@ -1,8 +1,8 @@
 
-PASS (min-width: 0) can match a container with a principal box
+FAIL (min-width: 0) can match a container with a principal box assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 PASS (min-width: 0) does not match a container without a principal box (display:none)
 PASS (min-width: 0) does not match a container without a principal box (display:contents)
-PASS not (max-width: 0) can match a container with a principal box
+FAIL not (max-width: 0) can match a container with a principal box assert_equals: expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
 PASS not (max-width: 0) does not match a container without a principal box (display:none)
 PASS not (max-width: 0) does not match a container without a principal box (display:contents)
 

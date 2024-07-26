@@ -1,6 +1,6 @@
 Green
 Green
 
-PASS Host container child invalidated with container in shadow tree
-PASS Non-host container child invalidated with container in shadow tree
+FAIL Host container child invalidated with container in shadow tree assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Non-host container child invalidated with container in shadow tree assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 

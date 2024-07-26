@@ -1,20 +1,20 @@
 
-PASS (width)
+FAIL (width) assert_equals: expected "true" but got "false"
 PASS (height)
 PASS (unknown)
 PASS unknown(width)
-PASS ((width))
+FAIL ((width)) assert_equals: expected "true" but got "false"
 PASS ((height))
 PASS ((unknown))
-PASS ((((width))))
+FAIL ((((width)))) assert_equals: expected "true" but got "false"
 PASS ((((height))))
 PASS ((((unknown))))
 PASS (not (width))
-PASS (not (height))
+FAIL (not (height)) assert_equals: expected "true" but got "false"
 PASS (not (unknown))
 PASS (not unknown(width))
-PASS ((width) and (width))
-PASS ((width) and (width) and (width))
+FAIL ((width) and (width)) assert_equals: expected "true" but got "false"
+FAIL ((width) and (width) and (width)) assert_equals: expected "true" but got "false"
 PASS ((height) and (height))
 PASS ((height) and (width) and (width))
 PASS ((width) and (height) and (width))
@@ -22,19 +22,19 @@ PASS ((width) and (width) and (height))
 PASS ((unknown) and (width) and (width))
 PASS ((width) and (unknown) and (width))
 PASS ((width) and (width) and (unknown))
-PASS ((width) or (width))
-PASS ((width) or (width) or (width))
+FAIL ((width) or (width)) assert_equals: expected "true" but got "false"
+FAIL ((width) or (width) or (width)) assert_equals: expected "true" but got "false"
 PASS ((height) or (height))
-PASS ((height) or (width) or (width))
-PASS ((width) or (height) or (width))
-PASS ((width) or (width) or (height))
+FAIL ((height) or (width) or (width)) assert_equals: expected "true" but got "false"
+FAIL ((width) or (height) or (width)) assert_equals: expected "true" but got "false"
+FAIL ((width) or (width) or (height)) assert_equals: expected "true" but got "false"
 PASS ((unknown) or (width) or (width))
 PASS ((width) or (unknown) or (width))
 PASS ((width) or (width) or (unknown))
 PASS ((unknown) or (height) or (width))
 PASS (not ((width) and (width)))
-PASS (not ((width) and (height)))
+FAIL (not ((width) and (height))) assert_equals: expected "true" but got "false"
 PASS ((width) and (not ((height) or (width))))
-PASS ((height) or (not ((height) and (width))))
+FAIL ((height) or (not ((height) and (width)))) assert_equals: expected "true" but got "false"
 PASS ((height) or ((height) and (width)))
 

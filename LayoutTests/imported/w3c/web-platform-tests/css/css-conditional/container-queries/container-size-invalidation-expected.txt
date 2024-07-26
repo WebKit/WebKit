@@ -2,6 +2,6 @@ Test
 Deep
 
 
-PASS Children respond to changes in container size
-PASS Descendants respond to changes in container size
+FAIL Children respond to changes in container size assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Descendants respond to changes in container size assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
 

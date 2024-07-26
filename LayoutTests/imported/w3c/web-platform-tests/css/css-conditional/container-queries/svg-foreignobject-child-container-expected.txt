@@ -1,4 +1,4 @@
 Green
 
-PASS #inner querying #container inside foreignObject
+FAIL #inner querying #container inside foreignObject assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 

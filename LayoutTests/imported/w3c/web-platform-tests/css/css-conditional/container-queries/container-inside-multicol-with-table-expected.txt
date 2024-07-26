@@ -1,4 +1,4 @@
 
-PASS Matching size container inside table inside multicol
-PASS Matching size container inside multicol with table sibling
+FAIL Matching size container inside table inside multicol assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Matching size container inside multicol with table sibling assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 

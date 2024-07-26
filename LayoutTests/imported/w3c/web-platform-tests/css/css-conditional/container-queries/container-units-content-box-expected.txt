@@ -1,4 +1,4 @@
 
-PASS Container units are relative to the content box of the container
-PASS Container units are relative to the content box of the container (box-sizing: border-box)
+FAIL Container units are relative to the content box of the container assert_equals: expected "10px" but got "80px"
+FAIL Container units are relative to the content box of the container (box-sizing: border-box) assert_equals: expected "6px" but got "80px"
 

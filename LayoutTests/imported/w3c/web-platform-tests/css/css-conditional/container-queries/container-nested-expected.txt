@@ -1,16 +1,16 @@
 
-PASS Implicit
+FAIL Implicit assert_equals: expected "true" but got ""
 PASS Implicit, outer failing
 PASS Implicit, inner failing
-PASS Outer named, inner named
-PASS Outer named, inner named (reverse)
+FAIL Outer named, inner named assert_equals: expected "true" but got ""
+FAIL Outer named, inner named (reverse) assert_equals: expected "true" but got ""
 PASS Failing outer name
 PASS Failing inner name
-PASS Outer named, inner implicit
-PASS Inner named, outer implicit
-PASS Inner named, outer implicit (reverse)
-PASS Three levels
+FAIL Outer named, inner implicit assert_equals: expected "true" but got ""
+FAIL Inner named, outer implicit assert_equals: expected "true" but got ""
+FAIL Inner named, outer implicit (reverse) assert_equals: expected "true" but got ""
+FAIL Three levels assert_equals: expected "true" but got ""
 PASS Three levels, middle fail
-PASS Named inner invalidation
-PASS Implicit outer invalidation
+FAIL Named inner invalidation assert_equals: expected "true" but got ""
+FAIL Implicit outer invalidation assert_equals: expected "true" but got ""
 

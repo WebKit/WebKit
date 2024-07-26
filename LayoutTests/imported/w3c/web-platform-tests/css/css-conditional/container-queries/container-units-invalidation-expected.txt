@@ -1,9 +1,9 @@
 Test
 Test
 
-PASS cqi respond when selected container changes type (inline-size -> normal)
-PASS cqb respond when selected container changes type (size -> normal)
-PASS cqb respond when intermediate container changes type (inline-size -> size)
-PASS cqi respond when selected container changes inline-size
-PASS cqb respond when selected container changes block-size
+FAIL cqi respond when selected container changes type (inline-size -> normal) assert_equals: expected "30px" but got "80px"
+FAIL cqb respond when selected container changes type (size -> normal) assert_equals: expected "40px" but got "60px"
+FAIL cqb respond when intermediate container changes type (inline-size -> size) assert_equals: expected "40px" but got "60px"
+FAIL cqi respond when selected container changes inline-size assert_equals: expected "30px" but got "80px"
+FAIL cqb respond when selected container changes block-size assert_equals: expected "40px" but got "60px"
 

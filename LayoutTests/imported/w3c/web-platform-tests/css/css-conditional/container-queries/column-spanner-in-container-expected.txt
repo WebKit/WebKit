@@ -1,5 +1,5 @@
 
-PASS #spanner matching container with column-width 300px, getting column-span:all
+FAIL #spanner matching container with column-width 300px, getting column-span:all assert_equals: expected "600px" but got "300px"
 PASS Reducing #multicol width means #spanner no longer gets column-span:all
-PASS Back to matching 300px and column-span:all
+FAIL Back to matching 300px and column-span:all assert_equals: expected "600px" but got "300px"
 

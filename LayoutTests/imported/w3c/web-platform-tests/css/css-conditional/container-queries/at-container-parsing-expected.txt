@@ -1,55 +1,55 @@
 
-PASS (width)
-PASS (min-width: 0px)
-PASS (max-width: 0px)
-PASS (height)
-PASS (min-height: 0px)
-PASS (max-height: 0px)
-PASS (aspect-ratio)
-PASS (min-aspect-ratio: 1/2)
-PASS (max-aspect-ratio: 1/2)
-PASS (orientation: portrait)
-PASS (inline-size)
-PASS (min-inline-size: 0px)
-PASS (max-inline-size: 0px)
-PASS (block-size)
-PASS (min-block-size: 0px)
-PASS (max-block-size: 0px)
-PASS (width: 100px)
-PASS ((width: 100px))
-PASS (not (width: 100px))
-PASS ((width: 100px) and (height: 100px))
-PASS (((width: 40px) or (width: 50px)) and (height: 100px))
-PASS ((width: 100px) and ((height: 40px) or (height: 50px)))
-PASS (((width: 40px) and (height: 50px)) or (height: 100px))
-PASS ((width: 50px) or ((width: 40px) and (height: 50px)))
-PASS ((width: 100px) and (not (height: 100px)))
-PASS (width < 100px)
-PASS (width <= 100px)
-PASS (width = 100px)
-PASS (width > 100px)
-PASS (width >= 100px)
-PASS (100px < width)
-PASS (100px <= width)
-PASS (100px = width)
-PASS (100px > width)
-PASS (100px >= width)
-PASS (100px < width < 200px)
-PASS (100px < width <= 200px)
-PASS (100px <= width < 200px)
-PASS (100px > width > 200px)
-PASS (100px > width >= 200px)
-PASS (100px >= width > 200px)
-PASS (width: calc(10px))
-PASS (width: calc(10em))
-PASS (width: calc(10px + 10em))
-PASS (width < calc(10px + 10em))
-PASS (width < max(10px, 10em))
-PASS (calc(10px + 10em) < width)
-PASS (calc(10px + 10em) < width < max(30px, 30em))
-PASS (width: 100px) and (height: 100px)
-PASS (width: 100px) or (height: 100px)
-PASS not (width: 100px)
+FAIL (width) assert_equals: expected "true" but got ""
+FAIL (min-width: 0px) assert_equals: expected "true" but got ""
+FAIL (max-width: 0px) assert_equals: expected "true" but got ""
+FAIL (height) assert_equals: expected "true" but got ""
+FAIL (min-height: 0px) assert_equals: expected "true" but got ""
+FAIL (max-height: 0px) assert_equals: expected "true" but got ""
+FAIL (aspect-ratio) assert_equals: expected "true" but got ""
+FAIL (min-aspect-ratio: 1/2) assert_equals: expected "true" but got ""
+FAIL (max-aspect-ratio: 1/2) assert_equals: expected "true" but got ""
+FAIL (orientation: portrait) assert_equals: expected "true" but got ""
+FAIL (inline-size) assert_equals: expected "true" but got ""
+FAIL (min-inline-size: 0px) assert_equals: expected "true" but got ""
+FAIL (max-inline-size: 0px) assert_equals: expected "true" but got ""
+FAIL (block-size) assert_equals: expected "true" but got ""
+FAIL (min-block-size: 0px) assert_equals: expected "true" but got ""
+FAIL (max-block-size: 0px) assert_equals: expected "true" but got ""
+FAIL (width: 100px) assert_equals: expected "true" but got ""
+FAIL ((width: 100px)) assert_equals: expected "true" but got ""
+FAIL (not (width: 100px)) assert_equals: expected "true" but got ""
+FAIL ((width: 100px) and (height: 100px)) assert_equals: expected "true" but got ""
+FAIL (((width: 40px) or (width: 50px)) and (height: 100px)) assert_equals: expected "true" but got ""
+FAIL ((width: 100px) and ((height: 40px) or (height: 50px))) assert_equals: expected "true" but got ""
+FAIL (((width: 40px) and (height: 50px)) or (height: 100px)) assert_equals: expected "true" but got ""
+FAIL ((width: 50px) or ((width: 40px) and (height: 50px))) assert_equals: expected "true" but got ""
+FAIL ((width: 100px) and (not (height: 100px))) assert_equals: expected "true" but got ""
+FAIL (width < 100px) assert_equals: expected "true" but got ""
+FAIL (width <= 100px) assert_equals: expected "true" but got ""
+FAIL (width = 100px) assert_equals: expected "true" but got ""
+FAIL (width > 100px) assert_equals: expected "true" but got ""
+FAIL (width >= 100px) assert_equals: expected "true" but got ""
+FAIL (100px < width) assert_equals: expected "true" but got ""
+FAIL (100px <= width) assert_equals: expected "true" but got ""
+FAIL (100px = width) assert_equals: expected "true" but got ""
+FAIL (100px > width) assert_equals: expected "true" but got ""
+FAIL (100px >= width) assert_equals: expected "true" but got ""
+FAIL (100px < width < 200px) assert_equals: expected "true" but got ""
+FAIL (100px < width <= 200px) assert_equals: expected "true" but got ""
+FAIL (100px <= width < 200px) assert_equals: expected "true" but got ""
+FAIL (100px > width > 200px) assert_equals: expected "true" but got ""
+FAIL (100px > width >= 200px) assert_equals: expected "true" but got ""
+FAIL (100px >= width > 200px) assert_equals: expected "true" but got ""
+FAIL (width: calc(10px)) assert_equals: expected "true" but got ""
+FAIL (width: calc(10em)) assert_equals: expected "true" but got ""
+FAIL (width: calc(10px + 10em)) assert_equals: expected "true" but got ""
+FAIL (width < calc(10px + 10em)) assert_equals: expected "true" but got ""
+FAIL (width < max(10px, 10em)) assert_equals: expected "true" but got ""
+FAIL (calc(10px + 10em) < width) assert_equals: expected "true" but got ""
+FAIL (calc(10px + 10em) < width < max(30px, 30em)) assert_equals: expected "true" but got ""
+FAIL (width: 100px) and (height: 100px) assert_equals: expected "true" but got ""
+FAIL (width: 100px) or (height: 100px) assert_equals: expected "true" but got ""
+FAIL not (width: 100px) assert_equals: expected "true" but got ""
 PASS foo(width)
 PASS size(width)
 PASS (asdf)

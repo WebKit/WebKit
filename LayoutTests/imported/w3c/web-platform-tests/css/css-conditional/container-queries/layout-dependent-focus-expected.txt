@@ -1,3 +1,4 @@
 
-PASS Verify that onblur is called on hidden input
+
+FAIL Verify that onblur is called on hidden input assert_unreached: Event listener for 'blur' not called Reached unreachable code
 

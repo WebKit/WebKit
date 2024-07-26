@@ -1,11 +1,11 @@
 
-PASS /* basic */
-PASS display: table
-PASS display: table-cell
-PASS display: inline
-PASS display: contents
-PASS display: none
-PASS container-type: normal
-PASS container-type: inline-size
-PASS container-type: inline-size; writing-mode: vertical-lr
+FAIL /* basic */ assert_equals: width expected "20px" but got "80px"
+FAIL display: table assert_equals: width expected "30px" but got "80px"
+FAIL display: table-cell assert_equals: width expected "30px" but got "80px"
+FAIL display: inline assert_equals: width expected "30px" but got "80px"
+FAIL display: contents assert_equals: width expected "30px" but got "80px"
+FAIL display: none assert_equals: width expected "30px" but got "80px"
+FAIL container-type: normal assert_equals: width expected "30px" but got "80px"
+FAIL container-type: inline-size assert_equals: width expected "20px" but got "80px"
+FAIL container-type: inline-size; writing-mode: vertical-lr assert_equals: width expected "30px" but got "80px"
 

@@ -1,7 +1,7 @@
-XXXX
+XX
 
-PASS Sibling style mutation
-PASS Sibling style mutation, parent is affected
-PASS Sibling style mutation, ancestor is affected
-PASS Sibling text mutation
+FAIL Sibling style mutation assert_equals: expected "20" but got ""
+FAIL Sibling style mutation, parent is affected assert_equals: expected "20" but got ""
+FAIL Sibling style mutation, ancestor is affected assert_equals: expected "20" but got ""
+FAIL Sibling text mutation assert_equals: expected "20" but got ""
 

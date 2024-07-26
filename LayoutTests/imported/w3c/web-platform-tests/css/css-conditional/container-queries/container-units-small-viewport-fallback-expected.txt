@@ -1,4 +1,4 @@
 
 
-PASS Use small viewport size as fallback
+FAIL Use small viewport size as fallback assert_equals: expected "7px" but got "20px"
 
