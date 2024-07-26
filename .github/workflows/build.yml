@@ -25,21 +25,21 @@ jobs:
       matrix:
         include:
           - runner: macos-13-large
-            cpp_flags: "-DLIBCXX_ENABLE_ASSERTIONS=1"
+            cpp_flags: "-D_LIBCXX_ENABLE_ASSERTIONS=1"
             cpu: haswell
             label: bun-webkit-macos-amd64-debug
             brew_prefix: /usr/local/opt
             package_json_arch: "x64"
             CMAKE_BUILD_TYPE: Debug
           - runner: macos-13-xlarge
-            cpp_flags: "-DLIBCXX_ENABLE_ASSERTIONS=1"
+            cpp_flags: "-D_LIBCXX_ENABLE_ASSERTIONS=1"
             cpu: native
             label: bun-webkit-macos-arm64-debug
             brew_prefix: /opt/homebrew/opt
             package_json_arch: "arm64"
             CMAKE_BUILD_TYPE: Debug
           - runner: macos-13-large
-            cpp_flags: -flto=full -fwhole-program-vtables -fforce-emit-vtables -DLIBCXX_ENABLE_ASSERTIONS=0
+            cpp_flags: -flto=full -fwhole-program-vtables -fforce-emit-vtables -D_LIBCXX_ENABLE_ASSERTIONS=0
             cpu: haswell
             label: bun-webkit-macos-amd64-lto
             brew_prefix: /usr/local/opt
@@ -53,14 +53,14 @@ jobs:
             package_json_arch: "x64"
             CMAKE_BUILD_TYPE: Release
           - runner: macos-13-xlarge
-            cpp_flags: -flto=full -fwhole-program-vtables -fforce-emit-vtables -DLIBCXX_ENABLE_ASSERTIONS=0
+            cpp_flags: -flto=full -fwhole-program-vtables -fforce-emit-vtables -D_LIBCXX_ENABLE_ASSERTIONS=0
             cpu: native
             label: bun-webkit-macos-arm64-lto
             brew_prefix: /opt/homebrew/opt
             package_json_arch: "arm64"
             CMAKE_BUILD_TYPE: Release
           - runner: macos-13-xlarge
-            cpp_flags: "-DLIBCXX_ENABLE_ASSERTIONS=0"
+            cpp_flags: "-D_LIBCXX_ENABLE_ASSERTIONS=0"
             cpu: native
             label: bun-webkit-macos-arm64
             brew_prefix: /opt/homebrew/opt
