@@ -44,9 +44,11 @@ public:
     struct wpe_renderer_backend_egl* backend() const { return m_backend; }
 
 private:
-    PlatformDisplayLibWPE();
+    PlatformDisplayLibWPE() = default;
 
     Type type() const override { return PlatformDisplay::Type::WPE; }
+
+    void initializeEGLDisplay() override;
 
     struct wpe_renderer_backend_egl* m_backend { nullptr };
 };
