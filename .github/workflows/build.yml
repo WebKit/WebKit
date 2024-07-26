@@ -25,42 +25,42 @@ jobs:
       matrix:
         include:
           - runner: macos-13-large
-            lto_flag: ""
+            cpp_flags: "-DLIBCXX_ENABLE_ASSERTIONS=1"
             cpu: haswell
             label: bun-webkit-macos-amd64-debug
             brew_prefix: /usr/local/opt
             package_json_arch: "x64"
             CMAKE_BUILD_TYPE: Debug
           - runner: macos-13-xlarge
-            lto_flag: ""
+            cpp_flags: "-DLIBCXX_ENABLE_ASSERTIONS=1"
             cpu: native
             label: bun-webkit-macos-arm64-debug
             brew_prefix: /opt/homebrew/opt
             package_json_arch: "arm64"
             CMAKE_BUILD_TYPE: Debug
           - runner: macos-13-large
-            lto_flag: -flto=full -fwhole-program-vtables -fforce-emit-vtables
+            cpp_flags: -flto=full -fwhole-program-vtables -fforce-emit-vtables -DLIBCXX_ENABLE_ASSERTIONS=0
             cpu: haswell
             label: bun-webkit-macos-amd64-lto
             brew_prefix: /usr/local/opt
             package_json_arch: "x64"
             CMAKE_BUILD_TYPE: Release
           - runner: macos-13-large
-            lto_flag: ""
+            cpp_flags: ""
             cpu: haswell
             label: bun-webkit-macos-amd64
             brew_prefix: /usr/local/opt
             package_json_arch: "x64"
             CMAKE_BUILD_TYPE: Release
           - runner: macos-13-xlarge
-            lto_flag: -flto=full -fwhole-program-vtables -fforce-emit-vtables
+            cpp_flags: -flto=full -fwhole-program-vtables -fforce-emit-vtables -DLIBCXX_ENABLE_ASSERTIONS=0
             cpu: native
             label: bun-webkit-macos-arm64-lto
             brew_prefix: /opt/homebrew/opt
             package_json_arch: "arm64"
             CMAKE_BUILD_TYPE: Release
           - runner: macos-13-xlarge
-            lto_flag: ""
+            cpp_flags: "-DLIBCXX_ENABLE_ASSERTIONS=1"
             cpu: native
             label: bun-webkit-macos-arm64
             brew_prefix: /opt/homebrew/opt
@@ -97,8 +97,8 @@ jobs:
           AR: "${{matrix.brew_prefix}}/llvm@${{env.LLVM_VERSION}}/bin/llvm-ar"
           CMAKE_C_COMPILER: "${{matrix.brew_prefix}}/llvm@${{env.LLVM_VERSION}}/bin/clang"
           CMAKE_CXX_COMPILER: "${{matrix.brew_prefix}}/llvm@${{env.LLVM_VERSION}}/bin/clang++"
-          CMAKE_C_FLAGS: " -fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -fvisibility-inlines-hidden -O3 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -faddrsig "
-          CMAKE_CXX_FLAGS: " -fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -fvisibility-inlines-hidden -O3 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -faddrsig -fno-c++-static-destructors "
+          CMAKE_C_FLAGS: " -fno-exceptions ${{matrix.cpp_flags}} -fvisibility=hidden -fvisibility-inlines-hidden -O3 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -faddrsig "
+          CMAKE_CXX_FLAGS: " -fno-exceptions ${{matrix.cpp_flags}} -fvisibility=hidden -fvisibility-inlines-hidden -O3 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -faddrsig -fno-c++-static-destructors "
           CMAKE_OSX_DEPLOYMENT_TARGET: "13.0"
           CMAKE_BUILD_TYPE: ${{matrix.CMAKE_BUILD_TYPE}}
           PACKAGE_JSON_ARCH: ${{matrix.package_json_arch}}
