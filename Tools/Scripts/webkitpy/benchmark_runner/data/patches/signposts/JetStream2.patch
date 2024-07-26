@@ -1,22 +1,76 @@
 diff --git a/PerformanceTests/JetStream2/JetStreamDriver.js b/PerformanceTests/JetStream2/JetStreamDriver.js
-index 0bc36c9e62a1..ec4aaa0c2f1d 100644
+index 9079f300cd95..2de6fad99aaa 100644
 --- a/JetStreamDriver.js
 +++ b/JetStreamDriver.js
-@@ -645,6 +645,8 @@ class Benchmark {
-         if (RAMification)
-             resetMemoryPeak();
+@@ -544,6 +544,7 @@ get runnerCode() {
+         return `
+             let __benchmark = new Benchmark(${this.iterations});
+             let results = [];
++            __signpostStart(${JSON.stringify(this.name)});
+             for (let i = 0; i < ${this.iterations}; i++) {
+                 if (__benchmark.prepareForNextIteration)
+                     __benchmark.prepareForNextIteration();
+@@ -554,6 +555,7 @@ get runnerCode() {
  
-+        __signpostStart(this.name)
-+
-         let magicFrame;
-         try {
-             magicFrame = JetStream.runCode(code);
-@@ -654,6 +656,8 @@ class Benchmark {
-         }
-         let results = await promise;
+                 results.push(Math.max(1, end - start));
+             }
++            __signpostStop(${JSON.stringify(this.name)});
+             if (__benchmark.validate)
+                 __benchmark.validate();
+             top.currentResolve(results);`;
+@@ -956,6 +958,7 @@ get runnerCode() {
+         return `
+         async function doRun() {
+             let __benchmark = new Benchmark();
++            __signpostStart(${JSON.stringify(this.name)});
+             let results = [];
+             for (let i = 0; i < ${this.iterations}; i++) {
+                 let start = Date.now();
+@@ -963,6 +966,7 @@ async function doRun() {
+                 let end = Date.now();
+                 results.push(Math.max(1, end - start));
+             }
++            __signpostStop(${JSON.stringify(this.name)});
+             if (__benchmark.validate)
+                 __benchmark.validate();
+             top.currentResolve(results);
+@@ -992,6 +996,7 @@ get runnerCode() {
+         return `
+             let benchmark = new Benchmark();
+             let results = [];
++            __signpostStart(${JSON.stringify(this.name)});
+             {
+                 let start = Date.now();
+                 benchmark.buildStdlib();
+@@ -1003,6 +1008,7 @@ get runnerCode() {
+                 benchmark.run();
+                 results.push(Date.now() - start);
+             }
++            __signpostStop(${JSON.stringify(this.name)});
  
-+        __signpostStop(this.name)
-+
-         this.endTime = new Date();
+             top.currentResolve(results);
+             `;
+@@ -1089,6 +1095,7 @@ get prerunCode() {
+                 if (runTime !== null)
+                     throw new Error("called report run time twice")
+                 runTime = t;
++                __signpostStop(${JSON.stringify(this.name)});
+                 top.currentResolve([compileTime, runTime]);
+             };
  
-         if (RAMification) {
+@@ -1130,6 +1137,7 @@ get runnerCode() {
+                 xhr.responseType = 'arraybuffer';
+                 xhr.onload = function() {
+                     Module.wasmBinary = xhr.response;
++                    __signpostStart(${JSON.stringify(this.name)});
+                     doRun();
+                 };
+                 xhr.send(null);
+@@ -1146,6 +1154,7 @@ get runnerCode() {
+             Module.monitorRunDependencies = null;
+ 
+             Promise.resolve(42).then(() => {
++                __signpostStart(${JSON.stringify(this.name)});
+                 try {
+                     doRun();
+                 } catch(e) {
