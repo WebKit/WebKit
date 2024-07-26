@@ -915,7 +915,7 @@ webkit.org/b/233478 imported/w3c/web-platform-tests/css/css-transforms/backface-
 
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/composited-under-rotateY-180deg-clip.html
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/composited-under-rotateY-180deg.html
-webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/perspective-split-by-zero-w.html [ ImageOnlyFailure ]
+webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/perspective-split-by-zero-w.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/245862 imported/w3c/web-platform-tests/css/css-transforms/perspective-transforms-equivalence.html [ ImageOnlyFailure ]
 
@@ -1079,7 +1079,7 @@ webkit.org/b/254521 imported/w3c/web-platform-tests/media-source/mediasource-get
 webkit.org/b/262986 imported/w3c/web-platform-tests/media-source/mediasource-detach.html [ Pass Crash ]
 webkit.org/b/254522 media/video-volume.html [ Pass Failure ]
 webkit.org/b/254525 http/tests/media/video-throttled-load-metadata.html [ Pass Failure ]
-media/video-seek-to-current-time.html [ Failure ]
+media/video-seek-to-current-time.html [ Pass Failure ]
 
 webkit.org/b/213699 http/wpt/mediarecorder/mimeType.html [ Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/mute-tracks.html [ Failure Crash ]
@@ -1849,7 +1849,7 @@ webkit.org/b/151949 streams/pipe-to.html [ Failure ]
 webkit.org/b/189739 svg/gradients/spreadMethodClose2.svg [ ImageOnlyFailure ]
 webkit.org/b/189739 imported/mozilla/svg/linearGradient-basic-03.svg [ ImageOnlyFailure ]
 
-webkit.org/b/107018 svg/animations/animate-linear-discrete-additive.svg [ ImageOnlyFailure ]
+webkit.org/b/107018 svg/animations/animate-linear-discrete-additive.svg  [ Pass ImageOnlyFailure ]
 webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-b.svg [ ImageOnlyFailure ]
 webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-c.svg [ ImageOnlyFailure ]
 webkit.org/b/107018 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ Pass ImageOnlyFailure ]
@@ -2385,6 +2385,15 @@ webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/availa
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-019.html [ Pass ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/inline-box-border-vlr-001.html [ Pass ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-013.html [ ImageOnlyFailure ]
+
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/background-position-vrl-018.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/background-position-vrl-020.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/background-position-vrl-022.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/normal-flow-overconstrained-vrl-002.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/normal-flow-overconstrained-vrl-004.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/overconstrained-rel-pos-ltr-top-bottom-vrl-002.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/overconstrained-rel-pos-rtl-left-right-vrl-008.xht [ Pass ImageOnlyFailure ]
+webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-layout-rules-001.html [ Pass ImageOnlyFailure ]
 
 # Overrides over general expectations that are shared between GTK and WPE after updating css-text WPT tests
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-none-011.html [ Pass ]
@@ -3924,21 +3933,23 @@ webkit.org/b/180134 webanimations/opacity-animation-no-longer-composited-upon-co
 imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-opacity-zero-child.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/element-stops-grouping-after-animation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/fragmented-at-start-ignored.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-rendering-invalidation.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/fractional-translation-from-transform.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-rendering-invalidation.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/fractional-translation-from-transform.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-left-of-viewport-partially-onscreen-new.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-left-of-viewport-partially-onscreen-old.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mismatch-ident.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mismatch-partial.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-mismatch-wildcard.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-old-with-class-new-without.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-on-top-of-viewport-partially-onscreen-old.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-on-top-of-viewport-partially-onscreen-old.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/element-is-grouping-during-animation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-name-removed-mid-transition.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/modify-style-via-cssom.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/names-are-tree-scoped.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/no-painting-while-render-blocked.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/no-white-flash-before-activation.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/no-white-flash-before-activation.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/input-targets-root-while-render-blocked.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/no-css-animation-while-render-blocked.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/no-raf-while-render-blocked.html [ ImageOnlyFailure ]
