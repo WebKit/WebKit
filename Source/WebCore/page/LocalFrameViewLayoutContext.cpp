@@ -143,13 +143,13 @@ UpdateScrollInfoAfterLayoutTransaction& LocalFrameViewLayoutContext::updateScrol
     return *m_updateScrollInfoAfterLayoutTransaction;
 }
 
-void LocalFrameViewLayoutContext::layout()
+void LocalFrameViewLayoutContext::layout(bool canDeferUpdateLayerPositions)
 {
     LOG_WITH_STREAM(Layout, stream << "LocalFrameView " << &view() << " LocalFrameViewLayoutContext::layout() with size " << view().layoutSize());
 
     Ref protectedView(view());
 
-    performLayout();
+    performLayout(canDeferUpdateLayerPositions);
 
     if (view().hasOneRef())
         return;
@@ -161,14 +161,14 @@ void LocalFrameViewLayoutContext::layout()
         if (!needsLayout())
             break;
 
-        performLayout();
+        performLayout(canDeferUpdateLayerPositions);
 
         if (view().hasOneRef())
             return;
     }
 }
 
-void LocalFrameViewLayoutContext::performLayout()
+void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPositions)
 {
     Ref frame = this->frame();
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!document()->inRenderTreeUpdate());
@@ -271,14 +271,14 @@ void LocalFrameViewLayoutContext::performLayout()
         if (m_needsFullRepaint)
             renderView()->repaintRootContents();
         ASSERT(!layoutRoot->needsLayout());
-        protectedView()->didLayout(layoutRoot, isSimplifiedLayout);
-        runOrScheduleAsynchronousTasks();
+        protectedView()->didLayout(layoutRoot, isSimplifiedLayout, canDeferUpdateLayerPositions);
+        runOrScheduleAsynchronousTasks(canDeferUpdateLayerPositions);
     }
     InspectorInstrumentation::didLayout(frame, *layoutRoot);
     DebugPageOverlays::didLayout(frame);
 }
 
-void LocalFrameViewLayoutContext::runOrScheduleAsynchronousTasks()
+void LocalFrameViewLayoutContext::runOrScheduleAsynchronousTasks(bool canDeferUpdateLayerPositions)
 {
     if (m_postLayoutTaskTimer.isActive())
         return;
@@ -297,10 +297,10 @@ void LocalFrameViewLayoutContext::runOrScheduleAsynchronousTasks()
     }
 
     runPostLayoutTasks();
-    if (needsLayout()) {
+    if (needsLayoutInternal()) {
         // If runPostLayoutTasks() made us layout again, let's defer the tasks until after we return.
         m_postLayoutTaskTimer.startOneShot(0_s);
-        layout();
+        layout(canDeferUpdateLayerPositions);
     }
 }
 
@@ -333,6 +333,11 @@ void LocalFrameViewLayoutContext::reset()
 }
 
 bool LocalFrameViewLayoutContext::needsLayout() const
+{
+    return needsLayoutInternal() || protectedView()->hasPendingUpdateLayerPositions();
+}
+
+bool LocalFrameViewLayoutContext::needsLayoutInternal() const
 {
     // This can return true in cases where the document does not have a body yet.
     // Document::shouldScheduleLayout takes care of preventing us from scheduling

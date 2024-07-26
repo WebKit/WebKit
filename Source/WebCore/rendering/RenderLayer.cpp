@@ -968,10 +968,10 @@ void RenderLayer::willUpdateLayerPositions()
 void RenderLayer::updateLayerPositionsAfterStyleChange()
 {
     willUpdateLayerPositions();
-    recursiveUpdateLayerPositions(flagsForUpdateLayerPositions(*this));
+    recursiveUpdateLayerPositions(0, flagsForUpdateLayerPositions(*this));
 }
 
-void RenderLayer::updateLayerPositionsAfterLayout(bool isRelayoutingSubtree, bool didFullRepaint, CanUseSimplifiedRepaintPass canUseSimplifiedRepaintPass)
+void RenderLayer::updateLayerPositionsAfterLayout(RenderElement::LayoutIdentifier layoutIdentifier, bool isRelayoutingSubtree, bool didFullRepaint, CanUseSimplifiedRepaintPass canUseSimplifiedRepaintPass)
 {
     auto updateLayerPositionFlags = [&](bool isRelayoutingSubtree, bool didFullRepaint) {
         auto flags = flagsForUpdateLayerPositions(*this);
@@ -987,10 +987,10 @@ void RenderLayer::updateLayerPositionsAfterLayout(bool isRelayoutingSubtree, boo
     LOG(Compositing, "RenderLayer %p updateLayerPositionsAfterLayout", this);
     willUpdateLayerPositions();
 
-    recursiveUpdateLayerPositions(updateLayerPositionFlags(isRelayoutingSubtree, didFullRepaint), canUseSimplifiedRepaintPass);
+    recursiveUpdateLayerPositions(layoutIdentifier, updateLayerPositionFlags(isRelayoutingSubtree, didFullRepaint), canUseSimplifiedRepaintPass);
 }
 
-void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFlag> flags, CanUseSimplifiedRepaintPass canUseSimplifiedRepaintPass)
+void RenderLayer::recursiveUpdateLayerPositions(RenderElement::LayoutIdentifier layoutIdentifier, OptionSet<UpdateLayerPositionsFlag> flags, CanUseSimplifiedRepaintPass canUseSimplifiedRepaintPass)
 {
     updateLayerPosition(&flags);
     if (m_scrollableArea)
@@ -1032,7 +1032,7 @@ void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFl
         auto mayNeedRepaintRectUpdate = [&] {
             if (canUseSimplifiedRepaintPass == CanUseSimplifiedRepaintPass::No)
                 return true;
-            if (!renderer().didVisitDuringLastLayout())
+            if (!renderer().didVisitSinceLayout(layoutIdentifier))
                 return false;
             if (auto* renderBox = this->renderBox(); renderBox && renderBox->hasRenderOverflow() && renderBox->hasTransformRelatedProperty()) {
                 // Disable optimization for subtree when dealing with overflow as RenderLayer is not sized to enclose overflow.
@@ -1100,7 +1100,7 @@ void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFl
         flags.add(SeenCompositedScrollingLayer);
 
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
-        child->recursiveUpdateLayerPositions(flags, canUseSimplifiedRepaintPass);
+        child->recursiveUpdateLayerPositions(layoutIdentifier, flags, canUseSimplifiedRepaintPass);
 
     if (m_scrollableArea)
         m_scrollableArea->updateMarqueePosition();

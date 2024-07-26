@@ -66,7 +66,7 @@ public:
     LocalFrameViewLayoutContext(LocalFrameView&);
     ~LocalFrameViewLayoutContext();
 
-    WEBCORE_EXPORT void layout();
+    WEBCORE_EXPORT void layout(bool canDeferUpdateLayerPositions = false);
     bool needsLayout() const;
 
     // We rely on the side-effects of layout, like compositing updates, to update state in various subsystems
@@ -143,13 +143,15 @@ private:
     friend class LayoutStateDisabler;
     friend class SubtreeLayoutStateMaintainer;
 
-    void performLayout();
+    bool needsLayoutInternal() const;
+
+    void performLayout(bool canDeferUpdateLayerPositions);
     bool canPerformLayout() const;
     bool isLayoutSchedulingEnabled() const { return m_layoutSchedulingIsEnabled; }
 
     void layoutTimerFired();
     void runPostLayoutTasks();
-    void runOrScheduleAsynchronousTasks();
+    void runOrScheduleAsynchronousTasks(bool canDeferUpdateLayerPositions);
     bool inAsynchronousTasks() const { return m_inAsynchronousTasks; }
 
     void setSubtreeLayoutRoot(RenderElement&);
