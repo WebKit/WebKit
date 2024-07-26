@@ -7461,7 +7461,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
     if (statelessType) {
         auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
         connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), WTFMove(m_conditions), WTFMove(additionalWatchpointSets));
-        dataLogLnIf(InlineCacheCompilerInternal::verbose, "Installing ", m_stubInfo.accessType, " / ", stub->cases().first()->m_type);
+        dataLogLnIf(InlineCacheCompilerInternal::verbose, "Installing ", m_stubInfo.accessType, " / ", accessCase.m_type);
         vm.m_sharedJITStubs->setStatelessStub(statelessType.value(), Ref { stub });
         return finishPreCompiledCodeGeneration(WTFMove(stub));
     }
