@@ -2738,8 +2738,6 @@ fast/dom/no-scroll-when-command-click-fragment-URL.html [ Skip ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/backdrop-filters-grayscale-001.html [ ImageOnlyFailure ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/backdrop-filters-sepia.html [ ImageOnlyFailure ]
 
-webkit.org/b/270274 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-fill-outside-range-test.html [ Skip ]
-
 webkit.org/b/270310 [ Sonoma+ ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/removed-element-is-removed-from-top-layer.html [ ImageOnlyFailure ]
 webkit.org/b/270310 [ Sonoma+ ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-correct-order-remove-readd.html [ ImageOnlyFailure ]
 
