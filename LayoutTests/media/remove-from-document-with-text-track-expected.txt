@@ -1,0 +1,10 @@
+Test that removing a media element with an empty text track from the DOM and reinserting it does not crash.
+
+RUN(track = video.addTextTrack('subtitles', 'English', 'en'))
+RUN(video.src = findMediaFile('video', 'content/test'))
+EVENT(playing)
+EXPECTED (track.cues.length == '0') OK
+RUN(document.body.removeChild(video))
+RUN(document.body.appendChild(video))
+END OF TEST
+
