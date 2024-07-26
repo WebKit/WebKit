@@ -43,6 +43,7 @@
 #include "HostWindow.h"
 #include "Icon.h"
 #include "ImageBuffer.h"
+#include "ImageBufferResourceLimits.h"
 #include "InputMode.h"
 #include "MediaControlsContextMenuItem.h"
 #include "MediaProducer.h"
@@ -686,6 +687,8 @@ public:
 #endif
 
     virtual void hasActiveNowPlayingSessionChanged(bool) { }
+
+    virtual void getImageBufferResourceLimitsForTesting(CompletionHandler<void(std::optional<ImageBufferResourceLimits>)>&& callback) const { callback(std::nullopt); }
 
     WEBCORE_EXPORT virtual ~ChromeClient();
 

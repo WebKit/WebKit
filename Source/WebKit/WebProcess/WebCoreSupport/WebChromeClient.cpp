@@ -1908,4 +1908,11 @@ void WebChromeClient::hasActiveNowPlayingSessionChanged(bool hasActiveNowPlaying
     protectedPage()->hasActiveNowPlayingSessionChanged(hasActiveNowPlayingSession);
 }
 
+#if ENABLE(GPU_PROCESS)
+void WebChromeClient::getImageBufferResourceLimitsForTesting(CompletionHandler<void(std::optional<ImageBufferResourceLimits>)>&& callback) const
+{
+    protectedPage()->ensureRemoteRenderingBackendProxy().getImageBufferResourceLimitsForTesting(WTFMove(callback));
+}
+#endif
+
 } // namespace WebKit

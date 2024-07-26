@@ -3035,7 +3035,8 @@ std::optional<CanvasRenderingContext2DBase::RenderingMode> CanvasRenderingContex
 {
     if (auto* buffer = canvasBase().buffer()) {
         buffer->ensureBackendCreated();
-        return buffer->renderingMode();
+        if (buffer->hasBackend())
+            return buffer->renderingMode();
     }
     return std::nullopt;
 }

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<script src=../../resources/js-test-pre.js></script>
+<script>
+var jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+description("Check that GPU process ImageBuffer resource limits are enforced");
+
+// Waits until getImageBufferResourceLimits() returns values that match the
+// specified query. We do this because there is asynchrony involved in
+// these values (from IPC messages and the use of atomics), so cannot guarantee
+// that we will get the values we expect at the exact time of the call.
+async function imageBufferResourceLimitsMatch(query) {
+    for (;;) {
+        let limits = await internals.getImageBufferResourceLimits();
+        let queryMatched = true;
+        for (let key in query) {
+            let queryValue = query[key];
+            if (typeof queryValue == "number") {
+                if (limits[key] != queryValue)
+                    queryMatched = false;
+            } else {
+                if (!query[key](limits[key]))
+                    queryMatched = false;
+            }
+        }
+        if (queryMatched)
+            return true;
+    }
+}
+
+function checkLimits(limits) {
+    return limits.acceleratedImageBufferForCanvasLimit >= 1000 &&
+           (limits.globalAcceleratedImageBufferLimit - limits.acceleratedImageBufferForCanvasLimit) >= 1000 &&
+           (limits.imageBufferForCanvasLimit - limits.globalAcceleratedImageBufferLimit) >= 1000 &&
+           (limits.globalImageBufferForCanvasLimit - limits.imageBufferForCanvasLimit) >= 1000;
+}
+
+function growCanvasesTo(canvases, count) {
+    debug(`Increasing canvas count to ${count}`);
+    while (canvases.length < count) {
+        let e = document.createElement("canvas");
+        e.width = 10;
+        e.height = 10;
+        canvases.push(e);
+    }
+}
+
+function shrinkCanvasesTo(canvases, count) {
+    debug(`Decreasing canvas count to ${count}`);
+    canvases.length = count;
+}
+
+function getEffectiveRenderingModeCounts(canvases) {
+    let accelerated = 0;
+    let unaccelerated = 0;
+    let noBackend = 0;
+    for (let c of canvases) {
+        let m = c.getContext("2d").getEffectiveRenderingModeForTesting();
+        if (m == "Accelerated")
+            ++accelerated;
+        else if (m == "Unaccelerated")
+            ++unaccelerated;
+        else if (m === null)
+            ++noBackend;
+    }
+    return { accelerated, unaccelerated, noBackend };
+}
+
+async function run() {
+    if (!window.internals) {
+        debug("Test requires internals");
+        return;
+    }
+
+    // First, wait until any canvases from previous tests have been deleted.
+    gc();
+    try {
+        await imageBufferResourceLimitsMatch({ imageBufferForCanvasCount: 0 });
+    } catch {
+        debug("Platform does not enforce ImageBuffer resource limits");
+        return;
+    }
+
+    // Check that the hard code limits are reasonable enough for this test to
+    // rely on.
+    let limits = await internals.getImageBufferResourceLimits();
+    shouldBeTrue(() => checkLimits(limits));
+
+    let canvases = [];
+    let renderingModeCounts;
+
+    // Create 500 canvases. This is below acceleratedImageBufferForCanvasLimit,
+    // so should they should all get accelerated ImageBuffer backing stores.
+    growCanvasesTo(canvases, 500);
+    renderingModeCounts = getEffectiveRenderingModeCounts(canvases);
+
+    shouldEvaluateTo(() => renderingModeCounts.accelerated, 500);
+    shouldEvaluateTo(() => renderingModeCounts.unaccelerated, 0);
+    shouldEvaluateTo(() => renderingModeCounts.noBackend, 0);
+
+    // Wait until the values returned by getImageBufferResourceLimits match our
+    // expectations.
+    await imageBufferResourceLimitsMatch({
+        acceleratedImageBufferForCanvasCount: 500,
+        globalAcceleratedImageBufferCount: x => x >= 500,
+        imageBufferForCanvasCount: 500,
+        globalImageBufferForCanvasCount: 500,
+    });
+
+    // Create enough canvases to reach the per Web Process
+    // acceleratedImageBufferForCanvasLimit.
+    growCanvasesTo(canvases, limits.acceleratedImageBufferForCanvasLimit);
+    renderingModeCounts = getEffectiveRenderingModeCounts(canvases);
+
+    shouldEvaluateTo(() => renderingModeCounts.accelerated, limits.acceleratedImageBufferForCanvasLimit);
+    shouldEvaluateTo(() => renderingModeCounts.unaccelerated, 0);
+    shouldEvaluateTo(() => renderingModeCounts.noBackend, 0);
+
+    await imageBufferResourceLimitsMatch({
+        acceleratedImageBufferForCanvasCount: limits.acceleratedImageBufferForCanvasLimit,
+        globalAcceleratedImageBufferCount: x => x >= limits.acceleratedImageBufferForCanvasLimit,
+        imageBufferForCanvasCount: limits.acceleratedImageBufferForCanvasLimit,
+        globalImageBufferForCanvasCount: limits.acceleratedImageBufferForCanvasLimit,
+    });
+
+    // Create a few more canvases over the per Web Process
+    // acceleratedImageBufferForCanvasLimit. These should all be unaccelerated.
+    growCanvasesTo(canvases, limits.acceleratedImageBufferForCanvasLimit + 500);
+    renderingModeCounts = getEffectiveRenderingModeCounts(canvases);
+
+    shouldEvaluateTo(() => renderingModeCounts.accelerated, limits.acceleratedImageBufferForCanvasLimit);
+    shouldEvaluateTo(() => renderingModeCounts.unaccelerated, 500);
+    shouldEvaluateTo(() => renderingModeCounts.noBackend, 0);
+
+    await imageBufferResourceLimitsMatch({
+        acceleratedImageBufferForCanvasCount: limits.acceleratedImageBufferForCanvasLimit,
+        globalAcceleratedImageBufferCount: x => x >= limits.acceleratedImageBufferForCanvasLimit,
+        imageBufferForCanvasCount: limits.acceleratedImageBufferForCanvasLimit + 500,
+        globalImageBufferForCanvasCount: limits.acceleratedImageBufferForCanvasLimit + 500,
+    });
+
+    // Create an ImageBuffer with a non-canvas purpose and requested to be
+    // accelerated. Since we haven't reached globalAcceleratedImageBufferLimit,
+    // this should be accelerated.
+    let nonCanvasImageBufferRenderingMode = internals.getEffectiveRenderingModeOfNewlyCreatedAcceleratedImageBuffer();
+    shouldBeTrue(() => nonCanvasImageBufferRenderingMode == "Accelerated");
+
+    // Create enough canvases to reach the per Web Process
+    // imageBufferForCanvasLimit.
+    growCanvasesTo(canvases, limits.imageBufferForCanvasLimit);
+    renderingModeCounts = getEffectiveRenderingModeCounts(canvases);
+
+    shouldEvaluateTo(() => renderingModeCounts.accelerated, limits.acceleratedImageBufferForCanvasLimit);
+    shouldEvaluateTo(() => renderingModeCounts.unaccelerated, limits.imageBufferForCanvasLimit - limits.acceleratedImageBufferForCanvasLimit);
+    shouldEvaluateTo(() => renderingModeCounts.noBackend, 0);
+
+    await imageBufferResourceLimitsMatch({
+        acceleratedImageBufferForCanvasCount: limits.acceleratedImageBufferForCanvasLimit,
+        globalAcceleratedImageBufferCount: x => x >= limits.acceleratedImageBufferForCanvasLimit,
+        imageBufferForCanvasCount: limits.imageBufferForCanvasLimit,
+        globalImageBufferForCanvasCount: limits.imageBufferForCanvasLimit,
+    });
+
+    // Create a few more canvases over the per Web Process
+    // imageBufferForCanvasLimit. These should all fail to create a backend.
+    growCanvasesTo(canvases, limits.imageBufferForCanvasLimit + 500);
+    renderingModeCounts = getEffectiveRenderingModeCounts(canvases);
+
+    shouldEvaluateTo(() => renderingModeCounts.accelerated, limits.acceleratedImageBufferForCanvasLimit);
+    shouldEvaluateTo(() => renderingModeCounts.unaccelerated, limits.imageBufferForCanvasLimit - limits.acceleratedImageBufferForCanvasLimit);
+    shouldEvaluateTo(() => renderingModeCounts.noBackend, 500);
+
+    // Release all the canvases except for the initial 500 accelerated ones.
+    shrinkCanvasesTo(canvases, 500);
+    gc();
+
+    await imageBufferResourceLimitsMatch({
+        acceleratedImageBufferForCanvasCount: 500,
+        globalAcceleratedImageBufferCount: x => x >= 500,
+        imageBufferForCanvasCount: 500,
+        globalImageBufferForCanvasCount: 500,
+    });
+
+    // Create another 100 canvases, which all should be accelerated.
+    growCanvasesTo(canvases, 600);
+    renderingModeCounts = getEffectiveRenderingModeCounts(canvases);
+
+    shouldEvaluateTo(() => renderingModeCounts.accelerated, 600);
+    shouldEvaluateTo(() => renderingModeCounts.unaccelerated, 0);
+    shouldEvaluateTo(() => renderingModeCounts.noBackend, 0);
+}
+
+onload = async function() {
+    await run();
+    finishJSTest();
+};
+</script>
+<script src=../../resources/js-test-post.js></script>

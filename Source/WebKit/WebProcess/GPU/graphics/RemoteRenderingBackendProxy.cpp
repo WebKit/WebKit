@@ -147,6 +147,21 @@ auto RemoteRenderingBackendProxy::sendSync(T&& message, ObjectIdentifierGeneric<
     return result;
 }
 
+template<typename T, typename C, typename U, typename V, typename W>
+auto RemoteRenderingBackendProxy::sendWithAsyncReply(T&& message, C&& callback, ObjectIdentifierGeneric<U, V, W> destination)
+{
+    RefPtr connection = this->connection();
+    if (UNLIKELY(!connection))
+        return IPC::Error::InvalidConnection;
+    auto replyID = connection->sendWithAsyncReply(std::forward<T>(message), std::forward<C>(callback), destination, defaultTimeout);
+    if (UNLIKELY(!replyID)) {
+        RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::sendWithAsyncReply - failed, name:%" PUBLIC_LOG_STRING, m_identifier.toUInt64(), IPC::description(T::name()).characters());
+        didBecomeUnresponsive();
+        return IPC::Error::Unspecified;
+    }
+    return IPC::Error::NoError;
+}
+
 void RemoteRenderingBackendProxy::didClose(IPC::Connection&)
 {
     if (!m_connection)
@@ -577,6 +592,11 @@ Function<bool()> RemoteRenderingBackendProxy::flushImageBuffers()
 }
 
 #endif // USE(GRAPHICS_LAYER_WC)
+
+void RemoteRenderingBackendProxy::getImageBufferResourceLimitsForTesting(CompletionHandler<void(ImageBufferResourceLimits)>&& callback)
+{
+    sendWithAsyncReply(Messages::RemoteRenderingBackend::GetImageBufferResourceLimitsForTesting(), WTFMove(callback));
+}
 
 } // namespace WebKit
 

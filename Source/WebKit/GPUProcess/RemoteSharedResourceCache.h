@@ -31,6 +31,7 @@
 #include "RemoteSerializedImageBufferIdentifier.h"
 #include "ThreadSafeObjectHeap.h"
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/ImageBufferResourceLimits.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/FastMalloc.h>
@@ -44,7 +45,7 @@
 namespace WebKit {
 
 class GPUConnectionToWebProcess;
-// Class holding GPU process resources per Web Process.
+// Class holding GPU process resources per Web Content process.
 // Thread-safe.
 class RemoteSharedResourceCache final : public ThreadSafeRefCounted<RemoteSharedResourceCache>, IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -63,6 +64,12 @@ public:
     WebCore::IOSurfacePool& ioSurfacePool() const { return m_ioSurfacePool; }
 #endif
 
+    void didCreateImageBuffer(WebCore::RenderingPurpose, WebCore::RenderingMode);
+    void didReleaseImageBuffer(WebCore::RenderingPurpose, WebCore::RenderingMode);
+    bool reachedAcceleratedImageBufferLimit(WebCore::RenderingPurpose) const;
+    bool reachedImageBufferForCanvasLimit() const;
+    WebCore::ImageBufferResourceLimits getResourceLimitsForTesting() const;
+
     void lowMemoryHandler();
 
 private:
@@ -76,8 +83,9 @@ private:
 #if HAVE(IOSURFACE)
     Ref<WebCore::IOSurfacePool> m_ioSurfacePool;
 #endif
+    std::atomic<size_t> m_acceleratedImageBufferForCanvasCount;
+    std::atomic<size_t> m_imageBufferForCanvasCount;
 };
-
 
 } // namespace WebKit
 

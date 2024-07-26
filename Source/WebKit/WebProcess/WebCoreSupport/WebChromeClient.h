@@ -533,6 +533,10 @@ private:
 
     void hasActiveNowPlayingSessionChanged(bool) final;
 
+#if ENABLE(GPU_PROCESS)
+    void getImageBufferResourceLimitsForTesting(CompletionHandler<void(std::optional<WebCore::ImageBufferResourceLimits>)>&&) const final;
+#endif
+
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };
 

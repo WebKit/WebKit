@@ -37,10 +37,12 @@
 #include "ExceptionOr.h"
 #include "HEVCUtilities.h"
 #include "IDLTypes.h"
+#include "ImageBufferResourceLimits.h"
 #include "NowPlayingInfo.h"
 #include "OrientationNotifier.h"
 #include "PageConsoleClient.h"
 #include "RealtimeMediaSource.h"
+#include "RenderingMode.h"
 #include "SleepDisabler.h"
 #include "TextIndicator.h"
 #include "VP9Utilities.h"
@@ -1482,6 +1484,13 @@ public:
     const String& defaultSpatialTrackingLabel() const;
 
     bool isEffectivelyMuted(const HTMLMediaElement&);
+
+    using RenderingMode = WebCore::RenderingMode;
+    std::optional<RenderingMode> getEffectiveRenderingModeOfNewlyCreatedAcceleratedImageBuffer();
+
+    using ImageBufferResourceLimits = WebCore::ImageBufferResourceLimits;
+    using ImageBufferResourceLimitsPromise = DOMPromiseDeferred<IDLDictionary<ImageBufferResourceLimits>>;
+    void getImageBufferResourceLimits(ImageBufferResourceLimitsPromise&&);
 
 private:
     explicit Internals(Document&);
