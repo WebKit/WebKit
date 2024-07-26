@@ -707,6 +707,7 @@ public:
     void dump(const ControlStack&, const Stack* expressionStack);
     void setParser(FunctionParser<OMGIRGenerator>* parser) { m_parser = parser; };
     ALWAYS_INLINE void willParseOpcode() { }
+    ALWAYS_INLINE void willParseExtendedOpcode() { }
     ALWAYS_INLINE void didParseOpcode() { }
     void didFinishParsingLocals() { }
     void didPopValueFromStack(ExpressionType expr, String msg)

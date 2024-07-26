@@ -134,6 +134,7 @@ public:
     Result WARN_UNUSED_RETURN parseConstantExpression();
 
     OpType currentOpcode() const { return m_currentOpcode; }
+    uint32_t currentExtendedOpcode() const { return m_currentExtOp; }
     size_t currentOpcodeStartingOffset() const { return m_currentOpcodeStartingOffset; }
     const TypeDefinition& signature() const { return m_signature; }
     const Type& typeOfLocal(uint32_t localIndex) const { return m_locals[localIndex]; }
@@ -350,6 +351,7 @@ private:
     BitVector m_localInitFlags;
 
     OpType m_currentOpcode { 0 };
+    uint32_t m_currentExtOp { 0 };
     size_t m_currentOpcodeStartingOffset { 0 };
 
     unsigned m_unreachableBlocks { 0 };
@@ -1850,10 +1852,10 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     }
 
     case Ext1: {
-        uint32_t extOp;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(extOp), "can't parse 0xfc extended opcode"_s);
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(m_currentExtOp), "can't parse 0xfc extended opcode"_s);
+        m_context.willParseExtendedOpcode();
 
-        Ext1OpType op = static_cast<Ext1OpType>(extOp);
+        Ext1OpType op = static_cast<Ext1OpType>(m_currentExtOp);
         switch (op) {
         case Ext1OpType::TableInit: {
             TableInitImmediates immediates;
@@ -2019,7 +2021,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 #undef CREATE_CASE
 
         default:
-            WASM_PARSER_FAIL_IF(true, "invalid 0xfc extended op "_s, extOp);
+            WASM_PARSER_FAIL_IF(true, "invalid 0xfc extended op "_s, m_currentExtOp);
             break;
         }
         return { };
@@ -2027,11 +2029,10 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
     case ExtGC: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled"_s);
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(m_currentExtOp), "can't parse extended GC opcode"_s);
+        m_context.willParseExtendedOpcode();
 
-        uint32_t extOp;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(extOp), "can't parse extended GC opcode"_s);
-
-        ExtGCOpType op = static_cast<ExtGCOpType>(extOp);
+        ExtGCOpType op = static_cast<ExtGCOpType>(m_currentExtOp);
         switch (op) {
         case ExtGCOpType::RefI31: {
             TypedExpression value;
@@ -2650,17 +2651,17 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             return { };
         }
         default:
-            WASM_PARSER_FAIL_IF(true, "invalid extended GC op "_s, extOp);
+            WASM_PARSER_FAIL_IF(true, "invalid extended GC op "_s, m_currentExtOp);
             break;
         }
         return { };
     }
 
     case ExtAtomic: {
-        uint32_t extOp;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(extOp), "can't parse atomic extended opcode"_s);
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(m_currentExtOp), "can't parse atomic extended opcode"_s);
+        m_context.willParseExtendedOpcode();
 
-        ExtAtomicOpType op = static_cast<ExtAtomicOpType>(extOp);
+        ExtAtomicOpType op = static_cast<ExtAtomicOpType>(m_currentExtOp);
 #if ENABLE(WEBASSEMBLY_OMGJIT)
         if (UNLIKELY(Options::dumpWebAssemblyOpcodeStatistics()))
             WasmOpcodeCounter::singleton().increment(op);
@@ -2694,7 +2695,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         case ExtAtomicOpType::I64AtomicRmwCmpxchg:
             return atomicCompareExchange(op, Types::I64);
         default:
-            WASM_PARSER_FAIL_IF(true, "invalid extended atomic op "_s, extOp);
+            WASM_PARSER_FAIL_IF(true, "invalid extended atomic op "_s, m_currentExtOp);
             break;
         }
         return { };
@@ -3443,12 +3444,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     case ExtSIMD: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblySIMD(), "wasm-simd is not enabled"_s);
         m_context.notifyFunctionUsesSIMD();
-        uint32_t extOp;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(extOp), "can't parse wasm extended opcode"_s);
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(m_currentExtOp), "can't parse wasm extended opcode"_s);
+        m_context.willParseExtendedOpcode();
 
         constexpr bool isReachable = true;
 
-        ExtSIMDOpType op = static_cast<ExtSIMDOpType>(extOp);
+        ExtSIMDOpType op = static_cast<ExtSIMDOpType>(m_currentExtOp);
         if (UNLIKELY(Options::dumpWebAssemblyOpcodeStatistics()))
             WasmOpcodeCounter::singleton().increment(op);
 
@@ -3460,7 +3461,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         FOR_EACH_WASM_EXT_SIMD_REL_OP(CREATE_SIMD_CASE)
         #undef CREATE_SIMD_CASE
         default:
-            WASM_PARSER_FAIL_IF(true, "invalid extended simd op "_s, extOp);
+            WASM_PARSER_FAIL_IF(true, "invalid extended simd op "_s, m_currentExtOp);
             break;
         }
         return { };
@@ -3707,10 +3708,10 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     }
 
     case Ext1: {
-        uint32_t extOp;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(extOp), "can't parse extended 0xfc opcode"_s);
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(m_currentExtOp), "can't parse extended 0xfc opcode"_s);
+        m_context.willParseExtendedOpcode();
 
-        switch (static_cast<Ext1OpType>(extOp)) {
+        switch (static_cast<Ext1OpType>(m_currentExtOp)) {
         case Ext1OpType::TableInit: {
             TableInitImmediates immediates;
             WASM_FAIL_IF_HELPER_FAILS(parseTableInitImmediates(immediates));
@@ -3756,7 +3757,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             return { };
 #undef CREATE_EXT1_CASE
         default:
-            WASM_PARSER_FAIL_IF(true, "invalid extended 0xfc op "_s, extOp);
+            WASM_PARSER_FAIL_IF(true, "invalid extended 0xfc op "_s, m_currentExtOp);
             break;
         }
 
@@ -3800,11 +3801,10 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 
     case ExtGC: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled"_s);
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(m_currentExtOp), "can't parse extended GC opcode"_s);
+        m_context.willParseExtendedOpcode();
 
-        uint32_t extOp;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(extOp), "can't parse extended GC opcode"_s);
-
-        ExtGCOpType op = static_cast<ExtGCOpType>(extOp);
+        ExtGCOpType op = static_cast<ExtGCOpType>(m_currentExtOp);
 #if ENABLE(WEBASSEMBLY_OMGJIT)
         if (UNLIKELY(Options::dumpWebAssemblyOpcodeStatistics()))
             WasmOpcodeCounter::singleton().increment(op);
@@ -3900,7 +3900,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             return { };
         }
         default:
-            WASM_PARSER_FAIL_IF(true, "invalid extended GC op "_s, extOp);
+            WASM_PARSER_FAIL_IF(true, "invalid extended GC op "_s, m_currentExtOp);
             break;
         }
 
@@ -3917,9 +3917,10 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 
 #define CREATE_ATOMIC_CASE(name, ...) case ExtAtomicOpType::name:
     case ExtAtomic: {
-        uint32_t extOp;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(extOp), "can't parse atomic extended opcode"_s);
-        ExtAtomicOpType op = static_cast<ExtAtomicOpType>(extOp);
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(m_currentExtOp), "can't parse atomic extended opcode"_s);
+        m_context.willParseExtendedOpcode();
+
+        ExtAtomicOpType op = static_cast<ExtAtomicOpType>(m_currentExtOp);
         switch (op) {
         FOR_EACH_WASM_EXT_ATOMIC_LOAD_OP(CREATE_ATOMIC_CASE)
         FOR_EACH_WASM_EXT_ATOMIC_STORE_OP(CREATE_ATOMIC_CASE)
@@ -3950,7 +3951,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             break;
         }
         default:
-            WASM_PARSER_FAIL_IF(true, "invalid extended atomic op "_s, extOp);
+            WASM_PARSER_FAIL_IF(true, "invalid extended atomic op "_s, m_currentExtOp);
             break;
         }
 
@@ -3962,12 +3963,12 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case ExtSIMD: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblySIMD(), "wasm-simd is not enabled"_s);
         m_context.notifyFunctionUsesSIMD();
-        uint32_t extOp;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(extOp), "can't parse wasm extended opcode"_s);
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(m_currentExtOp), "can't parse wasm extended opcode"_s);
+        m_context.willParseExtendedOpcode();
 
         constexpr bool isReachable = false;
 
-        ExtSIMDOpType op = static_cast<ExtSIMDOpType>(extOp);
+        ExtSIMDOpType op = static_cast<ExtSIMDOpType>(m_currentExtOp);
         switch (op) {
         #define CREATE_SIMD_CASE(name, _, laneOp, lane, signMode) case ExtSIMDOpType::name: return simd<isReachable>(SIMDLaneOperation::laneOp, lane, signMode);
         FOR_EACH_WASM_EXT_SIMD_GENERAL_OP(CREATE_SIMD_CASE)
@@ -3976,7 +3977,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         FOR_EACH_WASM_EXT_SIMD_REL_OP(CREATE_SIMD_CASE)
         #undef CREATE_SIMD_CASE
         default:
-            WASM_PARSER_FAIL_IF(true, "invalid extended simd op "_s, extOp);
+            WASM_PARSER_FAIL_IF(true, "invalid extended simd op "_s, m_currentExtOp);
             break;
         }
         return { };

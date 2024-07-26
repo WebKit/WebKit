@@ -4234,8 +4234,28 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCrash()
 ALWAYS_INLINE void BBQJIT::willParseOpcode()
 {
     m_pcToCodeOriginMapBuilder.appendItem(m_jit.label(), CodeOrigin(BytecodeIndex(m_parser->currentOpcodeStartingOffset())));
-    if (UNLIKELY(m_disassembler))
-        m_disassembler->setOpcode(m_jit.label(), m_parser->currentOpcode(), m_parser->currentOpcodeStartingOffset());
+    if (UNLIKELY(m_disassembler)) {
+        OpType currentOpcode = m_parser->currentOpcode();
+        switch (currentOpcode) {
+        case OpType::Ext1:
+        case OpType::ExtGC:
+        case OpType::ExtAtomic:
+        case OpType::ExtSIMD:
+            return; // We'll handle these once we know the extended opcode too.
+        default:
+            break;
+        }
+        m_disassembler->setOpcode(m_jit.label(), PrefixedOpcode(m_parser->currentOpcode()), m_parser->currentOpcodeStartingOffset());
+    }
+}
+
+ALWAYS_INLINE void BBQJIT::willParseExtendedOpcode()
+{
+    if (UNLIKELY(m_disassembler)) {
+        OpType prefix = m_parser->currentOpcode();
+        uint32_t opcode = m_parser->currentExtendedOpcode();
+        m_disassembler->setOpcode(m_jit.label(), PrefixedOpcode(prefix, opcode), m_parser->currentOpcodeStartingOffset());
+    }
 }
 
 ALWAYS_INLINE void BBQJIT::didParseOpcode()

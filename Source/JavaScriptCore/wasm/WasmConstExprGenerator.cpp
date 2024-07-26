@@ -713,6 +713,7 @@ public:
 
     void dump(const ControlStack&, const Stack*) { }
     ALWAYS_INLINE void willParseOpcode() { }
+    ALWAYS_INLINE void willParseExtendedOpcode() { }
     ALWAYS_INLINE void didParseOpcode() {
         if (m_parser->currentOpcode() == Nop)
             m_shouldError = true;

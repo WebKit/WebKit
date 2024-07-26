@@ -819,6 +819,7 @@ public:
     void dump(const ControlStack&, const Stack* expressionStack);
     void setParser(FunctionParser<OMGIRGenerator>* parser) { m_parser = parser; };
     ALWAYS_INLINE void willParseOpcode() { }
+    ALWAYS_INLINE void willParseExtendedOpcode() { }
     ALWAYS_INLINE void didParseOpcode() { }
     void didFinishParsingLocals() { }
     void didPopValueFromStack(ExpressionType expr, String msg)
@@ -5895,7 +5896,17 @@ auto OMGIRGenerator::origin() -> Origin
 {
     if (!m_parser)
         return Origin();
-    OpcodeOrigin origin(m_parser->currentOpcode(), m_parser->currentOpcodeStartingOffset());
+    OpcodeOrigin origin = OpcodeOrigin(m_parser->currentOpcode(), m_parser->currentOpcodeStartingOffset());
+    switch (m_parser->currentOpcode()) {
+    case OpType::Ext1:
+    case OpType::ExtGC:
+    case OpType::ExtAtomic:
+    case OpType::ExtSIMD:
+        origin = OpcodeOrigin(m_parser->currentOpcode(), m_parser->currentExtendedOpcode(), m_parser->currentOpcodeStartingOffset());
+        break;
+    default:
+        break;
+    }
     ASSERT(isValidOpType(static_cast<uint8_t>(origin.opcode())));
     return bitwise_cast<Origin>(origin);
 }

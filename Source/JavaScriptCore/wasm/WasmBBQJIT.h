@@ -1792,6 +1792,8 @@ public:
 
     ALWAYS_INLINE void willParseOpcode();
 
+    ALWAYS_INLINE void willParseExtendedOpcode();
+
     ALWAYS_INLINE void didParseOpcode();
 
     // SIMD

@@ -385,6 +385,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addCrash();
 
     ALWAYS_INLINE void willParseOpcode() { }
+    ALWAYS_INLINE void willParseExtendedOpcode() { }
     ALWAYS_INLINE void didParseOpcode() { }
     void didFinishParsingLocals();
 
