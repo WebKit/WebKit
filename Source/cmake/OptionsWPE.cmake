@@ -140,7 +140,7 @@ endif ()
 
 find_package(GIDocgen)
 if (ENABLE_DOCUMENTATION AND NOT GIDocgen_FOUND)
-    message(FATAL_ERROR "ENABLE_INTROSPECTION is needed for gi-docgen.")
+    message(FATAL_ERROR "ENABLE_DOCUMENTATION is needed for gi-docgen.")
 endif ()
 
 if (ENABLE_WPE_1_1_API)
