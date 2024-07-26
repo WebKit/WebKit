@@ -2724,10 +2724,10 @@ static FloatRect computeMarqueeSelectionRect(const WebCore::FloatPoint& point1, 
     return { marqueeRectLocation.x(), marqueeRectLocation.y(), std::abs(marqueeRectSize.width()), std::abs(marqueeRectSize.height()) };
 }
 
-void UnifiedPDFPlugin::freezeCursorDuringSelectionDragIfNeeded(IsDraggingSelection isDraggingSelection)
+void UnifiedPDFPlugin::freezeCursorDuringSelectionDragIfNeeded(IsDraggingSelection isDraggingSelection, IsMarqueeSelection isMarqueeSelection)
 {
     if (isDraggingSelection == IsDraggingSelection::Yes && !std::exchange(m_selectionTrackingData.cursorIsFrozenForSelectionDrag, true))
-        notifyCursorChanged(PlatformCursorType::IBeam);
+        notifyCursorChanged(isMarqueeSelection == IsMarqueeSelection::Yes ? PlatformCursorType::Cross : PlatformCursorType::IBeam);
 }
 
 void UnifiedPDFPlugin::unfreezeCursorAfterSelectionDragIfNeeded()
@@ -2741,7 +2741,7 @@ void UnifiedPDFPlugin::unfreezeCursorAfterSelectionDragIfNeeded()
 
 void UnifiedPDFPlugin::continueTrackingSelection(PDFDocumentLayout::PageIndex pageIndex, const WebCore::FloatPoint& pagePoint, IsDraggingSelection isDraggingSelection)
 {
-    freezeCursorDuringSelectionDragIfNeeded(isDraggingSelection);
+    freezeCursorDuringSelectionDragIfNeeded(isDraggingSelection, m_selectionTrackingData.shouldMakeMarqueeSelection ? IsMarqueeSelection::Yes : IsMarqueeSelection::No);
 
     auto beginAutoscrollIfNecessary = makeScopeExit([&] {
         if (isDraggingSelection == IsDraggingSelection::Yes)

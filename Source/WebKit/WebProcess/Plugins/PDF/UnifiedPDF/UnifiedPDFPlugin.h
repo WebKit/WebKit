@@ -385,13 +385,14 @@ private:
     };
 
     enum class IsDraggingSelection : bool { No, Yes };
+    enum class IsMarqueeSelection : bool { No, Yes };
 
     SelectionGranularity selectionGranularityForMouseEvent(const WebMouseEvent&) const;
     void beginTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::FloatPoint& pagePoint, const WebMouseEvent&);
     void extendCurrentSelectionIfNeeded();
     void updateCurrentSelectionForContextMenuEventIfNeeded();
     void continueTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::FloatPoint& pagePoint, IsDraggingSelection);
-    void freezeCursorDuringSelectionDragIfNeeded(IsDraggingSelection);
+    void freezeCursorDuringSelectionDragIfNeeded(IsDraggingSelection, IsMarqueeSelection);
     void unfreezeCursorAfterSelectionDragIfNeeded();
     void stopTrackingSelection();
     void setCurrentSelection(RetainPtr<PDFSelection>&&);
