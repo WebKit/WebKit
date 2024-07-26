@@ -4173,6 +4173,9 @@ css3/filters/backdrop-filter-page-scale.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/trusted-types/trusted-types-navigation.html [ Failure Pass ]
 js/dom/encode-URI-test.html [ Pass Failure ]
 
+# WinCairo doesn't create accelerated ImageBuffer backends.
+fast/canvas/image-buffer-resource-limits.html [ Skip ]
+
 # eventSender.leapForward should be reimplemented without Sleep.
 editing/selection/mouse/click-left-of-rtl-wrapping-text.html [ Skip ] # Timeout
 

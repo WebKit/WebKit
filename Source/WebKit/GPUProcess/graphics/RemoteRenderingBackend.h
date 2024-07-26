@@ -184,6 +184,8 @@ private:
     bool shouldUseLockdownFontParser() const;
 #endif
 
+    void getImageBufferResourceLimitsForTesting(CompletionHandler<void(WebCore::ImageBufferResourceLimits)>&&);
+
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     Ref<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;

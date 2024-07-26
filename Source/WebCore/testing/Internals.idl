@@ -449,6 +449,25 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary ImageBufferResourceLimits {
+    unsigned long long acceleratedImageBufferForCanvasCount;
+    unsigned long long acceleratedImageBufferForCanvasLimit;
+    unsigned long long globalAcceleratedImageBufferCount;
+    unsigned long long globalAcceleratedImageBufferLimit;
+    unsigned long long globalImageBufferForCanvasCount;
+    unsigned long long globalImageBufferForCanvasLimit;
+    unsigned long long imageBufferForCanvasCount;
+    unsigned long long imageBufferForCanvasLimit;
+};
+
+enum RenderingMode {
+    "Unaccelerated",
+    "Accelerated"
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     LegacyNoInterfaceObject,
 ] interface Internals {
     DOMString address(Node node);
@@ -1376,4 +1395,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     readonly attribute DOMString defaultSpatialTrackingLabel;
 
     boolean isEffectivelyMuted(HTMLMediaElement element);
+
+    RenderingMode? getEffectiveRenderingModeOfNewlyCreatedAcceleratedImageBuffer();
+    Promise<ImageBufferResourceLimits> getImageBufferResourceLimits();
 };

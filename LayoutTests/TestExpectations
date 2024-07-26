@@ -7874,6 +7874,8 @@ imported/w3c/web-platform-tests/css/css-anchor-position/anchor-getComputedStyle-
 
 # -- End: Anchor Positioning -- #
 
+fast/canvas/image-buffer-resource-limits.html [ Slow ]
+
 # Standardized CSS zoom tests.
 imported/w3c/web-platform-tests/css/css-viewport/width.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-viewport/zoom/border-spacing.html [ ImageOnlyFailure ]

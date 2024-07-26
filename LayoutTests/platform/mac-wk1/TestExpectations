@@ -2819,6 +2819,9 @@ http/tests/media/hls/hls-webvtt-style.html [ Pass Timeout ]
 [ Ventura Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode-disabled.html [ Skip ]
 [ Ventura Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode.html [ Skip ]
 
+# Test relies on GPUP.
+fast/canvas/image-buffer-resource-limits.html [ Skip ]
+
 webkit.org/b/273577 [ Ventura ] http/tests/media/hls/track-webvtt-multitracks.html [ Skip ]
 
 # rdar://65188503
