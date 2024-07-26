@@ -281,7 +281,7 @@ std::optional<SimpleRange> AXTextMarkerRange::simpleRange() const
 std::optional<CharacterRange> AXTextMarkerRange::characterRange() const
 {
     if (m_start.m_data.objectID != m_end.m_data.objectID
-        || m_start.m_data.treeID != m_end.m_data.treeID)
+        || UNLIKELY(m_start.m_data.treeID != m_end.m_data.treeID))
         return std::nullopt;
 
     if (m_start.m_data.characterOffset > m_end.m_data.characterOffset) {

@@ -1134,12 +1134,19 @@ unsigned AccessibilityUIElement::uiElementCountForSearchPredicate(JSContextRef c
 AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(JSContextRef context, AccessibilityUIElement *startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSDictionary *parameterizedAttribute = searchPredicateParameterizedAttributeForSearchCriteria(context, startElement, isDirectionNext, 1, searchKey, searchText, visibleOnly, immediateDescendantsOnly);
-    id value = [m_element accessibilityAttributeValue:@"AXUIElementsForSearchPredicate" forParameter:parameterizedAttribute];
-    if ([value isKindOfClass:[NSArray class]])
-        return AccessibilityUIElement([value lastObject]);
+    NSDictionary *parameter = searchPredicateParameterizedAttributeForSearchCriteria(context, startElement, isDirectionNext, 1, searchKey, searchText, visibleOnly, immediateDescendantsOnly);
+    id value = [m_element accessibilityAttributeValue:@"AXUIElementsForSearchPredicate" forParameter:parameter];
+    if (![value isKindOfClass:[NSArray class]] || ![value count])
+        return nullptr;
+
+    id result = [value firstObject];
+    if ([result isKindOfClass:NSDictionary.class]) {
+        RELEASE_ASSERT([result objectForKey:@"AXSearchResultElement"]);
+        return AccessibilityUIElement([result objectForKey:@"AXSearchResultElement"]);
+    }
+    return AccessibilityUIElement(result);
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 

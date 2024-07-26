@@ -1412,24 +1412,29 @@ bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned location
 unsigned AccessibilityUIElement::uiElementCountForSearchPredicate(JSContextRef context, AccessibilityUIElement *startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSDictionary *parameterizedAttribute = searchPredicateParameterizedAttributeForSearchCriteria(context, startElement, isDirectionNext, UINT_MAX, searchKey, searchText, visibleOnly, immediateDescendantsOnly);
-    auto value = attributeValueForParameter(@"AXUIElementsForSearchPredicate", parameterizedAttribute);
+    NSDictionary *parameter = searchPredicateForSearchCriteria(context, startElement, nullptr, isDirectionNext, UINT_MAX, searchKey, searchText, visibleOnly, immediateDescendantsOnly);
+    auto value = attributeValueForParameter(@"AXUIElementsForSearchPredicate", parameter);
     if ([value isKindOfClass:[NSArray class]])
         return [value count];
     END_AX_OBJC_EXCEPTIONS
-    
+
     return 0;
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementForSearchPredicate(JSContextRef context, AccessibilityUIElement *startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSDictionary *parameterizedAttribute = searchPredicateParameterizedAttributeForSearchCriteria(context, startElement, isDirectionNext, 1, searchKey, searchText, visibleOnly, immediateDescendantsOnly);
-    auto searchResults = attributeValueForParameter(@"AXUIElementsForSearchPredicate", parameterizedAttribute);
-    if ([searchResults isKindOfClass:[NSArray class]]) {
-        if (id lastResult = [searchResults lastObject])
-            return AccessibilityUIElement::create(lastResult);
+    NSDictionary *parameter = searchPredicateForSearchCriteria(context, startElement, nullptr, isDirectionNext, 1, searchKey, searchText, visibleOnly, immediateDescendantsOnly);
+    auto searchResults = attributeValueForParameter(@"AXUIElementsForSearchPredicate", parameter);
+    if (![searchResults isKindOfClass:[NSArray class]] || ![searchResults count])
+        return nullptr;
+
+    id result = [searchResults firstObject];
+    if ([result isKindOfClass:NSDictionary.class]) {
+        RELEASE_ASSERT([result objectForKey:@"AXSearchResultElement"]);
+        return AccessibilityUIElement::create([result objectForKey:@"AXSearchResultElement"]);
     }
+    return AccessibilityUIElement::create(result);
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
@@ -2068,6 +2073,26 @@ int AccessibilityUIElement::lineIndexForTextMarker(AccessibilityTextMarker* mark
     END_AX_OBJC_EXCEPTIONS
 
     return -1;
+}
+
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForSearchPredicate(JSContextRef context, AccessibilityTextMarkerRange *startRange, bool forward, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSDictionary *parameter = searchPredicateForSearchCriteria(context, nullptr, startRange, forward, 1, searchKey, searchText, visibleOnly, immediateDescendantsOnly);
+    auto searchResults = attributeValueForParameter(@"AXUIElementsForSearchPredicate", parameter);
+    if (![searchResults isKindOfClass:[NSArray class]] || ![searchResults count])
+        return nullptr;
+
+    id result = [searchResults firstObject];
+    if (![result isKindOfClass:NSDictionary.class])
+        return nullptr;
+
+    id rangeRef = [result objectForKey:@"AXSearchResultRange"];
+    if (rangeRef && CFGetTypeID((__bridge CFTypeRef)rangeRef) == AXTextMarkerRangeGetTypeID())
+        return AccessibilityTextMarkerRange::create(rangeRef);
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
 }
 
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::misspellingTextMarkerRange(AccessibilityTextMarkerRange* start, bool forward)

@@ -2116,8 +2116,12 @@ static RenderObject* rendererForView(WAKView* view)
 
 - (NSArray<WebAccessibilityObjectWrapper *> *)accessibilityFindMatchingObjects:(NSDictionary *)parameters
 {
-    auto criteria = accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(parameters);
-    return makeNSArray(self.axBackingObject->findMatchingObjects(WTFMove(criteria)));
+    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
+    if (!backingObject)
+        return nil;
+
+    auto criteria = accessibilitySearchCriteriaForSearchPredicate(*backingObject, parameters);
+    return makeNSArray(backingObject->findMatchingObjects(WTFMove(criteria)));
 }
 
 - (void)accessibilityModifySelection:(TextGranularity)granularity increase:(BOOL)increase

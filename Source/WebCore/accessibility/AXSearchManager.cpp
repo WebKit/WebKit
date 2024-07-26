@@ -218,7 +218,7 @@ static void appendAccessibilityObject(RefPtr<AXCoreObject> object, Accessibility
         results.append(object);
 }
 
-static void appendChildrenToArray(RefPtr<AXCoreObject> object, bool isForward, RefPtr<AXCoreObject> startObject, AccessibilityObject::AccessibilityChildrenVector& results)
+static void appendChildrenToArray(RefPtr<AXCoreObject> object, bool isForward, RefPtr<AXCoreObject> startObject, AXCoreObject::AccessibilityChildrenVector& results)
 {
     // A table's children includes elements whose own children are also the table's children (due to the way the Mac exposes tables).
     // The rows from the table should be queried, since those are direct descendants of the table, and they contain content.
@@ -271,9 +271,9 @@ static void appendChildrenToArray(RefPtr<AXCoreObject> object, bool isForward, R
     }
 }
 
-AXCoreObject::AccessibilityChildrenVector AXSearchManager::findMatchingObjects(AccessibilitySearchCriteria&& criteria)
+AXCoreObject::AccessibilityChildrenVector AXSearchManager::findMatchingObjectsInternal(const AccessibilitySearchCriteria& criteria)
 {
-    AXTRACE("Accessibility::findMatchingObjects"_s);
+    AXTRACE("Accessibility::findMatchingObjectsInternal"_s);
     AXLOG(criteria);
 
     AXCoreObject::AccessibilityChildrenVector results;
@@ -329,6 +329,50 @@ AXCoreObject::AccessibilityChildrenVector AXSearchManager::findMatchingObjects(A
 
     AXLOG(results);
     return results;
+}
+
+std::optional<AXTextMarkerRange> AXSearchManager::findMatchingRange(AccessibilitySearchCriteria&& criteria)
+{
+    // Currently, this method only supports searching for the next/previous misspelling.
+    // FIXME: support other types of ranges, like italicized.
+    if (criteria.searchKeys.size() != 1 || criteria.searchKeys[0] != AccessibilitySearchKey::MisspelledWord
+        || !criteria.startObject || criteria.resultsLimit != 1) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    RefPtr startObject = criteria.startObject;
+    bool forward = criteria.searchDirection == AccessibilitySearchDirection::Next;
+    if (match(startObject, criteria)) {
+        AXTextMarkerRange startRange { startObject->treeID(), startObject->objectID(), criteria.startRange };
+        const auto& characterRanges = m_spellCheckerResultRanges.get(startObject->objectID());
+        ASSERT(!characterRanges.isEmpty());
+
+        if (forward) {
+            for (auto it = characterRanges.begin(); it != characterRanges.end(); ++it) {
+                AXTextMarkerRange range { startObject->treeID(), startObject->objectID(), *it };
+                if (range > startRange)
+                    return range;
+            }
+        } else {
+            for (auto it = characterRanges.rbegin(); it != characterRanges.rend(); ++it) {
+                AXTextMarkerRange range { startObject->treeID(), startObject->objectID(), *it };
+                if (range < startRange)
+                    return range;
+            }
+        }
+    }
+
+    // Didn't find a matching range for startObject, thus move to the next/previous object.
+    auto objects = findMatchingObjectsInternal(criteria);
+    if (!objects.isEmpty() && objects[0]) {
+        auto& object = *objects[0];
+        const auto& characterRanges = m_spellCheckerResultRanges.get(object.objectID());
+        ASSERT(!characterRanges.isEmpty());
+        auto& characterRange = forward ? characterRanges[0] : characterRanges.last();
+        return { { object.treeID(), object.objectID(), characterRange } };
+    }
+    return std::nullopt;
 }
 
 } // namespace WebCore
