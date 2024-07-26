@@ -1126,6 +1126,12 @@ void CommandEncoder::onCommandBufferCompletion(Function<void()>&& completion)
 {
     if (m_cachedCommandBuffer)
         m_cachedCommandBuffer.get()->onCompletion(WTFMove(completion));
+    else if (m_commandBuffer && m_commandBuffer.status < MTLCommandBufferStatusCommitted) {
+        [m_commandBuffer addCompletedHandler:^(id<MTLCommandBuffer>) {
+            completion();
+        }];
+    } else
+        completion();
 }
 
 bool CommandEncoder::encoderIsCurrent(id<MTLCommandEncoder> commandEncoder) const

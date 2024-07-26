@@ -142,7 +142,8 @@ RefPtr<WebCore::WebGPU::ExternalTexture> RemoteDeviceProxy::importExternalTextur
                 auto sendResult = send(Messages::RemoteDevice::SetSharedVideoFrameMemory { WTFMove(handle) });
                 UNUSED_VARIABLE(sendResult);
             });
-            ASSERT(convertedDescriptor->sharedFrame);
+            if (!convertedDescriptor->sharedFrame)
+                return nullptr;
         }
     }
 
