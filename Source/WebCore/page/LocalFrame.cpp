@@ -295,7 +295,7 @@ void LocalFrame::setDocument(RefPtr<Document>&& newDocument)
 
     if (isMainFrame()) {
         if (RefPtr page = this->page())
-            page->didChangeMainDocument();
+            page->didChangeMainDocument(newDocument.get());
         checkedLoader()->client().dispatchDidChangeMainDocument();
     }
 
