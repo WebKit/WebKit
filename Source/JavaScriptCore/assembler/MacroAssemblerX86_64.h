@@ -584,18 +584,6 @@ public:
         }
     }
 
-    void lshift64(TrustedImm32 imm, RegisterID shiftAmount, RegisterID dest)
-    {
-        if (shiftAmount == dest) {
-            move(imm, scratchRegister());
-            lshift64(shiftAmount, scratchRegister());
-            move(scratchRegister(), dest);
-        } else {
-            move(imm, dest);
-            lshift64(shiftAmount, dest);
-        }
-    }
-
     void lshift64(Address src, RegisterID shiftAmount, RegisterID dest)
     {
         if (shiftAmount == dest) {
