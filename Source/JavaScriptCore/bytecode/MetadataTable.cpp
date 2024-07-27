@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MetadataTable.h"
 
+#include "BytecodeStructs.h"
 #include "JSCJSValueInlines.h"
 #include "OpcodeInlines.h"
 #include "UnlinkedMetadataTableInlines.h"
@@ -51,6 +52,55 @@ struct DeallocTable {
         }
     }
 };
+
+struct ClearTable {
+    template<typename Op>
+    static void withOpcodeType(MetadataTable* table)
+    {
+        if constexpr (static_cast<unsigned>(Op::opcodeID) < NUMBER_OF_BYTECODE_WITH_METADATA) {
+            table->forEach<Op>([&](auto& entry) {
+                uint8_t* ptr = reinterpret_cast_ptr<uint8_t*>(&entry);
+                memset(ptr, 0, sizeof(entry));
+            });
+        }
+    }
+};
+
+struct ClearTableWithCache {
+    template<typename Op>
+    static void withOpcodeType(MetadataTable* table, UnlinkedMetadataTable::MetadataIDs& cachedIDs)
+    {
+        if constexpr (static_cast<unsigned>(Op::opcodeID) < NUMBER_OF_BYTECODE_WITH_METADATA) {
+            unsigned index = 0;
+            table->forEach<Op>([&](auto& entry) {
+                uint8_t* ptr = reinterpret_cast_ptr<uint8_t*>(&entry);
+                if (!cachedIDs.contains(index))
+                    memset(ptr, 0, sizeof(entry));
+                index++;
+            });
+        }
+    }
+};
+
+void MetadataTable::clear(UnlinkedMetadataTable::CacheMap& cachedIDs)
+{
+    for (unsigned i = 0; i < NUMBER_OF_BYTECODE_WITH_METADATA; i++) {
+        OpcodeID op = static_cast<OpcodeID>(i);
+        switch (op) {
+        case op_resolve_scope:
+        case op_get_from_scope: {
+            auto iterator = cachedIDs.find(op);
+            if (iterator != cachedIDs.end()) {
+                getOpcodeType<ClearTableWithCache>(op, this, iterator->value);
+                break;
+            }
+            FALLTHROUGH;
+        }
+        default:
+            getOpcodeType<ClearTable>(op, this);
+        }
+    }
+}
 
 MetadataTable::~MetadataTable()
 {

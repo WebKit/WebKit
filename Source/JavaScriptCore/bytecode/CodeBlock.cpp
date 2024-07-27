@@ -342,7 +342,7 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecut
     , m_ownerExecutable(ownerExecutable, WriteBarrierEarlyInit)
     , m_vm(&vm)
     , m_instructionsRawPointer(unlinkedCodeBlock->instructions().rawPointer())
-    , m_metadata(unlinkedCodeBlock->metadata().link())
+    , m_metadata(unlinkedCodeBlock->metadataLink())
     , m_creationTime(ApproximateTime::now())
 {
     ASSERT(heap()->isDeferred());
@@ -536,35 +536,52 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             const Identifier& ident = identifier(bytecode.m_var);
             RELEASE_ASSERT(bytecode.m_resolveType != ResolvedClosureVar);
 
-            ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
+            auto processMetadata = [&](ResolveOp& op) ALWAYS_INLINE_LAMBDA {
+                if (op.lexicalEnvironment) {
+                    if (op.type == ModuleVar) {
+                        // Keep the linked module environment strongly referenced.
+                        if (stronglyReferencedModuleEnvironments.add(jsCast<JSModuleEnvironment*>(op.lexicalEnvironment)).isNewEntry)
+                            addConstant(ConcurrentJSLocker(m_lock), op.lexicalEnvironment);
+                        metadata.m_lexicalEnvironment.set(vm, this, op.lexicalEnvironment);
+                    } else
+                        metadata.m_symbolTable.set(vm, this, op.lexicalEnvironment->symbolTable());
+                } else if (JSScope* constantScope = JSScope::constantScopeForCodeBlock(op.type, this)) {
+                    metadata.m_constantScope.set(vm, this, constantScope);
+                    if (op.type == GlobalProperty || op.type == GlobalPropertyWithVarInjectionChecks)
+                        metadata.m_globalLexicalBindingEpoch = m_globalObject->globalLexicalBindingEpoch();
+                } else
+                    metadata.m_globalObject.clear();
+            };
 
+            if (metadata.m_resolveType == ClosureVar) {
+                unsigned cachedDepth = metadata.m_localScopeDepth;
+                ResolveOp op = JSScope::abstractResolveFast(m_globalObject.get(), cachedDepth, bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
+                ASSERT(metadata.m_resolveType == op.type && metadata.m_localScopeDepth == op.depth);
+                processMetadata(op);
+                break;
+            }
+
+            ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
             metadata.m_resolveType = op.type;
             metadata.m_localScopeDepth = op.depth;
-            if (op.lexicalEnvironment) {
-                if (op.type == ModuleVar) {
-                    // Keep the linked module environment strongly referenced.
-                    if (stronglyReferencedModuleEnvironments.add(jsCast<JSModuleEnvironment*>(op.lexicalEnvironment)).isNewEntry)
-                        addConstant(ConcurrentJSLocker(m_lock), op.lexicalEnvironment);
-                    metadata.m_lexicalEnvironment.set(vm, this, op.lexicalEnvironment);
-                } else
-                    metadata.m_symbolTable.set(vm, this, op.lexicalEnvironment->symbolTable());
-            } else if (JSScope* constantScope = JSScope::constantScopeForCodeBlock(op.type, this)) {
-                metadata.m_constantScope.set(vm, this, constantScope);
-                if (op.type == GlobalProperty || op.type == GlobalPropertyWithVarInjectionChecks)
-                    metadata.m_globalLexicalBindingEpoch = m_globalObject->globalLexicalBindingEpoch();
-            } else
-                metadata.m_globalObject.clear();
+            processMetadata(op);
+            if (op.type == ClosureVar && op.depth - bytecode.m_localScopeDepth)
+                unlinkedCodeBlock->cache(bytecode);
             break;
         }
 
         case op_get_from_scope: {
             INITIALIZE_METADATA(OpGetFromScope)
 
+            if (metadata.m_getPutInfo.resolveType() == ClosureVar)
+                break;
+
             metadata.m_watchpointSet = nullptr;
 
             ASSERT(!isInitialization(bytecode.m_getPutInfo.initializationMode()));
             if (bytecode.m_getPutInfo.resolveType() == ResolvedClosureVar) {
                 metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), ClosureVar, bytecode.m_getPutInfo.initializationMode(), bytecode.m_getPutInfo.ecmaMode());
+                unlinkedCodeBlock->cache(bytecode);
                 break;
             }
 
@@ -579,6 +596,9 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             else if (op.structure)
                 metadata.m_structure.set(vm, this, op.structure);
             metadata.m_operand = op.operand;
+
+            if (metadata.m_getPutInfo.resolveType() == ClosureVar)
+                unlinkedCodeBlock->cache(bytecode);
             break;
         }
 

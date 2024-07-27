@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BytecodeStructs.h"
 #include "MetadataTable.h"
 #include "UnlinkedMetadataTable.h"
 #include <wtf/FastMalloc.h>
@@ -121,7 +122,7 @@ ALWAYS_INLINE RefPtr<MetadataTable> UnlinkedMetadataTable::link()
 
     unsigned totalSize = this->totalSize();
     unsigned offsetTableSize = this->offsetTableSize();
-    unsigned valueProfileSize = m_numValueProfiles * sizeof(ValueProfile);
+    unsigned valueProfileSize = this->valueProfileSize();
     uint8_t* buffer;
     if (!m_isLinked) {
         m_isLinked = true;
@@ -140,6 +141,53 @@ ALWAYS_INLINE RefPtr<MetadataTable> UnlinkedMetadataTable::link()
     return adoptRef(*new (buffer + valueProfileSize + sizeof(LinkingData)) MetadataTable(*this));
 }
 
+ALWAYS_INLINE RefPtr<MetadataTable> UnlinkedMetadataTable::link(CacheMap& cachedIDs)
+{
+    ASSERT(m_isFinalized);
+
+    if (!m_hasMetadata)
+        return nullptr;
+
+    if (m_isLinked) {
+        RefPtr<MetadataTable> newTable = link();
+        MetadataTable* baseTable = asMetadataTable();
+        ASSERT(newTable && baseTable && newTable.get() != baseTable);
+
+        for (auto& entry : cachedIDs) {
+            OpcodeID op = static_cast<OpcodeID>(entry.key);
+            switch (op) {
+            case op_resolve_scope: {
+                auto* newStart = newTable->get<OpResolveScope::Metadata>();
+                auto* baseStart = baseTable->get<OpResolveScope::Metadata>();
+                for (unsigned index : entry.value) {
+                    memcpy(newStart + index, baseStart + index, sizeof(OpResolveScope::Metadata));
+                    ASSERT(newStart[index].m_resolveType == ClosureVar && baseStart[index].m_resolveType == ClosureVar);
+                }
+                break;
+            }
+            case op_get_from_scope: {
+                auto* newStart = newTable->get<OpGetFromScope::Metadata>();
+                auto* baseStart = baseTable->get<OpGetFromScope::Metadata>();
+                for (unsigned index : entry.value) {
+                    memcpy(newStart + index, baseStart + index, sizeof(OpGetFromScope::Metadata));
+                    ASSERT(newStart[index].m_getPutInfo.resolveType() == ClosureVar && baseStart[index].m_getPutInfo.resolveType() == ClosureVar);
+                }
+                break;
+            }
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        }
+        return newTable;
+    }
+
+    m_isLinked = true;
+    unsigned valueProfileSize = this->valueProfileSize();
+    memset(m_rawBuffer, 0, valueProfileSize);
+    asMetadataTable()->clear(cachedIDs);
+    return adoptRef(*new (m_rawBuffer + valueProfileSize + sizeof(LinkingData)) MetadataTable(*this));
+}
+
 ALWAYS_INLINE void UnlinkedMetadataTable::unlink(MetadataTable& metadataTable)
 {
     ASSERT(m_isFinalized);
@@ -152,6 +200,16 @@ ALWAYS_INLINE void UnlinkedMetadataTable::unlink(MetadataTable& metadataTable)
         return;
     }
     MetadataTableMalloc::free(metadataTable.valueProfilesEnd() + -static_cast<ptrdiff_t>(numValueProfiles()));
+}
+
+ALWAYS_INLINE MetadataTable* UnlinkedMetadataTable::asMetadataTable()
+{
+    ASSERT(m_isFinalized);
+
+    if (!m_hasMetadata)
+        return nullptr;
+
+    return reinterpret_cast_ptr<MetadataTable*>(m_rawBuffer + valueProfileSize() + sizeof(LinkingData));
 }
 
 } // namespace JSC

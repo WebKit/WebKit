@@ -146,7 +146,7 @@ void UnlinkedMetadataTable::finalize()
     });
 #endif
 
-    unsigned valueProfileSize = m_numValueProfiles * sizeof(ValueProfile);
+    unsigned valueProfileSize = this->valueProfileSize();
     if (m_is32Bit) {
         // offset already accounts for s_offset16TableSize
         uint8_t* newBuffer = reinterpret_cast_ptr<uint8_t*>(MetadataTableMalloc::malloc(valueProfileSize + sizeof(LinkingData) + s_offset32TableSize + offset));

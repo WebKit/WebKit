@@ -57,7 +57,8 @@ public:
 
     static JSObject* resolve(JSGlobalObject*, JSScope*, const Identifier&);
     static JSValue resolveScopeForHoistingFuncDeclInEval(JSGlobalObject*, JSScope*, const Identifier&);
-    static ResolveOp abstractResolve(JSGlobalObject*, size_t depthOffset, JSScope*, const Identifier&, GetOrPut, ResolveType, InitializationMode);
+    static ResolveOp abstractResolveFast(JSGlobalObject*, size_t cachedDepth, size_t scopeDepth, JSScope*, const Identifier&, GetOrPut, ResolveType, InitializationMode);
+    static ResolveOp abstractResolve(JSGlobalObject*, size_t scopeDepth, JSScope*, const Identifier&, GetOrPut, ResolveType, InitializationMode);
 
     static bool hasConstantScope(ResolveType);
     static JSScope* constantScopeForCodeBlock(ResolveType, CodeBlock*);

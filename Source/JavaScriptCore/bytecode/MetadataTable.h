@@ -135,6 +135,8 @@ public:
         return !unlinkedMetadataPtr;
     }
 
+    void clear(UnlinkedMetadataTable::CacheMap&);
+
 private:
     MetadataTable(UnlinkedMetadataTable&);
 

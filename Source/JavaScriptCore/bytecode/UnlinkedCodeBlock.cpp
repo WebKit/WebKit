@@ -345,4 +345,11 @@ void UnlinkedCodeBlock::allocateSharedProfiles(unsigned numBinaryArithProfiles, 
     m_unaryArithProfiles = FixedVector<UnaryArithProfile>(numUnaryArithProfiles);
 }
 
+RefPtr<MetadataTable> UnlinkedCodeBlock::metadataLink()
+{
+    if (!m_cachedIDs)
+        return m_metadata->link();
+    return m_metadata->link(*m_cachedIDs);
+}
+
 } // namespace JSC

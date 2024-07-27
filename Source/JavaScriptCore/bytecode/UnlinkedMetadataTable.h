@@ -67,6 +67,9 @@ class UnlinkedMetadataTable : public ThreadSafeRefCounted<UnlinkedMetadataTable>
 public:
     static constexpr unsigned s_maxMetadataAlignment = 8;
 
+    typedef HashSet<unsigned, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> MetadataIDs;
+    typedef HashMap<unsigned, MetadataIDs, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> CacheMap;
+
     struct LinkingData {
         Ref<UnlinkedMetadataTable> unlinkedMetadata;
         std::atomic<unsigned> refCount;
@@ -81,7 +84,9 @@ public:
 
     void finalize();
 
+    RefPtr<MetadataTable> link(CacheMap&);
     RefPtr<MetadataTable> link();
+    MetadataTable* asMetadataTable();
 
     static Ref<UnlinkedMetadataTable> create()
     {
@@ -120,10 +125,12 @@ private:
 
     size_t sizeInBytesForGC(MetadataTable&);
 
+    ALWAYS_INLINE unsigned valueProfileSize() const { return m_numValueProfiles * sizeof(ValueProfile); }
+
     unsigned totalSize() const
     {
         ASSERT(m_isFinalized);
-        unsigned valueProfileSize = m_numValueProfiles * sizeof(ValueProfile);
+        unsigned valueProfileSize = this->valueProfileSize();
         if (m_is32Bit)
             return valueProfileSize + offsetTable32()[s_offsetTableEntries - 1];
         return valueProfileSize + offsetTable16()[s_offsetTableEntries - 1];
@@ -149,18 +156,18 @@ private:
     // Then, s_offset16TableSize and s_offset16TableSize + s_offset32TableSize offer the same alignment characteristics for subsequent Metadata.
     static constexpr unsigned s_offset32TableSize = roundUpToMultipleOf<s_maxMetadataAlignment>(s_offsetTableEntries * sizeof(Offset32));
 
-    void* buffer() const { return m_rawBuffer + m_numValueProfiles * sizeof(ValueProfile) + sizeof(LinkingData); }
+    void* buffer() const { return m_rawBuffer + valueProfileSize() + sizeof(LinkingData); }
     Offset32* preprocessBuffer() const { return bitwise_cast<Offset32*>(m_rawBuffer); }
 
     Offset16* offsetTable16() const
     {
         ASSERT(!m_is32Bit);
-        return bitwise_cast<Offset16*>(m_rawBuffer + m_numValueProfiles * sizeof(ValueProfile) + sizeof(LinkingData));
+        return bitwise_cast<Offset16*>(m_rawBuffer + valueProfileSize() + sizeof(LinkingData));
     }
     Offset32* offsetTable32() const
     {
         ASSERT(m_is32Bit);
-        return bitwise_cast<Offset32*>(m_rawBuffer + m_numValueProfiles * sizeof(ValueProfile) + sizeof(LinkingData) + s_offset16TableSize);
+        return bitwise_cast<Offset32*>(m_rawBuffer + valueProfileSize() + sizeof(LinkingData) + s_offset16TableSize);
     }
 
     bool m_hasMetadata : 1;

@@ -499,6 +499,19 @@ private:
     FixedVector<BinaryArithProfile> m_binaryArithProfiles;
     FixedVector<UnaryArithProfile> m_unaryArithProfiles;
 
+public:
+    template<typename Bytecode>
+    void cache(const Bytecode& bytecode)
+    {
+        ASSERT(bytecode.opcodeID == op_resolve_scope || bytecode.opcodeID == op_get_from_scope);
+
+        if (!m_cachedIDs)
+            m_cachedIDs = makeUnique<UnlinkedMetadataTable::CacheMap>();
+        m_cachedIDs->add(bytecode.opcodeID, UnlinkedMetadataTable::MetadataIDs()).iterator->value.add(bytecode.m_metadataID);
+    }
+    RefPtr<MetadataTable> metadataLink();
+    std::unique_ptr<UnlinkedMetadataTable::CacheMap> m_cachedIDs;
+
 #if ASSERT_ENABLED
     Lock m_cachedIdentifierUidsLock;
     HashSet<UniquedStringImpl*> m_cachedIdentifierUids;
