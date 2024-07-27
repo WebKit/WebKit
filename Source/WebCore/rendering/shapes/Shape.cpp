@@ -30,7 +30,7 @@
 #include "config.h"
 #include "Shape.h"
 
-#include "BasicShapeFunctions.h"
+#include "BasicShapeConversion.h"
 #include "BasicShapes.h"
 #include "BoxShape.h"
 #include "GraphicsContext.h"

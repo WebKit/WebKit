@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "BasicShapeFunctions.h"
+#include "BasicShapeConversion.h"
 
 #include "BasicShapes.h"
 #include "CSSBasicShapes.h"
@@ -303,8 +303,10 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         rect->setBottomLeftRadius(convertToLengthSize(conversionData, rectValue->protectedBottomLeftRadius().get()));
         return rect;
     }
+
     if (auto* pathValue = dynamicDowncast<CSSPathValue>(value))
         return basicShapePathForValue(*pathValue, zoom);
+
     RELEASE_ASSERT_NOT_REACHED();
 }
 
@@ -324,4 +326,4 @@ float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate& center, fl
     return boxDimension - offset;
 }
 
-}
+} // namespace WebCore

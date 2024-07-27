@@ -28,7 +28,7 @@
 #pragma once
 
 #include "AnchorPositionEvaluator.h"
-#include "BasicShapeFunctions.h"
+#include "BasicShapeConversion.h"
 #include "CSSBasicShapes.h"
 #include "CSSCalcValue.h"
 #include "CSSContentDistributionValue.h"
