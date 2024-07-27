@@ -212,8 +212,9 @@ public:
     virtual void zoomIn() = 0;
     virtual void zoomOut() = 0;
     void save(CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)>&&);
-    void openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)>&&);
 #endif
+
+    void openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)>&&);
 
     void notifyCursorChanged(WebCore::PlatformCursorType);
 
