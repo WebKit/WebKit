@@ -71,10 +71,6 @@ public:
     void ref() const;
     void deref() const;
 
-    // For CheckedPtr / CheckedRef use.
-    void incrementPtrCount() const;
-    void decrementPtrCount() const;
-
     Element* focusedElementInScope();
     Element* pointerLockElement() const;
 

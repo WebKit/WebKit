@@ -426,9 +426,6 @@ public:
     using EventTarget::WeakValueType;
     using EventTarget::WeakPtrImplType;
 
-    using ContainerNode::incrementPtrCount;
-    using ContainerNode::decrementPtrCount;
-
     inline static Ref<Document> create(const Settings&, const URL&);
     static Ref<Document> createNonRenderedPlaceholder(LocalFrame&, const URL&);
     static Ref<Document> create(Document&);
