@@ -2949,6 +2949,10 @@ static inline bool isAssistableElement(Element& element)
         if (inputElement->isColorControl())
             return true;
 #endif
+#if ENABLE(INPUT_TYPE_WEEK_PICKER)
+        if (inputElement->isWeekField())
+            return true;
+#endif
         return inputElement->isTextField() || inputElement->isDateField() || inputElement->isDateTimeLocalField() || inputElement->isMonthField() || inputElement->isTimeField();
     }
     if (is<HTMLIFrameElement>(element))

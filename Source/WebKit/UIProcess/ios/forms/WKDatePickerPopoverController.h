@@ -38,6 +38,9 @@
 
 @interface WKDatePickerPopoverController : UIViewController
 - (instancetype)initWithDatePicker:(UIDatePicker *)datePicker delegate:(id<WKDatePickerPopoverControllerDelegate>)delegate;
+#if HAVE(UI_CALENDAR_SELECTION_WEEK_OF_YEAR)
+- (instancetype)initWithCalendarView:(UICalendarView *)calendarView selectionWeekOfYear:(UICalendarSelectionWeekOfYear *)weekSelection delegate:(id<WKDatePickerPopoverControllerDelegate>)delegate;
+#endif
 - (void)presentInView:(UIView *)view sourceRect:(CGRect)rect completion:(void(^)())completion;
 - (void)dismissDatePicker;
 - (void)assertAccessoryViewCanBeHitTestedForTesting;

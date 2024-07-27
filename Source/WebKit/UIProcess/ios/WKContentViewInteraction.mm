@@ -2657,6 +2657,9 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
     case WebKit::InputType::Month:
     case WebKit::InputType::DateTimeLocal:
     case WebKit::InputType::Time:
+#if ENABLE(INPUT_TYPE_WEEK_PICKER)
+    case WebKit::InputType::Week:
+#endif
         return NO;
     case WebKit::InputType::Select: {
         if (self._shouldUseContextMenusForFormControls)
@@ -3886,6 +3889,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     case WebKit::InputType::DateTimeLocal:
     case WebKit::InputType::Month:
     case WebKit::InputType::Time:
+#if ENABLE(INPUT_TYPE_WEEK_PICKER)
+    case WebKit::InputType::Week:
+#endif
         return NO;
     case WebKit::InputType::Select: {
         if (self._shouldUseContextMenusForFormControls)
@@ -3902,7 +3908,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     case WebKit::InputType::NumberPad:
     case WebKit::InputType::ContentEditable:
     case WebKit::InputType::TextArea:
+#if !ENABLE(INPUT_TYPE_WEEK_PICKER)
     case WebKit::InputType::Week:
+#endif
         return PAL::currentUserInterfaceIdiomIsSmallScreen();
     }
 }
@@ -7775,6 +7783,9 @@ static bool mayContainSelectableText(WebKit::InputType type)
     case WebKit::InputType::Month:
     case WebKit::InputType::Select:
     case WebKit::InputType::Time:
+#if ENABLE(INPUT_TYPE_WEEK_PICKER)
+    case WebKit::InputType::Week:
+#endif
         return false;
     // The following types look and behave like a text field.
     case WebKit::InputType::ContentEditable:
@@ -7787,7 +7798,9 @@ static bool mayContainSelectableText(WebKit::InputType type)
     case WebKit::InputType::Text:
     case WebKit::InputType::TextArea:
     case WebKit::InputType::URL:
+#if !ENABLE(INPUT_TYPE_WEEK_PICKER)
     case WebKit::InputType::Week:
+#endif
         return true;
     }
 }
@@ -7827,6 +7840,9 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     case WebKit::InputType::DateTimeLocal:
     case WebKit::InputType::Month:
     case WebKit::InputType::Time:
+#if ENABLE(INPUT_TYPE_WEEK_PICKER)
+    case WebKit::InputType::Week:
+#endif
         return adoptNS([[WKDateTimeInputControl alloc] initWithView:view]);
     default:
         return nil;
@@ -10943,6 +10959,9 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
         case WebKit::InputType::Month:
         case WebKit::InputType::DateTimeLocal:
         case WebKit::InputType::Time:
+#if ENABLE(INPUT_TYPE_WEEK_PICKER)
+        case WebKit::InputType::Week:
+#endif
             return UIColor.clearColor;
         default:
             return nil;

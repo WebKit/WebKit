@@ -29,6 +29,7 @@
 #import "DateComponents.h"
 #import "FontCascade.h"
 #import <CoreFoundation/CFNotificationCenter.h>
+#import <WebCore/LocalizedStrings.h>
 #import <math.h>
 #import <wtf/Assertions.h>
 #import <wtf/NeverDestroyed.h>
@@ -97,33 +98,35 @@ RetainPtr<NSDateFormatter> LocalizedDateCache::createFormatterForType(DateCompon
     auto dateFormatter = adoptNS([[NSDateFormatter alloc] init]);
     NSLocale *currentLocale = [NSLocale currentLocale];
     [dateFormatter setLocale:currentLocale];
+    [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
 
     switch (type) {
     case DateComponentsType::Invalid:
         ASSERT_NOT_REACHED();
         break;
     case DateComponentsType::Date:
-        [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
         [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
         [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
         break;
     case DateComponentsType::DateTimeLocal:
-        [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
         [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
         [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
         break;
     case DateComponentsType::Month:
-        [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
         [dateFormatter setDateFormat:[NSDateFormatter dateFormatFromTemplate:@"MMMMyyyy" options:0 locale:currentLocale]];
         break;
     case DateComponentsType::Time:
-        [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
         [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
         [dateFormatter setDateStyle:NSDateFormatterNoStyle];
         break;
     case DateComponentsType::Week:
+#if HAVE(UI_CALENDAR_SELECTION_WEEK_OF_YEAR)
+        [dateFormatter setDateFormat:[NSString stringWithFormat:@"'%@' w',' yyyy", (NSString *)inputWeekLabel()]];
+#else
         ASSERT_NOT_REACHED();
+#endif
         break;
+
     }
 
     return dateFormatter;
@@ -158,7 +161,11 @@ float LocalizedDateCache::calculateMaximumWidth(DateComponentsType type, const M
     NSUInteger totalMonthsToTest = 1;
     if (type == DateComponentsType::Date
         || type == DateComponentsType::DateTimeLocal
-        || type == DateComponentsType::Month)
+        || type == DateComponentsType::Month
+#if ENABLE(INPUT_TYPE_WEEK_PICKER)
+        || type == DateComponentsType::Week
+#endif
+        )
         totalMonthsToTest = numberOfGregorianMonths;
     for (NSUInteger i = 0; i < totalMonthsToTest; ++i) {
         [components setMonth:(i + 1)];

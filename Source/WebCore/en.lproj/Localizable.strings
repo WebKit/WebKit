@@ -1702,6 +1702,9 @@
 /* Unwanted software warning title */
 "Website With Harmful Software Warning" = "Website With Harmful Software Warning";
 
+/* Week label for week of year input type */
+"Week" = "Week";
+
 /* Year label in date picker */
 "YEAR (Date picker for extra zoom mode)" = "YEAR";
 
