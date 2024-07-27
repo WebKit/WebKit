@@ -3992,8 +3992,6 @@ webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-deco
 webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-vertical-001.html [ ImageOnlyFailure ]
 webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-vertical-002.html [ ImageOnlyFailure ]
 webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-percent-001.html [ ImageOnlyFailure ]
-webkit.org/b/203529 imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-vertical-ja.html [ ImageOnlyFailure ]
-webkit.org/b/203529 imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-vertical.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-propagation-display-contents.html [ ImageOnlyFailure ]
 webkit.org/b/230083 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-skip-ink-001.html [ ImageOnlyFailure ]
 webkit.org/b/230083 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-skip-ink-004.html [ ImageOnlyFailure ]

@@ -328,7 +328,7 @@ float overlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineBo
             return style.typographicMode() == TypographicMode::Vertical || style.blockFlowDirection() == BlockFlowDirection::RightToLeft;
         return false;
     };
-    return overBecomesUnder() ? inlineBoxContentBoxHeight(inlineBox) : 0.f;
+    return overBecomesUnder() ? inlineBoxContentBoxHeight(inlineBox) + defaultGap(style) : (0.f - defaultGap(style));
 }
 
 }
