@@ -318,21 +318,14 @@ float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineB
 
 float overlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineBox, const RenderStyle& style)
 {
-    if (!style.textDecorationsInEffect().contains(TextDecorationLine::Underline))
-        return { };
-
     if (style.typographicMode() == TypographicMode::Horizontal || style.textOrientation() == TextOrientation::Sideways)
         return { };
 
     auto underlinePosition = style.textUnderlinePosition();
     auto overBecomesUnder = [&] {
-        auto typographicMode = style.typographicMode();
         // If 'right' causes the underline to be drawn on the "over" side of the text, then an overline also switches sides and is drawn on the "under" side.
         if (underlinePosition.contains(TextUnderlinePosition::Right))
-            return typographicMode == TypographicMode::Vertical || style.blockFlowDirection() == BlockFlowDirection::RightToLeft;
-        // If 'left' causes the underline to be drawn on the "over" side of the text, then an overline also switches sides and is drawn on the "under" side.
-        if (underlinePosition.contains(TextUnderlinePosition::Left))
-            return typographicMode == TypographicMode::Horizontal && style.blockFlowDirection() == BlockFlowDirection::LeftToRight;
+            return style.typographicMode() == TypographicMode::Vertical || style.blockFlowDirection() == BlockFlowDirection::RightToLeft;
         return false;
     };
     return overBecomesUnder() ? inlineBoxContentBoxHeight(inlineBox) : 0.f;
