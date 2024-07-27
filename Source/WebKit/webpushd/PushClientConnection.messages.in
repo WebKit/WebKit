@@ -42,6 +42,7 @@ messages -> WebPushD::PushClientConnection NotUsingIPCConnection {
     ShowNotification(struct WebCore::NotificationData notificationData, RefPtr<WebCore::NotificationResources> notificationResources) -> ()
     GetNotifications(URL registrationURL, String tag) -> (Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData> result)
     EnableMockUserNotificationCenterForTesting() -> ()
+    CancelNotification(WTF::UUID notificationID)
 }
 
 #endif // ENABLE(WEB_PUSH_NOTIFICATIONS)

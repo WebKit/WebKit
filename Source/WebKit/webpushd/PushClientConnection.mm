@@ -271,6 +271,13 @@ void PushClientConnection::getNotifications(const URL& registrationURL, const St
 #endif
 }
 
+void PushClientConnection::cancelNotification(const WTF::UUID& notificationID)
+{
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+    WebPushDaemon::singleton().cancelNotification(*this, notificationID);
+#endif
+}
+
 #if PLATFORM(IOS)
 String PushClientConnection::associatedWebClipTitle() const
 {

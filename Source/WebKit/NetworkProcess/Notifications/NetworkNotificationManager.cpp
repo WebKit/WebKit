@@ -101,10 +101,12 @@ void NetworkNotificationManager::getNotifications(const URL& registrationURL, co
     m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetNotifications { registrationURL, tag }, WTFMove(completionHandler));
 }
 
-void NetworkNotificationManager::cancelNotification(const WTF::UUID&)
+void NetworkNotificationManager::cancelNotification(const WTF::UUID& notificationID)
 {
     if (!m_connection)
         return;
+
+    m_connection->sendWithoutUsingIPCConnection(Messages::PushClientConnection::CancelNotification { notificationID });
 }
 
 void NetworkNotificationManager::clearNotifications(const Vector<WTF::UUID>&)

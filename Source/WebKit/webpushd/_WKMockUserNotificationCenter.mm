@@ -74,6 +74,23 @@ static NSMutableArray *notificationsByBundleIdentifier(NSString *bundleIdentifie
     });
 }
 
+- (void)removePendingNotificationRequestsWithIdentifiers:(NSArray<NSString *> *) identifiers
+{
+    RetainPtr toRemove = adoptNS([NSMutableArray new]);
+    for (UNNotification *notification in notifications.get()) {
+        if ([identifiers containsObject:notification.request.identifier])
+            [toRemove addObject:notification];
+    }
+
+    [notifications removeObjectsInArray:toRemove.get()];
+}
+
+- (void)removeDeliveredNotificationsWithIdentifiers:(NSArray<NSString *> *) identifiers
+{
+    // For now, the mock UNUserNotificationCenter doesn't distinguish between pending and delivered notifications.
+    [self removePendingNotificationRequestsWithIdentifiers:identifiers];
+}
+
 @end
 
 #endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)

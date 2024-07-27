@@ -495,6 +495,17 @@ async function getNotifications()
     globalRegistration.active.postMessage({ message: "getNotifications", port: channel.port2 }, [channel.port2]);
     return await promise;
 }
+
+async function closeAllNotifications()
+{
+    const channel = new MessageChannel();
+    const promise = new Promise((resolve) => {
+        channel.port1.onmessage = (event) => resolve(event.data);
+    });
+    globalRegistration.active.postMessage({ message: "closeAllNotifications", port: channel.port2 }, [channel.port2]);
+    return await promise;
+}
+
 </script>
 )SRC"_s;
 
@@ -509,17 +520,21 @@ function notificationToString(n)
 
 self.addEventListener("message", (event) => {
     let { message, port } = event.data;
+    var closeAllNotifications = message === "closeAllNotifications";
     if (message === "setup") {
         globalPort = port;
         port.postMessage("Ready");
     } else if (message === "disableShowNotifications") {
         showNotifications = false;
         port.postMessage(true);
-    } else if (message === "getNotifications") {
+    } else if (message === "getNotifications" || closeAllNotifications) {
         registration.getNotifications().then((notifications) => {
             var result = "";
-            for (n = 0; n < notifications.length; ++n)
+            for (n = 0; n < notifications.length; ++n) {
                 result += n + " - " + notificationToString(notifications[n]) + " ";
+                if (closeAllNotifications)
+                    notifications[n].close();
+            }
             port.postMessage(result);
         }, (exception) => {
             port.postMessage("getNotifications failed: " + exception);
@@ -770,6 +785,13 @@ public:
         NSError *error = nil;
         id obj = [m_webView objectByCallingAsyncFunction:@"return await getNotifications()" withArguments:@{ } error:&error];
         return error ?: obj;
+    }
+
+    void closeAllNotifications()
+    {
+        NSError *error = nil;
+        [m_webView objectByCallingAsyncFunction:@"return await closeAllNotifications()" withArguments:@{ } error:&error];
+        EXPECT_NULL(error);
     }
 
     void resetPermission()
@@ -1598,6 +1620,11 @@ TEST_F(WebPushDBuiltInTest, ShowAndGetNotifications)
 
     id result = view->getNotifications();
     EXPECT_TRUE([result isEqualToString:@"0 - title: notification body:  tag:  dir: auto silent: null data: null "]);
+
+    view->closeAllNotifications();
+
+    result = view->getNotifications();
+    EXPECT_TRUE([result isEqualToString:@""]);
 }
 #endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
 

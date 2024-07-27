@@ -612,7 +612,7 @@ static NSString *platformDefaultActionBundleIdentifier()
 #endif
 }
 
-static NSString *platformNotificationCenterBundleIdentifier(PushClientConnection& connection)
+static RetainPtr<NSString> platformNotificationCenterBundleIdentifier(PushClientConnection& connection)
 {
 #if PLATFORM(IOS)
     return [NSString stringWithFormat:@"com.apple.WebKit.PushBundle.%@", (NSString *)connection.pushPartitionString()];
@@ -652,10 +652,10 @@ void WebPushDaemon::showNotification(PushClientConnection& connection, const Web
     if (platformShouldPlaySound(notificationData))
         content.get().sound = [UNNotificationSound defaultSound];
 
-    NSString *notificationCenterBundleIdentifier = platformNotificationCenterBundleIdentifier(connection);
+    auto notificationCenterBundleIdentifier = platformNotificationCenterBundleIdentifier(connection);
 
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
-    content.get().icon = [UNNotificationIcon iconForApplicationIdentifier:notificationCenterBundleIdentifier];
+    content.get().icon = [UNNotificationIcon iconForApplicationIdentifier:notificationCenterBundleIdentifier.get()];
 #endif
 
     NSString *notificationSourceForDisplay = platformNotificationSourceForDisplay(connection);
@@ -669,7 +669,7 @@ ALLOW_NONLITERAL_FORMAT_END
     content.get().userInfo = notificationData.dictionaryRepresentation();
 
     UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:(NSString *)notificationData.notificationID.toString() content:content.get() trigger:nil];
-    RetainPtr center = adoptNS([[m_userNotificationCenterClass alloc] initWithBundleIdentifier:notificationCenterBundleIdentifier]);
+    RetainPtr center = adoptNS([[m_userNotificationCenterClass alloc] initWithBundleIdentifier:notificationCenterBundleIdentifier.get()]);
     if (!center)
         RELEASE_LOG_ERROR(Push, "Failed to instantiate UNUserNotificationCenter center");
 
@@ -684,8 +684,8 @@ ALLOW_NONLITERAL_FORMAT_END
 
 void WebPushDaemon::getNotifications(PushClientConnection& connection, const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
 {
-    NSString *placeholderBundleIdentifier = platformNotificationCenterBundleIdentifier(connection);
-    RetainPtr center = adoptNS([[m_userNotificationCenterClass alloc] initWithBundleIdentifier:placeholderBundleIdentifier]);
+    auto placeholderBundleIdentifier = platformNotificationCenterBundleIdentifier(connection);
+    RetainPtr center = adoptNS([[m_userNotificationCenterClass alloc] initWithBundleIdentifier:placeholderBundleIdentifier.get()]);
 
     auto blockPtr = makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSArray<UNNotification *> *notifications) mutable {
         Vector<WebCore::NotificationData> notificationDatas;
@@ -703,6 +703,16 @@ void WebPushDaemon::getNotifications(PushClientConnection& connection, const URL
 
 
     [center getDeliveredNotificationsWithCompletionHandler:blockPtr.get()];
+}
+
+void WebPushDaemon::cancelNotification(PushClientConnection& connection, const WTF::UUID& notificationID)
+{
+    auto placeholderBundleIdentifier = platformNotificationCenterBundleIdentifier(connection);
+    RetainPtr center = adoptNS([[m_userNotificationCenterClass alloc] initWithBundleIdentifier:placeholderBundleIdentifier.get()]);
+
+    auto identifiers = @[ (NSString *)notificationID.toString() ];
+    [center removePendingNotificationRequestsWithIdentifiers:identifiers];
+    [center removeDeliveredNotificationsWithIdentifiers:identifiers];
 }
 
 void WebPushDaemon::getPushPermissionState(PushClientConnection& connection, const URL& scopeURL, CompletionHandler<void(WebCore::PushPermissionState)>&& replySender)
@@ -724,8 +734,8 @@ void WebPushDaemon::getPushPermissionState(PushClientConnection& connection, con
     }
 #endif
 
-    NSString *notificationCenterBundleIdentifier = platformNotificationCenterBundleIdentifier(connection);
-    RetainPtr center = adoptNS([[UNUserNotificationCenter alloc] initWithBundleIdentifier:notificationCenterBundleIdentifier]);
+    auto notificationCenterBundleIdentifier = platformNotificationCenterBundleIdentifier(connection);
+    RetainPtr center = adoptNS([[UNUserNotificationCenter alloc] initWithBundleIdentifier:notificationCenterBundleIdentifier.get()]);
 
     auto blockPtr = makeBlockPtr([replySender = WTFMove(replySender)](UNNotificationSettings *settings) mutable {
         auto permissionState = [](UNAuthorizationStatus status) {

@@ -31,6 +31,8 @@
 - (instancetype)initWithBundleIdentifier:(NSString *)bundleIdentifier;
 - (void)addNotificationRequest:(UNNotificationRequest *)request withCompletionHandler:(void(^)(NSError *error))completionHandler;
 - (void)getDeliveredNotificationsWithCompletionHandler:(void(^)(NSArray<UNNotification *> *notifications))completionHandler;
+- (void)removePendingNotificationRequestsWithIdentifiers:(NSArray<NSString *> *) identifiers;
+- (void)removeDeliveredNotificationsWithIdentifiers:(NSArray<NSString *> *) identifiers;
 @end
 
 #endif

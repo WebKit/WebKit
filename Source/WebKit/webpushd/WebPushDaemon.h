@@ -95,6 +95,7 @@ public:
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
     void showNotification(PushClientConnection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>, CompletionHandler<void()>&&);
     void getNotifications(PushClientConnection&, const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
+    void cancelNotification(PushClientConnection&, const WTF::UUID& notificationID);
 
     void getPushPermissionState(PushClientConnection&, const URL& scopeURL, CompletionHandler<void(WebCore::PushPermissionState)>&&);
     void enableMockUserNotificationCenterForTesting(PushClientConnection&);
