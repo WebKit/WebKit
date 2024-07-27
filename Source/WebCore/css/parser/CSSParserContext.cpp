@@ -55,6 +55,7 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
 {
     // FIXME: We should turn all of the features on from their WebCore Settings defaults.
     if (isUASheetBehavior(mode)) {
+        cssTextUnderlinePositionLeftRightEnabled = true;
         lightDarkEnabled = true;
         popoverAttributeEnabled = true;
         propertySettings.cssInputSecurityEnabled = true;
