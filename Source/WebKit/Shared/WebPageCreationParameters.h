@@ -80,6 +80,10 @@
 #include "HardwareKeyboardState.h"
 #endif
 
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+#include <WebCore/ShouldRequireExplicitConsentForGamepadAccess.h>
+#endif
+
 namespace IPC {
 class Decoder;
 class Encoder;
@@ -330,6 +334,10 @@ struct WebPageCreationParameters {
 
 #if (PLATFORM(GTK) || PLATFORM(WPE)) && USE(GBM)
     Vector<DMABufRendererBufferFormat> preferredBufferFormats;
+#endif
+
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+    WebCore::ShouldRequireExplicitConsentForGamepadAccess gamepadAccessRequiresExplicitConsent { WebCore::ShouldRequireExplicitConsentForGamepadAccess::No };
 #endif
 };
 

@@ -787,7 +787,11 @@ public:
         Yes
     };
     virtual void setGamepadsRecentlyAccessed(GamepadsRecentlyAccessed) { }
+
+#if PLATFORM(VISION)
+    virtual void gamepadsConnectedStateChanged() { }
 #endif
+#endif // ENABLE(GAMEPAD)
 
     virtual void hasActiveNowPlayingSessionChanged(bool) { }
 

@@ -47,6 +47,10 @@ OBJC_PROTOCOL(_UIClickInteractionDriving);
 #include <WebCore/UserInterfaceDirectionPolicy.h>
 #endif
 
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+#include <WebCore/ShouldRequireExplicitConsentForGamepadAccess.h>
+#endif
+
 namespace WebKit {
 class BrowsingContextGroup;
 class VisitedLinkStore;
@@ -416,6 +420,11 @@ public:
     void setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension mode) { m_data.contentSecurityPolicyModeForExtension = mode; }
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_data.contentSecurityPolicyModeForExtension; }
 
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+    WebCore::ShouldRequireExplicitConsentForGamepadAccess gamepadAccessRequiresExplicitConsent() const { return m_data.gamepadAccessRequiresExplicitConsent; }
+    void setGamepadAccessRequiresExplicitConsent(WebCore::ShouldRequireExplicitConsentForGamepadAccess value) { m_data.gamepadAccessRequiresExplicitConsent = value; }
+#endif
+
 private:
     struct Data {
         template<typename T, Ref<T>(*initializer)()> class LazyInitializedRef {
@@ -577,6 +586,9 @@ private:
         bool allowsInlinePredictions { false };
         bool scrollToTextFragmentIndicatorEnabled { true };
         bool scrollToTextFragmentMarkingEnabled { true };
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+        WebCore::ShouldRequireExplicitConsentForGamepadAccess gamepadAccessRequiresExplicitConsent { WebCore::ShouldRequireExplicitConsentForGamepadAccess::No };
+#endif
 
 #if ENABLE(WRITING_TOOLS)
         WebCore::WritingTools::Behavior writingToolsBehavior { WebCore::WritingTools::Behavior::Default };

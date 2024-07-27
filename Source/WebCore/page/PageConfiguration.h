@@ -47,6 +47,10 @@
 #include "DeviceOrientationUpdateProvider.h"
 #endif
 
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+#include "ShouldRequireExplicitConsentForGamepadAccess.h"
+#endif
+
 namespace WebCore {
 
 class AlternativeTextClient;
@@ -210,6 +214,10 @@ public:
 
     ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
     UniqueRef<CryptoClient> cryptoClient;
+
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+    ShouldRequireExplicitConsentForGamepadAccess gamepadAccessRequiresExplicitConsent { ShouldRequireExplicitConsentForGamepadAccess::No };
+#endif
 };
 
 }

@@ -67,8 +67,27 @@ void UIGamepadProvider::gamepadSyncTimerFired()
         return;
 
     webPageProxy->gamepadActivity(snapshotGamepads(), m_shouldMakeGamepadsVisibleOnSync ? EventMakesGamepadsVisible::Yes : EventMakesGamepadsVisible::No);
+
+#if PLATFORM(VISION)
+    webPageProxy->setGamepadsConnected(isAnyGamepadConnected());
+#endif
+
     m_shouldMakeGamepadsVisibleOnSync = false;
 }
+
+#if PLATFORM(VISION)
+bool UIGamepadProvider::isAnyGamepadConnected() const
+{
+    bool anyGamepadConnected = false;
+    for (auto it = m_gamepads.begin(); it != m_gamepads.end(); ++it) {
+        if (*it) {
+            anyGamepadConnected = true;
+            break;
+        }
+    }
+    return anyGamepadConnected;
+}
+#endif
 
 void UIGamepadProvider::scheduleGamepadStateSync()
 {
@@ -156,12 +175,20 @@ void UIGamepadProvider::viewBecameActive(WebPageProxy& page)
     if (!m_isMonitoringGamepads)
         startMonitoringGamepads();
 
+#if PLATFORM(VISION)
+    page.setGamepadsConnected(isAnyGamepadConnected());
+#endif
+
     if (platformWebPageProxyForGamepadInput())
         platformStartMonitoringInput();
 }
 
 void UIGamepadProvider::viewBecameInactive(WebPageProxy& page)
 {
+#if PLATFORM(VISION)
+    page.setGamepadsConnected(false);
+#endif
+
     RefPtr pageForGamepadInput = platformWebPageProxyForGamepadInput();
     if (pageForGamepadInput == &page)
         platformStopMonitoringInput();

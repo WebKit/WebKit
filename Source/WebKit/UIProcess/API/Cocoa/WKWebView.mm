@@ -2298,11 +2298,38 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 #import <WebKitAdditions/WKWebViewAdditionsAfter.mm>
 #endif
 
-#if ENABLE(GAMEPAD) && !__has_include(<WebKitAdditions/WKWebViewAdditionsAfter+Gamepad.mm>)
+#if ENABLE(GAMEPAD)
+#if !__has_include(<WebKitAdditions/WKWebViewAdditionsAfter+Gamepad.mm>)
 - (void)_setGamepadsRecentlyAccessed:(BOOL)gamepadsRecentlyAccessed
 {
 }
 #endif
+
+#if PLATFORM(VISION)
+- (BOOL)_gamepadsConnected
+{
+    return _page->gamepadsConnected();
+}
+
+- (void)_gamepadsConnectedStateChanged
+{
+    id<WKUIDelegatePrivate> uiDelegate = (id<WKUIDelegatePrivate>)self.UIDelegate;
+    if ([uiDelegate respondsToSelector:@selector(_webView:gamepadsConnectedStateDidChange:)])
+        [uiDelegate _webView:self gamepadsConnectedStateDidChange:_page->gamepadsConnected()];
+}
+
+- (void)_setAllowGamepadsAccess
+{
+    _page->allowGamepadAccess();
+}
+
+#if !__has_include(<WebKitAdditions/WKWebViewAdditionsAfter+Gamepad.mm>)
+- (void)_setAllowGamepadsInput:(BOOL)allowGamepadsInput
+{
+}
+#endif
+#endif // PLATFORM(VISION)
+#endif // ENABLE(GAMEPAD)
 
 @end
 

@@ -226,6 +226,10 @@
 #include "WebXRSystem.h"
 #endif
 
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+#include "GamepadManager.h"
+#endif
+
 namespace WebCore {
 
 static HashSet<SingleThreadWeakRef<Page>>& allPages()
@@ -417,6 +421,9 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_contentSecurityPolicyModeForExtension(WTFMove(pageConfiguration.contentSecurityPolicyModeForExtension))
     , m_badgeClient(WTFMove(pageConfiguration.badgeClient))
     , m_historyItemClient(WTFMove(pageConfiguration.historyItemClient))
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+    , m_gamepadAccessRequiresExplicitConsent(pageConfiguration.gamepadAccessRequiresExplicitConsent)
+#endif
 #if ENABLE(WRITING_TOOLS)
     , m_writingToolsController(makeUniqueRef<WritingToolsController>(*this))
 #endif
@@ -455,6 +462,10 @@ Page::Page(PageConfiguration&& pageConfiguration)
 
 #if PLATFORM(COCOA)
     platformInitialize();
+#endif
+
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+    initializeGamepadAccessForPageLoad();
 #endif
 
     settingsDidChange();
@@ -1586,6 +1597,10 @@ void Page::didCommitLoad()
     m_hasEverSetVisibilityAdjustment = false;
 
     m_mainFrameURLFragment = { };
+
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+    initializeGamepadAccessForPageLoad();
+#endif
 
     resetSeenPlugins();
     resetSeenMediaEngines();
@@ -4856,7 +4871,24 @@ void Page::gamepadsRecentlyAccessed()
     chrome().client().gamepadsRecentlyAccessed();
     m_lastAccessNotificationTime = MonotonicTime::now();
 }
-#endif
+
+#if PLATFORM(VISION)
+void Page::allowGamepadAccess()
+{
+    if (m_gamepadAccessGranted)
+        return;
+
+    m_gamepadAccessGranted = true;
+    GamepadManager::singleton().updateQuarantineStatus();
+}
+
+void Page::initializeGamepadAccessForPageLoad()
+{
+    m_gamepadAccessGranted = m_gamepadAccessRequiresExplicitConsent == ShouldRequireExplicitConsentForGamepadAccess::No;
+}
+#endif // PLATFORM(VISION)
+
+#endif // ENABLE(GAMEPAD)
 
 #if ENABLE(WRITING_TOOLS)
 void Page::willBeginWritingToolsSession(const std::optional<WritingTools::Session>& session, CompletionHandler<void(const Vector<WritingTools::Context>&)>&& completionHandler)

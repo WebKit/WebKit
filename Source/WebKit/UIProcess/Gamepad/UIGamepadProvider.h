@@ -80,6 +80,10 @@ private:
     void scheduleGamepadStateSync();
     void gamepadSyncTimerFired();
 
+#if PLATFORM(VISION)
+    bool isAnyGamepadConnected() const;
+#endif
+
     WeakHashSet<WebProcessPool> m_processPoolsUsingGamepads;
 
     Vector<std::unique_ptr<UIGamepad>> m_gamepads;
