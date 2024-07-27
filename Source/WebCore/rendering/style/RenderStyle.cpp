@@ -2169,12 +2169,12 @@ void RenderStyle::setCursorList(RefPtr<CursorList>&& list)
     m_rareInheritedData.access().cursorData = WTFMove(list);
 }
 
-void RenderStyle::setQuotes(RefPtr<QuotesData>&& q)
+void RenderStyle::setQuotes(RefPtr<QuotesData>&& quotes)
 {
-    if (m_rareInheritedData->quotes == q || (m_rareInheritedData->quotes && q && *m_rareInheritedData->quotes == *q))
+    if (arePointingToEqualData(m_rareInheritedData->quotes.get(), quotes.get()))
         return;
 
-    m_rareInheritedData.access().quotes = WTFMove(q);
+    m_rareInheritedData.access().quotes = WTFMove(quotes);
 }
 
 void RenderStyle::setWillChange(RefPtr<WillChangeData>&& willChangeData)

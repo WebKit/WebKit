@@ -145,6 +145,7 @@ StyleRareInheritedData::StyleRareInheritedData()
 #if ENABLE(DARK_MODE_CSS)
     , colorScheme(RenderStyle::initialColorScheme())
 #endif
+    , quotes(RenderStyle::initialQuotes())
     , appleColorFilter(StyleFilterData::create())
     , lineGrid(RenderStyle::initialLineGrid())
     , tabSize(RenderStyle::initialTabSize())
@@ -244,6 +245,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , colorScheme(o.colorScheme)
 #endif
     , textEmphasisCustomMark(o.textEmphasisCustomMark)
+    , quotes(o.quotes)
     , appleColorFilter(o.appleColorFilter)
     , lineGrid(o.lineGrid)
     , tabSize(o.tabSize)
@@ -256,6 +258,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , listStyleType(o.listStyleType)
     , scrollbarColor(o.scrollbarColor)
 {
+    ASSERT(o == *this, "StyleRareInheritedData should be properly copied.");
 }
 
 Ref<StyleRareInheritedData> StyleRareInheritedData::copy() const
