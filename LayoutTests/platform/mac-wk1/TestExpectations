@@ -2858,3 +2858,6 @@ http/tests/xmlhttprequest/cross-origin-authorization.html [ Failure ]
 compositing/repaint/scroller-repaints-once.html [ Failure ]
 
 http/tests/login-status/ [ Skip ]
+
+imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-properties.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-img-object-fit.html [ ImageOnlyFailure ]

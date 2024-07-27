@@ -26,8 +26,19 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/60x60-green.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/a-green.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/b-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/blue-green-red-yellow-50x100.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/blue-green-red-yellow-no-size.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/c-red.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/cat.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/colors-16x8-noSize.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/colors-16x8-parDefault.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/colors-16x8.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/colors-16x8.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/colors-8x16-noSize.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/colors-8x16-parDefault.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/colors-8x16.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/colors-8x16.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/exif-orientation-6-ru.jpg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/import-green.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/import-red.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/intrinsic-size.jpg
@@ -40,6 +51,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/ruler-h-50px.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/ruler-v-100px.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/ruler-v-50px.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/small-border.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/square-purple.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/square-teal.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/square-white.png
@@ -56,3 +68,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/test-outer.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/test-tl.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/test-tr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/testHelper.js

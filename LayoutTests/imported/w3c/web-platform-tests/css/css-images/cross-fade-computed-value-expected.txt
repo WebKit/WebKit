@@ -1,0 +1,8 @@
+
+FAIL Property background-image value 'cross-fade(30% color-mix(in srgb, currentcolor, blue), white)' assert_true: 'cross-fade(30% color-mix(in srgb, currentcolor, blue), white)' is a supported value for background-image. expected true got false
+FAIL Property background-image value 'cross-fade(50% red, 50% green)' assert_true: 'cross-fade(50% red, 50% green)' is a supported value for background-image. expected true got false
+FAIL Property background-image value 'cross-fade(20% red, 20% green)' assert_true: 'cross-fade(20% red, 20% green)' is a supported value for background-image. expected true got false
+FAIL Property background-image value 'cross-fade(50% red, 50% green, 50% blue)' assert_true: 'cross-fade(50% red, 50% green, 50% blue)' is a supported value for background-image. expected true got false
+FAIL Property background-image value 'cross-fade(calc(101%) red, green)' assert_true: 'cross-fade(calc(101%) red, green)' is a supported value for background-image. expected true got false
+FAIL Property background-image value 'cross-fade(calc(-200%) red, green)' assert_true: 'cross-fade(calc(-200%) red, green)' is a supported value for background-image. expected true got false
+

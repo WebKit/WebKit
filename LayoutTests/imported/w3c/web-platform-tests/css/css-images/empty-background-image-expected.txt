@@ -1,0 +1,3 @@
+
+PASS Empty url shouldn't try to load a subresource.
+
