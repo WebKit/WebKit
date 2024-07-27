@@ -62,6 +62,11 @@ void CommandBuffer::makeInvalid(NSString* lastError)
 
 void CommandBuffer::makeInvalidDueToCommit(NSString* lastError)
 {
+    m_cachedCommandBuffer = m_commandBuffer;
+    [m_commandBuffer addCompletedHandler:[protectedThis = Ref { *this }](id<MTLCommandBuffer>) {
+        protectedThis->m_commandBufferComplete.signal();
+        protectedThis->m_cachedCommandBuffer = nil;
+    }];
     m_lastErrorString = lastError;
     m_commandBuffer = nil;
 }
@@ -81,14 +86,12 @@ int CommandBuffer::bufferMapCount() const
     return m_bufferMapCount;
 }
 
-void CommandBuffer::onCompletion(Function<void()>&& completion)
+void CommandBuffer::waitForCompletion()
 {
-    if (!m_commandBuffer)
-        return completion();
-
-    [m_commandBuffer addCompletedHandler:^(id<MTLCommandBuffer>) {
-        completion();
-    }];
+    auto status = [m_cachedCommandBuffer status];
+    constexpr auto commandBufferSubmissionTimeout = 5000_ms;
+    if (status == MTLCommandBufferStatusCommitted || status == MTLCommandBufferStatusScheduled)
+        m_commandBufferComplete.waitFor(commandBufferSubmissionTimeout);
 }
 
 } // namespace WebGPU

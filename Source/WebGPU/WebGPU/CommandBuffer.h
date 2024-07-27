@@ -26,10 +26,10 @@
 #pragma once
 
 #import <wtf/FastMalloc.h>
-#import <wtf/Function.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/WeakPtr.h>
+#import <wtf/threads/BinarySemaphore.h>
 
 struct WGPUCommandBufferImpl {
 };
@@ -65,7 +65,7 @@ public:
     void setBufferMapCount(int);
     int bufferMapCount() const;
     NSString* lastError() const;
-    void onCompletion(Function<void()>&&);
+    void waitForCompletion();
 
 private:
     CommandBuffer(id<MTLCommandBuffer>, id<MTLSharedEvent>, Device&);
@@ -78,6 +78,8 @@ private:
 
     const Ref<Device> m_device;
     NSString* m_lastErrorString { nil };
+    // FIXME: we should not need this semaphore - https://bugs.webkit.org/show_bug.cgi?id=272353
+    BinarySemaphore m_commandBufferComplete;
 };
 
 } // namespace WebGPU
