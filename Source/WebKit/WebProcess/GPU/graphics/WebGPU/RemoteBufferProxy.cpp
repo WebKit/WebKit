@@ -63,7 +63,7 @@ static bool offsetOrSizeExceedsBounds(size_t dataSize, WebCore::WebGPU::Size64 o
     return offset >= dataSize || (requestedSize.has_value() && requestedSize.value() + offset > dataSize);
 }
 
-void RemoteBufferProxy::getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, Function<void(MappedRange)>&& callback)
+void RemoteBufferProxy::getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, Function<void(std::span<uint8_t>)>&& callback)
 {
     // FIXME: Implement error handling.
     auto sendResult = sendSync(Messages::RemoteBuffer::GetMappedRange(offset, size));
@@ -74,10 +74,10 @@ void RemoteBufferProxy::getMappedRange(WebCore::WebGPU::Size64 offset, std::opti
         return;
     }
 
-    callback({ data->data() + offset, static_cast<size_t>(size.value_or(data->size() - offset)) });
+    callback(data->mutableSpan().subspan(offset));
 }
 
-auto RemoteBufferProxy::getBufferContents() -> MappedRange
+std::span<uint8_t> RemoteBufferProxy::getBufferContents()
 {
     RELEASE_ASSERT_NOT_REACHED();
 }

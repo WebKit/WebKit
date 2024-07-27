@@ -86,11 +86,10 @@
 @property (nonatomic, getter=isSelected) bool selected;
 @property (nonatomic, getter=isShowingReaderMode) bool showingReaderMode;
 
-@property (nonatomic, copy) void (^toggleReaderMode)(void);
-@property (nonatomic, copy) NSLocale *(^detectWebpageLocale)(void);
+@property (nonatomic, copy) void (^setReaderModeShowing)(BOOL);
+@property (nonatomic, copy) NSLocale *(^webpageLocale)(void);
 
-@property (nonatomic, copy) void (^reload)(void);
-@property (nonatomic, copy) void (^reloadFromOrigin)(void);
+@property (nonatomic, copy) void (^reload)(BOOL);
 @property (nonatomic, copy) void (^goBack)(void);
 @property (nonatomic, copy) void (^goForward)(void);
 @property (nonatomic, copy) void (^duplicate)(_WKWebExtensionTabCreationOptions *, void (^completionHandler)(TestWebExtensionTab *, NSError *));

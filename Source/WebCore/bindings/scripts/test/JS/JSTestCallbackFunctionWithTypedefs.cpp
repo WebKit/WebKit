@@ -37,7 +37,7 @@ using namespace JSC;
 
 JSTestCallbackFunctionWithTypedefs::JSTestCallbackFunctionWithTypedefs(JSObject* callback, JSDOMGlobalObject* globalObject)
     : TestCallbackFunctionWithTypedefs(globalObject->scriptExecutionContext())
-    , m_data(new JSCallbackDataWeak(callback, globalObject, this))
+    , m_data(new JSCallbackData(callback, globalObject, this))
 {
 }
 

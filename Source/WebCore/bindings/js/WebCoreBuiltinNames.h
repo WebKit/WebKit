@@ -168,6 +168,7 @@ namespace WebCore {
     macro(CSSUnitValue) \
     macro(CSSUnparsedValue) \
     macro(CSSVariableReferenceValue) \
+    macro(CommandEvent) \
     macro(CookieChangeEvent) \
     macro(CookieStore) \
     macro(CookieStoreManager) \
@@ -280,7 +281,6 @@ namespace WebCore {
     macro(InputEvent) \
     macro(IntersectionObserver) \
     macro(IntersectionObserverEntry) \
-    macro(InvokeEvent) \
     macro(KeyframeEffect) \
     macro(Lock) \
     macro(LockManager) \
@@ -325,6 +325,7 @@ namespace WebCore {
     macro(NavigatorUserMedia) \
     macro(Notification) \
     macro(NotificationEvent) \
+    macro(Observable) \
     macro(OfflineAudioCompletionEvent) \
     macro(OfflineAudioContext) \
     macro(OffscreenCanvas) \
@@ -434,6 +435,7 @@ namespace WebCore {
     macro(StylePropertyMap) \
     macro(StorageManager) \
     macro(StorageManagerFileSystemAccess) \
+    macro(Subscriber) \
     macro(SubtleCrypto) \
     macro(TestReportBody) \
     macro(TextDecoderStream) \

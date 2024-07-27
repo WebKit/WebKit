@@ -635,6 +635,11 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f64_nearest, double, (double operand))
     return std::nearbyint(operand);
 }
 
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f32_roundeven, float, (float operand)) { return roundevenf(operand); }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f64_roundeven, double, (double operand)) { return roundeven(operand); }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f32_trunc, float, (float operand)) { return std::trunc(operand); }
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f64_trunc, double, (double operand)) { return std::trunc(operand); }
+
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i32_div_s, int32_t, (int32_t a, int32_t b)) { return a / b; }
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i32_div_u, uint32_t, (uint32_t a, uint32_t b)) { return a / b; }
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(i32_rem_s, int32_t, (int32_t a, int32_t b)) { return a % b; }

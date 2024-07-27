@@ -41,14 +41,14 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
 
-void adjustMIMETypeIfNecessary(CFURLResponseRef response, bool /*isMainResourceLoad*/)
+void adjustMIMETypeIfNecessary(CFURLResponseRef response, IsMainResourceLoad, IsNoSniffSet isNoSniffSet)
 {
     if (CFURLResponseGetMIMEType(response))
         return;
 
     RetainPtr<CFStringRef> type;
 
-    if (auto extension = filePathExtension(response)) {
+    if (auto extension = filePathExtension(response); extension && isNoSniffSet == IsNoSniffSet::No) {
         // <rdar://problem/7007389> CoreTypes UTI map is missing 100+ file extensions that GateKeeper knew about
         // Once UTType matches one of these mappings on all versions of macOS we support, we can remove that pair.
         // Alternatively, we could remove any pairs that we determine we no longer need.

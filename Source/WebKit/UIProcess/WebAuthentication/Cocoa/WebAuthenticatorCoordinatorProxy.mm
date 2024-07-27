@@ -24,7 +24,7 @@
  */
 
 #include <wtf/Assertions.h>
-#if HAVE(UNIFIED_ASC_AUTH_UI)
+#if HAVE(UNIFIED_ASC_AUTH_UI) || HAVE(WEB_AUTHN_AS_MODERN)
 
 #import "config.h"
 #import "WebAuthenticatorCoordinatorProxy.h"
@@ -52,16 +52,6 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>
-
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebAuthenticatorCoordinatorProxyAdditions.h>)
-#import <WebKitAdditions/WebAuthenticatorCoordinatorProxyAdditions.h>
-#else
-#define AUTHENTICATOR_COORDINATOR_ADDITIONS
-#define AUTHENTICATOR_COORDINATOR_ASSERTION_REQUEST_ADDITIONS
-#define AUTHENTICATOR_COORDINATOR_ASSERTION_RESPONSE_ADDITIONS
-#define AUTHENTICATOR_COORDINATOR_REGISTRATION_RESPONSE_ADDITIONS
-#endif
-
 #import "AuthenticationServicesCoreSoftLink.h"
 #if HAVE(WEB_AUTHN_AS_MODERN)
 #import "AuthenticationServicesSoftLink.h"
@@ -257,6 +247,24 @@ RetainPtr<ASAuthorizationController> WebAuthenticatorCoordinatorProxy::construct
     return adoptNS([allocASAuthorizationControllerInstance() initWithAuthorizationRequests:requests.get()]);
 }
 
+#if HAVE(WEB_AUTHN_PRF_API)
+static inline RetainPtr<ASAuthorizationPublicKeyCredentialPRFAssertionInputValues> toASAssertionPRFInputValue(std::optional<WebCore::AuthenticationExtensionsClientInputs::PRFValues> eval)
+{
+    if (!eval)
+        return nullptr;
+
+    auto first = WebCore::toNSData(eval->first);
+
+    RetainPtr<NSData> second;
+    if (eval->second)
+        second = WebCore::toNSData(*eval->second);
+
+    if (eval->second)
+        return adoptNS([WebKit::allocASAuthorizationPublicKeyCredentialPRFAssertionInputValuesInstance() initWithSaltInput1:first.get() saltInput2:WebCore::toNSData(*eval->second).get()]);
+    return adoptNS([WebKit::allocASAuthorizationPublicKeyCredentialPRFAssertionInputValuesInstance() initWithSaltInput1:first.get() saltInput2:nil]);
+}
+#endif
+
 RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegistration(const PublicKeyCredentialCreationOptions &options, const WebCore::SecurityOriginData& callerOrigin)
 {
     RetainPtr<NSMutableArray<ASAuthorizationRequest *>> requests = adoptNS([[NSMutableArray alloc] init]);
@@ -299,7 +307,17 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegistration(con
     if (includePlatformRequest) {
         RetainPtr request = adoptNS([[allocASAuthorizationPlatformPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:*options.rp.id] createCredentialRegistrationRequestWithClientData:clientData.get() name:options.user.name userID:toNSData(options.user.id).get()]);
 
-        AUTHENTICATOR_COORDINATOR_ADDITIONS
+        if (m_isConditionalMediation && [request respondsToSelector:@selector(setRequestStyle:)])
+            request.get().requestStyle = ASAuthorizationPlatformPublicKeyCredentialRegistrationRequestStyleConditional;
+#if HAVE(WEB_AUTHN_PRF_API)
+        if (options.extensions && options.extensions->prf) {
+            auto prf = options.extensions->prf;
+            if (prf->eval)
+                request.get().prf = adoptNS([allocASAuthorizationPublicKeyCredentialPRFRegistrationInputInstance() initWithInputValues:toASAssertionPRFInputValue(prf->eval).get()]).get();
+            else
+                request.get().prf = [getASAuthorizationPublicKeyCredentialPRFRegistrationInputClass() checkForSupport];
+        }
+#endif
 
         // Platform credentials may only support enterprise attestation.
         if (options.attestation == AttestationConveyancePreference::Enterprise)
@@ -395,9 +413,10 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
             ASSERT(!options.extensions->largeBlob->support);
             ASSERT(!(options.extensions->largeBlob->read && options.extensions->largeBlob->write));
             auto largeBlob = options.extensions->largeBlob;
-            request.get().largeBlob = adoptNS([allocASAuthorizationPublicKeyCredentialLargeBlobAssertionInputInstance() initWithOperation:(largeBlob->read && *largeBlob->read) ? ASAuthorizationPublicKeyCredentialLargeBlobAssertionOperationRead : ASAuthorizationPublicKeyCredentialLargeBlobAssertionOperationWrite]).get();
+            RetainPtr asLargeBlob = adoptNS([allocASAuthorizationPublicKeyCredentialLargeBlobAssertionInputInstance() initWithOperation:(largeBlob->read && *largeBlob->read) ? ASAuthorizationPublicKeyCredentialLargeBlobAssertionOperationRead : ASAuthorizationPublicKeyCredentialLargeBlobAssertionOperationWrite]);
             if (largeBlob->write)
-                request.get().largeBlob.dataToWrite = WebCore::toNSData(*largeBlob->write).get();
+                asLargeBlob.get().dataToWrite = WebCore::toNSData(*largeBlob->write).get();
+            request.get().largeBlob = asLargeBlob.get();
         }
 
         request.get().userVerificationPreference = toASUserVerificationPreference(options.userVerification).get();
@@ -405,7 +424,23 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
         if (!allowHybrid)
             request.get().shouldShowHybridTransport = false;
 
-        AUTHENTICATOR_COORDINATOR_ASSERTION_REQUEST_ADDITIONS
+#if HAVE(WEB_AUTHN_PRF_API)
+        if (options.extensions && options.extensions->prf) {
+            auto prf = options.extensions->prf;
+            RetainPtr inputValues = toASAssertionPRFInputValue(prf->eval);
+            RetainPtr<NSMutableDictionary> perCredentialInputValues = nullptr;
+            if (prf->evalByCredential) {
+                perCredentialInputValues = adoptNS([[NSMutableDictionary alloc] init]);
+                for (auto& credentialIDAndInputValues : *prf->evalByCredential) {
+                    auto key = base64URLDecode(credentialIDAndInputValues.key.utf8().span());
+                    if (!key)
+                        continue;
+                    [perCredentialInputValues setObject:toASAssertionPRFInputValue(credentialIDAndInputValues.value).get() forKey: toNSData(*key).get()];
+                }
+            }
+            request.get().prf = adoptNS([allocASAuthorizationPublicKeyCredentialPRFAssertionInputInstance() initWithInputValues:inputValues.get() perCredentialInputValues:perCredentialInputValues.get()]).get();
+        }
+#endif
 
         [requests addObject:request.leakRef()];
     }
@@ -558,7 +593,21 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                     extensionOutputs.largeBlob = { credential.get().largeBlob.isSupported, nullptr, std::nullopt };
                 }
 
-                AUTHENTICATOR_COORDINATOR_REGISTRATION_RESPONSE_ADDITIONS
+#if HAVE(WEB_AUTHN_PRF_API)
+                if ([credential respondsToSelector:@selector(prf)] && credential.get().prf) {
+                    hasExtensionOutput = true;
+                    RefPtr<ArrayBuffer> first = nullptr;
+                    RefPtr<ArrayBuffer> second = nullptr;
+                    if (credential.get().prf.first)
+                        first = toArrayBuffer(credential.get().prf.first);
+                    if (credential.get().prf.second)
+                        second = toArrayBuffer(credential.get().prf.second);
+                    if (first)
+                        extensionOutputs.prf = { credential.get().prf.isSupported, { { first, second } } };
+                    else
+                        extensionOutputs.prf = { credential.get().prf.isSupported, std::nullopt };
+                }
+#endif
 
                 if (hasExtensionOutput)
                     response.extensionOutputs = extensionOutputs;
@@ -580,7 +629,16 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                     extensionOutputs.largeBlob = { std::nullopt, protector, credential.get().largeBlob.didWrite };
                 }
 
-                AUTHENTICATOR_COORDINATOR_ASSERTION_RESPONSE_ADDITIONS
+#if HAVE(WEB_AUTHN_PRF_API)
+                if ([credential respondsToSelector:@selector(prf)] && credential.get().prf) {
+                    hasExtensionOutput = true;
+                    RefPtr<ArrayBuffer> first = toArrayBuffer(credential.get().prf.first);
+                    RefPtr<ArrayBuffer> second = nullptr;
+                    if (credential.get().prf.second)
+                        second = toArrayBuffer(credential.get().prf.second);
+                    extensionOutputs.prf = { std::nullopt, { { first, second } } };
+                }
+#endif
 
                 if (hasExtensionOutput)
                     response.extensionOutputs = extensionOutputs;
@@ -632,6 +690,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
 #endif
 }
 
+#if HAVE(UNIFIED_ASC_AUTH_UI)
 static inline RetainPtr<NSString> toNSString(UserVerificationRequirement userVerificationRequirement)
 {
     switch (userVerificationRequirement) {
@@ -889,7 +948,6 @@ static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestConte
     return requestContext;
 }
 
-#if HAVE(UNIFIED_ASC_AUTH_UI)
 static Vector<WebCore::AuthenticatorTransport> toAuthenticatorTransports(NSArray<NSNumber *> *ascTransports)
 {
     Vector<WebCore::AuthenticatorTransport> transports;
@@ -914,6 +972,7 @@ bool WebAuthenticatorCoordinatorProxy::isASCAvailable()
     return isAuthenticationServicesCoreFrameworkAvailable();
 }
 
+#if HAVE(UNIFIED_ASC_AUTH_UI)
 RetainPtr<ASCCredentialRequestContext> WebAuthenticatorCoordinatorProxy::contextForRequest(WebAuthenticationRequestData&& requestData)
 {
     RetainPtr<ASCCredentialRequestContext> result;
@@ -925,7 +984,6 @@ RetainPtr<ASCCredentialRequestContext> WebAuthenticatorCoordinatorProxy::context
     return result;
 }
 
-#if HAVE(UNIFIED_ASC_AUTH_UI)
 static inline void continueAfterRequest(RetainPtr<id <ASCCredentialProtocol>> credential, RetainPtr<NSError> error, RequestCompletionHandler&& handler)
 {
     AuthenticatorResponseData response = { };
@@ -1175,10 +1233,13 @@ void WebAuthenticatorCoordinatorProxy::cancel(CompletionHandler<void()>&& handle
     } else
         handler();
 
+#if HAVE(UNIFIED_ASC_AUTH_UI)
     if (m_proxy) {
         [m_proxy cancelCurrentRequest];
         m_proxy.clear();
     }
+#endif
+
 #if HAVE(WEB_AUTHN_AS_MODERN)
     if (m_controller)
         [m_controller cancel];
@@ -1187,4 +1248,4 @@ void WebAuthenticatorCoordinatorProxy::cancel(CompletionHandler<void()>&& handle
 
 } // namespace WebKit
 
-#endif // HAVE(UNIFIED_ASC_AUTH_UI)
+#endif // HAVE(UNIFIED_ASC_AUTH_UI) || HAVE(WEB_AUTHN_AS_MODERN)

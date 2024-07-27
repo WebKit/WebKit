@@ -37,6 +37,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
+#include <wtf/SafeStrerror.h>
 #include <wtf/Seconds.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -57,6 +58,7 @@ struct _WPEViewDRMPrivate {
     std::optional<uint32_t> modeBlob;
     GRefPtr<WPEBuffer> pendingBuffer;
     GRefPtr<WPEBuffer> committedBuffer;
+    Vector<drm_mode_rect> damageRects;
     drmEventContext eventContext;
     GRefPtr<GSource> eventSource;
     OptionSet<UpdateFlags> updateFlags;
@@ -247,10 +249,11 @@ WPE::DRM::Plane::Properties emptyPlaneProperties(const WPE::DRM::Plane& plane)
     properties.srcY.second = 0;
     properties.srcW.second = 0;
     properties.srcH.second = 0;
+    properties.fbDamageClips.second = 0;
     return properties;
 }
 
-WPE::DRM::Plane::Properties primaryPlaneProperties(const WPE::DRM::Plane& plane, uint32_t crtcID, drmModeModeInfo* mode, const WPE::DRM::Buffer& buffer)
+WPE::DRM::Plane::Properties primaryPlaneProperties(const WPE::DRM::Plane& plane, uint32_t crtcID, drmModeModeInfo* mode, const WPE::DRM::Buffer& buffer, std::optional<uint32_t> damageID)
 {
     auto properties = plane.properties();
     properties.crtcID.second = crtcID;
@@ -263,6 +266,8 @@ WPE::DRM::Plane::Properties primaryPlaneProperties(const WPE::DRM::Plane& plane,
     properties.srcY.second = 0;
     properties.srcW.second = (static_cast<uint64_t>(gbm_bo_get_width(buffer.bufferObject())) << 16);
     properties.srcH.second = (static_cast<uint64_t>(gbm_bo_get_height(buffer.bufferObject())) << 16);
+    if (properties.fbDamageClips.first && damageID)
+        properties.fbDamageClips.second = damageID.value();
     return properties;
 }
 
@@ -294,10 +299,12 @@ static bool addPlaneProperties(drmModeAtomicReq* request, const WPE::DRM::Plane&
     success &= drmAtomicAddProperty(request, plane.id(), properties.srcY);
     success &= drmAtomicAddProperty(request, plane.id(), properties.srcW);
     success &= drmAtomicAddProperty(request, plane.id(), properties.srcH);
+    if (properties.fbDamageClips.first)
+        success &= drmAtomicAddProperty(request, plane.id(), properties.fbDamageClips);
     return success;
 }
 
-static bool wpeViewDRMCommitAtomic(WPEViewDRM* view, WPE::DRM::Buffer* buffer, GError** error)
+static bool wpeViewDRMCommitAtomic(WPEViewDRM* view, WPE::DRM::Buffer* buffer, std::optional<uint32_t> damageID, GError** error)
 {
     WPE::DRM::UniquePtr<drmModeAtomicReq> request(drmModeAtomicAlloc());
     uint32_t flags = DRM_MODE_PAGE_FLIP_EVENT | DRM_MODE_ATOMIC_NONBLOCK;
@@ -312,8 +319,9 @@ static bool wpeViewDRMCommitAtomic(WPEViewDRM* view, WPE::DRM::Buffer* buffer, G
 
         if (!view->priv->modeBlob) {
             uint32_t blobID;
-            if (drmModeCreatePropertyBlob(fd, mode, sizeof(drmModeModeInfo), &blobID) == -1) {
-                g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: failed to crate blob from DRM mode");
+            auto result = drmModeCreatePropertyBlob(fd, mode, sizeof(drmModeModeInfo), &blobID);
+            if (result < 0) {
+                g_set_error(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: failed to crate blob from DRM mode: %s", safeStrerror(-result).data());
                 return false;
             }
 
@@ -330,7 +338,7 @@ static bool wpeViewDRMCommitAtomic(WPEViewDRM* view, WPE::DRM::Buffer* buffer, G
     }
 
     auto& plane = wpeDisplayDRMGetPrimaryPlane(display);
-    if (!addPlaneProperties(request.get(), plane, buffer ? primaryPlaneProperties(plane, crtc.id(), mode, *buffer) : emptyPlaneProperties(plane))) {
+    if (!addPlaneProperties(request.get(), plane, buffer ? primaryPlaneProperties(plane, crtc.id(), mode, *buffer, damageID) : emptyPlaneProperties(plane))) {
         g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: failed to set plane properties");
         return false;
     }
@@ -382,18 +390,50 @@ static std::pair<uint32_t, uint64_t> wpeBufferFormat(WPEBuffer* buffer)
     return { DRM_FORMAT_INVALID, DRM_FORMAT_MOD_INVALID };
 }
 
+static std::optional<uint32_t> buildDamageBlob(WPEDisplayDRM* display, const Vector<drm_mode_rect>& damageRects, GError** error)
+{
+    if (damageRects.isEmpty())
+        return std::nullopt;
+
+    uint32_t blobID;
+    int fd = gbm_device_get_fd(wpe_display_drm_get_device(display));
+    auto result = drmModeCreatePropertyBlob(fd, damageRects.data(), damageRects.sizeInBytes(), &blobID);
+    if (result < 0) {
+        g_set_error(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: failed to crate damage blob: %s", safeStrerror(-result).data());
+        return 0;
+    }
+
+    return blobID;
+}
+
+static void destroyDamageBlob(WPEDisplayDRM* display, uint32_t blobID)
+{
+    int fd = gbm_device_get_fd(wpe_display_drm_get_device(display));
+    drmModeDestroyPropertyBlob(fd, blobID);
+}
+
 static gboolean wpeViewDRMRequestUpdate(WPEViewDRM* view, GError** error)
 {
     auto* priv = view->priv;
     auto* buffer = priv->pendingBuffer ? priv->pendingBuffer.get() : priv->committedBuffer.get();
     auto* drmBuffer = buffer ? static_cast<WPE::DRM::Buffer*>(wpe_buffer_get_user_data(buffer)) : nullptr;
-    if (wpe_display_drm_supports_atomic(WPE_DISPLAY_DRM(wpe_view_get_display(WPE_VIEW(view)))))
-        return wpeViewDRMCommitAtomic(WPE_VIEW_DRM(view), drmBuffer, error);
+    auto* display = WPE_DISPLAY_DRM(wpe_view_get_display(WPE_VIEW(view)));
+    if (wpe_display_drm_supports_atomic(display)) {
+        auto damageID = drmBuffer ? buildDamageBlob(display, priv->damageRects, error) : std::nullopt;
+        if (damageID.has_value() && !damageID.value())
+            return FALSE;
+
+        auto result = wpeViewDRMCommitAtomic(WPE_VIEW_DRM(view), drmBuffer, damageID, error);
+        if (damageID)
+            destroyDamageBlob(display, damageID.value());
+        priv->damageRects.clear();
+        return result;
+    }
 
     return wpeViewDRMCommitLegacy(WPE_VIEW_DRM(view), *drmBuffer, error);
 }
 
-static gboolean wpeViewDRMRenderBuffer(WPEView* view, WPEBuffer* buffer, const WPERectangle*, guint, GError** error)
+static gboolean wpeViewDRMRenderBuffer(WPEView* view, WPEBuffer* buffer, const WPERectangle* damageRects, guint nDamageRects, GError** error)
 {
     auto* drmBuffer = static_cast<WPE::DRM::Buffer*>(wpe_buffer_get_user_data(buffer));
     if (!drmBuffer) {
@@ -411,6 +451,10 @@ static gboolean wpeViewDRMRenderBuffer(WPEView* view, WPEBuffer* buffer, const W
     }
     auto* priv = WPE_VIEW_DRM(view)->priv;
     priv->pendingBuffer = buffer;
+    priv->damageRects.clear();
+    priv->damageRects.reserveInitialCapacity(nDamageRects);
+    for (unsigned i = 0; i < nDamageRects; ++i)
+        priv->damageRects.append({ damageRects[i].x, damageRects[i].y, damageRects[i].x + damageRects[i].width, damageRects[i].y + damageRects[i].height });
 
     if (priv->updateFlags.contains(UpdateFlags::CursorUpdateRequested)) {
         priv->updateFlags.add(UpdateFlags::BufferUpdatePending);

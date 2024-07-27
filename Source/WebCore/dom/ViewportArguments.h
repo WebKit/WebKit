@@ -70,7 +70,6 @@ struct ViewportArguments {
         PluginDocument,
         ImageDocument,
 #endif
-        CSSDeviceAdaptation,
         ViewportMeta,
     } type;
 
@@ -85,14 +84,10 @@ struct ViewportArguments {
     {
     }
 
-    ViewportArguments(Type type, float width, float minWidth, float maxWidth, float height, float minHeight, float maxHeight, float zoom, float minZoom, float maxZoom, float userZoom, float orientation, float shrinkToFit, ViewportFit viewportFit, bool widthWasExplicit)
+    ViewportArguments(Type type, float width, float height, float zoom, float minZoom, float maxZoom, float userZoom, float orientation, float shrinkToFit, ViewportFit viewportFit, bool widthWasExplicit)
         : type(type)
         , width(width)
-        , minWidth(minWidth)
-        , maxWidth(maxWidth)
         , height(height)
-        , minHeight(minHeight)
-        , maxHeight(maxHeight)
         , zoom(zoom)
         , minZoom(minZoom)
         , maxZoom(maxZoom)
@@ -108,11 +103,7 @@ struct ViewportArguments {
     ViewportAttributes resolve(const FloatSize& initialViewportSize, const FloatSize& deviceSize, int defaultWidth) const;
 
     float width { ValueAuto };
-    float minWidth { ValueAuto };
-    float maxWidth { ValueAuto };
     float height { ValueAuto };
-    float minHeight { ValueAuto };
-    float maxHeight { ValueAuto };
     float zoom { ValueAuto };
     float minZoom { ValueAuto };
     float maxZoom { ValueAuto };
@@ -127,11 +118,7 @@ struct ViewportArguments {
         // Used for figuring out whether to reset the viewport or not,
         // thus we are not taking type into account.
         return width == other.width
-            && minWidth == other.minWidth
-            && maxWidth == other.maxWidth
             && height == other.height
-            && minHeight == other.minHeight
-            && maxHeight == other.maxHeight
             && zoom == other.zoom
             && minZoom == other.minZoom
             && maxZoom == other.maxZoom

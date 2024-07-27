@@ -60,6 +60,10 @@
 
     [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIScripting scripting;
 
+    [MainWorldOnly, Dynamic, Conditional=WK_WEB_EXTENSIONS_SIDEBAR] readonly attribute WebExtensionAPISidebarAction sidebarAction;
+
+    [MainWorldOnly, Dynamic, Conditional=WK_WEB_EXTENSIONS_SIDEBAR] readonly attribute WebExtensionAPISidePanel sidePanel;
+
     [Dynamic] readonly attribute WebExtensionAPIStorage storage;
 
     [MainWorldOnly] readonly attribute WebExtensionAPITabs tabs;

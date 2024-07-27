@@ -101,8 +101,4 @@ layer at (8,28) size 784x202 clip at (9,29) size 767x185 scrollHeight 620
     RenderText {#text} at (1,601) size 16x19
       text run at (1,601) width 16: "30"
     RenderBR {BR} at (17,601) size 0x19
-layer at (8,28) size 8x20
-  RenderBlock (positioned) {SPAN} at (8,28) size 8x20
-    RenderText {#text} at (0,0) size 8x19
-      text run at (0,0) width 8: "0"
 caret: position 0 of child 36 {#text} of child 5 {DIV} of body

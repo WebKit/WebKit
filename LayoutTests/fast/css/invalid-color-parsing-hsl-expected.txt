@@ -1,0 +1,93 @@
+Test parsing various invalid hsl colors
+Parsing hsl(0, 10%, 20%)
+PASS expectedStyle is actualStyle
+Parsing hsl(0, -10%, 20%)
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10%, 20%, -12%)
+PASS expectedStyle is actualStyle
+Parsing hsl(.7deg, 10%, 20%)
+PASS expectedStyle is actualStyle
+Parsing hsl(0., 10%, 20%)
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10.%, 20%)
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10%, 20.%)
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10% 20%)
+PASS expectedStyle is actualStyle
+Parsing hsl(0,10%
+PASS expectedStyle is actualStyle
+Parsing hsl(0,10%)
+PASS expectedStyle is actualStyle
+Parsing hsl(0,10)
+PASS expectedStyle is actualStyle
+Parsing hsl(20deg, 10%,20%
+PASS expectedStyle is actualStyle
+Parsing hsl(20deg, 10%20%
+PASS expectedStyle is actualStyle
+Parsing hsl(20degg,10)
+PASS expectedStyle is actualStyle
+Parsing hsl(20degg,10%,20%)
+PASS expectedStyle is actualStyle
+Parsing hsl(20degg, 10%,20%
+PASS expectedStyle is actualStyle
+Parsing hsl(20de, 10%,20%
+PASS expectedStyle is actualStyle
+Parsing hsl(20d, 10%,20%
+PASS expectedStyle is actualStyle
+Parsing hsl(20ra, 10%,20%
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10%, 20%,.2)
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10%, 20%,.2
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10%, 20%,.
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10%, 20%,
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10%, 20%
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10%, 20
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10%, 2
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10%,
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10%,
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10%
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 1
+PASS expectedStyle is actualStyle
+Parsing hsl(0,
+PASS expectedStyle is actualStyle
+Parsing hsl(0,
+PASS expectedStyle is actualStyle
+Parsing hsl(0
+PASS expectedStyle is actualStyle
+Parsing hsl(
+PASS expectedStyle is actualStyle
+Parsing hsla(
+PASS expectedStyle is actualStyle
+Parsing hsl()
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10%, 20%,)
+PASS expectedStyle is actualStyle
+Parsing hsla(0, 10%, 20%,)
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10%, 20%,0.)
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10%, 20%,0.  )
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10%, 20%,0.%  )
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10%, 20%,0.  %)
+PASS expectedStyle is actualStyle
+Parsing hsl(0, 10, 20%,0.1)
+PASS expectedStyle is actualStyle
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

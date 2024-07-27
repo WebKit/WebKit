@@ -117,6 +117,9 @@ public:
         m_unadjustedMovementDelta = webEvent.unadjustedMovementDelta();
         m_globalPosition = webEvent.globalPosition();
         m_clickCount = webEvent.clickCount();
+        m_coalescedEvents = WTF::map(webEvent.coalescedEvents(), [&](const auto& event) {
+            return platform(event);
+        });
 #if PLATFORM(MAC)
         m_eventNumber = webEvent.eventNumber();
         m_menuTypeForEvent = webEvent.menuTypeForEvent();

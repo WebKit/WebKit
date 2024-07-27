@@ -425,7 +425,8 @@ void Notification::requestPermission(Document& document, RefPtr<NotificationPerm
 
 void Notification::eventListenersDidChange()
 {
-    m_hasRelevantEventListener = hasEventListeners(eventNames().clickEvent)
+    m_hasRelevantEventListener = hasEventListeners(eventNames().auxclickEvent)
+        || hasEventListeners(eventNames().clickEvent)
         || hasEventListeners(eventNames().closeEvent)
         || hasEventListeners(eventNames().errorEvent)
         || hasEventListeners(eventNames().showEvent);

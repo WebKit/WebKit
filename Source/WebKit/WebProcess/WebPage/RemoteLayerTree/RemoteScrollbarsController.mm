@@ -39,6 +39,8 @@ RemoteScrollbarsController::RemoteScrollbarsController(WebCore::ScrollableArea& 
     : ScrollbarsController(scrollableArea)
     , m_coordinator(ThreadSafeWeakPtr<WebCore::ScrollingCoordinator>(coordinator))
 {
+    if (auto scrollingCoordinator = m_coordinator.get())
+        scrollingCoordinator->setScrollbarWidth(scrollableArea, scrollableArea.scrollbarWidthStyle());
 }
 
 void RemoteScrollbarsController::scrollbarLayoutDirectionChanged(WebCore::UserInterfaceLayoutDirection scrollbarLayoutDirection)
@@ -123,6 +125,12 @@ void RemoteScrollbarsController::updateScrollbarEnabledState(WebCore::Scrollbar&
 {
     if (auto scrollingCoordinator = m_coordinator.get())
         scrollingCoordinator->setScrollbarEnabled(scrollbar);
+}
+
+void RemoteScrollbarsController::scrollbarWidthChanged(WebCore::ScrollbarWidth width)
+{
+    if (auto scrollingCoordinator = m_coordinator.get())
+        scrollingCoordinator->setScrollbarWidth(scrollableArea(), width);
 }
 
 void RemoteScrollbarsController::updateScrollbarStyle()

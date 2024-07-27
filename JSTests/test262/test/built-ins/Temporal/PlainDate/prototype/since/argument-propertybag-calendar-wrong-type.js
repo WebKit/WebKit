@@ -9,7 +9,6 @@ description: >
 features: [BigInt, Symbol, Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("UTC");
 const instance = new Temporal.PlainDate(2000, 5, 2);
 
 const primitiveTests = [
@@ -31,10 +30,8 @@ for (const [calendar, description] of primitiveTests) {
 
 const typeErrorTests = [
   [Symbol(), "symbol"],
-  [{}, "plain object that doesn't implement the protocol"],
-  [new Temporal.TimeZone("UTC"), "time zone instance"],
-  [Temporal.Calendar, "Temporal.Calendar, object"],
-  [Temporal.Calendar.prototype, "Temporal.Calendar.prototype, object"],  // fails brand check in dateFromFields()
+  [{}, "object"],
+  [new Temporal.Duration(), "duration instance"],
 ];
 
 for (const [calendar, description] of typeErrorTests) {

@@ -1027,6 +1027,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/CheckVisibilityOptions.idl
     dom/ChildNode.idl
     dom/ClipboardEvent.idl
+    dom/CommandEvent.idl
     dom/Comment.idl
     dom/CompositionEvent.idl
     dom/ContentVisibilityAutoStateChangeEvent.idl
@@ -1103,7 +1104,6 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/IdleRequestOptions.idl
     dom/InnerHTML.idl
     dom/InputEvent.idl
-    dom/InvokeEvent.idl
     dom/KeyboardEvent.idl
     dom/MessageChannel.idl
     dom/MessageEvent.idl
@@ -1122,6 +1122,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/NodeList.idl
     dom/NonDocumentTypeChildNode.idl
     dom/NonElementParentNode.idl
+    dom/Observable.idl
     dom/OverflowEvent.idl
     dom/PageTransitionEvent.idl
     dom/ParentNode.idl
@@ -1144,6 +1145,11 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/Slotable.idl
     dom/StaticRange.idl
     dom/StringCallback.idl
+    dom/SubscribeOptions.idl
+    dom/Subscriber.idl
+    dom/SubscriberCallback.idl
+    dom/SubscriptionObserver.idl
+    dom/SubscriptionObserverCallback.idl
     dom/Text.idl
     dom/TextDecoder.idl
     dom/TextDecoderStream.idl
@@ -1371,6 +1377,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/EventSource.idl
     page/FragmentDirective.idl
     page/History.idl
+    page/IsLoggedIn.idl
     page/IntersectionObserver.idl
     page/IntersectionObserverCallback.idl
     page/IntersectionObserverEntry.idl
@@ -2359,16 +2366,10 @@ if (USE_THEME_ADWAITA)
     )
 endif ()
 
-if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.18)
-    set(CAT_PROGRAM ${CMAKE_COMMAND} -E cat)
-else ()
-    set(CAT_PROGRAM cat)
-endif ()
-
 add_custom_command(
     OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
     DEPENDS ${MODERN_MEDIA_CONTROLS_STYLE_SHEETS}
-    COMMAND ${CAT_PROGRAM} ${MODERN_MEDIA_CONTROLS_STYLE_SHEETS} > ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
+    COMMAND ${CMAKE_COMMAND} -E cat ${MODERN_MEDIA_CONTROLS_STYLE_SHEETS} > ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
     VERBATIM)
 
 set(MODERN_MEDIA_CONTROLS_SCRIPTS
@@ -2451,7 +2452,7 @@ set(MODERN_MEDIA_CONTROLS_SCRIPTS
 add_custom_command(
     OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
     DEPENDS ${MODERN_MEDIA_CONTROLS_SCRIPTS}
-    COMMAND ${CAT_PROGRAM} ${MODERN_MEDIA_CONTROLS_SCRIPTS} > ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
+    COMMAND ${CMAKE_COMMAND} -E cat ${MODERN_MEDIA_CONTROLS_SCRIPTS} > ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
     VERBATIM)
 
 # Modules that the bindings generator scripts may use

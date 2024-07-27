@@ -148,7 +148,7 @@ void ExtensionStyleSheets::updateInjectedStyleSheetCache() const
     for (const auto& userStyleSheet : m_pageSpecificStyleSheets)
         addStyleSheet(userStyleSheet);
 
-    owningPage->userContentProvider().forEachUserStyleSheet([&](const UserStyleSheet& userStyleSheet) {
+    owningPage->protectedUserContentProvider()->forEachUserStyleSheet([&](const UserStyleSheet& userStyleSheet) {
         if (userStyleSheet.pageID())
             return;
 

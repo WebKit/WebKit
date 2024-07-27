@@ -109,10 +109,9 @@ enum class ShadowRootSerializable : bool { No, Yes };
 enum class VisibilityAdjustment : uint8_t;
 
 // https://github.com/whatwg/html/pull/9841
-enum class InvokeAction: uint8_t {
+enum class CommandType: uint8_t {
     Invalid,
 
-    Auto,
     Custom,
 
     TogglePopover,
@@ -158,6 +157,7 @@ struct ResolvedStyle;
 
 class Element : public ContainerNode {
     WTF_MAKE_ISO_ALLOCATED(Element);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Element);
 public:
     static Ref<Element> create(const QualifiedName&, Document&);
     virtual ~Element();
@@ -655,8 +655,8 @@ public:
     void clearPopoverData();
     bool isPopoverShowing() const;
 
-    virtual bool isValidInvokeAction(const InvokeAction action) { return action == InvokeAction::Auto; }
-    virtual bool handleInvokeInternal(const HTMLFormControlElement&, const InvokeAction&) { return false; }
+    virtual bool isValidCommandType(const CommandType) { return false; }
+    virtual bool handleCommandInternal(const HTMLFormControlElement&, const CommandType&) { return false; }
 
     ExceptionOr<void> setPointerCapture(int32_t);
     ExceptionOr<void> releasePointerCapture(int32_t);

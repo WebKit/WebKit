@@ -8,7 +8,7 @@ includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const calendar = new Temporal.Calendar("iso8601");
+const calendar = "iso8601";
 const zdt = new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, "UTC", calendar);
 const result = Temporal.PlainDate.from(zdt);
 
@@ -19,7 +19,7 @@ TemporalHelpers.assertPlainDate(
 );
 
 assert.sameValue(
-  result.getCalendar(),
+  result.calendarId,
   calendar,
   "Calendar is copied"
 );

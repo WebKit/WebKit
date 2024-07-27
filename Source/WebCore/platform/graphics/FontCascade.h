@@ -218,7 +218,7 @@ public:
     enum class CodePath : uint8_t { Auto, Simple, Complex, SimpleWithGlyphOverflow };
     WEBCORE_EXPORT CodePath codePath(const TextRun&, std::optional<unsigned> from = std::nullopt, std::optional<unsigned> to = std::nullopt) const;
     static CodePath characterRangeCodePath(std::span<const LChar>) { return CodePath::Simple; }
-    static CodePath characterRangeCodePath(std::span<const UChar>);
+    WEBCORE_EXPORT static CodePath characterRangeCodePath(std::span<const UChar>);
 
     bool primaryFontIsSystemFont() const;
 

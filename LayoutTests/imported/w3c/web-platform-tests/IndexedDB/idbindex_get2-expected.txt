@@ -1,3 +1,0 @@
-
-PASS IDBIndex.get() - returns the record where the index contains duplicate values
-

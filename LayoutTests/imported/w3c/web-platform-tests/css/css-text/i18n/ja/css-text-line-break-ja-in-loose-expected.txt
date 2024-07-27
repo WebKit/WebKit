@@ -1,5 +1,5 @@
 
-FAIL 2024  ONE DOT LEADER may appear at line start if ja and loose assert_approx_equals: expected 48.9169921875 +/- 1 but got 78.9169921875
+FAIL 2024  ONE DOT LEADER may appear at line start if ja and loose assert_approx_equals: expected 47.52000045776367 +/- 1 but got 77.52000427246094
 FAIL 2025  TWO DOT LEADER may appear at line start if ja and loose assert_approx_equals: expected 69 +/- 1 but got 99
 FAIL 2026  HORIZONTAL ELLIPSIS may appear at line start if ja and loose assert_approx_equals: expected 69 +/- 1 but got 99
 FAIL 22EF  MIDLINE HORIZONTAL ELLIPSIS may appear at line start if ja and loose assert_approx_equals: expected 69 +/- 1 but got 99

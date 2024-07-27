@@ -1,3 +1,0 @@
-
-PASS IDBDatabase.deleteObjectStore() - attempt to remove an object store that does not exist
-

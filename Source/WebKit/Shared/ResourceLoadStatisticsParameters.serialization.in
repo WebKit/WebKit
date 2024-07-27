@@ -35,5 +35,6 @@ enum class WebCore::SameSiteStrictEnforcementEnabled : bool;
     WebCore::RegistrableDomain standaloneApplicationDomain;
     HashSet<WebCore::RegistrableDomain> appBoundDomains;
     HashSet<WebCore::RegistrableDomain> managedDomains;
+    HashSet<WebCore::RegistrableDomain> persistedDomains;
     WebCore::RegistrableDomain manualPrevalentResource;
 }

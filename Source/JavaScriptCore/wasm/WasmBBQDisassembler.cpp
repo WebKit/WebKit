@@ -38,6 +38,22 @@
 namespace JSC {
 namespace Wasm {
 
+ASCIILiteral makeString(PrefixedOpcode prefixedOpcode)
+{
+    switch (prefixedOpcode.prefixOrOpcode) {
+    case OpType::Ext1:
+        return makeString(prefixedOpcode.prefixed.ext1Opcode);
+    case OpType::ExtSIMD:
+        return makeString(prefixedOpcode.prefixed.simdOpcode);
+    case OpType::ExtGC:
+        return makeString(prefixedOpcode.prefixed.gcOpcode);
+    case OpType::ExtAtomic:
+        return makeString(prefixedOpcode.prefixed.atomicOpcode);
+    default:
+        return makeString(prefixedOpcode.prefixOrOpcode);
+    }
+}
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BBQDisassembler);
 
 BBQDisassembler::BBQDisassembler() = default;
@@ -70,7 +86,7 @@ void BBQDisassembler::dumpHeader(PrintStream& out, LinkBuffer& linkBuffer)
     out.print("   Code at [", RawPointer(linkBuffer.debugAddress()), ", ", RawPointer(static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.size()), "):\n");
 }
 
-Vector<BBQDisassembler::DumpedOp> BBQDisassembler::dumpVectorForInstructions(LinkBuffer& linkBuffer, const char* prefix, Vector<std::tuple<MacroAssembler::Label, OpType, size_t>>& labels, MacroAssembler::Label endLabel)
+Vector<BBQDisassembler::DumpedOp> BBQDisassembler::dumpVectorForInstructions(LinkBuffer& linkBuffer, const char* prefix, Vector<std::tuple<MacroAssembler::Label, PrefixedOpcode, size_t>>& labels, MacroAssembler::Label endLabel)
 {
     StringPrintStream out;
     Vector<DumpedOp> result;
@@ -96,7 +112,7 @@ Vector<BBQDisassembler::DumpedOp> BBQDisassembler::dumpVectorForInstructions(Lin
     return result;
 }
 
-void BBQDisassembler::dumpForInstructions(PrintStream& out, LinkBuffer& linkBuffer, const char* prefix, Vector<std::tuple<MacroAssembler::Label, OpType, size_t>>& labels, MacroAssembler::Label endLabel)
+void BBQDisassembler::dumpForInstructions(PrintStream& out, LinkBuffer& linkBuffer, const char* prefix, Vector<std::tuple<MacroAssembler::Label, PrefixedOpcode, size_t>>& labels, MacroAssembler::Label endLabel)
 {
     Vector<DumpedOp> dumpedOps = dumpVectorForInstructions(linkBuffer, prefix, labels, endLabel);
 

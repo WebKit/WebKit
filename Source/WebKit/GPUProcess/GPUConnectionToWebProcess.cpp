@@ -204,7 +204,7 @@ private:
         case CaptureDevice::DeviceType::Camera:
             if (!m_process.get()->allowsVideoCapture())
                 return false;
-#if PLATFORM(IOS) || PLATFORM(VISION)
+#if PLATFORM(IOS_FAMILY)
             MediaSessionManageriOS::providePresentingApplicationPID();
 #endif
             return true;
@@ -293,7 +293,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     , m_routingArbitrator(LocalAudioSessionRoutingArbitrator::create(*this))
 #endif
-    , m_preferences(parameters.preferences)
+    , m_sharedPreferencesForWebProcess(WTFMove(parameters.sharedPreferencesForWebProcess))
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
@@ -490,7 +490,7 @@ bool GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() const
     if (hasOutstandingRenderingResourceUsage())
         return false;
 
-    if (m_preferences.isDOMRenderingEnabled)
+    if (sharedPreferencesForWebProcess().useGPUProcessForDOMRenderingEnabled)
         return false;
 
 #if ENABLE(WEB_AUDIO)
@@ -667,7 +667,7 @@ void GPUConnectionToWebProcess::createRenderingBackend(RenderingBackendIdentifie
     auto streamConnection = IPC::StreamServerConnection::tryCreate(WTFMove(connectionHandle), params);
     MESSAGE_CHECK(streamConnection);
 
-    auto addResult = m_remoteRenderingBackendMap.ensure(identifier, [&, streamConnection] () mutable {
+    auto addResult = m_remoteRenderingBackendMap.ensure(identifier, [&] {
         return IPC::ScopedActiveMessageReceiveQueue { RemoteRenderingBackend::create(*this, identifier, streamConnection.releaseNonNull()) };
     });
     if (!addResult.isNewEntry) {
@@ -700,7 +700,7 @@ void GPUConnectionToWebProcess::createGraphicsContextGL(GraphicsContextGLIdentif
     auto streamConnection = IPC::StreamServerConnection::tryCreate(WTFMove(connectionHandle), params);
     MESSAGE_CHECK(streamConnection);
 
-    auto addResult = m_remoteGraphicsContextGLMap.ensure(identifier, [&, streamConnection = WTFMove(streamConnection)] () mutable {
+    auto addResult = m_remoteGraphicsContextGLMap.ensure(identifier, [&] {
         return IPC::ScopedActiveMessageReceiveQueue { RemoteGraphicsContextGL::create(*this, WTFMove(attributes), identifier, *renderingBackend, streamConnection.releaseNonNull()) };
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
@@ -746,7 +746,7 @@ void GPUConnectionToWebProcess::performWithMediaPlayerOnMainThread(MediaPlayerId
 
 void GPUConnectionToWebProcess::createGPU(WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& connectionHandle)
 {
-    MESSAGE_CHECK(isWebGPUEnabled());
+    MESSAGE_CHECK(sharedPreferencesForWebProcess().webGPUEnabled);
 
     auto it = m_remoteRenderingBackendMap.find(renderingBackendIdentifier);
     if (it == m_remoteRenderingBackendMap.end())
@@ -760,7 +760,7 @@ void GPUConnectionToWebProcess::createGPU(WebGPUIdentifier identifier, Rendering
     auto streamConnection = IPC::StreamServerConnection::tryCreate(WTFMove(connectionHandle), params);
     MESSAGE_CHECK(streamConnection);
 
-    auto addResult = m_remoteGPUMap.ensure(identifier, [&, streamConnection = WTFMove(streamConnection)] () mutable {
+    auto addResult = m_remoteGPUMap.ensure(identifier, [&] {
         return IPC::ScopedActiveMessageReceiveQueue { RemoteGPU::create(identifier, *this, *renderingBackend, streamConnection.releaseNonNull()) };
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);

@@ -513,6 +513,29 @@ inline ASCIILiteral makeString(OpType op)
 }
 #undef CREATE_CASE
 
+#define CREATE_CASE(name, ...) case Ext1OpType::name: return #name ## _s;
+inline ASCIILiteral makeString(Ext1OpType op)
+{
+    switch (op) {
+    FOR_EACH_WASM_TABLE_OP(CREATE_CASE)
+    FOR_EACH_WASM_TRUNC_SATURATED_OP(CREATE_CASE)
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
+}
+#undef CREATE_CASE
+
+#define CREATE_CASE(name, ...) case ExtGCOpType::name: return #name ## _s;
+inline ASCIILiteral makeString(ExtGCOpType op)
+{
+    switch (op) {
+    FOR_EACH_WASM_GC_OP(CREATE_CASE)
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
+}
+#undef CREATE_CASE
+
 #define CREATE_CASE(name, ...) case ExtAtomicOpType::name: return #name ## _s;
 inline ASCIILiteral makeString(ExtAtomicOpType op)
 {

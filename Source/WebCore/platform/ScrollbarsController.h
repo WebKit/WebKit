@@ -37,6 +37,7 @@ namespace WebCore {
 class Scrollbar;
 class ScrollableArea;
 enum class ScrollbarOrientation : uint8_t;
+enum class ScrollbarWidth : uint8_t;
 
 class ScrollbarsController {
     WTF_MAKE_FAST_ALLOCATED;
@@ -112,6 +113,8 @@ public:
     WEBCORE_EXPORT void updateScrollbarsThickness();
 
     WEBCORE_EXPORT virtual void updateScrollbarStyle() { }
+
+    WEBCORE_EXPORT virtual void scrollbarWidthChanged(WebCore::ScrollbarWidth) { }
 
 private:
     ScrollableArea& m_scrollableArea;

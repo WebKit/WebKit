@@ -47,6 +47,11 @@ RemoteTextDetector::RemoteTextDetector(Ref<WebCore::ShapeDetection::TextDetector
 
 RemoteTextDetector::~RemoteTextDetector() = default;
 
+const SharedPreferencesForWebProcess& RemoteTextDetector::sharedPreferencesForWebProcess() const
+{
+    return m_backend->sharedPreferencesForWebProcess();
+}
+
 Ref<WebCore::ShapeDetection::TextDetector> RemoteTextDetector::protectedBacking()
 {
     return backing();

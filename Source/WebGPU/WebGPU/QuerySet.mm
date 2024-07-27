@@ -119,6 +119,7 @@ void QuerySet::setOverrideLocation(QuerySet&, uint32_t, uint32_t)
 void QuerySet::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
     m_commandEncoders.add(commandEncoder);
+    commandEncoder.addBuffer(m_visibilityBuffer);
     if (isDestroyed())
         commandEncoder.makeSubmitInvalid();
 }

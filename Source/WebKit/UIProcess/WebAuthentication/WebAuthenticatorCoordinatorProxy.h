@@ -111,8 +111,9 @@ private:
 
     WebPageProxy& m_webPageProxy;
 
-#if HAVE(UNIFIED_ASC_AUTH_UI)
+#if HAVE(UNIFIED_ASC_AUTH_UI) || HAVE(WEB_AUTHN_AS_MODERN)
     bool isASCAvailable();
+#endif
 
 #if HAVE(WEB_AUTHN_AS_MODERN)
     RetainPtr<ASAuthorizationController> constructASController(const WebAuthenticationRequestData&);
@@ -122,8 +123,8 @@ private:
 
     void performRequest(WebAuthenticationRequestData&&, RequestCompletionHandler&&);
 
-    RetainPtr<ASCCredentialRequestContext> contextForRequest(WebAuthenticationRequestData&&);
 #if HAVE(UNIFIED_ASC_AUTH_UI)
+    RetainPtr<ASCCredentialRequestContext> contextForRequest(WebAuthenticationRequestData&&);
     void performRequestLegacy(RetainPtr<ASCCredentialRequestContext>, RequestCompletionHandler&&);
 #endif
 
@@ -135,10 +136,11 @@ private:
     bool m_isConditionalMediation { false };
 #endif
 
+#if HAVE(UNIFIED_ASC_AUTH_UI)
     RetainPtr<ASCAuthorizationRemotePresenter> m_presenter;
     RetainPtr<ASCAgentProxy> m_proxy;
-    CompletionHandler<void()> m_cancelHandler;
 #endif // HAVE(UNIFIED_ASC_AUTH_UI)
+    CompletionHandler<void()> m_cancelHandler;
 };
 
 } // namespace WebKit

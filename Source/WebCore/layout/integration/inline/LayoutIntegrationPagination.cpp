@@ -53,7 +53,7 @@ static LayoutUnit computeFirstLineSnapAdjustment(const InlineDisplay::Line& line
     return lineGrid.paginationOrigin.value_or(LayoutSize { }).height() + firstBaselinePosition - baseline;
 }
 
-std::pair<Vector<LineAdjustment>, std::optional<size_t>> computeAdjustmentsForPagination(const InlineContent& inlineContent, const Layout::PlacedFloats& placedFloats, bool allowLayoutRestart, const Layout::BlockLayoutState& blockLayoutState, RenderBlockFlow& flow)
+std::pair<Vector<LineAdjustment>, std::optional<LayoutRestartLine>> computeAdjustmentsForPagination(const InlineContent& inlineContent, const Layout::PlacedFloats& placedFloats, bool allowLayoutRestart, const Layout::BlockLayoutState& blockLayoutState, RenderBlockFlow& flow)
 {
     auto lineCount = inlineContent.displayContent().lines.size();
     Vector<LineAdjustment> adjustments { lineCount };
@@ -92,7 +92,7 @@ std::pair<Vector<LineAdjustment>, std::optional<size_t>> computeAdjustmentsForPa
     }
 
     std::optional<size_t> previousPageBreakIndex;
-    std::optional<size_t> layoutRestartLineIndex;
+    std::optional<LayoutRestartLine> layoutRestartLine;
 
     size_t widows = flow.style().hasAutoWidows() ? 0 : flow.style().widows();
     size_t orphans = flow.style().orphans();
@@ -103,6 +103,10 @@ std::pair<Vector<LineAdjustment>, std::optional<size_t>> computeAdjustmentsForPa
         auto floatMinimumBottom = lineFloatBottomMap.getOptional(lineIndex).value_or(0_lu);
 
         auto adjustment = flow.computeLineAdjustmentForPagination(line, accumulatedOffset, floatMinimumBottom);
+        if (layoutRestartLine && layoutRestartLine->index == lineIndex) {
+            ASSERT(!layoutRestartLine->offset);
+            layoutRestartLine->offset = adjustment.strut;
+        }
 
         if (adjustment.isFirstAfterPageBreak) {
             auto remainingLines = lineCount - lineIndex;
@@ -111,7 +115,7 @@ std::pair<Vector<LineAdjustment>, std::optional<size_t>> computeAdjustmentsForPa
                 remainingLines--;
 
             // See if there are enough lines left to meet the widow requirement.
-            if (remainingLines < widows && allowLayoutRestart && !layoutRestartLineIndex) {
+            if (remainingLines < widows && allowLayoutRestart && !layoutRestartLine) {
                 auto previousPageLineCount = lineIndex - previousPageBreakIndex.value_or(0);
                 auto neededLines = widows - remainingLines;
                 auto availableLines = previousPageLineCount > orphans ? previousPageLineCount - orphans : 0;
@@ -122,7 +126,7 @@ std::pair<Vector<LineAdjustment>, std::optional<size_t>> computeAdjustmentsForPa
                     flow.setBreakAtLineToAvoidWidow(breakIndex + 1);
                     lineIndex = breakIndex;
                     // We need to redo the layout starting from the break for things like intrusive floats.
-                    layoutRestartLineIndex = breakIndex;
+                    layoutRestartLine = { breakIndex, { } };
                     continue;
                 }
             }
@@ -150,7 +154,7 @@ std::pair<Vector<LineAdjustment>, std::optional<size_t>> computeAdjustmentsForPa
     if (!previousPageBreakIndex)
         return { };
 
-    return { adjustments, layoutRestartLineIndex };
+    return { adjustments, layoutRestartLine };
 }
 
 void adjustLinePositionsForPagination(InlineContent& inlineContent, const Vector<LineAdjustment>& adjustments)

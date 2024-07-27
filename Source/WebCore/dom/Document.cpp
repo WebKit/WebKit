@@ -2760,9 +2760,9 @@ auto Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Elemen
                 } else
                     context = nullptr;
             }
-            if (frameView->layoutContext().isLayoutPending() || renderView()->needsLayout()) {
+            if (frameView->layoutContext().needsLayout()) {
                 ContentVisibilityForceLayoutScope scope(*renderView(), context);
-                frameView->layoutContext().layout();
+                frameView->layoutContext().layout(layoutOptions.contains(LayoutOptions::CanDeferUpdateLayerPositions));
                 result = UpdateLayoutResult::ChangesDone;
             }
 
@@ -3404,7 +3404,7 @@ void Document::setVisuallyOrdered()
 Ref<DocumentParser> Document::createParser()
 {
     // FIXME: this should probably pass the frame instead
-    return XMLDocumentParser::create(*this, protectedView().get(), m_parserContentPolicy);
+    return XMLDocumentParser::create(*this, view() ? XMLDocumentParser::IsInFrameView::Yes : XMLDocumentParser::IsInFrameView::No, m_parserContentPolicy);
 }
 
 bool Document::hasHighlight() const
@@ -3540,7 +3540,7 @@ ExceptionOr<void> Document::open(Document* entryDocument)
     if (entryDocument && !entryDocument->securityOrigin().isSameOriginAs(securityOrigin()))
         return Exception { ExceptionCode::SecurityError };
 
-    if (m_ignoreOpensDuringUnloadCount)
+    if (m_unloadCounter)
         return { };
 
     if (m_activeParserWasAborted)
@@ -3558,7 +3558,7 @@ ExceptionOr<void> Document::open(Document* entryDocument)
             }
         }
 
-        bool isNavigating = frame->loader().policyChecker().delegateIsDecidingNavigationPolicy() || frame->loader().state() == FrameState::Provisional || frame->navigationScheduler().hasQueuedNavigation();
+        bool isNavigating = frame->loader().policyChecker().delegateIsDecidingNavigationPolicy() || frame->loader().state() == FrameState::Provisional || frame->checkedNavigationScheduler()->hasQueuedNavigation();
         if (frame->loader().policyChecker().delegateIsDecidingNavigationPolicy())
             frame->loader().policyChecker().stopCheck();
         // Null-checking m_frame again as `policyChecker().stopCheck()` may have cleared it.
@@ -3754,7 +3754,7 @@ void Document::explicitClose()
 void Document::implicitClose()
 {
     RELEASE_ASSERT(!m_inStyleRecalc);
-    bool wasLocationChangePending = frame() && frame()->navigationScheduler().locationChangePending();
+    bool wasLocationChangePending = frame() && frame()->checkedNavigationScheduler()->locationChangePending();
     bool doload = !parsing() && m_parser && !m_processingLoadEvent && !wasLocationChangePending;
 
     if (!doload)
@@ -3894,7 +3894,7 @@ bool Document::isLayoutPending() const
 
 bool Document::supportsPaintTiming() const
 {
-    return securityOrigin().isSameOriginDomain(topOrigin());
+    return protectedSecurityOrigin()->isSameOriginDomain(topOrigin());
 }
 
 // https://w3c.github.io/paint-timing/#ref-for-mark-paint-timing
@@ -3942,7 +3942,7 @@ ExceptionOr<void> Document::write(Document* entryDocument, SegmentedString&& tex
         return { };
 
     bool hasInsertionPoint = m_parser && m_parser->hasInsertionPoint();
-    if (!hasInsertionPoint && (m_ignoreOpensDuringUnloadCount || m_ignoreDestructiveWriteCount))
+    if (!hasInsertionPoint && (m_unloadCounter || m_ignoreDestructiveWriteCount))
         return { };
 
     if (!hasInsertionPoint) {
@@ -4082,7 +4082,11 @@ void Document::setURL(const URL& url)
     if (newURL == m_url)
         return;
 
-    m_fragmentDirective = newURL.consumeFragmentDirective();
+    if (RefPtr page = protectedPage())
+        m_fragmentDirective = page->mainFrameURLFragment();
+
+    if (m_fragmentDirective.isEmpty())
+        m_fragmentDirective = newURL.consumeFragmentDirective();
 
     if (SecurityOrigin::shouldIgnoreHost(newURL))
         newURL.removeHostAndPort();
@@ -4503,7 +4507,7 @@ bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targ
     if (targetDocument->securityOrigin().protocol() != destinationURL.protocol())
         return true;
 
-    return !(targetDocument->securityOrigin().isSameOriginDomain(SecurityOrigin::create(destinationURL)) || areRegistrableDomainsEqual(targetDocument->url(), destinationURL));
+    return !(targetDocument->protectedSecurityOrigin()->isSameOriginDomain(SecurityOrigin::create(destinationURL)) || areRegistrableDomainsEqual(targetDocument->url(), destinationURL));
 }
 
 void Document::didRemoveAllPendingStylesheet()
@@ -6324,6 +6328,14 @@ HTMLFrameOwnerElement* Document::ownerElement() const
     return frame()->ownerElement();
 }
 
+std::optional<OwnerPermissionsPolicyData> Document::ownerPermissionsPolicy() const
+{
+    if (WeakPtr currentFrame = frame())
+        return currentFrame->ownerPermissionsPolicy();
+
+    return std::nullopt;
+}
+
 // https://html.spec.whatwg.org/#cookie-averse-document-object
 bool Document::isCookieAverse() const
 {
@@ -7241,12 +7253,6 @@ Ref<HTMLCollection> Document::embeds()
     return ensureCachedCollection<CollectionType::DocEmbeds>();
 }
 
-Ref<HTMLCollection> Document::plugins()
-{
-    // This is an alias for embeds() required for the JS DOM bindings.
-    return ensureCachedCollection<CollectionType::DocEmbeds>();
-}
-
 Ref<HTMLCollection> Document::scripts()
 {
     return ensureCachedCollection<CollectionType::DocScripts>();
@@ -7560,7 +7566,7 @@ void Document::initContentSecurityPolicy()
     if (!isPluginDocument())
         return;
     RefPtr openerFrame = dynamicDowncast<LocalFrame>(m_frame->opener());
-    bool shouldInhert = parentFrame || (openerFrame && openerFrame->document()->securityOrigin().isSameOriginDomain(securityOrigin()));
+    bool shouldInhert = parentFrame || (openerFrame && openerFrame->document()->protectedSecurityOrigin()->isSameOriginDomain(securityOrigin()));
     if (!shouldInhert)
         return;
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
@@ -8811,7 +8817,7 @@ Ref<DocumentFragment> Document::documentFragmentForInnerOuterHTML()
 
 Ref<FontFaceSet> Document::fonts()
 {
-    return fontSelector().fontFaceSet();
+    return protectedFontSelector()->fontFaceSet();
 }
 
 EditingBehavior Document::editingBehavior() const
@@ -9891,7 +9897,7 @@ void Document::handlePopoverLightDismiss(const PointerEvent& event, Node& target
 
                     if (!invokerPopover) {
                         if (RefPtr button = dynamicDowncast<HTMLFormControlElement>(*htmlElement)) {
-                            if (RefPtr popover = dynamicDowncast<HTMLElement>(button->invokeTargetElement()); popover && isShowingAutoPopover(*popover))
+                            if (RefPtr popover = dynamicDowncast<HTMLElement>(button->commandForElement()); popover && isShowingAutoPopover(*popover))
                                 invokerPopover = WTFMove(popover);
                             else if (RefPtr popover = button->popoverTargetElement(); popover && isShowingAutoPopover(*popover))
                                 invokerPopover = WTFMove(popover);
@@ -10088,7 +10094,7 @@ void Document::navigateFromServiceWorker(const URL& url, CompletionHandler<void(
             callback(ScheduleLocationChangeResult::Stopped);
             return;
         }
-        frame->navigationScheduler().scheduleLocationChange(*weakThis, weakThis->securityOrigin(), url, frame->loader().outgoingReferrer(), LockHistory::Yes, LockBackForwardList::No, NavigationHistoryBehavior::Auto, [callback = WTFMove(callback)](auto result) mutable {
+        frame->checkedNavigationScheduler()->scheduleLocationChange(*weakThis, weakThis->securityOrigin(), url, frame->loader().outgoingReferrer(), LockHistory::Yes, LockBackForwardList::No, NavigationHistoryBehavior::Auto, [callback = WTFMove(callback)](auto result) mutable {
             callback(result);
         });
     });
@@ -10716,7 +10722,7 @@ PermissionsPolicy Document::permissionsPolicy() const
     // because Document may not be set on Frame yet, and it would affect the computation
     // of PermissionsPolicy.
     if (!m_permissionsPolicy)
-        m_permissionsPolicy = makeUnique<PermissionsPolicy>(ownerElement(), securityOrigin().data());
+        m_permissionsPolicy = makeUnique<PermissionsPolicy>(*this);
 
     return *m_permissionsPolicy;
 }

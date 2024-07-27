@@ -1,3 +1,0 @@
-
-PASS IDBIndex.count() - returns the number of records in the index
-

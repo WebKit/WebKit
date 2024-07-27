@@ -1,3 +1,0 @@
-
-PASS Attempting to use deleted IDBObjectStore
-

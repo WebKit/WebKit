@@ -343,7 +343,7 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
     if (!isSupported)
         selectedFactory.clear();
 
-    GST_LOG("Lookup result for %s matching caps %" GST_PTR_FORMAT " : isSupported=%s, isUsingHardware=%s", elementFactoryTypeToString(factoryType), caps.get(), boolForPrinting(isSupported), boolForPrinting(isUsingHardware));
+    GST_LOG("Lookup result for %s matching caps %" GST_PTR_FORMAT " : isSupported=%s, isUsingHardware=%s, factory=%" GST_PTR_FORMAT, elementFactoryTypeToString(factoryType), caps.get(), boolForPrinting(isSupported), boolForPrinting(isUsingHardware), selectedFactory.get());
     return { isSupported, isUsingHardware, selectedFactory };
 }
 
@@ -378,12 +378,12 @@ void GStreamerRegistryScanner::refresh()
     GST_DEBUG("%s registry scanner initialized", m_isMediaSource ? "MSE" : "Regular playback");
     for (auto& mimeType : m_decoderMimeTypeSet)
         GST_DEBUG("Decoder mime-type registered: %s", mimeType.utf8().data());
-    for (auto& item : m_decoderCodecMap)
-        GST_DEBUG("%s decoder codec pattern registered: %s", item.value ? "Hardware" : "Software", item.key.string().utf8().data());
+    for (auto& [codec, isHardware] : m_decoderCodecMap)
+        GST_DEBUG("%s decoder codec pattern registered: %s", isHardware ? "Hardware" : "Software", codec.utf8().data());
     for (auto& mimeType : m_encoderMimeTypeSet)
         GST_DEBUG("Encoder mime-type registered: %s", mimeType.utf8().data());
-    for (auto& item : m_encoderCodecMap)
-        GST_DEBUG("%s encoder codec pattern registered: %s", item.value ? "Hardware" : "Software", item.key.string().utf8().data());
+    for (auto& [codec, isHardware] : m_encoderCodecMap)
+        GST_DEBUG("%s encoder codec pattern registered: %s", isHardware ? "Hardware" : "Software", codec.utf8().data());
 #endif
 }
 
@@ -423,11 +423,11 @@ void GStreamerRegistryScanner::fillMimeTypeSetFromCapsMapping(const GStreamerReg
                 for (const auto& pattern : current.webkitCodecPatterns)
                     m_decoderCodecMap.add(pattern, result);
             }
-            if (!current.webkitMimeTypes.isEmpty()) {
-                for (const auto& mimeType : current.webkitMimeTypes)
+            if (!current.webkitMIMETypes.isEmpty()) {
+                for (const auto& mimeType : current.webkitMIMETypes)
                     m_decoderMimeTypeSet.add(mimeType);
             } else
-                m_decoderMimeTypeSet.add(AtomString::fromLatin1(current.capsString));
+                m_decoderMimeTypeSet.add(current.capsString);
         }
     }
 }
@@ -437,26 +437,26 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
     m_decoderCodecMap.clear();
     m_decoderMimeTypeSet.clear();
     if (auto result = factories.hasElementForMediaType(ElementFactories::Type::AudioDecoder, "audio/mpeg, mpegversion=(int)4"_s)) {
-        m_decoderMimeTypeSet.add(AtomString("audio/aac"_s));
-        m_decoderMimeTypeSet.add(AtomString("audio/mp4"_s));
-        m_decoderMimeTypeSet.add(AtomString("audio/x-m4a"_s));
-        m_decoderMimeTypeSet.add(AtomString("audio/mpeg"_s));
-        m_decoderMimeTypeSet.add(AtomString("audio/x-mpeg"_s));
-        m_decoderCodecMap.add(AtomString("mpeg"_s), result);
-        m_decoderCodecMap.add(AtomString("mp4a*"_s), result);
+        m_decoderMimeTypeSet.add("audio/aac"_s);
+        m_decoderMimeTypeSet.add("audio/mp4"_s);
+        m_decoderMimeTypeSet.add("audio/x-m4a"_s);
+        m_decoderMimeTypeSet.add("audio/mpeg"_s);
+        m_decoderMimeTypeSet.add("audio/x-mpeg"_s);
+        m_decoderCodecMap.add("mpeg"_s, result);
+        m_decoderCodecMap.add("mp4a*"_s, result);
     }
 
     auto opusSupported = factories.hasElementForMediaType(ElementFactories::Type::AudioDecoder, "audio/x-opus"_s);
     if (opusSupported && (!m_isMediaSource || factories.hasElementForMediaType(ElementFactories::Type::AudioParser, "audio/x-opus"_s))) {
-        m_decoderMimeTypeSet.add(AtomString("audio/opus"_s));
-        m_decoderCodecMap.add(AtomString("opus"_s), opusSupported);
-        m_decoderCodecMap.add(AtomString("x-opus"_s), opusSupported);
+        m_decoderMimeTypeSet.add("audio/opus"_s);
+        m_decoderCodecMap.add("opus"_s, opusSupported);
+        m_decoderCodecMap.add("x-opus"_s, opusSupported);
     }
 
     auto vorbisSupported = factories.hasElementForMediaType(ElementFactories::Type::AudioDecoder, "audio/x-vorbis"_s);
     if (vorbisSupported && (!m_isMediaSource || factories.hasElementForMediaType(ElementFactories::Type::AudioParser, "audio/x-vorbis"_s))) {
-        m_decoderCodecMap.add(AtomString("vorbis"_s), vorbisSupported);
-        m_decoderCodecMap.add(AtomString("x-vorbis"_s), vorbisSupported);
+        m_decoderCodecMap.add("vorbis"_s, vorbisSupported);
+        m_decoderCodecMap.add("x-vorbis"_s, vorbisSupported);
     }
 
     bool matroskaSupported = factories.hasElementForMediaType(ElementFactories::Type::Demuxer, "video/x-matroska"_s);
@@ -465,21 +465,21 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
         auto vp9DecoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-vp9"_s, ElementFactories::CheckHardwareClassifier::Yes, { { "vp9alphadecodebin"_s } });
 
         if (vp8DecoderAvailable || vp9DecoderAvailable)
-            m_decoderMimeTypeSet.add(AtomString("video/webm"_s));
+            m_decoderMimeTypeSet.add("video/webm"_s);
 
         if (vp8DecoderAvailable) {
-            m_decoderCodecMap.add(AtomString("vp8"_s), vp8DecoderAvailable);
-            m_decoderCodecMap.add(AtomString("x-vp8"_s), vp8DecoderAvailable);
-            m_decoderCodecMap.add(AtomString("vp8.0"_s), vp8DecoderAvailable);
+            m_decoderCodecMap.add("vp8"_s, vp8DecoderAvailable);
+            m_decoderCodecMap.add("x-vp8"_s, vp8DecoderAvailable);
+            m_decoderCodecMap.add("vp8.0"_s, vp8DecoderAvailable);
         }
         if (vp9DecoderAvailable) {
-            m_decoderCodecMap.add(AtomString("vp9"_s), vp9DecoderAvailable);
-            m_decoderCodecMap.add(AtomString("x-vp9"_s), vp9DecoderAvailable);
-            m_decoderCodecMap.add(AtomString("vp9.0"_s), vp9DecoderAvailable);
-            m_decoderCodecMap.add(AtomString("vp09*"_s), vp9DecoderAvailable);
+            m_decoderCodecMap.add("vp9"_s, vp9DecoderAvailable);
+            m_decoderCodecMap.add("x-vp9"_s, vp9DecoderAvailable);
+            m_decoderCodecMap.add("vp9.0"_s, vp9DecoderAvailable);
+            m_decoderCodecMap.add("vp09*"_s, vp9DecoderAvailable);
         }
         if (opusSupported)
-            m_decoderMimeTypeSet.add(AtomString("audio/webm"_s));
+            m_decoderMimeTypeSet.add(("audio/webm"_s));
     }
 
     bool shouldAddMP4Container = false;
@@ -492,9 +492,9 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
 
     if (h264DecoderAvailable && (!needsH264Parse || factories.hasElementForMediaType(ElementFactories::Type::VideoParser, "video/x-h264"_s))) {
         shouldAddMP4Container = true;
-        m_decoderCodecMap.add(AtomString("x-h264"_s), h264DecoderAvailable);
-        m_decoderCodecMap.add(AtomString("avc*"_s), h264DecoderAvailable);
-        m_decoderCodecMap.add(AtomString("mp4v*"_s), h264DecoderAvailable);
+        m_decoderCodecMap.add("x-h264"_s, h264DecoderAvailable);
+        m_decoderCodecMap.add("avc*"_s, h264DecoderAvailable);
+        m_decoderCodecMap.add("mp4v*"_s, h264DecoderAvailable);
     }
 
     auto h265DecoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-h265"_s, ElementFactories::CheckHardwareClassifier::Yes);
@@ -507,21 +507,21 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
 
     if (h265DecoderAvailable && (!needsH265Parse || factories.hasElementForMediaType(ElementFactories::Type::VideoParser, "video/x-h265"_s))) {
         shouldAddMP4Container = true;
-        m_decoderCodecMap.add(AtomString("x-h265"_s), h265DecoderAvailable);
-        m_decoderCodecMap.add(AtomString("hvc1*"_s), h265DecoderAvailable);
-        m_decoderCodecMap.add(AtomString("hev1*"_s), h265DecoderAvailable);
+        m_decoderCodecMap.add("x-h265"_s, h265DecoderAvailable);
+        m_decoderCodecMap.add("hvc1*"_s, h265DecoderAvailable);
+        m_decoderCodecMap.add("hev1*"_s, h265DecoderAvailable);
     }
 
     if (shouldAddMP4Container) {
-        m_decoderMimeTypeSet.add(AtomString("video/mp4"_s));
-        m_decoderMimeTypeSet.add(AtomString("video/x-m4v"_s));
+        m_decoderMimeTypeSet.add("video/mp4"_s);
+        m_decoderMimeTypeSet.add("video/x-m4v"_s);
     }
 
     auto av1DecoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-av1"_s, ElementFactories::CheckHardwareClassifier::Yes);
     if ((matroskaSupported || isContainerTypeSupported(Configuration::Decoding, "video/mp4"_s)) && av1DecoderAvailable) {
-        m_decoderCodecMap.add(AtomString("av01*"_s), av1DecoderAvailable);
-        m_decoderCodecMap.add(AtomString("av1"_s), av1DecoderAvailable);
-        m_decoderCodecMap.add(AtomString("x-av1"_s), av1DecoderAvailable);
+        m_decoderCodecMap.add("av01*"_s, av1DecoderAvailable);
+        m_decoderCodecMap.add("av1"_s, av1DecoderAvailable);
+        m_decoderCodecMap.add("x-av1"_s, av1DecoderAvailable);
     }
 
     Vector<GstCapsWebKitMapping> mseCompatibleMapping = {
@@ -574,50 +574,50 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
     fillMimeTypeSetFromCapsMapping(factories, mapping);
 
     if (factories.hasElementForMediaType(ElementFactories::Type::Demuxer, "application/ogg"_s)) {
-        m_decoderMimeTypeSet.add(AtomString("application/ogg"_s));
+        m_decoderMimeTypeSet.add("application/ogg"_s);
 
         if (vorbisSupported) {
-            m_decoderMimeTypeSet.add(AtomString("audio/ogg"_s));
-            m_decoderMimeTypeSet.add(AtomString("audio/x-vorbis+ogg"_s));
+            m_decoderMimeTypeSet.add("audio/ogg"_s);
+            m_decoderMimeTypeSet.add("audio/x-vorbis+ogg"_s);
         }
 
         if (auto result = factories.hasElementForMediaType(ElementFactories::Type::AudioDecoder, "audio/x-speex"_s)) {
-            m_decoderMimeTypeSet.add(AtomString("audio/ogg"_s));
-            m_decoderCodecMap.add(AtomString("speex"_s), result);
+            m_decoderMimeTypeSet.add("audio/ogg"_s);
+            m_decoderCodecMap.add("speex"_s, result);
         }
 
         if (auto result = factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-theora"_s)) {
-            m_decoderMimeTypeSet.add(AtomString("video/ogg"_s));
-            m_decoderCodecMap.add(AtomString("theora"_s), result);
+            m_decoderMimeTypeSet.add("video/ogg"_s);
+            m_decoderCodecMap.add("theora"_s, result);
         }
     }
 
     bool audioMpegSupported = false;
     if (auto result = factories.hasElementForMediaType(ElementFactories::Type::AudioDecoder, "audio/mpeg, mpegversion=(int)1, layer=(int)[1, 3]"_s)) {
         audioMpegSupported = true;
-        m_decoderMimeTypeSet.add(AtomString("audio/mp1"_s));
-        m_decoderMimeTypeSet.add(AtomString("audio/mp3"_s));
-        m_decoderMimeTypeSet.add(AtomString("audio/x-mp3"_s));
-        m_decoderCodecMap.add(AtomString("audio/mp3"_s), result);
-        m_decoderCodecMap.add(AtomString("mp3"_s), result);
+        m_decoderMimeTypeSet.add("audio/mp1"_s);
+        m_decoderMimeTypeSet.add("audio/mp3"_s);
+        m_decoderMimeTypeSet.add("audio/x-mp3"_s);
+        m_decoderCodecMap.add("audio/mp3"_s, result);
+        m_decoderCodecMap.add("mp3"_s, result);
     }
 
     if (factories.hasElementForMediaType(ElementFactories::Type::AudioDecoder, "audio/mpeg, mpegversion=(int)2"_s)) {
         audioMpegSupported = true;
-        m_decoderMimeTypeSet.add(AtomString("audio/mp2"_s));
+        m_decoderMimeTypeSet.add("audio/mp2"_s);
     }
 
     audioMpegSupported |= isContainerTypeSupported(Configuration::Decoding, "audio/mp4"_s);
     if (audioMpegSupported) {
-        m_decoderMimeTypeSet.add(AtomString("audio/mpeg"_s));
-        m_decoderMimeTypeSet.add(AtomString("audio/x-mpeg"_s));
+        m_decoderMimeTypeSet.add("audio/mpeg"_s);
+        m_decoderMimeTypeSet.add("audio/x-mpeg"_s);
     }
 
     if (matroskaSupported) {
-        m_decoderMimeTypeSet.add(AtomString("video/x-matroska"_s));
+        m_decoderMimeTypeSet.add("video/x-matroska"_s);
 
         if (factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-vp10"_s))
-            m_decoderMimeTypeSet.add(AtomString("video/webm"_s));
+            m_decoderMimeTypeSet.add("video/webm"_s);
     }
 }
 
@@ -632,94 +632,94 @@ void GStreamerRegistryScanner::initializeEncoders(const GStreamerRegistryScanner
 
     auto aacSupported = factories.hasElementForMediaType(ElementFactories::Type::AudioEncoder, "audio/mpeg, mpegversion=(int)4"_s);
     if (auto result = factories.hasElementForMediaType(ElementFactories::Type::AudioEncoder, "audio/mpeg, mpegversion=(int)4"_s)) {
-        m_encoderCodecMap.add(AtomString("mpeg"_s), result);
-        m_encoderCodecMap.add(AtomString("mp4a*"_s), result);
+        m_encoderCodecMap.add("mpeg"_s, result);
+        m_encoderCodecMap.add("mp4a*"_s, result);
     }
 
     if (auto alawSupported = factories.hasElementForMediaType(ElementFactories::Type::AudioEncoder, "audio/x-alaw"_s))
-        m_encoderCodecMap.add(AtomString("alaw"_s), alawSupported);
+        m_encoderCodecMap.add("alaw"_s, alawSupported);
 
     if (auto ulawSupported = factories.hasElementForMediaType(ElementFactories::Type::AudioEncoder, "audio/x-mulaw"_s))
-        m_encoderCodecMap.add(AtomString("ulaw"_s), ulawSupported);
+        m_encoderCodecMap.add("ulaw"_s, ulawSupported);
 
     if (auto flacSupported = factories.hasElementForMediaType(ElementFactories::Type::AudioEncoder, "audio/x-flac"_s))
-        m_encoderCodecMap.add(AtomString("flac"_s), flacSupported);
+        m_encoderCodecMap.add("flac"_s, flacSupported);
 
     if (auto mp3Supported = factories.hasElementForMediaType(ElementFactories::Type::AudioEncoder, "audio/mpeg, mpegversion=(int)1, layer=(int)3"_s))
-        m_encoderCodecMap.add(AtomString("mp3"_s), mp3Supported);
+        m_encoderCodecMap.add("mp3"_s, mp3Supported);
 
     auto opusSupported = factories.hasElementForMediaType(ElementFactories::Type::AudioEncoder, "audio/x-opus"_s);
     if (opusSupported) {
-        m_encoderCodecMap.add(AtomString("opus"_s), opusSupported);
-        m_encoderCodecMap.add(AtomString("x-opus"_s), opusSupported);
+        m_encoderCodecMap.add("opus"_s, opusSupported);
+        m_encoderCodecMap.add("x-opus"_s, opusSupported);
     }
 
     auto vorbisSupported = factories.hasElementForMediaType(ElementFactories::Type::AudioEncoder, "audio/x-vorbis"_s);
     if (vorbisSupported) {
-        m_encoderCodecMap.add(AtomString("vorbis"_s), vorbisSupported);
-        m_encoderCodecMap.add(AtomString("x-vorbis"_s), vorbisSupported);
+        m_encoderCodecMap.add("vorbis"_s, vorbisSupported);
+        m_encoderCodecMap.add("x-vorbis"_s, vorbisSupported);
     }
 
     Vector<String> av1EncodersDisallowedList { "av1enc"_s };
     auto av1EncoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoEncoder, "video/x-av1"_s, ElementFactories::CheckHardwareClassifier::Yes, std::make_optional(WTFMove(av1EncodersDisallowedList)));
     if (av1EncoderAvailable) {
-        m_encoderCodecMap.add(AtomString("av01*"_s), av1EncoderAvailable);
-        m_encoderCodecMap.add(AtomString("av1"_s), av1EncoderAvailable);
-        m_encoderCodecMap.add(AtomString("x-av1"_s), av1EncoderAvailable);
+        m_encoderCodecMap.add("av01*"_s, av1EncoderAvailable);
+        m_encoderCodecMap.add("av1"_s, av1EncoderAvailable);
+        m_encoderCodecMap.add("x-av1"_s, av1EncoderAvailable);
     }
 
     auto vp8EncoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoEncoder, "video/x-vp8"_s, ElementFactories::CheckHardwareClassifier::Yes);
     if (vp8EncoderAvailable) {
-        m_encoderCodecMap.add(AtomString("vp8"_s), vp8EncoderAvailable);
-        m_encoderCodecMap.add(AtomString("x-vp8"_s), vp8EncoderAvailable);
-        m_encoderCodecMap.add(AtomString("vp8.0"_s), vp8EncoderAvailable);
+        m_encoderCodecMap.add("vp8"_s, vp8EncoderAvailable);
+        m_encoderCodecMap.add("x-vp8"_s, vp8EncoderAvailable);
+        m_encoderCodecMap.add("vp8.0"_s, vp8EncoderAvailable);
     }
 
     auto vp9EncoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoEncoder, "video/x-vp9"_s, ElementFactories::CheckHardwareClassifier::Yes);
     if (vp9EncoderAvailable) {
-        m_encoderCodecMap.add(AtomString("vp9"_s), vp9EncoderAvailable);
-        m_encoderCodecMap.add(AtomString("x-vp9"_s), vp9EncoderAvailable);
-        m_encoderCodecMap.add(AtomString("vp9.0"_s), vp9EncoderAvailable);
-        m_encoderCodecMap.add(AtomString("vp09*"_s), vp9EncoderAvailable);
+        m_encoderCodecMap.add("vp9"_s, vp9EncoderAvailable);
+        m_encoderCodecMap.add("x-vp9"_s, vp9EncoderAvailable);
+        m_encoderCodecMap.add("vp9.0"_s, vp9EncoderAvailable);
+        m_encoderCodecMap.add("vp09*"_s, vp9EncoderAvailable);
     }
 
     if (factories.hasElementForMediaType(ElementFactories::Type::Muxer, "video/webm"_s) && (vp8EncoderAvailable || vp9EncoderAvailable || av1EncoderAvailable))
-        m_encoderMimeTypeSet.add(AtomString("video/webm"_s));
+        m_encoderMimeTypeSet.add("video/webm"_s);
 
     if (factories.hasElementForMediaType(ElementFactories::Type::Muxer, "audio/webm"_s)) {
         if (opusSupported)
-            m_encoderMimeTypeSet.add(AtomString("audio/opus"_s));
-        m_encoderMimeTypeSet.add(AtomString("audio/webm"_s));
+            m_encoderMimeTypeSet.add("audio/opus"_s);
+        m_encoderMimeTypeSet.add("audio/webm"_s);
     }
 
     if (factories.hasElementForMediaType(ElementFactories::Type::Muxer, "audio/ogg"_s) && (vorbisSupported || opusSupported))
-        m_encoderMimeTypeSet.add(AtomString("audio/ogg"_s));
+        m_encoderMimeTypeSet.add("audio/ogg"_s);
 
     auto h264EncoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoEncoder, "video/x-h264, profile=(string){ constrained-baseline, baseline, high }"_s, ElementFactories::CheckHardwareClassifier::Yes);
     if (h264EncoderAvailable) {
-        m_encoderCodecMap.add(AtomString("h264"_s), h264EncoderAvailable);
-        m_encoderCodecMap.add(AtomString("x-h264"_s), h264EncoderAvailable);
-        m_encoderCodecMap.add(AtomString("avc*"_s), h264EncoderAvailable);
-        m_encoderCodecMap.add(AtomString("mp4v*"_s), h264EncoderAvailable);
+        m_encoderCodecMap.add("h264"_s, h264EncoderAvailable);
+        m_encoderCodecMap.add("x-h264"_s, h264EncoderAvailable);
+        m_encoderCodecMap.add("avc*"_s, h264EncoderAvailable);
+        m_encoderCodecMap.add("mp4v*"_s, h264EncoderAvailable);
     }
 
     auto h265EncoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoEncoder, "video/x-h265, profile=(string){ main, high }"_s, ElementFactories::CheckHardwareClassifier::Yes);
     if (h265EncoderAvailable) {
-        m_encoderCodecMap.add(AtomString("hev1*"_s), h265EncoderAvailable);
-        m_encoderCodecMap.add(AtomString("hvc1*"_s), h265EncoderAvailable);
+        m_encoderCodecMap.add("hev1*"_s, h265EncoderAvailable);
+        m_encoderCodecMap.add("hvc1*"_s, h265EncoderAvailable);
     }
 
     if (factories.hasElementForMediaType(ElementFactories::Type::Muxer, "video/quicktime"_s)) {
         if (opusSupported)
-            m_encoderMimeTypeSet.add(AtomString("audio/opus"_s));
+            m_encoderMimeTypeSet.add("audio/opus"_s);
         if (aacSupported) {
-            m_encoderMimeTypeSet.add(AtomString("audio/aac"_s));
-            m_encoderMimeTypeSet.add(AtomString("audio/mp4"_s));
-            m_encoderMimeTypeSet.add(AtomString("audio/x-m4a"_s));
+            m_encoderMimeTypeSet.add("audio/aac"_s);
+            m_encoderMimeTypeSet.add("audio/mp4"_s);
+            m_encoderMimeTypeSet.add("audio/x-m4a"_s);
         }
         if (h264EncoderAvailable) {
-            m_encoderMimeTypeSet.add(AtomString("video/mp4"_s));
-            m_encoderMimeTypeSet.add(AtomString("video/x-m4v"_s));
+            m_encoderMimeTypeSet.add("video/mp4"_s);
+            m_encoderMimeTypeSet.add("video/x-m4v"_s);
         }
     }
 }
@@ -754,7 +754,7 @@ GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isCodecSup
     else {
         auto& codecMap = configuration == Configuration::Decoding ? m_decoderCodecMap : m_encoderCodecMap;
         for (const auto& [codecId, lookupResult] : codecMap) {
-            if (!fnmatch(codecId.string().utf8().data(), codecName.utf8().data(), 0)) {
+            if (!fnmatch(codecId.utf8().data(), codecName.utf8().data(), 0)) {
                 bool isSupported = shouldCheckForHardwareUse ? lookupResult.isUsingHardware : true;
                 if (isSupported) {
                     result.isSupported = true;
@@ -802,7 +802,7 @@ MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(
 
     using SupportsType = MediaPlayerEnums::SupportsType;
 
-    const auto& containerType = contentType.containerType().convertToASCIILowercase();
+    const auto containerType = contentType.containerType().convertToASCIILowercase();
     if (!isContainerTypeSupported(configuration, containerType))
         return SupportsType::IsNotSupported;
 

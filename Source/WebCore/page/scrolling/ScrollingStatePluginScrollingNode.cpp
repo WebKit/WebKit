@@ -61,6 +61,7 @@ ScrollingStatePluginScrollingNode::ScrollingStatePluginScrollingNode(
     ScrollbarHoverState&& scrollbarHoverState,
     ScrollbarEnabledState&& scrollbarEnabledState,
     UserInterfaceLayoutDirection scrollbarLayoutDirection,
+    ScrollbarWidth scrollbarWidth,
     RequestedKeyboardScrollData&& scrollData
 ) : ScrollingStateScrollingNode(
     ScrollingNodeType::PluginScrolling,
@@ -91,6 +92,7 @@ ScrollingStatePluginScrollingNode::ScrollingStatePluginScrollingNode(
     WTFMove(scrollbarHoverState),
     WTFMove(scrollbarEnabledState),
     scrollbarLayoutDirection,
+    scrollbarWidth,
     WTFMove(scrollData)
 )
 {

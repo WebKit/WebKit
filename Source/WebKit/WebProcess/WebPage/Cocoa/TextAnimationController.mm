@@ -28,7 +28,6 @@
 #include "config.h"
 #include "TextAnimationController.h"
 
-#include "TextAnimationType.h"
 #include "WebPage.h"
 #include <WebCore/Chrome.h>
 #include <WebCore/ChromeClient.h>
@@ -37,6 +36,7 @@
 #include <WebCore/Range.h>
 #include <WebCore/RenderedDocumentMarker.h>
 #include <WebCore/SimpleRange.h>
+#include <WebCore/TextAnimationTypes.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/WritingToolsTypes.h>
@@ -180,12 +180,12 @@ void TextAnimationController::removeInitialTextAnimation(const WTF::UUID& sessio
 
 static WebCore::CharacterRange remainingCharacterRange(WebCore::CharacterRange totalRange, WebCore::CharacterRange previousRange)
 {
+    if (totalRange.length < previousRange.length) {
+        return totalRange;
+    }
     auto location = previousRange.location + previousRange.length;
     auto length = totalRange.length - previousRange.length;
-    if (totalRange.length < previousRange.length) {
-        ASSERT_NOT_REACHED();
-        return WebCore::CharacterRange { 0, 0 };
-    }
+
     return WebCore::CharacterRange { location, length };
 };
 
@@ -201,23 +201,26 @@ void TextAnimationController::addInitialTextAnimation(const WTF::UUID& sessionUU
     if (!textIndicatorData)
         return;
 
-    m_webPage->addTextAnimationForAnimationID(initialAnimationUUID, { TextAnimationType::Initial, WTF::UUID(WTF::UUID::emptyValue) }, *textIndicatorData);
+    m_webPage->addTextAnimationForAnimationID(initialAnimationUUID, { WebCore::TextAnimationType::Initial, WebCore::TextAnimationRunMode::RunAnimation, WTF::UUID(WTF::UUID::emptyValue) }, *textIndicatorData);
 
     m_initialAnimations.set(sessionUUID, initialAnimationUUID);
 }
 
 
-void TextAnimationController::addSourceTextAnimation(const WTF::UUID& sessionUUID, const WebCore::CharacterRange& replacingRange, const String string, WTF::CompletionHandler<void(void)>&& completionHandler)
+void TextAnimationController::addSourceTextAnimation(const WTF::UUID& sessionUUID, const WebCore::CharacterRange& replacingRange, const String string, WTF::CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
 {
 #if PLATFORM(MAC)
     auto previouslyReplacedRange = m_alreadyReplacedRanges.getOptional(sessionUUID);
     auto replaceCharacterRange = replacingRange;
 
+    WebCore::TextAnimationRunMode runMode = WebCore::TextAnimationRunMode::RunAnimation;
     if (previouslyReplacedRange) {
-        if ((*previouslyReplacedRange)->range == replacingRange && (*previouslyReplacedRange)->string == string)
-            return;
-
-        replaceCharacterRange = remainingCharacterRange(replacingRange, (*previouslyReplacedRange)->range);
+        // If the text is the same as has been replaced before, this is the final replace, so we shouldn't
+        // try and run the animation or recalculate the range for the animation.
+        if ((*previouslyReplacedRange)->range.location == replacingRange.location && (*previouslyReplacedRange)->string == string)
+            runMode = WebCore::TextAnimationRunMode::OnlyReplaceText;
+        else
+            replaceCharacterRange = remainingCharacterRange(replacingRange, (*previouslyReplacedRange)->range);
     }
 
     auto sessionRange = contextRangeForSessionWithID(sessionUUID);
@@ -232,11 +235,11 @@ void TextAnimationController::addSourceTextAnimation(const WTF::UUID& sessionUUI
 
     auto textIndicatorData = createTextIndicatorForRange(replacedRange);
     if (!textIndicatorData) {
-        completionHandler();
+        completionHandler(WebCore::TextAnimationRunMode::RunAnimation);
         return;
     }
 
-    m_webPage->addTextAnimationForAnimationID(sourceTextIndicatorUUID, { WebKit::TextAnimationType::Source, WTF::UUID(WTF::UUID::emptyValue)  }, *textIndicatorData, WTFMove(completionHandler));
+    m_webPage->addTextAnimationForAnimationID(sourceTextIndicatorUUID, { WebCore::TextAnimationType::Source, runMode, WTF::UUID(WTF::UUID::emptyValue)  }, *textIndicatorData, WTFMove(completionHandler));
 
     TextAnimationRange animationState = { sourceTextIndicatorUUID, replaceCharacterRange };
     auto& animationRanges = m_textAnimationRanges.ensure(sessionUUID, [&] {
@@ -282,9 +285,13 @@ void TextAnimationController::addDestinationTextAnimation(const WTF::UUID& sessi
     if (!textIndicatorData)
         return;
 
-    m_webPage->addTextAnimationForAnimationID(destinationTextIndicatorUUID, { TextAnimationType::Final, unstyledRangeUUID }, *textIndicatorData, [weakWebPage = WeakPtr { *m_webPage }, sessionUUID]() mutable {
+    m_webPage->addTextAnimationForAnimationID(destinationTextIndicatorUUID, { WebCore::TextAnimationType::Final, WebCore::TextAnimationRunMode::RunAnimation, unstyledRangeUUID }, *textIndicatorData, [weakWebPage = WeakPtr { *m_webPage }, sessionUUID](WebCore::TextAnimationRunMode runMode) mutable {
+        if (runMode == WebCore::TextAnimationRunMode::DoNotRun)
+            return;
+
         if (!weakWebPage)
             return;
+
         weakWebPage->addInitialTextAnimation(sessionUUID);
     });
 

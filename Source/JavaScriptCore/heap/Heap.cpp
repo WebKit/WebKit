@@ -272,7 +272,7 @@ private:
     , name ISO_SUBSPACE_INIT(*this, heapCellType, type)
 
 #define INIT_SERVER_STRUCTURE_ISO_SUBSPACE(name, heapCellType, type) \
-    , name("IsoSubspace" #name, *this, heapCellType, WTF::roundUpToMultipleOf<type::atomSize>(sizeof(type)), type::numberOfLowerTierCells, makeUnique<StructureAlignedMemoryAllocator>("Structure"))
+    , name("IsoSubspace" #name, *this, heapCellType, WTF::roundUpToMultipleOf<type::atomSize>(sizeof(type)), type::usePreciseAllocationsOnly, type::numberOfLowerTierPreciseCells, makeUnique<StructureAlignedMemoryAllocator>("Structure"))
 
 Heap::Heap(VM& vm, HeapType heapType)
     : m_heapType(heapType)
@@ -2827,18 +2827,6 @@ void Heap::didFreeBlock(size_t capacity)
 #endif
 }
 
-// The following are pulled out of the body of Heap::addCoreConstraints() only
-// because the WinCairo port is not able to handle #if's inside the body of the
-// lambda passed into the MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR macro. This works
-// around that issue.
-
-#if JSC_OBJC_API_ENABLED
-constexpr bool objcAPIEnabled = true;
-#else
-constexpr bool objcAPIEnabled = false;
-static UNUSED_FUNCTION void scanExternalRememberedSet(VM&, AbstractSlotVisitor&) { }
-#endif
-
 #if ENABLE(SAMPLING_PROFILER)
 constexpr bool samplingProfilerSupported = true;
 template<typename Visitor>
@@ -2909,10 +2897,12 @@ void Heap::addCoreConstraints()
         "Msr", "Misc Small Roots",
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             VM& vm = this->vm();
-            if constexpr (objcAPIEnabled) {
+#if JSC_OBJC_API_ENABLED
+            {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::ExternalRememberedSet);
                 scanExternalRememberedSet(vm, visitor);
             }
+#endif
 
             {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::StrongReferences);
@@ -2993,13 +2983,10 @@ void Heap::addCoreConstraints()
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([] (auto& visitor) {
             JSC::Heap* heap = visitor.heap();
 
-            // The `visitor2` argument is strangely named because the WinCairo port
-            // gets confused  and thinks we're trying to capture the outer visitor
-            // arg here. Giving it a unique name works around this issue.
-            auto callOutputConstraint = [] (auto& visitor2, HeapCell* heapCell, HeapCell::Kind) {
-                SetRootMarkReasonScope rootScope(visitor2, RootMarkReason::Output);
+            auto callOutputConstraint = [] (auto& visitor, HeapCell* heapCell, HeapCell::Kind) {
+                SetRootMarkReasonScope rootScope(visitor, RootMarkReason::Output);
                 JSCell* cell = static_cast<JSCell*>(heapCell);
-                cell->methodTable()->visitOutputConstraints(cell, visitor2);
+                cell->methodTable()->visitOutputConstraints(cell, visitor);
             };
             
             auto add = [&] (auto& set) {

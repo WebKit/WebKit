@@ -155,6 +155,7 @@
 #import <WebCore/Settings.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/StringUtilities.h>
+#import <WebCore/TextAnimationTypes.h>
 #import <WebCore/TextManipulationController.h>
 #import <WebCore/TextManipulationItem.h>
 #import <WebCore/ViewportArguments.h>
@@ -360,7 +361,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
     // FIXME: This copy is probably not necessary.
     Ref pageConfiguration = _configuration->_pageConfiguration->copy();
-    [self _setupPageConfiguration:pageConfiguration];
+    [self _setupPageConfiguration:pageConfiguration withPool:processPool];
 
     _usePlatformFindUI = YES;
 
@@ -449,7 +450,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 #endif
 }
 
-- (void)_setupPageConfiguration:(Ref<API::PageConfiguration>&)pageConfiguration
+- (void)_setupPageConfiguration:(Ref<API::PageConfiguration>&)pageConfiguration withPool:(WebKit::WebProcessPool&)pool
 {
     pageConfiguration->setPreferences([_configuration preferences]->_preferences.get());
     if (WKWebView *relatedWebView = [_configuration _relatedWebView])
@@ -476,6 +477,12 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
     pageConfiguration->setAdditionalSupportedImageTypes(makeVector<String>([_configuration _additionalSupportedImageTypes]));
 
+    pageConfiguration->setWaitsForPaintAfterViewDidMoveToWindow([_configuration _waitsForPaintAfterViewDidMoveToWindow]);
+    pageConfiguration->setDrawsBackground([_configuration _drawsBackground]);
+    pageConfiguration->setControlledByAutomation([_configuration _isControlledByAutomation]);
+
+    pageConfiguration->preferences().startBatchingUpdates();
+
     pageConfiguration->preferences().setSuppressesIncrementalRendering(!![_configuration suppressesIncrementalRendering]);
 #if !PLATFORM(MAC)
     // FIXME: rdar://99156546. Remove this and WKWebViewConfiguration._printsBackgrounds once all iOS clients adopt the new API.
@@ -488,9 +495,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->preferences().setHTTPEquivEnabled(!![_configuration _allowsMetaRefresh]);
     pageConfiguration->preferences().setAllowUniversalAccessFromFileURLs(!![_configuration _allowUniversalAccessFromFileURLs]);
     pageConfiguration->preferences().setAllowTopNavigationToDataURLs(!![_configuration _allowTopNavigationToDataURLs]);
-    pageConfiguration->setWaitsForPaintAfterViewDidMoveToWindow([_configuration _waitsForPaintAfterViewDidMoveToWindow]);
-    pageConfiguration->setDrawsBackground([_configuration _drawsBackground]);
-    pageConfiguration->setControlledByAutomation([_configuration _isControlledByAutomation]);
     pageConfiguration->preferences().setIncompleteImageBorderEnabled(!![_configuration _incompleteImageBorderEnabled]);
     pageConfiguration->preferences().setShouldDeferAsynchronousScriptsUntilAfterDocumentLoadOrFirstPaint(!![_configuration _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad]);
     pageConfiguration->preferences().setShouldRestrictBaseURLSchemes(shouldRestrictBaseURLSchemes());
@@ -583,6 +587,12 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->preferences().setAlternateFormControlDesignEnabled(WebKit::defaultAlternateFormControlDesignEnabled());
     pageConfiguration->preferences().setVideoFullscreenRequiresElementFullscreen(WebKit::defaultVideoFullscreenRequiresElementFullscreen());
 #endif
+
+    // For SharedPreferencesForWebProcess
+    pageConfiguration->preferences().setAllowTestOnlyIPC(!![_configuration _allowTestOnlyIPC]);
+    pageConfiguration->preferences().setUsesSingleWebProcess(pool.usesSingleWebProcess());
+
+    pageConfiguration->preferences().endBatchingUpdates();
 }
 
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
@@ -1272,7 +1282,10 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 #else
     auto useIntrinsicDeviceScaleFactor = [[_customContentView class] web_requiresCustomSnapshotting];
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME: <rdar://131638772> UIScreen.mainScreen is deprecated.
     CGFloat deviceScale = useIntrinsicDeviceScaleFactor ? UIScreen.mainScreen.scale : _page->deviceScaleFactor();
+ALLOW_DEPRECATED_DECLARATIONS_END
     CGFloat imageWidth = useIntrinsicDeviceScaleFactor ? snapshotWidth : snapshotWidth * deviceScale;
     RetainPtr<WKWebView> strongSelf = self;
     BOOL afterScreenUpdates = snapshotConfiguration && snapshotConfiguration.afterScreenUpdates;
@@ -1790,20 +1803,20 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 }
 #endif
 
-static inline WKTextAnimationType toWKTextAnimationType(WebKit::TextAnimationType style)
+static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationType style)
 {
     switch (style) {
-    case WebKit::TextAnimationType::Initial:
+    case WebCore::TextAnimationType::Initial:
         return WKTextAnimationTypeInitial;
-    case WebKit::TextAnimationType::Source:
+    case WebCore::TextAnimationType::Source:
         return WKTextAnimationTypeSource;
-    case WebKit::TextAnimationType::Final:
+    case WebCore::TextAnimationType::Final:
         return WKTextAnimationTypeFinal;
     }
 }
 
 #if ENABLE(WRITING_TOOLS_UI)
-- (void)_addTextAnimationForAnimationID:(NSUUID *)nsUUID withData:(const WebKit::TextAnimationData&)data
+- (void)_addTextAnimationForAnimationID:(NSUUID *)nsUUID withData:(const WebCore::TextAnimationData&)data
 {
 #if PLATFORM(IOS_FAMILY)
     [_contentView addTextAnimationForAnimationID:nsUUID withStyleType:toWKTextAnimationType(data.style)];
@@ -2076,14 +2089,19 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
 #pragma mark - WTWritingToolsDelegate conformance
 
-- (PlatformWritingToolsAllowedInputOptions)writingToolsAllowedInputOptions {
+- (PlatformWritingToolsResultOptions)allowedWritingToolsResultOptions
+{
     auto& editorState = _page->editorState();
     if (editorState.isContentEditable && !editorState.isContentRichlyEditable)
-        return PlatformWritingToolsAllowedInputOptionsPlainText;
+        return PlatformWritingToolsResultPlainText;
 
-    PlatformWritingToolsAllowedInputOptions listOption = (PlatformWritingToolsAllowedInputOptions)(1 << 2);
+    return PlatformWritingToolsResultPlainText | PlatformWritingToolsResultRichText | PlatformWritingToolsResultList | PlatformWritingToolsResultTable;
+}
 
-    return PlatformWritingToolsAllowedInputOptionsPlainText | PlatformWritingToolsAllowedInputOptionsRichText | listOption | PlatformWritingToolsAllowedInputOptionsTable;
+// FIXME: (rdar://130540028) Remove uses of the old WritingToolsAllowedInputOptions API in favor of the new WritingToolsResultOptions API, and remove staging.
+- (PlatformWritingToolsResultOptions)writingToolsAllowedInputOptions
+{
+    return [self allowedWritingToolsResultOptions];
 }
 
 - (PlatformWritingToolsBehavior)writingToolsBehavior
@@ -2280,11 +2298,38 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 #import <WebKitAdditions/WKWebViewAdditionsAfter.mm>
 #endif
 
-#if ENABLE(GAMEPAD) && !__has_include(<WebKitAdditions/WKWebViewAdditionsAfter+Gamepad.mm>)
+#if ENABLE(GAMEPAD)
+#if !__has_include(<WebKitAdditions/WKWebViewAdditionsAfter+Gamepad.mm>)
 - (void)_setGamepadsRecentlyAccessed:(BOOL)gamepadsRecentlyAccessed
 {
 }
 #endif
+
+#if PLATFORM(VISION)
+- (BOOL)_gamepadsConnected
+{
+    return _page->gamepadsConnected();
+}
+
+- (void)_gamepadsConnectedStateChanged
+{
+    id<WKUIDelegatePrivate> uiDelegate = (id<WKUIDelegatePrivate>)self.UIDelegate;
+    if ([uiDelegate respondsToSelector:@selector(_webView:gamepadsConnectedStateDidChange:)])
+        [uiDelegate _webView:self gamepadsConnectedStateDidChange:_page->gamepadsConnected()];
+}
+
+- (void)_setAllowGamepadsAccess
+{
+    _page->allowGamepadAccess();
+}
+
+#if !__has_include(<WebKitAdditions/WKWebViewAdditionsAfter+Gamepad.mm>)
+- (void)_setAllowGamepadsInput:(BOOL)allowGamepadsInput
+{
+}
+#endif
+#endif // PLATFORM(VISION)
+#endif // ENABLE(GAMEPAD)
 
 @end
 
@@ -2835,6 +2880,11 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 #endif
 }
 
+- (BOOL)_canEnterFullscreen
+{
+    return _page->canEnterFullscreen();
+}
+
 - (BOOL)_isPictureInPictureActive
 {
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
@@ -2877,6 +2927,12 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     _impl->toggleInWindowFullscreen();
 #endif
+}
+
+- (void)_enterFullscreen
+{
+    if (RefPtr page = _page)
+        page->enterFullscreen();
 }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
@@ -3060,7 +3116,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 #if PLATFORM(IOS_FAMILY)
     [_contentView addTextAnimationForAnimationID:nsUUID.get() withStyleType:WKTextAnimationTypeInitial];
 #elif PLATFORM(MAC)
-    _impl->addTextAnimationForAnimationID(*uuid, { WebKit::TextAnimationType::Initial, WTF::UUID(WTF::UUID::emptyValue) });
+    _impl->addTextAnimationForAnimationID(*uuid, { WebCore::TextAnimationType::Initial, WebCore::TextAnimationRunMode::RunAnimation, WTF::UUID(WTF::UUID::emptyValue) });
 #endif
     return nsUUID.get();
 #else // ENABLE(WRITING_TOOLS_UI)
@@ -3082,7 +3138,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 #if PLATFORM(IOS_FAMILY)
     [_contentView addTextAnimationForAnimationID:nsUUID.get() withStyleType:WKTextAnimationTypeFinal];
 #elif PLATFORM(MAC)
-    _impl->addTextAnimationForAnimationID(*uuid, { WebKit::TextAnimationType::Final, WTF::UUID(WTF::UUID::emptyValue) });
+    _impl->addTextAnimationForAnimationID(*uuid, { WebCore::TextAnimationType::Final, WebCore::TextAnimationRunMode::RunAnimation, WTF::UUID(WTF::UUID::emptyValue) });
 #endif
     return nsUUID.get();
 #else // ENABLE(WRITING_TOOLS_UI)
@@ -4664,6 +4720,19 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
         return completionHandler(NO);
 
     _page->pauseNowPlayingMediaSession([completionHandler = makeBlockPtr(completionHandler)](bool success) {
+        completionHandler(static_cast<BOOL>(success));
+    });
+}
+
+- (void)_simulateClickOverFirstMatchingTextInViewportWithUserInteraction:(NSString *)targetText completionHandler:(void(^)(BOOL))completionHandler
+{
+    if (!targetText.length)
+        [NSException raise:NSInvalidArgumentException format:@"The target text must be non-empty."];
+
+    if (!self._isValid)
+        return completionHandler(NO);
+
+    _page->simulateClickOverFirstMatchingTextInViewportWithUserInteraction(targetText, [completionHandler = makeBlockPtr(completionHandler)](bool success) {
         completionHandler(static_cast<BOOL>(success));
     });
 }

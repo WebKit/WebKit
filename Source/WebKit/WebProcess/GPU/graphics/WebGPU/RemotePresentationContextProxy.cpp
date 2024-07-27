@@ -84,7 +84,7 @@ void RemotePresentationContextProxy::present(bool presentToGPUProcess)
     }
 }
 
-RefPtr<WebCore::NativeImage> RemotePresentationContextProxy::getMetalTextureAsNativeImage(uint32_t)
+void RemotePresentationContextProxy::getMetalTextureAsNativeImage(uint32_t, Function<void(RefPtr<WebCore::NativeImage>&&)>&&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }

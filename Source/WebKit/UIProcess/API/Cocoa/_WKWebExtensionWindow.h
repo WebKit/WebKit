@@ -30,7 +30,7 @@
 @class _WKWebExtensionContext;
 @protocol _WKWebExtensionTab;
 
-NS_ASSUME_NONNULL_BEGIN
+WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*!
  @abstract Constants used by @link WKWebExtensionWindow @/link to indicate the type of a window.
@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NS_ENUM(NSInteger, _WKWebExtensionWindowType) {
     _WKWebExtensionWindowTypeNormal,
     _WKWebExtensionWindowTypePopup,
-} WK_API_AVAILABLE(macos(13.3), ios(16.4));
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*!
  @abstract Constants used by @link WKWebExtensionWindow @/link to indicate possible states of a window.
@@ -54,10 +54,10 @@ typedef NS_ENUM(NSInteger, _WKWebExtensionWindowState) {
     _WKWebExtensionWindowStateMinimized,
     _WKWebExtensionWindowStateMaximized,
     _WKWebExtensionWindowStateFullscreen,
-} WK_API_AVAILABLE(macos(13.3), ios(16.4));
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*! @abstract A class conforming to the `WKWebExtensionWindow` protocol represents a window to web extensions. */
-WK_API_AVAILABLE(macos(13.3), ios(16.4))
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_SWIFT_UI_ACTOR
 @protocol _WKWebExtensionWindow <NSObject>
 @optional
 
@@ -116,6 +116,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  */
 - (BOOL)isUsingPrivateBrowsingForWebExtensionContext:(_WKWebExtensionContext *)context;
 
+#if TARGET_OS_OSX
 /*!
  @abstract Called when the screen frame containing the window is needed.
  @param context The context associated with the running web extension.
@@ -123,6 +124,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @discussion Defaults to `CGRectNull` if not implemented.
  */
 - (CGRect)screenFrameForWebExtensionContext:(_WKWebExtensionContext *)context;
+#endif // TARGET_OS_OSX
 
 /*!
  @abstract Called when the frame of the window is needed.
@@ -166,4 +168,4 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
 
 @end
 
-NS_ASSUME_NONNULL_END
+WK_HEADER_AUDIT_END(nullability, sendability)

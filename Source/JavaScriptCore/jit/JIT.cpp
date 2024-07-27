@@ -588,6 +588,8 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_del_by_val)
         DEFINE_SLOWCASE_OP(op_del_by_id)
         DEFINE_SLOWCASE_OP(op_sub)
+        DEFINE_SLOWCASE_OP(op_resolve_scope)
+        DEFINE_SLOWCASE_OP(op_get_from_scope)
         DEFINE_SLOWCASE_OP(op_put_to_scope)
 
         DEFINE_SLOWCASE_OP(op_iterator_open)
@@ -664,9 +666,9 @@ void JIT::emitMaterializeMetadataAndConstantPoolRegisters()
 
 void JIT::emitMaterializeMetadataAndConstantPoolRegisters(CCallHelpers& jit)
 {
-    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), s_constantsGPR);
+    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), GPRInfo::jitDataRegister);
     static_assert(static_cast<ptrdiff_t>(CodeBlock::offsetOfJITData() + sizeof(void*)) == CodeBlock::offsetOfMetadataTable());
-    jit.loadPairPtr(Address(s_constantsGPR, CodeBlock::offsetOfJITData()), s_constantsGPR, s_metadataGPR);
+    jit.loadPairPtr(Address(GPRInfo::jitDataRegister, CodeBlock::offsetOfJITData()), GPRInfo::jitDataRegister, GPRInfo::metadataTableRegister);
 }
 
 void JIT::emitSaveCalleeSaves()
@@ -705,11 +707,11 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::consistencyCheckGenerator(VM&)
     jit.breakpoint();
     stackPointerOK.link(&jit);
 
-    auto metadataOK = jit.branchPtr(Equal, expectedMetadataGPR, s_metadataGPR);
+    auto metadataOK = jit.branchPtr(Equal, expectedMetadataGPR, GPRInfo::metadataTableRegister);
     jit.breakpoint();
     metadataOK.link(&jit);
 
-    auto constantsOK = jit.branchPtr(Equal, expectedConstantsGPR, s_constantsGPR);
+    auto constantsOK = jit.branchPtr(Equal, expectedConstantsGPR, GPRInfo::jitDataRegister);
     jit.breakpoint();
     constantsOK.link(&jit);
 

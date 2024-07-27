@@ -34,9 +34,10 @@ class SVGPoint;
 
 class SVGPathElement final : public SVGGeometryElement {
     WTF_MAKE_ISO_ALLOCATED(SVGPathElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGPathElement);
 public:
     static Ref<SVGPathElement> create(const QualifiedName&, Document&);
-    
+
     static Ref<SVGPathSegClosePath> createSVGPathSegClosePath() { return SVGPathSegClosePath::create(); }
     static Ref<SVGPathSegMovetoAbs> createSVGPathSegMovetoAbs(float x, float y) { return SVGPathSegMovetoAbs::create(x, y); }
     static Ref<SVGPathSegMovetoRel> createSVGPathSegMovetoRel(float x, float y) { return SVGPathSegMovetoRel::create(x, y); }
@@ -123,8 +124,9 @@ private:
     void invalidateMPathDependencies();
 
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    void collectExtraStyleForPresentationalHints(MutableStyleProperties&) override;
+    void collectDPresentationalHint(MutableStyleProperties&);
 
-private:
     Ref<SVGAnimatedPathSegList> m_pathSegList { SVGAnimatedPathSegList::create(this) };
 };
 

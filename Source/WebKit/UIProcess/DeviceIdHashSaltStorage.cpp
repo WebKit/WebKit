@@ -145,9 +145,7 @@ void DeviceIdHashSaltStorage::loadStorageFromDisk(CompletionHandler<void(HashMap
                 continue;
 
             auto origins = makeString(hashSaltForOrigin->documentOrigin.toString(), hashSaltForOrigin->parentOrigin.toString());
-            auto deviceIdHashSaltForOrigin = deviceIdHashSaltForOrigins.ensure(origins, [hashSaltForOrigin = WTFMove(hashSaltForOrigin)] () mutable {
-                return WTFMove(hashSaltForOrigin);
-            });
+            auto deviceIdHashSaltForOrigin = deviceIdHashSaltForOrigins.add(origins, WTFMove(hashSaltForOrigin));
 
             if (!deviceIdHashSaltForOrigin.isNewEntry)
                 RELEASE_LOG_ERROR(DiskPersistency, "DeviceIdHashSaltStorage: There are two files with different hash salts for the same origin: '%s'", originPath.utf8().data());
@@ -209,7 +207,7 @@ void DeviceIdHashSaltStorage::storeHashSaltToDisk(const HashSaltForOrigin& hashS
 void DeviceIdHashSaltStorage::completeDeviceIdHashSaltForOriginCall(SecurityOriginData&& documentOrigin, SecurityOriginData&& parentOrigin, CompletionHandler<void(String&&)>&& completionHandler)
 {
     auto origins = makeString(documentOrigin.toString(), parentOrigin.toString());
-    auto& deviceIdHashSalt = m_deviceIdHashSaltForOrigins.ensure(origins, [documentOrigin = WTFMove(documentOrigin), parentOrigin = WTFMove(parentOrigin)] () mutable {
+    auto& deviceIdHashSalt = m_deviceIdHashSaltForOrigins.ensure(origins, [&] {
         std::array<uint64_t, randomDataSize> randomData;
         cryptographicallyRandomValues(asWritableBytes(std::span<uint64_t> { randomData }));
 

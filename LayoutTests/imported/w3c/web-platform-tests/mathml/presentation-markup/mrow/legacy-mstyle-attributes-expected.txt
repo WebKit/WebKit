@@ -4,6 +4,10 @@ PASS Legacy mstyle attributes do not apply to mfrac
 PASS Legacy mstyle attributes do not apply to mo
 PASS Legacy mstyle attributes do not apply to menclose
 PASS Legacy mstyle attributes do not apply to ms
+PASS Legacy mstyle attributes do not apply to mpadded
+PASS Legacy mstyle attributes do not apply to mover
+PASS Legacy mstyle attributes do not apply to munder
+PASS Legacy mstyle attributes do not apply to munderover
 
 
 1
@@ -22,6 +26,9 @@ A
 |
 |
 4
+1
+−
+2
 
 1
 A
@@ -33,6 +40,9 @@ A
 |
 |
 4
+1
+−
+2
 
 1
 
@@ -41,4 +51,32 @@ A
 1
 
 1
+
+
+
+1
+2
+
+1
+2
+
+1
+2
+
+1
+2
+
+1
+2
+3
+1
+2
+3
+
+1
+2
+3
+1
+2
+3
 

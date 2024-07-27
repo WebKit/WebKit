@@ -871,6 +871,12 @@ void GraphicsLayer::traverse(GraphicsLayer& layer, const Function<void(GraphicsL
         traverse(*maskLayer, traversalFunc);
 }
 
+void GraphicsLayer::setTileCoverage(TileCoverage coverage)
+{
+    if (auto* backing = tiledBacking())
+        backing->setTileCoverage(coverage);
+}
+
 void GraphicsLayer::dumpLayer(TextStream& ts, OptionSet<LayerTreeAsTextOptions> options) const
 {
     ts << indent << "(" << "GraphicsLayer";

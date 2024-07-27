@@ -44,8 +44,6 @@ public:
     std::unique_ptr<webrtc::VideoDecoderFactory> createDecoderFactory() override;
     std::unique_ptr<webrtc::VideoEncoderFactory> createEncoderFactory() override;
 
-    void setActive(bool) final;
-
 private:
     std::optional<MediaCapabilitiesInfo> computeVPParameters(const VideoConfiguration&) final;
     bool isVPSoftwareDecoderSmooth(const VideoConfiguration&) final;

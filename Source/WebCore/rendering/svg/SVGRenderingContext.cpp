@@ -142,22 +142,24 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
     }
 
     if (!isRenderingMask) {
-        if (LegacyRenderSVGResourceMasker* masker = resources->masker()) {
+        if (auto* masker = resources->masker()) {
             GraphicsContext* contextPtr = &m_paintInfo->context();
-            bool result = masker->applyResource(*m_renderer, style, contextPtr, { });
+            auto result = masker->applyResource(*m_renderer, style, contextPtr, { });
             m_paintInfo->setContext(*contextPtr);
-            if (!result)
+            if (!resourceWasApplied(result))
                 return;
         }
     }
 
-    LegacyRenderSVGResourceClipper* clipper = resources->clipper();
+    auto* clipper = resources->clipper();
     if (!hasCSSClipping && clipper) {
         GraphicsContext* contextPtr = &m_paintInfo->context();
-        bool result = clipper->applyResource(*m_renderer, style, contextPtr, { });
+        auto result = clipper->applyResource(*m_renderer, style, contextPtr, { });
         m_paintInfo->setContext(*contextPtr);
-        if (!result)
+        if (!resourceWasApplied(result))
             return;
+
+        m_pathClippingIsEntirelyWithinRendererContents = result.contains(LegacyRenderSVGResource::ApplyResult::ClipContainsRendererContent);
     }
 
     if (!isRenderingMask) {
@@ -169,9 +171,9 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
             // (because it was either drawn before or empty) but we still need to apply the filter.
             m_renderingFlags |= EndFilterLayer;
             GraphicsContext* contextPtr = &m_paintInfo->context();
-            bool result = m_filter->applyResource(*m_renderer, style, contextPtr, { });
+            auto result = m_filter->applyResource(*m_renderer, style, contextPtr, { });
             m_paintInfo->setContext(*contextPtr);
-            if (!result)
+            if (!resourceWasApplied(result))
                 return;
 
             // Since we're caching the resulting bitmap and do not invalidate it on repaint rect

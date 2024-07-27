@@ -64,7 +64,7 @@ class WebsiteDataStore;
 
 struct GPUProcessConnectionParameters;
 struct GPUProcessCreationParameters;
-struct GPUProcessPreferencesForWebProcess;
+struct SharedPreferencesForWebProcess;
 
 class GPUProcessProxy final : public AuxiliaryProcessProxy {
     WTF_MAKE_FAST_ALLOCATED;
@@ -78,6 +78,8 @@ public:
     ~GPUProcessProxy();
 
     void createGPUProcessConnection(WebProcessProxy&, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&);
+
+    void sharedPreferencesForWebProcessDidChange(WebProcessProxy&, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
 
     void updateProcessAssertion();
 
@@ -112,6 +114,9 @@ public:
 #if HAVE(POWERLOG_TASK_MODE_QUERY)
     void enablePowerLogging();
     static bool isPowerLoggingInTaskMode();
+#endif
+#if ENABLE(WEBXR)
+    void webXRPromptAccepted(std::optional<WebCore::ProcessIdentity>, CompletionHandler<void(bool)>&&);
 #endif
 
     void updatePreferences(WebProcessProxy&);

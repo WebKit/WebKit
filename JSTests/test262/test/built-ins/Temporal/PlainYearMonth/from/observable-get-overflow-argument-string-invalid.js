@@ -9,9 +9,9 @@ features: [Temporal]
 ---*/
 
 const expected = [
-  "ownKeys options",
-  "getOwnPropertyDescriptor options.overflow",
   "get options.overflow",
+  "get options.overflow.toString",
+  "call options.overflow.toString",
 ];
 
 let actual = [];

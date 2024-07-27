@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    let expectedStyle;
+    let actualStyle;
+    
+    function test()
+    {
+        debug('Test parsing various invalid hsl colors');
+        const tests = [
+            { test: "hsl(0, 10%, 20%)", expected: "rgba(56, 46, 46, 1)" },
+            { test: "hsl(0, -10%, 20%)", expected: "rgb(51, 51, 51)" },
+            { test: "hsl(0, 10%, 20%, -12%)", expected: "rgba(56, 46, 46, 0)" },
+            { test: "hsl(.7deg, 10%, 20%)", expected: "rgba(56, 46, 46, 1)" },
+            { test: "hsl(0., 10%, 20%)", expected: "transparent" },
+            { test: "hsl(0, 10.%, 20%)", expected: "transparent" },
+            { test: "hsl(0, 10%, 20.%)", expected: "transparent" },
+            { test: "hsl(0, 10% 20%)", expected: "transparent" },
+            { test: "hsl(0,10% ", expected: "transparent" },
+            { test: "hsl(0,10%)", expected: "transparent" },
+            { test: "hsl(0,10)", expected: "transparent" },
+
+            { test: "hsl(20deg, 10%,20%", expected: "rgb(56, 49, 46)" }, // CSS allows a missing bracket at the end of the token stream.
+            { test: "hsl(20deg, 10%20%", expected: "transparent" },
+
+            { test: "hsl(20degg,10)", expected: "transparent" },
+            { test: "hsl(20degg,10%,20%)", expected: "transparent" },
+            { test: "hsl(20degg, 10%,20%", expected: "transparent" },
+            { test: "hsl(20de, 10%,20%", expected: "transparent" },
+            { test: "hsl(20d, 10%,20%", expected: "transparent" },
+            { test: "hsl(20ra, 10%,20%", expected: "transparent" },
+
+            { test: "hsl(0, 10%, 20%,.2)", expected: "rgba(56, 46, 46, 0.2)" },
+            { test: "hsl(0, 10%, 20%,.2", expected: "rgba(56, 46, 46, 0.2)" }, // Ditto.
+            { test: "hsl(0, 10%, 20%,.", expected: "transparent" },
+            { test: "hsl(0, 10%, 20%,", expected: "transparent" },
+            { test: "hsl(0, 10%, 20%", expected: "rgb(56, 46, 46)" }, // Ditto.
+            { test: "hsl(0, 10%, 20", expected: "transparent" },
+            { test: "hsl(0, 10%, 2", expected: "transparent" },
+            { test: "hsl(0, 10%, ", expected: "transparent" },
+            { test: "hsl(0, 10%,", expected: "transparent" },
+            { test: "hsl(0, 10%", expected: "transparent" },
+            { test: "hsl(0, 10", expected: "transparent" },
+            { test: "hsl(0, 1", expected: "transparent" },
+            { test: "hsl(0, ", expected: "transparent" },
+            { test: "hsl(0,", expected: "transparent" },
+            { test: "hsl(0", expected: "transparent" },
+            { test: "hsl(", expected: "transparent" },
+            { test: "hsla(", expected: "transparent" },
+
+            { test: "hsl()", expected: "transparent" },
+            { test: "hsl(0, 10%, 20%,)", expected: "transparent" },
+            { test: "hsla(0, 10%, 20%,)", expected: "transparent" },
+            { test: "hsl(0, 10%, 20%,0.)", expected: "transparent" },
+            { test: "hsl(0, 10%, 20%,0.  )", expected: "transparent" },
+            { test: "hsl(0, 10%, 20%,0.%  )", expected: "transparent" },
+            { test: "hsl(0, 10%, 20%,0.  %)", expected: "transparent" },
+            { test: "hsl(0, 10, 20%,0.1)", expected: "transparent" },
+        ];
+
+        const expectedResultDiv = document.createElement('div');
+        const actualResultDiv = document.createElement('div');
+
+        for (const test of tests) {
+            expectedResultDiv.style.color = 'transparent';
+            actualResultDiv.style.color = 'transparent';
+
+            expectedResultDiv.style.color = test.test;
+            actualResultDiv.style.color = test.expected;
+            
+            expectedStyle = expectedResultDiv.style.color;
+            actualStyle = actualResultDiv.style.color;
+
+            debug(`Parsing ${test.test}`)
+            shouldBe('expectedStyle', 'actualStyle');
+        }
+    }
+
+    test();
+</script>    
+</body>
+</html>

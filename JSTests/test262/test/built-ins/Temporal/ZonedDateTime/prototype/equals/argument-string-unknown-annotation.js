@@ -14,8 +14,7 @@ const tests = [
   ["1970-01-01T00:00[UTC][foo=bar][_foo-bar0=Ignore-This-999999999999]", "with another unknown annotation"],
 ];
 
-const timeZone = new Temporal.TimeZone("UTC");
-const instance = new Temporal.ZonedDateTime(0n, timeZone);
+const instance = new Temporal.ZonedDateTime(0n, "UTC");
 
 tests.forEach(([arg, description]) => {
   const result = instance.equals(arg);

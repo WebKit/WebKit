@@ -323,8 +323,14 @@ void ShadowBlur::blurLayerImage(std::span<uint8_t> imageData, const IntSize& siz
                 int alpha2 = pixels[(dim - 1) * stride + channels[step]];
 
                 auto ptr = pixels.subspan(channels[step + 1]);
-                auto prev = pixels.subspan(stride + channels[step]);
-                auto next = pixels.subspan(ofs * stride + channels[step]);
+
+                // If either dimension is 1 pixel long, prev would go outside the bounds of pixels,
+                // so make it an empty subspan.
+                auto prev = (stride + channels[step] < pixels.size()) ? pixels.subspan(stride + channels[step]) : std::span<uint8_t> { };
+
+                // if image to be blurred is smaller than the box kernel size, next would go outside
+                // the bounds of pixels, so make it an empty subspan.
+                auto next = (ofs * stride + channels[step] < pixels.size()) ? pixels.subspan(ofs * stride + channels[step]) : std::span<uint8_t> { };
 
                 int i;
                 int sum = side1 * alpha1 + alpha1;
@@ -348,7 +354,7 @@ void ShadowBlur::blurLayerImage(std::span<uint8_t> imageData, const IntSize& siz
                     sum += next.front() - prev.front();
                 }
 
-                for (; i < dim && ptr.size() <= stride && prev.size() >= stride; ptr = ptr.subspan(stride), prev = prev.subspan(stride), ++i) {
+                for (; i < dim && ptr.size() >= stride && prev.size() >= stride; ptr = ptr.subspan(stride), prev = prev.subspan(stride), ++i) {
                     ptr[0] = (sum * invCount) >> blurSumShift;
                     sum += alpha2 - prev.front();
                 }

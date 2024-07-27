@@ -11,7 +11,7 @@ description: >
 
 var obj = {};
 var data = "data";
-var dateObj = new Date();
+var dateObj = new Date(0);
 
 dateObj.set = function(value) {
   data = value;

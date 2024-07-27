@@ -35,6 +35,7 @@
 #include "JSDataView.h"
 #include "JSGenericTypedArrayViewConstructor.h"
 #include "JSGlobalObject.h"
+#include "JSTypedArrays.h"
 #include "StructureInlines.h"
 
 namespace JSC {
@@ -46,11 +47,18 @@ JSGenericTypedArrayViewConstructor<ViewClass>::JSGenericTypedArrayViewConstructo
 }
 
 template<typename ViewClass>
-void JSGenericTypedArrayViewConstructor<ViewClass>::finishCreation(VM& vm, JSGlobalObject*, JSObject* prototype, const String& name)
+void JSGenericTypedArrayViewConstructor<ViewClass>::finishCreation(VM& vm, JSGlobalObject* globalObject, JSObject* prototype, const String& name)
 {
     Base::finishCreation(vm, ViewClass::TypedArrayStorageType == TypeDataView ? 1 : 3, name, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->BYTES_PER_ELEMENT, jsNumber(ViewClass::elementSize), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete);
+
+    if constexpr (std::is_same_v<ViewClass, JSUint8Array>) {
+        if (Options::useUint8ArrayBase64Methods()) {
+            JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("fromBase64"_s, uint8ArrayConstructorFromBase64, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+            JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("fromHex"_s, uint8ArrayConstructorFromHex, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+        }
+    }
 }
 
 template<typename ViewClass>

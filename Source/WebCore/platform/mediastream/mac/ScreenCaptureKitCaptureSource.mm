@@ -576,9 +576,12 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
     if (contentScale && contentScale != 1)
         scaledContentRect.scale(1 / contentScale);
 
+    auto areSizesRoughlyEqual = [] (auto sizeA, auto sizeB) {
+        return std::fabs(sizeA.width() - sizeB.width()) < 2 && std::abs(sizeA.height() - sizeB.height()) < 2;
+    };
     // FIXME: for now we will rely on cropping to handle large presenter overlay.
     // We might further want to reduce calling updateStreamConfiguration once we crop when user is resizing.
-    if (m_contentSize != scaledContentRect.size() && !shouldDisallowReconfiguration) {
+    if (!shouldDisallowReconfiguration && !areSizesRoughlyEqual(m_contentSize, scaledContentRect.size())) {
         m_contentSize = scaledContentRect.size();
         m_streamConfiguration = nullptr;
         updateStreamConfiguration();
@@ -586,7 +589,7 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
 
     auto intrinsicSize = FloatSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(PAL::CMSampleBufferGetFormatDescription(m_currentFrame.get()), true, true));
 
-    if (contentRect.size() != intrinsicSize) {
+    if (!areSizesRoughlyEqual(contentRect.size(), intrinsicSize)) {
         if (!m_transferSession)
             m_transferSession = ImageTransferSessionVT::create(preferedPixelBufferFormat());
 

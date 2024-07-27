@@ -116,7 +116,7 @@ void LegacyRenderSVGRect::fillShape(GraphicsContext& context) const
     }
 #endif
 
-    context.fillRect(m_fillBoundingBox);
+    context.fillRect(m_fillBoundingBox, fillRequiresClip() ? GraphicsContext::RequiresClipToRect::Yes : GraphicsContext::RequiresClipToRect::No);
 }
 
 void LegacyRenderSVGRect::strokeShape(GraphicsContext& context) const

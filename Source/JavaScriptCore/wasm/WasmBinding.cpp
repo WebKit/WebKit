@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,9 +30,9 @@
 
 #include "CCallHelpers.h"
 #include "DisallowMacroScratchRegisterUsage.h"
+#include "JSWebAssemblyInstance.h"
 #include "LinkBuffer.h"
 #include "WasmCallingConvention.h"
-#include "WasmInstance.h"
 
 namespace JSC { namespace Wasm {
 
@@ -49,24 +49,25 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     ASSERT(noOverlap(scratch, GPRInfo::wasmContextInstancePointer));
 
     JIT_COMMENT(jit, "Store Callee's wasm callee for import function ", importIndex);
-    jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfBoxedTargetCalleeLoadLocation(importIndex)), scratch);
+    jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfBoxedTargetCalleeLoadLocation(importIndex)), scratch);
     jit.loadPtr(JIT::Address(scratch), scratch);
     // We are halfway between being the caller and the callee: we have already made the call, but not yet completed the prologue.
     // On ARM64 this doesn't really matter, but on intel we need to worry about the pushed pc.
     jit.storeWasmCalleeCallee(scratch, safeCast<int>(sizeof(CallerFrameAndPC)) - safeCast<int>(prologueStackPointerDelta()));
 
+    // FIXME: This could be a load pair.
     // B3's call codegen ensures that the JSCell is a WebAssemblyFunction.
     // While we're accessing that cacheline, also get the wasm entrypoint so we can tail call to it below.
-    jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfWasmEntrypointLoadLocation(importIndex)), scratch);
-    // Get the callee's Wasm::Instance and set it as WasmContext's instance. The caller will take care of restoring its own Instance.
+    jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfWasmEntrypointLoadLocation(importIndex)), scratch);
+    // Get the callee's JSWebAssemblyInstance and set it as WasmContext's instance. The caller will take care of restoring its own JSWebAssemblyInstance.
     // This switches the current instance.
-    jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfTargetInstance(importIndex)), GPRInfo::wasmContextInstancePointer); // Instance*.
+    jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfTargetInstance(importIndex)), GPRInfo::wasmContextInstancePointer); // JSWebAssemblyInstance*.
 
 #if !CPU(ARM) // ARM has no pinned registers for Wasm Memory, so no need to set them up
-    // FIXME the following code assumes that all Wasm::Instance have the same pinned registers. https://bugs.webkit.org/show_bug.cgi?id=162952
+    // FIXME the following code assumes that all JSWebAssemblyInstance have the same pinned registers. https://bugs.webkit.org/show_bug.cgi?id=162952
     // Set up the callee's baseMemoryPointer register as well as the memory size registers.
     {
-        jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
+        jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(JSWebAssemblyInstance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
         jit.cageConditionally(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, wasmCallingConvention().prologueScratchGPRs[1]);
     }
 #endif

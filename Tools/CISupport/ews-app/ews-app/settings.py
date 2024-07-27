@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -32,10 +32,15 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import sys
 import ews.common.util as util
 
+if sys.version_info < (3, 9):
+    print('ERROR: Minimum supported Python version for this code is Python 3.9')
+    sys.exit(1)
+
 is_test_mode_enabled = util.load_password('EWS_PRODUCTION') is None
-is_dev_instance = (util.load_password('DEV_INSTANCE', default='').lower() == 'true')
+is_dev_instance = (util.get_custom_suffix() != '')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

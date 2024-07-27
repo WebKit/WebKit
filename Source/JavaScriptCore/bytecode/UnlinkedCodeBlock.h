@@ -254,10 +254,10 @@ public:
 
     bool typeProfilerExpressionInfoForBytecodeOffset(unsigned bytecodeOffset, unsigned& startDivot, unsigned& endDivot);
 
-    void recordParse(CodeFeatures features, LexicalScopeFeatures lexicalScopeFeatures, bool hasCapturedVariables, unsigned lineCount, unsigned endColumn)
+    void recordParse(CodeFeatures features, LexicallyScopedFeatures lexicallyScopedFeatures, bool hasCapturedVariables, unsigned lineCount, unsigned endColumn)
     {
         m_features = features;
-        m_lexicalScopeFeatures = lexicalScopeFeatures;
+        m_lexicallyScopedFeatures = lexicallyScopedFeatures;
         m_hasCapturedVariables = hasCapturedVariables;
         m_lineCount = lineCount;
         // For the UnlinkedCodeBlock, startColumn is always 0.
@@ -270,7 +270,7 @@ public:
     void setSourceMappingURLDirective(const String& sourceMappingURL) { m_sourceMappingURLDirective = sourceMappingURL.impl(); }
 
     CodeFeatures codeFeatures() const { return m_features; }
-    LexicalScopeFeatures lexicalScopeFeatures() const { return static_cast<LexicalScopeFeatures>(m_lexicalScopeFeatures); }
+    LexicallyScopedFeatures lexicallyScopedFeatures() const { return m_lexicallyScopedFeatures; }
     bool hasCapturedVariables() const { return m_hasCapturedVariables; }
     unsigned lineCount() const { return m_lineCount; }
     ALWAYS_INLINE unsigned startColumn() const { return 0; }
@@ -412,7 +412,7 @@ private:
     unsigned m_age : 3;
     static_assert(((1U << 3) - 1) >= maxAge);
     bool m_hasCheckpoints : 1;
-    unsigned m_lexicalScopeFeatures : bitWidthOfLexicalScopeFeatures;
+    LexicallyScopedFeatures m_lexicallyScopedFeatures : bitWidthOfLexicallyScopedFeatures { 0 };
 public:
     ConcurrentJSLock m_lock;
 #if ENABLE(JIT)

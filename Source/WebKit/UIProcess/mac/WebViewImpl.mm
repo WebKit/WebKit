@@ -4606,7 +4606,7 @@ void WebViewImpl::removeTextPlaceholder(NSTextPlaceholder *placeholder, bool wil
 }
 
 #if ENABLE(WRITING_TOOLS_UI)
-void WebViewImpl::addTextAnimationForAnimationID(WTF::UUID uuid, const WebKit::TextAnimationData& data)
+void WebViewImpl::addTextAnimationForAnimationID(WTF::UUID uuid, const WebCore::TextAnimationData& data)
 {
     if (!m_page->preferences().textAnimationsEnabled())
         return;
@@ -5649,8 +5649,10 @@ void WebViewImpl::mouseEntered(NSEvent *event)
     if (m_ignoresMouseMoveEvents)
         return;
 
-    if (event.trackingArea == m_flagsChangedEventMonitorTrackingArea.get())
+    if (event.trackingArea == m_flagsChangedEventMonitorTrackingArea.get()) {
         createFlagsChangedEventMonitor();
+        return;
+    }
 
     nativeMouseEventHandler(event);
 }
@@ -5660,8 +5662,10 @@ void WebViewImpl::mouseExited(NSEvent *event)
     if (m_ignoresMouseMoveEvents)
         return;
 
-    if (event.trackingArea == m_flagsChangedEventMonitorTrackingArea.get())
+    if (event.trackingArea == m_flagsChangedEventMonitorTrackingArea.get()) {
         removeFlagsChangedEventMonitor();
+        return;
+    }
 
     nativeMouseEventHandler(event);
 }
@@ -6460,16 +6464,6 @@ bool WebViewImpl::canHandleContextMenuWritingTools() const
     return [PAL::getWTWritingToolsViewControllerClass() isAvailable] && m_page->writingToolsBehavior() != WebCore::WritingTools::Behavior::None;
 }
 
-void WebViewImpl::handleContextMenuWritingToolsDeprecated(IntRect selectionBoundsInRootView)
-{
-    if (!canHandleContextMenuWritingTools()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    auto view = m_view.get();
-    [[PAL::getWTWritingToolsClass() sharedInstance] showPanelForSelectionRect:selectionBoundsInRootView ofView:view.get() forDelegate:(NSObject<WTWritingToolsDelegate> *)view.get()];
-}
 #endif
 
 bool WebViewImpl::acceptsPreviewPanelControl(QLPreviewPanel *)

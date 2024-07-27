@@ -55,11 +55,24 @@ public:
     virtual void didFail(const ResourceError&) = 0;
     virtual void didFinish(const NetworkLoadMetrics&) = 0;
     virtual void didNotHandle() = 0;
-    virtual void cancel() = 0;
     virtual void setCancelledCallback(Function<void()>&&) = 0;
     virtual void usePreload() = 0;
     virtual void contextIsStopping() = 0;
+
+    void cancel();
+    bool isCancelled() const { return m_isCancelled; }
+
+private:
+    virtual void doCancel() = 0;
+    bool m_isCancelled { false };
 };
+
+inline void Client::cancel()
+{
+    ASSERT(!m_isCancelled);
+    m_isCancelled = true;
+    doCancel();
+}
 
 void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, ResourceRequest&&, String&& referrer, FetchOptions&&, SWServerConnectionIdentifier, FetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier);
 };

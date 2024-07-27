@@ -201,13 +201,13 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(JSGlobalObject* globalObject
 
     switch (functionConstructionMode) {
     case FunctionConstructionMode::Function:
-        return JSFunction::create(vm, function, globalObject->globalScope(), structure);
+        return JSFunction::create(vm, globalObject, function, globalObject->globalScope(), structure);
     case FunctionConstructionMode::Generator:
-        return JSGeneratorFunction::create(vm, function, globalObject->globalScope(), structure);
+        return JSGeneratorFunction::create(vm, globalObject, function, globalObject->globalScope(), structure);
     case FunctionConstructionMode::Async:
-        return JSAsyncFunction::create(vm, function, globalObject->globalScope(), structure);
+        return JSAsyncFunction::create(vm, globalObject, function, globalObject->globalScope(), structure);
     case FunctionConstructionMode::AsyncGenerator:
-        return JSAsyncGeneratorFunction::create(vm, function, globalObject->globalScope(), structure);
+        return JSAsyncGeneratorFunction::create(vm, globalObject, function, globalObject->globalScope(), structure);
     }
 
     ASSERT_NOT_REACHED();

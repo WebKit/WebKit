@@ -70,7 +70,7 @@ private:
     String cssText() const final;
     ExceptionOr<void> setCssText(const String&) final;
     String getPropertyValueInternal(CSSPropertyID) final;
-    ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, bool important) final;
+    ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, IsImportant) final;
     Ref<MutableStyleProperties> copyProperties() const final;
 
     RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID, ComputedStyleExtractor::UpdateLayout = ComputedStyleExtractor::UpdateLayout::Yes) const;

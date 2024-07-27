@@ -31,8 +31,7 @@ interface mixin GlobalEventHandlers {
     // are not yet implemented.
 
     attribute EventHandler onabort;
-    // FIXME: Implement 'onauxclick'.
-    // attribute EventHandler onauxclick;
+    attribute EventHandler onauxclick;
     attribute EventHandler onbeforetoggle;
     attribute EventHandler onblur;
     attribute EventHandler oncancel;

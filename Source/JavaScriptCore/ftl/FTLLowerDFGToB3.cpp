@@ -104,7 +104,6 @@
 #include "SuperSampler.h"
 #include "ThunkGenerators.h"
 #include "VirtualRegister.h"
-#include "WasmInstance.h"
 #include "WasmModuleInformation.h"
 #include "WebAssemblyFunction.h"
 #include "YarrJITRegisters.h"
@@ -1374,6 +1373,9 @@ private:
         case GetGlobalThis:
             compileGetGlobalThis();
             break;
+        case UnwrapGlobalProxy:
+            compileUnwrapGlobalProxy();
+            break;
         case GetClosureVar:
             compileGetClosureVar();
             break;
@@ -1552,11 +1554,14 @@ private:
         case NormalizeMapKey:
             compileNormalizeMapKey();
             break;
-        case MapKeyIndex:
-            compileMapKeyIndex();
+        case MapGet:
+            compileMapGet();
             break;
-        case MapValue:
-            compileMapValue();
+        case LoadMapValue:
+            compileLoadMapValue();
+            break;
+        case IsEmptyStorage:
+            compileIsEmptyStorage();
             break;
         case MapIterationNext:
             compileMapIterationNext();
@@ -3086,62 +3091,12 @@ private:
         }
 
         case DoubleRepUse: {
-            if (m_node->numChildren() == 2) {
-                LValue left = lowDouble(m_graph.child(m_node, 0));
-                LValue right = lowDouble(m_graph.child(m_node, 1));
-
-                LBasicBlock notLessThan = m_out.newBlock();
-                LBasicBlock isEqual = m_out.newBlock();
-                LBasicBlock notEqual = m_out.newBlock();
-                LBasicBlock continuation = m_out.newBlock();
-
-                Vector<ValueFromBlock, 2> results;
-
-                results.append(m_out.anchor(left));
-                m_out.branch(
-                    m_node->op() == ArithMin
-                        ? m_out.doubleLessThan(left, right)
-                        : m_out.doubleGreaterThan(left, right),
-                    unsure(continuation), unsure(notLessThan));
-
-                // The spec for Math.min and Math.max states that +0 is considered to be larger than -0.
-                LBasicBlock lastNext = m_out.appendTo(notLessThan, isEqual);
-                m_out.branch(
-                    m_out.doubleEqual(left, right),
-                        rarely(isEqual), usually(notEqual));
-
-                lastNext = m_out.appendTo(isEqual, notEqual);
-                results.append(m_out.anchor(
-                    m_node->op() == ArithMin
-                        ? m_out.bitOr(left, right)
-                        : m_out.bitAnd(left, right)));
-                m_out.jump(continuation);
-
-                lastNext = m_out.appendTo(notEqual, continuation);
-                results.append(
-                    m_out.anchor(
-                        m_out.select(
-                            m_node->op() == ArithMin
-                                ? m_out.doubleGreaterThan(left, right)
-                                : m_out.doubleLessThan(left, right),
-                            right, m_out.constDouble(PNaN))));
-                m_out.jump(continuation);
-
-                m_out.appendTo(continuation, lastNext);
-                setDouble(m_out.phi(Double, results));
-                break;
+            LValue left = lowDouble(m_graph.child(m_node, 0));
+            for (unsigned index = 1; index < m_node->numChildren(); ++index) {
+                LValue right = lowDouble(m_graph.child(m_node, index));
+                left = (m_node->op() == ArithMin) ? m_out.doubleMin(left, right) : m_out.doubleMax(left, right);
             }
-
-            size_t scratchSize = sizeof(double) * m_node->numChildren();
-            ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
-            LValue buffer = m_out.constIntPtr(static_cast<const double*>(scratchBuffer->dataBuffer()));
-
-            for (unsigned index = 0; index < m_node->numChildren(); ++index) {
-                LValue value = lowDouble(m_graph.child(m_node, index));
-                m_out.storeDouble(value, m_out.baseIndex(m_heaps.indexedDoubleProperties, buffer, m_out.constInt32(index), jsNumber(index)));
-            }
-
-            setDouble(vmCall(Double, m_node->op() == ArithMin ? operationArithMinMultipleDouble : operationArithMaxMultipleDouble, buffer, m_out.constInt32(m_node->numChildren())));
+            setDouble(left);
             break;
         }
 
@@ -7797,6 +7752,7 @@ IGNORE_CLANG_WARNINGS_END
     void compileNewFunction()
     {
         ASSERT(m_node->op() == NewFunction || m_node->op() == NewGeneratorFunction || m_node->op() == NewAsyncGeneratorFunction || m_node->op() == NewAsyncFunction);
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         bool isGeneratorFunction = m_node->op() == NewGeneratorFunction;
         bool isAsyncFunction = m_node->op() == NewAsyncFunction;
         bool isAsyncGeneratorFunction =  m_node->op() == NewAsyncGeneratorFunction;
@@ -7806,17 +7762,16 @@ IGNORE_CLANG_WARNINGS_END
         FunctionExecutable* executable = m_node->castOperand<FunctionExecutable*>();
         if (executable->singleton().isStillValid()) {
             LValue callResult =
-                isGeneratorFunction ? vmCall(Int64, operationNewGeneratorFunction, m_vmValue, scope, weakPointer(executable)) :
-                isAsyncFunction ? vmCall(Int64, operationNewAsyncFunction, m_vmValue, scope, weakPointer(executable)) :
-                isAsyncGeneratorFunction ? vmCall(Int64, operationNewAsyncGeneratorFunction, m_vmValue, scope, weakPointer(executable)) :
-                vmCall(Int64, operationNewFunction, m_vmValue, scope, weakPointer(executable));
+                isGeneratorFunction ? vmCall(Int64, operationNewGeneratorFunction, weakPointer(globalObject), scope, weakPointer(executable)) :
+                isAsyncFunction ? vmCall(Int64, operationNewAsyncFunction, weakPointer(globalObject), scope, weakPointer(executable)) :
+                isAsyncGeneratorFunction ? vmCall(Int64, operationNewAsyncGeneratorFunction, weakPointer(globalObject), scope, weakPointer(executable)) :
+                vmCall(Int64, selectNewFunctionOperation(executable), weakPointer(globalObject), scope, weakPointer(executable));
             setJSValue(callResult);
             return;
         }
 
         RegisteredStructure structure = m_graph.registerStructure(
             [&] () {
-                JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
                 switch (m_node->op()) {
                 case NewGeneratorFunction:
                     return globalObject->generatorFunctionStructure();
@@ -7864,12 +7819,14 @@ IGNORE_CLANG_WARNINGS_END
                     operation = operationNewAsyncFunctionWithInvalidatedReallocationWatchpoint;
                 else if (isAsyncGeneratorFunction)
                     operation = operationNewAsyncGeneratorFunctionWithInvalidatedReallocationWatchpoint;
+                else
+                    operation = selectNewFunctionWithInvalidatedReallocationWatchpointOperation(executable);
 
                 return createLazyCallGenerator(vm, operation,
                     locations[0].directGPR(), locations[1].directGPR(), locations[2].directGPR(),
                     CCallHelpers::TrustedImmPtr(executable));
             },
-            m_vmValue, scope);
+            weakPointer(globalObject), scope);
         ValueFromBlock slowResult = m_out.anchor(callResult);
         m_out.jump(continuation);
 
@@ -10695,6 +10652,12 @@ IGNORE_CLANG_WARNINGS_END
         setJSValue(m_out.loadPtr(m_out.absolute(globalObject->addressOfGlobalThis())));
     }
 
+    void compileUnwrapGlobalProxy()
+    {
+        LValue globalProxy = lowGlobalProxy(m_node->child1());
+        setJSValue(m_out.loadPtr(globalProxy, m_heaps.JSGlobalProxy_target));
+    }
+
     void compileGetClosureVar()
     {
         setJSValue(
@@ -12425,7 +12388,7 @@ IGNORE_CLANG_WARNINGS_END
         State* state = &m_ftlState;
         VM& vm = this->vm();
         CodeOrigin semanticNodeOrigin = node->origin.semantic;
-        auto ecmaMode = node->ecmaMode();
+        auto lexicallyScopedFeatures = node->lexicallyScopedFeatures();
         patchpoint->setGenerator(
             [=, &vm] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -12453,7 +12416,7 @@ IGNORE_CLANG_WARNINGS_END
                 jit.subPtr(CCallHelpers::TrustedImm32(requiredBytes), CCallHelpers::stackPointerRegister);
                 jit.setupArguments<decltype(operationCallDirectEvalSloppy)>(GPRInfo::regT1, GPRInfo::regT2, GPRInfo::regT3);
                 jit.prepareCallOperation(vm);
-                jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(ecmaMode.isStrict() ? operationCallDirectEvalStrict : operationCallDirectEvalSloppy)), GPRInfo::nonPreservedNonArgumentGPR0);
+                jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(selectCallDirectEvalOperation(lexicallyScopedFeatures))), GPRInfo::nonPreservedNonArgumentGPR0);
                 jit.call(GPRInfo::nonPreservedNonArgumentGPR0, OperationPtrTag);
                 exceptions->append(jit.emitExceptionCheck(state->vm(), AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth, CCallHelpers::operationExceptionRegister<typename FunctionTraits<decltype(operationCallDirectEvalSloppy)>::ResultType>()));
 
@@ -12490,11 +12453,6 @@ IGNORE_CLANG_WARNINGS_END
         m_proc.requestCallArgAreaSizeInBytes(totalFrameSize);
 
         Vector<ConstrainedValue> arguments;
-        auto setArgument = [&] (LValue value, VirtualRegister reg) {
-            intptr_t offsetFromSP = (reg.offset() - CallerFrameAndPC::sizeInRegisters) * sizeof(EncodedJSValue);
-            arguments.append(ConstrainedValue(value, ValueRep::stackArgument(offsetFromSP)));
-        };
-
         for (unsigned i = signature.argumentCount(); i--;) {
             bool isStack = wasmCallInfo.params[i].location.isStackArgument();
             auto type = signature.argumentType(i);
@@ -12552,26 +12510,23 @@ IGNORE_CLANG_WARNINGS_END
             }
         }
 
-        // Set up new wasm instance in the pinned register.
+        // Set up the wasm instance in the pinned register.
         bool wasmBoundsCheckingSizeRegisterConfiguredAsInputContraints = false;
         bool wasmBaseMemoryPointerConfiguredAsInputContraints = false;
-        auto* jsInstance = wasmFunction->instance();
-        arguments.append(ConstrainedValue(m_out.constIntPtr(&jsInstance->instance()), ValueRep::reg(GPRInfo::wasmContextInstancePointer)));
-        if (!!jsInstance->instance().module().moduleInformation().memory) {
-            auto mode = jsInstance->memoryMode();
-            if (mode == MemoryMode::Signaling || (mode == MemoryMode::BoundsChecking && jsInstance->instance().memory()->sharingMode() == MemorySharingMode::Shared)) {
+        auto* instance = wasmFunction->instance();
+        arguments.append(ConstrainedValue(frozenPointer(m_graph.freeze(instance)), ValueRep::reg(GPRInfo::wasmContextInstancePointer)));
+        if (!!instance->module().moduleInformation().memory) {
+            auto mode = instance->memoryMode();
+            if (mode == MemoryMode::Signaling || (mode == MemoryMode::BoundsChecking && instance->memory()->sharingMode() == MemorySharingMode::Shared)) {
                 // Capacity and basePointer will not be changed.
                 if (mode == MemoryMode::BoundsChecking) {
-                    arguments.append(ConstrainedValue(m_out.constInt64(jsInstance->instance().memory()->mappedCapacity()), ValueRep::reg(GPRInfo::wasmBoundsCheckingSizeRegister)));
+                    arguments.append(ConstrainedValue(m_out.constInt64(instance->memory()->mappedCapacity()), ValueRep::reg(GPRInfo::wasmBoundsCheckingSizeRegister)));
                     wasmBoundsCheckingSizeRegisterConfiguredAsInputContraints = true;
                 }
-                arguments.append(ConstrainedValue(m_out.constIntPtr(jsInstance->instance().memory()->basePointer()), ValueRep::reg(GPRInfo::wasmBaseMemoryPointer)));
+                arguments.append(ConstrainedValue(m_out.constIntPtr(instance->memory()->basePointer()), ValueRep::reg(GPRInfo::wasmBaseMemoryPointer)));
                 wasmBaseMemoryPointerConfiguredAsInputContraints = true;
             }
         }
-
-        // Anchor JSWebAssemblyInstance in |this| for GC.
-        setArgument(frozenPointer(m_graph.freeze(jsInstance)), VirtualRegister(CallFrameSlot::thisArgument));
 
         PatchpointValue* patchpoint = nullptr;
         if (signature.returnsVoid())
@@ -12621,7 +12576,7 @@ IGNORE_CLANG_WARNINGS_END
             clobber.add(GPRInfo::wasmBaseMemoryPointer, IgnoreVectors);
         patchpoint->clobber(WTFMove(clobber));
         auto clobberLate = RegisterSetBuilder::registersToSaveForCCall(RegisterSetBuilder::allScalarRegisters());
-        clobberLate.add(GPRInfo::wasmContextInstancePointer, IgnoreVectors); // Because it is already tied to Wasm::Instance* in patchpoint's input constraint, we should say it is late clobbered.
+        clobberLate.add(GPRInfo::wasmContextInstancePointer, IgnoreVectors); // Because it is already tied to JSWebAssemblyInstance* in patchpoint's input constraint, we should say it is late clobbered.
         if (wasmBoundsCheckingSizeRegisterConfiguredAsInputContraints)
             clobberLate.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
         if (wasmBaseMemoryPointerConfiguredAsInputContraints)
@@ -12644,17 +12599,17 @@ IGNORE_CLANG_WARNINGS_END
                 constexpr GPRReg scratchGPR = GPRInfo::nonPreservedNonArgumentGPR0;
                 static_assert(noOverlap(GPRInfo::wasmBoundsCheckingSizeRegister, GPRInfo::wasmBaseMemoryPointer, scratchGPR));
                 ASSERT(!RegisterSetBuilder::macroClobberedGPRs().contains(scratchGPR, IgnoreVectors));
-                if (!!jsInstance->instance().module().moduleInformation().memory) {
-                    auto mode = jsInstance->memoryMode();
-                    if (!(mode == MemoryMode::Signaling || (mode == MemoryMode::BoundsChecking && jsInstance->instance().memory()->sharingMode() == MemorySharingMode::Shared))) {
+                if (!!instance->module().moduleInformation().memory) {
+                    auto mode = instance->memoryMode();
+                    if (!(mode == MemoryMode::Signaling || (mode == MemoryMode::BoundsChecking && instance->memory()->sharingMode() == MemorySharingMode::Shared))) {
                         // We always clobber GPRInfo::wasmBoundsCheckingSizeRegister regardless of mode. It is OK since patchpoint already said it is clobbered.
                         if (isARM64E())
-                            jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
+                            jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(JSWebAssemblyInstance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
                         else {
                             if (mode == MemoryMode::BoundsChecking)
-                                jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
+                                jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(JSWebAssemblyInstance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
                             else
-                                jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Wasm::Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer);
+                                jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer);
                         }
                         jit.cageConditionally(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, scratchGPR);
                     }
@@ -12667,6 +12622,10 @@ IGNORE_CLANG_WARNINGS_END
                 // https://bugs.webkit.org/show_bug.cgi?id=196570
                 jit.loadPtr(wasmFunction->entrypointLoadLocation(), scratchGPR);
                 jit.call(scratchGPR, WasmEntryPtrTag);
+
+                // Restore stack pointer after call (we may tail call)
+                jit.addPtr(MacroAssembler::TrustedImm32(-static_cast<int32_t>(params.proc().frameSize())), MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
+
             });
 
         if (signature.returnsVoid())
@@ -13798,7 +13757,7 @@ IGNORE_CLANG_WARNINGS_END
     }
 
     template<typename MapOrSet>
-    void compileGetMapIndexImpl()
+    void compileMapGetImpl()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
 
@@ -13850,7 +13809,8 @@ IGNORE_CLANG_WARNINGS_END
         // Get the entryKey JSValue.
         m_out.appendTo(notEmptyEntry, notDeletedKey);
         LValue entryKeyIndex = m_out.castToInt32(entryKeyIndexValue);
-        LValue entryKey = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, mapStorageData, m_out.zeroExt(entryKeyIndex, Int64)));
+        TypedPointer entryKeySlot = m_out.baseIndex(m_heaps.indexedContiguousProperties, mapStorageData, m_out.zeroExt(entryKeyIndex, Int64));
+        LValue entryKey = m_out.load64(entryKeySlot);
 
         // Check wether the current entryKey is a deleted one.
         m_out.branch(m_out.equal(entryKey,  weakPointer(vm().orderedHashTableDeletedValue())), unsure(loopAround), unsure(notDeletedKey));
@@ -13954,66 +13914,65 @@ IGNORE_CLANG_WARNINGS_END
 
         // The current entryKey doesn't match the target key. Then, get the next entry in the chain and continue.
         m_out.appendTo(loopAround, presentInTable);
-        LValue entryChainIndex = m_out.add(m_out.constInt32(MapOrSet::Helper::ChainOffset), entryKeyIndex);
-        LValue nextEntry = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, mapStorageData, m_out.zeroExt(entryChainIndex, Int64)));
+        LValue nextEntry = m_out.load64(m_out.address(m_heaps.OrderedHashTableData, entryKeySlot.value(), MapOrSet::Helper::ChainOffset * sizeof(EncodedJSValue)));
         m_out.addIncomingToPhi(entryKeyIndexValue, m_out.anchor(nextEntry));
         m_out.jump(loopStart);
 
         // Found a matched entryKey.
         m_out.appendTo(presentInTable, slowPath);
-        ValueFromBlock entryValueResult = m_out.anchor(entryKeyIndex);
+        ValueFromBlock entryValueResult = m_out.anchor(entryKeySlot.value());
         m_out.jump(done);
 
         // The slow path should call the operation.
         m_out.appendTo(slowPath, notPresentInTable);
-        auto operation = std::is_same<MapOrSet, JSMap>::value ? operationMapKeyIndex : operationSetKeyIndex;
-        ValueFromBlock slowPathResult = m_out.anchor(vmCall(Int32, operation, weakPointer(globalObject), map, key, hash));
+        auto operation = std::is_same<MapOrSet, JSMap>::value ? operationMapGet : operationSetGet;
+        ValueFromBlock slowPathResult = m_out.anchor(vmCall(Int64, operation, weakPointer(globalObject), map, key, hash));
         m_out.jump(done);
 
         // Didn't find a matched entryKey.
         m_out.appendTo(notPresentInTable, done);
-        ValueFromBlock notPresentResult = m_out.anchor(m_out.constInt32(JSMap::Helper::InvalidTableIndex));
+        ValueFromBlock notPresentResult = m_out.anchor(m_out.constInt64(0));
         m_out.jump(done);
 
         // Done.
         m_out.appendTo(done, lastNext);
-        setInt32(m_out.phi(Int32, entryValueResult, slowPathResult, notPresentResult));
+        setStorage(m_out.phi(Int64, entryValueResult, slowPathResult, notPresentResult));
     }
 
-    void compileMapKeyIndex()
+    void compileMapGet()
     {
         if (m_node->child1().useKind() == MapObjectUse)
-            compileGetMapIndexImpl<JSMap>();
+            compileMapGetImpl<JSMap>();
         else if (m_node->child1().useKind() == SetObjectUse)
-            compileGetMapIndexImpl<JSSet>();
+            compileMapGetImpl<JSSet>();
         else
             RELEASE_ASSERT_NOT_REACHED();
     }
 
-    void compileMapValue()
+    void compileLoadMapValue()
     {
         LBasicBlock presentInTable = m_out.newBlock();
         LBasicBlock notPresentInTable = m_out.newBlock();
         LBasicBlock done = m_out.newBlock();
 
-        LValue map = lowMapObject(m_node->child1());
-        LValue keyIndex = lowInt32(m_node->child2());
-
-        LValue isSentinel = m_out.equal(keyIndex, m_out.constInt32(JSMap::Helper::InvalidTableIndex));
-        m_out.branch(isSentinel, unsure(notPresentInTable), unsure(presentInTable));
+        LValue mapKeySlot = lowStorage(m_node->child1());
+        m_out.branch(m_out.isZero64(mapKeySlot), unsure(notPresentInTable), unsure(presentInTable));
 
         LBasicBlock lastNext = m_out.appendTo(notPresentInTable, presentInTable);
         ValueFromBlock notPresentResult = m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined())));
         m_out.jump(done);
 
         m_out.appendTo(presentInTable, done);
-        LValue butterflyStorage = toButterfly(m_out.loadPtr(map, m_heaps.JSSet_butterfly));
-        LValue valueIndex = m_out.add(m_out.int32One, keyIndex);
-        ValueFromBlock presentResult = m_out.anchor(m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, butterflyStorage, m_out.zeroExt(valueIndex, Int64))));
+        ValueFromBlock presentResult = m_out.anchor(m_out.load64(m_out.address(m_heaps.OrderedHashTableData, mapKeySlot, sizeof(EncodedJSValue))));
         m_out.jump(done);
 
         m_out.appendTo(done, lastNext);
         setJSValue(m_out.phi(Int64, notPresentResult, presentResult));
+    }
+
+    void compileIsEmptyStorage()
+    {
+        setBoolean(m_out.isZero64(lowStorage(m_node->child1())));
     }
 
     void compileMapIterationNext()
@@ -16215,7 +16174,7 @@ IGNORE_CLANG_WARNINGS_END
         m_out.jump(continuation);
 
         m_out.appendTo(slowPath, continuation);
-        // We ensure allocation sinking explictly sets bottom values for all field members.
+        // We ensure allocation sinking explicitly sets bottom values for all field members.
         // Therefore, it doesn't matter what JSValue we pass in as the initialization value
         // because all fields will be overwritten.
         // FIXME: It may be worth creating an operation that calls a constructor on JSLexicalEnvironment that
@@ -20976,6 +20935,13 @@ IGNORE_CLANG_WARNINGS_END
         return result;
     }
 
+    LValue lowGlobalProxy(Edge edge)
+    {
+        LValue result = lowCell(edge);
+        speculateGlobalProxy(edge, result);
+        return result;
+    }
+
     LValue lowString(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
     {
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == StringUse || edge.useKind() == KnownStringUse || edge.useKind() == StringIdentUse);
@@ -21534,6 +21500,9 @@ IGNORE_CLANG_WARNINGS_END
             break;
         case ProxyObjectUse:
             speculateProxyObject(edge);
+            break;
+        case GlobalProxyUse:
+            speculateGlobalProxy(edge);
             break;
         case DerivedArrayUse:
             speculateDerivedArray(edge);
@@ -22188,6 +22157,16 @@ IGNORE_CLANG_WARNINGS_END
     void speculateProxyObject(Edge edge)
     {
         speculateProxyObject(edge, lowCell(edge));
+    }
+
+    void speculateGlobalProxy(Edge edge, LValue cell)
+    {
+        FTL_TYPE_CHECK(jsValueValue(cell), edge, SpecGlobalProxy, isNotType(cell, GlobalProxyType));
+    }
+
+    void speculateGlobalProxy(Edge edge)
+    {
+        speculateGlobalProxy(edge, lowCell(edge));
     }
 
     void speculateDerivedArray(Edge edge, LValue cell)

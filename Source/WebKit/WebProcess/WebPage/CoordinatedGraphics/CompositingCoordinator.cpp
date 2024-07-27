@@ -177,12 +177,9 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
     m_page.finalizeRenderingUpdate(flags);
 
     auto& coordinatedLayer = downcast<CoordinatedGraphicsLayer>(*m_rootLayer);
-    coordinatedLayer.updateContentBuffersIncludingSubLayers();
-    shouldSyncFrame |= coordinatedLayer.checkPendingStateChangesIncludingSubLayers();
-
-#if !HAVE(DISPLAY_LINK)
+    auto [performLayerSync, platformLayerUpdated] = coordinatedLayer.finalizeCompositingStateFlush();
+    shouldSyncFrame |= performLayerSync;
     shouldSyncFrame |= m_forceFrameSync;
-#endif
 
     if (shouldSyncFrame) {
         m_nicosia.scene->accessState(
@@ -212,12 +209,10 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
             });
 
         m_client.commitSceneState(m_nicosia.scene);
-#if !HAVE(DISPLAY_LINK)
         m_forceFrameSync = false;
-#endif
     }
 #if HAVE(DISPLAY_LINK)
-    else
+    else if (platformLayerUpdated)
         m_client.commitSceneState(nullptr);
 #endif
 

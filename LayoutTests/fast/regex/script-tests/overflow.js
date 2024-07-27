@@ -10,6 +10,6 @@ var s3 = "&{6}u4a64YfQP{C}u88c4u5772Qu8693{4294967167}u85f2u7f3fs((uf202){4})u5b
 var regexp3 = new RegExp(s3, "");
 shouldBe("regexp3.exec(s3)", 'null');
 
-shouldThrow("function f() { /[^a$]{4294967295}/ }", '"SyntaxError: Invalid regular expression: number too large in {} quantifier"');
+shouldThrow("function f() { /[^a$]{18446744073709551615}/ }", '"SyntaxError: Invalid regular expression: number too large in {} quantifier"');
 
-shouldThrow("new RegExp('((?=$))??(?:\\\\1){34359738368,}')", '"SyntaxError: Invalid regular expression: number too large in {} quantifier"');
+shouldThrow("new RegExp('((?=$))??(?:\\\\1){1180591620717411303423,}')", '"SyntaxError: Invalid regular expression: number too large in {} quantifier"');

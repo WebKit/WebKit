@@ -1,0 +1,22 @@
+PASS nthSection(1).checkVisibility({ contentVisibilityAuto: true }) is true
+PASS nthSection(2).checkVisibility({ contentVisibilityAuto: true }) is true
+PASS numberOfVisibleItems() >= 8 is true
+PASS nthSection(1).checkVisibility({ contentVisibilityAuto: true }) is false
+PASS nthSection(4).checkVisibility({ contentVisibilityAuto: true }) is true
+PASS numberOfVisibleItems() >= 8 is true
+PASS nthSection(1).checkVisibility({ contentVisibilityAuto: true }) is false
+PASS nthSection(4).checkVisibility({ contentVisibilityAuto: true }) is true
+PASS nthSection(1).checkVisibility({ contentVisibilityAuto: true }) is true
+PASS nthSection(2).checkVisibility({ contentVisibilityAuto: true }) is true
+PASS nthSection(1).checkVisibility({ contentVisibilityAuto: true }) is true
+PASS nthSection(2).checkVisibility({ contentVisibilityAuto: true }) is true
+PASS numberOfVisibleItems() >= 8 is true
+PASS nthSection(1).checkVisibility({ contentVisibilityAuto: true }) is false
+PASS nthSection(10).checkVisibility({ contentVisibilityAuto: true }) is true
+PASS numberOfVisibleItems() >= 8 is true
+PASS nthSection(1).checkVisibility({ contentVisibilityAuto: true }) is false
+PASS nthSection(10).checkVisibility({ contentVisibilityAuto: true }) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -59,6 +59,14 @@
 #endif
 
     _textInteractionAssistant = adoptNS([[UIWKTextInteractionAssistant alloc] initWithView:view]);
+
+#if PLATFORM(APPLETV) && USE(UICONTEXTMENU)
+    if (RetainPtr contextMenuInteraction = [self contextMenuInteraction]) {
+        [view removeInteraction:contextMenuInteraction.get()];
+        [self setExternalContextMenuInteractionDelegate:nil];
+    }
+#endif
+
     return self;
 }
 

@@ -1868,7 +1868,7 @@ public:
     unsigned parameterCount() const { return m_parameterCount; }
 
     CodeFeatures features() const { return m_mutableMetadata.m_features; }
-    LexicalScopeFeatures lexicalScopeFeatures() const { return m_mutableMetadata.m_lexicalScopeFeatures; }
+    LexicallyScopedFeatures lexicallyScopedFeatures() const { return m_mutableMetadata.m_lexicallyScopedFeatures; }
     SourceParseMode sourceParseMode() const { return m_sourceParseMode; }
 
     unsigned hasCapturedVariables() const { return m_mutableMetadata.m_hasCapturedVariables; }
@@ -1972,7 +1972,6 @@ public:
     unsigned evalContextType() const { return m_evalContextType; }
     unsigned hasTailCalls() const { return m_hasTailCalls; }
     unsigned hasCheckpoints() const { return m_hasCheckpoints; }
-    unsigned lexicalScopeFeatures() const { return m_lexicalScopeFeatures; }
     unsigned lineCount() const { return m_lineCount; }
     unsigned endColumn() const { return m_endColumn; }
 
@@ -1981,6 +1980,7 @@ public:
     int numParameters() const { return m_numParameters; }
 
     CodeFeatures features() const { return m_features; }
+    LexicallyScopedFeatures lexicallyScopedFeatures() const { return m_lexicallyScopedFeatures; }
     SourceParseMode parseMode() const { return m_parseMode; }
     OptionSet<CodeGenerationMode> codeGenerationMode() const { return m_codeGenerationMode; }
     unsigned codeType() const { return m_codeType; }
@@ -2009,9 +2009,9 @@ private:
     unsigned m_hasTailCalls : 1;
     unsigned m_codeType : 2;
     unsigned m_hasCheckpoints : 1;
-    unsigned m_lexicalScopeFeatures : bitWidthOfLexicalScopeFeatures;
 
-    CodeFeatures m_features;
+    CodeFeatures m_features : bitWidthOfCodeFeatures;
+    LexicallyScopedFeatures m_lexicallyScopedFeatures : bitWidthOfLexicallyScopedFeatures;
     SourceParseMode m_parseMode;
     OptionSet<CodeGenerationMode> m_codeGenerationMode;
 
@@ -2216,7 +2216,7 @@ ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* 
     , m_age(0)
     , m_hasCheckpoints(cachedCodeBlock.hasCheckpoints())
 
-    , m_lexicalScopeFeatures(cachedCodeBlock.lexicalScopeFeatures())
+    , m_lexicallyScopedFeatures(cachedCodeBlock.lexicallyScopedFeatures())
     , m_features(cachedCodeBlock.features())
     , m_parseMode(cachedCodeBlock.parseMode())
     , m_codeGenerationMode(cachedCodeBlock.codeGenerationMode())
@@ -2268,7 +2268,7 @@ ALWAYS_INLINE UnlinkedEvalCodeBlock::UnlinkedEvalCodeBlock(Decoder& decoder, con
 ALWAYS_INLINE void CachedFunctionExecutable::encode(Encoder& encoder, const UnlinkedFunctionExecutable& executable)
 {
     m_mutableMetadata.m_features = executable.m_features;
-    m_mutableMetadata.m_lexicalScopeFeatures = executable.m_lexicalScopeFeatures;
+    m_mutableMetadata.m_lexicallyScopedFeatures = executable.m_lexicallyScopedFeatures;
     m_mutableMetadata.m_hasCapturedVariables = executable.m_hasCapturedVariables;
 
     m_firstLineOffset = executable.m_firstLineOffset;
@@ -2342,7 +2342,7 @@ ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& de
     , m_constructorKind(cachedExecutable.constructorKind())
     , m_sourceParseMode(cachedExecutable.sourceParseMode())
     , m_implementationVisibility(static_cast<unsigned>(cachedExecutable.implementationVisibility()))
-    , m_lexicalScopeFeatures(cachedExecutable.lexicalScopeFeatures())
+    , m_lexicallyScopedFeatures(cachedExecutable.lexicallyScopedFeatures())
     , m_functionMode(cachedExecutable.functionMode())
     , m_derivedContextType(cachedExecutable.derivedContextType())
     , m_inlineAttribute(cachedExecutable.inlineAttribute())
@@ -2405,7 +2405,7 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
     m_numCalleeLocals = codeBlock.m_numCalleeLocals;
     m_numParameters = codeBlock.m_numParameters;
     m_features = codeBlock.m_features;
-    m_lexicalScopeFeatures = codeBlock.m_lexicalScopeFeatures;
+    m_lexicallyScopedFeatures = codeBlock.m_lexicallyScopedFeatures;
     m_parseMode = codeBlock.m_parseMode;
     m_codeGenerationMode = codeBlock.m_codeGenerationMode;
     m_codeType = codeBlock.m_codeType;

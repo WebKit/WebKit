@@ -42,6 +42,7 @@ class HTMLCollection;
 
 class HTMLDataListElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLDataListElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLDataListElement);
 public:
     static Ref<HTMLDataListElement> create(const QualifiedName&, Document&);
     ~HTMLDataListElement();

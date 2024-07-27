@@ -594,6 +594,7 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<NSURL> _visualSearchPreviewImageURL;
     RetainPtr<NSString> _visualSearchPreviewTitle;
     CGRect _visualSearchPreviewImageBounds;
+    std::optional<CGRect> _cachedVisualSearchPreviewImageBoundsInWindowCoordinates;
 #endif // USE(QUICK_LOOK)
     WebKit::DynamicImageAnalysisContextMenuState _dynamicImageAnalysisContextMenuState;
     std::optional<WebKit::ImageAnalysisContextMenuActionData> _imageAnalysisContextMenuActionData;

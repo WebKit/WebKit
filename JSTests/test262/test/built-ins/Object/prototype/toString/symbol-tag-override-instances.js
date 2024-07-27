@@ -46,7 +46,7 @@ custom = new Number();
 custom[Symbol.toStringTag] = 'test262';
 assert.sameValue(Object.prototype.toString.call(custom), '[object test262]');
 
-custom = new Date();
+custom = new Date(0);
 custom[Symbol.toStringTag] = 'test262';
 assert.sameValue(Object.prototype.toString.call(custom), '[object test262]');
 

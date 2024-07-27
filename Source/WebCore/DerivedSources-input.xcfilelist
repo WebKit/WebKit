@@ -1261,7 +1261,6 @@ $(PROJECT_DIR)/css/SelectorPseudoElementMap.in
 $(PROJECT_DIR)/css/StyleMedia.idl
 $(PROJECT_DIR)/css/StyleSheet.idl
 $(PROJECT_DIR)/css/StyleSheetList.idl
-$(PROJECT_DIR)/css/WebKitCSSViewportRule.idl
 $(PROJECT_DIR)/css/WebKitFontFamilyNames.in
 $(PROJECT_DIR)/css/counterStyles.css
 $(PROJECT_DIR)/css/fullscreen.css
@@ -1334,6 +1333,7 @@ $(PROJECT_DIR)/dom/CharacterData.idl
 $(PROJECT_DIR)/dom/CheckVisibilityOptions.idl
 $(PROJECT_DIR)/dom/ChildNode.idl
 $(PROJECT_DIR)/dom/ClipboardEvent.idl
+$(PROJECT_DIR)/dom/CommandEvent.idl
 $(PROJECT_DIR)/dom/Comment.idl
 $(PROJECT_DIR)/dom/CompositionEvent.idl
 $(PROJECT_DIR)/dom/ContentVisibilityAutoStateChangeEvent.idl
@@ -1415,7 +1415,6 @@ $(PROJECT_DIR)/dom/IdleRequestCallback.idl
 $(PROJECT_DIR)/dom/IdleRequestOptions.idl
 $(PROJECT_DIR)/dom/InnerHTML.idl
 $(PROJECT_DIR)/dom/InputEvent.idl
-$(PROJECT_DIR)/dom/InvokeEvent.idl
 $(PROJECT_DIR)/dom/KeyboardEvent.idl
 $(PROJECT_DIR)/dom/MessageChannel.idl
 $(PROJECT_DIR)/dom/MessageEvent.idl
@@ -1434,6 +1433,7 @@ $(PROJECT_DIR)/dom/NodeIterator.idl
 $(PROJECT_DIR)/dom/NodeList.idl
 $(PROJECT_DIR)/dom/NonDocumentTypeChildNode.idl
 $(PROJECT_DIR)/dom/NonElementParentNode.idl
+$(PROJECT_DIR)/dom/Observable.idl
 $(PROJECT_DIR)/dom/OverflowEvent.idl
 $(PROJECT_DIR)/dom/PageTransitionEvent.idl
 $(PROJECT_DIR)/dom/ParentNode.idl
@@ -1456,6 +1456,11 @@ $(PROJECT_DIR)/dom/SlotAssignmentMode.idl
 $(PROJECT_DIR)/dom/Slotable.idl
 $(PROJECT_DIR)/dom/StaticRange.idl
 $(PROJECT_DIR)/dom/StringCallback.idl
+$(PROJECT_DIR)/dom/Subscriber.idl
+$(PROJECT_DIR)/dom/SubscribeOptions.idl
+$(PROJECT_DIR)/dom/SubscriberCallback.idl
+$(PROJECT_DIR)/dom/SubscriptionObserver.idl
+$(PROJECT_DIR)/dom/SubscriptionObserverCallback.idl
 $(PROJECT_DIR)/dom/Text.idl
 $(PROJECT_DIR)/dom/TextDecoder.idl
 $(PROJECT_DIR)/dom/TextDecoderStream.idl
@@ -1773,6 +1778,7 @@ $(PROJECT_DIR)/page/DOMWindow.idl
 $(PROJECT_DIR)/page/EventSource.idl
 $(PROJECT_DIR)/page/FragmentDirective.idl
 $(PROJECT_DIR)/page/History.idl
+$(PROJECT_DIR)/page/IsLoggedIn.idl
 $(PROJECT_DIR)/page/IntersectionObserver.idl
 $(PROJECT_DIR)/page/IntersectionObserverCallback.idl
 $(PROJECT_DIR)/page/IntersectionObserverEntry.idl

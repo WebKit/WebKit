@@ -8,8 +8,13 @@ includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const calendar = "IsO8601";
-
-const arg = { monthCode: "M11", day: 18, calendar };
+const arg = { monthCode: "M11", day: 18, calendar: "IsO8601" };
 const result = Temporal.PlainMonthDay.from(arg);
 TemporalHelpers.assertPlainMonthDay(result, "M11", 18, "Calendar is case-insensitive");
+
+arg.calendar = "\u0130SO8601";
+assert.throws(
+  RangeError,
+  () => Temporal.PlainMonthDay.from(arg),
+  "calendar ID is capital dotted I is not lowercased"
+);

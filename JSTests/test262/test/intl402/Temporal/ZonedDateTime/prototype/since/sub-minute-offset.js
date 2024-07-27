@@ -8,7 +8,7 @@ includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("Africa/Monrovia");
+const timeZone = "Africa/Monrovia";
 const instance = new Temporal.ZonedDateTime(0n, timeZone);
 
 let result = instance.since("1970-01-01T00:44:30-00:44:30[Africa/Monrovia]");

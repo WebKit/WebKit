@@ -57,7 +57,7 @@
 #include "RenderChildIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderFragmentedFlow.h"
-#include "RenderImageResourceStyleImage.h"
+#include "RenderImageResource.h"
 #include "RenderLayoutState.h"
 #include "RenderStyleSetters.h"
 #include "RenderTheme.h"
@@ -151,7 +151,7 @@ using namespace HTMLNames;
 
 RenderImage::RenderImage(Type type, Element& element, RenderStyle&& style, OptionSet<ReplacedFlag> flags, StyleImage* styleImage, const float imageDevicePixelRatio)
     : RenderReplaced(type, element, WTFMove(style), IntSize(), flags | ReplacedFlag::IsImage)
-    , m_imageResource(styleImage ? makeUnique<RenderImageResourceStyleImage>(*styleImage) : makeUnique<RenderImageResource>())
+    , m_imageResource(makeUnique<RenderImageResource>(styleImage))
     , m_hasImageOverlay([&] {
         auto* htmlElement = dynamicDowncast<HTMLElement>(element);
         return htmlElement && ImageOverlay::hasOverlay(*htmlElement);
@@ -172,7 +172,7 @@ RenderImage::RenderImage(Type type, Element& element, RenderStyle&& style, Style
 
 RenderImage::RenderImage(Type type, Document& document, RenderStyle&& style, StyleImage* styleImage)
     : RenderReplaced(type, document, WTFMove(style), IntSize(), ReplacedFlag::IsImage)
-    , m_imageResource(styleImage ? makeUnique<RenderImageResourceStyleImage>(*styleImage) : makeUnique<RenderImageResource>())
+    , m_imageResource(makeUnique<RenderImageResource>(styleImage))
 {
 }
 

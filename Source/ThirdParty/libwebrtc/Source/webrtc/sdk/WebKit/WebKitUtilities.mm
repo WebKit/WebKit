@@ -38,16 +38,6 @@
 
 namespace webrtc {
 
-void setApplicationStatus(bool isActive)
-{
-/*
-    if (isActive)
-        [[RTCUIApplicationStatusObserver sharedInstance] setActive];
-    else
-        [[RTCUIApplicationStatusObserver sharedInstance] setInactive];
- */
-}
-
 rtc::scoped_refptr<webrtc::VideoFrameBuffer> pixelBufferToFrame(CVPixelBufferRef pixelBuffer)
 {
     RTCCVPixelBuffer *frameBuffer = [[RTCCVPixelBuffer alloc] initWithPixelBuffer:pixelBuffer];

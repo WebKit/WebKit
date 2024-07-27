@@ -185,6 +185,7 @@
     macro(language) \
     macro(languageDisplay) \
     macro(largestUnit) \
+    macro(lastChunkHandling) \
     macro(lastIndex) \
     macro(length) \
     macro(line) \
@@ -237,6 +238,7 @@
     macro(propertyIsEnumerable) \
     macro(prototype) \
     macro(raw) \
+    macro(read) \
     macro(region) \
     macro(replace) \
     macro(resizable) \
@@ -299,6 +301,7 @@
     macro(weeks) \
     macro(weeksDisplay) \
     macro(writable) \
+    macro(written) \
     macro(year) \
     macro(years) \
     macro(yearsDisplay)

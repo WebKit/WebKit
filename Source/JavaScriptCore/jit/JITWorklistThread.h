@@ -53,6 +53,7 @@ public:
     ASCIILiteral name() const final;
 
     State state() const { return m_state; }
+    const Safepoint* safepoint() const { return m_safepoint; }
 
 private:
     PollResult poll(const AbstractLocker&) final;

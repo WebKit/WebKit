@@ -209,6 +209,7 @@ enum class SessionHistoryVisibility : bool;
 enum class ShouldOpenExternalURLsPolicy : uint8_t;
 enum class ShouldSample : bool;
 enum class ShouldTreatAsContinuingLoad : uint8_t;
+enum class TextAnimationRunMode : uint8_t;
 enum class TextCheckingType : uint8_t;
 enum class TextGranularity : uint8_t;
 enum class TrackingType : uint8_t;
@@ -376,6 +377,7 @@ namespace WebCore {
 class ShareableBitmap;
 class ShareableBitmapHandle;
 class ShareableResourceHandle;
+struct TextAnimationData;
 enum class ExceptionCode : uint8_t;
 }
 
@@ -482,7 +484,6 @@ struct FocusedElementInformation;
 struct FrameInfoData;
 struct FrameTreeCreationParameters;
 struct FrameTreeNodeData;
-struct GPUProcessPreferencesForWebProcess;
 struct GeolocationIdentifierType;
 struct InputMethodState;
 struct InsertTextOptions;
@@ -492,7 +493,6 @@ struct LoadParameters;
 struct ModelIdentifier;
 struct NavigationActionData;
 struct NetworkResourceLoadIdentifierType;
-struct NetworkProcessPreferencesForWebProcess;
 struct PDFContextMenu;
 struct PDFPluginIdentifierType;
 struct PlatformPopupMenuData;
@@ -504,7 +504,6 @@ struct RemotePageParameters;
 struct SessionState;
 struct TapIdentifierType;
 struct TextCheckerRequestType;
-struct TextAnimationData;
 struct TransactionIDType;
 struct URLSchemeTaskParameters;
 struct UserMessage;
@@ -619,11 +618,6 @@ public:
 
     bool isLockdownModeExplicitlySet() const { return m_isLockdownModeExplicitlySet; }
     bool shouldEnableLockdownMode() const;
-
-#if ENABLE(GPU_PROCESS)
-    GPUProcessPreferencesForWebProcess preferencesForGPUProcess() const;
-#endif
-    NetworkProcessPreferencesForWebProcess preferencesForNetworkProcess() const;
 
     bool hasSameGPUAndNetworkProcessPreferencesAs(const API::PageConfiguration&) const;
     bool hasSameGPUAndNetworkProcessPreferencesAs(const WebPageProxy& page) const { return hasSameGPUAndNetworkProcessPreferencesAs(page.configuration()); }
@@ -1928,6 +1922,11 @@ public:
 
     void gamepadActivity(const Vector<std::optional<GamepadData>>&, WebCore::EventMakesGamepadsVisible);
     void gamepadsRecentlyAccessed();
+#if PLATFORM(VISION)
+    bool gamepadsConnected() const { return m_gamepadsConnected; }
+    void setGamepadsConnected(bool);
+    void allowGamepadAccess();
+#endif
 #endif
 
     void isLoadingChanged();
@@ -2156,6 +2155,9 @@ public:
 #endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
+    bool canEnterFullscreen();
+    void enterFullscreen();
+
     void failedToEnterFullscreen(PlaybackSessionContextIdentifier);
     void didEnterFullscreen(PlaybackSessionContextIdentifier);
     void didExitFullscreen(PlaybackSessionContextIdentifier);
@@ -2250,7 +2252,6 @@ public:
 #if ENABLE(WRITING_TOOLS)
 #if ENABLE(CONTEXT_MENUS)
     bool canHandleContextMenuWritingTools() const;
-    void handleContextMenuWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView);
     void handleContextMenuWritingTools(WebCore::WritingTools::RequestedTool);
 #endif
 #endif
@@ -2422,12 +2423,12 @@ public:
 #endif // ENABLE(WRITING_TOOLS)
 
 #if ENABLE(WRITING_TOOLS_UI)
-    void addTextAnimationForAnimationID(IPC::Connection&, const WTF::UUID&, const WebKit::TextAnimationData&, const WebCore::TextIndicatorData&, WTF::CompletionHandler<void(void)>&&);
+    void addTextAnimationForAnimationID(IPC::Connection&, const WTF::UUID&, const WebCore::TextAnimationData&, const WebCore::TextIndicatorData&, WTF::CompletionHandler<void(WebCore::TextAnimationRunMode)>&&);
     void removeTextAnimationForAnimationID(IPC::Connection&, const WTF::UUID&);
     void enableSourceTextAnimationAfterElementWithID(const String& elementID, const WTF::UUID&);
     void enableTextAnimationTypeForElementWithID(const String& elementID, const WTF::UUID&);
 
-    void callCompletionHandlerForAnimationID(const WTF::UUID&);
+    void callCompletionHandlerForAnimationID(const WTF::UUID&, WebCore::TextAnimationRunMode);
     void getTextIndicatorForID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
     void updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID&, bool, CompletionHandler<void()>&& = [] { });
 #endif
@@ -2485,6 +2486,8 @@ public:
     void dispatchActivityStateChange();
 
     void closeCurrentTypingCommand();
+
+    void simulateClickOverFirstMatchingTextInViewportWithUserInteraction(String&& targetText, CompletionHandler<void(bool)>&&);
 
 private:
     void getWebCryptoMasterKey(CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
@@ -2940,6 +2943,7 @@ private:
     void handleSynchronousMessage(IPC::Connection&, const String& messageName, const UserData& messageBody, CompletionHandler<void(UserData&&)>&&);
 
     void viewIsBecomingVisible();
+    void viewIsBecomingInvisible();
 
     void stopAllURLSchemeTasks(WebProcessProxy* = nullptr);
 
@@ -3077,9 +3081,11 @@ private:
 
 #if ENABLE(GAMEPAD)
     void recentGamepadAccessStateChanged(PAL::HysteresisState);
+    void resetRecentGamepadAccessState();
 #endif
 
     void setAllowsLayoutViewportHeightExpansion(bool);
+    void setBrowsingContextGroup(BrowsingContextGroup&);
 
     struct Internals;
     Internals& internals() { return m_internals; }
@@ -3619,6 +3625,9 @@ private:
 
 #if ENABLE(GAMEPAD)
     PAL::HysteresisActivity m_recentGamepadAccessHysteresis;
+#if PLATFORM(VISION)
+    bool m_gamepadsConnected { false };
+#endif
 #endif
 
     std::unique_ptr<WebPageProxyTesting> m_pageForTesting;

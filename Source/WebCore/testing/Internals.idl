@@ -159,6 +159,27 @@ enum AutoplayPolicy {
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     Conditional=VIDEO,
     JSGenerateToJSObject,
+] dictionary NowPlayingInfoArtwork {
+    DOMString src;
+    DOMString mimeType;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    Conditional=VIDEO,
+    JSGenerateToJSObject,
+] dictionary NowPlayingMetadata {
+    DOMString title;
+    DOMString artist;
+    DOMString album;
+    DOMString sourceApplicationIdentifier;
+    NowPlayingInfoArtwork? artwork;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    Conditional=VIDEO,
+    JSGenerateToJSObject,
 ] dictionary MediaUsageState {
     DOMString mediaURL;
     boolean isPlaying;
@@ -425,6 +446,25 @@ enum AV1ConfigurationRange {
 };
 
 typedef (FetchRequest or FetchResponse) FetchObject;
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary ImageBufferResourceLimits {
+    unsigned long long acceleratedImageBufferForCanvasCount;
+    unsigned long long acceleratedImageBufferForCanvasLimit;
+    unsigned long long globalAcceleratedImageBufferCount;
+    unsigned long long globalAcceleratedImageBufferLimit;
+    unsigned long long globalImageBufferForCanvasCount;
+    unsigned long long globalImageBufferForCanvasLimit;
+    unsigned long long imageBufferForCanvasCount;
+    unsigned long long imageBufferForCanvasLimit;
+};
+
+enum RenderingMode {
+    "Unaccelerated",
+    "Accelerated"
+};
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
@@ -947,6 +987,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=MEDIA_SOURCE] undefined setShouldGenerateTimestamps(SourceBuffer buffer, boolean flag);
     [Conditional=MEDIA_SOURCE] double minimumUpcomingPresentationTimeForTrackID(SourceBuffer buffer, [AtomString] DOMString trackID);
     [Conditional=MEDIA_SOURCE] undefined setMaximumQueueDepthForTrackID(SourceBuffer buffer, [AtomString] DOMString trackID, unsigned long maxQueueDepth);
+    [Conditional=MEDIA_SOURCE] unsigned long evictableSize(SourceBuffer buffer);
 
     [Conditional=VIDEO] undefined beginMediaSessionInterruption(DOMString interruptionType);
     [Conditional=VIDEO] undefined endMediaSessionInterruption(DOMString flags);
@@ -964,6 +1005,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=VIDEO] undefined endAudioSessionInterruption();
     [Conditional=VIDEO] undefined clearAudioSessionInterruptionFlag();
     [Conditional=VIDEO] undefined suspendAllMediaBuffering();
+    [Conditional=VIDEO] undefined suspendAllMediaPlayback();
+    [Conditional=VIDEO] undefined resumeAllMediaPlayback();
 
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerEnabled(boolean enabled);
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerState(DOMString deviceName, DOMString deviceState);
@@ -1185,6 +1228,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     undefined setMaxCanvasArea(unsigned long size);
 
+    [Conditional=VIDEO] readonly attribute NowPlayingMetadata? nowPlayingMetadata;
     [Conditional=VIDEO] readonly attribute NowPlayingState nowPlayingState;
 
     [Conditional=VIDEO] HTMLMediaElement bestMediaElementForRemoteControls(PlaybackControlsPurpose purpose);
@@ -1351,4 +1395,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     readonly attribute DOMString defaultSpatialTrackingLabel;
 
     boolean isEffectivelyMuted(HTMLMediaElement element);
+
+    RenderingMode? getEffectiveRenderingModeOfNewlyCreatedAcceleratedImageBuffer();
+    Promise<ImageBufferResourceLimits> getImageBufferResourceLimits();
 };

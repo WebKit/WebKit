@@ -29,6 +29,7 @@
 
 #import "ClassMethodSwizzler.h"
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKNavigationDelegate.h>
@@ -493,23 +494,32 @@ TEST(SafeBrowsing, WKWebViewGoBackIFrame)
     phishingResourceName = @"simple";
     ClassMethodSwizzler swizzler(objc_getClass("SSBLookupContext"), @selector(sharedLookupContext), [SimpleLookupContext methodForSelector:@selector(sharedLookupContext)]);
     
-    auto delegate = adoptNS([WKWebViewGoBackNavigationDelegate new]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
     auto webView = adoptNS([WKWebView new]);
     [webView configuration].preferences._safeBrowsingEnabled = YES;
+
+    __block bool navigationFailed = false;
+    __block bool navigationFinished = false;
+    delegate.get().didFailProvisionalLoadInSubframeWithError = ^(WKWebView *, WKFrameInfo *frame, NSError *error) {
+        EXPECT_NOT_NULL(error);
+        auto failingURL = (NSString *)[error.userInfo valueForKey:@"NSErrorFailingURLStringKey"];
+        EXPECT_TRUE([failingURL hasSuffix:@"/simple.html"]);
+        navigationFailed = true;
+    };
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *navigation) {
+        navigationFinished = true;
+    };
+
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple2")]];
     TestWebKitAPI::Util::run(&navigationFinished);
+    EXPECT_FALSE(navigationFailed);
+    navigationFinished = false;
+    navigationFailed = false;
 
     [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple-iframe")]];
-    while (![webView _safeBrowsingWarning])
-        TestWebKitAPI::Util::spinRunLoop();
-#if !PLATFORM(MAC)
-    [[webView _safeBrowsingWarning] didMoveToWindow];
-#endif
-    navigationFinished = false;
-    goBack([webView _safeBrowsingWarning], false);
     TestWebKitAPI::Util::run(&navigationFinished);
-    EXPECT_TRUE([[webView URL] isEqual:resourceURL(@"simple2")]);
+    TestWebKitAPI::Util::run(&navigationFailed);
 }
 
 @interface NullLookupContext : NSObject

@@ -16,8 +16,13 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits_fixtures.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_keys.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_keys.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/derived_bits_length.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/derived_bits_length.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/derived_bits_length_testcases.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/derived_bits_length_vectors.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.any.js

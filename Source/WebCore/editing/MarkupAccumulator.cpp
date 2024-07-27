@@ -40,6 +40,7 @@
 #include "FrameLoader.h"
 #include "HTMLElement.h"
 #include "HTMLFrameElement.h"
+#include "HTMLHeadElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
@@ -387,9 +388,16 @@ const ShadowRoot* MarkupAccumulator::suitableShadowRoot(const Node& node)
 
 void MarkupAccumulator::startAppendingNode(const Node& node, Namespaces* namespaces)
 {
-    if (RefPtr element = dynamicDowncast<Element>(node))
+    if (RefPtr element = dynamicDowncast<Element>(node)) {
         appendStartTag(m_markup, *element, namespaces);
-    else if (auto* shadowRoot = suitableShadowRoot(node)) {
+
+        // Currently URL Replacement only happens when saving markup to disk and the file uses UTF-8 encoding.
+        // To ensure the file can be loaded correctly, change the specified encoding to UTF-8.
+        // FIXME: This can be dropped when file encoding matches declared encoding.
+        if (m_urlReplacementData && is<HTMLHeadElement>(element))
+            m_markup.append("<meta charset=\"UTF-8\"><!-- Encoding specified by WebKit -->"_s);
+
+    } else if (auto* shadowRoot = suitableShadowRoot(node)) {
         m_markup.append("<template shadowrootmode=\""_s);
         switch (shadowRoot->mode()) {
         case ShadowRootMode::Open:

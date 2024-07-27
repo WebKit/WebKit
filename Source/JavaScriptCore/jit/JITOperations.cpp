@@ -1292,8 +1292,8 @@ JSC_DEFINE_JIT_OPERATION(operationPutByMegamorphicReallocating, void, (VM* vmPoi
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Structure* oldStructure = baseObject->structure();
-    Structure* newStructure = entry->m_newStructureID.decode();
+    Structure* oldStructure = WTF::opaque(baseObject->structure());
+    Structure* newStructure = WTF::opaque(entry->m_newStructureID.decode());
     PropertyOffset offset = entry->m_offset;
 
     ASSERT(oldStructure == entry->m_oldStructureID.decode());
@@ -1303,6 +1303,8 @@ JSC_DEFINE_JIT_OPERATION(operationPutByMegamorphicReallocating, void, (VM* vmPoi
     baseObject->setStructure(vm, newStructure);
     ASSERT(newStructure == baseObject->structure());
     dataLogLnIf(verbose, JSValue(baseObject), " ", offset);
+    ensureStillAliveHere(oldStructure);
+    ensureStillAliveHere(newStructure);
     OPERATION_RETURN(scope);
 }
 
@@ -2387,7 +2389,7 @@ JSC_DEFINE_JIT_OPERATION(operationCallDirectEvalSloppy, EncodedJSValue, (void* f
     auto scope = DECLARE_THROW_SCOPE(vm);
     calleeFrame->setCodeBlock(nullptr);
 
-    OPERATION_RETURN(scope, JSValue::encode(eval(calleeFrame, JSValue::decode(encodedThisValue), callerScopeChain, ECMAMode::sloppy())));
+    OPERATION_RETURN(scope, JSValue::encode(eval(calleeFrame, JSValue::decode(encodedThisValue), callerScopeChain, NoLexicallyScopedFeatures)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationCallDirectEvalStrict, EncodedJSValue, (void* frame, JSScope* callerScopeChain, EncodedJSValue encodedThisValue))
@@ -2398,7 +2400,29 @@ JSC_DEFINE_JIT_OPERATION(operationCallDirectEvalStrict, EncodedJSValue, (void* f
     auto scope = DECLARE_THROW_SCOPE(vm);
     calleeFrame->setCodeBlock(nullptr);
 
-    OPERATION_RETURN(scope, JSValue::encode(eval(calleeFrame, JSValue::decode(encodedThisValue), callerScopeChain, ECMAMode::strict())));
+    OPERATION_RETURN(scope, JSValue::encode(eval(calleeFrame, JSValue::decode(encodedThisValue), callerScopeChain, StrictModeLexicallyScopedFeature)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationCallDirectEvalSloppyTaintedByWithScope, EncodedJSValue, (void* frame, JSScope* callerScopeChain, EncodedJSValue encodedThisValue))
+{
+    CallFrame* calleeFrame = reinterpret_cast<CallFrame*>(frame);
+    // We can't trust our callee since it could be garbage but our caller's should be ok.
+    VM& vm = calleeFrame->callerFrame()->deprecatedVM();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    calleeFrame->setCodeBlock(nullptr);
+
+    OPERATION_RETURN(scope, JSValue::encode(eval(calleeFrame, JSValue::decode(encodedThisValue), callerScopeChain, TaintedByWithScopeLexicallyScopedFeature)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationCallDirectEvalStrictTaintedByWithScope, EncodedJSValue, (void* frame, JSScope* callerScopeChain, EncodedJSValue encodedThisValue))
+{
+    CallFrame* calleeFrame = reinterpret_cast<CallFrame*>(frame);
+    // We can't trust our callee since it could be garbage but our caller's should be ok.
+    VM& vm = calleeFrame->callerFrame()->deprecatedVM();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    calleeFrame->setCodeBlock(nullptr);
+
+    OPERATION_RETURN(scope, JSValue::encode(eval(calleeFrame, JSValue::decode(encodedThisValue), callerScopeChain, StrictModeLexicallyScopedFeature | TaintedByWithScopeLexicallyScopedFeature)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPolymorphicCall, UCPURegister, (CallFrame* calleeFrame, CallLinkInfo* callLinkInfo))
@@ -2615,87 +2639,162 @@ JSC_DEFINE_JIT_OPERATION(operationCreateClonedArgumentsBaseline, EncodedJSValue,
     OPERATION_RETURN(scope, JSValue::encode(ClonedArguments::createWithMachineFrame(globalObject, callFrame, ArgumentsMode::Cloned)));
 }
 
-template<typename FunctionType>
-static EncodedJSValue newFunctionCommon(VM& vm, JSScope* scope, JSCell* functionExecutable, bool isInvalidated)
+template<typename FunctionType, bool isInvalidated>
+static EncodedJSValue newFunctionCommon(VM& vm, JSGlobalObject* globalObject, JSScope* scope, JSCell* functionExecutable, Structure* structure)
 {
     ASSERT(functionExecutable->inherits<FunctionExecutable>());
-    if (isInvalidated)
-        return JSValue::encode(FunctionType::createWithInvalidatedReallocationWatchpoint(vm, static_cast<FunctionExecutable*>(functionExecutable), scope));
-    return JSValue::encode(FunctionType::create(vm, static_cast<FunctionExecutable*>(functionExecutable), scope));
+    if constexpr (isInvalidated)
+        return JSValue::encode(FunctionType::createWithInvalidatedReallocationWatchpoint(vm, globalObject, static_cast<FunctionExecutable*>(functionExecutable), scope, structure));
+    else
+        return JSValue::encode(FunctionType::create(vm, globalObject, static_cast<FunctionExecutable*>(functionExecutable), scope, structure));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationNewFunction, EncodedJSValue, (VM* vmPointer, JSScope* environment, JSCell* functionExecutable))
+JSC_DEFINE_JIT_OPERATION(operationNewFunction, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* environment, JSCell* functionExecutable))
 {
-    VM& vm = *vmPointer;
+    VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    OPERATION_RETURN(scope, newFunctionCommon<JSFunction>(vm, environment, functionExecutable, false));
+    constexpr bool isInvalidated = false;
+    OPERATION_RETURN(scope, newFunctionCommon<JSFunction, isInvalidated>(vm, globalObject, environment, functionExecutable, JSFunction::selectStructureForNewFuncExp(globalObject, jsCast<FunctionExecutable*>(functionExecutable))));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationNewFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (VM* vmPointer, JSScope* environment, JSCell* functionExecutable))
+JSC_DEFINE_JIT_OPERATION(operationNewFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* environment, JSCell* functionExecutable))
 {
-    VM& vm = *vmPointer;
+    VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    OPERATION_RETURN(scope, newFunctionCommon<JSFunction>(vm, environment, functionExecutable, true));
+    constexpr bool isInvalidated = true;
+    OPERATION_RETURN(scope, newFunctionCommon<JSFunction, isInvalidated>(vm, globalObject, environment, functionExecutable, JSFunction::selectStructureForNewFuncExp(globalObject, jsCast<FunctionExecutable*>(functionExecutable))));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationNewGeneratorFunction, EncodedJSValue, (VM* vmPointer, JSScope* environment, JSCell* functionExecutable))
+JSC_DEFINE_JIT_OPERATION(operationNewSloppyFunction, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* environment, JSCell* functionExecutable))
 {
-    VM& vm = *vmPointer;
+    VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    OPERATION_RETURN(scope, newFunctionCommon<JSGeneratorFunction>(vm, environment, functionExecutable, false));
+    constexpr bool isInvalidated = false;
+    constexpr bool isBuiltin = false;
+    OPERATION_RETURN(scope, newFunctionCommon<JSFunction, isInvalidated>(vm, globalObject, environment, functionExecutable, globalObject->sloppyFunctionStructure(isBuiltin)));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationNewGeneratorFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (VM* vmPointer, JSScope* environment, JSCell* functionExecutable))
+JSC_DEFINE_JIT_OPERATION(operationNewSloppyFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* environment, JSCell* functionExecutable))
 {
-    VM& vm = *vmPointer;
+    VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    OPERATION_RETURN(scope, newFunctionCommon<JSGeneratorFunction>(vm, environment, functionExecutable, true));
+    constexpr bool isInvalidated = true;
+    constexpr bool isBuiltin = false;
+    OPERATION_RETURN(scope, newFunctionCommon<JSFunction, isInvalidated>(vm, globalObject, environment, functionExecutable, globalObject->sloppyFunctionStructure(isBuiltin)));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationNewAsyncFunction, EncodedJSValue, (VM* vmPointer, JSScope* environment, JSCell* functionExecutable))
+JSC_DEFINE_JIT_OPERATION(operationNewStrictFunction, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* environment, JSCell* functionExecutable))
 {
-    VM& vm = *vmPointer;
+    VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    OPERATION_RETURN(scope, newFunctionCommon<JSAsyncFunction>(vm, environment, functionExecutable, false));
+    constexpr bool isInvalidated = false;
+    constexpr bool isBuiltin = false;
+    OPERATION_RETURN(scope, newFunctionCommon<JSFunction, isInvalidated>(vm, globalObject, environment, functionExecutable, globalObject->strictFunctionStructure(isBuiltin)));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationNewAsyncFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (VM* vmPointer, JSScope* environment, JSCell* functionExecutable))
+JSC_DEFINE_JIT_OPERATION(operationNewStrictFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* environment, JSCell* functionExecutable))
 {
-    VM& vm = *vmPointer;
+    VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    OPERATION_RETURN(scope, newFunctionCommon<JSAsyncFunction>(vm, environment, functionExecutable, true));
+    constexpr bool isInvalidated = true;
+    constexpr bool isBuiltin = false;
+    OPERATION_RETURN(scope, newFunctionCommon<JSFunction, isInvalidated>(vm, globalObject, environment, functionExecutable, globalObject->strictFunctionStructure(isBuiltin)));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationNewAsyncGeneratorFunction, EncodedJSValue, (VM* vmPointer, JSScope* environment, JSCell* functionExecutable))
+JSC_DEFINE_JIT_OPERATION(operationNewArrowFunction, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* environment, JSCell* functionExecutable))
 {
-    VM& vm = *vmPointer;
+    VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    OPERATION_RETURN(scope, newFunctionCommon<JSAsyncGeneratorFunction>(vm, environment, functionExecutable, false));
+    constexpr bool isInvalidated = false;
+    constexpr bool isBuiltin = false;
+    OPERATION_RETURN(scope, newFunctionCommon<JSFunction, isInvalidated>(vm, globalObject, environment, functionExecutable, globalObject->arrowFunctionStructure(isBuiltin)));
 }
-    
-JSC_DEFINE_JIT_OPERATION(operationNewAsyncGeneratorFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (VM* vmPointer, JSScope* environment, JSCell* functionExecutable))
+
+JSC_DEFINE_JIT_OPERATION(operationNewArrowFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* environment, JSCell* functionExecutable))
 {
-    VM& vm = *vmPointer;
+    VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    OPERATION_RETURN(scope, newFunctionCommon<JSAsyncGeneratorFunction>(vm, environment, functionExecutable, true));
+    constexpr bool isInvalidated = true;
+    constexpr bool isBuiltin = false;
+    OPERATION_RETURN(scope, newFunctionCommon<JSFunction, isInvalidated>(vm, globalObject, environment, functionExecutable, globalObject->arrowFunctionStructure(isBuiltin)));
 }
-    
+
+JSC_DEFINE_JIT_OPERATION(operationNewGeneratorFunction, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* environment, JSCell* functionExecutable))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    constexpr bool isInvalidated = false;
+    OPERATION_RETURN(scope, newFunctionCommon<JSGeneratorFunction, isInvalidated>(vm, globalObject, environment, functionExecutable, globalObject->generatorFunctionStructure()));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationNewGeneratorFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* environment, JSCell* functionExecutable))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    constexpr bool isInvalidated = true;
+    OPERATION_RETURN(scope, newFunctionCommon<JSGeneratorFunction, isInvalidated>(vm, globalObject, environment, functionExecutable, globalObject->generatorFunctionStructure()));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationNewAsyncFunction, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* environment, JSCell* functionExecutable))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    constexpr bool isInvalidated = false;
+    OPERATION_RETURN(scope, newFunctionCommon<JSAsyncFunction, isInvalidated>(vm, globalObject, environment, functionExecutable, globalObject->asyncFunctionStructure()));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationNewAsyncFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* environment, JSCell* functionExecutable))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    constexpr bool isInvalidated = true;
+    OPERATION_RETURN(scope, newFunctionCommon<JSAsyncFunction, isInvalidated>(vm, globalObject, environment, functionExecutable, globalObject->asyncFunctionStructure()));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationNewAsyncGeneratorFunction, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* environment, JSCell* functionExecutable))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    constexpr bool isInvalidated = false;
+    OPERATION_RETURN(scope, newFunctionCommon<JSAsyncGeneratorFunction, isInvalidated>(vm, globalObject, environment, functionExecutable, globalObject->asyncGeneratorFunctionStructure()));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationNewAsyncGeneratorFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* environment, JSCell* functionExecutable))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    constexpr bool isInvalidated = true;
+    OPERATION_RETURN(scope, newFunctionCommon<JSAsyncGeneratorFunction, isInvalidated>(vm, globalObject, environment, functionExecutable, globalObject->asyncGeneratorFunctionStructure()));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationSetFunctionName, void, (JSGlobalObject* globalObject, JSCell* funcCell, EncodedJSValue encodedName))
 {
     VM& vm = globalObject->vm();
@@ -4476,8 +4575,8 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationReallocateButterflyAndTransition, voi
     size_t newSize = handler->newSize() / sizeof(JSValue);
     size_t oldSize = handler->oldSize() / sizeof(JSValue);
     PropertyOffset offset = handler->offset();
-    Structure* oldStructure = handler->structureID().decode();
-    Structure* newStructure = handler->newStructureID().decode();
+    Structure* oldStructure = WTF::opaque(handler->structureID().decode());
+    Structure* newStructure = WTF::opaque(handler->newStructureID().decode());
 
     ASSERT(oldStructure == baseObject->structure());
     Butterfly* newButterfly = baseObject->allocateMoreOutOfLineStorage(vm, oldSize, newSize);

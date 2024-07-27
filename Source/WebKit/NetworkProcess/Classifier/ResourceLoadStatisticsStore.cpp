@@ -790,6 +790,8 @@ bool ResourceLoadStatisticsStore::shouldExemptFromWebsiteDataDeletion(const Regi
 HashSet<RegistrableDomain> ResourceLoadStatisticsStore::domainsExemptFromWebsiteDataDeletion() const
 {
     auto result = m_appBoundDomains.unionWith(m_managedDomains);
+    result = result.unionWith(m_persistedDomains);
+
     if (!m_standaloneApplicationDomain.isEmpty())
         result.add(m_standaloneApplicationDomain);
 

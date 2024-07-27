@@ -127,7 +127,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
     CCallHelpers jit(codeBlock);
     {
         SetForScope disallowFreeze { state.graph.m_frozenValuesAreFinalized, true };
-        GraphSafepoint safepoint(state.graph, safepointResult);
+        GraphSafepoint safepoint(state.graph, safepointResult, true);
         B3::generate(*state.proc, jit);
     }
     if (safepointResult.didGetCancelled())

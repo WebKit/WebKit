@@ -11,8 +11,6 @@ features: [Temporal]
 ---*/
 
 const expected = [
-  "ownKeys options",
-  "getOwnPropertyDescriptor options.overflow",
   "get options.overflow",
   "get options.overflow.toString",
   "call options.overflow.toString",
@@ -26,11 +24,6 @@ assert.compareArray(actual, expected, "Successful call");
 TemporalHelpers.assertPlainMonthDay(result, "M05", 17);
 
 actual.splice(0);  // empty it for the next check
-const failureExpected = [
-  "ownKeys options",
-  "getOwnPropertyDescriptor options.overflow",
-  "get options.overflow",
-];
 
 assert.throws(TypeError, () => Temporal.PlainMonthDay.from(7, options));
-assert.compareArray(actual, failureExpected, "Failing call");
+assert.compareArray(actual, expected, "Failing call");

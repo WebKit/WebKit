@@ -31,6 +31,8 @@
 #include "AbstractSlotVisitor.h"
 #include "CodeBlock.h"
 #include "HeapInlines.h"
+#include "JITSafepoint.h"
+#include "JITWorklistThread.h"
 #include "JSCellInlines.h"
 #include "VMInlines.h"
 #include <wtf/CompilationThread.h>
@@ -55,6 +57,7 @@ JITPlan::JITPlan(JITCompilationMode mode, CodeBlock* codeBlock)
 void JITPlan::cancel()
 {
     RELEASE_ASSERT(m_stage != JITPlanStage::Canceled);
+    RELEASE_ASSERT(!safepointKeepsDependenciesLive());
     ASSERT(m_vm);
     m_stage = JITPlanStage::Canceled;
     m_vm = nullptr;
@@ -138,6 +141,11 @@ bool JITPlan::checkLivenessAndVisitChildren(AbstractSlotVisitor& visitor)
     return true;
 }
 
+bool JITPlan::safepointKeepsDependenciesLive() const
+{
+    return m_thread && m_thread->safepoint() && m_thread->safepoint()->keepDependenciesLive();
+}
+
 bool JITPlan::computeCompileTimes() const
 {
     return reportCompileTimes()
@@ -155,7 +163,7 @@ bool JITPlan::reportCompileTimes() const
 
 void JITPlan::compileInThread(JITWorklistThread* thread)
 {
-    m_thread = thread;
+    SetForScope threadScope(m_thread, thread);
 
     MonotonicTime before;
     CString codeBlockName;

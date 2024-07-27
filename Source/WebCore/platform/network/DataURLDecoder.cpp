@@ -31,6 +31,7 @@
 #include <pal/text/DecodeEscapeSequences.h>
 #include <pal/text/TextEncoding.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/URL.h>
 #include <wtf/WorkQueue.h>

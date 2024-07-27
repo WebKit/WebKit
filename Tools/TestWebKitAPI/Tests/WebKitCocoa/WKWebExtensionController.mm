@@ -60,9 +60,24 @@ TEST(WKWebExtensionController, Configuration)
 TEST(WKWebExtensionController, LoadingAndUnloadingContexts)
 {
     _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
+    NSError *error;
 
     EXPECT_EQ(testController.extensions.count, 0ul);
     EXPECT_EQ(testController.extensionContexts.count, 0ul);
+
+#if TARGET_OS_IPHONE
+    _WKWebExtension *invalidPersistenceExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:@{ @"manifest_version": @2, @"name": @"Invalid Persistence", @"description": @"Invalid Persistence", @"version": @"1.0", @"background": @{ @"page": @"background.html", @"persistent": @YES } }];
+    _WKWebExtensionContext *invalidPersistenceContext = [[_WKWebExtensionContext alloc] initForExtension:invalidPersistenceExtension];
+
+    EXPECT_FALSE(invalidPersistenceContext.loaded);
+    EXPECT_FALSE([testController loadExtensionContext:invalidPersistenceContext error:&error]);
+    EXPECT_NOT_NULL(error);
+    EXPECT_NS_EQUAL(error.domain, _WKWebExtensionErrorDomain);
+    EXPECT_EQ(error.code, _WKWebExtensionErrorInvalidBackgroundPersistence);
+
+    EXPECT_EQ(testController.extensions.count, 0ul);
+    EXPECT_EQ(testController.extensionContexts.count, 0ul);
+#endif // TARGET_OS_IPHONE
 
     _WKWebExtension *testExtensionOne = [[_WKWebExtension alloc] _initWithManifestDictionary:@{ @"manifest_version": @2, @"name": @"Test One", @"description": @"Test One", @"version": @"1.0" }];
     _WKWebExtensionContext *testContextOne = [[_WKWebExtensionContext alloc] initForExtension:testExtensionOne];
@@ -78,7 +93,6 @@ TEST(WKWebExtensionController, LoadingAndUnloadingContexts)
     EXPECT_FALSE(testContextTwo.loaded);
     EXPECT_NULL([testController extensionContextForExtension:testExtensionTwo]);
 
-    NSError *error;
     EXPECT_TRUE([testController loadExtensionContext:testContextOne error:&error]);
     EXPECT_NULL(error);
 
@@ -759,6 +773,76 @@ TEST(WKWebExtensionController, WebAccessibleResources)
             @"resources": @[ @"g*.svg" ],
             @"matches": @[ @"*://localhost/*" ]
         } ]
+    };
+
+    auto *resources = @{
+        @"content.js": contentScript,
+        @"good.svg": @"<svg xmlns='http://www.w3.org/2000/svg'></svg>",
+        @"bad.svg": @"<svg xmlns='http://www.w3.org/2000/svg'></svg>"
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionController, WebAccessibleResourcesV2)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *contentScript = Util::constructScript(@[
+        @"var imgGood = document.createElement('img')",
+        @"imgGood.src = browser.runtime.getURL('good.svg')",
+
+        @"var imgBad = document.createElement('img')",
+        @"imgBad.src = browser.runtime.getURL('bad.svg')",
+
+        @"var goodLoaded = false",
+        @"var badFailed = false",
+
+        @"imgGood.onload = () => {",
+        @"  goodLoaded = true",
+        @"  if (badFailed)",
+        @"    browser.test.notifyPass()",
+        @"}",
+
+        @"imgGood.onerror = () => {",
+        @"  browser.test.notifyFail('The good image should load')",
+        @"}",
+
+        @"imgBad.onload = () => {",
+        @"  browser.test.notifyFail('The bad image should not load')",
+        @"}",
+
+        @"imgBad.onerror = () => {",
+        @"  badFailed = true",
+        @"  if (goodLoaded)",
+        @"    browser.test.notifyPass()",
+        @"}",
+
+        @"document.body.appendChild(imgGood)",
+        @"document.body.appendChild(imgBad)"
+    ]);
+
+    auto *manifest = @{
+        @"manifest_version": @2,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+
+        @"content_scripts": @[ @{
+            @"js": @[ @"content.js" ],
+            @"matches": @[ @"*://localhost/*" ],
+        } ],
+
+        @"web_accessible_resources": @[ @"good.svg" ]
     };
 
     auto *resources = @{

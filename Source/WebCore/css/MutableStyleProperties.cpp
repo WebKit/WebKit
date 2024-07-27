@@ -141,7 +141,7 @@ bool MutableStyleProperties::removeCustomProperty(const String& propertyName, St
     return removePropertyAtIndex(findCustomPropertyIndex(propertyName), returnText);
 }
 
-bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String& value, bool important, CSSParserContext parserContext, bool* didFailParsing)
+bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String& value, CSSParserContext parserContext, IsImportant important, bool* didFailParsing)
 {
     if (!isExposed(propertyID, &parserContext.propertySettings) && !isInternal(propertyID)) {
         // Allow internal properties as we use them to handle certain DOM-exposed values
@@ -163,13 +163,13 @@ bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String&
     return parseResult == CSSParser::ParseResult::Changed;
 }
 
-bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String& value, bool important, bool* didFailParsing)
+bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String& value, IsImportant important, bool* didFailParsing)
 {
     CSSParserContext parserContext(cssParserMode());
-    return setProperty(propertyID, value, important, parserContext, didFailParsing);
+    return setProperty(propertyID, value, parserContext, important, didFailParsing);
 }
 
-bool MutableStyleProperties::setCustomProperty(const String& propertyName, const String& value, bool important, CSSParserContext parserContext)
+bool MutableStyleProperties::setCustomProperty(const String& propertyName, const String& value, CSSParserContext parserContext, IsImportant important)
 {
     // Setting the value to an empty string just removes the property in both IE and Gecko.
     // Setting it to null seems to produce less consistent results, but we treat it just the same.
@@ -182,7 +182,7 @@ bool MutableStyleProperties::setCustomProperty(const String& propertyName, const
     return CSSParser::parseCustomPropertyValue(*this, AtomString { propertyName }, value, important, parserContext) == CSSParser::ParseResult::Changed;
 }
 
-void MutableStyleProperties::setProperty(CSSPropertyID propertyID, RefPtr<CSSValue>&& value, bool important)
+void MutableStyleProperties::setProperty(CSSPropertyID propertyID, RefPtr<CSSValue>&& value, IsImportant important)
 {
     if (isLonghand(propertyID)) {
         setProperty(CSSProperty(propertyID, WTFMove(value), important));
@@ -235,7 +235,7 @@ bool MutableStyleProperties::setProperty(const CSSProperty& property, CSSPropert
     return true;
 }
 
-bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, CSSValueID identifier, bool important)
+bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, CSSValueID identifier, IsImportant important)
 {
     ASSERT(isLonghand(propertyID));
     return setProperty(CSSProperty(propertyID, CSSPrimitiveValue::create(identifier), important));

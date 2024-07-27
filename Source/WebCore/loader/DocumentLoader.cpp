@@ -558,7 +558,7 @@ void DocumentLoader::handleSubstituteDataLoadNow()
     if (auto* page = m_frame ? m_frame->page() : nullptr) {
         // We intentionally do nothing with the results of this call.
         // We want the CSS to be loaded for us, but we ignore any attempt to block or upgrade the connection since there is no connection.
-        page->userContentProvider().processContentRuleListsForLoad(*page, response.url(), ContentExtensions::ResourceType::Document, *this);
+        page->protectedUserContentProvider()->processContentRuleListsForLoad(*page, response.url(), ContentExtensions::ResourceType::Document, *this);
     }
 #endif
 
@@ -935,7 +935,7 @@ void DocumentLoader::responseReceived(CachedResource& resource, const ResourceRe
             auto firstPartyDomain = RegistrableDomain(response.url());
             if (auto loginDomains = NetworkStorageSession::subResourceDomainsInNeedOfStorageAccessForFirstParty(firstPartyDomain)) {
                 if (!Quirks::hasStorageAccessForAllLoginDomains(*loginDomains, firstPartyDomain)) {
-                    m_frame->navigationScheduler().scheduleRedirect(document, 0, microsoftTeamsRedirectURL(), IsMetaRefresh::No);
+                    m_frame->checkedNavigationScheduler()->scheduleRedirect(document, 0, microsoftTeamsRedirectURL(), IsMetaRefresh::No);
                     return;
                 }
             }
@@ -1253,7 +1253,7 @@ void DocumentLoader::stopLoadingForPolicyChange(LoadWillContinueInAnotherProcess
 // https://w3c.github.io/ServiceWorker/#control-and-use-window-client
 static inline bool shouldUseActiveServiceWorkerFromParent(const Document& document, const Document& parent)
 {
-    return !document.url().protocolIsInHTTPFamily() && !document.securityOrigin().isOpaque() && parent.securityOrigin().isSameOriginDomain(document.securityOrigin());
+    return !document.url().protocolIsInHTTPFamily() && !document.securityOrigin().isOpaque() && parent.protectedSecurityOrigin()->isSameOriginDomain(document.securityOrigin());
 }
 
 void DocumentLoader::commitData(const SharedBuffer& data)
@@ -2140,8 +2140,17 @@ void DocumentLoader::startLoadingMainResource()
     if (contentFilterInDocumentLoader())
         m_contentFilter = !m_substituteData.isValid() ? ContentFilter::create(*this) : nullptr;
 #endif
-    
-    
+
+    auto url = m_request.url();
+    auto fragmentDirective = url.consumeFragmentDirective();
+
+    m_request.setURL(url, m_request.didFilterLinkDecoration());
+    if (m_frame) {
+        RefPtr page = m_frame->protectedPage();
+        if (page)
+            page->setMainFrameURLFragment(WTFMove(fragmentDirective));
+    }
+
     // Make sure we re-apply the user agent to the Document's ResourceRequest upon reload in case the embedding
     // application has changed it, by clearing the previous user agent value here and applying the new value in CachedResourceLoader.
     m_request.clearHTTPUserAgent();

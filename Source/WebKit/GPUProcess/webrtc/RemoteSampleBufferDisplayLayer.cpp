@@ -59,9 +59,6 @@ RemoteSampleBufferDisplayLayer::RemoteSampleBufferDisplayLayer(GPUConnectionToWe
 void RemoteSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, bool shouldMaintainAspectRatio, bool canShowWhileLocked, LayerInitializationCallback&& callback)
 {
     LayerHostingContextOptions contextOptions;
-#if USE(EXTENSIONKIT)
-    contextOptions.useHostable = true;
-#endif
 #if PLATFORM(IOS_FAMILY)
     contextOptions.canShowWhileLocked = canShowWhileLocked;
 #else

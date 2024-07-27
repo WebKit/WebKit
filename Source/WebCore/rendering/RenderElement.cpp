@@ -63,7 +63,6 @@
 #include "RenderFragmentedFlow.h"
 #include "RenderGrid.h"
 #include "RenderImage.h"
-#include "RenderImageResourceStyleImage.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
@@ -1098,9 +1097,9 @@ void RenderElement::willBeRemovedFromTree()
     RenderObject::willBeRemovedFromTree();
 }
 
-bool RenderElement::didVisitDuringLastLayout() const
+bool RenderElement::didVisitSinceLayout(LayoutIdentifier identifier) const
 {
-    return layoutIdentifier() == view().frameView().layoutContext().layoutIdentifier();
+    return layoutIdentifier() >= identifier;
 }
 
 inline void RenderElement::clearSubtreeLayoutRootIfNeeded() const

@@ -71,6 +71,7 @@ struct SVGPropertyTraits<SVGSpreadMethodType> {
 
 class SVGGradientElement : public SVGElement, public SVGURIReference {
     WTF_MAKE_ISO_ALLOCATED(SVGGradientElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGGradientElement);
 public:
     enum {
         SVG_SPREADMETHOD_UNKNOWN = SVGSpreadMethodUnknown,

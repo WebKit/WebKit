@@ -22,8 +22,8 @@
 #if USE(GSTREAMER_WEBRTC)
 
 #include "GStreamerCommon.h"
+#include "GStreamerQuirks.h"
 #include "GStreamerRegistryScanner.h"
-#include <wtf/text/MakeString.h>
 
 GST_DEBUG_CATEGORY(webkit_webrtc_incoming_track_processor_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_incoming_track_processor_debug
@@ -42,33 +42,68 @@ void GStreamerIncomingTrackProcessor::configure(ThreadSafeWeakPtr<GStreamerMedia
 {
     m_endPoint = WTFMove(endPoint);
     m_pad = WTFMove(pad);
-    m_data.mediaStreamBinName = span(GST_OBJECT_NAME(m_pad.get()));
-    m_bin = gst_bin_new(m_data.mediaStreamBinName.ascii().data());
 
     auto caps = adoptGRef(gst_pad_get_current_caps(m_pad.get()));
     if (!caps)
         caps = adoptGRef(gst_pad_query_caps(m_pad.get(), nullptr));
 
-    GST_DEBUG_OBJECT(m_bin.get(), "Processing track with caps %" GST_PTR_FORMAT, caps.get());
-    m_data.type = doCapsHaveType(caps.get(), "audio") ? RealtimeMediaSource::Type::Audio : RealtimeMediaSource::Type::Video;
+    ASCIILiteral typeName;
+    if (doCapsHaveType(caps.get(), "audio")) {
+        typeName = "audio"_s;
+        m_data.type = RealtimeMediaSource::Type::Audio;
+    } else {
+        typeName = "video"_s;
+        m_data.type = RealtimeMediaSource::Type::Video;
+    }
     m_data.caps = WTFMove(caps);
 
+    m_data.mediaStreamBinName = makeString("incoming-"_s, typeName, "-track-"_s, span(GST_OBJECT_NAME(m_pad.get())));
+    m_bin = gst_bin_new(m_data.mediaStreamBinName.ascii().data());
+    GST_DEBUG_OBJECT(m_bin.get(), "Processing track with caps %" GST_PTR_FORMAT, m_data.caps.get());
+
     g_object_get(m_pad.get(), "transceiver", &m_data.transceiver.outPtr(), nullptr);
-    retrieveMediaStreamAndTrackIdFromSDP();
+
+    auto structure = gst_caps_get_structure(m_data.caps.get(), 0);
+    if (auto ssrc = gstStructureGet<unsigned>(structure, "ssrc"_s)) {
+        auto msIdAttributeName = makeString("ssrc-"_s, *ssrc, "-msid"_s);
+        auto msIdAttribute = gst_structure_get_string(structure, msIdAttributeName.ascii().data());
+        auto components = String::fromUTF8(msIdAttribute).split(' ');
+        if (components.size() == 2)
+            m_sdpMsIdAndTrackId = { components[0], components[1] };
+    }
+
+    if (m_sdpMsIdAndTrackId.second.isEmpty())
+        retrieveMediaStreamAndTrackIdFromSDP();
+
     m_data.mediaStreamId = mediaStreamIdFromPad();
 
     if (!m_sdpMsIdAndTrackId.second.isEmpty())
         m_data.trackId = m_sdpMsIdAndTrackId.second;
 
-    m_tee = gst_element_factory_make("tee", "tee");
-    g_object_set(m_tee.get(), "allow-not-linked", TRUE, nullptr);
+    m_sink = gst_element_factory_make("fakesink", "sink");
+    g_object_set(m_sink.get(), "sync", TRUE, "enable-last-sample", FALSE, nullptr);
+    auto queue = gst_element_factory_make("queue", "queue");
 
     auto trackProcessor = incomingTrackProcessor();
-    m_data.isUpstreamDecoding = m_isDecoding;
 
-    gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_tee.get(), trackProcessor.get(), nullptr);
+    gst_bin_add_many(GST_BIN_CAST(m_bin.get()), trackProcessor.get(), queue, m_sink.get(), nullptr);
+    gst_element_link(queue, m_sink.get());
+
     auto sinkPad = adoptGRef(gst_element_get_static_pad(trackProcessor.get(), "sink"));
     gst_element_add_pad(m_bin.get(), gst_ghost_pad_new("sink", sinkPad.get()));
+
+    if (m_data.type != RealtimeMediaSource::Type::Video || !m_isDecoding)
+        return;
+
+    auto sinkSinkPad = adoptGRef(gst_element_get_static_pad(m_sink.get(), "sink"));
+    gst_pad_add_probe(sinkSinkPad.get(), GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(+[](GstPad*, GstPadProbeInfo* info, gpointer) -> GstPadProbeReturn {
+        auto query = GST_PAD_PROBE_INFO_QUERY(info);
+        if (GST_QUERY_TYPE(query) != GST_QUERY_ALLOCATION)
+            return GST_PAD_PROBE_OK;
+
+        gst_query_add_allocation_meta(query, GST_VIDEO_META_API_TYPE, nullptr);
+        return GST_PAD_PROBE_REMOVE;
+    }), nullptr, nullptr);
 }
 
 String GStreamerIncomingTrackProcessor::mediaStreamIdFromPad()
@@ -130,8 +165,10 @@ GRefPtr<GstElement> GStreamerIncomingTrackProcessor::incomingTrackProcessor()
     if (m_data.type == RealtimeMediaSource::Type::Audio)
         return createParser();
 
-    GST_DEBUG_OBJECT(m_bin.get(), "Requesting a key-frame");
-    gst_pad_send_event(m_pad.get(), gst_video_event_new_upstream_force_key_unit(GST_CLOCK_TIME_NONE, TRUE, 1));
+    if (m_data.type == RealtimeMediaSource::Type::Video) {
+        GST_DEBUG_OBJECT(m_bin.get(), "Requesting a key-frame");
+        gst_pad_send_event(m_pad.get(), gst_video_event_new_upstream_force_key_unit(GST_CLOCK_TIME_NONE, TRUE, 1));
+    }
 
     bool forceEarlyVideoDecoding = !g_strcmp0(g_getenv("WEBKIT_GST_WEBRTC_FORCE_EARLY_VIDEO_DECODING"), "1");
     GST_DEBUG_OBJECT(m_bin.get(), "Configuring for input caps: %" GST_PTR_FORMAT "%s", m_data.caps.get(), forceEarlyVideoDecoding ? " and early decoding" : "");
@@ -152,12 +189,6 @@ GRefPtr<GstElement> GStreamerIncomingTrackProcessor::incomingTrackProcessor()
     GST_DEBUG_OBJECT(m_bin.get(), "Preparing video decoder for depayloaded RTP packets");
     GRefPtr<GstElement> decodebin = makeGStreamerElement("decodebin3", nullptr);
     m_isDecoding = true;
-
-    m_queue = gst_element_factory_make("queue", nullptr);
-    m_fakeVideoSink = makeGStreamerElement("fakevideosink", nullptr);
-    g_object_set(m_fakeVideoSink.get(), "enable-last-sample", FALSE, nullptr);
-    gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_queue.get(), m_fakeVideoSink.get(), nullptr);
-    gst_element_link(m_queue.get(), m_fakeVideoSink.get());
 
     g_signal_connect(decodebin.get(), "deep-element-added", G_CALLBACK(+[](GstBin*, GstBin*, GstElement* element, gpointer) {
         String elementClass = WTF::span(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
@@ -194,13 +225,9 @@ GRefPtr<GstElement> GStreamerIncomingTrackProcessor::incomingTrackProcessor()
     }), this);
 
     g_signal_connect_swapped(decodebin.get(), "pad-added", G_CALLBACK(+[](GStreamerIncomingTrackProcessor* self, GstPad* pad) {
-        auto sinkPad = adoptGRef(gst_element_get_static_pad(self->m_tee.get(), "sink"));
+        auto queue = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(self->m_bin.get()), "queue"));
+        auto sinkPad = adoptGRef(gst_element_get_static_pad(queue.get(), "sink"));
         gst_pad_link(pad, sinkPad.get());
-
-        gst_element_link(self->m_tee.get(), self->m_queue.get());
-        gst_element_sync_state_with_parent(self->m_tee.get());
-        gst_element_sync_state_with_parent(self->m_queue.get());
-        gst_element_sync_state_with_parent(self->m_fakeVideoSink.get());
         self->trackReady();
     }), this);
     return decodebin;
@@ -218,10 +245,26 @@ GRefPtr<GstElement> GStreamerIncomingTrackProcessor::createParser()
         configureVideoRTPDepayloader(element);
     }), nullptr);
 
+    auto& quirksManager = GStreamerQuirksManager::singleton();
+    if (quirksManager.isEnabled()) {
+        // Prevent auto-plugging of hardware-accelerated elements. Those will be used in the playback pipeline.
+        g_signal_connect(parsebin.get(), "autoplug-select", G_CALLBACK(+[](GstElement*, GstPad*, GstCaps*, GstElementFactory* factory, gpointer) -> unsigned {
+            static auto skipAutoPlug = gstGetAutoplugSelectResult("skip"_s);
+            static auto tryAutoPlug = gstGetAutoplugSelectResult("try"_s);
+            RELEASE_ASSERT(skipAutoPlug);
+            RELEASE_ASSERT(tryAutoPlug);
+            auto& quirksManager = GStreamerQuirksManager::singleton();
+            auto isHardwareAccelerated = quirksManager.isHardwareAccelerated(factory).value_or(false);
+            if (isHardwareAccelerated)
+                return *skipAutoPlug;
+            return *tryAutoPlug;
+        }), nullptr);
+    }
+
     g_signal_connect_swapped(parsebin.get(), "pad-added", G_CALLBACK(+[](GStreamerIncomingTrackProcessor* self, GstPad* pad) {
-        auto sinkPad = adoptGRef(gst_element_get_static_pad(self->m_tee.get(), "sink"));
+        auto queue = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(self->m_bin.get()), "queue"));
+        auto sinkPad = adoptGRef(gst_element_get_static_pad(queue.get(), "sink"));
         gst_pad_link(pad, sinkPad.get());
-        gst_element_sync_state_with_parent(self->m_tee.get());
         self->trackReady();
     }), this);
     return parsebin;
@@ -252,7 +295,7 @@ const GstStructure* GStreamerIncomingTrackProcessor::stats()
 
     m_stats.reset(gst_structure_new_empty("incoming-video-stats"));
     GUniqueOutPtr<GstStructure> stats;
-    g_object_get(m_fakeVideoSink.get(), "stats", &stats.outPtr(), nullptr);
+    g_object_get(m_sink.get(), "stats", &stats.outPtr(), nullptr);
 
     auto droppedVideoFrames = gstStructureGet<uint64_t>(stats.get(), "dropped"_s);
     if (!droppedVideoFrames)

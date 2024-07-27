@@ -104,7 +104,7 @@ template<typename Identifier, typename HeldType>
 bool ThreadSafeObjectHeap<Identifier, HeldType>::add(const Reference& ref, HeldType object)
 {
     Locker locker { m_objectsLock };
-    auto addResult = m_objects.ensure(ref, [&object]() mutable {
+    auto addResult = m_objects.ensure(ref, [&] {
         return ReferenceState { WTFMove(object) };
     });
     if (!addResult.isNewEntry) {

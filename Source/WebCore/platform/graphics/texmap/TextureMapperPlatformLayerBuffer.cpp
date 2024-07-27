@@ -98,7 +98,7 @@ void TextureMapperPlatformLayerBuffer::paintToTextureMapper(TextureMapper& textu
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
     if (m_fence) {
-        m_fence->wait(WebCore::GLFence::FlushCommands::No);
+        m_fence->serverWait();
         m_fence = nullptr;
     }
 #endif
@@ -156,6 +156,14 @@ void TextureMapperPlatformLayerBuffer::paintToTextureMapper(TextureMapper& textu
             ASSERT(texture.id);
             textureMapper.drawTextureExternalOES(texture.id, m_extraFlags, targetRect, modelViewMatrix, opacity);
         });
+}
+
+bool TextureMapperPlatformLayerBuffer::isHolePunchBuffer() const
+{
+    // Holepunch buffers are the only ones that have the ShouldNotBlend flag.
+    // All of the other buffers have to be blended, but holepunch ones need
+    // to overwrite the existent content to render the transparent rectangle.
+    return m_extraFlags.contains(TextureMapperFlags::ShouldNotBlend);
 }
 
 } // namespace WebCore

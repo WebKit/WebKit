@@ -31,6 +31,7 @@
 #include "MessageReceiver.h"
 #include <WebCore/HTMLMediaElement.h>
 #include <WebCore/HTMLMediaElementEnums.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -39,11 +40,6 @@
 
 namespace WebKit {
 class WebFullScreenManagerProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebFullScreenManagerProxy> : std::true_type { };
 }
 
 namespace WebCore {
@@ -79,8 +75,9 @@ public:
     virtual void unlockFullscreenOrientation() { }
 };
 
-class WebFullScreenManagerProxy : public IPC::MessageReceiver {
+class WebFullScreenManagerProxy : public IPC::MessageReceiver, public CanMakeCheckedPtr<WebFullScreenManagerProxy> {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebFullScreenManagerProxy);
 public:
     WebFullScreenManagerProxy(WebPageProxy&, WebFullScreenManagerProxyClient&);
     virtual ~WebFullScreenManagerProxy();

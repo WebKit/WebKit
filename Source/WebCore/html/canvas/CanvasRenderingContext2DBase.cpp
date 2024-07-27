@@ -1223,7 +1223,7 @@ void CanvasRenderingContext2DBase::strokeInternal(const Path& path)
         c->strokePath(path);
 
     didDraw(repaintEntireCanvas, [&]() {
-        return targetSwitcher ? targetSwitcher->expandedBounds() : path.fastBoundingRect();
+        return targetSwitcher ? targetSwitcher->expandedBounds() : inflatedStrokeRect(path.fastBoundingRect());
     });
 }
 
@@ -2302,7 +2302,8 @@ void CanvasRenderingContext2DBase::didDraw(std::optional<FloatRect> rect, Option
     if (!options.contains(DidDrawOption::PreserveCachedContents))
         m_cachedContents.emplace<CachedContentsUnknown>();
 
-    if (!effectiveDrawingContext())
+    auto* context = effectiveDrawingContext();
+    if (!context)
         return;
 
     m_hasDeferredOperations = true;
@@ -2337,7 +2338,7 @@ void CanvasRenderingContext2DBase::didDraw(std::optional<FloatRect> rect, Option
         canvasBase().didDraw(std::nullopt, shouldApplyPostProcessing);
     else {
         // Inflate dirty rect to cover antialiasing on image buffers.
-        if (effectiveDrawingContext()->shouldAntialias())
+        if (context->shouldAntialias())
             dirtyRect.inflate(1);
 #if USE(COORDINATED_GRAPHICS)
         // In COORDINATED_GRAPHICS graphics layer is tiled and tiling logic handles dirty rects
@@ -3034,7 +3035,8 @@ std::optional<CanvasRenderingContext2DBase::RenderingMode> CanvasRenderingContex
 {
     if (auto* buffer = canvasBase().buffer()) {
         buffer->ensureBackendCreated();
-        return buffer->renderingMode();
+        if (buffer->hasBackend())
+            return buffer->renderingMode();
     }
     return std::nullopt;
 }

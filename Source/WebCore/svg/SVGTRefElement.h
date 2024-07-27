@@ -30,6 +30,7 @@ class SVGTRefTargetEventListener;
 
 class SVGTRefElement final : public SVGTextPositioningElement, public SVGURIReference {
     WTF_MAKE_ISO_ALLOCATED(SVGTRefElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGTRefElement);
 public:
     static Ref<SVGTRefElement> create(const QualifiedName&, Document&);
 

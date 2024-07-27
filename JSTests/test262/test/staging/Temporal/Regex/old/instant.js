@@ -10,8 +10,7 @@ features: [Temporal]
 function test(isoString, components) {
   var [y, mon, d, h = 0, min = 0, s = 0, ms = 0, µs = 0, ns = 0] = components;
   var instant = Temporal.Instant.from(isoString);
-  var utc = Temporal.TimeZone.from("UTC");
-  var datetime = utc.getPlainDateTimeFor(instant);
+  var datetime = instant.toZonedDateTimeISO("UTC");
   assert.sameValue(datetime.year, y);
   assert.sameValue(datetime.month, mon);
   assert.sameValue(datetime.day, d);
@@ -175,21 +174,7 @@ test("1976-11-18T15:23:30,1234Z", [
   123,
   400
 ]);
-[
-  "\u221204:00",
-  "\u221204",
-  "\u22120400"
-].forEach(offset => test(`1976-11-18T15:23:30.1234${ offset }`, [
-  1976,
-  11,
-  18,
-  19,
-  23,
-  30,
-  123,
-  400
-]));
-test("\u2212009999-11-18T15:23:30.1234Z", [
+test("-009999-11-18T15:23:30.1234Z", [
   -9999,
   11,
   18,

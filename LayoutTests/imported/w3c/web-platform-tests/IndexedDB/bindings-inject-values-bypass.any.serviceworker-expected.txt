@@ -1,0 +1,4 @@
+
+PASS Returning values to script should bypass prototype chain
+PASS Returning values to script should bypass prototype setters
+

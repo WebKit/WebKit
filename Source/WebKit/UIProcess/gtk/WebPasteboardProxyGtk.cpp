@@ -27,6 +27,7 @@
 #include "WebPasteboardProxy.h"
 
 #include "Clipboard.h"
+#include "Connection.h"
 #include "SharedBufferReference.h"
 #include "WebFrameProxy.h"
 #include <WebCore/Pasteboard.h>
@@ -45,21 +46,21 @@ void WebPasteboardProxy::getTypes(const String& pasteboardName, CompletionHandle
     Clipboard::get(pasteboardName).formats(WTFMove(completionHandler));
 }
 
-void WebPasteboardProxy::readText(const String& pasteboardName, CompletionHandler<void(String&&)>&& completionHandler)
+void WebPasteboardProxy::readText(IPC::Connection& connection, const String& pasteboardName, CompletionHandler<void(String&&)>&& completionHandler)
 {
-    Clipboard::get(pasteboardName).readText(WTFMove(completionHandler));
+    Clipboard::get(pasteboardName).readText(WTFMove(completionHandler), connection.inDispatchSyncMessageCount() > 1 ? Clipboard::ReadMode::Synchronous : Clipboard::ReadMode::Asynchronous);
 }
 
-void WebPasteboardProxy::readFilePaths(const String& pasteboardName, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void WebPasteboardProxy::readFilePaths(IPC::Connection& connection, const String& pasteboardName, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    Clipboard::get(pasteboardName).readFilePaths(WTFMove(completionHandler));
+    Clipboard::get(pasteboardName).readFilePaths(WTFMove(completionHandler), connection.inDispatchSyncMessageCount() > 1 ? Clipboard::ReadMode::Synchronous : Clipboard::ReadMode::Asynchronous);
 }
 
-void WebPasteboardProxy::readBuffer(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
+void WebPasteboardProxy::readBuffer(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
 {
     Clipboard::get(pasteboardName).readBuffer(pasteboardType.utf8().data(), [completionHandler = WTFMove(completionHandler)](auto&& buffer) mutable {
         completionHandler(WTFMove(buffer));
-    });
+    }, connection.inDispatchSyncMessageCount() > 1 ? Clipboard::ReadMode::Synchronous : Clipboard::ReadMode::Asynchronous);
 }
 
 void WebPasteboardProxy::writeToClipboard(const String& pasteboardName, SelectionData&& selectionData)
@@ -89,7 +90,7 @@ void WebPasteboardProxy::didDestroyFrame(WebFrameProxy* frame)
         m_primarySelectionOwner = nullptr;
 }
 
-void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(IPC::Connection&, const String& pasteboardName, const String& origin, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(IPC::Connection& connection, const String& pasteboardName, const String& origin, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
     auto& clipboard = Clipboard::get(pasteboardName);
     clipboard.readBuffer(PasteboardCustomData::gtkType(), [&clipboard, origin, completionHandler = WTFMove(completionHandler)](auto&& buffer) mutable {
@@ -111,7 +112,7 @@ void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(IPC::Connection&, const S
 
             completionHandler(copyToVector(domTypes));
         });
-    });
+    }, connection.inDispatchSyncMessageCount() > 1 ? Clipboard::ReadMode::Synchronous : Clipboard::ReadMode::Asynchronous);
 }
 
 void WebPasteboardProxy::writeCustomData(IPC::Connection&, const Vector<PasteboardCustomData>& data, const String& pasteboardName, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(int64_t)>&& completionHandler)
@@ -192,17 +193,17 @@ void WebPasteboardProxy::getPasteboardItemsCount(IPC::Connection&, const String&
     });
 }
 
-void WebPasteboardProxy::readURLFromPasteboard(IPC::Connection&, size_t index, const String& pasteboardName, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(String&& url, String&& title)>&& completionHandler)
+void WebPasteboardProxy::readURLFromPasteboard(IPC::Connection& connection, size_t index, const String& pasteboardName, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(String&& url, String&& title)>&& completionHandler)
 {
     if (index) {
         completionHandler({ }, { });
         return;
     }
 
-    Clipboard::get(pasteboardName).readURL(WTFMove(completionHandler));
+    Clipboard::get(pasteboardName).readURL(WTFMove(completionHandler), connection.inDispatchSyncMessageCount() > 1 ? Clipboard::ReadMode::Synchronous : Clipboard::ReadMode::Asynchronous);
 }
 
-void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection&, std::optional<size_t> index, const String& pasteboardType, const String& pasteboardName, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
+void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection& connection, std::optional<size_t> index, const String& pasteboardType, const String& pasteboardName, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
 {
     if (index && index.value()) {
         completionHandler({ });
@@ -211,7 +212,7 @@ void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection&, std::optiona
 
     Clipboard::get(pasteboardName).readBuffer(pasteboardType.utf8().data(), [completionHandler = WTFMove(completionHandler)](auto&& buffer) mutable {
         completionHandler(WTFMove(buffer));
-    });
+    }, connection.inDispatchSyncMessageCount() > 1 ? Clipboard::ReadMode::Synchronous : Clipboard::ReadMode::Asynchronous);
 }
 
 void WebPasteboardProxy::getPasteboardChangeCount(IPC::Connection&, const String& pasteboardName, CompletionHandler<void(int64_t)>&& completionHandler)

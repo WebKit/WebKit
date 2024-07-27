@@ -33,6 +33,7 @@ class HTMLImageElement;
 
 class ImageDocument final : public HTMLDocument {
     WTF_MAKE_ISO_ALLOCATED(ImageDocument);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ImageDocument);
 public:
     static Ref<ImageDocument> create(LocalFrame& frame, const URL& url)
     {

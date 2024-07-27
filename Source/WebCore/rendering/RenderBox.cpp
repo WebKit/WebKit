@@ -344,6 +344,10 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         if (auto* scrollableArea = layer()->scrollableArea())
             scrollableArea->scrollbarsController().scrollbarLayoutDirectionChanged(shouldPlaceVerticalScrollbarOnLeft() ? UserInterfaceLayoutDirection::RTL : UserInterfaceLayoutDirection::LTR);
     }
+    if (layer() && oldStyle && oldStyle->scrollbarWidth() != newStyle.scrollbarWidth()) {
+        if (auto* scrollableArea = layer()->scrollableArea())
+            scrollableArea->scrollbarsController().scrollbarWidthChanged(newStyle.scrollbarWidth());
+    }
 
 #if ENABLE(DARK_MODE_CSS)
     if (layer() && oldStyle && oldStyle->colorScheme() != newStyle.colorScheme()) {
@@ -3092,7 +3096,7 @@ void RenderBox::cacheIntrinsicContentLogicalHeightForFlexItem(LayoutUnit height)
         return;
     if (overridingLogicalHeight() || shouldComputeLogicalHeightFromAspectRatio())
         return;
-    flexibleBox->setCachedChildIntrinsicContentLogicalHeight(*this, height);
+    flexibleBox->setCachedFlexItemIntrinsicContentLogicalHeight(*this, height);
 }
 
 void RenderBox::overrideLogicalHeightForSizeContainment()
@@ -3312,7 +3316,7 @@ std::optional<LayoutUnit> RenderBox::computeContentAndScrollbarLogicalHeightUsin
     if (height.isAuto()) {
         if (heightType != MinSize)
             return std::nullopt;
-        if (intrinsicContentHeight && isFlexItem() && downcast<RenderFlexibleBox>(parent())->shouldApplyMinBlockSizeAutoForChild(*this))
+        if (intrinsicContentHeight && isFlexItem() && downcast<RenderFlexibleBox>(parent())->shouldApplyMinBlockSizeAutoForFlexItem(*this))
             return adjustIntrinsicLogicalHeightForBoxSizing(intrinsicContentHeight.value());
         return std::optional<LayoutUnit>(0);
     }
@@ -3443,7 +3447,7 @@ LayoutUnit RenderBox::computeReplacedLogicalWidth(ShouldComputePreferred shouldC
 
 LayoutUnit RenderBox::computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit logicalWidth, ShouldComputePreferred shouldComputePreferred) const
 {
-    if (shouldIgnoreMinMaxSizes())
+    if (shouldIgnoreLogicalMinMaxWidthSizes())
         return logicalWidth;
 
     auto& logicalMinWidth = style().logicalMinWidth();
@@ -3617,8 +3621,8 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Len
         std::optional<LayoutUnit> stretchedHeight;
         if (auto* block = dynamicDowncast<RenderBlock>(container)) {
             block->addPercentHeightDescendant(*const_cast<RenderBox*>(this));
-            if (auto usedChildOverridingLogicalHeightForPercentageResolutionForFlex = (block->isFlexItem() ? downcast<RenderFlexibleBox>(block->parent())->usedChildOverridingLogicalHeightForPercentageResolution(*block) : std::nullopt))
-                stretchedHeight = block->overridingContentLogicalHeight(*usedChildOverridingLogicalHeightForPercentageResolutionForFlex);
+            if (auto usedFlexItemOverridingLogicalHeightForPercentageResolutionForFlex = (block->isFlexItem() ? downcast<RenderFlexibleBox>(block->parent())->usedFlexItemOverridingLogicalHeightForPercentageResolution(*block) : std::nullopt))
+                stretchedHeight = block->overridingContentLogicalHeight(*usedFlexItemOverridingLogicalHeightForPercentageResolutionForFlex);
             else if (auto usedChildOverridingLogicalHeightForGrid = (block->isGridItem() && !hasPerpendicularContainingBlock ? block->overridingLogicalHeight() : std::nullopt))
                 stretchedHeight = block->overridingContentLogicalHeight(*usedChildOverridingLogicalHeightForGrid);
         }
@@ -3639,6 +3643,8 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Len
             availableHeight = containingBlockLogicalHeightForPositioned(downcast<RenderBoxModelObject>(*container));
         else if (stretchedHeight)
             availableHeight = stretchedHeight.value();
+        else if (auto gridAreaLogicalHeight = isGridItem() ? this->overridingContainingBlockContentLogicalHeight() : std::nullopt; gridAreaLogicalHeight && *gridAreaLogicalHeight)
+            availableHeight = gridAreaLogicalHeight->value();
         else {
             availableHeight = hasPerpendicularContainingBlock ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(IncludeMarginBorderPadding);
             // It is necessary to use the border-box to match WinIE's broken
@@ -3686,8 +3692,8 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogi
         return logicalHeight() - borderAndPaddingLogicalHeight();
     }
 
-    if (auto usedChildOverridingLogicalHeightForPercentageResolutionForFlex = (isFlexItem() ? downcast<RenderFlexibleBox>(*parent()).usedChildOverridingLogicalHeightForPercentageResolution(*this) : std::nullopt))
-        return overridingContentLogicalHeight(*usedChildOverridingLogicalHeightForPercentageResolutionForFlex);
+    if (auto usedFlexItemOverridingLogicalHeightForPercentageResolutionForFlex = (isFlexItem() ? downcast<RenderFlexibleBox>(*parent()).usedFlexItemOverridingLogicalHeightForPercentageResolution(*this) : std::nullopt))
+        return overridingContentLogicalHeight(*usedFlexItemOverridingLogicalHeightForPercentageResolutionForFlex);
 
     if (shouldComputeLogicalHeightFromAspectRatio()) {
         auto borderAndPaddingLogicalHeight = this->borderAndPaddingLogicalHeight();
@@ -5704,14 +5710,12 @@ LayoutBoxExtent RenderBox::scrollPaddingForViewportRect(const LayoutRect& viewpo
 
 LayoutUnit synthesizedBaseline(const RenderBox& box, const RenderStyle& parentStyle, LineDirectionMode direction, BaselineSynthesisEdge edge)
 {
+    auto textOrientation = parentStyle.textOrientation();
     auto baselineType = [&] {
         // https://drafts.csswg.org/css-inline-3/#alignment-baseline-property
         // https://drafts.csswg.org/css-inline-3/#dominant-baseline-property
-
-        auto isHorizontalWritingMode = parentStyle.isHorizontalWritingMode();
-        auto textOrientation = parentStyle.textOrientation();
-
-        if (isHorizontalWritingMode || textOrientation == TextOrientation::Sideways)
+        auto isInsideHorizontalWritingMode = parentStyle.isHorizontalWritingMode();
+        if (isInsideHorizontalWritingMode || textOrientation == TextOrientation::Sideways)
             return FontBaseline::AlphabeticBaseline;
         if (textOrientation == TextOrientation::Upright || textOrientation == TextOrientation::Mixed)
             return FontBaseline::CentralBaseline;
@@ -5720,18 +5724,16 @@ LayoutUnit synthesizedBaseline(const RenderBox& box, const RenderStyle& parentSt
         return FontBaseline::AlphabeticBaseline;
     }();
 
-    if (baselineType == FontBaseline::AlphabeticBaseline && parentStyle.writingMode() == WritingMode::VerticalLr)
-        return 0_lu;
-
     auto boxSize = direction == HorizontalLine ? box.height() : box.width();
-
     if (edge == ContentBox)
         boxSize -= direction == HorizontalLine ? box.verticalBorderAndPaddingExtent() : box.horizontalBorderAndPaddingExtent();
     else if (edge == MarginBox)
         boxSize += direction == HorizontalLine ? box.verticalMarginExtent() : box.horizontalMarginExtent();
     
-    if (baselineType == FontBaseline::AlphabeticBaseline)
-        return boxSize;
+    if (baselineType == FontBaseline::AlphabeticBaseline) {
+        auto shouldTreatAsHorizontal = direction == HorizontalLine || (textOrientation == TextOrientation::Sideways && parentStyle.writingMode() == WritingMode::VerticalRl);
+        return shouldTreatAsHorizontal ? boxSize : LayoutUnit();
+    }
     return boxSize / 2;
 }
 
@@ -5740,9 +5742,24 @@ LayoutUnit RenderBox::intrinsicLogicalWidth() const
     return style().isHorizontalWritingMode() ? intrinsicSize().width() : intrinsicSize().height();
 }
 
-bool RenderBox::shouldIgnoreMinMaxSizes() const
+bool RenderBox::shouldIgnoreLogicalMinMaxWidthSizes() const
 {
-    return isFlexItem() && downcast<RenderFlexibleBox>(parent())->isComputingFlexBaseSizes();
+    if (!isFlexItem())
+        return false;
+    if (auto* flexBox = dynamicDowncast<RenderFlexibleBox>(parent()))
+        return flexBox->isComputingFlexBaseSizes() && style().isHorizontalWritingMode() == flexBox->isHorizontalFlow();
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool RenderBox::shouldIgnoreLogicalMinMaxHeightSizes() const
+{
+    if (!isFlexItem())
+        return false;
+    if (auto* flexBox = dynamicDowncast<RenderFlexibleBox>(parent()))
+        return flexBox->isComputingFlexBaseSizes() && style().isHorizontalWritingMode() != flexBox->isHorizontalFlow();
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerWidth() const

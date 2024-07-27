@@ -1123,8 +1123,8 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                     [argumentEncoder[stage] setTexture:texture atIndex:index];
                 if (texture) {
                     stageResources[metalRenderStage(stage)][resourceUsage - 1].append(texture);
-                    ASSERT(texture.parentRelativeLevel == apiTextureView.baseMipLevel());
-                    ASSERT(texture.parentRelativeSlice == apiTextureView.baseArrayLayer());
+                    ASSERT(apiTextureView.isDestroyed() || texture.parentRelativeLevel == apiTextureView.baseMipLevel());
+                    ASSERT(apiTextureView.isDestroyed() || texture.parentRelativeSlice == apiTextureView.baseArrayLayer());
                     stageResourceUsages[metalRenderStage(stage)][resourceUsage - 1].append(makeBindGroupEntryUsageData(textureEntry ? usageForTexture(*textureEntry) : (storageTextureEntry ? usageForStorageTexture(*storageTextureEntry) : BindGroupEntryUsage::ConstantTexture), entry.binding, apiTextureView));
                 }
             } else if (externalTextureIsPresent) {

@@ -1674,6 +1674,13 @@ static void emitTextureStore(FunctionDefinitionWriter* writer, AST::CallExpressi
         writer->visit(*arrayIndex);
     }
     writer->stringBuilder().append(')');
+
+    auto& textureType = std::get<Types::TextureStorage>(*texture.inferredType());
+    if (textureType.access == AccessMode::ReadWrite) {
+        writer->stringBuilder().append(";\n"_s, writer->indent());
+        writer->visit(texture);
+        writer->stringBuilder().append(".fence()"_s);
+    }
 }
 
 static void emitStorageBarrier(FunctionDefinitionWriter* writer, AST::CallExpression&)
@@ -2345,7 +2352,11 @@ void FunctionDefinitionWriter::visit(AST::DecrementIncrementStatement& statement
 
 void FunctionDefinitionWriter::visit(AST::DiscardStatement&)
 {
+#if CPU(X86_64)
+    m_stringBuilder.append("__asm volatile(\"\"); discard_fragment()"_s);
+#else
     m_stringBuilder.append("discard_fragment()"_s);
+#endif
 }
 
 void FunctionDefinitionWriter::visit(AST::IfStatement& statement)

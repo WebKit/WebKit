@@ -739,14 +739,12 @@ private:
             if (Node::shouldSpeculateHeapBigInt(leftChild.node(), rightChild.node())) {
                 fixEdge<HeapBigIntUse>(leftChild);
                 fixEdge<HeapBigIntUse>(rightChild);
-                node->clearFlags(NodeMustGenerate);
                 break;
             }
 #if USE(BIGINT32)
             if (Node::shouldSpeculateBigInt(leftChild.node(), rightChild.node())) {
                 fixEdge<AnyBigIntUse>(leftChild);
                 fixEdge<AnyBigIntUse>(rightChild);
-                node->clearFlags(NodeMustGenerate);
                 break; 
             }
 #endif
@@ -818,14 +816,12 @@ private:
             if (Node::shouldSpeculateHeapBigInt(node->child1().node(), node->child2().node())) {
                 fixEdge<HeapBigIntUse>(node->child1());
                 fixEdge<HeapBigIntUse>(node->child2());
-                node->clearFlags(NodeMustGenerate);
                 break;
             }
 #if USE(BIGINT32)
             if (Node::shouldSpeculateBigInt(node->child1().node(), node->child2().node())) {
                 fixEdge<AnyBigIntUse>(node->child1());
                 fixEdge<AnyBigIntUse>(node->child2());
-                node->clearFlags(NodeMustGenerate);
                 break;
             }
 #endif
@@ -1976,6 +1972,11 @@ private:
             fixEdge<KnownCellUse>(node->child1());
             break;
         }
+
+        case UnwrapGlobalProxy: {
+            fixEdge<GlobalProxyUse>(node->child1());
+            break;
+        }
             
         case AllocatePropertyStorage:
         case ReallocatePropertyStorage: {
@@ -2723,12 +2724,12 @@ private:
             break;
         }
 
-        case MapValue:
-            fixEdge<MapObjectUse>(node->child1());
-            fixEdge<Int32Use>(node->child2());
+        case LoadMapValue:
+        case IsEmptyStorage:
+            fixEdge<UntypedUse>(node->child1());
             break;
 
-        case MapKeyIndex:
+        case MapGet:
             if (node->child1().useKind() == MapObjectUse)
                 fixEdge<MapObjectUse>(node->child1());
             else if (node->child1().useKind() == SetObjectUse)
@@ -3414,6 +3415,17 @@ private:
                         Edge(node->child1().node(), ProxyObjectUse));
                     m_graph.convertToConstant(node, jsBoolean(true));
                     observeUseKindOnNode<ProxyObjectUse>(node);
+                    return;
+                }
+                break;
+
+            case SpecGlobalProxy:
+                if (node->child1()->shouldSpeculateGlobalProxy()) {
+                    m_insertionSet.insertNode(
+                        m_indexInBlock, SpecNone, Check, node->origin,
+                        Edge(node->child1().node(), GlobalProxyUse));
+                    m_graph.convertToConstant(node, jsBoolean(true));
+                    observeUseKindOnNode<GlobalProxyUse>(node);
                     return;
                 }
                 break;

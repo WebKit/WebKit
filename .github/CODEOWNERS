@@ -126,7 +126,7 @@
 /LayoutTests/http/tests/paymentrequest @aprotyas @marcoscaceres
 /LayoutTests/http/tests/ssl/applepay @aprotyas
 /LayoutTests/http/tests/ssl/applepay-ams-ui @aprotyas
-/LayoutTests/imported/w3c/web-platform-tests/geolocation-API @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/geolocation @marcoscaceres
 /LayoutTests/imported/w3c/web-platform-tests/payment-request @aprotyas @marcoscaceres
 /LayoutTests/imported/w3c/web-platform-tests/permissions @marcoscaceres
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation @marcoscaceres

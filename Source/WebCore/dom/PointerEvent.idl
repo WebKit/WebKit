@@ -34,11 +34,14 @@ dictionary PointerEventInit : MouseEventInit {
     long twist = 0;
     DOMString pointerType = "";
     boolean isPrimary = false;
+    sequence<PointerEvent> coalescedEvents = [];
 };
 
 [
     DisabledByQuirk=shouldDisablePointerEvents,
-    Exposed=Window
+    Exposed=Window,
+    JSGenerateToNativeObject,
+    ExportToWrappedFunction
 ] interface PointerEvent : MouseEvent {
     constructor([AtomString] DOMString type, optional PointerEventInit eventInitDict);
 
@@ -52,5 +55,7 @@ dictionary PointerEventInit : MouseEventInit {
     readonly attribute long twist;
     readonly attribute DOMString pointerType;
     readonly attribute boolean isPrimary;
+
+    [SecureContext, EnabledBySetting=GetCoalescedEventsEnabled] sequence<PointerEvent> getCoalescedEvents();
 };
 

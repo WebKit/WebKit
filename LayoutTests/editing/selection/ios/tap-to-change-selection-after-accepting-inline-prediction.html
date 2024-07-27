@@ -56,7 +56,7 @@ addEventListener("load", async () => {
     await UIHelper.acceptInlinePrediction();
     await UIHelper.ensurePresentationUpdate();
 
-    await UIHelper.waitForCondition(() => document.body.textContent.includes("I want to celebrate"));
+    await UIHelper.waitForCondition(() => document.body.textContent.includes("I want to c"));
 
     await UIHelper.activateElement(document.getElementById("target"));
     await shouldBecomeEqual("targetContainsCaretSelection()", "true");

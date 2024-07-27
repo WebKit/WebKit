@@ -145,6 +145,9 @@
             "com.apple.coremedia.mediaplaybackd.figcontentkeysession.xpc"
             "com.apple.coremedia.mediaplaybackd.figcontentkeyboss.xpc"
             "com.apple.coremedia.mediaplaybackd.figcpecryptor.xpc"
+#if HAVE(AVMETRICS)
+            "com.apple.coremedia.mediaplaybackd.figmetriceventtimeline.xpc"
+#endif
             "com.apple.coremedia.mediaplaybackd.formatreader.xpc"
             "com.apple.coremedia.mediaplaybackd.player.xpc"
             "com.apple.coremedia.mediaplaybackd.remaker.xpc"
@@ -562,6 +565,8 @@
     (sysctl-name
         "hw.activecpu"
         "hw.cachelinesize"
+        "hw.cpufamily"
+        "hw.cpusubfamily"
         "hw.l2cachesize"
         "hw.logicalcpu_max"
         "hw.machine"
@@ -572,6 +577,7 @@
         "hw.physicalcpu_max"
         "hw.product" ;; <rdar://problem/81334849>
         "kern.bootargs"
+        "kern.hv_vmm_present"
 #if ASAN_ENABLED
         "kern.osrelease"
 #endif
@@ -582,7 +588,9 @@
         "kern.willshutdown" ;; <rdar://122511261>
         "machdep.ptrauth_enabled"
         "vm.footprint_suspend"
-        "vm.malloc_ranges")) ;; <rdar://problem/105161083>
+        "vm.malloc_ranges") ;; <rdar://problem/105161083>
+    (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76782530>
+)
 
 (allow iokit-get-properties
     (iokit-property "AAPL,DisplayPipe")
@@ -973,6 +981,7 @@
     mach_vm_remap_external
     semaphore_create
     semaphore_destroy
+    task_create_identity_token
     task_get_special_port_from_user
     task_info_from_user
     task_restartable_ranges_register

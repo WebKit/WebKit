@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>now-playing-info-media-session-suspend-playback</title>
+    <script src=video-test.js></script>
+    <script src=media-file.js></script>
+    <script>
+
+        let nowPlayingState;
+
+        async function waitForAttributeToChange(attribute, expected) {
+            let start = new Date().getTime();
+            do {
+
+                if (internals.nowPlayingState[attribute] != expected)
+                    return;
+
+                await new Promise(resolve => setTimeout(resolve, 100));
+            } while (new Date().getTime() - start < 500);
+
+            failTest(`** Timed out waiting for "${attribute}" to change from "${expected}"`);
+        }
+
+        function playAction()
+        {
+            consoleWrite('ACTION: play');
+            video.play();
+        }
+
+        function pauseAction()
+        {
+            consoleWrite('ACTION: pause');
+            video.pause();
+        }
+
+        async function runTest()
+        {
+            findMediaElement();
+
+            consoleWrite('<br>* NowPlaying should not be active before playback has started.');
+            run('video.src = findMediaFile("video", "content/test")');
+            await waitFor(video, 'canplaythrough');
+
+            run('nowPlayingState = internals.nowPlayingState');
+            testExpected('nowPlayingState.registeredAsNowPlayingApplication', false);
+
+            run('navigator.mediaSession.metadata = new MediaMetadata({title: "title", artist: "artist", album: "album", artwork: [{src: "content/abe.png"}]})');
+            run('navigator.mediaSession.playbackState = "paused"')
+            run('navigator.mediaSession.positionState = {duration: video.duration, position: video.currentTime}');
+            run('navigator.mediaSession.setActionHandler("play", playAction)');
+            run('navigator.mediaSession.setActionHandler("pause", pauseAction)');
+
+            consoleWrite('<br>* Start to play, NowPlaying should become active.');
+            runWithKeyDown(() => {
+                run('navigator.mediaSession.callActionHandler({action: "play"})');
+            });
+
+            await waitFor(video, 'playing');
+            run('navigator.mediaSession.callActionHandler({action: "pause"})');
+            await waitForAttributeToChange('registeredAsNowPlayingApplication', false);
+
+            consoleWrite('<br>* Metadata should not be blank.');
+            run('nowPlayingMetadata = internals.nowPlayingMetadata');
+            await testExpectedEventually('nowPlayingMetadata', null, '!=', 10000);
+            await testExpectedEventually('nowPlayingMetadata.title', '', '!=', 10000);
+
+            consoleWrite('<br>* Suspending all media playback NowPlaying to deactivate.');
+            run('internals.suspendAllMediaPlayback()');
+            await waitForAttributeToChange('registeredAsNowPlayingApplication', true);
+            testExpected('nowPlayingState.registeredAsNowPlayingApplication', false);
+
+            await testExpectedEventually('internals.nowPlayingMetadata', null, '==', 10000);
+
+            consoleWrite('');
+        }
+
+        window.addEventListener('load', event => {
+            runTest().then(endTest).catch(failTest);
+        });
+    </script>
+</head>
+<body">
+    <video controls></video>
+    <br>
+    Tests that the NowPlaying metadata is empty when in private browsing mode.
+</body>
+</html>

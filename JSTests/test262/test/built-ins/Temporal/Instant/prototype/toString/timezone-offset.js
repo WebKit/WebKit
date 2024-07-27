@@ -10,8 +10,7 @@ features: [BigInt, Temporal]
 const instant = new Temporal.Instant(0n);
 
 function test(timeZoneIdentifier, expected, description) {
-  const timeZone = new Temporal.TimeZone(timeZoneIdentifier);
-  assert.sameValue(instant.toString({ timeZone }), expected, description);
+  assert.sameValue(instant.toString({ timeZone: timeZoneIdentifier }), expected, description);
 }
 
 test("UTC", "1970-01-01T00:00:00+00:00", "offset of UTC is +00:00");

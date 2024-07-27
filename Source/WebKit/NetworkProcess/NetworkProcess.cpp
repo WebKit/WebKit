@@ -416,6 +416,13 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
     }
 }
 
+void NetworkProcess::sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier identifier, SharedPreferencesForWebProcess&& sharedPreferences, CompletionHandler<void()>&& completionHandler)
+{
+    if (RefPtr connection = m_webProcessConnections.get(identifier))
+        connection->updateSharedPreferencesForWebProcess(WTFMove(sharedPreferences));
+    completionHandler();
+}
+
 void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)
 {
     if (!HashSet<WebCore::RegistrableDomain>::isValidValue(firstPartyForCookies))
@@ -2149,10 +2156,17 @@ void NetworkProcess::cancelDownload(DownloadID downloadID, CompletionHandler<voi
 }
 
 #if PLATFORM(COCOA)
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+void NetworkProcess::publishDownloadProgress(DownloadID downloadID, const URL& url, std::span<const uint8_t> bookmarkData)
+{
+    downloadManager().publishDownloadProgress(downloadID, url, bookmarkData);
+}
+#else
 void NetworkProcess::publishDownloadProgress(DownloadID downloadID, const URL& url, SandboxExtension::Handle&& sandboxExtensionHandle)
 {
     downloadManager().publishDownloadProgress(downloadID, url, WTFMove(sandboxExtensionHandle));
 }
+#endif
 #endif
 
 void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTask, ResponseCompletionHandler&& completionHandler, const ResourceResponse& response)
@@ -2315,9 +2329,6 @@ void NetworkProcess::processDidResume(bool forForegroundActivity)
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processDidResume() forForegroundActivity=%d", this, forForegroundActivity);
 
     m_isSuspended = false;
-
-    for (auto& connection : m_webProcessConnections.values())
-        connection->endSuspension();
 
     WebResourceLoadStatisticsStore::resume();
     PCM::PersistentStore::processDidResume();
@@ -3027,6 +3038,12 @@ void NetworkProcess::setStorageSiteValidationEnabled(PAL::SessionID sessionID, b
 {
     if (auto* session = networkSession(sessionID))
         session->protectedStorageManager()->setStorageSiteValidationEnabled(enabled);
+}
+
+void NetworkProcess::setPersistedDomains(PAL::SessionID sessionID, HashSet<RegistrableDomain>&& domains)
+{
+    if (auto* session = networkSession(sessionID))
+        session->setPersistedDomains(WTFMove(domains));
 }
 
 } // namespace WebKit

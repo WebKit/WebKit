@@ -2451,15 +2451,22 @@ static bool hasAncestorQualifyingForWritingToolsPreservation(Element* ancestor, 
     if (!ancestor)
         return false;
 
-    return cache.ensure(*ancestor, [&] {
-        if (isMailBlockquote(*ancestor))
-            return true;
+    if (!cache.contains(*ancestor)) {
+        auto result = [&] {
+            if (isMailBlockquote(*ancestor))
+                return true;
 
-        if (auto renderer = ancestor->renderer(); renderer && renderer->style().whiteSpace() == WhiteSpace::Pre)
-            return true;
+            if (auto renderer = ancestor->renderer(); renderer && renderer->style().whiteSpace() == WhiteSpace::Pre)
+                return true;
 
-        return hasAncestorQualifyingForWritingToolsPreservation(ancestor->parentElement(), cache);
-    }).iterator->value;
+            return hasAncestorQualifyingForWritingToolsPreservation(ancestor->parentElement(), cache);
+        }();
+
+        cache.set(*ancestor, result);
+        return result;
+    }
+
+    return cache.get(*ancestor);
 }
 #endif
 

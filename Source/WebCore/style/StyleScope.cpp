@@ -120,13 +120,13 @@ void Scope::createDocumentResolver()
 
     m_resolver->ruleSets().setDynamicViewTransitionsStyle(m_dynamicViewTransitionsStyle.get());
 
-    m_document.fontSelector().buildStarted();
+    m_document.protectedFontSelector()->buildStarted();
 
     m_resolver->ruleSets().initializeUserStyle();
     m_resolver->addCurrentSVGFontFaceRules();
     m_resolver->appendAuthorStyleSheets(m_activeStyleSheets);
 
-    m_document.fontSelector().buildCompleted();
+    m_document.protectedFontSelector()->buildCompleted();
 }
 
 void Scope::createOrFindSharedShadowTreeResolver()

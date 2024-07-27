@@ -37,9 +37,8 @@ class Document;
 class Element;
 struct Styleable;
 
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AcceleratedTimeline);
 class AcceleratedTimeline {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AcceleratedTimeline);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
     AcceleratedTimeline(Document&);
 

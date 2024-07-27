@@ -407,10 +407,19 @@ void AVVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettin
 {
     m_currentSettings = std::nullopt;
 
-    if (settings.contains(RealtimeMediaSourceSettings::Flag::WhiteBalanceMode))
-        updateWhiteBalanceMode();
-    if (settings.contains(RealtimeMediaSourceSettings::Flag::Torch))
-        updateTorch();
+    bool whiteBalanceModeChanged = settings.contains(RealtimeMediaSourceSettings::Flag::WhiteBalanceMode);
+    bool torchChanged = settings.contains(RealtimeMediaSourceSettings::Flag::Torch);
+    if (!whiteBalanceModeChanged && !torchChanged)
+        return;
+
+    scheduleDeferredTask([this, whiteBalanceModeChanged, torchChanged] {
+        startApplyingConstraints();
+        if (whiteBalanceModeChanged)
+            updateWhiteBalanceMode();
+        if (torchChanged)
+            updateTorch();
+        endApplyingConstraints();
+    });
 }
 
 static bool isZoomSupported(const Vector<VideoPreset>& presets)
@@ -802,6 +811,17 @@ void AVVideoCaptureSource::setFrameRateAndZoomWithPreset(double requestedFrameRa
     m_currentZoom = requestedZoom;
 
     setSessionSizeFrameRateAndZoom();
+
+#if PLATFORM(IOS_FAMILY)
+    // Updating the device configuration may switch off the torch. We reenable torch asynchronously if needed.
+    if (torch()) {
+        scheduleDeferredTask([this] {
+            startApplyingConstraints();
+            updateTorch();
+            endApplyingConstraints();
+        });
+    }
+#endif
 }
 
 static bool isFrameRateMatching(double frameRate, AVCaptureDevice* device)
@@ -1042,7 +1062,9 @@ bool AVVideoCaptureSource::setupSession()
         return false;
     }
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(APPLETV)
+    [m_session setMultitaskingCameraAccessEnabled:YES];
+#elif PLATFORM(IOS_FAMILY)
     PAL::AVCaptureSessionSetAuthorizedToUseCameraInMultipleForegroundAppLayout(m_session.get());
 #endif
     [m_session addObserver:m_objcObserver.get() forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:(void *)nil];

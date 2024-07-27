@@ -20,8 +20,6 @@ Normally a potential Committer would be nominated once they have submitted aroun
 
 Significant contributors to testing, bug management, web site content, documentation, project infrastructure and other non-code areas may also be nominated, even without the normal threshold of patches.
 
-A person who will be working under the supervision of a WebKit reviewer on WebKit-related projects can be nominated if the reviewer is willing to vouch for them and supervise them to ensure they follow project policies on checkins. Supervision does not necessarily imply a manager/employee relationship, just that you work with the potential committer closely enough to make sure they follow policy and work well with others.
-
 All committer nominations require the support of three reviewers. One reviewer nominates, two others second the nomination.
 
 ## Criteria for Reviewers
@@ -31,8 +29,6 @@ A WebKit Reviewer should be a person who has shown particularly good judgment, u
 A potential Reviewer may be nominated once they have submitted a minimum of 80 good patches. They should also be in touch with other reviewers and aware of who are the experts in various areas.
 
 A person who submits many patches but does not show good collaboration skills, code understanding or understanding of project policies may never be nominated. Making unofficial reviews before you become a reviewer is encouraged. This is an excellent way to show your skills. Note that you should not put r+ nor r- on patches in such unofficial reviews.
-
-For Reviewer status, there is no supervision exception.
 
 All reviewer nominations require the support of four reviewers. One reviewer nominates, three reviewers second.
 

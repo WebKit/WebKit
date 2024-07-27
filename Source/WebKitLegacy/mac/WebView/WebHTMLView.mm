@@ -3619,6 +3619,11 @@ static RetainPtr<NSMenuItem> createMenuItem(const WebCore::HitTestResult& hitTes
         return nil;
 #endif
 
+#if ENABLE(WRITING_TOOLS)
+    if (item.action() == WebCore::ContextMenuItemTagWritingTools)
+        return nil;
+#endif
+
     if (item.action() == WebCore::ContextMenuItemTagShareMenu)
         return createShareMenuItem(hitTestResult);
 
@@ -7140,6 +7145,22 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     auto* coreFrame = core([self _frame]);
     return coreFrame && coreFrame->editor().findString(string, coreOptions(options));
 }
+
+#if ENABLE(WRITING_TOOLS)
+
+// Disable Writing Tools in WebKitLegacy.
+
+- (NSInteger /* PlatformWritingToolsBehavior */)writingToolsBehavior
+{
+    return -1; // PlatformWritingToolsBehaviorNone
+}
+
+- (BOOL)providesWritingToolsContextMenu
+{
+    return YES;
+}
+
+#endif
 
 @end
 

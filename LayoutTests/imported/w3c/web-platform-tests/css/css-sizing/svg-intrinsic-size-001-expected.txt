@@ -8,7 +8,5 @@ PASS svg 1
 PASS svg 2
 PASS svg 3
 PASS svg 4
-FAIL svg 5 assert_equals:
-<svg viewBox="0 0 4 1" data-expected-client-width="600" data-expected-client-height="150"></svg>
-clientWidth expected 600 but got 0
+PASS svg 5
 

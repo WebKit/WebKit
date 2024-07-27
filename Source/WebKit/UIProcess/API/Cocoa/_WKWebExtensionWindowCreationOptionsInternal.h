@@ -31,13 +31,13 @@
 
 - (instancetype)_init NS_DESIGNATED_INITIALIZER;
 
-@property (readwrite, setter=_setDesiredFrame:) CGRect desiredFrame;
-@property (readwrite, setter=_setDesiredWindowType:) _WKWebExtensionWindowType desiredWindowType;
-@property (readwrite, setter=_setDesiredWindowState:) _WKWebExtensionWindowState desiredWindowState;
-@property (readwrite, setter=_setDesiredURLs:) NSArray<NSURL *> *desiredURLs;
-@property (readwrite, setter=_setDesiredTabs:) NSArray<id <_WKWebExtensionTab>> *desiredTabs;
-@property (readwrite, setter=_setShouldFocus:) BOOL shouldFocus;
-@property (readwrite, setter=_setSouldUsePrivateBrowsing:) BOOL shouldUsePrivateBrowsing;
+@property (readwrite, setter=_setFrame:) CGRect frame;
+@property (readwrite, setter=_setWindowType:) _WKWebExtensionWindowType windowType;
+@property (readwrite, setter=_setWindowState:) _WKWebExtensionWindowState windowState;
+@property (readwrite, setter=_setTabURLs:) NSArray<NSURL *> *tabURLs;
+@property (readwrite, setter=_setTabs:) NSArray<id <_WKWebExtensionTab>> *tabs;
+@property (readwrite, setter=_setFocused:) BOOL focused;
+@property (readwrite, setter=_setUsePrivateBrowsing:) BOOL usePrivateBrowsing;
 
 @end
 

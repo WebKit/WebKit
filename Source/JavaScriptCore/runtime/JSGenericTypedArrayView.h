@@ -228,4 +228,9 @@ public:
 template<typename Adaptor> inline RefPtr<typename Adaptor::ViewType> toPossiblySharedNativeTypedView(VM&, JSValue);
 template<typename Adaptor> inline RefPtr<typename Adaptor::ViewType> toUnsharedNativeTypedView(VM&, JSValue);
 
+enum class Alphabet : uint8_t { Base64, Base64URL };
+enum class LastChunkHandling : uint8_t { Loose, Strict, StopBeforePartial };
+enum class FromBase64ShouldThrowError: bool { Yes, No };
+std::tuple<FromBase64ShouldThrowError, size_t, Vector<uint8_t>> fromBase64(StringView, size_t, Alphabet, LastChunkHandling);
+
 } // namespace JSC

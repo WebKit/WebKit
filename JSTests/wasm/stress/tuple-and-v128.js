@@ -1,3 +1,4 @@
+//@ skip if !$isSIMDPlatform
 let bytes = readFile('./resources/tuple-and-v128.wasm', 'binary');
 let importObject = {
   m: {

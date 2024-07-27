@@ -273,29 +273,7 @@ GstElement* makeGStreamerElement(const char* factoryName, const char* name);
 GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads);
 
 template<typename T>
-inline std::optional<T> gstStructureGet(const GstStructure* structure, ASCIILiteral key)
-{
-    static_assert(std::is_same_v<T, int> || std::is_same_v<T, int64_t> || std::is_same_v<T, unsigned> || std::is_same_v<T, uint64_t> || std::is_same_v<T, double>);
-
-    T value;
-    if constexpr(std::is_same_v<T, int>) {
-        if (UNLIKELY(gst_structure_get_int(structure, key.characters(), &value)))
-            return value;
-    } else if constexpr(std::is_same_v<T, int64_t>) {
-        if (UNLIKELY(gst_structure_get_int64(structure, key.characters(), &value)))
-            return value;
-    } else if constexpr(std::is_same_v<T, unsigned>) {
-        if (UNLIKELY(gst_structure_get_uint(structure, key.characters(), &value)))
-            return value;
-    } else if constexpr(std::is_same_v<T, uint64_t>) {
-        if (UNLIKELY(gst_structure_get_uint64(structure, key.characters(), &value)))
-            return value;
-    } else if constexpr(std::is_same_v<T, double>) {
-        if (UNLIKELY(gst_structure_get_double(structure, key.characters(), &value)))
-            return value;
-    }
-    return std::nullopt;
-}
+std::optional<T> gstStructureGet(const GstStructure*, ASCIILiteral key);
 
 String gstStructureToJSONString(const GstStructure*);
 
@@ -315,6 +293,8 @@ bool gstObjectHasProperty(GstElement*, const char* name);
 bool gstObjectHasProperty(GstPad*, const char* name);
 
 GRefPtr<GstBuffer> wrapSpanData(const std::span<const uint8_t>&);
+
+std::optional<unsigned> gstGetAutoplugSelectResult(ASCIILiteral);
 
 void registerActivePipeline(const GRefPtr<GstElement>&);
 void unregisterPipeline(const GRefPtr<GstElement>&);

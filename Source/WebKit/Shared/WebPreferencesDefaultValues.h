@@ -40,7 +40,7 @@
 #define Webgpu_feature_status Preview
 #endif
 
-#if defined(ENABLE_UNIFIED_PDF_BY_DEFAULT) && ENABLE_UNIFIED_PDF_BY_DEFAULT
+#if defined(ENABLE_UNIFIED_PDF_AS_PREVIEW) && ENABLE_UNIFIED_PDF_AS_PREVIEW
 #define Unifiedpdf_feature_status Preview
 #else
 #define Unifiedpdf_feature_status Internal

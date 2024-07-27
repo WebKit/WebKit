@@ -98,6 +98,7 @@ public:
     using ImageFormat = WebExtensionTabImageFormat;
 
     enum class AssumeWindowMatches : bool { No, Yes };
+    enum class ReloadFromOrigin : bool { No, Yes };
 
     using WebProcessProxySet = HashSet<Ref<WebProcessProxy>>;
 
@@ -138,25 +139,28 @@ public:
     void didOpen() { ASSERT(!m_isOpen); m_isOpen = true; }
     void didClose() { ASSERT(m_isOpen); m_isOpen = false; }
 
-    bool isActive() const;
-    bool isSelected() const;
     bool isPrivate() const;
 
-    void pin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
-    void unpin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
-
     bool isPinned() const;
+    void setPinned(bool, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
-    void toggleReaderMode(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void pin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setPinned(true, WTFMove(completionHandler)); }
+    void unpin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setPinned(false, WTFMove(completionHandler)); }
 
     bool isReaderModeAvailable() const;
-    bool isShowingReaderMode() const;
 
-    void mute(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
-    void unmute(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    bool isReaderModeShowing() const;
+    void setReaderModeShowing(bool, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+
+    void toggleReaderMode(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setReaderModeShowing(!isReaderModeShowing(), WTFMove(completionHandler)); }
 
     bool isAudible() const;
+
     bool isMuted() const;
+    void setMuted(bool, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+
+    void mute(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setMuted(true, WTFMove(completionHandler)); }
+    void unmute(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setMuted(false, WTFMove(completionHandler)); }
 
     CGSize size() const;
 
@@ -173,15 +177,19 @@ public:
 
     void loadURL(URL, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
-    void reload(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
-    void reloadFromOrigin(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void reload(ReloadFromOrigin, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
     void goBack(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
     void goForward(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
+    bool isActive() const;
     void activate(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
-    void select(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
-    void deselect(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+
+    bool isSelected() const;
+    void setSelected(bool, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+
+    void select(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setSelected(true, WTFMove(completionHandler)); }
+    void deselect(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setSelected(false, WTFMove(completionHandler)); }
 
     void duplicate(const WebExtensionTabParameters&, CompletionHandler<void(Expected<RefPtr<WebExtensionTab>, WebExtensionError>&&)>&&);
 
@@ -207,37 +215,34 @@ private:
     mutable bool m_private : 1 { false };
     mutable bool m_cachedPrivate : 1 { false };
     bool m_respondsToWindow : 1 { false };
+    bool m_respondsToIndex : 1 { false };
     bool m_respondsToParentTab : 1 { false };
     bool m_respondsToSetParentTab : 1 { false };
     bool m_respondsToMainWebView : 1 { false };
-    bool m_respondsToTabTitle : 1 { false };
-    bool m_respondsToIsSelected : 1 { false };
+    bool m_respondsToTitle : 1 { false };
     bool m_respondsToIsPinned : 1 { false };
-    bool m_respondsToPin : 1 { false };
-    bool m_respondsToUnpin : 1 { false };
+    bool m_respondsToSetPinned : 1 { false };
     bool m_respondsToIsReaderModeAvailable : 1 { false };
-    bool m_respondsToIsShowingReaderMode : 1 { false };
-    bool m_respondsToToggleReaderMode : 1 { false };
+    bool m_respondsToIsReaderModeShowing : 1 { false };
+    bool m_respondsToSetReaderModeShowing : 1 { false };
     bool m_respondsToIsAudible : 1 { false };
     bool m_respondsToIsMuted : 1 { false };
-    bool m_respondsToMute : 1 { false };
-    bool m_respondsToUnmute : 1 { false };
+    bool m_respondsToSetMuted : 1 { false };
     bool m_respondsToSize : 1 { false };
     bool m_respondsToZoomFactor : 1 { false };
     bool m_respondsToSetZoomFactor : 1 { false };
     bool m_respondsToURL : 1 { false };
     bool m_respondsToPendingURL : 1 { false };
     bool m_respondsToIsLoadingComplete : 1 { false };
-    bool m_respondsToDetectWebpageLocale : 1 { false };
-    bool m_respondsToCaptureVisibleWebpage : 1 { false };
+    bool m_respondsToWebpageLocale : 1 { false };
+    bool m_respondsToTakeSnapshot : 1 { false };
     bool m_respondsToLoadURL : 1 { false };
     bool m_respondsToReload : 1 { false };
-    bool m_respondsToReloadFromOrigin : 1 { false };
     bool m_respondsToGoBack : 1 { false };
     bool m_respondsToGoForward : 1 { false };
     bool m_respondsToActivate : 1 { false };
-    bool m_respondsToSelect : 1 { false };
-    bool m_respondsToDeselect : 1 { false };
+    bool m_respondsToIsSelected : 1 { false };
+    bool m_respondsToSetSelected : 1 { false };
     bool m_respondsToDuplicate : 1 { false };
     bool m_respondsToClose : 1 { false };
     bool m_respondsToShouldGrantTabPermissionsOnUserGesture : 1 { false };

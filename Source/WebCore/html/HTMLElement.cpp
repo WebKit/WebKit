@@ -1529,28 +1529,24 @@ void HTMLElement::popoverAttributeChanged(const AtomString& value)
         ensurePopoverData().setPopoverState(newPopoverState);
 }
 
-bool HTMLElement::isValidInvokeAction(const InvokeAction action)
+bool HTMLElement::isValidCommandType(const CommandType command)
 {
-    return Element::isValidInvokeAction(action) || action == InvokeAction::TogglePopover || action == InvokeAction::ShowPopover || action == InvokeAction::HidePopover;
+    return Element::isValidCommandType(command) || command == CommandType::TogglePopover || command == CommandType::ShowPopover || command == CommandType::HidePopover;
 }
 
-bool HTMLElement::handleInvokeInternal(const HTMLFormControlElement& invoker, const InvokeAction& action)
+bool HTMLElement::handleCommandInternal(const HTMLFormControlElement& invoker, const CommandType& command)
 {
     if (popoverState() == PopoverState::None)
         return false;
 
     if (isPopoverShowing()) {
-        bool shouldHide = action == InvokeAction::Auto
-            || action == InvokeAction::TogglePopover
-            || action == InvokeAction::HidePopover;
+        bool shouldHide = command == CommandType::TogglePopover || command == CommandType::HidePopover;
         if (shouldHide) {
             hidePopover();
             return true;
         }
     } else {
-        bool shouldShow = action == InvokeAction::Auto
-            || action == InvokeAction::TogglePopover
-            || action == InvokeAction::ShowPopover;
+        bool shouldShow = command == CommandType::TogglePopover || command == CommandType::ShowPopover;
         if (shouldShow) {
             showPopover(&invoker);
             return true;

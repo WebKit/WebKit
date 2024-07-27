@@ -84,8 +84,6 @@ void generateToAir(Procedure& procedure)
     if (procedure.optLevel() >= 2) {
         reduceDoubleToFloat(procedure);
         reduceStrength(procedure);
-        // FIXME: Re-enable B3 hoistLoopInvariantValues
-        // https://bugs.webkit.org/show_bug.cgi?id=212651
         if (Options::useB3HoistLoopInvariantValues())
             hoistLoopInvariantValues(procedure);
         if (eliminateCommonSubexpressions(procedure))
@@ -103,11 +101,12 @@ void generateToAir(Procedure& procedure)
         reduceStrength(procedure);
     }
 
+    // This puts the IR in quirks mode.
+    lowerMacros(procedure);
+
 #if USE(JSVALUE32_64)
     lowerInt64(procedure);
 #endif
-    // This puts the IR in quirks mode.
-    lowerMacros(procedure);
 
     if (procedure.optLevel() >= 2) {
         optimizeAssociativeExpressionTrees(procedure);

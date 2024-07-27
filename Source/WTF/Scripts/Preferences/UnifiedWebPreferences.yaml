@@ -303,6 +303,16 @@ AllowSettingAnyXHRHeaderFromFileURLs:
     WebCore:
       default: false
 
+AllowTestOnlyIPC:
+  type: bool
+  status: embedder
+  exposed: [ WebKit ]
+  webcoreBinding: none
+  defaultValue:
+    WebKit:
+      default: false
+  sharedPreferenceForWebProcess: true
+
 AllowTopNavigationToDataURLs:
   type: bool
   humanReadableName: "Allow top navigation to data: URLs"
@@ -721,6 +731,20 @@ AutomaticallyAdjustsViewScaleUsingMinimumEffectiveDeviceWidth:
       default: false
     WebCore:
       default: false
+
+AuxclickEventEnabled:
+  type: bool
+  status: stable
+  category: dom
+  humanReadableName: "Enable `auxclick` event"
+  humanReadableDescription: "Enable the `auxclick` UI event"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
 
 BackgroundFetchAPIEnabled:
   type: bool
@@ -1300,17 +1324,17 @@ CSSTextSpacingEnabled:
 
 CSSTextUnderlinePositionLeftRightEnabled:
   type: bool
-  status: unstable
+  status: stable
   category: css
   humanReadableName: "CSS text-underline-position: left right"
   humanReadableDescription: "Enable the property text-underline-position left and right value support"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSTextWrapPrettyEnabled:
   type: bool
@@ -1818,11 +1842,11 @@ CryptoKitEnabled:
   humanReadableDescription: "Enable CryptoKit for supported Algorithms."
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CursiveFontFamily:
   type: String
@@ -2815,6 +2839,20 @@ GenericCueAPIEnabled:
     WebCore:
       default: false
 
+GetCoalescedEventsEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "Pointer Events getCoalescedEvents API"
+  humanReadableDescription: "Enable the `getCoalescedEvents` function of the Pointer Events API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 GetUserMediaRequiresFocus:
   type: bool
   status: internal
@@ -2886,6 +2924,21 @@ HTTPEquivEnabled:
       default: true
     WebCore:
       default: true
+
+HTTPSByDefaultEnabled:
+  type: bool
+  status: testable
+  category: security
+  humanReadableName: "HTTPS-by-default (HTTPS-First)"
+  humanReadableDescription: "Enable HTTPS-by-default (HTTPS-First)"
+  webcoreName: httpsByDefault
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 HiddenPageCSSAnimationSuspensionEnabled:
   type: bool
@@ -3391,8 +3444,8 @@ InvokerAttributesEnabled:
   type: bool
   status: testable
   category: html
-  humanReadableName: "HTML invoketarget & invokeaction attributes"
-  humanReadableDescription: "Enable HTML invoketarget & invokeaction attribute support"
+  humanReadableName: "HTML command & commandfor attributes"
+  humanReadableDescription: "Enable HTML command & commandfor attribute support"
   defaultValue:
     WebKitLegacy:
       default: false
@@ -3918,6 +3971,7 @@ LockdownFontParserEnabled:
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 LoginStatusAPIEnabled:
   type: bool
@@ -4750,6 +4804,20 @@ NotificationsEnabled:
       "PLATFORM(IOS_FAMILY)": false
       default: true
 
+ObservableEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "Observable API"
+  humanReadableDescription: "Support for the Observable API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 OffscreenCanvasDeprecatedCommitEnabled:
   type: bool
   status: testable
@@ -5360,7 +5428,7 @@ ReportingEnabled:
 
 RequestIdleCallbackEnabled:
   type: bool
-  status: preview
+  status: stable
   category: dom
   humanReadableName: "requestIdleCallback"
   humanReadableDescription: "Enable requestIdleCallback support"
@@ -5368,6 +5436,7 @@ RequestIdleCallbackEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "USE(CF)": true
       default: false
     WebCore:
       default: false
@@ -5986,6 +6055,7 @@ ShapeDetection:
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 SharedWorkerEnabled:
   type: bool
@@ -6902,6 +6972,7 @@ UseCGDisplayListsForDOMRendering:
   defaultValue:
     WebKit:
       default: true
+  sharedPreferenceForWebProcess: true
 
 UseGPUProcessForCanvasRenderingEnabled:
   type: bool
@@ -6930,6 +7001,7 @@ UseGPUProcessForDOMRenderingEnabled:
   defaultValue:
     WebKit:
       default: defaultUseGPUProcessForDOMRenderingEnabled()
+  sharedPreferenceForWebProcess: true
 
 UseGPUProcessForDisplayCapture:
   type: bool
@@ -6974,6 +7046,7 @@ UseGPUProcessForWebGLEnabled:
       "ENABLE(GPU_PROCESS_BY_DEFAULT) && ENABLE(GPU_PROCESS_WEBGL_BY_DEFAULT)": true
       "USE(GRAPHICS_LAYER_WC)": true
       default: false
+  sharedPreferenceForWebProcess: true
 
 UseGiantTiles:
   type: bool
@@ -7102,6 +7175,16 @@ UsesEncodingDetector:
       default: false
     WebCore:
       default: false
+
+UsesSingleWebProcess:
+  type: bool
+  status: embedder
+  exposed: [ WebKit ]
+  webcoreBinding: none
+  defaultValue:
+    WebKit:
+      default: false
+  sharedPreferenceForWebProcess: true
 
 VP8DecoderEnabled:
   type: bool
@@ -7546,6 +7629,21 @@ WebCryptoX25519Enabled:
     WebCore:
       default: false
 
+WebExtensionSidebarEnabled:
+  type: bool
+  status: testable
+  category: extensions
+  humanReadableName: "WebExtension sidebarAction and sidePanel APIs"
+  humanReadableDescription: "Enable support for WebExtensions using the sidebarAction / sidePanel family of APIs"
+  condition: ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 WebGLDraftExtensionsEnabled:
   type: bool
   status: testable
@@ -7572,6 +7670,7 @@ WebGLEnabled:
       default: true
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 WebGLTimerQueriesEnabled:
   type: bool
@@ -7621,6 +7720,7 @@ WebGPUEnabled:
     WebCore:
       "ENABLE(WEBGPU_BY_DEFAULT)": true
       default: false
+  sharedPreferenceForWebProcess: true
 
 WebInspectorEngineeringSettingsAllowed:
   type: bool
@@ -7750,21 +7850,6 @@ WebRTCH264HardwareEncoderEnabled:
       default: true
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
-WebRTCH264LowLatencyEncoderEnabled:
-  type: bool
-  status: internal
-  category: media
-  humanReadableName: "WebRTC H264 LowLatency encoder"
-  humanReadableDescription: "Enable H264 LowLatency encoder"
-  webcoreBinding: DeprecatedGlobalSettings
-  condition: ENABLE(WEB_RTC)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-
-# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 WebRTCH265CodecEnabled:
   type: bool
   status: stable
@@ -7811,30 +7896,6 @@ WebRTCPlatformCodecsInGPUProcessEnabled:
       default: false
     WebCore:
       default: false
-
-WebRTCPlatformTCPSocketsEnabled:
-  type: bool
-  status: internal
-  category: media
-  humanReadableName: "WebRTC Platform TCP Sockets"
-  humanReadableDescription: "Enable WebRTC Platform TCP Sockets"
-  webcoreBinding: DeprecatedGlobalSettings
-  condition: ENABLE(WEB_RTC)
-  defaultValue:
-    WebKit:
-      default: true
-
-WebRTCPlatformUDPSocketsEnabled:
-  type: bool
-  status: internal
-  category: media
-  humanReadableName: "WebRTC Platform UDP Sockets"
-  humanReadableDescription: "Enable WebRTC Platform UDP Sockets"
-  webcoreBinding: DeprecatedGlobalSettings
-  condition: ENABLE(WEB_RTC)
-  defaultValue:
-    WebKit:
-      default: true
 
 WebRTCRemoteVideoFrameEnabled:
   type: bool
@@ -7995,6 +8056,7 @@ WebTransportEnabled:
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 WebXRAugmentedRealityModuleEnabled:
   type: bool
@@ -8025,6 +8087,7 @@ WebXREnabled:
       default: true
     WebCore:
       default: true
+  sharedPreferenceForWebProcess: true
 
 WebXRGamepadsModuleEnabled:
   type: bool

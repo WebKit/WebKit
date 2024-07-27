@@ -73,7 +73,7 @@ private:
     void didCreateGLContext() override;
     void willDestroyGLContext() override;
     void willRenderFrame() override;
-    void didRenderFrame(const std::optional<WebCore::Region>&) override;
+    void didRenderFrame(WebCore::Region&&) override;
 
     void didCreateCompositingRunLoop(WTF::RunLoop&) override;
     void willDestroyCompositingRunLoop() override;

@@ -45,6 +45,7 @@ struct DetectedBarcode;
 
 namespace WebKit {
 class RemoteRenderingBackend;
+struct SharedPreferencesForWebProcess;
 
 namespace ShapeDetection {
 class ObjectHeap;
@@ -59,6 +60,7 @@ public:
         return adoptRef(*new RemoteBarcodeDetector(WTFMove(barcodeDetector), objectHeap, backend, identifier, webProcessIdentifier));
     }
 
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
     virtual ~RemoteBarcodeDetector();
 
 private:

@@ -413,11 +413,6 @@ void RealtimeVideoCaptureSource::dispatchVideoFrameToObservers(VideoFrame& video
     videoFrameAvailable(videoFrame, metadata);
 }
 
-void RealtimeVideoCaptureSource::clientUpdatedSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
-{
-    setSizeFrameRateAndZoom({ width, height, frameRate, zoom });
-}
-
 std::optional<RealtimeVideoCaptureSource::CaptureSizeFrameRateAndZoom> RealtimeVideoCaptureSource::bestSupportedSizeFrameRateAndZoomConsideringObservers(const VideoPresetConstraints& constraints)
 {
     auto& settings = this->settings();
@@ -450,12 +445,10 @@ void RealtimeVideoCaptureSource::setSizeFrameRateAndZoom(const VideoPresetConstr
     m_currentPreset = match->encodingPreset;
     auto newSize = match->encodingPreset->size();
 
-    startApplyingConstraints();
     setFrameRateAndZoomWithPreset(match->requestedFrameRate, match->requestedZoom, WTFMove(match->encodingPreset));
     setSize(newSize);
     setFrameRate(match->requestedFrameRate);
     setZoom(match->requestedZoom);
-    endApplyingConstraints();
 }
 
 auto RealtimeVideoCaptureSource::takePhotoInternal(PhotoSettings&&) -> Ref<TakePhotoNativePromise>

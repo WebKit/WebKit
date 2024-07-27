@@ -1721,6 +1721,110 @@ MacroAssemblerCodeRef<JITThunkPtrTag> toLengthThunkGenerator(VM& vm)
     return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "toLength");
 }
 
+#if CPU(ARM64)
+MacroAssemblerCodeRef<JITThunkPtrTag> maxThunkGenerator(VM& vm)
+{
+    SpecializedThunkJIT jit(vm, 2);
+    jit.loadJSArgument(0, JSRInfo::jsRegT10);
+    jit.loadJSArgument(1, JSRInfo::jsRegT32);
+
+    jit.appendFailure(jit.branchIfNotNumber(JSRInfo::jsRegT10.payloadGPR()));
+    jit.appendFailure(jit.branchIfNotNumber(JSRInfo::jsRegT32.payloadGPR()));
+
+    // if (lhs.isInt32()) {
+    //   if (rhs.isInt32())
+    //       return max(lhs.asInt32(), rhs.asInt32());
+    //   else
+    //       return max(static_cast<double>(lhs.asInt32()), rhs.asDouble());
+    // } else {
+    //   if (rhs.isInt32())
+    //       return max(lhs.asDouble(), static_cast<double>(rhs.asInt32()));
+    //   else
+    //       return max(lhs.asDouble(), rhs.asDouble()));
+    // }
+
+    auto notInt32LHS = jit.branchIfNotInt32(JSRInfo::jsRegT10);
+    {
+        auto notInt32RHS = jit.branchIfNotInt32(JSRInfo::jsRegT32);
+
+        jit.moveConditionally32(CCallHelpers::LessThan, JSRInfo::jsRegT10.payloadGPR(), JSRInfo::jsRegT32.payloadGPR(), JSRInfo::jsRegT32.payloadGPR(), JSRInfo::jsRegT10.payloadGPR(), JSRInfo::jsRegT10.payloadGPR());
+        jit.returnJSValue(JSRInfo::jsRegT10.payloadGPR());
+
+        notInt32RHS.link(&jit);
+        jit.convertInt32ToDouble(JSRInfo::jsRegT10.payloadGPR(), FPRInfo::fpRegT0);
+        jit.unboxDoubleNonDestructive(JSRInfo::jsRegT32, FPRInfo::fpRegT1, GPRInfo::regT4);
+        jit.doubleMax(FPRInfo::fpRegT0, FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+        jit.returnDouble(FPRInfo::fpRegT0);
+    }
+    {
+        notInt32LHS.link(&jit);
+        jit.unboxDoubleNonDestructive(JSRInfo::jsRegT10, FPRInfo::fpRegT0, GPRInfo::regT4);
+        auto notInt32RHS = jit.branchIfNotInt32(JSRInfo::jsRegT32);
+
+        jit.convertInt32ToDouble(JSRInfo::jsRegT32.payloadGPR(), FPRInfo::fpRegT1);
+        jit.doubleMax(FPRInfo::fpRegT0, FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+        jit.returnDouble(FPRInfo::fpRegT0);
+
+        notInt32RHS.link(&jit);
+        jit.unboxDoubleNonDestructive(JSRInfo::jsRegT32, FPRInfo::fpRegT1, GPRInfo::regT4);
+        jit.doubleMax(FPRInfo::fpRegT0, FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+        jit.returnDouble(FPRInfo::fpRegT0);
+    }
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "max");
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> minThunkGenerator(VM& vm)
+{
+    SpecializedThunkJIT jit(vm, 2);
+    jit.loadJSArgument(0, JSRInfo::jsRegT10);
+    jit.loadJSArgument(1, JSRInfo::jsRegT32);
+
+    jit.appendFailure(jit.branchIfNotNumber(JSRInfo::jsRegT10.payloadGPR()));
+    jit.appendFailure(jit.branchIfNotNumber(JSRInfo::jsRegT32.payloadGPR()));
+
+    // if (lhs.isInt32()) {
+    //   if (rhs.isInt32())
+    //       return min(lhs.asInt32(), rhs.asInt32());
+    //   else
+    //       return min(static_cast<double>(lhs.asInt32()), rhs.asDouble());
+    // } else {
+    //   if (rhs.isInt32())
+    //       return min(lhs.asDouble(), static_cast<double>(rhs.asInt32()));
+    //   else
+    //       return min(lhs.asDouble(), rhs.asDouble()));
+    // }
+
+    auto notInt32LHS = jit.branchIfNotInt32(JSRInfo::jsRegT10);
+    {
+        auto notInt32RHS = jit.branchIfNotInt32(JSRInfo::jsRegT32);
+
+        jit.moveConditionally32(CCallHelpers::GreaterThan, JSRInfo::jsRegT10.payloadGPR(), JSRInfo::jsRegT32.payloadGPR(), JSRInfo::jsRegT32.payloadGPR(), JSRInfo::jsRegT10.payloadGPR(), JSRInfo::jsRegT10.payloadGPR());
+        jit.returnJSValue(JSRInfo::jsRegT10);
+
+        notInt32RHS.link(&jit);
+        jit.convertInt32ToDouble(JSRInfo::jsRegT10.payloadGPR(), FPRInfo::fpRegT0);
+        jit.unboxDoubleNonDestructive(JSRInfo::jsRegT32, FPRInfo::fpRegT1, GPRInfo::regT4);
+        jit.doubleMin(FPRInfo::fpRegT0, FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+        jit.returnDouble(FPRInfo::fpRegT0);
+    }
+    {
+        notInt32LHS.link(&jit);
+        jit.unboxDoubleNonDestructive(JSRInfo::jsRegT10, FPRInfo::fpRegT0, GPRInfo::regT4);
+        auto notInt32RHS = jit.branchIfNotInt32(JSRInfo::jsRegT32);
+
+        jit.convertInt32ToDouble(JSRInfo::jsRegT32.payloadGPR(), FPRInfo::fpRegT1);
+        jit.doubleMin(FPRInfo::fpRegT0, FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+        jit.returnDouble(FPRInfo::fpRegT0);
+
+        notInt32RHS.link(&jit);
+        jit.unboxDoubleNonDestructive(JSRInfo::jsRegT32, FPRInfo::fpRegT1, GPRInfo::regT4);
+        jit.doubleMin(FPRInfo::fpRegT0, FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+        jit.returnDouble(FPRInfo::fpRegT0);
+    }
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "min");
+}
+#endif
+
 #if USE(JSVALUE64)
 MacroAssemblerCodeRef<JITThunkPtrTag> objectIsThunkGenerator(VM& vm)
 {

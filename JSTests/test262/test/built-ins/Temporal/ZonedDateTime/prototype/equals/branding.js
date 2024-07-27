@@ -11,7 +11,7 @@ const equals = Temporal.ZonedDateTime.prototype.equals;
 
 assert.sameValue(typeof equals, "function");
 
-const args = [new Temporal.ZonedDateTime(123456n, new Temporal.TimeZone("UTC"))];
+const args = [new Temporal.ZonedDateTime(123456n, "UTC")];
 
 assert.throws(TypeError, () => equals.apply(undefined, args), "undefined");
 assert.throws(TypeError, () => equals.apply(null, args), "null");

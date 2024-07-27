@@ -62,7 +62,7 @@ public:
     virtual void willDestroyGLContext() { }
     virtual void finalize() { }
     virtual void willRenderFrame() { }
-    virtual void didRenderFrame(const std::optional<WebCore::Region>&) { }
+    virtual void didRenderFrame(WebCore::Region&&) { }
 
     virtual void didCreateCompositingRunLoop(WTF::RunLoop&) { }
     virtual void willDestroyCompositingRunLoop() { }
@@ -74,6 +74,7 @@ public:
     virtual void visibilityDidChange(bool) { }
     virtual bool backgroundColorDidChange();
 
+    const WebCore::IntSize& size() const { return m_size; }
     void clearIfNeeded();
 
 protected:

@@ -45,6 +45,7 @@ struct ResourceRequestPlatformData {
     bool m_useAdvancedPrivacyProtections { false };
     bool m_didFilterLinkDecoration { false };
     bool m_isPrivateTokenUsageByThirdPartyAllowed { false };
+    bool m_wasSchemeOptimisticallyUpgraded { false };
 };
 
 using ResourceRequestData = std::variant<ResourceRequestBase::RequestData, ResourceRequestPlatformData>;

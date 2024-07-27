@@ -529,19 +529,21 @@ void RenderTable::layout()
         if (auto overridingLogicalHeight = this->overridingLogicalHeight())
             computedLogicalHeight = std::max(computedLogicalHeight, *overridingLogicalHeight - borderAndPaddingAfter - sumCaptionsLogicalHeight());
 
-        Length logicalMaxHeightLength = style().logicalMaxHeight();
-        if (logicalMaxHeightLength.isFillAvailable() || (logicalMaxHeightLength.isSpecified() && !logicalMaxHeightLength.isNegative()
-            && !logicalMaxHeightLength.isMinContent() && !logicalMaxHeightLength.isMaxContent() && !logicalMaxHeightLength.isFitContent())) {
-            LayoutUnit computedMaxLogicalHeight = convertStyleLogicalHeightToComputedHeight(logicalMaxHeightLength);
-            computedLogicalHeight = std::min(computedLogicalHeight, computedMaxLogicalHeight);
-        }
+        if (!shouldIgnoreLogicalMinMaxHeightSizes()) {
+            Length logicalMaxHeightLength = style().logicalMaxHeight();
+            if (logicalMaxHeightLength.isFillAvailable() || (logicalMaxHeightLength.isSpecified() && !logicalMaxHeightLength.isNegative()
+                && !logicalMaxHeightLength.isMinContent() && !logicalMaxHeightLength.isMaxContent() && !logicalMaxHeightLength.isFitContent())) {
+                LayoutUnit computedMaxLogicalHeight = convertStyleLogicalHeightToComputedHeight(logicalMaxHeightLength);
+                computedLogicalHeight = std::min(computedLogicalHeight, computedMaxLogicalHeight);
+            }
 
-        Length logicalMinHeightLength = style().logicalMinHeight();
-        if (logicalMinHeightLength.isMinContent() || logicalMinHeightLength.isMaxContent() || logicalMinHeightLength.isFitContent())
-            logicalMinHeightLength = LengthType::Auto;
-        if (logicalMinHeightLength.isIntrinsic() || (logicalMinHeightLength.isSpecified() && !logicalMinHeightLength.isNegative())) {
-            LayoutUnit computedMinLogicalHeight = convertStyleLogicalHeightToComputedHeight(logicalMinHeightLength);
-            computedLogicalHeight = std::max(computedLogicalHeight, computedMinLogicalHeight);
+            Length logicalMinHeightLength = style().logicalMinHeight();
+            if (logicalMinHeightLength.isMinContent() || logicalMinHeightLength.isMaxContent() || logicalMinHeightLength.isFitContent())
+                logicalMinHeightLength = LengthType::Auto;
+            if (logicalMinHeightLength.isIntrinsic() || (logicalMinHeightLength.isSpecified() && !logicalMinHeightLength.isNegative())) {
+                LayoutUnit computedMinLogicalHeight = convertStyleLogicalHeightToComputedHeight(logicalMinHeightLength);
+                computedLogicalHeight = std::max(computedLogicalHeight, computedMinLogicalHeight);
+            }
         }
 
         distributeExtraLogicalHeight(computedLogicalHeight - totalSectionLogicalHeight);

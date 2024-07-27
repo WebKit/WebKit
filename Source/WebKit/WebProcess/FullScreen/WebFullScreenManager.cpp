@@ -257,6 +257,8 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, 
 
             auto imageResourceHandle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly);
 
+            m_willUseQuickLookForFullscreen = true;
+
             return {
                 FullScreenMediaDetails::Type::Image,
                 imageSize,
@@ -267,6 +269,9 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, 
 
         mediaDetails = getImageMediaDetails();
     }
+
+    if (m_willUseQuickLookForFullscreen)
+        m_page->freezeLayerTree(WebPage::LayerTreeFreezeReason::OutOfProcessFullscreen);
 #endif
 
     m_initialFrame = screenRectOfContents(m_element.get());
@@ -445,6 +450,11 @@ static Vector<Ref<Element>> collectFullscreenElementsFromElement(Element* elemen
 
 void WebFullScreenManager::didExitFullScreen()
 {
+#if PLATFORM(VISION) && ENABLE(QUICKLOOK_FULLSCREEN)
+    if (std::exchange(m_willUseQuickLookForFullscreen, false))
+        m_page->unfreezeLayerTree(WebPage::LayerTreeFreezeReason::OutOfProcessFullscreen);
+#endif
+
     m_page->isInFullscreenChanged(WebPage::IsInFullscreenMode::No);
 
     if (!m_element)

@@ -28,6 +28,7 @@
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 
+#include "AnimationMalloc.h"
 #include "Document.h"
 #include "LocalDOMWindow.h"
 #include "Page.h"
@@ -41,7 +42,6 @@
 #include <wtf/MonotonicTime.h>
 
 namespace WebCore {
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AcceleratedTimeline);
 
 AcceleratedTimeline::AcceleratedTimeline(Document& document)
 {

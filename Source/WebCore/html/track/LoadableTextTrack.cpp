@@ -30,7 +30,6 @@
 #if ENABLE(VIDEO)
 
 #include "ElementInlines.h"
-#include "HTMLTrackElement.h"
 #include "ScriptExecutionContext.h"
 #include "TextTrackCueList.h"
 #include "VTTCue.h"
@@ -44,7 +43,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(LoadableTextTrack);
 
 LoadableTextTrack::LoadableTextTrack(HTMLTrackElement& track, const AtomString& kind, const AtomString& label, const AtomString& language)
     : TextTrack(track.scriptExecutionContext(), kind, emptyAtom(), label, language, TrackElement)
-    , m_trackElement(&track)
+    , m_trackElement(track)
 {
 }
 
@@ -155,7 +154,7 @@ size_t LoadableTextTrack::trackElementIndex()
     for (RefPtr<Node> node = m_trackElement->parentNode()->firstChild(); node; node = node->nextSibling()) {
         if (!node->hasTagName(trackTag) || !node->parentNode())
             continue;
-        if (node == m_trackElement)
+        if (node.get() == m_trackElement.get())
             return index;
         ++index;
     }

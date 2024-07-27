@@ -191,7 +191,7 @@ void TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::paintToTextureMapper(Te
         return;
 
     if (m_fence) {
-        m_fence->wait(WebCore::GLFence::FlushCommands::No);
+        m_fence->serverWait();
         m_fence = nullptr;
     }
 

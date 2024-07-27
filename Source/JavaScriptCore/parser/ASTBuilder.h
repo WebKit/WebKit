@@ -466,7 +466,7 @@ public:
     FunctionMetadataNode* createFunctionMetadata(
         const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, 
         unsigned startColumn, unsigned endColumn, unsigned functionStart, int functionNameStart,
-        int parametersStart, ImplementationVisibility implementationVisibility, LexicalScopeFeatures lexicalScopeFeatures,
+        int parametersStart, ImplementationVisibility implementationVisibility, LexicallyScopedFeatures lexicallyScopedFeatures,
         ConstructorKind constructorKind, SuperBinding superBinding,
         unsigned parameterCount,
         SourceParseMode mode, bool isArrowFunctionBodyExpression)
@@ -474,7 +474,7 @@ public:
         return new (m_parserArena) FunctionMetadataNode(
             m_parserArena, startLocation, endLocation, startColumn, endColumn, functionStart,
             functionNameStart, parametersStart, implementationVisibility,
-            lexicalScopeFeatures, constructorKind, superBinding,
+            lexicallyScopedFeatures, constructorKind, superBinding,
             parameterCount, mode, isArrowFunctionBodyExpression);
     }
 

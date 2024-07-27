@@ -198,7 +198,7 @@
 #include <WebCore/DragData.h>
 #include <WebCore/Editing.h>
 #include <WebCore/Editor.h>
-#include <WebCore/ElementIterator.h>
+#include <WebCore/ElementAncestorIteratorInlines.h>
 #include <WebCore/ElementTargetingController.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/EventNames.h>
@@ -215,6 +215,7 @@
 #include <WebCore/FullscreenManager.h>
 #include <WebCore/GeometryUtilities.h>
 #include <WebCore/HTMLAttachmentElement.h>
+#include <WebCore/HTMLBodyElement.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLImageElement.h>
 #include <WebCore/HTMLInputElement.h>
@@ -465,7 +466,7 @@ static const Seconds maximumLayerVolatilityTimerInterval { 2_s };
 
 #if PLATFORM(IOS_FAMILY)
 static constexpr Seconds updateFocusedElementInformationDebounceInterval { 100_ms };
-static constexpr Seconds updateLayoutViewportHeightExpansionTimerInterval { 25_ms };
+static constexpr Seconds updateLayoutViewportHeightExpansionTimerInterval { 200_ms };
 #endif
 
 #define WEBPAGE_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
@@ -788,6 +789,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.canShowWhileLocked = parameters.canShowWhileLocked;
 #endif
 
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+    pageConfiguration.gamepadAccessRequiresExplicitConsent = parameters.gamepadAccessRequiresExplicitConsent;
+#endif
+
     m_page = Page::create(WTFMove(pageConfiguration));
 
     updateAfterDrawingAreaCreation(parameters);
@@ -1103,9 +1108,8 @@ void WebPage::getFrameInfo(WebCore::FrameIdentifier frameID, CompletionHandler<v
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return completionHandler(std::nullopt);
-    frame->getFrameInfo([completionHandler = WTFMove(completionHandler)](auto&& frameInfo) mutable {
-        completionHandler(WTFMove(frameInfo));
-    });
+
+    completionHandler(frame->info());
 }
 
 void WebPage::getFrameTree(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler)
@@ -2074,6 +2078,9 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
             localMainFrame->loader().forceSandboxFlags(loadParameters.effectiveSandboxFlags);
     }
 
+    if (auto onwerPermissionsPolicy = std::exchange(loadParameters.ownerPermissionsPolicy, { }))
+        localFrame->setOwnerPermissionsPolicy(WTFMove(*onwerPermissionsPolicy));
+
     localFrame->loader().load(WTFMove(frameLoadRequest));
 
     ASSERT(!m_pendingNavigationID);
@@ -2177,7 +2184,7 @@ void WebPage::navigateToPDFLinkWithSimulatedClick(const String& url, IntPoint do
     // FIXME: Set modifier keys.
     // FIXME: This should probably set IsSimulated::Yes.
     auto mouseEvent = MouseEvent::create(eventNames().clickEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes,
-        MonotonicTime::now(), nullptr, singleClick, screenPoint, documentPoint, 0, 0, { }, MouseButton::Left, 0, nullptr, 0, WebCore::SyntheticClickType::NoTap);
+        MonotonicTime::now(), nullptr, singleClick, screenPoint, documentPoint, 0, 0, { }, MouseButton::Left, 0, nullptr, 0, WebCore::SyntheticClickType::NoTap, { });
 
     mainFrame->loader().changeLocation(mainFrameDocument->completeURL(url), emptyAtom(), mouseEvent.ptr(), ReferrerPolicy::NoReferrer, ShouldOpenExternalURLsPolicy::ShouldAllow);
 }
@@ -2355,30 +2362,6 @@ void WebPage::sendViewportAttributesChanged(const ViewportArguments& viewportArg
 #endif
 }
 #endif
-
-void WebPage::scrollMainFrameIfNotAtMaxScrollPosition(const IntSize& scrollOffset)
-{
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    if (!localMainFrame)
-        return;
-    RefPtr frameView = localMainFrame->view();
-
-    ScrollPosition scrollPosition = frameView->scrollPosition();
-    ScrollPosition maximumScrollPosition = frameView->maximumScrollPosition();
-
-    // If the current scroll position in a direction is the max scroll position 
-    // we don't want to scroll at all.
-    IntSize newScrollOffset;
-    if (scrollPosition.x() < maximumScrollPosition.x())
-        newScrollOffset.setWidth(scrollOffset.width());
-    if (scrollPosition.y() < maximumScrollPosition.y())
-        newScrollOffset.setHeight(scrollOffset.height());
-
-    if (newScrollOffset.isZero())
-        return;
-
-    frameView->setScrollPosition(frameView->scrollPosition() + newScrollOffset);
-}
 
 void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
 {
@@ -3451,6 +3434,14 @@ private:
 void WebPage::didDismissContextMenu()
 {
     corePage()->contextMenuController().didDismissContextMenu();
+}
+
+void WebPage::showContextMenuFromFrame(const WebCore::FrameIdentifier& frameID, const ContextMenuContextData& contextMenuContextData, const UserData& userData)
+{
+    flushPendingEditorStateUpdate();
+    send(Messages::WebPageProxy::ShowContextMenuFromFrame(frameID, contextMenuContextData, userData));
+    m_hasEverDisplayedContextMenu = true;
+    scheduleFullEditorStateUpdate();
 }
 
 #endif // ENABLE(CONTEXT_MENUS)
@@ -4572,8 +4563,19 @@ void WebPage::updateRenderingWithForcedRepaint(CompletionHandler<void()>&& compl
     m_drawingArea->updateRenderingWithForcedRepaintAsync(*this, WTFMove(completionHandler));
 }
 
-void WebPage::preferencesDidChange(const WebPreferencesStore& store)
+void WebPage::preferencesDidChange(const WebPreferencesStore& store, std::optional<uint64_t> sharedPreferencesVersion)
 {
+#if ENABLE(GPU_PROCESS)
+    if (sharedPreferencesVersion) {
+        ASSERT(*sharedPreferencesVersion);
+        auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::WaitForSharedPreferencesForWebProcessToSync { *sharedPreferencesVersion }, 0);
+        auto [success] = sendResult.takeReplyOr(false);
+        if (!success)
+            return; // Sync IPC has timed out or WebProcessProxy is getting destroyed
+    }
+#else
+    UNUSED_PARAM(sharedPreferencesVersion);
+#endif
     WebPreferencesStore::removeTestRunnerOverrides();
     updatePreferences(store);
 }
@@ -5927,31 +5929,44 @@ void WebPage::unmarkAllBadGrammar()
 }
 
 #if USE(APPKIT)
-void WebPage::uppercaseWord()
+void WebPage::uppercaseWord(FrameIdentifier frameID)
 {
-    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
 
-    frame->editor().uppercaseWord();
+    RefPtr coreFrame = frame->coreLocalFrame();
+    if (!coreFrame)
+        return;
+
+    coreFrame->editor().uppercaseWord();
 }
 
-void WebPage::lowercaseWord()
+void WebPage::lowercaseWord(FrameIdentifier frameID)
 {
-    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
 
-    frame->editor().lowercaseWord();
+    RefPtr coreFrame = frame->coreLocalFrame();
+    if (!coreFrame)
+        return;
+
+    coreFrame->editor().lowercaseWord();
 }
 
-void WebPage::capitalizeWord()
+void WebPage::capitalizeWord(FrameIdentifier frameID)
 {
-    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
 
-    frame->editor().capitalizeWord();
+    RefPtr coreFrame = frame->coreLocalFrame();
+    if (!coreFrame)
+        return;
+
+
+    coreFrame->editor().capitalizeWord();
 }
 #endif
     
@@ -7036,6 +7051,7 @@ void WebPage::setCompositionAsync(const String& text, const Vector<CompositionUn
 
 void WebPage::setWritingSuggestion(const String& fullTextWithPrediction, const EditingRange& selection)
 {
+#if PLATFORM(COCOA)
     platformWillPerformEditingCommand();
 
     RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
@@ -7043,6 +7059,10 @@ void WebPage::setWritingSuggestion(const String& fullTextWithPrediction, const E
         return;
 
     frame->editor().setWritingSuggestion(fullTextWithPrediction, { selection.location, selection.length });
+#else
+    UNUSED_PARAM(fullTextWithPrediction);
+    UNUSED_PARAM(selection);
+#endif
 }
 
 void WebPage::confirmCompositionAsync()
@@ -7706,6 +7726,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
 
 #if PLATFORM(IOS_FAMILY)
     m_updateLayoutViewportHeightExpansionTimer.stop();
+    m_shouldRescheduleLayoutViewportHeightExpansionTimer = false;
 #endif
     removeReasonsToDisallowLayoutViewportHeightExpansion(m_disallowLayoutViewportHeightExpansionReasons);
 
@@ -7849,15 +7870,26 @@ void WebPage::loadAndDecodeImage(WebCore::ResourceRequest&& request, std::option
             RefPtr nativeImage = bitmapImage->primaryNativeImage();
             if (!nativeImage)
                 return completionHandler({ });
-            RefPtr<ShareableBitmap> result;
-            if (sizeConstraint) {
-                FloatRect rect = largestRectWithAspectRatioInsideRect(nativeImage->size().aspectRatio(), FloatRect({ }, *sizeConstraint));
-                result = ShareableBitmap::createFromImageDraw(*nativeImage, nativeImage->colorSpace(), flooredIntSize(rect.size()));
-            } else
-                result = ShareableBitmap::createFromImageDraw(*nativeImage);
-            if (!result)
+
+            FloatSize sourceSize = nativeImage->size();
+            FloatSize destinationSize = sourceSize;
+            if (sizeConstraint)
+                destinationSize = largestRectWithAspectRatioInsideRect(sourceSize.aspectRatio(), FloatRect({ }, sizeConstraint->shrunkTo(sourceSize))).size();
+
+            IntSize roundedDestinationSize = flooredIntSize(destinationSize);
+            auto sourceColorSpace = nativeImage->colorSpace();
+            auto destinationColorSpace = sourceColorSpace.supportsOutput() ? sourceColorSpace : DestinationColorSpace::SRGB();
+            auto bitmap = ShareableBitmap::create({ roundedDestinationSize, destinationColorSpace });
+            if (!bitmap)
                 return completionHandler({ });
-            completionHandler(result.releaseNonNull());
+
+            auto context = bitmap->createGraphicsContext();
+            if (!context)
+                return completionHandler({ });
+
+            context->drawNativeImage(*nativeImage, FloatRect({ }, roundedDestinationSize), FloatRect({ }, sourceSize), { CompositeOperator::Copy });
+
+            completionHandler(bitmap.releaseNonNull());
         });
     });
 }
@@ -8190,7 +8222,14 @@ void WebPage::gamepadsRecentlyAccessed()
     send(Messages::WebPageProxy::GamepadsRecentlyAccessed());
 }
 
+#if PLATFORM(VISION)
+void WebPage::allowGamepadAccess()
+{
+    corePage()->allowGamepadAccess();
+}
 #endif
+
+#endif // ENABLE(GAMEPAD)
 
 #if ENABLE(POINTER_LOCK)
 void WebPage::didAcquirePointerLock()
@@ -8344,6 +8383,16 @@ void WebPage::requestStorageAccess(RegistrableDomain&& subFrameDomain, Registrab
         }
         completionHandler(result);
     });
+}
+
+void WebPage::setLoginStatus(RegistrableDomain&& domain, IsLoggedIn loggedInStatus, CompletionHandler<void()>&& completionHandler)
+{
+    WebProcess::singleton().ensureNetworkProcessConnection().protectedConnection()->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::SetLoginStatus(WTFMove(domain), loggedInStatus), WTFMove(completionHandler));
+}
+
+void WebPage::isLoggedIn(RegistrableDomain&& domain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    WebProcess::singleton().ensureNetworkProcessConnection().protectedConnection()->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::IsLoggedIn(WTFMove(domain)), WTFMove(completionHandler));
 }
 
 void WebPage::addDomainWithPageLevelStorageAccess(const RegistrableDomain& topLevelDomain, const RegistrableDomain& resourceDomain)
@@ -9235,7 +9284,7 @@ void WebPage::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&& comp
 
 #if ENABLE(WRITING_TOOLS_UI)
 
-void WebPage::addTextAnimationForAnimationID(const WTF::UUID& uuid, const WebKit::TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData, CompletionHandler<void()>&& completionHandler)
+void WebPage::addTextAnimationForAnimationID(const WTF::UUID& uuid, const WebCore::TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::WebPageProxy::AddTextAnimationForAnimationID(uuid, styleData, indicatorData), WTFMove(completionHandler));
 }
@@ -9261,7 +9310,7 @@ void WebPage::addInitialTextAnimation(const WTF::UUID& uuid)
 }
 
 
-void WebPage::addSourceTextAnimation(const WTF::UUID& uuid, const CharacterRange& range, const String string, WTF::CompletionHandler<void(void)>&& completionHandler)
+void WebPage::addSourceTextAnimation(const WTF::UUID& uuid, const CharacterRange& range, const String string, WTF::CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
 {
     m_textAnimationController->addSourceTextAnimation(uuid, range, string, WTFMove(completionHandler));
 }
@@ -9283,13 +9332,6 @@ void WebPage::clearAnimationsForSessionID(const WTF::UUID& uuid)
 void WebPage::handleContextMenuTranslation(const TranslationContextMenuInfo& info)
 {
     send(Messages::WebPageProxy::HandleContextMenuTranslation(info));
-}
-#endif
-
-#if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
-void WebPage::handleContextMenuWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView)
-{
-    send(Messages::WebPageProxy::HandleContextMenuWritingToolsDeprecated(selectionBoundsInRootView));
 }
 #endif
 
@@ -9805,11 +9847,8 @@ void WebPage::updateLastNodeBeforeWritingSuggestions(const KeyboardEvent& event)
 
 void WebPage::didAddOrRemoveViewportConstrainedObjects()
 {
-    if (!m_page->settings().layoutViewportHeightExpansionFactor())
-        return;
-
 #if PLATFORM(IOS_FAMILY)
-    m_updateLayoutViewportHeightExpansionTimer.restart();
+    scheduleLayoutViewportHeightExpansionUpdate();
 #endif
 }
 
@@ -9840,6 +9879,122 @@ void WebPage::removeReasonsToDisallowLayoutViewportHeightExpansion(OptionSet<Dis
 void WebPage::hasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSession)
 {
     send(Messages::WebPageProxy::HasActiveNowPlayingSessionChanged(hasActiveNowPlayingSession));
+}
+
+void WebPage::simulateClickOverFirstMatchingTextInViewportWithUserInteraction(const String& targetText, CompletionHandler<void(bool)>&& completion)
+{
+    ASSERT(!targetText.isEmpty());
+
+    RefPtr localMainFrame = m_mainFrame->coreLocalFrame();
+    if (!localMainFrame)
+        return completion(false);
+
+    RefPtr view = localMainFrame->view();
+    if (!view)
+        return completion(false);
+
+    RefPtr document = localMainFrame->document();
+    if (!document)
+        return completion(false);
+
+    RefPtr bodyElement = document->body();
+    if (!bodyElement)
+        return completion(false);
+
+    struct Candidate {
+        Ref<HTMLElement> target;
+        IntPoint location;
+    };
+
+    Vector<Candidate> candidates;
+
+    auto unobscuredContentRect = view->unobscuredContentRect();
+    auto searchRange = makeRangeSelectingNodeContents(*bodyElement);
+    while (is_lt(treeOrder<ComposedTree>(searchRange.start, searchRange.end))) {
+        auto range = findPlainText(searchRange, targetText, {
+            FindOption::CaseInsensitive,
+            FindOption::AtWordStarts,
+            FindOption::TreatMedialCapitalAsWordStart,
+            FindOption::DoNotRevealSelection,
+            FindOption::DoNotSetSelection,
+        });
+
+        if (range.collapsed())
+            break;
+
+        searchRange.start = range.end;
+
+        RefPtr target = [&] -> RefPtr<HTMLElement> {
+            for (RefPtr ancestor = range.start.container.ptr(); ancestor; ancestor = ancestor->parentElementInComposedTree()) {
+                RefPtr element = dynamicDowncast<HTMLElement>(*ancestor);
+                if (!element)
+                    continue;
+
+                if (element->willRespondToMouseClickEvents() || element->isLink())
+                    return element;
+            }
+            return { };
+        }();
+
+        if (!target)
+            continue;
+
+        auto textRects = RenderObject::absoluteTextRects(range, {
+            RenderObject::BoundingRectBehavior::RespectClipping,
+            RenderObject::BoundingRectBehavior::UseVisibleBounds,
+            RenderObject::BoundingRectBehavior::IgnoreTinyRects,
+            RenderObject::BoundingRectBehavior::IgnoreEmptyTextSelections,
+        });
+
+        auto indexOfFirstRelevantTextRect = textRects.findIf([&](auto& textRect) {
+            return unobscuredContentRect.intersects(textRect);
+        });
+
+        if (indexOfFirstRelevantTextRect == notFound)
+            continue;
+
+        candidates.append({ target.releaseNonNull(), textRects[indexOfFirstRelevantTextRect].center() });
+    }
+
+    candidates.removeAllMatching([&](auto& targetAndLocation) {
+        auto& [target, location] = targetAndLocation;
+        auto result = localMainFrame->eventHandler().hitTestResultAtPoint(location, {
+            HitTestRequest::Type::ReadOnly,
+            HitTestRequest::Type::Active,
+        });
+
+        RefPtr innerNode = result.innerNonSharedNode();
+        return !innerNode || !target->containsIncludingShadowDOM(innerNode.get());
+    });
+
+    if (candidates.isEmpty()) {
+        WEBPAGE_RELEASE_LOG(MouseHandling, "WebPage::simulateClickOverText - no matches found");
+        return completion(false);
+    }
+
+    if (candidates.size() > 1) {
+        WEBPAGE_RELEASE_LOG(MouseHandling, "WebPage::simulateClickOverText - too many matches found (%zu)", candidates.size());
+        // FIXME: We'll want to add a way to disambiguate between multiple matches in the future. For now, just exit without
+        // trying to simulate a click.
+        return completion(false);
+    }
+
+    auto& [target, location] = candidates.first();
+
+    SetForScope userIsInteractingChange { m_userIsInteracting, true };
+
+    auto locationInWindow = view->contentsToWindow(location);
+    auto makeSyntheticEvent = [&](PlatformEvent::Type type) -> PlatformMouseEvent {
+        return { locationInWindow, locationInWindow, MouseButton::Left, type, 1, { }, WallTime::now(), ForceAtClick, SyntheticClickType::OneFingerTap, mousePointerID };
+    };
+
+    WEBPAGE_RELEASE_LOG(MouseHandling, "WebPage::simulateClickOverText - performing synthetic click");
+    bool handledClick = localMainFrame->eventHandler().handleMousePressEvent(makeSyntheticEvent(PlatformEvent::Type::MousePressed)).wasHandled();
+    if (m_isClosed)
+        return completion(false);
+
+    handledClick |= localMainFrame->eventHandler().handleMouseReleaseEvent(makeSyntheticEvent(PlatformEvent::Type::MouseReleased)).wasHandled();
+    completion(handledClick);
 }
 
 } // namespace WebKit

@@ -2047,10 +2047,14 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyImageOrientation);
         if (first.textAlignLast != second.textAlignLast)
             changingProperties.m_properties.set(CSSPropertyTextAlignLast);
+        if (first.textBoxEdge != second.textBoxEdge)
+            changingProperties.m_properties.set(CSSPropertyTextBoxEdge);
         if (first.textJustify != second.textJustify)
             changingProperties.m_properties.set(CSSPropertyTextJustify);
         if (first.textDecorationSkipInk != second.textDecorationSkipInk)
             changingProperties.m_properties.set(CSSPropertyTextDecorationSkipInk);
+        if (first.textUnderlinePosition != second.textUnderlinePosition)
+            changingProperties.m_properties.set(CSSPropertyTextUnderlinePosition);
         if (first.rubyPosition != second.rubyPosition)
             changingProperties.m_properties.set(CSSPropertyWebkitRubyPosition);
         if (first.paintOrder != second.paintOrder)
@@ -2091,7 +2095,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // visitedLinkStrokeColor
         // hasSetStrokeColor
         // usedZoom
-        // textBoxEdge
         // textSecurity
         // userModify
         // speakAs
@@ -2101,7 +2104,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // touchCalloutEnabled
         // lineGrid
         // imageRendering
-        // textUnderlinePosition
         // textZoom
         // lineSnap
         // lineAlign
@@ -2167,12 +2169,12 @@ void RenderStyle::setCursorList(RefPtr<CursorList>&& list)
     m_rareInheritedData.access().cursorData = WTFMove(list);
 }
 
-void RenderStyle::setQuotes(RefPtr<QuotesData>&& q)
+void RenderStyle::setQuotes(RefPtr<QuotesData>&& quotes)
 {
-    if (m_rareInheritedData->quotes == q || (m_rareInheritedData->quotes && q && *m_rareInheritedData->quotes == *q))
+    if (arePointingToEqualData(m_rareInheritedData->quotes.get(), quotes.get()))
         return;
 
-    m_rareInheritedData.access().quotes = WTFMove(q);
+    m_rareInheritedData.access().quotes = WTFMove(quotes);
 }
 
 void RenderStyle::setWillChange(RefPtr<WillChangeData>&& willChangeData)

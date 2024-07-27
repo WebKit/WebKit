@@ -45,6 +45,7 @@
 #include "JSEventListener.h"
 #include "LayoutUnit.h"
 #include "LocalDOMWindow.h"
+#include "MouseEvent.h"
 #include "NamedNodeMap.h"
 #include "NetworkStorageSession.h"
 #include "OrganizationStorageAccessPromptQuirk.h"
@@ -110,6 +111,7 @@ static inline bool isYahooMail(Document& document)
 #import <WebKitAdditions/QuirksAdditions.cpp>
 #else
 static inline bool needsDesktopUserAgentInternal(const URL&) { return false; }
+static inline bool shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeInternal(const URL&) { return false; }
 #endif
 
 Quirks::Quirks(Document& document)
@@ -153,7 +155,8 @@ bool Quirks::needsFormControlToBeMouseFocusable() const
     if (!needsQuirks())
         return false;
 
-    return m_document->topDocument().url().host() == "ceac.state.gov"_s;
+    auto host = m_document->topDocument().url().host();
+    return host == "ceac.state.gov"_s || host.endsWith(".ceac.state.gov"_s);
 #else
     return false;
 #endif
@@ -269,7 +272,6 @@ bool Quirks::isTouchBarUpdateSuppressedForHiddenContentEditable() const
 }
 
 // icloud.com rdar://26013388
-// twitter.com rdar://28036205
 // trix-editor.org rdar://28242210
 // onedrive.live.com rdar://26013388
 // added in https://bugs.webkit.org/show_bug.cgi?id=161996
@@ -281,9 +283,6 @@ bool Quirks::isNeverRichlyEditableForTouchBar() const
 
     auto& url = m_document->topDocument().url();
     auto host = url.host();
-
-    if (isDomain("twitter.com"_s))
-        return true;
 
     if (host == "onedrive.live.com"_s)
         return true;
@@ -393,6 +392,8 @@ String Quirks::storageAccessUserAgentStringQuirkForDomain(const URL& url)
     RegistrableDomain domain { url };
     auto iterator = quirks.find(domain);
     if (iterator == quirks.end())
+        return { };
+    if (domain == "live.com"_s && url.host() != "teams.live.com"_s)
         return { };
     return iterator->value;
 }
@@ -1284,7 +1285,7 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
 
     static NeverDestroyed<UserScript> kinjaLoginUserScript { "function triggerLoginForm() { let elements = document.getElementsByClassName('js_header-userbutton'); if (elements && elements[0]) { elements[0].click(); clearInterval(interval); } } let interval = setInterval(triggerLoginForm, 200);"_s, URL(aboutBlankURL()), Vector<String>(), Vector<String>(), UserScriptInjectionTime::DocumentEnd, UserContentInjectedFrames::InjectInTopFrameOnly, WaitForNotificationBeforeInjecting::Yes };
 
-    if (eventType == eventNames().clickEvent) {
+    if (isAnyClick(eventType)) {
         RefPtr document = m_document.get();
         if (!document)
             return Quirks::StorageAccessResult::ShouldNotCancelEvent;
@@ -1720,6 +1721,14 @@ bool Quirks::shouldDisableNavigatorStandaloneQuirk() const
     return false;
 }
 
+bool Quirks::shouldPreventOrientationMediaQueryFromEvaluatingToLandscape() const
+{
+    if (!needsQuirks())
+        return false;
+
+    return shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeInternal(m_document->topDocument().url());
+}
+
 // This section is dedicated to UA override for iPad. iPads (but iPad Mini) are sending a desktop user agent
 // to websites. In some cases, the website breaks in some ways, not expecting a touch interface for the website.
 // Controls not active or too small, form factor, etc. In this case it is better to send the iPad Mini UA.
@@ -1801,6 +1810,10 @@ bool Quirks::needsIPadMiniUserAgent(const URL& url)
 
     // FIXME: Remove this quirk when <rdar://122481999> is complete
     if (host == "spotify.com"_s || host.endsWith(".spotify.com"_s) || host.endsWith(".spotifycdn.com"_s))
+        return true;
+
+    // FIXME: Remove this quirk if seatguru decides to adjust their site. See https://webkit.org/b/276947
+    if (host == "seatguru.com"_s || host.endsWith(".seatguru.com"_s))
         return true;
 
     return false;

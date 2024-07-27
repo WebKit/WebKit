@@ -212,7 +212,7 @@ private:
         ~CanBeAcceleratedMutationScope();
 
     private:
-        KeyframeEffect* m_effect;
+        RefPtr<KeyframeEffect> m_effect;
         bool m_couldOriginallyPreventAcceleration;
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
         bool m_couldOriginallyBeAccelerated;

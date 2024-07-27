@@ -826,6 +826,7 @@ accessibility/list [ WontFix ]
 accessibility/announcement-notification.html [ WontFix ]
 accessibility/menuitem-is-selected.html [ WontFix ]
 accessibility/relationships.html [ WontFix ]
+accessibility/search-misspellings.html [ WontFix ]
 accessibility/shadow-dom-hit-test.html [ WontFix ]
 accessibility/mac/text-marker-range-for-line.html [ WontFix ]
 # Datalist is unsupported in WK1
@@ -1068,14 +1069,10 @@ http/tests/media/cross-origin-webm-video.html [ Skip ]
 http/tests/media/video-webm-stall.html
 http/tests/media/video-src-webm-blob.html [ Failure ]
 http/tests/media/video-srcobject-webm-blob.html [ Failure ]
-media/W3C/video/canPlayType/canPlayType_codecs_order_1.html [ Failure ]
-media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html [ Failure ]
-media/W3C/video/canPlayType/canPlayType_two_implies_one_1.html [ Failure ]
-media/W3C/video/canPlayType/canPlayType_two_implies_one_2.html [ Failure ]
-media/media-can-play-webm.html [ Failure ]
 media/media-vp8-webm-error.html [ Failure ]
 media/media-vp8-webm.html [ Skip ]
 media/media-vp8-webm-seek-to-start.html [ Skip ]
+media/media-vp8-webm-with-poster.html [ Skip ]
 media/video-src-webm-blob.html [ Failure ]
 media/track/media-audio-track.html [ Failure ]
 media/media-sources-selection.html [ ImageOnlyFailure ]
@@ -1091,6 +1088,7 @@ media/media-source/media-managedmse-multipletracks-bufferedchange.html [ Skip ]
 media/media-source/media-managedmse-poster.html [ Skip ]
 media/media-source/media-managedmse-resume-after-remove.html [ Skip ]
 media/media-source/media-managedmse-stall-endofstream.html [ Skip ]
+media/media-source/media-managedmse-video-with-poster.html [ Skip ]
 
 # CRABS WebM isn't supported in WK1
 media/media-webm-opus-buffered.html [ Failure ]
@@ -1177,8 +1175,6 @@ imported/w3c/web-platform-tests/editing/run/multitest.html?5001-6000 [ Slow ]
 imported/w3c/web-platform-tests/editing/run/multitest.html?6001-7000 [ Slow ]
 imported/w3c/web-platform-tests/editing/run/multitest.html?7001-8000 [ Slow ]
 
-imported/w3c/web-platform-tests/uievents/mouse/mousemove_prevent_default_action.tentative.html [ Failure ]
-
 # FIXME: Needs bugzilla (<rdar://problem/18273139>)
 storage/websql/sql-error-codes.html [ Failure ]
 
@@ -1196,6 +1192,19 @@ webkit.org/b/155067 storage/indexeddb/transaction-abort-private.html [ Pass Cras
 webkit.org/b/172092 [ Debug ] fast/parser/adoption-agency-unload-iframe-4.html [ Pass Timeout ]
 
 webkit.org/b/254706 [ Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Slow Pass ]
+
+imported/w3c/web-platform-tests/html/dom/render-blocking/parser-blocking-script.html [ Failure ]
+imported/w3c/web-platform-tests/html/dom/render-blocking/parser-inserted-async-script.html [ Failure ]
+imported/w3c/web-platform-tests/html/dom/render-blocking/parser-inserted-defer-script.html [ Failure ]
+imported/w3c/web-platform-tests/html/dom/render-blocking/parser-inserted-module-script.html [ Failure ]
+imported/w3c/web-platform-tests/html/dom/render-blocking/parser-inserted-style-element.html [ Failure ]
+imported/w3c/web-platform-tests/html/dom/render-blocking/parser-inserted-stylesheet-link.html [ Failure ]
+imported/w3c/web-platform-tests/html/dom/render-blocking/remove-attr-script-keeps-blocking.html [ Failure ]
+imported/w3c/web-platform-tests/html/dom/render-blocking/remove-attr-style-keeps-blocking.html [ Failure ]
+imported/w3c/web-platform-tests/html/dom/render-blocking/remove-attr-stylesheet-link-keeps-blocking.html [ Failure ]
+imported/w3c/web-platform-tests/html/dom/render-blocking/script-inserted-module-script.html [ Failure ]
+imported/w3c/web-platform-tests/html/dom/render-blocking/script-inserted-style-element.html [ Failure ]
+imported/w3c/web-platform-tests/html/dom/render-blocking/script-inserted-stylesheet-link.html [ Failure ]
 
 http/tests/security/xss-DENIED-xsl-external-entity.xml [ Skip ]
 
@@ -1394,6 +1403,46 @@ imported/w3c/web-platform-tests/IndexedDB/reading-autoincrement-indexes.any.serv
 imported/w3c/web-platform-tests/IndexedDB/reading-autoincrement-store-cursors.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/reading-autoincrement-store.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/storage-buckets.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/IndexedDB/bindings-inject-keys-bypass.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/bindings-inject-keys-bypass.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/bindings-inject-values-bypass.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/bindings-inject-values-bypass.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbcursor_advance_index.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbcursor_advance_index.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbcursor_advance_objectstore.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbcursor_advance_objectstore.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbcursor_continue_index.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbcursor_continue_index.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbcursor_continue_objectstore.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbcursor_continue_objectstore.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbcursor_delete_index.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbcursor_delete_index.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbdatabase_deleteObjectStore.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbdatabase_deleteObjectStore.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbdatabase_transaction.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbdatabase_transaction.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbfactory_open.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbfactory_open.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbindex_count.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbindex_count.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbindex_get.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbindex_get.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbindex_getAll.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbindex_getAll.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbindex_getAllKeys.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbindex_getAllKeys.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbindex_getKey.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbindex_getKey.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_add.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_add.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_delete.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_delete.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_deleteIndex.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_deleteIndex.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_put.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_put.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/value.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/value.any.sharedworker.html [ Failure ]
 http/tests/security/service-worker-network-load.html [ Skip ]
 
 # No Cross-Origin-Opener-Policy / Cross-Origin-Embedder-Policy in WK1.
@@ -1502,6 +1551,11 @@ storage/indexeddb/modern/exceed-open-file-limit.html
 # Only fails in WK1
 imported/w3c/web-platform-tests/cookies/secure/set-from-ws.sub.html [ Failure ]
 
+webkit.org/b/276371 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits.https.any.html [ Failure ]
+webkit.org/b/276371 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits.https.any.worker.html [ Failure ]
+webkit.org/b/276371 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_keys.https.any.html [ Failure ]
+webkit.org/b/276371 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_keys.https.any.worker.html [ Failure ]
+
 webkit.org/b/244308 imported/w3c/web-platform-tests/cookies/attributes/attributes-ctl.sub.html [ Pass Failure ]
 
 # Only flakey in WK1
@@ -1586,6 +1640,9 @@ fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Skip ]
 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate.html [ Skip ]
 http/tests/download/convert-cached-load-to-download.html [ Skip ]
 
+# Can't load application/octet-stream in WK1
+http/tests/mime/html-with-nosniff-html.html [ Skip ]
+
 # dumpPolicyDelegateCallbacks is not supported in DumpRenderTree
 fast/loader/iframe-src-invalid-url.html [ Skip ]
 
@@ -1615,6 +1672,8 @@ accessibility/mac/svg-relative-frame.html [ Skip ]
 accessibility/mac/table-relative-frame.html [ Skip ]
 
 # Skip due to lack of DumpRenderTree `AccessibilityUIElement::stringDescriptionOfAttributeValue` implementation.
+accessibility/mixed-contenteditable-visible-character-range-hang.html [ Skip ]
+accessibility/mixed-contenteditable-double-br-visible-character-range-hang.html [ Skip ]
 accessibility/visible-character-range-basic.html [ Skip ]
 accessibility/visible-character-range-height-changes.html [ Skip ]
 accessibility/visible-character-range-scrolling.html [ Skip ]
@@ -2180,8 +2239,6 @@ webkit.org/b/221717 http/tests/security/http-0.9/default-port-script-blocked.htm
 
 webkit.org/b/223104 compositing/visibility/iframe-visibility-hidden.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/222686 imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-max-size-001.html [ Pass Failure ]
-
 webkit.org/b/223816 [ arm64 ] platform/mac/fast/objc/webScriptObject-hasWebScriptKey.html [ Failure ]
 
 webkit.org/b/223770 media/video-playback-quality.html [ Pass Failure ]
@@ -2461,11 +2518,11 @@ css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=249544
 # Generic Permissions API is not supported in WK1
-imported/w3c/web-platform-tests/geolocation-API/permission.https.html [ WontFix ]
-imported/w3c/web-platform-tests/geolocation-API/disabled-by-permissions-policy.https.sub.html [ WontFix Slow ]
-imported/w3c/web-platform-tests/geolocation-API/enabled-by-permission-policy-attribute-redirect-on-load.https.sub.html [ Skip Slow ]
-imported/w3c/web-platform-tests/geolocation-API/enabled-by-permissions-policy.https.sub.html [ Skip Slow ]
-imported/w3c/web-platform-tests/geolocation-API/enabled-on-self-origin-by-permissions-policy.https.sub.html [ Skip Slow ]
+imported/w3c/web-platform-tests/geolocation/permission.https.html [ WontFix ]
+imported/w3c/web-platform-tests/geolocation/disabled-by-permissions-policy.https.sub.html [ WontFix Slow ]
+imported/w3c/web-platform-tests/geolocation/enabled-by-permission-policy-attribute-redirect-on-load.https.sub.html [ Skip Slow ]
+imported/w3c/web-platform-tests/geolocation/enabled-by-permissions-policy.https.sub.html [ Skip Slow ]
+imported/w3c/web-platform-tests/geolocation/enabled-on-self-origin-by-permissions-policy.https.sub.html [ Skip Slow ]
 
 # Per-process limit is only for WK2
 http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Skip ]
@@ -2681,8 +2738,6 @@ fast/dom/no-scroll-when-command-click-fragment-URL.html [ Skip ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/backdrop-filters-grayscale-001.html [ ImageOnlyFailure ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/filter-effects/backdrop-filters-sepia.html [ ImageOnlyFailure ]
 
-webkit.org/b/270274 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-fill-outside-range-test.html [ Skip ]
-
 webkit.org/b/270310 [ Sonoma+ ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/removed-element-is-removed-from-top-layer.html [ ImageOnlyFailure ]
 webkit.org/b/270310 [ Sonoma+ ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-correct-order-remove-readd.html [ ImageOnlyFailure ]
 
@@ -2764,6 +2819,9 @@ http/tests/media/hls/hls-webvtt-style.html [ Pass Timeout ]
 [ Ventura Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode-disabled.html [ Skip ]
 [ Ventura Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode.html [ Skip ]
 
+# Test relies on GPUP.
+fast/canvas/image-buffer-resource-limits.html [ Skip ]
+
 webkit.org/b/273577 [ Ventura ] http/tests/media/hls/track-webvtt-multitracks.html [ Skip ]
 
 # rdar://65188503
@@ -2794,3 +2852,9 @@ webkit.org/b/274792 compositing/repaint/iframes/compositing-iframe-with-fixed-ba
 
 webkit.org/b/276145 http/tests/security/block-popup-to-all-zero-address.html [ Skip ]
 
+# rdar://124363343 ([ Sequoia+ ] Multiple WebKit tests failing after explicit "SameSite" attribute change)
+http/tests/xmlhttprequest/cross-origin-authorization.html [ Failure ]
+
+compositing/repaint/scroller-repaints-once.html [ Failure ]
+
+http/tests/login-status/ [ Skip ]

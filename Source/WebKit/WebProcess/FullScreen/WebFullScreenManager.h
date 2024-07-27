@@ -133,6 +133,10 @@ private:
     bool m_isPerformingTextRecognitionInMainVideo { false };
 #endif // ENABLE(VIDEO)
 
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    bool m_willUseQuickLookForFullscreen { false };
+#endif
+
     bool m_closing { false };
     bool m_inWindowFullScreenMode { false };
 #if !RELEASE_LOG_DISABLED

@@ -168,6 +168,7 @@ class HTMLMediaElement
     , public CanMakeWeakPtr<HTMLMediaElement, WeakPtrFactoryInitialization::Eager>
 {
     WTF_MAKE_ISO_ALLOCATED(HTMLMediaElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLMediaElement);
 public:
     using CanMakeWeakPtr<HTMLMediaElement, WeakPtrFactoryInitialization::Eager>::weakPtrFactory;
     using CanMakeWeakPtr<HTMLMediaElement, WeakPtrFactoryInitialization::Eager>::WeakValueType;
@@ -727,7 +728,7 @@ protected:
 
     bool showPosterFlag() const { return m_showPoster; }
     void setShowPosterFlag(bool);
-    
+
     void setChangingVideoFullscreenMode(bool value) { m_changingVideoFullscreenMode = value; }
     bool isChangingVideoFullscreenMode() const { return m_changingVideoFullscreenMode; }
 
@@ -1018,7 +1019,7 @@ private:
     bool hasMediaStreamSource() const final;
     void processIsSuspendedChanged() final;
     bool shouldOverridePauseDuringRouteChange() const final;
-    bool isNowPlayingEligible() const final { return m_mediaSession->hasNowPlayingInfo(); }
+    bool isNowPlayingEligible() const final;
     std::optional<NowPlayingInfo> nowPlayingInfo() const final;
     WeakPtr<PlatformMediaSession> selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSession>>&, PlatformMediaSession::PlaybackControlsPurpose) final;
 
@@ -1272,6 +1273,8 @@ private:
     bool m_volumeLocked : 1;
     bool m_cachedIsInVisibilityAdjustmentSubtree : 1 { false };
     bool m_requiresTextTrackRepresentation : 1 { false };
+
+    IntRect m_textTrackRepresentationBounds;
 
     enum class ControlsState : uint8_t { None, Initializing, Ready, PartiallyDeinitialized };
     friend String convertEnumerationToString(HTMLMediaElement::ControlsState enumerationValue);

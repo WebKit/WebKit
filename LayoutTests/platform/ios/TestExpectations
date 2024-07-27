@@ -137,6 +137,8 @@ http/tests/media/modern-media-controls/overflow-support [ Pass ]
 media/media-source/media-managedmse-airplay.html [ Pass ]
 media/media-source/media-managedmse-airplay-withsrc.html [ Pass ]
 media/media-source/media-managedmse-idl.html [ Pass ]
+media/media-source/media-managedmse-video-with-poster.html [ Pass ]
+
 webkit.org/b/269897 media/media-source/media-managedmse-poster.html [ Skip ]
 
 fast/images/text-recognition [ Pass ]
@@ -150,7 +152,6 @@ http/tests/ssl/applepay [ Pass ]
 webkit.org/b/212975 http/tests/ssl/applepay/PaymentRequest.https.html [ Pass Timeout ]
 
 http/tests/paymentrequest/ApplePayModifier-disbursementRequest.https.html [ Skip ]
-http/tests/paymentrequest/paymentrequest-merchantCategoryCode.https.html [ Skip ]
 http/tests/paymentrequest [ Pass ]
 imported/w3c/web-platform-tests/payment-request [ Pass ]
 imported/w3c/web-platform-tests/payment-request/payment-request-hasenrolledinstrument-method.tentative.https.html [ DumpJSConsoleLogInStdErr ]
@@ -351,6 +352,9 @@ http/tests/media
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements
 http/tests/cache/disk-cache/disk-cache-media-small.html
 http/tests/media/audio-load-loadeddata.html [ Pass ]
+
+# Digital Credentials
+http/wpt/identity/identitycredentialscontainer-get-hidden.https.html [ Skip ]
 
 # No touch events
 fast/events/touch [ Skip ]
@@ -1449,7 +1453,6 @@ webkit.org/b/178487 compositing/repaint/iframes/compositing-iframe-with-fixed-ba
 webkit.org/b/178487 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
 webkit.org/b/178487 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
 webkit.org/b/178487 compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
-webkit.org/b/178487 compositing/video/video-object-fit.html [ Failure ]
 webkit.org/b/178487 compositing/masks/compositing-clip-path-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/178487 compositing/video/video-clip-change-src.html [ ImageOnlyFailure ]
 
@@ -1566,6 +1569,14 @@ webkit.org/b/181752 storage/indexeddb/modern/transaction-scheduler-6.html [ Skip
 webkit.org/b/181752 storage/indexeddb/odd-strings.html [ Skip ]
 webkit.org/b/181752 storage/indexeddb/transaction-coordination-within-database.html [ Skip ]
 webkit.org/b/181752 storage/indexeddb/transaction-starvation.html [ Skip ]
+imported/w3c/web-platform-tests/IndexedDB/idbindex_batchGetAll.tentative.any.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbindex_batchGetAll.tentative.any.worker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_batchGetAll.tentative.any.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_batchGetAll.tentative.any.worker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_batchGetAll_largeValue.tentative.any.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_batchGetAll_largeValue.tentative.any.worker.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/transaction-relaxed-durability.tentative.any.html [ Failure ]
+imported/w3c/web-platform-tests/IndexedDB/transaction-relaxed-durability.tentative.any.worker.html [ Failure ]
 
 # SVG tests that fail:
 svg/as-object/svg-embedded-in-html-in-iframe.html [ Failure ]
@@ -1784,6 +1795,10 @@ imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-c.html [ Im
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-opacity-1a.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-opacity-1b.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-opacity-1e.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-length-rounding-min-val.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/svg-fill-none.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/svg-stroke-dasharray.html [ ImageOnlyFailure ]
 
 fast/flexbox/flex-hang.html [ Failure ]
 fast/flexbox/overhanging-floats-removed.html [ Failure ]
@@ -2295,6 +2310,7 @@ fast/dom/linkify-phone-numbers.html [ Pass ]
 
 accessibility/table-exposure-updates-dynamically.html [ Pass ]
 accessibility/accessibility-node-reparent.html [ Pass ]
+accessibility/animated-dropdown.html [ Pass ]
 accessibility/aria-braillelabel.html [ Pass ]
 accessibility/aria-brailleroledescription.html [ Pass ]
 accessibility/aria-checked-mixed-value.html [ Pass ]
@@ -2337,6 +2353,9 @@ accessibility/insert-text-into-password-field.html [ Pass ]
 accessibility/list-with-dynamically-changing-content.html [ Pass ]
 accessibility/live-region-attributes-update-after-dynamic-change.html [ Pass ]
 accessibility/menu-list-crash2.html [ Pass ]
+# rdar://132587324 These two tests have been flakey on iOS since they were introduced — temporarily disable them for now.
+# accessibility/mixed-contenteditable-visible-character-range-hang.html [ Pass ]
+# accessibility/mixed-contenteditable-double-br-visible-character-range-hang.html [ Pass ]
 accessibility/multiple-attribute-change-crash.html [ Pass ]
 accessibility/nested-custom-element-accname.html [ Pass ]
 accessibility/node-only-inert-object.html [ Pass ]
@@ -2809,19 +2828,19 @@ webkit.org/b/174120 http/tests/resourceLoadStatistics/user-interaction-in-cross-
 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Skip ]
 http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal.html [ Skip ]
 # Skipped in WK2 expectations because cookie partitioning is only available in macOS High Sierra and iOS 11.
-http/tests/resourceLoadStatistics/cookie-deletion.html [ Pass ]
-http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction.html [ Pass ]
-http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html [ Pass ]
-http/tests/resourceLoadStatistics/add-blocking-to-redirect.html [ Pass ]
-http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Pass ]
-http/tests/resourceLoadStatistics/grandfathering.html [ Pass ]
 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store.html [ Pass ]
 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Pass ]
 http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-redirects.html [ Pass ]
 http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-requests.html [ Pass ]
+http/tests/resourceLoadStatistics/add-blocking-to-redirect.html [ Pass ]
+http/tests/resourceLoadStatistics/cookie-deletion.html [ Pass ]
+http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction.html [ Pass ]
+# http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Pass ] # uncomment when rdar://129872343 is resolved.
+http/tests/resourceLoadStatistics/grandfathering.html [ Pass ]
+http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html [ Pass ]
 
 # The SameSite cookie API is only available in macOS Catalina and above, and thus skipped for WK2 in general.
-http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Pass ]
+# http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Pass ] # uncomment when rdar://129872343 is resolved.
 http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to.html [ Pass ]
 
 http/tests/storageAccess/deny-storage-access-under-opener.html [ Pass ]
@@ -3103,7 +3122,8 @@ editing/selection/character-granularity-rect.html [ Pass ]
 webkit.org/b/184783 compositing/ios/overflow-scroll-touch-tiles.html [ Pass Failure ]
 
 # Disabled globally.
-http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Pass ]
+#http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Pass ]
+# FIXME: Uncomment above after webkit.org/b/277198 is resolved (new expectation set below).
 
 webkit.org/b/173041 http/tests/websocket/tests/hybi/handshake-ok-with-legacy-sec-websocket-response-headers.html [ Pass Failure ]
 
@@ -3270,8 +3290,6 @@ webkit.org/b/205216 imported/w3c/web-platform-tests/content-security-policy/repo
 
 webkit.org/b/207769 crypto/subtle/rsa-indexeddb-non-exportable.html [ Pass Timeout ]
 
-webkit.org/b/207770 http/tests/cache/disk-cache/disk-cache-vary-cookie.html [ Pass Timeout ]
-
 webkit.org/b/207858 fast/canvas/webgl/context-attributes-alpha.html [ Pass Failure ImageOnlyFailure ]
 # webkit.org/b/207858 fast/canvas/webgl/match-page-color-space.html [ Pass Failure ImageOnlyFailure ]
 webkit.org/b/207858 webgl/smell-test.html [ Pass Failure ImageOnlyFailure ]
@@ -3346,6 +3364,11 @@ webkit.org/b/212218 webrtc/datachannel/gather-candidates-networkprocess-crash.ht
 
 webkit.org/b/212226 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-008.html [ ImageOnlyFailure ]
 webkit.org/b/212227 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-002.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-grid/subgrid/alignment-in-subgridded-axes-001.html [ Skip ]
+webkit.org/b/266091 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/intrinsic-sizing/masonry-intrinsic-sizing-cols-006.html
+
 
 fast/text/text-styles/-apple-system [ Pass ]
 
@@ -3992,9 +4015,6 @@ media/mediacapabilities/mediacapabilities-allowed-containers.html [ Failure ]
 # Screen Orientation API doesn't support nested frames yet
 # TODO: figure out if this still applies.
 # imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html [ Skip ]
-
-webkit.org/b/248923 fast/rendering/render-style-null-optgroup-crash.html [ Pass Failure ]
-
 
 # Per-process limit is only for WK2
 http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Skip ]
@@ -4672,6 +4692,10 @@ imported/w3c/web-platform-tests/css/css-ruby/ruby-text-combine-upright-002a.html
 imported/w3c/web-platform-tests/css/css-ruby/ruby-text-combine-upright-002b.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/line-break-around-ruby-001.html [ Failure ]
 webkit.org/b/271384 imported/w3c/web-platform-tests/css/css-ruby/line-spacing.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-ruby/rt-display-blockified.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-bidi-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-text-combine-upright-001a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-text-combine-upright-001b.html [ ImageOnlyFailure ]
 fast/ruby/annotation-with-line-gap.html [ ImageOnlyFailure ]
 fast/ruby/tight-line-spacing-with-line-height.html [ ImageOnlyFailure ]
 
@@ -5603,14 +5627,26 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-a
 imported/w3c/web-platform-tests/uievents/click/auxclick_event.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/click/click_event_target_child_parent.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/click/click_event_target_siblings.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/click/contextmenu_event.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/click/dblclick_event_mouse.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/interface/keyboard-accesskey-click-event.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/interface/keyboard-click-event.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/mouse/attributes.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/mouse/layout_change_should_fire_mouseover.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/mouse/mouseenter-mouseleave-on-drag.html [ Skip ]
-imported/w3c/web-platform-tests/uievents/mouse/mousemove_prevent_default_action.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/mouse/mousemove_prevent_default_action.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/mouse/mouse_boundary_events_after_reappending_last_over_target.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/order-of-events/focus-events/focus.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/order-of-events/focus-events/focus-contained.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/click-on-html.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/click-order.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/mousemove-across.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/mousemove-between.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/mouseover-out.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/textInput/delete-selection.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/textInput/delete.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/textInput/enter-input.html [ Skip ]
 
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events-onerror.html [ Pass Failure ]
 imported/w3c/web-platform-tests/uievents/click/click_events_on_input.html [ Pass Failure ]
@@ -6183,8 +6219,6 @@ quicklook/multi-sheet-numbers-09.html [ Failure ]
 http/tests/quicklook/secure-document-with-subresources.html [ ImageOnlyFailure ]
 
 webkit.org/b/209446 imported/w3c/web-platform-tests/navigation-timing/test_timing_attributes_order.html [ Pass Failure ]
-
-webkit.org/b/209512 http/tests/cache/disk-cache/disk-cache-vary-cookie-private.html [ Pass Timeout ]
 
 webkit.org/b/231630 http/tests/cache/disk-cache/redirect-chain-limits.html [ Slow ]
 
@@ -6830,9 +6864,13 @@ http/wpt/opener/parent-access-child-via-windowproxy.html [ Pass ]
 http/wpt/opener/same-site-child-access-parent-iframe-via-windowproxy.html [ Pass ]
 
 # webkit.org/b/267890 REGRESSION (273260@main): [ iOS17 ] 3 tests in fast/forms/switch regularly timeout
-fast/forms/switch/pointer-tracking-there-and-back-again-rtl.html [ Timeout ]
-fast/forms/switch/pointer-tracking-there-and-back-again.html [ Timeout ]
-fast/forms/switch/pointer-tracking.html [ Timeout ]
+# fast/forms/switch/pointer-tracking-there-and-back-again-rtl.html [ Timeout ]
+# fast/forms/switch/pointer-tracking-there-and-back-again.html [ Timeout ]
+# fast/forms/switch/pointer-tracking.html [ Timeout ]
+# UNCOMMENT ABOVE AND REMOVE FROM platform/ios-17/TestExpectations WHEN BELOW IS RESOLVED.
+# rdar://130619586 (REGRESSION (278311@main): [ iOS ] 2 fast/forms/switch/pointer-tracking-there-and-back-again*.html tests are constantly failing / timing out.)
+fast/forms/switch/pointer-tracking-there-and-back-again-rtl.html [ ImageOnlyFailure ]
+fast/forms/switch/pointer-tracking-there-and-back-again.html [ ImageOnlyFailure ]
 
 webkit.org/b/267796 [ Release ] imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF-dynamic.html [ Pass Failure ]
 
@@ -7266,3 +7304,98 @@ webkit.org/b/275963 [ x86_64 ] svg/W3C-SVG-1.1/metadata-example-01-b.svg [ Failu
 webkit.org/b/275963 [ x86_64 ] svg/custom/use-on-symbol-inside-pattern.svg [ Failure ]
 
 webkit.org/b/275962 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/no-referrer-dynamic-url-censored.html [ Failure ]
+
+# rdar://130594018 (REGRESSION (278344@main?): [ iOS 18 Release ] 2 http/tests/xmlhttprequest/* layout tests are constantly failing.)
+[ Release ] http/tests/xmlhttprequest/resetting-timeout-to-zero.html [ Failure ]
+[ Release ] http/tests/xmlhttprequest/timeout-greater-than-default-network-timeout.html [ Failure ]
+imported/w3c/web-platform-tests/xhr/access-control-basic-post-success-no-content-type.htm [ Failure ]
+imported/w3c/web-platform-tests/xhr/content-type-unmodified.any.worker.html [ Failure ]
+imported/w3c/web-platform-tests/xhr/request-content-length.any.html [ Failure ]
+imported/w3c/web-platform-tests/xhr/request-content-length.any.worker.html [ Failure ]
+
+# rdar://129189203 (REGRESSION (279427@main-279418@main?): [ iOS 18 x86_64 ] 11X imported/w3c/web-platform-tests/fetch/api/basic/scheme* (layout-tests) are flaky text failures)
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.sharedworker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-blob.sub.any.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-blob.sub.any.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-data.any.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-data.any.sharedworker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-data.any.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-others.sub.any.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-others.sub.any.sharedworker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/scheme-others.sub.any.worker.html [ Pass Failure ]
+
+# rdar://127374397 (REGRESSION: [ iOS 18 ]  18X imported/w3c/web-platform-tests/css/css-counter-styles  test are consistent image failures)
+imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-050.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-045.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/katakana-iroha/css3-counter-styles-040.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/katakana/css3-counter-styles-037.html [ ImageOnlyFailure ]
+
+# rdar://127258636 (REGRESSION: [ iOS 18 ] 8 editing/selection/vertical-lr-ltr-extend-line tests are consistent failures)
+editing/selection/vertical-lr-ltr-extend-line-backward-br.html [ Failure ]
+editing/selection/vertical-lr-ltr-extend-line-forward-br.html [ Failure ]
+editing/selection/vertical-rl-ltr-extend-line-backward-br.html [ Failure ]
+editing/selection/vertical-rl-ltr-extend-line-backward-p.html [ Failure ]
+editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html [ Failure ]
+editing/selection/vertical-rl-ltr-extend-line-forward-br.html [ Failure ]
+editing/selection/vertical-rl-ltr-extend-line-forward-p.html [ Failure ]
+editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html [ Failure ]
+
+# rdar://121281240 -- failure on the old HTTP stack, fixed in the unified HTTP stack
+imported/w3c/web-platform-tests/cookie-store/change_eventhandler_for_http_cookie_and_set_cookie_headers.https.window.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/name/name-ctl.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/value/value-ctl.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/h1-parsing/lone-cr.window.html [ Pass Failure ]
+
+# rdar://129872343 (REGRESSION: [ iOS 18 ] 19x http/tests/resourceLoadStatistics/* layout-tests are constant failures)
+# FIXME: needs new bug.
+http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Failure ]
+http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Failure ]
+
+# webkit.org/b/276558 ([ iOS18 ] 7 wpt/intersection-observer/* layout tests are flakily failing.)
+imported/w3c/web-platform-tests/intersection-observer/callback-cross-realm-report-exception.html [ Pass Failure ]
+imported/w3c/web-platform-tests/intersection-observer/multiple-targets.html [ Pass Failure ]
+imported/w3c/web-platform-tests/intersection-observer/multiple-thresholds.html [ Pass Failure ]
+imported/w3c/web-platform-tests/intersection-observer/root-margin.html [ Pass Failure ]
+imported/w3c/web-platform-tests/intersection-observer/same-document-no-root.html [ Pass Failure ]
+imported/w3c/web-platform-tests/intersection-observer/same-document-zero-size-target.html [ Pass Failure ]
+imported/w3c/web-platform-tests/intersection-observer/text-target.html [ Pass Failure ]
+
+# webkit.org/b/276562 ([ iOS18 ] 3 wpt/webcodecs/* layout tests are constantly failing.)
+imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_annexb [ Failure DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_avc [ Failure DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?h264_annexb [ Failure DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?h264_annexb [ Failure DumpJSConsoleLogInStdErr ]
+
+webkit.org/b/276624 fast/dynamic/layer-hit-test-crash.html [ Pass Failure ]
+
+webkit.org/b/276906 imported/w3c/web-platform-tests/IndexedDB/storage-buckets.https.any.worker.html [ Pass Failure ]
+
+webkit.org/b/276920 fast/events/ios/rotation/basic-rotation.html [ Pass Failure ]
+
+webkit.org/b/277067 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Pass Timeout ]
+
+imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-in-loose.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-pr-normal.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-pr-strict.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-pr-normal.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-pr-strict.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-stretchy.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/stretch-along-block-axis-001.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-legacy-length-values.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-border-margin-003.html [ ImageOnlyFailure ]
+
+webkit.org/b/277195 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-label-focus.html [ Failure ]
+
+# webkit.org/b/277196 (REGRESSION (281345@main): [ iOS ] 2 imported/w3c/web-platform-tests/html/semantics/invokers/* layout tests are constantly failing.)
+imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-dialog-behavior.tentative.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-popover-behavior.tentative.html [ Failure ]
+
+# webkit.org/b/277198 (REGRESSION (iOS 18): 2 http/tests/xmlhttprequests layout tests are constantly failing.)
+# FIXME: Uncomment explicit pass expectation above when this is resolved (search for bug link)
+http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html [ Failure ]
+http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Failure ]

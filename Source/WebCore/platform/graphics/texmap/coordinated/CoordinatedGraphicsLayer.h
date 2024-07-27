@@ -143,8 +143,7 @@ public:
     PlatformLayer* platformLayer() const override;
 #endif
 
-    bool checkPendingStateChangesIncludingSubLayers();
-    void updateContentBuffersIncludingSubLayers();
+    std::pair<bool, bool> finalizeCompositingStateFlush();
 
     FloatPoint computePositionRelativeToBase();
     void computePixelAlignment(FloatPoint& position, FloatSize&, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset);
@@ -210,6 +209,9 @@ private:
     void computeTransformedVisibleRect();
     void updateContentBuffers();
 
+    bool checkPendingStateChanges();
+    bool checkContentLayerUpdated();
+
     Ref<Nicosia::Buffer> paintTile(const IntRect&, const IntRect& mappedTileRect, float contentsScale);
     Ref<Nicosia::Buffer> paintImage(Image&);
 
@@ -273,6 +275,7 @@ private:
         Nicosia::CompositionLayer::LayerState::RepaintCounter repaintCounter;
         Nicosia::CompositionLayer::LayerState::DebugBorder debugBorder;
         bool performLayerSync { false };
+        bool contentLayerUpdated { false };
 
         RefPtr<Nicosia::BackingStore> backingStore;
         RefPtr<Nicosia::ContentLayer> contentLayer;

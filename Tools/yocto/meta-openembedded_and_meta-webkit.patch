@@ -25,20 +25,6 @@ index f4911f3..b13abad 100644
  
  [Install]
  WantedBy=multi-user.target
-diff --git a/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bb b/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bb
-index 9459f4c..e74a20c 100644
---- a/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bb
-+++ b/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bb
-@@ -170,9 +170,6 @@ RDEPENDS:packagegroup-wpewebkit-depends-desktop = "\
-     libxtst \
-     libx11-locale \
-     xorg-minimal-fonts \
--    gdk-pixbuf-loader-ico \
--    gdk-pixbuf-loader-bmp \
--    gdk-pixbuf-loader-ani \
-     gdk-pixbuf-xlib \
-     liberation-fonts \
-     atk \
 diff --git a/sources/poky/meta/recipes-support/icu/icu/ICU-22813_rise_buffer_sizes_pkgdata_PR3058.patch b/sources/poky/meta/recipes-support/icu/icu/ICU-22813_rise_buffer_sizes_pkgdata_PR3058.patch
 new file mode 100644
 index 0000000..21bc060
@@ -127,3 +113,106 @@ index 8352bf2..c81cfe9 100644
             "
  
  SRC_URI:append:class-target = "\
+diff --git a/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0001-meson-Check-for-libunwind-instead-of-libunwind-gener.patch b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0001-meson-Check-for-libunwind-instead-of-libunwind-gener.patch
+index dc702a0e37..1082fe4ffc 100644
+--- a/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0001-meson-Check-for-libunwind-instead-of-libunwind-gener.patch
++++ b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0001-meson-Check-for-libunwind-instead-of-libunwind-gener.patch
+@@ -13,15 +13,15 @@ Signed-off-by: Khem Raj <raj.khem@gmail.com>
+  1 file changed, 1 insertion(+), 1 deletion(-)
+ 
+ diff --git a/meson.build b/meson.build
+-index 2835782..0fdb39a 100644
++index 3d3d8b5..4a1963d 100644
+ --- a/meson.build
+ +++ b/meson.build
+-@@ -81,7 +81,7 @@ config_h.set10('HAVE_POLKIT_AGENT', polkit_agent_dep.found())
+- config_h.set10('HAVE_POLKIT', polkit_dep.found())
+- 
++@@ -96,7 +96,7 @@ config_h.set10('HAVE_POLKIT', polkit_dep.found())
+  if get_option('libunwind')
+--  libunwind_dep = dependency('libunwind-generic')
+-+  libunwind_dep = dependency('libunwind')
++   # Force libunwind usage if it's specified to avoid back compiles
++   # and backtrace() showing up in builds
++-  libunwind_dep = dependency('libunwind-generic', required: true)
+++  libunwind_dep = dependency('libunwind', required: true)
+    config_h.set('ENABLE_LIBUNWIND', libunwind_dep.found())
+    config_h.set('HAVE_UNW_SET_CACHE_SIZE', libunwind_dep.found() and cc.has_header_symbol('libunwind.h', 'unw_set_cache_size', dependencies: [libunwind_dep]))
+  endif
+diff --git a/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0002-meson-Do-not-invoke-the-commands-to-update-the-icon-.patch b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0002-meson-Do-not-invoke-the-commands-to-update-the-icon-.patch
+new file mode 100644
+index 0000000000..998c20c657
+--- /dev/null
++++ b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof/0002-meson-Do-not-invoke-the-commands-to-update-the-icon-.patch
+@@ -0,0 +1,32 @@
++From 9ad120283f4b61b97da67f18a95bb3b4f1e8a3b9 Mon Sep 17 00:00:00 2001
++From: Carlos Alberto Lopez Perez <clopez@igalia.com>
++Date: Wed, 24 Jul 2024 15:51:05 +0100
++Subject: [PATCH] meson: Do not invoke the commands to update the icon caches
++ when cross-building
++
++This does not have any useful efect when cross-building and it requires
++the cross-builder environment to have gtk4-native built in order to invoke
++gtk-update-icon-cache program.
++
++Upstream-Status: Pending
++Signed-off-by: Carlos Alberto Lopez Perez <clopez@igalia.com>
++---
++ meson.build | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++diff --git a/meson.build b/meson.build
++index 3d3d8b5..da622f1 100644
++--- a/meson.build
+++++ b/meson.build
++@@ -250,7 +250,7 @@ configure_file(
++   configuration: config_h
++ )
++ 
++-if get_option('gtk') and gnome.found()
+++if get_option('gtk') and gnome.found() and not meson.is_cross_build()
++   gnome.post_install(
++       gtk_update_icon_cache: true,
++     update_desktop_database: true
++-- 
++2.39.2
++
+diff --git a/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof_3.44.0.bb b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof_3.48.0.bb
+similarity index 71%
+rename from meta-gnome/recipes-gnome/sysprof/sysprof_3.44.0.bb
+rename to meta-gnome/recipes-gnome/sysprof/sysprof_3.48.0.bb
+index 3523bad3e2..bf4ee7a73e 100644
+--- a/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof_3.44.0.bb
++++ b/sources/meta-openembedded/meta-gnome/recipes-gnome/sysprof/sysprof_3.48.0.bb
+@@ -14,19 +14,24 @@ DEPENDS += " \
+     json-glib \
+ "
+ 
+-SRC_URI += "file://0001-meson-Check-for-libunwind-instead-of-libunwind-gener.patch"
+-SRC_URI[archive.sha256sum] = "ab5d9f5b71973b3088d58a1bfdf1dc23c39a02f5fce4e5e9c73e034b178b005b"
++SRC_URI += "file://0001-meson-Check-for-libunwind-instead-of-libunwind-gener.patch \
++            file://0002-meson-Do-not-invoke-the-commands-to-update-the-icon-.patch "
++SRC_URI[archive.sha256sum] = "07d9081a66cf2fb52753f48ff2b85ada75c60ff1bc1af1bd14d8aeb627972168"
+ 
+-PACKAGECONFIG ?= "${@bb.utils.contains('DISTRO_FEATURES', 'polkit', 'sysprofd libsysprof', '', d)} \
++PACKAGECONFIG ?= "${@bb.utils.contains('DISTRO_FEATURES', 'polkit', 'sysprofd', '', d)} \
+                   ${@bb.utils.contains_any('DISTRO_FEATURES', '${GTK3DISTROFEATURES}', 'gtk', '', d)} \
+-                  libunwind"
++                  agent \
++                  libsysprof \
++                  libunwind \
++                  "
+ # nongnu libunwind needs porting to RV32
+ PACKAGECONFIG:remove:riscv32 = "libunwind"
+ 
+-PACKAGECONFIG[gtk] = "-Denable_gtk=true,-Denable_gtk=false,gtk+3 libdazzle"
+-PACKAGECONFIG[sysprofd] = "-Dwith_sysprofd=bundled,-Dwith_sysprofd=none,polkit"
+-PACKAGECONFIG[libsysprof] = "-Dlibsysprof=true,-Dlibsysprof=false,polkit"
++PACKAGECONFIG[gtk] = "-Dgtk=true,-Dgtk=false,gtk4 libadwaita"
++PACKAGECONFIG[sysprofd] = "-Dsysprofd=bundled,-Dsysprofd=none,polkit"
++PACKAGECONFIG[libsysprof] = "-Dlibsysprof=true,-Dlibsysprof=false,json-glib"
+ PACKAGECONFIG[libunwind] = "-Dlibunwind=true,-Dlibunwind=false,libunwind"
++PACKAGECONFIG[agent] = "-Dagent=true,-Dagent=false,"
+ 
+ EXTRA_OEMESON += "-Dsystemdunitdir=${systemd_unitdir}/system"
+ 

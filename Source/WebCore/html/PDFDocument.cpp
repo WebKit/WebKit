@@ -136,6 +136,8 @@ PDFDocument::PDFDocument(LocalFrame& frame, const URL& url)
 {
 }
 
+PDFDocument::~PDFDocument() = default;
+
 Ref<DocumentParser> PDFDocument::createParser()
 {
     return PDFDocumentParser::create(*this);

@@ -32,6 +32,8 @@ SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(WebKit, AuthenticationServicesCore);
 
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, AuthenticationServicesCore, ASCWebKitSPISupport);
 
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCAuthorizationErrorDomain, NSErrorDomain);
+
 #if HAVE(ASC_AUTH_UI) || HAVE(UNIFIED_ASC_AUTH_UI)
 
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCAgentProxy);
@@ -52,7 +54,6 @@ SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCSecurityKeyPub
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCSecurityKeyPublicKeyCredentialRegistration);
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, AuthenticationServicesCore, ASGlobalFrameIdentifier);
 
-SOFT_LINK_CONSTANT_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCAuthorizationErrorDomain, NSErrorDomain);
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCPINValidationResultKey, NSString*);
 
-#endif // HAVE(ASC_AUTH_UI)
+#endif // HAVE(ASC_AUTH_UI) || HAVE(UNIFIED_ASC_AUTH_UI)

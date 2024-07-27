@@ -57,6 +57,8 @@ HTMLTableElement::HTMLTableElement(const QualifiedName& tagName, Document& docum
     ASSERT(hasTagName(tableTag));
 }
 
+HTMLTableElement::~HTMLTableElement() = default;
+
 Ref<HTMLTableElement> HTMLTableElement::create(Document& document)
 {
     return adoptRef(*new HTMLTableElement(tableTag, document));

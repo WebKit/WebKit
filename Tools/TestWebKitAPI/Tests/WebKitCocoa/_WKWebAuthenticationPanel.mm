@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(WEB_AUTHN)
+#if ENABLE(WEB_AUTHN) && HAVE(UNIFIED_ASC_AUTH_UI)
 
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
@@ -2407,4 +2407,4 @@ TEST(WebAuthenticationPanel, DeleteOneCredential)
 
 } // namespace TestWebKitAPI
 
-#endif // ENABLE(WEB_AUTHN)
+#endif // ENABLE(WEB_AUTHN) && HAVE(UNIFIED_ASC_AUTH_UI)

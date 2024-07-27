@@ -221,7 +221,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
     clickHandlingState.trusted = event.isTrusted();
 
     RefPtr inputForLegacyPreActivationBehavior = dynamicDowncast<HTMLInputElement>(node);
-    if (!inputForLegacyPreActivationBehavior && event.bubbles() && event.type() == eventNames().clickEvent)
+    if (!inputForLegacyPreActivationBehavior && event.bubbles() && isAnyClick(event))
         inputForLegacyPreActivationBehavior = findInputElementInEventPath(eventPath);
     if (inputForLegacyPreActivationBehavior
         && (!event.isTrusted() || !inputForLegacyPreActivationBehavior->isDisabledFormControl())) {

@@ -913,7 +913,7 @@ class TestResultsController
     
     static resultLink(testPrefix, suffix, contents)
     {
-        return '<a class=result-link href="' + testPrefix + suffix + '" data-prefix="' + testPrefix + '">' + contents + '</a> ';
+        return '<a class=result-link href="' + encodeURI(testPrefix + suffix) + '" data-prefix="' + testPrefix + '">' + contents + '</a> ';
     }
 
     textResultLinks(prefix)

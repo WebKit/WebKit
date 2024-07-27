@@ -28,14 +28,12 @@ info: |
         ii. 1. Set _plainDateTime_ to ? BuiltinTimeZoneGetPlainDateTimeFor(_item_.[[TimeZone]], _instant_, _item_.[[Calendar]]).
     sec-temporal.plaintime.prototype.equals step 3:
       3. Set _other_ to ? ToTemporalTime(_other_).
-includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
 // This code path is encountered if the time zone offset is negative and its
 // absolute value in nanoseconds is greater than the nanosecond field of the
 // exact time's epoch parts
-const tz = TemporalHelpers.specificOffsetTimeZone(-2);
-const datetime = new Temporal.ZonedDateTime(3661_001_001_001n, tz);
+const datetime = new Temporal.ZonedDateTime(3661_001_001_001n, "-00:02");
 
-assert(new Temporal.PlainTime(1, 1, 1, 1, 0, 999).equals(datetime));
+assert(new Temporal.PlainTime(0, 59, 1, 1, 1, 1).equals(datetime));

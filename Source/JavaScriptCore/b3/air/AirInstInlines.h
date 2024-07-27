@@ -167,10 +167,8 @@ inline std::optional<unsigned> Inst::shouldTryAliasingDef()
     case AddFloat:
     case MulDouble:
     case MulFloat:
-#if CPU(X86_64)
-        if (MacroAssembler::supportsAVX())
+        if (isX86_64_AVX())
             return std::nullopt;
-#endif
         if (args.size() == 3)
             return 2;
         break;

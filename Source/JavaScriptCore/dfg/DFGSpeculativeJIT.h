@@ -1479,9 +1479,10 @@ public:
     void compileCallCustomAccessorSetter(Node*);
     void compileNormalizeMapKey(Node*);
     template<typename MapOrSet>
-    ALWAYS_INLINE void compileGetMapIndexImpl(Node*);
-    void compileMapKeyIndex(Node*);
-    void compileMapValue(Node*);
+    ALWAYS_INLINE void compileMapGetImpl(Node*);
+    void compileMapGet(Node*);
+    void compileLoadMapValue(Node*);
+    void compileIsEmptyStorage(Node*);
     void compileMapIteratorNext(Node*);
     void compileMapIteratorKey(Node*);
     void compileMapIteratorValue(Node*);
@@ -1536,6 +1537,7 @@ public:
     void compileSkipScope(Node*);
     void compileGetGlobalObject(Node*);
     void compileGetGlobalThis(Node*);
+    void compileUnwrapGlobalProxy(Node*);
 
     void compileGetArrayLength(Node*);
 #if USE(LARGE_TYPED_ARRAYS)
@@ -1903,6 +1905,8 @@ public:
     void speculatePromiseObject(Edge, GPRReg cell);
     void speculateProxyObject(Edge, GPRReg cell);
     void speculateProxyObject(Edge);
+    void speculateGlobalProxy(Edge, GPRReg cell);
+    void speculateGlobalProxy(Edge);
     void speculateDerivedArray(Edge, GPRReg cell);
     void speculateDerivedArray(Edge);
     void speculateDateObject(Edge);

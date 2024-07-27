@@ -49,7 +49,7 @@ PASS SubtleCrypto interface: operation verify(AlgorithmIdentifier, CryptoKey, Bu
 PASS SubtleCrypto interface: operation digest(AlgorithmIdentifier, BufferSource)
 PASS SubtleCrypto interface: operation generateKey(AlgorithmIdentifier, boolean, sequence<KeyUsage>)
 PASS SubtleCrypto interface: operation deriveKey(AlgorithmIdentifier, CryptoKey, AlgorithmIdentifier, boolean, sequence<KeyUsage>)
-PASS SubtleCrypto interface: operation deriveBits(AlgorithmIdentifier, CryptoKey, unsigned long)
+PASS SubtleCrypto interface: operation deriveBits(AlgorithmIdentifier, CryptoKey, optional unsigned long?)
 PASS SubtleCrypto interface: operation importKey(KeyFormat, (BufferSource or JsonWebKey), AlgorithmIdentifier, boolean, sequence<KeyUsage>)
 PASS SubtleCrypto interface: operation exportKey(KeyFormat, CryptoKey)
 PASS SubtleCrypto interface: operation wrapKey(KeyFormat, CryptoKey, CryptoKey, AlgorithmIdentifier)
@@ -70,8 +70,8 @@ PASS SubtleCrypto interface: crypto.subtle must inherit property "generateKey(Al
 PASS SubtleCrypto interface: calling generateKey(AlgorithmIdentifier, boolean, sequence<KeyUsage>) on crypto.subtle with too few arguments must throw TypeError
 PASS SubtleCrypto interface: crypto.subtle must inherit property "deriveKey(AlgorithmIdentifier, CryptoKey, AlgorithmIdentifier, boolean, sequence<KeyUsage>)" with the proper type
 PASS SubtleCrypto interface: calling deriveKey(AlgorithmIdentifier, CryptoKey, AlgorithmIdentifier, boolean, sequence<KeyUsage>) on crypto.subtle with too few arguments must throw TypeError
-PASS SubtleCrypto interface: crypto.subtle must inherit property "deriveBits(AlgorithmIdentifier, CryptoKey, unsigned long)" with the proper type
-PASS SubtleCrypto interface: calling deriveBits(AlgorithmIdentifier, CryptoKey, unsigned long) on crypto.subtle with too few arguments must throw TypeError
+PASS SubtleCrypto interface: crypto.subtle must inherit property "deriveBits(AlgorithmIdentifier, CryptoKey, optional unsigned long?)" with the proper type
+PASS SubtleCrypto interface: calling deriveBits(AlgorithmIdentifier, CryptoKey, optional unsigned long?) on crypto.subtle with too few arguments must throw TypeError
 PASS SubtleCrypto interface: crypto.subtle must inherit property "importKey(KeyFormat, (BufferSource or JsonWebKey), AlgorithmIdentifier, boolean, sequence<KeyUsage>)" with the proper type
 PASS SubtleCrypto interface: calling importKey(KeyFormat, (BufferSource or JsonWebKey), AlgorithmIdentifier, boolean, sequence<KeyUsage>) on crypto.subtle with too few arguments must throw TypeError
 PASS SubtleCrypto interface: crypto.subtle must inherit property "exportKey(KeyFormat, CryptoKey)" with the proper type

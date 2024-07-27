@@ -14,7 +14,7 @@ const invalidStrings = [
   "-000000-10-31T17:45+01:00",
   "-000000-10-31T17:45+00:00[UTC]",
 ];
-const timeZone = new Temporal.TimeZone("UTC");
+const timeZone = "UTC";
 const instance = new Temporal.ZonedDateTime(0n, timeZone);
 invalidStrings.forEach((str) => {
   const arg = { year: 1976, month: 11, day: 18, calendar: str };

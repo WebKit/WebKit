@@ -13,43 +13,41 @@ function epochNsInYear(year) {
   return (year - 1970n) * avgNsPerYear + (avgNsPerYear / 2n);
 }
 
-const utc = new Temporal.TimeZone("UTC");
-
-let instance = new Temporal.ZonedDateTime(epochNsInYear(-100000n), utc);
+let instance = new Temporal.ZonedDateTime(epochNsInYear(-100000n), "UTC");
 assert.sameValue(instance.toString(), "-100000-07-01T21:30:36+00:00[UTC]", "large negative year formatted as 6-digit");
 
-instance = new Temporal.ZonedDateTime(epochNsInYear(-10000n), utc);
+instance = new Temporal.ZonedDateTime(epochNsInYear(-10000n), "UTC");
 assert.sameValue(instance.toString(), "-010000-07-01T21:30:36+00:00[UTC]", "smallest 5-digit negative year formatted as 6-digit");
 
-instance = new Temporal.ZonedDateTime(epochNsInYear(-9999n), utc);
+instance = new Temporal.ZonedDateTime(epochNsInYear(-9999n), "UTC");
 assert.sameValue(instance.toString(), "-009999-07-02T03:19:48+00:00[UTC]", "largest 4-digit negative year formatted as 6-digit");
 
-instance = new Temporal.ZonedDateTime(epochNsInYear(-1000n), utc);
+instance = new Temporal.ZonedDateTime(epochNsInYear(-1000n), "UTC");
 assert.sameValue(instance.toString(), "-001000-07-02T09:30:36+00:00[UTC]", "smallest 4-digit negative year formatted as 6-digit");
 
-instance = new Temporal.ZonedDateTime(epochNsInYear(-999n), utc);
+instance = new Temporal.ZonedDateTime(epochNsInYear(-999n), "UTC");
 assert.sameValue(instance.toString(), "-000999-07-02T15:19:48+00:00[UTC]", "largest 3-digit negative year formatted as 6-digit");
 
-instance = new Temporal.ZonedDateTime(epochNsInYear(-1n), utc);
+instance = new Temporal.ZonedDateTime(epochNsInYear(-1n), "UTC");
 assert.sameValue(instance.toString(), "-000001-07-02T15:41:24+00:00[UTC]", "year -1 formatted as 6-digit");
 
-instance = new Temporal.ZonedDateTime(epochNsInYear(0n), utc);
+instance = new Temporal.ZonedDateTime(epochNsInYear(0n), "UTC");
 assert.sameValue(instance.toString(), "0000-07-01T21:30:36+00:00[UTC]", "year 0 formatted as 4-digit");
 
-instance = new Temporal.ZonedDateTime(epochNsInYear(1n), utc);
+instance = new Temporal.ZonedDateTime(epochNsInYear(1n), "UTC");
 assert.sameValue(instance.toString(), "0001-07-02T03:19:48+00:00[UTC]", "year 1 formatted as 4-digit");
 
-instance = new Temporal.ZonedDateTime(epochNsInYear(999n), utc);
+instance = new Temporal.ZonedDateTime(epochNsInYear(999n), "UTC");
 assert.sameValue(instance.toString(), "0999-07-02T03:41:24+00:00[UTC]", "largest 3-digit positive year formatted as 4-digit");
 
-instance = new Temporal.ZonedDateTime(epochNsInYear(1000n), utc);
+instance = new Temporal.ZonedDateTime(epochNsInYear(1000n), "UTC");
 assert.sameValue(instance.toString(), "1000-07-02T09:30:36+00:00[UTC]", "smallest 4-digit positive year formatted as 4-digit");
 
-instance = new Temporal.ZonedDateTime(epochNsInYear(9999n), utc);
+instance = new Temporal.ZonedDateTime(epochNsInYear(9999n), "UTC");
 assert.sameValue(instance.toString(), "9999-07-02T15:41:24+00:00[UTC]", "largest 4-digit positive year formatted as 4-digit");
 
-instance = new Temporal.ZonedDateTime(epochNsInYear(10000n), utc);
+instance = new Temporal.ZonedDateTime(epochNsInYear(10000n), "UTC");
 assert.sameValue(instance.toString(), "+010000-07-01T21:30:36+00:00[UTC]", "smallest 5-digit positive year formatted as 6-digit");
 
-instance = new Temporal.ZonedDateTime(epochNsInYear(100000n), utc);
+instance = new Temporal.ZonedDateTime(epochNsInYear(100000n), "UTC");
 assert.sameValue(instance.toString(), "+100000-07-01T21:30:36+00:00[UTC]", "large positive year formatted as 6-digit");

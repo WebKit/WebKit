@@ -112,6 +112,10 @@ CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, id<MTLSharedE
     , m_abortCommandBuffer(event)
     , m_device(device)
 {
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    m_managedTextures = [NSMutableSet set];
+    m_managedBuffers = [NSMutableSet set];
+#endif
 }
 
 CommandEncoder::CommandEncoder(Device& device)
@@ -1118,10 +1122,10 @@ void CommandEncoder::clearTextureIfNeeded(const WGPUImageCopyTexture& destinatio
     CommandEncoder::clearTextureIfNeeded(texture, mipLevel, slice, device, blitCommandEncoder);
 }
 
-void CommandEncoder::waitForCommandBufferCompletion()
+void CommandEncoder::onCommandBufferCompletion(Function<void()>&& completion)
 {
     if (m_cachedCommandBuffer)
-        m_cachedCommandBuffer.get()->waitForCompletion();
+        m_cachedCommandBuffer.get()->onCompletion(WTFMove(completion));
 }
 
 bool CommandEncoder::encoderIsCurrent(id<MTLCommandEncoder> commandEncoder) const
@@ -1235,6 +1239,26 @@ bool CommandEncoder::submitWillBeInvalid() const
 {
     return m_makeSubmitInvalid;
 }
+
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+void CommandEncoder::addBuffer(id<MTLBuffer> buffer)
+{
+    if (buffer.storageMode == MTLStorageModeManaged)
+        [m_managedBuffers addObject:buffer];
+}
+void CommandEncoder::addTexture(id<MTLTexture> texture)
+{
+    if (texture.storageMode == MTLStorageModeManaged)
+        [m_managedTextures addObject:texture];
+}
+#else
+void CommandEncoder::addBuffer(id<MTLBuffer>)
+{
+}
+void CommandEncoder::addTexture(id<MTLTexture>)
+{
+}
+#endif
 
 void CommandEncoder::makeSubmitInvalid(NSString* errorString)
 {
@@ -1775,6 +1799,17 @@ Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& des
 
     commandBuffer.label = fromAPI(descriptor.label);
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    if (m_managedBuffers.count || m_managedTextures.count) {
+        id<MTLBlitCommandEncoder> blitCommandEncoder = [commandBuffer blitCommandEncoder];
+        for (id<MTLBuffer> buffer in m_managedBuffers)
+            [blitCommandEncoder synchronizeResource:buffer];
+        for (id<MTLTexture> texture in m_managedTextures)
+            [blitCommandEncoder synchronizeResource:texture];
+        [blitCommandEncoder endEncoding];
+    }
+#endif
+
     auto result = CommandBuffer::create(commandBuffer, m_abortCommandBuffer, m_device);
     m_abortCommandBuffer = nil;
     m_cachedCommandBuffer = result;
@@ -1870,7 +1905,7 @@ static bool validateResolveQuerySet(const QuerySet& querySet, uint32_t firstQuer
     return true;
 }
 
-void CommandEncoder::resolveQuerySet(const QuerySet& querySet, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset)
+void CommandEncoder::resolveQuerySet(const QuerySet& querySet, uint32_t firstQuery, uint32_t queryCount, Buffer& destination, uint64_t destinationOffset)
 {
     if (!prepareTheEncoderState()) {
         GENERATE_INVALID_ENCODER_STATE_ERROR();
@@ -1884,7 +1919,7 @@ void CommandEncoder::resolveQuerySet(const QuerySet& querySet, uint32_t firstQue
 
     querySet.setCommandEncoder(*this);
     destination.setCommandEncoder(*this);
-
+    destination.indirectBufferInvalidated();
     if (querySet.isDestroyed() || destination.isDestroyed() || !queryCount)
         return;
 

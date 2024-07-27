@@ -15,6 +15,13 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/click-cancel.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/click-on-body.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/click-on-div.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/click-on-html.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/click-order.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/mouseevents-mousemove.htm
+/LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/mousemove-across.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/mousemove-between.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/mouseover-out.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/wheel-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/wheel-scrolling.html

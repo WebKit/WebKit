@@ -563,9 +563,21 @@ class Tracker(GenericTracker):
 
         return result
 
+    def valid_keywords(self):
+        response = self.session.get(
+            '{}/rest/field/bug/{}{}'.format(self.url, 'keywords', self._login_arguments(required=False)),
+            timeout=self.timeout,
+        )
+        if response.status_code // 100 == 4 and self._logins_left:
+            self._logins_left -= 1
+        if response.status_code // 100 != 2:
+            sys.stderr.write("Failed to retrieve keywords list'\n")
+            return []
+        return [value.get('name', '') for value in response.json().get('fields')[0].get('values', [])]
+
     def create(
         self, title, description,
-        project=None, component=None, version=None, assign=True,
+        project=None, component=None, version=None, assign=True, keywords=None
     ):
         if not title:
             raise ValueError('Must define title to create bug')
@@ -602,6 +614,11 @@ class Tracker(GenericTracker):
         if version not in self.projects[project]['versions']:
             raise ValueError("'{}' is not a recognized version for '{}'".format(version, project))
 
+        keywords = keywords or []
+        for keyword in keywords:
+            if keyword not in self.valid_keywords():
+                raise ValueError(f"'{keyword}' is not a valid keyword for '{project}'")
+
         params = dict(
             summary=title,
             description=description,
@@ -611,6 +628,8 @@ class Tracker(GenericTracker):
         )
         if assign:
             params['assigned_to'] = self.me().username
+        if keywords:
+            params['keywords'] = keywords
 
         response = None
         try:

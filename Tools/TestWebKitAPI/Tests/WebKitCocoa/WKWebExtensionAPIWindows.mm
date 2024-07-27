@@ -432,21 +432,21 @@ TEST(WKWebExtensionAPIWindows, Create)
     auto originalOpenNewWindow = manager.get().internalDelegate.openNewWindow;
 
     manager.get().internalDelegate.openNewWindow = ^(_WKWebExtensionWindowCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionWindow>, NSError *)) {
-        EXPECT_EQ(options.desiredFrame.origin.x, 300);
-        EXPECT_EQ(options.desiredFrame.size.height, 400);
-        EXPECT_TRUE(std::isnan(options.desiredFrame.origin.y));
-        EXPECT_TRUE(std::isnan(options.desiredFrame.size.width));
+        EXPECT_EQ(options.frame.origin.x, 300);
+        EXPECT_EQ(options.frame.size.height, 400);
+        EXPECT_TRUE(std::isnan(options.frame.origin.y));
+        EXPECT_TRUE(std::isnan(options.frame.size.width));
 
-        EXPECT_TRUE(options.shouldFocus);
-        EXPECT_FALSE(options.shouldUsePrivateBrowsing);
+        EXPECT_TRUE(options.focused);
+        EXPECT_FALSE(options.usePrivateBrowsing);
 
-        EXPECT_EQ(options.desiredWindowType, _WKWebExtensionWindowTypePopup);
-        EXPECT_EQ(options.desiredWindowState, _WKWebExtensionWindowStateNormal);
+        EXPECT_EQ(options.windowType, _WKWebExtensionWindowTypePopup);
+        EXPECT_EQ(options.windowState, _WKWebExtensionWindowStateNormal);
 
-        EXPECT_EQ(options.desiredTabs.count, 0lu);
+        EXPECT_EQ(options.tabs.count, 0lu);
 
-        EXPECT_EQ(options.desiredURLs.count, 1lu);
-        EXPECT_NS_EQUAL(options.desiredURLs.firstObject, [NSURL URLWithString:@"http://example.com/"]);
+        EXPECT_EQ(options.tabURLs.count, 1lu);
+        EXPECT_NS_EQUAL(options.tabURLs.firstObject, [NSURL URLWithString:@"http://example.com/"]);
 
         originalOpenNewWindow(options, context, completionHandler);
     };
@@ -477,8 +477,8 @@ TEST(WKWebExtensionAPIWindows, CreateWithRelativeURL)
     auto originalOpenNewWindow = manager.get().internalDelegate.openNewWindow;
 
     manager.get().internalDelegate.openNewWindow = ^(_WKWebExtensionWindowCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionWindow>, NSError *)) {
-        EXPECT_EQ(options.desiredURLs.count, 1lu);
-        EXPECT_NS_EQUAL(options.desiredURLs.firstObject, [NSURL URLWithString:@"test.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
+        EXPECT_EQ(options.tabURLs.count, 1lu);
+        EXPECT_NS_EQUAL(options.tabURLs.firstObject, [NSURL URLWithString:@"test.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
 
         originalOpenNewWindow(options, context, completionHandler);
     };
@@ -508,9 +508,9 @@ TEST(WKWebExtensionAPIWindows, CreateWithRelativeURLs)
     auto originalOpenNewWindow = manager.get().internalDelegate.openNewWindow;
 
     manager.get().internalDelegate.openNewWindow = ^(_WKWebExtensionWindowCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionWindow>, NSError *)) {
-        EXPECT_EQ(options.desiredURLs.count, 2lu);
-        EXPECT_NS_EQUAL(options.desiredURLs.firstObject, [NSURL URLWithString:@"one.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
-        EXPECT_NS_EQUAL(options.desiredURLs.lastObject, [NSURL URLWithString:@"two.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
+        EXPECT_EQ(options.tabURLs.count, 2lu);
+        EXPECT_NS_EQUAL(options.tabURLs.firstObject, [NSURL URLWithString:@"one.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
+        EXPECT_NS_EQUAL(options.tabURLs.lastObject, [NSURL URLWithString:@"two.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
 
         originalOpenNewWindow(options, context, completionHandler);
     };

@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_throws_dom: function "() => { throw committedReason; }" threw undefined with type "undefined", not an object
 
 
-FAIL reload() with an unserializable state inside onpagehide throws "DataCloneError", not "InvalidStateError" assert_equals: expected 1 but got 0
+PASS reload() with an unserializable state inside onpagehide throws "DataCloneError", not "InvalidStateError"
 

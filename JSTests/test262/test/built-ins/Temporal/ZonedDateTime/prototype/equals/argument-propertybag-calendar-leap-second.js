@@ -7,7 +7,7 @@ description: Leap second is a valid ISO string for a calendar in a property bag
 features: [Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("UTC");
+const timeZone = "UTC";
 const instance = new Temporal.ZonedDateTime(0n, timeZone);
 
 const calendar = "2016-12-31T23:59:60+00:00[UTC]";

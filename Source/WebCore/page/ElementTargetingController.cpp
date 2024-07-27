@@ -133,15 +133,15 @@ static inline bool elementAndAncestorsAreOnlyRenderedChildren(const Element& ele
         return false;
 
     for (auto& ancestor : ancestorsOfType<RenderElement>(*renderer)) {
-        unsigned numberOfRenderedChildren = 0;
-        for (auto& child : childrenOfType<RenderElement>(ancestor)) {
-            if (RefPtr childElement = child.element(); childElement && !childElement->visibilityAdjustment().contains(VisibilityAdjustment::Subtree))
-                numberOfRenderedChildren++;
-        }
-        if (numberOfRenderedChildren >= 2)
-            return false;
-    }
+        unsigned numberOfVisibleChildren = 0;
+        for (auto& child : childrenOfType<RenderObject>(ancestor)) {
+            if (child.style().usedVisibility() == Visibility::Hidden)
+                continue;
 
+            if (++numberOfVisibleChildren >= 2)
+                return false;
+        }
+    }
     return true;
 }
 
@@ -999,8 +999,17 @@ Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Re
         auto targetBoundingBox = target->boundingBoxInRootViewCoordinates();
         auto targetAreaRatio = computeViewportAreaRatio(targetBoundingBox);
 
-        bool shouldSkipTargetThatCoversViewport = [&] {
-            if (targetAreaRatio < minimumAreaRatioForElementToCoverViewport)
+        auto hasOneRenderedChild = [](const Element& target) {
+            CheckedPtr renderer = target.renderer();
+            if (!renderer)
+                return false;
+
+            CheckedPtr firstChild = renderer->firstChild();
+            return firstChild && firstChild == renderer->lastChild();
+        };
+
+        bool shouldSkipIrrelevantTarget = [&] {
+            if (targetAreaRatio < minimumAreaRatioForElementToCoverViewport && !hasOneRenderedChild(target))
                 return false;
 
             auto& style = targetRenderer->style();
@@ -1012,7 +1021,7 @@ Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Re
                 && targetRenderer->usedPointerEvents() == PointerEvents::None;
         }();
 
-        if (shouldSkipTargetThatCoversViewport)
+        if (shouldSkipIrrelevantTarget)
             continue;
 
         bool shouldAddTarget = targetAreaRatio > 0

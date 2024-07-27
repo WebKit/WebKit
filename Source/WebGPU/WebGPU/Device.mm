@@ -197,7 +197,11 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
     desc.mipmapLevelCount = 1;
     desc.pixelFormat = MTLPixelFormatBGRA8Unorm;
     desc.textureType = MTLTextureType2D;
+#if PLATFORM(MAC)
+    desc.storageMode = hasUnifiedMemory() ? MTLStorageModeShared : MTLStorageModeManaged;
+#else
     desc.storageMode = MTLStorageModeShared;
+#endif
     desc.usage = MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget;
     m_placeholderTexture = [m_device newTextureWithDescriptor:desc];
     desc.pixelFormat = MTLPixelFormatDepth32Float_Stencil8;

@@ -117,7 +117,7 @@ bool AccessibilityMathMLElement::isMathSubscriptSuperscript() const
 
 bool AccessibilityMathMLElement::isMathRow() const
 {
-    return m_renderer && m_renderer->isRenderMathMLRow() && !isMathRoot();
+    return m_renderer && m_renderer->isRenderMathMLRow() && !isMathRoot() && !isMathUnderOver() && !isMathMultiscript() && !isMathFraction();
 }
 
 bool AccessibilityMathMLElement::isMathUnderOver() const

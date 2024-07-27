@@ -81,6 +81,8 @@ public:
     PointerID pointerId() const { return m_pointerId; }
     const String& pointerType() const { return m_pointerType; }
 
+    Vector<PlatformMouseEvent> coalescedEvents() const { return m_coalescedEvents; }
+
 #if PLATFORM(MAC)
     int eventNumber() const { return m_eventNumber; }
     int menuTypeForEvent() const { return m_menuTypeForEvent; }
@@ -112,6 +114,7 @@ protected:
     int m_clickCount { 0 };
     unsigned m_modifierFlags { 0 };
     unsigned short m_buttons { 0 };
+    Vector<PlatformMouseEvent> m_coalescedEvents;
 #if PLATFORM(MAC)
     int m_eventNumber { 0 };
     int m_menuTypeForEvent { 0 };

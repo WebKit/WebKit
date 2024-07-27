@@ -5,11 +5,11 @@
 esid: sec-temporal.plaindatetime.prototype.until
 description: >
   Appropriate error thrown when a calendar property from a property bag cannot
-  be converted to a calendar object or string
+  be converted to a calendar ID
 features: [BigInt, Symbol, Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("UTC");
+const timeZone = "UTC";
 const instance = new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321);
 
 const primitiveTests = [
@@ -31,10 +31,8 @@ for (const [calendar, description] of primitiveTests) {
 
 const typeErrorTests = [
   [Symbol(), "symbol"],
-  [{}, "plain object that doesn't implement the protocol"],
-  [new Temporal.TimeZone("UTC"), "time zone instance"],
-  [Temporal.Calendar, "Temporal.Calendar, object"],
-  [Temporal.Calendar.prototype, "Temporal.Calendar.prototype, object"],  // fails brand check in dateFromFields()
+  [{}, "object"],
+  [new Temporal.Duration(), "duration instance"],
 ];
 
 for (const [calendar, description] of typeErrorTests) {

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>
+    async function doLoad() {
+      var canvas = document.createElement('canvas');
+      document.body.appendChild(canvas);
+      var ctx = canvas.getContext('2d');
+
+      canvas.width = 200;
+      canvas.height = 200;
+      ctx.lineWidth = 29.04;
+      ctx.lineCap = "round";
+
+      ctx.clearRect(0, 0, 200, 200);
+
+      ctx.strokeStyle = "#f00";
+      ctx.beginPath();
+      ctx.moveTo(50, 50);
+      ctx.lineTo(100, 150);
+      ctx.stroke();
+
+      ctx.strokeStyle = "#0f0";
+      ctx.beginPath();
+      ctx.moveTo(100, 150);
+      ctx.bezierCurveTo(150, 100, 150, 100, 150, 50);
+      ctx.stroke();
+    }
+  </script>
+</head>
+
+<body onload="doLoad()">
+</body>
+
+</html>

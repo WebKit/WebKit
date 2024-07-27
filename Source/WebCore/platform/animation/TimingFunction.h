@@ -124,23 +124,7 @@ public:
         return adoptRef(*new CubicBezierTimingFunction(preset, x1, y1, x2, y2));
     }
 
-    static Ref<CubicBezierTimingFunction> create(TimingFunctionPreset preset)
-    {
-        switch (preset) {
-        case TimingFunctionPreset::Ease:
-            return create(TimingFunctionPreset::Ease, 0.25, 0.1, 0.25, 1.0);
-        case TimingFunctionPreset::EaseIn:
-            return create(TimingFunctionPreset::EaseIn, 0.42, 0.0, 1.0, 1.0);
-        case TimingFunctionPreset::EaseOut:
-            return create(TimingFunctionPreset::EaseOut, 0.0, 0.0, 0.58, 1.0);
-        case TimingFunctionPreset::EaseInOut:
-            return create(TimingFunctionPreset::EaseInOut, 0.42, 0.0, 0.58, 1.0);
-        case TimingFunctionPreset::Custom:
-            break;
-        }
-        ASSERT_NOT_REACHED();
-        return create();
-    }
+    WEBCORE_EXPORT static Ref<CubicBezierTimingFunction> create(TimingFunctionPreset);
 
     bool operator==(const TimingFunction& other) const final
     {

@@ -749,6 +749,9 @@
     "imported/w3c/web-platform-tests/FileAPI/url/sandboxed-iframe.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/IndexedDB/database-names-by-origin.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/IndexedDB/idb-binary-key-roundtrip.htm": [
         "slow"
     ],
@@ -804,6 +807,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/large-requests-abort.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/IndexedDB/nested-cloning-basic.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.html": [
@@ -2177,6 +2183,9 @@
     "imported/w3c/web-platform-tests/css/css-pseudo/idlharness.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-text-decor/animations/discrete-no-interpolation.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/css-transforms/animation/rotate-interpolation.html": [
         "slow"
     ],
@@ -3288,9 +3297,6 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/fetch/redirect-navigate/preserve-fragment.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/geolocation-API/getCurrentPosition_IDL.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/eligibility/dedicated-worker.html": [
@@ -5814,6 +5820,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/uievents/mouse/mouseover-at-removing-mousedown-target.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/iframe-blank-inherit.meta/unset/fetch.https.html": [

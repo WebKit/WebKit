@@ -797,6 +797,16 @@ ALWAYS_INLINE Structure* Structure::addPropertyTransitionToExistingStructureConc
     return addPropertyTransitionToExistingStructureImpl(structure, uid, attributes, offset);
 }
 
+ALWAYS_INLINE StructureTransitionTable::Hash::Key StructureTransitionTable::Hash::createFromStructure(Structure* structure)
+{
+    switch (structure->transitionKind()) {
+    case TransitionKind::ChangePrototype:
+        return StructureTransitionTable::Hash::createKey(structure->storedPrototype().isNull() ? nullptr : asObject(structure->storedPrototype()), structure->transitionPropertyAttributes(), structure->transitionKind());
+    default:
+        return StructureTransitionTable::Hash::createKey(structure->m_transitionPropertyName.get(), structure->transitionPropertyAttributes(), structure->transitionKind());
+    }
+}
+
 inline Structure* StructureTransitionTable::trySingleTransition() const
 {
     uintptr_t pointer = m_data;
@@ -805,13 +815,13 @@ inline Structure* StructureTransitionTable::trySingleTransition() const
     return nullptr;
 }
 
-inline Structure* StructureTransitionTable::get(UniquedStringImpl* rep, unsigned attributes, TransitionKind transitionKind) const
+inline Structure* StructureTransitionTable::get(PointerKey rep, unsigned attributes, TransitionKind transitionKind) const
 {
     if (isUsingSingleSlot()) {
         auto* transition = trySingleTransition();
-        return (transition && transition->m_transitionPropertyName == rep && transition->transitionPropertyAttributes() == attributes && transition->transitionKind() == transitionKind) ? transition : nullptr;
+        return (transition && Hash::createFromStructure(transition) == Hash::createKey(rep, attributes, transitionKind)) ? transition : nullptr;
     }
-    return map()->get(StructureTransitionTable::Hash::Key(rep, attributes, transitionKind));
+    return map()->get(StructureTransitionTable::Hash::createKey(rep, attributes, transitionKind));
 }
 
 inline void StructureTransitionTable::finalizeUnconditionally(VM& vm, CollectionScope)

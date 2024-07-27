@@ -60,19 +60,19 @@ struct ExtraMarginsFromSubgrids {
 
 namespace GridLayoutFunctions {
 
-LayoutUnit computeMarginLogicalSizeForChild(const RenderGrid&, GridTrackSizingDirection, const RenderBox&);
-LayoutUnit marginLogicalSizeForChild(const RenderGrid&, GridTrackSizingDirection, const RenderBox&);
-bool isOrthogonalChild(const RenderGrid&, const RenderBox&);
+LayoutUnit computeMarginLogicalSizeForGridItem(const RenderGrid&, GridTrackSizingDirection, const RenderBox&);
+LayoutUnit marginLogicalSizeForGridItem(const RenderGrid&, GridTrackSizingDirection, const RenderBox&);
+bool isOrthogonalGridItem(const RenderGrid&, const RenderBox&);
 bool isOrthogonalParent(const RenderGrid&, const RenderElement& parent);
-bool isAspectRatioBlockSizeDependentChild(const RenderBox&);
-GridTrackSizingDirection flowAwareDirectionForChild(const RenderGrid&, const RenderBox&, GridTrackSizingDirection);
+bool isAspectRatioBlockSizeDependentGridItem(const RenderBox&);
+GridTrackSizingDirection flowAwareDirectionForGridItem(const RenderGrid&, const RenderBox&, GridTrackSizingDirection);
 GridTrackSizingDirection flowAwareDirectionForParent(const RenderGrid&, const RenderElement& parent, GridTrackSizingDirection);
-std::optional<RenderBox::ContainingBlockOverrideValue> overridingContainingBlockContentSizeForChild(const RenderBox&, GridTrackSizingDirection);
-bool hasRelativeOrIntrinsicSizeForChild(const RenderBox& child, GridTrackSizingDirection);
+std::optional<RenderBox::ContainingBlockOverrideValue> overridingContainingBlockContentSizeForGridItem(const RenderBox&, GridTrackSizingDirection);
+bool hasRelativeOrIntrinsicSizeForGridItem(const RenderBox& gridItem, GridTrackSizingDirection);
 
 bool isFlippedDirection(const RenderGrid&, GridTrackSizingDirection);
 bool isSubgridReversedDirection(const RenderGrid&, GridTrackSizingDirection outerDirection, const RenderGrid& subgrid);
-ExtraMarginsFromSubgrids extraMarginForSubgridAncestors(GridTrackSizingDirection, const RenderBox& child);
+ExtraMarginsFromSubgrids extraMarginForSubgridAncestors(GridTrackSizingDirection, const RenderBox& gridItem);
 
 unsigned alignmentContextForBaselineAlignment(const GridSpan&, const ItemPosition& alignment);
 

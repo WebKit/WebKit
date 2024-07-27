@@ -30,18 +30,16 @@
   bool _supportsH265;
   bool _supportsVP9Profile0;
   bool _supportsVP9Profile2;
-  bool _useLowLatencyH264;
   bool _supportsAv1;
 }
 
-- (id)initWithH265:(bool)supportsH265 vp9Profile0:(bool)supportsVP9Profile0 vp9Profile2:(bool)supportsVP9Profile2 lowLatencyH264:(bool)useLowLatencyH264 av1:(bool)supportsAv1
+- (id)initWithH265:(bool)supportsH265 vp9Profile0:(bool)supportsVP9Profile0 vp9Profile2:(bool)supportsVP9Profile2 av1:(bool)supportsAv1
 {
   self = [super init];
   if (self) {
     _supportsH265 = supportsH265;
     _supportsVP9Profile0 = supportsVP9Profile0;
     _supportsVP9Profile2 = supportsVP9Profile2;
-    _useLowLatencyH264 = useLowLatencyH264;
     _supportsAv1 = supportsAv1;
   }
   return self;
@@ -110,7 +108,7 @@
 - (id<RTCVideoEncoder>)createEncoder:(RTCVideoCodecInfo *)info {
   if ([info.name isEqualToString:kRTCVideoCodecH264Name]) {
     RTCVideoEncoderH264* encoder = [[RTCVideoEncoderH264 alloc] initWithCodecInfo:info];
-    [encoder setH264LowLatencyEncoderEnabled:_useLowLatencyH264];
+    [encoder setH264LowLatencyEncoderEnabled:true];
     return encoder;
   } else if ([info.name isEqualToString:kRTCVideoCodecVp8Name]) {
     return [RTCVideoEncoderVP8 vp8Encoder];

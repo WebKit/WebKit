@@ -506,6 +506,7 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
         m_lastUpdatedNowPlayingDuration = NAN;
         m_lastUpdatedNowPlayingElapsedTime = NAN;
         m_lastUpdatedNowPlayingInfoUniqueIdentifier = { };
+        m_nowPlayingInfo = std::nullopt;
 
         updateActiveNowPlayingSession(nullptr);
         return;

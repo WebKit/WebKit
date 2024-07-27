@@ -105,6 +105,11 @@ enum class MediaPlayerPitchCorrectionAlgorithm : uint8_t {
     BestForSpeech,
 };
 
+enum class MediaPlayerNeedsRenderingModeChanged : bool {
+    No,
+    Yes,
+};
+
 class MediaPlayerEnums {
 public:
     using NetworkState = MediaPlayerNetworkState;
@@ -117,6 +122,7 @@ public:
     using MediaEngineIdentifier = MediaPlayerMediaEngineIdentifier;
     using WirelessPlaybackTargetType = MediaPlayerWirelessPlaybackTargetType;
     using PitchCorrectionAlgorithm = MediaPlayerPitchCorrectionAlgorithm;
+    using NeedsRenderingModeChanged = MediaPlayerNeedsRenderingModeChanged;
 
     enum {
         VideoFullscreenModeNone = 0,

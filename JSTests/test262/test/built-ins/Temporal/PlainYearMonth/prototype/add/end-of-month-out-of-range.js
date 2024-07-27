@@ -20,11 +20,3 @@ const duration = new Temporal.Duration(0, 0, 0, -1);
 
 // Calendar addition result is out of range
 assert.throws(RangeError, () => new Temporal.PlainYearMonth(275760, 9).add(duration), "Addition of 1 month to receiver out of range");
-
-// Calendar addition succeeds, but subtracting 1 day gives out of range result
-const cal = new class extends Temporal.Calendar {
-  dateAdd() {
-    return new Temporal.PlainDate(-271821, 4, 19);
-  }
-}("iso8601");
-assert.throws(RangeError, () => new Temporal.PlainYearMonth(2000, 1, cal).add(duration), "Subtraction of 1 day from next month out of range");

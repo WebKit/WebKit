@@ -270,7 +270,7 @@ op :call_direct_eval,
         argv: unsigned,
         thisValue: VirtualRegister,
         scope: VirtualRegister,
-        ecmaMode: ECMAMode,
+        lexicallyScopedFeatures: unsigned,
         valueProfile: unsigned,
     },
     metadata: {
@@ -1433,10 +1433,17 @@ op :op_construct_return_location
 op :op_call_varargs_return_location
 op :op_construct_varargs_return_location
 op :op_get_by_id_return_location
+op :op_get_by_id_direct_return_location
 op :op_get_length_return_location
 op :op_get_by_val_return_location
 op :op_put_by_id_return_location
 op :op_put_by_val_return_location
+op :op_put_by_val_direct_return_location
+op :op_in_by_id_return_location
+op :op_in_by_val_return_location
+op :op_enumerator_get_by_val_return_location
+op :op_enumerator_put_by_val_return_location
+op :op_enumerator_in_by_val_return_location
 op :op_iterator_open_return_location
 op :op_iterator_next_return_location
 op :op_call_direct_eval_slow_return_location

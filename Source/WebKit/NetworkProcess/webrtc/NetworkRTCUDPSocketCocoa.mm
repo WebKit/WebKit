@@ -39,9 +39,6 @@
 #include <wtf/SoftLinking.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
-SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
-SOFT_LINK_OPTIONAL(libnetwork, nw_parameters_allow_sharing_port_with_listener, void, __cdecl, (nw_parameters_t, nw_listener_t))
-
 namespace WebKit {
 
 using namespace WebCore;
@@ -327,13 +324,8 @@ std::pair<RetainPtr<nw_connection_t>, Ref<NetworkRTCUDPSocketCocoaConnections::C
         if (m_address.ipaddr().IsNil())
             hostAddress = m_address.hostname();
 
-        // rdar://80176676: we workaround local loop port reuse by using 0 instead of m_address.port() when nw_parameters_allow_sharing_port_with_listener is not available.
-        uint16_t port = 0;
-        if (nw_parameters_allow_sharing_port_with_listenerPtr()) {
-            nw_parameters_allow_sharing_port_with_listenerPtr()(parameters.get(), m_nwListener.get());
-            port = m_address.port();
-        }
-        auto localEndpoint = adoptNS(nw_endpoint_create_host_with_numeric_port(hostAddress.c_str(), port));
+        nw_parameters_allow_sharing_port_with_listener(parameters.get(), m_nwListener.get());
+        auto localEndpoint = adoptNS(nw_endpoint_create_host_with_numeric_port(hostAddress.c_str(), m_address.port()));
         nw_parameters_set_local_endpoint(parameters.get(), localEndpoint.get());
     }
     configureParameters(parameters.get(), remoteAddress.family() == AF_INET ? nw_ip_version_4 : nw_ip_version_6);

@@ -61,11 +61,11 @@ public:
         }
     }
 
-    ALWAYS_INLINE TableIndex getKeyIndex(JSGlobalObject* globalObject, JSValue key, uint32_t hash)
+    ALWAYS_INLINE JSValue* getKeySlot(JSGlobalObject* globalObject, JSValue key, uint32_t hash)
     {
         if (m_storage)
-            return Helper::find(globalObject, storageRef(), key, hash).entryKeyIndex;
-        return Helper::InvalidTableIndex;
+            return Helper::find(globalObject, storageRef(), key, hash).entryKeySlot;
+        return nullptr;
     }
 
     ALWAYS_INLINE bool has(JSGlobalObject* globalObject, JSValue key)

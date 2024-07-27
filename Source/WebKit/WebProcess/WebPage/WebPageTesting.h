@@ -58,10 +58,8 @@ private:
 #endif
 
     void clearWheelEventTestMonitor();
-
     Ref<WebPage> protectedPage() const;
 
-    const WebCore::PageIdentifier m_identifier;
     WeakRef<WebPage> m_page;
 };
 

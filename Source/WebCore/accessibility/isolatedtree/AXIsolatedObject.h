@@ -363,7 +363,7 @@ private:
     // Parameterized attribute retrieval.
     Vector<SimpleRange> findTextRanges(const AccessibilitySearchTextCriteria&) const final;
     Vector<String> performTextOperation(const AccessibilityTextOperation&) final;
-    void findMatchingObjects(AccessibilitySearchCriteria*, AccessibilityChildrenVector&) final;
+    AccessibilityChildrenVector findMatchingObjects(AccessibilitySearchCriteria&&) final;
 
 #if PLATFORM(COCOA)
     bool preventKeyboardDOMEventDispatch() const final { return boolAttributeValue(AXPropertyName::PreventKeyboardDOMEventDispatch); }
@@ -469,7 +469,7 @@ private:
     bool isSelectedOptionActive() const final;
     bool hasBoldFont() const final { return boolAttributeValue(AXPropertyName::HasBoldFont); }
     bool hasItalicFont() const final { return boolAttributeValue(AXPropertyName::HasItalicFont); }
-    bool hasMisspelling() const final;
+    Vector<CharacterRange> spellCheckerResultRanges() const final;
     bool hasPlainText() const final { return boolAttributeValue(AXPropertyName::HasPlainText); }
     bool hasSameFont(const AXCoreObject&) const final;
     bool hasSameFontColor(const AXCoreObject&) const final;

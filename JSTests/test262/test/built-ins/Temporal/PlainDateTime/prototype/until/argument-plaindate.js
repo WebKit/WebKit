@@ -14,8 +14,8 @@ includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-TemporalHelpers.checkToTemporalPlainDateTimeFastPath((date, calendar) => {
-  const datetime = new Temporal.PlainDateTime(2000, 5, 2, 0, 0, 0, 987, 654, 321, calendar);
+TemporalHelpers.checkToTemporalPlainDateTimeFastPath((date) => {
+  const datetime = new Temporal.PlainDateTime(2000, 5, 2, 0, 0, 0, 987, 654, 321, "iso8601");
   const result = datetime.until(date);
   assert.sameValue(result.total({ unit: "nanoseconds" }), -987654321, "PlainDate is converted to midnight");
 });

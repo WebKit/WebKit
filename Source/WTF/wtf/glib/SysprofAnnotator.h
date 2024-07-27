@@ -67,7 +67,7 @@ public:
         vsnprintf(buffer.data(), 1024, description, args);
         va_end(args);
 
-        auto value = std::make_pair(SYSPROF_CAPTURE_CURRENT_TIME, WTFMove(buffer));
+        auto value = std::make_pair(SYSPROF_CAPTURE_CURRENT_TIME, Vector<char>(buffer));
 
         Locker locker { m_lock };
         m_ongoingMarks.set(key, value);

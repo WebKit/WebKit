@@ -1,3 +1,0 @@
-
-PASS IDBCursor.delete() - index - throw InvalidStateError caused by object store been deleted
-

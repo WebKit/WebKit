@@ -41,20 +41,18 @@
 @class NSPopover;
 #endif
 
-#define HAVE_UPDATED_WEB_EXTENSION_ACTION_INSPECTION_OVERRIDE_NAME 1
-
-NS_ASSUME_NONNULL_BEGIN
+WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*! @abstract This notification is sent whenever a @link WKWebExtensionAction has changed properties. */
-WK_API_AVAILABLE(macos(14.4), ios(17.4), visionos(1.1))
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 WK_EXTERN NSNotificationName const _WKWebExtensionActionPropertiesDidChangeNotification NS_SWIFT_NAME(_WKWebExtensionAction.propertiesDidChangeNotification);
 
 /*!
  @abstract A `WKWebExtensionAction` object encapsulates the properties for an individual web extension action.
  @discussion Provides access to action properties such as popup, icon, and title, with tab-specific values.
  */
-WK_CLASS_AVAILABLE(macos(14.4), ios(17.4), visionos(1.1))
-NS_SWIFT_NAME(_WKWebExtension.Action)
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(_WKWebExtension.Action)
 @interface _WKWebExtensionAction : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;
@@ -168,4 +166,4 @@ NS_SWIFT_NAME(_WKWebExtension.Action)
 
 @end
 
-NS_ASSUME_NONNULL_END
+WK_HEADER_AUDIT_END(nullability, sendability)

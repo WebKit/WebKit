@@ -8,7 +8,7 @@ includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("UTC");
+const timeZone = "UTC";
 const instance = new Temporal.ZonedDateTime(0n, timeZone);
 
 for (const calendar of [

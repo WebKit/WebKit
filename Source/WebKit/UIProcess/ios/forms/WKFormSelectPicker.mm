@@ -1144,6 +1144,8 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
     [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:NO];
 
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME: <rdar://131638865> UITableViewCell.textLabel is deprecated.
     if (!cell.textLabel.enabled)
         return;
 
@@ -1155,6 +1157,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
         cell.imageView.image = [UIImage systemImageNamed:@"checkmark.circle.fill"];
     else
         cell.imageView.image = [[UIImage systemImageNamed:@"circle"] imageWithTintColor:UIColor.tertiaryLabelColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     [_contentView updateFocusedElementSelectedIndex:[self findItemIndexAt:indexPath] allowsMultipleSelection:true];
     option->isSelected = !option->isSelected;

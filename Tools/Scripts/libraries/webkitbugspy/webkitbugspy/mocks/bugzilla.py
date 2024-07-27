@@ -350,6 +350,17 @@ class Bugzilla(Base, mocks.Requests):
             url=url,
         )
 
+    def _fields(self, url, id):
+        return mocks.Response.fromJson(
+            dict(fields=[dict(
+                id=10,
+                name='keywords',
+                type=8,
+                display_name='Keywords',
+                values=[dict(name='InRadar')]
+            )]), url=url
+        )
+
     def _create(self, url, credentials, data):
         user = self._user_for_credentials(credentials)
         assignee = self.users.get(data['assigned_to']) if 'assigned_to' in data else None
@@ -379,7 +390,7 @@ class Bugzilla(Base, mocks.Requests):
             project=data.get('product'),
             component=data.get('component'),
             version=data.get('version'),
-            keywords=[],
+            keywords=data.get('keywords'),
             comments=[], watchers=[user, assignee] if assignee else [user],
         )
 
@@ -463,6 +474,10 @@ class Bugzilla(Base, mocks.Requests):
         match = re.match(r'{}/rest/product/(?P<id>\d+)(?P<credentials>\?login=\S+\&password=\S+)?$'.format(self.hosts[0]), stripped_url)
         if match and method == 'GET':
             return self._product_details(url, int(match.group('id')))
+
+        match = re.match(r'{}/rest/field/bug/(?P<id>\w+)(?P<credentials>\?login=\S+\&password=\S+)?$'.format(self.hosts[0]), stripped_url)
+        if match and method == 'GET':
+            return self._fields(url, match.group('id'))
 
         match = re.match(r'{}/rest/bug(?P<credentials>\?login=\S+\&password=\S+)?$'.format(self.hosts[0]), stripped_url)
         if match and method == 'POST':

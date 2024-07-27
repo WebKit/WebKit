@@ -147,6 +147,7 @@ def types_that_must_be_moved():
         'WebCore::GraphicsContextGL::ExternalImageSource',
         'WebCore::GraphicsContextGL::ExternalSyncSource',
         'WebCore::ProcessIdentity',
+        'std::optional<WebCore::ProcessIdentity>',
         'WebKit::ConsumerSharedCARingBufferHandle',
         'WebKit::GPUProcessConnectionParameters',
         'WebKit::ModelProcessConnectionParameters',
@@ -650,6 +651,12 @@ def handler_function(receiver, message):
     return '%s::%s' % (receiver.name, message.name[0].lower() + message.name[1:])
 
 
+def generate_runtime_enablement(message):
+    if not message.enabled_by:
+        return message.enabled_if
+    return ' && '.join(['sharedPreferencesForWebProcess().' + preference[0].lower() + preference[1:] for preference in message.enabled_by])
+
+
 def async_message_statement(receiver, message):
     if receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE) and message.reply_parameters is not None and not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
         dispatch_function_args = ['decoder', 'WTFMove(replyHandler)', 'this', '&%s' % handler_function(receiver, message)]
@@ -671,8 +678,9 @@ def async_message_statement(receiver, message):
         connection = ''
 
     result = []
-    if message.runtime_enablement:
-        result.append('    if (decoder.messageName() == Messages::%s::%s::name() && %s)\n' % (receiver.name, message.name, message.runtime_enablement))
+    runtime_enablement = generate_runtime_enablement(message)
+    if runtime_enablement:
+        result.append('    if (decoder.messageName() == Messages::%s::%s::name() && %s)\n' % (receiver.name, message.name, runtime_enablement))
     else:
         result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
     result.append('        return IPC::%s<Messages::%s::%s>(%s%s);\n' % (dispatch_function, receiver.name, message.name, connection, ', '.join(dispatch_function_args)))
@@ -693,8 +701,9 @@ def sync_message_statement(receiver, message):
         maybe_reply_encoder = ', replyEncoder'
 
     result = []
-    if message.runtime_enablement:
-        result.append('    if (decoder.messageName() == Messages::%s::%s::name() && %s)\n' % (receiver.name, message.name, message.runtime_enablement))
+    runtime_enablement = generate_runtime_enablement(message)
+    if runtime_enablement:
+        result.append('    if (decoder.messageName() == Messages::%s::%s::name() && %s)\n' % (receiver.name, message.name, runtime_enablement))
     else:
         result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
     result.append('        return IPC::%s<Messages::%s::%s>(connection, decoder%s, this, &%s);\n' % (dispatch_function, receiver.name, message.name, maybe_reply_encoder, handler_function(receiver, message)))
@@ -884,6 +893,7 @@ def headers_for_type(type):
         'WebCore::InputMode': ['<WebCore/InputMode.h>'],
         'WebCore::InspectorClientDeveloperPreference': ['<WebCore/InspectorClient.h>'],
         'WebCore::InspectorOverlayHighlight': ['<WebCore/InspectorOverlay.h>'],
+        'WebCore::IsLoggedIn': ['<WebCore/IsLoggedIn.h>'],
         'WebCore::ISOWebVTTCue': ['<WebCore/ISOVTTCue.h>'],
         'WebCore::KeyframeValueList': ['<WebCore/GraphicsLayer.h>'],
         'WebCore::KeypressCommand': ['<WebCore/KeyboardEvent.h>'],
@@ -991,6 +1001,9 @@ def headers_for_type(type):
         'WebCore::TargetedElementAdjustment': ['<WebCore/ElementTargetingTypes.h>'],
         'WebCore::TargetedElementInfo': ['<WebCore/ElementTargetingTypes.h>'],
         'WebCore::TargetedElementRequest': ['<WebCore/ElementTargetingTypes.h>'],
+        'WebCore::TextAnimationData': ['<WebCore/TextAnimationTypes.h>'],
+        'WebCore::TextAnimationRunMode': ['<WebCore/TextAnimationTypes.h>'],
+        'WebCore::TextAnimationType': ['<WebCore/TextAnimationTypes.h>'],
         'WebCore::TextCheckingRequestData': ['<WebCore/TextChecking.h>'],
         'WebCore::TextCheckingResult': ['<WebCore/TextCheckerClient.h>'],
         'WebCore::TextCheckingType': ['<WebCore/TextChecking.h>'],
@@ -1004,12 +1017,12 @@ def headers_for_type(type):
         'WebCore::WritingTools::Action': ['<WebCore/WritingToolsTypes.h>'],
         'WebCore::WritingTools::TextSuggestion': ['<WebCore/WritingToolsTypes.h>'],
         'WebCore::WritingTools::Behavior': ['<WebCore/WritingToolsTypes.h>'],
-        'WebCore::WritingTools::TextSuggestion::ID': ['<WebCore/WritingToolsTypes.h>'],
-        'WebCore::WritingTools::TextSuggestionState': ['<WebCore/WritingToolsTypes.h>'],
         'WebCore::WritingTools::Session': ['<WebCore/WritingToolsTypes.h>'],
         'WebCore::WritingTools::Session::Type': ['<WebCore/WritingToolsTypes.h>'],
         'WebCore::WritingTools::Session::CompositionType': ['<WebCore/WritingToolsTypes.h>'],
         'WebCore::WritingTools::Session::ID': ['<WebCore/WritingToolsTypes.h>'],
+        'WebCore::WritingTools::TextSuggestion::ID': ['<WebCore/WritingToolsTypes.h>'],
+        'WebCore::WritingTools::TextSuggestionState': ['<WebCore/WritingToolsTypes.h>'],
         'WebCore::UsedLegacyTLS': ['<WebCore/ResourceResponseBase.h>'],
         'WebCore::VideoFrameRotation': ['<WebCore/VideoFrame.h>'],
         'WebCore::VideoPlaybackQualityMetrics': ['<WebCore/VideoPlaybackQualityMetrics.h>'],
@@ -1104,8 +1117,6 @@ def headers_for_type(type):
         'WebKit::SelectionTouch': ['"GestureTypes.h"'],
         'WebKit::TapIdentifier': ['"IdentifierTypes.h"'],
         'WebKit::TextCheckerRequestID': ['"IdentifierTypes.h"'],
-        'WebKit::TextAnimationType': ['"TextAnimationType.h"'],
-        'WebKit::TextAnimationData': ['"TextAnimationType.h"'],
         'WebKit::WebEventType': ['"WebEvent.h"'],
         'WebKit::WebExtensionContextInstallReason': ['"WebExtensionContext.h"'],
         'WebKit::WebExtensionCookieFilterParameters': ['"WebExtensionCookieParameters.h"'],
@@ -1242,6 +1253,8 @@ def collect_header_conditions_for_receiver(receiver, header_conditions):
             header_conditions[header].extend(conditions)
 
     for message in receiver.messages:
+        if message.enabled_by:
+            header_conditions['"SharedPreferencesForWebProcess.h"'] = [None]
         if message.reply_parameters is not None:
             for reply_parameter in message.reply_parameters:
                 type = reply_parameter.type

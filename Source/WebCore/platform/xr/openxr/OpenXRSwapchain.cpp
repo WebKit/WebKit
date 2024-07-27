@@ -48,7 +48,7 @@ std::unique_ptr<OpenXRSwapchain> OpenXRSwapchain::create(XrInstance instance, Xr
         return createStructure<XrSwapchainImageOpenGLKHR, XR_TYPE_SWAPCHAIN_IMAGE_OPENGL_KHR>();
     }());
 
-    Vector<XrSwapchainImageBaseHeader*> imageHeaders = imageBuffers.map([](auto& image) mutable {
+    Vector<XrSwapchainImageBaseHeader*> imageHeaders = imageBuffers.map([](auto& image) {
         return (XrSwapchainImageBaseHeader*) &image;
     });
 

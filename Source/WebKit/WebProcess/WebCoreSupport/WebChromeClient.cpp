@@ -342,6 +342,7 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& win
         WebCore::LockBackForwardList::No,
         { }, /* clientRedirectSourceForHistory */
         0, /* effectiveSandboxFlags */
+        std::nullopt, /* ownerPermissionsPolicy */
         navigationAction.privateClickMeasurement(),
         { }, /* advancedPrivacyProtections */
         { }, /* originatorAdvancedPrivacyProtections */
@@ -1188,12 +1189,13 @@ RefPtr<WebCore::ScrollingCoordinator> WebChromeClient::createScrollingCoordinato
 #endif
 
 #if PLATFORM(MAC)
-void WebChromeClient::ensureScrollbarsController(Page& corePage, ScrollableArea& area) const
+void WebChromeClient::ensureScrollbarsController(Page& corePage, ScrollableArea& area, bool update) const
 {
     auto page = protectedPage();
     ASSERT(page->corePage() == &corePage);
     auto* currentScrollbarsController = area.existingScrollbarsController();
-    if (area.mockScrollbarsControllerEnabled()) {
+
+    if (area.mockScrollbarsControllerEnabled() || (update && !currentScrollbarsController)) {
         ASSERT(!currentScrollbarsController || is<ScrollbarsControllerMock>(currentScrollbarsController));
         return;
     }
@@ -1656,6 +1658,16 @@ void WebChromeClient::requestStorageAccess(RegistrableDomain&& subFrameDomain, R
     protectedPage()->requestStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), *webFrame, scope, WTFMove(completionHandler));
 }
 
+void WebChromeClient::setLoginStatus(RegistrableDomain&& domain, IsLoggedIn loggedInStatus, CompletionHandler<void()>&& completionHandler)
+{
+    protectedPage()->setLoginStatus(WTFMove(domain), loggedInStatus, WTFMove(completionHandler));
+}
+
+void WebChromeClient::isLoggedIn(RegistrableDomain&& domain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    protectedPage()->isLoggedIn(WTFMove(domain), WTFMove(completionHandler));
+}
+
 bool WebChromeClient::hasPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain) const
 {
     return protectedPage()->hasPageLevelStorageAccess(topLevelDomain, resourceDomain);
@@ -1885,7 +1897,7 @@ void WebChromeClient::addInitialTextAnimation(const WritingTools::Session::ID& s
     protectedPage()->addInitialTextAnimation(sessionID);
 }
 
-void WebChromeClient::addSourceTextAnimation(const WritingTools::Session::ID& sessionID, const CharacterRange& range, const String string, WTF::CompletionHandler<void(void)>&& completionHandler)
+void WebChromeClient::addSourceTextAnimation(const WritingTools::Session::ID& sessionID, const CharacterRange& range, const String string, WTF::CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
 {
     protectedPage()->addSourceTextAnimation(sessionID, range, string, WTFMove(completionHandler));
 }
@@ -1906,5 +1918,12 @@ void WebChromeClient::hasActiveNowPlayingSessionChanged(bool hasActiveNowPlaying
 {
     protectedPage()->hasActiveNowPlayingSessionChanged(hasActiveNowPlayingSession);
 }
+
+#if ENABLE(GPU_PROCESS)
+void WebChromeClient::getImageBufferResourceLimitsForTesting(CompletionHandler<void(std::optional<ImageBufferResourceLimits>)>&& callback) const
+{
+    protectedPage()->ensureRemoteRenderingBackendProxy().getImageBufferResourceLimitsForTesting(WTFMove(callback));
+}
+#endif
 
 } // namespace WebKit

@@ -36,6 +36,7 @@
 #include "StringFunctions.h"
 #include <WebCore/AccessibilityObjectAtspi.h>
 #include <WebCore/AccessibilityRootAtspi.h>
+#include <WebKit/WKBundleFramePrivate.h>
 #include <WebKit/WKBundlePagePrivate.h>
 
 namespace WTR {
@@ -60,10 +61,9 @@ static WebCore::AccessibilityObjectAtspi* findAccessibleObjectById(WebCore::Acce
     return nullptr;
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef id)
+RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSContextRef context, JSStringRef id)
 {
-    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
-    auto* rootObject = static_cast<WebCore::AccessibilityObjectAtspi*>(WKAccessibilityRootObject(page));
+    auto* rootObject = static_cast<WebCore::AccessibilityObjectAtspi*>(WKAccessibilityRootObject(WKBundleFrameForJavaScriptContext(context)));
     if (!rootObject)
         return nullptr;
 
@@ -83,19 +83,18 @@ void AccessibilityController::injectAccessibilityPreference(JSStringRef domain, 
 {
 }
 
-Ref<AccessibilityUIElement> AccessibilityController::rootElement()
+Ref<AccessibilityUIElement> AccessibilityController::rootElement(JSContextRef context)
 {
-    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
-    auto* element = static_cast<WebCore::AccessibilityObjectAtspi*>(WKAccessibilityRootObject(page));
+    auto* element = static_cast<WebCore::AccessibilityObjectAtspi*>(WKAccessibilityRootObject(WKBundleFrameForJavaScriptContext(context)));
     return AccessibilityUIElement::create(element);
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
+RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement(JSContextRef context)
 {
-    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
-    if (!WKAccessibilityRootObject(page))
+    if (!WKAccessibilityRootObject(WKBundleFrameForJavaScriptContext(context)))
         return nullptr;
 
+    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     if (auto* element = static_cast<WebCore::AccessibilityObjectAtspi*>(WKAccessibilityFocusedObject(page)))
         return AccessibilityUIElement::create(element);
     return nullptr;

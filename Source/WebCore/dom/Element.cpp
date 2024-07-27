@@ -412,10 +412,15 @@ void Element::setTabIndexForBindings(int value)
 
 bool Element::isKeyboardFocusable(KeyboardEvent*) const
 {
-    if (!(isFocusable() && !shouldBeIgnoredInSequentialFocusNavigation() && tabIndexSetExplicitly().value_or(0) >= 0))
+    if (!isFocusable() || shouldBeIgnoredInSequentialFocusNavigation() || tabIndexSetExplicitly().value_or(0) < 0)
         return false;
     if (RefPtr root = shadowRoot()) {
         if (root->delegatesFocus())
+            return false;
+    }
+    // Popovers with invokers delegate focus.
+    if (RefPtr popover = dynamicDowncast<HTMLElement>(*this)) {
+        if (popover->isPopoverShowing() && popover->popoverData()->invoker())
             return false;
     }
     return true;
@@ -441,7 +446,7 @@ static bool isCompatibilityMouseEvent(const MouseEvent& mouseEvent)
     // https://www.w3.org/TR/pointerevents/#compatibility-mapping-with-mouse-events
     const auto& type = mouseEvent.type();
     auto& eventNames = WebCore::eventNames();
-    return type != eventNames.clickEvent && type != eventNames.mouseoverEvent && type != eventNames.mouseoutEvent && type != eventNames.mouseenterEvent && type != eventNames.mouseleaveEvent;
+    return !isAnyClick(mouseEvent) && type != eventNames.mouseoverEvent && type != eventNames.mouseoutEvent && type != eventNames.mouseenterEvent && type != eventNames.mouseleaveEvent;
 }
 
 enum class ShouldIgnoreMouseEvent : bool { No, Yes };
@@ -450,7 +455,7 @@ static ShouldIgnoreMouseEvent dispatchPointerEventIfNeeded(Element& element, con
     if (RefPtr page = element.document().page()) {
         auto& pointerCaptureController = page->pointerCaptureController();
 #if ENABLE(TOUCH_EVENTS)
-        if (platformEvent.pointerId() != mousePointerID && mouseEvent.type() != eventNames().clickEvent && pointerCaptureController.preventsCompatibilityMouseEventsForIdentifier(platformEvent.pointerId()))
+        if (platformEvent.pointerId() != mousePointerID && !isAnyClick(mouseEvent) && pointerCaptureController.preventsCompatibilityMouseEventsForIdentifier(platformEvent.pointerId()))
             return ShouldIgnoreMouseEvent::Yes;
 #else
         UNUSED_PARAM(platformEvent);
@@ -482,7 +487,13 @@ Element::DispatchMouseEventResult Element::dispatchMouseEvent(const PlatformMous
     if (isForceEvent(platformEvent) && !document().hasListenerTypeForEventType(platformEvent.type()))
         return { Element::EventIsDispatched::No, eventIsDefaultPrevented };
 
-    Ref mouseEvent = MouseEvent::create(eventType, document().windowProxy(), platformEvent, detail, relatedTarget);
+    Vector<Ref<MouseEvent>> childMouseEvents;
+    for (const auto& childPlatformEvent : platformEvent.coalescedEvents()) {
+        Ref childMouseEvent = MouseEvent::create(eventType, document().windowProxy(), childPlatformEvent, { }, detail, relatedTarget);
+        childMouseEvents.append(WTFMove(childMouseEvent));
+    }
+
+    Ref mouseEvent = MouseEvent::create(eventType, document().windowProxy(), platformEvent, childMouseEvents, detail, relatedTarget);
 
     if (mouseEvent->type().isEmpty())
         return { Element::EventIsDispatched::Yes, eventIsDefaultPrevented }; // Shouldn't happen.
@@ -490,7 +501,7 @@ Element::DispatchMouseEventResult Element::dispatchMouseEvent(const PlatformMous
     Ref protectedThis { *this };
     bool didNotSwallowEvent = true;
 
-    if (dispatchPointerEventIfNeeded(*this, mouseEvent.get(), platformEvent, didNotSwallowEvent) == ShouldIgnoreMouseEvent::Yes)
+    if (dispatchPointerEventIfNeeded(*this, mouseEvent, platformEvent, didNotSwallowEvent) == ShouldIgnoreMouseEvent::Yes)
         return { Element::EventIsDispatched::No, eventIsDefaultPrevented };
 
     auto isParentProcessAFullWebBrowser = false;
@@ -510,6 +521,7 @@ Element::DispatchMouseEventResult Element::dispatchMouseEvent(const PlatformMous
     if (mouseEvent->defaultPrevented() || mouseEvent->defaultHandled())
         didNotSwallowEvent = false;
 
+    // The document should not receive dblclick for non-primary buttons.
     if (mouseEvent->type() == eventNames().clickEvent && mouseEvent->detail() == 2) {
         // Special case: If it's a double click event, we also send the dblclick event. This is not part
         // of the DOM specs, but is used for compatibility with the ondblclick="" attribute. This is treated
@@ -519,6 +531,7 @@ Element::DispatchMouseEventResult Element::dispatchMouseEvent(const PlatformMous
             mouseEvent->bubbles() ? Event::CanBubble::Yes : Event::CanBubble::No,
             mouseEvent->cancelable() ? Event::IsCancelable::Yes : Event::IsCancelable::No,
             Event::IsComposed::Yes,
+            MonotonicTime::now(),
             mouseEvent->view(), mouseEvent->detail(),
             mouseEvent->screenX(), mouseEvent->screenY(), mouseEvent->clientX(), mouseEvent->clientY(),
             mouseEvent->modifierKeys(), mouseEvent->button(), mouseEvent->buttons(), mouseEvent->syntheticClickType(), relatedTarget);
@@ -1899,7 +1912,8 @@ std::optional<std::pair<CheckedPtr<RenderObject>, FloatRect>> Element::boundingA
 FloatRect Element::boundingClientRect()
 {
     Ref document = this->document();
-    document->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
+    document->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout , LayoutOptions::CanDeferUpdateLayerPositions }, this);
+    LocalFrameView::AutoPreventLayerAccess preventAccess(*document->view());
     auto pair = boundingAbsoluteRectWithoutLayout();
     if (!pair)
         return { };
@@ -2135,7 +2149,7 @@ bool Element::isElementReflectionAttribute(const Settings& settings, const Quali
 {
     return name == HTMLNames::aria_activedescendantAttr
         || (settings.popoverAttributeEnabled() && name == HTMLNames::popovertargetAttr)
-        || (settings.invokerAttributesEnabled() && name == HTMLNames::invoketargetAttr);
+        || (settings.invokerAttributesEnabled() && name == HTMLNames::commandforAttr);
 }
 
 bool Element::isElementsArrayReflectionAttribute(const QualifiedName& name)
@@ -3675,6 +3689,9 @@ RefPtr<Element> Element::findFocusDelegateForTarget(ContainerNode& target, Focus
     if (RefPtr element = autoFocusDelegate(target, trigger))
         return element;
     for (Ref element : descendantsOfType<Element>(target)) {
+        if (is<HTMLDialogElement>(&target) && element->isKeyboardFocusable(nullptr))
+            return element;
+
         switch (trigger) {
         case FocusTrigger::Click:
             if (element->isMouseFocusable())
@@ -3881,7 +3898,7 @@ bool Element::dispatchMouseForceWillBegin()
         return false;
 
     PlatformMouseEvent platformMouseEvent { frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), MouseButton::None, PlatformEvent::Type::NoType, 1, { }, WallTime::now(), ForceAtClick, SyntheticClickType::NoTap };
-    auto mouseForceWillBeginEvent = MouseEvent::create(eventNames().webkitmouseforcewillbeginEvent, document().windowProxy(), platformMouseEvent, 0, nullptr);
+    auto mouseForceWillBeginEvent = MouseEvent::create(eventNames().webkitmouseforcewillbeginEvent, document().windowProxy(), platformMouseEvent, { }, 0, nullptr);
     mouseForceWillBeginEvent->setTarget(Ref { *this });
     dispatchEvent(mouseForceWillBeginEvent);
 

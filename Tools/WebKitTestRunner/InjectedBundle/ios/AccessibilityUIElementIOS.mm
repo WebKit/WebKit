@@ -807,8 +807,8 @@ unsigned AccessibilityUIElement::uiElementCountForSearchPredicate(JSContextRef c
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementForSearchPredicate(JSContextRef context, AccessibilityUIElement *startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
 {
-    NSDictionary *parameterizedAttribute = searchPredicateParameterizedAttributeForSearchCriteria(context, startElement, isDirectionNext, 5, searchKey, searchText, visibleOnly, immediateDescendantsOnly);
-    id results = [m_element accessibilityFindMatchingObjects:parameterizedAttribute];
+    NSDictionary *parameter = searchPredicateForSearchCriteria(context, startElement, nullptr, isDirectionNext, 5, searchKey, searchText, visibleOnly, immediateDescendantsOnly);
+    id results = [m_element accessibilityFindMatchingObjects:parameter];
     if (![results isKindOfClass:[NSArray class]])
         return nullptr;
 
@@ -1259,6 +1259,12 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::lineTextMarkerRange
     
     id textMarkerRange = [m_element textMarkerRangeForMarkers:textMarkers];
     return AccessibilityTextMarkerRange::create(textMarkerRange);
+}
+
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForSearchPredicate(JSContextRef context, AccessibilityTextMarkerRange *startRange, bool forward, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
+{
+    // FIXME: add implementation for iOS.
+    return nullptr;
 }
 
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::misspellingTextMarkerRange(AccessibilityTextMarkerRange* start, bool forward)

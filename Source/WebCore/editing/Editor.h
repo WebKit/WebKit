@@ -404,7 +404,9 @@ public:
     // international text input composition
     bool hasComposition() const { return m_compositionNode; }
     WEBCORE_EXPORT void setComposition(const String&, const Vector<CompositionUnderline>&, const Vector<CompositionHighlight>&, const HashMap<String, Vector<CharacterRange>>&, unsigned selectionStart, unsigned selectionEnd);
+#if PLATFORM(COCOA)
     WEBCORE_EXPORT void setWritingSuggestion(const String&, const CharacterRange& selection);
+#endif
     WEBCORE_EXPORT void setOffset(uint64_t);
     WEBCORE_EXPORT void confirmComposition();
     WEBCORE_EXPORT void confirmComposition(const String&); // if no existing composition, replaces selection
@@ -566,6 +568,8 @@ public:
 
     static RefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *);
     static RefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *);
+
+    static bool writingSuggestionsSupportsSuffix();
 #endif
 
 #if PLATFORM(MAC)

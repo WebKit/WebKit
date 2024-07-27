@@ -41,14 +41,19 @@ WebMediaKeySystemClient::WebMediaKeySystemClient(WebPage& page)
 {
 }
 
+void WebMediaKeySystemClient::pageDestroyed()
+{
+    delete this;
+}
+
 void WebMediaKeySystemClient::requestMediaKeySystem(MediaKeySystemRequest& request)
 {
-    m_page.mediaKeySystemPermissionRequestManager().startMediaKeySystemRequest(request);
+    m_page->mediaKeySystemPermissionRequestManager().startMediaKeySystemRequest(request);
 }
 
 void WebMediaKeySystemClient::cancelMediaKeySystemRequest(MediaKeySystemRequest& request)
 {
-    m_page.mediaKeySystemPermissionRequestManager().cancelMediaKeySystemRequest(request);
+    m_page->mediaKeySystemPermissionRequestManager().cancelMediaKeySystemRequest(request);
 }
 
 } // namespace WebKit;

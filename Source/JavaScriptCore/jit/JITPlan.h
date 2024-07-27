@@ -96,6 +96,8 @@ public:
     virtual bool iterateCodeBlocksForGC(AbstractSlotVisitor&, const Function<void(CodeBlock*)>&);
     virtual bool checkLivenessAndVisitChildren(AbstractSlotVisitor&);
 
+    bool safepointKeepsDependenciesLive() const;
+
     template<typename Functor>
     void addMainThreadFinalizationTask(const Functor& functor)
     {

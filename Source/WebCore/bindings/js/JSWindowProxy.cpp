@@ -92,7 +92,6 @@ void JSWindowProxy::setWindow(VM& vm, JSDOMGlobalObject& window)
 {
     ASSERT(window.classInfo() == JSDOMWindow::info());
     setTarget(vm, &window);
-    structure()->setGlobalObject(vm, &window);
     GCController::singleton().garbageCollectSoon();
 }
 

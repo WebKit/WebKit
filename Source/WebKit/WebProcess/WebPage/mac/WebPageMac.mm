@@ -1089,6 +1089,11 @@ bool WebPage::shouldAvoidComputingPostLayoutDataForEditorState() const
         return false;
     }
 
+    if (m_hasEverDisplayedContextMenu) {
+        // Some context menu items (like Writing Tools) depend on having post-layout editor state data.
+        return false;
+    }
+
     return true;
 }
 
@@ -1136,10 +1141,12 @@ void WebPage::savePDF(PDFPluginIdentifier identifier, CompletionHandler<void(con
 
 void WebPage::openPDFWithPreview(PDFPluginIdentifier identifier, CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)>&& completionHandler)
 {
-    auto pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
-    if (!pdfPlugin)
-        return completionHandler({ }, { }, { }, { });
-    pdfPlugin->openWithPreview(WTFMove(completionHandler));
+    for (auto& pluginView : m_pluginViews) {
+        if (pluginView.pdfPluginIdentifier() == identifier)
+            return pluginView.openWithPreview(WTFMove(completionHandler));
+    }
+
+    completionHandler({ }, { }, { }, { });
 }
 
 void WebPage::createPDFHUD(PDFPluginBase& plugin, const IntRect& boundingBox)

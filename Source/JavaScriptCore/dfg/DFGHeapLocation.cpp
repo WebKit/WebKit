@@ -93,6 +93,10 @@ void printInternal(PrintStream& out, LocationKind kind)
     case StackPayloadLoc:
         out.print("StackPayloadLoc");
         return;
+
+    case GlobalProxyTargetLoc:
+        out.print("GlobalProxyTargetLoc");
+        return;
         
     case ArrayLengthLoc:
         out.print("ArrayLengthLoc");
@@ -270,8 +274,8 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("MapEntryValueLoc");
         return;
 
-    case MapValueLoc:
-        out.print("MapValueLoc");
+    case LoadMapValueLoc:
+        out.print("LoadMapValueLoc");
         return;
 
     case WeakMapGetLoc:

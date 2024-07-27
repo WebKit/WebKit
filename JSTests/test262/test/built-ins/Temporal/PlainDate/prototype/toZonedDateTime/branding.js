@@ -11,7 +11,7 @@ const toZonedDateTime = Temporal.PlainDate.prototype.toZonedDateTime;
 
 assert.sameValue(typeof toZonedDateTime, "function");
 
-const args = [new Temporal.TimeZone("UTC")];
+const args = ["UTC"];
 
 assert.throws(TypeError, () => toZonedDateTime.apply(undefined, args), "undefined");
 assert.throws(TypeError, () => toZonedDateTime.apply(null, args), "null");

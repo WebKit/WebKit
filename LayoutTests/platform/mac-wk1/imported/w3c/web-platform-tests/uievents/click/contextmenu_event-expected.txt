@@ -1,0 +1,10 @@
+Test contextmenu event
+
+Tests that right-clicking fires a contextmenu event.
+
+Right-click here.
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Test contextmenu dispatched after mousedown Test timed out
+

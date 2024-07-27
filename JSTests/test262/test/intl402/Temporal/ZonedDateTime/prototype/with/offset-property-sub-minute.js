@@ -8,8 +8,7 @@ includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("Africa/Monrovia");
-const instance = Temporal.ZonedDateTime.from({ year: 1970, month: 1, day: 1, hour: 12, timeZone });
+const instance = Temporal.ZonedDateTime.from({ year: 1970, month: 1, day: 1, hour: 12, timeZone: "Africa/Monrovia" });
 assert.sameValue(instance.offset, "-00:44:30", "original offset");
 const properties = { day: 2, offset: "-00:45" };
 

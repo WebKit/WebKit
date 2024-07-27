@@ -100,6 +100,27 @@ class TestResultWriterTest(unittest.TestCase):
             "template_test/pbkdf2.https.any.worker_1-1000-expected.txt", expected
         )
 
+        expected = test_result_writer.TestResultWriter.expected_filename(
+            "template_test/pbkdf2.https.any.worker.html?a%20b", fs
+        )
+        self.assertEqual(
+            "template_test/pbkdf2.https.any.worker_a%20b-expected.txt", expected
+        )
+
+        expected = test_result_writer.TestResultWriter.expected_filename(
+            "template_test/pbkdf2.https.any.worker.html#1-1000", fs
+        )
+        self.assertEqual(
+            "template_test/pbkdf2.https.any.worker_1-1000-expected.txt", expected
+        )
+
+        expected = test_result_writer.TestResultWriter.expected_filename(
+            "template_test/pbkdf2.https.any.worker.html?1-1000#aaa", fs
+        )
+        self.assertEqual(
+            "template_test/pbkdf2.https.any.worker_1-1000#aaa-expected.txt", expected
+        )
+
     def test_actual_filename(self):
         host = MockHost()
         port = TestPort(host)

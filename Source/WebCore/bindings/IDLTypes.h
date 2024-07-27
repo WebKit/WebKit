@@ -389,6 +389,9 @@ template<typename T>
 struct IsIDLInterface : public std::integral_constant<bool, WTF::IsTemplate<T, IDLInterface>::value> { };
 
 template<typename T>
+struct IsIDLCallbackFunction : public std::integral_constant<bool, WTF::IsTemplate<T, IDLCallbackFunction>::value> { };
+
+template<typename T>
 struct IsIDLDictionary : public std::integral_constant<bool, WTF::IsTemplate<T, IDLDictionary>::value> { };
 
 template<typename T>

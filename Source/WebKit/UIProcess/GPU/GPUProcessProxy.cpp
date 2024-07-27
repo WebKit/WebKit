@@ -466,10 +466,12 @@ void GPUProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
 
 void GPUProcessProxy::connectionWillOpen(IPC::Connection&)
 {
+    RELEASE_LOG(Process, "%p - GPUProcessProxy::connectionWillOpen:", this);
 }
 
 void GPUProcessProxy::processWillShutDown(IPC::Connection& connection)
 {
+    RELEASE_LOG(Process, "%p - GPUProcessProxy::processWillShutDown:", this);
     ASSERT_UNUSED(connection, this->connection() == &connection);
     if (singleton() == this)
         singleton() = nullptr;
@@ -501,6 +503,11 @@ void GPUProcessProxy::createGPUProcessConnection(WebProcessProxy& webProcessProx
             return;
         stopResponsivenessTimer();
     }, 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+
+void GPUProcessProxy::sharedPreferencesForWebProcessDidChange(WebProcessProxy& webProcessProxy, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess, CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::GPUProcess::SharedPreferencesForWebProcessDidChange { webProcessProxy.coreProcessIdentifier(), WTFMove(sharedPreferencesForWebProcess) }, WTFMove(completionHandler));
 }
 
 void GPUProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
@@ -551,6 +558,7 @@ void GPUProcessProxy::processIsReadyToExit()
 
 void GPUProcessProxy::childConnectionDidBecomeUnresponsive()
 {
+    RELEASE_LOG_ERROR(Process, "%p - GPUProcessProxy::childConnectionDidBecomeUnresponsive:", this);
     didBecomeUnresponsive();
 }
 
@@ -586,6 +594,8 @@ void GPUProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC:
 
 void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
 {
+    RELEASE_LOG(Process, "%p - GPUProcessProxy::didFinishLaunching:", this);
+
     AuxiliaryProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
     if (!connectionIdentifier) {
@@ -619,6 +629,14 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     sendBookmarkDataForCacheDirectory();
 #endif
 }
+
+#if ENABLE(WEBXR)
+void GPUProcessProxy::webXRPromptAccepted(std::optional<WebCore::ProcessIdentity> processIdentity, CompletionHandler<void(bool)>&& completion)
+{
+    sendWithAsyncReply(Messages::GPUProcess::WebXRPromptAccepted(WTFMove(processIdentity)), WTFMove(completion));
+}
+#endif
+
 
 void GPUProcessProxy::updateProcessAssertion()
 {
@@ -696,17 +714,20 @@ void GPUProcessProxy::removeSession(PAL::SessionID sessionID)
 
 void GPUProcessProxy::sendPrepareToSuspend(IsSuspensionImminent isSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&& completionHandler)
 {
+    RELEASE_LOG(ProcessSuspension, "%p - GPUProcessProxy::sendPrepareToSuspend:", this);
     sendWithAsyncReply(Messages::GPUProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes, MonotonicTime::now() + Seconds(remainingRunTime)), WTFMove(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
 }
 
 void GPUProcessProxy::sendProcessDidResume(ResumeReason)
 {
+    RELEASE_LOG(ProcessSuspension, "%p - GPUProcessProxy::sendProcessDidResume:", this);
     if (canSendMessage())
         send(Messages::GPUProcess::ProcessDidResume(), 0);
 }
 
 void GPUProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
 {
+    RELEASE_LOG_ERROR(Process, "GPUProcessProxy::terminateWebProcess: webProcessIdentifier=%" PRIu64, webProcessIdentifier.toUInt64());
     if (auto process = WebProcessProxy::processForIdentifier(webProcessIdentifier))
         process->requestTermination(ProcessTerminationReason::RequestedByGPUProcess);
 }
@@ -714,10 +735,10 @@ void GPUProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProcessI
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 void GPUProcessProxy::didCreateContextForVisibilityPropagation(WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, LayerHostingContextID contextID)
 {
-    RELEASE_LOG(Process, "GPUProcessProxy::didCreateContextForVisibilityPropagation: webPageProxyID: %" PRIu64 ", pagePID: %" PRIu64 ", contextID: %u", webPageProxyID.toUInt64(), pageID.toUInt64(), contextID);
+    RELEASE_LOG(Process, "%p - GPUProcessProxy::didCreateContextForVisibilityPropagation: webPageProxyID: %" PRIu64 ", pagePID: %" PRIu64 ", contextID: %u", this, webPageProxyID.toUInt64(), pageID.toUInt64(), contextID);
     auto page = WebProcessProxy::webPage(webPageProxyID);
     if (!page) {
-        RELEASE_LOG(Process, "GPUProcessProxy::didCreateContextForVisibilityPropagation() No WebPageProxy with this identifier");
+        RELEASE_LOG(Process, "%p - GPUProcessProxy::didCreateContextForVisibilityPropagation() No WebPageProxy with this identifier", this);
         return;
     }
     if (page->webPageIDInMainFrameProcess() == pageID) {
@@ -729,7 +750,7 @@ void GPUProcessProxy::didCreateContextForVisibilityPropagation(WebPageProxyIdent
         provisionalPage->didCreateContextInGPUProcessForVisibilityPropagation(contextID);
         return;
     }
-    RELEASE_LOG(Process, "GPUProcessProxy::didCreateContextForVisibilityPropagation() There was a WebPageProxy for this identifier, but it had the wrong WebPage identifier.");
+    RELEASE_LOG(Process, "%p - GPUProcessProxy::didCreateContextForVisibilityPropagation() There was a WebPageProxy for this identifier, but it had the wrong WebPage identifier.", this);
 }
 #endif
 
@@ -779,7 +800,7 @@ void GPUProcessProxy::updateScreenPropertiesIfNeeded()
 
 void GPUProcessProxy::didBecomeUnresponsive()
 {
-    RELEASE_LOG_ERROR(Process, "GPUProcessProxy::didBecomeUnresponsive: GPUProcess with PID %d became unresponsive, terminating it", processID());
+    RELEASE_LOG_ERROR(Process, "%p - GPUProcessProxy::didBecomeUnresponsive: GPUProcess with PID %d became unresponsive, terminating it", this, processID());
     terminate();
     gpuProcessExited(ProcessTerminationReason::Unresponsive);
 }

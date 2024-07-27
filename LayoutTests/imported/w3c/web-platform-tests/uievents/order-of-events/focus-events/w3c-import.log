@@ -15,5 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/focus-events/focus-automated-blink-webkit.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/focus-events/focus-contained.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/focus-events/focus-management-expectations.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/order-of-events/focus-events/focus.html

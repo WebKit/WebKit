@@ -8,7 +8,7 @@ features: [Temporal]
 ---*/
 
 const plainDate = Temporal.PlainDate.from("2020-01-01");
-const timeZone = Temporal.TimeZone.from("UTC");
+const timeZone = "UTC";
 const plainTime = Temporal.PlainTime.from("12:00");
 
 let result = plainDate.toZonedDateTime({ timeZone, plainTime });
@@ -17,13 +17,7 @@ assert.sameValue(result.toString(), "2020-01-01T12:00:00+00:00[UTC]", "objects p
 result = plainDate.toZonedDateTime(timeZone);
 assert.sameValue(result.toString(), "2020-01-01T00:00:00+00:00[UTC]", "time zone object argument");
 
-result = plainDate.toZonedDateTime("UTC");
-assert.sameValue(result.toString(), "2020-01-01T00:00:00+00:00[UTC]", "time zone string argument");
-
-result = plainDate.toZonedDateTime({ timeZone });
-assert.sameValue(result.toString(), "2020-01-01T00:00:00+00:00[UTC]", "time zone object property");
-
-result = plainDate.toZonedDateTime({ timeZone: "UTC", plainTime });
+result = plainDate.toZonedDateTime({ timeZone, plainTime });
 assert.sameValue(result.toString(), "2020-01-01T12:00:00+00:00[UTC]", "time zone string property");
 
 result = plainDate.toZonedDateTime({ timeZone, plainTime: "12:00" });

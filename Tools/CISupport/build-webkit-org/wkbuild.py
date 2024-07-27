@@ -47,7 +47,6 @@ def _should_file_trigger_build(target_platform, file):
         "mac-monterey",
         "mac-ventura",
         "mac-sonoma",
-        "win",
         "ios-17",
         "ios-simulator-17",
         "visionos-1",
@@ -88,10 +87,10 @@ def _should_file_trigger_build(target_platform, file):
         ("LayoutTests/platform/mac-sonoma", ["mac-ventura", "mac-sonoma"]),
         ("LayoutTests/platform/mac-wk2", ["mac"]),
         ("LayoutTests/platform/mac-wk1", ["mac"]),
-        ("LayoutTests/platform/mac", ["mac", "win"]),
+        ("LayoutTests/platform/mac", ["mac"]),
         ("LayoutTests/platform/wk2", ["mac", "ios", "visionos"]),
         ("cairo", ["gtk", "wincairo"]),
-        ("cf", ["mac", "win", "ios", "visionos", "tvos", "watchos"]),
+        ("cf", ["mac", "ios", "visionos", "tvos", "watchos"]),
         ("cocoa", ["mac", "ios", "visionos", "tvos", "watchos"]),
         ("curl", ["gtk", "wincairo"]),
         ("gobject", ["gtk"]),
@@ -101,7 +100,6 @@ def _should_file_trigger_build(target_platform, file):
         ("mac", ["mac"]),
         ("objc", ["mac", "ios", "visionos", "tvos", "watchos"]),
         ("soup", ["gtk"]),
-        ("win", ["win"]),
     ]
     patterns = [
         # Patterns that shouldn't trigger builds on any bots.
@@ -117,10 +115,8 @@ def _should_file_trigger_build(target_platform, file):
         (r"(?:^|/)PlatformGTK\.cmake$", ["gtk"]),
         (r"Mac\.(?:cpp|h|mm)$", ["mac"]),
         (r"IOS\.(?:cpp|h|mm)$", ["ios", "visionos", "tvos", "watchos"]),
-        (r"\.(?:vcproj|vsprops|sln|vcxproj|props|filters)$", ["win"]),
         (r"\.exp(?:\.in)?$", ["mac", "ios", "visionos", "tvos", "watchos"]),
         (r"\.order$", ["mac", "ios", "visionos", "tvos", "watchos"]),
-        (r"\.(?:vcproj|vcxproj)/", ["win"]),
         (r"\.xcconfig$", ["mac", "ios", "visionos", "tvos", "watchos"]),
         (r"\.xcodeproj/", ["mac", "ios", "visionos", "tvos", "watchos"]),
     ]

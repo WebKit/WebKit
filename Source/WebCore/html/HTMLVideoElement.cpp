@@ -75,6 +75,8 @@ inline HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document
     m_defaultPosterURL = AtomString { document.settings().defaultVideoPosterURL() };
 }
 
+HTMLVideoElement::~HTMLVideoElement() = default;
+
 Ref<HTMLVideoElement> HTMLVideoElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
 {
     Ref videoElement = adoptRef(*new HTMLVideoElement(tagName, document, createdByParser));

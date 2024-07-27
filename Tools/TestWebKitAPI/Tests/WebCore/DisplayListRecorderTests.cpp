@@ -194,7 +194,8 @@ struct ChangeAntialiasBeforeSave {
   (should-antialias 0))
 (save)
 (fill-rect
-  (rect at (0,0) size 5.50x5.70))
+  (rect at (0,0) size 5.50x5.70)
+  (requiresClipToRect 1))
 (restore))DL"_s;
     }
 };
@@ -220,7 +221,8 @@ struct ChangeAntialiasBeforeAndAfterSave {
   (change-flags [should-antialias])
   (should-antialias 1))
 (fill-rect
-  (rect at (0,0) size 5.50x5.70))
+  (rect at (0,0) size 5.50x5.70)
+  (requiresClipToRect 1))
 (restore))DL"_s;
     }
 };

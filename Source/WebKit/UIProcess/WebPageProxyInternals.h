@@ -193,6 +193,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     WebCore::IntSize minimumSizeForAutoLayout;
     WebCore::FloatSize minimumUnobscuredSize;
     Deque<NativeWebMouseEvent> mouseEventQueue;
+    Vector<WebMouseEvent> coalescedMouseEvents;
     WebCore::MediaProducerMutedStateFlags mutedState;
     WebNotificationManagerMessageHandler notificationManagerMessageHandler;
     OptionSet<WebCore::LayoutMilestone> observedLayoutMilestones;
@@ -295,7 +296,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
 
 #if ENABLE(WRITING_TOOLS)
     HashMap<WTF::UUID, WebCore::TextIndicatorData> textIndicatorDataForAnimationID;
-    HashMap<WTF::UUID, CompletionHandler<void()>> completionHandlerForAnimationID;
+    HashMap<WTF::UUID, CompletionHandler<void(WebCore::TextAnimationRunMode)>> completionHandlerForAnimationID;
 #endif
 
     MonotonicTime didFinishDocumentLoadForMainFrameTimestamp;

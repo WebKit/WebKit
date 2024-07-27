@@ -58,6 +58,7 @@ enum UseKind : uint8_t {
     PromiseObjectUse,
     RegExpObjectUse,
     ProxyObjectUse,
+    GlobalProxyUse,
     DerivedArrayUse,
     ObjectOrOtherUse,
     StringIdentUse,
@@ -145,6 +146,8 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
         return SpecRegExpObject;
     case ProxyObjectUse:
         return SpecProxyObject;
+    case GlobalProxyUse:
+        return SpecGlobalProxy;
     case DerivedArrayUse:
         return SpecDerivedArray;
     case ObjectOrOtherUse:
@@ -261,6 +264,7 @@ inline bool isCell(UseKind kind)
     case RegExpObjectUse:
     case PromiseObjectUse:
     case ProxyObjectUse:
+    case GlobalProxyUse:
     case DerivedArrayUse:
     case StringIdentUse:
     case StringUse:

@@ -137,6 +137,11 @@ void RemoteRenderingBackend::stopListeningForIPC()
     });
 }
 
+const SharedPreferencesForWebProcess& RemoteRenderingBackend::sharedPreferencesForWebProcess() const
+{
+    return m_gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
+}
+
 void RemoteRenderingBackend::workQueueInitialize()
 {
     assertIsCurrent(workQueue());
@@ -269,10 +274,20 @@ static RefPtr<ImageBuffer> allocateImageBufferInternal(const FloatSize& logicalS
     return imageBuffer;
 }
 
+static void adjustImageBufferRenderingMode(const RemoteSharedResourceCache& sharedResourceCache, RenderingPurpose purpose, RenderingMode& renderingMode)
+{
+    if (renderingMode == RenderingMode::Accelerated && sharedResourceCache.reachedAcceleratedImageBufferLimit(purpose))
+        renderingMode = RenderingMode::Unaccelerated;
+}
+
 RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat, ImageBufferCreationContext creationContext, RenderingResourceIdentifier imageBufferIdentifier)
 {
     assertIsCurrent(workQueue());
+    if (purpose == RenderingPurpose::Canvas && m_sharedResourceCache->reachedImageBufferForCanvasLimit())
+        return nullptr;
     adjustImageBufferCreationContext(m_sharedResourceCache, creationContext);
+    adjustImageBufferRenderingMode(m_sharedResourceCache, purpose, renderingMode);
+
     RefPtr<ImageBuffer> imageBuffer;
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
@@ -609,6 +624,11 @@ bool RemoteRenderingBackend::shouldUseLockdownFontParser() const
     return m_gpuConnectionToWebProcess->isLockdownSafeFontParserEnabled() && m_gpuConnectionToWebProcess->isLockdownModeEnabled() && PAL::canLoad_CoreText_CTFontManagerCreateMemorySafeFontDescriptorFromData();
 }
 #endif
+
+void RemoteRenderingBackend::getImageBufferResourceLimitsForTesting(CompletionHandler<void(WebCore::ImageBufferResourceLimits)>&& callback)
+{
+    callback(m_sharedResourceCache->getResourceLimitsForTesting());
+}
 
 } // namespace WebKit
 

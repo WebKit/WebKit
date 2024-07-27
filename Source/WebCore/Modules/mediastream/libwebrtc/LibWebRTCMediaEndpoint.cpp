@@ -319,7 +319,7 @@ void LibWebRTCMediaEndpoint::OnSignalingChange(webrtc::PeerConnectionInterface::
 
 MediaStream& LibWebRTCMediaEndpoint::mediaStreamFromRTCStreamId(const String& id)
 {
-    auto mediaStream = m_remoteStreamsById.ensure(id, [id, this]() mutable {
+    auto mediaStream = m_remoteStreamsById.ensure(id, [id, this]() {
         auto& document = downcast<Document>(*m_peerConnectionBackend.connection().scriptExecutionContext());
         auto stream = MediaStream::create(document, MediaStreamPrivate::create(document.logger(), { }, String(id)));
         return stream;

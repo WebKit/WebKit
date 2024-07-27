@@ -46,6 +46,7 @@ using PDFPageCoverage = Vector<PerPageInfo>;
 
 struct PDFPageCoverageAndScales {
     PDFPageCoverage pages;
+    WebCore::FloatSize contentsOffset { };
     float deviceScaleFactor { 1 };
     float pdfDocumentScale { 1 };
     float tilingScaleFactor { 1 };

@@ -38,6 +38,7 @@
 #include "MacroAssemblerHelpers.h"
 #include "Options.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/SetForScope.h>
 #include <wtf/SharedTask.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/TZoneMalloc.h>
@@ -99,6 +100,7 @@ class AbstractMacroAssembler : public AbstractMacroAssemblerBase {
 public:
     typedef AbstractMacroAssembler<AssemblerType> AbstractMacroAssemblerType;
     typedef AssemblerType AssemblerType_T;
+    friend class SuppressRegisetrAllocationValidation;
 
     template<PtrTag tag> using CodeRef = MacroAssemblerCodeRef<tag>;
 
@@ -182,6 +184,8 @@ public:
         
         BaseIndex indexedBy(RegisterID index, Scale) const;
         
+        friend bool operator==(const Address&, const Address&) = default;
+
         RegisterID base;
         int32_t offset;
     };
@@ -193,6 +197,8 @@ public:
         {
         }
         
+        friend bool operator==(const ExtendedAddress&, const ExtendedAddress&) = default;
+
         RegisterID base;
         intptr_t offset;
     };
@@ -213,12 +219,6 @@ public:
 #endif
         }
         
-        RegisterID base;
-        RegisterID index;
-        Scale scale;
-        int32_t offset;
-        Extend extend;
-        
         BaseIndex withOffset(int32_t additionalOffset)
         {
             return BaseIndex(base, index, scale, offset + additionalOffset);
@@ -228,6 +228,14 @@ public:
         {
             return BaseIndex(AbstractMacroAssembler::withSwappedRegister(base, left, right), AbstractMacroAssembler::withSwappedRegister(index, left, right), scale, offset);
         }
+
+        friend bool operator==(const BaseIndex&, const BaseIndex&) = default;
+
+        RegisterID base;
+        RegisterID index;
+        Scale scale;
+        int32_t offset;
+        Extend extend;
     };
 
     // PreIndexAddress:
@@ -885,6 +893,22 @@ public:
         return Label(this);
     }
 
+    // DFG register allocation validation is broken in various cases. We need suppression mechanism otherwise, it introduces a new bug rather to bypass the issue.
+    class SuppressRegisetrAllocationValidation {
+    public:
+#if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
+        SuppressRegisetrAllocationValidation(AbstractMacroAssemblerType& assembler)
+            : m_suppressRegisterValidation(assembler.m_suppressRegisterValidation, true)
+        {
+        }
+
+    private:
+        SetForScope<bool> m_suppressRegisterValidation;
+#else
+        SuppressRegisetrAllocationValidation(AbstractMacroAssemblerType&) { }
+#endif
+    };
+
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
     class RegisterAllocationOffset {
     public:
@@ -914,12 +938,14 @@ public:
 
     void checkRegisterAllocationAgainstBranchRange(unsigned offset1, unsigned offset2)
     {
+        if (m_suppressRegisterValidation)
+            return;
+
         if (offset1 > offset2)
             std::swap(offset1, offset2);
 
-        size_t size = m_registerAllocationForOffsets.size();
-        for (size_t i = 0; i < size; ++i)
-            m_registerAllocationForOffsets[i].checkOffsets(offset1, offset2);
+        for (auto& offset : m_registerAllocationForOffsets)
+            offset.checkOffsets(offset1, offset2);
     }
 #endif
 
@@ -1087,6 +1113,7 @@ public:
 protected:
 
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
+    bool m_suppressRegisterValidation { false };
     Vector<RegisterAllocationOffset, 10> m_registerAllocationForOffsets;
 #endif
 

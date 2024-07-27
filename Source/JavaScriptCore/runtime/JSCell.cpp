@@ -322,7 +322,7 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void reportZappedCellAndCras
                 return IterationStatus::Done;
 
             if (subspace.isIsoSubspace()) {
-                static_cast<IsoSubspace&>(subspace).forEachLowerTierFreeListedPreciseAllocation([&](PreciseAllocation* allocation) {
+                static_cast<IsoSubspace&>(subspace).forEachLowerTierPreciseFreeListedPreciseAllocation([&](PreciseAllocation* allocation) {
                     if (allocation->contains(cell)) {
                         foundPreciseAllocation = allocation;
                         isFreeListed = true;

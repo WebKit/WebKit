@@ -9,8 +9,6 @@ features: [Temporal]
 ---*/
 
 const expected = [
-  "ownKeys options",
-  "getOwnPropertyDescriptor options.overflow",
   "get options.overflow",
   "get options.overflow.toString",
   "call options.overflow.toString",
@@ -25,9 +23,9 @@ TemporalHelpers.assertPlainYearMonth(result, 2021, 5, "M05");
 
 actual.splice(0);  // empty it for the next check
 const failureExpected = [
-  "ownKeys options",
-  "getOwnPropertyDescriptor options.overflow",
   "get options.overflow",
+  "get options.overflow.toString",
+  "call options.overflow.toString",
 ];
 
 assert.throws(TypeError, () => Temporal.PlainYearMonth.from(7, options));

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ContextDestructionObserver.h"
+#include "ActiveDOMObject.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -37,7 +37,7 @@ class ReportingObserverCallback;
 class ReportingScope;
 class ScriptExecutionContext;
 
-class ReportingObserver final : public RefCounted<ReportingObserver>, public ContextDestructionObserver  {
+class ReportingObserver final : public RefCounted<ReportingObserver>, public ActiveDOMObject  {
     WTF_MAKE_ISO_ALLOCATED(ReportingObserver);
 public:
     struct Options {
@@ -56,6 +56,11 @@ public:
     void appendQueuedReportIfCorrectType(const Ref<Report>&);
 
     ReportingObserverCallback& callbackConcurrently();
+
+    // ActiveDOMObject
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+    bool virtualHasPendingActivity() const final;
 
 private:
     explicit ReportingObserver(ScriptExecutionContext&, Ref<ReportingObserverCallback>&&, ReportingObserver::Options&&);

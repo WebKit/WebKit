@@ -31,6 +31,7 @@ class RenderMarquee;
 
 class HTMLMarqueeElement final : public HTMLElement, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(HTMLMarqueeElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLMarqueeElement);
 public:
     static Ref<HTMLMarqueeElement> create(const QualifiedName&, Document&);
 

@@ -43,7 +43,6 @@ class Waiter final : public WTF::BasicRawSentinelNode<Waiter>, public ThreadSafe
 public:
     Waiter(VM*);
     Waiter(JSPromise*);
-    ~Waiter();
 
     bool isAsync() const
     {
@@ -71,13 +70,17 @@ public:
         return m_condition;
     }
 
-    DeferredWorkTimer::Ticket ticket(const AbstractLocker&) const
+    RefPtr<DeferredWorkTimer::TicketData> ticket(const AbstractLocker&) const
     {
         ASSERT(m_isAsync);
-        return m_ticket;
+        return m_ticket.get();
     }
 
-    void scheduleWorkAndClearTicket(DeferredWorkTimer::Task&&);
+    void clearTicket(const AbstractLocker&)
+    {
+        ASSERT(m_isAsync);
+        m_ticket = nullptr;
+    }
 
     void setTimer(const AbstractLocker&, Ref<RunLoop::DispatchTimer>&& timer)
     {
@@ -90,21 +93,25 @@ public:
         return !!m_timer;
     }
 
-    void cancelTimer(const AbstractLocker&)
+    void clearTimer(const AbstractLocker&)
     {
         ASSERT(m_isAsync);
         // If the timeout for AsyncWaiter is infinity, we won't dispatch any timer.
         if (!m_timer)
             return;
         m_timer->stop();
-        // This releases the strong reference to the Waiter in the timer.
+        // The AsyncWaiter's timer holds the waiter's reference. This
+        // releases the strong reference to the Waiter in the timer.
         m_timer = nullptr;
     }
 
+    void scheduleWorkAndClear(const AbstractLocker&, DeferredWorkTimer::Task&&);
+    void cancelAndClear(const AbstractLocker&);
     void dump(PrintStream&) const;
+
 private:
     VM* m_vm { nullptr };
-    DeferredWorkTimer::Ticket m_ticket { nullptr };
+    ThreadSafeWeakPtr<DeferredWorkTimer::TicketData> m_ticket { nullptr };
     RefPtr<RunLoop::DispatchTimer> m_timer { nullptr };
     Condition m_condition;
     bool m_isAsync { false };

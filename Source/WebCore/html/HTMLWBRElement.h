@@ -33,6 +33,7 @@ class RenderLineBreak;
 
 class HTMLWBRElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLWBRElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLWBRElement);
 public:
     static Ref<HTMLWBRElement> create(const QualifiedName&, Document&);
 

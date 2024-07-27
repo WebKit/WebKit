@@ -3,7 +3,9 @@
 
 /*---
 esid: sec-temporal.plaindate.prototype.withcalendar
-description: Fast path for converting other Temporal objects to Temporal.Calendar by reading internal slots
+description: >
+  Fast path for converting other Temporal objects to calendar ID by reading
+  internal slots
 info: |
     sec-temporal-totemporalcalendar step 1.b:
       b. If _temporalCalendarLike_ has an [[InitializedTemporalDate]], [[InitializedTemporalDateTime]], [[InitializedTemporalMonthDay]], [[InitializedTemporalYearMonth]], or [[InitializedTemporalZonedDateTime]] internal slot, then
@@ -22,8 +24,6 @@ const zonedDateTime = new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UT
   const actual = [];
   const expected = [];
 
-  const calendar = arg.getISOFields().calendar;
-
   Object.defineProperty(arg, "calendar", {
     get() {
       actual.push("get calendar");
@@ -31,31 +31,9 @@ const zonedDateTime = new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UT
     },
   });
 
-  const instance = new Temporal.PlainDate(1976, 11, 18, {
-  dateAdd() {},
-  dateFromFields() {},
-  dateUntil() {},
-  day() {},
-  dayOfWeek() {},
-  dayOfYear() {},
-  daysInMonth() {},
-  daysInWeek() {},
-  daysInYear() {},
-  fields() {},
-  id: "replace-me",
-  inLeapYear() {},
-  mergeFields() {},
-  month() {},
-  monthCode() {},
-  monthDayFromFields() {},
-  monthsInYear() {},
-  weekOfYear() {},
-  year() {},
-  yearMonthFromFields() {},
-  yearOfWeek() {},
-});
+  const instance = new Temporal.PlainDate(1976, 11, 18, "iso8601");
   const result = instance.withCalendar(arg);
-  assert.sameValue(result.getISOFields().calendar, calendar, "Temporal object coerced to calendar");
+  assert.sameValue(result.calendarId, "iso8601", "Temporal object coerced to calendar");
 
   assert.compareArray(actual, expected, "calendar getter not called");
 });

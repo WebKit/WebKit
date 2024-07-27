@@ -129,7 +129,9 @@ public:
     CGRect frame() const;
     void setFrame(CGRect, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
+#if PLATFORM(MAC)
     CGRect screenFrame() const;
+#endif
 
     void close(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 

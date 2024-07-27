@@ -25,5 +25,5 @@
 
 [
     ExportMacro=WEBCORE_EXPORT,
-    IsStrongCallback
+    GenerateIsReachable=ImplScriptExecutionContext
 ] callback VoidCallback = undefined ();

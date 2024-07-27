@@ -36,10 +36,6 @@
 #undef GST_USE_UNSTABLE_API
 #endif
 
-#if defined(BUILDING_WebCore) && PLATFORM(WPE) && USE(WPEBACKEND_FDO_AUDIO_EXTENSION)
-#include <wpe/extensions/audio.h>
-#endif
-
 namespace WTF {
 
 WTF_DEFINE_GPTR_DELETER(GstStructure, gst_structure_free)
@@ -55,10 +51,6 @@ WTF_DEFINE_GPTR_DELETER(GstAudioInfo, gst_audio_info_free)
 #if defined(BUILDING_WebCore) && USE(GSTREAMER_WEBRTC)
 WTF_DEFINE_GPTR_DELETER(GstWebRTCSessionDescription, gst_webrtc_session_description_free)
 WTF_DEFINE_GPTR_DELETER(GstSDPMessage, gst_sdp_message_free)
-#endif
-
-#if defined(BUILDING_WebCore) && PLATFORM(WPE) && USE(WPEBACKEND_FDO_AUDIO_EXTENSION)
-WTF_DEFINE_GPTR_DELETER(struct wpe_audio_source, wpe_audio_source_destroy)
 #endif
 }
 

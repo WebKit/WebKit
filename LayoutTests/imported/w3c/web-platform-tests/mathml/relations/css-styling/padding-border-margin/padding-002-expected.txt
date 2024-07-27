@@ -7,8 +7,8 @@ PASS Padding properties on merror
 PASS Padding properties on merror (rtl)
 PASS Padding properties on mfrac
 PASS Padding properties on mfrac (rtl)
-FAIL Padding properties on mi assert_approx_equals: right padding expected 40 +/- 1 but got 38.406253814697266
-FAIL Padding properties on mi (rtl) assert_approx_equals: right padding expected 40 +/- 1 but got 38.406253814697266
+PASS Padding properties on mi
+PASS Padding properties on mi (rtl)
 PASS Padding properties on mmultiscripts
 PASS Padding properties on mmultiscripts (rtl)
 PASS Padding properties on mn
@@ -16,7 +16,7 @@ PASS Padding properties on mn (rtl)
 PASS Padding properties on mo
 PASS Padding properties on mo (rtl)
 PASS Padding properties on mover
-PASS Padding properties on mover
+PASS Padding properties on mover (rtl)
 PASS Padding properties on mpadded
 PASS Padding properties on mpadded (rtl)
 PASS Padding properties on mphantom

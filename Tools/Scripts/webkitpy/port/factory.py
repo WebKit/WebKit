@@ -64,9 +64,12 @@ def platform_options(use_globs=False):
         optparse.make_option('--wpe', action='store_const', dest='platform',
             const=('wpe*' if use_globs else 'wpe'),
             help=('Alias for --platform=wpe')),
+        optparse.make_option('--win', action='store_const', dest='platform',
+            const=('win'),
+            help=('Alias for --platform=win')),
         optparse.make_option('--wincairo', action='store_const', dest='platform',
-            const=('wincairo'),
-            help=('Alias for --platform=wincairo')),
+            const=('win'),
+            help=('Alias for --platform=win')),
         optparse.make_option('--maccatalyst', action='store_const', dest='platform',
             const=('maccatalyst'),
             help=('Alias for --platform=maccatalyst')),
@@ -111,7 +114,7 @@ class PortFactory(object):
         'mac.MacCatalystPort',
         'mac.MacPort',
         'test.TestPort',
-        'win.WinCairoPort',
+        'win.WinPort',
         'wpe.WPEPort',
     )
 
@@ -125,7 +128,7 @@ class PortFactory(object):
         elif platform.is_mac():
             return 'mac'
         elif platform.is_win():
-            return 'wincairo'
+            return 'win'
         raise NotImplementedError('unknown platform: %s' % platform)
 
     def get(self, port_name=None, options=None, **kwargs):
@@ -133,6 +136,8 @@ class PortFactory(object):
         port_name is None, this routine attempts to guess at the most
         appropriate port on this platform."""
         port_name = port_name or self._default_port()
+        if port_name == 'wincairo':
+            port_name = 'win'
 
         classes = []
         for port_class in self.PORT_CLASSES:
@@ -171,7 +176,7 @@ class PortFactory(object):
             'mac-sonoma-wk2',
             'mac-ventura-wk1',
             'mac-ventura-wk2',
-            'wincairo-win10',
+            'win-win10',
             'wpe',
         ]
         return fnmatch.filter(all_port_names, platform)

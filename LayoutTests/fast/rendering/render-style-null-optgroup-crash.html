@@ -7,9 +7,13 @@ function f1() {
     try { y = x.commonAncestorContainer; } catch { }
     try { z.selectionDirection = "backward"; } catch { }
     try { y.innerHTML = "PASS"; } catch { }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 if (window.testRunner) {
+    testRunner.waitUntilDone();
     testRunner.dumpAsText();
 }
 

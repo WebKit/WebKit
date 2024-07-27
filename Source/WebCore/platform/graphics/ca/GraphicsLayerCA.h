@@ -290,6 +290,8 @@ private:
     PlatformCALayer* layerForSuperlayer() const;
     PlatformCALayer* animatedLayer(AnimatedProperty) const;
 
+    WEBCORE_EXPORT void setTileCoverage(TileCoverage) override;
+
     typedef String CloneID; // Identifier for a given clone, based on original/replica branching down the tree.
     static bool isReplicatedRootClone(const CloneID& cloneID) { return cloneID[0U] & 1; }
 
@@ -327,6 +329,7 @@ private:
     bool hasAnimations() const { return !m_animations.isEmpty(); }
     bool animationIsRunning(const String& animationName) const;
 
+    void commitLayerTypeChangesBeforeSublayers(CommitState&, float pageScaleFactor, bool& layerTypeChanged);
     void commitLayerChangesBeforeSublayers(CommitState&, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool& layerTypeChanged);
     void commitLayerChangesAfterSublayers(CommitState&);
 
@@ -672,6 +675,8 @@ private:
     FloatSize m_pixelAlignmentOffset;
 
     Color m_contentsSolidColor;
+
+    TileCoverage m_tileCoverage;
 
     RefPtr<NativeImage> m_uncorrectedContentsImage;
     RefPtr<NativeImage> m_pendingContentsImage;

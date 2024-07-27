@@ -1,3 +1,0 @@
-
-PASS IDBIndex.getKey() - returns the record's primary key
-

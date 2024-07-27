@@ -86,7 +86,7 @@ void SVGFEImageElement::requestImageResource()
 
     CachedResourceRequest request(ResourceRequest(document().completeURL(href())), options);
     request.setInitiator(*this);
-    m_cachedImage = document().cachedResourceLoader().requestImage(WTFMove(request)).value_or(nullptr);
+    m_cachedImage = document().protectedCachedResourceLoader()->requestImage(WTFMove(request)).value_or(nullptr);
 
     if (CachedResourceHandle cachedImage = m_cachedImage)
         cachedImage->addClient(*this);

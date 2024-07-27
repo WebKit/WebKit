@@ -1,4 +1,4 @@
 
 
-FAIL navigation.activation after replace promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'from_entry_after_nav.key')"
+FAIL navigation.activation after replace assert_equals: expected "bda7783c-e584-483e-ad30-88339ca06c57" but got "eb3c4530-37d5-4f6b-84e8-152ccfdf7c72"
 

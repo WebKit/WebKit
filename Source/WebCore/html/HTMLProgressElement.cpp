@@ -42,8 +42,6 @@ const double HTMLProgressElement::InvalidPosition = -2;
 
 HTMLProgressElement::HTMLProgressElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document, TypeFlag::HasCustomStyleResolveCallbacks)
-    , m_value(0)
-    , m_isDeterminate(false)
 {
     ASSERT(hasTagName(progressTag));
 }

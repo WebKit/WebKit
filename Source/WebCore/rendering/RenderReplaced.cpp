@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Google Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011-2012. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -391,10 +392,12 @@ bool RenderReplaced::hasReplacedLogicalHeight() const
 bool RenderReplaced::setNeedsLayoutIfNeededAfterIntrinsicSizeChange()
 {
     setPreferredLogicalWidthsDirty(true);
-    
+
     // If the actual area occupied by the image has changed and it is not constrained by style then a layout is required.
-    bool imageSizeIsConstrained = style().logicalWidth().isSpecified() && style().logicalHeight().isSpecified() && !style().logicalMinWidth().isIntrinsic() && !style().logicalMaxWidth().isIntrinsic();
-    
+    bool imageSizeIsConstrained = style().logicalWidth().isSpecified() && style().logicalHeight().isSpecified()
+        && !style().logicalMinWidth().isIntrinsic() && !style().logicalMaxWidth().isIntrinsic()
+        && !hasAutoHeightOrContainingBlockWithAutoHeight(UpdatePercentageHeightDescendants::No);
+
     // FIXME: We only need to recompute the containing block's preferred size
     // if the containing block's size depends on the image's size (i.e., the container uses shrink-to-fit sizing).
     // There's no easy way to detect that shrink-to-fit is needed, always force a layout.
@@ -402,7 +405,7 @@ bool RenderReplaced::setNeedsLayoutIfNeededAfterIntrinsicSizeChange()
         style().logicalWidth().isPercentOrCalculated()
         || style().logicalMaxWidth().isPercentOrCalculated()
         || style().logicalMinWidth().isPercentOrCalculated();
-    
+
     // Flex layout algorithm uses the intrinsic image width/height even if width/height are specified.
     if (!imageSizeIsConstrained || containingBlockNeedsToRecomputePreferredSize || isFlexItem()) {
         setNeedsLayout();
@@ -548,11 +551,8 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
     intrinsicRatio = { intrinsicSize.width(), intrinsicSize.height() };
 }
 
-LayoutUnit RenderReplaced::computeConstrainedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
+LayoutUnit RenderReplaced::computeConstrainedLogicalWidth() const
 {
-    if (shouldComputePreferred == ComputePreferred)
-        return computeReplacedLogicalWidthRespectingMinMaxWidth(0_lu, ComputePreferred);
-
     // The aforementioned 'constraint equation' used for block-level, non-replaced
     // elements in normal flow:
     // 'margin-left' + 'border-left-width' + 'padding-left' + 'width' +
@@ -566,7 +566,7 @@ LayoutUnit RenderReplaced::computeConstrainedLogicalWidth(ShouldComputePreferred
     LayoutUnit marginEnd = minimumValueForLength(style().marginEnd(), logicalWidth); 
 
     logicalWidth = std::max(0_lu, (logicalWidth - (marginStart + marginEnd + borderLeft() + borderRight() + paddingLeft() + paddingRight())));
-    return computeReplacedLogicalWidthRespectingMinMaxWidth(logicalWidth, shouldComputePreferred);
+    return computeReplacedLogicalWidthRespectingMinMaxWidth(logicalWidth, ShouldComputePreferred::ComputeActual);
 }
 
 static inline LayoutUnit resolveWidthForRatio(LayoutUnit borderAndPaddingLogicalHeight, LayoutUnit borderAndPaddingLogicalWidth, LayoutUnit logicalHeight, double aspectRatio, BoxSizing boxSizing)
@@ -619,7 +619,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
             // or if 'width' has a computed value of 'auto', 'height' has some other computed value, and the element does have an intrinsic ratio; then the used value
             // of 'width' is: (used height) * (intrinsic ratio)
             if (!computedHeightIsAuto || (!hasIntrinsicWidth && hasIntrinsicHeight)) {
-                LayoutUnit estimatedUsedWidth = hasIntrinsicWidth ? LayoutUnit(constrainedSize.width()) : computeConstrainedLogicalWidth(shouldComputePreferred);
+                LayoutUnit estimatedUsedWidth = hasIntrinsicWidth ? LayoutUnit(constrainedSize.width()) : shouldComputePreferred == ShouldComputePreferred::ComputePreferred ? computeReplacedLogicalWidthRespectingMinMaxWidth(0_lu, shouldComputePreferred) : computeConstrainedLogicalWidth();
                 LayoutUnit logicalHeight = computeReplacedLogicalHeight(std::optional<LayoutUnit>(estimatedUsedWidth));
                 BoxSizing boxSizing = style().hasAspectRatio() ? style().boxSizingForAspectRatio() : BoxSizing::ContentBox;
                 return computeReplacedLogicalWidthRespectingMinMaxWidth(resolveWidthForRatio(borderAndPaddingLogicalHeight(), borderAndPaddingLogicalWidth(), logicalHeight, intrinsicRatio.aspectRatioDouble(), boxSizing), shouldComputePreferred);
@@ -632,8 +632,11 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
             // on the replaced element's width, then the used value of 'width' is
             // calculated from the constraint equation used for block-level,
             // non-replaced elements in normal flow.
-            if (computedHeightIsAuto && !hasIntrinsicWidth && !hasIntrinsicHeight)
-                return computeConstrainedLogicalWidth(shouldComputePreferred);
+            if (computedHeightIsAuto && !hasIntrinsicWidth && !hasIntrinsicHeight) {
+                if (shouldComputePreferred == ShouldComputePreferred::ComputePreferred && (isFlexItem() || isGridItem()))
+                    return computeConstrainedLogicalWidth();
+                return shouldComputePreferred == ShouldComputePreferred::ComputePreferred ? computeReplacedLogicalWidthRespectingMinMaxWidth(0_lu, shouldComputePreferred) : computeConstrainedLogicalWidth();
+            }
         }
 
         // Otherwise, if 'width' has a computed value of 'auto', and the element has an intrinsic width, then that intrinsic width is the used value of 'width'.
@@ -717,7 +720,7 @@ void RenderReplaced::computePreferredLogicalWidths()
     else
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeReplacedLogicalWidth(ComputePreferred);
 
-    bool ignoreMinMaxSizes = shouldIgnoreMinMaxSizes();
+    bool ignoreMinMaxSizes = shouldIgnoreLogicalMinMaxWidthSizes();
     const RenderStyle& styleToUse = style();
     if (styleToUse.logicalWidth().isPercentOrCalculated() || styleToUse.logicalMaxWidth().isPercentOrCalculated())
         m_minPreferredLogicalWidth = 0;

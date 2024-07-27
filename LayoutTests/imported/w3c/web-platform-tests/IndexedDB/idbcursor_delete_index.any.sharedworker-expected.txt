@@ -1,0 +1,7 @@
+
+PASS Remove a record from the object store
+PASS Attempt to remove a record in a read-only transaction
+PASS Attempt to remove a record in an inactive transaction
+PASS If the cursor's source or effective object store has been deleted, the implementation MUST throw a DOMException of type InvalidStateError
+PASS Throw InvalidStateError when the cursor is being iterated
+

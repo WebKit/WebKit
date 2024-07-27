@@ -37,6 +37,7 @@ using StyleEventSender = EventSender<HTMLStyleElement, WeakPtrImplWithEventTarge
 
 class HTMLStyleElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLStyleElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLStyleElement);
 public:
     static Ref<HTMLStyleElement> create(Document&);
     static Ref<HTMLStyleElement> create(const QualifiedName&, Document&, bool createdByParser);

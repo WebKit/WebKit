@@ -41,15 +41,14 @@ namespace WebKit {
 using namespace WebCore;
 
 WebPageTesting::WebPageTesting(WebPage& page)
-    : m_identifier(page.identifier())
-    , m_page(page)
+    : m_page(page)
 {
-    WebProcess::singleton().addMessageReceiver(Messages::WebPageTesting::messageReceiverName(), page.identifier(), *this);
+    WebProcess::singleton().addMessageReceiver(Messages::WebPageTesting::messageReceiverName(), m_page->identifier(), *this);
 }
 
 WebPageTesting::~WebPageTesting()
 {
-    WebProcess::singleton().removeMessageReceiver(Messages::WebPageTesting::messageReceiverName(), m_identifier);
+    WebProcess::singleton().removeMessageReceiver(Messages::WebPageTesting::messageReceiverName(), m_page->identifier());
 }
 
 void WebPageTesting::setDefersLoading(bool defersLoading)

@@ -7,7 +7,7 @@ description: Sub-minute offset trailing zeroes allowed in ISO string but not in 
 features: [Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("+01:35");
+const timeZone = "+01:35";
 const instance = new Temporal.ZonedDateTime(0n, timeZone);
 let str = "1970-01-01T01:35:30+01:35:00.000000000[+01:35]";
 

@@ -144,46 +144,6 @@ void PlatformDisplayX11::initializeEGLDisplay()
 #endif
 }
 
-#if USE(LCMS)
-cmsHPROFILE PlatformDisplayX11::colorProfile() const
-{
-    if (m_iccProfile)
-        return m_iccProfile.get();
-
-    Atom iccAtom = XInternAtom(m_display, "_ICC_PROFILE", False);
-    Atom type;
-    int format;
-    unsigned long itemCount, bytesAfter;
-    unsigned char* data = nullptr;
-    auto result = XGetWindowProperty(m_display, RootWindowOfScreen(DefaultScreenOfDisplay(m_display)), iccAtom, 0L, ~0L, False, XA_CARDINAL, &type, &format, &itemCount, &bytesAfter, &data);
-    if (result == Success && type == XA_CARDINAL && itemCount > 0) {
-        unsigned long dataSize;
-        switch (format) {
-        case 8:
-            dataSize = itemCount;
-            break;
-        case 16:
-            dataSize = sizeof(short) * itemCount;
-            break;
-        case 32:
-            dataSize = sizeof(long) * itemCount;
-            break;
-        default:
-            dataSize = 0;
-            break;
-        }
-
-        if (dataSize)
-            m_iccProfile = LCMSProfilePtr(cmsOpenProfileFromMem(data, dataSize));
-    }
-
-    if (data)
-        XFree(data);
-
-    return m_iccProfile ? m_iccProfile.get() : PlatformDisplay::colorProfile();
-}
-#endif
-
 #if USE(ATSPI)
 String PlatformDisplayX11::platformAccessibilityBusAddress() const
 {

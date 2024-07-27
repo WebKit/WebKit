@@ -21,10 +21,3 @@ assert.throws(RangeError, () => Temporal.Instant.fromEpochMilliseconds(-limit - 
 assert.throws(RangeError, () => Temporal.Instant.fromEpochMilliseconds(limit + 1));
 assert.sameValue(`${ Temporal.Instant.fromEpochMilliseconds(-limit) }`, "-271821-04-20T00:00:00Z");
 assert.sameValue(`${ Temporal.Instant.fromEpochMilliseconds(limit) }`, "+275760-09-13T00:00:00Z");
-
-// converting from DateTime
-var min = Temporal.PlainDateTime.from("-271821-04-19T00:00:00.000000001");
-var max = Temporal.PlainDateTime.from("+275760-09-13T23:59:59.999999999");
-var utc = Temporal.TimeZone.from("UTC");
-assert.throws(RangeError, () => utc.getInstantFor(min));
-assert.throws(RangeError, () => utc.getInstantFor(max));

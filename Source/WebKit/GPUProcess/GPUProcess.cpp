@@ -35,7 +35,6 @@
 #include "GPUProcessConnectionParameters.h"
 #include "GPUProcessCreationParameters.h"
 #include "GPUProcessPreferences.h"
-#include "GPUProcessPreferencesForWebProcess.h"
 #include "GPUProcessProxyMessages.h"
 #include "GPUProcessSessionParameters.h"
 #include "LogInitialization.h"
@@ -147,6 +146,13 @@ void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier iden
 
     ASSERT(!m_webProcessConnections.contains(identifier));
     m_webProcessConnections.add(identifier, WTFMove(newConnection));
+}
+
+void GPUProcess::sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier identifier, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess, CompletionHandler<void()>&& completionHandler)
+{
+    if (RefPtr connection = m_webProcessConnections.get(identifier))
+        connection->updateSharedPreferencesForWebProcess(WTFMove(sharedPreferencesForWebProcess));
+    completionHandler();
 }
 
 void GPUProcess::removeGPUConnectionToWebProcess(GPUConnectionToWebProcess& connection)
@@ -628,6 +634,19 @@ void GPUProcess::requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier pro
     }
 
     completion(iterator->value->remoteMediaPlayerManagerProxy().bitmapImageForCurrentTime(playerIdentifier));
+}
+#endif
+
+#if ENABLE(WEBXR)
+std::optional<WebCore::ProcessIdentity> GPUProcess::immersiveModeProcessIdentity() const
+{
+    return m_processIdentity;
+}
+
+void GPUProcess::webXRPromptAccepted(std::optional<WebCore::ProcessIdentity> processIdentity, CompletionHandler<void(bool)>&& completionHandler)
+{
+    m_processIdentity = processIdentity;
+    completionHandler(true);
 }
 #endif
 

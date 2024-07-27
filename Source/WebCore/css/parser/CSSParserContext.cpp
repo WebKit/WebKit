@@ -28,7 +28,7 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSValuePool.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "OriginAccessPatterns.h"
 #include "Page.h"
@@ -55,6 +55,7 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
 {
     // FIXME: We should turn all of the features on from their WebCore Settings defaults.
     if (isUASheetBehavior(mode)) {
+        cssTextUnderlinePositionLeftRightEnabled = true;
         lightDarkEnabled = true;
         popoverAttributeEnabled = true;
         propertySettings.cssInputSecurityEnabled = true;
@@ -79,7 +80,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , charset { charset }
     , mode { document.inQuirksMode() ? HTMLQuirksMode : HTMLStandardMode }
     , isHTMLDocument { document.isHTMLDocument() }
-    , hasDocumentSecurityOrigin { sheetBaseURL.isNull() || document.securityOrigin().canRequest(baseURL, OriginAccessPatternsForWebProcess::singleton()) }
+    , hasDocumentSecurityOrigin { sheetBaseURL.isNull() || document.protectedSecurityOrigin()->canRequest(baseURL, OriginAccessPatternsForWebProcess::singleton()) }
     , useSystemAppearance { document.page() ? document.page()->useSystemAppearance() : false }
     , colorContrastEnabled { document.settings().cssColorContrastEnabled() }
     , counterStyleAtRuleImageSymbolsEnabled { document.settings().cssCounterStyleAtRuleImageSymbolsEnabled() }

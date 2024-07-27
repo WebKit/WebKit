@@ -60,7 +60,7 @@ NSString * const _WKMenuItemIdentifierShareMenu = @"WKMenuItemIdentifierShareMen
 NSString * const _WKMenuItemIdentifierSpeechMenu = @"WKMenuItemIdentifierSpeechMenu";
 
 NSString * const _WKMenuItemIdentifierTranslate = @"WKMenuItemIdentifierTranslate";
-NSString * const _WKMenuItemIdentifierWritingTools = @"WKMenuItemIdentifierWritingTools";
+NSString * const _WKMenuItemIdentifierWritingTools = @"__NSTextViewContextSubmenuIdentifierWritingTools"; // AppKit creates this menu item.
 NSString * const _WKMenuItemIdentifierCopySubject = @"WKMenuItemIdentifierCopySubject";
 
 NSString * const _WKMenuItemIdentifierSpellingMenu = @"WKMenuItemIdentifierSpellingMenu";

@@ -67,6 +67,10 @@
 #include "ApplicationManifest.h"
 #endif
 
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+#include "ShouldRequireExplicitConsentForGamepadAccess.h"
+#endif
+
 namespace JSC {
 class Debugger;
 }
@@ -360,6 +364,8 @@ public:
     const URL& mainFrameURL() const { return m_mainFrameURL; }
     SecurityOrigin& mainFrameOrigin() const;
     WEBCORE_EXPORT void setMainFrameURL(const URL&);
+    WEBCORE_EXPORT void setMainFrameURLFragment(String&&);
+    String mainFrameURLFragment() const { return m_mainFrameURLFragment; }
 
     bool openedByDOM() const;
     WEBCORE_EXPORT void setOpenedByDOM();
@@ -1147,6 +1153,10 @@ public:
 
 #if ENABLE(GAMEPAD)
     void gamepadsRecentlyAccessed();
+#if PLATFORM(VISION)
+    WEBCORE_EXPORT void allowGamepadAccess();
+    bool gamepadAccessGranted() const { return m_gamepadAccessGranted; }
+#endif
 #endif
 
 #if ENABLE(WRITING_TOOLS)
@@ -1242,6 +1252,10 @@ private:
     RefPtr<WebXRSession> activeImmersiveXRSession() const;
 #endif
 
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+    void initializeGamepadAccessForPageLoad();
+#endif
+
     std::optional<PageIdentifier> m_identifier;
     UniqueRef<Chrome> m_chrome;
     UniqueRef<DragCaretController> m_dragCaretController;
@@ -1271,6 +1285,7 @@ private:
     Ref<Frame> m_mainFrame;
     URL m_mainFrameURL;
     RefPtr<SecurityOrigin> m_mainFrameOrigin;
+    String m_mainFrameURLFragment;
 
     RefPtr<PluginData> m_pluginData;
 
@@ -1582,6 +1597,10 @@ private:
 
 #if ENABLE(GAMEPAD)
     MonotonicTime m_lastAccessNotificationTime;
+#if PLATFORM(VISION)
+    bool m_gamepadAccessGranted { true };
+    ShouldRequireExplicitConsentForGamepadAccess m_gamepadAccessRequiresExplicitConsent { ShouldRequireExplicitConsentForGamepadAccess::No };
+#endif
 #endif
 
 #if ENABLE(WRITING_TOOLS)

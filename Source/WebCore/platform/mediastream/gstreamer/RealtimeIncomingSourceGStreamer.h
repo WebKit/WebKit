@@ -32,43 +32,34 @@ public:
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeIncomingSourceGStreamer>::deref(); }
     ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeIncomingSourceGStreamer>::controlBlock(); }
 
-    GstElement* bin() { return m_bin.get(); }
-
-    virtual void setUpstreamBin(const GRefPtr<GstElement>&);
+    GstElement* bin() const { return m_bin.get(); }
+    virtual bool setBin(const GRefPtr<GstElement>&);
 
     bool hasClient(const GRefPtr<GstElement>&);
-    std::optional<int> registerClient(GRefPtr<GstElement>&&);
+    int registerClient(GRefPtr<GstElement>&&);
     void unregisterClient(int);
 
-    void handleUpstreamEvent(GRefPtr<GstEvent>&&, int clientId);
-    bool handleUpstreamQuery(GstQuery*, int clientId);
+    void handleUpstreamEvent(GRefPtr<GstEvent>&&);
+    bool handleUpstreamQuery(GstQuery*);
+    void handleDownstreamEvent(GstElement* sink, GRefPtr<GstEvent>&&);
 
     void tearDown();
-
-    void setIsUpstreamDecoding(bool isUpstreamDecoding) { m_isUpstreamDecoding = isUpstreamDecoding; };
 
 protected:
     RealtimeIncomingSourceGStreamer(const CaptureDevice&);
 
-    GRefPtr<GstElement> m_upstreamBin;
-    GRefPtr<GstElement> m_tee;
-
 private:
     // RealtimeMediaSource API
-    void startProducingData() final;
-    void stopProducingData() final;
     const RealtimeMediaSourceCapabilities& capabilities() final;
 
-    virtual void dispatchSample(GRefPtr<GstSample>&&) { }
+    virtual void dispatchSample(GRefPtr<GstSample>&&) = 0;
 
-    void unregisterClientLocked(int);
+    void forEachClient(Function<void(GstElement*)>&&);
 
     GRefPtr<GstElement> m_bin;
-    GQuark m_clientQuark { 0 };
+    GRefPtr<GstElement> m_sink;
     Lock m_clientLock;
     HashMap<int, GRefPtr<GstElement>> m_clients WTF_GUARDED_BY_LOCK(m_clientLock);
-    bool m_isStarted { true };
-    bool m_isUpstreamDecoding { false };
 };
 
 } // namespace WebCore

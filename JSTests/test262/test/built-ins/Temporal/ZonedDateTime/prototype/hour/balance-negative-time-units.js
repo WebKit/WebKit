@@ -22,19 +22,17 @@ info: |
       3. Set _result_ to ? BalanceISODateTime(_result_.[[Year]], _result_.[[Month]], _result_.[[Day]], _result_.[[Hour]], _result_.[[Minute]], _result_.[[Second]], _result_.[[Millisecond]], _result_.[[Microsecond]], _result_.[[Nanosecond]] + _offsetNanoseconds_).
     sec-get-temporal.zoneddatetime.prototype.hour step 6:
       6. Let _temporalDateTime_ be ? BuiltinTimeZoneGetPlainDateTimeFor(_timeZone_, _instant_, _calendar_).
-includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
 // This code path is encountered if the time zone offset is negative and its
 // absolute value in nanoseconds is greater than the nanosecond field of the
 // exact time's epoch parts
-const tz = TemporalHelpers.specificOffsetTimeZone(-2);
-const datetime = new Temporal.ZonedDateTime(3600_000_000_001n, tz);
+const datetime = new Temporal.ZonedDateTime(3600_000_000_001n, "-00:02");
 
 assert.sameValue(datetime.hour, 0);
-assert.sameValue(datetime.minute, 59);
-assert.sameValue(datetime.second, 59);
-assert.sameValue(datetime.millisecond, 999);
-assert.sameValue(datetime.microsecond, 999);
-assert.sameValue(datetime.nanosecond, 999);
+assert.sameValue(datetime.minute, 58);
+assert.sameValue(datetime.second, 0);
+assert.sameValue(datetime.millisecond, 0);
+assert.sameValue(datetime.microsecond, 0);
+assert.sameValue(datetime.nanosecond, 1);

@@ -31,6 +31,7 @@ class RenderFrame;
 
 class HTMLFrameElement final : public HTMLFrameElementBase {
     WTF_MAKE_ISO_ALLOCATED(HTMLFrameElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLFrameElement);
 public:
     static Ref<HTMLFrameElement> create(const QualifiedName&, Document&);
 

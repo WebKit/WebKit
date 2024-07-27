@@ -85,6 +85,13 @@ void Download::platformDestroyDownload()
 #endif
 }
 
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+void Download::publishProgress(const URL& url, std::span<const uint8_t> bookmarkData)
+{
+    RetainPtr bookmark = toNSData(bookmarkData);
+    m_progress = adoptNS([[WKDownloadProgress alloc] initWithDownloadTask:m_downloadTask.get() download:*this URL:(NSURL *)url bookmarkData:bookmark.get()]);
+}
+#else
 void Download::publishProgress(const URL& url, SandboxExtension::Handle&& sandboxExtensionHandle)
 {
     ASSERT(!m_progress);
@@ -103,5 +110,6 @@ void Download::publishProgress(const URL& url, SandboxExtension::Handle&& sandbo
     [m_progress publish];
 #endif
 }
+#endif
 
 }

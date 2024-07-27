@@ -85,7 +85,7 @@ for (var i = 0, len = flexboxen.length; i < len; i++) {
     firstChild = flexbox.firstChild;
     lastChild = flexbox.lastChild;
     if (!flexbox.isHorizontal && flexbox.isColumn && flexbox.isLTR) {
-        shouldBe('firstChild.offsetTop', "0");
+        shouldBe('firstChild.offsetTop', "20");
         shouldBe('lastChild.offsetTop', "20");
     } else if (flexbox.isHorizontalFlow)
         shouldBe('firstChild.offsetTop', 'lastChild.offsetTop');

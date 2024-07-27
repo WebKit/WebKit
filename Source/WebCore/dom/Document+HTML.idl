@@ -45,7 +45,7 @@ partial interface Document {
     readonly attribute HTMLHeadElement? head;
     [SameObject] readonly attribute HTMLCollection images;
     [SameObject] readonly attribute HTMLCollection embeds;
-    [SameObject] readonly attribute HTMLCollection plugins;
+    [ImplementedAs=embeds, SameObject] readonly attribute HTMLCollection plugins;
     [SameObject] readonly attribute HTMLCollection links;
     [SameObject] readonly attribute HTMLCollection forms;
     [SameObject] readonly attribute HTMLCollection scripts;

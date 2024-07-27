@@ -1,6 +1,4 @@
 
-PASS small typed array
-PASS blob
 PASS blob with small typed array
 PASS blob with small typed array with key generator
 PASS blob array

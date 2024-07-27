@@ -12,23 +12,10 @@ const expected = [
   // RejectObjectWithCalendarOrTimeZone
   "get fields.calendar",
   "get fields.timeZone",
-  // CopyDataProperties
-  "ownKeys options",
-  "getOwnPropertyDescriptor options.overflow",
+  // GetTemporalOverflowOption
   "get options.overflow",
-  "getOwnPropertyDescriptor options.extra",
-  "get options.extra",
-  // lookup
-  "get this.calendar.fields",
-  "get this.calendar.mergeFields",
-  "get this.calendar.monthDayFromFields",
-  // CalendarFields
-  "call this.calendar.fields",
-  // PrepareTemporalFields on receiver
-  "get this.calendar.day",
-  "call this.calendar.day",
-  "get this.calendar.monthCode",
-  "call this.calendar.monthCode",
+  "get options.overflow.toString",
+  "call options.overflow.toString",
   // PrepareTemporalFields on argument
   "get fields.day",
   "get fields.day.valueOf",
@@ -42,20 +29,10 @@ const expected = [
   "get fields.year",
   "get fields.year.valueOf",
   "call fields.year.valueOf",
-  // CalendarMergeFields
-  "call this.calendar.mergeFields",
-  // CalendarMonthDayFromFields
-  "call this.calendar.monthDayFromFields",
-  // inside Calendar.p.monthDayFromFields
-  "get options.overflow.toString",
-  "call options.overflow.toString",
 ];
 const actual = [];
 
-const calendar = TemporalHelpers.calendarObserver(actual, "this.calendar");
-const instance = new Temporal.PlainMonthDay(5, 2, calendar);
-// clear observable operations that occurred during the constructor call
-actual.splice(0);
+const instance = new Temporal.PlainMonthDay(5, 2, "iso8601");
 
 const fields = TemporalHelpers.propertyBagObserver(actual, {
   year: 1.7,

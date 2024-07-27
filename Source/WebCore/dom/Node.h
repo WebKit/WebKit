@@ -72,7 +72,6 @@ class RenderStyle;
 class SVGQualifiedName;
 class ShadowRoot;
 class TouchEvent;
-class TrustedScript;
 class WebCoreOpaqueRoot;
 
 namespace Style {
@@ -91,13 +90,14 @@ enum class MutationObserverOptionType : uint8_t;
 using MutationObserverOptions = OptionSet<MutationObserverOptionType>;
 using MutationRecordDeliveryOptions = OptionSet<MutationObserverOptionType>;
 
-using NodeOrStringOrTrustedScript = std::variant<RefPtr<Node>, String, RefPtr<TrustedScript>>;
+using NodeOrString = std::variant<RefPtr<Node>, String>;
 
 const int initialNodeVectorSize = 11; // Covers 99.5%. See webkit.org/b/80706
 typedef Vector<Ref<Node>, initialNodeVectorSize> NodeVector;
 
-class Node : public EventTarget {
+class Node : public EventTarget, public CanMakeCheckedPtr<Node> {
     WTF_MAKE_COMPACT_ISO_ALLOCATED(Node);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Node);
 
     friend class Document;
     friend class TreeScope;
@@ -159,8 +159,8 @@ public:
 #else
     static uintptr_t previousSiblingPointerMask() { return -1; }
 #endif
-    Node* nextSibling() const { return m_next; }
-    RefPtr<Node> protectedNextSibling() const { return m_next; }
+    Node* nextSibling() const { return m_next.get(); }
+    RefPtr<Node> protectedNextSibling() const { return m_next.get(); }
     static constexpr ptrdiff_t nextSiblingMemoryOffset() { return OBJECT_OFFSETOF(Node, m_next); }
     WEBCORE_EXPORT RefPtr<NodeList> childNodes();
     Node* firstChild() const;
@@ -218,9 +218,9 @@ public:
     WEBCORE_EXPORT Element* nextElementSibling() const;
 
     // From the ChildNode - https://dom.spec.whatwg.org/#childnode
-    ExceptionOr<void> before(FixedVector<NodeOrStringOrTrustedScript>&&);
-    ExceptionOr<void> after(FixedVector<NodeOrStringOrTrustedScript>&&);
-    ExceptionOr<void> replaceWith(FixedVector<NodeOrStringOrTrustedScript>&&);
+    ExceptionOr<void> before(FixedVector<NodeOrString>&&);
+    ExceptionOr<void> after(FixedVector<NodeOrString>&&);
+    ExceptionOr<void> replaceWith(FixedVector<NodeOrString>&&);
     WEBCORE_EXPORT ExceptionOr<void> remove();
 
     // Other methods (not part of DOM)
@@ -302,7 +302,7 @@ public:
     inline ContainerNode* parentOrShadowHostNode() const; // Defined in ShadowRoot.h
     inline RefPtr<ContainerNode> protectedParentOrShadowHostNode() const; // Defined in ShadowRoot.h
     ContainerNode* parentInComposedTree() const;
-    Element* parentElementInComposedTree() const;
+    WEBCORE_EXPORT Element* parentElementInComposedTree() const;
     Element* parentOrShadowHostElement() const;
     inline void setParentNode(ContainerNode*); // Defined in ContainerNode.h.
     Node& rootNode() const;
@@ -509,7 +509,7 @@ public:
     void clearNodeLists();
 
     virtual bool willRespondToMouseMoveEvents() const;
-    bool willRespondToMouseClickEvents(const RenderStyle* = nullptr) const;
+    WEBCORE_EXPORT bool willRespondToMouseClickEvents(const RenderStyle* = nullptr) const;
     Editability computeEditabilityForMouseClickEvents(const RenderStyle* = nullptr) const;
     virtual bool willRespondToMouseClickEventsWithEditability(Editability) const;
     virtual bool willRespondToTouchEvents() const;
@@ -767,9 +767,9 @@ protected:
     template<typename NodeClass>
     static NodeClass& traverseToRootNodeInternal(const NodeClass&);
 
-    // FIXME: Replace all uses of convertNodesOrStringsOrTrustedScriptsIntoNode by convertNodesOrStringsOrTrustedScriptsIntoNodeVector.
-    ExceptionOr<RefPtr<Node>> convertNodesOrStringsOrTrustedScriptsIntoNode(RefPtr<Node>, FixedVector<NodeOrStringOrTrustedScript>&&);
-    ExceptionOr<NodeVector> convertNodesOrStringsOrTrustedScriptsIntoNodeVector(RefPtr<Node>, FixedVector<NodeOrStringOrTrustedScript>&&);
+    // FIXME: Replace all uses of convertNodesOrStringsIntoNode by convertNodesOrStringsIntoNodeVector.
+    ExceptionOr<RefPtr<Node>> convertNodesOrStringsIntoNode(FixedVector<NodeOrString>&&);
+    ExceptionOr<NodeVector> convertNodesOrStringsIntoNodeVector(FixedVector<NodeOrString>&&);
 
 private:
     virtual PseudoId customPseudoId() const
@@ -803,10 +803,10 @@ private:
     const uint16_t m_typeBitFields;
     mutable OptionSet<StateFlag> m_stateFlags;
 
-    ContainerNode* m_parentNode { nullptr };
+    CheckedPtr<ContainerNode> m_parentNode;
     TreeScope* m_treeScope { nullptr };
     CompactPointerTuple<Node*, uint16_t> m_previous;
-    Node* m_next { nullptr };
+    CheckedPtr<Node> m_next;
     CompactPointerTuple<RenderObject*, uint16_t> m_rendererWithStyleFlags;
     CompactUniquePtrTuple<NodeRareData, uint16_t> m_rareDataWithBitfields;
 };
@@ -908,7 +908,7 @@ inline void addSubresourceURL(ListHashSet<URL>& urls, const URL& url)
 inline ContainerNode* Node::parentNode() const
 {
     ASSERT(isMainThreadOrGCThread());
-    return m_parentNode;
+    return m_parentNode.get();
 }
 
 inline ContainerNode* Node::parentNodeGuaranteedHostFree() const

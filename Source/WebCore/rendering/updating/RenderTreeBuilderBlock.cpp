@@ -48,7 +48,7 @@ static bool canDropAnonymousBlock(const RenderBlock& anonymousBlock)
     return true;
 }
 
-static bool canMergeContiguousAnonymousBlocks(const RenderObject& rendererToBeRemoved, const RenderObject* previous, const RenderObject* next)
+static bool canMergeContiguousAnonymousBlocks(const RenderObject& rendererToBeRemoved, const RenderObject* previous, const RenderObject* next, const RenderObject* anonymousDestroyRoot)
 {
     ASSERT(!rendererToBeRemoved.renderTreeBeingDestroyed());
 
@@ -66,7 +66,7 @@ static bool canMergeContiguousAnonymousBlocks(const RenderObject& rendererToBeRe
         return true;
 
     // Let's merge pre and post anonymous block containers when the continuation triggering box (rendererToBeRemoved) is going away.
-    return previous && next;
+    return previous && next && previous != anonymousDestroyRoot && next != anonymousDestroyRoot;
 }
 
 static RenderBlock* continuationBefore(RenderBlock& parent, RenderObject* beforeChild)
@@ -313,7 +313,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
     // with inline content, then we can fold the inline content back together.
     WeakPtr prev = oldChild.previousSibling();
     WeakPtr next = oldChild.nextSibling();
-    bool canMergeAnonymousBlocks = canCollapseAnonymousBlock == CanCollapseAnonymousBlock::Yes && canMergeContiguousAnonymousBlocks(oldChild, prev.get(), next.get());
+    bool canMergeAnonymousBlocks = canCollapseAnonymousBlock == CanCollapseAnonymousBlock::Yes && canMergeContiguousAnonymousBlocks(oldChild, prev.get(), next.get(), m_builder.m_anonymousDestroyRoot.get());
 
     auto takenChild = m_builder.detachFromRenderElement(parent, oldChild, willBeDestroyed);
 

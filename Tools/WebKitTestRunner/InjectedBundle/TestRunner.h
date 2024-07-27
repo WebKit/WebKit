@@ -211,7 +211,7 @@ public:
     void setWhatToDump(WhatToDump);
 
     bool shouldDumpAllFrameScrollPositions() const { return m_shouldDumpAllFrameScrollPositions; }
-    bool shouldDumpBackForwardListsForAllWindows() const { return m_shouldDumpBackForwardListsForAllWindows; }
+    bool shouldDumpBackForwardListsForAllWindows() const;
     bool shouldDumpEditingCallbacks() const { return m_dumpEditingCallbacks; }
     bool shouldDumpMainFrameScrollPosition() const { return whatToDump() == WhatToDump::RenderTree; }
     bool shouldDumpStatusCallbacks() const { return m_dumpStatusCallbacks; }
@@ -588,7 +588,6 @@ private:
 
     unsigned m_renderTreeDumpOptions { 0 };
     bool m_shouldDumpAllFrameScrollPositions { false };
-    bool m_shouldDumpBackForwardListsForAllWindows { false };
     bool m_shouldAllowEditing { true };
 
     bool m_dumpEditingCallbacks { false };

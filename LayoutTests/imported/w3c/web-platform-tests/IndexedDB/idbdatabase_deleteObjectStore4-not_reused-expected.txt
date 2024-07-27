@@ -1,3 +1,0 @@
-
-PASS IDBDatabase.deleteObjectStore() - the object store is not reused
-

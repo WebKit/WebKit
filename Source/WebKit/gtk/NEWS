@@ -1,4 +1,18 @@
 ================
+WebKitGTK 2.45.5
+================
+
+What's new in WebKitGTK 2.45.5?
+
+  - Add support for system tracing with Sysprof.
+  - Allow receiving event listener signals from the a11y bus.
+  - Fix pointer lock on X11.
+  - Fix source links in generated API documentation.
+  - Fix drawing shadows in some cases when ImageBitmap is accelerated.
+  - Fix the build with MEDIA_STREAM disabled.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.45.4
 ================
 

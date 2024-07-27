@@ -7,35 +7,7 @@ description: Temporal.ZonedDateTime.prototype.equals()
 features: [Temporal]
 ---*/
 
-var tz = {
-  getOffsetNanosecondsFor() { return -5 * 3600_000_000_000; },
-  getPossibleInstantsFor(pdt) { return Temporal.TimeZone.from("-05:00").getPossibleInstantsFor(pdt); },
-  id: "America/New_York",
-};
-var cal = {
-  dateFromFields(...args) { return Temporal.Calendar.from("iso8601").dateFromFields(...args); },
-  id: "gregory",
-  dateAdd() {},
-  dateUntil() {},
-  day() {},
-  dayOfWeek() {},
-  dayOfYear() {},
-  daysInMonth() {},
-  daysInWeek() {},
-  daysInYear() {},
-  fields(fieldNames) { return fieldNames; },
-  inLeapYear() {},
-  mergeFields() {},
-  month() {},
-  monthCode() {},
-  monthDayFromFields() {},
-  monthsInYear() {},
-  weekOfYear() {},
-  year() {},
-  yearMonthFromFields() {},
-  yearOfWeek() {},
-};
-var zdt = new Temporal.ZonedDateTime(0n, tz, cal);
+var zdt = new Temporal.ZonedDateTime(0n, "-05:00", "iso8601");
 
 // constructed from equivalent parameters are equal
 var zdt2 = Temporal.ZonedDateTime.from({
@@ -43,22 +15,18 @@ var zdt2 = Temporal.ZonedDateTime.from({
   month: 12,
   day: 31,
   hour: 19,
-  timeZone: tz,
-  calendar: cal,
+  timeZone: "-05:00",
+  calendar: "iso8601",
 });
 assert(zdt.equals(zdt2));
 assert(zdt2.equals(zdt));
 
 // different instant not equal
-var zdt2 = new Temporal.ZonedDateTime(1n, tz, cal);
+var zdt2 = new Temporal.ZonedDateTime(1n, "-05:00", "iso8601");
 assert(!zdt.equals(zdt2));
 
 // different time zone not equal
-var zdt2 = new Temporal.ZonedDateTime(0n, "UTC", cal);
-assert(!zdt.equals(zdt2));
-
-// different calendar not equal
-var zdt2 = new Temporal.ZonedDateTime(0n, tz, "iso8601");
+var zdt2 = new Temporal.ZonedDateTime(0n, "UTC", "iso8601");
 assert(!zdt.equals(zdt2));
 
 // casts its argument
@@ -77,22 +45,22 @@ assert(!zdt.equals({
   year: 1969,
   month: 12,
   day: 31,
-  timeZone: tz
+  timeZone: "-05:00"
 }));
 assert.throws(TypeError, () => zdt.equals({
   month: 12,
   day: 31,
-  timeZone: tz
+  timeZone: "-05:00"
 }));
 assert.throws(TypeError, () => zdt.equals({
   year: 1969,
   day: 31,
-  timeZone: tz
+  timeZone: "-05:00"
 }));
 assert.throws(TypeError, () => zdt.equals({
   year: 1969,
   month: 12,
-  timeZone: tz
+  timeZone: "-05:00"
 }));
 assert.throws(TypeError, () => zdt.equals({
   year: 1969,
@@ -103,6 +71,6 @@ assert.throws(TypeError, () => zdt.equals({
   years: 1969,
   months: 12,
   days: 31,
-  timeZone: tz,
-  calendarName: "gregory"
+  timeZone: "-05:00",
+  calendarName: "iso8601"
 }));

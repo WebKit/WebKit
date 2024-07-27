@@ -153,6 +153,7 @@ typedef NS_ENUM(NSInteger, VKImageOrientation) {
 
 @interface VKWKLineInfo : VKWKTextInfo
 @property (nonatomic, readonly) NSArray<VKWKTextInfo *> *children;
+@property (nonatomic, readonly) BOOL shouldWrap;
 @end
 
 @class DDScannerResult;
@@ -168,6 +169,7 @@ typedef NS_ENUM(NSInteger, VKImageOrientation) {
 #if HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
 @property (nonatomic) UIMenu *mrcMenu;
 @property (nonatomic, nullable, weak) UIViewController *presentingViewControllerForMrcAction;
+@property (nonatomic) CGRect rectForMrcActionInPresentingViewController;
 @property (nonatomic, readonly) NSArray<BCSAction *> *barcodeActions;
 #endif
 @end
@@ -177,9 +179,14 @@ NS_ASSUME_NONNULL_END
 #endif
 
 @interface VKWKLineInfo (Staging_85139101)
-@property (nonatomic, readonly) BOOL shouldWrap;
 @property (nonatomic, readonly) NSUInteger layoutDirection;
 @end
+
+#if HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+@interface VKImageAnalysis (Staging_127892794)
+@property (nonatomic) CGRect rectForMrcActionInPresentingViewController;
+@end
+#endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 

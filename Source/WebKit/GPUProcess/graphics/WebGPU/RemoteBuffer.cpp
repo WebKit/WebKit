@@ -74,8 +74,7 @@ void RemoteBuffer::getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<
 {
     m_backing->getMappedRange(offset, size, [&] (auto mappedRange) {
         m_isMapped = true;
-
-        callback(Vector(std::span { static_cast<const uint8_t*>(mappedRange.source), mappedRange.byteLength }));
+        callback(mappedRange);
     });
 }
 
@@ -96,20 +95,19 @@ void RemoteBuffer::copy(std::optional<WebCore::SharedMemoryHandle>&& dataHandle,
         return;
     }
 
-    auto [buffer, bufferLength] = m_backing->getBufferContents();
-    if (!buffer || !bufferLength) {
+    auto buffer = m_backing->getBufferContents();
+    if (buffer.empty()) {
         completionHandler(false);
         return;
     }
 
-    auto dataSize = data.size();
-    auto endOffset = checkedSum<size_t>(offset, dataSize);
-    if (endOffset.hasOverflowed() || endOffset.value() > bufferLength) {
+    auto endOffset = checkedSum<size_t>(offset, data.size());
+    if (endOffset.hasOverflowed() || endOffset.value() > buffer.size()) {
         completionHandler(false);
         return;
     }
 
-    memcpySpan(std::span { buffer + offset, dataSize }, data);
+    memcpySpan(buffer.subspan(offset), data);
     completionHandler(true);
 }
 

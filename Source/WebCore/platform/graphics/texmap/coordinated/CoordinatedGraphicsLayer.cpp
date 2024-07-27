@@ -764,9 +764,16 @@ void CoordinatedGraphicsLayer::updatePlatformLayer()
 
     m_shouldUpdatePlatformLayer = false;
 #if USE(COORDINATED_GRAPHICS) && USE(NICOSIA)
-    if (m_nicosia.contentLayer)
+    if (m_nicosia.contentLayer) {
         m_nicosia.contentLayer->swapBuffersIfNeeded();
+        m_nicosia.contentLayerUpdated = true;
+    }
 #endif
+}
+
+bool CoordinatedGraphicsLayer::checkContentLayerUpdated()
+{
+    return std::exchange(m_nicosia.contentLayerUpdated, false);
 }
 
 static void clampToContentsRectIfRectIsInfinite(FloatRect& rect, const FloatSize& contentsSize)
@@ -1081,15 +1088,9 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
     }
 }
 
-bool CoordinatedGraphicsLayer::checkPendingStateChangesIncludingSubLayers()
+bool CoordinatedGraphicsLayer::checkPendingStateChanges()
 {
-    bool performLayerSync = std::exchange(m_nicosia.performLayerSync, false);
-    if (maskLayer())
-        performLayerSync |= downcast<CoordinatedGraphicsLayer>(*maskLayer()).checkPendingStateChangesIncludingSubLayers();
-
-    for (auto& child : children())
-        performLayerSync |= downcast<CoordinatedGraphicsLayer>(child.get()).checkPendingStateChangesIncludingSubLayers();
-    return performLayerSync;
+    return std::exchange(m_nicosia.performLayerSync, false);
 }
 
 void CoordinatedGraphicsLayer::deviceOrPageScaleFactorChanged()
@@ -1124,18 +1125,34 @@ void CoordinatedGraphicsLayer::requestBackingStoreUpdate()
     notifyFlushRequired();
 }
 
-void CoordinatedGraphicsLayer::updateContentBuffersIncludingSubLayers()
+std::pair<bool, bool> CoordinatedGraphicsLayer::finalizeCompositingStateFlush()
 {
-    if (CoordinatedGraphicsLayer* mask = downcast<CoordinatedGraphicsLayer>(maskLayer()))
-        mask->updateContentBuffers();
+    bool performLayerSync = false;
+    bool contentLayerUpdated = false;
 
-    if (CoordinatedGraphicsLayer* replica = downcast<CoordinatedGraphicsLayer>(replicaLayer()))
+    if (auto* mask = downcast<CoordinatedGraphicsLayer>(maskLayer())) {
+        mask->updateContentBuffers();
+        performLayerSync |= mask->checkPendingStateChanges();
+        contentLayerUpdated |= mask->checkContentLayerUpdated();
+    }
+
+    if (auto* replica = downcast<CoordinatedGraphicsLayer>(replicaLayer())) {
         replica->updateContentBuffers();
+        performLayerSync |= replica->checkPendingStateChanges();
+        contentLayerUpdated |= replica->checkContentLayerUpdated();
+    }
 
     updateContentBuffers();
+    performLayerSync |= checkPendingStateChanges();
+    contentLayerUpdated |= checkContentLayerUpdated();
 
-    for (auto& child : children())
-        downcast<CoordinatedGraphicsLayer>(child.get()).updateContentBuffersIncludingSubLayers();
+    for (auto& child : children()) {
+        auto [childLayerSync, childContentUpdated] = downcast<CoordinatedGraphicsLayer>(child.get()).finalizeCompositingStateFlush();
+        performLayerSync |= childLayerSync;
+        contentLayerUpdated |= childContentUpdated;
+    }
+
+    return { performLayerSync, contentLayerUpdated };
 }
 
 void CoordinatedGraphicsLayer::updateContentBuffers()

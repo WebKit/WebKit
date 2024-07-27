@@ -245,9 +245,7 @@ void VideoPresentationInterfaceIOS::doSetup()
         }
     }
 
-    WebAVPlayerLayer *playerLayer = (WebAVPlayerLayer *)[m_playerLayerView playerLayer];
-
-    playerLayer.presentationModel = videoPresentationModel().get();
+    playerLayer().presentationModel = videoPresentationModel().get();
 
     setupPlayerViewController();
 
@@ -282,15 +280,14 @@ void VideoPresentationInterfaceIOS::videoDimensionsChanged(const FloatSize& vide
     if (videoDimensions.isZero())
         return;
 
-    WebAVPlayerLayer *playerLayer = (WebAVPlayerLayer *)[m_playerLayerView playerLayer];
-    [playerLayer setVideoDimensions:videoDimensions];
+    playerLayer().videoDimensions = videoDimensions;
     setContentDimensions(videoDimensions);
     [m_playerLayerView setNeedsLayout];
 
 #if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
     WebAVPictureInPicturePlayerLayerView *pipView = (WebAVPictureInPicturePlayerLayerView *)[m_playerLayerView pictureInPicturePlayerLayerView];
     WebAVPlayerLayer *pipPlayerLayer = (WebAVPlayerLayer *)[pipView layer];
-    [pipPlayerLayer setVideoDimensions:playerLayer.videoDimensions];
+    [pipPlayerLayer setVideoDimensions:playerLayer().videoDimensions];
     [pipView setNeedsLayout];
 #endif
 }
@@ -324,6 +321,11 @@ void VideoPresentationInterfaceIOS::setInlineRect(const FloatRect& inlineRect, b
 WebAVPlayerController *VideoPresentationInterfaceIOS::playerController() const
 {
     return m_playbackSessionInterface->playerController();
+}
+
+WebAVPlayerLayer *VideoPresentationInterfaceIOS::playerLayer() const
+{
+    return (WebAVPlayerLayer *)[m_playerLayerView playerLayer];
 }
 
 void VideoPresentationInterfaceIOS::applicationDidBecomeActive()

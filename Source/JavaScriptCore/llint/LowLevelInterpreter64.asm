@@ -1651,6 +1651,11 @@ llintOpWithMetadata(op_get_by_id_direct, OpGetByIdDirect, macro (size, get, disp
 .opGetByIdDirectSlow:
     callSlowPath(_llint_slow_path_get_by_id_direct)
     dispatch()
+
+.osrReturnPoint:
+    getterSetterOSRExitReturnPoint(op_get_by_id_direct, size)
+    valueProfile(size, OpGetByIdDirect, m_valueProfile, r0, t2)
+    return(r0)
 end)
 
 # The base object is expected in t3
@@ -1921,7 +1926,6 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
     getterSetterOSRExitReturnPoint(op_get_by_val, size)
     valueProfile(size, OpGetByVal, m_valueProfile, r0, t5)
     return(r0)
-
 end)
 
 llintOpWithMetadata(op_get_private_name, OpGetPrivateName, macro (size, get, dispatch, metadata, return)
@@ -2140,8 +2144,11 @@ putByValOp(put_by_val, OpPutByVal, macro (size, dispatch)
     dispatch()
 end)
 
-putByValOp(put_by_val_direct, OpPutByValDirect, macro (a, b) end)
-
+putByValOp(put_by_val_direct, OpPutByValDirect, macro (size, dispatch)
+.osrReturnPoint:
+    getterSetterOSRExitReturnPoint(op_put_by_val_direct, size)
+    dispatch()
+end)
 
 macro llintJumpTrueOrFalseOp(opcodeName, opcodeStruct, miscConditionOp, truthyCellConditionOp)
     llintOpWithJump(op_%opcodeName%, opcodeStruct, macro (size, get, jump, dispatch)
@@ -3465,6 +3472,11 @@ llintOpWithMetadata(op_enumerator_get_by_val, OpEnumeratorGetByVal, macro (size,
 .getSlowPath:
     callSlowPath(_slow_path_enumerator_get_by_val)
     dispatch()
+
+.osrReturnPoint:
+    getterSetterOSRExitReturnPoint(op_enumerator_get_by_val, size)
+    valueProfile(size, OpEnumeratorGetByVal, m_valueProfile, r0, t5)
+    return(r0)
 end)
 
 llintOpWithMetadata(op_enumerator_put_by_val, OpEnumeratorPutByVal, macro (size, get, dispatch, metadata, return)
@@ -3513,6 +3525,10 @@ llintOpWithMetadata(op_enumerator_put_by_val, OpEnumeratorPutByVal, macro (size,
 .putSlowPath:
     callSlowPath(_slow_path_enumerator_put_by_val)
     dispatch()
+
+.osrReturnPoint:
+    getterSetterOSRExitReturnPoint(op_enumerator_put_by_val, size)
+    dispatch()
 end)
 
 macro hasPropertyImpl(opcodeStruct, size, get, dispatch, metadata, return, slowPath)
@@ -3543,10 +3559,29 @@ end
 
 llintOpWithMetadata(op_enumerator_in_by_val, OpEnumeratorInByVal, macro (size, get, dispatch, metadata, return)
     hasPropertyImpl(OpEnumeratorInByVal, size, get, dispatch, metadata, return, _slow_path_enumerator_in_by_val)
+.osrReturnPoint:
+    getterSetterOSRExitReturnPoint(op_enumerator_in_by_val, size)
+    return(r0)
 end)
 
 llintOpWithMetadata(op_enumerator_has_own_property, OpEnumeratorHasOwnProperty, macro (size, get, dispatch, metadata, return)
     hasPropertyImpl(OpEnumeratorHasOwnProperty, size, get, dispatch, metadata, return, _slow_path_enumerator_has_own_property)
+end)
+
+llintOpWithReturn(op_in_by_id, OpInById, macro (size, get, dispatch, return)
+    callSlowPath(_llint_slow_path_in_by_id)
+    dispatch()
+.osrReturnPoint:
+    getterSetterOSRExitReturnPoint(op_in_by_id, size)
+    return(r0)
+end)
+
+llintOpWithReturn(op_in_by_val, OpInByVal, macro (size, get, dispatch, return)
+    callSlowPath(_llint_slow_path_in_by_val)
+    dispatch()
+.osrReturnPoint:
+    getterSetterOSRExitReturnPoint(op_in_by_val, size)
+    return(r0)
 end)
 
 llintOpWithProfile(op_get_internal_field, OpGetInternalField, macro (size, get, dispatch, return)

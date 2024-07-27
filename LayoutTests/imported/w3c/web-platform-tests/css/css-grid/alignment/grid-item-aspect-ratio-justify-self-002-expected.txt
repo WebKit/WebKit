@@ -1,0 +1,60 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FAIL .item 1 assert_equals:
+<div class="item start" data-expected-width="16" data-expected-height="32"></div>
+width expected 16 but got 0
+FAIL .item 2 assert_equals:
+<div class="item end" data-expected-width="16" data-expected-height="32"></div>
+width expected 16 but got 0
+FAIL .item 3 assert_equals:
+<div class="item self-start" data-expected-width="16" data-expected-height="32"></div>
+width expected 16 but got 0
+FAIL .item 4 assert_equals:
+<div class="item self-end" data-expected-width="16" data-expected-height="32"></div>
+width expected 16 but got 0
+FAIL .item 5 assert_equals:
+<div class="item flex-start" data-expected-width="16" data-expected-height="32"></div>
+width expected 16 but got 0
+FAIL .item 6 assert_equals:
+<div class="item flex-end" data-expected-width="16" data-expected-height="32"></div>
+width expected 16 but got 0
+FAIL .item 7 assert_equals:
+<div class="item left" data-expected-width="16" data-expected-height="32"></div>
+width expected 16 but got 0
+FAIL .item 8 assert_equals:
+<div class="item right" data-expected-width="16" data-expected-height="32"></div>
+width expected 16 but got 0
+FAIL .item 9 assert_equals:
+<div class="item center" data-expected-width="16" data-expected-height="32"></div>
+width expected 16 but got 0
+FAIL .item 10 assert_equals:
+<div class="item normal" data-expected-width="24" data-expected-height="48"></div>
+width expected 24 but got 0
+PASS .item 11
+PASS .item 12
+PASS .item 13
+PASS .item 14
+PASS .item 15
+PASS .item 16
+PASS .item 17
+PASS .item 18
+PASS .item 19
+PASS .item 20
+

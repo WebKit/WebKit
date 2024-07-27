@@ -68,8 +68,7 @@ void WebContextMenu::show()
 
     ContextMenuContextData contextMenuContextData(menuLocation, menuItems, controller.context());
 
-    m_page->flushPendingEditorStateUpdate();
-    m_page->send(Messages::WebPageProxy::ShowContextMenuFromFrame(frame->frameID(), contextMenuContextData, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    m_page->showContextMenuFromFrame(frame->frameID(), contextMenuContextData, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get()));
 }
 
 void WebContextMenu::itemSelected(const WebContextMenuItemData& item)

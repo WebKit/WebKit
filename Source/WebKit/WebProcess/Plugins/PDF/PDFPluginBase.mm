@@ -764,6 +764,26 @@ ScrollPosition PDFPluginBase::maximumScrollPosition() const
     return maximumOffset;
 }
 
+IntSize PDFPluginBase::overhangAmount() const
+{
+    IntSize stretch;
+
+    // ScrollableArea's maximumScrollOffset() doesn't handle being zoomed below 1.
+    auto maximumScrollOffset = scrollOffsetFromPosition(maximumScrollPosition());
+    auto scrollOffset = this->scrollOffset();
+    if (scrollOffset.y() < 0)
+        stretch.setHeight(scrollOffset.y());
+    else if (scrollOffset.y() > maximumScrollOffset.y())
+        stretch.setHeight(scrollOffset.y() - maximumScrollOffset.y());
+
+    if (scrollOffset.x() < 0)
+        stretch.setWidth(scrollOffset.x());
+    else if (scrollOffset.x() > maximumScrollOffset.x())
+        stretch.setWidth(scrollOffset.x() - maximumScrollOffset.x());
+
+    return stretch;
+}
+
 float PDFPluginBase::deviceScaleFactor() const
 {
     if (RefPtr page = this->page())
@@ -953,6 +973,24 @@ void PDFPluginBase::destroyScrollbar(ScrollbarOrientation orientation)
     willRemoveScrollbar(scrollbar.get(), orientation);
     scrollbar->removeFromParent();
     scrollbar = nullptr;
+}
+
+void PDFPluginBase::wantsWheelEventsChanged()
+{
+    if (!m_element)
+        return;
+
+    if (!m_frame || !m_frame->coreLocalFrame())
+        return;
+
+    RefPtr document = m_frame->coreLocalFrame()->document();
+    if (!document)
+        return;
+
+    if (wantsWheelEvents())
+        document->didAddWheelEventHandler(*m_element);
+    else
+        document->didRemoveWheelEventHandler(*m_element, EventHandlerRemoval::All);
 }
 
 void PDFPluginBase::print()
@@ -1158,7 +1196,7 @@ void PDFPluginBase::navigateToURL(const URL& url)
 
     RefPtr<Event> coreEvent;
     if (m_lastMouseEvent)
-        coreEvent = MouseEvent::create(eventNames().clickEvent, &frame->windowProxy(), platform(*m_lastMouseEvent), 0, 0);
+        coreEvent = MouseEvent::create(eventNames().clickEvent, &frame->windowProxy(), platform(*m_lastMouseEvent), { }, 0, 0);
 
     frame->loader().changeLocation(url, emptyAtom(), coreEvent.get(), ReferrerPolicy::NoReferrer, ShouldOpenExternalURLsPolicy::ShouldAllow);
 }

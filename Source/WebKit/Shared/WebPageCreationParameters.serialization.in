@@ -259,6 +259,10 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 #if (PLATFORM(GTK) || PLATFORM(WPE)) && USE(GBM)
     Vector<WebKit::DMABufRendererBufferFormat> preferredBufferFormats;
 #endif
+
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+    WebCore::ShouldRequireExplicitConsentForGamepadAccess gamepadAccessRequiresExplicitConsent;
+#endif
 }
 
 [Nested] struct WebKit::RemotePageParameters {

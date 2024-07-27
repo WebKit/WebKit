@@ -12,7 +12,7 @@ const invalidStrings = [
   ["1970-01-01T00:00[UTC][u-CA=iso8601]", "invalid partially-capitalized key"],
   ["1970-01-01T00:00[UTC][FOO=bar]", "invalid capitalized unrecognized key"],
 ];
-const timeZone = new Temporal.TimeZone("UTC");
+const timeZone = "UTC";
 const instance = new Temporal.ZonedDateTime(0n, timeZone);
 invalidStrings.forEach(([arg, descr]) => {
   assert.throws(

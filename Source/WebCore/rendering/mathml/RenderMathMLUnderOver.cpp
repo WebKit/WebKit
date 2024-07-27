@@ -187,8 +187,7 @@ void RenderMathMLUnderOver::computePreferredLogicalWidths()
     ASSERT(preferredLogicalWidthsDirty());
 
     if (!isValid()) {
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = 0;
-        setPreferredLogicalWidthsDirty(false);
+        RenderMathMLRow::computePreferredLogicalWidths();
         return;
     }
 
@@ -197,13 +196,13 @@ void RenderMathMLUnderOver::computePreferredLogicalWidths()
         return;
     }
 
-    LayoutUnit preferredWidth = base().maxPreferredLogicalWidth() + base().marginLogicalWidth();
+    LayoutUnit preferredWidth = base().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(base());
 
     if (scriptType() == MathMLScriptsElement::ScriptType::Under || scriptType() == MathMLScriptsElement::ScriptType::UnderOver)
-        preferredWidth = std::max(preferredWidth, under().maxPreferredLogicalWidth() + under().marginLogicalWidth());
+        preferredWidth = std::max(preferredWidth, under().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(under()));
 
     if (scriptType() == MathMLScriptsElement::ScriptType::Over || scriptType() == MathMLScriptsElement::ScriptType::UnderOver)
-        preferredWidth = std::max(preferredWidth, over().maxPreferredLogicalWidth() + over().marginLogicalWidth());
+        preferredWidth = std::max(preferredWidth, over().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(over()));
 
     m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = preferredWidth + borderAndPaddingLogicalWidth();
 
@@ -306,7 +305,7 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
         return;
 
     if (!isValid()) {
-        layoutInvalidMarkup(relayoutChildren);
+        RenderMathMLRow::layoutBlock(relayoutChildren);
         return;
     }
 

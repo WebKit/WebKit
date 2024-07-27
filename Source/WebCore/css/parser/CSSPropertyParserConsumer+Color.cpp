@@ -868,12 +868,8 @@ Color consumeColorRaw(CSSParserTokenRange& range, const CSSParserContext& contex
 
 // MARK: - Raw parsing entry points
 
-Color parseColorRaw(const String& string, const CSSParserContext& context, const CSSColorParsingOptions& options, const CSSUnresolvedColorResolutionContext& eagerResolutionContext)
+Color parseColorRawSlow(const String& string, const CSSParserContext& context, const CSSColorParsingOptions& options, const CSSUnresolvedColorResolutionContext& eagerResolutionContext)
 {
-    bool strict = !isQuirksModeBehavior(context.mode);
-    if (auto color = CSSParserFastPaths::parseSimpleColor(string, strict))
-        return *color;
-
     CSSTokenizer tokenizer(string);
     CSSParserTokenRange range(tokenizer.tokenRange());
 

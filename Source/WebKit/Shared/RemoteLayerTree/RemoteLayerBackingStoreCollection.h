@@ -76,6 +76,7 @@ public:
 
     // Return value indicates whether the backing store needs to be included in the transaction.
     bool backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
+    bool backingStoreWillBeDisplayedWithRenderingSuppression(RemoteLayerBackingStore&);
     void backingStoreBecameUnreachable(RemoteLayerBackingStore&);
 
     virtual void prepareBackingStoresForDisplay(RemoteLayerTreeTransaction&);

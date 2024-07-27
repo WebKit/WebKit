@@ -720,7 +720,7 @@ static inline WebKit::WebExtensionContext::TabSet toImpl(NSSet<id<_WKWebExtensio
     WebKit::WebExtensionContext::TabSet result;
     result.reserveInitialCapacity(tabs.count);
 
-    for (id<_WKWebExtensionTab> tab in tabs) {
+    for (id tab in tabs) {
         NSCParameterAssert([tab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
         result.addVoid(context.getOrCreateTab(tab));
     }
@@ -786,9 +786,6 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 {
     if (properties == _WKWebExtensionTabChangedPropertiesNone)
         return { };
-
-    if (properties == _WKWebExtensionTabChangedPropertiesAll)
-        return WebKit::WebExtensionTab::allChangedProperties();
 
     OptionSet<WebKit::WebExtensionTab::ChangedProperties> result;
 

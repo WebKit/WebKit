@@ -32,6 +32,7 @@ class CachedSVGDocument;
 
 class SVGUseElement final : public SVGGraphicsElement, public SVGURIReference, private CachedSVGDocumentClient {
     WTF_MAKE_ISO_ALLOCATED(SVGUseElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGUseElement);
 public:
     static Ref<SVGUseElement> create(const QualifiedName&, Document&);
     virtual ~SVGUseElement();

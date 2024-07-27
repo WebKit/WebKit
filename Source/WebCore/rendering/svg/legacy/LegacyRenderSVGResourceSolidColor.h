@@ -36,7 +36,7 @@ public:
     void removeAllClientsFromCacheIfNeeded(bool, SingleThreadWeakHashSet<RenderObject>*) override { }
     void removeClientFromCache(RenderElement&, bool = true) override { }
 
-    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
+    OptionSet<ApplyResult> applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
     void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*) override;
     FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) override { return FloatRect(); }
 

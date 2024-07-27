@@ -31,6 +31,8 @@
 #include "PushMessageForTesting.h"
 #include "WebPushMessage.h"
 #include <WebCore/ExceptionData.h>
+#include <WebCore/NotificationResources.h>
+#include <WebCore/PushPermissionState.h>
 #include <WebCore/PushSubscriptionData.h>
 #include <WebCore/PushSubscriptionIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
@@ -44,6 +46,8 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 #include <wtf/text/WTFString.h>
+
+OBJC_CLASS UIWebClip;
 
 namespace WebCore {
 class SecurityOriginData;
@@ -87,6 +91,10 @@ public:
 
     void didReceiveMessageWithReplyHandler(IPC::Decoder&, Function<void(UniqueRef<IPC::Encoder>&&)>&&) override;
 
+#if PLATFORM(IOS)
+    String associatedWebClipTitle() const;
+#endif
+
 private:
     PushClientConnection(xpc_connection_t);
 
@@ -104,19 +112,30 @@ private:
     void removePushSubscriptionsForOrigin(WebCore::SecurityOriginData&&, CompletionHandler<void(unsigned)>&&);
     void setPublicTokenForTesting(const String& publicToken, CompletionHandler<void()>&&);
     void updateConnectionConfiguration(WebPushDaemonConnectionConfiguration&&);
-    void getPushPermissionState(URL&& scopeURL, CompletionHandler<void(const Expected<uint8_t, WebCore::ExceptionData>&)>&&);
+    void getPushPermissionState(URL&& scopeURL, CompletionHandler<void(WebCore::PushPermissionState)>&&);
     void setHostAppAuditTokenData(const Vector<uint8_t>&);
     void getPushTopicsForTesting(CompletionHandler<void(Vector<String>, Vector<String>)>&&);
     void didShowNotificationForTesting(URL&& scopeURL, CompletionHandler<void()>&&);
+
+    void showNotification(const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>, CompletionHandler<void()>&&);
+    void getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
+    void cancelNotification(const WTF::UUID& notificationID);
+    void enableMockUserNotificationCenterForTesting(CompletionHandler<void()>&&);
+
     String bundleIdentifierFromAuditToken(audit_token_t);
     bool hostHasEntitlement(ASCIILiteral);
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
 
+#if PLATFORM(IOS)
+    mutable RetainPtr<UIWebClip> m_associatedWebClip;
+#endif
+
     std::optional<audit_token_t> m_hostAppAuditToken;
     std::optional<String> m_hostAppCodeSigningIdentifier;
     std::optional<bool> m_hostAppHasPushEntitlement;
 
+    String m_bundleIdentifierOverride;
     String m_pushPartitionString;
     Markable<WTF::UUID> m_dataStoreIdentifier;
 

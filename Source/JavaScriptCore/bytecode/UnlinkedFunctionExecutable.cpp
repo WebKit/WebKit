@@ -52,12 +52,11 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
     UnlinkedFunctionKind functionKind, ParserError& error, SourceParseMode parseMode)
 {
     JSParserBuiltinMode builtinMode = executable->isBuiltinFunction() ? JSParserBuiltinMode::Builtin : JSParserBuiltinMode::NotBuiltin;
-    JSParserStrictMode strictMode = executable->isInStrictContext() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
     JSParserScriptMode scriptMode = executable->scriptMode();
     ASSERT(isFunctionParseMode(executable->parseMode()));
     auto* classElementDefinitions = executable->classElementDefinitions();
     std::unique_ptr<FunctionNode> function = parse<FunctionNode>(
-        vm, source, executable->name(), executable->implementationVisibility(), builtinMode, strictMode, scriptMode, executable->parseMode(), executable->functionMode(), executable->superBinding(), error, executable->constructorKind(), executable->derivedContextType(), EvalContextType::None, nullptr, classElementDefinitions);
+        vm, source, executable->name(), executable->implementationVisibility(), builtinMode, executable->lexicallyScopedFeatures(), scriptMode, executable->parseMode(), executable->functionMode(), executable->superBinding(), error, executable->constructorKind(), executable->derivedContextType(), EvalContextType::None, nullptr, classElementDefinitions);
 
     if (!function) {
         ASSERT(error.isValid());
@@ -65,7 +64,7 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
     }
 
     function->finishParsing(executable->name(), executable->functionMode());
-    executable->recordParse(function->features(), function->lexicalScopeFeatures(), function->hasCapturedVariables());
+    executable->recordParse(function->features(), function->lexicallyScopedFeatures(), function->hasCapturedVariables());
 
     bool isClassContext = executable->superBinding() == SuperBinding::Needed || executable->parseMode() == SourceParseMode::ClassFieldInitializerMode;
 
@@ -108,7 +107,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM& vm, Structure* struct
     , m_constructorKind(static_cast<unsigned>(node->constructorKind()))
     , m_sourceParseMode(node->parseMode())
     , m_implementationVisibility(static_cast<unsigned>(node->implementationVisibility()))
-    , m_lexicalScopeFeatures(node->lexicalScopeFeatures())
+    , m_lexicallyScopedFeatures(node->lexicallyScopedFeatures())
     , m_functionMode(static_cast<unsigned>(node->functionMode()))
     , m_derivedContextType(static_cast<unsigned>(derivedContextType))
     , m_inlineAttribute(static_cast<unsigned>(inlineAttribute))
@@ -210,8 +209,9 @@ UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(
     ParserError error;
     VM& vm = globalObject->vm();
     CodeCache* codeCache = vm.codeCache();
+    LexicallyScopedFeatures lexicallyScopedFeatures = globalObject->globalScopeExtension() ? TaintedByWithScopeLexicallyScopedFeature : NoLexicallyScopedFeatures;
     OptionSet<CodeGenerationMode> codeGenerationMode = globalObject->defaultCodeGenerationMode();
-    UnlinkedFunctionExecutable* executable = codeCache->getUnlinkedGlobalFunctionExecutable(vm, name, source, codeGenerationMode, functionConstructorParametersEndPosition, error);
+    UnlinkedFunctionExecutable* executable = codeCache->getUnlinkedGlobalFunctionExecutable(vm, name, source, lexicallyScopedFeatures, codeGenerationMode, functionConstructorParametersEndPosition, error);
 
     if (globalObject->hasDebugger())
         globalObject->debugger()->sourceParsed(globalObject, source.provider(), error.line(), error.message());

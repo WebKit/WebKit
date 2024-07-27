@@ -119,8 +119,6 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path=None):
             category = 'iOS'
         elif platform.startswith('visionos'):
             category = 'visionOS'
-        elif platform == 'win':
-            category = 'AppleWin'
         elif platform.startswith('gtk'):
             category = 'GTK'
         elif platform.startswith('wpe'):
@@ -132,7 +130,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path=None):
         else:
             category = 'misc'
 
-        if (category in ('AppleMac', 'AppleWin', 'iOS')) and factoryName != 'BuildFactory':
+        if (category in ('AppleMac', 'iOS')) and factoryName != 'BuildFactory':
             builder['nextBuild'] = pickLatestBuild
 
         c['builders'].append(builder)

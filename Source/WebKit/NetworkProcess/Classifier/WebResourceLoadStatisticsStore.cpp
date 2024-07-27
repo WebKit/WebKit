@@ -45,6 +45,7 @@
 #include <WebCore/CookieJar.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
+#include <WebCore/IsLoggedIn.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/SQLiteDatabase.h>
@@ -473,6 +474,25 @@ void WebResourceLoadStatisticsStore::requestStorageAccess(RegistrableDomain&& su
     });
 }
 
+void WebResourceLoadStatisticsStore::setLoginStatus(RegistrableDomain&& domain, IsLoggedIn loggedInStatus, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (loggedInStatus == IsLoggedIn::LoggedIn)
+        m_loginStatus.set(domain, loggedInStatus);
+    else
+        m_loginStatus.remove(domain);
+    completionHandler();
+}
+
+void WebResourceLoadStatisticsStore::isLoggedIn(RegistrableDomain&& domain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    auto it = m_loginStatus.find(domain);
+    completionHandler(it != m_loginStatus.end() && it->value == IsLoggedIn::LoggedIn);
+}
+
 void WebResourceLoadStatisticsStore::requestStorageAccessEphemeral(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, FrameIdentifier frameID, PageIdentifier webPageID, WebPageProxyIdentifier webPageProxyID, StorageAccessScope scope, CanRequestStorageAccessWithoutUserInteraction canRequestStorageAccessWithoutUserInteraction, std::optional<OrganizationStorageAccessPromptQuirk>&& storageAccessPromptQuirk, CompletionHandler<void(RequestStorageAccessResult)>&& completionHandler)
 {
     ASSERT(isEphemeral());
@@ -659,6 +679,19 @@ void WebResourceLoadStatisticsStore::setFirstPartyWebsiteDataRemovalMode(FirstPa
         postTaskReply([completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler();
         });
+    });
+}
+
+void WebResourceLoadStatisticsStore::setPersistedDomains(const HashSet<RegistrableDomain>& domains)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (isEphemeral() || domains.isEmpty())
+        return;
+
+    postTask([this, domains = crossThreadCopy(domains)]() mutable {
+        if (m_statisticsStore)
+            m_statisticsStore->setPersistedDomains(WTFMove(domains));
     });
 }
 

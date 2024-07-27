@@ -32,6 +32,7 @@
 #include "LocalFrameLoaderClient.h"
 #include "LocalizedStrings.h"
 #include "SimpleRange.h"
+#include "TextChecking.h"
 #include "TextIteratorBehavior.h"
 #include "VisibleSelection.h"
 #include "Widget.h"
@@ -93,6 +94,7 @@ class QualifiedName;
 class RenderObject;
 class ScrollView;
 
+struct AccessibilitySearchCriteria;
 struct AccessibilityText;
 struct CharacterRange;
 struct ScrollRectToVisibleOptions;
@@ -573,71 +575,7 @@ enum class AccessibilityTextSource {
     Action,
 };
 
-enum class AccessibilitySearchKey {
-    AnyType = 1,
-    Article,
-    BlockquoteSameLevel,
-    Blockquote,
-    BoldFont,
-    Button,
-    Checkbox,
-    Control,
-    DifferentType,
-    FontChange,
-    FontColorChange,
-    Frame,
-    Graphic,
-    HeadingLevel1,
-    HeadingLevel2,
-    HeadingLevel3,
-    HeadingLevel4,
-    HeadingLevel5,
-    HeadingLevel6,
-    HeadingSameLevel,
-    Heading,
-    Highlighted,
-    ItalicFont,
-    KeyboardFocusable,
-    Landmark,
-    Link,
-    List,
-    LiveRegion,
-    MisspelledWord,
-    Outline,
-    PlainText,
-    RadioGroup,
-    SameType,
-    StaticText,
-    StyleChange,
-    TableSameLevel,
-    Table,
-    TextField,
-    Underline,
-    UnvisitedLink,
-    VisitedLink,
-};
-
 using AXEditingStyleValueVariant = std::variant<String, bool, int>;
-
-struct AccessibilitySearchCriteria {
-    AXCoreObject* anchorObject { nullptr };
-    AXCoreObject* startObject;
-    AccessibilitySearchDirection searchDirection;
-    Vector<AccessibilitySearchKey> searchKeys;
-    String searchText;
-    unsigned resultsLimit;
-    bool visibleOnly;
-    bool immediateDescendantsOnly;
-
-    AccessibilitySearchCriteria(AXCoreObject* startObject, AccessibilitySearchDirection searchDirection, String searchText, unsigned resultsLimit, bool visibleOnly, bool immediateDescendantsOnly)
-        : startObject(startObject)
-        , searchDirection(searchDirection)
-        , searchText(searchText)
-        , resultsLimit(resultsLimit)
-        , visibleOnly(visibleOnly)
-        , immediateDescendantsOnly(immediateDescendantsOnly)
-    { }
-};
 
 enum class AccessibilityObjectInclusion : uint8_t {
     IncludeObject,
@@ -981,7 +919,7 @@ public:
 
     virtual bool hasBoldFont() const = 0;
     virtual bool hasItalicFont() const = 0;
-    virtual bool hasMisspelling() const = 0;
+    virtual Vector<CharacterRange> spellCheckerResultRanges() const = 0;
     virtual std::optional<SimpleRange> misspellingRange(const SimpleRange& start, AccessibilitySearchDirection) const = 0;
     virtual std::optional<SimpleRange> visibleCharacterRange() const = 0;
     virtual bool hasPlainText() const = 0;
@@ -1099,7 +1037,7 @@ public:
     virtual AXCoreObject* parentObject() const = 0;
     virtual AXCoreObject* parentObjectUnignored() const = 0;
 
-    virtual void findMatchingObjects(AccessibilitySearchCriteria*, AccessibilityChildrenVector&) = 0;
+    virtual AccessibilityChildrenVector findMatchingObjects(AccessibilitySearchCriteria&&) = 0;
     virtual bool isDescendantOfRole(AccessibilityRole) const = 0;
 
     virtual bool hasDocumentRoleAncestor() const = 0;
@@ -1621,8 +1559,6 @@ T* findChild(T& object, F&& matches)
     return nullptr;
 }
 
-void findMatchingObjects(const AccessibilitySearchCriteria&, AXCoreObject::AccessibilityChildrenVector&);
-
 template<typename T, typename F>
 void enumerateAncestors(const T& object, bool includeSelf, const F& lambda)
 {
@@ -1705,8 +1641,6 @@ inline AXCoreObject* AXCoreObject::axScrollView() const
 // Logging helpers.
 WTF::TextStream& operator<<(WTF::TextStream&, AccessibilityRole);
 WTF::TextStream& operator<<(WTF::TextStream&, AccessibilitySearchDirection);
-WTF::TextStream& operator<<(WTF::TextStream&, AccessibilitySearchKey);
-WTF::TextStream& operator<<(WTF::TextStream&, const AccessibilitySearchCriteria&);
 WTF::TextStream& operator<<(WTF::TextStream&, AccessibilityObjectInclusion);
 WTF::TextStream& operator<<(WTF::TextStream&, const AXCoreObject&);
 WTF::TextStream& operator<<(WTF::TextStream&, AccessibilityText);

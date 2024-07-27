@@ -750,11 +750,13 @@ void MockRealtimeVideoSource::setIsInterrupted(bool isInterrupted)
 
 void MockRealtimeVideoSource::startApplyingConstraints()
 {
+    ASSERT(!m_beingConfigured);
     m_beingConfigured = true;
 }
 
 void MockRealtimeVideoSource::endApplyingConstraints()
 {
+    ASSERT(m_beingConfigured);
     m_beingConfigured = false;
 }
 

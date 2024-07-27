@@ -40,6 +40,7 @@ class HTMLSourceElement final
 #endif
     , public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(HTMLSourceElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLSourceElement);
 public:
     static Ref<HTMLSourceElement> create(Document&);
     static Ref<HTMLSourceElement> create(const QualifiedName&, Document&);

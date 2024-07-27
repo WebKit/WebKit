@@ -85,7 +85,7 @@ def parse_results_file(args, file_path):
     return None, None, None, None
 
 
-def find_project_results(args, project, file_list, results_data):
+def find_project_results(args, project, file_list, results_data, issue_to_report):
     bug_counts = {}
     files_per_project = {key: set() for key in CHECKER_MAP.values()}
 
@@ -115,6 +115,11 @@ def find_project_results(args, project, file_list, results_data):
             file_dict[file_name][issue_hash] = result_file
         results_data[CHECKER_MAP[bug_type]] = file_dict
 
+        # Add direct mapping from issue hash to report path
+        if not CHECKER_MAP[bug_type] in issue_to_report.keys():
+            issue_to_report[CHECKER_MAP[bug_type]] = {}
+        issue_to_report[CHECKER_MAP[bug_type]][issue_hash] = result_file
+
         output_file_name = os.path.abspath(f'{args.output_dir}/{project}/{CHECKER_MAP[bug_type]}Issues')
         with open(output_file_name, 'a') as f:
             f.write(f'{issue_hash}\n')
@@ -136,6 +141,7 @@ def find_all_results(args):
     file_list = []
     results_data = {}
     result_counts = {}
+    issue_to_report = {}
 
     for project in PROJECTS:
         subprocess.run(['mkdir', os.path.abspath(f'{args.output_dir}/{project}')])
@@ -153,13 +159,18 @@ def find_all_results(args):
 
         print(f'\n------ {project} ------\n')
         print(f'TOTAL ISSUES: {len(project_files)}')
-        find_project_results(args, project, project_files, results_data)
+        find_project_results(args, project, project_files, results_data, issue_to_report)
 
     print("\nWriting results files...")
+    # Checker -> File -> Issue -> Report
     results_data_file = os.path.abspath(f'{args.output_dir}/issues_per_file.json')
     with open(results_data_file, "w") as f:
         results_data_obj = json.dumps(results_data, indent=4)
         f.write(results_data_obj)
+    # Checker -> Issue -> Report
+    issue_to_report_file = os.path.abspath(f'{args.output_dir}/issue_to_report.json')
+    with open(issue_to_report_file, "w") as f:
+        f.write(json.dumps(issue_to_report, indent=4))
     print(f'Done! Find them in {os.path.abspath(args.output_dir)}\n')
 
     results_msg = f'Total ({sum([c for c in result_counts.values()])}) '

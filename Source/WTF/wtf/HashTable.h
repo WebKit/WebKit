@@ -295,13 +295,14 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         const_iterator m_iterator;
     };
 
-    template<typename ValueTraits, typename HashFunctions> class IdentityHashTranslator {
+    template<typename ValueTraits, typename HashFunctions>
+    class IdentityHashTranslator {
     public:
-        template<typename T> static unsigned hash(const T& key) { return HashFunctions::hash(key); }
-        template<typename T, typename U> static bool equal(const T& a, const U& b) { return HashFunctions::equal(a, b); }
-        template<typename T, typename U, typename V> static void translate(T& location, const U&, V&& value)
-        { 
-            ValueTraits::assignToEmpty(location, std::forward<V>(value)); 
+        static unsigned hash(const auto& key) { return HashFunctions::hash(key); }
+        static bool equal(const auto& a, const auto& b) { return HashFunctions::equal(a, b); }
+        static void translate(auto& location, const auto&, const Invocable<typename ValueTraits::TraitType()> auto& functor)
+        {
+            ValueTraits::assignToEmpty(location, functor());
         }
     };
 
@@ -476,14 +477,14 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             setKeyCount(0);
         }
 
-        AddResult add(const ValueType& value) { return add<IdentityTranslatorType>(Extractor::extract(value), value); }
-        AddResult add(ValueType&& value) { return add<IdentityTranslatorType>(Extractor::extract(value), WTFMove(value)); }
+        AddResult add(const ValueType& value) { return add<IdentityTranslatorType>(Extractor::extract(value), [&]() ALWAYS_INLINE_LAMBDA { return value; }); }
+        AddResult add(ValueType&& value) { return add<IdentityTranslatorType>(Extractor::extract(value), [&]() ALWAYS_INLINE_LAMBDA { return WTFMove(value); }); }
 
         // A special version of add() that finds the object by hashing and comparing
         // with some other type, to avoid the cost of type conversion if the object is already
         // in the table.
-        template<typename HashTranslator, typename T, typename Extra> AddResult add(T&& key, Extra&&);
-        template<typename HashTranslator, typename T, typename Extra> AddResult addPassingHashCode(T&& key, Extra&&);
+        template<typename HashTranslator> AddResult add(auto&& key, const std::invocable<> auto& functor);
+        template<typename HashTranslator> AddResult addPassingHashCode(auto&& key, const std::invocable<> auto& functor);
 
         iterator find(const KeyType& key) { return find<IdentityTranslatorType>(key); }
         const_iterator find(const KeyType& key) const { return find<IdentityTranslatorType>(key); }
@@ -536,7 +537,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         template<typename HashTranslator, typename T> ValueType* lookupForReinsert(const T&);
         template<typename HashTranslator, typename T> FullLookupType fullLookupForWriting(const T&);
 
-        template<typename HashTranslator, typename T, typename Extra> void addUniqueForInitialization(T&& key, Extra&&);
+        template<typename HashTranslator> void addUniqueForInitialization(auto&& key, const std::invocable<> auto& functor);
 
         template<typename HashTranslator, typename T> void checkKey(const T&);
 
@@ -823,8 +824,8 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    template<typename HashTranslator, typename T, typename Extra>
-    ALWAYS_INLINE void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::addUniqueForInitialization(T&& key, Extra&& extra)
+    template<typename HashTranslator, typename T>
+    ALWAYS_INLINE void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::addUniqueForInitialization(T&& key, const std::invocable<> auto& functor)
     {
         ASSERT(m_table);
 
@@ -835,7 +836,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         internalCheckTableConsistency();
 
         Value* entry = lookupForReinsert<HashTranslator>(key);
-        HashTranslator::translate(*entry, std::forward<T>(key), std::forward<Extra>(extra));
+        HashTranslator::translate(*entry, std::forward<T>(key), functor);
 
         internalCheckTableConsistency();
     }
@@ -866,8 +867,8 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    template<typename HashTranslator, typename T, typename Extra>
-    ALWAYS_INLINE auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::add(T&& key, Extra&& extra) -> AddResult
+    template<typename HashTranslator, typename T>
+    ALWAYS_INLINE auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::add(T&& key, const std::invocable<> auto& functor) -> AddResult
     {
         checkKey<HashTranslator>(key);
 
@@ -938,7 +939,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             setDeletedCount(deletedCount() - 1);
         }
 
-        HashTranslator::translate(*entry, std::forward<T>(key), std::forward<Extra>(extra));
+        HashTranslator::translate(*entry, std::forward<T>(key), functor);
         setKeyCount(keyCount() + 1);
         
         if (shouldExpand())
@@ -950,8 +951,8 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    template<typename HashTranslator, typename T, typename Extra>
-    inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::addPassingHashCode(T&& key, Extra&& extra) -> AddResult
+    template<typename HashTranslator, typename T>
+    inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::addPassingHashCode(T&& key, const std::invocable<> auto& functor) -> AddResult
     {
         checkKey<HashTranslator>(key);
 
@@ -976,7 +977,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             setDeletedCount(deletedCount() - 1);
         }
 
-        HashTranslator::translate(*entry, std::forward<T>(key), std::forward<Extra>(extra), h);
+        HashTranslator::translate(*entry, std::forward<T>(key), functor, h);
         setKeyCount(keyCount() + 1);
 
         if (shouldExpand())
@@ -1341,7 +1342,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         setDeletedCount(0);
 
         for (const auto& otherValue : other)
-            addUniqueForInitialization<IdentityTranslatorType>(Extractor::extract(otherValue), otherValue);
+            addUniqueForInitialization<IdentityTranslatorType>(Extractor::extract(otherValue), [&]() ALWAYS_INLINE_LAMBDA { return otherValue; });
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>

@@ -1,0 +1,33 @@
+
+Tests that the NowPlaying metadata is empty when in private browsing mode.
+
+* NowPlaying should not be active before playback has started.
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplaythrough)
+RUN(nowPlayingState = internals.nowPlayingState)
+EXPECTED (nowPlayingState.registeredAsNowPlayingApplication == 'false') OK
+RUN(navigator.mediaSession.metadata = new MediaMetadata({title: "title", artist: "artist", album: "album", artwork: [{src: "content/abe.png"}]}))
+RUN(navigator.mediaSession.playbackState = "paused")
+RUN(navigator.mediaSession.positionState = {duration: video.duration, position: video.currentTime})
+RUN(navigator.mediaSession.setActionHandler("play", playAction))
+RUN(navigator.mediaSession.setActionHandler("pause", pauseAction))
+
+* Start to play, NowPlaying should become active.
+RUN(navigator.mediaSession.callActionHandler({action: "play"}))
+ACTION: play
+EVENT(playing)
+RUN(navigator.mediaSession.callActionHandler({action: "pause"}))
+ACTION: pause
+
+* Metadata should not be blank.
+RUN(nowPlayingMetadata = internals.nowPlayingMetadata)
+EXPECTED (nowPlayingMetadata != 'null') OK
+EXPECTED (nowPlayingMetadata.title != '') OK
+
+* Suspending all media playback NowPlaying to deactivate.
+RUN(internals.suspendAllMediaPlayback())
+EXPECTED (nowPlayingState.registeredAsNowPlayingApplication == 'false') OK
+EXPECTED (internals.nowPlayingMetadata == 'null') OK
+
+END OF TEST
+

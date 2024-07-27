@@ -734,6 +734,28 @@ inline int32_t JSValue::bigInt32AsInt32() const
 }
 #endif // USE(BIGINT32)
 
+inline bool JSValue::isZeroBigInt() const
+{
+    ASSERT(isBigInt());
+#if USE(BIGINT32)
+    if (isBigInt32())
+        return !bigInt32AsInt32();
+#endif
+    ASSERT(isHeapBigInt());
+    return asHeapBigInt()->isZero();
+}
+
+inline bool JSValue::isNegativeBigInt() const
+{
+    ASSERT(isBigInt());
+#if USE(BIGINT32)
+    if (isBigInt32())
+        return bigInt32AsInt32() < 0;
+#endif
+    ASSERT(isHeapBigInt());
+    return asHeapBigInt()->sign();
+}
+
 inline bool JSValue::isSymbol() const
 {
     return isCell() && asCell()->isSymbol();

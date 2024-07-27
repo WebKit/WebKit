@@ -364,6 +364,9 @@ WebProcessProxy::~WebProcessProxy()
         removeMessageReceiver(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::messageReceiverName());
 #endif
 
+    if (auto completionHandler = std::exchange(m_sharedPreferencesForWebProcessCompletionHandler, { }))
+        completionHandler(false);
+
     auto result = allProcessMap().remove(coreProcessIdentifier());
     ASSERT_UNUSED(result, result);
 
@@ -471,41 +474,25 @@ void WebProcessProxy::initializeWebProcess(WebProcessCreationParameters&& parame
 
 void WebProcessProxy::initializePreferencesForGPUAndNetworkProcesses(const WebPageProxy& page)
 {
-#if ENABLE(GPU_PROCESS)
-    if (!m_preferencesForGPUProcess)
-        m_preferencesForGPUProcess = page.preferencesForGPUProcess();
-    else
-        ASSERT(*m_preferencesForGPUProcess == page.preferencesForGPUProcess());
+    if (!m_sharedPreferencesForWebProcess) {
+        updateSharedPreferencesForWebProcess(page.preferences());
+        ASSERT(m_sharedPreferencesForWebProcess);
+    } else {
+#if ASSERT_ENABLED
+        auto sharedPreferencesForWebProcess = *m_sharedPreferencesForWebProcess;
+        ASSERT(!WebKit::updateSharedPreferencesForWebProcess(sharedPreferencesForWebProcess, page.preferences()));
 #endif
-    if (!m_preferencesForNetworkProcess)
-        m_preferencesForNetworkProcess = page.preferencesForNetworkProcess();
-    else
-        ASSERT(*m_preferencesForNetworkProcess == page.preferencesForNetworkProcess());
-}
+    }
 
-void WebProcessProxy::initializePreferencesForNetworkProcess(const API::PageConfiguration& pageConfiguration)
-{
-    ASSERT(!m_preferencesForNetworkProcess);
-    m_preferencesForNetworkProcess = pageConfiguration.preferencesForNetworkProcess();
-}
-
-void WebProcessProxy::initializePreferencesForNetworkProcess(const WebPreferencesStore& preferences)
-{
-    ASSERT(!m_preferencesForNetworkProcess);
-    m_preferencesForNetworkProcess = NetworkProcessPreferencesForWebProcess {
-        preferences.getBoolValueForKey(WebPreferencesKey::webTransportEnabledKey()),
-        processPool().usesSingleWebProcess(),
-    };
 }
 
 bool WebProcessProxy::hasSameGPUAndNetworkProcessPreferencesAs(const API::PageConfiguration& pageConfiguration) const
 {
-#if ENABLE(GPU_PROCESS)
-    if (m_preferencesForGPUProcess && *m_preferencesForGPUProcess != pageConfiguration.preferencesForGPUProcess())
-        return false;
-#endif
-    if (m_preferencesForNetworkProcess && *m_preferencesForNetworkProcess != pageConfiguration.preferencesForNetworkProcess())
-        return false;
+    if (m_sharedPreferencesForWebProcess) {
+        auto sharedPreferencesForWebProcess = *m_sharedPreferencesForWebProcess;
+        if (WebKit::updateSharedPreferencesForWebProcess(sharedPreferencesForWebProcess, pageConfiguration.preferences()))
+            return false;
+    }
     return true;
 }
 
@@ -1078,10 +1065,9 @@ void WebProcessProxy::createGPUProcessConnection(GPUProcessConnectionIdentifier 
     ASSERT(m_processIdentity);
 #endif
     parameters.webProcessIdentity = m_processIdentity;
-    auto& gpuPreferences = preferencesForGPUProcess();
-    ASSERT(gpuPreferences);
-    if (gpuPreferences)
-        parameters.preferences = *gpuPreferences;
+    ASSERT(m_sharedPreferencesForWebProcess);
+    if (m_sharedPreferencesForWebProcess)
+        parameters.sharedPreferencesForWebProcess = *m_sharedPreferencesForWebProcess;
 #if ENABLE(IPC_TESTING_API)
     parameters.ignoreInvalidMessageForTesting = ignoreInvalidMessageForTesting();
 #endif
@@ -2195,6 +2181,65 @@ Ref<WebProcessPool> WebProcessProxy::protectedProcessPool() const
     return processPool();
 }
 
+std::optional<SharedPreferencesForWebProcess> WebProcessProxy::updateSharedPreferencesForWebProcess(const WebPreferences& preferences)
+{
+    if (!m_sharedPreferencesForWebProcess) {
+        m_sharedPreferencesForWebProcess = WebKit::sharedPreferencesForWebProcess(preferences);
+        m_sharedPreferencesForWebProcess->version = 1;
+        return m_sharedPreferencesForWebProcess;
+    }
+    if (WebKit::updateSharedPreferencesForWebProcess(*m_sharedPreferencesForWebProcess, preferences)) {
+        ++m_sharedPreferencesForWebProcess->version;
+        return m_sharedPreferencesForWebProcess;
+    }
+    return std::nullopt;
+}
+
+void WebProcessProxy::didSyncSharedPreferencesForWebProcessWithNetworkProcess(uint64_t syncedSharedPreferencesVersion)
+{
+    m_sharedPreferencesVersionInNetworkProcess = syncedSharedPreferencesVersion;
+    if (m_sharedPreferencesVersionInNetworkProcess < m_awaitedSharedPreferencesVersion
+#if ENABLE(GPU_PROCESS)
+        || m_sharedPreferencesVersionInGPUProcess < m_awaitedSharedPreferencesVersion
+#endif
+        )
+        return;
+    auto completionHandler = std::exchange(m_sharedPreferencesForWebProcessCompletionHandler, { });
+    if (!completionHandler)
+        return;
+    completionHandler(true);
+    m_awaitedSharedPreferencesVersion = 0;
+}
+
+#if ENABLE(GPU_PROCESS)
+void WebProcessProxy::didSyncSharedPreferencesForWebProcessWithGPUProcess(uint64_t syncedSharedPreferencesVersion)
+{
+    m_sharedPreferencesVersionInGPUProcess = syncedSharedPreferencesVersion;
+    if (m_sharedPreferencesVersionInNetworkProcess < m_awaitedSharedPreferencesVersion
+        || m_sharedPreferencesVersionInGPUProcess < m_awaitedSharedPreferencesVersion)
+        return;
+    auto completionHandler = std::exchange(m_sharedPreferencesForWebProcessCompletionHandler, { });
+    if (!completionHandler)
+        return;
+    completionHandler(true);
+    m_awaitedSharedPreferencesVersion = 0;
+}
+#endif
+
+void WebProcessProxy::waitForSharedPreferencesForWebProcessToSync(uint64_t sharedPreferencesVersion, CompletionHandler<void(bool success)>&& completionHandler)
+{
+    ASSERT(!m_sharedPreferencesForWebProcessCompletionHandler);
+    ASSERT(!m_awaitedSharedPreferencesVersion);
+    if (m_sharedPreferencesVersionInNetworkProcess >= sharedPreferencesVersion
+#if ENABLE(GPU_PROCESS)
+        || m_sharedPreferencesVersionInGPUProcess >= m_awaitedSharedPreferencesVersion
+#endif
+        )
+        return completionHandler(true);
+    m_awaitedSharedPreferencesVersion = sharedPreferencesVersion;
+    m_sharedPreferencesForWebProcessCompletionHandler = WTFMove(completionHandler);
+}
+
 PAL::SessionID WebProcessProxy::sessionID() const
 {
     ASSERT(m_websiteDataStore);
@@ -2764,6 +2809,14 @@ TextStream& operator<<(TextStream& ts, const WebProcessProxy& process)
 
     return ts;
 }
+
+#if ENABLE(WEBXR)
+const WebCore::ProcessIdentity& WebProcessProxy::processIdentity()
+{
+    return m_processIdentity;
+}
+#endif
+
 
 } // namespace WebKit
 

@@ -21,5 +21,5 @@ for (const calendar of [
   const arg = { year: 1976, monthCode: "M11", day: 18, calendar };
   const result = Temporal.PlainDate.from(arg);
   TemporalHelpers.assertPlainDate(result, 1976, 11, "M11", 18, `Calendar created from string "${calendar}"`);
-  assert.sameValue(result.getISOFields().calendar, "iso8601", "calendar slot stores a string");
+  assert.sameValue(result.calendarId, "iso8601", "calendar string is iso8601");
 }

@@ -30,21 +30,21 @@
 #import "WKTextAnimationManager.h"
 
 #import "ImageOptions.h"
-#import "TextAnimationType.h"
 #import "WKTextAnimationType.h"
 #import "WebViewImpl.h"
+#import <WebCore/TextAnimationTypes.h>
 #import <pal/cocoa/WritingToolsUISoftLink.h>
 
 @interface WKTextAnimationTypeEffectData : NSObject
 @property (nonatomic, strong, readonly) NSUUID *effectID;
-@property (nonatomic, assign, readonly) WebKit::TextAnimationType type;
+@property (nonatomic, assign, readonly) WebCore::TextAnimationType type;
 @end
 
 @implementation WKTextAnimationTypeEffectData {
     RetainPtr<NSUUID> _effectID;
 }
 
-- (instancetype)initWithEffectID:(NSUUID *)effectID type:(WebKit::TextAnimationType)type
+- (instancetype)initWithEffectID:(NSUUID *)effectID type:(WebCore::TextAnimationType)type
 {
     if (!(self = [super init]))
         return nil;
@@ -85,37 +85,37 @@
     return self;
 }
 
-- (void)addTextAnimationForAnimationID:(NSUUID *)uuid withData:(const WebKit::TextAnimationData&)data
+- (void)addTextAnimationForAnimationID:(NSUUID *)uuid withData:(const WebCore::TextAnimationData&)data
 {
     RetainPtr<id<_WTTextEffect>> effect;
     RetainPtr chunk = adoptNS([PAL::alloc_WTTextChunkInstance() initChunkWithIdentifier:uuid.UUIDString]);
     switch (data.style) {
-    case WebKit::TextAnimationType::Initial:
+    case WebCore::TextAnimationType::Initial:
         effect = adoptNS([PAL::alloc_WTSweepTextEffectInstance() initWithChunk:chunk.get() effectView:_effectView.get()]);
         break;
-    case WebKit::TextAnimationType::Source:
+    case WebCore::TextAnimationType::Source:
         effect = adoptNS([PAL::alloc_WTReplaceSourceTextEffectInstance() initWithChunk:chunk.get() effectView:_effectView.get()]);
-        effect.get().preCompletion = makeBlockPtr([weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), uuid = RetainPtr(uuid)] {
+        effect.get().preCompletion = makeBlockPtr([weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), uuid = RetainPtr(uuid), runMode = data.runMode] {
             auto strongWebView = weakWebView.get();
             auto animationID = WTF::UUID::fromNSUUID(uuid.get());
             if (strongWebView && animationID)
-                strongWebView->page().callCompletionHandlerForAnimationID(*animationID);
+                strongWebView->page().callCompletionHandlerForAnimationID(*animationID, runMode);
         }).get();
         break;
-    case WebKit::TextAnimationType::Final:
+    case WebCore::TextAnimationType::Final:
         effect = adoptNS([PAL::alloc_WTReplaceDestinationTextEffectInstance() initWithChunk:chunk.get() effectView:_effectView.get()]);
         static_cast<_WTReplaceDestinationTextEffect *>(effect.get()).preCompletion = makeBlockPtr([weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), remainingID = data.unanimatedRangeUUID] {
             auto strongWebView = weakWebView.get();
             if (strongWebView)
                 strongWebView->page().updateUnderlyingTextVisibilityForTextAnimationID(remainingID, false);
         }).get();
-        effect.get().completion = makeBlockPtr([weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), remainingID = data.unanimatedRangeUUID, uuid = RetainPtr(uuid)] {
+        effect.get().completion = makeBlockPtr([weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), remainingID = data.unanimatedRangeUUID, uuid = RetainPtr(uuid), runMode = data.runMode] {
             auto strongWebView = weakWebView.get();
             if (strongWebView)
                 strongWebView->page().updateUnderlyingTextVisibilityForTextAnimationID(remainingID, true);
             auto animationID = WTF::UUID::fromNSUUID(uuid.get());
             if (animationID)
-                strongWebView->page().callCompletionHandlerForAnimationID(*animationID);
+                strongWebView->page().callCompletionHandlerForAnimationID(*animationID, runMode);
         }).get();
         break;
     }
@@ -145,7 +145,7 @@
         RetainPtr effectData = [_chunkToEffect objectForKey:chunkID];
         [_effectView removeEffect:[effectData effectID]];
 
-        if ([effectData type] != WebKit::TextAnimationType::Initial)
+        if ([effectData type] != WebCore::TextAnimationType::Initial)
             [_chunkToEffect removeObjectForKey:chunkID];
     }
 }
@@ -154,8 +154,8 @@
 {
     for (NSUUID *chunkID in [_chunkToEffect allKeys]) {
         RetainPtr effectData = [_chunkToEffect objectForKey:chunkID];
-        if ([effectData type] == WebKit::TextAnimationType::Initial)
-            [self addTextAnimationForAnimationID:chunkID withData: { WebKit::TextAnimationType::Initial, WTF::UUID(WTF::UUID::emptyValue) }];
+        if ([effectData type] == WebCore::TextAnimationType::Initial)
+            [self addTextAnimationForAnimationID:chunkID withData: { WebCore::TextAnimationType::Initial, WebCore::TextAnimationRunMode::RunAnimation, WTF::UUID(WTF::UUID::emptyValue) }];
     }
 }
 

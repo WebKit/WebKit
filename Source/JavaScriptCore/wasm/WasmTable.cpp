@@ -288,7 +288,7 @@ Ref<FuncRefTable> FuncRefTable::createFixedSized(uint32_t size, Type wasmType)
     return adoptRef(*new (NotNull, fastMalloc(allocationSize(allocatedLength(size)))) FuncRefTable(size, size, wasmType));
 }
 
-void FuncRefTable::setFunction(uint32_t index, JSObject* optionalWrapper, WasmToWasmImportableFunction function, Instance* instance)
+void FuncRefTable::setFunction(uint32_t index, JSObject* optionalWrapper, WasmToWasmImportableFunction function, JSWebAssemblyInstance* instance)
 {
     RELEASE_ASSERT(index < length());
     RELEASE_ASSERT(m_owner);

@@ -37,20 +37,20 @@ bool certificatesMatch(SecTrustRef trust1, SecTrustRef trust2)
     if (!trust1 || !trust2)
         return false;
 
-    auto chain1 = adoptCF(SecTrustCopyCertificateChain(trust1));
-    auto chain2 = adoptCF(SecTrustCopyCertificateChain(trust2));
-    CFIndex count1 = CFArrayGetCount(chain1.get());
-    CFIndex count2 = CFArrayGetCount(chain2.get());
+    RetainPtr chain1 = adoptCF(SecTrustCopyCertificateChain(trust1));
+    RetainPtr chain2 = adoptCF(SecTrustCopyCertificateChain(trust2));
+    CFIndex count1 = chain1 ? CFArrayGetCount(chain1.get()) : 0;
+    CFIndex count2 = chain2 ? CFArrayGetCount(chain2.get()) : 0;
 
     if (count1 != count2)
         return false;
 
-    for (CFIndex i = 0; i < count1; i++) {
-        auto cert1 = CFArrayGetValueAtIndex(chain1.get(), i);
-        auto cert2 = CFArrayGetValueAtIndex(chain2.get(), i);
+    for (CFIndex i = 0; i < count1; ++i) {
+        RetainPtr cert1 = CFArrayGetValueAtIndex(chain1.get(), i);
+        RetainPtr cert2 = CFArrayGetValueAtIndex(chain2.get(), i);
         RELEASE_ASSERT(cert1);
         RELEASE_ASSERT(cert2);
-        if (!CFEqual(cert1, cert2))
+        if (!CFEqual(cert1.get(), cert2.get()))
             return false;
     }
 

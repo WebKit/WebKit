@@ -4,7 +4,6 @@
 /*---
 esid: sec-temporal.duration.prototype.subtract
 description: Negative time fields are balanced upwards
-info: |
 includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/

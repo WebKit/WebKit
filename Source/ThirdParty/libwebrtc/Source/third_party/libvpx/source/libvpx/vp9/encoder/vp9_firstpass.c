@@ -10,6 +10,7 @@
 
 #include <limits.h>
 #include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 
 #include "./vpx_dsp_rtcd.h"
@@ -3590,8 +3591,8 @@ void vp9_rc_get_second_pass_params(VP9_COMP *cpi) {
     const int frames_left =
         (int)(twopass->total_stats.count - cm->current_video_frame);
     // Special case code for first frame.
-    const int section_target_bandwidth =
-        (int)(twopass->bits_left / frames_left);
+    int64_t section_target_bandwidth = twopass->bits_left / frames_left;
+    section_target_bandwidth = VPXMIN(section_target_bandwidth, INT_MAX);
     const double section_length = twopass->total_left_stats.count;
     const double section_error =
         twopass->total_left_stats.coded_error / section_length;
@@ -3606,7 +3607,7 @@ void vp9_rc_get_second_pass_params(VP9_COMP *cpi) {
 
     tmp_q = get_twopass_worst_quality(
         cpi, section_error, section_intra_skip + section_inactive_zone,
-        section_noise, section_target_bandwidth);
+        section_noise, (int)section_target_bandwidth);
 
     twopass->active_worst_quality = tmp_q;
     twopass->baseline_active_worst_quality = tmp_q;
@@ -3809,7 +3810,8 @@ void vp9_twopass_postencode_update(VP9_COMP *cpi) {
         rc->vbr_bits_off_target_fast +=
             fast_extra_thresh - rc->projected_frame_size;
         rc->vbr_bits_off_target_fast =
-            VPXMIN(rc->vbr_bits_off_target_fast, (4 * rc->avg_frame_bandwidth));
+            VPXMIN(rc->vbr_bits_off_target_fast,
+                   (4 * (int64_t)rc->avg_frame_bandwidth));
 
         // Fast adaptation of minQ if necessary to use up the extra bits.
         if (rc->avg_frame_bandwidth) {

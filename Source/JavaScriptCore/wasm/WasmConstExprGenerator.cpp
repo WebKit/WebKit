@@ -200,7 +200,7 @@ public:
         ASSERT(mode == Mode::Validate);
     }
 
-    ConstExprGenerator(Mode mode, const ModuleInformation& info, RefPtr<Instance> instance)
+    ConstExprGenerator(Mode mode, const ModuleInformation& info, JSWebAssemblyInstance* instance)
         : m_mode(mode)
         , m_info(info)
         , m_instance(instance)
@@ -305,9 +305,9 @@ public:
         VM& vm = m_instance->vm();
         EncodedJSValue obj;
         if (value.type() == ConstExprValue::Vector)
-            obj = arrayNew(m_instance.get(), typeIndex, size, value.getVector());
+            obj = arrayNew(m_instance, typeIndex, size, value.getVector());
         else
-            obj = arrayNew(m_instance.get(), typeIndex, size, value.getValue());
+            obj = arrayNew(m_instance, typeIndex, size, value.getValue());
         if (UNLIKELY(!obj))
             return ConstExprValue(InvalidConstExpr);
         return ConstExprValue(Strong<JSObject>(vm, JSValue::decode(obj).getObject()));
@@ -382,7 +382,7 @@ public:
     ExpressionType createNewStruct(uint32_t typeIndex)
     {
         VM& vm = m_instance->vm();
-        EncodedJSValue obj = structNew(m_instance.get(), typeIndex, static_cast<bool>(UseDefaultValue::Yes), nullptr);
+        EncodedJSValue obj = structNew(m_instance, typeIndex, static_cast<bool>(UseDefaultValue::Yes), nullptr);
         if (UNLIKELY(!obj))
             return ConstExprValue(InvalidConstExpr);
         return ConstExprValue(Strong<JSObject>(vm, JSValue::decode(obj).getObject()));
@@ -713,6 +713,7 @@ public:
 
     void dump(const ControlStack&, const Stack*) { }
     ALWAYS_INLINE void willParseOpcode() { }
+    ALWAYS_INLINE void willParseExtendedOpcode() { }
     ALWAYS_INLINE void didParseOpcode() {
         if (m_parser->currentOpcode() == Nop)
             m_shouldError = true;
@@ -726,7 +727,7 @@ private:
     size_t m_offsetInSource;
     ExpressionType m_result;
     const ModuleInformation& m_info;
-    RefPtr<Instance> m_instance;
+    JSWebAssemblyInstance* m_instance { nullptr };
     bool m_shouldError = false;
     Vector<uint32_t> m_declaredFunctions;
 };
@@ -745,7 +746,7 @@ Expected<void, String> parseExtendedConstExpr(std::span<const uint8_t> source, s
     return { };
 }
 
-Expected<uint64_t, String> evaluateExtendedConstExpr(const Vector<uint8_t>& constantExpression, RefPtr<Instance> instance, const ModuleInformation& info, Type expectedType)
+Expected<uint64_t, String> evaluateExtendedConstExpr(const Vector<uint8_t>& constantExpression, JSWebAssemblyInstance* instance, const ModuleInformation& info, Type expectedType)
 {
     RELEASE_ASSERT_WITH_MESSAGE(Options::useWebAssemblyExtendedConstantExpressions(), "Wasm extended const expressions not enabled");
     ConstExprGenerator generator(ConstExprGenerator::Mode::Evaluate, info, instance);

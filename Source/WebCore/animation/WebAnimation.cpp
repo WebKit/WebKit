@@ -1609,12 +1609,12 @@ ExceptionOr<void> WebAnimation::commitStyles()
         return WTF::switchOn(property,
             [&] (CSSPropertyID propertyId) {
                 if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*animatedStyle, propertyId, nullptr, ComputedStyleExtractor::PropertyValueType::Computed))
-                    return inlineStyle->setProperty(propertyId, cssValue->cssText(), false, { styledElement->document() });
+                    return inlineStyle->setProperty(propertyId, cssValue->cssText(), { styledElement->document() });
                 return false;
             },
             [&] (const AtomString& customProperty) {
                 if (auto cssValue = computedStyleExtractor.customPropertyValue(customProperty))
-                    return inlineStyle->setCustomProperty(customProperty, cssValue->cssText(), false, { styledElement->document() });
+                    return inlineStyle->setCustomProperty(customProperty, cssValue->cssText(), { styledElement->document() });
                 return false;
             }
         );

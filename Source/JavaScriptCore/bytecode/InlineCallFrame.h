@@ -59,6 +59,7 @@ struct InlineCallFrame {
         SetterCall,
         ProxyObjectLoadCall,
         ProxyObjectStoreCall,
+        ProxyObjectInCall,
         BoundFunctionCall,
         BoundFunctionTailCall,
     };
@@ -73,6 +74,7 @@ struct InlineCallFrame {
         case SetterCall:
         case ProxyObjectLoadCall:
         case ProxyObjectStoreCall:
+        case ProxyObjectInCall:
         case BoundFunctionCall:
             return CallMode::Regular;
         case TailCall:
@@ -123,6 +125,7 @@ struct InlineCallFrame {
         case SetterCall:
         case ProxyObjectLoadCall:
         case ProxyObjectStoreCall:
+        case ProxyObjectInCall:
         case BoundFunctionCall:
         case BoundFunctionTailCall:
             return CodeForCall;

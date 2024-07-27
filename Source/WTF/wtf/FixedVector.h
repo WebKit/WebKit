@@ -95,6 +95,8 @@ public:
         : m_storage(other.isEmpty() ? nullptr : Storage::createFromVector(other).moveToUniquePtr())
     { }
 
+    // FIXME: Should we remove this now that it's not required for HashTable::add? This assignment is non-trivial and
+    // should probably go through the explicit constructor.
     template<size_t inlineCapacity, typename OverflowHandler>
     FixedVector& operator=(const Vector<T, inlineCapacity, OverflowHandler>& other)
     {
@@ -109,6 +111,8 @@ public:
         m_storage = target.isEmpty() ? nullptr : Storage::createFromVector(WTFMove(target)).moveToUniquePtr();
     }
 
+    // FIXME: Should we remove this now that it's not required for HashTable::add? This assignment is non-trivial and
+    // should probably go through the explicit constructor.
     template<size_t inlineCapacity, typename OverflowHandler>
     FixedVector& operator=(Vector<T, inlineCapacity, OverflowHandler>&& other)
     {

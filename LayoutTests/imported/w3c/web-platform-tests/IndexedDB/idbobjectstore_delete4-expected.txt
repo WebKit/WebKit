@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.delete() - delete removes record (out-of-line keys)
-

@@ -23,8 +23,11 @@
 
 #include "ImageBuffer.h"
 #include "SVGNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFEFuncAElement);
 
 inline SVGFEFuncAElement::SVGFEFuncAElement(const QualifiedName& tagName, Document& document)
     : SVGComponentTransferFunctionElement(tagName, document)

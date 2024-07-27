@@ -335,7 +335,7 @@ bool Queue::validateWriteBuffer(const Buffer& buffer, uint64_t bufferOffset, siz
     return true;
 }
 
-void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, std::span<uint8_t> data)
+void Queue::writeBuffer(Buffer& buffer, uint64_t bufferOffset, std::span<uint8_t> data)
 {
     auto device = m_device.get();
     if (!device)
@@ -356,6 +356,7 @@ void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, std::span<u
         return;
     }
 
+    buffer.indirectBufferInvalidated();
     // FIXME(PERFORMANCE): Instead of checking whether or not the whole queue is idle,
     // we could detect whether this specific resource is idle, if we tracked every resource.
     if (isIdle()) {

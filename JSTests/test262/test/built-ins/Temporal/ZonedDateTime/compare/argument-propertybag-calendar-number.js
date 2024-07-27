@@ -7,7 +7,7 @@ description: A number as calendar in a property bag is not accepted
 features: [Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("UTC");
+const timeZone = "UTC";
 const datetime = new Temporal.ZonedDateTime(0n, timeZone);
 
 const numbers = [

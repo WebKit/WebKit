@@ -657,6 +657,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     accessibility/AXGeometryManager.h
     accessibility/AXLogger.h
     accessibility/AXObjectCache.h
+    accessibility/AXSearchManager.h
     accessibility/AXTextMarker.h
     accessibility/AXTextRun.h
     accessibility/AXTextStateChangeIntent.h
@@ -932,6 +933,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/CheckVisibilityOptions.h
     dom/CollectionIndexCache.h
     dom/CollectionIndexCacheInlines.h
+    dom/CommandEvent.h
     dom/Comment.h
     dom/ContainerNode.h
     dom/ContextDestructionObserver.h
@@ -1000,7 +1002,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/GetHTMLOptions.h
     dom/ImageOverlay.h
     dom/InlineStyleSheetOwner.h
-    dom/InvokeEvent.h
     dom/KeyboardEvent.h
     dom/LiveNodeList.h
     dom/LiveNodeListInlines.h
@@ -1165,6 +1166,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     history/CachedPage.h
     history/HistoryItem.h
 
+    html/Allowlist.h
     html/AttachmentAssociatedElement.h
     html/Autocapitalize.h
     html/AutocapitalizeTypes.h
@@ -1277,6 +1279,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/MediaElementSession.h
     html/MediaError.h
     html/OffscreenCanvas.h
+    html/OwnerPermissionsPolicyData.h
     html/PDFDocument.h
     html/PermissionsPolicy.h
     html/PluginDocument.h
@@ -1538,6 +1541,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/HandleUserInputEventResult.h
     page/ImageAnalysisQueue.h
     page/InteractionRegion.h
+    page/IsLoggedIn.h
     page/LayoutMilestone.h
     page/LinkDecorationFilteringData.h
     page/LocalDOMWindow.h
@@ -1545,6 +1549,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/LocalFrame.h
     page/LocalFrameView.h
     page/LocalFrameViewLayoutContext.h
+    page/LoginStatus.h
     page/MediaCanStartListener.h
     page/MediaControlsContextMenuItem.h
     page/MediaProducer.h
@@ -1598,6 +1603,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/SpeechSynthesisClient.h
     page/StorageBlockingPolicy.h
     page/StructuredSerializeOptions.h
+    page/TextAnimationTypes.h
     page/TextDirectionSubmenuInclusionBehavior.h
     page/TextIndicator.h
     page/TranslationContextMenuInfo.h
@@ -1984,6 +1990,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ImageBufferBackendParameters.h
     platform/graphics/ImageBufferPixelFormat.h
     platform/graphics/ImageBufferPlatformBackend.h
+    platform/graphics/ImageBufferResourceLimits.h
     platform/graphics/ImageDecoder.h
     platform/graphics/ImageDecoderIdentifier.h
     platform/graphics/ImageFrame.h

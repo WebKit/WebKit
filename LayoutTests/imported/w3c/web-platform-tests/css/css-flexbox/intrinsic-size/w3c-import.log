@@ -22,9 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-003-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-003.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-004-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-004.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-005-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-006-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-006.html
@@ -51,6 +49,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-017.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-018.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-019.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-020-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-020.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-002-expected.xht

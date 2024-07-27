@@ -64,14 +64,6 @@ bool PointerLockManagerX11::lock()
     auto window = GDK_WINDOW_XID(gtk_widget_get_window(viewWidget));
     auto xCursor = gdk_x11_cursor_get_xcursor(cursor.get());
 #endif
-
-    int rootX, rootY;
-    Window unusedWindow;
-    int unusedCoord;
-    unsigned unusedMask;
-    XQueryPointer(xDisplay, window, &unusedWindow, &unusedWindow, &rootX, &rootY, &unusedCoord, &unusedCoord, &unusedMask);
-    m_x11RootInitialPoint = { rootX, rootY };
-
     int eventMask = PointerMotionMask | ButtonReleaseMask | ButtonPressMask | EnterWindowMask | LeaveWindowMask;
     XUngrabPointer(xDisplay, 0);
     return XGrabPointer(xDisplay, window, true, eventMask, GrabModeAsync, GrabModeAsync, window, xCursor, 0) == GrabSuccess;
@@ -87,13 +79,16 @@ bool PointerLockManagerX11::unlock()
 
 void PointerLockManagerX11::didReceiveMotionEvent(const FloatPoint& point)
 {
-    FloatSize delta = point - m_initialPoint;
-    if (IntSize(delta).isZero())
+    auto delta = IntSize(point - m_initialPoint);
+    if (delta.isZero())
         return;
 
     handleMotion(delta);
     auto* display = GDK_DISPLAY_XDISPLAY(gtk_widget_get_display(m_webPage.viewWidget()));
-    XWarpPointer(display, None, XRootWindow(display, 0), 0, 0, 0, 0, m_x11RootInitialPoint.x(), m_x11RootInitialPoint.y());
+    float scaleFactor = m_webPage.deviceScaleFactor();
+    IntSize warp = delta;
+    warp.scale(-scaleFactor);
+    XWarpPointer(display, None, None, 0, 0, 0, 0, warp.width(), warp.height());
 }
 
 } // namespace WebKit

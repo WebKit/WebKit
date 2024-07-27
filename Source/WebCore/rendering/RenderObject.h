@@ -565,6 +565,7 @@ public:
     bool isRenderSVGPath() const { return type() == Type::SVGPath; }
     bool isRenderSVGShape() const { return isRenderSVGModelObject() && m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::IsShape); }
     bool isLegacyRenderSVGShape() const { return isLegacyRenderSVGModelObject() && m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::IsShape); }
+    bool isLegacyRenderSVGRect() const { return type() == Type::LegacySVGRect; }
     bool isRenderSVGText() const { return type() == Type::SVGText; }
     bool isRenderSVGTextPath() const { return type() == Type::SVGTextPath; }
     bool isRenderSVGTSpan() const { return type() == Type::SVGTSpan; }
@@ -1567,6 +1568,9 @@ inline bool RenderObject::isRenderMathMLRow() const
     case Type::MathMLPadded:
     case Type::MathMLRoot:
     case Type::MathMLRow:
+    case Type::MathMLFraction:
+    case Type::MathMLScripts:
+    case Type::MathMLUnderOver:
         return true;
     default:
         break;

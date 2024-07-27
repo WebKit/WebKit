@@ -119,7 +119,7 @@ void OMGPlan::work(CompilationEffort)
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };
-        fail(makeString(parseAndCompileResult.error(), "when trying to tier up "_s, m_functionIndex));
+        fail(makeString(parseAndCompileResult.error(), "when trying to tier up "_s, m_functionIndex), Plan::Error::Parse);
         return;
     }
 
@@ -127,7 +127,7 @@ void OMGPlan::work(CompilationEffort)
     LinkBuffer linkBuffer(*context.wasmEntrypointJIT, callee.ptr(), LinkBuffer::Profile::WasmOMG, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate())) {
         Locker locker { m_lock };
-        Base::fail(makeString("Out of executable memory while tiering up function at index "_s, m_functionIndex));
+        Base::fail(makeString("Out of executable memory while tiering up function at index "_s, m_functionIndex), Plan::Error::OutOfMemory);
         return;
     }
 

@@ -10,6 +10,7 @@
 
 #include <math.h>
 #include <limits.h>
+#include <stdint.h>
 #include <stdio.h>
 
 #include "./vpx_dsp_rtcd.h"
@@ -17,6 +18,7 @@
 #include "block.h"
 #include "onyx_int.h"
 #include "vpx_dsp/variance.h"
+#include "vpx_dsp/vpx_dsp_common.h"
 #include "encodeintra.h"
 #include "vp8/common/common.h"
 #include "vp8/common/setupintrarecon.h"
@@ -310,6 +312,12 @@ static double simple_weight(YV12_BUFFER_CONFIG *source) {
   return sum_weights;
 }
 
+// Returns the saturating cast of a double value to int.
+static int saturate_cast_double_to_int(double d) {
+  if (d > INT_MAX) return INT_MAX;
+  return (int)d;
+}
+
 /* This function returns the current per frame maximum bitrate target */
 static int frame_max_bits(VP8_COMP *cpi) {
   /* Max allocation for a single frame based on the max section guidelines
@@ -352,10 +360,11 @@ static int frame_max_bits(VP8_COMP *cpi) {
     /* For VBR base this on the bits and frames left plus the
      * two_pass_vbrmax_section rate passed in by the user
      */
-    max_bits = (int)(((double)cpi->twopass.bits_left /
-                      (cpi->twopass.total_stats.count -
-                       (double)cpi->common.current_video_frame)) *
-                     ((double)cpi->oxcf.two_pass_vbrmax_section / 100.0));
+    max_bits = saturate_cast_double_to_int(
+        ((double)cpi->twopass.bits_left /
+         (cpi->twopass.total_stats.count -
+          (double)cpi->common.current_video_frame)) *
+        ((double)cpi->oxcf.two_pass_vbrmax_section / 100.0));
   }
 
   /* Trap case where we are out of bits */
@@ -2004,8 +2013,9 @@ static void define_gf_group(VP8_COMP *cpi, FIRSTPASS_STATS *this_frame) {
     /* Calculate the number of bits to be spent on the gf or arf based on
      * the boost number
      */
-    gf_bits = (int)((double)Boost *
-                    (cpi->twopass.gf_group_bits / (double)allocation_chunks));
+    gf_bits = saturate_cast_double_to_int(
+        (double)Boost *
+        (cpi->twopass.gf_group_bits / (double)allocation_chunks));
 
     /* If the frame that is to be boosted is simpler than the average for
      * the gf/arf group then use an alternative calculation
@@ -2033,9 +2043,9 @@ static void define_gf_group(VP8_COMP *cpi, FIRSTPASS_STATS *this_frame) {
      */
     else {
       // Avoid division by 0 by clamping cpi->twopass.kf_group_error_left to 1
-      int alt_gf_bits =
-          (int)((double)cpi->twopass.kf_group_bits * mod_frame_err /
-                (double)VPXMAX(cpi->twopass.kf_group_error_left, 1));
+      int alt_gf_bits = saturate_cast_double_to_int(
+          (double)cpi->twopass.kf_group_bits * mod_frame_err /
+          (double)VPXMAX(cpi->twopass.kf_group_error_left, 1));
 
       if (alt_gf_bits > gf_bits) {
         gf_bits = alt_gf_bits;
@@ -2169,7 +2179,8 @@ static void assign_std_frame_bits(VP8_COMP *cpi, FIRSTPASS_STATS *this_frame) {
   }
 
   /* How many of those bits available for allocation should we give it? */
-  target_frame_size = (int)((double)cpi->twopass.gf_group_bits * err_fraction);
+  target_frame_size = saturate_cast_double_to_int(
+      (double)cpi->twopass.gf_group_bits * err_fraction);
 
   /* Clip to target size to 0 - max_bits (or cpi->twopass.gf_group_bits)
    * at the top end.
@@ -2324,13 +2335,15 @@ void vp8_second_pass(VP8_COMP *cpi) {
   if (cpi->common.current_video_frame == 0) {
     cpi->twopass.est_max_qcorrection_factor = 1.0;
 
+    int64_t section_target_bandwidth = cpi->twopass.bits_left / frames_left;
+    section_target_bandwidth = VPXMIN(section_target_bandwidth, INT_MAX);
+
     /* Set a cq_level in constrained quality mode. */
     if (cpi->oxcf.end_usage == USAGE_CONSTRAINED_QUALITY) {
       int est_cq;
 
       est_cq = estimate_cq(cpi, &cpi->twopass.total_left_stats,
-                           (int)(cpi->twopass.bits_left / frames_left),
-                           overhead_bits);
+                           (int)section_target_bandwidth, overhead_bits);
 
       cpi->cq_target_quality = cpi->oxcf.cq_level;
       if (est_cq > cpi->cq_target_quality) cpi->cq_target_quality = est_cq;
@@ -2341,8 +2354,7 @@ void vp8_second_pass(VP8_COMP *cpi) {
     cpi->twopass.maxq_min_limit = cpi->best_quality;
 
     tmp_q = estimate_max_q(cpi, &cpi->twopass.total_left_stats,
-                           (int)(cpi->twopass.bits_left / frames_left),
-                           overhead_bits);
+                           (int)section_target_bandwidth, overhead_bits);
 
     /* Limit the maxq value returned subsequently.
      * This increases the risk of overspend or underspend if the initial
@@ -2370,9 +2382,11 @@ void vp8_second_pass(VP8_COMP *cpi) {
             (unsigned int)cpi->twopass.total_stats.count)) {
     if (frames_left < 1) frames_left = 1;
 
+    int64_t section_target_bandwidth = cpi->twopass.bits_left / frames_left;
+    section_target_bandwidth = VPXMIN(section_target_bandwidth, INT_MAX);
+
     tmp_q = estimate_max_q(cpi, &cpi->twopass.total_left_stats,
-                           (int)(cpi->twopass.bits_left / frames_left),
-                           overhead_bits);
+                           (int)section_target_bandwidth, overhead_bits);
 
     /* Move active_worst_quality but in a damped way */
     if (tmp_q > cpi->active_worst_quality) {

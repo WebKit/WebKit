@@ -59,6 +59,8 @@ static inline const char* toFeatureCategory(API::FeatureCategory category)
         return "CSS";
     case API::FeatureCategory::DOM:
         return "DOM";
+    case API::FeatureCategory::Extensions:
+        return "Extensions";
     case API::FeatureCategory::HTML:
         return "HTML";
     case API::FeatureCategory::Javascript:

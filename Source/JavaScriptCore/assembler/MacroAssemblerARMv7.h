@@ -198,7 +198,7 @@ public:
     //
     // Operations are typically two operand - operation(source, srcDst)
     // For many operations the source may be an TrustedImm32, the srcDst operand
-    // may often be a memory location (explictly described using an Address
+    // may often be a memory location (explicitly described using an Address
     // object).
 
     void add32(RegisterID src, RegisterID dest)
@@ -1518,6 +1518,14 @@ public:
             m_assembler.vmov(dest, src);
     }
 
+    void moveDoubleOrNop(FPRegisterID src, FPRegisterID dest)
+    {
+        if (src != dest)
+            m_assembler.vmov(dest, src);
+        else
+            nop();
+    }
+
     void moveZeroToFloat(FPRegisterID reg)
     {
         static double zeroConstant = 0.;
@@ -2158,6 +2166,18 @@ public:
             cachedDataTempRegister().invalidate();
         else if (dest == addressTempRegister)
             invalidateCachedAddressTempRegister();
+    }
+
+    // For use in IT blocks, where we need to generate an instruction even if
+    // src == dest. This should be pretty uncommon, so it's simpler to generate
+    // a nop.
+    void moveOrNop(RegisterID src, RegisterID dest)
+    {
+        if (src == dest) {
+            nop();
+            return;
+        }
+        move(src, dest);
     }
 
     void move(TrustedImmPtr imm, RegisterID dest)
@@ -2962,16 +2982,99 @@ public:
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(0));
     }
 
+    void moveConditionally32(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID src, RegisterID dest)
+    {
+        m_assembler.cmp(left, right);
+        m_assembler.it(armV7Condition(cond));
+        moveOrNop(src, dest);
+    }
+
+    void moveConditionally32(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        m_assembler.cmp(left, right);
+        m_assembler.it(armV7Condition(cond), false);
+        moveOrNop(thenCase, dest);
+        moveOrNop(elseCase, dest);
+    }
+
     void moveConditionally32(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
     {
-        auto passCase = branch32(cond, left, right);
-        move(elseCase, dest);
-        auto done = jump();
+        compare32AndSetFlags(left, right);
+        m_assembler.it(armV7Condition(cond), false);
+        moveOrNop(thenCase, dest);
+        moveOrNop(elseCase, dest);
+    }
 
-        passCase.link(this);
-        move(thenCase, dest);
+    void moveConditionallyTest32(ResultCondition cond, RegisterID testReg, RegisterID mask, RegisterID src, RegisterID dest)
+    {
+        if (src == dest)
+            return;
+        m_assembler.tst(testReg, mask);
+        m_assembler.it(armV7Condition(cond));
+        move(src, dest);
+    }
 
-        done.link(this);
+    void moveConditionallyTest32(ResultCondition cond, RegisterID left, RegisterID right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        // These are all correctness checks. We use an IT block, so we need to
+        // generate a specific number of instructions. Specifically, move(x, x)
+        // would not generate an instruction, so the IT block would apply to
+        // some later, unrelated instruction.
+        if (thenCase == elseCase)
+            return;
+        m_assembler.tst(left, right);
+        if (thenCase == dest) {
+            m_assembler.it(armV7Condition(cond), false);
+            nop();
+            move(elseCase, dest);
+        } else if (elseCase == dest) {
+            m_assembler.it(armV7Condition(cond));
+            move(thenCase, dest);
+        } else {
+            m_assembler.it(armV7Condition(cond), false);
+            move(thenCase, dest);
+            move(elseCase, dest);
+        }
+    }
+
+    void moveConditionallyTest32(ResultCondition cond, RegisterID left, TrustedImm32 right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        test32(left, right);
+        m_assembler.it(armV7Condition(cond), false);
+        moveOrNop(thenCase, dest);
+        moveOrNop(elseCase, dest);
+    }
+
+    void moveDoubleConditionally32(RelationalCondition cond, RegisterID left, RegisterID right, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        m_assembler.cmp(left, right);
+        m_assembler.it(armV7Condition(cond), false);
+        moveDoubleOrNop(thenCase, dest);
+        moveDoubleOrNop(elseCase, dest);
+    }
+
+    void moveDoubleConditionally32(RelationalCondition cond, RegisterID left, TrustedImm32 right, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        compare32AndSetFlags(left, right);
+        m_assembler.it(armV7Condition(cond), false);
+        moveDoubleOrNop(thenCase, dest);
+        moveDoubleOrNop(elseCase, dest);
+    }
+
+    void moveDoubleConditionallyTest32(ResultCondition cond, RegisterID left, RegisterID right, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        m_assembler.tst(left, right);
+        m_assembler.it(armV7Condition(cond), false);
+        moveDoubleOrNop(thenCase, dest);
+        moveDoubleOrNop(elseCase, dest);
+    }
+
+    void moveDoubleConditionallyTest32(ResultCondition cond, RegisterID left, TrustedImm32 right, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        test32(left, right);
+        m_assembler.it(armV7Condition(cond), false);
+        moveDoubleOrNop(thenCase, dest);
+        moveDoubleOrNop(elseCase, dest);
     }
 
     ALWAYS_INLINE DataLabel32 moveWithPatch(TrustedImm32 imm, RegisterID dst)

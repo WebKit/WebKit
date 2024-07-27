@@ -4,10 +4,10 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (-50,-50) size 452x353 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (-50,-50) size 451.11x352.77
-layer at (-50,-50) size 452x353 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (0,0) size 451.11x352.77
+layer at (-50,-50) size 452x333 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-50,-50) size 451.11x332.77
+layer at (-50,-50) size 452x333 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 451.11x332.77
 layer at (-50,-50) size 452x205 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 451.11x204.61
 layer at (30,131.59) size 342x23
@@ -28,22 +28,18 @@ layer at (10,208.95) size 252x14
   RenderSVGText {text} at (60,258) size 253x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 253x14
       chunk 1 text run 1 at (10.00,220.00) startOffset 0 endOffset 46 width 252.16: ".getCTM(): 0.71,0.71,-0.71,0.71,116.67,-100.00"
-layer at (10,228.95) size 308x14
-  RenderSVGText {text} at (60,278) size 309x15 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 309x14
-      chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 56 width 308.17: ".getTransformToElement(): 0.42,0.42,-0.42,0.42,0.00,0.00"
-layer at (10,248.95) size 341x14
-  RenderSVGText {text} at (60,298) size 341x15 contains 1 chunk(s)
+layer at (10,228.95) size 341x14
+  RenderSVGText {text} at (60,278) size 341x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 341x14
-      chunk 1 text run 1 at (10.00,260.00) startOffset 0 endOffset 65 width 340.78: ".getBBox() for 'blueCircle': .x=-50,.y=-50,.width=100,.height=100"
-layer at (10,268.95) size 254x14
-  RenderSVGText {text} at (60,318) size 255x15 contains 1 chunk(s)
+      chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 65 width 340.78: ".getBBox() for 'blueCircle': .x=-50,.y=-50,.width=100,.height=100"
+layer at (10,248.95) size 254x14
+  RenderSVGText {text} at (60,298) size 255x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 255x14
-      chunk 1 text run 1 at (10.00,280.00) startOffset 0 endOffset 47 width 254.45: ".farthestViewportElement of blueCircle=svg-root"
-layer at (10,288.95) size 272x14
-  RenderSVGText {text} at (60,338) size 273x15 contains 1 chunk(s)
+      chunk 1 text run 1 at (10.00,260.00) startOffset 0 endOffset 47 width 254.45: ".farthestViewportElement of blueCircle=svg-root"
+layer at (10,268.95) size 272x14
+  RenderSVGText {text} at (60,318) size 273x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 273x14
-      chunk 1 text run 1 at (10.00,300.00) startOffset 0 endOffset 47 width 272.48: ".nearestViewportElement of blueCircle=nestedSVG"
+      chunk 1 text run 1 at (10.00,280.00) startOffset 0 endOffset 47 width 272.48: ".nearestViewportElement of blueCircle=nestedSVG"
 layer at (10,310.55) size 230x38
   RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
 layer at (10,310.55) size 229x37

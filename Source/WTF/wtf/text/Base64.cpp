@@ -25,6 +25,7 @@
 #include <wtf/text/Base64.h>
 
 #include <limits.h>
+#include <wtf/SIMDUTF.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/MakeString.h>
 
@@ -95,10 +96,28 @@ static const char base64URLDecMap[decodeMapSize] = {
     0x31, 0x32, 0x33, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet
 };
 
+static inline simdutf::base64_options toSIMDUTFOptions(OptionSet<Base64EncodeOption> options)
+{
+    if (options.contains(Base64EncodeOption::URL)) {
+        if (options.contains(Base64EncodeOption::OmitPadding))
+            return simdutf::base64_url;
+        return simdutf::base64_url_with_padding;
+    }
+    if (options.contains(Base64EncodeOption::OmitPadding))
+        return simdutf::base64_default_no_padding;
+    return simdutf::base64_default;
+}
+
 template<typename CharacterType> static void base64EncodeInternal(std::span<const uint8_t> inputDataBuffer, std::span<CharacterType> destinationDataBuffer, OptionSet<Base64EncodeOption> options)
 {
     ASSERT(destinationDataBuffer.size() > 0);
     ASSERT(calculateBase64EncodedSize(inputDataBuffer.size(), options) == destinationDataBuffer.size());
+
+    if constexpr (sizeof(CharacterType) == 1) {
+        size_t bytesWritten = simdutf::binary_to_base64(bitwise_cast<const char*>(inputDataBuffer.data()), inputDataBuffer.size(), bitwise_cast<char*>(destinationDataBuffer.data()), toSIMDUTFOptions(options));
+        ASSERT_UNUSED(bytesWritten, bytesWritten == destinationDataBuffer.size());
+        return;
+    }
 
     auto encodeMap = options.contains(Base64EncodeOption::URL) ? base64URLEncMap : base64EncMap;
 
@@ -175,6 +194,14 @@ String base64EncodeToString(std::span<const std::byte> input, OptionSet<Base64En
 String base64EncodeToStringReturnNullIfOverflow(std::span<const std::byte> input, OptionSet<Base64EncodeOption> options)
 {
     return tryMakeString(base64Encoded(input, options));
+}
+
+unsigned calculateBase64EncodedSize(unsigned inputLength, OptionSet<Base64EncodeOption> options)
+{
+    if (inputLength > maximumBase64EncoderInputBufferSize)
+        return 0;
+
+    return simdutf::base64_length_from_binary(inputLength, toSIMDUTFOptions(options));
 }
 
 template<typename T, typename Malloc = VectorBufferMalloc>

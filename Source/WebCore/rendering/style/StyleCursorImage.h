@@ -54,7 +54,7 @@ public:
 private:
     explicit StyleCursorImage(Ref<StyleImage>&&, const std::optional<IntPoint>& hotSpot, const URL&, LoadedFromOpaqueSource);
 
-    void setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom) final;
+    void setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom, const URL& = URL()) final;
     Ref<CSSValue> computedStyleValue(const RenderStyle&) const final;
     ImageWithScale selectBestFitImage(const Document&) final;
 

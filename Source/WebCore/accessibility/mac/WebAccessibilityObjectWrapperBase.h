@@ -118,7 +118,7 @@ RetainPtr<NSAttributedString> attributedStringCreate(Node*, StringView, const Si
 
 - (NSDictionary<NSString *, id> *)baseAccessibilityResolvedEditingStyles;
 
-extern WebCore::AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(const NSDictionary *);
+extern WebCore::AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicate(WebCore::AXCoreObject&, const NSDictionary *);
 
 extern NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector&);
 extern NSRange makeNSRange(std::optional<WebCore::SimpleRange>);

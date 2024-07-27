@@ -9,13 +9,15 @@ features: [Temporal]
 ---*/
 
 const expected = [
-  "ownKeys options",
-  "getOwnPropertyDescriptor options.disambiguation",
   "get options.disambiguation",
-  "getOwnPropertyDescriptor options.offset",
+  "get options.disambiguation.toString",
+  "call options.disambiguation.toString",
   "get options.offset",
-  "getOwnPropertyDescriptor options.overflow",
+  "get options.offset.toString",
+  "call options.offset.toString",
   "get options.overflow",
+  "get options.overflow.toString",
+  "call options.overflow.toString",
 ];
 
 let actual = [];

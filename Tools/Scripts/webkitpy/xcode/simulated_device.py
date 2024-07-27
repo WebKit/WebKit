@@ -56,6 +56,7 @@ class DeviceRequest(object):
 class SimulatedDeviceManager(object):
     class Runtime(object):
         def __init__(self, runtime_dict):
+            self.root = runtime_dict['runtimeRoot']
             self.build_version = runtime_dict['buildversion']
             self.os_variant = runtime_dict['name'].split(' ')[0]
             self.version = Version.from_string(runtime_dict['version'])
@@ -124,6 +125,7 @@ class SimulatedDeviceManager(object):
             host=host,
             device_type=device_type,
             build_version=runtime.build_version,
+            runtime_root=runtime.root,
         ))
         SimulatedDeviceManager.AVAILABLE_DEVICES.append(result)
         return result
@@ -537,20 +539,23 @@ class SimulatedDevice(object):
         'watchOS': 'com.apple.NanoSettings',
     }
 
-    def __init__(self, name, udid, host, device_type, build_version):
+    def __init__(self, name, udid, host, device_type, build_version, runtime_root):
         assert device_type.software_version
 
         self.name = name
         self.udid = udid
         self.device_type = device_type
         self.build_version = build_version
+        self.runtime_root = runtime_root
         self._state = SimulatedDevice.DeviceState.SHUTTING_DOWN
 
         self.executive = host.executive
         self.filesystem = host.filesystem
         self.platform = host.platform
 
-        self.environment_extras = []
+        self.environment_extras = [
+            [SimulatedDeviceManager.xcrun, 'simctl', 'spawn', self.udid, 'launchctl', 'unload', '-w', f'{runtime_root}/System/Library/LaunchDaemons/com.apple.chronod.plist'],  # FIXME: rdar://129075664
+        ]
 
         if apple_additions():
             self.environment_extras.extend(apple_additions().environment_extras(udid))

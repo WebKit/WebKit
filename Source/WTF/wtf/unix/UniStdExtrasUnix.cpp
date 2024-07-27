@@ -42,6 +42,18 @@ bool setCloseOnExec(int fileDescriptor)
     return returnValue != -1;
 }
 
+bool unsetCloseOnExec(int fileDescriptor)
+{
+    int returnValue = -1;
+    do {
+        int flags = fcntl(fileDescriptor, F_GETFD);
+        if (flags == -1)
+            returnValue = fcntl(fileDescriptor, F_SETFD, flags & ~FD_CLOEXEC);
+    } while (returnValue == -1 && errno == EINTR);
+
+    return returnValue != -1;
+}
+
 int dupCloseOnExec(int fileDescriptor)
 {
     int duplicatedFileDescriptor = -1;

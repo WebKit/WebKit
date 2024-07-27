@@ -1,0 +1,5 @@
+
+
+PASS Header-set policy is overridden in cross-origin iframe using allow attribute.
+FAIL Setting digital-credentials-get=(self) disallows the API in same-origin iframes. assert_false: Digital Credential API expected false got true
+

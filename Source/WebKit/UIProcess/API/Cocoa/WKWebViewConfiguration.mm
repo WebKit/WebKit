@@ -66,6 +66,10 @@
 #import "_WKWebExtensionControllerInternal.h"
 #endif
 
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+#import <WebCore/ShouldRequireExplicitConsentForGamepadAccess.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 
 _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
@@ -249,6 +253,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [coder encodeBool:self._scrollToTextFragmentIndicatorEnabled forKey:@"scrollToTextFragmentIndicatorEnabled"];
     [coder encodeBool:self._scrollToTextFragmentMarkingEnabled forKey:@"scrollToTextFragmentMarkingEnabled"];
     [coder encodeBool:self._multiRepresentationHEICInsertionEnabled forKey:@"multiRepresentationHEICInsertionEnabled"];
+#if PLATFORM(VISION)
+    [coder encodeBool:self._gamepadAccessRequiresExplicitConsent forKey:@"gamepadAccessRequiresExplicitConsent"];
+#endif
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder
@@ -296,6 +303,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     self._scrollToTextFragmentIndicatorEnabled = [coder decodeBoolForKey:@"scrollToTextFragmentIndicatorEnabled"];
     self._scrollToTextFragmentMarkingEnabled = [coder decodeBoolForKey:@"scrollToTextFragmentMarkingEnabled"];
     self._multiRepresentationHEICInsertionEnabled = [coder decodeBoolForKey:@"multiRepresentationHEICInsertionEnabled"];
+#if PLATFORM(VISION)
+    self._gamepadAccessRequiresExplicitConsent = [coder decodeBoolForKey:@"gamepadAccessRequiresExplicitConsent"];
+#endif
 
     return self;
 }
@@ -1475,6 +1485,24 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
     return NO;
 #endif
 }
+
+#if PLATFORM(VISION)
+- (BOOL)_gamepadAccessRequiresExplicitConsent
+{
+#if ENABLE(GAMEPAD)
+    return _pageConfiguration->gamepadAccessRequiresExplicitConsent() == WebCore::ShouldRequireExplicitConsentForGamepadAccess::Yes;
+#else
+    return NO;
+#endif
+}
+
+- (void)_setGamepadAccessRequiresExplicitConsent:(BOOL)gamepadAccessRequiresExplicitConsent
+{
+#if ENABLE(GAMEPAD)
+    _pageConfiguration->setGamepadAccessRequiresExplicitConsent(gamepadAccessRequiresExplicitConsent ? WebCore::ShouldRequireExplicitConsentForGamepadAccess::Yes : WebCore::ShouldRequireExplicitConsentForGamepadAccess::No);
+#endif
+}
+#endif // PLATFORM(VISION)
 
 @end
 

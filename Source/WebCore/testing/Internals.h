@@ -37,9 +37,12 @@
 #include "ExceptionOr.h"
 #include "HEVCUtilities.h"
 #include "IDLTypes.h"
+#include "ImageBufferResourceLimits.h"
+#include "NowPlayingInfo.h"
 #include "OrientationNotifier.h"
 #include "PageConsoleClient.h"
 #include "RealtimeMediaSource.h"
+#include "RenderingMode.h"
 #include "SleepDisabler.h"
 #include "TextIndicator.h"
 #include "VP9Utilities.h"
@@ -809,6 +812,7 @@ public:
     double minimumUpcomingPresentationTimeForTrackID(SourceBuffer&, const AtomString&);
     void setShouldGenerateTimestamps(SourceBuffer&, bool);
     void setMaximumQueueDepthForTrackID(SourceBuffer&, const AtomString&, size_t);
+    size_t evictableSize(SourceBuffer&);
 #endif
 
 #if ENABLE(VIDEO)
@@ -831,6 +835,8 @@ public:
     void endAudioSessionInterruption();
     void clearAudioSessionInterruptionFlag();
     void suspendAllMediaBuffering();
+    void suspendAllMediaPlayback();
+    void resumeAllMediaPlayback();
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -1118,6 +1124,10 @@ public:
 
     bool usingAppleInternalSDK() const;
     bool usingGStreamer() const;
+
+    using NowPlayingInfoArtwork = WebCore::NowPlayingInfoArtwork;
+    using NowPlayingMetadata = WebCore::NowPlayingMetadata;
+    std::optional<NowPlayingMetadata> nowPlayingMetadata() const;
 
     struct NowPlayingState {
         String title;
@@ -1474,6 +1484,13 @@ public:
     const String& defaultSpatialTrackingLabel() const;
 
     bool isEffectivelyMuted(const HTMLMediaElement&);
+
+    using RenderingMode = WebCore::RenderingMode;
+    std::optional<RenderingMode> getEffectiveRenderingModeOfNewlyCreatedAcceleratedImageBuffer();
+
+    using ImageBufferResourceLimits = WebCore::ImageBufferResourceLimits;
+    using ImageBufferResourceLimitsPromise = DOMPromiseDeferred<IDLDictionary<ImageBufferResourceLimits>>;
+    void getImageBufferResourceLimits(ImageBufferResourceLimitsPromise&&);
 
 private:
     explicit Internals(Document&);

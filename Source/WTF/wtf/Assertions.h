@@ -65,6 +65,9 @@
 #include <type_traits>
 #endif
 
+#define _XSTRINGIFY(line) #line
+#define _STRINGIFY(line) _XSTRINGIFY(line)
+
 /* ASSERT_ENABLED is defined in PlatformEnable.h. */
 
 #ifndef BACKTRACE_DISABLED
@@ -379,7 +382,7 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 #if ENABLE(SECURITY_ASSERTIONS)
 #define ASSERT_NOT_REACHED_WITH_SECURITY_IMPLICATION(...) CRASH_WITH_SECURITY_IMPLICATION_AND_INFO(__VA_ARGS__)
 #define ASSERT_WITH_SECURITY_IMPLICATION(assertion) \
-    (!(assertion) ? \
+    (UNLIKELY(!(assertion)) ? \
         (WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion), \
          CRASH_WITH_SECURITY_IMPLICATION()) : \
         (void)0)
@@ -396,7 +399,7 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 #else /* ASSERT_ENABLED */
 
 #define ASSERT(assertion, ...) do { \
-    if (!(assertion)) { \
+    if (UNLIKELY(!(assertion))) { \
         WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
         BACKTRACE(); \
         CRASH_WITH_INFO(__VA_ARGS__); \
@@ -404,7 +407,7 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 } while (0)
 
 #define ASSERT_UNDER_CONSTEXPR_CONTEXT(assertion) do { \
-    if (!(assertion)) { \
+    if (UNLIKELY(!(assertion))) { \
         WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
         if (!std::is_constant_evaluated()) \
             BACKTRACE(); \
@@ -413,7 +416,7 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 } while (0)
 
 #define ASSERT_AT(assertion, file, line, function) do { \
-    if (!(assertion)) { \
+    if (UNLIKELY(!(assertion))) { \
         WTFReportAssertionFailure(file, line, function, #assertion); \
         BACKTRACE(); \
         CRASH(); \
@@ -445,7 +448,7 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 } while (0)
 
 #define ASSERT_IMPLIES(condition, assertion) do { \
-    if ((condition) && !(assertion)) { \
+    if (UNLIKELY((condition) && !(assertion))) { \
         WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #condition " => " #assertion); \
         BACKTRACE(); \
         CRASH(); \
@@ -466,7 +469,7 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
  
 */
 #define ASSERT_WITH_SECURITY_IMPLICATION(assertion) do { \
-    if (!(assertion)) { \
+    if (UNLIKELY(!(assertion))) { \
         WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
         BACKTRACE(); \
         CRASH_WITH_SECURITY_IMPLICATION(); \
@@ -482,7 +485,7 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 #define ASSERT_WITH_MESSAGE(assertion, ...) ((void)0)
 #else
 #define ASSERT_WITH_MESSAGE(assertion, ...) do { \
-    if (!(assertion)) { \
+    if (UNLIKELY(!(assertion))) { \
         WTFReportAssertionFailureWithMessage(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion, __VA_ARGS__); \
         BACKTRACE(); \
         CRASH(); \
@@ -501,7 +504,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #define ASSERT_WITH_MESSAGE_UNUSED(variable, assertion, ...) ((void)variable)
 #else
 #define ASSERT_WITH_MESSAGE_UNUSED(variable, assertion, ...) do { \
-    if (!(assertion)) { \
+    if (UNLIKELY(!(assertion))) { \
         WTFReportAssertionFailureWithMessage(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion, __VA_ARGS__); \
         BACKTRACE(); \
         CRASH(); \
@@ -519,7 +522,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #else
 
 #define ASSERT_ARG(argName, assertion) do { \
-    if (!(assertion)) { \
+    if (UNLIKELY(!(assertion))) { \
         WTFReportArgumentAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #argName, #assertion); \
         BACKTRACE(); \
         CRASH(); \
@@ -619,7 +622,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #define RELEASE_LOG_DEBUG(channel, ...) ((void)0)
 
 #define RELEASE_LOG_IF(isAllowed, channel, ...) ((void)0)
-#define RELEASE_LOG_ERROR_IF(isAllowed, channel, ...) do { if (isAllowed) RELEASE_LOG_ERROR(channel, __VA_ARGS__); } while (0)
+#define RELEASE_LOG_ERROR_IF(isAllowed, channel, ...) do { if (UNLIKELY(isAllowed)) RELEASE_LOG_ERROR(channel, __VA_ARGS__); } while (0)
 #define RELEASE_LOG_INFO_IF(isAllowed, channel, ...) ((void)0)
 #define RELEASE_LOG_DEBUG_IF(isAllowed, channel, ...) ((void)0)
 
@@ -656,8 +659,6 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
         sd_journal_send_with_location("CODE_FILE=" file, "CODE_LINE=" line, function, "WEBKIT_SUBSYSTEM=%s", LOG_CHANNEL(channel).subsystem, "WEBKIT_CHANNEL=%s", LOG_CHANNEL(channel).name, "PRIORITY=%i", priority, "MESSAGE=" __VA_ARGS__, nullptr); \
 } while (0)
 
-#define _XSTRINGIFY(line) #line
-#define _STRINGIFY(line) _XSTRINGIFY(line)
 #define RELEASE_LOG(channel, ...) SD_JOURNAL_SEND(channel, LOG_NOTICE, __FILE__, _STRINGIFY(__LINE__), __func__, __VA_ARGS__)
 #define RELEASE_LOG_ERROR(channel, ...) SD_JOURNAL_SEND(channel, LOG_ERR, __FILE__, _STRINGIFY(__LINE__), __func__, __VA_ARGS__)
 #define RELEASE_LOG_FAULT(channel, ...) SD_JOURNAL_SEND(channel, LOG_CRIT, __FILE__, _STRINGIFY(__LINE__), __func__, __VA_ARGS__)
@@ -705,9 +706,9 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 
 #if !RELEASE_LOG_DISABLED
 #define RELEASE_LOG_IF(isAllowed, channel, ...) do { if (isAllowed) RELEASE_LOG(channel, __VA_ARGS__); } while (0)
-#define RELEASE_LOG_ERROR_IF(isAllowed, channel, ...) do { if (isAllowed) RELEASE_LOG_ERROR(channel, __VA_ARGS__); } while (0)
-#define RELEASE_LOG_INFO_IF(isAllowed, channel, ...) do { if (isAllowed) RELEASE_LOG_INFO(channel, __VA_ARGS__); } while (0)
-#define RELEASE_LOG_DEBUG_IF(isAllowed, channel, ...) do { if (isAllowed) RELEASE_LOG_DEBUG(channel, __VA_ARGS__); } while (0)
+#define RELEASE_LOG_ERROR_IF(isAllowed, channel, ...) do { if (UNLIKELY(isAllowed)) RELEASE_LOG_ERROR(channel, __VA_ARGS__); } while (0)
+#define RELEASE_LOG_INFO_IF(isAllowed, channel, ...) do { if (UNLIKELY(isAllowed)) RELEASE_LOG_INFO(channel, __VA_ARGS__); } while (0)
+#define RELEASE_LOG_DEBUG_IF(isAllowed, channel, ...) do { if (UNLIKELY(isAllowed)) RELEASE_LOG_DEBUG(channel, __VA_ARGS__); } while (0)
 #endif
 
 /* ALWAYS_LOG */

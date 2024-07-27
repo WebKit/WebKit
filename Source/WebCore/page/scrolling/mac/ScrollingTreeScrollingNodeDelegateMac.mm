@@ -95,6 +95,11 @@ void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingS
         m_scrollerPair->verticalScroller().setScrollbarLayoutDirection(scrollbarLayoutDirection);
     }
 
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollbarWidth)) {
+        auto scrollbarWidth = scrollingStateNode.scrollbarWidth();
+        m_scrollerPair->setScrollbarWidth(scrollbarWidth);
+    }
+
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ContentAreaHoverState)) {
         if (scrollingStateNode.mouseIsOverContentArea())
             m_scrollerPair->mouseEnteredContentArea();

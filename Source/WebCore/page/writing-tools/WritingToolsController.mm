@@ -41,6 +41,7 @@
 #import "Logging.h"
 #import "NodeRenderStyle.h"
 #import "RenderedDocumentMarker.h"
+#import "TextAnimationTypes.h"
 #import "TextIterator.h"
 #import "VisibleUnits.h"
 #import "WebContentReader.h"
@@ -380,19 +381,6 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
         return;
     }
 
-#if PLATFORM(IOS_FAMILY)
-    if (!state->hasReceivedText && session.compositionType == WritingTools::Session::CompositionType::SmartReply) {
-        // UIKit inserts a space prior to `willBegin` and before `didReceiveText`, so the initial session range
-        // becomes invalid and must be re-computed.
-        //
-        // FIXME: (rdar://131197624) Remove this special-case logic if/when UIKit no longer injects a space.
-        if (auto selectedRange = document->selection().selection().firstRange())
-            state->reappliedCommands.last()->setEndingContextRange(*selectedRange);
-    }
-
-    state->hasReceivedText = true;
-#endif
-
     m_page->chrome().client().removeInitialTextAnimation(session.identifier);
 
     document->selection().clear();
@@ -421,7 +409,10 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 
     auto commandState = finished ? WritingToolsCompositionCommand::State::Complete : WritingToolsCompositionCommand::State::InProgress;
 
-    auto addDestinationTextAnimation = [weakThis = WeakPtr { *this }, state, resolvedRange, attributedText, commandState, identifier = session.identifier, sessionRange]() mutable {
+    auto addDestinationTextAnimation = [weakThis = WeakPtr { *this }, state, resolvedRange, attributedText, commandState, identifier = session.identifier, sessionRange](WebCore::TextAnimationRunMode runMode) mutable {
+        if (runMode == WebCore::TextAnimationRunMode::DoNotRun)
+            return;
+
         if (!weakThis)
             return;
 
@@ -433,12 +424,14 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 
         weakThis->replaceContentsOfRangeInSession(*state, resolvedRange, attributedText, commandState);
 
+        if (runMode == WebCore::TextAnimationRunMode::OnlyReplaceText)
+            return;
+
         // FIXME: We won't be setting the selection after every replace, we need a different way to
         // caluculate this range.
         auto selectionRange = document->selection().selection().firstRange();
         if (!selectionRange)
             return;
-
 
         auto rangeAfterReplace = characterRange(sessionRange, *selectionRange);
 
@@ -451,7 +444,7 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 #if PLATFORM(MAC)
     m_page->chrome().client().addSourceTextAnimation(session.identifier, range, attributedText.string, WTFMove(addDestinationTextAnimation));
 #else
-    addDestinationTextAnimation();
+    addDestinationTextAnimation(WebCore::TextAnimationRunMode::RunAnimation);
 #endif
 }
 

@@ -70,11 +70,11 @@ void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPa
     }
 
     auto *creationOptions = [[_WKWebExtensionTabCreationOptions alloc] _init];
-    creationOptions.shouldActivate = parameters.active.value_or(true);
-    creationOptions.shouldSelect = creationOptions.shouldActivate ?: parameters.selected.value_or(false);
-    creationOptions.shouldPin = parameters.pinned.value_or(false);
-    creationOptions.shouldMute = parameters.muted.value_or(false);
-    creationOptions.shouldShowReaderMode = parameters.showingReaderMode.value_or(false);
+    creationOptions.active = parameters.active.value_or(true);
+    creationOptions.selected = creationOptions.active ?: parameters.selected.value_or(false);
+    creationOptions.pinned = parameters.pinned.value_or(false);
+    creationOptions.muted = parameters.muted.value_or(false);
+    creationOptions.readerModeShowing = parameters.showingReaderMode.value_or(false);
 
     RefPtr window = getWindow(parameters.windowIdentifier.value_or(WebExtensionWindowConstants::CurrentIdentifier), webPageProxyIdentifier);
     if (parameters.windowIdentifier && !window) {
@@ -82,8 +82,8 @@ void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPa
         return;
     }
 
-    creationOptions.desiredWindow = window ? window->delegate() : nil;
-    creationOptions.desiredIndex = parameters.index.value_or(window ? window->tabs().size() : 0);
+    creationOptions.window = window ? window->delegate() : nil;
+    creationOptions.index = parameters.index.value_or(window ? window->tabs().size() : 0);
 
     if (parameters.parentTabIdentifier) {
         RefPtr tab = getTab(parameters.parentTabIdentifier.value());
@@ -92,11 +92,11 @@ void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPa
             return;
         }
 
-        creationOptions.desiredParentTab = tab->delegate();
+        creationOptions.parentTab = tab->delegate();
     }
 
     if (parameters.url)
-        creationOptions.desiredURL = parameters.url.value();
+        creationOptions.url = parameters.url.value();
 
     [delegate webExtensionController:extensionController()->wrapper() openNewTabWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<_WKWebExtensionTab> newTab, NSError *error) mutable {
         if (error) {
@@ -109,8 +109,6 @@ void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPa
             completionHandler({ });
             return;
         }
-
-        THROW_UNLESS([newTab conformsToProtocol:@protocol(_WKWebExtensionTab)], @"Object returned by webExtensionController:openNewTabWithOptions:forExtensionContext:completionHandler: does not conform to the _WKWebExtensionTab protocol");
 
         completionHandler({ getOrCreateTab(newTab)->parameters() });
     }).get()];
@@ -332,10 +330,7 @@ void WebExtensionContext::tabsReload(WebPageProxyIdentifier webPageProxyIdentifi
         return;
     }
 
-    if (reloadFromOrigin == ReloadFromOrigin::Yes)
-        tab->reloadFromOrigin(WTFMove(completionHandler));
-    else
-        tab->reload(WTFMove(completionHandler));
+    tab->reload(reloadFromOrigin, WTFMove(completionHandler));
 }
 
 void WebExtensionContext::tabsGoBack(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)

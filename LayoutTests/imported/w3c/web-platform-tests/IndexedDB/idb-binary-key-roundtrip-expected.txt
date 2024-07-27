@@ -6,6 +6,7 @@ PASS Binary keys can be supplied using the view type Uint16Array
 PASS Binary keys can be supplied using the view type Int16Array
 PASS Binary keys can be supplied using the view type Uint32Array
 PASS Binary keys can be supplied using the view type Int32Array
+FAIL Binary keys can be supplied using the view type Float16Array undefined is not a constructor (evaluating 'new self[type](buffer)')
 PASS Binary keys can be supplied using the view type Float32Array
 PASS Binary keys can be supplied using the view type Float64Array
 PASS ArrayBuffer can be used to supply a binary key

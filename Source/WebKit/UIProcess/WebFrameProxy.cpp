@@ -442,11 +442,11 @@ void WebFrameProxy::commitProvisionalFrame(IPC::Connection& connection, FrameIde
 {
     ASSERT(m_page);
     if (m_provisionalFrame) {
-        protectedProcess()->send(Messages::WebPage::LoadDidCommitInAnotherProcess(frameID, m_layerHostingContextIdentifier), m_page->webPageIDInMainFrameProcess());
+        protectedProcess()->send(Messages::WebPage::LoadDidCommitInAnotherProcess(frameID, m_layerHostingContextIdentifier), *webPageIDInCurrentProcess());
         if (RefPtr process = std::exchange(m_provisionalFrame, nullptr)->takeFrameProcess()) {
             m_frameProcess = process.releaseNonNull();
             if (m_remoteFrameSize)
-                protectedProcess()->send(Messages::WebPage::UpdateFrameSize(frameID, *m_remoteFrameSize), m_page->webPageIDInMainFrameProcess());
+                protectedProcess()->send(Messages::WebPage::UpdateFrameSize(frameID, *m_remoteFrameSize), *webPageIDInCurrentProcess());
         }
     }
     protectedPage()->didCommitLoadForFrame(connection, frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
@@ -486,7 +486,7 @@ void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& 
     protectedProcess()->sendWithAsyncReply(Messages::WebPage::GetFrameInfo(m_frameID), [aggregator] (std::optional<FrameInfoData>&& info) {
         if (info)
             aggregator->setCurrentFrameData(WTFMove(*info));
-    }, m_page->webPageIDInMainFrameProcess());
+    }, *webPageIDInCurrentProcess());
 
     bool isSiteIsolationEnabled = page() && page()->preferences().siteIsolationEnabled();
     size_t index = 0;
@@ -563,7 +563,7 @@ void WebFrameProxy::notifyParentOfLoadCompletion(WebProcessProxy& childFrameProc
 std::optional<WebCore::PageIdentifier> WebFrameProxy::webPageIDInCurrentProcess()
 {
     if (m_page)
-        return m_page->webPageIDInMainFrameProcess();
+        return m_page->webPageIDInProcess(process());
     return std::nullopt;
 }
 

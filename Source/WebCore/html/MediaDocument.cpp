@@ -44,6 +44,7 @@
 #include "KeyboardEvent.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
+#include "MouseEvent.h"
 #include "NodeList.h"
 #include "Page.h"
 #include "RawDataDocumentParser.h"
@@ -182,7 +183,7 @@ void MediaDocument::defaultEventHandler(Event& event)
         return;
 
     if (RefPtr video = ancestorVideoElement(targetNode)) {
-        if (event.type() == eventNames().clickEvent) {
+        if (isAnyClick(event)) {
             if (!video->canPlay()) {
                 video->pause();
                 event.setDefaultHandled();

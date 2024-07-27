@@ -274,7 +274,7 @@ void LinkLoader::preconnectIfNeeded(const LinkLoadParameters& params, Document& 
         return;
     ASSERT(document.settings().linkPreconnectEnabled());
     StoredCredentialsPolicy storageCredentialsPolicy = StoredCredentialsPolicy::Use;
-    if (equalLettersIgnoringASCIICase(params.crossOrigin, "anonymous"_s) && !document.securityOrigin().isSameOriginDomain(SecurityOrigin::create(href)))
+    if (equalLettersIgnoringASCIICase(params.crossOrigin, "anonymous"_s) && !document.protectedSecurityOrigin()->isSameOriginDomain(SecurityOrigin::create(href)))
         storageCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
     ASSERT(document.frame()->loader().networkingContext());
     platformStrategies()->loaderStrategy()->preconnectTo(document.protectedFrame()->checkedLoader(), href, storageCredentialsPolicy, LoaderStrategy::ShouldPreconnectAsFirstParty::No, [weakDocument = WeakPtr { document }, href](ResourceError error) {

@@ -7,29 +7,7 @@ description: An ISO 8601 string can be converted to a calendar ID in Calendar
 features: [Temporal]
 ---*/
 
-const instance = new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UTC", {
-  dateAdd() {},
-  dateFromFields() {},
-  dateUntil() {},
-  day() {},
-  dayOfWeek() {},
-  dayOfYear() {},
-  daysInMonth() {},
-  daysInWeek() {},
-  daysInYear() {},
-  fields() {},
-  id: "replace-me",
-  inLeapYear() {},
-  mergeFields() {},
-  month() {},
-  monthCode() {},
-  monthDayFromFields() {},
-  monthsInYear() {},
-  weekOfYear() {},
-  year() {},
-  yearMonthFromFields() {},
-  yearOfWeek() {},
-});
+const instance = new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UTC", "iso8601");
 
 for (const arg of [
   "2020-01-01",
@@ -42,5 +20,5 @@ for (const arg of [
   "2020-01[u-ca=iso8601]",
 ]) {
   const result = instance.withCalendar(arg);
-  assert.sameValue(result.getISOFields().calendar, "iso8601", `Calendar created from string "${arg}"`);
+  assert.sameValue(result.calendarId, "iso8601", `Calendar created from string "${arg}"`);
 }

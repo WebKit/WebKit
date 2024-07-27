@@ -92,7 +92,7 @@
 
 namespace JSC {
 
-JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain, ECMAMode ecmaMode)
+JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain, LexicallyScopedFeatures lexicallyScopedFeatures)
 {
     CallFrame* callerFrame = callFrame->callerFrame();
     CallSiteIndex callerCallSiteIndex = callerFrame->callSiteIndex();
@@ -171,7 +171,7 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
 
     DirectEvalExecutable* eval = callerBaselineCodeBlock->directEvalCodeCache().tryGet(programSource, bytecodeIndex);
     if (!eval) {
-        if (!ecmaMode.isStrict()) {
+        if (!(lexicallyScopedFeatures & StrictModeLexicallyScopedFeature)) {
             if (programSource->is8Bit()) {
                 LiteralParser preparser(globalObject, programSource->span8(), SloppyJSON, callerBaselineCodeBlock);
                 if (JSValue parsedObject = preparser.tryLiteralParse())
@@ -190,7 +190,7 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
         PrivateNameEnvironment privateNameEnvironment;
         JSScope::collectClosureVariablesUnderTDZ(callerScopeChain, variablesUnderTDZ, privateNameEnvironment);
         SourceTaintedOrigin sourceTaintedOrigin = computeNewSourceTaintedOriginFromStack(vm, callFrame);
-        eval = DirectEvalExecutable::create(globalObject, makeSource(programSource, callerBaselineCodeBlock->source().provider()->sourceOrigin(), sourceTaintedOrigin), derivedContextType, callerUnlinkedCodeBlock->needsClassFieldInitializer(), callerUnlinkedCodeBlock->privateBrandRequirement(), isArrowFunctionContext, callerBaselineCodeBlock->ownerExecutable()->isInsideOrdinaryFunction(), evalContextType, &variablesUnderTDZ, &privateNameEnvironment, ecmaMode);
+        eval = DirectEvalExecutable::create(globalObject, makeSource(programSource, callerBaselineCodeBlock->source().provider()->sourceOrigin(), sourceTaintedOrigin), lexicallyScopedFeatures, derivedContextType, callerUnlinkedCodeBlock->needsClassFieldInitializer(), callerUnlinkedCodeBlock->privateBrandRequirement(), isArrowFunctionContext, callerBaselineCodeBlock->ownerExecutable()->isInsideOrdinaryFunction(), evalContextType, &variablesUnderTDZ, &privateNameEnvironment);
         EXCEPTION_ASSERT(!!scope.exception() == !eval);
         if (!eval)
             return { };
@@ -708,7 +708,7 @@ public:
                 if (m_catchableFromWasm) {
                     auto* wasmCallee = static_cast<Wasm::Callee*>(nativeCallee);
                     if (wasmCallee->hasExceptionHandlers()) {
-                        Wasm::Instance* instance = m_callFrame->wasmInstance();
+                        JSWebAssemblyInstance* instance = m_callFrame->wasmInstance();
                         unsigned exceptionHandlerIndex = m_callFrame->callSiteIndex().bits();
                         m_handler = { wasmCallee->handlerForIndex(*instance, exceptionHandlerIndex, m_wasmTag), wasmCallee };
                         if (m_handler.m_valid)
@@ -952,6 +952,9 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
     ProgramExecutable* program = ProgramExecutable::create(globalObject, source);
     EXCEPTION_ASSERT(throwScope.exception() || program);
     RETURN_IF_EXCEPTION(throwScope, { });
+
+    if (globalObject->globalScopeExtension())
+        program->setTaintedByWithScope();
 
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());

@@ -1,3 +1,0 @@
-
-PASS IDBDatabase.transaction() - opening a transaction defaults to a read-only mode
-

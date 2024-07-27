@@ -175,8 +175,8 @@ RefPtr<CSSValue> CSSUnitValue::toCSSValue() const
 // FIXME: This function could be mostly generated from CSSProperties.json.
 static bool isValueOutOfRangeForProperty(CSSPropertyID propertyID, double value, CSSUnitType unit)
 {
-    bool acceptsNegativeNumbers = true;
-    if (CSSParserFastPaths::isSimpleLengthPropertyID(propertyID, acceptsNegativeNumbers) && !acceptsNegativeNumbers && value < 0)
+    ValueRange valueRange = ValueRange::All;
+    if (CSSParserFastPaths::isSimpleLengthPropertyID(propertyID, valueRange) && valueRange == ValueRange::NonNegative && value < 0)
         return true;
 
     switch (propertyID) {

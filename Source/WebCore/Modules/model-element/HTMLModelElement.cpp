@@ -179,7 +179,7 @@ void HTMLModelElement::setSourceURL(const URL& url)
     auto request = createPotentialAccessControlRequest(ResourceRequest { m_sourceURL }, WTFMove(options), document(), crossOriginAttribute);
     request.setInitiator(*this);
 
-    auto resource = document().cachedResourceLoader().requestModelResource(WTFMove(request));
+    auto resource = document().protectedCachedResourceLoader()->requestModelResource(WTFMove(request));
     if (!resource.has_value()) {
         ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
         if (!m_readyPromise->isFulfilled())

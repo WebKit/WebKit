@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
@@ -27,7 +28,6 @@
 
 namespace WebCore {
 
-class CSSProperty;
 class CSSRule;
 class CSSStyleSheet;
 class CSSValue;
@@ -67,7 +67,7 @@ public:
     // CSSPropertyID versions of the CSSOM functions to support bindings and editing.
     // Use the non-virtual methods in the concrete subclasses when possible.
     virtual String getPropertyValueInternal(CSSPropertyID) = 0;
-    virtual ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, bool important) = 0;
+    virtual ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, IsImportant) = 0;
 
     virtual Ref<MutableStyleProperties> copyProperties() const = 0;
 

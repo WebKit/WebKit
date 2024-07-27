@@ -174,7 +174,7 @@ ALWAYS_INLINE static bool isTaggedJSCCodePtrImpl(PtrType ptr)
         static_assert(tag == OperationPtrTag);
 #if ENABLE(JIT_CAGE)
         if (Options::useJITCage()) {
-#if JIT_OPERATION_VALIDATION_ASSERT_ENABLED
+#if ENABLE(JIT_OPERATION_VALIDATION_ASSERT)
             return JITOperationList::instance().inverseMap(ptr);
 #else
             // Not supported. We currently don't use this, and don't have an

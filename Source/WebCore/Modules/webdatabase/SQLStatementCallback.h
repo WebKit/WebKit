@@ -42,6 +42,9 @@ public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
     virtual CallbackResult<void> handleEvent(SQLTransaction&, SQLResultSet&) = 0;
+
+private:
+    virtual bool hasCallback() const = 0;
 };
 
 } // namespace WebCore

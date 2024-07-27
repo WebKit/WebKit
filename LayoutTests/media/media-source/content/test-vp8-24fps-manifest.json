@@ -1,0 +1,9 @@
+{
+	"url": "content/test-vp8-24fps.webm",
+	"type": "video/webm; codecs=\"vp8,opus\"",
+	"init": { "offset": 0, "size": 898 },
+	"duration": 10,
+	"media": [
+		{ "offset": 898,    "size": 378159, "timestamp": 0,     "duration": 10}
+	]
+}

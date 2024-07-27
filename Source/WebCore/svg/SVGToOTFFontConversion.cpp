@@ -1444,7 +1444,7 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
                 m_glyphNameToIndexMap.add(glyphName, i);
         }
         if (m_codepointsToIndicesMap.isValidKey(glyph.codepoints)) {
-            auto& glyphVector = m_codepointsToIndicesMap.add(glyph.codepoints, Vector<Glyph>()).iterator->value;
+            auto& glyphVector = m_codepointsToIndicesMap.add(glyph.codepoints, Vector<Glyph, 1>()).iterator->value;
             // Prefer isolated arabic forms
             if (glyph.glyphElement && equalLettersIgnoringASCIICase(glyph.glyphElement->attributeWithoutSynchronization(SVGNames::arabic_formAttr), "isolated"_s))
                 glyphVector.insert(0, i);

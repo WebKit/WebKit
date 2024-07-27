@@ -44,6 +44,7 @@ enum TextControlSetValueSelection { SetSelectionToEnd, Clamp, DoNotSet };
 
 class HTMLTextFormControlElement : public HTMLFormControlElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLTextFormControlElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLTextFormControlElement);
 public:
     // Common flag for HTMLInputElement::tooLong() / tooShort() and HTMLTextAreaElement::tooLong() / tooShort().
     enum NeedsToCheckDirtyFlag {CheckDirtyFlag, IgnoreDirtyFlag};

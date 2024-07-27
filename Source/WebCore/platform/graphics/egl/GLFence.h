@@ -31,13 +31,12 @@ class GLFence {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static bool isSupported();
-    enum class ShouldFlush : bool { No, Yes };
-    WEBCORE_EXPORT static std::unique_ptr<GLFence> create(ShouldFlush = ShouldFlush::Yes);
+    WEBCORE_EXPORT static std::unique_ptr<GLFence> create();
     explicit GLFence(GLsync);
     ~GLFence();
 
-    enum class FlushCommands : bool { No, Yes };
-    unsigned wait(FlushCommands);
+    void serverWait();
+    void clientWait();
 
 private:
     GLsync m_sync;

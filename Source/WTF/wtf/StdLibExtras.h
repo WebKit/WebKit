@@ -27,6 +27,7 @@
 #pragma once
 
 #include <cstring>
+#include <functional>
 #include <memory>
 #include <span>
 #include <type_traits>
@@ -722,11 +723,11 @@ bool equalSpans(std::span<T, TExtent> a, std::span<U, UExtent> b)
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
 void memcpySpan(std::span<T, TExtent> destination, std::span<U, UExtent> source)
 {
-    RELEASE_ASSERT(destination.size() == source.size());
     static_assert(sizeof(T) == sizeof(U));
     static_assert(std::is_trivially_copyable_v<T>);
     static_assert(std::is_trivially_copyable_v<U>);
-    memcpy(destination.data(), source.data(), destination.size_bytes());
+    RELEASE_ASSERT(destination.size() >= source.size());
+    memcpy(destination.data(), source.data(), source.size_bytes());
 }
 
 template<typename T, std::size_t Extent>
@@ -765,22 +766,16 @@ template<ByteType T, typename U> constexpr auto byteCast(const U& value)
     return ByteCastTraits<U>::template cast<T>(value);
 }
 
+// This is like std::invocable but it takes the expected signature rather than just the arguments.
+template<typename Functor, typename Signature>
+concept Invocable = requires(std::decay_t<Functor>&& f, std::function<Signature> expected)
+{
+    { expected = std::move(f) };
+};
+
 } // namespace WTF
 
 #define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)
-
-// FIXME: Needed for GCC<=9.3. Remove it after Ubuntu 20.04 end of support (May 2023).
-#if defined(__GLIBCXX__) && !defined(HAVE_STD_REMOVE_CVREF) && !COMPILER(CLANG)
-namespace std {
-template <typename T>
-struct remove_cvref {
-    using type = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
-};
-
-template <typename T>
-using remove_cvref_t = typename remove_cvref<T>::type;
-}
-#endif
 
 namespace WTF {
 namespace detail {
@@ -826,3 +821,4 @@ using WTF::tryBinarySearch;
 using WTF::valueOrCompute;
 using WTF::valueOrDefault;
 using WTF::toTwosComplement;
+using WTF::Invocable;

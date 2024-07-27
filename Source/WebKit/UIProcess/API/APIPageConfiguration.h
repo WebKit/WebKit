@@ -47,6 +47,10 @@ OBJC_PROTOCOL(_UIClickInteractionDriving);
 #include <WebCore/UserInterfaceDirectionPolicy.h>
 #endif
 
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+#include <WebCore/ShouldRequireExplicitConsentForGamepadAccess.h>
+#endif
+
 namespace WebKit {
 class BrowsingContextGroup;
 class VisitedLinkStore;
@@ -56,9 +60,6 @@ class WebPreferences;
 class WebProcessPool;
 class WebUserContentControllerProxy;
 class WebsiteDataStore;
-
-struct GPUProcessPreferencesForWebProcess;
-struct NetworkProcessPreferencesForWebProcess;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 class WebExtensionController;
@@ -419,10 +420,10 @@ public:
     void setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension mode) { m_data.contentSecurityPolicyModeForExtension = mode; }
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_data.contentSecurityPolicyModeForExtension; }
 
-#if ENABLE(GPU_PROCESS)
-    WebKit::GPUProcessPreferencesForWebProcess preferencesForGPUProcess() const;
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+    WebCore::ShouldRequireExplicitConsentForGamepadAccess gamepadAccessRequiresExplicitConsent() const { return m_data.gamepadAccessRequiresExplicitConsent; }
+    void setGamepadAccessRequiresExplicitConsent(WebCore::ShouldRequireExplicitConsentForGamepadAccess value) { m_data.gamepadAccessRequiresExplicitConsent = value; }
 #endif
-    WebKit::NetworkProcessPreferencesForWebProcess preferencesForNetworkProcess() const;
 
 private:
     struct Data {
@@ -585,6 +586,9 @@ private:
         bool allowsInlinePredictions { false };
         bool scrollToTextFragmentIndicatorEnabled { true };
         bool scrollToTextFragmentMarkingEnabled { true };
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+        WebCore::ShouldRequireExplicitConsentForGamepadAccess gamepadAccessRequiresExplicitConsent { WebCore::ShouldRequireExplicitConsentForGamepadAccess::No };
+#endif
 
 #if ENABLE(WRITING_TOOLS)
         WebCore::WritingTools::Behavior writingToolsBehavior { WebCore::WritingTools::Behavior::Default };

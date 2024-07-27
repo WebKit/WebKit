@@ -129,6 +129,7 @@
 #include "InternalsSetLike.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSImageData.h"
+#include "JSInternals.h"
 #include "LegacySchemeRegistry.h"
 #include "LoaderStrategy.h"
 #include "LocalDOMWindow.h"
@@ -602,6 +603,8 @@ void Internals::resetToConsistentState(Page& page)
     PlatformMediaSessionManager::sharedManager().resetSessionState();
     PlatformMediaSessionManager::sharedManager().setWillIgnoreSystemInterruptions(true);
     PlatformMediaSessionManager::sharedManager().applicationWillEnterForeground(false);
+    if (page.mediaPlaybackIsSuspended())
+        page.resumeAllMediaPlayback();
 #endif
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     PlatformMediaSessionManager::sharedManager().setIsPlayingToAutomotiveHeadUnit(false);
@@ -4700,6 +4703,11 @@ void Internals::setMaximumQueueDepthForTrackID(SourceBuffer& buffer, const AtomS
     buffer.setMaximumQueueDepthForTrackID(parseInteger<TrackID>(trackID).value_or(0), maxQueueDepth);
 }
 
+size_t Internals::evictableSize(SourceBuffer& buffer)
+{
+    return buffer.evictableSize();
+}
+
 #endif
 
 void Internals::enableMockMediaCapabilities()
@@ -4979,6 +4987,32 @@ void Internals::suspendAllMediaBuffering()
     page->suspendAllMediaBuffering();
 }
 
+void Internals::suspendAllMediaPlayback()
+{
+    auto frame = this->frame();
+    if (!frame)
+        return;
+
+    auto page = frame->page();
+    if (!page)
+        return;
+
+    page->suspendAllMediaPlayback();
+}
+
+void Internals::resumeAllMediaPlayback()
+{
+    auto frame = this->frame();
+    if (!frame)
+        return;
+
+    auto page = frame->page();
+    if (!page)
+        return;
+
+    page->resumeAllMediaPlayback();
+}
+
 #endif // ENABLE(VIDEO)
 
 #if ENABLE(WEB_AUDIO)
@@ -5020,6 +5054,13 @@ void Internals::simulateSystemWake() const
 #if ENABLE(VIDEO)
     PlatformMediaSessionManager::sharedManager().processSystemDidWake();
 #endif
+}
+
+std::optional<Internals::NowPlayingMetadata> Internals::nowPlayingMetadata() const
+{
+    if (auto nowPlayingInfo = PlatformMediaSessionManager::sharedManager().nowPlayingInfo())
+        return nowPlayingInfo->metadata;
+    return std::nullopt;
 }
 
 ExceptionOr<Internals::NowPlayingState> Internals::nowPlayingState() const
@@ -7500,6 +7541,37 @@ const String& Internals::defaultSpatialTrackingLabel() const
 bool Internals::isEffectivelyMuted(const HTMLMediaElement& element)
 {
     return element.effectiveMuted();
+}
+
+std::optional<RenderingMode> Internals::getEffectiveRenderingModeOfNewlyCreatedAcceleratedImageBuffer()
+{
+    RefPtr document = contextDocument();
+    if (!document || !document->page())
+        return std::nullopt;
+
+    if (RefPtr imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8, ImageBufferOptions::Accelerated, &document->page()->chrome())) {
+        imageBuffer->ensureBackendCreated();
+        if (imageBuffer->hasBackend())
+            return imageBuffer->renderingMode();
+    }
+    return std::nullopt;
+}
+
+void Internals::getImageBufferResourceLimits(ImageBufferResourceLimitsPromise&& promise)
+{
+    RefPtr document = contextDocument();
+    if (!document || !document->page()) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
+        return;
+    }
+
+    document->page()->chrome().client().getImageBufferResourceLimitsForTesting([promise = WTFMove(promise)](auto&& limits) mutable {
+        if (!limits) {
+            promise.reject(Exception { ExceptionCode::InvalidStateError });
+            return;
+        }
+        promise.resolve(*limits);
+    });
 }
 
 } // namespace WebCore

@@ -977,6 +977,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
     , m_thisRegister(CallFrame::thisArgumentOffset())
     , m_codeType(ModuleCode)
     , m_vm(vm)
+    , m_defaultAllowCallIgnoreResultOptimization(true)
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
     , m_isBuiltinFunction(false)
@@ -3505,7 +3506,7 @@ RegisterID* BytecodeGenerator::emitNewClassFieldInitializerFunction(RegisterID* 
     SourceParseMode parseMode = SourceParseMode::ClassFieldInitializerMode;
     ConstructAbility constructAbility = ConstructAbility::CannotConstruct;
 
-    FunctionMetadataNode metadata(parserArena(), JSTokenLocation(), JSTokenLocation(), 0, 0, 0, 0, 0, ImplementationVisibility::Private, StrictModeLexicalFeature, ConstructorKind::None, superBinding, 0, parseMode, false);
+    FunctionMetadataNode metadata(parserArena(), JSTokenLocation(), JSTokenLocation(), 0, 0, 0, 0, 0, ImplementationVisibility::Private, StrictModeLexicallyScopedFeature, ConstructorKind::None, superBinding, 0, parseMode, false);
     metadata.finishParsing(m_scopeNode->source(), Identifier(), FunctionMode::MethodDefinition);
     auto initializer = UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), &metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, InlineAttribute::Always, scriptMode(), WTFMove(variablesUnderTDZ), { }, WTFMove(parentPrivateNameEnvironment), newDerivedContextType, NeedsClassFieldInitializer::No, PrivateBrandRequirement::None);
     initializer->setClassElementDefinitions(WTFMove(classElementDefinitions));
@@ -3647,6 +3648,20 @@ ExpectedFunction BytecodeGenerator::emitExpectedFunctionSnippet(RegisterID* dst,
     return expectedFunction;
 }
 
+LexicallyScopedFeatures BytecodeGenerator::computeFeaturesForCallDirectEval()
+{
+    LexicallyScopedFeatures features = lexicallyScopedFeatures();
+
+    for (unsigned i = m_lexicalScopeStack.size(); i--; ) {
+        if (m_lexicalScopeStack[i].m_isWithScope) {
+            features |= TaintedByWithScopeLexicallyScopedFeature;
+            break;
+        }
+    }
+
+    return features;
+}
+
 template<typename CallOp>
 RegisterID* BytecodeGenerator::emitCall(RegisterID* dst, RegisterID* func, ExpectedFunction expectedFunction, CallArguments& callArguments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall debuggableCall)
 {
@@ -3701,7 +3716,7 @@ RegisterID* BytecodeGenerator::emitCall(RegisterID* dst, RegisterID* func, Expec
     ASSERT(dst);
     ASSERT(dst != ignoredResult());
     if constexpr (opcodeID == op_call_direct_eval)
-        CallOp::emit(this, dst, func, callArguments.argumentCountIncludingThis(), callArguments.stackOffset(), thisRegister(), scopeRegister(), ecmaMode(), nextValueProfileIndex());
+        CallOp::emit(this, dst, func, callArguments.argumentCountIncludingThis(), callArguments.stackOffset(), thisRegister(), scopeRegister(), computeFeaturesForCallDirectEval(), nextValueProfileIndex());
     else if constexpr (opcodeID == op_call_ignore_result) {
         CallOp::emit(this, func, callArguments.argumentCountIncludingThis(), callArguments.stackOffset());
         if (shouldEmitTypeProfilerHooks())

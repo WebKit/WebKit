@@ -31,6 +31,7 @@ namespace WebCore {
 
 class HTMLDialogElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLDialogElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLDialogElement);
 public:
     template<typename... Args> static Ref<HTMLDialogElement> create(Args&&... args) { return adoptRef(*new HTMLDialogElement(std::forward<Args>(args)...)); }
 
@@ -49,14 +50,15 @@ public:
 
     void runFocusingSteps();
 
-    bool isValidInvokeAction(const InvokeAction) final;
-    bool handleInvokeInternal(const HTMLFormControlElement& invoker, const InvokeAction&) final;
+    bool isValidCommandType(const CommandType) final;
+    bool handleCommandInternal(const HTMLFormControlElement& invoker, const CommandType&) final;
 
 private:
     HTMLDialogElement(const QualifiedName&, Document&);
 
     void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
     void setIsModal(bool newValue);
+    bool supportsFocus() const final;
 
     String m_returnValue;
     bool m_isModal { false };

@@ -26,4 +26,4 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[ IsStrongCallback ] callback SQLStatementErrorCallback = boolean (SQLTransaction transaction, SQLError error);
+[ GenerateIsReachable=ImplScriptExecutionContext ] callback SQLStatementErrorCallback = boolean (SQLTransaction transaction, SQLError error);

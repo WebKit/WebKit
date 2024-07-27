@@ -762,6 +762,18 @@ void WebSWServerConnection::retrieveRecordResponseBody(WebCore::BackgroundFetchR
     });
 }
 
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+void WebSWServerConnection::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    if (!session()) {
+        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
+        return;
+    }
+
+    session()->notificationManager().getNotifications(registrationURL, tag, WTFMove(completionHandler));
+}
+#endif
+
 } // namespace WebKit
 
 #undef CONNECTION_MESSAGE_CHECK_COMPLETION

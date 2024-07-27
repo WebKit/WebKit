@@ -114,55 +114,51 @@ kern_return_t pas_report_crash_extract_pgm_failure(vm_address_t fault_address, m
             report->alignment = "address right-aligned";
 
             // Right-aligned "Lower PGM OOB" checking
-            // FIXME: This assumes the allocation is still live.
             addr64_t bottom = (addr64_t) (key - pgm_metadata->mem_to_waste - pgm_metadata->page_size);
             addr64_t top = (addr64_t) (key - pgm_metadata->mem_to_waste);
 
             if (pas_fault_address_is_in_bounds(fault_address, bottom, top))
-                return pas_update_report_crash_fields(report, "long-range OOB", "low", fault_address, pgm_metadata->allocation_size_requested);
+                return pas_update_report_crash_fields(report, pgm_metadata->free_status ? "long-range UAF" : "long-range OOB", "low", fault_address, pgm_metadata->allocation_size_requested);
+
 
             // Right-aligned "UAF + OOB" checking towards lower guard page
-            // FIXME: This assumes the allocation is not live.
             bottom = (addr64_t) (key - pgm_metadata->mem_to_waste);
             top = (addr64_t) key;
 
             if (pas_fault_address_is_in_bounds(fault_address, bottom, top))
-                return pas_update_report_crash_fields(report, "OOB + UAF", "low", fault_address, pgm_metadata->allocation_size_requested);
+                return pas_update_report_crash_fields(report, pgm_metadata->free_status ? "UAF" : "OOB", "low", fault_address, pgm_metadata->allocation_size_requested);
 
             // Right-aligned "Upper PGM OOB" checking
-            // FIXME: This assumes the allocation is still live.
             bottom = (addr64_t) (key - pgm_metadata->mem_to_waste + pgm_metadata->size_of_data_pages);
             top = (addr64_t) (key - pgm_metadata->mem_to_waste + pgm_metadata->size_of_data_pages + pgm_metadata->page_size);
 
             if (pas_fault_address_is_in_bounds(fault_address, bottom, top))
-                return pas_update_report_crash_fields(report, "out-of-bounds", "high", fault_address, pgm_metadata->allocation_size_requested);
+                return pas_update_report_crash_fields(report, pgm_metadata->free_status ? "UAF" : "OOB", "high", fault_address, pgm_metadata->allocation_size_requested);
 
         } else {
             report->alignment = "address left-aligned";
 
             // Left-aligned "Lower PGM OOB" checking
-            // FIXME: This assumes the allocation is still live.
             addr64_t bottom = key - pgm_metadata->page_size;
             addr64_t top = key;
 
             if (pas_fault_address_is_in_bounds(fault_address, bottom, top))
-                return pas_update_report_crash_fields(report, "out-of-bounds", "high", fault_address, pgm_metadata->allocation_size_requested);
+                return pas_update_report_crash_fields(report, pgm_metadata->free_status ? "UAF" : "OOB", "high", fault_address, pgm_metadata->allocation_size_requested);
 
             // Left-aligned "UAF + OOB" checking towards upper guard page
-            // FIXME: This assumes the allocation is not live.
             bottom = (addr64_t) (key + pgm_metadata->size_of_data_pages - pgm_metadata->mem_to_waste);
             top = (addr64_t) (key + pgm_metadata->size_of_data_pages);
 
             if (pas_fault_address_is_in_bounds(fault_address, bottom, top))
-                return pas_update_report_crash_fields(report, "OOB + UAF", "low", fault_address, pgm_metadata->allocation_size_requested);
+                return pas_update_report_crash_fields(report, pgm_metadata->free_status ? "UAF" : "OOB", "low", fault_address, pgm_metadata->allocation_size_requested);
 
             // Left-aligned "Upper PGM OOB" checking
-            // FIXME: This assumes the allocation is still live.
             bottom = (addr64_t) (key + pgm_metadata->size_of_data_pages);
             top = (addr64_t) (key + pgm_metadata->size_of_data_pages + pgm_metadata->page_size);
 
             if (pas_fault_address_is_in_bounds(fault_address, bottom, top))
-                return pas_update_report_crash_fields(report, "long-range OOB", "low", fault_address, pgm_metadata->allocation_size_requested);
+                return pas_update_report_crash_fields(report, pgm_metadata->free_status ? "long-range UAF" : "long-range OOB", "low", fault_address, pgm_metadata->allocation_size_requested);
+
         }
 
         // Left-aligned "UAF" checking calculations are same as right-aligned checking
@@ -171,7 +167,8 @@ kern_return_t pas_report_crash_extract_pgm_failure(vm_address_t fault_address, m
         addr64_t top = (addr64_t) (key - pgm_metadata->mem_to_waste + pgm_metadata->size_of_data_pages);
 
         if (pas_fault_address_is_in_bounds(fault_address, bottom, top))
-            return pas_update_report_crash_fields(report, "use-after-free", "high", fault_address, pgm_metadata->allocation_size_requested);
+            return pas_update_report_crash_fields(report, pgm_metadata->free_status ? "UAF" : "undefined", "low", fault_address, pgm_metadata->allocation_size_requested);
+
     }
 
     return KERN_FAILURE;

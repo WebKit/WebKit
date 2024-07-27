@@ -24,8 +24,6 @@
 
 #include "RenderCounter.h"
 #include "RenderImage.h"
-#include "RenderImageResource.h"
-#include "RenderImageResourceStyleImage.h"
 #include "RenderQuote.h"
 #include "RenderStyle.h"
 #include "RenderTextFragment.h"

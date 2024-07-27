@@ -72,7 +72,8 @@ namespace Wasm {
     macro(NullRefAsNonNull, "ref.as_non_null to a null reference"_s) \
     macro(CastFailure, "ref.cast failed to cast reference to target heap type"_s) \
     macro(OutOfBoundsDataSegmentAccess, "Offset + array length would exceed the size of a data segment"_s) \
-    macro(OutOfBoundsElementSegmentAccess, "Offset + array length would exceed the length of an element segment"_s)
+    macro(OutOfBoundsElementSegmentAccess, "Offset + array length would exceed the length of an element segment"_s) \
+    macro(OutOfMemory,  "Out of memory"_s)
 
 enum class ExceptionType : uint32_t {
 #define MAKE_ENUM(enumName, error) enumName,
@@ -135,6 +136,7 @@ ALWAYS_INLINE bool isTypeErrorExceptionType(ExceptionType type)
     case ExceptionType::NullStructSet:
     case ExceptionType::NullRefAsNonNull:
     case ExceptionType::CastFailure:
+    case ExceptionType::OutOfMemory:
         return false;
     case ExceptionType::FuncrefNotWasm:
     case ExceptionType::InvalidGCTypeUse:

@@ -65,7 +65,7 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     DrawPath(WebCore::Path path)
     DrawFocusRingPath(WebCore::Path path, float outlineWidth, WebCore::Color color)
     DrawFocusRingRects(Vector<WebCore::FloatRect> rects, float outlineOffset, float outlineWidth, WebCore::Color color)
-    FillRect(WebCore::FloatRect rect)
+    FillRect(WebCore::FloatRect rect, WebCore::GraphicsContext::RequiresClipToRect requiresClipToRect)
     FillRectWithColor(WebCore::FloatRect rect, WebCore::Color color)
     FillRectWithGradient(WebCore::DisplayList::FillRectWithGradient item)
     FillRectWithGradientAndSpaceTransform(WebCore::DisplayList::FillRectWithGradientAndSpaceTransform item)

@@ -12,7 +12,7 @@ var obj = {};
 
 Object.defineProperties(obj, {
   property: {
-    writable: new Date()
+    writable: new Date(0)
   }
 });
 

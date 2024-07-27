@@ -944,6 +944,7 @@ void PageClientImpl::didHandleAcceptedCandidate()
 
 void PageClientImpl::videoControlsManagerDidChange()
 {
+    PageClientImplCocoa::videoControlsManagerDidChange();
     m_impl->videoControlsManagerDidChange();
 }
 
@@ -1105,11 +1106,6 @@ void PageClientImpl::handleContextMenuTranslation(const TranslationContextMenuIn
 bool PageClientImpl::canHandleContextMenuWritingTools() const
 {
     return m_impl->canHandleContextMenuWritingTools();
-}
-
-void PageClientImpl::handleContextMenuWritingToolsDeprecated(IntRect selectionBoundsInRootView)
-{
-    m_impl->handleContextMenuWritingToolsDeprecated(selectionBoundsInRootView);
 }
 
 void PageClientImpl::handleContextMenuWritingTools(WebCore::WritingTools::RequestedTool tool, WebCore::IntRect selectionRect)

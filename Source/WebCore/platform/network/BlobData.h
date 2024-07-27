@@ -110,7 +110,6 @@ public:
     void setPolicyContainer(const PolicyContainer& policyContainer) { m_policyContainer = policyContainer; }
 
     const BlobDataItemList& items() const { return m_items; }
-    void swapItems(BlobDataItemList&);
 
     void replaceData(const DataSegment& oldData, Ref<DataSegment>&& newData);
     void appendData(Ref<DataSegment>&&);

@@ -40,11 +40,8 @@ enum class CompilationType;
 
 namespace WebCore {
 
-class Document;
 class Exception;
-class Node;
 class ScriptExecutionContext;
-class Text;
 
 enum class TrustedType : int8_t {
     TrustedHTML,
@@ -72,8 +69,6 @@ ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, std::var
 ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, std::variant<RefPtr<TrustedScript>, String>&&, const String& sink);
 
 ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, std::variant<RefPtr<TrustedScriptURL>, String>&&, const String& sink);
-
-ExceptionOr<RefPtr<Text>> processNodeOrStringAsTrustedType(Ref<Document>, RefPtr<Node> parent, std::variant<RefPtr<Node>, String, RefPtr<TrustedScript>>);
 
 WEBCORE_EXPORT AttributeTypeAndSink trustedTypeForAttribute(const String& elementName, const String& attributeName, const String& elementNamespace, const String& attributeNamespace);
 

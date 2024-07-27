@@ -123,7 +123,7 @@ void AcceleratedBackingStoreDMABuf::didDestroyBuffer(uint64_t id)
         m_bufferIDs.remove(buffer.get());
 }
 
-void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID, const std::optional<WebCore::Region>& damage)
+void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID, WebCore::Region&& damage)
 {
     ASSERT(!m_pendingBuffer);
     auto* buffer = m_buffers.get(bufferID);
@@ -136,16 +136,9 @@ void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID, const std::optional
     // to pass directly a pointer below instead of using copies.
     static_assert(sizeof(WebCore::IntRect) == sizeof(WPERectangle));
 
-    Vector<WebCore::IntRect, 1> damageRects;
-    if (damage) {
-        if (damage->isEmpty())
-            damageRects.append({ 0, 0, 0, 0 });
-        else
-            damageRects = damage->rects();
-    }
-
+    auto damageRects = damage.rects();
     ASSERT(damageRects.size() <= std::numeric_limits<guint>::max());
-    const auto* rects = damageRects.size() ? reinterpret_cast<const WPERectangle*>(damageRects.data()) : nullptr;
+    const auto* rects = !damageRects.isEmpty() ? reinterpret_cast<const WPERectangle*>(damageRects.data()) : nullptr;
 
     m_pendingBuffer = buffer;
     GUniqueOutPtr<GError> error;

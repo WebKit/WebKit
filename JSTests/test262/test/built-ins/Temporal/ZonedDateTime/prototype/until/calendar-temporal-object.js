@@ -21,6 +21,6 @@ features: [Temporal]
 ---*/
 
 TemporalHelpers.checkToTemporalCalendarFastPath((temporalObject) => {
-  const datetime = new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UTC", temporalObject);
+  const datetime = new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UTC");
   datetime.until({ year: 2005, month: 6, day: 2, timeZone: "UTC", calendar: temporalObject });
 });

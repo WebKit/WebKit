@@ -36,4 +36,6 @@ struct TextBoxEdge {
     friend bool operator==(const TextBoxEdge&, const TextBoxEdge&) = default;
 };
 
+WTF::TextStream& operator<<(WTF::TextStream&, TextBoxEdge);
+
 } // namespace WebCore

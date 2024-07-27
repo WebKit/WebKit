@@ -30,7 +30,6 @@
 #include "APIObject.h"
 #include "CocoaImage.h"
 #include <wtf/Forward.h>
-#include <wtf/WeakObjCPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 

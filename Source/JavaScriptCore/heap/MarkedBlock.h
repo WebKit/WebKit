@@ -83,8 +83,8 @@ public:
     using AtomNumberType = std::conditional<atomsPerBlock < UINT16_MAX, uint16_t, uint32_t>::type;
     static_assert(std::numeric_limits<AtomNumberType>::max() >= atomsPerBlock);
 
-    static constexpr size_t maxNumberOfLowerTierCells = 8;
-    static_assert(maxNumberOfLowerTierCells <= 256);
+    static constexpr size_t maxNumberOfLowerTierPreciseCells = 8;
+    static_assert(maxNumberOfLowerTierPreciseCells <= 256);
     
     static_assert(!(atomSize & (atomSize - 1)), "MarkedBlock::atomSize must be a power of two.");
     static_assert(!(blockSize & (blockSize - 1)), "MarkedBlock::blockSize must be a power of two.");

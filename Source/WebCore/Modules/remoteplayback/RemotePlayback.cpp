@@ -363,6 +363,11 @@ void RemotePlayback::disconnect()
     });
 }
 
+void RemotePlayback::stop()
+{
+    m_callbackMap.clear();
+}
+
 void RemotePlayback::playbackTargetPickerWasDismissed()
 {
     if (m_promptPromises.isEmpty())

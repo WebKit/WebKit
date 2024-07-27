@@ -17,13 +17,14 @@ layer at (0,0) size 800x600
           RenderText {#text} at (7,7) size 330x167
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,28) width 245: "at first was in managing her"
-            text run at (7,49) width 245: "flamingo: she succeeded in"
-            text run at (7,70) width 245: "getting its body tucked away,"
-            text run at (7,91) width 245: "comfortably enough, under her"
-            text run at (7,112) width 307: "arm, with its legs hanging down, "
-            text run at (314,112) width 23: "but"
-            text run at (7,133) width 330: "generally, just as she had got its neck nicely"
-            text run at (7,154) width 93: "straightened."
+            text run at (7,49) width 245: "flamingo: she succeeded in get" + hyphen string "-"
+            text run at (7,70) width 208: "ting its body tucked away, "
+            text run at (215,70) width 37: "com" + hyphen string "-"
+            text run at (7,91) width 245: "fortably enough, under her arm,"
+            text run at (7,112) width 227: "with its legs hanging down, "
+            text run at (233,112) width 104: "but generally,"
+            text run at (7,133) width 330: "just as she had got its neck nicely straight" + hyphen string "-"
+            text run at (7,154) width 39: "ened."
       RenderBlock (floating) {DIV} at (356,0) size 344x232
         RenderBlock {P} at (0,16) size 344x18
           RenderText {#text} at (0,0) size 81x17
@@ -38,13 +39,14 @@ layer at (0,0) size 800x600
           RenderText {#text} at (7,7) size 330x167
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,28) width 245: "at first was in managing her"
-            text run at (7,49) width 245: "flamingo: she succeeded in"
-            text run at (7,70) width 245: "getting its body tucked away,"
-            text run at (7,91) width 245: "comfortably enough, under her"
-            text run at (7,112) width 307: "arm, with its legs hanging down, "
-            text run at (314,112) width 23: "but"
-            text run at (7,133) width 330: "generally, just as she had got its neck nicely"
-            text run at (7,154) width 93: "straightened."
+            text run at (7,49) width 245: "flamingo: she succeeded in get" + hyphen string "-"
+            text run at (7,70) width 208: "ting its body tucked away, "
+            text run at (215,70) width 37: "com" + hyphen string "-"
+            text run at (7,91) width 245: "fortably enough, under her arm,"
+            text run at (7,112) width 227: "with its legs hanging down, "
+            text run at (233,112) width 104: "but generally,"
+            text run at (7,133) width 330: "just as she had got its neck nicely straight" + hyphen string "-"
+            text run at (7,154) width 39: "ened."
       RenderBlock (floating) {DIV} at (4,232) size 344x232
         RenderBlock {P} at (0,16) size 344x18
           RenderText {#text} at (0,0) size 47x17
@@ -59,13 +61,14 @@ layer at (0,0) size 800x600
           RenderText {#text} at (7,7) size 330x167
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,28) width 245: "at first was in managing her"
-            text run at (7,49) width 245: "flamingo: she succeeded in"
-            text run at (7,70) width 245: "getting its body tucked away,"
-            text run at (7,91) width 245: "comfortably enough, under her"
-            text run at (7,112) width 307: "arm, with its legs hanging down, "
-            text run at (314,112) width 23: "but"
-            text run at (7,133) width 330: "generally, just as she had got its neck nicely"
-            text run at (7,154) width 93: "straightened."
+            text run at (7,49) width 245: "flamingo: she succeeded in get" + hyphen string "\x{2022}"
+            text run at (7,70) width 208: "ting its body tucked away, "
+            text run at (215,70) width 37: "com" + hyphen string "\x{2022}"
+            text run at (7,91) width 245: "fortably enough, under her arm,"
+            text run at (7,112) width 227: "with its legs hanging down, "
+            text run at (233,112) width 104: "but generally,"
+            text run at (7,133) width 330: "just as she had got its neck nicely straight" + hyphen string "\x{2022}"
+            text run at (7,154) width 39: "ened."
       RenderBlock (floating) {DIV} at (356,232) size 357x232
         RenderBlock {P} at (0,16) size 357x18
           RenderText {#text} at (0,0) size 136x17
@@ -80,10 +83,11 @@ layer at (0,0) size 800x600
           RenderText {#text} at (7,7) size 330x167
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,28) width 245: "at first was in managing her"
-            text run at (7,49) width 245: "flamingo: she succeeded in"
-            text run at (7,70) width 245: "getting its body tucked away,"
-            text run at (7,91) width 245: "comfortably enough, under her"
-            text run at (7,112) width 307: "arm, with its legs hanging down, "
-            text run at (314,112) width 23: "but"
-            text run at (7,133) width 330: "generally, just as she had got its neck nicely"
-            text run at (7,154) width 93: "straightened."
+            text run at (7,49) width 245: "flamingo: she succeeded in get" + hyphen string "\x{B7}~"
+            text run at (7,70) width 198: "ting its body tucked away, "
+            text run at (205,70) width 47: "com" + hyphen string "\x{B7}~"
+            text run at (7,91) width 245: "fortably enough, under her arm,"
+            text run at (7,112) width 227: "with its legs hanging down, "
+            text run at (233,112) width 104: "but generally,"
+            text run at (7,133) width 330: "just as she had got its neck nicely straight" + hyphen string "\x{B7}~"
+            text run at (7,154) width 39: "ened."

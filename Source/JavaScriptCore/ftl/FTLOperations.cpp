@@ -251,14 +251,16 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSG
         }
         RELEASE_ASSERT(executable && activation);
 
+        CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(materialization->origin(), callFrame->codeBlock()->baselineAlternative());
+        JSGlobalObject* globalObject = codeBlock->globalObject();
         if (materialization->type() == PhantomNewFunction)
-            return JSFunction::createWithInvalidatedReallocationWatchpoint(vm, executable, activation);
+            return JSFunction::createWithInvalidatedReallocationWatchpoint(vm, globalObject, executable, activation);
         else if (materialization->type() == PhantomNewGeneratorFunction)
-            return JSGeneratorFunction::createWithInvalidatedReallocationWatchpoint(vm, executable, activation);    
+            return JSGeneratorFunction::createWithInvalidatedReallocationWatchpoint(vm, globalObject, executable, activation);
         else if (materialization->type() == PhantomNewAsyncGeneratorFunction)
-            return JSAsyncGeneratorFunction::createWithInvalidatedReallocationWatchpoint(vm, executable, activation);
+            return JSAsyncGeneratorFunction::createWithInvalidatedReallocationWatchpoint(vm, globalObject, executable, activation);
         ASSERT(materialization->type() == PhantomNewAsyncFunction);
-        return JSAsyncFunction::createWithInvalidatedReallocationWatchpoint(vm, executable, activation);
+        return JSAsyncFunction::createWithInvalidatedReallocationWatchpoint(vm, globalObject, executable, activation);
     }
 
     case PhantomCreateActivation: {

@@ -7,7 +7,6 @@ description: relativeTo property bag with offset property is rejected if offset 
 features: [Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("UTC");
 const d1 = new Temporal.Duration(0, 1, 0, 280);
 const d2 = new Temporal.Duration(0, 1, 0, 281);
 
@@ -21,7 +20,7 @@ const badOffsets = [
   1000n,      // must be a string
 ];
 badOffsets.forEach((offset) => {
-  const relativeTo = { year: 2021, month: 10, day: 28, offset, timeZone };
+  const relativeTo = { year: 2021, month: 10, day: 28, offset, timeZone: "UTC" };
   assert.throws(
     typeof(offset) === 'string' ? RangeError : TypeError,
     () => Temporal.Duration.compare(d1, d2, { relativeTo }),

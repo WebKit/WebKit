@@ -14,9 +14,7 @@ info: |
 features: [Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("-03:30");
-
-const datetime = new Temporal.ZonedDateTime(1572757201_000_000_000n, timeZone);
+const datetime = new Temporal.ZonedDateTime(1572757201_000_000_000n, "-03:30");
 const explicit = datetime.with({ minute: 31 }, { offset: undefined });
 assert.sameValue(explicit.epochNanoseconds, 1572757261_000_000_000n, "default offset is prefer");
 const implicit = datetime.with({ minute: 31 }, {});

@@ -1902,18 +1902,8 @@ def main(argv):
     header_set.add(ConditionalHeader('"FormDataReference.h"', None))
     additional_forward_declarations_list = []
     file_extension = argv[1]
-    skip = False
-    directory = None
     for i in range(2, len(argv)):
-        if skip:
-            directory = argv[i]
-            skip = False
-            continue
-        if argv[i] == 'DIRECTORY':
-            skip = True
-            continue
-        path = os.path.sep.join([directory, argv[i]])
-        with open(path) as file:
+        with open(argv[i]) as file:
             new_types, new_enums, new_headers, new_using_statements, new_additional_forward_declarations, new_objc_wrapped_types = parse_serialized_types(file)
             for type in new_types:
                 serialized_types.append(type)

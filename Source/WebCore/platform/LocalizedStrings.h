@@ -402,6 +402,10 @@ namespace WebCore {
     WEBCORE_EXPORT String datePickerYearLabelTitle();
 #endif
 
+#if ENABLE(INPUT_TYPE_WEEK_PICKER)
+    WEBCORE_EXPORT String inputWeekLabel();
+#endif
+
 #if ENABLE(WEB_AUTHN)
     WEBCORE_EXPORT String makeCredentialTouchIDPromptTitle(const String& bundleName, const String& domain);
     WEBCORE_EXPORT String getAssertionTouchIDPromptTitle(const String& bundleName, const String& domain);

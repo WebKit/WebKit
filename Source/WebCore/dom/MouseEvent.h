@@ -45,16 +45,19 @@ class PlatformMouseEvent;
 
 enum class SyntheticClickType : uint8_t;
 
+bool isAnyClick(const AtomString& eventType);
+bool isAnyClick(const Event&);
+
 class MouseEvent : public MouseRelatedEvent {
     WTF_MAKE_ISO_ALLOCATED(MouseEvent);
 public:
     WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier>, MouseButton, unsigned short buttons,
-        EventTarget* relatedTarget, double force, SyntheticClickType, IsSimulated = IsSimulated::No, IsTrusted = IsTrusted::Yes);
+        EventTarget* relatedTarget, double force, SyntheticClickType, const Vector<Ref<MouseEvent>>& coalescedEvents, IsSimulated = IsSimulated::No, IsTrusted = IsTrusted::Yes);
 
-    WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomString& eventType, RefPtr<WindowProxy>&&, const PlatformMouseEvent&, int detail, Node* relatedTarget);
+    WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomString& eventType, RefPtr<WindowProxy>&&, const PlatformMouseEvent&, const Vector<Ref<MouseEvent>>& coalescedEvents, int detail, Node* relatedTarget);
 
-    static Ref<MouseEvent> create(const AtomString& eventType, CanBubble, IsCancelable, IsComposed, RefPtr<WindowProxy>&&, int detail,
+    static Ref<MouseEvent> create(const AtomString& eventType, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
         int screenX, int screenY, int clientX, int clientY, OptionSet<Modifier>, MouseButton, unsigned short buttons,
         SyntheticClickType, EventTarget* relatedTarget);
 
@@ -88,12 +91,14 @@ public:
 
     unsigned which() const final;
 
+    Vector<Ref<MouseEvent>> coalescedEvents() const { return m_coalescedEvents; }
+
 protected:
     MouseEvent(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier>, MouseButton, unsigned short buttons,
-        EventTarget* relatedTarget, double force, SyntheticClickType, IsSimulated, IsTrusted);
+        EventTarget* relatedTarget, double force, SyntheticClickType, const Vector<Ref<MouseEvent>>& coalescedEvents, IsSimulated, IsTrusted);
 
-    MouseEvent(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed, RefPtr<WindowProxy>&&, int detail,
+    MouseEvent(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& clientLocation, double movementX, double movementY, OptionSet<Modifier>, MouseButton, unsigned short buttons,
         SyntheticClickType, EventTarget* relatedTarget);
 
@@ -112,6 +117,7 @@ private:
     bool m_buttonDown { false };
     RefPtr<EventTarget> m_relatedTarget;
     double m_force { 0 };
+    Vector<Ref<MouseEvent>> m_coalescedEvents;
 };
 
 } // namespace WebCore

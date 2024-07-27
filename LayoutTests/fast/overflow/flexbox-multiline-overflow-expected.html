@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+<style>
+#scroller {
+  display: flex;
+  flex-flow: row wrap;
+  width: 60px;
+  border: solid black thick;
+  overflow: scroll;
+  justify-content: safe end;
+}
+.child {
+  width: 80%;
+  flex: none;
+  border: solid orange;
+  margin-left: 40%;
+}
+.child:nth-child(2) {
+  width: 120%;
+  margin-left: 0;
+}
+</style>
+
+<div id=scroller>
+  <div class=child>1</div>
+  <div class=child>2</div>
+  <div class=child>3</div>
+</div>
+

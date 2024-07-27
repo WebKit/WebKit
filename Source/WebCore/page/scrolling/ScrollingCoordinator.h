@@ -215,6 +215,7 @@ public:
     WEBCORE_EXPORT virtual void setScrollbarEnabled(Scrollbar&) { }
     WEBCORE_EXPORT virtual void setLayerHostingContextIdentifierForFrameHostingNode(ScrollingNodeID, std::optional<LayerHostingContextIdentifier>) { }
     WEBCORE_EXPORT virtual void setScrollbarLayoutDirection(ScrollableArea&, UserInterfaceLayoutDirection) { }
+    WEBCORE_EXPORT virtual void setScrollbarWidth(ScrollableArea&, ScrollbarWidth) { }
 
     FrameIdentifier mainFrameIdentifier() const;
 

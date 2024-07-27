@@ -7,7 +7,7 @@ description: Negative zero, as an extended year, is rejected
 features: [Temporal, arrow-function]
 ---*/
 
-const datetime = new Temporal.ZonedDateTime(0n, new Temporal.TimeZone("UTC"));
+const datetime = new Temporal.ZonedDateTime(0n, "UTC");
 const invalidStrings = [
   "-000000-10-31T17:45Z",
   "-000000-10-31T17:45+00:00[UTC]",

@@ -214,11 +214,13 @@ class MediaController
             this.togglePlayback();
             event.preventDefault();
             event.stopPropagation();
-        }
-        else if (event.type === "keyup" && this.isFullscreen && event.key === " ") {
+        } else if (event.type === "keyup" && this.isFullscreen && event.key === " ") {
             event.preventDefault();
             event.stopPropagation();
-        }
+        } else if (event.type === "dragstart" && this.isFullscreen)
+            event.preventDefault();
+        else if (event.type === this.fullscreenChangeEventType)
+            this.host?.presentationModeChanged?.();
 
         if (event.currentTarget === this.media) {
             if (event.type === "play")
@@ -333,6 +335,9 @@ class MediaController
                 supportingObject.disable();
         }
 
+        if (previousControls)
+            previousControls.disable();
+
         this.controls = new ControlsClass;
         this.controls.delegate = this;
 
@@ -352,6 +357,11 @@ class MediaController
         this._supportingObjects = this._supportingObjectClasses().map(SupportClass => new SupportClass(this), this);
 
         this.controls.shouldUseSingleBarLayout = this.controls instanceof InlineMediaControls && this.isYouTubeEmbedWithTitle;
+
+        if (this.controls instanceof MacOSFullscreenMediaControls)
+            window.addEventListener("dragstart", this, true);
+        else
+            window.removeEventListener("dragstart", this, true);
 
         if (this.host && this.host.inWindowFullscreen) {
             this._stopPropagationOnClickEvents();

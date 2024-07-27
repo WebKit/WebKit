@@ -363,7 +363,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         consoleSettingsView.addSetting(WI.UIString("Traces:"), WI.settings.consoleAutoExpandTrace, WI.UIString("Auto-expand"));
         consoleSettingsView.addSetting(WI.UIString("Show:"), WI.settings.showConsoleMessageTimestamps, WI.UIString("Timestamps"));
 
-        // COMPATIBILITY (iOS X.Y, macOS X.Y): `Console.setConsoleClearAPIEnabled` did not exist yet.
+        // COMPATIBILITY (iOS 18.0, macOS 15.0): `Console.setConsoleClearAPIEnabled` did not exist yet.
         if (InspectorBackend.hasCommand("Console.setConsoleClearAPIEnabled"))
             consoleSettingsView.addSetting(WI.UIString("Clear:"), WI.settings.consoleClearAPIEnabled, WI.UIString("Allow page to clear Console"));
 

@@ -66,7 +66,7 @@ void CryptoAlgorithmECDH::generateKey(const CryptoAlgorithmParameters& parameter
     callback(WTFMove(pair));
 }
 
-void CryptoAlgorithmECDH::deriveBits(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& baseKey, size_t length, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+void CryptoAlgorithmECDH::deriveBits(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& baseKey, std::optional<size_t> length, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     auto& ecParameters = downcast<CryptoAlgorithmEcdhKeyDeriveParams>(parameters);
 
@@ -90,16 +90,16 @@ void CryptoAlgorithmECDH::deriveBits(const CryptoAlgorithmParameters& parameters
         return;
     }
 
-    auto unifiedCallback = [callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](std::optional<Vector<uint8_t>>&& derivedKey, size_t length) mutable {
+    auto unifiedCallback = [callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](std::optional<Vector<uint8_t>>&& derivedKey, std::optional<size_t> length) mutable {
         if (!derivedKey) {
             exceptionCallback(ExceptionCode::OperationError);
             return;
         }
-        if (!length) {
+        if (!length || !(*length)) {
             callback(WTFMove(*derivedKey));
             return;
         }
-        auto lengthInBytes = std::ceil(length / 8.);
+        auto lengthInBytes = std::ceil(*length / 8.);
         if (lengthInBytes > (*derivedKey).size()) {
             exceptionCallback(ExceptionCode::OperationError);
             return;

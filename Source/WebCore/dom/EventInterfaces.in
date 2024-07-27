@@ -13,6 +13,7 @@ BeforeUnloadEvent
 BufferedChangeEvent conditional=MEDIA_SOURCE
 ClipboardEvent
 CloseEvent
+CommandEvent
 CompositionEvent
 CookieChangeEvent
 CSSAnimationEvent
@@ -29,7 +30,6 @@ FormDataEvent
 HashChangeEvent
 InputEvent
 InputEvents interfaceName=InputEvent
-InvokeEvent
 KeyboardEvent
 KeyboardEvents interfaceName=KeyboardEvent
 MediaQueryListEvent

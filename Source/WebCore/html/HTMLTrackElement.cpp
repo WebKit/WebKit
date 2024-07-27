@@ -74,7 +74,6 @@ inline HTMLTrackElement::HTMLTrackElement(const QualifiedName& tagName, Document
 
 HTMLTrackElement::~HTMLTrackElement()
 {
-    m_track->clearElement();
     m_track->clearClient(*this);
 }
 
@@ -166,7 +165,7 @@ bool HTMLTrackElement::isDefault() const
 
 TextTrack& HTMLTrackElement::track()
 {
-    return m_track;
+    return m_track.get();
 }
 
 bool HTMLTrackElement::isURLAttribute(const Attribute& attribute) const

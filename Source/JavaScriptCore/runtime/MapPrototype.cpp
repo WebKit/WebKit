@@ -64,7 +64,7 @@ void MapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().entriesPublicName(), entries, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().entriesPrivateName(), entries, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    JSFunction* forEachFunc = JSFunction::create(vm, mapPrototypeForEachCodeGenerator(vm), globalObject);
+    JSFunction* forEachFunc = JSFunction::create(vm, globalObject, mapPrototypeForEachCodeGenerator(vm), globalObject);
     putDirectWithoutTransition(vm, vm.propertyNames->forEach, forEachFunc, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().forEachPrivateName(), forEachFunc, static_cast<unsigned>(PropertyAttribute::DontEnum));
 

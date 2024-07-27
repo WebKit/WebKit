@@ -29,7 +29,7 @@
 
 #import <WebKit/_WKWebExtensionDataType.h>
 
-NS_ASSUME_NONNULL_BEGIN
+WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*! @abstract Indicates a `_WKWebExtensionDataRecord` error. */
 WK_EXTERN NSErrorDomain const _WKWebExtensionDataRecordErrorDomain WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
@@ -55,7 +55,7 @@ typedef NS_ERROR_ENUM(_WKWebExtensionDataRecordErrorDomain, _WKWebExtensionDataR
  @discussion Contains properties and methods to query the data types and sizes.
 */
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-NS_SWIFT_NAME(_WKWebExtension.DataRecord)
+WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(_WKWebExtension.DataRecord)
 @interface _WKWebExtensionDataRecord : NSObject
 
 + (instancetype)new NS_UNAVAILABLE;
@@ -85,4 +85,4 @@ NS_SWIFT_NAME(_WKWebExtension.DataRecord)
 
 @end
 
-NS_ASSUME_NONNULL_END
+WK_HEADER_AUDIT_END(nullability, sendability)

@@ -33,6 +33,7 @@
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/IntDegrees.h>
 #include <WebCore/MediaPlayerIdentifier.h>
+#include <WebCore/ProcessIdentity.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/Timer.h>
 #include <pal/SessionID.h>
@@ -56,19 +57,19 @@
 namespace WebCore {
 class CaptureDevice;
 class NowPlayingManager;
+class SecurityOriginData;
 struct MockMediaDevice;
 struct ScreenProperties;
-class SecurityOriginData;
 }
 
 namespace WebKit {
 
 class GPUConnectionToWebProcess;
+class RemoteAudioSessionProxyManager;
 struct GPUProcessConnectionParameters;
 struct GPUProcessCreationParameters;
-struct GPUProcessPreferencesForWebProcess;
 struct GPUProcessSessionParameters;
-class RemoteAudioSessionProxyManager;
+struct SharedPreferencesForWebProcess;
 
 class GPUProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<GPUProcess> {
     WTF_MAKE_NONCOPYABLE(GPUProcess);
@@ -130,6 +131,9 @@ public:
 #if ENABLE(VIDEO)
     void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
 #endif
+#if ENABLE(WEBXR)
+    std::optional<WebCore::ProcessIdentity> immersiveModeProcessIdentity() const;
+#endif
 
 private:
     void lowMemoryHandler(Critical, Synchronous);
@@ -152,6 +156,7 @@ private:
     void platformInitializeGPUProcess(GPUProcessCreationParameters&);
     void updateGPUProcessPreferences(GPUProcessPreferences&&);
     void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&, CompletionHandler<void()>&&);
+    void sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
     void addSession(PAL::SessionID, GPUProcessSessionParameters&&);
     void removeSession(PAL::SessionID);
     void updateSandboxAccess(const Vector<SandboxExtension::Handle>&);
@@ -198,11 +203,14 @@ private:
 #if HAVE(POWERLOG_TASK_MODE_QUERY)
     void enablePowerLogging(SandboxExtension::Handle&&);
 #endif
+#if ENABLE(WEBXR)
+    void webXRPromptAccepted(std::optional<WebCore::ProcessIdentity>, CompletionHandler<void(bool)>&&);
+#endif
 
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<GPUConnectionToWebProcess>> m_webProcessConnections;
     MonotonicTime m_creationTime { MonotonicTime::now() };
-    
+
     GPUProcessPreferences m_preferences;
 
 #if ENABLE(MEDIA_STREAM)
@@ -240,6 +248,9 @@ private:
 #endif
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     mutable std::unique_ptr<RemoteAudioSessionProxyManager> m_audioSessionManager;
+#endif
+#if ENABLE(WEBXR)
+    std::optional<WebCore::ProcessIdentity> m_processIdentity;
 #endif
 #if ENABLE(VP9) && PLATFORM(COCOA)
     bool m_haveEnabledVP8Decoder { false };

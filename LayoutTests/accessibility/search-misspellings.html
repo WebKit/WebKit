@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content" contenteditable=true>
+<p id="p1">This paragraph contains some tezt that isd</p>
+<p id="p2">mispeled.</p>
+<p id="p3">Therd paragrph.</p>
+<br>
+<a href="#">Loock at thes pictures...</a>
+</div>
+
+<script>
+let output = "Tests navigation by misspelled words.\n\n";
+
+if (accessibilityController) {
+    content = accessibilityController.accessibleElementById("content");
+
+    output += "Find all misspelled word from the beginning of content:\n";
+    startRange = content.textMarkerRangeForMarkers(content.startTextMarker, content.startTextMarker);
+    result = content.textMarkerRangeForSearchPredicate(startRange, true, "AXMisspelledWordSearchKey");
+    while (result) {
+        output += `${content.stringForTextMarkerRange(result)}\n`;
+        result = content.textMarkerRangeForSearchPredicate(result, true, "AXMisspelledWordSearchKey");
+    }
+
+    output += "Find all misspelled words backwards from the end of content:\n";
+    startRange = content.textMarkerRangeForMarkers(content.endTextMarker, content.endTextMarker);
+    result = content.textMarkerRangeForSearchPredicate(startRange, false, "AXMisspelledWordSearchKey");
+    while (result) {
+        output += `${content.stringForTextMarkerRange(result)}\n`;
+        result = content.textMarkerRangeForSearchPredicate(result, false, "AXMisspelledWordSearchKey");
+    }
+
+    document.getElementById("content").style.visibility = "hidden";
+    debug(output);
+}
+</script>
+</body>
+</html>

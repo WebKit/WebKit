@@ -220,6 +220,7 @@ headers: <WebCore/DisplayListItems.h>
 
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillRect {
     WebCore::FloatRect rect();
+    WebCore::GraphicsContext::RequiresClipToRect requiresClipToRect();
 };
 
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillRectWithColor {
@@ -236,6 +237,7 @@ headers: <WebCore/DisplayListItems.h>
     WebCore::FloatRect rect();
     Ref<WebCore::Gradient> gradient();
     WebCore::AffineTransform gradientSpaceTransform();
+    WebCore::GraphicsContext::RequiresClipToRect requiresClipToRect();
 };
 
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillCompositedRect {

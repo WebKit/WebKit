@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: http://localhost:8800/geolocation-API/non-secure-contexts.http.html
-
-Harness Error (TIMEOUT), message = null
-
-FAIL When in a non-secure context, getCurrentPosition()'s errorCallback is asynchronously called. promise_test: Unhandled rejection with value: object "Error: successCallback must never be invoked."
-TIMEOUT When in a non-secure context, the getCurrentPosition() errorCallBack gets a GeolocationPositionError with PERMISSION_DENIED. Test timed out
-

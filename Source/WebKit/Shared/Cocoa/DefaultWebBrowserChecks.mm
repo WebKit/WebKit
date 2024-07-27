@@ -77,7 +77,9 @@ static bool isInWebKitChildProcess()
         isInSubProcess |= WTF::processHasEntitlement("com.apple.developer.web-browser-engine.networking"_s)
             || WTF::processHasEntitlement("com.apple.developer.web-browser-engine.rendering"_s)
             || WTF::processHasEntitlement("com.apple.developer.web-browser-engine.webcontent"_s);
-#else
+        if (isInSubProcess)
+            return;
+#endif // USE(EXTENSIONKIT)
         NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
         isInSubProcess = [bundleIdentifier hasPrefix:@"com.apple.WebKit.WebContent"]
             || [bundleIdentifier hasPrefix:@"com.apple.WebKit.Networking"]
@@ -85,7 +87,6 @@ static bool isInWebKitChildProcess()
 #if ENABLE(MODEL_PROCESS)
         isInSubProcess = isInSubProcess || [bundleIdentifier hasPrefix:@"com.apple.WebKit.Model"];
 #endif // ENABLE(MODEL_PROCESS)
-#endif // USE(EXTENSIONKIT)
     });
 
     return isInSubProcess;

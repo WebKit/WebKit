@@ -11,7 +11,7 @@ const withCalendar = Temporal.PlainDateTime.prototype.withCalendar;
 
 assert.sameValue(typeof withCalendar, "function");
 
-const args = [new Temporal.Calendar("iso8601")];
+const args = ["iso8601"];
 
 assert.throws(TypeError, () => withCalendar.apply(undefined, args), "undefined");
 assert.throws(TypeError, () => withCalendar.apply(null, args), "null");

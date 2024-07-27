@@ -30,6 +30,7 @@ struct RadialGradientAttributes;
 
 class SVGRadialGradientElement final : public SVGGradientElement {
     WTF_MAKE_ISO_ALLOCATED(SVGRadialGradientElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGRadialGradientElement);
 public:
     static Ref<SVGRadialGradientElement> create(const QualifiedName&, Document&);
 

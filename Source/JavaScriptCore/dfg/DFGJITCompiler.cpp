@@ -100,19 +100,20 @@ void JITCompiler::linkOSRExits()
 
         jitAssertHasValidCallFrame();
 #if USE(JSVALUE64)
+        move(TrustedImm32(i), GPRInfo::numberTagRegister);
         if (m_graph.m_plan.isUnlinked()) {
-            move(TrustedImm32(i), GPRInfo::numberTagRegister);
             if (info.m_replacementDestination.isSet())
                 dispatchCasesWithoutLinkedFailures.append(jump());
             else
                 dispatchCases.append(jump());
-            continue;
-        }
-#endif
+        } else
+            info.m_patchableJump = patchableJump();
+#else
         UNUSED_VARIABLE(dispatchCases);
         UNUSED_VARIABLE(dispatchCasesWithoutLinkedFailures);
         store32(TrustedImm32(i), &vm().osrExitIndex);
         info.m_patchableJump = patchableJump();
+#endif
     }
 
 #if USE(JSVALUE64)
@@ -130,13 +131,11 @@ void JITCompiler::linkOSRExits()
             didNotHaveException.link(this);
         }
         dispatchCases.link(this);
-        store32(GPRInfo::numberTagRegister, &vm().osrExitIndex);
         loadPtr(Address(GPRInfo::jitDataRegister, JITData::offsetOfExits()), GPRInfo::jitDataRegister);
         static_assert(sizeof(JITData::ExitVector::value_type) == 16);
         static_assert(!JITData::ExitVector::value_type::offsetOfCodePtr());
-        lshiftPtr(TrustedImm32(4), GPRInfo::numberTagRegister);
-        addPtr(GPRInfo::numberTagRegister, GPRInfo::jitDataRegister);
-        emitMaterializeTagCheckRegisters();
+        lshiftPtr(GPRInfo::numberTagRegister, TrustedImm32(4), GPRInfo::notCellMaskRegister);
+        addPtr(GPRInfo::notCellMaskRegister, GPRInfo::jitDataRegister);
         farJump(Address(GPRInfo::jitDataRegister, JITData::ExitVector::Storage::offsetOfData()), OSRExitPtrTag);
     }
 #endif
@@ -159,12 +158,14 @@ void JITCompiler::compileEntry()
 void JITCompiler::compileSetupRegistersForEntry()
 {
     emitSaveCalleeSaves();
-    emitMaterializeTagCheckRegisters();    
 #if USE(JSVALUE64)
-    if (m_graph.m_plan.isUnlinked()) {
-        emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::jitDataRegister);
-        loadPtr(Address(GPRInfo::jitDataRegister, CodeBlock::offsetOfJITData()), GPRInfo::jitDataRegister);
-    }
+    // Use numberTagRegister as a scratch since it is recovered after this.
+    jitAssertCodeBlockOnCallFrameWithType(GPRInfo::numberTagRegister, JITType::DFGJIT);
+#endif
+    emitMaterializeTagCheckRegisters();
+#if USE(JSVALUE64)
+    emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::jitDataRegister);
+    loadPtr(Address(GPRInfo::jitDataRegister, CodeBlock::offsetOfJITData()), GPRInfo::jitDataRegister);
 #endif
 }
 

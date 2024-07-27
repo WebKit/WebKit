@@ -14,4 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/support/abspos-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/support/simple.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/support/viewBox-change-repaint-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/support/viewBox-scaling-text-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/coordinate-systems/support/views.svg

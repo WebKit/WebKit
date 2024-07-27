@@ -29,6 +29,7 @@
 #include "ArrayPrototype.h"
 #include "BuiltinNames.h"
 #include "CachedCall.h"
+#include "CharacterPropertyDataGenerator.h"
 #include "CodeBlock.h"
 #include "Completion.h"
 #include "ControlFlowProfiler.h"
@@ -2243,6 +2244,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionDumpAndResetPasDebugSpectrum);
 static JSC_DECLARE_HOST_FUNCTION(functionMonotonicTimeNow);
 static JSC_DECLARE_HOST_FUNCTION(functionWallTimeNow);
 static JSC_DECLARE_HOST_FUNCTION(functionApproximateTimeNow);
+static JSC_DECLARE_HOST_FUNCTION(functionEvaluateWithScopeExtension);
 static JSC_DECLARE_HOST_FUNCTION(functionHeapExtraMemorySize);
 #if ENABLE(JIT)
 static JSC_DECLARE_HOST_FUNCTION(functionJITSizeStatistics);
@@ -2259,6 +2261,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionAssertFrameAligned);
 static JSC_DECLARE_HOST_FUNCTION(functionCallFromCPPAsFirstEntry);
 static JSC_DECLARE_HOST_FUNCTION(functionCallFromCPP);
 static JSC_DECLARE_HOST_FUNCTION(functionCachedCallFromCPP);
+static JSC_DECLARE_HOST_FUNCTION(functionDumpLineBreakData);
 
 const ClassInfo JSDollarVM::s_info = { "DollarVM"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDollarVM) };
 
@@ -3280,7 +3283,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateBuiltin, (JSGlobalObject* globalObject, C
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     SourceCode source = makeSource(WTFMove(functionText), { }, SourceTaintedOrigin::Untainted);
-    JSFunction* func = JSFunction::create(vm, createBuiltinExecutable(vm, source, Identifier::fromString(vm, "foo"_s), ImplementationVisibility::Public, ConstructorKind::None, ConstructAbility::CannotConstruct, InlineAttribute::None)->link(vm, nullptr, source), globalObject);
+    JSFunction* func = JSFunction::create(vm, globalObject, createBuiltinExecutable(vm, source, Identifier::fromString(vm, "foo"_s), ImplementationVisibility::Public, ConstructorKind::None, ConstructAbility::CannotConstruct, InlineAttribute::None)->link(vm, nullptr, source), globalObject);
 
     return JSValue::encode(func);
 }
@@ -3976,6 +3979,30 @@ JSC_DEFINE_HOST_FUNCTION(functionApproximateTimeNow, (JSGlobalObject*, CallFrame
     return JSValue::encode(jsNumber(ApproximateTime::now().secondsSinceEpoch().milliseconds()));
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionEvaluateWithScopeExtension, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue scriptValue = callFrame->argument(0);
+    if (!scriptValue.isString())
+        return throwVMTypeError(globalObject, scope, "Expected first argument to be a string"_s);
+
+    String program = asString(scriptValue)->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    SourceCode source = makeSource(WTFMove(program), callFrame->callerSourceOrigin(vm), SourceTaintedOrigin::Untainted);
+    JSObject* scopeExtension = callFrame->argument(1).getObject();
+
+    NakedPtr<Exception> exception;
+    JSValue result = evaluateWithScopeExtension(globalObject, source, scopeExtension, exception);
+    if (exception)
+        return throwVMException(globalObject, scope, exception);
+
+    return JSValue::encode(result);
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionHeapExtraMemorySize, (JSGlobalObject* globalObject, CallFrame*))
 {
     DollarVMAssertScope assertScope;
@@ -4155,6 +4182,13 @@ JSC_DEFINE_HOST_FUNCTION(functionCachedCallFromCPP, (JSGlobalObject* globalObjec
     return JSValue::encode(jsUndefined());
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionDumpLineBreakData, (JSGlobalObject*, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    dumpLineBreakData();
+    return JSValue::encode(jsUndefined());
+}
+
 constexpr unsigned jsDollarVMPropertyAttributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete;
 
 void JSDollarVM::finishCreation(VM& vm)
@@ -4327,6 +4361,8 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "wallTimeNow"_s, functionWallTimeNow, 0);
     addFunction(vm, "approximateTimeNow"_s, functionApproximateTimeNow, 0);
 
+    addFunction(vm, "evaluateWithScopeExtension"_s, functionEvaluateWithScopeExtension, 1);
+
     addFunction(vm, "heapExtraMemorySize"_s, functionHeapExtraMemorySize, 0);
 
 #if ENABLE(JIT)
@@ -4347,6 +4383,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "callFromCPPAsFirstEntry"_s, functionCallFromCPPAsFirstEntry, 2);
     addFunction(vm, "callFromCPP"_s, functionCallFromCPP, 2);
     addFunction(vm, "cachedCallFromCPP"_s, functionCachedCallFromCPP, 2);
+    addFunction(vm, "dumpLineBreakData"_s, functionDumpLineBreakData, 0);
 
     m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }

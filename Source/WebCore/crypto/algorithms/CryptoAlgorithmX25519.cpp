@@ -63,7 +63,7 @@ std::optional<Vector<uint8_t>> CryptoAlgorithmX25519::platformDeriveBits(const C
 }
 #endif
 
-void CryptoAlgorithmX25519::deriveBits(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& baseKey, size_t length, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+void CryptoAlgorithmX25519::deriveBits(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& baseKey, std::optional<size_t> length, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     if (baseKey->type() != CryptoKey::Type::Private) {
         exceptionCallback(ExceptionCode::InvalidAccessError);
@@ -86,16 +86,16 @@ void CryptoAlgorithmX25519::deriveBits(const CryptoAlgorithmParameters& paramete
         return;
     }
 
-    auto unifiedCallback = [callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](std::optional<Vector<uint8_t>>&& derivedKey, size_t length) mutable {
+    auto unifiedCallback = [callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](std::optional<Vector<uint8_t>>&& derivedKey, std::optional<size_t> length) mutable {
         if (!derivedKey) {
             exceptionCallback(ExceptionCode::OperationError);
             return;
         }
-        if (!length) {
+        if (!length || !(*length)) {
             callback(WTFMove(*derivedKey));
             return;
         }
-        auto lengthInBytes = std::ceil(length / 8.);
+        auto lengthInBytes = std::ceil(*length / 8.);
         if (lengthInBytes > (*derivedKey).size()) {
             exceptionCallback(ExceptionCode::OperationError);
             return;

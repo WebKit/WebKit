@@ -95,7 +95,7 @@ Data concatenate(const Data& a, const Data& b)
         return a;
 
     Vector<uint8_t> buffer(a.size() + b.size());
-    memcpySpan(buffer.mutableSpan().first(a.size()), a.span());
+    memcpySpan(buffer.mutableSpan(), a.span());
     memcpySpan(buffer.mutableSpan().subspan(a.size()), b.span());
     return Data(WTFMove(buffer));
 }

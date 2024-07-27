@@ -456,11 +456,6 @@ EditCommandComposition& CompositeEditCommand::ensureComposition()
     return *command->m_composition;
 }
 
-bool CompositeEditCommand::isCreateLinkCommand() const
-{
-    return false;
-}
-
 bool CompositeEditCommand::preservesTypingStyle() const
 {
     return false;

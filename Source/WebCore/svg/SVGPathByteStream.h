@@ -149,6 +149,12 @@ public:
     {
     }
 
+    static SVGPathByteStream& empty()
+    {
+        static MainThreadNeverDestroyed<SVGPathByteStream> singleton;
+        return singleton;
+    }
+
     SVGPathByteStream& operator=(const SVGPathByteStream& other)
     {
         if (this == &other)

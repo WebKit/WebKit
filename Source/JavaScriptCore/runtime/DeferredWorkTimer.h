@@ -32,7 +32,7 @@
 #include <wtf/FixedVector.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -52,7 +52,7 @@ public:
         WebAssembly,
     };
 
-    class TicketData : public CanMakeWeakPtr<TicketData>, public ThreadSafeRefCounted<TicketData>  {
+    class TicketData : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<TicketData>  {
     private:
         WTF_MAKE_TZONE_ALLOCATED(TicketData);
         WTF_MAKE_NONCOPYABLE(TicketData);

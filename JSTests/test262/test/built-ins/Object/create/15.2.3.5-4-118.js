@@ -9,7 +9,7 @@ description: >
     (8.10.5 step 4.a)
 ---*/
 
-var descObj = new Date();
+var descObj = new Date(0);
 
 descObj.configurable = true;
 

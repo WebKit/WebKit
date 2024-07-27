@@ -65,7 +65,7 @@ ExceptionOr<URL> AbstractWorker::resolveURL(const String& url)
     if (!scriptURL.isValid())
         return Exception { ExceptionCode::SyntaxError };
 
-    if (!context.securityOrigin()->canRequest(scriptURL, OriginAccessPatternsForWebProcess::singleton()) && !scriptURL.protocolIsData())
+    if (!context.protectedSecurityOrigin()->canRequest(scriptURL, OriginAccessPatternsForWebProcess::singleton()) && !scriptURL.protocolIsData())
         return Exception { ExceptionCode::SecurityError };
 
     ASSERT(context.contentSecurityPolicy());

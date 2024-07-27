@@ -84,7 +84,7 @@ protected:
 
     void initCoordinates();
     void initCoordinates(const LayoutPoint& clientLocation);
-    void receivedTarget() final;
+    void receivedTarget() override;
 
     void computePageLocation();
     void computeRelativePosition();

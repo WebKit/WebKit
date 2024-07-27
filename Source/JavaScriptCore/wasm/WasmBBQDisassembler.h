@@ -43,6 +43,53 @@ namespace Wasm {
 
 class BBQCallee;
 
+struct PrefixedOpcode {
+    OpType prefixOrOpcode;
+    union {
+        Ext1OpType ext1Opcode;
+        ExtAtomicOpType atomicOpcode;
+        ExtSIMDOpType simdOpcode;
+        ExtGCOpType gcOpcode;
+    } prefixed;
+
+    inline explicit PrefixedOpcode(OpType opcode)
+    {
+        switch (opcode) {
+        default:
+            prefixOrOpcode = opcode;
+            break;
+        case OpType::ExtGC:
+        case OpType::Ext1:
+        case OpType::ExtAtomic:
+        case OpType::ExtSIMD:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    inline explicit PrefixedOpcode(OpType prefix, uint32_t opcode)
+    {
+        prefixOrOpcode = prefix;
+        switch (prefix) {
+        case OpType::Ext1:
+            prefixed.ext1Opcode = static_cast<Ext1OpType>(opcode);
+            break;
+        case OpType::ExtSIMD:
+            prefixed.simdOpcode = static_cast<ExtSIMDOpType>(opcode);
+            break;
+        case OpType::ExtGC:
+            prefixed.gcOpcode = static_cast<ExtGCOpType>(opcode);
+            break;
+        case OpType::ExtAtomic:
+            prefixed.atomicOpcode = static_cast<ExtAtomicOpType>(opcode);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Expected a valid WASM opcode prefix.");
+        }
+    }
+};
+
+ASCIILiteral makeString(PrefixedOpcode);
+
 class BBQDisassembler {
     WTF_MAKE_TZONE_ALLOCATED(BBQDisassembler);
 public:
@@ -50,7 +97,7 @@ public:
     ~BBQDisassembler();
 
     void setStartOfCode(MacroAssembler::Label label) { m_startOfCode = label; }
-    void setOpcode(MacroAssembler::Label label, OpType opcode, size_t offset)
+    void setOpcode(MacroAssembler::Label label, PrefixedOpcode opcode, size_t offset)
     {
         m_labels.append(std::tuple { label, opcode, offset });
     }
@@ -66,13 +113,13 @@ private:
     struct DumpedOp {
         CString disassembly;
     };
-    Vector<DumpedOp> dumpVectorForInstructions(LinkBuffer&, const char* prefix, Vector<std::tuple<MacroAssembler::Label, OpType, size_t>>& labels, MacroAssembler::Label endLabel);
+    Vector<DumpedOp> dumpVectorForInstructions(LinkBuffer&, const char* prefix, Vector<std::tuple<MacroAssembler::Label, PrefixedOpcode, size_t>>& labels, MacroAssembler::Label endLabel);
 
-    void dumpForInstructions(PrintStream&, LinkBuffer&, const char* prefix, Vector<std::tuple<MacroAssembler::Label, OpType, size_t>>& labels, MacroAssembler::Label endLabel);
+    void dumpForInstructions(PrintStream&, LinkBuffer&, const char* prefix, Vector<std::tuple<MacroAssembler::Label, PrefixedOpcode, size_t>>& labels, MacroAssembler::Label endLabel);
     void dumpDisassembly(PrintStream&, LinkBuffer&, MacroAssembler::Label from, MacroAssembler::Label to);
 
     MacroAssembler::Label m_startOfCode;
-    Vector<std::tuple<MacroAssembler::Label, OpType, size_t>> m_labels;
+    Vector<std::tuple<MacroAssembler::Label, PrefixedOpcode, size_t>> m_labels;
     MacroAssembler::Label m_endOfOpcode;
     MacroAssembler::Label m_endOfCode;
     void* m_codeStart { nullptr };

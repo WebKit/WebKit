@@ -102,7 +102,7 @@ private:
         SessionEndingFromSystem,
     };
     ImmersiveSessionState m_immersiveSessionState { ImmersiveSessionState::Idle };
-    void setImmersiveSessionState(ImmersiveSessionState);
+    void setImmersiveSessionState(ImmersiveSessionState, CompletionHandler<void(bool)>&&);
     void invalidateImmersiveSessionState(ImmersiveSessionState nextSessionState = ImmersiveSessionState::Idle);
 
     WebPageProxy& m_page;

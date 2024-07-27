@@ -1472,3 +1472,22 @@ embed, object, img {
 ins, del {
     text-decoration-skip: none;
 }
+
+/* https://drafts.csswg.org/css-text-decor-4/#default-stylesheet */
+/* set language-appropriate default emphasis mark position */
+:root:lang(zh), [lang|=zh] {
+    text-emphasis-position: under right;
+}
+[lang|=ja], [lang|=ko] {
+    text-emphasis-position: over right;
+}
+
+/* set language-appropriate default underline position */
+:root:lang(ja), [lang|=ja],
+:root:lang(mn), [lang|=mn],
+:root:lang(ko), [lang|=ko] {
+    text-underline-position: right;
+}
+:root:lang(zh), [lang|=zh] {
+    text-underline-position: left;
+}

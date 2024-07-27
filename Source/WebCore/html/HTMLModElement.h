@@ -29,6 +29,7 @@ namespace WebCore {
 
 class HTMLModElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLModElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLModElement);
 public:
     static Ref<HTMLModElement> create(const QualifiedName&, Document&);
 

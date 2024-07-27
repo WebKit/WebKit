@@ -30,7 +30,7 @@ includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("UTC");
+const timeZone = "UTC";
 const datetime = new Temporal.ZonedDateTime(830998861_001_001_001n, timeZone);
 const options = { largestUnit: "days" };
 

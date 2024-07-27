@@ -32,6 +32,25 @@ body, html {
     pointer-events: auto;
 }
 
+.bottom {
+    position: fixed;
+    pointer-events: none;
+    bottom: 0;
+    width: 100%;
+    height: 150px;
+    text-align: center;
+}
+
+.bottombox {
+    width: 150px;
+    height: 150px;
+    border: 2px black solid;
+    box-sizing: border-box;
+    background: papayawhip;
+    margin: 0 auto;
+    pointer-events: auto;
+}
+
 .dimmed {
     pointer-events: auto;
     background-color: rgba(0, 0, 0, 0.25);
@@ -49,6 +68,9 @@ addEventListener("load", async () => {
     secondSelector = await UIHelper.adjustVisibilityForFrontmostTarget(50, 100);
     shouldBeEqualToString("secondSelector", "DIV.overlay.dimmed");
 
+    thirdSelector = await UIHelper.adjustVisibilityForFrontmostTarget(document.querySelector(".bottombox"));
+    shouldBeEqualToString("thirdSelector", "DIV.bottombox");
+
     finishJSTest();
 });
 </script>
@@ -56,6 +78,9 @@ addEventListener("load", async () => {
 <body>
 <div class="overlay">
     <div class="box"></div>
+</div>
+<div class="bottom">
+    <div class="bottombox"></div>
 </div>
 <main>
     <p>Here’s to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They’re not fond of rules. And they have no respect for the status quo.</p>

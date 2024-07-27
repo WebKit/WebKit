@@ -61,6 +61,7 @@ enum class SelectionRenderingBehavior : bool;
 
 class HTMLElement : public StyledElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLElement);
 public:
     static Ref<HTMLElement> create(const QualifiedName& tagName, Document&);
 
@@ -160,8 +161,8 @@ public:
     void setPopover(const AtomString& value) { setAttributeWithoutSynchronization(HTMLNames::popoverAttr, value); };
     void popoverAttributeChanged(const AtomString& value);
 
-    bool isValidInvokeAction(const InvokeAction) override;
-    bool handleInvokeInternal(const HTMLFormControlElement& invoker, const InvokeAction&) override;
+    bool isValidCommandType(const CommandType) override;
+    bool handleCommandInternal(const HTMLFormControlElement& invoker, const CommandType&) override;
 
 #if PLATFORM(IOS_FAMILY)
     static SelectionRenderingBehavior selectionRenderingBehavior(const Node*);

@@ -132,7 +132,7 @@ public:
     static int convertMarqueeRepetition(BuilderState&, const CSSValue&);
     static int convertMarqueeSpeed(BuilderState&, const CSSValue&);
     static RefPtr<QuotesData> convertQuotes(BuilderState&, const CSSValue&);
-    static TextUnderlinePosition convertTextUnderlinePosition(BuilderState&, const CSSValue&);
+    static OptionSet<TextUnderlinePosition> convertTextUnderlinePosition(BuilderState&, const CSSValue&);
     static TextUnderlineOffset convertTextUnderlineOffset(BuilderState&, const CSSValue&);
     static TextDecorationThickness convertTextDecorationThickness(BuilderState&, const CSSValue&);
     static RefPtr<StyleReflection> convertReflection(BuilderState&, const CSSValue&);
@@ -229,7 +229,6 @@ private:
     friend class BuilderCustom;
 
     static Length convertToRadiusLength(const CSSToLengthConversionData&, const CSSPrimitiveValue&);
-    static OptionSet<TextEmphasisPosition> valueToEmphasisPosition(const CSSPrimitiveValue&);
     static Length parseSnapCoordinate(BuilderState&, const CSSValue&);
 
 #if ENABLE(DARK_MODE_CSS)
@@ -266,10 +265,8 @@ inline Length BuilderConverter::convertLength(const BuilderState& builderState, 
     if (primitiveValue.isCalculatedPercentageWithLength())
         return Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData));
 
-    if (primitiveValue.isAnchor()) {
-        RefPtr anchorPositionedElement = builderState.element();
-        return AnchorPositionEvaluator::resolveAnchorValue(primitiveValue.cssAnchorValue(), anchorPositionedElement.get());
-    }
+    if (primitiveValue.isAnchor())
+        return AnchorPositionEvaluator::resolveAnchorValue(primitiveValue.cssAnchorValue(), builderState);
 
     ASSERT_NOT_REACHED();
     return Length(0, LengthType::Fixed);
@@ -561,7 +558,10 @@ inline ImageOrientation BuilderConverter::convertImageOrientation(BuilderState&,
 
 inline TransformOperations BuilderConverter::convertTransform(BuilderState& builderState, const CSSValue& value)
 {
-    auto operations = transformsForValue(value, builderState.cssToLengthConversionData());
+    CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
+        builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
+        : builderState.cssToLengthConversionData();
+    auto operations = transformsForValue(value, conversionData);
     if (!operations)
         return TransformOperations { };
     return *operations;
@@ -569,7 +569,10 @@ inline TransformOperations BuilderConverter::convertTransform(BuilderState& buil
 
 inline RefPtr<TranslateTransformOperation> BuilderConverter::convertTranslate(BuilderState& builderState, const CSSValue& value)
 {
-    return translateForValue(value, builderState.cssToLengthConversionData());
+    CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
+        builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
+        : builderState.cssToLengthConversionData();
+    return translateForValue(value, conversionData);
 }
 
 inline RefPtr<RotateTransformOperation> BuilderConverter::convertRotate(BuilderState&, const CSSValue& value)
@@ -643,7 +646,7 @@ inline String BuilderConverter::convertStringOrNone(BuilderState& builderState, 
     return convertString(builderState, value);
 }
 
-inline OptionSet<TextEmphasisPosition> BuilderConverter::valueToEmphasisPosition(const CSSPrimitiveValue& primitiveValue)
+inline static OptionSet<TextEmphasisPosition> valueToEmphasisPosition(const CSSPrimitiveValue& primitiveValue)
 {
     ASSERT(primitiveValue.isValueID());
 
@@ -875,9 +878,41 @@ inline RefPtr<QuotesData> BuilderConverter::convertQuotes(BuilderState&, const C
     return QuotesData::create(quotes);
 }
 
-inline TextUnderlinePosition BuilderConverter::convertTextUnderlinePosition(BuilderState&, const CSSValue& value)
+inline static OptionSet<TextUnderlinePosition> valueToUnderlinePosition(const CSSPrimitiveValue& primitiveValue)
 {
-    return fromCSSValue<TextUnderlinePosition>(value);
+    ASSERT(primitiveValue.isValueID());
+
+    switch (primitiveValue.valueID()) {
+    case CSSValueFromFont:
+        return TextUnderlinePosition::FromFont;
+    case CSSValueUnder:
+        return TextUnderlinePosition::Under;
+    case CSSValueLeft:
+        return TextUnderlinePosition::Left;
+    case CSSValueRight:
+        return TextUnderlinePosition::Right;
+    case CSSValueAuto:
+        return RenderStyle::initialTextUnderlinePosition();
+    default:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return RenderStyle::initialTextUnderlinePosition();
+}
+
+inline OptionSet<TextUnderlinePosition> BuilderConverter::convertTextUnderlinePosition(BuilderState&, const CSSValue& value)
+{
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value))
+        return valueToUnderlinePosition(*primitiveValue);
+
+    auto* pair = dynamicDowncast<CSSValuePair>(value);
+    if (!pair)
+        return { };
+
+    auto position = valueToUnderlinePosition(downcast<CSSPrimitiveValue>(pair->first()));
+    position.add(valueToUnderlinePosition(downcast<CSSPrimitiveValue>(pair->second())));
+    return position;
 }
 
 inline TextUnderlineOffset BuilderConverter::convertTextUnderlineOffset(BuilderState& builderState, const CSSValue& value)

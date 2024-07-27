@@ -548,13 +548,11 @@ void PlaybackSessionManager::togglePictureInPicture(PlaybackSessionContextIdenti
 
 void PlaybackSessionManager::enterFullscreen(PlaybackSessionContextIdentifier contextId)
 {
-    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).enterFullscreen();
 }
 
 void PlaybackSessionManager::exitFullscreen(PlaybackSessionContextIdentifier contextId)
 {
-    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).exitFullscreen();
 }
 

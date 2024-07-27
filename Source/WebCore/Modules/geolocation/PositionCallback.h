@@ -38,6 +38,9 @@ public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
     virtual CallbackResult<void> handleEvent(GeolocationPosition*) = 0;
+
+private:
+    virtual bool hasCallback() const = 0;
 };
 
 } // namespace WebCore

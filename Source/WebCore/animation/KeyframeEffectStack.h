@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AnimationList.h"
+#include "AnimationMalloc.h"
 #include "CSSPropertyNames.h"
 #include "WebAnimationTypes.h"
 #include <wtf/Vector.h>
@@ -50,9 +51,8 @@ namespace Style {
 struct ResolutionContext;
 }
 
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(KeyframeEffectStack);
 class KeyframeEffectStack {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(KeyframeEffectStack);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
     explicit KeyframeEffectStack();
     ~KeyframeEffectStack();

@@ -17,8 +17,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/cancel-mousedown-in-subframe.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/layout_change_should_fire_mouseover.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mouse_boundary_events_after_reappending_last_over_target.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mouse_boundary_events_after_removing_last_over_element.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mouse_buttons_back_forward.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mouseenter-mouseleave-on-drag.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html
-/LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mousemove_prevent_default_action.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mousemove_prevent_default_action.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mouseover-at-removing-mousedown-target.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/synthetic-mouse-enter-leave-over-out-button-state-after-target-removed.tentative.html

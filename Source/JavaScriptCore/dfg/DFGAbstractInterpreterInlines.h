@@ -1100,6 +1100,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
 
+        bool isBigIntBinaryUsedKind = node->isBinaryUseKind(HeapBigIntUse) || node->isBinaryUseKind(AnyBigIntUse) || node->isBinaryUseKind(BigInt32Use);
+        if (node->mustGenerate() && isBigIntBinaryUsedKind) {
+            if (childY && childY.isBigInt() && !childY.isNegativeBigInt()) {
+                node->clearFlags(NodeMustGenerate);
+                m_state.setShouldTryConstantFolding(true);
+            }
+        }
+
         if (node->isBinaryUseKind(HeapBigIntUse)) {
             // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate
             // the format of our result:
@@ -1186,6 +1194,15 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ValueDiv: {
         if (handleConstantDivOp(node))
             break;
+
+        bool isBigIntBinaryUsedKind = node->isBinaryUseKind(HeapBigIntUse) || node->isBinaryUseKind(AnyBigIntUse) || node->isBinaryUseKind(BigInt32Use);
+        if (node->mustGenerate() && isBigIntBinaryUsedKind) {
+            JSValue left = forNode(node->child2()).value();
+            if (left && left.isBigInt() && !left.isZeroBigInt()) {
+                node->clearFlags(NodeMustGenerate);
+                m_state.setShouldTryConstantFolding(true);
+            }
+        }
 
         if (node->isBinaryUseKind(HeapBigIntUse)) {
             // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate
@@ -1549,7 +1566,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case MapIterationEntryValue:
     case MapIteratorKey:
     case MapIteratorValue:
-    case MapValue:
+    case LoadMapValue:
     case ExtractValueFromWeakMapGet:
         makeHeapTopForNode(node);
         break;
@@ -1558,8 +1575,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case MapSet:
         break;
 
+    case MapGet:
+        clearForNode(node);
+        break;
+
     case MapIterationEntry:
-    case MapKeyIndex:
         setTypeForNode(node, SpecInt32Only);
         break;
 
@@ -1569,6 +1589,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case MapIteratorNext:
+    case IsEmptyStorage:
         setTypeForNode(node, SpecBoolean);
         break;
 
@@ -3667,15 +3688,30 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
-    case GetScope:
-        if (JSValue base = forNode(node->child1()).m_value) {
-            if (JSFunction* function = jsDynamicCast<JSFunction*>(base)) {
+    case GetScope: {
+        JSValue value = forNode(node->child1()).value();
+        if (value) {
+            if (JSFunction* function = jsDynamicCast<JSFunction*>(value)) {
                 setConstant(node, *m_graph.freeze(function->scope()));
                 break;
             }
         }
-        setTypeForNode(node, SpecObjectOther);
+
+        switch (node->child1()->op()) {
+        case NewFunction:
+        case NewGeneratorFunction:
+        case NewAsyncGeneratorFunction:
+        case NewAsyncFunction: {
+            m_state.setShouldTryConstantFolding(true);
+            forNode(node) = forNode(node->child1()->child1());
+            break;
+        }
+        default:
+            setTypeForNode(node, SpecObjectOther);
+            break;
+        }
         break;
+    }
 
     case SkipScope: {
         if (JSValue child = forNode(node->child1()).value()) {
@@ -3717,8 +3753,29 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case UnwrapGlobalProxy: {
+        if (forNode(node->child1()).m_structure.isFinite()) {
+            JSGlobalObject* globalObject = nullptr;
+            bool ok = true;
+            forNode(node->child1()).m_structure.forEach(
+                [&] (RegisteredStructure structure) {
+                    if (!globalObject)
+                        globalObject = structure->globalObject();
+                    else if (globalObject != structure->globalObject())
+                        ok = false;
+                });
+            if (globalObject && ok) {
+                setConstant(node, *m_graph.freeze(JSValue(globalObject)));
+                break;
+            }
+        }
+
+        setTypeForNode(node, SpecObjectOther);
+        break;
+    }
+
     case GetGlobalThis: {
-        setTypeForNode(node, SpecObject);
+        setTypeForNode(node, SpecGlobalProxy);
         break;
     }
 
@@ -4534,7 +4591,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setNonCellTypeForNode(node, SpecBoolean);
         break;
     }
-        
+
     case GetExecutable: {
         JSValue value = forNode(node->child1()).value();
         if (value) {
@@ -4544,10 +4601,22 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
         }
-        setTypeForNode(node, SpecCellOther);
+
+        switch (node->child1()->op()) {
+        case NewFunction:
+        case NewGeneratorFunction:
+        case NewAsyncGeneratorFunction:
+        case NewAsyncFunction: {
+            setConstant(node, *node->child1()->cellOperand());
+            break;
+        }
+        default:
+            setTypeForNode(node, SpecCellOther);
+            break;
+        }
         break;
     }
-    
+
     case CheckIsConstant: {
         AbstractValue& value = forNode(node->child1());
         if (value.value() == node->constant()->value() && (value.value() || value.m_type == SpecEmpty)) {

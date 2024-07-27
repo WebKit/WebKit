@@ -277,7 +277,7 @@ void ColorInputType::updateColorSwatch()
         return;
 
     ASSERT(element());
-    colorSwatch->setInlineStyleProperty(CSSPropertyBackgroundColor, element()->value(), false);
+    colorSwatch->setInlineStyleProperty(CSSPropertyBackgroundColor, element()->value());
 }
 
 HTMLElement* ColorInputType::shadowColorSwatch() const

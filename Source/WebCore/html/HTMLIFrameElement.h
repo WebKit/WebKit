@@ -35,8 +35,10 @@ class TrustedHTML;
 
 class HTMLIFrameElement final : public HTMLFrameElementBase {
     WTF_MAKE_ISO_ALLOCATED(HTMLIFrameElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLIFrameElement);
 public:
     static Ref<HTMLIFrameElement> create(const QualifiedName&, Document&);
+    ~HTMLIFrameElement();
 
     DOMTokenList& sandbox();
 
@@ -44,7 +46,6 @@ public:
     String referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const final;
 
-    PermissionsPolicy::PolicyDirective permissionsPolicyDirective() const;
     const AtomString& loadingForBindings() const;
     void setLoadingForBindings(const AtomString&);
 
@@ -77,7 +78,6 @@ private:
     bool isLazyLoadObserverActive() const final;
 
     std::unique_ptr<DOMTokenList> m_sandbox;
-    mutable std::optional<PermissionsPolicy::PolicyDirective> m_permissionsPolicyDirective;
 #if ENABLE(FULLSCREEN_API)
     bool m_IFrameFullscreenFlag { false };
 #endif

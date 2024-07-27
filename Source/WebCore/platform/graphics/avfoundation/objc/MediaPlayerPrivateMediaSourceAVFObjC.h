@@ -63,7 +63,6 @@ class VideoLayerManagerObjC;
 class VideoTrackPrivate;
 class WebCoreDecompressionSession;
 
-
 class MediaPlayerPrivateMediaSourceAVFObjC
     : public CanMakeWeakPtr<MediaPlayerPrivateMediaSourceAVFObjC>
     , public RefCounted<MediaPlayerPrivateMediaSourceAVFObjC>
@@ -285,12 +284,12 @@ private:
     void ensureLayer();
     void destroyLayer();
     void ensureDecompressionSession();
-    void destroyDecompressionSession();
+    MediaPlayerEnums::NeedsRenderingModeChanged destroyDecompressionSession();
     void ensureVideoRenderer();
     void destroyVideoRenderer();
 
     bool shouldEnsureLayerOrVideoRenderer() const;
-    void ensureLayerOrVideoRenderer();
+    void ensureLayerOrVideoRenderer(MediaPlayerEnums::NeedsRenderingModeChanged);
     void destroyLayerOrVideoRenderer();
     void configureLayerOrVideoRenderer(WebSampleBufferVideoRendering *);
 

@@ -753,17 +753,6 @@ class Port(object):
             'JSC_useKernTCSM',
             '__XPC_JSC_useKernTCSM',
 
-            # CYGWIN:
-            'HOMEDRIVE',
-            'HOMEPATH',
-            '_NT_SYMBOL_PATH',
-
-            # Windows:
-            'COMSPEC',
-            'SYSTEMDRIVE',
-            'SYSTEMROOT',
-            'WEBKIT_LIBRARIES',
-
             # Most ports (?):
             'HOME',
             'PATH',

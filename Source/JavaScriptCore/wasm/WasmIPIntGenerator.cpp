@@ -496,6 +496,7 @@ public:
     }
     void didPopValueFromStack(ExpressionType, String) { }
     void willParseOpcode() { }
+    void willParseExtendedOpcode() { }
     void didParseOpcode()
     {
         if (!m_parser->unreachableBlocks())

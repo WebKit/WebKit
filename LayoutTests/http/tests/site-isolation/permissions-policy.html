@@ -1,0 +1,28 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+
+description("Verifies permissions policy is set correctly on cross-site frames");
+jsTestIsAsync = true;
+
+onmessage = (event) => {
+    let iframe = document.getElementById("iframe");
+    let src = iframe.src;
+    if (src.includes("exception")) {
+        shouldBe("event.data", "'exception'");
+        shouldBe("event.origin", "'http://localhost:8000'");
+
+        iframe.removeAttribute("allow");
+        iframe.src = "http://localhost:8000/site-isolation/resources/permissions-policy-iframe.html?allow";
+    } else if (src.includes("allow")) {
+        shouldBe("event.data", "'pass'");
+        shouldBe("event.origin", "'http://localhost:8000'");
+
+        finishJSTest();
+    }
+}
+
+</script>
+<body>
+<iframe id="iframe" allow="sync-xhr 'none'" src="http://localhost:8000/site-isolation/resources/permissions-policy-iframe.html?exception"></iframe>
+</body>

@@ -43,7 +43,6 @@
 #include <wtf/PointerComparison.h>
 
 namespace WebCore {
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(KeyframeEffectStack);
 
 KeyframeEffectStack::KeyframeEffectStack() = default;
 

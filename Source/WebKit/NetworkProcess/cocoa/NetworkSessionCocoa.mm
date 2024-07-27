@@ -760,10 +760,12 @@ void NetworkSessionCocoa::setClientAuditToken(const WebCore::AuthenticationChall
     
     // Proxy authentication is handled by CFNetwork internally. We can get here if the user cancels
     // CFNetwork authentication dialog, and we shouldn't ask the client to display another one in that case.
-    if (challenge.protectionSpace.isProxy && !sessionCocoa->preventsSystemHTTPProxyAuthentication()) {
-        completionHandler(NSURLSessionAuthChallengeUseCredential, nil);
-        return;
-    }
+    if (challenge.protectionSpace.isProxy
+#if HAVE(NW_PROXY_CONFIG)
+        && sessionCocoa->proxyConfigs().isEmpty()
+#endif
+        && !sessionCocoa->preventsSystemHTTPProxyAuthentication())
+        return completionHandler(NSURLSessionAuthChallengeUseCredential, nil);
 
     NegotiatedLegacyTLS negotiatedLegacyTLS = NegotiatedLegacyTLS::No;
 
@@ -1095,10 +1097,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         ALLOW_DEPRECATED_DECLARATIONS_END
 
         // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
-        int statusCode = [response isKindOfClass:NSHTTPURLResponse.class] ? [(NSHTTPURLResponse *)response statusCode] : 0;
+        auto isNSHTTPURLResponseClass = [response isKindOfClass:NSHTTPURLResponse.class];
+        int statusCode = isNSHTTPURLResponseClass ? [(NSHTTPURLResponse *)response statusCode] : 0;
+        NSString *xContentTypeOptions = isNSHTTPURLResponseClass ? [(NSHTTPURLResponse *)response valueForHTTPHeaderField:@"X-Content-Type-Options"] : nil;
+        bool isNoSniff = xContentTypeOptions && [xContentTypeOptions caseInsensitiveCompare:@"nosniff"] == NSOrderedSame;
         if (statusCode != httpStatus304NotModified) {
             bool isMainResourceLoad = networkDataTask->firstRequest().requester() == WebCore::ResourceRequestRequester::Main;
-            WebCore::adjustMIMETypeIfNecessary(response._CFURLResponse, isMainResourceLoad);
+            WebCore::adjustMIMETypeIfNecessary(response._CFURLResponse, isMainResourceLoad ? WebCore::IsMainResourceLoad::Yes : WebCore::IsMainResourceLoad::No, isNoSniff ? WebCore::IsNoSniffSet::Yes : WebCore::IsNoSniffSet::No);
         }
 
         WebCore::ResourceResponse resourceResponse(response);

@@ -227,6 +227,7 @@ public:
     void dirtyNormalFlowList();
     void dirtyZOrderLists();
     void dirtyStackingContextZOrderLists();
+    void dirtyHiddenStackingContextAncestorZOrderLists();
 
     bool normalFlowListDirty() const { return m_normalFlowListDirty; }
     bool zOrderListsDirty() const { return m_zOrderListsDirty; }
@@ -444,13 +445,13 @@ public:
     RenderLayer* reflectionLayer() const;
     bool isReflectionLayer(const RenderLayer&) const;
 
-    const LayoutPoint& location() const { return m_topLeft; }
+    inline const LayoutPoint& location() const;
     void setLocation(const LayoutPoint& p) { m_topLeft = p; }
 
-    const IntSize& size() const { return m_layerSize; }
+    inline const IntSize& size() const;
     void setSize(const IntSize& size) { m_layerSize = size; } // Only public for RenderTreeAsText.
 
-    LayoutRect rect() const { return LayoutRect(location(), size()); }
+    inline LayoutRect rect() const;
 
     IntSize visibleSize() const;
 
@@ -499,7 +500,7 @@ public:
 
     void updateLayerPositionsAfterStyleChange();
     enum class CanUseSimplifiedRepaintPass : uint8_t { No, Yes };
-    void updateLayerPositionsAfterLayout(bool isRelayoutingSubtree, bool didFullRepaint, CanUseSimplifiedRepaintPass);
+    void updateLayerPositionsAfterLayout(RenderElement::LayoutIdentifier, bool isRelayoutingSubtree, bool didFullRepaint, CanUseSimplifiedRepaintPass);
     void updateLayerPositionsAfterOverflowScroll();
     void updateLayerPositionsAfterDocumentScroll();
 
@@ -916,7 +917,7 @@ private:
     void updateZOrderLists();
     void rebuildZOrderLists();
     void rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>&, std::unique_ptr<Vector<RenderLayer*>>&, OptionSet<Compositing>&);
-    void collectLayers(bool includeHiddenLayers, std::unique_ptr<Vector<RenderLayer*>>&, std::unique_ptr<Vector<RenderLayer*>>&, OptionSet<Compositing>&);
+    void collectLayers(std::unique_ptr<Vector<RenderLayer*>>&, std::unique_ptr<Vector<RenderLayer*>>&, OptionSet<Compositing>&);
     void clearZOrderLists();
 
     void updateNormalFlowList();
@@ -998,7 +999,7 @@ private:
     // Returns true if the position changed.
     bool updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* = nullptr);
 
-    void recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFlag>, CanUseSimplifiedRepaintPass = CanUseSimplifiedRepaintPass::No);
+    void recursiveUpdateLayerPositions(RenderElement::LayoutIdentifier, OptionSet<UpdateLayerPositionsFlag>, CanUseSimplifiedRepaintPass = CanUseSimplifiedRepaintPass::No);
 
     enum UpdateLayerPositionsAfterScrollFlag {
         IsOverflowScroll                        = 1 << 0,
@@ -1168,6 +1169,13 @@ private:
     void updateAncestorChainHasBlendingDescendants();
     void dirtyAncestorChainHasBlendingDescendants();
 
+    void updateAncestorChainHasIntrinsicallyCompositedDescendants();
+    void dirtyAncestorChainHasIntrinsicallyCompositedDescendants();
+
+    bool isIntrinsicallyComposited() const { return m_intrinsicallyComposited; }
+    bool hasIntrinsicallyCompositedDescendants() const { return m_hasIntrinsicallyCompositedDescendants; }
+    void setIntrinsicallyComposited(bool);
+
     Ref<ClipRects> parentClipRects(const ClipRectsContext&) const;
     ClipRect backgroundClipRect(const ClipRectsContext&) const;
 
@@ -1263,6 +1271,10 @@ private:
     bool m_hasNotIsolatedBlendingDescendants : 1;
     bool m_hasNotIsolatedBlendingDescendantsStatusDirty : 1;
     bool m_repaintRectsValid : 1;
+
+    bool m_intrinsicallyComposited : 1;
+    bool m_hasIntrinsicallyCompositedDescendants : 1;
+    bool m_hasIntrinsicallyCompositedDescendantsStatusDirty : 1;
 
     RenderLayerModelObject& m_renderer;
 

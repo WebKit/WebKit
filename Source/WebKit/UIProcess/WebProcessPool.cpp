@@ -695,7 +695,6 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
 
         processPool->initializeNewWebProcess(newProcessProxy, websiteDataStore.get());
         processPool->m_processes.append(WTFMove(newProcessProxy));
-        remoteWorkerProcessProxy->initializePreferencesForNetworkProcess(preferencesStore.store);
     }
 
     auto aggregator = CallbackAggregator::create([completionHandler = WTFMove(completionHandler), remoteProcessIdentifier = remoteWorkerProcessProxy->coreProcessIdentifier()]() mutable {
@@ -787,11 +786,6 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
     if (m_sandboxEnabled)
         return nullptr;
 #endif
-
-    // Setting the data store below will cause the WebProcess to launch initialize its connection to
-    // the network process, we need to make sure we have the preferences for the network process
-    // ready beforehand.
-    prewarmedProcess->initializePreferencesForNetworkProcess(pageConfiguration);
 
     ASSERT(prewarmedProcess->isPrewarmed());
     prewarmedProcess->setWebsiteDataStore(websiteDataStore);
@@ -1191,9 +1185,7 @@ Ref<WebProcessProxy> WebProcessPool::processForRegistrableDomain(WebsiteDataStor
             return process;
         }
     }
-    Ref process = createNewWebProcess(&websiteDataStore, lockdownMode);
-    process->initializePreferencesForNetworkProcess(pageConfiguration);
-    return process;
+    return createNewWebProcess(&websiteDataStore, lockdownMode);
 }
 
 UserContentControllerIdentifier WebProcessPool::userContentControllerIdentifierForRemoteWorkers()

@@ -45,7 +45,7 @@ using namespace JSC;
 
 JSTestVoidCallbackFunction::JSTestVoidCallbackFunction(JSObject* callback, JSDOMGlobalObject* globalObject)
     : TestVoidCallbackFunction(globalObject->scriptExecutionContext())
-    , m_data(new JSCallbackDataWeak(callback, globalObject, this))
+    , m_data(new JSCallbackData(callback, globalObject, this))
 {
 }
 

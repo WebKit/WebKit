@@ -361,9 +361,7 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
     // We don't update compositing layers, because we need to do a deep update from the compositing ancestor.
     if (!view.frameView().layoutContext().isInRenderTreeLayout()) {
         // If we're in the middle of layout, we'll just update layers once layout has finished.
-        m_layer.updateLayerPositionsAfterOverflowScroll();
-
-        view.frameView().scheduleUpdateWidgetPositions();
+        view.frameView().updateLayerPositionsAfterOverflowScroll(m_layer);
 
         if (!m_updatingMarqueePosition) {
             // Avoid updating compositing layers if, higher on the stack, we're already updating layer
@@ -1167,6 +1165,8 @@ void RenderLayerScrollableArea::computeHasCompositedScrollableOverflow(LayoutUpT
         paintParent->setDescendantsNeedUpdateBackingAndHierarchyTraversal();
 
     m_hasCompositedScrollableOverflow = hasCompositedScrollableOverflow;
+    if (m_hasCompositedScrollableOverflow)
+        m_layer.compositor().layerGainedCompositedScrollableOverflow(m_layer);
 }
 
 bool RenderLayerScrollableArea::hasScrollableHorizontalOverflow() const
@@ -1302,7 +1302,7 @@ void RenderLayerScrollableArea::updateScrollbarsAfterLayout()
         // FIXME: This does not belong here.
         auto* parent = renderer.parent();
         if (CheckedPtr parentFlexibleBox = dynamicDowncast<RenderFlexibleBox>(parent); parentFlexibleBox && renderer.isRenderBox())
-            parentFlexibleBox->clearCachedMainSizeForChild(*m_layer.renderBox());
+            parentFlexibleBox->clearCachedMainSizeForFlexItem(*m_layer.renderBox());
     }
 
     // Set up the range.
@@ -1846,7 +1846,7 @@ void RenderLayerScrollableArea::updateAllScrollbarRelatedStyle()
 // FIXME: this is only valid after we've made layers.
 bool RenderLayerScrollableArea::usesCompositedScrolling() const
 {
-    return m_layer.isComposited() && m_layer.backing()->hasScrollingLayer();
+    return hasCompositedScrollableOverflow() && m_layer.isComposited();
 }
 
 static inline int adjustedScrollDelta(int beginningDelta)
@@ -2046,6 +2046,5 @@ FrameIdentifier RenderLayerScrollableArea::rootFrameID() const
 {
     return m_layer.renderer().frame().rootFrame().frameID();
 }
-
 
 } // namespace WebCore

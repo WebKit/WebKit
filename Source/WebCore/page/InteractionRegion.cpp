@@ -75,8 +75,7 @@ static bool hasInteractiveCursorType(Element& element)
     if (cursorType == CursorType::Auto && element.enclosingLinkEventParentOrSelf())
         cursorType = CursorType::Pointer;
 
-    return cursorType == CursorType::Grab
-        || cursorType == CursorType::Move
+    return cursorType == CursorType::Move
         || cursorType == CursorType::Pointer
         || cursorType == CursorType::Text
         || cursorType == CursorType::VerticalText;

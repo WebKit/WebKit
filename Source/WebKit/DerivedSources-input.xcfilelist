@@ -178,6 +178,9 @@ $(PROJECT_DIR)/Resources/cocoa/NotificationAllowList/EmbeddedForwardedNotificati
 $(PROJECT_DIR)/Resources/cocoa/NotificationAllowList/ForwardedNotifications.def
 $(PROJECT_DIR)/Resources/cocoa/NotificationAllowList/MacForwardedNotifications.def
 $(PROJECT_DIR)/Resources/cocoa/NotificationAllowList/NonForwardedNotifications.def
+$(PROJECT_DIR)/Scripts/PreferencesTemplates/SharedPreferencesForWebProcess.cpp.erb
+$(PROJECT_DIR)/Scripts/PreferencesTemplates/SharedPreferencesForWebProcess.h.erb
+$(PROJECT_DIR)/Scripts/PreferencesTemplates/SharedPreferencesForWebProcess.serialization.in.erb
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPageUpdatePreferences.cpp.erb
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesFeatures.cpp.erb
@@ -294,7 +297,6 @@ $(PROJECT_DIR)/Shared/FrameTreeCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/FrameTreeNodeData.serialization.in
 $(PROJECT_DIR)/Shared/FullScreenMediaDetails.serialization.in
 $(PROJECT_DIR)/Shared/GPUProcessConnectionParameters.serialization.in
-$(PROJECT_DIR)/Shared/GPUProcessPreferencesForWebProcess.serialization.in
 $(PROJECT_DIR)/Shared/Gamepad/GamepadData.serialization.in
 $(PROJECT_DIR)/Shared/GoToBackForwardItemParameters.serialization.in
 $(PROJECT_DIR)/Shared/HTTPSUpgrade/HTTPSUpgradeList.txt
@@ -313,7 +315,6 @@ $(PROJECT_DIR)/Shared/ModelProcessConnectionParameters.serialization.in
 $(PROJECT_DIR)/Shared/MonotonicObjectIdentifier.serialization.in
 $(PROJECT_DIR)/Shared/NavigationActionData.serialization.in
 $(PROJECT_DIR)/Shared/NetworkProcessConnectionParameters.serialization.in
-$(PROJECT_DIR)/Shared/NetworkProcessPreferencesForWebProcess.serialization.in
 $(PROJECT_DIR)/Shared/Notifications/NotificationManagerMessageHandler.messages.in
 $(PROJECT_DIR)/Shared/Notifications/NotificationManagerProxy.messages.in
 $(PROJECT_DIR)/Shared/PALArgumentCoders.serialization.in
@@ -342,6 +343,7 @@ $(PROJECT_DIR)/Shared/SessionState.serialization.in
 $(PROJECT_DIR)/Shared/Shared/EditorState.serialization.in
 $(PROJECT_DIR)/Shared/SyntheticEditingCommandType.serialization.in
 $(PROJECT_DIR)/Shared/TextAnimationType.serialization.in
+$(PROJECT_DIR)/Shared/TextAnimationTypes.serialization.in
 $(PROJECT_DIR)/Shared/TextFlags.serialization.in
 $(PROJECT_DIR)/Shared/TextIndicatorStyle.serialization.in
 $(PROJECT_DIR)/Shared/TextRecognitionResult.serialization.in
@@ -552,6 +554,8 @@ $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIPermissions.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIPort.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIRuntime.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIScripting.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPISidebarAction.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPISidePanel.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIStorage.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIStorageArea.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPITabs.idl

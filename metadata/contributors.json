@@ -807,6 +807,15 @@
    },
    {
       "emails" : [
+         "aviduya@apple.com",
+         "anferneev@icloud.com"
+      ],
+      "github" : "aviduya",
+      "name" : "Anfernee Viduya",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "a_izquierdogarcia@apple.com",
          "aizquierdogarcia@apple.com"
       ],
@@ -976,6 +985,14 @@
          "webkit-bot-watchers-bugzilla@group.apple.com"
       ],
       "name" : "Apple Bot Watchers"
+   },
+   {
+      "emails" : [
+         "ari_young@apple.com",
+         "ariyoung@pm.me"
+      ],
+      "github" : "AriYoung00",
+      "name" : "Ari Young"
    },
    {
       "emails" : [
@@ -2231,6 +2248,18 @@
       "name" : "David Smith",
       "nicks" : [
          "catfishman"
+      ]
+   },
+   {
+      "emails" : [
+         "davidtranhq@gmail.com",
+         "david_tran5@apple.com",
+         "dtran253@uwo.ca"
+      ],
+      "github" : "davidtranhq",
+      "name" : "David Tran",
+      "nicks" : [
+         "davidtranhq"
       ]
    },
    {
@@ -6951,10 +6980,9 @@
    },
    {
       "emails" : [
-         "sam@webkit.org",
-         "weinig@apple.com"
+         "sam@webkit.org"
       ],
-      "expertise" : "HTML DOM, Core DOM, DOM Bindings (JavaScript, Objective-C and COM), Security, DumpRenderTree",
+      "expertise" : "HTML DOM, Core DOM, Security, Canvas, JavaScript DOM Bindings, ObjC DOM Bindings, Basic types and data structures, Tools, Color, CSS Properties and Values",
       "github" : "weinig",
       "name" : "Sam Weinig",
       "nicks" : [

@@ -86,7 +86,7 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
             return;
         auto& authenticatorManager = m_webPageProxy.websiteDataStore().authenticatorManager();
         if (result) {
-#if HAVE(UNIFIED_ASC_AUTH_UI)
+#if HAVE(UNIFIED_ASC_AUTH_UI) || HAVE(WEB_AUTHN_AS_MODERN)
             if (!authenticatorManager.isMock() && !authenticatorManager.isVirtual()) {
                 if (!isASCAvailable()) {
                     handler({ }, AuthenticatorAttachment::Platform, ExceptionData { ExceptionCode::NotSupportedError, "Not implemented."_s });
@@ -104,7 +104,7 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
                 RELEASE_LOG_ERROR(WebAuthn, "The origin of the document is not the same as its ancestors.");
                 return;
             }
-#endif // HAVE(UNIFIED_ASC_AUTH_UI)
+#endif // not HAVE(UNIFIED_ASC_AUTH_UI) || HAVE(WEB_AUTHN_AS_MODERN)
 
             RefPtr<ArrayBuffer> clientDataJSON;
             // AS API makes no difference between SameSite vs CrossOrigin
@@ -143,7 +143,7 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
 }
 
 
-#if !HAVE(UNIFIED_ASC_AUTH_UI)
+#if !HAVE(UNIFIED_ASC_AUTH_UI) && !HAVE(WEB_AUTHN_AS_MODERN)
 void WebAuthenticatorCoordinatorProxy::cancel(CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();
@@ -158,7 +158,7 @@ void WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable(const Sec
 {
     handler(false);
 }
-#endif // !HAVE(UNIFIED_ASC_AUTH_UI)
+#endif // !HAVE(UNIFIED_ASC_AUTH_UI) && !HAVE(WEB_AUTHN_AS_MODERN)
 
 } // namespace WebKit
 

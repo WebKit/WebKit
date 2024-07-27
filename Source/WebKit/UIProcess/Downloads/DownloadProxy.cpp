@@ -106,21 +106,6 @@ WebPageProxy* DownloadProxy::originatingPage() const
     return m_originatingPage.get();
 }
 
-#if PLATFORM(COCOA)
-void DownloadProxy::publishProgress(const URL& URL)
-{
-    if (!m_dataStore)
-        return;
-
-    auto handle = SandboxExtension::createHandle(URL.fileSystemPath(), SandboxExtension::Type::ReadWrite);
-    ASSERT(handle);
-    if (!handle)
-        return;
-
-    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, URL, WTFMove(*handle)), 0);
-}
-#endif // PLATFORM(COCOA)
-
 void DownloadProxy::didStart(const ResourceRequest& request, const String& suggestedFilename)
 {
     m_request = request;

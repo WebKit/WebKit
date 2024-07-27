@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+
+            window.addEventListener('load', async event => {
+
+                video = document.querySelector('video');
+                run(`track = video.addTextTrack('subtitles', 'English', 'en')`);
+                run(`video.src = findMediaFile('video', 'content/test')`);
+
+                await waitFor(video, 'playing');
+                testExpected('track.cues.length', 0);
+                await sleepFor(100);
+                
+                run(`document.body.removeChild(video)`);
+                await sleepFor(100);
+                run(`document.body.appendChild(video)`);
+                
+                endTest();
+            });
+    </script>
+</head>
+<body>
+    <p>Test that removing a media element with an empty text track from the DOM and reinserting it does not crash.</p>
+    <video controls autoplay></video>
+</body>
+</html>

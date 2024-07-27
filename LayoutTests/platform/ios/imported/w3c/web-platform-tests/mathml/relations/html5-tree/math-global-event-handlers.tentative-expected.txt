@@ -4,11 +4,11 @@ PASS onabort: the default value must be null
 PASS onabort: the content attribute must be compiled into a function as the corresponding property
 PASS onabort: dynamic changes on the attribute
 PASS onabort: dispatching an Event at a <math> element must trigger element.onabort
-FAIL onauxclick: must be on the appropriate locations for GlobalEventHandlers assert_true: MathMLElement has an own property named "onauxclick" expected true got false
-FAIL onauxclick: the default value must be null assert_equals: The default value of the property is null for a MathMLMathElement instance expected (object) null but got (undefined) undefined
-FAIL onauxclick: the content attribute must be compiled into a function as the corresponding property assert_equals: The onauxclick property must be a function expected "function" but got "undefined"
-FAIL onauxclick: dynamic changes on the attribute assert_equals: The onauxclick property must be null (no attribute) expected (object) null but got (undefined) undefined
-FAIL onauxclick: dispatching an Event at a <math> element must trigger element.onauxclick assert_equals: The event must be fired at the <math> element expected (object) Element node <math></math> but got (undefined) undefined
+PASS onauxclick: must be on the appropriate locations for GlobalEventHandlers
+PASS onauxclick: the default value must be null
+PASS onauxclick: the content attribute must be compiled into a function as the corresponding property
+PASS onauxclick: dynamic changes on the attribute
+PASS onauxclick: dispatching an Event at a <math> element must trigger element.onauxclick
 PASS onblur: must be on the appropriate locations for GlobalEventHandlers
 PASS onblur: the default value must be null
 PASS onblur: the content attribute must be compiled into a function as the corresponding property

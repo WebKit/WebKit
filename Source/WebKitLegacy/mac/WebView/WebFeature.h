@@ -64,7 +64,8 @@ typedef NS_ENUM(NSUInteger, WebFeatureCategory) {
     WebFeatureCategoryNetworking = 6,
     WebFeatureCategoryPrivacy = 7,
     WebFeatureCategorySecurity = 8,
-    WebFeatureCategoryHTML = 9
+    WebFeatureCategoryHTML = 9,
+    WebFeatureCategoryExtensions = 10,
 };
 
 @interface WebFeature : NSObject

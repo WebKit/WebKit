@@ -52,7 +52,7 @@ Usage: $programName [options]
   --top-level           Show the top-level build directory
 
   --gtk                 Find the build directory for the GTK+ port
-  --wincairo            Find the build directory for using Cairo (rather than CoreGraphics) on Windows
+  --win                 Find the build directory for Windows port
 
 Either --configuration or --top-level is required.
 EOF

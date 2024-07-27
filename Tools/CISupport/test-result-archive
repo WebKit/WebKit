@@ -80,10 +80,10 @@ def archive_test_results(configuration, platform, layoutTestResultsDir):
         compress_spindumps(layoutTestResultsDir)
         if subprocess.call(["ditto", "-c", "-k", "--sequesterRsrc", "--zlibCompressionLevel", "2", layoutTestResultsDir, archiveFile]):
             return 1
-    elif platform in ('win', 'gtk', 'wpe'):
+    elif platform in ('gtk', 'wpe'):
         if subprocess.call(["zip", "-r", "-2", archiveFile, "."], cwd=layoutTestResultsDir):
             return 1
-    elif platform == 'wincairo':
+    elif platform in ('win', 'wincairo'):
         with zipfile.ZipFile(archiveFile, 'w', zipfile.ZIP_DEFLATED) as archiveZip:
             for path, dirNames, fileNames in os.walk(layoutTestResultsDir):
                 relativePath = os.path.relpath(path, layoutTestResultsDir)

@@ -66,6 +66,17 @@ enum class ExtSIMDOpType : uint32_t {
 };
 #undef CREATE_ENUM_VALUE
 
+#define CREATE_CASE(name, ...) case ExtSIMDOpType::name: return #name ## _s;
+inline ASCIILiteral makeString(ExtSIMDOpType op)
+{
+    switch (op) {
+        FOR_EACH_WASM_EXT_SIMD_OP(CREATE_CASE)
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
+}
+#undef CREATE_CASE
+
 constexpr std::pair<size_t, size_t> countNumberOfWasmExtendedSIMDOpcodes()
 {
     uint8_t numberOfOpcodes = 0;

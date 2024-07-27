@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.put() - autoIncrement and out-of-line keys
-

@@ -46,10 +46,13 @@ namespace RTC::Network {
 struct IPAddress {
     struct UnspecifiedFamily { };
 
-    explicit IPAddress() = default;
+    IPAddress() = default;
     explicit IPAddress(const rtc::IPAddress&);
+    explicit IPAddress(const struct sockaddr&);
     explicit IPAddress(std::variant<UnspecifiedFamily, uint32_t, std::array<uint32_t, 4>> value)
-        : value(value) { }
+        : value(value)
+    {
+    }
 
     rtc::IPAddress rtcAddress() const;
 
@@ -59,9 +62,10 @@ struct IPAddress {
 };
 
 struct InterfaceAddress {
-    explicit InterfaceAddress(const rtc::InterfaceAddress&);
     explicit InterfaceAddress(IPAddress address, int ipv6Flags)
-        : address(address), ipv6Flags(ipv6Flags) { }
+        : address(address), ipv6Flags(ipv6Flags)
+    {
+    }
 
     rtc::InterfaceAddress rtcAddress() const;
 
@@ -78,7 +82,6 @@ struct SocketAddress {
         , ipAddress(ipAddress) { }
 
     rtc::SocketAddress rtcAddress() const;
-    static rtc::SocketAddress isolatedCopy(const rtc::SocketAddress&);
 
     uint16_t port;
     int scopeID;
@@ -93,7 +96,7 @@ struct RTCNetwork {
     using IPAddress = RTC::Network::IPAddress;
     using InterfaceAddress = RTC::Network::InterfaceAddress;
 
-    explicit RTCNetwork(const rtc::Network&);
+    RTCNetwork() = default;
     explicit RTCNetwork(Vector<char>&& name, Vector<char>&& description, IPAddress prefix, int prefixLength, int type, uint16_t id, int preference, bool active, bool ignored, int scopeID, Vector<InterfaceAddress>&& ips);
 
     rtc::Network value() const;
@@ -101,13 +104,13 @@ struct RTCNetwork {
     Vector<char> name;
     Vector<char> description;
     IPAddress prefix;
-    int prefixLength;
-    int type;
-    uint16_t id;
-    int preference;
-    bool active;
-    bool ignored;
-    int scopeID;
+    int prefixLength { 0 };
+    int type { 0 };
+    uint16_t id { 0 };
+    int preference { 0 };
+    bool active { 0 };
+    bool ignored { false };
+    int scopeID { 0 };
     Vector<InterfaceAddress> ips;
 };
 

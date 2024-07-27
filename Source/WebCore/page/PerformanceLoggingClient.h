@@ -41,6 +41,7 @@ public:
         ExposedTilelessArea,
         FilledTile,
         SwitchedScrollingMode,
+        StartedRubberbanding
     };
     virtual void logScrollingEvent(ScrollingEvent, MonotonicTime, uint64_t) = 0;
 

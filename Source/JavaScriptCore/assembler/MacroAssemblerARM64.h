@@ -2157,18 +2157,24 @@ public:
 
     void transfer32(Address src, Address dest)
     {
+        if (src == dest)
+            return;
         load32(src, getCachedDataTempRegisterIDAndInvalidate());
         store32(getCachedDataTempRegisterIDAndInvalidate(), dest);
     }
 
     void transfer64(Address src, Address dest)
     {
+        if (src == dest)
+            return;
         load64(src, getCachedDataTempRegisterIDAndInvalidate());
         store64(getCachedDataTempRegisterIDAndInvalidate(), dest);
     }
 
     void transferVector(Address src, Address dest)
     {
+        if (src == dest)
+            return;
         loadVector(src, fpTempRegister);
         storeVector(fpTempRegister, dest);
     }
@@ -2180,18 +2186,24 @@ public:
 
     void transfer32(BaseIndex src, BaseIndex dest)
     {
+        if (src == dest)
+            return;
         load32(src, getCachedDataTempRegisterIDAndInvalidate());
         store32(getCachedDataTempRegisterIDAndInvalidate(), dest);
     }
 
     void transfer64(BaseIndex src, BaseIndex dest)
     {
+        if (src == dest)
+            return;
         load64(src, getCachedDataTempRegisterIDAndInvalidate());
         store64(getCachedDataTempRegisterIDAndInvalidate(), dest);
     }
 
     void transferVector(BaseIndex src, BaseIndex dest)
     {
+        if (src == dest)
+            return;
         loadVector(src, fpTempRegister);
         storeVector(fpTempRegister, dest);
     }

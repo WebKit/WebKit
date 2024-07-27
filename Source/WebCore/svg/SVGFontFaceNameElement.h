@@ -27,6 +27,7 @@ class CSSFontFaceSrcLocalValue;
 
 class SVGFontFaceNameElement final : public SVGElement {
     WTF_MAKE_ISO_ALLOCATED(SVGFontFaceNameElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFontFaceNameElement);
 public:
     static Ref<SVGFontFaceNameElement> create(const QualifiedName&, Document&);
     

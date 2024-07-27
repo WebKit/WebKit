@@ -470,6 +470,9 @@ String ScrollerMac::scrollbarState() const
     if ([m_scrollerImp userInterfaceLayoutDirection] == NSUserInterfaceLayoutDirectionRightToLeft)
         result.append(",RTL"_s);
 
+    if ([m_scrollerImp controlSize] != NSControlSizeRegular)
+        result.append(",thin"_s);
+
     return result.toString();
 }
 

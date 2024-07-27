@@ -13,7 +13,8 @@ function callArg(foo) { return foo(); }
 let state = callArg($vm.vmTaintedState)
 check("Untainted", state);
 
-state = $vm.runTaintedString("function taintedFunc() { return $vm.vmTaintedState(); } $vm.vmTaintedState()");
+state = null;
+$vm.runTaintedString("function taintedFunc() { return $vm.vmTaintedState(); } state = $vm.vmTaintedState()");
 check("KnownTainted", state);
 check("IndirectlyTaintedByHistory");
 
@@ -62,7 +63,8 @@ setTimeout(() => {
 });
 
 setTimeout(() => {
-    state = $vm.runTaintedString("callArg($vm.vmTaintedState)");
+    state = null;
+    $vm.runTaintedString("state = callArg($vm.vmTaintedState)");
     check("KnownTainted", state);
 });
 

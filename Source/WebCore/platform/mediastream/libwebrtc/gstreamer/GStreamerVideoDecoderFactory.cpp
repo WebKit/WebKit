@@ -82,16 +82,6 @@ public:
         m_needsKeyframe = true;
     }
 
-    static unsigned getGstAutoplugSelectResult(const char* nick)
-    {
-        static GEnumClass* enumClass = static_cast<GEnumClass*>(g_type_class_ref(g_type_from_name("GstAutoplugSelectResult")));
-        ASSERT(enumClass);
-        GEnumValue* ev = g_enum_get_value_by_nick(enumClass, nick);
-        if (!ev)
-            return 0;
-        return ev->value;
-    }
-
     bool Configure(const webrtc::VideoDecoder::Settings& codecSettings) override
     {
         m_src = makeElement("appsrc");
@@ -112,12 +102,17 @@ public:
 
         auto& quirksManager = GStreamerQuirksManager::singleton();
         if (quirksManager.isEnabled()) {
+            // Prevent auto-plugging of hardware-accelerated elements. Those will be used in the playback pipeline.
             g_signal_connect(decoder, "autoplug-select", G_CALLBACK(+[](GstElement*, GstPad*, GstCaps*, GstElementFactory* factory, gpointer) -> unsigned {
+                static auto skipAutoPlug = gstGetAutoplugSelectResult("skip"_s);
+                static auto tryAutoPlug = gstGetAutoplugSelectResult("try"_s);
+                RELEASE_ASSERT(skipAutoPlug);
+                RELEASE_ASSERT(tryAutoPlug);
                 auto& quirksManager = GStreamerQuirksManager::singleton();
                 auto isHardwareAccelerated = quirksManager.isHardwareAccelerated(factory).value_or(false);
                 if (isHardwareAccelerated)
-                    return getGstAutoplugSelectResult("skip");
-                return getGstAutoplugSelectResult("try");
+                    return *skipAutoPlug;
+                return *tryAutoPlug;
             }), nullptr);
         }
 

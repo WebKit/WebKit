@@ -1,15 +1,14 @@
 
 
-PASS invokeTargetElement reflects invokee HTML element
-PASS invokeTargetElement reflects set value
-PASS invokeTargetElement reflects set value across shadow root into light dom
-PASS invokeTargetElement does not reflect set value inside shadowroot
-PASS invokeTargetElement throws error on assignment of non Element
-PASS invokeAction reflects '' when attribute not present
-PASS invokeAction reflects '' when attribute empty, setAttribute version
-PASS invokeAction reflects same casing
-PASS invokeAction reflects '' when attribute empty, IDL version
-PASS invokeAction reflects tostring value
-PASS invokeAction reflects '' when attribute set to []
-PASS invokeAction reflects tostring value 2
+PASS commandForElement reflects invokee HTML element
+PASS commandForElement reflects set value
+PASS commandForElement reflects set value across shadow root into light dom
+PASS commandForElement does not reflect set value inside shadowroot
+PASS commandForElement throws error on assignment of non Element
+PASS command reflects '' when attribute empty, setAttribute version
+PASS command reflects same casing
+PASS command reflects '' when attribute empty, IDL version
+PASS command reflects tostring value
+PASS command reflects '' when attribute set to []
+PASS command reflects tostring value 2
 

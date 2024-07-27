@@ -918,6 +918,8 @@ runtime/JSFinalizationRegistry.cpp
 runtime/JSFunction.cpp
 runtime/JSGenerator.cpp
 runtime/JSGeneratorFunction.cpp
+runtime/JSGenericTypedArrayView.cpp
+runtime/JSGenericTypedArrayViewConstructor.cpp
 runtime/JSGenericTypedArrayViewPrototype.cpp
 runtime/JSGlobalLexicalEnvironment.cpp
 runtime/JSGlobalObject.cpp
@@ -1110,6 +1112,7 @@ runtime/WeakSetPrototype.cpp
 runtime/WideningNumberPredictionFuzzerAgent.cpp
 
 tools/CellList.cpp
+tools/CharacterPropertyDataGenerator.cpp
 tools/CompilerTimingScope.cpp
 tools/FunctionAllowlist.cpp
 tools/FunctionOverrides.cpp
@@ -1142,8 +1145,6 @@ wasm/WasmFunctionIPIntMetadataGenerator.cpp
 wasm/WasmGlobal.cpp
 wasm/WasmHandlerInfo.cpp
 wasm/WasmIndexOrName.cpp
-wasm/WasmInstance.cpp
-wasm/WasmInstance.h
 wasm/WasmIPIntGenerator.cpp
 wasm/WasmIPIntPlan.cpp
 wasm/WasmIPIntSlowPaths.cpp @no-unify

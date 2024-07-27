@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-temporal-intl
-description: Islamic calendars (note there are 6 variants)
+description: Islamic calendars (note there are 5 variants)
 features: [Temporal]
 ---*/
 
@@ -15,62 +15,42 @@ const tests = [
     inLeapYear: false,
     daysInYear: 354,
     daysInMonth12: 29,
-    isoYear: 2023,
-    isoMonth: 7,
-    isoDay: 18
+    isoDate: "2023-07-18",
   },
   {
     calendar: "islamic-umalqura",
     inLeapYear: false,
     daysInYear: 354,
     daysInMonth12: 30,
-    isoYear: 2023,
-    isoMonth: 7,
-    isoDay: 19
+    isoDate: "2023-07-19",
   },
   {
     calendar: "islamic-civil",
     inLeapYear: true,
     daysInYear: 355,
     daysInMonth12: 30,
-    isoYear: 2023,
-    isoMonth: 7,
-    isoDay: 19
-  },
-  {
-    calendar: "islamicc", // deprecated version of islamic-civil
-    inLeapYear: true,
-    daysInYear: 355,
-    daysInMonth12: 30,
-    isoYear: 2023,
-    isoMonth: 7,
-    isoDay: 19
+    isoDate: "2023-07-19",
   },
   {
     calendar: "islamic-rgsa",
     inLeapYear: false,
     daysInYear: 354,
     daysInMonth12: 29,
-    isoYear: 2023,
-    isoMonth: 7,
-    isoDay: 18
+    isoDate: "2023-07-18",
   },
   {
     calendar: "islamic-tbla",
     inLeapYear: true,
     daysInYear: 355,
     daysInMonth12: 30,
-    isoYear: 2023,
-    isoMonth: 7,
-    isoDay: 18
+    isoDate: "2023-07-18",
   }
 ];
 
 for (const test of tests) {
-  const { calendar, inLeapYear, daysInYear, daysInMonth12, isoYear, isoMonth, isoDay } = test;
+  const { calendar, inLeapYear, daysInYear, daysInMonth12, isoDate } = test;
   const year = 1445;
   const date = Temporal.PlainDate.from({ year, month: 1, day: 1, calendar });
-  const isoFields = date.getISOFields();
   assert.sameValue(date.calendarId, calendar);
   assert.sameValue(date.year, year);
   assert.sameValue(date.month, 1);
@@ -85,7 +65,5 @@ for (const test of tests) {
   assert.sameValue(lastDayOfThisYear.dayOfYear, daysInYear);
   const dateMonth12 = date.with({ month: 12 });
   assert.sameValue(dateMonth12.daysInMonth, daysInMonth12);
-  assert.sameValue(isoYear, isoFields.isoYear);
-  assert.sameValue(isoMonth, isoFields.isoMonth);
-  assert.sameValue(isoDay, isoFields.isoDay);
+  assert.sameValue(date.toString(), `${isoDate}[u-ca=${calendar}]`, "ISO reference date");
 }

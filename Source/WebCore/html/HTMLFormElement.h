@@ -43,6 +43,7 @@ class ValidatedFormListedElement;
 
 class HTMLFormElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLFormElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLFormElement);
 public:
     static Ref<HTMLFormElement> create(Document&);
     static Ref<HTMLFormElement> create(const QualifiedName&, Document&);

@@ -2126,10 +2126,12 @@ void TestRunner::getAndClearReportedWindowProxyAccessDomains(JSContextRef contex
 
 void TestRunner::dumpBackForwardList()
 {
-    m_shouldDumpBackForwardListsForAllWindows = true;
-    auto& injectedBundle = InjectedBundle::singleton();
-    if (WKBundleFrameIsRemote(WKBundlePageGetMainFrame(injectedBundle.pageRef())))
-        postPageMessage("DumpBackForwardList");
+    postSynchronousPageMessage("DumpBackForwardList");
+}
+
+bool TestRunner::shouldDumpBackForwardListsForAllWindows() const
+{
+    return postSynchronousPageMessageReturningBoolean("ShouldDumpBackForwardListsForAllWindows");
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_END

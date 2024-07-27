@@ -207,7 +207,7 @@ void VTTCueBox::applyCSSProperties()
     // is not a true viewport, but it is a container, so they serve the same purpose.
 
     // the 'writing-mode' property must be set to writing-mode
-    setInlineStyleProperty(CSSPropertyWritingMode, cue->getCSSWritingMode(), false);
+    setInlineStyleProperty(CSSPropertyWritingMode, cue->getCSSWritingMode());
 
     // the 'top' property must be set to top
     std::visit(WTF::makeVisitor([&] (double top) {
@@ -256,7 +256,7 @@ void VTTCueBox::applyCSSProperties()
     // The font shorthand property on the (root) list of WebVTT Node Objects
     // must be set to 5vh sans-serif. [CSS-VALUES]
     // NOTE: We use 'cqh' rather than 'vh' as the video element is not a proper viewport.
-    setInlineStyleProperty(CSSPropertyFontSize, cue->fontSize(), CSSUnitType::CSS_CQMIN, cue->fontSizeIsImportant());
+    setInlineStyleProperty(CSSPropertyFontSize, cue->fontSize(), CSSUnitType::CSS_CQMIN, cue->fontSizeIsImportant() ? IsImportant::Yes : IsImportant::No);
 
     if (!cue->snapToLines()) {
         setInlineStyleProperty(CSSPropertyWhiteSpaceCollapse, CSSValuePreserve);

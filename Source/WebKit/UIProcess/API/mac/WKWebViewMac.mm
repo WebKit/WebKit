@@ -701,6 +701,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
     _impl->removeTextPlaceholder(placeholder, willInsertText, completionHandler);
 }
 
+- (void)showContextMenuForSelection:(id)sender
+{
+}
+
 #if ENABLE(DRAG_SUPPORT)
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)draggedImage:(NSImage *)image endedAt:(NSPoint)endPoint operation:(NSDragOperation)operation
@@ -1775,6 +1779,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_simulateMouseMove:(NSEvent *)event
 {
     return _impl->mouseMoved(event);
+}
+
+- (void)_simulateMouseEnter:(NSEvent *)event
+{
+    _impl->mouseEntered(event);
 }
 
 - (void)_setFont:(NSFont *)font sender:(id)sender

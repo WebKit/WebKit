@@ -48,6 +48,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrackCueGeneric);
 
 class TextTrackCueGenericBoxElement final : public VTTCueBox {
     WTF_MAKE_ISO_ALLOCATED_INLINE(TextTrackCueGenericBoxElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextTrackCueGenericBoxElement);
 public:
     static Ref<TextTrackCueGenericBoxElement> create(Document&, TextTrackCueGeneric&);
     

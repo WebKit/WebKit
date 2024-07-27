@@ -82,9 +82,7 @@ public:
     WebCore::GraphicsLayer* rootLayer() const { return m_rootLayer.get(); }
     WebCore::GraphicsLayer* rootCompositingLayer() const { return m_rootCompositingLayer; }
 
-#if !HAVE(DISPLAY_LINK)
     void forceFrameSync() { m_forceFrameSync = true; }
-#endif
 
     bool flushPendingLayerChanges(OptionSet<WebCore::FinalizeRenderingUpdateFlags>);
     void syncDisplayState();
@@ -148,9 +146,7 @@ private:
     WebCore::FloatRect m_visibleContentsRect;
 
     double m_lastAnimationServiceTime { 0 };
-#if !HAVE(DISPLAY_LINK)
     bool m_forceFrameSync { false };
-#endif
 };
 
 }

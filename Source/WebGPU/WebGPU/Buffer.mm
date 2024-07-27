@@ -85,13 +85,14 @@ static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, WGPUBufferUsageFl
 {
     if (deviceHasUnifiedMemory)
         return MTLStorageModeShared;
-    if (usage & (WGPUBufferUsage_MapRead | WGPUBufferUsage_MapWrite | WGPUBufferUsage_Index))
-        return MTLStorageModeShared;
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    if (usage & (WGPUBufferUsage_MapRead | WGPUBufferUsage_MapWrite | WGPUBufferUsage_Index))
+        return MTLStorageModeManaged;
     if (mappedAtCreation)
         return MTLStorageModeManaged;
 #else
     UNUSED_PARAM(mappedAtCreation);
+    UNUSED_PARAM(usage);
 #endif
     return MTLStorageModePrivate;
 }
@@ -172,6 +173,7 @@ void Buffer::setCommandEncoder(CommandEncoder& commandEncoder, bool mayModifyBuf
 {
     UNUSED_PARAM(mayModifyBuffer);
     m_commandEncoders.add(commandEncoder);
+    commandEncoder.addBuffer(m_buffer);
     if (m_state == State::Mapped || m_state == State::MappedAtCreation)
         commandEncoder.incrementBufferMapCount();
     if (isDestroyed())
@@ -365,7 +367,7 @@ void Buffer::unmap()
     decrementBufferMapCount();
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    if (m_state == State::MappedAtCreation && m_buffer.storageMode == MTLStorageModeManaged) {
+    if (m_buffer.storageMode == MTLStorageModeManaged) {
         for (const auto& mappedRange : m_mappedRanges)
             [m_buffer didModifyRange:NSMakeRange(static_cast<NSUInteger>(mappedRange.begin()), static_cast<NSUInteger>(mappedRange.end() - mappedRange.begin()))];
     }
@@ -410,26 +412,27 @@ id<MTLBuffer> Buffer::indirectIndexedBuffer() const
     return m_indirectIndexedBuffer;
 }
 
-bool Buffer::indirectBufferRequiresRecomputation(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, uint32_t minInstanceCount, MTLIndexType indexType) const
+bool Buffer::indirectBufferRequiresRecomputation(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, uint32_t minInstanceCount, MTLIndexType indexType, uint32_t firstInstance) const
 {
     auto rangeBegin = m_indirectCache.lastBaseIndex;
     auto rangeEnd = m_indirectCache.lastBaseIndex + m_indirectCache.indexCount;
     auto newRangeEnd = baseIndex + indexCount;
-    return baseIndex != rangeBegin || newRangeEnd != rangeEnd || minVertexCount != m_indirectCache.minVertexCount || minInstanceCount != m_indirectCache.minInstanceCount || m_indirectCache.indexType != indexType;
+    return baseIndex != rangeBegin || newRangeEnd != rangeEnd || minVertexCount != m_indirectCache.minVertexCount || minInstanceCount != m_indirectCache.minInstanceCount || m_indirectCache.indexType != indexType || m_indirectCache.firstInstance != firstInstance;
 }
 
-void Buffer::indirectBufferRecomputed(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, uint32_t minInstanceCount, MTLIndexType indexType)
+void Buffer::indirectBufferRecomputed(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, uint32_t minInstanceCount, MTLIndexType indexType, uint32_t firstInstance)
 {
     m_indirectCache.lastBaseIndex = baseIndex;
     m_indirectCache.indexCount = indexCount;
     m_indirectCache.minVertexCount = minVertexCount;
     m_indirectCache.minInstanceCount = minInstanceCount;
     m_indirectCache.indexType = indexType;
+    m_indirectCache.firstInstance = firstInstance;
 }
 
 void Buffer::indirectBufferInvalidated()
 {
-    indirectBufferRecomputed(0, 0, 0, 0, MTLIndexTypeUInt16);
+    indirectBufferRecomputed(0, 0, 0, 0, MTLIndexTypeUInt16, 0);
 }
 
 } // namespace WebGPU

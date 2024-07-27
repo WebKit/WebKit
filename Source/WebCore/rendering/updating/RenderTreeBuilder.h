@@ -155,6 +155,7 @@ private:
     IsInternalMove m_internalMovesType { IsInternalMove::No };
     TearDownType m_tearDownType { TearDownType::Root };
     CheckedPtr<const RenderElement> m_subtreeDestroyRoot;
+    SingleThreadWeakPtr<const RenderObject> m_anonymousDestroyRoot;
 };
 
 }

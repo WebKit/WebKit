@@ -60,6 +60,8 @@ public:
 
     void updateScrollbarStyle() final;
 
+    void scrollbarWidthChanged(WebCore::ScrollbarWidth) final;
+
     bool isRemoteScrollbarsController() const final { return true; }
 
 private:

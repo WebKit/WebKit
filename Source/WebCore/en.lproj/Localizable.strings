@@ -565,6 +565,21 @@
 /* Validation message for input form controls of type 'email' that have an invalid value */
 "Enter an email address" = "Enter an email address";
 
+/* Fallback label text for unlabeled telephone number input field. */
+"Phone number" = "Phone number";
+
+/* Fallback label text for unlabeled email address field. */
+"Email address" = "Email address";
+
+/* Fallback label text for unlabeled URL input field. */
+"URL" = "URL";
+
+/* Fallback label text for unlabeled text field. */
+"Enter text" = "Enter text";
+
+/* Fallback label text for password field. */
+"Password" = "Password";
+
 /* Custom protocol synchronous load failure description */
 "Error handling synchronous load with custom protocol" = "Error handling synchronous load with custom protocol";
 
@@ -1687,6 +1702,9 @@
 /* Unwanted software warning title */
 "Website With Harmful Software Warning" = "Website With Harmful Software Warning";
 
+/* Week label for week of year input type */
+"Week" = "Week";
+
 /* Year label in date picker */
 "YEAR (Date picker for extra zoom mode)" = "YEAR";
 
@@ -1818,6 +1836,9 @@
 
 /* accessibility role description for a footer */
 "footer" = "footer";
+
+/* Web Push Notification string to indicate the name of the Web App/Web Site a notification was sent from, such as 'from Wikipedia' */
+"from %@" = "from %@";
 
 /* accessibility role description for headings */
 "heading" = "heading";

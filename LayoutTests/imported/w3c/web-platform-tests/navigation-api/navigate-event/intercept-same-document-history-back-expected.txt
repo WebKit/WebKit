@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT event.intercept() can intercept same-document history.back() Test timed out
+FAIL event.intercept() can intercept same-document history.back() assert_equals: expected 1 but got 2
 

@@ -144,8 +144,7 @@ NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(NetworkProcess& net
     , m_webProcessIdentifier(webProcessIdentifier)
     , m_schemeRegistry(NetworkSchemeRegistry::create())
     , m_originAccessPatterns(makeUniqueRef<NetworkOriginAccessPatterns>())
-    , m_preferencesForWebProcess(parameters.preferencesForWebProcess)
-    , m_allowTestOnlyIPC(parameters.allowTestOnlyIPC)
+    , m_sharedPreferencesForWebProcess(parameters.sharedPreferencesForWebProcess)
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
@@ -503,14 +502,6 @@ void NetworkConnectionToWebProcess::removeSocketChannel(WebSocketIdentifier iden
 {
     ASSERT(m_networkSocketChannels.contains(identifier));
     m_networkSocketChannels.remove(identifier);
-}
-
-void NetworkConnectionToWebProcess::endSuspension()
-{
-#if USE(LIBWEBRTC)
-    if (m_rtcProvider)
-        m_rtcProvider->authorizeListeningSockets();
-#endif
 }
 
 NetworkSession* NetworkConnectionToWebProcess::networkSession()
@@ -1152,6 +1143,28 @@ void NetworkConnectionToWebProcess::requestStorageAccess(RegistrableDomain&& sub
     }
 
     completionHandler({ WebCore::StorageAccessWasGranted::Yes, WebCore::StorageAccessPromptWasShown::No, scope, topFrameDomain, subFrameDomain });
+}
+
+void NetworkConnectionToWebProcess::setLoginStatus(RegistrableDomain&& domain, IsLoggedIn loggedInStatus, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* networkSession = this->networkSession()) {
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
+            resourceLoadStatistics->setLoginStatus(WTFMove(domain), loggedInStatus, WTFMove(completionHandler));
+            return;
+        }
+    }
+    completionHandler();
+}
+
+void NetworkConnectionToWebProcess::isLoggedIn(RegistrableDomain&& domain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (auto* networkSession = this->networkSession()) {
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
+            resourceLoadStatistics->isLoggedIn(WTFMove(domain), WTFMove(completionHandler));
+            return;
+        }
+    }
+    completionHandler(false);
 }
 
 void NetworkConnectionToWebProcess::storageAccessQuirkForTopFrameDomain(URL&& topFrameURL, CompletionHandler<void(Vector<RegistrableDomain>)>&& completionHandler)

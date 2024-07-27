@@ -31,6 +31,7 @@
 
 #include "AXLogger.h"
 #include "AXObjectCache.h"
+#include "AXSearchManager.h"
 #include "AXTextMarker.h"
 #include "AccessibilityMockObject.h"
 #include "AccessibilityRenderObject.h"
@@ -368,38 +369,33 @@ bool AccessibilityObject::isNonNativeTextControl() const
     return (isARIATextControl() || hasContentEditableAttributeSet()) && !isNativeTextControl();
 }
 
-bool AccessibilityObject::hasMisspelling() const
+Vector<CharacterRange> AccessibilityObject::spellCheckerResultRanges() const
 {
     if (!node())
-        return false;
-    
+        return { };
+
     auto* frame = node()->document().frame();
     if (!frame)
-        return false;
-    
-    Editor& editor = frame->editor();
-    
-    TextCheckerClient* textChecker = editor.textChecker();
+        return { };
+
+    auto* textChecker = frame->editor().textChecker();
     if (!textChecker)
-        return false;
-    
-    bool isMisspelled = false;
+        return { };
 
     if (unifiedTextCheckerEnabled(frame)) {
         Vector<TextCheckingResult> results;
         checkTextOfParagraph(*textChecker, stringValue(), TextCheckingType::Spelling, results, frame->selection().selection());
-        if (!results.isEmpty())
-            isMisspelled = true;
-        return isMisspelled;
+        return results.map([] (const auto& result) {
+            return result.range;
+        });
+    } else {
+        int location = -1;
+        int length = 0;
+        textChecker->checkSpellingOfString(stringValue(), &location, &length);
+        if (location > -1 && length > 0)
+            return { { static_cast<uint64_t>(location), static_cast<uint64_t>(length) } };
+        return { };
     }
-
-    int misspellingLength = 0;
-    int misspellingLocation = -1;
-    textChecker->checkSpellingOfString(stringValue(), &misspellingLocation, &misspellingLength);
-    if (misspellingLength || misspellingLocation != -1)
-        isMisspelled = true;
-    
-    return isMisspelled;
 }
 
 std::optional<SimpleRange> AccessibilityObject::misspellingRange(const SimpleRange& start, AccessibilitySearchDirection direction) const
@@ -595,25 +591,6 @@ bool AccessibilityObject::isDescendantOfRole(AccessibilityRole role) const
     }) != nullptr;
 }
 
-static void appendAccessibilityObject(RefPtr<AXCoreObject> object, AccessibilityObject::AccessibilityChildrenVector& results)
-{
-    // Find the next descendant of this attachment object so search can continue through frames.
-    if (object->isAttachment()) {
-        Widget* widget = object->widgetForAttachmentView();
-        auto* frameView = dynamicDowncast<LocalFrameView>(widget);
-        if (!frameView)
-            return;
-        auto* document = frameView->frame().document();
-        if (!document || !document->hasLivingRenderTree())
-            return;
-
-        object = object->axObjectCache()->getOrCreate(*document);
-    }
-
-    if (object)
-        results.append(object);
-}
-
 #if ASSERT_ENABLED
 static bool isTableComponent(AXCoreObject& axObject)
 {
@@ -701,18 +678,14 @@ void AccessibilityObject::addChild(AXCoreObject* child, DescendIfIgnored descend
 {
     insertChild(child, m_children.size(), descendIfIgnored);
 }
-    
-void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* criteria, AccessibilityChildrenVector& results)
-{
-    ASSERT(criteria);
-    if (!criteria)
-        return;
 
-    if (AXObjectCache* cache = axObjectCache())
+AXCoreObject::AccessibilityChildrenVector AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria&& criteria)
+{
+    if (auto* cache = axObjectCache())
         cache->startCachingComputedObjectAttributesUntilTreeMutates();
 
-    criteria->anchorObject = this;
-    Accessibility::findMatchingObjects(*criteria, results);
+    criteria.anchorObject = this;
+    return AXSearchManager().findMatchingObjects(WTFMove(criteria));
 }
 
 // Returns the range that is fewer positions away from the reference range.
@@ -1768,26 +1741,28 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
     return builder.toString();
 }
 
-VisiblePosition AccessibilityObject::nextLineEndPosition(const VisiblePosition& visiblePos) const
+VisiblePosition AccessibilityObject::nextLineEndPosition(const VisiblePosition& startPosition) const
 {
-    if (visiblePos.isNull())
-        return VisiblePosition();
+    if (startPosition.isNull())
+        return { };
 
-    // to make sure we move off of a line end
-    VisiblePosition nextVisiblePos = visiblePos.next();
-    if (nextVisiblePos.isNull())
-        return VisiblePosition();
+    // Move to the next position to ensure we move off a line end.
+    auto nextPosition = startPosition.next();
+    if (nextPosition.isNull())
+        return { };
 
-    VisiblePosition endPosition = endOfLine(nextVisiblePos);
-
-    // as long as the position hasn't reached the end of the doc,  keep searching for a valid line end position
-    // There are cases like when the position is next to a floating object that'll return null for end of line. This code will avoid returning null.
-    while (endPosition.isNull() && nextVisiblePos.isNotNull()) {
-        nextVisiblePos = nextVisiblePos.next();
-        endPosition = endOfLine(nextVisiblePos);
+    auto lineEndPosition = endOfLine(nextPosition);
+    // As long as the position hasn't reached the end of the document, keep searching for a valid line
+    // end position. Skip past null positions, as there are cases like when the position is next to a
+    // floating object that'll return null for end of line. Also, in certain scenarios, like when one
+    // position is editable and the other isn't (e.g. in mixed-contenteditable-visible-character-range-hang.html),
+    // we may end up back at the same position we started at. This is never valid, so keep moving forward
+    // trying to find the next line end.
+    while ((lineEndPosition.isNull() || lineEndPosition == startPosition) && nextPosition.isNotNull()) {
+        nextPosition = nextPosition.next();
+        lineEndPosition = endOfLine(nextPosition);
     }
-
-    return endPosition;
+    return lineEndPosition;
 }
 
 std::optional<VisiblePosition> AccessibilityObject::previousLineStartPositionInternal(const VisiblePosition& visiblePosition) const
@@ -4412,282 +4387,6 @@ String roleToPlatformString(AccessibilityRole role)
 {
     static NeverDestroyed<PlatformRoleMap> roleMap = createPlatformRoleMap();
     return roleMap->get(enumToUnderlyingType(role));
-}
-
-// This function determines if the given `axObject` is a radio button part of a different ad-hoc radio group
-// than `referenceObject`, where ad-hoc radio group membership is determined by comparing `name` attributes.
-static bool isRadioButtonInDifferentAdhocGroup(RefPtr<AXCoreObject> axObject, AXCoreObject* referenceObject)
-{
-    if (!axObject || !axObject->isRadioButton())
-        return false;
-
-    // If the `referenceObject` is not a radio button and this `axObject` is, their radio group membership is different because
-    // `axObject` belongs to a group and `referenceObject` doesn't.
-    if (!referenceObject || !referenceObject->isRadioButton())
-        return true;
-
-    return axObject->nameAttribute() != referenceObject->nameAttribute();
-}
-
-static bool isAccessibilityObjectSearchMatchAtIndex(RefPtr<AXCoreObject> axObject, const AccessibilitySearchCriteria& criteria, size_t index)
-{
-    switch (criteria.searchKeys[index]) {
-    case AccessibilitySearchKey::AnyType:
-        // The AccessibilitySearchKey::AnyType matches any non-null AccessibilityObject.
-        return true;
-    case AccessibilitySearchKey::Article:
-        return axObject->roleValue() == AccessibilityRole::DocumentArticle;
-    case AccessibilitySearchKey::BlockquoteSameLevel:
-        return criteria.startObject
-            && axObject->isBlockquote()
-            && axObject->blockquoteLevel() == criteria.startObject->blockquoteLevel();
-    case AccessibilitySearchKey::Blockquote:
-        return axObject->isBlockquote();
-    case AccessibilitySearchKey::BoldFont:
-        return axObject->hasBoldFont();
-    case AccessibilitySearchKey::Button:
-        return axObject->isButton();
-    case AccessibilitySearchKey::Checkbox:
-        return axObject->isCheckbox();
-    case AccessibilitySearchKey::Control:
-        return axObject->isControl() || axObject->isSummary();
-    case AccessibilitySearchKey::DifferentType:
-        return criteria.startObject
-            && axObject->roleValue() != criteria.startObject->roleValue();
-    case AccessibilitySearchKey::FontChange:
-        return criteria.startObject
-            && !axObject->hasSameFont(*criteria.startObject);
-    case AccessibilitySearchKey::FontColorChange:
-        return criteria.startObject
-            && !axObject->hasSameFontColor(*criteria.startObject);
-    case AccessibilitySearchKey::Frame:
-        return axObject->isWebArea();
-    case AccessibilitySearchKey::Graphic:
-        return axObject->isImage();
-    case AccessibilitySearchKey::HeadingLevel1:
-        return axObject->headingLevel() == 1;
-    case AccessibilitySearchKey::HeadingLevel2:
-        return axObject->headingLevel() == 2;
-    case AccessibilitySearchKey::HeadingLevel3:
-        return axObject->headingLevel() == 3;
-    case AccessibilitySearchKey::HeadingLevel4:
-        return axObject->headingLevel() == 4;
-    case AccessibilitySearchKey::HeadingLevel5:
-        return axObject->headingLevel() == 5;
-    case AccessibilitySearchKey::HeadingLevel6:
-        return axObject->headingLevel() == 6;
-    case AccessibilitySearchKey::HeadingSameLevel:
-        return criteria.startObject
-            && axObject->isHeading()
-            && axObject->headingLevel() == criteria.startObject->headingLevel();
-    case AccessibilitySearchKey::Heading:
-        return axObject->isHeading();
-    case AccessibilitySearchKey::Highlighted:
-        return axObject->hasHighlighting();
-    case AccessibilitySearchKey::KeyboardFocusable:
-        return axObject->isKeyboardFocusable();
-    case AccessibilitySearchKey::ItalicFont:
-        return axObject->hasItalicFont();
-    case AccessibilitySearchKey::Landmark:
-        return axObject->isLandmark();
-    case AccessibilitySearchKey::Link: {
-        bool isLink = axObject->isLink();
-#if PLATFORM(IOS_FAMILY)
-        if (!isLink)
-            isLink = axObject->isDescendantOfRole(AccessibilityRole::WebCoreLink);
-#endif
-        return isLink;
-    }
-    case AccessibilitySearchKey::List:
-        return axObject->isList();
-    case AccessibilitySearchKey::LiveRegion:
-        return axObject->supportsLiveRegion();
-    case AccessibilitySearchKey::MisspelledWord:
-        return axObject->hasMisspelling();
-    case AccessibilitySearchKey::Outline:
-        return axObject->isTree();
-    case AccessibilitySearchKey::PlainText:
-        return axObject->hasPlainText();
-    case AccessibilitySearchKey::RadioGroup:
-        return axObject->isRadioGroup() || isRadioButtonInDifferentAdhocGroup(axObject, criteria.startObject);
-    case AccessibilitySearchKey::SameType:
-        return criteria.startObject
-            && axObject->roleValue() == criteria.startObject->roleValue();
-    case AccessibilitySearchKey::StaticText:
-        return axObject->isStaticText();
-    case AccessibilitySearchKey::StyleChange:
-        return criteria.startObject
-            && !axObject->hasSameStyle(*criteria.startObject);
-    case AccessibilitySearchKey::TableSameLevel:
-        return criteria.startObject
-            && axObject->isTable() && axObject->isExposable()
-            && axObject->tableLevel() == criteria.startObject->tableLevel();
-    case AccessibilitySearchKey::Table:
-        return axObject->isTable() && axObject->isExposable();
-    case AccessibilitySearchKey::TextField:
-        return axObject->isTextControl();
-    case AccessibilitySearchKey::Underline:
-        return axObject->hasUnderline();
-    case AccessibilitySearchKey::UnvisitedLink:
-        return axObject->isUnvisited();
-    case AccessibilitySearchKey::VisitedLink:
-        return axObject->isVisited();
-    default:
-        return false;
-    }
-}
-
-static bool isAccessibilityObjectSearchMatch(RefPtr<AXCoreObject> axObject, const AccessibilitySearchCriteria& criteria)
-{
-    if (!axObject)
-        return false;
-
-    size_t length = criteria.searchKeys.size();
-    for (size_t i = 0; i < length; ++i) {
-        if (isAccessibilityObjectSearchMatchAtIndex(axObject, criteria, i)) {
-            if (criteria.visibleOnly && !axObject->isOnScreen())
-                return false;
-            return true;
-        }
-    }
-    return false;
-}
-
-static bool isAccessibilityTextSearchMatch(RefPtr<AXCoreObject> axObject, const AccessibilitySearchCriteria& criteria)
-{
-    if (!axObject)
-        return false;
-
-    // If text is empty we return true.
-    if (criteria.searchText.isEmpty())
-        return true;
-
-    return containsPlainText(axObject->title(), criteria.searchText, FindOption::CaseInsensitive)
-        || containsPlainText(axObject->description(), criteria.searchText, FindOption::CaseInsensitive)
-        || containsPlainText(axObject->stringValue(), criteria.searchText, FindOption::CaseInsensitive);
-}
-
-static bool objectMatchesSearchCriteriaWithResultLimit(RefPtr<AXCoreObject> object, const AccessibilitySearchCriteria& criteria, AXCoreObject::AccessibilityChildrenVector& results)
-{
-    if (isAccessibilityObjectSearchMatch(object, criteria) && isAccessibilityTextSearchMatch(object, criteria)) {
-        results.append(object);
-
-        // Enough results were found to stop searching.
-        if (results.size() >= criteria.resultsLimit)
-            return true;
-    }
-
-    return false;
-}
-
-static void appendChildrenToArray(RefPtr<AXCoreObject> object, bool isForward, RefPtr<AXCoreObject> startObject, AccessibilityObject::AccessibilityChildrenVector& results)
-{
-    // A table's children includes elements whose own children are also the table's children (due to the way the Mac exposes tables).
-    // The rows from the table should be queried, since those are direct descendants of the table, and they contain content.
-    // FIXME: Unlike AXCoreObject::children(), AXCoreObject::rows() returns a copy, not a const-reference. This can be wasteful
-    // for tables with lots of rows and probably should be changed.
-    const auto& searchChildren = object->isTable() && object->isExposable() ? object->rows() : object->children();
-
-    size_t childrenSize = searchChildren.size();
-
-    size_t startIndex = isForward ? childrenSize : 0;
-    size_t endIndex = isForward ? 0 : childrenSize;
-
-    // If the startObject is ignored, we should use an accessible sibling as a start element instead.
-    if (startObject && startObject->accessibilityIsIgnored() && startObject->isDescendantOfObject(object.get())) {
-        RefPtr<AXCoreObject> parentObject = startObject->parentObject();
-        // Go up the parent chain to find the highest ancestor that's also being ignored.
-        while (parentObject && parentObject->accessibilityIsIgnored()) {
-            if (parentObject == object)
-                break;
-            startObject = parentObject;
-            parentObject = parentObject->parentObject();
-        }
-
-        // We should only ever hit this case with a live object (not an isolated object), as it would require startObject to be ignored,
-        // and we should never have created an isolated object from an ignored live object.
-        ASSERT(is<AccessibilityObject>(startObject));
-        auto* newStartObject = dynamicDowncast<AccessibilityObject>(startObject.get());
-        // Get the un-ignored sibling based on the search direction, and update the searchPosition.
-        if (newStartObject && newStartObject->accessibilityIsIgnored())
-            newStartObject = isForward ? newStartObject->previousSiblingUnignored() : newStartObject->nextSiblingUnignored();
-        startObject = newStartObject;
-    }
-
-    size_t searchPosition = startObject ? searchChildren.find(startObject) : notFound;
-
-    if (searchPosition != notFound) {
-        if (isForward)
-            endIndex = searchPosition + 1;
-        else
-            endIndex = searchPosition;
-    }
-
-    // This is broken into two statements so that it's easier read.
-    if (isForward) {
-        for (size_t i = startIndex; i > endIndex; i--)
-            appendAccessibilityObject(searchChildren.at(i - 1), results);
-    } else {
-        for (size_t i = startIndex; i < endIndex; i++)
-            appendAccessibilityObject(searchChildren.at(i), results);
-    }
-}
-
-void findMatchingObjects(const AccessibilitySearchCriteria& criteria, AXCoreObject::AccessibilityChildrenVector& results)
-{
-    AXTRACE("Accessibility::findMatchingObjects"_s);
-    AXLOG(criteria);
-
-    // This search algorithm only searches the elements before/after the starting object.
-    // It does this by stepping up the parent chain and at each level doing a DFS.
-
-    // If there's no start object, it means we want to search everything.
-    RefPtr<AXCoreObject> startObject = criteria.startObject;
-    if (!startObject)
-        startObject = criteria.anchorObject;
-
-    bool isForward = criteria.searchDirection == AccessibilitySearchDirection::Next;
-
-    // The first iteration of the outer loop will examine the children of the start object for matches. However, when
-    // iterating backwards, the start object children should not be considered, so the loop is skipped ahead. We make an
-    // exception when no start object was specified because we want to search everything regardless of search direction.
-    RefPtr<AXCoreObject> previousObject;
-    if (!isForward && startObject != criteria.anchorObject) {
-        previousObject = startObject;
-        startObject = startObject->parentObjectUnignored();
-    }
-
-    // The outer loop steps up the parent chain each time (unignored is important here because otherwise elements would be searched twice)
-    for (auto* stopSearchElement = criteria.anchorObject->parentObjectUnignored(); startObject && startObject != stopSearchElement; startObject = startObject->parentObjectUnignored()) {
-        // Only append the children after/before the previous element, so that the search does not check elements that are
-        // already behind/ahead of start element.
-        AXCoreObject::AccessibilityChildrenVector searchStack;
-        if (!criteria.immediateDescendantsOnly || startObject == criteria.anchorObject)
-            appendChildrenToArray(startObject, isForward, previousObject, searchStack);
-
-        // This now does a DFS at the current level of the parent.
-        while (!searchStack.isEmpty()) {
-            auto searchObject = searchStack.last();
-            searchStack.removeLast();
-
-            if (objectMatchesSearchCriteriaWithResultLimit(searchObject, criteria, results))
-                break;
-
-            if (!criteria.immediateDescendantsOnly)
-                appendChildrenToArray(searchObject, isForward, nullptr, searchStack);
-        }
-
-        if (results.size() >= criteria.resultsLimit)
-            break;
-
-        // When moving backwards, the parent object needs to be checked, because technically it's "before" the starting element.
-        if (!isForward && startObject != criteria.anchorObject && objectMatchesSearchCriteriaWithResultLimit(startObject, criteria, results))
-            break;
-
-        previousObject = startObject;
-    }
-
-    AXLOG(results);
 }
 
 } // namespace Accessibility

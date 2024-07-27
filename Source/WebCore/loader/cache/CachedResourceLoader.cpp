@@ -470,7 +470,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
             || type == CachedResource::Type::CSSStyleSheet) {
 
             if (RefPtr frame = this->frame())
-                return MixedContentChecker::frameAndAncestorsCanRunInsecureContent(*frame, m_document->securityOrigin(), url);
+                return MixedContentChecker::frameAndAncestorsCanRunInsecureContent(*frame, m_document->protectedSecurityOrigin(), url);
         }
     }
 
@@ -627,9 +627,11 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
     }
 
     // SVG Images have unique security rules that prevent all subresource requests except for data urls.
-    if (type != CachedResource::Type::MainResource && frame() && frame()->page()) {
-        if (frame()->protectedPage()->chrome().client().isSVGImageChromeClient() && !url.protocolIsData())
-            return false;
+    if (type != CachedResource::Type::MainResource && frame()) {
+        if (RefPtr page = frame()->page()) {
+            if (page->chrome().client().isSVGImageChromeClient() && !url.protocolIsData())
+                return false;
+        }
     }
 
     // Last of all, check for insecure content. We do this last so that when folks block insecure content with a CSP policy, they don't get a warning.
@@ -646,7 +648,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
 bool CachedResourceLoader::canRequestAfterRedirection(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options, const URL& preRedirectURL) const
 {
     if (m_document) {
-        if (!m_document->securityOrigin().canDisplay(url, OriginAccessPatternsForWebProcess::singleton())) {
+        if (!m_document->protectedSecurityOrigin()->canDisplay(url, OriginAccessPatternsForWebProcess::singleton())) {
             FrameLoader::reportLocalLoadFailed(protectedFrame().get(), url.stringCenterEllipsizedToLength());
             LOG(ResourceLoading, "CachedResourceLoader::canRequestAfterRedirection URL was not allowed by SecurityOrigin::canDisplay");
             CACHEDRESOURCELOADER_RELEASE_LOG("canRequestAfterRedirection: URL was not allowed by SecurityOrigin::canDisplay");
@@ -759,6 +761,21 @@ FetchMetadataSite CachedResourceLoader::computeFetchMetadataSiteAfterRedirection
     return computeFetchMetadataSiteInternal(request, type, mode, &originalOrigin, nullptr, originalSite, isDirectlyUserInitiatedRequest);
 }
 
+static bool shouldPerformHTTPSUpgrade(const URL& originalURL, const URL& newURL, const LocalFrame& frame, CachedResource::Type type, bool isHTTPSByDefaultEnabled, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections)
+{
+    if (!frame.isMainFrame() || type != CachedResource::Type::MainResource)
+        return false;
+
+    const auto& isSameSiteBypassEnabled = (originalURL.isEmpty()
+        || RegistrableDomain(newURL) == RegistrableDomain(originalURL))
+        && advancedPrivacyProtections.contains(AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain);
+
+    return isHTTPSByDefaultEnabled
+        && newURL.protocolIs("http"_s)
+        && !isSameSiteBypassEnabled
+        && !frame.checkedLoader()->isHTTPFallbackInProgress();
+}
+
 bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type type, ResourceRequest& request, const ResourceLoaderOptions& options, FetchMetadataSite site, const URL& preRedirectURL)
 {
     ASSERT(m_documentLoader);
@@ -768,6 +785,16 @@ bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type ty
     if (RefPtr document = m_documentLoader->cachedResourceLoader().document()) {
         bool alwaysUpgradeMixedContent = document->frame() ? MixedContentChecker::shouldUpgradeInsecureContent(*document->frame(), isUpgradableTypeFromResourceType(type), request.url(), options.mode, options.destination, options.initiator) : false;
         upgradeInsecureResourceRequestIfNeeded(request, *document, alwaysUpgradeMixedContent ? ContentSecurityPolicy::AlwaysUpgradeRequest::Yes : ContentSecurityPolicy::AlwaysUpgradeRequest::No);
+    }
+
+    RefPtr frame = m_documentLoader->frame();
+    if (frame) {
+        bool isHTTPSByDefaultEnabled = frame->page() ? frame->page()->protectedSettings()->httpsByDefault() : false;
+        if (shouldPerformHTTPSUpgrade(preRedirectURL, request.url(), *frame, type, isHTTPSByDefaultEnabled, m_documentLoader->advancedPrivacyProtections())) {
+            auto portsForUpgradingInsecureScheme = frame->page() ? std::optional { frame->page()->portsForUpgradingInsecureSchemeForTesting() } : std::nullopt;
+            auto upgradePort = (portsForUpgradingInsecureScheme && request.url().port() == portsForUpgradingInsecureScheme->first) ? std::optional { portsForUpgradingInsecureScheme->second } : std::nullopt;
+            request.upgradeInsecureRequestIfNeeded(ShouldUpgradeLocalhostAndIPAddress::No, upgradePort);
+        }
     }
 
     // FIXME: We might want to align the checks done here with the ones done in CachedResourceLoader::requestResource, content extensions blocking in particular.
@@ -780,7 +807,6 @@ bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type ty
     if (!requestOrigin->isSameSiteAs(preRedirectOrigin))
         request.setIsSameSite(false);
 
-    RefPtr frame = m_documentLoader->frame();
     if (frame && (!frame->document() || !frame->document()->quirks().shouldDisableFetchMetadata())) {
         // In the case of a protocol downgrade we strip all FetchMetadata headers.
         // Otherwise we add or update FetchMetadata.
@@ -802,7 +828,7 @@ bool CachedResourceLoader::canRequestInContentDispositionAttachmentSandbox(Cache
     // FIXME: Do we want to expand this to all resource types that the mixed content checker would consider active content?
     switch (type) {
     case CachedResource::Type::MainResource:
-        if (auto* ownerElement = frame() ? frame()->ownerElement() : nullptr) {
+        if (RefPtr ownerElement = frame() ? frame()->ownerElement() : nullptr) {
             document = &ownerElement->document();
             break;
         }
@@ -947,13 +973,13 @@ void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, Ca
     // FetchMetadata depends on PSL to determine same-site relationships and without this
     // ability it is best to not set any FetchMetadata headers as sites generally expect
     // all of them or none.
-    if (frameLoader.frame().document() && !frameLoader.frame().document()->quirks().shouldDisableFetchMetadata()) {
+    if (frameLoader.frame().document() && !frameLoader.frame().protectedDocument()->quirks().shouldDisableFetchMetadata()) {
         auto site = computeFetchMetadataSite(request.resourceRequest(), type, request.options().mode, frameLoader.frame(), frameLoader.frame().isMainFrame() && m_documentLoader && m_documentLoader->isRequestFromClientOrUserInput());
         updateRequestFetchMetadataHeaders(request.resourceRequest(), request.options(), site);
     }
     request.updateUserAgentHeader(frameLoader);
 
-    if (frameLoader.frame().loader().loadType() == FrameLoadType::ReloadFromOrigin)
+    if (frameLoader.frame().checkedLoader()->loadType() == FrameLoadType::ReloadFromOrigin)
         request.updateCacheModeIfNeeded(cachePolicy(type, request.resourceRequest().url()));
     request.updateAccordingCacheMode();
     request.updateAcceptEncodingHeader();
@@ -1066,6 +1092,16 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         url = request.resourceRequest().url();
     }
 
+    Ref page = *frame->page();
+    if (RefPtr documentLoader = m_documentLoader.get()) {
+        if (shouldPerformHTTPSUpgrade(url, request.resourceRequest().url(), frame, type, page->protectedSettings()->httpsByDefault(), documentLoader->advancedPrivacyProtections())) {
+            auto portsForUpgradingInsecureScheme = page->portsForUpgradingInsecureSchemeForTesting();
+            auto upgradePort = (portsForUpgradingInsecureScheme && request.resourceRequest().url().port() == portsForUpgradingInsecureScheme->first) ? std::optional { portsForUpgradingInsecureScheme->second } : std::nullopt;
+            request.resourceRequest().upgradeInsecureRequestIfNeeded(ShouldUpgradeLocalhostAndIPAddress::No, upgradePort);
+            url = request.resourceRequest().url();
+        }
+    }
+
     // We are passing url as well as request, as request url may contain a fragment identifier.
     if (!canRequest(type, url, request.options(), forPreload, isRequestUpgradable ? MixedContentChecker::IsUpgradable::Yes : MixedContentChecker::IsUpgradable::No)) {
         CACHEDRESOURCELOADER_RELEASE_LOG_WITH_FRAME("requestResource: Not allowed to request resource", frame.get());
@@ -1090,10 +1126,8 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     if (InspectorInstrumentation::willIntercept(frame.ptr(), request.resourceRequest()))
         request.setCachingPolicy(CachingPolicy::DisallowCaching);
 
-    Ref page = *frame->page();
-
     if (RefPtr documentLoader = m_documentLoader.get()) {
-        bool madeHTTPS { false };
+        bool madeHTTPS { request.resourceRequest().wasSchemeOptimisticallyUpgraded() };
 #if ENABLE(CONTENT_EXTENSIONS)
         const auto& resourceRequest = request.resourceRequest();
         if (request.options().shouldEnableContentExtensionsCheck == ShouldEnableContentExtensionsCheck::Yes) {
@@ -1123,7 +1157,10 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
             }
         }
 #endif
-        if (!madeHTTPS && type == CachedResource::Type::MainResource && frame->checkedLoader()->shouldUpgradeRequestforHTTPSOnly(frame->document() ? frame->document()->url() : URL { }, request.resourceRequest()) && m_documentLoader->frameLoader())
+        bool isHTTPSOnlyActive = page->protectedSettings()->httpsByDefault()
+            && m_documentLoader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnly)
+            && !m_documentLoader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain);
+        if (!madeHTTPS && !request.resourceRequest().url().protocolIs("https"_s) && type == CachedResource::Type::MainResource && isHTTPSOnlyActive)
             return makeUnexpected(protectedDocumentLoader()->checkedFrameLoader()->client().httpNavigationWithHTTPSOnlyError(request.resourceRequest()));
 
         if (madeHTTPS
@@ -1181,6 +1218,8 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         resource->setLinkPreload();
 
     Ref cookieJar = page->cookieJar();
+
+    FrameLoader::addSameSiteInfoToRequestIfNeeded(request.resourceRequest(), document());
 
     auto mayAddToMemoryCache = computeMayAddToMemoryCache(request, resource.get()) ? MayAddToMemoryCache::Yes : MayAddToMemoryCache::No;
     RevalidationPolicy policy = determineRevalidationPolicy(type, request, resource.get(), forPreload, imageLoading);
@@ -1526,7 +1565,7 @@ void CachedResourceLoader::printAccessDeniedMessage(const URL& url) const
     if (!m_document || m_document->url().isNull())
         message = makeString("Unsafe attempt to load URL "_s, url.stringCenterEllipsizedToLength(), '.');
     else
-        message = makeString("Unsafe attempt to load URL "_s, url.stringCenterEllipsizedToLength(), " from origin "_s, m_document->securityOrigin().toString(), ". Domains, protocols and ports must match.\n"_s);
+        message = makeString("Unsafe attempt to load URL "_s, url.stringCenterEllipsizedToLength(), " from origin "_s, m_document->protectedSecurityOrigin()->toString(), ". Domains, protocols and ports must match.\n"_s);
 
     if (RefPtr frameDocument = frame->document())
         frameDocument->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);

@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -33,6 +33,8 @@ from ews.config import ERR_BUG_CLOSED, ERR_OBSOLETE_CHANGE, ERR_UNABLE_TO_FETCH_
 from ews.models.patch import Change
 from ews.views.statusbubble import StatusBubble
 
+import ews.common.util as util
+
 _log = logging.getLogger(__name__)
 
 
@@ -44,7 +46,12 @@ class FetchLoop():
         thread.start()
 
     def run(self):
+        Buildbot.update_icons_for_queues_mapping()
         Buildbot.update_builder_name_to_id_mapping()
+        custom_suffix = util.get_custom_suffix()
+        if custom_suffix != '':
+            _log.info(f'Skipping automatic Bugzilla patch sending on testing environment. custom_suffix: {custom_suffix}')
+            return
         while True:
             Buildbot.update_icons_for_queues_mapping()
             try:

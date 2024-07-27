@@ -66,7 +66,7 @@ namespace JSC {
     macro(BooleanObjectType, SpecObjectOther) \
     macro(NumberObjectType, SpecObjectOther) \
     macro(ErrorInstanceType, SpecObjectOther) \
-    macro(GlobalProxyType, SpecObjectOther) \
+    macro(GlobalProxyType, SpecGlobalProxy) \
     macro(DirectArgumentsType, SpecDirectArguments) \
     macro(ScopedArgumentsType, SpecScopedArguments) \
     macro(ClonedArgumentsType, SpecObjectOther) \

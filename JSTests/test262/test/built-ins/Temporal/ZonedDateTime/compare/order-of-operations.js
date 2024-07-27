@@ -10,30 +10,6 @@ features: [Temporal]
 
 const expected = [
   "get one.calendar",
-  "has one.calendar.dateAdd",
-  "has one.calendar.dateFromFields",
-  "has one.calendar.dateUntil",
-  "has one.calendar.day",
-  "has one.calendar.dayOfWeek",
-  "has one.calendar.dayOfYear",
-  "has one.calendar.daysInMonth",
-  "has one.calendar.daysInWeek",
-  "has one.calendar.daysInYear",
-  "has one.calendar.fields",
-  "has one.calendar.id",
-  "has one.calendar.inLeapYear",
-  "has one.calendar.mergeFields",
-  "has one.calendar.month",
-  "has one.calendar.monthCode",
-  "has one.calendar.monthDayFromFields",
-  "has one.calendar.monthsInYear",
-  "has one.calendar.weekOfYear",
-  "has one.calendar.year",
-  "has one.calendar.yearMonthFromFields",
-  "has one.calendar.yearOfWeek",
-  "get one.calendar.dateFromFields",
-  "get one.calendar.fields",
-  "call one.calendar.fields",
   // PrepareTemporalFields
   "get one.day",
   "get one.day.valueOf",
@@ -69,42 +45,8 @@ const expected = [
   "get one.year",
   "get one.year.valueOf",
   "call one.year.valueOf",
-  "has one.timeZone.getOffsetNanosecondsFor",
-  "has one.timeZone.getPossibleInstantsFor",
-  "has one.timeZone.id",
-  // InterpretTemporalDateTimeFields
-  "call one.calendar.dateFromFields",
-  // InterpretISODateTimeOffset
-  "get one.timeZone.getOffsetNanosecondsFor",
-  "get one.timeZone.getPossibleInstantsFor",
-  "call one.timeZone.getPossibleInstantsFor",
-  "call one.timeZone.getOffsetNanosecondsFor",
   // Same set of operations, for the other argument:
   "get two.calendar",
-  "has two.calendar.dateAdd",
-  "has two.calendar.dateFromFields",
-  "has two.calendar.dateUntil",
-  "has two.calendar.day",
-  "has two.calendar.dayOfWeek",
-  "has two.calendar.dayOfYear",
-  "has two.calendar.daysInMonth",
-  "has two.calendar.daysInWeek",
-  "has two.calendar.daysInYear",
-  "has two.calendar.fields",
-  "has two.calendar.id",
-  "has two.calendar.inLeapYear",
-  "has two.calendar.mergeFields",
-  "has two.calendar.month",
-  "has two.calendar.monthCode",
-  "has two.calendar.monthDayFromFields",
-  "has two.calendar.monthsInYear",
-  "has two.calendar.weekOfYear",
-  "has two.calendar.year",
-  "has two.calendar.yearMonthFromFields",
-  "has two.calendar.yearOfWeek",
-  "get two.calendar.dateFromFields",
-  "get two.calendar.fields",
-  "call two.calendar.fields",
   // PrepareTemporalFields
   "get two.day",
   "get two.day.valueOf",
@@ -140,16 +82,6 @@ const expected = [
   "get two.year",
   "get two.year.valueOf",
   "call two.year.valueOf",
-  "has two.timeZone.getOffsetNanosecondsFor",
-  "has two.timeZone.getPossibleInstantsFor",
-  "has two.timeZone.id",
-  // InterpretTemporalDateTimeFields
-  "call two.calendar.dateFromFields",
-  // InterpretISODateTimeOffset
-  "get two.timeZone.getOffsetNanosecondsFor",
-  "get two.timeZone.getPossibleInstantsFor",
-  "call two.timeZone.getPossibleInstantsFor",
-  "call two.timeZone.getOffsetNanosecondsFor",
 ];
 const actual = [];
 
@@ -165,9 +97,9 @@ const one = TemporalHelpers.propertyBagObserver(actual, {
   microsecond: 654,
   nanosecond: 321,
   offset: "+00:00",
-  calendar: TemporalHelpers.calendarObserver(actual, "one.calendar"),
-  timeZone: TemporalHelpers.timeZoneObserver(actual, "one.timeZone"),
-}, "one");
+  calendar: "iso8601",
+  timeZone: "UTC",
+}, "one", ["calendar", "timeZone"]);
 
 const two = TemporalHelpers.propertyBagObserver(actual, {
   year: 2014,
@@ -181,9 +113,9 @@ const two = TemporalHelpers.propertyBagObserver(actual, {
   microsecond: 456,
   nanosecond: 789,
   offset: "+00:00",
-  calendar: TemporalHelpers.calendarObserver(actual, "two.calendar"),
-  timeZone: TemporalHelpers.timeZoneObserver(actual, "two.timeZone"),
-}, "two");
+  calendar: "iso8601",
+  timeZone: "UTC",
+}, "two", ["calendar", "timeZone"]);
 
 Temporal.ZonedDateTime.compare(one, two);
 assert.compareArray(actual, expected, "order of operations");

@@ -29,7 +29,6 @@
 
 #include "Connection.h"
 #include "GPUConnectionToWebProcessMessages.h"
-#include "GPUProcessPreferencesForWebProcess.h"
 #include "MessageReceiverMap.h"
 #include "RemoteAudioHardwareListenerIdentifier.h"
 #include "RemoteAudioSessionIdentifier.h"
@@ -37,6 +36,7 @@
 #include "RemoteRemoteCommandListenerIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 #include "ScopedActiveMessageReceiveQueue.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/IntDegrees.h>
@@ -137,12 +137,17 @@ public:
     static Ref<GPUConnectionToWebProcess> create(GPUProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&);
     virtual ~GPUConnectionToWebProcess();
 
-    bool isWebGPUEnabled() const { return m_preferences.isWebGPUEnabled; }
-    bool isWebGLEnabled() const { return m_preferences.isWebGLEnabled; }
-    bool isWebXREnabled() const { return m_preferences.isWebXREnabled; }
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
+    void updateSharedPreferencesForWebProcess(const SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess) { m_sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess); }
+
+#if ENABLE(WEBXR)
+    bool isWebXREnabled() const { return sharedPreferencesForWebProcess().webXREnabled; }
+#else
+    bool isWebXREnabled() const { return false; }
+#endif
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    bool isDynamicContentScalingEnabled() const { return m_preferences.isDynamicContentScalingEnabled; }
+    bool isDynamicContentScalingEnabled() const { return sharedPreferencesForWebProcess().useCGDisplayListsForDOMRendering; }
 #endif
 
     using WebCore::NowPlayingManagerClient::weakPtrFactory;
@@ -165,9 +170,9 @@ public:
     PAL::SessionID sessionID() const { return m_sessionID; }
 
     bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled; }
-    bool isLockdownSafeFontParserEnabled() const { return m_preferences.isLockdownSafeFontParserEnabled; }
+    bool isLockdownSafeFontParserEnabled() const { return sharedPreferencesForWebProcess().lockdownFontParserEnabled; }
 
-    bool allowTestOnlyIPC() const { return m_preferences.allowTestOnlyIPC; }
+    bool allowTestOnlyIPC() const { return sharedPreferencesForWebProcess().allowTestOnlyIPC; }
 
     Logger& logger();
 
@@ -445,9 +450,7 @@ private:
 #if ENABLE(IPC_TESTING_API)
     IPCTester m_ipcTester;
 #endif
-    // GPU preferences don't change for a given WebProcess. Pages that use different GPUProcessPreferences
-    // cannot be in the same WebProcess.
-    const GPUProcessPreferencesForWebProcess m_preferences;
+    SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
 };
 
 } // namespace WebKit

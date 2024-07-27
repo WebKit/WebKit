@@ -76,7 +76,8 @@ private:
 
     // Data types.
     enum BreakClass : uint16_t {
-        // See UAX14
+        // See UAX14 and LineBreak.txt
+        // https://www.unicode.org/Public/UCD/latest/ucd/LineBreak.txt
         kIndeterminate = 0,
         kAL = 1,
         kID = 1 << 1,
@@ -85,9 +86,13 @@ private:
         kCP = 1 << 4,
         kCL = 1 << 5,
         kGL = 1 << 6,
+        kQU = 1 << 7,
+        kSP = 1 << 8,
         kNU = kAL,
         kWeird = 1 << 15,
-        // Currently we map HL to AL and H2 and H3 to ID.
+        // Currently we map
+        //     1. HL to AL
+        //     2. H2 and H3 to ID
         // We also don't distinguish AL and NU.
         // If we pull more logic into isBreakable, these may need to be distinguished.
     };
@@ -111,7 +116,7 @@ private:
     class LineBreakTable {
     public:
         static constexpr UChar firstCharacter = '!';
-        static constexpr UChar lastCharacter = 127;
+        static constexpr UChar lastCharacter = 0xFF;
         static inline bool unsafeLookup(UChar before, UChar after) // Must range check before calling.
         {
             const unsigned beforeIndex = before - firstCharacter;
@@ -121,7 +126,7 @@ private:
     private:
         static constexpr unsigned rowCount = lastCharacter - firstCharacter + 1;
         static constexpr unsigned columnCount = (lastCharacter - firstCharacter) / 8 + 1;
-        WEBCORE_EXPORT static const unsigned char breakTable[rowCount][columnCount];
+        WEBCORE_EXPORT static const uint8_t breakTable[rowCount][columnCount];
     };
     static const LineBreakTable lineBreakTable;
 };
@@ -168,8 +173,7 @@ inline size_t BreakLines::nextBreakablePosition(CachedLineBreakIteratorFactory& 
             return i;
 
         // ASCII rapid lookup.
-        if (shortcutRules == LineBreakRules::Normal) { // Not valid for 'loose' line-breaking.
-
+        if constexpr (shortcutRules == LineBreakRules::Normal) { // Not valid for 'loose' line-breaking.
             // Don't allow line breaking between '-' and a digit if the '-' may mean a minus sign in the context,
             // while allow breaking in 'ABCD-1234' and '1234-5678' which may be in long URLs.
             if (before == '-' && isASCIIDigit(after)) {
@@ -190,36 +194,41 @@ inline size_t BreakLines::nextBreakablePosition(CachedLineBreakIteratorFactory& 
         }
 
         // Non-ASCII rapid lookup.
-        if (words != WordBreakBehavior::AutoPhrase) {
+        if constexpr (words != WordBreakBehavior::AutoPhrase) {
             if (!before.type)
                 before.type = classify<shortcutRules, nonBreakingSpaceBehavior>(before);
             after.type = classify<shortcutRules, nonBreakingSpaceBehavior>(after);
             // Short-circuit the commonest cases: letter + letter.
-            int pair = before.type | after.type;
-            if (pair == (kAL | kAL)) {
-                if (words == WordBreakBehavior::BreakAll)
-                    return i;
+            unsigned pair = before.type | after.type;
+            // AL+AL SP+AL SP+QU AL+QU QU+QU QU+AL (after's SP is already filtered out).
+            if (!(pair & ~(kSP | kAL | kQU))) {
+                if constexpr (words == WordBreakBehavior::BreakAll) {
+                    if (pair == kAL)
+                        return i;
+                }
                 continue;
             }
             if ((pair | kAL) == (kID | kAL)) {
-                if (words == WordBreakBehavior::KeepAll)
+                if constexpr (words == WordBreakBehavior::KeepAll)
                     continue;
                 return i;
             }
             // Handle special cases.
-            if (pair & kGL && !(pair & kWeird)) // Keep nbsp high in our list.
+            if (pair & (kGL | kQU) && !(pair & kWeird)) // Keep nbsp high in our list.
                 continue;
             if (after.type == kCM) {
                 after.type = before.type;
                 continue;
             }
-            if (shortcutRules == LineBreakRules::Normal && !(pair & kWeird)) {
-                // Handle some common and obvious punctuation behaviors.
-                if (pair & (kCL | kCP | kOP)) {
-                    if (after.type == kCL || after.type == kCP || before.type == kOP)
-                        continue;
-                    if (pair & kID)
-                        return i;
+            if constexpr (shortcutRules == LineBreakRules::Normal) {
+                if (!(pair & kWeird)) {
+                    // Handle some common and obvious punctuation behaviors.
+                    if (pair & (kCL | kCP | kOP)) {
+                        if (after.type == kCL || after.type == kCP || before.type == kOP)
+                            continue;
+                        if (pair & kID)
+                            return i;
+                    }
                 }
             }
         }
@@ -318,6 +327,7 @@ template<BreakLines::LineBreakRules rules, BreakLines::NoBreakSpaceBehavior nonB
 inline BreakLines::BreakClass BreakLines::classify(UChar character)
 {
     // This function is optimized for letters and NBSP.
+    // See LineBreak.txt for classification.
 
     static constexpr UChar blockLast3 = ~0x07;
     static constexpr UChar blockLast4 = ~0x0F;
@@ -334,6 +344,10 @@ inline BreakLines::BreakClass BreakLines::classify(UChar character)
         case 0x0010 / 0x10:
             return kCM;
         case 0x0020 / 0x10:
+            if (character == 0x0020) // space
+                return kSP;
+            if (character == 0x0022 || character == 0x0027)
+                return kQU;
             if (character == 0x0028)
                 return kOP;
             if (character == 0x0029)
@@ -367,12 +381,14 @@ inline BreakLines::BreakClass BreakLines::classify(UChar character)
             return kWeird;
         }
     case 0x0080 / 0x80: // Latin-1
-        if (nonBreakingSpaceBehavior == NoBreakSpaceBehavior::Normal && character == 0xA0)
-            return kGL;
+        if (character == 0x00A0) // noBreakSpace
+            return nonBreakingSpaceBehavior == NoBreakSpaceBehavior::Normal ? kGL : kSP;
         if (character > 0x00C0)
             return kAL;
         if (character == 0x00A1 || character == 0x00BF)
             return kOP;
+        if (character == 0x00AB || character == 0x00BB)
+            return kQU;
         return kWeird;
     case 0x0100 / 0x80:
     case 0x0180 / 0x80:
@@ -421,6 +437,39 @@ inline BreakLines::BreakClass BreakLines::classify(UChar character)
         default:
             return kWeird;
         }
+    case 0x0600 / 0x80:
+    case 0x0680 / 0x80:
+    case 0x0700 / 0x80:
+    case 0x0780 / 0x80:
+    case 0x0800 / 0x80:
+    case 0x0880 / 0x80:
+    case 0x0900 / 0x80:
+    case 0x0980 / 0x80:
+    case 0x1000 / 0x80:
+    case 0x1080 / 0x80:
+    case 0x1100 / 0x80:
+    case 0x1180 / 0x80:
+    case 0x1200 / 0x80:
+    case 0x1280 / 0x80:
+    case 0x1300 / 0x80:
+    case 0x1380 / 0x80:
+    case 0x1400 / 0x80:
+    case 0x1480 / 0x80:
+    case 0x1500 / 0x80:
+    case 0x1580 / 0x80:
+    case 0x1600 / 0x80:
+    case 0x1680 / 0x80:
+    case 0x1700 / 0x80:
+    case 0x1780 / 0x80:
+    case 0x1800 / 0x80:
+    case 0x1880 / 0x80:
+    case 0x1900 / 0x80:
+    case 0x1980 / 0x80:
+        return kWeird;
+    case 0x2000 / 0x80:
+        if (character == 0x2018 || character == 0x2019)
+            return kQU;
+        return kWeird;
     // FIXME: Continue bitmask switch up to 2E80.
     }
 

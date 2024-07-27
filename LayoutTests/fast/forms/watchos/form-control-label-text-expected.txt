@@ -2,7 +2,7 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 test label 4
-Label text should be missing: ""
+Label text should be a default non-empty fallback: "Enter text"
 Label text should use the placeholder: "test label 1"
 Label text should use the title: "test label 2"
 Label text should use the accessibility label: "test label 3"

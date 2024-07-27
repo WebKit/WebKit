@@ -236,17 +236,17 @@ TEST(WKWebExtensionAPITabs, Create)
     auto originalOpenNewTab = manager.get().internalDelegate.openNewTab;
 
     manager.get().internalDelegate.openNewTab = ^(_WKWebExtensionTabCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
-        EXPECT_NS_EQUAL(options.desiredWindow, window);
-        EXPECT_EQ(options.desiredIndex, window.tabs.count);
+        EXPECT_NS_EQUAL(options.window, window);
+        EXPECT_EQ(options.index, window.tabs.count);
 
-        EXPECT_NULL(options.desiredParentTab);
-        EXPECT_NULL(options.desiredURL);
+        EXPECT_NULL(options.parentTab);
+        EXPECT_NULL(options.url);
 
-        EXPECT_TRUE(options.shouldActivate);
-        EXPECT_TRUE(options.shouldSelect);
-        EXPECT_FALSE(options.shouldPin);
-        EXPECT_FALSE(options.shouldMute);
-        EXPECT_FALSE(options.shouldShowReaderMode);
+        EXPECT_TRUE(options.active);
+        EXPECT_TRUE(options.selected);
+        EXPECT_FALSE(options.pinned);
+        EXPECT_FALSE(options.muted);
+        EXPECT_FALSE(options.readerModeShowing);
 
         originalOpenNewTab(options, context, completionHandler);
     };
@@ -287,17 +287,17 @@ TEST(WKWebExtensionAPITabs, CreateWithSpecifiedOptions)
     auto originalOpenNewTab = manager.get().internalDelegate.openNewTab;
 
     manager.get().internalDelegate.openNewTab = ^(_WKWebExtensionTabCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
-        EXPECT_NS_EQUAL(options.desiredWindow, window);
-        EXPECT_EQ(options.desiredIndex, 1lu);
+        EXPECT_NS_EQUAL(options.window, window);
+        EXPECT_EQ(options.index, 1lu);
 
-        EXPECT_NS_EQUAL(options.desiredParentTab, tab);
-        EXPECT_NS_EQUAL(options.desiredURL, [NSURL URLWithString:@"https://example.com/"]);
+        EXPECT_NS_EQUAL(options.parentTab, tab);
+        EXPECT_NS_EQUAL(options.url, [NSURL URLWithString:@"https://example.com/"]);
 
-        EXPECT_FALSE(options.shouldActivate);
-        EXPECT_FALSE(options.shouldSelect);
-        EXPECT_TRUE(options.shouldPin);
-        EXPECT_TRUE(options.shouldMute);
-        EXPECT_TRUE(options.shouldShowReaderMode);
+        EXPECT_FALSE(options.active);
+        EXPECT_FALSE(options.selected);
+        EXPECT_TRUE(options.pinned);
+        EXPECT_TRUE(options.muted);
+        EXPECT_TRUE(options.readerModeShowing);
 
         originalOpenNewTab(options, context, completionHandler);
     };
@@ -323,7 +323,7 @@ TEST(WKWebExtensionAPITabs, CreateWithRelativeURL)
     auto originalOpenNewTab = manager.get().internalDelegate.openNewTab;
 
     manager.get().internalDelegate.openNewTab = ^(_WKWebExtensionTabCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
-        EXPECT_NS_EQUAL(options.desiredURL, [NSURL URLWithString:@"test.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
+        EXPECT_NS_EQUAL(options.url, [NSURL URLWithString:@"test.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
 
         originalOpenNewTab(options, context, completionHandler);
     };
@@ -355,17 +355,17 @@ TEST(WKWebExtensionAPITabs, Duplicate)
     auto originalDuplicate = tab.duplicate;
 
     tab.duplicate = ^(_WKWebExtensionTabCreationOptions *options, void (^completionHandler)(TestWebExtensionTab *, NSError *)) {
-        EXPECT_NS_EQUAL(options.desiredWindow, window);
-        EXPECT_EQ(options.desiredIndex, window.tabs.count);
+        EXPECT_NS_EQUAL(options.window, window);
+        EXPECT_EQ(options.index, window.tabs.count);
 
-        EXPECT_NULL(options.desiredParentTab);
-        EXPECT_NULL(options.desiredURL);
+        EXPECT_NULL(options.parentTab);
+        EXPECT_NULL(options.url);
 
-        EXPECT_TRUE(options.shouldActivate);
-        EXPECT_TRUE(options.shouldSelect);
-        EXPECT_FALSE(options.shouldPin);
-        EXPECT_FALSE(options.shouldMute);
-        EXPECT_FALSE(options.shouldShowReaderMode);
+        EXPECT_TRUE(options.active);
+        EXPECT_TRUE(options.selected);
+        EXPECT_FALSE(options.pinned);
+        EXPECT_FALSE(options.muted);
+        EXPECT_FALSE(options.readerModeShowing);
 
         originalDuplicate(options, completionHandler);
     };
@@ -401,17 +401,17 @@ TEST(WKWebExtensionAPITabs, DuplicateWithOptions)
     auto originalDuplicate = tab.duplicate;
 
     tab.duplicate = ^(_WKWebExtensionTabCreationOptions *options, void (^completionHandler)(TestWebExtensionTab *, NSError *)) {
-        EXPECT_NS_EQUAL(options.desiredWindow, window);
-        EXPECT_EQ(options.desiredIndex, 1lu);
+        EXPECT_NS_EQUAL(options.window, window);
+        EXPECT_EQ(options.index, 1lu);
 
-        EXPECT_NULL(options.desiredParentTab);
-        EXPECT_NULL(options.desiredURL);
+        EXPECT_NULL(options.parentTab);
+        EXPECT_NULL(options.url);
 
-        EXPECT_FALSE(options.shouldActivate);
-        EXPECT_FALSE(options.shouldSelect);
-        EXPECT_FALSE(options.shouldPin);
-        EXPECT_FALSE(options.shouldMute);
-        EXPECT_FALSE(options.shouldShowReaderMode);
+        EXPECT_FALSE(options.active);
+        EXPECT_FALSE(options.selected);
+        EXPECT_FALSE(options.pinned);
+        EXPECT_FALSE(options.muted);
+        EXPECT_FALSE(options.readerModeShowing);
 
         originalDuplicate(options, completionHandler);
     };
@@ -830,7 +830,7 @@ TEST(WKWebExtensionAPITabs, ToggleReaderMode)
 
     __block size_t toggleReaderModeCounter = 0;
 
-    manager.get().defaultTab.toggleReaderMode = ^{
+    manager.get().defaultTab.setReaderModeShowing = ^(BOOL showing) {
         ++toggleReaderModeCounter;
     };
 
@@ -865,7 +865,7 @@ TEST(WKWebExtensionAPITabs, DetectLanguage)
 
     __block bool detectWebpageLocaleCalled = false;
 
-    manager.get().defaultTab.detectWebpageLocale = ^{
+    manager.get().defaultTab.webpageLocale = ^{
         detectWebpageLocaleCalled = true;
         return [NSLocale localeWithLocaleIdentifier:@"en-US"];
     };
@@ -915,12 +915,11 @@ TEST(WKWebExtensionAPITabs, Reload)
     __block bool reloadCalled = false;
     __block bool reloadFromOriginCalled = false;
 
-    manager.get().defaultTab.reload = ^{
-        reloadCalled = true;
-    };
-
-    manager.get().defaultTab.reloadFromOrigin = ^{
-        reloadFromOriginCalled = true;
+    manager.get().defaultTab.reload = ^(BOOL fromOrigin) {
+        if (fromOrigin)
+            reloadFromOriginCalled = true;
+        else
+            reloadCalled = true;
     };
 
     [manager loadAndRun];

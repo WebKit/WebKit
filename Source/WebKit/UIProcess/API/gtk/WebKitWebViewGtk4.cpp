@@ -135,4 +135,19 @@ guint createShowOptionMenuSignal(WebKitWebViewClass* webViewClass)
         WEBKIT_TYPE_OPTION_MENU,
         GDK_TYPE_RECTANGLE | G_SIGNAL_TYPE_STATIC_SCOPE);
 }
+
+/**
+ * webkit_web_view_set_background_color:
+ * @web_view: a #WebKitWebView
+ * @rgba: a #GdkRGBA
+ *
+ * Sets the color that will be used to draw the @web_view background.
+ *
+ * Sets the color that will be used to draw the @web_view background before
+ * the actual contents are rendered. Note that if the web page loaded in @web_view
+ * specifies a background color, it will take precedence over the @rgba color.
+ * By default the @web_view background color is opaque white.
+ *
+ * Since: 2.8
+ */
 #endif

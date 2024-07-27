@@ -163,12 +163,10 @@ void LayerTreeHost::layerFlushTimerFired()
     if (m_isWaitingForRenderer)
         return;
 
-#if !HAVE(DISPLAY_LINK)
     // If a force-repaint callback was registered, we should force a 'frame sync' that
     // will guarantee us a call to renderNextFrame() once the update is complete.
     if (m_forceRepaintAsync.callback)
         m_coordinator.forceFrameSync();
-#endif
 
     OptionSet<FinalizeRenderingUpdateFlags> flags;
 #if PLATFORM(GTK)
@@ -218,6 +216,7 @@ void LayerTreeHost::forceRepaint()
     m_coordinator.syncDisplayState();
 
     // We need to schedule another flush, otherwise the forced paint might cancel a later expected flush.
+    m_coordinator.forceFrameSync();
     scheduleLayerFlush();
 
     if (!m_isWaitingForRenderer) {
@@ -423,11 +422,21 @@ void LayerTreeHost::clearIfNeeded()
 
 void LayerTreeHost::didRenderFrame(uint32_t compositionResponseID, const WebCore::Damage& damage)
 {
-    std::optional<WebCore::Region> damageRegion;
-    if (!m_scrolledSinceLastFrame && !damage.isInvalid())
-        damageRegion = damage.region();
+    auto damageRegion = [&]() -> WebCore::Region {
+        if (m_scrolledSinceLastFrame || damage.isInvalid())
+            return { };
 
-    m_surface->didRenderFrame(damageRegion);
+        if (damage.isEmpty())
+            return { };
+
+        const auto& region = damage.region();
+        if (region.isRect() && region.contains(IntRect({ }, m_surface->size())))
+            return { };
+
+        return region;
+    }();
+
+    m_surface->didRenderFrame(WTFMove(damageRegion));
 
     m_scrolledSinceLastFrame = false;
 
@@ -494,10 +503,8 @@ void LayerTreeHost::renderNextFrame(bool forceRepaint)
 
     if (scheduledWhileWaitingForRenderer || m_layerFlushTimer.isActive() || forceRepaint) {
         m_layerFlushTimer.stop();
-#if !HAVE(DISPLAY_LINK)
         if (forceRepaint)
             m_coordinator.forceFrameSync();
-#endif
         layerFlushTimerFired();
     }
 }

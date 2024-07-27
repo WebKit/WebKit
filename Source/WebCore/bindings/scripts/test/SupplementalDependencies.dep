@@ -19,12 +19,13 @@ JSTestCEReactions.h:
 JSTestCEReactionsStringifier.h: 
 JSTestCallTracer.h: 
 JSTestCallbackFunction.h: 
+JSTestCallbackFunctionGenerateIsReachable.h: 
 JSTestCallbackFunctionRethrow.h: 
-JSTestCallbackFunctionStrong.h: 
 JSTestCallbackFunctionWithThisObject.h: 
 JSTestCallbackFunctionWithTypedefs.h: 
 JSTestCallbackFunctionWithVariadic.h: 
 JSTestCallbackInterface.h: 
+JSTestCallbackOrDict.h: 
 JSTestClassWithJSBuiltinConstructor.h: 
 JSTestConditionalIncludes.h: TestMixinInterface.idl
 TestMixinInterface.idl:

@@ -1,0 +1,9 @@
+Steps:
+
+Move your mouse across the yellow/red <div> element quickly from right to left.
+Move your mouse across the black/blue <div> element quickly from right to left.
+If the test fails, redo it again and move faster on the black/blue <div> element next time.
+
+
+PASS Mousemove events across elements should fire in the correct order.
+

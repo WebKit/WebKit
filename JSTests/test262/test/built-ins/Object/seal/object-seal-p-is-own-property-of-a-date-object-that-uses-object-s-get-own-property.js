@@ -9,7 +9,7 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-var obj = new Date();
+var obj = new Date(0);
 
 obj.foo = 10;
 

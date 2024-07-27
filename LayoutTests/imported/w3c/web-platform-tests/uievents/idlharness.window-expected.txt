@@ -17,6 +17,13 @@ PASS Partial interface KeyboardEvent[2]: original interface defined
 PASS Partial interface KeyboardEvent[2]: member names are unique
 PASS Partial dictionary KeyboardEventInit: original dictionary defined
 PASS Partial dictionary KeyboardEventInit: member names are unique
+PASS Partial interface Window: member names are unique
+PASS Window includes GlobalEventHandlers: member names are unique
+PASS Window includes WindowEventHandlers: member names are unique
+PASS Window includes WindowOrWorkerGlobalScope: member names are unique
+PASS Window includes AnimationFrameProvider: member names are unique
+PASS Window includes WindowSessionStorage: member names are unique
+PASS Window includes WindowLocalStorage: member names are unique
 PASS UIEvent interface: existence and properties of interface object
 PASS UIEvent interface object length
 PASS UIEvent interface object name
@@ -239,6 +246,16 @@ PASS TextEvent interface: existence and properties of interface prototype object
 PASS TextEvent interface: existence and properties of interface prototype object's @@unscopables property
 PASS TextEvent interface: attribute data
 PASS TextEvent interface: operation initTextEvent(DOMString, optional boolean, optional boolean, optional Window?, optional DOMString)
+PASS TextEvent must be primary interface of (() => { const ev = document.createEvent("TextEvent"); ev.initTextEvent("event"); return ev; })()
+PASS Stringification of (() => { const ev = document.createEvent("TextEvent"); ev.initTextEvent("event"); return ev; })()
+PASS TextEvent interface: (() => { const ev = document.createEvent("TextEvent"); ev.initTextEvent("event"); return ev; })() must inherit property "data" with the proper type
+PASS TextEvent interface: (() => { const ev = document.createEvent("TextEvent"); ev.initTextEvent("event"); return ev; })() must inherit property "initTextEvent(DOMString, optional boolean, optional boolean, optional Window?, optional DOMString)" with the proper type
+PASS TextEvent interface: calling initTextEvent(DOMString, optional boolean, optional boolean, optional Window?, optional DOMString) on (() => { const ev = document.createEvent("TextEvent"); ev.initTextEvent("event"); return ev; })() with too few arguments must throw TypeError
+PASS UIEvent interface: (() => { const ev = document.createEvent("TextEvent"); ev.initTextEvent("event"); return ev; })() must inherit property "view" with the proper type
+PASS UIEvent interface: (() => { const ev = document.createEvent("TextEvent"); ev.initTextEvent("event"); return ev; })() must inherit property "detail" with the proper type
+PASS UIEvent interface: (() => { const ev = document.createEvent("TextEvent"); ev.initTextEvent("event"); return ev; })() must inherit property "initUIEvent(DOMString, optional boolean, optional boolean, optional Window?, optional long)" with the proper type
+PASS UIEvent interface: calling initUIEvent(DOMString, optional boolean, optional boolean, optional Window?, optional long) on (() => { const ev = document.createEvent("TextEvent"); ev.initTextEvent("event"); return ev; })() with too few arguments must throw TypeError
+PASS UIEvent interface: (() => { const ev = document.createEvent("TextEvent"); ev.initTextEvent("event"); return ev; })() must inherit property "which" with the proper type
 PASS MutationEvent interface: existence and properties of interface object
 PASS MutationEvent interface object length
 PASS MutationEvent interface object name

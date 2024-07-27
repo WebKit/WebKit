@@ -1699,7 +1699,6 @@
 		AD4B1DFA1DF244E20071AE32 /* WasmBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4B1DF81DF244D70071AE32 /* WasmBinding.h */; };
 		AD5B416F1EBAFB77008EFA43 /* WasmName.h in Headers */ = {isa = PBXBuildFile; fileRef = AD5B416E1EBAFB65008EFA43 /* WasmName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD5C36DD1F688B65000BCAAF /* WasmJS.h in Headers */ = {isa = PBXBuildFile; fileRef = AD5C36DC1F688B5F000BCAAF /* WasmJS.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		AD5C36E21F699EC0000BCAAF /* WasmInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = AD5C36DF1F699EB6000BCAAF /* WasmInstance.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD5C36E61F69EC91000BCAAF /* WasmTable.h in Headers */ = {isa = PBXBuildFile; fileRef = AD5C36E41F69EC8B000BCAAF /* WasmTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD5C36EA1F75AD6A000BCAAF /* JSToWasm.h in Headers */ = {isa = PBXBuildFile; fileRef = AD8DD6CF1F67089F0004EB52 /* JSToWasm.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD5C36EB1F75AD73000BCAAF /* JSWebAssembly.h in Headers */ = {isa = PBXBuildFile; fileRef = ADD09AF31F62482E001313C2 /* JSWebAssembly.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2015,6 +2014,7 @@
 		E389D854291226BC0085C3DC /* PageCount.h in Headers */ = {isa = PBXBuildFile; fileRef = E389D852291226BC0085C3DC /* PageCount.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E38DAB532A95D23A0050B7A8 /* PerfLog.h in Headers */ = {isa = PBXBuildFile; fileRef = E38DAB512A95D23A0050B7A8 /* PerfLog.h */; };
 		E38DB2E727F588F80027BD3F /* ScriptExecutableInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E38DB2E627F588F70027BD3F /* ScriptExecutableInlines.h */; };
+		E38DE55C2C4A11C700EF7055 /* CharacterPropertyDataGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = E38DE55A2C4A11AD00EF7055 /* CharacterPropertyDataGenerator.h */; };
 		E38E8790254B978400F6F9E4 /* JSDateMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9788FC221471AD0C0068CE2D /* JSDateMath.cpp */; };
 		E38F091A288D35CF009FD386 /* ObjectAdaptiveStructureWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E38F0919288D35CF009FD386 /* ObjectAdaptiveStructureWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E39006212208BFC4001019CF /* SubspaceAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = E39006202208BFC3001019CF /* SubspaceAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4725,6 +4725,8 @@
 		918E15BD2447B22600447A56 /* AggregateErrorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AggregateErrorPrototype.h; sourceTree = "<group>"; };
 		918E15BE2447B22700447A56 /* AggregateErrorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AggregateErrorPrototype.cpp; sourceTree = "<group>"; };
 		918E15BF2447B22700447A56 /* AggregateErrorConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AggregateErrorConstructor.h; sourceTree = "<group>"; };
+		91C326592BFFB2B3009C7E2B /* JSGenericTypedArrayView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGenericTypedArrayView.cpp; sourceTree = "<group>"; };
+		91C3265B2BFFB2B9009C7E2B /* JSGenericTypedArrayViewConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGenericTypedArrayViewConstructor.cpp; sourceTree = "<group>"; };
 		91C3265D2BFFB2BF009C7E2B /* JSGenericTypedArrayViewPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGenericTypedArrayViewPrototype.cpp; sourceTree = "<group>"; };
 		91D1578C24E0BE35001F4CED /* Breakpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Breakpoint.cpp; sourceTree = "<group>"; };
 		91F548A52A4CF448007292DE /* MapConstructor.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = MapConstructor.js; sourceTree = "<group>"; };
@@ -5226,8 +5228,6 @@
 		AD4B1DF81DF244D70071AE32 /* WasmBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmBinding.h; sourceTree = "<group>"; };
 		AD5B416E1EBAFB65008EFA43 /* WasmName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmName.h; sourceTree = "<group>"; };
 		AD5C36DC1F688B5F000BCAAF /* WasmJS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmJS.h; sourceTree = "<group>"; };
-		AD5C36DE1F699EB6000BCAAF /* WasmInstance.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmInstance.cpp; sourceTree = "<group>"; };
-		AD5C36DF1F699EB6000BCAAF /* WasmInstance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmInstance.h; sourceTree = "<group>"; };
 		AD5C36E31F69EC8B000BCAAF /* WasmTable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmTable.cpp; sourceTree = "<group>"; };
 		AD5C36E41F69EC8B000BCAAF /* WasmTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmTable.h; sourceTree = "<group>"; };
 		AD7438BE1E04579200FD0C2A /* WasmTypeDefinition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmTypeDefinition.cpp; sourceTree = "<group>"; };
@@ -5690,6 +5690,8 @@
 		E38DAB512A95D23A0050B7A8 /* PerfLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerfLog.h; sourceTree = "<group>"; };
 		E38DAB522A95D23A0050B7A8 /* PerfLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerfLog.cpp; sourceTree = "<group>"; };
 		E38DB2E627F588F70027BD3F /* ScriptExecutableInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptExecutableInlines.h; sourceTree = "<group>"; };
+		E38DE55A2C4A11AD00EF7055 /* CharacterPropertyDataGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CharacterPropertyDataGenerator.h; sourceTree = "<group>"; };
+		E38DE55B2C4A11AD00EF7055 /* CharacterPropertyDataGenerator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CharacterPropertyDataGenerator.cpp; sourceTree = "<group>"; };
 		E38F0919288D35CF009FD386 /* ObjectAdaptiveStructureWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectAdaptiveStructureWatchpoint.h; sourceTree = "<group>"; };
 		E39006202208BFC3001019CF /* SubspaceAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubspaceAccess.h; sourceTree = "<group>"; };
 		E3915C062309682900CB2561 /* WasmContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmContext.cpp; sourceTree = "<group>"; };
@@ -7730,8 +7732,6 @@
 				148521D726EAEBFE00CC1D1A /* WasmHandlerInfo.h */,
 				AD8FF3961EB5BD850087FF82 /* WasmIndexOrName.cpp */,
 				AD8FF3951EB5BD850087FF82 /* WasmIndexOrName.h */,
-				AD5C36DE1F699EB6000BCAAF /* WasmInstance.cpp */,
-				AD5C36DF1F699EB6000BCAAF /* WasmInstance.h */,
 				F3D9C2382A426CB7006EE152 /* WasmIPIntGenerator.cpp */,
 				F3D9C2352A426CB7006EE152 /* WasmIPIntGenerator.h */,
 				F3D9C2362A426CB7006EE152 /* WasmIPIntPlan.cpp */,
@@ -8336,7 +8336,9 @@
 				70B7918C1C024462002481E2 /* JSGeneratorFunction.cpp */,
 				70B7918D1C024462002481E2 /* JSGeneratorFunction.h */,
 				276B39092A71D2B400252F4E /* JSGeneratorFunctionInlines.h */,
+				91C326592BFFB2B3009C7E2B /* JSGenericTypedArrayView.cpp */,
 				0F2B66C317B6B5AB00A7AE3F /* JSGenericTypedArrayView.h */,
+				91C3265B2BFFB2B9009C7E2B /* JSGenericTypedArrayViewConstructor.cpp */,
 				0F2B66C417B6B5AB00A7AE3F /* JSGenericTypedArrayViewConstructor.h */,
 				0F2B66C517B6B5AB00A7AE3F /* JSGenericTypedArrayViewConstructorInlines.h */,
 				0F2B66C617B6B5AB00A7AE3F /* JSGenericTypedArrayViewInlines.h */,
@@ -8884,6 +8886,8 @@
 				FE1BD01B1E72002100134BC9 /* CellList.cpp */,
 				FE1BD01C1E72002100134BC9 /* CellList.h */,
 				FE1BD0201E72027000134BC9 /* CellProfile.h */,
+				E38DE55B2C4A11AD00EF7055 /* CharacterPropertyDataGenerator.cpp */,
+				E38DE55A2C4A11AD00EF7055 /* CharacterPropertyDataGenerator.h */,
 				0F4F11E7209BCDA100709654 /* CompilerTimingScope.cpp */,
 				0F4F11E6209BCDA100709654 /* CompilerTimingScope.h */,
 				52EED7922492B868008F4C93 /* FunctionAllowlist.cpp */,
@@ -10489,6 +10493,7 @@
 				FEC160322339E9F900A04CB8 /* CellSize.h in Headers */,
 				0F1C3DDA1BBCE09E00E523E4 /* CellState.h in Headers */,
 				E3E6E9CC28F3C33F00EDE7C0 /* ChainedWatchpoint.h in Headers */,
+				E38DE55C2C4A11C700EF7055 /* CharacterPropertyDataGenerator.h in Headers */,
 				5338E2A72396EFFB00C61BAD /* CheckpointOSRExitSideState.h in Headers */,
 				86281EF425B61AF000367004 /* CheckPrivateBrandStatus.h in Headers */,
 				86281EF025B6160000367004 /* CheckPrivateBrandVariant.h in Headers */,
@@ -11850,7 +11855,6 @@
 				E383500A2390D93B0036316D /* WasmGlobal.h in Headers */,
 				148521D826EAEBFE00CC1D1A /* WasmHandlerInfo.h in Headers */,
 				AD8FF3981EB5BDB20087FF82 /* WasmIndexOrName.h in Headers */,
-				AD5C36E21F699EC0000BCAAF /* WasmInstance.h in Headers */,
 				F3D9C2392A426CB8006EE152 /* WasmIPIntGenerator.h in Headers */,
 				F3D9C23B2A426CB8006EE152 /* WasmIPIntPlan.h in Headers */,
 				53091F9A2ABE1F570076CBC4 /* WasmIPIntSlowPaths.h in Headers */,

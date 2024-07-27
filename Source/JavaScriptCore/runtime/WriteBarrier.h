@@ -168,7 +168,11 @@ public:
 
     JSValue get() const
     {
+#if USE(JSVALUE64) || !ENABLE(CONCURRENT_JS)
+        return JSValue::decode(m_value);
+#else
         return JSValue::decodeConcurrent(&m_value);
+#endif
     }
     void clear() { m_value = JSValue::encode(JSValue()); }
     void setUndefined() { m_value = JSValue::encode(jsUndefined()); }

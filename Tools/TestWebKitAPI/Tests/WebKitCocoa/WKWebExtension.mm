@@ -1468,6 +1468,17 @@ TEST(WKWebExtension, DeclarativeNetRequestParsing)
     EXPECT_TRUE(testExtension.hasContentModificationRules);
     // But also an error.
     EXPECT_EQ(testExtension.errors.count, 1ul);
+
+    // No rule sets
+    testManifestDictionary[@"declarative_net_request"] = @{
+        @"rule_resources": @[ ]
+    };
+
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    // There shouldn't be any rules.
+    EXPECT_FALSE(testExtension.hasContentModificationRules);
+    // Or any errors.
+    EXPECT_EQ(testExtension.errors.count, 0ul);
 }
 
 TEST(WKWebExtension, ExternallyConnectableParsing)

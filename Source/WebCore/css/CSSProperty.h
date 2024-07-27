@@ -31,12 +31,14 @@ namespace WebCore {
 
 class CSSValueList;
 
+enum class IsImportant : bool { No, Yes };
+
 struct StylePropertyMetadata {
-    StylePropertyMetadata(CSSPropertyID propertyID, bool isSetFromShorthand, int indexInShorthandsVector, bool important, bool implicit, bool inherited)
+    StylePropertyMetadata(CSSPropertyID propertyID, bool isSetFromShorthand, int indexInShorthandsVector, IsImportant important, bool implicit, bool inherited)
         : m_propertyID(propertyID)
         , m_isSetFromShorthand(isSetFromShorthand)
         , m_indexInShorthandsVector(indexInShorthandsVector)
-        , m_important(important)
+        , m_important(important == IsImportant::Yes)
         , m_implicit(implicit)
         , m_inherited(inherited)
     {
@@ -48,17 +50,17 @@ struct StylePropertyMetadata {
     
     friend bool operator==(const StylePropertyMetadata&, const StylePropertyMetadata&) = default;
 
-    uint16_t m_propertyID : 10;
-    uint16_t m_isSetFromShorthand : 1;
-    uint16_t m_indexInShorthandsVector : 2; // If this property was set as part of an ambiguous shorthand, gives the index in the shorthands vector.
-    uint16_t m_important : 1;
-    uint16_t m_implicit : 1; // Whether or not the property was set implicitly as the result of a shorthand.
-    uint16_t m_inherited : 1;
+    unsigned m_propertyID : 10;
+    unsigned m_isSetFromShorthand : 1;
+    unsigned m_indexInShorthandsVector : 2; // If this property was set as part of an ambiguous shorthand, gives the index in the shorthands vector.
+    unsigned m_important : 1;
+    unsigned m_implicit : 1; // Whether or not the property was set implicitly as the result of a shorthand.
+    unsigned m_inherited : 1;
 };
 
 class CSSProperty {
 public:
-    CSSProperty(CSSPropertyID propertyID, RefPtr<CSSValue>&& value, bool important = false, bool isSetFromShorthand = false, int indexInShorthandsVector = 0, bool implicit = false)
+    CSSProperty(CSSPropertyID propertyID, RefPtr<CSSValue>&& value, IsImportant important = IsImportant::No, bool isSetFromShorthand = false, int indexInShorthandsVector = 0, bool implicit = false)
         : m_metadata(propertyID, isSetFromShorthand, indexInShorthandsVector, important, implicit, isInheritedProperty(propertyID))
         , m_value(WTFMove(value))
     {

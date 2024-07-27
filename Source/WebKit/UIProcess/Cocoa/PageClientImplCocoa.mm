@@ -26,10 +26,11 @@
 #import "config.h"
 #import "PageClientImplCocoa.h"
 
-#import "TextAnimationType.h"
+
 #import "WKTextAnimationType.h"
 #import "WKWebViewInternal.h"
 #import <WebCore/AlternativeTextUIController.h>
+#import <WebCore/TextAnimationTypes.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <pal/spi/ios/BrowserEngineKitSPI.h>
@@ -157,7 +158,7 @@ void PageClientImplCocoa::storeAppHighlight(const WebCore::AppHighlight &highlig
 #endif // ENABLE(APP_HIGHLIGHTS)
 
 #if ENABLE(WRITING_TOOLS_UI)
-void PageClientImplCocoa::addTextAnimationForAnimationID(const WTF::UUID& uuid, const WebKit::TextAnimationData& data)
+void PageClientImplCocoa::addTextAnimationForAnimationID(const WTF::UUID& uuid, const WebCore::TextAnimationData& data)
 {
     [m_webView _addTextAnimationForAnimationID:uuid withData:data];
 }
@@ -315,6 +316,13 @@ void PageClientImplCocoa::setGamepadsRecentlyAccessed(GamepadsRecentlyAccessed g
 {
     [m_webView _setGamepadsRecentlyAccessed:(gamepadsRecentlyAccessed == GamepadsRecentlyAccessed::No) ? NO : YES];
 }
+
+#if PLATFORM(VISION)
+void PageClientImplCocoa::gamepadsConnectedStateChanged()
+{
+    [m_webView _gamepadsConnectedStateChanged];
+}
+#endif
 #endif
 
 void PageClientImplCocoa::hasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSession)
@@ -325,6 +333,12 @@ void PageClientImplCocoa::hasActiveNowPlayingSessionChanged(bool hasActiveNowPla
     [m_webView willChangeValueForKey:@"_hasActiveNowPlayingSession"];
     [m_webView _setHasActiveNowPlayingSession:hasActiveNowPlayingSession];
     [m_webView didChangeValueForKey:@"_hasActiveNowPlayingSession"];
+}
+
+void PageClientImplCocoa::videoControlsManagerDidChange()
+{
+    [m_webView willChangeValueForKey:@"_canEnterFullscreen"];
+    [m_webView didChangeValueForKey:@"_canEnterFullscreen"];
 }
 
 } // namespace WebKit

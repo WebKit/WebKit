@@ -31,6 +31,7 @@
 #include "WebPageProxy.h"
 #include "WebPreferencesKeys.h"
 #include "WebProcessPool.h"
+#include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/LibWebRTCProvider.h>
 #include <WebCore/StorageBlockingPolicy.h>
 #include <wtf/NeverDestroyed.h>
@@ -195,6 +196,11 @@ void WebPreferences::updateBoolValueForKey(const String& key, bool value, bool e
 
         return;
     }
+
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+    if (key == WebPreferencesKey::builtInNotificationsEnabledKey())
+        WebCore::DeprecatedGlobalSettings::setBuiltInNotificationsEnabled(value);
+#endif
 
     update(); // FIXME: Only send over the changed key and value.
 }

@@ -217,8 +217,9 @@ public:
     virtual void zoomIn() = 0;
     virtual void zoomOut() = 0;
     void save(CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)>&&);
-    void openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)>&&);
 #endif
+
+    void openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)>&&);
 
     void notifyCursorChanged(WebCore::PlatformCursorType);
 
@@ -327,6 +328,7 @@ protected:
     WebCore::ScrollPosition minimumScrollPosition() const final;
     WebCore::ScrollPosition maximumScrollPosition() const final;
     WebCore::IntSize visibleSize() const final { return m_size; }
+    WebCore::IntSize overhangAmount() const final;
     WebCore::IntPoint lastKnownMousePositionInView() const override;
 
     float deviceScaleFactor() const override;
@@ -352,6 +354,8 @@ protected:
     virtual void updateScrollbars();
     virtual Ref<WebCore::Scrollbar> createScrollbar(WebCore::ScrollbarOrientation);
     virtual void destroyScrollbar(WebCore::ScrollbarOrientation);
+
+    void wantsWheelEventsChanged();
 
     virtual void incrementalLoadingDidProgress() { }
     virtual void incrementalLoadingDidCancel() { }

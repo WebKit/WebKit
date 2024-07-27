@@ -138,10 +138,12 @@ void* LocalAllocator::allocateSlowCase(JSC::Heap& heap, size_t cellSize, GCDefer
 
     Subspace* subspace = m_directory->m_subspace;
     if (subspace->isIsoSubspace()) {
-        if (void* result = static_cast<IsoSubspace*>(subspace)->tryAllocateFromLowerTier())
+        if (void* result = static_cast<IsoSubspace*>(subspace)->tryAllocatePreciseOrLowerTierPrecise(cellSize))
             return result;
     }
-    
+
+    ASSERT(!subspace->isPreciseOnly());
+    ASSERT_WITH_MESSAGE(cellSize == m_directory->cellSize(), "non-preciseOnly allocations should match allocator's the size class");
     MarkedBlock::Handle* block = m_directory->tryAllocateBlock(heap);
     if (!block) {
         if (failureMode == AllocationFailureMode::Assert)

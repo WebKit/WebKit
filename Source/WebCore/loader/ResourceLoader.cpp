@@ -428,7 +428,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
         RefPtr page = frameLoader()->frame().page();
         RefPtr documentLoader = m_documentLoader;
         if (page && documentLoader) {
-            auto results = page->userContentProvider().processContentRuleListsForLoad(*page, request.url(), m_resourceType, *documentLoader, redirectResponse.url());
+            auto results = page->protectedUserContentProvider()->processContentRuleListsForLoad(*page, request.url(), m_resourceType, *documentLoader, redirectResponse.url());
             bool blockedLoad = results.summary.blockedLoad;
             ContentExtensions::applyResultsToRequest(WTFMove(results), page.get(), request);
             if (blockedLoad) {
@@ -449,8 +449,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
     }
 
     if (frameLoader() && frameLoader()->frame().isMainFrame() && cachedResource() && cachedResource()->type() == CachedResource::Type::MainResource && !redirectResponse.isNull()) {
-        auto requestURL { redirectResponse.url() };
-        if (checkedFrameLoader()->upgradeRequestforHTTPSOnlyIfNeeded(requestURL, request) && request.url() == redirectResponse.url()) {
+        if (request.wasSchemeOptimisticallyUpgraded() && request.url() == redirectResponse.url()) {
             RESOURCELOADER_RELEASE_LOG("willSendRequestInternal: resource load canceled because of entering same-URL redirect loop");
             cancel(httpsUpgradeRedirectLoopError());
             completionHandler({ });
@@ -460,7 +459,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
 
     if (m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks) {
         if (createdResourceIdentifier)
-            checkedFrameLoader()->notifier().assignIdentifierToInitialRequest(m_identifier, documentLoader(), request);
+            checkedFrameLoader()->notifier().assignIdentifierToInitialRequest(m_identifier, protectedDocumentLoader().get(), request);
 
 #if PLATFORM(IOS_FAMILY)
         // If this ResourceLoader was stopped as a result of assignIdentifierToInitialRequest, bail out
@@ -556,7 +555,7 @@ bool ResourceLoader::shouldAllowResourceToAskForCredentials() const
 {
     RefPtr topFrame = dynamicDowncast<LocalFrame>(m_frame->tree().top());
     return m_canCrossOriginRequestsAskUserForCredentials
-        || (topFrame && topFrame->document()->securityOrigin().canRequest(m_request.url(), OriginAccessPatternsForWebProcess::singleton()));
+        || (topFrame && topFrame->document()->protectedSecurityOrigin()->canRequest(m_request.url(), OriginAccessPatternsForWebProcess::singleton()));
 }
 
 void ResourceLoader::didBlockAuthenticationChallenge()
@@ -846,7 +845,7 @@ bool ResourceLoader::isAllowedToAskUserForCredentials() const
         return false;
     if (!shouldAllowResourceToAskForCredentials())
         return false;
-    return m_options.credentials == FetchOptions::Credentials::Include || (m_options.credentials == FetchOptions::Credentials::SameOrigin && m_frame->document()->securityOrigin().canRequest(originalRequest().url(), OriginAccessPatternsForWebProcess::singleton()));
+    return m_options.credentials == FetchOptions::Credentials::Include || (m_options.credentials == FetchOptions::Credentials::SameOrigin && m_frame->document()->protectedSecurityOrigin()->canRequest(originalRequest().url(), OriginAccessPatternsForWebProcess::singleton()));
 }
 
 bool ResourceLoader::shouldIncludeCertificateInfo() const

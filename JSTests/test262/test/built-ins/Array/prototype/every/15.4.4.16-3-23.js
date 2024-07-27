@@ -31,10 +31,12 @@ Con.prototype = proto;
 
 var child = new Con();
 
-child.toString = function() {
-  toStringAccessed = true;
-  return '1';
-};
+Object.defineProperty(child, "toString", {
+  value: function() {
+	  toStringAccessed = true;
+	  return '1';
+  }
+});
 
 var obj = {
   0: 12,

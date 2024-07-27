@@ -108,13 +108,13 @@ int SQLiteStatement::bindBlob(int index, const String& text)
     // treats as a null, so we supply a non-null pointer for that case.
     auto upconvertedCharacters = StringView(text).upconvertedCharacters();
     UChar anyCharacter = 0;
-    std::span<const UChar> characters;
+    const UChar* characters;
     if (text.isEmpty() && !text.isNull())
-        characters = span(anyCharacter);
+        characters = &anyCharacter;
     else
-        characters = upconvertedCharacters.span();
+        characters = upconvertedCharacters;
 
-    return bindBlob(index, asBytes(characters));
+    return bindBlob(index, std::span(reinterpret_cast<const uint8_t*>(characters), text.length() * sizeof(UChar)));
 }
 
 int SQLiteStatement::bindText(int index, StringView text)

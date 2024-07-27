@@ -299,3 +299,26 @@ void _WKBundleFrameGenerateTestReport(WKBundleFrameRef frameRef, WKStringRef mes
     if (RefPtr document = coreFrame->document())
         document->reportingScope().generateTestReport(WebKit::toWTFString(message), WebKit::toWTFString(group));
 }
+
+void* WKAccessibilityRootObject(WKBundleFrameRef frameRef)
+{
+    RefPtr frame = WebKit::toImpl(frameRef)->coreLocalFrame();
+    if (!frame)
+        return nullptr;
+
+    WebCore::AXObjectCache::enableAccessibility();
+
+    RefPtr document = frame->rootFrame().document();
+    if (!document)
+        return nullptr;
+
+    CheckedPtr axObjectCache = document->axObjectCache();
+    if (!axObjectCache)
+        return nullptr;
+
+    auto* root = axObjectCache->rootObject();
+    if (!root)
+        return nullptr;
+
+    return root->wrapper();
+}

@@ -47,7 +47,7 @@ class GetByVariant {
 public:
     GetByVariant(
         CacheableIdentifier,
-        const StructureSet& = StructureSet(), PropertyOffset = invalidOffset,
+        const StructureSet& = StructureSet(), bool viaGlobalProxy = false, PropertyOffset = invalidOffset,
         const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
         std::unique_ptr<CallLinkStatus> = nullptr,
         JSFunction* = nullptr,
@@ -89,6 +89,8 @@ public:
 
     bool overlaps(const GetByVariant& other)
     {
+        if (m_viaGlobalProxy != other.m_viaGlobalProxy)
+            return true;
         if (!!m_identifier != !!other.m_identifier)
             return true;
         if (m_identifier) {
@@ -97,7 +99,9 @@ public:
         }
         return structureSet().overlaps(other.structureSet());
     }
-    
+
+    bool viaGlobalProxy() const { return m_viaGlobalProxy; }
+
 private:
     friend class GetByStatus;
 
@@ -105,6 +109,7 @@ private:
     
     StructureSet m_structureSet;
     ObjectPropertyConditionSet m_conditionSet;
+    bool m_viaGlobalProxy { false };
     PropertyOffset m_offset;
     std::unique_ptr<CallLinkStatus> m_callLinkStatus;
     JSFunction* m_intrinsicFunction;

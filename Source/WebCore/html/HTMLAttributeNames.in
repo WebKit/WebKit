@@ -104,6 +104,8 @@ codetype
 color
 cols
 colspan
+command
+commandfor
 compact
 composite
 content
@@ -163,8 +165,6 @@ inert
 inputmode
 integrity
 interactive
-invokeaction
-invoketarget
 is
 ismap
 keytype
@@ -211,6 +211,7 @@ onanimationiteration
 onanimationstart
 onautocomplete
 onautocompleteerror
+onauxclick
 onbeforecopy
 onbeforecut
 onbeforeinput

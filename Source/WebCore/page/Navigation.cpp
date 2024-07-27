@@ -268,7 +268,7 @@ Navigation::Result Navigation::reload(ReloadOptions&& options, Ref<DeferredPromi
     if (serializedState.hasException())
         return createErrorResult(WTFMove(committed), WTFMove(finished), serializedState.releaseException());
 
-    if (!window()->protectedDocument()->isFullyActive())
+    if (!window()->protectedDocument()->isFullyActive() || window()->document()->unloadCounter())
         return createErrorResult(WTFMove(committed), WTFMove(finished), ExceptionCode::InvalidStateError, "Invalid state"_s);
 
     RefPtr apiMethodTracker = maybeSetUpcomingNonTraversalTracker(WTFMove(committed), WTFMove(finished), WTFMove(options.info), serializedState.releaseReturnValue());
@@ -298,7 +298,7 @@ Navigation::Result Navigation::navigate(const String& url, NavigateOptions&& opt
     if (serializedState.hasException())
         return createErrorResult(WTFMove(committed), WTFMove(finished), serializedState.releaseException());
 
-    if (!window()->protectedDocument()->isFullyActive())
+    if (!window()->protectedDocument()->isFullyActive() || window()->document()->unloadCounter())
         return createErrorResult(WTFMove(committed), WTFMove(finished), ExceptionCode::InvalidStateError, "Invalid state"_s);
 
     RefPtr apiMethodTracker = maybeSetUpcomingNonTraversalTracker(WTFMove(committed), WTFMove(finished), WTFMove(options.info), serializedState.releaseReturnValue());
@@ -319,7 +319,7 @@ Navigation::Result Navigation::navigate(const String& url, NavigateOptions&& opt
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#performing-a-navigation-api-traversal
 Navigation::Result Navigation::performTraversal(const String& key, Navigation::Options options, FrameLoadType loadType, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
-    if (!window()->protectedDocument()->isFullyActive())
+    if (!window()->protectedDocument()->isFullyActive() || window()->document()->unloadCounter())
         return createErrorResult(WTFMove(committed), WTFMove(finished), ExceptionCode::InvalidStateError, "Invalid state"_s);
 
     RefPtr current = currentEntry();
@@ -630,6 +630,9 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
     RefPtr document = window()->protectedDocument();
 
     RefPtr apiMethodTracker = m_ongoingAPIMethodTracker;
+    // FIXME: this should not be needed, we should pass it into FrameLoader.
+    if (apiMethodTracker && apiMethodTracker->serializedState)
+        destination->setStateObject(apiMethodTracker->serializedState.get());
     bool isSameDocument = destination->sameDocument();
     bool isTraversal = navigationType == NavigationNavigationType::Traverse;
     bool canIntercept = documentCanHaveURLRewritten(*document, destination->url()) && (!isTraversal || isSameDocument);
@@ -703,7 +706,10 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
         if (navigationType == NavigationNavigationType::Traverse)
             m_suppressNormalScrollRestorationDuringOngoingNavigation = true;
 
-        // FIXME: Step 7: URL and history update
+        if (navigationType == NavigationNavigationType::Push || navigationType == NavigationNavigationType::Replace) {
+            auto historyHandling = navigationType == NavigationNavigationType::Replace ? NavigationHistoryBehavior::Replace : NavigationHistoryBehavior::Push;
+            frame()->loader().updateURLAndHistory(destination->url(), classicHistoryAPIState, historyHandling);
+        }
     }
 
     if (endResultIsSameDocument) {
@@ -782,8 +788,9 @@ bool Navigation::dispatchTraversalNavigateEvent(HistoryItem& historyItem)
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#fire-a-push/replace/reload-navigate-event
 bool Navigation::dispatchPushReplaceReloadNavigateEvent(const URL& url, NavigationNavigationType navigationType, bool isSameDocument, FormState* formState, SerializedScriptValue* classicHistoryAPIState)
 {
-    // FIXME: Set event's classic history API state to classicHistoryAPIState.
     Ref destination = NavigationDestination::create(url, nullptr, isSameDocument);
+    if (classicHistoryAPIState)
+        destination->setStateObject(classicHistoryAPIState);
     return innerDispatchNavigateEvent(navigationType, WTFMove(destination), { }, formState, classicHistoryAPIState);
 }
 

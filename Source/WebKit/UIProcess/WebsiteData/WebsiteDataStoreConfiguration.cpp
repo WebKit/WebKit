@@ -178,7 +178,7 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
 
 WebPushD::WebPushDaemonConnectionConfiguration WebsiteDataStoreConfiguration::webPushDaemonConnectionConfiguration() const
 {
-    return { m_webPushDaemonUsesMockBundlesForTesting, { }, m_webPushPartitionString, m_identifier };
+    return { m_webPushDaemonUsesMockBundlesForTesting, { }, { }, m_webPushPartitionString, m_identifier };
 }
 
 WebsiteDataStoreConfiguration::Directories WebsiteDataStoreConfiguration::Directories::isolatedCopy() const &

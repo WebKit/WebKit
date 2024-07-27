@@ -91,6 +91,7 @@ enum class VTTAlignSetting : uint8_t {
 
 class VTTCueBox : public TextTrackCueBox {
     WTF_MAKE_ISO_ALLOCATED(VTTCueBox);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VTTCueBox);
 public:
     static Ref<VTTCueBox> create(Document&, VTTCue&);
 

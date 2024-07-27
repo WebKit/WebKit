@@ -73,8 +73,7 @@ ExceptionOr<RefPtr<CSSValue>> CSSStyleValueFactory::extractCSSValue(const CSSPro
 {
     auto styleDeclaration = MutableStyleProperties::create();
     
-    constexpr bool important = true;
-    CSSParser::ParseResult parseResult = CSSParser::parseValue(styleDeclaration, propertyID, cssText, important, parserContext);
+    CSSParser::ParseResult parseResult = CSSParser::parseValue(styleDeclaration, propertyID, cssText, IsImportant::Yes, parserContext);
 
     if (parseResult == CSSParser::ParseResult::Error)
         return Exception { ExceptionCode::TypeError, makeString(cssText, " cannot be parsed."_s) };
@@ -86,8 +85,7 @@ ExceptionOr<RefPtr<CSSStyleValue>> CSSStyleValueFactory::extractShorthandCSSValu
 {
     auto styleDeclaration = MutableStyleProperties::create();
 
-    constexpr bool important = true;
-    CSSParser::ParseResult parseResult = CSSParser::parseValue(styleDeclaration, propertyID, cssText, important, parserContext);
+    CSSParser::ParseResult parseResult = CSSParser::parseValue(styleDeclaration, propertyID, cssText, IsImportant::Yes, parserContext);
 
     if (parseResult == CSSParser::ParseResult::Error)
         return Exception { ExceptionCode::TypeError, makeString(cssText, " cannot be parsed."_s) };

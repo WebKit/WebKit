@@ -1340,17 +1340,6 @@ BuildVersion:	20G165'''),
         self.expectOutcome(result=SUCCESS, state_string='Printed configuration')
         return self.runStep()
 
-    def test_success_win(self):
-        self.setupStep(PrintConfiguration())
-        self.setProperty('platform', 'win')
-
-        self.expectRemoteCommands(
-            ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
-            ExpectShell(command=['df', '-hl'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Printed configuration')
-        return self.runStep()
-
     def test_failure(self):
         self.setupStep(PrintConfiguration())
         self.setProperty('platform', 'ios-12')

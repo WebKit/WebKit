@@ -303,6 +303,62 @@ FOR_EACH_ARITH_UNARY_OP_STD(JSC_DEFINE_VIA_STD)
 FOR_EACH_ARITH_UNARY_OP_CUSTOM(JSC_DEFINE_VIA_CUSTOM)
 #undef JSC_DEFINE_VIA_CUSTOM
 
+template<typename FloatType>
+ALWAYS_INLINE FloatType fMax(FloatType a, FloatType b)
+{
+    if (std::isnan(a) || std::isnan(b))
+        return a + b;
+    if (a == static_cast<FloatType>(0.0) && b == static_cast<FloatType>(0.0) && std::signbit(a) != std::signbit(b))
+        return static_cast<FloatType>(0.0);
+    return std::max(a, b);
+}
+
+template<typename FloatType>
+ALWAYS_INLINE FloatType fMin(FloatType a, FloatType b)
+{
+    if (std::isnan(a) || std::isnan(b))
+        return a + b;
+    if (a == static_cast<FloatType>(0.0) && b == static_cast<FloatType>(0.0) && std::signbit(a) != std::signbit(b))
+        return static_cast<FloatType>(-0.0);
+    return std::min(a, b);
+}
+
+ALWAYS_INLINE double jsMaxDouble(double lhs, double rhs)
+{
+#if CPU(ARM64)
+    // Intentionally using fmax, not fmaxnm since fmax is aligned to JS Math.max semantics.
+    // fmaxnm returns non-NaN number when either lhs or rhs is NaN. But Math.max returns NaN.
+    double result;
+    asm (
+        "fmax %d[result], %d[lhs], %d[rhs]"
+        : [result] "=w"(result)
+        : [lhs] "w"(lhs), [rhs] "w"(rhs)
+        :
+        );
+    return result;
+#else
+    return fMax(lhs, rhs);
+#endif
+}
+
+ALWAYS_INLINE double jsMinDouble(double lhs, double rhs)
+{
+#if CPU(ARM64)
+    // Intentionally using fmin, not fminnm since fmin is aligned to JS Math.min semantics.
+    // fminnm returns non-NaN number when either lhs or rhs is NaN. But Math.min returns NaN.
+    double result;
+    asm (
+        "fmin %d[result], %d[lhs], %d[rhs]"
+        : [result] "=w"(result)
+        : [lhs] "w"(lhs), [rhs] "w"(rhs)
+        :
+        );
+    return result;
+#else
+    return fMin(lhs, rhs);
+#endif
+}
+
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(truncDouble, double, (double));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(truncFloat, float, (float));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(ceilDouble, double, (double));
@@ -322,6 +378,10 @@ JSC_DECLARE_NOEXCEPT_JIT_OPERATION(roundFloat, float, (float));
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f32_nearest, float, (float));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f64_nearest, double, (double));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f32_roundeven, float, (float));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f64_roundeven, double, (double));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f32_trunc, float, (float));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(f64_trunc, double, (double));
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i32_div_s, int32_t, (int32_t, int32_t));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(i32_div_u, uint32_t, (uint32_t, uint32_t));

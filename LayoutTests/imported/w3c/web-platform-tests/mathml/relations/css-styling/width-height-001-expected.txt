@@ -7,8 +7,8 @@ FAIL width and height properties on merror assert_approx_equals: width expected 
 FAIL inline-size and block-size properties on merror assert_approx_equals: width expected 600 +/- 1 but got 0
 FAIL width and height properties on mfrac assert_approx_equals: width expected 500 +/- 1 but got 0
 FAIL inline-size and block-size properties on mfrac assert_approx_equals: width expected 600 +/- 1 but got 0
-FAIL width and height properties on mi assert_approx_equals: width expected 500 +/- 1 but got 501.59375
-FAIL inline-size and block-size properties on mi assert_approx_equals: width expected 600 +/- 1 but got 601.59375
+PASS width and height properties on mi
+PASS inline-size and block-size properties on mi
 FAIL width and height properties on mmultiscripts assert_approx_equals: width expected 500 +/- 1 but got 0.625
 FAIL inline-size and block-size properties on mmultiscripts assert_approx_equals: width expected 600 +/- 1 but got 0.625
 PASS width and height properties on mn
@@ -21,8 +21,8 @@ FAIL width and height properties on mpadded assert_approx_equals: width expected
 FAIL inline-size and block-size properties on mpadded assert_approx_equals: width expected 600 +/- 1 but got 0
 FAIL width and height properties on mphantom assert_approx_equals: width expected 500 +/- 1 but got 0
 FAIL inline-size and block-size properties on mphantom assert_approx_equals: width expected 600 +/- 1 but got 0
-FAIL width and height properties on mroot assert_approx_equals: width expected 500 +/- 1 but got 8.375
-FAIL inline-size and block-size properties on mroot assert_approx_equals: width expected 600 +/- 1 but got 8.375
+FAIL width and height properties on mroot assert_approx_equals: width expected 500 +/- 1 but got 13.734375
+FAIL inline-size and block-size properties on mroot assert_approx_equals: width expected 600 +/- 1 but got 13.734375
 FAIL width and height properties on mrow assert_approx_equals: width expected 500 +/- 1 but got 0
 FAIL inline-size and block-size properties on mrow assert_approx_equals: width expected 600 +/- 1 but got 0
 PASS width and height properties on ms

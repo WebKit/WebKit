@@ -144,7 +144,7 @@ PatternData* LegacyRenderSVGResourcePattern::buildPattern(RenderElement& rendere
     return m_patternMap.set(renderer, WTFMove(patternData)).iterator->value.get();
 }
 
-bool LegacyRenderSVGResourcePattern::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
+auto LegacyRenderSVGResourcePattern::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
 {
     ASSERT(context);
     ASSERT(!resourceMode.isEmpty());
@@ -161,11 +161,11 @@ bool LegacyRenderSVGResourcePattern::applyResource(RenderElement& renderer, cons
     // then the given effect (e.g. a gradient or a filter) will be ignored.
     FloatRect objectBoundingBox = renderer.objectBoundingBox();
     if (m_attributes.patternUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && objectBoundingBox.isEmpty())
-        return false;
+        return { };
 
     PatternData* patternData = buildPattern(renderer, resourceMode, *context);
     if (!patternData)
-        return false;
+        return { };
 
     // Draw pattern
     context->save();
@@ -200,7 +200,7 @@ bool LegacyRenderSVGResourcePattern::applyResource(RenderElement& renderer, cons
         }
     }
 
-    return true;
+    return { ApplyResult::ResourceApplied };
 }
 
 void LegacyRenderSVGResourcePattern::postApplyResource(RenderElement&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const RenderElement* shape)

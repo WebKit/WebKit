@@ -91,26 +91,6 @@ static IntType chillUMod(IntType numerator, IntType denominator)
     return unsignedNumerator % unsignedDenominator;
 }
 
-template<typename FloatType>
-static FloatType fMax(FloatType a, FloatType b)
-{
-    if (std::isnan(a) || std::isnan(b))
-        return a + b;
-    if (a == static_cast<FloatType>(0.0) && b == static_cast<FloatType>(0.0) && std::signbit(a) != std::signbit(b))
-        return static_cast<FloatType>(0.0);
-    return std::max(a, b);
-}
-
-template<typename FloatType>
-static FloatType fMin(FloatType a, FloatType b)
-{
-    if (std::isnan(a) || std::isnan(b))
-        return a + b;
-    if (a == static_cast<FloatType>(0.0) && b == static_cast<FloatType>(0.0) && std::signbit(a) != std::signbit(b))
-        return static_cast<FloatType>(-0.0);
-    return std::min(a, b);
-}
-
 template<typename IntType>
 static IntType rotateRight(IntType value, int32_t shift)
 {

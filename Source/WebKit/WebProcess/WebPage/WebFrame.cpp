@@ -302,11 +302,6 @@ FrameTreeNodeData WebFrame::frameTreeData() const
     return data;
 }
 
-void WebFrame::getFrameInfo(CompletionHandler<void(FrameInfoData&&)>&& completionHandler)
-{
-    completionHandler(info());
-}
-
 WebCore::FrameIdentifier WebFrame::frameID() const
 {
     ASSERT(m_frameID);

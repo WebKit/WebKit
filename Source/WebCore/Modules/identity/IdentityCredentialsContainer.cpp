@@ -36,6 +36,8 @@
 #include "ExceptionOr.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDigitalCredential.h"
+#include "LocalDOMWindow.h"
+#include "VisibilityState.h"
 
 namespace WebCore {
 IdentityCredentialsContainer::IdentityCredentialsContainer(WeakPtr<Document, WeakPtrImplWithEventTargetData>&& document)
@@ -47,6 +49,29 @@ void IdentityCredentialsContainer::get(CredentialRequestOptions&& options, Crede
 {
     if (!performCommonChecks(options, promise))
         return;
+
+    RefPtr document = this->document();
+    ASSERT(document);
+    if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::DigitalCredentialsGetRule, *document, PermissionsPolicy::ShouldReportViolation::No)) {
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "Third-party iframes are not allowed to call .get() unless explicitly allowed via Permissions Policy (digital-credentials-get)"_s });
+        return;
+    }
+
+    if (!document->hasFocus()) {
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not focused."_s });
+        return;
+    }
+
+    if (document->visibilityState() != VisibilityState::Visible) {
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not visible."_s });
+        return;
+    }
+
+    RefPtr window = document->domWindow();
+    if (!window || !window->consumeTransientActivation()) {
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "Calling get() needs to be triggered by an activation triggering user event."_s });
+        return;
+    }
 
     if (!options.digital) {
         promise.reject(Exception { ExceptionCode::NotSupportedError, "Only digital member is supported."_s });

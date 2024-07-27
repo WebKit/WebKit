@@ -25,6 +25,7 @@
 messages -> RemoteRenderingBackend NotRefCounted Stream {
     CreateImageBuffer(WebCore::FloatSize logicalSize, WebCore::RenderingMode renderingMode, WebCore::RenderingPurpose renderingPurpose, float resolutionScale, WebCore::DestinationColorSpace colorSpace, enum:uint8_t WebCore::ImageBufferPixelFormat pixelFormat, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
     ReleaseImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+    GetImageBufferResourceLimitsForTesting() -> (struct WebCore::ImageBufferResourceLimits limits) Async
     DestroyGetPixelBufferSharedMemory()
     CacheNativeImage(WebCore::ShareableBitmapHandle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
     CacheFont(struct WebCore::FontInternalAttributes data, struct WebCore::FontPlatformDataAttributes platformData, std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifier) NotStreamEncodable
@@ -62,13 +63,13 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     MoveToSerializedBuffer(WebCore::RenderingResourceIdentifier sourceImageBuffer)
     MoveToImageBuffer(WebCore::RenderingResourceIdentifier destinationImageBuffer)
 
-    CreateRemoteBarcodeDetector(WebKit::ShapeDetectionIdentifier identifier, WebCore::ShapeDetection::BarcodeDetectorOptions barcodeDetectorOptions) AllowedWhenWaitingForSyncReply
-    ReleaseRemoteBarcodeDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
-    GetRemoteBarcodeDetectorSupportedFormats() -> (Vector<WebCore::ShapeDetection::BarcodeFormat> formats) Async
-    CreateRemoteFaceDetector(WebKit::ShapeDetectionIdentifier identifier, WebCore::ShapeDetection::FaceDetectorOptions faceDetectorOptions) AllowedWhenWaitingForSyncReply
-    ReleaseRemoteFaceDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
-    CreateRemoteTextDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
-    ReleaseRemoteTextDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
+    [EnabledBy=ShapeDetection] CreateRemoteBarcodeDetector(WebKit::ShapeDetectionIdentifier identifier, WebCore::ShapeDetection::BarcodeDetectorOptions barcodeDetectorOptions) AllowedWhenWaitingForSyncReply
+    [EnabledBy=ShapeDetection] ReleaseRemoteBarcodeDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
+    [EnabledBy=ShapeDetection] GetRemoteBarcodeDetectorSupportedFormats() -> (Vector<WebCore::ShapeDetection::BarcodeFormat> formats) Async
+    [EnabledBy=ShapeDetection] CreateRemoteFaceDetector(WebKit::ShapeDetectionIdentifier identifier, WebCore::ShapeDetection::FaceDetectorOptions faceDetectorOptions) AllowedWhenWaitingForSyncReply
+    [EnabledBy=ShapeDetection] ReleaseRemoteFaceDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
+    [EnabledBy=ShapeDetection] CreateRemoteTextDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
+    [EnabledBy=ShapeDetection] ReleaseRemoteTextDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
 }
 
 #endif // ENABLE(GPU_PROCESS)

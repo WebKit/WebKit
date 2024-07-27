@@ -479,6 +479,9 @@ WEB_PREFERENCES = \
 #
 
 WEB_PREFERENCES_TEMPLATES = \
+    $(WebKit2)/Scripts/PreferencesTemplates/SharedPreferencesForWebProcess.h.erb \
+    $(WebKit2)/Scripts/PreferencesTemplates/SharedPreferencesForWebProcess.cpp.erb \
+    $(WebKit2)/Scripts/PreferencesTemplates/SharedPreferencesForWebProcess.serialization.in.erb \
     $(WebKit2)/Scripts/PreferencesTemplates/WebPageUpdatePreferences.cpp.erb \
     $(WebKit2)/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb \
     $(WebKit2)/Scripts/PreferencesTemplates/WebPreferencesFeatures.cpp.erb \
@@ -488,7 +491,7 @@ WEB_PREFERENCES_TEMPLATES = \
     $(WebKit2)/Scripts/PreferencesTemplates/WebPreferencesStoreDefaultsMap.cpp.erb \
 #
 WEB_PREFERENCES_FILES = $(basename $(notdir $(WEB_PREFERENCES_TEMPLATES)))
-WEB_PREFERENCES_PATTERNS = $(subst .,%,$(WEB_PREFERENCES_FILES))
+WEB_PREFERENCES_PATTERNS = $(subst .cpp,%cpp, $(subst .h,%h, $(subst .in,%in, $(WEB_PREFERENCES_FILES))))
 
 all : $(WEB_PREFERENCES_FILES)
 
@@ -622,7 +625,6 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/FullScreenMediaDetails.serialization.in \
 	Shared/Gamepad/GamepadData.serialization.in \
 	Shared/GPUProcessConnectionParameters.serialization.in \
-	Shared/GPUProcessPreferencesForWebProcess.serialization.in \
 	Shared/GoToBackForwardItemParameters.serialization.in \
 	Shared/InspectorExtensionTypes.serialization.in \
 	Shared/PlatformFontInfo.serialization.in \
@@ -642,7 +644,6 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/MonotonicObjectIdentifier.serialization.in \
 	Shared/NavigationActionData.serialization.in \
 	Shared/NetworkProcessConnectionParameters.serialization.in \
-	Shared/NetworkProcessPreferencesForWebProcess.serialization.in \
 	Shared/Pasteboard.serialization.in \
 	Shared/PlatformPopupMenuData.serialization.in \
 	Shared/PolicyDecision.serialization.in \
@@ -662,7 +663,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/SessionState.serialization.in \
 	Shared/SyntheticEditingCommandType.serialization.in \
 	Shared/TextFlags.serialization.in \
-	Shared/TextAnimationType.serialization.in \
+	Shared/TextAnimationTypes.serialization.in \
 	Shared/TextRecognitionResult.serialization.in \
 	Shared/TextRecognitionUpdateResult.serialization.in \
 	Shared/URLSchemeTaskParameters.serialization.in \
@@ -812,6 +813,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	WebProcess/UserContent/InjectUserScriptImmediately.serialization.in \
 	WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.serialization.in \
 	WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemoteProperties.serialization.in \
+	SharedPreferencesForWebProcess.serialization.in \
 #
 
 WEBCORE_SERIALIZATION_DESCRIPTION_FILES = \
@@ -837,8 +839,19 @@ WEBCORE_SERIALIZATION_DESCRIPTION_FILES_FULLPATH := $(foreach I,$(WEBCORE_SERIAL
 
 all : GeneratedSerializers.h GeneratedSerializers.mm GeneratedWebKitSecureCoding.h GeneratedWebKitSecureCoding.mm SerializedTypeInfo.mm WebKitPlatformGeneratedSerializers.mm
 
-GeneratedSerializers.h GeneratedSerializers.mm GeneratedWebKitSecureCoding.h GeneratedWebKitSecureCoding.mm SerializedTypeInfo.mm WebKitPlatformGeneratedSerializers.mm : $(WebKit2)/Scripts/generate-serializers.py $(SERIALIZATION_DESCRIPTION_FILES) $(WebKit2)/DerivedSources.make $(WEBCORE_SERIALIZATION_DESCRIPTION_FILES_FULLPATH)
-	$(PYTHON) $(WebKit2)/Scripts/generate-serializers.py mm DIRECTORY $(WebKit2) $(SERIALIZATION_DESCRIPTION_FILES) DIRECTORY $(WebCorePrivateHeaders) $(WEBCORE_SERIALIZATION_DESCRIPTION_FILES)
+GENERATED_SERIALIZERS_OUTPUT_FILES = \
+    GeneratedSerializers.h \
+    GeneratedSerializers.mm \
+    GeneratedWebKitSecureCoding.h \
+    GeneratedWebKitSecureCoding.mm \
+    SerializedTypeInfo.mm \
+    WebKitPlatformGeneratedSerializers.mm \
+#
+
+GENERATED_SERIALIZERS_OUTPUT_PATTERNS = $(subst .,%,$(GENERATED_SERIALIZERS_OUTPUT_FILES))
+
+$(GENERATED_SERIALIZERS_OUTPUT_PATTERNS) : $(WebKit2)/Scripts/generate-serializers.py $(SERIALIZATION_DESCRIPTION_FILES) $(WebKit2)/DerivedSources.make $(WEBCORE_SERIALIZATION_DESCRIPTION_FILES_FULLPATH)
+	$(PYTHON) $(WebKit2)/Scripts/generate-serializers.py mm $(filter %.in,$^)
 
 EXTENSIONS_DIR = $(WebKit2)/WebProcess/Extensions
 EXTENSIONS_SCRIPTS_DIR = $(EXTENSIONS_DIR)/Bindings/Scripts
@@ -874,6 +887,8 @@ EXTENSION_INTERFACES = \
     WebExtensionAPIPort \
     WebExtensionAPIRuntime \
     WebExtensionAPIScripting \
+    WebExtensionAPISidePanel \
+    WebExtensionAPISidebarAction \
     WebExtensionAPIStorage \
     WebExtensionAPIStorageArea \
     WebExtensionAPITabs \

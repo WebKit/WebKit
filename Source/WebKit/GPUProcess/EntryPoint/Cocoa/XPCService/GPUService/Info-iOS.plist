@@ -28,16 +28,26 @@
 	<string>NSApplication</string>
 	<key>LSUIElement</key>
 	<true/>
-    <key>_STAttributionDisplayName</key>
-    <string>Website</string>
+	<key>_STAttributionDisplayName</key>
+	<string>Website</string>
 	<key>XPCService</key>
 	<dict>
 		<key>ServiceType</key>
 		<string>Application</string>
 		<key>RunLoopType</key>
 		<string>NSRunLoop</string>
-                <key>_ProcessType</key>
-                <string>App</string>
+		<key>_AdditionalProperties</key>
+		<dict>
+			<key>RunningBoard</key>
+			<dict>
+				<key>Managed</key>
+				<true/>
+				<key>Reported</key>
+				<true/>
+			</dict>
+		</dict>
+		<key>_ProcessType</key>
+		<string>App</string>
 		<key>_MultipleInstances</key>
 		<true/>
 	</dict>

@@ -231,14 +231,16 @@ JSC_DEFINE_HOST_FUNCTION(mathProtoFuncMax, (JSGlobalObject* globalObject, CallFr
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     unsigned argsCount = callFrame->argumentCount();
-    double result = -std::numeric_limits<double>::infinity();
-    for (unsigned k = 0; k < argsCount; ++k) {
-        double val = callFrame->uncheckedArgument(k).toNumber(globalObject);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        if (std::isnan(val)) {
-            result = PNaN;
-        } else if (val > result || (!val && !result && !std::signbit(val)))
-            result = val;
+    if (UNLIKELY(!argsCount))
+        return JSValue::encode(jsNumber(-std::numeric_limits<double>::infinity()));
+
+    double result = callFrame->uncheckedArgument(0).toNumber(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    for (unsigned i = 1; i < argsCount; ++i) {
+        double value = callFrame->uncheckedArgument(i).toNumber(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        result = Math::jsMaxDouble(result, value);
     }
     return JSValue::encode(jsNumber(result));
 }
@@ -248,14 +250,16 @@ JSC_DEFINE_HOST_FUNCTION(mathProtoFuncMin, (JSGlobalObject* globalObject, CallFr
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     unsigned argsCount = callFrame->argumentCount();
-    double result = +std::numeric_limits<double>::infinity();
-    for (unsigned k = 0; k < argsCount; ++k) {
-        double val = callFrame->uncheckedArgument(k).toNumber(globalObject);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        if (std::isnan(val)) {
-            result = PNaN;
-        } else if (val < result || (!val && !result && std::signbit(val)))
-            result = val;
+    if (UNLIKELY(!argsCount))
+        return JSValue::encode(jsNumber(std::numeric_limits<double>::infinity()));
+
+    double result = callFrame->uncheckedArgument(0).toNumber(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    for (unsigned i = 1; i < argsCount; ++i) {
+        double value = callFrame->uncheckedArgument(i).toNumber(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        result = Math::jsMinDouble(result, value);
     }
     return JSValue::encode(jsNumber(result));
 }

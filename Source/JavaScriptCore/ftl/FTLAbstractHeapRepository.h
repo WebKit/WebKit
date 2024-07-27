@@ -33,6 +33,7 @@
 #include "HasOwnPropertyCache.h"
 #include "IndexingType.h"
 #include "JSGlobalObject.h"
+#include "JSGlobalProxy.h"
 #include "JSMap.h"
 #include "JSSet.h"
 #include "JSWeakMap.h"
@@ -44,6 +45,7 @@ namespace JSC { namespace FTL {
 #define FOR_EACH_ABSTRACT_HEAP(macro) \
     macro(typedArrayProperties) \
     macro(JSCellHeaderAndNamedProperties) \
+    macro(OrderedHashTableData) \
 
 #define FOR_EACH_ABSTRACT_FIELD(macro) \
     macro(ArrayBuffer_data, ArrayBuffer::offsetOfData()) \
@@ -117,6 +119,7 @@ namespace JSC { namespace FTL {
     macro(JSGlobalObject_regExpGlobalData_cachedResult_result_start, JSGlobalObject::regExpGlobalDataOffset() + RegExpGlobalData::offsetOfCachedResult() + RegExpCachedResult::offsetOfResult() + OBJECT_OFFSETOF(MatchResult, start)) \
     macro(JSGlobalObject_regExpGlobalData_cachedResult_result_end, JSGlobalObject::regExpGlobalDataOffset() + RegExpGlobalData::offsetOfCachedResult() + RegExpCachedResult::offsetOfResult() + OBJECT_OFFSETOF(MatchResult, end)) \
     macro(JSGlobalObject_regExpGlobalData_cachedResult_reified, JSGlobalObject::regExpGlobalDataOffset() + RegExpGlobalData::offsetOfCachedResult() + RegExpCachedResult::offsetOfReified()) \
+    macro(JSGlobalProxy_target, JSGlobalProxy::targetOffset()) \
     macro(JSObject_butterfly, JSObject::butterflyOffset()) \
     macro(JSPropertyNameEnumerator_cachedInlineCapacity, JSPropertyNameEnumerator::cachedInlineCapacityOffset()) \
     macro(JSPropertyNameEnumerator_cachedPropertyNamesVector, JSPropertyNameEnumerator::cachedPropertyNamesVectorOffset()) \

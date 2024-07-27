@@ -41,17 +41,6 @@ static RetainPtr<TestWKWebView> createInWindowFullscreenWebView()
     return webView;
 }
 
-template <typename Callable>
-static void testEventually(Callable&& c)
-{
-    int tries = 0;
-    do {
-        if (c())
-            break;
-        TestWebKitAPI::Util::runFor(0.1_s);
-    } while (++tries <= 100);
-}
-
 TEST(InWindowFullscreen, EmptyDocument)
 {
     auto webView = createInWindowFullscreenWebView();
@@ -73,7 +62,7 @@ TEST(InWindowFullscreen, CanToggleAfterPlaybackStarts)
     TestWebKitAPI::Util::run(&isPlaying);
 
     [webView _updateMediaPlaybackControlsManager];
-    testEventually([&] {
+    TestWebKitAPI::Util::waitFor([&] {
         [webView _updateMediaPlaybackControlsManager];
         return [webView _canToggleInWindow];
     });
@@ -92,20 +81,20 @@ TEST(InWindowFullscreen, ToggleChangesIsActive)
     [webView objectByEvaluatingJavaScriptWithUserGesture:@"go()"];
     TestWebKitAPI::Util::run(&isPlaying);
 
-    testEventually([&] {
+    TestWebKitAPI::Util::waitFor([&] {
         [webView _updateMediaPlaybackControlsManager];
         return [webView _canToggleInWindow];
     });
     EXPECT_TRUE([webView _canToggleInWindow]);
 
     [webView _toggleInWindow];
-    testEventually([&] {
+    TestWebKitAPI::Util::waitFor([&] {
         return [webView _isInWindowActive];
     });
     EXPECT_TRUE([webView _isInWindowActive]);
 
     [webView _toggleInWindow];
-    testEventually([&] {
+    TestWebKitAPI::Util::waitFor([&] {
         return ![webView _isInWindowActive];
     });
     EXPECT_FALSE([webView _isInWindowActive]);
@@ -123,7 +112,7 @@ TEST(InWindowFullscreen, ToggleChangesIsActiveWithoutUserGesture)
     [webView objectByEvaluatingJavaScriptWithUserGesture:@"go()"];
     TestWebKitAPI::Util::run(&isPlaying);
 
-    testEventually([&] {
+    TestWebKitAPI::Util::waitFor([&] {
         [webView _updateMediaPlaybackControlsManager];
         return [webView _canToggleInWindow];
     });
@@ -132,10 +121,10 @@ TEST(InWindowFullscreen, ToggleChangesIsActiveWithoutUserGesture)
     [webView objectByEvaluatingJavaScriptWithUserGesture:@"internals.consumeTransientActivation()"];
 
     [webView _toggleInWindow];
-    testEventually([&] {
+    TestWebKitAPI::Util::waitFor([&] {
         return [webView _isInWindowActive];
     });
     EXPECT_TRUE([webView _isInWindowActive]);
 }
 
-}
+} // namespace TestWebKitAPI

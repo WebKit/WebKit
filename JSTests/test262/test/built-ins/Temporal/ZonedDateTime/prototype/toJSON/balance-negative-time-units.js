@@ -26,16 +26,14 @@ info: |
       9. Let _dateTime_ be ? BuiltinTimeZoneGetPlainDateTimeFor(_timeZone_, _instant_, _isoCalendar_).
     sec-get-temporal.zoneddatetime.prototype.tojson step 3:
       3. Return ? TemporalZonedDateTimeToString(_zonedDateTime_, *"auto"*, *"auto"*, *"auto"*, *"auto"*).
-includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
 // This code path is encountered if the time zone offset is negative and its
 // absolute value in nanoseconds is greater than the nanosecond field of the
 // ZonedDateTime
-const tz = TemporalHelpers.specificOffsetTimeZone(-2);
-const datetime = new Temporal.ZonedDateTime(1001n, tz);
+const datetime = new Temporal.ZonedDateTime(1001n, "-00:02");
 
 const jsonString = datetime.toJSON();
 
-assert.sameValue(jsonString, "1970-01-01T00:00:00.000000999+00:00[-00:00:00.000000002]");
+assert.sameValue(jsonString, "1969-12-31T23:58:00.000001001-00:02[-00:02]");

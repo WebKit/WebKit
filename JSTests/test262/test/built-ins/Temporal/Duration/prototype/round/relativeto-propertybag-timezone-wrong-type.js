@@ -5,7 +5,7 @@
 esid: sec-temporal.duration.prototype.round
 description: >
   Appropriate error thrown when argument cannot be converted to a valid string
-  or object for TimeZone
+  for time zone
 features: [BigInt, Symbol, Temporal]
 ---*/
 
@@ -30,8 +30,8 @@ for (const [timeZone, description] of primitiveTests) {
 
 const typeErrorTests = [
   [Symbol(), "symbol"],
-  [{}, "object not implementing time zone protocol"],
-  [new Temporal.Calendar("iso8601"), "calendar instance"],
+  [{}, "object"],
+  [new Temporal.Duration(), "duration instance"],
 ];
 
 for (const [timeZone, description] of typeErrorTests) {

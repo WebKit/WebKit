@@ -140,28 +140,26 @@ void HTMLDialogElement::close(const String& result)
     queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-bool HTMLDialogElement::isValidInvokeAction(const InvokeAction action)
+bool HTMLDialogElement::isValidCommandType(const CommandType command)
 {
-    return HTMLElement::isValidInvokeAction(action) || action == InvokeAction::ShowModal || action == InvokeAction::Close;
+    return HTMLElement::isValidCommandType(command) || command == CommandType::ShowModal || command == CommandType::Close;
 }
 
-bool HTMLDialogElement::handleInvokeInternal(const HTMLFormControlElement& invoker, const InvokeAction& action)
+bool HTMLDialogElement::handleCommandInternal(const HTMLFormControlElement& invoker, const CommandType& command)
 {
-    if (HTMLElement::handleInvokeInternal(invoker, action))
+    if (HTMLElement::handleCommandInternal(invoker, command))
         return true;
 
     if (isPopoverShowing())
         return false;
 
     if (isOpen()) {
-        auto shouldClose = action == InvokeAction::Auto || action == InvokeAction::Close;
-        if (shouldClose) {
+        if (command == CommandType::Close) {
             close(nullString());
             return true;
         }
     } else {
-        auto shouldOpen = action == InvokeAction::Auto || action == InvokeAction::ShowModal;
-        if (shouldOpen) {
+        if (command == CommandType::ShowModal) {
             showModal();
             return true;
         }
@@ -184,7 +182,7 @@ void HTMLDialogElement::queueCancelTask()
 void HTMLDialogElement::runFocusingSteps()
 {
     RefPtr<Element> control;
-    if (m_isModal && hasAttributeWithoutSynchronization(HTMLNames::autofocusAttr))
+    if (hasAttributeWithoutSynchronization(HTMLNames::autofocusAttr))
         control = this;
     if (!control)
         control = findFocusDelegate();
@@ -203,6 +201,11 @@ void HTMLDialogElement::runFocusingSteps()
     Ref topDocument = control->document().topDocument();
     topDocument->clearAutofocusCandidates();
     topDocument->setAutofocusProcessed();
+}
+
+bool HTMLDialogElement::supportsFocus() const
+{
+    return true;
 }
 
 void HTMLDialogElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)

@@ -865,9 +865,6 @@ void WebContextMenuProxyMac::getContextMenuItem(const WebContextMenuItemData& it
         if ([NSMenuItem.class respondsToSelector:@selector(standardWritingToolsMenuItem)]) {
             RetainPtr menuItem = [NSMenuItem standardWritingToolsMenuItem];
 
-            // FIXME: (rdar://127608508) Use the default identifier once the deprecated menu item is removed.
-            [menuItem setIdentifier:_WKMenuItemIdentifierWritingTools];
-
             for (NSMenuItem *subItem in [menuItem submenu].itemArray) {
                 if (subItem.isSeparatorItem)
                     continue;

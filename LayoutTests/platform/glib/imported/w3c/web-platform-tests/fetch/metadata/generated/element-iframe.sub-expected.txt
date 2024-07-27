@@ -14,4 +14,6 @@ PASS sec-fetch-user - Not sent to non-trustworthy cross-site destination
 PASS sec-fetch-site - HTTPS downgrade (header not sent)
 PASS sec-fetch-site - HTTPS upgrade
 PASS sec-fetch-site - HTTPS downgrade-upgrade
+PASS sec-fetch-site - no referrer
+FAIL sec-fetch-site - no referrer - redirection assert_own_property: expected property "sec-fetch-site" missing
 

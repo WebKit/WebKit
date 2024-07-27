@@ -77,25 +77,36 @@ void NetworkNotificationManager::getPendingPushMessages(CompletionHandler<void(c
     m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPendingPushMessages(), WTFMove(replyHandler));
 }
 
-void NetworkNotificationManager::showNotification(IPC::Connection&, const WebCore::NotificationData&, RefPtr<NotificationResources>&&, CompletionHandler<void()>&& callback)
+void NetworkNotificationManager::showNotification(IPC::Connection&, const WebCore::NotificationData& notification, RefPtr<NotificationResources>&& notificationResources, CompletionHandler<void()>&& completionHandler)
 {
-    callback();
+    RELEASE_ASSERT(m_networkSession.networkProcess().builtInNotificationsEnabled());
 
-//     FIXME: While we don't normally land commented-out code in the tree,
-//     this is a nice bookmark for a development milestone; Roundtrip communication with webpushd
-//     Will make next development steps obvious.
-//
-//    CompletionHandler<void(String)>&& completionHandler = [] (String reply) {
-//        printf("Got reply: %s\n", reply.utf8().data());
-//    };
-//
-//    sendMessageWithReply<WebPushD::MessageType::EchoTwice>(WTFMove(completionHandler), String("FIXME: Do useful work here"));
+    if (!m_connection) {
+        completionHandler();
+        return;
+    }
+
+    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::ShowNotification { notification, notificationResources }, WTFMove(completionHandler));
 }
 
-void NetworkNotificationManager::cancelNotification(const WTF::UUID&)
+void NetworkNotificationManager::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    RELEASE_ASSERT(m_networkSession.networkProcess().builtInNotificationsEnabled());
+
+    if (!m_connection) {
+        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active connection to webpushd"_s }));
+        return;
+    }
+
+    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetNotifications { registrationURL, tag }, WTFMove(completionHandler));
+}
+
+void NetworkNotificationManager::cancelNotification(const WTF::UUID& notificationID)
 {
     if (!m_connection)
         return;
+
+    m_connection->sendWithoutUsingIPCConnection(Messages::PushClientConnection::CancelNotification { notificationID });
 }
 
 void NetworkNotificationManager::clearNotifications(const Vector<WTF::UUID>&)
@@ -157,7 +168,9 @@ void NetworkNotificationManager::getPushPermissionState(URL&& scopeURL, Completi
         return;
     }
 
-    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushPermissionState(WTFMove(scopeURL)), WTFMove(completionHandler));
+    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushPermissionState(WTFMove(scopeURL)), [completionHandler = WTFMove(completionHandler)](WebCore::PushPermissionState state) mutable {
+        completionHandler(static_cast<uint8_t>(state));
+    });
 }
 
 void NetworkNotificationManager::incrementSilentPushCount(WebCore::SecurityOriginData&& origin, CompletionHandler<void(unsigned)>&& completionHandler)

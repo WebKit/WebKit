@@ -51,7 +51,7 @@ my @command = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "run-qt-wpe-
 runInFlatpakIfAvailable(@command);
 
 # Check to see that all the frameworks are built.
-checkFrameworks();
+checkBuild();
 
 if (!inFlatpakSandbox()) {
     if ($productDir) {

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    font-size: 16px;
+    width: 300px;
+    height: 300px;
+    caret-color: transparent;
+}
+</style>
+<script>
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+    testRunner.waitUntilDone();
+
+    let editor = document.getElementById("editor");
+    await UIHelper.activateElementAndWaitForInputSession(editor);
+    await UIHelper.ensurePresentationUpdate();
+
+    getSelection().setPosition(document.body.childNodes[0], 1);
+
+    await UIHelper.setInlinePrediction("Hello", 4);
+    await UIHelper.ensurePresentationUpdate();
+    testRunner.notifyDone();
+});
+</script>
+</head>
+<body id="editor" contenteditable><span>Hell</span><div></div></body>
+</html>

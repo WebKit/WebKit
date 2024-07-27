@@ -30,7 +30,7 @@
 WK_EXTERN NSString * const _WKMenuItemIdentifierCopy WK_API_AVAILABLE(macos(10.12), ios(10.0));
 WK_EXTERN NSString * const _WKMenuItemIdentifierCopyImage WK_API_AVAILABLE(macos(10.12), ios(10.0));
 WK_EXTERN NSString * const _WKMenuItemIdentifierCopyLink WK_API_AVAILABLE(macos(10.12), ios(10.0));
-WK_EXTERN NSString * const _WKMenuItemIdentifierCopyLinkToHighlight WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+WK_EXTERN NSString * const _WKMenuItemIdentifierCopyLinkToHighlight WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 WK_EXTERN NSString * const _WKMenuItemIdentifierCopyMediaLink WK_API_AVAILABLE(macos(10.14), ios(12.0));
 WK_EXTERN NSString * const _WKMenuItemIdentifierDownloadImage WK_API_AVAILABLE(macos(10.12), ios(10.0));
 WK_EXTERN NSString * const _WKMenuItemIdentifierDownloadLinkedFile WK_API_AVAILABLE(macos(10.12), ios(10.0));
@@ -51,7 +51,7 @@ WK_EXTERN NSString * const _WKMenuItemIdentifierSearchWeb WK_API_AVAILABLE(macos
 WK_EXTERN NSString * const _WKMenuItemIdentifierShowHideMediaControls WK_API_AVAILABLE(macos(10.12), ios(10.0));
 WK_EXTERN NSString * const _WKMenuItemIdentifierShowHideMediaStats WK_API_AVAILABLE(macos(13.3), ios(16.4));
 WK_EXTERN NSString * const _WKMenuItemIdentifierToggleEnhancedFullScreen WK_API_AVAILABLE(macos(10.14), ios(12.0));
-WK_EXTERN NSString * const _WKMenuItemIdentifierToggleVideoViewer WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXTERN NSString * const _WKMenuItemIdentifierToggleVideoViewer WK_API_AVAILABLE(macos(15.0), ios(18.0));
 WK_EXTERN NSString * const _WKMenuItemIdentifierToggleFullScreen WK_API_AVAILABLE(macos(10.12), ios(10.0));
 
 WK_EXTERN NSString * const _WKMenuItemIdentifierShareMenu WK_API_AVAILABLE(macos(10.12), ios(10.0));
@@ -61,7 +61,7 @@ WK_EXTERN NSString * const _WKMenuItemIdentifierAddHighlightToCurrentQuickNote W
 WK_EXTERN NSString * const _WKMenuItemIdentifierAddHighlightToNewQuickNote WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 WK_EXTERN NSString * const _WKMenuItemIdentifierTranslate WK_API_AVAILABLE(macos(12.0), ios(15.0));
-WK_EXTERN NSString * const _WKMenuItemIdentifierWritingTools WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+WK_EXTERN NSString * const _WKMenuItemIdentifierWritingTools WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 WK_EXTERN NSString * const _WKMenuItemIdentifierCopySubject WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 WK_EXTERN NSString * const _WKMenuItemIdentifierSpellingMenu WK_API_AVAILABLE(macos(13.0), ios(16.0));

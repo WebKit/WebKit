@@ -37,7 +37,6 @@ namespace WebCore {
 StyleCanvasImage::StyleCanvasImage(String&& name)
     : StyleGeneratedImage { Type::CanvasImage, StyleCanvasImage::isFixedSize }
     , m_name { WTFMove(name) }
-    , m_element { nullptr }
 {
 }
 
@@ -147,7 +146,7 @@ HTMLCanvasElement* StyleCanvasImage::element(Document& document) const
             return nullptr;
         m_element->addObserver(const_cast<StyleCanvasImage&>(*this));
     }
-    return m_element;
+    return m_element.get();
 }
 
 } // namespace WebCore

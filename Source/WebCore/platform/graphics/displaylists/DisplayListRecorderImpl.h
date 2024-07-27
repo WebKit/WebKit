@@ -82,10 +82,10 @@ private:
     void recordDrawPath(const Path&) final;
     void recordDrawFocusRingPath(const Path&, float outlineWidth, const Color&) final;
     void recordDrawFocusRingRects(const Vector<FloatRect>&, float outlineOffset, float outlineWidth, const Color&) final;
-    void recordFillRect(const FloatRect&) final;
+    void recordFillRect(const FloatRect&, RequiresClipToRect) final;
     void recordFillRectWithColor(const FloatRect&, const Color&) final;
     void recordFillRectWithGradient(const FloatRect&, Gradient&) final;
-    void recordFillRectWithGradientAndSpaceTransform(const FloatRect&, Gradient&, const AffineTransform&) final;
+    void recordFillRectWithGradientAndSpaceTransform(const FloatRect&, Gradient&, const AffineTransform&, RequiresClipToRect) final;
     void recordFillCompositedRect(const FloatRect&, const Color&, CompositeOperator, BlendMode) final;
     void recordFillRoundedRect(const FloatRoundedRect&, const Color&, BlendMode) final;
     void recordFillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect&, const Color&) final;

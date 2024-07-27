@@ -129,9 +129,9 @@ private:
 
 #if PLATFORM(GTK)
     void getTypes(const String& pasteboardName, CompletionHandler<void(Vector<String>&&)>&&);
-    void readText(const String& pasteboardName, CompletionHandler<void(String&&)>&&);
-    void readFilePaths(const String& pasteboardName, CompletionHandler<void(Vector<String>&&)>&&);
-    void readBuffer(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+    void readText(IPC::Connection&, const String& pasteboardName, CompletionHandler<void(String&&)>&&);
+    void readFilePaths(IPC::Connection&, const String& pasteboardName, CompletionHandler<void(Vector<String>&&)>&&);
+    void readBuffer(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
     void writeToClipboard(const String& pasteboardName, WebCore::SelectionData&&);
     void clearClipboard(const String& pasteboardName);
     void getPasteboardChangeCount(IPC::Connection&, const String& pasteboardName, CompletionHandler<void(int64_t)>&&);

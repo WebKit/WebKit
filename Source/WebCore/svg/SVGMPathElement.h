@@ -30,6 +30,7 @@ class SVGPathElement;
 
 class SVGMPathElement final : public SVGElement, public SVGURIReference {
     WTF_MAKE_ISO_ALLOCATED(SVGMPathElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGMPathElement);
 public:
     static Ref<SVGMPathElement> create(const QualifiedName&, Document&);
 

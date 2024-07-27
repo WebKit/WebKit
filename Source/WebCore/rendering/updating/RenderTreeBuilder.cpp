@@ -916,14 +916,19 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
     WeakPtr destroyRootParent = destroyRoot->parent();
     if (&rendererToDestroy != destroyRoot.get()) {
         // Destroy the child renderer first, before we start tearing down the anonymous wrapper ancestor chain.
+        auto anonymousDestroyRoot = SetForScope { m_anonymousDestroyRoot, destroyRoot };
         destroy(rendererToDestroy);
     }
 
-    if (destroyRoot)
+    if (destroyRoot) {
+        auto anonymousDestroyRoot = SetForScope { m_anonymousDestroyRoot, destroyRoot.get() != &rendererToDestroy ? destroyRoot : nullptr };
         destroy(*destroyRoot);
+    }
 
     if (!destroyRootParent)
         return;
+
+    auto anonymousDestroyRoot = SetForScope { m_anonymousDestroyRoot, destroyRootParent };
     removeAnonymousWrappersForInlineChildrenIfNeeded(*destroyRootParent);
 
     // Anonymous parent might have become empty, try to delete it too.
@@ -969,8 +974,8 @@ static void resetRendererStateOnDetach(RenderElement& parent, RenderObject& chil
         downcast<RenderBox>(child).removeFloatingOrPositionedChildFromBlockLists();
     else if (CheckedPtr parentFlexibleBox = dynamicDowncast<RenderFlexibleBox>(parent)) {
         if (CheckedPtr childBox = dynamicDowncast<RenderBox>(child)) {
-            parentFlexibleBox->clearCachedChildIntrinsicContentLogicalHeight(*childBox);
-            parentFlexibleBox->clearCachedMainSizeForChild(*childBox);
+            parentFlexibleBox->clearCachedFlexItemIntrinsicContentLogicalHeight(*childBox);
+            parentFlexibleBox->clearCachedMainSizeForFlexItem(*childBox);
         }
     }
 

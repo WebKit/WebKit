@@ -35,6 +35,7 @@
 #import "WebPushDaemonConnectionConfiguration.h"
 #import "WebPushDaemonConstants.h"
 #import <JavaScriptCore/ConsoleTypes.h>
+#import <WebCore/NotificationData.h>
 #import <WebCore/PushPermissionState.h>
 #import <wtf/HexNumber.h>
 #import <wtf/Vector.h>
@@ -44,6 +45,10 @@
 #if PLATFORM(MAC)
 #import <bsm/libbsm.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
+#endif
+
+#if PLATFORM(IOS)
+#import "UIKitSPI.h"
 #endif
 
 using WebKit::Daemon::Encoder;
@@ -65,6 +70,7 @@ void PushClientConnection::updateConnectionConfiguration(WebPushDaemonConnection
     if (configuration.hostAppAuditTokenData)
         setHostAppAuditTokenData(*configuration.hostAppAuditTokenData);
 
+    m_bundleIdentifierOverride = configuration.bundleIdentifierOverride;
     m_pushPartitionString = configuration.pushPartitionString;
     m_dataStoreIdentifier = configuration.dataStoreIdentifier;
     m_useMockBundlesForTesting = configuration.useMockBundlesForTesting;
@@ -113,6 +119,8 @@ const String& PushClientConnection::hostAppCodeSigningIdentifier()
 #else
         if (!m_hostAppAuditToken)
             m_hostAppCodeSigningIdentifier = String();
+        else if (!m_bundleIdentifierOverride.isEmpty() && hostAppHasPushInjectEntitlement())
+            m_hostAppCodeSigningIdentifier = m_bundleIdentifierOverride;
         else
             m_hostAppCodeSigningIdentifier = bundleIdentifierFromAuditToken(*m_hostAppAuditToken);
 #endif
@@ -236,12 +244,57 @@ void PushClientConnection::didShowNotificationForTesting(URL&& scopeURL, Complet
     WebPushDaemon::singleton().didShowNotificationForTesting(*this, WTFMove(scopeURL), WTFMove(replySender));
 }
 
-void PushClientConnection::getPushPermissionState(URL&&, CompletionHandler<void(const Expected<uint8_t, WebCore::ExceptionData>&)>&& replySender)
+void PushClientConnection::getPushPermissionState(URL&& scopeURL, CompletionHandler<void(WebCore::PushPermissionState)>&& replySender)
 {
-    // FIXME: This doesn't actually get called right now, since the permission is currently checked
-    // in WebProcess. However, we've left this stub in for now because there is a chance that we
-    // will move the permission check into webpushd when supporting other platforms.
-    replySender(static_cast<uint8_t>(WebCore::PushPermissionState::Denied));
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+    WebPushDaemon::singleton().getPushPermissionState(*this, WTFMove(scopeURL), WTFMove(replySender));
+#else
+    replySender({ });
+#endif
+}
+
+void PushClientConnection::showNotification(const WebCore::NotificationData& notificationData, RefPtr<WebCore::NotificationResources> notificationResources, CompletionHandler<void()>&& completionHandler)
+{
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+    WebPushDaemon::singleton().showNotification(*this, notificationData, notificationResources, WTFMove(completionHandler));
+#else
+    completionHandler();
+#endif
+}
+
+void PushClientConnection::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+    WebPushDaemon::singleton().getNotifications(*this, registrationURL, tag, WTFMove(completionHandler));
+#else
+    completionHandler({ });
+#endif
+}
+
+void PushClientConnection::cancelNotification(const WTF::UUID& notificationID)
+{
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+    WebPushDaemon::singleton().cancelNotification(*this, notificationID);
+#endif
+}
+
+#if PLATFORM(IOS)
+String PushClientConnection::associatedWebClipTitle() const
+{
+    if (!m_associatedWebClip)
+        m_associatedWebClip = [UIWebClip webClipWithIdentifier:(NSString *)m_pushPartitionString];
+    return m_associatedWebClip.get().title;
+}
+#endif // PLATFORM(IOS)
+
+void PushClientConnection::enableMockUserNotificationCenterForTesting(CompletionHandler<void()>&& completionHandler)
+{
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+    WebPushDaemon::singleton().enableMockUserNotificationCenterForTesting(*this);
+    completionHandler();
+#else
+    completionHandler();
+#endif
 }
 
 } // namespace WebPushD

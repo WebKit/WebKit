@@ -149,6 +149,50 @@ void testPGMRealloc()
     new_realloc_memory = bmalloc_try_reallocate((void *) alloc_memory.begin, 0, pas_non_compact_allocation_mode, pas_reallocate_free_always);
 }
 
+void testPGMMetaData()
+{
+    pas_heap_ref heapRef = ISO_HEAP_REF_INITIALIZER_WITH_ALIGNMENT(getpagesize() * 100, getpagesize());
+    pas_heap* heap = iso_heap_ref_get_heap(&heapRef);
+    pas_physical_memory_transaction transaction;
+    pas_physical_memory_transaction_construct(&transaction);
+
+    pas_heap_lock_lock();
+
+    size_t init_free_virtual_mem = pas_probabilistic_guard_malloc_get_free_virtual_memory();
+    size_t init_free_wasted_mem = pas_probabilistic_guard_malloc_get_free_wasted_memory();
+    pas_ptr_hash_map_entry** metadata_array = pas_probabilistic_guard_malloc_get_metadata_array();
+
+    size_t num_allocations = 1000, num_success_allocs = 0, num_de_allocs = 0;
+    pas_allocation_result mem_storage[num_allocations];
+
+    for (size_t i = 0; i < num_allocations; i++ ) {
+        size_t alloc_size = 20;
+        pas_allocation_result mem = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+        mem_storage[i] = mem;
+        if (mem_storage[i].did_succeed)
+            num_success_allocs++;
+    }
+
+    for (size_t i = 0; i < num_allocations; i++) {
+        pas_probabilistic_guard_malloc_deallocate(reinterpret_cast<void *>(mem_storage[i].begin));
+
+        if (mem_storage[i].did_succeed)
+            /* MetaData entry should be preserved during above deallocation for respective object memory */
+            if (reinterpret_cast<uintptr_t>(metadata_array[i % MAX_PGM_HASH_ENTRIES]->key) == mem_storage[i].begin)
+                num_de_allocs++;
+    }
+
+    size_t updated_free_virtual_mem = pas_probabilistic_guard_malloc_get_free_virtual_memory();
+    size_t updated_free_wasted_mem = pas_probabilistic_guard_malloc_get_free_wasted_memory();
+
+    CHECK_EQUAL(init_free_virtual_mem, updated_free_virtual_mem);
+    CHECK_EQUAL(init_free_wasted_mem, updated_free_wasted_mem);
+
+    CHECK_EQUAL(num_success_allocs, num_de_allocs);
+
+    pas_heap_lock_unlock();
+}
+
 /* Ensure all PGM errors cases are handled. */
 void testPGMErrors() {
     pas_heap_ref heapRef = ISO_HEAP_REF_INITIALIZER_WITH_ALIGNMENT(getpagesize() * 100, getpagesize());
@@ -215,4 +259,5 @@ void addPGMTests() {
     ADD_TEST(testPGMMultipleAlloc());
     ADD_TEST(testPGMRealloc());
     ADD_TEST(testPGMErrors());
+    ADD_TEST(testPGMMetaData());
 }

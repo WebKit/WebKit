@@ -424,7 +424,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
 
             if (result.match == Match::SelectorMatches || result.match == Match::SelectorFailsAllSiblings || result.match == Match::SelectorFailsCompletely)
                 return MatchResult::updateWithMatchType(result, matchType);
-        };
+        }
         return MatchResult::fails(Match::SelectorFailsAllSiblings);
     }
     case CSSSelector::Relation::Subselector:
@@ -1110,7 +1110,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
 #endif
 
         case CSSSelector::PseudoClass::Scope: {
-            const Node* contextualReferenceNode = !checkingContext.scope ? element.document().documentElement() : checkingContext.scope;
+            const Node* contextualReferenceNode = !checkingContext.scope ? element.document().documentElement() : checkingContext.scope.get();
             return &element == contextualReferenceNode;
         }
         case CSSSelector::PseudoClass::State:

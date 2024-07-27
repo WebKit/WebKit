@@ -73,12 +73,12 @@ void CSSParser::parseSheetForInspector(const CSSParserContext& context, StyleShe
 
 RefPtr<StyleRuleBase> CSSParser::parseRule(const CSSParserContext& context, StyleSheetContents* sheet, const String& string, CSSParserEnum::IsNestedContext isNestedContext)
 {
-    return CSSParserImpl::parseRule(string, context, sheet, CSSParserImpl::AllowImportRules, isNestedContext);
+    return CSSParserImpl::parseRule(string, context, sheet, CSSParserImpl::AllowedRules::ImportRules, isNestedContext);
 }
 
 RefPtr<StyleRuleKeyframe> CSSParser::parseKeyframeRule(const String& string)
 {
-    RefPtr keyframe = CSSParserImpl::parseRule(string, m_context, nullptr, CSSParserImpl::KeyframeRules);
+    RefPtr keyframe = CSSParserImpl::parseRule(string, m_context, nullptr, CSSParserImpl::AllowedRules::KeyframeRules);
     return downcast<StyleRuleKeyframe>(keyframe.get());
 }
 
@@ -141,7 +141,7 @@ RefPtr<CSSValue> CSSParser::parseSingleValue(CSSPropertyID propertyID, const Str
     return CSSPropertyParser::parseSingleValue(propertyID, tokenizer.tokenRange(), context);
 }
 
-CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration, CSSPropertyID propertyID, const String& string, bool important, const CSSParserContext& context)
+CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration, CSSPropertyID propertyID, const String& string, IsImportant important, const CSSParserContext& context)
 {
     ASSERT(!string.isEmpty());
     if (RefPtr value = CSSParserFastPaths::maybeParseValue(propertyID, string, context))
@@ -150,12 +150,12 @@ CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration
     return parser.parseValue(declaration, propertyID, string, important);
 }
 
-CSSParser::ParseResult CSSParser::parseCustomPropertyValue(MutableStyleProperties& declaration, const AtomString& propertyName, const String& string, bool important, const CSSParserContext& context)
+CSSParser::ParseResult CSSParser::parseCustomPropertyValue(MutableStyleProperties& declaration, const AtomString& propertyName, const String& string, IsImportant important, const CSSParserContext& context)
 {
     return CSSParserImpl::parseCustomPropertyValue(declaration, propertyName, string, important, context);
 }
 
-CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration, CSSPropertyID propertyID, const String& string, bool important)
+CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration, CSSPropertyID propertyID, const String& string, IsImportant important)
 {
     return CSSParserImpl::parseValue(declaration, propertyID, string, important, m_context);
 }

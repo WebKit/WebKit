@@ -175,7 +175,7 @@ CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& requ
         options.storedCredentialsPolicy = StoredCredentialsPolicy::Use;
         break;
     case FetchOptions::Credentials::SameOrigin:
-        options.storedCredentialsPolicy = document.securityOrigin().canRequest(request.url(), OriginAccessPatternsForWebProcess::singleton()) ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
+        options.storedCredentialsPolicy = document.protectedSecurityOrigin()->canRequest(request.url(), OriginAccessPatternsForWebProcess::singleton()) ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
         break;
     case FetchOptions::Credentials::Omit:
         options.storedCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;

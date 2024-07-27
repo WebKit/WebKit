@@ -32,6 +32,7 @@ class SVGAttributeAnimator;
 
 class SVGAnimateElementBase : public SVGAnimationElement {
     WTF_MAKE_ISO_ALLOCATED(SVGAnimateElementBase);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAnimateElementBase);
 public:
     bool isDiscreteAnimator() const;
 

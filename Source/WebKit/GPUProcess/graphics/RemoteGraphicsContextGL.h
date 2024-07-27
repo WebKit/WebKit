@@ -29,8 +29,10 @@
 
 #include "Connection.h"
 #include "GPUConnectionToWebProcess.h"
+#include "GPUProcess.h"
 #include "GraphicsContextGLIdentifier.h"
 #include "RemoteRenderingBackend.h"
+#include "RemoteSharedResourceCache.h"
 #include "ScopedWebGLRenderingResourcesRequest.h"
 #include "SharedVideoFrame.h"
 #include "StreamMessageReceiver.h"
@@ -147,6 +149,7 @@ protected:
 private:
     void paintNativeImageToImageBuffer(WebCore::NativeImage&, WebCore::RenderingResourceIdentifier);
     bool webXREnabled() const;
+    bool webXRPromptAccepted() const;
 
 protected:
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;

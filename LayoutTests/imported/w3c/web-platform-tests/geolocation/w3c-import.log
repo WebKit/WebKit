@@ -1,0 +1,38 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/PositionOptions.https.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/clearWatch_TypeError.https.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/disabled-by-permissions-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/disabled-by-permissions-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/enabled-by-permission-policy-attribute-redirect-on-load.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/enabled-by-permission-policy-attribute.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/enabled-by-permissions-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/enabled-by-permissions-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/enabled-on-self-origin-by-permissions-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/enabled-on-self-origin-by-permissions-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/getCurrentPosition_TypeError.https.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/getCurrentPosition_permission_allow.https.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/getCurrentPosition_permission_deny.https.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/idlharness.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/non-fully-active.https.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/non-secure-contexts.http.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/permission.https.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/support.js
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/tojson.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/watchPosition_TypeError.https.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation/watchPosition_permission_deny.https.html

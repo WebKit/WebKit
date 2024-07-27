@@ -108,6 +108,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textOrientation(static_cast<unsigned>(TextOrientation::Mixed))
     , textIndentLine(static_cast<unsigned>(RenderStyle::initialTextIndentLine()))
     , textIndentType(static_cast<unsigned>(RenderStyle::initialTextIndentType()))
+    , textUnderlinePosition(static_cast<unsigned>(RenderStyle::initialTextUnderlinePosition().toRaw()))
     , lineBoxContain(static_cast<unsigned>(RenderStyle::initialLineBoxContain().toRaw()))
     , imageOrientation(RenderStyle::initialImageOrientation())
     , imageRendering(static_cast<unsigned>(RenderStyle::initialImageRendering()))
@@ -119,7 +120,6 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textAlignLast(static_cast<unsigned>(RenderStyle::initialTextAlignLast()))
     , textJustify(static_cast<unsigned>(RenderStyle::initialTextJustify()))
     , textDecorationSkipInk(static_cast<unsigned>(RenderStyle::initialTextDecorationSkipInk()))
-    , textUnderlinePosition(static_cast<unsigned>(RenderStyle::initialTextUnderlinePosition()))
     , rubyPosition(static_cast<unsigned>(RenderStyle::initialRubyPosition()))
     , textZoom(static_cast<unsigned>(RenderStyle::initialTextZoom()))
 #if PLATFORM(IOS_FAMILY)
@@ -145,6 +145,7 @@ StyleRareInheritedData::StyleRareInheritedData()
 #if ENABLE(DARK_MODE_CSS)
     , colorScheme(RenderStyle::initialColorScheme())
 #endif
+    , quotes(RenderStyle::initialQuotes())
     , appleColorFilter(StyleFilterData::create())
     , lineGrid(RenderStyle::initialLineGrid())
     , tabSize(RenderStyle::initialTabSize())
@@ -200,6 +201,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , textOrientation(o.textOrientation)
     , textIndentLine(o.textIndentLine)
     , textIndentType(o.textIndentType)
+    , textUnderlinePosition(o.textUnderlinePosition)
     , lineBoxContain(o.lineBoxContain)
     , imageOrientation(o.imageOrientation)
     , imageRendering(o.imageRendering)
@@ -211,7 +213,6 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , textAlignLast(o.textAlignLast)
     , textJustify(o.textJustify)
     , textDecorationSkipInk(o.textDecorationSkipInk)
-    , textUnderlinePosition(o.textUnderlinePosition)
     , rubyPosition(o.rubyPosition)
     , textZoom(o.textZoom)
 #if PLATFORM(IOS_FAMILY)
@@ -244,6 +245,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , colorScheme(o.colorScheme)
 #endif
     , textEmphasisCustomMark(o.textEmphasisCustomMark)
+    , quotes(o.quotes)
     , appleColorFilter(o.appleColorFilter)
     , lineGrid(o.lineGrid)
     , tabSize(o.tabSize)
@@ -256,6 +258,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , listStyleType(o.listStyleType)
     , scrollbarColor(o.scrollbarColor)
 {
+    ASSERT(o == *this, "StyleRareInheritedData should be properly copied.");
 }
 
 Ref<StyleRareInheritedData> StyleRareInheritedData::copy() const

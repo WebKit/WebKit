@@ -57,7 +57,7 @@ public:
     // embellished operator, and omits any embellishments.
     // FIXME: We don't yet handle all the cases in the MathML spec. See
     // https://bugs.webkit.org/show_bug.cgi?id=78617.
-    virtual RenderMathMLOperator* unembellishedOperator() const { return 0; }
+    virtual RenderMathMLOperator* unembellishedOperator() const { return nullptr; }
 
     LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
 
@@ -77,7 +77,6 @@ protected:
     static inline LayoutUnit ascentForChild(const RenderBox& child);
 
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
-    void layoutInvalidMarkup(bool relayoutChildren);
     void computeAndSetBlockDirectionMarginsOfChildren();
 
 private:

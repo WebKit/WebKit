@@ -37,7 +37,7 @@ function showCookies()
 
 function sendXHR(queryCommand)
 {
-    var baseurl = "http://localhost:8000/cookies/resources/cookie-utility.py";
+    var baseurl = location.origin + "/cookies/resources/cookie-utility.py";
     var url = queryCommand ? baseurl + "?queryfunction=" + queryCommand : baseurl;
     console.log(url);
     var req = new XMLHttpRequest();

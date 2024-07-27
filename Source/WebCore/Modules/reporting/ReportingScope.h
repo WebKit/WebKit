@@ -58,6 +58,8 @@ public:
     void notifyReportObservers(Ref<Report>&&);
     void appendQueuedReportsForRelevantType(ReportingObserver&);
 
+    bool containsObserver(const ReportingObserver&) const;
+
     static MemoryCompactRobinHoodHashMap<String, String> parseReportingEndpointsFromHeader(const String&, const URL& baseURL);
     void parseReportingEndpoints(const String&, const URL& baseURL);
 

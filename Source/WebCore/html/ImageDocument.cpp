@@ -98,6 +98,7 @@ private:
 
 class ImageDocumentElement final : public HTMLImageElement {
     WTF_MAKE_ISO_ALLOCATED_INLINE(ImageDocumentElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ImageDocumentElement);
 public:
     static Ref<ImageDocumentElement> create(ImageDocument&);
 
@@ -427,7 +428,7 @@ void ImageDocument::imageClicked(int x, int y)
 void ImageEventListener::handleEvent(ScriptExecutionContext&, Event& event)
 {
     RefPtr document = m_document.get();
-    if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && event.type() == eventNames().clickEvent && document)
+    if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && isAnyClick(event) && document)
         document->imageClicked(mouseEvent->offsetX(), mouseEvent->offsetY());
 }
 

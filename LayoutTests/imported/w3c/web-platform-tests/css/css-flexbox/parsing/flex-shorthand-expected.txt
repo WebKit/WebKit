@@ -35,4 +35,8 @@ PASS e.style['flex'] = "1 0 max-content" should set flex-basis
 PASS e.style['flex'] = "1 0 max-content" should set flex-grow
 PASS e.style['flex'] = "1 0 max-content" should set flex-shrink
 PASS e.style['flex'] = "1 0 max-content" should not set unrelated longhands
+PASS e.style['flex'] = "auto 1 2" should set flex-basis
+PASS e.style['flex'] = "auto 1 2" should set flex-grow
+PASS e.style['flex'] = "auto 1 2" should set flex-shrink
+PASS e.style['flex'] = "auto 1 2" should not set unrelated longhands
 

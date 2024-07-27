@@ -49,6 +49,8 @@ void JSGenericTypedArrayViewPrototype<ViewClass>::finishCreation(
 
     if constexpr (std::is_same_v<ViewClass, JSUint8Array>) {
         if (Options::useUint8ArrayBase64Methods()) {
+            JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("setFromBase64"_s, uint8ArrayPrototypeSetFromBase64, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+            JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("setFromHex"_s, uint8ArrayPrototypeSetFromHex, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
             JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toBase64"_s, uint8ArrayPrototypeToBase64, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
             JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toHex"_s, uint8ArrayPrototypeToHex, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
         }

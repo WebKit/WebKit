@@ -201,8 +201,11 @@ LMPlayableViewController *VideoPresentationInterfaceLMK::playableViewController(
 
 void VideoPresentationInterfaceLMK::ensurePlayableViewController()
 {
-    if (!m_playerViewController)
-        m_playerViewController = [linearMediaPlayer() makeViewController];
+    if (m_playerViewController)
+        return;
+
+    m_playerViewController = [linearMediaPlayer() makeViewController];
+    [m_playerViewController view].alpha = 0;
 }
 
 } // namespace WebKit

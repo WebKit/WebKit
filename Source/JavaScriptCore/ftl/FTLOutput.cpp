@@ -332,6 +332,16 @@ LValue Output::doubleSqrt(LValue value)
     return m_block->appendNew<B3::Value>(m_proc, B3::Sqrt, origin(), value);
 }
 
+LValue Output::doubleMax(LValue lhs, LValue rhs)
+{
+    return m_block->appendNew<B3::Value>(m_proc, B3::FMax, origin(), lhs, rhs);
+}
+
+LValue Output::doubleMin(LValue lhs, LValue rhs)
+{
+    return m_block->appendNew<B3::Value>(m_proc, B3::FMin, origin(), lhs, rhs);
+}
+
 LValue Output::doubleToInt(LValue value)
 {
     PatchpointValue* result = patchpoint(Int32);

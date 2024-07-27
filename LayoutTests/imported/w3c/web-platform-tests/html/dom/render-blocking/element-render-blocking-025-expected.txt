@@ -1,0 +1,3 @@
+
+FAIL adding an id in the body satisfies render block assert_false: expected false got true
+

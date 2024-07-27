@@ -217,6 +217,8 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     else
         m_delegateMethods.webViewRequestPermissionForXRSessionOriginModeAndFeaturesWithCompletionHandler = [delegate respondsToSelector:@selector(_webView:requestPermissionForXRSessionOrigin:mode:grantedFeatures:consentRequiredFeatures:consentOptionalFeatures:completionHandler:)];
 
+    m_delegateMethods.webViewSupportedXRSessionFeatures = [delegate respondsToSelector:@selector(_webView:supportedXRSessionFeatures:arFeatures:)];
+
 #if PLATFORM(IOS_FAMILY)
     if ([delegate respondsToSelector:@selector(_webView:startXRSessionWithFeatures:completionHandler:)])
         m_delegateMethods.webViewStartXRSessionWithCompletionHandler = true;
@@ -2066,6 +2068,22 @@ void UIDelegate::UIClient::requestPermissionOnXRSessionFeatures(WebPageProxy&, c
             checker->didCallCompletionHandler();
             completionHandler(toPlatformXRFeatures(userGrantedFeatures));
         }).get()];
+    }
+}
+
+void UIDelegate::UIClient::supportedXRSessionFeatures(PlatformXR::Device::FeatureList& vrFeatures, PlatformXR::Device::FeatureList& arFeatures)
+{
+    if (m_uiDelegate && m_uiDelegate->m_delegateMethods.webViewSupportedXRSessionFeatures) {
+        auto delegate = (id<WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
+        if (delegate) {
+            _WKXRSessionFeatureFlags wkVRfeatures = _WKXRSessionFeatureFlagsNone;
+            _WKXRSessionFeatureFlags wkARfeatures = _WKXRSessionFeatureFlagsNone;
+
+            [delegate _webView:m_uiDelegate->m_webView.get().get() supportedXRSessionFeatures:&wkVRfeatures arFeatures:&wkARfeatures];
+
+            vrFeatures = toPlatformXRFeatures(wkVRfeatures).value_or(PlatformXR::Device::FeatureList());
+            arFeatures = toPlatformXRFeatures(wkARfeatures).value_or(PlatformXR::Device::FeatureList());
+        }
     }
 }
 

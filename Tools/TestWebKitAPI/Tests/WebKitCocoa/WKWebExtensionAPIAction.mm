@@ -1283,10 +1283,10 @@ TEST(WKWebExtensionAPIAction, NavigationOpensInNewTab)
     };
 
     manager.get().internalDelegate.openNewTab = ^(_WKWebExtensionTabCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
-        EXPECT_NS_EQUAL(options.desiredURL, localhostRequest.URL);
-        EXPECT_NS_EQUAL(options.desiredWindow, manager.get().defaultWindow);
-        EXPECT_EQ(options.desiredIndex, 1ul);
-        EXPECT_EQ(options.shouldActivate, YES);
+        EXPECT_NS_EQUAL(options.url, localhostRequest.URL);
+        EXPECT_NS_EQUAL(options.window, manager.get().defaultWindow);
+        EXPECT_EQ(options.index, 1ul);
+        EXPECT_EQ(options.active, YES);
 
         originalOpenNewTab(options, context, completionHandler);
 

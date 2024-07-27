@@ -34,12 +34,16 @@
 #import "FrontBoardServicesSPI.h"
 #import "HandleMessage.h"
 #import "LaunchServicesSPI.h"
+#import "UserNotificationsSPI.h"
+#import "_WKMockUserNotificationCenter.h"
 
+#import <WebCore/LocalizedStrings.h>
 #import <WebCore/NotificationData.h>
 #import <WebCore/NotificationPayload.h>
 #import <WebCore/SecurityOriginData.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <span>
+#import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/HexNumber.h>
 #import <wtf/NeverDestroyed.h>
@@ -50,6 +54,7 @@
 #import <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
+#import "UIKitSPI.h"
 #import <UIKit/UIApplication.h>
 #endif
 
@@ -72,6 +77,9 @@ WebPushDaemon& WebPushDaemon::singleton()
 WebPushDaemon::WebPushDaemon()
     : m_incomingPushTransactionTimer { *this, &WebPushDaemon::incomingPushTransactionTimerFired }
     , m_silentPushTimer { *this, &WebPushDaemon::silentPushTimerFired }
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+    , m_userNotificationCenterClass { [UNUserNotificationCenter class] }
+#endif
 {
 }
 
@@ -248,7 +256,7 @@ void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection
     }
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)
 
-    PushSubscriptionSetIdentifier identifier { .bundleIdentifier = message.targetAppCodeSigningIdentifier, .pushPartition = message.pushPartitionString };
+    PushSubscriptionSetIdentifier identifier { .bundleIdentifier = message.targetAppCodeSigningIdentifier, .pushPartition = message.pushPartitionString, .dataStoreIdentifier = connection.dataStoreIdentifier() };
     auto addResult = m_pushMessages.ensure(identifier, [] {
         return Deque<WebKit::WebPushMessage> { };
     });
@@ -580,6 +588,171 @@ PushClientConnection* WebPushDaemon::toPushClientConnection(xpc_connection_t con
     RELEASE_ASSERT(clientConnection);
     return clientConnection;
 }
+
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+
+static bool platformShouldPlaySound(const WebCore::NotificationData& data)
+{
+#if PLATFORM(IOS)
+    return data.silent == std::nullopt || !(*data.silent);
+#elif PLATFORM(MAC)
+    return data.silent != std::nullopt && !(*data.silent);
+#else
+    return false;
+#endif
+}
+
+static NSString *platformDefaultActionBundleIdentifier()
+{
+#if PLATFORM(IOS)
+    return @"com.apple.webapp";
+#else
+    // FIXME: Calculate appropriate value on macOS
+    return nil;
+#endif
+}
+
+static RetainPtr<NSString> platformNotificationCenterBundleIdentifier(PushClientConnection& connection)
+{
+#if PLATFORM(IOS)
+    return [NSString stringWithFormat:@"com.apple.WebKit.PushBundle.%@", (NSString *)connection.pushPartitionString()];
+#else
+    // FIXME: Calculate the correct values on macOS in a non-testing environment.
+    RELEASE_ASSERT(connection.hostAppCodeSigningIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s);
+    return [NSString stringWithFormat:@"com.apple.WebKit.PushBundle.%@", (NSString *)connection.pushPartitionString()];
+#endif
+}
+
+static NSString *platformNotificationSourceForDisplay(PushClientConnection& connection)
+{
+#if PLATFORM(IOS)
+    return (NSString *)connection.associatedWebClipTitle();
+#else
+    // FIXME: Calculate appropriate value on macOS
+    return nil;
+#endif
+}
+
+void WebPushDaemon::enableMockUserNotificationCenterForTesting(PushClientConnection& connection)
+{
+    RELEASE_ASSERT(connection.hostAppCodeSigningIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s);
+    m_userNotificationCenterClass = [_WKMockUserNotificationCenter class];
+}
+
+void WebPushDaemon::showNotification(PushClientConnection& connection, const WebCore::NotificationData& notificationData, RefPtr<WebCore::NotificationResources> resources, CompletionHandler<void()>&& completionHandler)
+{
+    RetainPtr content = adoptNS([[UNMutableNotificationContent alloc] init]);
+
+    [content setDefaultActionBundleIdentifier:platformDefaultActionBundleIdentifier()];
+
+    content.get().targetContentIdentifier = (NSString *)connection.pushPartitionString();
+    content.get().title = (NSString *)notificationData.title;
+    content.get().body = (NSString *)notificationData.body;
+
+    if (platformShouldPlaySound(notificationData))
+        content.get().sound = [UNNotificationSound defaultSound];
+
+    auto notificationCenterBundleIdentifier = platformNotificationCenterBundleIdentifier(connection);
+
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+    content.get().icon = [UNNotificationIcon iconForApplicationIdentifier:notificationCenterBundleIdentifier.get()];
+#endif
+
+    NSString *notificationSourceForDisplay = platformNotificationSourceForDisplay(connection);
+    if (!notificationSourceForDisplay.length)
+        notificationSourceForDisplay = (NSString *)notificationData.originString;
+
+ALLOW_NONLITERAL_FORMAT_BEGIN
+    content.get().subtitle = [NSString stringWithFormat:(NSString *)WEB_UI_STRING("from %@", "Web Push Notification string to indicate the name of the Web App/Web Site a notification was sent from, such as 'from Wikipedia'"), notificationSourceForDisplay];
+ALLOW_NONLITERAL_FORMAT_END
+
+    content.get().userInfo = notificationData.dictionaryRepresentation();
+
+    UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:(NSString *)notificationData.notificationID.toString() content:content.get() trigger:nil];
+    RetainPtr center = adoptNS([[m_userNotificationCenterClass alloc] initWithBundleIdentifier:notificationCenterBundleIdentifier.get()]);
+    if (!center)
+        RELEASE_LOG_ERROR(Push, "Failed to instantiate UNUserNotificationCenter center");
+
+    auto blockPtr = makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+        if (error)
+            RELEASE_LOG_ERROR(Push, "Failed to add notification request: %{private}@", error.description);
+        completionHandler();
+    });
+
+    [center addNotificationRequest:request withCompletionHandler:blockPtr.get()];
+}
+
+void WebPushDaemon::getNotifications(PushClientConnection& connection, const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    auto placeholderBundleIdentifier = platformNotificationCenterBundleIdentifier(connection);
+    RetainPtr center = adoptNS([[m_userNotificationCenterClass alloc] initWithBundleIdentifier:placeholderBundleIdentifier.get()]);
+
+    auto blockPtr = makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSArray<UNNotification *> *notifications) mutable {
+        Vector<WebCore::NotificationData> notificationDatas;
+        for (UNNotification *notification in notifications) {
+            auto notificationData = WebCore::NotificationData::fromDictionary(notification.request.content.userInfo);
+            if (!notificationData) {
+                RELEASE_LOG_ERROR(Push, "GetNotifications - Skipping notification with invalid Notification userInfo");
+                continue;
+            }
+            notificationDatas.append(*notificationData);
+        }
+
+        completionHandler(notificationDatas);
+    });
+
+
+    [center getDeliveredNotificationsWithCompletionHandler:blockPtr.get()];
+}
+
+void WebPushDaemon::cancelNotification(PushClientConnection& connection, const WTF::UUID& notificationID)
+{
+    auto placeholderBundleIdentifier = platformNotificationCenterBundleIdentifier(connection);
+    RetainPtr center = adoptNS([[m_userNotificationCenterClass alloc] initWithBundleIdentifier:placeholderBundleIdentifier.get()]);
+
+    auto identifiers = @[ (NSString *)notificationID.toString() ];
+    [center removePendingNotificationRequestsWithIdentifiers:identifiers];
+    [center removeDeliveredNotificationsWithIdentifiers:identifiers];
+}
+
+void WebPushDaemon::getPushPermissionState(PushClientConnection& connection, const URL& scopeURL, CompletionHandler<void(WebCore::PushPermissionState)>&& replySender)
+{
+    auto identifier = connection.subscriptionSetIdentifier();
+    if (identifier.pushPartition.isEmpty()) {
+        WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "Denied push permission since no pushPartition specified");
+        return replySender(WebCore::PushPermissionState::Denied);
+    }
+
+#if PLATFORM(IOS)
+    const auto& webClipIdentifier = identifier.pushPartition;
+    RetainPtr webClip = [UIWebClip webClipWithIdentifier:(NSString *)webClipIdentifier];
+    URL webClipURL { [webClip pageURL] };
+
+    if (webClipURL.isEmpty() || scopeURL.isEmpty() || !protocolHostAndPortAreEqual(webClipURL, scopeURL)) {
+        WEBPUSHDAEMON_RELEASE_LOG(Push, "Denied push permission because web clip URL %{sensitive}@ (empty: %d) does not match scope %{sensitive}@ (empty: %d)", (NSURL *)webClipURL, webClipURL.isEmpty(), (NSURL *)scopeURL, scopeURL.isEmpty());
+        return replySender(WebCore::PushPermissionState::Denied);
+    }
+#endif
+
+    auto notificationCenterBundleIdentifier = platformNotificationCenterBundleIdentifier(connection);
+    RetainPtr center = adoptNS([[UNUserNotificationCenter alloc] initWithBundleIdentifier:notificationCenterBundleIdentifier.get()]);
+
+    auto blockPtr = makeBlockPtr([replySender = WTFMove(replySender)](UNNotificationSettings *settings) mutable {
+        auto permissionState = [](UNAuthorizationStatus status) {
+            switch (status) {
+            case UNAuthorizationStatusNotDetermined: return WebCore::PushPermissionState::Prompt;
+            case UNAuthorizationStatusDenied: return WebCore::PushPermissionState::Denied;
+            case UNAuthorizationStatusAuthorized: return WebCore::PushPermissionState::Granted;
+            default: return WebCore::PushPermissionState::Prompt;
+            }
+        }(settings.authorizationStatus);
+        replySender(permissionState);
+    });
+
+    [center getNotificationSettingsWithCompletionHandler:blockPtr.get()];
+}
+
+#endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
 
 } // namespace WebPushD
 

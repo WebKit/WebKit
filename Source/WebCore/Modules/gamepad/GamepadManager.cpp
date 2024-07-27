@@ -39,6 +39,10 @@
 #include "PlatformGamepad.h"
 #include <wtf/NeverDestroyed.h>
 
+#if PLATFORM(VISION)
+#include "Page.h"
+#endif
+
 namespace WebCore {
 
 static NavigatorGamepad* navigatorGamepadFromDOMWindow(LocalDOMWindow& window)
@@ -57,6 +61,20 @@ GamepadManager::GamepadManager()
 {
 }
 
+#if PLATFORM(VISION)
+void GamepadManager::findUnquarantinedNavigatorsAndWindows(WeakHashSet<NavigatorGamepad>& navigators, WeakHashSet<LocalDOMWindow, WeakPtrImplWithEventTargetData>& windows)
+{
+    for (auto& navigator : m_navigators) {
+        if (!m_gamepadQuarantinedNavigators.contains(navigator))
+            navigators.add(navigator);
+    }
+    for (auto& window : m_domWindows) {
+        if (!m_gamepadQuarantinedDOMWindows.contains(window))
+            windows.add(window);
+    }
+}
+#endif
+
 void GamepadManager::platformGamepadConnected(PlatformGamepad& platformGamepad, EventMakesGamepadsVisible eventVisibility)
 {
     if (eventVisibility == EventMakesGamepadsVisible::No)
@@ -73,8 +91,16 @@ void GamepadManager::platformGamepadConnected(PlatformGamepad& platformGamepad, 
     m_gamepadBlindNavigators.clear();
     m_gamepadBlindDOMWindows.clear();
 
+#if PLATFORM(VISION)
+    // Notify everyone not in the quarantined list of this new gamepad.
+    WeakHashSet<NavigatorGamepad> navigators;
+    WeakHashSet<LocalDOMWindow, WeakPtrImplWithEventTargetData> windows;
+    findUnquarantinedNavigatorsAndWindows(navigators, windows);
+    makeGamepadVisible(platformGamepad, navigators, windows);
+#else
     // Notify everyone of this new gamepad.
     makeGamepadVisible(platformGamepad, m_navigators, m_domWindows);
+#endif
 }
 
 void GamepadManager::platformGamepadDisconnected(PlatformGamepad& platformGamepad)
@@ -96,6 +122,10 @@ void GamepadManager::platformGamepadDisconnected(PlatformGamepad& platformGamepa
         // If this Navigator hasn't seen gamepads yet then its Window should not get the disconnect event.
         if (m_gamepadBlindNavigators.contains(*navigator))
             continue;
+#if PLATFORM(VISION)
+        if (m_gamepadQuarantinedNavigators.contains(*navigator))
+            continue;
+#endif
 
         Ref<Gamepad> gamepad(navigator->gamepadFromPlatformGamepad(platformGamepad));
 
@@ -164,7 +194,16 @@ void GamepadManager::registerNavigator(NavigatorGamepad& navigator)
 
     ASSERT(!m_navigators.contains(navigator));
     m_navigators.add(navigator);
+
+#if PLATFORM(VISION)
+    auto page = navigator.protectedPage();
+    if (page && page->gamepadAccessGranted())
+        m_gamepadBlindNavigators.add(navigator);
+    else
+        m_gamepadQuarantinedNavigators.add(navigator);
+#else
     m_gamepadBlindNavigators.add(navigator);
+#endif
 
     maybeStartMonitoringGamepads();
 }
@@ -176,6 +215,10 @@ void GamepadManager::unregisterNavigator(NavigatorGamepad& navigator)
     ASSERT(m_navigators.contains(navigator));
     m_navigators.remove(navigator);
     m_gamepadBlindNavigators.remove(navigator);
+
+#if PLATFORM(VISION)
+    m_gamepadQuarantinedNavigators.remove(navigator);
+#endif
 
     maybeStopMonitoringGamepads();
 }
@@ -191,13 +234,26 @@ void GamepadManager::registerDOMWindow(LocalDOMWindow& window)
     NavigatorGamepad* navigator = navigatorGamepadFromDOMWindow(window);
     ASSERT(navigator);
 
-    if (m_navigators.add(*navigator).isNewEntry)
+    if (m_navigators.add(*navigator).isNewEntry) {
+#if PLATFORM(VISION)
+        auto page = navigator->protectedPage();
+        if (page && page->gamepadAccessGranted())
+            m_gamepadBlindNavigators.add(*navigator);
+        else
+            m_gamepadQuarantinedNavigators.add(*navigator);
+#else
         m_gamepadBlindNavigators.add(*navigator);
+#endif
+    }
 
     // If this LocalDOMWindow's NavigatorGamepad was already registered but was still blind,
     // then this LocalDOMWindow should be blind.
     if (m_gamepadBlindNavigators.contains(*navigator))
         m_gamepadBlindDOMWindows.add(window);
+#if PLATFORM(VISION)
+    else if (m_gamepadQuarantinedNavigators.contains(*navigator))
+        m_gamepadQuarantinedDOMWindows.add(window);
+#endif
 
     maybeStartMonitoringGamepads();
 }
@@ -210,8 +266,49 @@ void GamepadManager::unregisterDOMWindow(LocalDOMWindow& window)
     m_domWindows.remove(window);
     m_gamepadBlindDOMWindows.remove(window);
 
+#if PLATFORM(VISION)
+    m_gamepadQuarantinedDOMWindows.remove(window);
+#endif
+
     maybeStopMonitoringGamepads();
 }
+
+#if PLATFORM(VISION)
+void GamepadManager::updateQuarantineStatus()
+{
+    if (m_gamepadQuarantinedNavigators.isEmptyIgnoringNullReferences() && m_gamepadQuarantinedDOMWindows.isEmptyIgnoringNullReferences())
+        return;
+
+    WeakHashSet<NavigatorGamepad> navigators;
+    WeakHashSet<LocalDOMWindow, WeakPtrImplWithEventTargetData> windows;
+    for (auto& navigator : m_gamepadQuarantinedNavigators) {
+        auto page = navigator.protectedPage();
+        if (page && page->gamepadAccessGranted()) {
+            LOG(Gamepad, "(%u) GamepadManager found navigator %p to release from quarantine", (unsigned)getpid(), &navigator);
+            navigators.add(navigator);
+        }
+    }
+    for (auto& window : m_gamepadQuarantinedDOMWindows) {
+        auto page = window.protectedPage();
+        if (page && page->gamepadAccessGranted()) {
+            LOG(Gamepad, "(%u) GamepadManager found window %p to release from quarantine", (unsigned)getpid(), &window);
+            windows.add(window);
+        }
+    }
+
+    if (navigators.isEmptyIgnoringNullReferences() && windows.isEmptyIgnoringNullReferences())
+        return;
+
+    for (auto& navigator : navigators) {
+        m_gamepadBlindNavigators.add(navigator);
+        m_gamepadQuarantinedNavigators.remove(navigator);
+    }
+    for (auto& window : windows) {
+        m_gamepadBlindDOMWindows.add(window);
+        m_gamepadQuarantinedDOMWindows.remove(window);
+    }
+}
+#endif // PLATFORM(VISION)
 
 void GamepadManager::maybeStartMonitoringGamepads()
 {

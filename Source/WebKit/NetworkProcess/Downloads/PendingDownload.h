@@ -63,7 +63,11 @@ public:
     void cancel(CompletionHandler<void(std::span<const uint8_t>)>&&);
 
 #if PLATFORM(COCOA)
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    void publishProgress(const URL&, std::span<const uint8_t>);
+#else
     void publishProgress(const URL&, SandboxExtension::Handle&&);
+#endif
     void didBecomeDownload(const std::unique_ptr<Download>&);
 #endif
 
@@ -89,7 +93,11 @@ private:
 
 #if PLATFORM(COCOA)
     URL m_progressURL;
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    Vector<uint8_t> m_bookmarkData;
+#else
     SandboxExtension::Handle m_progressSandboxExtension;
+#endif
 #endif
 };
 

@@ -5,5 +5,5 @@ Test Description: This test checks if PointerEvent constructor works properly wi
 The following pointer types were detected: .
 
 
-FAIL PointerEvent: Constructor test event.getCoalescedEvents is not a function. (In 'event.getCoalescedEvents()', 'event.getCoalescedEvents' is undefined)
+FAIL PointerEvent: Constructor test event.getPredictedEvents is not a function. (In 'event.getPredictedEvents()', 'event.getPredictedEvents' is undefined)
 

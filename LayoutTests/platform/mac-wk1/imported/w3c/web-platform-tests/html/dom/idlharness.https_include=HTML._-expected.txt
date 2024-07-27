@@ -242,7 +242,7 @@ PASS HTMLElement interface: attribute innerText
 PASS HTMLElement interface: attribute outerText
 PASS HTMLElement interface: operation attachInternals()
 PASS HTMLElement interface: attribute onabort
-FAIL HTMLElement interface: attribute onauxclick assert_true: The prototype object must have a property "onauxclick" expected true got false
+PASS HTMLElement interface: attribute onauxclick
 PASS HTMLElement interface: attribute onblur
 PASS HTMLElement interface: attribute oncancel
 PASS HTMLElement interface: attribute oncanplay
@@ -339,7 +339,7 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "outerText" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "attachInternals()" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onabort" with the proper type
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onauxclick" with the proper type assert_inherits: property "onauxclick" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onauxclick" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onblur" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncancel" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncanplay" with the proper type

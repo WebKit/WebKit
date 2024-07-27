@@ -45,7 +45,7 @@ auto BaselineJITPlan::compileInThreadImpl(JITCompilationEffort effort) -> Compil
     Safepoint::Result result;
     {
         Safepoint safepoint(*this, result);
-        safepoint.begin();
+        safepoint.begin(false);
 
         JIT jit(*m_vm, *this, m_codeBlock);
         auto jitCode = jit.compileAndLinkWithoutFinalizing(effort);

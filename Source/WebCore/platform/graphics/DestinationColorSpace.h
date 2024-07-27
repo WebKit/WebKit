@@ -51,6 +51,8 @@ public:
 
     WEBCORE_EXPORT std::optional<DestinationColorSpace> asRGB() const;
 
+    WEBCORE_EXPORT bool supportsOutput() const;
+
 private:
     PlatformColorSpace m_platformColorSpace;
 };

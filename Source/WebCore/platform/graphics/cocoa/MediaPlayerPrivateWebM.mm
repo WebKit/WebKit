@@ -133,7 +133,7 @@ MediaPlayerPrivateWebM::MediaPlayerPrivateWebM(MediaPlayer* player)
     ALWAYS_LOG(LOGIDENTIFIER, "synchronizer initial rate:", [m_synchronizer rate]);
     [m_synchronizer setRate:0];
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    m_videoTarget = player->videoTarget();
+    setVideoTarget(player->videoTarget());
 #endif
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
@@ -814,8 +814,8 @@ void MediaPlayerPrivateWebM::acceleratedRenderingStateChanged()
 void MediaPlayerPrivateWebM::updateDisplayLayerAndDecompressionSession()
 {
     if (shouldEnsureLayerOrVideoRenderer()) {
-        destroyDecompressionSession();
-        ensureLayerOrVideoRenderer();
+        auto needsRenderingModeChanged = destroyDecompressionSession();
+        ensureLayerOrVideoRenderer(needsRenderingModeChanged);
         return;
     }
 
@@ -1535,15 +1535,16 @@ void MediaPlayerPrivateWebM::destroyLayer()
     m_sampleBufferDisplayLayer = nullptr;
 }
 
-void MediaPlayerPrivateWebM::destroyDecompressionSession()
+MediaPlayerEnums::NeedsRenderingModeChanged MediaPlayerPrivateWebM::destroyDecompressionSession()
 {
     if (!m_decompressionSession)
-        return;
+        return MediaPlayerEnums::NeedsRenderingModeChanged::No;
 
     m_decompressionSession->invalidate();
     m_decompressionSession = nullptr;
     m_hasAvailableVideoFrameSemaphore = nullptr;
     setHasAvailableVideoFrame(false);
+    return MediaPlayerEnums::NeedsRenderingModeChanged::Yes;
 }
 
 void MediaPlayerPrivateWebM::ensureVideoRenderer()
@@ -1769,7 +1770,7 @@ void MediaPlayerPrivateWebM::videoRendererReadyForDisplayChanged(WebSampleBuffer
     setHasAvailableVideoFrame(true);
 }
 
-void MediaPlayerPrivateWebM::ensureLayerOrVideoRenderer()
+void MediaPlayerPrivateWebM::ensureLayerOrVideoRenderer(MediaPlayerEnums::NeedsRenderingModeChanged needsRenderingModeChanged)
 {
     switch (acceleratedVideoMode()) {
     case AcceleratedVideoMode::Layer:
@@ -1796,23 +1797,34 @@ void MediaPlayerPrivateWebM::ensureLayerOrVideoRenderer()
 
     ALWAYS_LOG(LOGIDENTIFIER, acceleratedVideoMode(), ", renderer=", !!renderer);
 
-    bool needsRenderingModeChanged;
     switch (acceleratedVideoMode()) {
     case AcceleratedVideoMode::Layer:
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+        if (!m_usingLinearMediaPlayer)
+            needsRenderingModeChanged = MediaPlayerEnums::NeedsRenderingModeChanged::Yes;
+#else
+        needsRenderingModeChanged = MediaPlayerEnums::NeedsRenderingModeChanged::Yes;
+#endif
+        FALLTHROUGH;
     case AcceleratedVideoMode::VideoRenderer:
-        needsRenderingModeChanged = true;
         setVideoRenderer(renderer.get());
         break;
     case AcceleratedVideoMode::StagedLayer:
+        needsRenderingModeChanged = MediaPlayerEnums::NeedsRenderingModeChanged::Yes;
+        FALLTHROUGH;
     case AcceleratedVideoMode::StagedVideoRenderer:
-        needsRenderingModeChanged = false;
         stageVideoRenderer(renderer.get());
         break;
     }
 
-    RefPtr player = m_player.get();
-    if (player && needsRenderingModeChanged)
-        player->renderingModeChanged();
+    switch (needsRenderingModeChanged) {
+    case MediaPlayerEnums::NeedsRenderingModeChanged::Yes:
+        if (RefPtr player = m_player.get())
+            player->renderingModeChanged();
+        break;
+    case MediaPlayerEnums::NeedsRenderingModeChanged::No:
+        break;
+    }
 }
 
 void MediaPlayerPrivateWebM::setShouldDisableHDR(bool shouldDisable)
@@ -1879,18 +1891,21 @@ void MediaPlayerPrivateWebM::updateSpatialTrackingLabel()
 {
     auto *renderer = m_sampleBufferVideoRenderer ? m_sampleBufferVideoRenderer.get() : [m_sampleBufferDisplayLayer sampleBufferRenderer];
     if (!m_spatialTrackingLabel.isNull()) {
+        INFO_LOG(LOGIDENTIFIER, "Explicitly set STSLabel: ", m_spatialTrackingLabel);
         renderer.STSLabel = m_spatialTrackingLabel;
         return;
     }
 
-    if (renderer) {
+    if (renderer && m_visible) {
         // Let AVSBRS manage setting the spatial tracking label in its video renderer itself.
+        INFO_LOG(LOGIDENTIFIER, "Has visible renderer, set STSLabel: nil");
         renderer.STSLabel = nil;
         return;
     }
 
     if (m_audioRenderers.empty()) {
         // If there are no audio renderers, there's nothing to do.
+        INFO_LOG(LOGIDENTIFIER, "No audio renderers - no-op");
         return;
     }
 
@@ -1898,7 +1913,14 @@ void MediaPlayerPrivateWebM::updateSpatialTrackingLabel()
     // the session's spatial tracking label if not, and set the label directly on each audio
     // renderer.
     AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
-    auto *defaultLabel = !m_defaultSpatialTrackingLabel.isNull() ? (NSString *)m_defaultSpatialTrackingLabel : session.spatialTrackingLabel;
+    String defaultLabel;
+    if (!m_defaultSpatialTrackingLabel.isNull()) {
+        INFO_LOG(LOGIDENTIFIER, "Default STSLabel: ", m_defaultSpatialTrackingLabel);
+        defaultLabel = m_defaultSpatialTrackingLabel;
+    } else {
+        INFO_LOG(LOGIDENTIFIER, "AVAudioSession label: ", session.spatialTrackingLabel);
+        defaultLabel = session.spatialTrackingLabel;
+    }
     for (auto& renderer : m_audioRenderers)
         [(__bridge AVSampleBufferAudioRenderer *)renderer.second.get() setSTSLabel:defaultLabel];
 }

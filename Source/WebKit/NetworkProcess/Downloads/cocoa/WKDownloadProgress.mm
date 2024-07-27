@@ -38,6 +38,9 @@ static void* WKDownloadProgressBytesReceivedContext = &WKDownloadProgressBytesRe
 static NSString * const countOfBytesExpectedToReceiveKeyPath = @"countOfBytesExpectedToReceive";
 static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
 
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+#import <WebKitAdditions/DownloadProgressAdditions.mm>
+#else
 @implementation WKDownloadProgress {
     RetainPtr<NSURLSessionDownloadTask> m_task;
     WeakPtr<WebKit::Download> m_download;
@@ -148,3 +151,4 @@ static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
 }
 
 @end
+#endif

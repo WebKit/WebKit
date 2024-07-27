@@ -6,7 +6,7 @@ import Builder from '../Builder.js'
 
 const verbose = false;
 const numFunctions = 2;
-const maxParams = 128;
+const maxParams = 16;
 
 // This test starts running with a few bytes of executable memory available. Try
 // to create and instantiate modules which have way more exports than anything

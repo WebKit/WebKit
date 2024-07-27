@@ -139,6 +139,13 @@ public:
     void dump(PrintStream&) const;
 
     CacheableIdentifier singleIdentifier() const;
+
+    bool viaGlobalProxy() const
+    {
+        if (m_variants.isEmpty())
+            return false;
+        return m_variants.first().viaGlobalProxy();
+    }
     
 private:
     void merge(const GetByStatus&);

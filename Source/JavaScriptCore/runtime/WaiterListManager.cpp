@@ -56,23 +56,6 @@ Waiter::Waiter(JSPromise* promise)
 {
 }
 
-Waiter::~Waiter()
-{
-    if (m_ticket) {
-        ASSERT(m_ticket->isCancelled());
-        scheduleWorkAndClearTicket([](DeferredWorkTimer::Ticket) mutable { });
-    }
-}
-
-void Waiter::scheduleWorkAndClearTicket(DeferredWorkTimer::Task&& task)
-{
-    ASSERT(m_isAsync && m_vm && !isOnList());
-    // If the ticket is already be removed from the the pending tickets, then do nothing here.
-    if (!m_ticket)
-        return;
-    auto ticket = std::exchange(m_ticket, nullptr);
-    m_vm->deferredWorkTimer->scheduleWorkSoon(ticket, WTFMove(task));
-}
 
 WaiterListManager& WaiterListManager::singleton()
 {
@@ -231,7 +214,7 @@ void WaiterListManager::notifyWaiterImpl(const AbstractLocker& listLocker, Ref<W
     ASSERT(!waiter->isOnList());
 
     if (waiter->isAsync()) {
-        waiter->scheduleWorkAndClearTicket([resolveResult](DeferredWorkTimer::Ticket ticket) {
+        waiter->scheduleWorkAndClear(listLocker, [resolveResult](DeferredWorkTimer::Ticket ticket) {
             JSPromise* promise = jsCast<JSPromise*>(ticket->target());
             JSGlobalObject* globalObject = promise->globalObject();
             ASSERT(ticket->globalObject() == globalObject);
@@ -239,9 +222,6 @@ void WaiterListManager::notifyWaiterImpl(const AbstractLocker& listLocker, Ref<W
             JSValue result = resolveResult == ResolveResult::Ok ? vm.smallStrings.okString() : vm.smallStrings.timedOutString();
             promise->resolve(globalObject, result);
         });
-
-        // The AsyncWaiter's timer holds the waiter's reference. We must cancel it after the waiter done its job.
-        waiter->cancelTimer(listLocker);
         return;
     }
 
@@ -275,12 +255,25 @@ size_t WaiterListManager::totalWaiterCount()
     return totalCount;
 }
 
-void WaiterListManager::cancelAsyncWaiter(const AbstractLocker& listLocker, Waiter* waiter)
+void Waiter::scheduleWorkAndClear(const AbstractLocker& listLocker, DeferredWorkTimer::Task&& task)
 {
-    ASSERT(waiter->isAsync());
-    auto ticket = waiter->ticket(listLocker);
-    waiter->vm()->deferredWorkTimer->cancelPendingWork(ticket);
-    waiter->cancelTimer(listLocker);
+    ASSERT(m_isAsync && m_vm && !isOnList());
+    if (auto ticket = this->ticket(listLocker)) {
+        m_vm->deferredWorkTimer->scheduleWorkSoon(ticket.get(), WTFMove(task));
+        clearTicket(listLocker);
+    }
+    clearTimer(listLocker);
+}
+
+void Waiter::cancelAndClear(const AbstractLocker& listLocker)
+{
+    ASSERT(m_isAsync);
+    if (auto ticket = this->ticket(listLocker)) {
+        m_vm->deferredWorkTimer->cancelPendingWork(ticket.get());
+        m_vm->deferredWorkTimer->scheduleWorkSoon(ticket.get(), [](DeferredWorkTimer::Ticket) { });
+        clearTicket(listLocker);
+    }
+    clearTimer(listLocker);
 }
 
 void WaiterListManager::unregister(VM* vm)
@@ -299,7 +292,7 @@ void WaiterListManager::unregister(VM* vm)
                 // If the vm is about destructing, then it shouldn't
                 // been blocked. That means we shouldn't find any SyncWaiter.
                 ASSERT(waiter->isAsync());
-                cancelAsyncWaiter(listLocker, waiter);
+                waiter->cancelAndClear(listLocker);
                 return true;
             }
             return false;
@@ -315,14 +308,13 @@ void WaiterListManager::unregister(JSGlobalObject* globalObject)
         Locker listLocker { list->lock };
         list->removeIf(listLocker, [&](Waiter* waiter) {
             if (waiter->isAsync()) {
-                RefPtr<DeferredWorkTimer::TicketData> ticket = waiter->ticket(listLocker);
-                if (ticket && !ticket->isCancelled() && ticket->globalObject() == globalObject) {
+                if (auto ticket = waiter->ticket(listLocker); ticket && !ticket->isCancelled() && ticket->globalObject() == globalObject) {
                     dataLogLnIf(WaiterListsManagerInternal::verbose,
                         "<WaiterListManager> <Thread:", Thread::current(),
                         "> unregister JSGlobalObject is cancelling waiter=", *waiter,
                         " in WaiterList for ptr ", RawPointer(entry.key));
 
-                    cancelAsyncWaiter(listLocker, waiter);
+                    waiter->cancelAndClear(listLocker);
                     return true;
                 }
             }
@@ -352,14 +344,14 @@ void WaiterListManager::unregister(uint8_t* arrayPtr, size_t size)
                 // See example, waitasync-timeout-finite-gc.js.
                 //
                 // OK, let's say if the ticket has a valid timer and its globalObject is about being
-                // destructed later but before the timeout. Then, we cannot cancel the timer from
+                // destructed later but before the timeout. Then, we cannot cancel the work from
                 // `unregister(JSGlobalObject* globalObject)` since the waiter is already removed
                 // from the lists by this code. So, should we keep it in the list? No, in either
                 // case, we have to remove it since all lists associating to the SAB (about destructing)
                 // must be removed. This is because there may be a new SAB with a waiter at the same address.
                 // Therefore, we will let `clearWeakTickets` to handle this special case.
                 if (!waiter->hasTimer(listLocker))
-                    cancelAsyncWaiter(listLocker, waiter);
+                    waiter->cancelAndClear(listLocker);
                 return true;
             });
 
@@ -398,11 +390,12 @@ void Waiter::dump(PrintStream& out) const
         return;
     }
 
-    out.print(", ticket=", RawPointer(m_ticket));
-    if (m_ticket && !m_ticket->isCancelled()) {
-        out.print(", m_ticket->globalObject=", RawPointer(m_ticket->globalObject()));
-        out.print(", m_ticket->target=", RawPointer(jsCast<JSObject*>(m_ticket->dependencies().last().get())));
-        out.print(", m_ticket->scriptExecutionOwner=", RawPointer(m_ticket->scriptExecutionOwner()));
+    auto ticket = this->ticket(NoLockingNecessary);
+    out.print(", ticket=", RawPointer(ticket.get()));
+    if (ticket && !ticket->isCancelled()) {
+        out.print(", m_ticket->globalObject=", RawPointer(ticket->globalObject()));
+        out.print(", m_ticket->target=", RawPointer(jsCast<JSObject*>(ticket->dependencies().last().get())));
+        out.print(", m_ticket->scriptExecutionOwner=", RawPointer(ticket->scriptExecutionOwner()));
     }
 
     out.print(", m_timer=", RawPointer(m_timer.get()));

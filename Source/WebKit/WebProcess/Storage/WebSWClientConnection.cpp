@@ -43,6 +43,7 @@
 #include "WebSWServerConnectionMessages.h"
 #include <WebCore/BackgroundFetchInformation.h>
 #include <WebCore/BackgroundFetchRequest.h>
+#include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FocusController.h>
@@ -296,6 +297,19 @@ void WebSWClientConnection::getPushPermissionState(WebCore::ServiceWorkerRegistr
 
 void WebSWClientConnection::getNotifications(const URL& registrationURL, const String& tag, GetNotificationsCallback&& callback)
 {
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+    if (DeprecatedGlobalSettings::builtInNotificationsEnabled()) {
+        sendWithAsyncReply(Messages::WebSWServerConnection::GetNotifications { registrationURL, tag }, [callback = WTFMove(callback)](auto&& result) mutable {
+            if (!result.has_value())
+                return callback(result.error().toException());
+
+            callback(static_cast<Vector<NotificationData>>(*result));
+        });
+
+        return;
+    }
+#endif
+
     WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebProcessProxy::GetNotifications { registrationURL, tag }, WTFMove(callback));
 }
 

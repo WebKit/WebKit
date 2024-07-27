@@ -162,6 +162,7 @@ public:
     void setUsePerTargetPresentingApplicationPIDs(bool usePerTargetPresentingApplicationPIDs) { m_usePerTargetPresentingApplicationPIDs = usePerTargetPresentingApplicationPIDs; }
 
     bool isSimulatingCustomerInstall() const { return m_simulateCustomerInstall; }
+    void connectToWebInspector();
 #endif
 
     void updateTargetListing(TargetID);

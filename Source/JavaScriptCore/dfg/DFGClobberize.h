@@ -224,7 +224,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case CompareEqPtr:
         def(PureValue(node, node->cellOperand()->cell()));
         return;
-        
+
+    case UnwrapGlobalProxy:
+        read(JSGlobalProxy_target);
+        def(HeapLocation(GlobalProxyTargetLoc, JSGlobalProxy_target, node->child1()), LazyNode(node));
+        return;
+
     case ArithIMul:
     case ArithPow:
     case GetScope:
@@ -236,6 +241,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case CompareStrictEq:
     case SameValue:
     case IsEmpty:
+    case IsEmptyStorage:
     case TypeOfIsUndefined:
     case IsUndefinedOrNull:
     case IsBoolean:
@@ -2107,7 +2113,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(PureValue(node));
         return;
 
-    case MapKeyIndex: {
+    case MapGet: {
         Edge& mapEdge = node->child1();
         Edge& keyEdge = node->child2();
         Edge& hashEdge = node->child3();
@@ -2116,12 +2122,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(HeapLocation(MapEntryKeyLoc, heap, mapEdge, keyEdge, hashEdge), LazyNode(node));
         return;
     }
-    case MapValue: {
-        Edge& mapEdge = node->child1();
-        Edge& indexEdge = node->child2();
+    case LoadMapValue: {
+        Edge& keySlotEdge = node->child1();
         AbstractHeapKind heap = JSMapFields;
         read(heap);
-        def(HeapLocation(MapValueLoc, heap, mapEdge, indexEdge), LazyNode(node));
+        def(HeapLocation(LoadMapValueLoc, heap, keySlotEdge), LazyNode(node));
         return;
     }
 

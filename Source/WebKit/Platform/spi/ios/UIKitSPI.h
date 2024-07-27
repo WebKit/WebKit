@@ -29,7 +29,6 @@
 
 #import <CoreSVG/CGSVGDocument.h>
 #import <UIKit/NSTextAlternatives.h>
-#import <UIKit/UIActivityViewController_Private.h>
 #import <UIKit/UIAlertController_Private.h>
 #import <UIKit/UIApplication+iOSMac_Private.h>
 #import <UIKit/UIApplication_Private.h>
@@ -86,6 +85,7 @@
 #import <UIKit/UIVisualEffect_Private.h>
 #import <UIKit/UIWKTextInteractionAssistant.h>
 #import <UIKit/UIWebBrowserView.h>
+#import <UIKit/UIWebClip.h>
 #import <UIKit/UIWebDocumentView.h>
 #import <UIKit/UIWebTiledView.h>
 #import <UIKit/UIWindowScene_Private.h>
@@ -139,10 +139,17 @@
 #endif
 
 #if PLATFORM(VISION)
+#import <UIKit/UIActivityViewController_Private.h>
 #import <UIKit/UIView+SpatialComputing.h>
 #endif
 
 #else // USE(APPLE_INTERNAL_SDK)
+
+@interface UIWebClip : NSObject
++ (UIWebClip *)webClipWithIdentifier:(NSString *)identifier;
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic, retain) NSURL *pageURL;
+@end
 
 #if ENABLE(DRAG_SUPPORT)
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
@@ -584,9 +591,11 @@ extern NSString * const UIPresentationControllerDismissalTransitionDidEndComplet
 - (UIWindow *)window;
 @end
 
+#if PLATFORM(VISION)
 @interface UIActivityViewController ()
 @property (nonatomic) BOOL allowsCustomPresentationStyle;
 @end
+#endif // PLATFORM(VISION)
 
 @interface UIView ()
 + (BOOL)_isInAnimationBlock;
@@ -1214,6 +1223,14 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @end
 
 @class UITextInputArrowKeyHistory;
+
+#if HAVE(UI_FOCUS_ITEM_DEFERRAL_MODE)
+// FIXME: <rdar://131799614> Remove staging code.
+
+typedef NS_ENUM(NSInteger, UIFocusItemDeferralMode);
+
+#define UIFocusItemDeferralModeNever 2
+#endif
 
 WTF_EXTERN_C_BEGIN
 

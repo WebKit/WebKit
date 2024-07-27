@@ -27,7 +27,9 @@
 #error "Please #include <pal/spi/cocoa/PassKitSPI.h> instead of this file directly."
 #endif
 
-#if HAVE(PASSKIT_INSTALLMENTS_IN_SDK)
+#if HAVE(PASSKIT_INSTALLMENTS)
+
+#if USE(APPLE_INTERNAL_SDK)
 
 #if HAVE(PASSKIT_MODULARIZATION)
 #import <PassKitCore/PKPaymentRequest_Private.h>
@@ -39,7 +41,7 @@
 #import <PassKitCore/PKPaymentRequestStatus_Private.h>
 #import <PassKitCore/PKPayment_Private.h>
 
-#elif HAVE(PASSKIT_INSTALLMENTS)
+#else // !USE(APPLE_INTERNAL_SDK)
 
 typedef NS_ENUM(NSInteger, PKInstallmentItemType) {
     PKInstallmentItemTypeGeneric = 0,
@@ -114,7 +116,7 @@ typedef NS_ENUM(NSUInteger, PKPaymentRequestType) {
 // only when building against an internal SDK without PKPaymentInstallmentConfiguration.h (so that we
 // can implement a -respondsToSelector: check). The __has_include portion of this check can be
 // removed once the minimum supported Catalina internal SDK is known to contain this private header.
-#if !USE(APPLE_INTERNAL_SDK) || !__has_include(<PassKitCore/PKPaymentInstallmentConfiguration.h>)
+#if !__has_include(<PassKitCore/PKPaymentInstallmentConfiguration.h>)
 
 typedef NS_OPTIONS(NSInteger, PKPaymentSetupFeatureSupportedOptions) {
     PKPaymentSetupFeatureSupportedOptionsInstallments = 1 << 0,
@@ -124,6 +126,8 @@ typedef NS_OPTIONS(NSInteger, PKPaymentSetupFeatureSupportedOptions) {
 @property (nonatomic, assign, readonly) PKPaymentSetupFeatureSupportedOptions supportedOptions;
 @end
 
-#endif
+#endif // !__has_include(<PassKitCore/PKPaymentInstallmentConfiguration.h>)
+
+#endif // !USE(APPLE_INTERNAL_SDK)
 
 #endif // HAVE(PASSKIT_INSTALLMENTS)

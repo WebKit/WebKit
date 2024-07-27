@@ -33,6 +33,8 @@
 #include <WebCore/SelectionData.h>
 #include <WebCore/SharedBuffer.h>
 #include <gtk/gtk.h>
+#include <variant>
+#include <wtf/RefCounted.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -74,118 +76,185 @@ void Clipboard::formats(CompletionHandler<void(Vector<String>&&)>&& completionHa
     completionHandler(WTFMove(result));
 }
 
-struct ReadTextAsyncData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+class ClipboardTask final : public RefCounted<ClipboardTask> {
+public:
 
-    explicit ReadTextAsyncData(CompletionHandler<void(String&&)>&& handler)
-        : completionHandler(WTFMove(handler))
+    static Ref<ClipboardTask> create(GdkClipboard* clipboard, Clipboard::ReadMode readMode)
     {
+        return adoptRef(*new ClipboardTask(clipboard, readMode));
     }
 
-    CompletionHandler<void(String&&)> completionHandler;
-};
+    ~ClipboardTask() = default;
 
-void Clipboard::readText(CompletionHandler<void(String&&)>&& completionHandler)
-{
-    gdk_clipboard_read_text_async(m_clipboard, nullptr, [](GObject* clipboard, GAsyncResult* result, gpointer userData) {
-        std::unique_ptr<ReadTextAsyncData> data(static_cast<ReadTextAsyncData*>(userData));
-        GUniquePtr<char> text(gdk_clipboard_read_text_finish(GDK_CLIPBOARD(clipboard), result, nullptr));
-        data->completionHandler(String::fromUTF8(text.get()));
-    }, new ReadTextAsyncData(WTFMove(completionHandler)));
-}
+    using ReadTextCompletionHandler = CompletionHandler<void(String&&)>;
 
-struct ReadFilePathsAsyncData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-
-    explicit ReadFilePathsAsyncData(CompletionHandler<void(Vector<String>&&)>&& handler)
-        : completionHandler(WTFMove(handler))
+    void readText(ReadTextCompletionHandler&& completionHandler)
     {
+        RefPtr protectedThis = RefPtr { this };
+        m_completionHandler = WTFMove(completionHandler);
+        gdk_clipboard_read_text_async(m_clipboard, m_cancellable.get(), [](GObject* clipboard, GAsyncResult* result, gpointer userData) {
+            auto task = adoptRef(static_cast<ClipboardTask*>(userData));
+            GUniqueOutPtr<GError> error;
+            GUniquePtr<char> text(gdk_clipboard_read_text_finish(GDK_CLIPBOARD(clipboard), result, &error.outPtr()));
+            std::get<ReadTextCompletionHandler>(task->m_completionHandler)(String::fromUTF8(text.get()));
+            task->done(error.get());
+        }, protectedThis.leakRef());
+        run();
     }
 
-    CompletionHandler<void(Vector<String>&&)> completionHandler;
-};
+    using ReadFilePathsCompletionHandler = CompletionHandler<void(Vector<String>&&)>;
 
-void Clipboard::readFilePaths(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
-{
-    gdk_clipboard_read_value_async(m_clipboard, GDK_TYPE_FILE_LIST, G_PRIORITY_DEFAULT, nullptr, [](GObject* clipboard, GAsyncResult* result, gpointer userData) {
-        std::unique_ptr<ReadFilePathsAsyncData> data(static_cast<ReadFilePathsAsyncData*>(userData));
-        Vector<String> filePaths;
-        if (const GValue* value = gdk_clipboard_read_value_finish(GDK_CLIPBOARD(clipboard), result, nullptr)) {
-            auto* list = static_cast<GSList*>(g_value_get_boxed(value));
-            for (auto* l = list; l && l->data; l = g_slist_next(l)) {
-                auto* file = G_FILE(l->data);
-                if (!g_file_is_native(file))
-                    continue;
-
-                GUniquePtr<gchar> filename(g_file_get_path(file));
-                if (filename)
-                    filePaths.append(String::fromUTF8(filename.get()));
-            }
-        }
-        data->completionHandler(WTFMove(filePaths));
-    }, new ReadFilePathsAsyncData(WTFMove(completionHandler)));
-}
-
-struct ReadBufferAsyncData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-
-    explicit ReadBufferAsyncData(CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&& handler)
-        : completionHandler(WTFMove(handler))
+    void readFilePaths(ReadFilePathsCompletionHandler&& completionHandler)
     {
-    }
+        RefPtr protectedThis = RefPtr { this };
+        m_completionHandler = WTFMove(completionHandler);
+        gdk_clipboard_read_value_async(m_clipboard, GDK_TYPE_FILE_LIST, G_PRIORITY_DEFAULT, m_cancellable.get(), [](GObject* clipboard, GAsyncResult* result, gpointer userData) {
+            auto task = adoptRef(static_cast<ClipboardTask*>(userData));
+            Vector<String> filePaths;
+            GUniqueOutPtr<GError> error;
+            if (const GValue* value = gdk_clipboard_read_value_finish(GDK_CLIPBOARD(clipboard), result, &error.outPtr())) {
+                auto* list = static_cast<GSList*>(g_value_get_boxed(value));
+                for (auto* iter = list; iter && iter->data; iter = g_slist_next(iter)) {
+                    auto* file = G_FILE(iter->data);
+                    if (!g_file_is_native(file))
+                        continue;
 
-    CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)> completionHandler;
-};
-
-void Clipboard::readBuffer(const char* format, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&& completionHandler)
-{
-    const char* mimeTypes[] = { format, nullptr };
-    gdk_clipboard_read_async(m_clipboard, mimeTypes, G_PRIORITY_DEFAULT, nullptr, [](GObject* clipboard, GAsyncResult* result, gpointer userData) {
-        std::unique_ptr<ReadBufferAsyncData> data(static_cast<ReadBufferAsyncData*>(userData));
-        GRefPtr<GInputStream> inputStream = adoptGRef(gdk_clipboard_read_finish(GDK_CLIPBOARD(clipboard), result, nullptr, nullptr));
-        if (!inputStream) {
-            data->completionHandler(WebCore::SharedBuffer::create());
-            return;
-        }
-
-        GRefPtr<GOutputStream> outputStream = adoptGRef(g_memory_output_stream_new_resizable());
-        g_output_stream_splice_async(outputStream.get(), inputStream.get(),
-            static_cast<GOutputStreamSpliceFlags>(G_OUTPUT_STREAM_SPLICE_CLOSE_SOURCE | G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET),
-            G_PRIORITY_DEFAULT, nullptr, [](GObject* stream, GAsyncResult* result, gpointer userData) {
-                std::unique_ptr<ReadBufferAsyncData> data(static_cast<ReadBufferAsyncData*>(userData));
-                gssize writtenBytes = g_output_stream_splice_finish(G_OUTPUT_STREAM(stream), result, nullptr);
-                if (writtenBytes <= 0) {
-                    data->completionHandler(WebCore::SharedBuffer::create());
-                    return;
+                    GUniquePtr<gchar> filename(g_file_get_path(file));
+                    if (filename)
+                        filePaths.append(String::fromUTF8(filename.get()));
                 }
+            }
+            std::get<ReadFilePathsCompletionHandler>(task->m_completionHandler)(WTFMove(filePaths));
+            task->done(error.get());
+        }, protectedThis.leakRef());
+        run();
+    }
 
-                GRefPtr<GBytes> bytes = adoptGRef(g_memory_output_stream_steal_as_bytes(G_MEMORY_OUTPUT_STREAM(stream)));
-                data->completionHandler(WebCore::SharedBuffer::create(bytes.get()));
-            }, data.release());
-    }, new ReadBufferAsyncData(WTFMove(completionHandler)));
-}
+    using ReadBufferCompletionHandler = CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>;
 
-struct ReadURLAsyncData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    void readBuffer(const char* format, ReadBufferCompletionHandler&& completionHandler)
+    {
+        RefPtr protectedThis = RefPtr { this };
+        m_completionHandler = WTFMove(completionHandler);
+        const char* mimeTypes[] = { format, nullptr };
+        gdk_clipboard_read_async(m_clipboard, mimeTypes, G_PRIORITY_DEFAULT, m_cancellable.get(), [](GObject* clipboard, GAsyncResult* result, gpointer userData) {
+            auto task = adoptRef(static_cast<ClipboardTask*>(userData));
+            GUniqueOutPtr<GError> error;
+            GRefPtr<GInputStream> inputStream = adoptGRef(gdk_clipboard_read_finish(GDK_CLIPBOARD(clipboard), result, nullptr, &error.outPtr()));
+            if (!inputStream) {
+                std::get<ReadBufferCompletionHandler>(task->m_completionHandler)(WebCore::SharedBuffer::create());
+                task->done(error.get());
+                return;
+            }
 
-    explicit ReadURLAsyncData(CompletionHandler<void(String&& url, String&& title)>&& handler)
-        : completionHandler(WTFMove(handler))
+            auto* cancellable = task->m_cancellable.get();
+            GRefPtr<GOutputStream> outputStream = adoptGRef(g_memory_output_stream_new_resizable());
+            g_output_stream_splice_async(outputStream.get(), inputStream.get(), static_cast<GOutputStreamSpliceFlags>(G_OUTPUT_STREAM_SPLICE_CLOSE_SOURCE | G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET),
+                G_PRIORITY_DEFAULT, cancellable, [](GObject* stream, GAsyncResult* result, gpointer userData) {
+                    auto task = adoptRef(static_cast<ClipboardTask*>(userData));
+                    GUniqueOutPtr<GError> error;
+                    gssize writtenBytes = g_output_stream_splice_finish(G_OUTPUT_STREAM(stream), result, &error.outPtr());
+                    if (writtenBytes <= 0) {
+                        std::get<ReadBufferCompletionHandler>(task->m_completionHandler)(WebCore::SharedBuffer::create());
+                        task->done(error.get());
+                        return;
+                    }
+
+                    GRefPtr<GBytes> bytes = adoptGRef(g_memory_output_stream_steal_as_bytes(G_MEMORY_OUTPUT_STREAM(stream)));
+                    std::get<ReadBufferCompletionHandler>(task->m_completionHandler)(WebCore::SharedBuffer::create(bytes.get()));
+                    task->done(error.get());
+                }, task.leakRef());
+        }, protectedThis.leakRef());
+        run();
+    }
+
+    using ReadURLCompletionHandler = CompletionHandler<void(String&& url, String&& title)>;
+
+    void readURL(ReadURLCompletionHandler&& completionHandler)
+    {
+        RefPtr protectedThis = RefPtr { this };
+        m_completionHandler = WTFMove(completionHandler);
+        gdk_clipboard_read_value_async(m_clipboard, GDK_TYPE_FILE_LIST, G_PRIORITY_DEFAULT, m_cancellable.get(), [](GObject* clipboard, GAsyncResult* result, gpointer userData) {
+            auto task = adoptRef(static_cast<ClipboardTask*>(userData));
+            GUniqueOutPtr<GError> error;
+            const GValue* value = gdk_clipboard_read_value_finish(GDK_CLIPBOARD(clipboard), result, &error.outPtr());
+            auto* list = static_cast<GSList*>(g_value_get_boxed(value));
+            auto* file = list && list->data ? G_FILE(list->data) : nullptr;
+            GUniquePtr<char> uri(g_file_get_uri(file));
+            std::get<ReadURLCompletionHandler>(task->m_completionHandler)(uri ? String::fromUTF8(uri.get()) : String(), { });
+            task->done(error.get());
+        }, protectedThis.leakRef());
+        run();
+    }
+
+private:
+    ClipboardTask(GdkClipboard* clipboard, Clipboard::ReadMode readMode)
+        : m_clipboard(clipboard)
+        , m_readMode(readMode)
+        , m_cancellable(readMode == Clipboard::ReadMode::Synchronous ? adoptGRef(g_cancellable_new()) : nullptr)
+        , m_mainLoop(readMode == Clipboard::ReadMode::Synchronous ? adoptGRef(g_main_loop_new(nullptr, FALSE)) : nullptr)
     {
     }
 
-    CompletionHandler<void(String&& url, String&& title)> completionHandler;
+    void run()
+    {
+        if (m_readMode == Clipboard::ReadMode::Asynchronous)
+            return;
+
+        m_timeoutSourceID = g_timeout_add(500, [](gpointer userData) -> gboolean {
+            auto& task = *static_cast<ClipboardTask*>(userData);
+            task.timeout();
+            return G_SOURCE_REMOVE;
+        }, this);
+
+        g_main_loop_run(m_mainLoop.get());
+
+        g_cancellable_cancel(m_cancellable.get());
+        g_clear_handle_id(&m_timeoutSourceID, g_source_remove);
+    }
+
+    void timeout()
+    {
+        RELEASE_ASSERT(m_readMode == Clipboard::ReadMode::Synchronous);
+        m_timeoutSourceID = 0;
+        done(nullptr);
+    }
+
+    void done(GError* error)
+    {
+        if (m_readMode == Clipboard::ReadMode::Asynchronous)
+            return;
+
+        if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+            g_main_loop_quit(m_mainLoop.get());
+    }
+
+    GdkClipboard* m_clipboard { nullptr };
+    Clipboard::ReadMode m_readMode { Clipboard::ReadMode::Asynchronous };
+    GRefPtr<GCancellable> m_cancellable;
+    GRefPtr<GMainLoop> m_mainLoop;
+    unsigned m_timeoutSourceID { 0 };
+    std::variant<ReadTextCompletionHandler, ReadFilePathsCompletionHandler, ReadBufferCompletionHandler, ReadURLCompletionHandler> m_completionHandler;
 };
 
-void Clipboard::readURL(CompletionHandler<void(String&& url, String&& title)>&& completionHandler)
+void Clipboard::readText(CompletionHandler<void(String&&)>&& completionHandler, ReadMode readMode)
 {
-    gdk_clipboard_read_value_async(m_clipboard, GDK_TYPE_FILE_LIST, G_PRIORITY_DEFAULT, nullptr, [](GObject* clipboard, GAsyncResult* result, gpointer userData) {
-        std::unique_ptr<ReadURLAsyncData> data(static_cast<ReadURLAsyncData*>(userData));
-        const GValue* value = gdk_clipboard_read_value_finish(GDK_CLIPBOARD(clipboard), result, nullptr);
-        auto* list = static_cast<GSList*>(g_value_get_boxed(value));
-        auto* file = list && list->data ? G_FILE(list->data) : nullptr;
-        GUniquePtr<char> uri(g_file_get_uri(file));
-        data->completionHandler(uri ? String::fromUTF8(uri.get()) : String(), { });
-    }, new ReadURLAsyncData(WTFMove(completionHandler)));
+    ClipboardTask::create(m_clipboard, readMode)->readText(WTFMove(completionHandler));
+}
+
+void Clipboard::readFilePaths(CompletionHandler<void(Vector<String>&&)>&& completionHandler, ReadMode readMode)
+{
+    ClipboardTask::create(m_clipboard, readMode)->readFilePaths(WTFMove(completionHandler));
+}
+
+void Clipboard::readBuffer(const char* format, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&& completionHandler, ReadMode readMode)
+{
+    ClipboardTask::create(m_clipboard, readMode)->readBuffer(format, WTFMove(completionHandler));
+}
+
+void Clipboard::readURL(CompletionHandler<void(String&& url, String&& title)>&& completionHandler, ReadMode readMode)
+{
+    ClipboardTask::create(m_clipboard, readMode)->readURL(WTFMove(completionHandler));
 }
 
 void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<void(int64_t)>&& completionHandler)

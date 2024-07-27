@@ -35,6 +35,7 @@ enum class RequestPriority : uint8_t;
 
 class HTMLScriptElement final : public HTMLElement, public ScriptElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLScriptElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLScriptElement);
 public:
     static Ref<HTMLScriptElement> create(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted = false);
 

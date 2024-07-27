@@ -106,7 +106,7 @@ private:
 
     RenderView& renderView();
 
-    Document& m_document;
+    Ref<Document> m_document;
     std::unique_ptr<Style::Update> m_styleUpdate;
 
     Vector<Parent> m_parentStack;

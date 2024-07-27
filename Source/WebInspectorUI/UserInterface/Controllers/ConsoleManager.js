@@ -216,8 +216,8 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
 
         switch (reason) {
         case WI.ConsoleManager.ClearReason.Frontend:
-            // COMPATIBILITY (iOS X.Y, macOS X.Y): `Console.ClearReason.Frontend` did not exist yet.
-            // COMPATIBILITY (iOS X.Y, macOS X.Y): `Console.setConsoleClearAPIEnabled` did not exist yet.
+            // COMPATIBILITY (iOS 18.0, macOS 15.0): `Console.ClearReason.Frontend` did not exist yet.
+            // COMPATIBILITY (iOS 18.0, macOS 15.0): `Console.setConsoleClearAPIEnabled` did not exist yet.
             console.assert(InspectorBackend.hasCommand("Console.setConsoleClearAPIEnabled"));
             console.assert(WI.settings.consoleClearAPIEnabled.value);
             // fallthrough
@@ -300,7 +300,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
 
     _setConsoleClearAPIEnabled(target)
     {
-        // COMPATIBILITY (iOS X.Y, macOS X.Y): `Console.setConsoleClearAPIEnabled` did not exist yet.
+        // COMPATIBILITY (iOS 18.0, macOS 15.0): `Console.setConsoleClearAPIEnabled` did not exist yet.
         if (target.hasCommand("Console.setConsoleClearAPIEnabled"))
             target.ConsoleAgent.setConsoleClearAPIEnabled(WI.settings.consoleClearAPIEnabled.value);
     }

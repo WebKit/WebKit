@@ -739,6 +739,7 @@ dom/ActiveDOMObject.cpp
 dom/BroadcastChannel.cpp
 dom/CollectionIndexCache.cpp
 dom/CollectionIndexCacheInlines.h
+dom/CommandEvent.cpp
 dom/ComposedTreeAncestorIterator.h
 dom/ComposedTreeIterator.cpp
 dom/ComposedTreeIterator.h
@@ -766,7 +767,6 @@ dom/FragmentDirectiveRangeFinder.cpp
 dom/FullscreenManager.cpp
 dom/ImageOverlay.cpp
 dom/InlineStyleSheetOwner.cpp
-dom/InvokeEvent.cpp
 dom/KeyboardEvent.cpp
 dom/MessageEvent.cpp
 dom/MessagePort.cpp

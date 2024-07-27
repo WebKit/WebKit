@@ -176,8 +176,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME: <rdar://131638772> UIScreen.mainScreen is deprecated.
     self.view.frame = UIScreen.mainScreen.bounds;
+ALLOW_DEPRECATED_DECLARATIONS_END
     self.view.backgroundColor = [UIColor blackColor];
     [_avPlayerViewController view].autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 }
@@ -896,7 +898,7 @@ void VideoPresentationManagerProxy::setupFullscreenWithID(PlaybackSessionContext
     // Do not add another refcount for this contextId if the interface is already in
     // a fullscreen mode, lest the refcounts get out of sync, as removeClientForContext
     // is only called once both PiP and video fullscreen are fully exited.
-    if (interface->mode() == HTMLMediaElementEnums::VideoFullscreenModeNone)
+    if (interface->mode() == HTMLMediaElementEnums::VideoFullscreenModeNone || interface->mode() == HTMLMediaElementEnums::VideoFullscreenModeInWindow)
         addClientForContext(contextId);
 
     if (m_mockVideoPresentationModeEnabled) {
@@ -916,11 +918,19 @@ void VideoPresentationManagerProxy::setupFullscreenWithID(PlaybackSessionContext
     MESSAGE_CHECK(videoFullscreenMode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture); // setupFullscreen() ASSERTs this so catch it here while we can still fail the message
 #endif
 
-    RetainPtr<WKLayerHostView> view = createLayerHostViewWithID(contextId, videoLayerID, initialSize, hostingDeviceScaleFactor);
+#if PLATFORM(IOS_FAMILY)
+    // The video may not have been rendered yet, which would have triggered a call to createViewWithID/createLayerHostViewWithID making the AVPlayerLayer and AVPlayerLayerView not yet set. Create them as needed.
+    if (!model->videoView())
+        createViewWithID(contextId, videoLayerID, initialSize, videoDimensions, hostingDeviceScaleFactor);
+    ASSERT(model->videoView());
+#endif
 
+    RetainPtr view = model->layerHostView() ? static_cast<WKLayerHostView*>(model->layerHostView()) : createLayerHostViewWithID(contextId, videoLayerID, initialSize, hostingDeviceScaleFactor);
 #if USE(EXTENSIONKIT)
-        if (UIView *visibilityPropagationView = m_page->pageClient().createVisibilityPropagationView())
-            [view setVisibilityPropagationView:visibilityPropagationView];
+    if (UIView *visibilityPropagationView = m_page->pageClient().createVisibilityPropagationView())
+        [view setVisibilityPropagationView:visibilityPropagationView];
+#else
+    UNUSED_VARIABLE(view);
 #endif
 
 #if PLATFORM(IOS_FAMILY)

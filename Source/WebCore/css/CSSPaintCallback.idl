@@ -26,5 +26,5 @@
 [
     EnabledBySetting=CSSPaintingAPIEnabled,
     CallbackThisObject=any,
-    IsStrongCallback
+    GenerateIsReachable=ImplScriptExecutionContext
 ] callback CSSPaintCallback = undefined (PaintRenderingContext2D context, CSSPaintSize size, StylePropertyMapReadOnly styleMap, sequence<USVString> arguments);

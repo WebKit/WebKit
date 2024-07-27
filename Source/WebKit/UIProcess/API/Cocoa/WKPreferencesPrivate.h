@@ -38,7 +38,7 @@ typedef NS_OPTIONS(NSUInteger, _WKDebugOverlayRegions) {
     _WKTouchActionRegion = 1 << 2,
     _WKEditableElementRegion = 1 << 3,
     _WKInteractionRegion WK_API_AVAILABLE(macos(13.0), ios(16.0)) = 1 << 4,
-    _WKSiteIsolationRegion WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) = 1 << 5,
+    _WKSiteIsolationRegion WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0)) = 1 << 5,
 } WK_API_AVAILABLE(macos(10.11), ios(9.0));
 
 typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {
@@ -133,7 +133,7 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 
 @property (nonatomic, setter=_setAVFoundationEnabled:) BOOL _avFoundationEnabled WK_API_AVAILABLE(macos(10.10), ios(12.0));
 
-@property (nonatomic, setter=_setTextExtractionEnabled:) BOOL _textExtractionEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, setter=_setTextExtractionEnabled:) BOOL _textExtractionEnabled WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
 + (NSArray<_WKFeature *> *)_features WK_API_AVAILABLE(macos(13.3), ios(16.4));
 - (BOOL)_isEnabledForFeature:(_WKFeature *)feature WK_API_AVAILABLE(macos(10.12), ios(10.0));
@@ -235,15 +235,15 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 
 @interface WKPreferences (WKPrivateDeprecated)
 
-@property (nonatomic, setter=_setShouldAllowDesignSystemUIFonts:) BOOL _shouldAllowDesignSystemUIFonts WK_API_DEPRECATED("Design system UI fonts are always enabled", macos(10.15, WK_MAC_TBA), ios(13.0, WK_IOS_TBA), visionos(1.0, WK_XROS_TBA));
+@property (nonatomic, setter=_setShouldAllowDesignSystemUIFonts:) BOOL _shouldAllowDesignSystemUIFonts WK_API_DEPRECATED("Design system UI fonts are always enabled", macos(10.15, 15.0), ios(13.0, 18.0), visionos(1.0, 2.0));
 @property (nonatomic, setter=_setRequestAnimationFrameEnabled:) BOOL _requestAnimationFrameEnabled WK_API_DEPRECATED("requestAnimationFrame is always enabled", macos(10.15.4, 13.0), ios(13.4, 16.0));
 @property (nonatomic, setter=_setSubpixelAntialiasedLayerTextEnabled:) BOOL _subpixelAntialiasedLayerTextEnabled WK_API_DEPRECATED("Subpixel antialiased text is no longer supported", macos(10.12, 13.3), ios(10.0, 16.4));
 #if !TARGET_OS_IPHONE
-@property (nonatomic, setter=_setPageCacheSupportsPlugins:) BOOL _pageCacheSupportsPlugins WK_API_DEPRECATED("NPAPI plugins are no longer supported", macos(10.13.4, WK_MAC_TBA));
-@property (nonatomic, setter=_setAsynchronousPluginInitializationEnabled:) BOOL _asynchronousPluginInitializationEnabled WK_API_DEPRECATED("NPAPI plugins are no longer supported", macos(10.13.4, WK_MAC_TBA));
-@property (nonatomic, setter=_setArtificialPluginInitializationDelayEnabled:) BOOL _artificialPluginInitializationDelayEnabled WK_API_DEPRECATED("NPAPI plugins are no longer supported", macos(10.13.4, WK_MAC_TBA));
-@property (nonatomic, setter=_setExperimentalPlugInSandboxProfilesEnabled:) BOOL _experimentalPlugInSandboxProfilesEnabled WK_API_DEPRECATED("NPAPI plugins are no longer supported", macos(10.14.4, WK_MAC_TBA));
-@property (nonatomic, setter=_setPlugInSnapshottingEnabled:) BOOL _plugInSnapshottingEnabled WK_API_DEPRECATED("NPAPI plugins are no longer supported", macos(10.13.4, WK_MAC_TBA));
+@property (nonatomic, setter=_setPageCacheSupportsPlugins:) BOOL _pageCacheSupportsPlugins WK_API_DEPRECATED("NPAPI plugins are no longer supported", macos(10.13.4, 15.0));
+@property (nonatomic, setter=_setAsynchronousPluginInitializationEnabled:) BOOL _asynchronousPluginInitializationEnabled WK_API_DEPRECATED("NPAPI plugins are no longer supported", macos(10.13.4, 15.0));
+@property (nonatomic, setter=_setArtificialPluginInitializationDelayEnabled:) BOOL _artificialPluginInitializationDelayEnabled WK_API_DEPRECATED("NPAPI plugins are no longer supported", macos(10.13.4, 15.0));
+@property (nonatomic, setter=_setExperimentalPlugInSandboxProfilesEnabled:) BOOL _experimentalPlugInSandboxProfilesEnabled WK_API_DEPRECATED("NPAPI plugins are no longer supported", macos(10.14.4, 15.0));
+@property (nonatomic, setter=_setPlugInSnapshottingEnabled:) BOOL _plugInSnapshottingEnabled WK_API_DEPRECATED("NPAPI plugins are no longer supported", macos(10.13.4, 15.0));
 @property (nonatomic, setter=_setSubpixelCSSOMElementMetricsEnabled:) BOOL _subpixelCSSOMElementMetricsEnabled WK_API_DEPRECATED("Subpixel CSSOM element metrics are no longer supported", macos(10.13.4, 10.15));
 #endif
 @property (nonatomic, setter=_setDisplayListDrawingEnabled:) BOOL _displayListDrawingEnabled WK_API_DEPRECATED("Display list drawing is no longer supported", macos(10.12, 14.4), ios(10.0, 17.4), visionos(1.0, 1.1));

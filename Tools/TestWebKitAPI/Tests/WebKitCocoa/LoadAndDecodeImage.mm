@@ -45,6 +45,9 @@ TEST(WebKit, LoadAndDecodeImage)
     auto pngData = [&] {
         return contentsToVector([[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]);
     };
+    auto untaggedPNGData = [&] {
+        return contentsToVector([[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]);
+    };
     auto gifData = [&] {
         return contentsToVector([[NSBundle mainBundle] URLForResource:@"apple" withExtension:@"gif" subdirectory:@"TestWebKitAPI.resources"]);
     };
@@ -52,6 +55,7 @@ TEST(WebKit, LoadAndDecodeImage)
     HTTPServer server {
         { "/terminate"_s, { HTTPResponse::Behavior::TerminateConnectionAfterReceivingResponse } },
         { "/test_png"_s, { pngData() } },
+        { "/test_untagged_png"_s, { untaggedPNGData() } },
         { "/test_gif"_s, { gifData() } },
         { "/redirect"_s, { 302, { { "Location"_s, "/test_png"_s } }, "redirecting..."_s } },
         { "/not_image"_s, { "this is not an image"_s } }
@@ -75,6 +79,14 @@ TEST(WebKit, LoadAndDecodeImage)
         return makeUnexpected(error);
     };
 
+    auto colorSpaceForImage = [&] (Util::PlatformImage *image) -> RetainPtr<CGColorSpaceRef> {
+        return CGImageGetColorSpace(Util::convertToCGImage(image).get());
+    };
+
+    auto colorSpaceDescriptionForImage = [&] (Util::PlatformImage *image) -> NSString * {
+        return (__bridge NSString *)adoptCF(CFCopyDescription(colorSpaceForImage(image).get())).autorelease();
+    };
+
     auto result1 = imageOrError("/terminate"_s);
     EXPECT_WK_STREQ(result1.error().get().domain, NSURLErrorDomain);
     EXPECT_EQ(result1.error().get().code, NSURLErrorNetworkConnectionLost);
@@ -90,14 +102,24 @@ TEST(WebKit, LoadAndDecodeImage)
     auto result4 = imageOrError("/test_png"_s, CGSizeMake(100, 100));
     EXPECT_EQ(result4->get().size.height, 80);
     EXPECT_EQ(result4->get().size.width, 100);
+    EXPECT_TRUE([colorSpaceDescriptionForImage(result4->get()) containsString:@"Calibrated RGB"]);
 
-    auto result5 = imageOrError("/test_gif"_s);
-    EXPECT_EQ(result5->get().size.height, 64);
-    EXPECT_EQ(result5->get().size.width, 52);
+    auto result5 = imageOrError("/test_png"_s, CGSizeMake(1000, 1000));
+    EXPECT_EQ(result5->get().size.height, 174);
+    EXPECT_EQ(result5->get().size.width, 215);
 
-    auto result6 = imageOrError("/redirect"_s);
-    EXPECT_EQ(result2->get().size.height, 174);
-    EXPECT_EQ(result2->get().size.width, 215);
+    auto result6 = imageOrError("/test_gif"_s);
+    EXPECT_EQ(result6->get().size.height, 64);
+    EXPECT_EQ(result6->get().size.width, 52);
+
+    auto result7 = imageOrError("/redirect"_s);
+    EXPECT_EQ(result7->get().size.height, 174);
+    EXPECT_EQ(result7->get().size.width, 215);
+
+    auto result8 = imageOrError("/test_untagged_png"_s, CGSizeMake(100, 100));
+    EXPECT_EQ(result8->get().size.height, 100);
+    EXPECT_EQ(result8->get().size.width, 100);
+    EXPECT_TRUE([colorSpaceDescriptionForImage(result8->get()) containsString:@"sRGB"]);
 
     HTTPServer tlsServer { {
         { "/"_s, { pngData() } },

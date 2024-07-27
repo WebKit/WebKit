@@ -49,7 +49,6 @@
 #include "HTMLDialogElement.h"
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
-#include "HTMLScriptElement.h"
 #include "HTMLSlotElement.h"
 #include "HTMLStyleElement.h"
 #include "InputEvent.h"
@@ -84,7 +83,6 @@
 #include "TextEvent.h"
 #include "TextManipulationController.h"
 #include "TouchEvent.h"
-#include "TrustedType.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WheelEvent.h"
 #include "XMLNSNames.h"
@@ -110,7 +108,7 @@ WTF_MAKE_COMPACT_ISO_ALLOCATED_IMPL(Node);
 
 using namespace HTMLNames;
 
-struct SameSizeAsNode : EventTarget {
+struct SameSizeAsNode : EventTarget, CanMakeCheckedPtr<SameSizeAsNode> {
 #if ASSERT_ENABLED
     uint32_t m_isAllocatedMemory;
     bool inRemovedLastRefFunction;
@@ -568,14 +566,13 @@ ExceptionOr<void> Node::appendChild(Node& newChild)
     return Exception { ExceptionCode::HierarchyRequestError };
 }
 
-static HashSet<RefPtr<Node>> nodeSetPreTransformedFromNodeOrStringOrTrustedScriptVector(const FixedVector<NodeOrStringOrTrustedScript>& vector)
+static HashSet<RefPtr<Node>> nodeSetPreTransformedFromNodeOrStringVector(const FixedVector<NodeOrString>& vector)
 {
     HashSet<RefPtr<Node>> nodeSet;
     for (const auto& variant : vector) {
         WTF::switchOn(variant,
             [&] (const RefPtr<Node>& node) { nodeSet.add(const_cast<Node*>(node.get())); },
-            [] (const String&) { },
-            [] (const RefPtr<TrustedScript>&) { }
+            [] (const String&) { }
         );
     }
     return nodeSet;
@@ -600,34 +597,18 @@ static RefPtr<Node> firstFollowingSiblingNotInNodeSet(Node& context, const HashS
 }
 
 // https://dom.spec.whatwg.org/#converting-nodes-into-a-node
-ExceptionOr<RefPtr<Node>> Node::convertNodesOrStringsOrTrustedScriptsIntoNode(RefPtr<Node> parent, FixedVector<NodeOrStringOrTrustedScript>&& vector)
+ExceptionOr<RefPtr<Node>> Node::convertNodesOrStringsIntoNode(FixedVector<NodeOrString>&& nodeOrStringVector)
 {
-    if (vector.isEmpty())
+    if (nodeOrStringVector.isEmpty())
         return nullptr;
 
     Ref document = this->document();
-    NodeVector nodes;
-    auto trustedTypesEnabled = document->scriptExecutionContext()->settingsValues().trustedTypesEnabled;
-    for (auto& variant : vector) {
-        if (trustedTypesEnabled) {
-            auto textNodeHolder = processNodeOrStringAsTrustedType(document, parent, variant);
-            if (textNodeHolder.hasException())
-                return textNodeHolder.releaseException();
-
-            if (RefPtr textNode = textNodeHolder.releaseReturnValue()) {
-                nodes.append(textNode.releaseNonNull());
-                continue;
-            }
-        } else if (std::holds_alternative<String>(variant)) {
-            nodes.append(Text::create(document, WTFMove(std::get<String>(variant))));
-            continue;
-        }
-
-        ASSERT(std::holds_alternative<RefPtr<Node>>(variant));
-        RefPtr node = WTFMove(std::get<RefPtr<Node>>(variant));
-        ASSERT(node);
-        nodes.append(node.releaseNonNull());
-    }
+    auto nodes = WTF::map(WTFMove(nodeOrStringVector), [&](auto&& variant) -> Ref<Node> {
+        return WTF::switchOn(WTFMove(variant),
+            [&](RefPtr<Node>&& node) { return node.releaseNonNull(); },
+            [&](String&& string) -> Ref<Node> { return Text::create(document, WTFMove(string)); }
+        );
+    });
 
     if (nodes.size() == 1)
         return RefPtr<Node> { WTFMove(nodes.first()) };
@@ -642,26 +623,16 @@ ExceptionOr<RefPtr<Node>> Node::convertNodesOrStringsOrTrustedScriptsIntoNode(Re
 }
 
 // https://dom.spec.whatwg.org/#converting-nodes-into-a-node except this returns a NodeVector
-ExceptionOr<NodeVector> Node::convertNodesOrStringsOrTrustedScriptsIntoNodeVector(RefPtr<Node> parent, FixedVector<NodeOrStringOrTrustedScript>&& vector)
+ExceptionOr<NodeVector> Node::convertNodesOrStringsIntoNodeVector(FixedVector<NodeOrString>&& nodeOrStringVector)
 {
-    if (vector.isEmpty())
+    if (nodeOrStringVector.isEmpty())
         return NodeVector { };
 
     Ref document = this->document();
     NodeVector nodeVector;
-    nodeVector.reserveInitialCapacity(vector.size());
-    auto trustedTypesEnabled = document->scriptExecutionContext()->settingsValues().trustedTypesEnabled;
-    for (auto& variant : vector) {
-        if (trustedTypesEnabled) {
-            auto textNodeHolder = processNodeOrStringAsTrustedType(document, parent, variant);
-            if (textNodeHolder.hasException())
-                return textNodeHolder.releaseException();
-
-            if (RefPtr textNode = textNodeHolder.releaseReturnValue()) {
-                nodeVector.append(textNode.releaseNonNull());
-                continue;
-            }
-        } else if (std::holds_alternative<String>(variant)) {
+    nodeVector.reserveInitialCapacity(nodeOrStringVector.size());
+    for (auto& variant : nodeOrStringVector) {
+        if (std::holds_alternative<String>(variant)) {
             nodeVector.append(Text::create(document, WTFMove(std::get<String>(variant))));
             continue;
         }
@@ -688,16 +659,16 @@ ExceptionOr<NodeVector> Node::convertNodesOrStringsOrTrustedScriptsIntoNodeVecto
     return nodeVector;
 }
 
-ExceptionOr<void> Node::before(FixedVector<NodeOrStringOrTrustedScript>&& vector)
+ExceptionOr<void> Node::before(FixedVector<NodeOrString>&& nodeOrStringVector)
 {
     RefPtr parent = parentNode();
     if (!parent)
         return { };
 
-    auto nodeSet = nodeSetPreTransformedFromNodeOrStringOrTrustedScriptVector(vector);
+    auto nodeSet = nodeSetPreTransformedFromNodeOrStringVector(nodeOrStringVector);
     RefPtr viablePreviousSibling = firstPrecedingSiblingNotInNodeSet(*this, nodeSet);
 
-    auto result = convertNodesOrStringsOrTrustedScriptsIntoNodeVector(parent, WTFMove(vector));
+    auto result = convertNodesOrStringsIntoNodeVector(WTFMove(nodeOrStringVector));
     if (result.hasException())
         return result.releaseException();
 
@@ -709,16 +680,16 @@ ExceptionOr<void> Node::before(FixedVector<NodeOrStringOrTrustedScript>&& vector
     return parent->insertChildrenBeforeWithoutPreInsertionValidityCheck(WTFMove(newChildren), viableNextSibling.get());
 }
 
-ExceptionOr<void> Node::after(FixedVector<NodeOrStringOrTrustedScript>&& vector)
+ExceptionOr<void> Node::after(FixedVector<NodeOrString>&& nodeOrStringVector)
 {
     RefPtr parent = parentNode();
     if (!parent)
         return { };
 
-    auto nodeSet = nodeSetPreTransformedFromNodeOrStringOrTrustedScriptVector(vector);
+    auto nodeSet = nodeSetPreTransformedFromNodeOrStringVector(nodeOrStringVector);
     RefPtr viableNextSibling = firstFollowingSiblingNotInNodeSet(*this, nodeSet);
 
-    auto result = convertNodesOrStringsOrTrustedScriptsIntoNodeVector(parent, WTFMove(vector));
+    auto result = convertNodesOrStringsIntoNodeVector(WTFMove(nodeOrStringVector));
     if (result.hasException())
         return result.releaseException();
 
@@ -729,16 +700,16 @@ ExceptionOr<void> Node::after(FixedVector<NodeOrStringOrTrustedScript>&& vector)
     return parent->insertChildrenBeforeWithoutPreInsertionValidityCheck(WTFMove(newChildren), viableNextSibling.get());
 }
 
-ExceptionOr<void> Node::replaceWith(FixedVector<NodeOrStringOrTrustedScript>&& vector)
+ExceptionOr<void> Node::replaceWith(FixedVector<NodeOrString>&& nodeOrStringVector)
 {
     RefPtr parent = parentNode();
     if (!parent)
         return { };
 
-    auto nodeSet = nodeSetPreTransformedFromNodeOrStringOrTrustedScriptVector(vector);
+    auto nodeSet = nodeSetPreTransformedFromNodeOrStringVector(nodeOrStringVector);
     RefPtr viableNextSibling = firstFollowingSiblingNotInNodeSet(*this, nodeSet);
 
-    auto result = convertNodesOrStringsOrTrustedScriptsIntoNode(parent, WTFMove(vector));
+    auto result = convertNodesOrStringsIntoNode(WTFMove(nodeOrStringVector));
     if (result.hasException())
         return result.releaseException();
 

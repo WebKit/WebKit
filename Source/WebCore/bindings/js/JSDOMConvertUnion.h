@@ -131,6 +131,12 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
     using InterfaceTypeList = brigand::filter<TypeList, IsIDLInterface<brigand::_1>>;
     using TypedArrayTypeList = brigand::filter<TypeList, IsIDLTypedArray<brigand::_1>>;
 
+    using CallbackFunctionTypeList = brigand::filter<TypeList, IsIDLCallbackFunction<brigand::_1>>;
+    static constexpr size_t numberOfCallbackFunctionTypes = brigand::size<CallbackFunctionTypeList>::value;
+    static_assert(numberOfCallbackFunctionTypes < 2, "There can be 0 or 1 callback function types in an IDLUnion.");
+    static constexpr bool hasCallbackFunctionType = numberOfCallbackFunctionTypes > 0;
+    using CallbackFunctionType = ConditionalFront<CallbackFunctionTypeList, hasCallbackFunctionType>;
+
     static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
         JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
@@ -256,8 +262,13 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         // FIXME: Add support for step 10.
         //
         // 10. If IsCallable(V) is true, then:
-        //     1. If types includes a callback function type, then return the result of converting V to that callback function type.
-        //     2. If types includes object, then return the IDL value that is a reference to the object V.
+        if (value.isCallable()) {
+            //     1. If types includes a callback function type, then return the result of converting V to that callback function type.
+            if constexpr (hasCallbackFunctionType)
+                RELEASE_AND_RETURN(scope, (Converter<CallbackFunctionType>::convert(lexicalGlobalObject, value, *JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject))));
+            //     2. If types includes object, then return the IDL value that is a reference to the object V.
+            //         (FIXME: Add support for object and step 10.2)
+        }
 
         // 11. If V is any kind of object, then:
         if constexpr (hasAnyObjectType) {

@@ -165,17 +165,19 @@ void EventRegionContext::uniteInteractionRegions(RenderObject& renderer, const F
         if (defaultContentHint && shouldConsolidateInteractionRegion(renderer, rectForTracking, interactionRegion->elementIdentifier))
             return;
 
-        m_interactionRectsAndContentHints.add(rectForTracking, interactionRegion->contentHint);
-
-        auto discoveredIterator = m_discoveredRegionsByElement.find(interactionRegion->elementIdentifier);
-        if (discoveredIterator != m_discoveredRegionsByElement.end()) {
-            discoveredIterator->value.append(*interactionRegion);
-            return;
+        // This region might be a container we can remove later.
+        bool hasNoVisualBorders = !renderer.hasVisibleBoxDecorations();
+        if (hasNoVisualBorders) {
+            if (auto* renderElement = dynamicDowncast<RenderElement>(renderer))
+                m_containerRemovalCandidates.add(renderElement->element()->identifier());
         }
 
-        Vector<InteractionRegion, 1> discoveredRegions;
-        discoveredRegions.append(*interactionRegion);
-        m_discoveredRegionsByElement.add(interactionRegion->elementIdentifier, discoveredRegions);
+        m_interactionRectsAndContentHints.add(rectForTracking, interactionRegion->contentHint);
+
+        auto discoveredAddResult = m_discoveredRegionsByElement.add(interactionRegion->elementIdentifier, Vector<InteractionRegion>());
+        discoveredAddResult.iterator->value.append(*interactionRegion);
+        if (!discoveredAddResult.isNewEntry)
+            return;
 
         auto guardRect = guardRectForRegionBounds(*interactionRegion);
         if (guardRect) {
@@ -213,8 +215,12 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(RenderObject& render
 
         auto& ancestorBounds = discoveredIterator->value.first().rectInLayerCoordinates;
 
+        constexpr float looseContainmentMargin = 3.0;
+        FloatRect ancestorBoundsForLooseContainmentCheck = ancestorBounds;
+        ancestorBoundsForLooseContainmentCheck.inflate(looseContainmentMargin);
+
         // The ancestor's InteractionRegion does not contain ours, we don't consolidate and stop the search.
-        if (!ancestorBounds.contains(bounds))
+        if (!ancestorBoundsForLooseContainmentCheck.contains(bounds))
             return false;
 
         constexpr auto maxMargin = 50;
@@ -239,12 +245,6 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(RenderObject& render
             return true;
         }
 
-        // We can't consolidate this region but it might be a container we can remove later.
-        if (hasNoVisualBorders) {
-            if (auto* renderElement = dynamicDowncast<RenderElement>(renderer))
-                m_containerRemovalCandidates.add(renderElement->element()->identifier());
-        }
-
         // We found a region nested inside a container candidate for removal, flag it for removal.
         if (m_containerRemovalCandidates.contains(ancestorElementIdentifier)) {
             m_containerRemovalCandidates.remove(ancestorElementIdentifier);
@@ -263,6 +263,7 @@ void EventRegionContext::convertGuardContainersToInterationIfNeeded(float minimu
         if (region.type != InteractionRegion::Type::Guard)
             continue;
 
+        // FIXME: This seems like it could be structured so it doesn't need four hash lookups in the worst case.
         if (!m_discoveredRegionsByElement.contains(region.elementIdentifier)) {
             auto rectForTracking = enclosingIntRect(region.rectInLayerCoordinates);
             if (!m_interactionRectsAndContentHints.contains(rectForTracking)) {
@@ -270,9 +271,7 @@ void EventRegionContext::convertGuardContainersToInterationIfNeeded(float minimu
                 region.cornerRadius = minimumCornerRadius;
 
                 m_interactionRectsAndContentHints.add(rectForTracking, region.contentHint);
-                Vector<InteractionRegion, 1> discoveredRegions;
-                discoveredRegions.append(region);
-                m_discoveredRegionsByElement.add(region.elementIdentifier, discoveredRegions);
+                m_discoveredRegionsByElement.add(region.elementIdentifier, Vector<InteractionRegion>({ region }));
             }
         }
     }

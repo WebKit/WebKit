@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Error: assert_equals: deviceId is 0 expected (number) 0 but got (undefined) undefined
+CONSOLE MESSAGE: Error: assert_equals: deviceId is 0 expected (number) 0 but got (undefined) undefined
+
+Harness Error (FAIL), message = Error: assert_equals: deviceId is 0 expected (number) 0 but got (undefined) undefined
+
+PASS PointerEvent.persistentDeviceId
+

@@ -142,6 +142,7 @@ public:
     void setIsRetryingLaunch() { m_isRetryingLaunch = true; }
     bool isRetryingLaunch() const { return m_isRetryingLaunch; }
     void releaseLaunchGrant() { m_launchGrant = nullptr; }
+    static bool hasExtensionsInAppBundle();
 #endif
 
 private:

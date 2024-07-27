@@ -1,0 +1,13 @@
+Tests the LoginStatus API to set and get the login status.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Successfully set login status to 'logged-in'.
+PASS isLoggedIn() returned true after setting status to 'logged-in'.
+PASS Successfully set login status to 'logged-out'.
+PASS isLoggedIn() returned false after setting status to 'logged-out'.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

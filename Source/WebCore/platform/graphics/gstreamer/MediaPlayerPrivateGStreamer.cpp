@@ -121,12 +121,10 @@
 #endif // USE(TEXTURE_MAPPER)
 
 #if USE(TEXTURE_MAPPER_DMABUF)
-#include "DMABufFormat.h"
-#include "DMABufObject.h"
+#include "DMABufUtilities.h"
 #include "DMABufVideoSinkGStreamer.h"
 #include "GBMBufferSwapchain.h"
 #include "TextureMapperPlatformLayerProxyDMABuf.h"
-#include <gbm.h>
 #include <gst/allocators/gstdmabuf.h>
 #endif // USE(TEXTURE_MAPPER_DMABUF)
 
@@ -225,6 +223,11 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
 
 MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
 {
+    tearDown(true);
+}
+
+void MediaPlayerPrivateGStreamer::tearDown(bool clearMediaPlayer)
+{
     GST_DEBUG_OBJECT(pipeline(), "Disposing player");
     m_isPlayerShuttingDown.store(true);
 
@@ -242,18 +245,12 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     if (m_fillTimer.isActive())
         m_fillTimer.stop();
 
-    m_pausedTimerHandler.stop();
+    if (m_pausedTimerHandler.isActive())
+        m_pausedTimerHandler.stop();
 
     if (m_videoSink) {
         GRefPtr<GstPad> videoSinkPad = adoptGRef(gst_element_get_static_pad(m_videoSink.get(), "sink"));
         g_signal_handlers_disconnect_matched(videoSinkPad.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-    }
-
-    if (m_pipeline) {
-        auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
-        gst_bus_disable_sync_message_emission(bus.get());
-        disconnectSimpleBusMessageCallback(m_pipeline.get());
-        g_signal_handlers_disconnect_matched(m_pipeline.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
     }
 
 #if USE(GSTREAMER_GL)
@@ -286,11 +283,22 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     if (m_pipeline) {
         unregisterPipeline(m_pipeline);
         gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
+
+        auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
+        gst_bus_disable_sync_message_emission(bus.get());
+        disconnectSimpleBusMessageCallback(m_pipeline.get());
+        g_signal_handlers_disconnect_matched(m_pipeline.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+
         m_pipeline = nullptr;
     }
 
+    if (!clearMediaPlayer)
+        return;
+
+    mediaPlayerWillBeDestroyed();
     m_player = nullptr;
-    m_notifier->invalidate();
+    if (m_notifier->isValid())
+        m_notifier->invalidate();
 }
 
 bool MediaPlayerPrivateGStreamer::isAvailable()
@@ -440,6 +448,8 @@ bool MediaPlayerPrivateGStreamer::isPipelineWaitingPreroll(GstState current, Gst
 
 bool MediaPlayerPrivateGStreamer::isPipelineWaitingPreroll() const
 {
+    if (!m_pipeline)
+        return true;
     GstState current, pending;
     GstStateChangeReturn change = gst_element_get_state(m_pipeline.get(), &current, &pending, 0);
     return isPipelineWaitingPreroll(current, pending, change);
@@ -816,7 +826,7 @@ void MediaPlayerPrivateGStreamer::setPreload(MediaPlayer::Preload preload)
 
 const PlatformTimeRanges& MediaPlayerPrivateGStreamer::buffered() const
 {
-    if (m_didErrorOccur || m_isLiveStream.value_or(false))
+    if (m_didErrorOccur || m_isLiveStream.value_or(false) || !m_pipeline)
         return PlatformTimeRanges::emptyRanges();
 
     MediaTime mediaDuration = duration();
@@ -2103,8 +2113,9 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             GUniqueOutPtr<GstStructure> responseHeaders;
             if (gst_structure_get(structure, "response-headers", GST_TYPE_STRUCTURE, &responseHeaders.outPtr(), nullptr)) {
                 auto contentLengthHeaderName = httpHeaderNameString(HTTPHeaderName::ContentLength);
+                auto contentLengthFromResponse = gstStructureGet<uint64_t>(responseHeaders.get(), contentLengthHeaderName);
                 uint64_t contentLength = 0;
-                if (!gst_structure_get_uint64(responseHeaders.get(), contentLengthHeaderName.characters(), &contentLength)) {
+                if (!contentLengthFromResponse) {
                     // souphttpsrc sets a string for Content-Length, so
                     // handle it here, until we remove the webkit+ protocol
                     // prefix from webkitwebsrc.
@@ -2113,7 +2124,8 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                         if (contentLength == G_MAXUINT64)
                             contentLength = 0;
                     }
-                }
+                } else
+                    contentLength = *contentLengthFromResponse;
                 if (!isRangeRequest) {
                     m_isLiveStream = !contentLength;
                     GST_INFO_OBJECT(pipeline(), "%s stream detected", m_isLiveStream.value_or(false) ? "Live" : "Non-live");
@@ -3270,7 +3282,7 @@ bool MediaPlayerPrivateGStreamer::canSaveMediaData() const
 void MediaPlayerPrivateGStreamer::pausedTimerFired()
 {
     GST_DEBUG_OBJECT(pipeline(), "In PAUSED for too long. Releasing pipeline resources.");
-    changePipelineState(GST_STATE_NULL);
+    tearDown(true);
 }
 
 void MediaPlayerPrivateGStreamer::acceleratedRenderingStateChanged()
@@ -3376,11 +3388,15 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
         {
             Locker locker { proxy.lock() };
 
-            if (!proxy.isActive())
+            if (!proxy.isActive()) {
+                GST_ERROR_OBJECT(pipeline(), "TextureMapperPlatformLayerProxyGL is inactive");
+                textureMapperPlatformLayerProxyWasInvalidated();
                 return;
+            }
 
             auto frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_videoDecoderPlatform, m_textureMapperFlags, !m_isUsingFallbackVideoSink);
             internalCompositingOperation(proxy, WTFMove(frameHolder));
+            m_hasFirstVideoSampleBeenRendered = true;
         };
 
 #if USE(NICOSIA)
@@ -3394,54 +3410,6 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
 #endif // USE(TEXTURE_MAPPER)
 
 #if USE(TEXTURE_MAPPER_DMABUF)
-// GStreamer's gst_video_format_to_fourcc() doesn't cover RGB-like formats, so we
-// provide the appropriate FourCC values for those through this funcion.
-static uint32_t fourccValue(GstVideoFormat format)
-{
-    switch (format) {
-    case GST_VIDEO_FORMAT_RGBx:
-        return uint32_t(DMABufFormat::FourCC::XBGR8888);
-    case GST_VIDEO_FORMAT_BGRx:
-        return uint32_t(DMABufFormat::FourCC::XRGB8888);
-    case GST_VIDEO_FORMAT_xRGB:
-        return uint32_t(DMABufFormat::FourCC::BGRX8888);
-    case GST_VIDEO_FORMAT_xBGR:
-        return uint32_t(DMABufFormat::FourCC::RGBX8888);
-    case GST_VIDEO_FORMAT_RGBA:
-        return uint32_t(DMABufFormat::FourCC::ABGR8888);
-    case GST_VIDEO_FORMAT_BGRA:
-        return uint32_t(DMABufFormat::FourCC::ARGB8888);
-    case GST_VIDEO_FORMAT_ARGB:
-        return uint32_t(DMABufFormat::FourCC::BGRA8888);
-    case GST_VIDEO_FORMAT_ABGR:
-        return uint32_t(DMABufFormat::FourCC::RGBA8888);
-    case GST_VIDEO_FORMAT_P010_10LE:
-    case GST_VIDEO_FORMAT_P010_10BE:
-        return uint32_t(DMABufFormat::FourCC::P010);
-    case GST_VIDEO_FORMAT_P016_LE:
-    case GST_VIDEO_FORMAT_P016_BE:
-        return uint32_t(DMABufFormat::FourCC::P016);
-    default:
-        break;
-    }
-
-    return gst_video_format_to_fourcc(format);
-}
-
-static DMABufColorSpace colorSpaceForColorimetry(const GstVideoColorimetry* cinfo)
-{
-    if (gst_video_colorimetry_matches(cinfo, GST_VIDEO_COLORIMETRY_SRGB))
-        return DMABufColorSpace::SRGB;
-    if (gst_video_colorimetry_matches(cinfo, GST_VIDEO_COLORIMETRY_BT601))
-        return DMABufColorSpace::BT601;
-    if (gst_video_colorimetry_matches(cinfo, GST_VIDEO_COLORIMETRY_BT709))
-        return DMABufColorSpace::BT709;
-    if (gst_video_colorimetry_matches(cinfo, GST_VIDEO_COLORIMETRY_BT2020))
-        return DMABufColorSpace::BT2020;
-    if (gst_video_colorimetry_matches(cinfo, GST_VIDEO_COLORIMETRY_SMPTE240M))
-        return DMABufColorSpace::SMPTE240M;
-    return DMABufColorSpace::Invalid;
-}
 
 struct DMABufMemoryQuarkData {
     DMABufReleaseFlag releaseFlag;
@@ -3498,6 +3466,7 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
     Locker locker { proxy.lock() };
     if (!proxy.isActive()) {
         GST_ERROR_OBJECT(pipeline(), "TextureMapperPlatformLayerProxyDMABuf is inactive");
+        textureMapperPlatformLayerProxyWasInvalidated();
         return;
     }
 
@@ -3526,10 +3495,10 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
                     fourcc = drmInfo.drm_fourcc;
 #endif
                 if (!fourcc)
-                    fourcc = fourccValue(GST_VIDEO_INFO_FORMAT(&videoInfo));
+                    fourcc = dmaBufFourccValue(GST_VIDEO_INFO_FORMAT(&videoInfo));
 
                 object.format = DMABufFormat::create(fourcc);
-                object.colorSpace = colorSpaceForColorimetry(&GST_VIDEO_INFO_COLORIMETRY(&videoInfo));
+                object.colorSpace = dmaBufColorSpaceForColorimetry(&GST_VIDEO_INFO_COLORIMETRY(&videoInfo));
 
                 if (m_videoSize.isEmpty()) {
                     object.width = GST_VIDEO_INFO_WIDTH(&videoInfo);
@@ -3579,6 +3548,7 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
                 return WTFMove(object);
             }, textureMapperFlags);
 
+        m_hasFirstVideoSampleBeenRendered = true;
         auto* quarkData = static_cast<DMABufMemoryQuarkData*>(gst_mini_object_get_qdata(GST_MINI_OBJECT_CAST(memory.get()), dmabuf_memory_quark()));
         if (quarkData)
             m_dmabufMemory.add(WTFMove(memory));
@@ -3588,16 +3558,19 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
 
     // If the decoder is exporting raw memory, we have to use the swapchain to allocate appropriate buffers
     // and copy over the data for each plane. For that to work, linear-storage buffer is required.
+
+    auto fourcc = dmaBufFourccValue(GST_VIDEO_INFO_FORMAT(&videoInfo));
+    if (fourcc == uint32_t(DMABufFormat::FourCC::Invalid)) {
+        GST_ERROR_OBJECT(pipeline(), "Invalid DMABuf fourcc for GStreamer video format %s", gst_video_format_to_string(GST_VIDEO_INFO_FORMAT(&videoInfo)));
+        return;
+    }
+
     GBMBufferSwapchain::BufferDescription bufferDescription {
-        .format = DMABufFormat::create(fourccValue(GST_VIDEO_INFO_FORMAT(&videoInfo))),
+        .format = DMABufFormat::create(fourcc),
         .width = static_cast<uint32_t>GST_VIDEO_INFO_WIDTH(&videoInfo),
         .height = static_cast<uint32_t>GST_VIDEO_INFO_HEIGHT(&videoInfo),
         .flags = GBMBufferSwapchain::BufferDescription::LinearStorage,
     };
-    if (bufferDescription.format.fourcc == DMABufFormat::FourCC::Invalid) {
-        GST_ERROR_OBJECT(pipeline(), "Invalid DMABuf fourcc for GStreamer video format %s", gst_video_format_to_string(GST_VIDEO_INFO_FORMAT(&videoInfo)));
-        return;
-    }
 
     auto swapchainBuffer = m_swapchain->getBuffer(bufferDescription);
     if (!swapchainBuffer) {
@@ -3605,65 +3578,8 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
         return;
     }
 
-    // Destination helper struct, maps the gbm_bo object into CPU-memory space and copies from the accompanying Source in fill().
-    struct Destination {
-        static Lock& mappingLock()
-        {
-            static Lock s_mappingLock;
-            return s_mappingLock;
-        }
-
-        Destination(struct gbm_bo* bo, uint32_t width, uint32_t height)
-            : bo(bo)
-            , height(height)
-        {
-            map = gbm_bo_map(bo, 0, 0, width, height, GBM_BO_TRANSFER_WRITE, &stride, &mapData);
-            if (!map)
-                return;
-
-            valid = true;
-            data = reinterpret_cast<uint8_t*>(map);
-        }
-
-        ~Destination()
-        {
-            if (valid)
-                gbm_bo_unmap(bo, mapData);
-        }
-
-        void copyPlaneData(GstVideoFrame* sourceVideoFrame, unsigned planeIndex)
-        {
-            auto sourceStride = GST_VIDEO_FRAME_PLANE_STRIDE(sourceVideoFrame, planeIndex);
-            auto* planeData = reinterpret_cast<uint8_t*>(GST_VIDEO_FRAME_PLANE_DATA(sourceVideoFrame, planeIndex));
-            for (uint32_t y = 0; y < height; ++y) {
-                auto* destinationData = &data[y * stride];
-                auto* sourceData = &planeData[y * sourceStride];
-                memcpy(destinationData, sourceData, std::min(static_cast<uint32_t>(sourceStride), stride));
-            }
-        }
-
-        bool valid { false };
-        struct gbm_bo* bo { nullptr };
-        void* map { nullptr };
-        void* mapData { nullptr };
-        uint8_t* data { nullptr };
-        uint32_t height { 0 };
-        uint32_t stride { 0 };
-    };
-
-    GstMappedFrame sourceFrame(m_sample, GST_MAP_READ);
-    if (!sourceFrame)
+    if (!fillSwapChainBuffer(swapchainBuffer, m_sample))
         return;
-
-    auto* sourceVideoFrame = sourceFrame.get();
-    for (unsigned i = 0; i < GST_VIDEO_FRAME_N_PLANES(sourceVideoFrame); ++i) {
-        auto& planeData = swapchainBuffer->planeData(i);
-
-        Locker locker { Destination::mappingLock() };
-        Destination destination(planeData.bo, planeData.width, planeData.height);
-        if (destination.valid)
-            destination.copyPlaneData(sourceVideoFrame, i);
-    }
 
     // The updated buffer is pushed into the composition stage. The DMABufObject handle uses the swapchain address as the handle base.
     // When the buffer is pushed for the first time, the lambda will be invoked to retrieve a more complete DMABufObject for the
@@ -3673,9 +3589,10 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
         DMABufObject(reinterpret_cast<uintptr_t>(m_swapchain.get()) + swapchainBuffer->handle()),
         [&](auto&& initialObject) {
             auto object = swapchainBuffer->createDMABufObject(initialObject.handle);
-            object.colorSpace = colorSpaceForColorimetry(&GST_VIDEO_INFO_COLORIMETRY(&videoInfo));
+            object.colorSpace = dmaBufColorSpaceForColorimetry(&GST_VIDEO_INFO_COLORIMETRY(&videoInfo));
             return object;
         }, textureMapperFlags);
+    m_hasFirstVideoSampleBeenRendered = true;
 }
 #endif // USE(TEXTURE_MAPPER_DMABUF)
 
@@ -3842,6 +3759,20 @@ void MediaPlayerPrivateGStreamer::invalidateCachedPositionOnNextIteration() cons
         if (!player)
             return;
         invalidateCachedPosition();
+    });
+}
+
+void MediaPlayerPrivateGStreamer::textureMapperPlatformLayerProxyWasInvalidated()
+{
+    RELEASE_ASSERT(m_sampleMutex.isHeld());
+    if (!m_hasFirstVideoSampleBeenRendered)
+        return;
+
+    RunLoop::main().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this] {
+        RefPtr player = weakThis.get();
+        if (!player)
+            return;
+        tearDown(false);
     });
 }
 
@@ -4015,6 +3946,9 @@ void MediaPlayerPrivateGStreamer::setVisibleInViewport(bool isVisible)
     // this using an environment variable, set from the webkitpy glib port sub-classes.
     const char* allowPlaybackOfInvisibleVideos = g_getenv("WEBKIT_GST_ALLOW_PLAYBACK_OF_INVISIBLE_VIDEOS");
     if (!isVisible && allowPlaybackOfInvisibleVideos && !strcmp(allowPlaybackOfInvisibleVideos, "1"))
+        return;
+
+    if (!m_pipeline)
         return;
 
     RefPtr player = m_player.get();
@@ -4359,22 +4293,19 @@ bool MediaPlayerPrivateGStreamer::updateVideoSinkStatistics()
     if (!m_videoSink)
         return false;
 
-    uint64_t totalVideoFrames = 0;
-    uint64_t droppedVideoFrames = 0;
     GUniqueOutPtr<GstStructure> stats;
     g_object_get(m_videoSink.get(), "stats", &stats.outPtr(), nullptr);
+    auto totalVideoFrames = gstStructureGet<uint64_t>(stats.get(), "rendered"_s);
+    auto droppedVideoFrames = gstStructureGet<uint64_t>(stats.get(), "dropped"_s);
 
-    if (!gst_structure_get_uint64(stats.get(), "rendered", &totalVideoFrames))
-        return false;
-
-    if (!gst_structure_get_uint64(stats.get(), "dropped", &droppedVideoFrames))
+    if (!totalVideoFrames || !droppedVideoFrames)
         return false;
 
     // Caching is required so that metrics queries performed after EOS still return valid values.
-    if (totalVideoFrames)
-        m_totalVideoFrames = totalVideoFrames;
-    if (droppedVideoFrames)
-        m_droppedVideoFrames = droppedVideoFrames;
+    if (*totalVideoFrames)
+        m_totalVideoFrames = *totalVideoFrames;
+    if (*droppedVideoFrames)
+        m_droppedVideoFrames = *droppedVideoFrames;
     return true;
 }
 

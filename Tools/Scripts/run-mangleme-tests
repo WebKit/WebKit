@@ -61,7 +61,7 @@ my $productDir = productDir();
 
 chdirWebKit();
 
-checkFrameworks();
+checkBuild();
 
 mkdir "WebKitBuild/mangleme";
 (system "/usr/bin/make", "-C", "Tools/mangleme") == 0 or die;

@@ -42,7 +42,6 @@
 #include "FrameLoader.h"
 #include "HTTPParsers.h"
 #include "HistoryController.h"
-#include "IgnoreOpensDuringUnloadCountIncrementer.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
@@ -54,6 +53,7 @@
 #include "SecurityOriginHash.h"
 #include "Settings.h"
 #include "SubframeLoader.h"
+#include "UnloadCountIncrementer.h"
 #include <pal/Logging.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
@@ -443,7 +443,7 @@ static void firePageHideEventRecursively(LocalFrame& frame)
     // that the parent document's ignore-opens-during-unload counter should be incremented while the
     // pagehide event is being fired in its subframes:
     // https://html.spec.whatwg.org/multipage/browsers.html#unload-a-document
-    IgnoreOpensDuringUnloadCountIncrementer ignoreOpensDuringUnloadCountIncrementer(document.get());
+    UnloadCountIncrementer UnloadCountIncrementer(document.get());
 
     frame.loader().stopLoading(UnloadEventPolicy::UnloadAndPageHide);
 

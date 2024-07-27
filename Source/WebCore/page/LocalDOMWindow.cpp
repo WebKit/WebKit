@@ -246,7 +246,7 @@ static void removeAllBeforeUnloadEventListeners(LocalDOMWindow* domWindow)
 static bool allowsBeforeUnloadListeners(LocalDOMWindow* window)
 {
     ASSERT_ARG(window, window);
-    auto* frame = window->frame();
+    RefPtr frame = window->frame();
     if (!frame)
         return false;
     if (!frame->page())
@@ -383,7 +383,7 @@ bool LocalDOMWindow::allowPopUp(LocalFrame& firstFrame)
 
 bool LocalDOMWindow::allowPopUp()
 {
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     return frame && allowPopUp(*frame);
 }
 
@@ -603,7 +603,7 @@ void LocalDOMWindow::resumeFromBackForwardCache()
 
 bool LocalDOMWindow::isCurrentlyDisplayedInFrame() const
 {
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     return frame && frame->document()->domWindow() == this;
 }
 
@@ -641,7 +641,7 @@ ExceptionOr<Ref<NodeList>> LocalDOMWindow::collectMatchingElementsInFlatTree(Nod
 
     Vector<Ref<Element>> result;
     for (auto& node : composedTreeDescendants(*scopeContainer)) {
-        if (RefPtr element = dynamicDowncast<Element>(node); element && query.matches(*element) && !node.isInUserAgentShadowTree())
+        if (RefPtr element = dynamicDowncast<Element>(node); element && query.matches(*element) && !element->isInUserAgentShadowTree())
             result.append(element.releaseNonNull());
     }
 
@@ -661,7 +661,7 @@ ExceptionOr<RefPtr<Element>> LocalDOMWindow::matchingElementInFlatTree(Node& sco
     SelectorQuery& query = queryOrException.releaseReturnValue();
 
     for (auto& node : composedTreeDescendants(*scopeContainer)) {
-        if (RefPtr element = dynamicDowncast<Element>(node); element && query.matches(*element) && !node.isInUserAgentShadowTree())
+        if (RefPtr element = dynamicDowncast<Element>(node); element && query.matches(*element) && !element->isInUserAgentShadowTree())
             return element;
     }
 
@@ -1101,7 +1101,7 @@ void LocalDOMWindow::closePage()
 {
     protectedDocument()->checkedEventLoop()->queueTask(TaskSource::DOMManipulation, [this, protectedThis = Ref { *this }] {
         // Calling closeWindow() may destroy the page.
-        if (auto* page = this->page())
+        if (RefPtr page = this->page())
             page->chrome().closeWindow();
     });
 }
@@ -1477,13 +1477,13 @@ void LocalDOMWindow::disownOpener()
 
 String LocalDOMWindow::origin() const
 {
-    auto* document = this->document();
+    RefPtr document = this->document();
     return document ? document->securityOrigin().toString() : emptyString();
 }
 
 SecurityOrigin* LocalDOMWindow::securityOrigin() const
 {
-    auto* document = this->document();
+    RefPtr document = this->document();
     return document ? &document->securityOrigin() : nullptr;
 }
 
@@ -1633,7 +1633,6 @@ RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const S
     auto [pseudoElementIsParsable, pseudoElementIdentifier] = CSSSelectorParser::parsePseudoElement(pseudoElement, parserContext);
     if (!(pseudoElementIsParsable || (pseudoElementIdentifier && !pseudoElementIdentifier->nameArgument.isNull())) && !pseudoElement.isEmpty())
         return nullptr;
-    auto pseudoId = pseudoElementIdentifier ? pseudoElementIdentifier->pseudoId : PseudoId::None;
 
     RefPtr frame = this->frame();
     frame->protectedDocument()->styleScope().flushPendingUpdate();
@@ -1642,7 +1641,7 @@ RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const S
     if (!authorOnly)
         rulesToInclude |= Style::Resolver::UAAndUserCSSRules;
 
-    auto matchedRules = frame->document()->styleScope().resolver().pseudoStyleRulesForElement(element, pseudoId, rulesToInclude);
+    auto matchedRules = frame->document()->styleScope().resolver().pseudoStyleRulesForElement(element, pseudoElementIdentifier, rulesToInclude);
     if (matchedRules.isEmpty())
         return nullptr;
 

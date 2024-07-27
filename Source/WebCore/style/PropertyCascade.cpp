@@ -181,7 +181,7 @@ const PropertyCascade::Property* PropertyCascade::lastDeferredPropertyResolvingR
     return nullptr;
 }
 
-bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel, bool important)
+bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel, IsImportant important)
 {
     auto includePropertiesForRollback = [&] {
         if (m_rollbackScope && matchedProperties.styleScopeOrdinal > *m_rollbackScope)
@@ -204,7 +204,7 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
     for (auto current : matchedProperties.properties.get()) {
         if (current.isImportant())
             hasImportantProperties = true;
-        if (important != current.isImportant())
+        if ((important == IsImportant::No && current.isImportant()) || (important == IsImportant::Yes && !current.isImportant()))
             continue;
 
         auto propertyID = current.id();
@@ -316,7 +316,7 @@ bool PropertyCascade::addNormalMatches(CascadeLevel cascadeLevel)
 {
     bool hasImportant = false;
     for (auto& matchedDeclarations : declarationsForCascadeLevel(m_matchResult, cascadeLevel))
-        hasImportant |= addMatch(matchedDeclarations, cascadeLevel, false);
+        hasImportant |= addMatch(matchedDeclarations, cascadeLevel, IsImportant::No);
 
     return hasImportant;
 }
@@ -372,7 +372,7 @@ void PropertyCascade::addImportantMatches(CascadeLevel cascadeLevel)
     }
 
     for (auto& match : importantMatches)
-        addMatch(matchedDeclarations[match.index], cascadeLevel, true);
+        addMatch(matchedDeclarations[match.index], cascadeLevel, IsImportant::Yes);
 }
 
 void PropertyCascade::sortDeferredPropertyIDs()

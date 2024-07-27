@@ -90,7 +90,7 @@ public:
     }
 
 protected:
-    JS_EXPORT_PRIVATE JSCallee(VM&, JSGlobalObject*, Structure*);
+    JSCallee(VM&, JSGlobalObject*, Structure*);
     JSCallee(VM&, JSScope*, Structure*);
 
     DECLARE_DEFAULT_FINISH_CREATION;

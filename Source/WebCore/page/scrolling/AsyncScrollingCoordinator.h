@@ -184,6 +184,7 @@ private:
     
     WEBCORE_EXPORT void setMouseIsOverScrollbar(Scrollbar*, bool isOverScrollbar) override;
     WEBCORE_EXPORT void setScrollbarEnabled(Scrollbar&) override;
+    WEBCORE_EXPORT void setScrollbarWidth(ScrollableArea&, ScrollbarWidth) override;
 
     void hysterisisTimerFired(PAL::HysteresisState);
 

@@ -33,4 +33,6 @@ void wpeToplevelWaylandSetHasPointer(WPEToplevelWayland*, bool);
 WPEView* wpeToplevelWaylandGetVisibleViewUnderPointer(WPEToplevelWayland*);
 void wpeToplevelWaylandSetIsFocused(WPEToplevelWayland*, bool);
 WPEView* wpeToplevelWaylandGetVisibleFocusedView(WPEToplevelWayland*);
+void wpeToplevelWaylandSetIsUnderTouch(WPEToplevelWayland*, bool);
+WPEView* wpeToplevelWaylandGetVisibleViewUnderTouch(WPEToplevelWayland*);
 void wpeToplevelWaylandViewVisibilityChanged(WPEToplevelWayland*, WPEView*);

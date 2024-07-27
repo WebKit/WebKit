@@ -47,6 +47,11 @@ RemoteFaceDetector::RemoteFaceDetector(Ref<WebCore::ShapeDetection::FaceDetector
 
 RemoteFaceDetector::~RemoteFaceDetector() = default;
 
+const SharedPreferencesForWebProcess& RemoteFaceDetector::sharedPreferencesForWebProcess() const
+{
+    return m_backend->sharedPreferencesForWebProcess();
+}
+
 void RemoteFaceDetector::detect(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedFace>&&)>&& completionHandler)
 {
     auto sourceImage = m_backend->imageBuffer(renderingResourceIdentifier);

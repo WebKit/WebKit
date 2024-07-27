@@ -316,7 +316,7 @@ struct PerWebProcessState {
     RetainPtr<UIView> _resizeAnimationView;
     CGFloat _lastAdjustmentForScroller;
 
-    CGSize _lastKnownWindowSize;
+    std::pair<CGSize, UIInterfaceOrientation> _lastKnownWindowSizeAndOrientation;
     RetainPtr<NSTimer> _endLiveResizeTimer;
 
     WebCore::FloatBoxExtent _obscuredInsetsWhenSaved;
@@ -407,15 +407,19 @@ struct PerWebProcessState {
 - (void)_proofreadingSessionWithUUID:(NSUUID *)sessionUUID updateState:(WebCore::WritingTools::TextSuggestionState)state forSuggestionWithUUID:(NSUUID *)replacementUUID;
 
 #if PLATFORM(MAC)
-- (NSWritingToolsAllowedInputOptions)writingToolsAllowedInputOptions;
+// FIXME: (rdar://130540028) Remove uses of the old WritingToolsAllowedInputOptions API in favor of the new WritingToolsResultOptions API, and remove staging.
+- (PlatformWritingToolsResultOptions)writingToolsAllowedInputOptions;
+- (PlatformWritingToolsResultOptions)allowedWritingToolsResultOptions;
 #else
-- (UIWritingToolsAllowedInputOptions)writingToolsAllowedInputOptions;
+// FIXME: (rdar://130540028) Remove uses of the old WritingToolsAllowedInputOptions API in favor of the new WritingToolsResultOptions API, and remove staging.
+- (PlatformWritingToolsResultOptions)writingToolsAllowedInputOptions;
+- (PlatformWritingToolsResultOptions)allowedWritingToolsResultOptions;
 #endif
 
 #endif // ENABLE(WRITING_TOOLS)
 
 #if ENABLE(WRITING_TOOLS_UI)
-- (void)_addTextAnimationForAnimationID:(NSUUID *)uuid withData:(const WebKit::TextAnimationData&)styleData;
+- (void)_addTextAnimationForAnimationID:(NSUUID *)uuid withData:(const WebCore::TextAnimationData&)styleData;
 - (void)_removeTextAnimationForAnimationID:(NSUUID *)uuid;
 #endif
 
@@ -435,6 +439,13 @@ struct PerWebProcessState {
 
 #if ENABLE(GAMEPAD)
 - (void)_setGamepadsRecentlyAccessed:(BOOL)gamepadsRecentlyAccessed;
+
+#if PLATFORM(VISION)
+@property (nonatomic, readonly) BOOL _gamepadsConnected;
+- (void)_gamepadsConnectedStateChanged;
+- (void)_setAllowGamepadsInput:(BOOL)allowGamepadsInput;
+- (void)_setAllowGamepadsAccess;
+#endif
 #endif
 
 - (WKPageRef)_pageForTesting;

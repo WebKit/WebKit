@@ -2823,6 +2823,8 @@ class Trigger(trigger.Trigger):
 
         properties_to_pass = {prop: properties.Property(prop) for prop in property_names}
         properties_to_pass['retry_count'] = properties.Property('retry_count', default=0)
+        properties_to_pass['os_version_builder'] = properties.Property('os_version', default='')
+        properties_to_pass['xcode_version_builder'] = properties.Property('xcode_version', default='')
         if self.include_revision:
             properties_to_pass['ews_revision'] = properties.Property('got_revision')
         return properties_to_pass
@@ -3119,7 +3121,7 @@ class InstallWinDependencies(shell.ShellCommandNewStyle):
     name = 'win-deps'
     description = ['Updating Win dependencies']
     descriptionDone = ['Updated Win dependencies']
-    command = ['python3', 'Tools/Scripts/update-webkit-wincairo-libs.py']
+    command = ['python3', 'Tools/Scripts/update-webkit-win-libs.py']
     haltOnFailure = True
 
     def __init__(self, **kwargs):
@@ -5837,6 +5839,7 @@ class PrintConfiguration(steps.ShellSequence):
         self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
         self.addLogObserver('stdio', self.log_observer)
 
+    @defer.inlineCallbacks
     def run(self):
         command_list = list(self.command_list_generic)
         platform = self.getProperty('platform', '*')
@@ -5849,7 +5852,10 @@ class PrintConfiguration(steps.ShellSequence):
 
         for command in command_list:
             self.commands.append(util.ShellArg(command=command, logname='stdio'))
-        return super().run()
+        rc = yield super().run()
+        logs = self.log_observer.getStdout() + self.log_observer.getStderr()
+        self.parseAndValidate(logs)
+        defer.returnValue(rc)
 
     def convert_build_to_os_name(self, build):
         if not build:
@@ -5867,21 +5873,43 @@ class PrintConfiguration(steps.ShellSequence):
                 return value
         return 'Unknown'
 
-    def getResultSummary(self):
-        if self.results != SUCCESS:
-            return {'step': 'Failed to print configuration'}
-        logText = self.log_observer.getStdout() + self.log_observer.getStderr()
-        configuration = 'Printed configuration'
+    def parseAndValidate(self, logText):
+        os_version, xcode_version = '', ''
         match = re.search('ProductVersion:[ \t]*(.+?)\n', logText)
         if match:
             os_version = match.group(1).strip()
             os_name = self.convert_build_to_os_name(os_version)
-            configuration = 'OS: {} ({})'.format(os_name, os_version)
 
         xcode_re = sdk_re = 'Xcode[ \t]+?([0-9.]+?)\n'
         match = re.search(xcode_re, logText)
         if match:
             xcode_version = match.group(1).strip()
+
+        self.setProperty('os_version', os_version)
+        self.setProperty('xcode_version', xcode_version)
+        os_version_builder = self.getProperty('os_version_builder', '')
+        xcode_version_builder = self.getProperty('xcode_version_builder', '')
+
+        if ((os_version and os_version_builder and os_version != os_version_builder) or
+                (xcode_version and xcode_version_builder and xcode_version != xcode_version_builder)):
+            message = f'Error: OS/SDK version mismatch, please inform an admin.'
+            detailed_message = message + f' Builder: OS={os_version_builder}, Xcode={xcode_version_builder}; Tester: OS={os_version}, Xcode={xcode_version}'
+            print(f'\n{detailed_message}')
+            self.build.stopBuild(reason=detailed_message, results=FAILURE)
+            self.build.buildFinished([message], FAILURE)
+
+    def getResultSummary(self):
+        if self.results not in [SUCCESS, WARNINGS, EXCEPTION]:
+            return {'step': 'Failed to print configuration'}
+
+        configuration = 'Printed configuration'
+        os_version = self.getProperty('os_version', '')
+        if os_version:
+            os_name = self.convert_build_to_os_name(os_version)
+            configuration = 'OS: {} ({})'.format(os_name, os_version)
+
+        xcode_version = self.getProperty('xcode_version', '')
+        if xcode_version:
             configuration += ', Xcode: {}'.format(xcode_version)
         return {'step': configuration}
 

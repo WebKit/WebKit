@@ -46,6 +46,8 @@ public:
 
     void setClient(TextureMapperPlatformLayer::Client* client) { m_client = client; }
 
+    virtual bool isHolePunchBuffer() const { return false; }
+
 protected:
     TextureMapperPlatformLayer::Client* client() { return m_client; }
 

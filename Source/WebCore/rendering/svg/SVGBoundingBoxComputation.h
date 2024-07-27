@@ -43,7 +43,8 @@ public:
         IgnoreTransformations               = 1 << 6, /* WebKit extension - internal    */
         OverrideBoxWithFilterBox            = 1 << 7, /* WebKit extension - internal    */
         OverrideBoxWithFilterBoxForChildren = 1 << 8, /* WebKit extension - internal    */
-        CalculateFastRepaintRect            = 1 << 9  /* WebKit extension - internal    */
+        CalculateFastRepaintRect            = 1 << 9, /* WebKit extension - internal    */
+        UseFilterBoxOnEmptyRect             = 1 << 10  /* WebKit extension - internal    */
     };
 
     using DecorationOptions = OptionSet<DecorationOption>;
@@ -66,16 +67,7 @@ public:
         return computeDecoratedBoundingBox(renderer, repaintBoundingBoxDecoration);
     }
 
-    static LayoutRect computeVisualOverflowRect(const RenderLayerModelObject& renderer)
-    {
-        auto repaintBoundingBoxWithoutTransformations = computeDecoratedBoundingBox(renderer, repaintBoundingBoxDecoration | DecorationOption::IncludeOutline | DecorationOption::IgnoreTransformations);
-        if (repaintBoundingBoxWithoutTransformations.isEmpty())
-            return { };
-
-        auto visualOverflowRect = enclosingLayoutRect(repaintBoundingBoxWithoutTransformations);
-        visualOverflowRect.moveBy(-renderer.nominalSVGLayoutLocation());
-        return visualOverflowRect;
-    }
+    static LayoutRect computeVisualOverflowRect(const RenderLayerModelObject&);
 
 private:
     FloatRect handleShapeOrTextOrInline(const DecorationOptions&, bool* boundingBoxValid = nullptr) const;

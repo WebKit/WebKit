@@ -42,7 +42,7 @@ public:
 
     void initializeMasonry(unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection);
     void performMasonryPlacement(unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection);
-    LayoutUnit offsetForChild(const RenderBox&) const;
+    LayoutUnit offsetForGridItem(const RenderBox&) const;
     LayoutUnit gridContentSize() const { return m_gridContentSize; };
     LayoutUnit gridGap() const { return m_masonryAxisGridGap; };
 
@@ -61,12 +61,12 @@ private:
 
     void resizeAndResetRunningPositions();
     void allocateCapacityForMasonryVectors();
-    LayoutUnit masonryAxisMarginBoxForItem(const RenderBox& child);
-    void updateRunningPositions(const RenderBox& child, const GridArea&);
-    void updateItemOffset(const RenderBox& child, LayoutUnit offset);
+    LayoutUnit masonryAxisMarginBoxForItem(const RenderBox& gridItem);
+    void updateRunningPositions(const RenderBox& gridItem, const GridArea&);
+    void updateItemOffset(const RenderBox& gridItem, LayoutUnit offset);
     inline GridTrackSizingDirection gridAxisDirection() const;
 
-    bool hasDefiniteGridAxisPosition(const RenderBox& child, GridTrackSizingDirection masonryDirection) const;
+    bool hasDefiniteGridAxisPosition(const RenderBox& gridItem, GridTrackSizingDirection masonryDirection) const;
     GridArea masonryGridAreaFromGridAxisSpan(const GridSpan&) const;
     GridSpan gridAxisSpanFromArea(const GridArea&) const;
     bool hasEnoughSpaceAtPosition(unsigned startingPosition, unsigned spanLength) const;

@@ -54,7 +54,7 @@ void JITOperationList::initialize()
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
 
-#if JIT_OPERATION_VALIDATION_ASSERT_ENABLED
+#if ENABLE(JIT_OPERATION_VALIDATION_ASSERT)
 void JITOperationList::addInverseMap(void* validationEntry, void* pointer)
 {
     m_validatedOperationsInverseMap.add(validationEntry, pointer);
@@ -64,7 +64,7 @@ void JITOperationList::addInverseMap(void* validationEntry, void* pointer)
     addInverseMap(validationEntry, pointer)
 #else
 #define JSC_REGISTER_INVERSE_JIT_CAGED_POINTER_FOR_DEBUG(validationEntry, pointer)
-#endif // JIT_OPERATION_VALIDATION_ASSERT_ENABLED
+#endif // ENABLE(JIT_OPERATION_VALIDATION_ASSERT)
 
 SUPPRESS_ASAN ALWAYS_INLINE void JITOperationList::addPointers(const JITOperationAnnotation* begin, const JITOperationAnnotation* end)
 {
@@ -75,7 +75,7 @@ SUPPRESS_ASAN ALWAYS_INLINE void JITOperationList::addPointers(const JITOperatio
         return;
     }
 #endif
-    if constexpr (JIT_OPERATION_VALIDATION_ASSERT_ENABLED) {
+#if ENABLE(JIT_OPERATION_VALIDATION_ASSERT)
         for (const auto* current = begin; current != end; ++current) {
             void* operation = removeCodePtrTag(current->operation);
             if (operation) {
@@ -85,7 +85,7 @@ SUPPRESS_ASAN ALWAYS_INLINE void JITOperationList::addPointers(const JITOperatio
                 JSC_REGISTER_INVERSE_JIT_CAGED_POINTER_FOR_DEBUG(validator, operation);
             }
         }
-    }
+#endif
 }
 
 void JITOperationList::populatePointersInJavaScriptCore()

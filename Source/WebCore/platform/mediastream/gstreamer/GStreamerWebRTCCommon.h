@@ -27,7 +27,6 @@ using WebRTCTrackData = struct _WebRTCTrackData {
     String trackId;
     String mediaStreamBinName;
     GRefPtr<GstWebRTCRTPTransceiver> transceiver;
-    bool isUpstreamDecoding;
     RealtimeMediaSource::Type type;
     GRefPtr<GstCaps> caps;
 };

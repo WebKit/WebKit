@@ -95,7 +95,7 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         RELEASE_ASSERT(!connectedSubframeCount() && !hasRareData() && !wrapper());
         bool hadElementChild = false;
-        while (RefPtr child = m_firstChild) {
+        while (RefPtr child = m_firstChild.get()) {
             hadElementChild |= is<Element>(*child);
             removeBetween(nullptr, child->protectedNextSibling().get(), *child);
         }
@@ -137,7 +137,7 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
 
         RefAllowingPartiallyDestroyed<Document> { document() }->nodeChildrenWillBeRemoved(*this);
 
-        while (RefPtr child = m_firstChild) {
+        while (RefPtr child = m_firstChild.get()) {
             if (is<Element>(*child))
                 hadElementChild = true;
 
@@ -577,7 +577,7 @@ void ContainerNode::insertBeforeCommon(Node& nextChild, Node& newChild)
     ASSERT(!newChild.isShadowRoot());
 
     RefPtr previousSibling = nextChild.previousSibling();
-    ASSERT(m_lastChild != previousSibling);
+    ASSERT(m_lastChild != previousSibling.get());
     nextChild.setPreviousSibling(&newChild);
     if (previousSibling) {
         ASSERT(m_firstChild != &nextChild);
@@ -1164,9 +1164,9 @@ unsigned ContainerNode::childElementCount() const
     return std::distance(children.begin(), { });
 }
 
-ExceptionOr<void> ContainerNode::append(FixedVector<NodeOrStringOrTrustedScript>&& vector)
+ExceptionOr<void> ContainerNode::append(FixedVector<NodeOrString>&& vector)
 {
-    auto result = convertNodesOrStringsOrTrustedScriptsIntoNodeVector(this, WTFMove(vector));
+    auto result = convertNodesOrStringsIntoNodeVector(WTFMove(vector));
     if (result.hasException())
         return result.releaseException();
 
@@ -1185,9 +1185,9 @@ ExceptionOr<void> ContainerNode::append(FixedVector<NodeOrStringOrTrustedScript>
     return { };
 }
 
-ExceptionOr<void> ContainerNode::prepend(FixedVector<NodeOrStringOrTrustedScript>&& vector)
+ExceptionOr<void> ContainerNode::prepend(FixedVector<NodeOrString>&& vector)
 {
-    auto result = convertNodesOrStringsOrTrustedScriptsIntoNodeVector(this, WTFMove(vector));
+    auto result = convertNodesOrStringsIntoNodeVector(WTFMove(vector));
     if (result.hasException())
         return result.releaseException();
 
@@ -1208,9 +1208,9 @@ ExceptionOr<void> ContainerNode::prepend(FixedVector<NodeOrStringOrTrustedScript
 }
 
 // https://dom.spec.whatwg.org/#dom-parentnode-replacechildren
-ExceptionOr<void> ContainerNode::replaceChildren(FixedVector<NodeOrStringOrTrustedScript>&& vector)
+ExceptionOr<void> ContainerNode::replaceChildren(FixedVector<NodeOrString>&& vector)
 {
-    auto result = convertNodesOrStringsOrTrustedScriptsIntoNodeVector(this, WTFMove(vector));
+    auto result = convertNodesOrStringsIntoNodeVector(WTFMove(vector));
     if (result.hasException())
         return result.releaseException();
     auto newChildren = result.releaseReturnValue();

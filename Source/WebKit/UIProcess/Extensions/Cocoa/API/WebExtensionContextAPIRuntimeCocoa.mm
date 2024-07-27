@@ -90,11 +90,11 @@ void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(Expected
     auto frontmostWindow = this->frontmostWindow();
 
     auto *creationOptions = [[_WKWebExtensionTabCreationOptions alloc] _init];
-    creationOptions.shouldActivate = YES;
-    creationOptions.shouldSelect = YES;
-    creationOptions.desiredWindow = frontmostWindow ? frontmostWindow->delegate() : nil;
-    creationOptions.desiredIndex = frontmostWindow ? frontmostWindow->tabs().size() : 0;
-    creationOptions.desiredURL = optionsPageURL();
+    creationOptions.active = YES;
+    creationOptions.selected = YES;
+    creationOptions.window = frontmostWindow ? frontmostWindow->delegate() : nil;
+    creationOptions.index = frontmostWindow ? frontmostWindow->tabs().size() : 0;
+    creationOptions.url = optionsPageURL();
 
     [delegate webExtensionController:extensionController()->wrapper() openNewTabWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](id<_WKWebExtensionTab> newTab, NSError *error) mutable {
         if (error) {
@@ -107,8 +107,6 @@ void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(Expected
             completionHandler(toWebExtensionError(apiName, nil, @"the options page cound not be opened"));
             return;
         }
-
-        THROW_UNLESS([newTab conformsToProtocol:@protocol(_WKWebExtensionTab)], @"Object returned by webExtensionController:openNewTabWithOptions:forExtensionContext:completionHandler: does not conform to the _WKWebExtensionTab protocol");
 
         completionHandler({ });
     }).get()];

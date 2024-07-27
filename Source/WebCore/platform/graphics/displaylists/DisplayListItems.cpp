@@ -536,12 +536,13 @@ void DrawFocusRingRects::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 
 void FillRect::apply(GraphicsContext& context) const
 {
-    context.fillRect(m_rect);
+    context.fillRect(m_rect, m_requiresClipToRect);
 }
 
 void FillRect::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 {
     ts.dumpProperty("rect", rect());
+    ts.dumpProperty("requiresClipToRect", m_requiresClipToRect == GraphicsContext::RequiresClipToRect::Yes);
 }
 
 void FillRectWithColor::apply(GraphicsContext& context) const
@@ -578,17 +579,19 @@ void FillRectWithGradient::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("rect", rect());
 }
 
-FillRectWithGradientAndSpaceTransform::FillRectWithGradientAndSpaceTransform(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
+FillRectWithGradientAndSpaceTransform::FillRectWithGradientAndSpaceTransform(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, GraphicsContext::RequiresClipToRect requiresClipToRect)
     : m_rect(rect)
     , m_gradient(gradient)
     , m_gradientSpaceTransform(gradientSpaceTransform)
+    , m_requiresClipToRect(requiresClipToRect)
 {
 }
 
-FillRectWithGradientAndSpaceTransform::FillRectWithGradientAndSpaceTransform(FloatRect&& rect, Ref<Gradient>&& gradient, AffineTransform&& gradientSpaceTransform)
+FillRectWithGradientAndSpaceTransform::FillRectWithGradientAndSpaceTransform(FloatRect&& rect, Ref<Gradient>&& gradient, AffineTransform&& gradientSpaceTransform, GraphicsContext::RequiresClipToRect requiresClipToRect)
     : m_rect(WTFMove(rect))
     , m_gradient(WTFMove(gradient))
     , m_gradientSpaceTransform(WTFMove(gradientSpaceTransform))
+    , m_requiresClipToRect(requiresClipToRect)
 {
 }
 
@@ -602,6 +605,7 @@ void FillRectWithGradientAndSpaceTransform::dump(TextStream& ts, OptionSet<AsTex
     // FIXME: log gradient.
     ts.dumpProperty("rect", rect());
     ts.dumpProperty("gradient-space-transform", gradientSpaceTransform());
+    ts.dumpProperty("requiresClipToRect", m_requiresClipToRect == GraphicsContext::RequiresClipToRect::Yes);
 }
 
 void FillCompositedRect::apply(GraphicsContext& context) const

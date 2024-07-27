@@ -179,7 +179,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @result The JSValue representing a JavaScript value with type BigInt.
 @discussion This is equivalent to calling the <code>BigInt</code> constructor from JavaScript with a string argument.
 */
-+ (nullable JSValue *)valueWithNewBigIntFromString:(nonnull NSString *)string inContext:(nonnull JSContext *)context JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
++ (nullable JSValue *)valueWithNewBigIntFromString:(nonnull NSString *)string inContext:(nonnull JSContext *)context JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
 @method
@@ -188,7 +188,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @param context The JSContext to which the resulting JSValue belongs.
 @result The JSValue representing a JavaScript value with type BigInt.
 */
-+ (nullable JSValue *)valueWithNewBigIntFromInt64:(int64_t)int64 inContext:(nonnull JSContext *)context JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
++ (nullable JSValue *)valueWithNewBigIntFromInt64:(int64_t)int64 inContext:(nonnull JSContext *)context JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
 @method
@@ -197,7 +197,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @param context The JSContext to which the resulting JSValue belongs.
 @result The JSValue representing a JavaScript value with type BigInt.
 */
-+ (nullable JSValue *)valueWithNewBigIntFromUInt64:(uint64_t)uint64 inContext:(nonnull JSContext *)context JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
++ (nullable JSValue *)valueWithNewBigIntFromUInt64:(uint64_t)uint64 inContext:(nonnull JSContext *)context JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
 @method
@@ -207,7 +207,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @result The JSValue representing a JavaScript value with type BigInt.
 @discussion If the value is not an integer, an exception is thrown.
 */
-+ (nullable JSValue *)valueWithNewBigIntFromDouble:(double)value inContext:(nonnull JSContext *)context JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
++ (nullable JSValue *)valueWithNewBigIntFromDouble:(double)value inContext:(nonnull JSContext *)context JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
 @method
@@ -327,14 +327,14 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @abstract Convert a JSValue to a <code>int64_t</code>.
 @discussion The JSValue is converted to an integer according to the rules specified by the JavaScript language. If the value is a BigInt, then the value is truncated to an <code>int64_t</code>.
 */
-- (int64_t)toInt64 JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+- (int64_t)toInt64 JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
 @method
 @abstract Convert a JSValue to a <code>uint64_t</code>.
 @discussion The JSValue is converted to an integer according to the rules specified by the JavaScript language. If the value is a BigInt, then the value is truncated to a <code>uint64_t</code>.
 */
-- (uint64_t)toUInt64 JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+- (uint64_t)toUInt64 JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
 @method
@@ -454,7 +454,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @property
 @abstract Check if a JSValue is a BigInt.
 */
-@property (readonly) BOOL isBigInt JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+@property (readonly) BOOL isBigInt JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
 @method
@@ -488,7 +488,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @result A value of JSRelationCondition, a kJSRelationConditionUndefined is returned if an exception is thrown.
 @discussion The result is computed by comparing the results of JavaScript's <code>==</code>, <code><</code>, and <code>></code> operators. If either <code>self</code> or <code>other</code> is (or would coerce to) <code>NaN</code> in JavaScript, then the result is kJSRelationConditionUndefined.
 */
-- (JSRelationCondition)compareJSValue:(nonnull JSValue *)other JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+- (JSRelationCondition)compareJSValue:(nonnull JSValue *)other JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
 @method
@@ -497,7 +497,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @result A value of JSRelationCondition, a kJSRelationConditionUndefined is returned if an exception is thrown.
 @discussion The JSValue is converted to an integer according to the rules specified by the JavaScript language then compared with <code>other</code>.
 */
-- (JSRelationCondition)compareInt64:(int64_t)other JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+- (JSRelationCondition)compareInt64:(int64_t)other JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
 @method
@@ -506,7 +506,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @result A value of JSRelationCondition, a kJSRelationConditionUndefined is returned if an exception is thrown.
 @discussion The JSValue is converted to an integer according to the rules specified by the JavaScript language then compared with <code>other</code>.
 */
-- (JSRelationCondition)compareUInt64:(uint64_t)other JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+- (JSRelationCondition)compareUInt64:(uint64_t)other JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
 @method
@@ -515,7 +515,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @result A value of JSRelationCondition, a kJSRelationConditionUndefined is returned if an exception is thrown.
 @discussion The JSValue is converted to a double according to the rules specified by the JavaScript language then compared with <code>other</code>.
 */
-- (JSRelationCondition)compareDouble:(double)other JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+- (JSRelationCondition)compareDouble:(double)other JSC_API_AVAILABLE(macos(15.0), ios(18.0));
 
 /*!
 @methodgroup Calling Functions and Constructors

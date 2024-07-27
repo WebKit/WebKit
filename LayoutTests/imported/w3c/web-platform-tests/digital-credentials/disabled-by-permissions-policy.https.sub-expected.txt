@@ -1,0 +1,5 @@
+
+
+FAIL Permissions-Policy header digital-credentials-get=() disallows the top-level document. promise_rejects_dom: function "function() { throw e }" threw object "TypeError: At least one provider must be specified." that is not a DOMException NotAllowedError: property "code" is equal to undefined, expected 0
+FAIL Permissions-Policy header digital-credentials-get=() disallows same-origin iframes. assert_false: Digital Credential API expected false got true
+

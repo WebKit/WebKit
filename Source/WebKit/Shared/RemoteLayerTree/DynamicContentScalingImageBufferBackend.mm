@@ -29,6 +29,7 @@
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 
 #import "Logging.h"
+#import "WKCrashReporter.h"
 #import <CoreRE/RECGCommandsContext.h>
 #import <WebCore/DynamicContentScalingDisplayList.h>
 #import <WebCore/GraphicsContextCG.h>
@@ -39,6 +40,7 @@
 #import <wtf/MachSendRight.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/StringConcatenate.h>
 
 template<> struct WTF::CFTypeTrait<CAMachPortRef> {
     static inline CFTypeID typeID(void) { return CAMachPortGetTypeID(); }
@@ -118,7 +120,15 @@ std::optional<ImageBufferBackendHandle> DynamicContentScalingImageBufferBackend:
 
     Vector<MachSendRight> sendRights;
     if (m_resourceCache) {
-        sendRights = makeVector(ports.get(), [] (id port) -> std::optional<MachSendRight> {
+        sendRights = makeVector(ports.get(), [] (CFTypeRef port) -> std::optional<MachSendRight> {
+            // FIXME: Remove this once rdar://131143854 is resolved.
+            if (!dynamic_cf_cast<CAMachPortRef>(port)) {
+                auto typeID = CFGetTypeID(port);
+                String typeDescription { adoptCF(CFCopyTypeIDDescription(typeID)).get() };
+                String objectDescription { adoptCF(CFCopyDescription(port)).get() };
+                auto description = makeString("Unexpected type in DCS ports array: "_s, typeID, " "_s, typeDescription, " "_s, objectDescription);
+                logAndSetCrashLogMessage(description.utf8().data());
+            }
             // We `create` instead of `adopt` because CAMachPort has no API to leak its reference.
             return { MachSendRight::create(CAMachPortGetPort(checked_cf_cast<CAMachPortRef>(port))) };
         });

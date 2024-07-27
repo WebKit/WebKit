@@ -134,6 +134,7 @@
 #import <WebCore/Scrollbar.h>
 #import <WebCore/ShareData.h>
 #import <WebCore/TextAlternativeWithRange.h>
+#import <WebCore/TextAnimationTypes.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/TextRecognitionResult.h>
@@ -1337,9 +1338,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self _createAndConfigureHighlightLongPressGestureRecognizer];
     [self _createAndConfigureLongPressGestureRecognizer];
 
-#if HAVE(LINK_PREVIEW)
     [self _updateLongPressAndHighlightLongPressGestures];
-#endif
 
 #if ENABLE(DRAG_SUPPORT)
     [self setUpDragAndDropInteractions];
@@ -1667,6 +1666,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_updateLongPressAndHighlightLongPressGestures
 {
+#if HAVE(LINK_PREVIEW)
     // We only disable the highlight long press gesture in the case where UIContextMenu is available and we
     // also allow link previews, since the context menu interaction's gestures need to take precedence over
     // highlight long press gestures.
@@ -1675,6 +1675,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // We only enable the long press gesture in the case where the app is linked on iOS 12 or earlier (and
     // therefore prefers the legacy action sheet over context menus), and link previews are also enabled.
     [_longPressGestureRecognizer setEnabled:!self._shouldUseContextMenus && self.webView.allowsLinkPreview];
+#else
+    [_highlightLongPressGestureRecognizer setEnabled:NO];
+    [_longPressGestureRecognizer setEnabled:NO];
+#endif
 }
 
 - (UIView *)unscaledView
@@ -2653,6 +2657,9 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
     case WebKit::InputType::Month:
     case WebKit::InputType::DateTimeLocal:
     case WebKit::InputType::Time:
+#if ENABLE(INPUT_TYPE_WEEK_PICKER)
+    case WebKit::InputType::Week:
+#endif
         return NO;
     case WebKit::InputType::Select: {
         if (self._shouldUseContextMenusForFormControls)
@@ -3882,6 +3889,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     case WebKit::InputType::DateTimeLocal:
     case WebKit::InputType::Month:
     case WebKit::InputType::Time:
+#if ENABLE(INPUT_TYPE_WEEK_PICKER)
+    case WebKit::InputType::Week:
+#endif
         return NO;
     case WebKit::InputType::Select: {
         if (self._shouldUseContextMenusForFormControls)
@@ -3898,7 +3908,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     case WebKit::InputType::NumberPad:
     case WebKit::InputType::ContentEditable:
     case WebKit::InputType::TextArea:
+#if !ENABLE(INPUT_TYPE_WEEK_PICKER)
     case WebKit::InputType::Week:
+#endif
         return PAL::currentUserInterfaceIdiomIsSmallScreen();
     }
 }
@@ -6294,6 +6306,32 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
 
 - (void)setAttributedMarkedText:(NSAttributedString *)markedText selectedRange:(NSRange)selectedRange
 {
+    BOOL hasTextCompletion = ^{
+        // UIKit doesn't include the `NSTextCompletionAttributeName`, so the next best way to detect if this method
+        // is being used for a text completion is to check if the attributes match these hard-coded ones.
+        RetainPtr textCompletionAttributes = @{
+            NSForegroundColorAttributeName : UIColor.systemGrayColor,
+            NSBackgroundColorAttributeName : UIColor.clearColor,
+        };
+
+        RetainPtr markedTextAttributes = [markedText attributesAtIndex:0 effectiveRange:nil];
+
+        RetainPtr foregroundColor = [markedTextAttributes objectForKey:NSForegroundColorAttributeName];
+        if (![foregroundColor isEqual:UIColor.systemGrayColor])
+            return NO;
+
+        RetainPtr backgroundColor = [markedTextAttributes objectForKey:NSBackgroundColorAttributeName];
+        if (![backgroundColor isEqual:UIColor.clearColor])
+            return NO;
+
+        return YES;
+    }();
+
+    if (hasTextCompletion) {
+        _page->setWritingSuggestion([markedText string], { 0, 0 });
+        return;
+    }
+
     Vector<WebCore::CompositionUnderline> underlines;
     Vector<WebCore::CompositionHighlight> highlights;
 
@@ -6912,11 +6950,15 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 
 #if HAVE(INLINE_PREDICTIONS)
     bool allowsInlinePredictions = [&] {
+#if PLATFORM(MACCATALYST)
+        return false;
+#else
         if (self.webView.configuration.allowsInlinePredictions)
             return true;
         if (auto& state = _page->editorState(); state.hasPostLayoutData() && !_isFocusingElementWithKeyboard && !_page->waitingForPostLayoutEditorStateUpdateAfterFocusingElement())
             return state.postLayoutData->canEnableWritingSuggestions;
         return _focusedElementInformation.isWritingSuggestionsEnabled;
+#endif
     }();
     traits.inlinePredictionType = allowsInlinePredictions ? UITextInlinePredictionTypeDefault : UITextInlinePredictionTypeNo;
 #endif
@@ -7741,6 +7783,9 @@ static bool mayContainSelectableText(WebKit::InputType type)
     case WebKit::InputType::Month:
     case WebKit::InputType::Select:
     case WebKit::InputType::Time:
+#if ENABLE(INPUT_TYPE_WEEK_PICKER)
+    case WebKit::InputType::Week:
+#endif
         return false;
     // The following types look and behave like a text field.
     case WebKit::InputType::ContentEditable:
@@ -7753,7 +7798,9 @@ static bool mayContainSelectableText(WebKit::InputType type)
     case WebKit::InputType::Text:
     case WebKit::InputType::TextArea:
     case WebKit::InputType::URL:
+#if !ENABLE(INPUT_TYPE_WEEK_PICKER)
     case WebKit::InputType::Week:
+#endif
         return true;
     }
 }
@@ -7783,12 +7830,19 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
         return adoptNS([[WKFormSelectControl alloc] initWithView:view]);
 #if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
+#if PLATFORM(APPLETV)
+        return nil;
+#else
         return adoptNS([[WKFormColorControl alloc] initWithView:view]);
+#endif
 #endif // ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Date:
     case WebKit::InputType::DateTimeLocal:
     case WebKit::InputType::Month:
     case WebKit::InputType::Time:
+#if ENABLE(INPUT_TYPE_WEEK_PICKER)
+    case WebKit::InputType::Week:
+#endif
         return adoptNS([[WKDateTimeInputControl alloc] initWithView:view]);
     default:
         return nil;
@@ -9131,6 +9185,58 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 #endif
 }
 
+#if PLATFORM(WATCHOS)
+static String fallbackLabelTextForUnlabeledInputFieldInZoomedFormControls(WebCore::InputMode inputMode, WebKit::InputType elementType)
+{
+    bool isPasswordField = false;
+
+    auto elementTypeIsAnyOf = [elementType](std::initializer_list<WebKit::InputType>&& elementTypes) {
+        return std::ranges::any_of(WTFMove(elementTypes), [elementType](auto&& type) {
+            return elementType == type;
+        });
+    };
+
+    // If unspecified, try to infer the input mode from the input type
+    if (inputMode == WebCore::InputMode::Unspecified) {
+        if (elementTypeIsAnyOf({ WebKit::InputType::ContentEditable, WebKit::InputType::Text, WebKit::InputType::TextArea }))
+            inputMode = WebCore::InputMode::Text;
+        if (elementTypeIsAnyOf({ WebKit::InputType::URL }))
+            inputMode = WebCore::InputMode::Url;
+        if (elementTypeIsAnyOf({ WebKit::InputType::Number, WebKit::InputType::NumberPad }))
+            inputMode = WebCore::InputMode::Numeric;
+        if (elementTypeIsAnyOf({ WebKit::InputType::Search }))
+            inputMode = WebCore::InputMode::Search;
+        if (elementTypeIsAnyOf({ WebKit::InputType::Email }))
+            inputMode = WebCore::InputMode::Email;
+        if (elementTypeIsAnyOf({ WebKit::InputType::Phone }))
+            inputMode = WebCore::InputMode::Telephone;
+        if (elementTypeIsAnyOf({ WebKit::InputType::Password }))
+            isPasswordField = true;
+    }
+
+    if (isPasswordField)
+        return WEB_UI_STRING("Password", "Fallback label text for unlabeled password field.");
+
+    switch (inputMode) {
+    case WebCore::InputMode::Telephone:
+        return WEB_UI_STRING("Phone number", "Fallback label text for unlabeled telephone number input field.");
+    case WebCore::InputMode::Url:
+        return WEB_UI_STRING("URL", "Fallback label text for unlabeled URL input field.");
+    case WebCore::InputMode::Email:
+        return WEB_UI_STRING("Email address", "Fallback label text for unlabeled email address field.");
+    case WebCore::InputMode::Numeric:
+    case WebCore::InputMode::Decimal:
+        return WEB_UI_STRING("Enter a number", "Fallback label text for unlabeled numeric field.");
+    case WebCore::InputMode::Search:
+        return WEB_UI_STRING("Search", "Fallback label text for unlabeled search field");
+    case WebCore::InputMode::Unspecified:
+    case WebCore::InputMode::None:
+    case WebCore::InputMode::Text:
+        return WEB_UI_STRING("Enter text", "Fallback label text for unlabeled text field.");
+    }
+}
+#endif
+
 - (NSString *)inputLabelText
 {
     if (!_focusedElementInformation.label.isEmpty())
@@ -9141,6 +9247,11 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
     if (!_focusedElementInformation.title.isEmpty())
         return _focusedElementInformation.title;
+
+#if PLATFORM(WATCHOS)
+    if (_focusedElementInformation.placeholder.isEmpty())
+        return fallbackLabelTextForUnlabeledInputFieldInZoomedFormControls(_focusedElementInformation.inputMode, _focusedElementInformation.elementType);
+#endif
 
     return _focusedElementInformation.placeholder;
 }
@@ -10848,6 +10959,9 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
         case WebKit::InputType::Month:
         case WebKit::InputType::DateTimeLocal:
         case WebKit::InputType::Time:
+#if ENABLE(INPUT_TYPE_WEEK_PICKER)
+        case WebKit::InputType::Week:
+#endif
             return UIColor.clearColor;
         default:
             return nil;
@@ -12010,7 +12124,11 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (UIImage *)previewController:(QLPreviewController *)controller transitionImageForPreviewItem:(id <QLPreviewItem>)item contentRect:(CGRect *)outContentRect
 {
-    *outContentRect = { CGPointZero, [self convertRect:_visualSearchPreviewImageBounds toView:nil].size };
+    // FIXME: We should remove this caching when UIKit doesn't call this delegate method twice, with
+    // the second call being in the midst of an ongoing animation. See <rdar://problem/131368437>.
+    if (!_cachedVisualSearchPreviewImageBoundsInWindowCoordinates)
+        _cachedVisualSearchPreviewImageBoundsInWindowCoordinates = { CGPointZero, [self convertRect:_visualSearchPreviewImageBounds toView:nil].size };
+    *outContentRect = *_cachedVisualSearchPreviewImageBoundsInWindowCoordinates;
     return _visualSearchPreviewImage.get();
 }
 
@@ -12021,6 +12139,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     _visualSearchPreviewImage.clear();
     _visualSearchPreviewTitle.clear();
     _visualSearchPreviewImageURL.clear();
+    _cachedVisualSearchPreviewImageBoundsInWindowCoordinates.reset();
 }
 
 #pragma mark - QLPreviewControllerDataSource
@@ -12155,10 +12274,14 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 }
 
 
-- (void)updateImageAnalysisForContextMenuPresentation:(CocoaImageAnalysis *)analysis
+- (void)updateImageAnalysisForContextMenuPresentation:(CocoaImageAnalysis *)analysis elementBounds:(CGRect)elementBounds
 {
 #if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
     analysis.presentingViewControllerForMrcAction = self._wk_viewControllerForFullScreenPresentation;
+    if ([analysis respondsToSelector:@selector(setRectForMrcActionInPresentingViewController:)]) {
+        CGRect boundsInPresentingViewController = [self convertRect:elementBounds toView:analysis.presentingViewControllerForMrcAction.viewIfLoaded];
+        analysis.rectForMrcActionInPresentingViewController = boundsInPresentingViewController;
+    }
 #endif
 }
 
@@ -12346,8 +12469,9 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
     if (_positionInformation.isPausedVideo)
         [request setImageSource:VKImageAnalyzerRequestImageSourceVideoFrame];
 
+    auto elementBounds = _positionInformation.bounds;
     auto visualSearchAnalysisStartTime = MonotonicTime::now();
-    [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:[requestIdentifier = WTFMove(requestIdentifier), weakSelf, visualSearchAnalysisStartTime, aggregator = aggregator.copyRef(), data] (CocoaImageAnalysis *result, NSError *error) mutable {
+    [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:[requestIdentifier = WTFMove(requestIdentifier), weakSelf, visualSearchAnalysisStartTime, aggregator = aggregator.copyRef(), data, elementBounds] (CocoaImageAnalysis *result, NSError *error) mutable {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
@@ -12362,6 +12486,8 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
         if (!result || error)
             return;
 
+        [strongSelf updateImageAnalysisForContextMenuPresentation:result elementBounds:elementBounds];
+
 #if ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
         if (shouldUseMachineReadableCodeMenuFromImageAnalysisResult(result))
             data->machineReadableCodeMenu = result.mrcMenu;
@@ -12369,7 +12495,6 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 #if USE(QUICK_LOOK)
         data->hasVisualSearchResults = hasVisualSearchResults;
 #endif
-        [strongSelf updateImageAnalysisForContextMenuPresentation:result];
     }];
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
@@ -13174,7 +13299,7 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 - (void)callCompletionHandlerForAnimationID:(NSUUID *)uuid
 {
     auto animationUUID = WTF::UUID::fromNSUUID(uuid);
-    _page->callCompletionHandlerForAnimationID(*animationUUID);
+    _page->callCompletionHandlerForAnimationID(*animationUUID, WebCore::TextAnimationRunMode::RunAnimation);
 }
 
 #endif
@@ -13197,9 +13322,15 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 
 #if ENABLE(WRITING_TOOLS)
 
-- (UIWritingToolsAllowedInputOptions)writingToolsAllowedInputOptions
+// FIXME: (rdar://130540028) Remove uses of the old WritingToolsAllowedInputOptions API in favor of the new WritingToolsResultOptions API, and remove staging.
+- (PlatformWritingToolsResultOptions)writingToolsAllowedInputOptions
 {
-    return [_webView writingToolsAllowedInputOptions];
+    return [_webView allowedWritingToolsResultOptions];
+}
+
+- (PlatformWritingToolsResultOptions)allowedWritingToolsResultOptions
+{
+    return [_webView allowedWritingToolsResultOptions];
 }
 
 - (UIWritingToolsBehavior)writingToolsBehavior

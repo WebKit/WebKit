@@ -340,14 +340,13 @@ pas_try_reallocate(void* old_ptr,
         }
 
         pas_heap_lock_lock();
-        
-        entry = pas_large_map_find(begin);
 
-        if (pas_large_map_entry_is_empty(entry)) {
-            // Check for PGM case
-            if (config.pgm_enabled && pas_probabilistic_guard_malloc_check_exists(begin))
-                entry = pas_probabilistic_guard_malloc_return_as_large_map_entry(begin);
-            else
+        // Check for PGM case for slow path if object is using PGM large heap
+        if (config.pgm_enabled && pas_probabilistic_guard_malloc_check_exists(begin)) {
+            entry = pas_probabilistic_guard_malloc_return_as_large_map_entry(begin);
+        } else {
+            entry = pas_large_map_find(begin);
+            if (pas_large_map_entry_is_empty(entry))
                 pas_reallocation_did_fail("Source object not allocated", NULL, heap, old_ptr, 0, new_size);
         }
 
@@ -364,6 +363,11 @@ pas_try_reallocate(void* old_ptr,
             allocate_callback, allocate_callback_arg);
         
         if (result.begin || free_mode == pas_reallocate_free_always) {
+            // Deallocate old PGM entry if its the one reallocated to other entry
+            if (pas_try_deallocate_pgm_large(old_ptr, config.config_ptr)) {
+                pas_msl_free_logging(old_ptr); /* This will not go to TLC, thus, we need to record deallocation here. */
+                return result;
+            }
             pas_deallocate_known_large(old_ptr, config.config_ptr);
             pas_msl_free_logging(old_ptr); /* This will not go to TLC, thus, we need to record deallocation here. */
         }

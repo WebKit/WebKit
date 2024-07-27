@@ -710,7 +710,7 @@ IntPoint unadjustedMovementForEvent(NSEvent *event)
 
 class PlatformMouseEventBuilder : public PlatformMouseEvent {
 public:
-    PlatformMouseEventBuilder(NSEvent *event, NSEvent *correspondingPressureEvent, NSView *windowView)
+    PlatformMouseEventBuilder(NSEvent *event, NSEvent *correspondingPressureEvent, NSView *windowView, bool isCoalesced = false)
     {
         // PlatformEvent
         m_type = mouseEventTypeForEvent(event);
@@ -738,6 +738,9 @@ public:
         m_clickCount = clickCountForEvent(event);
         m_movementDelta = IntPoint(event.deltaX, event.deltaY);
         m_unadjustedMovementDelta = unadjustedMovementForEvent(event);
+
+        if (!isCoalesced)
+            m_coalescedEvents = { PlatformMouseEventBuilder { event, correspondingPressureEvent, windowView, true } };
 
         m_force = 0;
         int stage = eventIsPressureEvent ? event.stage : correspondingPressureEvent.stage;

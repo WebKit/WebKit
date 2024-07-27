@@ -32,6 +32,9 @@ SOFT_LINK_FRAMEWORK_FOR_HEADER(WebKit, AuthenticationServicesCore);
 
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCWebKitSPISupport);
 
+SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, AuthenticationServicesCore, ASCAuthorizationErrorDomain, NSErrorDomain);
+#define ASCAuthorizationErrorDomain WebKit::get_AuthenticationServicesCore_ASCAuthorizationErrorDomain()
+
 #if HAVE(ASC_AUTH_UI) || HAVE(UNIFIED_ASC_AUTH_UI)
 
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCAgentProxy);
@@ -52,10 +55,7 @@ SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCSecurityKeyPublicKeyCredentialLoginChoice)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCSecurityKeyPublicKeyCredentialRegistration);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASGlobalFrameIdentifier);
 
-SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, AuthenticationServicesCore, ASCAuthorizationErrorDomain, NSErrorDomain);
-#define ASCAuthorizationErrorDomain WebKit::get_AuthenticationServicesCore_ASCAuthorizationErrorDomain()
-
 SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, AuthenticationServicesCore, ASCPINValidationResultKey, NSString*);
 #define ASCPINValidationResultKey WebKit::get_AuthenticationServicesCore_ASCPINValidationResultKey()
 
-#endif // HAVE(ASC_AUTH_UI)
+#endif // HAVE(ASC_AUTH_UI) || HAVE(UNIFIED_ASC_AUTH_UI)

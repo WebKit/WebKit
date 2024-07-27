@@ -266,7 +266,10 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
     [self _updateRuntimeProtocolConformanceIfNeeded];
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME: <rdar://131638772> UIScreen.mainScreen is deprecated.
     _page->setIntrinsicDeviceScaleFactor(WebCore::screenScaleFactor([UIScreen mainScreen]));
+ALLOW_DEPRECATED_DECLARATIONS_END
     _page->setUseFixedLayout(true);
     _page->setScreenIsBeingCaptured([self screenIsBeingCaptured]);
 
@@ -321,7 +324,10 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:[UIApplication sharedApplication]];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME: <rdar://131638772> UIScreen.mainScreen is deprecated.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_screenCapturedDidChange:) name:UIScreenCapturedDidChangeNotification object:[UIScreen mainScreen]];
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (WebCore::IOSApplication::isEvernote() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::WKContentViewDoesNotOverrideKeyCommands))
         class_addMethod(self.class, @selector(keyCommands), reinterpret_cast<IMP>(&keyCommandsPlaceholderHackForEvernote), method_getTypeEncoding(class_getInstanceMethod(self.class, @selector(keyCommands))));
@@ -758,7 +764,10 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
 
 - (BOOL)screenIsBeingCaptured
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME: <rdar://131638936> UIScreen.isCaptured is deprecated.
     return [[[self window] screen] isCaptured];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (NSUndoManager *)undoManagerForWebView
@@ -803,6 +812,13 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
             [self _becomeFirstResponderWithSelectionMovingForward:NO completionHandler:nil];
     }
 }
+
+#if HAVE(UI_FOCUS_ITEM_DEFERRAL_MODE)
+- (UIFocusItemDeferralMode)focusItemDeferralMode
+{
+    return (UIFocusItemDeferralMode)UIFocusItemDeferralModeNever;
+}
+#endif
 
 #pragma mark Internal
 

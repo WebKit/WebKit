@@ -103,7 +103,7 @@ bool HTMLPlugInImageElement::canLoadURL(const URL& completeURL) const
         if (is<RemoteFrame>(contentFrame()))
             return false;
         RefPtr<Document> contentDocument = this->contentDocument();
-        if (contentDocument && !document().securityOrigin().isSameOriginDomain(contentDocument->securityOrigin()))
+        if (contentDocument && !document().protectedSecurityOrigin()->isSameOriginDomain(contentDocument->securityOrigin()))
             return false;
     }
 

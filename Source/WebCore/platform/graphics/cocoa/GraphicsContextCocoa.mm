@@ -31,7 +31,7 @@
 #import "GraphicsContextCG.h"
 #import "IOSurface.h"
 #import "IntRect.h"
-#import <pal/spi/cf/CoreTextSPI.h>
+#import <CoreText/CoreText.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <pal/spi/mac/NSGraphicsSPI.h>
@@ -39,7 +39,7 @@
 #import <wtf/StdLibExtras.h>
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-#include "MultiRepresentationHEICMetrics.h"
+#import "MultiRepresentationHEICMetrics.h"
 #endif
 
 #if USE(APPKIT)
@@ -49,6 +49,7 @@
 #if PLATFORM(IOS_FAMILY)
 #import "Color.h"
 #import "WKGraphics.h"
+#import <UIKit/UIKit.h>
 #import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #endif
@@ -83,9 +84,7 @@ ImageDrawResult GraphicsContext::drawMultiRepresentationHEIC(Image& image, const
     // FIXME (rdar://123044459): This needs to account for vertical writing modes.
     CGContextSetTextPosition(cgContext, 0, font.metricsForMultiRepresentationHEIC().descent);
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    CTFontDrawImageFromEmojiImageProviderAtPoint(font.getCTFont(), multiRepresentationHEIC.get(), CGContextGetTextPosition(cgContext), cgContext);
-ALLOW_DEPRECATED_DECLARATIONS_END
+    CTFontDrawImageFromAdaptiveImageProviderAtPoint(font.getCTFont(), multiRepresentationHEIC.get(), CGContextGetTextPosition(cgContext), cgContext);
 
     auto orientation = options.orientation();
     if (orientation == ImageOrientation::Orientation::FromImage)

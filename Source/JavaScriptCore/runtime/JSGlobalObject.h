@@ -524,7 +524,7 @@ public:
 
     void addWeakTicket(DeferredWorkTimer::Ticket);
     void clearWeakTickets();
-    std::unique_ptr<WeakHashSet<DeferredWorkTimer::TicketData>> m_weakTickets;
+    std::unique_ptr<ThreadSafeWeakHashSet<DeferredWorkTimer::TicketData>> m_weakTickets;
 
     inline std::unique_ptr<ObjectAdaptiveStructureWatchpoint>& typedArrayConstructorSpeciesAbsenceWatchpoint(TypedArrayType);
     inline std::unique_ptr<ObjectAdaptiveStructureWatchpoint>& typedArrayPrototypeSymbolIteratorAbsenceWatchpoint(TypedArrayType);
@@ -735,6 +735,7 @@ public:
     JSFunction* regExpProtoExecFunction() const;
     JSFunction* stringProtoSubstringFunction() const;
     JSFunction* performProxyObjectHasFunction() const;
+    JSFunction* performProxyObjectHasFunctionConcurrently() const;
     JSFunction* performProxyObjectHasByValFunction() const;
     JSFunction* performProxyObjectHasByValFunctionConcurrently() const;
     JSFunction* performProxyObjectGetFunction() const;

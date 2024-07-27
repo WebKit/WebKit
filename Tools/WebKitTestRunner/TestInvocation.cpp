@@ -690,9 +690,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "DumpBackForwardList"))
-        return postPageMessage("DumpBackForwardList");
-
     if (WKStringIsEqualToUTF8CString(messageName, "StopLoading"))
         return WKPageStopLoading(TestController::singleton().mainWebView()->page());
 
@@ -1415,6 +1412,14 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
 
     if (WKStringIsEqualToUTF8CString(messageName, "IsCommandEnabled"))
         return adoptWK(WKBooleanCreate(WKPageIsEditingCommandEnabledForTesting(TestController::singleton().mainWebView()->page(), stringValue(messageBody))));
+
+    if (WKStringIsEqualToUTF8CString(messageName, "DumpBackForwardList")) {
+        m_shouldDumpBackForwardListsForAllWindows = true;
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "ShouldDumpBackForwardListsForAllWindows"))
+        return adoptWK(WKBooleanCreate(m_shouldDumpBackForwardListsForAllWindows));
 
     ASSERT_NOT_REACHED();
     return nullptr;

@@ -30,7 +30,6 @@
 #include "PDFPluginIdentifier.h"
 #include "PasteboardAccessIntent.h"
 #include "SameDocumentNavigationType.h"
-#include "TextAnimationType.h"
 #include "WebColorPicker.h"
 #include "WebDateTimePicker.h"
 #include "WebPopupMenuProxy.h"
@@ -48,6 +47,7 @@
 #include <WebCore/MediaControlsContextMenuItem.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/ShareableBitmap.h>
+#include <WebCore/TextAnimationTypes.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/ValidationBubble.h>
 #include <variant>
@@ -719,7 +719,7 @@ public:
     virtual void storeAppHighlight(const WebCore::AppHighlight&) = 0;
 #endif
 #if ENABLE(WRITING_TOOLS_UI)
-    virtual void addTextAnimationForAnimationID(const WTF::UUID&, const WebKit::TextAnimationData&) = 0;
+    virtual void addTextAnimationForAnimationID(const WTF::UUID&, const WebCore::TextAnimationData&) = 0;
     virtual void removeTextAnimationForAnimationID(const WTF::UUID&) = 0;
 #endif
     virtual void requestScrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin) { }
@@ -742,7 +742,6 @@ public:
 
 #if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
     virtual bool canHandleContextMenuWritingTools() const = 0;
-    virtual void handleContextMenuWritingToolsDeprecated(WebCore::IntRect selectionBoundsInRootView) = 0;
     virtual void handleContextMenuWritingTools(WebCore::WritingTools::RequestedTool, WebCore::IntRect) { }
 #endif
 
@@ -788,7 +787,11 @@ public:
         Yes
     };
     virtual void setGamepadsRecentlyAccessed(GamepadsRecentlyAccessed) { }
+
+#if PLATFORM(VISION)
+    virtual void gamepadsConnectedStateChanged() { }
 #endif
+#endif // ENABLE(GAMEPAD)
 
     virtual void hasActiveNowPlayingSessionChanged(bool) { }
 

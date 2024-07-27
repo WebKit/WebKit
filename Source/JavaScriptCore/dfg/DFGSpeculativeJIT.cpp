@@ -2485,19 +2485,7 @@ void SpeculativeJIT::compileCurrentBlock()
 
     if (m_block->isCatchEntrypoint) {
         addPtr(TrustedImm32(-(m_graph.frameRegisterCount() * sizeof(Register))), GPRInfo::callFrameRegister,  stackPointerRegister);
-        emitSaveCalleeSaves();
-        // CodeBlock in the stack is already replaced in OSR entry.
-#if USE(JSVALUE64)
-        // Use numberTagRegister as a scratch since it is recovered after this.
-        jitAssertCodeBlockOnCallFrameWithType(GPRInfo::numberTagRegister, JITType::DFGJIT);
-#endif
-        emitMaterializeTagCheckRegisters();
-#if USE(JSVALUE64)
-        if (m_graph.m_plan.isUnlinked()) {
-            emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::jitDataRegister);
-            loadPtr(Address(GPRInfo::jitDataRegister, CodeBlock::offsetOfJITData()), GPRInfo::jitDataRegister);
-        }
-#endif
+        compileSetupRegistersForEntry();
     }
 
     m_stream.appendAndLog(VariableEvent::reset());
@@ -7531,7 +7519,13 @@ void SpeculativeJIT::compileArithMinMax(Node* node)
             FPRReg op1FPR = op1.fpr();
             FPRReg op2FPR = op2.fpr();
             FPRReg resultFPR = result.fpr();
-
+#if CPU(ARM64)
+            if (node->op() == ArithMin)
+                doubleMin(op1FPR, op2FPR, resultFPR);
+            else
+                doubleMax(op1FPR, op2FPR, resultFPR);
+            doubleResult(resultFPR, node);
+#else
             JumpList done;
 
             Jump op1Less = branchDouble(node->op() == ArithMin ? DoubleLessThanAndOrdered : DoubleGreaterThanAndOrdered, op1FPR, op2FPR);
@@ -7568,9 +7562,30 @@ void SpeculativeJIT::compileArithMinMax(Node* node)
             done.link(this);
 
             doubleResult(resultFPR, node);
+#endif
             break;
         }
 
+#if CPU(ARM64)
+        SpeculateDoubleOperand op1(this, m_graph.child(node, 0));
+        FPRTemporary result(this);
+
+        FPRReg op1FPR = op1.fpr();
+        FPRReg resultFPR = result.fpr();
+
+        moveDouble(op1FPR, resultFPR);
+
+        for (unsigned index = 1; index < node->numChildren(); ++index) {
+            SpeculateDoubleOperand op2(this, m_graph.child(node, index));
+            FPRReg op2FPR = op2.fpr();
+            if (node->op() == ArithMin)
+                doubleMin(op2FPR, resultFPR, resultFPR);
+            else
+                doubleMax(op2FPR, resultFPR, resultFPR);
+        }
+
+        doubleResult(resultFPR, node);
+#else
         GPRTemporary buffer(this);
 
         GPRReg bufferGPR = buffer.gpr();
@@ -7590,6 +7605,7 @@ void SpeculativeJIT::compileArithMinMax(Node* node)
         FPRReg resultFPR = result.fpr();
         callOperationWithoutExceptionCheck(node->op() == ArithMin ? operationArithMinMultipleDouble : operationArithMaxMultipleDouble, resultFPR, bufferGPR, TrustedImm32(node->numChildren()));
         doubleResult(resultFPR, node);
+#endif
         break;
     }
 
@@ -8995,6 +9011,19 @@ void SpeculativeJIT::compileGetGlobalThis(Node* node)
     cellResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileUnwrapGlobalProxy(Node* node)
+{
+    SpeculateCellOperand object(this, node->child1());
+    GPRTemporary result(this);
+
+    GPRReg objectGPR = object.gpr();
+    GPRReg resultGPR = result.gpr();
+
+    speculateGlobalProxy(node->child1(), objectGPR);
+    loadPtr(Address(objectGPR, JSGlobalProxy::targetOffset()), resultGPR);
+    cellResult(resultGPR, node);
+}
+
 bool SpeculativeJIT::canBeRope(Edge& edge)
 {
     if (m_state.forNode(edge).isType(SpecStringIdent))
@@ -9194,14 +9223,16 @@ void SpeculativeJIT::compileNewFunction(Node* node)
         
         flushRegisters();
 
+        auto function = operationNewFunction;
         if (nodeType == NewGeneratorFunction)
-            callOperation(operationNewGeneratorFunction, resultGPR, TrustedImmPtr(&vm()), scopeGPR, LinkableConstant(*this, executable));
+            function = operationNewGeneratorFunction;
         else if (nodeType == NewAsyncFunction)
-            callOperation(operationNewAsyncFunction, resultGPR, TrustedImmPtr(&vm()), scopeGPR, LinkableConstant(*this, executable));
+            function = operationNewAsyncFunction;
         else if (nodeType == NewAsyncGeneratorFunction)
-            callOperation(operationNewAsyncGeneratorFunction, resultGPR, TrustedImmPtr(&vm()), scopeGPR, LinkableConstant(*this, executable));
+            function = operationNewAsyncGeneratorFunction;
         else
-            callOperation(operationNewFunction, resultGPR, TrustedImmPtr(&vm()), scopeGPR, LinkableConstant(*this, executable));
+            function = selectNewFunctionOperation(executable);
+        callOperation(function, resultGPR, LinkableConstant:: globalObject(*this, node), scopeGPR, LinkableConstant(*this, executable));
         cellResult(resultGPR, node);
         return;
     }
@@ -9236,25 +9267,25 @@ void SpeculativeJIT::compileNewFunction(Node* node)
     if (nodeType == NewFunction) {
         compileNewFunctionCommon<JSFunction>(resultGPR, structure, scratch1GPR, scratch2GPR, scopeGPR, slowPath, JSFunction::allocationSize(0), executable);
             
-        addSlowPathGenerator(slowPathCall(slowPath, this, operationNewFunctionWithInvalidatedReallocationWatchpoint, resultGPR, TrustedImmPtr(&vm()), scopeGPR, LinkableConstant(*this, executable)));
+        addSlowPathGenerator(slowPathCall(slowPath, this, selectNewFunctionWithInvalidatedReallocationWatchpointOperation(executable), resultGPR, LinkableConstant:: globalObject(*this, node), scopeGPR, LinkableConstant(*this, executable)));
     }
 
     if (nodeType == NewGeneratorFunction) {
         compileNewFunctionCommon<JSGeneratorFunction>(resultGPR, structure, scratch1GPR, scratch2GPR, scopeGPR, slowPath, JSGeneratorFunction::allocationSize(0), executable);
 
-        addSlowPathGenerator(slowPathCall(slowPath, this, operationNewGeneratorFunctionWithInvalidatedReallocationWatchpoint, resultGPR, TrustedImmPtr(&vm()), scopeGPR, LinkableConstant(*this, executable)));
+        addSlowPathGenerator(slowPathCall(slowPath, this, operationNewGeneratorFunctionWithInvalidatedReallocationWatchpoint, resultGPR, LinkableConstant:: globalObject(*this, node), scopeGPR, LinkableConstant(*this, executable)));
     }
 
     if (nodeType == NewAsyncFunction) {
         compileNewFunctionCommon<JSAsyncFunction>(resultGPR, structure, scratch1GPR, scratch2GPR, scopeGPR, slowPath, JSAsyncFunction::allocationSize(0), executable);
 
-        addSlowPathGenerator(slowPathCall(slowPath, this, operationNewAsyncFunctionWithInvalidatedReallocationWatchpoint, resultGPR, TrustedImmPtr(&vm()), scopeGPR, LinkableConstant(*this, executable)));
+        addSlowPathGenerator(slowPathCall(slowPath, this, operationNewAsyncFunctionWithInvalidatedReallocationWatchpoint, resultGPR, LinkableConstant:: globalObject(*this, node), scopeGPR, LinkableConstant(*this, executable)));
     }
 
     if (nodeType == NewAsyncGeneratorFunction) {
         compileNewFunctionCommon<JSAsyncGeneratorFunction>(resultGPR, structure, scratch1GPR, scratch2GPR, scopeGPR, slowPath, JSAsyncGeneratorFunction::allocationSize(0), executable);
         
-        addSlowPathGenerator(slowPathCall(slowPath, this, operationNewAsyncGeneratorFunctionWithInvalidatedReallocationWatchpoint, resultGPR, TrustedImmPtr(&vm()), scopeGPR, LinkableConstant(*this, executable)));
+        addSlowPathGenerator(slowPathCall(slowPath, this, operationNewAsyncGeneratorFunctionWithInvalidatedReallocationWatchpoint, resultGPR, LinkableConstant:: globalObject(*this, node), scopeGPR, LinkableConstant(*this, executable)));
     }
     
     cellResult(resultGPR, node);
@@ -12417,6 +12448,20 @@ void SpeculativeJIT::speculateProxyObject(Edge edge)
     speculateProxyObject(edge, operand.gpr());
 }
 
+void SpeculativeJIT::speculateGlobalProxy(Edge edge, GPRReg cell)
+{
+    speculateCellType(edge, cell, SpecGlobalProxy, GlobalProxyType);
+}
+
+void SpeculativeJIT::speculateGlobalProxy(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecGlobalProxy))
+        return;
+
+    SpeculateCellOperand operand(this, edge);
+    speculateGlobalProxy(edge, operand.gpr());
+}
+
 void SpeculativeJIT::speculateDerivedArray(Edge edge, GPRReg cell)
 {
     speculateCellType(edge, cell, SpecDerivedArray, DerivedArrayType);
@@ -13022,6 +13067,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case ProxyObjectUse:
         speculateProxyObject(edge);
+        break;
+    case GlobalProxyUse:
+        speculateGlobalProxy(edge);
         break;
     case DerivedArrayUse:
         speculateDerivedArray(edge);
@@ -14468,6 +14516,37 @@ void SpeculativeJIT::compileNormalizeMapKey(Node* node)
 
     doneCases.link(this);
     jsValueResult(resultRegs, node);
+}
+
+void SpeculativeJIT::compileLoadMapValue(Node* node)
+{
+    StorageOperand keySlot(this, node->child1());
+    JSValueRegsTemporary result(this);
+
+    GPRReg keySlotGPR = keySlot.gpr();
+    JSValueRegs resultRegs = result.regs();
+
+    Jump notPresentInTable = branchIfEmpty(keySlotGPR);
+    loadValue(Address(keySlotGPR, sizeof(EncodedJSValue)), resultRegs);
+    Jump done = jump();
+
+    notPresentInTable.link(this);
+    moveValue(jsUndefined(), resultRegs);
+
+    done.link(this);
+    jsValueResult(resultRegs, node);
+}
+
+void SpeculativeJIT::compileIsEmptyStorage(Node* node)
+{
+    StorageOperand keySlot(this, node->child1());
+    GPRTemporary result(this, Reuse, keySlot);
+
+    GPRReg keySlotGPR = keySlot.gpr();
+    GPRReg resultGPR = result.gpr();
+
+    comparePtr(Equal, keySlotGPR, TrustedImm32(0), resultGPR);
+    unblessedBooleanResult(resultGPR, node);
 }
 
 void SpeculativeJIT::compileMapStorage(Node* node)

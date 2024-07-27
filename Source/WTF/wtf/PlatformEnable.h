@@ -82,7 +82,7 @@
 
 /* --------- Windows port --------- */
 #if PLATFORM(WIN)
-#include <wtf/PlatformEnableWinCairo.h>
+#include <wtf/PlatformEnableWin.h>
 #endif
 
 /* --------- PlayStation port --------- */
@@ -281,6 +281,10 @@
 
 #if !defined(ENABLE_INPUT_TYPE_WEEK)
 #define ENABLE_INPUT_TYPE_WEEK 0
+#endif
+
+#if !defined(ENABLE_INPUT_TYPE_WEEK_PICKER)
+#define ENABLE_INPUT_TYPE_WEEK_PICKER 0
 #endif
 
 #if !defined(ENABLE_IOS_GESTURE_EVENTS)
@@ -1000,6 +1004,6 @@
 #endif
 
 #if !defined(ENABLE_WRITING_SUGGESTIONS) \
-    && (PLATFORM(COCOA) && HAVE(INLINE_PREDICTIONS))
+    && (PLATFORM(COCOA) && HAVE(INLINE_PREDICTIONS) && !PLATFORM(MACCATALYST))
 #define ENABLE_WRITING_SUGGESTIONS 1
 #endif

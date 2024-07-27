@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<ul id="list">
+  <li>
+    <a id="link" href="#url">
+      <div id="img" role="img">
+        <span style="position:absolute">X</span>
+        <span>Y</span>
+      </div>
+    </a>
+  </li>
+</ul>
+
+<script>
+var output = "This test ensures we do not cause a main-thread infinite loop when trying to setSelectedTextRange with a range containing a role='img' element.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var link = accessibilityController.accessibleElementById("link");
+    setTimeout(async function() {
+        link.setSelectedTextMarkerRange(link.textMarkerRangeForElement(link));
+
+        // Exercise a main-thread API (setting a DOM attribute) and wait for the result to be applied, confirming the main-thread isn't hung.
+        document.getElementById("img").setAttribute("aria-label", "foo bar");
+        await waitFor(() => platformTextAlternatives(accessibilityController.accessibleElementById("img")).includes("foo bar"));
+
+        document.getElementById("list").style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

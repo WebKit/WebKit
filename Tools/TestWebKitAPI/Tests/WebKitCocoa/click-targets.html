@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<style>
+body {
+    font-family: system-ui;
+    font-size: 16px;
+}
+
+.button {
+    color: white;
+    padding: 0.5em;
+    font-size: 16px;
+    border-radius: 4px;
+    border: none;
+}
+
+.green {
+    background: green;
+}
+
+div.container {
+    margin: 1em 0;
+}
+
+div.tall {
+    height: 5000px;
+}
+</style>
+<script>
+addEventListener("load", () => {
+    for (const element of [...document.querySelectorAll("a, button, input")]) {
+        for (const type of ["mousedown", "mouseup", "click"]) {
+            element.addEventListener(type, event => {
+                const target = event.target;
+                if (target.events)
+                    target.events.push(event.type);
+                else
+                    target.events = [event.type];
+                event.preventDefault();
+            });
+        }
+    }
+});
+</script>
+</head>
+<body>
+    <div class="container"><a class="top" href="https://bugs.webkit.org">Bugzilla</a></div>
+    <div class="container"><button class="top green button">Sign Up</button></div>
+    <div class="container"><input class="top" type="text" placeholder="First name"></div>
+    <div class="tall"></div>
+    <div class="container"><a class="bottom" href="https://bugs.webkit.org">Bugzilla</a></div>
+    <div class="container"><button class="bottom green button">Sign Up</button></div>
+    <div class="container"><input class="bottom" type="text" placeholder="First name"></div>
+    <div class="tall"></div>
+</body>
+</html>

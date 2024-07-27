@@ -34,6 +34,7 @@
 #include <WebCore/PlaybackSessionModel.h>
 #include <WebCore/TimeRanges.h>
 #include <WebCore/VideoReceiverEndpoint.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -47,13 +48,24 @@ class WebPageProxy;
 class PlaybackSessionManagerProxy;
 class VideoReceiverEndpointMessage;
 
-class PlaybackSessionModelContext final: public RefCounted<PlaybackSessionModelContext>, public WebCore::PlaybackSessionModel  {
+class PlaybackSessionModelContext final
+    : public RefCounted<PlaybackSessionModelContext>
+    , public WebCore::PlaybackSessionModel
+    , public CanMakeCheckedPtr<PlaybackSessionModelContext> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionModelContext);
 public:
     static Ref<PlaybackSessionModelContext> create(PlaybackSessionManagerProxy& manager, PlaybackSessionContextIdentifier contextId)
     {
         return adoptRef(*new PlaybackSessionModelContext(manager, contextId));
     }
     virtual ~PlaybackSessionModelContext();
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 
     // PlaybackSessionModel
     void addClient(WebCore::PlaybackSessionModelClient&) final;
@@ -218,6 +230,7 @@ public:
 
     void invalidate();
 
+    bool hasControlsManagerInterface() const { return !!m_controlsManagerContextId; }
     WebCore::PlatformPlaybackSessionInterface* controlsManagerInterface();
     void requestControlledElementID();
 

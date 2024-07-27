@@ -1,3 +1,0 @@
-
-PASS IDBCursor.delete() - index - attempt to remove a record in a read-only transaction
-

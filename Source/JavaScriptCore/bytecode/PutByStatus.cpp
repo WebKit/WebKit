@@ -93,7 +93,7 @@ PutByStatus PutByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeInde
         if (!isValidOffset(offset))
             return PutByStatus(NoInformation);
         
-        return PutByVariant::replace(nullptr, structure, offset);
+        return PutByVariant::replace(nullptr, structure, offset, /* viaGlobalProxy */ false);
     }
 
     Structure* newStructure = newStructureID.decode();
@@ -187,7 +187,7 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
         Structure* structure = stubInfo->inlineAccessBaseStructure();
         PropertyOffset offset = structure->getConcurrently(uid);
         if (isValidOffset(offset))
-            return PutByVariant::replace(WTFMove(identifier), structure, offset);
+            return PutByVariant::replace(WTFMove(identifier), structure, offset, /* viaGlobalProxy */ false);
         return PutByStatus(JSC::slowVersion(summary), *stubInfo);
     }
         
@@ -215,6 +215,18 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
                     return PutByStatus(Megamorphic);
                 break;
             }
+            case AccessCase::ProxyObjectStore:
+            case AccessCase::IndexedProxyObjectStore: {
+                auto callLinkStatus = makeUnique<CallLinkStatus>();
+                if (CallLinkInfo* callLinkInfo = stubInfo->callLinkInfoAt(locker, 0, access))
+                    *callLinkStatus = CallLinkStatus::computeFor(locker, profiledBlock, *callLinkInfo, callExitSiteData);
+                auto status = PutByStatus(PutByStatus::ProxyObject);
+                auto variant = PutByVariant::proxy(access.identifier(), access.structure(), WTFMove(callLinkStatus));
+                if (!status.appendVariant(variant))
+                    return PutByStatus(JSC::slowVersion(summary), *stubInfo);
+                return status;
+            }
+
             default:
                 break;
             }
@@ -222,8 +234,8 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
 
         for (unsigned i = 0; i < list->size(); ++i) {
             const AccessCase& access = list->at(i);
-            if (access.viaGlobalProxy())
-                return PutByStatus(JSC::slowVersion(summary), *stubInfo);
+            bool viaGlobalProxy = access.viaGlobalProxy();
+
             if (access.usesPolyProto())
                 return PutByStatus(JSC::slowVersion(summary), *stubInfo);
             
@@ -233,7 +245,7 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
                 PropertyOffset offset = structure->getConcurrently(access.uid());
                 if (!isValidOffset(offset))
                     return PutByStatus(JSC::slowVersion(summary), *stubInfo);
-                auto variant = PutByVariant::replace(access.identifier(), structure, offset);
+                auto variant = PutByVariant::replace(access.identifier(), structure, offset, viaGlobalProxy);
                 if (!result.appendVariant(variant))
                     return PutByStatus(JSC::slowVersion(summary), *stubInfo);
                 break;
@@ -271,7 +283,7 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
                     domAttribute = WTF::makeUnique<DOMAttributeAnnotation>(*access.as<GetterSetterAccessCase>().domAttribute());
                 result.m_state = CustomAccessor;
 
-                auto variant = PutByVariant::customSetter(access.identifier(), access.structure(), WTFMove(conditionSet), customAccessorSetter, WTFMove(domAttribute));
+                auto variant = PutByVariant::customSetter(access.identifier(), access.structure(), viaGlobalProxy, WTFMove(conditionSet), customAccessorSetter, WTFMove(domAttribute));
                 if (!result.appendVariant(variant))
                     return PutByStatus(JSC::slowVersion(summary), *stubInfo);
                 break;
@@ -294,7 +306,7 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
                     if (CallLinkInfo* callLinkInfo = stubInfo->callLinkInfoAt(locker, i, access))
                         *callLinkStatus = CallLinkStatus::computeFor(locker, profiledBlock, *callLinkInfo, callExitSiteData);
 
-                    auto variant = PutByVariant::setter(access.identifier(), structure, complexGetStatus.offset(), complexGetStatus.conditionSet(), WTFMove(callLinkStatus));
+                    auto variant = PutByVariant::setter(access.identifier(), structure, complexGetStatus.offset(), viaGlobalProxy, complexGetStatus.conditionSet(), WTFMove(callLinkStatus));
                     if (!result.appendVariant(variant))
                         return PutByStatus(JSC::slowVersion(summary), *stubInfo);
                     break;
@@ -305,16 +317,6 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
 
             case AccessCase::CustomValueSetter:
                 return PutByStatus(MakesCalls);
-
-            case AccessCase::ProxyObjectStore: {
-                auto callLinkStatus = makeUnique<CallLinkStatus>();
-                if (CallLinkInfo* callLinkInfo = stubInfo->callLinkInfoAt(locker, i, access))
-                    *callLinkStatus = CallLinkStatus::computeFor(locker, profiledBlock, *callLinkInfo, callExitSiteData);
-                auto variant = PutByVariant::proxy(access.identifier(), access.structure(), WTFMove(callLinkStatus));
-                if (!result.appendVariant(variant))
-                    return PutByStatus(JSC::slowVersion(summary), *stubInfo);
-                break;
-            }
 
             default:
                 return PutByStatus(JSC::slowVersion(summary), *stubInfo);
@@ -423,7 +425,7 @@ PutByStatus PutByStatus::computeFor(JSGlobalObject* globalObject, const Structur
                 return PutByStatus(LikelyTakesSlowPath);
             }
 
-            PutByVariant variant = PutByVariant::replace(identifier, structure, offset);
+            PutByVariant variant = PutByVariant::replace(identifier, structure, offset, /* viaGlobalProxy */ false);
             if (!result.appendVariant(variant))
                 return PutByStatus(LikelyTakesSlowPath);
             continue;
@@ -488,6 +490,7 @@ bool PutByStatus::makesCalls() const
     case ObservedSlowPathAndMakesCalls:
     case Megamorphic:
     case CustomAccessor:
+    case ProxyObject:
         return true;
     case Simple: {
         for (unsigned i = m_variants.size(); i--;) {
@@ -496,9 +499,8 @@ bool PutByStatus::makesCalls() const
         }
         return false;
     }
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
     }
+    return false;
 }
 
 PutByStatus PutByStatus::slowVersion() const
@@ -570,6 +572,7 @@ void PutByStatus::merge(const PutByStatus& other)
         
     case Simple:
     case CustomAccessor:
+    case ProxyObject:
         if (other.m_state != m_state)
             return mergeSlow();
         
@@ -613,6 +616,9 @@ void PutByStatus::dump(PrintStream& out) const
         break;
     case CustomAccessor:
         out.print("CustomAccessor");
+        break;
+    case ProxyObject:
+        out.print("ProxyObject");
         break;
     case Megamorphic:
         out.print("Megamorphic");

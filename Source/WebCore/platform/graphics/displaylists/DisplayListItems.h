@@ -915,18 +915,21 @@ class FillRect {
 public:
     static constexpr char name[] = "fill-rect";
 
-    FillRect(const FloatRect& rect)
+    FillRect(const FloatRect& rect, GraphicsContext::RequiresClipToRect requiresClipToRect)
         : m_rect(rect)
+        , m_requiresClipToRect(requiresClipToRect)
     {
     }
 
     const FloatRect& rect() const { return m_rect; }
+    GraphicsContext::RequiresClipToRect requiresClipToRect() const { return m_requiresClipToRect; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
     FloatRect m_rect;
+    GraphicsContext::RequiresClipToRect m_requiresClipToRect;
 };
 
 class FillRectWithColor {
@@ -972,12 +975,13 @@ class FillRectWithGradientAndSpaceTransform {
 public:
     static constexpr char name[] = "fill-rect-with-gradient-and-space-transform";
 
-    WEBCORE_EXPORT FillRectWithGradientAndSpaceTransform(const FloatRect&, Gradient&, const AffineTransform&);
-    WEBCORE_EXPORT FillRectWithGradientAndSpaceTransform(FloatRect&&, Ref<Gradient>&&, AffineTransform&&);
+    WEBCORE_EXPORT FillRectWithGradientAndSpaceTransform(const FloatRect&, Gradient&, const AffineTransform&, GraphicsContext::RequiresClipToRect);
+    WEBCORE_EXPORT FillRectWithGradientAndSpaceTransform(FloatRect&&, Ref<Gradient>&&, AffineTransform&&, GraphicsContext::RequiresClipToRect);
 
     const FloatRect& rect() const { return m_rect; }
     const Ref<Gradient>& gradient() const { return m_gradient; }
     const AffineTransform& gradientSpaceTransform() const { return m_gradientSpaceTransform; }
+    GraphicsContext::RequiresClipToRect requiresClipToRect() const { return m_requiresClipToRect; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -986,6 +990,7 @@ private:
     FloatRect m_rect;
     Ref<Gradient> m_gradient;
     AffineTransform m_gradientSpaceTransform;
+    GraphicsContext::RequiresClipToRect m_requiresClipToRect;
 };
 
 class FillCompositedRect {

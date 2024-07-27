@@ -48,7 +48,7 @@ public:
 
     bool operator==(const TransformOperations&) const;
 
-    TransformOperations clone() const;
+    WEBCORE_EXPORT TransformOperations clone() const;
     TransformOperations selfOrCopyWithResolvedCalculatedValues(const FloatSize&) const;
 
     const_iterator begin() const { return m_operations.begin(); }

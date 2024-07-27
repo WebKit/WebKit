@@ -41,9 +41,9 @@
 
 namespace WebPushTool {
 
-std::unique_ptr<Connection> Connection::create(std::optional<Action> action, PreferTestService preferTestService, Reconnect reconnect)
+std::unique_ptr<Connection> Connection::create(PreferTestService preferTestService, String bundleIdentifier, String pushPartition)
 {
-    return makeUnique<Connection>(action, preferTestService, reconnect);
+    return makeUnique<Connection>(preferTestService, bundleIdentifier, pushPartition);
 }
 
 static mach_port_t maybeConnectToService(const char* serviceName)
@@ -60,9 +60,9 @@ static mach_port_t maybeConnectToService(const char* serviceName)
     return MACH_PORT_NULL;
 }
 
-Connection::Connection(std::optional<Action> action, PreferTestService preferTestService, Reconnect reconnect)
-    : m_action(action)
-    , m_reconnect(reconnect == Reconnect::Yes)
+Connection::Connection(PreferTestService preferTestService, String bundleIdentifier, String pushPartition)
+    : m_bundleIdentifier(bundleIdentifier)
+    , m_pushPartition(pushPartition)
 {
     if (preferTestService == PreferTestService::Yes)
         m_serviceName = "org.webkit.webpushtestdaemon.service";
@@ -72,31 +72,12 @@ Connection::Connection(std::optional<Action> action, PreferTestService preferTes
 
 void Connection::connectToService(WaitForServiceToExist waitForServiceToExist)
 {
-    if (m_connection)
-        return;
 
     m_connection = adoptNS(xpc_connection_create_mach_service(m_serviceName, dispatch_get_main_queue(), 0));
 
-    xpc_connection_set_event_handler(m_connection.get(), [this, weakThis = WeakPtr { *this }](xpc_object_t event) {
-        if (!weakThis)
-            return;
-
-        if (event == XPC_ERROR_CONNECTION_INVALID) {
-            printf("Failed to start listening for connections to mach service\n");
-            connectionDropped();
-            return;
-        }
-
-        if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
-            printf("Connection closed\n");
-            if (m_reconnect)
-                printf("===============\nReconnecting...\n");
-            connectionDropped();
-            return;
-        }
-
-        if (xpc_get_type(event) == XPC_TYPE_DICTIONARY) {
-            messageReceived(event);
+    xpc_connection_set_event_handler(m_connection.get(), [](xpc_object_t event) {
+        if (event == XPC_ERROR_CONNECTION_INVALID || event == XPC_ERROR_CONNECTION_INTERRUPTED) {
+            fprintf(stderr, "Unexpected XPC connection issue: %s\n", event.debugDescription.UTF8String);
             return;
         }
 
@@ -118,44 +99,20 @@ void Connection::connectToService(WaitForServiceToExist waitForServiceToExist)
     xpc_connection_activate(m_connection.get());
 
     sendAuditToken();
-    startAction();
 }
 
-void Connection::startAction()
+void Connection::sendPushMessage(PushMessageForTesting&& message, CompletionHandler<void(String)>&& completionHandler)
 {
-    if (m_action) {
-        switch (*m_action) {
-        case Action::StreamDebugMessages:
-            startDebugStreamAction();
-            break;
-        };
-    }
-
-    if (m_pushMessage)
-        sendPushMessage();
-}
-
-void Connection::sendPushMessage()
-{
-    ASSERT(m_pushMessage);
-
     printf("Injecting push message\n");
 
-    sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(*m_pushMessage), [shouldExitAfterInject = !m_action] (const String& error) {
-        if (!error.isEmpty())
-            printf("Push message injected. Error: %s\n", error.utf8().data());
-        else
-            printf("Push message injected.\n");
-
-        if (shouldExitAfterInject)
-            CFRunLoopStop(CFRunLoopGetMain());
-    });
+    sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(WTFMove(message)), WTFMove(completionHandler));
 }
 
-void Connection::startDebugStreamAction()
+void Connection::getPushPermissionState(const String& scope, CompletionHandler<void(WebCore::PushPermissionState)>&& completionHandler)
 {
-    printf("Now streaming debug messages via: log stream --debug --info --process webpushd");
-    system("log stream --debug --info --process webpushd");
+    printf("Getting push permission state\n");
+
+    sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushPermissionState(URL(scope)), WTFMove(completionHandler));
 }
 
 void Connection::sendAuditToken()
@@ -170,6 +127,8 @@ void Connection::sendAuditToken()
 
     WebKit::WebPushD::WebPushDaemonConnectionConfiguration configuration;
     configuration.useMockBundlesForTesting = true;
+    configuration.bundleIdentifierOverride = m_bundleIdentifier;
+    configuration.pushPartitionString = m_pushPartition;
 
     Vector<uint8_t> tokenVector;
     tokenVector.resize(32);
@@ -177,29 +136,6 @@ void Connection::sendAuditToken()
     configuration.hostAppAuditTokenData = WTFMove(tokenVector);
 
     sendWithoutUsingIPCConnection(Messages::PushClientConnection::UpdateConnectionConfiguration(WTFMove(configuration)));
-}
-
-void Connection::connectionDropped()
-{
-    m_connection = nullptr;
-    if (m_reconnect) {
-        callOnMainRunLoop([this, weakThis = WeakPtr { this }] {
-            if (weakThis)
-                connectToService(WaitForServiceToExist::Yes);
-        });
-        return;
-    }
-
-    CFRunLoopStop(CFRunLoopGetCurrent());
-}
-
-void Connection::messageReceived(xpc_object_t message)
-{
-    const char* debugMessage = xpc_dictionary_get_string(message, "debug message");
-    if (!debugMessage)
-        return;
-
-    printf("%s\n", debugMessage);
 }
 
 static OSObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&& encoder)

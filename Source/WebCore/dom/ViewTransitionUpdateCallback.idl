@@ -25,5 +25,5 @@
 
 [
     EnabledBySetting=ViewTransitionsEnabled,
-    IsStrongCallback
+    GenerateIsReachable=ImplScriptExecutionContext
 ] callback ViewTransitionUpdateCallback = Promise<any> ();

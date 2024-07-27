@@ -614,6 +614,12 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
         RetainPtr<CFDataRef> auditData = adoptCF(CFDataCreate(nullptr, (const UInt8*)&*auditToken, sizeof(*auditToken)));
         Inspector::RemoteInspector::singleton().setParentProcessInformation(WebCore::presentingApplicationPID(), auditData);
     }
+    // We need to connect to webinspectord before the first page load for the XPC connection to be successfully opened.
+    // This is because we block launchd before the first page load, and launchd is required to establish the connection.
+    // This is only done if Web Inspector is enabled, which is determined by the size of the Web Inspector extension vector.
+    // See WebProcessProxy::shouldEnableRemoteInspector().
+    if (parameters.enableRemoteWebInspectorExtensionHandles.size())
+        Inspector::RemoteInspector::singleton().connectToWebInspector();
 #endif
 
 #if ENABLE(GAMEPAD)

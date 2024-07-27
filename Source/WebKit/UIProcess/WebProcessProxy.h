@@ -29,15 +29,14 @@
 #include "AuxiliaryProcessProxy.h"
 #include "BackgroundProcessResponsivenessTimer.h"
 #include "GPUProcessConnectionIdentifier.h"
-#include "GPUProcessPreferencesForWebProcess.h"
 #include "MessageReceiverMap.h"
-#include "NetworkProcessPreferencesForWebProcess.h"
 #include "NetworkProcessProxy.h"
 #include "ProcessLauncher.h"
 #include "ProcessTerminationReason.h"
 #include "ProcessThrottler.h"
 #include "RemoteWorkerInitializationData.h"
 #include "ResponsivenessTimer.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "SpeechRecognitionServer.h"
 #include "UserContentControllerIdentifier.h"
 #include "VisibleWebPageCounter.h"
@@ -123,6 +122,7 @@ class WebLockRegistryProxy;
 class WebPageGroup;
 class WebPageProxy;
 class WebPermissionControllerProxy;
+class WebPreferences;
 class WebProcessPool;
 class WebUserContentControllerProxy;
 class WebsiteDataStore;
@@ -189,12 +189,13 @@ public:
     WebProcessPool& processPool() const;
     Ref<WebProcessPool> protectedProcessPool() const;
 
+    const std::optional<SharedPreferencesForWebProcess>& sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
+    std::optional<SharedPreferencesForWebProcess> updateSharedPreferencesForWebProcess(const WebPreferences&);
+    void didSyncSharedPreferencesForWebProcessWithNetworkProcess(uint64_t syncedPreferencesVersion);
 #if ENABLE(GPU_PROCESS)
-    const std::optional<GPUProcessPreferencesForWebProcess>& preferencesForGPUProcess() const { return m_preferencesForGPUProcess; }
+    void didSyncSharedPreferencesForWebProcessWithGPUProcess(uint64_t syncedPreferencesVersion);
 #endif
-    const std::optional<NetworkProcessPreferencesForWebProcess>& preferencesForNetworkProcess() const { return m_preferencesForNetworkProcess; }
-    void initializePreferencesForNetworkProcess(const API::PageConfiguration&);
-    void initializePreferencesForNetworkProcess(const WebPreferencesStore&);
+    void waitForSharedPreferencesForWebProcessToSync(uint64_t sharedPreferencesVersion, CompletionHandler<void(bool success)>&&);
 
     bool isMatchingRegistrableDomain(const WebCore::RegistrableDomain& domain) const { return m_registrableDomain ? *m_registrableDomain == domain : false; }
     WebCore::RegistrableDomain registrableDomain() const { return valueOrDefault(m_registrableDomain); }
@@ -516,6 +517,10 @@ public:
     Seconds totalBackgroundTime() const;
     Seconds totalSuspendedTime() const;
 
+#if ENABLE(WEBXR)
+    const WebCore::ProcessIdentity& processIdentity();
+#endif
+
 private:
     Type type() const final { return Type::WebContent; }
 
@@ -779,11 +784,16 @@ private:
     bool m_platformSuspendDidReleaseNearSuspendedAssertion { false };
 #endif
     mutable String m_environmentIdentifier;
+    mutable std::optional<SharedPreferencesForWebProcess> m_sharedPreferencesForWebProcess;
+    uint64_t m_sharedPreferencesVersionInNetworkProcess { 0 };
+#if ENABLE(GPU_PROCESS)
+    uint64_t m_sharedPreferencesVersionInGPUProcess { 0 };
+#endif
+    uint64_t m_awaitedSharedPreferencesVersion { 0 };
+    CompletionHandler<void(bool success)> m_sharedPreferencesForWebProcessCompletionHandler;
 #if ENABLE(GPU_PROCESS)
     GPUProcessConnectionIdentifier m_gpuProcessConnectionIdentifier;
-    mutable std::optional<GPUProcessPreferencesForWebProcess> m_preferencesForGPUProcess;
 #endif
-    mutable std::optional<NetworkProcessPreferencesForWebProcess> m_preferencesForNetworkProcess;
 
     ProcessThrottleState m_throttleStateForStatistics { ProcessThrottleState::Suspended };
     MonotonicTime m_throttleStateForStatisticsTimestamp;

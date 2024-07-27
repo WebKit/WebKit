@@ -58,13 +58,6 @@ std::unique_ptr<PlatformDisplayLibWPE> PlatformDisplayLibWPE::create()
     return std::unique_ptr<PlatformDisplayLibWPE>(new PlatformDisplayLibWPE());
 }
 
-PlatformDisplayLibWPE::PlatformDisplayLibWPE()
-{
-#if PLATFORM(GTK)
-    PlatformDisplay::setSharedDisplayForCompositing(*this);
-#endif
-}
-
 PlatformDisplayLibWPE::~PlatformDisplayLibWPE()
 {
     if (m_backend)
@@ -116,6 +109,13 @@ bool PlatformDisplayLibWPE::initialize(int hostFd)
     }
 #endif
     return m_eglDisplay != EGL_NO_DISPLAY;
+}
+
+void PlatformDisplayLibWPE::initializeEGLDisplay()
+{
+    if (!m_backend)
+        m_eglDisplay = eglGetCurrentDisplay();
+    PlatformDisplay::initializeEGLDisplay();
 }
 
 } // namespace WebCore

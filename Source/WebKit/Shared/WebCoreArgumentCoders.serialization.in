@@ -1804,6 +1804,12 @@ enum class WebCore::RotationDirection : bool
 [Nested] enum class WebCore::MockContentFilterSettings::Decision : bool
 #endif
 
+header: <WebCore/IsLoggedIn.h>
+enum class WebCore::IsLoggedIn : uint8_t {
+    LoggedOut,
+    LoggedIn
+};
+
 header: <WebCore/AutoplayEvent.h>
 enum class WebCore::AutoplayEvent : uint8_t {
     DidPreventMediaFromPlaying,
@@ -1926,18 +1932,13 @@ header: <WebCore/RectEdges.h>
     PluginDocument,
     ImageDocument,
 #endif
-    ViewportMeta,
-    CSSDeviceAdaptation
+    ViewportMeta
 };
 
 struct WebCore::ViewportArguments {
     WebCore::ViewportArguments::Type type;
     float width;
-    float minWidth;
-    float maxWidth;
     float height;
-    float minHeight;
-    float maxHeight;
     float zoom;
     float minZoom;
     float maxZoom;
@@ -2004,6 +2005,7 @@ header: <WebCore/ResourceRequest.h>
     [BitField] bool m_useAdvancedPrivacyProtections;
     [BitField] bool m_didFilterLinkDecoration;
     [BitField] bool m_isPrivateTokenUsageByThirdPartyAllowed;
+    [BitField] bool m_wasSchemeOptimisticallyUpgraded;
 };
 
 #if USE(SOUP)
@@ -4088,6 +4090,7 @@ header: <WebCore/ScrollingStateNode.h>
     ScrollbarHoverState
     ScrollbarEnabledState
     ScrollbarLayoutDirection
+    ScrollbarWidth
     FrameScaleFactor
     EventTrackingRegion
     RootContentsLayer
@@ -8165,6 +8168,8 @@ using WebCore::EpochTimeStamp = uint64_t
 using WebCore::SharedMemory::Handle = WebCore::SharedMemoryHandle
 using WebCore::ServiceWorkerOrClientIdentifier = std::variant<WebCore::ServiceWorkerIdentifier, WebCore::ScriptExecutionContextIdentifier>
 
+[Nested] enum class WebCore::GraphicsContext::RequiresClipToRect : bool
+
 enum class WebCore::HighlightVisibility : bool
 
 #if OS(WINDOWS)
@@ -8282,8 +8287,69 @@ enum class WebCore::ShouldContinuePolicyCheck : bool
 
 #if ENABLE(GAMEPAD)
 enum class WebCore::EventMakesGamepadsVisible : bool
+
+#if PLATFORM(VISION)
+enum class WebCore::ShouldRequireExplicitConsentForGamepadAccess : bool;
+#endif
 #endif
 
 enum class WebCore::WillInternallyHandleFailure : bool
 enum class WebCore::ApplyTrackingPrevention : bool
 enum class WebCore::ShouldSample : bool
+
+[Nested] struct WebCore::Allowlist::AllowAllOrigins {
+};
+
+class WebCore::Allowlist {
+    std::variant<HashSet<WebCore::SecurityOriginData>, WebCore::Allowlist::AllowAllOrigins> origins()
+};
+
+struct WebCore::OwnerPermissionsPolicyData {
+    WebCore::SecurityOriginData documentOrigin;
+    WebCore::PermissionsPolicy documentPolicy;
+    WebCore::OwnerPermissionsPolicyData::PolicyDirective containerPolicy;
+};
+
+[Nested] enum class WebCore::PermissionsPolicy::Feature : uint8_t {
+    Camera,
+    Microphone,
+    SpeakerSelection,
+    DisplayCapture,
+    Gamepad,
+    Geolocation,
+    Payment,
+    ScreenWakeLock,
+    SyncXHR,
+    Fullscreen,
+    WebShare,
+#if ENABLE(DEVICE_ORIENTATION)
+    Gyroscope,
+    Accelerometer,
+    Magnetometer,
+#endif
+#if ENABLE(WEB_AUTHN)
+    PublickeyCredentialsGetRule,
+    DigitalCredentialsGetRule,
+#endif
+#if ENABLE(WEBXR)
+    XRSpatialTracking,
+#endif
+    PrivateToken,
+    Invalid
+};
+
+class WebCore::PermissionsPolicy {
+    WebCore::PermissionsPolicy::InheritedPolicy inheritedPolicy()
+};
+
+header: <WebCore/ImageBufferResourceLimits.h>
+struct WebCore::ImageBufferResourceLimits {
+    size_t acceleratedImageBufferForCanvasCount;
+    size_t acceleratedImageBufferForCanvasLimit;
+    size_t globalAcceleratedImageBufferCount;
+    size_t globalAcceleratedImageBufferLimit;
+    size_t globalImageBufferForCanvasCount;
+    size_t globalImageBufferForCanvasLimit;
+    size_t imageBufferForCanvasCount;
+    size_t imageBufferForCanvasLimit;
+};

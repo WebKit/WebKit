@@ -164,8 +164,8 @@ protected:
     struct GstCapsWebKitMapping {
         ElementFactories::Type elementType;
         ASCIILiteral capsString;
-        Vector<AtomString> webkitMimeTypes;
-        Vector<AtomString> webkitCodecPatterns;
+        Vector<ASCIILiteral> webkitMIMETypes;
+        Vector<ASCIILiteral> webkitCodecPatterns;
     };
     void fillMimeTypeSetFromCapsMapping(const ElementFactories&, const Vector<GstCapsWebKitMapping>&);
 
@@ -207,9 +207,9 @@ private:
 
     bool m_isMediaSource { false };
     HashSet<String> m_decoderMimeTypeSet;
-    HashMap<AtomString, RegistryLookupResult> m_decoderCodecMap;
+    HashMap<String, RegistryLookupResult> m_decoderCodecMap;
     HashSet<String> m_encoderMimeTypeSet;
-    HashMap<AtomString, RegistryLookupResult> m_encoderCodecMap;
+    HashMap<String, RegistryLookupResult> m_encoderCodecMap;
 };
 
 } // namespace WebCore

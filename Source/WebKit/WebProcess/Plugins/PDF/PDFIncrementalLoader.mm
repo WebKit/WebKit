@@ -618,7 +618,7 @@ size_t PDFIncrementalLoader::dataProviderGetBytesAtPosition(std::span<uint8_t> b
     }
 
     if (auto data = plugin->dataSpanForRange(position, buffer.size(), CheckValidRanges::Yes); data.data()) {
-        memcpySpan(buffer.first(data.size()), data);
+        memcpySpan(buffer, data);
 #if !LOG_DISABLED
         decrementThreadsWaitingOnCallback();
         incrementalLoaderLog(makeString("Satisfied range request for "_s, data.size(), " bytes at position "_s, position, " synchronously"_s));
@@ -639,7 +639,7 @@ size_t PDFIncrementalLoader::dataProviderGetBytesAtPosition(std::span<uint8_t> b
             if (dataSemaphore->wasSignaled())
                 return;
             RELEASE_ASSERT(bytes.size() <= buffer.size());
-            memcpySpan(buffer.first(bytes.size()), bytes);
+            memcpySpan(buffer, bytes);
             bytesProvided = bytes.size();
             dataSemaphore->signal();
         });

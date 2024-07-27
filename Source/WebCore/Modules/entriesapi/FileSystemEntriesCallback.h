@@ -42,6 +42,9 @@ public:
 
     // Helper to post callback task.
     void scheduleCallback(ScriptExecutionContext&, const Vector<Ref<FileSystemEntry>>&);
+
+private:
+    virtual bool hasCallback() const = 0;
 };
 
 } // namespace WebCore

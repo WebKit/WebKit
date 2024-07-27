@@ -130,7 +130,6 @@ public:
 
     FrameInfoData info() const;
     FrameTreeNodeData frameTreeData() const;
-    void getFrameInfo(CompletionHandler<void(FrameInfoData&&)>&&);
 
     WebCore::FrameIdentifier frameID() const;
 

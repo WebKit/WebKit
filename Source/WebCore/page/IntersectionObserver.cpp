@@ -473,7 +473,7 @@ auto IntersectionObserver::updateObservations(Document& hostDocument) -> NeedNot
         ASSERT(index != notFound);
         auto& registration = targetRegistrations[index];
 
-        bool isSameOriginObservation = &target->document() == &hostDocument || target->document().securityOrigin().isSameOriginDomain(hostDocument.securityOrigin());
+        bool isSameOriginObservation = &target->document() == &hostDocument || target->document().protectedSecurityOrigin()->isSameOriginDomain(hostDocument.securityOrigin());
         auto intersectionState = computeIntersectionState(registration, *frameView, *target, isSameOriginObservation);
 
         if (intersectionState.observationChanged) {
