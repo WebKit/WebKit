@@ -7389,3 +7389,7 @@ imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-
 imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-border-margin-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/277195 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-label-focus.html [ Failure ]
+
+# webkit.org/b/277196 (REGRESSION (281345@main): [ iOS ] 2 imported/w3c/web-platform-tests/html/semantics/invokers/* layout tests are constantly failing.)
+imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-dialog-behavior.tentative.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-popover-behavior.tentative.html [ Failure ]
