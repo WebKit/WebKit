@@ -66,7 +66,6 @@
 #include "SVGRenderStyle.h"
 #include "SVGRootInlineBox.h"
 #include "SVGStopElement.h"
-#include "StyleCachedImage.h"
 #include <math.h>
 
 namespace WebCore {

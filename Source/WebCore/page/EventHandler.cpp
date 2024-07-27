@@ -119,7 +119,6 @@
 #include "ShadowRoot.h"
 #include "SpatialNavigation.h"
 #include "StaticPasteboard.h"
-#include "StyleCachedImage.h"
 #include "TextEvent.h"
 #include "TextIterator.h"
 #include "TextRecognitionOptions.h"

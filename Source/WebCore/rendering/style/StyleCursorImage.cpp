@@ -37,6 +37,7 @@
 #include "StyleBuilderState.h"
 #include "StyleCachedImage.h"
 #include "StyleImageSet.h"
+#include "StyleSameDocumentSVGResourceImage.h"
 
 namespace WebCore {
 
@@ -86,14 +87,23 @@ ImageWithScale StyleCursorImage::selectBestFitImage(const Document& document)
     if (RefPtr imageSet = dynamicDowncast<StyleImageSet>(m_image.get()))
         return imageSet->selectBestFitImage(document);
 
-    if (RefPtr cachedImage = dynamicDowncast<StyleCachedImage>(m_image.get())) {
+    auto replacementImageFromSVGCursorResource = [&](auto& existingImage) -> RefPtr<StyleImage> {
         if (RefPtr cursorElement = updateCursorElement(document)) {
-            auto existingImageURL = cachedImage->imageURL();
-            auto updatedImageURL = document.completeURL(cursorElement->href());
+            auto existingImageURL = existingImage->imageURL();
+            auto replacementImageURL = document.completeURL(cursorElement->href());
 
-            if (existingImageURL != updatedImageURL)
-                m_image = StyleCachedImage::create(CSSImageValue::create(WTFMove(updatedImageURL), m_loadedFromOpaqueSource));
+            if (existingImageURL != replacementImageURL)
+                return StyleCachedImage::create(CSSImageValue::create(WTFMove(replacementImageURL), m_loadedFromOpaqueSource));
         }
+        return nullptr;
+    };
+
+    if (RefPtr cachedImage = dynamicDowncast<StyleCachedImage>(m_image.get())) {
+        if (auto replacementImage = replacementImageFromSVGCursorResource(cachedImage))
+            m_image = replacementImage.releaseNonNull();
+    } else if (RefPtr sameDocumentResourceImage = dynamicDowncast<StyleSameDocumentSVGResourceImage>(m_image.get())) {
+        if (auto replacementImage = replacementImageFromSVGCursorResource(sameDocumentResourceImage))
+            m_image = replacementImage.releaseNonNull();
     }
 
     return { m_image.ptr(), 1, String() };

@@ -42,8 +42,9 @@ class StyleCachedImage final : public StyleImage {
 public:
     static Ref<StyleCachedImage> create(Ref<CSSImageValue>, float scaleFactor = 1);
     static Ref<StyleCachedImage> create(CachedImage&, float scaleFactor = 1);
-    static Ref<StyleCachedImage> copyOverridingScaleFactor(StyleCachedImage&, float scaleFactor);
     virtual ~StyleCachedImage();
+
+    Ref<StyleImage> copyOverridingScaleFactor(float newScaleFactor) final;
 
     bool operator==(const StyleImage&) const final;
     bool equals(const StyleCachedImage&) const;
@@ -82,18 +83,21 @@ private:
     StyleCachedImage(Ref<CSSImageValue>&&, float);
     StyleCachedImage(CachedImage&, float);
 
-    LegacyRenderSVGResourceContainer* uncheckedRenderSVGResource(TreeScope&, const AtomString& fragment) const;
-    LegacyRenderSVGResourceContainer* uncheckedRenderSVGResource(const RenderElement*) const;
-    LegacyRenderSVGResourceContainer* legacyRenderSVGResource(const RenderElement*) const;
-    RenderSVGResourceContainer* renderSVGResource(const RenderElement*) const;
-    bool isRenderSVGResource(const RenderElement*) const;
+    // MARK: - Internal
+    enum class IsRenderSVGResource : uint8_t { Unknown, Yes, No };
+    RefPtr<SVGSVGElement> rootForSVGResource() const;
+    LegacyRenderSVGResourceContainer* legacyRenderSVGResource() const;
+    LegacyRenderSVGResourceContainer* legacyRenderSVGResource(const SVGSVGElement&) const;
+    RenderSVGResourceContainer* renderSVGResource() const;
+    RenderSVGResourceContainer* renderSVGResource(const SVGSVGElement&) const;
+    bool isRenderSVGResource() const;
 
     Ref<CSSImageValue> m_cssValue;
-    bool m_isPending { true };
-    mutable float m_scaleFactor { 1 };
-    mutable CachedResourceHandle<CachedImage> m_cachedImage;
-    mutable std::optional<bool> m_isRenderSVGResource;
+    CachedResourceHandle<CachedImage> m_cachedImage;
     FloatSize m_containerSize;
+    float m_scaleFactor { 1 };
+    bool m_isPending { true };
+    mutable IsRenderSVGResource m_isRenderSVGResource { IsRenderSVGResource::Unknown };
 };
 
 } // namespace WebCore

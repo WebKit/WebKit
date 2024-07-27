@@ -35,13 +35,6 @@
 #include "CachedResourceLoader.h"
 #include "RenderElement.h"
 #include "RenderView.h"
-#include "StyleCachedImage.h"
-#include "StyleCanvasImage.h"
-#include "StyleCrossfadeImage.h"
-#include "StyleFilterImage.h"
-#include "StyleGradientImage.h"
-#include "StyleNamedImage.h"
-#include "StylePaintImage.h"
 
 namespace WebCore {
 
@@ -66,24 +59,13 @@ void StyleMultiImage::load(CachedResourceLoader& loader, const ResourceLoaderOpt
 
     auto bestFitImage = selectBestFitImage(*loader.document());
 
-    ASSERT(is<StyleCachedImage>(bestFitImage.image) || is<StyleGeneratedImage>(bestFitImage.image));
+    // `copyOverridingScaleFactor` will return the image, unchanged, if the scale factor
+    // is already set to `bestFitImage.scaleFactor` or if the scale factor is unused, such
+    // as for generated image.
+    m_selectedImage = bestFitImage.image->copyOverridingScaleFactor(bestFitImage.scaleFactor);
 
-    if (is<StyleGeneratedImage>(bestFitImage.image)) {
-        m_selectedImage = bestFitImage.image;
+    if (m_selectedImage->isPending())
         m_selectedImage->load(loader, options);
-        return;
-    }
-    
-    if (RefPtr styleCachedImage = dynamicDowncast<StyleCachedImage>(bestFitImage.image)) {
-        if (styleCachedImage->imageScaleFactor() == bestFitImage.scaleFactor)
-            m_selectedImage = WTFMove(styleCachedImage);
-        else
-            m_selectedImage = StyleCachedImage::copyOverridingScaleFactor(*styleCachedImage, bestFitImage.scaleFactor);
-
-        if (m_selectedImage->isPending())
-            m_selectedImage->load(loader, options);
-        return;
-    }
 }
 
 CachedImage* StyleMultiImage::cachedImage() const

@@ -55,7 +55,6 @@
 #include "MarkupAccumulator.h"
 #include "Page.h"
 #include "RenderElement.h"
-#include "StyleCachedImage.h"
 #include "StyleImage.h"
 #include "StylePropertiesInlines.h"
 #include "StyleRule.h"
