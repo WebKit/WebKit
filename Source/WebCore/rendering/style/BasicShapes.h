@@ -68,7 +68,7 @@ public:
 
     virtual Type type() const = 0;
 
-    virtual const Path& path(const FloatRect&) = 0;
+    virtual Path path(const FloatRect&) const = 0;
     virtual WindRule windRule() const { return WindRule::NonZero; }
 
     virtual bool canBlend(const BasicShape&) const = 0;
@@ -176,7 +176,7 @@ class BasicShapeCircleOrEllipse : public BasicShape {
 public:
     void setPositionWasOmitted(bool flag) { m_centerWasOmitted = flag; }
     bool positionWasOmitted() const { return m_centerWasOmitted; }
-    virtual const Path& pathForCenterCoordinate(const FloatRect&, FloatPoint) const = 0;
+    virtual Path pathForCenterCoordinate(const FloatRect&, FloatPoint) const = 0;
 
 private:
     bool m_centerWasOmitted = false;
@@ -204,8 +204,8 @@ private:
 
     Type type() const final { return Type::Circle; }
 
-    const Path& path(const FloatRect&) final;
-    const Path& pathForCenterCoordinate(const FloatRect&, FloatPoint) const final;
+    Path path(const FloatRect&) const final;
+    Path pathForCenterCoordinate(const FloatRect&, FloatPoint) const final;
 
     bool canBlend(const BasicShape&) const final;
     Ref<BasicShape> blend(const BasicShape& from, const BlendingContext&) const final;
@@ -243,8 +243,8 @@ private:
 
     Type type() const final { return Type::Ellipse; }
 
-    const Path& path(const FloatRect&) final;
-    const Path& pathForCenterCoordinate(const FloatRect&, FloatPoint) const final;
+    Path path(const FloatRect&) const final;
+    Path pathForCenterCoordinate(const FloatRect&, FloatPoint) const final;
 
     bool canBlend(const BasicShape&) const final;
     Ref<BasicShape> blend(const BasicShape& from, const BlendingContext&) const final;
@@ -281,7 +281,7 @@ private:
 
     Type type() const final { return Type::Polygon; }
 
-    const Path& path(const FloatRect&) final;
+    Path path(const FloatRect&) const final;
 
     bool canBlend(const BasicShape&) const final;
     Ref<BasicShape> blend(const BasicShape& from, const BlendingContext&) const final;
@@ -314,7 +314,7 @@ public:
     const SVGPathByteStream* pathData() const { return m_byteStream.get(); }
     const std::unique_ptr<SVGPathByteStream>& byteStream() const { return m_byteStream; }
 
-    const Path& path(const FloatRect&) final;
+    Path path(const FloatRect&) const final;
 
     bool canBlend(const BasicShape&) const final;
     Ref<BasicShape> blend(const BasicShape& from, const BlendingContext&) const final;
@@ -367,7 +367,7 @@ private:
 
     Type type() const override { return Type::Inset; }
 
-    const Path& path(const FloatRect&) override;
+    Path path(const FloatRect&) const override;
 
     bool canBlend(const BasicShape&) const override;
     Ref<BasicShape> blend(const BasicShape& from, const BlendingContext&) const override;
@@ -421,7 +421,7 @@ private:
 
     Type type() const final { return Type::Rect; }
 
-    const Path& path(const FloatRect&) final;
+    Path path(const FloatRect&) const final;
 
     bool canBlend(const BasicShape&) const final;
     Ref<BasicShape> blend(const BasicShape& from, const BlendingContext&) const final;
@@ -471,7 +471,7 @@ private:
 
     Type type() const final { return Type::Xywh; }
 
-    const Path& path(const FloatRect&) final;
+    Path path(const FloatRect&) const final;
 
     bool canBlend(const BasicShape&) const final;
     Ref<BasicShape> blend(const BasicShape& from, const BlendingContext&) const final;

@@ -477,7 +477,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     auto& style = regionRenderer.style();
     RefPtr styleClipPath = style.clipPath();
 
-    if (!hasRotationOrShear && styleClipPath && styleClipPath->type() == PathOperation::OperationType::Shape && originalElement) {
+    if (!hasRotationOrShear && styleClipPath && styleClipPath->type() == PathOperation::Type::Shape && originalElement) {
         auto size = boundingSize(regionRenderer, transform);
         auto path = styleClipPath->getPath(TransformOperationData(FloatRect(FloatPoint(), size)));
 

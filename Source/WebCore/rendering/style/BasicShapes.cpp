@@ -187,13 +187,13 @@ float BasicShapeCircle::floatValueForRadiusInBox(float boxWidth, float boxHeight
     return std::max(std::max(std::abs(center.x()), widthDelta), std::max(std::abs(center.y()), heightDelta));
 }
 
-const Path& BasicShapeCircle::pathForCenterCoordinate(const FloatRect& boundingBox, FloatPoint center) const
+Path BasicShapeCircle::pathForCenterCoordinate(const FloatRect& boundingBox, FloatPoint center) const
 {
     float radius = floatValueForRadiusInBox(boundingBox.width(), boundingBox.height(),  center);
     return cachedEllipsePath(FloatRect(center.x() - radius + boundingBox.x(), center.y() - radius + boundingBox.y(), radius * 2, radius * 2));
 }
 
-const Path& BasicShapeCircle::path(const FloatRect& boundingBox)
+Path BasicShapeCircle::path(const FloatRect& boundingBox) const
 {
     return pathForCenterCoordinate(boundingBox, { floatValueForCenterCoordinate(m_centerX, boundingBox.width()), floatValueForCenterCoordinate(m_centerY, boundingBox.height()) });
 }
@@ -274,7 +274,7 @@ float BasicShapeEllipse::floatValueForRadiusInBox(const BasicShapeRadius& radius
     return std::max(std::abs(center), widthOrHeightDelta);
 }
 
-const Path& BasicShapeEllipse::pathForCenterCoordinate(const FloatRect& boundingBox, FloatPoint center) const
+Path BasicShapeEllipse::pathForCenterCoordinate(const FloatRect& boundingBox, FloatPoint center) const
 {
     float radiusX = floatValueForRadiusInBox(m_radiusX, center.x(), boundingBox.width());
     float radiusY = floatValueForRadiusInBox(m_radiusY, center.y(), boundingBox.height());
@@ -282,7 +282,7 @@ const Path& BasicShapeEllipse::pathForCenterCoordinate(const FloatRect& bounding
     return cachedEllipsePath(FloatRect(center.x() - radiusX + boundingBox.x(), center.y() - radiusY + boundingBox.y(), radiusX * 2, radiusY * 2));
 }
 
-const Path& BasicShapeEllipse::path(const FloatRect& boundingBox)
+Path BasicShapeEllipse::path(const FloatRect& boundingBox) const
 {
     return pathForCenterCoordinate(boundingBox, { floatValueForCenterCoordinate(m_centerX, boundingBox.width()), floatValueForCenterCoordinate(m_centerY, boundingBox.height()) });
 }
@@ -375,7 +375,7 @@ bool BasicShapeRect::operator==(const BasicShape& other) const
         && m_bottomLeftRadius == otherRect.m_bottomLeftRadius;
 }
 
-const Path& BasicShapeRect::path(const FloatRect& boundingBox)
+Path BasicShapeRect::path(const FloatRect& boundingBox) const
 {
     auto top = m_edges.top().isAuto() ? 0 : floatValueForLength(m_edges.top(), boundingBox.height());
     auto right = m_edges.right().isAuto() ? boundingBox.width() : floatValueForLength(m_edges.right(), boundingBox.width());
@@ -482,7 +482,7 @@ bool BasicShapeXywh::operator==(const BasicShape& other) const
         && m_bottomLeftRadius == otherXywh.m_bottomLeftRadius;
 }
 
-const Path& BasicShapeXywh::path(const FloatRect& boundingBox)
+Path BasicShapeXywh::path(const FloatRect& boundingBox) const
 {
     auto insetX = floatValueForLength(m_insetX, boundingBox.width());
     auto insetY = floatValueForLength(m_insetY, boundingBox.height());
@@ -566,7 +566,7 @@ bool BasicShapePolygon::operator==(const BasicShape& other) const
         && m_values == otherPolygon.m_values;
 }
 
-const Path& BasicShapePolygon::path(const FloatRect& boundingBox)
+Path BasicShapePolygon::path(const FloatRect& boundingBox) const
 {
     ASSERT(!(m_values.size() % 2));
     size_t length = m_values.size();
@@ -644,7 +644,7 @@ Ref<BasicShape> BasicShapePath::clone() const
     return adoptRef(*new BasicShapePath(WTFMove(byteStream), m_zoom, m_windRule));
 }
 
-const Path& BasicShapePath::path(const FloatRect& boundingBox)
+Path BasicShapePath::path(const FloatRect& boundingBox) const
 {
     return cachedTransformedByteStreamPath(*m_byteStream, m_zoom, boundingBox.location());
 }
@@ -733,7 +733,7 @@ bool BasicShapeInset::operator==(const BasicShape& other) const
         && m_bottomLeftRadius == otherInset.m_bottomLeftRadius;
 }
 
-const Path& BasicShapeInset::path(const FloatRect& boundingBox)
+Path BasicShapeInset::path(const FloatRect& boundingBox) const
 {
     float left = floatValueForLength(m_left, boundingBox.width());
     float top = floatValueForLength(m_top, boundingBox.height());

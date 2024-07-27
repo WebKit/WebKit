@@ -1863,10 +1863,10 @@ static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathO
         return CSSPrimitiveValue::create(CSSValueNone);
 
     switch (operation->type()) {
-    case PathOperation::Reference:
+    case PathOperation::Type::Reference:
         return CSSPrimitiveValue::createURI(uncheckedDowncast<ReferencePathOperation>(*operation).url());
 
-    case PathOperation::Shape: {
+    case PathOperation::Type::Shape: {
         auto& shapeOperation = uncheckedDowncast<ShapePathOperation>(*operation);
         if (shapeOperation.referenceBox() == CSSBoxType::BoxMissing)
             return CSSValueList::createSpaceSeparated(valueForBasicShape(style, shapeOperation.basicShape(), conversion));
@@ -1874,10 +1874,10 @@ static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathO
             createConvertingToCSSValueID(shapeOperation.referenceBox()));
     }
 
-    case PathOperation::Box:
+    case PathOperation::Type::Box:
         return createConvertingToCSSValueID(uncheckedDowncast<BoxPathOperation>(*operation).referenceBox());
 
-    case PathOperation::Ray: {
+    case PathOperation::Type::Ray: {
         auto& ray = uncheckedDowncast<RayPathOperation>(*operation);
         auto angle = CSSPrimitiveValue::create(ray.angle(), CSSUnitType::CSS_DEG);
         RefPtr<CSSValuePair> position = ray.position().x().isAuto() ? nullptr : RefPtr { CSSValuePair::createNoncoalescing(Ref { ComputedStyleExtractor::zoomAdjustedPixelValueForLength(ray.position().x(), style) }, Ref { ComputedStyleExtractor::zoomAdjustedPixelValueForLength(ray.position().y(), style) }) };

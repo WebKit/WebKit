@@ -54,7 +54,7 @@ Ref<PathOperation> ReferencePathOperation::clone() const
 }
 
 ReferencePathOperation::ReferencePathOperation(const String& url, const AtomString& fragment, const RefPtr<SVGElement> element)
-    : PathOperation(Reference)
+    : PathOperation(Type::Reference)
     , m_url(url)
     , m_fragment(fragment)
 {
@@ -63,7 +63,7 @@ ReferencePathOperation::ReferencePathOperation(const String& url, const AtomStri
 }
 
 ReferencePathOperation::ReferencePathOperation(std::optional<Path>&& path)
-    : PathOperation(Reference)
+    : PathOperation(Type::Reference)
     , m_path(WTFMove(path))
 {
 }
@@ -92,7 +92,7 @@ RefPtr<PathOperation> RayPathOperation::blend(const PathOperation* to, const Ble
     return RayPathOperation::create(WebCore::blend(m_angle, toRayPathOperation.angle(), context), m_size, m_isContaining, WebCore::blend(m_position, toRayPathOperation.position(), context), m_referenceBox);
 }
 
-const std::optional<Path> RayPathOperation::getPath(const TransformOperationData& data) const
+std::optional<Path> RayPathOperation::getPath(const TransformOperationData& data) const
 {
     return MotionPath::computePathForRay(*this, data);
 }
