@@ -50,6 +50,10 @@ void JSGlobalProxy::setTarget(VM& vm, JSGlobalObject* globalObject)
 {
     m_target.set(vm, this, globalObject);
     setPrototypeDirect(vm, globalObject->getPrototypeDirect());
+    Structure* oldStructure = structure();
+    DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+    Structure* newStructure = Structure::changeGlobalProxyTargetTransition(vm, oldStructure, globalObject, deferred);
+    setStructure(vm, newStructure);
 }
 
 bool JSGlobalProxy::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)

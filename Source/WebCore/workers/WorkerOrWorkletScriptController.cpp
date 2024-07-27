@@ -576,7 +576,6 @@ void WorkerOrWorkletScriptController::initScriptWithSubclass()
     contextPrototype->structure()->setPrototypeWithoutTransition(*m_vm, globalScopePrototype);
 
     proxy->setTarget(*m_vm, m_globalScopeWrapper.get());
-    proxy->structure()->setGlobalObject(*m_vm, m_globalScopeWrapper.get());
 
     ASSERT(m_globalScopeWrapper->globalObject() == m_globalScopeWrapper);
     ASSERT(asObject(m_globalScopeWrapper->getPrototypeDirect())->globalObject() == m_globalScopeWrapper);

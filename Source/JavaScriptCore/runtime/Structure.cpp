@@ -707,6 +707,21 @@ Structure* Structure::changePrototypeTransition(VM& vm, Structure* structure, JS
     return transition;
 }
 
+Structure* Structure::changeGlobalProxyTargetTransition(VM& vm, Structure* structure, JSGlobalObject* globalObject, DeferredStructureTransitionWatchpointFire& deferred)
+{
+    DeferGC deferGC(vm);
+    Structure* transition = Structure::create(vm, structure, &deferred);
+
+    transition->setGlobalObject(vm, globalObject);
+
+    PropertyTable* table = structure->copyPropertyTableForPinning(vm);
+    transition->pin(Locker { transition->m_lock }, vm, table);
+    transition->setMaxOffset(vm, structure->maxOffset());
+
+    transition->checkOffsetConsistency();
+    return transition;
+}
+
 Structure* Structure::attributeChangeTransitionToExistingStructureImpl(Structure* structure, PropertyName propertyName, unsigned attributes, PropertyOffset& offset)
 {
     ASSERT(structure->isObject());
