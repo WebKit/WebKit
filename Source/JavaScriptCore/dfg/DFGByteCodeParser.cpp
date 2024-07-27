@@ -2262,11 +2262,14 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
     // If the claim is that this did not originate from a stub, then we don't want to emit a switch
     // statement. Whenever the non-stub profiling says that it could take slow path, it really means that
     // it has no idea.
-    if (!Options::usePolymorphicCallInliningForNonStubStatus()
-        && !callLinkStatus.isBasedOnStub()) {
+    if (!Options::usePolymorphicCallInliningForNonStubStatus() && !callLinkStatus.isBasedOnStub()) {
         VERBOSE_LOG("Bailing inlining (non-stub polymorphism).\nStack: ", currentCodeOrigin(), "\n");
         return CallOptimizationResult::DidNothing;
     }
+
+    // Adjusting inlining balance to accept a bit more candidates for polymorphic call inlining.
+    if (callLinkStatus.size())
+        inliningBalance = static_cast<unsigned>(static_cast<double>(inliningBalance) * std::sqrt(callLinkStatus.size()));
 
     bool allAreClosureCalls = true;
     bool allAreDirectCalls = true;
