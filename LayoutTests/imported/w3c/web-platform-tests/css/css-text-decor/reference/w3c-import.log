@@ -74,9 +74,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-thickness-scroll-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-thickness-single-notref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-thickness-vertical-green-rect-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-underline-position-horizontal-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-underline-position-vertical-ja-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-underline-position-vertical-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-underline-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-wavy-covers-whole-line-length-001-notref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-emphasis-color-001-ref.xht
@@ -114,3 +111,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-underline-offset-zero-position-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-underline-position-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-underline-position-from-font-variable-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-underline-position-horizontal-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-underline-position-vertical-ja-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-underline-position-vertical-ref.html

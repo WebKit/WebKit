@@ -1,7 +1,7 @@
 
-FAIL 00B1  PLUS-MINUS SIGN may NOT appear at line start if zh and strict assert_approx_equals: expected 87.1500015258789 +/- 1 but got 57.150001525878906
-FAIL 20AC  EURO SIGN may NOT appear at line start if zh and strict assert_approx_equals: expected 90 +/- 1 but got 60
-FAIL 2116  NUMERO SIGN may NOT appear at line start if zh and strict assert_approx_equals: expected 99 +/- 1 but got 69
+FAIL 00B1  PLUS-MINUS SIGN may NOT appear at line start if zh and strict assert_approx_equals: expected 91.62000274658203 +/- 1 but got 61.62000274658203
+FAIL 20AC  EURO SIGN may NOT appear at line start if zh and strict assert_approx_equals: expected 91.58999633789062 +/- 1 but got 61.59000015258789
+FAIL 2116  NUMERO SIGN may NOT appear at line start if zh and strict assert_approx_equals: expected 99.75 +/- 1 but got 69.75
 FAIL FE69  SMALL DOLLAR SIGN may NOT appear at line start if zh and strict assert_approx_equals: expected 99 +/- 1 but got 69
 FAIL FF04  FULLWIDTH DOLLAR SIGN may NOT appear at line start if zh and strict assert_approx_equals: expected 99 +/- 1 but got 69
 FAIL FFE1  FULLWIDTH POUND SIGN may NOT appear at line start if zh and strict assert_approx_equals: expected 99 +/- 1 but got 69

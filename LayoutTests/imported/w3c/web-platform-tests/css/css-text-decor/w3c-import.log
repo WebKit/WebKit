@@ -177,12 +177,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-vertical-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-vertical-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-vertical-002.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-position-horizontal-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-position-horizontal.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-position-vertical-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-position-vertical-ja-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-position-vertical-ja.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-position-vertical.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-wavy-covers-whole-line-length-001-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-wavy-covers-whole-line-length-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-visibility-001.xht
@@ -525,3 +519,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-001b.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-from-font-variable-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-from-font-variable.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-horizontal-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-horizontal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-vertical-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-vertical-ja-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-vertical-ja.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-vertical.html

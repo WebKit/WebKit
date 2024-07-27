@@ -14,8 +14,23 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fonts/AD.woff
 /LayoutTests/imported/w3c/web-platform-tests/fonts/Ahem.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/Ahem.ttf.headers
 /LayoutTests/imported/w3c/web-platform-tests/fonts/CanvasTest-ascent256.ttf
 /LayoutTests/imported/w3c/web-platform-tests/fonts/CanvasTest-descent0.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CanvasTest-nospace.ttf
 /LayoutTests/imported/w3c/web-platform-tests/fonts/CanvasTest.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/CanvasTest.ttf.headers
+/LayoutTests/imported/w3c/web-platform-tests/fonts/GentiumPlus-R.woff
+/LayoutTests/imported/w3c/web-platform-tests/fonts/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/fonts/README.md
+/LayoutTests/imported/w3c/web-platform-tests/fonts/Revalia.woff
+/LayoutTests/imported/w3c/web-platform-tests/fonts/Scheherazade-Regular.woff
+/LayoutTests/imported/w3c/web-platform-tests/fonts/ahem.css
+/LayoutTests/imported/w3c/web-platform-tests/fonts/ahem.css.headers
+/LayoutTests/imported/w3c/web-platform-tests/fonts/fail.woff
+/LayoutTests/imported/w3c/web-platform-tests/fonts/mplus-1p-regular.woff
+/LayoutTests/imported/w3c/web-platform-tests/fonts/pass.woff
+/LayoutTests/imported/w3c/web-platform-tests/fonts/sileot-webfont.woff
+/LayoutTests/imported/w3c/web-platform-tests/fonts/tcu-font.woff
