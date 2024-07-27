@@ -25,6 +25,7 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+Image.h"
 
+#include "CSSCalcSymbolTable.h"
 #include "CSSCanvasValue.h"
 #include "CSSCrossfadeValue.h"
 #include "CSSCursorImageValue.h"
@@ -39,8 +40,12 @@
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+Angle.h"
 #include "CSSPropertyParserConsumer+AngleDefinitions.h"
+#include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+Color.h"
 #include "CSSPropertyParserConsumer+ColorInterpolationMethod.h"
+#include "CSSPropertyParserConsumer+Ident.h"
+#include "CSSPropertyParserConsumer+Length.h"
+#include "CSSPropertyParserConsumer+LengthDefinitions.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+MetaTransformer.h"
 #include "CSSPropertyParserConsumer+Number.h"
@@ -48,11 +53,15 @@
 #include "CSSPropertyParserConsumer+Percent.h"
 #include "CSSPropertyParserConsumer+PercentDefinitions.h"
 #include "CSSPropertyParserConsumer+Position.h"
+#include "CSSPropertyParserConsumer+RawTypes.h"
 #include "CSSPropertyParserConsumer+Resolution.h"
 #include "CSSPropertyParserConsumer+ResolutionDefinitions.h"
 #include "CSSPropertyParserConsumer+String.h"
 #include "CSSPropertyParserConsumer+URL.h"
+#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include "CSSValueList.h"
+#include "StyleImage.h"
+#include <wtf/SortedArrayMap.h>
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
