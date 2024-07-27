@@ -624,7 +624,8 @@ public:
 
     bool shouldComputeLogicalHeightFromAspectRatio() const;
 
-    bool shouldIgnoreMinMaxSizes() const;
+    bool shouldIgnoreLogicalMinMaxWidthSizes() const;
+    bool shouldIgnoreLogicalMinMaxHeightSizes() const;
 
     // The explicit intrinsic inner size of contain-intrinsic-size
     std::optional<LayoutUnit> explicitIntrinsicInnerWidth() const;

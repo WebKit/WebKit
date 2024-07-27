@@ -1234,9 +1234,10 @@ LayoutUnit RenderFlexibleBox::computeFlexBaseSizeForFlexItem(RenderBox& flexItem
 {
     Length flexBasis = flexBasisForFlexItem(flexItem);
     ScopedFlexBasisAsFlexItemMainSize scoped(flexItem, flexBasis.isContent() ? Length(LengthType::MaxContent) : flexBasis, mainAxisIsFlexItemInlineAxis(flexItem));
+    // FIXME: While we are supposed to ignore min/max here, clients of maybeCacheFlexItemMainIntrinsicSize may expect min/max constrained size.
+    SetForScope<bool> computingBaseSizesScope(m_isComputingFlexBaseSizes, true);
 
     maybeCacheFlexItemMainIntrinsicSize(flexItem, relayoutChildren);
-    SetForScope<bool> computingBaseSizesScope(m_isComputingFlexBaseSizes, true);
 
     // 9.2.3 A.
     if (flexItemMainSizeIsDefinite(flexItem, flexBasis))

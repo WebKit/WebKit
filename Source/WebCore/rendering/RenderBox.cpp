@@ -3447,7 +3447,7 @@ LayoutUnit RenderBox::computeReplacedLogicalWidth(ShouldComputePreferred shouldC
 
 LayoutUnit RenderBox::computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit logicalWidth, ShouldComputePreferred shouldComputePreferred) const
 {
-    if (shouldIgnoreMinMaxSizes())
+    if (shouldIgnoreLogicalMinMaxWidthSizes())
         return logicalWidth;
 
     auto& logicalMinWidth = style().logicalMinWidth();
@@ -5742,9 +5742,24 @@ LayoutUnit RenderBox::intrinsicLogicalWidth() const
     return style().isHorizontalWritingMode() ? intrinsicSize().width() : intrinsicSize().height();
 }
 
-bool RenderBox::shouldIgnoreMinMaxSizes() const
+bool RenderBox::shouldIgnoreLogicalMinMaxWidthSizes() const
 {
-    return isFlexItem() && downcast<RenderFlexibleBox>(parent())->isComputingFlexBaseSizes();
+    if (!isFlexItem())
+        return false;
+    if (auto* flexBox = dynamicDowncast<RenderFlexibleBox>(parent()))
+        return flexBox->isComputingFlexBaseSizes() && style().isHorizontalWritingMode() == flexBox->isHorizontalFlow();
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool RenderBox::shouldIgnoreLogicalMinMaxHeightSizes() const
+{
+    if (!isFlexItem())
+        return false;
+    if (auto* flexBox = dynamicDowncast<RenderFlexibleBox>(parent()))
+        return flexBox->isComputingFlexBaseSizes() && style().isHorizontalWritingMode() != flexBox->isHorizontalFlow();
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerWidth() const

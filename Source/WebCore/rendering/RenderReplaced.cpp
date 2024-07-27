@@ -720,7 +720,7 @@ void RenderReplaced::computePreferredLogicalWidths()
     else
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeReplacedLogicalWidth(ComputePreferred);
 
-    bool ignoreMinMaxSizes = shouldIgnoreMinMaxSizes();
+    bool ignoreMinMaxSizes = shouldIgnoreLogicalMinMaxWidthSizes();
     const RenderStyle& styleToUse = style();
     if (styleToUse.logicalWidth().isPercentOrCalculated() || styleToUse.logicalMaxWidth().isPercentOrCalculated())
         m_minPreferredLogicalWidth = 0;
