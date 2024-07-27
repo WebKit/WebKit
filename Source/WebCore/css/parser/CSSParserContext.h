@@ -84,6 +84,7 @@ struct CSSParserContext {
     bool cssNestingEnabled : 1 { false };
     bool cssPaintingAPIEnabled : 1 { false };
     bool cssScopeAtRuleEnabled : 1 { false };
+    bool cssShapeFunctionEnabled : 1 { false };
     bool cssStartingStyleAtRuleEnabled : 1 { false };
     bool cssStyleQueriesEnabled : 1 { false };
     bool cssTextUnderlinePositionLeftRightEnabled : 1 { false };
