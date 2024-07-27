@@ -6055,6 +6055,7 @@ ShapeDetection:
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 SharedWorkerEnabled:
   type: bool

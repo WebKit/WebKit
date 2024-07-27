@@ -85,14 +85,15 @@ def parse(file):
             else:
                 parameters = []
 
-            runtime_enablement = None
+            enabled_if = None
+            enabled_by = None
             if options_string:
                 match = re.search(r"(?:(?:, |^)+(?:EnabledIf='(.*)'))(?:, |$)?", options_string)
                 if match:
-                    runtime_enablement = match.groups()[0]
+                    enabled_if = match.groups()[0]
                 match = re.search(r"(?:(?:, |^)+(?:EnabledBy=([\w,]+)))(?:, |$)?", options_string)
                 if match:
-                    runtime_enablement = ' && '.join(['sharedPreferencesForWebProcess().' + preference[0].lower() + preference[1:] for preference in match.groups()[0].split(',')])
+                    enabled_by = map(lambda str: str.strip(), match.groups()[0].split(','))
 
             attributes = parse_attributes_string(attributes_string)
 
@@ -105,7 +106,7 @@ def parse(file):
             else:
                 reply_parameters = None
 
-            messages.append(model.Message(name, parameters, reply_parameters, attributes, combine_condition(conditions), runtime_enablement))
+            messages.append(model.Message(name, parameters, reply_parameters, attributes, combine_condition(conditions), enabled_if, enabled_by))
     return model.MessageReceiver(destination, superclass, receiver_attributes, messages, combine_condition(master_condition), namespace)
 
 

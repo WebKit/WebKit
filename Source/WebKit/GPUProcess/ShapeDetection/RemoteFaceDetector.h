@@ -44,6 +44,7 @@ class FaceDetector;
 
 namespace WebKit {
 class RemoteRenderingBackend;
+struct SharedPreferencesForWebProcess;
 
 namespace ShapeDetection {
 class ObjectHeap;
@@ -57,6 +58,8 @@ public:
     {
         return adoptRef(*new RemoteFaceDetector(WTFMove(faceDetector), objectHeap, backend, identifier, webProcessIdentifier));
     }
+
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
     virtual ~RemoteFaceDetector();
 

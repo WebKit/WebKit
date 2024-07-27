@@ -51,13 +51,15 @@ class MessageReceiver(object):
 
 
 class Message(object):
-    def __init__(self, name, parameters, reply_parameters, attributes, condition, runtime_enablement=None):
+    def __init__(self, name, parameters, reply_parameters, attributes, condition, enabled_if=None, enabled_by=None):
         self.name = name
         self.parameters = parameters
         self.reply_parameters = reply_parameters
         self.attributes = frozenset(attributes or [])
         self.condition = condition
-        self.runtime_enablement = runtime_enablement
+        assert(not enabled_if or not enabled_by)
+        self.enabled_if = enabled_if
+        self.enabled_by = enabled_by
 
     def has_attribute(self, attribute):
         return attribute in self.attributes

@@ -651,6 +651,12 @@ def handler_function(receiver, message):
     return '%s::%s' % (receiver.name, message.name[0].lower() + message.name[1:])
 
 
+def generate_runtime_enablement(message):
+    if not message.enabled_by:
+        return message.enabled_if
+    return ' && '.join(['sharedPreferencesForWebProcess().' + preference[0].lower() + preference[1:] for preference in message.enabled_by])
+
+
 def async_message_statement(receiver, message):
     if receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE) and message.reply_parameters is not None and not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
         dispatch_function_args = ['decoder', 'WTFMove(replyHandler)', 'this', '&%s' % handler_function(receiver, message)]
@@ -672,8 +678,9 @@ def async_message_statement(receiver, message):
         connection = ''
 
     result = []
-    if message.runtime_enablement:
-        result.append('    if (decoder.messageName() == Messages::%s::%s::name() && %s)\n' % (receiver.name, message.name, message.runtime_enablement))
+    runtime_enablement = generate_runtime_enablement(message)
+    if runtime_enablement:
+        result.append('    if (decoder.messageName() == Messages::%s::%s::name() && %s)\n' % (receiver.name, message.name, runtime_enablement))
     else:
         result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
     result.append('        return IPC::%s<Messages::%s::%s>(%s%s);\n' % (dispatch_function, receiver.name, message.name, connection, ', '.join(dispatch_function_args)))
@@ -694,8 +701,9 @@ def sync_message_statement(receiver, message):
         maybe_reply_encoder = ', replyEncoder'
 
     result = []
-    if message.runtime_enablement:
-        result.append('    if (decoder.messageName() == Messages::%s::%s::name() && %s)\n' % (receiver.name, message.name, message.runtime_enablement))
+    runtime_enablement = generate_runtime_enablement(message)
+    if runtime_enablement:
+        result.append('    if (decoder.messageName() == Messages::%s::%s::name() && %s)\n' % (receiver.name, message.name, runtime_enablement))
     else:
         result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
     result.append('        return IPC::%s<Messages::%s::%s>(connection, decoder%s, this, &%s);\n' % (dispatch_function, receiver.name, message.name, maybe_reply_encoder, handler_function(receiver, message)))
@@ -1245,6 +1253,8 @@ def collect_header_conditions_for_receiver(receiver, header_conditions):
             header_conditions[header].extend(conditions)
 
     for message in receiver.messages:
+        if message.enabled_by:
+            header_conditions['"SharedPreferencesForWebProcess.h"'] = [None]
         if message.reply_parameters is not None:
             for reply_parameter in message.reply_parameters:
                 type = reply_parameter.type

@@ -137,6 +137,11 @@ void RemoteRenderingBackend::stopListeningForIPC()
     });
 }
 
+const SharedPreferencesForWebProcess& RemoteRenderingBackend::sharedPreferencesForWebProcess() const
+{
+    return m_gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
+}
+
 void RemoteRenderingBackend::workQueueInitialize()
 {
     assertIsCurrent(workQueue());
