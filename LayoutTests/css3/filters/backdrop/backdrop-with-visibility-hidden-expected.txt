@@ -7,11 +7,10 @@
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
-          (position 0.00 150.00)
           (bounds 402.00 52.00)
           (contentsVisible 0)
           (structural layer
-            (position 201.00 176.00)
+            (position 201.00 26.00)
             (bounds 402.00 52.00)
           )
           (backdrop layer
