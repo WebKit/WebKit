@@ -1990,8 +1990,8 @@ void Document::setDocumentElementLanguage(const AtomString& language)
     m_documentElementLanguage = language;
 
     if (oldEffectiveDocumentElementLangauge != effectiveDocumentElementLanguage()) {
-        for (auto& element : std::exchange(m_elementsWithLangAttrMatchingDocumentElement, { }))
-            Ref { element }->updateEffectiveLangStateAndPropagateToDescendants();
+        for (Ref element : std::exchange(m_elementsWithLangAttrMatchingDocumentElement, { }))
+            element->updateEffectiveLangStateAndPropagateToDescendants();
     }
 
     if (m_contentLanguage == language)
@@ -5961,8 +5961,8 @@ void Document::nodeWillBeRemoved(Node& node)
     adjustFocusedNodeOnNodeRemoval(node);
     adjustFocusNavigationNodeOnNodeRemoval(node);
 
-    for (auto& nodeIterator : m_nodeIterators)
-        Ref { nodeIterator }->nodeWillBeRemoved(node);
+    for (Ref nodeIterator : m_nodeIterators)
+        nodeIterator->nodeWillBeRemoved(node);
 
     for (auto& range : m_ranges)
         Ref { range.get() }->nodeWillBeRemoved(node);
@@ -6786,8 +6786,8 @@ void Document::suspend(ReasonForSuspension reason)
 
     documentWillBecomeInactive();
 
-    for (auto& element : m_documentSuspensionCallbackElements)
-        Ref { element }->prepareForDocumentSuspension();
+    for (Ref element : m_documentSuspensionCallbackElements)
+        element->prepareForDocumentSuspension();
 
 #if ASSERT_ENABLED
     // Clear the update flag to be able to check if the viewport arguments update
@@ -10342,7 +10342,7 @@ void Document::prepareCanvasesForDisplayOrFlushIfNeeded()
     auto contexts = copyToVectorOf<WeakPtr<CanvasRenderingContext>>(m_canvasContextsToPrepare);
     m_canvasContextsToPrepare.clear();
     for (auto& weakContext : contexts) {
-        auto* context = weakContext.get();
+        RefPtr context = weakContext.get();
         if (!context)
             continue;
 
