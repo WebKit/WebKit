@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -545,7 +545,7 @@ static AOM_INLINE void encode_nonrd_sb(AV1_COMP *cpi, ThreadData *td,
     BLOCK_SIZE bsize_select = sf->part_sf.fixed_partition_size;
     if (sf->rt_sf.use_fast_fixed_part &&
         x->content_state_sb.source_sad_nonrd < kLowSad) {
-      bsize_select = BLOCK_64X64;
+      bsize_select = cm->seq_params->sb_size;
     }
     const BLOCK_SIZE bsize = seg_skip ? sb_size : bsize_select;
     av1_set_fixed_partitioning(cpi, tile_info, mi, mi_row, mi_col, bsize);
@@ -1008,12 +1008,16 @@ static AOM_INLINE uint64_t get_sb_source_sad(const AV1_COMP *cpi, int mi_row,
   const int blk_64x64_col_index = mi_col / blk_64x64_in_mis;
   const int blk_64x64_row_index = mi_row / blk_64x64_in_mis;
   uint64_t curr_sb_sad = UINT64_MAX;
+  // Avoid the border as sad_blk_64x64 may not be set for the border
+  // in the scene detection.
+  if ((blk_64x64_row_index >= num_blk_64x64_rows - 1) ||
+      (blk_64x64_col_index >= num_blk_64x64_cols - 1)) {
+    return curr_sb_sad;
+  }
   const uint64_t *const src_sad_blk_64x64_data =
       &cpi->src_sad_blk_64x64[blk_64x64_col_index +
                               blk_64x64_row_index * num_blk_64x64_cols];
-  if (cm->seq_params->sb_size == BLOCK_128X128 &&
-      blk_64x64_col_index + 1 < num_blk_64x64_cols &&
-      blk_64x64_row_index + 1 < num_blk_64x64_rows) {
+  if (cm->seq_params->sb_size == BLOCK_128X128) {
     // Calculate SB source SAD by accumulating source SAD of 64x64 blocks in the
     // superblock
     curr_sb_sad = src_sad_blk_64x64_data[0] + src_sad_blk_64x64_data[1] +
@@ -1211,6 +1215,9 @@ static AOM_INLINE void encode_sb_row(AV1_COMP *cpi, ThreadData *td,
     x->sb_me_partition = 0;
     x->sb_me_mv.as_int = 0;
     x->sb_force_fixed_part = 1;
+    x->color_palette_thresh = 64;
+    x->nonrd_prune_ref_frame_search =
+        cpi->sf.rt_sf.nonrd_prune_ref_frame_search;
 
     if (cpi->oxcf.mode == ALLINTRA) {
       x->intra_sb_rdmult_modifier = 128;
@@ -2105,7 +2112,8 @@ static AOM_INLINE void encode_frame_internal(AV1_COMP *cpi) {
       for (j = TX_TYPES - 1; j >= 0; j--) {
         int update_txtype_frameprobs = 1;
         const int new_prob =
-            sum ? MAX_TX_TYPE_PROB * cpi->td.rd_counts.tx_type_used[i][j] / sum
+            sum ? (int)((int64_t)MAX_TX_TYPE_PROB *
+                        cpi->td.rd_counts.tx_type_used[i][j] / sum)
                 : (j ? 0 : MAX_TX_TYPE_PROB);
 #if CONFIG_FPMT_TEST
         if (cpi->ppi->fpmt_unit_test_cfg == PARALLEL_SIMULATION_ENCODE) {

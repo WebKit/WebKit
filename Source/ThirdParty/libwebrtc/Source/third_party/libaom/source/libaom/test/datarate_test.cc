@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -162,7 +162,7 @@ class DatarateTestLarge
     const int bitrate_array[2] = { 250, 650 };
     cfg_.rc_target_bitrate = bitrate_array[GET_PARAM(4)];
     ResetModel();
-    tile_column_ = 2;
+    tile_columns_ = 2;
     ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
     ASSERT_GE(static_cast<double>(cfg_.rc_target_bitrate),
               effective_datarate_ * 0.85)
@@ -354,7 +354,7 @@ class DatarateTestLarge
     const int bitrate_array[2] = { 250, 650 };
     cfg_.rc_target_bitrate = bitrate_array[GET_PARAM(4)];
     ResetModel();
-    tile_column_ = 1;
+    tile_columns_ = 1;
     ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
     ASSERT_GE(static_cast<double>(cfg_.rc_target_bitrate),
               effective_datarate_ * 0.85)

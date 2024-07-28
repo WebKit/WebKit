@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -4180,10 +4180,11 @@ static void highbd_inv_txfm2d_add_no_identity_avx2(const int32_t *input,
   }
 }
 
-void av1_highbd_inv_txfm2d_add_universe_avx2(const int32_t *input,
-                                             uint8_t *output, int stride,
-                                             TX_TYPE tx_type, TX_SIZE tx_size,
-                                             int eob, const int bd) {
+static void av1_highbd_inv_txfm2d_add_universe_avx2(const int32_t *input,
+                                                    uint8_t *output, int stride,
+                                                    TX_TYPE tx_type,
+                                                    TX_SIZE tx_size, int eob,
+                                                    const int bd) {
   switch (tx_type) {
     case DCT_DCT:
     case ADST_DCT:
@@ -4216,19 +4217,11 @@ void av1_highbd_inv_txfm_add_avx2(const tran_low_t *input, uint8_t *dest,
   const TX_SIZE tx_size = txfm_param->tx_size;
   switch (tx_size) {
     case TX_4X8:
-      av1_highbd_inv_txfm_add_4x8_sse4_1(input, dest, stride, txfm_param);
-      break;
     case TX_8X4:
-      av1_highbd_inv_txfm_add_8x4_sse4_1(input, dest, stride, txfm_param);
-      break;
     case TX_4X4:
-      av1_highbd_inv_txfm_add_4x4_sse4_1(input, dest, stride, txfm_param);
-      break;
     case TX_16X4:
-      av1_highbd_inv_txfm_add_16x4_sse4_1(input, dest, stride, txfm_param);
-      break;
     case TX_4X16:
-      av1_highbd_inv_txfm_add_4x16_sse4_1(input, dest, stride, txfm_param);
+      av1_highbd_inv_txfm_add_sse4_1(input, dest, stride, txfm_param);
       break;
     default:
       av1_highbd_inv_txfm2d_add_universe_avx2(

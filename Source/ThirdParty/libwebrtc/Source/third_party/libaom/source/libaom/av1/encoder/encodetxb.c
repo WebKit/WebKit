@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -10,6 +10,8 @@
  */
 
 #include "av1/encoder/encodetxb.h"
+
+#include <stdint.h>
 
 #include "aom_ports/mem.h"
 #include "av1/common/blockd.h"
@@ -38,20 +40,37 @@ void av1_alloc_txb_buf(AV1_COMP *cpi) {
       1 << num_pels_log2_lookup[cm->seq_params->sb_size];
   const int chroma_max_sb_square =
       luma_max_sb_square >> (subsampling_x + subsampling_y);
-  const int num_tcoeffs =
-      size * (luma_max_sb_square + (num_planes - 1) * chroma_max_sb_square);
+  const int total_max_sb_square =
+      (luma_max_sb_square + (num_planes - 1) * chroma_max_sb_square);
+  if ((size_t)size > SIZE_MAX / (size_t)total_max_sb_square) {
+    aom_internal_error(cm->error, AOM_CODEC_ERROR,
+                       "A multiplication would overflow size_t");
+  }
+  const size_t num_tcoeffs = (size_t)size * (size_t)total_max_sb_square;
   const int txb_unit_size = TX_SIZE_W_MIN * TX_SIZE_H_MIN;
 
   av1_free_txb_buf(cpi);
   // TODO(jingning): This should be further reduced.
   CHECK_MEM_ERROR(cm, cpi->coeff_buffer_base,
                   aom_malloc(sizeof(*cpi->coeff_buffer_base) * size));
+  if (sizeof(*coeff_buf_pool->tcoeff) > SIZE_MAX / num_tcoeffs) {
+    aom_internal_error(cm->error, AOM_CODEC_ERROR,
+                       "A multiplication would overflow size_t");
+  }
   CHECK_MEM_ERROR(
       cm, coeff_buf_pool->tcoeff,
       aom_memalign(32, sizeof(*coeff_buf_pool->tcoeff) * num_tcoeffs));
+  if (sizeof(*coeff_buf_pool->eobs) > SIZE_MAX / num_tcoeffs) {
+    aom_internal_error(cm->error, AOM_CODEC_ERROR,
+                       "A multiplication would overflow size_t");
+  }
   CHECK_MEM_ERROR(
       cm, coeff_buf_pool->eobs,
       aom_malloc(sizeof(*coeff_buf_pool->eobs) * num_tcoeffs / txb_unit_size));
+  if (sizeof(*coeff_buf_pool->entropy_ctx) > SIZE_MAX / num_tcoeffs) {
+    aom_internal_error(cm->error, AOM_CODEC_ERROR,
+                       "A multiplication would overflow size_t");
+  }
   CHECK_MEM_ERROR(cm, coeff_buf_pool->entropy_ctx,
                   aom_malloc(sizeof(*coeff_buf_pool->entropy_ctx) *
                              num_tcoeffs / txb_unit_size));

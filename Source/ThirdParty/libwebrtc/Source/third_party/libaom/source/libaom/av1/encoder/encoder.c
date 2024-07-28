@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -9,12 +9,14 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
-#include <limits.h>
+#include <assert.h>
 #include <float.h>
+#include <limits.h>
 #include <math.h>
+#include <stdbool.h>
 #include <stdio.h>
-#include <time.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "av1/common/scale.h"
 #include "config/aom_config.h"
@@ -54,6 +56,9 @@
 #include "av1/encoder/aq_cyclicrefresh.h"
 #include "av1/encoder/aq_variance.h"
 #include "av1/encoder/bitstream.h"
+#if CONFIG_INTERNAL_STATS
+#include "av1/encoder/blockiness.h"
+#endif
 #include "av1/encoder/context_tree.h"
 #include "av1/encoder/dwt.h"
 #include "av1/encoder/encodeframe.h"
@@ -547,6 +552,7 @@ void av1_init_seq_coding_tools(AV1_PRIMARY *const ppi,
 
   if (seq->operating_points_cnt_minus_1 == 0) {
     seq->operating_point_idc[0] = 0;
+    seq->has_nonzero_operating_point_idc = false;
   } else {
     // Set operating_point_idc[] such that the i=0 point corresponds to the
     // highest quality operating point (all layers), and subsequent
@@ -560,9 +566,11 @@ void av1_init_seq_coding_tools(AV1_PRIMARY *const ppi,
         seq->operating_point_idc[i] =
             (~(~0u << (ppi->number_spatial_layers - sl)) << 8) |
             ~(~0u << (ppi->number_temporal_layers - tl));
+        assert(seq->operating_point_idc[i] != 0);
         i++;
       }
     }
+    seq->has_nonzero_operating_point_idc = true;
   }
 }
 
@@ -2494,6 +2502,9 @@ static int encode_without_recode(AV1_COMP *cpi) {
                          ? svc->downsample_filter_phase[svc->spatial_layer_id]
                          : 0;
 
+  if (cpi->rc.postencode_drop && allow_postencode_drop_rtc(cpi))
+    av1_save_all_coding_context(cpi);
+
   set_size_independent_vars(cpi);
   av1_setup_frame_size(cpi);
   cm->prev_frame = get_primary_ref_frame_buf(cm);
@@ -3276,6 +3287,11 @@ static int encode_with_recode_loop_and_filter(AV1_COMP *cpi, size_t *size,
 #if CONFIG_COLLECT_COMPONENT_TIMING
   end_timing(cpi, av1_pack_bitstream_final_time);
 #endif
+
+  if (cpi->rc.postencode_drop && allow_postencode_drop_rtc(cpi) &&
+      av1_postencode_drop_cbr(cpi, size)) {
+    return AOM_CODEC_OK;
+  }
 
   // Compute sse and rate.
   if (sse != NULL) {
@@ -4197,10 +4213,6 @@ void print_entropy_stats(AV1_PRIMARY *const ppi) {
 #endif  // CONFIG_ENTROPY_STATS
 
 #if CONFIG_INTERNAL_STATS
-extern double av1_get_blockiness(const unsigned char *img1, int img1_pitch,
-                                 const unsigned char *img2, int img2_pitch,
-                                 int width, int height);
-
 static void adjust_image_stat(double y, double u, double v, double all,
                               ImageStat *s) {
   s->stat[STAT_Y] += y;
@@ -5387,7 +5399,8 @@ aom_fixed_buf_t *av1_get_global_headers(AV1_PRIMARY *ppi) {
   memmove(&header_buf[payload_offset], &header_buf[0], sequence_header_size);
 
   if (av1_write_obu_header(&ppi->level_params, &ppi->cpi->frame_header_count,
-                           OBU_SEQUENCE_HEADER, 0,
+                           OBU_SEQUENCE_HEADER,
+                           ppi->seq_params.has_nonzero_operating_point_idc, 0,
                            &header_buf[0]) != obu_header_size) {
     return NULL;
   }

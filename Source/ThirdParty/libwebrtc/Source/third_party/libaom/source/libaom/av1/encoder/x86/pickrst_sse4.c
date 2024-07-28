@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -10,7 +10,7 @@
  */
 
 #include <assert.h>
-#include <emmintrin.h>
+#include <smmintrin.h>
 #include "aom_dsp/x86/mem_sse2.h"
 #include "aom_dsp/x86/synonyms.h"
 
@@ -731,7 +731,8 @@ void av1_compute_stats_sse4_1(int wiener_win, const uint8_t *dgd,
 }
 
 static INLINE __m128i pair_set_epi16(int a, int b) {
-  return _mm_set1_epi32((int32_t)(((uint16_t)(a)) | (((uint32_t)(b)) << 16)));
+  return _mm_set1_epi32(
+      (int32_t)(((uint16_t)(a)) | (((uint32_t)(uint16_t)(b)) << 16)));
 }
 
 int64_t av1_lowbd_pixel_proj_error_sse4_1(

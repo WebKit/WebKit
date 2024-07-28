@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -261,6 +261,9 @@ static INLINE void av1_set_mv_limits(
 void av1_set_mv_search_range(FullMvLimits *mv_limits, const MV *mv);
 
 int av1_init_search_range(int size);
+
+int av1_vector_match(const int16_t *ref, const int16_t *src, int bwl,
+                     int search_size, int full_search, int *sad);
 
 unsigned int av1_int_pro_motion_estimation(
     const struct AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bsize, int mi_row,

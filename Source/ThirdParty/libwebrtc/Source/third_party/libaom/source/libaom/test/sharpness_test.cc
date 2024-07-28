@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2021, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -30,7 +30,7 @@ const std::unordered_map<
     kPsnrThreshold = { { static_cast<int>(::libaom_test::kTwoPassGood),
                          { { 2, { { 2, 37.6 }, { 5, 37.6 } } },
                            { 4, { { 2, 37.5 }, { 5, 37.5 } } },
-                           { 6, { { 2, 37.4 }, { 5, 37.4 } } } } },
+                           { 6, { { 2, 37.3 }, { 5, 37.3 } } } } },
                        { static_cast<int>(::libaom_test::kAllIntra),
                          { { 3, { { 2, 42.2 }, { 5, 42.2 } } },
                            { 6, { { 2, 41.8 }, { 4, 41.9 }, { 5, 41.9 } } },

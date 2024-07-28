@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2020, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -20,6 +20,9 @@
 #include "aom_dsp/arm/sum_neon.h"
 
 #define MAX_UPSAMPLE_SZ 16
+
+// TODO(aomedia:349436249): enable for armv7 after SIGBUS is fixed.
+#if AOM_ARCH_AARCH64
 
 // These kernels are a transposed version of those defined in reconintra.c,
 // with the absolute value of the negatives taken in the top row.
@@ -209,6 +212,7 @@ void av1_filter_intra_predictor_neon(uint8_t *dst, ptrdiff_t stride,
     } while (r < height + 1);
   }
 }
+#endif  // AOM_ARCH_AARCH64
 
 void av1_filter_intra_edge_neon(uint8_t *p, int sz, int strength) {
   if (!strength) return;

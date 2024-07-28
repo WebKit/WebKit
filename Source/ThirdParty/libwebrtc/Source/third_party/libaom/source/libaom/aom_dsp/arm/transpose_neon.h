@@ -1,11 +1,12 @@
 /*
- *  Copyright (c) 2018, Alliance for Open Media. All Rights Reserved.
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree. An additional intellectual property rights grant can be found
- *  in the file PATENTS.  All contributing project authors may
- *  be found in the AUTHORS file in the root of the source tree.
+ * This source code is subject to the terms of the BSD 2 Clause License and
+ * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
+ * was not distributed with this source code in the LICENSE file, you can
+ * obtain it at www.aomedia.org/license/software. If the Alliance for Open
+ * Media Patent License 1.0 was not distributed with this source code in the
+ * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
 #ifndef AOM_AOM_DSP_ARM_TRANSPOSE_NEON_H_
@@ -323,6 +324,41 @@ static INLINE void transpose_elems_inplace_u8_8x4(uint8x8_t *a0, uint8x8_t *a1,
   *a1 = vreinterpret_u8_u16(c1.val[0]);
   *a2 = vreinterpret_u8_u16(c0.val[1]);
   *a3 = vreinterpret_u8_u16(c1.val[1]);
+}
+
+static INLINE void transpose_elems_inplace_u8_16x4(uint8x16_t *a0,
+                                                   uint8x16_t *a1,
+                                                   uint8x16_t *a2,
+                                                   uint8x16_t *a3) {
+  // Swap 8 bit elements. Goes from:
+  // a0: 00 01 02 03 04 05 06 07 08 09 010 011 012 013 014 015
+  // a1: 10 11 12 13 14 15 16 17 18 19 110 111 112 113 114 115
+  // a2: 20 21 22 23 24 25 26 27 28 29 210 211 212 213 214 215
+  // a3: 30 31 32 33 34 35 36 37 38 39 310 311 312 313 314 315
+  // to:
+  // b0.val[0]: 00 10 02 12 04 14 06 16 08 18 010 110 012 112 014 114
+  // b0.val[1]: 01 11 03 13 05 15 07 17 09 19 011 111 013 113 015 115
+  // b1.val[0]: 20 30 22 32 24 34 26 36 28 38 210 310 212 312 214 314
+  // b1.val[1]: 21 31 23 33 25 35 27 37 29 39 211 311 213 313 215 315
+
+  const uint8x16x2_t b0 = vtrnq_u8(*a0, *a1);
+  const uint8x16x2_t b1 = vtrnq_u8(*a2, *a3);
+
+  // Swap 16 bit elements resulting in:
+  // c0.val[0]: 00 10 20 30 04 14 24 34 08  18  28  38  012 112 212 312
+  // c0.val[1]: 02 12 22 32 06 16 26 36 09  19  29  39  013 113 213 313
+  // c1.val[0]: 01 11 21 31 05 15 25 35 010 110 210 310 014 114 214 314
+  // c1.val[1]: 03 13 23 33 07 17 27 37 011 111 211 311 015 115 215 315
+
+  const uint16x8x2_t c0 = vtrnq_u16(vreinterpretq_u16_u8(b0.val[0]),
+                                    vreinterpretq_u16_u8(b1.val[0]));
+  const uint16x8x2_t c1 = vtrnq_u16(vreinterpretq_u16_u8(b0.val[1]),
+                                    vreinterpretq_u16_u8(b1.val[1]));
+
+  *a0 = vreinterpretq_u8_u16(c0.val[0]);
+  *a1 = vreinterpretq_u8_u16(c1.val[0]);
+  *a2 = vreinterpretq_u8_u16(c0.val[1]);
+  *a3 = vreinterpretq_u8_u16(c1.val[1]);
 }
 
 static INLINE void transpose_elems_inplace_u8_4x4(uint8x8_t *a0,
@@ -883,6 +919,40 @@ static INLINE void transpose_arrays_s16_8x8(const int16x8_t *a,
   out[5] = d1.val[1];
   out[6] = d2.val[1];
   out[7] = d3.val[1];
+}
+
+static INLINE void transpose_elems_inplace_s16_8x4(int16x8_t *a0, int16x8_t *a1,
+                                                   int16x8_t *a2,
+                                                   int16x8_t *a3) {
+  // Swap 16 bit elements. Goes from:
+  // a0: 00 01 02 03 04 05 06 07
+  // a1: 10 11 12 13 14 15 16 17
+  // a2: 20 21 22 23 24 25 26 27
+  // a3: 30 31 32 33 34 35 36 37
+  // to:
+  // b0.val[0]: 00 10 02 12 04 14 06 16
+  // b0.val[1]: 01 11 03 13 05 15 07 17
+  // b1.val[0]: 20 30 22 32 24 34 26 36
+  // b1.val[1]: 21 31 23 33 25 35 27 37
+
+  const int16x8x2_t b0 = vtrnq_s16(*a0, *a1);
+  const int16x8x2_t b1 = vtrnq_s16(*a2, *a3);
+
+  // Swap 32 bit elements resulting in:
+  // c0.val[0]: 00 10 20 30 04 14 24 34
+  // c0.val[1]: 01 11 21 31 05 15 25 35
+  // c1.val[0]: 02 12 22 32 06 16 26 36
+  // c1.val[1]: 03 13 23 33 07 17 27 37
+
+  const int32x4x2_t c0 = vtrnq_s32(vreinterpretq_s32_s16(b0.val[0]),
+                                   vreinterpretq_s32_s16(b1.val[0]));
+  const int32x4x2_t c1 = vtrnq_s32(vreinterpretq_s32_s16(b0.val[1]),
+                                   vreinterpretq_s32_s16(b1.val[1]));
+
+  *a0 = vreinterpretq_s16_s32(c0.val[0]);
+  *a1 = vreinterpretq_s16_s32(c1.val[0]);
+  *a2 = vreinterpretq_s16_s32(c0.val[1]);
+  *a3 = vreinterpretq_s16_s32(c1.val[1]);
 }
 
 static INLINE void transpose_elems_inplace_u16_4x4(uint16x4_t *a0,

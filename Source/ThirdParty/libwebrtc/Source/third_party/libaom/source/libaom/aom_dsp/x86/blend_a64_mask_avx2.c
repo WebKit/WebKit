@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -910,14 +910,12 @@ static INLINE void highbd_blend_a64_d16_mask_w4_avx2(
     const __m256i *round_offset, int shift, const __m256i *clip_low,
     const __m256i *clip_high, const __m256i *mask_max) {
   // Load 4x u16 pixels from each of 4 rows from each source
-  const __m256i s0 = _mm256_set_epi64x(*(int64_t *)(src0 + 3 * src0_stride),
-                                       *(int64_t *)(src0 + 2 * src0_stride),
-                                       *(int64_t *)(src0 + 1 * src0_stride),
-                                       *(int64_t *)(src0 + 0 * src0_stride));
-  const __m256i s1 = _mm256_set_epi64x(*(int64_t *)(src1 + 3 * src1_stride),
-                                       *(int64_t *)(src1 + 2 * src1_stride),
-                                       *(int64_t *)(src1 + 1 * src1_stride),
-                                       *(int64_t *)(src1 + 0 * src1_stride));
+  const __m256i s0 =
+      yy_loadu_4x64(src0 + 3 * src0_stride, src0 + 2 * src0_stride,
+                    src0 + 1 * src0_stride, src0 + 0 * src0_stride);
+  const __m256i s1 =
+      yy_loadu_4x64(src1 + 3 * src1_stride, src1 + 2 * src1_stride,
+                    src1 + 1 * src1_stride, src1 + 0 * src1_stride);
   // Generate the inverse mask
   const __m256i mask1 = _mm256_sub_epi16(*mask_max, *mask0);
 

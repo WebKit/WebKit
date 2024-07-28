@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -360,6 +360,8 @@ void aom_dc_predictor_64x32_c(uint8_t *dst, ptrdiff_t stride,
 #undef DC_MULTIPLIER_1X2
 #undef DC_MULTIPLIER_1X4
 
+#if CONFIG_AV1_HIGHBITDEPTH
+
 static INLINE void highbd_v_predictor(uint16_t *dst, ptrdiff_t stride, int bw,
                                       int bh, const uint16_t *above,
                                       const uint16_t *left, int bd) {
@@ -704,6 +706,7 @@ void aom_highbd_dc_predictor_64x32_c(uint16_t *dst, ptrdiff_t stride,
 
 #undef HIGHBD_DC_MULTIPLIER_1X2
 #undef HIGHBD_DC_MULTIPLIER_1X4
+#endif  // CONFIG_AV1_HIGHBITDEPTH
 
 // This serves as a wrapper function, so that all the prediction functions
 // can be unified and accessed as a pointer array. Note that the boundary
@@ -715,12 +718,16 @@ void aom_highbd_dc_predictor_64x32_c(uint16_t *dst, ptrdiff_t stride,
     type##_predictor(dst, stride, width, height, above, left); \
   }
 
+#if CONFIG_AV1_HIGHBITDEPTH
 #define intra_pred_highbd_sized(type, width, height)                        \
   void aom_highbd_##type##_predictor_##width##x##height##_c(                \
       uint16_t *dst, ptrdiff_t stride, const uint16_t *above,               \
       const uint16_t *left, int bd) {                                       \
     highbd_##type##_predictor(dst, stride, width, height, above, left, bd); \
   }
+#else  // !CONFIG_AV1_HIGHBITDEPTH
+#define intra_pred_highbd_sized(type, width, height)
+#endif  // CONFIG_AV1_HIGHBITDEPTH
 
 /* clang-format off */
 #define intra_pred_rectangular(type) \

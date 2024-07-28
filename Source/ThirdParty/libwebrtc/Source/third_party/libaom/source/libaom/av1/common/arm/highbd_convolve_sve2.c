@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2024, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -562,10 +562,11 @@ static INLINE uint16x8_t highbd_convolve8_8_y(int16x8_t samples_lo[4],
   return vminq_u16(res, max);
 }
 
-void highbd_convolve_y_sr_8tap_sve2(const uint16_t *src, ptrdiff_t src_stride,
-                                    uint16_t *dst, ptrdiff_t dst_stride,
-                                    int width, int height,
-                                    const int16_t *filter_y, int bd) {
+static void highbd_convolve_y_sr_8tap_sve2(const uint16_t *src,
+                                           ptrdiff_t src_stride, uint16_t *dst,
+                                           ptrdiff_t dst_stride, int width,
+                                           int height, const int16_t *filter_y,
+                                           int bd) {
   assert(width >= 4 && height >= 4);
 
   const int16x8_t y_filter = vld1q_s16(filter_y);
@@ -731,10 +732,11 @@ static INLINE uint16x8_t highbd_convolve4_8_y(int16x8_t samples[4],
   return vminq_u16(res, max);
 }
 
-void highbd_convolve_y_sr_4tap_sve2(const uint16_t *src, ptrdiff_t src_stride,
-                                    uint16_t *dst, ptrdiff_t dst_stride,
-                                    int width, int height,
-                                    const int16_t *filter_y, int bd) {
+static void highbd_convolve_y_sr_4tap_sve2(const uint16_t *src,
+                                           ptrdiff_t src_stride, uint16_t *dst,
+                                           ptrdiff_t dst_stride, int width,
+                                           int height, const int16_t *filter_y,
+                                           int bd) {
   assert(width >= 4 && height >= 4);
 
   const int16x8_t y_filter =
@@ -1346,12 +1348,10 @@ static INLINE uint16x8_t highbd_convolve8_8_2d_v(
   return vminq_u16(res, max);
 }
 
-void highbd_convolve_2d_sr_vert_8tap_sve2(const uint16_t *src,
-                                          ptrdiff_t src_stride, uint16_t *dst,
-                                          ptrdiff_t dst_stride, int width,
-                                          int height, const int16_t *filter_y,
-                                          ConvolveParams *conv_params, int bd,
-                                          const int y_offset) {
+static void highbd_convolve_2d_sr_vert_8tap_sve2(
+    const uint16_t *src, ptrdiff_t src_stride, uint16_t *dst,
+    ptrdiff_t dst_stride, int width, int height, const int16_t *filter_y,
+    ConvolveParams *conv_params, int bd, const int y_offset) {
   assert(width >= 4 && height >= 4);
   const int64x2_t offset = vdupq_n_s64(y_offset);
   const int32x4_t shift = vdupq_n_s32(-conv_params->round_1);
@@ -1536,12 +1536,10 @@ static INLINE uint16x8_t highbd_convolve4_8_2d_v(int16x8_t samples[4],
   return vminq_u16(res, max);
 }
 
-void highbd_convolve_2d_sr_vert_4tap_sve2(const uint16_t *src,
-                                          ptrdiff_t src_stride, uint16_t *dst,
-                                          ptrdiff_t dst_stride, int width,
-                                          int height, const int16_t *filter_y,
-                                          ConvolveParams *conv_params, int bd,
-                                          const int y_offset) {
+static void highbd_convolve_2d_sr_vert_4tap_sve2(
+    const uint16_t *src, ptrdiff_t src_stride, uint16_t *dst,
+    ptrdiff_t dst_stride, int width, int height, const int16_t *filter_y,
+    ConvolveParams *conv_params, int bd, const int y_offset) {
   assert(width >= 4 && height >= 4);
   const int64x2_t offset = vdupq_n_s64(y_offset);
   const int32x4_t shift = vdupq_n_s32(-conv_params->round_1);

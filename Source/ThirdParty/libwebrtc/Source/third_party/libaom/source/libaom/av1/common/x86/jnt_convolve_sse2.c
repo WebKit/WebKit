@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -15,6 +15,7 @@
 
 #include "aom_dsp/aom_filter.h"
 #include "aom_dsp/x86/convolve_sse2.h"
+#include "aom_dsp/x86/synonyms.h"
 
 void av1_dist_wtd_convolve_x_sse2(const uint8_t *src, int src_stride,
                                   uint8_t *dst0, int dst_stride0, int w, int h,
@@ -178,31 +179,23 @@ void av1_dist_wtd_convolve_y_sse2(const uint8_t *src, int src_stride,
 
   if (w == 4) {
     __m128i s[8], src6, res, res_shift;
-    src6 = _mm_cvtsi32_si128(*(int *)(src_ptr + 6 * src_stride));
-    s[0] = _mm_unpacklo_epi8(
-        _mm_cvtsi32_si128(*(int *)(src_ptr + 0 * src_stride)),
-        _mm_cvtsi32_si128(*(int *)(src_ptr + 1 * src_stride)));
-    s[1] = _mm_unpacklo_epi8(
-        _mm_cvtsi32_si128(*(int *)(src_ptr + 1 * src_stride)),
-        _mm_cvtsi32_si128(*(int *)(src_ptr + 2 * src_stride)));
-    s[2] = _mm_unpacklo_epi8(
-        _mm_cvtsi32_si128(*(int *)(src_ptr + 2 * src_stride)),
-        _mm_cvtsi32_si128(*(int *)(src_ptr + 3 * src_stride)));
-    s[3] = _mm_unpacklo_epi8(
-        _mm_cvtsi32_si128(*(int *)(src_ptr + 3 * src_stride)),
-        _mm_cvtsi32_si128(*(int *)(src_ptr + 4 * src_stride)));
-    s[4] = _mm_unpacklo_epi8(
-        _mm_cvtsi32_si128(*(int *)(src_ptr + 4 * src_stride)),
-        _mm_cvtsi32_si128(*(int *)(src_ptr + 5 * src_stride)));
-    s[5] = _mm_unpacklo_epi8(
-        _mm_cvtsi32_si128(*(int *)(src_ptr + 5 * src_stride)), src6);
+    s[0] = _mm_unpacklo_epi8(xx_loadl_32(src_ptr + 0 * src_stride),
+                             xx_loadl_32(src_ptr + 1 * src_stride));
+    s[1] = _mm_unpacklo_epi8(xx_loadl_32(src_ptr + 1 * src_stride),
+                             xx_loadl_32(src_ptr + 2 * src_stride));
+    s[2] = _mm_unpacklo_epi8(xx_loadl_32(src_ptr + 2 * src_stride),
+                             xx_loadl_32(src_ptr + 3 * src_stride));
+    s[3] = _mm_unpacklo_epi8(xx_loadl_32(src_ptr + 3 * src_stride),
+                             xx_loadl_32(src_ptr + 4 * src_stride));
+    s[4] = _mm_unpacklo_epi8(xx_loadl_32(src_ptr + 4 * src_stride),
+                             xx_loadl_32(src_ptr + 5 * src_stride));
+    src6 = xx_loadl_32(src_ptr + 6 * src_stride);
+    s[5] = _mm_unpacklo_epi8(xx_loadl_32(src_ptr + 5 * src_stride), src6);
 
     do {
-      s[6] = _mm_unpacklo_epi8(
-          src6, _mm_cvtsi32_si128(*(int *)(src_ptr + 7 * src_stride)));
-      src6 = _mm_cvtsi32_si128(*(int *)(src_ptr + 8 * src_stride));
-      s[7] = _mm_unpacklo_epi8(
-          _mm_cvtsi32_si128(*(int *)(src_ptr + 7 * src_stride)), src6);
+      s[6] = _mm_unpacklo_epi8(src6, xx_loadl_32(src_ptr + 7 * src_stride));
+      src6 = xx_loadl_32(src_ptr + 8 * src_stride);
+      s[7] = _mm_unpacklo_epi8(xx_loadl_32(src_ptr + 7 * src_stride), src6);
 
       res = convolve_lo_y(s + 0, coeffs);
       res_shift = _mm_sll_epi32(res, left_shift);

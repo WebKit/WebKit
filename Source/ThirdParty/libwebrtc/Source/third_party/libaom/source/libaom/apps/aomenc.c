@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -244,33 +244,35 @@ static const int av1_arg_ctrl_map[] = { AOME_SET_CPUUSED,
                                         AV1E_SET_RATE_DISTRIBUTION_INFO,
                                         0 };
 
-const arg_def_t *main_args[] = { &g_av1_codec_arg_defs.help,
-                                 &g_av1_codec_arg_defs.use_cfg,
-                                 &g_av1_codec_arg_defs.debugmode,
-                                 &g_av1_codec_arg_defs.outputfile,
-                                 &g_av1_codec_arg_defs.codecarg,
-                                 &g_av1_codec_arg_defs.passes,
-                                 &g_av1_codec_arg_defs.pass_arg,
-                                 &g_av1_codec_arg_defs.fpf_name,
-                                 &g_av1_codec_arg_defs.limit,
-                                 &g_av1_codec_arg_defs.skip,
-                                 &g_av1_codec_arg_defs.good_dl,
-                                 &g_av1_codec_arg_defs.rt_dl,
-                                 &g_av1_codec_arg_defs.ai_dl,
-                                 &g_av1_codec_arg_defs.quietarg,
-                                 &g_av1_codec_arg_defs.verbosearg,
-                                 &g_av1_codec_arg_defs.psnrarg,
-                                 &g_av1_codec_arg_defs.use_webm,
-                                 &g_av1_codec_arg_defs.use_ivf,
-                                 &g_av1_codec_arg_defs.use_obu,
-                                 &g_av1_codec_arg_defs.q_hist_n,
-                                 &g_av1_codec_arg_defs.rate_hist_n,
-                                 &g_av1_codec_arg_defs.disable_warnings,
-                                 &g_av1_codec_arg_defs.disable_warning_prompt,
-                                 &g_av1_codec_arg_defs.recontest,
-                                 NULL };
+static const arg_def_t *const main_args[] = {
+  &g_av1_codec_arg_defs.help,
+  &g_av1_codec_arg_defs.use_cfg,
+  &g_av1_codec_arg_defs.debugmode,
+  &g_av1_codec_arg_defs.outputfile,
+  &g_av1_codec_arg_defs.codecarg,
+  &g_av1_codec_arg_defs.passes,
+  &g_av1_codec_arg_defs.pass_arg,
+  &g_av1_codec_arg_defs.fpf_name,
+  &g_av1_codec_arg_defs.limit,
+  &g_av1_codec_arg_defs.skip,
+  &g_av1_codec_arg_defs.good_dl,
+  &g_av1_codec_arg_defs.rt_dl,
+  &g_av1_codec_arg_defs.ai_dl,
+  &g_av1_codec_arg_defs.quietarg,
+  &g_av1_codec_arg_defs.verbosearg,
+  &g_av1_codec_arg_defs.psnrarg,
+  &g_av1_codec_arg_defs.use_webm,
+  &g_av1_codec_arg_defs.use_ivf,
+  &g_av1_codec_arg_defs.use_obu,
+  &g_av1_codec_arg_defs.q_hist_n,
+  &g_av1_codec_arg_defs.rate_hist_n,
+  &g_av1_codec_arg_defs.disable_warnings,
+  &g_av1_codec_arg_defs.disable_warning_prompt,
+  &g_av1_codec_arg_defs.recontest,
+  NULL
+};
 
-const arg_def_t *global_args[] = {
+static const arg_def_t *const global_args[] = {
   &g_av1_codec_arg_defs.use_nv12,
   &g_av1_codec_arg_defs.use_yv12,
   &g_av1_codec_arg_defs.use_i420,
@@ -300,40 +302,44 @@ const arg_def_t *global_args[] = {
   NULL
 };
 
-const arg_def_t *rc_args[] = { &g_av1_codec_arg_defs.dropframe_thresh,
-                               &g_av1_codec_arg_defs.resize_mode,
-                               &g_av1_codec_arg_defs.resize_denominator,
-                               &g_av1_codec_arg_defs.resize_kf_denominator,
-                               &g_av1_codec_arg_defs.superres_mode,
-                               &g_av1_codec_arg_defs.superres_denominator,
-                               &g_av1_codec_arg_defs.superres_kf_denominator,
-                               &g_av1_codec_arg_defs.superres_qthresh,
-                               &g_av1_codec_arg_defs.superres_kf_qthresh,
-                               &g_av1_codec_arg_defs.end_usage,
-                               &g_av1_codec_arg_defs.target_bitrate,
-                               &g_av1_codec_arg_defs.min_quantizer,
-                               &g_av1_codec_arg_defs.max_quantizer,
-                               &g_av1_codec_arg_defs.undershoot_pct,
-                               &g_av1_codec_arg_defs.overshoot_pct,
-                               &g_av1_codec_arg_defs.buf_sz,
-                               &g_av1_codec_arg_defs.buf_initial_sz,
-                               &g_av1_codec_arg_defs.buf_optimal_sz,
-                               &g_av1_codec_arg_defs.bias_pct,
-                               &g_av1_codec_arg_defs.minsection_pct,
-                               &g_av1_codec_arg_defs.maxsection_pct,
-                               NULL };
+static const arg_def_t *const rc_args[] = {
+  &g_av1_codec_arg_defs.dropframe_thresh,
+  &g_av1_codec_arg_defs.resize_mode,
+  &g_av1_codec_arg_defs.resize_denominator,
+  &g_av1_codec_arg_defs.resize_kf_denominator,
+  &g_av1_codec_arg_defs.superres_mode,
+  &g_av1_codec_arg_defs.superres_denominator,
+  &g_av1_codec_arg_defs.superres_kf_denominator,
+  &g_av1_codec_arg_defs.superres_qthresh,
+  &g_av1_codec_arg_defs.superres_kf_qthresh,
+  &g_av1_codec_arg_defs.end_usage,
+  &g_av1_codec_arg_defs.target_bitrate,
+  &g_av1_codec_arg_defs.min_quantizer,
+  &g_av1_codec_arg_defs.max_quantizer,
+  &g_av1_codec_arg_defs.undershoot_pct,
+  &g_av1_codec_arg_defs.overshoot_pct,
+  &g_av1_codec_arg_defs.buf_sz,
+  &g_av1_codec_arg_defs.buf_initial_sz,
+  &g_av1_codec_arg_defs.buf_optimal_sz,
+  &g_av1_codec_arg_defs.bias_pct,
+  &g_av1_codec_arg_defs.minsection_pct,
+  &g_av1_codec_arg_defs.maxsection_pct,
+  NULL
+};
 
-const arg_def_t *kf_args[] = { &g_av1_codec_arg_defs.fwd_kf_enabled,
-                               &g_av1_codec_arg_defs.kf_min_dist,
-                               &g_av1_codec_arg_defs.kf_max_dist,
-                               &g_av1_codec_arg_defs.kf_disabled,
-                               &g_av1_codec_arg_defs.sframe_dist,
-                               &g_av1_codec_arg_defs.sframe_mode,
-                               NULL };
+static const arg_def_t *const kf_args[] = {
+  &g_av1_codec_arg_defs.fwd_kf_enabled,
+  &g_av1_codec_arg_defs.kf_min_dist,
+  &g_av1_codec_arg_defs.kf_max_dist,
+  &g_av1_codec_arg_defs.kf_disabled,
+  &g_av1_codec_arg_defs.sframe_dist,
+  &g_av1_codec_arg_defs.sframe_mode,
+  NULL
+};
 
 // TODO(bohanli): Currently all options are supported by the key & value API.
 // Consider removing the control ID usages?
-const arg_def_t *av1_ctrl_args[] = {
+static const arg_def_t *const av1_ctrl_args[] = {
   &g_av1_codec_arg_defs.cpu_used_av1,
   &g_av1_codec_arg_defs.auto_altref,
   &g_av1_codec_arg_defs.sharpness,
@@ -451,7 +457,7 @@ const arg_def_t *av1_ctrl_args[] = {
   NULL,
 };
 
-const arg_def_t *av1_key_val_args[] = {
+static const arg_def_t *const av1_key_val_args[] = {
   &g_av1_codec_arg_defs.passes,
   &g_av1_codec_arg_defs.two_pass_output,
   &g_av1_codec_arg_defs.second_pass_log,
@@ -460,10 +466,11 @@ const arg_def_t *av1_key_val_args[] = {
   &g_av1_codec_arg_defs.sb_qp_sweep,
   &g_av1_codec_arg_defs.dist_metric,
   &g_av1_codec_arg_defs.kf_max_pyr_height,
+  &g_av1_codec_arg_defs.auto_tiles,
   NULL,
 };
 
-static const arg_def_t *no_args[] = { NULL };
+static const arg_def_t *const no_args[] = { NULL };
 
 static void show_help(FILE *fout, int shorthelp) {
   fprintf(fout, "Usage: %s <options> -o dst_filename src_filename\n",
@@ -935,9 +942,9 @@ static int parse_stream_params(struct AvxEncoderConfig *global,
                                struct stream_state *stream, char **argv) {
   char **argi, **argj;
   struct arg arg;
-  static const arg_def_t **ctrl_args = no_args;
-  static const arg_def_t **key_val_args = no_args;
-  static const int *ctrl_args_map = NULL;
+  const arg_def_t *const *ctrl_args = no_args;
+  const arg_def_t *const *key_val_args = no_args;
+  const int *ctrl_args_map = NULL;
   struct stream_config *config = &stream->config;
   int eos_mark_found = 0;
   int webm_forced = 0;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -152,10 +152,13 @@ VAR_FN(16, 16, 16, 8)
 VAR_FN(16, 8, 8, 7)
 VAR_FN(8, 16, 8, 7)
 VAR_FN(8, 8, 8, 6)
+
+#if !CONFIG_REALTIME_ONLY
 VAR_FN(8, 32, 8, 8)
 VAR_FN(32, 8, 8, 8)
 VAR_FN(16, 64, 16, 10)
 VAR_FN(64, 16, 16, 10)
+#endif  // !CONFIG_REALTIME_ONLY
 
 #undef VAR_FN
 
@@ -382,6 +385,23 @@ DECLS(sse2)
     return (var >= 0) ? (uint32_t)var : 0;                                     \
   }
 
+#if CONFIG_REALTIME_ONLY
+#define FNS(opt)                         \
+  FN(128, 128, 16, 7, 7, opt, (int64_t)) \
+  FN(128, 64, 16, 7, 6, opt, (int64_t))  \
+  FN(64, 128, 16, 6, 7, opt, (int64_t))  \
+  FN(64, 64, 16, 6, 6, opt, (int64_t))   \
+  FN(64, 32, 16, 6, 5, opt, (int64_t))   \
+  FN(32, 64, 16, 5, 6, opt, (int64_t))   \
+  FN(32, 32, 16, 5, 5, opt, (int64_t))   \
+  FN(32, 16, 16, 5, 4, opt, (int64_t))   \
+  FN(16, 32, 16, 4, 5, opt, (int64_t))   \
+  FN(16, 16, 16, 4, 4, opt, (int64_t))   \
+  FN(16, 8, 16, 4, 3, opt, (int64_t))    \
+  FN(8, 16, 8, 3, 4, opt, (int64_t))     \
+  FN(8, 8, 8, 3, 3, opt, (int64_t))      \
+  FN(8, 4, 8, 3, 2, opt, (int64_t))
+#else  // !CONFIG_REALTIME_ONLY
 #define FNS(opt)                         \
   FN(128, 128, 16, 7, 7, opt, (int64_t)) \
   FN(128, 64, 16, 7, 6, opt, (int64_t))  \
@@ -402,6 +422,7 @@ DECLS(sse2)
   FN(32, 8, 16, 5, 3, opt, (int64_t))    \
   FN(16, 64, 16, 4, 6, opt, (int64_t))   \
   FN(64, 16, 16, 6, 4, opt, (int64_t))
+#endif  // CONFIG_REALTIME_ONLY
 
 FNS(sse2)
 
@@ -549,6 +570,20 @@ DECLS(sse2)
     return (var >= 0) ? (uint32_t)var : 0;                                     \
   }
 
+#if CONFIG_REALTIME_ONLY
+#define FNS(opt)                       \
+  FN(64, 64, 16, 6, 6, opt, (int64_t)) \
+  FN(64, 32, 16, 6, 5, opt, (int64_t)) \
+  FN(32, 64, 16, 5, 6, opt, (int64_t)) \
+  FN(32, 32, 16, 5, 5, opt, (int64_t)) \
+  FN(32, 16, 16, 5, 4, opt, (int64_t)) \
+  FN(16, 32, 16, 4, 5, opt, (int64_t)) \
+  FN(16, 16, 16, 4, 4, opt, (int64_t)) \
+  FN(16, 8, 16, 4, 3, opt, (int64_t))  \
+  FN(8, 16, 8, 3, 4, opt, (int64_t))   \
+  FN(8, 8, 8, 3, 3, opt, (int64_t))    \
+  FN(8, 4, 8, 3, 2, opt, (int64_t))
+#else  // !CONFIG_REALTIME_ONLY
 #define FNS(opt)                       \
   FN(64, 64, 16, 6, 6, opt, (int64_t)) \
   FN(64, 32, 16, 6, 5, opt, (int64_t)) \
@@ -566,6 +601,7 @@ DECLS(sse2)
   FN(32, 8, 16, 5, 3, opt, (int64_t))  \
   FN(16, 64, 16, 4, 6, opt, (int64_t)) \
   FN(64, 16, 16, 6, 4, opt, (int64_t))
+#endif  // CONFIG_REALTIME_ONLY
 
 FNS(sse2)
 

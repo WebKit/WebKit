@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -84,12 +84,15 @@ MASKSAD8XN_SSSE3(8)
 MASKSAD8XN_SSSE3(4)
 MASKSAD4XN_SSSE3(8)
 MASKSAD4XN_SSSE3(4)
+
+#if !CONFIG_REALTIME_ONLY
 MASKSAD4XN_SSSE3(16)
 MASKSADMXN_SSSE3(16, 4)
 MASKSAD8XN_SSSE3(32)
 MASKSADMXN_SSSE3(32, 8)
 MASKSADMXN_SSSE3(16, 64)
 MASKSADMXN_SSSE3(64, 16)
+#endif  // !CONFIG_REALTIME_ONLY
 
 static INLINE unsigned int masked_sad_ssse3(const uint8_t *src_ptr,
                                             int src_stride,
@@ -275,12 +278,15 @@ HIGHBD_MASKSADMXN_SSSE3(8, 8)
 HIGHBD_MASKSADMXN_SSSE3(8, 4)
 HIGHBD_MASKSAD4XN_SSSE3(8)
 HIGHBD_MASKSAD4XN_SSSE3(4)
+
+#if !CONFIG_REALTIME_ONLY
 HIGHBD_MASKSAD4XN_SSSE3(16)
 HIGHBD_MASKSADMXN_SSSE3(16, 4)
 HIGHBD_MASKSADMXN_SSSE3(8, 32)
 HIGHBD_MASKSADMXN_SSSE3(32, 8)
 HIGHBD_MASKSADMXN_SSSE3(16, 64)
 HIGHBD_MASKSADMXN_SSSE3(64, 16)
+#endif  // !CONFIG_REALTIME_ONLY
 
 static INLINE unsigned int highbd_masked_sad_ssse3(
     const uint8_t *src8, int src_stride, const uint8_t *a8, int a_stride,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2024, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -11,6 +11,7 @@
 
 #include <arm_neon.h>
 #include <arm_sve.h>
+#include <assert.h>
 #include <string.h>
 
 #include "config/aom_config.h"
@@ -159,6 +160,7 @@ static INLINE void compute_stats_win7_sve(int16_t *dgd_avg, int dgd_avg_stride,
   int64_t H_tmp[49 * 49];
   memset(H_tmp, 0, sizeof(H_tmp));
 
+  assert(height > 0);
   do {
     // Cross-correlation (M).
     for (int row = 0; row < wiener_win; row++) {
@@ -292,6 +294,7 @@ static INLINE void compute_stats_win5_sve(int16_t *dgd_avg, int dgd_avg_stride,
   int64_t H_tmp[25 * 25];
   memset(H_tmp, 0, sizeof(H_tmp));
 
+  assert(height > 0);
   do {
     // Cross-correlation (M).
     for (int row = 0; row < wiener_win; row++) {
@@ -435,12 +438,14 @@ void av1_compute_stats_sve(int wiener_win, const uint8_t *dgd,
   // the last line of src will be scaled according to how many rows remain.
   const int downsample_remainder = height % downsample_factor;
 
-  if (wiener_win == WIENER_WIN) {
-    compute_stats_win7_sve(dgd_avg, dgd_avg_stride, src_avg, src_avg_stride,
-                           width, downsample_height, M, H, downsample_factor);
-  } else {
-    compute_stats_win5_sve(dgd_avg, dgd_avg_stride, src_avg, src_avg_stride,
-                           width, downsample_height, M, H, downsample_factor);
+  if (downsample_height > 0) {
+    if (wiener_win == WIENER_WIN) {
+      compute_stats_win7_sve(dgd_avg, dgd_avg_stride, src_avg, src_avg_stride,
+                             width, downsample_height, M, H, downsample_factor);
+    } else {
+      compute_stats_win5_sve(dgd_avg, dgd_avg_stride, src_avg, src_avg_stride,
+                             width, downsample_height, M, H, downsample_factor);
+    }
   }
 
   if (downsample_remainder > 0) {

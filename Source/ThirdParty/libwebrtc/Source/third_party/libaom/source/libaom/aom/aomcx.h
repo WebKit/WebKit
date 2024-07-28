@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -1539,6 +1539,28 @@ enum aome_enc_control_id {
    */
   AV1E_SET_SVC_FRAME_DROP_MODE = 165,
 
+  /*!\brief Codec control to set auto tiling, unsigned int parameter.
+   * Value of 1 means encoder will set number of tile_columns and tile_rows,
+   * based on the number of threads and resolution. This will override any
+   * settings set via SET_TILE_COLUMNS/ROWS. If the value is 0 no change is
+   * done, the previous setting (if any) for tile_columns/rows is preserved.
+   */
+  AV1E_SET_AUTO_TILES = 166,
+
+  /*!\brief Codec control to get the high motion content flag, used for
+   * screen content realtime (RTC) encoding, int * parameter.
+   * Returns an integer.
+   * 1 means high motion content flag is set to 1, 0 means set to 0.
+   */
+  AV1E_GET_HIGH_MOTION_CONTENT_SCREEN_RTC = 167,
+
+  /*!\brief Codec control to enable postencode frame drop for RTC encoding,
+   * int parameter. Value of 1 means encoder will enable postencode
+   * drop, Default is 0 (not enabled). Postencode drop is only allowed
+   * when frame dropping is enabled (rc_dropframe_thresh > 0).
+   */
+  AV1E_SET_POSTENCODE_DROP_RTC = 168,
+
   // Any new encoder control IDs should be added above.
   // Maximum allowed encoder control ID is 229.
   // No encoder control ID should be added below.
@@ -2195,6 +2217,15 @@ AOM_CTRL_USE_TYPE(AV1E_SET_SVC_FRAME_DROP_MODE, unsigned int)
 
 AOM_CTRL_USE_TYPE(AV1E_SET_MAX_CONSEC_FRAME_DROP_CBR, int)
 #define AOM_CTRL_AV1E_SET_MAX_CONSEC_FRAME_DROP_CBR
+
+AOM_CTRL_USE_TYPE(AV1E_SET_AUTO_TILES, unsigned int)
+#define AOM_CTRL_AV1E_SET_AUTO_TILES
+
+AOM_CTRL_USE_TYPE(AV1E_GET_HIGH_MOTION_CONTENT_SCREEN_RTC, int *)
+#define AOM_CTRL_AV1E_GET_HIGH_MOTION_CONTENT_SCREEN_RTC
+
+AOM_CTRL_USE_TYPE(AV1E_SET_POSTENCODE_DROP_RTC, int)
+#define AOM_CTRL_AV1E_SET_POSTENCODE_DROP_RTC
 
 /*!\endcond */
 /*! @} - end defgroup aom_encoder */

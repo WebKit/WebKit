@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2022, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -16,6 +16,7 @@
 #include "config/av1_rtcd.h"
 
 #include "aom/aom_integer.h"
+#include "aom_dsp/arm/mem_neon.h"
 #include "aom_dsp/arm/sum_neon.h"
 #include "aom_dsp/arm/transpose_neon.h"
 #include "aom_dsp/intrapred_common.h"
@@ -1293,6 +1294,33 @@ static AOM_FORCE_INLINE uint16x8_t highbd_dr_z1_apply_shift_x8(uint16x8_t a0,
       highbd_dr_z1_apply_shift_x4(vget_high_u16(a0), vget_high_u16(a1), shift));
 }
 
+// clang-format off
+static const uint8_t kLoadMaxShuffles[] = {
+  14, 15, 14, 15, 14, 15, 14, 15, 14, 15, 14, 15, 14, 15, 14, 15,
+  12, 13, 14, 15, 14, 15, 14, 15, 14, 15, 14, 15, 14, 15, 14, 15,
+  10, 11, 12, 13, 14, 15, 14, 15, 14, 15, 14, 15, 14, 15, 14, 15,
+   8,  9, 10, 11, 12, 13, 14, 15, 14, 15, 14, 15, 14, 15, 14, 15,
+   6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 14, 15, 14, 15, 14, 15,
+   4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 14, 15, 14, 15,
+   2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 14, 15,
+   0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
+};
+// clang-format on
+
+static INLINE uint16x8_t zn_load_masked_neon(const uint16_t *ptr,
+                                             int shuffle_idx) {
+  uint8x16_t shuffle = vld1q_u8(&kLoadMaxShuffles[16 * shuffle_idx]);
+  uint8x16_t src = vreinterpretq_u8_u16(vld1q_u16(ptr));
+#if AOM_ARCH_AARCH64
+  return vreinterpretq_u16_u8(vqtbl1q_u8(src, shuffle));
+#else
+  uint8x8x2_t src2 = { { vget_low_u8(src), vget_high_u8(src) } };
+  uint8x8_t lo = vtbl2_u8(src2, vget_low_u8(shuffle));
+  uint8x8_t hi = vtbl2_u8(src2, vget_high_u8(shuffle));
+  return vreinterpretq_u16_u8(vcombine_u8(lo, hi));
+#endif
+}
+
 static void highbd_dr_prediction_z1_upsample0_neon(uint16_t *dst,
                                                    ptrdiff_t stride, int bw,
                                                    int bh,
@@ -1336,13 +1364,26 @@ static void highbd_dr_prediction_z1_upsample0_neon(uint16_t *dst,
     } else {
       int c = 0;
       do {
-        const uint16x8_t a0 = vld1q_u16(&above[base + c]);
-        const uint16x8_t a1 = vld1q_u16(&above[base + c + 1]);
-        const uint16x8_t val = highbd_dr_z1_apply_shift_x8(a0, a1, shift);
-        const uint16x8_t cmp =
-            vcgtq_s16(vdupq_n_s16(max_base_x - base - c), iota1x8);
-        const uint16x8_t res = vbslq_u16(cmp, val, vdupq_n_u16(above_max));
-        vst1q_u16(dst + c, res);
+        uint16x8_t a0;
+        uint16x8_t a1;
+        if (base + c >= max_base_x) {
+          a0 = a1 = vdupq_n_u16(above_max);
+        } else {
+          if (base + c + 7 >= max_base_x) {
+            int shuffle_idx = max_base_x - base - c;
+            a0 = zn_load_masked_neon(above + (max_base_x - 7), shuffle_idx);
+          } else {
+            a0 = vld1q_u16(above + base + c);
+          }
+          if (base + c + 8 >= max_base_x) {
+            int shuffle_idx = max_base_x - base - c - 1;
+            a1 = zn_load_masked_neon(above + (max_base_x - 7), shuffle_idx);
+          } else {
+            a1 = vld1q_u16(above + base + c + 1);
+          }
+        }
+
+        vst1q_u16(dst + c, highbd_dr_z1_apply_shift_x8(a0, a1, shift));
         c += 8;
       } while (c < bw);
     }
@@ -1583,13 +1624,13 @@ static AOM_FORCE_INLINE uint16x4x2_t highbd_dr_prediction_z2_gather_left_x4(
 
   // At time of writing both Clang and GCC produced better code with these
   // nested if-statements compared to a switch statement with fallthrough.
-  ret0_u32 = vld1_lane_u32((const uint32_t *)(left + idx0), ret0_u32, 0);
+  load_unaligned_u32_2x1_lane(ret0_u32, left + idx0, 0);
   if (n > 1) {
-    ret0_u32 = vld1_lane_u32((const uint32_t *)(left + idx1), ret0_u32, 1);
+    load_unaligned_u32_2x1_lane(ret0_u32, left + idx1, 1);
     if (n > 2) {
-      ret1_u32 = vld1_lane_u32((const uint32_t *)(left + idx2), ret1_u32, 0);
+      load_unaligned_u32_2x1_lane(ret1_u32, left + idx2, 0);
       if (n > 3) {
-        ret1_u32 = vld1_lane_u32((const uint32_t *)(left + idx3), ret1_u32, 1);
+        load_unaligned_u32_2x1_lane(ret1_u32, left + idx3, 1);
       }
     }
   }
@@ -1623,25 +1664,21 @@ static AOM_FORCE_INLINE uint16x8x2_t highbd_dr_prediction_z2_gather_left_x8(
 
   // At time of writing both Clang and GCC produced better code with these
   // nested if-statements compared to a switch statement with fallthrough.
-  ret0_u32 = vld1q_lane_u32((const uint32_t *)(left + idx0), ret0_u32, 0);
+  load_unaligned_u32_4x1_lane(ret0_u32, left + idx0, 0);
   if (n > 1) {
-    ret0_u32 = vld1q_lane_u32((const uint32_t *)(left + idx1), ret0_u32, 1);
+    load_unaligned_u32_4x1_lane(ret0_u32, left + idx1, 1);
     if (n > 2) {
-      ret0_u32 = vld1q_lane_u32((const uint32_t *)(left + idx2), ret0_u32, 2);
+      load_unaligned_u32_4x1_lane(ret0_u32, left + idx2, 2);
       if (n > 3) {
-        ret0_u32 = vld1q_lane_u32((const uint32_t *)(left + idx3), ret0_u32, 3);
+        load_unaligned_u32_4x1_lane(ret0_u32, left + idx3, 3);
         if (n > 4) {
-          ret1_u32 =
-              vld1q_lane_u32((const uint32_t *)(left + idx4), ret1_u32, 0);
+          load_unaligned_u32_4x1_lane(ret1_u32, left + idx4, 0);
           if (n > 5) {
-            ret1_u32 =
-                vld1q_lane_u32((const uint32_t *)(left + idx5), ret1_u32, 1);
+            load_unaligned_u32_4x1_lane(ret1_u32, left + idx5, 1);
             if (n > 6) {
-              ret1_u32 =
-                  vld1q_lane_u32((const uint32_t *)(left + idx6), ret1_u32, 2);
+              load_unaligned_u32_4x1_lane(ret1_u32, left + idx6, 2);
               if (n > 7) {
-                ret1_u32 = vld1q_lane_u32((const uint32_t *)(left + idx7),
-                                          ret1_u32, 3);
+                load_unaligned_u32_4x1_lane(ret1_u32, left + idx7, 3);
               }
             }
           }
@@ -2456,12 +2493,28 @@ void av1_highbd_dr_prediction_z2_neon(uint16_t *dst, ptrdiff_t stride, int bw,
     val_lo = vmlal_lane_u16(val_lo, vget_low_u16(in1), (s1), (lane));     \
     uint32x4_t val_hi = vmull_lane_u16(vget_high_u16(in0), (s0), (lane)); \
     val_hi = vmlal_lane_u16(val_hi, vget_high_u16(in1), (s1), (lane));    \
-    const uint16x8_t cmp = vaddq_u16((iota), vdupq_n_u16(base));          \
-    const uint16x8_t res = vcombine_u16(vrshrn_n_u32(val_lo, (shift)),    \
-                                        vrshrn_n_u32(val_hi, (shift)));   \
-    *(out) = vbslq_u16(vcltq_u16(cmp, vdupq_n_u16(max_base_y)), res,      \
-                       vdupq_n_u16(left_max));                            \
+    *(out) = vcombine_u16(vrshrn_n_u32(val_lo, (shift)),                  \
+                          vrshrn_n_u32(val_hi, (shift)));                 \
   } while (0)
+
+static INLINE uint16x8x2_t z3_load_left_neon(const uint16_t *left0, int ofs,
+                                             int max_ofs) {
+  uint16x8_t r0;
+  uint16x8_t r1;
+  if (ofs + 7 >= max_ofs) {
+    int shuffle_idx = max_ofs - ofs;
+    r0 = zn_load_masked_neon(left0 + (max_ofs - 7), shuffle_idx);
+  } else {
+    r0 = vld1q_u16(left0 + ofs);
+  }
+  if (ofs + 8 >= max_ofs) {
+    int shuffle_idx = max_ofs - ofs - 1;
+    r1 = zn_load_masked_neon(left0 + (max_ofs - 7), shuffle_idx);
+  } else {
+    r1 = vld1q_u16(left0 + ofs + 1);
+  }
+  return (uint16x8x2_t){ { r0, r1 } };
+}
 
 static void highbd_dr_prediction_z3_upsample0_neon(uint16_t *dst,
                                                    ptrdiff_t stride, int bw,
@@ -2561,34 +2614,30 @@ static void highbd_dr_prediction_z3_upsample0_neon(uint16_t *dst,
         if (base0 >= max_base_y) {
           out[0] = vdupq_n_u16(left_max);
         } else {
-          const uint16x8_t l00 = vld1q_u16(left + base0);
-          const uint16x8_t l01 = vld1q_u16(left1 + base0);
-          HIGHBD_DR_PREDICTOR_Z3_STEP_X8(&out[0], iota1x8, base0, l00, l01,
-                                         shifts0, shifts1, 0, 6);
+          const uint16x8x2_t l0 = z3_load_left_neon(left, base0, max_base_y);
+          HIGHBD_DR_PREDICTOR_Z3_STEP_X8(&out[0], iota1x8, base0, l0.val[0],
+                                         l0.val[1], shifts0, shifts1, 0, 6);
         }
         if (base1 >= max_base_y) {
           out[1] = vdupq_n_u16(left_max);
         } else {
-          const uint16x8_t l10 = vld1q_u16(left + base1);
-          const uint16x8_t l11 = vld1q_u16(left1 + base1);
-          HIGHBD_DR_PREDICTOR_Z3_STEP_X8(&out[1], iota1x8, base1, l10, l11,
-                                         shifts0, shifts1, 1, 6);
+          const uint16x8x2_t l1 = z3_load_left_neon(left, base1, max_base_y);
+          HIGHBD_DR_PREDICTOR_Z3_STEP_X8(&out[1], iota1x8, base1, l1.val[0],
+                                         l1.val[1], shifts0, shifts1, 1, 6);
         }
         if (base2 >= max_base_y) {
           out[2] = vdupq_n_u16(left_max);
         } else {
-          const uint16x8_t l20 = vld1q_u16(left + base2);
-          const uint16x8_t l21 = vld1q_u16(left1 + base2);
-          HIGHBD_DR_PREDICTOR_Z3_STEP_X8(&out[2], iota1x8, base2, l20, l21,
-                                         shifts0, shifts1, 2, 6);
+          const uint16x8x2_t l2 = z3_load_left_neon(left, base2, max_base_y);
+          HIGHBD_DR_PREDICTOR_Z3_STEP_X8(&out[2], iota1x8, base2, l2.val[0],
+                                         l2.val[1], shifts0, shifts1, 2, 6);
         }
         if (base3 >= max_base_y) {
           out[3] = vdupq_n_u16(left_max);
         } else {
-          const uint16x8_t l30 = vld1q_u16(left + base3);
-          const uint16x8_t l31 = vld1q_u16(left1 + base3);
-          HIGHBD_DR_PREDICTOR_Z3_STEP_X8(&out[3], iota1x8, base3, l30, l31,
-                                         shifts0, shifts1, 3, 6);
+          const uint16x8x2_t l3 = z3_load_left_neon(left, base3, max_base_y);
+          HIGHBD_DR_PREDICTOR_Z3_STEP_X8(&out[3], iota1x8, base3, l3.val[0],
+                                         l3.val[1], shifts0, shifts1, 3, 6);
         }
         transpose_array_inplace_u16_4x8(out);
         for (int r2 = 0; r2 < 4; ++r2) {

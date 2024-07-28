@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -358,6 +358,7 @@ void av1_build_compound_diffwtd_mask_c(uint8_t *mask,
   }
 }
 
+#if CONFIG_AV1_HIGHBITDEPTH
 static AOM_FORCE_INLINE void diffwtd_mask_highbd(
     uint8_t *mask, int which_inverse, int mask_base, const uint16_t *src0,
     int src0_stride, const uint16_t *src1, int src1_stride, int h, int w,
@@ -437,6 +438,7 @@ void av1_build_compound_diffwtd_mask_highbd_c(
     default: assert(0);
   }
 }
+#endif  // CONFIG_AV1_HIGHBITDEPTH
 
 static AOM_INLINE void init_wedge_master_masks(void) {
   int i, j;

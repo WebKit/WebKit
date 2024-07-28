@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2017, Alliance for Open Media. All rights reserved
+# Copyright (c) 2017, Alliance for Open Media. All rights reserved.
 #
 # This source code is subject to the terms of the BSD 2 Clause License and the
 # Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License was
@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 3.5)
 
 string(TIMESTAMP year "%Y")
 set(asm_file_header_block "\;
-\; Copyright (c) ${year}, Alliance for Open Media. All rights reserved
+\; Copyright (c) ${year}, Alliance for Open Media. All rights reserved.
 \;
 \; This source code is subject to the terms of the BSD 2 Clause License and
 \; the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -23,7 +23,7 @@ set(asm_file_header_block "\;
 \;
 ")
 set(h_file_header_block "/*
- * Copyright (c) ${year}, Alliance for Open Media. All rights reserved
+ * Copyright (c) ${year}, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -36,7 +36,7 @@ set(h_file_header_block "/*
 \#define AOM_CONFIG_H_
 ")
 set(cmake_file_header_block "##
-## Copyright (c) ${year}, Alliance for Open Media. All rights reserved
+## Copyright (c) ${year}, Alliance for Open Media. All rights reserved.
 ##
 ## This source code is subject to the terms of the BSD 2 Clause License and
 ## the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License

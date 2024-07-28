@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2024, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -17,6 +17,7 @@
 
 #include "aom_dsp/x86/synonyms.h"
 
+#define ROW_OFFSET 5
 #define CAST_HI(x) _mm256_castsi128_si256(x)
 #define CAST_LOW(x) _mm256_castsi256_si128(x)
 
@@ -122,7 +123,7 @@
   filter_offset = 3;                                                           \
                                                                                \
   /* Pad start pixels to the left, while processing the first pixels in the    \
-    row. */                                                                    \
+   * row. */                                                                   \
   if (j == 0) {                                                                \
     /* a0 a0 a0 a0 .... a12 || b0 b0 b0 b0 .... b12 */                         \
     row0 = _mm256_shuffle_epi8(r0, wd32_start_pad_mask);                       \
@@ -131,21 +132,24 @@
     r0 = row0;                                                                 \
     r1 = row1;                                                                 \
   }                                                                            \
-                                                                               \
+  const int is_last_cols32 = (j + 32 == filtered_length);                      \
+  /* Avoid loading extra pixels at frame boundary.*/                           \
+  if (is_last_cols32) row_offset = ROW_OFFSET;                                 \
   /* a29 a30 a31 a32 a33 a34 a35 a36 0 0 ....*/                                \
   __m128i row0_0 = _mm_loadl_epi64(                                            \
-      (__m128i *)&input[i * in_stride + 32 + j - filter_offset]);              \
+      (__m128i *)&input[i * in_stride + 32 + j - filter_offset - row_offset]); \
   /* b29 b30 b31 b32 b33 b34 b35 b36 0 0 .... */                               \
-  __m128i row1_0 = _mm_loadl_epi64(                                            \
-      (__m128i *)&input[(i + 1) * in_stride + 32 + j - filter_offset]);        \
+  __m128i row1_0 =                                                             \
+      _mm_loadl_epi64((__m128i *)&input[(i + 1) * in_stride + 32 + j -         \
+                                        filter_offset - row_offset]);          \
   __m256i r2 = _mm256_permute2x128_si256(                                      \
       _mm256_castsi128_si256(row0_0), _mm256_castsi128_si256(row1_0), 0x20);   \
                                                                                \
   /* Pad end pixels to the right, while processing the last pixels in the      \
-  row. */                                                                      \
-  const int is_last_cols32 = (j + 32 == filtered_length);                      \
+   * row. */                                                                   \
   if (is_last_cols32) {                                                        \
-    r2 = _mm256_shuffle_epi8(r2, wd32_end_pad_mask);                           \
+    r2 = _mm256_shuffle_epi8(_mm256_srli_si256(r2, ROW_OFFSET),                \
+                             wd32_end_pad_mask);                               \
   }                                                                            \
                                                                                \
   /* Process even pixels of the first row  */                                  \
@@ -169,7 +173,8 @@
   s1[3] = _mm256_alignr_epi8(r2, r1, 6);                                       \
                                                                                \
   /* The register res_out_0 stores the result of start-16 pixels corresponding \
-to the first and second rows whereas res_out_1 stores the end-16 pixels. */    \
+   * to the first and second rows whereas res_out_1 stores the end-16          \
+   * pixels. */                                                                \
   __m256i res_out_0[2], res_out_1[2];                                          \
   res_out_1[0] = res_out_1[1] = zero;                                          \
   res_out_0[0] = res_out_0[1] = zero;                                          \
@@ -184,7 +189,7 @@ to the first and second rows whereas res_out_1 stores the end-16 pixels. */    \
   /* r00-r03 r08-r011 | r04-r07 r012-r015 */                                   \
   __m256i res_out_r0 = _mm256_packus_epi32(res_out_0[0], res_out_1[0]);        \
                                                                                \
-  /* result of 32 pixels of row1 (b0 to b32) */                                \
+  /* Result of 32 pixels of row1 (b0 to b32) */                                \
   res_out_0[1] = _mm256_sra_epi32(                                             \
       _mm256_add_epi32(res_out_0[1], round_const_bits), round_shift_bits);     \
   res_out_1[1] = _mm256_sra_epi32(                                             \
@@ -530,11 +535,10 @@ void av1_resize_horz_dir_avx2(const uint8_t *const input, int in_stride,
                               uint8_t *intbuf, int height, int filtered_length,
                               int width2) {
   assert(height % 2 == 0);
-  // Currently, Invoking C function for width less than 32. Optimize the below,
-  // by invoking SSE2 once the implementation for the same is available.
+  // Invoke SSE2 for width less than 32.
   if (filtered_length < 32) {
-    av1_resize_horz_dir_c(input, in_stride, intbuf, height, filtered_length,
-                          width2);
+    av1_resize_horz_dir_sse2(input, in_stride, intbuf, height, filtered_length,
+                             width2);
     return;
   }
 
@@ -568,6 +572,7 @@ void av1_resize_horz_dir_avx2(const uint8_t *const input, int in_stride,
   if (filtered_length % 32 == 0) {
     for (int i = 0; i < height; i += 2) {
       int filter_offset = 0;
+      int row_offset = 0;
       for (int j = 0; j < filtered_length; j += 32) {
         PROCESS_RESIZE_X_WD32
       }
@@ -575,28 +580,50 @@ void av1_resize_horz_dir_avx2(const uint8_t *const input, int in_stride,
   } else {
     for (int i = 0; i < height; i += 2) {
       int filter_offset = 0;
-      int remain_col = filtered_length % 32;
-      for (int j = 0; j + 32 <= filtered_length; j += 32) {
+      int remain_col = filtered_length;
+      int row_offset = 0;
+      // To avoid pixel over-read at frame boundary, processing of 32 pixels
+      // is done using the core loop only if sufficient number of pixels
+      // required for the load are present. The remaining pixels are processed
+      // separately.
+      for (int j = 0; j <= filtered_length - 32; j += 32) {
+        if (remain_col == 34 || remain_col == 36) {
+          break;
+        }
         PROCESS_RESIZE_X_WD32
+        remain_col -= 32;
       }
 
       int wd_processed = filtered_length - remain_col;
-      if (remain_col > 15) {
-        remain_col = filtered_length % 16;
-        const int in_idx = i * in_stride + wd_processed - filter_offset;
+      // To avoid pixel over-read at frame boundary, processing of 16 pixels
+      // is done only if sufficient number of pixels required for the
+      // load are present. The remaining pixels are processed separately.
+      if (remain_col > 15 && remain_col != 18 && remain_col != 20) {
+        remain_col = filtered_length - wd_processed - 16;
+        const int in_idx = i * in_stride + wd_processed;
         const int out_idx = (i * dst_stride) + wd_processed / 2;
         // a0 a1 --- a15
-        __m128i row0 = _mm_loadu_si128((__m128i *)&input[in_idx]);
+        __m128i row0 =
+            _mm_loadu_si128((__m128i *)&input[in_idx - filter_offset]);
         // b0 b1 --- b15
-        __m128i row1 = _mm_loadu_si128((__m128i *)&input[in_idx + in_stride]);
+        __m128i row1 = _mm_loadu_si128(
+            (__m128i *)&input[in_idx + in_stride - filter_offset]);
         // a0 a1 --- a15 || b0 b1 --- b15
         __m256i r0 =
             _mm256_permute2x128_si256(CAST_HI(row0), CAST_HI(row1), 0x20);
+        if (filter_offset == 0) {
+          r0 = _mm256_shuffle_epi8(r0, wd32_start_pad_mask);
+        }
+        filter_offset = 3;
+        const int is_last_cols16 = wd_processed + 16 == filtered_length;
+        if (is_last_cols16) row_offset = ROW_OFFSET;
 
         // a16 a17 --- a23
-        row0 = _mm_loadl_epi64((__m128i *)&input[in_idx + 16]);
+        row0 = _mm_loadl_epi64(
+            (__m128i *)&input[in_idx + 16 - row_offset - filter_offset]);
         // b16 b17 --- b23
-        row1 = _mm_loadl_epi64((__m128i *)&input[in_idx + 16 + in_stride]);
+        row1 = _mm_loadl_epi64((__m128i *)&input[in_idx + 16 + in_stride -
+                                                 row_offset - filter_offset]);
 
         // a16-a23 x x x x| b16-b23 x x x x
         __m256i r1 =
@@ -604,9 +631,9 @@ void av1_resize_horz_dir_avx2(const uint8_t *const input, int in_stride,
 
         // Pad end pixels to the right, while processing the last pixels in the
         // row.
-        const int is_last_cols16 = wd_processed + 16 == filtered_length;
         if (is_last_cols16) {
-          r1 = _mm256_shuffle_epi8(r1, wd32_end_pad_mask);
+          r1 = _mm256_shuffle_epi8(_mm256_srli_si256(r1, ROW_OFFSET),
+                                   wd32_end_pad_mask);
         }
 
         // a0 a1 --- a15 || b0 b1 --- b15
@@ -623,7 +650,7 @@ void av1_resize_horz_dir_avx2(const uint8_t *const input, int in_stride,
         res_out_0[0] = res_out_0[1] = zero;
         resize_convolve(s0, coeffs_x, res_out_0);
 
-        // r00 -r07
+        // r00-r07
         res_out_0[0] = _mm256_sra_epi32(
             _mm256_add_epi32(res_out_0[0], round_const_bits), round_shift_bits);
         // r10-r17
@@ -646,23 +673,30 @@ void av1_resize_horz_dir_avx2(const uint8_t *const input, int in_stride,
                          _mm_unpackhi_epi64(low_result, low_result));
       }
 
+      // To avoid pixel over-read at frame boundary, processing of 8 pixels
+      // is done only if sufficient number of pixels required for the
+      // load are present. The remaining pixels are processed by C function.
       wd_processed = filtered_length - remain_col;
-      if (remain_col > 7) {
-        remain_col = filtered_length % 8;
+      if (remain_col > 7 && remain_col != 10 && remain_col != 12) {
+        remain_col = filtered_length - wd_processed - 8;
         const int in_idx = i * in_stride + wd_processed - filter_offset;
         const int out_idx = (i * dst_stride) + wd_processed / 2;
+        const int is_last_cols_8 = wd_processed + 8 == filtered_length;
+        if (is_last_cols_8) row_offset = ROW_OFFSET;
         // a0 a1 --- a15
-        __m128i row0 = _mm_loadu_si128((__m128i *)&input[in_idx]);
+        __m128i row0 = _mm_loadu_si128((__m128i *)&input[in_idx - row_offset]);
         // b0 b1 --- b15
-        __m128i row1 = _mm_loadu_si128((__m128i *)&input[in_idx + in_stride]);
+        __m128i row1 =
+            _mm_loadu_si128((__m128i *)&input[in_idx + in_stride - row_offset]);
         // a0 a1 --- a15 || b0 b1 --- b15
         __m256i r0 =
             _mm256_permute2x128_si256(CAST_HI(row0), CAST_HI(row1), 0x20);
 
         // Pad end pixels to the right, while processing the last pixels in the
         // row.
-        const int is_last_cols_8 = wd_processed + 8 == filtered_length;
-        if (is_last_cols_8) r0 = _mm256_shuffle_epi8(r0, wd8_end_pad_mask);
+        if (is_last_cols_8)
+          r0 = _mm256_shuffle_epi8(_mm256_srli_si256(r0, ROW_OFFSET),
+                                   wd8_end_pad_mask);
 
         // a0 a1 a2 a3 a4 a5 a6 a7 | b0 b1 b2 b3 b4 b5 b6 b7
         s0[0] = r0;
@@ -672,6 +706,7 @@ void av1_resize_horz_dir_avx2(const uint8_t *const input, int in_stride,
         s0[2] = _mm256_bsrli_epi128(r0, 4);
         // a6 a7 a8 a9 a10 a10 a10 a10 | b6 b7 b8 b9 b10 b10 b10 b10
         s0[3] = _mm256_bsrli_epi128(r0, 6);
+
         __m256i res_out_0[2];
         res_out_0[0] = res_out_0[1] = zero;
         resize_convolve(s0, coeffs_x, res_out_0);
@@ -695,10 +730,6 @@ void av1_resize_horz_dir_avx2(const uint8_t *const input, int in_stride,
       }
 
       wd_processed = filtered_length - remain_col;
-      // When the remaining width is 2, the above code would not have taken
-      // care of padding required for (filtered_length - 4)th pixel. Hence,
-      // process that pixel again with the C code.
-      wd_processed = (remain_col == 2) ? wd_processed - 2 : wd_processed;
       if (remain_col) {
         const int in_idx = (in_stride * i);
         const int out_idx = (wd_processed / 2) + width2 * i;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -72,9 +72,14 @@ INSTANTIATE_TEST_SUITE_P(
     libaom_test::AV1WarpFilter::BuildParams(av1_warp_affine_neon));
 
 #if CONFIG_AV1_HIGHBITDEPTH
+#if AOM_ARCH_AARCH64
+// TODO(aomedia:349455146): enable for armv7 after SIGBUS is fixed.
 INSTANTIATE_TEST_SUITE_P(
     NEON, AV1HighbdWarpFilterTest,
     libaom_test::AV1HighbdWarpFilter::BuildParams(av1_highbd_warp_affine_neon));
+#else   // !AOM_ARCH_AARCH64
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AV1HighbdWarpFilterTest);
+#endif  // AOM_ARCH_AARCH64
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 #endif  // HAVE_NEON
 

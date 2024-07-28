@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -198,8 +198,8 @@ int SIMD_FUNC(cdef_find_dir)(const uint16_t *img, int stride, int32_t *var,
 }
 
 // Work around compiler out of memory issues with Win32 builds. This issue has
-// been observed with Visual Studio 2017, 2019, and 2022 (version 17.4).
-#if defined(_MSC_VER) && defined(_M_IX86) && _MSC_VER < 1940
+// been observed with Visual Studio 2017, 2019, and 2022 (version 17.10.3).
+#if defined(_MSC_VER) && defined(_M_IX86)
 #define CDEF_INLINE static INLINE
 #else
 #define CDEF_INLINE SIMD_INLINE

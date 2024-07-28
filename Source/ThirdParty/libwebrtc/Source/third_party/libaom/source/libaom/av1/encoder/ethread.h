@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -122,7 +122,8 @@ int av1_compute_num_enc_workers(const AV1_COMP *cpi, int max_workers);
 
 int av1_compute_num_fp_contexts(AV1_PRIMARY *ppi, AV1EncoderConfig *oxcf);
 
-int av1_check_fpmt_config(AV1_PRIMARY *const ppi, AV1EncoderConfig *const oxcf);
+int av1_check_fpmt_config(AV1_PRIMARY *const ppi,
+                          const AV1EncoderConfig *const oxcf);
 
 void av1_compress_parallel_frames(AV1_PRIMARY *const ppi,
                                   AV1_COMP_DATA *const first_cpi_data);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -15,6 +15,7 @@
 #include "aom/aom_integer.h"
 #include "aom_dsp/x86/bitdepth_conversion_sse2.h"
 #include "aom_dsp/x86/mem_sse2.h"
+#include "aom_dsp/x86/synonyms.h"
 #include "aom_ports/mem.h"
 
 static INLINE void sign_extend_16bit_to_32bit_sse2(__m128i in, __m128i zero,
@@ -171,10 +172,8 @@ unsigned int aom_avg_4x4_sse2(const uint8_t *s, int p) {
   __m128i s0, s1, u0;
   unsigned int avg = 0;
   u0 = _mm_setzero_si128();
-  s0 = _mm_unpacklo_epi32(_mm_cvtsi32_si128(*(const int *)(s)),
-                          _mm_cvtsi32_si128(*(const int *)(s + p)));
-  s1 = _mm_unpacklo_epi32(_mm_cvtsi32_si128(*(const int *)(s + p * 2)),
-                          _mm_cvtsi32_si128(*(const int *)(s + p * 3)));
+  s0 = _mm_unpacklo_epi32(xx_loadl_32(s), xx_loadl_32(s + p));
+  s1 = _mm_unpacklo_epi32(xx_loadl_32(s + p * 2), xx_loadl_32(s + p * 3));
   s0 = _mm_sad_epu8(s0, u0);
   s1 = _mm_sad_epu8(s1, u0);
   s0 = _mm_add_epi16(s0, s1);

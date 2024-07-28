@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -3813,8 +3813,9 @@ static INLINE void lowbd_inv_txfm2d_add_4x4_neon(const int32_t *input,
   }
 }
 
-void lowbd_inv_txfm2d_add_4x8_neon(const int32_t *input, uint8_t *output,
-                                   int stride, TX_TYPE tx_type, int eob) {
+static void lowbd_inv_txfm2d_add_4x8_neon(const int32_t *input, uint8_t *output,
+                                          int stride, TX_TYPE tx_type,
+                                          int eob) {
   (void)eob;
   TX_SIZE tx_size = TX_4X8;
   DECLARE_ALIGNED(32, int, txfm_buf[4 * 8 + 8 + 8]);
@@ -3878,8 +3879,9 @@ void lowbd_inv_txfm2d_add_4x8_neon(const int32_t *input, uint8_t *output,
   }
 }
 
-void lowbd_inv_txfm2d_add_8x4_neon(const int32_t *input, uint8_t *output,
-                                   int stride, TX_TYPE tx_type, int eob) {
+static void lowbd_inv_txfm2d_add_8x4_neon(const int32_t *input, uint8_t *output,
+                                          int stride, TX_TYPE tx_type,
+                                          int eob) {
   (void)eob;
   TX_SIZE tx_size = TX_8X4;
   DECLARE_ALIGNED(32, int, txfm_buf[8 * 4 + 8 + 8]);
@@ -3943,8 +3945,9 @@ void lowbd_inv_txfm2d_add_8x4_neon(const int32_t *input, uint8_t *output,
   }
 }
 
-void lowbd_inv_txfm2d_add_4x16_neon(const int32_t *input, uint8_t *output,
-                                    int stride, TX_TYPE tx_type, int eob) {
+static void lowbd_inv_txfm2d_add_4x16_neon(const int32_t *input,
+                                           uint8_t *output, int stride,
+                                           TX_TYPE tx_type, int eob) {
   (void)eob;
   TX_SIZE tx_size = TX_4X16;
   DECLARE_ALIGNED(32, int, txfm_buf[4 * 16 + 16 + 16]);
@@ -4007,8 +4010,9 @@ void lowbd_inv_txfm2d_add_4x16_neon(const int32_t *input, uint8_t *output,
   }
 }
 
-void lowbd_inv_txfm2d_add_16x4_neon(const int32_t *input, uint8_t *output,
-                                    int stride, TX_TYPE tx_type, int eob) {
+static void lowbd_inv_txfm2d_add_16x4_neon(const int32_t *input,
+                                           uint8_t *output, int stride,
+                                           TX_TYPE tx_type, int eob) {
   (void)eob;
   TX_SIZE tx_size = TX_16X4;
   DECLARE_ALIGNED(32, int, txfm_buf[16 * 4 + 16 + 16]);
@@ -4172,6 +4176,11 @@ static INLINE void lowbd_inv_txfm2d_add_universe_neon(
       break;
   }
 }
+
+// This function is used by av1_inv_txfm2d_test.cc.
+void av1_lowbd_inv_txfm2d_add_neon(const int32_t *input, uint8_t *output,
+                                   int stride, TX_TYPE tx_type, TX_SIZE tx_size,
+                                   int eob);
 
 void av1_lowbd_inv_txfm2d_add_neon(const int32_t *input, uint8_t *output,
                                    int stride, TX_TYPE tx_type, TX_SIZE tx_size,

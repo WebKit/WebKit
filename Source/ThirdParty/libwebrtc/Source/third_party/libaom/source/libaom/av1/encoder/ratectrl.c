@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -33,6 +33,7 @@
 #include "av1/encoder/encoder_utils.h"
 #include "av1/encoder/encode_strategy.h"
 #include "av1/encoder/gop_structure.h"
+#include "av1/encoder/mcomp.h"
 #include "av1/encoder/random.h"
 #include "av1/encoder/ratectrl.h"
 
@@ -217,10 +218,10 @@ int av1_estimate_bits_at_q(const AV1_COMP *cpi, int q,
                 (int)((uint64_t)bpm * mbs) >> BPER_MB_NORMBITS);
 }
 
-int av1_rc_clamp_pframe_target_size(const AV1_COMP *const cpi, int target,
+int av1_rc_clamp_pframe_target_size(const AV1_COMP *const cpi, int64_t target,
                                     FRAME_UPDATE_TYPE frame_update_type) {
   const RATE_CONTROL *rc = &cpi->rc;
-  const AV1EncoderConfig *oxcf = &cpi->oxcf;
+  const RateControlCfg *const rc_cfg = &cpi->oxcf.rc_cfg;
   const int min_frame_target =
       AOMMAX(rc->min_frame_bandwidth, rc->avg_frame_bandwidth >> 5);
   // Clip the frame target to the minimum setup value.
@@ -237,13 +238,13 @@ int av1_rc_clamp_pframe_target_size(const AV1_COMP *const cpi, int target,
 
   // Clip the frame target to the maximum allowed value.
   if (target > rc->max_frame_bandwidth) target = rc->max_frame_bandwidth;
-  if (oxcf->rc_cfg.max_inter_bitrate_pct) {
-    const int max_rate =
-        rc->avg_frame_bandwidth * oxcf->rc_cfg.max_inter_bitrate_pct / 100;
+  if (rc_cfg->max_inter_bitrate_pct) {
+    const int64_t max_rate =
+        (int64_t)rc->avg_frame_bandwidth * rc_cfg->max_inter_bitrate_pct / 100;
     target = AOMMIN(target, max_rate);
   }
 
-  return target;
+  return (int)target;
 }
 
 int av1_rc_clamp_iframe_target_size(const AV1_COMP *const cpi, int64_t target) {
@@ -441,6 +442,8 @@ void av1_rc_init(const AV1EncoderConfig *oxcf, RATE_CONTROL *rc) {
   rc->frame_level_fast_extra_bits = 0;
   rc->use_external_qp_one_pass = 0;
   rc->percent_blocks_inactive = 0;
+  rc->force_max_q = 0;
+  rc->postencode_drop = 0;
 }
 
 static bool check_buffer_below_thresh(AV1_COMP *cpi, int64_t buffer_level,
@@ -550,7 +553,7 @@ static int adjust_q_cbr(const AV1_COMP *cpi, int q, int active_worst_quality,
       p_rc->buffer_level < (p_rc->optimal_buffer_level >> 1) &&
       rc->frames_since_key > 4;
   int max_delta_down;
-  int max_delta_up = overshoot_buffer_low ? 60 : 20;
+  int max_delta_up = overshoot_buffer_low ? 120 : 20;
   const int change_avg_frame_bandwidth =
       abs(rc->avg_frame_bandwidth - rc->prev_avg_frame_bandwidth) >
       0.1 * (rc->avg_frame_bandwidth);
@@ -570,7 +573,7 @@ static int adjust_q_cbr(const AV1_COMP *cpi, int q, int active_worst_quality,
       // Link max_delta_up to max_delta_down and buffer status.
       if (p_rc->buffer_level > p_rc->optimal_buffer_level) {
         max_delta_up = AOMMAX(4, max_delta_down);
-      } else {
+      } else if (!overshoot_buffer_low) {
         max_delta_up = AOMMAX(8, max_delta_down);
       }
     }
@@ -588,18 +591,19 @@ static int adjust_q_cbr(const AV1_COMP *cpi, int q, int active_worst_quality,
   // Apply some control/clamp to QP under certain conditions.
   // Delay the use of the clamping for svc until after num_temporal_layers,
   // to make they have been set for each temporal layer.
+  // Check for rc->q_1/2_frame > 0 in case they have not been set due to
+  // dropped frames.
   if (!frame_is_intra_only(cm) && rc->frames_since_key > 1 &&
+      rc->q_1_frame > 0 && rc->q_2_frame > 0 &&
       (!cpi->ppi->use_svc ||
        svc->current_superframe > (unsigned int)svc->number_temporal_layers) &&
       !change_target_bits_mb && !cpi->rc.rtc_external_ratectrl &&
       (!cpi->oxcf.rc_cfg.gf_cbr_boost_pct ||
        !(refresh_frame->alt_ref_frame || refresh_frame->golden_frame))) {
     // If in the previous two frames we have seen both overshoot and undershoot
-    // clamp Q between the two. Check for rc->q_1/2_frame > 0 in case they have
-    // not been set due to dropped frames.
+    // clamp Q between the two.
     if (rc->rc_1_frame * rc->rc_2_frame == -1 &&
-        rc->q_1_frame != rc->q_2_frame && rc->q_1_frame > 0 &&
-        rc->q_2_frame > 0 && !overshoot_buffer_low) {
+        rc->q_1_frame != rc->q_2_frame && !overshoot_buffer_low) {
       int qclamp = clamp(q, AOMMIN(rc->q_1_frame, rc->q_2_frame),
                          AOMMAX(rc->q_1_frame, rc->q_2_frame));
       // If the previous frame had overshoot and the current q needs to
@@ -651,10 +655,14 @@ static int adjust_q_cbr(const AV1_COMP *cpi, int q, int active_worst_quality,
       LAYER_CONTEXT *lc = &svc->layer_context[layer];
       // lc->rc.avg_frame_bandwidth and lc->p_rc.last_q correspond to the
       // last TL0 frame.
+      const int last_qindex_tl0 =
+          rc->frames_since_key < svc->number_temporal_layers
+              ? lc->p_rc.last_q[KEY_FRAME]
+              : lc->p_rc.last_q[INTER_FRAME];
       if (rc->avg_frame_bandwidth < lc->rc.avg_frame_bandwidth &&
-          q < lc->p_rc.last_q[INTER_FRAME] - 4)
-        q = lc->p_rc.last_q[INTER_FRAME] - 4;
-    } else if (cpi->svc.temporal_layer_id == 0 &&
+          q < last_qindex_tl0 - 4)
+        q = last_qindex_tl0 - 4;
+    } else if (cpi->svc.temporal_layer_id == 0 && !frame_is_intra_only(cm) &&
                p_rc->buffer_level > (p_rc->optimal_buffer_level >> 2) &&
                rc->frame_source_sad < 100000) {
       // Push base TL0 Q down if buffer is stable and frame_source_sad
@@ -1121,7 +1129,7 @@ static int calc_active_worst_quality_no_stats_cbr(const AV1_COMP *cpi) {
   int adjustment = 0;
   int active_worst_quality;
   int ambient_qp;
-  if (cm->current_frame.frame_type == KEY_FRAME) return rc->worst_quality;
+  if (frame_is_intra_only(cm)) return rc->worst_quality;
   // For ambient_qp we use minimum of avg_frame_qindex[KEY_FRAME/INTER_FRAME]
   // for the first few frames following key frame. These are both initialized
   // to worst_quality and updated with (3/4, 1/4) average in postencode_update.
@@ -1136,9 +1144,15 @@ static int calc_active_worst_quality_no_stats_cbr(const AV1_COMP *cpi) {
     avg_qindex_key =
         AOMMIN(lp_rc->avg_frame_qindex[KEY_FRAME], lp_rc->last_q[KEY_FRAME]);
   }
-  ambient_qp = (cm->current_frame.frame_number < num_frames_weight_key)
-                   ? AOMMIN(p_rc->avg_frame_qindex[INTER_FRAME], avg_qindex_key)
-                   : p_rc->avg_frame_qindex[INTER_FRAME];
+  if (svc->temporal_layer_id > 0 &&
+      rc->frames_since_key < 2 * svc->number_temporal_layers) {
+    ambient_qp = avg_qindex_key;
+  } else {
+    ambient_qp =
+        (cm->current_frame.frame_number < num_frames_weight_key)
+            ? AOMMIN(p_rc->avg_frame_qindex[INTER_FRAME], avg_qindex_key)
+            : p_rc->avg_frame_qindex[INTER_FRAME];
+  }
   ambient_qp = AOMMIN(rc->worst_quality, ambient_qp);
 
   if (p_rc->buffer_level > p_rc->optimal_buffer_level) {
@@ -2417,10 +2431,6 @@ void av1_rc_postencode_update(AV1_COMP *cpi, uint64_t bytes_used) {
 void av1_rc_postencode_update_drop_frame(AV1_COMP *cpi) {
   // Update buffer level with zero size, update frame counters, and return.
   update_buffer_level(cpi, 0);
-  if (cpi->svc.spatial_layer_id == cpi->svc.number_spatial_layers - 1) {
-    cpi->rc.frames_since_key++;
-    cpi->rc.frames_to_key--;
-  }
   cpi->rc.rc_2_frame = 0;
   cpi->rc.rc_1_frame = 0;
   cpi->rc.prev_avg_frame_bandwidth = cpi->rc.avg_frame_bandwidth;
@@ -2550,16 +2560,17 @@ void av1_rc_set_gf_interval_range(const AV1_COMP *const cpi,
 void av1_rc_update_framerate(AV1_COMP *cpi, int width, int height) {
   const AV1EncoderConfig *const oxcf = &cpi->oxcf;
   RATE_CONTROL *const rc = &cpi->rc;
-  int64_t vbr_max_bits;
   const int MBs = av1_get_MBs(width, height);
 
-  rc->avg_frame_bandwidth =
-      (int)round(oxcf->rc_cfg.target_bandwidth / cpi->framerate);
-  rc->min_frame_bandwidth =
-      (int)(rc->avg_frame_bandwidth * oxcf->rc_cfg.vbrmin_section / 100);
+  const double avg_frame_bandwidth =
+      round(oxcf->rc_cfg.target_bandwidth / cpi->framerate);
+  rc->avg_frame_bandwidth = (int)AOMMIN(avg_frame_bandwidth, INT_MAX);
 
-  rc->min_frame_bandwidth =
-      AOMMAX(rc->min_frame_bandwidth, FRAME_OVERHEAD_BITS);
+  int64_t vbr_min_bits =
+      (int64_t)rc->avg_frame_bandwidth * oxcf->rc_cfg.vbrmin_section / 100;
+  vbr_min_bits = AOMMIN(vbr_min_bits, INT_MAX);
+
+  rc->min_frame_bandwidth = AOMMAX((int)vbr_min_bits, FRAME_OVERHEAD_BITS);
 
   // A maximum bitrate for a frame is defined.
   // The baseline for this aligns with HW implementations that
@@ -2568,9 +2579,9 @@ void av1_rc_update_framerate(AV1_COMP *cpi, int width, int height) {
   // a very high rate is given on the command line or the the rate cannnot
   // be acheived because of a user specificed max q (e.g. when the user
   // specifies lossless encode.
-  vbr_max_bits =
-      ((int64_t)rc->avg_frame_bandwidth * oxcf->rc_cfg.vbrmax_section) / 100;
-  vbr_max_bits = (vbr_max_bits < INT_MAX) ? vbr_max_bits : INT_MAX;
+  int64_t vbr_max_bits =
+      (int64_t)rc->avg_frame_bandwidth * oxcf->rc_cfg.vbrmax_section / 100;
+  vbr_max_bits = AOMMIN(vbr_max_bits, INT_MAX);
 
   rc->max_frame_bandwidth =
       AOMMAX(AOMMAX((MBs * MAX_MB_RATE), MAXRATE_1080P), (int)vbr_max_bits);
@@ -2595,12 +2606,12 @@ static void vbr_rate_correction(AV1_COMP *cpi, int *this_frame_target) {
 #endif
   int64_t frame_target = *this_frame_target;
 
-  const int stats_count =
+  const double stats_count =
       cpi->ppi->twopass.stats_buf_ctx->total_stats != NULL
-          ? (int)cpi->ppi->twopass.stats_buf_ctx->total_stats->count
-          : 0;
-  const int frame_window = AOMMIN(
-      16, (int)(stats_count - (int)cpi->common.current_frame.frame_number));
+          ? cpi->ppi->twopass.stats_buf_ctx->total_stats->count
+          : 0.0;
+  const int frame_window =
+      (int)AOMMIN(16, stats_count - cpi->common.current_frame.frame_number);
   assert(VBR_PCT_ADJUSTMENT_LIMIT <= 100);
   if (frame_window > 0) {
     const int64_t max_delta =
@@ -2639,7 +2650,7 @@ static void vbr_rate_correction(AV1_COMP *cpi, int *this_frame_target) {
         AOMMIN(fast_extra_bits,
                AOMMAX(one_frame_bits / 8, p_rc->vbr_bits_off_target_fast / 8));
 #endif
-    fast_extra_bits = (fast_extra_bits < INT_MAX) ? fast_extra_bits : INT_MAX;
+    fast_extra_bits = AOMMIN(fast_extra_bits, INT_MAX);
     if (fast_extra_bits > 0) {
       // Update frame_target only if additional bits are available from
       // local undershoot.
@@ -2654,7 +2665,7 @@ static void vbr_rate_correction(AV1_COMP *cpi, int *this_frame_target) {
   }
 
   // Clamp the target for the frame to the maximum allowed for one frame.
-  *this_frame_target = (int)((frame_target < INT_MAX) ? frame_target : INT_MAX);
+  *this_frame_target = (int)AOMMIN(frame_target, INT_MAX);
 }
 
 void av1_set_target_rate(AV1_COMP *cpi, int width, int height) {
@@ -2683,11 +2694,10 @@ int av1_calc_pframe_target_size_one_pass_vbr(
     target = ((int64_t)rc->avg_frame_bandwidth * p_rc->baseline_gf_interval) /
              (p_rc->baseline_gf_interval + af_ratio - 1);
   }
-  if (target > INT_MAX) target = INT_MAX;
 #else
   target = rc->avg_frame_bandwidth;
 #endif
-  return av1_rc_clamp_pframe_target_size(cpi, (int)target, frame_update_type);
+  return av1_rc_clamp_pframe_target_size(cpi, target, frame_update_type);
 }
 
 int av1_calc_iframe_target_size_one_pass_vbr(const AV1_COMP *const cpi) {
@@ -2707,16 +2717,17 @@ int av1_calc_pframe_target_size_one_pass_cbr(
   const int64_t one_pct_bits = 1 + p_rc->optimal_buffer_level / 100;
   int min_frame_target =
       AOMMAX(rc->avg_frame_bandwidth >> 4, FRAME_OVERHEAD_BITS);
-  int target;
+  int64_t target;
 
   if (rc_cfg->gf_cbr_boost_pct) {
     const int af_ratio_pct = rc_cfg->gf_cbr_boost_pct + 100;
     if (frame_update_type == GF_UPDATE || frame_update_type == OVERLAY_UPDATE) {
-      target = (rc->avg_frame_bandwidth * p_rc->baseline_gf_interval *
+      target = ((int64_t)rc->avg_frame_bandwidth * p_rc->baseline_gf_interval *
                 af_ratio_pct) /
                (p_rc->baseline_gf_interval * 100 + af_ratio_pct - 100);
     } else {
-      target = (rc->avg_frame_bandwidth * p_rc->baseline_gf_interval * 100) /
+      target = ((int64_t)rc->avg_frame_bandwidth * p_rc->baseline_gf_interval *
+                100) /
                (p_rc->baseline_gf_interval * 100 + af_ratio_pct - 100);
     }
   } else {
@@ -2745,11 +2756,12 @@ int av1_calc_pframe_target_size_one_pass_cbr(
     target += (target * pct_high) / 200;
   }
   if (rc_cfg->max_inter_bitrate_pct) {
-    const int max_rate =
-        rc->avg_frame_bandwidth * rc_cfg->max_inter_bitrate_pct / 100;
+    const int64_t max_rate =
+        (int64_t)rc->avg_frame_bandwidth * rc_cfg->max_inter_bitrate_pct / 100;
     target = AOMMIN(target, max_rate);
   }
-  return AOMMAX(min_frame_target, target);
+  if (target > INT_MAX) target = INT_MAX;
+  return AOMMAX(min_frame_target, (int)target);
 }
 
 int av1_calc_iframe_target_size_one_pass_cbr(const AV1_COMP *cpi) {
@@ -2771,7 +2783,7 @@ int av1_calc_iframe_target_size_one_pass_cbr(const AV1_COMP *cpi) {
     if (rc->frames_since_key < framerate / 2) {
       kf_boost = (int)(kf_boost * rc->frames_since_key / (framerate / 2));
     }
-    target = ((16 + kf_boost) * rc->avg_frame_bandwidth) >> 4;
+    target = ((int64_t)(16 + kf_boost) * rc->avg_frame_bandwidth) >> 4;
   }
   return av1_rc_clamp_iframe_target_size(cpi, target);
 }
@@ -3015,6 +3027,80 @@ static int set_block_is_active(unsigned char *const active_map_4x4, int mi_cols,
   return 0;
 }
 
+// Returns the best sad for column or row motion of the superblock.
+static unsigned int estimate_scroll_motion(
+    const AV1_COMP *cpi, uint8_t *src_buf, uint8_t *last_src_buf,
+    int src_stride, int ref_stride, BLOCK_SIZE bsize, int pos_col, int pos_row,
+    int *best_intmv_col, int *best_intmv_row) {
+  const AV1_COMMON *const cm = &cpi->common;
+  const int bw = block_size_wide[bsize];
+  const int bh = block_size_high[bsize];
+  const int full_search = 1;
+  // Keep border a multiple of 16.
+  const int border = (cpi->oxcf.border_in_pixels >> 4) << 4;
+  // Make search_size_height larger to capture more common vertical scroll.
+  // Increase the search if last two frames were dropped.
+  // Values set based on screen test set.
+  int search_size_width = 96;
+  int search_size_height = cpi->rc.drop_count_consec > 1 ? 224 : 192;
+  // Adjust based on boundary.
+  if ((pos_col - search_size_width < -border) ||
+      (pos_col + search_size_width > cm->width + border))
+    search_size_width = border;
+  if ((pos_row - search_size_height < -border) ||
+      (pos_row + search_size_height > cm->height + border))
+    search_size_height = border;
+  const uint8_t *ref_buf;
+  const int row_norm_factor = mi_size_high_log2[bsize] + 1;
+  const int col_norm_factor = 3 + (bw >> 5);
+  const int ref_buf_width = (search_size_width << 1) + bw;
+  const int ref_buf_height = (search_size_height << 1) + bh;
+  int16_t *hbuf = (int16_t *)aom_malloc(ref_buf_width * sizeof(*hbuf));
+  int16_t *vbuf = (int16_t *)aom_malloc(ref_buf_height * sizeof(*vbuf));
+  int16_t *src_hbuf = (int16_t *)aom_malloc(bw * sizeof(*src_hbuf));
+  int16_t *src_vbuf = (int16_t *)aom_malloc(bh * sizeof(*src_vbuf));
+  if (!hbuf || !vbuf || !src_hbuf || !src_vbuf) {
+    aom_free(hbuf);
+    aom_free(vbuf);
+    aom_free(src_hbuf);
+    aom_free(src_vbuf);
+    aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
+                       "Failed to allocate hbuf, vbuf, src_hbuf, or src_vbuf");
+  }
+  // Set up prediction 1-D reference set for rows.
+  ref_buf = last_src_buf - search_size_width;
+  aom_int_pro_row(hbuf, ref_buf, ref_stride, ref_buf_width, bh,
+                  row_norm_factor);
+  // Set up prediction 1-D reference set for cols
+  ref_buf = last_src_buf - search_size_height * ref_stride;
+  aom_int_pro_col(vbuf, ref_buf, ref_stride, bw, ref_buf_height,
+                  col_norm_factor);
+  // Set up src 1-D reference set
+  aom_int_pro_row(src_hbuf, src_buf, src_stride, bw, bh, row_norm_factor);
+  aom_int_pro_col(src_vbuf, src_buf, src_stride, bw, bh, col_norm_factor);
+  unsigned int best_sad;
+  int best_sad_col, best_sad_row;
+  // Find the best match per 1-D search
+  *best_intmv_col =
+      av1_vector_match(hbuf, src_hbuf, mi_size_wide_log2[bsize],
+                       search_size_width, full_search, &best_sad_col);
+  *best_intmv_row =
+      av1_vector_match(vbuf, src_vbuf, mi_size_high_log2[bsize],
+                       search_size_height, full_search, &best_sad_row);
+  if (best_sad_col < best_sad_row) {
+    *best_intmv_row = 0;
+    best_sad = best_sad_col;
+  } else {
+    *best_intmv_col = 0;
+    best_sad = best_sad_row;
+  }
+  aom_free(hbuf);
+  aom_free(vbuf);
+  aom_free(src_hbuf);
+  aom_free(src_vbuf);
+  return best_sad;
+}
+
 /*!\brief Check for scene detection, for 1 pass real-time mode.
  *
  * Compute average source sad (temporal sad: between current source and
@@ -3182,6 +3268,50 @@ static void rc_scene_detection_onepass_rt(AV1_COMP *cpi,
   if (num_samples > 0)
     rc->percent_blocks_with_motion =
         ((num_samples - num_zero_temp_sad) * 100) / num_samples;
+  // Update the high_motion_content_screen_rtc flag on TL0. Avoid the update
+  // if too many consecutive frame drops occurred.
+  const uint64_t thresh_high_motion = 9 * 64 * 64;
+  if (cpi->svc.temporal_layer_id == 0 && rc->drop_count_consec < 3) {
+    cpi->rc.high_motion_content_screen_rtc = 0;
+    if (cpi->oxcf.speed >= 11 &&
+        cpi->oxcf.tune_cfg.content == AOM_CONTENT_SCREEN &&
+        rc->percent_blocks_with_motion > 40 &&
+        rc->prev_avg_source_sad > thresh_high_motion &&
+        rc->avg_source_sad > thresh_high_motion &&
+        rc->avg_frame_low_motion < 60 && unscaled_src->y_width >= 1280 &&
+        unscaled_src->y_height >= 720) {
+      cpi->rc.high_motion_content_screen_rtc = 1;
+      // Compute fast coarse/global motion for 128x128 superblock centered
+      // at middle of frames, to determine if motion is scroll.
+      int pos_col = (unscaled_src->y_width >> 1) - 64;
+      int pos_row = (unscaled_src->y_height >> 1) - 64;
+      src_y = unscaled_src->y_buffer + pos_row * src_ystride + pos_col;
+      last_src_y =
+          unscaled_last_src->y_buffer + pos_row * last_src_ystride + pos_col;
+      int best_intmv_col = 0;
+      int best_intmv_row = 0;
+      unsigned int y_sad = estimate_scroll_motion(
+          cpi, src_y, last_src_y, src_ystride, last_src_ystride, BLOCK_128X128,
+          pos_col, pos_row, &best_intmv_col, &best_intmv_row);
+      if (y_sad < 100 && (abs(best_intmv_col) > 16 || abs(best_intmv_row) > 16))
+        cpi->rc.high_motion_content_screen_rtc = 0;
+    }
+    // Pass the flag value to all layer frames.
+    if (cpi->svc.number_spatial_layers > 1 ||
+        cpi->svc.number_temporal_layers > 1) {
+      SVC *svc = &cpi->svc;
+      for (int sl = 0; sl < svc->number_spatial_layers; ++sl) {
+        for (int tl = 1; tl < svc->number_temporal_layers; ++tl) {
+          const int layer =
+              LAYER_IDS_TO_IDX(sl, tl, svc->number_temporal_layers);
+          LAYER_CONTEXT *lc = &svc->layer_context[layer];
+          RATE_CONTROL *lrc = &lc->rc;
+          lrc->high_motion_content_screen_rtc =
+              rc->high_motion_content_screen_rtc;
+        }
+      }
+    }
+  }
   // Scene detection is only on base SLO, and using full/orignal resolution.
   // Pass the state to the upper spatial layers.
   if (cpi->svc.number_spatial_layers > 1) {
@@ -3648,4 +3778,55 @@ int av1_encodedframe_overshoot_cbr(AV1_COMP *cpi, int *q) {
     }
   }
   return 1;
+}
+
+int av1_postencode_drop_cbr(AV1_COMP *cpi, size_t *size) {
+  PRIMARY_RATE_CONTROL *const p_rc = &cpi->ppi->p_rc;
+  size_t frame_size = *size << 3;
+  const int64_t new_buffer_level =
+      p_rc->buffer_level + cpi->rc.avg_frame_bandwidth - (int64_t)frame_size;
+  // For now we drop if new buffer level (given the encoded frame size) goes
+  // below 0 and encoded frame size is much larger than per-frame-bandwidth.
+  // If the frame is already labelled as scene change (high_source_sad = 1)
+  // or the QP is close to max, then no need to drop.
+  const int qp_thresh = 3 * (cpi->rc.worst_quality >> 2);
+  if (!cpi->rc.high_source_sad && new_buffer_level < 0 &&
+      frame_size > 8 * (unsigned int)cpi->rc.avg_frame_bandwidth &&
+      cpi->common.quant_params.base_qindex < qp_thresh) {
+    *size = 0;
+    cpi->is_dropped_frame = true;
+    restore_all_coding_context(cpi);
+    av1_rc_postencode_update_drop_frame(cpi);
+    // Force max_q on next fame. Reset some RC parameters.
+    cpi->rc.force_max_q = 1;
+    p_rc->avg_frame_qindex[INTER_FRAME] = cpi->rc.worst_quality;
+    p_rc->buffer_level = p_rc->optimal_buffer_level;
+    p_rc->bits_off_target = p_rc->optimal_buffer_level;
+    cpi->rc.rc_1_frame = 0;
+    cpi->rc.rc_2_frame = 0;
+    if (cpi->svc.number_spatial_layers > 1 ||
+        cpi->svc.number_temporal_layers > 1) {
+      SVC *svc = &cpi->svc;
+      // Postencode drop is only checked on base spatial layer,
+      // for now if max-q is set on base we force it on all layers.
+      for (int sl = 0; sl < svc->number_spatial_layers; ++sl) {
+        for (int tl = 0; tl < svc->number_temporal_layers; ++tl) {
+          const int layer =
+              LAYER_IDS_TO_IDX(sl, tl, svc->number_temporal_layers);
+          LAYER_CONTEXT *lc = &svc->layer_context[layer];
+          RATE_CONTROL *lrc = &lc->rc;
+          PRIMARY_RATE_CONTROL *lp_rc = &lc->p_rc;
+          // Force max_q on next fame. Reset some RC parameters.
+          lrc->force_max_q = 1;
+          lp_rc->avg_frame_qindex[INTER_FRAME] = cpi->rc.worst_quality;
+          lp_rc->buffer_level = lp_rc->optimal_buffer_level;
+          lp_rc->bits_off_target = lp_rc->optimal_buffer_level;
+          lrc->rc_1_frame = 0;
+          lrc->rc_2_frame = 0;
+        }
+      }
+    }
+    return 1;
+  }
+  return 0;
 }

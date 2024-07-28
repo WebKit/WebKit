@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -12,7 +12,7 @@
 #ifndef AOM_AOM_DSP_X86_SYNONYMS_H_
 #define AOM_AOM_DSP_X86_SYNONYMS_H_
 
-#include <immintrin.h>
+#include <emmintrin.h>
 #include <string.h>
 
 #include "config/aom_config.h"
@@ -50,7 +50,8 @@ static INLINE __m128i xx_loadu_128(const void *a) {
 // Since directly loading as `int64_t`s and using _mm_set_epi64 may violate
 // the strict aliasing rule, this takes a different approach
 static INLINE __m128i xx_loadu_2x64(const void *hi, const void *lo) {
-  return _mm_unpacklo_epi64(_mm_loadu_si64(lo), _mm_loadu_si64(hi));
+  return _mm_unpacklo_epi64(_mm_loadl_epi64((const __m128i *)lo),
+                            _mm_loadl_epi64((const __m128i *)hi));
 }
 
 static INLINE void xx_storel_32(void *const a, const __m128i v) {
@@ -68,28 +69,6 @@ static INLINE void xx_store_128(void *const a, const __m128i v) {
 
 static INLINE void xx_storeu_128(void *const a, const __m128i v) {
   _mm_storeu_si128((__m128i *)a, v);
-}
-
-// The _mm_set_epi64x() intrinsic is undefined for some Visual Studio
-// compilers. The following function is equivalent to _mm_set_epi64x()
-// acting on 32-bit integers.
-static INLINE __m128i xx_set_64_from_32i(int32_t e1, int32_t e0) {
-#if defined(_MSC_VER) && _MSC_VER < 1900
-  return _mm_set_epi32(0, e1, 0, e0);
-#else
-  return _mm_set_epi64x((uint32_t)e1, (uint32_t)e0);
-#endif
-}
-
-// The _mm_set1_epi64x() intrinsic is undefined for some Visual Studio
-// compilers. The following function is equivalent to _mm_set1_epi64x()
-// acting on a 32-bit integer.
-static INLINE __m128i xx_set1_64_from_32i(int32_t a) {
-#if defined(_MSC_VER) && _MSC_VER < 1900
-  return _mm_set_epi32(0, a, 0, a);
-#else
-  return _mm_set1_epi64x((uint32_t)a);
-#endif
 }
 
 // Fill an SSE register using an interleaved pair of values, ie. set the

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -53,22 +53,27 @@ static INLINE __m256i yy_set2_epi16(int16_t a, int16_t b) {
   return _mm256_setr_epi16(a, b, a, b, a, b, a, b, a, b, a, b, a, b, a, b);
 }
 
-// The _mm256_set1_epi64x() intrinsic is undefined for some Visual Studio
-// compilers. The following function is equivalent to _mm256_set1_epi64x()
-// acting on a 32-bit integer.
-static INLINE __m256i yy_set1_64_from_32i(int32_t a) {
-#if defined(_MSC_VER) && defined(_M_IX86) && _MSC_VER < 1900
-  return _mm256_set_epi32(0, a, 0, a, 0, a, 0, a);
-#else
-  return _mm256_set1_epi64x((uint32_t)a);
-#endif
-}
-
 // Some compilers don't have _mm256_set_m128i defined in immintrin.h. We
 // therefore define an equivalent function using a different intrinsic.
 // ([ hi ], [ lo ]) -> [ hi ][ lo ]
 static INLINE __m256i yy_set_m128i(__m128i hi, __m128i lo) {
   return _mm256_insertf128_si256(_mm256_castsi128_si256(lo), hi, 1);
+}
+
+// This behaves similarly to _mm256_set_epi64x(), but avoids undefined
+// sanitizer warnings when loading values from unaligned buffers using
+// `*(int64_t *)val`.
+static INLINE __m256i yy_loadu_4x64(const void *e3, const void *e2,
+                                    const void *e1, const void *e0) {
+  __m128d v0 = _mm_castsi128_pd(_mm_loadl_epi64((const __m128i *)e0));
+  __m128d v01 = _mm_loadh_pd(v0, (const double *)e1);
+  __m128d v2 = _mm_castsi128_pd(_mm_loadl_epi64((const __m128i *)e2));
+  __m128d v23 = _mm_loadh_pd(v2, (const double *)e3);
+  // Note this can be replaced with
+  // `_mm256_castpd_si256(_mm256_set_m128d(v23, v01))` if immintrin.h contains
+  // _mm256_set_m128d() with all supported compilers. This version is used to
+  // match the behavior with yy_set_m128i().
+  return yy_set_m128i(_mm_castpd_si128(v23), _mm_castpd_si128(v01));
 }
 
 static INLINE __m256i yy_loadu2_128(const void *hi, const void *lo) {

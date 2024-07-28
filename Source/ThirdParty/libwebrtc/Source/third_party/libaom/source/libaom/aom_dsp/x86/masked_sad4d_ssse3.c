@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2020, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -260,9 +260,12 @@ MASKSAD8XN_SSSE3(8)
 MASKSAD8XN_SSSE3(4)
 MASKSAD4XN_SSSE3(8)
 MASKSAD4XN_SSSE3(4)
+
+#if !CONFIG_REALTIME_ONLY
 MASKSAD4XN_SSSE3(16)
 MASKSADMXN_SSSE3(16, 4)
 MASKSAD8XN_SSSE3(32)
 MASKSADMXN_SSSE3(32, 8)
 MASKSADMXN_SSSE3(16, 64)
 MASKSADMXN_SSSE3(64, 16)
+#endif  // !CONFIG_REALTIME_ONLY

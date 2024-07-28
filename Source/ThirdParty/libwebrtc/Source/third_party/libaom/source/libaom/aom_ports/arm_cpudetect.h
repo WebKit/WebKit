@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -32,7 +32,7 @@
 #endif
 
 #if defined(__ANDROID__) && (__ANDROID_API__ < 18)
-#define ANDROID_USE_CPU_FEATURES_LIB 1
+#define AOM_USE_ANDROID_CPU_FEATURES 1
 // Use getauxval() when targeting (64-bit) Android with API level >= 18.
 // getauxval() is supported since Android API level 18 (Android 4.3.)
 // First Android version with 64-bit support was Android 5.x (API level 21).

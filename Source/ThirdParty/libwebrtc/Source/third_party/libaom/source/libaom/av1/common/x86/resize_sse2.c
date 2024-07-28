@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2024, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -15,6 +15,8 @@
 #include "av1/common/resize.h"
 
 #include "aom_dsp/x86/synonyms.h"
+
+#define ROW_OFFSET 5
 
 #define PROCESS_RESIZE_Y_WD8                                           \
   /* ah0 ah1 ... ah7 */                                                \
@@ -102,7 +104,7 @@ bool av1_resize_vert_dir_sse2(uint8_t *intbuf, uint8_t *output, int out_stride,
   const __m128i round_const_bits = _mm_set1_epi32((1 << bits) >> 1);
   const __m128i round_shift_bits = _mm_cvtsi32_si128(bits);
   const uint8_t max_pixel = 255;
-  const __m128i clip_pixel = _mm_set1_epi8(max_pixel);
+  const __m128i clip_pixel = _mm_set1_epi8((char)max_pixel);
   const __m128i zero = _mm_setzero_si128();
   prepare_filter_coeffs(av1_down2_symeven_half_filter, coeffs_y);
 
@@ -163,4 +165,178 @@ bool av1_resize_vert_dir_sse2(uint8_t *intbuf, uint8_t *output, int out_stride,
                                  stride, stride - remain_col);
 
   return true;
+}
+
+// Blends a and b using mask and returns the result.
+static INLINE __m128i blend(__m128i a, __m128i b, __m128i mask) {
+  const __m128i masked_b = _mm_and_si128(mask, b);
+  const __m128i masked_a = _mm_andnot_si128(mask, a);
+  return (_mm_or_si128(masked_a, masked_b));
+}
+
+// Masks used for width 16 pixels, with left and right padding
+// requirements.
+static const uint8_t left_padding_mask[16] = {
+  255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
+static const uint8_t right_padding_mask[16] = { 0,   0,   0,   0,  0,   0,
+                                                0,   0,   0,   0,  255, 255,
+                                                255, 255, 255, 255 };
+
+static const uint8_t mask_16[16] = {
+  255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0,
+};
+
+void av1_resize_horz_dir_sse2(const uint8_t *const input, int in_stride,
+                              uint8_t *intbuf, int height, int filtered_length,
+                              int width2) {
+  assert(height % 2 == 0);
+  // Invoke C for width less than 16.
+  if (filtered_length < 16) {
+    av1_resize_horz_dir_c(input, in_stride, intbuf, height, filtered_length,
+                          width2);
+    return;
+  }
+
+  __m128i coeffs_x[2];
+  const int bits = FILTER_BITS;
+  const int dst_stride = width2;
+  const __m128i round_const_bits = _mm_set1_epi32((1 << bits) >> 1);
+  const __m128i round_shift_bits = _mm_cvtsi32_si128(bits);
+
+  const uint8_t max_pixel = 255;
+  const __m128i clip_pixel = _mm_set1_epi8((char)max_pixel);
+  const __m128i zero = _mm_setzero_si128();
+
+  const __m128i start_pad_mask = _mm_loadu_si128((__m128i *)left_padding_mask);
+  const __m128i end_pad_mask = _mm_loadu_si128((__m128i *)right_padding_mask);
+  const __m128i mask_even = _mm_loadu_si128((__m128i *)mask_16);
+  prepare_filter_coeffs(av1_down2_symeven_half_filter, coeffs_x);
+
+  for (int i = 0; i < height; ++i) {
+    int filter_offset = 0;
+    int row01_offset = ROW_OFFSET;
+    int remain_col = filtered_length;
+    // To avoid pixel over-read at frame boundary, processing of 16 pixels
+    // is done using the core loop only if sufficient number of pixels required
+    // for the load are present.The remaining pixels are processed separately.
+    for (int j = 0; j <= filtered_length - 16; j += 16) {
+      if (remain_col == 18 || remain_col == 20) {
+        break;
+      }
+      const int is_last_cols16 = (j == filtered_length - 16);
+      // While processing the last 16 pixels of the row, ensure that only valid
+      // pixels are loaded.
+      if (is_last_cols16) row01_offset = 0;
+      const int in_idx = i * in_stride + j - filter_offset;
+      const int out_idx = i * dst_stride + j / 2;
+      remain_col -= 16;
+      // a0 a1 a2 a3 .... a15
+      __m128i row00 = _mm_loadu_si128((__m128i *)&input[in_idx]);
+      // a8 a9 a10 a11 .... a23
+      __m128i row01 = _mm_loadu_si128(
+          (__m128i *)&input[in_idx + row01_offset + filter_offset]);
+      filter_offset = 3;
+
+      // Pad start pixels to the left, while processing the first pixels in the
+      // row.
+      if (j == 0) {
+        const __m128i start_pixel_row0 =
+            _mm_set1_epi8((char)input[i * in_stride]);
+        row00 =
+            blend(_mm_slli_si128(row00, 3), start_pixel_row0, start_pad_mask);
+      }
+
+      // Pad end pixels to the right, while processing the last pixels in the
+      // row.
+      if (is_last_cols16) {
+        const __m128i end_pixel_row0 =
+            _mm_set1_epi8((char)input[i * in_stride + filtered_length - 1]);
+        row01 = blend(_mm_srli_si128(row01, ROW_OFFSET), end_pixel_row0,
+                      end_pad_mask);
+      }
+
+      // a2 a3 a4 a5 a6 a7 a8 a9 .... a17
+      const __m128i row0_1 = _mm_unpacklo_epi64(_mm_srli_si128(row00, 2),
+                                                _mm_srli_si128(row01, 2));
+      // a4 a5 a6 a7 a9 10 a11 a12 .... a19
+      const __m128i row0_2 = _mm_unpacklo_epi64(_mm_srli_si128(row00, 4),
+                                                _mm_srli_si128(row01, 4));
+      // a6 a7 a8 a9 a10 a11 a12 a13 .... a21
+      const __m128i row0_3 = _mm_unpacklo_epi64(_mm_srli_si128(row00, 6),
+                                                _mm_srli_si128(row01, 6));
+
+      // a0 a2 a4 a6 a8 a10 a12 a14 (each 16 bit)
+      const __m128i s0 = _mm_and_si128(row00, mask_even);
+      // a1 a3 a5 a7 a9 a11 a13 a15
+      const __m128i s1 = _mm_and_si128(_mm_srli_epi16(row00, 8), mask_even);
+      // a2 a4 a6 a8 a10 a12 a14 a16
+      const __m128i s2 = _mm_and_si128(row0_1, mask_even);
+      // a3 a5 a7 a9 a11 a13 a15 a17
+      const __m128i s3 = _mm_and_si128(_mm_srli_epi16(row0_1, 8), mask_even);
+      // a4 a6 a8 a10 a12 a14 a16 a18
+      const __m128i s4 = _mm_and_si128(row0_2, mask_even);
+      // a5 a7 a9 a11 a13 a15 a17 a19
+      const __m128i s5 = _mm_and_si128(_mm_srli_epi16(row0_2, 8), mask_even);
+      // a6 a8 a10 a12 a14 a16 a18 a20
+      const __m128i s6 = _mm_and_si128(row0_3, mask_even);
+      // a7 a9 a11 a13 a15 a17 a19 a21
+      const __m128i s7 = _mm_and_si128(_mm_srli_epi16(row0_3, 8), mask_even);
+
+      // a0a7 a2a9 a4a11 .... a12a19 a14a21
+      const __m128i s07 = _mm_add_epi16(s0, s7);
+      // a1a6 a3a8 a5a10 .... a13a18 a15a20
+      const __m128i s16 = _mm_add_epi16(s1, s6);
+      // a2a5 a4a7 a6a9  .... a14a17 a16a19
+      const __m128i s25 = _mm_add_epi16(s2, s5);
+      // a3a4 a5a6 a7a8  .... a15a16 a17a18
+      const __m128i s34 = _mm_add_epi16(s3, s4);
+
+      // a0a7 a1a6 a2a9 a3a8 a4a11 a5a10 a6a13 a7a12
+      const __m128i s1607_low = _mm_unpacklo_epi16(s07, s16);
+      // a2a5 a3a4 a4a7 a5a6 a6a9 a7a8 a8a11 a9a10
+      const __m128i s3425_low = _mm_unpacklo_epi16(s25, s34);
+
+      // a8a15 a9a14 a10a17 a11a16 a12a19 a13a18 a14a21 a15a20
+      const __m128i s1607_high = _mm_unpackhi_epi16(s07, s16);
+      // a10a13 a11a12 a12a15 a13a14 a14a17 a15a16 a16a19 a17a18
+      const __m128i s3425_high = _mm_unpackhi_epi16(s25, s34);
+
+      const __m128i r01_0 = _mm_madd_epi16(s3425_low, coeffs_x[1]);
+      const __m128i r01_1 = _mm_madd_epi16(s1607_low, coeffs_x[0]);
+      const __m128i r01_2 = _mm_madd_epi16(s3425_high, coeffs_x[1]);
+      const __m128i r01_3 = _mm_madd_epi16(s1607_high, coeffs_x[0]);
+
+      // Result of first 8 pixels of row0 (a0 to a7).
+      // r0_0 r0_1 r0_2 r0_3
+      __m128i r00 = _mm_add_epi32(r01_0, r01_1);
+      r00 = _mm_add_epi32(r00, round_const_bits);
+      r00 = _mm_sra_epi32(r00, round_shift_bits);
+
+      // Result of next 8 pixels of row0 (a8 to 15).
+      // r0_4 r0_5 r0_6 r0_7
+      __m128i r01 = _mm_add_epi32(r01_2, r01_3);
+      r01 = _mm_add_epi32(r01, round_const_bits);
+      r01 = _mm_sra_epi32(r01, round_shift_bits);
+
+      // r0_0 r0_1 r1_2 r0_3 r0_4 r0_5 r0_6 r0_7
+      const __m128i res_16 = _mm_packs_epi32(r00, r01);
+      const __m128i res_8 = _mm_packus_epi16(res_16, res_16);
+      __m128i res = _mm_min_epu8(res_8, clip_pixel);
+      res = _mm_max_epu8(res, zero);
+
+      // r0_0 r0_1 r1_2 r0_3 r0_4 r0_5 r0_6 r0_7
+      _mm_storel_epi64((__m128i *)&intbuf[out_idx], res);
+    }
+
+    int wd_processed = filtered_length - remain_col;
+    if (remain_col) {
+      const int in_idx = (in_stride * i);
+      const int out_idx = (wd_processed / 2) + width2 * i;
+
+      down2_symeven(input + in_idx, filtered_length, intbuf + out_idx,
+                    wd_processed);
+    }
+  }
 }

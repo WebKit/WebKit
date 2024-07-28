@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -1993,8 +1993,8 @@ int av1_intrabc_hash_search(const AV1_COMP *cpi, const MACROBLOCKD *xd,
   return best_hash_cost;
 }
 
-static int vector_match(int16_t *ref, int16_t *src, int bwl, int search_size,
-                        int full_search, int *sad) {
+int av1_vector_match(const int16_t *ref, const int16_t *src, int bwl,
+                     int search_size, int full_search, int *sad) {
   int best_sad = INT_MAX;
   int this_sad;
   int d;
@@ -2174,11 +2174,11 @@ unsigned int av1_int_pro_motion_estimation(const AV1_COMP *cpi, MACROBLOCK *x,
 
   // Find the best match per 1-D search
   best_int_mv->as_fullmv.col =
-      vector_match(hbuf, src_hbuf, mi_size_wide_log2[bsize], search_size_width,
-                   full_search, &best_sad_col);
+      av1_vector_match(hbuf, src_hbuf, mi_size_wide_log2[bsize],
+                       search_size_width, full_search, &best_sad_col);
   best_int_mv->as_fullmv.row =
-      vector_match(vbuf, src_vbuf, mi_size_high_log2[bsize], search_size_height,
-                   full_search, &best_sad_row);
+      av1_vector_match(vbuf, src_vbuf, mi_size_high_log2[bsize],
+                       search_size_height, full_search, &best_sad_row);
 
   // For screen: select between horiz or vert motion.
   if (is_screen) {

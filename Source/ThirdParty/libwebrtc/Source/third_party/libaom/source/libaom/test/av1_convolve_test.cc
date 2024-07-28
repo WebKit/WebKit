@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2020, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -9,6 +9,8 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include <cstddef>
+#include <cstdint>
 #include <ostream>
 #include <set>
 #include <vector>
@@ -325,7 +327,8 @@ typedef void (*convolve_x_func)(const uint8_t *src, int src_stride,
 class AV1ConvolveXTest : public AV1ConvolveTest<convolve_x_func> {
  public:
   void RunTest() {
-    for (int sub_x = 0; sub_x < 16; ++sub_x) {
+    // Do not test the no-op filter.
+    for (int sub_x = 1; sub_x < 16; ++sub_x) {
       for (int filter = EIGHTTAP_REGULAR; filter <= INTERP_FILTERS_ALL;
            ++filter) {
         InterpFilter f = static_cast<InterpFilter>(filter);
@@ -530,7 +533,8 @@ typedef void (*highbd_convolve_x_func)(
 class AV1ConvolveXHighbdTest : public AV1ConvolveTest<highbd_convolve_x_func> {
  public:
   void RunTest() {
-    for (int sub_x = 0; sub_x < 16; ++sub_x) {
+    // Do not test the no-op filter.
+    for (int sub_x = 1; sub_x < 16; ++sub_x) {
       for (int filter = EIGHTTAP_REGULAR; filter <= INTERP_FILTERS_ALL;
            ++filter) {
         InterpFilter f = static_cast<InterpFilter>(filter);
@@ -737,7 +741,8 @@ typedef void (*convolve_y_func)(const uint8_t *src, int src_stride,
 class AV1ConvolveYTest : public AV1ConvolveTest<convolve_y_func> {
  public:
   void RunTest() {
-    for (int sub_y = 0; sub_y < 16; ++sub_y) {
+    // Do not test the no-op filter.
+    for (int sub_y = 1; sub_y < 16; ++sub_y) {
       for (int filter = EIGHTTAP_REGULAR; filter <= INTERP_FILTERS_ALL;
            ++filter) {
         InterpFilter f = static_cast<InterpFilter>(filter);
@@ -923,7 +928,8 @@ typedef void (*highbd_convolve_y_func)(
 class AV1ConvolveYHighbdTest : public AV1ConvolveTest<highbd_convolve_y_func> {
  public:
   void RunTest() {
-    for (int sub_y = 0; sub_y < 16; ++sub_y) {
+    // Do not test the no-op filter.
+    for (int sub_y = 1; sub_y < 16; ++sub_y) {
       for (int filter = EIGHTTAP_REGULAR; filter <= INTERP_FILTERS_ALL;
            ++filter) {
         InterpFilter f = static_cast<InterpFilter>(filter);
@@ -1203,8 +1209,9 @@ typedef void (*convolve_2d_func)(const uint8_t *src, int src_stride,
 class AV1Convolve2DTest : public AV1ConvolveTest<convolve_2d_func> {
  public:
   void RunTest() {
-    for (int sub_x = 0; sub_x < 16; ++sub_x) {
-      for (int sub_y = 0; sub_y < 16; ++sub_y) {
+    // Do not test the no-op filter.
+    for (int sub_x = 1; sub_x < 16; ++sub_x) {
+      for (int sub_y = 1; sub_y < 16; ++sub_y) {
         for (int h_f = EIGHTTAP_REGULAR; h_f <= INTERP_FILTERS_ALL; ++h_f) {
           for (int v_f = EIGHTTAP_REGULAR; v_f <= INTERP_FILTERS_ALL; ++v_f) {
             if (((h_f == MULTITAP_SHARP2) && (v_f < MULTITAP_SHARP2)) ||
@@ -1326,6 +1333,11 @@ INSTANTIATE_TEST_SUITE_P(NEON_I8MM, AV1Convolve2DTest,
                          BuildLowbdParams(av1_convolve_2d_sr_neon_i8mm));
 #endif
 
+#if HAVE_SVE2
+INSTANTIATE_TEST_SUITE_P(SVE2, AV1Convolve2DTest,
+                         BuildLowbdParams(av1_convolve_2d_sr_sve2));
+#endif
+
 /////////////////////////////////////////////////////////////////
 // Single reference convolve-2D IntraBC functions (low bit-depth)
 /////////////////////////////////////////////////////////////////
@@ -1429,8 +1441,9 @@ class AV1Convolve2DHighbdTest
     : public AV1ConvolveTest<highbd_convolve_2d_func> {
  public:
   void RunTest() {
-    for (int sub_x = 0; sub_x < 16; ++sub_x) {
-      for (int sub_y = 0; sub_y < 16; ++sub_y) {
+    // Do not test the no-op filter.
+    for (int sub_x = 1; sub_x < 16; ++sub_x) {
+      for (int sub_y = 1; sub_y < 16; ++sub_y) {
         for (int h_f = EIGHTTAP_REGULAR; h_f <= INTERP_FILTERS_ALL; ++h_f) {
           for (int v_f = EIGHTTAP_REGULAR; v_f <= INTERP_FILTERS_ALL; ++v_f) {
             if (((h_f == MULTITAP_SHARP2) && (v_f < MULTITAP_SHARP2)) ||
@@ -1781,7 +1794,8 @@ class AV1ConvolveXCompoundTest : public AV1ConvolveTest<convolve_x_func> {
  public:
   void RunTest() {
     auto compound_params = GetCompoundParams();
-    for (int sub_pix = 0; sub_pix < 16; ++sub_pix) {
+    // Do not test the no-op filter.
+    for (int sub_pix = 1; sub_pix < 16; ++sub_pix) {
       for (int f = EIGHTTAP_REGULAR; f < INTERP_FILTERS_ALL; ++f) {
         for (const auto &c : compound_params) {
           TestConvolve(sub_pix, static_cast<InterpFilter>(f), c);
@@ -1883,7 +1897,8 @@ class AV1ConvolveXHighbdCompoundTest
  public:
   void RunTest() {
     auto compound_params = GetCompoundParams();
-    for (int sub_pix = 0; sub_pix < 16; ++sub_pix) {
+    // Do not test the no-op filter.
+    for (int sub_pix = 1; sub_pix < 16; ++sub_pix) {
       for (int f = EIGHTTAP_REGULAR; f < INTERP_FILTERS_ALL; ++f) {
         for (const auto &c : compound_params) {
           TestConvolve(sub_pix, static_cast<InterpFilter>(f), c);
@@ -2282,8 +2297,9 @@ class AV1Convolve2DCompoundTest : public AV1ConvolveTest<convolve_2d_func> {
     auto compound_params = GetCompoundParams();
     for (int h_f = EIGHTTAP_REGULAR; h_f < INTERP_FILTERS_ALL; ++h_f) {
       for (int v_f = EIGHTTAP_REGULAR; v_f < INTERP_FILTERS_ALL; ++v_f) {
-        for (int sub_x = 0; sub_x < 16; ++sub_x) {
-          for (int sub_y = 0; sub_y < 16; ++sub_y) {
+        // Do not test the no-op filter.
+        for (int sub_x = 1; sub_x < 16; ++sub_x) {
+          for (int sub_y = 1; sub_y < 16; ++sub_y) {
             for (const auto &compound : compound_params) {
               TestConvolve(static_cast<InterpFilter>(h_f),
                            static_cast<InterpFilter>(v_f), sub_x, sub_y,
@@ -2388,8 +2404,9 @@ class AV1Convolve2DHighbdCompoundTest
     auto compound_params = GetCompoundParams();
     for (int h_f = EIGHTTAP_REGULAR; h_f < INTERP_FILTERS_ALL; ++h_f) {
       for (int v_f = EIGHTTAP_REGULAR; v_f < INTERP_FILTERS_ALL; ++v_f) {
-        for (int sub_x = 0; sub_x < 16; ++sub_x) {
-          for (int sub_y = 0; sub_y < 16; ++sub_y) {
+        // Do not test the no-op filter.
+        for (int sub_x = 1; sub_x < 16; ++sub_x) {
+          for (int sub_y = 1; sub_y < 16; ++sub_y) {
             for (const auto &compound : compound_params) {
               TestConvolve(static_cast<InterpFilter>(h_f),
                            static_cast<InterpFilter>(v_f), sub_x, sub_y,

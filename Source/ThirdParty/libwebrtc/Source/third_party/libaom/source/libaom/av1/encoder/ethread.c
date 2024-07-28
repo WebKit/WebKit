@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -1124,7 +1124,8 @@ void av1_terminate_workers(AV1_PRIMARY *ppi) {
 
 // This function returns 1 if frame parallel encode is supported for
 // the current configuration. Returns 0 otherwise.
-static AOM_INLINE int is_fpmt_config(AV1_PRIMARY *ppi, AV1EncoderConfig *oxcf) {
+static AOM_INLINE int is_fpmt_config(const AV1_PRIMARY *ppi,
+                                     const AV1EncoderConfig *oxcf) {
   // FPMT is enabled for AOM_Q and AOM_VBR.
   // TODO(Tarun): Test and enable resize config.
   if (oxcf->rc_cfg.mode == AOM_CBR || oxcf->rc_cfg.mode == AOM_CQ) {
@@ -1162,7 +1163,7 @@ static AOM_INLINE int is_fpmt_config(AV1_PRIMARY *ppi, AV1EncoderConfig *oxcf) {
 }
 
 int av1_check_fpmt_config(AV1_PRIMARY *const ppi,
-                          AV1EncoderConfig *const oxcf) {
+                          const AV1EncoderConfig *const oxcf) {
   if (is_fpmt_config(ppi, oxcf)) return 1;
   // Reset frame parallel configuration for unsupported config
   if (ppi->num_fp_contexts > 1) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -23,6 +23,7 @@
 #include "av1/encoder/model_rd.h"
 #include "av1/encoder/motion_search_facade.h"
 #include "av1/encoder/nonrd_opt.h"
+#include "av1/encoder/palette.h"
 #include "av1/encoder/reconinter_enc.h"
 #include "av1/encoder/var_based_part.h"
 
@@ -1648,21 +1649,28 @@ void av1_nonrd_pick_intra_mode(AV1_COMP *cpi, MACROBLOCK *x, RD_STATS *rd_cost,
     }
   }
 
-  const unsigned int thresh_sad = cpi->sf.rt_sf.prune_palette_nonrd ? 100 : 20;
+  const unsigned int thresh_sad =
+      cpi->sf.rt_sf.prune_palette_search_nonrd > 1 ? 100 : 20;
   const unsigned int best_sad_norm =
       args.best_sad >>
       (b_width_log2_lookup[bsize] + b_height_log2_lookup[bsize]);
 
   // Try palette if it's enabled.
   bool try_palette =
-      (!args.prune_mode_based_on_sad || best_sad_norm > thresh_sad) &&
-      cpi->oxcf.tool_cfg.enable_palette && bsize <= BLOCK_16X16 &&
-      x->source_variance > 200 &&
+      cpi->oxcf.tool_cfg.enable_palette &&
       av1_allow_palette(cpi->common.features.allow_screen_content_tools,
                         mi->bsize);
+  if (cpi->sf.rt_sf.prune_palette_search_nonrd > 0) {
+    bool prune =
+        (!args.prune_mode_based_on_sad || best_sad_norm > thresh_sad) &&
+        bsize <= BLOCK_16X16 && x->source_variance > 200;
+    try_palette &= prune;
+  }
   if (try_palette) {
     const TxfmSearchInfo *txfm_info = &x->txfm_search_info;
     const unsigned int intra_ref_frame_cost = 0;
+    x->color_palette_thresh = (best_sad_norm < 500) ? 32 : 64;
+
     // Search palette mode for Luma plane in intra frame.
     av1_search_palette_mode_luma(cpi, x, bsize, intra_ref_frame_cost, ctx,
                                  &this_rdc, best_rdc.rdcost);
@@ -2486,7 +2494,8 @@ static AOM_FORCE_INLINE bool skip_inter_mode_nonrd(
     return true;
 
   // For screen content: skip mode testing based on source_sad.
-  if (cpi->oxcf.tune_cfg.content == AOM_CONTENT_SCREEN) {
+  if (cpi->oxcf.tune_cfg.content == AOM_CONTENT_SCREEN &&
+      !x->force_zeromv_skip_for_blk) {
     // If source_sad is computed: skip non-zero motion
     // check for stationary (super)blocks. Otherwise if superblock
     // has motion skip the modes with zero motion on last reference
@@ -3105,6 +3114,34 @@ static AOM_FORCE_INLINE void handle_screen_content_mode_nonrd(
   }
 }
 
+static AOM_INLINE bool enable_palette(AV1_COMP *cpi, bool is_mode_intra,
+                                      BLOCK_SIZE bsize,
+                                      unsigned int source_variance,
+                                      int force_zeromv_skip,
+                                      int skip_idtx_palette,
+                                      int force_palette_test) {
+  if (!cpi->oxcf.tool_cfg.enable_palette) return false;
+  if (!av1_allow_palette(cpi->common.features.allow_screen_content_tools,
+                         bsize)) {
+    return false;
+  }
+  if (skip_idtx_palette) return false;
+
+  if (cpi->sf.rt_sf.prune_palette_search_nonrd > 1 &&
+      ((cpi->rc.high_source_sad && cpi->ppi->rtc_ref.non_reference_frame) ||
+       bsize > BLOCK_16X16)) {
+    return false;
+  }
+
+  if ((is_mode_intra || force_palette_test) && source_variance > 0 &&
+      !force_zeromv_skip &&
+      (cpi->rc.high_source_sad || source_variance > 300)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 /*!\brief AV1 inter mode selection based on Non-RD optimized model.
  *
  * \ingroup nonrd_mode_search
@@ -3460,17 +3497,9 @@ void av1_nonrd_pick_inter_mode_sb(AV1_COMP *cpi, TileDataEnc *tile_data,
                           x->content_state_sb.source_sad_nonrd != kZeroSad &&
                           !cpi->rc.high_source_sad;
 
-  int try_palette =
-      !skip_idtx_palette && cpi->oxcf.tool_cfg.enable_palette &&
-      av1_allow_palette(cpi->common.features.allow_screen_content_tools,
-                        mi->bsize);
-  try_palette =
-      try_palette &&
-      (is_mode_intra(best_pickmode->best_mode) || force_palette_test) &&
-      x->source_variance > 0 && !x->force_zeromv_skip_for_blk &&
-      (cpi->rc.high_source_sad || x->source_variance > 300);
-
-  if (rt_sf->prune_palette_nonrd && bsize > BLOCK_16X16) try_palette = 0;
+  bool try_palette = enable_palette(
+      cpi, is_mode_intra(best_pickmode->best_mode), bsize, x->source_variance,
+      x->force_zeromv_skip_for_blk, skip_idtx_palette, force_palette_test);
 
   // Perform screen content mode evaluation for non-rd
   handle_screen_content_mode_nonrd(

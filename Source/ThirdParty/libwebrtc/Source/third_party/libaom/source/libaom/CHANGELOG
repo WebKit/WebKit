@@ -1,3 +1,48 @@
+2024-06-07 v3.8.3
+  This release includes several bug fixes. This release is ABI
+  compatible with the last release. See
+  https://aomedia.googlesource.com/aom/+log/v3.8.2..v3.8.3 for all the
+  commits in this release.
+
+  - Bug Fixes
+    * aomedia:2754, aomedia:3567: Ensure thread stack size is at least
+      256 KB
+    * aomedia:3382, chromium:339877165: update codec config after
+      svc/scale controls (CVE-2024-5493)
+    * aomedia:3561: libaom-3.8.2 armv7 Android build failed
+    * aomedia:3580: Allow g_timebase.num to be greater than
+      g_timebase.den
+    * Arm SVE build fixes.
+    * av1_block_error_lp_neon: fix block_size param type
+
+2024-06-05 v3.9.1
+  This release includes several bug fixes. This release is ABI
+  compatible with the last release. See
+  https://aomedia.googlesource.com/aom/+log/v3.9.0..v3.9.1 for all the
+  commits in this release.
+
+  - Bug Fixes
+    * aomedia:2754, aomedia:3567: Ensure thread stack size is at least
+      256 KB
+    * b:330639949, oss-fuzz:68195: Increase scaling in linsolve_wiener
+    * Fix high target data rate overflow.
+    * aomedia:3509: Fix two UBSan errors in av1_rc_update_framerate()
+    * aomedia:3382, chromium:339877165: update codec config after
+      svc/scale controls (CVE-2024-5493)
+    * aomedia:3561: libaom-3.8.2 armv7 Android build failed
+    * aomedia:3571: {,highbd_}intrapred_neon.c: Avoid over-reads in z1
+      and z3 preds
+    * aomedia:3578: libaom-3.9.0 undefined reference to
+      `aom_sub_pixel_variance16xh_ssse3'
+    * aomedia:3579: Use round for RC calculations in cyclic_refresh
+    * aomedia:3580: Allow g_timebase.num to be greater than
+      g_timebase.den
+    * oss-fuzz:68774: libaom:av1_dec_fuzzer: Segv on unknown address in
+      od_ec_dec_init
+    * Arm SVE build fixes.
+    * av1_block_error_lp_neon: fix block_size param type
+    * av1_block_error_lp_sve: fix block_size param type
+
 2024-04-09 v3.9.0
   This release includes new codec interfaces, compression efficiency and
   perceptual improvements, speedup for RTC for both video and screen content,

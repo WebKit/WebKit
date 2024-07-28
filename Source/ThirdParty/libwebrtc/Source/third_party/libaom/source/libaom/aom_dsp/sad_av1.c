@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -83,12 +83,14 @@ MASKSADMxN(8, 8)
 MASKSADMxN(8, 4)
 MASKSADMxN(4, 8)
 MASKSADMxN(4, 4)
+#if !CONFIG_REALTIME_ONLY
 MASKSADMxN(4, 16)
 MASKSADMxN(16, 4)
 MASKSADMxN(8, 32)
 MASKSADMxN(32, 8)
 MASKSADMxN(16, 64)
 MASKSADMxN(64, 16)
+#endif  // !CONFIG_REALTIME_ONLY
 /* clang-format on */
 
 #if CONFIG_AV1_HIGHBITDEPTH
@@ -148,12 +150,14 @@ HIGHBD_MASKSADMXN(8, 8)
 HIGHBD_MASKSADMXN(8, 4)
 HIGHBD_MASKSADMXN(4, 8)
 HIGHBD_MASKSADMXN(4, 4)
+#if !CONFIG_REALTIME_ONLY
 HIGHBD_MASKSADMXN(4, 16)
 HIGHBD_MASKSADMXN(16, 4)
 HIGHBD_MASKSADMXN(8, 32)
 HIGHBD_MASKSADMXN(32, 8)
 HIGHBD_MASKSADMXN(16, 64)
 HIGHBD_MASKSADMXN(64, 16)
+#endif  // !CONFIG_REALTIME_ONLY
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 
 #if !CONFIG_REALTIME_ONLY

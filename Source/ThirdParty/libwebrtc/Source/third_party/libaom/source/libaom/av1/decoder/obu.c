@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -10,6 +10,7 @@
  */
 
 #include <assert.h>
+#include <stdbool.h>
 
 #include "config/aom_config.h"
 #include "config/aom_scale_rtcd.h"
@@ -134,6 +135,7 @@ static uint32_t read_sequence_header_obu(AV1Decoder *pbi,
     seq_params->display_model_info_present_flag = 0;
     seq_params->operating_points_cnt_minus_1 = 0;
     seq_params->operating_point_idc[0] = 0;
+    seq_params->has_nonzero_operating_point_idc = false;
     if (!read_bitstream_level(&seq_params->seq_level_idx[0], rb)) {
       pbi->error.error_code = AOM_CODEC_UNSUP_BITSTREAM;
       return 0;
@@ -155,9 +157,12 @@ static uint32_t read_sequence_header_obu(AV1Decoder *pbi,
     seq_params->display_model_info_present_flag = aom_rb_read_bit(rb);
     seq_params->operating_points_cnt_minus_1 =
         aom_rb_read_literal(rb, OP_POINTS_CNT_MINUS_1_BITS);
+    seq_params->has_nonzero_operating_point_idc = false;
     for (int i = 0; i < seq_params->operating_points_cnt_minus_1 + 1; i++) {
       seq_params->operating_point_idc[i] =
           aom_rb_read_literal(rb, OP_POINTS_IDC_BITS);
+      if (seq_params->operating_point_idc[i] != 0)
+        seq_params->has_nonzero_operating_point_idc = true;
       if (!read_bitstream_level(&seq_params->seq_level_idx[i], rb)) {
         pbi->error.error_code = AOM_CODEC_UNSUP_BITSTREAM;
         return 0;
