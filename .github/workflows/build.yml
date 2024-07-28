@@ -259,8 +259,8 @@ jobs:
           path: ${{runner.temp}}/bun-webkit-macos-arm64-debug
       - uses: actions/download-artifact@v3
         with:
-          name: bun-webkit-macos-arm64-lto
-          path: ${{runner.temp}}/bun-webkit-macos-arm64-lto
+          name: bun-webkit-macos-amd64-debug
+          path: ${{runner.temp}}/bun-webkit-macos-amd64-debug
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-amd64
