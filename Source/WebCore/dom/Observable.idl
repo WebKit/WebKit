@@ -33,5 +33,7 @@ interface Observable {
   constructor(SubscriberCallback callback);
   [CallWith=CurrentScriptExecutionContext, RaisesException] undefined subscribe(optional ObserverUnion observer = {}, optional SubscribeOptions options = {});
 
+  [CallWith=CurrentScriptExecutionContext] Observable filter(PredicateCallback predicate);
+
   [CallWith=CurrentScriptExecutionContext] Observable take(unsigned long long amount);
 };

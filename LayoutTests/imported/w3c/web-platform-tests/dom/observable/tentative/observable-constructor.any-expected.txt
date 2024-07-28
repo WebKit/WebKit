@@ -43,7 +43,7 @@ PASS Unsubscription lifecycle
 PASS Teardowns are called in upstream->downstream order on consumer-initiated unsubscription
 PASS Teardowns are called in downstream->upstream order on consumer-initiated unsubscription with pre-aborted Signal
 PASS Producer-initiated unsubscription in a downstream Observable fires abort events before each teardown, in downstream->upstream order
-FAIL Subscriber#error() value is stored as Subscriber's AbortSignal's reason assert_equals: Reason is set correctly expected (string) "calling error()" but got (object) object "AbortError: The operation was aborted."
+PASS Subscriber#error() value is stored as Subscriber's AbortSignal's reason
 PASS Aborting a subscription should stop emitting values
 PASS Calling subscribe should never throw an error synchronously, initializer throws error
 PASS Calling subscribe should never throw an error synchronously, subscriber pushes error

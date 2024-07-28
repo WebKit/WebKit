@@ -1136,6 +1136,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/PointerEvent.idl \
     $(WebCore)/dom/PointerLockOptions.idl \
     $(WebCore)/dom/PopStateEvent.idl \
+    $(WebCore)/dom/PredicateCallback.idl \
     $(WebCore)/dom/ProcessingInstruction.idl \
     $(WebCore)/dom/ProgressEvent.idl \
     $(WebCore)/dom/PromiseRejectionEvent.idl \

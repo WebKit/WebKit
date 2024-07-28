@@ -30,9 +30,11 @@
 #include "Document.h"
 #include "Exception.h"
 #include "ExceptionCode.h"
+#include "InternalObserverFilter.h"
 #include "InternalObserverFromScript.h"
 #include "InternalObserverTake.h"
 #include "JSSubscriptionObserverCallback.h"
+#include "PredicateCallback.h"
 #include "SubscribeOptions.h"
 #include "Subscriber.h"
 #include "SubscriberCallback.h"
@@ -93,6 +95,12 @@ void Observable::subscribeInternal(ScriptExecutionContext& context, Ref<Internal
         }
     }
 }
+
+Ref<Observable> Observable::filter(ScriptExecutionContext& context, PredicateCallback& predicate)
+{
+    return create(createSubscriberCallbackFilter(context, *this, predicate));
+}
+
 
 Ref<Observable> Observable::take(ScriptExecutionContext& context, uint64_t amount)
 {

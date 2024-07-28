@@ -1440,6 +1440,7 @@ $(PROJECT_DIR)/dom/ParentNode.idl
 $(PROJECT_DIR)/dom/PointerEvent.idl
 $(PROJECT_DIR)/dom/PointerLockOptions.idl
 $(PROJECT_DIR)/dom/PopStateEvent.idl
+$(PROJECT_DIR)/dom/PredicateCallback.idl
 $(PROJECT_DIR)/dom/ProcessingInstruction.idl
 $(PROJECT_DIR)/dom/ProgressEvent.idl
 $(PROJECT_DIR)/dom/PromiseRejectionEvent.idl

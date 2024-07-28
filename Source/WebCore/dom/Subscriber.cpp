@@ -69,7 +69,7 @@ void Subscriber::error(JSC::JSValue error)
     if (isInactiveDocument())
         return;
 
-    close(JSC::jsUndefined());
+    close(error);
 
     m_observer->error(error);
 }

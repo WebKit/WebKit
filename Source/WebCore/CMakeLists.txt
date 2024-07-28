@@ -1129,6 +1129,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/PointerEvent.idl
     dom/PointerLockOptions.idl
     dom/PopStateEvent.idl
+    dom/PredicateCallback.idl
     dom/ProcessingInstruction.idl
     dom/ProgressEvent.idl
     dom/PromiseRejectionEvent.idl
