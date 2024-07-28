@@ -1,0 +1,14 @@
+
+PASS Match container in outer tree
+FAIL Match container in the shadow tree for a host child in the host child's tree scope assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Match <slot> as a container for ::slotted element
+PASS Match container in outer tree for :host
+FAIL Match ::part's parent in the shadow tree as the container for ::part assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match ::slotted as a container for its ::before assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Match container in outer tree for :host::before
+FAIL Match the ::part as a container for ::before on ::part elements assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match container for ::part selector in inner shadow tree for exportparts assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Match container for slot light tree child fallback
+FAIL Should match parent container inside shadow tree for ::part() assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL A :host::part rule matching a container in the shadow tree assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+

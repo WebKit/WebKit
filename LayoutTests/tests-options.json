@@ -2156,13 +2156,13 @@
     "imported/w3c/web-platform-tests/css/css-color/color-resolving-hwb.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-replaced.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-048.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-state-changed.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-text-fragment.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/css/css-content/content-none-select-1.html": [

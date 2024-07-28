@@ -1,0 +1,3 @@
+
+FAIL CSS Content Visibility: hidden never anchors assert_equals: #positioned should be anchored because it's not under a content-visibility ancestor expected 209 but got 8
+

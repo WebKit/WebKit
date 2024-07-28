@@ -1,0 +1,22 @@
+
+PASS contain: none
+FAIL contain: style assert_equals: open-quote expected true but got false
+FAIL switching contain from none to style assert_equals: increment-counter expected true but got false
+FAIL switching contain from style to none assert_equals: increment-counter expected false but got true
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

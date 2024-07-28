@@ -1,0 +1,10 @@
+
+PASS contain: none
+PASS contain: layout
+FAIL switching contain from none to layout assert_equals: vertical baseline suppressed expected true but got false
+FAIL switching contain from layout to none assert_equals: vertical baseline suppressed expected false but got true
+X
+X
+X
+X
+

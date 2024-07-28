@@ -1,0 +1,21 @@
+
+PASS Match container in outer tree
+FAIL Match container in walking flat tree ancestors assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Match container in ::slotted selector's originating element tree
+PASS Match container in outer tree for :host
+FAIL Match container in ::part selector's originating element tree assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match container for ::before in ::slotted selector's originating element tree assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Match container in outer tree for :host::before
+FAIL Match container for ::before in ::part selector's originating element tree assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match container for ::part selector's originating element tree for exportparts assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Match container for slot light tree child fallback
+FAIL Should not match container inside shadow tree for ::part() assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL A :host::part rule should match containers in the originating element tree assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Container name set inside a shadow tree should not match query using ::part on the outside
+PASS Container name set with a ::part should match query inside the shadow tree
+PASS Container name set inside a shadow tree should match query for a ::slotted() rule inside the tree
+PASS Container name set inside a shadow tree should not match query for host child on the outside
+PASS Container name set on :host from inside a shadow tree matching query inside the shadow tree
+PASS Container name set on :host from inside a shadow tree matching query for ::slotted inside the shadow tree
+PASS Container name set on :host from inside a shadow tree not matching query for slotted from the outside of the shadow tree
+

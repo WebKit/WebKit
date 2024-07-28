@@ -1,0 +1,6 @@
+PASS
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT ContentVisibilityAutoStateChange fires trece when `scrollIntoView` a descendant of `content-visibility:auto` which is hidden after scrolling Test timed out
+

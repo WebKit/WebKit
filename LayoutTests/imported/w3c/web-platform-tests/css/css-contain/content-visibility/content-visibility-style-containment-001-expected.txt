@@ -1,0 +1,10 @@
+
+PASS content-visibility: visible
+FAIL content-visibility: hidden assert_true: expected true got false
+FAIL content-visibility: auto (far from viewport) assert_true: expected true got false
+FAIL content-visibility: auto (close from viewport) assert_true: expected true got false
+FAIL switching content-visibility from visible to hidden assert_true: expected true got false
+PASS switching content-visibility from hidden to visible
+FAIL switching content-visibility from visible to auto assert_true: expected true got false
+PASS switching content-visibility from auto to visible
+

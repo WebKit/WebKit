@@ -11,7 +11,7 @@ Do NOT modify or remove this file.
 Properties requiring vendor prefixes:
 None
 Property values requiring vendor prefixes:
-ruby-text
+None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/META.yml
@@ -124,6 +124,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-flexitem-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-flexitem.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-grid-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-grid-indefinite-height-min-height-flex-row.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-grid-stretches-auto-rows-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-grid-stretches-auto-rows.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-grid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-intrinsic-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-intrinsic.html
@@ -193,8 +196,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-breaks-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-breaks-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-breaks-002.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-button-001-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-button-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-button-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-button-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-button-002.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-button-002.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-cell-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-cell-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-cell-002-expected.html
@@ -203,6 +208,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-containing-block-absolute-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-containing-block-fixed-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-containing-block-fixed-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-dynamic-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-dynamic-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-dynamic-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-dynamic-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-dynamic-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-dynamic-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-dynamic-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-flexbox-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-flexbox-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-layout-formatting-context-float-001-expected.html
@@ -368,6 +380,19 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-containing-block-fixed-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-containing-block-fixed-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-containing-block-fixed-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-dynamic-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-dynamic-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-dynamic-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-dynamic-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-dynamic-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-dynamic-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-dynamic-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-dynamic-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-dynamic-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-dynamic-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-dynamic-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-dynamic-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-dynamic-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-formatting-context-float-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-formatting-context-float-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-paint-formatting-context-float-001.html
@@ -491,6 +516,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-button-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-button-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-button-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-dynamic-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-fieldset-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-fieldset-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-fieldset-002-expected.html
@@ -517,6 +543,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-grid-005-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-grid-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-grid-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-grid-indefinite-height-min-height-flex-row-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-grid-indefinite-height-min-height-flex-row.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-grid-stretches-auto-rows-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-grid-stretches-auto-rows.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-001.html
@@ -633,6 +663,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-style-counters-005-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-style-counters-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-style-counters-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-style-dynamic-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-style-ol-ordinal-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-style-ol-ordinal-li-container-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-style-ol-ordinal-li-container.html
@@ -647,8 +678,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-style-ol-ordinal-start-reversed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-style-ol-ordinal-start.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-style-ol-ordinal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-style-remove-element-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-subgrid-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/contain-subgrid-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-type-important.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/counter-scoping-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/counter-scoping-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/counter-scoping-002-expected.html
@@ -676,3 +709,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/quote-scoping-invalidation-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/quote-scoping-invalidation-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/quote-scoping-invalidation-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/quote-scoping-shadow-dom-crash.html

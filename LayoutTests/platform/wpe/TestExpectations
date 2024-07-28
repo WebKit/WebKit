@@ -1493,7 +1493,6 @@ webkit.org/b/264680 css3/filters/backdrop/dynamic-with-clip-path.html [ ImageOnl
 webkit.org/b/264680 fast/dom/access-key-iframe.html [ Failure Pass ]
 webkit.org/b/264680 fast/hidpi/image-set-cross-fade.html [ ImageOnlyFailure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure Pass ]
-webkit.org/b/264680 imported/w3c/web-platform-tests/css/css-contain/container-queries/container-units-in-at-container-fallback.html [ Failure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-text-backdrop-filter.html [ ImageOnlyFailure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-align-003.html [ ImageOnlyFailure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-003.html [ ImageOnlyFailure Pass ]

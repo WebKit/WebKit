@@ -2351,11 +2351,6 @@ webkit.org/b/236128 fullscreen/full-screen-iframe-with-max-width-height.html [ S
 
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-param-url.html [ ImageOnlyFailure ]
 
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/canvas-as-container-001.html [ ImageOnlyFailure ]
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/canvas-as-container-002.html [ ImageOnlyFailure ]
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/canvas-as-container-003.html [ ImageOnlyFailure ]
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/canvas-as-container-004.html [ ImageOnlyFailure ]
-
 webkit.org/b/237783 imported/w3c/web-platform-tests/html/semantics/forms/input-change-event-properties.html [ Timeout ]
 
 # Flaky since their import.
@@ -2710,6 +2705,11 @@ webkit.org/b/266184 compositing/images/truncated-direct-png-image.html [ ImageOn
 # webkit.org/b/266345 [Test Gardening] css-contain/contain-size-block-003.html and css-contain/contain-size-inline-block-003.html only fail on GTK
 imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/canvas-as-container-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/canvas-as-container-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/canvas-as-container-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/canvas-as-container-004.html [ ImageOnlyFailure ]
 
 # webkit.org/b/263441 [ mac-wk1 ] Several WPTs using wheel actions are timing out after 269632@main
 imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior.html [ Skip ]

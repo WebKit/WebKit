@@ -1,0 +1,4 @@
+
+FAIL CSS Content Visibility: auto prevents existing anchors to unskipped content
+from becoming skipped assert_equals: #positioned should be anchored because #anchor is on-screen. expected 209 but got 8
+

@@ -1,0 +1,6 @@
+
+PASS contain: none
+PASS contain: paint
+FAIL switching contain from none to paint assert_equals: independent formatting context expected true but got false
+FAIL switching contain from paint to none assert_equals: independent formatting context expected false but got true
+
