@@ -464,6 +464,8 @@ typedef struct vpx_codec_enc_cfg {
   /*!\brief Target data rate
    *
    * Target bitrate to use for this stream, in kilobits per second.
+   * Internally capped to the smaller of the uncompressed bitrate and
+   * 1000000 kilobits per second.
    */
   unsigned int rc_target_bitrate;
 

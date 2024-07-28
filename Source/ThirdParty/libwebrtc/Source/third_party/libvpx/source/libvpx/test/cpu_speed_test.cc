@@ -105,7 +105,7 @@ TEST_P(CpuSpeedTest, TestTuneScreen) {
   ::libvpx_test::Y4mVideoSource video("screendata.y4m", 0, 25);
   cfg_.g_timebase = video.timebase();
   cfg_.rc_2pass_vbr_minsection_pct = 5;
-  cfg_.rc_2pass_vbr_minsection_pct = 2000;
+  cfg_.rc_2pass_vbr_maxsection_pct = 2000;
   cfg_.rc_target_bitrate = 2000;
   cfg_.rc_max_quantizer = 63;
   cfg_.rc_min_quantizer = 0;

@@ -9,10 +9,11 @@
  */
 
 #include <assert.h>
-#include <stdlib.h>
 #include <limits.h>
-#include <stdio.h>
 #include <math.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "./rate_hist.h"
 
@@ -48,7 +49,8 @@ struct rate_hist *init_rate_histogram(const vpx_codec_enc_cfg_t *cfg,
   // Determine the number of samples in the buffer. Use the file's framerate
   // to determine the number of frames in rc_buf_sz milliseconds, with an
   // adjustment (5/4) to account for alt-refs
-  hist->samples = cfg->rc_buf_sz * 5 / 4 * fps->num / fps->den / 1000;
+  hist->samples =
+      (int)((int64_t)cfg->rc_buf_sz * 5 / 4 * fps->num / fps->den / 1000);
 
   // prevent division by zero
   if (hist->samples == 0) hist->samples = 1;

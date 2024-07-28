@@ -114,6 +114,7 @@ class VPxFirstPassEncoderThreadTest
   vpx_fixed_buf_t firstpass_stats_;
 };
 
+#if !CONFIG_REALTIME_ONLY
 static void compare_fp_stats(vpx_fixed_buf_t *fp_stats, double factor) {
   // fp_stats consists of 2 set of first pass encoding stats. These 2 set of
   // stats are compared to check if the stats match or at least are very close.
@@ -167,6 +168,7 @@ static void compare_fp_stats_md5(vpx_fixed_buf_t *fp_stats) {
   memset((uint8_t *)fp_stats->buf, 0, fp_stats->sz);
   fp_stats->sz = 0;
 }
+#endif  // !CONFIG_REALTIME_ONLY
 
 TEST_P(VPxFirstPassEncoderThreadTest, FirstPassStatsTest) {
 #if CONFIG_REALTIME_ONLY

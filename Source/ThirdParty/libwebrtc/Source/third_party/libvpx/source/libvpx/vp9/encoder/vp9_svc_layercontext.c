@@ -232,8 +232,9 @@ void vp9_update_layer_context_change_config(VP9_COMP *const cpi,
             VPXMIN(lrc->bits_off_target, lrc->maximum_buffer_size);
         lrc->buffer_level = VPXMIN(lrc->buffer_level, lrc->maximum_buffer_size);
         lc->framerate = cpi->framerate / oxcf->ts_rate_decimator[tl];
-        lrc->avg_frame_bandwidth =
-            (int)VPXMIN(lc->target_bandwidth / lc->framerate, INT_MAX);
+        const double avg_frame_bandwidth =
+            round(lc->target_bandwidth / lc->framerate);
+        lrc->avg_frame_bandwidth = (int)VPXMIN(avg_frame_bandwidth, INT_MAX);
         lrc->max_frame_bandwidth = rc->max_frame_bandwidth;
         lrc->worst_quality = rc->worst_quality;
         lrc->best_quality = rc->best_quality;
@@ -273,8 +274,9 @@ void vp9_update_layer_context_change_config(VP9_COMP *const cpi,
       } else {
         lc->framerate = cpi->framerate;
       }
-      lrc->avg_frame_bandwidth =
-          (int)VPXMIN(lc->target_bandwidth / lc->framerate, INT_MAX);
+      const double avg_frame_bandwidth =
+          round(lc->target_bandwidth / lc->framerate);
+      lrc->avg_frame_bandwidth = (int)VPXMIN(avg_frame_bandwidth, INT_MAX);
       lrc->max_frame_bandwidth = rc->max_frame_bandwidth;
       // Update qp-related quantities.
       lrc->worst_quality = rc->worst_quality;
@@ -316,8 +318,9 @@ void vp9_update_temporal_layer_framerate(VP9_COMP *const cpi) {
   const int tl = svc->temporal_layer_id;
 
   lc->framerate = cpi->framerate / oxcf->ts_rate_decimator[tl];
-  lrc->avg_frame_bandwidth =
-      (int)VPXMIN(lc->target_bandwidth / lc->framerate, INT_MAX);
+  const double avg_frame_bandwidth =
+      round(lc->target_bandwidth / lc->framerate);
+  lrc->avg_frame_bandwidth = (int)VPXMIN(avg_frame_bandwidth, INT_MAX);
   lrc->max_frame_bandwidth = cpi->rc.max_frame_bandwidth;
   // Update the average layer frame size (non-cumulative per-frame-bw).
   if (tl == 0) {
@@ -339,7 +342,8 @@ void vp9_update_spatial_layer_framerate(VP9_COMP *const cpi, double framerate) {
   RATE_CONTROL *const lrc = &lc->rc;
 
   lc->framerate = framerate;
-  const double avg_frame_bandwidth = lc->target_bandwidth / lc->framerate;
+  const double avg_frame_bandwidth =
+      round(lc->target_bandwidth / lc->framerate);
   lrc->avg_frame_bandwidth = (int)VPXMIN(avg_frame_bandwidth, INT_MAX);
   const int64_t vbr_min_bits =
       (int64_t)lrc->avg_frame_bandwidth * oxcf->two_pass_vbrmin_section / 100;
@@ -1338,7 +1342,7 @@ void vp9_svc_adjust_avg_frame_qindex(VP9_COMP *const cpi) {
   // Reset it for all temporal layers on base spatial layer.
   if (cm->frame_type == KEY_FRAME && cpi->oxcf.rc_mode == VPX_CBR &&
       !svc->simulcast_mode &&
-      rc->projected_frame_size > 3 * rc->avg_frame_bandwidth) {
+      rc->projected_frame_size / 3 > rc->avg_frame_bandwidth) {
     int tl;
     rc->avg_frame_qindex[INTER_FRAME] =
         VPXMAX(rc->avg_frame_qindex[INTER_FRAME],

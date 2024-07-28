@@ -4098,16 +4098,14 @@ static int encode_without_recode_loop(VP9_COMP *cpi, size_t *size,
 #endif
 
   // Scene detection is always used for VBR mode or screen-content case.
-  // For other cases (e.g., CBR mode) use it for 5 <= speed < 8 for now
-  // (need to check encoding time cost for doing this for speed 8).
+  // For other cases (e.g., CBR mode) use it for 5 <= speed.
   cpi->rc.high_source_sad = 0;
   cpi->rc.hybrid_intra_scene_change = 0;
   cpi->rc.re_encode_maxq_scene_change = 0;
   if (cm->show_frame && cpi->oxcf.mode == REALTIME &&
       !cpi->disable_scene_detection_rtc_ratectrl &&
       (cpi->oxcf.rc_mode == VPX_VBR ||
-       cpi->oxcf.content == VP9E_CONTENT_SCREEN ||
-       (cpi->oxcf.speed >= 5 && cpi->oxcf.speed < 8)))
+       cpi->oxcf.content == VP9E_CONTENT_SCREEN || cpi->oxcf.speed >= 5))
     vp9_scene_detection_onepass(cpi);
 
   if (svc->spatial_layer_id == svc->first_spatial_layer_to_encode) {
@@ -6335,6 +6333,25 @@ void vp9_init_encode_frame_result(ENCODE_FRAME_RESULT *encode_frame_result) {
 #endif  // CONFIG_RATE_CTRL
 }
 
+// Returns if TPL stats need to be calculated.
+static INLINE int should_run_tpl(VP9_COMP *cpi, int gf_group_index) {
+  RATE_CONTROL *const rc = &cpi->rc;
+  if (!cpi->sf.enable_tpl_model) return 0;
+  // If there is an ARF for this GOP, TPL stats is always calculated.
+  if (gf_group_index == 1 &&
+      cpi->twopass.gf_group.update_type[gf_group_index] == ARF_UPDATE)
+    return 1;
+  // If this GOP doesn't have an ARF, TPL stats is still calculated, only when
+  // external rate control is used.
+  if (cpi->ext_ratectrl.ready &&
+      cpi->ext_ratectrl.funcs.send_tpl_gop_stats != NULL &&
+      rc->frames_till_gf_update_due == rc->baseline_gf_interval &&
+      cpi->twopass.gf_group.update_type[1] != ARF_UPDATE) {
+    return 1;
+  }
+  return 0;
+}
+
 int vp9_get_compressed_data(VP9_COMP *cpi, unsigned int *frame_flags,
                             size_t *size, uint8_t *dest, size_t dest_size,
                             int64_t *time_stamp, int64_t *time_end, int flush,
@@ -6595,9 +6612,7 @@ int vp9_get_compressed_data(VP9_COMP *cpi, unsigned int *frame_flags,
 #if CONFIG_COLLECT_COMPONENT_TIMING
   start_timing(cpi, setup_tpl_stats_time);
 #endif
-  if (gf_group_index == 1 &&
-      cpi->twopass.gf_group.update_type[gf_group_index] == ARF_UPDATE &&
-      cpi->sf.enable_tpl_model) {
+  if (should_run_tpl(cpi, gf_group_index)) {
     vp9_init_tpl_buffer(cpi);
     vp9_estimate_tpl_qp_gop(cpi);
     vp9_setup_tpl_stats(cpi);
@@ -6971,7 +6986,6 @@ int vp9_set_size_literal(VP9_COMP *cpi, unsigned int width,
     cm->width = width;
     if (cm->width > cpi->initial_width) {
       cm->width = cpi->initial_width;
-      printf("Warning: Desired width too large, changed to %d\n", cm->width);
     }
   }
 
@@ -6979,7 +6993,6 @@ int vp9_set_size_literal(VP9_COMP *cpi, unsigned int width,
     cm->height = height;
     if (cm->height > cpi->initial_height) {
       cm->height = cpi->initial_height;
-      printf("Warning: Desired height too large, changed to %d\n", cm->height);
     }
   }
   assert(cm->width <= cpi->initial_width);
