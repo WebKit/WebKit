@@ -21,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-clip-rule-004-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-content-clip-004-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-ellipse-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-green-square-001-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-invisible-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-negative-scale-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-on-marker-001-ref.svg

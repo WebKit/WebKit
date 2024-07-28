@@ -14,11 +14,23 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-empty-container-with-filter-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-empty-container-with-filter.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-invalid-reference-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-invalid-reference.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-negative-scale-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-negative-scale.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-text-001-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-text-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-type-001-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-type-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-type-002-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-type-002.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-type-003-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-type-003.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-with-filter-clipped-to-region-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-with-filter-clipped-to-region.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-with-filter-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-with-filter.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-with-rotation-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-with-rotation.svg

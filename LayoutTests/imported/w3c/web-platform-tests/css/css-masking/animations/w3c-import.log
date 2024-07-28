@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/animations/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/animations/clip-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/animations/clip-path-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/animations/clip-path-interpolation-001.html
