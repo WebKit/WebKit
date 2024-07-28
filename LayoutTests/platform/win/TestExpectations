@@ -709,6 +709,9 @@ http/tests/cache-storage [ Skip ]
 http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
 http/tests/canvas/color-fonts [ Skip ]
 
+# Flaky GC test 
+webkit.org/b/277234 http/tests/canvas/ctx.2d-canvas-style-no-document-leak.html [ Skip ] # Pass Failure
+
 http/wpt/clear-site-data/partitioning.html [ Skip ] # Not supported yet. This test is slow.
 
 http/tests/contentdispositionattachmentsandbox [ Skip ]
@@ -780,8 +783,6 @@ http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
 http/tests/misc/form-submit-file-cross-site.html [ Skip ]
 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 http/tests/misc/timer-vs-loading.html [ Skip ]
-http/tests/misc/webtiming-cross-origin-and-back1.html [ Failure Pass ]
-http/tests/misc/webtiming-no-origin.html [ Failure Pass ]
 http/tests/misc/willCacheResponse-delegate-callback.html [ Failure ]
 
 http/tests/model [ Skip ]
@@ -797,9 +798,6 @@ http/tests/navigation/javascriptlink-frames.html [ Skip ] # Missing
 http/tests/navigation/postredirect-basic.html [ Skip ] # Missing
 http/tests/navigation/postredirect-goback1.html [ Skip ] # Missing
 http/tests/navigation/page-cache-mediastream.html [ Skip ] # Timeout
-
-webkit.org/b/269223 http/tests/navigation/ping-attribute/area-cross-origin-from-https-UpgradeMixedContent.html [ Pass Failure ]
-webkit.org/b/269223 http/tests/navigation/ping-attribute/area-cross-origin-from-https.html [ Pass Failure ]
 
 http/tests/notifications [ Skip ]
 http/tests/paymentrequest [ Skip ]
@@ -908,8 +906,6 @@ http/tests/security/xss-DENIED-xsl-external-entity.xml [ Skip ] # Failure
 
 webkit.org/b/255748 [ Debug ] http/tests/security/navigate-when-restoring-cached-page.html [ Skip ] # Crash
 webkit.org/b/255748 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ] # Crash
-
-http/tests/security/cached-cross-origin-preloaded-css-stylesheet.html [ Failure Pass ]
 
 http/tests/ssl/media-stream [ Skip ]
 
@@ -1320,6 +1316,8 @@ webkit.org/b/159755 fast/text/emoji-gender-9.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/199186 fonts/use-typo-metrics-1.html [ Skip ]
 
+# content-visibility:auto is flaky
+webkit.org/b/277235 fast/dynamic/content-visibility-crash-with-continuation-and-table.html [ Skip ] # Pass Failure
 
 webkit.org/b/227189 fast/forms/checkbox-and-pseudo.html [ Skip ] # Require expect file for dumped render tree.
 
@@ -1329,6 +1327,8 @@ webkit.org/b/238644 fast/events/mouse-click-events.html [ Skip ]
 
 # Makes a subsequent test an assertion failure crash
 webkit.org/b/277121 [ Debug ] fast/events/event-handler-detached-document.html
+
+webkit.org/b/168136 performance-api/performance-observer-periodic.html [ Pass Failure ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # TEMPORARY SKIPS -- these areas still need to be addressed individually
