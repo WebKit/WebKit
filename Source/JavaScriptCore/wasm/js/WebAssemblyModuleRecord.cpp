@@ -268,7 +268,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                             if (!global.type.isNullable() && value.isNull())
                                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "non-null externref cannot be null"_s)));
                             m_instance->setGlobal(import.kindIndex, value);
-                        } else if (Wasm::isFuncref(declaredGlobalType) || (!Options::useWebAssemblyGC() && isRefWithTypeIndex(declaredGlobalType))) {
+                        } else if (Wasm::isFuncref(declaredGlobalType) || (!Options::useWasmGC() && isRefWithTypeIndex(declaredGlobalType))) {
                             WebAssemblyFunction* wasmFunction = nullptr;
                             WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
                             value = globalValue->global()->get(globalObject);
@@ -287,7 +287,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
 
                             m_instance->setGlobal(import.kindIndex, value);
                         } else {
-                            RELEASE_ASSERT(Options::useWebAssemblyGC());
+                            RELEASE_ASSERT(Options::useWasmGC());
                             value = Wasm::internalizeExternref(globalValue->global()->get(globalObject));
                             if (!Wasm::TypeInformation::castReference(value, declaredGlobalType.isNullable(), declaredGlobalType.index))
                                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "Argument value did not match the reference type"_s)));
@@ -332,7 +332,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                             if (!globalType.isNullable() && value.isNull())
                                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "must be a non-null value"_s)));
                             m_instance->setGlobal(import.kindIndex, value);
-                        } else if (Wasm::isFuncref(globalType) || (!Options::useWebAssemblyGC() && Wasm::isRefWithTypeIndex(globalType))) {
+                        } else if (Wasm::isFuncref(globalType) || (!Options::useWasmGC() && Wasm::isRefWithTypeIndex(globalType))) {
                             WebAssemblyFunction* wasmFunction = nullptr;
                             WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
                             if (!isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction) && (!globalType.isNullable() || !value.isNull())) {
@@ -349,7 +349,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
 
                             m_instance->setGlobal(import.kindIndex, value);
                         } else {
-                            RELEASE_ASSERT(Options::useWebAssemblyGC());
+                            RELEASE_ASSERT(Options::useWasmGC());
                             value = Wasm::internalizeExternref(value);
                             if (!Wasm::TypeInformation::castReference(value, global.type.isNullable(), global.type.index))
                                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "Argument value did not match the reference type"_s)));
@@ -592,7 +592,7 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
 
                 if (global.initializationType == Wasm::GlobalInformation::FromGlobalImport) {
                     ASSERT(global.initialBits.initialBitsOrImportNumber < m_instance->module().moduleInformation().globals.size());
-                    ASSERT_IMPLIES(!Options::useWebAssemblyGC(), global.initialBits.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
+                    ASSERT_IMPLIES(!Options::useWasmGC(), global.initialBits.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
                     initialVector = m_instance->loadV128Global(global.initialBits.initialBitsOrImportNumber);
                 } else if (global.initializationType == Wasm::GlobalInformation::FromExpression)
                     initialVector = global.initialBits.initialVector;
@@ -619,7 +619,7 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
             uint64_t initialBits = 0;
             if (global.initializationType == Wasm::GlobalInformation::FromGlobalImport) {
                 ASSERT(global.initialBits.initialBitsOrImportNumber < m_instance->module().moduleInformation().globals.size());
-                ASSERT_IMPLIES(!Options::useWebAssemblyGC(), global.initialBits.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
+                ASSERT_IMPLIES(!Options::useWasmGC(), global.initialBits.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
                 initialBits = m_instance->loadI64Global(global.initialBits.initialBitsOrImportNumber);
             } else if (global.initializationType == Wasm::GlobalInformation::FromRefFunc) {
                 ASSERT(global.initialBits.initialBitsOrImportNumber < moduleInformation.functionIndexSpaceSize());

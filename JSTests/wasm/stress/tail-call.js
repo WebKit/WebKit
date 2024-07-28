@@ -1,5 +1,5 @@
 //@ skip
-//@ requireOptions("--useWebAssemblyTailCalls=true", "--maximumWebAssemblyCalleeSizeForInlining=0")
+//@ requireOptions("--useWasmTailCalls=true", "--maximumWasmCalleeSizeForInlining=0")
 import * as assert from "../assert.js";
 import Builder from "../Builder.js";
 

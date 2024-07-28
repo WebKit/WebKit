@@ -1,4 +1,4 @@
-//@ requireOptions("--useWebAssemblySIMD=1")
+//@ requireOptions("--useWasmSIMD=1")
 //@ skip if !$isSIMDPlatform
 
 /*

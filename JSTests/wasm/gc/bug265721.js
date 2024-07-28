@@ -1,4 +1,4 @@
-//@ runWebAssemblySuite("--useWebAssemblyTypedFunctionReferences=true", "--useWebAssemblyGC=true")
+//@ runWebAssemblySuite("--useWasmTypedFunctionReferences=true", "--useWasmGC=true")
 
 // Test for https://bugs.webkit.org/show_bug.cgi?id=265721
 

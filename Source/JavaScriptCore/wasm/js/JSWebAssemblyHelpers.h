@@ -157,7 +157,7 @@ ALWAYS_INLINE JSValue defaultValueForReferenceType(const Wasm::Type type)
     ASSERT(Wasm::isRefType(type));
     if (Wasm::isExternref(type))
         return jsUndefined();
-    ASSERT_IMPLIES(!Options::useWebAssemblyTypedFunctionReferences(), Wasm::isFuncref(type));
+    ASSERT_IMPLIES(!Options::useWasmTypedFunctionReferences(), Wasm::isFuncref(type));
     return jsNull();
 }
 
@@ -209,7 +209,7 @@ ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Typ
         if (Wasm::isExternref(type)) {
             if (!type.isNullable() && value.isNull())
                 return throwVMTypeError(globalObject, scope, "Non-null Externref cannot be null"_s);
-        } else if (Wasm::isFuncref(type) || (!Options::useWebAssemblyGC() && isRefWithTypeIndex(type))) {
+        } else if (Wasm::isFuncref(type) || (!Options::useWasmGC() && isRefWithTypeIndex(type))) {
             WebAssemblyFunction* wasmFunction = nullptr;
             WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
             if (!isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction) && (!type.isNullable() || !value.isNull()))
@@ -221,7 +221,7 @@ ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Typ
                     return throwVMTypeError(globalObject, scope, "Argument function did not match the reference type"_s);
             }
         } else {
-            ASSERT(Options::useWebAssemblyGC());
+            ASSERT(Options::useWasmGC());
             value = Wasm::internalizeExternref(value);
             if (!Wasm::TypeInformation::castReference(value, type.isNullable(), type.index)) {
                 // FIXME: provide a better error message here

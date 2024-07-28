@@ -1,0 +1,36 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/generate-object-fit-and-position-canvas-tests.sh
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/generate-object-fit-png-tests.sh
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/generate-object-fit-svg-tests.sh
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/generate-object-position-png-tests.sh
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/generate-object-position-svg-tests.sh
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/generate_object_view_box_tests.py
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/object-view-box-fit-contain-ref-template.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/object-view-box-fit-contain-template.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/object-view-box-fit-cover-ref-template.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/object-view-box-fit-cover-template.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/object-view-box-fit-fill-ref-template.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/object-view-box-fit-fill-template.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/object-view-box-fit-none-ref-template.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/object-view-box-fit-none-template.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/object-view-box-writing-mode-ref-template.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/object-view-box-writing-mode-template.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/template-object-fit-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/template-object-fit-test.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/template-object-position-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tools/template-object-position-test.html

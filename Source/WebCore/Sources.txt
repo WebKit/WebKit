@@ -825,10 +825,11 @@ crypto/keys/CryptoKeyOKP.cpp
 crypto/keys/CryptoKeyRSA.cpp
 crypto/keys/CryptoKeyRSAComponents.cpp
 crypto/keys/CryptoKeyRaw.cpp
-css/BasicShapeFunctions.cpp
+css/BasicShapeConversion.cpp
 css/CSSAnchorValue.cpp
 css/CSSAspectRatioValue.cpp
 css/CSSBackgroundRepeatValue.cpp
+css/CSSShapeSegmentValue.cpp
 css/CSSBasicShapes.cpp
 css/CSSBorderImage.cpp
 css/CSSBorderImageSliceValue.cpp
@@ -1178,6 +1179,7 @@ dom/InlineStyleSheetOwner.cpp
 dom/InputEvent.cpp
 dom/InternalObserver.cpp
 dom/InternalObserverFromScript.cpp
+dom/InternalObserverTake.cpp
 dom/KeyboardEvent.cpp
 dom/LiveNodeList.cpp
 dom/LoadableClassicScript.cpp

@@ -1243,6 +1243,7 @@ bool ElementTargetingController::adjustVisibility(Vector<TargetedElementAdjustme
         else
             adjustedElement->invalidateStyle();
         m_adjustedElements.add(element);
+        m_documentsAffectedByVisibilityAdjustment.add(element->document());
     }
 
     if (changed)
@@ -1375,6 +1376,7 @@ void ElementTargetingController::adjustVisibilityInRepeatedlyTargetedRegions(Doc
         else
             adjustedElement->invalidateStyle();
         m_adjustedElements.add(element);
+        m_documentsAffectedByVisibilityAdjustment.add(element->document());
     }
 
     dispatchVisibilityAdjustmentStateDidChange();
@@ -1434,6 +1436,7 @@ void ElementTargetingController::applyVisibilityAdjustmentFromSelectors()
             element->invalidateStyle();
 
         m_adjustedElements.add(*element);
+        m_documentsAffectedByVisibilityAdjustment.add(element->document());
 
         if (auto clientRect = inflatedClientRectForAdjustmentRegionTracking(*element, viewportArea))
             adjustmentRegion.unite(*clientRect);
@@ -1538,6 +1541,11 @@ void ElementTargetingController::reset()
     cleanUpAdjustmentClientRects();
 }
 
+void ElementTargetingController::didChangeMainDocument(Document* newDocument)
+{
+    m_shouldRecomputeAdjustedElements = newDocument && m_documentsAffectedByVisibilityAdjustment.contains(*newDocument);
+}
+
 bool ElementTargetingController::resetVisibilityAdjustments(const Vector<TargetedElementIdentifiers>& identifiers)
 {
     RefPtr page = m_page.get();
@@ -1633,7 +1641,7 @@ bool ElementTargetingController::resetVisibilityAdjustments(const Vector<Targete
     return changed;
 }
 
-uint64_t ElementTargetingController::numberOfVisibilityAdjustmentRects() const
+uint64_t ElementTargetingController::numberOfVisibilityAdjustmentRects()
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -1648,6 +1656,8 @@ uint64_t ElementTargetingController::numberOfVisibilityAdjustmentRects() const
         return 0;
 
     document->updateLayoutIgnorePendingStylesheets();
+
+    recomputeAdjustedElementsIfNeeded();
 
     Vector<FloatRect> clientRects;
     clientRects.reserveInitialCapacity(m_adjustedElements.computeSize());
@@ -1690,6 +1700,41 @@ uint64_t ElementTargetingController::numberOfVisibilityAdjustmentRects() const
     }
 
     return numberOfParentedEmptyOrNonRenderedElements + numberOfRects;
+}
+
+void ElementTargetingController::recomputeAdjustedElementsIfNeeded()
+{
+    if (!m_shouldRecomputeAdjustedElements)
+        return;
+
+    m_shouldRecomputeAdjustedElements = false;
+
+    RefPtr mainDocument = this->mainDocument();
+    if (!mainDocument)
+        return;
+
+    RefPtr documentElement = mainDocument->documentElement();
+    if (!documentElement)
+        return;
+
+    for (Ref element : descendantsOfType<Element>(*documentElement)) {
+        auto adjustment = element->visibilityAdjustment();
+        if (adjustment.isEmpty())
+            continue;
+
+        if (adjustment.contains(VisibilityAdjustment::Subtree))
+            m_adjustedElements.add(element);
+
+        if (adjustment.contains(VisibilityAdjustment::AfterPseudo)) {
+            if (RefPtr afterPseudo = element->afterPseudoElement())
+                m_adjustedElements.add(*afterPseudo);
+        }
+
+        if (adjustment.contains(VisibilityAdjustment::BeforePseudo)) {
+            if (RefPtr beforePseudo = element->beforePseudoElement())
+                m_adjustedElements.add(*beforePseudo);
+        }
+    }
 }
 
 void ElementTargetingController::cleanUpAdjustmentClientRects()

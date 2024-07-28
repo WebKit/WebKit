@@ -185,7 +185,7 @@ void EntryPlan::compileFunctions(CompilationEffort effort)
 
     size_t bytesCompiled = 0;
     while (true) {
-        if (effort == Partial && bytesCompiled >= Options::webAssemblyPartialCompileLimit())
+        if (effort == Partial && bytesCompiled >= Options::wasmPartialCompileLimit())
             return;
 
         uint32_t functionIndex;
@@ -203,7 +203,7 @@ void EntryPlan::compileFunctions(CompilationEffort effort)
             functionIndexEnd = m_numberOfFunctions;
             for (uint32_t index = functionIndex; index < m_numberOfFunctions; ++index) {
                 bytesCompiled += m_moduleInformation->functions[index].data.size();
-                if (bytesCompiled >= Options::webAssemblyPartialCompileLimit()) {
+                if (bytesCompiled >= Options::wasmPartialCompileLimit()) {
                     functionIndexEnd = index + 1;
                     break;
                 }

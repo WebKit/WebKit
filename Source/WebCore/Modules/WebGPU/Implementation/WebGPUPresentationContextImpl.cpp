@@ -131,16 +131,12 @@ void PresentationContextImpl::present(bool)
     m_currentTexture = nullptr;
 }
 
-void PresentationContextImpl::getMetalTextureAsNativeImage(uint32_t bufferIndex, Function<void(RefPtr<WebCore::NativeImage>&&)>&& completion)
+RefPtr<WebCore::NativeImage> PresentationContextImpl::getMetalTextureAsNativeImage(uint32_t bufferIndex)
 {
-    if (auto* surface = m_swapChain.get()) {
-        wgpuSwapChainGetTextureAsNativeImage(surface, bufferIndex, [completion = WTFMove(completion)](RetainPtr<CGImageRef>&& image) mutable {
-            completion(WebCore::NativeImage::create(WTFMove(image)));
-        });
-        return;
-    }
+    if (auto* surface = m_swapChain.get())
+        return WebCore::NativeImage::create(wgpuSwapChainGetTextureAsNativeImage(surface, bufferIndex));
 
-    completion(nullptr);
+    return nullptr;
 }
 
 } // namespace WebCore::WebGPU

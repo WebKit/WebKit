@@ -1,5 +1,5 @@
 //@ skip
-//@ requireOptions("--useWebAssemblyTailCalls=true")
+//@ requireOptions("--useWasmTailCalls=true")
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
 

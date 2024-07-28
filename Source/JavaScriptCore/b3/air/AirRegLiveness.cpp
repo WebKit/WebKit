@@ -70,7 +70,7 @@ RegLiveness::RegLiveness(Code& code)
             
         block->last().forEach<Reg>(
             [&] (Reg& reg, Arg::Role role, Bank, Width width) {
-                ASSERT(width <= Width64 || Options::useWebAssemblySIMD());
+                ASSERT(width <= Width64 || Options::useWasmSIMD());
                 if (Arg::isLateUse(role))
                     liveAtTail.add(reg, width);
             });

@@ -584,18 +584,6 @@ public:
         }
     }
 
-    void lshift64(TrustedImm32 imm, RegisterID shiftAmount, RegisterID dest)
-    {
-        if (shiftAmount == dest) {
-            move(imm, scratchRegister());
-            lshift64(shiftAmount, scratchRegister());
-            move(scratchRegister(), dest);
-        } else {
-            move(imm, dest);
-            lshift64(shiftAmount, dest);
-        }
-    }
-
     void lshift64(Address src, RegisterID shiftAmount, RegisterID dest)
     {
         if (shiftAmount == dest) {
@@ -1420,14 +1408,14 @@ public:
     void storeVector(FPRegisterID src, Address address)
     {
         ASSERT(supportsAVX());
-        ASSERT(Options::useWebAssemblySIMD());
+        ASSERT(Options::useWasmSIMD());
         m_assembler.vmovups_rm(src, address.offset, address.base);
     }
     
     void storeVector(FPRegisterID src, BaseIndex address)
     {
         ASSERT(supportsAVX());
-        ASSERT(Options::useWebAssemblySIMD());
+        ASSERT(Options::useWasmSIMD());
         m_assembler.vmovups_rm(src, address.offset, address.base, address.index, address.scale);
     }
 

@@ -31,6 +31,7 @@
 #include "Exception.h"
 #include "ExceptionCode.h"
 #include "InternalObserverFromScript.h"
+#include "InternalObserverTake.h"
 #include "JSSubscriptionObserverCallback.h"
 #include "SubscribeOptions.h"
 #include "Subscriber.h"
@@ -42,7 +43,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Observable);
 
-ExceptionOr<Ref<Observable>> Observable::create(Ref<SubscriberCallback> callback)
+Ref<Observable> Observable::create(Ref<SubscriberCallback> callback)
 {
     return adoptRef(*new Observable(callback));
 }
@@ -91,6 +92,11 @@ void Observable::subscribeInternal(ScriptExecutionContext& context, Ref<Internal
             subscriber->error(previousException->value());
         }
     }
+}
+
+Ref<Observable> Observable::take(ScriptExecutionContext& context, uint64_t amount)
+{
+    return create(createSubscriberCallbackTake(context, *this, amount));
 }
 
 Observable::Observable(Ref<SubscriberCallback> callback)

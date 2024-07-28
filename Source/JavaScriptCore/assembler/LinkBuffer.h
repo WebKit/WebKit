@@ -451,7 +451,7 @@ private:
     FINALIZE_CODE_IF(JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpRegExpDisassembly(), linkBufferReference, resultPtrTag, simpleName, dataLogFArgumentsForHeading)
 
 #define FINALIZE_WASM_CODE(linkBufferReference, resultPtrTag, simpleName, ...)  \
-    FINALIZE_CODE_IF((JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpWebAssemblyDisassembly()), linkBufferReference, resultPtrTag, simpleName, __VA_ARGS__)
+    FINALIZE_CODE_IF((JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpWasmDisassembly()), linkBufferReference, resultPtrTag, simpleName, __VA_ARGS__)
 
 #define FINALIZE_WASM_CODE_FOR_MODE(mode, linkBufferReference, resultPtrTag, simpleName, ...)  \
     FINALIZE_CODE_IF(shouldDumpDisassemblyFor(mode), linkBufferReference, resultPtrTag, simpleName, __VA_ARGS__)

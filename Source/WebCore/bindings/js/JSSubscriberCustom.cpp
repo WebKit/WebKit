@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSSubscriber.h"
 
+#include "VoidCallback.h"
+
 namespace WebCore {
 
 template<typename Visitor>

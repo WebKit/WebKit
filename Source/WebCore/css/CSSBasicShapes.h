@@ -30,6 +30,7 @@
 #pragma once
 
 #include "CSSValueList.h"
+#include "CSSValuePair.h"
 #include "SVGPathByteStream.h"
 #include <wtf/UniqueRef.h>
 
@@ -193,7 +194,7 @@ private:
 
 class CSSPolygonValue final : public CSSValueContainingVector {
 public:
-    static Ref<CSSPolygonValue> create(CSSValueListBuilder values, WindRule);
+    static Ref<CSSPolygonValue> create(CSSValueListBuilder&& values, WindRule);
 
     WindRule windRule() const { return m_windRule; }
 
@@ -201,7 +202,7 @@ public:
     bool equals(const CSSPolygonValue&) const;
 
 private:
-    explicit CSSPolygonValue(CSSValueListBuilder, WindRule);
+    explicit CSSPolygonValue(CSSValueListBuilder&&, WindRule);
 
     WindRule m_windRule { };
 };
@@ -299,7 +300,6 @@ public:
     String customCSSText() const;
     bool equals(const CSSXywhValue&) const;
 
-
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
     {
         if (func(m_insetX.get()) == IterationStatus::Done)
@@ -360,6 +360,25 @@ private:
     WindRule m_windRule { };
 };
 
+class CSSShapeValue final : public CSSValueContainingVector {
+public:
+    static Ref<CSSShapeValue> create(WindRule, Ref<CSSValuePair>&& fromCoordinates, CSSValueListBuilder&& shapeSegments);
+
+    WindRule windRule() const { return m_windRule; }
+
+    String customCSSText() const;
+    bool equals(const CSSShapeValue&) const;
+
+    const CSSValue& fromCoordinates() const { return m_fromCoordinates; }
+    Ref<CSSValue> protectedFromCoordinates() const { return m_fromCoordinates; }
+
+private:
+    CSSShapeValue(WindRule, Ref<CSSValuePair>&& fromCoordinates, CSSValueListBuilder&& shapeSegments);
+
+    Ref<CSSValue> m_fromCoordinates;
+    WindRule m_windRule { WindRule::NonZero };
+};
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSCircleValue, isCircle())
@@ -368,4 +387,5 @@ SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSInsetShapeValue, isInsetShape())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSPolygonValue, isPolygon())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSPathValue, isPath())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSRectShapeValue, isRectShape())
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSShapeValue, isShape())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSXywhValue, isXywhShape())

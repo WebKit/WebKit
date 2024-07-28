@@ -9,19 +9,30 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-mask-image
+None
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-image-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-position-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-position.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-properties-border-radius-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-properties-border-radius.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-properties-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-properties.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-border-image-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-border-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-cursor.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-default-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-default.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-exif-png-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-exif-png-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-exif-png-3-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-exif-png-3.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-exif-png-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-exif-png.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-composited-dynamic1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-composited-dynamic1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-composited-dynamic2-expected.html
@@ -39,6 +50,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-embedded-content.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-iframe-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-img-object-fit-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-img-object-fit.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-list-style-image-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-list-style-image.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-mask-image-expected.html
@@ -46,6 +61,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-computed-style.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-content-images-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-content-images.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-cross-origin-canvas-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-cross-origin-canvas.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-cross-origin-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-cross-origin-svg-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-cross-origin-svg.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-cross-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-image-document-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-image-document.html

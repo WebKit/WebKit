@@ -130,6 +130,8 @@ bool CSSCircleValue::equals(const CSSCircleValue& other) const
         && compareCSSValuePtr(m_radius, other.m_radius);
 }
 
+// MARK: -
+
 CSSEllipseValue::CSSEllipseValue(RefPtr<CSSValue>&& radiusX, RefPtr<CSSValue>&& radiusY, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY)
     : CSSValue(EllipseClass)
     , m_radiusX(WTFMove(radiusX))
@@ -198,6 +200,8 @@ bool CSSEllipseValue::equals(const CSSEllipseValue& other) const
         && compareCSSValuePtr(m_radiusX, other.m_radiusX)
         && compareCSSValuePtr(m_radiusY, other.m_radiusY);
 }
+
+// MARK: -
 
 CSSXywhValue::CSSXywhValue(Ref<CSSValue>&& insetX, Ref<CSSValue>&& insetY, Ref<CSSValue>&& width, Ref<CSSValue>&& height, RefPtr<CSSValue>&& topLeftRadius, RefPtr<CSSValue>&& topRightRadius, RefPtr<CSSValue>&& bottomRightRadius, RefPtr<CSSValue>&& bottomLeftRadius)
     : CSSValue(XywhShapeClass)
@@ -317,6 +321,8 @@ String CSSXywhValue::customCSSText() const
         bottomRightRadiusWidth, bottomRightRadiusHeight, bottomLeftRadiusWidth, bottomLeftRadiusHeight);
 }
 
+// MARK: -
+
 CSSRectShapeValue::CSSRectShapeValue(Ref<CSSValue>&& top, Ref<CSSValue>&& right, Ref<CSSValue>&& bottom, Ref<CSSValue>&& left, RefPtr<CSSValue>&& topLeftRadius, RefPtr<CSSValue>&& topRightRadius, RefPtr<CSSValue>&& bottomRightRadius, RefPtr<CSSValue>&& bottomLeftRadius)
     : CSSValue(RectShapeClass)
     , m_top(WTFMove(top))
@@ -383,6 +389,8 @@ String CSSRectShapeValue::customCSSText() const
         bottomRightRadiusWidth, bottomRightRadiusHeight, bottomLeftRadiusWidth, bottomLeftRadiusHeight);
 }
 
+// MARK: -
+
 CSSPathValue::CSSPathValue(SVGPathByteStream data, WindRule rule)
     : CSSValue(PathClass)
     , m_pathData(WTFMove(data))
@@ -414,13 +422,15 @@ bool CSSPathValue::equals(const CSSPathValue& other) const
     return m_pathData == other.m_pathData && m_windRule == other.m_windRule;
 }
 
-CSSPolygonValue::CSSPolygonValue(CSSValueListBuilder values, WindRule rule)
+// MARK: -
+
+CSSPolygonValue::CSSPolygonValue(CSSValueListBuilder&& values, WindRule rule)
     : CSSValueContainingVector(PolygonClass, SpaceSeparator, WTFMove(values))
     , m_windRule(rule)
 {
 }
 
-Ref<CSSPolygonValue> CSSPolygonValue::create(CSSValueListBuilder values, WindRule rule)
+Ref<CSSPolygonValue> CSSPolygonValue::create(CSSValueListBuilder&& values, WindRule rule)
 {
     return adoptRef(*new CSSPolygonValue(WTFMove(values), rule));
 }
@@ -443,6 +453,8 @@ bool CSSPolygonValue::equals(const CSSPolygonValue& other) const
 {
     return m_windRule == other.m_windRule && itemsEqual(other);
 }
+
+// MARK: -
 
 CSSInsetShapeValue::CSSInsetShapeValue(Ref<CSSValue>&& top, Ref<CSSValue>&& right, Ref<CSSValue>&& bottom, Ref<CSSValue>&& left, RefPtr<CSSValue>&& topLeftRadius, RefPtr<CSSValue>&& topRightRadius, RefPtr<CSSValue>&& bottomRightRadius, RefPtr<CSSValue>&& bottomLeftRadius)
     : CSSValue(InsetShapeClass)
@@ -520,6 +532,32 @@ bool CSSInsetShapeValue::equals(const CSSInsetShapeValue& other) const
         && compareCSSValuePtr(m_topRightRadius, other.m_topRightRadius)
         && compareCSSValuePtr(m_bottomRightRadius, other.m_bottomRightRadius)
         && compareCSSValuePtr(m_bottomLeftRadius, other.m_bottomLeftRadius);
+}
+
+// MARK: -
+
+Ref<CSSShapeValue> CSSShapeValue::create(WindRule windRule, Ref<CSSValuePair>&& fromCoordinates, CSSValueListBuilder&& shapeSegments)
+{
+    return adoptRef(*new CSSShapeValue(windRule, WTFMove(fromCoordinates), WTFMove(shapeSegments)));
+}
+
+CSSShapeValue::CSSShapeValue(WindRule windRule, Ref<CSSValuePair>&& fromCoordinates, CSSValueListBuilder&& shapeCommands)
+    : CSSValueContainingVector(ShapeClass, CommaSeparator, WTFMove(shapeCommands))
+    , m_fromCoordinates(WTFMove(fromCoordinates))
+    , m_windRule(windRule)
+{
+}
+
+String CSSShapeValue::customCSSText() const
+{
+    ASSERT_NOT_IMPLEMENTED_YET();
+    return ""_s;
+}
+
+bool CSSShapeValue::equals(const CSSShapeValue&) const
+{
+    ASSERT_NOT_IMPLEMENTED_YET();
+    return false;
 }
 
 } // namespace WebCore

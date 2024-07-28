@@ -1,0 +1,7 @@
+
+PASS e.style['mask-composite'] = "add" should set the property value
+PASS e.style['mask-composite'] = "subtract" should set the property value
+PASS e.style['mask-composite'] = "intersect" should set the property value
+PASS e.style['mask-composite'] = "exclude" should set the property value
+PASS e.style['mask-composite'] = "add, subtract" should set the property value
+

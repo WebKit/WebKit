@@ -28,13 +28,13 @@
 #include "AbortController.h"
 #include "ActiveDOMObject.h"
 #include "InternalObserver.h"
-#include "ScriptExecutionContext.h"
 #include "ScriptWrappable.h"
-#include "SubscriptionObserverCallback.h"
-#include "VoidCallback.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+class ScriptExecutionContext;
+class VoidCallback;
 
 class Subscriber final : public ActiveDOMObject, public ScriptWrappable, public RefCounted<Subscriber> {
     WTF_MAKE_ISO_ALLOCATED(Subscriber);
@@ -55,15 +55,10 @@ public:
     void reportErrorObject(JSC::JSValue);
 
     // JSCustomMarkFunction; for JSSubscriberCustom
-    Vector<VoidCallback*> teardownCallbacksConcurrently()
-    {
-        Locker locker { m_teardownsLock };
-        return m_teardowns.map([](auto& callback) { return callback.ptr(); });
-    }
-    InternalObserver* observerConcurrently()
-    {
-        return &m_observer.get();
-    }
+    Vector<VoidCallback*> teardownCallbacksConcurrently();
+    InternalObserver* observerConcurrently();
+    void visitAdditionalChildren(JSC::AbstractSlotVisitor&);
+    void visitAdditionalChildren(JSC::SlotVisitor&);
 
     // ActiveDOMObject
     void ref() const final { RefCounted::ref(); }

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Document.h"
 #include "ElementIdentifier.h"
 #include "ElementTargetingTypes.h"
 #include "EventTarget.h"
@@ -59,8 +60,9 @@ public:
     void adjustVisibilityInRepeatedlyTargetedRegions(Document&);
 
     void reset();
+    void didChangeMainDocument(Document* newDocument);
 
-    WEBCORE_EXPORT uint64_t numberOfVisibilityAdjustmentRects() const;
+    WEBCORE_EXPORT uint64_t numberOfVisibilityAdjustmentRects();
     WEBCORE_EXPORT bool resetVisibilityAdjustments(const Vector<TargetedElementIdentifiers>&);
 
     WEBCORE_EXPORT RefPtr<Image> snapshotIgnoringVisibilityAdjustment(ElementIdentifier, ScriptExecutionContextIdentifier);
@@ -87,8 +89,11 @@ private:
 
     Vector<TargetedElementInfo> extractTargets(Vector<Ref<Node>>&&, RefPtr<Element>&& innerElement, bool canIncludeNearbyElements);
 
+    void recomputeAdjustedElementsIfNeeded();
+
     SingleThreadWeakPtr<Page> m_page;
     DeferrableOneShotTimer m_recentAdjustmentClientRectsCleanUpTimer;
+    WeakHashSet<Document, WeakPtrImplWithEventTargetData> m_documentsAffectedByVisibilityAdjustment;
     HashMap<ElementIdentifier, IntRect> m_recentAdjustmentClientRects;
     ApproximateTime m_startTimeForSelectorBasedVisibilityAdjustment;
     Timer m_selectorBasedVisibilityAdjustmentTimer;
@@ -100,6 +105,7 @@ private:
     FloatSize m_viewportSizeForVisibilityAdjustment;
     unsigned m_additionalAdjustmentCount { 0 };
     bool m_didCollectInitialAdjustments { false };
+    bool m_shouldRecomputeAdjustedElements { false };
 };
 
 } // namespace WebCore

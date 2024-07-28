@@ -1,4 +1,4 @@
-//@ requireOptions("--useWebAssemblySIMD=1", "--useBBQJIT=0", "--useWebAssemblyLLInt=1")
+//@ requireOptions("--useWasmSIMD=1", "--useBBQJIT=0", "--useWasmLLInt=1")
 //@ skip if !$isSIMDPlatform or $memoryLimited
 import * as assert from "../assert.js"
 

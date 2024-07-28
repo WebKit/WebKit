@@ -1,4 +1,4 @@
-//@ runWebAssemblySuite("--useWebAssemblyTypedFunctionReferences=true", "--useWebAssemblyGC=true", "--slowPathAllocsBetweenGCs=8")
+//@ runWebAssemblySuite("--useWasmTypedFunctionReferences=true", "--useWasmGC=true", "--slowPathAllocsBetweenGCs=8")
 
 // Test for https://bugs.webkit.org/show_bug.cgi?id=250613
 // Note: without the --slowPathAllocsBetweenGCs=8 flag, this test only fails approximately every 1 in 10 executions.

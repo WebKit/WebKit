@@ -783,7 +783,7 @@ void run(const TestConfig* config)
     RUN(testTrappingStoreElimination());
     RUN(testMoveConstants());
     RUN(testMoveConstantsWithLargeOffsets());
-    if (Options::useWebAssemblySIMD())
+    if (Options::useWasmSIMD())
         RUN(testMoveConstantsSIMD());
     RUN(testPCOriginMapDoesntInsertNops());
     RUN(testPinRegisters());

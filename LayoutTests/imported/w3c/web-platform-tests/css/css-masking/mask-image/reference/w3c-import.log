@@ -15,3 +15,9 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/reference/1x1-black-30-alpha.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/reference/mask-image-data-url-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/reference/mask-image-ib-split-2-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/reference/mask-image-ib-split-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/reference/mask-image-inline-sliced-1-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/reference/mask-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/reference/mask-image-svg-child-will-change-ref.html

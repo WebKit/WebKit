@@ -105,7 +105,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGrow, (JSGlobalObject* globalO
     if (table->table()->isFuncrefTable() && !defaultValue.isNull() && !isWebAssemblyHostFunction(defaultValue))
         return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table.prototype.grow expects the second argument to be null or an instance of WebAssembly.Function"_s);
     else if (table->table()->isExternrefTable() && !isExternref(table->table()->wasmType())) {
-        RELEASE_ASSERT(Options::useWebAssemblyGC());
+        RELEASE_ASSERT(Options::useWasmGC());
         JSValue internalValue = Wasm::internalizeExternref(defaultValue);
         if (!Wasm::TypeInformation::castReference(internalValue, true, table->table()->wasmType().index))
             return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table.prototype.grow failed to cast the second argument to the table's element type"_s);
@@ -175,7 +175,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncSet, (JSGlobalObject* globalOb
         if (isExternref(table->table()->wasmType()))
             table->set(index, value);
         else {
-            RELEASE_ASSERT(Options::useWebAssemblyGC());
+            RELEASE_ASSERT(Options::useWasmGC());
             JSValue internalValue = Wasm::internalizeExternref(value);
             if (!Wasm::TypeInformation::castReference(internalValue, true, table->table()->wasmType().index))
                 return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table.prototype.set failed to cast the second argument to the table's element type"_s);

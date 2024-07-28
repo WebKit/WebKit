@@ -102,22 +102,22 @@ void CompositorIntegrationImpl::withDisplayBufferAsNativeImage(uint32_t bufferIn
     if (!m_renderBuffers.size() || bufferIndex >= m_renderBuffers.size() || !m_device.get())
         return completion(nullptr);
 
-    if (auto* presentationContextPtr = m_presentationContext.get()) {
-        presentationContextPtr->getMetalTextureAsNativeImage(bufferIndex, [bufferIndex, protectedThis = Ref { *this }, completion = WTFMove(completion)] (RefPtr<NativeImage>&& displayImage) mutable {
-            if (!displayImage) {
-                auto& renderBuffer = protectedThis->m_renderBuffers[bufferIndex];
-                RetainPtr<CGContextRef> cgContext = renderBuffer->createPlatformContext();
-                if (cgContext)
-                    displayImage = NativeImage::create(renderBuffer->createImage(cgContext.get()));
-            }
+    RefPtr<NativeImage> displayImage;
+    if (auto* presentationContextPtr = m_presentationContext.get())
+        displayImage = presentationContextPtr->getMetalTextureAsNativeImage(bufferIndex);
 
-            if (!displayImage)
-                return completion(nullptr);
-
-            CGImageSetCachingFlags(displayImage->platformImage().get(), kCGImageCachingTransient);
-            completion(displayImage.get());
-        });
+    if (!displayImage) {
+        auto& renderBuffer = m_renderBuffers[bufferIndex];
+        RetainPtr<CGContextRef> cgContext = renderBuffer->createPlatformContext();
+        if (cgContext)
+            displayImage = NativeImage::create(renderBuffer->createImage(cgContext.get()));
     }
+
+    if (!displayImage)
+        return completion(nullptr);
+
+    CGImageSetCachingFlags(displayImage->platformImage().get(), kCGImageCachingTransient);
+    completion(displayImage.get());
 }
 
 void CompositorIntegrationImpl::paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t)

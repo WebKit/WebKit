@@ -111,7 +111,7 @@ void LLIntPlan::compileFunction(uint32_t functionIndex)
         return;
     }
 
-    if (Options::useWebAssemblyTailCalls()) {
+    if (Options::useWasmTailCalls()) {
         Locker locker { m_lock };
 
         for (auto successor : parseAndCompileResult->get()->tailCallSuccessors())
@@ -322,7 +322,7 @@ void LLIntPlan::didCompleteCompilation()
 
     unsigned functionCount = m_wasmInternalFunctions.size();
     if (!m_callees && functionCount) {
-        if (UNLIKELY(Options::dumpGeneratedWebAssemblyBytecodes())) {
+        if (UNLIKELY(Options::dumpGeneratedWasmBytecodes())) {
             for (unsigned i = 0; i < functionCount; ++i)
                 BytecodeDumper::dumpBlock(m_wasmInternalFunctions[i].get(), m_moduleInformation, WTF::dataFile());
         }

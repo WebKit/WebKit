@@ -1327,6 +1327,9 @@ webkit.org/b/238491 fast/editing/apply-relative-font-style-change-crash-004.html
 
 webkit.org/b/238644 fast/events/mouse-click-events.html [ Skip ]
 
+# Makes a subsequent test an assertion failure crash
+webkit.org/b/277121 [ Debug ] fast/events/event-handler-detached-document.html
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # TEMPORARY SKIPS -- these areas still need to be addressed individually
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -4083,6 +4086,7 @@ webkit.org/b/265213 fast/dom/Range/detach-range-during-deletecontents.html [ Ski
 # waitForCompositorReady().then(takeScreenshot) times out on the internal Buildbot
 imported/w3c/web-platform-tests/scroll-animations/css/animation-range-visual-test.html [ ImageOnlyFailure Timeout ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/custom-property.html [ ImageOnlyFailure Timeout ]
+[ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-inactive-outside-range-test.html [ Skip ] # Timeout
 
 imported/w3c/web-platform-tests/scroll-animations/view-timelines/animation-events.html [ Failure Pass ]
 

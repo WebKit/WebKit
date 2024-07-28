@@ -1,4 +1,4 @@
-//@ requireOptions("--useBBQJIT=1", "--useWebAssemblyLLInt=1", "--webAssemblyLLIntTiersUpToBBQ=1")
+//@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
 //@ skip
 // Failure:
 // Exception: ReferenceError: Can't find variable: Worker

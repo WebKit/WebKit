@@ -135,12 +135,12 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
         ASSERT(functions[index].finishedValidating);
 
         // See also: B3Procedure::usesSIMD().
-        if (!Options::useWebAssemblySIMD())
+        if (!Options::useWasmSIMD())
             return false;
         if (Options::forceAllFunctionsToUseSIMD())
             return true;
         // The LLInt discovers this value.
-        ASSERT(Options::useWebAssemblyLLInt() || Options::useWebAssemblyIPInt());
+        ASSERT(Options::useWasmLLInt() || Options::useWasmIPInt());
 
         return functions[index].usesSIMD;
     }

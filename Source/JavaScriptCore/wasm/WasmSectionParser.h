@@ -56,7 +56,7 @@ private:
     NEVER_INLINE UnexpectedResult WARN_UNUSED_RETURN fail(Args... args) const
     {
         using namespace FailureHelper; // See ADL comment in namespace above.
-        if (UNLIKELY(ASSERT_ENABLED && Options::crashOnFailedWebAssemblyValidate()))
+        if (UNLIKELY(ASSERT_ENABLED && Options::crashOnFailedWasmValidate()))
             CRASH();
 
         return UnexpectedResult(makeString("WebAssembly.Module doesn't parse at byte "_s, String::number(m_offset + m_offsetInSource), ": "_s, makeString(args)...));

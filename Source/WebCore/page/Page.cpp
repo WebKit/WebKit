@@ -3963,7 +3963,7 @@ void Page::enableICECandidateFiltering()
 #endif
 }
 
-void Page::didChangeMainDocument()
+void Page::didChangeMainDocument(Document* newDocument)
 {
 #if ENABLE(WEB_RTC)
     m_rtcController->reset(m_shouldEnableICECandidateFilteringByDefault);
@@ -3974,6 +3974,8 @@ void Page::didChangeMainDocument()
         m_sampledPageTopColor = std::nullopt;
         chrome().client().sampledPageTopColorChanged();
     }
+
+    checkedElementTargetingController()->didChangeMainDocument(newDocument);
 }
 
 RenderingUpdateScheduler& Page::renderingUpdateScheduler()

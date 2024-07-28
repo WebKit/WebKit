@@ -43,7 +43,7 @@ inline Air::Opcode moveForType(Type type)
     case Double:
         return MoveDouble;
     case V128:
-        ASSERT(Options::useWebAssemblySIMD());
+        ASSERT(Options::useWasmSIMD());
         return MoveVector;
     case Void:
     case Tuple:

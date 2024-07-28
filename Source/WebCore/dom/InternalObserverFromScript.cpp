@@ -27,6 +27,7 @@
 #include "InternalObserverFromScript.h"
 
 #include "JSSubscriptionObserverCallback.h"
+#include "ScriptExecutionContext.h"
 #include "SubscriptionObserver.h"
 
 namespace WebCore {

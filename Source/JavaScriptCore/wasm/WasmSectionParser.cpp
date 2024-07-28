@@ -61,7 +61,7 @@ auto SectionParser::parseType() -> PartialResult
         RefPtr<TypeDefinition> signature;
 
         // When GC is enabled, recursive references can show up in any of these cases.
-        SetForScope<RecursionGroupInformation> recursionGroupInfo(m_recursionGroupInformation, Options::useWebAssemblyGC() ? RecursionGroupInformation { true, m_info->typeCount(), m_info->typeCount() + 1 } : RecursionGroupInformation { false, 0, 0 });
+        SetForScope<RecursionGroupInformation> recursionGroupInfo(m_recursionGroupInformation, Options::useWasmGC() ? RecursionGroupInformation { true, m_info->typeCount(), m_info->typeCount() + 1 } : RecursionGroupInformation { false, 0, 0 });
 
         switch (static_cast<TypeKind>(typeKind)) {
         case TypeKind::Func: {
@@ -69,21 +69,21 @@ auto SectionParser::parseType() -> PartialResult
             break;
         }
         case TypeKind::Struct: {
-            if (!Options::useWebAssemblyGC())
+            if (!Options::useWasmGC())
                 return fail(i, "th type failed to parse because struct types are not enabled");
 
             WASM_FAIL_IF_HELPER_FAILS(parseStructType(i, signature));
             break;
         }
         case TypeKind::Array: {
-            if (!Options::useWebAssemblyGC())
+            if (!Options::useWasmGC())
                 return fail(i, "th type failed to parse because array types are not enabled");
 
             WASM_FAIL_IF_HELPER_FAILS(parseArrayType(i, signature));
             break;
         }
         case TypeKind::Rec: {
-            if (!Options::useWebAssemblyGC())
+            if (!Options::useWasmGC())
                 return fail(i, "th type failed to parse because rec types are not enabled");
 
             WASM_FAIL_IF_HELPER_FAILS(parseRecursionGroup(i, signature));
@@ -93,7 +93,7 @@ auto SectionParser::parseType() -> PartialResult
         }
         case TypeKind::Sub:
         case TypeKind::Subfinal: {
-            if (!Options::useWebAssemblyGC())
+            if (!Options::useWasmGC())
                 return fail(i, "th type failed to parse because sub types are not enabled");
 
             Vector<TypeIndex> empty;
@@ -110,7 +110,7 @@ auto SectionParser::parseType() -> PartialResult
         // notations for recursion groups with one type. Here we ensure that if such a
         // shorthand type is actually recursive, it is represented with a recursion group.
         // Subtyping checks are also done here to ensure sub types are subtypes of their parents.
-        if (Options::useWebAssemblyGC()) {
+        if (Options::useWasmGC()) {
             // Recursion group parsing will append the entries itself, as there may
             // be multiple entries that need to be added to the type section for
             // each recursion group.
@@ -270,7 +270,7 @@ auto SectionParser::parseResizableLimits(uint32_t& initial, std::optional<uint32
     WASM_PARSER_FAIL_IF(!parseVarUInt32(initial), "can't parse resizable limits initial page count"_s);
 
     isShared = flags == 0x3;
-    WASM_PARSER_FAIL_IF(isShared && !Options::useWebAssemblyFaultSignalHandler(), "shared memory is not enabled"_s);
+    WASM_PARSER_FAIL_IF(isShared && !Options::useWasmFaultSignalHandler(), "shared memory is not enabled"_s);
 
     if (flags) {
         uint32_t maximumInt;
@@ -293,7 +293,7 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
 
     int8_t firstByte = 0;
     WASM_PARSER_FAIL_IF(!peekInt7(firstByte), "can't parse Table information"_s);
-    if (!isImport && Options::useWebAssemblyTypedFunctionReferences() && static_cast<TypeKind>(firstByte) == TypeKind::Void) {
+    if (!isImport && Options::useWasmTypedFunctionReferences() && static_cast<TypeKind>(firstByte) == TypeKind::Void) {
         hasInitExpr = true;
         m_offset++;
         uint8_t reservedByte;
@@ -302,7 +302,7 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
 
     WASM_PARSER_FAIL_IF(!parseValueType(m_info, type), "can't parse Table type"_s);
     WASM_PARSER_FAIL_IF(!isRefType(type), "Table type should be a ref type, got "_s, type);
-    if (!Options::useWebAssemblyTypedFunctionReferences())
+    if (!Options::useWasmTypedFunctionReferences())
         WASM_PARSER_FAIL_IF(type.kind != TypeKind::Funcref && type.kind != TypeKind::Externref, "Table type should be funcref or anyref, got "_s, type);
     if (!hasInitExpr)
         WASM_PARSER_FAIL_IF(!isDefaultableType(type), "Table's type must be defaultable"_s);
@@ -623,7 +623,7 @@ auto SectionParser::parseElement() -> PartialResult
         case 0x05: {
             Type refType;
             WASM_PARSER_FAIL_IF(!parseRefType(m_info, refType), "can't parse reftype in elem section"_s);
-            ASSERT_IMPLIES(!Options::useWebAssemblyTypedFunctionReferences(), isExternref(refType) || isFuncref(refType));
+            ASSERT_IMPLIES(!Options::useWasmTypedFunctionReferences(), isExternref(refType) || isFuncref(refType));
 
             uint32_t indexCount;
             WASM_FAIL_IF_HELPER_FAILS(parseIndexCountForElementSection(indexCount, elementNum));
@@ -645,7 +645,7 @@ auto SectionParser::parseElement() -> PartialResult
 
             Type refType;
             WASM_PARSER_FAIL_IF(!parseRefType(m_info, refType), "can't parse reftype in elem section"_s);
-            ASSERT_IMPLIES(!Options::useWebAssemblyTypedFunctionReferences(), isExternref(refType) || isFuncref(refType));
+            ASSERT_IMPLIES(!Options::useWasmTypedFunctionReferences(), isExternref(refType) || isFuncref(refType));
             WASM_FAIL_IF_HELPER_FAILS(validateElementTableIdx(tableIndex, refType));
 
             uint32_t indexCount;
@@ -663,7 +663,7 @@ auto SectionParser::parseElement() -> PartialResult
         case 0x07: {
             Type refType;
             WASM_PARSER_FAIL_IF(!parseRefType(m_info, refType), "can't parse reftype in elem section"_s);
-            ASSERT_IMPLIES(!Options::useWebAssemblyTypedFunctionReferences(), isExternref(refType) || isFuncref(refType));
+            ASSERT_IMPLIES(!Options::useWasmTypedFunctionReferences(), isExternref(refType) || isFuncref(refType));
 
             uint32_t indexCount;
             WASM_FAIL_IF_HELPER_FAILS(parseIndexCountForElementSection(indexCount, elementNum));
@@ -731,7 +731,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
 
 #if ENABLE(B3_JIT)
     case ExtSIMD: {
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblySIMD(), "SIMD must be enabled"_s);
+        WASM_PARSER_FAIL_IF(!Options::useWasmSIMD(), "SIMD must be enabled"_s);
         WASM_PARSER_FAIL_IF(!parseUInt8(opcode), "can't get init_expr's simd opcode"_s);
         WASM_PARSER_FAIL_IF(static_cast<ExtSIMDOpType>(opcode) != ExtSIMDOpType::V128Const, "unknown init_expr simd opcode "_s, opcode);
         v128_t constant;
@@ -753,7 +753,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
         WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get get_global's index"_s);
 
         WASM_PARSER_FAIL_IF(index >= m_info->globals.size(), "get_global's index "_s, index, " exceeds the number of globals "_s, m_info->globals.size());
-        if (!Options::useWebAssemblyGC())
+        if (!Options::useWasmGC())
             WASM_PARSER_FAIL_IF(index >= m_info->firstInternalGlobal, "get_global import kind index "_s, index, " exceeds the first internal global "_s, m_info->firstInternalGlobal);
         WASM_PARSER_FAIL_IF(m_info->globals[index].mutability != Mutability::Immutable, "get_global import kind index "_s, index, " is mutable "_s);
 
@@ -764,7 +764,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
 
     case RefNull: {
         Type typeOfNull;
-        if (Options::useWebAssemblyTypedFunctionReferences()) {
+        if (Options::useWasmTypedFunctionReferences()) {
             int32_t heapType;
             WASM_PARSER_FAIL_IF(!parseHeapType(m_info, heapType), "ref.null heaptype must be funcref, externref or type_idx"_s);
             if (isTypeIndexHeapType(heapType)) {
@@ -786,7 +786,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
         WASM_PARSER_FAIL_IF(index >= m_info->functionIndexSpaceSize(), "ref.func index "_s, index, " exceeds the number of functions "_s, m_info->functionIndexSpaceSize());
         m_info->addReferencedFunction(index);
 
-        if (Options::useWebAssemblyTypedFunctionReferences()) {
+        if (Options::useWasmTypedFunctionReferences()) {
             TypeIndex typeIndex = m_info->typeIndexFromFunctionIndexSpace(index);
             resultType = { TypeKind::Ref, typeIndex };
         } else
@@ -797,8 +797,8 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
     }
 
     case ExtGC:
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled"_s);
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExtendedConstantExpressions(), "unknown init_expr opcode "_s, opcode);
+        WASM_PARSER_FAIL_IF(!Options::useWasmGC(), "Wasm GC is not enabled"_s);
+        WASM_PARSER_FAIL_IF(!Options::useWasmExtendedConstantExpressions(), "unknown init_expr opcode "_s, opcode);
         break;
 
     default:
@@ -816,7 +816,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
         isExtendedConstantExpression = false;
         return { };
     }
-    WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExtendedConstantExpressions(), "init_expr should end with end, ended with "_s, endOpcode);
+    WASM_PARSER_FAIL_IF(!Options::useWasmExtendedConstantExpressions(), "init_expr should end with end, ended with "_s, endOpcode);
 
     // If an End doesn't appear, we have to assume it's an extended constant expression
     // and use the full Wasm expression parser to validate.
@@ -898,7 +898,7 @@ auto SectionParser::parsePackedType(PackedType& packedType) -> PartialResult
 
 auto SectionParser::parseStorageType(StorageType& storageType) -> PartialResult
 {
-    ASSERT(Options::useWebAssemblyGC());
+    ASSERT(Options::useWasmGC());
 
     int8_t kind;
     WASM_PARSER_FAIL_IF(!peekInt7(kind), "invalid type in struct field or array element"_s);
@@ -917,7 +917,7 @@ auto SectionParser::parseStorageType(StorageType& storageType) -> PartialResult
 
 auto SectionParser::parseStructType(uint32_t position, RefPtr<TypeDefinition>& structType) -> PartialResult
 {
-    ASSERT(Options::useWebAssemblyGC());
+    ASSERT(Options::useWasmGC());
 
     uint32_t fieldCount;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(fieldCount), "can't get "_s, position, "th struct type's field count"_s);
@@ -946,7 +946,7 @@ auto SectionParser::parseStructType(uint32_t position, RefPtr<TypeDefinition>& s
 
 auto SectionParser::parseArrayType(uint32_t position, RefPtr<TypeDefinition>& arrayType) -> PartialResult
 {
-    ASSERT(Options::useWebAssemblyGC());
+    ASSERT(Options::useWasmGC());
 
     StorageType elementType;
     WASM_PARSER_FAIL_IF(!parseStorageType(elementType), "can't get array's element Type"_s);
@@ -961,7 +961,7 @@ auto SectionParser::parseArrayType(uint32_t position, RefPtr<TypeDefinition>& ar
 
 auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition>& recursionGroup) -> PartialResult
 {
-    ASSERT(Options::useWebAssemblyGC());
+    ASSERT(Options::useWasmGC());
 
     uint32_t typeCount;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(typeCount), "can't get "_s, position, "th recursion group's type count"_s);
@@ -1124,7 +1124,7 @@ auto SectionParser::checkSubtypeValidity(const TypeDefinition& subtype) -> Parti
 
 auto SectionParser::parseSubtype(uint32_t position, RefPtr<TypeDefinition>& subtype, Vector<TypeIndex>& recursionGroupTypes, bool isFinal) -> PartialResult
 {
-    ASSERT(Options::useWebAssemblyGC());
+    ASSERT(Options::useWasmGC());
 
     uint32_t supertypeCount;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(supertypeCount), "can't get "_s, position, "th subtype's supertype count"_s);
@@ -1411,7 +1411,7 @@ auto SectionParser::parseCustom() -> PartialResult
         if (nameSection)
             m_info->nameSection = WTFMove(*nameSection);
         else
-            dataLogLnIf(Options::dumpWebAssemblyWarnings(), "Could not parse name section: ", nameSection.error());
+            dataLogLnIf(Options::dumpWasmWarnings(), "Could not parse name section: ", nameSection.error());
     } else if (section.name == branchHintsName) {
         BranchHintsSectionParser branchHintsSectionParser(section.payload, m_info);
         branchHintsSectionParser.parse();

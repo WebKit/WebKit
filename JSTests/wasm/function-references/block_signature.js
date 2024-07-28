@@ -1,4 +1,4 @@
-//@ runWebAssemblySuite("--useWebAssemblyTypedFunctionReferences=true")
+//@ runWebAssemblySuite("--useWasmTypedFunctionReferences=true")
 import * as assert from '../assert.js';
 
 function module(bytes, valid = true) {

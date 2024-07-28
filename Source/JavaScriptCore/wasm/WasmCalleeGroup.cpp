@@ -76,7 +76,7 @@ CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInfor
     , m_callsiteCollection(m_calleeCount)
 {
     RefPtr<CalleeGroup> protectedThis = this;
-    if (Options::useWebAssemblyLLInt()) {
+    if (Options::useWasmLLInt()) {
         m_plan = adoptRef(*new LLIntPlan(vm, moduleInformation, m_llintCallees->data(), createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
             if (!m_plan) {
                 m_errorMessage = makeString("Out of memory while creating LLInt CalleeGroup"_s);
@@ -150,7 +150,7 @@ CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInfor
     , m_callsiteCollection(m_calleeCount)
 {
     RefPtr<CalleeGroup> protectedThis = this;
-    if (Options::useWebAssemblyIPInt()) {
+    if (Options::useWasmIPInt()) {
         m_plan = adoptRef(*new IPIntPlan(vm, moduleInformation, m_ipintCallees->data(), createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
             Locker locker { m_lock };
             if (m_plan->failed()) {

@@ -26,7 +26,6 @@
 #pragma once
 
 #import <wtf/FastMalloc.h>
-#import <wtf/Function.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/Ref.h>
@@ -124,7 +123,7 @@ public:
     void setCommandEncoder(CommandEncoder&) const;
     static ASCIILiteral formatToString(WGPUTextureFormat);
     bool isCanvasBacking() const;
-    void onCommandBufferCompletion(Function<void()>&&);
+    void waitForCommandBufferCompletion();
 
 private:
     Texture(id<MTLTexture>, const WGPUTextureDescriptor&, Vector<WGPUTextureFormat>&& viewFormats, Device&);

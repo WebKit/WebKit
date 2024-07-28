@@ -1,4 +1,4 @@
-//@ runWebAssemblySuite("--useWebAssemblyTypedFunctionReferences=true", "--useWebAssemblyGC=true", "--useWebAssemblyExtendedConstantExpressions=true")
+//@ runWebAssemblySuite("--useWasmTypedFunctionReferences=true", "--useWasmGC=true", "--useWasmExtendedConstantExpressions=true")
 
 import * as assert from "../assert.js";
 import { instantiate } from "./wast-wrapper.js";
