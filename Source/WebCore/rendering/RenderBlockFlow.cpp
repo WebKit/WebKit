@@ -1107,6 +1107,9 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
             layoutState->pushBlockStartTrimming(false);
         }
     }
+
+    applyStretchAlignmentToChildIfNeeded(child);
+
     // Now place the child in the correct left position
     determineLogicalLeftPositionForChild(child, ApplyLayoutDelta);
 
@@ -1172,33 +1175,73 @@ void RenderBlockFlow::adjustPositionedBlock(RenderBox& child, const MarginInfo& 
 
 void RenderBlockFlow::determineLogicalLeftPositionForChild(RenderBox& child, ApplyLayoutDeltaMode applyDelta)
 {
-    LayoutUnit startPosition = borderStart() + paddingStart();
-    LayoutUnit initialStartPosition = startPosition;
+    LayoutUnit startPositionWithOnlyBorderAndPadding = borderStart() + paddingStart();
+    LayoutUnit startPosition = startPositionWithOnlyBorderAndPadding;
     if ((shouldPlaceVerticalScrollbarOnLeft() || style().scrollbarGutter().bothEdges) && isHorizontalWritingMode())
         startPosition += (style().isLeftToRightDirection() ? 1 : -1) * verticalScrollbarWidth();
     if (style().scrollbarGutter().bothEdges && !isHorizontalWritingMode())
         startPosition += (style().isLeftToRightDirection() ? 1 : -1) * horizontalScrollbarHeight();
-    LayoutUnit totalAvailableLogicalWidth = borderAndPaddingLogicalWidth() + availableLogicalWidth();
+    const LayoutUnit totalAvailableLogicalWidth = borderAndPaddingLogicalWidth() + availableLogicalWidth();
 
     LayoutUnit childMarginStart = marginStartForChild(child);
-    LayoutUnit newPosition = startPosition + childMarginStart;
+    startPosition += childMarginStart;
 
     LayoutUnit positionToAvoidFloats;
-    
     if (child.avoidsFloats() && containsFloats())
         positionToAvoidFloats = startOffsetForLine(logicalTopForChild(child), logicalHeightForChild(child));
 
+    // The non-standard WebKitCenter value should be overriden by justify-self.
+    if ((child.style().justifySelf().position() == ItemPosition::Auto && style().textAlign() == TextAlignMode::WebKitCenter) || child.style().marginStartUsing(&style()).isAuto()) {
+        // If the child is being centred then the margin calculated to do that has factored in any offset required to
+        // avoid floats, so use it if necessary.
+        startPosition = std::max(startPosition, positionToAvoidFloats + childMarginStart);
+        setLogicalLeftForChild(child, style().isLeftToRightDirection() ? startPosition : totalAvailableLogicalWidth - startPosition - logicalWidthForChild(child), applyDelta);
+        return;
+    }
+
+    auto computeSelfAlignedLogicalLeftPositionForChild = [&](LayoutUnit currentPosition) -> LayoutUnit {
+        auto startAlignedPosition = currentPosition;
+        auto endAlignedPosition = totalAvailableLogicalWidth - startAlignedPosition - logicalWidthForChild(child);
+        auto selfAlignmentStyle = child.style().resolvedJustifySelf(&style(), ItemPosition::Normal);
+        const auto parentDirection = style().direction();
+        if (!isLeftToRightDirection(parentDirection))
+            std::swap(startAlignedPosition, endAlignedPosition);
+        if (child.style().justifySelf().overflow() == OverflowAlignment::Safe && logicalWidthForChild(child) > totalAvailableLogicalWidth)
+            return startAlignedPosition;
+        const auto childDirection = child.style().direction();
+        if (selfAlignmentStyle.isStartward(childDirection, parentDirection))
+            return startAlignedPosition;
+        if (selfAlignmentStyle.isEndward(childDirection, parentDirection))
+            return endAlignedPosition;
+        if (selfAlignmentStyle.isCentered())
+            return totalAvailableLogicalWidth / 2 - logicalWidthForChild(child) / 2;
+        ASSERT_NOT_REACHED();
+        return { };
+    };
+
     // If the child has an offset from the content edge to avoid floats then use that, otherwise let any negative
     // margin pull it back over the content edge or any positive margin push it out.
-    // If the child is being centred then the margin calculated to do that has factored in any offset required to
-    // avoid floats, so use it if necessary.
+    if (positionToAvoidFloats > startPositionWithOnlyBorderAndPadding)
+        startPosition = std::max(startPosition, positionToAvoidFloats);
+    setLogicalLeftForChild(child, computeSelfAlignedLogicalLeftPositionForChild(startPosition), applyDelta);
+}
 
-    if (style().textAlign() == TextAlignMode::WebKitCenter || child.style().marginStartUsing(&style()).isAuto())
-        newPosition = std::max(newPosition, positionToAvoidFloats + childMarginStart);
-    else if (positionToAvoidFloats > initialStartPosition)
-        newPosition = std::max(newPosition, positionToAvoidFloats);
-
-    setLogicalLeftForChild(child, style().isLeftToRightDirection() ? newPosition : totalAvailableLogicalWidth - newPosition - logicalWidthForChild(child), applyDelta);
+void RenderBlockFlow::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
+{
+    auto childSelfAlignmentStyle = child.style().resolvedJustifySelf(&style(), ItemPosition::Normal);
+    if (childSelfAlignmentStyle.position() != ItemPosition::Stretch)
+        return;
+    auto hasAutoLogicalWidth = isHorizontalWritingMode() ? child.style().width().isAuto() : child.style().height().isAuto();
+    auto hasAutoMarginsInInlineDirection = [&] {
+        if (isHorizontalWritingMode())
+            return child.style().marginLeft().isAuto() || child.style().marginRight().isAuto();
+        return child.style().marginTop().isAuto() || child.style().marginBottom().isAuto();
+    }();
+    if (!hasAutoLogicalWidth || hasAutoMarginsInInlineDirection)
+        return;
+    auto stretchedLogicalWidth = availableLogicalWidth();
+    auto desiredLogicalWidth = child.constrainLogicalWidthInFragmentByMinMax(stretchedLogicalWidth, contentWidth(), *this, nullptr);
+    child.setLogicalWidth(desiredLogicalWidth);
 }
 
 void RenderBlockFlow::adjustFloatingBlock(const MarginInfo& marginInfo)

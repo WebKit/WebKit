@@ -35,4 +35,65 @@ TextStream& operator<<(TextStream& ts, const StyleSelfAlignmentData& o)
     return ts << o.position() << " " << o.positionType() << " " << o.overflow();
 }
 
+bool StyleSelfAlignmentData::isStartward(TextDirection direction, TextDirection parentDirection) const
+{
+    switch (static_cast<ItemPosition>(m_position)) {
+    case ItemPosition::Normal:
+    case ItemPosition::Stretch:
+    case ItemPosition::Baseline:
+    case ItemPosition::Start:
+    case ItemPosition::FlexStart:
+        return true;
+    case ItemPosition::SelfStart:
+        return direction == parentDirection;
+    case ItemPosition::End:
+    case ItemPosition::FlexEnd:
+    case ItemPosition::LastBaseline:
+    case ItemPosition::Center:
+        return false;
+    case ItemPosition::SelfEnd:
+        return direction != parentDirection;
+    case ItemPosition::Left:
+        return parentDirection == TextDirection::LTR;
+    case ItemPosition::Right:
+        return parentDirection == TextDirection::RTL;
+    default:
+        ASSERT("Invalid ItemPosition");
+        return true;
+    };
 }
+
+bool StyleSelfAlignmentData::isEndward(TextDirection direction, TextDirection parentDirection) const
+{
+    switch (static_cast<ItemPosition>(m_position)) {
+    case ItemPosition::Normal:
+    case ItemPosition::Stretch:
+    case ItemPosition::Baseline:
+    case ItemPosition::Start:
+    case ItemPosition::FlexStart:
+    case ItemPosition::Center:
+        return false;
+    case ItemPosition::SelfStart:
+        return direction != parentDirection;
+    case ItemPosition::End:
+    case ItemPosition::FlexEnd:
+    case ItemPosition::LastBaseline:
+        return true;
+    case ItemPosition::SelfEnd:
+        return direction == parentDirection;
+    case ItemPosition::Left:
+        return parentDirection == TextDirection::RTL;
+    case ItemPosition::Right:
+        return parentDirection == TextDirection::LTR;
+    default:
+        ASSERT("Invalid ItemPosition");
+        return false;
+    };
+}
+
+bool StyleSelfAlignmentData::isCentered() const
+{
+    return position() == ItemPosition::Center;
+}
+
+} // namespace WebCore

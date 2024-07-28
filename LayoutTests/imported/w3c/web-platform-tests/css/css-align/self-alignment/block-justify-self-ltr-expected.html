@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Self-Alignment: justify-self - block-level elements</title>
+<link rel="author" title="David Tran" href="mailto:davidtranhq+wpt@gmail.com">
+<link rel="help" href="https://www.w3.org/TR/css-align-3/#justify-block" />
+<meta name="assert" content="justify-self applies to block-level boxes">
+<style>
+.test {
+  width: 200px;
+  border: 2px solid;
+  padding: 0 5px;
+  margin: 0 2px;
+  break-inside: avoid;
+}
+
+.expected {
+  background-color: orange;
+  width: 50px;
+  direction: rtl;
+}
+
+.actual {
+  background-color: cyan;
+  width: 50px;
+  direction: rtl;
+}
+
+.test-suite {
+  columns: 2;
+  width: 570px;
+  height: 570px;
+}
+
+dt {
+  margin-top: 2px;
+  break-after: avoid;
+}
+
+html {
+  font: 10px/1 sans-serif;
+}
+
+.no-break {
+  break-inside: avoid-column;
+}
+
+</style>
+<div class="test-suite">
+  <dl>
+    <div class="no-break">
+      <dt>auto inherits from parent</dt>
+      <dd>
+        <div class="test" style="justify-items: center;">
+          <div class="expected" style="margin: auto">expected</div>
+          <div class="actual" style="margin: auto">actual</div>
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>normal acts as default layout</dt>
+      <dd>
+        <div class="test">
+          <div class="expected">expected</div>
+          <div class="actual">actual</div>
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>stretches if auto width and !auto margins</dt>
+      <dd>
+        <div class="test">
+          <div class="expected" style="width: auto;">expected</div>
+          <div class="actual" style="width: auto;">actual</div>
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>stretches auto width and !auto margin replaced elements</dt>
+      <dd>
+        <div class="test">
+          <img class="expected" src="../../../images/blue.png" alt="Placeholder Image" style="display: block; width: 200px; height: 10px;" />
+          <img class="actual" src="../../../images/blue.png" alt="Placeholder Image" style="display: block; width: 200px; height: 10px;" />
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>stretch = flex-start if fixed width</dt>
+      <dd>
+        <div class="test">
+          <div class="expected">expected</div>
+          <div class="actual">actual</div>
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>stretch = flex-start if auto margins</dt>
+      <dd>
+        <div class="test">
+          <div class="expected" style="width: auto;">expected</div>
+          <div class="actual" style="width: auto;">actual</div>
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>stretch respects max-width</dt>
+      <dd>
+        <div class="test">
+          <div class="expected" style="width: 150px;">expected</div>
+          <div class="actual" style="width: 150px;">actual</div>
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>stretch respects min-width</dt>
+      <dd>
+        <div class="test">
+          <div class="expected" style="width: 230px;">expected</div>
+          <div class="actual" style="width: 230px">actual</div>
+        </div>
+      </dd>
+    </div>
+
+
+    <div class="no-break">
+      <dt>center</dt>
+      <dd>
+        <div class="test">
+          <div class="expected" style="margin: auto;">expected</div>
+          <div class="actual" style="margin: auto;">actual</div>
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>left</dt>
+      <dd>
+        <div class="test">
+          <div class="expected" style="margin-right: 150px;">expected</div>
+          <div class="actual" style="margin-right: 150px;">actual</div>
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>right</dt>
+      <dd>
+        <div class="test">
+          <div class="expected" style="margin-left: 150px;">expected</div>
+          <div class="actual" style="margin-left: 150px;">actual</div>
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>start</dt>
+      <dd>
+        <div class="test">
+          <div class="expected">expected</div>
+          <div class="actual">actual</div>
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>end</dt>
+      <dd>
+        <div class="test">
+          <div class="expected" style="margin-left: 150px;">expected</div>
+          <div class="actual" style="margin-left: 150px;">actual</div>
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>flex-start</dt>
+      <dd>
+        <div class="test">
+          <div class="expected">expected</div>
+          <div class="actual">actual</div>
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>flex-end</dt>
+      <dd>
+        <div class="test">
+          <div class="expected" style="margin-left: 150px;">expected</div>
+          <div class="actual" style="margin-left: 150px;">actual</div>
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>self-start</dt>
+      <dd>
+        <div class="test">
+          <div class="expected" style="margin-left: 150px;">expected</div>
+          <div class="actual" style="margin-left: 150px;">actual</div>
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>self-end</dt>
+      <dd>
+        <div class="test">
+          <div class="expected">expected</div>
+          <div class="actual">actual</div>
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>normal (replaced box absolute is start)</dt>
+      <dd>
+        <div class="test" style="position: relative;">
+          <img src="../../../images/blue.png" alt="Placeholder Image" style="position: absolute; width: 50px; height: 10px;">
+          <div>dummy</div>
+          <img src="../../../images/blue.png" alt="Placeholder Image" style="position: absolute; width: 50px; height: 10px;">
+          <div>dummy</div>
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>normal (absolute is stretch)</dt>
+      <dd>
+        <div class="test" style="position: relative;">
+          <div class="expected" style="position: absolute; width: auto; inset: auto 0 auto 0;">expected</div>
+          <div>dummy</div>
+          <div class="actual" style="position: absolute; width: auto; inset: auto 0 auto 0;">actual</div>
+          <div>dummy</div>
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>safe end overflows to start</dt>
+      <dd>
+        <div class="test">
+          <div class="expected" style="width: 225px">expected</div>
+          <div class="actual" style="width: 225px;">actual</div>
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>unsafe end overflows to end</dt>
+      <dd>
+        <div class="test">
+          <div class="expected" style="width: 225px; margin-left: -25px">expected</div>
+          <div class="actual" style="width: 225px; margin-left: -25px">actual</div>
+        </div>
+      </dd>
+    </div>
+
+    <div class="no-break">
+      <dt>no effect on table cells</dt>
+      <dd>
+        <div class="test" style="display: table">
+          <div style="display: table-row">
+            <div class="expected" style="display: table-cell;">expected</div>
+          </div>
+          <div style="display: table-row">
+            <div class="actual" style="display: table-cell">actual</div>
+          </div>
+        </div>
+      </dd>
+    </div>
+  </dl>
+</div>

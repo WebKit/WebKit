@@ -54,6 +54,9 @@ public:
     ItemPosition position() const { return static_cast<ItemPosition>(m_position); }
     ItemPositionType positionType() const { return static_cast<ItemPositionType>(m_positionType); }
     OverflowAlignment overflow() const { return static_cast<OverflowAlignment>(m_overflow); }
+    bool isStartward(TextDirection, TextDirection parentDirection) const;
+    bool isEndward(TextDirection, TextDirection parentDirection) const;
+    bool isCentered() const;
 
     friend bool operator==(const StyleSelfAlignmentData&, const StyleSelfAlignmentData&) = default;
 
