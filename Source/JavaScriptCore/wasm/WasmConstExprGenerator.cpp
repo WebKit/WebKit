@@ -258,7 +258,7 @@ public:
     {
         // Note that this check works for table initializers too, because no globals are registered when the table section is read and the count is 0.
         WASM_COMPILE_FAIL_IF(index >= m_info.globals.size(), "get_global's index ", index, " exceeds the number of globals ", m_info.globals.size());
-        if (!Options::useWebAssemblyGC())
+        if (!Options::useWasmGC())
             WASM_COMPILE_FAIL_IF(index >= m_info.firstInternalGlobal, "get_global import kind index ", index, " exceeds the first internal global ", m_info.firstInternalGlobal);
         WASM_COMPILE_FAIL_IF(m_info.globals[index].mutability != Mutability::Immutable, "get_global import kind index ", index, " is mutable ");
 
@@ -315,7 +315,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result)
     {
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled"_s);
+        WASM_PARSER_FAIL_IF(!Options::useWasmGC(), "Wasm GC is not enabled"_s);
 
         if (m_mode == Mode::Evaluate) {
             result = createNewArray(typeIndex, static_cast<uint32_t>(size.getValue()), value);
@@ -327,7 +327,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t typeIndex, ExpressionType size, ExpressionType& result)
     {
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled"_s);
+        WASM_PARSER_FAIL_IF(!Options::useWasmGC(), "Wasm GC is not enabled"_s);
 
         if (m_mode == Mode::Evaluate) {
             Ref<TypeDefinition> typeDef = m_info.typeSignatures[typeIndex];
@@ -347,7 +347,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addArrayNewFixed(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result)
     {
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled"_s);
+        WASM_PARSER_FAIL_IF(!Options::useWasmGC(), "Wasm GC is not enabled"_s);
 
         if (m_mode == Mode::Evaluate) {
             auto* arrayType = m_info.typeSignatures[typeIndex]->expand().as<ArrayType>();
@@ -391,7 +391,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t typeIndex, ExpressionType& result)
     {
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled"_s);
+        WASM_PARSER_FAIL_IF(!Options::useWasmGC(), "Wasm GC is not enabled"_s);
 
         if (m_mode == Mode::Evaluate) {
             result = createNewStruct(typeIndex);
@@ -403,7 +403,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result)
     {
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled"_s);
+        WASM_PARSER_FAIL_IF(!Options::useWasmGC(), "Wasm GC is not enabled"_s);
 
         if (m_mode == Mode::Evaluate) {
             result = createNewStruct(typeIndex);
@@ -427,7 +427,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addAnyConvertExtern(ExpressionType reference, ExpressionType& result)
     {
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled"_s);
+        WASM_PARSER_FAIL_IF(!Options::useWasmGC(), "Wasm GC is not enabled"_s);
         if (m_mode == Mode::Evaluate) {
             if (reference.type() == ConstExprValue::Numeric)
                 result = ConstExprValue(externInternalize(reference.getValue()));
@@ -442,7 +442,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addExternConvertAny(ExpressionType reference, ExpressionType& result)
     {
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled"_s);
+        WASM_PARSER_FAIL_IF(!Options::useWasmGC(), "Wasm GC is not enabled"_s);
         result = reference;
         return { };
     }
@@ -695,7 +695,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addSIMDLoadPad(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&) CONST_EXPR_STUB
     ExpressionType WARN_UNUSED_RETURN addConstant(v128_t vector)
     {
-        RELEASE_ASSERT(Options::useWebAssemblySIMD());
+        RELEASE_ASSERT(Options::useWasmSIMD());
         if (m_mode == Mode::Evaluate)
             return ConstExprValue(vector);
         return { };
@@ -734,7 +734,7 @@ private:
 
 Expected<void, String> parseExtendedConstExpr(std::span<const uint8_t> source, size_t offsetInSource, size_t& offset, ModuleInformation& info, Type expectedType)
 {
-    RELEASE_ASSERT_WITH_MESSAGE(Options::useWebAssemblyExtendedConstantExpressions(), "Wasm extended const expressions not enabled");
+    RELEASE_ASSERT_WITH_MESSAGE(Options::useWasmExtendedConstantExpressions(), "Wasm extended const expressions not enabled");
     ConstExprGenerator generator(ConstExprGenerator::Mode::Validate, offsetInSource, info);
     FunctionParser<ConstExprGenerator> parser(generator, source, *TypeInformation::typeDefinitionForFunction({ expectedType }, { }), info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parseConstantExpression());
@@ -748,7 +748,7 @@ Expected<void, String> parseExtendedConstExpr(std::span<const uint8_t> source, s
 
 Expected<uint64_t, String> evaluateExtendedConstExpr(const Vector<uint8_t>& constantExpression, JSWebAssemblyInstance* instance, const ModuleInformation& info, Type expectedType)
 {
-    RELEASE_ASSERT_WITH_MESSAGE(Options::useWebAssemblyExtendedConstantExpressions(), "Wasm extended const expressions not enabled");
+    RELEASE_ASSERT_WITH_MESSAGE(Options::useWasmExtendedConstantExpressions(), "Wasm extended const expressions not enabled");
     ConstExprGenerator generator(ConstExprGenerator::Mode::Evaluate, info, instance);
     FunctionParser<ConstExprGenerator> parser(generator, constantExpression, *TypeInformation::typeDefinitionForFunction({ expectedType }, { }), info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parseConstantExpression());

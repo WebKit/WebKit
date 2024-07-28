@@ -104,16 +104,16 @@ static inline bool shouldJIT(Wasm::LLIntCallee* callee, RequiredWasmJIT required
     }
 #endif
     if (requiredJIT == RequiredWasmJIT::Any) {
-        if (Options::webAssemblyLLIntTiersUpToBBQ()
+        if (Options::wasmLLIntTiersUpToBBQ()
             && (!Options::useBBQJIT() || !Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(callee->functionIndex())))
             return false;
 #if ENABLE(WEBASSEMBLY_OMGJIT)
-        if (!Options::webAssemblyLLIntTiersUpToBBQ()
+        if (!Options::wasmLLIntTiersUpToBBQ()
             && (!Options::useOMGJIT() || !Wasm::OMGPlan::ensureGlobalOMGAllowlist().containsWasmFunction(callee->functionIndex())))
             return false;
 #endif
     }
-    if (!Options::webAssemblyFunctionIndexRangeToCompile().isInRange(callee->functionIndex()))
+    if (!Options::wasmFunctionIndexRangeToCompile().isInRange(callee->functionIndex()))
         return false;
     return true;
 }
@@ -154,7 +154,7 @@ static inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, JSWebAs
     if (compile) {
         uint32_t functionIndex = callee->functionIndex();
         RefPtr<Wasm::Plan> plan;
-        if (Options::webAssemblyLLIntTiersUpToBBQ() && Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(functionIndex))
+        if (Options::wasmLLIntTiersUpToBBQ() && Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(functionIndex))
             plan = adoptRef(*new Wasm::BBQPlan(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), instance->calleeGroup(), Wasm::Plan::dontFinalize()));
 #if ENABLE(WEBASSEMBLY_OMGJIT)
         else // No need to check OMG allow list: if we didn't want to compile this function, shouldJIT should have returned false.
@@ -203,7 +203,7 @@ static inline std::optional<Wasm::Plan::Error> jitCompileSIMDFunction(Wasm::LLIn
     uint32_t functionIndex = callee->functionIndex();
     ASSERT(instance->module().moduleInformation().usesSIMD(functionIndex));
     RefPtr<Wasm::Plan> plan;
-    if (Options::webAssemblyLLIntTiersUpToBBQ())
+    if (Options::wasmLLIntTiersUpToBBQ())
         plan = adoptRef(*new Wasm::BBQPlan(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), instance->calleeGroup(), Wasm::Plan::dontFinalize()));
 #if ENABLE(WEBASSEMBLY_OMGJIT)
     else
@@ -233,7 +233,7 @@ WASM_SLOW_PATH_DECL(prologue_osr)
         WASM_RETURN_TWO(nullptr, nullptr);
     }
 
-    if (!Options::useWebAssemblyLLIntPrologueOSR())
+    if (!Options::useWasmLLIntPrologueOSR())
         WASM_RETURN_TWO(nullptr, nullptr);
 
     dataLogLnIf(Options::verboseOSR(), *callee, ": Entered prologue_osr with tierUpCounter = ", callee->tierUpCounter());
@@ -249,7 +249,7 @@ WASM_SLOW_PATH_DECL(loop_osr)
     Wasm::LLIntCallee* callee = CALLEE();
     Wasm::LLIntTierUpCounter& tierUpCounter = callee->tierUpCounter();
 
-    if (!Options::useWebAssemblyOSR() || !Options::useWebAssemblyLLIntLoopOSR() || !shouldJIT(callee, RequiredWasmJIT::Any)) {
+    if (!Options::useWasmOSR() || !Options::useWasmLLIntLoopOSR() || !shouldJIT(callee, RequiredWasmJIT::Any)) {
         slow_path_wasm_prologue_osr(callFrame, pc, instance);
         WASM_RETURN_TWO(nullptr, nullptr);
     }
@@ -264,7 +264,7 @@ WASM_SLOW_PATH_DECL(loop_osr)
     unsigned loopOSREntryBytecodeOffset = callee->bytecodeOffset(pc);
     const auto& osrEntryData = tierUpCounter.osrEntryDataForLoop(loopOSREntryBytecodeOffset);
 
-    if (Options::webAssemblyLLIntTiersUpToBBQ() && Options::useBBQJIT()) {
+    if (Options::wasmLLIntTiersUpToBBQ() && Options::useBBQJIT()) {
         if (!jitCompileAndSetHeuristics(callee, instance))
             WASM_RETURN_TWO(nullptr, nullptr);
 
@@ -376,7 +376,7 @@ WASM_SLOW_PATH_DECL(epilogue_osr)
         callee->tierUpCounter().deferIndefinitely();
         WASM_END_IMPL();
     }
-    if (!Options::useWebAssemblyLLIntEpilogueOSR())
+    if (!Options::useWasmLLIntEpilogueOSR())
         WASM_END_IMPL();
 
     dataLogLnIf(Options::verboseOSR(), *callee, ": Entered epilogue_osr with tierUpCounter = ", callee->tierUpCounter());
@@ -390,7 +390,7 @@ WASM_SLOW_PATH_DECL(simd_go_straight_to_bbq_osr)
     UNUSED_PARAM(pc);
     Wasm::LLIntCallee* callee = CALLEE();
 
-    if (!Options::useWebAssemblySIMD())
+    if (!Options::useWasmSIMD())
         RELEASE_ASSERT_NOT_REACHED();
     RELEASE_ASSERT(shouldJIT(callee));
 

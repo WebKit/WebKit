@@ -54,7 +54,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(BufferMemoryManager);
 
 size_t BufferMemoryHandle::fastMappedRedzoneBytes()
 {
-    return static_cast<size_t>(PageCount::pageSize) * Options::webAssemblyFastMemoryRedzonePages();
+    return static_cast<size_t>(PageCount::pageSize) * Options::wasmFastMemoryRedzonePages();
 }
 
 size_t BufferMemoryHandle::fastMappedBytes()
@@ -102,7 +102,7 @@ BufferMemoryResult BufferMemoryManager::tryAllocateFastMemory()
             m_fastMemories.size() >= m_maxFastMemoryCount / 2 ? BufferMemoryResult::SuccessAndNotifyMemoryPressure : BufferMemoryResult::Success);
     }();
 
-    dataLogLnIf(Options::logWebAssemblyMemory(), "Allocated virtual: ", result, "; state: ", *this);
+    dataLogLnIf(Options::logWasmMemory(), "Allocated virtual: ", result, "; state: ", *this);
 
     return result;
 }
@@ -115,7 +115,7 @@ void BufferMemoryManager::freeFastMemory(void* basePtr)
         m_fastMemories.removeFirst(basePtr);
     }
 
-    dataLogLnIf(Options::logWebAssemblyMemory(), "Freed virtual; state: ", *this);
+    dataLogLnIf(Options::logWasmMemory(), "Freed virtual; state: ", *this);
 }
 
 BufferMemoryResult BufferMemoryManager::tryAllocateGrowableBoundsCheckingMemory(size_t mappedCapacity)
@@ -131,7 +131,7 @@ BufferMemoryResult BufferMemoryManager::tryAllocateGrowableBoundsCheckingMemory(
         return BufferMemoryResult(result, BufferMemoryResult::Success);
     }();
 
-    dataLogLnIf(Options::logWebAssemblyMemory(), "Allocated virtual: ", result, "; state: ", *this);
+    dataLogLnIf(Options::logWasmMemory(), "Allocated virtual: ", result, "; state: ", *this);
 
     return result;
 }
@@ -144,7 +144,7 @@ void BufferMemoryManager::freeGrowableBoundsCheckingMemory(void* basePtr, size_t
         m_growableBoundsCheckingMemories.erase(std::make_pair(bitwise_cast<uintptr_t>(basePtr), mappedCapacity));
     }
 
-    dataLogLnIf(Options::logWebAssemblyMemory(), "Freed virtual; state: ", *this);
+    dataLogLnIf(Options::logWasmMemory(), "Freed virtual; state: ", *this);
 }
 
 bool BufferMemoryManager::isInGrowableOrFastMemory(void* address)
@@ -186,7 +186,7 @@ BufferMemoryResult::Kind BufferMemoryManager::tryAllocatePhysicalBytes(size_t by
         return BufferMemoryResult::Success;
     }();
 
-    dataLogLnIf(Options::logWebAssemblyMemory(), "Allocated physical: ", bytes, ", ", BufferMemoryResult::toString(result), "; state: ", *this);
+    dataLogLnIf(Options::logWasmMemory(), "Allocated physical: ", bytes, ", ", BufferMemoryResult::toString(result), "; state: ", *this);
 
     return result;
 }
@@ -198,7 +198,7 @@ void BufferMemoryManager::freePhysicalBytes(size_t bytes)
         m_physicalBytes -= bytes;
     }
 
-    dataLogLnIf(Options::logWebAssemblyMemory(), "Freed physical: ", bytes, "; state: ", *this);
+    dataLogLnIf(Options::logWasmMemory(), "Freed physical: ", bytes, "; state: ", *this);
 }
 
 void BufferMemoryManager::dump(PrintStream& out) const

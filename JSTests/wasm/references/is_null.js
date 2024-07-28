@@ -1,4 +1,4 @@
-//@ runWebAssemblySuite("--useWebAssemblyTypedFunctionReferences=false", "--useWebAssemblyGC=false")
+//@ runWebAssemblySuite("--useWasmTypedFunctionReferences=false", "--useWasmGC=false")
 
 import * as assert from '../assert.js';
 import Builder from '../Builder.js';

@@ -170,7 +170,7 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
         return nullptr;
         
     char* fastMemory = nullptr;
-    if (Options::useWebAssemblyFastMemory()) {
+    if (Options::useWasmFastMemory()) {
 #if CPU(ADDRESS32)
         RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("32-bit platforms don't support fast memory.");
 #endif
@@ -201,7 +201,7 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
         return nullptr;
     }
 
-    if (UNLIKELY(Options::crashIfWebAssemblyCantFastMemory()))
+    if (UNLIKELY(Options::crashIfWasmCantFastMemory()))
         webAssemblyCouldntGetFastMemory();
 
     switch (sharingMode) {

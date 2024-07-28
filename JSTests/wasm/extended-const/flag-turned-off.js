@@ -1,4 +1,4 @@
-//@ runWebAssemblySuite("--useWebAssemblyExtendedConstantExpressions=false")
+//@ runWebAssemblySuite("--useWasmExtendedConstantExpressions=false")
 import * as assert from "../assert.js";
 
 function module(bytes, valid = true) {

@@ -741,7 +741,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             checkConsistency();
 
             inst.forEachTmp([&] (const Tmp& tmp, Arg::Role role, Bank, Width width) {
-                ASSERT(width <= Width64 || Options::useWebAssemblySIMD());
+                ASSERT(width <= Width64 || Options::useWasmSIMD());
                 if (tmp.isReg() && isDisallowedRegister(tmp.reg()))
                     return;
 
@@ -754,7 +754,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             });
 
             inst.forEachArg([&] (Arg& arg, Arg::Role role, Bank, Width width) {
-                ASSERT_UNUSED(width, width <= Width64 || Options::useWebAssemblySIMD());
+                ASSERT_UNUSED(width, width <= Width64 || Options::useWasmSIMD());
                 if (!arg.isTmp())
                     return;
 

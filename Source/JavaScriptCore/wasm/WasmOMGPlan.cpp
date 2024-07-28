@@ -184,13 +184,13 @@ void OMGPlan::work(CompilationEffort)
                 bbqCallee->setReplacement(callee.copyRef());
                 bbqCallee->tierUpCount()->setCompilationStatusForOMG(mode(), TierUpCount::CompilationStatus::Compiled);
             }
-            if (Options::useWebAssemblyIPInt() && m_calleeGroup->m_ipintCallees) {
+            if (Options::useWasmIPInt() && m_calleeGroup->m_ipintCallees) {
                 IPIntCallee& ipintCallee = m_calleeGroup->m_ipintCallees->at(m_functionIndex).get();
                 Locker locker { ipintCallee.tierUpCounter().m_lock };
                 ipintCallee.setReplacement(callee.copyRef(), mode());
                 ipintCallee.tierUpCounter().setCompilationStatus(mode(), IPIntTierUpCounter::CompilationStatus::Compiled);
             }
-            if (!Options::useWebAssemblyIPInt() && m_calleeGroup->m_llintCallees) {
+            if (!Options::useWasmIPInt() && m_calleeGroup->m_llintCallees) {
                 LLIntCallee& llintCallee = m_calleeGroup->m_llintCallees->at(m_functionIndex).get();
                 Locker locker { llintCallee.tierUpCounter().m_lock };
                 llintCallee.setReplacement(callee.copyRef(), mode());

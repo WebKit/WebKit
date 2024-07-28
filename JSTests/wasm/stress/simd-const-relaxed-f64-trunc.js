@@ -1,4 +1,4 @@
-//@ requireOptions("--useWebAssemblyRelaxedSIMD=1")
+//@ requireOptions("--useWasmRelaxedSIMD=1")
 //@ skip if !$isSIMDPlatform
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"

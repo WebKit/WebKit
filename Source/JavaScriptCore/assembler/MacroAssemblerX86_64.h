@@ -1408,14 +1408,14 @@ public:
     void storeVector(FPRegisterID src, Address address)
     {
         ASSERT(supportsAVX());
-        ASSERT(Options::useWebAssemblySIMD());
+        ASSERT(Options::useWasmSIMD());
         m_assembler.vmovups_rm(src, address.offset, address.base);
     }
     
     void storeVector(FPRegisterID src, BaseIndex address)
     {
         ASSERT(supportsAVX());
-        ASSERT(Options::useWebAssemblySIMD());
+        ASSERT(Options::useWasmSIMD());
         m_assembler.vmovups_rm(src, address.offset, address.base, address.index, address.scale);
     }
 

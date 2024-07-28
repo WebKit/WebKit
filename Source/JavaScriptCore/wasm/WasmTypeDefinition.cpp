@@ -899,7 +899,7 @@ TypeInformation::TypeInformation()
     m_Void_I32I32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { }, { Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_Void_I32I32I32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { }, { Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_I32_I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { Wasm::Types::I32 } }).iterator->key;
-    if (!Options::useWebAssemblyGC())
+    if (!Options::useWasmGC())
         return;
     m_I32_RefI32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { anyrefType(), Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_Ref_RefI32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { anyrefType() }, { anyrefType(), Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
@@ -1062,7 +1062,7 @@ std::optional<RefPtr<const RTT>> TypeInformation::tryGetCanonicalRTT(TypeIndex t
 
 RefPtr<const RTT> TypeInformation::getCanonicalRTT(TypeIndex type)
 {
-    if (Options::useWebAssemblyGC()) {
+    if (Options::useWasmGC()) {
         const auto result = TypeInformation::tryGetCanonicalRTT(type);
         ASSERT(result.has_value());
         return result.value();

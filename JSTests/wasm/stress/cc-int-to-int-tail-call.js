@@ -1,5 +1,5 @@
 //@ skip
-//@ requireOptions("--useIPIntWrappers=1", "--useWebAssemblyTailCalls=true", "--maximumWebAssemblyCalleeSIzeForInlining=0")
+//@ requireOptions("--useIPIntWrappers=1", "--useWasmTailCalls=true", "--maximumWasmCalleeSIzeForInlining=0")
 //@ skip if $architecture != "arm64" && $architecture != "x86_64"
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"

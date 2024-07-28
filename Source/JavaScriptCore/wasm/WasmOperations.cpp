@@ -119,7 +119,7 @@ static void triggerOMGReplacementCompile(TierUpCount& tierUp, OMGCallee* replace
 
 void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint64_t* buffer, SavedFPWidth savedFPWidth)
 {
-    ASSERT(Options::useWebAssemblySIMD() || savedFPWidth == SavedFPWidth::DontSaveVectors);
+    ASSERT(Options::useWasmSIMD() || savedFPWidth == SavedFPWidth::DontSaveVectors);
     unsigned valueSize = (savedFPWidth == SavedFPWidth::SaveVectors) ? 2 : 1;
 
     dataLogLnIf(WasmOperationsInternal::verbose, "loadValuesIntoBuffer: valueSize = ", valueSize, "; values.size() = ", values.size());
@@ -266,7 +266,7 @@ static void doOSREntry(JSWebAssemblyInstance* instance, Probe::Context& context,
 
 inline bool shouldJIT(unsigned functionIndex)
 {
-    if (!Options::webAssemblyFunctionIndexRangeToCompile().isInRange(functionIndex))
+    if (!Options::wasmFunctionIndexRangeToCompile().isInRange(functionIndex))
         return false;
     return true;
 }
@@ -353,7 +353,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
 
     dataLogLnIf(Options::verboseOSR(), "Consider OSREntryPlan for [", functionIndex, "] loopIndex#", loopIndex, " with executeCounter = ", tierUp, " ", RawPointer(callee.replacement()));
 
-    if (!Options::useWebAssemblyOSR()) {
+    if (!Options::useWasmOSR()) {
         if (shouldTriggerOMGCompile(tierUp, callee.replacement(), functionIndex))
             triggerOMGReplacementCompile(tierUp, callee.replacement(), instance, calleeGroup, functionIndex, callee.hasExceptionHandlers());
 
@@ -748,9 +748,9 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyI
         default: {
             if (Wasm::isRefType(returnType)) {
                 if (isExternref(returnType))
-                    ASSERT_IMPLIES(!Options::useWebAssemblyTypedFunctionReferences(), returnType.isNullable());
-                else if (isFuncref(returnType) || (!Options::useWebAssemblyGC() && isRefWithTypeIndex(returnType))) {
-                    ASSERT_IMPLIES(!Options::useWebAssemblyTypedFunctionReferences(), returnType.isNullable());
+                    ASSERT_IMPLIES(!Options::useWasmTypedFunctionReferences(), returnType.isNullable());
+                else if (isFuncref(returnType) || (!Options::useWasmGC() && isRefWithTypeIndex(returnType))) {
+                    ASSERT_IMPLIES(!Options::useWasmTypedFunctionReferences(), returnType.isNullable());
                     WebAssemblyFunction* wasmFunction = nullptr;
                     WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
                     if (UNLIKELY(!isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction) && !value.isNull())) {
@@ -766,7 +766,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyI
                         }
                     }
                 } else {
-                    ASSERT(Options::useWebAssemblyGC());
+                    ASSERT(Options::useWasmGC());
                     value = Wasm::internalizeExternref(value);
                     if (UNLIKELY(!Wasm::TypeInformation::castReference(value, returnType.isNullable(), returnType.index))) {
                         throwTypeError(globalObject, scope, "Argument value did not match reference type"_s);

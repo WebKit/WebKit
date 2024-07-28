@@ -173,7 +173,7 @@ public:
                 VALIDATE(value->type() == Float, ("At ", *value));
                 break;
             case Const128:
-                RELEASE_ASSERT(Options::useWebAssemblySIMD());
+                RELEASE_ASSERT(Options::useWasmSIMD());
                 VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
                 VALIDATE(!value->numChildren(), ("At ", *value));
                 VALIDATE(value->type() == V128, ("At ", *value));

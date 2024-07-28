@@ -263,7 +263,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, JSEnt
     // https://webassembly.github.io/spec/js-api/index.html#exported-function-exotic-objects
     // If parameters or results contain v128, throw a TypeError.
     // Note: the above error is thrown each time the [[Call]] method is invoked.
-    if (Options::useWebAssemblySIMD() && (wasmFrameConvention.argumentsOrResultsIncludeV128)) {
+    if (Options::useWasmSIMD() && (wasmFrameConvention.argumentsOrResultsIncludeV128)) {
         jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::codeBlock), GPRInfo::wasmContextInstancePointer);
         JIT_COMMENT(jit, "Throw an exception because this function uses v128");
         emitThrowWasmToJSException(jit, GPRInfo::wasmContextInstancePointer, ExceptionType::TypeErrorInvalidV128Use);

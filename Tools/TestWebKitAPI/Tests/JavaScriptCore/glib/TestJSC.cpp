@@ -4338,13 +4338,13 @@ static void testsJSCOptions()
     g_assert_cmpuint(maxPerThreadStackUsage, ==, 4096);
     g_assert_true(jsc_options_set_uint("maxPerThreadStackUsage", 5242880));
 
-    gsize webAssemblyPartialCompileLimit;
-    g_assert_true(jsc_options_get_size("webAssemblyPartialCompileLimit", &webAssemblyPartialCompileLimit));
-    g_assert_cmpuint(webAssemblyPartialCompileLimit, ==, 5000);
-    g_assert_true(jsc_options_set_size("webAssemblyPartialCompileLimit", 6000));
-    g_assert_true(jsc_options_get_size("webAssemblyPartialCompileLimit", &webAssemblyPartialCompileLimit));
-    g_assert_cmpuint(webAssemblyPartialCompileLimit, ==, 6000);
-    g_assert_true(jsc_options_set_size("webAssemblyPartialCompileLimit", 5000));
+    gsize wasmPartialCompileLimit;
+    g_assert_true(jsc_options_get_size("wasmPartialCompileLimit", &wasmPartialCompileLimit));
+    g_assert_cmpuint(wasmPartialCompileLimit, ==, 5000);
+    g_assert_true(jsc_options_set_size("wasmPartialCompileLimit", 6000));
+    g_assert_true(jsc_options_get_size("wasmPartialCompileLimit", &wasmPartialCompileLimit));
+    g_assert_cmpuint(wasmPartialCompileLimit, ==, 6000);
+    g_assert_true(jsc_options_set_size("wasmPartialCompileLimit", 5000));
 
     gdouble criticalGCMemoryThreshold;
     g_assert_true(jsc_options_get_double("criticalGCMemoryThreshold", &criticalGCMemoryThreshold));
@@ -4433,7 +4433,7 @@ static void testsJSCOptions()
             g_assert_true(type == JSC_OPTION_INT);
         else if (!g_strcmp0(option, "maxPerThreadStackUsage"))
             g_assert_true(type == JSC_OPTION_UINT);
-        else if (!g_strcmp0(option, "webAssemblyPartialCompileLimit"))
+        else if (!g_strcmp0(option, "wasmPartialCompileLimit"))
             g_assert_true(type == JSC_OPTION_SIZE);
         else if (!g_strcmp0(option, "smallHeapRAMFraction"))
             g_assert_true(type == JSC_OPTION_DOUBLE);
@@ -4456,7 +4456,7 @@ static void testsJSCOptions()
         "--jsc-useJIT=false",
         "--jsc-thresholdForJITAfterWarmUp=2000",
         "--jsc-maxPerThreadStackUsage=1024",
-        "--jsc-webAssemblyPartialCompileLimit=4000",
+        "--jsc-wasmPartialCompileLimit=4000",
         "--jsc-criticalGCMemoryThreshold=0.95",
         "--jsc-configFile=/tmp/bar",
         "--jsc-bytecodeRangeToJITCompile=100:300",
@@ -4475,8 +4475,8 @@ static void testsJSCOptions()
     g_assert_cmpint(thresholdForJITAfterWarmUp, ==, 2000);
     g_assert_true(jsc_options_get_uint("maxPerThreadStackUsage", &maxPerThreadStackUsage));
     g_assert_cmpuint(maxPerThreadStackUsage, ==, 1024);
-    g_assert_true(jsc_options_get_size("webAssemblyPartialCompileLimit", &webAssemblyPartialCompileLimit));
-    g_assert_cmpuint(webAssemblyPartialCompileLimit, ==, 4000);
+    g_assert_true(jsc_options_get_size("wasmPartialCompileLimit", &wasmPartialCompileLimit));
+    g_assert_cmpuint(wasmPartialCompileLimit, ==, 4000);
     g_assert_true(jsc_options_get_double("criticalGCMemoryThreshold", &criticalGCMemoryThreshold));
     g_assert_cmpfloat(criticalGCMemoryThreshold, ==, 0.95);
     g_assert_true(jsc_options_get_string("configFile", &configFile.outPtr()));
@@ -4490,7 +4490,7 @@ static void testsJSCOptions()
     g_assert_true(jsc_options_set_boolean(JSC_OPTIONS_USE_JIT, TRUE));
     g_assert_true(jsc_options_set_int("thresholdForJITAfterWarmUp", 500));
     g_assert_true(jsc_options_set_uint("maxPerThreadStackUsage", 5242880));
-    g_assert_true(jsc_options_set_size("webAssemblyPartialCompileLimit", 5000));
+    g_assert_true(jsc_options_set_size("wasmPartialCompileLimit", 5000));
     g_assert_true(jsc_options_set_double("smallHeapRAMFraction", 0.25));
     g_assert_true(jsc_options_set_string("configFile", nullptr));
     g_assert_true(jsc_options_set_range_string("bytecodeRangeToJITCompile", nullptr));

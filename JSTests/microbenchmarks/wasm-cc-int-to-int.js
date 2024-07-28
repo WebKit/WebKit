@@ -1,6 +1,6 @@
 //@ skip
 //@ $skipModes << :lockdown
-//@ runDefaultWasm("--useWebAssembly=1")
+//@ runDefaultWasm("--useWasm=1")
 
 var wasm_code;
 try {

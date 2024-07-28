@@ -1,4 +1,4 @@
-//@ requireOptions("--useWebAssemblySIMD=1", "--thresholdForOMGOptimizeSoon=1", "--thresholdForOMGOptimizeAfterWarmUp=1")
+//@ requireOptions("--useWasmSIMD=1", "--thresholdForOMGOptimizeSoon=1", "--thresholdForOMGOptimizeAfterWarmUp=1")
 //@ skip if !$isSIMDPlatform
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"

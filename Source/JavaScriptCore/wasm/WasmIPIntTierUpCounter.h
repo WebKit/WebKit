@@ -63,7 +63,7 @@ public:
 
     void optimizeAfterWarmUp()
     {
-        if (Options::webAssemblyLLIntTiersUpToBBQ())
+        if (Options::wasmLLIntTiersUpToBBQ())
             setNewThreshold(Options::thresholdForBBQOptimizeAfterWarmUp());
         else
             setNewThreshold(Options::thresholdForOMGOptimizeAfterWarmUp());
@@ -76,7 +76,7 @@ public:
 
     void optimizeSoon()
     {
-        if (Options::webAssemblyLLIntTiersUpToBBQ())
+        if (Options::wasmLLIntTiersUpToBBQ())
             setNewThreshold(Options::thresholdForBBQOptimizeSoon());
         else
             setNewThreshold(Options::thresholdForOMGOptimizeSoon());

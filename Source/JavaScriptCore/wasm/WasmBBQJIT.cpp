@@ -2894,7 +2894,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addRefEq(Value ref0, Value ref1, Value&
 PartialResult WARN_UNUSED_RETURN BBQJIT::addRefFunc(uint32_t index, Value& result)
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-    TypeKind returnType = Options::useWebAssemblyTypedFunctionReferences() ? TypeKind::Ref : TypeKind::Funcref;
+    TypeKind returnType = Options::useWasmTypedFunctionReferences() ? TypeKind::Ref : TypeKind::Funcref;
 
     Vector<Value, 8> arguments = {
         instanceValue(),
@@ -3213,7 +3213,7 @@ StackMap BBQJIT::makeStackMap(const ControlData& data, Stack& enclosingStack)
     for (unsigned i = 0; i < m_locals.size(); i ++)
         stackMap[stackMapIndex ++] = OSREntryValue(toB3Rep(m_locals[i]), toB3Type(m_localTypes[i]));
 
-    if (Options::useWebAssemblyIPInt()) {
+    if (Options::useWasmIPInt()) {
         // Do rethrow slots first because IPInt has them in a shadow stack.
         for (const ControlEntry& entry : m_parser->controlStack()) {
             for (unsigned i = 0; i < entry.controlData.implicitSlots(); i ++) {
@@ -4068,7 +4068,7 @@ void BBQJIT::addRTTSlowPathJump(TypeIndex signature, GPRReg calleeRTT)
 
 void BBQJIT::emitSlowPathRTTCheck(MacroAssembler::Label returnLabel, TypeIndex typeIndex, GPRReg calleeRTT)
 {
-    ASSERT(Options::useWebAssemblyGC());
+    ASSERT(Options::useWasmGC());
 
     auto signatureRTT = TypeInformation::getCanonicalRTT(typeIndex);
     GPRReg rttSize = wasmScratchGPR;
@@ -4197,7 +4197,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCallIndirect(unsigned tableIndex, co
             static_assert(static_cast<ptrdiff_t>(WasmToWasmImportableFunction::offsetOfSignatureIndex() + sizeof(void*)) == WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation());
 
             // Save the table entry in calleeRTT if needed for the subtype check.
-            bool needsSubtypeCheck = Options::useWebAssemblyGC() && !originalSignature.isFinalType();
+            bool needsSubtypeCheck = Options::useWasmGC() && !originalSignature.isFinalType();
             if (needsSubtypeCheck)
                 m_jit.move(calleeSignatureIndex, calleeRTT);
 

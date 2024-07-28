@@ -109,7 +109,7 @@ void IPIntPlan::compileFunction(uint32_t functionIndex)
         return;
     }
 
-    if (Options::useWebAssemblyTailCalls()) {
+    if (Options::useWasmTailCalls()) {
         Locker locker { m_lock };
 
         for (auto successor : parseAndCompileResult->get()->tailCallSuccessors())

@@ -1,4 +1,4 @@
-//@ requireOptions("--useWebAssemblySIMD=1", "--watchdog=1000", "--watchdog-exception-ok")
+//@ requireOptions("--useWasmSIMD=1", "--watchdog=1000", "--watchdog-exception-ok")
 //@ skip if !$isSIMDPlatform
 //@ skip
 //FIXME: this test is currently broken.

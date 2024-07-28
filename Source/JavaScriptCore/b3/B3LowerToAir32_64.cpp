@@ -1372,7 +1372,7 @@ private:
             }
             break;
         case Width128:
-            RELEASE_ASSERT(is64Bit() && Options::useWebAssemblySIMD());
+            RELEASE_ASSERT(is64Bit() && Options::useWasmSIMD());
             RELEASE_ASSERT(bank == FP);
             return MoveVector;
         }

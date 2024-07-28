@@ -1,4 +1,4 @@
-//@ requireOptions("--maxPerThreadStackUsage=512000", "--useWebAssemblySIMD=false")
+//@ requireOptions("--maxPerThreadStackUsage=512000", "--useWasmSIMD=false")
 
 import Builder from '../Builder.js'
 import * as assert from '../assert.js'
