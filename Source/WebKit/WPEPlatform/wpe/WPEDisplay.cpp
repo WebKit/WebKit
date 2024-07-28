@@ -185,9 +185,10 @@ WPEDisplay* wpe_display_get_default(void)
                     s_defaultDisplay = WTFMove(display);
                     return;
                 }
-                g_warning("Failed to connect to display of type %s: %s", extensionName, error->message);
+                g_error("Failed to connect to display of type %s: %s", extensionName, error->message);
             } else
-                g_warning("Display of type %s was not found", extensionName);
+                g_error("Display of type %s was not found", extensionName);
+            return;
         }
 
         auto* extensionList = g_io_extension_point_get_extensions(extensionPoint);
