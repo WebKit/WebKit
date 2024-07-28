@@ -459,7 +459,6 @@ _ChaCha20_ctr32_ssse3_4x:
 _CET_ENDBR
 	movq	%rsp,%r9
 
-	movq	%r10,%r11
 	subq	$0x140+8,%rsp
 	movdqa	L$sigma(%rip),%xmm11
 	movdqu	(%rcx),%xmm15

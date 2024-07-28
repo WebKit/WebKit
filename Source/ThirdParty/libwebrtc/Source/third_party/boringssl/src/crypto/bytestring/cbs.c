@@ -507,11 +507,9 @@ int CBS_get_asn1_int64(CBS *cbs, int64_t *out) {
     return 0;
   }
   uint8_t sign_extend[sizeof(int64_t)];
-  memset(sign_extend, is_negative ? 0xff : 0, sizeof(sign_extend));
-  for (size_t i = 0; i < len; i++) {
-    sign_extend[i] = data[len - i - 1];
-  }
-  memcpy(out, sign_extend, sizeof(sign_extend));
+  OPENSSL_memset(sign_extend, is_negative ? 0xff : 0, sizeof(sign_extend));
+  OPENSSL_memcpy(sign_extend + sizeof(int64_t) - len, data, len);
+  *out = CRYPTO_load_u64_be(sign_extend);
   return 1;
 }
 

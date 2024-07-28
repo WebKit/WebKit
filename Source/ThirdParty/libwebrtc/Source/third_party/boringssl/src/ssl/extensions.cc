@@ -441,16 +441,18 @@ bool tls12_add_verify_sigalgs(const SSL_HANDSHAKE *hs, CBB *out) {
 }
 
 bool tls12_check_peer_sigalg(const SSL_HANDSHAKE *hs, uint8_t *out_alert,
-                             uint16_t sigalg) {
-  for (uint16_t verify_sigalg : tls12_get_verify_sigalgs(hs)) {
-    if (verify_sigalg == sigalg) {
-      return true;
-    }
+                             uint16_t sigalg, EVP_PKEY *pkey) {
+  // The peer must have selected an algorithm that is consistent with its public
+  // key, the TLS version, and what we advertised.
+  Span<const uint16_t> sigalgs = tls12_get_verify_sigalgs(hs);
+  if (std::find(sigalgs.begin(), sigalgs.end(), sigalg) == sigalgs.end() ||
+      !ssl_pkey_supports_algorithm(hs->ssl, pkey, sigalg, /*is_verify=*/true)) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_WRONG_SIGNATURE_TYPE);
+    *out_alert = SSL_AD_ILLEGAL_PARAMETER;
+    return false;
   }
 
-  OPENSSL_PUT_ERROR(SSL, SSL_R_WRONG_SIGNATURE_TYPE);
-  *out_alert = SSL_AD_ILLEGAL_PARAMETER;
-  return false;
+  return true;
 }
 
 // tls_extension represents a TLS extension that is handled internally.
@@ -1474,16 +1476,19 @@ bool ssl_is_alpn_protocol_allowed(const SSL_HANDSHAKE *hs,
   }
 
   // Check that the protocol name is one of the ones we advertised.
-  CBS client_protocol_name_list =
-          MakeConstSpan(hs->config->alpn_client_proto_list),
-      client_protocol_name;
-  while (CBS_len(&client_protocol_name_list) > 0) {
-    if (!CBS_get_u8_length_prefixed(&client_protocol_name_list,
-                                    &client_protocol_name)) {
+  return ssl_alpn_list_contains_protocol(hs->config->alpn_client_proto_list,
+                                         protocol);
+}
+
+bool ssl_alpn_list_contains_protocol(Span<const uint8_t> list,
+                                     Span<const uint8_t> protocol) {
+  CBS cbs = list, candidate;
+  while (CBS_len(&cbs) > 0) {
+    if (!CBS_get_u8_length_prefixed(&cbs, &candidate)) {
       return false;
     }
 
-    if (client_protocol_name == protocol) {
+    if (candidate == protocol) {
       return true;
     }
   }
@@ -4144,7 +4149,8 @@ bool tls1_choose_signature_algorithm(SSL_HANDSHAKE *hs,
                                      ? MakeConstSpan(kSignSignatureAlgorithms)
                                      : cred->sigalgs;
   for (uint16_t sigalg : sigalgs) {
-    if (!ssl_pkey_supports_algorithm(ssl, cred->pubkey.get(), sigalg)) {
+    if (!ssl_pkey_supports_algorithm(ssl, cred->pubkey.get(), sigalg,
+                                     /*is_verify=*/false)) {
       continue;
     }
 

@@ -6,26 +6,18 @@
 #if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__APPLE__)
 .text	
 
-
-
-.globl	_bn_mul_mont_gather5
-.private_extern _bn_mul_mont_gather5
+.globl	_bn_mul_mont_gather5_nohw
+.private_extern _bn_mul_mont_gather5_nohw
 
 .p2align	6
-_bn_mul_mont_gather5:
+_bn_mul_mont_gather5_nohw:
 
 _CET_ENDBR
+
+
 	movl	%r9d,%r9d
 	movq	%rsp,%rax
 
-	testl	$7,%r9d
-	jnz	L$mul_enter
-	leaq	_OPENSSL_ia32cap_P(%rip),%r11
-	movl	8(%r11),%r11d
-	jmp	L$mul4x_enter
-
-.p2align	4
-L$mul_enter:
 	movd	8(%rsp),%xmm5
 	pushq	%rbx
 
@@ -452,17 +444,16 @@ L$mul_epilogue:
 	ret
 
 
+.globl	_bn_mul4x_mont_gather5
+.private_extern _bn_mul4x_mont_gather5
 
 .p2align	5
-bn_mul4x_mont_gather5:
+_bn_mul4x_mont_gather5:
 
+_CET_ENDBR
 .byte	0x67
 	movq	%rsp,%rax
 
-L$mul4x_enter:
-	andl	$0x80108,%r11d
-	cmpl	$0x80108,%r11d
-	je	L$mulx4x_enter
 	pushq	%rbx
 
 	pushq	%rbp
@@ -478,6 +469,9 @@ L$mul4x_enter:
 L$mul4x_prologue:
 
 .byte	0x67
+
+
+
 	shll	$3,%r9d
 	leaq	(%r9,%r9,2),%r10
 	negq	%r9
@@ -1087,20 +1081,15 @@ L$inner4x:
 	jmp	L$sqr4x_sub_entry
 
 
-.globl	_bn_power5
-.private_extern _bn_power5
+.globl	_bn_power5_nohw
+.private_extern _bn_power5_nohw
 
 .p2align	5
-_bn_power5:
+_bn_power5_nohw:
 
 _CET_ENDBR
 	movq	%rsp,%rax
 
-	leaq	_OPENSSL_ia32cap_P(%rip),%r11
-	movl	8(%r11),%r11d
-	andl	$0x80108,%r11d
-	cmpl	$0x80108,%r11d
-	je	L$powerx5_enter
 	pushq	%rbx
 
 	pushq	%rbp
@@ -1114,6 +1103,9 @@ _CET_ENDBR
 	pushq	%r15
 
 L$power5_prologue:
+
+
+
 
 	shll	$3,%r9d
 	leal	(%r9,%r9,2),%r10d
@@ -2066,13 +2058,15 @@ L$sqr4x_sub_entry:
 	ret
 
 
+.globl	_bn_mulx4x_mont_gather5
+.private_extern _bn_mulx4x_mont_gather5
 
 .p2align	5
-bn_mulx4x_mont_gather5:
+_bn_mulx4x_mont_gather5:
 
+_CET_ENDBR
 	movq	%rsp,%rax
 
-L$mulx4x_enter:
 	pushq	%rbx
 
 	pushq	%rbp
@@ -2086,6 +2080,9 @@ L$mulx4x_enter:
 	pushq	%r15
 
 L$mulx4x_prologue:
+
+
+
 
 	shll	$3,%r9d
 	leaq	(%r9,%r9,2),%r10
@@ -2603,13 +2600,15 @@ L$mulx4x_inner:
 	jmp	L$sqrx4x_sub_entry
 
 
+.globl	_bn_powerx5
+.private_extern _bn_powerx5
 
 .p2align	5
-bn_powerx5:
+_bn_powerx5:
 
+_CET_ENDBR
 	movq	%rsp,%rax
 
-L$powerx5_enter:
 	pushq	%rbx
 
 	pushq	%rbp
@@ -2623,6 +2622,9 @@ L$powerx5_enter:
 	pushq	%r15
 
 L$powerx5_prologue:
+
+
+
 
 	shll	$3,%r9d
 	leaq	(%r9,%r9,2),%r10

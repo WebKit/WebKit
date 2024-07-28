@@ -236,6 +236,30 @@ TEST(DSATest, Generate) {
                           sig_len, dsa.get()));
 }
 
+TEST(DSATest, GenerateParamsTooLarge) {
+  bssl::UniquePtr<DSA> dsa(DSA_new());
+  ASSERT_TRUE(dsa);
+  EXPECT_FALSE(DSA_generate_parameters_ex(
+      dsa.get(), 10001, /*seed=*/nullptr, /*seed_len=*/0,
+      /*out_counter=*/nullptr, /*out_h=*/nullptr,
+      /*cb=*/nullptr));
+}
+
+TEST(DSATest, GenerateKeyTooLarge) {
+  bssl::UniquePtr<DSA> dsa = GetFIPSDSA();
+  ASSERT_TRUE(dsa);
+  bssl::UniquePtr<BIGNUM> large_p(BN_new());
+  ASSERT_TRUE(large_p);
+  ASSERT_TRUE(BN_set_bit(large_p.get(), 10001));
+  ASSERT_TRUE(BN_set_bit(large_p.get(), 0));
+  ASSERT_TRUE(DSA_set0_pqg(dsa.get(), /*p=*/large_p.get(), /*q=*/nullptr,
+                           /*g=*/nullptr));
+  large_p.release();  // |DSA_set0_pqg| takes ownership on success.
+
+  // Don't generate DSA keys if the group is too large.
+  EXPECT_FALSE(DSA_generate_key(dsa.get()));
+}
+
 TEST(DSATest, Verify) {
   bssl::UniquePtr<DSA> dsa = GetFIPSDSA();
   ASSERT_TRUE(dsa);

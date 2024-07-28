@@ -30,11 +30,6 @@ Lenc_key:
 	AARCH64_VALID_CALL_TARGET
 	stp	x29,x30,[sp,#-16]!
 	add	x29,sp,#0
-	mov	x3,#-1
-	cmp	x0,#0
-	b.eq	Lenc_key_abort
-	cmp	x2,#0
-	b.eq	Lenc_key_abort
 	mov	x3,#-2
 	cmp	w1,#128
 	b.lt	Lenc_key_abort

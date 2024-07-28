@@ -45,8 +45,8 @@ struct Base64TestVector {
   const char *encoded;
 };
 
-// Test vectors from RFC 4648.
 static const Base64TestVector kTestVectors[] = {
+    // Test vectors from RFC 4648, section 10.
     {canonical, "", ""},
     {canonical, "f", "Zg==\n"},
     {canonical, "fo", "Zm8=\n"},
@@ -54,12 +54,31 @@ static const Base64TestVector kTestVectors[] = {
     {canonical, "foob", "Zm9vYg==\n"},
     {canonical, "fooba", "Zm9vYmE=\n"},
     {canonical, "foobar", "Zm9vYmFy\n"},
-    {valid, "foobar", "Zm9vYmFy\n\n"},
-    {valid, "foobar", " Zm9vYmFy\n\n"},
-    {valid, "foobar", " Z m 9 v Y m F y\n\n"},
+
     {invalid, "", "Zm9vYmFy=\n"},
     {invalid, "", "Zm9vYmFy==\n"},
     {invalid, "", "Zm9vYmFy===\n"},
+
+    // valid non-canonical encodings due to arbitrary whitespace
+    {valid, "foobar", "Zm9vYmFy\n\n"},
+    {valid, "foobar", " Zm9vYmFy\n\n"},
+    {valid, "foobar", " Z m 9 v Y m F y\n\n"},
+    {valid, "foobar", "Zm9vYmFy\r\n"},
+
+    // The following "valid" encodings are arguably invalid, but they are
+    // commonly accepted by parsers, in particular by OpenSSL.
+    {valid, "v", "dv==\n"},
+    {canonical, "w", "dw==\n"},
+    {valid, "w", "dx==\n"},
+    {valid, "w", "d+==\n"},
+    {valid, "w", "d/==\n"},
+    {invalid, "", "d===\n"},
+    {canonical, "w`", "d2A=\n"},
+    {valid, "w`", "d2B=\n"},
+    {valid, "w`", "d2C=\n"},
+    {valid, "w`", "d2D=\n"},
+    {canonical, "wa", "d2E=\n"},
+
     {invalid, "", "Z"},
     {invalid, "", "Z\n"},
     {invalid, "", "ab!c"},

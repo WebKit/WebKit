@@ -5294,29 +5294,6 @@ OPENSSL_EXPORT void X509_STORE_set_verify_cb(
 #define X509_STORE_set_verify_cb_func(store, func) \
   X509_STORE_set_verify_cb((store), (func))
 
-typedef int (*X509_STORE_CTX_get_crl_fn)(X509_STORE_CTX *ctx, X509_CRL **crl,
-                                         X509 *x);
-typedef int (*X509_STORE_CTX_check_crl_fn)(X509_STORE_CTX *ctx, X509_CRL *crl);
-
-// X509_STORE_set_get_crl override's |store|'s logic for looking up CRLs.
-//
-// Do not use this function. It is temporarily retained to support one caller
-// and will be removed after that caller is fixed. It is not possible for
-// external callers to correctly implement this callback. The real
-// implementation sets some inaccessible internal state on |X509_STORE_CTX|.
-OPENSSL_EXPORT void X509_STORE_set_get_crl(X509_STORE *store,
-                                           X509_STORE_CTX_get_crl_fn get_crl);
-
-// X509_STORE_set_check_crl override's |store|'s logic for checking CRL
-// validity.
-//
-// Do not use this function. It is temporarily retained to support one caller
-// and will be removed after that caller is fixed. It is not possible for
-// external callers to correctly implement this callback. The real
-// implementation relies some inaccessible internal state on |X509_STORE_CTX|.
-OPENSSL_EXPORT void X509_STORE_set_check_crl(
-    X509_STORE *store, X509_STORE_CTX_check_crl_fn check_crl);
-
 // X509_STORE_CTX_set_chain configures |ctx| to use |sk| for untrusted
 // intermediate certificates to use in verification. This function is redundant
 // with the |chain| parameter of |X509_STORE_CTX_init|. Use the parameter

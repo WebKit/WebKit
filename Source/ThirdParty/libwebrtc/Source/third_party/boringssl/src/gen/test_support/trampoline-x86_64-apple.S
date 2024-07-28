@@ -52,6 +52,7 @@ _CET_ENDBR
 	movq	%r15,104(%rsp)
 
 
+
 	movq	0(%rsi),%rbx
 	movq	8(%rsi),%rbp
 	movq	16(%rsi),%r12
@@ -473,6 +474,7 @@ _CET_ENDBR
 
 
 
+
 	nop
 	popq	%r12
 
@@ -493,6 +495,7 @@ _abi_test_bad_unwind_temporary:
 
 _CET_ENDBR
 	pushq	%r12
+
 
 
 

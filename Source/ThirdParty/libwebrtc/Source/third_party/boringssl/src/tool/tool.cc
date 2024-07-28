@@ -111,8 +111,6 @@ int main(int argc, char **argv) {
   signal(SIGPIPE, SIG_IGN);
 #endif
 
-  CRYPTO_library_init();
-
   int starting_arg = 1;
   tool_func_t tool = nullptr;
 #if !defined(OPENSSL_WINDOWS)

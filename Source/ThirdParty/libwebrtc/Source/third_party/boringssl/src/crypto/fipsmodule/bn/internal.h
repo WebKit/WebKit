@@ -438,18 +438,26 @@ int bn_mul_mont_nohw(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp,
 #if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64)
 #define OPENSSL_BN_ASM_MONT5
 
-// bn_mul_mont_gather5 multiples loads index |power| of |table|, multiplies it
-// by |ap| modulo |np|, and stores the result in |rp|. The values are |num|
-// words long and represented in Montgomery form. |n0| is a pointer to the
-// corresponding field in |BN_MONT_CTX|. |table| must be aligned to at least
-// 16 bytes. |power| must be less than 32 and is treated as secret.
-//
-// WARNING: This function implements Almost Montgomery Multiplication from
-// https://eprint.iacr.org/2011/239. The inputs do not need to be fully reduced.
-// However, even if they are fully reduced, the output may not be.
-void bn_mul_mont_gather5(BN_ULONG *rp, const BN_ULONG *ap,
-                         const BN_ULONG *table, const BN_ULONG *np,
-                         const BN_ULONG *n0, int num, int power);
+// The following functions implement |bn_mul_mont_gather5|. See
+// |bn_mul_mont_gather5| for details.
+OPENSSL_INLINE int bn_mul4x_mont_gather5_capable(int num) {
+  return (num & 7) == 0;
+}
+void bn_mul4x_mont_gather5(BN_ULONG *rp, const BN_ULONG *ap,
+                           const BN_ULONG *table, const BN_ULONG *np,
+                           const BN_ULONG *n0, int num, int power);
+
+OPENSSL_INLINE int bn_mulx4x_mont_gather5_capable(int num) {
+  return bn_mul4x_mont_gather5_capable(num) && CRYPTO_is_ADX_capable() &&
+         CRYPTO_is_BMI1_capable() && CRYPTO_is_BMI2_capable();
+}
+void bn_mulx4x_mont_gather5(BN_ULONG *rp, const BN_ULONG *ap,
+                            const BN_ULONG *table, const BN_ULONG *np,
+                            const BN_ULONG *n0, int num, int power);
+
+void bn_mul_mont_gather5_nohw(BN_ULONG *rp, const BN_ULONG *ap,
+                              const BN_ULONG *table, const BN_ULONG *np,
+                              const BN_ULONG *n0, int num, int power);
 
 // bn_scatter5 stores |inp| to index |power| of |table|. |inp| and each entry of
 // |table| are |num| words long. |power| must be less than 32 and is treated as
@@ -463,17 +471,19 @@ void bn_scatter5(const BN_ULONG *inp, size_t num, BN_ULONG *table,
 // is treated as secret. |table| must be aligned to at least 16 bytes.
 void bn_gather5(BN_ULONG *out, size_t num, const BN_ULONG *table, size_t power);
 
-// bn_power5 squares |ap| five times and multiplies it by the value stored at
-// index |power| of |table|, modulo |np|. It stores the result in |rp|. The
-// values are |num| words long and represented in Montgomery form. |n0| is a
-// pointer to the corresponding field in |BN_MONT_CTX|. |num| must be divisible
-// by 8. |power| must be less than 32 and is treated as secret.
-//
-// WARNING: This function implements Almost Montgomery Multiplication from
-// https://eprint.iacr.org/2011/239. The inputs do not need to be fully reduced.
-// However, even if they are fully reduced, the output may not be.
-void bn_power5(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *table,
-               const BN_ULONG *np, const BN_ULONG *n0, int num, int power);
+// The following functions implement |bn_power5|. See |bn_power5| for details.
+void bn_power5_nohw(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *table,
+                    const BN_ULONG *np, const BN_ULONG *n0, int num, int power);
+
+OPENSSL_INLINE int bn_power5_capable(int num) { return (num & 7) == 0; }
+
+OPENSSL_INLINE int bn_powerx5_capable(int num) {
+  return bn_power5_capable(num) && CRYPTO_is_ADX_capable() &&
+         CRYPTO_is_BMI1_capable() && CRYPTO_is_BMI2_capable();
+}
+void bn_powerx5(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *table,
+                const BN_ULONG *np, const BN_ULONG *n0, int num, int power);
+
 #endif  // !OPENSSL_NO_ASM && OPENSSL_X86_64
 
 uint64_t bn_mont_n0(const BIGNUM *n);

@@ -511,7 +511,6 @@ $L$SEH_begin_ChaCha20_ctr32_ssse3_4x:
 _CET_ENDBR
 	mov	r9,rsp
 
-	mov	r11,r10
 	sub	rsp,0x140+168
 	movaps	XMMWORD[(-168)+r9],xmm6
 	movaps	XMMWORD[(-152)+r9],xmm7

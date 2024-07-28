@@ -363,57 +363,58 @@ _CET_ENDBR
 
 	push	rbp
 
-$L$SEH_prolog_aesni_gcm_decrypt_2:
+$L$SEH_prologue_aesni_gcm_decrypt_2:
 	mov	rbp,rsp
 
 	push	rbx
 
-$L$SEH_prolog_aesni_gcm_decrypt_3:
+$L$SEH_prologue_aesni_gcm_decrypt_3:
 	push	r12
 
-$L$SEH_prolog_aesni_gcm_decrypt_4:
+$L$SEH_prologue_aesni_gcm_decrypt_4:
 	push	r13
 
-$L$SEH_prolog_aesni_gcm_decrypt_5:
+$L$SEH_prologue_aesni_gcm_decrypt_5:
 	push	r14
 
-$L$SEH_prolog_aesni_gcm_decrypt_6:
+$L$SEH_prologue_aesni_gcm_decrypt_6:
 	push	r15
 
-$L$SEH_prolog_aesni_gcm_decrypt_7:
+$L$SEH_prologue_aesni_gcm_decrypt_7:
 	lea	rsp,[((-168))+rsp]
-$L$SEH_prolog_aesni_gcm_decrypt_8:
-$L$SEH_prolog_aesni_gcm_decrypt_9:
+$L$SEH_prologue_aesni_gcm_decrypt_8:
+$L$SEH_prologue_aesni_gcm_decrypt_9:
 
 
 
 	mov	QWORD[16+rbp],rdi
-$L$SEH_prolog_aesni_gcm_decrypt_10:
+$L$SEH_prologue_aesni_gcm_decrypt_10:
 	mov	QWORD[24+rbp],rsi
-$L$SEH_prolog_aesni_gcm_decrypt_11:
+$L$SEH_prologue_aesni_gcm_decrypt_11:
 	mov	rdi,QWORD[48+rbp]
 	mov	rsi,QWORD[56+rbp]
 
 	movaps	XMMWORD[(-208)+rbp],xmm6
-$L$SEH_prolog_aesni_gcm_decrypt_12:
+$L$SEH_prologue_aesni_gcm_decrypt_12:
 	movaps	XMMWORD[(-192)+rbp],xmm7
-$L$SEH_prolog_aesni_gcm_decrypt_13:
+$L$SEH_prologue_aesni_gcm_decrypt_13:
 	movaps	XMMWORD[(-176)+rbp],xmm8
-$L$SEH_prolog_aesni_gcm_decrypt_14:
+$L$SEH_prologue_aesni_gcm_decrypt_14:
 	movaps	XMMWORD[(-160)+rbp],xmm9
-$L$SEH_prolog_aesni_gcm_decrypt_15:
+$L$SEH_prologue_aesni_gcm_decrypt_15:
 	movaps	XMMWORD[(-144)+rbp],xmm10
-$L$SEH_prolog_aesni_gcm_decrypt_16:
+$L$SEH_prologue_aesni_gcm_decrypt_16:
 	movaps	XMMWORD[(-128)+rbp],xmm11
-$L$SEH_prolog_aesni_gcm_decrypt_17:
+$L$SEH_prologue_aesni_gcm_decrypt_17:
 	movaps	XMMWORD[(-112)+rbp],xmm12
-$L$SEH_prolog_aesni_gcm_decrypt_18:
+$L$SEH_prologue_aesni_gcm_decrypt_18:
 	movaps	XMMWORD[(-96)+rbp],xmm13
-$L$SEH_prolog_aesni_gcm_decrypt_19:
+$L$SEH_prologue_aesni_gcm_decrypt_19:
 	movaps	XMMWORD[(-80)+rbp],xmm14
-$L$SEH_prolog_aesni_gcm_decrypt_20:
+$L$SEH_prologue_aesni_gcm_decrypt_20:
 	movaps	XMMWORD[(-64)+rbp],xmm15
-$L$SEH_prolog_aesni_gcm_decrypt_21:
+$L$SEH_prologue_aesni_gcm_decrypt_21:
+$L$SEH_endprologue_aesni_gcm_decrypt_22:
 	vzeroupper
 
 	mov	r12,QWORD[64+rbp]
@@ -512,7 +513,7 @@ $L$dec_no_key_aliasing:
 
 $L$gcm_dec_abort:
 	ret
-$L$SEH_end_aesni_gcm_decrypt_22:
+$L$SEH_end_aesni_gcm_decrypt_23:
 
 
 
@@ -629,57 +630,58 @@ EXTERN	BORINGSSL_function_hit
 
 	push	rbp
 
-$L$SEH_prolog_aesni_gcm_encrypt_2:
+$L$SEH_prologue_aesni_gcm_encrypt_2:
 	mov	rbp,rsp
 
 	push	rbx
 
-$L$SEH_prolog_aesni_gcm_encrypt_3:
+$L$SEH_prologue_aesni_gcm_encrypt_3:
 	push	r12
 
-$L$SEH_prolog_aesni_gcm_encrypt_4:
+$L$SEH_prologue_aesni_gcm_encrypt_4:
 	push	r13
 
-$L$SEH_prolog_aesni_gcm_encrypt_5:
+$L$SEH_prologue_aesni_gcm_encrypt_5:
 	push	r14
 
-$L$SEH_prolog_aesni_gcm_encrypt_6:
+$L$SEH_prologue_aesni_gcm_encrypt_6:
 	push	r15
 
-$L$SEH_prolog_aesni_gcm_encrypt_7:
+$L$SEH_prologue_aesni_gcm_encrypt_7:
 	lea	rsp,[((-168))+rsp]
-$L$SEH_prolog_aesni_gcm_encrypt_8:
-$L$SEH_prolog_aesni_gcm_encrypt_9:
+$L$SEH_prologue_aesni_gcm_encrypt_8:
+$L$SEH_prologue_aesni_gcm_encrypt_9:
 
 
 
 	mov	QWORD[16+rbp],rdi
-$L$SEH_prolog_aesni_gcm_encrypt_10:
+$L$SEH_prologue_aesni_gcm_encrypt_10:
 	mov	QWORD[24+rbp],rsi
-$L$SEH_prolog_aesni_gcm_encrypt_11:
+$L$SEH_prologue_aesni_gcm_encrypt_11:
 	mov	rdi,QWORD[48+rbp]
 	mov	rsi,QWORD[56+rbp]
 
 	movaps	XMMWORD[(-208)+rbp],xmm6
-$L$SEH_prolog_aesni_gcm_encrypt_12:
+$L$SEH_prologue_aesni_gcm_encrypt_12:
 	movaps	XMMWORD[(-192)+rbp],xmm7
-$L$SEH_prolog_aesni_gcm_encrypt_13:
+$L$SEH_prologue_aesni_gcm_encrypt_13:
 	movaps	XMMWORD[(-176)+rbp],xmm8
-$L$SEH_prolog_aesni_gcm_encrypt_14:
+$L$SEH_prologue_aesni_gcm_encrypt_14:
 	movaps	XMMWORD[(-160)+rbp],xmm9
-$L$SEH_prolog_aesni_gcm_encrypt_15:
+$L$SEH_prologue_aesni_gcm_encrypt_15:
 	movaps	XMMWORD[(-144)+rbp],xmm10
-$L$SEH_prolog_aesni_gcm_encrypt_16:
+$L$SEH_prologue_aesni_gcm_encrypt_16:
 	movaps	XMMWORD[(-128)+rbp],xmm11
-$L$SEH_prolog_aesni_gcm_encrypt_17:
+$L$SEH_prologue_aesni_gcm_encrypt_17:
 	movaps	XMMWORD[(-112)+rbp],xmm12
-$L$SEH_prolog_aesni_gcm_encrypt_18:
+$L$SEH_prologue_aesni_gcm_encrypt_18:
 	movaps	XMMWORD[(-96)+rbp],xmm13
-$L$SEH_prolog_aesni_gcm_encrypt_19:
+$L$SEH_prologue_aesni_gcm_encrypt_19:
 	movaps	XMMWORD[(-80)+rbp],xmm14
-$L$SEH_prolog_aesni_gcm_encrypt_20:
+$L$SEH_prologue_aesni_gcm_encrypt_20:
 	movaps	XMMWORD[(-64)+rbp],xmm15
-$L$SEH_prolog_aesni_gcm_encrypt_21:
+$L$SEH_prologue_aesni_gcm_encrypt_21:
+$L$SEH_endprologue_aesni_gcm_encrypt_22:
 	vzeroupper
 
 	vmovdqu	xmm1,XMMWORD[rdi]
@@ -943,7 +945,7 @@ $L$enc_no_key_aliasing:
 
 $L$gcm_enc_abort:
 	ret
-$L$SEH_end_aesni_gcm_encrypt_22:
+$L$SEH_end_aesni_gcm_encrypt_23:
 
 
 section	.rdata rdata align=8
@@ -968,11 +970,11 @@ section	.text
 section	.pdata rdata align=4
 ALIGN	4
 	DD	$L$SEH_begin_aesni_gcm_decrypt_1 wrt ..imagebase
-	DD	$L$SEH_end_aesni_gcm_decrypt_22 wrt ..imagebase
+	DD	$L$SEH_end_aesni_gcm_decrypt_23 wrt ..imagebase
 	DD	$L$SEH_info_aesni_gcm_decrypt_0 wrt ..imagebase
 
 	DD	$L$SEH_begin_aesni_gcm_encrypt_1 wrt ..imagebase
-	DD	$L$SEH_end_aesni_gcm_encrypt_22 wrt ..imagebase
+	DD	$L$SEH_end_aesni_gcm_encrypt_23 wrt ..imagebase
 	DD	$L$SEH_info_aesni_gcm_encrypt_0 wrt ..imagebase
 
 
@@ -980,121 +982,124 @@ section	.xdata rdata align=8
 ALIGN	4
 $L$SEH_info_aesni_gcm_decrypt_0:
 	DB	1
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_21-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_endprologue_aesni_gcm_decrypt_22-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	33
 	DB	213
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_21-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_21-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	248
 	DW	9
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_20-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_20-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	232
 	DW	8
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_19-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_19-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	216
 	DW	7
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_18-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_18-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	200
 	DW	6
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_17-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_17-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	184
 	DW	5
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_16-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_16-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	168
 	DW	4
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_15-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_15-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	152
 	DW	3
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_14-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_14-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	136
 	DW	2
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_13-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_13-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	120
 	DW	1
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_12-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_12-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	104
 	DW	0
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_11-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_11-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	100
 	DW	29
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_10-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_10-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	116
 	DW	28
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_9-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_9-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	3
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_8-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_8-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	1
 	DW	21
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_7-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_7-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	240
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_6-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_6-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	224
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_5-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_5-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	208
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_4-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_4-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	192
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_3-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_3-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	48
-	DB	$L$SEH_prolog_aesni_gcm_decrypt_2-$L$SEH_begin_aesni_gcm_decrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_decrypt_2-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	80
 
+	DW	0
 $L$SEH_info_aesni_gcm_encrypt_0:
 	DB	1
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_21-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_endprologue_aesni_gcm_encrypt_22-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	33
 	DB	213
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_21-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_21-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	248
 	DW	9
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_20-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_20-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	232
 	DW	8
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_19-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_19-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	216
 	DW	7
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_18-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_18-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	200
 	DW	6
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_17-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_17-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	184
 	DW	5
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_16-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_16-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	168
 	DW	4
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_15-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_15-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	152
 	DW	3
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_14-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_14-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	136
 	DW	2
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_13-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_13-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	120
 	DW	1
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_12-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_12-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	104
 	DW	0
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_11-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_11-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	100
 	DW	29
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_10-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_10-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	116
 	DW	28
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_9-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_9-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	3
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_8-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_8-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	1
 	DW	21
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_7-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_7-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	240
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_6-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_6-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	224
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_5-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_5-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	208
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_4-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_4-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	192
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_3-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_3-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	48
-	DB	$L$SEH_prolog_aesni_gcm_encrypt_2-$L$SEH_begin_aesni_gcm_encrypt_1
+	DB	$L$SEH_prologue_aesni_gcm_encrypt_2-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	80
+
+	DW	0
 %else
 ; Work around https://bugzilla.nasm.us/show_bug.cgi?id=3392738
 ret

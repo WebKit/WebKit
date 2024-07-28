@@ -31,6 +31,8 @@ OPENSSL_MSVC_PRAGMA(warning(pop))
 #include "test_util.h"
 
 
+BSSL_NAMESPACE_BEGIN
+
 #if defined(OPENSSL_WINDOWS)
 static void PrintLastError(const char *s) {
   DWORD error = GetLastError();
@@ -237,3 +239,5 @@ bool TemporaryDirectory::AddFile(const std::string &filename,
   files_.insert(filename);
   return true;
 }
+
+BSSL_NAMESPACE_END

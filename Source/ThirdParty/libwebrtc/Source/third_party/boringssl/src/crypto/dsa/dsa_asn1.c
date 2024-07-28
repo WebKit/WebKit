@@ -65,8 +65,6 @@
 #include "../bytestring/internal.h"
 
 
-#define OPENSSL_DSA_MAX_MODULUS_BITS 10000
-
 // This function is in dsa_asn1.c rather than dsa.c because it is reachable from
 // |EVP_PKEY| parsers. This makes it easier for the static linker to drop most
 // of the DSA implementation.

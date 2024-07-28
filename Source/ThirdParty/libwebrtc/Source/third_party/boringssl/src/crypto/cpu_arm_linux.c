@@ -143,6 +143,9 @@ void OPENSSL_cpuid_setup(void) {
 
 int CRYPTO_has_broken_NEON(void) { return 0; }
 
-int CRYPTO_needs_hwcap2_workaround(void) { return g_needs_hwcap2_workaround; }
+int CRYPTO_needs_hwcap2_workaround(void) {
+  OPENSSL_init_cpuid();
+  return g_needs_hwcap2_workaround;
+}
 
 #endif  // OPENSSL_ARM && OPENSSL_LINUX && !OPENSSL_STATIC_ARMCAP

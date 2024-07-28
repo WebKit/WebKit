@@ -474,7 +474,7 @@ ___
 if ($win64) {
 $code.=<<___
 	lea	-0xa8(%rsp),%rsp		# 8 extra bytes to align the stack
-.seh_allocstack	0xa8
+.seh_stackalloc	0xa8
 .seh_setframe	%rbp, 0xa8+5*8
 	# Load the last two parameters. These go into %rdi and %rsi, which are
 	# non-volatile on Windows, so stash them in the parameter stack area
@@ -487,25 +487,26 @@ $code.=<<___
 	mov	0x38(%rbp), $Htable
 	# Save non-volatile XMM registers.
 	movaps	%xmm6,-0xd0(%rbp)
-.seh_savexmm128	%xmm6, 0xa8+5*8-0xd0
+.seh_savexmm	%xmm6, 0xa8+5*8-0xd0
 	movaps	%xmm7,-0xc0(%rbp)
-.seh_savexmm128	%xmm7, 0xa8+5*8-0xc0
+.seh_savexmm	%xmm7, 0xa8+5*8-0xc0
 	movaps	%xmm8,-0xb0(%rbp)
-.seh_savexmm128	%xmm8, 0xa8+5*8-0xb0
+.seh_savexmm	%xmm8, 0xa8+5*8-0xb0
 	movaps	%xmm9,-0xa0(%rbp)
-.seh_savexmm128	%xmm9, 0xa8+5*8-0xa0
+.seh_savexmm	%xmm9, 0xa8+5*8-0xa0
 	movaps	%xmm10,-0x90(%rbp)
-.seh_savexmm128	%xmm10, 0xa8+5*8-0x90
+.seh_savexmm	%xmm10, 0xa8+5*8-0x90
 	movaps	%xmm11,-0x80(%rbp)
-.seh_savexmm128	%xmm11, 0xa8+5*8-0x80
+.seh_savexmm	%xmm11, 0xa8+5*8-0x80
 	movaps	%xmm12,-0x70(%rbp)
-.seh_savexmm128	%xmm12, 0xa8+5*8-0x70
+.seh_savexmm	%xmm12, 0xa8+5*8-0x70
 	movaps	%xmm13,-0x60(%rbp)
-.seh_savexmm128	%xmm13, 0xa8+5*8-0x60
+.seh_savexmm	%xmm13, 0xa8+5*8-0x60
 	movaps	%xmm14,-0x50(%rbp)
-.seh_savexmm128	%xmm14, 0xa8+5*8-0x50
+.seh_savexmm	%xmm14, 0xa8+5*8-0x50
 	movaps	%xmm15,-0x40(%rbp)
-.seh_savexmm128	%xmm15, 0xa8+5*8-0x40
+.seh_savexmm	%xmm15, 0xa8+5*8-0x40
+.seh_endprologue
 ___
 }
 $code.=<<___;
@@ -753,7 +754,7 @@ ___
 if ($win64) {
 $code.=<<___
 	lea	-0xa8(%rsp),%rsp		# 8 extra bytes to align the stack
-.seh_allocstack	0xa8
+.seh_stackalloc	0xa8
 .seh_setframe	%rbp, 0xa8+5*8
 	# Load the last two parameters. These go into %rdi and %rsi, which are
 	# non-volatile on Windows, so stash them in the parameter stack area
@@ -766,25 +767,26 @@ $code.=<<___
 	mov	0x38(%rbp), $Htable
 	# Save non-volatile XMM registers.
 	movaps	%xmm6,-0xd0(%rbp)
-.seh_savexmm128	%xmm6, 0xa8+5*8-0xd0
+.seh_savexmm	%xmm6, 0xa8+5*8-0xd0
 	movaps	%xmm7,-0xc0(%rbp)
-.seh_savexmm128	%xmm7, 0xa8+5*8-0xc0
+.seh_savexmm	%xmm7, 0xa8+5*8-0xc0
 	movaps	%xmm8,-0xb0(%rbp)
-.seh_savexmm128	%xmm8, 0xa8+5*8-0xb0
+.seh_savexmm	%xmm8, 0xa8+5*8-0xb0
 	movaps	%xmm9,-0xa0(%rbp)
-.seh_savexmm128	%xmm9, 0xa8+5*8-0xa0
+.seh_savexmm	%xmm9, 0xa8+5*8-0xa0
 	movaps	%xmm10,-0x90(%rbp)
-.seh_savexmm128	%xmm10, 0xa8+5*8-0x90
+.seh_savexmm	%xmm10, 0xa8+5*8-0x90
 	movaps	%xmm11,-0x80(%rbp)
-.seh_savexmm128	%xmm11, 0xa8+5*8-0x80
+.seh_savexmm	%xmm11, 0xa8+5*8-0x80
 	movaps	%xmm12,-0x70(%rbp)
-.seh_savexmm128	%xmm12, 0xa8+5*8-0x70
+.seh_savexmm	%xmm12, 0xa8+5*8-0x70
 	movaps	%xmm13,-0x60(%rbp)
-.seh_savexmm128	%xmm13, 0xa8+5*8-0x60
+.seh_savexmm	%xmm13, 0xa8+5*8-0x60
 	movaps	%xmm14,-0x50(%rbp)
-.seh_savexmm128	%xmm14, 0xa8+5*8-0x50
+.seh_savexmm	%xmm14, 0xa8+5*8-0x50
 	movaps	%xmm15,-0x40(%rbp)
-.seh_savexmm128	%xmm15, 0xa8+5*8-0x40
+.seh_savexmm	%xmm15, 0xa8+5*8-0x40
+.seh_endprologue
 ___
 }
 $code.=<<___;

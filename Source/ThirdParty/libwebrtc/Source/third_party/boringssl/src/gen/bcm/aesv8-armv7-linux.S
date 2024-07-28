@@ -26,11 +26,6 @@
 .align	5
 aes_hw_set_encrypt_key:
 .Lenc_key:
-	mov	r3,#-1
-	cmp	r0,#0
-	beq	.Lenc_key_abort
-	cmp	r2,#0
-	beq	.Lenc_key_abort
 	mov	r3,#-2
 	cmp	r1,#128
 	blt	.Lenc_key_abort

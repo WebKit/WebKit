@@ -8011,7 +8011,7 @@ class TemporaryHashDir {
   }
 
   int type_;
-  TemporaryDirectory dir_;
+  bssl::TemporaryDirectory dir_;
   std::map<uint32_t, int> next_cert_;
   std::map<uint32_t, int> next_crl_;
 };
@@ -8019,7 +8019,7 @@ class TemporaryHashDir {
 // TODO(davidben): Also test CRL handling. There are some interesting behaviors
 // in here.
 TEST(X509Test, DirHash) {
-  if (SkipTempFileTests()) {
+  if (bssl::SkipTempFileTests()) {
     GTEST_SKIP();
   }
 
@@ -8266,7 +8266,7 @@ TEST(X509Test, DirHashSeparator) {
   const char kSeparator = ':';
 #endif
 
-  if (SkipTempFileTests()) {
+  if (bssl::SkipTempFileTests()) {
     GTEST_SKIP();
   }
 
@@ -8330,7 +8330,7 @@ TEST(X509Test, DirHashSeparator) {
 #if defined(OPENSSL_THREADS)
 // Test that directory hash lookup is thread-safe.
 TEST(X509Test, DirHashThreads) {
-  if (SkipTempFileTests()) {
+  if (bssl::SkipTempFileTests()) {
     GTEST_SKIP();
   }
 
@@ -8542,6 +8542,117 @@ TEST(X509Test, DuplicateName) {
             << X509_verify_cert_error_string(
                    X509_STORE_CTX_get_error(ctx.get()));
       }
+    }
+  }
+}
+
+TEST(X509Test, ParseIPAddress) {
+  const struct {
+    const char *inp;
+    // out is the expected output, or an empty vector if the parser is expected
+    // to fail.
+    std::vector<uint8_t> out;
+  } kIPTests[] = {
+      // Valid IPv4 addresses.
+      {"127.0.0.1", {127, 0, 0, 1}},
+      {"1.2.3.4", {1, 2, 3, 4}},
+      {"1.2.3.255", {1, 2, 3, 255}},
+      {"255.255.255.255", {255, 255, 255, 255}},
+
+      // Valid IPv6 addresses
+      {"::", {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+      {"::1", {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}},
+      {"::01", {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}},
+      {"::001", {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}},
+      {"::0001", {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}},
+      {"ffff::", {0xff, 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+      {"1::2", {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2}},
+      {"1:1:1:1:1:1:1:1", {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1}},
+      {"2001:db8::ff00:42:8329",
+       {0x20, 0x01, 0x0d, 0xb8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x00,
+        0x00, 0x42, 0x83, 0x29}},
+      {"1234::1.2.3.4", {0x12, 0x34, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4}},
+      {"::1.2.3.4", {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4}},
+      {"ffff:ffff:ffff:ffff:ffff:ffff:1.2.3.4",
+       {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        1, 2, 3, 4}},
+
+      // Too few IPv4 components.
+      {"1", {}},
+      {"1.", {}},
+      {"1.2", {}},
+      {"1.2.", {}},
+      {"1.2.3", {}},
+      {"1.2.3.", {}},
+
+      // Invalid embedded IPv4 address.
+      {"::1.2.3", {}},
+
+      // Too many components.
+      {"1.2.3.4.5", {}},
+      {"1:2:3:4:5:6:7:8:9", {}},
+      {"1:2:3:4:5::6:7:8:9", {}},
+
+      // IPv4 literals take the place of two IPv6 components.
+      {"1:2:3:4:5:6:7:1.2.3.4", {}},
+
+      // '::' should have fewer than 16 components or it is redundant.
+      {"1:2:3:4:5:6:7::8", {}},
+
+      // Embedded IPv4 addresses must be at the end.
+      {"::1.2.3.4:1", {}},
+
+      // Stray whitespace or other invalid characters.
+      {"1.2.3.4 ", {}},
+      {"1.2.3 .4", {}},
+      {"1.2.3. 4", {}},
+      {" 1.2.3.4", {}},
+      {"1.2.3.4.", {}},
+      {"1.2.3.+4", {}},
+      {"1.2.3.-4", {}},
+      {"1.2.3.4.example.test", {}},
+      {"::1 ", {}},
+      {" ::1", {}},
+      {":: 1", {}},
+      {": :1", {}},
+      {"1.2.3.nope", {}},
+      {"::nope", {}},
+
+      // Components too large.
+      {"1.2.3.256", {}},  // Overflows when adding
+      {"1.2.3.260", {}},  // Overflows when multiplying by 10
+      {"1.2.3.999999999999999999999999999999999999999999", {}},
+      {"::fffff", {}},
+
+      // Although not an overflow, more than four hex digits is an error.
+      {"::00000", {}},
+
+      // Too many colons.
+      {":::", {}},
+      {"1:::", {}},
+      {":::2", {}},
+      {"1:::2", {}},
+
+      // Only one group of zeros may be elided.
+      {"1::2::3", {}},
+
+      // We only support decimal.
+      {"1.2.3.01", {}},
+      {"1.2.3.0x1", {}},
+
+      // Random garbage.
+      {"example.test", {}},
+      {"", {}},
+  };
+  for (const auto &t : kIPTests) {
+    SCOPED_TRACE(t.inp);
+    bssl::UniquePtr<ASN1_OCTET_STRING> oct(a2i_IPADDRESS(t.inp));
+    if (t.out.empty()) {
+      EXPECT_FALSE(oct);
+    } else {
+      ASSERT_TRUE(oct);
+      EXPECT_EQ(Bytes(t.out), Bytes(ASN1_STRING_get0_data(oct.get()),
+                                    ASN1_STRING_length(oct.get())));
     }
   }
 }

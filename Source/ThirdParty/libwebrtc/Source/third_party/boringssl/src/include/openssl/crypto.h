@@ -32,17 +32,8 @@ extern "C" {
 #endif
 
 
-// crypto.h contains functions for initializing the crypto library.
+// crypto.h contains functions for library-wide initialization and properties.
 
-
-// CRYPTO_library_init initializes the crypto library. It must be called if the
-// library is built with BORINGSSL_NO_STATIC_INITIALIZER. Otherwise, it does
-// nothing and a static initializer is used instead. It is safe to call this
-// function multiple times and concurrently from multiple threads.
-//
-// On some ARM configurations, this function may require filesystem access and
-// should be called before entering a sandbox.
-OPENSSL_EXPORT void CRYPTO_library_init(void);
 
 // CRYPTO_is_confidential_build returns one if the linked version of BoringSSL
 // has been built with the BORINGSSL_CONFIDENTIAL define and zero otherwise.
@@ -164,7 +155,7 @@ OPENSSL_EXPORT void OPENSSL_load_builtin_modules(void);
 #define OPENSSL_INIT_NO_LOAD_CONFIG 0
 #define OPENSSL_INIT_NO_ATEXIT 0
 
-// OPENSSL_init_crypto calls |CRYPTO_library_init| and returns one.
+// OPENSSL_init_crypto returns one.
 OPENSSL_EXPORT int OPENSSL_init_crypto(uint64_t opts,
                                        const OPENSSL_INIT_SETTINGS *settings);
 
@@ -177,6 +168,9 @@ OPENSSL_EXPORT int FIPS_mode_set(int on);
 
 // FIPS_module_name returns the name of the FIPS module.
 OPENSSL_EXPORT const char *FIPS_module_name(void);
+
+// FIPS_module_hash returns the 32-byte hash of the FIPS module.
+OPENSSL_EXPORT const uint8_t* FIPS_module_hash(void);
 
 // FIPS_version returns the version of the FIPS module, or zero if the build
 // isn't exactly at a verified version. The version, expressed in base 10, will
@@ -195,6 +189,10 @@ OPENSSL_EXPORT int FIPS_query_algorithm_status(const char *algorithm);
 // CRYPTO_has_broken_NEON returns zero.
 OPENSSL_EXPORT int CRYPTO_has_broken_NEON(void);
 #endif
+
+// CRYPTO_library_init does nothing. Historically, it was needed in some build
+// configurations to initialization the library. This is no longer necessary.
+OPENSSL_EXPORT void CRYPTO_library_init(void);
 
 
 #if defined(__cplusplus)

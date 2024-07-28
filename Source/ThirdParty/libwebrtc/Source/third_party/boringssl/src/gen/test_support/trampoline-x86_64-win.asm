@@ -39,61 +39,62 @@ _CET_ENDBR
 
 	sub	rsp,344
 
-$L$SEH_prolog_abi_test_trampoline_2:
+$L$SEH_prologue_abi_test_trampoline_2:
 	mov	QWORD[112+rsp],rbx
 
-$L$SEH_prolog_abi_test_trampoline_3:
+$L$SEH_prologue_abi_test_trampoline_3:
 	mov	QWORD[120+rsp],rbp
 
-$L$SEH_prolog_abi_test_trampoline_4:
+$L$SEH_prologue_abi_test_trampoline_4:
 	mov	QWORD[128+rsp],rdi
 
-$L$SEH_prolog_abi_test_trampoline_5:
+$L$SEH_prologue_abi_test_trampoline_5:
 	mov	QWORD[136+rsp],rsi
 
-$L$SEH_prolog_abi_test_trampoline_6:
+$L$SEH_prologue_abi_test_trampoline_6:
 	mov	QWORD[144+rsp],r12
 
-$L$SEH_prolog_abi_test_trampoline_7:
+$L$SEH_prologue_abi_test_trampoline_7:
 	mov	QWORD[152+rsp],r13
 
-$L$SEH_prolog_abi_test_trampoline_8:
+$L$SEH_prologue_abi_test_trampoline_8:
 	mov	QWORD[160+rsp],r14
 
-$L$SEH_prolog_abi_test_trampoline_9:
+$L$SEH_prologue_abi_test_trampoline_9:
 	mov	QWORD[168+rsp],r15
 
-$L$SEH_prolog_abi_test_trampoline_10:
+$L$SEH_prologue_abi_test_trampoline_10:
 	movdqa	XMMWORD[176+rsp],xmm6
 
-$L$SEH_prolog_abi_test_trampoline_11:
+$L$SEH_prologue_abi_test_trampoline_11:
 	movdqa	XMMWORD[192+rsp],xmm7
 
-$L$SEH_prolog_abi_test_trampoline_12:
+$L$SEH_prologue_abi_test_trampoline_12:
 	movdqa	XMMWORD[208+rsp],xmm8
 
-$L$SEH_prolog_abi_test_trampoline_13:
+$L$SEH_prologue_abi_test_trampoline_13:
 	movdqa	XMMWORD[224+rsp],xmm9
 
-$L$SEH_prolog_abi_test_trampoline_14:
+$L$SEH_prologue_abi_test_trampoline_14:
 	movdqa	XMMWORD[240+rsp],xmm10
 
-$L$SEH_prolog_abi_test_trampoline_15:
+$L$SEH_prologue_abi_test_trampoline_15:
 	movdqa	XMMWORD[256+rsp],xmm11
 
-$L$SEH_prolog_abi_test_trampoline_16:
+$L$SEH_prologue_abi_test_trampoline_16:
 	movdqa	XMMWORD[272+rsp],xmm12
 
-$L$SEH_prolog_abi_test_trampoline_17:
+$L$SEH_prologue_abi_test_trampoline_17:
 	movdqa	XMMWORD[288+rsp],xmm13
 
-$L$SEH_prolog_abi_test_trampoline_18:
+$L$SEH_prologue_abi_test_trampoline_18:
 	movdqa	XMMWORD[304+rsp],xmm14
 
-$L$SEH_prolog_abi_test_trampoline_19:
+$L$SEH_prologue_abi_test_trampoline_19:
 	movdqa	XMMWORD[320+rsp],xmm15
 
-$L$SEH_prolog_abi_test_trampoline_20:
+$L$SEH_prologue_abi_test_trampoline_20:
+$L$SEH_endprologue_abi_test_trampoline_21:
 	mov	rbx,QWORD[rdx]
 	mov	rbp,QWORD[8+rdx]
 	mov	rdi,QWORD[16+rdx]
@@ -254,7 +255,7 @@ $L$call_done:
 
 	ret
 
-$L$SEH_end_abi_test_trampoline_21:
+$L$SEH_end_abi_test_trampoline_22:
 
 
 global	abi_test_clobber_rax
@@ -516,7 +517,8 @@ $L$SEH_begin_abi_test_bad_unwind_wrong_register_1:
 _CET_ENDBR
 	push	r12
 
-$L$SEH_prolog_abi_test_bad_unwind_wrong_register_2:
+$L$SEH_prologue_abi_test_bad_unwind_wrong_register_2:
+$L$SEH_endprologue_abi_test_bad_unwind_wrong_register_3:
 
 
 
@@ -524,7 +526,7 @@ $L$SEH_prolog_abi_test_bad_unwind_wrong_register_2:
 	pop	r12
 
 	ret
-$L$SEH_end_abi_test_bad_unwind_wrong_register_3:
+$L$SEH_end_abi_test_bad_unwind_wrong_register_4:
 
 
 
@@ -540,7 +542,8 @@ $L$SEH_begin_abi_test_bad_unwind_temporary_1:
 _CET_ENDBR
 	push	r12
 
-$L$SEH_prolog_abi_test_bad_unwind_temporary_2:
+$L$SEH_prologue_abi_test_bad_unwind_temporary_2:
+$L$SEH_endprologue_abi_test_bad_unwind_temporary_3:
 
 	mov	rax,r12
 	inc	rax
@@ -555,7 +558,7 @@ $L$SEH_prolog_abi_test_bad_unwind_temporary_2:
 
 	ret
 
-$L$SEH_end_abi_test_bad_unwind_temporary_3:
+$L$SEH_end_abi_test_bad_unwind_temporary_4:
 
 
 
@@ -592,7 +595,8 @@ ALIGN	16
 abi_test_bad_unwind_epilog:
 $L$SEH_begin_abi_test_bad_unwind_epilog_1:
 	push	r12
-$L$SEH_prolog_abi_test_bad_unwind_epilog_2:
+$L$SEH_prologue_abi_test_bad_unwind_epilog_2:
+$L$SEH_endprologue_abi_test_bad_unwind_epilog_3:
 
 	nop
 
@@ -600,24 +604,24 @@ $L$SEH_prolog_abi_test_bad_unwind_epilog_2:
 	pop	r12
 	nop
 	ret
-$L$SEH_end_abi_test_bad_unwind_epilog_3:
+$L$SEH_end_abi_test_bad_unwind_epilog_4:
 
 section	.pdata rdata align=4
 ALIGN	4
 	DD	$L$SEH_begin_abi_test_trampoline_1 wrt ..imagebase
-	DD	$L$SEH_end_abi_test_trampoline_21 wrt ..imagebase
+	DD	$L$SEH_end_abi_test_trampoline_22 wrt ..imagebase
 	DD	$L$SEH_info_abi_test_trampoline_0 wrt ..imagebase
 
 	DD	$L$SEH_begin_abi_test_bad_unwind_wrong_register_1 wrt ..imagebase
-	DD	$L$SEH_end_abi_test_bad_unwind_wrong_register_3 wrt ..imagebase
+	DD	$L$SEH_end_abi_test_bad_unwind_wrong_register_4 wrt ..imagebase
 	DD	$L$SEH_info_abi_test_bad_unwind_wrong_register_0 wrt ..imagebase
 
 	DD	$L$SEH_begin_abi_test_bad_unwind_temporary_1 wrt ..imagebase
-	DD	$L$SEH_end_abi_test_bad_unwind_temporary_3 wrt ..imagebase
+	DD	$L$SEH_end_abi_test_bad_unwind_temporary_4 wrt ..imagebase
 	DD	$L$SEH_info_abi_test_bad_unwind_temporary_0 wrt ..imagebase
 
 	DD	$L$SEH_begin_abi_test_bad_unwind_epilog_1 wrt ..imagebase
-	DD	$L$SEH_end_abi_test_bad_unwind_epilog_3 wrt ..imagebase
+	DD	$L$SEH_end_abi_test_bad_unwind_epilog_4 wrt ..imagebase
 	DD	$L$SEH_info_abi_test_bad_unwind_epilog_0 wrt ..imagebase
 
 
@@ -625,90 +629,94 @@ section	.xdata rdata align=8
 ALIGN	4
 $L$SEH_info_abi_test_trampoline_0:
 	DB	1
-	DB	$L$SEH_prolog_abi_test_trampoline_20-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_endprologue_abi_test_trampoline_21-$L$SEH_begin_abi_test_trampoline_1
 	DB	38
 	DB	0
-	DB	$L$SEH_prolog_abi_test_trampoline_20-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_prologue_abi_test_trampoline_20-$L$SEH_begin_abi_test_trampoline_1
 	DB	248
 	DW	20
-	DB	$L$SEH_prolog_abi_test_trampoline_19-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_prologue_abi_test_trampoline_19-$L$SEH_begin_abi_test_trampoline_1
 	DB	232
 	DW	19
-	DB	$L$SEH_prolog_abi_test_trampoline_18-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_prologue_abi_test_trampoline_18-$L$SEH_begin_abi_test_trampoline_1
 	DB	216
 	DW	18
-	DB	$L$SEH_prolog_abi_test_trampoline_17-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_prologue_abi_test_trampoline_17-$L$SEH_begin_abi_test_trampoline_1
 	DB	200
 	DW	17
-	DB	$L$SEH_prolog_abi_test_trampoline_16-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_prologue_abi_test_trampoline_16-$L$SEH_begin_abi_test_trampoline_1
 	DB	184
 	DW	16
-	DB	$L$SEH_prolog_abi_test_trampoline_15-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_prologue_abi_test_trampoline_15-$L$SEH_begin_abi_test_trampoline_1
 	DB	168
 	DW	15
-	DB	$L$SEH_prolog_abi_test_trampoline_14-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_prologue_abi_test_trampoline_14-$L$SEH_begin_abi_test_trampoline_1
 	DB	152
 	DW	14
-	DB	$L$SEH_prolog_abi_test_trampoline_13-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_prologue_abi_test_trampoline_13-$L$SEH_begin_abi_test_trampoline_1
 	DB	136
 	DW	13
-	DB	$L$SEH_prolog_abi_test_trampoline_12-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_prologue_abi_test_trampoline_12-$L$SEH_begin_abi_test_trampoline_1
 	DB	120
 	DW	12
-	DB	$L$SEH_prolog_abi_test_trampoline_11-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_prologue_abi_test_trampoline_11-$L$SEH_begin_abi_test_trampoline_1
 	DB	104
 	DW	11
-	DB	$L$SEH_prolog_abi_test_trampoline_10-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_prologue_abi_test_trampoline_10-$L$SEH_begin_abi_test_trampoline_1
 	DB	244
 	DW	21
-	DB	$L$SEH_prolog_abi_test_trampoline_9-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_prologue_abi_test_trampoline_9-$L$SEH_begin_abi_test_trampoline_1
 	DB	228
 	DW	20
-	DB	$L$SEH_prolog_abi_test_trampoline_8-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_prologue_abi_test_trampoline_8-$L$SEH_begin_abi_test_trampoline_1
 	DB	212
 	DW	19
-	DB	$L$SEH_prolog_abi_test_trampoline_7-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_prologue_abi_test_trampoline_7-$L$SEH_begin_abi_test_trampoline_1
 	DB	196
 	DW	18
-	DB	$L$SEH_prolog_abi_test_trampoline_6-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_prologue_abi_test_trampoline_6-$L$SEH_begin_abi_test_trampoline_1
 	DB	100
 	DW	17
-	DB	$L$SEH_prolog_abi_test_trampoline_5-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_prologue_abi_test_trampoline_5-$L$SEH_begin_abi_test_trampoline_1
 	DB	116
 	DW	16
-	DB	$L$SEH_prolog_abi_test_trampoline_4-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_prologue_abi_test_trampoline_4-$L$SEH_begin_abi_test_trampoline_1
 	DB	84
 	DW	15
-	DB	$L$SEH_prolog_abi_test_trampoline_3-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_prologue_abi_test_trampoline_3-$L$SEH_begin_abi_test_trampoline_1
 	DB	52
 	DW	14
-	DB	$L$SEH_prolog_abi_test_trampoline_2-$L$SEH_begin_abi_test_trampoline_1
+	DB	$L$SEH_prologue_abi_test_trampoline_2-$L$SEH_begin_abi_test_trampoline_1
 	DB	1
 	DW	43
 
 $L$SEH_info_abi_test_bad_unwind_wrong_register_0:
 	DB	1
-	DB	$L$SEH_prolog_abi_test_bad_unwind_wrong_register_2-$L$SEH_begin_abi_test_bad_unwind_wrong_register_1
+	DB	$L$SEH_endprologue_abi_test_bad_unwind_wrong_register_3-$L$SEH_begin_abi_test_bad_unwind_wrong_register_1
 	DB	1
 	DB	0
-	DB	$L$SEH_prolog_abi_test_bad_unwind_wrong_register_2-$L$SEH_begin_abi_test_bad_unwind_wrong_register_1
+	DB	$L$SEH_prologue_abi_test_bad_unwind_wrong_register_2-$L$SEH_begin_abi_test_bad_unwind_wrong_register_1
 	DB	208
 
+	DW	0
 $L$SEH_info_abi_test_bad_unwind_temporary_0:
 	DB	1
-	DB	$L$SEH_prolog_abi_test_bad_unwind_temporary_2-$L$SEH_begin_abi_test_bad_unwind_temporary_1
+	DB	$L$SEH_endprologue_abi_test_bad_unwind_temporary_3-$L$SEH_begin_abi_test_bad_unwind_temporary_1
 	DB	1
 	DB	0
-	DB	$L$SEH_prolog_abi_test_bad_unwind_temporary_2-$L$SEH_begin_abi_test_bad_unwind_temporary_1
+	DB	$L$SEH_prologue_abi_test_bad_unwind_temporary_2-$L$SEH_begin_abi_test_bad_unwind_temporary_1
 	DB	192
 
+	DW	0
 $L$SEH_info_abi_test_bad_unwind_epilog_0:
 	DB	1
-	DB	$L$SEH_prolog_abi_test_bad_unwind_epilog_2-$L$SEH_begin_abi_test_bad_unwind_epilog_1
+	DB	$L$SEH_endprologue_abi_test_bad_unwind_epilog_3-$L$SEH_begin_abi_test_bad_unwind_epilog_1
 	DB	1
 	DB	0
-	DB	$L$SEH_prolog_abi_test_bad_unwind_epilog_2-$L$SEH_begin_abi_test_bad_unwind_epilog_1
+	DB	$L$SEH_prologue_abi_test_bad_unwind_epilog_2-$L$SEH_begin_abi_test_bad_unwind_epilog_1
 	DB	192
+
+	DW	0
 %else
 ; Work around https://bugzilla.nasm.us/show_bug.cgi?id=3392738
 ret

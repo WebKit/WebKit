@@ -131,20 +131,6 @@ TEST(ThreadTest, RandState) {
   thread.join();
 }
 
-TEST(ThreadTest, InitThreads) {
-  constexpr size_t kNumThreads = 10;
-
-  // |CRYPTO_library_init| is safe to call across threads.
-  std::vector<std::thread> threads;
-  threads.reserve(kNumThreads);
-  for (size_t i = 0; i < kNumThreads; i++) {
-    threads.emplace_back(&CRYPTO_library_init);
-  }
-  for (auto &thread : threads) {
-    thread.join();
-  }
-}
-
 TEST(ThreadTest, PreSandboxInitThreads) {
   constexpr size_t kNumThreads = 10;
 

@@ -119,6 +119,50 @@
 #include "internal.h"
 #include "rsaz_exp.h"
 
+#if defined(OPENSSL_BN_ASM_MONT5)
+
+// bn_mul_mont_gather5 multiples loads index |power| of |table|, multiplies it
+// by |ap| modulo |np|, and stores the result in |rp|. The values are |num|
+// words long and represented in Montgomery form. |n0| is a pointer to the
+// corresponding field in |BN_MONT_CTX|. |table| must be aligned to at least
+// 16 bytes. |power| must be less than 32 and is treated as secret.
+//
+// WARNING: This function implements Almost Montgomery Multiplication from
+// https://eprint.iacr.org/2011/239. The inputs do not need to be fully reduced.
+// However, even if they are fully reduced, the output may not be.
+static void bn_mul_mont_gather5(
+    BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *table, const BN_ULONG *np,
+    const BN_ULONG *n0, int num, int power) {
+  if (bn_mulx4x_mont_gather5_capable(num)) {
+    bn_mulx4x_mont_gather5(rp, ap, table, np, n0, num, power);
+  } else if (bn_mul4x_mont_gather5_capable(num)) {
+    bn_mul4x_mont_gather5(rp, ap, table, np, n0, num, power);
+  } else {
+    bn_mul_mont_gather5_nohw(rp, ap, table, np, n0, num, power);
+  }
+}
+
+// bn_power5 squares |ap| five times and multiplies it by the value stored at
+// index |power| of |table|, modulo |np|. It stores the result in |rp|. The
+// values are |num| words long and represented in Montgomery form. |n0| is a
+// pointer to the corresponding field in |BN_MONT_CTX|. |num| must be divisible
+// by 8. |power| must be less than 32 and is treated as secret.
+//
+// WARNING: This function implements Almost Montgomery Multiplication from
+// https://eprint.iacr.org/2011/239. The inputs do not need to be fully reduced.
+// However, even if they are fully reduced, the output may not be.
+static void bn_power5(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *table,
+                      const BN_ULONG *np, const BN_ULONG *n0, int num,
+                      int power) {
+  assert(bn_power5_capable(num));
+  if (bn_powerx5_capable(num)) {
+    bn_powerx5(rp, ap, table, np, n0, num, power);
+  } else {
+    bn_power5_nohw(rp, ap, table, np, n0, num, power);
+  }
+}
+
+#endif // defined(OPENSSL_BN_ASM_MONT5)
 
 int BN_exp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
   int i, bits, ret = 0;
@@ -1079,7 +1123,7 @@ int BN_mod_exp_mont_consttime(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
 
     // Scan the exponent one window at a time starting from the most
     // significant bits.
-    if (top & 7) {
+    if (!bn_power5_capable(top)) {
       while (bits >= 0) {
         for (wvalue = 0, i = 0; i < 5; i++, bits--) {
           wvalue = (wvalue << 1) + BN_is_bit_set(p, bits);

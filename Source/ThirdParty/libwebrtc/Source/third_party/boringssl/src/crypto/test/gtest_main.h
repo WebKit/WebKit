@@ -63,8 +63,6 @@ class TestEventListener : public testing::EmptyTestEventListener {
 // SetupGoogleTest should be called by the test runner after
 // testing::InitGoogleTest has been called and before RUN_ALL_TESTS.
 inline void SetupGoogleTest() {
-  CRYPTO_library_init();
-
 #if defined(OPENSSL_WINDOWS)
   // Initialize Winsock.
   WORD wsa_version = MAKEWORD(2, 2);

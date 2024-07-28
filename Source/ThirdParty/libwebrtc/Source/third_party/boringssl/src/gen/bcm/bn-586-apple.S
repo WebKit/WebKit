@@ -10,20 +10,14 @@
 .align	4
 _bn_mul_add_words:
 L_bn_mul_add_words_begin:
-	call	L000PIC_me_up
-L000PIC_me_up:
-	popl	%eax
-	movl	L_OPENSSL_ia32cap_P$non_lazy_ptr-L000PIC_me_up(%eax),%eax
-	btl	$26,(%eax)
-	jnc	L001maw_non_sse2
 	movl	4(%esp),%eax
 	movl	8(%esp),%edx
 	movl	12(%esp),%ecx
 	movd	16(%esp),%mm0
 	pxor	%mm1,%mm1
-	jmp	L002maw_sse2_entry
+	jmp	L000maw_sse2_entry
 .align	4,0x90
-L003maw_sse2_unrolled:
+L001maw_sse2_unrolled:
 	movd	(%eax),%mm3
 	paddq	%mm3,%mm1
 	movd	(%edx),%mm2
@@ -83,12 +77,12 @@ L003maw_sse2_unrolled:
 	leal	32(%eax),%eax
 	psrlq	$32,%mm1
 	subl	$8,%ecx
-	jz	L004maw_sse2_exit
-L002maw_sse2_entry:
+	jz	L002maw_sse2_exit
+L000maw_sse2_entry:
 	testl	$4294967288,%ecx
-	jnz	L003maw_sse2_unrolled
+	jnz	L001maw_sse2_unrolled
 .align	2,0x90
-L005maw_sse2_loop:
+L003maw_sse2_loop:
 	movd	(%edx),%mm2
 	movd	(%eax),%mm3
 	pmuludq	%mm0,%mm2
@@ -99,189 +93,11 @@ L005maw_sse2_loop:
 	subl	$1,%ecx
 	psrlq	$32,%mm1
 	leal	4(%eax),%eax
-	jnz	L005maw_sse2_loop
-L004maw_sse2_exit:
+	jnz	L003maw_sse2_loop
+L002maw_sse2_exit:
 	movd	%mm1,%eax
 	emms
 	ret
-.align	4,0x90
-L001maw_non_sse2:
-	pushl	%ebp
-	pushl	%ebx
-	pushl	%esi
-	pushl	%edi
-
-	xorl	%esi,%esi
-	movl	20(%esp),%edi
-	movl	28(%esp),%ecx
-	movl	24(%esp),%ebx
-	andl	$4294967288,%ecx
-	movl	32(%esp),%ebp
-	pushl	%ecx
-	jz	L006maw_finish
-.align	4,0x90
-L007maw_loop:
-	# Round 0 
-	movl	(%ebx),%eax
-	mull	%ebp
-	addl	%esi,%eax
-	adcl	$0,%edx
-	addl	(%edi),%eax
-	adcl	$0,%edx
-	movl	%eax,(%edi)
-	movl	%edx,%esi
-	# Round 4 
-	movl	4(%ebx),%eax
-	mull	%ebp
-	addl	%esi,%eax
-	adcl	$0,%edx
-	addl	4(%edi),%eax
-	adcl	$0,%edx
-	movl	%eax,4(%edi)
-	movl	%edx,%esi
-	# Round 8 
-	movl	8(%ebx),%eax
-	mull	%ebp
-	addl	%esi,%eax
-	adcl	$0,%edx
-	addl	8(%edi),%eax
-	adcl	$0,%edx
-	movl	%eax,8(%edi)
-	movl	%edx,%esi
-	# Round 12 
-	movl	12(%ebx),%eax
-	mull	%ebp
-	addl	%esi,%eax
-	adcl	$0,%edx
-	addl	12(%edi),%eax
-	adcl	$0,%edx
-	movl	%eax,12(%edi)
-	movl	%edx,%esi
-	# Round 16 
-	movl	16(%ebx),%eax
-	mull	%ebp
-	addl	%esi,%eax
-	adcl	$0,%edx
-	addl	16(%edi),%eax
-	adcl	$0,%edx
-	movl	%eax,16(%edi)
-	movl	%edx,%esi
-	# Round 20 
-	movl	20(%ebx),%eax
-	mull	%ebp
-	addl	%esi,%eax
-	adcl	$0,%edx
-	addl	20(%edi),%eax
-	adcl	$0,%edx
-	movl	%eax,20(%edi)
-	movl	%edx,%esi
-	# Round 24 
-	movl	24(%ebx),%eax
-	mull	%ebp
-	addl	%esi,%eax
-	adcl	$0,%edx
-	addl	24(%edi),%eax
-	adcl	$0,%edx
-	movl	%eax,24(%edi)
-	movl	%edx,%esi
-	# Round 28 
-	movl	28(%ebx),%eax
-	mull	%ebp
-	addl	%esi,%eax
-	adcl	$0,%edx
-	addl	28(%edi),%eax
-	adcl	$0,%edx
-	movl	%eax,28(%edi)
-	movl	%edx,%esi
-
-	subl	$8,%ecx
-	leal	32(%ebx),%ebx
-	leal	32(%edi),%edi
-	jnz	L007maw_loop
-L006maw_finish:
-	movl	32(%esp),%ecx
-	andl	$7,%ecx
-	jnz	L008maw_finish2
-	jmp	L009maw_end
-L008maw_finish2:
-	# Tail Round 0 
-	movl	(%ebx),%eax
-	mull	%ebp
-	addl	%esi,%eax
-	adcl	$0,%edx
-	addl	(%edi),%eax
-	adcl	$0,%edx
-	decl	%ecx
-	movl	%eax,(%edi)
-	movl	%edx,%esi
-	jz	L009maw_end
-	# Tail Round 1 
-	movl	4(%ebx),%eax
-	mull	%ebp
-	addl	%esi,%eax
-	adcl	$0,%edx
-	addl	4(%edi),%eax
-	adcl	$0,%edx
-	decl	%ecx
-	movl	%eax,4(%edi)
-	movl	%edx,%esi
-	jz	L009maw_end
-	# Tail Round 2 
-	movl	8(%ebx),%eax
-	mull	%ebp
-	addl	%esi,%eax
-	adcl	$0,%edx
-	addl	8(%edi),%eax
-	adcl	$0,%edx
-	decl	%ecx
-	movl	%eax,8(%edi)
-	movl	%edx,%esi
-	jz	L009maw_end
-	# Tail Round 3 
-	movl	12(%ebx),%eax
-	mull	%ebp
-	addl	%esi,%eax
-	adcl	$0,%edx
-	addl	12(%edi),%eax
-	adcl	$0,%edx
-	decl	%ecx
-	movl	%eax,12(%edi)
-	movl	%edx,%esi
-	jz	L009maw_end
-	# Tail Round 4 
-	movl	16(%ebx),%eax
-	mull	%ebp
-	addl	%esi,%eax
-	adcl	$0,%edx
-	addl	16(%edi),%eax
-	adcl	$0,%edx
-	decl	%ecx
-	movl	%eax,16(%edi)
-	movl	%edx,%esi
-	jz	L009maw_end
-	# Tail Round 5 
-	movl	20(%ebx),%eax
-	mull	%ebp
-	addl	%esi,%eax
-	adcl	$0,%edx
-	addl	20(%edi),%eax
-	adcl	$0,%edx
-	decl	%ecx
-	movl	%eax,20(%edi)
-	movl	%edx,%esi
-	jz	L009maw_end
-	# Tail Round 6 
-	movl	24(%ebx),%eax
-	mull	%ebp
-	addl	%esi,%eax
-	adcl	$0,%edx
-	addl	24(%edi),%eax
-	adcl	$0,%edx
-	movl	%eax,24(%edi)
-	movl	%edx,%esi
-L009maw_end:
-	movl	%esi,%eax
-	popl	%ecx
 	popl	%edi
 	popl	%esi
 	popl	%ebx
@@ -292,19 +108,13 @@ L009maw_end:
 .align	4
 _bn_mul_words:
 L_bn_mul_words_begin:
-	call	L010PIC_me_up
-L010PIC_me_up:
-	popl	%eax
-	movl	L_OPENSSL_ia32cap_P$non_lazy_ptr-L010PIC_me_up(%eax),%eax
-	btl	$26,(%eax)
-	jnc	L011mw_non_sse2
 	movl	4(%esp),%eax
 	movl	8(%esp),%edx
 	movl	12(%esp),%ecx
 	movd	16(%esp),%mm0
 	pxor	%mm1,%mm1
 .align	4,0x90
-L012mw_sse2_loop:
+L004mw_sse2_loop:
 	movd	(%edx),%mm2
 	pmuludq	%mm0,%mm2
 	leal	4(%edx),%edx
@@ -313,156 +123,10 @@ L012mw_sse2_loop:
 	subl	$1,%ecx
 	psrlq	$32,%mm1
 	leal	4(%eax),%eax
-	jnz	L012mw_sse2_loop
+	jnz	L004mw_sse2_loop
 	movd	%mm1,%eax
 	emms
 	ret
-.align	4,0x90
-L011mw_non_sse2:
-	pushl	%ebp
-	pushl	%ebx
-	pushl	%esi
-	pushl	%edi
-
-	xorl	%esi,%esi
-	movl	20(%esp),%edi
-	movl	24(%esp),%ebx
-	movl	28(%esp),%ebp
-	movl	32(%esp),%ecx
-	andl	$4294967288,%ebp
-	jz	L013mw_finish
-L014mw_loop:
-	# Round 0 
-	movl	(%ebx),%eax
-	mull	%ecx
-	addl	%esi,%eax
-	adcl	$0,%edx
-	movl	%eax,(%edi)
-	movl	%edx,%esi
-	# Round 4 
-	movl	4(%ebx),%eax
-	mull	%ecx
-	addl	%esi,%eax
-	adcl	$0,%edx
-	movl	%eax,4(%edi)
-	movl	%edx,%esi
-	# Round 8 
-	movl	8(%ebx),%eax
-	mull	%ecx
-	addl	%esi,%eax
-	adcl	$0,%edx
-	movl	%eax,8(%edi)
-	movl	%edx,%esi
-	# Round 12 
-	movl	12(%ebx),%eax
-	mull	%ecx
-	addl	%esi,%eax
-	adcl	$0,%edx
-	movl	%eax,12(%edi)
-	movl	%edx,%esi
-	# Round 16 
-	movl	16(%ebx),%eax
-	mull	%ecx
-	addl	%esi,%eax
-	adcl	$0,%edx
-	movl	%eax,16(%edi)
-	movl	%edx,%esi
-	# Round 20 
-	movl	20(%ebx),%eax
-	mull	%ecx
-	addl	%esi,%eax
-	adcl	$0,%edx
-	movl	%eax,20(%edi)
-	movl	%edx,%esi
-	# Round 24 
-	movl	24(%ebx),%eax
-	mull	%ecx
-	addl	%esi,%eax
-	adcl	$0,%edx
-	movl	%eax,24(%edi)
-	movl	%edx,%esi
-	# Round 28 
-	movl	28(%ebx),%eax
-	mull	%ecx
-	addl	%esi,%eax
-	adcl	$0,%edx
-	movl	%eax,28(%edi)
-	movl	%edx,%esi
-
-	addl	$32,%ebx
-	addl	$32,%edi
-	subl	$8,%ebp
-	jz	L013mw_finish
-	jmp	L014mw_loop
-L013mw_finish:
-	movl	28(%esp),%ebp
-	andl	$7,%ebp
-	jnz	L015mw_finish2
-	jmp	L016mw_end
-L015mw_finish2:
-	# Tail Round 0 
-	movl	(%ebx),%eax
-	mull	%ecx
-	addl	%esi,%eax
-	adcl	$0,%edx
-	movl	%eax,(%edi)
-	movl	%edx,%esi
-	decl	%ebp
-	jz	L016mw_end
-	# Tail Round 1 
-	movl	4(%ebx),%eax
-	mull	%ecx
-	addl	%esi,%eax
-	adcl	$0,%edx
-	movl	%eax,4(%edi)
-	movl	%edx,%esi
-	decl	%ebp
-	jz	L016mw_end
-	# Tail Round 2 
-	movl	8(%ebx),%eax
-	mull	%ecx
-	addl	%esi,%eax
-	adcl	$0,%edx
-	movl	%eax,8(%edi)
-	movl	%edx,%esi
-	decl	%ebp
-	jz	L016mw_end
-	# Tail Round 3 
-	movl	12(%ebx),%eax
-	mull	%ecx
-	addl	%esi,%eax
-	adcl	$0,%edx
-	movl	%eax,12(%edi)
-	movl	%edx,%esi
-	decl	%ebp
-	jz	L016mw_end
-	# Tail Round 4 
-	movl	16(%ebx),%eax
-	mull	%ecx
-	addl	%esi,%eax
-	adcl	$0,%edx
-	movl	%eax,16(%edi)
-	movl	%edx,%esi
-	decl	%ebp
-	jz	L016mw_end
-	# Tail Round 5 
-	movl	20(%ebx),%eax
-	mull	%ecx
-	addl	%esi,%eax
-	adcl	$0,%edx
-	movl	%eax,20(%edi)
-	movl	%edx,%esi
-	decl	%ebp
-	jz	L016mw_end
-	# Tail Round 6 
-	movl	24(%ebx),%eax
-	mull	%ecx
-	addl	%esi,%eax
-	adcl	$0,%edx
-	movl	%eax,24(%edi)
-	movl	%edx,%esi
-L016mw_end:
-	movl	%esi,%eax
 	popl	%edi
 	popl	%esi
 	popl	%ebx
@@ -473,136 +137,20 @@ L016mw_end:
 .align	4
 _bn_sqr_words:
 L_bn_sqr_words_begin:
-	call	L017PIC_me_up
-L017PIC_me_up:
-	popl	%eax
-	movl	L_OPENSSL_ia32cap_P$non_lazy_ptr-L017PIC_me_up(%eax),%eax
-	btl	$26,(%eax)
-	jnc	L018sqr_non_sse2
 	movl	4(%esp),%eax
 	movl	8(%esp),%edx
 	movl	12(%esp),%ecx
 .align	4,0x90
-L019sqr_sse2_loop:
+L005sqr_sse2_loop:
 	movd	(%edx),%mm0
 	pmuludq	%mm0,%mm0
 	leal	4(%edx),%edx
 	movq	%mm0,(%eax)
 	subl	$1,%ecx
 	leal	8(%eax),%eax
-	jnz	L019sqr_sse2_loop
+	jnz	L005sqr_sse2_loop
 	emms
 	ret
-.align	4,0x90
-L018sqr_non_sse2:
-	pushl	%ebp
-	pushl	%ebx
-	pushl	%esi
-	pushl	%edi
-
-	movl	20(%esp),%esi
-	movl	24(%esp),%edi
-	movl	28(%esp),%ebx
-	andl	$4294967288,%ebx
-	jz	L020sw_finish
-L021sw_loop:
-	# Round 0 
-	movl	(%edi),%eax
-	mull	%eax
-	movl	%eax,(%esi)
-	movl	%edx,4(%esi)
-	# Round 4 
-	movl	4(%edi),%eax
-	mull	%eax
-	movl	%eax,8(%esi)
-	movl	%edx,12(%esi)
-	# Round 8 
-	movl	8(%edi),%eax
-	mull	%eax
-	movl	%eax,16(%esi)
-	movl	%edx,20(%esi)
-	# Round 12 
-	movl	12(%edi),%eax
-	mull	%eax
-	movl	%eax,24(%esi)
-	movl	%edx,28(%esi)
-	# Round 16 
-	movl	16(%edi),%eax
-	mull	%eax
-	movl	%eax,32(%esi)
-	movl	%edx,36(%esi)
-	# Round 20 
-	movl	20(%edi),%eax
-	mull	%eax
-	movl	%eax,40(%esi)
-	movl	%edx,44(%esi)
-	# Round 24 
-	movl	24(%edi),%eax
-	mull	%eax
-	movl	%eax,48(%esi)
-	movl	%edx,52(%esi)
-	# Round 28 
-	movl	28(%edi),%eax
-	mull	%eax
-	movl	%eax,56(%esi)
-	movl	%edx,60(%esi)
-
-	addl	$32,%edi
-	addl	$64,%esi
-	subl	$8,%ebx
-	jnz	L021sw_loop
-L020sw_finish:
-	movl	28(%esp),%ebx
-	andl	$7,%ebx
-	jz	L022sw_end
-	# Tail Round 0 
-	movl	(%edi),%eax
-	mull	%eax
-	movl	%eax,(%esi)
-	decl	%ebx
-	movl	%edx,4(%esi)
-	jz	L022sw_end
-	# Tail Round 1 
-	movl	4(%edi),%eax
-	mull	%eax
-	movl	%eax,8(%esi)
-	decl	%ebx
-	movl	%edx,12(%esi)
-	jz	L022sw_end
-	# Tail Round 2 
-	movl	8(%edi),%eax
-	mull	%eax
-	movl	%eax,16(%esi)
-	decl	%ebx
-	movl	%edx,20(%esi)
-	jz	L022sw_end
-	# Tail Round 3 
-	movl	12(%edi),%eax
-	mull	%eax
-	movl	%eax,24(%esi)
-	decl	%ebx
-	movl	%edx,28(%esi)
-	jz	L022sw_end
-	# Tail Round 4 
-	movl	16(%edi),%eax
-	mull	%eax
-	movl	%eax,32(%esi)
-	decl	%ebx
-	movl	%edx,36(%esi)
-	jz	L022sw_end
-	# Tail Round 5 
-	movl	20(%edi),%eax
-	mull	%eax
-	movl	%eax,40(%esi)
-	decl	%ebx
-	movl	%edx,44(%esi)
-	jz	L022sw_end
-	# Tail Round 6 
-	movl	24(%edi),%eax
-	mull	%eax
-	movl	%eax,48(%esi)
-	movl	%edx,52(%esi)
-L022sw_end:
 	popl	%edi
 	popl	%esi
 	popl	%ebx
@@ -634,8 +182,8 @@ L_bn_add_words_begin:
 	movl	32(%esp),%ebp
 	xorl	%eax,%eax
 	andl	$4294967288,%ebp
-	jz	L023aw_finish
-L024aw_loop:
+	jz	L006aw_finish
+L007aw_loop:
 	# Round 0 
 	movl	(%esi),%ecx
 	movl	(%edi),%edx
@@ -713,11 +261,11 @@ L024aw_loop:
 	addl	$32,%edi
 	addl	$32,%ebx
 	subl	$8,%ebp
-	jnz	L024aw_loop
-L023aw_finish:
+	jnz	L007aw_loop
+L006aw_finish:
 	movl	32(%esp),%ebp
 	andl	$7,%ebp
-	jz	L025aw_end
+	jz	L008aw_end
 	# Tail Round 0 
 	movl	(%esi),%ecx
 	movl	(%edi),%edx
@@ -728,7 +276,7 @@ L023aw_finish:
 	adcl	$0,%eax
 	decl	%ebp
 	movl	%ecx,(%ebx)
-	jz	L025aw_end
+	jz	L008aw_end
 	# Tail Round 1 
 	movl	4(%esi),%ecx
 	movl	4(%edi),%edx
@@ -739,7 +287,7 @@ L023aw_finish:
 	adcl	$0,%eax
 	decl	%ebp
 	movl	%ecx,4(%ebx)
-	jz	L025aw_end
+	jz	L008aw_end
 	# Tail Round 2 
 	movl	8(%esi),%ecx
 	movl	8(%edi),%edx
@@ -750,7 +298,7 @@ L023aw_finish:
 	adcl	$0,%eax
 	decl	%ebp
 	movl	%ecx,8(%ebx)
-	jz	L025aw_end
+	jz	L008aw_end
 	# Tail Round 3 
 	movl	12(%esi),%ecx
 	movl	12(%edi),%edx
@@ -761,7 +309,7 @@ L023aw_finish:
 	adcl	$0,%eax
 	decl	%ebp
 	movl	%ecx,12(%ebx)
-	jz	L025aw_end
+	jz	L008aw_end
 	# Tail Round 4 
 	movl	16(%esi),%ecx
 	movl	16(%edi),%edx
@@ -772,7 +320,7 @@ L023aw_finish:
 	adcl	$0,%eax
 	decl	%ebp
 	movl	%ecx,16(%ebx)
-	jz	L025aw_end
+	jz	L008aw_end
 	# Tail Round 5 
 	movl	20(%esi),%ecx
 	movl	20(%edi),%edx
@@ -783,7 +331,7 @@ L023aw_finish:
 	adcl	$0,%eax
 	decl	%ebp
 	movl	%ecx,20(%ebx)
-	jz	L025aw_end
+	jz	L008aw_end
 	# Tail Round 6 
 	movl	24(%esi),%ecx
 	movl	24(%edi),%edx
@@ -793,7 +341,7 @@ L023aw_finish:
 	addl	%edx,%ecx
 	adcl	$0,%eax
 	movl	%ecx,24(%ebx)
-L025aw_end:
+L008aw_end:
 	popl	%edi
 	popl	%esi
 	popl	%ebx
@@ -815,8 +363,8 @@ L_bn_sub_words_begin:
 	movl	32(%esp),%ebp
 	xorl	%eax,%eax
 	andl	$4294967288,%ebp
-	jz	L026aw_finish
-L027aw_loop:
+	jz	L009aw_finish
+L010aw_loop:
 	# Round 0 
 	movl	(%esi),%ecx
 	movl	(%edi),%edx
@@ -894,11 +442,11 @@ L027aw_loop:
 	addl	$32,%edi
 	addl	$32,%ebx
 	subl	$8,%ebp
-	jnz	L027aw_loop
-L026aw_finish:
+	jnz	L010aw_loop
+L009aw_finish:
 	movl	32(%esp),%ebp
 	andl	$7,%ebp
-	jz	L028aw_end
+	jz	L011aw_end
 	# Tail Round 0 
 	movl	(%esi),%ecx
 	movl	(%edi),%edx
@@ -909,7 +457,7 @@ L026aw_finish:
 	adcl	$0,%eax
 	decl	%ebp
 	movl	%ecx,(%ebx)
-	jz	L028aw_end
+	jz	L011aw_end
 	# Tail Round 1 
 	movl	4(%esi),%ecx
 	movl	4(%edi),%edx
@@ -920,7 +468,7 @@ L026aw_finish:
 	adcl	$0,%eax
 	decl	%ebp
 	movl	%ecx,4(%ebx)
-	jz	L028aw_end
+	jz	L011aw_end
 	# Tail Round 2 
 	movl	8(%esi),%ecx
 	movl	8(%edi),%edx
@@ -931,7 +479,7 @@ L026aw_finish:
 	adcl	$0,%eax
 	decl	%ebp
 	movl	%ecx,8(%ebx)
-	jz	L028aw_end
+	jz	L011aw_end
 	# Tail Round 3 
 	movl	12(%esi),%ecx
 	movl	12(%edi),%edx
@@ -942,7 +490,7 @@ L026aw_finish:
 	adcl	$0,%eax
 	decl	%ebp
 	movl	%ecx,12(%ebx)
-	jz	L028aw_end
+	jz	L011aw_end
 	# Tail Round 4 
 	movl	16(%esi),%ecx
 	movl	16(%edi),%edx
@@ -953,7 +501,7 @@ L026aw_finish:
 	adcl	$0,%eax
 	decl	%ebp
 	movl	%ecx,16(%ebx)
-	jz	L028aw_end
+	jz	L011aw_end
 	# Tail Round 5 
 	movl	20(%esi),%ecx
 	movl	20(%edi),%edx
@@ -964,7 +512,7 @@ L026aw_finish:
 	adcl	$0,%eax
 	decl	%ebp
 	movl	%ecx,20(%ebx)
-	jz	L028aw_end
+	jz	L011aw_end
 	# Tail Round 6 
 	movl	24(%esi),%ecx
 	movl	24(%edi),%edx
@@ -974,14 +522,10 @@ L026aw_finish:
 	subl	%edx,%ecx
 	adcl	$0,%eax
 	movl	%ecx,24(%ebx)
-L028aw_end:
+L011aw_end:
 	popl	%edi
 	popl	%esi
 	popl	%ebx
 	popl	%ebp
 	ret
-.section __IMPORT,__pointers,non_lazy_symbol_pointers
-L_OPENSSL_ia32cap_P$non_lazy_ptr:
-.indirect_symbol	_OPENSSL_ia32cap_P
-.long	0
 #endif  // !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86) && defined(__APPLE__)

@@ -152,6 +152,14 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CLANG)
     set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wframe-larger-than=25344")
   endif()
 
+  # -Wctad-maybe-unsupported was added in Clang 10, which is AppleClang 12.0.0.
+  if((CMAKE_C_COMPILER_ID STREQUAL "Clang" AND
+      CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "10.0.0") OR
+     (CMAKE_C_COMPILER_ID STREQUAL "AppleClang" AND
+      CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "12.0.0"))
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wctad-maybe-unsupported")
+  endif()
+
   if(CLANG OR CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "7.0.0")
     set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wimplicit-fallthrough")
   endif()
@@ -443,8 +451,8 @@ if(USE_CUSTOM_LIBCXX)
   set_target_properties(
     libcxx libcxxabi PROPERTIES
     COMPILE_FLAGS "-Wno-missing-prototypes -Wno-implicit-fallthrough"
-    # libc++ and libc++abi must be built in C++20 mode.
-    CXX_STANDARD 20
+    # libc++ and libc++abi must be built in C++23 mode.
+    CXX_STANDARD 23
     CXX_STANDARD_REQUIRED TRUE
   )
   # libc++abi depends on libc++ internal headers.

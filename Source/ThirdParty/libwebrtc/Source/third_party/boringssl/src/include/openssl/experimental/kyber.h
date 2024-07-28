@@ -22,6 +22,14 @@ extern "C" {
 #endif
 
 
+#if defined(OPENSSL_UNSTABLE_EXPERIMENTAL_KYBER)
+// This header implements experimental, draft versions of not-yet-standardized
+// primitives. When the standard is complete, these functions will be removed
+// and replaced with the final, incompatible standard version. They are
+// available now for short-lived experiments, but must not be deployed anywhere
+// durable, such as a long-lived key store. To use these functions define
+// OPENSSL_UNSTABLE_EXPERIMENTAL_KYBER
+
 // Kyber768.
 //
 // This implements the round-3 specification of Kyber, defined at
@@ -127,6 +135,8 @@ OPENSSL_EXPORT int KYBER_marshal_private_key(
 // there are trailing bytes in |in|.
 OPENSSL_EXPORT int KYBER_parse_private_key(
     struct KYBER_private_key *out_private_key, CBS *in);
+
+#endif // OPENSSL_UNSTABLE_EXPERIMENTAL_KYBER
 
 
 #if defined(__cplusplus)

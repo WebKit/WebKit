@@ -505,13 +505,9 @@ BSSL_NAMESPACE_END
 
 using namespace bssl;
 
-int SSL_library_init(void) {
-  CRYPTO_library_init();
-  return 1;
-}
+int SSL_library_init(void) { return 1; }
 
 int OPENSSL_init_ssl(uint64_t opts, const OPENSSL_INIT_SETTINGS *settings) {
-  CRYPTO_library_init();
   return 1;
 }
 
@@ -2286,34 +2282,49 @@ int SSL_CTX_set_tlsext_servername_arg(SSL_CTX *ctx, void *arg) {
 int SSL_select_next_proto(uint8_t **out, uint8_t *out_len, const uint8_t *peer,
                           unsigned peer_len, const uint8_t *supported,
                           unsigned supported_len) {
-  const uint8_t *result;
-  int status;
+  *out = nullptr;
+  *out_len = 0;
 
-  // For each protocol in peer preference order, see if we support it.
-  for (unsigned i = 0; i < peer_len;) {
-    for (unsigned j = 0; j < supported_len;) {
-      if (peer[i] == supported[j] &&
-          OPENSSL_memcmp(&peer[i + 1], &supported[j + 1], peer[i]) == 0) {
-        // We found a match
-        result = &peer[i];
-        status = OPENSSL_NPN_NEGOTIATED;
-        goto found;
-      }
-      j += supported[j];
-      j++;
-    }
-    i += peer[i];
-    i++;
+  // Both |peer| and |supported| must be valid protocol lists, but |peer| may be
+  // empty in NPN.
+  auto peer_span = MakeConstSpan(peer, peer_len);
+  auto supported_span = MakeConstSpan(supported, supported_len);
+  if ((!peer_span.empty() && !ssl_is_valid_alpn_list(peer_span)) ||
+      !ssl_is_valid_alpn_list(supported_span)) {
+    return OPENSSL_NPN_NO_OVERLAP;
   }
 
-  // There's no overlap between our protocols and the peer's list.
-  result = supported;
-  status = OPENSSL_NPN_NO_OVERLAP;
+  // For each protocol in peer preference order, see if we support it.
+  CBS cbs = peer_span, proto;
+  while (CBS_len(&cbs) != 0) {
+    if (!CBS_get_u8_length_prefixed(&cbs, &proto) || CBS_len(&proto) == 0) {
+      return OPENSSL_NPN_NO_OVERLAP;
+    }
 
-found:
-  *out = (uint8_t *)result + 1;
-  *out_len = result[0];
-  return status;
+    if (ssl_alpn_list_contains_protocol(MakeConstSpan(supported, supported_len),
+                                        proto)) {
+      // This function is not const-correct for compatibility with existing
+      // callers.
+      *out = const_cast<uint8_t *>(CBS_data(&proto));
+      // A u8 length prefix will fit in |uint8_t|.
+      *out_len = static_cast<uint8_t>(CBS_len(&proto));
+      return OPENSSL_NPN_NEGOTIATED;
+    }
+  }
+
+  // There's no overlap between our protocols and the peer's list. In ALPN, the
+  // caller is expected to fail the connection with no_application_protocol. In
+  // NPN, the caller is expected to opportunistically select the first protocol.
+  // See draft-agl-tls-nextprotoneg-04, section 6.
+  cbs = supported_span;
+  if (!CBS_get_u8_length_prefixed(&cbs, &proto) || CBS_len(&proto) == 0) {
+    return OPENSSL_NPN_NO_OVERLAP;
+  }
+
+  // See above.
+  *out = const_cast<uint8_t *>(CBS_data(&proto));
+  *out_len = static_cast<uint8_t>(CBS_len(&proto));
+  return OPENSSL_NPN_NO_OVERLAP;
 }
 
 void SSL_get0_next_proto_negotiated(const SSL *ssl, const uint8_t **out_data,

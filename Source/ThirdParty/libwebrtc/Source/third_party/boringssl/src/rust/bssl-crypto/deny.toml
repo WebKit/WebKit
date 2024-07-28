@@ -76,7 +76,7 @@ unlicensed = "deny"
 # See https://spdx.org/licenses/ for list of possible licenses
 # [possible values: any SPDX 3.11 short identifier (+ optional exception)].
 allow = [
-    "MIT",
+    "ISC",
 ]
 # List of explicitly disallowed licenses
 # See https://spdx.org/licenses/ for list of possible licenses
@@ -164,7 +164,7 @@ highlight = "all"
 # encouraged not to add dependencies here.
 allow = [
     # bssl-crypto should be allowed, version appropriately.
-    { name = "bssl-crypto", version = "=0.1.0" },
+    { name = "bssl-crypto", version = "=0.2.0" },
     # bssl-sys should be allowed, version appropriately.
     { name = "bssl-sys", version = "=0.1.0" },
 ]

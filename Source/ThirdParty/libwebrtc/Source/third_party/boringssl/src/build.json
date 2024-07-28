@@ -93,6 +93,10 @@
             "crypto/fipsmodule/sha/sha512.c",
             "crypto/fipsmodule/tls/kdf.c"
         ],
+        "asm": [
+            "third_party/fiat/asm/fiat_p256_adx_mul.S",
+            "third_party/fiat/asm/fiat_p256_adx_sqr.S"
+        ],
         "perlasm_aarch64": [
             {"src": "crypto/fipsmodule/aes/asm/aesv8-armx.pl", "dst": "aesv8-armv8"},
             {"src": "crypto/fipsmodule/modes/asm/aesv8-gcm-armv8.pl"},
@@ -229,6 +233,7 @@
             "crypto/dh_extra/params.c",
             "crypto/dh_extra/dh_asn1.c",
             "crypto/digest_extra/digest_extra.c",
+            "crypto/dilithium/dilithium.c",
             "crypto/dsa/dsa.c",
             "crypto/dsa/dsa_asn1.c",
             "crypto/ecdh_extra/ecdh_extra.c",
@@ -424,6 +429,7 @@
             "include/openssl/evp.h",
             "include/openssl/evp_errors.h",
             "include/openssl/ex_data.h",
+            "include/openssl/experimental/dilithium.h",
             "include/openssl/experimental/kyber.h",
             "include/openssl/experimental/spx.h",
             "include/openssl/hkdf.h",
@@ -476,12 +482,12 @@
             "crypto/bytestring/internal.h",
             "crypto/chacha/internal.h",
             "crypto/cipher_extra/internal.h",
-            "crypto/conf/conf_def.h",
             "crypto/conf/internal.h",
             "crypto/cpu_arm_linux.h",
             "crypto/curve25519/curve25519_tables.h",
             "crypto/curve25519/internal.h",
             "crypto/des/internal.h",
+            "crypto/dilithium/internal.h",
             "crypto/dsa/internal.h",
             "crypto/ec_extra/internal.h",
             "crypto/err/internal.h",
@@ -546,9 +552,7 @@
             "crypto/hrss/asm/poly_rq_mul.S",
             "crypto/poly1305/poly1305_arm_asm.S",
             "third_party/fiat/asm/fiat_curve25519_adx_mul.S",
-            "third_party/fiat/asm/fiat_curve25519_adx_square.S",
-            "third_party/fiat/asm/fiat_p256_adx_mul.S",
-            "third_party/fiat/asm/fiat_p256_adx_sqr.S"
+            "third_party/fiat/asm/fiat_curve25519_adx_square.S"
         ],
         "perlasm_aarch64": [
             {"src": "crypto/chacha/asm/chacha-armv8.pl"},
@@ -600,12 +604,14 @@
             "pki/trust_store.cc",
             "pki/verify_certificate_chain.cc",
             "pki/verify_error.cc",
+            "pki/verify.cc",
             "pki/verify_name_match.cc",
             "pki/verify_signed_data.cc"
         ],
         "hdrs": [
             "include/openssl/pki/certificate.h",
             "include/openssl/pki/signature_verify_cache.h",
+            "include/openssl/pki/verify.h",
             "include/openssl/pki/verify_error.h"
         ],
         "internal_hdrs": [
@@ -799,6 +805,7 @@
             "crypto/ecdh_extra/ecdh_test.cc",
             "crypto/dh_extra/dh_test.cc",
             "crypto/digest_extra/digest_test.cc",
+            "crypto/dilithium/dilithium_test.cc",
             "crypto/dsa/dsa_test.cc",
             "crypto/err/err_test.cc",
             "crypto/evp/evp_extra_test.cc",
@@ -853,6 +860,9 @@
             "crypto/cipher_extra/test/*.txt",
             "crypto/cipher_extra/test/nist_cavp/*.txt",
             "crypto/curve25519/ed25519_tests.txt",
+            "crypto/dilithium/dilithium_tests.txt",
+            "crypto/dilithium/edge_cases_draft_dilithium3_sign.txt",
+            "crypto/dilithium/edge_cases_draft_dilithium3_verify.txt",
             "crypto/ecdh_extra/ecdh_tests.txt",
             "crypto/evp/evp_tests.txt",
             "crypto/evp/scrypt_tests.txt",
@@ -920,7 +930,8 @@
             "pki/verify_certificate_chain_pkits_unittest.cc",
             "pki/verify_certificate_chain_unittest.cc",
             "pki/verify_name_match_unittest.cc",
-            "pki/verify_signed_data_unittest.cc"
+            "pki/verify_signed_data_unittest.cc",
+            "pki/verify_unittest.cc"
         ],
         "data": [
             "pki/testdata/cert_issuer_source_static_unittest/*.pem",
@@ -939,7 +950,7 @@
             "pki/testdata/verify_certificate_chain_unittest/pkits_errors/*.txt",
             "pki/testdata/verify_name_match_unittest/names/*.pem",
             "pki/testdata/verify_signed_data_unittest/*.pem",
-            "pki/testdata/verify_unittest/google-leaf.der",
+            "pki/testdata/verify_unittest/*.der",
             "pki/testdata/verify_unittest/self-issued.pem"
         ]
     },

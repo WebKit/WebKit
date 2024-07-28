@@ -15,10 +15,10 @@ L_aes_hw_encrypt_begin:
 #ifdef BORINGSSL_DISPATCH_TEST
 	pushl	%ebx
 	pushl	%edx
-	call	L000pic
-L000pic:
+	call	L000pic_for_function_hit
+L000pic_for_function_hit:
 	popl	%ebx
-	leal	_BORINGSSL_function_hit+1-L000pic(%ebx),%ebx
+	leal	_BORINGSSL_function_hit+1-L000pic_for_function_hit(%ebx),%ebx
 	movl	$1,%edx
 	movb	%dl,(%ebx)
 	popl	%edx
@@ -820,10 +820,10 @@ L_aes_hw_ctr32_encrypt_blocks_begin:
 #ifdef BORINGSSL_DISPATCH_TEST
 	pushl	%ebx
 	pushl	%edx
-	call	L038pic
-L038pic:
+	call	L038pic_for_function_hit
+L038pic_for_function_hit:
 	popl	%ebx
-	leal	_BORINGSSL_function_hit+0-L038pic(%ebx),%ebx
+	leal	_BORINGSSL_function_hit+0-L038pic_for_function_hit(%ebx),%ebx
 	movl	$1,%edx
 	movb	%dl,(%ebx)
 	popl	%edx
@@ -2065,25 +2065,34 @@ L076cbc_abort:
 	popl	%ebx
 	popl	%ebp
 	ret
-.private_extern	__aesni_set_encrypt_key
+.globl	_aes_hw_set_encrypt_key_base
+.private_extern	_aes_hw_set_encrypt_key_base
 .align	4
-__aesni_set_encrypt_key:
-	pushl	%ebp
+_aes_hw_set_encrypt_key_base:
+L_aes_hw_set_encrypt_key_base_begin:
+#ifdef BORINGSSL_DISPATCH_TEST
 	pushl	%ebx
-	testl	%eax,%eax
-	jz	L093bad_pointer
-	testl	%edx,%edx
-	jz	L093bad_pointer
+	pushl	%edx
+	call	L093pic_for_function_hit
+L093pic_for_function_hit:
+	popl	%ebx
+	leal	_BORINGSSL_function_hit+3-L093pic_for_function_hit(%ebx),%ebx
+	movl	$1,%edx
+	movb	%dl,(%ebx)
+	popl	%edx
+	popl	%ebx
+#endif
+	movl	4(%esp),%eax
+	movl	8(%esp),%ecx
+	movl	12(%esp),%edx
+	pushl	%ebx
 	call	L094pic
 L094pic:
 	popl	%ebx
 	leal	Lkey_const-L094pic(%ebx),%ebx
-	movl	L_OPENSSL_ia32cap_P$non_lazy_ptr-Lkey_const(%ebx),%ebp
 	movups	(%eax),%xmm0
 	xorps	%xmm4,%xmm4
-	movl	4(%ebp),%ebp
 	leal	16(%edx),%edx
-	andl	$268437504,%ebp
 	cmpl	$256,%ecx
 	je	L09514rounds
 	cmpl	$192,%ecx
@@ -2092,38 +2101,36 @@ L094pic:
 	jne	L097bad_keybits
 .align	4,0x90
 L09810rounds:
-	cmpl	$268435456,%ebp
-	je	L09910rounds_alt
 	movl	$9,%ecx
 	movups	%xmm0,-16(%edx)
 .byte	102,15,58,223,200,1
-	call	L100key_128_cold
+	call	L099key_128_cold
 .byte	102,15,58,223,200,2
-	call	L101key_128
+	call	L100key_128
 .byte	102,15,58,223,200,4
-	call	L101key_128
+	call	L100key_128
 .byte	102,15,58,223,200,8
-	call	L101key_128
+	call	L100key_128
 .byte	102,15,58,223,200,16
-	call	L101key_128
+	call	L100key_128
 .byte	102,15,58,223,200,32
-	call	L101key_128
+	call	L100key_128
 .byte	102,15,58,223,200,64
-	call	L101key_128
+	call	L100key_128
 .byte	102,15,58,223,200,128
-	call	L101key_128
+	call	L100key_128
 .byte	102,15,58,223,200,27
-	call	L101key_128
+	call	L100key_128
 .byte	102,15,58,223,200,54
-	call	L101key_128
+	call	L100key_128
 	movups	%xmm0,(%edx)
 	movl	%ecx,80(%edx)
-	jmp	L102good_key
+	jmp	L101good_key
 .align	4,0x90
-L101key_128:
+L100key_128:
 	movups	%xmm0,(%edx)
 	leal	16(%edx),%edx
-L100key_128_cold:
+L099key_128_cold:
 	shufps	$16,%xmm0,%xmm4
 	xorps	%xmm4,%xmm0
 	shufps	$140,%xmm0,%xmm4
@@ -2132,13 +2139,176 @@ L100key_128_cold:
 	xorps	%xmm1,%xmm0
 	ret
 .align	4,0x90
-L09910rounds_alt:
+L09612rounds:
+	movq	16(%eax),%xmm2
+	movl	$11,%ecx
+	movups	%xmm0,-16(%edx)
+.byte	102,15,58,223,202,1
+	call	L102key_192a_cold
+.byte	102,15,58,223,202,2
+	call	L103key_192b
+.byte	102,15,58,223,202,4
+	call	L104key_192a
+.byte	102,15,58,223,202,8
+	call	L103key_192b
+.byte	102,15,58,223,202,16
+	call	L104key_192a
+.byte	102,15,58,223,202,32
+	call	L103key_192b
+.byte	102,15,58,223,202,64
+	call	L104key_192a
+.byte	102,15,58,223,202,128
+	call	L103key_192b
+	movups	%xmm0,(%edx)
+	movl	%ecx,48(%edx)
+	jmp	L101good_key
+.align	4,0x90
+L104key_192a:
+	movups	%xmm0,(%edx)
+	leal	16(%edx),%edx
+.align	4,0x90
+L102key_192a_cold:
+	movaps	%xmm2,%xmm5
+L105key_192b_warm:
+	shufps	$16,%xmm0,%xmm4
+	movdqa	%xmm2,%xmm3
+	xorps	%xmm4,%xmm0
+	shufps	$140,%xmm0,%xmm4
+	pslldq	$4,%xmm3
+	xorps	%xmm4,%xmm0
+	pshufd	$85,%xmm1,%xmm1
+	pxor	%xmm3,%xmm2
+	pxor	%xmm1,%xmm0
+	pshufd	$255,%xmm0,%xmm3
+	pxor	%xmm3,%xmm2
+	ret
+.align	4,0x90
+L103key_192b:
+	movaps	%xmm0,%xmm3
+	shufps	$68,%xmm0,%xmm5
+	movups	%xmm5,(%edx)
+	shufps	$78,%xmm2,%xmm3
+	movups	%xmm3,16(%edx)
+	leal	32(%edx),%edx
+	jmp	L105key_192b_warm
+.align	4,0x90
+L09514rounds:
+	movups	16(%eax),%xmm2
+	leal	16(%edx),%edx
+	movl	$13,%ecx
+	movups	%xmm0,-32(%edx)
+	movups	%xmm2,-16(%edx)
+.byte	102,15,58,223,202,1
+	call	L106key_256a_cold
+.byte	102,15,58,223,200,1
+	call	L107key_256b
+.byte	102,15,58,223,202,2
+	call	L108key_256a
+.byte	102,15,58,223,200,2
+	call	L107key_256b
+.byte	102,15,58,223,202,4
+	call	L108key_256a
+.byte	102,15,58,223,200,4
+	call	L107key_256b
+.byte	102,15,58,223,202,8
+	call	L108key_256a
+.byte	102,15,58,223,200,8
+	call	L107key_256b
+.byte	102,15,58,223,202,16
+	call	L108key_256a
+.byte	102,15,58,223,200,16
+	call	L107key_256b
+.byte	102,15,58,223,202,32
+	call	L108key_256a
+.byte	102,15,58,223,200,32
+	call	L107key_256b
+.byte	102,15,58,223,202,64
+	call	L108key_256a
+	movups	%xmm0,(%edx)
+	movl	%ecx,16(%edx)
+	xorl	%eax,%eax
+	jmp	L101good_key
+.align	4,0x90
+L108key_256a:
+	movups	%xmm2,(%edx)
+	leal	16(%edx),%edx
+L106key_256a_cold:
+	shufps	$16,%xmm0,%xmm4
+	xorps	%xmm4,%xmm0
+	shufps	$140,%xmm0,%xmm4
+	xorps	%xmm4,%xmm0
+	shufps	$255,%xmm1,%xmm1
+	xorps	%xmm1,%xmm0
+	ret
+.align	4,0x90
+L107key_256b:
+	movups	%xmm0,(%edx)
+	leal	16(%edx),%edx
+	shufps	$16,%xmm2,%xmm4
+	xorps	%xmm4,%xmm2
+	shufps	$140,%xmm2,%xmm4
+	xorps	%xmm4,%xmm2
+	shufps	$170,%xmm1,%xmm1
+	xorps	%xmm1,%xmm2
+	ret
+L101good_key:
+	pxor	%xmm0,%xmm0
+	pxor	%xmm1,%xmm1
+	pxor	%xmm2,%xmm2
+	pxor	%xmm3,%xmm3
+	pxor	%xmm4,%xmm4
+	pxor	%xmm5,%xmm5
+	xorl	%eax,%eax
+	popl	%ebx
+	ret
+.align	2,0x90
+L097bad_keybits:
+	pxor	%xmm0,%xmm0
+	movl	$-2,%eax
+	popl	%ebx
+	ret
+.globl	_aes_hw_set_encrypt_key_alt
+.private_extern	_aes_hw_set_encrypt_key_alt
+.align	4
+_aes_hw_set_encrypt_key_alt:
+L_aes_hw_set_encrypt_key_alt_begin:
+#ifdef BORINGSSL_DISPATCH_TEST
+	pushl	%ebx
+	pushl	%edx
+	call	L109pic_for_function_hit
+L109pic_for_function_hit:
+	popl	%ebx
+	leal	_BORINGSSL_function_hit+3-L109pic_for_function_hit(%ebx),%ebx
+	movl	$1,%edx
+	movb	%dl,(%ebx)
+	popl	%edx
+	popl	%ebx
+#endif
+	movl	4(%esp),%eax
+	movl	8(%esp),%ecx
+	movl	12(%esp),%edx
+	pushl	%ebx
+	call	L110pic
+L110pic:
+	popl	%ebx
+	leal	Lkey_const-L110pic(%ebx),%ebx
+	movups	(%eax),%xmm0
+	xorps	%xmm4,%xmm4
+	leal	16(%edx),%edx
+	cmpl	$256,%ecx
+	je	L11114rounds_alt
+	cmpl	$192,%ecx
+	je	L11212rounds_alt
+	cmpl	$128,%ecx
+	jne	L113bad_keybits
+.align	4,0x90
+L11410rounds_alt:
 	movdqa	(%ebx),%xmm5
 	movl	$8,%ecx
 	movdqa	32(%ebx),%xmm4
 	movdqa	%xmm0,%xmm2
 	movdqu	%xmm0,-16(%edx)
-L103loop_key128:
+L115loop_key128:
 .byte	102,15,56,0,197
 .byte	102,15,56,221,196
 	pslld	$1,%xmm4
@@ -2154,7 +2324,7 @@ L103loop_key128:
 	movdqu	%xmm0,-16(%edx)
 	movdqa	%xmm0,%xmm2
 	decl	%ecx
-	jnz	L103loop_key128
+	jnz	L115loop_key128
 	movdqa	48(%ebx),%xmm4
 .byte	102,15,56,0,197
 .byte	102,15,56,221,196
@@ -2182,69 +2352,15 @@ L103loop_key128:
 	movdqu	%xmm0,16(%edx)
 	movl	$9,%ecx
 	movl	%ecx,96(%edx)
-	jmp	L102good_key
+	jmp	L116good_key
 .align	4,0x90
-L09612rounds:
+L11212rounds_alt:
 	movq	16(%eax),%xmm2
-	cmpl	$268435456,%ebp
-	je	L10412rounds_alt
-	movl	$11,%ecx
-	movups	%xmm0,-16(%edx)
-.byte	102,15,58,223,202,1
-	call	L105key_192a_cold
-.byte	102,15,58,223,202,2
-	call	L106key_192b
-.byte	102,15,58,223,202,4
-	call	L107key_192a
-.byte	102,15,58,223,202,8
-	call	L106key_192b
-.byte	102,15,58,223,202,16
-	call	L107key_192a
-.byte	102,15,58,223,202,32
-	call	L106key_192b
-.byte	102,15,58,223,202,64
-	call	L107key_192a
-.byte	102,15,58,223,202,128
-	call	L106key_192b
-	movups	%xmm0,(%edx)
-	movl	%ecx,48(%edx)
-	jmp	L102good_key
-.align	4,0x90
-L107key_192a:
-	movups	%xmm0,(%edx)
-	leal	16(%edx),%edx
-.align	4,0x90
-L105key_192a_cold:
-	movaps	%xmm2,%xmm5
-L108key_192b_warm:
-	shufps	$16,%xmm0,%xmm4
-	movdqa	%xmm2,%xmm3
-	xorps	%xmm4,%xmm0
-	shufps	$140,%xmm0,%xmm4
-	pslldq	$4,%xmm3
-	xorps	%xmm4,%xmm0
-	pshufd	$85,%xmm1,%xmm1
-	pxor	%xmm3,%xmm2
-	pxor	%xmm1,%xmm0
-	pshufd	$255,%xmm0,%xmm3
-	pxor	%xmm3,%xmm2
-	ret
-.align	4,0x90
-L106key_192b:
-	movaps	%xmm0,%xmm3
-	shufps	$68,%xmm0,%xmm5
-	movups	%xmm5,(%edx)
-	shufps	$78,%xmm2,%xmm3
-	movups	%xmm3,16(%edx)
-	leal	32(%edx),%edx
-	jmp	L108key_192b_warm
-.align	4,0x90
-L10412rounds_alt:
 	movdqa	16(%ebx),%xmm5
 	movdqa	32(%ebx),%xmm4
 	movl	$8,%ecx
 	movdqu	%xmm0,-16(%edx)
-L109loop_key192:
+L117loop_key192:
 	movq	%xmm2,(%edx)
 	movdqa	%xmm2,%xmm1
 .byte	102,15,56,0,213
@@ -2266,81 +2382,21 @@ L109loop_key192:
 	pxor	%xmm3,%xmm2
 	movdqu	%xmm0,-16(%edx)
 	decl	%ecx
-	jnz	L109loop_key192
+	jnz	L117loop_key192
 	movl	$11,%ecx
 	movl	%ecx,32(%edx)
-	jmp	L102good_key
+	jmp	L116good_key
 .align	4,0x90
-L09514rounds:
+L11114rounds_alt:
 	movups	16(%eax),%xmm2
 	leal	16(%edx),%edx
-	cmpl	$268435456,%ebp
-	je	L11014rounds_alt
-	movl	$13,%ecx
-	movups	%xmm0,-32(%edx)
-	movups	%xmm2,-16(%edx)
-.byte	102,15,58,223,202,1
-	call	L111key_256a_cold
-.byte	102,15,58,223,200,1
-	call	L112key_256b
-.byte	102,15,58,223,202,2
-	call	L113key_256a
-.byte	102,15,58,223,200,2
-	call	L112key_256b
-.byte	102,15,58,223,202,4
-	call	L113key_256a
-.byte	102,15,58,223,200,4
-	call	L112key_256b
-.byte	102,15,58,223,202,8
-	call	L113key_256a
-.byte	102,15,58,223,200,8
-	call	L112key_256b
-.byte	102,15,58,223,202,16
-	call	L113key_256a
-.byte	102,15,58,223,200,16
-	call	L112key_256b
-.byte	102,15,58,223,202,32
-	call	L113key_256a
-.byte	102,15,58,223,200,32
-	call	L112key_256b
-.byte	102,15,58,223,202,64
-	call	L113key_256a
-	movups	%xmm0,(%edx)
-	movl	%ecx,16(%edx)
-	xorl	%eax,%eax
-	jmp	L102good_key
-.align	4,0x90
-L113key_256a:
-	movups	%xmm2,(%edx)
-	leal	16(%edx),%edx
-L111key_256a_cold:
-	shufps	$16,%xmm0,%xmm4
-	xorps	%xmm4,%xmm0
-	shufps	$140,%xmm0,%xmm4
-	xorps	%xmm4,%xmm0
-	shufps	$255,%xmm1,%xmm1
-	xorps	%xmm1,%xmm0
-	ret
-.align	4,0x90
-L112key_256b:
-	movups	%xmm0,(%edx)
-	leal	16(%edx),%edx
-	shufps	$16,%xmm2,%xmm4
-	xorps	%xmm4,%xmm2
-	shufps	$140,%xmm2,%xmm4
-	xorps	%xmm4,%xmm2
-	shufps	$170,%xmm1,%xmm1
-	xorps	%xmm1,%xmm2
-	ret
-.align	4,0x90
-L11014rounds_alt:
 	movdqa	(%ebx),%xmm5
 	movdqa	32(%ebx),%xmm4
 	movl	$7,%ecx
 	movdqu	%xmm0,-32(%edx)
 	movdqa	%xmm2,%xmm1
 	movdqu	%xmm2,-16(%edx)
-L114loop_key256:
+L118loop_key256:
 .byte	102,15,56,0,213
 .byte	102,15,56,221,212
 	movdqa	%xmm0,%xmm3
@@ -2354,7 +2410,7 @@ L114loop_key256:
 	pxor	%xmm2,%xmm0
 	movdqu	%xmm0,(%edx)
 	decl	%ecx
-	jz	L115done_key256
+	jz	L119done_key256
 	pshufd	$255,%xmm0,%xmm2
 	pxor	%xmm3,%xmm3
 .byte	102,15,56,221,211
@@ -2369,11 +2425,11 @@ L114loop_key256:
 	movdqu	%xmm2,16(%edx)
 	leal	32(%edx),%edx
 	movdqa	%xmm2,%xmm1
-	jmp	L114loop_key256
-L115done_key256:
+	jmp	L118loop_key256
+L119done_key256:
 	movl	$13,%ecx
 	movl	%ecx,16(%edx)
-L102good_key:
+L116good_key:
 	pxor	%xmm0,%xmm0
 	pxor	%xmm1,%xmm1
 	pxor	%xmm2,%xmm2
@@ -2382,56 +2438,21 @@ L102good_key:
 	pxor	%xmm5,%xmm5
 	xorl	%eax,%eax
 	popl	%ebx
-	popl	%ebp
 	ret
 .align	2,0x90
-L093bad_pointer:
-	movl	$-1,%eax
-	popl	%ebx
-	popl	%ebp
-	ret
-.align	2,0x90
-L097bad_keybits:
+L113bad_keybits:
 	pxor	%xmm0,%xmm0
 	movl	$-2,%eax
 	popl	%ebx
-	popl	%ebp
 	ret
-.globl	_aes_hw_set_encrypt_key
-.private_extern	_aes_hw_set_encrypt_key
+.globl	_aes_hw_encrypt_key_to_decrypt_key
+.private_extern	_aes_hw_encrypt_key_to_decrypt_key
 .align	4
-_aes_hw_set_encrypt_key:
-L_aes_hw_set_encrypt_key_begin:
-#ifdef BORINGSSL_DISPATCH_TEST
-	pushl	%ebx
-	pushl	%edx
-	call	L116pic
-L116pic:
-	popl	%ebx
-	leal	_BORINGSSL_function_hit+3-L116pic(%ebx),%ebx
-	movl	$1,%edx
-	movb	%dl,(%ebx)
-	popl	%edx
-	popl	%ebx
-#endif
-	movl	4(%esp),%eax
-	movl	8(%esp),%ecx
-	movl	12(%esp),%edx
-	call	__aesni_set_encrypt_key
-	ret
-.globl	_aes_hw_set_decrypt_key
-.private_extern	_aes_hw_set_decrypt_key
-.align	4
-_aes_hw_set_decrypt_key:
-L_aes_hw_set_decrypt_key_begin:
-	movl	4(%esp),%eax
-	movl	8(%esp),%ecx
-	movl	12(%esp),%edx
-	call	__aesni_set_encrypt_key
-	movl	12(%esp),%edx
+_aes_hw_encrypt_key_to_decrypt_key:
+L_aes_hw_encrypt_key_to_decrypt_key_begin:
+	movl	4(%esp),%edx
+	movl	240(%edx),%ecx
 	shll	$4,%ecx
-	testl	%eax,%eax
-	jnz	L117dec_key_ret
 	leal	16(%edx,%ecx,1),%eax
 	movups	(%edx),%xmm0
 	movups	(%eax),%xmm1
@@ -2439,7 +2460,7 @@ L_aes_hw_set_decrypt_key_begin:
 	movups	%xmm1,(%edx)
 	leal	16(%edx),%edx
 	leal	-16(%eax),%eax
-L118dec_key_inverse:
+L120dec_key_inverse:
 	movups	(%edx),%xmm0
 	movups	(%eax),%xmm1
 .byte	102,15,56,219,192
@@ -2449,14 +2470,12 @@ L118dec_key_inverse:
 	movups	%xmm0,16(%eax)
 	movups	%xmm1,-16(%edx)
 	cmpl	%edx,%eax
-	ja	L118dec_key_inverse
+	ja	L120dec_key_inverse
 	movups	(%edx),%xmm0
 .byte	102,15,56,219,192
 	movups	%xmm0,(%edx)
 	pxor	%xmm0,%xmm0
 	pxor	%xmm1,%xmm1
-	xorl	%eax,%eax
-L117dec_key_ret:
 	ret
 .align	6,0x90
 Lkey_const:
@@ -2468,8 +2487,4 @@ Lkey_const:
 .byte	83,45,78,73,44,32,67,82,89,80,84,79,71,65,77,83
 .byte	32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115
 .byte	115,108,46,111,114,103,62,0
-.section __IMPORT,__pointers,non_lazy_symbol_pointers
-L_OPENSSL_ia32cap_P$non_lazy_ptr:
-.indirect_symbol	_OPENSSL_ia32cap_P
-.long	0
 #endif  // !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86) && defined(__APPLE__)

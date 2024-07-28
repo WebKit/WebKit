@@ -13,29 +13,56 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-use crate::CSliceMut;
+//! Getting random bytes.
 
-/// Fills buf with random bytes. In the event that sufficient random data can not be obtained,
-/// BoringSSL will abort, so the assert will never be hit.
+use crate::{with_output_array, FfiMutSlice};
+
+/// Fills `buf` with random bytes.
 pub fn rand_bytes(buf: &mut [u8]) {
-    let mut ffi_buf = CSliceMut::from(buf);
-    let result = unsafe { bssl_sys::RAND_bytes(ffi_buf.as_mut_ptr(), ffi_buf.len()) };
-    assert_eq!(result, 1, "BoringSSL RAND_bytes API failed unexpectedly");
+    // Safety: `RAND_bytes` writes exactly `buf.len()` bytes.
+    let ret = unsafe { bssl_sys::RAND_bytes(buf.as_mut_ffi_ptr(), buf.len()) };
+
+    // BoringSSL's `RAND_bytes` always succeeds returning 1, or crashes the
+    // address space if the PRNG can not provide random data.
+    debug_assert!(ret == 1);
+}
+
+/// Returns an array of random bytes.
+pub fn rand_array<const N: usize>() -> [u8; N] {
+    unsafe {
+        with_output_array(|out, out_len| {
+            // Safety: `RAND_bytes` writes exactly `out_len` bytes, as required.
+            let ret = bssl_sys::RAND_bytes(out, out_len);
+            // BoringSSL RAND_bytes always succeeds returning 1, or crashes the
+            // address space if the PRNG can not provide random data.
+            debug_assert!(ret == 1);
+        })
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::rand_bytes;
+    use super::*;
 
     #[test]
-    fn test_rand_bytes() {
+    fn fill() {
         let mut buf = [0; 32];
         rand_bytes(&mut buf);
     }
 
     #[test]
-    fn test_rand_bytes_empty() {
+    fn fill_empty() {
         let mut buf = [];
         rand_bytes(&mut buf);
+    }
+
+    #[test]
+    fn array() {
+        let _rand: [u8; 32] = rand_array();
+    }
+
+    #[test]
+    fn empty_array() {
+        let _rand: [u8; 0] = rand_array();
     }
 }

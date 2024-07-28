@@ -26,9 +26,9 @@ vars = {
   #  cipd describe PACKAGE_NAME -version latest
 
   # infra/3pp/tools/cmake/linux-amd64
-  'cmake_version': 'version:2@3.28.4.chromium.8',
+  'cmake_version': 'version:2@3.29.5.chromium.8',
   # infra/3pp/tools/go/linux-amd64
-  'go_version': 'version:2@1.22.1',
+  'go_version': 'version:2@1.22.4',
   # infra/3pp/tools/perl/windows-amd64
   'perl_version': 'version:2@5.32.1.1',
 
@@ -36,26 +36,23 @@ vars = {
   # https://chromium.googlesource.com/chromium/src/+/main/DEPS
   'android_sdk_platform-tools_version': 'HWVsGs2HCKgSVv41FsOcsfJbNcB0UFiNrF6Tc4yRArYC',
   'libfuzzer_revision': '758bd21f103a501b362b1ca46fa8fcb692eaa303',
-  'libcxx_revision': '80307e66e74bae927fb8709a549859e777e3bf0b',
-  'libcxxabi_revision': 'ec88f0ab262c5f2426dbf138b92ee9ae5961e431',
+  'libcxx_revision': '852bc6746f45add53fec19f3a29280e69e358d44',
+  'libcxxabi_revision': '43dd5b4bf62e8593461dce9a95e3d43fdcd0b9f2',
   'ninja_version': 'version:2@1.11.1.chromium.6',
 
-  # The Android NDK cannot be updated on CI for two reasons:
-  #
-  # Until https://crbug.com/boringssl/454 is fixed, we rely on an older NDK to
-  # test building without NEON instructions as the baseline.
-  #
-  # Until https://crbug.com/boringssl/653 is fixed, we cannot update past
-  # Chromium's version:2@r25c.cr0 package. Chromium has since switched building
-  # minimal CIPD packages which do not contain all the NDK files we need. We'll
-  # probably need to make our own NDK package.
-  'android_ndk_revision': '310956bd122ec2b96049f8d7398de6b717f3452e',
+  # The Android NDK cannot be updated until https://crbug.com/boringssl/454 is fixed.
+  # We rely on an older NDK to test building without NEON instructions as the baseline.
+  'android_ndk_revision': 'U0e8L6l52ySjBrUBB82Vdyhsg60vVMqH0ItTW3TRHAQC',
 }
 
 deps = {
   'boringssl/util/bot/android_ndk': {
-    'url': Var('chromium_git') + '/android_ndk.git' + '@' + Var('android_ndk_revision'),
+    'packages': [{
+      'package': 'infra/3pp/tools/android_ndk/linux-amd64',
+      'version': Var('android_ndk_revision'),
+    }],
     'condition': 'checkout_android',
+    'dep_type': 'cipd',
   },
 
   'boringssl/util/bot/android_sdk/public': {
