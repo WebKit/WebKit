@@ -87,7 +87,7 @@ private:
     CaptureDevice::DeviceType deviceType() const final { return mockCamera() ? CaptureDevice::DeviceType::Camera : CaptureDevice::DeviceType::Screen; }
     bool supportsSizeFrameRateAndZoom(const VideoPresetConstraints&) final;
     void setSizeFrameRateAndZoom(const VideoPresetConstraints&) override;
-    void setFrameRateAndZoomWithPreset(double, double, std::optional<VideoPreset>&&) final;
+    void applyFrameRateAndZoomWithPreset(double, double, std::optional<VideoPreset>&&) final;
 
     bool isMockSource() const final { return true; }
 

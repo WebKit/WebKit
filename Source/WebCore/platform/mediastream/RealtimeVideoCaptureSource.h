@@ -60,7 +60,7 @@ protected:
 
     void setSizeFrameRateAndZoom(const VideoPresetConstraints&) override;
 
-    virtual void setFrameRateAndZoomWithPreset(double, double, std::optional<VideoPreset>&&) { };
+    virtual void applyFrameRateAndZoomWithPreset(double, double, std::optional<VideoPreset>&&);
     virtual bool canResizeVideoFrames() const { return false; }
 
     void setSupportedPresets(Vector<VideoPreset>&&);
@@ -96,6 +96,7 @@ private:
     bool presetSupportsFrameRate(const VideoPreset&, double);
     bool presetSupportsZoom(const VideoPreset&, double);
 
+    void setSizeFrameRateAndZoomForPhoto(CaptureSizeFrameRateAndZoom&&);
     Ref<TakePhotoNativePromise> takePhoto(PhotoSettings&&) final;
     bool isPowerEfficient() const final;
 
@@ -119,6 +120,10 @@ struct SizeFrameRateAndZoom {
     String toJSONString() const;
     Ref<JSON::Object> toJSONObject() const;
 };
+
+inline void RealtimeVideoCaptureSource::applyFrameRateAndZoomWithPreset(double, double, std::optional<VideoPreset>&&)
+{
+}
 
 } // namespace WebCore
 
