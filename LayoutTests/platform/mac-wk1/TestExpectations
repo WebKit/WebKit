@@ -2059,6 +2059,7 @@ imported/w3c/web-platform-tests/preload/prefetch-document.html [ Skip ]
 imported/w3c/web-platform-tests/preload/prefetch-headers.html [ Skip ]
 imported/w3c/web-platform-tests/preload/prefetch-types.html [ Skip ]
 imported/w3c/web-platform-tests/preload/preload-in-data-doc.html [ Skip ]
+imported/w3c/web-platform-tests/preload/preload-type-match.html [ Skip ]
 
 webkit.org/b/254528 imported/w3c/web-platform-tests/preload/onerror-event.html [ Pass Failure ]
 
