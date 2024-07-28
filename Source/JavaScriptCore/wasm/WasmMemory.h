@@ -30,6 +30,7 @@
 #include "ArrayBuffer.h"
 #include "MemoryMode.h"
 #include "PageCount.h"
+#include "JSWebAssemblyInstance.h"
 #include "WeakGCSet.h"
 
 #include <wtf/CagedPtr.h>
