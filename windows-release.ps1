@@ -237,12 +237,8 @@ $null = mkdir -ErrorAction SilentlyContinue $output/include/JavaScriptCore
 $null = mkdir -ErrorAction SilentlyContinue $output/include/wtf
 
 Copy-Item $WebKitBuild/cmakeconfig.h $output/include/cmakeconfig.h
-Copy-Item $WebKitBuild/lib64/jsc.lib $output/lib/jsc.lib
-Copy-Item $WebKitBuild/lib64/WTF.lib $output/lib/
-# if ($CMAKE_BUILD_TYPE -eq "Debug") {
-#     Copy-Item $WebKitBuild/lib64/JavaScriptCore.pdb $output/lib/
-#     Copy-Item $WebKitBuild/lib64/WTF.pdb $output/lib/
-# }
+Copy-Item $WebKitBuild/lib/*.lib $output/lib/
+Copy-Item -ErrorAction SilentlyContinue $WebKitBuild/lib/*.pdb $output/lib/
 
 if ($CMAKE_BUILD_TYPE -eq "Release") {
     Move-Item $ICU_STATIC_LIBRARY/icudt.lib $ICU_STATIC_LIBRARY/sicudt.lib
