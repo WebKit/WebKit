@@ -289,7 +289,7 @@ Expected<PageCount, GrowFailReason> Memory::growShared(VM& vm, PageCount delta)
     m_growSuccessCallback(GrowSuccessTag, oldPageCount, newPageCount);
     // Update cache for instance
     for (auto& instance : m_instances) {
-        if (auto* strongReference = instance.get())
+        if (auto* strongReference = static_cast<JSWebAssemblyInstance*>(instance.get()))
             strongReference->updateCachedMemory();
     }
     return oldPageCount;
@@ -316,7 +316,7 @@ Expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
         // Update cache for instance
         for (auto& instance : m_instances) {
             if (instance.get() != nullptr)
-                instance.get()->updateCachedMemory();
+                static_cast<JSC::JSWebAssemblyInstance*>(instance.get())->updateCachedMemory();
         }
         return oldPageCount;
     };

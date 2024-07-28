@@ -30,7 +30,6 @@
 #include "ArrayBuffer.h"
 #include "MemoryMode.h"
 #include "PageCount.h"
-#include "JSWebAssemblyInstance.h"
 #include "WeakGCSet.h"
 
 #include <wtf/CagedPtr.h>
@@ -111,7 +110,7 @@ private:
     RefPtr<SharedArrayBufferContents> m_shared;
     WTF::Function<void(GrowSuccess, PageCount, PageCount)> m_growSuccessCallback;
     // FIXME: If/When merging this into JSWebAssemblyMemory we should just use an unconditionalFinalizer.
-    WeakGCSet<JSWebAssemblyInstance> m_instances;
+    WeakGCSet<JSCell> m_instances;
 };
 
 } } // namespace JSC::Wasm
