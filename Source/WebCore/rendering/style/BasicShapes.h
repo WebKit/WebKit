@@ -50,6 +50,10 @@ class Path;
 class RenderBox;
 class SVGPathByteStream;
 
+enum class CoordinateAffinity : uint8_t {
+    Relative, Absolute
+};
+
 class BasicShape : public RefCounted<BasicShape> {
 public:
     virtual ~BasicShape() = default;

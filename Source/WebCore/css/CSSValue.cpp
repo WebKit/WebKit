@@ -72,6 +72,7 @@
 #include "CSSReflectValue.h"
 #include "CSSScrollValue.h"
 #include "CSSShadowValue.h"
+#include "CSSShapeSegmentValue.h"
 #include "CSSSubgridValue.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSTransformListValue.h"
@@ -211,6 +212,10 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSScrollValue>(*this));
     case ShadowClass:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSShadowValue>(*this));
+    case ShapeClass:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSShapeValue>(*this));
+    case ShapeSegmentClass:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSShapeSegmentValue>(*this));
     case SubgridClass:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSSubgridValue>(*this));
     case StepsTimingFunctionClass:

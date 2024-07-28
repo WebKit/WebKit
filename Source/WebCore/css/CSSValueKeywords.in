@@ -1341,6 +1341,24 @@ rect
 
 // shapes
 polygon
+shape
+
+// shape function
+line
+// move
+hline
+vline
+curve
+// smooth
+arc
+cw
+ccw
+// large
+// small
+by
+close
+via
+of
 
 // @font-face src
 format
