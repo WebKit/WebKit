@@ -201,11 +201,10 @@ cmake -S . -B $WebKitBuild `
     "-DICU_INCLUDE_DIR=${ICU_STATIC_INCLUDE_DIR}" `
     "-DCMAKE_C_COMPILER=clang-cl" `
     "-DCMAKE_CXX_COMPILER=clang-cl" `
-    "-DCMAKE_LINKER=lld-link" `
-    "-DCMAKE_C_FLAGS_RELEASE=/Zi /O2 /Ob2 /DNDEBUG  -fuse-ld=lld " `
-    "-DCMAKE_CXX_FLAGS_RELEASE=/Zi /O2 /Ob2 /DNDEBUG -fuse-ld=lld  -Xclang -fno-c++-static-destructors " `
-    "-DCMAKE_C_FLAGS_DEBUG=/Zi /FS /O0 /Ob0 -fuse-ld=lld " `
-    "-DCMAKE_CXX_FLAGS_DEBUG=/Zi /FS /O0 /Ob0 -fuse-ld=lld -Xclang -fno-c++-static-destructors " `
+    "-DCMAKE_C_FLAGS_RELEASE=/Zi /O2 /Ob2 /DNDEBUG  " `
+    "-DCMAKE_CXX_FLAGS_RELEASE=/Zi /O2 /Ob2 /DNDEBUG  -Xclang -fno-c++-static-destructors " `
+    "-DCMAKE_C_FLAGS_DEBUG=/Zi /FS /O0 /Ob0 " `
+    "-DCMAKE_CXX_FLAGS_DEBUG=/Zi /FS /O0 /Ob0 -Xclang -fno-c++-static-destructors " `
     -DENABLE_REMOTE_INSPECTOR=ON `
     "-DCMAKE_MSVC_RUNTIME_LIBRARY=${CmakeMsvcRuntimeLibrary}" `
     -G Ninja
@@ -237,8 +236,8 @@ $null = mkdir -ErrorAction SilentlyContinue $output/include/JavaScriptCore
 $null = mkdir -ErrorAction SilentlyContinue $output/include/wtf
 
 Copy-Item $WebKitBuild/cmakeconfig.h $output/include/cmakeconfig.h
-Copy-Item $WebKitBuild/lib/*.lib $output/lib/
-Copy-Item -ErrorAction SilentlyContinue $WebKitBuild/lib/*.pdb $output/lib/
+Copy-Item -Recurse $WebKitBuild/lib $output/lib
+Copy-Item -Recurse $WebKitBuild/bin $output/bin
 
 if ($CMAKE_BUILD_TYPE -eq "Release") {
     Move-Item $ICU_STATIC_LIBRARY/icudt.lib $ICU_STATIC_LIBRARY/sicudt.lib
