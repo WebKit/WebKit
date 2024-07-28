@@ -24,7 +24,9 @@
  */
 
 #include "config.h"
+#include "JSGenericTypedArrayView.h"
 #include "JSGenericTypedArrayViewConstructor.h"
+#include "JSGenericTypedArrayViewConstructorInlines.h"
 
 #include "ParseInt.h"
 #include <wtf/text/Base64.h>

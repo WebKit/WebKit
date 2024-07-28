@@ -38,13 +38,14 @@ jobs:
             brew_prefix: /opt/homebrew/opt
             package_json_arch: "arm64"
             CMAKE_BUILD_TYPE: Debug
-          - runner: macos-13-large
-            cpp_flags: -flto=full -fwhole-program-vtables -fforce-emit-vtables -D_LIBCXX_ENABLE_ASSERTIONS=0
-            cpu: haswell
-            label: bun-webkit-macos-amd64-lto
-            brew_prefix: /usr/local/opt
-            package_json_arch: "x64"
-            CMAKE_BUILD_TYPE: Release
+          # We aren't doing LTO on macOS, for now.
+          # - runner: macos-13-large
+          #   cpp_flags: -flto=full -fwhole-program-vtables -fforce-emit-vtables -D_LIBCXX_ENABLE_ASSERTIONS=0
+          #   cpu: haswell
+          #   label: bun-webkit-macos-amd64-lto
+          #   brew_prefix: /usr/local/opt
+          #   package_json_arch: "x64"
+          #   CMAKE_BUILD_TYPE: Release
           - runner: macos-13-large
             cpp_flags: ""
             cpu: haswell
@@ -52,13 +53,14 @@ jobs:
             brew_prefix: /usr/local/opt
             package_json_arch: "x64"
             CMAKE_BUILD_TYPE: Release
-          - runner: macos-13-xlarge
-            cpp_flags: -flto=full -fwhole-program-vtables -fforce-emit-vtables -D_LIBCXX_ENABLE_ASSERTIONS=0
-            cpu: native
-            label: bun-webkit-macos-arm64-lto
-            brew_prefix: /opt/homebrew/opt
-            package_json_arch: "arm64"
-            CMAKE_BUILD_TYPE: Release
+          # We aren't doing LTO on macOS, for now.
+          # - runner: macos-13-xlarge
+          #   cpp_flags: -flto=full -fwhole-program-vtables -fforce-emit-vtables -D_LIBCXX_ENABLE_ASSERTIONS=0
+          #   cpu: native
+          #   label: bun-webkit-macos-arm64-lto
+          #   brew_prefix: /opt/homebrew/opt
+          #   package_json_arch: "arm64"
+          #   CMAKE_BUILD_TYPE: Release
           - runner: macos-13-xlarge
             cpp_flags: "-D_LIBCXX_ENABLE_ASSERTIONS=0"
             cpu: native
@@ -265,14 +267,6 @@ jobs:
           path: ${{runner.temp}}/bun-webkit-macos-amd64
       - uses: actions/download-artifact@v3
         with:
-          name: bun-webkit-macos-amd64-debug
-          path: ${{runner.temp}}/bun-webkit-macos-amd64-debug
-      - uses: actions/download-artifact@v3
-        with:
-          name: bun-webkit-macos-amd64-lto
-          path: ${{runner.temp}}/bun-webkit-macos-amd64-lto
-      - uses: actions/download-artifact@v3
-        with:
           name: bun-webkit-linux-amd64-lto
           path: ${{runner.temp}}/bun-webkit-linux-amd64-lto
       - uses: actions/download-artifact@v3
@@ -298,8 +292,6 @@ jobs:
           mv ${{runner.temp}}/bun-webkit-linux-arm64-debug/bun-webkit.tar.gz  ${{runner.temp}}/bun-webkit-linux-arm64-debug.tar.gz
           mv ${{runner.temp}}/bun-webkit-macos-arm64-debug/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-arm64-debug.tar.gz
           mv ${{runner.temp}}/bun-webkit-macos-amd64-debug/bun-webkit.tar.gz  ${{runner.temp}}/bun-webkit-macos-amd64-debug.tar.gz
-          mv ${{runner.temp}}/bun-webkit-macos-arm64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-arm64-lto.tar.gz
-          mv ${{runner.temp}}/bun-webkit-macos-amd64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz
           mv ${{runner.temp}}/bun-webkit-linux-arm64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-linux-arm64-lto.tar.gz
           mv ${{runner.temp}}/bun-webkit-linux-amd64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-linux-amd64-lto.tar.gz
           mv ${{runner.temp}}/bun-webkit-windows-amd64/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-windows-amd64.tar.gz
@@ -321,7 +313,5 @@ jobs:
             ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
             ${{runner.temp}}/bun-webkit-linux-amd64-lto.tar.gz
             ${{runner.temp}}/bun-webkit-linux-arm64-lto.tar.gz
-            ${{runner.temp}}/bun-webkit-macos-arm64-lto.tar.gz
-            ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz
             ${{runner.temp}}/bun-webkit-windows-amd64.tar.gz
             ${{runner.temp}}/bun-webkit-windows-amd64-debug.tar.gz
