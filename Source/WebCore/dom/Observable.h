@@ -36,7 +36,6 @@ namespace WebCore {
 class InternalObserver;
 class ScriptExecutionContext;
 class JSSubscriptionObserverCallback;
-class SubscriptionObserverCallback;
 struct SubscriptionObserver;
 struct SubscribeOptions;
 
@@ -46,12 +45,14 @@ class Observable final : public ScriptWrappable, public RefCounted<Observable> {
 public:
     using ObserverUnion = std::variant<RefPtr<JSSubscriptionObserverCallback>, SubscriptionObserver>;
 
-    static ExceptionOr<Ref<Observable>> create(Ref<SubscriberCallback>);
+    static Ref<Observable> create(Ref<SubscriberCallback>);
 
     explicit Observable(Ref<SubscriberCallback>);
 
     void subscribe(ScriptExecutionContext&, std::optional<ObserverUnion>, SubscribeOptions);
     void subscribeInternal(ScriptExecutionContext&, Ref<InternalObserver>, SubscribeOptions);
+
+    Ref<Observable> take(ScriptExecutionContext&, uint64_t);
 
 private:
     Ref<SubscriberCallback> m_subscriberCallback;

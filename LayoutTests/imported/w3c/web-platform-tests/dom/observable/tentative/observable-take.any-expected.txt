@@ -1,7 +1,7 @@
 
-FAIL take(): Takes the first N values from the source observable, then completes source.take is not a function. (In 'source.take(2)', 'source.take' is undefined)
-FAIL take(): Forwards complete()s that happen before the take count is met, and unsubscribes from source Observable source.take is not a function. (In 'source.take(5)', 'source.take' is undefined)
-FAIL take(): Should forward errors from the source observable source.take is not a function. (In 'source.take(100)', 'source.take' is undefined)
-FAIL take(): take(0) should not subscribe to the source observable, and should return an observable that immediately completes source.take is not a function. (In 'source.take(0)', 'source.take' is undefined)
-FAIL take(): Negative count is treated as maximum value source.take is not a function. (In 'source.take(-1)', 'source.take' is undefined)
+PASS take(): Takes the first N values from the source observable, then completes
+PASS take(): Forwards complete()s that happen before the take count is met, and unsubscribes from source Observable
+PASS take(): Should forward errors from the source observable
+PASS take(): take(0) should not subscribe to the source observable, and should return an observable that immediately completes
+PASS take(): Negative count is treated as maximum value
 

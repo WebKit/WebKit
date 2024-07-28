@@ -27,10 +27,13 @@
 
 #include "AbortController.h"
 #include "AbortSignal.h"
+#include "Document.h"
 #include "InternalObserver.h"
+#include "JSDOMExceptionHandling.h"
 #include "SubscriberCallback.h"
 #include "SubscriptionObserverCallback.h"
 #include "VoidCallback.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
@@ -146,6 +149,35 @@ void Subscriber::reportErrorObject(JSC::JSValue value)
     JSC::JSLockHolder lock(vm);
 
     reportException(globalObject, JSC::Exception::create(vm, value));
+}
+
+Vector<VoidCallback*> Subscriber::teardownCallbacksConcurrently()
+{
+    Locker locker { m_teardownsLock };
+    return m_teardowns.map([](auto& callback) {
+        return callback.ptr();
+    });
+}
+
+InternalObserver* Subscriber::observerConcurrently()
+{
+    return &m_observer.get();
+}
+
+void Subscriber::visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor)
+{
+    for (auto* teardown : teardownCallbacksConcurrently())
+        teardown->visitJSFunction(visitor);
+
+    observerConcurrently()->visitAdditionalChildren(visitor);
+}
+
+void Subscriber::visitAdditionalChildren(JSC::SlotVisitor& visitor)
+{
+    for (auto* teardown : teardownCallbacksConcurrently())
+        teardown->visitJSFunction(visitor);
+
+    observerConcurrently()->visitAdditionalChildren(visitor);
 }
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Subscriber);
