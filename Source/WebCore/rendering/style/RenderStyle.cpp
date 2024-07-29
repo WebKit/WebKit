@@ -1965,6 +1965,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyTextAutospace);
             changingProperties.m_properties.set(CSSPropertyFontStyle);
 #if ENABLE(VARIATION_FONTS)
+            changingProperties.m_properties.set(CSSPropertyFontOpticalSizing);
             changingProperties.m_properties.set(CSSPropertyFontVariationSettings);
 #endif
             changingProperties.m_properties.set(CSSPropertyFontWeight);
@@ -2887,6 +2888,16 @@ void RenderStyle::setFontSizeAdjust(FontSizeAdjust sizeAdjust)
     auto selector = fontCascade().fontSelector();
     auto description = fontDescription();
     description.setFontSizeAdjust(sizeAdjust);
+
+    setFontDescription(WTFMove(description));
+    fontCascade().update(selector);
+}
+
+void RenderStyle::setFontOpticalSizing(FontOpticalSizing opticalSizing)
+{
+    auto selector = fontCascade().fontSelector();
+    auto description = fontDescription();
+    description.setOpticalSizing(opticalSizing);
 
     setFontDescription(WTFMove(description));
     fontCascade().update(selector);

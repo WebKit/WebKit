@@ -74,6 +74,15 @@ WTF::TextStream& operator<<(TextStream& ts, Kerning kerning)
     return ts;
 }
 
+WTF::TextStream& operator<<(TextStream& ts, FontOpticalSizing opticalSizing)
+{
+    switch (opticalSizing) {
+    case FontOpticalSizing::Enabled: ts << "auto"; break;
+    case FontOpticalSizing::Disabled: ts << "none"; break;
+    }
+    return ts;
+}
+
 WTF::TextStream& operator<<(TextStream& ts, const FontVariantAlternates& alternates)
 {
     if (alternates.isNormal())
