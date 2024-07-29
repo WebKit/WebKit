@@ -5971,8 +5971,6 @@ webkit.org/b/261849 imported/w3c/web-platform-tests/css/css-scroll-anchoring/sta
 
 # Trusted Types aren't fully implemented yet
 webkit.org/b/272196 imported/w3c/web-platform-tests/trusted-types/trusted-types-createHTMLDocument.html [ Pass Failure ]
-webkit.org/b/274519 imported/w3c/web-platform-tests/trusted-types/HTMLScriptElement-in-xhtml-document.tentative.https.xhtml [ Skip ]
-webkit.org/b/274519 imported/w3c/web-platform-tests/trusted-types/Document-write-exception-order.xhtml [ Skip ]
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-importScripts.html [ Pass Failure ]
 webkit.org/b/274089 imported/w3c/web-platform-tests/trusted-types/trusted-types-from-literal.tentative.html [ Pass Failure ]
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-navigation.html [ Pass Failure ]
