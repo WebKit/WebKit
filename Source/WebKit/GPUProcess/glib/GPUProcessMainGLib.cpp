@@ -45,6 +45,7 @@ public:
 #if USE(SYSPROF_CAPTURE)
         SysprofAnnotator::createIfNeeded("WebKit (GPU)"_s);
 #endif
+        return true;
     }
 };
 #endif
