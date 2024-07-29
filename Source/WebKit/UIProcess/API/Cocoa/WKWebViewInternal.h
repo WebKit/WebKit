@@ -439,6 +439,13 @@ struct PerWebProcessState {
 
 #if ENABLE(GAMEPAD)
 - (void)_setGamepadsRecentlyAccessed:(BOOL)gamepadsRecentlyAccessed;
+
+#if PLATFORM(VISION)
+@property (nonatomic, readonly) BOOL _gamepadsConnected;
+- (void)_gamepadsConnectedStateChanged;
+- (void)_setAllowGamepadsInput:(BOOL)allowGamepadsInput;
+- (void)_setAllowGamepadsAccess;
+#endif
 #endif
 
 - (WKPageRef)_pageForTesting;

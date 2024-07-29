@@ -8284,6 +8284,10 @@ enum class WebCore::ShouldContinuePolicyCheck : bool
 
 #if ENABLE(GAMEPAD)
 enum class WebCore::EventMakesGamepadsVisible : bool
+
+#if PLATFORM(VISION)
+enum class WebCore::ShouldRequireExplicitConsentForGamepadAccess : bool;
+#endif
 #endif
 
 enum class WebCore::WillInternallyHandleFailure : bool

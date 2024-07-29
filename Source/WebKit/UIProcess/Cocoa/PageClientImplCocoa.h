@@ -129,6 +129,9 @@ public:
 
 #if ENABLE(GAMEPAD)
     void setGamepadsRecentlyAccessed(GamepadsRecentlyAccessed) final;
+#if PLATFORM(VISION)
+    void gamepadsConnectedStateChanged() final;
+#endif
 #endif
 
     void hasActiveNowPlayingSessionChanged(bool) final;

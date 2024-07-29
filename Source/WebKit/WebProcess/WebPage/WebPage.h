@@ -1423,6 +1423,9 @@ public:
 #if ENABLE(GAMEPAD)
     void gamepadActivity(const Vector<std::optional<GamepadData>>&, WebCore::EventMakesGamepadsVisible);
     void gamepadsRecentlyAccessed();
+#if PLATFORM(VISION)
+    void allowGamepadAccess();
+#endif
 #endif
 
 #if ENABLE(POINTER_LOCK)

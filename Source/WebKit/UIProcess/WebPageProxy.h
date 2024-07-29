@@ -1928,6 +1928,11 @@ public:
 
     void gamepadActivity(const Vector<std::optional<GamepadData>>&, WebCore::EventMakesGamepadsVisible);
     void gamepadsRecentlyAccessed();
+#if PLATFORM(VISION)
+    bool gamepadsConnected() const { return m_gamepadsConnected; }
+    void setGamepadsConnected(bool);
+    void allowGamepadAccess();
+#endif
 #endif
 
     void isLoadingChanged();
@@ -3080,6 +3085,7 @@ private:
 
 #if ENABLE(GAMEPAD)
     void recentGamepadAccessStateChanged(PAL::HysteresisState);
+    void resetRecentGamepadAccessState();
 #endif
 
     void setAllowsLayoutViewportHeightExpansion(bool);
@@ -3622,6 +3628,9 @@ private:
 
 #if ENABLE(GAMEPAD)
     PAL::HysteresisActivity m_recentGamepadAccessHysteresis;
+#if PLATFORM(VISION)
+    bool m_gamepadsConnected { false };
+#endif
 #endif
 
     std::unique_ptr<WebPageProxyTesting> m_pageForTesting;

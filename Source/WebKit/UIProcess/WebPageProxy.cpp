@@ -6461,6 +6461,9 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
 #if ENABLE(PDF_HUD)
         protectedPageClient->removeAllPDFHUDs();
 #endif
+#if ENABLE(GAMEPAD)
+        resetRecentGamepadAccessState();
+#endif
     }
 
     internals().pageLoadState.commitChanges();
@@ -10208,7 +10211,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 #endif
 
 #if ENABLE(GAMEPAD)
-    m_recentGamepadAccessHysteresis.cancel();
+    resetRecentGamepadAccessState();
 #endif
 
     // FIXME: <rdar://problem/38676604> In case of process swaps, the old process should gracefully suspend instead of terminating.
@@ -10380,6 +10383,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.hardwareKeyboardState = internals().hardwareKeyboardState;
     parameters.canShowWhileLocked = m_configuration->canShowWhileLocked();
     parameters.insertionPointColor = protectedPageClient()->insertionPointColor();
+#endif
+
+#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+    parameters.gamepadAccessRequiresExplicitConsent = m_configuration->gamepadAccessRequiresExplicitConsent();
 #endif
 
 #if PLATFORM(COCOA)
@@ -10640,6 +10647,33 @@ void WebPageProxy::gamepadsRecentlyAccessed()
 
     m_recentGamepadAccessHysteresis.impulse();
 }
+
+void WebPageProxy::resetRecentGamepadAccessState()
+{
+    if (m_recentGamepadAccessHysteresis.state() == PAL::HysteresisState::Started)
+        recentGamepadAccessStateChanged(PAL::HysteresisState::Stopped);
+
+    m_recentGamepadAccessHysteresis.cancel();
+}
+
+#if PLATFORM(VISION)
+
+void WebPageProxy::setGamepadsConnected(bool gamepadsConnected)
+{
+    if (m_gamepadsConnected == gamepadsConnected)
+        return;
+
+    m_gamepadsConnected = gamepadsConnected;
+    if (auto pageClient = optionalProtectedPageClient())
+        pageClient->gamepadsConnectedStateChanged();
+}
+
+void WebPageProxy::allowGamepadAccess()
+{
+    send(Messages::WebPage::AllowGamepadAccess());
+}
+
+#endif // PLATFORM(VISION)
 
 #endif // ENABLE(GAMEPAD)
 

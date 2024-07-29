@@ -45,6 +45,7 @@ namespace WebCore {
 
 class Gamepad;
 class Navigator;
+class Page;
 class PlatformGamepad;
 template<typename> class ExceptionOr;
 
@@ -67,6 +68,8 @@ public:
 
     WEBCORE_EXPORT static void setGamepadsRecentlyAccessedThreshold(Seconds);
     static Seconds gamepadsRecentlyAccessedThreshold();
+
+    RefPtr<Page> protectedPage() const;
 
 private:
     static ASCIILiteral supplementName();

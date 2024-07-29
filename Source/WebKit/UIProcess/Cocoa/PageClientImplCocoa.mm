@@ -315,6 +315,13 @@ void PageClientImplCocoa::setGamepadsRecentlyAccessed(GamepadsRecentlyAccessed g
 {
     [m_webView _setGamepadsRecentlyAccessed:(gamepadsRecentlyAccessed == GamepadsRecentlyAccessed::No) ? NO : YES];
 }
+
+#if PLATFORM(VISION)
+void PageClientImplCocoa::gamepadsConnectedStateChanged()
+{
+    [m_webView _gamepadsConnectedStateChanged];
+}
+#endif
 #endif
 
 void PageClientImplCocoa::hasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSession)
