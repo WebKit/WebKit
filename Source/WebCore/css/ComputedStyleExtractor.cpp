@@ -3608,11 +3608,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyJustifySelf:
         return valueForItemPositionWithOverflowAlignment(style.justifySelf());
     case CSSPropertyPlaceContent:
-        return getCSSPropertyValuesForShorthandProperties(placeContentShorthand());
+        return getCSSPropertyValuesFor2SidesShorthand(placeContentShorthand());
     case CSSPropertyPlaceItems:
-        return getCSSPropertyValuesForShorthandProperties(placeItemsShorthand());
+        return getCSSPropertyValuesFor2SidesShorthand(placeItemsShorthand());
     case CSSPropertyPlaceSelf:
-        return getCSSPropertyValuesForShorthandProperties(placeSelfShorthand());
+        return getCSSPropertyValuesFor2SidesShorthand(placeSelfShorthand());
     case CSSPropertyOrder:
         return CSSPrimitiveValue::createInteger(style.order());
     case CSSPropertyFloat:
@@ -3742,7 +3742,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         }
         return CSSGridTemplateAreasValue::create(style.namedGridArea(), style.namedGridAreaRowCount(), style.namedGridAreaColumnCount());
     case CSSPropertyGap:
-        return getCSSPropertyValuesForShorthandProperties(gapShorthand());
+        return getCSSPropertyValuesFor2SidesShorthand(gapShorthand());
     case CSSPropertyHeight:
         if (renderer && !renderer->isRenderOrLegacyRenderSVGModelObject()) {
             // According to http://www.w3.org/TR/CSS2/visudet.html#the-height-property,
