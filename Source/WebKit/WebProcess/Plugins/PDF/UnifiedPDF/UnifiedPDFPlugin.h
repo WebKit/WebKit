@@ -317,10 +317,6 @@ private:
     [[maybe_unused]] bool performCopyEditingOperation() const;
     void performCopyLinkOperation(const WebCore::IntPoint& contextMenuEventRootViewPoint) const;
 
-#if PLATFORM(MAC)
-    CheckedPtr<WebCore::KeyboardScrollingAnimator> checkedKeyboardScrollingAnimator() const;
-#endif
-
     void animatedScrollDidEnd() final;
 
     void setDisplayMode(PDFDocumentLayout::DisplayMode);

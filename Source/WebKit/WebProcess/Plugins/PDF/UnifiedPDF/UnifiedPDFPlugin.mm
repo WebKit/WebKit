@@ -2021,16 +2021,6 @@ bool UnifiedPDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
 #endif // ENABLE(CONTEXT_MENUS)
 }
 
-#if PLATFORM(MAC)
-
-// FIXME: <https://webkit.org/b/276981> Remove.
-CheckedPtr<KeyboardScrollingAnimator> UnifiedPDFPlugin::checkedKeyboardScrollingAnimator() const
-{
-    return scrollAnimator().keyboardScrollingAnimator();
-}
-
-#endif // PLATFORM(MAC)
-
 void UnifiedPDFPlugin::animatedScrollDidEnd()
 {
 #if PLATFORM(MAC)
