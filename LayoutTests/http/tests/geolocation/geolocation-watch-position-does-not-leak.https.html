@@ -2,66 +2,12 @@
 <html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/document-leak-test.js"></script>
 </head>
 <body>
 <script>
 description("Tests that navigator.geolocation.watchPosition() does not leak the document object.");
-jsTestIsAsync = true;
-
-var framesToCreate = 20;
-var allFrames = new Array(framesToCreate);
-
-for (let i = 0; i < framesToCreate; ++i) {
-    let iframe = document.createElement("iframe");
-    document.body.appendChild(iframe);
-    allFrames[i] = iframe;
-}
-
-function iframeForMessage(message)
-{
-    return allFrames.find(frame => frame.contentWindow === message.source);
-}
-
-var failCount = 0;
-function iFrameLeaked()
-{
-    if (++failCount >= framesToCreate) {
-        testFailed("All iframe documents leaked.");
-        finishJSTest();
-    }
-}
-
-function iframeLoaded(iframe)
-{
-    let frameDocumentID = internals.documentIdentifier(iframe.contentWindow.document);
-    let checkCount = 0;
-    iframe.addEventListener("load", () => {
-        let handle = setInterval(() => {
-            gc();
-            if (!internals.isDocumentAlive(frameDocumentID)) {
-                clearInterval(handle);
-                testPassed("The iframe document didn't leak.");
-                finishJSTest();
-            }
-            if (++checkCount > 5) {
-                clearInterval(handle);
-                iframeLeaked();
-            }
-        }, 10);
-    });
-
-    iframe.src = "about:blank";
-}
-
-onload = () => {
-    if (!(window.internals && window.testRunner)) {
-        testFailed("Test requires internals and testRunner.");
-        finishJSTest();
-    }
-
-    window.addEventListener("message", message => iframeLoaded(iframeForMessage(message)));
-    allFrames.forEach(frame => frame.src = "https://127.0.0.1:8443/geolocation/resources/geolocation-watch-position-callback.html");
-};
+onload = () => runDocumentLeakTest({ frameURL: "https://127.0.0.1:8443/geolocation/resources/geolocation-watch-position-callback.html", framesToCreate: 20 });
 </script>
 <script src="../resources/js-test-post.js"></script>
 </body>
