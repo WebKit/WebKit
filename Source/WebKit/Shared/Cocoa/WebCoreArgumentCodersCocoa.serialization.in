@@ -109,7 +109,12 @@ header: <WebCore/DictionaryPopupInfo.h>
 
 header: <WebCore/ResourceRequest.h>
 [CustomHeader] struct WebCore::ResourceRequestPlatformData {
+#if HAVE(WK_SECURE_CODING_NSURLREQUEST)
+    RetainPtr<NSURLRequest> m_urlRequest;
+#endif
+#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
     [SecureCodingAllowed=[NSMutableURLRequest.class, NSURLRequest.class]] RetainPtr<NSURLRequest> m_urlRequest;
+#endif
     std::optional<bool> m_isAppInitiated;
     std::optional<WebCore::ResourceRequestRequester> m_requester;
     bool m_privacyProxyFailClosedForUnreachableNonMainHosts;
@@ -360,6 +365,10 @@ DDScannerResult wrapped by CoreIPCDDScannerResult
 #if PLATFORM(MAC)
 WKDDActionContext wrapped by CoreIPCDDSecureActionContext
 #endif
+#endif
+
+#if HAVE(WK_SECURE_CODING_NSURLREQUEST)
+NSURLRequest wrapped by CoreIPCNSURLRequest
 #endif
 
 #if USE(AVFOUNDATION)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,32 +27,52 @@
 
 #if PLATFORM(COCOA)
 
-#include <wtf/ArgumentCoder.h>
-#include <wtf/URL.h>
+#include "ArgumentCodersCocoa.h"
+#include <wtf/RetainPtr.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebKit {
 
-class CoreIPCURL {
+class CoreIPCPlistArray;
+class CoreIPCPlistDictionary;
+class CoreIPCString;
+class CoreIPCNumber;
+class CoreIPCDate;
+class CoreIPCData;
+
+using PlistValue = std::variant<
+    CoreIPCPlistArray,
+    CoreIPCPlistDictionary,
+    CoreIPCString,
+    CoreIPCNumber,
+    CoreIPCDate,
+    CoreIPCData
+>;
+
+class CoreIPCPlistObject {
 public:
-    CoreIPCURL() = default;
-    CoreIPCURL(NSURL *url)
-        : m_url(url)
-    {
-    }
+    CoreIPCPlistObject(id);
+    CoreIPCPlistObject(UniqueRef<PlistValue>&&);
 
-    CoreIPCURL(URL&& url)
-        : m_url(WTFMove(url))
-    {
-    }
+    RetainPtr<id> toID() const;
+    static bool isPlistType(id);
 
-    RetainPtr<id> toID() const { return (NSURL *)m_url; }
-
+    const UniqueRef<PlistValue>& value() const { return m_value; }
 private:
-    friend struct IPC::ArgumentCoder<CoreIPCURL, void>;
-
-    URL m_url;
+    UniqueRef<PlistValue> m_value;
 };
 
 } // namespace WebKit
+
+namespace IPC {
+
+// This ArgumentCoders specialization for UniqueRef<PlistValue> is to allow us to use
+// makeUniqueRefWithoutFastMallocCheck<>, since we can't make the variant fast malloc'ed
+template<> struct ArgumentCoder<UniqueRef<WebKit::PlistValue>> {
+    static void encode(Encoder&, const UniqueRef<WebKit::PlistValue>&);
+    static std::optional<UniqueRef<WebKit::PlistValue>> decode(Decoder&);
+};
+
+} // namespace IPC
 
 #endif // PLATFORM(COCOA)

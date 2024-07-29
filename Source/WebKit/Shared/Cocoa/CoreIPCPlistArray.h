@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,30 +27,29 @@
 
 #if PLATFORM(COCOA)
 
-#include <wtf/ArgumentCoder.h>
-#include <wtf/URL.h>
+#include "ArgumentCodersCocoa.h"
+#include <wtf/RetainPtr.h>
 
 namespace WebKit {
 
-class CoreIPCURL {
+class CoreIPCPlistObject;
+
+class CoreIPCPlistArray {
 public:
-    CoreIPCURL() = default;
-    CoreIPCURL(NSURL *url)
-        : m_url(url)
-    {
-    }
+    CoreIPCPlistArray(NSArray *);
+    CoreIPCPlistArray(const RetainPtr<NSArray>&);
+    CoreIPCPlistArray(CoreIPCPlistArray&&);
+    CoreIPCPlistArray& operator=(CoreIPCPlistArray&&) = default;
+    ~CoreIPCPlistArray();
 
-    CoreIPCURL(URL&& url)
-        : m_url(WTFMove(url))
-    {
-    }
-
-    RetainPtr<id> toID() const { return (NSURL *)m_url; }
+    RetainPtr<id> toID() const;
 
 private:
-    friend struct IPC::ArgumentCoder<CoreIPCURL, void>;
+    friend struct IPC::ArgumentCoder<CoreIPCPlistArray, void>;
 
-    URL m_url;
+    CoreIPCPlistArray(Vector<CoreIPCPlistObject>&&);
+
+    Vector<CoreIPCPlistObject> m_array;
 };
 
 } // namespace WebKit

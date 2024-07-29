@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "CoreIPCPlistArray.h"
 
 #if PLATFORM(COCOA)
 
-#include <wtf/ArgumentCoder.h>
-#include <wtf/URL.h>
+#import "CoreIPCData.h"
+#import "CoreIPCDate.h"
+#import "CoreIPCNumber.h"
+#import "CoreIPCPlistDictionary.h"
+#import "CoreIPCPlistObject.h"
+#import "CoreIPCString.h"
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
 
-class CoreIPCURL {
-public:
-    CoreIPCURL() = default;
-    CoreIPCURL(NSURL *url)
-        : m_url(url)
-    {
+CoreIPCPlistArray::CoreIPCPlistArray(NSArray *array)
+{
+    for (id value in array) {
+        if (!CoreIPCPlistObject::isPlistType(value))
+            continue;
+        m_array.append(CoreIPCPlistObject(value));
     }
+}
 
-    CoreIPCURL(URL&& url)
-        : m_url(WTFMove(url))
-    {
-    }
+CoreIPCPlistArray::CoreIPCPlistArray(const RetainPtr<NSArray>& array)
+    : CoreIPCPlistArray(array.get()) { }
 
-    RetainPtr<id> toID() const { return (NSURL *)m_url; }
+CoreIPCPlistArray::CoreIPCPlistArray(CoreIPCPlistArray&&) = default;
 
-private:
-    friend struct IPC::ArgumentCoder<CoreIPCURL, void>;
+CoreIPCPlistArray::~CoreIPCPlistArray() = default;
 
-    URL m_url;
-};
+CoreIPCPlistArray::CoreIPCPlistArray(Vector<CoreIPCPlistObject>&& array)
+    : m_array(WTFMove(array)) { }
+
+RetainPtr<id> CoreIPCPlistArray::toID() const
+{
+    return createNSArray(m_array, [] (auto& object) -> id {
+        return object.toID().get();
+    });
+}
 
 } // namespace WebKit
 

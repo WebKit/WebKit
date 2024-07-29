@@ -249,10 +249,12 @@ $(PROJECT_DIR)/Shared/Cocoa/CoreIPCNSCFObject.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCNSShadow.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCNSURLCredential.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCNSURLProtectionSpace.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCNSURLRequest.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCNSValue.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCNull.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCPassKit.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCPersonNameComponents.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCPlist.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCPresentationIntent.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCSecureCoding.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCString.serialization.in

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,30 +27,34 @@
 
 #if PLATFORM(COCOA)
 
+#include "CoreIPCPlistObject.h"
 #include <wtf/ArgumentCoder.h>
-#include <wtf/URL.h>
+#include <wtf/KeyValuePair.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/UniqueRef.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
-class CoreIPCURL {
+class CoreIPCPlistDictionary {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    CoreIPCURL() = default;
-    CoreIPCURL(NSURL *url)
-        : m_url(url)
-    {
-    }
+    CoreIPCPlistDictionary(NSDictionary *);
+    CoreIPCPlistDictionary(const RetainPtr<NSDictionary>&);
+    CoreIPCPlistDictionary(CoreIPCPlistDictionary&&);
+    CoreIPCPlistDictionary& operator=(CoreIPCPlistDictionary&&) = default;
+    ~CoreIPCPlistDictionary();
 
-    CoreIPCURL(URL&& url)
-        : m_url(WTFMove(url))
-    {
-    }
-
-    RetainPtr<id> toID() const { return (NSURL *)m_url; }
+    RetainPtr<id> toID() const;
 
 private:
-    friend struct IPC::ArgumentCoder<CoreIPCURL, void>;
+    friend struct IPC::ArgumentCoder<CoreIPCPlistDictionary, void>;
 
-    URL m_url;
+    using ValueType = Vector<KeyValuePair<CoreIPCString, CoreIPCPlistObject>>;
+
+    CoreIPCPlistDictionary(ValueType&&);
+
+    ValueType m_keyValuePairs;
 };
 
 } // namespace WebKit
