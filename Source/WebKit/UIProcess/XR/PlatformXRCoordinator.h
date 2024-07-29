@@ -65,7 +65,7 @@ public:
     static PlatformXR::LayerHandle defaultLayerHandle() { return 1; }
 
     using DeviceInfoCallback = Function<void(std::optional<XRDeviceInfo>)>;
-    virtual void getPrimaryDeviceInfo(DeviceInfoCallback&&) = 0;
+    virtual void getPrimaryDeviceInfo(WebPageProxy&, DeviceInfoCallback&&) = 0;
 
     using FeatureListCallback = CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>;
     virtual void requestPermissionOnSessionFeatures(WebPageProxy&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList& granted, const PlatformXR::Device::FeatureList& /* consentRequired */, const PlatformXR::Device::FeatureList& /* consentOptional */, const PlatformXR::Device::FeatureList& /* requiredFeaturesRequested */, const PlatformXR::Device::FeatureList& /* optionalFeaturesRequested */, FeatureListCallback&& completionHandler) { completionHandler(granted); }

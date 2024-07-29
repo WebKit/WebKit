@@ -63,7 +63,7 @@ ARKitCoordinator::ARKitCoordinator()
     ASSERT(RunLoop::isMain());
 }
 
-void ARKitCoordinator::getPrimaryDeviceInfo(DeviceInfoCallback&& callback)
+void ARKitCoordinator::getPrimaryDeviceInfo(WebPageProxy&, DeviceInfoCallback&& callback)
 {
     RELEASE_LOG(XR, "ARKitCoordinator::getPrimaryDeviceInfo");
     ASSERT(RunLoop::isMain());
