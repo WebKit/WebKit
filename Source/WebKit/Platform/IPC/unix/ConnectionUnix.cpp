@@ -548,18 +548,27 @@ SocketPair createPlatformConnection(unsigned options)
 {
     int sockets[2];
 
+    auto setPasscredIfNeeded = [options, &sockets] {
+#if USE(GLIB) && OS(LINUX)
+        if (options & SetPasscredOnServer) {
+            int enable = 1;
+            RELEASE_ASSERT(!setsockopt(sockets[1], SOL_SOCKET, SO_PASSCRED, &enable, sizeof(enable)));
+        }
+#endif
+    };
+
 #if OS(LINUX)
     if ((options & SetCloexecOnServer) || (options & SetCloexecOnClient)) {
         RELEASE_ASSERT(socketpair(AF_UNIX, SOCKET_TYPE | SOCK_CLOEXEC, 0, sockets) != -1);
 
         if (!(options & SetCloexecOnServer))
             RELEASE_ASSERT(unsetCloseOnExec(sockets[1]));
-
         if (!(options & SetCloexecOnClient))
             RELEASE_ASSERT(unsetCloseOnExec(sockets[0]));
 
-        SocketPair socketPair = { sockets[0], sockets[1] };
-        return socketPair;
+        setPasscredIfNeeded();
+
+        return { sockets[0], sockets[1] };
     }
 #endif
 
@@ -567,12 +576,12 @@ SocketPair createPlatformConnection(unsigned options)
 
     if (options & SetCloexecOnServer)
         RELEASE_ASSERT(setCloseOnExec(sockets[1]));
-
     if (options & SetCloexecOnClient)
         RELEASE_ASSERT(setCloseOnExec(sockets[0]));
 
-    SocketPair socketPair = { sockets[0], sockets[1] };
-    return socketPair;
+    setPasscredIfNeeded();
+
+    return { sockets[0], sockets[1] };
 }
 
 std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()
@@ -580,4 +589,60 @@ std::optional<Connection::ConnectionIdentifierPair> Connection::createConnection
     SocketPair socketPair = createPlatformConnection();
     return ConnectionIdentifierPair { Identifier { UnixFileDescriptor { socketPair.server,  UnixFileDescriptor::Adopt } }, UnixFileDescriptor { socketPair.client, UnixFileDescriptor::Adopt } };
 }
+
+#if USE(GLIB) && OS(LINUX)
+void sendPIDToPeer(int socket)
+{
+    char buffer[1] = { 0 };
+    struct msghdr message = { };
+    struct iovec iov = { buffer, sizeof(buffer) };
+
+    // Write one null byte. Credentials will be attached regardless of what we send.
+    message.msg_iov = &iov;
+    message.msg_iovlen = 1;
+
+    if (sendmsg(socket, &message, 0) == -1)
+        g_error("sendPIDToPeer: Failed to send pid: %s", g_strerror(errno));
+}
+
+// The goal here is to receive the pid of the sandboxed child in the parent process's pid namespace.
+// It's impossible for the child to know this, but the kernel will translate it for us.
+//
+// Based on read_pid_from_socket() from bubblewrap's utils.c
+// SPDX-License-Identifier: LGPL-2.0-or-later
+pid_t readPIDFromPeer(int socket)
+{
+    char receiveBuffer[1] = { 0 };
+    struct msghdr message = { };
+    struct iovec iov = { receiveBuffer, sizeof(receiveBuffer) };
+    const ssize_t controlLength = CMSG_SPACE(sizeof(struct ucred));
+    union {
+        char buffer[controlLength];
+        cmsghdr forceAlignment;
+    } controlMessage;
+
+    message.msg_iov = &iov;
+    message.msg_iovlen = 1;
+    message.msg_control = controlMessage.buffer;
+    message.msg_controllen = controlLength;
+
+    if (recvmsg(socket, &message, 0) == -1)
+        g_error("readPIDFromPeer: Failed to read pid from PID socket: %s", g_strerror(errno));
+
+    if (message.msg_controllen <= 0)
+        g_error("readPIDFromPeer: Unexpected short read from PID socket");
+
+    for (cmsghdr* header = CMSG_FIRSTHDR(&message); header; header = CMSG_NXTHDR(&message, header)) {
+        const unsigned payloadLength = header->cmsg_len - CMSG_LEN(0);
+        if (header->cmsg_level == SOL_SOCKET && header->cmsg_type == SCM_CREDENTIALS && payloadLength == sizeof(struct ucred)) {
+            struct ucred credentials;
+            memcpy(&credentials, CMSG_DATA(header), sizeof(struct ucred));
+            return credentials.pid;
+        }
+    }
+
+    g_error("readPIDFromPeer: No pid returned on PID socket");
+}
+#endif
+
 } // namespace IPC

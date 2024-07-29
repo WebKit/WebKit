@@ -56,9 +56,17 @@ struct SocketPair {
 enum PlatformConnectionOptions {
     SetCloexecOnClient = 1 << 0,
     SetCloexecOnServer = 1 << 1,
+#if USE(GLIB) && OS(LINUX)
+    SetPasscredOnServer = 1 << 2
+#endif
 };
 
 SocketPair createPlatformConnection(unsigned options = SetCloexecOnClient | SetCloexecOnServer);
+
+#if USE(GLIB) && OS(LINUX)
+void sendPIDToPeer(int socket);
+pid_t readPIDFromPeer(int socket);
+#endif
 #endif
 
 #if OS(WINDOWS)
