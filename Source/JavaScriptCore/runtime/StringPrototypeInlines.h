@@ -319,9 +319,13 @@ inline JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* globalObject, 
     if (!replaceString.isNull()) {
         if (mode == StringReplaceMode::Single)
             RELEASE_AND_RETURN(scope, (stringReplaceStringString<StringReplaceSubstitutions::Yes, StringReplaceUseTable::No, BoyerMooreHorspoolTable<uint8_t>>(globalObject, jsString, string, searchString, replaceString, nullptr)));
-        else
+        else {
+            ASSERT(mode == StringReplaceMode::Global);
             RELEASE_AND_RETURN(scope, (stringReplaceAllStringString<StringReplaceSubstitutions::Yes, StringReplaceUseTable::No, BoyerMooreHorspoolTable<uint8_t>>(globalObject, jsString, string, searchString, replaceString, nullptr)));
+        }
     }
+
+    ASSERT(callData.type != CallData::Type::None);
 
     size_t matchStart = StringView(string).find(vm.adaptiveStringSearcherTables(), StringView(searchString));
     if (matchStart == notFound)
@@ -332,27 +336,25 @@ inline JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* globalObject, 
     Vector<Range<int32_t>, 16> sourceRanges;
     Vector<String, 16> replacements;
     do {
-        if (callData.type != CallData::Type::None) {
-            JSValue replacement;
-            if (cachedCall) {
-                auto* substring = jsSubstring(vm, globalObject, jsString, matchStart, searchStringLength);
-                RETURN_IF_EXCEPTION(scope, nullptr);
-                replacement = cachedCall->callWithArguments(globalObject, jsUndefined(), substring, jsNumber(matchStart), jsString);
-                RETURN_IF_EXCEPTION(scope, nullptr);
-            } else {
-                MarkedArgumentBuffer args;
-                auto* substring = jsSubstring(vm, globalObject, jsString, matchStart, searchString.impl()->length());
-                RETURN_IF_EXCEPTION(scope, nullptr);
-                args.append(substring);
-                args.append(jsNumber(matchStart));
-                args.append(jsString);
-                ASSERT(!args.hasOverflowed());
-                replacement = call(globalObject, replaceValue, callData, jsUndefined(), args);
-                RETURN_IF_EXCEPTION(scope, nullptr);
-            }
-            replaceString = replacement.toWTFString(globalObject);
+        JSValue replacement;
+        if (cachedCall) {
+            auto* substring = jsSubstring(vm, globalObject, jsString, matchStart, searchStringLength);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            replacement = cachedCall->callWithArguments(globalObject, jsUndefined(), substring, jsNumber(matchStart), jsString);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+        } else {
+            MarkedArgumentBuffer args;
+            auto* substring = jsSubstring(vm, globalObject, jsString, matchStart, searchString.impl()->length());
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            args.append(substring);
+            args.append(jsNumber(matchStart));
+            args.append(jsString);
+            ASSERT(!args.hasOverflowed());
+            replacement = call(globalObject, replaceValue, callData, jsUndefined(), args);
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
+        replaceString = replacement.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, nullptr);
 
         if (UNLIKELY(!sourceRanges.tryConstructAndAppend(endOfLastMatch, matchStart))) {
             throwOutOfMemoryError(globalObject, scope);
@@ -360,18 +362,7 @@ inline JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* globalObject, 
         }
 
         size_t matchEnd = matchStart + searchStringLength;
-        if (callData.type != CallData::Type::None)
-            replacements.append(replaceString);
-        else {
-            StringBuilder replacement(StringBuilder::OverflowHandler::RecordOverflow);
-            int ovector[2] = { static_cast<int>(matchStart),  static_cast<int>(matchEnd) };
-            substituteBackreferences(replacement, replaceString, string, ovector, nullptr);
-            if (UNLIKELY(replacement.hasOverflowed())) {
-                throwOutOfMemoryError(globalObject, scope);
-                return nullptr;
-            }
-            replacements.append(replacement.toString());
-        }
+        replacements.append(replaceString);
 
         endOfLastMatch = matchEnd;
         if (mode == StringReplaceMode::Single)
