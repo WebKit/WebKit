@@ -2074,6 +2074,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyScrollbarColor);
         if (first.listStyleType != second.listStyleType)
             changingProperties.m_properties.set(CSSPropertyListStyleType);
+        if (first.hyphenationString != second.hyphenationString)
+            changingProperties.m_properties.set(CSSPropertyHyphenateCharacter);
 
         // customProperties is handled separately.
         // Non animated styles are followings.
@@ -2083,7 +2085,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // hyphenationLimitBefore
         // hyphenationLimitAfter
         // hyphenationLimitLines
-        // hyphenationString
         // tapHighlightColor
         // nbspMode
         // useTouchOverflowScrolling
