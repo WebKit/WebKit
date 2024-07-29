@@ -333,7 +333,7 @@ Vector<hb_feature_t> FontCache::computeFeatures(const FontDescription& fontDescr
     return features;
 }
 
-std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext)
+std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
 {
     auto familyName = getFamilyNameStringFromFamily(family);
     auto typeface = fontManager().matchFamilyStyle(familyName.utf8().data(), skiaFontStyle(fontDescription));
@@ -342,6 +342,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 
     auto size = fontDescription.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
     auto features = computeFeatures(fontDescription, fontCreationContext);
+    UNUSED_PARAM(options);
     FontPlatformData platformData(WTFMove(typeface), size, false /* syntheticBold */, false /* syntheticOblique */, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode(), WTFMove(features));
 
     platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedSize());

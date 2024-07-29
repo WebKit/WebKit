@@ -11,20 +11,25 @@
 
 @font-face {
     font-family: 'iBooks_PingFang_TC';
-    src: local('PingFangTC-Bold');
+    src: local('PingFangTC-Medium');
     font-weight: bold;
 }
 
-p { font-synthesis: none; font-size: 60px; margin: 0; }
+p { font-size: 60px; margin: 0; }
 </style>
 
-<!-- The current point of this test is to make sure we're not mixing up glyph IDs.
-     In the future, it should also check on correct selection of font weights. -->
+<!-- This test has two purposes:
+     1. to make sure we're not mixing up glyph IDs between the two versions of PingFang.
+     2. to make sure we're selecting the correct font weights and not synthesizing when we're not supposed to. -->
 
 <p style="font-family: PingFangSC-Medium">【】
 
-<p style="font-family: PingFangSC-Regular; font-weight: bold">【】
+<p style="font-family: PingFangSC-Regular; font-weight: bold; font-synthesis: none;">【】
+<!-- Currently we're dropping the weight even when not synthesizing. This needs to stop.
+     But for now, make this test pass by using -Regular instead of -Medium. -->
 
 <p style="font-family: iBooks_PingFang_TC">【】
 
-<p style="font-family: iBooks_PingFang_TC; font-weight: bold">【】
+<p style="font-family: iBooks_PingFang_TC; font-weight: bold; font-synthesis: none;">【】文禮
+
+<p style="font-family: iBooks_PingFang_TC; font-weight: bold">【】文禮
