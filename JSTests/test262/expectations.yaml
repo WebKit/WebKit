@@ -100,6 +100,9 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
+test/built-ins/RegExp/escape/initial-char-escape.js:
+  default: 'Test262Error: Initial ASCII letter a with special character is escaped Expected SameValue(«\x61\*a», «\x62\*a») to be true'
+  strict mode: 'Test262Error: Initial ASCII letter a with special character is escaped Expected SameValue(«\x61\*a», «\x62\*a») to be true'
 test/built-ins/RegExp/prototype/Symbol.match/flags-tostring-error.js:
   default: 'Test262Error: Expected a CustomError but got a Test262Error'
   strict mode: 'Test262Error: Expected a CustomError but got a Test262Error'
