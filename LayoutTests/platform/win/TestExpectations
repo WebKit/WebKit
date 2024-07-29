@@ -709,9 +709,6 @@ http/tests/cache-storage [ Skip ]
 http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
 http/tests/canvas/color-fonts [ Skip ]
 
-# Flaky GC test 
-webkit.org/b/277234 http/tests/canvas/ctx.2d-canvas-style-no-document-leak.html [ Skip ] # Pass Failure
-
 http/wpt/clear-site-data/partitioning.html [ Skip ] # Not supported yet. This test is slow.
 
 http/tests/contentdispositionattachmentsandbox [ Skip ]
