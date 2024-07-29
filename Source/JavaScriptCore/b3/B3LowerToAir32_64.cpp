@@ -1677,10 +1677,17 @@ private:
                 arg = dstTmp;
                 break;
             }
-            case ValueRep::StackArgument:
+            case ValueRep::StackArgument: {
                 arg = Arg::callArg(value.rep().offsetFromSP());
-                append(trappingInst(m_value, createStore(moveForType(value.value()->type()), value.value(), arg)));
+                auto from = someArg(value.value());
+                if (value.value()->type() == Int64) {
+                    Arg hiArg = Arg::callArg(value.rep().offsetFromSP() + 4);
+                    append(trappingInst(m_value, moveForType(Int32), m_value, from.tmpHi(), hiArg));
+                    append(trappingInst(m_value, moveForType(Int32), m_value, from.tmpLo(), arg));
+                } else
+                    append(trappingInst(m_value, createStore(moveForType(value.value()->type()), value.value(), arg)));
                 break;
+            }
             case ValueRep::SomeRegisterPair:
             case ValueRep::SomeLateRegisterPair: {
                 RELEASE_ASSERT(value.value()->type() == Int64);
