@@ -1879,7 +1879,7 @@ void WebExtension::populateDeclarativeNetRequestPropertiesIfNeeded()
         return;
     }
 
-    NSArray<NSDictionary *> *declarativeNetRequestRulesets = objectForKey<NSArray>(declarativeNetRequestManifestDictionary, declarativeNetRequestRulesManifestKey, true, NSDictionary.class);
+    NSArray<NSDictionary *> *declarativeNetRequestRulesets = objectForKey<NSArray>(declarativeNetRequestManifestDictionary, declarativeNetRequestRulesManifestKey, false, NSDictionary.class);
     if (!declarativeNetRequestRulesets) {
         if ([m_manifest objectForKey:declarativeNetRequestManifestKey])
             recordError(createError(Error::InvalidDeclarativeNetRequest));
