@@ -2048,6 +2048,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyTabSize);
         if (first.imageOrientation != second.imageOrientation)
             changingProperties.m_properties.set(CSSPropertyImageOrientation);
+        if (first.imageRendering != second.imageRendering)
+            changingProperties.m_properties.set(CSSPropertyImageRendering);
         if (first.textAlignLast != second.textAlignLast)
             changingProperties.m_properties.set(CSSPropertyTextAlignLast);
         if (first.textBoxEdge != second.textBoxEdge)
@@ -2109,7 +2111,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // lineBoxContain
         // touchCalloutEnabled
         // lineGrid
-        // imageRendering
         // textZoom
         // lineSnap
         // lineAlign
