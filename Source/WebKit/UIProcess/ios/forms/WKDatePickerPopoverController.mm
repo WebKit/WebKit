@@ -47,8 +47,8 @@ const CGFloat toolbarBottomMarginSmall = 2;
 @implementation WKDatePickerPopoverView {
     RetainPtr<UIVisualEffectView> _backgroundView;
     __weak UIDatePicker *_datePicker;
-    __weak UICalendarView *_calendarView;
 #if HAVE(UI_CALENDAR_SELECTION_WEEK_OF_YEAR)
+    __weak UICalendarView *_calendarView;
     RetainPtr<UICalendarSelectionWeekOfYear> _selectionWeekOfYear;
 #endif
     RetainPtr<UIToolbar> _accessoryView;
@@ -142,10 +142,14 @@ const CGFloat toolbarBottomMarginSmall = 2;
     return _datePicker;
 }
 
+#if HAVE(UI_CALENDAR_SELECTION_WEEK_OF_YEAR)
+
 - (UICalendarView *)calendarView
 {
     return _calendarView;
 }
+
+#endif
 
 - (UIToolbar *)accessoryView
 {

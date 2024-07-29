@@ -53,8 +53,8 @@
     WKContentView *_view;
     CGPoint _interactionPoint;
     RetainPtr<UIDatePicker> _datePicker;
-    RetainPtr<UICalendarView> _calendarView;
 #if HAVE(UI_CALENDAR_SELECTION_WEEK_OF_YEAR)
+    RetainPtr<UICalendarView> _calendarView;
     RetainPtr<UICalendarSelectionWeekOfYear> _selectionWeekOfYear;
 #endif
     BOOL _isDismissingDatePicker;
