@@ -477,18 +477,6 @@ public:
         lshift32(imm, dest);
     }
 
-    void lshift32(TrustedImm32 imm, RegisterID shiftAmount, RegisterID dest)
-    {
-        if (shiftAmount == dest) {
-            move(imm, scratchRegister());
-            lshift32(shiftAmount, scratchRegister());
-            move(scratchRegister(), dest);
-        } else {
-            move(imm, dest);
-            lshift32(shiftAmount, dest);
-        }
-    }
-
     void lshift32(Address src, RegisterID shiftAmount, RegisterID dest)
     {
         if (shiftAmount == dest) {

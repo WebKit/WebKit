@@ -1039,11 +1039,6 @@ public:
         lshift64(src, imm, dest);
     }
 
-    void lshiftPtr(TrustedImm32 imm, RegisterID shiftAmount, RegisterID dest)
-    {
-        lshift64(imm, shiftAmount, dest);
-    }
-
     void rshiftPtr(Imm32 imm, RegisterID srcDest)
     {
         rshift64(trustedImm32ForShift(imm), srcDest);
@@ -2327,11 +2322,6 @@ public:
     void lshift32(RegisterID src, Imm32 amount, RegisterID dest)
     {
         lshift32(src, trustedImm32ForShift(amount), dest);
-    }
-
-    void lshift32(Imm32 amount, RegisterID shiftAmount, RegisterID dest)
-    {
-        lshift32(trustedImm32ForShift(amount), shiftAmount, dest);
     }
     
     void rshift32(Imm32 imm, RegisterID dest)
