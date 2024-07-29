@@ -26,11 +26,17 @@
 #include "config.h"
 #include "AuxiliaryProcessMain.h"
 
+#include "IPCUtilities.h"
 #include <JavaScriptCore/Options.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wtf/text/StringToIntegerConversion.h>
+
+#if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX)
+#include "ProcessProviderLibWPE.h"
+#endif
 
 #if ENABLE(BREAKPAD)
 #include "unix/BreakpadExceptionHandler.h"
@@ -45,18 +51,52 @@ AuxiliaryProcessMainCommon::AuxiliaryProcessMainCommon()
 #endif
 }
 
+// The command line is constructed in ProcessLauncher::launchProcess.
 bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
 {
-    ASSERT(argc >= 3);
-    if (argc < 3)
+#if USE(GLIB) && OS(LINUX)
+    int minimumNumArgs = 4;
+#else
+    int minimumNumArgs = 3;
+#endif
+
+#if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX)
+    if (ProcessProviderLibWPE::singleton().isEnabled())
+        minimumNumArgs = 3;
+#endif
+
+    if (argc < minimumNumArgs)
         return false;
 
-    m_parameters.processIdentifier = ObjectIdentifier<WebCore::ProcessIdentifierType>(atoll(argv[1]));
-    m_parameters.connectionIdentifier = IPC::Connection::Identifier { atoi(argv[2]) };
+    if (auto processIdentifier = parseInteger<uint64_t>(StringView(argv[1], strlen(argv[1]))))
+        m_parameters.processIdentifier = ObjectIdentifier<WebCore::ProcessIdentifierType>(*processIdentifier);
+    else
+        return false;
+
+    if (auto connectionIdentifier = parseInteger<int>(StringView(argv[2], strlen(argv[2]))))
+        m_parameters.connectionIdentifier = IPC::Connection::Identifier { *connectionIdentifier };
+    else
+        return false;
+
+    if (!m_parameters.processIdentifier->toUInt64() || m_parameters.connectionIdentifier.handle <= 0)
+        return false;
+
+#if USE(GLIB) && OS(LINUX)
+    if (minimumNumArgs == 4) {
+        auto pidSocket = parseInteger<int>(StringView(argv[3], strlen(argv[3])));
+        if (!pidSocket || *pidSocket < 0)
+            return false;
+
+        IPC::sendPIDToPeer(*pidSocket);
+        RELEASE_ASSERT(!close(*pidSocket));
+    }
+#endif
+
 #if ENABLE(DEVELOPER_MODE)
-    if (argc > 3 && argv[3] && !strcmp(argv[3], "--configure-jsc-for-testing"))
+    if (argc > minimumNumArgs && argv[minimumNumArgs] && !strcmp(argv[minimumNumArgs], "--configure-jsc-for-testing"))
         JSC::Config::configureForTesting();
 #endif
+
     return true;
 }
 
