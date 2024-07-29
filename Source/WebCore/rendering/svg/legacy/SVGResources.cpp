@@ -35,7 +35,6 @@
 #include "SVGPatternElement.h"
 #include "SVGRenderStyle.h"
 #include "SVGURIReference.h"
-#include "StyleCachedImage.h"
 #include <wtf/RobinHoodHashSet.h>
 
 #if ENABLE(TREE_DEBUGGING)

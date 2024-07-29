@@ -49,6 +49,10 @@ class StyleImage : public RefCounted<StyleImage>, public CanMakeWeakPtr<StyleIma
 public:
     virtual ~StyleImage() = default;
 
+    // Copying.
+    virtual Ref<StyleImage> copyOverridingScaleFactor(float) { return *this; }
+
+    // Equality.
     virtual bool operator==(const StyleImage& other) const = 0;
 
     // Computed Style representation.
@@ -102,6 +106,7 @@ public:
     ALWAYS_INLINE bool isGradientImage() const { return m_type == Type::GradientImage; }
     ALWAYS_INLINE bool isNamedImage() const { return m_type == Type::NamedImage; }
     ALWAYS_INLINE bool isPaintImage() const { return m_type == Type::PaintImage; }
+    ALWAYS_INLINE bool isSameDocumentSVGResourceImage() const { return m_type == Type::SameDocumentSVGResourceImage; }
     ALWAYS_INLINE bool isInvalidImage() const { return m_type == Type::InvalidImage; }
 
     bool hasCachedImage() const { return m_type == Type::CachedImage || selectedImage()->isCachedImage(); }
@@ -109,15 +114,16 @@ public:
 protected:
     enum class Type : uint8_t {
         CachedImage,
-        CursorImage,
-        ImageSet,
-        FilterImage,
         CanvasImage,
         CrossfadeImage,
+        CursorImage,
+        FilterImage,
         GradientImage,
+        ImageSet,
         NamedImage,
-        InvalidImage,
         PaintImage,
+        SameDocumentSVGResourceImage,
+        InvalidImage,
     };
 
     StyleImage(Type type)

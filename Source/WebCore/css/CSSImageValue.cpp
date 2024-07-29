@@ -33,6 +33,7 @@
 #include "Element.h"
 #include "StyleBuilderState.h"
 #include "StyleCachedImage.h"
+#include "StyleSameDocumentSVGResourceImage.h"
 
 namespace WebCore {
 
@@ -101,6 +102,9 @@ URL CSSImageValue::reresolvedURL(const Document& document) const
 
 RefPtr<StyleImage> CSSImageValue::createStyleImage(Style::BuilderState& state) const
 {
+    if (isCSSLocalURL(m_location.resolvedURL.string()))
+        return StyleSameDocumentSVGResourceImage::create(const_cast<CSSImageValue&>(*this));
+
     auto location = makeResolvedURL(reresolvedURL(state.document()));
     if (m_location == location)
         return StyleCachedImage::create(const_cast<CSSImageValue&>(*this));

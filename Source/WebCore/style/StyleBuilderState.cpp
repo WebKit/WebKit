@@ -55,17 +55,8 @@
 #include "SVGSVGElement.h"
 #include "Settings.h"
 #include "StyleBuilder.h"
-#include "StyleCachedImage.h"
-#include "StyleCanvasImage.h"
-#include "StyleCrossfadeImage.h"
-#include "StyleCursorImage.h"
-#include "StyleFilterImage.h"
 #include "StyleFontSizeFunctions.h"
-#include "StyleGeneratedImage.h"
-#include "StyleGradientImage.h"
-#include "StyleImageSet.h"
-#include "StyleNamedImage.h"
-#include "StylePaintImage.h"
+#include "StyleImage.h"
 #include "TransformFunctions.h"
 
 namespace WebCore {
