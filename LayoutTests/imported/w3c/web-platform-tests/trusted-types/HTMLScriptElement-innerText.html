@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="/resources/testharness.js"></script>
+  <script src="/resources/testharnessreport.js"></script>
+  <meta http-equiv="Content-Security-Policy" content="require-trusted-types-for 'script'">
+</head>
+<body>
+<script>
+  const policy = trustedTypes.createPolicy("testpolicy", {
+      createScript: x => x});
+  promise_test(t => {
+    const s = document.createElement("script");
+    document.body.appendChild(s);
+    s.innerText = policy.createScript("window.postMessage('hello');");
+    return new Promise(resolve => {
+      window.addEventListener("message", e => {
+        if (e.data == "hello") resolve();
+      });
+    });
+  }, "Script set via .innerText executes on a connected HTMLScriptElement.");
+  promise_test(t => {
+    const s = document.createElement("script");
+    s.innerText= policy.createScript("window.postMessage('world');");
+    document.body.appendChild(s);
+    return new Promise(resolve => {
+      window.addEventListener("message", e => {
+        if (e.data == "world") resolve();
+      });
+    });
+  }, "Script set via .innerText executes on an unconnected HTMLScriptElement.");
+
+  test(t => {
+    const s = document.createElement("script");
+    document.body.appendChild(s);
+    s.innerText = policy.createScript("const a = 1;\nwindow.a=a;");
+    assert_equals(window.a, 1);
+  }, "Multi-line script set via .innerText executes on a connected HTMLScriptElement.");
+
+  test(t => {
+    const s = document.createElement("script");
+    document.body.appendChild(s);
+    s.innerText = policy.createScript("const b = 1;\nwindow.b=b;");
+    assert_equals(window.b, 1);
+  }, "Multi-line script set via .innerText executes on an unconnected HTMLScriptElement.");
+
+</script>
+</body>
+</html>

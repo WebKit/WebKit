@@ -1,12 +1,6 @@
-CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
-PASS Test TT application when manipulating <script> elements during loading.
-PASS Script set via .textContent executes on a connected HTMLScriptElement.
-PASS Script set via .textContent executes on an unconnected HTMLScriptElement.
-PASS Script set via .innerText executes on a connected HTMLScriptElement.
-PASS Script set via .innerText executes on an unconnected HTMLScriptElement.
 PASS Setting .src to a plain string should throw an exception and not modify the script state, on an unconnected script element.
 PASS Setting .src to a TrustedScriptURL should work and should execute the referenced script instead of the script body, on an unconnected script element.
 PASS Setting .src to a plain string should throw an exception and not modify the script state, on a connected script element.

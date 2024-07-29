@@ -1,0 +1,6 @@
+
+PASS Script set via .innerText executes on a connected HTMLScriptElement.
+PASS Script set via .innerText executes on an unconnected HTMLScriptElement.
+FAIL Multi-line script set via .innerText executes on a connected HTMLScriptElement. assert_equals: expected (number) 1 but got (undefined) undefined
+FAIL Multi-line script set via .innerText executes on an unconnected HTMLScriptElement. assert_equals: expected (number) 1 but got (undefined) undefined
+

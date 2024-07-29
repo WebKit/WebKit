@@ -1,0 +1,4 @@
+
+PASS Script set via .text executes on a connected HTMLScriptElement.
+PASS Script set via .text executes on an unconnected HTMLScriptElement.
+

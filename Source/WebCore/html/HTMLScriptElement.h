@@ -78,7 +78,6 @@ private:
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void didFinishInsertingNode() final;
     void childrenChanged(const ChildChange&) final;
-    void finishParsingChildren() final;
 
     ExceptionOr<void> setTextContent(ExceptionOr<String>);
 

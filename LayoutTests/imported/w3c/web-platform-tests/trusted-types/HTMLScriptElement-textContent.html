@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="/resources/testharness.js"></script>
+  <script src="/resources/testharnessreport.js"></script>
+  <meta http-equiv="Content-Security-Policy" content="require-trusted-types-for 'script'">
+</head>
+<body>
+<script>
+  const policy = trustedTypes.createPolicy("testpolicy", {
+      createScript: x => x, createHTML: x =>x});
+  promise_test(t => {
+    const s = document.createElement("script");
+    document.body.appendChild(s);
+    s.textContent = policy.createScript("window.postMessage('hello');");
+    return new Promise(resolve => {
+      window.addEventListener("message", e => {
+        if (e.data == "hello") resolve();
+      });
+    });
+  }, "Script set via .textContent executes on a connected HTMLScriptElement.");
+  promise_test(t => {
+    const s = document.createElement("script");
+    s.textContent = policy.createScript("window.postMessage('world');");
+    document.body.appendChild(s);
+    return new Promise(resolve => {
+      window.addEventListener("message", e => {
+        if (e.data == "world") resolve();
+      });
+    });
+  }, "Script set via .textContent executes on an unconnected HTMLScriptElement.");
+
+  // The below tests are there to catch potential optimisations that might lead to interop issues.
+  test(t => {
+    const s = document.createElement("script");
+    window.c = 10;
+    s.textContent = policy.createScript("window.c=1;");
+    s.innerHTML = policy.createHTML("window.c=1;");
+    document.body.appendChild(s);
+    assert_equals(window.c, 10)
+  }, "Script set via .textContent and then set via innerHTML doesn't execute.");
+
+  test(t => {
+    const s = document.createElement("script");
+    window.d = 10;
+    s.textContent = policy.createScript("window.d=1;");
+    s.firstChild.nodeValue = policy.createScript("window.d=1;");
+    document.body.appendChild(s);
+    assert_equals(window.d, 10)
+  }, "Script set via .textContent and then set via nodeValue doesn't execute.");
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+
+PASS Script set via .textContent executes on a connected HTMLScriptElement.
+PASS Script set via .textContent executes on an unconnected HTMLScriptElement.
+PASS Script set via .textContent and then set via innerHTML doesn't execute.
+PASS Script set via .textContent and then set via nodeValue doesn't execute.
+
