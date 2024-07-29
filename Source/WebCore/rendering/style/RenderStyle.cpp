@@ -1714,9 +1714,10 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         }
 
         if (first.multiCol != second.multiCol) {
-            changingProperties.m_properties.set(CSSPropertyColumnFill);
-            changingProperties.m_properties.set(CSSPropertyColumnWidth);
             changingProperties.m_properties.set(CSSPropertyColumnCount);
+            changingProperties.m_properties.set(CSSPropertyColumnFill);
+            changingProperties.m_properties.set(CSSPropertyColumnSpan);
+            changingProperties.m_properties.set(CSSPropertyColumnWidth);
             changingProperties.m_properties.set(CSSPropertyColumnRuleColor);
             changingProperties.m_properties.set(CSSPropertyColumnRuleStyle);
             changingProperties.m_properties.set(CSSPropertyColumnRuleWidth);
