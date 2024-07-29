@@ -31,6 +31,7 @@
 #include <JavaScriptCore/Lookup.h>
 #include <JavaScriptCore/ObjectConstructor.h>
 #include <JavaScriptCore/SlotVisitorInlines.h>
+#include <JavaScriptCore/Structure.h>
 #include <JavaScriptCore/StructureInlines.h>
 #include <JavaScriptCore/WriteBarrier.h>
 #include <cstddef>
@@ -81,7 +82,8 @@ public:
     static JSC::ScriptExecutionStatus scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
     static void reportViolationForUnsafeEval(JSC::JSGlobalObject*, JSC::JSString*);
     static String codeForEval(JSC::JSGlobalObject*, JSC::JSValue);
-    static bool canCompileStrings(JSC::JSGlobalObject*, JSC::CompilationType, String, JSC::JSValue);
+    static bool canCompileStrings(JSC::JSGlobalObject*, JSC::CompilationType, String, const JSC::ArgList&);
+    static JSC::Structure* trustedScriptStructure(JSC::JSGlobalObject*);
 
     void printErrorMessage(const String&) const;
 

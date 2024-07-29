@@ -5,5 +5,8 @@ PASS eval of string works.
 PASS indirect eval of string works.
 PASS eval of !TrustedScript and !string works.
 PASS Function constructor of TrustedScript works.
+PASS Function constructor of all TrustedScripts works.
 PASS Function constructor of string works.
+PASS Function constructor of all strings works.
+PASS Function constructor of string and TrustedScript works.
 

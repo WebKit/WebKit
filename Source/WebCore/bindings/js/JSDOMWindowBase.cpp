@@ -108,7 +108,8 @@ const GlobalObjectMethodTable* JSDOMWindowBase::globalObjectMethodTable()
 #endif
         deriveShadowRealmGlobalObject,
         codeForEval,
-        canCompileStrings
+        canCompileStrings,
+        trustedScriptStructure,
     };
     return &table;
 };
@@ -304,17 +305,17 @@ void JSDOMWindowBase::reportViolationForUnsafeEval(JSGlobalObject* object, JSStr
 
 String JSDOMWindowBase::codeForEval(JSGlobalObject* globalObject, JSValue value)
 {
-    VM& vm = globalObject->vm();
-
-    if (auto* script = JSTrustedScript::toWrapped(vm, value))
-        return script->toString();
-
-    return nullString();
+    return JSDOMGlobalObject::codeForEval(globalObject, value);
 }
 
-bool JSDOMWindowBase::canCompileStrings(JSGlobalObject* globalObject, CompilationType compilationType, String codeString, JSValue bodyArgument)
+bool JSDOMWindowBase::canCompileStrings(JSGlobalObject* globalObject, CompilationType compilationType, String codeString, const ArgList& args)
 {
-    return JSDOMGlobalObject::canCompileStrings(globalObject, compilationType, codeString, bodyArgument);
+    return JSDOMGlobalObject::canCompileStrings(globalObject, compilationType, codeString, args);
+}
+
+Structure* JSDOMWindowBase::trustedScriptStructure(JSGlobalObject* globalObject)
+{
+    return JSDOMGlobalObject::trustedScriptStructure(globalObject);
 }
 
 void JSDOMWindowBase::willRemoveFromWindowProxy()

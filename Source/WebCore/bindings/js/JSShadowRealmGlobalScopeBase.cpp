@@ -73,6 +73,7 @@ const GlobalObjectMethodTable* JSShadowRealmGlobalScopeBase::globalObjectMethodT
         &deriveShadowRealmGlobalObject,
         &codeForEval,
         &canCompileStrings,
+        &trustedScriptStructure,
     };
     return &table;
 };
@@ -160,9 +161,14 @@ String JSShadowRealmGlobalScopeBase::codeForEval(JSC::JSGlobalObject* globalObje
     return JSGlobalObject::codeForEval(globalObject, value);
 }
 
-bool JSShadowRealmGlobalScopeBase::canCompileStrings(JSC::JSGlobalObject* globalObject, JSC::CompilationType compilationType, String codeString, JSC::JSValue bodyArgument)
+bool JSShadowRealmGlobalScopeBase::canCompileStrings(JSC::JSGlobalObject* globalObject, JSC::CompilationType compilationType, String codeString, const ArgList& args)
 {
-    return JSGlobalObject::canCompileStrings(globalObject, compilationType, codeString, bodyArgument);
+    return JSGlobalObject::canCompileStrings(globalObject, compilationType, codeString, args);
+}
+
+JSC::Structure* JSShadowRealmGlobalScopeBase::trustedScriptStructure(JSC::JSGlobalObject* globalObject)
+{
+    return JSGlobalObject::trustedScriptStructure(globalObject);
 }
 
 void JSShadowRealmGlobalScopeBase::queueMicrotaskToEventLoop(JSGlobalObject& object, Ref<JSC::Microtask>&& task)

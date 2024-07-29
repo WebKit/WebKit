@@ -78,6 +78,7 @@ const GlobalObjectMethodTable* JSWorkerGlobalScopeBase::globalObjectMethodTable(
         deriveShadowRealmGlobalObject,
         codeForEval,
         canCompileStrings,
+        trustedScriptStructure,
     };
     return &table;
 };
@@ -151,17 +152,17 @@ void JSWorkerGlobalScopeBase::reportViolationForUnsafeEval(JSC::JSGlobalObject* 
 
 String JSWorkerGlobalScopeBase::codeForEval(JSC::JSGlobalObject* globalObject, JSC::JSValue value)
 {
-    VM& vm = globalObject->vm();
-
-    if (auto* script = JSTrustedScript::toWrapped(vm, value))
-        return script->toString();
-
-    return nullString();
+    return JSDOMGlobalObject::codeForEval(globalObject, value);
 }
 
-bool JSWorkerGlobalScopeBase::canCompileStrings(JSC::JSGlobalObject* globalObject, JSC::CompilationType compilationType, String codeString, JSC::JSValue bodyArgument)
+bool JSWorkerGlobalScopeBase::canCompileStrings(JSC::JSGlobalObject* globalObject, JSC::CompilationType compilationType, String codeString, const ArgList& args)
 {
-    return JSDOMGlobalObject::canCompileStrings(globalObject, compilationType, codeString, bodyArgument);
+    return JSDOMGlobalObject::canCompileStrings(globalObject, compilationType, codeString, args);
+}
+
+JSC::Structure* JSWorkerGlobalScopeBase::trustedScriptStructure(JSC::JSGlobalObject* globalObject)
+{
+    return JSDOMGlobalObject::trustedScriptStructure(globalObject);
 }
 
 void JSWorkerGlobalScopeBase::queueMicrotaskToEventLoop(JSGlobalObject& object, Ref<JSC::Microtask>&& task)

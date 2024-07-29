@@ -71,6 +71,7 @@ const GlobalObjectMethodTable* JSWorkletGlobalScopeBase::globalObjectMethodTable
         deriveShadowRealmGlobalObject,
         codeForEval,
         canCompileStrings,
+        trustedScriptStructure,
     };
     return &table;
 };
@@ -126,9 +127,14 @@ String JSWorkletGlobalScopeBase::codeForEval(JSC::JSGlobalObject* globalObject, 
     return JSGlobalObject::codeForEval(globalObject, value);
 }
 
-bool JSWorkletGlobalScopeBase::canCompileStrings(JSC::JSGlobalObject* globalObject, JSC::CompilationType compilationType, String codeString, JSC::JSValue bodyArgument)
+bool JSWorkletGlobalScopeBase::canCompileStrings(JSC::JSGlobalObject* globalObject, JSC::CompilationType compilationType, String codeString, const ArgList& args)
 {
-    return JSGlobalObject::canCompileStrings(globalObject, compilationType, codeString, bodyArgument);
+    return JSGlobalObject::canCompileStrings(globalObject, compilationType, codeString, args);
+}
+
+JSC::Structure* JSWorkletGlobalScopeBase::trustedScriptStructure(JSC::JSGlobalObject* globalObject)
+{
+    return JSGlobalObject::trustedScriptStructure(globalObject);
 }
 
 bool JSWorkletGlobalScopeBase::supportsRichSourceInfo(const JSGlobalObject* object)

@@ -806,8 +806,18 @@ bool ContentSecurityPolicy::allowMissingTrustedTypesForSinkGroup(const String& s
 
             String consoleMessage = makeString(policy->isReportOnly() ? "[Report Only] "_s : ""_s,
                 "This requires a "_s, stringContext, " value else it violates the following Content Security Policy directive: \"require-trusted-types-for 'script'\""_s);
-
-            String sample = makeString(sink, '|', source.left(40));
+            StringView adjustedSource = source;
+            if (sink == "Function"_s) {
+                if (source.startsWith("function anonymous"_s))
+                    adjustedSource = source.substring(18, source.length());
+                else if (source.startsWith("async function anonymous"_s))
+                    adjustedSource = source.substring(24, source.length());
+                else if (source.startsWith("function* anonymous"_s))
+                    adjustedSource = source.substring(19, source.length());
+                else if (source.startsWith("async function* anonymous"_s))
+                    adjustedSource = source.substring(25, source.length());
+            }
+            String sample = makeString(sink, '|', adjustedSource.left(40));
             reportViolation("require-trusted-types-for"_s, *policy, "trusted-types-sink"_s, consoleMessage, nullString(), sample, TextPosition(OrdinalNumber::beforeFirst(), OrdinalNumber()), nullptr);
         }
         return isAllowed;

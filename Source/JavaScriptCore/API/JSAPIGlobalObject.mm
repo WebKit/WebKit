@@ -80,6 +80,7 @@ const GlobalObjectMethodTable* JSAPIGlobalObject::globalObjectMethodTable()
         &deriveShadowRealmGlobalObject,
         &codeForEval,
         &canCompileStrings,
+        &trustedScriptStructure,
     };
     return &table;
 };

@@ -56,7 +56,8 @@ private:
     static void queueMicrotaskToEventLoop(JSC::JSGlobalObject&, Ref<JSC::Microtask>&&);
     static void reportViolationForUnsafeEval(JSC::JSGlobalObject*, JSC::JSString*);
     static String codeForEval(JSC::JSGlobalObject*, JSC::JSValue);
-    static bool canCompileStrings(JSC::JSGlobalObject*, JSC::CompilationType, String, JSC::JSValue);
+    static bool canCompileStrings(JSC::JSGlobalObject*, JSC::CompilationType, String, const JSC::ArgList&);
+    static JSC::Structure* trustedScriptStructure(JSC::JSGlobalObject*);
 
 protected:
     JSShadowRealmGlobalScopeBase(JSC::VM&, JSC::Structure*, RefPtr<ShadowRealmGlobalScope>&&);

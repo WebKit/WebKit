@@ -124,12 +124,21 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
 
     JSValue program = callFrame->argument(0);
     JSString* programString = nullptr;
+    bool isTrusted = false;
     if (LIKELY(program.isString()))
         programString = asString(program);
-    else if (Options::useTrustedTypes()) {
-        auto code = globalObject->globalObjectMethodTable()->codeForEval(globalObject, program);
-        if (!code.isNull())
-            programString = jsString(vm, code);
+    else if (Options::useTrustedTypes() && program.isObject()) {
+        auto* structure = globalObject->trustedScriptStructure();
+        if (structure == program.structureOrNull()) {
+            programString = program.toStringOrNull(globalObject);
+            isTrusted = true;
+        } else {
+            auto code = globalObject->globalObjectMethodTable()->codeForEval(globalObject, program);
+            if (!code.isNull()) {
+                programString = jsString(vm, code);
+                isTrusted = true;
+            }
+        }
     }
 
     if (!programString)
@@ -138,7 +147,7 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
     auto programSource = programString->value(globalObject);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    if (Options::useTrustedTypes() && globalObject->requiresTrustedTypes() && !globalObject->globalObjectMethodTable()->canCompileStrings(globalObject, CompilationType::DirectEval, programSource, program)) {
+    if (Options::useTrustedTypes() && globalObject->requiresTrustedTypes() && !isTrusted && !globalObject->globalObjectMethodTable()->canCompileStrings(globalObject, CompilationType::DirectEval, programSource, *vm.emptyList)) {
         throwException(globalObject, scope, createEvalError(globalObject, "Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment."_s));
         return { };
     }

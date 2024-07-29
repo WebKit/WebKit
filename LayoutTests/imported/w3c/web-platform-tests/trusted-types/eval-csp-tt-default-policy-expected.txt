@@ -5,4 +5,22 @@ PASS eval of string works.
 PASS eval of !TrustedScript and !string works.
 PASS Function constructor of TrustedScript works.
 PASS Function constructor of string works.
+PASS Function constructor of all TrustedScripts works.
+PASS Function constructor of all strings works.
+PASS Function constructor of string and TrustedScript works.
+PASS Async Function constructor of TrustedScript works.
+PASS AsyncFunction constructor of string works.
+PASS AsyncFunction constructor of all TrustedScripts works.
+PASS AsyncFunction constructor of all strings works.
+PASS AsyncFunction constructor of string and TrustedScript works.
+PASS GeneratorFunction constructor of TrustedScript works.
+PASS GeneratorFunction constructor of string works.
+PASS GeneratorFunction constructor of all TrustedScripts works.
+PASS GeneratorFunction constructor of all strings works.
+PASS GeneratorFunction constructor of string and TrustedScript works.
+PASS AsyncGeneratorFunction constructor of TrustedScript works.
+PASS AsyncGeneratorFunction constructor of string works.
+PASS AsyncGeneratorFunction constructor of all TrustedScripts works.
+PASS AsyncGeneratorFunction constructor of all strings works.
+PASS AsyncGeneratorFunction constructor of string and TrustedScript works.
 
