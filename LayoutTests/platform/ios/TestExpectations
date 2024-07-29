@@ -3273,8 +3273,6 @@ webkit.org/b/205216 imported/w3c/web-platform-tests/content-security-policy/repo
 
 webkit.org/b/207769 crypto/subtle/rsa-indexeddb-non-exportable.html [ Pass Timeout ]
 
-webkit.org/b/207770 http/tests/cache/disk-cache/disk-cache-vary-cookie.html [ Pass Timeout ]
-
 webkit.org/b/207858 fast/canvas/webgl/context-attributes-alpha.html [ Pass Failure ImageOnlyFailure ]
 # webkit.org/b/207858 fast/canvas/webgl/match-page-color-space.html [ Pass Failure ImageOnlyFailure ]
 webkit.org/b/207858 webgl/smell-test.html [ Pass Failure ImageOnlyFailure ]
@@ -6186,8 +6184,6 @@ quicklook/multi-sheet-numbers-09.html [ Failure ]
 http/tests/quicklook/secure-document-with-subresources.html [ ImageOnlyFailure ]
 
 webkit.org/b/209446 imported/w3c/web-platform-tests/navigation-timing/test_timing_attributes_order.html [ Pass Failure ]
-
-webkit.org/b/209512 http/tests/cache/disk-cache/disk-cache-vary-cookie-private.html [ Pass Timeout ]
 
 webkit.org/b/231630 http/tests/cache/disk-cache/redirect-chain-limits.html [ Slow ]
 

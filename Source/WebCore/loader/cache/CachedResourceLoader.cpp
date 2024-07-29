@@ -1184,6 +1184,8 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
     Ref cookieJar = page->cookieJar();
 
+    FrameLoader::addSameSiteInfoToRequestIfNeeded(request.resourceRequest(), document());
+
     auto mayAddToMemoryCache = computeMayAddToMemoryCache(request, resource.get()) ? MayAddToMemoryCache::Yes : MayAddToMemoryCache::No;
     RevalidationPolicy policy = determineRevalidationPolicy(type, request, resource.get(), forPreload, imageLoading);
     switch (policy) {
