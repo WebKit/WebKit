@@ -2202,6 +2202,7 @@ private:
                         break;
                     }
 
+                    auto oldTmp = tmp;
                     auto newTmp = m_code.newTmp(bank);
                     dataLogLnIf(traceDebug, "Add unspillable tmp since we introduce it during spill (2): ", tmp, " -> ", newTmp);
                     tmp = newTmp;
@@ -2211,10 +2212,33 @@ private:
                         return;
 
                     Arg arg = Arg::stack(stackSlotEntry->value);
-                    if (Arg::isAnyUse(role))
-                        insertionSet.insert(instIndex, move, inst.origin, arg, tmp);
-                    if (Arg::isAnyDef(role))
+                    if (Arg::isAnyUse(role)) {
+                        auto tryRematerialize = [&]() {
+                            if constexpr (bank == GP) {
+                                auto oldIndex = AbsoluteTmpMapper<bank>::absoluteIndex(oldTmp);
+                                if (m_useCounts.isConstDef<bank>(oldIndex)) {
+                                    int64_t value = m_useCounts.constant<bank>(oldIndex);
+                                    if (Arg::isValidImmForm(value) && isValidForm(Move, Arg::Imm, Arg::Tmp)) {
+                                        insertionSet.insert(instIndex, Move, inst.origin, Arg::imm(value), tmp);
+                                        return true;
+                                    }
+                                    if (isValidForm(Move, Arg::BigImm, Arg::Tmp)) {
+                                        insertionSet.insert(instIndex, Move, inst.origin, Arg::bigImm(value), tmp);
+                                        return true;
+                                    }
+                                }
+                            }
+                            return false;
+                        };
+
+                        if (!tryRematerialize())
+                            insertionSet.insert(instIndex, move, inst.origin, arg, tmp);
+                    }
+
+                    if (Arg::isAnyDef(role)) {
+                        // FIXME: When nobody is using admitsStack's spill result, we can also skip def.
                         insertionSet.insert(instIndex + 1, move, inst.origin, tmp, arg);
+                    }
                 });
             }
             insertionSet.execute(block);
