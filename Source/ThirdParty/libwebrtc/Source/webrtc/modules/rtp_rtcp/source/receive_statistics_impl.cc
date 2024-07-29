@@ -17,7 +17,6 @@
 #include <vector>
 
 #include "api/units/time_delta.h"
-#include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
@@ -282,11 +281,6 @@ void StreamStatisticianImpl::MaybeAppendReportBlockAndReset(
   // Only for report blocks in RTCP SR and RR.
   last_report_cumulative_loss_ = cumulative_loss_;
   last_report_seq_max_ = received_seq_max_;
-  BWE_TEST_LOGGING_PLOT_WITH_SSRC(1, "cumulative_loss_pkts", now.ms(),
-                                  cumulative_loss_, ssrc_);
-  BWE_TEST_LOGGING_PLOT_WITH_SSRC(1, "received_seq_max_pkts", now.ms(),
-                                  (received_seq_max_ - received_seq_first_),
-                                  ssrc_);
 }
 
 absl::optional<int> StreamStatisticianImpl::GetFractionLostInPercent() const {

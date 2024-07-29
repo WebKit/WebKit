@@ -16,7 +16,7 @@
 #include <cmath>
 #include <numeric>
 
-#include "api/array_view.h"
+#include "api/audio/audio_view.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/checks.h"
 
@@ -25,11 +25,12 @@ namespace {
 
 constexpr int kFramesPerSecond = 100;
 
-float FrameEnergy(const AudioFrameView<const float>& audio) {
+float FrameEnergy(DeinterleavedView<const float> audio) {
   float energy = 0.0f;
-  for (int k = 0; k < audio.num_channels(); ++k) {
+  for (size_t k = 0; k < audio.num_channels(); ++k) {
+    MonoView<const float> ch = audio[k];
     float channel_energy =
-        std::accumulate(audio.channel(k).begin(), audio.channel(k).end(), 0.0f,
+        std::accumulate(ch.begin(), ch.end(), 0.0f,
                         [](float a, float b) -> float { return a + b * b; });
     energy = std::max(channel_energy, energy);
   }
@@ -81,7 +82,7 @@ class NoiseFloorEstimator : public NoiseLevelEstimator {
   NoiseFloorEstimator& operator=(const NoiseFloorEstimator&) = delete;
   ~NoiseFloorEstimator() = default;
 
-  float Analyze(const AudioFrameView<const float>& frame) override {
+  float Analyze(DeinterleavedView<const float> frame) override {
     // Detect sample rate changes.
     const int sample_rate_hz =
         static_cast<int>(frame.samples_per_channel() * kFramesPerSecond);

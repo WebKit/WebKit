@@ -369,6 +369,10 @@ class FakePeerConnectionBase : public PeerConnectionInternal {
 
   const FieldTrialsView& trials() const override { return field_trials_; }
 
+  NetworkControllerInterface* GetNetworkController() override {
+    return nullptr;
+  }
+
  protected:
   test::ScopedKeyValueConfig field_trials_;
 };

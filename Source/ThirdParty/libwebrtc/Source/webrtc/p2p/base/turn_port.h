@@ -81,12 +81,16 @@ class TurnPort : public Port {
     }
     // Using `new` to access a non-public constructor.
     return absl::WrapUnique(
-        new TurnPort(args.network_thread, args.socket_factory, args.network,
-                     socket, args.username, args.password, *args.server_address,
-                     args.config->credentials, args.relative_priority,
-                     args.config->tls_alpn_protocols,
+        new TurnPort({.network_thread = args.network_thread,
+                      .socket_factory = args.socket_factory,
+                      .network = args.network,
+                      .ice_username_fragment = args.username,
+                      .ice_password = args.password,
+                      .field_trials = args.field_trials},
+                     socket, *args.server_address, args.config->credentials,
+                     args.relative_priority, args.config->tls_alpn_protocols,
                      args.config->tls_elliptic_curves, args.turn_customizer,
-                     args.config->tls_cert_verifier, args.field_trials));
+                     args.config->tls_cert_verifier));
   }
 
   // Create a TURN port that will use a new socket, bound to `network` and
@@ -98,13 +102,17 @@ class TurnPort : public Port {
       return nullptr;
     }
     // Using `new` to access a non-public constructor.
-    return absl::WrapUnique(
-        new TurnPort(args.network_thread, args.socket_factory, args.network,
-                     min_port, max_port, args.username, args.password,
-                     *args.server_address, args.config->credentials,
-                     args.relative_priority, args.config->tls_alpn_protocols,
-                     args.config->tls_elliptic_curves, args.turn_customizer,
-                     args.config->tls_cert_verifier, args.field_trials));
+    return absl::WrapUnique(new TurnPort(
+        {.network_thread = args.network_thread,
+         .socket_factory = args.socket_factory,
+         .network = args.network,
+         .ice_username_fragment = args.username,
+         .ice_password = args.password,
+         .field_trials = args.field_trials},
+        min_port, max_port, *args.server_address, args.config->credentials,
+        args.relative_priority, args.config->tls_alpn_protocols,
+        args.config->tls_elliptic_curves, args.turn_customizer,
+        args.config->tls_cert_verifier));
   }
 
   ~TurnPort() override;
@@ -184,7 +192,11 @@ class TurnPort : public Port {
   }
   // Finds the turn entry with `address` and sets its channel id.
   // Returns true if the entry is found.
-  bool SetEntryChannelId(const rtc::SocketAddress& address, int channel_id);
+  // This method must not be used in production, it is a test only
+  // utility that doesn't check the channel id is valid according to
+  // RFC5766.
+  bool SetEntryChannelIdForTesting(const rtc::SocketAddress& address,
+                                   int channel_id);
 
   void HandleConnectionDestroyed(Connection* conn) override;
 
@@ -201,36 +213,59 @@ class TurnPort : public Port {
   void SetCallbacksForTest(CallbacksForTest* callbacks);
 
  protected:
-  TurnPort(webrtc::TaskQueueBase* thread,
-           rtc::PacketSocketFactory* factory,
-           const rtc::Network* network,
+  TurnPort(const PortParametersRef& args,
            rtc::AsyncPacketSocket* socket,
-           absl::string_view username,
-           absl::string_view password,
            const ProtocolAddress& server_address,
            const RelayCredentials& credentials,
            int server_priority,
            const std::vector<std::string>& tls_alpn_protocols,
            const std::vector<std::string>& tls_elliptic_curves,
            webrtc::TurnCustomizer* customizer,
-           rtc::SSLCertificateVerifier* tls_cert_verifier = nullptr,
-           const webrtc::FieldTrialsView* field_trials = nullptr);
+           rtc::SSLCertificateVerifier* tls_cert_verifier = nullptr);
 
-  TurnPort(webrtc::TaskQueueBase* thread,
-           rtc::PacketSocketFactory* factory,
-           const rtc::Network* network,
+  TurnPort(const PortParametersRef& args,
            uint16_t min_port,
            uint16_t max_port,
-           absl::string_view username,
-           absl::string_view password,
            const ProtocolAddress& server_address,
            const RelayCredentials& credentials,
            int server_priority,
            const std::vector<std::string>& tls_alpn_protocols,
            const std::vector<std::string>& tls_elliptic_curves,
            webrtc::TurnCustomizer* customizer,
-           rtc::SSLCertificateVerifier* tls_cert_verifier = nullptr,
-           const webrtc::FieldTrialsView* field_trials = nullptr);
+           rtc::SSLCertificateVerifier* tls_cert_verifier = nullptr);
+
+  [[deprecated("Pass arguments using PortParametersRef")]] TurnPort(
+      webrtc::TaskQueueBase* thread,
+      rtc::PacketSocketFactory* factory,
+      const rtc::Network* network,
+      rtc::AsyncPacketSocket* socket,
+      absl::string_view username,
+      absl::string_view password,
+      const ProtocolAddress& server_address,
+      const RelayCredentials& credentials,
+      int server_priority,
+      const std::vector<std::string>& tls_alpn_protocols,
+      const std::vector<std::string>& tls_elliptic_curves,
+      webrtc::TurnCustomizer* customizer,
+      rtc::SSLCertificateVerifier* tls_cert_verifier = nullptr,
+      const webrtc::FieldTrialsView* field_trials = nullptr);
+
+  [[deprecated("Pass arguments using PortParametersRef")]] TurnPort(
+      webrtc::TaskQueueBase* thread,
+      rtc::PacketSocketFactory* factory,
+      const rtc::Network* network,
+      uint16_t min_port,
+      uint16_t max_port,
+      absl::string_view username,
+      absl::string_view password,
+      const ProtocolAddress& server_address,
+      const RelayCredentials& credentials,
+      int server_priority,
+      const std::vector<std::string>& tls_alpn_protocols,
+      const std::vector<std::string>& tls_elliptic_curves,
+      webrtc::TurnCustomizer* customizer,
+      rtc::SSLCertificateVerifier* tls_cert_verifier = nullptr,
+      const webrtc::FieldTrialsView* field_trials = nullptr);
 
   // NOTE: This method needs to be accessible for StunPort
   // return true if entry was created (i.e channel_number consumed).

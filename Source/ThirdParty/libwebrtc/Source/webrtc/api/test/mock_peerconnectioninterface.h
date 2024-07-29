@@ -215,6 +215,10 @@ class MockPeerConnectionInterface : public webrtc::PeerConnectionInterface {
   MOCK_METHOD(void, StopRtcEventLog, (), (override));
   MOCK_METHOD(void, Close, (), (override));
   MOCK_METHOD(rtc::Thread*, signaling_thread, (), (const override));
+  MOCK_METHOD(NetworkControllerInterface*,
+              GetNetworkController,
+              (),
+              (override));
 };
 
 static_assert(

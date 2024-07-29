@@ -12,7 +12,8 @@
 
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/call/transport.h"
-#include "api/task_queue/default_task_queue_factory.h"
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "modules/audio_mixer/sine_wave_generator.h"
@@ -74,8 +75,8 @@ class AudioEgressTest : public ::testing::Test {
         time_controller_.GetTaskQueueFactory());
     constexpr int kPcmuPayload = 0;
     egress_->SetEncoder(kPcmuPayload, kPcmuFormat,
-                        encoder_factory_->MakeAudioEncoder(
-                            kPcmuPayload, kPcmuFormat, absl::nullopt));
+                        encoder_factory_->Create(
+                            env_, kPcmuFormat, {.payload_type = kPcmuPayload}));
     egress_->StartSend();
     rtp_rtcp_->SetSequenceNumber(kSeqNum);
     rtp_rtcp_->SetSendingStatus(true);
@@ -104,6 +105,9 @@ class AudioEgressTest : public ::testing::Test {
   }
 
   GlobalSimulatedTimeController time_controller_{Timestamp::Micros(kStartTime)};
+  const Environment env_ =
+      CreateEnvironment(time_controller_.GetClock(),
+                        time_controller_.GetTaskQueueFactory());
   NiceMock<MockTransport> transport_;
   SineWaveGenerator wave_generator_;
   std::unique_ptr<ModuleRtpRtcpImpl2> rtp_rtcp_;
@@ -235,8 +239,8 @@ TEST_F(AudioEgressTest, ChangeEncoderFromPcmuToOpus) {
   const SdpAudioFormat kOpusFormat = {"opus", 48000, 2};
 
   egress_->SetEncoder(kOpusPayload, kOpusFormat,
-                      encoder_factory_->MakeAudioEncoder(
-                          kOpusPayload, kOpusFormat, absl::nullopt));
+                      encoder_factory_->Create(env_, kOpusFormat,
+                                               {.payload_type = kOpusPayload}));
 
   absl::optional<SdpAudioFormat> opus = egress_->GetEncoderFormat();
   EXPECT_TRUE(opus);

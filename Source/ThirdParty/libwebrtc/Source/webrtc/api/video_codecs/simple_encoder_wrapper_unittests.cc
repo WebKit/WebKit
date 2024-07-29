@@ -152,7 +152,7 @@ TEST(SimpleEncoderWrapper, EncodeL1T1) {
         ++num_callbacks;
         ASSERT_THAT(result.oh_no, Eq(false));
         EXPECT_THAT(result.dependency_structure, Ne(absl::nullopt));
-        EXPECT_THAT(result.bitstream_data, NotNull());
+        EXPECT_THAT(result.bitstream_data, Not(IsEmpty()));
         EXPECT_THAT(result.frame_type, Eq(FrameType::kKeyframe));
         EXPECT_THAT(result.generic_frame_info.spatial_id, Eq(0));
         EXPECT_THAT(result.generic_frame_info.temporal_id, Eq(0));
@@ -164,7 +164,7 @@ TEST(SimpleEncoderWrapper, EncodeL1T1) {
         ++num_callbacks;
         ASSERT_THAT(result.oh_no, Eq(false));
         EXPECT_THAT(result.dependency_structure, Eq(absl::nullopt));
-        EXPECT_THAT(result.bitstream_data, NotNull());
+        EXPECT_THAT(result.bitstream_data, Not(IsEmpty()));
         EXPECT_THAT(result.frame_type, Eq(FrameType::kDeltaFrame));
         EXPECT_THAT(result.generic_frame_info.spatial_id, Eq(0));
         EXPECT_THAT(result.generic_frame_info.temporal_id, Eq(0));
@@ -197,13 +197,13 @@ TEST(SimpleEncoderWrapper, EncodeL2T2_KEY) {
         if (result.generic_frame_info.spatial_id == 0) {
           ++num_callbacks;
           EXPECT_THAT(result.dependency_structure, Ne(absl::nullopt));
-          EXPECT_THAT(result.bitstream_data, NotNull());
+          EXPECT_THAT(result.bitstream_data, Not(IsEmpty()));
           EXPECT_THAT(result.frame_type, Eq(FrameType::kKeyframe));
           EXPECT_THAT(result.generic_frame_info.temporal_id, Eq(0));
         } else if (result.generic_frame_info.spatial_id == 1) {
           ++num_callbacks;
           EXPECT_THAT(result.dependency_structure, Eq(absl::nullopt));
-          EXPECT_THAT(result.bitstream_data, NotNull());
+          EXPECT_THAT(result.bitstream_data, Not(IsEmpty()));
           EXPECT_THAT(result.frame_type, Eq(FrameType::kDeltaFrame));
           EXPECT_THAT(result.generic_frame_info.temporal_id, Eq(0));
         }
@@ -216,13 +216,13 @@ TEST(SimpleEncoderWrapper, EncodeL2T2_KEY) {
         if (result.generic_frame_info.spatial_id == 0) {
           ++num_callbacks;
           EXPECT_THAT(result.dependency_structure, Eq(absl::nullopt));
-          EXPECT_THAT(result.bitstream_data, NotNull());
+          EXPECT_THAT(result.bitstream_data, Not(IsEmpty()));
           EXPECT_THAT(result.frame_type, Eq(FrameType::kDeltaFrame));
           EXPECT_THAT(result.generic_frame_info.temporal_id, Eq(1));
         } else if (result.generic_frame_info.spatial_id == 1) {
           ++num_callbacks;
           EXPECT_THAT(result.dependency_structure, Eq(absl::nullopt));
-          EXPECT_THAT(result.bitstream_data, NotNull());
+          EXPECT_THAT(result.bitstream_data, Not(IsEmpty()));
           EXPECT_THAT(result.frame_type, Eq(FrameType::kDeltaFrame));
           EXPECT_THAT(result.generic_frame_info.temporal_id, Eq(1));
         }

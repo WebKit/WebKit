@@ -11,6 +11,7 @@
 #ifndef LOGGING_RTC_EVENT_LOG_EVENTS_RTC_EVENT_BEGIN_LOG_H_
 #define LOGGING_RTC_EVENT_LOG_EVENTS_RTC_EVENT_BEGIN_LOG_H_
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -19,8 +20,7 @@
 #include "api/rtc_event_log/rtc_event.h"
 #include "api/units/timestamp.h"
 #include "logging/rtc_event_log/events/rtc_event_field_encoding.h"
-#include "logging/rtc_event_log/events/rtc_event_field_encoding_parser.h"
-#include "logging/rtc_event_log/events/rtc_event_field_extraction.h"
+#include "logging/rtc_event_log/events/rtc_event_log_parse_status.h"
 
 namespace webrtc {
 

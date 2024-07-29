@@ -10,13 +10,19 @@
 
 #include "logging/rtc_event_log/dependency_descriptor_encoder_decoder.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <string>
 #include <vector>
 
+#include "absl/strings/string_view.h"
+#include "absl/types/optional.h"
+#include "api/array_view.h"
 #include "logging/rtc_event_log/encoder/delta_encoding.h"
 #include "logging/rtc_event_log/encoder/optional_blob_encoding.h"
 #include "logging/rtc_event_log/events/rtc_event_log_parse_status.h"
 #include "logging/rtc_event_log/rtc_event_log2_proto_include.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {

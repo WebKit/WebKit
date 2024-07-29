@@ -24,6 +24,7 @@
 #include "api/test/metrics/global_metrics_logger_and_exporter.h"
 #include "api/test/metrics/metric.h"
 #include "api/test/simulated_network.h"
+#include "api/units/data_rate.h"
 #include "api/video/builtin_video_bitrate_allocator_factory.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video_codecs/video_encoder.h"
@@ -403,162 +404,6 @@ TEST_F(CallPerfTest,
                      DriftingClock::PercentsFaster(30.0f),
                      DriftingClock::PercentsSlower(30.0f), "_video_faster");
 }
-
-void CallPerfTest::TestCaptureNtpTime(
-    const BuiltInNetworkBehaviorConfig& net_config,
-    int threshold_ms,
-    int start_time_ms,
-    int run_time_ms) {
-  class CaptureNtpTimeObserver : public test::EndToEndTest,
-                                 public rtc::VideoSinkInterface<VideoFrame> {
-   public:
-    CaptureNtpTimeObserver(const BuiltInNetworkBehaviorConfig& net_config,
-                           int threshold_ms,
-                           int start_time_ms,
-                           int run_time_ms)
-        : EndToEndTest(test::VideoTestConstants::kLongTimeout),
-          net_config_(net_config),
-          clock_(Clock::GetRealTimeClock()),
-          threshold_ms_(threshold_ms),
-          start_time_ms_(start_time_ms),
-          run_time_ms_(run_time_ms),
-          creation_time_ms_(clock_->TimeInMilliseconds()),
-          capturer_(nullptr),
-          rtp_start_timestamp_set_(false),
-          rtp_start_timestamp_(0) {}
-
-   private:
-    BuiltInNetworkBehaviorConfig GetSendTransportConfig() const override {
-      return net_config_;
-    }
-
-    BuiltInNetworkBehaviorConfig GetReceiveTransportConfig() const override {
-      return net_config_;
-    }
-
-    void OnFrame(const VideoFrame& video_frame) override {
-      MutexLock lock(&mutex_);
-      if (video_frame.ntp_time_ms() <= 0) {
-        // Haven't got enough RTCP SR in order to calculate the capture ntp
-        // time.
-        return;
-      }
-
-      int64_t now_ms = clock_->TimeInMilliseconds();
-      int64_t time_since_creation = now_ms - creation_time_ms_;
-      if (time_since_creation < start_time_ms_) {
-        // Wait for `start_time_ms_` before start measuring.
-        return;
-      }
-
-      if (time_since_creation > run_time_ms_) {
-        observation_complete_.Set();
-      }
-
-      FrameCaptureTimeList::iterator iter =
-          capture_time_list_.find(video_frame.rtp_timestamp());
-      EXPECT_TRUE(iter != capture_time_list_.end());
-
-      // The real capture time has been wrapped to uint32_t before converted
-      // to rtp timestamp in the sender side. So here we convert the estimated
-      // capture time to a uint32_t 90k timestamp also for comparing.
-      uint32_t estimated_capture_timestamp =
-          90 * static_cast<uint32_t>(video_frame.ntp_time_ms());
-      uint32_t real_capture_timestamp = iter->second;
-      int time_offset_ms = real_capture_timestamp - estimated_capture_timestamp;
-      time_offset_ms = time_offset_ms / 90;
-      time_offset_ms_list_.AddSample(time_offset_ms);
-
-      EXPECT_TRUE(std::abs(time_offset_ms) < threshold_ms_);
-    }
-
-    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
-      MutexLock lock(&mutex_);
-      RtpPacket rtp_packet;
-      EXPECT_TRUE(rtp_packet.Parse(packet));
-
-      if (!rtp_start_timestamp_set_) {
-        // Calculate the rtp timestamp offset in order to calculate the real
-        // capture time.
-        uint32_t first_capture_timestamp =
-            90 * static_cast<uint32_t>(capturer_->first_frame_capture_time());
-        rtp_start_timestamp_ = rtp_packet.Timestamp() - first_capture_timestamp;
-        rtp_start_timestamp_set_ = true;
-      }
-
-      uint32_t capture_timestamp =
-          rtp_packet.Timestamp() - rtp_start_timestamp_;
-      capture_time_list_.insert(
-          capture_time_list_.end(),
-          std::make_pair(rtp_packet.Timestamp(), capture_timestamp));
-      return SEND_PACKET;
-    }
-
-    void OnFrameGeneratorCapturerCreated(
-        test::FrameGeneratorCapturer* frame_generator_capturer) override {
-      capturer_ = frame_generator_capturer;
-    }
-
-    void ModifyVideoConfigs(
-        VideoSendStream::Config* send_config,
-        std::vector<VideoReceiveStreamInterface::Config>* receive_configs,
-        VideoEncoderConfig* encoder_config) override {
-      (*receive_configs)[0].renderer = this;
-      // Enable the receiver side rtt calculation.
-      (*receive_configs)[0].rtp.rtcp_xr.receiver_reference_time_report = true;
-    }
-
-    void PerformTest() override {
-      EXPECT_TRUE(Wait()) << "Timed out while waiting for estimated capture "
-                             "NTP time to be within bounds.";
-      GetGlobalMetricsLogger()->LogMetric(
-          "capture_ntp_time", "real - estimated", time_offset_ms_list_,
-          Unit::kMilliseconds, ImprovementDirection::kNeitherIsBetter);
-    }
-
-    Mutex mutex_;
-    const BuiltInNetworkBehaviorConfig net_config_;
-    Clock* const clock_;
-    const int threshold_ms_;
-    const int start_time_ms_;
-    const int run_time_ms_;
-    const int64_t creation_time_ms_;
-    test::FrameGeneratorCapturer* capturer_;
-    bool rtp_start_timestamp_set_;
-    uint32_t rtp_start_timestamp_;
-    typedef std::map<uint32_t, uint32_t> FrameCaptureTimeList;
-    FrameCaptureTimeList capture_time_list_ RTC_GUARDED_BY(&mutex_);
-    SamplesStatsCounter time_offset_ms_list_;
-  } test(net_config, threshold_ms, start_time_ms, run_time_ms);
-
-  RunBaseTest(&test);
-}
-
-// Flaky tests, disabled on Mac and Windows due to webrtc:8291.
-#if !(defined(WEBRTC_MAC) || defined(WEBRTC_WIN))
-TEST_F(CallPerfTest, Real_Estimated_CaptureNtpTimeWithNetworkDelay) {
-  BuiltInNetworkBehaviorConfig net_config;
-  net_config.queue_delay_ms = 100;
-  // TODO(wu): lower the threshold as the calculation/estimation becomes more
-  // accurate.
-  const int kThresholdMs = 100;
-  const int kStartTimeMs = 10000;
-  const int kRunTimeMs = 20000;
-  TestCaptureNtpTime(net_config, kThresholdMs, kStartTimeMs, kRunTimeMs);
-}
-
-TEST_F(CallPerfTest, Real_Estimated_CaptureNtpTimeWithNetworkJitter) {
-  BuiltInNetworkBehaviorConfig net_config;
-  net_config.queue_delay_ms = 100;
-  net_config.delay_standard_deviation_ms = 10;
-  // TODO(wu): lower the threshold as the calculation/estimation becomes more
-  // accurate.
-  const int kThresholdMs = 100;
-  const int kStartTimeMs = 10000;
-  const int kRunTimeMs = 20000;
-  TestCaptureNtpTime(net_config, kThresholdMs, kStartTimeMs, kRunTimeMs);
-}
-#endif
 
 TEST_F(CallPerfTest, ReceivesCpuOveruseAndUnderuse) {
   // Minimal normal usage at the start, then 30s overuse to allow filter to
@@ -958,7 +803,7 @@ void CallPerfTest::TestMinAudioVideoBitrate(int test_bitrate_from,
    protected:
     BuiltInNetworkBehaviorConfig GetFakeNetworkPipeConfig() const {
       BuiltInNetworkBehaviorConfig pipe_config;
-      pipe_config.link_capacity_kbps = test_bitrate_from_;
+      pipe_config.link_capacity = DataRate::KilobitsPerSec(test_bitrate_from_);
       return pipe_config;
     }
 
@@ -990,7 +835,7 @@ void CallPerfTest::TestMinAudioVideoBitrate(int test_bitrate_from,
                : test_bitrate >= test_bitrate_to_;
            test_bitrate += test_bitrate_step_) {
         BuiltInNetworkBehaviorConfig pipe_config;
-        pipe_config.link_capacity_kbps = test_bitrate;
+        pipe_config.link_capacity = DataRate::KilobitsPerSec(test_bitrate);
         send_simulated_network_->SetConfig(pipe_config);
         receive_simulated_network_->SetConfig(pipe_config);
 

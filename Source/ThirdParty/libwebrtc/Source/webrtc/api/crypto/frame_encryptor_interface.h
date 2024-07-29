@@ -24,7 +24,7 @@ namespace webrtc {
 // addition to the standard SRTP mechanism and is not intended to be used
 // without it. Implementations of this interface will have the same lifetime as
 // the RTPSenders it is attached to. Additional data may be null.
-class FrameEncryptorInterface : public rtc::RefCountInterface {
+class FrameEncryptorInterface : public RefCountInterface {
  public:
   ~FrameEncryptorInterface() override {}
 

@@ -41,8 +41,10 @@ bool SetPriority(ThreadPriority priority) {
 #if defined(WEBRTC_WIN)
   return SetThreadPriority(GetCurrentThread(),
                            Win32PriorityFromThreadPriority(priority)) != FALSE;
-#elif defined(__native_client__) || defined(WEBRTC_FUCHSIA)
-  // Setting thread priorities is not supported in NaCl or Fuchsia.
+#elif defined(__native_client__) || defined(WEBRTC_FUCHSIA) || \
+    (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+  // Setting thread priorities is not supported in NaCl, Fuchsia or Emscripten
+  // without pthreads.
   return true;
 #elif defined(WEBRTC_CHROMIUM_BUILD) && defined(WEBRTC_LINUX)
   // TODO(tommi): Switch to the same mechanism as Chromium uses for changing

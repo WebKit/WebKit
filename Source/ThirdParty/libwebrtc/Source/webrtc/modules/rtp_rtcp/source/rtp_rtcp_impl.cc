@@ -21,11 +21,11 @@
 
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
+#include "modules/rtp_rtcp/source/ntp_time_util.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/dlrr.h"
 #include "modules/rtp_rtcp/source/rtcp_sender.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_config.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
-#include "modules/rtp_rtcp/source/time_util.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/ntp_time.h"
@@ -44,7 +44,8 @@ constexpr TimeDelta kDefaultExpectedRetransmissionTime = TimeDelta::Millis(125);
 
 ModuleRtpRtcpImpl::RtpSenderContext::RtpSenderContext(
     const RtpRtcpInterface::Configuration& config)
-    : packet_history(config.clock, RtpPacketHistory::PaddingMode::kPriority),
+    : packet_history(config.clock,
+                     RtpPacketHistory::PaddingMode::kRecentLargePacket),
       sequencer_(config.local_media_ssrc,
                  config.rtx_send_ssrc,
                  /*require_marker_before_media_padding=*/!config.audio,

@@ -18,10 +18,8 @@
 #include <vector>
 
 #include "absl/types/optional.h"
-#include "api/field_trials_view.h"
+#include "api/environment/environment.h"
 #include "api/network_state_predictor.h"
-#include "api/rtc_event_log/rtc_event_log.h"
-#include "api/transport/field_trial_based_config.h"
 #include "api/transport/network_control.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
@@ -32,6 +30,7 @@
 #include "modules/congestion_controller/goog_cc/alr_detector.h"
 #include "modules/congestion_controller/goog_cc/congestion_window_pushback_controller.h"
 #include "modules/congestion_controller/goog_cc/delay_based_bwe.h"
+#include "modules/congestion_controller/goog_cc/loss_based_bwe_v2.h"
 #include "modules/congestion_controller/goog_cc/probe_bitrate_estimator.h"
 #include "modules/congestion_controller/goog_cc/probe_controller.h"
 #include "modules/congestion_controller/goog_cc/send_side_bandwidth_estimation.h"
@@ -84,10 +83,9 @@ class GoogCcNetworkController : public NetworkControllerInterface {
                                     Timestamp at_time);
   void UpdateCongestionWindowSize();
   PacerConfig GetPacingRates(Timestamp at_time) const;
-  const FieldTrialBasedConfig trial_based_config_;
+  void SetNetworkStateEstimate(absl::optional<NetworkStateEstimate> estimate);
 
-  const FieldTrialsView* const key_value_config_;
-  RtcEventLog* const event_log_;
+  const Environment env_;
   const bool packet_feedback_only_;
   FieldTrialFlag safe_reset_on_route_change_;
   FieldTrialFlag safe_reset_acknowledged_rate_;

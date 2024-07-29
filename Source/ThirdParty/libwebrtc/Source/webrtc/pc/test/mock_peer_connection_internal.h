@@ -330,6 +330,10 @@ class MockPeerConnectionInternal : public PeerConnectionInternal {
               OnSctpDataChannelStateChanged,
               (int channel_id, DataChannelInterface::DataState),
               (override));
+  MOCK_METHOD(NetworkControllerInterface*,
+              GetNetworkController,
+              (),
+              (override));
 };
 
 }  // namespace webrtc

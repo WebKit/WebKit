@@ -259,6 +259,11 @@ class RTC_EXPORT VideoEncoder {
     // Indicates whether or not QP value encoder writes into frame/slice/tile
     // header can be interpreted as average frame/slice/tile QP.
     absl::optional<bool> is_qp_trusted;
+
+    // The minimum QP that the encoder is expected to use with the current
+    // configuration. This may be used to determine if the encoder has reached
+    // its target video quality for static screenshare content.
+    absl::optional<int> min_qp;
   };
 
   struct RTC_EXPORT RateControlParameters {

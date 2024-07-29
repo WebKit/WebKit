@@ -13,6 +13,7 @@
 
 #include <cstdint>
 #include <cstdio>
+#include <functional>
 #include <map>
 #include <string>
 #include <vector>
@@ -20,6 +21,7 @@
 #include "api/function_view.h"
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
+#include "rtc_base/checks.h"
 #include "rtc_tools/rtc_event_log_visualizer/analyzer_common.h"
 #include "rtc_tools/rtc_event_log_visualizer/plot_base.h"
 

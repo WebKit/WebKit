@@ -151,6 +151,7 @@ int32_t FakeEncoder::Encode(const VideoFrame& input_image,
     if (qp)
       encoded.qp_ = *qp;
     encoded.SetSimulcastIndex(i);
+    encoded.SetTemporalIndex(frame_info.layers[i].temporal_id);
     CodecSpecificInfo codec_specific = EncodeHook(encoded, buffer);
 
     if (callback->OnEncodedImage(encoded, &codec_specific).error !=

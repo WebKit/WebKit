@@ -29,15 +29,17 @@ const float kMuteFadeInc = 1.0f / kMuteFadeFrames;
 
 }  // namespace
 
-void AudioFrameOperations::QuadToStereo(rtc::ArrayView<const int16_t> src_audio,
-                                        size_t samples_per_channel,
-                                        rtc::ArrayView<int16_t> dst_audio) {
-  RTC_DCHECK_EQ(src_audio.size(), samples_per_channel * 4);
-  RTC_DCHECK_EQ(dst_audio.size(), samples_per_channel * 2);
-  for (size_t i = 0; i < samples_per_channel; i++) {
-    dst_audio[i * 2] =
+void AudioFrameOperations::QuadToStereo(
+    InterleavedView<const int16_t> src_audio,
+    InterleavedView<int16_t> dst_audio) {
+  RTC_DCHECK_EQ(NumChannels(src_audio), 4);
+  RTC_DCHECK_EQ(NumChannels(dst_audio), 2);
+  RTC_DCHECK_EQ(SamplesPerChannel(src_audio), SamplesPerChannel(dst_audio));
+  for (size_t i = 0; i < SamplesPerChannel(src_audio); ++i) {
+    auto dst_frame = i * 2;
+    dst_audio[dst_frame] =
         (static_cast<int32_t>(src_audio[4 * i]) + src_audio[4 * i + 1]) >> 1;
-    dst_audio[i * 2 + 1] =
+    dst_audio[dst_frame + 1] =
         (static_cast<int32_t>(src_audio[4 * i + 2]) + src_audio[4 * i + 3]) >>
         1;
   }
@@ -52,9 +54,12 @@ int AudioFrameOperations::QuadToStereo(AudioFrame* frame) {
                 AudioFrame::kMaxDataSizeSamples);
 
   if (!frame->muted()) {
-    auto current_data = frame->data_view();
-    QuadToStereo(current_data, frame->samples_per_channel_,
-                 frame->mutable_data(frame->samples_per_channel_, 2));
+    // Note that `src` and `dst` will map in to the same buffer, but the call
+    // to `mutable_data()` changes the layout of `frame`, so `src` and `dst`
+    // will have different dimensions (important to call `data_view()` first).
+    auto src = frame->data_view();
+    auto dst = frame->mutable_data(frame->samples_per_channel_, 2);
+    QuadToStereo(src, dst);
   } else {
     frame->num_channels_ = 2;
   }
@@ -63,21 +68,19 @@ int AudioFrameOperations::QuadToStereo(AudioFrame* frame) {
 }
 
 void AudioFrameOperations::DownmixChannels(
-    rtc::ArrayView<const int16_t> src_audio,
-    size_t src_channels,
-    size_t samples_per_channel,
-    size_t dst_channels,
-    rtc::ArrayView<int16_t> dst_audio) {
-  RTC_DCHECK_EQ(src_audio.size(), src_channels * samples_per_channel);
-  RTC_DCHECK_EQ(dst_audio.size(), dst_channels * samples_per_channel);
-  if (src_channels > 1 && dst_channels == 1) {
-    DownmixInterleavedToMono(src_audio.data(), samples_per_channel,
-                             src_channels, &dst_audio[0]);
-  } else if (src_channels == 4 && dst_channels == 2) {
-    QuadToStereo(src_audio, samples_per_channel, dst_audio);
+    InterleavedView<const int16_t> src_audio,
+    InterleavedView<int16_t> dst_audio) {
+  RTC_DCHECK_EQ(SamplesPerChannel(src_audio), SamplesPerChannel(dst_audio));
+  if (NumChannels(src_audio) > 1 && IsMono(dst_audio)) {
+    // TODO(tommi): change DownmixInterleavedToMono to support InterleavedView
+    // and MonoView.
+    DownmixInterleavedToMono(&src_audio.data()[0], SamplesPerChannel(src_audio),
+                             NumChannels(src_audio), &dst_audio.data()[0]);
+  } else if (NumChannels(src_audio) == 4 && NumChannels(dst_audio) == 2) {
+    QuadToStereo(src_audio, dst_audio);
   } else {
-    RTC_DCHECK_NOTREACHED() << "src_channels: " << src_channels
-                            << ", dst_channels: " << dst_channels;
+    RTC_DCHECK_NOTREACHED() << "src_channels: " << NumChannels(src_audio)
+                            << ", dst_channels: " << NumChannels(dst_audio);
   }
 }
 

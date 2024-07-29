@@ -34,6 +34,7 @@ class PacketBuffer {
   struct Packet {
     Packet() = default;
     Packet(const RtpPacketReceived& rtp_packet,
+           int64_t sequence_number,
            const RTPVideoHeader& video_header);
     Packet(const Packet&) = delete;
     Packet(Packet&&) = delete;
@@ -51,13 +52,14 @@ class PacketBuffer {
     bool is_last_packet_in_frame() const {
       return video_header.is_last_packet_in_frame;
     }
+    uint16_t seq_num() const { return static_cast<uint16_t>(sequence_number); }
 
     // If all its previous packets have been inserted into the packet buffer.
     // Set and used internally by the PacketBuffer.
     bool continuous = false;
     bool marker_bit = false;
     uint8_t payload_type = 0;
-    uint16_t seq_num = 0;
+    int64_t sequence_number = 0;
     uint32_t timestamp = 0;
     int times_nacked = -1;
 

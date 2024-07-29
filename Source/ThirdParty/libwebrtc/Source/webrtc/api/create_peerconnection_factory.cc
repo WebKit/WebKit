@@ -18,9 +18,10 @@
 #include "api/enable_media.h"
 #include "api/peer_connection_interface.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
-#include "api/scoped_refptr.h"
+#if defined(WEBRTC_WEBKIT_BUILD)
 #include "api/task_queue/default_task_queue_factory.h"
-#include "api/transport/field_trial_based_config.h"
+#endif
+#include "api/scoped_refptr.h"
 #include "rtc_base/thread.h"
 
 namespace webrtc {

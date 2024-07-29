@@ -113,6 +113,7 @@ struct SimulationSettings {
   absl::optional<int> agc_compression_gain;
   absl::optional<bool> agc2_use_adaptive_gain;
   absl::optional<float> agc2_fixed_gain_db;
+  absl::optional<bool> agc2_use_input_volume_controller;
   absl::optional<float> pre_amplifier_gain_factor;
   absl::optional<float> pre_gain_factor;
   absl::optional<float> post_gain_factor;

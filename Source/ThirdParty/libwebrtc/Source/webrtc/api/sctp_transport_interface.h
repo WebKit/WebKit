@@ -14,8 +14,8 @@
 #include "absl/types/optional.h"
 #include "api/dtls_transport_interface.h"
 #include "api/ref_count.h"
-#include "api/rtc_error.h"
 #include "api/scoped_refptr.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 

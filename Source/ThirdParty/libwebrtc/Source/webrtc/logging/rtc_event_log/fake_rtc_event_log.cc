@@ -10,10 +10,12 @@
 
 #include "logging/rtc_event_log/fake_rtc_event_log.h"
 
+#include <cstdint>
 #include <map>
 #include <memory>
 
-#include "api/rtc_event_log/rtc_event_log.h"
+#include "api/rtc_event_log/rtc_event.h"
+#include "api/rtc_event_log_output.h"
 #include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {

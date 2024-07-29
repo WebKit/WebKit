@@ -8,14 +8,22 @@
  */
 #include "logging/rtc_event_log/events/rtc_event_field_encoding.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
 #include <limits>
-#include <memory>
 #include <string>
+#include <tuple>
+#include <type_traits>
+#include <vector>
 
 #include "absl/strings/string_view.h"
+#include "absl/types/optional.h"
+#include "api/array_view.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "logging/rtc_event_log/encoder/var_int.h"
 #include "logging/rtc_event_log/events/rtc_event_field_encoding_parser.h"
+#include "rtc_base/checks.h"
 #include "test/gtest.h"
 
 namespace webrtc {

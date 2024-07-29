@@ -54,7 +54,7 @@ public:
     void OnFailure(webrtc::RTCError error) final { m_endpoint.createSessionDescriptionFailed(toExceptionCode(error.type()), error.message()); }
 
     void AddRef() const { m_endpoint.AddRef(); }
-    rtc::RefCountReleaseStatus Release() const { return m_endpoint.Release(); }
+    webrtc::RefCountReleaseStatus Release() const { return m_endpoint.Release(); }
 
 private:
     Endpoint& m_endpoint;
@@ -69,7 +69,7 @@ public:
     }
 
     void AddRef() const { m_endpoint.AddRef(); }
-    rtc::RefCountReleaseStatus Release() const { return m_endpoint.Release(); }
+    webrtc::RefCountReleaseStatus Release() const { return m_endpoint.Release(); }
 
 private:
     void OnSetLocalDescriptionComplete(webrtc::RTCError error) final
@@ -93,7 +93,7 @@ public:
     }
 
     void AddRef() const { m_endpoint.AddRef(); }
-    rtc::RefCountReleaseStatus Release() const { return m_endpoint.Release(); }
+    webrtc::RefCountReleaseStatus Release() const { return m_endpoint.Release(); }
 
 private:
     void OnSetRemoteDescriptionComplete(webrtc::RTCError error) final

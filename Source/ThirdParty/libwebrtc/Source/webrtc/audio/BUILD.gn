@@ -58,6 +58,7 @@ rtc_library("audio") {
     "../api/crypto:frame_decryptor_interface",
     "../api/crypto:frame_encryptor_interface",
     "../api/crypto:options",
+    "../api/environment",
     "../api/neteq:neteq_api",
     "../api/rtc_event_log",
     "../api/task_queue",
@@ -109,14 +110,11 @@ rtc_library("audio") {
     "../rtc_base/system:no_unique_address",
     "../rtc_base/task_utils:repeating_task",
     "../system_wrappers",
-    "../system_wrappers:field_trial",
     "../system_wrappers:metrics",
     "utility:audio_frame_operations",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/functional:any_invocable",
     "//third_party/abseil-cpp/absl/memory",
-    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/strings:string_view",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
@@ -163,12 +161,16 @@ if (rtc_include_tests) {
       ":audio",
       ":audio_end_to_end_test",
       ":channel_receive_unittest",
+      "../api:array_view",
+      "../api:frame_transformer_interface",
       "../api:libjingle_peerconnection_api",
+      "../api:make_ref_counted",
       "../api:mock_audio_mixer",
       "../api:mock_frame_decryptor",
       "../api:mock_frame_encryptor",
       "../api:mock_frame_transformer",
       "../api:mock_transformable_audio_frame",
+      "../api:rtp_headers",
       "../api:scoped_refptr",
       "../api/audio:audio_frame_api",
       "../api/audio:audio_processing_statistics",
@@ -191,6 +193,7 @@ if (rtc_include_tests) {
       "../call:rtp_sender",
       "../common_audio",
       "../logging:mocks",
+      "../modules/audio_coding:audio_coding_module_typedefs",
       "../modules/audio_device:audio_device_impl",  # For TestAudioDeviceModule
       "../modules/audio_device:mock_audio_device",
       "../modules/audio_mixer:audio_mixer_impl",
@@ -221,8 +224,6 @@ if (rtc_include_tests) {
       "../test/time_controller:time_controller",
       "utility:utility_tests",
       "//testing/gtest",
-    ]
-    absl_deps = [
       "//third_party/abseil-cpp/absl/memory",
       "//third_party/abseil-cpp/absl/types:optional",
     ]
@@ -241,6 +242,7 @@ if (rtc_include_tests) {
       "../logging:mocks",
       "../modules/audio_device:mock_audio_device",
       "../modules/rtp_rtcp",
+      "../modules/rtp_rtcp:ntp_time_util",
       "../modules/rtp_rtcp:rtp_rtcp_format",
       "../rtc_base:logging",
       "../rtc_base:threading",
@@ -248,10 +250,7 @@ if (rtc_include_tests) {
       "../test:mock_transport",
       "../test:test_support",
       "../test/time_controller",
-    ]
-    absl_deps = [
       "//third_party/abseil-cpp/absl/strings",
-      "//third_party/abseil-cpp/absl/types:optional",
     ]
   }
 }

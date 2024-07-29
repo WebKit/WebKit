@@ -15,18 +15,6 @@
 #include "api/video/video_frame_type.h"
 
 namespace webrtc {
-
-void PrintTo(const EncodedFrame& frame,
-             std::ostream* os) /* no-presubmit-check TODO(webrtc:8982) */ {
-  *os << "EncodedFrame with id=" << frame.Id()
-      << " rtp=" << frame.RtpTimestamp() << " size=" << frame.size()
-      << " refs=[";
-  for (size_t ref = 0; ref < frame.num_references; ++ref) {
-    *os << frame.references[ref] << ",";
-  }
-  *os << "]";
-}
-
 namespace test {
 
 int64_t FakeEncodedFrame::ReceivedTime() const {

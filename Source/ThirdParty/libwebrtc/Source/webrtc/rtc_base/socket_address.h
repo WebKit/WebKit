@@ -14,9 +14,6 @@
 #include <string>
 
 #include "absl/strings/string_view.h"
-#ifdef WEBRTC_UNIT_TEST
-#include <ostream>  // no-presubmit-check TODO(webrtc:8982)
-#endif              // WEBRTC_UNIT_TEST
 #include "rtc_base/ip_address.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -132,13 +129,6 @@ class RTC_EXPORT SocketAddress {
 
   // Parses hostname:port and [hostname]:port.
   bool FromString(absl::string_view str);
-
-#ifdef WEBRTC_UNIT_TEST
-  inline std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
-      std::ostream& os) {           // no-presubmit-check TODO(webrtc:8982)
-    return os << HostAsURIString() << ":" << port();
-  }
-#endif  // WEBRTC_UNIT_TEST
 
   // Determines whether this represents a missing / any IP address.
   // That is, 0.0.0.0 or ::.

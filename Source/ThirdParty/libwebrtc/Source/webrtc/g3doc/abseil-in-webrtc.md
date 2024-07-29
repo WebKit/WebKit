@@ -16,12 +16,13 @@ adds the first use.
 ## How to depend on Abseil
 
 For build targets of type `rtc_library`, `rtc_source_set` and
-`rtc_static_library`, dependencies on Abseil need to be listed in `absl_deps`
-instead of `deps`.
+`rtc_static_library`, dependencies on Abseil need to be listed in `deps`.
 
-This is needed in order to support the Abseil component build in Chromium. In
-that build mode, WebRTC will depend on a monolithic Abseil build target that
-will generate a shared library.
+The GN templates will take care of generating the proper dependency when
+used within Chromium or standalone. In that build mode, WebRTC will depend
+on a monolithic Abseil build target that will generate a shared library.
+
+Previously, `absl_deps` was used but been deprecated in May 2024.
 
 ## **Allowed**
 

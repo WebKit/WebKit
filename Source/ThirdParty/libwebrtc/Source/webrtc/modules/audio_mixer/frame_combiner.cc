@@ -36,17 +36,13 @@
 namespace webrtc {
 namespace {
 
-using MixingBuffer =
-    std::array<std::array<float, FrameCombiner::kMaximumChannelSize>,
-               FrameCombiner::kMaximumNumberOfChannels>;
-
 void SetAudioFrameFields(rtc::ArrayView<const AudioFrame* const> mix_list,
                          size_t number_of_channels,
                          int sample_rate,
                          size_t number_of_streams,
                          AudioFrame* audio_frame_for_mixing) {
-  const size_t samples_per_channel = static_cast<size_t>(
-      (sample_rate * webrtc::AudioMixerImpl::kFrameDurationInMs) / 1000);
+  const size_t samples_per_channel =
+      SampleRateToDefaultChannelSize(sample_rate);
 
   // TODO(minyue): Issue bugs.webrtc.org/3390.
   // Audio frame timestamp. The 'timestamp_' field is set to dummy
@@ -85,56 +81,47 @@ void MixFewFramesWithNoLimiter(rtc::ArrayView<const AudioFrame* const> mix_list,
     return;
   }
   RTC_DCHECK_LE(mix_list.size(), 1);
-  std::copy(mix_list[0]->data(),
-            mix_list[0]->data() +
-                mix_list[0]->num_channels_ * mix_list[0]->samples_per_channel_,
-            audio_frame_for_mixing->mutable_data());
+  InterleavedView<int16_t> dst = audio_frame_for_mixing->mutable_data(
+      mix_list[0]->samples_per_channel_, mix_list[0]->num_channels_);
+  CopySamples(dst, mix_list[0]->data_view());
 }
 
 void MixToFloatFrame(rtc::ArrayView<const AudioFrame* const> mix_list,
-                     size_t samples_per_channel,
-                     size_t number_of_channels,
-                     MixingBuffer* mixing_buffer) {
-  RTC_DCHECK_LE(samples_per_channel, FrameCombiner::kMaximumChannelSize);
-  RTC_DCHECK_LE(number_of_channels, FrameCombiner::kMaximumNumberOfChannels);
+                     DeinterleavedView<float>& mixing_buffer) {
+  const size_t number_of_channels = NumChannels(mixing_buffer);
   // Clear the mixing buffer.
-  *mixing_buffer = {};
+  rtc::ArrayView<float> raw_data = mixing_buffer.data();
+  ClearSamples(raw_data);
 
   // Convert to FloatS16 and mix.
   for (size_t i = 0; i < mix_list.size(); ++i) {
-    const AudioFrame* const frame = mix_list[i];
-    const int16_t* const frame_data = frame->data();
-    for (size_t j = 0; j < std::min(number_of_channels,
-                                    FrameCombiner::kMaximumNumberOfChannels);
-         ++j) {
-      for (size_t k = 0; k < std::min(samples_per_channel,
-                                      FrameCombiner::kMaximumChannelSize);
-           ++k) {
-        (*mixing_buffer)[j][k] += frame_data[number_of_channels * k + j];
+    InterleavedView<const int16_t> frame_data = mix_list[i]->data_view();
+    RTC_CHECK(!frame_data.empty());
+    for (size_t j = 0; j < number_of_channels; ++j) {
+      MonoView<float> channel = mixing_buffer[j];
+      for (size_t k = 0; k < SamplesPerChannel(channel); ++k) {
+        channel[k] += frame_data[number_of_channels * k + j];
       }
     }
   }
 }
 
-void RunLimiter(AudioFrameView<float> mixing_buffer_view, Limiter* limiter) {
-  const size_t sample_rate = mixing_buffer_view.samples_per_channel() * 1000 /
-                             AudioMixerImpl::kFrameDurationInMs;
-  // TODO(alessiob): Avoid calling SetSampleRate every time.
-  limiter->SetSampleRate(sample_rate);
-  limiter->Process(mixing_buffer_view);
+void RunLimiter(DeinterleavedView<float> deinterleaved, Limiter* limiter) {
+  limiter->SetSamplesPerChannel(deinterleaved.samples_per_channel());
+  limiter->Process(deinterleaved);
 }
 
 // Both interleaves and rounds.
-void InterleaveToAudioFrame(AudioFrameView<const float> mixing_buffer_view,
+void InterleaveToAudioFrame(DeinterleavedView<float> deinterleaved,
                             AudioFrame* audio_frame_for_mixing) {
-  const size_t number_of_channels = mixing_buffer_view.num_channels();
-  const size_t samples_per_channel = mixing_buffer_view.samples_per_channel();
-  int16_t* const mixing_data = audio_frame_for_mixing->mutable_data();
+  InterleavedView<int16_t> mixing_data = audio_frame_for_mixing->mutable_data(
+      deinterleaved.samples_per_channel(), deinterleaved.num_channels());
   // Put data in the result frame.
-  for (size_t i = 0; i < number_of_channels; ++i) {
-    for (size_t j = 0; j < samples_per_channel; ++j) {
-      mixing_data[number_of_channels * j + i] =
-          FloatS16ToS16(mixing_buffer_view.channel(i)[j]);
+  for (size_t i = 0; i < mixing_data.num_channels(); ++i) {
+    auto channel = deinterleaved[i];
+    for (size_t j = 0; j < mixing_data.samples_per_channel(); ++j) {
+      mixing_data[mixing_data.num_channels() * j + i] =
+          FloatS16ToS16(channel[j]);
     }
   }
 }
@@ -145,10 +132,7 @@ constexpr size_t FrameCombiner::kMaximumChannelSize;
 
 FrameCombiner::FrameCombiner(bool use_limiter)
     : data_dumper_(new ApmDataDumper(0)),
-      mixing_buffer_(
-          std::make_unique<std::array<std::array<float, kMaximumChannelSize>,
-                                      kMaximumNumberOfChannels>>()),
-      limiter_(static_cast<size_t>(48000), data_dumper_.get(), "AudioMixer"),
+      limiter_(data_dumper_.get(), kMaximumChannelSize, "AudioMixer"),
       use_limiter_(use_limiter) {
   static_assert(kMaximumChannelSize * kMaximumNumberOfChannels <=
                     AudioFrame::kMaxDataSizeSamples,
@@ -163,17 +147,26 @@ void FrameCombiner::Combine(rtc::ArrayView<AudioFrame* const> mix_list,
                             size_t number_of_streams,
                             AudioFrame* audio_frame_for_mixing) {
   RTC_DCHECK(audio_frame_for_mixing);
+  RTC_DCHECK_GT(sample_rate, 0);
+
+  // Note: `mix_list` is allowed to be empty.
+  // See FrameCombiner.CombiningZeroFramesShouldProduceSilence.
+
+  // Make sure to cap `number_of_channels` to the kMaximumNumberOfChannels
+  // limits since processing from hereon out will be bound by them.
+  number_of_channels = std::min(number_of_channels, kMaximumNumberOfChannels);
 
   SetAudioFrameFields(mix_list, number_of_channels, sample_rate,
                       number_of_streams, audio_frame_for_mixing);
 
-  const size_t samples_per_channel = static_cast<size_t>(
-      (sample_rate * webrtc::AudioMixerImpl::kFrameDurationInMs) / 1000);
+  size_t samples_per_channel = SampleRateToDefaultChannelSize(sample_rate);
 
+#if RTC_DCHECK_IS_ON
   for (const auto* frame : mix_list) {
     RTC_DCHECK_EQ(samples_per_channel, frame->samples_per_channel_);
     RTC_DCHECK_EQ(sample_rate, frame->sample_rate_hz_);
   }
+#endif
 
   // The 'num_channels_' field of frames in 'mix_list' could be
   // different from 'number_of_channels'.
@@ -186,28 +179,23 @@ void FrameCombiner::Combine(rtc::ArrayView<AudioFrame* const> mix_list,
     return;
   }
 
-  MixToFloatFrame(mix_list, samples_per_channel, number_of_channels,
-                  mixing_buffer_.get());
-
-  const size_t output_number_of_channels =
-      std::min(number_of_channels, kMaximumNumberOfChannels);
-  const size_t output_samples_per_channel =
-      std::min(samples_per_channel, kMaximumChannelSize);
-
-  // Put float data in an AudioFrameView.
-  std::array<float*, kMaximumNumberOfChannels> channel_pointers{};
-  for (size_t i = 0; i < output_number_of_channels; ++i) {
-    channel_pointers[i] = &(*mixing_buffer_.get())[i][0];
-  }
-  AudioFrameView<float> mixing_buffer_view(&channel_pointers[0],
-                                           output_number_of_channels,
-                                           output_samples_per_channel);
+  // Make sure that the size of the view based on the desired
+  // `samples_per_channel` and `number_of_channels` doesn't exceed the size of
+  // the `mixing_buffer_` buffer.
+  RTC_DCHECK_LE(samples_per_channel, kMaximumChannelSize);
+  // Since the above check is a DCHECK only, clamp down on `samples_per_channel`
+  // to make sure we don't exceed the buffer size in non-dcheck builds.
+  // See also FrameCombinerDeathTest.DebugBuildCrashesWithHighRate.
+  samples_per_channel = std::min(samples_per_channel, kMaximumChannelSize);
+  DeinterleavedView<float> deinterleaved(
+      mixing_buffer_.data(), samples_per_channel, number_of_channels);
+  MixToFloatFrame(mix_list, deinterleaved);
 
   if (use_limiter_) {
-    RunLimiter(mixing_buffer_view, &limiter_);
+    RunLimiter(deinterleaved, &limiter_);
   }
 
-  InterleaveToAudioFrame(mixing_buffer_view, audio_frame_for_mixing);
+  InterleaveToAudioFrame(deinterleaved, audio_frame_for_mixing);
 }
 
 }  // namespace webrtc

@@ -11,8 +11,7 @@
 #ifndef MEDIA_BASE_CODEC_H_
 #define MEDIA_BASE_CODEC_H_
 
-#include <map>
-#include <set>
+#include <cstddef>
 #include <string>
 #include <vector>
 
@@ -21,6 +20,7 @@
 #include "absl/types/optional.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/rtp_parameters.h"
+#include "api/video_codecs/scalability_mode.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "media/base/media_constants.h"
 #include "rtc_base/system/rtc_export.h"

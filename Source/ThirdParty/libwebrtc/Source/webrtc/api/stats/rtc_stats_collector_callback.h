@@ -17,7 +17,7 @@
 
 namespace webrtc {
 
-class RTCStatsCollectorCallback : public rtc::RefCountInterface {
+class RTCStatsCollectorCallback : public RefCountInterface {
  public:
   ~RTCStatsCollectorCallback() override = default;
 

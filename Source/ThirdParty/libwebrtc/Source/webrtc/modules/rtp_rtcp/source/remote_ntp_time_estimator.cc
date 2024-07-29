@@ -12,7 +12,7 @@
 
 #include <cstdint>
 
-#include "modules/rtp_rtcp/source/time_util.h"
+#include "modules/rtp_rtcp/source/ntp_time_util.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/ntp_time.h"

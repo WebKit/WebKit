@@ -39,10 +39,8 @@ rtc_library("time_controller") {
     "../../rtc_base/synchronization:mutex",
     "../../rtc_base/synchronization:yield_policy",
     "../../system_wrappers",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/functional:any_invocable",
-    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
 }
 

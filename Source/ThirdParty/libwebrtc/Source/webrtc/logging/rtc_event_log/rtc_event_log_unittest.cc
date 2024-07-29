@@ -11,6 +11,8 @@
 #include "api/rtc_event_log/rtc_event_log.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <map>
 #include <memory>
@@ -22,6 +24,9 @@
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "logging/rtc_event_log/events/rtc_event_alr_state.h"
 #include "logging/rtc_event_log/events/rtc_event_audio_network_adaptation.h"
 #include "logging/rtc_event_log/events/rtc_event_audio_playout.h"
 #include "logging/rtc_event_log/events/rtc_event_audio_receive_stream_config.h"
@@ -30,12 +35,17 @@
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_loss_based.h"
 #include "logging/rtc_event_log/events/rtc_event_dtls_transport_state.h"
 #include "logging/rtc_event_log/events/rtc_event_dtls_writable_state.h"
+#include "logging/rtc_event_log/events/rtc_event_frame_decoded.h"
 #include "logging/rtc_event_log/events/rtc_event_generic_ack_received.h"
 #include "logging/rtc_event_log/events/rtc_event_generic_packet_received.h"
 #include "logging/rtc_event_log/events/rtc_event_generic_packet_sent.h"
+#include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair.h"
+#include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair_config.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_cluster_created.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_result_failure.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_result_success.h"
+#include "logging/rtc_event_log/events/rtc_event_remote_estimate.h"
+#include "logging/rtc_event_log/events/rtc_event_route_change.h"
 #include "logging/rtc_event_log/events/rtc_event_rtcp_packet_incoming.h"
 #include "logging/rtc_event_log/events/rtc_event_rtcp_packet_outgoing.h"
 #include "logging/rtc_event_log/events/rtc_event_rtp_packet_incoming.h"
@@ -44,15 +54,16 @@
 #include "logging/rtc_event_log/events/rtc_event_video_send_stream_config.h"
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "logging/rtc_event_log/rtc_event_log_unittest_helper.h"
-#include "logging/rtc_event_log/rtc_stream_config.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_dependency_descriptor_extension.h"
-#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/fake_clock.h"
 #include "rtc_base/random.h"
+#include "rtc_base/time_utils.h"
 #include "test/explicit_key_value_config.h"
 #include "test/gtest.h"
+#include "test/logging/log_writer.h"
 #include "test/logging/memory_log_writer.h"
 #include "test/testsupport/file_utils.h"
 

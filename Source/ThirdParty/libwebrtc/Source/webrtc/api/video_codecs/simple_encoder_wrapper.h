@@ -27,7 +27,7 @@ class SimpleEncoderWrapper {
  public:
   struct EncodeResult {
     bool oh_no = false;
-    rtc::scoped_refptr<EncodedImageBufferInterface> bitstream_data;
+    std::vector<uint8_t> bitstream_data;
     FrameType frame_type;
     GenericFrameInfo generic_frame_info;
     absl::optional<FrameDependencyStructure> dependency_structure;

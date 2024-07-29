@@ -170,16 +170,12 @@ namespace rtc {
 using ::webrtc::TimeDelta;
 
 bool OpenSSLAdapter::InitializeSSL() {
-  if (!SSL_library_init())
-    return false;
-#if !defined(ADDRESS_SANITIZER) || !defined(WEBRTC_MAC) || defined(WEBRTC_IOS)
-  // Loading the error strings crashes mac_asan.  Omit this debugging aid there.
-  SSL_load_error_strings();
-#endif
-  ERR_load_BIO_strings();
-  OpenSSL_add_all_algorithms();
-  RAND_poll();
-  return true;
+  // TODO: https://issues.webrtc.org/issues/339300437 - remove once
+  // BoringSSL no longer requires this after
+  // https://bugs.chromium.org/p/boringssl/issues/detail?id=35
+  // In OpenSSL it is supposed to be a no-op as of 1.1:
+  // https://www.openssl.org/docs/man1.1.1/man3/OPENSSL_init_ssl.html
+  return OPENSSL_init_ssl(0, nullptr);
 }
 
 bool OpenSSLAdapter::CleanupSSL() {

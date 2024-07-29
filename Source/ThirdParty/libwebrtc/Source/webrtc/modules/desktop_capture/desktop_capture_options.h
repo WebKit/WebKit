@@ -72,6 +72,13 @@ class RTC_EXPORT DesktopCaptureOptions {
 
   bool allow_iosurface() const { return allow_iosurface_; }
   void set_allow_iosurface(bool allow) { allow_iosurface_ = allow; }
+
+  // If this flag is set, and the system supports it, ScreenCaptureKit will be
+  // used for desktop capture.
+  // TODO: crbug.com/327458809 - Force the use of SCK and ignore this flag in
+  // new versions of macOS that remove support for the CGDisplay-based APIs.
+  bool allow_sck_capturer() const { return allow_sck_capturer_; }
+  void set_allow_sck_capturer(bool allow) { allow_sck_capturer_ = allow; }
 #endif
 
   const rtc::scoped_refptr<FullScreenWindowDetector>&
@@ -235,6 +242,7 @@ class RTC_EXPORT DesktopCaptureOptions {
 #if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
   rtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor_;
   bool allow_iosurface_ = false;
+  bool allow_sck_capturer_ = false;
 #endif
 
   rtc::scoped_refptr<FullScreenWindowDetector> full_screen_window_detector_;

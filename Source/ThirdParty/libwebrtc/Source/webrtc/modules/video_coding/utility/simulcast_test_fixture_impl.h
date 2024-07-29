@@ -78,6 +78,7 @@ class SimulcastTestFixtureImpl final : public SimulcastTestFixture {
       int num_spatial_layers);
   void SwitchingToOneStream(int width, int height);
 
+  const Environment env_;
   std::unique_ptr<VideoEncoder> encoder_;
   MockEncodedImageCallback encoder_callback_;
   std::unique_ptr<VideoDecoder> decoder_;

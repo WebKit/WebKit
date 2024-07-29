@@ -25,7 +25,7 @@
 #include "p2p/base/async_stun_tcp_socket.h"
 #include "rtc_base/byte_buffer.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/helpers.h"
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/message_digest.h"
 #include "rtc_base/socket_adapters.h"
@@ -41,9 +41,6 @@ constexpr TimeDelta kNonceTimeout = TimeDelta::Minutes(60);
 constexpr TimeDelta kDefaultAllocationTimeout = TimeDelta::Minutes(10);
 constexpr TimeDelta kPermissionTimeout = TimeDelta::Minutes(5);
 constexpr TimeDelta kChannelTimeout = TimeDelta::Minutes(10);
-
-constexpr int kMinChannelNumber = 0x4000;
-constexpr int kMaxChannelNumber = 0x7FFF;
 
 constexpr size_t kNonceKeySize = 16;
 constexpr size_t kNonceSize = 48;
@@ -721,7 +718,8 @@ void TurnServerAllocation::HandleChannelBindRequest(const TurnMessage* msg) {
 
   // Check that channel id is valid.
   int channel_id = channel_attr->value() >> 16;
-  if (channel_id < kMinChannelNumber || channel_id > kMaxChannelNumber) {
+  if (channel_id < kMinTurnChannelNumber ||
+      channel_id > kMaxTurnChannelNumber) {
     SendBadRequestResponse(msg);
     return;
   }

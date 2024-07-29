@@ -29,7 +29,7 @@ namespace webrtc {
 // AudioChannel represents a single media session and provides APIs over
 // AudioIngress and AudioEgress. Note that a single RTP stack is shared with
 // these two classes as it has both sending and receiving capabilities.
-class AudioChannel : public rtc::RefCountInterface {
+class AudioChannel : public RefCountInterface {
  public:
   AudioChannel(Transport* transport,
                uint32_t local_ssrc,

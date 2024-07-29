@@ -69,7 +69,7 @@ private:
     void UnregisterTransformedFrameCallback() final;
     void UnregisterTransformedFrameSinkCallback(uint32_t ssrc) final;
     void AddRef() const final { ref(); }
-    rtc::RefCountReleaseStatus Release() const final;
+    webrtc::RefCountReleaseStatus Release() const final;
 
     MediaType m_mediaType;
     Side m_side;
@@ -87,10 +87,10 @@ inline LibWebRTCRtpTransformBackend::LibWebRTCRtpTransformBackend(MediaType medi
 {
 }
 
-inline rtc::RefCountReleaseStatus LibWebRTCRtpTransformBackend::Release() const
+inline webrtc::RefCountReleaseStatus LibWebRTCRtpTransformBackend::Release() const
 {
     deref();
-    return rtc::RefCountReleaseStatus::kOtherRefsRemained;
+    return webrtc::RefCountReleaseStatus::kOtherRefsRemained;
 }
 
 } // namespace WebCore

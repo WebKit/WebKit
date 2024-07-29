@@ -10,6 +10,10 @@
 
 #include "logging/rtc_event_log/events/rtc_event_generic_packet_received.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+
 #include "absl/memory/memory.h"
 
 namespace webrtc {

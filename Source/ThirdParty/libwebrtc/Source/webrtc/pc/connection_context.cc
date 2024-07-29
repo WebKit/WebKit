@@ -18,7 +18,7 @@
 #include "media/base/media_engine.h"
 #include "media/sctp/sctp_transport_factory.h"
 #include "pc/media_factory.h"
-#include "rtc_base/helpers.h"
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/internal/default_socket_server.h"
 #include "rtc_base/socket_server.h"
 #include "rtc_base/time_utils.h"

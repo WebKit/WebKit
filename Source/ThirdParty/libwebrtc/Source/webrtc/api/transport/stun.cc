@@ -21,7 +21,7 @@
 #include "rtc_base/byte_order.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/crc32.h"
-#include "rtc_base/helpers.h"
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/message_digest.h"
 #include "system_wrappers/include/metrics.h"

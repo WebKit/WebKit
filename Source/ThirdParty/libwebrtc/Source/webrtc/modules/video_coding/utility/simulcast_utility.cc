@@ -75,7 +75,18 @@ bool SimulcastUtility::ValidSimulcastParameters(const VideoCodec& codec,
 
 bool SimulcastUtility::IsConferenceModeScreenshare(const VideoCodec& codec) {
   return codec.mode == VideoCodecMode::kScreensharing &&
-         codec.legacy_conference_mode;
+         codec.legacy_conference_mode &&
+         (codec.codecType == kVideoCodecVP8 ||
+          codec.codecType == kVideoCodecH264);
+}
+
+bool SimulcastUtility::IsConferenceModeScreenshare(
+    const VideoEncoderConfig& encoder_config) {
+  return encoder_config.content_type ==
+             VideoEncoderConfig::ContentType::kScreen &&
+         encoder_config.legacy_conference_mode &&
+         (encoder_config.codec_type == webrtc::VideoCodecType::kVideoCodecVP8 ||
+          encoder_config.codec_type == webrtc::VideoCodecType::kVideoCodecH264);
 }
 
 int SimulcastUtility::NumberOfTemporalLayers(const VideoCodec& codec,

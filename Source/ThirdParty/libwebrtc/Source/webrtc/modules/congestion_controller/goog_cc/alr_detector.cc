@@ -14,11 +14,13 @@
 #include <cstdio>
 #include <memory>
 
-#include "api/rtc_event_log/rtc_event.h"
+#include "absl/types/optional.h"
+#include "api/field_trials_view.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "logging/rtc_event_log/events/rtc_event_alr_state.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/numerics/safe_conversions.h"
+#include "rtc_base/experiments/alr_experiment.h"
+#include "rtc_base/experiments/struct_parameters_parser.h"
 #include "rtc_base/time_utils.h"
 
 namespace webrtc {

@@ -25,7 +25,7 @@
 #include "absl/types/optional.h"
 #include "api/field_trials_view.h"
 #include "api/network_state_predictor.h"
-#include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
+#include "api/transport/bandwidth_usage.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/struct_parameters_parser.h"
 #include "rtc_base/logging.h"
@@ -210,12 +210,8 @@ void TrendlineEstimator::UpdateTrendline(double recv_delta_ms,
 
   // Exponential backoff filter.
   accumulated_delay_ += delta_ms;
-  BWE_TEST_LOGGING_PLOT(1, "accumulated_delay_ms", arrival_time_ms,
-                        accumulated_delay_);
   smoothed_delay_ = smoothing_coef_ * smoothed_delay_ +
                     (1 - smoothing_coef_) * accumulated_delay_;
-  BWE_TEST_LOGGING_PLOT(1, "smoothed_delay_ms", arrival_time_ms,
-                        smoothed_delay_);
 
   // Maintain packet window
   delay_hist_.emplace_back(
@@ -250,7 +246,6 @@ void TrendlineEstimator::UpdateTrendline(double recv_delta_ms,
       }
     }
   }
-  BWE_TEST_LOGGING_PLOT(1, "trendline_slope", arrival_time_ms, trend);
 
   Detect(trend, send_delta_ms, arrival_time_ms);
 }
@@ -283,8 +278,6 @@ void TrendlineEstimator::Detect(double trend, double ts_delta, int64_t now_ms) {
   const double modified_trend =
       std::min(num_of_deltas_, kMinNumDeltas) * trend * threshold_gain_;
   prev_modified_trend_ = modified_trend;
-  BWE_TEST_LOGGING_PLOT(1, "T", now_ms, modified_trend);
-  BWE_TEST_LOGGING_PLOT(1, "threshold", now_ms, threshold_);
   if (modified_trend > threshold_) {
     if (time_over_using_ == -1) {
       // Initialize the timer. Assume that we've been

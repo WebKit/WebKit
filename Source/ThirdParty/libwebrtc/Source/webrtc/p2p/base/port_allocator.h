@@ -27,7 +27,6 @@
 #include "p2p/base/port_interface.h"
 #include "p2p/base/transport_description.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/helpers.h"
 #include "rtc_base/network.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/ssl_certificate.h"

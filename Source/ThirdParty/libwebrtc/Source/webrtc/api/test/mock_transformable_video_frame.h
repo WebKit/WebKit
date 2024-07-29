@@ -22,6 +22,7 @@ namespace webrtc {
 class MockTransformableVideoFrame
     : public webrtc::TransformableVideoFrameInterface {
  public:
+  MockTransformableVideoFrame() : TransformableVideoFrameInterface(Passkey()) {}
   MOCK_METHOD(rtc::ArrayView<const uint8_t>, GetData, (), (const, override));
   MOCK_METHOD(void, SetData, (rtc::ArrayView<const uint8_t> data), (override));
   MOCK_METHOD(uint32_t, GetTimestamp, (), (const, override));

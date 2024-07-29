@@ -1803,6 +1803,10 @@ VideoEncoder::EncoderInfo LibvpxVp9Encoder::GetEncoderInfo() const {
       info.preferred_pixel_formats = {VideoFrameBuffer::Type::kI420,
                                       VideoFrameBuffer::Type::kNV12};
     }
+
+    if (codec_.mode == VideoCodecMode::kScreensharing) {
+      info.min_qp = variable_framerate_screenshare::kMinQP;
+    }
   }
   if (!encoder_info_override_.resolution_bitrate_limits().empty()) {
     info.resolution_bitrate_limits =

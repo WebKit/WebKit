@@ -11,15 +11,28 @@
 
 #include <math.h>
 
+#include <deque>
+#include <memory>
+#include <string>
 #include <utility>
 
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
+#include "api/rtc_event_log_output.h"
+#include "api/transport/goog_cc_factory.h"
+#include "api/transport/network_control.h"
+#include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/congestion_controller/goog_cc/alr_detector.h"
 #include "modules/congestion_controller/goog_cc/delay_based_bwe.h"
+#include "modules/congestion_controller/goog_cc/goog_cc_network_control.h"
 #include "modules/congestion_controller/goog_cc/trendline_estimator.h"
 #include "modules/remote_bitrate_estimator/aimd_rate_control.h"
 #include "rtc_base/checks.h"
+#include "test/logging/log_writer.h"
 
 namespace webrtc {
 namespace {

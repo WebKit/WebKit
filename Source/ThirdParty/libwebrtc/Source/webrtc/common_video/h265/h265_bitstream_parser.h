@@ -40,8 +40,7 @@ class RTC_EXPORT H265BitstreamParser : public BitstreamParser {
   absl::optional<uint32_t> GetLastSlicePpsId() const;
 
   static absl::optional<uint32_t> ParsePpsIdFromSliceSegmentLayerRbsp(
-      const uint8_t* data,
-      size_t length,
+      rtc::ArrayView<const uint8_t> data,
       uint8_t nalu_type);
 
  protected:
@@ -50,9 +49,8 @@ class RTC_EXPORT H265BitstreamParser : public BitstreamParser {
     kInvalidStream,
     kUnsupportedStream,
   };
-  void ParseSlice(const uint8_t* slice, size_t length);
-  Result ParseNonParameterSetNalu(const uint8_t* source,
-                                  size_t source_length,
+  void ParseSlice(rtc::ArrayView<const uint8_t> slice);
+  Result ParseNonParameterSetNalu(rtc::ArrayView<const uint8_t> source,
                                   uint8_t nalu_type);
 
   const H265PpsParser::PpsState* GetPPS(uint32_t id) const;

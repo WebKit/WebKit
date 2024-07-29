@@ -25,132 +25,133 @@ from tools.mb import mb
 
 
 def _GetExecutable(target, platform):
-  executable_prefix = '.\\' if platform == 'win32' else './'
-  executable_suffix = '.exe' if platform == 'win32' else ''
-  return executable_prefix + target + executable_suffix
+    executable_prefix = '.\\' if platform == 'win32' else './'
+    executable_suffix = '.exe' if platform == 'win32' else ''
+    return executable_prefix + target + executable_suffix
 
 
 def main(args):
-  mbw = WebRTCMetaBuildWrapper()
-  return mbw.Main(args)
+    mbw = WebRTCMetaBuildWrapper()
+    return mbw.Main(args)
 
 
 class WebRTCMetaBuildWrapper(mb.MetaBuildWrapper):
-  def __init__(self):
-    super().__init__()
-    # Make sure default_config and default_isolate_map are attributes of the
-    # parent class before changing their values.
-    # pylint: disable=access-member-before-definition
-    assert self.default_config
-    assert self.default_isolate_map
-    self.default_config = os.path.join(_SCRIPT_DIR, 'mb_config.pyl')
-    self.default_isolate_map = os.path.join(_SRC_DIR, 'infra', 'specs',
-                                            'gn_isolate_map.pyl')
 
-  def GetSwarmingCommand(self, target, vals):
-    isolate_map = self.ReadIsolateMap()
-    test_type = isolate_map[target]['type']
+    def __init__(self):
+        super().__init__()
+        # Make sure default_config and default_isolate_map are attributes of the
+        # parent class before changing their values.
+        # pylint: disable=access-member-before-definition
+        assert self.default_config
+        assert self.default_isolate_map
+        self.default_config = os.path.join(_SCRIPT_DIR, 'mb_config.pyl')
+        self.default_isolate_map = os.path.join(_SRC_DIR, 'infra', 'specs',
+                                                'gn_isolate_map.pyl')
 
-    is_android = 'target_os="android"' in vals['gn_args']
-    is_fuchsia = 'target_os="fuchsia"' in vals['gn_args']
-    is_ios = 'target_os="ios"' in vals['gn_args']
-    is_linux = self.platform.startswith('linux') and not is_android
-    is_win = self.platform.startswith('win')
+    def GetSwarmingCommand(self, target, vals):
+        isolate_map = self.ReadIsolateMap()
+        test_type = isolate_map[target]['type']
 
-    if test_type == 'nontest':
-      self.WriteFailureAndRaise('We should not be isolating %s.' % target,
-                                output_path=None)
-    if test_type not in ('console_test_launcher', 'windowed_test_launcher',
-                         'non_parallel_console_test_launcher', 'raw',
-                         'additional_compile_target', 'junit_test', 'script'):
-      self.WriteFailureAndRaise('No command line for '
-                                '%s found (test type %s).' %
-                                (target, test_type),
-                                output_path=None)
+        is_android = 'target_os="android"' in vals['gn_args']
+        is_fuchsia = 'target_os="fuchsia"' in vals['gn_args']
+        is_ios = 'target_os="ios"' in vals['gn_args']
+        is_linux = self.platform.startswith('linux') and not is_android
+        is_win = self.platform.startswith('win')
 
-    cmdline = []
-    extra_files = [
-        '../../.vpython3',
-        '../../testing/test_env.py',
-    ]
-    vpython_exe = 'vpython3'
+        if test_type == 'nontest':
+            self.WriteFailureAndRaise('We should not be isolating %s.' %
+                                      target,
+                                      output_path=None)
+        if test_type not in ('console_test_launcher', 'windowed_test_launcher',
+                             'non_parallel_console_test_launcher', 'raw',
+                             'additional_compile_target', 'junit_test',
+                             'script'):
+            self.WriteFailureAndRaise('No command line for '
+                                      '%s found (test type %s).' %
+                                      (target, test_type),
+                                      output_path=None)
 
-    if isolate_map[target].get('script'):
-      cmdline += [
-          vpython_exe,
-          '../../' + self.ToSrcRelPath(isolate_map[target]['script'])
-      ]
-    elif is_android:
-      cmdline += [
-          'luci-auth', 'context', '--', vpython_exe,
-          '../../build/android/test_wrapper/logdog_wrapper.py', '--target',
-          target, '--logdog-bin-cmd',
-          '../../.task_template_packages/logdog_butler', '--logcat-output-file',
-          '${ISOLATED_OUTDIR}/logcats', '--store-tombstones'
-      ]
-    elif is_ios or is_fuchsia or test_type == 'raw':
-      if is_win:
-        cmdline += ['bin\\run_{}.bat'.format(target)]
-      else:
-        cmdline += ['bin/run_{}'.format(target)]
-    else:
-      if isolate_map[target].get('use_webcam', False):
-        cmdline += [
-            vpython_exe, '../../tools_webrtc/ensure_webcam_is_running.py'
+        cmdline = []
+        extra_files = [
+            '../../.vpython3',
+            '../../testing/test_env.py',
         ]
-        extra_files.append('../../tools_webrtc/ensure_webcam_is_running.py')
-      if isolate_map[target].get('use_pipewire', False):
-        cmdline += [vpython_exe, '../../tools_webrtc/configure_pipewire.py']
-        extra_files.append('../../tools_webrtc/configure_pipewire.py')
+        vpython_exe = 'vpython3'
 
-      # is_linux uses use_ozone and x11 by default.
-      use_x11 = is_linux
+        if isolate_map[target].get('script'):
+            cmdline += [
+                vpython_exe,
+                '../../' + self.ToSrcRelPath(isolate_map[target]['script'])
+            ]
+        elif is_android:
+            cmdline += [
+                'luci-auth', 'context', '--', vpython_exe,
+                '../../build/android/test_wrapper/logdog_wrapper.py',
+                '--target', target, '--logdog-bin-cmd',
+                '../../.task_template_packages/logdog_butler',
+                '--logcat-output-file', '${ISOLATED_OUTDIR}/logcats',
+                '--store-tombstones'
+            ]
+        elif is_ios or is_fuchsia or test_type == 'raw':
+            if is_win:
+                cmdline += ['bin\\run_{}.bat'.format(target)]
+            else:
+                cmdline += ['bin/run_{}'.format(target)]
+        else:
+            if isolate_map[target].get('use_pipewire', False):
+                cmdline += [
+                    vpython_exe, '../../tools_webrtc/configure_pipewire.py'
+                ]
+                extra_files.append('../../tools_webrtc/configure_pipewire.py')
 
-      xvfb = use_x11 and test_type == 'windowed_test_launcher'
-      if xvfb:
-        cmdline += [vpython_exe, '../../testing/xvfb.py']
-        extra_files.append('../../testing/xvfb.py')
-      else:
-        cmdline += [vpython_exe, '../../testing/test_env.py']
+            # is_linux uses use_ozone and x11 by default.
+            use_x11 = is_linux
 
-      extra_files += [
-          '../../third_party/gtest-parallel/gtest-parallel',
-          '../../third_party/gtest-parallel/gtest_parallel.py',
-          '../../tools_webrtc/gtest-parallel-wrapper.py',
-      ]
-      output_dir = '${ISOLATED_OUTDIR}/test_logs'
-      cmdline += [
-          '../../tools_webrtc/gtest-parallel-wrapper.py',
-          '--output_dir=%s' % output_dir,
-          '--gtest_color=no',
-      ]
-      if test_type == 'non_parallel_console_test_launcher':
-        # Still use the gtest-parallel-wrapper.py script since we
-        # need it to run tests on swarming, but don't execute tests
-        # in parallel.
-        cmdline.append('--workers=1')
+            xvfb = use_x11 and test_type == 'windowed_test_launcher'
+            if xvfb:
+                cmdline += [vpython_exe, '../../testing/xvfb.py']
+                extra_files.append('../../testing/xvfb.py')
+            else:
+                cmdline += [vpython_exe, '../../testing/test_env.py']
 
-      asan = 'is_asan=true' in vals['gn_args']
-      lsan = 'is_lsan=true' in vals['gn_args']
-      msan = 'is_msan=true' in vals['gn_args']
-      tsan = 'is_tsan=true' in vals['gn_args']
-      sanitizer = asan or lsan or msan or tsan
-      if not sanitizer:
-        # Retry would hide most sanitizers detections.
-        cmdline.append('--retry_failed=3')
+            extra_files += [
+                '../../third_party/gtest-parallel/gtest-parallel',
+                '../../third_party/gtest-parallel/gtest_parallel.py',
+                '../../tools_webrtc/gtest-parallel-wrapper.py',
+            ]
+            output_dir = '${ISOLATED_OUTDIR}/test_logs'
+            cmdline += [
+                '../../tools_webrtc/gtest-parallel-wrapper.py',
+                '--output_dir=%s' % output_dir,
+                '--gtest_color=no',
+            ]
+            if test_type == 'non_parallel_console_test_launcher':
+                # Still use the gtest-parallel-wrapper.py script since we
+                # need it to run tests on swarming, but don't execute tests
+                # in parallel.
+                cmdline.append('--workers=1')
 
-      cmdline.append(_GetExecutable(target, self.platform))
+            asan = 'is_asan=true' in vals['gn_args']
+            lsan = 'is_lsan=true' in vals['gn_args']
+            msan = 'is_msan=true' in vals['gn_args']
+            tsan = 'is_tsan=true' in vals['gn_args']
+            sanitizer = asan or lsan or msan or tsan
+            if not sanitizer:
+                # Retry would hide most sanitizers detections.
+                cmdline.append('--retry_failed=3')
 
-      cmdline.extend([
-          '--asan=%d' % asan,
-          '--lsan=%d' % lsan,
-          '--msan=%d' % msan,
-          '--tsan=%d' % tsan,
-      ])
+            cmdline.append(_GetExecutable(target, self.platform))
 
-    cmdline += isolate_map[target].get('args', [])
+            cmdline.extend([
+                '--asan=%d' % asan,
+                '--lsan=%d' % lsan,
+                '--msan=%d' % msan,
+                '--tsan=%d' % tsan,
+            ])
 
-    return cmdline, extra_files
+        cmdline += isolate_map[target].get('args', [])
+
+        return cmdline, extra_files
 
 if __name__ == '__main__':
-  sys.exit(main(sys.argv[1:]))
+    sys.exit(main(sys.argv[1:]))

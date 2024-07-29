@@ -16,7 +16,6 @@
 #include <numeric>
 #include <tuple>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/agc2/agc2_testing_common.h"
 #include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/test/audio_buffer_tools.h"
@@ -596,9 +595,7 @@ TEST(GainController2,
     agc2_reference.Process(absl::nullopt, /*input_volume_changed=*/false,
                            &audio_buffer_reference);
     test::CopyVectorToAudioBuffer(stream_config, frame, &audio_buffer);
-    float speech_probability = vad.Analyze(AudioFrameView<const float>(
-        audio_buffer.channels(), audio_buffer.num_channels(),
-        audio_buffer.num_frames()));
+    float speech_probability = vad.Analyze(audio_buffer.view());
     agc2.Process(speech_probability, /*input_volume_changed=*/false,
                  &audio_buffer);
     // Check the output buffer.

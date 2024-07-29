@@ -20,6 +20,7 @@
 #include "api/test/simulated_network.h"
 #include "api/test/video_quality_test_fixture.h"
 #include "api/transport/bitrate_settings.h"
+#include "api/units/data_rate.h"
 #include "api/video_codecs/video_codec.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -140,8 +141,11 @@ ABSL_FLAG(int,
           link_capacity,
           0,
           "Capacity (kbps) of the fake link. 0 means infinite.");
-int LinkCapacityKbps() {
-  return absl::GetFlag(FLAGS_link_capacity);
+webrtc::DataRate LinkCapacity() {
+  int link_capacity_kbps = absl::GetFlag(FLAGS_link_capacity);
+  return link_capacity_kbps == 0
+             ? webrtc::DataRate::Infinity()
+             : webrtc::DataRate::KilobitsPerSec(link_capacity_kbps);
 }
 
 ABSL_FLAG(int, queue_size, 0, "Size of the bottleneck link queue in packets.");
@@ -313,7 +317,7 @@ std::vector<std::string> Slides() {
 void Loopback() {
   BuiltInNetworkBehaviorConfig pipe_config;
   pipe_config.loss_percent = LossPercent();
-  pipe_config.link_capacity_kbps = LinkCapacityKbps();
+  pipe_config.link_capacity = LinkCapacity();
   pipe_config.queue_length_packets = QueueSize();
   pipe_config.queue_delay_ms = AvgPropagationDelayMs();
   pipe_config.delay_standard_deviation_ms = StdPropagationDelayMs();

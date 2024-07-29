@@ -264,9 +264,9 @@
     'ios_simulator_tests_matrix': {
       'ios_simulator_tests': {
         'variants': [
-          'SIM_IPHONE_X_15_5',
           'SIM_IPHONE_X_16_4',
           'SIM_IPHONE_14_17_4',
+          'SIM_IPHONE_15_18_0',
         ],
       },
     },

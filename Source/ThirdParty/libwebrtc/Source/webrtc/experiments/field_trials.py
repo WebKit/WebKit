@@ -59,9 +59,15 @@ ACTIVE_FIELD_TRIALS: FrozenSet[FieldTrial] = frozenset([
     FieldTrial('WebRTC-Av1-GetEncoderInfoOverride',
                42225234,
                date(2024, 4, 1)),
+    FieldTrial('WebRTC-BitrateAdjusterUseNewfangledHeadroomAdjustment',
+               349561566,
+               date(2025, 8, 26)),
     FieldTrial('WebRTC-Bwe-LimitPacingFactorByUpperLinkCapacityEstimate',
                42220543,
                date(2025, 1, 1)),
+    FieldTrial('WebRTC-Bwe-ResetOnAdapterIdChange',
+               42225231,
+               date(2025, 5, 30)),
     FieldTrial('WebRTC-DataChannelMessageInterleaving',
                41481008,
                date(2024, 10, 1)),
@@ -86,9 +92,9 @@ ACTIVE_FIELD_TRIALS: FrozenSet[FieldTrial] = frozenset([
     FieldTrial('WebRTC-JitterEstimatorConfig',
                42224404,
                date(2024, 4, 1)),
-    FieldTrial('WebRTC-LibaomAv1Encoder-MaxConsecFrameDrop',
-               42226184,
-               date(2024, 4, 1)),
+    FieldTrial('WebRTC-LibaomAv1Encoder-AdaptiveMaxConsecDrops',
+               351644568,
+               date(2025, 7, 1)),
     FieldTrial('WebRTC-LibvpxVp9Encoder-SvcFrameDropConfig',
                42226190,
                date(2024, 9, 1)),
@@ -101,12 +107,18 @@ ACTIVE_FIELD_TRIALS: FrozenSet[FieldTrial] = frozenset([
     FieldTrial('WebRTC-Pacer-KeyframeFlushing',
                42221435,
                date(2024, 4, 1)),
-    FieldTrial('WebRTC-PaddingMode-RecentLargePacket',
-               42225520,
-               date(2024, 4, 1)),
     FieldTrial('WebRTC-PermuteTlsClientHello',
                42225803,
                date(2024, 7, 1)),
+    FieldTrial('WebRTC-QCM-Dynamic-AV1',
+               349860657,
+               date(2025, 7, 1)),
+    FieldTrial('WebRTC-QCM-Dynamic-VP8',
+               349860657,
+               date(2025, 7, 1)),
+    FieldTrial('WebRTC-QCM-Dynamic-VP9',
+               349860657,
+               date(2025, 7, 1)),
     FieldTrial('WebRTC-ReceiveBufferSize',
                42225927,
                date(2024, 4, 1)),
@@ -155,6 +167,9 @@ ACTIVE_FIELD_TRIALS: FrozenSet[FieldTrial] = frozenset([
     FieldTrial('WebRTC-Video-H26xPacketBuffer',
                41480904,
                date(2024, 6, 1)),
+    FieldTrial('WebRTC-Video-Vp9FlexibleMode',
+               329396373,
+               date(2025, 6, 26)),
     # keep-sorted end
 ])  # yapf: disable
 
@@ -478,9 +493,6 @@ POLICY_EXEMPT_FIELD_TRIALS: FrozenSet[FieldTrial] = frozenset([
     FieldTrial('WebRTC-AudioDevicePlayoutBufferSizeFactor',
                42221006,
                date(2024, 4, 1)),
-    FieldTrial('WebRTC-AutomaticAnimationDetectionScreenshare',
-               42221141,
-               date(2024, 4, 1)),
     FieldTrial('WebRTC-BindUsingInterfaceName',
                42220770,
                date(2024, 4, 1)),
@@ -793,9 +805,6 @@ POLICY_EXEMPT_FIELD_TRIALS: FrozenSet[FieldTrial] = frozenset([
     FieldTrial('WebRTC-VP8-Postproc-Config-Arm',
                42231704,
                INDEFINITE),
-    FieldTrial('WebRTC-VP8ConferenceTemporalLayers',
-               42234443,
-               INDEFINITE),
     FieldTrial('WebRTC-VP8IosMaxNumberOfThread',
                42220027,
                date(2024, 4, 1)),
@@ -875,7 +884,7 @@ POLICY_EXEMPT_FIELD_TRIALS: FrozenSet[FieldTrial] = frozenset([
 ])  # yapf: disable
 
 POLICY_EXEMPT_FIELD_TRIALS_DIGEST: str = \
-    'b0b0cce63bfdf327229b569576a07b716db186b7'
+    'ad853beba9dddb16d9f45164a8d69b5d01e7d1c9'
 
 REGISTERED_FIELD_TRIALS: FrozenSet[FieldTrial] = ACTIVE_FIELD_TRIALS.union(
     POLICY_EXEMPT_FIELD_TRIALS)

@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "api/call/transport.h"
+#include "api/sequence_checker.h"
 #include "api/units/timestamp.h"
 #include "call/call.h"
 #include "rtc_base/copy_on_write_buffer.h"
@@ -53,6 +54,8 @@ class NetworkNodeTransport : public Transport {
   NetworkNodeTransport(Clock* sender_clock, Call* sender_call);
   ~NetworkNodeTransport() override;
 
+  void UpdateAdapterId(int adapter_id);
+
   bool SendRtp(rtc::ArrayView<const uint8_t> packet,
                const PacketOptions& options) override;
   bool SendRtcp(rtc::ArrayView<const uint8_t> packet) override;
@@ -68,6 +71,9 @@ class NetworkNodeTransport : public Transport {
   }
 
  private:
+  SequenceChecker sequence_checker_;
+  int adapter_id_ RTC_GUARDED_BY(sequence_checker_) = 0;
+
   Mutex mutex_;
   Clock* const sender_clock_;
   Call* const sender_call_;

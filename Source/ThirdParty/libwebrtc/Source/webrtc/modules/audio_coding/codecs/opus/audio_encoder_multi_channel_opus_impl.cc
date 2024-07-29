@@ -20,15 +20,17 @@
 #include "modules/audio_coding/codecs/opus/audio_encoder_multi_channel_opus_impl.h"
 
 #include <algorithm>
+#include <iterator>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include "absl/strings/match.h"
+#include "api/audio_codecs/opus/audio_encoder_opus_config.h"
 #include "modules/audio_coding/codecs/opus/audio_coder_opus_common.h"
-#include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/string_to_number.h"
 
 namespace webrtc {

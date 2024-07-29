@@ -29,6 +29,8 @@
 #include "api/units/time_delta.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
+#include "api/video_codecs/builtin_video_decoder_factory.h"
+#include "api/video_codecs/builtin_video_encoder_factory.h"
 #include "api/video_codecs/scalability_mode.h"
 #include "api/video_codecs/video_decoder.h"
 #include "api/video_codecs/video_encoder.h"
@@ -185,9 +187,11 @@ class VideoCodecTesterTest : public ::testing::Test {
   std::unique_ptr<VideoCodecStats> RunEncodeDecodeTest(
       std::string codec_type,
       ScalabilityMode scalability_mode,
-      std::vector<std::vector<Frame>> encoded_frames) {
+      std::vector<std::vector<Frame>> encoded_frames,
+      absl::optional<int> num_source_frames = absl::nullopt) {
     int num_frames = encoded_frames.size();
-    std::string yuv_path = CreateYuvFile(kWidth, kHeight, num_frames);
+    std::string yuv_path =
+        CreateYuvFile(kWidth, kHeight, num_source_frames.value_or(num_frames));
     VideoSourceSettings video_source_settings{
         .file_path = yuv_path,
         .resolution = {.width = kWidth, .height = kHeight},
@@ -486,6 +490,33 @@ TEST_F(VideoCodecTesterTest, Psnr) {
   EXPECT_NEAR(slice[1].psnr->v, 34, 1);
 }
 
+TEST_F(VideoCodecTesterTest, ReversePlayback) {
+  std::unique_ptr<VideoCodecStats> stats = RunEncodeDecodeTest(
+      "VP8", ScalabilityMode::kL1T1,
+      {{{.timestamp_rtp = 0, .frame_size = DataSize::Bytes(1)}},
+       {{.timestamp_rtp = 1, .frame_size = DataSize::Bytes(1)}},
+       {{.timestamp_rtp = 2, .frame_size = DataSize::Bytes(1)}},
+       {{.timestamp_rtp = 3, .frame_size = DataSize::Bytes(1)}},
+       {{.timestamp_rtp = 4, .frame_size = DataSize::Bytes(1)}},
+       {{.timestamp_rtp = 5, .frame_size = DataSize::Bytes(1)}}},
+      /*num_source_frames=*/3);
+
+  std::vector<Frame> slice = stats->Slice(Filter{}, /*merge=*/false);
+  ASSERT_THAT(slice, SizeIs(6));
+  ASSERT_TRUE(slice[0].psnr.has_value());
+  ASSERT_TRUE(slice[1].psnr.has_value());
+  ASSERT_TRUE(slice[2].psnr.has_value());
+  ASSERT_TRUE(slice[3].psnr.has_value());
+  ASSERT_TRUE(slice[4].psnr.has_value());
+  ASSERT_TRUE(slice[5].psnr.has_value());
+  EXPECT_NEAR(slice[0].psnr->y, 48, 1);
+  EXPECT_NEAR(slice[1].psnr->y, 42, 1);
+  EXPECT_NEAR(slice[2].psnr->y, 34, 1);
+  EXPECT_NEAR(slice[3].psnr->y, 42, 1);
+  EXPECT_NEAR(slice[4].psnr->y, 48, 1);
+  EXPECT_NEAR(slice[5].psnr->y, 42, 1);
+}
+
 struct ScalabilityTestParameters {
   std::string codec_type;
   ScalabilityMode scalability_mode;
@@ -620,7 +651,7 @@ TEST_P(VideoCodecTesterTestPacing, PaceEncode) {
   }));
 
   EncodingSettings encoding_settings = VideoCodecTester::CreateEncodingSettings(
-      "VP8", "L1T1", kSourceWidth, kSourceHeight, {kBitrate}, kFramerate);
+      env, "VP8", "L1T1", kSourceWidth, kSourceHeight, {kBitrate}, kFramerate);
   std::map<uint32_t, EncodingSettings> frame_settings =
       VideoCodecTester::CreateFrameSettings(encoding_settings, kNumFrames);
 
@@ -687,7 +718,8 @@ class VideoCodecTesterTestEncodingSettings
 TEST_P(VideoCodecTesterTestEncodingSettings, CreateEncodingSettings) {
   EncodingSettingsTestParameters test_params = GetParam();
   EncodingSettings encoding_settings = VideoCodecTester::CreateEncodingSettings(
-      test_params.codec_type, test_params.scalability_mode, /*width=*/1280,
+      CreateEnvironment(), test_params.codec_type, test_params.scalability_mode,
+      /*width=*/1280,
       /*height=*/720, test_params.bitrate, kFramerate);
   const std::map<LayerId, LayerSettings>& layers_settings =
       encoding_settings.layers_settings;
@@ -869,6 +901,41 @@ INSTANTIATE_TEST_SUITE_P(
                 DataRate::KilobitsPerSec(500), DataRate::KilobitsPerSec(600),
                 DataRate::KilobitsPerSec(700), DataRate::KilobitsPerSec(800),
                 DataRate::KilobitsPerSec(900)}}));
+
+// TODO(webrtc:42225151): Add an IVF test stream and enable the test.
+TEST(VideoCodecTester, DISABLED_CompressedVideoSource) {
+  const Environment env = CreateEnvironment();
+  std::unique_ptr<VideoEncoderFactory> encoder_factory =
+      CreateBuiltinVideoEncoderFactory();
+  std::unique_ptr<VideoDecoderFactory> decoder_factory =
+      CreateBuiltinVideoDecoderFactory();
+
+  VideoSourceSettings source_settings{
+      .file_path = ".ivf",
+      .resolution = {.width = 320, .height = 180},
+      .framerate = Frequency::Hertz(30)};
+
+  EncodingSettings encoding_settings = VideoCodecTester::CreateEncodingSettings(
+      env, "AV1", "L1T1", 320, 180, {DataRate::KilobitsPerSec(128)},
+      Frequency::Hertz(30));
+
+  std::map<uint32_t, EncodingSettings> frame_settings =
+      VideoCodecTester::CreateFrameSettings(encoding_settings, 3);
+
+  std::unique_ptr<VideoCodecStats> stats =
+      VideoCodecTester::RunEncodeDecodeTest(
+          env, source_settings, encoder_factory.get(), decoder_factory.get(),
+          EncoderSettings{}, DecoderSettings{}, frame_settings);
+
+  std::vector<Frame> slice = stats->Slice(Filter{}, /*merge=*/false);
+  ASSERT_THAT(slice, SizeIs(3));
+  ASSERT_TRUE(slice[0].psnr.has_value());
+  ASSERT_TRUE(slice[1].psnr.has_value());
+  ASSERT_TRUE(slice[2].psnr.has_value());
+  EXPECT_NEAR(slice[0].psnr->y, 42, 1);
+  EXPECT_NEAR(slice[1].psnr->y, 38, 1);
+  EXPECT_NEAR(slice[1].psnr->v, 38, 1);
+}
 
 }  // namespace test
 }  // namespace webrtc

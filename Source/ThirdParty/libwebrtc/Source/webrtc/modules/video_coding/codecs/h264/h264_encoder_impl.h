@@ -113,6 +113,7 @@ class H264EncoderImpl : public VideoEncoder {
   absl::InlinedVector<absl::optional<ScalabilityMode>, kMaxSimulcastStreams>
       scalability_modes_;
 
+  const Environment env_;
   VideoCodec codec_;
   H264PacketizationMode packetization_mode_;
   size_t max_payload_size_;

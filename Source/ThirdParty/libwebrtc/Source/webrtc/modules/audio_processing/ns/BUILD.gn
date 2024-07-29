@@ -64,7 +64,6 @@ rtc_static_library("ns") {
     "../../../system_wrappers:metrics",
     "../utility:cascaded_biquad_filter",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 if (rtc_include_tests) {
@@ -89,7 +88,6 @@ if (rtc_include_tests) {
       "../../../test:test_support",
       "../utility:cascaded_biquad_filter",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 
     defines = []
 

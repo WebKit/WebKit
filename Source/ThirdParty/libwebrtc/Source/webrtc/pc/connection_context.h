@@ -44,8 +44,7 @@ namespace webrtc {
 // interferes with the operation of other PeerConnections.
 //
 // This class must be created and destroyed on the signaling thread.
-class ConnectionContext final
-    : public rtc::RefCountedNonVirtual<ConnectionContext> {
+class ConnectionContext final : public RefCountedNonVirtual<ConnectionContext> {
  public:
   // Creates a ConnectionContext. May return null if initialization fails.
   // The Dependencies class allows simple management of all new dependencies
@@ -106,7 +105,7 @@ class ConnectionContext final
   ConnectionContext(const Environment& env,
                     PeerConnectionFactoryDependencies* dependencies);
 
-  friend class rtc::RefCountedNonVirtual<ConnectionContext>;
+  friend class RefCountedNonVirtual<ConnectionContext>;
   ~ConnectionContext();
 
  private:

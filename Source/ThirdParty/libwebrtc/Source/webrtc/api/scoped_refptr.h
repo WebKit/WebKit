@@ -63,7 +63,7 @@
 #ifndef API_SCOPED_REFPTR_H_
 #define API_SCOPED_REFPTR_H_
 
-#include <memory>
+#include <cstddef>
 #include <utility>
 
 namespace webrtc {

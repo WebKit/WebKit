@@ -11,6 +11,7 @@
 #ifndef LOGGING_RTC_EVENT_LOG_ENCODER_RTC_EVENT_LOG_ENCODER_NEW_FORMAT_H_
 #define LOGGING_RTC_EVENT_LOG_ENCODER_RTC_EVENT_LOG_ENCODER_NEW_FORMAT_H_
 
+#include <cstdint>
 #include <deque>
 #include <map>
 #include <memory>
@@ -19,6 +20,7 @@
 
 #include "api/array_view.h"
 #include "api/field_trials_view.h"
+#include "api/rtc_event_log/rtc_event.h"
 #include "logging/rtc_event_log/encoder/rtc_event_log_encoder.h"
 
 namespace webrtc {

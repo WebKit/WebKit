@@ -18,7 +18,6 @@
 
 #include "api/rtc_event_log/rtc_event.h"
 #include "api/rtc_event_log_output.h"
-#include "api/task_queue/task_queue_factory.h"
 
 namespace webrtc {
 

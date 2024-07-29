@@ -19,6 +19,7 @@
 #include "absl/types/optional.h"
 #include "api/test/network_emulation_manager.h"
 #include "api/test/simulated_network.h"
+#include "api/units/data_rate.h"
 #include "rtc_base/event.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/network_constants.h"
@@ -129,7 +130,7 @@ TEST(TcpMessageRouteTest, DeliveredOnLossyNetwork) {
   BuiltInNetworkBehaviorConfig send;
   // 800 kbps means that the 100 kB message would be delivered in ca 1 second
   // under ideal conditions and no overhead.
-  send.link_capacity_kbps = 100 * 8;
+  send.link_capacity = DataRate::KilobitsPerSec(100 * 8);
   send.loss_percent = 50;
   send.queue_delay_ms = 100;
   send.delay_standard_deviation_ms = 20;

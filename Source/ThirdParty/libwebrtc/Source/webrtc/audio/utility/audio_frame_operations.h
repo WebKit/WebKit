@@ -28,9 +28,8 @@ class AudioFrameOperations {
   // Downmixes 4 channels `src_audio` to stereo `dst_audio`. This is an in-place
   // operation, meaning `src_audio` and `dst_audio` may point to the same
   // buffer.
-  static void QuadToStereo(rtc::ArrayView<const int16_t> src_audio,
-                           size_t samples_per_channel,
-                           rtc::ArrayView<int16_t> dst_audio);
+  static void QuadToStereo(InterleavedView<const int16_t> src_audio,
+                           InterleavedView<int16_t> dst_audio);
 
   // `frame.num_channels_` will be updated. This version checks that
   // `num_channels_` is 4 channels.
@@ -40,11 +39,8 @@ class AudioFrameOperations {
   // This is an in-place operation, meaning `src_audio` and `dst_audio`
   // may point to the same buffer. Supported channel combinations are
   // Stereo to Mono, Quad to Mono, and Quad to Stereo.
-  static void DownmixChannels(rtc::ArrayView<const int16_t> src_audio,
-                              size_t src_channels,
-                              size_t samples_per_channel,
-                              size_t dst_channels,
-                              rtc::ArrayView<int16_t> dst_audio);
+  static void DownmixChannels(InterleavedView<const int16_t> src_audio,
+                              InterleavedView<int16_t> dst_audio);
 
   // `frame.num_channels_` will be updated. This version checks that
   // `num_channels_` and `dst_channels` are valid and performs relevant downmix.

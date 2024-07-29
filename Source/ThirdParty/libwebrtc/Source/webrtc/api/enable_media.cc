@@ -15,8 +15,11 @@
 
 #include "api/environment/environment.h"
 #include "api/peer_connection_interface.h"
+#include "api/scoped_refptr.h"
+#include "call/call.h"
+#include "call/call_config.h"
 #include "call/create_call.h"
-#include "media/engine/webrtc_media_engine.h"
+#include "media/base/media_engine.h"
 #include "media/engine/webrtc_video_engine.h"
 #include "media/engine/webrtc_voice_engine.h"
 #include "pc/media_factory.h"

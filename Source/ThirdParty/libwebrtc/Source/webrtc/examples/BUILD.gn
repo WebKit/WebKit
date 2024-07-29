@@ -71,8 +71,8 @@ rtc_library("read_auth_file") {
   deps = [
     "../api:array_view",
     "../rtc_base:stringutils",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/strings:strings" ]
 }
 
 if (rtc_include_tests) {
@@ -632,7 +632,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
         deps = [
           ":AppRTCMobile_lib",
           ":apprtc_signaling",
-          "../rtc_base:ssl",
+          "../rtc_base:ssl_adapter",
           "../sdk:mediaconstraints_objc",
           "../sdk:peerconnectionfactory_base_objc",
           "../sdk:videocapture_objc",
@@ -711,7 +711,7 @@ if (is_linux || is_chromeos || is_win) {
       "../rtc_base:net_helpers",
       "../rtc_base:refcount",
       "../rtc_base:rtc_certificate_generator",
-      "../rtc_base:ssl",
+      "../rtc_base:ssl_adapter",
       "../rtc_base:stringutils",
       "../rtc_base:threading",
       "../rtc_base/third_party/sigslot",
@@ -866,10 +866,11 @@ if (!build_with_chromium) {
       "../p2p:libstunprober",
       "../p2p:rtc_p2p",
       "../rtc_base:checks",
+      "../rtc_base:crypto_random",
       "../rtc_base:logging",
       "../rtc_base:network",
       "../rtc_base:socket_address",
-      "../rtc_base:ssl",
+      "../rtc_base:ssl_adapter",
       "../rtc_base:threading",
       "../rtc_base:timeutils",
       "../test:scoped_key_value_config",

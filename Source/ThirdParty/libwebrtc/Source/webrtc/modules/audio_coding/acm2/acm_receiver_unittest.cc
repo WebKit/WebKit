@@ -16,6 +16,9 @@
 #include "absl/types/optional.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
+#include "api/units/timestamp.h"
 #include "modules/audio_coding/codecs/cng/audio_encoder_cng.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/audio_coding/neteq/tools/rtp_generator.h"
@@ -68,7 +71,7 @@ class AcmReceiverTestOldApi : public AudioPacketizationCallback,
         encoder_factory_->QueryAudioEncoder(format);
     RTC_CHECK(info.has_value());
     std::unique_ptr<AudioEncoder> enc =
-        encoder_factory_->MakeAudioEncoder(payload_type, format, absl::nullopt);
+        encoder_factory_->Create(env_, format, {.payload_type = payload_type});
 
     // If we have a compatible CN specification, stack a CNG on top.
     auto it = cng_payload_types.find(info->sample_rate_hz);
@@ -119,7 +122,8 @@ class AcmReceiverTestOldApi : public AudioPacketizationCallback,
 
     int ret_val = receiver_->InsertPacket(
         rtp_header_,
-        rtc::ArrayView<const uint8_t>(payload_data, payload_len_bytes));
+        rtc::ArrayView<const uint8_t>(payload_data, payload_len_bytes),
+        Timestamp::MinusInfinity());
     if (ret_val < 0) {
       RTC_DCHECK_NOTREACHED();
       return -1;
@@ -130,6 +134,7 @@ class AcmReceiverTestOldApi : public AudioPacketizationCallback,
     return 0;
   }
 
+  const Environment env_ = CreateEnvironment();
   const rtc::scoped_refptr<AudioEncoderFactory> encoder_factory_ =
       CreateBuiltinAudioEncoderFactory();
   const rtc::scoped_refptr<AudioDecoderFactory> decoder_factory_ =
@@ -373,7 +378,8 @@ TEST_F(AcmReceiverTestOldApi, MAYBE_NetEqCalls) {
 
   for (int num_calls = 0; num_calls < kNumNormalCalls; ++num_calls) {
     const uint8_t kPayload[kPayloadSizeBytes] = {0};
-    ASSERT_EQ(0, receiver_->InsertPacket(rtp_header, kPayload));
+    ASSERT_EQ(0, receiver_->InsertPacket(rtp_header, kPayload,
+                                         Timestamp::MinusInfinity()));
     ++rtp_header.sequenceNumber;
     rtp_header.timestamp += kFrameSizeSamples;
     ASSERT_EQ(0, receiver_->GetAudio(-1, &audio_frame, &muted));

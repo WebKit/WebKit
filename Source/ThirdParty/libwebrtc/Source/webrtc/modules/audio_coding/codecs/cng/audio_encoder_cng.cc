@@ -89,7 +89,9 @@ AudioEncoderCng::AudioEncoderCng(AudioEncoderCngConfig&& config)
                       : CreateVad(config.vad_mode)),
       cng_encoder_(new ComfortNoiseEncoder(SampleRateHz(),
                                            sid_frame_interval_ms_,
-                                           num_cng_coefficients_)) {}
+                                           num_cng_coefficients_)) {
+  speech_encoder_->Reset();
+}
 
 AudioEncoderCng::~AudioEncoderCng() = default;
 

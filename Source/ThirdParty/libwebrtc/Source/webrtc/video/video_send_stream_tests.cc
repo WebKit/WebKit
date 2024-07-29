@@ -18,6 +18,7 @@
 #include "api/test/metrics/global_metrics_logger_and_exporter.h"
 #include "api/test/metrics/metric.h"
 #include "api/test/simulated_network.h"
+#include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/video/builtin_video_bitrate_allocator_factory.h"
 #include "api/video/encoded_image.h"
@@ -1460,7 +1461,7 @@ TEST_F(VideoSendStreamTest, PaddingIsPrimarilyRetransmissions) {
       const int kNetworkDelayMs = 50;
       BuiltInNetworkBehaviorConfig config;
       config.loss_percent = 10;
-      config.link_capacity_kbps = kCapacityKbps;
+      config.link_capacity = DataRate::KilobitsPerSec(kCapacityKbps);
       config.queue_delay_ms = kNetworkDelayMs;
       return config;
     }
@@ -2697,7 +2698,8 @@ TEST_F(VideoSendStreamTest, ReconfigureBitratesSetsEncoderBitratesCorrectly) {
               CreateBuiltinVideoBitrateAllocatorFactory()) {}
 
    private:
-    std::unique_ptr<VideoBitrateAllocator> CreateVideoBitrateAllocator(
+    std::unique_ptr<VideoBitrateAllocator> Create(
+        const Environment& env,
         const VideoCodec& codec) override {
       EXPECT_GE(codec.startBitrate, codec.minBitrate);
       EXPECT_LE(codec.startBitrate, codec.maxBitrate);
@@ -2722,7 +2724,7 @@ TEST_F(VideoSendStreamTest, ReconfigureBitratesSetsEncoderBitratesCorrectly) {
       ++num_rate_allocator_creations_;
       create_rate_allocator_event_.Set();
 
-      return bitrate_allocator_factory_->CreateVideoBitrateAllocator(codec);
+      return bitrate_allocator_factory_->Create(env, codec);
     }
 
     int32_t InitEncode(const VideoCodec* codecSettings,
@@ -4075,10 +4077,6 @@ void VideoSendStreamTest::TestTemporalLayers(
           test::VideoTestConstants::kVideoSendPayloadType;
       encoder_config->video_format.name = payload_name_;
       encoder_config->codec_type = PayloadStringToCodecType(payload_name_);
-      encoder_config->video_stream_factory =
-          rtc::make_ref_counted<cricket::EncoderStreamFactory>(
-              payload_name_, /*max_qp=*/56, /*is_screenshare=*/false,
-              /*conference_mode=*/false, encoder_info);
       encoder_config->max_bitrate_bps = kMaxBitrateBps;
       if (absl::EqualsIgnoreCase(payload_name_, "VP9")) {
         encoder_config->encoder_specific_settings = rtc::make_ref_counted<

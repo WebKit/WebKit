@@ -21,8 +21,8 @@ rtc_library("numerics") {
     "../../rtc_base:rtc_numerics",
     "../../rtc_base:timeutils",
     "../units:timestamp",
+    "//third_party/abseil-cpp/absl/algorithm:container",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/algorithm:container" ]
 }
 
 if (rtc_include_tests) {
@@ -35,7 +35,7 @@ if (rtc_include_tests) {
     deps = [
       ":numerics",
       "../../test:test_support",
+      "//third_party/abseil-cpp/absl/algorithm:container",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/algorithm:container" ]
   }
 }

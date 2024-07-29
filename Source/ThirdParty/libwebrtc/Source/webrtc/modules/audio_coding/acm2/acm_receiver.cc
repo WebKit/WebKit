@@ -20,6 +20,7 @@
 #include "api/audio/audio_frame.h"
 #include "api/audio_codecs/audio_decoder.h"
 #include "api/neteq/neteq.h"
+#include "api/units/timestamp.h"
 #include "modules/audio_coding/acm2/acm_resampler.h"
 #include "modules/audio_coding/acm2/call_statistics.h"
 #include "modules/audio_coding/neteq/default_neteq_factory.h"
@@ -56,15 +57,13 @@ AcmReceiver::Config::Config(const Config&) = default;
 AcmReceiver::Config::~Config() = default;
 
 AcmReceiver::AcmReceiver(const Config& config)
-    : last_audio_buffer_(new int16_t[AudioFrame::kMaxDataSizeSamples]),
-      neteq_(CreateNetEq(config.neteq_factory,
+    : neteq_(CreateNetEq(config.neteq_factory,
                          config.neteq_config,
                          &config.clock,
                          config.decoder_factory)),
       clock_(config.clock),
       resampled_last_output_frame_(true) {
-  memset(last_audio_buffer_.get(), 0,
-         sizeof(int16_t) * AudioFrame::kMaxDataSizeSamples);
+  ClearSamples(last_audio_buffer_);
 }
 
 AcmReceiver::~AcmReceiver() = default;
@@ -104,7 +103,8 @@ int AcmReceiver::last_output_sample_rate_hz() const {
 }
 
 int AcmReceiver::InsertPacket(const RTPHeader& rtp_header,
-                              rtc::ArrayView<const uint8_t> incoming_payload) {
+                              rtc::ArrayView<const uint8_t> incoming_payload,
+                              Timestamp receive_time) {
   if (incoming_payload.empty()) {
     neteq_->InsertEmptyPacket(rtp_header);
     return 0;
@@ -139,7 +139,7 @@ int AcmReceiver::InsertPacket(const RTPHeader& rtp_header,
     }
   }  // `mutex_` is released.
 
-  if (neteq_->InsertPacket(rtp_header, incoming_payload) < 0) {
+  if (neteq_->InsertPacket(rtp_header, incoming_payload, receive_time) < 0) {
     RTC_LOG(LS_ERROR) << "AcmReceiver::InsertPacket "
                       << static_cast<int>(rtp_header.payloadType)
                       << " Failed to insert packet";
@@ -170,7 +170,7 @@ int AcmReceiver::GetAudio(int desired_freq_hz,
     // Prime the resampler with the last frame.
     int16_t temp_output[AudioFrame::kMaxDataSizeSamples];
     int samples_per_channel_int = resampler_.Resample10Msec(
-        last_audio_buffer_.get(), current_sample_rate_hz, desired_freq_hz,
+        last_audio_buffer_.data(), current_sample_rate_hz, desired_freq_hz,
         audio_frame->num_channels_, AudioFrame::kMaxDataSizeSamples,
         temp_output);
     if (samples_per_channel_int < 0) {
@@ -206,7 +206,8 @@ int AcmReceiver::GetAudio(int desired_freq_hz,
   }
 
   // Store current audio in `last_audio_buffer_` for next time.
-  memcpy(last_audio_buffer_.get(), audio_frame->data(),
+  // TODO: b/335805780 - Use CopySamples().
+  memcpy(last_audio_buffer_.data(), audio_frame->data(),
          sizeof(int16_t) * audio_frame->samples_per_channel_ *
              audio_frame->num_channels_);
 
@@ -220,12 +221,6 @@ void AcmReceiver::SetCodecs(const std::map<int, SdpAudioFormat>& codecs) {
 
 void AcmReceiver::FlushBuffers() {
   neteq_->FlushBuffers();
-}
-
-void AcmReceiver::RemoveAllCodecs() {
-  MutexLock lock(&mutex_);
-  neteq_->RemoveAllPayloadTypes();
-  last_decoder_ = absl::nullopt;
 }
 
 absl::optional<uint32_t> AcmReceiver::GetPlayoutTimestamp() {
@@ -308,6 +303,8 @@ void AcmReceiver::GetNetworkStatistics(
       neteq_lifetime_stat.removed_samples_for_acceleration;
   acm_stat->fecPacketsReceived = neteq_lifetime_stat.fec_packets_received;
   acm_stat->fecPacketsDiscarded = neteq_lifetime_stat.fec_packets_discarded;
+  acm_stat->totalProcessingDelayUs =
+      neteq_lifetime_stat.total_processing_delay_us;
   acm_stat->packetsDiscarded = neteq_lifetime_stat.packets_discarded;
 
   NetEqOperationsAndState neteq_operations_and_state =

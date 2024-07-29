@@ -10,12 +10,16 @@
 
 #include "logging/rtc_event_log/encoder/optional_blob_encoding.h"
 
+#include <cstddef>
 #include <cstdint>
+#include <string>
+#include <vector>
 
+#include "absl/strings/string_view.h"
+#include "absl/types/optional.h"
 #include "rtc_base/bit_buffer.h"
 #include "rtc_base/bitstream_reader.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 
 namespace webrtc {
 

@@ -31,15 +31,13 @@ H264BitstreamParser::H264BitstreamParser() = default;
 H264BitstreamParser::~H264BitstreamParser() = default;
 
 H264BitstreamParser::Result H264BitstreamParser::ParseNonParameterSetNalu(
-    const uint8_t* source,
-    size_t source_length,
+    rtc::ArrayView<const uint8_t> source,
     uint8_t nalu_type) {
   if (!sps_ || !pps_)
     return kInvalidStream;
 
   last_slice_qp_delta_ = absl::nullopt;
-  const std::vector<uint8_t> slice_rbsp =
-      H264::ParseRbsp(source, source_length);
+  const std::vector<uint8_t> slice_rbsp = H264::ParseRbsp(source);
   if (slice_rbsp.size() < H264::kNaluTypeSize)
     return kInvalidStream;
 
@@ -50,6 +48,11 @@ H264BitstreamParser::Result H264BitstreamParser::ParseNonParameterSetNalu(
   // out.
   bool is_idr = (source[0] & 0x0F) == H264::NaluType::kIdr;
   uint8_t nal_ref_idc = (source[0] & 0x60) >> 5;
+
+  uint32_t num_ref_idx_l0_active_minus1 =
+      pps_->num_ref_idx_l0_default_active_minus1;
+  uint32_t num_ref_idx_l1_active_minus1 =
+      pps_->num_ref_idx_l1_default_active_minus1;
 
   // first_mb_in_slice: ue(v)
   slice_reader.ReadExponentialGolomb();
@@ -114,10 +117,16 @@ H264BitstreamParser::Result H264BitstreamParser::ParseNonParameterSetNalu(
       // num_ref_idx_active_override_flag: u(1)
       if (slice_reader.Read<bool>()) {
         // num_ref_idx_l0_active_minus1: ue(v)
-        slice_reader.ReadExponentialGolomb();
+        num_ref_idx_l0_active_minus1 = slice_reader.ReadExponentialGolomb();
+        if (num_ref_idx_l0_active_minus1 > H264::kMaxReferenceIndex) {
+          return kInvalidStream;
+        }
         if (slice_type == H264::SliceType::kB) {
           // num_ref_idx_l1_active_minus1: ue(v)
-          slice_reader.ReadExponentialGolomb();
+          num_ref_idx_l1_active_minus1 = slice_reader.ReadExponentialGolomb();
+          if (num_ref_idx_l1_active_minus1 > H264::kMaxReferenceIndex) {
+            return kInvalidStream;
+          }
         }
       }
       break;
@@ -180,19 +189,67 @@ H264BitstreamParser::Result H264BitstreamParser::ParseNonParameterSetNalu(
   if (!slice_reader.Ok()) {
     return kInvalidStream;
   }
-  // TODO(pbos): Do we need support for pred_weight_table()?
   if ((pps_->weighted_pred_flag && (slice_type == H264::SliceType::kP ||
                                     slice_type == H264::SliceType::kSp)) ||
       (pps_->weighted_bipred_idc == 1 && slice_type == H264::SliceType::kB)) {
-#if !defined(WEBRTC_WEBKIT_BUILD) || !defined(WEBRTC_MAC)
-    RTC_LOG(LS_ERROR) << "Streams with pred_weight_table unsupported.";
-#endif
-    return kUnsupportedStream;
+    // pred_weight_table()
+    // luma_log2_weight_denom: ue(v)
+    slice_reader.ReadExponentialGolomb();
+
+    // If separate_colour_plane_flag is equal to 0, ChromaArrayType is set equal
+    // to chroma_format_idc. Otherwise(separate_colour_plane_flag is equal to
+    // 1), ChromaArrayType is set equal to 0.
+    uint8_t chroma_array_type =
+        sps_->separate_colour_plane_flag == 0 ? sps_->chroma_format_idc : 0;
+
+    if (chroma_array_type != 0) {
+      // chroma_log2_weight_denom: ue(v)
+      slice_reader.ReadExponentialGolomb();
+    }
+
+    for (uint32_t i = 0; i <= num_ref_idx_l0_active_minus1; i++) {
+      //    luma_weight_l0_flag 2 u(1)
+      if (slice_reader.Read<bool>()) {
+        // luma_weight_l0[i] 2 se(v)
+        slice_reader.ReadExponentialGolomb();
+        // luma_offset_l0[i] 2 se(v)
+        slice_reader.ReadExponentialGolomb();
+      }
+      if (chroma_array_type != 0) {
+        // chroma_weight_l0_flag: u(1)
+        if (slice_reader.Read<bool>()) {
+          for (uint8_t j = 0; j < 2; j++) {
+            // chroma_weight_l0[i][j] 2 se(v)
+            slice_reader.ReadExponentialGolomb();
+            // chroma_offset_l0[i][j] 2 se(v)
+            slice_reader.ReadExponentialGolomb();
+          }
+        }
+      }
+    }
+    if (slice_type % 5 == 1) {
+      for (uint32_t i = 0; i <= num_ref_idx_l1_active_minus1; i++) {
+        // luma_weight_l1_flag: u(1)
+        if (slice_reader.Read<bool>()) {
+          // luma_weight_l1[i] 2 se(v)
+          slice_reader.ReadExponentialGolomb();
+          // luma_offset_l1[i] 2 se(v)
+          slice_reader.ReadExponentialGolomb();
+        }
+        if (chroma_array_type != 0) {
+          // chroma_weight_l1_flag: u(1)
+          if (slice_reader.Read<bool>()) {
+            for (uint8_t j = 0; j < 2; j++) {
+              // chroma_weight_l1[i][j] 2 se(v)
+              slice_reader.ReadExponentialGolomb();
+              // chroma_offset_l1[i][j] 2 se(v)
+              slice_reader.ReadExponentialGolomb();
+            }
+          }
+        }
+      }
+    }
   }
-  // if ((weighted_pred_flag && (slice_type == P || slice_type == SP)) ||
-  //    (weighted_bipred_idc == 1 && slice_type == B)) {
-  //  pred_weight_table()
-  // }
   if (nal_ref_idc != 0) {
     // dec_ref_pic_marking():
     if (is_idr) {
@@ -249,19 +306,20 @@ H264BitstreamParser::Result H264BitstreamParser::ParseNonParameterSetNalu(
   return kOk;
 }
 
-void H264BitstreamParser::ParseSlice(const uint8_t* slice, size_t length) {
+void H264BitstreamParser::ParseSlice(rtc::ArrayView<const uint8_t> slice) {
+  if (slice.empty()) {
+    return;
+  }
   H264::NaluType nalu_type = H264::ParseNaluType(slice[0]);
   switch (nalu_type) {
     case H264::NaluType::kSps: {
-      sps_ = SpsParser::ParseSps(slice + H264::kNaluTypeSize,
-                                 length - H264::kNaluTypeSize);
+      sps_ = SpsParser::ParseSps(slice.subview(H264::kNaluTypeSize));
       if (!sps_)
         RTC_DLOG(LS_WARNING) << "Unable to parse SPS from H264 bitstream.";
       break;
     }
     case H264::NaluType::kPps: {
-      pps_ = PpsParser::ParsePps(slice + H264::kNaluTypeSize,
-                                 length - H264::kNaluTypeSize);
+      pps_ = PpsParser::ParsePps(slice.subview(H264::kNaluTypeSize));
       if (!pps_)
         RTC_DLOG(LS_WARNING) << "Unable to parse PPS from H264 bitstream.";
       break;
@@ -271,7 +329,7 @@ void H264BitstreamParser::ParseSlice(const uint8_t* slice, size_t length) {
     case H264::NaluType::kPrefix:
       break;  // Ignore these nalus, as we don't care about their contents.
     default:
-      Result res = ParseNonParameterSetNalu(slice, length, nalu_type);
+      Result res = ParseNonParameterSetNalu(slice, nalu_type);
       if (res != kOk)
         RTC_DLOG(LS_INFO) << "Failed to parse bitstream. Error: " << res;
       break;
@@ -280,11 +338,10 @@ void H264BitstreamParser::ParseSlice(const uint8_t* slice, size_t length) {
 
 void H264BitstreamParser::ParseBitstream(
     rtc::ArrayView<const uint8_t> bitstream) {
-  std::vector<H264::NaluIndex> nalu_indices =
-      H264::FindNaluIndices(bitstream.data(), bitstream.size());
+  std::vector<H264::NaluIndex> nalu_indices = H264::FindNaluIndices(bitstream);
   for (const H264::NaluIndex& index : nalu_indices)
-    ParseSlice(bitstream.data() + index.payload_start_offset,
-               index.payload_size);
+    ParseSlice(
+        bitstream.subview(index.payload_start_offset, index.payload_size));
 }
 
 absl::optional<int> H264BitstreamParser::GetLastSliceQp() const {

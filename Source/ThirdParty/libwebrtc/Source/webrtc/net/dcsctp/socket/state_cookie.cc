@@ -42,9 +42,9 @@ std::vector<uint8_t> StateCookie::Serialize() {
   buffer.Store8<36>(capabilities_.partial_reliability);
   buffer.Store8<37>(capabilities_.message_interleaving);
   buffer.Store8<38>(capabilities_.reconfig);
+  buffer.Store8<39>(capabilities_.zero_checksum);
   buffer.Store16<40>(capabilities_.negotiated_maximum_incoming_streams);
   buffer.Store16<42>(capabilities_.negotiated_maximum_outgoing_streams);
-  buffer.Store8<44>(capabilities_.zero_checksum);
   return cookie;
 }
 
@@ -77,9 +77,9 @@ absl::optional<StateCookie> StateCookie::Deserialize(
   capabilities.partial_reliability = buffer.Load8<36>() != 0;
   capabilities.message_interleaving = buffer.Load8<37>() != 0;
   capabilities.reconfig = buffer.Load8<38>() != 0;
+  capabilities.zero_checksum = buffer.Load8<39>() != 0;
   capabilities.negotiated_maximum_incoming_streams = buffer.Load16<40>();
   capabilities.negotiated_maximum_outgoing_streams = buffer.Load16<42>();
-  capabilities.zero_checksum = buffer.Load8<44>() != 0;
 
   return StateCookie(peer_tag, my_tag, peer_initial_tsn, my_initial_tsn, a_rwnd,
                      tie_tag, capabilities);

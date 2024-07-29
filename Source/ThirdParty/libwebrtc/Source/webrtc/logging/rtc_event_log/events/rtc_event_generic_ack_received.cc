@@ -10,9 +10,13 @@
 
 #include "logging/rtc_event_log/events/rtc_event_generic_ack_received.h"
 
+#include <cstdint>
+#include <memory>
 #include <vector>
 
 #include "absl/memory/memory.h"
+#include "absl/types/optional.h"
+#include "api/rtc_event_log/rtc_event.h"
 #include "rtc_base/time_utils.h"
 
 namespace webrtc {

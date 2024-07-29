@@ -35,6 +35,9 @@ class RTC_EXPORT SharedScreenCastStream
     virtual void OnCursorShapeChanged() = 0;
     virtual void OnDesktopFrameChanged() = 0;
     virtual void OnFailedToProcessBuffer() = 0;
+    virtual void OnBufferCorruptedMetadata() = 0;
+    virtual void OnBufferCorruptedData() = 0;
+    virtual void OnEmptyBuffer() = 0;
     virtual void OnStreamConfigured() = 0;
     virtual void OnFrameRateChanged(uint32_t frame_rate) = 0;
 

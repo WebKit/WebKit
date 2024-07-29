@@ -25,6 +25,7 @@
 #include "api/frame_transformer_interface.h"
 #include "api/transport/bandwidth_estimation_settings.h"
 #include "api/transport/bitrate_settings.h"
+#include "api/transport/network_control.h"
 #include "api/units/timestamp.h"
 #include "call/rtp_config.h"
 #include "common_video/frame_counts.h"
@@ -160,6 +161,7 @@ class RtpTransportControllerSendInterface {
   virtual void IncludeOverheadInPacedSender() = 0;
 
   virtual void EnsureStarted() = 0;
+  virtual NetworkControllerInterface* GetNetworkController() = 0;
 };
 
 }  // namespace webrtc

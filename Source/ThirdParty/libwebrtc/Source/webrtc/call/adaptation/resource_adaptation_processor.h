@@ -84,7 +84,7 @@ class ResourceAdaptationProcessor : public ResourceAdaptationProcessorInterface,
   // If resource usage measurements happens off the adaptation task queue, this
   // class takes care of posting the measurement for the processor to handle it
   // on the adaptation task queue.
-  class ResourceListenerDelegate : public rtc::RefCountInterface,
+  class ResourceListenerDelegate : public RefCountInterface,
                                    public ResourceListener {
    public:
     explicit ResourceListenerDelegate(ResourceAdaptationProcessor* processor);

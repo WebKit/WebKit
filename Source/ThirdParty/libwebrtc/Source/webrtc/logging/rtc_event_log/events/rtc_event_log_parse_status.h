@@ -12,8 +12,8 @@
 #define LOGGING_RTC_EVENT_LOG_EVENTS_RTC_EVENT_LOG_PARSE_STATUS_H_
 
 #include <string>
-#include <vector>
 
+#include "absl/base/attributes.h"
 #include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 

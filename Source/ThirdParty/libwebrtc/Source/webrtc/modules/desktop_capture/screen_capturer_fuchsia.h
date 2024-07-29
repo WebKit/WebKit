@@ -11,7 +11,7 @@
 #ifndef MODULES_DESKTOP_CAPTURE_SCREEN_CAPTURER_FUCHSIA_H_
 #define MODULES_DESKTOP_CAPTURE_SCREEN_CAPTURER_FUCHSIA_H_
 
-#include <fuchsia/sysmem/cpp/fidl.h>
+#include <fuchsia/sysmem2/cpp/fidl.h>
 #include <fuchsia/ui/composition/cpp/fidl.h>
 #include <lib/sys/cpp/component_context.h>
 
@@ -36,19 +36,19 @@ class ScreenCapturerFuchsia final : public DesktopCapturer {
   bool SelectSource(SourceId id) override;
 
  private:
-  fuchsia::sysmem::BufferCollectionConstraints GetBufferConstraints();
+  fuchsia::sysmem2::BufferCollectionConstraints GetBufferConstraints();
   void SetupBuffers();
   uint32_t GetPixelsPerRow(
-      const fuchsia::sysmem::ImageFormatConstraints& constraints);
+      const fuchsia::sysmem2::ImageFormatConstraints& constraints);
 
   Callback* callback_ = nullptr;
 
   std::unique_ptr<sys::ComponentContext> component_context_;
-  fuchsia::sysmem::AllocatorSyncPtr sysmem_allocator_;
+  fuchsia::sysmem2::AllocatorSyncPtr sysmem_allocator_;
   fuchsia::ui::composition::AllocatorSyncPtr flatland_allocator_;
   fuchsia::ui::composition::ScreenCaptureSyncPtr screen_capture_;
-  fuchsia::sysmem::BufferCollectionSyncPtr collection_;
-  fuchsia::sysmem::BufferCollectionInfo_2 buffer_collection_info_;
+  fuchsia::sysmem2::BufferCollectionSyncPtr collection_;
+  fuchsia::sysmem2::BufferCollectionInfo buffer_collection_info_;
   std::unordered_map<uint32_t, uint8_t*> virtual_memory_mapped_addrs_;
 
   bool fatal_error_;

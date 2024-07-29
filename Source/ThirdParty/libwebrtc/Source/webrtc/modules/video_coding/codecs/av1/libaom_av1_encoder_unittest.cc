@@ -10,6 +10,7 @@
 
 #include "modules/video_coding/codecs/av1/libaom_av1_encoder.h"
 
+#include <algorithm>
 #include <limits>
 #include <memory>
 #include <utility>
@@ -22,6 +23,7 @@
 #include "api/test/frame_generator_interface.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/video_coding/codecs/test/encoded_video_frame_producer.h"
 #include "modules/video_coding/include/video_error_codes.h"
 #include "test/gmock.h"
@@ -37,6 +39,7 @@ using ::testing::Eq;
 using ::testing::Field;
 using ::testing::IsEmpty;
 using ::testing::SizeIs;
+using ::testing::Values;
 
 VideoCodec DefaultCodecSettings() {
   VideoCodec codec_settings;
@@ -199,31 +202,53 @@ TEST(LibaomAv1EncoderTest, CheckOddDimensionsWithSpatialLayers) {
   ASSERT_THAT(encoded_frames, SizeIs(6));
 }
 
-TEST(LibaomAv1EncoderTest, WithMaximumConsecutiveFrameDrop) {
-  auto field_trials = std::make_unique<ScopedKeyValueConfig>(
-      "WebRTC-LibaomAv1Encoder-MaxConsecFrameDrop/maxdrop:2/");
-  const Environment env = CreateEnvironment(std::move(field_trials));
+class LibaomAv1EncoderMaxConsecDropTest
+    : public ::testing::TestWithParam</*framerate_fps=*/int> {};
+
+TEST_P(LibaomAv1EncoderMaxConsecDropTest, MaxConsecDrops) {
   VideoBitrateAllocation allocation;
-  allocation.SetBitrate(0, 0, 1000);  // some very low bitrate
-  std::unique_ptr<VideoEncoder> encoder = CreateLibaomAv1Encoder(env);
+  allocation.SetBitrate(0, 0,
+                        1000);  // Very low bitrate to provoke frame drops.
+  std::unique_ptr<VideoEncoder> encoder =
+      CreateLibaomAv1Encoder(CreateEnvironment());
   VideoCodec codec_settings = DefaultCodecSettings();
   codec_settings.SetFrameDropEnabled(true);
   codec_settings.SetScalabilityMode(ScalabilityMode::kL1T1);
   codec_settings.startBitrate = allocation.get_sum_kbps();
+  codec_settings.maxFramerate = GetParam();
   ASSERT_EQ(encoder->InitEncode(&codec_settings, DefaultEncoderSettings()),
             WEBRTC_VIDEO_CODEC_OK);
   encoder->SetRates(VideoEncoder::RateControlParameters(
       allocation, codec_settings.maxFramerate));
-  EncodedVideoFrameProducer evfp(*encoder);
-  evfp.SetResolution(
-      RenderResolution{codec_settings.width, codec_settings.height});
-  // We should code the first frame, skip two, then code another frame.
   std::vector<EncodedVideoFrameProducer::EncodedFrame> encoded_frames =
-      evfp.SetNumInputFrames(4).Encode();
-  ASSERT_THAT(encoded_frames, SizeIs(2));
-  // The 4 frames have default Rtp-timestamps of 1000, 4000, 7000, 10000.
-  ASSERT_THAT(encoded_frames[1].encoded_image.RtpTimestamp(), 10000);
+      EncodedVideoFrameProducer(*encoder)
+          .SetNumInputFrames(60)
+          .SetFramerateFps(codec_settings.maxFramerate)
+          .SetResolution(RenderResolution{320, 180})
+          .Encode();
+  ASSERT_GE(encoded_frames.size(), 2u);
+
+  int max_consec_drops = 0;
+  for (size_t i = 1; i < encoded_frames.size(); ++i) {
+    uint32_t frame_duration_rtp =
+        encoded_frames[i].encoded_image.RtpTimestamp() -
+        encoded_frames[i - 1].encoded_image.RtpTimestamp();
+    // X consecutive drops result in a freeze of (X + 1) frame duration.
+    // Subtract 1 to get pure number of drops.
+    int num_drops = frame_duration_rtp * codec_settings.maxFramerate /
+                        kVideoPayloadTypeFrequency -
+                    1;
+    max_consec_drops = std::max(max_consec_drops, num_drops);
+  }
+
+  const int expected_max_consec_drops =
+      std::ceil(0.25 * codec_settings.maxFramerate);
+  EXPECT_EQ(max_consec_drops, expected_max_consec_drops);
 }
+
+INSTANTIATE_TEST_SUITE_P(LibaomAv1EncoderMaxConsecDropTests,
+                         LibaomAv1EncoderMaxConsecDropTest,
+                         Values(1, 2, 5, 15, 30, 60));
 
 TEST(LibaomAv1EncoderTest, EncoderInfoWithoutResolutionBitrateLimits) {
   std::unique_ptr<VideoEncoder> encoder =

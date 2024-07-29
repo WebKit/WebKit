@@ -14,8 +14,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <deque>
+#include <functional>
 #include <memory>
-#include <string>
 
 #include "absl/strings/string_view.h"
 #include "api/environment/environment.h"
@@ -26,6 +26,7 @@
 #include "api/task_queue/task_queue_base.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "logging/rtc_event_log/encoder/rtc_event_log_encoder.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/thread_annotations.h"
 

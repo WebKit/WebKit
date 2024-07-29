@@ -56,10 +56,8 @@ rtc_library("resource_adaptation") {
     "../../rtc_base/system:no_unique_address",
     "../../video:video_stream_encoder_interface",
     "../../video/config:encoder_config",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/algorithm:container",
-    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/strings:string_view",
     "//third_party/abseil-cpp/absl/types:optional",
     "//third_party/abseil-cpp/absl/types:variant",
   ]
@@ -97,8 +95,8 @@ if (rtc_include_tests) {
       "../../test:scoped_key_value_config",
       "../../test:test_support",
       "../../video/config:encoder_config",
+      "//third_party/abseil-cpp/absl/types:optional",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
   }
 
   rtc_source_set("resource_adaptation_test_utilities") {
@@ -126,9 +124,7 @@ if (rtc_include_tests) {
       "../../test:test_support",
       "../../video:video_stream_encoder_interface",
       "../../video/config:encoder_config",
-    ]
-    absl_deps = [
-      "//third_party/abseil-cpp/absl/strings",
+      "//third_party/abseil-cpp/absl/strings:string_view",
       "//third_party/abseil-cpp/absl/types:optional",
     ]
   }

@@ -20,6 +20,8 @@
 
 #include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
+#include "rtc_tools/rtc_event_log_visualizer/proto/chart.pb.h"
+#include "rtc_tools/rtc_event_log_visualizer/proto/chart_enums.pb.h"
 
 namespace webrtc {
 

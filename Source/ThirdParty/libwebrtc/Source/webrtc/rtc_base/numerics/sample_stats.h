@@ -13,7 +13,6 @@
 #include "api/numerics/samples_stats_counter.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
-#include "api/units/timestamp.h"
 
 namespace webrtc {
 template <typename T>

@@ -9,6 +9,10 @@
  */
 #include "logging/rtc_event_log/rtc_event_processor.h"
 
+#include <algorithm>
+#include <cstdint>
+
+#include "absl/types/optional.h"
 #include "rtc_base/numerics/sequence_number_util.h"
 
 namespace webrtc {

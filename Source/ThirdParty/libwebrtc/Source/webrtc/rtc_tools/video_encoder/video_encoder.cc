@@ -7,17 +7,21 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
+
 #include <string>
 
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
 #include "absl/flags/usage.h"
+#include "absl/strings/match.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
 #include "api/test/create_frame_generator.h"
 #include "api/test/frame_generator_interface.h"
 #include "api/video/builtin_video_bitrate_allocator_factory.h"
+#include "api/video_codecs/builtin_video_decoder_factory.h"
 #include "api/video_codecs/builtin_video_encoder_factory.h"
+#include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "media/base/media_constants.h"
 #include "modules/video_coding/codecs/av1/av1_svc_config.h"
 #include "modules/video_coding/include/video_codec_interface.h"
@@ -44,23 +48,15 @@ ABSL_FLAG(uint32_t, width, 1280, "Specify width of video encoder");
 ABSL_FLAG(uint32_t, height, 720, "Specify height of video encoder");
 
 ABSL_FLAG(std::string,
-          y4m_input_file,
+          input_file,
           "",
-          "Specify y4m input file of Y4mFrameGenerator");
-
-ABSL_FLAG(std::string,
-          ivf_input_file,
-          "",
-          "Specify ivf input file of IvfVideoFrameGenerator");
+          "Support yuv, y4m and ivf input file of video encoder");
 
 ABSL_FLAG(uint32_t, frame_rate_fps, 30, "Specify frame rate of video encoder");
-ABSL_FLAG(uint32_t,
-          bitrate_kbps,
-          1500,
-          "Specify bitrate_kbps of video encoder");
+ABSL_FLAG(uint32_t, bitrate_kbps, 0, "Specify bitrate_kbps of video encoder");
 ABSL_FLAG(uint32_t,
           key_frame_interval,
-          100,
+          3000,
           "Specify key frame interval of video encoder");
 
 ABSL_FLAG(uint32_t, frames, 300, "Specify maximum encoded frames");
@@ -69,6 +65,8 @@ ABSL_FLAG(bool,
           list_formats,
           false,
           "List all supported formats of video encoder");
+
+ABSL_FLAG(bool, validate_psnr, false, "Validate PSNR of encoded frames.");
 
 ABSL_FLAG(bool, verbose, false, "Verbose logs to stderr");
 
@@ -142,19 +140,154 @@ std::string ToString(const EncodedImage& encoded_image) {
   return ss.str();
 }
 
-// Wrapper of `EncodedImageCallback` that writes all encoded images into ivf
-// files through `test::EncodedImageFileWriter`.
-class TestEncodedImageCallback final : public EncodedImageCallback {
- public:
-  explicit TestEncodedImageCallback(const VideoCodec& video_codec_setting)
-      : video_codec_setting_(video_codec_setting) {
-    writer_ =
-        std::make_unique<test::EncodedImageFileWriter>(video_codec_setting);
+// This follows
+// https://source.chromium.org/chromium/chromium/src/+/main:media/gpu/test/video_encoder/video_encoder_test_environment.cc;bpv=1;bpt=1;l=64?q=GetDefaultTargetBitrate&ss=chromium%2Fchromium%2Fsrc
+uint32_t GetDefaultTargetBitrate(const VideoCodecType codec,
+                                 const uint32_t width,
+                                 const uint32_t height,
+                                 const uint32_t framerate,
+                                 bool validation = false) {
+  // For how these values are decided, see
+  // https://docs.google.com/document/d/1Mlu-2mMOqswWaaivIWhn00dYkoTwKcjLrxxBXcWycug
+  constexpr struct {
+    int area;
+    // bitrate[0]: for speed and quality performance
+    // bitrate[1]: for validation.
+    // The three values are for H264/VP8, VP9 and AV1, respectively.
+    double bitrate[2][3];
+  } kBitrateTable[] = {
+      {0, {{77.5, 65.0, 60.0}, {100.0, 100.0, 100.0}}},
+      {240 * 160, {{77.5, 65.0, 60.0}, {115.0, 100.0, 100.0}}},
+      {320 * 240, {{165.0, 105.0, 105.0}, {230.0, 180.0, 180.0}}},
+      {480 * 270, {{195.0, 180.0, 180.0}, {320.0, 250, 250}}},
+      {640 * 480, {{550.0, 355.0, 342.5}, {690.0, 520, 520}}},
+      {1280 * 720, {{1700.0, 990.0, 800.0}, {2500.0, 1500, 1200}}},
+      {1920 * 1080, {{2480.0, 2060.0, 1500.0}, {4000.0, 3350.0, 2500.0}}},
+  };
+  size_t codec_index = 0;
+  switch (codec) {
+    case webrtc::kVideoCodecVP8:
+    case webrtc::kVideoCodecH264:
+      codec_index = 0;
+      break;
+    case webrtc::kVideoCodecVP9:
+      codec_index = 1;
+      break;
+    case webrtc::kVideoCodecAV1:
+      codec_index = 2;
+      break;
+    default:
+      RTC_LOG(LS_ERROR) << "Unknown codec: " << codec;
   }
 
-  ~TestEncodedImageCallback() = default;
+  const int area = width * height;
+  RTC_CHECK(area != 0);
+  size_t index = std::size(kBitrateTable) - 1;
+  for (size_t i = 0; i < std::size(kBitrateTable); ++i) {
+    if (area < kBitrateTable[i].area) {
+      index = i;
+      break;
+    }
+  }
+  // The target bitrates are based on the bitrate tables in
+  // go/meet-codec-strategy, see
+  // https://docs.google.com/document/d/1Mlu-2mMOqswWaaivIWhn00dYkoTwKcjLrxxBXcWycug/edit.
+  const int low_area = kBitrateTable[index - 1].area;
+  const double low_bitrate =
+      kBitrateTable[index - 1].bitrate[validation][codec_index];
+  const int up_area = kBitrateTable[index].area;
+  const double up_bitrate =
+      kBitrateTable[index].bitrate[validation][codec_index];
+
+  const double bitrate_in_30fps_in_kbps =
+      (up_bitrate - low_bitrate) / (up_area - low_area) * (area - low_area) +
+      low_bitrate;
+  // This is selected as 1 in 30fps and 1.8 in 60fps.
+  const double framerate_multiplier =
+      0.27 * (framerate * framerate / 30.0 / 30.0) + 0.73;
+  return bitrate_in_30fps_in_kbps * framerate_multiplier * 1000;
+}
+
+// The BitstreamProcessor writes all encoded images into ivf
+// files through `test::EncodedImageFileWriter`, and it will also validate the
+// encoded PSNR if necessary.
+class BitstreamProcessor final : public EncodedImageCallback,
+                                 public DecodedImageCallback {
+ public:
+  constexpr static double kDefaultPSNRTolerance = 25.0;
+
+  explicit BitstreamProcessor(const Environment& env,
+                              const VideoCodec& video_codec_setting,
+                              bool validate_psnr,
+                              uint32_t frame_rate_fps,
+                              uint32_t target_bitrate)
+      : video_codec_setting_(video_codec_setting),
+        validate_psnr_(validate_psnr),
+        frame_rate_fps_(frame_rate_fps),
+        target_bitrate_(target_bitrate) {
+    writer_ =
+        std::make_unique<test::EncodedImageFileWriter>(video_codec_setting);
+
+    // PSNR validation.
+    if (validate_psnr_) {
+      const std::string video_codec_string =
+          CodecTypeToPayloadString(video_codec_setting.codecType);
+      // Create video decoder.
+      video_decoder_ = CreateBuiltinVideoDecoderFactory()->Create(
+          env, SdpVideoFormat(video_codec_string));
+      RTC_CHECK(video_decoder_);
+      video_decoder_->Configure({});
+      video_decoder_->RegisterDecodeCompleteCallback(this);
+    }
+  }
+
+  void ValidatePSNR(webrtc::VideoFrame& frame) {
+    RTC_CHECK(validate_psnr_);
+    video_decoder_->Decode(*encoded_image_, /*dont_care=*/0);
+    double psnr = I420PSNR(*frame.video_frame_buffer()->ToI420(),
+                           *decode_result_->video_frame_buffer()->ToI420());
+    psnr_.push_back(psnr);
+    if (psnr < kDefaultPSNRTolerance) {
+      RTC_LOG(LS_INFO) << __func__ << " Frame number: " << psnr_.size()
+                       << " , the PSNR is too low: " << psnr;
+    }
+  }
+
+  bool PSNRPassed() {
+    RTC_CHECK(validate_psnr_);
+    const uint32_t total_frames = psnr_.size();
+    double average_psnr = 0;
+    for (const auto& psnr : psnr_) {
+      average_psnr += psnr;
+    }
+    average_psnr /= total_frames;
+
+    const size_t average_frame_size_in_bits =
+        total_encoded_frames_size_ * 8 / total_frames;
+    const uint32_t average_bitrate =
+        average_frame_size_in_bits * frame_rate_fps_;
+    RTC_LOG(LS_INFO) << __func__ << " Average PSNR: " << average_psnr
+                     << " Average bitrate: " << average_bitrate
+                     << " Bitrate deviation: "
+                     << (average_bitrate * 100.0 / target_bitrate_) - 100.0
+                     << " %";
+    if (average_psnr < kDefaultPSNRTolerance) {
+      RTC_LOG(LS_ERROR) << __func__
+                        << " Average PSNR is too low: " << average_psnr;
+      return false;
+    }
+    return true;
+  }
+
+  ~BitstreamProcessor() = default;
 
  private:
+  // DecodedImageCallback
+  int32_t Decoded(VideoFrame& frame) override {
+    decode_result_ = std::make_unique<VideoFrame>(std::move(frame));
+    return 0;
+  }
+
   Result OnEncodedImage(const EncodedImage& encoded_image,
                         const CodecSpecificInfo* codec_specific_info) override {
     RTC_LOG(LS_VERBOSE) << "frame " << frames_ << ": {"
@@ -172,6 +305,11 @@ class TestEncodedImageCallback final : public EncodedImageCallback {
       ++frames_;
     }
 
+    if (validate_psnr_) {
+      encoded_image_ = std::make_unique<EncodedImage>(std::move(encoded_image));
+      total_encoded_frames_size_ += encoded_image_->size();
+    }
+
     return Result(Result::Error::OK);
   }
 
@@ -179,6 +317,15 @@ class TestEncodedImageCallback final : public EncodedImageCallback {
   int32_t frames_ = 0;
 
   std::unique_ptr<test::EncodedImageFileWriter> writer_;
+
+  const bool validate_psnr_ = false;
+  const uint32_t frame_rate_fps_ = 0;
+  const uint32_t target_bitrate_ = 0;
+  size_t total_encoded_frames_size_ = 0;
+  std::vector<double> psnr_;
+  std::unique_ptr<VideoDecoder> video_decoder_;
+  std::unique_ptr<VideoFrame> decode_result_;
+  std::unique_ptr<EncodedImage> encoded_image_;
 };
 
 // Wrapper of `BuiltinVideoEncoderFactory`.
@@ -333,13 +480,13 @@ class TestVideoEncoderFactoryWrapper final {
     RTC_CHECK_EQ(ret, WEBRTC_VIDEO_CODEC_OK);
 
     // Set bitrates.
-    std::unique_ptr<webrtc::VideoBitrateAllocator> bitrate_allocator_;
-    bitrate_allocator_ = webrtc::CreateBuiltinVideoBitrateAllocatorFactory()
-                             ->CreateVideoBitrateAllocator(video_codec_setting);
-    RTC_CHECK(bitrate_allocator_);
+    std::unique_ptr<VideoBitrateAllocator> bitrate_allocator =
+        CreateBuiltinVideoBitrateAllocatorFactory()->Create(
+            env, video_codec_setting);
+    RTC_CHECK(bitrate_allocator);
 
     webrtc::VideoBitrateAllocation allocation =
-        bitrate_allocator_->GetAllocation(bitrate_kbps * 1000, frame_rate_fps);
+        bitrate_allocator->GetAllocation(bitrate_kbps * 1000, frame_rate_fps);
     RTC_LOG(LS_INFO) << allocation.ToString();
 
     video_encoder->SetRates(webrtc::VideoEncoder::RateControlParameters(
@@ -359,8 +506,8 @@ class TestVideoEncoderFactoryWrapper final {
 // resolution, frame rate, bitrate, key frame interval and maximum number of
 // frames. The video encoder supports multiple `FrameGeneratorInterface`
 // implementations: `SquareFrameGenerator`, `SlideFrameGenerator`,
-// `Y4mFrameGenerator` and `IvfFileFrameGenerator`. All the encoded bitstreams
-// are wrote into ivf output files.
+// `YuvFileGenerator`, `Y4mFrameGenerator` and `IvfFileFrameGenerator`. All the
+// encoded bitstreams are wrote into ivf output files.
 int main(int argc, char* argv[]) {
   absl::SetProgramUsageMessage(
       "A video encode tool.\n"
@@ -376,10 +523,15 @@ int main(int argc, char* argv[]) {
       "--frame_rate_fps=30 "
       "--bitrate_kbps=500\n"
       "\n"
-      "./video_encoder --y4m_input_file=input.y4m --video_codec=av1 "
+      "./video_encoder --input_file=input.yuv --video_codec=av1 "
+      "--width=640 --height=360 --frames=300 --validate_psnr"
+      "--scalability_mode=L1T3 (Note the width and height must match the yuv "
+      "file)\n"
+      "\n"
+      "./video_encoder --input_file=input.y4m --video_codec=av1 "
       "--scalability_mode=L1T3\n"
       "\n"
-      "./video_encoder --ivf_input_file=input.ivf --video_codec=av1 "
+      "./video_encoder --input_file=input.ivf --video_codec=av1 "
       "--scalability_mode=L1T3\n");
   absl::ParseCommandLine(argc, argv);
 
@@ -392,6 +544,7 @@ int main(int argc, char* argv[]) {
   rtc::LogMessage::SetLogToStderr(true);
 
   const bool list_formats = absl::GetFlag(FLAGS_list_formats);
+  const bool validate_psnr = absl::GetFlag(FLAGS_validate_psnr);
 
   // Video encoder configurations.
   const std::string video_codec_string = absl::GetFlag(FLAGS_video_codec);
@@ -403,13 +556,12 @@ int main(int argc, char* argv[]) {
 
   uint32_t raw_frame_generator = absl::GetFlag(FLAGS_raw_frame_generator);
 
-  const std::string y4m_input_file = absl::GetFlag(FLAGS_y4m_input_file);
-  const std::string ivf_input_file = absl::GetFlag(FLAGS_ivf_input_file);
+  const std::string input_file = absl::GetFlag(FLAGS_input_file);
 
   const uint32_t frame_rate_fps = absl::GetFlag(FLAGS_frame_rate_fps);
-  const uint32_t bitrate_kbps = absl::GetFlag(FLAGS_bitrate_kbps);
   const uint32_t key_frame_interval = absl::GetFlag(FLAGS_key_frame_interval);
   const uint32_t maximum_number_of_frames = absl::GetFlag(FLAGS_frames);
+  uint32_t bitrate_kbps = absl::GetFlag(FLAGS_bitrate_kbps);
 
   const webrtc::Environment env = webrtc::CreateEnvironment();
 
@@ -443,18 +595,23 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
-  // Create `FrameGeneratorInterface`.
-  if (!y4m_input_file.empty() && !ivf_input_file.empty()) {
-    RTC_LOG(LS_ERROR)
-        << "Can not specify both '--y4m_input_file' and '--ivf_input_file'";
-    return EXIT_FAILURE;
+  // Use the default targit bitrate if the `bitrate_kbps` is not specified.
+  if (bitrate_kbps == 0) {
+    bitrate_kbps = webrtc::GetDefaultTargetBitrate(
+                       webrtc::PayloadStringToCodecType(video_codec_string),
+                       width, height, frame_rate_fps) /
+                   1000;
   }
 
   std::unique_ptr<webrtc::test::FrameGeneratorInterface> frame_buffer_generator;
-  if (!y4m_input_file.empty()) {
-    // Use `Y4mFrameGenerator` if specify `--y4m_input_file`.
+  if (absl::EndsWith(input_file, ".yuv")) {
+    frame_buffer_generator = webrtc::test::CreateFromYuvFileFrameGenerator(
+        {input_file}, width, height, /*frame_repeat_count=*/1);
+
+    RTC_LOG(LS_INFO) << "Create YuvFileGenerator: " << width << "x" << height;
+  } else if (absl::EndsWith(input_file, ".y4m")) {
     frame_buffer_generator = std::make_unique<webrtc::test::Y4mFrameGenerator>(
-        y4m_input_file, webrtc::test::Y4mFrameGenerator::RepeatMode::kLoop);
+        input_file, webrtc::test::Y4mFrameGenerator::RepeatMode::kLoop);
 
     webrtc::test::FrameGeneratorInterface::Resolution resolution =
         frame_buffer_generator->GetResolution();
@@ -463,10 +620,9 @@ int main(int argc, char* argv[]) {
     }
 
     RTC_LOG(LS_INFO) << "Create Y4mFrameGenerator: " << width << "x" << height;
-  } else if (!ivf_input_file.empty()) {
-    // Use `IvfFileFrameGenerator` if specify `--ivf_input_file`.
+  } else if (absl::EndsWith(input_file, ".ivf")) {
     frame_buffer_generator =
-        webrtc::test::CreateFromIvfFileFrameGenerator(env, ivf_input_file);
+        webrtc::test::CreateFromIvfFileFrameGenerator(env, input_file);
 
     // Set width and height.
     webrtc::test::FrameGeneratorInterface::Resolution resolution =
@@ -475,7 +631,7 @@ int main(int argc, char* argv[]) {
       frame_buffer_generator->ChangeResolution(width, height);
     }
 
-    RTC_LOG(LS_INFO) << "CreateFromIvfFileFrameGenerator: " << ivf_input_file
+    RTC_LOG(LS_INFO) << "CreateFromIvfFileFrameGenerator: " << input_file
                      << ", " << width << "x" << height;
   } else {
     RTC_CHECK_LE(raw_frame_generator, 1);
@@ -508,7 +664,8 @@ int main(int argc, char* argv[]) {
                    << width << "x" << height << ", frame rate "
                    << frame_rate_fps << ", bitrate_kbps " << bitrate_kbps
                    << ", key frame interval " << key_frame_interval
-                   << ", frames " << maximum_number_of_frames;
+                   << ", frames " << maximum_number_of_frames
+                   << ", validate_psnr " << validate_psnr;
 
   // Create and initialize video encoder.
   webrtc::VideoCodec video_codec_setting =
@@ -521,14 +678,14 @@ int main(int argc, char* argv[]) {
           env, video_codec_setting);
   RTC_CHECK(video_encoder);
 
-  // Create `TestEncodedImageCallback`.
-  std::unique_ptr<webrtc::TestEncodedImageCallback>
-      test_encoded_image_callback =
-          std::make_unique<webrtc::TestEncodedImageCallback>(
-              video_codec_setting);
-  RTC_CHECK(test_encoded_image_callback);
-  int ret = video_encoder->RegisterEncodeCompleteCallback(
-      test_encoded_image_callback.get());
+  // Create `BitstreamProcessor`.
+  std::unique_ptr<webrtc::BitstreamProcessor> bitstream_processor =
+      std::make_unique<webrtc::BitstreamProcessor>(
+          env, video_codec_setting, validate_psnr, frame_rate_fps,
+          bitrate_kbps * 1000);
+  RTC_CHECK(bitstream_processor);
+  int ret =
+      video_encoder->RegisterEncodeCompleteCallback(bitstream_processor.get());
   RTC_CHECK_EQ(ret, WEBRTC_VIDEO_CODEC_OK);
 
   // Start to encode frames.
@@ -546,6 +703,9 @@ int main(int argc, char* argv[]) {
             .set_rtp_timestamp(rtp_timestamp)
             .build();
     ret = video_encoder->Encode(frame, &frame_types);
+    if (validate_psnr) {
+      bitstream_processor->ValidatePSNR(frame);
+    }
     RTC_CHECK_EQ(ret, WEBRTC_VIDEO_CODEC_OK);
 
     rtp_timestamp += kRtpTick;
@@ -553,6 +713,10 @@ int main(int argc, char* argv[]) {
 
   // Cleanup.
   video_encoder->Release();
+
+  if (validate_psnr && !bitstream_processor->PSNRPassed()) {
+    return EXIT_FAILURE;
+  }
 
   return EXIT_SUCCESS;
 }

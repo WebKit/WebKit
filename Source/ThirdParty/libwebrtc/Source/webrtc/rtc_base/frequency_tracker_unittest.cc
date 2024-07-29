@@ -70,7 +70,7 @@ TEST(FrequencyTrackerTest, MeasuresConstantRate) {
   stats.Update(now);
   Frequency last_error = Frequency::PlusInfinity();
   for (TimeDelta i = TimeDelta::Zero(); i < kWindow; i += kInterval) {
-    SCOPED_TRACE(i);
+    SCOPED_TRACE(ToString(i));
     now += kInterval;
     stats.Update(now);
 
@@ -88,7 +88,7 @@ TEST(FrequencyTrackerTest, MeasuresConstantRate) {
   // Once window is full, rate measurment should be stable.
   for (TimeDelta i = TimeDelta::Zero(); i < kInterval;
        i += TimeDelta::Millis(1)) {
-    SCOPED_TRACE(i);
+    SCOPED_TRACE(ToString(i));
     EXPECT_EQ(stats.Rate(now + i), kConstantRate);
   }
 }
@@ -123,7 +123,7 @@ TEST(FrequencyTrackerTest, IncreasingThenDecreasingRate) {
 
   stats.Update(kLargeSize, now);
   for (TimeDelta i = TimeDelta::Zero(); i < kWindow; i += kLargeInterval) {
-    SCOPED_TRACE(i);
+    SCOPED_TRACE(ToString(i));
     now += kLargeInterval;
     stats.Update(kLargeSize, now);
   }
@@ -132,7 +132,7 @@ TEST(FrequencyTrackerTest, IncreasingThenDecreasingRate) {
 
   // Decrease rate with smaller measurments.
   for (TimeDelta i = TimeDelta::Zero(); i < kWindow; i += kLargeInterval) {
-    SCOPED_TRACE(i);
+    SCOPED_TRACE(ToString(i));
     now += kLargeInterval;
     stats.Update(kSmallSize, now);
 
@@ -145,7 +145,7 @@ TEST(FrequencyTrackerTest, IncreasingThenDecreasingRate) {
 
   // Increase rate with more frequent measurments.
   for (TimeDelta i = TimeDelta::Zero(); i < kWindow; i += kSmallInterval) {
-    SCOPED_TRACE(i);
+    SCOPED_TRACE(ToString(i));
     now += kSmallInterval;
     stats.Update(kSmallSize, now);
 

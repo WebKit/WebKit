@@ -22,9 +22,8 @@ rtc_library("av1_svc_config") {
     "../../svc:scalability_mode_util",
     "../../svc:scalability_structures",
     "../../svc:scalable_video_controller",
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
   ]
-
-  absl_deps = [ "//third_party/abseil-cpp/absl/container:inlined_vector" ]
 }
 
 rtc_library("dav1d_decoder") {
@@ -44,7 +43,6 @@ rtc_library("dav1d_decoder") {
     "//third_party/dav1d",
     "//third_party/libyuv",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("libaom_av1_encoder") {
@@ -62,20 +60,19 @@ rtc_library("libaom_av1_encoder") {
     "../../../../api/video_codecs:scalability_mode",
     "../../../../api/video_codecs:video_codecs_api",
     "../../../../common_video",
+    "../../../../modules/rtp_rtcp:rtp_rtcp_format",
     "../../../../rtc_base:checks",
     "../../../../rtc_base:logging",
     "../../../../rtc_base:rtc_numerics",
     "../../../../rtc_base/experiments:encoder_info_settings",
     "../../svc:scalability_structures",
     "../../svc:scalable_video_controller",
-    "//third_party/libaom",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/algorithm:container",
     "//third_party/abseil-cpp/absl/base:core_headers",
     "//third_party/abseil-cpp/absl/base:nullability",
-    "//third_party/abseil-cpp/absl/strings:strings",
+    "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
+    "//third_party/libaom",
   ]
 }
 
@@ -108,12 +105,13 @@ if (rtc_include_tests) {
         "../../../../api/units:data_size",
         "../../../../api/units:time_delta",
         "../../../../api/video:video_frame",
+        "../../../../modules/rtp_rtcp:rtp_rtcp_format",
         "../../../../test:scoped_key_value_config",
         "../../svc:scalability_mode_util",
         "../../svc:scalability_structures",
         "../../svc:scalable_video_controller",
+        "//third_party/abseil-cpp/absl/types:optional",
       ]
-      absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
     }
   }
 }

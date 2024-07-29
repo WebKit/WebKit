@@ -1021,12 +1021,6 @@ void DcSctpSocket::OnSentPacket(rtc::ArrayView<const uint8_t> packet,
       DebugPrintOutgoing(packet);
     }
 
-    // The heartbeat interval timer is restarted for every sent packet, to
-    // fire when the outgoing channel is inactive.
-    if (tcb_ != nullptr) {
-      tcb_->heartbeat_handler().RestartTimer();
-    }
-
     ++metrics_.tx_packets_count;
   }
 }

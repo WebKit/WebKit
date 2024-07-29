@@ -35,8 +35,18 @@ VideoType PipeWireRawFormatToVideoType(uint32_t id) {
       return VideoType::kYUY2;
     case SPA_VIDEO_FORMAT_UYVY:
       return VideoType::kUYVY;
+    case SPA_VIDEO_FORMAT_RGB16:
+      return VideoType::kRGB565;
     case SPA_VIDEO_FORMAT_RGB:
+      return VideoType::kBGR24;
+    case SPA_VIDEO_FORMAT_BGR:
       return VideoType::kRGB24;
+    case SPA_VIDEO_FORMAT_BGRA:
+      return VideoType::kARGB;
+    case SPA_VIDEO_FORMAT_RGBA:
+      return VideoType::kABGR;
+    case SPA_VIDEO_FORMAT_ARGB:
+      return VideoType::kBGRA;
     default:
       return VideoType::kUnknown;
   }
@@ -354,6 +364,13 @@ void PipeWireSession::OnRegistryGlobal(void* data,
                                        const spa_dict* props) {
   PipeWireSession* that = static_cast<PipeWireSession*>(data);
 
+  // Skip already added nodes to avoid duplicate camera entries
+  if (std::find_if(that->nodes_.begin(), that->nodes_.end(),
+                   [id](const PipeWireNode& node) {
+                     return node.id() == id;
+                   }) != that->nodes_.end())
+    return;
+
   if (type != absl::string_view(PW_TYPE_INTERFACE_Node))
     return;
 
@@ -372,12 +389,10 @@ void PipeWireSession::OnRegistryGlobal(void* data,
 void PipeWireSession::OnRegistryGlobalRemove(void* data, uint32_t id) {
   PipeWireSession* that = static_cast<PipeWireSession*>(data);
 
-  for (auto it = that->nodes_.begin(); it != that->nodes().end(); ++it) {
-    if ((*it).id() == id) {
-      that->nodes_.erase(it);
-      break;
-    }
-  }
+  auto it = std::remove_if(
+      that->nodes_.begin(), that->nodes_.end(),
+      [id](const PipeWireNode& node) { return node.id() == id; });
+  that->nodes_.erase(it, that->nodes_.end());
 }
 
 void PipeWireSession::Finish(VideoCaptureOptions::Status status) {

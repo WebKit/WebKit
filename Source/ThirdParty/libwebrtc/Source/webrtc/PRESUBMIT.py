@@ -52,6 +52,8 @@ PYLINT_OLD_STYLE = [
     "tools_webrtc/autoroller/roll_deps.py",
     "tools_webrtc/android/build_aar.py",
     "tools_webrtc/ios/build_ios_libs.py",
+    "tools_webrtc/mb/mb.py",
+    "tools_webrtc/mb/mb_unittest.py",
 ]
 
 # These filters will always be removed, even if the caller specifies a filter
@@ -374,39 +376,6 @@ def CheckNoSourcesAbove(input_api, gn_files, output_api):
     return []
 
 
-def CheckAbseilDependencies(input_api, gn_files, output_api):
-    """Checks that Abseil dependencies are declared in `absl_deps`."""
-    absl_re = re.compile(r'third_party/abseil-cpp', re.MULTILINE | re.DOTALL)
-    target_types_to_check = [
-        'rtc_library',
-        'rtc_source_set',
-        'rtc_static_library',
-        'webrtc_fuzzer_test',
-    ]
-    error_msg = ('Abseil dependencies in target "%s" (file: %s) '
-                 'should be moved to the "absl_deps" parameter.')
-    errors = []
-
-    # pylint: disable=too-many-nested-blocks
-    for gn_file in gn_files:
-        gn_file_content = input_api.ReadFile(gn_file)
-        for target_match in TARGET_RE.finditer(gn_file_content):
-            target_type = target_match.group('target_type')
-            target_name = target_match.group('target_name')
-            target_contents = target_match.group('target_contents')
-            if target_type in target_types_to_check:
-                for deps_match in DEPS_RE.finditer(target_contents):
-                    deps = deps_match.group('deps').splitlines()
-                    for dep in deps:
-                        if re.search(absl_re, dep):
-                            errors.append(
-                                output_api.PresubmitError(
-                                    error_msg %
-                                    (target_name, gn_file.LocalPath())))
-                            break  # no need to warn more than once per target
-    return errors
-
-
 def CheckNoMixingSources(input_api, gn_files, output_api):
     """Disallow mixing C, C++ and Obj-C/Obj-C++ in the same target.
 
@@ -669,7 +638,6 @@ def CheckGnChanges(input_api, output_api):
     if gn_files:
         result.extend(CheckNoSourcesAbove(input_api, gn_files, output_api))
         result.extend(CheckNoMixingSources(input_api, gn_files, output_api))
-        result.extend(CheckAbseilDependencies(input_api, gn_files, output_api))
         result.extend(
             CheckNoPackageBoundaryViolations(input_api, gn_files, output_api))
         result.extend(CheckPublicDepsIsNotUsed(gn_files, input_api,

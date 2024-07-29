@@ -17,7 +17,6 @@
 #include "absl/strings/match.h"
 #include "api/units/timestamp.h"
 #include "logging/rtc_event_log/events/rtc_event_rtp_packet_outgoing.h"
-#include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {
@@ -69,7 +68,6 @@ DEPRECATED_RtpSenderEgress::DEPRECATED_RtpSenderEgress(
       packet_history_(packet_history),
       transport_(config.outgoing_transport),
       event_log_(config.event_log),
-      is_audio_(config.audio),
       need_rtp_packet_infos_(config.need_rtp_packet_infos),
       transport_feedback_observer_(config.transport_feedback_callback),
       send_packet_observer_(config.send_packet_observer),
@@ -94,27 +92,6 @@ void DEPRECATED_RtpSenderEgress::SendPacket(
   RTC_DCHECK(HasCorrectSsrc(*packet));
   Timestamp now = clock_->CurrentTime();
   int64_t now_ms = now.ms();
-
-  if (is_audio_) {
-#if BWE_TEST_LOGGING_COMPILE_TIME_ENABLE
-    BWE_TEST_LOGGING_PLOT_WITH_SSRC(1, "AudioTotBitrate_kbps", now_ms,
-                                    GetSendRates().Sum().kbps(), packet_ssrc);
-    BWE_TEST_LOGGING_PLOT_WITH_SSRC(
-        1, "AudioNackBitrate_kbps", now_ms,
-        GetSendRates()[RtpPacketMediaType::kRetransmission].kbps(),
-        packet_ssrc);
-#endif
-  } else {
-#if BWE_TEST_LOGGING_COMPILE_TIME_ENABLE
-    BWE_TEST_LOGGING_PLOT_WITH_SSRC(1, "VideoTotBitrate_kbps", now_ms,
-                                    GetSendRates().Sum().kbps(), packet_ssrc);
-    BWE_TEST_LOGGING_PLOT_WITH_SSRC(
-        1, "VideoNackBitrate_kbps", now_ms,
-        GetSendRates()[RtpPacketMediaType::kRetransmission].kbps(),
-        packet_ssrc);
-#endif
-  }
-
   PacketOptions options;
   {
     MutexLock lock(&lock_);

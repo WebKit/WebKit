@@ -11,7 +11,6 @@
 #include "p2p/client/basic_port_allocator.h"
 
 #include <memory>
-#include <ostream>  // no-presubmit-check TODO(webrtc:8982)
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/string_view.h"
@@ -133,22 +132,6 @@ void CheckStunKeepaliveIntervalOfAllReadyPorts(
 }  // namespace
 
 namespace cricket {
-
-// Helper for dumping candidates
-std::ostream& operator<<(std::ostream& os,
-                         const std::vector<Candidate>& candidates) {
-  os << '[';
-  bool first = true;
-  for (const Candidate& c : candidates) {
-    if (!first) {
-      os << ", ";
-    }
-    os << c.ToString();
-    first = false;
-  }
-  os << ']';
-  return os;
-}
 
 class BasicPortAllocatorTestBase : public ::testing::Test,
                                    public sigslot::has_slots<> {

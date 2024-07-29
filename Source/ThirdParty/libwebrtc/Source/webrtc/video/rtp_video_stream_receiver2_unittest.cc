@@ -188,7 +188,7 @@ class RtpVideoStreamReceiver2Test : public ::testing::Test,
     info.pps_id = -1;
     data->AppendData<uint8_t, 2>({H264::NaluType::kSps, sps_id});
     auto& h264 = absl::get<RTPVideoHeaderH264>(video_header->video_type_header);
-    h264.nalus[h264.nalus_length++] = info;
+    h264.nalus.push_back(info);
   }
 
   void AddPps(RTPVideoHeader* video_header,
@@ -201,7 +201,7 @@ class RtpVideoStreamReceiver2Test : public ::testing::Test,
     info.pps_id = pps_id;
     data->AppendData<uint8_t, 2>({H264::NaluType::kPps, pps_id});
     auto& h264 = absl::get<RTPVideoHeaderH264>(video_header->video_type_header);
-    h264.nalus[h264.nalus_length++] = info;
+    h264.nalus.push_back(info);
   }
 
   void AddIdr(RTPVideoHeader* video_header, int pps_id) {
@@ -210,7 +210,7 @@ class RtpVideoStreamReceiver2Test : public ::testing::Test,
     info.sps_id = -1;
     info.pps_id = pps_id;
     auto& h264 = absl::get<RTPVideoHeaderH264>(video_header->video_type_header);
-    h264.nalus[h264.nalus_length++] = info;
+    h264.nalus.push_back(info);
   }
 
   void OnRtpPacket(const RtpPacketReceived& packet) override {

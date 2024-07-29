@@ -13,9 +13,12 @@
 #include <stddef.h>
 
 #include <atomic>
+#include <string>
 #include <utility>
 #include <vector>
 
+#include "api/media_stream_interface.h"
+#include "api/scoped_refptr.h"
 #include "pc/media_stream.h"
 #include "pc/media_stream_proxy.h"
 #include "rtc_base/thread.h"

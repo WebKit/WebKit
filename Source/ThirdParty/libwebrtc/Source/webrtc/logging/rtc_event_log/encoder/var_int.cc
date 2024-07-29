@@ -10,6 +10,12 @@
 
 #include "logging/rtc_event_log/encoder/var_int.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <string>
+#include <utility>
+
+#include "absl/strings/string_view.h"
 #include "rtc_base/bitstream_reader.h"
 #include "rtc_base/checks.h"
 

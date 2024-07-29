@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <string>
+#include <vector>
 
 #include "modules/video_coding/codecs/interface/common_constants.h"
 #include "rtc_base/checks.h"
@@ -72,8 +73,6 @@ struct NaluInfo {
   }
 };
 
-const size_t kMaxNalusPerPacket = 10;
-
 struct RTPVideoHeaderH264 {
   // The NAL unit type. If this is a header for a
   // fragmented packet, it's the NAL unit type of
@@ -83,8 +82,7 @@ struct RTPVideoHeaderH264 {
   uint8_t nalu_type;
   // The packetization type of this buffer - single, aggregated or fragmented.
   H264PacketizationTypes packetization_type;
-  NaluInfo nalus[kMaxNalusPerPacket];
-  size_t nalus_length;
+  std::vector<NaluInfo> nalus;
   // The packetization mode of this transport. Packetization mode
   // determines which packetization types are allowed when packetizing.
   H264PacketizationMode packetization_mode;
@@ -93,8 +91,7 @@ struct RTPVideoHeaderH264 {
                          const RTPVideoHeaderH264& rhs) {
     return lhs.nalu_type == rhs.nalu_type &&
            lhs.packetization_type == rhs.packetization_type &&
-           std::equal(lhs.nalus, lhs.nalus + lhs.nalus_length, rhs.nalus,
-                      rhs.nalus + rhs.nalus_length) &&
+           lhs.nalus == rhs.nalus &&
            lhs.packetization_mode == rhs.packetization_mode;
   }
 

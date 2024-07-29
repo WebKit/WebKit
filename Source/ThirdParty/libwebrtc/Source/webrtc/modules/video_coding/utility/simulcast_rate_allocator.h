@@ -16,6 +16,7 @@
 
 #include <vector>
 
+#include "api/environment/environment.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_bitrate_allocator.h"
 #include "api/video_codecs/video_codec.h"
@@ -26,7 +27,7 @@ namespace webrtc {
 
 class SimulcastRateAllocator : public VideoBitrateAllocator {
  public:
-  explicit SimulcastRateAllocator(const VideoCodec& codec);
+  SimulcastRateAllocator(const Environment& env, const VideoCodec& codec);
   ~SimulcastRateAllocator() override;
 
   SimulcastRateAllocator(const SimulcastRateAllocator&) = delete;

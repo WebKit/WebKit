@@ -15,9 +15,24 @@
 #include <cstdint>
 #include <initializer_list>
 #include <limits>
+#include <numeric>
+#include <utility>
+#include <vector>
 
-#include "absl/memory/memory.h"
+#include "absl/types/optional.h"
+#include "api/rtp_headers.h"
+#include "api/units/timestamp.h"
+#include "logging/rtc_event_log/events/logged_rtp_rtcp.h"
+#include "logging/rtc_event_log/events/rtc_event_begin_log.h"
+#include "logging/rtc_event_log/events/rtc_event_bwe_update_delay_based.h"
+#include "logging/rtc_event_log/events/rtc_event_bwe_update_loss_based.h"
+#include "logging/rtc_event_log/events/rtc_event_end_log.h"
+#include "logging/rtc_event_log/events/rtc_event_probe_cluster_created.h"
+#include "logging/rtc_event_log/events/rtc_event_probe_result_failure.h"
+#include "logging/rtc_event_log/events/rtc_event_probe_result_success.h"
+#include "logging/rtc_event_log/events/rtc_event_remote_estimate.h"
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
+#include "logging/rtc_event_log/rtc_event_processor_order.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/random.h"
 #include "test/gmock.h"

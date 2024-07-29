@@ -253,9 +253,10 @@ TransportFeedbackAdapter::ProcessTransportFeedbackInner(
       });
 
   if (failed_lookups > 0) {
-    RTC_LOG(LS_WARNING) << "Failed to lookup send time for " << failed_lookups
-                        << " packet" << (failed_lookups > 1 ? "s" : "")
-                        << ". Send time history too small?";
+    RTC_LOG(LS_WARNING)
+        << "Failed to lookup send time for " << failed_lookups << " packet"
+        << (failed_lookups > 1 ? "s" : "")
+        << ". Packets reordered or send time history too small?";
   }
   if (ignored > 0) {
     RTC_LOG(LS_INFO) << "Ignoring " << ignored

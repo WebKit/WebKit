@@ -22,6 +22,7 @@
 #include "api/crypto/frame_encryptor_interface.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/sequence_checker.h"
+#include "api/task_queue/task_queue_factory.h"
 #include "audio/channel_send_frame_transformer_delegate.h"
 #include "audio/utility/audio_frame_operations.h"
 #include "call/rtp_transport_controller_send_interface.h"
@@ -62,19 +63,16 @@ class ChannelSend : public ChannelSendInterface,
                     public RtcpPacketTypeCounterObserver,
                     public ReportBlockDataObserver {
  public:
-  ChannelSend(Clock* clock,
-              TaskQueueFactory* task_queue_factory,
+  ChannelSend(const Environment& env,
               Transport* rtp_transport,
               RtcpRttStats* rtcp_rtt_stats,
-              RtcEventLog* rtc_event_log,
               FrameEncryptorInterface* frame_encryptor,
               const webrtc::CryptoOptions& crypto_options,
               bool extmap_allow_mixed,
               int rtcp_report_interval_ms,
               uint32_t ssrc,
               rtc::scoped_refptr<FrameTransformerInterface> frame_transformer,
-              RtpTransportControllerSendInterface* transport_controller,
-              const FieldTrialsView& field_trials);
+              RtpTransportControllerSendInterface* transport_controller);
 
   ~ChannelSend() override;
 
@@ -179,6 +177,8 @@ class ChannelSend : public ChannelSendInterface,
   void InitFrameTransformerDelegate(
       rtc::scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer);
 
+  const Environment env_;
+
   // Thread checkers document and lock usage of some methods on voe::Channel to
   // specific threads we know about. The goal is to eventually split up
   // voe::Channel into parts with single-threaded semantics, and thereby reduce
@@ -194,8 +194,6 @@ class ChannelSend : public ChannelSendInterface,
 
   const uint32_t ssrc_;
   bool sending_ RTC_GUARDED_BY(&worker_thread_checker_) = false;
-
-  RtcEventLog* const event_log_;
 
   std::unique_ptr<ModuleRtpRtcpImpl2> rtp_rtcp_;
   std::unique_ptr<RTPSenderAudio> rtp_sender_audio_;
@@ -355,10 +353,7 @@ int32_t ChannelSend::SendRtpAudio(AudioFrameType frameType,
   // Push data from ACM to RTP/RTCP-module to deliver audio frame for
   // packetization.
   if (!rtp_rtcp_->OnSendingRtpFrame(rtp_timestamp_without_offset,
-                                    // Leaving the time when this frame was
-                                    // received from the capture device as
-                                    // undefined for voice for now.
-                                    -1, payloadType,
+                                    absolute_capture_timestamp_ms, payloadType,
                                     /*force_sender_report=*/false)) {
     return -1;
   }
@@ -393,27 +388,24 @@ int32_t ChannelSend::SendRtpAudio(AudioFrameType frameType,
 }
 
 ChannelSend::ChannelSend(
-    Clock* clock,
-    TaskQueueFactory* task_queue_factory,
+    const Environment& env,
     Transport* rtp_transport,
     RtcpRttStats* rtcp_rtt_stats,
-    RtcEventLog* rtc_event_log,
     FrameEncryptorInterface* frame_encryptor,
     const webrtc::CryptoOptions& crypto_options,
     bool extmap_allow_mixed,
     int rtcp_report_interval_ms,
     uint32_t ssrc,
     rtc::scoped_refptr<FrameTransformerInterface> frame_transformer,
-    RtpTransportControllerSendInterface* transport_controller,
-    const FieldTrialsView& field_trials)
-    : ssrc_(ssrc),
-      event_log_(rtc_event_log),
+    RtpTransportControllerSendInterface* transport_controller)
+    : env_(env),
+      ssrc_(ssrc),
       rtp_packet_pacer_proxy_(new RtpPacketSenderProxy()),
       retransmission_rate_limiter_(
-          new RateLimiter(clock, kMaxRetransmissionWindowMs)),
+          new RateLimiter(&env_.clock(), kMaxRetransmissionWindowMs)),
       frame_encryptor_(frame_encryptor),
       crypto_options_(crypto_options),
-      encoder_queue_(task_queue_factory->CreateTaskQueue(
+      encoder_queue_(env_.task_queue_factory().CreateTaskQueue(
           "AudioEncoder",
           TaskQueueFactory::Priority::NORMAL)),
       encoder_queue_checker_(encoder_queue_.get()),
@@ -424,15 +416,15 @@ ChannelSend::ChannelSend(
   configuration.report_block_data_observer = this;
   configuration.network_link_rtcp_observer =
       transport_controller->GetRtcpObserver();
-  configuration.clock = (clock ? clock : Clock::GetRealTimeClock());
+  configuration.clock = &env_.clock();
   configuration.audio = true;
   configuration.outgoing_transport = rtp_transport;
 
   configuration.paced_sender = rtp_packet_pacer_proxy_.get();
 
-  configuration.event_log = event_log_;
+  configuration.event_log = &env_.event_log();
   configuration.rtt_stats = rtcp_rtt_stats;
-  if (field_trials.IsDisabled("WebRTC-DisableRtxRateLimiter")) {
+  if (env_.field_trials().IsDisabled("WebRTC-DisableRtxRateLimiter")) {
     configuration.retransmission_rate_limiter =
         retransmission_rate_limiter_.get();
   }
@@ -441,7 +433,7 @@ ChannelSend::ChannelSend(
   configuration.rtcp_packet_type_counter_observer = this;
 
   configuration.local_media_ssrc = ssrc;
-  configuration.field_trials = &field_trials;
+  configuration.field_trials = &env_.field_trials();
 
   rtp_rtcp_ = ModuleRtpRtcpImpl2::Create(configuration);
   rtp_rtcp_->SetSendingMediaStatus(false);
@@ -895,24 +887,20 @@ void ChannelSend::InitFrameTransformerDelegate(
 }  // namespace
 
 std::unique_ptr<ChannelSendInterface> CreateChannelSend(
-    Clock* clock,
-    TaskQueueFactory* task_queue_factory,
+    const Environment& env,
     Transport* rtp_transport,
     RtcpRttStats* rtcp_rtt_stats,
-    RtcEventLog* rtc_event_log,
     FrameEncryptorInterface* frame_encryptor,
     const webrtc::CryptoOptions& crypto_options,
     bool extmap_allow_mixed,
     int rtcp_report_interval_ms,
     uint32_t ssrc,
     rtc::scoped_refptr<FrameTransformerInterface> frame_transformer,
-    RtpTransportControllerSendInterface* transport_controller,
-    const FieldTrialsView& field_trials) {
+    RtpTransportControllerSendInterface* transport_controller) {
   return std::make_unique<ChannelSend>(
-      clock, task_queue_factory, rtp_transport, rtcp_rtt_stats, rtc_event_log,
-      frame_encryptor, crypto_options, extmap_allow_mixed,
-      rtcp_report_interval_ms, ssrc, std::move(frame_transformer),
-      transport_controller, field_trials);
+      env, rtp_transport, rtcp_rtt_stats, frame_encryptor, crypto_options,
+      extmap_allow_mixed, rtcp_report_interval_ms, ssrc,
+      std::move(frame_transformer), transport_controller);
 }
 
 }  // namespace voe

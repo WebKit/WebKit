@@ -609,9 +609,13 @@ class RtpReplayer final {
                packet.original_length - packet.length);
         packet_buffer.MutableData()[0] &= ~0x20;
       }
+      // Check that the packet is a RTP packet and is valid.
+      if (!IsRtpPacket({packet.data, packet.length})) {
+        continue;
+      }
       RtpPacket header;
-      header.Parse(packet_buffer);
-      if (header.Timestamp() < start_timestamp ||
+      if (!header.Parse(packet_buffer) ||
+          header.Timestamp() < start_timestamp ||
           header.Timestamp() > stop_timestamp) {
         continue;
       }

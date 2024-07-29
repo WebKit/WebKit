@@ -14,14 +14,9 @@
 #include <memory>
 #include <vector>
 
-namespace webrtc {
+#include "api/transport/bandwidth_usage.h"
 
-enum class BandwidthUsage {
-  kBwNormal = 0,
-  kBwUnderusing = 1,
-  kBwOverusing = 2,
-  kLast
-};
+namespace webrtc {
 
 // TODO(yinwa): work in progress. API in class NetworkStatePredictor should not
 // be used by other users until this comment is removed.

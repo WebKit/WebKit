@@ -13,7 +13,9 @@
 #include <cstdint>
 #include <utility>
 
+#include "absl/base/nullability.h"
 #include "absl/types/optional.h"
+#include "api/environment/environment.h"
 #include "modules/remote_bitrate_estimator/aimd_rate_control.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "modules/remote_bitrate_estimator/inter_arrival.h"
@@ -39,13 +41,13 @@ RemoteBitrateEstimatorSingleStream::Detector::Detector()
       inter_arrival(90 * kTimestampGroupLengthMs, kTimestampToMs) {}
 
 RemoteBitrateEstimatorSingleStream::RemoteBitrateEstimatorSingleStream(
-    RemoteBitrateObserver* observer,
-    Clock* clock)
-    : clock_(clock),
+    const Environment& env,
+    absl::Nonnull<RemoteBitrateObserver*> observer)
+    : env_(env),
+      observer_(observer),
       incoming_bitrate_(kBitrateWindow),
       last_valid_incoming_bitrate_(DataRate::Zero()),
-      remote_rate_(field_trials_),
-      observer_(observer),
+      remote_rate_(env_.field_trials()),
       process_interval_(kProcessInterval),
       uma_recorded_(false) {
   RTC_LOG(LS_INFO) << "RemoteBitrateEstimatorSingleStream: Instantiating.";
@@ -68,7 +70,7 @@ void RemoteBitrateEstimatorSingleStream::IncomingPacket(
   uint32_t ssrc = rtp_packet.Ssrc();
   uint32_t rtp_timestamp =
       rtp_packet.Timestamp() + transmission_time_offset.value_or(0);
-  Timestamp now = clock_->CurrentTime();
+  Timestamp now = env_.clock().CurrentTime();
   Detector& estimator = overuse_detectors_[ssrc];
   estimator.last_packet_time = now;
 
@@ -114,7 +116,7 @@ void RemoteBitrateEstimatorSingleStream::IncomingPacket(
 }
 
 TimeDelta RemoteBitrateEstimatorSingleStream::Process() {
-  Timestamp now = clock_->CurrentTime();
+  Timestamp now = env_.clock().CurrentTime();
   Timestamp next_process_time = last_process_time_.has_value()
                                     ? *last_process_time_ + process_interval_
                                     : now;

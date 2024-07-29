@@ -30,8 +30,8 @@ rtc_library("audio_frame_operations") {
     "../../rtc_base:logging",
     "../../rtc_base:safe_conversions",
     "../../system_wrappers:field_trial",
+    "//third_party/abseil-cpp/absl/base:core_headers",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/base:core_headers" ]
 }
 
 if (rtc_include_tests) {

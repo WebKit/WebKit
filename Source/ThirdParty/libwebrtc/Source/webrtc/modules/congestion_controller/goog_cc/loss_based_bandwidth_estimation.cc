@@ -11,6 +11,7 @@
 #include "modules/congestion_controller/goog_cc/loss_based_bandwidth_estimation.h"
 
 #include <algorithm>
+#include <cmath>
 #include <vector>
 
 #include "absl/strings/match.h"

@@ -218,6 +218,10 @@ luci.realm(name = "pools/try-tests", bindings = [
 ])
 luci.realm(name = "try", bindings = [
     luci.binding(
+        roles = "role/buildbucket.creator",
+        groups = "project-webrtc-led-users",
+    ),
+    luci.binding(
         roles = "role/swarming.taskTriggerer",
         groups = "project-webrtc-led-users",
     ),
@@ -237,6 +241,10 @@ luci.realm(name = "pools/perf", bindings = [
 ])
 luci.realm(name = "perf", bindings = [
     luci.binding(
+        roles = "role/buildbucket.creator",
+        groups = "project-webrtc-led-users",
+    ),
+    luci.binding(
         roles = "role/swarming.taskTriggerer",
         groups = "project-webrtc-led-users",
     ),
@@ -246,6 +254,10 @@ luci.realm(name = "@root", bindings = [
     # Allow admins to use LED & Swarming "Debug" feature on all WebRTC bots.
     luci.binding(
         roles = "role/swarming.poolUser",
+        groups = "project-webrtc-admins",
+    ),
+    luci.binding(
+        roles = "role/buildbucket.creator",
         groups = "project-webrtc-admins",
     ),
     luci.binding(
@@ -264,6 +276,10 @@ luci.bucket(
             "project-webrtc-tryjob-access",
         ]),
     ],
+    constraints = luci.bucket_constraints(
+        pools = ["luci.webrtc.try"],
+        service_accounts = ["webrtc-try-builder@chops-service-accounts.iam.gserviceaccount.com"],
+    ),
 )
 
 luci.bucket(
@@ -634,11 +650,7 @@ def perf_builder(name, perf_cat, **kwargs):
     add_milo(name, {"perf": perf_cat})
     properties = make_reclient_properties("rbe-webrtc-trusted")
     properties["builder_group"] = "client.webrtc.perf"
-    dimensions = {"pool": "luci.webrtc.perf", "os": "Linux", "cores": "2"}
-    if "Android" in name or "Fuchsia" in name:
-        # Android perf testers require more performant bots to finish under 3 hours.
-        # Fuchsia perf testers encountered "no space left on device" error on multiple runs.
-        dimensions["cores"] = "8"
+    dimensions = {"pool": "luci.webrtc.perf", "os": "Linux"}
     return webrtc_builder(
         name = name,
         dimensions = dimensions,
@@ -820,6 +832,8 @@ try_builder("win11_release", cq = None)
 try_builder("win11_debug", cq = None)
 chromium_try_builder("win_chromium_compile")
 chromium_try_builder("win_chromium_compile_dbg")
+
+try_builder("iwyu_verifier", cq = None)
 
 try_builder(
     "presubmit",

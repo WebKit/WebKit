@@ -13,12 +13,13 @@
 
 #include <stdint.h>
 
-#include <algorithm>
+#include <functional>
 #include <memory>
-#include <utility>
+#include <type_traits>
 #include <vector>
 
-#include "api/function_view.h"
+#include "absl/types/optional.h"
+#include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "logging/rtc_event_log/rtc_event_processor_order.h"
 #include "rtc_base/checks.h"
 

@@ -10,24 +10,31 @@
 
 #include "logging/rtc_event_log/rtc_event_log_impl.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <functional>
-#include <limits>
+#include <iterator>
 #include <memory>
+#include <string>
 #include <utility>
-#include <vector>
 
 #include "absl/strings/string_view.h"
 #include "api/environment/environment.h"
 #include "api/field_trials_view.h"
+#include "api/rtc_event_log/rtc_event.h"
+#include "api/rtc_event_log/rtc_event_log.h"
+#include "api/rtc_event_log_output.h"
+#include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
+#include "logging/rtc_event_log/encoder/rtc_event_log_encoder.h"
 #include "logging/rtc_event_log/encoder/rtc_event_log_encoder_legacy.h"
 #include "logging/rtc_event_log/encoder/rtc_event_log_encoder_new_format.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/numerics/safe_minmax.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/time_utils.h"
 
 namespace webrtc {

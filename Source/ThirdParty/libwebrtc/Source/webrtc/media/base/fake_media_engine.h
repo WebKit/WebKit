@@ -495,6 +495,7 @@ class FakeVoiceMediaReceiveChannel
 
   std::vector<webrtc::RtpSource> GetSources(uint32_t ssrc) const override;
   void SetReceiveNackEnabled(bool enabled) override {}
+  void SetRtcpMode(webrtc::RtcpMode mode) override {}
   void SetReceiveNonSenderRttEnabled(bool enabled) override {}
 
  private:

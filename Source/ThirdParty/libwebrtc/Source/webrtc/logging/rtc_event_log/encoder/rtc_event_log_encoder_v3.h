@@ -11,14 +11,16 @@
 #ifndef LOGGING_RTC_EVENT_LOG_ENCODER_RTC_EVENT_LOG_ENCODER_V3_H_
 #define LOGGING_RTC_EVENT_LOG_ENCODER_RTC_EVENT_LOG_ENCODER_V3_H_
 
+#include <cstdint>
 #include <deque>
+#include <functional>
 #include <map>
 #include <memory>
 #include <string>
 
 #include "api/array_view.h"
+#include "api/rtc_event_log/rtc_event.h"
 #include "logging/rtc_event_log/encoder/rtc_event_log_encoder.h"
-#include "logging/rtc_event_log/events/rtc_event_definition.h"
 
 namespace webrtc {
 

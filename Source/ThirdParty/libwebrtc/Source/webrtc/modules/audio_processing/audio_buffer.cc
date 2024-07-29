@@ -15,7 +15,6 @@
 #include <cstdint>
 
 #include "common_audio/channel_buffer.h"
-#include "common_audio/include/audio_util.h"
 #include "common_audio/resampler/push_sinc_resampler.h"
 #include "modules/audio_processing/splitting_filter.h"
 #include "rtc_base/checks.h"
@@ -25,7 +24,6 @@ namespace {
 
 constexpr size_t kSamplesPer32kHzChannel = 320;
 constexpr size_t kSamplesPer48kHzChannel = 480;
-constexpr size_t kMaxSamplesPerChannel = AudioBuffer::kMaxSampleRate / 100;
 
 size_t NumBandsFromFramesPerChannel(size_t num_frames) {
   if (num_frames == kSamplesPer32kHzChannel) {
@@ -110,9 +108,9 @@ void AudioBuffer::CopyFrom(const float* const* stacked_data,
   const bool resampling_needed = input_num_frames_ != buffer_num_frames_;
 
   if (downmix_needed) {
-    RTC_DCHECK_GE(kMaxSamplesPerChannel, input_num_frames_);
+    RTC_DCHECK_GE(kMaxSamplesPerChannel10ms, input_num_frames_);
 
-    std::array<float, kMaxSamplesPerChannel> downmix;
+    std::array<float, kMaxSamplesPerChannel10ms> downmix;
     if (downmix_by_averaging_) {
       const float kOneByNumChannels = 1.f / input_num_channels_;
       for (size_t i = 0; i < input_num_frames_; ++i) {
@@ -230,7 +228,7 @@ void AudioBuffer::CopyFrom(const int16_t* const interleaved_data,
   if (num_channels_ == 1) {
     if (input_num_channels_ == 1) {
       if (resampling_required) {
-        std::array<float, kMaxSamplesPerChannel> float_buffer;
+        std::array<float, kMaxSamplesPerChannel10ms> float_buffer;
         S16ToFloatS16(interleaved, input_num_frames_, float_buffer.data());
         input_resamplers_[0]->Resample(float_buffer.data(), input_num_frames_,
                                        data_->channels()[0],
@@ -239,7 +237,7 @@ void AudioBuffer::CopyFrom(const int16_t* const interleaved_data,
         S16ToFloatS16(interleaved, input_num_frames_, data_->channels()[0]);
       }
     } else {
-      std::array<float, kMaxSamplesPerChannel> float_buffer;
+      std::array<float, kMaxSamplesPerChannel10ms> float_buffer;
       float* downmixed_data =
           resampling_required ? float_buffer.data() : data_->channels()[0];
       if (downmix_by_averaging_) {
@@ -274,7 +272,7 @@ void AudioBuffer::CopyFrom(const int16_t* const interleaved_data,
     };
 
     if (resampling_required) {
-      std::array<float, kMaxSamplesPerChannel> float_buffer;
+      std::array<float, kMaxSamplesPerChannel10ms> float_buffer;
       for (size_t i = 0; i < num_channels_; ++i) {
         deinterleave_channel(i, num_channels_, input_num_frames_, interleaved,
                              float_buffer.data());
@@ -302,7 +300,7 @@ void AudioBuffer::CopyTo(const StreamConfig& stream_config,
 
   int16_t* interleaved = interleaved_data;
   if (num_channels_ == 1) {
-    std::array<float, kMaxSamplesPerChannel> float_buffer;
+    std::array<float, kMaxSamplesPerChannel10ms> float_buffer;
 
     if (resampling_required) {
       output_resamplers_[0]->Resample(data_->channels()[0], buffer_num_frames_,
@@ -335,7 +333,7 @@ void AudioBuffer::CopyTo(const StreamConfig& stream_config,
 
     if (resampling_required) {
       for (size_t i = 0; i < num_channels_; ++i) {
-        std::array<float, kMaxSamplesPerChannel> float_buffer;
+        std::array<float, kMaxSamplesPerChannel10ms> float_buffer;
         output_resamplers_[i]->Resample(data_->channels()[i],
                                         buffer_num_frames_, float_buffer.data(),
                                         output_num_frames_);

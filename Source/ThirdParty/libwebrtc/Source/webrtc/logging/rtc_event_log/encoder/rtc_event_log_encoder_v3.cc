@@ -10,12 +10,15 @@
 
 #include "logging/rtc_event_log/encoder/rtc_event_log_encoder_v3.h"
 
+#include <cstdint>
+#include <deque>
+#include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include "absl/types/optional.h"
-#include "logging/rtc_event_log/encoder/rtc_event_log_encoder_common.h"
-#include "logging/rtc_event_log/encoder/var_int.h"
+#include "api/rtc_event_log/rtc_event.h"
+#include "api/units/timestamp.h"
 #include "logging/rtc_event_log/events/rtc_event_alr_state.h"
 #include "logging/rtc_event_log/events/rtc_event_audio_network_adaptation.h"
 #include "logging/rtc_event_log/events/rtc_event_audio_playout.h"
@@ -45,7 +48,6 @@
 #include "logging/rtc_event_log/events/rtc_event_video_receive_stream_config.h"
 #include "logging/rtc_event_log/events/rtc_event_video_send_stream_config.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 
 namespace webrtc {
 

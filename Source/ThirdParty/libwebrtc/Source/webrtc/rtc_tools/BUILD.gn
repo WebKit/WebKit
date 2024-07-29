@@ -62,8 +62,6 @@ rtc_library("video_file_reader") {
     "../rtc_base:logging",
     "../rtc_base:refcount",
     "../rtc_base:stringutils",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -80,10 +78,7 @@ rtc_library("video_file_writer") {
     "../api/video:video_frame",
     "../api/video:video_rtp_headers",
     "../rtc_base:logging",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/strings",
-    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
@@ -114,9 +109,9 @@ rtc_library("video_quality_analysis") {
     "../common_video",
     "../rtc_base:checks",
     "../rtc_base:logging",
+    "//third_party/abseil-cpp/absl/types:optional",
     "//third_party/libyuv",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 # TODO(bugs.webrtc.org/11474): Enable this on win if needed. For now it
@@ -137,12 +132,6 @@ if (!is_component_build) {
   # is_component_build=true because it depends on WebRTC testonly code
   # which is not part of //third_party/webrtc_overrides:webrtc_component.
 
-  # Abseil dependencies are not moved to the absl_deps field deliberately.
-  # If build_with_chromium is true, the absl_deps replaces the dependencies with
-  # the "//third_party/abseil-cpp:absl" target. Which doesn't include absl/flags
-  # (and some others) because they cannot be used in Chromiums. Special exception
-  # for the "frame_analyzer" target in "third_party/abseil-cpp/absl.gni" allows
-  # it to be build in chromium.
   rtc_executable("frame_analyzer") {
     visibility = [ "*" ]
     testonly = true
@@ -175,12 +164,6 @@ if (!is_component_build) {
   # is_component_build=true because it depends on WebRTC testonly code
   # which is not part of //third_party/webrtc_overrides:webrtc_component.
 
-  # Abseil dependencies are not moved to the absl_deps field deliberately.
-  # If build_with_chromium is true, the absl_deps replaces the dependencies with
-  # the "//third_party/abseil-cpp:absl" target. Which doesn't include absl/flags
-  # (and some others) because they cannot be used in Chromiums. Special exception
-  # for the "rtp_generator" target in "third_party/abseil-cpp/absl.gni" allows
-  # it to be build in chromium.
   rtc_executable("rtp_generator") {
     visibility = [ "*" ]
     testonly = true
@@ -242,12 +225,6 @@ if (!is_component_build) {
   # is_component_build=true because it depends on WebRTC testonly code
   # which is not part of //third_party/webrtc_overrides:webrtc_component.
 
-  # Abseil dependencies are not moved to the absl_deps field deliberately.
-  # If build_with_chromium is true, the absl_deps replaces the dependencies with
-  # the "//third_party/abseil-cpp:absl" target. Which doesn't include absl/flags
-  # (and some others) because they cannot be used in Chromiums. Special exception
-  # for the "video_replay" target in "third_party/abseil-cpp/absl.gni" allows
-  # it to be build in chromium.
   rtc_executable("video_replay") {
     visibility = [ "*" ]
     testonly = true
@@ -284,9 +261,9 @@ if (!is_component_build) {
       "../test:test_renderer",
       "../test:test_support",
       "../test:test_video_capturer",
+      "../test:video_frame_writer",
       "../test:video_test_common",
       "../test:video_test_constants",
-      "../test:video_test_support",
       "../test/time_controller:time_controller",
       "//third_party/abseil-cpp/absl/flags:flag",
       "//third_party/abseil-cpp/absl/flags:parse",
@@ -376,10 +353,10 @@ if (!build_with_chromium) {
       ]
       deps = [
         ":chart_proto",
+        "../api:candidate",
         "../api:dtls_transport_interface",
         "../api:function_view",
         "../api:make_ref_counted",
-        "../api:network_state_predictor_api",
         "../api:rtp_headers",
         "../api:rtp_parameters",
         "../api:scoped_refptr",
@@ -388,6 +365,7 @@ if (!build_with_chromium) {
         "../api/environment:environment_factory",
         "../api/neteq:neteq_api",
         "../api/rtc_event_log:rtc_event_log",
+        "../api/transport:bandwidth_usage",
         "../api/transport:field_trial_based_config",
         "../api/transport:goog_cc",
         "../api/transport:network_control",
@@ -416,6 +394,7 @@ if (!build_with_chromium) {
         "../modules/pacing",
         "../modules/remote_bitrate_estimator",
         "../modules/rtp_rtcp",
+        "../modules/rtp_rtcp:ntp_time_util",
         "../modules/rtp_rtcp:rtp_rtcp_format",
         "../rtc_base:checks",
         "../rtc_base:logging",
@@ -427,12 +406,10 @@ if (!build_with_chromium) {
         "../rtc_base/network:sent_packet",
         "../system_wrappers",
         "../test:explicit_key_value_config",
-      ]
-      absl_deps = [
         "//third_party/abseil-cpp/absl/algorithm:container",
         "//third_party/abseil-cpp/absl/base:core_headers",
         "//third_party/abseil-cpp/absl/functional:bind_front",
-        "//third_party/abseil-cpp/absl/strings",
+        "//third_party/abseil-cpp/absl/strings:string_view",
         "//third_party/abseil-cpp/absl/types:optional",
       ]
     }
@@ -451,8 +428,9 @@ if (!build_with_chromium) {
         "//logging:rtc_event_log_parser",
         "//rtc_base:protobuf_utils",
         "//rtc_base:safe_conversions",
+        "//third_party/abseil-cpp/absl/strings",
+        "//third_party/abseil-cpp/absl/strings:string_view",
       ]
-      absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
     }
 
     rtc_library("event_log_visualizer_bindings_unittest") {
@@ -465,6 +443,7 @@ if (!build_with_chromium) {
         "//rtc_base/system:file_wrapper",
         "//test:fileutils",
         "//test:test_support",
+        "//third_party/abseil-cpp/absl/types:optional",
       ]
     }
   }
@@ -483,8 +462,10 @@ if (!build_with_chromium) {
       "//api/environment",
       "//api/environment:environment_factory",
       "//api/video:builtin_video_bitrate_allocator_factory",
+      "//api/video_codecs:builtin_video_decoder_factory",
       "//api/video_codecs:builtin_video_encoder_factory",
       "//api/video_codecs:video_codecs_api",
+      "//common_video:common_video",
       "//media:media_constants",
       "//modules/video_coding:video_codec_interface",
       "//modules/video_coding:video_coding_utility",
@@ -495,6 +476,7 @@ if (!build_with_chromium) {
       "//third_party/abseil-cpp/absl/flags:flag",
       "//third_party/abseil-cpp/absl/flags:parse",
       "//third_party/abseil-cpp/absl/flags:usage",
+      "//third_party/abseil-cpp/absl/strings:strings",
     ]
   }
 }
@@ -511,9 +493,11 @@ if (rtc_include_tests) {
           "rtc_event_log_visualizer/main.cc",
         ]
         deps = [
+          ":chart_proto",
           ":event_log_visualizer_utils",
           "../api/neteq:neteq_api",
           "../api/rtc_event_log",
+          "../api/units:time_delta",
           "../logging:rtc_event_log_parser",
           "../modules/audio_coding:neteq",
           "../modules/rtp_rtcp:rtp_rtcp_format",
@@ -527,6 +511,7 @@ if (rtc_include_tests) {
           "//third_party/abseil-cpp/absl/flags:parse",
           "//third_party/abseil-cpp/absl/flags:usage",
           "//third_party/abseil-cpp/absl/strings",
+          "//third_party/abseil-cpp/absl/types:optional",
         ]
       }
 
@@ -538,7 +523,11 @@ if (rtc_include_tests) {
           "rtc_event_log_to_text/main.cc",
         ]
         deps = [
+          "../api:candidate",
+          "../api:rtp_parameters",
           "../api/rtc_event_log",
+          "../api/transport:bandwidth_usage",
+          "../api/video:video_frame",
           "../logging:ice_log",
           "../logging:rtc_event_audio",
           "../logging:rtc_event_begin_end",

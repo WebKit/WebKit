@@ -66,8 +66,8 @@ class H264SpsPpsTracker {
     std::unique_ptr<uint8_t[]> data;
   };
 
-  std::map<uint32_t, PpsInfo> pps_data_;
-  std::map<uint32_t, SpsInfo> sps_data_;
+  std::map<int, PpsInfo> pps_data_;
+  std::map<int, SpsInfo> sps_data_;
 };
 
 }  // namespace video_coding

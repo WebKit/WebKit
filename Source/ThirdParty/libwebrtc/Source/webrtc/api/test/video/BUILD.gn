@@ -25,7 +25,6 @@ rtc_library("function_video_factory") {
 
 rtc_library("video_frame_writer") {
   visibility = [ "*" ]
-  testonly = true
   sources = [ "video_frame_writer.h" ]
 
   deps = [ "../../video:video_frame" ]
@@ -47,6 +46,6 @@ rtc_library("test_video_track_source") {
     "../../../rtc_base/system:no_unique_address",
     "../../video:recordable_encoded_frame",
     "../../video:video_frame",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }

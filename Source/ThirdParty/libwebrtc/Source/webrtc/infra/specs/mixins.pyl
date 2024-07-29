@@ -18,6 +18,13 @@
       }
     }
   },
+  'arm64': {
+    'swarming': {
+      'dimensions': {
+        'cpu': 'arm64'
+      }
+    }
+  },
   'chrome-tester-service-account': {
     'swarming': {
       'service_account':
@@ -61,9 +68,8 @@
   'ios-device-16.7': {
     'swarming': {
       'dimensions': {
-        'os': 'iOS-16.7.1',
-        'pool': 'chrome.tests',
-        'device_status': 'available'
+        'os': 'iOS-16.7.5',
+        'pool': 'chrome.tests'
       }
     }
   },
@@ -71,19 +77,9 @@
     'swarming': {
       'idempotent': False,
       'dimensions': {
-        'os': 'iOS-15.7.8',
-        'pool': 'WebRTC',
-        'id': 'mac-254-e504',
-        'device_status': 'available'
+        'os': 'iOS-17.5.1',
+        'pool': 'WebRTC'
       }
-    }
-  },
-  'ios_runtime_cache_15_5': {
-    'swarming': {
-      'named_caches': [{
-        'name': 'runtime_ios_15_5',
-        'path': 'Runtime-ios-15.5'
-      }]
     }
   },
   'ios_runtime_cache_16_4': {
@@ -94,11 +90,19 @@
       }]
     }
   },
-  'ios_runtime_cache_17_4': {
+  'ios_runtime_cache_17_5': {
     'swarming': {
       'named_caches': [{
-        'name': 'runtime_ios_17_4',
-        'path': 'Runtime-ios-17.4'
+        'name': 'runtime_ios_17_5',
+        'path': 'Runtime-ios-17.5'
+      }]
+    }
+  },
+  'ios_runtime_cache_18_0': {
+    'swarming': {
+      'named_caches': [{
+        'name': 'runtime_ios_18_0',
+        'path': 'Runtime-ios-18.0'
       }]
     }
   },
@@ -314,23 +318,11 @@
       }
     }
   },
-  'xcode_14_main': {
-    'args': ['--xcode-build-version', '14c18'],
-    'swarming': {
-      'dimensions': {
-        'caches': 'xcode_ios_14c18'
-      },
-      'named_caches': [{
-        'name': 'xcode_ios_14c18',
-        'path': 'Xcode.app'
-      }]
-    }
-  },
   'xcode_15_main': {
-    'args': ['--xcode-build-version', '15c500b'],
+    'args': ['--xcode-build-version', '15f31d'],
     'swarming': {
       'named_caches': [{
-        'name': 'xcode_ios_15c500b',
+        'name': 'xcode_ios_15f31d',
         'path': 'Xcode.app'
       }]
     }

@@ -13,7 +13,8 @@
 #include <string>
 
 #include "p2p/base/p2p_constants.h"
-#include "rtc_base/gunit.h"
+#include "rtc_base/socket_address.h"
+#include "test/gtest.h"
 
 using webrtc::IceCandidateType;
 

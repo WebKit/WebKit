@@ -133,6 +133,8 @@ class AudioIngress : public AudioMixer::Source {
 
   RemoteNtpTimeEstimator ntp_estimator_ RTC_GUARDED_BY(lock_);
 
+  Clock* clock_;
+
   // For receiving RTP statistics, this tracks the sampling rate value
   // per payload type set when caller set via SetReceiveCodecs.
   std::map<int, int> receive_codec_info_ RTC_GUARDED_BY(lock_);

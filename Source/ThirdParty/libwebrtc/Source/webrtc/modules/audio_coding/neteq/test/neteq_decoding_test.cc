@@ -13,6 +13,7 @@
 #include "absl/strings/string_view.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/rtp_headers.h"
+#include "api/units/timestamp.h"
 #include "modules/audio_coding/neteq/default_neteq_factory.h"
 #include "modules/audio_coding/neteq/test/result_sink.h"
 #include "rtc_base/strings/string_builder.h"
@@ -106,11 +107,11 @@ void NetEqDecodingTest::Process() {
       // Ignore payload type 104 (iSAC-swb) if ISAC is not supported.
       if (packet_->header().payloadType != 104)
 #endif
-        ASSERT_EQ(
-            0, neteq_->InsertPacket(
-                   packet_->header(),
-                   rtc::ArrayView<const uint8_t>(
-                       packet_->payload(), packet_->payload_length_bytes())));
+        ASSERT_EQ(0, neteq_->InsertPacket(packet_->header(),
+                                          rtc::ArrayView<const uint8_t>(
+                                              packet_->payload(),
+                                              packet_->payload_length_bytes()),
+                                          clock_.CurrentTime()));
     }
     // Get next packet.
     packet_ = rtp_source_->NextPacket();
@@ -239,7 +240,8 @@ void NetEqDecodingTest::WrapTest(uint16_t start_seq_no,
       PopulateRtpInfo(seq_no, timestamp, &rtp_info);
       if (drop_seq_numbers.find(seq_no) == drop_seq_numbers.end()) {
         // This sequence number was not in the set to drop. Insert it.
-        ASSERT_EQ(0, neteq_->InsertPacket(rtp_info, payload));
+        ASSERT_EQ(0, neteq_->InsertPacket(rtp_info, payload,
+                                          Timestamp::Millis(t_ms)));
       }
       NetEqNetworkStatistics network_stats;
       ASSERT_EQ(0, neteq_->NetworkStatistics(&network_stats));
@@ -298,7 +300,8 @@ void NetEqDecodingTest::LongCngWithClockDrift(double drift_factor,
       uint8_t payload[kPayloadBytes] = {0};
       RTPHeader rtp_info;
       PopulateRtpInfo(seq_no, timestamp, &rtp_info);
-      ASSERT_EQ(0, neteq_->InsertPacket(rtp_info, payload));
+      ASSERT_EQ(
+          0, neteq_->InsertPacket(rtp_info, payload, Timestamp::Millis(t_ms)));
       ++seq_no;
       timestamp += kSamples;
       next_input_time_ms += static_cast<double>(kFrameSizeMs) * drift_factor;
@@ -325,8 +328,10 @@ void NetEqDecodingTest::LongCngWithClockDrift(double drift_factor,
       size_t payload_len;
       RTPHeader rtp_info;
       PopulateCng(seq_no, timestamp, &rtp_info, payload, &payload_len);
-      ASSERT_EQ(0, neteq_->InsertPacket(rtp_info, rtc::ArrayView<const uint8_t>(
-                                                      payload, payload_len)));
+      ASSERT_EQ(
+          0, neteq_->InsertPacket(
+                 rtp_info, rtc::ArrayView<const uint8_t>(payload, payload_len),
+                 Timestamp::Millis(t_ms)));
       ++seq_no;
       timestamp += kCngPeriodSamples;
       next_input_time_ms += static_cast<double>(kCngPeriodMs) * drift_factor;
@@ -367,8 +372,10 @@ void NetEqDecodingTest::LongCngWithClockDrift(double drift_factor,
       size_t payload_len;
       RTPHeader rtp_info;
       PopulateCng(seq_no, timestamp, &rtp_info, payload, &payload_len);
-      ASSERT_EQ(0, neteq_->InsertPacket(rtp_info, rtc::ArrayView<const uint8_t>(
-                                                      payload, payload_len)));
+      ASSERT_EQ(
+          0, neteq_->InsertPacket(
+                 rtp_info, rtc::ArrayView<const uint8_t>(payload, payload_len),
+                 Timestamp::Millis(t_ms)));
       ++seq_no;
       timestamp += kCngPeriodSamples;
       next_input_time_ms += kCngPeriodMs * drift_factor;
@@ -384,7 +391,8 @@ void NetEqDecodingTest::LongCngWithClockDrift(double drift_factor,
       uint8_t payload[kPayloadBytes] = {0};
       RTPHeader rtp_info;
       PopulateRtpInfo(seq_no, timestamp, &rtp_info);
-      ASSERT_EQ(0, neteq_->InsertPacket(rtp_info, payload));
+      ASSERT_EQ(
+          0, neteq_->InsertPacket(rtp_info, payload, Timestamp::Millis(t_ms)));
       ++seq_no;
       timestamp += kSamples;
       next_input_time_ms += kFrameSizeMs * drift_factor;

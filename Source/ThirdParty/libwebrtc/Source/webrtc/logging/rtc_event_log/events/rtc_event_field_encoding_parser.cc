@@ -11,10 +11,18 @@
 
 #include "logging/rtc_event_log/events/rtc_event_field_encoding_parser.h"
 
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <tuple>
+
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
+#include "api/array_view.h"
 #include "logging/rtc_event_log/encoder/var_int.h"
+#include "logging/rtc_event_log/events/fixed_length_encoding_parameters_v3.h"
 #include "logging/rtc_event_log/events/rtc_event_field_encoding.h"
+#include "logging/rtc_event_log/events/rtc_event_field_extraction.h"
 #include "logging/rtc_event_log/events/rtc_event_log_parse_status.h"
 #include "rtc_base/bitstream_reader.h"
 #include "rtc_base/checks.h"

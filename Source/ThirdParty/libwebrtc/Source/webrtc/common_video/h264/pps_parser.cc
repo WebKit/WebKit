@@ -29,16 +29,15 @@ constexpr int kMinPicInitQpDeltaValue = -26;
 // You can find it on this page:
 // http://www.itu.int/rec/T-REC-H.264
 
-absl::optional<PpsParser::PpsState> PpsParser::ParsePps(const uint8_t* data,
-                                                        size_t length) {
+absl::optional<PpsParser::PpsState> PpsParser::ParsePps(
+    rtc::ArrayView<const uint8_t> data) {
   // First, parse out rbsp, which is basically the source buffer minus emulation
   // bytes (the last byte of a 0x00 0x00 0x03 sequence). RBSP is defined in
   // section 7.3.1 of the H.264 standard.
-  return ParseInternal(H264::ParseRbsp(data, length));
+  return ParseInternal(H264::ParseRbsp(data));
 }
 
-bool PpsParser::ParsePpsIds(const uint8_t* data,
-                            size_t length,
+bool PpsParser::ParsePpsIds(rtc::ArrayView<const uint8_t> data,
                             uint32_t* pps_id,
                             uint32_t* sps_id) {
   RTC_DCHECK(pps_id);
@@ -46,28 +45,32 @@ bool PpsParser::ParsePpsIds(const uint8_t* data,
   // First, parse out rbsp, which is basically the source buffer minus emulation
   // bytes (the last byte of a 0x00 0x00 0x03 sequence). RBSP is defined in
   // section 7.3.1 of the H.264 standard.
-  std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(data, length);
+  std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(data);
   BitstreamReader reader(unpacked_buffer);
   *pps_id = reader.ReadExponentialGolomb();
   *sps_id = reader.ReadExponentialGolomb();
   return reader.Ok();
 }
 
-absl::optional<uint32_t> PpsParser::ParsePpsIdFromSlice(const uint8_t* data,
-                                                        size_t length) {
-  std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(data, length);
+absl::optional<PpsParser::SliceHeader> PpsParser::ParseSliceHeader(
+    rtc::ArrayView<const uint8_t> data) {
+  std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(data);
   BitstreamReader slice_reader(unpacked_buffer);
+  PpsParser::SliceHeader slice_header;
 
   // first_mb_in_slice: ue(v)
-  slice_reader.ReadExponentialGolomb();
+  slice_header.first_mb_in_slice = slice_reader.ReadExponentialGolomb();
   // slice_type: ue(v)
   slice_reader.ReadExponentialGolomb();
   // pic_parameter_set_id: ue(v)
-  uint32_t slice_pps_id = slice_reader.ReadExponentialGolomb();
+  slice_header.pic_parameter_set_id = slice_reader.ReadExponentialGolomb();
+
+  // The rest of the slice header requires information from the SPS to parse.
+
   if (!slice_reader.Ok()) {
     return absl::nullopt;
   }
-  return slice_pps_id;
+  return slice_header;
 }
 
 absl::optional<PpsParser::PpsState> PpsParser::ParseInternal(
@@ -126,9 +129,13 @@ absl::optional<PpsParser::PpsState> PpsParser::ParseInternal(
     }
   }
   // num_ref_idx_l0_default_active_minus1: ue(v)
-  reader.ReadExponentialGolomb();
+  pps.num_ref_idx_l0_default_active_minus1 = reader.ReadExponentialGolomb();
   // num_ref_idx_l1_default_active_minus1: ue(v)
-  reader.ReadExponentialGolomb();
+  pps.num_ref_idx_l1_default_active_minus1 = reader.ReadExponentialGolomb();
+  if (pps.num_ref_idx_l0_default_active_minus1 > H264::kMaxReferenceIndex ||
+      pps.num_ref_idx_l1_default_active_minus1 > H264::kMaxReferenceIndex) {
+    return absl::nullopt;
+  }
   // weighted_pred_flag: u(1)
   pps.weighted_pred_flag = reader.Read<bool>();
   // weighted_bipred_idc: u(2)

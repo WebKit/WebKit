@@ -128,7 +128,6 @@ class RTC_EXPORT P2PTransportChannel : public IceTransportInternal,
   bool receiving() const override;
   void SetIceRole(IceRole role) override;
   IceRole GetIceRole() const override;
-  void SetIceTiebreaker(uint64_t tiebreaker) override;
   void SetIceParameters(const IceParameters& ice_params) override;
   void SetRemoteIceParameters(const IceParameters& ice_params) override;
   void SetRemoteIceMode(IceMode mode) override;
@@ -439,7 +438,6 @@ class RTC_EXPORT P2PTransportChannel : public IceTransportInternal,
       RTC_GUARDED_BY(network_thread_);
   IceMode remote_ice_mode_ RTC_GUARDED_BY(network_thread_);
   IceRole ice_role_ RTC_GUARDED_BY(network_thread_);
-  uint64_t ice_tiebreaker_ RTC_GUARDED_BY(network_thread_);
   IceGatheringState gathering_state_ RTC_GUARDED_BY(network_thread_);
   std::unique_ptr<webrtc::BasicRegatheringController> regathering_controller_
       RTC_GUARDED_BY(network_thread_);

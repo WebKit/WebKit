@@ -19,7 +19,6 @@
 #include "absl/types/optional.h"
 #include "api/field_trials_view.h"
 #include "modules/pacing/interval_budget.h"
-#include "rtc_base/experiments/alr_experiment.h"
 #include "rtc_base/experiments/struct_parameters_parser.h"
 
 namespace webrtc {

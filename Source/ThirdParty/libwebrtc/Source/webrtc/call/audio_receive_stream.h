@@ -62,6 +62,7 @@ class AudioReceiveStreamInterface : public MediaReceiveStreamInterface {
     double jitter_buffer_minimum_delay_seconds = 0.0;
     uint64_t inserted_samples_for_deceleration = 0;
     uint64_t removed_samples_for_acceleration = 0;
+    double total_processing_delay_seconds = 0.0;
     // Stats below DO NOT correspond directly to anything in the WebRTC stats
     float expand_rate = 0.0f;
     float speech_expand_rate = 0.0f;
@@ -117,6 +118,7 @@ class AudioReceiveStreamInterface : public MediaReceiveStreamInterface {
 
       // See NackConfig for description.
       NackConfig nack;
+      RtcpMode rtcp_mode = RtcpMode::kCompound;
     } rtp;
 
     // Receive-side RTT.

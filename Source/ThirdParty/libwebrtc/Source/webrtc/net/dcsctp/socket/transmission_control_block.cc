@@ -244,6 +244,13 @@ void TransmissionControlBlock::SendBufferedPackets(SctpPacket::Builder& builder,
 
     auto chunks =
         retransmission_queue_.GetChunksToSend(now, builder.bytes_remaining());
+
+    if (!chunks.empty()) {
+      // https://datatracker.ietf.org/doc/html/rfc9260#section-8.3
+      // Sending DATA means that the path is not idle - restart heartbeat timer.
+      heartbeat_handler_.RestartTimer();
+    }
+
     for (auto& [tsn, data] : chunks) {
       if (capabilities_.message_interleaving) {
         builder.Add(IDataChunk(tsn, std::move(data), false));

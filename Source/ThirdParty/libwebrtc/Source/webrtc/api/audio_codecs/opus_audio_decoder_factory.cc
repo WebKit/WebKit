@@ -13,9 +13,15 @@
 #include <memory>
 #include <vector>
 
+#include "absl/types/optional.h"
+#include "api/audio_codecs/audio_codec_pair_id.h"
+#include "api/audio_codecs/audio_decoder.h"
+#include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_decoder_factory_template.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/opus/audio_decoder_multi_channel_opus.h"
 #include "api/audio_codecs/opus/audio_decoder_opus.h"
+#include "api/scoped_refptr.h"
 
 namespace webrtc {
 

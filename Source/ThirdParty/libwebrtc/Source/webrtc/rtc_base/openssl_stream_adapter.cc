@@ -17,17 +17,12 @@
 #include <openssl/tls1.h>
 #include <openssl/x509v3.h>
 
-#include "absl/strings/string_view.h"
-#ifndef OPENSSL_IS_BORINGSSL
-#include <openssl/dtls1.h>
-#include <openssl/ssl.h>
-#endif
-
 #include <atomic>
 #include <memory>
 #include <utility>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -36,6 +31,9 @@
 #include "rtc_base/openssl_adapter.h"
 #include "rtc_base/openssl_digest.h"
 #ifdef OPENSSL_IS_BORINGSSL
+#include <openssl/dtls1.h>
+#include <openssl/ssl.h>
+
 #include "rtc_base/boringssl_identity.h"
 #else
 #include "rtc_base/openssl_identity.h"
@@ -570,17 +568,14 @@ StreamResult OpenSSLStreamAdapter::Write(rtc::ArrayView<const uint8_t> data,
     case SSL_NONE:
       // pass-through in clear text
       return stream_->Write(data, written, error);
-
     case SSL_WAIT:
     case SSL_CONNECTING:
       return SR_BLOCK;
-
     case SSL_CONNECTED:
       if (WaitingToVerifyPeerCertificate()) {
         return SR_BLOCK;
       }
       break;
-
     case SSL_ERROR:
     case SSL_CLOSED:
     default:
@@ -612,7 +607,6 @@ StreamResult OpenSSLStreamAdapter::Write(rtc::ArrayView<const uint8_t> data,
     case SSL_ERROR_WANT_WRITE:
       RTC_DLOG(LS_VERBOSE) << " -- error want write";
       return SR_BLOCK;
-
     case SSL_ERROR_ZERO_RETURN:
     default:
       Error("SSL_write", (ssl_error ? ssl_error : -1), 0, false);
@@ -915,7 +909,6 @@ int OpenSSLStreamAdapter::ContinueSSL() {
         FireEvent(SE_OPEN | SE_READ | SE_WRITE, 0);
       }
       break;
-
     case SSL_ERROR_WANT_READ: {
       RTC_DLOG(LS_VERBOSE) << " -- error want read";
       struct timeval timeout;
@@ -924,13 +917,11 @@ int OpenSSLStreamAdapter::ContinueSSL() {
         SetTimeout(delay);
       }
     } break;
-
     case SSL_ERROR_WANT_WRITE:
       RTC_DLOG(LS_VERBOSE) << " -- error want write";
       break;
-
     case SSL_ERROR_ZERO_RETURN:
-    default:
+    default: {
       SSLHandshakeError ssl_handshake_err = SSLHandshakeError::UNKNOWN;
       int err_code = ERR_peek_last_error();
       if (err_code != 0 && ERR_GET_REASON(err_code) == SSL_R_NO_SHARED_CIPHER) {
@@ -942,6 +933,7 @@ int OpenSSLStreamAdapter::ContinueSSL() {
         handshake_error_(ssl_handshake_err);
       }
       return (ssl_error != 0) ? ssl_error : -1;
+    }
   }
 
   return 0;

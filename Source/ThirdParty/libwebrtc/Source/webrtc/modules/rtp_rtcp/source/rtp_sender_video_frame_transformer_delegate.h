@@ -21,7 +21,9 @@
 #include "api/task_queue/task_queue_factory.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "api/video/encoded_image.h"
 #include "api/video/video_layers_allocation.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {

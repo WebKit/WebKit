@@ -203,4 +203,33 @@ TEST(StatisticsCalculator, DiscardedPackets) {
             statistics_calculator.GetLifetimeStatistics().packets_discarded);
 }
 
+TEST(StatisticsCalculator, JitterBufferDelay) {
+  StatisticsCalculator stats;
+  NetEqLifetimeStatistics lts;
+  lts = stats.GetLifetimeStatistics();
+  EXPECT_EQ(lts.total_processing_delay_us, 0ul);
+  stats.JitterBufferDelay(/*num_samples=*/480,
+                          /*waiting_time_ms=*/90ul,
+                          /*target_delay_ms=*/80ul,
+                          /*unlimited_target_delay_ms=*/70,
+                          /*processing_delay_us=*/100 * 1000ul);
+  lts = stats.GetLifetimeStatistics();
+  EXPECT_EQ(lts.jitter_buffer_delay_ms / 480, 90ul);
+  EXPECT_EQ(lts.jitter_buffer_target_delay_ms / 480, 80ul);
+  EXPECT_EQ(lts.jitter_buffer_minimum_delay_ms / 480, 70ul);
+  EXPECT_EQ(lts.total_processing_delay_us / 480, 100 * 1000ul);
+  EXPECT_EQ(lts.jitter_buffer_emitted_count, 480ul);
+  stats.JitterBufferDelay(/*num_samples=*/480,
+                          /*waiting_time_ms=*/90ul,
+                          /*target_delay_ms=*/80ul,
+                          /*unlimited_target_delay_ms=*/70,
+                          /*processing_delay_us=*/100 * 1000ul);
+  lts = stats.GetLifetimeStatistics();
+  EXPECT_EQ(lts.jitter_buffer_delay_ms / 960, 90ul);
+  EXPECT_EQ(lts.jitter_buffer_target_delay_ms / 960, 80ul);
+  EXPECT_EQ(lts.jitter_buffer_minimum_delay_ms / 960, 70ul);
+  EXPECT_EQ(lts.total_processing_delay_us / 960, 100 * 1000ul);
+  EXPECT_EQ(lts.jitter_buffer_emitted_count, 960ul);
+}
+
 }  // namespace webrtc

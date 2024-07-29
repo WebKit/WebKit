@@ -13,10 +13,16 @@
 #include <memory>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "api/audio_codecs/L16/audio_decoder_L16.h"
+#include "api/audio_codecs/audio_codec_pair_id.h"
+#include "api/audio_codecs/audio_decoder.h"
+#include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_decoder_factory_template.h"
+#include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/g711/audio_decoder_g711.h"
 #include "api/audio_codecs/g722/audio_decoder_g722.h"
+#include "api/scoped_refptr.h"
 #if WEBRTC_USE_BUILTIN_ILBC
 #include "api/audio_codecs/ilbc/audio_decoder_ilbc.h"  // nogncheck
 #endif

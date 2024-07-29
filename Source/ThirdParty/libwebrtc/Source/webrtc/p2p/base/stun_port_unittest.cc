@@ -17,8 +17,8 @@
 #include "p2p/base/mock_dns_resolving_packet_socket_factory.h"
 #include "p2p/base/test_stun_server.h"
 #include "rtc_base/async_packet_socket.h"
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/gunit.h"
-#include "rtc_base/helpers.h"
 #include "rtc_base/network/received_packet.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/ssl_adapter.h"
@@ -137,9 +137,13 @@ class StunPortTestBase : public ::testing::Test, public sigslot::has_slots<> {
   void CreateStunPort(const ServerAddresses& stun_servers,
                       const webrtc::FieldTrialsView* field_trials = nullptr) {
     stun_port_ = cricket::StunPort::Create(
-        rtc::Thread::Current(), socket_factory(), &network_, 0, 0,
-        rtc::CreateRandomString(16), rtc::CreateRandomString(22), stun_servers,
-        absl::nullopt, field_trials);
+        {.network_thread = rtc::Thread::Current(),
+         .socket_factory = socket_factory(),
+         .network = &network_,
+         .ice_username_fragment = rtc::CreateRandomString(16),
+         .ice_password = rtc::CreateRandomString(22),
+         .field_trials = field_trials},
+        0, 0, stun_servers, absl::nullopt);
     stun_port_->SetIceTiebreaker(kTiebreakerDefault);
     stun_port_->set_stun_keepalive_delay(stun_keepalive_delay_);
     // If `stun_keepalive_lifetime_` is negative, let the stun port
@@ -170,9 +174,13 @@ class StunPortTestBase : public ::testing::Test, public sigslot::has_slots<> {
           OnReadPacket(socket, packet);
         });
     stun_port_ = cricket::UDPPort::Create(
-        rtc::Thread::Current(), socket_factory(), &network_, socket_.get(),
-        rtc::CreateRandomString(16), rtc::CreateRandomString(22), false,
-        absl::nullopt, field_trials);
+        {.network_thread = rtc::Thread::Current(),
+         .socket_factory = socket_factory(),
+         .network = &network_,
+         .ice_username_fragment = rtc::CreateRandomString(16),
+         .ice_password = rtc::CreateRandomString(22),
+         .field_trials = field_trials},
+        socket_.get(), false, absl::nullopt);
     ASSERT_TRUE(stun_port_ != NULL);
     stun_port_->SetIceTiebreaker(kTiebreakerDefault);
     ServerAddresses stun_servers;

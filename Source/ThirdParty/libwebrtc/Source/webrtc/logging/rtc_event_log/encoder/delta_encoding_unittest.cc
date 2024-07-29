@@ -11,6 +11,9 @@
 #include "logging/rtc_event_log/encoder/delta_encoding.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 #include <limits>
 #include <numeric>
 #include <string>

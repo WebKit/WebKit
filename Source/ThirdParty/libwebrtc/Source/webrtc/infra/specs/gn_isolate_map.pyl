@@ -126,9 +126,7 @@
   },
   "video_capture_tests": {
     "label": "//modules/video_capture:video_capture_tests",
-    "type": "non_parallel_console_test_launcher",
-    # TODO(bugs.webrtc.org/9292): remove use_webcam and the ensure script.
-    "use_webcam": True,
+    "type": "console_test_launcher",
   },
   "video_codec_perf_tests": {
     "label": "//modules/video_coding:video_codec_perf_tests",

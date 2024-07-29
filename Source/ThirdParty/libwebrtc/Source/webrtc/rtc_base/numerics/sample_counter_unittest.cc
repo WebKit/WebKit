@@ -12,6 +12,7 @@
 
 #include <initializer_list>
 
+#include "absl/types/optional.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 

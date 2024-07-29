@@ -55,7 +55,7 @@ file type suffix), in the same directory, in the same build target.
   test `.cc` files, and with `.cc` files that define `main`.)
 
 See also the
-[examples and exceptions on how to treat `.h` and `.cpp` files](style-guide/h-cc-pairs.md).
+[examples and exceptions on how to treat `.h` and `.cc` files](style-guide/h-cc-pairs.md).
 
 This makes the source code easier to navigate and organize, and precludes some
 questionable build system practices such as having build targets that don't pull

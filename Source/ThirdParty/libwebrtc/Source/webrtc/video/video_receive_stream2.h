@@ -350,6 +350,8 @@ class VideoReceiveStream2
   // destructed to avoid races when running tasks on the `decode_queue_` during
   // VideoReceiveStream2 destruction.
   std::unique_ptr<TaskQueueBase, TaskQueueDeleter> decode_queue_;
+
+  absl::optional<uint32_t> last_decoded_rtp_timestamp_;
 };
 
 }  // namespace internal

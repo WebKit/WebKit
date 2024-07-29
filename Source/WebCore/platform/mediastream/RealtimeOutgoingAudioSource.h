@@ -95,11 +95,11 @@ private:
     void RemoveSink(webrtc::AudioTrackSinkInterface*) final;
 
     void AddRef() const final { ref(); }
-    rtc::RefCountReleaseStatus Release() const final
+    webrtc::RefCountReleaseStatus Release() const final
     {
         auto result = refCount() - 1;
         deref();
-        return result ? rtc::RefCountReleaseStatus::kOtherRefsRemained : rtc::RefCountReleaseStatus::kDroppedLastRef;
+        return result ? webrtc::RefCountReleaseStatus::kOtherRefsRemained : webrtc::RefCountReleaseStatus::kDroppedLastRef;
     }
 
     SourceState state() const final { return kLive; }

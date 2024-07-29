@@ -37,7 +37,12 @@ class RTC_EXPORT H265VpsParser {
   };
 
   // Unpack RBSP and parse VPS state from the supplied buffer.
-  static absl::optional<VpsState> ParseVps(const uint8_t* data, size_t length);
+  static absl::optional<VpsState> ParseVps(rtc::ArrayView<const uint8_t> data);
+  // TODO: bugs.webrtc.org/42225170 - Deprecate.
+  static inline absl::optional<VpsState> ParseVps(const uint8_t* data,
+                                                  size_t length) {
+    return ParseVps(rtc::MakeArrayView(data, length));
+  }
 
  protected:
   // Parse the VPS state, for a bit buffer where RBSP decoding has already been

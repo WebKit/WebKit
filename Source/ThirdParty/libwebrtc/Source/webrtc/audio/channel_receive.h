@@ -140,6 +140,7 @@ class ChannelReceiveInterface : public RtpPacketSinkInterface {
 
   virtual CallReceiveStatistics GetRTCPStatistics() const = 0;
   virtual void SetNACKStatus(bool enable, int max_packets) = 0;
+  virtual void SetRtcpMode(webrtc::RtcpMode mode) = 0;
   virtual void SetNonSenderRttMeasurement(bool enabled) = 0;
 
   virtual AudioMixer::Source::AudioFrameInfo GetAudioFrameWithInfo(

@@ -11,14 +11,16 @@
 #ifndef LOGGING_RTC_EVENT_LOG_EVENTS_RTC_EVENT_AUDIO_NETWORK_ADAPTATION_H_
 #define LOGGING_RTC_EVENT_LOG_EVENTS_RTC_EVENT_AUDIO_NETWORK_ADAPTATION_H_
 
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/array_view.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "api/units/timestamp.h"
-#include "logging/rtc_event_log/events/rtc_event_field_encoding_parser.h"
+#include "logging/rtc_event_log/events/rtc_event_log_parse_status.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
 
 namespace webrtc {

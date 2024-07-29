@@ -10,9 +10,20 @@
 
 #include "logging/rtc_event_log/rtc_event_log_impl.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <deque>
+#include <memory>
+#include <string>
 #include <utility>
-#include <vector>
 
+#include "absl/strings/string_view.h"
+#include "api/rtc_event_log/rtc_event.h"
+#include "api/rtc_event_log_output.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "logging/rtc_event_log/encoder/rtc_event_log_encoder.h"
+#include "rtc_base/checks.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/time_controller/simulated_time_controller.h"

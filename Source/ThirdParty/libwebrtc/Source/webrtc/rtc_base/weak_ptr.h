@@ -102,7 +102,7 @@ class WeakReference {
     bool IsValid() const;
 
    private:
-    friend class FinalRefCountedObject<Flag>;
+    friend class webrtc::FinalRefCountedObject<Flag>;
 
     ~Flag() = default;
 

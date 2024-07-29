@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "rtc_base/helpers.h"
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/string_encode.h"
 #include "rtc_base/string_to_number.h"
 

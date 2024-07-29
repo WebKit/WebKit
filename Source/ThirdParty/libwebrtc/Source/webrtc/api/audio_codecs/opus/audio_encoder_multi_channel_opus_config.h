@@ -12,11 +12,8 @@
 #define API_AUDIO_CODECS_OPUS_AUDIO_ENCODER_MULTI_CHANNEL_OPUS_CONFIG_H_
 
 #include <stddef.h>
-
 #include <vector>
 
-#include "absl/types/optional.h"
-#include "api/audio_codecs/opus/audio_encoder_opus_config.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {

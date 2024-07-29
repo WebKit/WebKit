@@ -27,9 +27,6 @@ secondary_source = "//build/secondary/"
 no_check_targets = [
   "//third_party/icu/*",
 
-  # TODO(crbug.com/1151236) Remove once fixed.
-  "//base/allocator/partition_allocator:partition_alloc",
-
   # TODO: crbug/326607005 - GTEST_HAS_ABSL is broken
   "//third_party/googletest:gmock",
   "//third_party/googletest:gtest",
@@ -40,6 +37,8 @@ no_check_targets = [
 # discouraged except for gypi_to_gn calls.
 exec_script_whitelist = build_dotfile_settings.exec_script_whitelist +
                         [ "//build_overrides/build.gni" ]
+
+export_compile_commands = [ "*" ]
 
 default_args = {
   # Webrtc does not support component builds because we are not using the

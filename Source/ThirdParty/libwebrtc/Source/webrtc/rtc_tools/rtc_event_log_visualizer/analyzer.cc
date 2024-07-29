@@ -20,6 +20,7 @@
 #include <memory>
 #include <string>
 #include <tuple>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -27,13 +28,14 @@
 #include "absl/functional/bind_front.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
+#include "api/candidate.h"
 #include "api/dtls_transport_interface.h"
 #include "api/environment/environment_factory.h"
 #include "api/function_view.h"
 #include "api/media_types.h"
-#include "api/network_state_predictor.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/rtp_headers.h"
+#include "api/transport/bandwidth_usage.h"
 #include "api/transport/goog_cc_factory.h"
 #include "api/transport/network_control.h"
 #include "api/transport/network_types.h"
@@ -1537,6 +1539,9 @@ void EventLogAnalyzer::CreateGoogCcSimulationGraph(Plot* plot) {
 void EventLogAnalyzer::CreateOutgoingTWCCLossRateGraph(Plot* plot) {
   TimeSeries loss_rate_series("Loss rate (from packet feedback)",
                               LineStyle::kLine, PointStyle::kHighlight);
+  TimeSeries reordered_packets_between_feedback(
+      "Ratio of reordered packets from last feedback", LineStyle::kLine,
+      PointStyle::kHighlight);
   TimeSeries average_loss_rate_series("Average loss rate last 5s",
                                       LineStyle::kLine, PointStyle::kHighlight);
   TimeSeries missing_feedback_series("Missing feedback", LineStyle::kNone,
@@ -1555,27 +1560,49 @@ void EventLogAnalyzer::CreateOutgoingTWCCLossRateGraph(Plot* plot) {
         unwrapper.Unwrap(parsed_log_.transport_feedbacks(kIncomingPacket)[0]
                              .transport_feedback.GetBaseSequence());
   }
+  std::unordered_set<int64_t> previous_feedback_lost_sequence_numbers;
+  size_t previous_feedback_size = 0;
   for (auto& feedback : parsed_log_.transport_feedbacks(kIncomingPacket)) {
     const rtcp::TransportFeedback& transport_feedback =
         feedback.transport_feedback;
-    size_t base_seq_num =
+    int64_t base_seq_num =
         unwrapper.Unwrap(transport_feedback.GetBaseSequence());
     // Collect packets that do not have feedback, which are from the last acked
     // packet, to the current base packet.
-    for (size_t seq_num = last_acked; seq_num < base_seq_num; ++seq_num) {
+    for (int64_t seq_num = last_acked; seq_num < base_seq_num; ++seq_num) {
       missing_feedback_series.points.emplace_back(
           config_.GetCallTimeSec(feedback.timestamp),
           100 + seq_num - last_acked);
     }
     last_acked = base_seq_num + transport_feedback.GetPacketStatusCount();
 
+    int num_reordered_packets = 0;
+    std::unordered_set<int64_t> lost_sequence_numbers;
+    transport_feedback.ForAllPackets(
+        [&](uint16_t sequence_number, TimeDelta receive_time_delta) {
+          int64_t unwrapped_seq = unwrapper.Unwrap(sequence_number);
+          if (receive_time_delta.IsInfinite()) {
+            lost_sequence_numbers.insert(unwrapped_seq);
+          } else {
+            num_reordered_packets +=
+                previous_feedback_lost_sequence_numbers.count(unwrapped_seq);
+          }
+        });
+
     // Compute loss rate from the transport feedback.
-    auto loss_rate =
-        static_cast<float>((transport_feedback.GetPacketStatusCount() -
-                            transport_feedback.GetReceivedPackets().size()) *
-                           100.0 / transport_feedback.GetPacketStatusCount());
+    float loss_rate =
+        static_cast<float>(lost_sequence_numbers.size() * 100.0 /
+                           transport_feedback.GetPacketStatusCount());
+
     loss_rate_series.points.emplace_back(
         config_.GetCallTimeSec(feedback.timestamp), loss_rate);
+    float reordered_rate =
+        previous_feedback_size == 0
+            ? 0
+            : static_cast<float>(num_reordered_packets * 100.0 /
+                                 previous_feedback_size);
+    reordered_packets_between_feedback.points.emplace_back(
+        config_.GetCallTimeSec(feedback.timestamp), reordered_rate);
 
     // Compute loss rate in a window of kObservationWindowSize.
     if (window_summary.num_packets == 0) {
@@ -1583,8 +1610,7 @@ void EventLogAnalyzer::CreateOutgoingTWCCLossRateGraph(Plot* plot) {
     }
     window_summary.num_packets += transport_feedback.GetPacketStatusCount();
     window_summary.num_lost_packets +=
-        transport_feedback.GetPacketStatusCount() -
-        transport_feedback.GetReceivedPackets().size();
+        lost_sequence_numbers.size() - num_reordered_packets;
 
     const Timestamp last_received_time = feedback.log_time();
     const TimeDelta observation_duration =
@@ -1615,9 +1641,13 @@ void EventLogAnalyzer::CreateOutgoingTWCCLossRateGraph(Plot* plot) {
       }
       window_summary = PacketLossSummary();
     }
+    std::swap(previous_feedback_lost_sequence_numbers, lost_sequence_numbers);
+    previous_feedback_size = transport_feedback.GetPacketStatusCount();
   }
   // Add the data set to the plot.
   plot->AppendTimeSeriesIfNotEmpty(std::move(loss_rate_series));
+  plot->AppendTimeSeriesIfNotEmpty(
+      std::move(reordered_packets_between_feedback));
   plot->AppendTimeSeriesIfNotEmpty(std::move(average_loss_rate_series));
   plot->AppendTimeSeriesIfNotEmpty(std::move(missing_feedback_series));
 

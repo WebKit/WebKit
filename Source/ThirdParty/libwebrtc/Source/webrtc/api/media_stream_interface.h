@@ -17,6 +17,7 @@
 #define API_MEDIA_STREAM_INTERFACE_H_
 
 #include <stddef.h>
+#include <stdint.h>
 
 #include <string>
 #include <vector>
@@ -31,6 +32,7 @@
 #include "api/video/video_sink_interface.h"
 #include "api/video/video_source_interface.h"
 #include "api/video_track_source_constraints.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {

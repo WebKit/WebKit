@@ -150,14 +150,13 @@ if (rtc_include_tests && !build_with_chromium) {
       "../logging:log_writer",
       "../network:emulated_network",
       "../time_controller",
-    ]
-    absl_deps = [
       "//third_party/abseil-cpp/absl/cleanup",
       "//third_party/abseil-cpp/absl/flags:flag",
       "//third_party/abseil-cpp/absl/flags:parse",
       "//third_party/abseil-cpp/absl/functional:any_invocable",
       "//third_party/abseil-cpp/absl/memory",
       "//third_party/abseil-cpp/absl/strings",
+      "//third_party/abseil-cpp/absl/strings:string_view",
       "//third_party/abseil-cpp/absl/types:optional",
     ]
     if (is_android) {

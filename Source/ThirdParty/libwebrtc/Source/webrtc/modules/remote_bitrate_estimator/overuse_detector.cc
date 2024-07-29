@@ -16,7 +16,6 @@
 #include <algorithm>
 #include <string>
 
-#include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_minmax.h"
 
@@ -45,8 +44,6 @@ BandwidthUsage OveruseDetector::Detect(double offset,
     return BandwidthUsage::kBwNormal;
   }
   const double T = std::min(num_of_deltas, kMaxNumDeltas) * offset;
-  BWE_TEST_LOGGING_PLOT(1, "T", now_ms, T);
-  BWE_TEST_LOGGING_PLOT(1, "threshold", now_ms, threshold_);
   if (T > threshold_) {
     if (time_over_using_ == -1) {
       // Initialize the timer. Assume that we've been

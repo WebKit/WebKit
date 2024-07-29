@@ -10,7 +10,12 @@
 
 #include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair_config.h"
 
+#include <cstdint>
+#include <memory>
+
 #include "absl/memory/memory.h"
+#include "api/candidate.h"
+#include "api/rtc_event_log/rtc_event.h"
 
 namespace webrtc {
 

@@ -65,6 +65,8 @@ class MediaReceiveStreamInterface : public ReceiveStreamInterface {
       rtc::scoped_refptr<webrtc::FrameDecryptorInterface> frame_decryptor) = 0;
 
   virtual std::vector<RtpSource> GetSources() const = 0;
+
+  virtual void SetRtcpMode(RtcpMode mode) = 0;
 };
 
 }  // namespace webrtc

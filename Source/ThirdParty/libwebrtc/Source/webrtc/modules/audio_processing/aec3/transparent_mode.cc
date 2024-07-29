@@ -19,6 +19,7 @@ namespace {
 
 constexpr size_t kBlocksSinceConvergencedFilterInit = 10000;
 constexpr size_t kBlocksSinceConsistentEstimateInit = 10000;
+constexpr float kInitialTransparentStateProbability = 0.2f;
 
 bool DeactivateTransparentMode() {
   return field_trial::IsEnabled("WebRTC-Aec3TransparentModeKillSwitch");
@@ -41,7 +42,7 @@ class TransparentModeImpl : public TransparentMode {
     transparency_activated_ = false;
 
     // The estimated probability of being transparent mode.
-    prob_transparent_state_ = 0.f;
+    prob_transparent_state_ = kInitialTransparentStateProbability;
   }
 
   void Update(int filter_delay_blocks,
@@ -118,7 +119,7 @@ class TransparentModeImpl : public TransparentMode {
 
  private:
   bool transparency_activated_ = false;
-  float prob_transparent_state_ = 0.f;
+  float prob_transparent_state_ = kInitialTransparentStateProbability;
 };
 
 // Legacy classifier for toggling transparent mode.

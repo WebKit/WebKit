@@ -10,12 +10,15 @@
 
 #include "rtc_tools/rtc_event_log_visualizer/analyzer_bindings.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 #include <string>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "rtc_base/protobuf_utils.h"
 #include "rtc_base/system/file_wrapper.h"
-#include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 

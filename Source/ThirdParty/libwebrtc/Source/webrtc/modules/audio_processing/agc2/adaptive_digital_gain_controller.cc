@@ -124,7 +124,7 @@ AdaptiveDigitalGainController::AdaptiveDigitalGainController(
 }
 
 void AdaptiveDigitalGainController::Process(const FrameInfo& info,
-                                            AudioFrameView<float> frame) {
+                                            DeinterleavedView<float> frame) {
   RTC_DCHECK_GE(info.speech_level_dbfs, -150.0f);
   RTC_DCHECK_GE(frame.num_channels(), 1);
   RTC_DCHECK(

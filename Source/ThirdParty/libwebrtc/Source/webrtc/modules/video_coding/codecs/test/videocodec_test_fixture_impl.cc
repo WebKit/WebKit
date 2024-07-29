@@ -62,7 +62,7 @@
 #include "test/testsupport/file_utils.h"
 #include "test/testsupport/frame_writer.h"
 #include "test/video_codec_settings.h"
-#include "video/config/simulcast.h"
+#include "video/config/encoder_stream_factory.h"
 #include "video/config/video_encoder_config.h"
 
 namespace webrtc {
@@ -72,16 +72,21 @@ namespace {
 using VideoStatistics = VideoCodecTestStats::VideoStatistics;
 
 const int kBaseKeyFrameInterval = 3000;
-const double kBitratePriority = 1.0;
 const int kDefaultMaxFramerateFps = 30;
 const int kMaxQp = 56;
 
 void ConfigureSimulcast(VideoCodec* codec_settings) {
   FieldTrialBasedConfig trials;
-  const std::vector<webrtc::VideoStream> streams = cricket::GetSimulcastConfig(
-      /*min_layer=*/1, codec_settings->numberOfSimulcastStreams,
-      codec_settings->width, codec_settings->height, kBitratePriority, kMaxQp,
-      /* is_screenshare = */ false, true, trials, webrtc::kVideoCodecVP8);
+  VideoEncoderConfig encoder_config;
+  encoder_config.codec_type = codec_settings->codecType;
+  encoder_config.number_of_streams = codec_settings->numberOfSimulcastStreams;
+  encoder_config.simulcast_layers.resize(
+      codec_settings->numberOfSimulcastStreams);
+  VideoEncoder::EncoderInfo encoder_info;
+  auto stream_factory =
+      rtc::make_ref_counted<cricket::EncoderStreamFactory>(encoder_info);
+  const std::vector<VideoStream> streams = stream_factory->CreateEncoderStreams(
+      trials, codec_settings->width, codec_settings->height, encoder_config);
 
   for (size_t i = 0; i < streams.size(); ++i) {
     SimulcastStream* ss = &codec_settings->simulcastStream[i];
@@ -92,7 +97,7 @@ void ConfigureSimulcast(VideoCodec* codec_settings) {
     ss->maxBitrate = streams[i].max_bitrate_bps / 1000;
     ss->targetBitrate = streams[i].target_bitrate_bps / 1000;
     ss->minBitrate = streams[i].min_bitrate_bps / 1000;
-    ss->qpMax = streams[i].max_qp;
+    ss->qpMax = kMaxQp;
     ss->active = true;
   }
 }
@@ -173,7 +178,7 @@ SdpVideoFormat CreateSdpVideoFormat(
     CodecParameterMap codec_params = {
         {cricket::kH264FmtpProfileLevelId,
          *H264ProfileLevelIdToString(H264ProfileLevelId(
-             config.h264_codec_settings.profile, H264Level::kLevel3_1))},
+             config.h264_codec_settings.profile, H264Level::kLevel4_2))},
         {cricket::kH264FmtpPacketizationMode, packetization_mode},
         {cricket::kH264FmtpLevelAsymmetryAllowed, "1"}};
 
@@ -376,7 +381,7 @@ void VideoCodecTestFixtureImpl::H264KeyframeChecker::CheckEncodedFrame(
   bool contains_pps = false;
   bool contains_idr = false;
   const std::vector<webrtc::H264::NaluIndex> nalu_indices =
-      webrtc::H264::FindNaluIndices(encoded_frame.data(), encoded_frame.size());
+      webrtc::H264::FindNaluIndices(encoded_frame);
   for (const webrtc::H264::NaluIndex& index : nalu_indices) {
     webrtc::H264::NaluType nalu_type = webrtc::H264::ParseNaluType(
         encoded_frame.data()[index.payload_start_offset]);
@@ -446,6 +451,7 @@ VideoCodecTestFixtureImpl::VideoCodecTestFixtureImpl(Config config)
                            webrtc::LibvpxVp9DecoderTemplateAdapter,
                            webrtc::OpenH264DecoderTemplateAdapter,
                            webrtc::Dav1dDecoderTemplateAdapter>>()),
+      env_(CreateEnvironment()),
       config_(config) {}
 
 VideoCodecTestFixtureImpl::VideoCodecTestFixtureImpl(
@@ -454,6 +460,7 @@ VideoCodecTestFixtureImpl::VideoCodecTestFixtureImpl(
     std::unique_ptr<VideoEncoderFactory> encoder_factory)
     : encoder_factory_(std::move(encoder_factory)),
       decoder_factory_(std::move(decoder_factory)),
+      env_(CreateEnvironment()),
       config_(config) {}
 
 VideoCodecTestFixtureImpl::~VideoCodecTestFixtureImpl() = default;
@@ -695,8 +702,6 @@ void VideoCodecTestFixtureImpl::VerifyVideoStatistic(
 }
 
 bool VideoCodecTestFixtureImpl::CreateEncoderAndDecoder() {
-  const Environment env = CreateEnvironment();
-
   SdpVideoFormat encoder_format(CreateSdpVideoFormat(config_));
   SdpVideoFormat decoder_format = encoder_format;
 
@@ -711,7 +716,7 @@ bool VideoCodecTestFixtureImpl::CreateEncoderAndDecoder() {
     decoder_format = *config_.decoder_format;
   }
 
-  encoder_ = encoder_factory_->Create(env, encoder_format);
+  encoder_ = encoder_factory_->Create(env_, encoder_format);
   EXPECT_TRUE(encoder_) << "Encoder not successfully created.";
   if (encoder_ == nullptr) {
     return false;
@@ -721,7 +726,7 @@ bool VideoCodecTestFixtureImpl::CreateEncoderAndDecoder() {
       config_.NumberOfSimulcastStreams(), config_.NumberOfSpatialLayers());
   for (size_t i = 0; i < num_simulcast_or_spatial_layers; ++i) {
     std::unique_ptr<VideoDecoder> decoder =
-        decoder_factory_->Create(env, decoder_format);
+        decoder_factory_->Create(env_, decoder_format);
     EXPECT_TRUE(decoder) << "Decoder not successfully created.";
     if (decoder == nullptr) {
       return false;
@@ -818,7 +823,7 @@ bool VideoCodecTestFixtureImpl::SetUpAndInitObjects(
 
   task_queue->SendTask([this]() {
     processor_ = std::make_unique<VideoProcessor>(
-        encoder_.get(), &decoders_, source_frame_reader_.get(), config_,
+        env_, encoder_.get(), &decoders_, source_frame_reader_.get(), config_,
         &stats_, &encoded_frame_writers_,
         decoded_frame_writers_.empty() ? nullptr : &decoded_frame_writers_);
   });

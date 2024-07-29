@@ -18,10 +18,9 @@
 #include "api/audio/audio_frame.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/crypto/crypto_options.h"
-#include "api/field_trials_view.h"
+#include "api/environment/environment.h"
 #include "api/frame_transformer_interface.h"
 #include "api/function_view.h"
-#include "api/task_queue/task_queue_factory.h"
 #include "modules/rtp_rtcp/include/report_block_data.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "modules/rtp_rtcp/source/rtp_sender_audio.h"
@@ -29,7 +28,6 @@
 namespace webrtc {
 
 class FrameEncryptorInterface;
-class RtcEventLog;
 class RtpTransportControllerSendInterface;
 
 struct CallSendStatistics {
@@ -115,19 +113,16 @@ class ChannelSendInterface {
 };
 
 std::unique_ptr<ChannelSendInterface> CreateChannelSend(
-    Clock* clock,
-    TaskQueueFactory* task_queue_factory,
+    const Environment& env,
     Transport* rtp_transport,
     RtcpRttStats* rtcp_rtt_stats,
-    RtcEventLog* rtc_event_log,
     FrameEncryptorInterface* frame_encryptor,
     const webrtc::CryptoOptions& crypto_options,
     bool extmap_allow_mixed,
     int rtcp_report_interval_ms,
     uint32_t ssrc,
     rtc::scoped_refptr<FrameTransformerInterface> frame_transformer,
-    RtpTransportControllerSendInterface* transport_controller,
-    const FieldTrialsView& field_trials);
+    RtpTransportControllerSendInterface* transport_controller);
 
 }  // namespace voe
 }  // namespace webrtc

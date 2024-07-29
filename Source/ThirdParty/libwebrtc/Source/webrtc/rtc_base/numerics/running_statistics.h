@@ -13,7 +13,7 @@
 
 #include <algorithm>
 #include <cmath>
-#include <limits>
+#include <cstdint>
 
 #include "absl/types/optional.h"
 #include "rtc_base/checks.h"

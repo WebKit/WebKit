@@ -11,7 +11,7 @@
 #include "p2p/base/ice_credentials_iterator.h"
 
 #include "p2p/base/p2p_constants.h"
-#include "rtc_base/helpers.h"
+#include "rtc_base/crypto_random.h"
 
 namespace cricket {
 

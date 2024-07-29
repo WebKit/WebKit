@@ -10,6 +10,8 @@
 
 #include "logging/rtc_event_log/encoder/rtc_event_log_encoder_common.h"
 
+#include <cstdint>
+
 #include "rtc_base/checks.h"
 
 namespace webrtc {

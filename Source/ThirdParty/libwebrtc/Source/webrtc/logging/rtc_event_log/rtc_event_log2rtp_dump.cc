@@ -14,24 +14,23 @@
 #include <iostream>
 #include <memory>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
 #include "absl/flags/usage.h"
-#include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/array_view.h"
-#include "api/rtc_event_log/rtc_event_log.h"
 #include "api/rtp_headers.h"
+#include "logging/rtc_event_log/events/logged_rtp_rtcp.h"
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "logging/rtc_event_log/rtc_event_processor.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/string_to_number.h"
 #include "test/rtp_file_reader.h"
 #include "test/rtp_file_writer.h"
 
@@ -77,19 +76,8 @@ using MediaType = webrtc::ParsedRtcEventLog::MediaType;
 // of the command-line flag. In this case, no value is written to the output
 // variable.
 absl::optional<uint32_t> ParseSsrc(absl::string_view str) {
-  // If the input string starts with 0x or 0X it indicates a hexadecimal number.
-  uint32_t ssrc;
-  auto read_mode = std::dec;
-  if (str.size() > 2 &&
-      (str.substr(0, 2) == "0x" || str.substr(0, 2) == "0X")) {
-    read_mode = std::hex;
-    str = str.substr(2);
-  }
-  std::stringstream ss(std::string{str});
-  ss >> read_mode >> ssrc;
-  if (str.empty() || (!ss.fail() && ss.eof()))
-    return ssrc;
-  return absl::nullopt;
+  // Set `base` to 0 to allow detection of the "0x" prefix in case hex is used.
+  return rtc::StringToNumber<uint32_t>(str, 0);
 }
 
 bool ShouldSkipStream(MediaType media_type,

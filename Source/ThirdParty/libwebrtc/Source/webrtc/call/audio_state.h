@@ -23,7 +23,7 @@ class AudioTransport;
 
 // AudioState holds the state which must be shared between multiple instances of
 // webrtc::Call for audio processing purposes.
-class AudioState : public rtc::RefCountInterface {
+class AudioState : public RefCountInterface {
  public:
   struct Config {
     Config();

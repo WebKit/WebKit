@@ -12,7 +12,9 @@
 
 #include <algorithm>
 
+#include "api/field_trials_view.h"
 #include "api/units/data_size.h"
+#include "api/units/time_delta.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
@@ -26,10 +28,9 @@ constexpr size_t kMaxPendingProbeClusters = 5;
 
 BitrateProberConfig::BitrateProberConfig(
     const FieldTrialsView* key_value_config)
-    : min_probe_delta("min_probe_delta", TimeDelta::Millis(2)),
-      max_probe_delay("max_probe_delay", TimeDelta::Millis(10)),
+    : max_probe_delay("max_probe_delay", TimeDelta::Millis(10)),
       min_packet_size("min_packet_size", DataSize::Bytes(200)) {
-  ParseFieldTrial({&min_probe_delta, &max_probe_delay, &min_packet_size},
+  ParseFieldTrial({&max_probe_delay, &min_packet_size},
                   key_value_config->Lookup("WebRTC-Bwe-ProbingBehavior"));
 }
 
@@ -93,6 +94,7 @@ void BitrateProber::OnIncomingPacket(DataSize packet_size) {
 void BitrateProber::CreateProbeCluster(
     const ProbeClusterConfig& cluster_config) {
   RTC_DCHECK(probing_state_ != ProbingState::kDisabled);
+  RTC_DCHECK(cluster_config.min_probe_delta > TimeDelta::Zero());
 
   while (!clusters_.empty() &&
          (cluster_config.at_time - clusters_.front().requested_at >
@@ -109,6 +111,7 @@ void BitrateProber::CreateProbeCluster(
       (cluster_config.target_data_rate * cluster_config.target_duration)
           .bytes();
   RTC_DCHECK_GE(cluster.pace_info.probe_cluster_min_bytes, 0);
+  cluster.min_probe_delta = cluster_config.min_probe_delta;
   cluster.pace_info.send_bitrate = cluster_config.target_data_rate;
   cluster.pace_info.probe_cluster_id = cluster_config.id;
   clusters_.push(cluster);
@@ -164,7 +167,7 @@ DataSize BitrateProber::RecommendedMinProbeSize() const {
     return DataSize::Zero();
   }
   DataRate send_rate = clusters_.front().pace_info.send_bitrate;
-  return send_rate * config_.min_probe_delta;
+  return send_rate * clusters_.front().min_probe_delta;
 }
 
 void BitrateProber::ProbeSent(Timestamp now, DataSize size) {

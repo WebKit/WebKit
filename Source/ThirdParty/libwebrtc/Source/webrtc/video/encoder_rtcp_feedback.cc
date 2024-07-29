@@ -14,9 +14,11 @@
 #include <utility>
 
 #include "absl/types/optional.h"
+#include "api/environment/environment.h"
 #include "api/video_codecs/video_encoder.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/keyframe_interval_settings.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -25,14 +27,14 @@ constexpr int kMinKeyframeSendIntervalMs = 300;
 }  // namespace
 
 EncoderRtcpFeedback::EncoderRtcpFeedback(
-    Clock* clock,
+    const Environment& env,
     bool per_layer_keyframes,
     const std::vector<uint32_t>& ssrcs,
     VideoStreamEncoderInterface* encoder,
     std::function<std::vector<RtpSequenceNumberMap::Info>(
         uint32_t ssrc,
         const std::vector<uint16_t>& seq_nums)> get_packet_infos)
-    : clock_(clock),
+    : env_(env),
       ssrcs_(ssrcs),
       per_layer_keyframes_(per_layer_keyframes),
       get_packet_infos_(std::move(get_packet_infos)),
@@ -40,7 +42,7 @@ EncoderRtcpFeedback::EncoderRtcpFeedback(
       time_last_packet_delivery_queue_(per_layer_keyframes ? ssrcs.size() : 1,
                                        Timestamp::Zero()),
       min_keyframe_send_interval_(
-          TimeDelta::Millis(KeyframeIntervalSettings::ParseFromFieldTrials()
+          TimeDelta::Millis(KeyframeIntervalSettings(env_.field_trials())
                                 .MinKeyframeSendIntervalMs()
                                 .value_or(kMinKeyframeSendIntervalMs))) {
   RTC_DCHECK(!ssrcs.empty());
@@ -60,7 +62,7 @@ void EncoderRtcpFeedback::OnReceivedIntraFrameRequest(uint32_t ssrc) {
   size_t ssrc_index =
       per_layer_keyframes_ ? std::distance(ssrcs_.begin(), it) : 0;
   RTC_CHECK_LE(ssrc_index, time_last_packet_delivery_queue_.size());
-  const Timestamp now = clock_->CurrentTime();
+  const Timestamp now = env_.clock().CurrentTime();
   if (time_last_packet_delivery_queue_[ssrc_index] +
           min_keyframe_send_interval_ >
       now)

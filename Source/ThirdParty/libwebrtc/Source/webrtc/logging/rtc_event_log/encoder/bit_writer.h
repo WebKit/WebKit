@@ -15,7 +15,6 @@
 #include <stdint.h>
 
 #include <string>
-#include <utility>
 
 #include "absl/strings/string_view.h"
 #include "rtc_base/bit_buffer.h"

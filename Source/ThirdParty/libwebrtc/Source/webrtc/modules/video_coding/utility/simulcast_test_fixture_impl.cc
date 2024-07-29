@@ -259,10 +259,10 @@ SimulcastTestFixtureImpl::SimulcastTestFixtureImpl(
     std::unique_ptr<VideoEncoderFactory> encoder_factory,
     std::unique_ptr<VideoDecoderFactory> decoder_factory,
     SdpVideoFormat video_format)
-    : codec_type_(PayloadStringToCodecType(video_format.name)) {
-  Environment env = CreateEnvironment();
-  encoder_ = encoder_factory->Create(env, video_format);
-  decoder_ = decoder_factory->Create(env, video_format);
+    : env_(CreateEnvironment()),
+      codec_type_(PayloadStringToCodecType(video_format.name)) {
+  encoder_ = encoder_factory->Create(env_, video_format);
+  decoder_ = decoder_factory->Create(env_, video_format);
   SetUpCodec((codec_type_ == kVideoCodecVP8 || codec_type_ == kVideoCodecH264)
                  ? kDefaultTemporalLayerProfile
                  : kNoTemporalLayerProfile);
@@ -294,7 +294,7 @@ void SimulcastTestFixtureImpl::SetUpCodec(const int* temporal_layer_profile) {
 }
 
 void SimulcastTestFixtureImpl::SetUpRateAllocator() {
-  rate_allocator_.reset(new SimulcastRateAllocator(settings_));
+  rate_allocator_ = std::make_unique<SimulcastRateAllocator>(env_, settings_);
 }
 
 void SimulcastTestFixtureImpl::SetRates(uint32_t bitrate_kbps, uint32_t fps) {

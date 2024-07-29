@@ -11,10 +11,6 @@
 #ifndef API_UNITS_DATA_RATE_H_
 #define API_UNITS_DATA_RATE_H_
 
-#ifdef WEBRTC_UNIT_TEST
-#include <ostream>  // no-presubmit-check TODO(webrtc:8982)
-#endif              // WEBRTC_UNIT_TEST
-
 #include <limits>
 #include <string>
 #include <type_traits>
@@ -141,14 +137,6 @@ std::string ToString(DataRate value);
 inline std::string ToLogString(DataRate value) {
   return ToString(value);
 }
-
-#ifdef WEBRTC_UNIT_TEST
-inline std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
-    std::ostream& stream,         // no-presubmit-check TODO(webrtc:8982)
-    DataRate value) {
-  return stream << ToString(value);
-}
-#endif  // WEBRTC_UNIT_TEST
 
 }  // namespace webrtc
 

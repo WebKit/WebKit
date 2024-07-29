@@ -717,6 +717,7 @@ class WebRtcVoiceEngineTestFake : public ::testing::TestWithParam<bool> {
     stats.concealment_events = 12;
     stats.jitter_buffer_delay_seconds = 34;
     stats.jitter_buffer_emitted_count = 77;
+    stats.total_processing_delay_seconds = 0.123;
     stats.expand_rate = 5.67f;
     stats.speech_expand_rate = 8.90f;
     stats.secondary_decoded_rate = 1.23f;
@@ -765,6 +766,8 @@ class WebRtcVoiceEngineTestFake : public ::testing::TestWithParam<bool> {
               stats.jitter_buffer_delay_seconds);
     EXPECT_EQ(info.jitter_buffer_emitted_count,
               stats.jitter_buffer_emitted_count);
+    EXPECT_EQ(info.total_processing_delay_seconds,
+              stats.total_processing_delay_seconds);
     EXPECT_EQ(info.expand_rate, stats.expand_rate);
     EXPECT_EQ(info.speech_expand_rate, stats.speech_expand_rate);
     EXPECT_EQ(info.secondary_decoded_rate, stats.secondary_decoded_rate);
@@ -3739,7 +3742,7 @@ TEST(WebRtcVoiceEngineTest, StartupShutdownWithExternalADM) {
     }
     // The engine/channel should have dropped their references.
     EXPECT_EQ(adm.release()->Release(),
-              rtc::RefCountReleaseStatus::kDroppedLastRef);
+              webrtc::RefCountReleaseStatus::kDroppedLastRef);
   }
 }
 

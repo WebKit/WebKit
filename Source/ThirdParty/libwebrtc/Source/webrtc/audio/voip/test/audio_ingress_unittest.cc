@@ -13,6 +13,8 @@
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/call/transport.h"
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "api/task_queue/default_task_queue_factory.h"
 #include "api/units/time_delta.h"
 #include "audio/voip/audio_egress.h"
@@ -70,8 +72,8 @@ class AudioIngressTest : public ::testing::Test {
         rtp_rtcp_.get(), time_controller_.GetClock(),
         time_controller_.GetTaskQueueFactory());
     egress_->SetEncoder(kPcmuPayload, kPcmuFormat,
-                        encoder_factory_->MakeAudioEncoder(
-                            kPcmuPayload, kPcmuFormat, absl::nullopt));
+                        encoder_factory_->Create(
+                            env_, kPcmuFormat, {.payload_type = kPcmuPayload}));
     egress_->StartSend();
     ingress_->StartPlay();
     rtp_rtcp_->SetSendingStatus(true);
@@ -96,6 +98,9 @@ class AudioIngressTest : public ::testing::Test {
   }
 
   GlobalSimulatedTimeController time_controller_{Timestamp::Micros(123456789)};
+  const Environment env_ =
+      CreateEnvironment(time_controller_.GetClock(),
+                        time_controller_.GetTaskQueueFactory());
   SineWaveGenerator wave_generator_;
   NiceMock<MockTransport> transport_;
   std::unique_ptr<ReceiveStatistics> receive_statistics_;

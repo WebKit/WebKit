@@ -91,6 +91,7 @@ class AudioReceiveStreamImpl final : public webrtc::AudioReceiveStreamInterface,
       override;
   void SetDecoderMap(std::map<int, SdpAudioFormat> decoder_map) override;
   void SetNackHistory(int history_ms) override;
+  void SetRtcpMode(RtcpMode mode) override;
   void SetNonSenderRttMeasurement(bool enabled) override;
   void SetFrameDecryptor(rtc::scoped_refptr<webrtc::FrameDecryptorInterface>
                              frame_decryptor) override;

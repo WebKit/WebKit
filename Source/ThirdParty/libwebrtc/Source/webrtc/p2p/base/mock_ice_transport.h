@@ -57,7 +57,6 @@ class MockIceTransport : public IceTransportInternal {
   const std::string& transport_name() const override { return transport_name_; }
   int component() const override { return 0; }
   void SetIceRole(IceRole role) override {}
-  void SetIceTiebreaker(uint64_t tiebreaker) override {}
   // The ufrag and pwd in `ice_params` must be set
   // before candidate gathering can start.
   void SetIceParameters(const IceParameters& ice_params) override {}

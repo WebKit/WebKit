@@ -50,8 +50,8 @@ if (rtc_include_tests) {
       "../../video:video_frame",
       "../../video:video_rtp_headers",
       "//testing/gtest",
+      "//third_party/abseil-cpp/absl/types:optional",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
   }
 
   rtc_library("video_encoder_factory_template_tests") {

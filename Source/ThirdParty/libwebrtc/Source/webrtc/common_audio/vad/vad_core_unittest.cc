@@ -54,7 +54,12 @@ TEST_F(VadTest, set_mode_core) {
   free(self);
 }
 
+// TODO(bugs.webrtc.org/345674542): Fix/enable.
+#if defined(__has_feature) && __has_feature(undefined_behavior_sanitizer)
+TEST_F(VadTest, DISABLED_CalcVad) {
+#else
 TEST_F(VadTest, CalcVad) {
+#endif
   VadInstT* self = reinterpret_cast<VadInstT*>(malloc(sizeof(VadInstT)));
   int16_t speech[kMaxFrameLength];
 

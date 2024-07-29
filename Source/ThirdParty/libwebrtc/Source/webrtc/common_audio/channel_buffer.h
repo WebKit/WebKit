@@ -23,6 +23,44 @@
 
 namespace webrtc {
 
+// TODO: b/335805780 - Remove this method. Instead, use Deinterleave() from
+// audio_util.h which requires size checked buffer views.
+template <typename T>
+void Deinterleave(const T* interleaved,
+                  size_t samples_per_channel,
+                  size_t num_channels,
+                  T* const* deinterleaved) {
+  for (size_t i = 0; i < num_channels; ++i) {
+    T* channel = deinterleaved[i];
+    size_t interleaved_idx = i;
+    for (size_t j = 0; j < samples_per_channel; ++j) {
+      channel[j] = interleaved[interleaved_idx];
+      interleaved_idx += num_channels;
+    }
+  }
+}
+
+// `Interleave()` variant for cases where the deinterleaved channels aren't
+// represented by a `DeinterleavedView`.
+// TODO: b/335805780 - Remove this method. Instead, use Deinterleave() from
+// audio_util.h which requires size checked buffer views.
+template <typename T>
+void Interleave(const T* const* deinterleaved,
+                size_t samples_per_channel,
+                size_t num_channels,
+                InterleavedView<T>& interleaved) {
+  RTC_DCHECK_EQ(NumChannels(interleaved), num_channels);
+  RTC_DCHECK_EQ(SamplesPerChannel(interleaved), samples_per_channel);
+  for (size_t i = 0; i < num_channels; ++i) {
+    const T* channel = deinterleaved[i];
+    size_t interleaved_idx = i;
+    for (size_t j = 0; j < samples_per_channel; ++j) {
+      interleaved[interleaved_idx] = channel[j];
+      interleaved_idx += num_channels;
+    }
+  }
+}
+
 // Helper to encapsulate a contiguous data buffer, full or split into frequency
 // bands, with access to a pointer arrays of the deinterleaved channels and
 // bands. The buffer is zero initialized at creation.

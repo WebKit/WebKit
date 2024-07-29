@@ -1338,4 +1338,60 @@ TEST_F(SdpOfferAnswerTest, MidBackfillDoesNotCheckAgainstBundleGroup) {
   EXPECT_TRUE(pc->CreateAnswerAndSetAsLocal());
 }
 
+TEST_F(SdpOfferAnswerTest, ReducedSizeNegotiated) {
+  auto caller = CreatePeerConnection();
+  auto callee = CreatePeerConnection();
+
+  auto audio_transceiver = caller->AddTransceiver(cricket::MEDIA_TYPE_AUDIO);
+  auto video_transceiver = caller->AddTransceiver(cricket::MEDIA_TYPE_VIDEO);
+
+  ASSERT_TRUE(caller->ExchangeOfferAnswerWith(callee.get()));
+  auto receivers = callee->pc()->GetReceivers();
+  ASSERT_EQ(receivers.size(), 2u);
+  auto audio_recv_param = receivers[0]->GetParameters();
+  EXPECT_TRUE(audio_recv_param.rtcp.reduced_size);
+  auto video_recv_param = receivers[1]->GetParameters();
+  EXPECT_TRUE(video_recv_param.rtcp.reduced_size);
+
+  auto senders = caller->pc()->GetSenders();
+  ASSERT_EQ(senders.size(), 2u);
+  auto audio_send_param = senders[0]->GetParameters();
+  EXPECT_TRUE(audio_send_param.rtcp.reduced_size);
+  auto video_send_param = senders[1]->GetParameters();
+  EXPECT_TRUE(video_send_param.rtcp.reduced_size);
+}
+
+TEST_F(SdpOfferAnswerTest, ReducedSizeNotNegotiated) {
+  auto caller = CreatePeerConnection();
+  auto callee = CreatePeerConnection();
+
+  auto audio_transceiver = caller->AddTransceiver(cricket::MEDIA_TYPE_AUDIO);
+  auto video_transceiver = caller->AddTransceiver(cricket::MEDIA_TYPE_VIDEO);
+
+  auto offer = caller->CreateOfferAndSetAsLocal();
+  ASSERT_NE(offer, nullptr);
+  std::string sdp;
+  offer->ToString(&sdp);
+  // Remove rtcp-rsize attribute.
+  auto modified_offer = CreateSessionDescription(
+      SdpType::kOffer, absl::StrReplaceAll(sdp, {{"a=rtcp-rsize\r\n", ""}}));
+  EXPECT_TRUE(callee->SetRemoteDescription(std::move(modified_offer)));
+  auto answer = callee->CreateAnswerAndSetAsLocal();
+  EXPECT_TRUE(caller->SetRemoteDescription(std::move(answer)));
+
+  auto receivers = callee->pc()->GetReceivers();
+  ASSERT_EQ(receivers.size(), 2u);
+  auto audio_recv_param = receivers[0]->GetParameters();
+  EXPECT_FALSE(audio_recv_param.rtcp.reduced_size);
+  auto video_recv_param = receivers[1]->GetParameters();
+  EXPECT_FALSE(video_recv_param.rtcp.reduced_size);
+
+  auto senders = caller->pc()->GetSenders();
+  ASSERT_EQ(senders.size(), 2u);
+  auto audio_send_param = senders[0]->GetParameters();
+  EXPECT_FALSE(audio_send_param.rtcp.reduced_size);
+  auto video_send_param = senders[1]->GetParameters();
+  EXPECT_FALSE(video_send_param.rtcp.reduced_size);
+}
+
 }  // namespace webrtc

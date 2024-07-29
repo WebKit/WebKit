@@ -46,8 +46,12 @@ ChannelBufferWavWriter::~ChannelBufferWavWriter() = default;
 void ChannelBufferWavWriter::Write(const ChannelBuffer<float>& buffer) {
   RTC_CHECK_EQ(file_->num_channels(), buffer.num_channels());
   interleaved_.resize(buffer.size());
-  Interleave(buffer.channels(), buffer.num_frames(), buffer.num_channels(),
-             &interleaved_[0]);
+  InterleavedView<float> view(&interleaved_[0], buffer.num_frames(),
+                              buffer.num_channels());
+  const float* samples = buffer.channels()[0];
+  DeinterleavedView<const float> source(samples, buffer.num_frames(),
+                                        buffer.num_channels());
+  Interleave(source, view);
   FloatToFloatS16(&interleaved_[0], interleaved_.size(), &interleaved_[0]);
   file_->WriteSamples(&interleaved_[0], interleaved_.size());
 }
@@ -62,8 +66,10 @@ ChannelBufferVectorWriter::~ChannelBufferVectorWriter() = default;
 void ChannelBufferVectorWriter::Write(const ChannelBuffer<float>& buffer) {
   // Account for sample rate changes throughout a simulation.
   interleaved_buffer_.resize(buffer.size());
+  InterleavedView<float> view(&interleaved_buffer_[0], buffer.num_frames(),
+                              buffer.num_channels());
   Interleave(buffer.channels(), buffer.num_frames(), buffer.num_channels(),
-             interleaved_buffer_.data());
+             view);
   size_t old_size = output_->size();
   output_->resize(old_size + interleaved_buffer_.size());
   FloatToFloatS16(interleaved_buffer_.data(), interleaved_buffer_.size(),

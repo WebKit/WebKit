@@ -197,6 +197,8 @@ bool DcSctpTransport::Start(int local_sctp_port,
         DataChannelInterface::MaxSendQueueSize();
     // This is just set to avoid denial-of-service. Practically unlimited.
     options.max_send_buffer_size = std::numeric_limits<size_t>::max();
+    options.enable_message_interleaving =
+        env_.field_trials().IsEnabled("WebRTC-DataChannelMessageInterleaving");
 
     std::unique_ptr<dcsctp::PacketObserver> packet_observer;
     if (RTC_LOG_CHECK_LEVEL(LS_VERBOSE)) {

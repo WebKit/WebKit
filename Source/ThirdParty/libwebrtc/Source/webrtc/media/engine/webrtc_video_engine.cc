@@ -163,21 +163,15 @@ bool IsCodecValidForLowerRange(const Codec& codec) {
   return false;
 }
 
-// This function will assign dynamic payload types (in the range [96, 127]
-// and then [35, 63]) to the input codecs, and also add ULPFEC, RED, FlexFEC,
-// and associated RTX codecs for recognized codecs (VP8, VP9, H264, and RED).
-// It will also add default feedback params to the codecs.
+// Get the default set of supported codecs.
 // is_decoder_factory is needed to keep track of the implict assumption that any
 // H264 decoder also supports constrained base line profile.
 // Also, is_decoder_factory is used to decide whether FlexFEC video format
 // should be advertised as supported.
-// TODO(kron): Perhaps it is better to move the implicit knowledge to the place
-// where codecs are negotiated.
 template <class T>
-std::vector<Codec> GetPayloadTypesAndDefaultCodecs(
+std::vector<webrtc::SdpVideoFormat> GetDefaultSupportedFormats(
     const T* factory,
     bool is_decoder_factory,
-    bool include_rtx,
     const webrtc::FieldTrialsView& trials) {
   if (!factory) {
     return {};
@@ -190,11 +184,10 @@ std::vector<Codec> GetPayloadTypesAndDefaultCodecs(
   }
 
   if (supported_formats.empty())
-    return std::vector<Codec>();
+    return supported_formats;
 
   supported_formats.push_back(webrtc::SdpVideoFormat(kRedCodecName));
   supported_formats.push_back(webrtc::SdpVideoFormat(kUlpfecCodecName));
-
   // flexfec-03 is always supported as receive codec and as send codec
   // only if WebRTC-FlexFEC-03-Advertised is enabled
   if (is_decoder_factory || IsEnabled(trials, "WebRTC-FlexFEC-03-Advertised")) {
@@ -206,7 +199,17 @@ std::vector<Codec> GetPayloadTypesAndDefaultCodecs(
     flexfec_format.parameters = {{kFlexfecFmtpRepairWindow, "10000000"}};
     supported_formats.push_back(flexfec_format);
   }
+  return supported_formats;
+}
 
+// This function will assign dynamic payload types (in the range [96, 127]
+// and then [35, 63]) to the input codecs, and also add ULPFEC, RED, FlexFEC,
+// and associated RTX codecs for recognized codecs (VP8, VP9, H264, and RED).
+// It will also add default feedback params to the codecs.
+std::vector<Codec> AssignPayloadTypesAndAddRtx(
+    const std::vector<webrtc::SdpVideoFormat>& supported_formats,
+    bool include_rtx,
+    const webrtc::FieldTrialsView& trials) {
   // Due to interoperability issues with old Chrome/WebRTC versions that
   // ignore the [35, 63] range prefer the lower range for new codecs.
   static const int kFirstDynamicPayloadTypeLowerRange = 35;
@@ -268,6 +271,20 @@ std::vector<Codec> GetPayloadTypesAndDefaultCodecs(
     }
   }
   return output_codecs;
+}
+
+// TODO(kron): Perhaps it is better to move the implicit knowledge to the place
+// where codecs are negotiated.
+template <class T>
+std::vector<Codec> GetPayloadTypesAndDefaultCodecs(
+    const T* factory,
+    bool is_decoder_factory,
+    bool include_rtx,
+    const webrtc::FieldTrialsView& trials) {
+  auto supported_formats =
+      GetDefaultSupportedFormats(factory, is_decoder_factory, trials);
+
+  return AssignPayloadTypesAndAddRtx(supported_formats, include_rtx, trials);
 }
 
 static std::string CodecVectorToString(const std::vector<Codec>& codecs) {
@@ -961,10 +978,8 @@ WebRtcVideoSendChannel::WebRtcVideoSendStream::ConfigureVideoEncoderSettings(
           {{"off", webrtc::InterLayerPredMode::kOff},
            {"on", webrtc::InterLayerPredMode::kOn},
            {"onkeypic", webrtc::InterLayerPredMode::kOnKeyPic}});
-      webrtc::FieldTrialFlag force_flexible_mode("FlexibleMode");
       webrtc::ParseFieldTrial(
-          {&interlayer_pred_experiment_enabled, &inter_layer_pred_mode,
-           &force_flexible_mode},
+          {&interlayer_pred_experiment_enabled, &inter_layer_pred_mode},
           call_->trials().Lookup("WebRTC-Vp9InterLayerPred"));
       if (interlayer_pred_experiment_enabled) {
         vp9_settings.interLayerPred = inter_layer_pred_mode;
@@ -972,7 +987,10 @@ WebRtcVideoSendChannel::WebRtcVideoSendStream::ConfigureVideoEncoderSettings(
         // Limit inter-layer prediction to key pictures by default.
         vp9_settings.interLayerPred = webrtc::InterLayerPredMode::kOnKeyPic;
       }
-      vp9_settings.flexibleMode = force_flexible_mode.Get();
+
+      // TODO(webrtc:329396373): Remove after flexible mode is fully deployed.
+      vp9_settings.flexibleMode =
+          !IsDisabled(call_->trials(), "WebRTC-Video-Vp9FlexibleMode");
     } else {
       // Multiple spatial layers vp9 screenshare needs flexible mode.
       vp9_settings.flexibleMode = vp9_settings.numberOfSpatialLayers > 1;
@@ -1486,9 +1504,9 @@ bool WebRtcVideoSendChannel::AddSendStream(const StreamParams& sp) {
   RTC_DCHECK(ssrc != 0);
   send_streams_[ssrc] = stream;
 
-    if (ssrc_list_changed_callback_) {
-      ssrc_list_changed_callback_(send_ssrcs_);
-    }
+  if (ssrc_list_changed_callback_) {
+    ssrc_list_changed_callback_(send_ssrcs_);
+  }
 
   if (sending_) {
     stream->SetSend(true);
@@ -1786,6 +1804,7 @@ bool WebRtcVideoSendChannel::WebRtcVideoSendStream::SetVideoSend(
   TRACE_EVENT0("webrtc", "WebRtcVideoSendStream::SetVideoSend");
   RTC_DCHECK_RUN_ON(&thread_checker_);
 
+  bool reconfiguration_needed = false;
   if (options) {
     VideoOptions old_options = parameters_.options;
     parameters_.options.SetAll(*options);
@@ -1801,13 +1820,21 @@ bool WebRtcVideoSendChannel::WebRtcVideoSendStream::SetVideoSend(
       old_options.is_screencast = options->is_screencast;
     }
     if (parameters_.options != old_options) {
-      ReconfigureEncoder(nullptr);
+      reconfiguration_needed = true;
     }
   }
 
   if (source_ && stream_) {
     stream_->SetSource(nullptr, webrtc::DegradationPreference::DISABLED);
+    if (source && source != source_) {
+      reconfiguration_needed = true;
+    }
   }
+
+  if (reconfiguration_needed) {
+    ReconfigureEncoder(nullptr);
+  }
+
   // Switch to the new source.
   source_ = source;
   if (source && stream_) {
@@ -2213,21 +2240,10 @@ WebRtcVideoSendChannel::WebRtcVideoSendStream::CreateVideoEncoderConfig(
   // Ensure frame dropping is always enabled.
   encoder_config.frame_drop_enabled = true;
 
-  int max_qp;
-  switch (encoder_config.codec_type) {
-    case webrtc::kVideoCodecH264:
-    case webrtc::kVideoCodecH265:
-      max_qp = kDefaultVideoMaxQpH26x;
-      break;
-    case webrtc::kVideoCodecVP8:
-    case webrtc::kVideoCodecVP9:
-    case webrtc::kVideoCodecAV1:
-    case webrtc::kVideoCodecGeneric:
-      max_qp = kDefaultVideoMaxQpVpx;
-      break;
+  int max_qp = -1;
+  if (codec.GetParam(kCodecParamMaxQuantization, &max_qp) && max_qp > 0) {
+    encoder_config.max_qp = max_qp;
   }
-  codec.GetParam(kCodecParamMaxQuantization, &max_qp);
-  encoder_config.max_qp = max_qp;
 
   return encoder_config;
 }
@@ -3120,22 +3136,22 @@ bool WebRtcVideoReceiveChannel::MaybeCreateDefaultReceiveStream(
     // BWE has already been notified of this received packet.
     return false;
   }
-    // Ignore unknown ssrcs if we recently created an unsignalled receive
-    // stream since this shouldn't happen frequently. Getting into a state
-    // of creating decoders on every packet eats up processing time (e.g.
-    // https://crbug.com/1069603) and this cooldown prevents that.
-    if (last_unsignalled_ssrc_creation_time_ms_.has_value()) {
-      int64_t now_ms = rtc::TimeMillis();
-      if (now_ms - last_unsignalled_ssrc_creation_time_ms_.value() <
-          kUnsignaledSsrcCooldownMs) {
-        // We've already created an unsignalled ssrc stream within the last
-        // 0.5 s, ignore with a warning.
-        RTC_LOG(LS_WARNING)
-            << "Another unsignalled ssrc packet arrived shortly after the "
-            << "creation of an unsignalled ssrc stream. Dropping packet.";
-        return false;
-      }
+  // Ignore unknown ssrcs if we recently created an unsignalled receive
+  // stream since this shouldn't happen frequently. Getting into a state
+  // of creating decoders on every packet eats up processing time (e.g.
+  // https://crbug.com/1069603) and this cooldown prevents that.
+  if (last_unsignalled_ssrc_creation_time_ms_.has_value()) {
+    int64_t now_ms = rtc::TimeMillis();
+    if (now_ms - last_unsignalled_ssrc_creation_time_ms_.value() <
+        kUnsignaledSsrcCooldownMs) {
+      // We've already created an unsignalled ssrc stream within the last
+      // 0.5 s, ignore with a warning.
+      RTC_LOG(LS_WARNING)
+          << "Another unsignalled ssrc packet arrived shortly after the "
+          << "creation of an unsignalled ssrc stream. Dropping packet.";
+      return false;
     }
+  }
 
   // RTX SSRC not yet known.
   ReCreateDefaultReceiveStream(packet.Ssrc(), absl::nullopt);

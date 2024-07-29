@@ -100,12 +100,12 @@ rtc_source_set("rnn_vad_layers") {
     "../../../../api:function_view",
     "../../../../rtc_base:checks",
     "../../../../rtc_base:safe_conversions",
+    "//third_party/abseil-cpp/absl/strings:string_view",
     "//third_party/rnnoise:rnn_vad",
   ]
   if (current_cpu == "x86" || current_cpu == "x64") {
     deps += [ ":vector_math_avx2" ]
   }
-  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
 rtc_source_set("vector_math") {
@@ -229,8 +229,8 @@ if (rtc_include_tests) {
       "../../../../rtc_base:safe_compare",
       "../../../../test:fileutils",
       "../../../../test:test_support",
+      "//third_party/abseil-cpp/absl/strings:string_view",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
   }
 
   unittest_resources = [
@@ -306,7 +306,6 @@ if (rtc_include_tests) {
     if (current_cpu == "x86" || current_cpu == "x64") {
       deps += [ ":vector_math_avx2" ]
     }
-    absl_deps = [ "//third_party/abseil-cpp/absl/memory" ]
     data = unittest_resources
     if (is_ios) {
       deps += [ ":unittests_bundle_data" ]

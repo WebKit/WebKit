@@ -24,8 +24,7 @@ namespace webrtc {
 RtpPacketizerH265::RtpPacketizerH265(rtc::ArrayView<const uint8_t> payload,
                                      PayloadSizeLimits limits)
     : limits_(limits), num_packets_left_(0) {
-  for (const auto& nalu :
-       H264::FindNaluIndices(payload.data(), payload.size())) {
+  for (const auto& nalu : H264::FindNaluIndices(payload)) {
 #if WEBRTC_WEBKIT_BUILD
     if (!nalu.payload_size) {
       input_fragments_.clear();

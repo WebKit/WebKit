@@ -78,8 +78,8 @@ rtc_library("audio_device_buffer") {
     "../../rtc_base/synchronization:mutex",
     "../../system_wrappers",
     "../../system_wrappers:metrics",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("audio_device_generic") {
@@ -99,7 +99,7 @@ rtc_library("audio_device_name") {
     "audio_device_name.cc",
     "audio_device_name.h",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+  deps = [ "//third_party/abseil-cpp/absl/strings:string_view" ]
 }
 
 rtc_source_set("windows_core_audio_utility") {
@@ -119,8 +119,8 @@ rtc_source_set("windows_core_audio_utility") {
       "../../rtc_base:platform_thread_types",
       "../../rtc_base:stringutils",
       "../../rtc_base/win:windows_version",
+      "//third_party/abseil-cpp/absl/strings:strings",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/strings:strings" ]
 
     libs = [ "oleaut32.lib" ]
   }
@@ -165,8 +165,6 @@ rtc_source_set("audio_device_module_from_input_and_output") {
       "../../rtc_base:timeutils",
       "../../rtc_base/win:scoped_com_initializer",
       "../../rtc_base/win:windows_version",
-    ]
-    absl_deps = [
       "//third_party/abseil-cpp/absl/strings:strings",
       "//third_party/abseil-cpp/absl/types:optional",
     ]
@@ -205,9 +203,7 @@ if (!build_with_chromium) {
       "../../rtc_base:timeutils",
       "../../rtc_base/synchronization:mutex",
       "../../rtc_base/task_utils:repeating_task",
-    ]
-    absl_deps = [
-      "//third_party/abseil-cpp/absl/strings",
+      "//third_party/abseil-cpp/absl/strings:string_view",
       "//third_party/abseil-cpp/absl/types:optional",
     ]
   }
@@ -249,8 +245,8 @@ if (!build_with_chromium) {
       "../../rtc_base/synchronization:mutex",
       "../../rtc_base/system:file_wrapper",
       "../../system_wrappers",
+      "//third_party/abseil-cpp/absl/strings:string_view",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
   }
 }
 
@@ -292,11 +288,8 @@ rtc_library("audio_device_impl") {
     "../../system_wrappers:field_trial",
     "../../system_wrappers:metrics",
     "../utility",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/base:core_headers",
-    "//third_party/abseil-cpp/absl/strings:strings",
-    "//third_party/abseil-cpp/absl/types:optional",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
   if (rtc_include_internal_audio_device && is_ios) {
     deps += [ "../../sdk:audio_device" ]
@@ -444,8 +437,8 @@ rtc_source_set("mock_audio_device") {
     "../../api:make_ref_counted",
     "../../api/audio:audio_device",
     "../../test:test_support",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 if (rtc_include_tests && !build_with_chromium) {
@@ -486,9 +479,6 @@ if (rtc_include_tests && !build_with_chromium) {
       "../../test:fileutils",
       "../../test:test_support",
       "../../test/time_controller",
-    ]
-    absl_deps = [
-      "//third_party/abseil-cpp/absl/strings",
       "//third_party/abseil-cpp/absl/types:optional",
     ]
     if (is_linux || is_chromeos || is_mac || is_win) {

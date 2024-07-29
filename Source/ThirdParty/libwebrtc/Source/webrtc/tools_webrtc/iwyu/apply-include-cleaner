@@ -96,8 +96,7 @@ if [ ! -f $FILE ]; then
   error "File $FILE is not found"
 fi
 
-cd $WORKDIR
-../../$CLEANER $INCLUDE_ARGS $COMMAND ../../$FILE
+$CLEANER -p $WORKDIR $INCLUDE_ARGS $COMMAND $FILE
 
 echo "Finished. Check diff, compile, gn gen --check and git cl format"
 echo "before uploading."

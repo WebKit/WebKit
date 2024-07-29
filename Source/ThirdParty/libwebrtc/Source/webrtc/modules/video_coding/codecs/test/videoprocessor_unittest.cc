@@ -12,6 +12,7 @@
 
 #include <memory>
 
+#include "api/environment/environment_factory.h"
 #include "api/scoped_refptr.h"
 #include "api/test/mock_video_decoder.h"
 #include "api/test/mock_video_encoder.h"
@@ -53,8 +54,9 @@ class VideoProcessorTest : public ::testing::Test {
     ExpectInit();
     q_.SendTask([this] {
       video_processor_ = std::make_unique<VideoProcessor>(
-          &encoder_mock_, &decoders_, &frame_reader_mock_, config_, &stats_,
-          &encoded_frame_writers_, /*decoded_frame_writers=*/nullptr);
+          CreateEnvironment(), &encoder_mock_, &decoders_, &frame_reader_mock_,
+          config_, &stats_, &encoded_frame_writers_,
+          /*decoded_frame_writers=*/nullptr);
     });
   }
 

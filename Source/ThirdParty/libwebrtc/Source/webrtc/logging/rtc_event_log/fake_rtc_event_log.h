@@ -11,11 +11,13 @@
 #ifndef LOGGING_RTC_EVENT_LOG_FAKE_RTC_EVENT_LOG_H_
 #define LOGGING_RTC_EVENT_LOG_FAKE_RTC_EVENT_LOG_H_
 
+#include <cstdint>
 #include <map>
 #include <memory>
 
 #include "api/rtc_event_log/rtc_event.h"
 #include "api/rtc_event_log/rtc_event_log.h"
+#include "api/rtc_event_log_output.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 

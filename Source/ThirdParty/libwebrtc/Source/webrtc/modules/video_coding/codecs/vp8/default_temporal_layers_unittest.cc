@@ -13,6 +13,7 @@
 #include <cstdint>
 #include <memory>
 
+#include "api/environment/environment_factory.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/vp8_frame_config.h"
@@ -98,7 +99,7 @@ std::vector<uint32_t> GetTemporalLayerRates(int target_bitrate_kbps,
   codec.simulcastStream[0].maxBitrate = target_bitrate_kbps;
   codec.simulcastStream[0].numberOfTemporalLayers = num_temporal_layers;
   codec.simulcastStream[0].active = true;
-  SimulcastRateAllocator allocator(codec);
+  SimulcastRateAllocator allocator(CreateEnvironment(), codec);
   return allocator
       .Allocate(
           VideoBitrateAllocationParameters(target_bitrate_kbps, framerate_fps))

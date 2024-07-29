@@ -11,10 +11,12 @@
 #include "logging/rtc_event_log/events/fixed_length_encoding_parameters_v3.h"
 
 #include <algorithm>
+#include <cstdint>
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "logging/rtc_event_log/events/rtc_event_field_extraction.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
 using webrtc_event_logging::MaxUnsignedValueOfBitWidth;

@@ -70,6 +70,7 @@ class VideoEncoderFactoryInterface {
     } rate_control;
 
     struct Performance {
+      bool encode_on_calling_thread;
       std::pair<int, int> min_max_effort_level;
     } performance;
   };

@@ -16,6 +16,7 @@
 #include <utility>
 #include <vector>
 
+#include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
 #include "p2p/base/basic_packet_socket_factory.h"
 #include "p2p/base/port_allocator.h"
@@ -34,18 +35,12 @@ namespace cricket {
 
 class TestUDPPort : public UDPPort {
  public:
-  static TestUDPPort* Create(rtc::Thread* thread,
-                             rtc::PacketSocketFactory* factory,
-                             const rtc::Network* network,
+  static TestUDPPort* Create(const PortParametersRef& args,
                              uint16_t min_port,
                              uint16_t max_port,
-                             absl::string_view username,
-                             absl::string_view password,
-                             bool emit_localhost_for_anyaddress,
-                             const webrtc::FieldTrialsView* field_trials) {
-    TestUDPPort* port =
-        new TestUDPPort(thread, factory, network, min_port, max_port, username,
-                        password, emit_localhost_for_anyaddress, field_trials);
+                             bool emit_localhost_for_anyaddress) {
+    TestUDPPort* port = new TestUDPPort(args, min_port, max_port,
+                                        emit_localhost_for_anyaddress);
     if (!port->Init()) {
       delete port;
       port = nullptr;
@@ -53,26 +48,36 @@ class TestUDPPort : public UDPPort {
     return port;
   }
 
+  static std::unique_ptr<TestUDPPort> Create(
+      const PortParametersRef& args,
+      rtc::AsyncPacketSocket* socket,
+      bool emit_localhost_for_anyaddress) {
+    auto port = absl::WrapUnique(
+        new TestUDPPort(args, socket, emit_localhost_for_anyaddress));
+    if (!port->Init()) {
+      return nullptr;
+    }
+    return port;
+  }
+
  protected:
-  TestUDPPort(rtc::Thread* thread,
-              rtc::PacketSocketFactory* factory,
-              const rtc::Network* network,
+  TestUDPPort(const PortParametersRef& args,
               uint16_t min_port,
               uint16_t max_port,
-              absl::string_view username,
-              absl::string_view password,
-              bool emit_localhost_for_anyaddress,
-              const webrtc::FieldTrialsView* field_trials)
-      : UDPPort(thread,
+              bool emit_localhost_for_anyaddress)
+      : UDPPort(args,
                 webrtc::IceCandidateType::kHost,
-                factory,
-                network,
                 min_port,
                 max_port,
-                username,
-                password,
-                emit_localhost_for_anyaddress,
-                field_trials) {}
+                emit_localhost_for_anyaddress) {}
+
+  TestUDPPort(const PortParametersRef& args,
+              rtc::AsyncPacketSocket* socket,
+              bool emit_localhost_for_anyaddress)
+      : UDPPort(args,
+                webrtc::IceCandidateType::kHost,
+                socket,
+                emit_localhost_for_anyaddress) {}
 };
 
 // A FakePortAllocatorSession can be used with either a real or fake socket
@@ -123,9 +128,13 @@ class FakePortAllocatorSession : public PortAllocatorSession {
           (rtc::HasIPv6Enabled() && (flags() & PORTALLOCATOR_ENABLE_IPV6))
               ? ipv6_network_
               : ipv4_network_;
-      port_.reset(TestUDPPort::Create(network_thread_, factory_, &network, 0, 0,
-                                      username(), password(), false,
-                                      field_trials_));
+      port_.reset(TestUDPPort::Create({.network_thread = network_thread_,
+                                       .socket_factory = factory_,
+                                       .network = &network,
+                                       .ice_username_fragment = username(),
+                                       .ice_password = password(),
+                                       .field_trials = field_trials_},
+                                      0, 0, false));
       RTC_DCHECK(port_);
       port_->SetIceTiebreaker(allocator_->ice_tiebreaker());
       port_->SubscribePortDestroyed(

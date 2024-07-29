@@ -19,6 +19,7 @@
 #include "api/task_queue/task_queue_base.h"
 #include "api/test/metrics/global_metrics_logger_and_exporter.h"
 #include "api/test/metrics/metric.h"
+#include "api/units/data_rate.h"
 #include "call/fake_network_pipe.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -410,7 +411,8 @@ RampUpDownUpTester::RampUpDownUpTester(size_t num_video_streams,
       interval_start_ms_(clock_->TimeInMilliseconds()),
       sent_bytes_(0),
       loss_rates_(loss_rates) {
-  forward_transport_config_.link_capacity_kbps = link_rates_[test_state_];
+  forward_transport_config_.link_capacity =
+      DataRate::KilobitsPerSec(link_rates_[test_state_]);
   forward_transport_config_.queue_delay_ms = 100;
   forward_transport_config_.loss_percent = loss_rates_[test_state_];
 }
@@ -549,7 +551,8 @@ void RampUpDownUpTester::EvolveTestState(int bitrate_bps, bool suspended) {
     case kTransitionToNextState:
       if (!ExpectingFec() || GetFecBytes() > 0) {
         test_state_ = next_state_;
-        forward_transport_config_.link_capacity_kbps = link_rates_[test_state_];
+        forward_transport_config_.link_capacity =
+            DataRate::KilobitsPerSec(link_rates_[test_state_]);
         // No loss while ramping up and down as it may affect the BWE
         // negatively, making the test flaky.
         forward_transport_config_.loss_percent = 0;

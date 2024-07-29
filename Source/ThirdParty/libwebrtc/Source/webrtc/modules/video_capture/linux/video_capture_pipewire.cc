@@ -33,7 +33,16 @@ struct {
     {SPA_VIDEO_FORMAT_NV12, VideoType::kNV12},
     {SPA_VIDEO_FORMAT_YUY2, VideoType::kYUY2},
     {SPA_VIDEO_FORMAT_UYVY, VideoType::kUYVY},
-    {SPA_VIDEO_FORMAT_RGB, VideoType::kRGB24},
+    // PipeWire is big-endian for the formats, while libyuv is little-endian
+    // This means that BGRA == ARGB, RGBA == ABGR and similar
+    // This follows mapping in libcamera PipeWire plugin:
+    // https://gitlab.freedesktop.org/pipewire/pipewire/-/blob/master/spa/plugins/libcamera/libcamera-utils.cpp
+    {SPA_VIDEO_FORMAT_BGRA, VideoType::kARGB},
+    {SPA_VIDEO_FORMAT_RGBA, VideoType::kABGR},
+    {SPA_VIDEO_FORMAT_ARGB, VideoType::kBGRA},
+    {SPA_VIDEO_FORMAT_RGB, VideoType::kBGR24},
+    {SPA_VIDEO_FORMAT_BGR, VideoType::kRGB24},
+    {SPA_VIDEO_FORMAT_RGB16, VideoType::kRGB565},
 };
 
 VideoType VideoCaptureModulePipeWire::PipeWireRawFormatToVideoType(
@@ -298,10 +307,17 @@ void VideoCaptureModulePipeWire::OnFormatChanged(const struct spa_pod* format) {
         break;
       case VideoType::kYUY2:
       case VideoType::kUYVY:
+      case VideoType::kRGB565:
         stride = configured_capability_.width * 2;
         break;
       case VideoType::kRGB24:
+      case VideoType::kBGR24:
         stride = configured_capability_.width * 3;
+        break;
+      case VideoType::kARGB:
+      case VideoType::kABGR:
+      case VideoType::kBGRA:
+        stride = configured_capability_.width * 4;
         break;
       default:
         RTC_LOG(LS_ERROR) << "Unsupported video format.";
@@ -410,11 +426,10 @@ void VideoCaptureModulePipeWire::ProcessBuffers() {
       ScopedBuf frame;
       frame.initialize(
           static_cast<uint8_t*>(
-              mmap(nullptr,
-                   spaBuffer->datas[0].maxsize + spaBuffer->datas[0].mapoffset,
-                   PROT_READ, MAP_PRIVATE, spaBuffer->datas[0].fd, 0)),
-          spaBuffer->datas[0].maxsize + spaBuffer->datas[0].mapoffset,
-          spaBuffer->datas[0].fd, spaBuffer->datas[0].type == SPA_DATA_DmaBuf);
+              mmap(nullptr, spaBuffer->datas[0].maxsize, PROT_READ, MAP_SHARED,
+                   spaBuffer->datas[0].fd, spaBuffer->datas[0].mapoffset)),
+          spaBuffer->datas[0].maxsize, spaBuffer->datas[0].fd,
+          spaBuffer->datas[0].type == SPA_DATA_DmaBuf);
 
       if (!frame) {
         RTC_LOG(LS_ERROR) << "Failed to mmap the memory: "

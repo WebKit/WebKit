@@ -163,9 +163,6 @@ class AudioProcessingImpl : public AudioProcessing {
                            ReinitializeTransientSuppressor);
   FRIEND_TEST_ALL_PREFIXES(ApmWithSubmodulesExcludedTest,
                            BitexactWithDisabledModules);
-  FRIEND_TEST_ALL_PREFIXES(
-      AudioProcessingImplGainController2FieldTrialParametrizedTest,
-      ConfigAdjustedWhenExperimentEnabled);
 
   void set_stream_analog_level_locked(int level)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);
@@ -194,46 +191,9 @@ class AudioProcessingImpl : public AudioProcessing {
   static std::atomic<int> instance_count_;
   const bool use_setup_specific_default_aec3_config_;
 
-  // Parameters for the "GainController2" experiment which determines whether
-  // the following APM sub-modules are created and, if so, their configurations:
-  // AGC2 (`gain_controller2`), AGC1 (`gain_control`, `agc_manager`) and TS
-  // (`transient_suppressor`).
-  // TODO(bugs.webrtc.org/7494): Remove when the "WebRTC-Audio-GainController2"
-  // field trial is removed.
-  struct GainController2ExperimentParams {
-    struct Agc2Config {
-      InputVolumeController::Config input_volume_controller;
-      AudioProcessing::Config::GainController2::AdaptiveDigital
-          adaptive_digital_controller;
-    };
-    // When `agc2_config` is specified, all gain control switches to AGC2 and
-    // the configuration is overridden.
-    absl::optional<Agc2Config> agc2_config;
-    // When true, the transient suppressor submodule is never created regardless
-    // of the APM configuration.
-    bool disallow_transient_suppressor_usage;
-  };
-  // Specified when the "WebRTC-Audio-GainController2" field trial is specified.
-  // TODO(bugs.webrtc.org/7494): Remove when the "WebRTC-Audio-GainController2"
-  // field trial is removed.
-  const absl::optional<GainController2ExperimentParams>
-      gain_controller2_experiment_params_;
-
-  // Parses the "WebRTC-Audio-GainController2" field trial. If disabled, returns
-  // an unspecified value.
-  static absl::optional<GainController2ExperimentParams>
-  GetGainController2ExperimentParams();
-
-  // When `experiment_params` is specified, returns an APM configuration
-  // modified according to the experiment parameters. Otherwise returns
-  // `config`.
-  static AudioProcessing::Config AdjustConfig(
-      const AudioProcessing::Config& config,
-      const absl::optional<GainController2ExperimentParams>& experiment_params);
-  // Returns true if the APM VAD sub-module should be used.
-  static bool UseApmVadSubModule(
-      const AudioProcessing::Config& config,
-      const absl::optional<GainController2ExperimentParams>& experiment_params);
+  // Deprecated.
+  // TODO(bugs.webrtc.org/7494): Remove.
+  static bool UseApmVadSubModule(const AudioProcessing::Config& config);
 
   TransientSuppressor::VadMode transient_suppressor_vad_mode_;
 

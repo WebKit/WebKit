@@ -29,7 +29,8 @@ class BuiltinVideoBitrateAllocatorFactory
   BuiltinVideoBitrateAllocatorFactory() = default;
   ~BuiltinVideoBitrateAllocatorFactory() override = default;
 
-  std::unique_ptr<VideoBitrateAllocator> CreateVideoBitrateAllocator(
+  std::unique_ptr<VideoBitrateAllocator> Create(
+      const Environment& env,
       const VideoCodec& codec) override {
     // TODO(https://crbug.com/webrtc/14884): Update SvcRateAllocator to
     // support simulcast and use it for VP9/AV1 simulcast as well.
@@ -38,7 +39,7 @@ class BuiltinVideoBitrateAllocatorFactory
         codec.numberOfSimulcastStreams <= 1) {
       return std::make_unique<SvcRateAllocator>(codec);
     }
-    return std::make_unique<SimulcastRateAllocator>(codec);
+    return std::make_unique<SimulcastRateAllocator>(env, codec);
   }
 };
 

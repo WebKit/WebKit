@@ -21,8 +21,8 @@
 #include "api/audio/audio_processing.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_encoder_factory.h"
+#include "api/environment/environment.h"
 #include "api/scoped_refptr.h"
-#include "api/task_queue/task_queue_factory.h"
 #include "api/voip/voip_base.h"
 #include "api/voip/voip_codec.h"
 #include "api/voip/voip_dtmf.h"
@@ -52,10 +52,9 @@ class VoipCore : public VoipEngine,
                  public VoipStatistics,
                  public VoipVolumeControl {
  public:
-  // Construct VoipCore with provided arguments.
-  VoipCore(rtc::scoped_refptr<AudioEncoderFactory> encoder_factory,
+  VoipCore(const Environment& env,
+           rtc::scoped_refptr<AudioEncoderFactory> encoder_factory,
            rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
-           std::unique_ptr<TaskQueueFactory> task_queue_factory,
            rtc::scoped_refptr<AudioDeviceModule> audio_device_module,
            rtc::scoped_refptr<AudioProcessing> audio_processing);
   ~VoipCore() override = default;
@@ -136,9 +135,9 @@ class VoipCore : public VoipEngine,
   bool UpdateAudioTransportWithSenders();
 
   // Synchronization for these are handled internally.
+  const Environment env_;
   rtc::scoped_refptr<AudioEncoderFactory> encoder_factory_;
   rtc::scoped_refptr<AudioDecoderFactory> decoder_factory_;
-  std::unique_ptr<TaskQueueFactory> task_queue_factory_;
 
   // Synchronization is handled internally by AudioProcessing.
   // Must be placed before `audio_device_module_` for proper destruction.

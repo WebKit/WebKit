@@ -9,6 +9,8 @@
 
 #include "logging/rtc_event_log/events/rtc_event_field_extraction.h"
 
+#include <cstdint>
+
 #include "rtc_base/random.h"
 #include "test/gtest.h"
 

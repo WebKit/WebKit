@@ -16,10 +16,13 @@
 #include <vector>
 
 #include "absl/functional/any_invocable.h"
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/environment/environment_factory.h"
 #include "api/field_trials_view.h"
+#include "api/rtc_event_log/rtc_event.h"
 #include "api/rtc_event_log/rtc_event_log.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/units/timestamp.h"
 #include "system_wrappers/include/clock.h"

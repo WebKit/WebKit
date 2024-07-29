@@ -16,8 +16,11 @@
 #include <string>
 #include <utility>
 
+#include "absl/memory/memory.h"
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
+#include "api/field_trials_view.h"
+#include "api/transport/field_trial_based_config.h"
 #include "modules/audio_coding/audio_network_adaptor/audio_network_adaptor_impl.h"
 #include "modules/audio_coding/audio_network_adaptor/controller_manager.h"
 #include "modules/audio_coding/codecs/opus/audio_coder_opus_common.h"
@@ -31,7 +34,6 @@
 #include "rtc_base/string_encode.h"
 #include "rtc_base/string_to_number.h"
 #include "rtc_base/time_utils.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 
@@ -163,14 +165,14 @@ int GetBitrateBps(const AudioEncoderOpusConfig& config) {
   return *config.bitrate_bps;
 }
 
-std::vector<float> GetBitrateMultipliers() {
+std::vector<float> GetBitrateMultipliers(const FieldTrialsView& field_trials) {
   constexpr char kBitrateMultipliersName[] =
       "WebRTC-Audio-OpusBitrateMultipliers";
   const bool use_bitrate_multipliers =
-      webrtc::field_trial::IsEnabled(kBitrateMultipliersName);
+      field_trials.IsEnabled(kBitrateMultipliersName);
   if (use_bitrate_multipliers) {
     const std::string field_trial_string =
-        webrtc::field_trial::FindFullName(kBitrateMultipliersName);
+        field_trials.Lookup(kBitrateMultipliersName);
     std::vector<std::string> pieces;
     rtc::tokenize(field_trial_string, '-', &pieces);
     if (pieces.size() < 2 || pieces[0] != "Enabled") {
@@ -225,16 +227,6 @@ AudioCodecInfo AudioEncoderOpusImpl::QueryAudioEncoder(
   info.allow_comfort_noise = false;
   info.supports_network_adaption = true;
   return info;
-}
-
-std::unique_ptr<AudioEncoder> AudioEncoderOpusImpl::MakeAudioEncoder(
-    const AudioEncoderOpusConfig& config,
-    int payload_type) {
-  if (!config.IsOk()) {
-    RTC_DCHECK_NOTREACHED();
-    return nullptr;
-  }
-  return std::make_unique<AudioEncoderOpusImpl>(config, payload_type);
 }
 
 absl::optional<AudioEncoderOpusConfig> AudioEncoderOpusImpl::SdpToConfig(
@@ -345,9 +337,35 @@ class AudioEncoderOpusImpl::PacketLossFractionSmoother {
   rtc::ExpFilter smoother_;
 };
 
+std::unique_ptr<AudioEncoderOpusImpl> AudioEncoderOpusImpl::CreateForTesting(
+    const Environment& env,
+    const AudioEncoderOpusConfig& config,
+    int payload_type,
+    const AudioNetworkAdaptorCreator& audio_network_adaptor_creator,
+    std::unique_ptr<SmoothingFilter> bitrate_smoother) {
+  // Using `new` to access a non-public constructor.
+  return absl::WrapUnique(new AudioEncoderOpusImpl(
+      env.field_trials(), config, payload_type, audio_network_adaptor_creator,
+      std::move(bitrate_smoother)));
+}
+
+AudioEncoderOpusImpl::AudioEncoderOpusImpl(const Environment& env,
+                                           const AudioEncoderOpusConfig& config,
+                                           int payload_type)
+    : AudioEncoderOpusImpl(
+          env.field_trials(),
+          config,
+          payload_type,
+          [this](absl::string_view config_string, RtcEventLog* event_log) {
+            return DefaultAudioNetworkAdaptorCreator(config_string, event_log);
+          },
+          // We choose 5sec as initial time constant due to empirical data.
+          std::make_unique<SmoothingFilterImpl>(5'000)) {}
+
 AudioEncoderOpusImpl::AudioEncoderOpusImpl(const AudioEncoderOpusConfig& config,
                                            int payload_type)
     : AudioEncoderOpusImpl(
+          FieldTrialBasedConfig(),
           config,
           payload_type,
           [this](absl::string_view config_string, RtcEventLog* event_log) {
@@ -357,17 +375,17 @@ AudioEncoderOpusImpl::AudioEncoderOpusImpl(const AudioEncoderOpusConfig& config,
           std::make_unique<SmoothingFilterImpl>(5000)) {}
 
 AudioEncoderOpusImpl::AudioEncoderOpusImpl(
+    const FieldTrialsView& field_trials,
     const AudioEncoderOpusConfig& config,
     int payload_type,
     const AudioNetworkAdaptorCreator& audio_network_adaptor_creator,
     std::unique_ptr<SmoothingFilter> bitrate_smoother)
     : payload_type_(payload_type),
-      use_stable_target_for_adaptation_(!webrtc::field_trial::IsDisabled(
-          "WebRTC-Audio-StableTargetAdaptation")),
-      adjust_bandwidth_(
-          webrtc::field_trial::IsEnabled("WebRTC-AdjustOpusBandwidth")),
+      use_stable_target_for_adaptation_(
+          !field_trials.IsDisabled("WebRTC-Audio-StableTargetAdaptation")),
+      adjust_bandwidth_(field_trials.IsEnabled("WebRTC-AdjustOpusBandwidth")),
       bitrate_changed_(true),
-      bitrate_multipliers_(GetBitrateMultipliers()),
+      bitrate_multipliers_(GetBitrateMultipliers(field_trials)),
       packet_loss_rate_(0.0),
       inst_(nullptr),
       packet_loss_fraction_smoother_(new PacketLossFractionSmoother()),
@@ -383,10 +401,6 @@ AudioEncoderOpusImpl::AudioEncoderOpusImpl(
   RTC_CHECK(RecreateEncoderInstance(config));
   SetProjectedPacketLossRate(packet_loss_rate_);
 }
-
-AudioEncoderOpusImpl::AudioEncoderOpusImpl(int payload_type,
-                                           const SdpAudioFormat& format)
-    : AudioEncoderOpusImpl(*SdpToConfig(format), payload_type) {}
 
 AudioEncoderOpusImpl::~AudioEncoderOpusImpl() {
   RTC_CHECK_EQ(0, WebRtcOpus_EncoderFree(inst_));

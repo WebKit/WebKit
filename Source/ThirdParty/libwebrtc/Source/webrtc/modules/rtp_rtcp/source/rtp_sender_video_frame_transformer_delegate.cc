@@ -10,15 +10,31 @@
 
 #include "modules/rtp_rtcp/source/rtp_sender_video_frame_transformer_delegate.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include "absl/types/optional.h"
+#include "api/array_view.h"
+#include "api/frame_transformer_interface.h"
+#include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_factory.h"
-#include "modules/rtp_rtcp/source/rtp_descriptor_authentication.h"
+#include "api/transport/rtp/dependency_descriptor.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "api/video/encoded_image.h"
+#include "api/video/video_codec_type.h"
+#include "api/video/video_frame_metadata.h"
+#include "api/video/video_frame_type.h"
+#include "api/video/video_layers_allocation.h"
+#include "api/video_codecs/video_codec.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 namespace {
@@ -28,6 +44,7 @@ namespace {
 // estimate of the RTT of the link,so 10ms should be a reasonable estimate for
 // frames being re-transmitted to a peer, probably on the same network.
 const TimeDelta kDefaultRetransmissionsTime = TimeDelta::Millis(10);
+}  // namespace
 
 class TransformableVideoSenderFrame : public TransformableVideoFrameInterface {
  public:
@@ -39,7 +56,8 @@ class TransformableVideoSenderFrame : public TransformableVideoFrameInterface {
                                 TimeDelta expected_retransmission_time,
                                 uint32_t ssrc,
                                 std::vector<uint32_t> csrcs)
-      : encoded_data_(encoded_image.GetEncodedData()),
+      : TransformableVideoFrameInterface(Passkey()),
+        encoded_data_(encoded_image.GetEncodedData()),
         pre_transform_payload_size_(encoded_image.size()),
         header_(video_header),
         frame_type_(encoded_image._frameType),
@@ -128,7 +146,6 @@ class TransformableVideoSenderFrame : public TransformableVideoFrameInterface {
   uint32_t ssrc_;
   std::vector<uint32_t> csrcs_;
 };
-}  // namespace
 
 RTPSenderVideoFrameTransformerDelegate::RTPSenderVideoFrameTransformerDelegate(
     RTPVideoFrameSenderInterface* sender,

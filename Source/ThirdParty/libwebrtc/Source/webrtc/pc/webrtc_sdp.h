@@ -112,6 +112,11 @@ RTC_EXPORT bool ParseCandidate(absl::string_view message,
 bool WriteFmtpParameters(const webrtc::CodecParameterMap& parameters,
                          rtc::StringBuilder* os);
 
+// Parses a string into an FMTP parameter set, in key-value format.
+bool ParseFmtpParameterSet(absl::string_view line_params,
+                           webrtc::CodecParameterMap& codec_params,
+                           SdpParseError* error);
+
 }  // namespace webrtc
 
 #endif  // PC_WEBRTC_SDP_H_

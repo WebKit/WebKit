@@ -10,8 +10,10 @@
 
 #include "rtc_base/numerics/sample_counter.h"
 
+#include <cstdint>
 #include <limits>
 
+#include "absl/types/optional.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 

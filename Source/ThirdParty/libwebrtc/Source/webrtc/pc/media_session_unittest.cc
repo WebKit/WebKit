@@ -52,10 +52,6 @@
 namespace cricket {
 namespace {
 
-using ::rtc::kCsAeadAes128Gcm;
-using ::rtc::kCsAeadAes256Gcm;
-using ::rtc::kCsAesCm128HmacSha1_32;
-using ::rtc::kCsAesCm128HmacSha1_80;
 using ::rtc::UniqueRandomIdGenerator;
 using ::testing::Bool;
 using ::testing::Combine;

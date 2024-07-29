@@ -58,9 +58,6 @@ extern const char kCsAeadAes256Gcm[];
 // name, as defined in https://tools.ietf.org/html/rfc5764#section-4.1.2.
 std::string SrtpCryptoSuiteToName(int crypto_suite);
 
-// The reverse of above conversion.
-int SrtpCryptoSuiteFromName(absl::string_view crypto_suite);
-
 // Get key length and salt length for given crypto suite. Returns true for
 // valid suites, otherwise false.
 bool GetSrtpKeyAndSaltLengths(int crypto_suite,
@@ -69,9 +66,6 @@ bool GetSrtpKeyAndSaltLengths(int crypto_suite,
 
 // Returns true if the given crypto suite id uses a GCM cipher.
 bool IsGcmCryptoSuite(int crypto_suite);
-
-// Returns true if the given crypto suite name uses a GCM cipher.
-bool IsGcmCryptoSuiteName(absl::string_view crypto_suite);
 
 // SSLStreamAdapter : A StreamInterfaceAdapter that does SSL/TLS.
 // After SSL has been started, the stream will only open on successful
@@ -90,17 +84,13 @@ bool IsGcmCryptoSuiteName(absl::string_view crypto_suite);
 enum SSLRole { SSL_CLIENT, SSL_SERVER };
 enum SSLMode { SSL_MODE_TLS, SSL_MODE_DTLS };
 
-// Note: TLS_10, TLS_11, and DTLS_10 will all be ignored, and only DTLS1_2 will
-// be accepted unless the trial flag WebRTC-LegacyTlsProtocols/Enabled/ is
-// passed in or an explicit override is used. Support for the legacy protocol
-// versions will be completely removed in the future.
-// See https://bugs.webrtc.org/10261.
+// TODO bugs.webrtc.org/40644300 remove unused legacy constants.
 enum SSLProtocolVersion {
   SSL_PROTOCOL_NOT_GIVEN = -1,
-  SSL_PROTOCOL_TLS_10 = 0,
-  SSL_PROTOCOL_TLS_11,
-  SSL_PROTOCOL_TLS_12,
-  SSL_PROTOCOL_DTLS_10 = SSL_PROTOCOL_TLS_11,
+  SSL_PROTOCOL_TLS_10 = 0,  // Deprecated and no longer supported.
+  SSL_PROTOCOL_TLS_11 = 1,  // Deprecated and no longer supported.
+  SSL_PROTOCOL_TLS_12 = 2,
+  SSL_PROTOCOL_DTLS_10 = 1,  // Deprecated and no longer supported.
   SSL_PROTOCOL_DTLS_12 = SSL_PROTOCOL_TLS_12,
 };
 enum class SSLPeerCertificateDigestError {
@@ -198,7 +188,8 @@ class SSLStreamAdapter : public StreamInterface {
 
   // Retrieves the enum value for SSL version.
   // Will return -1 until the version has been negotiated.
-  virtual SSLProtocolVersion GetSslVersion() const = 0;
+  [[deprecated("Use GetSslVersionBytes")]] virtual SSLProtocolVersion
+  GetSslVersion() const = 0;
   // Retrieves the 2-byte version from the TLS protocol.
   // Will return false until the version has been negotiated.
   virtual bool GetSslVersionBytes(int* version) const = 0;

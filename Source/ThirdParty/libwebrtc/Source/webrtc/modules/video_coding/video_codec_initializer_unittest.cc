@@ -16,6 +16,8 @@
 #include <memory>
 
 #include "absl/types/optional.h"
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "api/scoped_refptr.h"
 #include "api/test/mock_fec_controller_override.h"
 #include "api/video/builtin_video_bitrate_allocator_factory.h"
@@ -92,10 +94,10 @@ class VideoCodecInitializerTest : public ::testing::Test {
 
   void InitializeCodec() {
     frame_buffer_controller_.reset();
-    codec_out_ =
-        VideoCodecInitializer::SetupCodec(field_trials_, config_, streams_);
-    bitrate_allocator_ = CreateBuiltinVideoBitrateAllocatorFactory()
-                             ->CreateVideoBitrateAllocator(codec_out_);
+    codec_out_ = VideoCodecInitializer::SetupCodec(env_.field_trials(), config_,
+                                                   streams_);
+    bitrate_allocator_ =
+        CreateBuiltinVideoBitrateAllocatorFactory()->Create(env_, codec_out_);
     RTC_CHECK(bitrate_allocator_);
 
     // Make sure temporal layers instances have been created.
@@ -137,7 +139,7 @@ class VideoCodecInitializerTest : public ::testing::Test {
     return stream;
   }
 
-  const test::ExplicitKeyValueConfig field_trials_{""};
+  const Environment env_ = CreateEnvironment();
   MockFecControllerOverride fec_controller_override_;
 
   // Input settings.
@@ -505,7 +507,7 @@ TEST_F(VideoCodecInitializerTest, Av1SingleSpatialLayerBitratesAreConsistent) {
   streams[0].scalability_mode = ScalabilityMode::kL1T2;
 
   VideoCodec codec =
-      VideoCodecInitializer::SetupCodec(field_trials_, config, streams);
+      VideoCodecInitializer::SetupCodec(env_.field_trials(), config, streams);
 
   EXPECT_GE(codec.spatialLayers[0].targetBitrate,
             codec.spatialLayers[0].minBitrate);
@@ -520,7 +522,7 @@ TEST_F(VideoCodecInitializerTest, Av1TwoSpatialLayersBitratesAreConsistent) {
   streams[0].scalability_mode = ScalabilityMode::kL2T2;
 
   VideoCodec codec =
-      VideoCodecInitializer::SetupCodec(field_trials_, config, streams);
+      VideoCodecInitializer::SetupCodec(env_.field_trials(), config, streams);
 
   EXPECT_GE(codec.spatialLayers[0].targetBitrate,
             codec.spatialLayers[0].minBitrate);
@@ -533,6 +535,51 @@ TEST_F(VideoCodecInitializerTest, Av1TwoSpatialLayersBitratesAreConsistent) {
             codec.spatialLayers[1].maxBitrate);
 }
 
+TEST_F(VideoCodecInitializerTest, Av1ConfiguredMinBitrateApplied) {
+  VideoEncoderConfig config;
+  config.simulcast_layers.resize(1);
+  config.simulcast_layers[0].min_bitrate_bps = 28000;
+  config.codec_type = VideoCodecType::kVideoCodecAV1;
+  std::vector<VideoStream> streams = {DefaultStream()};
+  streams[0].scalability_mode = ScalabilityMode::kL3T2;
+
+  VideoCodec codec =
+      VideoCodecInitializer::SetupCodec(env_.field_trials(), config, streams);
+
+  EXPECT_EQ(codec.spatialLayers[0].minBitrate, 28u);
+  EXPECT_GE(codec.spatialLayers[0].targetBitrate,
+            codec.spatialLayers[0].minBitrate);
+}
+
+TEST_F(VideoCodecInitializerTest,
+       Av1ConfiguredMinBitrateLimitedByDefaultTargetBitrate) {
+  VideoEncoderConfig config;
+  config.simulcast_layers.resize(1);
+  config.simulcast_layers[0].min_bitrate_bps = 2228000;
+  config.codec_type = VideoCodecType::kVideoCodecAV1;
+  std::vector<VideoStream> streams = {DefaultStream()};
+  streams[0].scalability_mode = ScalabilityMode::kL3T2;
+
+  VideoCodec codec =
+      VideoCodecInitializer::SetupCodec(env_.field_trials(), config, streams);
+
+  EXPECT_GE(codec.spatialLayers[0].targetBitrate,
+            codec.spatialLayers[0].minBitrate);
+}
+
+TEST_F(VideoCodecInitializerTest, Av1ConfiguredMinBitrateNotAppliedIfUnset) {
+  VideoEncoderConfig config;
+  config.simulcast_layers.resize(1);
+  config.codec_type = VideoCodecType::kVideoCodecAV1;
+  std::vector<VideoStream> streams = {DefaultStream()};
+  streams[0].scalability_mode = ScalabilityMode::kL3T2;
+
+  VideoCodec codec =
+      VideoCodecInitializer::SetupCodec(env_.field_trials(), config, streams);
+
+  EXPECT_GT(codec.spatialLayers[0].minBitrate, 0u);
+}
+
 TEST_F(VideoCodecInitializerTest, Av1TwoSpatialLayersActiveByDefault) {
   VideoEncoderConfig config;
   config.codec_type = VideoCodecType::kVideoCodecAV1;
@@ -541,7 +588,7 @@ TEST_F(VideoCodecInitializerTest, Av1TwoSpatialLayersActiveByDefault) {
   config.spatial_layers = {};
 
   VideoCodec codec =
-      VideoCodecInitializer::SetupCodec(field_trials_, config, streams);
+      VideoCodecInitializer::SetupCodec(env_.field_trials(), config, streams);
 
   EXPECT_TRUE(codec.spatialLayers[0].active);
   EXPECT_TRUE(codec.spatialLayers[1].active);
@@ -557,7 +604,7 @@ TEST_F(VideoCodecInitializerTest, Av1TwoSpatialLayersOneDeactivated) {
   config.spatial_layers[1].active = false;
 
   VideoCodec codec =
-      VideoCodecInitializer::SetupCodec(field_trials_, config, streams);
+      VideoCodecInitializer::SetupCodec(env_.field_trials(), config, streams);
 
   EXPECT_TRUE(codec.spatialLayers[0].active);
   EXPECT_FALSE(codec.spatialLayers[1].active);
@@ -575,7 +622,7 @@ TEST_F(VideoCodecInitializerTest, Vp9SingleSpatialLayerBitratesAreConsistent) {
   streams[0].scalability_mode = ScalabilityMode::kL1T2;
 
   VideoCodec codec =
-      VideoCodecInitializer::SetupCodec(field_trials_, config, streams);
+      VideoCodecInitializer::SetupCodec(env_.field_trials(), config, streams);
 
   EXPECT_EQ(1u, codec.VP9()->numberOfSpatialLayers);
   // Target is consistent with min and max (min <= target <= max).
@@ -603,7 +650,7 @@ TEST_F(VideoCodecInitializerTest, Vp9TwoSpatialLayersBitratesAreConsistent) {
   streams[0].scalability_mode = ScalabilityMode::kL2T2;
 
   VideoCodec codec =
-      VideoCodecInitializer::SetupCodec(field_trials_, config, streams);
+      VideoCodecInitializer::SetupCodec(env_.field_trials(), config, streams);
 
   EXPECT_EQ(2u, codec.VP9()->numberOfSpatialLayers);
   EXPECT_GE(codec.spatialLayers[0].targetBitrate,
@@ -627,14 +674,15 @@ TEST_F(VideoCodecInitializerTest, UpdatesVp9SpecificFieldsWithScalabilityMode) {
   streams[0].scalability_mode = ScalabilityMode::kL2T3_KEY;
 
   VideoCodec codec =
-      VideoCodecInitializer::SetupCodec(field_trials_, config, streams);
+      VideoCodecInitializer::SetupCodec(env_.field_trials(), config, streams);
 
   EXPECT_EQ(codec.VP9()->numberOfSpatialLayers, 2u);
   EXPECT_EQ(codec.VP9()->numberOfTemporalLayers, 3u);
   EXPECT_EQ(codec.VP9()->interLayerPred, InterLayerPredMode::kOnKeyPic);
 
   streams[0].scalability_mode = ScalabilityMode::kS3T1;
-  codec = VideoCodecInitializer::SetupCodec(field_trials_, config, streams);
+  codec =
+      VideoCodecInitializer::SetupCodec(env_.field_trials(), config, streams);
 
   EXPECT_EQ(codec.VP9()->numberOfSpatialLayers, 3u);
   EXPECT_EQ(codec.VP9()->numberOfTemporalLayers, 1u);

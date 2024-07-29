@@ -31,14 +31,5 @@ int AudioprocFloat(std::unique_ptr<AudioProcessingBuilder> ap_builder,
                             /*processed_capture_samples=*/nullptr);
 }
 
-int AudioprocFloat(std::unique_ptr<AudioProcessingBuilder> ap_builder,
-                   int argc,
-                   char* argv[],
-                   absl::string_view input_aecdump,
-                   std::vector<float>* processed_capture_samples) {
-  return AudioprocFloatImpl(std::move(ap_builder), argc, argv, input_aecdump,
-                            processed_capture_samples);
-}
-
 }  // namespace test
 }  // namespace webrtc

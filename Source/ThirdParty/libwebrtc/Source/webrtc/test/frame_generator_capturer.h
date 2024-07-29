@@ -80,8 +80,6 @@ class FrameGeneratorCapturer : public TestVideoCapturer {
   void SetFakeRotation(VideoRotation rotation);
   void SetFakeColorSpace(absl::optional<ColorSpace> color_space);
 
-  int64_t first_frame_capture_time() const { return first_frame_capture_time_; }
-
   bool Init();
 
  private:
@@ -103,8 +101,6 @@ class FrameGeneratorCapturer : public TestVideoCapturer {
   absl::optional<int> wanted_fps_ RTC_GUARDED_BY(&lock_);
   VideoRotation fake_rotation_ = kVideoRotation_0;
   absl::optional<ColorSpace> fake_color_space_ RTC_GUARDED_BY(&lock_);
-
-  int64_t first_frame_capture_time_;
 
   std::unique_ptr<TaskQueueBase, TaskQueueDeleter> task_queue_;
 };

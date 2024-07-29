@@ -161,7 +161,7 @@ void WritePps(const H265PpsParser::PpsState& pps,
     bit_buffer.GetCurrentOffset(&byte_offset, &bit_offset);
   }
 
-  H265::WriteRbsp(data, byte_offset, out_buffer);
+  H265::WriteRbsp(rtc::MakeArrayView(data, byte_offset), out_buffer);
 }
 
 class H265PpsParserTest : public ::testing::Test {
@@ -196,9 +196,8 @@ class H265PpsParserTest : public ::testing::Test {
         0x16, 0x59, 0x59, 0xa4, 0x93, 0x2b, 0x80, 0x40, 0x00, 0x00,
         0x03, 0x00, 0x40, 0x00, 0x00, 0x07, 0x82};
     H265SpsParser::SpsState parsed_sps =
-        H265SpsParser::ParseSps(sps_buffer, arraysize(sps_buffer)).value();
-    parsed_pps_ =
-        H265PpsParser::ParsePps(buffer_.data(), buffer_.size(), &parsed_sps);
+        H265SpsParser::ParseSps(sps_buffer).value();
+    parsed_pps_ = H265PpsParser::ParsePps(buffer_, &parsed_sps);
     ASSERT_TRUE(parsed_pps_);
     EXPECT_EQ(pps.dependent_slice_segments_enabled_flag,
               parsed_pps_->dependent_slice_segments_enabled_flag);

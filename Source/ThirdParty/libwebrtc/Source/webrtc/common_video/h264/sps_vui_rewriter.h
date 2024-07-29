@@ -43,8 +43,7 @@ class SpsVuiRewriter : private SpsParser {
   // (NALU start, type, Stap-A, etc) have already been parsed and that RBSP
   // decoding has been performed.
   static ParseResult ParseAndRewriteSps(
-      const uint8_t* buffer,
-      size_t length,
+      rtc::ArrayView<const uint8_t> buffer,
       absl::optional<SpsParser::SpsState>* sps,
       const ColorSpace* color_space,
       rtc::Buffer* destination,
@@ -58,8 +57,7 @@ class SpsVuiRewriter : private SpsParser {
 
  private:
   static ParseResult ParseAndRewriteSps(
-      const uint8_t* buffer,
-      size_t length,
+      rtc::ArrayView<const uint8_t> buffer,
       absl::optional<SpsParser::SpsState>* sps,
       const ColorSpace* color_space,
       rtc::Buffer* destination);

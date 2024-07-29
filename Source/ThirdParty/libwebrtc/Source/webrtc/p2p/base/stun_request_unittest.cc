@@ -13,9 +13,9 @@
 #include <utility>
 #include <vector>
 
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/fake_clock.h"
 #include "rtc_base/gunit.h"
-#include "rtc_base/helpers.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/time_utils.h"
 #include "test/gtest.h"

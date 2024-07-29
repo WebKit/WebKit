@@ -99,7 +99,7 @@ static std::string ToStringIfSet(const char* key,
 
 template <class T>
 static std::string VectorToString(const std::vector<T>& vals) {
-  rtc::StringBuilder ost;  // no-presubmit-check TODO(webrtc:8982)
+  rtc::StringBuilder ost;
   ost << "[";
   for (size_t i = 0; i < vals.size(); ++i) {
     if (i > 0) {
@@ -476,6 +476,8 @@ struct MediaReceiverInfo {
   absl::optional<uint64_t> fec_packets_discarded;
   // https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-fecbytesreceived
   absl::optional<uint64_t> fec_bytes_received;
+  // https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-totalprocessingdelay
+  double total_processing_delay_seconds = 0.0;
 
   // Remote outbound stats derived by the received RTCP sender reports.
   // https://w3c.github.io/webrtc-stats/#remoteoutboundrtpstats-dict*
@@ -819,7 +821,7 @@ struct MediaChannelParameters {
 
   std::vector<Codec> codecs;
   std::vector<webrtc::RtpExtension> extensions;
-  // For a send stream this is true if we've neogtiated a send direction,
+  // For a send stream this is true if we've negotiated a send direction,
   // for a receive stream this is true if we've negotiated a receive direction.
   bool is_stream_active = true;
 
@@ -841,7 +843,10 @@ struct MediaChannelParameters {
  protected:
   virtual std::map<std::string, std::string> ToStringMap() const {
     return {{"codecs", VectorToString(codecs)},
-            {"extensions", VectorToString(extensions)}};
+            {"extensions", VectorToString(extensions)},
+            {"rtcp", "{reduced_size:" + rtc::ToString(rtcp.reduced_size) +
+                         ", remote_estimate:" +
+                         rtc::ToString(rtcp.remote_estimate) + "}"}};
   }
 };
 
@@ -918,6 +923,7 @@ class VoiceMediaReceiveChannelInterface : public MediaReceiveChannelInterface {
       std::unique_ptr<webrtc::AudioSinkInterface> sink) = 0;
   virtual bool GetStats(VoiceMediaReceiveInfo* stats, bool reset_legacy) = 0;
   virtual void SetReceiveNackEnabled(bool enabled) = 0;
+  virtual void SetRtcpMode(webrtc::RtcpMode mode) = 0;
   virtual void SetReceiveNonSenderRttEnabled(bool enabled) = 0;
 };
 

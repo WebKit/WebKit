@@ -16,20 +16,21 @@
 
 #include "absl/memory/memory.h"
 #include "modules/rtp_rtcp/source/rtp_descriptor_authentication.h"
+#include "modules/rtp_rtcp/source/rtp_sender_video_frame_transformer_delegate.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/thread.h"
 
 namespace webrtc {
 
-namespace {
 class TransformableVideoReceiverFrame
     : public TransformableVideoFrameInterface {
  public:
   TransformableVideoReceiverFrame(std::unique_ptr<RtpFrameObject> frame,
                                   uint32_t ssrc,
                                   RtpVideoFrameReceiver* receiver)
-      : frame_(std::move(frame)),
+      : TransformableVideoFrameInterface(Passkey()),
+        frame_(std::move(frame)),
         metadata_(frame_->GetRtpVideoHeader().GetAsMetadata()),
         receiver_(receiver) {
     metadata_.SetSsrc(ssrc);
@@ -89,7 +90,6 @@ class TransformableVideoReceiverFrame
   VideoFrameMetadata metadata_;
   RtpVideoFrameReceiver* receiver_;
 };
-}  // namespace
 
 RtpVideoStreamReceiverFrameTransformerDelegate::
     RtpVideoStreamReceiverFrameTransformerDelegate(
