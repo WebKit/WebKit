@@ -43,12 +43,12 @@ async function runTests()
             // Test that a third-party without pre-existing cookies does not write first-party cookies.
             await testCrossOriginCookie();
             // Navigate to localhost to set first-party cookie 'setAsFirstParty'.
-            document.location.href = "http://localhost:8000/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html#setCookieAsFirstParty";
+            document.location.href = "https://localhost:8443/websocket/tests/hybi/websocket-cookie-overwrite-behavior.https.html#setCookieAsFirstParty";
             break;
         case "#setCookieAsFirstParty":
-            await setCookie("setAsFirstParty", "value");
+            await setCookie("setAsFirstParty", "value", {"SameSite": "None", "Secure": null});
             // Navigate back to 127.0.0.1 to test third-party cookie.
-            document.location.href = "http://127.0.0.1:8000/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html#didSetCookieAsFirstParty";
+            document.location.href = "https://127.0.0.1:8443/websocket/tests/hybi/websocket-cookie-overwrite-behavior.https.html#didSetCookieAsFirstParty";
             break;
         case "#didSetCookieAsFirstParty":
             testRunner.dumpChildFramesAsText();
@@ -56,7 +56,7 @@ async function runTests()
             debug("Setting third-party cookie 'foo' through cross-origin WebSocket handshake and checking that it doesn't write first-party cookies.");
             await testCrossOriginCookie();
             let iframeElement = document.createElement("iframe");
-            iframeElement.src = "http://localhost:8000/cookies/resources/echo-cookies.py";
+            iframeElement.src = "https://localhost:8443/cookies/resources/echo-cookies.py";
             iframeElement.onload = finishJSTest;
             debug("<br>Opening localhost third-party iframe to check its cookies.");
             document.body.appendChild(iframeElement);

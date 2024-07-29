@@ -1902,8 +1902,8 @@ webkit.org/b/264804 http/tests/resourceLoadStatistics/blocking-in-web-worker-scr
 webkit.org/b/264804 http/tests/resourceLoadStatistics/no-third-party-cookie-blocking-when-itp-is-off.html [ Failure ]
 webkit.org/b/264804 http/tests/resourceLoadStatistics/ping-to-prevalent-resource.html [ Failure ]
 webkit.org/b/264804 http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction.html [ Failure ]
-webkit.org/b/264804 http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.html [ Failure ]
-webkit.org/b/264804 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Failure ]
+webkit.org/b/264804 http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.https.html [ Failure ]
+webkit.org/b/264804 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.https.html [ Failure ]
 webkit.org/b/264804 http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-not-removed-with-user-interaction-6-days-ago.html [ Pass Timeout ]
 
 webkit.org/b/264805 imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss [ Failure ]
