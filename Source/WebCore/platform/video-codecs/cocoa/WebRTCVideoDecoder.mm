@@ -33,7 +33,7 @@
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN
 
-#include <webrtc/sdk/WebKit/WebKitDecoder.h>
+#include <webrtc/webkit_sdk/WebKit/WebKitDecoder.h>
 
 ALLOW_UNUSED_PARAMETERS_END
 ALLOW_COMMA_END

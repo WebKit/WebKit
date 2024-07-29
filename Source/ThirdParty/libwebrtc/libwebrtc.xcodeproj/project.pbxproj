@@ -16983,11 +16983,11 @@
 				5C63F9871E4174BD002CA531 /* p2p */,
 				5C63FA351E417608002CA531 /* pc */,
 				413A21431FE18D0100373E99 /* rtc_base */,
-				5C4B4B571E431C20002651C8 /* sdk */,
 				4131C3CB234B982A0028A615 /* stats */,
 				5C4B4C8B1E43207F002651C8 /* system_wrappers */,
 				44ABBE852AC63CA3006B44DD /* test */,
 				5CDD85591E43B5AE00621E92 /* video */,
+				5C4B4B571E431C20002651C8 /* webkit_sdk */,
 			);
 			path = webrtc;
 			sourceTree = "<group>";
@@ -17466,13 +17466,13 @@
 			path = src;
 			sourceTree = "<group>";
 		};
-		5C4B4B571E431C20002651C8 /* sdk */ = {
+		5C4B4B571E431C20002651C8 /* webkit_sdk */ = {
 			isa = PBXGroup;
 			children = (
 				5C4B4B581E431C49002651C8 /* objc */,
 				419C84961FE2FE9C0040C30F /* WebKit */,
 			);
-			path = sdk;
+			path = webkit_sdk;
 			sourceTree = "<group>";
 		};
 		5C4B4B581E431C49002651C8 /* objc */ = {

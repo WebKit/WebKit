@@ -45,8 +45,8 @@ ALLOW_COMMA_BEGIN
 #include <webrtc/api/environment/environment_factory.h>
 #include <webrtc/modules/video_coding/codecs/vp8/include/vp8.h>
 #include <webrtc/modules/video_coding/codecs/vp9/include/vp9.h>
-#include <webrtc/sdk/WebKit/WebKitDecoder.h>
 #include <webrtc/system_wrappers/include/cpu_info.h>
+#include <webrtc/webkit_sdk/WebKit/WebKitDecoder.h>
 
 ALLOW_COMMA_END
 ALLOW_UNUSED_PARAMETERS_END

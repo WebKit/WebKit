@@ -42,7 +42,7 @@
 
 ALLOW_COMMA_BEGIN
 
-#include <webrtc/sdk/WebKit/WebKitUtilities.h>
+#include <webrtc/webkit_sdk/WebKit/WebKitUtilities.h>
 
 ALLOW_COMMA_END
 
