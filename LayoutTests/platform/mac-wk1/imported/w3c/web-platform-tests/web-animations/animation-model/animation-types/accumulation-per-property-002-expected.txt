@@ -145,6 +145,9 @@ PASS quotes: ""“" "”" "‘" "’"" onto ""‘" "’" "“" "”""
 PASS resize (type: discrete) has testAccumulation function
 PASS resize: "horizontal" onto "both"
 PASS resize: "both" onto "horizontal"
+PASS ruby-align (type: discrete) has testAccumulation function
+PASS ruby-align: "center" onto "start"
+PASS ruby-align: "start" onto "center"
 PASS scrollbar-color (type: colorPair) has testAccumulation function
 PASS scrollbar-color supports animating as color pair of rgb() with overflowed  from and to values
 PASS scrollbar-color supports animating as color pair of #RGB

@@ -269,6 +269,7 @@ PASS resize
 PASS right
 PASS rotate
 PASS row-gap
+PASS ruby-align
 PASS rx
 PASS ry
 PASS scale

@@ -176,6 +176,10 @@ PASS resize (type: discrete) has testInterpolation function
 PASS resize uses discrete animation when animating between "both" and "horizontal" with linear easing
 PASS resize uses discrete animation when animating between "both" and "horizontal" with effect easing
 PASS resize uses discrete animation when animating between "both" and "horizontal" with keyframe easing
+PASS ruby-align (type: discrete) has testInterpolation function
+PASS ruby-align uses discrete animation when animating between "start" and "center" with linear easing
+PASS ruby-align uses discrete animation when animating between "start" and "center" with effect easing
+PASS ruby-align uses discrete animation when animating between "start" and "center" with keyframe easing
 PASS scrollbar-color (type: colorPair) has testInterpolation function
 PASS scrollbar-color supports animating as color pair of rgb()
 PASS scrollbar-color supports animating as color pair of #RGB

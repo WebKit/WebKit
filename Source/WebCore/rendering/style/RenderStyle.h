@@ -192,6 +192,7 @@ enum class PseudoId : uint32_t;
 enum class QuoteType : uint8_t;
 enum class Resize : uint8_t;
 enum class RubyPosition : uint8_t;
+enum class RubyAlign : uint8_t;
 enum class SVGPaintType : uint8_t;
 enum class ScrollAxis : uint8_t;
 enum class ScrollSnapStop : bool;
@@ -895,6 +896,7 @@ public:
     const AtomString& textEmphasisMarkString() const;
 
     inline RubyPosition rubyPosition() const;
+    inline RubyAlign rubyAlign() const;
 
 #if ENABLE(DARK_MODE_CSS)
     inline StyleColorScheme colorScheme() const;
@@ -1507,6 +1509,7 @@ public:
     inline void setObjectPosition(LengthPoint);
 
     inline void setRubyPosition(RubyPosition);
+    inline void setRubyAlign(RubyAlign);
 
 #if ENABLE(DARK_MODE_CSS)
     inline void setColorScheme(StyleColorScheme);
@@ -1986,6 +1989,7 @@ public:
     static inline const AtomString& initialTextEmphasisCustomMark();
     static constexpr OptionSet<TextEmphasisPosition> initialTextEmphasisPosition();
     static constexpr RubyPosition initialRubyPosition();
+    static constexpr RubyAlign initialRubyAlign();
     static constexpr OptionSet<LineBoxContain> initialLineBoxContain();
     static constexpr ImageOrientation initialImageOrientation();
     static constexpr ImageRendering initialImageRendering();

@@ -903,6 +903,7 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
         || first.hyphenationLimitAfter != second.hyphenationLimitAfter
         || first.hyphenationString != second.hyphenationString
         || first.rubyPosition != second.rubyPosition
+        || first.rubyAlign != second.rubyAlign
         || first.textCombine != second.textCombine
         || first.textEmphasisMark != second.textEmphasisMark
         || first.textEmphasisPosition != second.textEmphasisPosition
@@ -2057,6 +2058,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyTextUnderlinePosition);
         if (first.rubyPosition != second.rubyPosition)
             changingProperties.m_properties.set(CSSPropertyWebkitRubyPosition);
+        if (first.rubyAlign != second.rubyAlign)
+            changingProperties.m_properties.set(CSSPropertyRubyAlign);
         if (first.paintOrder != second.paintOrder)
             changingProperties.m_properties.set(CSSPropertyPaintOrder);
         if (first.capStyle != second.capStyle)

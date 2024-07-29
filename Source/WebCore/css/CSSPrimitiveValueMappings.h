@@ -1532,6 +1532,12 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
+#define TYPE RubyAlign
+#define FOR_EACH(CASE) CASE(Start) CASE(Center) CASE(SpaceBetween) CASE(SpaceAround)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
+
 #define TYPE TextOverflow
 #define FOR_EACH(CASE) CASE(Clip) CASE(Ellipsis)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS

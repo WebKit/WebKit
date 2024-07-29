@@ -1168,6 +1168,20 @@ CSSRhythmicSizingEnabled:
     WebCore:
       default: false
 
+CSSRubyAlignEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS ruby-align property"
+  humanReadableDescription: "Enable ruby-align"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSScopeAtRuleEnabled:
   type: bool
   status: stable

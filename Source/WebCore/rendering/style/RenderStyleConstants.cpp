@@ -933,6 +933,17 @@ TextStream& operator<<(TextStream& ts, RubyPosition position)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, RubyAlign alignment)
+{
+    switch (alignment) {
+    case RubyAlign::Start: ts << "start"; break;
+    case RubyAlign::Center: ts << "center"; break;
+    case RubyAlign::SpaceBetween: ts << "space-between"; break;
+    case RubyAlign::SpaceAround: ts << "space-around"; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, ScrollSnapAxis axis)
 {
     switch (axis) {
