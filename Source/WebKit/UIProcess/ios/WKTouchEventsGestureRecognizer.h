@@ -56,6 +56,7 @@ struct WKTouchEvent {
     bool inJavaScriptGesture { false };
 
     Vector<WKTouchPoint> touchPoints;
+    Vector<WKTouchEvent> coalescedEvents;
     bool isPotentialTap { false };
 };
 

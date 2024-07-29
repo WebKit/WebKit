@@ -131,7 +131,7 @@ WEBCORE_EXPORT @interface WebEvent : NSObject {
     NSArray *_touchLocations;
     NSArray *_touchIdentifiers;
     NSArray *_touchPhases;
-    
+
     BOOL _isGesture;
     float _gestureScale;
     float _gestureRotation;

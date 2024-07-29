@@ -7690,7 +7690,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
     m_lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage = std::nullopt;
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    EventDispatcher::TouchEventQueue queuedEvents;
+    auto queuedEvents = makeUniqueRef<EventDispatcher::TouchEventQueue>();
     WebProcess::singleton().eventDispatcher().takeQueuedTouchEventsForPage(*this, queuedEvents);
     cancelAsynchronousTouchEvents(WTFMove(queuedEvents));
 #endif

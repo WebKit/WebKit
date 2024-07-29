@@ -91,7 +91,7 @@ public:
         CompletionHandler<void(bool, std::optional<WebCore::RemoteUserInputEventData>)> completionHandler;
     };
     using TouchEventQueue = Vector<TouchEventData, 1>;
-    void takeQueuedTouchEventsForPage(const WebPage&, TouchEventQueue&);
+    void takeQueuedTouchEventsForPage(const WebPage&, UniqueRef<TouchEventQueue>&);
 #endif
 
     void initializeConnection(IPC::Connection&);
@@ -159,7 +159,7 @@ private:
     std::unique_ptr<WebCore::WheelEventDeltaFilter> m_recentWheelEventDeltaFilter;
 #if ENABLE(IOS_TOUCH_EVENTS)
     Lock m_touchEventsLock;
-    HashMap<WebCore::PageIdentifier, TouchEventQueue> m_touchEvents WTF_GUARDED_BY_LOCK(m_touchEventsLock);
+    HashMap<WebCore::PageIdentifier, UniqueRef<TouchEventQueue>> m_touchEvents WTF_GUARDED_BY_LOCK(m_touchEventsLock);
 #endif
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
