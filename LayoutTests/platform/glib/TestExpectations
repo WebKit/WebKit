@@ -4109,6 +4109,11 @@ imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking
 
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video.html [ Failure ]
 
+# Flaky since 280917@main.
+webkit.org/b/277255 fast/css/text-overflow-input.html [ Failure Pass ]
+webkit.org/b/277255 fast/forms/datalist/datalist-searchinput-appearance.html [ Failure Pass ]
+webkit.org/b/277255 fast/dynamic/layer-hit-test-crash.html [ Failure Pass ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
