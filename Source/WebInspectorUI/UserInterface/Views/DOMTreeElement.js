@@ -1015,6 +1015,10 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         config.setNumberCommitHandler(this._attributeNumberEditingCommitted.bind(this));
         this._editing = WI.startEditing(attribute, config);
 
+        // There's no text content to select for value-less attributes (ex: disabled)
+        if (!elementForSelection.childNodes.length)
+            elementForSelection = attributeNameElement;
+
         window.getSelection().setBaseAndExtent(elementForSelection, 0, elementForSelection, 1);
 
         return true;
@@ -1056,8 +1060,14 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         function keyupListener(event)
         {
-            if (closingTagElement)
-                closingTagElement.textContent = "</" + tagNameElement.textContent + ">";
+            if (closingTagElement) {
+                let textContent = tagNameElement.textContent.trimStart();
+                let whitespaceIndex = textContent.search(/\s/);
+                if (whitespaceIndex !== -1)
+                    textContent = textContent.slice(0, whitespaceIndex);
+
+                closingTagElement.textContent = "</" + textContent + ">";
+            }
         }
 
         function editingComitted(element, newTagName)
@@ -1271,30 +1281,57 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             return;
         }
 
-        var treeOutline = this.treeOutline;
-        var wasExpanded = this.expanded;
+        let treeOutline = this.treeOutline;
+        let wasExpanded = this.expanded;
 
-        function changeTagNameCallback(error, nodeId)
-        {
+        let newTagName = newText;
+        let attributes = "";
+        let whitespaceIndex = newText.search(/\s/);
+        if (whitespaceIndex !== -1) {
+            newTagName = newText.slice(0, whitespaceIndex);
+            attributes = newText.slice(whitespaceIndex + 1).replace(/\s+/g, " ");
+        }
+
+        let changeTagNameCallback = (error, nodeId) => {
             if (error || !nodeId) {
                 cancel();
                 return;
             }
 
-            var node = WI.domManager.nodeForId(nodeId);
+            let node = WI.domManager.nodeForId(nodeId);
 
+            if (!attributes.length) {
+                nodeUpdatedCallback(node);
+                return;
+            }
+
+            let attributesAddedCallback = (error, nodeId) => {
+                if (error) {
+                    cancel();
+                    return;
+                }
+
+                moveDirection = "forward";
+                nodeUpdatedCallback(node);
+            }
+
+            const attributeNameToReplace = "";
+            node.setAttribute(attributeNameToReplace, attributes, attributesAddedCallback);
+        }
+
+        let nodeUpdatedCallback = (node) => {
             // Select it and expand if necessary. We force tree update so that it processes dom events and is up to date.
             treeOutline._updateModifiedNodes();
             treeOutline.selectDOMNode(node, true);
 
-            var newTreeItem = treeOutline.findTreeElement(node);
+            let newTreeItem = treeOutline.findTreeElement(node);
             if (wasExpanded)
                 newTreeItem.expand();
 
             moveToNextAttributeIfNeeded.call(newTreeItem);
         }
 
-        this.representedObject.setNodeName(newText, changeTagNameCallback);
+        this.representedObject.setNodeName(newTagName, changeTagNameCallback);
     }
 
     _textNodeEditingCommitted(element, newText)
