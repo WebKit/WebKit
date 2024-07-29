@@ -32,10 +32,6 @@
 #include "Common.h"
 #include "MiniBrowserLibResource.h"
 #include "WebKitBrowserWindow.h"
-#include <wtf/win/SoftLinking.h>
-
-SOFT_LINK_LIBRARY(user32);
-SOFT_LINK_OPTIONAL(user32, SetProcessDpiAwarenessContext, BOOL, STDAPICALLTYPE, (DPI_AWARENESS_CONTEXT));
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ int nCmdShow)
 {
@@ -61,11 +57,6 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR, _
 
     // Init COM
     OleInitialize(nullptr);
-
-    if (SetProcessDpiAwarenessContextPtr())
-        SetProcessDpiAwarenessContextPtr()(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
-    else
-        ::SetProcessDPIAware();
 
     auto factory = WebKitBrowserWindow::create;
     auto& mainWindow = MainWindow::create().leakRef();

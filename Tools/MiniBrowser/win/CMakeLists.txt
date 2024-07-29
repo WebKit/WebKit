@@ -7,6 +7,7 @@ set(MiniBrowser_SOURCES
     Common.cpp
     Common2.cpp
     MainWindow.cpp
+    MiniBrowser.exe.manifest
     MiniBrowserLib.rc
     WebKitBrowserWindow.cpp
     WinMain.cpp
