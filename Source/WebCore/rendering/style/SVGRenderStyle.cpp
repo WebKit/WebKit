@@ -86,6 +86,7 @@ inline SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle& other)
     , m_miscData(other.m_miscData)
     , m_layoutData(other.m_layoutData)
 {
+    ASSERT(other == *this, "SVGRenderStyle should be properly copied.");
 }
 
 Ref<SVGRenderStyle> SVGRenderStyle::copy() const

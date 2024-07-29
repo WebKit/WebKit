@@ -54,6 +54,7 @@ StyleNonInheritedData::StyleNonInheritedData(const StyleNonInheritedData& other)
     , miscData(other.miscData)
     , rareData(other.rareData)
 {
+    ASSERT(other == *this, "StyleNonInheritedData should be properly copied.");
 }
 
 Ref<StyleNonInheritedData> StyleNonInheritedData::create()
