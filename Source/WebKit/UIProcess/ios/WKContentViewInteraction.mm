@@ -6307,6 +6307,9 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
 - (void)setAttributedMarkedText:(NSAttributedString *)markedText selectedRange:(NSRange)selectedRange
 {
     BOOL hasTextCompletion = ^{
+        if (!markedText.length)
+            return NO;
+
         // UIKit doesn't include the `NSTextCompletionAttributeName`, so the next best way to detect if this method
         // is being used for a text completion is to check if the attributes match these hard-coded ones.
         RetainPtr textCompletionAttributes = @{
