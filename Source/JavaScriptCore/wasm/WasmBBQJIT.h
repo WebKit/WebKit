@@ -1850,7 +1850,7 @@ public:
 
     void dump(const ControlStack&, const Stack*);
     void didFinishParsingLocals();
-    void didPopValueFromStack(ExpressionType, String);
+    void didPopValueFromStack(ExpressionType, ASCIILiteral);
 
     void finalize();
 

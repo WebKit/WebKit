@@ -719,7 +719,7 @@ public:
             m_shouldError = true;
     }
     void didFinishParsingLocals() { }
-    void didPopValueFromStack(ExpressionType, String) { }
+    void didPopValueFromStack(ExpressionType, ASCIILiteral) { }
 
 private:
     FunctionParser<ConstExprGenerator>* m_parser { nullptr };

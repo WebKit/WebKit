@@ -4271,7 +4271,7 @@ bool BBQJIT::usesSIMD()
 
 void BBQJIT::dump(const ControlStack&, const Stack*) { }
 void BBQJIT::didFinishParsingLocals() { }
-void BBQJIT::didPopValueFromStack(ExpressionType, String) { }
+void BBQJIT::didPopValueFromStack(ExpressionType, ASCIILiteral) { }
 
 void BBQJIT::finalize()
 {

@@ -494,7 +494,7 @@ public:
     {
         m_metadata->m_bytecodeOffset = m_parser->offset();
     }
-    void didPopValueFromStack(ExpressionType, String) { }
+    void didPopValueFromStack(ExpressionType, ASCIILiteral) { }
     void willParseOpcode() { }
     void willParseExtendedOpcode() { }
     void didParseOpcode()
