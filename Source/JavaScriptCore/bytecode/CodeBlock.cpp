@@ -536,24 +536,40 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             const Identifier& ident = identifier(bytecode.m_var);
             RELEASE_ASSERT(bytecode.m_resolveType != ResolvedClosureVar);
 
-            ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
-
-            metadata.m_resolveType = op.type;
-            metadata.m_localScopeDepth = op.depth;
-            if (op.lexicalEnvironment) {
-                if (op.type == ModuleVar) {
-                    // Keep the linked module environment strongly referenced.
-                    if (stronglyReferencedModuleEnvironments.add(jsCast<JSModuleEnvironment*>(op.lexicalEnvironment)).isNewEntry)
-                        addConstant(ConcurrentJSLocker(m_lock), op.lexicalEnvironment);
-                    metadata.m_lexicalEnvironment.set(vm, this, op.lexicalEnvironment);
+            auto processMetadata = [&](ResolveOp& op) ALWAYS_INLINE_LAMBDA {
+                metadata.m_resolveType = op.type;
+                metadata.m_localScopeDepth = op.depth;
+                if (op.lexicalEnvironment) {
+                    if (op.type == ModuleVar) {
+                        // Keep the linked module environment strongly referenced.
+                        if (stronglyReferencedModuleEnvironments.add(jsCast<JSModuleEnvironment*>(op.lexicalEnvironment)).isNewEntry)
+                            addConstant(ConcurrentJSLocker(m_lock), op.lexicalEnvironment);
+                        metadata.m_lexicalEnvironment.set(vm, this, op.lexicalEnvironment);
+                    } else
+                        metadata.m_symbolTable.set(vm, this, op.lexicalEnvironment->symbolTable());
+                } else if (JSScope* constantScope = JSScope::constantScopeForCodeBlock(op.type, this)) {
+                    metadata.m_constantScope.set(vm, this, constantScope);
+                    if (op.type == GlobalProperty || op.type == GlobalPropertyWithVarInjectionChecks)
+                        metadata.m_globalLexicalBindingEpoch = m_globalObject->globalLexicalBindingEpoch();
                 } else
-                    metadata.m_symbolTable.set(vm, this, op.lexicalEnvironment->symbolTable());
-            } else if (JSScope* constantScope = JSScope::constantScopeForCodeBlock(op.type, this)) {
-                metadata.m_constantScope.set(vm, this, constantScope);
-                if (op.type == GlobalProperty || op.type == GlobalPropertyWithVarInjectionChecks)
-                    metadata.m_globalLexicalBindingEpoch = m_globalObject->globalLexicalBindingEpoch();
-            } else
-                metadata.m_globalObject.clear();
+                    metadata.m_globalObject.clear();
+            };
+
+            ResolveOp op;
+            if (unlinkedCodeBlock->m_cachedResolveScopes) {
+                auto itr = unlinkedCodeBlock->m_cachedResolveScopes->find(bytecode.m_metadataID);
+                if (itr != unlinkedCodeBlock->m_cachedResolveScopes->end()) {
+                    unsigned cachedDepth = itr->value;
+                    op = JSScope::abstractResolveFast(m_globalObject.get(), cachedDepth, bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
+                    processMetadata(op);
+                    break;
+                }
+            }
+
+            op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
+            processMetadata(op);
+            if (op.type == ClosureVar && op.depth - bytecode.m_localScopeDepth)
+                unlinkedCodeBlock->cacheResolveScope(bytecode.m_metadataID, op.depth);
             break;
         }
 
@@ -568,6 +584,15 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                 break;
             }
 
+            if (unlinkedCodeBlock->m_cachedGetFromScope) {
+                auto itr = unlinkedCodeBlock->m_cachedGetFromScope->find(bytecode.m_metadataID);
+                if (itr != unlinkedCodeBlock->m_cachedGetFromScope->end()) {
+                    metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), ClosureVar, bytecode.m_getPutInfo.initializationMode(), bytecode.m_getPutInfo.ecmaMode());
+                    metadata.m_operand = itr->value;
+                    break;
+                }
+            }
+
             const Identifier& ident = identifier(bytecode.m_var);
             ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_getPutInfo.resolveType(), InitializationMode::NotInitialization);
 
@@ -579,6 +604,9 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             else if (op.structure)
                 metadata.m_structure.set(vm, this, op.structure);
             metadata.m_operand = op.operand;
+
+            if (metadata.m_getPutInfo.resolveType() == ClosureVar)
+                unlinkedCodeBlock->cacheGetFromScope(bytecode.m_metadataID, metadata.m_operand);
             break;
         }
 

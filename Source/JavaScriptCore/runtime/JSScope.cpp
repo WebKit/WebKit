@@ -303,14 +303,30 @@ JSObject* JSScope::resolve(JSGlobalObject* globalObject, JSScope* scope, const I
     return resolve(globalObject, scope, ident, predicate1, predicate2);
 }
 
-ResolveOp JSScope::abstractResolve(JSGlobalObject* globalObject, size_t depthOffset, JSScope* scope, const Identifier& ident, GetOrPut getOrPut, ResolveType unlinkedType, InitializationMode initializationMode)
+ResolveOp JSScope::abstractResolveFast(JSGlobalObject* globalObject, size_t cachedDepth, size_t scopeDepth, JSScope* scope, const Identifier& ident, GetOrPut getOrPut, ResolveType unlinkedType, InitializationMode initializationMode)
+{
+    ASSERT_UNUSED(unlinkedType, unlinkedType != Dynamic);
+    while (scopeDepth < cachedDepth) {
+        scope = scope->next();
+        ++scopeDepth;
+    }
+
+    ResolveOp op;
+    bool needsVarInjectionChecks = false;
+    bool success = abstractAccess(globalObject, scope, ident, getOrPut, cachedDepth, needsVarInjectionChecks, op, initializationMode);
+    ASSERT_UNUSED(success, success);
+    ASSERT(op.type == ClosureVar);
+    return op;
+}
+
+ResolveOp JSScope::abstractResolve(JSGlobalObject* globalObject, size_t scopeDepth, JSScope* scope, const Identifier& ident, GetOrPut getOrPut, ResolveType unlinkedType, InitializationMode initializationMode)
 {
     ResolveOp op(Dynamic, 0, nullptr, nullptr, nullptr, 0);
     if (unlinkedType == Dynamic)
         return op;
 
     bool needsVarInjectionChecks = JSC::needsVarInjectionChecks(unlinkedType);
-    size_t depth = depthOffset;
+    size_t depth = scopeDepth;
     for (; scope; scope = scope->next()) {
         bool success = abstractAccess(globalObject, scope, ident, getOrPut, depth, needsVarInjectionChecks, op, initializationMode);
         if (success)

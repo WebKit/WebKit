@@ -499,6 +499,25 @@ private:
     FixedVector<BinaryArithProfile> m_binaryArithProfiles;
     FixedVector<UnaryArithProfile> m_unaryArithProfiles;
 
+public:
+    typedef HashMap<unsigned, unsigned, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> ResolveScopeCache;
+    std::unique_ptr<ResolveScopeCache> m_cachedResolveScopes;
+    void cacheResolveScope(unsigned metadataID, unsigned depth)
+    {
+        if (!m_cachedResolveScopes)
+            m_cachedResolveScopes = makeUnique<ResolveScopeCache>();
+        m_cachedResolveScopes->add(metadataID, depth);
+    }
+
+    typedef HashMap<unsigned, uintptr_t, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> GetFromScopeCache;
+    std::unique_ptr<GetFromScopeCache> m_cachedGetFromScope;
+    void cacheGetFromScope(unsigned metadataID, uintptr_t offset)
+    {
+        if (!m_cachedGetFromScope)
+            m_cachedGetFromScope = makeUnique<GetFromScopeCache>();
+        m_cachedGetFromScope->add(metadataID, offset);
+    }
+
 #if ASSERT_ENABLED
     Lock m_cachedIdentifierUidsLock;
     HashSet<UniquedStringImpl*> m_cachedIdentifierUids;
