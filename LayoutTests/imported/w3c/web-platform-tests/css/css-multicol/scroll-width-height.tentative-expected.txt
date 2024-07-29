@@ -1,0 +1,8 @@
+
+PASS .child, .grandchild 1
+PASS .child, .grandchild 2
+PASS .child, .grandchild 3
+PASS .child, .grandchild 4
+PASS .child, .grandchild 5
+PASS .child, .grandchild 6
+
