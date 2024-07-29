@@ -52,5 +52,21 @@
   test(t => {
     assert_throws_js(EvalError, _ => new Function('val', p.createScript('return val+1'))(1));
   }, "Function constructor of string and TrustedScript fails.");
+
+  const AsyncFunction = async function() {}.constructor;
+  const GeneratorFunction = function*() {}.constructor;
+  const AsyncGeneratorFunction = async function*() {}.constructor;
+
+  test(t => {
+      assert_throws_js(EvalError, _ => new AsyncFunction('return 1+1')());
+  }, "AsyncFunction constructor of string fails.");
+
+  test(t => {
+      assert_throws_js(EvalError, _ => new GeneratorFunction('return 1+1')());
+  }, "GeneratorFunction constructor of string fails.");
+
+  test(t => {
+      assert_throws_js(EvalError, _ => new AsyncGeneratorFunction('return 1+1')());
+  }, "AsyncGeneratorFunction constructor of string fails.");
 </script>
 

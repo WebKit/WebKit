@@ -3,6 +3,9 @@ CONSOLE MESSAGE: This requires a TrustedScript value else it violates the follow
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
 PASS eval of TrustedScript works.
 PASS indirect eval of TrustedScript works.
@@ -14,4 +17,7 @@ PASS Function constructor of string fails.
 PASS Function constructor of all TrustedScripts works.
 PASS Function constructor of all strings fails.
 PASS Function constructor of string and TrustedScript fails.
+PASS AsyncFunction constructor of string fails.
+PASS GeneratorFunction constructor of string fails.
+PASS AsyncGeneratorFunction constructor of string fails.
 
