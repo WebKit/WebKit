@@ -244,7 +244,7 @@ public:
     Markable<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier() { return m_layerHostingContextIdentifier; }
 
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections() const;
-    OptionSet<WebCore::AdvancedPrivacyProtections> originatorAdvancedPrivacyProtections() const;
+    std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> originatorAdvancedPrivacyProtections() const;
 
     bool handleContextMenuEvent(const WebCore::PlatformMouseEvent&);
     WebCore::HandleUserInputEventResult handleMouseEvent(const WebMouseEvent&);

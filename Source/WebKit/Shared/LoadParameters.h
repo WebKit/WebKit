@@ -89,7 +89,7 @@ struct LoadParameters {
 #endif
     bool isRequestFromClientOrUserInput { false };
 
-    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
+    std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> advancedPrivacyProtections;
 };
 
 } // namespace WebKit

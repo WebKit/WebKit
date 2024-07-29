@@ -56,5 +56,5 @@ enum class WebKit::NavigatingToAppBoundDomain : bool;
 #endif
     bool isRequestFromClientOrUserInput;
 
-    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
+    std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> advancedPrivacyProtections;
 };
