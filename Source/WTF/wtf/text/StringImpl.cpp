@@ -23,7 +23,11 @@
  */
 
 #include "config.h"
+
+#include <wtf/NeverDestroyed.h>
+#include "wtf/DebugHeap.h"
 #include <wtf/text/StringImpl.h>
+
 
 #include <wtf/Algorithms.h>
 #include <wtf/StdLibExtras.h>
@@ -36,6 +40,7 @@
 #include <wtf/text/SymbolRegistry.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/UTF8Conversion.h>
+
 
 #if STRING_STATS
 #include <unistd.h>
@@ -107,7 +112,7 @@ void StringStats::printStats()
 }
 #endif
 
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringImpl);
+DEFINE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringImpl);
 
 StringImpl::StaticStringImpl StringImpl::s_emptyAtomString("", StringImpl::StringAtom);
 

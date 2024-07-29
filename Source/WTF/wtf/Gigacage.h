@@ -28,6 +28,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/ASCIILiteral.h>
+#include <wtf/MathExtras.h>
 
 #if USE(SYSTEM_MALLOC)
 #define GIGACAGE_ENABLED 0
