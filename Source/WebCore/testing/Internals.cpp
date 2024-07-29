@@ -3085,15 +3085,6 @@ bool Internals::isElementAlive(uint64_t elementIdentifier) const
     return Element::fromIdentifier(ObjectIdentifier<ElementIdentifierType>(elementIdentifier));
 }
 
-uint64_t Internals::frameIdentifier(const Document& document) const
-{
-    if (auto* page = document.page()) {
-        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame()))
-            return localMainFrame->loader().frameID().object().toUInt64();
-    }
-    return 0;
-}
-
 uint64_t Internals::pageIdentifier(const Document& document) const
 {
     return valueOrDefault(document.pageID()).toUInt64();

@@ -1163,7 +1163,6 @@ enum RenderingMode {
 
     unsigned long long elementIdentifier(Element element);
     boolean isElementAlive(unsigned long long elementIdentifier);
-    unsigned long long frameIdentifier(Document document);
     unsigned long long pageIdentifier(Document document);
 
     boolean isAnyWorkletGlobalScopeAlive();
