@@ -226,6 +226,28 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, JSValue tagValue
     initializeLocale(globalObject, tag, optionsValue);
 }
 
+// https://tc39.es/proposal-intl-locale-info/#sec-weekday-to-string
+static StringView weekdayToString(StringView fw)
+{
+    if (fw == "0"_s)
+        return "sun"_s;
+    if (fw == "1"_s)
+        return "mon"_s;
+    if (fw == "2"_s)
+        return "tue"_s;
+    if (fw == "3"_s)
+        return "wed"_s;
+    if (fw == "4"_s)
+        return "thu"_s;
+    if (fw == "5"_s)
+        return "fri"_s;
+    if (fw == "6"_s)
+        return "sat"_s;
+    if (fw == "7"_s)
+        return "sun"_s;
+    return fw;
+}
+
 // https://tc39.es/ecma402/#sec-Intl.Locale
 void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& tag, JSValue optionsValue)
 {
@@ -279,6 +301,16 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
     if (!collation.isNull()) {
         if (!isUnicodeLocaleIdentifierType(collation) || !localeID.setKeywordValue("collation"_s, collation)) {
             throwRangeError(globalObject, scope, "collation is not a well-formed collation value"_s);
+            return;
+        }
+    }
+
+    String firstDayOfWeek = intlStringOption(globalObject, options, vm.propertyNames->firstDayOfWeek, { }, { }, { });
+    RETURN_IF_EXCEPTION(scope, void());
+    if (!firstDayOfWeek.isNull()) {
+        auto fw = weekdayToString(firstDayOfWeek);
+        if (!isUnicodeLocaleIdentifierType(fw) || !localeID.setKeywordValue("fw"_s, fw)) {
+            throwRangeError(globalObject, scope, "firstDayOfWeek is not a well-formed firstDayOfWeek value"_s);
             return;
         }
     }
@@ -507,6 +539,14 @@ const String& IntlLocale::collation()
     if (!m_collation)
         m_collation = keywordValue("collation"_s);
     return m_collation.value();
+}
+
+// https://tc39.es/proposal-intl-locale-info/#sec-Intl.Locale.prototype.firstDayOfWeek
+const String& IntlLocale::firstDayOfWeek()
+{
+    if (!m_firstDayOfWeek)
+        m_firstDayOfWeek = keywordValue("fw"_s);
+    return m_firstDayOfWeek.value();
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.hourCycle

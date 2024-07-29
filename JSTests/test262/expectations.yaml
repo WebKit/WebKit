@@ -1105,30 +1105,9 @@ test/intl402/DurationFormat/prototype/format/precision-exact-mathematical-values
 test/intl402/DurationFormat/prototype/format/rounding-mode-trunc-for-seconds.js:
   default: 'Test262Error: Intl.DurationFormat should format seconds, milliseconds and microseconds with `roundingMode: "trunc"` Expected SameValue(«2», «1») to be true'
   strict mode: 'Test262Error: Intl.DurationFormat should format seconds, milliseconds and microseconds with `roundingMode: "trunc"` Expected SameValue(«2», «1») to be true'
-test/intl402/Locale/constructor-options-firstDayOfWeek-invalid.js:
-  default: 'Test262Error: new Intl.Locale("en", {firstDayOfWeek: ""}) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: new Intl.Locale("en", {firstDayOfWeek: ""}) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/Locale/constructor-options-firstDayOfWeek-valid.js:
-  default: 'Test262Error: new Intl.Locale("en", { firstDayOfWeek: mon }).toString() returns "en-u-fw-mon" Expected SameValue(«en», «en-u-fw-mon») to be true'
-  strict mode: 'Test262Error: new Intl.Locale("en", { firstDayOfWeek: mon }).toString() returns "en-u-fw-mon" Expected SameValue(«en», «en-u-fw-mon») to be true'
 test/intl402/Locale/extensions-grandfathered.js:
   default: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'
   strict mode: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'
-test/intl402/Locale/prototype/firstDayOfWeek/name.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Intl.Locale.prototype, \"firstDayOfWeek\").get')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Intl.Locale.prototype, \"firstDayOfWeek\").get')"
-test/intl402/Locale/prototype/firstDayOfWeek/prop-desc.js:
-  default: "TypeError: undefined is not an object (evaluating 'propdesc.set')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'propdesc.set')"
-test/intl402/Locale/prototype/firstDayOfWeek/valid-id.js:
-  default: 'Test262Error: new Intl.Locale(en-u-fw-mon).firstDayOfWeek returns "mon" Expected SameValue(«undefined», «mon») to be true'
-  strict mode: 'Test262Error: new Intl.Locale(en-u-fw-mon).firstDayOfWeek returns "mon" Expected SameValue(«undefined», «mon») to be true'
-test/intl402/Locale/prototype/firstDayOfWeek/valid-options.js:
-  default: 'Test262Error: new Intl.Locale("en", { firstDayOfWeek: mon }).firstDayOfWeek returns "mon" Expected SameValue(«undefined», «mon») to be true'
-  strict mode: 'Test262Error: new Intl.Locale("en", { firstDayOfWeek: mon }).firstDayOfWeek returns "mon" Expected SameValue(«undefined», «mon») to be true'
-test/intl402/Locale/prototype/getWeekInfo/firstDay-by-option.js:
-  default: 'Test262Error: new Intl.Locale("en", { firstDayOfWeek: mon }).getWeekInfo().firstDay returns "1" Expected SameValue(«7», «1») to be true'
-  strict mode: 'Test262Error: new Intl.Locale("en", { firstDayOfWeek: mon }).getWeekInfo().firstDay returns "1" Expected SameValue(«7», «1») to be true'
 test/intl402/NumberFormat/prototype/format/useGrouping-extended-en-IN.js:
   default: 'Test262Error: notation: "compact" Expected SameValue(«1K», «1T») to be true'
   strict mode: 'Test262Error: notation: "compact" Expected SameValue(«1K», «1T») to be true'

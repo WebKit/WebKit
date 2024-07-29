@@ -65,6 +65,7 @@ public:
     const String& calendar();
     const String& caseFirst();
     const String& collation();
+    const String& firstDayOfWeek();
     const String& hourCycle();
     const String& numberingSystem();
     TriState numeric();
@@ -96,6 +97,7 @@ private:
     std::optional<String> m_calendar;
     std::optional<String> m_caseFirst;
     std::optional<String> m_collation;
+    std::optional<String> m_firstDayOfWeek;
     std::optional<String> m_hourCycle;
     std::optional<String> m_numberingSystem;
     TriState m_numeric { TriState::Indeterminate };

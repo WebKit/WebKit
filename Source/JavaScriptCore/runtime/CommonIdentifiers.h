@@ -128,6 +128,7 @@
     macro(exports) \
     macro(fallback) \
     macro(flags) \
+    macro(firstDayOfWeek) \
     macro(forEach) \
     macro(formatMatcher) \
     macro(formatToParts) \
