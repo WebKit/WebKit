@@ -79,6 +79,10 @@
 #include "WebInspectorUIProxy.h"
 #endif
 
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+#include "WebExtensionSidebarParameters.h"
+#endif
+
 OBJC_CLASS NSArray;
 OBJC_CLASS NSDate;
 OBJC_CLASS NSDictionary;
@@ -798,6 +802,20 @@ private:
     void scriptingGetRegisteredScripts(const Vector<String>&, CompletionHandler<void(Expected<Vector<WebExtensionRegisteredScriptParameters>, WebExtensionError>&&)>&&);
     void scriptingUnregisterContentScripts(const Vector<String>&, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
     bool createInjectedContentForScripts(const Vector<WebExtensionRegisteredScriptParameters>&, WebExtensionDynamicScripts::WebExtensionRegisteredScript::FirstTimeRegistration, DynamicInjectedContentsMap&, NSString *callingAPIName, NSString **errorMessage);
+
+    // Sidebar APIs
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    bool isSidebarMessageAllowed();
+    void sidebarOpen(const std::optional<WebExtensionWindowIdentifier>, const std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void sidebarIsOpen(const std::optional<WebExtensionWindowIdentifier>, CompletionHandler<void(Expected<bool, WebExtensionError>&&)>&&);
+    void sidebarClose(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void sidebarToggle(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void sidebarGetOptions(const std::optional<WebExtensionWindowIdentifier>, const std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(Expected<WebExtensionSidebarParameters, WebExtensionError>&&)>&&);
+    void sidebarSetOptions(const std::optional<WebExtensionWindowIdentifier>, const std::optional<WebExtensionTabIdentifier>, const std::optional<String>& panelSourcePath, const std::optional<bool> enabled, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void sidebarGetTitle(const std::optional<WebExtensionWindowIdentifier>, const std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&&);
+    void sidebarSetTitle(const std::optional<WebExtensionWindowIdentifier>, const std::optional<WebExtensionTabIdentifier>, const std::optional<String>& title, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void sidebarSetIcon(const std::optional<WebExtensionWindowIdentifier>, const std::optional<WebExtensionTabIdentifier>, const String& iconJSON, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+#endif
 
     // Storage APIs
     bool isStorageMessageAllowed();

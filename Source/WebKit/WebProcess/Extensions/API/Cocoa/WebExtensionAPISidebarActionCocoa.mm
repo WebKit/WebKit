@@ -39,11 +39,6 @@ void WebExtensionAPISidebarAction::open(Ref<WebExtensionCallbackHandler>&& callb
     callback->reportError(@"unimplemented");
 }
 
-void WebExtensionAPISidebarAction::isOpen(Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
-{
-    callback->reportError(@"unimplemented");
-}
-
 void WebExtensionAPISidebarAction::close(Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     callback->reportError(@"unimplemented");
@@ -53,6 +48,12 @@ void WebExtensionAPISidebarAction::toggle(Ref<WebExtensionCallbackHandler>&& cal
 {
     callback->reportError(@"unimplemented");
 }
+
+void WebExtensionAPISidebarAction::isOpen(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+{
+    callback->reportError(@"unimplemented");
+}
+
 
 void WebExtensionAPISidebarAction::getPanel(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {

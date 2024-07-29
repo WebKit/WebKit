@@ -41,10 +41,10 @@ class WebExtensionAPISidebarAction : public WebExtensionAPIObject, public JSWebE
 public:
 #if PLATFORM(COCOA)
     void open(Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void isOpen(Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void close(Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void toggle(Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
+    void isOpen(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void getPanel(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void setPanel(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void getTitle(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);

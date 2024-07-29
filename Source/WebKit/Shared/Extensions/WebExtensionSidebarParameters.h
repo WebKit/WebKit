@@ -23,21 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WK_WEB_EXTENSIONS_SIDEBAR,
-    MainWorldOnly,
-    ReturnsPromiseWhenCallbackIsOmitted,
-] interface WebExtensionAPISidebarAction {
+#pragma once
 
-    [RaisesException] void open([Optional, CallbackHandler] function callback);
-    [RaisesException] void close([Optional, CallbackHandler] function callback);
-    [RaisesException] void toggle([Optional, CallbackHandler] function callback);
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
-    [RaisesException] void isOpen([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
-    [RaisesException] void getPanel([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
-    [RaisesException] void setPanel([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
-    [RaisesException] void getTitle([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
-    [RaisesException] void setTitle([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
-    [RaisesException] void setIcon([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
+namespace WebKit {
 
+struct WebExtensionSidebarParameters {
+    bool enabled { false };
+    String panelPath;
+    std::optional<WebExtensionTabIdentifier> tabIdentifier;
 };
+
+}
+
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
