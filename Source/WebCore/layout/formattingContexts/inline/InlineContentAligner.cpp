@@ -305,6 +305,8 @@ InlineLayoutUnit InlineContentAligner::applyRubyAlign(RubyAlign rubyAlign, Line:
     switch (rubyAlign) {
     case RubyAlign::Start:
         return { };
+    case RubyAlign::Center:
+        return spaceToDistribute / 2;
     case RubyAlign::SpaceAround: {
         auto expansion = ExpansionInfo { };
         computedExpansions(runs, range, { }, expansion, IgnoreRubyRange::No);
