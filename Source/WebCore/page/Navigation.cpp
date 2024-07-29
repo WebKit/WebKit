@@ -700,8 +700,12 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
         RefPtr fromNavigationHistoryEntry = currentEntry();
         ASSERT(fromNavigationHistoryEntry);
 
-        // FIXME: Create finished promise
-        m_transition = NavigationTransition::create(navigationType, *fromNavigationHistoryEntry);
+        auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(document->globalObject());
+        JSC::JSLockHolder lock(globalObject.vm());
+        RefPtr deferredFinished = DeferredPromise::create(globalObject);
+        Ref finished = DOMPromise::create(globalObject, *JSC::jsCast<JSC::JSPromise*>(deferredFinished->promise()));
+        deferredFinished->markAsHandled();
+        m_transition = NavigationTransition::create(navigationType, *fromNavigationHistoryEntry, WTFMove(finished));
 
         if (navigationType == NavigationNavigationType::Traverse)
             m_suppressNormalScrollRestorationDuringOngoingNavigation = true;
@@ -739,14 +743,29 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
             if (!failure) {
                 dispatchEvent(Event::create(eventNames().navigatesuccessEvent, { }));
 
-                // FIXME: 7. If navigation's transition is not null, then resolve navigation's transition's finished promise with undefined.
-                m_transition = nullptr;
+                if (m_transition) {
+                    auto promiseValue = m_transition->finished().promise();
+                    auto& jsPromise = *JSC::jsCast<JSC::JSPromise*>(promiseValue);
+                    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsPromise.globalObject());
+                    auto deferredFinished = DeferredPromise::create(globalObject, jsPromise);
+                    deferredFinished->resolve();
+                    m_transition = nullptr;
+                }
 
                 if (apiMethodTracker)
                     resolveFinishedPromise(apiMethodTracker.get());
             } else {
                 // FIXME: Fill in error information.
                 dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, { }, { }, 0, 0, { }));
+
+                if (m_transition) {
+                    auto promiseValue = m_transition->finished().promise();
+                    auto& jsPromise = *JSC::jsCast<JSC::JSPromise*>(promiseValue);
+                    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsPromise.globalObject());
+                    auto deferredFinished = DeferredPromise::create(globalObject, jsPromise);
+                    deferredFinished->reject();
+                    m_transition = nullptr;
+                }
             }
         } else {
             // FIXME: and the following failure steps given reason rejectionReason:

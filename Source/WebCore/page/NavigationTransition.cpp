@@ -32,9 +32,10 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(NavigationTransition);
 
-NavigationTransition::NavigationTransition(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& fromEntry)
+NavigationTransition::NavigationTransition(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DOMPromise>&& finished)
     : m_navigationType(type)
     , m_from(WTFMove(fromEntry))
+    , m_finished(WTFMove(finished))
 {
 }
 

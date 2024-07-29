@@ -37,18 +37,18 @@ class DOMPromise;
 class NavigationTransition final : public RefCounted<NavigationTransition>, public ScriptWrappable {
     WTF_MAKE_ISO_ALLOCATED(NavigationTransition);
 public:
-    static Ref<NavigationTransition> create(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& fromEntry) { return adoptRef(*new NavigationTransition(type, WTFMove(fromEntry))); };
+    static Ref<NavigationTransition> create(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DOMPromise>&& finished) { return adoptRef(*new NavigationTransition(type, WTFMove(fromEntry), WTFMove(finished))); };
 
     NavigationNavigationType navigationType() { return m_navigationType; };
     NavigationHistoryEntry& from() { return m_from; };
-    DOMPromise* finished() { return m_finished.get(); };
+    DOMPromise& finished() { return m_finished; };
 
 private:
-    explicit NavigationTransition(NavigationNavigationType, Ref<NavigationHistoryEntry>&& fromEntry);
+    explicit NavigationTransition(NavigationNavigationType, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DOMPromise>&& finished);
 
     NavigationNavigationType m_navigationType;
     Ref<NavigationHistoryEntry> m_from;
-    RefPtr<DOMPromise> m_finished;
+    Ref<DOMPromise> m_finished;
 };
 
 } // namespace WebCore
