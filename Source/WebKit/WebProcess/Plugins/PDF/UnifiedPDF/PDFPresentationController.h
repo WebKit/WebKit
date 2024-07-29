@@ -30,6 +30,11 @@
 #include "PDFDocumentLayout.h"
 #include "PDFPageCoverage.h"
 #include <wtf/OptionSet.h>
+#include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/ThreadSafeWeakPtr.h>
+
+OBJC_CLASS PDFDocument;
 
 namespace WebCore {
 enum class TiledBackingScrollability : uint8_t;
@@ -42,14 +47,19 @@ namespace WebKit {
 class AsyncPDFRenderer;
 class WebKeyboardEvent;
 class UnifiedPDFPlugin;
+class WebWheelEvent;
 enum class RepaintRequirement : uint8_t;
 
-class PDFPresentationController {
+class PDFPresentationController : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PDFPresentationController> {
+    WTF_MAKE_NONCOPYABLE(PDFPresentationController);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<PDFPresentationController> createForMode(PDFDocumentLayout::DisplayMode, UnifiedPDFPlugin&);
+    static RefPtr<PDFPresentationController> createForMode(PDFDocumentLayout::DisplayMode, UnifiedPDFPlugin&);
 
     PDFPresentationController(UnifiedPDFPlugin&);
     virtual ~PDFPresentationController();
+
+    virtual WebCore::GraphicsLayerClient& graphicsLayerClient() = 0;
 
     // Subclasses must call the base class teardown().
     virtual void teardown();
@@ -57,6 +67,7 @@ public:
     virtual bool supportsDisplayMode(PDFDocumentLayout::DisplayMode) const = 0;
     virtual void willChangeDisplayMode(PDFDocumentLayout::DisplayMode newMode) = 0;
 
+    // Package up the data needed to paint a set of pages for the given clip, for use by UnifiedPDFPlugin::paintPDFContent and async rendering.
     virtual PDFPageCoverage pageCoverageForContentsRect(const WebCore::FloatRect&, std::optional<PDFLayoutRow>) const = 0;
     virtual PDFPageCoverageAndScales pageCoverageAndScalesForContentsRect(const WebCore::FloatRect&, std::optional<PDFLayoutRow>, float tilingScaleFactor) const = 0;
 
@@ -91,17 +102,18 @@ public:
 
     virtual void ensurePageIsVisible(PDFDocumentLayout::PageIndex) = 0;
 
+    WebCore::FloatRect layoutBoundsForPageAtIndex(PDFDocumentLayout::PageIndex) const;
+
     // Event handling.
     virtual bool handleKeyboardEvent(const WebKeyboardEvent&) = 0;
-
     virtual bool wantsWheelEvents() const { return false; }
     virtual bool handleWheelEvent(const WebWheelEvent&) { return false; }
 
     void releaseMemory();
+    RetainPtr<PDFDocument> pluginPDFDocument() const;
+    bool pluginShouldCachePagePreviews() const;
 
 protected:
-    virtual WebCore::GraphicsLayerClient& graphicsLayerClient() = 0;
-
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String&, WebCore::GraphicsLayer::Type);
     RefPtr<WebCore::GraphicsLayer> makePageContainerLayer(PDFDocumentLayout::PageIndex);
 

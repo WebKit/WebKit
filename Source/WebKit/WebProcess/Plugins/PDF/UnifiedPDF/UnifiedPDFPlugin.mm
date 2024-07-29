@@ -217,7 +217,7 @@ GraphicsLayer* UnifiedPDFPlugin::graphicsLayer() const
     return m_rootLayer.get();
 }
 
-void UnifiedPDFPlugin::setPresentationController(std::unique_ptr<PDFPresentationController>&& presentationController)
+void UnifiedPDFPlugin::setPresentationController(RefPtr<PDFPresentationController>&& presentationController)
 {
     if (m_presentationController)
         m_presentationController->teardown();
@@ -510,11 +510,6 @@ float UnifiedPDFPlugin::scaleForPagePreviews() const
     return deviceScaleFactor() * m_documentLayout.scale() * pagePreviewScale;
 }
 
-void UnifiedPDFPlugin::didGeneratePreviewForPage(PDFDocumentLayout::PageIndex pageIndex)
-{
-    m_presentationController->didGeneratePreviewForPage(pageIndex);
-}
-
 void UnifiedPDFPlugin::willAttachScrollingNode()
 {
     createScrollingNodeIfNecessary();
@@ -721,25 +716,9 @@ void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext
     ASSERT_NOT_REACHED();
 }
 
-PDFPageCoverage UnifiedPDFPlugin::pageCoverageForContentsRect(const FloatRect& clipRect, std::optional<PDFLayoutRow> row) const
+void UnifiedPDFPlugin::paintPDFContent(const WebCore::GraphicsLayer* layer, GraphicsContext& context, const FloatRect& clipRect, const std::optional<PDFLayoutRow>& row, PaintingBehavior behavior, AsyncPDFRenderer* asyncRenderer)
 {
-    if (m_size.isEmpty() || documentSize().isEmpty())
-        return { };
-
-    return m_presentationController->pageCoverageForContentsRect(clipRect, row);
-}
-
-PDFPageCoverageAndScales UnifiedPDFPlugin::pageCoverageAndScalesForContentsRect(const FloatRect& clipRect, std::optional<PDFLayoutRow> row, float tilingScaleFactor) const
-{
-    if (m_size.isEmpty() || documentSize().isEmpty())
-        return { { }, { }, 1, 1, 1 };
-
-    return m_presentationController->pageCoverageAndScalesForContentsRect(clipRect, row, tilingScaleFactor);
-}
-
-void UnifiedPDFPlugin::paintPDFContent(const WebCore::GraphicsLayer* layer, GraphicsContext& context, const FloatRect& clipRect, std::optional<PDFLayoutRow> row, PaintingBehavior behavior, AsyncPDFRenderer* asyncRenderer)
-{
-    if (m_size.isEmpty() || documentSize().isEmpty())
+    if (visibleOrDocumentSizeIsEmpty() || !m_presentationController)
         return;
 
     auto stateSaver = GraphicsContextStateSaver(context);
@@ -763,7 +742,7 @@ void UnifiedPDFPlugin::paintPDFContent(const WebCore::GraphicsLayer* layer, Grap
             tilingScaleFactor = tiledBacking->tilingScaleFactor();
     }
 
-    auto pageCoverage = pageCoverageAndScalesForContentsRect(clipRect, row, tilingScaleFactor);
+    auto pageCoverage = m_presentationController->pageCoverageAndScalesForContentsRect(clipRect, row, tilingScaleFactor);
     auto documentScale = pageCoverage.pdfDocumentScale;
 
     for (auto& pageInfo : pageCoverage.pages) {
@@ -832,7 +811,7 @@ void UnifiedPDFPlugin::paintPDFContent(const WebCore::GraphicsLayer* layer, Grap
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
 void UnifiedPDFPlugin::paintPDFSelection(const GraphicsLayer* layer, GraphicsContext& context, const FloatRect& clipRect, std::optional<PDFLayoutRow> row)
 {
-    if (!m_currentSelection || [m_currentSelection isEmpty] || !canPaintSelectionIntoOwnedLayer())
+    if (!m_currentSelection || [m_currentSelection isEmpty] || !canPaintSelectionIntoOwnedLayer() || !m_presentationController)
         return;
 
     bool isVisibleAndActive = false;
@@ -850,7 +829,7 @@ void UnifiedPDFPlugin::paintPDFSelection(const GraphicsLayer* layer, GraphicsCon
     if (auto* tiledBacking = layer->tiledBacking())
         tilingScaleFactor = tiledBacking->tilingScaleFactor();
 
-    auto pageCoverage = pageCoverageAndScalesForContentsRect(clipRect, row, tilingScaleFactor);
+    auto pageCoverage = m_presentationController->pageCoverageAndScalesForContentsRect(clipRect, row, tilingScaleFactor);
     auto documentScale = pageCoverage.pdfDocumentScale;
     for (auto& pageInfo : pageCoverage.pages) {
         auto page = m_documentLayout.pageAtIndex(pageInfo.pageIndex);
@@ -900,11 +879,6 @@ bool UnifiedPDFPlugin::canPaintSelectionIntoOwnedLayer() const
     return [getPDFSelectionClass() instancesRespondToSelector:@selector(enumerateRectsAndTransformsForPage:usingBlock:)];
 #endif
     return false;
-}
-
-std::optional<PDFLayoutRow> UnifiedPDFPlugin::rowForLayerID(PlatformLayerIdentifier layerID) const
-{
-    return m_presentationController->rowForLayerID(layerID);
 }
 
 static const WebCore::Color textAnnotationHoverColor()

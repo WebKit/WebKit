@@ -86,7 +86,7 @@ template<> struct DefaultHash<WebKit::TileForGrid> : TileForGridHash { };
 
 namespace WebKit {
 
-class UnifiedPDFPlugin;
+class PDFPresentationController;
 
 struct PDFTileRenderType;
 using PDFTileRenderIdentifier = ObjectIdentifier<PDFTileRenderType>;
@@ -96,7 +96,7 @@ class AsyncPDFRenderer final : public WebCore::TiledBackingClient,
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AsyncPDFRenderer);
 public:
-    static Ref<AsyncPDFRenderer> create(UnifiedPDFPlugin&);
+    static Ref<AsyncPDFRenderer> create(PDFPresentationController&);
 
     virtual ~AsyncPDFRenderer();
 
@@ -122,7 +122,7 @@ public:
     void setShowDebugBorders(bool);
 
 private:
-    AsyncPDFRenderer(UnifiedPDFPlugin&);
+    AsyncPDFRenderer(PDFPresentationController&);
 
     WebCore::GraphicsLayer* layerForTileGrid(WebCore::TileGridIdentifier) const;
 
@@ -173,7 +173,7 @@ private:
 
     void paintPagePreviewOnWorkQueue(RetainPtr<PDFDocument>&&, const PagePreviewRequest&);
     void didCompletePagePreviewRender(RefPtr<WebCore::ImageBuffer>&&, const PagePreviewRequest&);
-    void removePagePreviewsOutsideCoverageRect(const WebCore::FloatRect&);
+    void removePagePreviewsOutsideCoverageRect(const WebCore::FloatRect&, const std::optional<PDFLayoutRow>& = { });
 
     void paintPDFPageIntoBuffer(RetainPtr<PDFDocument>&&, Ref<WebCore::ImageBuffer>, PDFDocumentLayout::PageIndex, const WebCore::FloatRect& pageBounds);
 
@@ -181,8 +181,7 @@ private:
     static WebCore::AffineTransform tileToPaintingTransform(float tilingScaleFactor);
     static WebCore::AffineTransform paintingToTileTransform(float tilingScaleFactor);
 
-    // FIXME: <https://webkit.org/b/276981> Point to the presentation controller.
-    ThreadSafeWeakPtr<UnifiedPDFPlugin> m_plugin;
+    ThreadSafeWeakPtr<PDFPresentationController> m_presentationController;
 
     HashMap<WebCore::PlatformLayerIdentifier, Ref<WebCore::GraphicsLayer>> m_layerIDtoLayerMap;
     HashMap<WebCore::TileGridIdentifier, WebCore::PlatformLayerIdentifier> m_tileGridToLayerIDMap;

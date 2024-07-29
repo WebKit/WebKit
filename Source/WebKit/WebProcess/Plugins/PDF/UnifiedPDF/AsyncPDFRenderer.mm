@@ -29,7 +29,7 @@
 #if ENABLE(UNIFIED_PDF)
 
 #include "Logging.h"
-#include "UnifiedPDFPlugin.h"
+#include "PDFPresentationController.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <PDFKit/PDFKit.h>
 #include <WebCore/GraphicsContext.h>
@@ -40,15 +40,15 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<AsyncPDFRenderer> AsyncPDFRenderer::create(UnifiedPDFPlugin& plugin)
+Ref<AsyncPDFRenderer> AsyncPDFRenderer::create(PDFPresentationController& presentationController)
 {
-    return adoptRef(*new AsyncPDFRenderer(plugin));
+    return adoptRef(*new AsyncPDFRenderer { presentationController });
 }
 
 // m_maxConcurrentTileRenders is a trade-off between rendering multiple tiles concurrently, and getting backed up because
 // in-flight renders can't be canceled when resizing or zooming makes them invalid.
-AsyncPDFRenderer::AsyncPDFRenderer(UnifiedPDFPlugin& plugin)
-    : m_plugin(plugin)
+AsyncPDFRenderer::AsyncPDFRenderer(PDFPresentationController& presentationController)
+    : m_presentationController(presentationController)
     , m_paintingWorkQueue(ConcurrentWorkQueue::create("WebKit: PDF Painting Work Queue"_s, WorkQueue::QOS::UserInteractive)) // Maybe make this concurrent?
     , m_maxConcurrentTileRenders(std::clamp(WTF::numberOfProcessorCores() - 2, 4, 16))
 {
@@ -72,16 +72,19 @@ void AsyncPDFRenderer::teardown()
 
 void AsyncPDFRenderer::releaseMemory()
 {
-    for (auto& keyValuePair : m_layerIDtoLayerMap) {
-        auto& layer = keyValuePair.value;
-        // Ideally we'd be able to make the ImageBuffer memory volatile which would eliminate the need for this callback: webkit.org/b/274878
-        if (auto* tiledBacking = layer->tiledBacking())
-            removePagePreviewsOutsideCoverageRect(tiledBacking->coverageRect());
-    }
-
 #if !LOG_DISABLED
     auto oldPagePreviewCount = m_pagePreviews.size();
 #endif
+
+    RefPtr presentationController = m_presentationController.get();
+    if (!presentationController)
+        return;
+
+    for (auto& [layerID, layer] : m_layerIDtoLayerMap) {
+        // Ideally we'd be able to make the ImageBuffer memory volatile which would eliminate the need for this callback: webkit.org/b/274878
+        if (auto* tiledBacking = layer->tiledBacking())
+            removePagePreviewsOutsideCoverageRect(tiledBacking->coverageRect(), presentationController->rowForLayerID(layerID));
+    }
 
     LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::releaseMemory - reduced page preview count from " << oldPagePreviewCount << " to " << m_pagePreviews.size());
 }
@@ -123,11 +126,11 @@ void AsyncPDFRenderer::setShowDebugBorders(bool showDebugBorders)
 
 void AsyncPDFRenderer::generatePreviewImageForPage(PDFDocumentLayout::PageIndex pageIndex, float scale)
 {
-    RefPtr plugin = m_plugin.get();
-    if (!plugin)
+    RefPtr presentationController = m_presentationController.get();
+    if (!presentationController)
         return;
 
-    RetainPtr pdfDocument = plugin->pdfDocument();
+    RetainPtr pdfDocument = presentationController->pluginPDFDocument();
     if (!pdfDocument)
         return;
 
@@ -136,7 +139,7 @@ void AsyncPDFRenderer::generatePreviewImageForPage(PDFDocumentLayout::PageIndex 
     if (m_enqueuedPagePreviews.contains(pageIndex))
         return;
 
-    auto pageBounds = plugin->layoutBoundsForPageAtIndex(pageIndex);
+    auto pageBounds = presentationController->layoutBoundsForPageAtIndex(pageIndex);
     pageBounds.setLocation({ });
 
     auto pagePreviewRequest = PagePreviewRequest { pageIndex, pageBounds, scale };
@@ -181,8 +184,8 @@ void AsyncPDFRenderer::paintPagePreviewOnWorkQueue(RetainPtr<PDFDocument>&& pdfD
 void AsyncPDFRenderer::didCompletePagePreviewRender(RefPtr<ImageBuffer>&& imageBuffer, const PagePreviewRequest& pagePreviewRequest)
 {
     ASSERT(isMainRunLoop());
-    RefPtr plugin = m_plugin.get();
-    if (!plugin)
+    RefPtr presentationController = m_presentationController.get();
+    if (!presentationController)
         return;
 
     auto pageIndex = pagePreviewRequest.pageIndex;
@@ -190,7 +193,7 @@ void AsyncPDFRenderer::didCompletePagePreviewRender(RefPtr<ImageBuffer>&& imageB
 
     m_enqueuedPagePreviews.remove(pageIndex);
     m_pagePreviews.set(pageIndex, WTFMove(imageBuffer));
-    plugin->didGeneratePreviewForPage(pageIndex);
+    presentationController->didGeneratePreviewForPage(pageIndex);
 }
 
 RefPtr<WebCore::ImageBuffer> AsyncPDFRenderer::previewImageForPage(PDFDocumentLayout::PageIndex pageIndex) const
@@ -256,18 +259,21 @@ void AsyncPDFRenderer::willRepaintAllTiles(TiledBacking&, TileGridIdentifier)
 
 void AsyncPDFRenderer::coverageRectDidChange(TiledBacking& tiledBacking, const FloatRect& coverageRect)
 {
-    RefPtr plugin = m_plugin.get();
-    if (!plugin)
+    RefPtr presentationController = m_presentationController.get();
+    if (!presentationController)
         return;
 
     std::optional<PDFLayoutRow> layoutRow;
+    const GraphicsLayer* layer = nullptr;
     auto layerID = m_tileGridToLayerIDMap.getOptional(tiledBacking.primaryGridIdentifier());
-    if (layerID)
-        layoutRow = plugin->rowForLayerID(*layerID);
+    if (layerID) {
+        layoutRow = presentationController->rowForLayerID(*layerID);
+        layer = m_layerIDtoLayerMap.get(*layerID);
+    }
 
-    auto pageCoverage = plugin->pageCoverageForContentsRect(coverageRect, layoutRow);
+    auto pageCoverage = presentationController->pageCoverageForContentsRect(coverageRect, layoutRow);
 
-    auto pagePreviewScale = plugin->scaleForPagePreviews();
+    auto pagePreviewScale = presentationController->graphicsLayerClient().customContentsScale(layer).value_or(1);
 
     for (auto& pageInfo : pageCoverage) {
         if (m_pagePreviews.contains(pageInfo.pageIndex))
@@ -276,19 +282,19 @@ void AsyncPDFRenderer::coverageRectDidChange(TiledBacking& tiledBacking, const F
         generatePreviewImageForPage(pageInfo.pageIndex, pagePreviewScale);
     }
 
-    if (!plugin->shouldCachePagePreviews())
-        removePagePreviewsOutsideCoverageRect(coverageRect);
+    if (!presentationController->pluginShouldCachePagePreviews())
+        removePagePreviewsOutsideCoverageRect(coverageRect, layoutRow);
 
     LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::coverageRectDidChange " << coverageRect << " " << pageCoverage << " - preview scale " << pagePreviewScale << " - have " << m_pagePreviews.size() << " page previews and " << m_enqueuedPagePreviews.size() << " enqueued");
 }
 
-void AsyncPDFRenderer::removePagePreviewsOutsideCoverageRect(const FloatRect& coverageRect)
+void AsyncPDFRenderer::removePagePreviewsOutsideCoverageRect(const FloatRect& coverageRect, const std::optional<PDFLayoutRow>& layoutRow)
 {
-    RefPtr plugin = m_plugin.get();
-    if (!plugin)
+    RefPtr presentationController = m_presentationController.get();
+    if (!presentationController)
         return;
 
-    auto pageCoverage = plugin->pageCoverageForContentsRect(coverageRect, { });
+    auto pageCoverage = presentationController->pageCoverageForContentsRect(coverageRect, layoutRow);
 
     PDFPageIndexSet unwantedPageIndices;
     for (auto pageIndex : m_pagePreviews.keys())
@@ -395,11 +401,11 @@ auto AsyncPDFRenderer::renderInfoForTile(const TiledBacking& tiledBacking, const
 {
     ASSERT(isMainRunLoop());
 
-    RefPtr plugin = m_plugin.get();
-    if (!plugin)
+    RefPtr presentationController = m_presentationController.get();
+    if (!presentationController)
         return { };
 
-    RetainPtr pdfDocument = plugin->pdfDocument();
+    RetainPtr pdfDocument = presentationController->pluginPDFDocument();
     if (!pdfDocument) {
         LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::enqueueLayerPaint - document is null, bailing");
         return { };
@@ -411,9 +417,9 @@ auto AsyncPDFRenderer::renderInfoForTile(const TiledBacking& tiledBacking, const
     std::optional<PDFLayoutRow> layoutRow;
     auto layerID = m_tileGridToLayerIDMap.getOptional(tileInfo.gridIdentifier);
     if (layerID)
-        layoutRow = plugin->rowForLayerID(*layerID);
+        layoutRow = presentationController->rowForLayerID(*layerID);
 
-    auto pageCoverage = plugin->pageCoverageAndScalesForContentsRect(paintingClipRect, layoutRow, tilingScaleFactor);
+    auto pageCoverage = presentationController->pageCoverageAndScalesForContentsRect(paintingClipRect, layoutRow, tilingScaleFactor);
 
     return TileRenderInfo { tileRect, clipRect, pageCoverage };
 }
@@ -422,11 +428,11 @@ void AsyncPDFRenderer::enqueuePaintWithClip(const TileForGrid& tileInfo, const T
 {
     ASSERT(isMainRunLoop());
 
-    RefPtr plugin = m_plugin.get();
-    if (!plugin)
+    RefPtr presentationController = m_presentationController.get();
+    if (!presentationController)
         return;
 
-    RetainPtr pdfDocument = plugin->pdfDocument();
+    RetainPtr pdfDocument = presentationController->pluginPDFDocument();
     if (!pdfDocument) {
         LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::enqueueLayerPaint - document is null, bailing");
         return;
@@ -447,8 +453,8 @@ void AsyncPDFRenderer::enqueuePaintWithClip(const TileForGrid& tileInfo, const T
 
 void AsyncPDFRenderer::serviceRequestQueue()
 {
-    RefPtr plugin = m_plugin.get();
-    if (!plugin)
+    RefPtr presentationController = m_presentationController.get();
+    if (!presentationController)
         return;
 
     while (m_numConcurrentTileRenders < m_maxConcurrentTileRenders) {
@@ -466,7 +472,7 @@ void AsyncPDFRenderer::serviceRequestQueue()
 
         ++m_numConcurrentTileRenders;
 
-        m_paintingWorkQueue->dispatch([protectedThis = Ref { *this }, pdfDocument = RetainPtr { plugin->pdfDocument() }, tileInfo, renderData]() mutable {
+        m_paintingWorkQueue->dispatch([protectedThis = Ref { *this }, pdfDocument = RetainPtr { presentationController->pluginPDFDocument() }, tileInfo, renderData] mutable {
             protectedThis->paintTileOnWorkQueue(WTFMove(pdfDocument), tileInfo, renderData.renderInfo, renderData.renderIdentifier);
         });
     }
@@ -575,10 +581,6 @@ void AsyncPDFRenderer::transferBufferToMainThread(RefPtr<ImageBuffer>&& imageBuf
     callOnMainRunLoop([weakThis = ThreadSafeWeakPtr { *this }, imageBuffer = WTFMove(imageBuffer), tileInfo, renderInfo, renderIdentifier]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
-            return;
-
-        RefPtr plugin = protectedThis->m_plugin.get();
-        if (!plugin)
             return;
 
         bool haveBuffer = !!imageBuffer;
@@ -742,8 +744,8 @@ void AsyncPDFRenderer::pdfContentChangedInRect(const GraphicsLayer* layer, float
 
     ASSERT(isMainRunLoop());
 
-    RefPtr plugin = m_plugin.get();
-    if (!plugin)
+    RefPtr presentationController = m_presentationController.get();
+    if (!presentationController)
         return;
 
     auto* tiledBacking = layer->tiledBacking();
@@ -757,13 +759,13 @@ void AsyncPDFRenderer::pdfContentChangedInRect(const GraphicsLayer* layer, float
     std::optional<PDFLayoutRow> layoutRow;
     auto layerID = m_tileGridToLayerIDMap.getOptional(tiledBacking->primaryGridIdentifier());
     if (layerID)
-        layoutRow = plugin->rowForLayerID(*layerID);
+        layoutRow = presentationController->rowForLayerID(*layerID);
 
-    auto pageCoverage = plugin->pageCoverageForContentsRect(paintingRect, layoutRow);
+    auto pageCoverage = presentationController->pageCoverageForContentsRect(paintingRect, layoutRow);
     if (pageCoverage.isEmpty())
         return;
 
-    RetainPtr pdfDocument = plugin->pdfDocument();
+    RetainPtr pdfDocument = presentationController->pluginPDFDocument();
     if (!pdfDocument)
         return;
 
@@ -784,7 +786,7 @@ void AsyncPDFRenderer::pdfContentChangedInRect(const GraphicsLayer* layer, float
         enqueueTilePaintIfNecessary(*tiledBacking, tileInfo, renderedTile.tileInfo.tileRect, clipRect);
     }
 
-    auto pagePreviewScale = plugin->scaleForPagePreviews();
+    auto pagePreviewScale = presentationController->graphicsLayerClient().customContentsScale(layer).value_or(1);
     for (auto& pageInfo : pageCoverage)
         generatePreviewImageForPage(pageInfo.pageIndex, pagePreviewScale);
 }

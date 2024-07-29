@@ -36,6 +36,8 @@ class PlatformWheelEvent;
 
 namespace WebKit {
 
+class UnifiedPDFPlugin;
+
 enum class PageTransitionState : uint8_t {
     Idle,
     DeterminingStretchAxis,

@@ -29,6 +29,7 @@
 #if ENABLE(UNIFIED_PDF)
 
 #include "Logging.h"
+#include "UnifiedPDFPlugin.h"
 #include "WebEventConversion.h"
 #include "WebKeyboardEvent.h"
 #include "WebWheelEvent.h"
@@ -925,6 +926,9 @@ void PDFDiscretePresentationController::setVisibleRow(unsigned rowIndex)
 
 PDFPageCoverage PDFDiscretePresentationController::pageCoverageForContentsRect(const FloatRect& paintingRect, std::optional<PDFLayoutRow> row) const
 {
+    if (m_plugin->visibleOrDocumentSizeIsEmpty())
+        return { };
+
     if (!row) {
         // PDFDiscretePresentationController layout is row-based.
         ASSERT_NOT_REACHED();
@@ -938,11 +942,10 @@ PDFPageCoverage PDFDiscretePresentationController::pageCoverageForContentsRect(c
 
     auto rectInPDFLayoutCoordinates = m_plugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Contents, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, FloatRect { drawingRect });
 
-    auto& documentLayout = m_plugin->documentLayout();
     auto pageCoverage = PDFPageCoverage { };
 
     auto addPageToCoverage = [&](PDFDocumentLayout::PageIndex pageIndex) {
-        auto pageBounds = documentLayout.layoutBoundsForPageAtIndex(pageIndex);
+        auto pageBounds = layoutBoundsForPageAtIndex(pageIndex);
         if (!pageBounds.intersects(rectInPDFLayoutCoordinates))
             return;
 
@@ -957,6 +960,9 @@ PDFPageCoverage PDFDiscretePresentationController::pageCoverageForContentsRect(c
 
 PDFPageCoverageAndScales PDFDiscretePresentationController::pageCoverageAndScalesForContentsRect(const FloatRect& clipRect, std::optional<PDFLayoutRow> row, float tilingScaleFactor) const
 {
+    if (m_plugin->visibleOrDocumentSizeIsEmpty())
+        return { { }, { }, 1, 1, 1 };
+
     if (!row) {
         // PDFDiscretePresentationController layout is row-based.
         ASSERT_NOT_REACHED();
@@ -1151,7 +1157,7 @@ void PDFDiscretePresentationController::updateLayersOnLayoutChange(FloatSize doc
     documentScaleTransform.scale(documentLayout.scale());
 
     auto updatePageContainerLayerBounds = [&](GraphicsLayer* pageContainerLayer, PDFDocumentLayout::PageIndex pageIndex, const FloatRect& rowBounds) {
-        auto pageBounds = documentLayout.layoutBoundsForPageAtIndex(pageIndex);
+        auto pageBounds = layoutBoundsForPageAtIndex(pageIndex);
         // Account for row.containerLayer already being positioned by the origin of rowBounds.
         pageBounds.moveBy(-rowBounds.location());
 
@@ -1449,10 +1455,9 @@ void PDFDiscretePresentationController::paintBackgroundLayerForRow(const Graphic
         return;
 
     auto& row = m_rows[rowIndex];
-    auto& documentLayout = m_plugin->documentLayout();
 
     auto paintOnePageBackground = [&](PDFDocumentLayout::PageIndex pageIndex) {
-        auto destinationRect = documentLayout.layoutBoundsForPageAtIndex(pageIndex);
+        auto destinationRect = layoutBoundsForPageAtIndex(pageIndex);
         destinationRect.setLocation({ });
 
         if (RefPtr asyncRenderer = asyncRendererIfExists())

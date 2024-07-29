@@ -270,6 +270,7 @@ private:
 
     WebCore::IntSize documentSize() const;
     WebCore::IntSize contentsSize() const override;
+    bool visibleOrDocumentSizeIsEmpty() const { return m_size.isEmpty() || documentSize().isEmpty(); }
     unsigned firstPageHeight() const override;
     unsigned heightForPageAtIndex(PDFDocumentLayout::PageIndex) const;
     WebCore::FloatRect layoutBoundsForPageAtIndex(PDFDocumentLayout::PageIndex) const;
@@ -434,18 +435,12 @@ private:
     void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect&, OptionSet<WebCore::GraphicsLayerPaintBehavior>) override;
     float pageScaleFactor() const override;
 
-    // Package up the data needed to paint a set of pages for the given clip, for use by UnifiedPDFPlugin::paintPDFContent and async rendering.
-    PDFPageCoverage pageCoverageForContentsRect(const WebCore::FloatRect& clipRect, std::optional<PDFLayoutRow>) const;
-    PDFPageCoverageAndScales pageCoverageAndScalesForContentsRect(const WebCore::FloatRect& clipRect, std::optional<PDFLayoutRow>, float tilingScaleFactor) const;
-
     enum class PaintingBehavior : bool { All, PageContentsOnly };
-    void paintPDFContent(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect, std::optional<PDFLayoutRow> = { }, PaintingBehavior = PaintingBehavior::All, AsyncPDFRenderer* = nullptr);
+    void paintPDFContent(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect, const std::optional<PDFLayoutRow>& = { }, PaintingBehavior = PaintingBehavior::All, AsyncPDFRenderer* = nullptr);
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
     void paintPDFSelection(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect, std::optional<PDFLayoutRow> = { });
 #endif
     bool canPaintSelectionIntoOwnedLayer() const;
-
-    std::optional<PDFLayoutRow> rowForLayerID(WebCore::PlatformLayerIdentifier) const;
 
     void willChangeVisibleRow();
     void didChangeVisibleRow();
@@ -554,7 +549,6 @@ private:
     bool shouldShowDebugIndicators() const;
 
     float scaleForPagePreviews() const;
-    void didGeneratePreviewForPage(PDFDocumentLayout::PageIndex);
 
 #if PLATFORM(MAC)
     void createPasswordEntryForm();
@@ -565,11 +559,11 @@ private:
 
     WebCore::PlatformWheelEvent wheelEventCopyWithVelocity(const WebCore::PlatformWheelEvent&) const;
 
-    void setPresentationController(std::unique_ptr<PDFPresentationController>&&);
+    void setPresentationController(RefPtr<PDFPresentationController>&&);
 
     WebCore::FloatRect pageBoundsInContentsSpace(PDFDocumentLayout::PageIndex) const;
 
-    std::unique_ptr<PDFPresentationController> m_presentationController;
+    RefPtr<PDFPresentationController> m_presentationController;
 
     PDFDocumentLayout m_documentLayout;
     RefPtr<WebCore::GraphicsLayer> m_rootLayer;
