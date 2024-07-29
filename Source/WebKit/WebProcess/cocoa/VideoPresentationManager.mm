@@ -738,7 +738,7 @@ void VideoPresentationManager::didCleanupFullscreen(PlaybackSessionContextIdenti
         removeClientForContext(contextId);
     }
 
-    if (!videoElement || !targetIsFullscreen || mode == HTMLMediaElementEnums::VideoFullscreenModeNone) {
+    if (!videoElement || !targetIsFullscreen || mode == HTMLMediaElementEnums::VideoFullscreenModeNone || mode == HTMLMediaElementEnums::VideoFullscreenModeInWindow) {
         setCurrentlyInFullscreen(*interface, false);
         return;
     }
