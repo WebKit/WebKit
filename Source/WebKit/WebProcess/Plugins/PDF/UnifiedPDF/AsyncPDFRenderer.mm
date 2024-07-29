@@ -585,13 +585,13 @@ void AsyncPDFRenderer::transferBufferToMainThread(RefPtr<ImageBuffer>&& imageBuf
 
         bool haveBuffer = !!imageBuffer;
 
-        // FIXME: <https://webkit.org/b/276981> This also calls layerForTileGrid.
-        protectedThis->didCompleteTileRender(WTFMove(imageBuffer), tileInfo, renderInfo, renderIdentifier);
+        RefPtr layer = protectedThis->layerForTileGrid(tileInfo.gridIdentifier);
+
+        protectedThis->didCompleteTileRender(WTFMove(imageBuffer), tileInfo, renderInfo, renderIdentifier, layer.get());
 
         if (haveBuffer) {
             auto paintingClipRect = convertTileRectToPaintingCoords(renderInfo.tileRect, renderInfo.pageCoverage.tilingScaleFactor);
 
-            RefPtr layer = protectedThis->layerForTileGrid(tileInfo.gridIdentifier);
             if (layer)
                 layer->setNeedsDisplayInRect(paintingClipRect);
         }
@@ -599,7 +599,7 @@ void AsyncPDFRenderer::transferBufferToMainThread(RefPtr<ImageBuffer>&& imageBuf
 }
 
 // imageBuffer may be null if allocation on the decoding thread failed.
-void AsyncPDFRenderer::didCompleteTileRender(RefPtr<ImageBuffer>&& imageBuffer, const TileForGrid& tileInfo, const TileRenderInfo& renderInfo, PDFTileRenderIdentifier renderIdentifier)
+void AsyncPDFRenderer::didCompleteTileRender(RefPtr<ImageBuffer>&& imageBuffer, const TileForGrid& tileInfo, const TileRenderInfo& renderInfo, PDFTileRenderIdentifier renderIdentifier, const GraphicsLayer* tileGridLayer)
 {
     bool requestWasValid = [&]() {
         auto it = m_currentValidTileRenders.find(tileInfo);
@@ -628,11 +628,10 @@ void AsyncPDFRenderer::didCompleteTileRender(RefPtr<ImageBuffer>&& imageBuffer, 
         return;
 
     // State may have changed since we started the tile paint; check that it's still valid.
-    RefPtr layer = layerForTileGrid(tileInfo.gridIdentifier);
-    if (!layer)
+    if (!tileGridLayer)
         return;
 
-    auto* tiledBacking = layer->tiledBacking();
+    auto* tiledBacking = tileGridLayer->tiledBacking();
     if (!tiledBacking)
         return;
 
