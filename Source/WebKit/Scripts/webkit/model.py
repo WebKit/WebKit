@@ -33,14 +33,14 @@ SYNCHRONOUS_ATTRIBUTE = 'Synchronous'
 STREAM_ATTRIBUTE = "Stream"
 
 class MessageReceiver(object):
-    def __init__(self, name, superclass, attributes, messages, condition, namespace):
+    def __init__(self, name, superclass, attributes, receiver_enabled_by, messages, condition, namespace):
         self.name = name
         self.superclass = superclass
         self.attributes = frozenset(attributes or [])
+        self.receiver_enabled_by = receiver_enabled_by
         self.messages = messages
         self.condition = condition
         self.namespace = namespace
-
 
     def iterparameters(self):
         return itertools.chain((parameter for message in self.messages for parameter in message.parameters),
@@ -77,7 +77,7 @@ class Parameter(object):
         return attribute in self.attributes
 
 
-ipc_receiver = MessageReceiver(name="IPC", superclass=None, attributes=[BUILTIN_ATTRIBUTE], messages=[
+ipc_receiver = MessageReceiver(name="IPC", superclass=None, attributes=[BUILTIN_ATTRIBUTE], receiver_enabled_by=None, messages=[
     Message('WrappedAsyncMessageForTesting', [], [], attributes=[BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE], condition=None),
     Message('SyncMessageReply', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
     Message('InitializeConnection', [], [], attributes=[BUILTIN_ATTRIBUTE], condition="PLATFORM(COCOA)"),
@@ -118,6 +118,6 @@ def generate_global_model(receivers):
         for message in receiver.messages:
             if message.reply_parameters is not None and not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
                 async_reply_messages.append(Message(name='%s_%sReply' % (receiver.name, message.name), parameters=message.reply_parameters, reply_parameters=[], attributes=None, condition=message.condition))
-    async_reply_receiver = MessageReceiver(name='AsyncReply', superclass='None', attributes=[BUILTIN_ATTRIBUTE], messages=async_reply_messages, condition=None, namespace='WebKit')
+    async_reply_receiver = MessageReceiver(name='AsyncReply', superclass='None', attributes=[BUILTIN_ATTRIBUTE], receiver_enabled_by=None, messages=async_reply_messages, condition=None, namespace='WebKit')
 
     return [ipc_receiver, async_reply_receiver] + receivers

@@ -1178,8 +1178,8 @@ void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const S
 
 bool WebPageProxy::hasSameGPUAndNetworkProcessPreferencesAs(const API::PageConfiguration& configuration) const
 {
-    auto sharedPreferences = sharedPreferencesForWebProcess(preferences());
-    return !updateSharedPreferencesForWebProcess(sharedPreferences, configuration.preferences());
+    auto sharedPreferences = sharedPreferencesForWebProcess(preferences().store());
+    return !updateSharedPreferencesForWebProcess(sharedPreferences, configuration.preferences().store());
 }
 
 void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, ProcessLaunchReason reason)
@@ -5888,7 +5888,7 @@ void WebPageProxy::preferencesDidChange()
     // Preferences need to be updated during synchronous printing to make "print backgrounds" preference work when toggled from a print dialog checkbox.
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         std::optional<uint64_t> sharedPreferencesVersion;
-        if (auto sharedPreferences = webProcess.updateSharedPreferencesForWebProcess(preferences())) {
+        if (auto sharedPreferences = webProcess.updateSharedPreferencesForWebProcess(preferences().store())) {
             sharedPreferencesVersion = sharedPreferences->version;
             if (RefPtr networkProcess = websiteDataStore().networkProcessIfExists()) {
                 networkProcess->sharedPreferencesForWebProcessDidChange(webProcess, WTFMove(*sharedPreferences), [weakWebProcess = WeakPtr { webProcess }, syncedVersion = sharedPreferences->version]() {
