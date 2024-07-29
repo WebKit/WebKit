@@ -7138,7 +7138,8 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     navigation->setLastNavigationAction(navigationActionData);
     navigation->setOriginatingFrameInfo(originatingFrameInfoData);
     navigation->setDestinationFrameSecurityOrigin(frameInfo.securityOrigin);
-    navigation->setOriginatorAdvancedPrivacyProtections(navigation->wasUserInitiated() ? navigationActionData.advancedPrivacyProtections : navigationActionData.originatorAdvancedPrivacyProtections);
+    if (navigationActionData.originatorAdvancedPrivacyProtections)
+        navigation->setOriginatorAdvancedPrivacyProtections(*navigationActionData.originatorAdvancedPrivacyProtections);
 
     RefPtr mainFrameNavigation = frame.isMainFrame() ? navigation.get() : nullptr;
     RefPtr originatingFrame = originatingFrameInfoData.frameID ? WebFrameProxy::webFrame(originatingFrameInfoData.frameID) : nullptr;

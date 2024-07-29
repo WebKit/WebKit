@@ -4109,7 +4109,7 @@ const URL& Document::urlForBindings() const
         if (policySourceLoader && !policySourceLoader->request().url().hasSpecialScheme() && url().protocolIsInHTTPFamily())
             policySourceLoader = loader();
 
-        if (!policySourceLoader || !policySourceLoader->originatorAdvancedPrivacyProtections().contains(AdvancedPrivacyProtections::BaselineProtections))
+        if (!policySourceLoader || !policySourceLoader->navigationalAdvancedPrivacyProtections().contains(AdvancedPrivacyProtections::BaselineProtections))
             return false;
 
         auto preNavigationURL = URL { loader()->originalRequest().httpReferrer() };
@@ -6477,7 +6477,7 @@ String Document::referrerForBindings()
     if (!policySourceLoader->request().url().hasSpecialScheme() && url().protocolIsInHTTPFamily())
         policySourceLoader = loader();
 
-    if (policySourceLoader && policySourceLoader->originatorAdvancedPrivacyProtections().contains(AdvancedPrivacyProtections::BaselineProtections)
+    if (policySourceLoader && policySourceLoader->navigationalAdvancedPrivacyProtections().contains(AdvancedPrivacyProtections::BaselineProtections)
         && !RegistrableDomain { URL { frame()->loader().referrer() } }.matches(securityOrigin().data()))
         return String();
     return referrer();

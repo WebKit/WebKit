@@ -87,7 +87,7 @@ struct LoadParameters {
     bool isRequestFromClientOrUserInput { false };
     bool isPerformingHTTPFallback { false };
 
-    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
+    std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> advancedPrivacyProtections;
 };
 
 } // namespace WebKit

@@ -2079,7 +2079,8 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     frameLoadRequest.setClientRedirectSourceForHistory(loadParameters.clientRedirectSourceForHistory);
     if (loadParameters.isRequestFromClientOrUserInput)
         frameLoadRequest.setIsRequestFromClientOrUserInput();
-    frameLoadRequest.setAdvancedPrivacyProtections(loadParameters.advancedPrivacyProtections);
+    if (loadParameters.advancedPrivacyProtections)
+        frameLoadRequest.setAdvancedPrivacyProtections(*loadParameters.advancedPrivacyProtections);
 
     if (loadParameters.effectiveSandboxFlags) {
         if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(corePage()->mainFrame()))
