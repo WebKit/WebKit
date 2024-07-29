@@ -335,13 +335,16 @@ std::optional<AXTextMarkerRange> AXSearchManager::findMatchingRange(Accessibilit
 {
     // Currently, this method only supports searching for the next/previous misspelling.
     // FIXME: support other types of ranges, like italicized.
-    if (criteria.searchKeys.size() != 1 || criteria.searchKeys[0] != AccessibilitySearchKey::MisspelledWord
-        || !criteria.startObject || criteria.resultsLimit != 1) {
+    if (criteria.searchKeys.size() != 1 || criteria.searchKeys[0] != AccessibilitySearchKey::MisspelledWord || criteria.resultsLimit != 1) {
         ASSERT_NOT_REACHED();
         return std::nullopt;
     }
 
-    RefPtr startObject = criteria.startObject;
+    // If there's no start object, it means we want to search everything.
+    RefPtr<AXCoreObject> startObject = criteria.startObject;
+    if (!startObject)
+        startObject = criteria.anchorObject;
+
     bool forward = criteria.searchDirection == AccessibilitySearchDirection::Next;
     if (match(startObject, criteria)) {
         AXTextMarkerRange startRange { startObject->treeID(), startObject->objectID(), criteria.startRange };
@@ -350,12 +353,17 @@ std::optional<AXTextMarkerRange> AXSearchManager::findMatchingRange(Accessibilit
 
         if (forward) {
             for (auto it = characterRanges.begin(); it != characterRanges.end(); ++it) {
-                AXTextMarkerRange range { startObject->treeID(), startObject->objectID(), *it };
-                if (range > startRange)
+                if (auto *node = startObject->node()) {
+                    auto startVisiblePosition = visiblePositionForIndexUsingCharacterIterator(*node, it->location);
+                    auto endVisiblePosition = visiblePositionForIndexUsingCharacterIterator(*node, it->location + it->length);
+                    VisiblePositionRange visiblePositionRange { startVisiblePosition, endVisiblePosition };
+                    AXTextMarkerRange range(visiblePositionRange);
                     return range;
+                }
             }
         } else {
             for (auto it = characterRanges.rbegin(); it != characterRanges.rend(); ++it) {
+                // TODO: return a VisiblePosition-based range here.
                 AXTextMarkerRange range { startObject->treeID(), startObject->objectID(), *it };
                 if (range < startRange)
                     return range;
