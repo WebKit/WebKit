@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<axe-menu id="menu" aria-label="Test menu">
+    <axe-group aria-label="Test group 1">
+        <axe-menuitem>Inbox</axe-menuitem>
+        <axe-menuitem>Archive</axe-menuitem>
+        <axe-menuitem>Trash</axe-menuitem>
+    </axe-group>
+    <axe-group aria-label="Test group 2">
+        <axe-menuitem>Custom Folder 1</axe-menuitem>
+        <axe-menuitem>Custom Folder 2</axe-menuitem>
+        <axe-menuitem>Custom Folder 3</axe-menuitem>
+     </axe-group>
+     <axe-group aria-label="Test group 3">
+         <axe-menuitem>New Folder</axe-menuitem>
+     </axe-group>
+</axe-menu>
+
+<script>
+var output = "This test ensures that we compute the right final role for a role='menu' item with menuitem grandchildren.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        const platform = accessibilityController.platformName;
+        if (platform !== "ios")
+            output += await expectAsync("accessibilityController.accessibleElementById('menu').role.toLowerCase().includes('menu')", "true");
+        if (platform === "ios" || platform === "mac")
+            output += dumpAXSearchTraversal(accessibilityController.rootElement.childAtIndex(0));
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+
+class Menu extends HTMLElement {
+  constructor() {
+    super();
+    this.internals_ = this.attachInternals();
+    this.internals_.role = 'menu';
+    this.internals_.ariaOrientation = 'vertical';
+  }
+}
+customElements.define('axe-menu', Menu);
+
+class Group extends HTMLElement {
+  constructor() {
+    super();
+    this.internals_ = this.attachInternals();
+    this.internals_.role = 'group';
+  }
+}
+customElements.define('axe-group', Group);
+
+class MenuItem extends HTMLElement {
+  constructor() {
+    super();
+    this.internals_ = this.attachInternals();
+    this.internals_.role = 'menuitem';
+  }
+}
+customElements.define('axe-menuitem', MenuItem);
+</script>
+</body>
+</html>
+
