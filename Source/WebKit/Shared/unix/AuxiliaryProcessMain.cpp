@@ -34,6 +34,10 @@
 #include <string.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
+#if USE(LIBWPE)
+#include "ProcessProviderLibWPE.h"
+#endif
+
 #if ENABLE(BREAKPAD)
 #include "unix/BreakpadExceptionHandler.h"
 #endif
