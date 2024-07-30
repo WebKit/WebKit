@@ -1,5 +1,8 @@
 
 PASS Setup
+PASS alignment-baseline (type: discrete) has testAccumulation function
+PASS alignment-baseline: "middle" onto "baseline"
+PASS alignment-baseline: "baseline" onto "middle"
 PASS align-content (type: discrete) has testAccumulation function
 PASS align-content: "flex-end" onto "flex-start"
 PASS align-content: "flex-start" onto "flex-end"
@@ -115,6 +118,9 @@ PASS box-shadow: shadow
 PASS box-sizing (type: discrete) has testAccumulation function
 PASS box-sizing: "border-box" onto "content-box"
 PASS box-sizing: "content-box" onto "border-box"
+PASS buffered-rendering (type: discrete) has testAccumulation function
+PASS buffered-rendering: "dynamic" onto "auto"
+PASS buffered-rendering: "auto" onto "dynamic"
 PASS caption-side (type: discrete) has testAccumulation function
 PASS caption-side: "bottom" onto "top"
 PASS caption-side: "top" onto "bottom"

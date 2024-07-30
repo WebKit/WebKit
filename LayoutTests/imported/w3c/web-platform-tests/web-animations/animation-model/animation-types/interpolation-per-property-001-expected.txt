@@ -1,5 +1,9 @@
 
 PASS Setup
+PASS alignment-baseline (type: discrete) has testInterpolation function
+PASS alignment-baseline uses discrete animation when animating between "baseline" and "middle" with linear easing
+PASS alignment-baseline uses discrete animation when animating between "baseline" and "middle" with effect easing
+PASS alignment-baseline uses discrete animation when animating between "baseline" and "middle" with keyframe easing
 PASS align-content (type: discrete) has testInterpolation function
 PASS align-content uses discrete animation when animating between "flex-start" and "flex-end" with linear easing
 PASS align-content uses discrete animation when animating between "flex-start" and "flex-end" with effect easing
@@ -141,6 +145,10 @@ PASS box-sizing (type: discrete) has testInterpolation function
 PASS box-sizing uses discrete animation when animating between "content-box" and "border-box" with linear easing
 PASS box-sizing uses discrete animation when animating between "content-box" and "border-box" with effect easing
 PASS box-sizing uses discrete animation when animating between "content-box" and "border-box" with keyframe easing
+PASS buffered-rendering (type: discrete) has testInterpolation function
+PASS buffered-rendering uses discrete animation when animating between "auto" and "dynamic" with linear easing
+PASS buffered-rendering uses discrete animation when animating between "auto" and "dynamic" with effect easing
+PASS buffered-rendering uses discrete animation when animating between "auto" and "dynamic" with keyframe easing
 PASS caption-side (type: discrete) has testInterpolation function
 PASS caption-side uses discrete animation when animating between "top" and "bottom" with linear easing
 PASS caption-side uses discrete animation when animating between "top" and "bottom" with effect easing

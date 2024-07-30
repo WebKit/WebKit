@@ -4020,6 +4020,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscreteFontDescriptionTypedWrapper<Kerning>(CSSPropertyFontKerning, &FontCascadeDescription::kerning, &FontCascadeDescription::setKerning),
         new FontFeatureSettingsWrapper,
         new FontFamilyWrapper,
+        new DiscreteSVGPropertyWrapper<AlignmentBaseline>(CSSPropertyAlignmentBaseline, &SVGRenderStyle::alignmentBaseline, &SVGRenderStyle::setAlignmentBaseline),
+        new DiscreteSVGPropertyWrapper<BufferedRendering>(CSSPropertyBufferedRendering, &SVGRenderStyle::bufferedRendering, &SVGRenderStyle::setBufferedRendering),
         new DiscreteSVGPropertyWrapper<WindRule>(CSSPropertyClipRule, &SVGRenderStyle::clipRule, &SVGRenderStyle::setClipRule),
         new DiscreteSVGPropertyWrapper<ColorInterpolation>(CSSPropertyColorInterpolationFilters, &SVGRenderStyle::colorInterpolationFilters, &SVGRenderStyle::setColorInterpolationFilters),
         new DiscreteSVGPropertyWrapper<DominantBaseline>(CSSPropertyDominantBaseline, &SVGRenderStyle::dominantBaseline, &SVGRenderStyle::setDominantBaseline),
@@ -4164,7 +4166,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         // property should be animatable, make sure to file a bug.
 
         // To be fixed / untriaged:
-        case CSSPropertyAlignmentBaseline:
         case CSSPropertyBorderBlock: // logical shorthand
         case CSSPropertyBorderBlockColor: // logical shorthand
         case CSSPropertyBorderBlockStyle: // logical shorthand
@@ -4174,7 +4175,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyBorderInlineStyle: // logical shorthand
         case CSSPropertyBorderInlineWidth: // logical shorthand
         case CSSPropertyBorderStyle:
-        case CSSPropertyBufferedRendering:
         case CSSPropertyHangingPunctuation:
         case CSSPropertyInlineSize:
         case CSSPropertyInputSecurity:
