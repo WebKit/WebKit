@@ -431,7 +431,7 @@ public:
 
     WEBCORE_EXPORT CheckedRef<ElementTargetingController> checkedElementTargetingController();
 
-    void didChangeMainDocument();
+    void didChangeMainDocument(Document* newDocument);
     void mainFrameDidChangeToNonInitialEmptyDocument();
 
     PerformanceMonitor* performanceMonitor() { return m_performanceMonitor.get(); }
