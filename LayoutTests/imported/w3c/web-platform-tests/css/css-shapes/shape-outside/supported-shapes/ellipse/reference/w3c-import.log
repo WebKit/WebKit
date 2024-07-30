@@ -1,0 +1,38 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-013-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-021-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-030-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-032-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-033-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-034-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-035-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-036-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-037-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-038-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-039-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-040-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-042-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-044-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-045-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-046-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-047-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-048-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-049-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-050-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-051-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/reference/shape-outside-ellipse-052-ref.html

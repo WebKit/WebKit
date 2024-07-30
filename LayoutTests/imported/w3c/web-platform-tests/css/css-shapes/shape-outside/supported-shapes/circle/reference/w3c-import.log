@@ -1,0 +1,36 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-013-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-023-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-030-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-032-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-033-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-034-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-035-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-036-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-041-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-042-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-047-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-048-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-049-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-050-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-051-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-052-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-053-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-054-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-055-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/reference/shape-outside-circle-056-ref.html
