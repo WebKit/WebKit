@@ -34,7 +34,7 @@
 #include <string.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
-#if USE(LIBWPE)
+#if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX)
 #include "ProcessProviderLibWPE.h"
 #endif
 

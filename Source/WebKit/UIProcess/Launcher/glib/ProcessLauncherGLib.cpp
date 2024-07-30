@@ -125,7 +125,9 @@ static bool isSandboxEnabled(const ProcessLauncher::LaunchOptions& launchOptions
 
 void ProcessLauncher::launchProcess()
 {
+#if ENABLE(BUBBLEWRAP_SANDBOX)
     RELEASE_ASSERT(m_launchOptions.processType != ProcessLauncher::ProcessType::DBusProxy);
+#endif
 
     GUniquePtr<gchar> processIdentifier(g_strdup_printf("%" PRIu64, m_launchOptions.processIdentifier.toUInt64()));
 
