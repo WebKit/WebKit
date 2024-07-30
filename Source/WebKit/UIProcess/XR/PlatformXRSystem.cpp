@@ -246,10 +246,9 @@ void PlatformXRSystem::setImmersiveSessionState(ImmersiveSessionState state, Com
     case ImmersiveSessionState::PermissionsGranted:
         return GPUProcessProxy::getOrCreate()->webXRPromptAccepted(m_page.ensureRunningProcess().processIdentity(), WTFMove(completion));
     case ImmersiveSessionState::SessionRunning:
-        break;
     case ImmersiveSessionState::SessionEndingFromWebContent:
     case ImmersiveSessionState::SessionEndingFromSystem:
-        return GPUProcessProxy::getOrCreate()->webXRPromptAccepted(std::nullopt, WTFMove(completion));
+        break;
     }
 
     completion(true);
