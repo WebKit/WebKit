@@ -4,12 +4,11 @@
 <dict>
 	<key>CanonicalName</key>
 	<string>WebKitSDKAdditions_macosx</string>
+	<key>HeaderSearchPaths</key>
+	<array>
+		<string>usr/local/include</string>
+	</array>
 	<key>IsBaseSDK</key>
 	<string>NO</string>
-	<!-- The public macOS SDK has a private frameworks directory, so we need to add a search path instead of overriding it via WK_PRIVATE_SDK_DIR. -->
-	<key>FrameworkSearchPaths</key>
-	<array>
-		<string>System/Library/PrivateFrameworks</string>
-	</array>
 </dict>
 </plist>
