@@ -58,9 +58,9 @@ public:
     JS_EXPORT_PRIVATE Plan(VM&, CompletionTask&&);
     virtual JS_EXPORT_PRIVATE ~Plan();
 
-    // If you guarantee the ordering here, you can rely on FIFO of the
-    // completion tasks being called.
-    void addCompletionTask(VM&, CompletionTask&&);
+    // If you guarantee the ordering here, you can rely on FIFO of the completion tasks being called.
+    // Return false if the task plan is already completed.
+    bool addCompletionTaskIfNecessary(VM&, CompletionTask&&);
 
     void setMode(MemoryMode mode) { m_mode = mode; }
     ALWAYS_INLINE MemoryMode mode() const { return m_mode; }
