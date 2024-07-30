@@ -877,6 +877,9 @@ static bool rareDataChangeRequiresLayout(const StyleRareNonInheritedData& first,
     if (first.scrollbarWidth != second.scrollbarWidth)
         return true;
 
+    if (first.textBoxTrim != second.textBoxTrim)
+        return true;
+
     return false;
 }
 
