@@ -1088,6 +1088,34 @@ TEST(KeyboardInputTests, NoCrashWhenDiscardingMarkedText)
     Util::runFor(100_ms);
 }
 
+TEST(KeyboardInputTests, NoCrashWithEmptyAttributedMarkedText)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setEditable:YES];
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width'><meta charset='utf-8'><body></body>"];
+    [webView selectAll:nil];
+
+    RetainPtr attributes = @{
+        NSMarkedClauseSegmentAttributeName: @(0),
+        NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
+        NSUnderlineColorAttributeName: UIColor.tintColor
+    };
+
+    RetainPtr composition = adoptNS([[NSAttributedString alloc] initWithString:@"あ" attributes:attributes.get()]);
+    [[webView textInputContentView] setAttributedMarkedText:composition.get() selectedRange:NSMakeRange(0, 1)];
+
+    RetainPtr finalComposition = adoptNS([[NSMutableAttributedString alloc] initWithString:@"あs" attributes:attributes.get()]);
+    [[webView textInputContentView] setAttributedMarkedText:finalComposition.get() selectedRange:NSMakeRange(0, 2)];
+
+    [finalComposition setAttributes:nil range:NSMakeRange(0, 2)];
+    [finalComposition replaceCharactersInRange:NSMakeRange(0, 2) withString:@"明日"];
+
+    [[webView textInputContentView] setAttributedMarkedText:finalComposition.get() selectedRange:NSMakeRange(0, 2)];
+
+    [finalComposition deleteCharactersInRange:NSMakeRange(0, 2)];
+    [[webView textInputContentView] setAttributedMarkedText:finalComposition.get() selectedRange:NSMakeRange(0, 0)];
+}
+
 TEST(KeyboardInputTests, CharactersAroundCaretSelection)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
