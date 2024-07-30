@@ -7336,3 +7336,5 @@ imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.
 # webkit.org/b/276830 Umbrella bug: Mark expectations impacting EWS (276830)
 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss [ Skip ]
+
+webkit.org/b/276624 fast/dynamic/layer-hit-test-crash.html [ Pass Failure ]
