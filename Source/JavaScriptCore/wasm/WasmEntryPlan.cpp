@@ -253,6 +253,21 @@ void EntryPlan::complete()
     }
 }
 
+bool EntryPlan::completeSyncIfPossible()
+{
+    Locker locker { m_lock };
+    if (m_currentIndex >= m_numberOfFunctions) {
+        if (hasWork())
+            moveToState(State::Compiled);
+
+        if (!m_numberOfActiveThreads) {
+            complete();
+            return true;
+        }
+    }
+    return false;
+}
+
 void EntryPlan::generateStubsIfNecessary()
 {
     if (!std::exchange(m_areWasmToWasmStubsCompiled, true)) {

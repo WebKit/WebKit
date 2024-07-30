@@ -62,13 +62,14 @@ void Plan::runCompletionTasks()
     m_completed.notifyAll();
 }
 
-void Plan::addCompletionTask(VM& vm, CompletionTask&& task)
+bool Plan::addCompletionTaskIfNecessary(VM& vm, CompletionTask&& task)
 {
     Locker locker { m_lock };
-    if (!isComplete())
+    if (!isComplete()) {
         m_completionTasks.append(std::make_pair(&vm, WTFMove(task)));
-    else
-        task->run(*this);
+        return true;
+    }
+    return false;
 }
 
 void Plan::waitForCompletion()
