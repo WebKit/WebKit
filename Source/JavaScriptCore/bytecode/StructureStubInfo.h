@@ -105,7 +105,7 @@ enum class CacheType : int8_t {
     InByIdSelf,
     Stub,
     ArrayLength,
-    StringLength
+    StringLength,
 };
 
 struct UnlinkedStructureStubInfo;
@@ -143,6 +143,7 @@ public:
 
     void initializeFromUnlinkedStructureStubInfo(VM&, CodeBlock*, const BaselineUnlinkedStructureStubInfo&);
     void initializeFromDFGUnlinkedStructureStubInfo(CodeBlock*, const DFG::UnlinkedStructureStubInfo&);
+    void initializePredefinedRegisters();
 
     DECLARE_VISIT_AGGREGATE;
 
@@ -449,6 +450,7 @@ public:
 private:
     CacheType m_cacheType { CacheType::Unset };
 public:
+    CacheType preconfiguredCacheType { CacheType::Unset };
     // We repatch only when this is zero. If not zero, we decrement.
     // Setting 1 for a totally clear stub, we'll patch it after the first execution.
     uint8_t countdown { 1 };
@@ -576,6 +578,7 @@ inline bool hasConstantIdentifier(AccessType accessType)
 
 struct UnlinkedStructureStubInfo {
     AccessType accessType;
+    CacheType preconfiguredCacheType { CacheType::Unset };
     bool propertyIsInt32 : 1 { false };
     bool propertyIsString : 1 { false };
     bool propertyIsSymbol : 1 { false };

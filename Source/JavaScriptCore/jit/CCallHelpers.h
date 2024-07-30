@@ -89,7 +89,7 @@ public:
     }
 
     template<typename RegType, unsigned NumberOfRegisters>
-    ALWAYS_INLINE void shuffleRegisters(std::array<RegType, NumberOfRegisters> destinations, std::array<RegType, NumberOfRegisters> sources)
+    ALWAYS_INLINE void shuffleRegisters(std::array<RegType, NumberOfRegisters> sources, std::array<RegType, NumberOfRegisters> destinations)
     {
         if (ASSERT_ENABLED) {
             RegisterSetBuilder set;
@@ -669,10 +669,10 @@ private:
         static_assert(gprArgsCount<TraitsType>(std::make_index_sequence<TraitsType::arity>()) == numGPRArgs);
         static_assert(fprArgsCount<TraitsType>(std::make_index_sequence<TraitsType::arity>()) == numFPRArgs);
 
-        shuffleRegisters<GPRReg, numGPRSources>(clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprDestinations), clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprSources));
+        shuffleRegisters<GPRReg, numGPRSources>(clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprSources), clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprDestinations));
         static_assert(!numCrossSources, "shouldn't be used on this architecture.");
 
-        shuffleRegisters<FPRReg, numFPRSources>(clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprDestinations), clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprSources));
+        shuffleRegisters<FPRReg, numFPRSources>(clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprSources), clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprDestinations));
     }
 
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke, typename... Args>

@@ -17201,7 +17201,7 @@ IGNORE_CLANG_WARNINGS_END
                 auto generator = Box<JITGetByIdGenerator>::create(
                     jit.codeBlock(), stubInfo, JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
                     params.unavailableRegisters(), identifier, JSValueRegs(params[1].gpr()),
-                    JSValueRegs(params[0].gpr()), stubInfoGPR, type);
+                    JSValueRegs(params[0].gpr()), stubInfoGPR, type, CacheType::GetByIdSelf);
 
                 generator->generateFastPath(jit);
                 CCallHelpers::Label done = jit.label();
