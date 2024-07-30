@@ -120,11 +120,11 @@ bool StyleMultiImage::errorOccurred() const
     return m_selectedImage && m_selectedImage->errorOccurred();
 }
 
-FloatSize StyleMultiImage::imageSize(const RenderElement* renderer, float multiplier, CachedImage::SizeType sizeType) const
+FloatSize StyleMultiImage::imageSize(const RenderElement* renderer, float multiplier) const
 {
     if (!m_selectedImage)
         return { };
-    return m_selectedImage->imageSize(renderer, multiplier, sizeType);
+    return m_selectedImage->imageSize(renderer, multiplier);
 }
 
 bool StyleMultiImage::imageHasRelativeWidth() const
@@ -149,11 +149,11 @@ bool StyleMultiImage::usesImageContainerSize() const
     return m_selectedImage && m_selectedImage->usesImageContainerSize();
 }
 
-void StyleMultiImage::setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom, const URL& url)
+void StyleMultiImage::setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom)
 {
     if (!m_selectedImage)
         return;
-    m_selectedImage->setContainerContextForRenderer(renderer, containerSize, containerZoom, url);
+    m_selectedImage->setContainerContextForRenderer(renderer, containerSize, containerZoom);
 }
 
 void StyleMultiImage::addClient(RenderElement& renderer)

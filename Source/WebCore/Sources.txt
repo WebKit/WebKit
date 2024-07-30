@@ -2712,6 +2712,7 @@ rendering/RenderHighlight.cpp
 rendering/RenderIFrame.cpp
 rendering/RenderImage.cpp
 rendering/RenderImageResource.cpp
+rendering/RenderImageResourceStyleImage.cpp
 rendering/RenderInline.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerBacking.cpp

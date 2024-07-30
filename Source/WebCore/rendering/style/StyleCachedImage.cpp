@@ -43,11 +43,6 @@ Ref<StyleCachedImage> StyleCachedImage::create(Ref<CSSImageValue> cssValue, floa
     return adoptRef(*new StyleCachedImage(WTFMove(cssValue), scaleFactor));
 }
 
-Ref<StyleCachedImage> StyleCachedImage::create(CachedImage& cachedImage, float scaleFactor)
-{
-    return adoptRef(*new StyleCachedImage(cachedImage, scaleFactor));
-}
-
 Ref<StyleCachedImage> StyleCachedImage::copyOverridingScaleFactor(StyleCachedImage& other, float scaleFactor)
 {
     if (other.m_scaleFactor == scaleFactor)
@@ -63,11 +58,6 @@ StyleCachedImage::StyleCachedImage(Ref<CSSImageValue>&& cssValue, float scaleFac
     m_cachedImage = m_cssValue->cachedImage();
     if (m_cachedImage)
         m_isPending = false;
-}
-
-StyleCachedImage::StyleCachedImage(CachedImage& cachedImage, float scaleFactor)
-    : StyleCachedImage { CSSImageValue::create(cachedImage), scaleFactor }
-{
 }
 
 StyleCachedImage::~StyleCachedImage() = default;
@@ -235,13 +225,13 @@ bool StyleCachedImage::errorOccurred() const
     return m_cachedImage->errorOccurred();
 }
 
-FloatSize StyleCachedImage::imageSize(const RenderElement* renderer, float multiplier, CachedImage::SizeType sizeType) const
+FloatSize StyleCachedImage::imageSize(const RenderElement* renderer, float multiplier) const
 {
     if (isRenderSVGResource(renderer))
         return m_containerSize;
     if (!m_cachedImage)
         return { };
-    return m_cachedImage->imageSizeForRenderer(renderer, multiplier, sizeType) / m_scaleFactor;
+    return m_cachedImage->imageSizeForRenderer(renderer, multiplier) / m_scaleFactor;
 }
 
 bool StyleCachedImage::imageHasRelativeWidth() const
@@ -282,12 +272,12 @@ bool StyleCachedImage::usesImageContainerSize() const
     return m_cachedImage->usesImageContainerSize();
 }
 
-void StyleCachedImage::setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom, const URL& url)
+void StyleCachedImage::setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom)
 {
     m_containerSize = containerSize;
     if (!m_cachedImage)
         return;
-    m_cachedImage->setContainerContextForClient(renderer, LayoutSize(containerSize), containerZoom, !url.isNull() ? url : imageURL());
+    m_cachedImage->setContainerContextForClient(renderer, LayoutSize(containerSize), containerZoom, imageURL());
 }
 
 void StyleCachedImage::addClient(RenderElement& renderer)

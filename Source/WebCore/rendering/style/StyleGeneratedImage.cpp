@@ -100,7 +100,7 @@ void StyleGeneratedImage::evictCachedGeneratedImage(FloatSize size)
     m_images.remove(size);
 }
 
-FloatSize StyleGeneratedImage::imageSize(const RenderElement* renderer, float multiplier, CachedImage::SizeType) const
+FloatSize StyleGeneratedImage::imageSize(const RenderElement* renderer, float multiplier) const
 {
     if (!m_fixedSize)
         return m_containerSize;

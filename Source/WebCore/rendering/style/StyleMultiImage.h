@@ -63,12 +63,12 @@ private:
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     bool isLoaded(const RenderElement*) const final;
     bool errorOccurred() const final;
-    FloatSize imageSize(const RenderElement*, float multiplier, CachedImage::SizeType = CachedImage::UsedSize) const final;
+    FloatSize imageSize(const RenderElement*, float multiplier) const final;
     bool imageHasRelativeWidth() const final;
     bool imageHasRelativeHeight() const final;
     void computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) final;
     bool usesImageContainerSize() const final;
-    void setContainerContextForRenderer(const RenderElement&, const FloatSize&, float, const URL& = URL());
+    void setContainerContextForRenderer(const RenderElement&, const FloatSize&, float);
     void addClient(RenderElement&) final;
     void removeClient(RenderElement&) final;
     bool hasClient(RenderElement&) const final;
