@@ -387,7 +387,7 @@ void AuxiliaryProcessProxy::wakeUpTemporarilyForIPC()
     // in increased memory usage. To avoid this, we allow the process to stay alive for 1 second after draining
     // its message queue.
     auto completionHandler = [activity = throttler().backgroundActivity("IPC sending due to large outgoing queue"_s)]() mutable {
-        WebCore::Timer::schedule(1_s, [activity = WTFMove(activity)]() { });
+        RunLoop::main().dispatchAfter(1_s, [activity = WTFMove(activity)]() { });
     };
     sendWithAsyncReply(Messages::AuxiliaryProcess::MainThreadPing(), WTFMove(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
 }
