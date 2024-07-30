@@ -66,10 +66,11 @@ void GStreamerIncomingTrackProcessor::configure(ThreadSafeWeakPtr<GStreamerMedia
     auto structure = gst_caps_get_structure(m_data.caps.get(), 0);
     if (auto ssrc = gstStructureGet<unsigned>(structure, "ssrc"_s)) {
         auto msIdAttributeName = makeString("ssrc-"_s, *ssrc, "-msid"_s);
-        auto msIdAttribute = gst_structure_get_string(structure, msIdAttributeName.ascii().data());
-        auto components = String::fromUTF8(msIdAttribute).split(' ');
-        if (components.size() == 2)
-            m_sdpMsIdAndTrackId = { components[0], components[1] };
+        if (auto msIdAttribute = gstStructureGetString(structure, msIdAttributeName)) {
+            auto components = msIdAttribute.toStringWithoutCopying().split(' ');
+            if (components.size() == 2)
+                m_sdpMsIdAndTrackId = { components[0], components[1] };
+        }
     }
 
     if (m_sdpMsIdAndTrackId.second.isEmpty())
@@ -175,8 +176,8 @@ GRefPtr<GstElement> GStreamerIncomingTrackProcessor::incomingTrackProcessor()
     if (!forceEarlyVideoDecoding) {
         auto structure = gst_caps_get_structure(m_data.caps.get(), 0);
         ASSERT(gst_structure_has_name(structure, "application/x-rtp"));
-        String encodingNameValue = WTF::span(gst_structure_get_string(structure, "encoding-name"));
-        auto mediaType = makeString("video/x-"_s, encodingNameValue.convertToASCIILowercase());
+        auto encodingName = gstStructureGetString(structure, "encoding-name"_s);
+        auto mediaType = makeString("video/x-"_s, encodingName.convertToASCIILowercase());
         auto codecCaps = adoptGRef(gst_caps_new_empty_simple(mediaType.ascii().data()));
 
         auto& scanner = GStreamerRegistryScanner::singleton();

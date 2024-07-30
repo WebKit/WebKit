@@ -61,8 +61,10 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     // FIXME: We use only the first structure of the caps. This not be the right approach specially
     // we don't have a payloader or encoder for that format.
     GUniquePtr<GstStructure> structure(gst_structure_copy(gst_caps_get_structure(caps.get(), 0)));
-    auto encoding = StringView::fromLatin1(gst_structure_get_string(structure.get(), "encoding-name")).convertToASCIILowercase();
-    if (encoding.isNull()) {
+    String encoding;
+    if (auto encodingName = gstStructureGetString(structure.get(), "encoding-name"_s))
+        encoding = encodingName.convertToASCIILowercase();
+    else {
         GST_ERROR_OBJECT(m_bin.get(), "encoding-name not found");
         return false;
     }
@@ -89,21 +91,21 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
         gst_util_set_object_arg(G_OBJECT(m_encoder.get()), "audio-type", "voice");
         g_object_set(m_encoder.get(), "perfect-timestamp", TRUE, nullptr);
 
-        if (const char* useInbandFec = gst_structure_get_string(structure.get(), "useinbandfec")) {
-            if (!g_strcmp0(useInbandFec, "1"))
+        if (auto useInbandFec = gstStructureGetString(structure.get(), "useinbandfec"_s)) {
+            if (useInbandFec == "1"_s)
                 g_object_set(m_encoder.get(), "inband-fec", true, nullptr);
             gst_structure_remove_field(structure.get(), "useinbandfec");
         }
 
-        if (const char* isStereo = gst_structure_get_string(structure.get(), "stereo")) {
-            if (!g_strcmp0(isStereo, "1"))
+        if (auto isStereo = gstStructureGetString(structure.get(), "stereo"_s)) {
+            if (isStereo == "1"_s)
                 m_inputCaps = adoptGRef(gst_caps_new_simple("audio/x-raw", "channels", G_TYPE_INT, 2, nullptr));
             gst_structure_remove_field(structure.get(), "stereo");
         }
 
         if (gst_caps_is_any(m_inputCaps.get())) {
-            if (const char* encodingParameters = gst_structure_get_string(structure.get(), "encoding-params")) {
-                if (auto channels = parseIntegerAllowingTrailingJunk<int>(StringView::fromLatin1(encodingParameters)))
+            if (auto encodingParameters = gstStructureGetString(structure.get(), "encoding-params"_s)) {
+                if (auto channels = parseIntegerAllowingTrailingJunk<int>(encodingParameters))
                     m_inputCaps = adoptGRef(gst_caps_new_simple("audio/x-raw", "channels", G_TYPE_INT, *channels, nullptr));
             }
         }
@@ -126,9 +128,8 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     // Align MTU with libwebrtc implementation, also helping to reduce packet fragmentation.
     g_object_set(m_payloader.get(), "auto-header-extension", TRUE, "mtu", 1200, nullptr);
 
-    if (const char* minPTime = gst_structure_get_string(structure.get(), "minptime")) {
-        auto time = String::fromLatin1(minPTime);
-        if (auto value = parseIntegerAllowingTrailingJunk<int64_t>(time)) {
+    if (auto minPTime = gstStructureGetString(structure.get(), "minptime"_s)) {
+        if (auto value = parseIntegerAllowingTrailingJunk<int64_t>(minPTime)) {
             if (gstObjectHasProperty(m_payloader.get(), "min-ptime"))
                 g_object_set(m_payloader.get(), "min-ptime", *value * GST_MSECOND, nullptr);
             else

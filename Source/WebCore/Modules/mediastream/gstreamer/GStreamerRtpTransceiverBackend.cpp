@@ -109,7 +109,7 @@ bool GStreamerRtpTransceiverBackend::stopped() const
     return m_isStopped;
 }
 
-static inline WARN_UNUSED_RETURN ExceptionOr<GstCaps*> toRtpCodecCapability(const RTCRtpCodecCapability& codec, int& dynamicPayloadType, const char* msid)
+static inline WARN_UNUSED_RETURN ExceptionOr<GRefPtr<GstCaps>> toRtpCodecCapability(const RTCRtpCodecCapability& codec, int& dynamicPayloadType, StringView msid)
 {
     if (!codec.mimeType.startsWith("video/"_s) && !codec.mimeType.startsWith("audio/"_s))
         return Exception { ExceptionCode::InvalidModificationError, "RTCRtpCodecCapability bad mimeType"_s };
@@ -118,10 +118,10 @@ static inline WARN_UNUSED_RETURN ExceptionOr<GstCaps*> toRtpCodecCapability(cons
     const auto mediaType = components[0];
     const auto codecName = components[1];
 
-    int payloadType = payloadTypeForEncodingName(codecName.ascii().data()).value_or(dynamicPayloadType++);
-    auto* caps = gst_caps_new_simple("application/x-rtp", "media", G_TYPE_STRING, mediaType.ascii().data(), "encoding-name", G_TYPE_STRING, codecName.ascii().data(), "clock-rate", G_TYPE_INT, codec.clockRate, "payload", G_TYPE_INT, payloadType, nullptr);
+    int payloadType = payloadTypeForEncodingName(codecName).value_or(dynamicPayloadType++);
+    auto caps = adoptGRef(gst_caps_new_simple("application/x-rtp", "media", G_TYPE_STRING, mediaType.ascii().data(), "encoding-name", G_TYPE_STRING, codecName.ascii().data(), "clock-rate", G_TYPE_INT, codec.clockRate, "payload", G_TYPE_INT, payloadType, nullptr));
     if (codec.channels)
-        gst_caps_set_simple(caps, "channels", G_TYPE_INT, *codec.channels, nullptr);
+        gst_caps_set_simple(caps.get(), "channels", G_TYPE_INT, *codec.channels, nullptr);
 
     if (!codec.sdpFmtpLine.isEmpty()) {
         // Forward each fmtp attribute as codec-<fmtp-name> in the caps so that the downstream
@@ -131,40 +131,40 @@ static inline WARN_UNUSED_RETURN ExceptionOr<GstCaps*> toRtpCodecCapability(cons
         for (auto& attribute : codec.sdpFmtpLine.split(';')) {
             auto components = attribute.split('=');
             auto field = makeString(codecName.convertToASCIILowercase(), '-', components[0]);
-            gst_caps_set_simple(caps, field.ascii().data(), G_TYPE_STRING, components[1].ascii().data(), nullptr);
+            gst_caps_set_simple(caps.get(), field.ascii().data(), G_TYPE_STRING, components[1].ascii().data(), nullptr);
         }
     }
 
     if (msid)
-        gst_caps_set_simple(caps, "a-msid", G_TYPE_STRING, msid, nullptr);
+        gst_caps_set_simple(caps.get(), "a-msid", G_TYPE_STRING, msid.toStringWithoutCopying().ascii().data(), nullptr);
 
-    GST_DEBUG("Codec capability: %" GST_PTR_FORMAT, caps);
+    GST_DEBUG("Codec capability: %" GST_PTR_FORMAT, caps.get());
     return caps;
 }
 
-static GUniquePtr<char> getMsidFromCurrentCodecPreferences(GstWebRTCRTPTransceiver* transceiver)
+static StringView getMsidFromCurrentCodecPreferences(GstWebRTCRTPTransceiver* transceiver)
 {
     GRefPtr<GstCaps> currentCaps;
-    GUniquePtr<char> msid;
     g_object_get(transceiver, "codec-preferences", &currentCaps.outPtr(), nullptr);
     GST_TRACE_OBJECT(transceiver, "Current codec preferences: %" GST_PTR_FORMAT, currentCaps.get());
     if (gst_caps_get_size(currentCaps.get()) > 0) {
         auto* s = gst_caps_get_structure(currentCaps.get(), 0);
-        msid = GUniquePtr<char>(g_strdup(gst_structure_get_string(s, "a-msid")));
+        if (auto msIdValue = gstStructureGetString(s, "a-msid"_s))
+            return msIdValue;
     }
-    return msid;
+    return nullptr;
 }
 
 ExceptionOr<void> GStreamerRtpTransceiverBackend::setCodecPreferences(const Vector<RTCRtpCodecCapability>& codecs)
 {
     auto gstCodecs = adoptGRef(gst_caps_new_empty());
-    GUniquePtr<char> msid = getMsidFromCurrentCodecPreferences(m_rtcTransceiver.get());
+    auto msid = getMsidFromCurrentCodecPreferences(m_rtcTransceiver.get());
     int dynamicPayloadType = 96;
     for (auto& codec : codecs) {
-        auto result = toRtpCodecCapability(codec, dynamicPayloadType, msid.get());
+        auto result = toRtpCodecCapability(codec, dynamicPayloadType, msid);
         if (result.hasException())
             return result.releaseException();
-        gst_caps_append(gstCodecs.get(), result.releaseReturnValue());
+        gst_caps_append(gstCodecs.get(), result.releaseReturnValue().leakRef());
     }
     g_object_set(m_rtcTransceiver.get(), "codec-preferences", gstCodecs.get(), nullptr);
     return { };

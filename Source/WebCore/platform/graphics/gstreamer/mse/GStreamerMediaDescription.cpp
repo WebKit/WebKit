@@ -56,7 +56,10 @@ String GStreamerMediaDescription::extractCodecName(const GRefPtr<GstCaps>& caps)
         if (!gst_structure_has_field(structure, "original-media-type"))
             return String();
 
-        gst_structure_set_name(structure, gst_structure_get_string(structure, "original-media-type"));
+        auto originalMediaType = WebCore::gstStructureGetString(structure, "original-media-type"_s);
+        RELEASE_ASSERT(originalMediaType);
+        gst_structure_set_name(structure, originalMediaType.toStringWithoutCopying().ascii().data());
+
         // Remove the DRM related fields from the caps.
         for (int j = 0; j < gst_structure_n_fields(structure); ++j) {
             const char* fieldName = gst_structure_nth_field_name(structure, j);

@@ -2094,8 +2094,8 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
 #endif
         if (gst_structure_has_name(structure, "http-headers")) {
             GST_DEBUG_OBJECT(pipeline(), "Processing HTTP headers: %" GST_PTR_FORMAT, structure);
-            if (const char* uri = gst_structure_get_string(structure, "uri")) {
-                URL url { String::fromLatin1(uri) };
+            if (auto uri = gstStructureGetString(structure, "uri"_s)) {
+                URL url { makeString(uri) };
 
                 if (url != m_url) {
                     GST_DEBUG_OBJECT(pipeline(), "Ignoring HTTP response headers for non-main URI.");
@@ -2119,10 +2119,9 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                     // souphttpsrc sets a string for Content-Length, so
                     // handle it here, until we remove the webkit+ protocol
                     // prefix from webkitwebsrc.
-                    if (const char* contentLengthAsString = gst_structure_get_string(responseHeaders.get(), contentLengthHeaderName.characters())) {
-                        contentLength = g_ascii_strtoull(contentLengthAsString, nullptr, 10);
-                        if (contentLength == G_MAXUINT64)
-                            contentLength = 0;
+                    if (auto contentLengthValue = gstStructureGetString(responseHeaders.get(), contentLengthHeaderName)) {
+                        if (auto parsedContentLength = parseInteger<uint64_t>(contentLengthValue))
+                            contentLength = *parsedContentLength;
                     }
                 } else
                     contentLength = *contentLengthFromResponse;
@@ -2752,11 +2751,11 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
         return false;
 
     const GValue* locations = gst_structure_get_value(m_mediaLocations.get(), "locations");
-    const char* newLocation = nullptr;
+    StringView newLocation;
 
     if (!locations) {
         // Fallback on new-location string.
-        newLocation = gst_structure_get_string(m_mediaLocations.get(), "new-location");
+        newLocation = gstStructureGetString(m_mediaLocations.get(), "new-location"_s);
         if (!newLocation)
             return false;
     }
@@ -2775,32 +2774,33 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
             return false;
         }
 
-        newLocation = gst_structure_get_string(structure, "new-location");
+        newLocation = gstStructureGetString(structure, "new-location"_s);
     }
 
     if (newLocation) {
         // Found a candidate. new-location is not always an absolute url
         // though. We need to take the base of the current url and
         // append the value of new-location to it.
-        URL baseUrl = gst_uri_is_valid(newLocation) ? URL() : m_url;
-        URL newUrl = URL(baseUrl, String::fromLatin1(newLocation));
+        auto locationString = makeString(newLocation);
+        URL baseURL = gst_uri_is_valid(locationString.utf8().data()) ? URL() : m_url;
+        URL newURL = URL(baseURL, WTFMove(locationString));
 
-        GUniqueOutPtr<gchar> playbinUrlStr;
-        g_object_get(m_pipeline.get(), "current-uri", &playbinUrlStr.outPtr(), nullptr);
-        URL playbinUrl { String::fromLatin1(playbinUrlStr.get()) };
+        GUniqueOutPtr<gchar> playbinURLStr;
+        g_object_get(m_pipeline.get(), "current-uri", &playbinURLStr.outPtr(), nullptr);
+        URL playbinURL { String::fromLatin1(playbinURLStr.get()) };
 
-        if (playbinUrl == newUrl) {
+        if (playbinURL == newURL) {
             GST_DEBUG_OBJECT(pipeline(), "Playbin already handled redirection.");
 
-            m_url = playbinUrl;
+            m_url = playbinURL;
 
             return true;
         }
 
         changePipelineState(GST_STATE_READY);
         auto securityOrigin = SecurityOrigin::create(m_url);
-        if (securityOrigin->canRequest(newUrl, originAccessPatternsForWebProcessOrEmpty())) {
-            GST_INFO_OBJECT(pipeline(), "New media url: %s", newUrl.string().utf8().data());
+        if (securityOrigin->canRequest(newURL, originAccessPatternsForWebProcessOrEmpty())) {
+            GST_INFO_OBJECT(pipeline(), "New media url: %s", newURL.string().utf8().data());
 
             RefPtr player = m_player.get();
 
@@ -2819,12 +2819,12 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
             gst_element_get_state(m_pipeline.get(), &state, nullptr, 0);
             if (state <= GST_STATE_READY) {
                 // Set the new uri and start playing.
-                setPlaybinURL(newUrl);
+                setPlaybinURL(newURL);
                 changePipelineState(GST_STATE_PLAYING);
                 return true;
             }
         } else
-            GST_INFO_OBJECT(pipeline(), "Not allowed to load new media location: %s", newUrl.string().utf8().data());
+            GST_INFO_OBJECT(pipeline(), "Not allowed to load new media location: %s", newURL.string().utf8().data());
     }
     m_mediaLocationCurrentIndex--;
     return false;

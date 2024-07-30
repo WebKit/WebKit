@@ -1013,25 +1013,32 @@ static ASCIILiteral webrtcStatsTypeName(int value)
 template<typename T>
 std::optional<T> gstStructureGet(const GstStructure* structure, ASCIILiteral key)
 {
+    return gstStructureGet<T>(structure, StringView { key });
+}
+
+template<typename T>
+std::optional<T> gstStructureGet(const GstStructure* structure, StringView key)
+{
     T value;
+    auto strKey = key.toStringWithoutCopying();
     if constexpr(std::is_same_v<T, int>) {
-        if (gst_structure_get_int(structure, key.characters(), &value))
+        if (gst_structure_get_int(structure, strKey.ascii().data(), &value))
             return value;
     } else if constexpr(std::is_same_v<T, int64_t>) {
-        if (gst_structure_get_int64(structure, key.characters(), &value))
+        if (gst_structure_get_int64(structure, strKey.ascii().data(), &value))
             return value;
     } else if constexpr(std::is_same_v<T, unsigned>) {
-        if (gst_structure_get_uint(structure, key.characters(), &value))
+        if (gst_structure_get_uint(structure, strKey.ascii().data(), &value))
             return value;
     } else if constexpr(std::is_same_v<T, uint64_t>) {
-        if (gst_structure_get_uint64(structure, key.characters(), &value))
+        if (gst_structure_get_uint64(structure, strKey.ascii().data(), &value))
             return value;
     } else if constexpr(std::is_same_v<T, double>) {
-        if (gst_structure_get_double(structure, key.characters(), &value))
+        if (gst_structure_get_double(structure, strKey.ascii().data(), &value))
             return value;
     } else if constexpr(std::is_same_v<T, bool>) {
         gboolean gstValue;
-        if (gst_structure_get_boolean(structure, key.characters(), &gstValue)) {
+        if (gst_structure_get_boolean(structure, strKey.ascii().data(), &gstValue)) {
             value = gstValue;
             return value;
         }
@@ -1046,6 +1053,23 @@ template std::optional<unsigned> gstStructureGet(const GstStructure*, ASCIILiter
 template std::optional<uint64_t> gstStructureGet(const GstStructure*, ASCIILiteral key);
 template std::optional<double> gstStructureGet(const GstStructure*, ASCIILiteral key);
 template std::optional<bool> gstStructureGet(const GstStructure*, ASCIILiteral key);
+
+template std::optional<int> gstStructureGet(const GstStructure*, StringView key);
+template std::optional<int64_t> gstStructureGet(const GstStructure*, StringView key);
+template std::optional<unsigned> gstStructureGet(const GstStructure*, StringView key);
+template std::optional<uint64_t> gstStructureGet(const GstStructure*, StringView key);
+template std::optional<double> gstStructureGet(const GstStructure*, StringView key);
+template std::optional<bool> gstStructureGet(const GstStructure*, StringView key);
+
+StringView gstStructureGetString(const GstStructure* structure, ASCIILiteral key)
+{
+    return gstStructureGetString(structure, StringView { key });
+}
+
+StringView gstStructureGetString(const GstStructure* structure, StringView key)
+{
+    return StringView::fromLatin1(gst_structure_get_string(structure, static_cast<const char*>(key.rawCharacters())));
+}
 
 static RefPtr<JSON::Value> gstStructureToJSON(const GstStructure*);
 

@@ -40,7 +40,7 @@ namespace WebCore {
 
 RTCStatsReport::Stats::Stats(Type type, const GstStructure* structure)
     : type(type)
-    , id(String::fromLatin1(gst_structure_get_string(structure, "id")))
+    , id(gstStructureGetString(structure, "id"_s).toString())
 {
     if (auto value = gstStructureGet<double>(structure, "timestamp"_s))
         timestamp = *value;
@@ -48,15 +48,12 @@ RTCStatsReport::Stats::Stats(Type type, const GstStructure* structure)
 
 RTCStatsReport::RtpStreamStats::RtpStreamStats(Type type, const GstStructure* structure)
     : Stats(type, structure)
+    , kind(gstStructureGetString(structure, "kind"_s).toString())
+    , transportId(gstStructureGetString(structure, "transport-id"_s).toString())
+    , codecId(gstStructureGetString(structure, "codec-id"_s).toString())
 {
-    transportId = String::fromLatin1(gst_structure_get_string(structure, "transport-id"));
-    codecId = String::fromLatin1(gst_structure_get_string(structure, "codec-id"));
-
     if (auto value = gstStructureGet<unsigned>(structure, "ssrc"_s))
         ssrc = *value;
-
-    if (const char* gstKind = gst_structure_get_string(structure, "kind"))
-        kind = String::fromLatin1(gstKind);
 }
 
 RTCStatsReport::SentRtpStreamStats::SentRtpStreamStats(Type type, const GstStructure* structure)
@@ -68,18 +65,14 @@ RTCStatsReport::SentRtpStreamStats::SentRtpStreamStats(Type type, const GstStruc
 
 RTCStatsReport::CodecStats::CodecStats(const GstStructure* structure)
     : Stats(Type::Codec, structure)
+    , mimeType(gstStructureGetString(structure, "mime-type"_s).toString())
+    , sdpFmtpLine(gstStructureGetString(structure, "sdp-fmtp-line"_s).toString())
 {
     clockRate = gstStructureGet<unsigned>(structure, "clock-rate"_s);
     channels = gstStructureGet<unsigned>(structure, "channels"_s);
 
     if (auto value = gstStructureGet<unsigned>(structure, "payload-type"_s))
         payloadType = *value;
-
-    if (const char* gstSdpFmtpLine = gst_structure_get_string(structure, "sdp-fmtp-line"))
-        sdpFmtpLine = String::fromLatin1(gstSdpFmtpLine);
-
-    if (const char* gstMIMEType = gst_structure_get_string(structure, "mime-type"))
-        mimeType = String::fromLatin1(gstMIMEType);
 
     // FIXME:
     // stats.implementation =
@@ -104,12 +97,9 @@ RTCStatsReport::ReceivedRtpStreamStats::ReceivedRtpStreamStats(Type type, const 
 
 RTCStatsReport::RemoteInboundRtpStreamStats::RemoteInboundRtpStreamStats(const GstStructure* structure)
     : ReceivedRtpStreamStats(Type::RemoteInboundRtp, structure)
+    , localId(gstStructureGetString(structure, "local-id"_s).toString())
 {
     roundTripTime = gstStructureGet<double>(structure, "round-trip-time"_s);
-
-    if (const char* gstLocalId = gst_structure_get_string(structure, "local-id"))
-        localId = String::fromLatin1(gstLocalId);
-
     fractionLost = gstStructureGet<double>(structure, "fraction-lost"_s);
 
     // FIXME:
@@ -119,11 +109,9 @@ RTCStatsReport::RemoteInboundRtpStreamStats::RemoteInboundRtpStreamStats(const G
 
 RTCStatsReport::RemoteOutboundRtpStreamStats::RemoteOutboundRtpStreamStats(const GstStructure* structure)
     : SentRtpStreamStats(Type::RemoteOutboundRtp, structure)
+    , localId(gstStructureGetString(structure, "local-id"_s).toString())
 {
     remoteTimestamp = gstStructureGet<double>(structure, "remote-timestamp"_s);
-
-    if (const char* gstLocalId = gst_structure_get_string(structure, "local-id"))
-        localId = String::fromLatin1(gstLocalId);
 
     // FIXME:
     // stats.roundTripTime
@@ -166,13 +154,11 @@ RTCStatsReport::InboundRtpStreamStats::InboundRtpStreamStats(const GstStructure*
 
 RTCStatsReport::OutboundRtpStreamStats::OutboundRtpStreamStats(const GstStructure* structure, const GstStructure* additionalStats)
     : SentRtpStreamStats(Type::OutboundRtp, structure)
+    , remoteId(gstStructureGetString(structure, "remote-id"_s).toString())
 {
     firCount = gstStructureGet<unsigned>(structure, "fir-count"_s);
     pliCount = gstStructureGet<unsigned>(structure, "pli-count"_s);
     nackCount = gstStructureGet<unsigned>(structure, "nack-count"_s);
-
-    if (const char* gstRemoteId = gst_structure_get_string(structure, "remote-id"))
-        remoteId = String::fromLatin1(gstRemoteId);
 
     if (!additionalStats)
         return;
@@ -191,10 +177,8 @@ RTCStatsReport::PeerConnectionStats::PeerConnectionStats(const GstStructure* str
 
 RTCStatsReport::TransportStats::TransportStats(const GstStructure* structure)
     : Stats(Type::Transport, structure)
+    , selectedCandidatePairId(gstStructureGetString(structure, "selected-candidate-pair-id"_s).toString())
 {
-    if (const char* gstSelectedCandidatePairId = gst_structure_get_string(structure, "selected-candidate-pair-id"))
-        selectedCandidatePairId = String::fromLatin1(gstSelectedCandidatePairId);
-
     // FIXME: This field is required, GstWebRTC doesn't provide it, so hard-code a value here.
     dtlsState = RTCDtlsTransportState::Connected;
 
@@ -209,7 +193,7 @@ RTCStatsReport::TransportStats::TransportStats(const GstStructure* structure)
     // stats.srtpCipher =
 }
 
-static inline RTCIceCandidateType iceCandidateType(const String& type)
+static inline RTCIceCandidateType iceCandidateType(StringView type)
 {
     if (type == "host"_s)
         return RTCIceCandidateType::Host;
@@ -225,25 +209,23 @@ static inline RTCIceCandidateType iceCandidateType(const String& type)
 
 RTCStatsReport::IceCandidateStats::IceCandidateStats(GstWebRTCStatsType statsType, const GstStructure* structure)
     : Stats(statsType == GST_WEBRTC_STATS_REMOTE_CANDIDATE ? Type::RemoteCandidate : Type::LocalCandidate, structure)
+    , transportId(gstStructureGetString(structure, "transport-id"_s).toString())
+    , address(gstStructureGetString(structure, "address"_s).toString())
+    , protocol(gstStructureGetString(structure, "protocol"_s).toString())
+    , url(gstStructureGetString(structure, "url"_s).toString())
 {
-    transportId = String::fromLatin1(gst_structure_get_string(structure, "transport-id"));
-    address = String::fromLatin1(gst_structure_get_string(structure, "address"));
-    protocol = String::fromLatin1(gst_structure_get_string(structure, "protocol"));
-    url = String::fromLatin1(gst_structure_get_string(structure, "url"));
-
     port = gstStructureGet<unsigned>(structure, "port"_s);
     priority = gstStructureGet<unsigned>(structure, "priority"_s);
 
-    auto gstIceCandidateType = String::fromLatin1(gst_structure_get_string(structure, "candidate-type"));
-    candidateType = iceCandidateType(gstIceCandidateType);
+    if (auto value = gstStructureGetString(structure, "candidate-type"_s))
+        candidateType = iceCandidateType(value);
 }
 
 RTCStatsReport::IceCandidatePairStats::IceCandidatePairStats(const GstStructure* structure)
     : Stats(Type::CandidatePair, structure)
+    , localCandidateId(gstStructureGetString(structure, "local-candidate-id"_s).toString())
+    , remoteCandidateId(gstStructureGetString(structure, "remote-candidate-id"_s).toString())
 {
-    localCandidateId = String::fromLatin1(gst_structure_get_string(structure, "local-candidate-id"));
-    remoteCandidateId = String::fromLatin1(gst_structure_get_string(structure, "remote-candidate-id"));
-
     // FIXME
     // stats.transportId =
     state = RTCStatsReport::IceCandidatePairState::Succeeded;

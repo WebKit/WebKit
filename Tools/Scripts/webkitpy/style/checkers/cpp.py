@@ -4058,6 +4058,8 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
     if filename != 'Source/WebCore/platform/graphics/gstreamer/GStreamerCommon.cpp':
         if search(r'gst_structure_get_(int|uint|double|boolean)', line):
             error(line_number, 'readability/check', 4, 'Consider using gstStructureGet<T>() instead')
+        if search(r'gst_structure_get_string', line):
+            error(line_number, 'readability/check', 4, 'Consider using gstStructureGetString() instead')
 
 
 def check_identifier_name_in_declaration(filename, line_number, line, file_state, error):
