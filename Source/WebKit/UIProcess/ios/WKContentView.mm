@@ -813,13 +813,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 }
 
-#if HAVE(UI_FOCUS_ITEM_DEFERRAL_MODE)
-- (UIFocusItemDeferralMode)focusItemDeferralMode
-{
-    return (UIFocusItemDeferralMode)UIFocusItemDeferralModeNever;
-}
-#endif
-
 #pragma mark Internal
 
 - (void)_windowDidMoveToScreenNotification:(NSNotification *)notification
