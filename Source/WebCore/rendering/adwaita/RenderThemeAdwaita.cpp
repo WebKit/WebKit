@@ -263,35 +263,54 @@ Color RenderThemeAdwaita::systemColor(CSSValueID cssValueID, OptionSet<StyleColo
     switch (cssValueID) {
     case CSSValueActivebuttontext:
     case CSSValueButtontext:
-        return useDarkAppearance ? buttonTextColorDark : buttonTextColorLight;
+        if (useDarkAppearance)
+            return { buttonTextColorDark, Color::Flags::Semantic };
+        return { buttonTextColorLight, Color::Flags::Semantic };
 
     case CSSValueGraytext:
-        return useDarkAppearance ? buttonTextDisabledColorDark : buttonTextDisabledColorLight;
+        if (useDarkAppearance)
+            return { buttonTextDisabledColorDark, Color::Flags::Semantic };
+        return { buttonTextDisabledColorLight, Color::Flags::Semantic };
 
     case CSSValueCanvas:
-        return useDarkAppearance ? SRGBA<uint8_t> { 30, 30, 30 } : Color::white;
+        if (useDarkAppearance)
+            return { SRGBA<uint8_t> { 30, 30, 30 }, Color::Flags::Semantic };
+        return { Color::white, Color::Flags::Semantic };
 
     case CSSValueField:
 #if HAVE(OS_DARK_MODE_SUPPORT)
     case CSSValueWebkitControlBackground:
 #endif
-        return useDarkAppearance ? textFieldBackgroundColorDark : textFieldBackgroundColorLight;
+        if (useDarkAppearance)
+            return { textFieldBackgroundColorDark, Color::Flags::Semantic };
+        return { textFieldBackgroundColorLight, Color::Flags::Semantic };
 
     case CSSValueCanvastext:
     case CSSValueFieldtext:
     case CSSValueText:
-        return useDarkAppearance ? Color::white : Color::black;
+        if (useDarkAppearance)
+            return { Color::white, Color::Flags::Semantic };
+        return { Color::black, Color::Flags::Semantic };
 
     case CSSValueHighlight:
         // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
-        return SRGBA<uint8_t> { 52, 132, 228 };
+        return { SRGBA<uint8_t> { 52, 132, 228 }, Color::Flags::Semantic };
 
     case CSSValueHighlighttext:
-        return Color::white;
+        return { Color::white, Color::Flags::Semantic };
 
     default:
         return RenderTheme::systemColor(cssValueID, options);
     }
+}
+
+bool RenderThemeAdwaita::isControlStyled(const RenderStyle& style, const RenderStyle& userAgentStyle) const
+{
+    auto appearance = style.usedAppearance();
+    if (appearance == StyleAppearance::TextField || appearance == StyleAppearance::TextArea || appearance == StyleAppearance::SearchField || appearance == StyleAppearance::Listbox)
+        return style.border() != userAgentStyle.border();
+
+    return RenderTheme::isControlStyled(style, userAgentStyle);
 }
 
 bool RenderThemeAdwaita::paintTextField(const RenderObject& renderObject, const PaintInfo& paintInfo, const FloatRect& rect)
