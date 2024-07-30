@@ -18,6 +18,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/DOMParser-parseFromString.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/DOMWindowTimers-setTimeout-setInterval.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Document-execCommand.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/Document-write-exception-order.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Document-write.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Element-insertAdjacentHTML.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Element-insertAdjacentText.html
@@ -25,11 +26,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Element-setAttribute-respects-Elements-node-documents-globals-CSP.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Element-setAttribute.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Element-setAttributeNS.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/Element-toggleAttribute.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/GlobalEventHandlers-onclick.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/HTMLElement-generic.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/HTMLScriptElement-in-xhtml-document.tentative.https.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/HTMLScriptElement-internal-slot.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/Node-multiple-arguments-tt-enforced.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Node-multiple-arguments.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Range-createContextualFragment.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/SVGScriptElement-internal-slot.html
@@ -60,7 +63,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-eval.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-importScripts.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-Document-execCommand.html
-/LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-Node-multiple-arguments.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-string-assignment-to-DOMParser-parseFromString.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-string-assignment-to-DOMWindowTimers-setTimeout-setInterval.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-string-assignment-to-Document-parseHTMLUnsafe.html
@@ -75,6 +77,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-string-assignment-to-ShadowRoot-setHTMLUnsafe.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-string-assignment-to-attribute-via-attribute-node.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-text-node-insertion-into-script-element.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-text-node-insertion-into-svg-script-element.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/csp-block-eval.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/default-policy-callback-arguments.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/default-policy-report-only.html
@@ -86,6 +89,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/empty-default-policy.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/empty-default-policy.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/eval-csp-no-tt.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/eval-csp-tt-default-policy-mutate.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/eval-csp-tt-default-policy.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/eval-csp-tt-no-default-policy.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/eval-function-constructor.html

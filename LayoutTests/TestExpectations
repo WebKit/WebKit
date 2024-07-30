@@ -5976,6 +5976,7 @@ webkit.org/b/274089 imported/w3c/web-platform-tests/trusted-types/trusted-types-
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-navigation.html [ Pass Failure ]
 webkit.org/b/274088 imported/w3c/web-platform-tests/trusted-types/Element-setAttribute-respects-Elements-node-documents-globals-CSP.html [ Pass Failure ]
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-eval.html [ Pass Failure ]
+webkit.org/b/277256 imported/w3c/web-platform-tests/trusted-types/block-text-node-insertion-into-svg-script-element.html [ Skip ]
 
 # Close watchers aren't implemented yet
 webkit.org/b/263305 imported/w3c/web-platform-tests/close-watcher/user-activation/n-activate-preventDefault.html?dialog [ Skip ]
