@@ -37,6 +37,7 @@ namespace WebCore {
 
 class FontCreationContext;
 class UnrealizedCoreTextFont;
+enum class FontLookupOptions : uint8_t;
 
 struct SynthesisPair {
     explicit SynthesisPair(bool needsSyntheticBold, bool needsSyntheticOblique)
@@ -82,8 +83,8 @@ enum class FontTypeForPreparation : bool {
 enum class ApplyTraitsVariations : bool { No, Yes };
 RetainPtr<CTFontRef> preparePlatformFont(UnrealizedCoreTextFont&&, const FontDescription&, const FontCreationContext&, FontTypeForPreparation = FontTypeForPreparation::NonSystemFont, ApplyTraitsVariations = ApplyTraitsVariations::Yes);
 enum class ShouldComputePhysicalTraits : bool { No, Yes };
-SynthesisPair computeNecessarySynthesis(CTFontRef, const FontDescription&, ShouldComputePhysicalTraits = ShouldComputePhysicalTraits::No, bool isPlatformFont = false);
-RetainPtr<CTFontRef> platformFontWithFamily(const AtomString& family, FontSelectionRequest, TextRenderingMode, float size);
+SynthesisPair computeNecessarySynthesis(CTFontRef, const FontDescription&, OptionSet<FontLookupOptions> = { }, ShouldComputePhysicalTraits = ShouldComputePhysicalTraits::No, bool isPlatformFont = false);
+RetainPtr<CTFontRef> platformFontWithFamily(const AtomString& family, FontSelectionRequest, TextRenderingMode, float size, OptionSet<FontLookupOptions>);
 FontSelectionCapabilities capabilitiesForFontDescriptor(CTFontDescriptorRef);
 void addAttributesForInstalledFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts);
 RetainPtr<CTFontRef> createFontForInstalledFonts(CTFontDescriptorRef, CGFloat size, AllowUserInstalledFonts);
