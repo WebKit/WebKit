@@ -51,6 +51,9 @@ public:
     void mouseDown(JSContextRef, int button, JSValueRef modifierArray, JSStringRef pointerType);
     void mouseUp(JSContextRef, int button, JSValueRef modifierArray, JSStringRef pointerType);
     void mouseMoveTo(int x, int y, JSStringRef pointerType);
+    void asyncMouseDown(JSContextRef, int button, JSValueRef modifierArray, JSStringRef pointerType, JSValueRef completionHandler);
+    void asyncMouseUp(JSContextRef, int button, JSValueRef modifierArray, JSStringRef pointerType, JSValueRef completionHandler);
+    void asyncMouseMoveTo(JSContextRef, int x, int y, JSStringRef pointerType, JSValueRef completionHandler);
     void mouseForceClick();
     void startAndCancelMouseForceClick();
     void mouseForceDown();

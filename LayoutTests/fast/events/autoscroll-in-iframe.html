@@ -25,7 +25,7 @@
         var verticalScrollOffset;
         var iframe;
         
-        function doTest()
+        async function doTest()
         {
             document.scrollingElement.scrollTop = 800;
             if (document.scrollingElement.scrollTop != 800)
@@ -38,14 +38,14 @@
             var y = iframe.clientTop + textInIframe.offsetTop + 7;
             if (window.eventSender) {
                 eventSender.dragMode = false;
-                eventSender.mouseMoveTo(x, y);
-                eventSender.mouseDown();
-                eventSender.mouseUp();
+                await eventSender.asyncMouseMoveTo(x, y);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseUp();
             }
             setTimeout(autoscrollTestPart1, 0);
         }
 
-        function autoscrollTestPart1()
+        async function autoscrollTestPart1()
         {
             var mainDocumentTop = document.scrollingElement.scrollTop;
             if (mainDocumentTop != 800)
@@ -56,17 +56,17 @@
                 var x = iframe.clientLeft + textInIframe.offsetLeft + 7;
                 var y = iframe.clientTop + textInIframe.offsetTop + 7;
                 eventSender.dragMode = false;
-                eventSender.mouseMoveTo(x, y);
-                eventSender.mouseDown();
-                eventSender.mouseMoveTo(x + 10, y);
+                await eventSender.asyncMouseMoveTo(x, y);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseMoveTo(x + 10, y);
             }
             setTimeout(autoscrollTestPart2, 100);
         }
 
-        function autoscrollTestPart2()
+        async function autoscrollTestPart2()
         {
             if (window.eventSender)
-                eventSender.mouseUp();
+                await eventSender.asyncMouseUp();
 
             var mainDocumentTop = document.scrollingElement.scrollTop;
             if (mainDocumentTop == 800)

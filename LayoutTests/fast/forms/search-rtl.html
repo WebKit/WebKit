@@ -18,17 +18,21 @@
         Clicking the (x) button should clear the field.
     </p>
     <script>
-        if (window.eventSender) {
-            var target = $("target");
-            var pos = searchCancelButtonPositionRTL(target);
-            eventSender.mouseMoveTo(pos.x, pos.y);
-            eventSender.mouseDown();
-            eventSender.mouseUp();
-            var result = $("result");
-            if (target.value == "")
-                result.innerText = "PASS";
-            else
-                result.innerText = "FAIL";
+        onload = async () => {
+            if (window.eventSender && window.testRunner) {
+                testRunner.waitUntilDone();
+                var target = $("target");
+                var pos = searchCancelButtonPositionRTL(target);
+                await eventSender.asyncMouseMoveTo(pos.x, pos.y);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseUp();
+                var result = $("result");
+                if (target.value == "")
+                    result.innerText = "PASS";
+                else
+                    result.innerText = "FAIL";
+                testRunner.notifyDone();
+            }
         }
     </script>
 </body>

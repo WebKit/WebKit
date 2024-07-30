@@ -24,9 +24,11 @@
       text.textContent = '-HIT-';
     }
   
-    function testContent() {
-      if (window.testRunner)
+    async function testContent() {
+      if (window.testRunner) {
         testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+      }
 
       var yOffset = topEdge;
     
@@ -51,13 +53,15 @@
             
         if (window.eventSender) {
           // Cell click
-          eventSender.mouseMoveTo(15, yOffset + 10);
-          eventSender.mouseDown();
-          eventSender.mouseUp();
+          await eventSender.asyncMouseMoveTo(15, yOffset + 10);
+          await eventSender.asyncMouseDown();
+          await eventSender.asyncMouseUp();
         }
 
         yOffset += 40;
       }
+      if (window.testRunner)
+        testRunner.notifyDone();
     }
   </script>
   

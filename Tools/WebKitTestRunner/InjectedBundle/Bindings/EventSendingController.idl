@@ -31,6 +31,9 @@ interface EventSendingController {
     undefined mouseDown(long buttonNumber, object modifierArray, optional DOMString pointerType);
     undefined mouseUp(long buttonNumber, object modifierArray, optional DOMString pointerType);
     undefined mouseMoveTo(long x, long y, optional DOMString pointerType);
+    Promise<undefined> asyncMouseDown(long buttonNumber, object modifierArray, optional DOMString pointerType);
+    Promise<undefined> asyncMouseUp(long buttonNumber, object modifierArray, optional DOMString pointerType);
+    Promise<undefined> asyncMouseMoveTo(long x, long y, optional DOMString pointerType);
     undefined mouseForceClick();
     undefined startAndCancelMouseForceClick();
     undefined mouseForceDown();

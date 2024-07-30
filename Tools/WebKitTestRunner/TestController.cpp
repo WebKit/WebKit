@@ -1967,6 +1967,25 @@ void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messag
         WKMessageListenerSendReply(listener.get(), reply);
     };
 
+    if (WKStringIsEqualToUTF8CString(messageName, "EventSender")) {
+        auto dictionary = dictionaryValue(messageBody);
+        auto subMessageName = stringValue(dictionary, "SubMessage");
+
+        if (WKStringIsEqualToUTF8CString(subMessageName, "MouseDown"))
+            m_eventSenderProxy->mouseDown(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"), stringValue(dictionary, "PointerType"));
+        else if (WKStringIsEqualToUTF8CString(subMessageName, "MouseUp"))
+            m_eventSenderProxy->mouseUp(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"), stringValue(dictionary, "PointerType"));
+        else if (WKStringIsEqualToUTF8CString(subMessageName, "MouseMoveTo"))
+            m_eventSenderProxy->mouseMoveTo(doubleValue(dictionary, "X"), doubleValue(dictionary, "Y"), stringValue(dictionary, "PointerType"));
+        else {
+            ASSERT_NOT_REACHED();
+            return completionHandler(nullptr);
+        }
+
+        m_eventSenderProxy->waitForPendingMouseEvents();
+        return completionHandler(nullptr);
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "FlushConsoleLogs"))
         return completionHandler(nullptr);
 
