@@ -25,7 +25,7 @@
 webkit_platform_headers: "CoreIPCData.h"
 
 [WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCData {
-    std::span<const uint8_t> dataReference();
+    std::optional<std::span<const uint8_t>> dataReference();
 }
 
 #endif // USE(CF)
