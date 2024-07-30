@@ -7020,7 +7020,10 @@ void WebPage::firstRectForCharacterRangeAsync(const EditingRange& editingRange, 
         return completionHandler({ }, editingRange);
 
     auto rect = RefPtr(frame->view())->contentsToWindow(frame->editor().firstRectForRange(*range));
-    auto lineEndPosition = endOfLine(makeContainerOffsetPosition(range->start));
+    auto startPosition = makeContainerOffsetPosition(range->start);
+    auto lineEndPosition = endOfLine(startPosition);
+    if (lineEndPosition.isNull())
+        lineEndPosition = startPosition;
     auto lineEndBoundary = makeBoundaryPoint(lineEndPosition);
     if (!lineEndBoundary)
         return completionHandler({ }, editingRange);
