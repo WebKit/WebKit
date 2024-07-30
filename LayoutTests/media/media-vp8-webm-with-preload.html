@@ -1,0 +1,31 @@
+<html>
+<head>
+<title>webm file with vp8 preload=metadata</title>
+<script src="../resources/testharness.js"></script>
+<script src="video-test.js"></script>
+<script>
+    async function init()
+    {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        findMediaElement();
+        testExpected('video.readyState', video.HAVE_METADATA, '<=');
+        if (video.readyState != video.HAVE_METADATA)
+            await waitFor(video, 'loadedmetadata', true);
+        // wait a little bit, readyState shouldn't move from HAVE_METADATA
+        await sleepFor(500);
+        testExpected('video.readyState', video.HAVE_METADATA);
+        run('video.play()');
+        await waitFor(video, 'playing');
+        run('video.currentTime = video.duration - 0.02');
+        await Promise.all([ waitFor(video, 'seeked', true), waitFor(video, 'ended', true) ]);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="init();">
+    <video src="content/test-vp8.webm" preload="metadata" poster="content/test-vp8.webm.png" />
+</body>
+</html>

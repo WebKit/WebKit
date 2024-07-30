@@ -87,7 +87,10 @@ public:
 
     static void registerMediaEngine(MediaEngineRegistrar);
 private:
+    void setPreload(MediaPlayer::Preload) final;
+    void doPreload();
     void load(const String&) final;
+    bool createResourceClient();
 
 #if ENABLE(MEDIA_SOURCE)
     void load(const URL&, const ContentType&, MediaSourcePrivateClient&) final;
@@ -98,6 +101,7 @@ private:
     
     // WebMResourceClientParent
     friend class WebMResourceClient;
+    void dataLengthReceived(size_t) final;
     void dataReceived(const SharedBuffer&) final;
     void loadFailed(const ResourceError&) final;
     void loadFinished() final;
@@ -109,6 +113,7 @@ private:
     bool supportsPictureInPicture() const final { return true; }
     bool supportsFullscreen() const final { return true; }
 
+    void prepareToPlay() final;
     void play() final;
     void pause() final;
     bool paused() const final;
@@ -309,7 +314,10 @@ private:
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     void maybeFinishLoading();
+    void readyToProcessData();
 
+    URL m_assetURL;
+    MediaPlayer::Preload m_preload { MediaPlayer::Preload::Auto };
     ThreadSafeWeakPtr<MediaPlayer> m_player;
     RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;
     RetainPtr<id> m_durationObserver;
@@ -322,6 +330,7 @@ private:
     Vector<RefPtr<VideoTrackPrivateWebM>> m_videoTracks;
     Vector<RefPtr<AudioTrackPrivateWebM>> m_audioTracks;
     StdUnorderedMap<TrackID, UniqueRef<TrackBuffer>> m_trackBufferMap;
+    StdUnorderedMap<TrackID, bool> m_readyForMoreSamplesMap;
     PlatformTimeRanges m_buffered;
 
     RefPtr<VideoMediaSampleRenderer> m_videoRenderer;
@@ -363,6 +372,8 @@ private:
     bool hasSelectedVideo() const;
     std::optional<TrackID> m_enabledVideoTrackID;
     std::atomic<uint32_t> m_abortCalled { 0 };
+    size_t m_contentLength { 0 };
+    size_t m_contentReceived { 0 };
     uint32_t m_pendingAppends { 0 };
 #if PLATFORM(IOS_FAMILY)
     bool m_displayLayerWasInterrupted { false };
@@ -373,7 +384,6 @@ private:
     bool m_visible { false };
     mutable bool m_loadingProgressed { false };
     bool m_loadFinished { false };
-    bool m_delayedIdle { false };
     bool m_errored { false };
     bool m_processingInitializationSegment { false };
     Ref<WebAVSampleBufferListener> m_listener;
