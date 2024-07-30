@@ -128,7 +128,7 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
 void CredentialsContainer::preventSilentAccess(DOMPromiseDeferred<void>&& promise) const
 {
     if (document() && !document()->isFullyActive()) {
-        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not fully active."_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "The document is not fully active."_s });
         return;
     }
     promise.resolve();
@@ -144,12 +144,12 @@ bool CredentialsContainer::performCommonChecks(const Options& options, Credentia
     }
 
     if (!document->isFullyActive()) {
-        promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not fully active."_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "The document is not fully active."_s });
         return false;
     }
 
     if (!document->page()) {
-        promise.reject(Exception { ExceptionCode::NotSupportedError, "No browsing context"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "No browsing context"_s });
         return false;
     }
 
