@@ -372,6 +372,9 @@ fast/css/accent-color/radio.html [ Pass ]
 fast/css/accent-color/range.html [ Pass ]
 fast/css/accent-color/text.html [ Pass ]
 
+# Test crashes due to assertion
+webkit.org/b/277336 [ Debug ] compositing/fixed-with-fixed-layout.html [ Crash ]
+
 # Support for VP9 encoded videos with transparency is only available on ports that use GStreamer.
 # Currently failing due to a different issue below.
 # media/video-with-alpha.html [ Pass ]
@@ -2207,6 +2210,8 @@ webkit.org/b/235885 webrtc/datachannel/datachannel-stats.html [ Skip ]
 webkit.org/b/235885 webrtc/datachannel/getStats-no-prflx-remote-candidate.html [ Skip ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-statsSelector.html [ Skip ]
 webkit.org/b/187064 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html [ Skip ]
+
+webkit.org/b/269873 imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel-service-worker.https.html [ Pass Failure Crash ]
 
 # FIXME: Remove Timeout expectation once bug #275685 is fixed.
 webkit.org/b/269285 webrtc/h265.html [ Failure Timeout ]

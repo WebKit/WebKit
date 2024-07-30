@@ -404,7 +404,6 @@ webkit.org/b/169918 compositing/tiling/rotated-tiled-clamped.html [ Missing Fail
 webkit.org/b/169918 compositing/tiling/rotated-tiled-preserve3d-clamped.html [ Missing Failure ]
 webkit.org/b/169918 compositing/visibility/visibility-composited-transforms.html [ Missing Failure ]
 webkit.org/b/169918 compositing/visibility/visibility-composited.html [ Missing Failure ]
-webkit.org/b/169918 compositing/fixed-with-fixed-layout.html [ Crash ]
 
 webkit.org/b/224105 compositing/video/video-clip-change-src.html [ ImageOnlyFailure Pass ]
 
