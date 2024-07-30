@@ -3778,9 +3778,7 @@ imported/w3c/web-platform-tests/preload/preload-type-match.html [ DumpJSConsoleL
 # Tests crashing in Debug only.
 [ Debug ] editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
 [ Debug ] fast/backgrounds/gradient-background-leakage-hidpi.html [ Crash ]
-[ Debug ] fast/canvas/2d.backingStorePixelRatio.html [ Crash ]
 [ Debug ] fast/canvas/canvas-as-image-hidpi.html [ Crash ]
-[ Debug ] fast/canvas/canvas-resize-reset-pixelRatio.html [ Crash ]
 [ Debug ] fast/css-custom-paint/simple-hidpi.html [ Crash ]
 [ Debug ] fast/dom/HTMLImageElement/sizes/image-sizes-2x.html [ Crash ]
 [ Debug ] fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [ Crash ]

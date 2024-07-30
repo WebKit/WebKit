@@ -58,9 +58,6 @@ enum RenderingMode {
     undefined setFillColor(unrestricted float grayLevel, optional unrestricted float alpha = 1);
     undefined setFillColor(unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
 
-    // Non-standard functionality (CanvasImageData).
-    readonly attribute float webkitBackingStorePixelRatio; // Always returns 1.
-
     // Non-standard legacy alias (CanvasImageSmoothing).
     [ImplementedAs=imageSmoothingEnabled] attribute boolean webkitImageSmoothingEnabled;
 

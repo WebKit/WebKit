@@ -1,3 +1,0 @@
-context1.webkitBackingStorePixelRatio is 1
-context2.webkitBackingStorePixelRatio is 1
-
