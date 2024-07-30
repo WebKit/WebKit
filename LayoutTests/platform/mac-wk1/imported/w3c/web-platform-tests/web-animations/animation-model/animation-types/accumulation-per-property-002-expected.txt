@@ -27,6 +27,9 @@ PASS line-height: "10px" onto "normal"
 PASS line-height: "normal" onto "10px"
 PASS line-height: "10" onto "normal"
 PASS line-height: "normal" onto "10"
+PASS list-style (type: discrete) has testAccumulation function
+PASS list-style: "outside url("http://localhost/test-2") square" onto "inside url("http://localhost/test-1") circle"
+PASS list-style: "inside url("http://localhost/test-1") circle" onto "outside url("http://localhost/test-2") square"
 PASS list-style-image (type: discrete) has testAccumulation function
 PASS list-style-image: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")"
 PASS list-style-image: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")"
@@ -105,6 +108,9 @@ PASS outline-style: "none" onto "dotted"
 PASS outline-width (type: length) has testAccumulation function
 PASS outline-width: length
 PASS outline-width: length of rem
+PASS overflow (type: discrete) has testAccumulation function
+PASS overflow: "hidden" onto "visible"
+PASS overflow: "visible" onto "hidden"
 PASS overflow-wrap (type: discrete) has testAccumulation function
 PASS overflow-wrap: "break-word" onto "normal"
 PASS overflow-wrap: "normal" onto "break-word"
@@ -133,6 +139,15 @@ PASS perspective-origin (type: position) has testAccumulation function
 PASS perspective-origin: length pair
 PASS perspective-origin: length pair of rem
 PASS perspective-origin: position of percentage
+PASS place-content (type: discrete) has testAccumulation function
+PASS place-content: "end" onto "start"
+PASS place-content: "start" onto "end"
+PASS place-items (type: discrete) has testAccumulation function
+PASS place-items: "end" onto "start"
+PASS place-items: "start" onto "end"
+PASS place-self (type: discrete) has testAccumulation function
+PASS place-self: "end" onto "start"
+PASS place-self: "start" onto "end"
 PASS pointer-events (type: discrete) has testAccumulation function
 PASS pointer-events: "none" onto "fill"
 PASS pointer-events: "fill" onto "none"
@@ -222,6 +237,9 @@ PASS text-box-edge: "leading" onto "text"
 PASS text-box-trim (type: discrete) has testAccumulation function
 PASS text-box-trim: "start" onto "none"
 PASS text-box-trim: "none" onto "start"
+PASS text-decoration (type: discrete) has testAccumulation function
+PASS text-decoration: "overline" onto "underline"
+PASS text-decoration: "underline" onto "overline"
 PASS text-decoration-color (type: color) has testAccumulation function
 PASS text-decoration-color supports animating as color of rgb() with overflowed  from and to values
 PASS text-decoration-color supports animating as color of #RGB
@@ -232,6 +250,12 @@ PASS text-decoration-color supports animating as color of hsla()
 PASS text-decoration-line (type: discrete) has testAccumulation function
 PASS text-decoration-line: "overline" onto "underline"
 PASS text-decoration-line: "underline" onto "overline"
+PASS text-decoration-skip (type: discrete) has testAccumulation function
+PASS text-decoration-skip: "none" onto "auto"
+PASS text-decoration-skip: "auto" onto "none"
+PASS text-decoration-skip-ink (type: discrete) has testAccumulation function
+PASS text-decoration-skip-ink: "none" onto "auto"
+PASS text-decoration-skip-ink: "auto" onto "none"
 PASS text-decoration-style (type: discrete) has testAccumulation function
 PASS text-decoration-style: "dotted" onto "solid"
 PASS text-decoration-style: "solid" onto "dotted"
