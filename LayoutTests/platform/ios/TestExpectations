@@ -7413,9 +7413,5 @@ webkit.org/b/277195 imported/w3c/web-platform-tests/html/semantics/interactive-e
 imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-dialog-behavior.tentative.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-popover-behavior.tentative.html [ Failure ]
 
-# webkit.org/b/277198 (REGRESSION (iOS 18): chunked-progress-event-expectedLength.html is constantly failing.)
-# FIXME: Uncomment explicit pass expectation above when this is resolved (search for bug link)
-http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html [ Failure ]
-
 # webkit.org/b/277308 (webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html needs to be marked as slow.)
 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Slow ]

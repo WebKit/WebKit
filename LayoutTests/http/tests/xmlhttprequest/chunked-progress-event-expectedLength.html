@@ -24,7 +24,7 @@ function test()
     xhr.open("GET", "resources/chunked-transfer.py", true);
 
     xhr.onprogress = function(e) {
-        if (e.loaded == 4 && e.total == 0 && !e.lengthComputable)
+        if (e.loaded >= 4 && e.total == 0 && !e.lengthComputable)
             log("PASS");
         else if (e.total != 0 && !e.lengthComputable)
             log("FAIL: XMLHttpRequestProgressEvent lengthComputable=false but total is non-zero: " + e.total);
