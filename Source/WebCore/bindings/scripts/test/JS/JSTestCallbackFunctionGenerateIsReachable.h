@@ -41,7 +41,7 @@ public:
     JSCallbackData* callbackData() { return m_data; }
 
     // Functions
-    CallbackResult<typename IDLDOMString::ImplementationType> handleEvent(typename IDLLong::ParameterType argument) override;
+    CallbackResult<typename IDLDOMString::CallbackReturnType> handleEvent(typename IDLLong::ParameterType argument) override;
 
 private:
     JSTestCallbackFunctionGenerateIsReachable(JSC::JSObject*, JSDOMGlobalObject*);

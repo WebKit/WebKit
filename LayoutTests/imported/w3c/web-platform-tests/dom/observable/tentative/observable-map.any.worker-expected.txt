@@ -1,22 +1,8 @@
 
-FAIL map(): Maps values correctly source.map is not a function. (In 'source.map((value, i) => {
-    indices.push(i);
-    return value * 2;
-  })', 'source.map' is undefined)
-FAIL map(): Mapper errors are emitted to Observer error() handler source.map is not a function. (In 'source.map((value) => {
-    if (value === 2) {
-      throw error;
-    }
-    return value * 2;
-  })', 'source.map' is undefined)
-FAIL map(): Passes complete() through from source Observable source.map is not a function. (In 'source.map(v => {
-    mapperCalls++;
-    return v * 2;
-  })', 'source.map' is undefined)
-FAIL map(): Passes error() through from source Observable source.map is not a function. (In 'source.map(v => {
-    mapperCalls++;
-    return v * 2;
-  })', 'source.map' is undefined)
-FAIL map(): Upon source completion, source Observable teardown sequence happens before downstream mapper complete() is called source.map is not a function. (In 'source.map(() => results.push('mapper called'))', 'source.map' is undefined)
-FAIL map(): Map observable unsubscription causes source Observable unsubscription. Mapper Observer's complete()/error() are not called source.map is not a function. (In 'source.map(v => v * 2)', 'source.map' is undefined)
+PASS map(): Maps values correctly
+PASS map(): Mapper errors are emitted to Observer error() handler
+PASS map(): Passes complete() through from source Observable
+PASS map(): Passes error() through from source Observable
+PASS map(): Upon source completion, source Observable teardown sequence happens before downstream mapper complete() is called
+PASS map(): Map observable unsubscription causes source Observable unsubscription. Mapper Observer's complete()/error() are not called
 

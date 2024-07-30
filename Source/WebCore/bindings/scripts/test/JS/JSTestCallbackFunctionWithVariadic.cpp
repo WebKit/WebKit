@@ -50,7 +50,7 @@ JSTestCallbackFunctionWithVariadic::~JSTestCallbackFunctionWithVariadic()
 #endif
 }
 
-CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunctionWithVariadic::handleEvent(VariadicArguments<IDLAny>&& arguments)
+CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunctionWithVariadic::handleEvent(VariadicArguments<IDLAny>&& arguments)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;

@@ -57,7 +57,7 @@ JSTestCallbackWithFunctionOrDict::~JSTestCallbackWithFunctionOrDict()
 #endif
 }
 
-CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackWithFunctionOrDict::handleEvent(typename IDLUnion<IDLDictionary<TestDictionary>, IDLCallbackFunction<JSTestCallbackFunction>>::ParameterType callback)
+CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackWithFunctionOrDict::handleEvent(typename IDLUnion<IDLDictionary<TestDictionary>, IDLCallbackFunction<JSTestCallbackFunction>>::ParameterType callback)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;

@@ -1755,6 +1755,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSManagedMediaSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSManagedMediaSource.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSManagedSourceBuffer.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSManagedSourceBuffer.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMapperCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMapperCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLElementWrapperFactory.cpp

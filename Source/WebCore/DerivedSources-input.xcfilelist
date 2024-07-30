@@ -1416,6 +1416,7 @@ $(PROJECT_DIR)/dom/IdleRequestOptions.idl
 $(PROJECT_DIR)/dom/InnerHTML.idl
 $(PROJECT_DIR)/dom/InputEvent.idl
 $(PROJECT_DIR)/dom/KeyboardEvent.idl
+$(PROJECT_DIR)/dom/MapperCallback.idl
 $(PROJECT_DIR)/dom/MessageChannel.idl
 $(PROJECT_DIR)/dom/MessageEvent.idl
 $(PROJECT_DIR)/dom/MessagePort.idl

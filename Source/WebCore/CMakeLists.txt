@@ -1105,6 +1105,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/InnerHTML.idl
     dom/InputEvent.idl
     dom/KeyboardEvent.idl
+    dom/MapperCallback.idl
     dom/MessageChannel.idl
     dom/MessageEvent.idl
     dom/MessagePort.idl

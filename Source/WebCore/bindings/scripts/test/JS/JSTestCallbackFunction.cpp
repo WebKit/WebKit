@@ -51,7 +51,7 @@ JSTestCallbackFunction::~JSTestCallbackFunction()
 #endif
 }
 
-CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunction::handleEvent(typename IDLLong::ParameterType argument)
+CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunction::handleEvent(typename IDLLong::ParameterType argument)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;

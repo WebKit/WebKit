@@ -40,7 +40,7 @@ public:
     JSCallbackData* callbackData() { return m_data; }
 
     // Functions
-    CallbackResult<typename IDLUndefined::ImplementationType> handleEvent(typename IDLUnion<IDLDictionary<TestDictionary>, IDLCallbackFunction<JSTestCallbackFunction>>::ParameterType callback) override;
+    CallbackResult<typename IDLUndefined::CallbackReturnType> handleEvent(typename IDLUnion<IDLDictionary<TestDictionary>, IDLCallbackFunction<JSTestCallbackFunction>>::ParameterType callback) override;
 
 private:
     JSTestCallbackWithFunctionOrDict(JSC::JSObject*, JSDOMGlobalObject*);

@@ -1112,6 +1112,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/InnerHTML.idl \
     $(WebCore)/dom/InputEvent.idl \
     $(WebCore)/dom/KeyboardEvent.idl \
+    $(WebCore)/dom/MapperCallback.idl \
     $(WebCore)/dom/MessageChannel.idl \
     $(WebCore)/dom/MessageEvent.idl \
     $(WebCore)/dom/MessagePort.idl \

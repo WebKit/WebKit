@@ -1180,6 +1180,7 @@ dom/InputEvent.cpp
 dom/InternalObserver.cpp
 dom/InternalObserverFromScript.cpp
 dom/InternalObserverFilter.cpp
+dom/InternalObserverMap.cpp
 dom/InternalObserverTake.cpp
 dom/KeyboardEvent.cpp
 dom/LiveNodeList.cpp
@@ -3939,6 +3940,7 @@ JSLandmarkType.cpp
 JSLatencyMode.cpp
 JSLocation.cpp
 JSLongRange.cpp
+JSMapperCallback.cpp
 JSMathMLElement.cpp
 JSMathMLMathElement.cpp
 JSManagedMediaSource.cpp
