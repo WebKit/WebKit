@@ -552,7 +552,7 @@ void WebCoreLogObserver::removeWatch(const Logger& logger)
 void deinitializeGStreamer()
 {
 #if USE(GSTREAMER_GL)
-    auto& sharedDisplay = PlatformDisplay::sharedDisplayForCompositing();
+    auto& sharedDisplay = PlatformDisplay::sharedDisplay();
     sharedDisplay.clearGStreamerGLState();
 #endif
 #if ENABLE(MEDIA_STREAM)

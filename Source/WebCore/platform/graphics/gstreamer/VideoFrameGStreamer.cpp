@@ -113,11 +113,11 @@ RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
 
     GRefPtr<GstBuffer> buffer;
     if (platformImage->isTextureBacked()) {
-        if (!PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent())
+        if (!PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent())
             return nullptr;
 
         auto data = SkData::MakeUninitialized(size);
-        GrDirectContext* grContext = PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
+        GrDirectContext* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
         if (!platformImage->readPixels(grContext, imageInfo, static_cast<uint8_t*>(data->writable_data()), strides[0], 0, 0))
             return nullptr;
 

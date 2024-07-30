@@ -54,7 +54,7 @@ struct TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::EGLImageData {
     ~EGLImageData()
     {
         if (numImages) {
-            auto& platformDisplay = PlatformDisplay::sharedDisplayForCompositing();
+            auto& platformDisplay = PlatformDisplay::sharedDisplay();
             glDeleteTextures(numImages, texture.data());
 
             for (unsigned i = 0; i < numImages; ++i) {
@@ -303,7 +303,7 @@ std::unique_ptr<TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::EGLImageData
 {
     using EGLImageData = TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::EGLImageData;
 
-    auto& platformDisplay = PlatformDisplay::sharedDisplayForCompositing();
+    auto& platformDisplay = PlatformDisplay::sharedDisplay();
 
     EGLImageKHR image[DMABufFormat::c_maxPlanes];
     for (unsigned i = 0; i < object.format.numPlanes; ++i) {

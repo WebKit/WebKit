@@ -100,10 +100,10 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
 
     if (platformImage->isTextureBacked()) {
         auto data = SkData::MakeUninitialized(imageInfo.computeMinByteSize());
-        if (!PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent())
+        if (!PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent())
             return false;
 
-        GrDirectContext* grContext = PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
+        GrDirectContext* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
         if (!platformImage->readPixels(grContext, imageInfo, static_cast<uint8_t*>(data->writable_data()), bytesPerRow, 0, 0))
             return false;
 

@@ -65,11 +65,11 @@ std::unique_ptr<ImageBufferSkiaAcceleratedBackend> ImageBufferSkiaAcceleratedBac
     if (parameters.purpose != RenderingPurpose::Canvas && !ProcessCapabilities::canUseAcceleratedBuffers())
         return nullptr;
 
-    auto* glContext = PlatformDisplay::sharedDisplayForCompositing().skiaGLContext();
+    auto* glContext = PlatformDisplay::sharedDisplay().skiaGLContext();
     if (!glContext || !glContext->makeContextCurrent())
         return nullptr;
 
-    auto* grContext = PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
+    auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
     RELEASE_ASSERT(grContext);
     auto imageInfo = SkImageInfo::MakeN32Premul(backendSize.width(), backendSize.height(), parameters.colorSpace.platformColorSpace());
     SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };
@@ -96,7 +96,7 @@ ImageBufferSkiaAcceleratedBackend::~ImageBufferSkiaAcceleratedBackend()
 {
 #if USE(NICOSIA)
     if (m_texture.back || m_texture.front) {
-        GLContext::ScopedGLContextCurrent scopedContext(*PlatformDisplay::sharedDisplayForCompositing().sharingGLContext());
+        GLContext::ScopedGLContextCurrent scopedContext(*PlatformDisplay::sharedDisplay().sharingGLContext());
         m_texture.back = nullptr;
         m_texture.front = nullptr;
     }
@@ -119,7 +119,7 @@ RefPtr<NativeImage> ImageBufferSkiaAcceleratedBackend::createNativeImageReferenc
 
 void ImageBufferSkiaAcceleratedBackend::getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination)
 {
-    if (!PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent())
+    if (!PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent())
         return;
 
     auto info = m_surface->imageInfo();
@@ -132,7 +132,7 @@ void ImageBufferSkiaAcceleratedBackend::getPixelBuffer(const IntRect& srcRect, P
 
 void ImageBufferSkiaAcceleratedBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    if (!PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent())
+    if (!PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent())
         return;
 
     auto info = m_surface->imageInfo();
@@ -151,7 +151,7 @@ RefPtr<GraphicsLayerContentsDisplayDelegate> ImageBufferSkiaAcceleratedBackend::
 
 void ImageBufferSkiaAcceleratedBackend::swapBuffersIfNeeded()
 {
-    auto& display = PlatformDisplay::sharedDisplayForCompositing();
+    auto& display = PlatformDisplay::sharedDisplay();
     if (!display.skiaGLContext()->makeContextCurrent())
         return;
 

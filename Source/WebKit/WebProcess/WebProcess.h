@@ -71,10 +71,6 @@ OBJC_CLASS NSMutableDictionary;
 
 #endif
 
-#if PLATFORM(GTK)
-#include <WebCore/PlatformDisplay.h>
-#endif
-
 #if PLATFORM(GTK) || PLATFORM(WPE)
 #include "DMABufRendererBufferMode.h"
 #endif
@@ -774,10 +770,6 @@ private:
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     OptionSet<DMABufRendererBufferMode> m_dmaBufRendererBufferMode;
-#endif
-
-#if PLATFORM(GTK)
-    std::unique_ptr<WebCore::PlatformDisplay> m_displayForCompositing;
 #endif
 
     bool m_hasSuspendedPageProxy { false };

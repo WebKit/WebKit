@@ -99,7 +99,7 @@ bool GraphicsContextSkia::makeGLContextCurrentIfNeeded() const
     if (m_renderingMode == RenderingMode::Unaccelerated || m_renderingPurpose != RenderingPurpose::Canvas)
         return true;
 
-    return PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent();
+    return PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent();
 }
 
 void GraphicsContextSkia::save(GraphicsContextState::Purpose purpose)

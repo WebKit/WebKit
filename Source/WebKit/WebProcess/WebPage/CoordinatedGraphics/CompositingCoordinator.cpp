@@ -90,7 +90,7 @@ CompositingCoordinator::CompositingCoordinator(WebPage& page, CompositingCoordin
 #endif
 {
 #if USE(SKIA)
-    if (ProcessCapabilities::canUseAcceleratedBuffers() && PlatformDisplay::sharedDisplayForCompositing().skiaGLContext())
+    if (ProcessCapabilities::canUseAcceleratedBuffers() && PlatformDisplay::sharedDisplay().skiaGLContext())
         m_skiaAcceleratedBufferPool = makeUnique<SkiaAcceleratedBufferPool>();
     else if (auto numberOfThreads = skiaNumberOfCpuPaintingThreads(); numberOfThreads > 0)
         m_skiaUnacceleratedThreadedRenderingPool = WorkerPool::create("SkiaPaintingThread"_s, numberOfThreads);

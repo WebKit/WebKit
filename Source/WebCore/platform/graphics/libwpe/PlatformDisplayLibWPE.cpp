@@ -58,16 +58,14 @@ std::unique_ptr<PlatformDisplayLibWPE> PlatformDisplayLibWPE::create()
     return std::unique_ptr<PlatformDisplayLibWPE>(new PlatformDisplayLibWPE());
 }
 
-PlatformDisplayLibWPE::~PlatformDisplayLibWPE()
+std::unique_ptr<PlatformDisplayLibWPE> PlatformDisplayLibWPE::create(int hostFd)
 {
-    if (m_backend)
-        wpe_renderer_backend_egl_destroy(m_backend);
+    return std::unique_ptr<PlatformDisplayLibWPE>(new PlatformDisplayLibWPE(hostFd));
 }
 
-bool PlatformDisplayLibWPE::initialize(int hostFd)
+PlatformDisplayLibWPE::PlatformDisplayLibWPE(int hostFd)
+    : m_backend(wpe_renderer_backend_egl_create(hostFd))
 {
-    m_backend = wpe_renderer_backend_egl_create(hostFd);
-
     EGLNativeDisplayType eglNativeDisplay = wpe_renderer_backend_egl_get_native_display(m_backend);
 
 #if WPE_CHECK_VERSION(1, 1, 0)
@@ -97,7 +95,7 @@ bool PlatformDisplayLibWPE::initialize(int hostFd)
         m_eglDisplay = eglGetDisplay(eglNativeDisplay);
     if (m_eglDisplay == EGL_NO_DISPLAY) {
         WTFLogAlways("PlatformDisplayLibWPE: could not create the EGL display: %s.", GLContext::lastErrorString());
-        return false;
+        return;
     }
 
     PlatformDisplay::initializeEGLDisplay();
@@ -108,7 +106,12 @@ bool PlatformDisplayLibWPE::initialize(int hostFd)
         m_angleNativeDisplay = eglNativeDisplay;
     }
 #endif
-    return m_eglDisplay != EGL_NO_DISPLAY;
+}
+
+PlatformDisplayLibWPE::~PlatformDisplayLibWPE()
+{
+    if (m_backend)
+        wpe_renderer_backend_egl_destroy(m_backend);
 }
 
 void PlatformDisplayLibWPE::initializeEGLDisplay()

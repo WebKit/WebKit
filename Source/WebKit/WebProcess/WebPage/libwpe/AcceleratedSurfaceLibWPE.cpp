@@ -68,7 +68,7 @@ void AcceleratedSurfaceLibWPE::initialize()
         nullptr
     };
     wpe_renderer_backend_egl_target_set_client(m_backend, &s_client, this);
-    wpe_renderer_backend_egl_target_initialize(m_backend, downcast<PlatformDisplayLibWPE>(PlatformDisplay::sharedDisplayForCompositing()).backend(),
+    wpe_renderer_backend_egl_target_initialize(m_backend, downcast<PlatformDisplayLibWPE>(PlatformDisplay::sharedDisplay()).backend(),
         std::max(1, m_size.width()), std::max(1, m_size.height()));
 }
 

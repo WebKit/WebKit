@@ -66,10 +66,10 @@ private:
 
 static sk_sp<SkData> encodeAcceleratedImage(SkImage* image, const String& mimeType, std::optional<double> quality)
 {
-    if (!PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent())
+    if (!PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent())
         return nullptr;
 
-    GrDirectContext* grContext = PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
+    GrDirectContext* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
 
     if (MIMETypeRegistry::isJPEGMIMEType(mimeType)) {
         SkJpegEncoder::Options options;

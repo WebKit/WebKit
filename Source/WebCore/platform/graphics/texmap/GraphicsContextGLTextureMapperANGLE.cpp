@@ -129,7 +129,7 @@ RefPtr<PixelBuffer> GraphicsContextGLTextureMapperANGLE::readCompositedResults()
 RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes, SerialFunctionDispatcher*)
 {
 #if USE(ANGLE_GBM)
-    auto& eglExtensions = PlatformDisplay::sharedDisplayForCompositing().eglExtensions();
+    auto& eglExtensions = PlatformDisplay::sharedDisplay().eglExtensions();
     if (eglExtensions.KHR_image_base && eglExtensions.EXT_image_dma_buf_import)
         return GraphicsContextGLGBMTextureMapper::create(GraphicsContextGLAttributes { attributes });
 #endif
@@ -186,7 +186,7 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
 {
     m_isForWebGL2 = contextAttributes().isWebGL2;
 
-    auto& sharedDisplay = PlatformDisplay::sharedDisplayForCompositing();
+    auto& sharedDisplay = PlatformDisplay::sharedDisplay();
     m_displayObj = sharedDisplay.angleEGLDisplay();
     if (m_displayObj == EGL_NO_DISPLAY)
         return false;

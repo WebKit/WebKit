@@ -124,7 +124,7 @@ void NicosiaPlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer&
         unsigned textureID = 0;
         auto image = nativeImage->platformImage();
         if (image->isTextureBacked()) {
-            auto& display = PlatformDisplay::sharedDisplayForCompositing();
+            auto& display = PlatformDisplay::sharedDisplay();
             if (!display.skiaGLContext()->makeContextCurrent())
                 return;
 

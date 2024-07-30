@@ -40,10 +40,8 @@ namespace WebKit {
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
 #if USE(WPE_RENDERER)
-    if (!parameters.isServiceWorkerProcess) {
-        RELEASE_ASSERT(is<WebCore::PlatformDisplayLibWPE>(WebCore::PlatformDisplay::sharedDisplay()));
-        downcast<WebCore::PlatformDisplayLibWPE>(WebCore::PlatformDisplay::sharedDisplay()).initialize(parameters.hostClientFileDescriptor.release());
-    }
+    if (!parameters.isServiceWorkerProcess)
+        WebCore::Platform::setSharedDisplay(WebCore::PlatformDisplayLibWPE::create(parameters.hostClientFileDescriptor.release()));
 #endif
     applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
 }

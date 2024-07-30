@@ -208,7 +208,7 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
 
     attributes.append(EGL_NONE);
 
-    auto& display = WebCore::PlatformDisplay::sharedDisplayForCompositing();
+    auto& display = WebCore::PlatformDisplay::sharedDisplay();
     auto image = display.createEGLImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes);
     gbm_bo_destroy(bo);
 
@@ -235,7 +235,7 @@ AcceleratedSurfaceDMABuf::RenderTargetEGLImage::~RenderTargetEGLImage()
     if (!m_image)
         return;
 
-    WebCore::PlatformDisplay::sharedDisplayForCompositing().destroyEGLImage(m_image);
+    WebCore::PlatformDisplay::sharedDisplay().destroyEGLImage(m_image);
 }
 #endif
 
@@ -282,7 +282,7 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.width(), size.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
-    auto& display = WebCore::PlatformDisplay::sharedDisplayForCompositing();
+    auto& display = WebCore::PlatformDisplay::sharedDisplay();
     auto image = display.createEGLImage(eglGetCurrentContext(), EGL_GL_TEXTURE_2D, (EGLClientBuffer)(uint64_t)texture, { });
     if (!image) {
         glDeleteTextures(1, &texture);
@@ -346,7 +346,7 @@ void AcceleratedSurfaceDMABuf::RenderTargetTexture::willRenderFrame() const
 AcceleratedSurfaceDMABuf::SwapChain::SwapChain(uint64_t surfaceID)
     : m_surfaceID(surfaceID)
 {
-    auto& display = WebCore::PlatformDisplay::sharedDisplayForCompositing();
+    auto& display = WebCore::PlatformDisplay::sharedDisplay();
     switch (display.type()) {
     case WebCore::PlatformDisplay::Type::Surfaceless:
         if (display.eglExtensions().MESA_image_dma_buf_export && WebProcess::singleton().dmaBufRendererBufferMode().contains(DMABufRendererBufferMode::Hardware))
@@ -384,7 +384,7 @@ void AcceleratedSurfaceDMABuf::SwapChain::setupBufferFormat(const Vector<DMABufR
     // The preferred formats vector is sorted by usage, but all formats for the same usage has the same priority.
     Locker locker { m_dmabufFormatLock };
     BufferFormat dmabufFormat;
-    const auto& supportedFormats = WebCore::PlatformDisplay::sharedDisplayForCompositing().dmabufFormats();
+    const auto& supportedFormats = WebCore::PlatformDisplay::sharedDisplay().dmabufFormats();
     for (const auto& bufferFormat : preferredFormats) {
         for (const auto& format : supportedFormats) {
             auto index = bufferFormat.formats.findIf([&](const auto& item) {
