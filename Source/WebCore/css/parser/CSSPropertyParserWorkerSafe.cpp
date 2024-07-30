@@ -92,7 +92,9 @@ std::optional<FilterOperations> CSSPropertyParserWorkerSafe::parseFilterString(c
     if (!parsedValue)
         return std::nullopt;
 
-    return Style::createFilterOperations(document, style, CSSToLengthConversionData(), *parsedValue);
+    CSSToLengthConversionData conversionData { style, nullptr, nullptr, nullptr };
+
+    return Style::createFilterOperations(document, style, conversionData, *parsedValue);
 }
 
 static CSSParserMode parserMode(ScriptExecutionContext& context)
