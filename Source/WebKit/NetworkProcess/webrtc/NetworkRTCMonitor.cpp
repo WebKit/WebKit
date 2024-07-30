@@ -155,10 +155,10 @@ static std::optional<std::pair<RTCNetwork::InterfaceAddress, RTCNetwork::IPAddre
     return std::make_pair(RTCNetwork::InterfaceAddress { address, rtc::IPV6_ADDRESS_FLAG_NONE }, mask);
 }
 
-static rtc::AdapterType interfaceAdapterType(const String& name)
+static rtc::AdapterType interfaceAdapterType(const char* interfaceName)
 {
 #if PLATFORM(COCOA)
-    auto interface = adoptCF(nw_interface_create_with_name(name.utf8().data()));
+    auto interface = adoptCF(nw_interface_create_with_name(interfaceName));
     if (!interface)
         return rtc::ADAPTER_TYPE_UNKNOWN;
 
@@ -209,14 +209,12 @@ static HashMap<String, RTCNetwork> gatherNetworkMap()
 
         auto prefixLength = rtc::CountIPMaskBits(address->second.rtcAddress());
 
-        auto name = String::fromUTF8(iterator->ifa_name);
+        auto name = span(iterator->ifa_name);
         auto prefixString = address->second.rtcAddress().ToString();
-        auto networkKey = makeString(name, "-"_s, prefixLength, "-"_s, StringView { std::span(prefixString.c_str(), prefixString.length()) });
+        auto networkKey = makeString(StringView { name }, "-"_s, prefixLength, "-"_s, StringView { std::span(prefixString.c_str(), prefixString.length()) });
 
         networkMap.ensure(networkKey, [&] {
-            std::span<const char> name { iterator->ifa_name, strlen(iterator->ifa_name) };
-            std::span<const char> description { networkKey.utf8().data(), networkKey.utf8().length() };
-            return RTCNetwork { { name }, { description }, address->second, prefixLength, interfaceAdapterType(name), 0, 0, true, false, scopeID, { } };
+            return RTCNetwork { name, networkKey.utf8().span(), address->second, prefixLength, interfaceAdapterType(iterator->ifa_name), 0, 0, true, false, scopeID, { } };
         }).iterator->value.ips.append(address->first);
     }
 
