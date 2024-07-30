@@ -28,6 +28,7 @@
 #include "ArgumentCoders.h" // NOLINT
 #include "Decoder.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
+#include "SharedPreferencesForWebProcess.h" // NOLINT
 #include "TestWithEnabledIfMessages.h" // NOLINT
 #include <wtf/text/WTFString.h> // NOLINT
 
