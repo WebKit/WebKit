@@ -579,7 +579,7 @@ TEST(WKWebExtensionController, CSSUserOrigin)
     auto *urlRequest = server.requestWithLocalhost();
 
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -625,7 +625,7 @@ TEST(WKWebExtensionController, CSSAuthorOrigin)
     auto *urlRequest = server.requestWithLocalhost();
 
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -786,7 +786,7 @@ TEST(WKWebExtensionController, WebAccessibleResources)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -856,7 +856,7 @@ TEST(WKWebExtensionController, WebAccessibleResourcesV2)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }

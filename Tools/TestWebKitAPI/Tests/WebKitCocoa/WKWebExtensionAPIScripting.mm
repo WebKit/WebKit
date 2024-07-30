@@ -210,7 +210,7 @@ TEST(WKWebExtensionAPIScripting, ExecuteScript)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -255,7 +255,7 @@ TEST(WKWebExtensionAPIScripting, ExecuteScriptJSONTypes)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -331,7 +331,7 @@ TEST(WKWebExtensionAPIScripting, ExecuteScriptWithFrameIds)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -435,7 +435,7 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSS)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -511,7 +511,7 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSSWithFrameIds)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -552,7 +552,7 @@ TEST(WKWebExtensionAPIScripting, CSSUserOrigin)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -593,7 +593,7 @@ TEST(WKWebExtensionAPIScripting, CSSAuthorOrigin)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -641,7 +641,7 @@ TEST(WKWebExtensionAPIScripting, World)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -718,7 +718,7 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScripts)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -773,7 +773,7 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScriptsWithCSSUserOrigin)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -828,7 +828,7 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScriptsWithCSSAuthorOrigin)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -917,7 +917,7 @@ TEST(WKWebExtensionAPIScripting, UpdateContentScripts)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -989,7 +989,7 @@ TEST(WKWebExtensionAPIScripting, GetContentScripts)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -1064,7 +1064,7 @@ TEST(WKWebExtensionAPIScripting, UnregisterContentScripts)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -1132,7 +1132,7 @@ TEST(WKWebExtensionAPIScripting, RegisteredScriptIsInjectedAfterContextReloads)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -1177,7 +1177,7 @@ TEST(WKWebExtensionAPIScripting, MainWorld)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -1221,7 +1221,7 @@ TEST(WKWebExtensionAPIScripting, IsolatedWorld)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }

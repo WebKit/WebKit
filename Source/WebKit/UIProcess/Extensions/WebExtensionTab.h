@@ -131,7 +131,7 @@ public:
     RefPtr<WebExtensionTab> parentTab() const;
     void setParentTab(RefPtr<WebExtensionTab>, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
-    WKWebView *mainWebView() const;
+    WKWebView *webView() const;
 
     String title() const;
 
@@ -218,7 +218,7 @@ private:
     bool m_respondsToIndex : 1 { false };
     bool m_respondsToParentTab : 1 { false };
     bool m_respondsToSetParentTab : 1 { false };
-    bool m_respondsToMainWebView : 1 { false };
+    bool m_respondsToWebView : 1 { false };
     bool m_respondsToTitle : 1 { false };
     bool m_respondsToIsPinned : 1 { false };
     bool m_respondsToSetPinned : 1 { false };

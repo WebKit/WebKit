@@ -156,7 +156,7 @@ TEST(WKWebExtensionAPIWindows, GetCurrentFromOptionsPage)
     EXPECT_NOT_NULL(defaultTab);
 
     [defaultTab changeWebViewIfNeededForURL:optionsPageURL forExtensionContext:manager.get().context];
-    [defaultTab.mainWebView loadRequest:[NSURLRequest requestWithURL:optionsPageURL]];
+    [defaultTab.webView loadRequest:[NSURLRequest requestWithURL:optionsPageURL]];
 
     [manager run];
 }

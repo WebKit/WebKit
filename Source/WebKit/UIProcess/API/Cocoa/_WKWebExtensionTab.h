@@ -42,7 +42,7 @@
 WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*!
- @abstract Constants used by @link WKWebExtensionController @/link to indicate tab changes.
+ @abstract Constants used by @link WKWebExtensionController @/link and @link WKWebExtensionContext @/link to indicate tab changes.
  @constant WKWebExtensionTabChangedPropertiesNone  Indicates nothing changed.
  @constant WKWebExtensionTabChangedPropertiesAudible  Indicates the audible state changed.
  @constant WKWebExtensionTabChangedPropertiesLoading  Indicates the loading state changed.
@@ -65,7 +65,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebExtensionTabChangedProperties) {
     _WKWebExtensionTabChangedPropertiesTitle      = 1 << 7,
     _WKWebExtensionTabChangedPropertiesURL        = 1 << 8,
     _WKWebExtensionTabChangedPropertiesZoomFactor = 1 << 9,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+} NS_SWIFT_NAME(_WKWebExtension.TabChangedProperties) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*! @abstract A class conforming to the `WKWebExtensionTab` protocol represents a tab to web extensions. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_SWIFT_UI_ACTOR
@@ -111,18 +111,18 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
 - (void)setParentTab:(nullable id <_WKWebExtensionTab>)parentTab forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
 /*!
- @abstract Called when the main web view for the tab is needed.
+ @abstract Called when the web view for the tab is needed.
  @param context The context in which the web extension is running.
- @return The main web view for the tab.
+ @return The web view for the tab.
  @discussion Defaults to `nil` if not implemented.
  */
-- (nullable WKWebView *)mainWebViewForWebExtensionContext:(_WKWebExtensionContext *)context;
+- (nullable WKWebView *)webViewForWebExtensionContext:(_WKWebExtensionContext *)context;
 
 /*!
  @abstract Called when the title of the tab is needed.
  @param context The context in which the web extension is running.
  @return The title of the tab.
- @discussion Defaults to `title` for the main web view if not implemented.
+ @discussion Defaults to `title` of the tab's web view if not implemented.
  */
 - (nullable NSString *)titleForWebExtensionContext:(_WKWebExtensionContext *)context;
 
@@ -210,7 +210,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @abstract Called when the size of the tab is needed.
  @param context The context in which the web extension is running.
  @return The size of the tab.
- @discussion Defaults to size of the main web view if not implemented.
+ @discussion Defaults to size of the tab's web view if not implemented.
  */
 - (CGSize)sizeForWebExtensionContext:(_WKWebExtensionContext *)context;
 
@@ -218,7 +218,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @abstract Called when the zoom factor of the tab is needed.
  @param context The context in which the web extension is running.
  @return The zoom factor of the tab.
- @discussion Defaults to `pageZoom` for the main web view if not implemented.
+ @discussion Defaults to `pageZoom` of the tab's web view if not implemented.
  @seealso setZoomFactor:forWebExtensionContext:completionHandler:
  */
 - (double)zoomFactorForWebExtensionContext:(_WKWebExtensionContext *)context;
@@ -229,7 +229,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @param context The context in which the web extension is running.
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
  which should be provided if any errors occurred.
- @discussion Sets `pageZoom` for the main web view if not implemented.
+ @discussion Sets `pageZoom` of the tab's web view if not implemented.
  @seealso zoomFactorForWebExtensionContext:
  */
 - (void)setZoomFactor:(double)zoomFactor forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
@@ -238,7 +238,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @abstract Called when the URL of the tab is needed.
  @param context The context in which the web extension is running.
  @return The URL of the tab.
- @discussion Defaults to `URL` for the main web view if not implemented.
+ @discussion Defaults to `URL` of the tab's web view if not implemented.
  */
 - (nullable NSURL *)urlForWebExtensionContext:(_WKWebExtensionContext *)context;
 
@@ -255,7 +255,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @abstract Called to check if the tab has finished loading.
  @param context The context in which the web extension is running.
  @return `YES` if the tab has finished loading, `NO` otherwise.
- @discussion Defaults to `isLoading` for the main web view if not implemented.
+ @discussion Defaults to `isLoading` of the tab's web view if not implemented.
  */
 - (BOOL)isLoadingCompleteForWebExtensionContext:(_WKWebExtensionContext *)context;
 
@@ -274,7 +274,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @param configuration An object that specifies how the snapshot is configured.
  @param completionHandler A block that must be called upon completion. The block takes two arguments:
  the captured image of the webpage (or \c nil if capturing failed) and an error, which should be provided if any errors occurred.
- @discussion Defaults to capturing the visible area for the main web view if not implemented.
+ @discussion Defaults to capturing the visible area of the tab's web view if not implemented.
  */
 #if TARGET_OS_IPHONE
 - (void)takeSnapshotWithConfiguration:(WKSnapshotConfiguration *)configuration forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(UIImage * WK_NULLABLE_RESULT visibleWebpageImage, NSError * _Nullable error))completionHandler;
@@ -289,7 +289,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
  which should be provided if any errors occurred.
  @discussion If the tab is already loading a page, calling this method should stop the current page from loading and start
- loading the new URL. Loads the URL in the main web view via `loadRequest:` if not implemented.
+ loading the new URL. Loads the URL in the tab's web view via `loadRequest:` if not implemented.
  */
 - (void)loadURL:(NSURL *)url forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
@@ -299,7 +299,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @param context The context in which the web extension is running.
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
  which should be provided if any errors occurred.
- @discussion Reloads the main web view via `reload` or `reloadFromOrigin` if not implemented.
+ @discussion Reloads the tab's web view via `reload` or `reloadFromOrigin` if not implemented.
  */
 - (void)reloadFromOrigin:(BOOL)fromOrigin forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
@@ -308,7 +308,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @param context The context in which the web extension is running.
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
  which should be provided if any errors occurred.
- @discussion Navigates to the previous page in the main web view via `goBack` if not implemented.
+ @discussion Navigates to the previous page in the tab's web view via `goBack` if not implemented.
  */
 - (void)goBackForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
@@ -317,7 +317,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @param context The context in which the web extension is running.
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
  which should be provided if any errors occurred.
- @discussion Navigates to the next page in the main web view via `goForward` if not implemented.
+ @discussion Navigates to the next page in the tab's web view via `goForward` if not implemented.
  */
 - (void)goForwardForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 

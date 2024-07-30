@@ -74,7 +74,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, BlockedLoadTest)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    auto webView = manager.get().defaultTab.mainWebView;
+    auto webView = manager.get().defaultTab.webView;
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
 
     __block bool receivedActionNotification { false };
@@ -133,7 +133,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, BlockedLoadInPrivateBrowsingTest)
 
     auto privateWindow = [manager openNewWindowUsingPrivateBrowsing:YES];
     auto privateTab = privateWindow.tabs.firstObject;
-    auto webView = privateTab.mainWebView;
+    auto webView = privateTab.webView;
 
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
 
@@ -305,7 +305,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, UpdateEnabledRulesetsPerformsCompil
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    auto webView = manager.get().defaultTab.mainWebView;
+    auto webView = manager.get().defaultTab.webView;
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
 
     __block bool receivedActionNotification { false };
@@ -410,7 +410,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, SetExtensionActionOptions)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
     auto *defaultTab = manager.get().defaultTab;
-    auto *webView = defaultTab.mainWebView;
+    auto *webView = defaultTab.webView;
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
 
     __block bool receivedActionNotification { false };
@@ -491,7 +491,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, GetMatchedRules)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -533,7 +533,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, SessionRules)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
     EXPECT_TRUE(manager.get().context.hasContentModificationRules);
 
-    auto webView = manager.get().defaultTab.mainWebView;
+    auto webView = manager.get().defaultTab.webView;
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
 
     __block bool receivedActionNotification { false };
@@ -602,7 +602,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, DynamicRules)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    auto webView = manager.get().defaultTab.mainWebView;
+    auto webView = manager.get().defaultTab.webView;
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
 
     __block bool receivedActionNotification { false };
@@ -691,7 +691,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, DISABLED_RedirectRule)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -770,7 +770,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithoutHostAccessPermis
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -846,7 +846,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithoutHostPermission)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -925,7 +925,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, ModifyHeadersRule)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -1005,7 +1005,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, ModifyHeadersRuleWithoutHostAccessP
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -1082,7 +1082,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, ModifyHeadersRuleWithoutHostPermiss
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }

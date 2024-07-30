@@ -1929,7 +1929,7 @@ RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifie
 
     // Search open tabs for the page.
     for (Ref tab : openTabs()) {
-        if (WKWebView *webView = tab->mainWebView()) {
+        if (WKWebView *webView = tab->webView()) {
             if (webView._page->identifier() != webPageProxyIdentifier)
                 continue;
 
@@ -3549,7 +3549,7 @@ void WebExtensionContext::reportWebViewConfigurationErrorIfNeeded(const WebExten
     // Access the method(s) below to trigger time-of-use logging with this stack trace
     // so it is easy to catch errors where they are actionable by the app.
 
-    tab.mainWebView();
+    tab.webView();
 }
 #endif
 
@@ -3629,7 +3629,7 @@ WebExtensionContext::InspectorTabVector WebExtensionContext::openInspectors(Func
     InspectorTabVector result;
 
     for (Ref tab : openTabs()) {
-        if (WKWebView *webView = tab->mainWebView()) {
+        if (WKWebView *webView = tab->webView()) {
             auto *webInspector = webView._inspector;
             if (!webInspector)
                 continue;

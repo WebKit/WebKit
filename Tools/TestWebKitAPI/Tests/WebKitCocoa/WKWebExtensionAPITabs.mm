@@ -573,7 +573,7 @@ TEST(WKWebExtensionAPITabs, GetCurrentFromOptionsPage)
     EXPECT_NOT_NULL(defaultTab);
 
     [defaultTab changeWebViewIfNeededForURL:optionsPageURL forExtensionContext:manager.get().context];
-    [defaultTab.mainWebView loadRequest:[NSURLRequest requestWithURL:optionsPageURL]];
+    [defaultTab.webView loadRequest:[NSURLRequest requestWithURL:optionsPageURL]];
 
     [manager run];
 }
@@ -777,8 +777,8 @@ TEST(WKWebExtensionAPITabs, QueryWithAccessPrompt)
     auto *windowOne = manager.get().defaultWindow;
     [windowOne openNewTab];
 
-    [windowOne.tabs.firstObject.mainWebView loadRequest:server.requestWithLocalhost()];
-    [windowOne.tabs.lastObject.mainWebView loadRequest:server.request()];
+    [windowOne.tabs.firstObject.webView loadRequest:server.requestWithLocalhost()];
+    [windowOne.tabs.lastObject.webView loadRequest:server.request()];
 
     EXPECT_EQ(manager.get().windows.count, 1lu);
     EXPECT_EQ(windowOne.tabs.count, 2lu);
@@ -861,7 +861,7 @@ TEST(WKWebExtensionAPITabs, DetectLanguage)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     __block bool detectWebpageLocaleCalled = false;
 
@@ -1113,7 +1113,7 @@ TEST(WKWebExtensionAPITabs, UpdatedEventWithoutPrivateAccess)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
     auto *privateWindow = [manager openNewWindowUsingPrivateBrowsing:YES];
-    [privateWindow.activeTab.mainWebView loadRequest:server.requestWithLocalhost()];
+    [privateWindow.activeTab.webView loadRequest:server.requestWithLocalhost()];
 
     [manager run];
 }
@@ -1144,7 +1144,7 @@ TEST(WKWebExtensionAPITabs, UpdatedEventWithPrivateAccess)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
     auto *privateWindow = [manager openNewWindowUsingPrivateBrowsing:YES];
-    [privateWindow.activeTab.mainWebView loadRequest:server.requestWithLocalhost()];
+    [privateWindow.activeTab.webView loadRequest:server.requestWithLocalhost()];
 
     [manager run];
 }
@@ -1504,7 +1504,7 @@ TEST(WKWebExtensionAPITabs, SendMessage)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -1557,7 +1557,7 @@ TEST(WKWebExtensionAPITabs, SendMessageWithAsyncReply)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -1608,7 +1608,7 @@ TEST(WKWebExtensionAPITabs, SendMessageWithPromiseReply)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -1661,7 +1661,7 @@ TEST(WKWebExtensionAPITabs, SendMessageWithAsyncPromiseReply)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -1710,7 +1710,7 @@ TEST(WKWebExtensionAPITabs, SendMessageWithoutReply)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -1768,7 +1768,7 @@ TEST(WKWebExtensionAPITabs, SendMessageFromBackgroundPageToFullPageExtensionCont
     EXPECT_NOT_NULL(defaultTab);
 
     [defaultTab changeWebViewIfNeededForURL:optionsPageURL forExtensionContext:manager.get().context];
-    [defaultTab.mainWebView loadRequest:[NSURLRequest requestWithURL:optionsPageURL]];
+    [defaultTab.webView loadRequest:[NSURLRequest requestWithURL:optionsPageURL]];
 
     [manager run];
 }
@@ -1842,7 +1842,7 @@ TEST(WKWebExtensionAPITabs, SendMessageFromBackgroundToSubframe)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequestMain];
+    [manager.get().defaultTab.webView loadRequest:urlRequestMain];
 
     [manager run];
 }
@@ -1904,7 +1904,7 @@ TEST(WKWebExtensionAPITabs, Connect)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -1988,7 +1988,7 @@ TEST(WKWebExtensionAPITabs, ConnectToSubframe)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequestMain];
+    [manager.get().defaultTab.webView loadRequest:urlRequestMain];
 
     [manager run];
 }
@@ -2043,7 +2043,7 @@ TEST(WKWebExtensionAPITabs, PortDisconnect)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -2112,7 +2112,7 @@ TEST(WKWebExtensionAPITabs, ConnectWithMultipleListeners)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -2173,7 +2173,7 @@ TEST(WKWebExtensionAPITabs, PortDisconnectWithMultipleListeners)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -2227,7 +2227,7 @@ TEST(WKWebExtensionAPITabs, ExecuteScript)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -2267,7 +2267,7 @@ TEST(WKWebExtensionAPITabs, ExecuteScriptJSONTypes)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -2337,7 +2337,7 @@ TEST(WKWebExtensionAPITabs, InsertAndRemoveCSSInMainFrame)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -2391,7 +2391,7 @@ TEST(WKWebExtensionAPITabs, InsertAndRemoveCSSInAllFrames)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -2426,7 +2426,7 @@ TEST(WKWebExtensionAPITabs, CSSUserOrigin)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -2461,7 +2461,7 @@ TEST(WKWebExtensionAPITabs, CSSAuthorOrigin)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -2541,7 +2541,7 @@ TEST(WKWebExtensionAPITabs, ActiveTab)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Localhost");
 
-    [manager.get().defaultTab.mainWebView loadRequest:localhostRequest];
+    [manager.get().defaultTab.webView loadRequest:localhostRequest];
 
     [manager run];
 
@@ -2571,13 +2571,13 @@ TEST(WKWebExtensionAPITabs, ActiveTab)
     EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL]);
     EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.URL]);
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost("/next.html"_s)];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost("/next.html"_s)];
 
     [manager run];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load IP Address");
 
-    [manager.get().defaultTab.mainWebView loadRequest:addressRequest];
+    [manager.get().defaultTab.webView loadRequest:addressRequest];
 
     [manager run];
 
@@ -2626,7 +2626,7 @@ TEST(WKWebExtensionAPITabs, UserGestureWithoutActiveTab)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Localhost");
 
-    [manager.get().defaultTab.mainWebView loadRequest:localhostRequest];
+    [manager.get().defaultTab.webView loadRequest:localhostRequest];
 
     [manager run];
 
@@ -2681,7 +2681,7 @@ TEST(WKWebExtensionAPITabs, ActiveTabWithDeniedPermissions)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Localhost");
 
-    [manager.get().defaultTab.mainWebView loadRequest:localhostRequest];
+    [manager.get().defaultTab.webView loadRequest:localhostRequest];
 
     [manager run];
 
@@ -2732,7 +2732,7 @@ TEST(WKWebExtensionAPITabs, ActiveTabRemovedWithDeniedPermissions)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Localhost");
 
-    [manager.get().defaultTab.mainWebView loadRequest:localhostRequest];
+    [manager.get().defaultTab.webView loadRequest:localhostRequest];
 
     [manager run];
 

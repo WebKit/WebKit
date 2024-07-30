@@ -58,7 +58,7 @@ WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, _WKWebExten
     , m_respondsToIndex([delegate respondsToSelector:@selector(indexInWindowForWebExtensionContext:)])
     , m_respondsToParentTab([delegate respondsToSelector:@selector(parentTabForWebExtensionContext:)])
     , m_respondsToSetParentTab([delegate respondsToSelector:@selector(setParentTab:forWebExtensionContext:completionHandler:)])
-    , m_respondsToMainWebView([delegate respondsToSelector:@selector(mainWebViewForWebExtensionContext:)])
+    , m_respondsToWebView([delegate respondsToSelector:@selector(webViewForWebExtensionContext:)])
     , m_respondsToTitle([delegate respondsToSelector:@selector(titleForWebExtensionContext:)])
     , m_respondsToIsPinned([delegate respondsToSelector:@selector(isPinnedForWebExtensionContext:)])
     , m_respondsToSetPinned([delegate respondsToSelector:@selector(setPinned:forWebExtensionContext:completionHandler:)])
@@ -317,33 +317,33 @@ void WebExtensionTab::setParentTab(RefPtr<WebExtensionTab> parentTab, Completion
     }).get()];
 }
 
-WKWebView *WebExtensionTab::mainWebView() const
+WKWebView *WebExtensionTab::webView() const
 {
-    if (!isValid() || !m_respondsToMainWebView)
+    if (!isValid() || !m_respondsToWebView)
         return nil;
 
-    auto *mainWebView = [m_delegate mainWebViewForWebExtensionContext:m_extensionContext->wrapper()];
-    if (!mainWebView)
+    auto *webView = [m_delegate webViewForWebExtensionContext:m_extensionContext->wrapper()];
+    if (!webView)
         return nil;
 
-    THROW_UNLESS([mainWebView isKindOfClass:WKWebView.class], @"Object returned by mainWebViewForWebExtensionContext: is not a WKWebView");
+    THROW_UNLESS([webView isKindOfClass:WKWebView.class], @"Object returned by webViewForWebExtensionContext: is not a WKWebView");
 
-    auto *configuredExtensionController = mainWebView.configuration._webExtensionController;
+    auto *configuredExtensionController = webView.configuration._webExtensionController;
     auto *expectedExtensionController = extensionContext()->extensionController()->wrapper();
     if (!configuredExtensionController || configuredExtensionController != expectedExtensionController) {
-        RELEASE_LOG_ERROR_IF(!configuredExtensionController, Extensions, "%{public}@ returned by mainWebViewForWebExtensionContext: is not configured with a _WKWebExtensionController", mainWebView);
-        RELEASE_LOG_ERROR_IF(configuredExtensionController && configuredExtensionController != expectedExtensionController, Extensions, "%{public}@ returned by mainWebViewForWebExtensionContext: is not configured with the same _WKWebExtensionController as extension context; %{public}@ != %{public}@", mainWebView, configuredExtensionController, expectedExtensionController);
+        RELEASE_LOG_ERROR_IF(!configuredExtensionController, Extensions, "%{public}@ returned by webViewForWebExtensionContext: is not configured with a _WKWebExtensionController", webView);
+        RELEASE_LOG_ERROR_IF(configuredExtensionController && configuredExtensionController != expectedExtensionController, Extensions, "%{public}@ returned by webViewForWebExtensionContext: is not configured with the same _WKWebExtensionController as extension context; %{public}@ != %{public}@", webView, configuredExtensionController, expectedExtensionController);
         ASSERT_NOT_REACHED();
         return nil;
     }
 
-    return mainWebView;
+    return webView;
 }
 
 String WebExtensionTab::title() const
 {
     if (!isValid() || !m_respondsToTitle)
-        return mainWebView().title;
+        return webView().title;
 
     auto *tabTitle = [m_delegate titleForWebExtensionContext:m_extensionContext->wrapper()];
     THROW_UNLESS(!tabTitle || [tabTitle isKindOfClass:NSString.class], @"Object returned by tabTitleForWebExtensionContext: is not a string");
@@ -495,7 +495,7 @@ bool WebExtensionTab::isMuted() const
 CGSize WebExtensionTab::size() const
 {
     if (!isValid() || !m_respondsToSize)
-        return mainWebView().frame.size;
+        return webView().frame.size;
 
     return [m_delegate sizeForWebExtensionContext:m_extensionContext->wrapper()];
 }
@@ -503,7 +503,7 @@ CGSize WebExtensionTab::size() const
 double WebExtensionTab::zoomFactor() const
 {
     if (!isValid() || !m_respondsToZoomFactor)
-        return mainWebView().pageZoom;
+        return webView().pageZoom;
 
     return [m_delegate zoomFactorForWebExtensionContext:m_extensionContext->wrapper()];
 }
@@ -513,7 +513,7 @@ void WebExtensionTab::setZoomFactor(double zoomFactor, CompletionHandler<void(Ex
     static NSString * const apiName = @"tabs.setZoom()";
 
     if (!isValid() || !m_respondsToSetZoomFactor) {
-        mainWebView().pageZoom = zoomFactor;
+        webView().pageZoom = zoomFactor;
         completionHandler({ });
         return;
     }
@@ -532,7 +532,7 @@ void WebExtensionTab::setZoomFactor(double zoomFactor, CompletionHandler<void(Ex
 URL WebExtensionTab::url() const
 {
     if (!isValid() || !m_respondsToURL)
-        return mainWebView().URL;
+        return webView().URL;
 
     auto *url = [m_delegate urlForWebExtensionContext:m_extensionContext->wrapper()];
     THROW_UNLESS(!url || [url isKindOfClass:NSURL.class], @"Object returned by urlForWebExtensionContext: is not a URL");
@@ -554,7 +554,7 @@ URL WebExtensionTab::pendingURL() const
 bool WebExtensionTab::isLoadingComplete() const
 {
     if (!isValid() || !m_respondsToIsLoadingComplete)
-        return !mainWebView().isLoading;
+        return !webView().isLoading;
 
     return [m_delegate isLoadingCompleteForWebExtensionContext:m_extensionContext->wrapper()];
 }
@@ -585,9 +585,9 @@ void WebExtensionTab::captureVisibleWebpage(CompletionHandler<void(Expected<Coco
     static NSString * const apiName = @"tabs.captureVisibleTab()";
 
     bool delegateIsUnavailable = !isValid() || !m_respondsToTakeSnapshot;
-    WKWebView *mainWebView = delegateIsUnavailable ? this->mainWebView() : nil;
+    WKWebView *webView = delegateIsUnavailable ? this->webView() : nil;
 
-    if (delegateIsUnavailable && !mainWebView) {
+    if (delegateIsUnavailable && !webView) {
         completionHandler(toWebExtensionError(apiName, nil, @"capture is unavailable for this tab"));
         return;
     }
@@ -603,16 +603,16 @@ void WebExtensionTab::captureVisibleWebpage(CompletionHandler<void(Expected<Coco
         completionHandler(image);
     });
 
-    NSRect snapshotRect = mainWebView.bounds;
+    NSRect snapshotRect = webView.bounds;
 #if PLATFORM(MAC)
-    snapshotRect.size.height -= mainWebView._topContentInset;
+    snapshotRect.size.height -= webView._topContentInset;
 #endif
 
     WKSnapshotConfiguration *snapshotConfiguration = [[WKSnapshotConfiguration alloc] init];
     snapshotConfiguration.rect = snapshotRect;
 
     if (delegateIsUnavailable) {
-        [mainWebView takeSnapshotWithConfiguration:snapshotConfiguration completionHandler:internalCompletionHandler.get()];
+        [webView takeSnapshotWithConfiguration:snapshotConfiguration completionHandler:internalCompletionHandler.get()];
         return;
     }
 
@@ -624,7 +624,7 @@ void WebExtensionTab::loadURL(URL url, CompletionHandler<void(Expected<void, Web
     static NSString * const apiName = @"tabs.update()";
 
     if (!isValid() || !m_respondsToLoadURL) {
-        [mainWebView() loadRequest:[NSURLRequest requestWithURL:url]];
+        [webView() loadRequest:[NSURLRequest requestWithURL:url]];
         completionHandler({ });
         return;
     }
@@ -645,7 +645,7 @@ void WebExtensionTab::reload(ReloadFromOrigin fromOrigin, CompletionHandler<void
     static NSString * const apiName = @"tabs.reload()";
 
     if (!isValid() || !m_respondsToReload) {
-        [mainWebView() reload];
+        [webView() reload];
         completionHandler({ });
         return;
     }
@@ -666,7 +666,7 @@ void WebExtensionTab::goBack(CompletionHandler<void(Expected<void, WebExtensionE
     static NSString * const apiName = @"tabs.goBack()";
 
     if (!isValid() || !m_respondsToGoBack) {
-        [mainWebView() goBack];
+        [webView() goBack];
         completionHandler({ });
         return;
     }
@@ -687,7 +687,7 @@ void WebExtensionTab::goForward(CompletionHandler<void(Expected<void, WebExtensi
     static NSString * const apiName = @"tabs.goForward()";
 
     if (!isValid() || !m_respondsToGoForward) {
-        [mainWebView() goForward];
+        [webView() goForward];
         completionHandler({ });
         return;
     }
@@ -827,7 +827,7 @@ WebExtensionTab::WebProcessProxySet WebExtensionTab::processes(WebExtensionEvent
     if (!isValid())
         return { };
 
-    auto *webView = mainWebView();
+    auto *webView = this->webView();
     if (!webView)
         return { };
 

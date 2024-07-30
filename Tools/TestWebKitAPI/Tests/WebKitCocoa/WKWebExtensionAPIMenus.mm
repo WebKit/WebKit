@@ -232,7 +232,7 @@ TEST(WKWebExtensionAPIMenus, ActionMenus)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
     [manager runForTimeInterval:1];
 
     auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
@@ -307,7 +307,7 @@ TEST(WKWebExtensionAPIMenus, ActionMenusWithActiveTab)
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<title>Test</title>"_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
     [manager runForTimeInterval:1];
 
     auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
@@ -556,7 +556,7 @@ TEST(WKWebExtensionAPIMenus, TabMenus)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
     [manager runForTimeInterval:1];
 
     auto *menuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
@@ -1129,7 +1129,7 @@ TEST(WKWebExtensionAPIMenus, MacContextMenuItems)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:urlRequest];
     [webView waitForNextPresentationUpdate];
@@ -1212,7 +1212,7 @@ TEST(WKWebExtensionAPIMenus, MacActiveTabContextMenuItems)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:server.requestWithLocalhost()];
     [webView waitForNextPresentationUpdate];
@@ -1311,7 +1311,7 @@ TEST(WKWebExtensionAPIMenus, MacURLPatternContextMenuItems)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:urlRequest];
     [webView waitForNextPresentationUpdate];
@@ -1395,7 +1395,7 @@ TEST(WKWebExtensionAPIMenus, MacSelectionContextMenuItems)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:urlRequest];
     [webView waitForNextPresentationUpdate];
@@ -1480,7 +1480,7 @@ TEST(WKWebExtensionAPIMenus, MacLinkContextMenuItems)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:urlRequest];
     [webView waitForNextPresentationUpdate];
@@ -1564,7 +1564,7 @@ TEST(WKWebExtensionAPIMenus, MacImageContextMenuItems)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:urlRequest];
     [webView waitForNextPresentationUpdate];
@@ -1648,7 +1648,7 @@ TEST(WKWebExtensionAPIMenus, MacVideoContextMenuItems)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:urlRequest];
     [webView waitForNextPresentationUpdate];
@@ -1732,7 +1732,7 @@ TEST(WKWebExtensionAPIMenus, MacAudioContextMenuItems)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:urlRequest];
     [webView waitForNextPresentationUpdate];
@@ -1812,7 +1812,7 @@ TEST(WKWebExtensionAPIMenus, MacEditableContextMenuItems)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:urlRequest];
     [webView waitForNextPresentationUpdate];
@@ -1896,7 +1896,7 @@ TEST(WKWebExtensionAPIMenus, MacFrameContextMenuItems)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
 
-    manager.get().defaultTab.mainWebView = webView.get();
+    manager.get().defaultTab.webView = webView.get();
 
     [webView synchronouslyLoadRequest:urlRequest];
     [webView waitForNextPresentationUpdate];

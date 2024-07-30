@@ -129,7 +129,7 @@
 
         if (options.url) {
             [newTab changeWebViewIfNeededForURL:options.url forExtensionContext:context];
-            [newTab.mainWebView loadRequest:[NSURLRequest requestWithURL:options.url]];
+            [newTab.webView loadRequest:[NSURLRequest requestWithURL:options.url]];
         }
 
         newTab.parentTab = options.parentTab;
@@ -334,8 +334,8 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
         configuration.userContentController = userContentController(usingPrivateBrowsing);
         configuration.preferences._developerExtrasEnabled = YES;
 
-        _mainWebView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
-        _mainWebView.navigationDelegate = self;
+        _webView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
+        _webView.navigationDelegate = self;
 
         _extensionController = extensionController;
     }
@@ -375,7 +375,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 {
     BOOL usingPrivateBrowsing = _window.usingPrivateBrowsing;
 
-    if ([_mainWebView.URL.scheme isEqualToString:url.scheme])
+    if ([_webView.URL.scheme isEqualToString:url.scheme])
         return;
 
     WKWebViewConfiguration *configuration = [url.scheme hasPrefix:@"http"] ? [[WKWebViewConfiguration alloc] init] : context.webViewConfiguration;
@@ -383,8 +383,8 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     configuration.websiteDataStore = usingPrivateBrowsing ? WKWebsiteDataStore.nonPersistentDataStore : WKWebsiteDataStore.defaultDataStore;
     configuration.userContentController = userContentController(usingPrivateBrowsing);
 
-    _mainWebView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
-    _mainWebView.navigationDelegate = self;
+    _webView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
+    _webView.navigationDelegate = self;
 }
 
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
@@ -412,9 +412,9 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     [_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesLoading forTab:self];
 }
 
-- (WKWebView *)mainWebViewForWebExtensionContext:(_WKWebExtensionContext *)context
+- (WKWebView *)webViewForWebExtensionContext:(_WKWebExtensionContext *)context
 {
-    return _mainWebView;
+    return _webView;
 }
 
 - (BOOL)isReaderModeShowingForWebExtensionContext:(_WKWebExtensionContext *)context
@@ -452,9 +452,9 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
         if (self->_reload)
             self->_reload(fromOrigin);
         else if (fromOrigin)
-            [self->_mainWebView reloadFromOrigin];
+            [self->_webView reloadFromOrigin];
         else
-            [self->_mainWebView reload];
+            [self->_webView reload];
 
         completionHandler(nil);
     });
@@ -466,7 +466,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
         if (self->_goBack)
             self->_goBack();
         else
-            [self->_mainWebView goBack];
+            [self->_webView goBack];
 
         completionHandler(nil);
     });
@@ -478,7 +478,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
         if (self->_goForward)
             self->_goForward();
         else
-            [self->_mainWebView goForward];
+            [self->_webView goForward];
 
         completionHandler(nil);
     });
@@ -632,8 +632,8 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     auto *previousActiveTab = _activeTab;
 
     for (TestWebExtensionTab *tab in _tabs) {
-        [tab.mainWebView _close];
-        tab.mainWebView = nil;
+        [tab.webView _close];
+        tab.webView = nil;
 
         [_extensionController didCloseTab:tab windowIsClosing:NO];
 
@@ -688,7 +688,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
         auto *desiredWindow = dynamic_objc_cast<TestWebExtensionWindow>(options.window) ?: weakTab.window;
         auto *duplicatedTab = [desiredWindow openNewTabAtIndex:options.index];
 
-        [duplicatedTab.mainWebView loadRequest:[NSURLRequest requestWithURL:weakTab.mainWebView.URL]];
+        [duplicatedTab.webView loadRequest:[NSURLRequest requestWithURL:weakTab.webView.URL]];
 
         duplicatedTab.selected = options.selected;
 
@@ -714,8 +714,8 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)closeTab:(TestWebExtensionTab *)tab windowIsClosing:(BOOL)windowIsClosing
 {
-    [tab.mainWebView _close];
-    tab.mainWebView = nil;
+    [tab.webView _close];
+    tab.webView = nil;
 
     [_tabs removeObject:tab];
 
@@ -736,8 +736,8 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     ASSERT([_tabs containsObject:oldTab]);
     ASSERT(![_tabs containsObject:newTab]);
 
-    [oldTab.mainWebView _close];
-    oldTab.mainWebView = nil;
+    [oldTab.webView _close];
+    oldTab.webView = nil;
 
     if (_activeTab == oldTab)
         _activeTab = newTab;
