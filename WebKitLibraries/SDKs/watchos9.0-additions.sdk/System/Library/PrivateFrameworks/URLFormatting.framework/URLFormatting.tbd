@@ -1,7 +1,0 @@
---- !tapi-tbd
-tbd-version: 4
-targets: [armv7k-watchos, arm64e-watchos, arm64_32-watchos]
-install-name: /System/Library/PrivateFrameworks/URLFormatting.framework/URLFormatting
-current-version: 213.13
-exports: []
-...
