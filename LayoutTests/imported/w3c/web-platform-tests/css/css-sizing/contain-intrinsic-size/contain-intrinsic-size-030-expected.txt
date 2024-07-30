@@ -1,12 +1,8 @@
 
 PASS .test 1
 PASS .test 2
-FAIL .test 3 assert_equals:
-<div class="test small-contents overflow-auto cis-width" data-expected-client-width="100" data-expected-client-height="0" data-expected-scroll-width="100" data-expected-scroll-height="20"></div>
-clientWidth expected 100 but got 85
-FAIL .test 4 assert_equals:
-<div class="test small-contents overflow-auto cis-both" data-expected-client-width="100" data-expected-client-height="50" data-expected-scroll-width="100" data-expected-scroll-height="50"></div>
-clientWidth expected 100 but got 85
+PASS .test 3
+PASS .test 4
 PASS .test 5
 PASS .test 6
 PASS .test 7
@@ -17,12 +13,8 @@ PASS .test 11
 PASS .test 12
 PASS .test 13
 PASS .test 14
-FAIL .test 15 assert_equals:
-<div class="test big-contents overflow-auto cis-width" data-expected-client-width="100" data-expected-client-height="0" data-expected-scroll-width="400" data-expected-scroll-height="200"></div>
-clientWidth expected 100 but got 85
-FAIL .test 16 assert_equals:
-<div class="test big-contents overflow-auto cis-both" data-expected-client-width="100" data-expected-client-height="50" data-expected-scroll-width="400" data-expected-scroll-height="200"></div>
-clientWidth expected 100 but got 85
+PASS .test 15
+PASS .test 16
 PASS .test 17
 PASS .test 18
 PASS .test 19

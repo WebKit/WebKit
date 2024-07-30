@@ -203,7 +203,7 @@ void RenderDeprecatedFlexibleBox::styleWillChange(StyleDifference diff, const Re
 void RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
     auto addScrollbarWidth = [&]() {
-        LayoutUnit scrollbarWidth = intrinsicScrollbarLogicalWidth();
+        LayoutUnit scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
         maxLogicalWidth += scrollbarWidth;
         minLogicalWidth += scrollbarWidth;
     };
