@@ -109,8 +109,11 @@ static FrameState toFrameState(const HistoryItem& historyItem)
 
 BackForwardListItemState toBackForwardListItemState(const WebCore::HistoryItem& historyItem)
 {
+    static constexpr unsigned maxTitleLength = 1000; // Closest power of 10 above the W3C recommendation for Title length.
+
     BackForwardListItemState state;
     state.identifier = historyItem.identifier();
+    state.pageState.title = historyItem.title().left(maxTitleLength);
     state.pageState.mainFrameState = toFrameState(historyItem);
     state.pageState.shouldOpenExternalURLsPolicy = historyItem.shouldOpenExternalURLsPolicy();
     state.pageState.sessionStateObject = historyItem.stateObject();
@@ -173,7 +176,7 @@ static void applyFrameState(WebCore::HistoryItemClient& client, HistoryItem& his
 #endif
 
     for (const auto& childFrameState : frameState.children) {
-        Ref<HistoryItem> childHistoryItem = HistoryItem::create(client, childFrameState.urlString, { });
+        Ref<HistoryItem> childHistoryItem = HistoryItem::create(client, childFrameState.urlString, { }, { });
         applyFrameState(client, childHistoryItem, childFrameState);
 
         historyItem.addChildItem(WTFMove(childHistoryItem));
@@ -182,7 +185,7 @@ static void applyFrameState(WebCore::HistoryItemClient& client, HistoryItem& his
 
 Ref<HistoryItem> toHistoryItem(WebCore::HistoryItemClient& client, const BackForwardListItemState& itemState)
 {
-    Ref<HistoryItem> historyItem = HistoryItem::create(client, itemState.pageState.mainFrameState.urlString, itemState.identifier);
+    Ref<HistoryItem> historyItem = HistoryItem::create(client, itemState.pageState.mainFrameState.urlString, itemState.pageState.title, { }, itemState.identifier);
     historyItem->setShouldOpenExternalURLsPolicy(itemState.pageState.shouldOpenExternalURLsPolicy);
     historyItem->setStateObject(itemState.pageState.sessionStateObject.get());
     applyFrameState(client, historyItem, itemState.pageState.mainFrameState);

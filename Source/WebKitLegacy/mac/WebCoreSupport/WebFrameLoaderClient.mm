@@ -1343,6 +1343,7 @@ void WebFrameLoaderClient::setTitle(const WebCore::StringWithDirection& title, c
     if ([[nsURL absoluteString] isEqualToString:@"about:blank"])
         return;
 #endif
+    [[[WebHistory optionalSharedHistory] itemForURL:nsURL] setTitle:title.string];
 }
 
 void WebFrameLoaderClient::savePlatformDataToCachedFrame(WebCore::CachedFrame* cachedFrame)

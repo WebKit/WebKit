@@ -68,6 +68,7 @@ public:
 
     const String& originalURL() const { return m_itemState.pageState.mainFrameState.originalURLString; }
     const String& url() const { return m_itemState.pageState.mainFrameState.urlString; }
+    const String& title() const { return m_itemState.pageState.title; }
     bool wasCreatedByJSWithoutUserInteraction() const { return m_itemState.pageState.wasCreatedByJSWithoutUserInteraction; }
 
     const URL& resourceDirectoryURL() const { return m_resourceDirectoryURL; }

@@ -200,7 +200,7 @@ URL History::urlForState(const String& urlString)
     return frame->document()->completeURL(urlString);
 }
 
-ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data, const String& urlString, StateObjectType stateObjectType)
+ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data, const String& title, const String& urlString, StateObjectType stateObjectType)
 {
     m_cachedState.clear();
 
@@ -265,10 +265,14 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
         return Exception { ExceptionCode::SecurityError, makeString("Attempt to use history.pushState() more than ", perStateObjectTimeSpanLimit, " times per ", stateObjectTimeSpan.seconds(), " seconds") };
     }
 
+    Checked<unsigned> titleSize = title.length();
+    titleSize *= 2;
+
     Checked<unsigned> urlSize = fullURL.string().length();
     urlSize *= 2;
 
-    Checked<uint64_t> payloadSize = urlSize;
+    Checked<uint64_t> payloadSize = titleSize;
+    payloadSize += urlSize;
     payloadSize += data ? data->wireBytes().size() : 0;
 
     Checked<uint64_t> newTotalUsage = mainHistory.m_totalStateObjectUsage;
@@ -292,10 +296,10 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
         frame->document()->updateURLForPushOrReplaceState(fullURL);
 
     if (stateObjectType == StateObjectType::Push) {
-        frame->loader().history().pushState(WTFMove(data), fullURL.string());
+        frame->loader().history().pushState(WTFMove(data), title, fullURL.string());
         frame->loader().client().dispatchDidPushStateWithinPage();
     } else if (stateObjectType == StateObjectType::Replace) {
-        frame->loader().history().replaceState(WTFMove(data), fullURL.string());
+        frame->loader().history().replaceState(WTFMove(data), title, fullURL.string());
         frame->loader().client().dispatchDidReplaceStateWithinPage();
     }
 

@@ -635,6 +635,13 @@ void HistoryController::setCurrentItem(Ref<HistoryItem>&& item)
     m_previousItem = std::exchange(m_currentItem, WTFMove(item));
 }
 
+void HistoryController::setCurrentItemTitle(const StringWithDirection& title)
+{
+    // FIXME: This ignores the title's direction.
+    if (RefPtr currentItem = m_currentItem)
+        currentItem->setTitle(title.string);
+}
+
 bool HistoryController::currentItemShouldBeReplaced() const
 {
     // From the HTML5 spec for location.assign():
@@ -686,8 +693,12 @@ void HistoryController::initializeItem(HistoryItem& item)
     if (originalURL.isEmpty())
         originalURL = aboutBlankURL();
     
+    StringWithDirection title = documentLoader->title();
+
     item.setURL(url);
     item.setTarget(m_frame->tree().uniqueName());
+    // FIXME: Should store the title direction as well.
+    item.setTitle(title.string);
     item.setOriginalURLString(originalURL.string());
 
     if (!unreachableURL.isEmpty() || documentLoader->response().httpStatusCode() >= 400)
@@ -881,7 +892,7 @@ void HistoryController::updateCurrentItem()
     }
 }
 
-void HistoryController::pushState(RefPtr<SerializedScriptValue>&& stateObject, const String& urlString)
+void HistoryController::pushState(RefPtr<SerializedScriptValue>&& stateObject, const String& title, const String& urlString)
 {
     if (!m_currentItem)
         return;
@@ -909,6 +920,7 @@ void HistoryController::pushState(RefPtr<SerializedScriptValue>&& stateObject, c
     // Override data in the current item (created by createItemTree) to reflect
     // the pushState() arguments.
     RefPtr currentItem = m_currentItem;
+    currentItem->setTitle(title);
     currentItem->setStateObject(WTFMove(stateObject));
     currentItem->setURLString(urlString);
     currentItem->setShouldRestoreScrollPosition(shouldRestoreScrollPosition);
@@ -924,7 +936,7 @@ void HistoryController::pushState(RefPtr<SerializedScriptValue>&& stateObject, c
     frame->checkedLoader()->client().updateGlobalHistory();
 }
 
-void HistoryController::replaceState(RefPtr<SerializedScriptValue>&& stateObject, const String& urlString)
+void HistoryController::replaceState(RefPtr<SerializedScriptValue>&& stateObject, const String& title, const String& urlString)
 {
     RefPtr currentItem = m_currentItem;
     if (!currentItem)
@@ -934,6 +946,7 @@ void HistoryController::replaceState(RefPtr<SerializedScriptValue>&& stateObject
 
     if (!urlString.isEmpty())
         currentItem->setURLString(urlString);
+    currentItem->setTitle(title);
     currentItem->setStateObject(WTFMove(stateObject));
     currentItem->setFormData(nullptr);
     currentItem->setFormContentType(String());
