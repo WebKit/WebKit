@@ -3991,7 +3991,8 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
         self.log_observer_json = logobserver.BufferLogObserver()
         self.addLogObserver('json', self.log_observer_json)
         self.setLayoutTestCommand()
-        self.command = self.shell_command(' '.join(str(c) for c in self.command) + ' 2>&1 | Tools/Scripts/filter-test-logs layout')
+        if self.getProperty('buildername', '').lower() != 'merge-queue':
+            self.command = self.shell_command(' '.join(str(c) for c in self.command) + ' 2>&1 | Tools/Scripts/filter-test-logs layout')
         return super().start()
 
     # FIXME: This will break if run-webkit-tests changes its default log formatter.
@@ -4118,17 +4119,18 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
     def evaluateCommand(self, cmd):
         rc = self.evaluateResult(cmd)
         previous_build_summary = self.getProperty('build_summary', '')
-        steps_to_add = [
-            GenerateS3URL(
-                f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
-                extension='txt',
-                content_type='text/plain',
-            ), UploadFileToS3(
-                'logs.txt',
-                links={self.name: 'Full logs'},
-                content_type='text/plain',
-            )
-        ]
+        if self.getProperty('buildername', '').lower() != 'merge-queue':
+            steps_to_add = [
+                GenerateS3URL(
+                    f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
+                    extension='txt',
+                    content_type='text/plain',
+                ), UploadFileToS3(
+                    'logs.txt',
+                    links={self.name: 'Full logs'},
+                    content_type='text/plain',
+                )
+            ]
         if rc == SUCCESS or rc == WARNINGS:
             message = 'Passed layout tests'
             self.descriptionDone = message
@@ -4142,7 +4144,8 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
             self.build.results = SUCCESS
             if RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE not in previous_build_summary:
                 self.setProperty('build_summary', message)
-            steps_to_add += [ArchiveTestResults(), UploadTestResults(), ExtractTestResults()]
+            if self.getProperty('buildername', '').lower() != 'merge-queue':
+                steps_to_add += [ArchiveTestResults(), UploadTestResults(), ExtractTestResults()]
             self.finished(WARNINGS)
         else:
             steps_to_add += [
