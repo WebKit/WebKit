@@ -98,6 +98,16 @@ const gCSSProperties1 = {
     types: [
     ]
   },
+  'block-step-insert': {
+    // https://drafts.csswg.org/css-rhythm/#block-step-insert
+    types: [
+      { type: 'discrete', options: [ [ 'margin', 'padding' ] ] }
+    ]
+  },
+  'block-step-size': {
+    // https://drafts.csswg.org/css-rhythm/#block-step-size
+    types: [ 'length' ]
+  },
   'border-block-end-color': {
     // https://drafts.csswg.org/css-logical-props/#propdef-border-block-end-color
     types: [

@@ -1163,10 +1163,10 @@ private:
 
 
 
-class ContainIntrinsiclLengthPropertyWrapper final : public OptionalLengthPropertyWrapper {
+class ContainIntrinsicLengthPropertyWrapper final : public OptionalLengthPropertyWrapper {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
-    ContainIntrinsiclLengthPropertyWrapper(CSSPropertyID property, std::optional<Length> (RenderStyle::*getter)() const, void (RenderStyle::*setter)(std::optional<Length>), ContainIntrinsicSizeType (RenderStyle::*typeGetter)() const, void (RenderStyle::*typeSetter)(ContainIntrinsicSizeType))
+    ContainIntrinsicLengthPropertyWrapper(CSSPropertyID property, std::optional<Length> (RenderStyle::*getter)() const, void (RenderStyle::*setter)(std::optional<Length>), ContainIntrinsicSizeType (RenderStyle::*typeGetter)() const, void (RenderStyle::*typeSetter)(ContainIntrinsicSizeType))
         : OptionalLengthPropertyWrapper(property, getter, setter, { Flags::NegativeLengthsAreInvalid })
         , m_containIntrinsicSizeTypeGetter(typeGetter)
         , m_containIntrinsicSizeTypeSetter(typeSetter)
@@ -3905,8 +3905,11 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 
         new TabSizePropertyWrapper,
 
-        new ContainIntrinsiclLengthPropertyWrapper(CSSPropertyContainIntrinsicWidth, &RenderStyle::containIntrinsicWidth, &RenderStyle::setContainIntrinsicWidth, &RenderStyle::containIntrinsicWidthType, &RenderStyle::setContainIntrinsicWidthType),
-        new ContainIntrinsiclLengthPropertyWrapper(CSSPropertyContainIntrinsicHeight, &RenderStyle::containIntrinsicHeight, &RenderStyle::setContainIntrinsicHeight, &RenderStyle::containIntrinsicHeightType, &RenderStyle::setContainIntrinsicHeightType),
+        new DiscretePropertyWrapper<BlockStepInsert>(CSSPropertyBlockStepInsert, &RenderStyle::blockStepInsert, &RenderStyle::setBlockStepInsert),
+        new OptionalLengthPropertyWrapper(CSSPropertyBlockStepSize, &RenderStyle::blockStepSize, &RenderStyle::setBlockStepSize, { OptionalLengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
+
+        new ContainIntrinsicLengthPropertyWrapper(CSSPropertyContainIntrinsicWidth, &RenderStyle::containIntrinsicWidth, &RenderStyle::setContainIntrinsicWidth, &RenderStyle::containIntrinsicWidthType, &RenderStyle::setContainIntrinsicWidthType),
+        new ContainIntrinsicLengthPropertyWrapper(CSSPropertyContainIntrinsicHeight, &RenderStyle::containIntrinsicHeight, &RenderStyle::setContainIntrinsicHeight, &RenderStyle::containIntrinsicHeightType, &RenderStyle::setContainIntrinsicHeightType),
 
         new DiscretePropertyWrapper<const StyleContentAlignmentData&>(CSSPropertyAlignContent, &RenderStyle::alignContent, &RenderStyle::setAlignContent),
         new DiscretePropertyWrapper<const StyleSelfAlignmentData&>(CSSPropertyAlignItems, &RenderStyle::alignItems, &RenderStyle::setAlignItems),
@@ -4162,8 +4165,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 
         // To be fixed / untriaged:
         case CSSPropertyAlignmentBaseline:
-        case CSSPropertyBlockStepInsert:
-        case CSSPropertyBlockStepSize:
         case CSSPropertyBorderBlock: // logical shorthand
         case CSSPropertyBorderBlockColor: // logical shorthand
         case CSSPropertyBorderBlockStyle: // logical shorthand

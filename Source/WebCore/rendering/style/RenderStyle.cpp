@@ -1805,6 +1805,10 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
     };
 
     auto conservativelyCollectChangedAnimatablePropertiesViaNonInheritedRareData = [&](auto& first, auto& second) {
+        if (first.blockStepInsert != second.blockStepInsert)
+            changingProperties.m_properties.set(CSSPropertyBlockStepInsert);
+        if (first.blockStepSize != second.blockStepSize)
+            changingProperties.m_properties.set(CSSPropertyBlockStepSize);
         if (first.containIntrinsicWidth != second.containIntrinsicWidth || first.containIntrinsicWidthType != second.containIntrinsicWidthType)
             changingProperties.m_properties.set(CSSPropertyContainIntrinsicWidth);
         if (first.containIntrinsicHeight != second.containIntrinsicHeight || first.containIntrinsicHeightType != second.containIntrinsicHeightType)
@@ -1943,8 +1947,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // boxReflect
         // pageSize
         // pageSizeType
-        // blockStepSize
-        // blockStepInsert
         // overscrollBehaviorX
         // overscrollBehaviorY
         // applePayButtonStyle

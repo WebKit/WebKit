@@ -40,6 +40,12 @@ PASS background-origin: "padding-box" onto "content-box"
 PASS background-repeat (type: discrete) has testAccumulation function
 PASS background-repeat: "round" onto "space"
 PASS background-repeat: "space" onto "round"
+PASS block-step-insert (type: discrete) has testAccumulation function
+PASS block-step-insert: "padding" onto "margin"
+PASS block-step-insert: "margin" onto "padding"
+PASS block-step-size (type: length) has testAccumulation function
+PASS block-step-size: length
+PASS block-step-size: length of rem
 PASS border-bottom-color (type: color) has testAccumulation function
 PASS border-bottom-color supports animating as color of rgb() with overflowed  from and to values
 PASS border-bottom-color supports animating as color of #RGB
