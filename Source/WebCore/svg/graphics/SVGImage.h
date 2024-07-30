@@ -56,6 +56,8 @@ public:
     bool hasRelativeWidth() const final;
     bool hasRelativeHeight() const final;
 
+    NaturalDimensions naturalDimensions(ImageOrientation = ImageOrientation::Orientation::FromImage) const final;
+
     // Start the animation from the beginning.
     void startAnimation() final;
     // Resume the animation from where it was last stopped.

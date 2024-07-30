@@ -30,6 +30,8 @@
 
 #include "CSSStyleImageValue.h"
 #include "CachedImage.h"
+#include "CanvasImageSource+OriginTainting.h"
+#include "CanvasImageSource+Usability.h"
 #include "DOMRectReadOnly.h"
 #include "ExceptionOr.h"
 #include "HTMLCanvasElement.h"
@@ -39,6 +41,7 @@
 #include "ImageBuffer.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSPlaneLayout.h"
+#include "NaturalDimensions.h"
 #include "OffscreenCanvas.h"
 #include "PixelBuffer.h"
 #include "SVGImageElement.h"
@@ -90,162 +93,180 @@ WebCodecsVideoFrame::~WebCodecsVideoFrame()
     }
 }
 
-// https://html.spec.whatwg.org/multipage/canvas.html#check-the-usability-of-the-image-argument
-static std::optional<Exception> checkImageUsability(ScriptExecutionContext& context, const WebCodecsVideoFrame::CanvasImageSource& source)
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, ImageUsabilityGood<HTMLImageElement>&& usability, Init&& init)
 {
-    return switchOn(source,
-    [&] (const RefPtr<HTMLImageElement>& imageElement) -> std::optional<Exception> {
-        if (!imageElement->originClean(*context.securityOrigin()))
-            return Exception { ExceptionCode::SecurityError, "Image element is tainted"_s };
+    // 1. If timestamp does not exist in init, throw a TypeError.
+    if (!init.timestamp)
+        return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
 
-        RefPtr image = imageElement->cachedImage() ? imageElement->cachedImage()->image() : nullptr;
-        if (!image)
-            return Exception { ExceptionCode::InvalidStateError,  "Image element has no data"_s };
-        if (!image->width() || !image->height())
-            return Exception { ExceptionCode::InvalidStateError,  "Image element has a bad size"_s };
-        return { };
-    },
-    [] (const RefPtr<SVGImageElement>& imageElement) -> std::optional<Exception> {
-        if (imageElement->renderingTaintsOrigin())
-            return Exception { ExceptionCode::SecurityError, "Image element is tainted"_s };
+    // 2. If image’s media data has no natural dimensions (e.g., it’s a vector graphic with no specified content size), then throw an InvalidStateError DOMException.
+    auto naturalDimensions = usability.source->naturalDimensions();
+    if (!naturalDimensions.width || !naturalDimensions.height)
+        return Exception { ExceptionCode::InvalidStateError,  "Image element must have specified natural dimensions"_s };
 
-        RefPtr image = imageElement->cachedImage() ? imageElement->cachedImage()->image() : nullptr;
-        if (!image)
-            return Exception { ExceptionCode::InvalidStateError,  "Image element has no data"_s };
-        if (!image->width() || !image->height())
-            return Exception { ExceptionCode::InvalidStateError,  "Image element has a bad size"_s };
-        return { };
-    },
-    [&] (const RefPtr<CSSStyleImageValue>& cssImage) -> std::optional<Exception> {
-        UNUSED_PARAM(cssImage);
-        ASSERT(!cssImage->isLoadedFromOpaqueSource());
-        return Exception { ExceptionCode::SecurityError, "Image element is tainted"_s };
-    },
-#if ENABLE(VIDEO)
-    [&] (const RefPtr<HTMLVideoElement>& video) -> std::optional<Exception> {
-        RefPtr origin = context.securityOrigin();
-        if (video->taintsOrigin(*origin))
-            return Exception { ExceptionCode::SecurityError, "Video element is tainted"_s };
+    // 3. Let resource be a new media resource containing a copy of image’s media data. If this is an animated image, image’s bitmap data must only be taken from the default image of the animation (the one that the format defines is to be used when animation is not supported or is disabled), or, if there is no such image, the first frame of the animation.
+    auto image = usability.source->nativeImage();
+    if (!image)
+        return Exception { ExceptionCode::InvalidStateError,  "Image element has no video frame"_s };
 
-        auto readyState = video->readyState();
-        if (readyState < HTMLMediaElement::HAVE_CURRENT_DATA)
-            return Exception { ExceptionCode::InvalidStateError,  "Video element has no data"_s };
-        return { };
-    },
-#endif
-    [] (const RefPtr<HTMLCanvasElement>& canvas) -> std::optional<Exception> {
-        if (!canvas->originClean())
-            return Exception { ExceptionCode::SecurityError, "Image element is tainted"_s };
+    // 4. Let width and height be the natural width and natural height of image.
+    ASSERT(image->size().width() == *naturalDimensions.width);
+    ASSERT(image->size().height() == *naturalDimensions.height);
 
-        auto size = canvas->size();
-        if (!size.width() || !size.height())
-            return Exception { ExceptionCode::InvalidStateError,  "Input canvas has a bad size"_s };
-        return { };
-    },
-#if ENABLE(OFFSCREEN_CANVAS)
-    [] (const RefPtr<OffscreenCanvas>& canvas) -> std::optional<Exception> {
-        if (!canvas->originClean())
-            return Exception { ExceptionCode::SecurityError, "Image element is tainted"_s };
-
-        if (!canvas->width() || !canvas->height())
-            return Exception { ExceptionCode::InvalidStateError,  "Input canvas has a bad size"_s };
-        return { };
-    },
-#endif
-    [] (const RefPtr<ImageBitmap>& image) -> std::optional<Exception> {
-        if (image->isDetached())
-            return Exception { ExceptionCode::InvalidStateError,  "Input ImageBitmap is detached"_s };
-
-        if (!image->originClean())
-            return Exception { ExceptionCode::SecurityError,  "Input ImageBitmap is tainted"_s };
-        return { };
-    });
+    return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTFMove(init));
 }
 
-ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, CanvasImageSource&& source, Init&& init)
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, ImageUsabilityGood<SVGImageElement>&& usability, Init&& init)
 {
-    if (auto exception = checkImageUsability(context, source))
-        return WTFMove(*exception);
+    // 1. If timestamp does not exist in init, throw a TypeError.
+    if (!init.timestamp)
+        return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
 
-    return switchOn(source,
-    [&] (RefPtr<HTMLImageElement>& imageElement) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
-        if (!init.timestamp)
-            return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
+    // 2. If image’s media data has no natural dimensions (e.g., it’s a vector graphic with no specified content size), then throw an InvalidStateError DOMException.
+    auto naturalDimensions = usability.source->naturalDimensions();
+    if (!naturalDimensions.width || !naturalDimensions.height)
+        return Exception { ExceptionCode::InvalidStateError,  "Image element must have specified natural dimensions"_s };
 
-        auto image = imageElement->cachedImage()->image()->currentNativeImage();
-        if (!image)
-            return Exception { ExceptionCode::InvalidStateError,  "Image element has no video frame"_s };
+    // 3. Let resource be a new media resource containing a copy of image’s media data. If this is an animated image, image’s bitmap data must only be taken from the default image of the animation (the one that the format defines is to be used when animation is not supported or is disabled), or, if there is no such image, the first frame of the animation.
+    auto image = usability.source->nativeImage();
+    if (!image)
+        return Exception { ExceptionCode::InvalidStateError,  "Image element has no video frame"_s };
 
-        return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTFMove(init));
-    },
-    [&] (RefPtr<SVGImageElement>& imageElement) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
-        if (!init.timestamp)
-            return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
+    // 4. Let width and height be the natural width and natural height of image.
+    ASSERT(image->size().width() == *naturalDimensions.width);
+    ASSERT(image->size().height() == *naturalDimensions.height);
 
-        auto image = imageElement->cachedImage()->image()->currentNativeImage();
-        if (!image)
-            return Exception { ExceptionCode::InvalidStateError,  "Image element has no video frame"_s };
+    return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTFMove(init));
+}
 
-        return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTFMove(init));
-    },
-    [&] (RefPtr<CSSStyleImageValue>& cssImage) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
-        if (!init.timestamp)
-            return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, ImageUsabilityGood<CSSStyleImageValue>&& usability, Init&& init)
+{
+    // 1. If timestamp does not exist in init, throw a TypeError.
+    if (!init.timestamp)
+        return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
 
-        auto image = cssImage->image()->image()->currentNativeImage();
-        if (!image)
-            return Exception { ExceptionCode::InvalidStateError,  "CSS Image has no video frame"_s };
+    // 2. If image’s media data has no natural dimensions (e.g., it’s a vector graphic with no specified content size), then throw an InvalidStateError DOMException.
+    auto naturalDimensions = usability.source->naturalDimensions();
+    if (!naturalDimensions.width || !naturalDimensions.height)
+        return Exception { ExceptionCode::InvalidStateError,  "Image element must have specified natural dimensions"_s };
 
-        return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTFMove(init));
-    },
-#if ENABLE(VIDEO)
-    [&] (RefPtr<HTMLVideoElement>& video) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
-        RefPtr videoFrame = video->player() ? video->player()->videoFrameForCurrentTime() : nullptr;
-        if (!videoFrame)
-            return Exception { ExceptionCode::InvalidStateError,  "Video element has no video frame"_s };
-        return initializeFrameFromOtherFrame(context, videoFrame.releaseNonNull(), WTFMove(init), VideoFrame::ShouldCloneWithDifferentTimestamp::No);
-    },
-#endif
-    [&] (RefPtr<HTMLCanvasElement>& canvas) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
-        if (!init.timestamp)
-            return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
+    // 3. Let resource be a new media resource containing a copy of image’s media data. If this is an animated image, image’s bitmap data must only be taken from the default image of the animation (the one that the format defines is to be used when animation is not supported or is disabled), or, if there is no such image, the first frame of the animation.
+    auto image = usability.source->nativeImage();
+    if (!image)
+        return Exception { ExceptionCode::InvalidStateError,  "Image element has no video frame"_s };
 
-        if (!canvas->width() || !canvas->height())
-            return Exception { ExceptionCode::InvalidStateError,  "Input canvas has a bad size"_s };
+    // 4. Let width and height be the natural width and natural height of image.
+    ASSERT(image->size().width() == *naturalDimensions.width);
+    ASSERT(image->size().height() == *naturalDimensions.height);
 
-        auto videoFrame = canvas->toVideoFrame();
-        if (!videoFrame)
-            return Exception { ExceptionCode::InvalidStateError,  "Canvas has no frame"_s };
-        return initializeFrameFromOtherFrame(context, videoFrame.releaseNonNull(), WTFMove(init), VideoFrame::ShouldCloneWithDifferentTimestamp::Yes);
-    },
+    return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTFMove(init));
+}
+
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, ImageUsabilityGood<ImageBitmap>&& usability, Init&& init)
+{
+    // 1. If timestamp does not exist in init, throw a TypeError.
+    if (!init.timestamp)
+        return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
+
+    // 2. Let resource be a new media resource containing a copy of image’s bitmap data.
+    Ref resource = WTFMove(usability.source);
+
+    // 3. Let width be image.width and height be image.height.
+    int width = static_cast<int>(usability.image->width());
+    int height = static_cast<int>(usability.image->height());
+
+    // 4. Run the Initialize Frame With Resource and Size algorithm with init, frame, resource, width, and height.
+    return create(context, WTFMove(resource), { width, height }, WTFMove(init));
+}
+
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, ImageUsabilityGood<HTMLCanvasElement>&& usability, Init&& init)
+{
+    // 1. If timestamp does not exist in init, throw a TypeError.
+    if (!init.timestamp)
+        return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
+
+    // 2. Let resource be a new media resource containing a copy of image’s bitmap data.
+    auto resource = usability.image->toVideoFrame();
+    if (!resource)
+        return Exception { ExceptionCode::InvalidStateError,  "Canvas has no frame"_s };
+
+    // 3. Let width be image.width and height be image.height.
+    ASSERT(resource->presentationSize() == usability.image->size());
+
+    // 4. Run the Initialize Frame With Resource and Size algorithm with init, frame, resource, width, and height.
+    return initializeFrameFromOtherFrame(context, resource.releaseNonNull(), WTFMove(init), VideoFrame::ShouldCloneWithDifferentTimestamp::Yes);
+}
+
 #if ENABLE(OFFSCREEN_CANVAS)
-    [&] (RefPtr<OffscreenCanvas>& canvas) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
-        if (!init.timestamp)
-            return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, ImageUsabilityGood<OffscreenCanvas>&& usability, Init&& init)
+{
+    // 1. If timestamp does not exist in init, throw a TypeError.
+    if (!init.timestamp)
+        return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
 
-        if (!canvas->width() || !canvas->height())
-            return Exception { ExceptionCode::InvalidStateError,  "Input canvas has a bad size"_s };
+    RefPtr resource = usability.image->makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No);
+    if (!resource)
+        return Exception { ExceptionCode::InvalidStateError,  "Canvas has no frame"_s };
 
-        RefPtr imageBuffer = canvas->makeRenderingResultsAvailable();
-        if (!imageBuffer)
-            return Exception { ExceptionCode::InvalidStateError,  "Input canvas has no image buffer"_s };
+    // 3. Let width be image.width and height be image.height.
+    int width = static_cast<int>(usability.image->width());
+    int height = static_cast<int>(usability.image->height());
 
-        return create(context, *imageBuffer, { static_cast<int>(canvas->width()), static_cast<int>(canvas->height()) }, WTFMove(init));
-    },
-#endif // ENABLE(OFFSCREEN_CANVAS)
-    [&] (RefPtr<ImageBitmap>& image) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
-        if (!init.timestamp)
-            return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
+    // 4. Run the Initialize Frame With Resource and Size algorithm with init, frame, resource, width, and height.
+    return create(context, resource.releaseNonNull(), { width, height }, WTFMove(init));
+}
+#endif
 
-        if (!image->width() || !image->height())
-            return Exception { ExceptionCode::InvalidStateError,  "Input image has a bad size"_s };
+#if ENABLE(VIDEO)
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, ImageUsabilityGood<HTMLVideoElement>&& usability, Init&& init)
+{
+    // 1. If image’s networkState attribute is NETWORK_EMPTY, then throw an InvalidStateError DOMException.
+    if (usability.image->networkState() == HTMLMediaElement::NETWORK_EMPTY)
+        return Exception { ExceptionCode::InvalidStateError,  "Video element has invalid network state (NETWORK_EMPTY)"_s };
 
-        RefPtr imageBuffer = image->buffer();
-        if (!imageBuffer)
-            return Exception { ExceptionCode::InvalidStateError,  "Input image has no image buffer"_s };
+    // 2. Let currentPlaybackFrame be the VideoFrame at the current playback position.
+    RefPtr currentPlaybackFrame = usability.image->player() ? usability.image->player()->videoFrameForCurrentTime() : nullptr;
+    if (!currentPlaybackFrame)
+        return Exception { ExceptionCode::InvalidStateError,  "Video element has no video frame"_s };
 
-        return create(context, *imageBuffer, { static_cast<int>(image->width()), static_cast<int>(image->height()) }, WTFMove(init));
-    });
+    // 3. If metadata does not exist in init, assign currentPlaybackFrame.[[metadata]] to it.
+    // FIXME: Add support for accessing metadata from frames.
+    // if (!init.metadata)
+    //     init.metadata = currentPlaybackFrame->metadata();
+
+    // 4. Run the Initialize Frame From Other Frame algorithm with init, frame, and currentPlaybackFrame.
+    return initializeFrameFromOtherFrame(context, currentPlaybackFrame.releaseNonNull(), WTFMove(init), VideoFrame::ShouldCloneWithDifferentTimestamp::No);
+}
+#endif
+
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, ImageUsabilityGood<WebCodecsVideoFrame>&& usability, Init&& init)
+{
+    // 1. Run the Initialize Frame From Other Frame algorithm with init, frame, and image.
+    return initializeFrameFromOtherFrame(context, WTFMove(usability.source), WTFMove(init), VideoFrame::ShouldCloneWithDifferentTimestamp::Yes);
+}
+
+// https://w3c.github.io/webcodecs/#dom-videoframe-videoframe
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, CanvasImageSource&& image, Init&& init)
+{
+    return WTF::switchOn(WTFMove(image),
+        [&]<typename T>(RefPtr<T>&& image) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+            // 1. Check the usability of the image argument. If this throws an exception or returns bad, then throw an InvalidStateError DOMException..
+            auto usability = checkUsability(*image);
+            if (usability.hasException() || std::holds_alternative<ImageUsabilityBad>(usability.returnValue()))
+                return Exception { ExceptionCode::InvalidStateError,  "Image source failed usability check."_s };
+
+            auto goodUsabilityState = std::get<ImageUsabilityGood<T>>(usability.releaseReturnValue());
+
+            // 2. If image is not origin-clean, then throw a SecurityError DOMException.
+            if (taintsOrigin(*context.securityOrigin(), goodUsabilityState.image))
+                return Exception { ExceptionCode::SecurityError,  "Image source must be origin-clean."_s };
+
+            // 3. Let frame be a new VideoFrame.
+            // 4. Switch on image: [ ...implemented via overloaded create functions ]
+            // 5. Return frame.
+            return create(context, WTFMove(goodUsabilityState), WTFMove(init));
+        }
+    );
 }
 
 ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, ImageBuffer& buffer, IntSize size, WebCodecsVideoFrame::Init&& init)
@@ -263,13 +284,6 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
         return Exception { ExceptionCode::InvalidStateError,  "Unable to create frame from buffer"_s };
 
     return WebCodecsVideoFrame::initializeFrameFromOtherFrame(context, videoFrame.releaseNonNull(), WTFMove(init), VideoFrame::ShouldCloneWithDifferentTimestamp::Yes);
-}
-
-ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, Ref<WebCodecsVideoFrame>&& initFrame, Init&& init)
-{
-    if (initFrame->isDetached())
-        return Exception { ExceptionCode::InvalidStateError,  "VideoFrame is detached"_s };
-    return initializeFrameFromOtherFrame(context, WTFMove(initFrame), WTFMove(init), VideoFrame::ShouldCloneWithDifferentTimestamp::Yes);
 }
 
 static std::optional<Exception> validateI420Sizes(const WebCodecsVideoFrame::BufferInit& init)

@@ -52,6 +52,7 @@ class GraphicsContext;
 class FragmentedSharedBuffer;
 class ShareableBitmap;
 struct Length;
+struct NaturalDimensions;
 
 // This class gets notified when an image creates or destroys decoded frames and when it advances animation frames.
 class ImageObserver;
@@ -95,9 +96,13 @@ public:
 
     virtual void setContainerSize(const FloatSize&) { }
     virtual bool usesContainerSize() const { return false; }
+
+    // FIXME: Phase out `hasRelativeWidth`/`hasRelativeHeight`/`computeIntrinsicDimensions` in favor of `naturalDimensions`.
     virtual bool hasRelativeWidth() const { return false; }
     virtual bool hasRelativeHeight() const { return false; }
     virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
+
+    virtual NaturalDimensions naturalDimensions(ImageOrientation = ImageOrientation::Orientation::FromImage) const = 0;
 
     virtual FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const = 0;
     virtual FloatSize sourceSize(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const { return size(orientation); }

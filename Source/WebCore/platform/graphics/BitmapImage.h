@@ -29,12 +29,12 @@
 
 #include "Image.h"
 #include "ImageSource.h"
+#include "NaturalDimensions.h"
 #include <wtf/Function.h>
 
 namespace WebCore {
 
 class ImageObserver;
-class ImageSource;
 class NativeImage;
 
 class BitmapImage final : public Image {
@@ -68,6 +68,7 @@ public:
     RefPtr<NativeImage> currentNativeImage() final { return m_source->currentNativeImage(); }
 
     // Image Metadata
+    NaturalDimensions naturalDimensions(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const final { return NaturalDimensions::fixed(size(orientation)); }
     FloatSize size(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const final { return m_source->size(orientation); }
     FloatSize sourceSize(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const { return m_source->sourceSize(orientation); }
     DestinationColorSpace colorSpace() final { return m_source->colorSpace(); }

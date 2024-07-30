@@ -24,6 +24,7 @@
 #include "FloatRect.h"
 #include "FloatSize.h"
 #include "Image.h"
+#include "NaturalDimensions.h"
 
 namespace WebCore {
 
@@ -45,6 +46,11 @@ FloatSize SVGImageForContainer::size(ImageOrientation) const
     FloatSize scaledContainerSize(m_containerSize);
     scaledContainerSize.scale(m_containerZoom);
     return FloatSize(roundedIntSize(scaledContainerSize));
+}
+
+NaturalDimensions SVGImageForContainer::naturalDimensions(ImageOrientation orienation) const
+{
+    return protectedImage()->naturalDimensions(orienation);
 }
 
 ImageDrawResult SVGImageForContainer::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options)

@@ -31,6 +31,7 @@
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "ImageObserver.h"
+#include "NaturalDimensions.h"
 #include <CoreGraphics/CGContext.h>
 #include <CoreGraphics/CGPDFDocument.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
@@ -65,6 +66,11 @@ void PDFDocumentImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length
     // FIXME: If we want size negotiation with PDF documents as-image, this is the place to implement it (https://bugs.webkit.org/show_bug.cgi?id=12095).
     Image::computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
     intrinsicRatio = FloatSize();
+}
+
+NaturalDimensions PDFDocumentImage::naturalDimensions(ImageOrientation orientation) const
+{
+    return NaturalDimensions::fixed(size(orientation));
 }
 
 EncodedDataStatus PDFDocumentImage::dataChanged(bool allDataReceived)
