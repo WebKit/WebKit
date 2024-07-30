@@ -642,7 +642,6 @@ bool Quirks::shouldSynthesizeTouchEvents() const
 
 // live.com rdar://52116170
 // sharepoint.com rdar://52116170
-// twitter.com rdar://59016252
 // maps.google.com https://bugs.webkit.org/show_bug.cgi?id=214945
 bool Quirks::shouldAvoidResizingWhenInputViewBoundsChange() const
 {
@@ -653,9 +652,6 @@ bool Quirks::shouldAvoidResizingWhenInputViewBoundsChange() const
     auto host = url.host();
 
     if (isDomain("live.com"_s))
-        return true;
-
-    if (isDomain("twitter.com"_s))
         return true;
 
     if (isDomain("google.com"_s) && url.path().startsWithIgnoringASCIICase("/maps/"_s))
