@@ -2630,4 +2630,18 @@ void RenderGrid::GridWrapper::resetCurrentGrid() const
     m_currentGrid = std::ref(const_cast<Grid&>(m_layoutGrid));
 }
 
+void RenderGrid::computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats)
+{
+    RenderBlock::computeOverflow(oldClientAfterEdge, recomputeFloats);
+
+    if (!hasPotentiallyScrollableOverflow() || isMasonry() || isSubgridRows() || isSubgridColumns())
+        return;
+
+    // FIXME: We should handle RTL and other writing modes also.
+    if (style().direction() == TextDirection::LTR && isHorizontalWritingMode()) {
+        auto gridAreaSize = LayoutSize { m_columnPositions.last(), m_rowPositions.last() };
+        addLayoutOverflow({ { }, gridAreaSize });
+    }
+}
+
 } // namespace WebCore

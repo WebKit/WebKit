@@ -12,9 +12,5 @@ FAIL .scroll 4 assert_equals:
 </div>
 scrollWidth expected 100 but got 1
 PASS .scroll 5
-FAIL .scroll 6 assert_equals:
-<div class="scroll zero-w grid" data-expected-scroll-width="100">
-  <div class="zero-h"></div>
-</div>
-scrollWidth expected 100 but got 1
+PASS .scroll 6
 

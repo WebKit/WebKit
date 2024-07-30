@@ -222,6 +222,7 @@ private:
 
     void paintChildren(PaintInfo& forSelf, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect) override;
     LayoutOptionalOutsets allowedLayoutOverflow() const override;
+    void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false) final;
 
     LayoutUnit availableAlignmentSpaceForGridItemBeforeStretching(LayoutUnit gridAreaBreadthForGridItem, const RenderBox&, GridTrackSizingDirection) const;
     StyleSelfAlignmentData justifySelfForGridItem(const RenderBox&, StretchingMode = StretchingMode::Any, const RenderStyle* = nullptr) const;
