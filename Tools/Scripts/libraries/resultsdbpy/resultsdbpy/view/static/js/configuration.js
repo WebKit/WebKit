@@ -123,13 +123,16 @@ class Configuration {
                 return 'B';
             return 'C';
         }
-        if (['K', 'S'].includes(match[2])) {
+        if (['K'].includes(match[2])) {
             const count = parseInt(match[3]);
             if (count < 200)
                 return 'B';
             if (count < 500)
-                return 'C'
+                return 'C';
             return 'D';
+        }
+        if (['S'].includes(match[2])) {
+            return 'C';
         }
         if (['L', 'O', 'T'].includes(match[2])) {
             const count = parseInt(match[3]);
@@ -137,6 +140,8 @@ class Configuration {
                 return 'E'
             return 'F';
         }
+        if (['M'].includes(match[2]) && Number(match[1]) >= 23)
+            return 'A';
         if (['M', 'U'].includes(match[2]))
             return 'G';
 
