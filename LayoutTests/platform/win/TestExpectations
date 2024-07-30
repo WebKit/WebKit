@@ -4208,6 +4208,3 @@ fast/css/view-transitions-nested-transparency-layers.html [ ImageOnlyFailure Pas
 # ImageOnlyFailure only on EWS. The background images doesn't seem to be loaded.
 imported/w3c/web-platform-tests/css/css-viewport/zoom/background-image.html [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/css/css-viewport/zoom/image-intrinsic-size.html [ ImageOnlyFailure Pass ]
-
-# Requires layer tiling
-compositing/repaint/scroller-repaints-once.html [ Failure ]

@@ -115,8 +115,14 @@ layer at (403,312) size 186x18
       text run at (51,0) width 84: "placeholder"
 layer at (403,312) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18
+layer at (181,12) size 16x16
+  RenderBlock {DIV} at (170,1) size 16x16 [bgcolor=#000000]
+layer at (11,60) size 16x16
+  RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
 layer at (11,84) size 16x16
   RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
+layer at (181,84) size 16x16
+  RenderBlock {DIV} at (170,1) size 16x16 [bgcolor=#000000]
 layer at (8,333) size 192x38
   RenderTextControl {INPUT} at (0,325) size 192x38 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
 layer at (11,350) size 186x18

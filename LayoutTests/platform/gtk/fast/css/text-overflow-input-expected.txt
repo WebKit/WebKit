@@ -346,11 +346,19 @@ layer at (469,355) size 186x18 scrollWidth 384
   RenderBlock {DIV} at (3,3) size 186x18
     RenderText {#text} at (0,0) size 383x17
       text run at (0,0) width 383: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+layer at (377,72) size 16x16
+  RenderBlock {DIV} at (170,1) size 16x16 [bgcolor=#000000]
 layer at (769,72) size 16x16
   RenderBlock {DIV} at (170,1) size 16x16 [bgcolor=#000000]
+layer at (206,120) size 16x16
+  RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
 layer at (596,120) size 16x16
   RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
+layer at (377,202) size 16x16
+  RenderBlock {DIV} at (170,1) size 16x16 [bgcolor=#000000]
 layer at (769,202) size 16x16
   RenderBlock {DIV} at (170,1) size 16x16 [bgcolor=#000000]
+layer at (206,250) size 16x16
+  RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
 layer at (596,250) size 16x16
   RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
