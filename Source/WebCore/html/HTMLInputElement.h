@@ -296,6 +296,7 @@ public:
     bool isTextFormControlMouseFocusable() const;
     bool valueAttributeWasUpdatedAfterParsing() const { return m_valueAttributeWasUpdatedAfterParsing; }
 
+
     void cacheSelectionInResponseToSetValue(int caretOffset) { cacheSelection(caretOffset, caretOffset, SelectionHasNoDirection); }
 
     WEBCORE_EXPORT Color valueAsColor() const; // Returns transparent color if not type=color.
@@ -348,6 +349,8 @@ public:
     bool isSwitchHeld() const;
 
     void initializeInputTypeAfterParsingOrCloning();
+    RefPtr<InputType> protectedInputType() const;
+
 
 private:
     enum class CreationType : uint8_t { Normal, ByParser, ByCloning };
@@ -499,6 +502,8 @@ private:
     bool m_hasSwitchAttribute : 1 { false };
     bool m_hasEverBeenPasswordField : 1 { false };
     RefPtr<InputType> m_inputType;
+
+
     // The ImageLoader must be owned by this element because the loader code assumes
     // that it lives as long as its owning element lives. If we move the loader into
     // the ImageInput object we may delete the loader while this element lives on.

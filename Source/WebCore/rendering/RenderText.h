@@ -296,6 +296,7 @@ inline UChar RenderText::characterAt(unsigned i) const
 
 inline const RenderStyle& RenderText::style() const
 {
+   
     return parent()->style();
 }
 

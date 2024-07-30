@@ -254,6 +254,7 @@ inline RenderText::RenderText(Type type, Node& node, const String& text)
     , m_text(text)
     , m_containsOnlyASCII(text.impl()->containsOnlyASCII())
 {
+    
     ASSERT(!m_text.isNull());
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
     ASSERT(isRenderText());
@@ -262,11 +263,13 @@ inline RenderText::RenderText(Type type, Node& node, const String& text)
 RenderText::RenderText(Type type, Text& textNode, const String& text)
     : RenderText(type, static_cast<Node&>(textNode), text)
 {
+     
 }
 
 RenderText::RenderText(Type type, Document& document, const String& text)
     : RenderText(type, static_cast<Node&>(document), text)
 {
+     
 }
 
 RenderText::~RenderText()
@@ -2125,7 +2128,7 @@ std::optional<bool> RenderText::emphasisMarkExistsAndIsAbove(const RenderText& r
 
     auto findRubyAnnotation = [&]() -> RenderBlockFlow* {
         for (auto* baseCandidate = renderer.parent(); baseCandidate; baseCandidate = baseCandidate->parent()) {
-            if (!baseCandidate->isInline())
+         
                 return nullptr;
             if (baseCandidate->style().display() == DisplayType::RubyBase) {
                 auto* annotationCandidate = baseCandidate->nextSibling();
