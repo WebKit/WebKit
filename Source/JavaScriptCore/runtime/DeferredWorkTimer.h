@@ -46,14 +46,19 @@ class DeferredWorkTimer final : public JSRunLoopTimer {
 public:
     using Base = JSRunLoopTimer;
 
+    enum class WorkType : uint8_t {
+        ImminentlyScheduled,
+        AtSomePoint,
+    };
+
     class TicketData : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<TicketData>  {
     private:
         WTF_MAKE_TZONE_ALLOCATED(TicketData);
         WTF_MAKE_NONCOPYABLE(TicketData);
     public:
-        inline TicketData(JSGlobalObject*, JSObject* scriptExecutionOwner, Vector<Weak<JSCell>>&& dependencies);
-        inline static Ref<TicketData> create(JSGlobalObject*, JSObject* scriptExecutionOwner, Vector<Weak<JSCell>>&& dependencies);
+        inline static Ref<TicketData> create(WorkType, JSGlobalObject*, JSObject* scriptExecutionOwner, Vector<Weak<JSCell>>&& dependencies);
 
+        WorkType type() const { return m_type; }
         inline VM& vm();
         JSObject* target();
         inline bool hasValidTarget() const;
@@ -65,6 +70,9 @@ public:
         bool isCancelled() const { return !m_scriptExecutionOwner.get() || !m_globalObject.get() || !hasValidTarget(); }
 
     private:
+        inline TicketData(WorkType, JSGlobalObject*, JSObject* scriptExecutionOwner, Vector<Weak<JSCell>>&& dependencies);
+
+        WorkType m_type;
         FixedVector<Weak<JSCell>> m_dependencies;
         Weak<JSObject> m_scriptExecutionOwner;
         Weak<JSGlobalObject> m_globalObject;
@@ -74,8 +82,10 @@ public:
 
     void doWork(VM&) final;
 
-    JS_EXPORT_PRIVATE Ticket addPendingWork(VM&, JSObject* target, Vector<Weak<JSCell>>&& dependencies);
-    bool hasAnyPendingWork() const;
+    JS_EXPORT_PRIVATE Ticket addPendingWork(WorkType, VM&, JSObject* target, Vector<Weak<JSCell>>&& dependencies);
+
+    JS_EXPORT_PRIVATE bool hasAnyPendingWork() const;
+    JS_EXPORT_PRIVATE bool hasImminentlyScheduledWork() const;
     bool hasPendingWork(Ticket);
     bool hasDependencyInPendingWork(Ticket, JSCell* dependency);
     bool cancelPendingWork(Ticket);

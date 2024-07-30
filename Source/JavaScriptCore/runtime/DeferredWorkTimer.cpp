@@ -41,17 +41,18 @@ namespace DeferredWorkTimerInternal {
 static constexpr bool verbose = false;
 }
 
-inline DeferredWorkTimer::TicketData::TicketData(JSGlobalObject* globalObject, JSObject* scriptExecutionOwner, Vector<Weak<JSCell>>&& dependencies)
-    : m_dependencies(WTFMove(dependencies))
+inline DeferredWorkTimer::TicketData::TicketData(WorkType type, JSGlobalObject* globalObject, JSObject* scriptExecutionOwner, Vector<Weak<JSCell>>&& dependencies)
+    : m_type(type)
+    , m_dependencies(WTFMove(dependencies))
     , m_scriptExecutionOwner(scriptExecutionOwner)
     , m_globalObject(globalObject)
 {
     globalObject->addWeakTicket(this);
 }
 
-inline Ref<DeferredWorkTimer::TicketData> DeferredWorkTimer::TicketData::create(JSGlobalObject* globalObject, JSObject* scriptExecutionOwner, Vector<Weak<JSCell>>&& dependencies)
+inline Ref<DeferredWorkTimer::TicketData> DeferredWorkTimer::TicketData::create(WorkType type, JSGlobalObject* globalObject, JSObject* scriptExecutionOwner, Vector<Weak<JSCell>>&& dependencies)
 {
-    return adoptRef(*new TicketData(globalObject, scriptExecutionOwner, WTFMove(dependencies)));
+    return adoptRef(*new TicketData(type, globalObject, scriptExecutionOwner, WTFMove(dependencies)));
 }
 
 inline VM& DeferredWorkTimer::TicketData::vm()
@@ -158,11 +159,11 @@ void DeferredWorkTimer::runRunLoop()
     ASSERT(!m_apiLock->vm()->currentThreadIsHoldingAPILock());
     ASSERT(&RunLoop::current() == &m_apiLock->vm()->runLoop());
     m_shouldStopRunLoopWhenAllTicketsFinish = true;
-    if (m_pendingTickets.size())
+    if (!m_pendingTickets.isEmpty())
         RunLoop::run();
 }
 
-DeferredWorkTimer::Ticket DeferredWorkTimer::addPendingWork(VM& vm, JSObject* target, Vector<Weak<JSCell>>&& dependencies)
+DeferredWorkTimer::Ticket DeferredWorkTimer::addPendingWork(WorkType type, VM& vm, JSObject* target, Vector<Weak<JSCell>>&& dependencies)
 {
     ASSERT_UNUSED(vm, vm.currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && vm.heap.worldIsStopped()));
     for (unsigned i = 0; i < dependencies.size(); ++i)
@@ -172,7 +173,7 @@ DeferredWorkTimer::Ticket DeferredWorkTimer::addPendingWork(VM& vm, JSObject* ta
     JSObject* scriptExecutionOwner = globalObject->globalObjectMethodTable()->currentScriptExecutionOwner(globalObject);
     dependencies.append(Weak<JSCell>(target));
 
-    auto ticketData = TicketData::create(globalObject, scriptExecutionOwner, WTFMove(dependencies));
+    auto ticketData = TicketData::create(type, globalObject, scriptExecutionOwner, WTFMove(dependencies));
     Ticket ticket = ticketData.ptr();
 
     dataLogLnIf(DeferredWorkTimerInternal::verbose, "Adding new pending ticket: ", RawPointer(ticket));
@@ -250,6 +251,18 @@ bool DeferredWorkTimer::hasAnyPendingWork() const
 {
     ASSERT(m_apiLock->vm()->currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && m_apiLock->vm()->heap.worldIsStopped()));
     return !m_pendingTickets.isEmpty();
+}
+
+bool DeferredWorkTimer::hasImminentlyScheduledWork() const
+{
+    ASSERT(m_apiLock->vm()->currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && m_apiLock->vm()->heap.worldIsStopped()));
+    for (auto& ticket : m_pendingTickets) {
+        if (ticket->isCancelled())
+            continue;
+        if (ticket->type() == WorkType::ImminentlyScheduled)
+            return true;
+    }
+    return false;
 }
 
 } // namespace JSC
