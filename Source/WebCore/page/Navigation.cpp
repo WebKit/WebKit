@@ -54,6 +54,7 @@
 #include "SerializedScriptValue.h"
 #include "ShouldTreatAsContinuingLoad.h"
 #include "UserGestureIndicator.h"
+#include <JavaScriptCore/Exception.h>
 #include <optional>
 #include <wtf/Assertions.h>
 #include <wtf/IsoMallocInlines.h>
@@ -597,7 +598,8 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
     auto exception = Exception(ExceptionCode::AbortError, "Navigation aborted"_s);
     auto domException = createDOMException(*globalObject, exception.isolatedCopy());
 
-    event.signal()->signalAbort(domException);
+    if (event.signal())
+        event.signal()->signalAbort(domException);
 
     m_ongoingNavigateEvent = nullptr;
 
@@ -611,6 +613,15 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
         // FIXME: Reject navigation's transition's finished promise with error.
         m_transition = nullptr;
     }
+}
+
+static std::pair<Ref<DOMPromise>, Ref<DeferredPromise>> createPromiseAndWrapper(Document& document)
+{
+    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(document.globalObject());
+    JSC::JSLockHolder lock(globalObject.vm());
+    RefPtr deferredPromise = DeferredPromise::create(globalObject);
+    Ref domPromise = DOMPromise::create(globalObject, *JSC::jsCast<JSC::JSPromise*>(deferredPromise->promise()));
+    return { WTFMove(domPromise), deferredPromise.releaseNonNull() };
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#inner-navigate-event-firing-algorithm
@@ -714,43 +725,79 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
 
     if (endResultIsSameDocument) {
         Vector<RefPtr<DOMPromise>> promiseList;
-        bool failure = false;
 
         for (auto& handler : event->handlers()) {
             auto callbackResult = handler->handleEvent();
             if (callbackResult.type() == CallbackResultType::Success)
                 promiseList.append(callbackResult.releaseReturnValue());
-            else
-                failure = true;
-            // FIXME: We need to keep around the failure reason but the generated handleEvent() catches and consumes it.
+            else if (callbackResult.type() == CallbackResultType::ExceptionThrown) {
+                // FIXME: We need to keep around the failure reason but the generated handleEvent() catches and consumes it.
+                auto promiseAndWrapper = createPromiseAndWrapper(*document);
+                promiseAndWrapper.second->reject(ExceptionCode::TypeError);
+                promiseList.append(WTFMove(promiseAndWrapper.first));
+                break;
+            }
+        }
+        if (promiseList.isEmpty()) {
+            auto promiseAndWrapper = createPromiseAndWrapper(*document);
+            promiseAndWrapper.second->resolveWithCallback([](JSDOMGlobalObject&) {
+                return JSC::jsUndefined();
+            });
+            promiseList.append(WTFMove(promiseAndWrapper.first));
         }
 
         // FIXME: Step 33.4: We need to wait for all promises.
 
-        if (document->isFullyActive() && !abortController->signal().aborted()) {
-            // If a new event has been dispatched in our event handler then we were aborted above.
-            if (m_ongoingNavigateEvent != event.ptr())
-                return false;
+        // If a new event has been dispatched in our event handler then we were aborted above.
+        if (m_ongoingNavigateEvent != event.ptr())
+            return false;
 
-            m_ongoingNavigateEvent = nullptr;
+        if (promiseList[0]) {
+            promiseList[0]->whenSettled([this, weakThis = WeakPtr { *this }, apiMethodTracker, abortController, callbackPromise = promiseList[0]] () mutable {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis || !frame() || !m_ongoingNavigateEvent)
+                    return;
+                RefPtr document = window()->protectedDocument();
+                if (!document->isFullyActive() || abortController->signal().aborted())
+                    return;
+                switch (callbackPromise->status()) {
+                case DOMPromise::Status::Fulfilled: {
+                    m_ongoingNavigateEvent->finish();
+                    m_ongoingNavigateEvent = nullptr;
 
-            event->finish();
+                    dispatchEvent(Event::create(eventNames().navigatesuccessEvent, { }));
 
-            if (!failure) {
-                dispatchEvent(Event::create(eventNames().navigatesuccessEvent, { }));
+                    // FIXME: 7. If navigation's transition is not null, then resolve navigation's transition's finished promise with undefined.
+                    m_ongoingNavigateEvent = nullptr;
 
-                // FIXME: 7. If navigation's transition is not null, then resolve navigation's transition's finished promise with undefined.
-                m_transition = nullptr;
+                    if (apiMethodTracker)
+                        resolveFinishedPromise(apiMethodTracker.get());
+                    break;
+                } case DOMPromise::Status::Rejected: {
+                    // FIXME: Fill in error information.
+                    String errorMessage;
+                    if (auto* error = jsDynamicCast<JSC::ErrorInstance*>(callbackPromise->result()))
+                        errorMessage = makeString("Uncaught "_s, error->sanitizedToString(protectedScriptExecutionContext()->globalObject()));
+                    m_ongoingNavigateEvent->finish();
+                    m_ongoingNavigateEvent = nullptr;
 
-                if (apiMethodTracker)
-                    resolveFinishedPromise(apiMethodTracker.get());
-            } else {
-                // FIXME: Fill in error information.
-                dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, { }, { }, 0, 0, { }));
-            }
-        } else {
-            // FIXME: and the following failure steps given reason rejectionReason:
-            m_ongoingNavigateEvent = nullptr;
+                    dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, errorMessage, document->url().stringWithoutFragmentIdentifier(), 1, 1, { protectedScriptExecutionContext()->globalObject()->vm(), callbackPromise->result() }));
+
+                    // FIXME: 7. If navigation's transition is not null, then resolve navigation's transition's finished promise with undefined.
+                    m_transition = nullptr;
+
+                    if (apiMethodTracker) {
+                        apiMethodTracker->finishedPromise->rejectWithCallback([&] (auto&) {
+                            return callbackPromise->result();
+                        }, RejectAsHandled::Yes);
+                    }
+                    break;
+                }
+                case DOMPromise::Status::Pending:
+                    ASSERT_NOT_REACHED();
+                    break;
+                }
+            });
         }
     } else if (apiMethodTracker)
         cleanupAPIMethodTracker(apiMethodTracker.get());
