@@ -39,6 +39,9 @@ enum class MediaSessionAction : uint8_t {
     Skipad,
     Stop,
     Seekto,
+    Togglemicrophone,
+    Togglecamera,
+    Togglescreenshare,
     Settrack,
 };
 

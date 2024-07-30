@@ -101,6 +101,8 @@ fast/dom/HTMLLinkElement/prefetch-too-many-clients.html [ Skip ]
 # MEDIA_CAPTURE is disabled
 fast/forms/file/file-input-capture.html [ Skip ]
 
+http/wpt/mediasession [ Skip ]
+
 # MEDIA_SOURCE is disabled
 webkit.org/b/64731 fast/history/page-cache-media-source-opened.html [ Skip ]
 webkit.org/b/64731 fast/history/page-cache-media-source-closed.html [ Skip ]

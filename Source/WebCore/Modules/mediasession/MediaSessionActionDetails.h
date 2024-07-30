@@ -36,6 +36,7 @@ struct MediaSessionActionDetails {
     std::optional<double> seekOffset;
     std::optional<double> seekTime;
     std::optional<bool> fastSeek;
+    std::optional<bool> isActivating;
 #if ENABLE(MEDIA_SESSION_PLAYLIST)
     String trackIdentifier;
 #endif

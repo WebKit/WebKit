@@ -33,6 +33,7 @@
     double? seekOffset;
     double? seekTime;
     boolean? fastSeek;
+    boolean? isActivating;
 
     [Conditional=MEDIA_SESSION_PLAYLIST, EnabledBySetting=MediaSessionPlaylistEnabled] DOMString? trackIdentifier;
 };

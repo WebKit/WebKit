@@ -1,0 +1,54 @@
+<script>
+var stream;
+async function startCapture(audio, video)
+{
+    stream = await navigator.mediaDevices.getUserMedia({ audio, video });
+}
+
+function stopCapture()
+{
+   stream.getTracks().forEach(t => t.stop());
+}
+
+function isCameraMuted()
+{
+    if (!stream)
+        return false;
+    const tracks = stream.getVideoTracks();
+    if (!tracks.length)
+        return false;
+    return tracks()[0].muted;
+}
+
+function isMicrophoneMuted()
+{
+    if (!stream)
+        return false;
+    const tracks = stream.getAudioTracks();
+    if (!tracks.length)
+        return false;
+    return tracks()[0].muted;
+}
+
+function waitForNoToggleAction(action)
+{
+    let rejectCallback;
+    const promise = new Promise((resolve, reject) => {
+        rejectCallback = reject;
+        setTimeout(() => resolve(null), 50);
+    });
+    navigator.mediaSession.setActionHandler(action, details => rejectCallback(details.isActivating));
+    return promise;
+}
+
+function waitForToggleAction(action)
+{
+    let resolveCallback;
+    const promise = new Promise((resolve, reject) => {
+        resolveCallback = resolve;
+        setTimeout(() => reject("waitForToggleAction " + action + " timed out"), 5000);
+    });
+    navigator.mediaSession.setActionHandler(action, details => resolveCallback(details.isActivating));
+    return promise;
+}
+</script>

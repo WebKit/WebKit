@@ -323,6 +323,10 @@ enum class VisibilityState : bool;
 enum class EventTrackingRegionsEventType : uint8_t;
 #endif
 
+#if ENABLE(MEDIA_SESSION)
+enum class MediaSessionAction : uint8_t;
+#endif
+
 using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
 using MediaProducerMutedStateFlags = OptionSet<MediaProducerMutedState>;
 using PlatformDisplayID = uint32_t;
@@ -1636,6 +1640,13 @@ public:
     void noteUserInteractionWithMediaElement();
     inline bool isCapturing() const;
     WEBCORE_EXPORT void updateIsPlayingMedia();
+
+#if ENABLE(MEDIA_STREAM) && ENABLE(MEDIA_SESSION)
+    void processCaptureStateDidChange(Function<bool(const Page&)>&&, Function<bool(const RealtimeMediaSource&)>&&, MediaSessionAction);
+    void cameraCaptureStateDidChange();
+    void microphoneCaptureStateDidChange();
+    void screenshareCaptureStateDidChange();
+#endif
     void pageMutedStateDidChange();
     void visibilityAdjustmentStateDidChange();
 
