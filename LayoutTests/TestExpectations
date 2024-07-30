@@ -7283,7 +7283,6 @@ imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-start
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-start-001.html?class=vrl,ex [ Skip ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-start-001.html?class=vrl,leading [ Skip ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-start-001.html?class=vrl,text [ Skip ]
-imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-dynamic-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/245032 imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-004.html [ ImageOnlyFailure ]
 

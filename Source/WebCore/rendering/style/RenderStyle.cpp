@@ -891,6 +891,7 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
         || first.textAlignLast != second.textAlignLast
         || first.textJustify != second.textJustify
         || first.textIndentLine != second.textIndentLine
+        || first.textBoxEdge != second.textBoxEdge
         || first.usedZoom != second.usedZoom
         || first.textZoom != second.textZoom
 #if ENABLE(TEXT_AUTOSIZING)
