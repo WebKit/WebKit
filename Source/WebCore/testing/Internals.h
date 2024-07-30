@@ -1491,6 +1491,8 @@ public:
     using ImageBufferResourceLimitsPromise = DOMPromiseDeferred<IDLDictionary<ImageBufferResourceLimits>>;
     void getImageBufferResourceLimits(ImageBufferResourceLimitsPromise&&);
 
+    void setResourceCachingDisabledByWebInspector(bool);
+
 private:
     explicit Internals(Document&);
 
