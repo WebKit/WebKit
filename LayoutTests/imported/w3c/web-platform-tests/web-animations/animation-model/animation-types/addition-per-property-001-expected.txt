@@ -142,6 +142,11 @@ PASS color-interpolation: "linearrgb" onto "auto"
 PASS color-interpolation-filters (type: discrete) has testAddition function
 PASS color-interpolation-filters: "linearrgb" onto "srgb"
 PASS color-interpolation-filters: "srgb" onto "linearrgb"
+PASS columns (type: positiveInteger) has testAddition function
+PASS columns: positive integer
+PASS columns (type: length) has testAddition function
+PASS columns: length
+PASS columns: length of rem
 PASS column-count (type: positiveInteger) has testAddition function
 PASS column-count: positive integer
 PASS column-count (type: discrete) has testAddition function
@@ -220,6 +225,9 @@ PASS flex-basis: "auto" onto "10px"
 PASS flex-direction (type: discrete) has testAddition function
 PASS flex-direction: "row-reverse" onto "row"
 PASS flex-direction: "row" onto "row-reverse"
+PASS flex-flow (type: discrete) has testAddition function
+PASS flex-flow: "row-reverse wrap" onto "row"
+PASS flex-flow: "row" onto "row-reverse wrap"
 PASS flex-grow (type: positiveNumber) has testAddition function
 PASS flex-grow: positive number
 PASS flex-shrink (type: positiveNumber) has testAddition function
@@ -285,6 +293,15 @@ PASS font-variation-settings: ""wdth" 5" onto ""wdth" 1, "wght" 1.1"
 PASS font-variation-settings: ""wdth" 1, "wght" 1.1" onto ""wdth" 5"
 PASS font-variation-settings: "normal" onto ""wdth" 5"
 PASS font-variation-settings: ""wdth" 5" onto "normal"
+PASS gap (type: length) has testAddition function
+PASS gap: length
+PASS gap: length of rem
+PASS gap (type: discrete) has testAddition function
+PASS gap: "200px" onto "normal"
+PASS gap: "normal" onto "200px"
+PASS grid-area (type: discrete) has testAddition function
+PASS grid-area: "5" onto "1"
+PASS grid-area: "1" onto "5"
 PASS grid-auto-columns (type: discrete) has testAddition function
 PASS grid-auto-columns: "5px" onto "1px"
 PASS grid-auto-columns: "1px" onto "5px"
@@ -294,18 +311,27 @@ PASS grid-auto-flow: "row" onto "column"
 PASS grid-auto-rows (type: discrete) has testAddition function
 PASS grid-auto-rows: "5px" onto "1px"
 PASS grid-auto-rows: "1px" onto "5px"
+PASS grid-column (type: discrete) has testAddition function
+PASS grid-column: "5" onto "1"
+PASS grid-column: "1" onto "5"
 PASS grid-column-end (type: discrete) has testAddition function
 PASS grid-column-end: "5" onto "1"
 PASS grid-column-end: "1" onto "5"
 PASS grid-column-start (type: discrete) has testAddition function
 PASS grid-column-start: "5" onto "1"
 PASS grid-column-start: "1" onto "5"
+PASS grid-row (type: discrete) has testAddition function
+PASS grid-row: "5" onto "1"
+PASS grid-row: "1" onto "5"
 PASS grid-row-end (type: discrete) has testAddition function
 PASS grid-row-end: "5" onto "1"
 PASS grid-row-end: "1" onto "5"
 PASS grid-row-start (type: discrete) has testAddition function
 PASS grid-row-start: "5" onto "1"
 PASS grid-row-start: "1" onto "5"
+PASS grid-template (type: discrete) has testAddition function
+PASS grid-template: "none" onto "". . a b" ". . a b""
+PASS grid-template: "". . a b" ". . a b"" onto "none"
 PASS grid-template-areas (type: discrete) has testAddition function
 PASS grid-template-areas: "none" onto "". . a b" ". . a b""
 PASS grid-template-areas: "". . a b" ". . a b"" onto "none"

@@ -3895,16 +3895,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new ContainIntrinsiclLengthPropertyWrapper(CSSPropertyContainIntrinsicWidth, &RenderStyle::containIntrinsicWidth, &RenderStyle::setContainIntrinsicWidth, &RenderStyle::containIntrinsicWidthType, &RenderStyle::setContainIntrinsicWidthType),
         new ContainIntrinsiclLengthPropertyWrapper(CSSPropertyContainIntrinsicHeight, &RenderStyle::containIntrinsicHeight, &RenderStyle::setContainIntrinsicHeight, &RenderStyle::containIntrinsicHeightType, &RenderStyle::setContainIntrinsicHeightType),
 
-        // FIXME: The following properties are currently not animatable but should be:
-        // background-blend-mode, clip-rule, color-interpolation,
-        // color-interpolation-filters, counter-increment, counter-reset, dominant-baseline,
-        // fill-rule, font-family, font-feature-settings, font-kerning, font-language-override,
-        // font-synthesis, font-variant-alternates, font-variant-caps, font-variant-east-asian,
-        // font-variant-ligatures, font-variant-numeric, font-variant-position, grid-template-areas,
-        // ime-mode, marker-end, marker-mid, marker-start, mask, mask-clip, mask-composite, mask-image,
-        // mask-mode, mask-origin, mask-repeat, mask-type, offset-distance, perspective-origin, quotes,
-        // ruby-align, scroll-behavior, shape-rendering, stroke-linecap, stroke-linejoin,
-        // text-anchor, text-emphasis-style, text-rendering, vector-effect
         new DiscretePropertyWrapper<const StyleContentAlignmentData&>(CSSPropertyAlignContent, &RenderStyle::alignContent, &RenderStyle::setAlignContent),
         new DiscretePropertyWrapper<const StyleSelfAlignmentData&>(CSSPropertyAlignItems, &RenderStyle::alignItems, &RenderStyle::setAlignItems),
         new DiscretePropertyWrapper<const StyleSelfAlignmentData&>(CSSPropertyAlignSelf, &RenderStyle::alignSelf, &RenderStyle::setAlignSelf),
@@ -4070,8 +4060,20 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyBorder,
         CSSPropertyBorderImage,
         CSSPropertyBorderSpacing,
+        CSSPropertyColumns,
+        CSSPropertyFlex,
+        CSSPropertyFlexFlow,
+        CSSPropertyGap,
+        CSSPropertyGrid,
+        CSSPropertyGridArea,
+        CSSPropertyGridColumn,
+        CSSPropertyGridRow,
+        CSSPropertyGridTemplate,
         CSSPropertyListStyle, // for list-style-image
         CSSPropertyMargin,
+        CSSPropertyMarginBlock, // logical shorthand
+        CSSPropertyMarginInline, // logical shorthand
+        CSSPropertyMarker,
         CSSPropertyOutline,
         CSSPropertyPadding,
         CSSPropertyPaddingBlock,
@@ -4079,12 +4081,18 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyPageBreakAfter,
         CSSPropertyPageBreakBefore,
         CSSPropertyPageBreakInside,
+        CSSPropertyPlaceContent,
+        CSSPropertyPlaceItems,
+        CSSPropertyPlaceSelf,
         CSSPropertyWebkitTextStroke,
         CSSPropertyColumnRule,
         CSSPropertyWebkitBorderRadius,
+        CSSPropertyTextDecoration,
+        CSSPropertyTextDecorationSkip,
         CSSPropertyTransformOrigin,
         CSSPropertyPerspectiveOrigin,
         CSSPropertyOffset,
+        CSSPropertyOverflow,
         CSSPropertyTextEmphasis,
         CSSPropertyFontVariant,
         CSSPropertyFontSynthesis,
@@ -4134,29 +4142,9 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         // When adding a new property, you should make sure it belongs in this list
         // or provide a wrapper for it above. If you are adding to this list but the
         // property should be animatable, make sure to file a bug.
-        case CSSPropertyDirection:
-        case CSSPropertyTextOrientation:
-        case CSSPropertyWritingMode:
-        case CSSPropertyWebkitFontSmoothing:
-        case CSSPropertyWebkitLocale:
-        case CSSPropertyWebkitTextOrientation:
-#if ENABLE(TEXT_AUTOSIZING)
-        case CSSPropertyWebkitTextSizeAdjust:
-        case CSSPropertyInternalTextAutosizingStatus:
-#endif
-        case CSSPropertyWebkitTextZoom:
+
+        // To be fixed / untriaged:
         case CSSPropertyAlignmentBaseline:
-        case CSSPropertyAnimation:
-        case CSSPropertyAnimationComposition:
-        case CSSPropertyAnimationDelay:
-        case CSSPropertyAnimationDirection:
-        case CSSPropertyAnimationDuration:
-        case CSSPropertyAnimationFillMode:
-        case CSSPropertyAnimationIterationCount:
-        case CSSPropertyAnimationName:
-        case CSSPropertyAnimationPlayState:
-        case CSSPropertyAnimationTimeline:
-        case CSSPropertyAnimationTimingFunction:
         case CSSPropertyAppearance:
         case CSSPropertyBlockStepInsert:
         case CSSPropertyBlockStepSize:
@@ -4170,21 +4158,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyBorderInlineWidth: // logical shorthand
         case CSSPropertyBorderStyle:
         case CSSPropertyBufferedRendering:
-        case CSSPropertyColumns:
-        case CSSPropertyContain:
-        case CSSPropertyContainer:
-        case CSSPropertyContainerName:
-        case CSSPropertyContainerType:
-        case CSSPropertyFlex:
-        case CSSPropertyFlexFlow:
-        case CSSPropertyGap:
-        case CSSPropertyGlyphOrientationHorizontal:
-        case CSSPropertyGlyphOrientationVertical:
-        case CSSPropertyGrid:
-        case CSSPropertyGridArea:
-        case CSSPropertyGridColumn:
-        case CSSPropertyGridRow:
-        case CSSPropertyGridTemplate:
         case CSSPropertyHangingPunctuation:
         case CSSPropertyInlineSize:
         case CSSPropertyInputSecurity:
@@ -4195,10 +4168,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyInsetInline:
         case CSSPropertyInsetInlineEnd:
         case CSSPropertyInsetInlineStart:
-        case CSSPropertyListStyle:
-        case CSSPropertyMarginBlock: // logical shorthand
-        case CSSPropertyMarginInline: // logical shorthand
-        case CSSPropertyMarker:
         case CSSPropertyMaskBorder:
         case CSSPropertyMaskBorderOutset:
         case CSSPropertyMaskBorderRepeat:
@@ -4206,17 +4175,12 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyMaskBorderSource:
         case CSSPropertyMaskBorderWidth:
         case CSSPropertyMasonryAutoFlow:
-        case CSSPropertyMathStyle:
-        case CSSPropertyOverflow:
         case CSSPropertyOverscrollBehavior:
         case CSSPropertyOverscrollBehaviorBlock:
         case CSSPropertyOverscrollBehaviorInline:
         case CSSPropertyOverscrollBehaviorX:
         case CSSPropertyOverscrollBehaviorY:
         case CSSPropertyPage:
-        case CSSPropertyPlaceContent:
-        case CSSPropertyPlaceItems:
-        case CSSPropertyPlaceSelf:
         case CSSPropertyScrollMargin:
         case CSSPropertyScrollMarginBlock:
         case CSSPropertyScrollMarginBlockEnd:
@@ -4242,15 +4206,40 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyScrollSnapAlign:
         case CSSPropertyScrollSnapStop:
         case CSSPropertyScrollSnapType:
+        case CSSPropertyStrokeColor:
+#if ENABLE(TEXT_AUTOSIZING)
+        case CSSPropertyWebkitTextSizeAdjust:
+#endif
+        case CSSPropertyViewTimeline:
+        case CSSPropertyViewTimelineInset: // FIXME: view-timeline-inset should be animatable (bug 265690)
+        case CSSPropertyWebkitUserSelect:
+
+        // Not animatable per-spec:
+        case CSSPropertyAnimation:
+        case CSSPropertyAnimationComposition:
+        case CSSPropertyAnimationDelay:
+        case CSSPropertyAnimationDirection:
+        case CSSPropertyAnimationDuration:
+        case CSSPropertyAnimationFillMode:
+        case CSSPropertyAnimationIterationCount:
+        case CSSPropertyAnimationName:
+        case CSSPropertyAnimationPlayState:
+        case CSSPropertyAnimationTimeline:
+        case CSSPropertyAnimationTimingFunction:
+        case CSSPropertyContain:
+        case CSSPropertyContainer:
+        case CSSPropertyContainerName:
+        case CSSPropertyContainerType:
+        case CSSPropertyDirection:
+        case CSSPropertyGlyphOrientationHorizontal:
+        case CSSPropertyGlyphOrientationVertical:
+        case CSSPropertyMathStyle:
         case CSSPropertyScrollTimeline:
         case CSSPropertyScrollTimelineAxis:
         case CSSPropertyScrollTimelineName:
-        case CSSPropertySize:
         case CSSPropertySpeakAs:
-        case CSSPropertyStrokeColor:
         case CSSPropertyTextCombineUpright:
-        case CSSPropertyTextDecoration:
-        case CSSPropertyTextDecorationSkip:
+        case CSSPropertyTextOrientation:
         case CSSPropertyTransition:
         case CSSPropertyTransitionBehavior:
         case CSSPropertyTransitionDelay:
@@ -4258,11 +4247,16 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyTransitionProperty:
         case CSSPropertyTransitionTimingFunction:
         case CSSPropertyUnicodeBidi:
-        case CSSPropertyViewTimeline:
         case CSSPropertyViewTimelineAxis:
-        case CSSPropertyViewTimelineInset: // FIXME: view-timeline-inset should be animabale (bug 265690)
         case CSSPropertyViewTimelineName:
         case CSSPropertyWillChange:
+        case CSSPropertyWritingMode:
+        case CSSPropertyZoom:
+
+        // FIXME: This is a descriptor, not a CSS property:
+        case CSSPropertySize:
+
+        // Legacy -webkit- properties.
 #if ENABLE(APPLE_PAY)
         case CSSPropertyApplePayButtonStyle:
         case CSSPropertyApplePayButtonType:
@@ -4288,6 +4282,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyWebkitCursorVisibility:
 #endif
         case CSSPropertyWebkitFontSizeDelta:
+        case CSSPropertyWebkitFontSmoothing:
         case CSSPropertyWebkitHyphenateLimitAfter:
         case CSSPropertyWebkitHyphenateLimitBefore:
         case CSSPropertyWebkitHyphenateLimitLines:
@@ -4296,6 +4291,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyWebkitLineClamp:
         case CSSPropertyWebkitLineGrid:
         case CSSPropertyWebkitLineSnap:
+        case CSSPropertyWebkitLocale:
         case CSSPropertyWebkitMarqueeDirection:
         case CSSPropertyWebkitMarqueeIncrement:
         case CSSPropertyWebkitMarqueeRepetition:
@@ -4316,16 +4312,19 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyWebkitTextCombine:
         case CSSPropertyWebkitTextDecoration:
         case CSSPropertyWebkitTextDecorationsInEffect:
+        case CSSPropertyWebkitTextOrientation:
         case CSSPropertyWebkitTextSecurity:
+#if ENABLE(TEXT_AUTOSIZING)
+        case CSSPropertyInternalTextAutosizingStatus:
+#endif
         case CSSPropertyWebkitTextStroke:
         case CSSPropertyWebkitTextStrokeWidth:
+        case CSSPropertyWebkitTextZoom:
 #if PLATFORM(IOS_FAMILY)
         case CSSPropertyWebkitTouchCallout:
 #endif
         case CSSPropertyWebkitUserDrag:
         case CSSPropertyWebkitUserModify:
-        case CSSPropertyWebkitUserSelect:
-        case CSSPropertyZoom:
             continue;
         default:
             if (CSSProperty::isDescriptorOnly(property))
