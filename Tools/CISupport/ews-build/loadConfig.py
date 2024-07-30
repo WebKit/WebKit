@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -39,6 +39,11 @@ from .factories import (APITestsFactory, BindingsFactory, BuildFactory, CommitQu
                         StyleFactory, TestFactory, tvOSBuildFactory, WPEBuildFactory, WPECairoBuildFactory, WPETestsFactory, WebKitPerlFactory, WebKitPyFactory,
                         WinBuildFactory, WinTestsFactory, iOSBuildFactory, iOSEmbeddedBuildFactory, iOSTestsFactory,  visionOSBuildFactory, visionOSEmbeddedBuildFactory, visionOSTestsFactory, macOSBuildFactory, macOSBuildOnlyFactory,
                         macOSWK1Factory, macOSWK2Factory, ServicesFactory, UnsafeMergeQueueFactory, WatchListFactory, watchOSBuildFactory)
+
+from .utils import get_custom_suffix
+
+custom_suffix = get_custom_suffix()
+
 
 BUILDER_NAME_LENGTH_LIMIT = 70
 STEP_NAME_LENGTH_LIMIT = 50
@@ -95,6 +100,9 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, setup_main_schedulers=True,
         if (schedulerClassName == 'Try_Userpass'):
             # FIXME: Read the credentials from local file on disk.
             scheduler['userpass'] = [(passwords.get('BUILDBOT_TRY_USERNAME', 'sampleuser'), passwords.get('BUILDBOT_TRY_PASSWORD', 'samplepass'))]
+        if custom_suffix != '' and schedulerName == 'safe-merge-queue' and schedulerClassName == 'Periodic':
+            print(f'Testing instance, reducing safe-merge-queue scheduler frequency to avoid accumulating too many pending build-requests.')
+            scheduler['periodicBuildTimer'] = 24 * 60 * 60
         if schedulerClassName == 'AnyBranchScheduler' and schedulerName:
             scheduler['change_filter'] = ChangeFilter(filter_fn=filter_fn)
         if setup_main_schedulers is True:
