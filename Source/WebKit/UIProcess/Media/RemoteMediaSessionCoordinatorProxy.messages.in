@@ -24,6 +24,7 @@
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 
+[EnabledBy=MediaSessionCoordinatorEnabled]
 messages -> RemoteMediaSessionCoordinatorProxy NotRefCounted {
 
     Join() -> (std::optional<WebCore::ExceptionData> error)

@@ -69,6 +69,11 @@ RemoteMediaSessionCoordinatorProxy::~RemoteMediaSessionCoordinatorProxy()
     m_webPageProxy.legacyMainFrameProcess().removeMessageReceiver(Messages::RemoteMediaSessionCoordinatorProxy::messageReceiverName(), m_webPageProxy.webPageIDInMainFrameProcess());
 }
 
+const SharedPreferencesForWebProcess& RemoteMediaSessionCoordinatorProxy::sharedPreferencesForWebProcess() const
+{
+    return *m_webPageProxy.legacyMainFrameProcess().sharedPreferencesForWebProcess();
+}
+
 void RemoteMediaSessionCoordinatorProxy::join(MediaSessionCommandCompletionHandler&& completionHandler)
 {
     auto identifier = LOGIDENTIFIER;

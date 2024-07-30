@@ -1235,6 +1235,9 @@ def collect_header_conditions_for_receiver(receiver, header_conditions):
         if not parameter.condition in type_conditions[parameter.type]:
             type_conditions[parameter.type].append(parameter.condition)
 
+    if receiver.receiver_enabled_by:
+        header_conditions['"SharedPreferencesForWebProcess.h"'] = [None]
+
     for parameter in receiver.iterparameters():
         type = parameter.type
         conditions = type_conditions[type]
