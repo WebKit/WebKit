@@ -1844,6 +1844,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyMaskBorderWidth);
             changingProperties.m_properties.set(CSSPropertyMaskBorderOutset);
             changingProperties.m_properties.set(CSSPropertyMaskBorderRepeat);
+            changingProperties.m_properties.set(CSSPropertyWebkitMaskBoxImage);
         }
         if (!arePointingToEqualData(first.shapeOutside, second.shapeOutside))
             changingProperties.m_properties.set(CSSPropertyShapeOutside);
@@ -3410,6 +3411,55 @@ void RenderStyle::setBorderImageVerticalRule(NinePieceImageRule rule)
     if (m_nonInheritedData->surroundData->border.m_image.verticalRule() == rule)
         return;
     m_nonInheritedData.access().surroundData.access().border.m_image.setVerticalRule(rule);
+}
+
+void RenderStyle::setMaskBorderSource(RefPtr<StyleImage>&& image)
+{
+    if (m_nonInheritedData.access().rareData.access().maskBorder.image() == image.get())
+        return;
+    m_nonInheritedData.access().rareData.access().maskBorder.setImage(WTFMove(image));
+}
+
+void RenderStyle::setMaskBorderSliceFill(bool fill)
+{
+    if (m_nonInheritedData->rareData->maskBorder.fill() == fill)
+        return;
+    m_nonInheritedData.access().rareData.access().maskBorder.setFill(fill);
+}
+
+void RenderStyle::setMaskBorderSlices(LengthBox&& slices)
+{
+    if (m_nonInheritedData->rareData->maskBorder.imageSlices() == slices)
+        return;
+    m_nonInheritedData.access().rareData.access().maskBorder.setImageSlices(WTFMove(slices));
+}
+
+void RenderStyle::setMaskBorderWidth(LengthBox&& slices)
+{
+    if (m_nonInheritedData->rareData->maskBorder.borderSlices() == slices)
+        return;
+    m_nonInheritedData.access().rareData.access().maskBorder.setBorderSlices(WTFMove(slices));
+}
+
+void RenderStyle::setMaskBorderOutset(LengthBox&& outset)
+{
+    if (m_nonInheritedData->rareData->maskBorder.outset() == outset)
+        return;
+    m_nonInheritedData.access().rareData.access().maskBorder.setOutset(WTFMove(outset));
+}
+
+void RenderStyle::setMaskBorderHorizontalRule(NinePieceImageRule rule)
+{
+    if (m_nonInheritedData->rareData->maskBorder.horizontalRule() == rule)
+        return;
+    m_nonInheritedData.access().rareData.access().maskBorder.setHorizontalRule(rule);
+}
+
+void RenderStyle::setMaskBorderVerticalRule(NinePieceImageRule rule)
+{
+    if (m_nonInheritedData->rareData->maskBorder.verticalRule() == rule)
+        return;
+    m_nonInheritedData.access().rareData.access().maskBorder.setVerticalRule(rule);
 }
 
 void RenderStyle::setColumnStylesFromPaginationMode(PaginationMode paginationMode)

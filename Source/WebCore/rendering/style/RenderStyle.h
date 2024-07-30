@@ -646,6 +646,11 @@ public:
     inline Ref<const FillLayer> protectedMaskLayers() const; // Defined in RenderStyleInlines.h.
     inline const NinePieceImage& maskBorder() const;
     inline StyleImage* maskBorderSource() const;
+    inline const LengthBox& maskBorderSlices() const;
+    inline const LengthBox& maskBorderWidth() const;
+    inline const LengthBox& maskBorderOutset() const;
+    inline NinePieceImageRule maskBorderHorizontalRule() const;
+    inline NinePieceImageRule maskBorderVerticalRule() const;
 
     BorderCollapse borderCollapse() const { return static_cast<BorderCollapse>(m_inheritedFlags.borderCollapse); }
     float horizontalBorderSpacing() const;
@@ -1312,7 +1317,14 @@ public:
     inline void setMaskImage(RefPtr<StyleImage>&&);
 
     inline void setMaskBorder(const NinePieceImage&);
-    inline void setMaskBorderSource(RefPtr<StyleImage>&&);
+    void setMaskBorderSource(RefPtr<StyleImage>&&);
+    void setMaskBorderSliceFill(bool);
+    void setMaskBorderSlices(LengthBox&&);
+    void setMaskBorderWidth(LengthBox&&);
+    void setMaskBorderOutset(LengthBox&&);
+    void setMaskBorderHorizontalRule(NinePieceImageRule);
+    void setMaskBorderVerticalRule(NinePieceImageRule);
+
     inline void setMaskXPosition(Length&&);
     inline void setMaskYPosition(Length&&);
     inline void setMaskRepeat(FillRepeatXY);

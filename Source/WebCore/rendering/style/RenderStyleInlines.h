@@ -582,8 +582,13 @@ inline const Length& RenderStyle::marqueeIncrement() const { return m_nonInherit
 inline int RenderStyle::marqueeLoopCount() const { return m_nonInheritedData->rareData->marquee->loops; }
 inline int RenderStyle::marqueeSpeed() const { return m_nonInheritedData->rareData->marquee->speed; }
 inline const NinePieceImage& RenderStyle::maskBorder() const { return m_nonInheritedData->rareData->maskBorder; }
+inline NinePieceImageRule RenderStyle::maskBorderHorizontalRule() const { return maskBorder().horizontalRule(); }
+inline const LengthBox& RenderStyle::maskBorderOutset() const { return maskBorder().outset(); }
 inline LayoutBoxExtent RenderStyle::maskBorderOutsets() const { return imageOutsets(maskBorder()); }
+inline const LengthBox& RenderStyle::maskBorderSlices() const { return maskBorder().imageSlices(); }
 inline StyleImage* RenderStyle::maskBorderSource() const { return maskBorder().image(); }
+inline NinePieceImageRule RenderStyle::maskBorderVerticalRule() const { return maskBorder().verticalRule(); }
+inline const LengthBox& RenderStyle::maskBorderWidth() const { return maskBorder().borderSlices(); }
 inline FillBox RenderStyle::maskClip() const { return maskLayers().clip(); }
 inline CompositeOperator RenderStyle::maskComposite() const { return maskLayers().composite(); }
 inline StyleImage* RenderStyle::maskImage() const { return maskLayers().image(); }

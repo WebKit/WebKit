@@ -871,13 +871,13 @@ private:
     }
 };
 
-class BorderImageRepeatWrapper final : public AnimationPropertyWrapperBase {
+class NinePieceImageRepeatWrapper final : public AnimationPropertyWrapperBase {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
-    BorderImageRepeatWrapper()
-        : AnimationPropertyWrapperBase(CSSPropertyBorderImageRepeat)
-        , m_horizontalWrapper(DiscretePropertyWrapper<NinePieceImageRule>(CSSPropertyBorderImageRepeat, &RenderStyle::borderImageHorizontalRule, &RenderStyle::setBorderImageHorizontalRule))
-        , m_verticalWrapper(DiscretePropertyWrapper<NinePieceImageRule>(CSSPropertyBorderImageRepeat, &RenderStyle::borderImageVerticalRule, &RenderStyle::setBorderImageVerticalRule))
+    NinePieceImageRepeatWrapper(CSSPropertyID property, NinePieceImageRule (RenderStyle::*horizontalGetter)() const, void (RenderStyle::*horizontalSetter)(NinePieceImageRule), NinePieceImageRule (RenderStyle::*verticalGetter)() const, void (RenderStyle::*verticalSetter)(NinePieceImageRule))
+        : AnimationPropertyWrapperBase(property)
+        , m_horizontalWrapper(DiscretePropertyWrapper<NinePieceImageRule>(property, horizontalGetter, horizontalSetter))
+        , m_verticalWrapper(DiscretePropertyWrapper<NinePieceImageRule>(property, verticalGetter, verticalSetter))
     {
     }
 
@@ -1214,8 +1214,12 @@ public:
 
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const override
     {
-        if (m_flags.contains(Flags::UsesFillKeyword) && from.borderImage().fill() != to.borderImage().fill())
-            return false;
+        if (m_flags.contains(Flags::UsesFillKeyword)) {
+            if (property() == CSSPropertyBorderImageSlice && from.borderImage().fill() != to.borderImage().fill())
+                return false;
+            if (property() == CSSPropertyMaskBorderSlice && from.maskBorder().fill() != to.maskBorder().fill())
+                return false;
+        }
 
         bool isLengthPercentage = m_flags.contains(Flags::IsLengthPercentage);
 
@@ -1248,8 +1252,12 @@ public:
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
     {
-        if (m_flags.contains(Flags::UsesFillKeyword))
-            destination.setBorderImageSliceFill((!context.progress || !context.isDiscrete ? from : to).borderImage().fill());
+        if (m_flags.contains(Flags::UsesFillKeyword)) {
+            if (property() == CSSPropertyBorderImageSlice)
+                destination.setBorderImageSliceFill((!context.progress || !context.isDiscrete ? from : to).borderImage().fill());
+            else if (property() == CSSPropertyMaskBorderSlice)
+                destination.setMaskBorderSliceFill((!context.progress || !context.isDiscrete ? from : to).maskBorder().fill());
+        }
         if (m_flags.contains(Flags::MayOverrideBorderWidths))
             destination.setBorderImageWidthOverridesBorderWidths((!context.progress || !context.isDiscrete ? from : to).borderImage().overridesBorderWidths());
         if (context.isDiscrete) {
@@ -3757,9 +3765,13 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new LengthBoxPropertyWrapper(CSSPropertyBorderImageSlice, &RenderStyle::borderImageSlices, &RenderStyle::setBorderImageSlices, { LengthBoxPropertyWrapper::Flags::UsesFillKeyword }),
         new LengthBoxPropertyWrapper(CSSPropertyBorderImageWidth, &RenderStyle::borderImageWidth, &RenderStyle::setBorderImageWidth, { LengthBoxPropertyWrapper::Flags::IsLengthPercentage, LengthBoxPropertyWrapper::Flags::MayOverrideBorderWidths }),
         new LengthBoxPropertyWrapper(CSSPropertyBorderImageOutset, &RenderStyle::borderImageOutset, &RenderStyle::setBorderImageOutset),
+        new NinePieceImageRepeatWrapper(CSSPropertyBorderImageRepeat, &RenderStyle::borderImageHorizontalRule, &RenderStyle::setBorderImageHorizontalRule, &RenderStyle::borderImageVerticalRule, &RenderStyle::setBorderImageVerticalRule),
 
         new StyleImagePropertyWrapper(CSSPropertyMaskBorderSource, &RenderStyle::maskBorderSource, &RenderStyle::setMaskBorderSource),
-        new PropertyWrapper<const NinePieceImage&>(CSSPropertyMaskBorder, &RenderStyle::maskBorder, &RenderStyle::setMaskBorder),
+        new LengthBoxPropertyWrapper(CSSPropertyMaskBorderSlice, &RenderStyle::maskBorderSlices, &RenderStyle::setMaskBorderSlices, { LengthBoxPropertyWrapper::Flags::UsesFillKeyword }),
+        new LengthBoxPropertyWrapper(CSSPropertyMaskBorderWidth, &RenderStyle::maskBorderWidth, &RenderStyle::setMaskBorderWidth, { LengthBoxPropertyWrapper::Flags::IsLengthPercentage }),
+        new LengthBoxPropertyWrapper(CSSPropertyMaskBorderOutset, &RenderStyle::maskBorderOutset, &RenderStyle::setMaskBorderOutset),
+        new NinePieceImageRepeatWrapper(CSSPropertyMaskBorderRepeat, &RenderStyle::maskBorderHorizontalRule, &RenderStyle::setMaskBorderHorizontalRule, &RenderStyle::maskBorderVerticalRule, &RenderStyle::setMaskBorderVerticalRule),
         new PropertyWrapper<const NinePieceImage&>(CSSPropertyWebkitMaskBoxImage, &RenderStyle::maskBorder, &RenderStyle::setMaskBorder),
 
         new FillLayersPropertyWrapper(CSSPropertyBackgroundPositionX, &RenderStyle::backgroundLayers, &RenderStyle::ensureBackgroundLayers),
@@ -3905,7 +3917,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<FillRepeatXY>(CSSPropertyBackgroundRepeat, &RenderStyle::backgroundRepeat, &RenderStyle::setBackgroundRepeat),
         new DiscretePropertyWrapper<BorderStyle>(CSSPropertyBorderBottomStyle, &RenderStyle::borderBottomStyle, &RenderStyle::setBorderBottomStyle),
         new DiscretePropertyWrapper<BorderCollapse>(CSSPropertyBorderCollapse, &RenderStyle::borderCollapse, &RenderStyle::setBorderCollapse),
-        new BorderImageRepeatWrapper,
         new DiscretePropertyWrapper<BorderStyle>(CSSPropertyBorderLeftStyle, &RenderStyle::borderLeftStyle, &RenderStyle::setBorderLeftStyle),
         new DiscretePropertyWrapper<BorderStyle>(CSSPropertyBorderRightStyle, &RenderStyle::borderRightStyle, &RenderStyle::setBorderRightStyle),
         new DiscretePropertyWrapper<BorderStyle>(CSSPropertyBorderTopStyle, &RenderStyle::borderTopStyle, &RenderStyle::setBorderTopStyle),
@@ -4075,6 +4086,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyMarginBlock, // logical shorthand
         CSSPropertyMarginInline, // logical shorthand
         CSSPropertyMarker,
+        CSSPropertyMaskBorder,
         CSSPropertyOutline,
         CSSPropertyPadding,
         CSSPropertyPaddingBlock,
@@ -4168,12 +4180,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyInsetInline:
         case CSSPropertyInsetInlineEnd:
         case CSSPropertyInsetInlineStart:
-        case CSSPropertyMaskBorder:
-        case CSSPropertyMaskBorderOutset:
-        case CSSPropertyMaskBorderRepeat:
-        case CSSPropertyMaskBorderSlice:
-        case CSSPropertyMaskBorderSource:
-        case CSSPropertyMaskBorderWidth:
         case CSSPropertyMasonryAutoFlow:
         case CSSPropertyOverscrollBehavior:
         case CSSPropertyOverscrollBehaviorBlock:
