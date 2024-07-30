@@ -75,7 +75,6 @@ public:
     WKBundleFrameRef topLoadingFrame() { return m_topLoadingFrame; }
     void setTopLoadingFrame(WKBundleFrameRef frame) { m_topLoadingFrame = frame; }
 
-    bool shouldDumpPixels() const { return m_dumpPixels; }
     bool dumpJSConsoleLogInStdErr() const { return m_dumpJSConsoleLogInStdErr; };
 
     enum class IsFinalTestOutput : bool { No, Yes };
@@ -193,7 +192,6 @@ private:
     };
     State m_state { Idle };
 
-    bool m_dumpPixels { false };
     bool m_useWorkQueue { false };
     bool m_pixelResultIsPending { false };
     bool m_dumpJSConsoleLogInStdErr { false };

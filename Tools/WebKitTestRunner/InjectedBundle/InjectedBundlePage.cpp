@@ -754,7 +754,7 @@ void InjectedBundlePage::dump(bool forceRepaint)
     if (injectedBundle.testRunner()->shouldDumpBackForwardListsForAllWindows())
         injectedBundle.dumpBackForwardListsForAllPages(stringBuilder);
 
-    if (injectedBundle.shouldDumpPixels() && injectedBundle.testRunner()->shouldDumpPixels()) {
+    if (injectedBundle.testRunner()->shouldDumpPixels()) {
         bool shouldCreateSnapshot = injectedBundle.testRunner()->isPrinting();
         if (shouldCreateSnapshot) {
             WKSnapshotOptions options = kWKSnapshotOptionsShareable;

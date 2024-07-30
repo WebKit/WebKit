@@ -219,7 +219,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
             setAllowedHosts(messageBodyDictionary);
 
             m_state = Idle;
-            m_dumpPixels = false;
             m_pixelResultIsPending = false;
 
             setlocale(LC_ALL, "");
@@ -335,7 +334,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
 {
     m_state = Testing;
 
-    m_dumpPixels = booleanValue(settings, "DumpPixels");
     m_timeout = Seconds::fromMilliseconds(uint64Value(settings, "Timeout"));
     m_dumpJSConsoleLogInStdErr = booleanValue(settings, "DumpJSConsoleLogInStdErr");
 
