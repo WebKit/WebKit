@@ -66,6 +66,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/RunLoop.h>
 #include <wtf/URLHash.h>
 #include <wtf/UUID.h>
 #include <wtf/WeakHashCountedSet.h>
@@ -931,7 +932,7 @@ private:
 
     String m_backgroundWebViewInspectionName;
 
-    std::unique_ptr<WebCore::Timer> m_unloadBackgroundWebViewTimer;
+    std::unique_ptr<RunLoop::Timer> m_unloadBackgroundWebViewTimer;
     MonotonicTime m_lastBackgroundPortActivityTime;
     bool m_backgroundContentIsLoaded { false };
     bool m_safeToLoadBackgroundContent { false };

@@ -44,6 +44,7 @@
 #include <WebCore/Timer.h>
 #include <wtf/Forward.h>
 #include <wtf/Identified.h>
+#include <wtf/RunLoop.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakHashSet.h>
 
@@ -258,7 +259,7 @@ private:
 #endif
     bool m_showingActionPopup { false };
 
-    std::unique_ptr<WebCore::Timer> m_purgeOldMatchedRulesTimer;
+    std::unique_ptr<RunLoop::Timer> m_purgeOldMatchedRulesTimer;
     std::unique_ptr<HTTPCookieStoreObserver> m_cookieStoreObserver;
 };
 
