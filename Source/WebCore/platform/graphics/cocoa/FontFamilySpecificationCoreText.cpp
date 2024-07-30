@@ -56,7 +56,7 @@ FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fo
 
         auto font = preparePlatformFont(WTFMove(unrealizedFont), fontDescription, { }, FontTypeForPreparation::SystemFont);
 
-        auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(font.get(), fontDescription, ShouldComputePhysicalTraits::Yes).boldObliquePair();
+        auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(font.get(), fontDescription, { }, ShouldComputePhysicalTraits::Yes).boldObliquePair();
 
         auto platformData = makeUnique<FontPlatformData>(font.get(), size, false, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
         platformData->updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedSize());
