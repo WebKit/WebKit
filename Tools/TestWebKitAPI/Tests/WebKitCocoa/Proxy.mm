@@ -342,7 +342,7 @@ TEST(WebKit, HTTPProxyAuthentication)
     EXPECT_WK_STREQ([delegate waitForAlert], "success!");
 }
 
-#if HAVE(NW_PROXY_CONFIG)
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
 TEST(WebKit, ProxyConfigurationAuthentication)
 {
     auto server = proxyAuthenticationServer();
