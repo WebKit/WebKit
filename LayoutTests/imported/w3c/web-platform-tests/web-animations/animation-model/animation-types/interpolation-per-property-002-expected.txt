@@ -248,6 +248,13 @@ PASS stop-color supports animating as color of rgba()
 PASS stop-color supports animating as color of hsla()
 PASS stop-opacity (type: opacity) has testInterpolation function
 PASS stop-opacity supports animating as a [0, 1] number
+PASS stroke-color (type: color) has testInterpolation function
+PASS stroke-color supports animating as color of rgb()
+PASS stroke-color supports animating as color of #RGB
+PASS stroke-color supports animating as color of hsl()
+PASS stroke-color supports animating as color of #RGBa
+PASS stroke-color supports animating as color of rgba()
+PASS stroke-color supports animating as color of hsla()
 PASS stroke-dasharray (type: dasharray) has testInterpolation function
 PASS stroke-dasharray supports animating as a percentage
 PASS stroke-dasharray supports animating as a positive number

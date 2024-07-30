@@ -1652,7 +1652,7 @@ public:
     inline bool hasExplicitlySetStrokeWidth() const;
     bool hasPositiveStrokeWidth() const;
     
-    inline StyleColor strokeColor() const;
+    inline const StyleColor& strokeColor() const;
     inline void setStrokeColor(const StyleColor&);
     inline void setVisitedLinkStrokeColor(const StyleColor&);
     inline const StyleColor& visitedLinkStrokeColor() const;

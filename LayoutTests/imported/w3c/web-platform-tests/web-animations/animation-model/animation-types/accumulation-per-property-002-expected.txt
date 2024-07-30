@@ -203,6 +203,13 @@ PASS stop-color supports animating as color of hsla()
 PASS stop-opacity (type: opacity) has testAccumulation function
 PASS stop-opacity: [0, 1] number
 PASS stop-opacity: [0, 1] number (clamped)
+PASS stroke-color (type: color) has testAccumulation function
+PASS stroke-color supports animating as color of rgb() with overflowed  from and to values
+PASS stroke-color supports animating as color of #RGB
+PASS stroke-color supports animating as color of hsl()
+PASS stroke-color supports animating as color of #RGBa
+PASS stroke-color supports animating as color of rgba()
+PASS stroke-color supports animating as color of hsla()
 PASS stroke-dasharray (type: dasharray) has testAccumulation function
 PASS stroke-dasharray: dasharray
 PASS stroke-dasharray (type: discrete) has testAccumulation function

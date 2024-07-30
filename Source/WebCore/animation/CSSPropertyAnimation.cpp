@@ -3882,6 +3882,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapperStyleColor(CSSPropertyStopColor, &RenderStyle::stopColor, &RenderStyle::setStopColor),
 
         new PropertyWrapperStyleColor(CSSPropertyLightingColor, &RenderStyle::lightingColor, &RenderStyle::setLightingColor),
+        new PropertyWrapperStyleColor(CSSPropertyStrokeColor, &RenderStyle::strokeColor, &RenderStyle::setStrokeColor),
 
         new PropertyWrapperBaselineShift,
         new PropertyWrapper<SVGLengthValue>(CSSPropertyKerning, &RenderStyle::kerning, &RenderStyle::setKerning),
@@ -4212,7 +4213,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyScrollSnapAlign:
         case CSSPropertyScrollSnapStop:
         case CSSPropertyScrollSnapType:
-        case CSSPropertyStrokeColor:
 #if ENABLE(TEXT_AUTOSIZING)
         case CSSPropertyWebkitTextSizeAdjust:
 #endif
