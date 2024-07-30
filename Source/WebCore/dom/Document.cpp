@@ -6041,7 +6041,7 @@ void Document::textRemoved(Node& text, unsigned offset, unsigned length)
 void Document::textNodesMerged(Text& oldNode, unsigned offset)
 {
     if (!m_ranges.isEmpty()) {
-        NodeWithIndex oldNodeWithIndex(&oldNode);
+        NodeWithIndex oldNodeWithIndex(oldNode);
         for (auto& range : m_ranges)
             Ref { range.get() }->textNodesMerged(oldNodeWithIndex, offset);
     }
