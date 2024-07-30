@@ -82,8 +82,8 @@ public:
         return *this;
     }
 
-    bool operator!() const { return !getAutoreleased(); }
-    explicit operator bool() const { return !!getAutoreleased(); }
+    bool operator!() const { return !get(); }
+    explicit operator bool() const { return !!get(); }
 
     RetainPtr<ValueType> get() const;
 
