@@ -79,6 +79,7 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const WTF::UUID& id
 
 #endif
 
+#if !PLATFORM(COCOA)
 WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const String& baseCacheDirectory, const String& baseDataDirectory)
     : m_isPersistent(IsPersistent::Yes)
     , m_unifiedOriginStorageLevel(WebsiteDataStore::defaultUnifiedOriginStorageLevel())
@@ -91,6 +92,7 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const String& baseC
 {
     initializePaths();
 }
+#endif
 
 void WebsiteDataStoreConfiguration::initializePaths()
 {
