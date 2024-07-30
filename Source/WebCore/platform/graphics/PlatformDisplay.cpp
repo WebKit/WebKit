@@ -310,6 +310,9 @@ void PlatformDisplay::initializeEGLDisplay()
 
         m_eglExtensions.KHR_image_base = findExtension("EGL_KHR_image_base"_s);
         m_eglExtensions.KHR_surfaceless_context = findExtension("EGL_KHR_surfaceless_context"_s);
+        m_eglExtensions.KHR_fence_sync = findExtension("EGL_KHR_fence_sync"_s);
+        m_eglExtensions.KHR_wait_sync = findExtension("EGL_KHR_wait_sync"_s);
+        m_eglExtensions.ANDROID_native_fence_sync = findExtension("EGL_ANDROID_native_fence_sync"_s);
         m_eglExtensions.EXT_image_dma_buf_import = findExtension("EGL_EXT_image_dma_buf_import"_s);
         m_eglExtensions.EXT_image_dma_buf_import_modifiers = findExtension("EGL_EXT_image_dma_buf_import_modifiers"_s);
         m_eglExtensions.MESA_image_dma_buf_export = findExtension("EGL_MESA_image_dma_buf_export"_s);

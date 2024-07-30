@@ -102,10 +102,13 @@ public:
 
     struct EGLExtensions {
         bool KHR_image_base { false };
+        bool KHR_fence_sync { false };
         bool KHR_surfaceless_context { false };
+        bool KHR_wait_sync { false };
         bool EXT_image_dma_buf_import { false };
         bool EXT_image_dma_buf_import_modifiers { false };
         bool MESA_image_dma_buf_export { false };
+        bool ANDROID_native_fence_sync { false };
     };
     const EGLExtensions& eglExtensions() const;
 

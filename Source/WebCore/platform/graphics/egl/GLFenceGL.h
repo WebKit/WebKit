@@ -19,45 +19,23 @@
 
 #pragma once
 
-#include <wtf/FastMalloc.h>
-#include <wtf/Noncopyable.h>
-
-#if OS(LINUX)
-#include <wtf/unix/UnixFileDescriptor.h>
-#endif
+#include "GLFence.h"
 
 typedef struct __GLsync* GLsync;
 
 namespace WebCore {
 
-class GLFence {
-    WTF_MAKE_NONCOPYABLE(GLFence);
-    WTF_MAKE_FAST_ALLOCATED;
+class GLFenceGL final : public GLFence {
 public:
-    static bool isSupported();
     WEBCORE_EXPORT static std::unique_ptr<GLFence> create();
-#if OS(LINUX)
-    WEBCORE_EXPORT static std::unique_ptr<GLFence> createExportable();
-    WEBCORE_EXPORT static std::unique_ptr<GLFence> importFD(WTF::UnixFileDescriptor&&);
-#endif
-    virtual ~GLFence() = default;
+    explicit GLFenceGL(GLsync);
+    virtual ~GLFenceGL();
 
-    virtual void clientWait() = 0;
-    virtual void serverWait() = 0;
-#if OS(LINUX)
-    virtual WTF::UnixFileDescriptor exportFD() { return { }; }
-#endif
+private:
+    void clientWait() override;
+    void serverWait() override;
 
-protected:
-    GLFence() = default;
-
-    struct Capabilities {
-        bool eglSupported { false };
-        bool eglServerWaitSupported { false };
-        bool eglExportableSupported { false };
-        bool glSupported { false };
-    };
-    static const Capabilities& capabilities();
+    GLsync m_sync { nullptr };
 };
 
 } // namespace WebCore
