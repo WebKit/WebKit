@@ -31,6 +31,7 @@ namespace WebCore {
 
 class CanvasLayerContextSwitcher;
 class CanvasRenderingContext2DBase;
+class FloatRect;
 
 class CanvasFilterContextSwitcher {
     WTF_MAKE_FAST_ALLOCATED;

@@ -28,6 +28,8 @@
 #if ENABLE(GPU_PROCESS)
 #include "RemoteSharedResourceCache.h"
 
+#include "GPUConnectionToWebProcess.h"
+
 #if HAVE(IOSURFACE)
 #include <WebCore/IOSurfacePool.h>
 #endif

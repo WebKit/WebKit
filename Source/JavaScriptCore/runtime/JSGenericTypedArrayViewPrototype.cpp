@@ -27,6 +27,8 @@
 #include "JSGenericTypedArrayViewPrototype.h"
 
 #include "JSGenericTypedArrayView.h"
+#include "JSGenericTypedArrayViewConstructor.h"
+#include "JSGenericTypedArrayViewInlines.h"
 #include "ObjectConstructor.h"
 #include "ParseInt.h"
 #include <wtf/text/Base64.h>

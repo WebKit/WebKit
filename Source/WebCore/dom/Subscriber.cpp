@@ -32,7 +32,6 @@
 #include "JSDOMExceptionHandling.h"
 #include "SubscriberCallback.h"
 #include "SubscriptionObserverCallback.h"
-#include "VoidCallback.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

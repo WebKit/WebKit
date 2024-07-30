@@ -31,6 +31,7 @@
 #include "Gradient.h"
 #include "LegacyRenderSVGShapeInlines.h"
 #include "RenderStyleInlines.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGPathElement.h"
 #include "SVGRenderStyle.h"
 #include "SVGResources.h"

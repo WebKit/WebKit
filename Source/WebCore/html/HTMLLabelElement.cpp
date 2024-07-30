@@ -32,6 +32,7 @@
 #include "FormListedElement.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
+#include "MouseEvent.h"
 #include "SelectionRestorationMode.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/IsoMallocInlines.h>

@@ -28,6 +28,7 @@
 #include "FetchIdentifier.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContextIdentifier.h"
+#include "ServiceWorkerTypes.h"
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 

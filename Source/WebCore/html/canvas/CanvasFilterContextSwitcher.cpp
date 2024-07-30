@@ -28,6 +28,7 @@
 
 #include "CanvasLayerContextSwitcher.h"
 #include "CanvasRenderingContext2DBase.h"
+#include "FloatRect.h"
 
 namespace WebCore {
 

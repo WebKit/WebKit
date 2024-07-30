@@ -26,6 +26,11 @@
 #include "config.h"
 #include "InternalObserver.h"
 
+#include "JSDOMExceptionHandling.h"
+#include "ScriptExecutionContext.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/JSGlobalObjectInlines.h>
+
 namespace WebCore {
 
 void InternalObserver::error(JSC::JSValue value)

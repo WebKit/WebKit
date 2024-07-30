@@ -23,6 +23,7 @@
 #include "SVGFEFloodElement.h"
 
 #include "FEFlood.h"
+#include "RenderElement.h"
 #include "RenderStyle.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"

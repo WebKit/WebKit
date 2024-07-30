@@ -27,7 +27,7 @@
 #pragma once
 
 #include "CSSGradientValue.h"
-#include "Length.h"
+#include "LengthSize.h"
 #include "StyleColor.h"
 #include "StyleGeneratedImage.h"
 #include <variant>

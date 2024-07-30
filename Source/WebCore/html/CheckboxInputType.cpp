@@ -58,8 +58,6 @@
 
 namespace WebCore {
 
-static constexpr Seconds switchHeldDelay = 200_ms;
-
 const AtomString& CheckboxInputType::formControlType() const
 {
     return InputTypeNames::checkbox();
@@ -186,6 +184,7 @@ void CheckboxInputType::handleTouchEvent(TouchEvent& event)
                 protectedThis->setIsSwitchHeld(true);
             });
         }
+        constexpr Seconds switchHeldDelay = 200_ms;
         m_switchHeldTimer->startOneShot(switchHeldDelay);
         event.setDefaultHandled();
     } else if (eventType == eventNames.touchmoveEvent) {

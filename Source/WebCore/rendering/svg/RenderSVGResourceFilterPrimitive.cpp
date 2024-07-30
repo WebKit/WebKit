@@ -26,7 +26,9 @@
 #include "config.h"
 #include "RenderSVGResourceFilterPrimitive.h"
 
+#include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourceFilter.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGFEDiffuseLightingElement.h"
 #include "SVGFEDropShadowElement.h"
 #include "SVGFEFloodElement.h"

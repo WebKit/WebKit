@@ -29,12 +29,12 @@
 #include "ActiveDOMObject.h"
 #include "InternalObserver.h"
 #include "ScriptWrappable.h"
+#include "VoidCallback.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class ScriptExecutionContext;
-class VoidCallback;
 
 class Subscriber final : public ActiveDOMObject, public ScriptWrappable, public RefCounted<Subscriber> {
     WTF_MAKE_ISO_ALLOCATED(Subscriber);

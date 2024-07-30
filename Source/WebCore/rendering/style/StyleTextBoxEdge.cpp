@@ -26,6 +26,8 @@
 #include "config.h"
 #include "StyleTextBoxEdge.h"
 
+#include <wtf/text/TextStream.h>
+
 namespace WebCore {
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, TextBoxEdge edge)

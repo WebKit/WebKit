@@ -29,6 +29,7 @@
 #include "HitTestResult.h"
 #include "IntRect.h"
 #include "LegacyRenderSVGResourceClipperInlines.h"
+#include "LegacyRenderSVGShape.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "Logging.h"

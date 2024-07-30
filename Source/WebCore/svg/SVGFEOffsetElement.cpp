@@ -24,6 +24,7 @@
 
 #include "FEOffset.h"
 #include "NodeName.h"
+#include "SVGFilter.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 

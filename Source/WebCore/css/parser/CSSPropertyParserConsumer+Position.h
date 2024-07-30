@@ -30,6 +30,7 @@ namespace WebCore {
 
 class CSSValue;
 
+struct CSSParserContext;
 enum class BoxOrient : bool;
 
 namespace CSSPropertyParserHelpers {
