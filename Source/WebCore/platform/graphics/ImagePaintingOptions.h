@@ -49,19 +49,20 @@ struct ImagePaintingOptions {
     // ImageDrawResult drawImage(..., ImagePaintingOptions = { ImageOrientation::Orientation::FromImage });
     // Should be removed once the pattern is not so prevalent.
     template<typename T, typename = std::enable_if_t<isOptionType<std::decay_t<T>>>>
-    ImagePaintingOptions(std::initializer_list<T> options)
+    constexpr ImagePaintingOptions(std::initializer_list<T> options)
     {
         for (auto& option : options)
             setOption(option);
     }
+
     template<typename T, typename = std::enable_if_t<isOptionType<std::decay_t<T>>>>
-    explicit ImagePaintingOptions(T option)
+    constexpr explicit ImagePaintingOptions(T option)
     {
         setOption(option);
     }
 
     template<typename T, typename U, typename... Rest, typename = std::enable_if_t<isOptionType<std::decay_t<T>>>>
-    ImagePaintingOptions(T first, U second, Rest... rest)
+    constexpr ImagePaintingOptions(T first, U second, Rest... rest)
     {
         setOption(first);
         setOption(second);
@@ -69,35 +70,35 @@ struct ImagePaintingOptions {
     }
 
     template<typename... Overrides>
-    ImagePaintingOptions(const ImagePaintingOptions& other, Overrides... overrides)
+    constexpr ImagePaintingOptions(const ImagePaintingOptions& other, Overrides... overrides)
         : ImagePaintingOptions(other)
     {
         (setOption(overrides), ...);
     }
 
-    ImagePaintingOptions() = default;
-    ImagePaintingOptions(const ImagePaintingOptions&) = default;
-    ImagePaintingOptions(ImagePaintingOptions&&) = default;
-    ImagePaintingOptions& operator=(const ImagePaintingOptions&) = default;
-    ImagePaintingOptions& operator=(ImagePaintingOptions&&) = default;
+    constexpr ImagePaintingOptions() = default;
+    constexpr ImagePaintingOptions(const ImagePaintingOptions&) = default;
+    constexpr ImagePaintingOptions(ImagePaintingOptions&&) = default;
+    constexpr ImagePaintingOptions& operator=(const ImagePaintingOptions&) = default;
+    constexpr ImagePaintingOptions& operator=(ImagePaintingOptions&&) = default;
 
-    CompositeOperator compositeOperator() const { return m_compositeOperator; }
-    BlendMode blendMode() const { return m_blendMode; }
-    DecodingMode decodingMode() const { return m_decodingMode; }
-    ImageOrientation orientation() const { return m_orientation; }
-    InterpolationQuality interpolationQuality() const { return m_interpolationQuality; }
-    AllowImageSubsampling allowImageSubsampling() const { return m_allowImageSubsampling; }
-    ShowDebugBackground showDebugBackground() const { return m_showDebugBackground; }
+    constexpr CompositeOperator compositeOperator() const { return m_compositeOperator; }
+    constexpr BlendMode blendMode() const { return m_blendMode; }
+    constexpr DecodingMode decodingMode() const { return m_decodingMode; }
+    constexpr ImageOrientation orientation() const { return m_orientation; }
+    constexpr InterpolationQuality interpolationQuality() const { return m_interpolationQuality; }
+    constexpr AllowImageSubsampling allowImageSubsampling() const { return m_allowImageSubsampling; }
+    constexpr ShowDebugBackground showDebugBackground() const { return m_showDebugBackground; }
 
 private:
-    void setOption(CompositeOperator compositeOperator) { m_compositeOperator = compositeOperator; }
-    void setOption(BlendMode blendMode) { m_blendMode = blendMode; }
-    void setOption(DecodingMode decodingMode) { m_decodingMode = decodingMode; }
-    void setOption(ImageOrientation orientation) { m_orientation = orientation.orientation(); }
-    void setOption(ImageOrientation::Orientation orientation) { m_orientation = orientation; }
-    void setOption(InterpolationQuality interpolationQuality) { m_interpolationQuality = interpolationQuality; }
-    void setOption(AllowImageSubsampling allowImageSubsampling) { m_allowImageSubsampling = allowImageSubsampling; }
-    void setOption(ShowDebugBackground showDebugBackground) { m_showDebugBackground = showDebugBackground; }
+    constexpr void setOption(CompositeOperator compositeOperator) { m_compositeOperator = compositeOperator; }
+    constexpr void setOption(BlendMode blendMode) { m_blendMode = blendMode; }
+    constexpr void setOption(DecodingMode decodingMode) { m_decodingMode = decodingMode; }
+    constexpr void setOption(ImageOrientation orientation) { m_orientation = orientation.orientation(); }
+    constexpr void setOption(ImageOrientation::Orientation orientation) { m_orientation = orientation; }
+    constexpr void setOption(InterpolationQuality interpolationQuality) { m_interpolationQuality = interpolationQuality; }
+    constexpr void setOption(AllowImageSubsampling allowImageSubsampling) { m_allowImageSubsampling = allowImageSubsampling; }
+    constexpr void setOption(ShowDebugBackground showDebugBackground) { m_showDebugBackground = showDebugBackground; }
 
     BlendMode m_blendMode : 5 { BlendMode::Normal };
     DecodingMode m_decodingMode : 3 { DecodingMode::Synchronous };

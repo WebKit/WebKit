@@ -1295,6 +1295,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/VideoFrameRequestCallback.h
     html/VoidCallback.h
 
+    html/canvas/CanvasImageSource.h
     html/canvas/ImageBitmapRenderingContextSettings.h
     html/canvas/PredefinedColorSpace.h
     html/canvas/WebGLAny.h
@@ -2033,6 +2034,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/Model.h
     platform/graphics/ModelPlayerIdentifier.h
     platform/graphics/NativeImage.h
+    platform/graphics/NaturalDimensions.h
     platform/graphics/NullGraphicsContext.h
     platform/graphics/NullImageBufferBackend.h
     platform/graphics/Path.h

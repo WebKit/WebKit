@@ -43,6 +43,7 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "NaturalDimensions.h"
 #include "Page.h"
 #include "PageConfiguration.h"
 #include "RenderSVGRoot.h"
@@ -384,6 +385,38 @@ void SVGImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrin
     intrinsicRatio = rootElement->viewBox().size();
     if (intrinsicRatio.isEmpty() && intrinsicWidth.isFixed() && intrinsicHeight.isFixed())
         intrinsicRatio = FloatSize(floatValueForLength(intrinsicWidth, 0), floatValueForLength(intrinsicHeight, 0));
+}
+
+NaturalDimensions SVGImage::naturalDimensions(ImageOrientation) const
+{
+    NaturalDimensions result;
+
+    RefPtr rootElement = this->rootElement();
+    if (!rootElement)
+        return result;
+
+    if (rootElement->hasIntrinsicWidth()) {
+        auto width = rootElement->intrinsicWidth();
+        if (width.isFixed())
+            result.width = width.value();
+    }
+
+    if (rootElement->hasIntrinsicHeight()) {
+        auto height = rootElement->intrinsicHeight();
+        if (height.isFixed())
+            result.height = height.value();
+    }
+
+    if (rootElement->preserveAspectRatio().align() == SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE)
+        return result;
+
+    auto aspectRatio = rootElement->viewBox().size();
+    if (!aspectRatio.isEmpty())
+        result.aspectRatio = LayoutSize { aspectRatio };
+    else if (result.width && result.height)
+        result.aspectRatio = LayoutSize { *result.width, *result.height };
+
+    return result;
 }
 
 void SVGImage::startAnimationTimerFired()

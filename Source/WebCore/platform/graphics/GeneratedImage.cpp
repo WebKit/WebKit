@@ -32,6 +32,7 @@
 #include "GeneratedImage.h"
 
 #include "FloatSize.h"
+#include "NaturalDimensions.h"
 
 namespace WebCore {
 
@@ -39,6 +40,11 @@ void GeneratedImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& 
 {
     Image::computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
     intrinsicRatio = FloatSize();
+}
+
+NaturalDimensions GeneratedImage::naturalDimensions(ImageOrientation orienation) const
+{
+    return NaturalDimensions::fixed(size(orienation));
 }
 
 }

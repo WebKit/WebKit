@@ -34,6 +34,9 @@ typedef (HTMLImageElement
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
     or HTMLVideoElement
 #endif
+#if defined(ENABLE_WEB_CODECS) && ENABLE_WEB_CODECS
+    or WebCodecsVideoFrame
+#endif
 ) CanvasImageSource;
 
 // FIXME: Support Serializable and Transferable.
@@ -45,7 +48,6 @@ typedef (HTMLImageElement
     ReportExtraMemoryCost,
 ] interface WebCodecsVideoFrame {
     [CallWith=CurrentScriptExecutionContext] constructor(CanvasImageSource image, optional VideoFrameInit init = {});
-    [CallWith=CurrentScriptExecutionContext] constructor(WebCodecsVideoFrame image, optional VideoFrameInit init = {});
     [CallWith=CurrentScriptExecutionContext] constructor([AllowShared] (ArrayBufferView or ArrayBuffer) data, VideoFrameBufferInit init);
 
     readonly attribute VideoPixelFormat? format;

@@ -122,6 +122,7 @@ public:
     ~ImageBitmap();
 
     ImageBuffer* buffer() const { return m_bitmap.get(); }
+    ImageBuffer* bufferIfNotDetached() const { return m_bitmap.get(); }
 
     RefPtr<ImageBuffer> takeImageBuffer();
 

@@ -28,6 +28,7 @@
 #include "AffineTransform.h"
 #include "CanvasDirection.h"
 #include "CanvasFillRule.h"
+#include "CanvasImageSource.h"
 #include "CanvasLineCap.h"
 #include "CanvasLineJoin.h"
 #include "CanvasPath.h"
@@ -71,23 +72,7 @@ class TextMetrics;
 class WebCodecsVideoFrame;
 
 struct DOMMatrix2DInit;
-
-
-using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>
-    , RefPtr<SVGImageElement>
-    , RefPtr<HTMLCanvasElement>
-    , RefPtr<ImageBitmap>
-    , RefPtr<CSSStyleImageValue>
-#if ENABLE(OFFSCREEN_CANVAS)
-    , RefPtr<OffscreenCanvas>
-#endif
-#if ENABLE(VIDEO)
-    , RefPtr<HTMLVideoElement>
-#endif
-#if ENABLE(WEB_CODECS)
-    , RefPtr<WebCodecsVideoFrame>
-#endif
-    >;
+template<typename> struct PreprocessedForDrawImage;
 
 class CanvasRenderingContext2DBase : public CanvasRenderingContext, public CanvasPath {
     WTF_MAKE_ISO_ALLOCATED(CanvasRenderingContext2DBase);
@@ -336,6 +321,7 @@ protected:
         ApplyClip = 1 << 2,
         ApplyPostProcessing = 1 << 3,
         PreserveCachedContents = 1 << 4,
+        EntireCanvas = 1 << 5,
     };
 
     static constexpr OptionSet<DidDrawOption> defaultDidDrawOptions()
@@ -356,10 +342,10 @@ protected:
             DidDrawOption::ApplyClip,
         };
     }
-    void didDraw(std::optional<FloatRect>, OptionSet<DidDrawOption> = defaultDidDrawOptions());
+
     void didDrawEntireCanvas(OptionSet<DidDrawOption> options = defaultDidDrawOptions());
-    void didDraw(bool entireCanvas, const FloatRect&, OptionSet<DidDrawOption> options = defaultDidDrawOptions());
-    template<typename RectProvider> void didDraw(bool entireCanvas, RectProvider, OptionSet<DidDrawOption> options = defaultDidDrawOptions());
+    void didDraw(std::optional<FloatRect>, OptionSet<DidDrawOption> = defaultDidDrawOptions());
+    template<std::invocable RectProvider> void didDraw(RectProvider&&, OptionSet<DidDrawOption> options = defaultDidDrawOptions());
 
     virtual std::optional<FilterOperations> setFilterStringWithoutUpdatingStyle(const String&) { return std::nullopt; }
 
@@ -416,32 +402,23 @@ private:
     void setFillStyle(CanvasStyle);
     void setFillStyle(std::optional<CanvasStyle>);
 
-    ExceptionOr<RefPtr<CanvasPattern>> createPattern(CachedImage&, RenderElement*, bool repeatX, bool repeatY);
-    ExceptionOr<RefPtr<CanvasPattern>> createPattern(HTMLImageElement&, bool repeatX, bool repeatY);
-    ExceptionOr<RefPtr<CanvasPattern>> createPattern(SVGImageElement&, bool repeatX, bool repeatY);
-    ExceptionOr<RefPtr<CanvasPattern>> createPattern(CanvasBase&, bool repeatX, bool repeatY);
-#if ENABLE(VIDEO)
-    ExceptionOr<RefPtr<CanvasPattern>> createPattern(HTMLVideoElement&, bool repeatX, bool repeatY);
-#endif
-    ExceptionOr<RefPtr<CanvasPattern>> createPattern(ImageBitmap&, bool repeatX, bool repeatY);
-    ExceptionOr<RefPtr<CanvasPattern>> createPattern(CSSStyleImageValue&, bool repeatX, bool repeatY);
-#if ENABLE(WEB_CODECS)
-    ExceptionOr<RefPtr<CanvasPattern>> createPattern(WebCodecsVideoFrame&, bool repeatX, bool repeatY);
-#endif
+    // `drawImage` dispatcher. Executes shared logic and dispatches to the per-CanvasImageSource specific drawing function.
+    template<typename Arguments> ExceptionOr<void> drawImage(CanvasImageSource&&, const Arguments&);
 
-    ExceptionOr<void> drawImage(HTMLImageElement&, const FloatRect& srcRect, const FloatRect& dstRect);
-    ExceptionOr<void> drawImage(HTMLImageElement&, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator&, const BlendMode&);
-    ExceptionOr<void> drawImage(SVGImageElement&, const FloatRect& srcRect, const FloatRect& dstRect);
-    ExceptionOr<void> drawImage(SVGImageElement&, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator&, const BlendMode&);
-    ExceptionOr<void> drawImage(CanvasBase&, const FloatRect& srcRect, const FloatRect& dstRect);
-    ExceptionOr<void> drawImage(Document&, CachedImage&, const RenderObject*, const FloatRect& imageRect, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator&, const BlendMode&, ImageOrientation = ImageOrientation::Orientation::FromImage);
+    // `drawImage` support for drawing over the entire canvas.
+    template<class T> void fullCanvasCompositedDrawImage(T&, GraphicsContext&, const FloatRect& srcRect, const FloatRect& dstRect, ImagePaintingOptions);
+
+    // Per-CanvasImageSource specific `drawImage` implementations.
+
+    // Default `drawImage` used for all non-specialized implementations.
+    template<class Source> OptionSet<DidDrawOption> drawImage(PreprocessedForDrawImage<Source>&, GraphicsContext&, const FloatRect& srcRect, const FloatRect& dstRect, CompositeOperator, BlendMode);
 #if ENABLE(VIDEO)
-    ExceptionOr<void> drawImage(HTMLVideoElement&, const FloatRect& srcRect, const FloatRect& dstRect);
+    // Specialized implemenation of `drawImage` HTMLVideoElement.
+    OptionSet<DidDrawOption> drawImage(PreprocessedForDrawImage<HTMLVideoElement>&, GraphicsContext&, const FloatRect& srcRect, const FloatRect& dstRect, CompositeOperator, BlendMode);
 #endif
-    ExceptionOr<void> drawImage(CSSStyleImageValue&, const FloatRect& srcRect, const FloatRect& dstRect);
-    ExceptionOr<void> drawImage(ImageBitmap&, const FloatRect& srcRect, const FloatRect& dstRect);
 #if ENABLE(WEB_CODECS)
-    ExceptionOr<void> drawImage(WebCodecsVideoFrame&, const FloatRect& srcRect, const FloatRect& dstRect);
+    // Specialized implemenation of `drawImage` WebCodecsVideoFrame.
+    OptionSet<DidDrawOption> drawImage(PreprocessedForDrawImage<WebCodecsVideoFrame>&, GraphicsContext&, const FloatRect& srcRect, const FloatRect& dstRect, CompositeOperator, BlendMode);
 #endif
 
     void beginCompositeLayer();
@@ -458,12 +435,7 @@ private:
     Path transformAreaToDevice(const FloatRect&) const;
     bool rectContainsCanvas(const FloatRect&) const;
 
-    template<class T> IntRect calculateCompositingBufferRect(const T&, IntSize*);
-    void compositeBuffer(ImageBuffer&, const IntRect&, CompositeOperator);
-
     FloatRect inflatedStrokeRect(const FloatRect&) const;
-
-    template<class T> void fullCanvasCompositedDrawImage(T&, const FloatRect&, const FloatRect&, CompositeOperator);
 
     bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const override;
 #if USE(SKIA)

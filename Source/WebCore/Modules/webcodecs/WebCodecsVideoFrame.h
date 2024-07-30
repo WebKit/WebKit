@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include "CanvasImageSource.h"
 #include "ContextDestructionObserver.h"
 #include "DOMRectReadOnly.h"
 #include "JSDOMPromiseDeferredForward.h"
@@ -38,36 +39,17 @@
 namespace WebCore {
 
 class BufferSource;
-class CSSStyleImageValue;
 class DOMRectReadOnly;
-class HTMLCanvasElement;
-class HTMLImageElement;
-class HTMLVideoElement;
-class ImageBitmap;
 class ImageBuffer;
 class NativeImage;
-class OffscreenCanvas;
-class SVGImageElement;
 class VideoColorSpace;
 
 template<typename> class ExceptionOr;
+template<typename> struct ImageUsabilityGood;
 
 class WebCodecsVideoFrame : public RefCounted<WebCodecsVideoFrame>, public ContextDestructionObserver {
 public:
     ~WebCodecsVideoFrame();
-
-    using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>
-        , RefPtr<SVGImageElement>
-        , RefPtr<HTMLCanvasElement>
-        , RefPtr<ImageBitmap>
-        , RefPtr<CSSStyleImageValue>
-#if ENABLE(OFFSCREEN_CANVAS)
-        , RefPtr<OffscreenCanvas>
-#endif
-#if ENABLE(VIDEO)
-        , RefPtr<HTMLVideoElement>
-#endif
-    >;
 
     enum class AlphaOption { Keep, Discard };
     struct Init {
@@ -98,7 +80,6 @@ public:
     };
 
     static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, CanvasImageSource&&, Init&&);
-    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, Ref<WebCodecsVideoFrame>&&, Init&&);
     static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, BufferSource&&, BufferInit&&);
     static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, ImageBuffer&, IntSize, Init&&);
     static Ref<WebCodecsVideoFrame> create(ScriptExecutionContext&, Ref<VideoFrame>&&, BufferInit&&);
@@ -130,10 +111,11 @@ public:
 
     bool isDetached() const { return m_isDetached; }
     RefPtr<VideoFrame> internalFrame() const { return m_data.internalFrame; }
+    RefPtr<VideoFrame> internalFrameIfNotDetached() const { return m_isDetached ? nullptr : m_data.internalFrame; }
 
     void setDisplaySize(size_t, size_t);
     void setVisibleRect(const DOMRectInit&);
-    bool shoudlDiscardAlpha() const { return m_data.format && (*m_data.format == VideoPixelFormat::RGBX || *m_data.format == VideoPixelFormat::BGRX); }
+    bool shouldDiscardAlpha() const { return m_data.format && (*m_data.format == VideoPixelFormat::RGBX || *m_data.format == VideoPixelFormat::BGRX); }
 
     const WebCodecsVideoFrameData& data() const { return m_data; }
 
@@ -146,6 +128,19 @@ private:
     static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(ScriptExecutionContext&, Ref<WebCodecsVideoFrame>&&, Init&&, VideoFrame::ShouldCloneWithDifferentTimestamp);
     static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(ScriptExecutionContext&, Ref<VideoFrame>&&, Init&&, VideoFrame::ShouldCloneWithDifferentTimestamp);
     static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameWithResourceAndSize(ScriptExecutionContext&, Ref<NativeImage>&&, Init&&);
+
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, ImageUsabilityGood<HTMLImageElement>&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, ImageUsabilityGood<SVGImageElement>&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, ImageUsabilityGood<CSSStyleImageValue>&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, ImageUsabilityGood<ImageBitmap>&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, ImageUsabilityGood<HTMLCanvasElement>&&, Init&&);
+#if ENABLE(OFFSCREEN_CANVAS)
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, ImageUsabilityGood<OffscreenCanvas>&&, Init&&);
+#endif
+#if ENABLE(VIDEO)
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, ImageUsabilityGood<HTMLVideoElement>&&, Init&&);
+#endif
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, ImageUsabilityGood<WebCodecsVideoFrame>&&, Init&&);
 
     WebCodecsVideoFrameData m_data;
     mutable RefPtr<VideoColorSpace> m_colorSpace;

@@ -1550,9 +1550,13 @@ html/ValidatedFormListedElement.cpp
 html/ValidationMessage.cpp
 html/WeekInputType.cpp
 html/canvas/ANGLEInstancedArrays.cpp
-html/canvas/CanvasLayerContextSwitcher.cpp
 html/canvas/CanvasFilterContextSwitcher.cpp
 html/canvas/CanvasGradient.cpp
+html/canvas/CanvasImageSource+CreatePattern.cpp
+html/canvas/CanvasImageSource+DrawImage.cpp
+html/canvas/CanvasImageSource+OriginTainting.cpp
+html/canvas/CanvasImageSource+Usability.cpp
+html/canvas/CanvasLayerContextSwitcher.cpp
 html/canvas/CanvasPath.cpp
 html/canvas/CanvasPattern.cpp
 html/canvas/CanvasRenderingContext.cpp
@@ -2809,6 +2813,7 @@ rendering/style/GridPositionsResolver.cpp
 rendering/style/GridTrackSize.cpp
 rendering/style/ListStyleType.cpp
 rendering/style/NinePieceImage.cpp
+rendering/style/ObjectSizeNegotiation.cpp
 rendering/style/OffsetRotation.cpp
 rendering/style/QuotesData.cpp
 rendering/style/RenderStyle.cpp

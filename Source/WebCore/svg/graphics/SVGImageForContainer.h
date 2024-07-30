@@ -53,6 +53,8 @@ public:
         protectedImage()->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
     }
 
+    NaturalDimensions naturalDimensions(ImageOrientation = ImageOrientation::Orientation::FromImage) const final;
+
     ImageDrawResult draw(GraphicsContext&, const FloatRect&, const FloatRect&, ImagePaintingOptions = { }) final;
 
     void drawPattern(GraphicsContext&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, ImagePaintingOptions = { }) final;

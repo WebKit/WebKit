@@ -27,6 +27,7 @@
 #include "CanvasRenderingContext.h"
 
 #include "CachedImage.h"
+#include "CanvasImageSource+OriginTainting.h"
 #include "CanvasPattern.h"
 #include "DestinationColorSpace.h"
 #include "GraphicsLayer.h"
@@ -134,63 +135,9 @@ bool CanvasRenderingContext::willReadFrequently() const
     return false;
 }
 
-bool CanvasRenderingContext::taintsOrigin(const CanvasPattern* pattern)
+bool CanvasRenderingContext::taintsOrigin(const CanvasPattern& pattern)
 {
-    return pattern && !pattern->originClean();
-}
-
-bool CanvasRenderingContext::taintsOrigin(const CanvasBase* sourceCanvas)
-{
-    return sourceCanvas && !sourceCanvas->originClean();
-}
-
-bool CanvasRenderingContext::taintsOrigin(const CachedImage* cachedImage)
-{
-    if (!cachedImage)
-        return false;
-
-    RefPtr image = cachedImage->image();
-    if (!image)
-        return false;
-
-    if (image->sourceURL().protocolIsData())
-        return false;
-
-    if (image->renderingTaintsOrigin())
-        return true;
-
-    if (cachedImage->isCORSCrossOrigin())
-        return true;
-
-    ASSERT(m_canvas.securityOrigin());
-    ASSERT(cachedImage->origin());
-    ASSERT(m_canvas.securityOrigin()->toString() == cachedImage->origin()->toString());
-    return false;
-}
-
-bool CanvasRenderingContext::taintsOrigin(const HTMLImageElement* element)
-{
-    return element && taintsOrigin(element->cachedImage());
-}
-
-bool CanvasRenderingContext::taintsOrigin(const SVGImageElement* element)
-{
-    return element && taintsOrigin(element->cachedImage());
-}
-
-bool CanvasRenderingContext::taintsOrigin(const HTMLVideoElement* video)
-{
-#if ENABLE(VIDEO)
-    return video && video->taintsOrigin(*m_canvas.securityOrigin());
-#else
-    UNUSED_PARAM(video);
-    return false;
-#endif
-}
-
-bool CanvasRenderingContext::taintsOrigin(const ImageBitmap* imageBitmap)
-{
-    return imageBitmap && !imageBitmap->originClean();
+    return !pattern.originClean();
 }
 
 bool CanvasRenderingContext::taintsOrigin(const URL& url)
@@ -198,15 +145,50 @@ bool CanvasRenderingContext::taintsOrigin(const URL& url)
     return !url.protocolIsData() && !m_canvas.securityOrigin()->canRequest(url, OriginAccessPatternsForWebProcess::singleton());
 }
 
-void CanvasRenderingContext::checkOrigin(const URL& url)
+bool CanvasRenderingContext::taintsOrigin(const HTMLImageElement& imageElement)
 {
-    if (m_canvas.originClean() && taintsOrigin(url))
-        m_canvas.setOriginTainted();
+    return WebCore::taintsOrigin(*m_canvas.securityOrigin(), imageElement);
 }
 
-void CanvasRenderingContext::checkOrigin(const CSSStyleImageValue&)
+bool CanvasRenderingContext::taintsOrigin(const SVGImageElement& imageElement)
 {
-    m_canvas.setOriginTainted();
+    return WebCore::taintsOrigin(*m_canvas.securityOrigin(), imageElement);
 }
+
+bool CanvasRenderingContext::taintsOrigin(const CSSStyleImageValue& imageValue)
+{
+    return WebCore::taintsOrigin(*m_canvas.securityOrigin(), imageValue);
+}
+
+bool CanvasRenderingContext::taintsOrigin(const ImageBitmap& imageBitmap)
+{
+    return WebCore::taintsOrigin(*m_canvas.securityOrigin(), imageBitmap);
+}
+
+bool CanvasRenderingContext::taintsOrigin(const HTMLCanvasElement& canvasElement)
+{
+    return WebCore::taintsOrigin(*m_canvas.securityOrigin(), canvasElement);
+}
+
+#if ENABLE(OFFSCREEN_CANVAS)
+bool CanvasRenderingContext::taintsOrigin(const OffscreenCanvas& offscreenCanvas)
+{
+    return WebCore::taintsOrigin(*m_canvas.securityOrigin(), offscreenCanvas);
+}
+#endif
+
+#if ENABLE(VIDEO)
+bool CanvasRenderingContext::taintsOrigin(const HTMLVideoElement& videoElement)
+{
+    return WebCore::taintsOrigin(*m_canvas.securityOrigin(), videoElement);
+}
+#endif
+
+#if ENABLE(WEB_CODECS)
+bool CanvasRenderingContext::taintsOrigin(const WebCodecsVideoFrame& videoFrame)
+{
+    return WebCore::taintsOrigin(*m_canvas.securityOrigin(), videoFrame);
+}
+#endif
 
 } // namespace WebCore

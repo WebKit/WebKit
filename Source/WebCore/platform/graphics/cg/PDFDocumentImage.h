@@ -68,6 +68,8 @@ private:
 
     void destroyDecodedData(bool destroyAll = true) override;
 
+    NaturalDimensions naturalDimensions(ImageOrientation = ImageOrientation::Orientation::FromImage) const final;
+
     void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override;
     FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const override;
 

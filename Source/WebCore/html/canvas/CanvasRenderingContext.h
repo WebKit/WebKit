@@ -45,10 +45,20 @@ class DestinationColorSpace;
 class GraphicsLayer;
 class HTMLCanvasElement;
 class HTMLImageElement;
-class HTMLVideoElement;
 class ImageBitmap;
 class SVGImageElement;
 class WebGLObject;
+
+#if ENABLE(OFFSCREEN_CANVAS)
+class OffscreenCanvas;
+#endif
+#if ENABLE(VIDEO)
+class HTMLVideoElement;
+#endif
+#if ENABLE(WEB_CODECS)
+class WebCodecsVideoFrame;
+#endif
+
 enum class ImageBufferPixelFormat : uint8_t;
 
 class CanvasRenderingContext : public ScriptWrappable, public CanMakeWeakPtr<CanvasRenderingContext> {
@@ -123,22 +133,31 @@ public:
 
 protected:
     explicit CanvasRenderingContext(CanvasBase&);
-    bool taintsOrigin(const CanvasPattern*);
-    bool taintsOrigin(const CanvasBase*);
-    bool taintsOrigin(const CachedImage*);
-    bool taintsOrigin(const HTMLImageElement*);
-    bool taintsOrigin(const SVGImageElement*);
-    bool taintsOrigin(const HTMLVideoElement*);
-    bool taintsOrigin(const ImageBitmap*);
+
+    bool taintsOrigin(const CanvasPattern&);
     bool taintsOrigin(const URL&);
 
-    template<class T> void checkOrigin(const T* arg)
+    // CanvasImageSource types.
+    bool taintsOrigin(const HTMLImageElement&);
+    bool taintsOrigin(const SVGImageElement&);
+    bool taintsOrigin(const CSSStyleImageValue&);
+    bool taintsOrigin(const ImageBitmap&);
+    bool taintsOrigin(const HTMLCanvasElement&);
+#if ENABLE(OFFSCREEN_CANVAS)
+    bool taintsOrigin(const OffscreenCanvas&);
+#endif
+#if ENABLE(VIDEO)
+    bool taintsOrigin(const HTMLVideoElement&);
+#endif
+#if ENABLE(WEB_CODECS)
+    bool taintsOrigin(const WebCodecsVideoFrame&);
+#endif
+
+    template<class T> void checkOrigin(const T& arg)
     {
         if (m_canvas.originClean() && taintsOrigin(arg))
             m_canvas.setOriginTainted();
     }
-    void checkOrigin(const URL&);
-    void checkOrigin(const CSSStyleImageValue&);
 
     bool m_isInPreparationForDisplayOrFlush { false };
     bool m_hasActiveInspectorCanvasCallTracer { false };

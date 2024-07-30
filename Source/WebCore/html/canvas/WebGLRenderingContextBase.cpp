@@ -5130,7 +5130,7 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLImageElement(ASCIILiter
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "invalid image"_s);
         return false;
     }
-    if (taintsOrigin(&image))
+    if (taintsOrigin(image))
         return Exception { ExceptionCode::SecurityError };
     return true;
 }
@@ -5141,7 +5141,7 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLCanvasElement(ASCIILite
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "no canvas"_s);
         return false;
     }
-    if (taintsOrigin(&canvas))
+    if (taintsOrigin(canvas))
         return Exception { ExceptionCode::SecurityError };
     return true;
 }
@@ -5153,7 +5153,7 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLVideoElement(ASCIILiter
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "no video"_s);
         return false;
     }
-    if (taintsOrigin(&video))
+    if (taintsOrigin(video))
         return Exception { ExceptionCode::SecurityError };
     return true;
 }
@@ -5166,7 +5166,7 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateOffscreenCanvas(ASCIILitera
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "no canvas"_s);
         return false;
     }
-    if (taintsOrigin(&canvas))
+    if (taintsOrigin(canvas))
         return Exception { ExceptionCode::SecurityError };
     return true;
 }
