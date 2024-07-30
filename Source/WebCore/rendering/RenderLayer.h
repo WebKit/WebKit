@@ -227,7 +227,6 @@ public:
     void dirtyNormalFlowList();
     void dirtyZOrderLists();
     void dirtyStackingContextZOrderLists();
-    void dirtyHiddenStackingContextAncestorZOrderLists();
 
     bool normalFlowListDirty() const { return m_normalFlowListDirty; }
     bool zOrderListsDirty() const { return m_zOrderListsDirty; }
@@ -917,7 +916,7 @@ private:
     void updateZOrderLists();
     void rebuildZOrderLists();
     void rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>&, std::unique_ptr<Vector<RenderLayer*>>&, OptionSet<Compositing>&);
-    void collectLayers(std::unique_ptr<Vector<RenderLayer*>>&, std::unique_ptr<Vector<RenderLayer*>>&, OptionSet<Compositing>&);
+    void collectLayers(bool includeHiddenLayers, std::unique_ptr<Vector<RenderLayer*>>&, std::unique_ptr<Vector<RenderLayer*>>&, OptionSet<Compositing>&);
     void clearZOrderLists();
 
     void updateNormalFlowList();
@@ -1169,13 +1168,6 @@ private:
     void updateAncestorChainHasBlendingDescendants();
     void dirtyAncestorChainHasBlendingDescendants();
 
-    void updateAncestorChainHasIntrinsicallyCompositedDescendants();
-    void dirtyAncestorChainHasIntrinsicallyCompositedDescendants();
-
-    bool isIntrinsicallyComposited() const { return m_intrinsicallyComposited; }
-    bool hasIntrinsicallyCompositedDescendants() const { return m_hasIntrinsicallyCompositedDescendants; }
-    void setIntrinsicallyComposited(bool);
-
     Ref<ClipRects> parentClipRects(const ClipRectsContext&) const;
     ClipRect backgroundClipRect(const ClipRectsContext&) const;
 
@@ -1271,10 +1263,6 @@ private:
     bool m_hasNotIsolatedBlendingDescendants : 1;
     bool m_hasNotIsolatedBlendingDescendantsStatusDirty : 1;
     bool m_repaintRectsValid : 1;
-
-    bool m_intrinsicallyComposited : 1;
-    bool m_hasIntrinsicallyCompositedDescendants : 1;
-    bool m_hasIntrinsicallyCompositedDescendantsStatusDirty : 1;
 
     RenderLayerModelObject& m_renderer;
 

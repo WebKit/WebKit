@@ -75,4 +75,6 @@ layer at (11,70) size 16x16
   RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
 layer at (180,94) size 16x16
   RenderBlock {DIV} at (169,1) size 16x16 [bgcolor=#000000]
+layer at (11,94) size 16x16
+  RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
 caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of child 3 {P} of body

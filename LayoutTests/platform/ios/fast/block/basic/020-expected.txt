@@ -18,3 +18,7 @@ layer at (0,0) size 800x600
             RenderText {#text} at (114,0) size 12x19
               text run at (114,0) width 12: "B"
           RenderBlock {P} at (0,36) size 784x0
+layer at (20,8) size 10x20
+  RenderBlock (positioned) {SPAN} at (19,8) size 12x20
+    RenderText {#text} at (0,0) size 11x19
+      text run at (0,0) width 11: "B"
