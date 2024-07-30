@@ -6,28 +6,32 @@
 <script src="/resources/testharnessreport.js"></script>
 <body></body>
 <script>
-  promise_test(async (t) => {
-    assert_false(
-        navigator.userActivation.isActive,
-        "User activation should not be active"
-    );
-    await promise_rejects_dom(t, "NotAllowedError", navigator.identity.get({}));
-  }, "navigator.identity.get() calling the API without user activation should reject with NotAllowedError.");
+    promise_test(async (t) => {
+        assert_false(
+            navigator.userActivation.isActive,
+            "User activation should not be active"
+        );
+        await promise_rejects_dom(
+            t,
+            "NotAllowedError",
+            navigator.identity.get({ digital: { providers: [] } })
+        );
+    }, "navigator.identity.get() calling the API without user activation should reject with NotAllowedError.");
 
-  promise_test(async (t) => {
-    await test_driver.bless();
-    assert_true(
-        navigator.userActivation.isActive,
-        "User activation should be active after test_driver.bless()."
-    );
-    await promise_rejects_dom(
-        t,
-        "NotSupportedError",
-        navigator.identity.get({})
-    );
-    assert_false(
-        navigator.userActivation.isActive,
-        "User activation should be consumed after navigator.identity.get()."
-    );
-  }, "navigator.identity.get() consumes user activation.");
+    promise_test(async (t) => {
+        await test_driver.bless();
+        assert_true(
+            navigator.userActivation.isActive,
+            "User activation should be active after test_driver.bless()."
+        );
+        await promise_rejects_js(
+            t,
+            TypeError,
+            navigator.identity.get({ digital: { providers: [] } })
+        );
+        assert_false(
+            navigator.userActivation.isActive,
+            "User activation should be consumed after navigator.identity.get()."
+        );
+    }, "navigator.identity.get() consumes user activation.");
 </script>

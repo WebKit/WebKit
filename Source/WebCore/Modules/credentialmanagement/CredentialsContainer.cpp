@@ -137,12 +137,12 @@ void CredentialsContainer::preventSilentAccess(DOMPromiseDeferred<void>&& promis
 template<typename Options>
 bool CredentialsContainer::performCommonChecks(const Options& options, CredentialPromise& promise)
 {
-    if (!document()) {
+    RefPtr document = this->document();
+    if (!document) {
         promise.reject(Exception { ExceptionCode::NotSupportedError });
         return false;
     }
 
-    RefPtr document = this->document();
     if (!document->isFullyActive()) {
         promise.reject(Exception { ExceptionCode::NotAllowedError, "The document is not fully active."_s });
         return false;
@@ -156,6 +156,18 @@ bool CredentialsContainer::performCommonChecks(const Options& options, Credentia
     if (options.signal && options.signal->aborted()) {
         promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
         return false;
+    }
+
+    if constexpr (std::is_same_v<Options, CredentialRequestOptions>) {
+        if (!options.publicKey && !options.digital) {
+            promise.reject(Exception { ExceptionCode::NotSupportedError, "Missing request type."_s });
+            return false;
+        }
+
+        if (options.publicKey && options.digital) {
+            promise.reject(Exception { ExceptionCode::NotSupportedError, "Only one request type is supported at a time."_s });
+            return false;
+        }
     }
 
     ASSERT(document->isSecureContext());
