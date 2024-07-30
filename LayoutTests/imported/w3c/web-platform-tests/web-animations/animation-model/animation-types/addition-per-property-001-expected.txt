@@ -350,6 +350,9 @@ PASS grid-template: "". . a b" ". . a b"" onto "none"
 PASS grid-template-areas (type: discrete) has testAddition function
 PASS grid-template-areas: "none" onto "". . a b" ". . a b""
 PASS grid-template-areas: "". . a b" ". . a b"" onto "none"
+PASS hanging-punctuation (type: discrete) has testAddition function
+PASS hanging-punctuation: "first last" onto "none"
+PASS hanging-punctuation: "none" onto "first last"
 PASS hyphens (type: discrete) has testAddition function
 PASS hyphens: "none" onto "manual"
 PASS hyphens: "manual" onto "none"

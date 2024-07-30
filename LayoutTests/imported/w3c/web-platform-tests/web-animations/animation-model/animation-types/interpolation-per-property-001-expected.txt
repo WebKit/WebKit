@@ -435,6 +435,10 @@ PASS grid-template-areas (type: discrete) has testInterpolation function
 PASS grid-template-areas uses discrete animation when animating between "". . a b" ". . a b"" and "none" with linear easing
 PASS grid-template-areas uses discrete animation when animating between "". . a b" ". . a b"" and "none" with effect easing
 PASS grid-template-areas uses discrete animation when animating between "". . a b" ". . a b"" and "none" with keyframe easing
+PASS hanging-punctuation (type: discrete) has testInterpolation function
+PASS hanging-punctuation uses discrete animation when animating between "none" and "first last" with linear easing
+PASS hanging-punctuation uses discrete animation when animating between "none" and "first last" with effect easing
+PASS hanging-punctuation uses discrete animation when animating between "none" and "first last" with keyframe easing
 PASS hyphens (type: discrete) has testInterpolation function
 PASS hyphens uses discrete animation when animating between "manual" and "none" with linear easing
 PASS hyphens uses discrete animation when animating between "manual" and "none" with effect easing

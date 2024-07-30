@@ -3948,6 +3948,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<const GridPosition&>(CSSPropertyGridColumnStart, &RenderStyle::gridItemColumnStart, &RenderStyle::setGridItemColumnStart),
         new DiscretePropertyWrapper<const GridPosition&>(CSSPropertyGridRowEnd, &RenderStyle::gridItemRowEnd, &RenderStyle::setGridItemRowEnd),
         new DiscretePropertyWrapper<const GridPosition&>(CSSPropertyGridRowStart, &RenderStyle::gridItemRowStart, &RenderStyle::setGridItemRowStart),
+        new DiscretePropertyWrapper<OptionSet<HangingPunctuation>>(CSSPropertyHangingPunctuation, &RenderStyle::hangingPunctuation, &RenderStyle::setHangingPunctuation),
         new DiscretePropertyWrapper<Hyphens>(CSSPropertyHyphens, &RenderStyle::hyphens, &RenderStyle::setHyphens),
         new DiscretePropertyWrapper<const AtomString&>(CSSPropertyHyphenateCharacter, &RenderStyle::hyphenationString, &RenderStyle::setHyphenationString),
         new DiscretePropertyWrapper<ImageOrientation>(CSSPropertyImageOrientation, &RenderStyle::imageOrientation, &RenderStyle::setImageOrientation),
@@ -4175,7 +4176,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyBorderInlineStyle: // logical shorthand
         case CSSPropertyBorderInlineWidth: // logical shorthand
         case CSSPropertyBorderStyle:
-        case CSSPropertyHangingPunctuation:
         case CSSPropertyInlineSize:
         case CSSPropertyInputSecurity:
         case CSSPropertyInset:

@@ -2040,6 +2040,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyOverflowWrap);
         if (first.lineBreak != second.lineBreak)
             changingProperties.m_properties.set(CSSPropertyLineBreak);
+        if (first.hangingPunctuation != second.hangingPunctuation)
+            changingProperties.m_properties.set(CSSPropertyHangingPunctuation);
         if (first.hyphens != second.hyphens)
             changingProperties.m_properties.set(CSSPropertyHyphens);
         if (first.textEmphasisPosition != second.textEmphasisPosition)
@@ -2124,7 +2126,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // textZoom
         // lineSnap
         // lineAlign
-        // hangingPunctuation
         // cursorData
         // textEmphasisCustomMark
     };
