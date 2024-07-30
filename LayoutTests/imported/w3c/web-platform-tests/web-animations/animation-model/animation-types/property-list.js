@@ -19,6 +19,12 @@ const gCSSProperties1 = {
       { type: 'discrete', options: [ [ 'flex-start', 'flex-end' ] ] }
     ]
   },
+  'appearance': {
+    // https://drafts.csswg.org/css-ui/#appearance-switching
+    types: [
+      { type: 'discrete' , options: [ [ 'auto', 'none' ] ] }
+    ]
+  },
   'backface-visibility': {
     // https://drafts.csswg.org/css-transforms/#propdef-backface-visibility
     types: [

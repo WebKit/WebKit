@@ -1788,6 +1788,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyResize);
         if (first.objectFit != second.objectFit)
             changingProperties.m_properties.set(CSSPropertyObjectFit);
+        if (first.appearance != second.appearance)
+            changingProperties.m_properties.set(CSSPropertyAppearance);
 
         if (first.transform.ptr() != second.transform.ptr())
             conservativelyCollectChangedAnimatablePropertiesViaTransformData(*first.transform, *second.transform);
@@ -1798,7 +1800,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // hasExplicitlySetColorScheme
         // hasExplicitlySetDirection
         // hasExplicitlySetWritingMode
-        // appearance
         // usedAppearance
         // userDrag
     };

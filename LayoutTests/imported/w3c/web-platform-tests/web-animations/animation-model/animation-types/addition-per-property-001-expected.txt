@@ -9,6 +9,9 @@ PASS align-items: "flex-start" onto "flex-end"
 PASS align-self (type: discrete) has testAddition function
 PASS align-self: "flex-end" onto "flex-start"
 PASS align-self: "flex-start" onto "flex-end"
+PASS appearance (type: discrete) has testAddition function
+PASS appearance: "none" onto "auto"
+PASS appearance: "auto" onto "none"
 PASS backface-visibility (type: discrete) has testAddition function
 PASS backface-visibility: "hidden" onto "visible"
 PASS backface-visibility: "visible" onto "hidden"
