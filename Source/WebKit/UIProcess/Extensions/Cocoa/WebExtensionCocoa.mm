@@ -2103,7 +2103,11 @@ const WebExtension::PermissionsSet& WebExtension::supportedPermissions()
     static MainThreadNeverDestroyed<PermissionsSet> permissions = std::initializer_list<String> { _WKWebExtensionPermissionActiveTab, _WKWebExtensionPermissionAlarms, _WKWebExtensionPermissionClipboardWrite,
         _WKWebExtensionPermissionContextMenus, _WKWebExtensionPermissionCookies, _WKWebExtensionPermissionDeclarativeNetRequest, _WKWebExtensionPermissionDeclarativeNetRequestFeedback,
         _WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess, _WKWebExtensionPermissionMenus, _WKWebExtensionPermissionNativeMessaging, _WKWebExtensionPermissionNotifications, _WKWebExtensionPermissionScripting,
-        _WKWebExtensionPermissionStorage, _WKWebExtensionPermissionTabs, _WKWebExtensionPermissionUnlimitedStorage, _WKWebExtensionPermissionWebNavigation, _WKWebExtensionPermissionWebRequest };
+        _WKWebExtensionPermissionStorage, _WKWebExtensionPermissionTabs, _WKWebExtensionPermissionUnlimitedStorage, _WKWebExtensionPermissionWebNavigation, _WKWebExtensionPermissionWebRequest,
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+        _WKWebExtensionPermissionSidePanel,
+#endif
+    };
     return permissions;
 }
 

@@ -314,6 +314,7 @@ Tests/WebKitCocoa/WKWebExtensionAPIPermissions.mm
 Tests/WebKitCocoa/WKWebExtensionAPIScripting.mm
 Tests/WebKitCocoa/WKWebExtensionAPIStorage.mm
 Tests/WebKitCocoa/WKWebExtensionAPIRuntime.mm
+Tests/WebKitCocoa/WKWebExtensionAPISidebar.mm
 Tests/WebKitCocoa/WKWebExtensionAPITabs.mm
 Tests/WebKitCocoa/WKWebExtensionAPIWebNavigation.mm
 Tests/WebKitCocoa/WKWebExtensionAPIWebRequest.mm
