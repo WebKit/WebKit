@@ -309,7 +309,7 @@ TextOnlyLineBreakResult TextOnlySimpleLineBuilder::handleOverflowingTextContent(
     if (lineBreakingResult.action == InlineContentBreaker::Result::Action::Keep) {
         auto& committedRuns = candidateContent.runs();
         for (auto& run : committedRuns)
-            m_line.appendTextFast(downcast<InlineTextItem>(run.inlineItem), run.style, run.logicalWidth);
+            m_line.appendTextFast(downcast<InlineTextItem>(run.inlineItem), run.style, run.contentWidth());
         if (m_line.hasContentOrListMarker())
             m_wrapOpportunityList.append(&committedRuns.last().inlineItem);
         return { lineBreakingResult.isEndOfLine, committedRuns.size() };
@@ -336,13 +336,13 @@ TextOnlyLineBreakResult TextOnlySimpleLineBuilder::handleOverflowingTextContent(
             auto& runs = candidateContent.runs();
             for (size_t index = 0; index < trailingRunIndex; ++index) {
                 auto& run = runs[index];
-                m_line.appendTextFast(downcast<InlineTextItem>(run.inlineItem), run.style, run.logicalWidth);
+                m_line.appendTextFast(downcast<InlineTextItem>(run.inlineItem), run.style, run.contentWidth());
             }
 
             auto committedInlineItemCount = trailingRunIndex + 1;
             auto& trailingRun = runs[trailingRunIndex];
             if (!lineBreakingResult.partialTrailingContent->partialRun) {
-                m_line.appendTextFast(downcast<InlineTextItem>(trailingRun.inlineItem), trailingRun.style, trailingRun.logicalWidth);
+                m_line.appendTextFast(downcast<InlineTextItem>(trailingRun.inlineItem), trailingRun.style, trailingRun.contentWidth());
                 if (auto hyphenWidth = lineBreakingResult.partialTrailingContent->hyphenWidth)
                     m_line.addTrailingHyphen(*hyphenWidth);
                 return { InlineContentBreaker::IsEndOfLine::Yes, committedInlineItemCount };

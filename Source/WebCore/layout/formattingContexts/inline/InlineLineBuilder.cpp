@@ -1050,7 +1050,7 @@ LineBuilder::Result LineBuilder::processLineBreakingResult(const LineCandidate& 
     if (lineBreakingResult.action == InlineContentBreaker::Result::Action::Keep) {
         // This continuous content can be fully placed on the current line.
         for (auto& run : candidateRuns)
-            m_line.append(run.inlineItem, run.style, run.logicalWidth);
+            m_line.append(run.inlineItem, run.style, run.contentWidth());
         // We are keeping this content on the line but we need to check if we could have wrapped here
         // in order to be able to revert back to this position if needed.
         // Let's just ignore cases like collapsed leading whitespace for now.
@@ -1149,12 +1149,12 @@ void LineBuilder::commitPartialContent(const InlineContentBreaker::ContinuousCon
                 return;
             }
             // The partial run is the last content to commit.
-            m_line.append(run.inlineItem, run.style, run.logicalWidth);
+            m_line.append(run.inlineItem, run.style, run.contentWidth());
             if (auto hyphenWidth = partialTrailingContent.hyphenWidth)
                 m_line.addTrailingHyphen(*hyphenWidth);
             return;
         }
-        m_line.append(run.inlineItem, run.style, run.logicalWidth);
+        m_line.append(run.inlineItem, run.style, run.contentWidth());
     }
 }
 

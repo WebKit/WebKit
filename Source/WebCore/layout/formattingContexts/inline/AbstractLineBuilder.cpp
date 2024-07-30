@@ -82,7 +82,7 @@ std::optional<InlineLayoutUnit> AbstractLineBuilder::eligibleOverflowWidthAsLead
             return { };
         }
     }
-    auto logicalWidthForNextLineAsLeading = overflowingRun.logicalWidth;
+    auto logicalWidthForNextLineAsLeading = overflowingRun.contentWidth();
     if (lineBreakingResult.action == InlineContentBreaker::Result::Action::Wrap)
         return logicalWidthForNextLineAsLeading;
     if (lineBreakingResult.action == InlineContentBreaker::Result::Action::Break && lineBreakingResult.partialTrailingContent->partialRun)

@@ -82,7 +82,7 @@ static InlineLayoutUnit baseLogicalWidthFromRubyBaseEnd(const Box& rubyBaseLayou
             hasSeenRubyBaseStart = true;
             break;
         }
-        baseLogicalWidth += candidateRun.logicalWidth;
+        baseLogicalWidth += candidateRun.contentWidth();
     }
     if (hasSeenRubyBaseStart)
         return baseLogicalWidth;
