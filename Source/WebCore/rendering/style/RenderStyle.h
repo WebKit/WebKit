@@ -1034,7 +1034,7 @@ public:
     const Length& scrollPaddingRight() const;
 
     bool hasSnapPosition() const;
-    const ScrollSnapType scrollSnapType() const;
+    ScrollSnapType scrollSnapType() const;
     const ScrollSnapAlign& scrollSnapAlign() const;
     ScrollSnapStop scrollSnapStop() const;
 
@@ -1043,7 +1043,7 @@ public:
     inline std::optional<ScrollbarColor> scrollbarColor() const;
     inline const StyleColor& scrollbarThumbColor() const;
     inline const StyleColor& scrollbarTrackColor() const;
-    WEBCORE_EXPORT const ScrollbarGutter scrollbarGutter() const;
+    WEBCORE_EXPORT ScrollbarGutter scrollbarGutter() const;
     WEBCORE_EXPORT ScrollbarWidth scrollbarWidth() const;
 
 #if ENABLE(TOUCH_EVENTS)

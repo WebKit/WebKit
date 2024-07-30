@@ -163,6 +163,15 @@ PASS resize: "both" onto "horizontal"
 PASS ruby-align (type: discrete) has testAccumulation function
 PASS ruby-align: "center" onto "start"
 PASS ruby-align: "start" onto "center"
+PASS scroll-snap-align (type: discrete) has testAccumulation function
+PASS scroll-snap-align: "start" onto "none"
+PASS scroll-snap-align: "none" onto "start"
+PASS scroll-snap-stop (type: discrete) has testAccumulation function
+PASS scroll-snap-stop: "always" onto "normal"
+PASS scroll-snap-stop: "normal" onto "always"
+PASS scroll-snap-type (type: discrete) has testAccumulation function
+PASS scroll-snap-type: "x mandatory" onto "none"
+PASS scroll-snap-type: "none" onto "x mandatory"
 PASS scrollbar-color (type: colorPair) has testAccumulation function
 PASS scrollbar-color supports animating as color pair of rgb() with overflowed  from and to values
 PASS scrollbar-color supports animating as color pair of #RGB

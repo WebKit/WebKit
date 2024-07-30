@@ -200,6 +200,18 @@ PASS ruby-align (type: discrete) has testInterpolation function
 PASS ruby-align uses discrete animation when animating between "start" and "center" with linear easing
 PASS ruby-align uses discrete animation when animating between "start" and "center" with effect easing
 PASS ruby-align uses discrete animation when animating between "start" and "center" with keyframe easing
+PASS scroll-snap-align (type: discrete) has testInterpolation function
+PASS scroll-snap-align uses discrete animation when animating between "none" and "start" with linear easing
+PASS scroll-snap-align uses discrete animation when animating between "none" and "start" with effect easing
+PASS scroll-snap-align uses discrete animation when animating between "none" and "start" with keyframe easing
+PASS scroll-snap-stop (type: discrete) has testInterpolation function
+PASS scroll-snap-stop uses discrete animation when animating between "normal" and "always" with linear easing
+PASS scroll-snap-stop uses discrete animation when animating between "normal" and "always" with effect easing
+PASS scroll-snap-stop uses discrete animation when animating between "normal" and "always" with keyframe easing
+PASS scroll-snap-type (type: discrete) has testInterpolation function
+PASS scroll-snap-type uses discrete animation when animating between "none" and "x mandatory" with linear easing
+PASS scroll-snap-type uses discrete animation when animating between "none" and "x mandatory" with effect easing
+PASS scroll-snap-type uses discrete animation when animating between "none" and "x mandatory" with keyframe easing
 PASS scrollbar-color (type: colorPair) has testInterpolation function
 PASS scrollbar-color supports animating as color pair of rgb()
 PASS scrollbar-color supports animating as color pair of #RGB

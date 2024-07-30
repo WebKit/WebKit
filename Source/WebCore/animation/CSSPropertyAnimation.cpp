@@ -4047,8 +4047,11 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscreteSVGPropertyWrapper<const String&>(CSSPropertyMarkerEnd, &SVGRenderStyle::markerEndResource, &SVGRenderStyle::setMarkerEndResource),
         new DiscreteSVGPropertyWrapper<const String&>(CSSPropertyMarkerMid, &SVGRenderStyle::markerMidResource, &SVGRenderStyle::setMarkerMidResource),
         new DiscreteSVGPropertyWrapper<const String&>(CSSPropertyMarkerStart, &SVGRenderStyle::markerStartResource, &SVGRenderStyle::setMarkerStartResource),
-        new DiscretePropertyWrapper<const ScrollbarGutter>(CSSPropertyScrollbarGutter, &RenderStyle::scrollbarGutter, &RenderStyle::setScrollbarGutter),
+        new DiscretePropertyWrapper<ScrollbarGutter>(CSSPropertyScrollbarGutter, &RenderStyle::scrollbarGutter, &RenderStyle::setScrollbarGutter),
         new DiscretePropertyWrapper<ScrollbarWidth>(CSSPropertyScrollbarWidth, &RenderStyle::scrollbarWidth, &RenderStyle::setScrollbarWidth),
+        new DiscretePropertyWrapper<const ScrollSnapAlign&>(CSSPropertyScrollSnapAlign, &RenderStyle::scrollSnapAlign, &RenderStyle::setScrollSnapAlign),
+        new DiscretePropertyWrapper<ScrollSnapStop>(CSSPropertyScrollSnapStop, &RenderStyle::scrollSnapStop, &RenderStyle::setScrollSnapStop),
+        new DiscretePropertyWrapper<ScrollSnapType>(CSSPropertyScrollSnapType, &RenderStyle::scrollSnapType, &RenderStyle::setScrollSnapType),
         new DiscretePropertyWrapper<std::optional<Style::ScopedName>>(CSSPropertyViewTransitionName, &RenderStyle::viewTransitionName, &RenderStyle::setViewTransitionName),
         new DiscretePropertyWrapper<FieldSizing>(CSSPropertyFieldSizing, &RenderStyle::fieldSizing, &RenderStyle::setFieldSizing),
         new DiscretePropertyWrapper<const Vector<AtomString>&>(CSSPropertyAnchorName, &RenderStyle::anchorNames, &RenderStyle::setAnchorNames),
@@ -4210,9 +4213,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyScrollPaddingLeft:
         case CSSPropertyScrollPaddingRight:
         case CSSPropertyScrollPaddingTop:
-        case CSSPropertyScrollSnapAlign:
-        case CSSPropertyScrollSnapStop:
-        case CSSPropertyScrollSnapType:
 #if ENABLE(TEXT_AUTOSIZING)
         case CSSPropertyWebkitTextSizeAdjust:
 #endif

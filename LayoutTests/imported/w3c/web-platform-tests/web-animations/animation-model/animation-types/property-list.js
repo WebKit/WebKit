@@ -1255,6 +1255,24 @@ const gCSSProperties2 = {
       { type: 'discrete', options: [ [ 'auto', 'smooth' ] ] }
     ]
   },
+  'scroll-snap-align': {
+    // https://drafts.csswg.org/css-scroll-snap/#propdef-scroll-snap-align
+    types: [
+      { type: 'discrete', options: [ [ 'none', 'start' ]] }
+    ]
+  },
+  'scroll-snap-stop': {
+    // https://drafts.csswg.org/css-scroll-snap/#propdef-scroll-snap-stop
+    types: [
+      { type: 'discrete', options: [ [ 'normal', 'always' ]] }
+    ]
+  },
+  'scroll-snap-type': {
+    // https://drafts.csswg.org/css-scroll-snap/#propdef-scroll-snap-type
+    types: [
+      { type: 'discrete', options: [ [ 'none', 'x mandatory' ]] }
+    ]
+  },
   'scrollbar-color': {
     // https://drafts.csswg.org/css-scrollbars/#propdef-scrollbar-color
     types: [ 'colorPair' ]

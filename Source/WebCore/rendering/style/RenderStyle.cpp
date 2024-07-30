@@ -1922,6 +1922,12 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyAnchorName);
         if (first.positionAnchor != second.positionAnchor)
             changingProperties.m_properties.set(CSSPropertyPositionAnchor);
+        if (first.scrollSnapAlign != second.scrollSnapAlign)
+            changingProperties.m_properties.set(CSSPropertyScrollSnapAlign);
+        if (first.scrollSnapStop != second.scrollSnapStop)
+            changingProperties.m_properties.set(CSSPropertyScrollSnapStop);
+        if (first.scrollSnapType != second.scrollSnapType)
+            changingProperties.m_properties.set(CSSPropertyScrollSnapType);
 
         // Non animated styles are followings.
         // customProperties
@@ -1937,9 +1943,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // boxReflect
         // pageSize
         // pageSizeType
-        // scrollSnapType
-        // scrollSnapAlign
-        // scrollSnapStop
         // blockStepSize
         // blockStepInsert
         // overscrollBehaviorX
@@ -3689,7 +3692,7 @@ ScrollbarWidth RenderStyle::initialScrollbarWidth()
     return ScrollbarWidth::Auto;
 }
 
-const ScrollSnapType RenderStyle::scrollSnapType() const
+ScrollSnapType RenderStyle::scrollSnapType() const
 {
     return m_nonInheritedData->rareData->scrollSnapType;
 }
@@ -3704,7 +3707,7 @@ ScrollSnapStop RenderStyle::scrollSnapStop() const
     return m_nonInheritedData->rareData->scrollSnapStop;
 }
 
-const ScrollbarGutter RenderStyle::scrollbarGutter() const
+ScrollbarGutter RenderStyle::scrollbarGutter() const
 {
     return m_nonInheritedData->rareData->scrollbarGutter;
 }
@@ -3714,7 +3717,7 @@ ScrollbarWidth RenderStyle::scrollbarWidth() const
     return m_nonInheritedData->rareData->scrollbarWidth;
 }
 
-void RenderStyle::setScrollSnapType(const ScrollSnapType type)
+void RenderStyle::setScrollSnapType(ScrollSnapType type)
 {
     SET_NESTED_VAR(m_nonInheritedData, rareData, scrollSnapType, type);
 }
@@ -3724,7 +3727,7 @@ void RenderStyle::setScrollSnapAlign(const ScrollSnapAlign& alignment)
     SET_NESTED_VAR(m_nonInheritedData, rareData, scrollSnapAlign, alignment);
 }
 
-void RenderStyle::setScrollSnapStop(const ScrollSnapStop stop)
+void RenderStyle::setScrollSnapStop(ScrollSnapStop stop)
 {
     SET_NESTED_VAR(m_nonInheritedData, rareData, scrollSnapStop, stop);
 }
