@@ -50,6 +50,11 @@ PlatformXRSystem::~PlatformXRSystem()
     m_page.legacyMainFrameProcess().removeMessageReceiver(Messages::PlatformXRSystem::messageReceiverName(), m_page.webPageIDInMainFrameProcess());
 }
 
+const SharedPreferencesForWebProcess& PlatformXRSystem::sharedPreferencesForWebProcess() const
+{
+    return *m_page.legacyMainFrameProcess().sharedPreferencesForWebProcess();
+}
+
 void PlatformXRSystem::invalidate()
 {
     ASSERT(RunLoop::isMain());

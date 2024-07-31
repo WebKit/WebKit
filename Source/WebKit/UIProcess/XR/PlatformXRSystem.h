@@ -52,6 +52,7 @@ namespace WebKit {
 class PlatformXRCoordinator;
 class WebPageProxy;
 
+struct SharedPreferencesForWebProcess;
 struct XRDeviceInfo;
 
 class PlatformXRSystem : public IPC::MessageReceiver, public PlatformXRCoordinatorSessionEventClient {
@@ -59,6 +60,8 @@ class PlatformXRSystem : public IPC::MessageReceiver, public PlatformXRCoordinat
 public:
     PlatformXRSystem(WebPageProxy&);
     virtual ~PlatformXRSystem();
+
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
     using PlatformXRCoordinatorSessionEventClient::weakPtrFactory;
     using PlatformXRCoordinatorSessionEventClient::WeakValueType;
