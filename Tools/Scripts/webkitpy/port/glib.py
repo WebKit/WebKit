@@ -154,6 +154,21 @@ class GLibPort(Port):
         env['LD_LIBRARY_PATH'] = self._prepend_to_env_value(self._build_path('lib'), env.get('LD_LIBRARY_PATH', ''))
         return env
 
+    def setup_sysprof_for_minibrowser(self):
+        pass_fds = ()
+        env = self.setup_environ_for_minibrowser()
+
+        if os.environ.get("SYSPROF_CONTROL_FD"):
+            try:
+                control_fd = int(os.environ.get("SYSPROF_CONTROL_FD"))
+                copy_fd = os.dup(control_fd)
+                pass_fds += (copy_fd, )
+                env["SYSPROF_CONTROL_FD"] = str(copy_fd)
+            except (ValueError):
+                pass
+
+        return env, pass_fds
+
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than, target_host=None):
         return GDBCrashLogGenerator(self._executive, name, pid, newer_than,
                                     self._filesystem, self._path_to_driver, self.port_name, self.get_option('configuration')).generate_crash_log(stdout, stderr)
