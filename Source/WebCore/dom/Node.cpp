@@ -1920,34 +1920,6 @@ unsigned short Node::compareDocumentPosition(Node& otherNode)
                DOCUMENT_POSITION_PRECEDING | DOCUMENT_POSITION_CONTAINS;
 }
 
-FloatPoint Node::convertToPage(const FloatPoint& p) const
-{
-    // If there is a renderer, just ask it to do the conversion
-    if (renderer())
-        return renderer()->localToAbsolute(p, UseTransforms);
-    
-    // Otherwise go up the tree looking for a renderer
-    if (auto* parent = parentElement())
-        return parent->convertToPage(p);
-
-    // No parent - no conversion needed
-    return p;
-}
-
-FloatPoint Node::convertFromPage(const FloatPoint& p) const
-{
-    // If there is a renderer, just ask it to do the conversion
-    if (renderer())
-        return renderer()->absoluteToLocal(p, UseTransforms);
-
-    // Otherwise go up the tree looking for a renderer
-    if (auto* parent = parentElement())
-        return parent->convertFromPage(p);
-
-    // No parent - no conversion needed
-    return p;
-}
-
 String Node::description() const
 {
     auto name = nodeName();

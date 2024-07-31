@@ -14,7 +14,7 @@
 
 function checkPosition(id) {
     var element = document.getElementById(id);
-    var y = webkitConvertPointFromNodeToPage(element, new WebKitPoint(0,0)).y;
+    var y = element.getBoundingClientRect().top;
 
     var resultString = '';
     if (y > 250) {

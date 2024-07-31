@@ -1728,7 +1728,6 @@ fast/dom/Window/mozilla-focus-blur.html [ Failure ]
 # fast/dom/Window/new-window-opener.html [ Failure ] # TODO: marked skip below. Uncomment when resolved.
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ Failure ]
 fast/dom/Window/slow-unload-handler.html [ Failure ]
-fast/dom/Window/webkitConvertPoint.html [ Failure ]
 fast/dom/Window/window-properties-device-orientation.html [ Failure ]
 fast/dom/Window/window-property-invalid-characters-ignored.html [ Failure ]
 fast/dom/Window/window-resize-and-move-arguments.html [ Failure ]
