@@ -12,14 +12,14 @@ layer at (0,0) size 800x600
             text run at (1,2) width 109: "Helvetica bold"
         RenderText {#text} at (109,2) size 76x18
           text run at (109,2) width 76: " Helvetica "
-        RenderInline {I} at (184,2) size 419x18
-          RenderText {#text} at (184,2) size 193x18
-            text run at (184,2) width 193: "Courier syn. italic "
-          RenderInline {B} at (376,1) size 227x25
-            RenderText {#text} at (376,1) size 227x25
-              text run at (376,1) width 227: "Papyrus syn. bold syn. italic"
+        RenderInline {I} at (184,2) size 136x18
+          RenderText {#text} at (184,2) size 77x18
+            text run at (184,2) width 77: "Courier "
+          RenderInline {B} at (260,1) size 60x25
+            RenderText {#text} at (260,1) size 60x25
+              text run at (260,1) width 60: "Papyrus"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (4,65) size 776x52 [border: (1px solid #ADD8E6)]
+      RenderBlock {DIV} at (4,65) size 776x27 [border: (1px solid #ADD8E6)]
         RenderInline {SPAN} at (1,2) size 68x18
           RenderText {#text} at (1,2) size 68x18
             text run at (1,2) width 68: "Courier"
@@ -55,15 +55,16 @@ layer at (0,0) size 800x600
             text run at (504,2) width 112: "Helvetica Bold"
         RenderText {#text} at (615,2) size 10x18
           text run at (615,2) width 10: " "
-        RenderInline {SPAN} at (624,1) size 146x25
-          RenderText {#text} at (624,1) size 146x25
-            text run at (624,1) width 146: "Papyrus syn. bold"
+        RenderInline {SPAN} at (624,1) size 60x25
+          RenderText {#text} at (624,1) size 60x25
+            text run at (624,1) width 60: "Papyrus"
+        RenderText {#text} at (683,2) size 10x18
+          text run at (683,2) width 10: " "
+        RenderInline {SPAN} at (692,1) size 60x25
+          RenderText {#text} at (692,1) size 60x25
+            text run at (692,1) width 60: "Papyrus"
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {SPAN} at (1,26) size 145x25
-          RenderText {#text} at (1,26) size 145x25
-            text run at (1,26) width 145: "Papyrus syn. bold"
-        RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (4,121) size 776x38 [border: (1px solid #ADD8E6)]
+      RenderBlock {DIV} at (4,96) size 776x38 [border: (1px solid #ADD8E6)]
         RenderInline {SPAN} at (1,1) size 68x18
           RenderText {#text} at (1,1) size 68x18
             text run at (1,1) width 68: "Courier"
@@ -107,7 +108,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (1,19) size 111x18
             text run at (1,19) width 111: "Helvetica Bold"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (4,163) size 776x38 [border: (1px solid #ADD8E6)]
+      RenderBlock {DIV} at (4,138) size 776x38 [border: (1px solid #ADD8E6)]
         RenderInline {SPAN} at (1,1) size 68x18
           RenderText {#text} at (1,1) size 68x18
             text run at (1,1) width 68: "Courier"
@@ -151,40 +152,53 @@ layer at (0,0) size 800x600
           RenderText {#text} at (1,19) size 111x18
             text run at (1,19) width 111: "Helvetica Bold"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,217) size 784x18
+      RenderBlock {DIV} at (4,180) size 776x27 [border: (1px solid #ADD8E6)]
+        RenderInline {B} at (1,1) size 186x25
+          RenderText {#text} at (1,1) size 186x25
+            text run at (1,1) width 186: "Papyrus synthetic bold"
+        RenderText {#text} at (186,1) size 67x25
+          text run at (186,1) width 67: " Papyrus "
+        RenderInline {I} at (252,1) size 397x25
+          RenderText {#text} at (252,1) size 168x25
+            text run at (252,1) width 168: "Papyrus synthetic italic "
+          RenderInline {B} at (419,1) size 230x25
+            RenderText {#text} at (419,1) size 230x25
+              text run at (419,1) width 230: "Papyrus synthetic bold italic"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,223) size 784x18
         RenderText {#text} at (0,0) size 228x18
           text run at (0,0) width 228: "Times followed by Ahem (normal):"
-      RenderBlock {DIV} at (4,251) size 776x20 [border: (1px solid #ADD8E6)]
+      RenderBlock {DIV} at (4,257) size 776x20 [border: (1px solid #ADD8E6)]
         RenderText {#text} at (1,1) size 44x18
           text run at (1,1) width 44: "Times "
         RenderInline {I} at (44,2) size 65x16
           RenderText {#text} at (44,2) size 65x16
             text run at (44,2) width 65: "AHEM"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,287) size 784x18
+      RenderBlock {P} at (0,293) size 784x18
         RenderText {#text} at (0,0) size 104x18
           text run at (0,0) width 104: "Ahem (normal):"
-      RenderBlock {DIV} at (4,321) size 776x18 [border: (1px solid #ADD8E6)]
+      RenderBlock {DIV} at (4,327) size 776x18 [border: (1px solid #ADD8E6)]
         RenderText {#text} at (1,1) size 80x16
           text run at (1,1) width 80: "AHEM "
         RenderInline {I} at (81,1) size 64x16
           RenderText {#text} at (81,1) size 64x16
             text run at (81,1) width 64: "AHEM"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,355) size 784x18
+      RenderBlock {P} at (0,361) size 784x18
         RenderText {#text} at (0,0) size 333x18
           text run at (0,0) width 333: "Ahem (normal) followed by Ahem (synthetic bold):"
-      RenderBlock {DIV} at (4,389) size 776x18 [border: (1px solid #ADD8E6)]
+      RenderBlock {DIV} at (4,395) size 776x18 [border: (1px solid #ADD8E6)]
         RenderText {#text} at (1,1) size 80x16
           text run at (1,1) width 80: "AHEM "
         RenderInline {B} at (81,1) size 68x16
           RenderText {#text} at (81,1) size 68x16
             text run at (81,1) width 68: "AHEM"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,423) size 784x18
+      RenderBlock {P} at (0,429) size 784x18
         RenderText {#text} at (0,0) size 343x18
           text run at (0,0) width 343: "Ahem (normal) followed by Ahem (synthetic italics):"
-      RenderBlock {DIV} at (4,457) size 776x18 [border: (1px solid #ADD8E6)]
+      RenderBlock {DIV} at (4,463) size 776x18 [border: (1px solid #ADD8E6)]
         RenderText {#text} at (1,1) size 80x16
           text run at (1,1) width 80: "AHEM "
         RenderInline {I} at (81,1) size 64x16
