@@ -74,6 +74,7 @@ namespace WebKit {
 class WebPageProxy;
 
 struct FrameInfoData;
+struct SharedPreferencesForWebProcess;
 struct WebAuthenticationRequestData;
 
 using CapabilitiesCompletionHandler = CompletionHandler<void(Vector<KeyValuePair<String, bool>>&&)>;
@@ -85,6 +86,8 @@ class WebAuthenticatorCoordinatorProxy : public IPC::MessageReceiver {
 public:
     explicit WebAuthenticatorCoordinatorProxy(WebPageProxy&);
     ~WebAuthenticatorCoordinatorProxy();
+
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
 #if HAVE(WEB_AUTHN_AS_MODERN)
     static WeakPtr<WebAuthenticatorCoordinatorProxy>& activeConditionalMediationProxy();

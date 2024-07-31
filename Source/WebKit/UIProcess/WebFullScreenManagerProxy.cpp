@@ -72,6 +72,11 @@ WebFullScreenManagerProxy::~WebFullScreenManagerProxy()
     callCloseCompletionHandlers();
 }
 
+const SharedPreferencesForWebProcess& WebFullScreenManagerProxy::sharedPreferencesForWebProcess() const
+{
+    return *m_page.legacyMainFrameProcess().sharedPreferencesForWebProcess();
+}
+
 void WebFullScreenManagerProxy::willEnterFullScreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
