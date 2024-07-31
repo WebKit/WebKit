@@ -1,0 +1,26 @@
+<style>
+
+select {
+    container: a1 / inline-size;
+}
+
+</style>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function load() {
+    options = select.options;
+    options[1] = undefined;
+    select.multiple = true;
+}
+
+</script>
+<body onload=load()>
+<select id="select">
+<option id="first">A</option>
+<option selected="selected">B</option>
+</select>
+<p>PASS if no crash.</p>
+</body>
