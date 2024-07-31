@@ -34,10 +34,6 @@
 #include <string.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
-#if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX)
-#include "ProcessProviderLibWPE.h"
-#endif
-
 #if ENABLE(BREAKPAD)
 #include "unix/BreakpadExceptionHandler.h"
 #endif
@@ -60,7 +56,7 @@ bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
     int minimumNumArgs = 3;
 #endif
 
-#if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX)
+#if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX) && (!PLATFORM(PLAYSTATION) || USE(WPE_BACKEND_PLAYSTATION))
     if (ProcessProviderLibWPE::singleton().isEnabled())
         minimumNumArgs = 3;
 #endif
