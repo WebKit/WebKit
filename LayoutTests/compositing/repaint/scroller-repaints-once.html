@@ -1,0 +1,85 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] --><html>
+<head>
+    <style>
+        #scroller {
+            position: relative;
+            z-index: 0;
+            width: 300px;
+            height: 300px;
+            border: 1px solid black;
+            overflow: scroll;
+            padding: 10px;
+        }
+
+        .contents {
+            height: 100px;
+        }
+
+        .norepaint {
+            position: relative;
+            background: blue;
+            width: 50px;
+            height: 50px;
+        }
+
+        .repaint {
+            position: relative;
+            background: blue;
+            width: 30px;
+            height: 30px;
+        }
+        
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(async () => {
+                // Wait for a stable state, right before a rendering update.
+                await new Promise(resolve => requestAnimationFrame(resolve))
+
+		// Make 'contents' have scrollable overflow, which should get composited.
+                document.getElementById('contents').style.height = "2000px";
+
+                await new Promise(resolve => requestAnimationFrame(resolve))
+
+                // Wait for the rendering update to happen, and then capture the layer tree,
+                // showing visible rects to ensure that some of the scrollable (but not visible)
+                // area is included in the coverage rects.
+
+                if (window.internals)
+                    var firstPaintLayers =  internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS);
+
+                // Mutate one of the elements inside the scroller, and then flush layout to generate repaint rects.
+
+                if (window.internals)
+                    internals.startTrackingRepaints();
+
+                document.getElementById('repaint').style.width = "35px";
+                document.getElementById('contents').getClientRects();
+
+                // Dump layer tree with repaint rects to show that we only repainted the mutated element, not the whole scroller.
+                if (window.internals) {
+                    document.getElementById('layers2').textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+                    document.getElementById('layers1').textContent = firstPaintLayers;
+                }
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div class="contents" id="contents">Scrolled contents</div>
+        <div class="norepaint"></div>
+        <div id="repaint" class="repaint"></div>
+    </div>
+<pre id="layers1"></pre>
+<pre id="layers2"></pre>
+</body>
+</html>

@@ -3995,6 +3995,9 @@ webkit.org/b/195259 compositing/geometry/fixed-position-composited-page-scale-sm
 webkit.org/b/276086 imported/w3c/web-platform-tests/webvtt/rendering/basic-cue-rendering.html
 webkit.org/b/276086 imported/w3c/web-platform-tests/webvtt/rendering/white-space-pre-line.html
 
+# Requires layer tiling
+compositing/repaint/scroller-repaints-once.html [ Failure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
