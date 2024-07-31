@@ -483,6 +483,7 @@ typedef (HTMLCanvasElement) WebGLCanvas;
 
 #if defined(ENABLE_PREDEFINED_COLOR_SPACE_DISPLAY_P3) && ENABLE_PREDEFINED_COLOR_SPACE_DISPLAY_P3
     [EnabledBySetting=CanvasColorSpaceEnabled] attribute PredefinedColorSpace drawingBufferColorSpace;
+    [EnabledBySetting=CanvasColorSpaceEnabled] attribute PredefinedColorSpace unpackColorSpace;
 #endif
 
     undefined activeTexture(GLenum texture);

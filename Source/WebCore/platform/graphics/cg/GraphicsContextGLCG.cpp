@@ -320,7 +320,7 @@ void convert16BitFormatToRGBA8(GraphicsContextGL::DataFormat srcFormat, const ui
 
 GraphicsContextGLImageExtractor::~GraphicsContextGLImageExtractor() = default;
 
-bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication)
+bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication, std::optional<DestinationColorSpace> destinationColorSpace)
 {
     if (!m_image)
         return false;
@@ -349,27 +349,32 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
     // image data.
     CGColorSpaceRef colorSpace = CGImageGetColorSpace(decodedImage->platformImage().get());
     CGColorSpaceModel model = CGColorSpaceGetModel(colorSpace);
-    if (model == kCGColorSpaceModelIndexed) {
+    bool isColorSpaceModelIndexed = model == kCGColorSpaceModelIndexed;
+    bool useExplicitColorspace = !ignoreGammaAndColorProfile && destinationColorSpace.has_value();
+    auto destinationCGColorSpace = useExplicitColorspace ? destinationColorSpace->platformColorSpace() : sRGBColorSpaceRef();
+    bool needsColorSpaceConversion = useExplicitColorspace && !CFEqual(colorSpace, destinationCGColorSpace);
+    if (isColorSpaceModelIndexed || needsColorSpaceConversion) {
         RetainPtr<CGContextRef> bitmapContext;
-        // FIXME: we should probably manually convert the image by indexing into
+        // FIXME for isColorSpaceModelIndexed-only conversion:
+        // We should probably manually convert the image by indexing into
         // the color table, which would allow us to avoid premultiplying the
         // alpha channel. Creation of a bitmap context with an alpha channel
         // doesn't seem to work unless it's premultiplied.
         bitmapContext = adoptCF(CGBitmapContextCreate(0, m_imageWidth, m_imageHeight, 8, m_imageWidth * 4,
-            sRGBColorSpaceRef(), static_cast<uint32_t>(kCGImageAlphaPremultipliedFirst) | static_cast<uint32_t>(kCGBitmapByteOrder32Host)));
+            destinationCGColorSpace, static_cast<uint32_t>(kCGImageAlphaPremultipliedFirst) | static_cast<uint32_t>(kCGBitmapByteOrder32Host)));
         if (!bitmapContext)
             return false;
 
-        CGContextSetBlendMode(bitmapContext.get(), kCGBlendModeCopy);
+        CGContextSetBlendMode(bitmapContext.get(), needsColorSpaceConversion ? kCGBlendModeNormal : kCGBlendModeCopy);
         CGContextSetInterpolationQuality(bitmapContext.get(), kCGInterpolationNone);
         CGContextDrawImage(bitmapContext.get(), CGRectMake(0, 0, m_imageWidth, m_imageHeight), decodedImage->platformImage().get());
 
         // Now discard the original CG image and replace it with a copy from the bitmap context.
         decodedImage = NativeImage::create(adoptCF(CGBitmapContextCreateImage(bitmapContext.get())));
-    }
 
-    if (!decodedImage)
-        return false;
+        if (!decodedImage)
+            return false;
+    }
 
     size_t bitsPerComponent = CGImageGetBitsPerComponent(decodedImage->platformImage().get());
     size_t bitsPerPixel = CGImageGetBitsPerPixel(decodedImage->platformImage().get());

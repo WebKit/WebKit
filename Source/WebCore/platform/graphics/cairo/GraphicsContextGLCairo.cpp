@@ -42,7 +42,7 @@ namespace WebCore {
 
 GraphicsContextGLImageExtractor::~GraphicsContextGLImageExtractor() = default;
 
-bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool)
+bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool, std::optional<DestinationColorSpace>)
 {
     if (!m_image)
         return false;
