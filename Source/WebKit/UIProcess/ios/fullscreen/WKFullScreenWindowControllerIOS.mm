@@ -1464,6 +1464,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
 - (void)placeholderWillMoveToSuperview:(UIView *)superview
 {
+#if !PLATFORM(APPLETV)
     if (superview)
         return;
 
@@ -1471,6 +1472,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         if ([_webViewPlaceholder superview] == nil && [_webViewPlaceholder parent] == self)
             [self close];
     });
+#endif
 }
 
 - (void)didEnterPictureInPicture
