@@ -107,6 +107,7 @@ public:
     WEBCORE_EXPORT static bool needsDesktopUserAgent(const URL&);
 
     bool needsGMailOverflowScrollQuirk() const;
+    bool needsIPadSkypeOverflowScrollQuirk() const;
     bool needsYouTubeOverflowScrollQuirk() const;
     bool needsFullscreenDisplayNoneQuirk() const;
     bool needsFullscreenObjectFitQuirk() const;
@@ -218,6 +219,7 @@ private:
     mutable std::optional<bool> m_needsFullWidthHeightFullscreenStyleQuirk;
 #if PLATFORM(IOS_FAMILY)
     mutable std::optional<bool> m_needsGMailOverflowScrollQuirk;
+    mutable std::optional<bool> m_needsIPadSkypeOverflowScrollQuirk;
     mutable std::optional<bool> m_needsYouTubeOverflowScrollQuirk;
     mutable std::optional<bool> m_needsPreloadAutoQuirk;
     mutable std::optional<bool> m_needsFullscreenDisplayNoneQuirk;

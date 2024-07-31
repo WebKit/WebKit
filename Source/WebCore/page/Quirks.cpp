@@ -716,6 +716,22 @@ bool Quirks::needsGMailOverflowScrollQuirk() const
 #endif
 }
 
+// web.skype.com webkit.org/b/275941
+bool Quirks::needsIPadSkypeOverflowScrollQuirk() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+
+    if (!m_needsIPadSkypeOverflowScrollQuirk)
+        m_needsIPadSkypeOverflowScrollQuirk = m_document->url().host() == "web.skype.com"_s;
+
+    return *m_needsIPadSkypeOverflowScrollQuirk;
+#else
+    return false;
+#endif
+}
+
 // FIXME: Remove after the site is fixed, <rdar://problem/50374311>
 // youtube.com rdar://49582231
 bool Quirks::needsYouTubeOverflowScrollQuirk() const
