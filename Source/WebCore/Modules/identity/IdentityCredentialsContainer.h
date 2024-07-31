@@ -27,7 +27,6 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "CredentialRequestCoordinator.h"
 #include "CredentialsContainer.h"
 #include "DigitalCredential.h"
 #include <wtf/RefCounted.h>

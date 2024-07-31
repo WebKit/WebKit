@@ -64,7 +64,6 @@ class CacheStorageProvider;
 class ChromeClient;
 class ContextMenuClient;
 class CookieJar;
-class CredentialRequestCoordinatorClient;
 class CryptoClient;
 class DatabaseProvider;
 class DiagnosticLoggingClient;
@@ -150,7 +149,6 @@ public:
 
 #if ENABLE(WEB_AUTHN)
     std::unique_ptr<AuthenticatorCoordinatorClient> authenticatorCoordinatorClient;
-    std::unique_ptr<CredentialRequestCoordinatorClient> credentialRequestCoordinatorClient;
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)

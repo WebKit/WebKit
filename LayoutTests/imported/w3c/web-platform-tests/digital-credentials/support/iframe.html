@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
 <script src="/resources/testdriver.js"></script>
 <script src="/resources/testdriver-vendor.js"></script>
 <body></body>
@@ -26,39 +27,33 @@
       }
       data.options.signal = abortController.signal;
     }
-    if (data.needsActivation) {
-      await test_driver.bless("user activation", null, window);
-    }
     let result;
     try {
-      /** @type {CredentialsContainer} */
-      const identity = navigator.identity;
-      if (data.abort === "before") {
+      /** @type {CrendetialManager} */
+      const { identity } = navigator;
+      if (abortController && data.abort === "before") {
         abortController.abort();
       }
-      let promise;
       switch (data.action) {
         case "ping":
-          promise = Promise.resolve("pong");
+          result = "pong";
           break;
         case "create":
-          promise = identity.create(data.options);
+          result = await identity.create(data.options);
           break;
         case "get":
-          promise = identity.get(data.options);
+          await test_driver.bless("user activation", null, window);
+          assert_true(navigator.userActivation.isActive, "user activation must be active");
+          result = await identity.get(data.options);
           break;
         case "preventSilentAccess":
-          promise = identity.preventSilentAccess();
+          result = await identity.preventSilentAccess();
           break;
         default:
           throw new Error(
             `Unsupported action in ${window.location}: ${data.action}`
           );
       }
-      if (data.abort === "after") {
-        abortController.abort();
-      }
-      result = await promise;
     } catch (error) {
       result = {
         constructor: error.constructor.name,

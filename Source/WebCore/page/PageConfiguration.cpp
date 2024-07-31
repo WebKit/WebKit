@@ -63,7 +63,6 @@
 #include "WebRTCProvider.h"
 #if ENABLE(WEB_AUTHN)
 #include "AuthenticatorCoordinatorClient.h"
-#include "CredentialRequestCoordinatorClient.h"
 #endif
 #if ENABLE(APPLE_PAY)
 #include "PaymentCoordinatorClient.h"

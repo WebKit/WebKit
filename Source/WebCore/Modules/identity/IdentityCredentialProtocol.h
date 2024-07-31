@@ -27,6 +27,6 @@
 
 namespace WebCore {
 
-enum class IdentityCredentialProtocol : uint8_t { Openid4vp };
+enum class IdentityCredentialProtocol : uint8_t { Mdoc };
 
 } // namespace WebCore
