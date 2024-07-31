@@ -16,11 +16,11 @@ addEventListener("mousedown", (event) => {
     event.preventDefault();
 });
 
-function onLoad() {
+async function onLoad() {
     if (window.eventSender) {
-        eventSender.mouseMoveTo(100, 100);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(100, 100);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
     }
 }
 </script>

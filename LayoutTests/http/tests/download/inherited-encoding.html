@@ -1,6 +1,7 @@
 <meta charset="koi8-r">
 <script>
 if (window.testRunner) {
+    testRunner.waitUntilDone();
     testRunner.dumpAsText();
     testRunner.setCustomPolicyDelegate(true, true);
     testRunner.waitForPolicyDelegate();
@@ -10,11 +11,12 @@ if (window.testRunner) {
 <a href="resources/literal-koi8-r.py" id=link>Click Me</a>
 
 <script>
-if (window.eventSender) {
-    var link = document.getElementById("link");
-    eventSender.mouseMoveTo(link.offsetLeft + 2,
-                            link.offsetTop + 2);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+onload = async () => {
+    if (window.eventSender && window.testRunner) {
+        var link = document.getElementById("link");
+        await eventSender.asyncMouseMoveTo(link.offsetLeft + 2,link.offsetTop + 2);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+    }
 }
 </script>

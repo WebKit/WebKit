@@ -6,24 +6,23 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
 }
 
-function moveToCenter(element)
+async function moveToCenter(element)
 {
     x = element.offsetParent.offsetLeft + element.offsetLeft + element.offsetWidth / 2;
     y = element.offsetParent.offsetTop + element.offsetTop + element.offsetHeight / 2;
-    eventSender.mouseMoveTo(x, y);
+    await eventSender.asyncMouseMoveTo(x, y);
 }
 
-function runTest() {
-
+async function runTest() {
     var x, y;
     var span = document.getElementById("span");
     moveToCenter(span);
-    eventSender.mouseDown();
+    await eventSender.asyncMouseDown();
     eventSender.leapForward(500);
     var input = document.getElementById("target");
     moveToCenter(input);
     eventSender.leapForward(500);
-    eventSender.mouseUp();
+    await eventSender.asyncMouseUp();
 
     input.contentWindow.postMessage("go", "*");
 }

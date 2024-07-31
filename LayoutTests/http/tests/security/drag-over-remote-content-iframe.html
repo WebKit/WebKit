@@ -5,7 +5,7 @@ function log(s) {
     document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
 }
 
-window.onload = function () {
+window.onload = async function () {
     if (window.testRunner)
         testRunner.dumpAsText(); 
 
@@ -34,11 +34,11 @@ window.onload = function () {
     var y1 = abe.offsetTop + 50;
 
     // Drag abe
-    eventSender.mouseMoveTo(x1, y1);
-    eventSender.mouseDown();
+    await eventSender.asyncMouseMoveTo(x1, y1);
+    await eventSender.asyncMouseDown();
     eventSender.leapForward(500);
-    eventSender.mouseMoveTo(x1 + 100, y1 - 100);
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(x1 + 100, y1 - 100);
+    await eventSender.asyncMouseUp();
 }
 </script>
 </head>

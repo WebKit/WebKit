@@ -34,18 +34,18 @@ function onInputFileChange()
         testRunner.notifyDone();
 }
 
-function moveMouseToCenterOfElement(element)
+async function moveMouseToCenterOfElement(element)
 {
     var centerX = element.offsetLeft + element.offsetWidth / 2;
     var centerY = element.offsetTop + element.offsetHeight / 2;
-    eventSender.mouseMoveTo(centerX, centerY);
+    await eventSender.asyncMouseMoveTo(centerX, centerY);
 }
 
-function runTests()
+async function runTests()
 {
     eventSender.beginDragWithFiles(['resources/test.txt']);
     moveMouseToCenterOfElement(document.getElementById("file"));
-    eventSender.mouseUp();
+    await eventSender.asyncMouseUp();
 }
 
 if (window.eventSender) {

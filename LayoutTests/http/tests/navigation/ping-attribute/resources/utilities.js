@@ -32,7 +32,7 @@ function clearLastPingResultAndRunTest(callback)
     xhr.onerror = done;
 }
 
-function clickElement(element)
+async function clickElement(element)
 {
     var x = element.offsetLeft + 2;
     var y = element.offsetTop + 2;
@@ -40,8 +40,8 @@ function clickElement(element)
     if (supportsTouchEvents && window.testRunner && testRunner.runUIScript)
         testRunner.runUIScript("(function() { uiController.singleTapAtPoint(" + x + ", " + y + ", function() { /* Do nothing */ }); })();", function () { /* Do nothing */ });
     else if (window.eventSender) {
-        eventSender.mouseMoveTo(x, y);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(x, y);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
     }
 }

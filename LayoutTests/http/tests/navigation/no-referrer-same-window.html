@@ -5,6 +5,7 @@ of the referrer and window.opener should be empty below.
 <br/>
 <a id="link" href="resources/no-referrer-same-window-helper.py" rel="noreferrer">Start no referrer test</a>
 <script>
+onload = async () => {
     window.name = "consoleWindow";
     if (window.testRunner) {
         testRunner.dumpAsText();
@@ -12,9 +13,10 @@ of the referrer and window.opener should be empty below.
     }
 
     var target = document.getElementById("link");
-    eventSender.mouseMoveTo(target.offsetLeft + 2, target.offsetTop + 2);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(target.offsetLeft + 2, target.offsetTop + 2);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+}
     
 function log(msg)
 {
