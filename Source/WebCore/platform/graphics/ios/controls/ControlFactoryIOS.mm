@@ -32,9 +32,9 @@
 
 namespace WebCore {
 
-std::unique_ptr<ControlFactory> ControlFactory::createControlFactory()
+RefPtr<ControlFactory> ControlFactory::create()
 {
-    return makeUnique<ControlFactoryIOS>();
+    return adoptRef(new ControlFactoryIOS());
 }
 
 std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformButton(ButtonPart&)
