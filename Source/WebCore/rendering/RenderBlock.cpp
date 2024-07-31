@@ -2492,7 +2492,7 @@ LayoutUnit RenderBlock::minLineHeightForReplacedRenderer(bool isFirstLine, Layou
 
 std::optional<LayoutUnit> RenderBlock::firstLineBaseline() const
 {
-    if (shouldApplyLayoutContainment())
+    if (shouldApplyLayoutContainment() || style().containerType() != ContainerType::Normal)
         return { };
 
     if (isWritingModeRoot() && !isFlexItem())
