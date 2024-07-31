@@ -121,6 +121,31 @@ static void wpeViewWaylandDispose(GObject* object)
     G_OBJECT_CLASS(wpe_view_wayland_parent_class)->dispose(object);
 }
 
+struct DMABufBuffer {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    explicit DMABufBuffer(wl_buffer* buffer)
+        : wlBuffer(buffer)
+    {
+    }
+
+    ~DMABufBuffer()
+    {
+        if (wlBuffer)
+            wl_buffer_destroy(wlBuffer);
+        if (release)
+            zwp_linux_buffer_release_v1_destroy(release);
+    }
+
+    struct wl_buffer* wlBuffer { nullptr };
+    struct zwp_linux_buffer_release_v1* release { nullptr };
+};
+
+static void dmaBufBufferDestroy(DMABufBuffer* buffer)
+{
+    delete buffer;
+}
+
 static const struct wl_buffer_listener bufferListener = {
     // release
     [](void* userData, struct wl_buffer*)
@@ -130,7 +155,7 @@ static const struct wl_buffer_listener bufferListener = {
     }
 };
 
-static struct wl_buffer* createWaylandBufferFromEGLImage(WPEView* view, WPEBuffer* buffer, GError** error)
+static DMABufBuffer* createWaylandBufferFromEGLImage(WPEView* view, WPEBuffer* buffer, GError** error)
 {
     GUniqueOutPtr<GError> bufferError;
     auto* eglDisplay = wpe_display_get_egl_display(wpe_view_get_display(view), &bufferError.outPtr());
@@ -156,7 +181,7 @@ static struct wl_buffer* createWaylandBufferFromEGLImage(WPEView* view, WPEBuffe
     }
 
     if (auto* wlBuffer = s_eglCreateWaylandBufferFromImageWL(eglDisplay, eglImage))
-        return wlBuffer;
+        return new DMABufBuffer(wlBuffer);
 
     g_set_error(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: eglCreateWaylandBufferFromImageWL failed with error %#04x", eglGetError());
     return nullptr;
@@ -164,12 +189,12 @@ static struct wl_buffer* createWaylandBufferFromEGLImage(WPEView* view, WPEBuffe
 
 static struct wl_buffer* createWaylandBufferFromDMABuf(WPEView* view, WPEBuffer* buffer, GError** error)
 {
-    if (auto* wlBuffer = static_cast<struct wl_buffer*>(wpe_buffer_get_user_data(buffer)))
-        return wlBuffer;
+    if (auto* dmaBufBuffer = static_cast<DMABufBuffer*>(wpe_buffer_get_user_data(buffer)))
+        return dmaBufBuffer->wlBuffer;
 
-    struct wl_buffer* wlBuffer = nullptr;
+    auto* bufferDMABuf = WPE_BUFFER_DMA_BUF(buffer);
+    DMABufBuffer* dmaBufBuffer = nullptr;
     if (auto* dmabuf = wpeDisplayWaylandGetLinuxDMABuf(WPE_DISPLAY_WAYLAND(wpe_view_get_display(view)))) {
-        auto* bufferDMABuf = WPE_BUFFER_DMA_BUF(buffer);
         auto modifier = wpe_buffer_dma_buf_get_modifier(bufferDMABuf);
         auto* params = zwp_linux_dmabuf_v1_create_params(dmabuf);
         auto planeCount = wpe_buffer_dma_buf_get_n_planes(bufferDMABuf);
@@ -177,7 +202,7 @@ static struct wl_buffer* createWaylandBufferFromDMABuf(WPEView* view, WPEBuffer*
             zwp_linux_buffer_params_v1_add(params, wpe_buffer_dma_buf_get_fd(bufferDMABuf, i), i, wpe_buffer_dma_buf_get_offset(bufferDMABuf, i),
                 wpe_buffer_dma_buf_get_stride(bufferDMABuf, i), modifier >> 32, modifier & 0xffffffff);
         }
-        wlBuffer = zwp_linux_buffer_params_v1_create_immed(params, wpe_buffer_get_width(buffer), wpe_buffer_get_height(buffer),
+        auto* wlBuffer = zwp_linux_buffer_params_v1_create_immed(params, wpe_buffer_get_width(buffer), wpe_buffer_get_height(buffer),
             wpe_buffer_dma_buf_get_format(bufferDMABuf), 0);
         zwp_linux_buffer_params_v1_destroy(params);
 
@@ -185,20 +210,36 @@ static struct wl_buffer* createWaylandBufferFromDMABuf(WPEView* view, WPEBuffer*
             g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: failed to create Wayland buffer from DMABuf");
             return nullptr;
         }
+
+        dmaBufBuffer = new DMABufBuffer(wlBuffer);
     } else {
-        wlBuffer = createWaylandBufferFromEGLImage(view, buffer, error);
-        if (!wlBuffer)
+        dmaBufBuffer = createWaylandBufferFromEGLImage(view, buffer, error);
+        if (!dmaBufBuffer)
             return nullptr;
     }
 
-    wl_buffer_add_listener(wlBuffer, &bufferListener, buffer);
+    auto* toplevel = wpe_view_get_toplevel(WPE_VIEW(view));
+    if (!wpeToplevelWaylandGetSurfaceSync(WPE_TOPLEVEL_WAYLAND(toplevel)) || wpe_buffer_dma_buf_get_rendering_fence(bufferDMABuf) == -1)
+        wl_buffer_add_listener(dmaBufBuffer->wlBuffer, &bufferListener, buffer);
 
-    wpe_buffer_set_user_data(buffer, wlBuffer, reinterpret_cast<GDestroyNotify>(wl_buffer_destroy));
-    return wlBuffer;
+    wpe_buffer_set_user_data(buffer, dmaBufBuffer, reinterpret_cast<GDestroyNotify>(dmaBufBufferDestroy));
+    return dmaBufBuffer->wlBuffer;
 }
 
 struct SharedMemoryBuffer {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    SharedMemoryBuffer(std::unique_ptr<WPE::WaylandSHMPool>&& pool, uint32_t offset, uint32_t width, uint32_t height, uint32_t stride)
+        : wlPool(WTFMove(pool))
+        , wlBuffer(wlPool->createBuffer(offset, width, height, stride))
+    {
+    }
+
+    ~SharedMemoryBuffer()
+    {
+        if (wlBuffer)
+            wl_buffer_destroy(wlBuffer);
+    }
 
     std::unique_ptr<WPE::WaylandSHMPool> wlPool;
     struct wl_buffer* wlBuffer;
@@ -206,7 +247,6 @@ struct SharedMemoryBuffer {
 
 static void sharedMemoryBufferDestroy(SharedMemoryBuffer* buffer)
 {
-    g_clear_pointer(&buffer->wlBuffer, wl_buffer_destroy);
     delete buffer;
 }
 
@@ -223,10 +263,7 @@ static SharedMemoryBuffer* sharedMemoryBufferCreate(WPEDisplayWayland* display, 
 
     memcpy(reinterpret_cast<char*>(wlPool->data()) + offset, g_bytes_get_data(bytes, nullptr), size);
 
-    auto* sharedMemoryBuffer = new SharedMemoryBuffer();
-    sharedMemoryBuffer->wlPool = WTFMove(wlPool);
-    sharedMemoryBuffer->wlBuffer = sharedMemoryBuffer->wlPool->createBuffer(offset, width, height, stride);
-    return sharedMemoryBuffer;
+    return new SharedMemoryBuffer(WTFMove(wlPool), offset, width, height, stride);
 }
 
 static struct wl_buffer* createWaylandBufferSHM(WPEView* view, WPEBuffer* buffer, GError** error)
@@ -284,6 +321,28 @@ const struct wl_callback_listener frameListener = {
     }
 };
 
+static void bufferReleased(WPEBuffer* buffer)
+{
+    wpe_view_buffer_released(wpe_buffer_get_view(buffer), buffer);
+    if (auto* dmaBufBuffer = static_cast<DMABufBuffer*>(wpe_buffer_get_user_data(buffer)))
+        g_clear_pointer(&dmaBufBuffer->release, zwp_linux_buffer_release_v1_destroy);
+}
+
+const struct zwp_linux_buffer_release_v1_listener bufferReleaseListener = {
+    // fenced_release
+    [](void* userData, struct zwp_linux_buffer_release_v1*, int32_t fence)
+    {
+        auto* buffer = WPE_BUFFER(userData);
+        wpe_buffer_dma_buf_set_release_fence(WPE_BUFFER_DMA_BUF(buffer), fence);
+        bufferReleased(buffer);
+    },
+    // immediate_release
+    [](void* userData, struct zwp_linux_buffer_release_v1*)
+    {
+        bufferReleased(WPE_BUFFER(userData));
+    }
+};
+
 static gboolean wpeViewWaylandRenderBuffer(WPEView* view, WPEBuffer* buffer, const WPERectangle* damageRects, guint nDamageRects, GError** error)
 {
     auto* wlBuffer = createWaylandBuffer(view, buffer, error);
@@ -297,6 +356,16 @@ static gboolean wpeViewWaylandRenderBuffer(WPEView* view, WPEBuffer* buffer, con
 
     auto* wlSurface = wpe_view_wayland_get_wl_surface(WPE_VIEW_WAYLAND(view));
     wl_surface_attach(wlSurface, wlBuffer, 0, 0);
+
+    auto* surfaceSync = wpeToplevelWaylandGetSurfaceSync(WPE_TOPLEVEL_WAYLAND(wpe_view_get_toplevel(view)));
+    auto renderingFence = UnixFileDescriptor { wpe_buffer_dma_buf_take_rendering_fence(WPE_BUFFER_DMA_BUF(buffer)), UnixFileDescriptor::Adopt };
+    if (renderingFence) {
+        zwp_linux_surface_synchronization_v1_set_acquire_fence(surfaceSync, renderingFence.value());
+
+        auto* dmaBufBuffer = static_cast<DMABufBuffer*>(wpe_buffer_get_user_data(buffer));
+        dmaBufBuffer->release = zwp_linux_surface_synchronization_v1_get_release(surfaceSync);
+        zwp_linux_buffer_release_v1_add_listener(dmaBufBuffer->release, &bufferReleaseListener, buffer);
+    }
 
     auto* display = WPE_DISPLAY_WAYLAND(wpe_view_get_display(view));
     auto* wlCompositor = wpe_display_wayland_get_wl_compositor(display);

@@ -332,8 +332,11 @@ struct WebPageCreationParameters {
     SandboxExtension::Handle machBootstrapHandle;
 #endif
 
-#if (PLATFORM(GTK) || PLATFORM(WPE)) && USE(GBM)
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#if USE(GBM)
     Vector<DMABufRendererBufferFormat> preferredBufferFormats;
+#endif
+    bool useExplicitSync { false };
 #endif
 
 #if PLATFORM(VISION) && ENABLE(GAMEPAD)

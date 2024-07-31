@@ -620,8 +620,11 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
     , m_overriddenMediaType(parameters.overriddenMediaType)
     , m_processDisplayName(parameters.processDisplayName)
-#if (PLATFORM(GTK) || PLATFORM(WPE)) && USE(GBM)
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#if USE(GBM)
     , m_preferredBufferFormats(WTFMove(parameters.preferredBufferFormats))
+#endif
+    , m_useExplicitSync(parameters.useExplicitSync)
 #endif
 #if ENABLE(APP_BOUND_DOMAINS)
     , m_limitsNavigationsToAppBoundDomains(parameters.limitsNavigationsToAppBoundDomains)

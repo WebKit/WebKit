@@ -1757,8 +1757,11 @@ public:
     const Logger& logger() const;
     const void* logIdentifier() const;
 
-#if (PLATFORM(GTK) || PLATFORM(WPE)) && USE(GBM)
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#if USE(GBM)
     const Vector<DMABufRendererBufferFormat>& preferredBufferFormats() const { return m_preferredBufferFormats; }
+#endif
+    bool useExplicitSync() const { return m_useExplicitSync; }
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
@@ -2779,8 +2782,11 @@ private:
     WebCore::Color m_accentColor;
 #endif
 
-#if (PLATFORM(GTK) || PLATFORM(WPE)) && USE(GBM)
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#if USE(GBM)
     Vector<DMABufRendererBufferFormat> m_preferredBufferFormats;
+#endif
+    bool m_useExplicitSync { false };
 #endif
 
 #if ENABLE(APP_BOUND_DOMAINS)

@@ -10613,6 +10613,11 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.preferredBufferFormats = preferredBufferFormats();
 #endif
 #endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    parameters.useExplicitSync = useExplicitSync();
+#endif
+
     return parameters;
 }
 

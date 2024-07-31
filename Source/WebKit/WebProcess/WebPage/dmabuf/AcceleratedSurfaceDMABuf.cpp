@@ -75,6 +75,11 @@ AcceleratedSurfaceDMABuf::AcceleratedSurfaceDMABuf(WebPage& webPage, Client& cli
     if (m_swapChain.type() == SwapChain::Type::EGLImage)
         m_swapChain.setupBufferFormat(m_webPage.preferredBufferFormats(), m_isOpaque);
 #endif
+    if (webPage.useExplicitSync()) {
+        auto& display = WebCore::PlatformDisplay::sharedDisplay();
+        auto& extensions = display.eglExtensions();
+        m_useExplicitSync = extensions.ANDROID_native_fence_sync && (display.eglCheckVersion(1, 5) || extensions.KHR_fence_sync);
+    }
 }
 
 AcceleratedSurfaceDMABuf::~AcceleratedSurfaceDMABuf()
@@ -104,10 +109,33 @@ AcceleratedSurfaceDMABuf::RenderTarget::~RenderTarget()
     WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::DidDestroyBuffer(m_id), m_surfaceID);
 }
 
+std::unique_ptr<WebCore::GLFence> AcceleratedSurfaceDMABuf::RenderTarget::createRenderingFence(bool useExplicitSync) const
+{
+    if (useExplicitSync && supportsExplicitSync()) {
+        if (auto fence = WebCore::GLFence::createExportable())
+            return fence;
+    }
+    return WebCore::GLFence::create();
+}
+
 void AcceleratedSurfaceDMABuf::RenderTarget::willRenderFrame() const
 {
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
+}
+
+void AcceleratedSurfaceDMABuf::RenderTarget::setReleaseFenceFD(UnixFileDescriptor&& releaseFence)
+{
+    m_releaseFenceFD = WTFMove(releaseFence);
+}
+
+void AcceleratedSurfaceDMABuf::RenderTarget::waitRelease()
+{
+    if (!m_releaseFenceFD)
+        return;
+
+    if (auto fence = WebCore::GLFence::importFD(WTFMove(m_releaseFenceFD)))
+        fence->serverWait();
 }
 
 AcceleratedSurfaceDMABuf::RenderTargetColorBuffer::RenderTargetColorBuffer(uint64_t surfaceID, const WebCore::IntSize& size)
@@ -481,12 +509,13 @@ AcceleratedSurfaceDMABuf::RenderTarget* AcceleratedSurfaceDMABuf::SwapChain::nex
     return m_lockedTargets[0].get();
 }
 
-void AcceleratedSurfaceDMABuf::SwapChain::releaseTarget(uint64_t targetID)
+void AcceleratedSurfaceDMABuf::SwapChain::releaseTarget(uint64_t targetID, UnixFileDescriptor&& releaseFence)
 {
     auto index = m_lockedTargets.reverseFindIf([targetID](const auto& item) {
         return item->id() == targetID;
     });
     if (index != notFound) {
+        m_lockedTargets[index]->setReleaseFenceFD(WTFMove(releaseFence));
         m_freeTargets.insert(0, WTFMove(m_lockedTargets[index]));
         m_lockedTargets.remove(index);
     }
@@ -595,7 +624,10 @@ void AcceleratedSurfaceDMABuf::willRenderFrame()
     if (!m_target)
         return;
 
+    m_target->waitRelease();
+
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+
     m_target->willRenderFrame();
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         WTFLogAlways("AcceleratedSurfaceDMABuf was unable to construct a complete framebuffer");
@@ -606,18 +638,21 @@ void AcceleratedSurfaceDMABuf::didRenderFrame(WebCore::Region&& damage)
     if (!m_target)
         return;
 
-    if (auto fence = WebCore::GLFence::create())
-        fence->clientWait();
-    else
+    UnixFileDescriptor renderingFence;
+    if (auto fence = m_target->createRenderingFence(m_useExplicitSync)) {
+        renderingFence = fence->exportFD();
+        if (!renderingFence)
+            fence->clientWait();
+    } else
         glFlush();
 
     m_target->didRenderFrame();
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Frame(m_target->id(), WTFMove(damage)), m_id);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Frame(m_target->id(), WTFMove(damage), WTFMove(renderingFence)), m_id);
 }
 
-void AcceleratedSurfaceDMABuf::releaseBuffer(uint64_t targetID)
+void AcceleratedSurfaceDMABuf::releaseBuffer(uint64_t targetID, UnixFileDescriptor&& releaseFence)
 {
-    m_swapChain.releaseTarget(targetID);
+    m_swapChain.releaseTarget(targetID, WTFMove(releaseFence));
 }
 
 void AcceleratedSurfaceDMABuf::frameDone()

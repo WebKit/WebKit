@@ -538,3 +538,23 @@ const char* wpe_display_get_drm_render_node(WPEDisplay* display)
     return wpeDisplayClass->get_drm_render_node ? wpeDisplayClass->get_drm_render_node(display) : nullptr;
 }
 
+/**
+ * wpe_display_use_explicit_sync:
+ * @display: a #WPEDisplay
+ *
+ * Get whether explicit sync should be used with @display for
+ * supported buffers.
+ *
+ * Returns: %TRUE if explicit sync should be used, or %FALSE otherwise
+ */
+gboolean wpe_display_use_explicit_sync(WPEDisplay* display)
+{
+    g_return_val_if_fail(WPE_IS_DISPLAY(display), FALSE);
+
+    static const char* envExplicitSync = getenv("WPE_USE_EXPLICIT_SYNC");
+    if (envExplicitSync && !strcmp(envExplicitSync, "0"))
+        return false;
+
+    auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
+    return wpeDisplayClass->use_explicit_sync ? wpeDisplayClass->use_explicit_sync(display) : FALSE;
+}
