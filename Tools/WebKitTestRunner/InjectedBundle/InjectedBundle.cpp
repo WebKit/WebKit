@@ -218,12 +218,13 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         if (!beforeTest) {
             setAllowedHosts(messageBodyDictionary);
 
-            m_state = Idle;
             m_dumpPixels = false;
             m_pixelResultIsPending = false;
 
             setlocale(LC_ALL, "");
-            InjectedBundle::singleton().testRunner()->removeAllWebNotificationPermissions();
+            if (m_testRunner)
+                m_testRunner->removeAllWebNotificationPermissions();
+            m_testRunner = nullptr;
 
             InjectedBundle::page()->resetAfterTest();
         }
@@ -245,33 +246,38 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidBeginSwipeCallback")) {
-        m_testRunner->callDidBeginSwipeCallback();
+        if (m_testRunner)
+            m_testRunner->callDidBeginSwipeCallback();
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "CallWillEndSwipeCallback")) {
-        m_testRunner->callWillEndSwipeCallback();
+        if (m_testRunner)
+            m_testRunner->callWillEndSwipeCallback();
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidEndSwipeCallback")) {
-        m_testRunner->callDidEndSwipeCallback();
+        if (m_testRunner)
+            m_testRunner->callDidEndSwipeCallback();
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidRemoveSwipeSnapshotCallback")) {
-        m_testRunner->callDidRemoveSwipeSnapshotCallback();
+        if (m_testRunner)
+            m_testRunner->callDidRemoveSwipeSnapshotCallback();
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "NotifyDownloadDone")) {
-        if (m_testRunner->shouldFinishAfterDownload())
+        if (m_testRunner && m_testRunner->shouldFinishAfterDownload())
             m_testRunner->notifyDone();
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "NotifyDone")) {
-        InjectedBundle::page()->dump(m_testRunner->shouldForceRepaint());
+        if (m_testRunner && InjectedBundle::page())
+            InjectedBundle::page()->dump(m_testRunner->shouldForceRepaint());
         return;
     }
 
@@ -279,28 +285,32 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto callbackID = uint64Value(messageBodyDictionary, "CallbackID");
         auto resultString = stringValue(messageBodyDictionary, "Result");
-        m_testRunner->runUIScriptCallback(callbackID, toJS(resultString).get());
+        if (m_testRunner)
+            m_testRunner->runUIScriptCallback(callbackID, toJS(resultString).get());
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "WorkQueueProcessedCallback")) {
-        if (!topLoadingFrame() && !m_testRunner->shouldWaitUntilDone())
+        if (!topLoadingFrame() && m_testRunner && m_testRunner && !m_testRunner->shouldWaitUntilDone())
             InjectedBundle::page()->dump(m_testRunner->shouldForceRepaint());
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "WebsiteDataDeletionForRegistrableDomainsFinished")) {
-        m_testRunner->statisticsDidModifyDataRecordsCallback();
+        if (m_testRunner)
+            m_testRunner->statisticsDidModifyDataRecordsCallback();
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "WebsiteDataScanForRegistrableDomainsFinished")) {
-        m_testRunner->statisticsDidScanDataRecordsCallback();
+        if (m_testRunner)
+            m_testRunner->statisticsDidScanDataRecordsCallback();
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "ForceImmediateCompletion")) {
-        m_testRunner->forceImmediateCompletion();
+        if (m_testRunner)
+            m_testRunner->forceImmediateCompletion();
         return;
     }
 
@@ -333,8 +343,6 @@ void InjectedBundle::setAllowedHosts(WKDictionaryRef settings)
 
 void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode testingMode)
 {
-    m_state = Testing;
-
     m_dumpPixels = booleanValue(settings, "DumpPixels");
     m_timeout = Seconds::fromMilliseconds(uint64Value(settings, "Timeout"));
     m_dumpJSConsoleLogInStdErr = booleanValue(settings, "DumpJSConsoleLogInStdErr");
@@ -393,8 +401,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
 
 void InjectedBundle::done(bool forceRepaint)
 {
-    m_state = Stopping;
-
     m_useWorkQueue = false;
 
     setTopLoadingFrame(0);
@@ -411,8 +417,7 @@ void InjectedBundle::done(bool forceRepaint)
     setValue(body, "ForceRepaint", forceRepaint);
 
     WKBundlePagePostMessageIgnoringFullySynchronousMode(page()->page(), toWK("Done").get(), body.get());
-
-    m_state = Idle;
+    m_testRunner = nullptr;
 }
 
 void InjectedBundle::clearResourceLoadStatistics()
@@ -435,7 +440,7 @@ void InjectedBundle::dumpBackForwardListsForAllPages(StringBuilder& stringBuilde
 
 void InjectedBundle::dumpToStdErr(const String& output)
 {
-    if (m_state != Testing)
+    if (!isTestRunning())
         return;
     if (output.isEmpty())
         return;
@@ -446,7 +451,7 @@ void InjectedBundle::dumpToStdErr(const String& output)
 
 void InjectedBundle::outputText(StringView output, IsFinalTestOutput isFinalTestOutput)
 {
-    if (m_state != Testing)
+    if (!isTestRunning())
         return;
     if (output.isEmpty())
         return;
