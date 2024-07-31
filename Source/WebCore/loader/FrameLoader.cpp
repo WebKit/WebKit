@@ -2702,7 +2702,7 @@ void FrameLoader::dispatchDidFailProvisionalLoad(DocumentLoader& provisionalDocu
     auto contentFilterWillContinueLoading = false;
 #endif
 
-    auto willContinueLoading = WillContinueLoading::No;
+    auto willContinueLoading = willInternallyHandleFailure == WillInternallyHandleFailure::Yes ? WillContinueLoading::Yes : WillContinueLoading::No;
     if (m_frame->history().provisionalItem())
         willContinueLoading = WillContinueLoading::Yes;
 #if ENABLE(CONTENT_FILTERING)
