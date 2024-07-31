@@ -1725,7 +1725,7 @@ bool MediaPlayerPrivateGStreamer::handleNeedContextMessage(GstMessage* message)
         auto context = adoptGRef(gst_context_new(WEBKIT_WEB_SRC_RESOURCE_LOADER_CONTEXT_TYPE_NAME, FALSE));
         GstStructure* contextStructure = gst_context_writable_structure(context.get());
 
-        gst_structure_set(contextStructure, "loader", G_TYPE_POINTER, m_loader.get(), nullptr);
+        gst_structure_set(contextStructure, "loader", G_TYPE_POINTER, m_loader.ptr(), nullptr);
         gst_element_set_context(GST_ELEMENT(GST_MESSAGE_SRC(message)), context.get());
         return true;
     }

@@ -265,8 +265,7 @@ bool MediaPlayerPrivateWebM::createResourceClient()
         request.addHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes="_s, m_contentReceived, '-', m_contentLength));
     }
 
-    auto loader = player->createResourceLoader();
-    m_resourceClient = WebMResourceClient::create(*this, *loader, WTFMove(request));
+    m_resourceClient = WebMResourceClient::create(*this, player->createResourceLoader(), WTFMove(request));
 
     return !!m_resourceClient;
 }

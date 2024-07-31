@@ -1051,10 +1051,9 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
     AVAssetResourceLoader *resourceLoader = [m_avAsset resourceLoader];
     [resourceLoader setDelegate:m_loaderDelegate.get() queue:globalLoaderDelegateQueue()];
 
-    if (auto mediaResourceLoader = player->createResourceLoader()) {
-        m_targetDispatcher = mediaResourceLoader->targetDispatcher();
-        resourceLoader.URLSession = (NSURLSession *)adoptNS([[WebCoreNSURLSession alloc] initWithResourceLoader:*mediaResourceLoader delegate:resourceLoader.URLSessionDataDelegate delegateQueue:resourceLoader.URLSessionDataDelegateQueue]).get();
-    }
+    Ref mediaResourceLoader = player->createResourceLoader();
+    m_targetDispatcher = mediaResourceLoader->targetDispatcher();
+    resourceLoader.URLSession = (NSURLSession *)adoptNS([[WebCoreNSURLSession alloc] initWithResourceLoader:mediaResourceLoader delegate:resourceLoader.URLSessionDataDelegate delegateQueue:resourceLoader.URLSessionDataDelegateQueue]).get();
 
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(chapterMetadataDidChange:) name:AVAssetChapterMetadataGroupsDidChangeNotification object:m_avAsset.get()];
 

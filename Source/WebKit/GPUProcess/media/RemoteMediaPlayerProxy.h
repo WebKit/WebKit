@@ -289,7 +289,7 @@ private:
     float mediaPlayerContentsScale() const final;
     bool mediaPlayerPlatformVolumeConfigurationRequired() const final;
     WebCore::CachedResourceLoader* mediaPlayerCachedResourceLoader() final;
-    RefPtr<WebCore::PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() final;
+    Ref<WebCore::PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() final;
     bool doesHaveAttribute(const AtomString&, AtomString* = nullptr) const final;
     bool mediaPlayerShouldUsePersistentCache() const final;
     const String& mediaPlayerMediaCacheDirectory() const final;

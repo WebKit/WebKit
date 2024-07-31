@@ -858,7 +858,7 @@ CachedResourceLoader* RemoteMediaPlayerProxy::mediaPlayerCachedResourceLoader()
     return nullptr;
 }
 
-RefPtr<PlatformMediaResourceLoader> RemoteMediaPlayerProxy::mediaPlayerCreateResourceLoader()
+Ref<PlatformMediaResourceLoader> RemoteMediaPlayerProxy::mediaPlayerCreateResourceLoader()
 {
     return adoptRef(*new RemoteMediaResourceLoader(*this));
 }

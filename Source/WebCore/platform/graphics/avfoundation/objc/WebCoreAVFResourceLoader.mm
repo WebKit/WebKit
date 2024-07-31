@@ -325,11 +325,9 @@ void WebCoreAVFResourceLoader::startLoading()
             return;
     }
 
-    if (auto loader = parent->player()->createResourceLoader()) {
-        m_platformMediaLoader = PlatformResourceMediaLoader::create(*this, *loader, WTFMove(request));
-        if (m_platformMediaLoader)
-            return;
-    }
+    m_platformMediaLoader = PlatformResourceMediaLoader::create(*this, parent->player()->createResourceLoader(), WTFMove(request));
+    if (m_platformMediaLoader)
+        return;
 
     LOG_ERROR("Failed to start load for media at url %s", [[[nsRequest URL] absoluteString] UTF8String]);
     [m_avRequest finishLoadingWithError:0];
