@@ -4119,6 +4119,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
     def evaluateCommand(self, cmd):
         rc = self.evaluateResult(cmd)
         previous_build_summary = self.getProperty('build_summary', '')
+        steps_to_add = []
         if self.getProperty('buildername', '').lower() != 'merge-queue':
             steps_to_add = [
                 GenerateS3URL(
