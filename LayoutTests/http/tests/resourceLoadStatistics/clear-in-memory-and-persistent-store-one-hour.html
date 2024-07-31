@@ -35,7 +35,7 @@
         testRunner.statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(1, completeTest);
     }
 
-    function runTestRunnerTest() {
+    async function runTestRunnerTest() {
         testRunner.setStatisticsPrevalentResource(statisticsUrl, false, function() {});
         if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
             testFailed("Host did not get set as non-prevalent resource.");
@@ -50,7 +50,7 @@
 
         testRunner.installStatisticsDidScanDataRecordsCallback(testStep2);
 
-        testRunner.statisticsProcessStatisticsAndDataRecords();
+        await testRunner.statisticsProcessStatisticsAndDataRecords();
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {

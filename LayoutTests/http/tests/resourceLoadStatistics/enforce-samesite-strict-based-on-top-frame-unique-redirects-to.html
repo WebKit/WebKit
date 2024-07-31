@@ -42,7 +42,7 @@
         setEnableFeature(false, finishJSTest);
     }
 
-    function secondStep() {
+    async function secondStep() {
         let cookies = internals.getCookies();
         if (cookies.length !== 1) {
             testFailed("Should have exactly one cookie before test but found " + cookies.length + " cookies.");
@@ -60,10 +60,10 @@
 
         testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
 
-        testRunner.statisticsProcessStatisticsAndDataRecords();
+        await testRunner.statisticsProcessStatisticsAndDataRecords();
     }
 
-    function runTest() {
+    async function runTest() {
         document.cookie = "clientSideCookie=1";
 
         testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, true);
@@ -84,7 +84,7 @@
 
         testRunner.installStatisticsDidScanDataRecordsCallback(secondStep);
 
-        testRunner.statisticsProcessStatisticsAndDataRecords();
+        await testRunner.statisticsProcessStatisticsAndDataRecords();
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {

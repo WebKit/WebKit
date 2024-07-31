@@ -26,11 +26,11 @@
     }
 
     function runTest() {
-        testRunner.setStatisticsPrevalentResource(topFrameOrigin1, true, function() {
+        testRunner.setStatisticsPrevalentResource(topFrameOrigin1, true, async function() {
             testRunner.setStatisticsTopFrameUniqueRedirectTo(statisticsUrl, topFrameOrigin1);
 
             testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
-            testRunner.statisticsProcessStatisticsAndDataRecords();
+            await testRunner.statisticsProcessStatisticsAndDataRecords();
         });
     }
 

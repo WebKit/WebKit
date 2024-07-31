@@ -48,10 +48,10 @@
         testRunner.setStatisticsSubresourceUniqueRedirectTo(url, topFrameUrl);
     }
 
-    function setUpStatisticsAndContinue() {
+    async function setUpStatisticsAndContinue() {
         insertManyTimes(subframeUrl);
         testRunner.installStatisticsDidScanDataRecordsCallback(checkClassificationAndContinue);
-        testRunner.statisticsProcessStatisticsAndDataRecords();
+        await testRunner.statisticsProcessStatisticsAndDataRecords();
     }
 
     function checkCountStatistics(result) {

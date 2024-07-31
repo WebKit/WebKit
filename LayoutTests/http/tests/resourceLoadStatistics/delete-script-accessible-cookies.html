@@ -57,9 +57,9 @@
         await fetch("/cookies/resources/setCookies.cgi", { headers: { "X-Set-Cookie": serverSideCookieName + "=1; path=/;" }, credentials: "same-origin" });
         document.cookie = clientSideCookieName + "=1";
         checkCookies(false);
-        testRunner.statisticsDeleteCookiesForHost("http://127.0.0.1", false);
+        await testRunner.statisticsDeleteCookiesForHost("http://127.0.0.1", false);
         checkCookies(true);
-        testRunner.statisticsDeleteCookiesForHost("http://127.0.0.1", true);
+        await testRunner.statisticsDeleteCookiesForHost("http://127.0.0.1", true);
         let cookiesLeft = internals.getCookies().length;
         if (cookiesLeft === 0)
             testPassed("After full deletion:               All cookies are gone.");

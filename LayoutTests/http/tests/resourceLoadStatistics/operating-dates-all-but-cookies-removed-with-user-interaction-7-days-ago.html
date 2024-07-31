@@ -214,9 +214,9 @@
         });
     }
 
-    function processWebsiteDataAndContinue() {
+    async function processWebsiteDataAndContinue() {
         testRunner.installStatisticsDidScanDataRecordsCallback(checkWebsiteDataAndContinue);
-        testRunner.statisticsProcessStatisticsAndDataRecords();
+        await testRunner.statisticsProcessStatisticsAndDataRecords();
     }
 
     function checkWebsiteDataAndContinue() {

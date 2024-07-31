@@ -9,7 +9,7 @@ CONSOLE MESSAGE: step4. About to open an iFrame to test for third party cookie a
 CONSOLE MESSAGE: step5. About to open an iFrame to try to set a cookie as a third party (should fail)
 CONSOLE MESSAGE: step6. About to open an iFrame and fireDataModificationHandlerAndContinue
 CONSOLE MESSAGE: In fireDataModificationHandlerAndContinue
-CONSOLE MESSAGE: Calling statisticsProcessStatisticsAndDataRecords
+CONSOLE MESSAGE: Calling await statisticsProcessStatisticsAndDataRecords
 CONSOLE MESSAGE: In callback function for installStatisticsDidScanDataRecordsCallback
 CONSOLE MESSAGE: step7. About to open an iFrame and setAsNonPrevalentAndContinue
 CONSOLE MESSAGE: In setAsNonPrevalentAndContinue

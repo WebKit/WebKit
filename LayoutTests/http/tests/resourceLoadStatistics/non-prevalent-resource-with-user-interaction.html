@@ -30,7 +30,7 @@
                 if (!testRunner.isStatisticsPrevalentResource(otherPrevalentUrl))
                     testFailed("Other host did not get set as prevalent resource.");
 
-                testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, true, function() {
+                testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, true, async function() {
                     if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
                         testFailed("Host did not get logged for user interaction.");
 
@@ -46,7 +46,7 @@
                     });
                     testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
                     testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
-                    testRunner.statisticsProcessStatisticsAndDataRecords();
+                    await testRunner.statisticsProcessStatisticsAndDataRecords();
                 });
             });
         });
