@@ -1125,7 +1125,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmArrayNewEmpty, EncodedJSValue, (J
     Wasm::FieldType fieldType = arraySignature.as<ArrayType>()->elementType();
 
     size_t elementSize = fieldType.type.elementSize();
-    if (UNLIKELY(productOverflows<uint32_t>(elementSize * size) || elementSize * size > maxArraySizeInBytes))
+    if (UNLIKELY(productOverflows<uint32_t>(elementSize, size) || elementSize * size > maxArraySizeInBytes))
         return JSValue::encode(jsNull());
 
     // Create a default-initialized array with the right element type and length

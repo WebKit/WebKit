@@ -72,7 +72,7 @@ inline EncodedJSValue arrayNew(JSWebAssemblyInstance* instance, uint32_t typeInd
 
     size_t elementSize = fieldType.type.elementSize();
 
-    if (UNLIKELY(productOverflows<uint32_t>(elementSize * size) || elementSize * size > maxArraySizeInBytes))
+    if (UNLIKELY(productOverflows<uint32_t>(elementSize, size) || elementSize * size > maxArraySizeInBytes))
         return JSValue::encode(jsNull());
 
     JSWebAssemblyArray* array = nullptr;
@@ -119,7 +119,7 @@ inline EncodedJSValue arrayNew(JSWebAssemblyInstance* instance, uint32_t typeInd
     auto rtt = instance->module().moduleInformation().rtts[typeIndex];
     size_t elementSize = fieldType.type.elementSize();
 
-    if (UNLIKELY(productOverflows<uint32_t>(elementSize * size) || elementSize * size > maxArraySizeInBytes))
+    if (UNLIKELY(productOverflows<uint32_t>(elementSize, size) || elementSize * size > maxArraySizeInBytes))
         return JSValue::encode(jsNull());
 
     FixedVector<v128_t> values(size);
