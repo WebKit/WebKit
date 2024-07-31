@@ -345,12 +345,13 @@
         },
         {
             "name": "setShouldBlackboxURL",
-            "description": "Sets whether the given URL should be in the list of blackboxed scripts, which are ignored when pausing/stepping/debugging.",
+            "description": "Sets whether the given URL should be in the list of blackboxed scripts, which are ignored when pausing.",
             "parameters": [
                 { "name": "url", "type": "string" },
                 { "name": "shouldBlackbox", "type": "boolean" },
-                { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If true, <code>url</code> is case sensitive." },
-                { "name": "isRegex", "type": "boolean", "optional": true, "description": "If true, treat <code>url</code> as regular expression." }
+                { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If <code>true</code>, <code>url</code> is case sensitive." },
+                { "name": "isRegex", "type": "boolean", "optional": true, "description": "If <code>true</code>, treat <code>url</code> as regular expression." },
+                { "name": "sourceRanges", "type": "array", "items": { "type": "integer" }, "optional": true, "description": "If provided, limits where in the script the debugger will skip pauses. Expected structure is a repeated <code>[startLine, startColumn, endLine, endColumn]</code>. Ignored if <code>shouldBlackbox</code> is <code>false</code>." }
             ]
         },
         {

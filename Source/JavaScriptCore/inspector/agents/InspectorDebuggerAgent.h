@@ -98,7 +98,7 @@ public:
     Protocol::ErrorStringOr<void> setPauseOnMicrotasks(bool enabled, RefPtr<JSON::Object>&& options) final;
     Protocol::ErrorStringOr<void> setPauseForInternalScripts(bool shouldPause) final;
     Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> evaluateOnCallFrame(const Protocol::Debugger::CallFrameId&, const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture) override;
-    Protocol::ErrorStringOr<void> setShouldBlackboxURL(const String& url, bool shouldBlackbox, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
+    Protocol::ErrorStringOr<void> setShouldBlackboxURL(const String& url, bool shouldBlackbox, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, RefPtr<JSON::Array>&& sourceRanges) final;
     Protocol::ErrorStringOr<void> setBlackboxBreakpointEvaluations(bool) final;
 
     // JSC::Debugger::Client
@@ -182,7 +182,7 @@ protected:
     virtual void didClearAsyncStackTraceData();
 
 private:
-    bool shouldBlackboxURL(const String&) const;
+    void setBlackboxConfiguration(JSC::SourceID, const JSC::Debugger::Script&);
 
     Ref<JSON::ArrayOf<Protocol::Debugger::CallFrame>> currentCallFrames(const InjectedScript&);
 
@@ -252,14 +252,8 @@ private:
     InjectedScriptManager& m_injectedScriptManager;
     HashMap<JSC::SourceID, JSC::Debugger::Script> m_scripts;
 
-    struct BlackboxConfig {
-        String url;
-        bool caseSensitive { false };
-        bool isRegex { false };
-
-        friend bool operator==(const BlackboxConfig&, const BlackboxConfig&) = default;
-    };
-    Vector<BlackboxConfig> m_blackboxedURLs;
+    using BlackboxParameters = std::tuple<String /* url */, bool /* caseSensitive */, bool /* isRegex */>;
+    HashMap<BlackboxParameters, HashSet<JSC::Debugger::BlackboxRange>> m_blackboxedURLs;
 
     HashSet<Listener*> m_listeners;
 
