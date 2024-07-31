@@ -79,14 +79,15 @@
                     iframe.allow = policy;
                 }
 
-                iframe.src = new URL(
-                    "/digital-credentials/support/iframe.html",
-                    crossOrigin ? hostInfo.HTTPS_REMOTE_ORIGIN : location.origin
-                ).href;
-                iframe.dataset.isAllowed = isAllowed;
-
                 await new Promise((resolve) => {
                     iframe.onload = resolve;
+                    iframe.src = new URL(
+                        "/digital-credentials/support/iframe.html",
+                        crossOrigin
+                            ? hostInfo.HTTPS_REMOTE_ORIGIN
+                            : location.origin
+                    ).href;
+                    iframe.dataset.isAllowed = isAllowed;
                     document.body.appendChild(iframe);
                 });
                 iframe.focus();
@@ -100,13 +101,19 @@
                         const { isAllowed } = details;
                         const action = "get";
                         const options = {
-                            digital: { providers: [] },
+                            digital: {
+                                // Results in TypeError when allowed, NotAllowedError when disallowed
+                                providers: [],
+                            },
                         };
                         const { data } = await new Promise((resolve) => {
                             window.addEventListener("message", resolve, {
                                 once: true,
                             });
-                            iframe.contentWindow.postMessage({ action, options }, "*");
+                            iframe.contentWindow.postMessage(
+                                { action, options, needsActivation: true },
+                                "*"
+                            );
                         });
                         const { name, messsage } = data;
                         assert_equals(

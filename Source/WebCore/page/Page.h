@@ -112,6 +112,7 @@ class DOMRectList;
 class DatabaseProvider;
 class DeviceOrientationUpdateProvider;
 class DiagnosticLoggingClient;
+class CredentialRequestCoordinator;
 class DragCaretController;
 class DragController;
 class EditorClient;
@@ -676,6 +677,7 @@ public:
 
 #if ENABLE(WEB_AUTHN)
     AuthenticatorCoordinator& authenticatorCoordinator() { return m_authenticatorCoordinator.get(); }
+    CredentialRequestCoordinator& credentialRequestCoordinator() { return m_credentialRequestCoordinator.get(); }
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -1514,6 +1516,7 @@ private:
 
 #if ENABLE(WEB_AUTHN)
     UniqueRef<AuthenticatorCoordinator> m_authenticatorCoordinator;
+    UniqueRef<CredentialRequestCoordinator> m_credentialRequestCoordinator;
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
