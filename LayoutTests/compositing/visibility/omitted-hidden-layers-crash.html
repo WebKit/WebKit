@@ -1,0 +1,31 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+  <script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<p>This test should not crash.</p>
+
+<div style="width: 200px; height: 200px; overflow: scroll; border: 1px black solid" id="scroll">
+  <div style="position: fixed; width: 20px; height: 20px; background: green"></div>
+  <div style="position: relative; width: 150px; height: 400px; background-color: blue"></div>
+</div>
+
+</body>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.onload = async () => {
+    await new Promise(requestAnimationFrame);
+    document.getElementById("scroll").style.visibility = "hidden";
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+</html>
