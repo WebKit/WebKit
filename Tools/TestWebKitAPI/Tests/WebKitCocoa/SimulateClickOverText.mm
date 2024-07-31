@@ -58,17 +58,26 @@ TEST(SimulateClickOverText, ClickTargets)
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [webView synchronouslyLoadTestPageNamed:@"click-targets"];
 
-    [webView simulateClickOverText:@"Bugzilla"];
-    [webView simulateClickOverText:@"Sign up"];
-    [webView simulateClickOverText:@"First name"];
+    EXPECT_TRUE([webView simulateClickOverText:@"Bugzilla"]);
+    EXPECT_TRUE([webView simulateClickOverText:@"Sign up"]);
+    EXPECT_TRUE([webView simulateClickOverText:@"First name"]);
+    EXPECT_TRUE([webView simulateClickOverText:@"Log in"]);
+    EXPECT_TRUE([webView simulateClickOverText:@"More info"]);
+    EXPECT_TRUE([webView simulateClickOverText:@"Close"]);
 
     RetainPtr expectedEvents = @[ @"mousedown", @"mouseup", @"click" ];
     EXPECT_TRUE([expectedEvents isEqualToArray:[webView objectByEvaluatingJavaScript:@"document.querySelector('a.top').events"]]);
     EXPECT_TRUE([expectedEvents isEqualToArray:[webView objectByEvaluatingJavaScript:@"document.querySelector('button.top').events"]]);
-    EXPECT_TRUE([expectedEvents isEqualToArray:[webView objectByEvaluatingJavaScript:@"document.querySelector('input.top').events"]]);
+    EXPECT_TRUE([expectedEvents isEqualToArray:[webView objectByEvaluatingJavaScript:@"document.querySelector('input[type=text].top').events"]]);
+    EXPECT_TRUE([expectedEvents isEqualToArray:[webView objectByEvaluatingJavaScript:@"document.querySelector('input[type=submit].top').events"]]);
+    EXPECT_TRUE([expectedEvents isEqualToArray:[webView objectByEvaluatingJavaScript:@"document.querySelector('input[type=button].top').events"]]);
+    EXPECT_TRUE([expectedEvents isEqualToArray:[webView objectByEvaluatingJavaScript:@"document.querySelector('div.close.top').events"]]);
     EXPECT_NULL([webView objectByEvaluatingJavaScript:@"document.querySelector('a.bottom').events"]);
     EXPECT_NULL([webView objectByEvaluatingJavaScript:@"document.querySelector('button.bottom').events"]);
     EXPECT_NULL([webView objectByEvaluatingJavaScript:@"document.querySelector('input.bottom').events"]);
+    EXPECT_NULL([webView objectByEvaluatingJavaScript:@"document.querySelector('input[type=submit].bottom').events"]);
+    EXPECT_NULL([webView objectByEvaluatingJavaScript:@"document.querySelector('input[type=button].bottom').events"]);
+    EXPECT_NULL([webView objectByEvaluatingJavaScript:@"document.querySelector('div.close.bottom').events"]);
 }
 
 TEST(SimulateClickOverText, ClickTargetsAfterScrolling)
@@ -78,17 +87,26 @@ TEST(SimulateClickOverText, ClickTargetsAfterScrolling)
     [webView stringByEvaluatingJavaScript:@"scrollBy(0, 5000)"];
     [webView waitForNextPresentationUpdate];
 
-    [webView simulateClickOverText:@"Bugzilla"];
-    [webView simulateClickOverText:@"Sign up"];
-    [webView simulateClickOverText:@"First name"];
+    EXPECT_TRUE([webView simulateClickOverText:@"Bugzilla"]);
+    EXPECT_TRUE([webView simulateClickOverText:@"Sign up"]);
+    EXPECT_TRUE([webView simulateClickOverText:@"First name"]);
+    EXPECT_TRUE([webView simulateClickOverText:@"Log in"]);
+    EXPECT_TRUE([webView simulateClickOverText:@"More info"]);
+    EXPECT_TRUE([webView simulateClickOverText:@"Close"]);
 
     RetainPtr expectedEvents = @[ @"mousedown", @"mouseup", @"click" ];
     EXPECT_NULL([webView objectByEvaluatingJavaScript:@"document.querySelector('a.top').events"]);
     EXPECT_NULL([webView objectByEvaluatingJavaScript:@"document.querySelector('button.top').events"]);
     EXPECT_NULL([webView objectByEvaluatingJavaScript:@"document.querySelector('input.top').events"]);
+    EXPECT_NULL([webView objectByEvaluatingJavaScript:@"document.querySelector('input[type=submit].top').events"]);
+    EXPECT_NULL([webView objectByEvaluatingJavaScript:@"document.querySelector('input[type=button].top').events"]);
+    EXPECT_NULL([webView objectByEvaluatingJavaScript:@"document.querySelector('div.close.top').events"]);
     EXPECT_TRUE([expectedEvents isEqualToArray:[webView objectByEvaluatingJavaScript:@"document.querySelector('a.bottom').events"]]);
     EXPECT_TRUE([expectedEvents isEqualToArray:[webView objectByEvaluatingJavaScript:@"document.querySelector('button.bottom').events"]]);
-    EXPECT_TRUE([expectedEvents isEqualToArray:[webView objectByEvaluatingJavaScript:@"document.querySelector('input.bottom').events"]]);
+    EXPECT_TRUE([expectedEvents isEqualToArray:[webView objectByEvaluatingJavaScript:@"document.querySelector('input[type=text].bottom').events"]]);
+    EXPECT_TRUE([expectedEvents isEqualToArray:[webView objectByEvaluatingJavaScript:@"document.querySelector('input[type=submit].bottom').events"]]);
+    EXPECT_TRUE([expectedEvents isEqualToArray:[webView objectByEvaluatingJavaScript:@"document.querySelector('input[type=button].bottom').events"]]);
+    EXPECT_TRUE([expectedEvents isEqualToArray:[webView objectByEvaluatingJavaScript:@"document.querySelector('div.close.bottom').events"]]);
 }
 
 } // namespace TestWebKitAPI

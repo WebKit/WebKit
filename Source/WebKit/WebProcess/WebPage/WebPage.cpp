@@ -9914,16 +9914,30 @@ void WebPage::simulateClickOverFirstMatchingTextInViewportWithUserInteraction(co
 
     Vector<Candidate> candidates;
 
+    auto removeNonHitTestableCandidates = [&] {
+        candidates.removeAllMatching([&](auto& targetAndLocation) {
+            auto& [target, location] = targetAndLocation;
+            auto result = localMainFrame->eventHandler().hitTestResultAtPoint(location, {
+                HitTestRequest::Type::ReadOnly,
+                HitTestRequest::Type::Active,
+            });
+            RefPtr innerNode = result.innerNonSharedNode();
+            return !innerNode || !target->containsIncludingShadowDOM(innerNode.get());
+        });
+    };
+
+    static constexpr OptionSet findOptions = {
+        FindOption::CaseInsensitive,
+        FindOption::AtWordStarts,
+        FindOption::TreatMedialCapitalAsWordStart,
+        FindOption::DoNotRevealSelection,
+        FindOption::DoNotSetSelection,
+    };
+
     auto unobscuredContentRect = view->unobscuredContentRect();
     auto searchRange = makeRangeSelectingNodeContents(*bodyElement);
     while (is_lt(treeOrder<ComposedTree>(searchRange.start, searchRange.end))) {
-        auto range = findPlainText(searchRange, targetText, {
-            FindOption::CaseInsensitive,
-            FindOption::AtWordStarts,
-            FindOption::TreatMedialCapitalAsWordStart,
-            FindOption::DoNotRevealSelection,
-            FindOption::DoNotSetSelection,
-        });
+        auto range = findPlainText(searchRange, targetText, findOptions);
 
         if (range.collapsed())
             break;
@@ -9962,24 +9976,47 @@ void WebPage::simulateClickOverFirstMatchingTextInViewportWithUserInteraction(co
         candidates.append({ target.releaseNonNull(), textRects[indexOfFirstRelevantTextRect].center() });
     }
 
-    candidates.removeAllMatching([&](auto& targetAndLocation) {
-        auto& [target, location] = targetAndLocation;
-        auto result = localMainFrame->eventHandler().hitTestResultAtPoint(location, {
-            HitTestRequest::Type::ReadOnly,
-            HitTestRequest::Type::Active,
-        });
-
-        RefPtr innerNode = result.innerNonSharedNode();
-        return !innerNode || !target->containsIncludingShadowDOM(innerNode.get());
-    });
+    removeNonHitTestableCandidates();
+    WEBPAGE_RELEASE_LOG(MouseHandling, "Simulating click - found %zu candidate(s) from visible text", candidates.size());
 
     if (candidates.isEmpty()) {
-        WEBPAGE_RELEASE_LOG(MouseHandling, "WebPage::simulateClickOverText - no matches found");
+        // Fall back to checking DOM attributes and accessibility labels.
+        auto hitTestResult = HitTestResult { LayoutRect { unobscuredContentRect } };
+        document->hitTest({ HitTestSource::User, { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::CollectMultipleElements } }, hitTestResult);
+        for (auto& node : hitTestResult.listBasedTestResult()) {
+            RefPtr element = dynamicDowncast<HTMLElement>(node);
+            if (!element)
+                continue;
+
+            bool isCandidate = false;
+            if (auto ariaLabel = element->attributeWithoutSynchronization(HTMLNames::aria_labelAttr); !ariaLabel.isEmpty())
+                isCandidate = containsPlainText(ariaLabel.string(), targetText, findOptions);
+
+            if (!isCandidate) {
+                if (RefPtr input = dynamicDowncast<HTMLInputElement>(element); input && (input->isSubmitButton() || input->isTextButton())) {
+                    if (auto value = input->visibleValue(); !value.isEmpty())
+                        isCandidate = containsPlainText(value, targetText, findOptions);
+                }
+            }
+
+            if (!isCandidate)
+                continue;
+
+            if (auto rendererAndBounds = element->boundingAbsoluteRectWithoutLayout())
+                candidates.append({ element.releaseNonNull(), enclosingIntRect(rendererAndBounds->second).center() });
+        }
+
+        removeNonHitTestableCandidates();
+        WEBPAGE_RELEASE_LOG(MouseHandling, "Simulating click - found %zu candidate(s) from DOM attributes", candidates.size());
+    }
+
+    if (candidates.isEmpty()) {
+        WEBPAGE_RELEASE_LOG(MouseHandling, "Simulating click - no matches found");
         return completion(false);
     }
 
     if (candidates.size() > 1) {
-        WEBPAGE_RELEASE_LOG(MouseHandling, "WebPage::simulateClickOverText - too many matches found (%zu)", candidates.size());
+        WEBPAGE_RELEASE_LOG(MouseHandling, "Simulating click - too many matches found (%zu)", candidates.size());
         // FIXME: We'll want to add a way to disambiguate between multiple matches in the future. For now, just exit without
         // trying to simulate a click.
         return completion(false);
@@ -9994,13 +10031,13 @@ void WebPage::simulateClickOverFirstMatchingTextInViewportWithUserInteraction(co
         return { locationInWindow, locationInWindow, MouseButton::Left, type, 1, { }, WallTime::now(), ForceAtClick, SyntheticClickType::OneFingerTap, mousePointerID };
     };
 
-    WEBPAGE_RELEASE_LOG(MouseHandling, "WebPage::simulateClickOverText - performing synthetic click");
-    bool handledClick = localMainFrame->eventHandler().handleMousePressEvent(makeSyntheticEvent(PlatformEvent::Type::MousePressed)).wasHandled();
+    WEBPAGE_RELEASE_LOG(MouseHandling, "Simulating click - dispatching events");
+    localMainFrame->eventHandler().handleMousePressEvent(makeSyntheticEvent(PlatformEvent::Type::MousePressed)).wasHandled();
     if (m_isClosed)
         return completion(false);
 
-    handledClick |= localMainFrame->eventHandler().handleMouseReleaseEvent(makeSyntheticEvent(PlatformEvent::Type::MouseReleased)).wasHandled();
-    completion(handledClick);
+    localMainFrame->eventHandler().handleMouseReleaseEvent(makeSyntheticEvent(PlatformEvent::Type::MouseReleased)).wasHandled();
+    completion(true);
 }
 
 } // namespace WebKit
