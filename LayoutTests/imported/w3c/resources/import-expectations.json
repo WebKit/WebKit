@@ -130,6 +130,7 @@
     "web-platform-tests/css/cssom": "import",
     "web-platform-tests/css/cssom-view": "import",
     "web-platform-tests/css/fetching": "skip",
+    "web-platform-tests/css/fill-stroke": "import",
     "web-platform-tests/css/filter-effects": "import",
     "web-platform-tests/css/geometry": "import",
     "web-platform-tests/css/mediaqueries": "import",

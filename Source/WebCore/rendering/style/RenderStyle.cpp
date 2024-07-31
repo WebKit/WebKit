@@ -2077,6 +2077,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyWebkitRubyPosition);
         if (first.rubyAlign != second.rubyAlign)
             changingProperties.m_properties.set(CSSPropertyRubyAlign);
+        if (first.strokeColor != second.strokeColor)
+            changingProperties.m_properties.set(CSSPropertyStrokeColor);
         if (first.paintOrder != second.paintOrder)
             changingProperties.m_properties.set(CSSPropertyPaintOrder);
         if (first.capStyle != second.capStyle)
@@ -2112,7 +2114,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // eventListenerRegionTypes
         // effectiveInert
         // usedContentVisibility
-        // strokeColor
         // visitedLinkStrokeColor
         // hasSetStrokeColor
         // usedZoom
