@@ -236,7 +236,7 @@ void Recorder::drawGlyphsAndCacheResources(const Font& font, const GlyphBufferGl
     recordDrawGlyphs(font, glyphs, advances, numGlyphs, localAnchor, smoothingMode);
 }
 
-void Recorder::drawDisplayListItems(const Vector<Item>& items, const ResourceHeap& resourceHeap, const FloatPoint& destination)
+void Recorder::drawDisplayListItems(const Vector<Item>& items, const ResourceHeap& resourceHeap, ControlFactory&, const FloatPoint& destination)
 {
     appendStateChangeItemIfNecessary();
 
