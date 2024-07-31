@@ -96,4 +96,9 @@ void WebNotificationManagerMessageHandler::pageWasNotifiedOfNotificationPermissi
     m_webPageProxy.pageWillLikelyUseNotifications();
 }
 
+void WebNotificationManagerMessageHandler::requestPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 } // namespace WebKit

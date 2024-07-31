@@ -44,6 +44,7 @@ public:
     void clearNotifications(const Vector<WTF::UUID>& notificationIDs) final;
     void didDestroyNotification(const WTF::UUID& notificationID) final;
     void pageWasNotifiedOfNotificationPermission() final { }
+    void requestPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&&) final;
 
     bool handlesNotification(WTF::UUID value) const { return m_notificationToSessionMap.contains(value); }
 

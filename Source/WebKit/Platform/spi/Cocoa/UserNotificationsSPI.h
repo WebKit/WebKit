@@ -28,6 +28,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <UserNotifications/UNNotificationContent_Private.h>
+#import <UserNotifications/UNNotificationSettings_Private.h>
 #import <UserNotifications/UNUserNotificationCenter_Private.h>
 
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
@@ -53,6 +54,11 @@
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
 @property (NS_NONATOMIC_IOSONLY, copy) UNNotificationIcon *icon;
 #endif
+@end
+
+@interface UNMutableNotificationSettings : UNNotificationSettings
++ (instancetype)emptySettings;
+@property (NS_NONATOMIC_IOSONLY, readwrite) UNAuthorizationStatus authorizationStatus;
 @end
 
 @interface UNUserNotificationCenter ()

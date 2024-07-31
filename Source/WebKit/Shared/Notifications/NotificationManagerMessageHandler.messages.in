@@ -25,5 +25,6 @@ messages -> NotificationManagerMessageHandler NotRefCounted {
     CancelNotification(WTF::UUID notificationID)
     ClearNotifications(Vector<WTF::UUID> notificationIDs)
     DidDestroyNotification(WTF::UUID notificationID)
-    PageWasNotifiedOfNotificationPermission();
+    PageWasNotifiedOfNotificationPermission()
+    RequestPermission(WebCore::SecurityOriginData origin) -> (bool granted)
 }

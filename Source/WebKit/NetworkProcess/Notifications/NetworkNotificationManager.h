@@ -76,6 +76,7 @@ private:
     void clearNotifications(const Vector<WTF::UUID>& notificationIDs) final;
     void didDestroyNotification(const WTF::UUID& notificationID) final;
     void pageWasNotifiedOfNotificationPermission() final { }
+    void requestPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&&) final;
 
     NetworkSession& m_networkSession;
     std::unique_ptr<WebPushD::Connection> m_connection;
