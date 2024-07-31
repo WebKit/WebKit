@@ -346,7 +346,6 @@ std::optional<WebCore::TextIndicatorData> TextAnimationController::createTextInd
     constexpr OptionSet textIndicatorOptions {
         WebCore::TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection,
         WebCore::TextIndicatorOption::ExpandClipBeyondVisibleRect,
-        WebCore::TextIndicatorOption::UseSelectionRectForSizing,
         WebCore::TextIndicatorOption::SkipReplacedContent,
         WebCore::TextIndicatorOption::RespectTextColor
     };
