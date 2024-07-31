@@ -70,7 +70,6 @@
 #include "ObjectConstructor.h"
 #include "ParserError.h"
 #include "ProfilerDatabase.h"
-#include "RegisterTZoneTypes.h"
 #include "ReleaseHeapAccessScope.h"
 #include "SamplingProfiler.h"
 #include "SideDataRepository.h"
@@ -103,7 +102,6 @@
 #include <wtf/SafeStrerror.h>
 #include <wtf/Scope.h>
 #include <wtf/StringPrintStream.h>
-#include <wtf/TZoneMallocInitialization.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/WTFProcess.h>
@@ -3460,13 +3458,8 @@ static void startTimeoutThreadIfNeeded(VM& vm)
     startTimeoutTimer(timeoutDuration);
 }
 
-int main(int argc, char** argv WTF_TZONE_EXTRA_MAIN_ARGS)
+int main(int argc, char** argv)
 {
-#if USE(TZONE_MALLOC)
-    const char* boothash = GET_TZONE_SEED_FROM_ENV(darwinEnvp);
-    WTF_TZONE_INIT(boothash);
-#endif
-
 #if OS(DARWIN)
 #if __has_include(<libproc.h>)
     // Let the kernel kill us when OOM
@@ -4356,22 +4349,12 @@ extern const JITOperationAnnotation startOfJITOperationsInShell __asm("section$s
 extern const JITOperationAnnotation endOfJITOperationsInShell __asm("section$end$__DATA_CONST$__jsc_ops");
 #endif
 
-#if USE(TZONE_MALLOC)
-extern const bmalloc::api::TZoneAnnotation startOfTZoneTypesInShell __asm("section$start$__DATA_CONST$__tzone_descs");
-extern const bmalloc::api::TZoneAnnotation endOfTZoneTypesInShell __asm("section$end$__DATA_CONST$__tzone_descs");
-#endif
-
 int jscmain(int argc, char** argv)
 {
     // Need to override and enable restricted options before we start parsing options below.
     JSC::Config::enableRestrictedOptions();
 
     WTF::initializeMainThread();
-#if USE(TZONE_MALLOC)
-    WTF_TZONE_REGISTER_TYPES(&startOfTZoneTypesInShell, &endOfTZoneTypesInShell);
-    JSC::registerTZoneTypes();
-    WTF_TZONE_REGISTRATION_DONE();
-#endif
 
     // Note that the options parsing can affect VM creation, and thus
     // comes first.

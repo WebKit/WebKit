@@ -319,10 +319,6 @@
 #endif
 #endif
 
-#if OS(DARWIN) && USE(APPLE_INTERNAL_SDK) && USE(TZONE_MALLOC)
-#define USE_DARWIN_TZONE_SEED 1
-#endif
-
 #if !defined(USE_WK_TZONE_MALLOC)
 #if USE(TZONE_MALLOC)
 // Separately control the use of TZone allocation in WebKit

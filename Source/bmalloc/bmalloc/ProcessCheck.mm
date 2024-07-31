@@ -25,11 +25,107 @@
 
 #import "ProcessCheck.h"
 
+#import "BAssert.h"
 #import <Foundation/Foundation.h>
 #import <cstdlib>
 #import <mutex>
+#import <string.h>
 
 namespace bmalloc {
+
+class ProcessNames {
+public:
+    static NSString* getAppName()
+    {
+        return getInstance().appName();
+    }
+
+    static NSString* getProcessName()
+    {
+        return getInstance().processName();
+    }
+
+    static const char* getCString()
+    {
+        return getInstance().asCString();
+    }
+
+private:
+    ProcessNames()
+    {
+    }
+
+    static void ensureInstance()
+    {
+        static std::once_flag onceFlag;
+        std::call_once(
+            onceFlag,
+            [] {
+                theProcessNames = new ProcessNames();
+            }
+        );
+    }
+
+    static ProcessNames& getInstance()
+    {
+        if (!theProcessNames)
+            ensureInstance();
+        BASSERT(theProcessNames);
+        return *theProcessNames;
+    }
+
+    NSString* appName()
+    {
+        static std::once_flag onceFlag;
+        std::call_once(
+            onceFlag,
+            [&] {
+                m_appName = [[NSBundle mainBundle] bundleIdentifier];
+            });
+
+        return m_appName;
+    }
+
+    NSString* processName()
+    {
+        static std::once_flag onceFlag;
+        std::call_once(
+            onceFlag,
+            [&] {
+                m_processName = [[NSProcessInfo processInfo] processName];
+            });
+
+        return m_processName;
+    }
+
+    const char* asCString()
+    {
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag, [&] () {
+            NSString* realName = appName();
+            if (!realName)
+                realName = processName();
+
+            strncpy(m_cString, [realName UTF8String], s_maxCStringLen);
+            m_cString[s_maxCStringLen] = '\0';
+        });
+
+        return m_cString;
+    }
+
+    static const size_t s_maxCStringLen = 64;
+    static ProcessNames* theProcessNames;
+    NSString* m_appName { nullptr };
+    NSString* m_processName { nullptr };
+    char m_cString[s_maxCStringLen + 1] { 0 };
+};
+
+ProcessNames* ProcessNames::theProcessNames = nullptr;
+
+const char* processNameString()
+{
+    return ProcessNames::getCString();
+}
 
 #if BPLATFORM(COCOA) && !BPLATFORM(WATCHOS)
 bool gigacageEnabledForProcess()
@@ -38,12 +134,12 @@ bool gigacageEnabledForProcess()
     // If we wanted to make it efficient to call more than once, we could memoize the result in a global boolean.
 
     @autoreleasepool {
-        if (NSString *appName = [[NSBundle mainBundle] bundleIdentifier]) {
+        if (NSString *appName = ProcessNames::getAppName()) {
             bool isWebProcess = [appName hasPrefix:@"com.apple.WebKit.WebContent"];
             return isWebProcess;
         }
 
-        NSString *processName = [[NSProcessInfo processInfo] processName];
+        NSString *processName = ProcessNames::getProcessName();
         bool isOptInBinary = [processName isEqualToString:@"jsc"]
             || [processName isEqualToString:@"DumpRenderTree"]
             || [processName isEqualToString:@"wasm"]
@@ -78,13 +174,13 @@ bool shouldProcessUnconditionallyUseBmalloc()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&] () {
         @autoreleasepool {
-            if (NSString *appName = [[NSBundle mainBundle] bundleIdentifier]) {
+            if (NSString *appName = ProcessNames::getAppName()) {
                 auto contains = [&] (NSString *string) {
                     return [appName rangeOfString:string options:NSCaseInsensitiveSearch].location != NSNotFound;
                 };
                 result = contains(@"com.apple.WebKit") || contains(@"safari");
             } else {
-                NSString *processName = [[NSProcessInfo processInfo] processName];
+                NSString *processName = ProcessNames::getProcessName();
                 result = [processName isEqualToString:@"jsc"]
                     || [processName isEqualToString:@"wasm"]
                     || [processName hasPrefix:@"test"];

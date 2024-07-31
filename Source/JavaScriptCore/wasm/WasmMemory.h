@@ -56,6 +56,8 @@ class Memory final : public RefCounted<Memory> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(Memory, JS_EXPORT_PRIVATE);
     friend LLIntOffsetsExtractor;
 public:
+    using JSWebAssemblyInstanceWeakCGSet = WeakGCSet<JSWebAssemblyInstance>;
+
     void dump(WTF::PrintStream&) const;
 
     enum NotifyPressure { NotifyPressureTag };
@@ -110,7 +112,8 @@ private:
     RefPtr<SharedArrayBufferContents> m_shared;
     WTF::Function<void(GrowSuccess, PageCount, PageCount)> m_growSuccessCallback;
     // FIXME: If/When merging this into JSWebAssemblyMemory we should just use an unconditionalFinalizer.
-    WeakGCSet<JSWebAssemblyInstance> m_instances;
+
+    JSWebAssemblyInstanceWeakCGSet m_instances;
 };
 
 } } // namespace JSC::Wasm

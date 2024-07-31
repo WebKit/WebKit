@@ -394,7 +394,7 @@
 
 #if !defined(BUSE_TZONE)
 #if BUSE(LIBPAS) && BOS(DARWIN) && BCPU(ARM64)
-#define BUSE_TZONE 0
+#define BUSE_TZONE 1
 #else
 #define BUSE_TZONE 0
 #endif
