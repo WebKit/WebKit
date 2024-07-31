@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
@@ -47,18 +48,18 @@ static bool hasActiveNowPlayingSessionChanged;
 
 TEST(NowPlayingSession, NoSession)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320)]);
     ASSERT_FALSE([webView _hasActiveNowPlayingSession]);
 }
 
 TEST(NowPlayingSession, HasSession)
 {
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration.get()]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration.get()]);
     ASSERT_FALSE([webView _hasActiveNowPlayingSession]);
 
-    auto observer = adoptNS([[NowPlayingSessionObserver alloc] init]);
+    RetainPtr observer = adoptNS([[NowPlayingSessionObserver alloc] init]);
     [webView addObserver:observer.get() forKeyPath:nowPlayingSessionKeyPath options:NSKeyValueObservingOptionNew context:nil];
 
     [webView loadTestPageNamed:@"large-video-test-now-playing"];
@@ -72,12 +73,12 @@ TEST(NowPlayingSession, HasSession)
 
 TEST(NowPlayingSession, NavigateAfterHasSession)
 {
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration.get()]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration.get()]);
     ASSERT_FALSE([webView _hasActiveNowPlayingSession]);
 
-    auto observer = adoptNS([[NowPlayingSessionObserver alloc] init]);
+    RetainPtr observer = adoptNS([[NowPlayingSessionObserver alloc] init]);
     [webView addObserver:observer.get() forKeyPath:nowPlayingSessionKeyPath options:NSKeyValueObservingOptionNew context:nil];
 
     [webView loadTestPageNamed:@"large-video-test-now-playing"];
@@ -95,6 +96,54 @@ TEST(NowPlayingSession, NavigateAfterHasSession)
         TestWebKitAPI::Util::run(&hasActiveNowPlayingSessionChanged);
 
     ASSERT_FALSE([webView _hasActiveNowPlayingSession]);
+}
+
+TEST(NowPlayingSession, NavigateToFragmentAfterHasSession)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration.get()]);
+    ASSERT_FALSE([webView _hasActiveNowPlayingSession]);
+
+    RetainPtr observer = adoptNS([[NowPlayingSessionObserver alloc] init]);
+    [webView addObserver:observer.get() forKeyPath:nowPlayingSessionKeyPath options:NSKeyValueObservingOptionNew context:nil];
+
+    [webView loadTestPageNamed:@"large-video-test-now-playing"];
+    [webView waitForMessage:@"playing"];
+
+    if (!hasActiveNowPlayingSessionChanged)
+        TestWebKitAPI::Util::run(&hasActiveNowPlayingSessionChanged);
+
+    ASSERT_TRUE([webView _hasActiveNowPlayingSession]);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"#a" relativeToURL:[webView URL]]]];
+    [webView _test_waitForDidSameDocumentNavigation];
+
+    ASSERT_TRUE([webView _hasActiveNowPlayingSession]);
+}
+
+TEST(NowPlayingSession, LoadSubframeAfterHasSession)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration.get()]);
+    ASSERT_FALSE([webView _hasActiveNowPlayingSession]);
+
+    RetainPtr observer = adoptNS([[NowPlayingSessionObserver alloc] init]);
+    [webView addObserver:observer.get() forKeyPath:nowPlayingSessionKeyPath options:NSKeyValueObservingOptionNew context:nil];
+
+    [webView loadTestPageNamed:@"large-video-test-now-playing"];
+    [webView waitForMessage:@"playing"];
+
+    if (!hasActiveNowPlayingSessionChanged)
+        TestWebKitAPI::Util::run(&hasActiveNowPlayingSessionChanged);
+
+    ASSERT_TRUE([webView _hasActiveNowPlayingSession]);
+
+    [webView evaluateJavaScript:@"loadSubframe()" completionHandler:nil];
+    [webView waitForMessage:@"subframeLoaded"];
+
+    ASSERT_TRUE([webView _hasActiveNowPlayingSession]);
 }
 
 @end

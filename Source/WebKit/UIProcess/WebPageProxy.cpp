@@ -6547,8 +6547,6 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     if (frame->isMainFrame() && preferences().textExtractionEnabled())
         prepareTextExtractionSupportIfNeeded();
 #endif
-
-    protectedPageClient->hasActiveNowPlayingSessionChanged(false);
 }
 
 void WebPageProxy::didFinishDocumentLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, uint64_t navigationID, const UserData& userData)
@@ -6810,13 +6808,15 @@ void WebPageProxy::didSameDocumentNavigationForFrameViaJSHistoryAPI(IPC::Connect
 
 void WebPageProxy::didChangeMainDocument(FrameIdentifier frameID)
 {
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+
 #if ENABLE(MEDIA_STREAM)
     if (m_userMediaPermissionRequestManager) {
         m_userMediaPermissionRequestManager->resetAccess(frameID);
 
 #if ENABLE(GPU_PROCESS)
         if (RefPtr gpuProcess = m_legacyMainFrameProcess->processPool().gpuProcess()) {
-            if (RefPtr frame = WebFrameProxy::webFrame(frameID))
+            if (frame)
                 gpuProcess->updateCaptureOrigin(SecurityOriginData::fromURLWithoutStrictOpaqueness(frame->url()), m_legacyMainFrameProcess->coreProcessIdentifier());
         }
 #endif
@@ -6826,6 +6826,9 @@ void WebPageProxy::didChangeMainDocument(FrameIdentifier frameID)
     m_isQuotaIncreaseDenied = false;
 
     m_speechRecognitionPermissionManager = nullptr;
+
+    if (frame && frame->isMainFrame())
+        Ref { pageClient() }->hasActiveNowPlayingSessionChanged(false);
 }
 
 void WebPageProxy::viewIsBecomingVisible()
