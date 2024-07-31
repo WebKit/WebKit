@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/CheckedPtr.h>
+
 #if ASSERT_ENABLED
 #include "ElementIteratorAssertions.h"
 #endif
@@ -48,7 +50,7 @@ public:
     inline ElementType& operator*() const;
     inline ElementType* operator->() const;
 
-    constexpr operator bool() const { return m_current; }
+    constexpr operator bool() const { return m_current.get(); }
     constexpr bool operator!() const { return !m_current; }
     constexpr bool operator==(std::nullptr_t) const { return !m_current; }
     constexpr bool operator==(const ElementIterator&) const;
@@ -66,8 +68,8 @@ protected:
     ElementIterator(const ContainerNode* root, ElementType* current);
 
 private:
-    const ContainerNode* m_root { nullptr };
-    ElementType* m_current { nullptr };
+    CheckedPtr<const ContainerNode> m_root;
+    CheckedPtr<ElementType> m_current;
 
 #if ASSERT_ENABLED
     ElementIteratorAssertions m_assertions;
@@ -108,7 +110,7 @@ inline ElementType* ElementIterator<ElementType>::operator->() const
 {
     ASSERT(m_current);
     ASSERT(!m_assertions.domTreeHasMutated());
-    return m_current;
+    return m_current.get();
 }
 
 template <typename ElementType>
