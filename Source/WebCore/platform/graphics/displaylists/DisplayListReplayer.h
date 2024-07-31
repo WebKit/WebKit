@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class ControlFactory;
 class FloatRect;
 class GraphicsContext;
 
@@ -49,7 +50,7 @@ class Replayer {
     WTF_MAKE_NONCOPYABLE(Replayer);
 public:
     WEBCORE_EXPORT Replayer(GraphicsContext&, const DisplayList&);
-    WEBCORE_EXPORT Replayer(GraphicsContext&, const Vector<Item>&, const ResourceHeap&);
+    WEBCORE_EXPORT Replayer(GraphicsContext&, const Vector<Item>&, const ResourceHeap&, ControlFactory&);
     ~Replayer() = default;
 
     WEBCORE_EXPORT ReplayResult replay(const FloatRect& initialClip = { }, bool trackReplayList = false);
@@ -58,6 +59,7 @@ private:
     GraphicsContext& m_context;
     const Vector<Item>& m_items;
     const ResourceHeap& m_resourceHeap;
+    Ref<ControlFactory> m_controlFactory;
 };
 
 } // namespace DisplayList

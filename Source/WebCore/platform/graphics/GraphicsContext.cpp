@@ -214,10 +214,10 @@ void GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, 
     bidiRuns.clear();
 }
 
-void GraphicsContext::drawDisplayListItems(const Vector<DisplayList::Item>& items, const DisplayList::ResourceHeap& resourceHeap, const FloatPoint& destination)
+void GraphicsContext::drawDisplayListItems(const Vector<DisplayList::Item>& items, const DisplayList::ResourceHeap& resourceHeap, ControlFactory& controlFactory, const FloatPoint& destination)
 {
     translate(destination);
-    DisplayList::Replayer(*this, items, resourceHeap).replay();
+    DisplayList::Replayer(*this, items, resourceHeap, controlFactory).replay();
     translate(-destination);
 }
 
