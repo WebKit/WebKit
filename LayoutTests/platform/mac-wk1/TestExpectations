@@ -2818,3 +2818,5 @@ imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-006.html [
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-autofocus.html [ Pass Failure ]
 imported/w3c/web-platform-tests/svg/import/metadata-example-01-t-manual.svg  [ Pass ImageOnlyFailure ]
 svg/custom/use-on-symbol-inside-pattern.svg [ Pass Failure ]
+
+compositing/repaint/scroller-repaints-once.html [ Failure ]
