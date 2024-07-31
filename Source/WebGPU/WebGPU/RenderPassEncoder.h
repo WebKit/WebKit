@@ -97,7 +97,7 @@ public:
     id<MTLRenderCommandEncoder> renderCommandEncoder() const;
     void makeInvalid(NSString* = nil);
     CommandEncoder& parentEncoder();
-    void setCommandEncoder(const BindGroupEntryUsageData::Resource&);
+    bool setCommandEncoder(const BindGroupEntryUsageData::Resource&);
     void addResourceToActiveResources(const BindGroupEntryUsageData::Resource&, id<MTLResource>, OptionSet<BindGroupEntryUsage>);
     static double quantizedDepthValue(double, WGPUTextureFormat);
     NSString* errorValidatingPipeline(const RenderPipeline&) const;

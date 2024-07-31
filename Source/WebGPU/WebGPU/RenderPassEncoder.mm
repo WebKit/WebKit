@@ -880,7 +880,7 @@ void RenderPassEncoder::endPass()
     }
 }
 
-void RenderPassEncoder::setCommandEncoder(const BindGroupEntryUsageData::Resource& resource)
+bool RenderPassEncoder::setCommandEncoder(const BindGroupEntryUsageData::Resource& resource)
 {
     WTF::switchOn(resource, [&](const RefPtr<Buffer>& buffer) {
         if (buffer)
@@ -892,6 +892,7 @@ void RenderPassEncoder::setCommandEncoder(const BindGroupEntryUsageData::Resourc
             if (externalTexture)
                 externalTexture->setCommandEncoder(m_parentEncoder);
     });
+    return !!renderCommandEncoder();
 }
 
 void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundle>>&& bundles)

@@ -42,6 +42,12 @@
     HashMap<uint64_t, WebGPU::IndexBufferAndIndexData, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> _minVertexCountForDrawCommand;
 }
 
+static bool setCommandEncoder(auto& buffer, auto& renderPassEncoder)
+{
+    buffer.setCommandEncoder(renderPassEncoder->parentEncoder());
+    return !!renderPassEncoder->renderCommandEncoder();
+}
+
 - (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb containerBuffer:(id<MTLBuffer>)containerBuffer pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode depthBias:(float)depthBias depthBiasSlopeScale:(float)depthBiasSlopeScale depthBiasClamp:(float)depthBiasClamp fragmentDynamicOffsetsBuffer:(id<MTLBuffer>)fragmentDynamicOffsetsBuffer pipeline:(const WebGPU::RenderPipeline*)pipeline minVertexCounts:(WebGPU::RenderBundle::MinVertexCountsContainer*)minVertexCounts
 {
     if (!(self = [super init]))
@@ -243,7 +249,7 @@ id<MTLIndirectRenderCommand> RenderBundleEncoder::currentRenderCommand()
     return m_currentCommand;
 }
 
-void RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resources, id<MTLResource> mtlResource, ResourceUsageAndRenderStage *resource)
+bool RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resources, id<MTLResource> mtlResource, ResourceUsageAndRenderStage *resource)
 {
     if (m_renderPassEncoder) {
         if (resource.renderStages && mtlResource)
@@ -251,7 +257,7 @@ void RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resource
         ASSERT(resource.entryUsage.hasExactlyOneBitSet());
         m_renderPassEncoder->addResourceToActiveResources(resource.resource, mtlResource, resource.entryUsage);
         m_renderPassEncoder->setCommandEncoder(resource.resource);
-        return;
+        return m_renderPassEncoder->renderCommandEncoder();
     }
 
     if (ResourceUsageAndRenderStage *existingResource = [resources objectForKey:mtlResource]) {
@@ -261,19 +267,22 @@ void RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resource
         existingResource.binding = resource.binding;
     } else
         [resources setObject:resource forKey:mtlResource];
+
+    return true;
 }
 
-void RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* container, id<MTLResource> mtlResource, MTLRenderStages stage)
+bool RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* container, id<MTLResource> mtlResource, MTLRenderStages stage)
 {
     RefPtr<Buffer> placeholderBuffer;
-    addResource(container, mtlResource, stage, placeholderBuffer);
+    return addResource(container, mtlResource, stage, placeholderBuffer);
 }
 
-void RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resources, id<MTLResource> mtlResource, MTLRenderStages stage, const BindGroupEntryUsageData::Resource& resource)
+bool RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resources, id<MTLResource> mtlResource, MTLRenderStages stage, const BindGroupEntryUsageData::Resource& resource)
 {
     if (m_renderPassEncoder && mtlResource) {
-        [m_renderPassEncoder->renderCommandEncoder() useResource:mtlResource usage:MTLResourceUsageRead stages:stage];
-        return;
+        id<MTLRenderCommandEncoder> renderCommandEncoder = m_renderPassEncoder->renderCommandEncoder();
+        [renderCommandEncoder useResource:mtlResource usage:MTLResourceUsageRead stages:stage];
+        return !!renderCommandEncoder;
     }
 
     return addResource(resources, mtlResource, [[ResourceUsageAndRenderStage alloc] initWithUsage:MTLResourceUsageRead renderStages:stage entryUsage:BindGroupEntryUsage::Input binding:BindGroupEntryUsageData::invalidBindingIndex resource:resource]);
@@ -688,7 +697,8 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexedIndir
             return finalizeRenderCommand();
 
         if (m_renderPassEncoder) {
-            indirectBuffer.setCommandEncoder(m_renderPassEncoder->parentEncoder());
+            if (!setCommandEncoder(indirectBuffer, m_renderPassEncoder))
+                return finalizeRenderCommand();
             if (!indirectBuffer.isDestroyed() && indexBuffer.length && mtlIndirectBuffer)
                 [m_renderPassEncoder->renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:mtlIndirectBuffer indirectBufferOffset:modifiedIndirectOffset];
         } else {
@@ -697,7 +707,8 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexedIndir
                 return finalizeRenderCommand();
 
             ASSERT(m_indexBufferOffset == contents->indexStart);
-            addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, &indirectBuffer);
+            if (!addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, &indirectBuffer))
+                return finalizeRenderCommand();
             [icbCommand drawIndexedPrimitives:m_primitiveType indexCount:contents->indexCount indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset instanceCount:contents->instanceCount baseVertex:contents->baseVertex baseInstance:contents->baseInstance];
         }
     } else {
@@ -741,7 +752,8 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndirect(Buf
         return finalizeRenderCommand();
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
         if (m_renderPassEncoder) {
-            indirectBuffer.setCommandEncoder(m_renderPassEncoder->parentEncoder());
+            if (!setCommandEncoder(indirectBuffer, m_renderPassEncoder))
+                return finalizeRenderCommand();
             if (!indirectBuffer.isDestroyed() && clampedIndirectBuffer)
                 [m_renderPassEncoder->renderCommandEncoder() drawPrimitives:m_primitiveType indirectBuffer:clampedIndirectBuffer indirectBufferOffset:0];
         } else {
@@ -749,7 +761,8 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndirect(Buf
             if (!contents || !contents->instanceCount || !contents->vertexCount)
                 return finalizeRenderCommand();
 
-            addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, &indirectBuffer);
+            if (!addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, &indirectBuffer))
+                return finalizeRenderCommand();
             [icbCommand drawPrimitives:m_primitiveType vertexStart:contents->vertexStart vertexCount:contents->vertexCount instanceCount:contents->instanceCount baseInstance:contents->baseInstance];
         }
     } else {
@@ -790,7 +803,8 @@ void RenderBundleEncoder::endCurrentICB()
         m_fragmentBuffers.grow(m_icbDescriptor.maxFragmentBufferBindCount);
     if (m_vertexDynamicOffset && !m_dynamicOffsetsVertexBuffer) {
         m_dynamicOffsetsVertexBuffer = [m_device->device() newBufferWithLength:m_vertexDynamicOffset options:MTLResourceStorageModeShared];
-        addResource(m_resources, m_dynamicOffsetsVertexBuffer, MTLRenderStageVertex);
+        if (!addResource(m_resources, m_dynamicOffsetsVertexBuffer, MTLRenderStageVertex))
+            return;
     }
     m_vertexDynamicOffset = 0;
 
@@ -802,7 +816,8 @@ void RenderBundleEncoder::endCurrentICB()
         static_cast<float*>(fragmentBufferPtr)[0] = 0.f;
         static_cast<float*>(fragmentBufferPtr)[1] = 1.f;
         static_cast<uint32_t*>(fragmentBufferPtr)[2] = m_sampleMask;
-        addResource(m_resources, m_dynamicOffsetsFragmentBuffer, MTLRenderStageFragment);
+        if (!addResource(m_resources, m_dynamicOffsetsFragmentBuffer, MTLRenderStageFragment))
+            return;
     }
     m_fragmentDynamicOffset = 0;
 
@@ -997,23 +1012,27 @@ void RenderBundleEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& gro
         for (size_t i = 0, resourceCount = resource.resourceUsages.size(); i < resourceCount; ++i) {
             auto& resourceUsage = resource.resourceUsages[i];
             ResourceUsageAndRenderStage* usageAndRenderStage = [[ResourceUsageAndRenderStage alloc] initWithUsage:resource.usage renderStages:resource.renderStages entryUsage:resourceUsage.usage binding:resourceUsage.binding resource:resourceUsage.resource];
-            addResource(m_resources, resource.mtlResources[i], usageAndRenderStage);
+            if (!addResource(m_resources, resource.mtlResources[i], usageAndRenderStage))
+                return;
         }
         if (m_renderPassEncoder) {
             for (size_t i = 0, resourceCount = resource.resourceUsages.size(); i < resourceCount; ++i) {
                 auto& resourceUsage = resource.resourceUsages[i];
-                m_renderPassEncoder->setCommandEncoder(resourceUsage.resource);
+                if (!m_renderPassEncoder->setCommandEncoder(resourceUsage.resource))
+                    return;
             }
         }
     }
 
     m_bindGroups.set(groupIndex, &group);
     if (auto vertexBindGroupBufferIndex = m_device->vertexBufferIndexForBindGroup(groupIndex); group.vertexArgumentBuffer() && m_vertexBuffers.size() > vertexBindGroupBufferIndex) {
-        addResource(m_resources, group.vertexArgumentBuffer(), MTLRenderStageVertex);
+        if (!addResource(m_resources, group.vertexArgumentBuffer(), MTLRenderStageVertex))
+            return;
         m_vertexBuffers[vertexBindGroupBufferIndex] = { .buffer = group.vertexArgumentBuffer(), .offset = 0, .dynamicOffsetCount = dynamicOffsetCount, .dynamicOffsets = dynamicOffsets->data(), .size = group.vertexArgumentBuffer().length };
     }
     if (group.fragmentArgumentBuffer() && m_fragmentBuffers.size() > groupIndex) {
-        addResource(m_resources, group.fragmentArgumentBuffer(), MTLRenderStageFragment);
+        if (!addResource(m_resources, group.fragmentArgumentBuffer(), MTLRenderStageFragment))
+            return;
         m_fragmentBuffers[groupIndex] = { .buffer = group.fragmentArgumentBuffer(), .offset = 0, .dynamicOffsetCount = dynamicOffsetCount, .dynamicOffsets = dynamicOffsets->data(), .size = group.fragmentArgumentBuffer().length };
     }
 }
@@ -1026,8 +1045,9 @@ void RenderBundleEncoder::setIndexBuffer(Buffer& buffer, WGPUIndexFormat format,
     m_indexType = format == WGPUIndexFormat_Uint32 ? MTLIndexTypeUInt32 : MTLIndexTypeUInt16;
     m_indexBufferOffset = offset;
     m_indexBufferSize = size;
-    if (m_renderPassEncoder)
-        buffer.setCommandEncoder(m_renderPassEncoder->parentEncoder());
+    if (m_renderPassEncoder && !setCommandEncoder(buffer, m_renderPassEncoder))
+        return;
+
     id<MTLBuffer> indexBuffer = m_indexBuffer->buffer();
 
     if (!currentRenderCommand()) {
@@ -1196,10 +1216,12 @@ void RenderBundleEncoder::setVertexBuffer(uint32_t slot, Buffer* optionalBuffer,
 
         auto& buffer = *optionalBuffer;
         m_utilizedBufferIndices.add(slot, size);
-        addResource(m_resources, buffer.buffer(), MTLRenderStageVertex, &buffer);
+        if (!addResource(m_resources, buffer.buffer(), MTLRenderStageVertex, &buffer))
+            return;
         m_vertexBuffers[slot] = { .buffer = buffer.buffer(), .offset = offset, .dynamicOffsetCount = 0, .dynamicOffsets = nullptr, .size = size };
-        if (m_renderPassEncoder)
-            buffer.setCommandEncoder(m_renderPassEncoder->parentEncoder());
+        if (m_renderPassEncoder && !setCommandEncoder(buffer, m_renderPassEncoder))
+            return;
+
     } else {
         if (optionalBuffer) {
             auto& buffer = *optionalBuffer;
