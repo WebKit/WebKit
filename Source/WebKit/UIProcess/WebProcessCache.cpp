@@ -199,18 +199,18 @@ void WebProcessCache::updateCapacity(WebProcessPool& processPool)
     } else {
 #if PLATFORM(IOS_FAMILY)
         constexpr unsigned maxProcesses = 10;
-        size_t memorySize = WTF::ramSizeDisregardingJetsamLimit() / GB;
+        size_t memorySize = WTF::ramSizeDisregardingJetsamLimit();
 #else
         constexpr unsigned maxProcesses = 30;
-        size_t memorySize = WTF::ramSize() / GB;
+        size_t memorySize = WTF::ramSize();
 #endif
-        WEBPROCESSCACHE_RELEASE_LOG("memory size %zu GB", 0, memorySize);
-        if (memorySize < 3) {
+        WEBPROCESSCACHE_RELEASE_LOG("memory size %zu bytes", 0, memorySize);
+        if (memorySize < 2 * GB) {
             m_capacity = 0;
             WEBPROCESSCACHE_RELEASE_LOG("updateCapacity: Cache is disabled because device does not have enough RAM", 0);
         } else {
             // Allow 4 processes in the cache per GB of RAM, up to maxProcesses.
-            m_capacity = std::min<unsigned>(memorySize * 4, maxProcesses);
+            m_capacity = std::min<unsigned>(memorySize / (256 * MB), maxProcesses);
             WEBPROCESSCACHE_RELEASE_LOG("updateCapacity: Cache has a capacity of %u processes", 0, capacity());
         }
     }
