@@ -4590,7 +4590,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& origin
 
     }
 
-    emitIndirectCall("CallRef", callee, calleeInstance, calleeCode, signature, args, results, CallType::Call);
+    emitIndirectCall("CallRef", callee, calleeInstance, calleeCode, signature, args, results);
     return { };
 }
 

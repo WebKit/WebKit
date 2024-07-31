@@ -2412,8 +2412,8 @@ public:
 
     // Let's you print from your JIT generated code.
     // See comments in MacroAssemblerPrinter.h for examples of how to use this.
-    template<typename... Arguments>
-    void print(Arguments&&... args);
+    void print(auto&&... args);
+    void println(auto&&... args);
 
     void print(Printer::PrintRecordList*);
 
