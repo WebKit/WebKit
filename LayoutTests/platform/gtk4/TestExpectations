@@ -40,6 +40,10 @@ webkit.org/b/277403 fast/events/drag-parent-node.html [ Failure ]
 webkit.org/b/277405 fast/events/dropzone-005.html [ Failure ]
 webkit.org/b/277414 imported/w3c/web-platform-tests/html/interaction/focus/document-level-focus-apis/document-has-system-focus.html [ Failure ]
 
+webkit.org/b/277426 editing/async-clipboard/clipboard-read-text-same-origin.html [ Skip ] # Timeout
+
+webkit.org/b/277427 fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html [ Skip ] # Timeout
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Triaged Expectations
 # * KEEP THE SECTIONS SORTED ALPHABETICALLY.

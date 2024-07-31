@@ -3196,7 +3196,10 @@ webkit.org/b/152618 fast/text/international/system-language/navigator-language/n
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-3.html [ ImageOnlyFailure ]
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
+
+# Skip tests requiring UIScriptController to generate events.
 webkit.org/b/153833 fast/shadow-dom/touch-event-ios.html [ Skip ]
+webkit.org/b/153833 css3/touch-action/touch-action-manipulation-fast-clicks.html [ Skip ] # Crash
 
 # This test is so slow that a Slow expectation is not enough to avoid flakiness.
 webkit.org/b/159754 workers/bomb.html [ Skip ]
@@ -3500,6 +3503,8 @@ fast/canvas/canvas-color-space-display-p3-ImageData.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/ [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/ [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/ [ Skip ]
+
+http/tests/workers/service/indexeddb-cryptokey-put-get.https.html [ Skip ] # Timeout
 
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Skip ]
 
@@ -4099,6 +4104,8 @@ imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pagelo
 webkit.org/b/277255 fast/css/text-overflow-input.html [ Failure Pass ]
 webkit.org/b/277255 fast/forms/datalist/datalist-searchinput-appearance.html [ Failure Pass ]
 webkit.org/b/277255 fast/dynamic/layer-hit-test-crash.html [ Failure Pass ]
+
+webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Skip ] # Timeout
 
 # End: Common failures between GTK and WPE.
 

@@ -764,10 +764,6 @@ webkit.org/b/153466 inspector/sampling-profiler [ Skip ]
 fast/text/han-generic-font-families.html [ WontFix ]
 fast/text/hangul-generic-font-families.html [ WontFix ]
 
-# Skip tests requiring UIScriptController to generate events
-webkit.org/b/153833 css3/touch-action/touch-action-manipulation-fast-clicks.html [ Skip ]
-webkit.org/b/153833 fast/events/can-click-element-on-page-with-active-pseudo-class-and-search-field.html [ Skip ]
-
 # These tests test the Shadow DOM based HTML form validation UI but GTK WK2 is using native dialogs instead.
 fast/forms/validation-message-on-listbox.html [ Skip ]
 fast/forms/validation-message-on-menulist.html [ Skip ]
@@ -1560,8 +1556,6 @@ webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
 
 webkit.org/b/118220 http/tests/cache/partitioned-cache.html [ Failure ]
-
-webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure ]
 
 webkit.org/b/128061 svg/zoom/page/zoom-svg-float-border-padding.xml [ Failure ]
 
