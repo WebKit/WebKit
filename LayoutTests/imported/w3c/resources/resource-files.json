@@ -9374,6 +9374,7 @@
         "web-platform-tests/svg/coordinate-systems/support/viewBox-change-repaint-001-ref.html",
         "web-platform-tests/svg/coordinate-systems/support/viewBox-scaling-text-001-ref.html",
         "web-platform-tests/svg/coordinate-systems/support/views.svg",
+        "web-platform-tests/svg/crashtests/support/used.svg",
         "web-platform-tests/svg/geometry/reftests/circle-ref.svg",
         "web-platform-tests/svg/geometry/reftests/ellipse-ref.svg",
         "web-platform-tests/svg/geometry/reftests/percentage-ref.svg",

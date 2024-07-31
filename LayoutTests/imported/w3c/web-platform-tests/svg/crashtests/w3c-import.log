@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/chrome-bug-1172059.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/chrome-bug-1205852.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/chrome-bug-1207590.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/chrome-bug-1238412.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/chrome-bug-1345806.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/chrome-bug-1371700.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/chrome-bug-1474157.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/chrome-bug-333487749.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/firefox-bug-1688293.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/firefox-bug-1703592.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/firefox-bug-1719483.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/firefox-bug-1723249.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/firefox-bug-1724237.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/firefox-bug-1753105.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/firefox-bug-1883804.html
