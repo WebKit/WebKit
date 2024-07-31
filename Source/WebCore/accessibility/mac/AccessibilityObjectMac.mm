@@ -645,9 +645,10 @@ static void attributedStringSetHeadingLevel(NSMutableAttributedString *attrStrin
 
     // Sometimes there are objects between the text and the heading.
     // In those cases the parent hierarchy should be queried to see if there is a heading ancestor.
-    RefPtr parent = renderer->document().axObjectCache()->getOrCreate(renderer->parent());
-    for (; parent; parent = parent->parentObject()) {
-        if (unsigned level = parent->headingLevel()) {
+    auto* cache = renderer->document().axObjectCache();
+    RefPtr ancestor = cache ? cache->getOrCreate(renderer->parent()) : nullptr;
+    for (; ancestor; ancestor = ancestor->parentObject()) {
+        if (unsigned level = ancestor->headingLevel()) {
             [attrString addAttribute:@"AXHeadingLevel" value:@(level) range:range];
             return;
         }
@@ -659,7 +660,8 @@ static void attributedStringSetBlockquoteLevel(NSMutableAttributedString *attrSt
     if (!renderer || !attributedStringContainsRange(attrString, range))
         return;
 
-    RefPtr object = renderer->document().axObjectCache()->getOrCreate(*renderer);
+    auto* cache = renderer->document().axObjectCache();
+    RefPtr object = cache ? cache->getOrCreate(*renderer) : nullptr;
     if (!object)
         return;
 
@@ -673,8 +675,9 @@ static void attributedStringSetExpandedText(NSMutableAttributedString *attrStrin
     if (!renderer || !attributedStringContainsRange(attrString, range))
         return;
 
-    RefPtr object = renderer->document().axObjectCache()->getOrCreate(*renderer);
-    if (object->supportsExpandedTextValue())
+    auto* cache = renderer->document().axObjectCache();
+    RefPtr object = cache ? cache->getOrCreate(*renderer) : nullptr;
+    if (object && object->supportsExpandedTextValue())
         [attrString addAttribute:NSAccessibilityExpandedTextValueAttribute value:object->expandedTextValue() range:range];
 }
 
@@ -732,7 +735,8 @@ static void attributedStringSetCompositionAttributes(NSMutableAttributedString *
 static bool shouldHaveAnySpellCheckAttribute(Node& node)
 {
     // If this node is not inside editable content, do not run the spell checker on the text.
-    return node.document().axObjectCache()->rootAXEditableElement(&node);
+    auto* cache = node.document().axObjectCache();
+    return cache && cache->rootAXEditableElement(&node);
 }
 
 void attributedStringSetNeedsSpellCheck(NSMutableAttributedString *attributedString, Node& node)
@@ -779,13 +783,13 @@ void attributedStringSetSpelling(NSMutableAttributedString *attrString, Node& no
     }
 }
 
-RetainPtr<NSAttributedString> attributedStringCreate(Node* node, StringView text, const SimpleRange& textRange, AXCoreObject::SpellCheck spellCheck)
+RetainPtr<NSAttributedString> attributedStringCreate(Node& node, StringView text, const SimpleRange& textRange, AXCoreObject::SpellCheck spellCheck)
 {
-    if (!node || !text.length())
+    if (!text.length())
         return nil;
 
     // Skip invisible text.
-    WeakPtr renderer = node->renderer();
+    CheckedPtr renderer = node.renderer();
     if (!renderer)
         return nil;
 
@@ -798,13 +802,13 @@ RetainPtr<NSAttributedString> attributedStringCreate(Node* node, StringView text
     attributedStringSetBlockquoteLevel(result.get(), renderer.get(), range);
     attributedStringSetExpandedText(result.get(), renderer.get(), range);
     attributedStringSetElement(result.get(), NSAccessibilityLinkTextAttribute, AccessibilityObject::anchorElementForNode(node), range);
-    attributedStringSetCompositionAttributes(result.get(), *node, textRange);
+    attributedStringSetCompositionAttributes(result.get(), node, textRange);
     // Do spelling last because it tends to break up the range.
     if (spellCheck == AXCoreObject::SpellCheck::Yes) {
         if (AXObjectCache::shouldSpellCheck())
-            attributedStringSetSpelling(result.get(), *node, text, range);
+            attributedStringSetSpelling(result.get(), node, text, range);
         else
-            attributedStringSetNeedsSpellCheck(result.get(), *node);
+            attributedStringSetNeedsSpellCheck(result.get(), node);
     }
 
     return result;
