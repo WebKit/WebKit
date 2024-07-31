@@ -1209,7 +1209,6 @@ dom/NodeList.cpp
 dom/NodeRareData.cpp
 dom/NodeTraversal.cpp
 dom/Observable.cpp
-dom/OverflowEvent.cpp
 dom/PageTransitionEvent.cpp
 dom/PendingScript.cpp
 dom/PointerEvent.cpp
@@ -4070,7 +4069,6 @@ JSOscillatorType.cpp
 JSOverSampleType.cpp
 JSOverconstrainedError.cpp
 JSOverconstrainedErrorEvent.cpp
-JSOverflowEvent.cpp
 JSPageTransitionEvent.cpp
 JSPaintRenderingContext2D.cpp
 JSPaintWorkletGlobalScope.cpp

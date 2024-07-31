@@ -180,7 +180,6 @@
 #include "NotificationController.h"
 #include "OpportunisticTaskScheduler.h"
 #include "OrientationNotifier.h"
-#include "OverflowEvent.h"
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
 #include "PageTransitionEvent.h"
@@ -6221,17 +6220,6 @@ void Document::queueTaskToDispatchEventOnWindow(TaskSource source, Ref<Event>&& 
     });
 }
 
-void Document::enqueueOverflowEvent(Ref<Event>&& event)
-{
-    // https://developer.mozilla.org/en-US/docs/Web/API/Element/overflow_event
-    // FIXME: This event is totally unspecified.
-    RefPtr target = event->target();
-    RELEASE_ASSERT(target);
-    eventLoop().queueTask(TaskSource::DOMManipulation, [protectedTarget = GCReachableRef<Node>(downcast<Node>(*target)), event = WTFMove(event)] {
-        protectedTarget->dispatchEvent(event);
-    });
-}
-
 ExceptionOr<Ref<Event>> Document::createEvent(const String& type)
 {
     // Please do *not* add new event classes to this function unless they are required
@@ -6296,8 +6284,6 @@ ExceptionOr<Ref<Event>> Document::createEvent(const String& type)
         return Ref<Event> { KeyboardEvent::createForBindings() };
     if (equalLettersIgnoringASCIICase(type, "mutationevent"_s) || equalLettersIgnoringASCIICase(type, "mutationevents"_s))
         return Ref<Event> { MutationEvent::createForBindings() };
-    if (equalLettersIgnoringASCIICase(type, "overflowevent"_s))
-        return Ref<Event> { OverflowEvent::createForBindings() };
     if (equalLettersIgnoringASCIICase(type, "popstateevent"_s))
         return Ref<Event> { PopStateEvent::createForBindings() };
     if (equalLettersIgnoringASCIICase(type, "wheelevent"_s))
@@ -6344,9 +6330,6 @@ void Document::addListenerTypeIfNeeded(const AtomString& eventType)
         break;
     case EventType::DOMCharacterDataModified:
         addListenerType(ListenerType::DOMCharacterDataModified);
-        break;
-    case EventType::overflowchanged:
-        addListenerType(ListenerType::OverflowChanged);
         break;
     case EventType::scroll:
         addListenerType(ListenerType::Scroll);

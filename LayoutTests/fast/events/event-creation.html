@@ -71,11 +71,6 @@
     shouldBeTrue("document.createEvent('MutationEvents') instanceof window.Event");
     shouldBeTrue("document.createEvent('MutationEvents').constructor === window.MutationEvent");
 
-    // OverflowEvent
-    shouldBeTrue("document.createEvent('OverflowEvent') instanceof window.OverflowEvent");
-    shouldBeTrue("document.createEvent('OverflowEvent') instanceof window.Event");
-    shouldBeTrue("document.createEvent('OverflowEvent').constructor === window.OverflowEvent");
-
     // TextEvent
     shouldBeTrue("document.createEvent('TextEvent') instanceof window.TextEvent");
     shouldBeTrue("document.createEvent('TextEvent') instanceof window.UIEvent");

@@ -1042,16 +1042,15 @@ public:
         DOMNodeRemovedFromDocument = 1 << 3,
         DOMNodeInsertedIntoDocument = 1 << 4,
         DOMCharacterDataModified = 1 << 5,
-        OverflowChanged = 1 << 6,
-        Scroll = 1 << 7,
-        ForceWillBegin = 1 << 8,
-        ForceChanged = 1 << 9,
-        ForceDown = 1 << 10,
-        ForceUp = 1 << 11,
-        FocusIn = 1 << 12,
-        FocusOut = 1 << 13,
-        CSSTransition = 1 << 14,
-        CSSAnimation = 1 << 15,
+        Scroll = 1 << 6,
+        ForceWillBegin = 1 << 7,
+        ForceChanged = 1 << 8,
+        ForceDown = 1 << 8,
+        ForceUp = 1 << 10,
+        FocusIn = 1 << 11,
+        FocusOut = 1 << 12,
+        CSSTransition = 1 << 13,
+        CSSAnimation = 1 << 14,
     };
 
     bool hasListenerType(ListenerType listenerType) const { return m_listenerTypes.contains(listenerType); }
@@ -1379,7 +1378,6 @@ public:
 
     void queueTaskToDispatchEvent(TaskSource, Ref<Event>&&);
     void queueTaskToDispatchEventOnWindow(TaskSource, Ref<Event>&&);
-    void enqueueOverflowEvent(Ref<Event>&&);
     void dispatchPageshowEvent(PageshowEventPersistence);
     void dispatchPagehideEvent(PageshowEventPersistence);
     WEBCORE_EXPORT void enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&&);

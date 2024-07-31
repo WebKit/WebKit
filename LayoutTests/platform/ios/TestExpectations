@@ -2022,7 +2022,6 @@ fast/dom/DeviceOrientation/updates.html
 fast/dom/MutationObserver/inline-event-listener.html
 fast/dom/Window/open-window-min-size.html
 fast/dom/rtl-scroll-to-leftmost-and-resize.html
-fast/dynamic/paused-event-dispatch.html
 fast/events/resize-subframe.html
 fast/files/read-blob-async.html
 fast/files/read-file-async.html
