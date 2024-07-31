@@ -707,6 +707,8 @@ accessibility/dynamic-table-row-column-indices.html [ Skip ]
 # Failing since added in webkit.org/b/274607
 accessibility/cells-inside-contenteditable.html [ Skip ]
 
+http/wpt/service-workers/mac [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
