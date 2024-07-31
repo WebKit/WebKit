@@ -1682,9 +1682,9 @@ bool WebProcessPool::httpPipeliningEnabled() const
 #endif
 }
 
-static WebProcessProxy* webProcessProxyFromConnection(IPC::Connection& connection, const Vector<Ref<WebProcessProxy>>& processes)
+WebProcessProxy* WebProcessPool::webProcessProxyFromConnection(const IPC::Connection& connection) const
 {
-    for (Ref process : processes) {
+    for (Ref process : m_processes) {
         if (process->hasConnection(connection))
             return process.ptr();
     }
@@ -1693,9 +1693,14 @@ static WebProcessProxy* webProcessProxyFromConnection(IPC::Connection& connectio
     return nullptr;
 }
 
+const SharedPreferencesForWebProcess& WebProcessPool::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
+{
+    return *webProcessProxyFromConnection(connection)->sharedPreferencesForWebProcess();
+}
+
 void WebProcessPool::handleMessage(IPC::Connection& connection, const String& messageName, const WebKit::UserData& messageBody)
 {
-    RefPtr webProcessProxy = webProcessProxyFromConnection(connection, m_processes);
+    RefPtr webProcessProxy = webProcessProxyFromConnection(connection);
     if (!webProcessProxy)
         return;
     m_injectedBundleClient->didReceiveMessageFromInjectedBundle(*this, messageName, webProcessProxy->transformHandlesToObjects(messageBody.protectedObject().get()).get());
@@ -1703,7 +1708,7 @@ void WebProcessPool::handleMessage(IPC::Connection& connection, const String& me
 
 void WebProcessPool::handleSynchronousMessage(IPC::Connection& connection, const String& messageName, const UserData& messageBody, CompletionHandler<void(UserData&&)>&& completionHandler)
 {
-    RefPtr webProcessProxy = webProcessProxyFromConnection(connection, m_processes);
+    RefPtr webProcessProxy = webProcessProxyFromConnection(connection);
     if (!webProcessProxy)
         return completionHandler({ });
 
@@ -1716,7 +1721,7 @@ void WebProcessPool::handleSynchronousMessage(IPC::Connection& connection, const
 
 void WebProcessPool::startedUsingGamepads(IPC::Connection& connection)
 {
-    RefPtr proxy = webProcessProxyFromConnection(connection, m_processes);
+    RefPtr proxy = webProcessProxyFromConnection(connection);
     if (!proxy)
         return;
 
@@ -1734,7 +1739,7 @@ void WebProcessPool::startedUsingGamepads(IPC::Connection& connection)
 void WebProcessPool::stoppedUsingGamepads(IPC::Connection& connection, CompletionHandler<void()>&& completionHandler)
 {
     CompletionHandlerCallingScope callCompletionHandlerOnExit(WTFMove(completionHandler));
-    RefPtr proxy = webProcessProxyFromConnection(connection, m_processes);
+    RefPtr proxy = webProcessProxyFromConnection(connection);
     if (!proxy)
         return;
 
