@@ -305,6 +305,7 @@ platform/cocoa/NSURLUtilities.mm
 platform/cocoa/ParentalControlsContentFilter.mm
 platform/cocoa/PasteboardCocoa.mm
 platform/cocoa/PasteboardCustomDataCocoa.mm
+platform/cocoa/PhotosFormatSoftLink.mm
 platform/cocoa/PlatformPasteboardCocoa.mm
 platform/cocoa/PlatformSpeechSynthesizerCocoa.mm @no-unify
 platform/cocoa/PlaybackSessionModelMediaElement.mm

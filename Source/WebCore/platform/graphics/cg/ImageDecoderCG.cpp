@@ -45,6 +45,9 @@
 #include <wtf/FlipBytes.h>
 
 #include "MediaAccessibilitySoftLink.h"
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+#include "PhotosFormatSoftLink.h"
+#endif
 
 namespace WebCore {
 
@@ -700,21 +703,36 @@ bool ImageDecoderCG::canDecodeType(const String& mimeType)
     return MIMETypeRegistry::isSupportedImageMIMEType(mimeType);
 }
 
-} // namespace WebCore
-
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ImageDecoderCGAdditions.cpp>)
-#include <WebKitAdditions/ImageDecoderCGAdditions.cpp>
-#else
-namespace WebCore {
-
 #if ENABLE(QUICKLOOK_FULLSCREEN)
+bool ImageDecoderCG::isPanoramic() const
+{
+    auto imageSize = FloatSize(frameSizeAtIndex(0));
+    auto aspectRatio = imageSize.aspectRatio();
+
+    constexpr float panoramicImageAspectRatioThreshold = 2.0;
+    if (aspectRatio <= panoramicImageAspectRatioThreshold)
+        return false;
+
+    constexpr float panoramicImageMinDimension = 800;
+    constexpr float panoramicImageMaxDimension = 30000;
+    return imageSize.minDimension() > panoramicImageMinDimension && imageSize.maxDimension() < panoramicImageMaxDimension;
+}
+
+bool ImageDecoderCG::isSpatial() const
+{
+    CGImageSourceRef imageSource = m_nativeDecoder.get();
+    if (!canLoad_PhotosFormats_PFMetadataImageSourceIsSpatialMedia())
+        return false;
+
+    return softLink_PhotosFormats_PFMetadataImageSourceIsSpatialMedia(imageSource);
+}
+
 bool ImageDecoderCG::shouldUseQuickLookForFullscreen() const
 {
-    return false;
+    return isPanoramic() || isSpatial();
 }
 #endif // ENABLE(QUICKLOOK_FULLSCREEN)
 
 } // namespace WebCore
-#endif
 
 #endif // USE(CG)
