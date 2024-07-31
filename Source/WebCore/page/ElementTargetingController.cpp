@@ -654,21 +654,35 @@ static HashSet<URL> collectMediaAndLinkURLs(const Element& element)
 }
 
 enum class IsNearbyTarget : bool { No, Yes };
-static TargetedElementInfo targetedElementInfo(Element& element, IsNearbyTarget isNearbyTarget, ElementSelectorCache& cache)
+static std::optional<TargetedElementInfo> targetedElementInfo(Element& element, IsNearbyTarget isNearbyTarget, ElementSelectorCache& cache)
 {
-    CheckedPtr renderer = element.renderer();
+    element.document().updateLayoutIgnorePendingStylesheets();
+
+    FloatRect boundsInClientCoordinates;
+    RectEdges<bool> offsetEdges;
+    PositionType positionType = PositionType::Static;
+    {
+        WeakPtr renderer = element.renderer();
+        if (!renderer)
+            return { };
+
+        offsetEdges = computeOffsetEdges(renderer->style());
+        positionType = renderer->style().position();
+        boundsInClientCoordinates = computeClientRect(*renderer);
+    }
+
     auto [renderedText, screenReaderText, hasLargeReplacedDescendant] = TextExtraction::extractRenderedText(element);
-    return {
+    return { {
         .elementIdentifier = element.identifier(),
         .documentIdentifier = element.document().identifier(),
-        .offsetEdges = computeOffsetEdges(renderer->style()),
+        .offsetEdges = offsetEdges,
         .renderedText = WTFMove(renderedText),
         .searchableText = searchableTextForTarget(element),
         .screenReaderText = WTFMove(screenReaderText),
         .selectors = selectorsForTarget(element, cache),
         .boundsInRootView = element.boundingBoxInRootViewCoordinates(),
-        .boundsInClientCoordinates = computeClientRect(*renderer),
-        .positionType = renderer->style().position(),
+        .boundsInClientCoordinates = WTFMove(boundsInClientCoordinates),
+        .positionType = positionType,
         .childFrameIdentifiers = collectChildFrameIdentifiers(element),
         .mediaAndLinkURLs = collectMediaAndLinkURLs(element),
         .isNearbyTarget = isNearbyTarget == IsNearbyTarget::Yes,
@@ -677,7 +691,7 @@ static TargetedElementInfo targetedElementInfo(Element& element, IsNearbyTarget 
         .isInVisibilityAdjustmentSubtree = element.isInVisibilityAdjustmentSubtree(),
         .hasLargeReplacedDescendant = hasLargeReplacedDescendant,
         .hasAudibleMedia = hasAudibleMedia(element)
-    };
+    } };
 }
 
 static const HTMLElement* findOnlyMainElement(const HTMLBodyElement& bodyElement)
@@ -1069,8 +1083,10 @@ Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Re
     Vector<TargetedElementInfo> results;
     results.reserveInitialCapacity(targets.size());
     for (auto iterator = targets.rbegin(); iterator != targets.rend(); ++iterator) {
-        results.append(targetedElementInfo(*iterator, IsNearbyTarget::No, cache));
-        addOutOfFlowTargetClientRectIfNeeded(*iterator);
+        if (auto info = targetedElementInfo(*iterator, IsNearbyTarget::No, cache)) {
+            results.append(WTFMove(*info));
+            addOutOfFlowTargetClientRectIfNeeded(*iterator);
+        }
     }
 
     if (additionalRegionForNearbyElements.isEmpty())
@@ -1126,8 +1142,10 @@ Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Re
     }();
 
     for (auto& element : nearbyTargets) {
-        results.append(targetedElementInfo(element, IsNearbyTarget::Yes, cache));
-        addOutOfFlowTargetClientRectIfNeeded(element);
+        if (auto info = targetedElementInfo(element, IsNearbyTarget::Yes, cache)) {
+            results.append(WTFMove(*info));
+            addOutOfFlowTargetClientRectIfNeeded(element);
+        }
     }
 
     return results;
