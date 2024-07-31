@@ -30,6 +30,7 @@
 #include "GCController.h"
 #include "Page.h"
 #include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/JSGlobalObject.h>
 #include <wtf/DataLog.h>
 #include <wtf/SystemTracing.h>
 
