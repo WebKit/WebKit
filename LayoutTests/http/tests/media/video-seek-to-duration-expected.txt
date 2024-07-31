@@ -1,0 +1,4 @@
+
+
+FAIL Test event dispatches and attribute changes for seek to duration. assert_equals: expected false but got true
+
