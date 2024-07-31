@@ -9401,6 +9401,7 @@
         "web-platform-tests/svg/path/property/marker-path-ref.svg",
         "web-platform-tests/svg/path/property/mpath-ref.svg",
         "web-platform-tests/svg/path/property/priority-ref.svg",
+        "web-platform-tests/svg/scripted/script-style-attribute-csp-ref.html",
         "web-platform-tests/svg/shapes/circle-01-ref.svg",
         "web-platform-tests/svg/shapes/ellipse-01-ref.svg",
         "web-platform-tests/svg/shapes/ellipse-02-ref.svg",
