@@ -300,3 +300,15 @@ const SCREEN_CONTROLLER = {
     pointerOrigin: VALID_POINTER_TRANSFORM,
     profiles: []
 };
+
+const FIRST_PERSON_OFFSET = {
+  position: [0, 0.1, 0],
+  orientation: [0, 0, 0, 1]
+};
+
+// From: https://immersive-web.github.io/webxr/#default-features
+const DEFAULT_FEATURES = {
+  "inline": ["viewer"],
+  "immersive-vr": ["viewer", "local"],
+  "immersive-ar": ["viewer", "local"],
+};

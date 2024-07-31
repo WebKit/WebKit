@@ -34,6 +34,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebXRReferenceSpace.h"
 #include "Page.h"
+#include "PlatformXR.h"
 #include "SecurityOrigin.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WebXRBoundedReferenceSpace.h"
@@ -108,6 +109,19 @@ const WebXRRenderState& WebXRSession::renderState() const
 const WebXRInputSourceArray& WebXRSession::inputSources() const
 {
     return m_inputSources;
+}
+
+// https://www.w3.org/TR/webxr/#dom-xrsession-enabledfeatures
+const Vector<String> WebXRSession::enabledFeatures() const
+{
+    Vector<String> enabledFeatureArray;
+    for (const auto& feature : m_requestedFeatures) {
+        String sessionFeature = PlatformXR::sessionFeatureDescriptor(feature);
+        if (sessionFeature != ""_s)
+            enabledFeatureArray.append(WTFMove(sessionFeature));
+    }
+
+    return enabledFeatureArray;
 }
 
 // https://immersive-web.github.io/webxr/#dom-xrsession-updaterenderstate
