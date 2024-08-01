@@ -18,7 +18,7 @@
         });
     }
 
-    function runTestRunnerTest() {
+    async function runTestRunnerTest() {
         testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
     
         var useragent = navigator.userAgent;
@@ -27,7 +27,7 @@
         var mimetypes = navigator.mimeTypes;
         var plugins = navigator.plugins;
         var appversion = navigator.appVersion;
-        testRunner.statisticsNotifyObserver();
+        await testRunner.statisticsNotifyObserver();
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {

@@ -18,7 +18,7 @@
         });
     }
 
-    function runTestRunnerTest() {
+    async function runTestRunnerTest() {
         testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
     
         var availTop = screen.availTop;
@@ -29,7 +29,7 @@
         var availLeft = screen.availLeft;
         var availHeight = screen.availHeight;
         var availWidth = screen.availWidth;
-        testRunner.statisticsNotifyObserver();
+        await testRunner.statisticsNotifyObserver();
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {

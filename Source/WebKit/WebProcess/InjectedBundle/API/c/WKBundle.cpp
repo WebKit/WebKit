@@ -211,15 +211,15 @@ void WKBundleClearResourceLoadStatistics(WKBundleRef)
     WebCore::ResourceLoadObserver::shared().clearState();
 }
 
-bool WKBundleResourceLoadStatisticsNotifyObserver(WKBundleRef)
+void WKBundleResourceLoadStatisticsNotifyObserver(WKBundleRef, void* context, NotifyObserverCallback callback)
 {
     if (!WebCore::ResourceLoadObserver::shared().hasStatistics())
-        return false;
+        return callback(context);
 
-    WebCore::ResourceLoadObserver::shared().updateCentralStatisticsStore([] { });
-    return true;
+    WebCore::ResourceLoadObserver::shared().updateCentralStatisticsStore([context, callback] {
+        callback(context);
+    });
 }
-
 
 void WKBundleExtendClassesForParameterCoder(WKBundleRef bundle, WKArrayRef classes)
 {

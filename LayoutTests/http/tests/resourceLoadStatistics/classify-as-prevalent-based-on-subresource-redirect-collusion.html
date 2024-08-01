@@ -17,8 +17,8 @@
     const subresourceOrigin3 = "http://127.0.0.4:8000/temp";
     const subresourceOrigin4 = "http://127.0.0.5:8000/temp";
 
-    function runTest() {
-        testRunner.statisticsNotifyObserver();
+    async function runTest() {
+        await testRunner.statisticsNotifyObserver();
 
         testRunner.setStatisticsSubresourceUniqueRedirectFrom(statisticsUrl, subresourceOrigin1);
         testRunner.setStatisticsSubresourceUniqueRedirectFrom(subresourceOrigin1, subresourceOrigin2);

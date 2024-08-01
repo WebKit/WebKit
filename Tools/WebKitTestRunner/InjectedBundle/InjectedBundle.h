@@ -131,7 +131,7 @@ public:
 
     void setAllowsAnySSLCertificate(bool);
 
-    bool statisticsNotifyObserver();
+    void statisticsNotifyObserver(CompletionHandler<void()>&&);
 
     void textDidChangeInTextField();
     void textFieldDidBeginEditing();

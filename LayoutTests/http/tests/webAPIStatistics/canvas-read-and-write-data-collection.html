@@ -18,14 +18,14 @@
         });
     }
 
-    function runTestRunnerTest() {
+    async function runTestRunnerTest() {
         testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
     
         var canvas = document.createElement('canvas');
         var context = canvas.getContext('2d');
         context.fillText('suspicious invisible text', 2, 15);
         canvas.toDataURL();
-        testRunner.statisticsNotifyObserver();
+        await testRunner.statisticsNotifyObserver();
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {

@@ -21,7 +21,7 @@
         setEnableFeature(false, finishJSTest);
     }
 
-    function runTest() {
+    async function runTest() {
         switch (document.location.host) {
             case "127.0.0.1:8000":
                 setEnableFeature(true, function() {
@@ -31,9 +31,8 @@
                 });
                 break;
             case "localhost:8000":
-                testRunner.installStatisticsDidScanDataRecordsCallback(finishTest);
-                if (!testRunner.statisticsNotifyObserver())
-                    timerHandle = setTimeout(finishTest, 100);
+                await testRunner.statisticsNotifyObserver();
+                finishTest();
                 break;
             default:
                 testFailed("Unknown host: " + document.location.host);
