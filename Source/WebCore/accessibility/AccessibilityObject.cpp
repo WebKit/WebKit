@@ -27,6 +27,7 @@
  */
 
 #include "config.h"
+
 #include "AccessibilityObject.h"
 
 #include "AXLogger.h"
@@ -1612,7 +1613,18 @@ std::optional<SimpleRange> AccessibilityObject::rangeForCharacterRange(const Cha
 VisiblePositionRange AccessibilityObject::lineRangeForPosition(const VisiblePosition& visiblePosition) const
 {
     VisiblePosition startPosition = startOfLine(visiblePosition);
-    VisiblePosition endPosition = nextLineEndPosition(startPosition);
+    VisiblePosition endPosition = endOfLine(visiblePosition);
+
+    if (endPosition.isNull() || endPosition < startPosition) {
+        // When endOfLine fails to return a plausible result, try nextLineEndPosition, which is more robust, but ensure it doesn't return a result from a subsequent line.
+        VisiblePosition nextLineEnd = nextLineEndPosition(startPosition);
+        while (!nextLineEnd.isNull() && nextLineEnd > startPosition && !inSameLine(nextLineEnd, startPosition))
+            nextLineEnd = nextLineEnd.previous();
+
+        if (!nextLineEnd.isNull())
+            endPosition = nextLineEnd;
+    }
+
     return { startPosition, endPosition };
 }
 

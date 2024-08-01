@@ -10,18 +10,26 @@
   First line of text
   <span contenteditable="false"><br></span>
   Second line of text
+  <p>
+    <br>
+  </p>
+  Fourth line of text
 </div>
 
 <script>
 let output = "This tests that when there are &lt;br&gt; elements with contenteditable=false in a contenteditable text area, we can get the correct range for a line.\n\n";
 
 if (window.accessibilityController) {
+  const expectedLines = ['First line of text', 'Second line of text', '', 'Fourth line of text'];
   const textControl = accessibilityController.accessibleElementById("textcontrol");
-  const fullRange = textControl.textMarkerRangeForElement(textControl.childAtIndex(0));
-  const marker = textControl.startTextMarkerForTextMarkerRange(fullRange);
-  const range = textControl.lineTextMarkerRangeForTextMarker(marker);
-  var rangeStr = (textControl.stringForTextMarkerRange(range) + "").trim();
-  output += expect("rangeStr", '"First line of text"');
+  for (let i = 0; i < textControl.childrenCount; i++) {
+    const child = textControl.childAtIndex(i);
+    const fullRange = textControl.textMarkerRangeForElement(child);
+    const marker = textControl.startTextMarkerForTextMarkerRange(fullRange);
+    const range = textControl.lineTextMarkerRangeForTextMarker(marker);
+    var rangeStr = (textControl.stringForTextMarkerRange(range) + "").trim();
+    output += expect("rangeStr", "'" + expectedLines[i] + "'");
+  }
   debug(output);
   document.getElementById("textcontrol").hidden = true;
 }
