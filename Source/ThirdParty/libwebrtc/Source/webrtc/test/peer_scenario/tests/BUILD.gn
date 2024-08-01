@@ -19,6 +19,7 @@ if (rtc_include_tests) {
     ]
     deps = [
       "..:peer_scenario",
+      "../../:create_frame_generator_capturer",
       "../../:field_trial",
       "../../:test_support",
       "../../../api:rtc_stats_api",
@@ -30,5 +31,11 @@ if (rtc_include_tests) {
       "../../../pc:pc_test_utils",
       "../../../pc:session_description",
     ]
+    if (rtc_enable_protobuf) {
+      deps += [
+        "../../../api/test/network_emulation:network_config_schedule_proto",
+        "../../../api/test/network_emulation:schedulable_network_node_builder",
+      ]
+    }
   }
 }

@@ -31,6 +31,8 @@
 #endif
 
 
+BSSL_NAMESPACE_BEGIN
+
 struct FileDeleter {
   void operator()(FILE *f) const {
     if (f != nullptr) {
@@ -158,5 +160,7 @@ class TemporaryDirectory {
   std::string path_;
   std::set<std::string> files_;
 };
+
+BSSL_NAMESPACE_END
 
 #endif  // OPENSSL_HEADER_CRYPTO_TEST_FILE_UTIL_H

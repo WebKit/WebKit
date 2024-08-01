@@ -1,4 +1,16 @@
 ================
+WebKitGTK 2.45.6
+================
+
+What's new in WebKitGTK 2.45.6?
+
+  - Fix web process cache suspend/resume when sandbox is enabled.
+  - Use server wait instead of client wait for GL fences when possible.
+  - Avoid unnecessary composition when layer didn't change even if a request animation frame is scheduled.
+  - Improve pointer lock on X11.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.45.5
 ================
 

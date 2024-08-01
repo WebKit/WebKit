@@ -42,6 +42,7 @@ _WKWebExtensionPermission const _WKWebExtensionPermissionMenus = @"menus";
 _WKWebExtensionPermission const _WKWebExtensionPermissionNativeMessaging = @"nativeMessaging";
 _WKWebExtensionPermission const _WKWebExtensionPermissionNotifications = @"notifications";
 _WKWebExtensionPermission const _WKWebExtensionPermissionScripting = @"scripting";
+_WKWebExtensionPermission const _WKWebExtensionPermissionSidePanel = @"sidePanel";
 _WKWebExtensionPermission const _WKWebExtensionPermissionStorage = @"storage";
 _WKWebExtensionPermission const _WKWebExtensionPermissionTabs = @"tabs";
 _WKWebExtensionPermission const _WKWebExtensionPermissionUnlimitedStorage = @"unlimitedStorage";

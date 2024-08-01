@@ -75,7 +75,7 @@ TEST(BitrateTrackerTest, MeasuresConstantRate) {
   DataSize total_size = kPacketSize;
   DataRate last_error = DataRate::PlusInfinity();
   for (TimeDelta i = TimeDelta::Zero(); i < kWindow; i += kInterval) {
-    SCOPED_TRACE(i);
+    SCOPED_TRACE(ToString(i));
     now += kInterval;
     total_size += kPacketSize;
     stats.Update(kPacketSize, now);
@@ -95,7 +95,7 @@ TEST(BitrateTrackerTest, MeasuresConstantRate) {
   // Once window is full, bitrate measurment should be stable.
   for (TimeDelta i = TimeDelta::Zero(); i < kInterval;
        i += TimeDelta::Millis(1)) {
-    SCOPED_TRACE(i);
+    SCOPED_TRACE(ToString(i));
     EXPECT_EQ(stats.Rate(now + i), kConstantRate);
   }
 }
@@ -111,7 +111,7 @@ TEST(BitrateTrackerTest, IncreasingThenDecreasingBitrate) {
 
   stats.Update(kLargePacketSize, now);
   for (TimeDelta i = TimeDelta::Zero(); i < kWindow; i += kLargeInterval) {
-    SCOPED_TRACE(i);
+    SCOPED_TRACE(ToString(i));
     now += kLargeInterval;
     stats.Update(kLargePacketSize, now);
   }
@@ -120,7 +120,7 @@ TEST(BitrateTrackerTest, IncreasingThenDecreasingBitrate) {
 
   // Decrease bitrate with smaller measurments.
   for (TimeDelta i = TimeDelta::Zero(); i < kWindow; i += kLargeInterval) {
-    SCOPED_TRACE(i);
+    SCOPED_TRACE(ToString(i));
     now += kLargeInterval;
     stats.Update(kSmallPacketSize, now);
 
@@ -133,7 +133,7 @@ TEST(BitrateTrackerTest, IncreasingThenDecreasingBitrate) {
 
   // Increase bitrate with more frequent measurments.
   for (TimeDelta i = TimeDelta::Zero(); i < kWindow; i += kSmallInterval) {
-    SCOPED_TRACE(i);
+    SCOPED_TRACE(ToString(i));
     now += kSmallInterval;
     stats.Update(kSmallPacketSize, now);
 
@@ -230,7 +230,7 @@ TEST(BitrateTrackerTest, HandlesZeroCounts) {
   EXPECT_GT(last_bitrate, DataRate::Zero());
   now += kInterval;
   while (now < start + kWindow) {
-    SCOPED_TRACE(now - start);
+    SCOPED_TRACE(ToString(now - start));
     stats.Update(0, now);
 
     absl::optional<DataRate> bitrate = stats.Rate(now);

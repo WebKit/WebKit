@@ -26,6 +26,7 @@
 #pragma once
 
 #include "InternalObserver.h"
+#include "VoidCallback.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

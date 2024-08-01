@@ -10,6 +10,15 @@
 
 #include "logging/rtc_event_log/encoder/bit_writer.h"
 
+#include <climits>
+#include <cstddef>
+#include <cstdint>
+#include <string>
+#include <utility>
+
+#include "absl/strings/string_view.h"
+#include "rtc_base/checks.h"
+
 namespace webrtc {
 
 namespace {

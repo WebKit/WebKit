@@ -13,6 +13,7 @@
 #include <memory>
 #include <utility>
 
+#include "api/audio/audio_frame.h"
 #include "common_audio/include/audio_util.h"
 #include "modules/audio_processing/agc2/agc2_common.h"
 #include "modules/audio_processing/agc2/cpu_features.h"
@@ -63,11 +64,11 @@ struct SpeechLevel {
 };
 
 // Computes the audio levels for the first channel in `frame`.
-AudioLevels ComputeAudioLevels(AudioFrameView<float> frame,
+AudioLevels ComputeAudioLevels(DeinterleavedView<float> frame,
                                ApmDataDumper& data_dumper) {
   float peak = 0.0f;
   float rms = 0.0f;
-  for (const auto& x : frame.channel(0)) {
+  for (const auto& x : frame[0]) {
     peak = std::max(std::fabs(x), peak);
     rms += x * x;
   }
@@ -94,7 +95,9 @@ GainController2::GainController2(
       fixed_gain_applier_(
           /*hard_clip_samples=*/false,
           /*initial_gain_factor=*/DbToRatio(config.fixed_digital.gain_db)),
-      limiter_(sample_rate_hz, &data_dumper_, /*histogram_name_prefix=*/"Agc2"),
+      limiter_(&data_dumper_,
+               SampleRateToDefaultChannelSize(sample_rate_hz),
+               /*histogram_name_prefix=*/"Agc2"),
       calls_since_last_limiter_log_(0) {
   RTC_DCHECK(Validate(config));
   data_dumper_.InitiateNewSetOfRecordings();
@@ -179,8 +182,8 @@ void GainController2::Process(absl::optional<float> speech_probability,
       saturation_protector_->Reset();
   }
 
-  AudioFrameView<float> float_frame(audio->channels(), audio->num_channels(),
-                                    audio->num_frames());
+  DeinterleavedView<float> float_frame = audio->view();
+
   // Compute speech probability.
   if (vad_) {
     // When the VAD component runs, `speech_probability` should not be specified

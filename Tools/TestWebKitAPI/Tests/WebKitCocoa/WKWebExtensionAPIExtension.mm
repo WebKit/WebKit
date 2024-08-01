@@ -356,7 +356,7 @@ TEST(WKWebExtensionAPIExtension, GetViewsForMultipleTabs)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
 
     [manager loadAndRun];
 }
@@ -439,7 +439,7 @@ TEST(WKWebExtensionAPIExtension, InIncognitoContext)
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
     manager.get().context.hasAccessInPrivateBrowsing = YES;
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 
@@ -450,7 +450,7 @@ TEST(WKWebExtensionAPIExtension, InIncognitoContext)
     auto *privateWindow = [manager openNewWindowUsingPrivateBrowsing:YES];
     auto *privateTab = privateWindow.tabs.firstObject;
 
-    [privateTab.mainWebView loadRequest:urlRequest];
+    [privateTab.webView loadRequest:urlRequest];
 
     [manager run];
 
@@ -480,7 +480,7 @@ TEST(WKWebExtensionAPIExtension, InIncognitoContextWithoutPrivateAccess)
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 
@@ -491,7 +491,7 @@ TEST(WKWebExtensionAPIExtension, InIncognitoContextWithoutPrivateAccess)
     auto *privateWindow = [manager openNewWindowUsingPrivateBrowsing:YES];
     auto *privateTab = privateWindow.tabs.firstObject;
 
-    [privateTab.mainWebView loadRequest:urlRequest];
+    [privateTab.webView loadRequest:urlRequest];
 
     // The content script should not run in the private tab, so timeout after waiting for 3 seconds.
     [manager runForTimeInterval:3];

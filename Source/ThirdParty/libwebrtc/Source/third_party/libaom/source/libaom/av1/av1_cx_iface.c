@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -9,6 +9,8 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 #include <limits.h>
+#include <math.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,6 +58,7 @@ struct av1_extracfg {
   unsigned int fp_mt;
   unsigned int tile_columns;  // log2 number of tile columns
   unsigned int tile_rows;     // log2 number of tile rows
+  unsigned int auto_tiles;
   unsigned int enable_tpl_model;
   unsigned int enable_keyframe_filtering;
   unsigned int arnr_max_frames;
@@ -236,6 +239,7 @@ static const struct av1_extracfg default_extra_cfg = {
   0,              // fp_mt
   0,              // tile_columns
   0,              // tile_rows
+  0,              // auto_tiles
   0,              // enable_tpl_model
   1,              // enable_keyframe_filtering
   7,              // arnr_max_frames
@@ -387,6 +391,7 @@ static const struct av1_extracfg default_extra_cfg = {
   0,              // fp_mt
   0,              // tile_columns
   0,              // tile_rows
+  0,              // auto_tiles
   1,              // enable_tpl_model
   1,              // enable_keyframe_filtering
   7,              // arnr_max_frames
@@ -671,7 +676,7 @@ static aom_codec_err_t validate_config(aom_codec_alg_priv_t *ctx,
     ERROR("max_frame_area out of range [..2^30]");
   }
   RANGE_CHECK(cfg, g_timebase.den, 1, 1000000000);
-  RANGE_CHECK(cfg, g_timebase.num, 1, cfg->g_timebase.den);
+  RANGE_CHECK(cfg, g_timebase.num, 1, 1000000000);
   RANGE_CHECK_HI(cfg, g_profile, MAX_PROFILES - 1);
 
   RANGE_CHECK_HI(cfg, rc_target_bitrate, 2000000);
@@ -750,6 +755,7 @@ static aom_codec_err_t validate_config(aom_codec_alg_priv_t *ctx,
 
   RANGE_CHECK_HI(extra_cfg, tile_columns, 6);
   RANGE_CHECK_HI(extra_cfg, tile_rows, 6);
+  RANGE_CHECK_HI(extra_cfg, auto_tiles, 1);
 
   RANGE_CHECK_HI(cfg, monochrome, 1);
 
@@ -985,6 +991,40 @@ static void disable_superres(SuperResCfg *const superres_cfg) {
   superres_cfg->superres_kf_qthresh = 255;
 }
 
+static void set_auto_tiles(TileConfig *const tile_cfg, unsigned int width,
+                           unsigned int height, unsigned int threads) {
+  int tile_cols_log2 = 0;
+  int tile_rows_log2 = 0;
+  if (threads < 2) return;
+  // Avoid small tiles because they are particularly bad for coding.
+  // Use no more tiles than the number of threads. Aim for one tile per
+  // thread. Using more than one thread inside one tile could be less
+  // efficient. Using more tiles than the number of threads would result
+  // in a compression penalty without much benefit.
+  const uint32_t kMinTileArea = 128 * 128;
+  const uint32_t kMaxTiles = 32;
+  uint32_t frame_area = width * height;
+  uint32_t tiles = (frame_area + kMinTileArea - 1) / kMinTileArea;
+  if (tiles > kMaxTiles) {
+    tiles = kMaxTiles;
+  }
+  if (tiles > threads) {
+    tiles = threads;
+  }
+  int tiles_log2 = (int)log2(tiles);
+  // If the frame width is equal or greater than the height, use more tile
+  // columns than tile rows.
+  if (width >= height) {
+    tile_cols_log2 = (tiles_log2 + 1) / 2;
+    tile_rows_log2 = tiles_log2 - tile_cols_log2;
+  } else {
+    tile_rows_log2 = (tiles_log2 + 1) / 2;
+    tile_cols_log2 = tiles_log2 - tile_rows_log2;
+  }
+  tile_cfg->tile_columns = tile_cols_log2;
+  tile_cfg->tile_rows = tile_rows_log2;
+}
+
 static void update_default_encoder_config(const cfg_options_t *cfg,
                                           struct av1_extracfg *extra_cfg) {
   extra_cfg->enable_cdef = (cfg->disable_cdef == 0) ? 1 : 0;
@@ -1035,39 +1075,22 @@ static void set_encoder_config(AV1EncoderConfig *oxcf,
   }
 
   TuneCfg *const tune_cfg = &oxcf->tune_cfg;
-
   FrameDimensionCfg *const frm_dim_cfg = &oxcf->frm_dim_cfg;
-
   TileConfig *const tile_cfg = &oxcf->tile_cfg;
-
   ResizeCfg *const resize_cfg = &oxcf->resize_cfg;
-
   GFConfig *const gf_cfg = &oxcf->gf_cfg;
-
   PartitionCfg *const part_cfg = &oxcf->part_cfg;
-
   IntraModeCfg *const intra_mode_cfg = &oxcf->intra_mode_cfg;
-
   TxfmSizeTypeCfg *const txfm_cfg = &oxcf->txfm_cfg;
-
   CompoundTypeCfg *const comp_type_cfg = &oxcf->comp_type_cfg;
-
   SuperResCfg *const superres_cfg = &oxcf->superres_cfg;
-
   KeyFrameCfg *const kf_cfg = &oxcf->kf_cfg;
-
   DecoderModelCfg *const dec_model_cfg = &oxcf->dec_model_cfg;
-
   RateControlCfg *const rc_cfg = &oxcf->rc_cfg;
-
   QuantizationCfg *const q_cfg = &oxcf->q_cfg;
-
   ColorCfg *const color_cfg = &oxcf->color_cfg;
-
   InputCfg *const input_cfg = &oxcf->input_cfg;
-
   AlgoCfg *const algo_cfg = &oxcf->algo_cfg;
-
   ToolCfg *const tool_cfg = &oxcf->tool_cfg;
 
   const int is_vbr = cfg->rc_end_usage == AOM_VBR;
@@ -1342,8 +1365,14 @@ static void set_encoder_config(AV1EncoderConfig *oxcf,
   tile_cfg->enable_large_scale_tile = cfg->large_scale_tile;
   tile_cfg->enable_single_tile_decoding =
       (tile_cfg->enable_large_scale_tile) ? extra_cfg->single_tile_decoding : 0;
-  tile_cfg->tile_columns = extra_cfg->tile_columns;
-  tile_cfg->tile_rows = extra_cfg->tile_rows;
+  if (extra_cfg->auto_tiles) {
+    set_auto_tiles(tile_cfg, cfg->g_w, cfg->g_h, cfg->g_threads);
+    extra_cfg->tile_columns = tile_cfg->tile_columns;
+    extra_cfg->tile_rows = tile_cfg->tile_rows;
+  } else {
+    tile_cfg->tile_columns = extra_cfg->tile_columns;
+    tile_cfg->tile_rows = extra_cfg->tile_rows;
+  }
   tile_cfg->tile_width_count = AOMMIN(cfg->tile_width_count, MAX_TILE_COLS);
   tile_cfg->tile_height_count = AOMMIN(cfg->tile_height_count, MAX_TILE_ROWS);
   for (int i = 0; i < tile_cfg->tile_width_count; i++) {
@@ -1704,18 +1733,28 @@ static aom_codec_err_t ctrl_set_row_mt(aom_codec_alg_priv_t *ctx,
 
 static aom_codec_err_t ctrl_set_tile_columns(aom_codec_alg_priv_t *ctx,
                                              va_list args) {
-  unsigned int tile_columns = CAST(AV1E_SET_TILE_COLUMNS, args);
-  if (tile_columns == ctx->extra_cfg.tile_columns) return AOM_CODEC_OK;
+  // If the control AUTO_TILES is used (set to 1) then don't override
+  // the tile_columns set via the AUTO_TILES control.
+  if (ctx->extra_cfg.auto_tiles) {
+    ERROR("AUTO_TILES is set so AV1E_SET_TILE_COLUMNS should not be called.");
+  }
   struct av1_extracfg extra_cfg = ctx->extra_cfg;
+  unsigned int tile_columns = CAST(AV1E_SET_TILE_COLUMNS, args);
+  if (tile_columns == extra_cfg.tile_columns) return AOM_CODEC_OK;
   extra_cfg.tile_columns = tile_columns;
   return update_extra_cfg(ctx, &extra_cfg);
 }
 
 static aom_codec_err_t ctrl_set_tile_rows(aom_codec_alg_priv_t *ctx,
                                           va_list args) {
-  unsigned int tile_rows = CAST(AV1E_SET_TILE_ROWS, args);
-  if (tile_rows == ctx->extra_cfg.tile_rows) return AOM_CODEC_OK;
+  // If the control AUTO_TILES is used (set to 1) then don't override
+  // the tile_rows set via the AUTO_TILES control.
+  if (ctx->extra_cfg.auto_tiles) {
+    ERROR("AUTO_TILES is set so AV1E_SET_TILE_ROWS should not be called.");
+  }
   struct av1_extracfg extra_cfg = ctx->extra_cfg;
+  unsigned int tile_rows = CAST(AV1E_SET_TILE_ROWS, args);
+  if (tile_rows == extra_cfg.tile_rows) return AOM_CODEC_OK;
   extra_cfg.tile_rows = tile_rows;
   return update_extra_cfg(ctx, &extra_cfg);
 }
@@ -2653,6 +2692,26 @@ static aom_codec_err_t ctrl_set_svc_frame_drop_mode(aom_codec_alg_priv_t *ctx,
     return AOM_CODEC_OK;
 }
 
+static aom_codec_err_t ctrl_set_auto_tiles(aom_codec_alg_priv_t *ctx,
+                                           va_list args) {
+  unsigned int auto_tiles = CAST(AV1E_SET_AUTO_TILES, args);
+  if (auto_tiles == ctx->extra_cfg.auto_tiles) return AOM_CODEC_OK;
+  struct av1_extracfg extra_cfg = ctx->extra_cfg;
+  extra_cfg.auto_tiles = auto_tiles;
+  return update_extra_cfg(ctx, &extra_cfg);
+}
+
+static aom_codec_err_t ctrl_set_postencode_drop_rtc(aom_codec_alg_priv_t *ctx,
+                                                    va_list args) {
+  AV1_PRIMARY *const ppi = ctx->ppi;
+  AV1_COMP *const cpi = ppi->cpi;
+  int enable_postencode_drop = CAST(AV1E_SET_POSTENCODE_DROP_RTC, args);
+  if (enable_postencode_drop > 1 || enable_postencode_drop < 0)
+    return AOM_CODEC_INVALID_PARAM;
+  cpi->rc.postencode_drop = enable_postencode_drop;
+  return AOM_CODEC_OK;
+}
+
 #if !CONFIG_REALTIME_ONLY
 static aom_codec_err_t create_stats_buffer(FIRSTPASS_STATS **frame_stats_buffer,
                                            STATS_BUFFER_CTX *stats_buf_context,
@@ -2815,7 +2874,7 @@ static aom_codec_err_t encoder_init(aom_codec_ctx_t *ctx) {
 #if !CONFIG_REALTIME_ONLY
       res = create_stats_buffer(&priv->frame_stats_buffer,
                                 &priv->stats_buf_context, *num_lap_buffers);
-      if (res != AOM_CODEC_OK) return AOM_CODEC_MEM_ERROR;
+      if (res != AOM_CODEC_OK) return res;
 
       assert(MAX_LAP_BUFFERS >= MAX_LAG_BUFFERS);
       int size = get_stats_buf_size(*num_lap_buffers, MAX_LAG_BUFFERS);
@@ -2830,6 +2889,7 @@ static aom_codec_err_t encoder_init(aom_codec_ctx_t *ctx) {
           priv->ppi, &priv->ppi->parallel_cpi[0], &priv->buffer_pool,
           &priv->oxcf, ENCODE_STAGE, -1);
       if (res != AOM_CODEC_OK) {
+        priv->base.err_detail = "av1_create_context_and_bufferpool() failed";
         return res;
       }
 #if !CONFIG_REALTIME_ONLY
@@ -2991,9 +3051,13 @@ static aom_codec_err_t encoder_encode(aom_codec_alg_priv_t *ctx,
   if (img != NULL) {
     res = validate_img(ctx, img);
     if (res == AOM_CODEC_OK) {
-      const size_t uncompressed_frame_sz =
-          ALIGN_POWER_OF_TWO_UNSIGNED(ctx->cfg.g_w, 5) *
+      const uint64_t uncompressed_frame_sz64 =
+          (uint64_t)ALIGN_POWER_OF_TWO_UNSIGNED(ctx->cfg.g_w, 5) *
           ALIGN_POWER_OF_TWO_UNSIGNED(ctx->cfg.g_h, 5) * get_image_bps(img) / 8;
+#if UINT64_MAX > SIZE_MAX
+      if (uncompressed_frame_sz64 > SIZE_MAX) return AOM_CODEC_MEM_ERROR;
+#endif
+      const size_t uncompressed_frame_sz = (size_t)uncompressed_frame_sz64;
 
       // Due to the presence of no-show frames, the ctx->cx_data buffer holds
       // compressed data corresponding to multiple frames. As no-show frames are
@@ -3008,6 +3072,8 @@ static aom_codec_err_t encoder_encode(aom_codec_alg_priv_t *ctx,
       if (ppi->cpi->oxcf.kf_cfg.key_freq_max == 0 &&
           !ppi->cpi->oxcf.kf_cfg.fwd_kf_enabled)
         multiplier = 2;
+      if (uncompressed_frame_sz > SIZE_MAX / multiplier)
+        return AOM_CODEC_MEM_ERROR;
       size_t data_sz = uncompressed_frame_sz * multiplier;
       if (data_sz < kMinCompressedSize) data_sz = kMinCompressedSize;
       if (ctx->cx_data == NULL || ctx->cx_data_sz < data_sz) {
@@ -3369,9 +3435,10 @@ static aom_codec_err_t encoder_encode(aom_codec_alg_priv_t *ctx,
 
         const size_t move_offset = obu_header_size + length_field_size;
         memmove(ctx->cx_data + move_offset, ctx->cx_data, cpi_data.frame_size);
-        obu_header_size =
-            av1_write_obu_header(&ppi->level_params, &cpi->frame_header_count,
-                                 OBU_TEMPORAL_DELIMITER, 0, ctx->cx_data);
+        obu_header_size = av1_write_obu_header(
+            &ppi->level_params, &cpi->frame_header_count,
+            OBU_TEMPORAL_DELIMITER,
+            ppi->seq_params.has_nonzero_operating_point_idc, 0, ctx->cx_data);
 
         // OBUs are preceded/succeeded by an unsigned leb128 coded integer.
         if (av1_write_uleb_obu_size(obu_header_size, obu_payload_size,
@@ -3931,9 +3998,22 @@ static aom_codec_err_t encoder_set_option(aom_codec_alg_priv_t *ctx,
   } else if (arg_match_helper(&arg, &g_av1_codec_arg_defs.tile_cols, argv,
                               err_string)) {
     extra_cfg.tile_columns = arg_parse_uint_helper(&arg, err_string);
+    if (extra_cfg.auto_tiles) {
+      snprintf(err_string, ARG_ERR_MSG_MAX_LEN,
+               "Cannot set tile-cols because auto-tiles is already set.");
+      err = AOM_CODEC_INVALID_PARAM;
+    }
   } else if (arg_match_helper(&arg, &g_av1_codec_arg_defs.tile_rows, argv,
                               err_string)) {
     extra_cfg.tile_rows = arg_parse_uint_helper(&arg, err_string);
+    if (extra_cfg.auto_tiles) {
+      snprintf(err_string, ARG_ERR_MSG_MAX_LEN,
+               "Cannot set tile-rows because auto-tiles is already set.");
+      err = AOM_CODEC_INVALID_PARAM;
+    }
+  } else if (arg_match_helper(&arg, &g_av1_codec_arg_defs.auto_tiles, argv,
+                              err_string)) {
+    extra_cfg.auto_tiles = arg_parse_uint_helper(&arg, err_string);
   } else if (arg_match_helper(&arg, &g_av1_codec_arg_defs.enable_tpl_model,
                               argv, err_string)) {
     extra_cfg.enable_tpl_model = arg_parse_uint_helper(&arg, err_string);
@@ -4373,6 +4453,15 @@ static aom_codec_err_t ctrl_get_luma_cdef_strength(aom_codec_alg_priv_t *ctx,
   return AOM_CODEC_OK;
 }
 
+static aom_codec_err_t ctrl_get_high_motion_content_screen_rtc(
+    aom_codec_alg_priv_t *ctx, va_list args) {
+  int *arg = va_arg(args, int *);
+  AV1_COMP *const cpi = ctx->ppi->cpi;
+  if (arg == NULL) return AOM_CODEC_INVALID_PARAM;
+  *arg = cpi->rc.high_motion_content_screen_rtc;
+  return AOM_CODEC_OK;
+}
+
 static aom_codec_ctrl_fn_map_t encoder_ctrl_maps[] = {
   { AV1_COPY_REFERENCE, ctrl_copy_reference },
   { AOME_USE_REFERENCE, ctrl_use_reference },
@@ -4519,6 +4608,8 @@ static aom_codec_ctrl_fn_map_t encoder_ctrl_maps[] = {
   { AV1E_SET_BITRATE_ONE_PASS_CBR, ctrl_set_bitrate_one_pass_cbr },
   { AV1E_SET_MAX_CONSEC_FRAME_DROP_CBR, ctrl_set_max_consec_frame_drop_cbr },
   { AV1E_SET_SVC_FRAME_DROP_MODE, ctrl_set_svc_frame_drop_mode },
+  { AV1E_SET_AUTO_TILES, ctrl_set_auto_tiles },
+  { AV1E_SET_POSTENCODE_DROP_RTC, ctrl_set_postencode_drop_rtc },
 
   // Getters
   { AOME_GET_LAST_QUANTIZER, ctrl_get_quantizer },
@@ -4535,6 +4626,8 @@ static aom_codec_ctrl_fn_map_t encoder_ctrl_maps[] = {
   { AV1E_GET_TARGET_SEQ_LEVEL_IDX, ctrl_get_target_seq_level_idx },
   { AV1E_GET_NUM_OPERATING_POINTS, ctrl_get_num_operating_points },
   { AV1E_GET_LUMA_CDEF_STRENGTH, ctrl_get_luma_cdef_strength },
+  { AV1E_GET_HIGH_MOTION_CONTENT_SCREEN_RTC,
+    ctrl_get_high_motion_content_screen_rtc },
 
   CTRL_MAP_END,
 };

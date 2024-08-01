@@ -233,7 +233,7 @@ function shouldHaveDOMCookieWithValue(name, expectedValue)
 function setCookieUsingWebSocketFromHost(host)
 {
     var promise = new Promise(resolve => {
-        var websocket = new WebSocket(`ws://${host}:8880/websocket/tests/hybi/cookie?set`);
+        var websocket = new WebSocket(`wss://${host}:9323/websocket/tests/hybi/cookie?set`);
         websocket.onclose = () => resolve();
     });
     return promise;

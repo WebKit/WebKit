@@ -67,7 +67,6 @@ if (rtc_include_tests) {
         "../../rtc_base/third_party/base64",
         "../../system_wrappers",
         "../../test:test_support",
-        "../../test:video_test_support",
       ]
       sources += [
         "screen_capturer_integration_test.cc",
@@ -236,8 +235,8 @@ if (rtc_include_tests) {
       "../../rtc_base:checks",
       "../../rtc_base:logging",
       "../../system_wrappers",
+      "//third_party/abseil-cpp/absl/strings:string_view",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 
     if (is_posix || is_fuchsia) {
       sources += [
@@ -277,7 +276,12 @@ if ((is_linux || is_chromeos) && rtc_use_pipewire) {
 rtc_library("desktop_capture") {
   visibility = [ "*" ]
   defines = []
-  deps = []
+  deps = [
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
   public_configs = [ ":x11_config" ]
   sources = [
     "blank_detector_desktop_capturer_wrapper.cc",
@@ -528,12 +532,6 @@ rtc_library("desktop_capture") {
     ]
   }
 
-  absl_deps = [
-    "//third_party/abseil-cpp/absl/memory",
-    "//third_party/abseil-cpp/absl/strings",
-    "//third_party/abseil-cpp/absl/types:optional",
-  ]
-
   if (rtc_use_x11_extensions) {
     deps += [ "../../rtc_base:sanitizer" ]
   }
@@ -629,6 +627,8 @@ if (is_mac) {
       "mac/desktop_frame_provider.mm",
       "mac/screen_capturer_mac.h",
       "mac/screen_capturer_mac.mm",
+      "mac/screen_capturer_sck.h",
+      "mac/screen_capturer_sck.mm",
       "mac/window_list_utils.h",
       "mouse_cursor.h",
       "mouse_cursor_monitor.h",
@@ -658,9 +658,11 @@ if (is_mac) {
     ]
     frameworks = [
       "AppKit.framework",
+      "CoreVideo.framework",
       "IOKit.framework",
       "IOSurface.framework",
     ]
+    weak_frameworks = [ "ScreenCaptureKit.framework" ]  # macOS 12.3
   }
 }
 

@@ -82,6 +82,7 @@ const NetworkStatistics kNetworkStats = {
     /*removedSamplesForAcceleration=*/321,
     /*fecPacketsReceived=*/123,
     /*fecPacketsDiscarded=*/101,
+    /*totalProcessingDelayMs=*/154,
     /*packetsDiscarded=*/989,
     /*currentExpandRate=*/789,
     /*currentSpeechExpandRate=*/12,
@@ -120,6 +121,7 @@ struct ConfigHelper {
 
     channel_receive_ = new ::testing::StrictMock<MockChannelReceive>();
     EXPECT_CALL(*channel_receive_, SetNACKStatus(true, 15)).Times(1);
+    EXPECT_CALL(*channel_receive_, SetRtcpMode(_)).Times(1);
     EXPECT_CALL(*channel_receive_,
                 RegisterReceiverCongestionControlObjects(&packet_router_))
         .Times(1);
@@ -208,9 +210,10 @@ TEST(AudioReceiveStreamTest, ConfigToString) {
   AudioReceiveStreamInterface::Config config;
   config.rtp.remote_ssrc = kRemoteSsrc;
   config.rtp.local_ssrc = kLocalSsrc;
+  config.rtp.rtcp_mode = RtcpMode::kOff;
   EXPECT_EQ(
       "{rtp: {remote_ssrc: 1234, local_ssrc: 5678, nack: "
-      "{rtp_history_ms: 0}}, "
+      "{rtp_history_ms: 0}, rtcp: off}, "
       "rtcp_send_transport: null}",
       config.ToString());
 }
@@ -285,6 +288,9 @@ TEST(AudioReceiveStreamTest, GetStats) {
               stats.removed_samples_for_acceleration);
     EXPECT_EQ(kNetworkStats.fecPacketsReceived, stats.fec_packets_received);
     EXPECT_EQ(kNetworkStats.fecPacketsDiscarded, stats.fec_packets_discarded);
+    EXPECT_EQ(static_cast<double>(kNetworkStats.totalProcessingDelayUs) /
+                  static_cast<double>(rtc::kNumMicrosecsPerSec),
+              stats.total_processing_delay_seconds);
     EXPECT_EQ(kNetworkStats.packetsDiscarded, stats.packets_discarded);
     EXPECT_EQ(Q14ToFloat(kNetworkStats.currentExpandRate), stats.expand_rate);
     EXPECT_EQ(Q14ToFloat(kNetworkStats.currentSpeechExpandRate),

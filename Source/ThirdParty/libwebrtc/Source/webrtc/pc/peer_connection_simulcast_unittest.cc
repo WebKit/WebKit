@@ -12,7 +12,6 @@
 #include <iterator>
 #include <map>
 #include <memory>
-#include <ostream>  // no-presubmit-check TODO(webrtc:8982)
 #include <string>
 #include <utility>
 #include <vector>
@@ -88,19 +87,6 @@ using cricket::RidDescription;
 using cricket::SimulcastDescription;
 using cricket::SimulcastLayer;
 using cricket::StreamParams;
-
-namespace cricket {
-
-std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
-    std::ostream& os,      // no-presubmit-check TODO(webrtc:8982)
-    const SimulcastLayer& layer) {
-  if (layer.is_paused) {
-    os << "~";
-  }
-  return os << layer.rid;
-}
-
-}  // namespace cricket
 
 namespace webrtc {
 

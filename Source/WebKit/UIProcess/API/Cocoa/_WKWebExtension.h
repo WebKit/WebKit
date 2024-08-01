@@ -82,14 +82,14 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @param appExtensionBundle The bundle to use for the new web extension.
  @param completionHandler A block to be called with an initialized web extension, or \c nil if the object could not be initialized due to an error.
  */
-+ (void)extensionWithAppExtensionBundle:(NSBundle *)appExtensionBundle completionHandler:(void (^)(_WKWebExtension * _Nullable extension, NSError * _Nullable error))completionHandler WK_SWIFT_ASYNC_THROWS_ON_FALSE(1);
++ (void)extensionWithAppExtensionBundle:(NSBundle *)appExtensionBundle completionHandler:(void (^)(_WKWebExtension * WK_NULLABLE_RESULT extension, NSError * _Nullable error))completionHandler WK_SWIFT_ASYNC_THROWS_ON_FALSE(1);
 
 /*!
  @abstract Returns a web extension initialized with a specified resource base URL.
  @param resourceBaseURL The directory URL to use for the new web extension.
  @param completionHandler A block to be called with an initialized web extension, or \c nil if the object could not be initialized due to an error.
  */
-+ (void)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL completionHandler:(void (^)(_WKWebExtension * _Nullable extension, NSError * _Nullable error))completionHandler WK_SWIFT_ASYNC_THROWS_ON_FALSE(1);
++ (void)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL completionHandler:(void (^)(_WKWebExtension * WK_NULLABLE_RESULT extension, NSError * _Nullable error))completionHandler WK_SWIFT_ASYNC_THROWS_ON_FALSE(1);
 
 /*!
  @abstract The active errors for the extension.

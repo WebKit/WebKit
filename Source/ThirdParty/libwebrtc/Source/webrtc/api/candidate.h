@@ -11,13 +11,11 @@
 #ifndef API_CANDIDATE_H_
 #define API_CANDIDATE_H_
 
-#include <limits.h>
+#include <stddef.h>
 #include <stdint.h>
 
-#include <algorithm>
 #include <string>
 
-#include "absl/base/attributes.h"
 #include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/network_constants.h"

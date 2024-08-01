@@ -99,7 +99,11 @@ if (ENABLE_WEBGL)
 endif ()
 
 if (USE_SKIA)
-    list(APPEND WebCore_SOURCES platform/graphics/egl/GLFence.cpp)
+    list(APPEND WebCore_SOURCES
+        platform/graphics/egl/GLFence.cpp
+        platform/graphics/egl/GLFenceEGL.cpp
+        platform/graphics/egl/GLFenceGL.cpp
+    )
 endif ()
 
 # Find the extras needed to copy for EGL besides the libraries

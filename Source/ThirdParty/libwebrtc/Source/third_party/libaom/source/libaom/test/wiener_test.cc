@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -158,11 +158,11 @@ static void compute_stats_win_opt_c(int wiener_win, const uint8_t *dgd,
   }
 }
 
-void compute_stats_opt_c(int wiener_win, const uint8_t *dgd, const uint8_t *src,
-                         int16_t *d, int16_t *s, int h_start, int h_end,
-                         int v_start, int v_end, int dgd_stride, int src_stride,
-                         int64_t *M, int64_t *H,
-                         int use_downsampled_wiener_stats) {
+static void compute_stats_opt_c(int wiener_win, const uint8_t *dgd,
+                                const uint8_t *src, int16_t *d, int16_t *s,
+                                int h_start, int h_end, int v_start, int v_end,
+                                int dgd_stride, int src_stride, int64_t *M,
+                                int64_t *H, int use_downsampled_wiener_stats) {
   if (wiener_win == WIENER_WIN || wiener_win == WIENER_WIN_CHROMA) {
     compute_stats_win_opt_c(wiener_win, dgd, src, d, s, h_start, h_end, v_start,
                             v_end, dgd_stride, src_stride, M, H,
@@ -519,11 +519,12 @@ static void compute_stats_highbd_win_opt_c(int wiener_win, const uint8_t *dgd8,
   }
 }
 
-void compute_stats_highbd_opt_c(int wiener_win, const uint8_t *dgd,
-                                const uint8_t *src, int16_t *d, int16_t *s,
-                                int h_start, int h_end, int v_start, int v_end,
-                                int dgd_stride, int src_stride, int64_t *M,
-                                int64_t *H, aom_bit_depth_t bit_depth) {
+static void compute_stats_highbd_opt_c(int wiener_win, const uint8_t *dgd,
+                                       const uint8_t *src, int16_t *d,
+                                       int16_t *s, int h_start, int h_end,
+                                       int v_start, int v_end, int dgd_stride,
+                                       int src_stride, int64_t *M, int64_t *H,
+                                       aom_bit_depth_t bit_depth) {
   if (wiener_win == WIENER_WIN || wiener_win == WIENER_WIN_CHROMA) {
     compute_stats_highbd_win_opt_c(wiener_win, dgd, src, h_start, h_end,
                                    v_start, v_end, dgd_stride, src_stride, M, H,

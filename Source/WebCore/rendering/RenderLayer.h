@@ -1185,6 +1185,10 @@ private:
 
     void updatePagination();
 
+    void setWasOmittedFromZOrderTree();
+    void setWasIncludedInZOrderTree() { m_wasOmittedFromZOrderTree = false; }
+    void removeSelfAndDescendantsFromCompositor();
+
     void setHasCompositingDescendant(bool b)  { m_hasCompositingDescendant = b; }
     void setHasCompositedNonContainedDescendants(bool value) { m_hasCompositedNonContainedDescendants = value; }
 
@@ -1275,6 +1279,8 @@ private:
     bool m_intrinsicallyComposited : 1;
     bool m_hasIntrinsicallyCompositedDescendants : 1;
     bool m_hasIntrinsicallyCompositedDescendantsStatusDirty : 1;
+
+    bool m_wasOmittedFromZOrderTree : 1 { false };
 
     RenderLayerModelObject& m_renderer;
 

@@ -10,6 +10,11 @@
 
 #include "api/rtc_event_log/rtc_event_log.h"
 
+#include <cstdint>
+#include <memory>
+
+#include "api/rtc_event_log_output.h"
+
 namespace webrtc {
 
 bool RtcEventLogNull::StartLogging(

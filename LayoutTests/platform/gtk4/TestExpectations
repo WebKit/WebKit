@@ -16,24 +16,33 @@
 #       it picks as the valid rule the last one matching.
 #////////////////////////////////////////////////////////////////////////////////////////
 
+# These two tests print console messages in GTK4.
+http/tests/xmlhttprequest/response-access-on-error.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/css/css-masking/inheritance.sub.html [ DumpJSConsoleLogInStdErr ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See below where to put expected failures.
 #////////////////////////////////////////////////////////////////////////////////////////
 
-# SOUP
-webkit.org/b/223236 http/tests/xmlhttprequest/loadstart-event-init.html [ Crash ]
-webkit.org/b/223236 http/tests/xmlhttprequest/redirect-cross-origin-post-sync.html [ Crash ]
-webkit.org/b/223236 http/tests/xmlhttprequest/redirect-cross-origin-post.html [ Crash ]
-webkit.org/b/223236 http/tests/xmlhttprequest/response-access-on-error.html [ Crash ]
-webkit.org/b/223236 http/tests/xmlhttprequest/upload-onabort-progressevent-attributes.html [ Crash ]
-webkit.org/b/223236 http/tests/xmlhttprequest/upload-onload-event.html [ Crash ]
-webkit.org/b/223236 http/tests/xmlhttprequest/upload-onload-progressevent-attributes.html [ Crash ]
-webkit.org/b/223236 http/tests/xmlhttprequest/upload-onloadend-event-after-abort.html [ Crash ]
-webkit.org/b/223236 http/tests/xmlhttprequest/upload-onloadend-event-after-load.html [ Crash ]
-webkit.org/b/223236 http/tests/xmlhttprequest/upload-onloadstart-event.html [ Crash ]
-webkit.org/b/223236 http/tests/xmlhttprequest/upload-onprogress-event.html [ Crash ]
-webkit.org/b/223236 http/tests/xmlhttprequest/upload-progress-events.html [ Crash ]
-webkit.org/b/223236 http/tests/xmlhttprequest/xmlhttprequest-sync-no-progress-events.html [ Crash ]
+webkit.org/b/277166 fast/dom/Window/window-focus-self.html [ Failure ]
+webkit.org/b/277166 fast/dom/Window/window-resize-and-move-arguments.html [ Failure ]
+webkit.org/b/277166 fast/dom/Window/window-resize.html [ Failure ]
+webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-left.html [ Failure ]
+webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-screenx.html [ Failure ]
+webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-top.html [ Failure ]
+webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-screenx-screeny.html [ Failure ]
+webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-top-left.html [ Failure ]
+
+webkit.org/b/277399 fast/text/hyphenate-locale.html [ Failure ]
+webkit.org/b/277401 editing/pasteboard/data-transfer-set-data-sanitize-url-when-copying-in-null-origin.html [ Failure ]
+webkit.org/b/277402 fast/events/context-activated-by-key-event.html [ Failure ]
+webkit.org/b/277403 fast/events/drag-parent-node.html [ Failure ]
+webkit.org/b/277405 fast/events/dropzone-005.html [ Failure ]
+webkit.org/b/277414 imported/w3c/web-platform-tests/html/interaction/focus/document-level-focus-apis/document-has-system-focus.html [ Failure ]
+
+webkit.org/b/277426 editing/async-clipboard/clipboard-read-text-same-origin.html [ Skip ] # Timeout
+
+webkit.org/b/277427 fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html [ Skip ] # Timeout
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Triaged Expectations

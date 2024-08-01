@@ -923,6 +923,12 @@ func (d *delocation) isRIPRelative(node *node32) bool {
 }
 
 func (d *delocation) processIntelInstruction(statement, instruction *node32) (*node32, error) {
+	var prefix string
+	if instruction.pegRule == ruleInstructionPrefix {
+		prefix = d.contents(instruction)
+		instruction = skipWS(instruction.next)
+	}
+
 	assertNodeType(instruction, ruleInstructionName)
 	instructionName := d.contents(instruction)
 
@@ -1240,6 +1246,9 @@ Args:
 	if changed {
 		d.writeCommentedNode(statement)
 		replacement := "\t" + instructionName + "\t" + strings.Join(args, ", ") + "\n"
+		if len(prefix) != 0 {
+			replacement = "\t" + prefix + replacement
+		}
 		wrappers.do(func() {
 			d.output.WriteString(replacement)
 		})

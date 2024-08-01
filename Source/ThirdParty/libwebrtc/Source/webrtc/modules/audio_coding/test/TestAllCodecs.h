@@ -13,6 +13,7 @@
 
 #include <memory>
 
+#include "api/environment/environment.h"
 #include "modules/audio_coding/acm2/acm_receiver.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/audio_coding/test/PCMFile.h"
@@ -68,6 +69,7 @@ class TestAllCodecs {
   void Run(TestPack* channel);
   void OpenOutFile(int test_number);
 
+  const Environment env_;
   std::unique_ptr<AudioCodingModule> acm_a_;
   std::unique_ptr<acm2::AcmReceiver> acm_b_;
   TestPack* channel_a_to_b_;

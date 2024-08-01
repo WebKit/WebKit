@@ -626,6 +626,7 @@ set(webrtc_SOURCES
     Source/webrtc/api/field_trials.cc
     Source/webrtc/api/field_trials_registry.cc
     Source/webrtc/api/frame_transformer_factory.cc
+    Source/webrtc/api/frame_transformer_interface.cc
     Source/webrtc/api/ice_transport_factory.cc
     Source/webrtc/api/jsep.cc
     Source/webrtc/api/jsep_ice_candidate.cc
@@ -1276,15 +1277,16 @@ set(webrtc_SOURCES
     Source/webrtc/modules/pacing/task_queue_paced_sender.cc
     Source/webrtc/modules/remote_bitrate_estimator/aimd_rate_control.cc
     Source/webrtc/modules/remote_bitrate_estimator/bwe_defines.cc
+    Source/webrtc/modules/remote_bitrate_estimator/congestion_control_feedback_generator.cc
     Source/webrtc/modules/remote_bitrate_estimator/inter_arrival.cc
     Source/webrtc/modules/remote_bitrate_estimator/overuse_detector.cc
     Source/webrtc/modules/remote_bitrate_estimator/overuse_estimator.cc
     Source/webrtc/modules/remote_bitrate_estimator/packet_arrival_map.cc
     Source/webrtc/modules/remote_bitrate_estimator/remote_bitrate_estimator_abs_send_time.cc
     Source/webrtc/modules/remote_bitrate_estimator/remote_bitrate_estimator_single_stream.cc
-    Source/webrtc/modules/remote_bitrate_estimator/remote_estimator_proxy.cc
     Source/webrtc/modules/remote_bitrate_estimator/tools/bwe_rtp.cc
     Source/webrtc/modules/remote_bitrate_estimator/tools/rtp_to_text.cc
+    Source/webrtc/modules/remote_bitrate_estimator/transport_sequence_number_feedback_generator.cc
     Source/webrtc/modules/rtp_rtcp/include/report_block_data.cc
     Source/webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.cc
     Source/webrtc/modules/rtp_rtcp/source/absolute_capture_time_interpolator.cc
@@ -1303,6 +1305,7 @@ set(webrtc_SOURCES
     Source/webrtc/modules/rtp_rtcp/source/forward_error_correction_internal.cc
     Source/webrtc/modules/rtp_rtcp/source/frame_object.cc
     Source/webrtc/modules/rtp_rtcp/source/leb128.cc
+    Source/webrtc/modules/rtp_rtcp/source/ntp_time_util.cc
     Source/webrtc/modules/rtp_rtcp/source/packet_loss_stats.cc
     Source/webrtc/modules/rtp_rtcp/source/packet_sequencer.cc
     Source/webrtc/modules/rtp_rtcp/source/receive_statistics_impl.cc
@@ -1374,7 +1377,6 @@ set(webrtc_SOURCES
     Source/webrtc/modules/rtp_rtcp/source/rtp_video_layers_allocation_extension.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_video_stream_receiver_frame_transformer_delegate.cc
     Source/webrtc/modules/rtp_rtcp/source/source_tracker.cc
-    Source/webrtc/modules/rtp_rtcp/source/time_util.cc
     Source/webrtc/modules/rtp_rtcp/source/tmmbr_help.cc
     Source/webrtc/modules/rtp_rtcp/source/ulpfec_generator.cc
     Source/webrtc/modules/rtp_rtcp/source/ulpfec_header_reader_writer.cc
@@ -1653,7 +1655,7 @@ set(webrtc_SOURCES
     Source/webrtc/rtc_base/copy_on_write_buffer.cc
     Source/webrtc/rtc_base/cpu_time.cc
     Source/webrtc/rtc_base/crc32.cc
-    Source/webrtc/rtc_base/crypt_string.cc
+    Source/webrtc/rtc_base/crypto_random.cc
     Source/webrtc/rtc_base/data_rate_limiter.cc
     Source/webrtc/rtc_base/deprecated/recursive_critical_section.cc
     Source/webrtc/rtc_base/event.cc
@@ -1676,7 +1678,6 @@ set(webrtc_SOURCES
     Source/webrtc/rtc_base/fake_ssl_identity.cc
     Source/webrtc/rtc_base/file_rotating_stream.cc
     Source/webrtc/rtc_base/firewall_socket_server.cc
-    Source/webrtc/rtc_base/helpers.cc
     Source/webrtc/rtc_base/ifaddrs_converter.cc
     Source/webrtc/rtc_base/internal/default_socket_server.cc
     Source/webrtc/rtc_base/ip_address.cc
@@ -1796,7 +1797,10 @@ set(webrtc_SOURCES
     Source/webrtc/video/frame_dumping_decoder.cc
     Source/webrtc/video/frame_dumping_encoder.cc
     Source/webrtc/video/frame_encode_metadata_writer.cc
+    Source/webrtc/video/quality_convergence_controller.cc
+    Source/webrtc/video/quality_convergence_monitor.cc
     Source/webrtc/video/quality_limitation_reason_tracker.cc
+    Source/webrtc/video/rate_utilization_tracker.cc
     Source/webrtc/video/receive_statistics_proxy.cc
     Source/webrtc/video/render/incoming_video_stream.cc
     Source/webrtc/video/render/video_render_frames.cc

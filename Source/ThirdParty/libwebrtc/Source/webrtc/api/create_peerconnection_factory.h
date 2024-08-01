@@ -10,6 +10,7 @@
 
 #ifndef API_CREATE_PEERCONNECTION_FACTORY_H_
 #define API_CREATE_PEERCONNECTION_FACTORY_H_
+// IWYU pragma: no_include "rtc_base/thread.h"
 
 #include <memory>
 
@@ -29,11 +30,9 @@ namespace rtc {
 // TODO(bugs.webrtc.org/9987): Move rtc::Thread to api/ or expose a better
 // type. At the moment, rtc::Thread is not part of api/ so it cannot be
 // included in order to avoid to leak internal types.
-class Thread;
+class Thread;  // IWYU pragma: keep
 }  // namespace rtc
-
 namespace webrtc {
-
 class AudioFrameProcessor;
 
 // Create a new instance of PeerConnectionFactoryInterface with optional video

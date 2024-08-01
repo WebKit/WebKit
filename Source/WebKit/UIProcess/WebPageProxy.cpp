@@ -1178,8 +1178,8 @@ void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const S
 
 bool WebPageProxy::hasSameGPUAndNetworkProcessPreferencesAs(const API::PageConfiguration& configuration) const
 {
-    auto sharedPreferences = sharedPreferencesForWebProcess(preferences());
-    return !updateSharedPreferencesForWebProcess(sharedPreferences, configuration.preferences());
+    auto sharedPreferences = sharedPreferencesForWebProcess(preferences().store());
+    return !updateSharedPreferencesForWebProcess(sharedPreferences, configuration.preferences().store());
 }
 
 void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, ProcessLaunchReason reason)
@@ -5888,7 +5888,7 @@ void WebPageProxy::preferencesDidChange()
     // Preferences need to be updated during synchronous printing to make "print backgrounds" preference work when toggled from a print dialog checkbox.
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         std::optional<uint64_t> sharedPreferencesVersion;
-        if (auto sharedPreferences = webProcess.updateSharedPreferencesForWebProcess(preferences())) {
+        if (auto sharedPreferences = webProcess.updateSharedPreferencesForWebProcess(preferences().store())) {
             sharedPreferencesVersion = sharedPreferences->version;
             if (RefPtr networkProcess = websiteDataStore().networkProcessIfExists()) {
                 networkProcess->sharedPreferencesForWebProcessDidChange(webProcess, WTFMove(*sharedPreferences), [weakWebProcess = WeakPtr { webProcess }, syncedVersion = sharedPreferences->version]() {
@@ -6547,8 +6547,6 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     if (frame->isMainFrame() && preferences().textExtractionEnabled())
         prepareTextExtractionSupportIfNeeded();
 #endif
-
-    protectedPageClient->hasActiveNowPlayingSessionChanged(false);
 }
 
 void WebPageProxy::didFinishDocumentLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, uint64_t navigationID, const UserData& userData)
@@ -6810,13 +6808,15 @@ void WebPageProxy::didSameDocumentNavigationForFrameViaJSHistoryAPI(IPC::Connect
 
 void WebPageProxy::didChangeMainDocument(FrameIdentifier frameID)
 {
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+
 #if ENABLE(MEDIA_STREAM)
     if (m_userMediaPermissionRequestManager) {
         m_userMediaPermissionRequestManager->resetAccess(frameID);
 
 #if ENABLE(GPU_PROCESS)
         if (RefPtr gpuProcess = m_legacyMainFrameProcess->processPool().gpuProcess()) {
-            if (RefPtr frame = WebFrameProxy::webFrame(frameID))
+            if (frame)
                 gpuProcess->updateCaptureOrigin(SecurityOriginData::fromURLWithoutStrictOpaqueness(frame->url()), m_legacyMainFrameProcess->coreProcessIdentifier());
         }
 #endif
@@ -6826,6 +6826,9 @@ void WebPageProxy::didChangeMainDocument(FrameIdentifier frameID)
     m_isQuotaIncreaseDenied = false;
 
     m_speechRecognitionPermissionManager = nullptr;
+
+    if (frame && frame->isMainFrame())
+        Ref { pageClient() }->hasActiveNowPlayingSessionChanged(false);
 }
 
 void WebPageProxy::viewIsBecomingVisible()
@@ -10613,6 +10616,11 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.preferredBufferFormats = preferredBufferFormats();
 #endif
 #endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    parameters.useExplicitSync = useExplicitSync();
+#endif
+
     return parameters;
 }
 

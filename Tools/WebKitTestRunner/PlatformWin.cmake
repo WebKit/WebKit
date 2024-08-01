@@ -5,6 +5,7 @@ list(APPEND WebKitTestRunner_SOURCES
     win/PlatformWebViewWin.cpp
     win/TestControllerWin.cpp
     win/UIScriptControllerWin.cpp
+    win/WebKitTestRunner.exe.manifest
     win/main.cpp
 )
 

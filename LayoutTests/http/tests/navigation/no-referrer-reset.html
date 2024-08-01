@@ -6,6 +6,7 @@ This tests whether referrer information gets properly set and reset when "norefe
 <br/>
 <a id="link" href="resources/no-referrer-reset-helper.py" target="_blank" rel="opener">Start reset test</a>
 <script>
+onload = async () => {
     window.name = "consoleWindow";
     window.noreferrerStepDone = false;
     if (window.testRunner) {
@@ -14,9 +15,10 @@ This tests whether referrer information gets properly set and reset when "norefe
     }
 
     var target = document.getElementById("link");
-    eventSender.mouseMoveTo(target.offsetLeft + 2, target.offsetTop + 2);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(target.offsetLeft + 2, target.offsetTop + 2);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+}
     
 function log(msg)
 {

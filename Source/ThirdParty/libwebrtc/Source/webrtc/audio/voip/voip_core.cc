@@ -37,16 +37,16 @@ static constexpr int kMaxChannelId = 100000;
 
 }  // namespace
 
-VoipCore::VoipCore(rtc::scoped_refptr<AudioEncoderFactory> encoder_factory,
+VoipCore::VoipCore(const Environment& env,
+                   rtc::scoped_refptr<AudioEncoderFactory> encoder_factory,
                    rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
-                   std::unique_ptr<TaskQueueFactory> task_queue_factory,
                    rtc::scoped_refptr<AudioDeviceModule> audio_device_module,
-                   rtc::scoped_refptr<AudioProcessing> audio_processing) {
-  encoder_factory_ = std::move(encoder_factory);
-  decoder_factory_ = std::move(decoder_factory);
-  task_queue_factory_ = std::move(task_queue_factory);
-  audio_device_module_ = std::move(audio_device_module);
-  audio_processing_ = std::move(audio_processing);
+                   rtc::scoped_refptr<AudioProcessing> audio_processing)
+    : env_(env),
+      encoder_factory_(std::move(encoder_factory)),
+      decoder_factory_(std::move(decoder_factory)),
+      audio_processing_(std::move(audio_processing)),
+      audio_device_module_(std::move(audio_device_module)) {
   audio_mixer_ = AudioMixerImpl::Create();
 
   // AudioTransportImpl depends on audio mixer and audio processing instances.
@@ -133,7 +133,7 @@ ChannelId VoipCore::CreateChannel(Transport* transport,
 
   rtc::scoped_refptr<AudioChannel> channel =
       rtc::make_ref_counted<AudioChannel>(transport, local_ssrc.value(),
-                                          task_queue_factory_.get(),
+                                          &env_.task_queue_factory(),
                                           audio_mixer_.get(), decoder_factory_);
 
   {
@@ -380,8 +380,8 @@ VoipResult VoipCore::SetSendCodec(ChannelId channel_id,
     return VoipResult::kInvalidArgument;
   }
 
-  auto encoder = encoder_factory_->MakeAudioEncoder(
-      payload_type, encoder_format, absl::nullopt);
+  auto encoder = encoder_factory_->Create(env_, encoder_format,
+                                          {.payload_type = payload_type});
   channel->SetEncoder(payload_type, encoder_format, std::move(encoder));
 
   return VoipResult::kOk;

@@ -19,7 +19,7 @@ function log(text)
 <div id="console"></div>
 <script language="JavaScript"> 
     var e = document.getElementById("imageSlow");
-    function runTest() {
+    async function runTest() {
         readyState = document.readyState;
         if (readyState == 'complete') {
             log("Success")
@@ -28,10 +28,10 @@ function log(text)
             x = e.offsetLeft + e.offsetWidth / 2;
             y = e.offsetTop + e.offsetHeight / 2;
     
-            eventSender.mouseMoveTo(x, y);
-            eventSender.mouseDown();    
-            eventSender.mouseMoveTo(x + 100, y + 100);
-            eventSender.mouseUp();
+            await eventSender.asyncMouseMoveTo(x, y);
+            await eventSender.asyncMouseDown();    
+            await eventSender.asyncMouseMoveTo(x + 100, y + 100);
+            await eventSender.asyncMouseUp();
             setTimeout("runTest()", 50);
         }
     }

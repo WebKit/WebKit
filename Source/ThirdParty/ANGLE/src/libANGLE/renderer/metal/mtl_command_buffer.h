@@ -96,7 +96,7 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
     AutoObjCPtr<id<MTLCommandBuffer>> makeMetalCommandBuffer(uint64_t *queueSerialOut);
     void onCommandBufferCommitted(id<MTLCommandBuffer> buf, uint64_t serial);
 
-    uint64_t getNextRenderEncoderSerial();
+    uint64_t getNextRenderPassEncoderSerial();
 
     uint64_t allocateTimeElapsedEntry();
     bool deleteTimeElapsedEntry(uint64_t id);
@@ -641,7 +641,7 @@ class RenderCommandEncoder final : public CommandEncoder
     RenderCommandEncoderStates mStateCache = {};
 
     bool mPipelineStateSet = false;
-    const uint64_t mSerial = 0;
+    uint64_t mSerial       = 0;
 };
 
 class BlitCommandEncoder final : public CommandEncoder

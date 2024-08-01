@@ -113,12 +113,6 @@ TEST(GCMTest, TestVectors) {
   });
 }
 
-TEST(GCMTest, ByteSwap) {
-  EXPECT_EQ(0x04030201u, CRYPTO_bswap4(0x01020304u));
-  EXPECT_EQ(UINT64_C(0x0807060504030201),
-            CRYPTO_bswap8(UINT64_C(0x0102030405060708)));
-}
-
 #if defined(SUPPORTS_ABI_TEST) && !defined(OPENSSL_NO_ASM)
 TEST(GCMTest, ABI) {
   static const uint64_t kH[2] = {

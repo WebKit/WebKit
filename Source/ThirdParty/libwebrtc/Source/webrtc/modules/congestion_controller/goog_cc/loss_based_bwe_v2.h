@@ -11,6 +11,8 @@
 #ifndef MODULES_CONGESTION_CONTROLLER_GOOG_CC_LOSS_BASED_BWE_V2_H_
 #define MODULES_CONGESTION_CONTROLLER_GOOG_CC_LOSS_BASED_BWE_V2_H_
 
+#include <cstdint>
+#include <unordered_map>
 #include <vector>
 
 #include "absl/types/optional.h"
@@ -147,9 +149,8 @@ class LossBasedBweV2 {
 
   struct PartialObservation {
     int num_packets = 0;
-    int num_lost_packets = 0;
+    std::unordered_map<int64_t, DataSize> lost_packets;
     DataSize size = DataSize::Zero();
-    DataSize lost_size = DataSize::Zero();
   };
 
   struct PaddingInfo {

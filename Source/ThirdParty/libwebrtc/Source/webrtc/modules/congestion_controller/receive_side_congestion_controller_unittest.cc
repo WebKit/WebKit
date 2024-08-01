@@ -11,17 +11,18 @@
 #include "modules/congestion_controller/include/receive_side_congestion_controller.h"
 
 #include "api/environment/environment_factory.h"
+#include "api/media_types.h"
 #include "api/test/network_emulation/create_cross_traffic.h"
 #include "api/test/network_emulation/cross_traffic.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
-#include "modules/pacing/packet_router.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "system_wrappers/include/clock.h"
+#include "test/explicit_key_value_config.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/scenario/scenario.h"
@@ -34,6 +35,7 @@ using ::testing::_;
 using ::testing::AtLeast;
 using ::testing::ElementsAre;
 using ::testing::MockFunction;
+using ::testing::SizeIs;
 
 constexpr DataRate kInitialBitrate = DataRate::BitsPerSec(60'000);
 
@@ -79,6 +81,76 @@ TEST(ReceiveSideCongestionControllerTest,
       remb_sender.AsStdFunction(), nullptr);
   EXPECT_CALL(remb_sender, Call(123, _));
   controller.SetMaxDesiredReceiveBitrate(DataRate::BitsPerSec(123));
+}
+
+TEST(ReceiveSideCongestionControllerTest, SendsRfc8888FeedbackIfForced) {
+  test::ExplicitKeyValueConfig field_trials(
+      "WebRTC-RFC8888CongestionControlFeedback/force_send:true/");
+  MockFunction<void(std::vector<std::unique_ptr<rtcp::RtcpPacket>>)>
+      rtcp_sender;
+  MockFunction<void(uint64_t, std::vector<uint32_t>)> remb_sender;
+  SimulatedClock clock(123456);
+  ReceiveSideCongestionController controller(
+      CreateEnvironment(&clock, &field_trials), rtcp_sender.AsStdFunction(),
+      remb_sender.AsStdFunction(), nullptr);
+
+  EXPECT_CALL(rtcp_sender, Call);
+  RtpPacketReceived packet;
+  packet.set_arrival_time(clock.CurrentTime());
+  controller.OnReceivedPacket(packet, MediaType::VIDEO);
+  TimeDelta next_process = controller.MaybeProcess();
+  clock.AdvanceTime(next_process);
+  next_process = controller.MaybeProcess();
+}
+
+TEST(ReceiveSideCongestionControllerTest, SendsRfc8888FeedbackIfEnabled) {
+  MockFunction<void(std::vector<std::unique_ptr<rtcp::RtcpPacket>>)>
+      rtcp_sender;
+  MockFunction<void(uint64_t, std::vector<uint32_t>)> remb_sender;
+  SimulatedClock clock(123456);
+  ReceiveSideCongestionController controller(
+      CreateEnvironment(&clock), rtcp_sender.AsStdFunction(),
+      remb_sender.AsStdFunction(), nullptr);
+  controller.EnablSendCongestionControlFeedbackAccordingToRfc8888();
+
+  EXPECT_CALL(rtcp_sender, Call)
+      .WillOnce(
+          [&](std::vector<std::unique_ptr<rtcp::RtcpPacket>> rtcp_packets) {
+            ASSERT_THAT(rtcp_packets, SizeIs(1));
+            rtc::Buffer buffer = rtcp_packets[0]->Build();
+            rtcp::CommonHeader header;
+            EXPECT_TRUE(header.Parse(buffer.data(), buffer.size()));
+            EXPECT_EQ(header.fmt(),
+                      rtcp::CongestionControlFeedback::kFeedbackMessageType);
+          });
+
+  RtpPacketReceived packet;
+  packet.set_arrival_time(clock.CurrentTime());
+  controller.OnReceivedPacket(packet, MediaType::VIDEO);
+  TimeDelta next_process = controller.MaybeProcess();
+  clock.AdvanceTime(next_process);
+  next_process = controller.MaybeProcess();
+}
+
+TEST(ReceiveSideCongestionControllerTest,
+     SendsNoFeedbackIfNotRfcRfc8888EnabledAndNoTransportFeedback) {
+  MockFunction<void(std::vector<std::unique_ptr<rtcp::RtcpPacket>>)>
+      rtcp_sender;
+  MockFunction<void(uint64_t, std::vector<uint32_t>)> remb_sender;
+  SimulatedClock clock(123456);
+  ReceiveSideCongestionController controller(
+      CreateEnvironment(&clock), rtcp_sender.AsStdFunction(),
+      remb_sender.AsStdFunction(), nullptr);
+
+  // No Transport feedback is sent because received packet does not have
+  // transport sequence number rtp header extension.
+  EXPECT_CALL(rtcp_sender, Call).Times(0);
+  RtpPacketReceived packet;
+  packet.set_arrival_time(clock.CurrentTime());
+  controller.OnReceivedPacket(packet, MediaType::VIDEO);
+  TimeDelta next_process = controller.MaybeProcess();
+  clock.AdvanceTime(next_process);
+  next_process = controller.MaybeProcess();
 }
 
 TEST(ReceiveSideCongestionControllerTest, ConvergesToCapacity) {

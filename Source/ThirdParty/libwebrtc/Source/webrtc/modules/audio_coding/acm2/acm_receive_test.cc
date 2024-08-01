@@ -122,7 +122,8 @@ void AcmReceiveTestOldApi::Run() {
     EXPECT_EQ(0, acm_receiver_->InsertPacket(
                      packet->header(),
                      rtc::ArrayView<const uint8_t>(
-                         packet->payload(), packet->payload_length_bytes())))
+                         packet->payload(), packet->payload_length_bytes()),
+                     clock_.CurrentTime()))
         << "Failure when inserting packet:" << std::endl
         << "  PT = " << static_cast<int>(packet->header().payloadType)
         << std::endl

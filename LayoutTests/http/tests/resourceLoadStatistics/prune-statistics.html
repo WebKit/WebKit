@@ -141,7 +141,7 @@
         testRunner.setStatisticsPrevalentResource(fillerUrl, true, function() {
             testRunner.setStatisticsHasHadUserInteraction(fillerUrl, true, async function () {
                 await testRunner.setStatisticsLastSeen(fillerUrl, newestTimestamp);
-                testRunner.statisticsProcessStatisticsAndDataRecords();
+                await testRunner.statisticsProcessStatisticsAndDataRecords();
             });
         });
     }

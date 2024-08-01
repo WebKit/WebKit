@@ -71,7 +71,7 @@ class PlatformDisplay {
     WTF_MAKE_NONCOPYABLE(PlatformDisplay); WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT static PlatformDisplay& sharedDisplay();
-    WEBCORE_EXPORT static PlatformDisplay& sharedDisplayForCompositing();
+    WEBCORE_EXPORT static void setSharedDisplay(std::unique_ptr<PlatformDisplay>&&);
     virtual ~PlatformDisplay();
 
     enum class Type {
@@ -102,10 +102,13 @@ public:
 
     struct EGLExtensions {
         bool KHR_image_base { false };
+        bool KHR_fence_sync { false };
         bool KHR_surfaceless_context { false };
+        bool KHR_wait_sync { false };
         bool EXT_image_dma_buf_import { false };
         bool EXT_image_dma_buf_import_modifiers { false };
         bool MESA_image_dma_buf_export { false };
+        bool ANDROID_native_fence_sync { false };
     };
     const EGLExtensions& eglExtensions() const;
 
@@ -148,17 +151,11 @@ public:
     const String& accessibilityBusAddress() const;
 #endif
 
-#if PLATFORM(WPE)
-    static void setUseDMABufForRendering(bool useDMABufForRendering) { s_useDMABufForRendering = useDMABufForRendering; }
-#endif
-
 protected:
     PlatformDisplay();
 #if PLATFORM(GTK)
     explicit PlatformDisplay(GdkDisplay*);
 #endif
-
-    static void setSharedDisplayForCompositing(PlatformDisplay&);
 
     virtual void initializeEGLDisplay();
 
@@ -223,10 +220,6 @@ private:
 
 #if USE(SKIA)
     ThreadSafeWeakHashSet<SkiaGLContext> m_skiaGLContexts;
-#endif
-
-#if PLATFORM(WPE)
-    static bool s_useDMABufForRendering;
 #endif
 };
 

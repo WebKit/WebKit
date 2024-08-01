@@ -326,7 +326,6 @@ auto Device::currentErrorScope(WGPUErrorFilter type) -> ErrorScope*
 void Device::generateAValidationError(String&& message)
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-generate-a-validation-error
-
     auto* scope = currentErrorScope(WGPUErrorFilter_Validation);
 
     if (scope) {

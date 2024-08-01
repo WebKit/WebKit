@@ -1,8 +1,16 @@
 diff --git a/doc/ExtensionSupport.md b/doc/ExtensionSupport.md
-index bb7e1359c7a48a1cd1001515eb046e5c33e922d7..1967ac6ae373966acef3963984d7e23bb1c8b8a9 100644
+index bb7e1359c7a48a1cd1001515eb046e5c33e922d7..dff8988c34fa21b0ebf378392ff3297e4cbf8467 100644
 --- a/doc/ExtensionSupport.md
 +++ b/doc/ExtensionSupport.md
-@@ -258,6 +258,7 @@ using data from registry_xml.py and gl.xml.
+@@ -221,6 +221,7 @@ using data from registry_xml.py and gl.xml.
+ | [GL_CHROMIUM_copy_compressed_texture](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/CHROMIUM_copy_compressed_texture.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+ | [GL_CHROMIUM_copy_texture](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/CHROMIUM_copy_texture.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+ | [GL_ANGLE_copy_texture_3d](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_copy_texture_3d.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
++| [GL_WEBKIT_explicit_resolve_target](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/WEBKIT_explicit_resolve_target.txt) |  |  |  |  |  |  |  |
+ | [GL_CHROMIUM_framebuffer_mixed_samples](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/CHROMIUM_framebuffer_mixed_samples.txt) |  |  |  |  |  |  |  |
+ | [GL_ANGLE_framebuffer_multisample](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_framebuffer_multisample.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+ | [GL_ANGLE_get_image](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_get_image.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+@@ -258,6 +259,7 @@ using data from registry_xml.py and gl.xml.
  | [GL_ANGLE_texture_external_update](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_texture_external_update.txt) |  |  |  |  |  |  |  |
  | [GL_ANGLE_texture_multisample](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_texture_multisample.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
  | [GL_ANGLE_texture_rectangle](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_texture_rectangle.txt) |  |  |  |  |  |  |  |
@@ -11,13 +19,20 @@ index bb7e1359c7a48a1cd1001515eb046e5c33e922d7..1967ac6ae373966acef3963984d7e23b
  | [GL_ANGLE_webgl_compatibility](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_webgl_compatibility.txt) |  |  |  |  |  |  |  |
  | [GL_ANGLE_yuv_internal_format](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_yuv_internal_format.txt) | &#x2714; |  | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 diff --git a/include/GLES2/gl2ext_angle.h b/include/GLES2/gl2ext_angle.h
-index 7952b50a5b8637eaf53d7d9611225a12c80cdcdd..c96853fafa1f23467ef659546aa4279735d0288c 100644
+index 7952b50a5b8637eaf53d7d9611225a12c80cdcdd..24f072e9eddcb3c7ce480a4f83558d4a24e1740d 100644
 --- a/include/GLES2/gl2ext_angle.h
 +++ b/include/GLES2/gl2ext_angle.h
-@@ -736,4 +736,16 @@ GL_APICALL void GL_APIENTRY glLogicOpANGLE (GLenum);
+@@ -736,4 +736,23 @@ GL_APICALL void GL_APIENTRY glLogicOpANGLE (GLenum);
  #define GL_PROGRAM_BINARY_READY_ANGLE    0x96BE
  #endif /* GL_ANGLE_program_binary_readiness_query */
  
++#ifndef GL_WEBKIT_explicit_resolve_target
++typedef void (GL_APIENTRYP PFNGLFRAMEBUFFERRESOLVERENDERBUFFERWEBKITPROC) (GLenum, GLenum, GLenum, GLuint);
++#ifdef GL_GLEXT_PROTOTYPES
++GL_APICALL void GL_APIENTRY glFramebufferResolveRenderbufferWEBKIT(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
++#endif
++#endif /* GL_WEBKIT_explicit_resolve_target */
++
 +#ifndef GL_ANGLE_variable_rasterization_rate_metal
 +#define GL_ANGLE_variable_rasterization_rate_metal 1
 +
@@ -67,8 +82,22 @@ index 8aabccca1e1edee5fae5e28ff6bf9ab6f8967f73..bf2798455b282be6ff38a5f049e0a14a
          {
              "name": "allow_inline_const_vertex_data",
              "category": "Features",
+diff --git a/scripts/entry_point_packed_gl_enums.json b/scripts/entry_point_packed_gl_enums.json
+index b258660ba4367032e592ab8d6397ee5edca0a661..fe961d3125259b015d3d005a6d45443ede3131bc 100644
+--- a/scripts/entry_point_packed_gl_enums.json
++++ b/scripts/entry_point_packed_gl_enums.json
+@@ -440,6 +440,9 @@
+     "glFramebufferFoveationParameters": {
+         "framebuffer": "FramebufferID"
+     },
++    "glFramebufferResolveRenderbufferWEBKIT": {
++        "renderbuffer": "RenderbufferID"
++    },
+     "glFramebufferRenderbuffer": {
+         "renderbuffer": "RenderbufferID"
+     },
 diff --git a/scripts/generate_entry_points.py b/scripts/generate_entry_points.py
-index b65053ff19bf323c618a64db6c296f1b5af15bb3..f5e05c1870a2aed854e3d6bbec1730aeb0d50a85 100755
+index a4dd512e5e4b864018737215e13d622deda4bbd8..79853e9acef6f523356a226432f77065467f4982 100755
 --- a/scripts/generate_entry_points.py
 +++ b/scripts/generate_entry_points.py
 @@ -1010,6 +1010,7 @@ FORMAT_DICT = {
@@ -80,7 +109,7 @@ index b65053ff19bf323c618a64db6c296f1b5af15bb3..f5e05c1870a2aed854e3d6bbec1730ae
      "GLsizei": "%d",
      "GLsizeiptr": UNSIGNED_LONG_LONG_FORMAT,
 diff --git a/scripts/gl_angle_ext.xml b/scripts/gl_angle_ext.xml
-index 466387f2a92f2bda5884e6cde7910678690fe58d..835cc7d42424dfc18067140a8c9d12369a4c7f7b 100644
+index 466387f2a92f2bda5884e6cde7910678690fe58d..6bd47c33dee536bdefad6aa8ca602ec41577089b 100644
 --- a/scripts/gl_angle_ext.xml
 +++ b/scripts/gl_angle_ext.xml
 @@ -9,6 +9,11 @@
@@ -95,7 +124,7 @@ index 466387f2a92f2bda5884e6cde7910678690fe58d..835cc7d42424dfc18067140a8c9d1236
      <!-- SECTION: GL parameter class type definitions. -->
      <groups>
          <group name="CreateFlagMask">
-@@ -1048,6 +1053,11 @@
+@@ -1048,6 +1053,18 @@
              <param group="LogicOp"><ptype>GLenum</ptype> <name>opcode</name></param>
              <alias name="glLogicOp"/>
          </command>
@@ -104,10 +133,17 @@ index 466387f2a92f2bda5884e6cde7910678690fe58d..835cc7d42424dfc18067140a8c9d1236
 +            <param><ptype>GLuint</ptype> <name>framebuffer</name></param>
 +            <param><ptype>GLMTLRasterizationRateMapANGLE</ptype> <name>map</name></param>
 +        </command>
++        <command>
++            <proto>void <name>glFramebufferResolveRenderbufferWEBKIT</name></proto>
++            <param><ptype>GLenum</ptype> <name>target</name></param>
++            <param><ptype>GLenum</ptype> <name>attachment</name></param>
++            <param><ptype>GLenum</ptype> <name>renderbuffertarget</name></param>
++            <param><ptype>GLuint</ptype> <name>renderbuffer</name></param>
++        </command>
      </commands>
  
      <!-- SECTION: ANGLE extension interface definitions -->
-@@ -1449,6 +1459,11 @@
+@@ -1449,6 +1466,16 @@
          <extension name="GL_ANGLE_shader_binary" supported='gles2'>
              <require>
                  <enum name="GL_SHADER_BINARY_ANGLE"/>
@@ -116,10 +152,15 @@ index 466387f2a92f2bda5884e6cde7910678690fe58d..835cc7d42424dfc18067140a8c9d1236
 +                <enum name="GL_VARIABLE_RASTERIZATION_RATE_ANGLE"/>
 +                <enum name="GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE"/>
 +                <command name="glBindMetalRasterizationRateMapANGLE"/>
++            </require>
++        </extension>
++        <extension name="GL_WEBKIT_explicit_resolve_target" supported='gles2'>
++            <require>
++                <command name="glFramebufferResolveRenderbufferWEBKIT"/>
              </require>
          </extension>
      </extensions>
-@@ -1630,4 +1645,9 @@
+@@ -1630,4 +1657,9 @@
      <enums namespace="GL" start="0x0BF2" end="0x0BF2" vendor="ANGLE">
          <enum value="0x0BF2" name="GL_COLOR_LOGIC_OP_ANGLE"/>
      </enums>
@@ -130,10 +171,10 @@ index 466387f2a92f2bda5884e6cde7910678690fe58d..835cc7d42424dfc18067140a8c9d1236
 +    </enums>
  </registry>
 diff --git a/scripts/registry_xml.py b/scripts/registry_xml.py
-index 4e428eac9e30e27598fcd2c3bf9d1b0a3a7fc6d0..9454ed3a9f1d116b3b99a74d63072d196c34dd66 100644
+index 4e428eac9e30e27598fcd2c3bf9d1b0a3a7fc6d0..438bf3b75cd41f83920f2227338443c2cdc2aba2 100644
 --- a/scripts/registry_xml.py
 +++ b/scripts/registry_xml.py
-@@ -73,6 +73,7 @@ angle_requestable_extensions = [
+@@ -73,12 +73,14 @@ angle_requestable_extensions = [
      "GL_ANGLE_texture_compression_dxt5",
      "GL_ANGLE_texture_external_update",
      "GL_ANGLE_texture_multisample",
@@ -141,8 +182,15 @@ index 4e428eac9e30e27598fcd2c3bf9d1b0a3a7fc6d0..9454ed3a9f1d116b3b99a74d63072d19
      "GL_ANGLE_vulkan_image",
      "GL_ANGLE_yuv_internal_format",
      "GL_CHROMIUM_color_buffer_float_rgb",
+     "GL_CHROMIUM_color_buffer_float_rgba",
+     "GL_CHROMIUM_lose_context",
+     "GL_CHROMIUM_sync_query",
++    "GL_WEBKIT_explicit_resolve_target",
+ ]
+ 
+ gles_requestable_extensions = [
 diff --git a/src/common/entry_points_enum_autogen.cpp b/src/common/entry_points_enum_autogen.cpp
-index 8266c3561d4af4f06a2dab192500026802ab5e9c..c8391669fd518ff06082a83ad68429513e873757 100644
+index 8266c3561d4af4f06a2dab192500026802ab5e9c..7e3f74ef36e2faa66caaf55a32ef936019a1e689 100644
 --- a/src/common/entry_points_enum_autogen.cpp
 +++ b/src/common/entry_points_enum_autogen.cpp
 @@ -540,6 +540,8 @@ const char *GetEntryPointName(EntryPoint ep)
@@ -154,8 +202,17 @@ index 8266c3561d4af4f06a2dab192500026802ab5e9c..c8391669fd518ff06082a83ad6842951
          case EntryPoint::GLBindProgramPipeline:
              return "glBindProgramPipeline";
          case EntryPoint::GLBindProgramPipelineEXT:
+@@ -1216,6 +1218,8 @@ const char *GetEntryPointName(EntryPoint ep)
+             return "glFramebufferRenderbuffer";
+         case EntryPoint::GLFramebufferRenderbufferOES:
+             return "glFramebufferRenderbufferOES";
++        case EntryPoint::GLFramebufferResolveRenderbufferWEBKIT:
++            return "glFramebufferResolveRenderbufferWEBKIT";
+         case EntryPoint::GLFramebufferTexture:
+             return "glFramebufferTexture";
+         case EntryPoint::GLFramebufferTexture1D:
 diff --git a/src/common/entry_points_enum_autogen.h b/src/common/entry_points_enum_autogen.h
-index e45604ba4ee4eb8ebffbd506dc34c71f635f3618..441a69f7325f69d88e708647c2b5dfacdceede5f 100644
+index e45604ba4ee4eb8ebffbd506dc34c71f635f3618..b7dc04efab8abb5bcd354aada4229d4487b21c88 100644
 --- a/src/common/entry_points_enum_autogen.h
 +++ b/src/common/entry_points_enum_autogen.h
 @@ -276,6 +276,7 @@ enum class EntryPoint
@@ -166,6 +223,14 @@ index e45604ba4ee4eb8ebffbd506dc34c71f635f3618..441a69f7325f69d88e708647c2b5dfac
      GLBindProgramPipeline,
      GLBindProgramPipelineEXT,
      GLBindRenderbuffer,
+@@ -614,6 +615,7 @@ enum class EntryPoint
+     GLFramebufferPixelLocalStorageRestoreANGLE,
+     GLFramebufferRenderbuffer,
+     GLFramebufferRenderbufferOES,
++    GLFramebufferResolveRenderbufferWEBKIT,
+     GLFramebufferTexture,
+     GLFramebufferTexture1D,
+     GLFramebufferTexture2D,
 diff --git a/src/common/frame_capture_utils_autogen.cpp b/src/common/frame_capture_utils_autogen.cpp
 index f356982285bc9bed6469571d6c2f0ef9ea7cc940..9f601fc824eae7e78da8e8f9b3fe6576b0d7e76c 100644
 --- a/src/common/frame_capture_utils_autogen.cpp
@@ -317,10 +382,10 @@ index 34826b47554d0d89e8b9619d46828177b2c1b873..2e03a110de26a7cb888d8e9a5997deaf
  #include "GLES3/gl3.h"
  #include "common/mathutil.h"
 diff --git a/src/compiler/fuzz/translator_fuzzer.cpp b/src/compiler/fuzz/translator_fuzzer.cpp
-index f55eddef30336ffe712d1a88bb8894e6e347734f..203cba54333499fe4a794ac790143b82c880e135 100644
+index 5b4b726798eb3ed29415dd103366c6206981517a..b258a88908e4893ef0a5a108c724220fb5ba4841 100644
 --- a/src/compiler/fuzz/translator_fuzzer.cpp
 +++ b/src/compiler/fuzz/translator_fuzzer.cpp
-@@ -139,6 +139,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+@@ -140,6 +140,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
          static_cast<uint32_t>(ShFragmentSynchronizationType::InvalidEnum));
  
      std::vector<uint32_t> validOutputs;
@@ -328,7 +393,7 @@ index f55eddef30336ffe712d1a88bb8894e6e347734f..203cba54333499fe4a794ac790143b82
      validOutputs.push_back(SH_ESSL_OUTPUT);
      validOutputs.push_back(SH_GLSL_COMPATIBILITY_OUTPUT);
      validOutputs.push_back(SH_GLSL_130_OUTPUT);
-@@ -155,6 +156,10 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+@@ -156,6 +157,10 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
      validOutputs.push_back(SH_HLSL_3_0_OUTPUT);
      validOutputs.push_back(SH_HLSL_4_1_OUTPUT);
      validOutputs.push_back(SH_HLSL_4_0_FL9_3_OUTPUT);
@@ -339,7 +404,7 @@ index f55eddef30336ffe712d1a88bb8894e6e347734f..203cba54333499fe4a794ac790143b82
      bool found = false;
      for (auto valid : validOutputs)
      {
-@@ -186,6 +191,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+@@ -187,6 +192,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
  
          if (translator == nullptr)
          {
@@ -347,7 +412,7 @@ index f55eddef30336ffe712d1a88bb8894e6e347734f..203cba54333499fe4a794ac790143b82
              return 0;
          }
  
-@@ -219,6 +225,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+@@ -220,6 +226,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
  
          if (!translator->Init(resources))
          {
@@ -355,7 +420,7 @@ index f55eddef30336ffe712d1a88bb8894e6e347734f..203cba54333499fe4a794ac790143b82
              return 0;
          }
  
-@@ -231,5 +238,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+@@ -232,5 +239,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
      const char *shaderStrings[]       = {reinterpret_cast<const char *>(data)};
      translator->compile(shaderStrings, 1, options);
  
@@ -376,7 +441,7 @@ index a7607c9e529ce7a57bdc6c3c82134b144eb67130..c9ec1adec020589bd4fcfe226721042a
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
 diff --git a/src/compiler/translator/glslang_tab_autogen.cpp b/src/compiler/translator/glslang_tab_autogen.cpp
-index acde76f0189b7dc474f54c3df7e0514a8529c162..2e95ee0da27b547c5258c8d88c8ef8d461f3943e 100644
+index 8fdf47f2df99d27c74009feaca91a7366c2ffa7e..876840f7c6be65fda7260182c3dc9ca38b79ac88 100644
 --- a/src/compiler/translator/glslang_tab_autogen.cpp
 +++ b/src/compiler/translator/glslang_tab_autogen.cpp
 @@ -1,5 +1,8 @@
@@ -402,10 +467,44 @@ index d5a48edd40f382359db76acf1a1ce75b6a6dc6d5..907c62e0bb659292b391270790498186
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
 diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
-index 8d05364ff463c426453332264fb0836611865c23..da8ae7bbc72c5b818917048f4058bb3c96698090 100644
+index 3ec9be59df1847a4b9e5eef6cbf41f2414fb154a..e3bf9da1bde6124c3aed59de644e6ccca24ca31d 100644
 --- a/src/libANGLE/Context.cpp
 +++ b/src/libANGLE/Context.cpp
-@@ -10018,6 +10018,14 @@ void Context::clearTexSubImage(TextureID texturePacked,
+@@ -9959,6 +9959,33 @@ void Context::textureFoveationParameters(TextureID texturePacked,
+     texture->setFocalPoint(layer, focalPoint, focalX, focalY, gainX, gainY, foveaArea);
+ }
+ 
++void Context::framebufferResolveRenderbufferWEBKIT(GLenum target,
++                                                   GLenum attachment,
++                                                   GLenum renderbuffertarget,
++                                                   RenderbufferID renderbuffer)
++{
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++    Framebuffer *framebuffer = mState.getTargetFramebuffer(target);
++    ASSERT(framebuffer);
++
++    if (renderbuffer.value != 0)
++    {
++        Renderbuffer *renderbufferObject = getRenderbuffer(renderbuffer);
++
++        framebuffer->setAttachmentResolve(this, GL_RENDERBUFFER, attachment, gl::ImageIndex(),
++                                          renderbufferObject);
++    }
++    else
++    {
++        framebuffer->resetAttachmentResolve(this, attachment);
++    }
++
++    mState.setObjectDirty(target);
++#else
++    UNIMPLEMENTED();
++#endif
++}
++
+ void Context::endTiling(GLbitfield preserveMask)
+ {
+     ANGLE_CONTEXT_TRY(mImplementation->endTiling(this, preserveMask));
+@@ -10019,6 +10046,14 @@ void Context::clearTexSubImage(TextureID texturePacked,
                                               static_cast<const uint8_t *>(data)));
  }
  
@@ -421,7 +520,7 @@ index 8d05364ff463c426453332264fb0836611865c23..da8ae7bbc72c5b818917048f4058bb3c
  ErrorSet::ErrorSet(Debug *debug,
                     const angle::FrontendFeatures &frontendFeatures,
 diff --git a/src/libANGLE/Context_gles_ext_autogen.h b/src/libANGLE/Context_gles_ext_autogen.h
-index 364ea21366fc5a76de2b3e596b7039370e911bde..06916ba9627e4913cc54267792739d560fecdfbc 100644
+index 364ea21366fc5a76de2b3e596b7039370e911bde..05d8ca360ef3df12b82fcdf07d2d53e2ed58f7c1 100644
 --- a/src/libANGLE/Context_gles_ext_autogen.h
 +++ b/src/libANGLE/Context_gles_ext_autogen.h
 @@ -631,6 +631,8 @@
@@ -433,11 +532,238 @@ index 364ea21366fc5a76de2b3e596b7039370e911bde..06916ba9627e4913cc54267792739d56
      /* GL_ANGLE_vulkan_image */                                                                    \
      void acquireTextures(GLuint numTextures, const TextureID *texturesPacked,                      \
                           const GLenum *layouts);                                                   \
+@@ -658,6 +660,10 @@
+     /* GL_CHROMIUM_framebuffer_mixed_samples */                                                    \
+     /* GL_CHROMIUM_lose_context */                                                                 \
+     void loseContext(GraphicsResetStatus currentPacked, GraphicsResetStatus otherPacked);          \
+-    /* GL_CHROMIUM_sync_query */
++    /* GL_CHROMIUM_sync_query */                                                                   \
++    /* GL_WEBKIT_explicit_resolve_target */                                                        \
++    void framebufferResolveRenderbufferWEBKIT(GLenum target, GLenum attachment,                    \
++                                              GLenum renderbuffertarget,                           \
++                                              RenderbufferID renderbufferPacked);
+ 
+ #endif  // ANGLE_CONTEXT_API_EXT_AUTOGEN_H_
 diff --git a/src/libANGLE/Framebuffer.cpp b/src/libANGLE/Framebuffer.cpp
-index a7a1cc00168789858d23f9799317c293bda6b077..833aa8c98ad0363b94fe179451664e214a4091ef 100644
+index a7a1cc00168789858d23f9799317c293bda6b077..46459bfdf1195cd2f372b2edf6178096ea0ef608 100644
 --- a/src/libANGLE/Framebuffer.cpp
 +++ b/src/libANGLE/Framebuffer.cpp
-@@ -1680,6 +1680,8 @@ angle::Result Framebuffer::discard(const Context *context, size_t count, const G
+@@ -164,6 +164,47 @@ FramebufferStatus CheckAttachmentCompleteness(const Context *context,
+     return FramebufferStatus::Complete();
+ }
+ 
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++// Check the |checkAttachment| in reference to |firstAttachment| for the sake of explicit resolve
++// target framebuffer completeness.
++FramebufferStatus CheckResolveTargetMatchesForCompleteness(
++    const Context *context,
++    const FramebufferAttachment &firstAttachment,
++    const FramebufferAttachment &checkAttachment)
++{
++    ASSERT(firstAttachment.isAttached() && checkAttachment.isAttached());
++
++    FramebufferStatus attachmentCompleteness =
++        CheckAttachmentCompleteness(context, checkAttachment);
++    if (!attachmentCompleteness.isComplete())
++    {
++        return attachmentCompleteness;
++    }
++
++    if (checkAttachment.getSamples() != 0)
++    {
++        return FramebufferStatus::Incomplete(GL_FRAMEBUFFER_UNSUPPORTED,
++            "Framebuffer is incomplete: Resolve attachments have multiple samples.");
++    }
++
++    if (firstAttachment.getSize() != checkAttachment.getSize())
++    {
++        return gl::FramebufferStatus::Incomplete(
++            GL_FRAMEBUFFER_UNSUPPORTED,
++            gl::err::kFramebufferIncompleteUnsupportedMissmatchedDimensions);
++    }
++
++    if (!Format::EquivalentForBlit(firstAttachment.getFormat(), checkAttachment.getFormat()))
++    {
++        return gl::FramebufferStatus::Incomplete(GL_FRAMEBUFFER_UNSUPPORTED,
++                                                 "Framebuffer is incomplete: Attempting to resolve "
++                                                 "to target with non-equivalent format for blit");
++    }
++
++    return FramebufferStatus::Complete();
++}
++#endif
++
+ FramebufferStatus CheckAttachmentSampleCounts(const Context *context,
+                                               GLsizei currAttachmentSamples,
+                                               GLsizei samples,
+@@ -369,6 +410,9 @@ FramebufferState::FramebufferState(rx::UniqueSerial serial)
+       mFramebufferSerial(serial),
+       mLabel(),
+       mColorAttachments(1),
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++      mColorResolveAttachments(1),
++#endif
+       mColorAttachmentsMask(0),
+       mDrawBufferStates(1, GL_BACK),
+       mReadBufferState(GL_BACK),
+@@ -392,6 +436,9 @@ FramebufferState::FramebufferState(const Caps &caps, FramebufferID id, rx::Uniqu
+       mFramebufferSerial(serial),
+       mLabel(),
+       mColorAttachments(caps.maxColorAttachments),
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++      mColorResolveAttachments(caps.maxColorAttachments),
++#endif
+       mColorAttachmentsMask(0),
+       mDrawBufferStates(caps.maxDrawBuffers, GL_NONE),
+       mReadBufferState(GL_COLOR_ATTACHMENT0_EXT),
+@@ -598,6 +645,27 @@ const FramebufferAttachment *FramebufferState::getDepthStencilAttachment() const
+     return nullptr;
+ }
+ 
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++const FramebufferAttachment *FramebufferState::getColorResolveAttachment(
++    size_t colorAttachment) const
++{
++    ASSERT(colorAttachment < mColorResolveAttachments.size());
++    return mColorResolveAttachments[colorAttachment].isAttached()
++               ? &mColorResolveAttachments[colorAttachment]
++               : nullptr;
++}
++
++const FramebufferAttachment *FramebufferState::getDepthResolveAttachment() const
++{
++    return mDepthResolveAttachment.isAttached() ? &mDepthResolveAttachment : nullptr;
++}
++
++const FramebufferAttachment *FramebufferState::getStencilResolveAttachment() const
++{
++    return mStencilResolveAttachment.isAttached() ? &mStencilResolveAttachment : nullptr;
++}
++#endif
++
+ const Extents FramebufferState::getAttachmentExtentsIntersection() const
+ {
+     int32_t width  = std::numeric_limits<int32_t>::max();
+@@ -828,6 +896,10 @@ Framebuffer::Framebuffer(const Context *context, rx::GLImplFactory *factory, Fra
+     ASSERT(mImpl != nullptr);
+     ASSERT(mState.mColorAttachments.size() ==
+            static_cast<size_t>(context->getCaps().maxColorAttachments));
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++    ASSERT(mState.mColorResolveAttachments.size() ==
++           static_cast<size_t>(context->getCaps().maxColorAttachments));
++#endif
+ 
+     for (uint32_t colorIndex = 0;
+          colorIndex < static_cast<uint32_t>(mState.mColorAttachments.size()); ++colorIndex)
+@@ -862,6 +934,15 @@ void Framebuffer::onDestroy(const Context *context)
+     mState.mWebGLStencilAttachment.detach(context, mState.mFramebufferSerial);
+     mState.mWebGLDepthStencilAttachment.detach(context, mState.mFramebufferSerial);
+ 
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++    for (auto &attachment : mState.mColorResolveAttachments)
++    {
++        attachment.detach(context, mState.mFramebufferSerial);
++    }
++    mState.mDepthResolveAttachment.detach(context, mState.mFramebufferSerial);
++    mState.mStencilResolveAttachment.detach(context, mState.mFramebufferSerial);
++#endif
++
+     if (mPixelLocalStorage)
+     {
+         mPixelLocalStorage->onFramebufferDestroyed(context);
+@@ -1146,6 +1227,23 @@ const FramebufferAttachment *Framebuffer::getAttachment(const Context *context,
+     return mState.getAttachment(context, attachment);
+ }
+ 
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++const FramebufferAttachment *Framebuffer::getColorResolveAttachment(size_t colorAttachment) const
++{
++    return mState.getColorResolveAttachment(colorAttachment);
++}
++
++const FramebufferAttachment *Framebuffer::getDepthResolveAttachment() const
++{
++    return mState.getDepthResolveAttachment();
++}
++
++const FramebufferAttachment *Framebuffer::getStencilResolveAttachment() const
++{
++    return mState.getStencilResolveAttachment();
++}
++#endif
++
+ size_t Framebuffer::getDrawbufferStateCount() const
+ {
+     return mState.mDrawBufferStates.size();
+@@ -1445,6 +1543,25 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
+         }
+     }
+ 
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++    for (size_t index = 0; index < mState.mColorAttachments.size(); ++index)
++    {
++        const FramebufferAttachment &colorAttachment = mState.mColorAttachments[index];
++        const FramebufferAttachment &colorResolveAttachment =
++            mState.mColorResolveAttachments[index];
++        if (colorResolveAttachment.isAttached() && colorAttachment.isAttached())
++        {
++            FramebufferStatus resolveAttachmentCompleteness =
++                CheckResolveTargetMatchesForCompleteness(context, colorAttachment,
++                                                         colorResolveAttachment);
++            if (!resolveAttachmentCompleteness.isComplete())
++            {
++                return resolveAttachmentCompleteness;
++            }
++        }
++    }
++#endif
++
+     const FramebufferAttachment &depthAttachment = mState.mDepthAttachment;
+     if (depthAttachment.isAttached())
+     {
+@@ -1498,6 +1615,20 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
+                     err::kFramebufferIncompleteMismatchedLayeredAttachments);
+             }
+         }
++
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++        const FramebufferAttachment &depthResolveAttachment = mState.mDepthResolveAttachment;
++        if (depthResolveAttachment.isAttached())
++        {
++            FramebufferStatus resolveAttachmentCompleteness =
++                CheckResolveTargetMatchesForCompleteness(context, depthAttachment,
++                                                         depthResolveAttachment);
++            if (!resolveAttachmentCompleteness.isComplete())
++            {
++                return resolveAttachmentCompleteness;
++            }
++        }
++#endif
+     }
+ 
+     const FramebufferAttachment &stencilAttachment = mState.mStencilAttachment;
+@@ -1553,6 +1684,20 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
+                     err::kFramebufferIncompleteMismatchedLayeredAttachments);
+             }
+         }
++
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++        const FramebufferAttachment &stencilResolveAttachment = mState.mStencilResolveAttachment;
++        if (stencilResolveAttachment.isAttached())
++        {
++            FramebufferStatus resolveAttachmentCompleteness =
++                CheckResolveTargetMatchesForCompleteness(context, stencilAttachment,
++                                                         stencilResolveAttachment);
++            if (!resolveAttachmentCompleteness.isComplete())
++            {
++                return resolveAttachmentCompleteness;
++            }
++        }
++#endif
+     }
+ 
+     // Starting from ES 3.0 stencil and depth, if present, should be the same image
+@@ -1680,6 +1825,8 @@ angle::Result Framebuffer::discard(const Context *context, size_t count, const G
      // Back-ends might make the contents of the FBO undefined. In WebGL 2.0, invalidate operations
      // can be no-ops, so we should probably do that to ensure consistency.
      // TODO(jmadill): WebGL behaviour, and robust resource init behaviour without WebGL.
@@ -446,7 +772,7 @@ index a7a1cc00168789858d23f9799317c293bda6b077..833aa8c98ad0363b94fe179451664e21
  
      return mImpl->discard(context, count, attachments);
  }
-@@ -1691,6 +1693,8 @@ angle::Result Framebuffer::invalidate(const Context *context,
+@@ -1691,6 +1838,8 @@ angle::Result Framebuffer::invalidate(const Context *context,
      // Back-ends might make the contents of the FBO undefined. In WebGL 2.0, invalidate operations
      // can be no-ops, so we should probably do that to ensure consistency.
      // TODO(jmadill): WebGL behaviour, and robust resource init behaviour without WebGL.
@@ -455,7 +781,138 @@ index a7a1cc00168789858d23f9799317c293bda6b077..833aa8c98ad0363b94fe179451664e21
  
      return mImpl->invalidate(context, count, attachments);
  }
-@@ -2839,4 +2843,56 @@ angle::Result Framebuffer::syncAttachmentState(const Context *context,
+@@ -1726,9 +1875,20 @@ bool Framebuffer::partialClearNeedsInit(const Context *context,
+         return true;
+     }
+ 
++    const Framebuffer *drawFramebuffer = glState.getDrawFramebuffer();
++    const FramebufferAttachment *stencilAttachment =
++        drawFramebuffer ? drawFramebuffer->getStencilOrDepthStencilAttachment() : nullptr;
++    const GLuint stencilBits    = stencilAttachment ? stencilAttachment->getStencilSize() : 0;
++    const GLuint maxStencilMask = (1 << stencilBits) - 1;
++
++    // The least significant |stencilBits| of stencil mask state specify a
++    // mask. Compare the masks for differences only in those bits, ignoring any
++    // difference in the high bits.
+     const auto &depthStencil       = glState.getDepthStencilState();
+-    if (stencil && (depthStencil.stencilMask != depthStencil.stencilWritemask ||
+-                    depthStencil.stencilBackMask != depthStencil.stencilBackWritemask))
++    const GLuint differentFwdMasks = depthStencil.stencilMask ^ depthStencil.stencilWritemask;
++    const GLuint differentBackMasks =
++        depthStencil.stencilBackMask ^ depthStencil.stencilBackWritemask;
++    if (stencil && ((differentFwdMasks | differentBackMasks) & maxStencilMask) != 0)
+     {
+         return true;
+     }
+@@ -2012,6 +2172,66 @@ void Framebuffer::setAttachmentMultiview(const Context *context,
+                   FramebufferAttachment::kDefaultRenderToTextureSamples);
+ }
+ 
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++void Framebuffer::setAttachmentResolve(const Context *context,
++                                       GLenum type,
++                                       GLenum binding,
++                                       const ImageIndex &textureIndex,
++                                       FramebufferAttachmentObject *resource)
++{
++    switch (binding)
++    {
++        case GL_DEPTH_STENCIL:
++        case GL_DEPTH_STENCIL_ATTACHMENT:
++            updateAttachmentResolve(context, &mState.mDepthResolveAttachment,
++                                    DIRTY_BIT_DEPTH_ATTACHMENT, &mDirtyDepthAttachmentBinding, type,
++                                    binding, textureIndex, resource);
++            updateAttachmentResolve(context, &mState.mStencilResolveAttachment,
++                                    DIRTY_BIT_STENCIL_ATTACHMENT, &mDirtyStencilAttachmentBinding,
++                                    type, binding, textureIndex, resource);
++            break;
++        case GL_DEPTH:
++        case GL_DEPTH_ATTACHMENT:
++            updateAttachmentResolve(context, &mState.mDepthResolveAttachment,
++                                    DIRTY_BIT_DEPTH_ATTACHMENT, &mDirtyDepthAttachmentBinding, type,
++                                    binding, textureIndex, resource);
++            if (context->isWebGL1())
++            {
++                updateAttachmentResolve(context, &mState.mStencilResolveAttachment,
++                                        DIRTY_BIT_STENCIL_ATTACHMENT,
++                                        &mDirtyStencilAttachmentBinding, GL_NONE,
++                                        GL_STENCIL_ATTACHMENT, ImageIndex(), nullptr);
++            }
++            break;
++
++        case GL_STENCIL:
++        case GL_STENCIL_ATTACHMENT:
++            updateAttachmentResolve(context, &mState.mStencilResolveAttachment,
++                                    DIRTY_BIT_STENCIL_ATTACHMENT, &mDirtyStencilAttachmentBinding,
++                                    type, binding, textureIndex, resource);
++            if (context->isWebGL1())
++            {
++                updateAttachmentResolve(context, &mState.mDepthResolveAttachment,
++                                        DIRTY_BIT_DEPTH_ATTACHMENT, &mDirtyDepthAttachmentBinding,
++                                        GL_NONE, GL_DEPTH_ATTACHMENT, ImageIndex(), nullptr);
++            }
++            break;
++
++        default:
++        {
++            const size_t colorIndex = binding - GL_COLOR_ATTACHMENT0;
++            ASSERT(colorIndex < mState.mColorResolveAttachments.size());
++
++            const size_t dirtyBit = DIRTY_BIT_COLOR_ATTACHMENT_0 + colorIndex;
++            updateAttachmentResolve(context, &mState.mColorResolveAttachments[colorIndex], dirtyBit,
++                                    &mDirtyColorAttachmentBindings[colorIndex], type, binding,
++                                    textureIndex, resource);
++        }
++        break;
++    }
++}
++#endif
++
+ void Framebuffer::commitWebGL1DepthStencilIfConsistent(const Context *context,
+                                                        GLsizei numViews,
+                                                        GLuint baseViewIndex,
+@@ -2189,11 +2409,40 @@ void Framebuffer::updateAttachment(const Context *context,
+     invalidateCompletenessCache();
+ }
+ 
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++void Framebuffer::updateAttachmentResolve(const Context *context,
++                                          FramebufferAttachment *attachment,
++                                          size_t dirtyBit,
++                                          angle::ObserverBinding *onDirtyBinding,
++                                          GLenum type,
++                                          GLenum binding,
++                                          const ImageIndex &textureIndex,
++                                          FramebufferAttachmentObject *resource)
++{
++    attachment->attach(
++        context, type, binding, textureIndex, resource, FramebufferAttachment::kDefaultNumViews,
++        FramebufferAttachment::kDefaultBaseViewIndex, false,
++        FramebufferAttachment::kDefaultRenderToTextureSamples, mState.mFramebufferSerial);
++    mDirtyBits.set(dirtyBit);
++    onDirtyBinding->bind(resource);
++    mAttachmentChangedAfterEnablingFoveation = isFoveationEnabled();
++
++    invalidateCompletenessCache();
++}
++#endif
++
+ void Framebuffer::resetAttachment(const Context *context, GLenum binding)
+ {
+     setAttachment(context, GL_NONE, binding, ImageIndex(), nullptr);
+ }
+ 
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++void Framebuffer::resetAttachmentResolve(const Context *context, GLenum binding)
++{
++    setAttachmentResolve(context, GL_NONE, binding, ImageIndex(), nullptr);
++}
++#endif
++
+ void Framebuffer::setWriteControlMode(SrgbWriteControlMode srgbWriteControlMode)
+ {
+     if (srgbWriteControlMode != mState.getWriteControlMode())
+@@ -2839,4 +3088,56 @@ angle::Result Framebuffer::syncAttachmentState(const Context *context,
  
      return angle::Result::Continue;
  }
@@ -513,10 +970,92 @@ index a7a1cc00168789858d23f9799317c293bda6b077..833aa8c98ad0363b94fe179451664e21
 +}
  }  // namespace gl
 diff --git a/src/libANGLE/Framebuffer.h b/src/libANGLE/Framebuffer.h
-index f690cf4932b165ff099b1ea1c80002023f559dd5..41cc590b8a636af5508fd3b4735486eec29a1fa7 100644
+index f690cf4932b165ff099b1ea1c80002023f559dd5..4d633b3d7722e72d14aa645cba2498d465b88212 100644
 --- a/src/libANGLE/Framebuffer.h
 +++ b/src/libANGLE/Framebuffer.h
-@@ -545,6 +545,8 @@ class Framebuffer final : public angle::ObserverInterface,
+@@ -82,6 +82,13 @@ class FramebufferState final : angle::NonCopyable
+     const FramebufferAttachment *getDepthStencilAttachment() const;
+     const FramebufferAttachment *getReadPixelsAttachment(GLenum readFormat) const;
+ 
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++    // GL_WEBKIT_explicit_resolve_target
++    const FramebufferAttachment *getColorResolveAttachment(size_t colorAttachment) const;
++    const FramebufferAttachment *getDepthResolveAttachment() const;
++    const FramebufferAttachment *getStencilResolveAttachment() const;
++#endif
++
+     const DrawBuffersVector<GLenum> &getDrawBufferStates() const { return mDrawBufferStates; }
+     DrawBufferMask getEnabledDrawBuffers() const { return mEnabledDrawBuffers; }
+     GLenum getReadBufferState() const { return mReadBufferState; }
+@@ -162,6 +169,13 @@ class FramebufferState final : angle::NonCopyable
+     FramebufferAttachment mDepthAttachment;
+     FramebufferAttachment mStencilAttachment;
+ 
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++    // GL_WEBKIT_explicit_resolve_target;
++    DrawBuffersVector<FramebufferAttachment> mColorResolveAttachments;
++    FramebufferAttachment mDepthResolveAttachment;
++    FramebufferAttachment mStencilResolveAttachment;
++#endif
++
+     // Tracks all the color buffers attached to this FramebufferDesc
+     DrawBufferMask mColorAttachmentsMask;
+ 
+@@ -244,6 +258,16 @@ class Framebuffer final : public angle::ObserverInterface,
+                                 GLint baseViewIndex);
+     void resetAttachment(const Context *context, GLenum binding);
+ 
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++    // GL_WEBKIT_explicit_resolve_target
++    void setAttachmentResolve(const Context *context,
++                              GLenum type,
++                              GLenum binding,
++                              const ImageIndex &textureIndex,
++                              FramebufferAttachmentObject *resource);
++    void resetAttachmentResolve(const Context *context, GLenum binding);
++#endif
++
+     bool detachTexture(Context *context, TextureID texture);
+     bool detachRenderbuffer(Context *context, RenderbufferID renderbuffer);
+ 
+@@ -258,9 +282,16 @@ class Framebuffer final : public angle::ObserverInterface,
+     const FramebufferAttachment *getFirstColorAttachment() const;
+     const FramebufferAttachment *getFirstNonNullAttachment() const;
+ 
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++    // GL_WEBKIT_explicit_resolve_target
++    const FramebufferAttachment *getColorResolveAttachment(size_t colorAttachment) const;
++    const FramebufferAttachment *getDepthResolveAttachment() const;
++    const FramebufferAttachment *getStencilResolveAttachment() const;
++#endif
++
+     const DrawBuffersVector<FramebufferAttachment> &getColorAttachments() const
+     {
+-        return mState.mColorAttachments;
++        return mState.getColorAttachments();
+     }
+ 
+     const FramebufferState &getState() const { return mState; }
+@@ -521,6 +552,18 @@ class Framebuffer final : public angle::ObserverInterface,
+                           bool isMultiview,
+                           GLsizei samples);
+ 
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++    // GL_WEBKIT_explicit_resolve_target
++    void updateAttachmentResolve(const Context *context,
++                                 FramebufferAttachment *attachment,
++                                 size_t dirtyBit,
++                                 angle::ObserverBinding *onDirtyBinding,
++                                 GLenum type,
++                                 GLenum binding,
++                                 const ImageIndex &textureIndex,
++                                 FramebufferAttachmentObject *resource);
++#endif
++
+     void markAttachmentsInitialized(const DrawBufferMask &color, bool depth, bool stencil);
+ 
+     // Checks that we have a partially masked clear:
+@@ -545,6 +588,8 @@ class Framebuffer final : public angle::ObserverInterface,
                                        Command command,
                                        const FramebufferAttachment *attachment) const;
  
@@ -526,7 +1065,7 @@ index f690cf4932b165ff099b1ea1c80002023f559dd5..41cc590b8a636af5508fd3b4735486ee
      rx::FramebufferImpl *mImpl;
  
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index f280a5b1630e36f9d85fa5fc75b38f6aba8dd37b..1c65fd4628421efe5e317b0036c9c34a3b5a1fa9 100644
+index 23adcd03b5744ff40dd030567174aef4abe4a599..cb546dcc6bc7f2d7ac8aeb8a6c052b532dd64782 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -644,7 +1183,7 @@ index a1ac0dd3075d43422336e74317c93c0106cb448f..f7bc28d978000abedfe9f71058dcc8d1
      GLES1State mGLES1State;
  
 diff --git a/src/libANGLE/capture/capture_gles_ext_autogen.cpp b/src/libANGLE/capture/capture_gles_ext_autogen.cpp
-index 8fd39cbd8e1e15cd8b7142bf31b64719d0079c7e..de5bee2e6af92a11b68a9a60ac84f5bcf3f278a8 100644
+index 8fd39cbd8e1e15cd8b7142bf31b64719d0079c7e..54fed047c7d7c01b96592cc535cfad4f1e6ab3c7 100644
 --- a/src/libANGLE/capture/capture_gles_ext_autogen.cpp
 +++ b/src/libANGLE/capture/capture_gles_ext_autogen.cpp
 @@ -5164,6 +5164,18 @@ CallCapture CaptureGetTranslatedShaderSourceANGLE(const State &glState,
@@ -666,8 +1205,32 @@ index 8fd39cbd8e1e15cd8b7142bf31b64719d0079c7e..de5bee2e6af92a11b68a9a60ac84f5bc
  CallCapture CaptureAcquireTexturesANGLE(const State &glState,
                                          bool isCallValid,
                                          GLuint numTextures,
+@@ -12236,4 +12248,23 @@ CallCapture CaptureStartTilingQCOM(const State &glState,
+     return CallCapture(angle::EntryPoint::GLStartTilingQCOM, std::move(paramBuffer));
+ }
+ 
++CallCapture CaptureFramebufferResolveRenderbufferWEBKIT(const State &glState,
++                                                        bool isCallValid,
++                                                        GLenum target,
++                                                        GLenum attachment,
++                                                        GLenum renderbuffertarget,
++                                                        RenderbufferID renderbufferPacked)
++{
++    ParamBuffer paramBuffer;
++
++    paramBuffer.addEnumParam("target", GLESEnum::AllEnums, ParamType::TGLenum, target);
++    paramBuffer.addEnumParam("attachment", GLESEnum::AllEnums, ParamType::TGLenum, attachment);
++    paramBuffer.addEnumParam("renderbuffertarget", GLESEnum::AllEnums, ParamType::TGLenum,
++                             renderbuffertarget);
++    paramBuffer.addValueParam("renderbufferPacked", ParamType::TRenderbufferID, renderbufferPacked);
++
++    return CallCapture(angle::EntryPoint::GLFramebufferResolveRenderbufferWEBKIT,
++                       std::move(paramBuffer));
++}
++
+ }  // namespace gl
 diff --git a/src/libANGLE/capture/capture_gles_ext_autogen.h b/src/libANGLE/capture/capture_gles_ext_autogen.h
-index e06b394709e2e712312c3596cd51f1465f705c07..14a484d89f89e79a03d18b463082ce069fa39cdc 100644
+index e06b394709e2e712312c3596cd51f1465f705c07..382a460d8cef36920770b9f79c945d4674de0806 100644
 --- a/src/libANGLE/capture/capture_gles_ext_autogen.h
 +++ b/src/libANGLE/capture/capture_gles_ext_autogen.h
 @@ -993,6 +993,11 @@ angle::CallCapture CaptureGetTranslatedShaderSourceANGLE(const State &glState,
@@ -682,6 +1245,21 @@ index e06b394709e2e712312c3596cd51f1465f705c07..14a484d89f89e79a03d18b463082ce06
  // GL_ANGLE_vulkan_image
  angle::CallCapture CaptureAcquireTexturesANGLE(const State &glState,
                                                 bool isCallValid,
+@@ -2881,6 +2886,14 @@ angle::CallCapture CaptureStartTilingQCOM(const State &glState,
+                                           GLuint height,
+                                           GLbitfield preserveMask);
+ 
++// GL_WEBKIT_explicit_resolve_target
++angle::CallCapture CaptureFramebufferResolveRenderbufferWEBKIT(const State &glState,
++                                                               bool isCallValid,
++                                                               GLenum target,
++                                                               GLenum attachment,
++                                                               GLenum renderbuffertarget,
++                                                               RenderbufferID renderbufferPacked);
++
+ // Parameter Captures
+ 
+ void CaptureDeletePerfMonitorsAMD_monitors(const State &glState,
 diff --git a/src/libANGLE/features.h b/src/libANGLE/features.h
 index a6fe076c72d043dba3fc347bf020ebf8ec895f51..add46e99c91d19bbd790d2de0d8768b8953d633e 100644
 --- a/src/libANGLE/features.h
@@ -713,10 +1291,18 @@ index 8068c7dd1fbc62d2177b771b583f24a3d81084b3..9de76b5ee42b6026cec4662daff6e354
          return GL_RGBA8;
      }
 diff --git a/src/libANGLE/gles_extensions_autogen.cpp b/src/libANGLE/gles_extensions_autogen.cpp
-index 08d6416ee0ff64ae1db4bd0b61df3fe48856df20..56138198776d6dac1139f69a05c161629a11b80b 100644
+index 08d6416ee0ff64ae1db4bd0b61df3fe48856df20..1d61477b65de7fe8f04759c42c6f95a862ee7c0d 100644
 --- a/src/libANGLE/gles_extensions_autogen.cpp
 +++ b/src/libANGLE/gles_extensions_autogen.cpp
-@@ -270,6 +270,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
+@@ -233,6 +233,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
+         map["GL_CHROMIUM_copy_compressed_texture"] = esOnlyExtension(&Extensions::copyCompressedTextureCHROMIUM);
+         map["GL_CHROMIUM_copy_texture"] = esOnlyExtension(&Extensions::copyTextureCHROMIUM);
+         map["GL_ANGLE_copy_texture_3d"] = enableableExtension(&Extensions::copyTexture3dANGLE);
++        map["GL_WEBKIT_explicit_resolve_target"] = enableableExtension(&Extensions::explicitResolveTargetWEBKIT);
+         map["GL_CHROMIUM_framebuffer_mixed_samples"] = esOnlyExtension(&Extensions::framebufferMixedSamplesCHROMIUM);
+         map["GL_ANGLE_framebuffer_multisample"] = enableableExtension(&Extensions::framebufferMultisampleANGLE);
+         map["GL_ANGLE_get_image"] = enableableExtension(&Extensions::getImageANGLE);
+@@ -270,6 +271,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
          map["GL_ANGLE_texture_external_update"] = enableableExtension(&Extensions::textureExternalUpdateANGLE);
          map["GL_ANGLE_texture_multisample"] = enableableExtension(&Extensions::textureMultisampleANGLE);
          map["GL_ANGLE_texture_rectangle"] = enableableDisablableExtension(&Extensions::textureRectangleANGLE);
@@ -725,10 +1311,20 @@ index 08d6416ee0ff64ae1db4bd0b61df3fe48856df20..56138198776d6dac1139f69a05c16162
          map["GL_ANGLE_webgl_compatibility"] = esOnlyExtension(&Extensions::webglCompatibilityANGLE);
          map["GL_ANGLE_yuv_internal_format"] = enableableExtension(&Extensions::yuvInternalFormatANGLE);
 diff --git a/src/libANGLE/gles_extensions_autogen.h b/src/libANGLE/gles_extensions_autogen.h
-index d3f6ae8aefceec8ff7db974ad0dbdb817bb8d8ed..b4e6567fbcd47295c30ee84a1696667a5ee05af7 100644
+index d3f6ae8aefceec8ff7db974ad0dbdb817bb8d8ed..6603729516e7caaaac3f851ab020d68d0b2203cf 100644
 --- a/src/libANGLE/gles_extensions_autogen.h
 +++ b/src/libANGLE/gles_extensions_autogen.h
-@@ -770,6 +770,9 @@ struct Extensions
+@@ -659,6 +659,9 @@ struct Extensions
+     // GL_ANGLE_copy_texture_3d
+     bool copyTexture3dANGLE = false;
+ 
++    // GL_WEBKIT_explicit_resolve_target
++    bool explicitResolveTargetWEBKIT = false;
++
+     // GL_CHROMIUM_framebuffer_mixed_samples
+     bool framebufferMixedSamplesCHROMIUM = false;
+ 
+@@ -770,6 +773,9 @@ struct Extensions
      // GL_ANGLE_texture_rectangle
      bool textureRectangleANGLE = false;
  
@@ -787,10 +1383,10 @@ index 9d8c7a4f4be3f1afd54163e2aacb12b9a832664e..9c3661be5fb3f51c15404bad23a1942a
  
      return result;
 diff --git a/src/libANGLE/renderer/gl/StateManagerGL.cpp b/src/libANGLE/renderer/gl/StateManagerGL.cpp
-index af3dbcec1bc5b30dde37e666446ca9cec2301239..fd82127caebb53e95be778518dbc748be917f6bc 100644
+index f771c406453139ef34ece342e7b13c67fb59e715..45956cd9bc887099897b73a70231a5196d91e699 100644
 --- a/src/libANGLE/renderer/gl/StateManagerGL.cpp
 +++ b/src/libANGLE/renderer/gl/StateManagerGL.cpp
-@@ -2492,6 +2492,8 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
+@@ -2512,6 +2512,8 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
                              break;
                          case gl::state::EXTENDED_DIRTY_BIT_BLEND_ADVANCED_COHERENT:
                              setBlendAdvancedCoherent(state.isBlendAdvancedCoherentEnabled());
@@ -799,6 +1395,22 @@ index af3dbcec1bc5b30dde37e666446ca9cec2301239..fd82127caebb53e95be778518dbc748b
                              break;
                          default:
                              UNREACHABLE();
+diff --git a/src/libANGLE/renderer/metal/BUILD.gn b/src/libANGLE/renderer/metal/BUILD.gn
+index 96e9ee8420810f6a3ca9a0c290d4a654200eb7b9..8725219587ee8afc25e803bfd84f0fb117176372 100644
+--- a/src/libANGLE/renderer/metal/BUILD.gn
++++ b/src/libANGLE/renderer/metal/BUILD.gn
+@@ -15,7 +15,10 @@ assert(is_mac || is_ios)
+ assert(angle_enable_metal)
+ 
+ config("angle_metal_backend_config") {
+-  defines = [ "ANGLE_ENABLE_METAL" ]
++  defines = [
++    "ANGLE_ENABLE_METAL",
++    "ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED=1",
++  ]
+   ldflags = [
+     "-weak_framework",
+     "Metal",
 diff --git a/src/libANGLE/renderer/metal/BufferMtl.mm b/src/libANGLE/renderer/metal/BufferMtl.mm
 index 398e6d3e3809da8b0d7ed81458a8f5b752433b16..4689f7484593f8654680d2650d8903324771ecb3 100644
 --- a/src/libANGLE/renderer/metal/BufferMtl.mm
@@ -846,7 +1458,7 @@ index acdd008c5424d3ab67df0ffe384bb459143348a1..7283095e00b5c260f276c497de5d53d1
  };
  
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
-index 62a9482ecc478b65431fe323e0e219b0d90fe101..3b53d1e9e38e74c28f66ecd67f4233eebb0a8ab4 100644
+index 763f717c171f46212dd4c7de75718de9716f7c93..2f34e489feacc07a009a1659af345d11f0d7cf92 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.mm
 +++ b/src/libANGLE/renderer/metal/ContextMtl.mm
 @@ -263,6 +263,8 @@ void ContextMtl::onDestroy(const gl::Context *context)
@@ -907,7 +1519,7 @@ index 62a9482ecc478b65431fe323e0e219b0d90fe101..3b53d1e9e38e74c28f66ecd67f4233ee
 +            {
 +                mtl::RenderPassAttachmentDesc desc;
 +                renderTargetMetal->toRenderPassAttachmentDesc(&desc);
-+                mRasterizationRateMapTexture = desc.hasImplicitMSTexture() ? desc.implicitMSTexture.get()->get() : desc.texture.get()->get();
++                mRasterizationRateMapTexture = desc.texture.get()->get();
 +            }
 +        }
 +    }
@@ -983,7 +1595,7 @@ index 16ae6340e37283bcd49e8ea926f75a1f6f17f1d6..34aadf0c7e20c05ab4c6791ba412ae2a
      bool isAMDBronzeDriver() const;
      bool isAMDFireProDevice() const;
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index 7a7e4c63faf11767e36ef22168c355a94e5145d6..16e834f2a09b3487e7c68ba19f1324b07621e34e 100644
+index 54aac1963594e58f7d687dc0f253b13409a086e5..e2cb837dc6ac2d51a20c34d44900f15a68a63850 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
 @@ -184,12 +184,22 @@ void DisplayMtl::terminate()
@@ -1009,18 +1621,31 @@ index 7a7e4c63faf11767e36ef22168c355a94e5145d6..16e834f2a09b3487e7c68ba19f1324b0
  }
  
  std::string DisplayMtl::getRendererDescription()
-@@ -1179,6 +1189,10 @@ void DisplayMtl::initializeExtensions() const
+@@ -1077,6 +1087,8 @@ void DisplayMtl::initializeExtensions() const
+     // GL_NV_pixel_buffer_object
+     mNativeExtensions.pixelBufferObjectNV = true;
+ 
++    mNativeExtensions.packReverseRowOrderANGLE = true;
++
+     if (mFeatures.hasEvents.enabled)
+     {
+         // MTLSharedEvent is only available since Metal 2.1
+@@ -1174,6 +1186,14 @@ void DisplayMtl::initializeExtensions() const
              mNativeCaps.maxImageUnits = gl::IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES;
          }
      }
 +
 +    // GL_ANGLE_variable_rasterization_rate_metal
 +    mNativeExtensions.variableRasterizationRateMetalANGLE = mFeatures.hasVariableRasterizationRate.enabled;
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++    // GL_WEBKIT_explicit_resolve_target
++    mNativeExtensions.explicitResolveTargetWEBKIT = true;
++#endif
 +
      // "The GPUs in Apple3 through Apple8 families only support memory barriers for compute command
      // encoders, and for vertex-to-vertex and vertex-to-fragment stages of render command encoders."
      mHasFragmentMemoryBarriers = !supportsAppleGPUFamily(3);
-@@ -1251,6 +1265,8 @@ void DisplayMtl::initializeFeatures()
+@@ -1246,6 +1266,8 @@ void DisplayMtl::initializeFeatures()
                              supportsMetal2_1() && (isOSX || isCatalyst) && !isARM);
      ANGLE_FEATURE_CONDITION((&mFeatures), hasDepthAutoResolve, supportsEitherGPUFamily(3, 2));
      ANGLE_FEATURE_CONDITION((&mFeatures), hasStencilAutoResolve, supportsEitherGPUFamily(5, 2));
@@ -1029,7 +1654,7 @@ index 7a7e4c63faf11767e36ef22168c355a94e5145d6..16e834f2a09b3487e7c68ba19f1324b0
      ANGLE_FEATURE_CONDITION((&mFeatures), allowMultisampleStoreAndResolve,
                              supportsEitherGPUFamily(3, 1));
  
-@@ -1441,8 +1457,7 @@ bool DisplayMtl::supportsMetal2_2() const
+@@ -1436,8 +1458,7 @@ bool DisplayMtl::supportsMetal2_2() const
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) || \
@@ -1039,7 +1664,7 @@ index 7a7e4c63faf11767e36ef22168c355a94e5145d6..16e834f2a09b3487e7c68ba19f1324b0
      if (@available(ios 14.0, macOS 11.0, *))
      {
          return [mMetalDevice supports32BitFloatFiltering];
-@@ -1462,6 +1477,17 @@ bool DisplayMtl::supportsDepth24Stencil8PixelFormat() const
+@@ -1457,6 +1478,17 @@ bool DisplayMtl::supportsDepth24Stencil8PixelFormat() const
      return false;
  #endif
  }
@@ -1057,11 +1682,254 @@ index 7a7e4c63faf11767e36ef22168c355a94e5145d6..16e834f2a09b3487e7c68ba19f1324b0
  bool DisplayMtl::isAMD() const
  {
      return angle::IsAMD(mMetalDeviceVendorId);
+diff --git a/src/libANGLE/renderer/metal/FrameBufferMtl.h b/src/libANGLE/renderer/metal/FrameBufferMtl.h
+index 51f2f2b96dddedf975ec17ec60e8eb8255592c25..9ce9bf08134f2ef93504397df9f8acc4fa0eed1a 100644
+--- a/src/libANGLE/renderer/metal/FrameBufferMtl.h
++++ b/src/libANGLE/renderer/metal/FrameBufferMtl.h
+@@ -207,6 +207,14 @@ class FramebufferMtl : public FramebufferImpl
+     angle::FixedVector<RenderTargetMtl *, mtl::kMaxRenderTargets> mColorRenderTargets;
+     RenderTargetMtl *mDepthRenderTarget   = nullptr;
+     RenderTargetMtl *mStencilRenderTarget = nullptr;
++
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++    // GL_WEBKIT_explicit_resolve_target
++    angle::FixedVector<RenderTargetMtl *, mtl::kMaxRenderTargets> mColorResolveRenderTargets;
++    RenderTargetMtl *mDepthResolveRenderTarget   = nullptr;
++    RenderTargetMtl *mStencilResolveRenderTarget = nullptr;
++#endif
++
+     mtl::RenderPassDesc mRenderPassDesc;
+ 
+     const mtl::Format *mRenderPassFirstColorAttachmentFormat = nullptr;
 diff --git a/src/libANGLE/renderer/metal/FrameBufferMtl.mm b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
-index b58d7f9d67932bb582c149623aca5054c53333e7..c61d5f65d4e9b6cc85eae02d42f751813e7f796a 100644
+index d4650cb71be42d55b19bb57cb98c06437086dfb5..9c7e1d9e5c00c8a69e2d7299c23154334e833e3f 100644
 --- a/src/libANGLE/renderer/metal/FrameBufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
-@@ -1685,8 +1685,13 @@ angle::Result FramebufferMtl::readPixelsToPBO(const gl::Context *context,
+@@ -121,6 +121,9 @@ angle::Result Copy2DTextureSlice0Level0ToTempTexture(const gl::Context *context,
+ FramebufferMtl::FramebufferMtl(const gl::FramebufferState &state, ContextMtl *context, bool flipY)
+     : FramebufferImpl(state),
+       mColorRenderTargets(context->getNativeCaps().maxColorAttachments, nullptr),
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++      mColorResolveRenderTargets(context->getNativeCaps().maxColorAttachments, nullptr),
++#endif
+       mBackbuffer(nullptr),
+       mFlipY(flipY)
+ {
+@@ -137,6 +140,14 @@ void FramebufferMtl::reset()
+     }
+     mDepthRenderTarget = mStencilRenderTarget = nullptr;
+ 
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++    for (auto &rt : mColorResolveRenderTargets)
++    {
++        rt = nullptr;
++    }
++    mDepthResolveRenderTarget = mStencilResolveRenderTarget = nullptr;
++#endif
++
+     mRenderPassFirstColorAttachmentFormat = nullptr;
+ 
+     mReadPixelBuffer = nullptr;
+@@ -958,7 +969,7 @@ void FramebufferMtl::setLoadStoreActionOnRenderPassFirstStart(
+         attachment.loadAction = MTLLoadActionLoad;
+     }
+ 
+-    if (attachment.hasImplicitMSTexture())
++    if (attachment.hasResolveTexture())
+     {
+         attachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
+     }
+@@ -1025,22 +1036,47 @@ angle::Result FramebufferMtl::updateColorRenderTarget(const gl::Context *context
+     ASSERT(colorIndexGL < mColorRenderTargets.size());
+     // Reset load store action
+     mRenderPassDesc.colorAttachments[colorIndexGL].reset();
+-    return updateCachedRenderTarget(context, mState.getColorAttachment(colorIndexGL),
+-                                    &mColorRenderTargets[colorIndexGL]);
++    ANGLE_TRY(updateCachedRenderTarget(context, mState.getColorAttachment(colorIndexGL),
++                                       &mColorRenderTargets[colorIndexGL]));
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++    if (mState.getColorResolveAttachment(colorIndexGL))
++    {
++        ANGLE_TRY(updateCachedRenderTarget(context, mState.getColorResolveAttachment(colorIndexGL),
++                                           &mColorResolveRenderTargets[colorIndexGL]));
++    }
++#endif
++    return angle::Result::Continue;
+ }
+ 
+ angle::Result FramebufferMtl::updateDepthRenderTarget(const gl::Context *context)
+ {
+     // Reset load store action
+     mRenderPassDesc.depthAttachment.reset();
+-    return updateCachedRenderTarget(context, mState.getDepthAttachment(), &mDepthRenderTarget);
++    ANGLE_TRY(updateCachedRenderTarget(context, mState.getDepthAttachment(), &mDepthRenderTarget));
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++    if (mState.getDepthResolveAttachment())
++    {
++        ANGLE_TRY(updateCachedRenderTarget(context, mState.getDepthResolveAttachment(),
++                                           &mDepthResolveRenderTarget));
++    }
++#endif
++    return angle::Result::Continue;
+ }
+ 
+ angle::Result FramebufferMtl::updateStencilRenderTarget(const gl::Context *context)
+ {
+     // Reset load store action
+     mRenderPassDesc.stencilAttachment.reset();
+-    return updateCachedRenderTarget(context, mState.getStencilAttachment(), &mStencilRenderTarget);
++    ANGLE_TRY(
++        updateCachedRenderTarget(context, mState.getStencilAttachment(), &mStencilRenderTarget));
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++    if (mState.getStencilResolveAttachment())
++    {
++        ANGLE_TRY(updateCachedRenderTarget(context, mState.getStencilResolveAttachment(),
++                                           &mStencilResolveRenderTarget));
++    }
++#endif
++    return angle::Result::Continue;
+ }
+ 
+ angle::Result FramebufferMtl::updateCachedRenderTarget(const gl::Context *context,
+@@ -1082,6 +1118,9 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
+ 
+         mtl::RenderPassColorAttachmentDesc &colorAttachment = desc.colorAttachments[colorIndexGL];
+         const RenderTargetMtl *colorRenderTarget            = mColorRenderTargets[colorIndexGL];
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++        const RenderTargetMtl *colorResolveRenderTarget = mColorResolveRenderTargets[colorIndexGL];
++#endif
+ 
+         // GL allows data types of fragment shader color outputs to be incompatible with disabled
+         // color attachments. To prevent various Metal validation issues, assign textures only to
+@@ -1089,6 +1128,12 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
+         if (colorRenderTarget && enabledDrawBuffers.test(colorIndexGL))
+         {
+             colorRenderTarget->toRenderPassAttachmentDesc(&colorAttachment);
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++            if (colorResolveRenderTarget)
++            {
++                colorResolveRenderTarget->toRenderPassResolveAttachmentDesc(&colorAttachment);
++            }
++#endif
+ 
+             desc.numColorAttachments = std::max(desc.numColorAttachments, colorIndexGL + 1);
+             desc.sampleCount = std::max(desc.sampleCount, colorRenderTarget->getRenderSamples());
+@@ -1117,6 +1162,12 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
+     if (mDepthRenderTarget)
+     {
+         mDepthRenderTarget->toRenderPassAttachmentDesc(&desc.depthAttachment);
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++        if (mDepthResolveRenderTarget)
++        {
++            mDepthResolveRenderTarget->toRenderPassResolveAttachmentDesc(&desc.depthAttachment);
++        }
++#endif
+         desc.sampleCount = std::max(desc.sampleCount, mDepthRenderTarget->getRenderSamples());
+     }
+     else
+@@ -1127,6 +1178,12 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
+     if (mStencilRenderTarget)
+     {
+         mStencilRenderTarget->toRenderPassAttachmentDesc(&desc.stencilAttachment);
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++        if (mStencilResolveRenderTarget)
++        {
++            mStencilResolveRenderTarget->toRenderPassResolveAttachmentDesc(&desc.stencilAttachment);
++        }
++#endif
+         desc.sampleCount = std::max(desc.sampleCount, mStencilRenderTarget->getRenderSamples());
+     }
+     else
+@@ -1200,7 +1257,7 @@ angle::Result FramebufferMtl::clearWithLoadOpRenderPassNotStarted(
+             colorAttachment.loadAction = MTLLoadActionLoad;
+         }
+ 
+-        if (colorAttachment.hasImplicitMSTexture())
++        if (colorAttachment.hasResolveTexture())
+         {
+             colorAttachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
+         }
+@@ -1220,7 +1277,7 @@ angle::Result FramebufferMtl::clearWithLoadOpRenderPassNotStarted(
+         tempDesc.depthAttachment.loadAction = MTLLoadActionLoad;
+     }
+ 
+-    if (tempDesc.depthAttachment.hasImplicitMSTexture())
++    if (tempDesc.depthAttachment.hasResolveTexture())
+     {
+         tempDesc.depthAttachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
+     }
+@@ -1239,7 +1296,7 @@ angle::Result FramebufferMtl::clearWithLoadOpRenderPassNotStarted(
+         tempDesc.stencilAttachment.loadAction = MTLLoadActionLoad;
+     }
+ 
+-    if (tempDesc.stencilAttachment.hasImplicitMSTexture())
++    if (tempDesc.stencilAttachment.hasResolveTexture())
+     {
+         tempDesc.stencilAttachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
+     }
+@@ -1477,31 +1534,54 @@ angle::Result FramebufferMtl::invalidateImpl(const gl::Context *context,
+                 }
+             }
+ 
+-            mtl::RenderPassColorAttachmentDesc &colorAttachment =
+-                mRenderPassDesc.colorAttachments[i];
++            // If the invalidated color buffer has an associated resolve target
++            // then resolve the MSAA samples, otherwise discard the data.
++            auto &colorAttachment = mRenderPassDesc.colorAttachments[i];
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++            auto *resolveRenderTarget = mColorResolveRenderTargets[i];
++            colorAttachment.storeAction =
++                resolveRenderTarget ? MTLStoreActionMultisampleResolve : MTLStoreActionDontCare;
++#else
+             colorAttachment.storeAction = MTLStoreActionDontCare;
++#endif
+             if (renderPassStarted)
+             {
+-                encoder->setColorStoreAction(MTLStoreActionDontCare, i);
++                encoder->setColorStoreAction(colorAttachment.storeAction, i);
+             }
+         }
+     }
+ 
+     if (invalidateDepthBuffer && mDepthRenderTarget)
+     {
+-        mRenderPassDesc.depthAttachment.storeAction = MTLStoreActionDontCare;
++        // If the invalidated depth buffer has an associated resolve target then
++        // resolve the MSAA samples, otherwise discard the data.
++        auto &depthAttachment = mRenderPassDesc.depthAttachment;
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++        depthAttachment.storeAction =
++            mDepthResolveRenderTarget ? MTLStoreActionMultisampleResolve : MTLStoreActionDontCare;
++#else
++        depthAttachment.storeAction = MTLStoreActionDontCare;
++#endif
+         if (renderPassStarted)
+         {
+-            encoder->setDepthStoreAction(MTLStoreActionDontCare);
++            encoder->setDepthStoreAction(depthAttachment.storeAction);
+         }
+     }
+ 
+     if (invalidateStencilBuffer && mStencilRenderTarget)
+     {
+-        mRenderPassDesc.stencilAttachment.storeAction = MTLStoreActionDontCare;
++        // If the invalidated stencil buffer has an associated resolve target
++        // then resolve the MSAA samples, otherwise discard the data.
++        auto &stencilAttachment = mRenderPassDesc.stencilAttachment;
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++        stencilAttachment.storeAction =
++            mStencilResolveRenderTarget ? MTLStoreActionMultisampleResolve : MTLStoreActionDontCare;
++#else
++        stencilAttachment.storeAction = MTLStoreActionDontCare;
++#endif
+         if (renderPassStarted)
+         {
+-            encoder->setStencilStoreAction(MTLStoreActionDontCare);
++            encoder->setStencilStoreAction(stencilAttachment.storeAction);
+         }
+     }
+ 
+@@ -1685,8 +1765,13 @@ angle::Result FramebufferMtl::readPixelsToPBO(const gl::Context *context,
  
      ContextMtl *contextMtl = mtl::GetImpl(context);
  
@@ -1119,10 +1987,10 @@ index a4a809fabe7572c1d212ff8fb4da35b1f67b6a01..eb2bd204b9edda65ba372b8fcb24f809
      {
          size_t resourceSize = EstimateTextureSizeInBytes(
 diff --git a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
-index d86b83a770764255b12733bf52505db510dac5ac..1fb577f4777bbd6c78046ab64461a99437fb32fa 100644
+index 2b12574f70492d26ca793c57b1c21569d50ef468..45446b2b041fad4f756e1587eecd4d0995c0a8bd 100644
 --- a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
-@@ -897,7 +897,7 @@ angle::Result ProgramExecutableMtl::setupDraw(const gl::Context *glContext,
+@@ -889,7 +889,7 @@ angle::Result ProgramExecutableMtl::setupDraw(const gl::Context *glContext,
  {
      ContextMtl *context = mtl::GetImpl(glContext);
  
@@ -1131,6 +1999,60 @@ index d86b83a770764255b12733bf52505db510dac5ac..1fb577f4777bbd6c78046ab64461a994
      {
          id<MTLFunction> vertexShader = nil;
          ANGLE_TRY(
+diff --git a/src/libANGLE/renderer/metal/RenderTargetMtl.h b/src/libANGLE/renderer/metal/RenderTargetMtl.h
+index 281085bbc46eb7d96dabf73b9c75ee0a61125bab..a07218bc78473252b0b2b9e561ec74799959177e 100644
+--- a/src/libANGLE/renderer/metal/RenderTargetMtl.h
++++ b/src/libANGLE/renderer/metal/RenderTargetMtl.h
+@@ -51,6 +51,9 @@ class RenderTargetMtl final : public FramebufferAttachmentRenderTarget
+     const mtl::Format &getFormat() const { return mFormat; }
+ 
+     void toRenderPassAttachmentDesc(mtl::RenderPassAttachmentDesc *rpaDescOut) const;
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++    void toRenderPassResolveAttachmentDesc(mtl::RenderPassAttachmentDesc *rpaDescOut) const;
++#endif
+ 
+   private:
+     mtl::TextureWeakRef mTexture;
+diff --git a/src/libANGLE/renderer/metal/RenderTargetMtl.mm b/src/libANGLE/renderer/metal/RenderTargetMtl.mm
+index 18e62da867b2916085794ba3b68ee4a3812d3929..6cbf2a58812184edb425d11689bdbce5574917f0 100644
+--- a/src/libANGLE/renderer/metal/RenderTargetMtl.mm
++++ b/src/libANGLE/renderer/metal/RenderTargetMtl.mm
+@@ -73,10 +73,33 @@ uint32_t RenderTargetMtl::getRenderSamples() const
+ 
+ void RenderTargetMtl::toRenderPassAttachmentDesc(mtl::RenderPassAttachmentDesc *rpaDescOut) const
+ {
+-    rpaDescOut->texture           = mTexture.lock();
+-    rpaDescOut->implicitMSTexture = mImplicitMSTexture.lock();
++    mtl::TextureRef implicitMSTex = getImplicitMSTexture();
++    mtl::TextureRef tex           = getTexture();
++    if (implicitMSTex)
++    {
++        rpaDescOut->texture             = implicitMSTex;
++        rpaDescOut->resolveTexture      = tex;
++        rpaDescOut->resolveLevel        = mLevelIndex;
++        rpaDescOut->resolveSliceOrDepth = mLayerIndex;
++    }
++    else
++    {
++        rpaDescOut->texture      = tex;
+         rpaDescOut->level        = mLevelIndex;
+         rpaDescOut->sliceOrDepth = mLayerIndex;
++    }
+     rpaDescOut->blendable = mFormat.getCaps().blendable;
+ }
++
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++void RenderTargetMtl::toRenderPassResolveAttachmentDesc(
++    mtl::RenderPassAttachmentDesc *rpaDescOut) const
++{
++    ASSERT(!getImplicitMSTexture());
++    ASSERT(getRenderSamples() == 1);
++    rpaDescOut->resolveTexture      = getTexture();
++    rpaDescOut->resolveLevel        = mLevelIndex;
++    rpaDescOut->resolveSliceOrDepth = mLayerIndex;
++}
++#endif
+ }  // namespace rx
 diff --git a/src/libANGLE/renderer/metal/SurfaceMtl.mm b/src/libANGLE/renderer/metal/SurfaceMtl.mm
 index 1089fb59517f0c50d055275a66992dda7f380e5f..1c1e2b823d9a4c1340fabb9dff87e8b60993e015 100644
 --- a/src/libANGLE/renderer/metal/SurfaceMtl.mm
@@ -1177,7 +2099,7 @@ index d93f10afc07d12b88cd234e569fa658a1fbf6ad2..24fc07ff9b0e8294d972e7623173b9d4
      params.srcDefaultAlphaData  = convertedFormat.defaultAlpha;
  
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.h b/src/libANGLE/renderer/metal/mtl_command_buffer.h
-index 7cf68b2d13a8b04fffc57d6223a8b60c7c0df010..0bbd15bd77be43272d8b8542a76926e544af59e8 100644
+index d8abf0f1ba04749840bb993a650febf766a471d0..c846a73d188b6890617cb1a3c15be0c62e0acc30 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.h
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.h
 @@ -104,6 +104,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
@@ -1233,7 +2155,7 @@ index 7cf68b2d13a8b04fffc57d6223a8b60c7c0df010..0bbd15bd77be43272d8b8542a76926e5
    private:
      // Override CommandEncoder
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.mm b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
-index 8399d093b04c1d70276219097c0f38a77f17ac0f..1d08dff9d8d2f0f2dd567145a1a5ea095f41760d 100644
+index 6ec5b329019ff4e7e2f459a0c72b71871d696732..56f7fb0b2eda3360e152d0d0aa074d39e6d4ffd8 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 @@ -373,12 +373,20 @@ inline void SetVisibilityResultModeCmd(id<MTLRenderCommandEncoder> encoder,
@@ -1286,7 +2208,7 @@ index 8399d093b04c1d70276219097c0f38a77f17ac0f..1d08dff9d8d2f0f2dd567145a1a5ea09
      if (timeElapsedEntry != 0)
      {
          // Record this command buffer's elapsed time.
-@@ -1362,6 +1385,7 @@ void RenderCommandEncoder::reset()
+@@ -1360,6 +1383,7 @@ void RenderCommandEncoder::reset()
      CommandEncoder::reset();
      mRecording        = false;
      mPipelineStateSet = false;
@@ -1294,7 +2216,24 @@ index 8399d093b04c1d70276219097c0f38a77f17ac0f..1d08dff9d8d2f0f2dd567145a1a5ea09
      mCommands.clear();
  }
  
-@@ -1776,7 +1800,8 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilRefVal(uint32_t ref)
+@@ -1491,13 +1515,13 @@ void RenderCommandEncoder::endEncodingImpl(bool considerDiscardSimulation)
+ inline void RenderCommandEncoder::initAttachmentWriteDependencyAndScissorRect(
+     const RenderPassAttachmentDesc &attachment)
+ {
+-    TextureRef texture = attachment.texture;
++    auto texture = attachment.hasResolveTexture() ? attachment.resolveTexture : attachment.texture;
++    auto &mipLevel = attachment.hasResolveTexture() ? attachment.resolveLevel : attachment.level;
++
+     if (texture)
+     {
+         cmdBuffer().setWriteDependency(texture, /*isRenderCommand=*/true);
+ 
+-        const MipmapNativeLevel &mipLevel = attachment.level;
+-
+         mRenderPassMaxScissorRect.width =
+             std::min<NSUInteger>(mRenderPassMaxScissorRect.width, texture->width(mipLevel));
+         mRenderPassMaxScissorRect.height =
+@@ -1775,7 +1799,8 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilRefVal(uint32_t ref)
      return setStencilRefVals(ref, ref);
  }
  
@@ -1304,7 +2243,7 @@ index 8399d093b04c1d70276219097c0f38a77f17ac0f..1d08dff9d8d2f0f2dd567145a1a5ea09
  {
      if (mStateCache.viewport.valid() && mStateCache.viewport.value() == viewport)
      {
-@@ -1789,12 +1814,22 @@ RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &viewp
+@@ -1788,12 +1813,22 @@ RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &viewp
      return *this;
  }
  
@@ -1330,7 +2269,7 @@ index 8399d093b04c1d70276219097c0f38a77f17ac0f..1d08dff9d8d2f0f2dd567145a1a5ea09
  
      MTLScissorRect clampedRect = {rect.x, rect.y, std::min(rect.width, clampedWidth),
                                    std::min(rect.height, clampedHeight)};
-@@ -1806,6 +1841,23 @@ RenderCommandEncoder &RenderCommandEncoder::setScissorRect(const MTLScissorRect
+@@ -1805,6 +1840,23 @@ RenderCommandEncoder &RenderCommandEncoder::setScissorRect(const MTLScissorRect
  
      mStateCache.scissorRect = clampedRect;
  
@@ -1354,7 +2293,7 @@ index 8399d093b04c1d70276219097c0f38a77f17ac0f..1d08dff9d8d2f0f2dd567145a1a5ea09
      mCommands.push(CmdType::SetScissorRect).push(clampedRect);
  
      return *this;
-@@ -2211,6 +2263,17 @@ void RenderCommandEncoder::popDebugGroup()
+@@ -2210,6 +2262,17 @@ void RenderCommandEncoder::popDebugGroup()
      mCommands.push(CmdType::PopDebugGroup);
  }
  
@@ -1372,7 +2311,7 @@ index 8399d093b04c1d70276219097c0f38a77f17ac0f..1d08dff9d8d2f0f2dd567145a1a5ea09
  RenderCommandEncoder &RenderCommandEncoder::setColorStoreAction(MTLStoreAction action,
                                                                  uint32_t colorAttachmentIndex)
  {
-@@ -2306,6 +2369,16 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilLoadAction(MTLLoadAction a
+@@ -2305,6 +2368,16 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilLoadAction(MTLLoadAction a
      return *this;
  }
  
@@ -1624,8 +2563,36 @@ index 50873854b075ce7327e2ecff25a2c37ba707eb88..d9a21b6ec4f1928acace805e61254c20
  TextureRef Texture::createMipView(const MipmapNativeLevel &level)
  {
      ANGLE_MTL_OBJC_SCOPE
+diff --git a/src/libANGLE/renderer/metal/mtl_state_cache.h b/src/libANGLE/renderer/metal/mtl_state_cache.h
+index 79afa2a499e6a508246edac7dd986b2eabf21a65..353840f9e8c7b1d2695e9cd07e0d357c2f8664ea 100644
+--- a/src/libANGLE/renderer/metal/mtl_state_cache.h
++++ b/src/libANGLE/renderer/metal/mtl_state_cache.h
+@@ -319,15 +319,19 @@ struct RenderPassAttachmentDesc
+     bool equalIgnoreLoadStoreOptions(const RenderPassAttachmentDesc &other) const;
+     bool operator==(const RenderPassAttachmentDesc &other) const;
+ 
+-    ANGLE_INLINE bool hasImplicitMSTexture() const { return implicitMSTexture.get(); }
++    ANGLE_INLINE bool hasResolveTexture() const { return resolveTexture.get(); }
+ 
++    // When rendering with implicit multisample, |texture| is the texture that
++    // will be rendered into and discarded at the end of a render pass. Its
++    // result will be automatically resolved into |resolveTexture|.
+     TextureRef texture;
+-    // Implicit multisample texture that will be rendered into and discarded at the end of
+-    // a render pass. Its result will be resolved into normal texture above.
+-    TextureRef implicitMSTexture;
++    TextureRef resolveTexture;
+     MipmapNativeLevel level;
+     uint32_t sliceOrDepth;
+ 
++    MipmapNativeLevel resolveLevel;
++    uint32_t resolveSliceOrDepth;
++
+     // This attachment is blendable or not.
+     bool blendable;
+     MTLLoadAction loadAction;
 diff --git a/src/libANGLE/renderer/metal/mtl_state_cache.mm b/src/libANGLE/renderer/metal/mtl_state_cache.mm
-index 8534c5c32fbc218da6c00ed95804026ccab508ef..7b2e9926b29407d7870b0da20a6591d0982146e7 100644
+index 8534c5c32fbc218da6c00ed95804026ccab508ef..43017fd33fe6be5af07864c2ec472b16ecbe6ddf 100644
 --- a/src/libANGLE/renderer/metal/mtl_state_cache.mm
 +++ b/src/libANGLE/renderer/metal/mtl_state_cache.mm
 @@ -21,9 +21,16 @@
@@ -1645,11 +2612,89 @@ index 8534c5c32fbc218da6c00ed95804026ccab508ef..7b2e9926b29407d7870b0da20a6591d0
  namespace rx
  {
  namespace mtl
+@@ -142,44 +149,29 @@ id<MTLTexture> ToObjC(const TextureRef &texture)
+ void BaseRenderPassAttachmentDescToObjC(const RenderPassAttachmentDesc &src,
+                                         MTLRenderPassAttachmentDescriptor *dst)
+ {
+-    const TextureRef &implicitMsTexture = src.implicitMSTexture;
+-
+-    if (implicitMsTexture)
+-    {
+-        dst.texture        = ToObjC(implicitMsTexture);
+-        dst.level          = 0;
+-        dst.slice          = 0;
+-        dst.depthPlane     = 0;
+-        dst.resolveTexture = ToObjC(src.texture);
+-        dst.resolveLevel   = src.level.get();
+-        if (dst.resolveTexture.textureType == MTLTextureType3D)
+-        {
+-            dst.resolveDepthPlane = src.sliceOrDepth;
+-            dst.resolveSlice      = 0;
+-        }
+-        else
+-        {
+-            dst.resolveSlice      = src.sliceOrDepth;
+-            dst.resolveDepthPlane = 0;
+-        }
+-    }
+-    else
+-    {
+     dst.texture = ToObjC(src.texture);
+     dst.level   = src.level.get();
+     if (dst.texture.textureType == MTLTextureType3D)
+     {
+-            dst.depthPlane = src.sliceOrDepth;
+         dst.slice      = 0;
++        dst.depthPlane = src.sliceOrDepth;
+     }
+     else
+     {
+         dst.slice      = src.sliceOrDepth;
+         dst.depthPlane = 0;
+     }
+-        dst.resolveTexture    = nil;
+-        dst.resolveLevel      = 0;
++
++    dst.resolveTexture = ToObjC(src.resolveTexture);
++    dst.resolveLevel   = src.resolveLevel.get();
++    if (dst.resolveTexture.textureType == MTLTextureType3D)
++    {
+         dst.resolveSlice      = 0;
++        dst.resolveDepthPlane = src.resolveSliceOrDepth;
++    }
++    else
++    {
++        dst.resolveSlice      = src.resolveSliceOrDepth;
+         dst.resolveDepthPlane = 0;
+     }
+ 
+@@ -692,9 +684,11 @@ RenderPassAttachmentDesc::RenderPassAttachmentDesc()
+ void RenderPassAttachmentDesc::reset()
+ {
+     texture.reset();
+-    implicitMSTexture.reset();
++    resolveTexture.reset();
+     level               = mtl::kZeroNativeMipLevel;
+     sliceOrDepth        = 0;
++    resolveLevel        = mtl::kZeroNativeMipLevel;
++    resolveSliceOrDepth = 0;
+     blendable           = false;
+     loadAction          = MTLLoadActionLoad;
+     storeAction         = MTLStoreActionStore;
+@@ -704,7 +698,7 @@ void RenderPassAttachmentDesc::reset()
+ bool RenderPassAttachmentDesc::equalIgnoreLoadStoreOptions(
+     const RenderPassAttachmentDesc &other) const
+ {
+-    return texture == other.texture && implicitMSTexture == other.implicitMSTexture &&
++    return texture == other.texture && resolveTexture == other.resolveTexture &&
+            level == other.level && sliceOrDepth == other.sliceOrDepth &&
+            blendable == other.blendable;
+ }
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.mm b/src/libANGLE/renderer/metal/mtl_utils.mm
-index 538a50893839c8a905744524d85e513c9914de0d..e403f8b6c795e5268d45677868c6adf30dda8b9e 100644
+index 95c5c04a77de0302e58ae7fbd8710e20947b6497..6d8f029619e651953434f27ce399de664178834e 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_utils.mm
-@@ -1557,6 +1557,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
+@@ -1560,6 +1560,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
  #endif      // TARGET_OS_IOS || TARGET_OS_TV
  }
  
@@ -1674,7 +2719,7 @@ index 538a50893839c8a905744524d85e513c9914de0d..e403f8b6c795e5268d45677868c6adf3
  bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-@@ -1571,10 +1589,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1574,10 +1592,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  #        if TARGET_OS_MACCATALYST
              ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
              case 1:
@@ -1687,7 +2732,7 @@ index 538a50893839c8a905744524d85e513c9914de0d..e403f8b6c795e5268d45677868c6adf3
                  break;
                  ANGLE_APPLE_ALLOW_DEPRECATED_END
  #        else   // TARGET_OS_MACCATALYST
-@@ -1597,7 +1615,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1600,7 +1618,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  
      // If device doesn't support [MTLDevice supportsFamily:], then use
      // [MTLDevice supportsFeatureSet:].
@@ -1696,6 +2741,16 @@ index 538a50893839c8a905744524d85e513c9914de0d..e403f8b6c795e5268d45677868c6adf3
      UNREACHABLE();
      return false;
  #    else
+@@ -1649,8 +1667,7 @@ static NSUInteger getNextLocationForAttachment(const mtl::RenderPassAttachmentDe
+                                                const Context *context,
+                                                NSUInteger currentRenderTargetSize)
+ {
+-    mtl::TextureRef texture =
+-        attachment.implicitMSTexture ? attachment.implicitMSTexture : attachment.texture;
++    mtl::TextureRef texture = attachment.texture;
+ 
+     if (texture)
+     {
 diff --git a/src/libANGLE/renderer/metal/shaders/create_mtl_internal_shaders.py b/src/libANGLE/renderer/metal/shaders/create_mtl_internal_shaders.py
 new file mode 100644
 index 0000000000000000000000000000000000000000..23e8295bcc16412d3aef3fc8e85748fa4ad77a70
@@ -1768,10 +2823,10 @@ index 0000000000000000000000000000000000000000..23e8295bcc16412d3aef3fc8e85748fa
 +if __name__ == '__main__':
 +    sys.exit(main())
 diff --git a/src/libANGLE/renderer/vulkan/ContextVk.cpp b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-index 9ffb67631de977b6e92d1112a2464b317f89bf92..d7f77cf43b7b4523f86b5b7062509b65a204bc9c 100644
+index 9a6129de41e94f452c5529a5266aef6a74a2445c..80e568f2b10c85cb66576f49e6ea86c175ebab36 100644
 --- a/src/libANGLE/renderer/vulkan/ContextVk.cpp
 +++ b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-@@ -5920,6 +5920,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
+@@ -5926,6 +5926,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                              break;
                          case gl::state::EXTENDED_DIRTY_BIT_BLEND_ADVANCED_COHERENT:
                              break;
@@ -1846,8 +2901,42 @@ index f170fc4d8bac3b766bd80083641622fe3571dd6e..4a9c9053385b54ec158d6934e4349d60
  }
  
  bool ValidateGetSamplerParameterIiv(const Context *context,
+diff --git a/src/libANGLE/validationESEXT.cpp b/src/libANGLE/validationESEXT.cpp
+index 34a61837a6999cf0cef25f64d8bd6cc75f18a8a6..427aa4e44ec90feefe684ed210292186a36fb488 100644
+--- a/src/libANGLE/validationESEXT.cpp
++++ b/src/libANGLE/validationESEXT.cpp
+@@ -4461,6 +4461,29 @@ bool ValidateLogicOpANGLE(const PrivateState &state,
+     return ValidateLogicOpCommon(state, errors, entryPoint, opcodePacked);
+ }
+ 
++// GL_WEBKIT_explicit_resolve_target
++bool ValidateFramebufferResolveRenderbufferWEBKIT(const Context *context,
++                                                  angle::EntryPoint entryPoint,
++                                                  GLenum target,
++                                                  GLenum attachment,
++                                                  GLenum renderbuffertarget,
++                                                  RenderbufferID renderbuffer)
++{
++#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
++    if (!context->getExtensions().explicitResolveTargetWEBKIT)
++    {
++        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
++        return false;
++    }
++
++    return ValidateFramebufferRenderbufferBase(context, entryPoint, target, attachment,
++                                               renderbuffertarget, renderbuffer);
++#else
++    UNIMPLEMENTED();
++    return false;
++#endif
++}
++
+ bool ValidateFramebufferFoveationConfigQCOM(const Context *context,
+                                             angle::EntryPoint entryPoint,
+                                             FramebufferID framebufferPacked,
 diff --git a/src/libANGLE/validationESEXT_autogen.h b/src/libANGLE/validationESEXT_autogen.h
-index de36b7a9d310208e2a600c895b253003c0a11484..41bd167ae5c715a32107b1c9a037d3740cc26b15 100644
+index de36b7a9d310208e2a600c895b253003c0a11484..852d2761a5d4c2e970d0c0c43753e768a269a129 100644
 --- a/src/libANGLE/validationESEXT_autogen.h
 +++ b/src/libANGLE/validationESEXT_autogen.h
 @@ -995,6 +995,11 @@ bool ValidateGetTranslatedShaderSourceANGLE(const Context *context,
@@ -1862,8 +2951,23 @@ index de36b7a9d310208e2a600c895b253003c0a11484..41bd167ae5c715a32107b1c9a037d374
  // GL_ANGLE_vulkan_image
  bool ValidateAcquireTexturesANGLE(const Context *context,
                                    angle::EntryPoint entryPoint,
+@@ -2884,6 +2889,14 @@ bool ValidateStartTilingQCOM(const Context *context,
+                              GLuint width,
+                              GLuint height,
+                              GLbitfield preserveMask);
++
++// GL_WEBKIT_explicit_resolve_target
++bool ValidateFramebufferResolveRenderbufferWEBKIT(const Context *context,
++                                                  angle::EntryPoint entryPoint,
++                                                  GLenum target,
++                                                  GLenum attachment,
++                                                  GLenum renderbuffertarget,
++                                                  RenderbufferID renderbufferPacked);
+ }  // namespace gl
+ 
+ #endif  // LIBANGLE_VALIDATION_ESEXT_AUTOGEN_H_
 diff --git a/src/libGLESv2/entry_points_gles_ext_autogen.cpp b/src/libGLESv2/entry_points_gles_ext_autogen.cpp
-index cb14151bfad4eade0972bec0dc9c1bb51b27f3e4..60a78aa6e35d9b36b1d75dd23a17de6f4028bc96 100644
+index cb14151bfad4eade0972bec0dc9c1bb51b27f3e4..df04e91921ae76f265bf5bc3de19cc981a9912d3 100644
 --- a/src/libGLESv2/entry_points_gles_ext_autogen.cpp
 +++ b/src/libGLESv2/entry_points_gles_ext_autogen.cpp
 @@ -4638,6 +4638,36 @@ void GL_APIENTRY GL_GetTranslatedShaderSourceANGLE(GLuint shader,
@@ -1903,8 +3007,53 @@ index cb14151bfad4eade0972bec0dc9c1bb51b27f3e4..60a78aa6e35d9b36b1d75dd23a17de6f
  // GL_ANGLE_vulkan_image
  void GL_APIENTRY GL_AcquireTexturesANGLE(GLuint numTextures,
                                           const GLuint *textures,
+@@ -13859,4 +13889,44 @@ GL_StartTilingQCOM(GLuint x, GLuint y, GLuint width, GLuint height, GLbitfield p
+     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+ }
+ 
++// GL_WEBKIT_explicit_resolve_target
++void GL_APIENTRY GL_FramebufferResolveRenderbufferWEBKIT(GLenum target,
++                                                         GLenum attachment,
++                                                         GLenum renderbuffertarget,
++                                                         GLuint renderbuffer)
++{
++    Context *context = GetValidGlobalContext();
++    EVENT(context, GLFramebufferResolveRenderbufferWEBKIT,
++          "context = %d, target = %s, attachment = %s, renderbuffertarget = %s, renderbuffer = %u",
++          CID(context), GLenumToString(GLESEnum::AllEnums, target),
++          GLenumToString(GLESEnum::AllEnums, attachment),
++          GLenumToString(GLESEnum::AllEnums, renderbuffertarget), renderbuffer);
++
++    if (context)
++    {
++        RenderbufferID renderbufferPacked = PackParam<RenderbufferID>(renderbuffer);
++        SCOPED_SHARE_CONTEXT_LOCK(context);
++        bool isCallValid =
++            (context->skipValidation() ||
++             (ValidatePixelLocalStorageInactive(
++                  context->getPrivateState(), context->getMutableErrorSetForValidation(),
++                  angle::EntryPoint::GLFramebufferResolveRenderbufferWEBKIT) &&
++              ValidateFramebufferResolveRenderbufferWEBKIT(
++                  context, angle::EntryPoint::GLFramebufferResolveRenderbufferWEBKIT, target,
++                  attachment, renderbuffertarget, renderbufferPacked)));
++        if (isCallValid)
++        {
++            context->framebufferResolveRenderbufferWEBKIT(target, attachment, renderbuffertarget,
++                                                          renderbufferPacked);
++        }
++        ANGLE_CAPTURE_GL(FramebufferResolveRenderbufferWEBKIT, isCallValid, context, target,
++                         attachment, renderbuffertarget, renderbufferPacked);
++    }
++    else
++    {
++        GenerateContextLostErrorOnCurrentGlobalContext();
++    }
++    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
++}
++
+ }  // extern "C"
 diff --git a/src/libGLESv2/entry_points_gles_ext_autogen.h b/src/libGLESv2/entry_points_gles_ext_autogen.h
-index e389d4728c4f16da54842c71e13e6857ed81daa2..0260d8adc5541ca8e12086207c382784fa9766eb 100644
+index e389d4728c4f16da54842c71e13e6857ed81daa2..8725696ee977c8bc8e041b3a4792e6b8a48ff5a0 100644
 --- a/src/libGLESv2/entry_points_gles_ext_autogen.h
 +++ b/src/libGLESv2/entry_points_gles_ext_autogen.h
 @@ -738,6 +738,10 @@ ANGLE_EXPORT void GL_APIENTRY GL_GetTranslatedShaderSourceANGLE(GLuint shader,
@@ -1918,8 +3067,21 @@ index e389d4728c4f16da54842c71e13e6857ed81daa2..0260d8adc5541ca8e12086207c382784
  // GL_ANGLE_vulkan_image
  ANGLE_EXPORT void GL_APIENTRY GL_AcquireTexturesANGLE(GLuint numTextures,
                                                        const GLuint *textures,
+@@ -1935,6 +1939,12 @@ ANGLE_EXPORT void GL_APIENTRY GL_TextureFoveationParametersQCOM(GLuint texture,
+ ANGLE_EXPORT void GL_APIENTRY GL_EndTilingQCOM(GLbitfield preserveMask);
+ ANGLE_EXPORT void GL_APIENTRY
+ GL_StartTilingQCOM(GLuint x, GLuint y, GLuint width, GLuint height, GLbitfield preserveMask);
++
++// GL_WEBKIT_explicit_resolve_target
++ANGLE_EXPORT void GL_APIENTRY GL_FramebufferResolveRenderbufferWEBKIT(GLenum target,
++                                                                      GLenum attachment,
++                                                                      GLenum renderbuffertarget,
++                                                                      GLuint renderbuffer);
+ }  // extern "C"
+ 
+ #endif  // LIBGLESV2_ENTRY_POINTS_GLES_EXT_AUTOGEN_H_
 diff --git a/src/libGLESv2/libGLESv2_autogen.cpp b/src/libGLESv2/libGLESv2_autogen.cpp
-index 5cc6a38217e8074633a63afd66c8ac7519c75f43..213539b2cefb4e794b47c01396c804c8414ad233 100644
+index 5cc6a38217e8074633a63afd66c8ac7519c75f43..8210a3e6a6cb521018cc4f9db47c5e9cc22d8e6e 100644
 --- a/src/libGLESv2/libGLESv2_autogen.cpp
 +++ b/src/libGLESv2/libGLESv2_autogen.cpp
 @@ -3942,6 +3942,12 @@ void GL_APIENTRY glGetTranslatedShaderSourceANGLE(GLuint shader,
@@ -1935,8 +3097,25 @@ index 5cc6a38217e8074633a63afd66c8ac7519c75f43..213539b2cefb4e794b47c01396c804c8
  // GL_ANGLE_vulkan_image
  void GL_APIENTRY glAcquireTexturesANGLE(GLuint numTextures,
                                          const GLuint *textures,
+@@ -6067,6 +6073,16 @@ glStartTilingQCOM(GLuint x, GLuint y, GLuint width, GLuint height, GLbitfield pr
+     return GL_StartTilingQCOM(x, y, width, height, preserveMask);
+ }
+ 
++// GL_WEBKIT_explicit_resolve_target
++void GL_APIENTRY glFramebufferResolveRenderbufferWEBKIT(GLenum target,
++                                                        GLenum attachment,
++                                                        GLenum renderbuffertarget,
++                                                        GLuint renderbuffer)
++{
++    return GL_FramebufferResolveRenderbufferWEBKIT(target, attachment, renderbuffertarget,
++                                                   renderbuffer);
++}
++
+ #if defined(ANGLE_ENABLE_GL_DESKTOP_FRONTEND)
+ 
+ // GL 1.0
 diff --git a/src/libGLESv2/libGLESv2_autogen.def b/src/libGLESv2/libGLESv2_autogen.def
-index 8117e28d0ec91924ece75f22a64c87e6573f70a4..200c7110e26346d3172542a1a598324322df10ab 100644
+index 8117e28d0ec91924ece75f22a64c87e6573f70a4..4897c4154c22d07fec87b9d15e45d7179987b5ec 100644
 --- a/src/libGLESv2/libGLESv2_autogen.def
 +++ b/src/libGLESv2/libGLESv2_autogen.def
 @@ -668,6 +668,9 @@ EXPORTS
@@ -1949,8 +3128,18 @@ index 8117e28d0ec91924ece75f22a64c87e6573f70a4..200c7110e26346d3172542a1a5983243
      ; GL_ANGLE_vulkan_image
      glAcquireTexturesANGLE
      glReleaseTexturesANGLE
+@@ -1265,6 +1268,9 @@ EXPORTS
+     glEndTilingQCOM
+     glStartTilingQCOM
+ 
++    ; GL_WEBKIT_explicit_resolve_target
++    glFramebufferResolveRenderbufferWEBKIT
++
+     ; EGL 1.0
+     EGL_ChooseConfig
+     EGL_CopyBuffers
 diff --git a/src/libGLESv2/libGLESv2_no_capture_autogen.def b/src/libGLESv2/libGLESv2_no_capture_autogen.def
-index 57875834664dc72e867fd161b0f0b27d683affd4..dfcc2c424ee4a976782f01add8a3051435db8906 100644
+index 57875834664dc72e867fd161b0f0b27d683affd4..0a189c1b388d82cbbfff55e6cd73e00d94019a53 100644
 --- a/src/libGLESv2/libGLESv2_no_capture_autogen.def
 +++ b/src/libGLESv2/libGLESv2_no_capture_autogen.def
 @@ -668,6 +668,9 @@ EXPORTS
@@ -1963,8 +3152,18 @@ index 57875834664dc72e867fd161b0f0b27d683affd4..dfcc2c424ee4a976782f01add8a30514
      ; GL_ANGLE_vulkan_image
      glAcquireTexturesANGLE
      glReleaseTexturesANGLE
+@@ -1265,6 +1268,9 @@ EXPORTS
+     glEndTilingQCOM
+     glStartTilingQCOM
+ 
++    ; GL_WEBKIT_explicit_resolve_target
++    glFramebufferResolveRenderbufferWEBKIT
++
+     ; EGL 1.0
+     EGL_ChooseConfig
+     EGL_CopyBuffers
 diff --git a/src/libGLESv2/libGLESv2_vulkan_secondaries_autogen.def b/src/libGLESv2/libGLESv2_vulkan_secondaries_autogen.def
-index ba0237ae105122f6e8f6349a2f0f294b5de30375..7efab9e284c4da08a95d01917ad59ca7410ba189 100644
+index ba0237ae105122f6e8f6349a2f0f294b5de30375..feb75b2bec659049e6afb4ecbfcd5a56d52f241e 100644
 --- a/src/libGLESv2/libGLESv2_vulkan_secondaries_autogen.def
 +++ b/src/libGLESv2/libGLESv2_vulkan_secondaries_autogen.def
 @@ -668,6 +668,9 @@ EXPORTS
@@ -1977,8 +3176,18 @@ index ba0237ae105122f6e8f6349a2f0f294b5de30375..7efab9e284c4da08a95d01917ad59ca7
      ; GL_ANGLE_vulkan_image
      glAcquireTexturesANGLE
      glReleaseTexturesANGLE
+@@ -1265,6 +1268,9 @@ EXPORTS
+     glEndTilingQCOM
+     glStartTilingQCOM
+ 
++    ; GL_WEBKIT_explicit_resolve_target
++    glFramebufferResolveRenderbufferWEBKIT
++
+     ; EGL 1.0
+     EGL_ChooseConfig
+     EGL_CopyBuffers
 diff --git a/src/libGLESv2/libGLESv2_with_capture_autogen.def b/src/libGLESv2/libGLESv2_with_capture_autogen.def
-index a242e6df2f07d273730e8fead7b1a7e5086a08a8..2559cd521aab1e6066559a44c7ecda1f98f8bd22 100644
+index a242e6df2f07d273730e8fead7b1a7e5086a08a8..5d2e6d06ad85fceffae7350679b824ea22dad31a 100644
 --- a/src/libGLESv2/libGLESv2_with_capture_autogen.def
 +++ b/src/libGLESv2/libGLESv2_with_capture_autogen.def
 @@ -668,6 +668,9 @@ EXPORTS
@@ -1991,8 +3200,18 @@ index a242e6df2f07d273730e8fead7b1a7e5086a08a8..2559cd521aab1e6066559a44c7ecda1f
      ; GL_ANGLE_vulkan_image
      glAcquireTexturesANGLE
      glReleaseTexturesANGLE
+@@ -1265,6 +1268,9 @@ EXPORTS
+     glEndTilingQCOM
+     glStartTilingQCOM
+ 
++    ; GL_WEBKIT_explicit_resolve_target
++    glFramebufferResolveRenderbufferWEBKIT
++
+     ; EGL 1.0
+     EGL_ChooseConfig
+     EGL_CopyBuffers
 diff --git a/src/libGLESv2/opengl32_autogen.def b/src/libGLESv2/opengl32_autogen.def
-index 782e627b9e2270d8cbb335fee5f191e15cbd98c7..910c861ae5917b8c6048e7519d03dec28e7d52a9 100644
+index 782e627b9e2270d8cbb335fee5f191e15cbd98c7..dfd2ad5a5579cb229c74e40ebaaa6588301cd405 100644
 --- a/src/libGLESv2/opengl32_autogen.def
 +++ b/src/libGLESv2/opengl32_autogen.def
 @@ -668,6 +668,9 @@ EXPORTS
@@ -2005,8 +3224,18 @@ index 782e627b9e2270d8cbb335fee5f191e15cbd98c7..910c861ae5917b8c6048e7519d03dec2
      ; GL_ANGLE_vulkan_image
      glAcquireTexturesANGLE
      glReleaseTexturesANGLE
+@@ -1265,6 +1268,9 @@ EXPORTS
+     glEndTilingQCOM
+     glStartTilingQCOM
+ 
++    ; GL_WEBKIT_explicit_resolve_target
++    glFramebufferResolveRenderbufferWEBKIT
++
+     ; GL 1.0
+     glAccum
+     glAlphaFunc
 diff --git a/src/libGLESv2/opengl32_with_wgl_autogen.def b/src/libGLESv2/opengl32_with_wgl_autogen.def
-index 30763ef3b30b4184d92008adea49e0eb3d6d1f9c..f1ba5c64dfaeb7350ef31c033e54a87696985ab4 100644
+index 30763ef3b30b4184d92008adea49e0eb3d6d1f9c..9395c6b7da198127b2f54951d213941657e449d8 100644
 --- a/src/libGLESv2/opengl32_with_wgl_autogen.def
 +++ b/src/libGLESv2/opengl32_with_wgl_autogen.def
 @@ -668,6 +668,9 @@ EXPORTS
@@ -2019,8 +3248,18 @@ index 30763ef3b30b4184d92008adea49e0eb3d6d1f9c..f1ba5c64dfaeb7350ef31c033e54a876
      ; GL_ANGLE_vulkan_image
      glAcquireTexturesANGLE
      glReleaseTexturesANGLE
+@@ -1265,6 +1268,9 @@ EXPORTS
+     glEndTilingQCOM
+     glStartTilingQCOM
+ 
++    ; GL_WEBKIT_explicit_resolve_target
++    glFramebufferResolveRenderbufferWEBKIT
++
+     ; GL 1.0
+     glAccum
+     glAlphaFunc
 diff --git a/src/libGLESv2/proc_table_egl_autogen.cpp b/src/libGLESv2/proc_table_egl_autogen.cpp
-index 4669eb7255e7c5d2f38415717e41f9a52978c446..b4ebf9cce3da85b54d2793485dbb9aad21e2a1f9 100644
+index 4669eb7255e7c5d2f38415717e41f9a52978c446..3d2bb967c5f8876e7f218557e2939265abdcf033 100644
 --- a/src/libGLESv2/proc_table_egl_autogen.cpp
 +++ b/src/libGLESv2/proc_table_egl_autogen.cpp
 @@ -190,6 +190,7 @@ const ProcEntry g_procTable[] = {
@@ -2031,8 +3270,16 @@ index 4669eb7255e7c5d2f38415717e41f9a52978c446..b4ebf9cce3da85b54d2793485dbb9aad
      {"glBindProgramPipeline", P(GL_BindProgramPipeline)},
      {"glBindProgramPipelineEXT", P(GL_BindProgramPipelineEXT)},
      {"glBindRenderbuffer", P(GL_BindRenderbuffer)},
+@@ -528,6 +529,7 @@ const ProcEntry g_procTable[] = {
+     {"glFramebufferPixelLocalStorageRestoreANGLE", P(GL_FramebufferPixelLocalStorageRestoreANGLE)},
+     {"glFramebufferRenderbuffer", P(GL_FramebufferRenderbuffer)},
+     {"glFramebufferRenderbufferOES", P(GL_FramebufferRenderbufferOES)},
++    {"glFramebufferResolveRenderbufferWEBKIT", P(GL_FramebufferResolveRenderbufferWEBKIT)},
+     {"glFramebufferTexture", P(GL_FramebufferTexture)},
+     DESKTOP_ONLY("glFramebufferTexture1D", GL_FramebufferTexture1D)
+     {"glFramebufferTexture2D", P(GL_FramebufferTexture2D)},
 diff --git a/src/libGLESv2/proc_table_glx_autogen.cpp b/src/libGLESv2/proc_table_glx_autogen.cpp
-index 413a54610cfc5a2404c5b703e638e003041e3668..e7b49f3f4a63d09a81282d10efad58ffd1b4f7da 100644
+index 413a54610cfc5a2404c5b703e638e003041e3668..7bae292cdf41ebc30ec59f1c87423818f5ccb32b 100644
 --- a/src/libGLESv2/proc_table_glx_autogen.cpp
 +++ b/src/libGLESv2/proc_table_glx_autogen.cpp
 @@ -67,6 +67,7 @@ const ProcEntry g_procTable[] = {
@@ -2043,8 +3290,16 @@ index 413a54610cfc5a2404c5b703e638e003041e3668..e7b49f3f4a63d09a81282d10efad58ff
      {"glBindProgramPipeline", P(GL_BindProgramPipeline)},
      {"glBindProgramPipelineEXT", P(GL_BindProgramPipelineEXT)},
      {"glBindRenderbuffer", P(GL_BindRenderbuffer)},
+@@ -405,6 +406,7 @@ const ProcEntry g_procTable[] = {
+     {"glFramebufferPixelLocalStorageRestoreANGLE", P(GL_FramebufferPixelLocalStorageRestoreANGLE)},
+     {"glFramebufferRenderbuffer", P(GL_FramebufferRenderbuffer)},
+     {"glFramebufferRenderbufferOES", P(GL_FramebufferRenderbufferOES)},
++    {"glFramebufferResolveRenderbufferWEBKIT", P(GL_FramebufferResolveRenderbufferWEBKIT)},
+     {"glFramebufferTexture", P(GL_FramebufferTexture)},
+     {"glFramebufferTexture1D", P(GL_FramebufferTexture1D)},
+     {"glFramebufferTexture2D", P(GL_FramebufferTexture2D)},
 diff --git a/src/libGLESv2/proc_table_wgl_autogen.cpp b/src/libGLESv2/proc_table_wgl_autogen.cpp
-index 4cfd778a60259c742692602a6a0d9f10bdab5806..63fc1cb00b9b5f36a4ded5b55c6f993c1febe84d 100644
+index 4cfd778a60259c742692602a6a0d9f10bdab5806..f939f35fe62e450710c8f73f6ed3f773146e6d18 100644
 --- a/src/libGLESv2/proc_table_wgl_autogen.cpp
 +++ b/src/libGLESv2/proc_table_wgl_autogen.cpp
 @@ -67,6 +67,7 @@ const ProcEntry g_procTable[] = {
@@ -2055,11 +3310,27 @@ index 4cfd778a60259c742692602a6a0d9f10bdab5806..63fc1cb00b9b5f36a4ded5b55c6f993c
      {"glBindProgramPipeline", P(GL_BindProgramPipeline)},
      {"glBindProgramPipelineEXT", P(GL_BindProgramPipelineEXT)},
      {"glBindRenderbuffer", P(GL_BindRenderbuffer)},
+@@ -405,6 +406,7 @@ const ProcEntry g_procTable[] = {
+     {"glFramebufferPixelLocalStorageRestoreANGLE", P(GL_FramebufferPixelLocalStorageRestoreANGLE)},
+     {"glFramebufferRenderbuffer", P(GL_FramebufferRenderbuffer)},
+     {"glFramebufferRenderbufferOES", P(GL_FramebufferRenderbufferOES)},
++    {"glFramebufferResolveRenderbufferWEBKIT", P(GL_FramebufferResolveRenderbufferWEBKIT)},
+     {"glFramebufferTexture", P(GL_FramebufferTexture)},
+     {"glFramebufferTexture1D", P(GL_FramebufferTexture1D)},
+     {"glFramebufferTexture2D", P(GL_FramebufferTexture2D)},
 diff --git a/src/tests/angle_end2end_tests.gni b/src/tests/angle_end2end_tests.gni
-index 879a6de5c94c64e6a676fe177df432a1cdc7f680..8af0ba1aa72a6d46a72f43ef3f4c76193b8460f2 100644
+index 879a6de5c94c64e6a676fe177df432a1cdc7f680..b46227c7c52fe621c00e3b124995729ba0e68ebd 100644
 --- a/src/tests/angle_end2end_tests.gni
 +++ b/src/tests/angle_end2end_tests.gni
-@@ -226,6 +226,7 @@ angle_end2end_tests_mac_sources = [
+@@ -86,6 +86,7 @@ angle_end2end_tests_sources = [
+   "gl_tests/FramebufferMixedSamplesTest.cpp",
+   "gl_tests/FramebufferMultiviewTest.cpp",
+   "gl_tests/FramebufferRenderMipmapTest.cpp",
++  "gl_tests/FramebufferResolveTest.cpp",
+   "gl_tests/FramebufferTest.cpp",
+   "gl_tests/GLSLTest.cpp",
+   "gl_tests/GeometryShaderTest.cpp",
+@@ -226,6 +227,7 @@ angle_end2end_tests_mac_sources = [
    "egl_tests/EGLSyncTestMetalSharedEvent.mm",
    "egl_tests/EGLWaitUntilWorkScheduledTest.cpp",
    "gl_tests/ImageTestMetal.mm",
@@ -2088,10 +3359,10 @@ index 969cd2f96d302d74dd3515ac842b93eb51387cd2..730d0ffa536caf536ec750e2bac82c81
      window->makeCurrent();
  
 diff --git a/util/autogen/angle_features_autogen.cpp b/util/autogen/angle_features_autogen.cpp
-index f4c6e4a8b7492243252413a5e17f1a35d9ee9fef..28ab6adc31f6fbb4fdf824f31812fd9679c100ec 100644
+index fd0de447a80fcf20e600e0dcbb603216b7747076..24e987b86b833a1dc36622f5dc084eb1c8e42d72 100644
 --- a/util/autogen/angle_features_autogen.cpp
 +++ b/util/autogen/angle_features_autogen.cpp
-@@ -200,6 +200,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
+@@ -203,6 +203,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
      {Feature::HasShaderStencilOutput, "hasShaderStencilOutput"},
      {Feature::HasStencilAutoResolve, "hasStencilAutoResolve"},
      {Feature::HasTextureSwizzle, "hasTextureSwizzle"},
@@ -2100,10 +3371,10 @@ index f4c6e4a8b7492243252413a5e17f1a35d9ee9fef..28ab6adc31f6fbb4fdf824f31812fd96
      {Feature::InitializeCurrentVertexAttributes, "initializeCurrentVertexAttributes"},
      {Feature::InjectAsmStatementIntoLoopBodies, "injectAsmStatementIntoLoopBodies"},
 diff --git a/util/autogen/angle_features_autogen.h b/util/autogen/angle_features_autogen.h
-index fc9632144674ae1b27ce8f1a961de3b2225f4666..a93eb665f2ee9fae1ad08abcf37926b4b71c79e6 100644
+index 25f26dc7dba0eaa092f9473b2de9c0c33d8571d0..350e080bac811bb6eee547d064aa16a6c043bf4e 100644
 --- a/util/autogen/angle_features_autogen.h
 +++ b/util/autogen/angle_features_autogen.h
-@@ -200,6 +200,7 @@ enum class Feature
+@@ -203,6 +203,7 @@ enum class Feature
      HasShaderStencilOutput,
      HasStencilAutoResolve,
      HasTextureSwizzle,
@@ -2112,7 +3383,7 @@ index fc9632144674ae1b27ce8f1a961de3b2225f4666..a93eb665f2ee9fae1ad08abcf37926b4
      InitializeCurrentVertexAttributes,
      InjectAsmStatementIntoLoopBodies,
 diff --git a/util/capture/frame_capture_replay_autogen.cpp b/util/capture/frame_capture_replay_autogen.cpp
-index 0356ae084c4e6394c3de340273b2426f9d8c2497..05684ff50b97458433160bb08ee573c6cf64898d 100644
+index 0356ae084c4e6394c3de340273b2426f9d8c2497..51cf85872ae18efa21c6d94d56e969e41508a659 100644
 --- a/util/capture/frame_capture_replay_autogen.cpp
 +++ b/util/capture/frame_capture_replay_autogen.cpp
 @@ -105,6 +105,10 @@ void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &cu
@@ -2126,8 +3397,20 @@ index 0356ae084c4e6394c3de340273b2426f9d8c2497..05684ff50b97458433160bb08ee573c6
          case angle::EntryPoint::GLBindProgramPipeline:
              glBindProgramPipeline(gProgramPipelineMap[captures[0].value.GLuintVal]);
              break;
+@@ -1053,6 +1057,11 @@ void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &cu
+                                          captures[2].value.GLenumVal,
+                                          gRenderbufferMap[captures[3].value.GLuintVal]);
+             break;
++        case angle::EntryPoint::GLFramebufferResolveRenderbufferWEBKIT:
++            glFramebufferResolveRenderbufferWEBKIT(
++                captures[0].value.GLenumVal, captures[1].value.GLenumVal,
++                captures[2].value.GLenumVal, gRenderbufferMap[captures[3].value.GLuintVal]);
++            break;
+         case angle::EntryPoint::GLFramebufferTexture:
+             glFramebufferTexture(captures[0].value.GLenumVal, captures[1].value.GLenumVal,
+                                  gTextureMap[captures[2].value.GLuintVal],
 diff --git a/util/capture/trace_gles_loader_autogen.cpp b/util/capture/trace_gles_loader_autogen.cpp
-index 2a2450169abf46c88371eb7cfc3c4f5755db5a84..ba7cd722020ac6fbd156af9ff8fcb034351a57c2 100644
+index 2a2450169abf46c88371eb7cfc3c4f5755db5a84..f746dabe8e8de21fe69bd99d7d9a8e75fa11723f 100644
 --- a/util/capture/trace_gles_loader_autogen.cpp
 +++ b/util/capture/trace_gles_loader_autogen.cpp
 @@ -630,6 +630,8 @@ ANGLE_TRACE_LOADER_EXPORT PFNGLSAMPLEMASKIANGLEPROC t_glSampleMaskiANGLE;
@@ -2139,7 +3422,16 @@ index 2a2450169abf46c88371eb7cfc3c4f5755db5a84..ba7cd722020ac6fbd156af9ff8fcb034
  ANGLE_TRACE_LOADER_EXPORT PFNGLACQUIRETEXTURESANGLEPROC t_glAcquireTexturesANGLE;
  ANGLE_TRACE_LOADER_EXPORT PFNGLRELEASETEXTURESANGLEPROC t_glReleaseTexturesANGLE;
  ANGLE_TRACE_LOADER_EXPORT PFNGLBINDUNIFORMLOCATIONCHROMIUMPROC t_glBindUniformLocationCHROMIUM;
-@@ -1845,6 +1847,9 @@ void LoadTraceGLES(LoadProc loadProc)
+@@ -879,6 +881,8 @@ ANGLE_TRACE_LOADER_EXPORT PFNGLTEXTUREFOVEATIONPARAMETERSQCOMPROC
+     t_glTextureFoveationParametersQCOM;
+ ANGLE_TRACE_LOADER_EXPORT PFNGLENDTILINGQCOMPROC t_glEndTilingQCOM;
+ ANGLE_TRACE_LOADER_EXPORT PFNGLSTARTTILINGQCOMPROC t_glStartTilingQCOM;
++ANGLE_TRACE_LOADER_EXPORT PFNGLFRAMEBUFFERRESOLVERENDERBUFFERWEBKITPROC
++    t_glFramebufferResolveRenderbufferWEBKIT;
+ ANGLE_TRACE_LOADER_EXPORT PFNGLDRAWTEXFOESPROC t_glDrawTexfOES;
+ ANGLE_TRACE_LOADER_EXPORT PFNGLDRAWTEXFVOESPROC t_glDrawTexfvOES;
+ ANGLE_TRACE_LOADER_EXPORT PFNGLDRAWTEXIOESPROC t_glDrawTexiOES;
+@@ -1845,6 +1849,9 @@ void LoadTraceGLES(LoadProc loadProc)
          loadProc("glTexStorage2DMultisampleANGLE"));
      t_glGetTranslatedShaderSourceANGLE = reinterpret_cast<PFNGLGETTRANSLATEDSHADERSOURCEANGLEPROC>(
          loadProc("glGetTranslatedShaderSourceANGLE"));
@@ -2149,8 +3441,18 @@ index 2a2450169abf46c88371eb7cfc3c4f5755db5a84..ba7cd722020ac6fbd156af9ff8fcb034
      t_glAcquireTexturesANGLE =
          reinterpret_cast<PFNGLACQUIRETEXTURESANGLEPROC>(loadProc("glAcquireTexturesANGLE"));
      t_glReleaseTexturesANGLE =
+@@ -2274,6 +2281,9 @@ void LoadTraceGLES(LoadProc loadProc)
+         loadProc("glTextureFoveationParametersQCOM"));
+     t_glEndTilingQCOM   = reinterpret_cast<PFNGLENDTILINGQCOMPROC>(loadProc("glEndTilingQCOM"));
+     t_glStartTilingQCOM = reinterpret_cast<PFNGLSTARTTILINGQCOMPROC>(loadProc("glStartTilingQCOM"));
++    t_glFramebufferResolveRenderbufferWEBKIT =
++        reinterpret_cast<PFNGLFRAMEBUFFERRESOLVERENDERBUFFERWEBKITPROC>(
++            loadProc("glFramebufferResolveRenderbufferWEBKIT"));
+     t_glDrawTexfOES  = reinterpret_cast<PFNGLDRAWTEXFOESPROC>(loadProc("glDrawTexfOES"));
+     t_glDrawTexfvOES = reinterpret_cast<PFNGLDRAWTEXFVOESPROC>(loadProc("glDrawTexfvOES"));
+     t_glDrawTexiOES  = reinterpret_cast<PFNGLDRAWTEXIOESPROC>(loadProc("glDrawTexiOES"));
 diff --git a/util/capture/trace_gles_loader_autogen.h b/util/capture/trace_gles_loader_autogen.h
-index c1e82cb5725914d533051df5e521b01e2fb872ff..c72acd9c43d3a326ff42652fdf8597fd5d8bbd99 100644
+index c1e82cb5725914d533051df5e521b01e2fb872ff..64a5dee4e3114de59ff638e098a3f4f56e4f853e 100644
 --- a/util/capture/trace_gles_loader_autogen.h
 +++ b/util/capture/trace_gles_loader_autogen.h
 @@ -595,6 +595,7 @@
@@ -2161,7 +3463,15 @@ index c1e82cb5725914d533051df5e521b01e2fb872ff..c72acd9c43d3a326ff42652fdf8597fd
  #define glAcquireTexturesANGLE t_glAcquireTexturesANGLE
  #define glReleaseTexturesANGLE t_glReleaseTexturesANGLE
  #define glBindUniformLocationCHROMIUM t_glBindUniformLocationCHROMIUM
-@@ -1515,6 +1516,8 @@ ANGLE_TRACE_LOADER_EXPORT extern PFNGLTEXSTORAGE2DMULTISAMPLEANGLEPROC
+@@ -827,6 +828,7 @@
+ #define glTextureFoveationParametersQCOM t_glTextureFoveationParametersQCOM
+ #define glEndTilingQCOM t_glEndTilingQCOM
+ #define glStartTilingQCOM t_glStartTilingQCOM
++#define glFramebufferResolveRenderbufferWEBKIT t_glFramebufferResolveRenderbufferWEBKIT
+ #define glDrawTexfOES t_glDrawTexfOES
+ #define glDrawTexfvOES t_glDrawTexfvOES
+ #define glDrawTexiOES t_glDrawTexiOES
+@@ -1515,6 +1517,8 @@ ANGLE_TRACE_LOADER_EXPORT extern PFNGLTEXSTORAGE2DMULTISAMPLEANGLEPROC
      t_glTexStorage2DMultisampleANGLE;
  ANGLE_TRACE_LOADER_EXPORT extern PFNGLGETTRANSLATEDSHADERSOURCEANGLEPROC
      t_glGetTranslatedShaderSourceANGLE;
@@ -2170,8 +3480,17 @@ index c1e82cb5725914d533051df5e521b01e2fb872ff..c72acd9c43d3a326ff42652fdf8597fd
  ANGLE_TRACE_LOADER_EXPORT extern PFNGLACQUIRETEXTURESANGLEPROC t_glAcquireTexturesANGLE;
  ANGLE_TRACE_LOADER_EXPORT extern PFNGLRELEASETEXTURESANGLEPROC t_glReleaseTexturesANGLE;
  ANGLE_TRACE_LOADER_EXPORT extern PFNGLBINDUNIFORMLOCATIONCHROMIUMPROC
+@@ -1782,6 +1786,8 @@ ANGLE_TRACE_LOADER_EXPORT extern PFNGLTEXTUREFOVEATIONPARAMETERSQCOMPROC
+     t_glTextureFoveationParametersQCOM;
+ ANGLE_TRACE_LOADER_EXPORT extern PFNGLENDTILINGQCOMPROC t_glEndTilingQCOM;
+ ANGLE_TRACE_LOADER_EXPORT extern PFNGLSTARTTILINGQCOMPROC t_glStartTilingQCOM;
++ANGLE_TRACE_LOADER_EXPORT extern PFNGLFRAMEBUFFERRESOLVERENDERBUFFERWEBKITPROC
++    t_glFramebufferResolveRenderbufferWEBKIT;
+ ANGLE_TRACE_LOADER_EXPORT extern PFNGLDRAWTEXFOESPROC t_glDrawTexfOES;
+ ANGLE_TRACE_LOADER_EXPORT extern PFNGLDRAWTEXFVOESPROC t_glDrawTexfvOES;
+ ANGLE_TRACE_LOADER_EXPORT extern PFNGLDRAWTEXIOESPROC t_glDrawTexiOES;
 diff --git a/util/capture/trace_interpreter_autogen.cpp b/util/capture/trace_interpreter_autogen.cpp
-index 7e73814693678a881dd1f461afa8b8d0c4e33606..505f51c431db7d6ebf33f28e846c018ed1b181ac 100644
+index 7e73814693678a881dd1f461afa8b8d0c4e33606..dbafb580bcc61702fedfd189c7c42e71d556d4e4 100644
 --- a/util/capture/trace_interpreter_autogen.cpp
 +++ b/util/capture/trace_interpreter_autogen.cpp
 @@ -896,6 +896,13 @@ CallCapture ParseCallCapture(const Token &nameToken,
@@ -2188,8 +3507,22 @@ index 7e73814693678a881dd1f461afa8b8d0c4e33606..505f51c431db7d6ebf33f28e846c018e
      if (strcmp(nameToken, "glBindProgramPipeline") == 0)
      {
          ParamBuffer params =
+@@ -2290,6 +2297,13 @@ CallCapture ParseCallCapture(const Token &nameToken,
+                 paramTokens, strings);
+         return CallCapture(EntryPoint::GLFramebufferRenderbufferOES, std::move(params));
+     }
++    if (strcmp(nameToken, "glFramebufferResolveRenderbufferWEBKIT") == 0)
++    {
++        ParamBuffer params = ParseParameters<
++            std::remove_pointer<PFNGLFRAMEBUFFERRESOLVERENDERBUFFERWEBKITPROC>::type>(paramTokens,
++                                                                                      strings);
++        return CallCapture(EntryPoint::GLFramebufferResolveRenderbufferWEBKIT, std::move(params));
++    }
+     if (strcmp(nameToken, "glFramebufferTexture") == 0)
+     {
+         ParamBuffer params =
 diff --git a/util/gles_loader_autogen.cpp b/util/gles_loader_autogen.cpp
-index 65c2f5ab70c3a73d292c4225b83d2ce9403eeef0..ea62bf6a6df341f02daaeab91d1cf6a422719cb9 100644
+index 65c2f5ab70c3a73d292c4225b83d2ce9403eeef0..46d6b09779d604793cf8c6895aa64663e4385c28 100644
 --- a/util/gles_loader_autogen.cpp
 +++ b/util/gles_loader_autogen.cpp
 @@ -607,6 +607,8 @@ ANGLE_UTIL_EXPORT PFNGLGETMULTISAMPLEFVANGLEPROC l_glGetMultisamplefvANGLE;
@@ -2201,7 +3534,16 @@ index 65c2f5ab70c3a73d292c4225b83d2ce9403eeef0..ea62bf6a6df341f02daaeab91d1cf6a4
  ANGLE_UTIL_EXPORT PFNGLACQUIRETEXTURESANGLEPROC l_glAcquireTexturesANGLE;
  ANGLE_UTIL_EXPORT PFNGLRELEASETEXTURESANGLEPROC l_glReleaseTexturesANGLE;
  ANGLE_UTIL_EXPORT PFNGLBINDUNIFORMLOCATIONCHROMIUMPROC l_glBindUniformLocationCHROMIUM;
-@@ -1812,6 +1814,9 @@ void LoadUtilGLES(LoadProc loadProc)
+@@ -847,6 +849,8 @@ ANGLE_UTIL_EXPORT PFNGLSHADINGRATEQCOMPROC l_glShadingRateQCOM;
+ ANGLE_UTIL_EXPORT PFNGLTEXTUREFOVEATIONPARAMETERSQCOMPROC l_glTextureFoveationParametersQCOM;
+ ANGLE_UTIL_EXPORT PFNGLENDTILINGQCOMPROC l_glEndTilingQCOM;
+ ANGLE_UTIL_EXPORT PFNGLSTARTTILINGQCOMPROC l_glStartTilingQCOM;
++ANGLE_UTIL_EXPORT PFNGLFRAMEBUFFERRESOLVERENDERBUFFERWEBKITPROC
++    l_glFramebufferResolveRenderbufferWEBKIT;
+ ANGLE_UTIL_EXPORT PFNGLDRAWTEXFOESPROC l_glDrawTexfOES;
+ ANGLE_UTIL_EXPORT PFNGLDRAWTEXFVOESPROC l_glDrawTexfvOES;
+ ANGLE_UTIL_EXPORT PFNGLDRAWTEXIOESPROC l_glDrawTexiOES;
+@@ -1812,6 +1816,9 @@ void LoadUtilGLES(LoadProc loadProc)
          loadProc("glTexStorage2DMultisampleANGLE"));
      l_glGetTranslatedShaderSourceANGLE = reinterpret_cast<PFNGLGETTRANSLATEDSHADERSOURCEANGLEPROC>(
          loadProc("glGetTranslatedShaderSourceANGLE"));
@@ -2211,8 +3553,18 @@ index 65c2f5ab70c3a73d292c4225b83d2ce9403eeef0..ea62bf6a6df341f02daaeab91d1cf6a4
      l_glAcquireTexturesANGLE =
          reinterpret_cast<PFNGLACQUIRETEXTURESANGLEPROC>(loadProc("glAcquireTexturesANGLE"));
      l_glReleaseTexturesANGLE =
+@@ -2241,6 +2248,9 @@ void LoadUtilGLES(LoadProc loadProc)
+         loadProc("glTextureFoveationParametersQCOM"));
+     l_glEndTilingQCOM   = reinterpret_cast<PFNGLENDTILINGQCOMPROC>(loadProc("glEndTilingQCOM"));
+     l_glStartTilingQCOM = reinterpret_cast<PFNGLSTARTTILINGQCOMPROC>(loadProc("glStartTilingQCOM"));
++    l_glFramebufferResolveRenderbufferWEBKIT =
++        reinterpret_cast<PFNGLFRAMEBUFFERRESOLVERENDERBUFFERWEBKITPROC>(
++            loadProc("glFramebufferResolveRenderbufferWEBKIT"));
+     l_glDrawTexfOES  = reinterpret_cast<PFNGLDRAWTEXFOESPROC>(loadProc("glDrawTexfOES"));
+     l_glDrawTexfvOES = reinterpret_cast<PFNGLDRAWTEXFVOESPROC>(loadProc("glDrawTexfvOES"));
+     l_glDrawTexiOES  = reinterpret_cast<PFNGLDRAWTEXIOESPROC>(loadProc("glDrawTexiOES"));
 diff --git a/util/gles_loader_autogen.h b/util/gles_loader_autogen.h
-index 2ffeb4c8deebff80248ffc9c07230322c1a5e956..4369b668525fc6540e97cedfcc0e39cb7292ab2d 100644
+index 2ffeb4c8deebff80248ffc9c07230322c1a5e956..0ecc4a1a2586396e87bb1946c12657b9d84292f1 100644
 --- a/util/gles_loader_autogen.h
 +++ b/util/gles_loader_autogen.h
 @@ -595,6 +595,7 @@
@@ -2223,7 +3575,15 @@ index 2ffeb4c8deebff80248ffc9c07230322c1a5e956..4369b668525fc6540e97cedfcc0e39cb
  #define glAcquireTexturesANGLE l_glAcquireTexturesANGLE
  #define glReleaseTexturesANGLE l_glReleaseTexturesANGLE
  #define glBindUniformLocationCHROMIUM l_glBindUniformLocationCHROMIUM
-@@ -1480,6 +1481,8 @@ ANGLE_UTIL_EXPORT extern PFNGLGETMULTISAMPLEFVANGLEPROC l_glGetMultisamplefvANGL
+@@ -827,6 +828,7 @@
+ #define glTextureFoveationParametersQCOM l_glTextureFoveationParametersQCOM
+ #define glEndTilingQCOM l_glEndTilingQCOM
+ #define glStartTilingQCOM l_glStartTilingQCOM
++#define glFramebufferResolveRenderbufferWEBKIT l_glFramebufferResolveRenderbufferWEBKIT
+ #define glDrawTexfOES l_glDrawTexfOES
+ #define glDrawTexfvOES l_glDrawTexfvOES
+ #define glDrawTexiOES l_glDrawTexiOES
+@@ -1480,6 +1482,8 @@ ANGLE_UTIL_EXPORT extern PFNGLGETMULTISAMPLEFVANGLEPROC l_glGetMultisamplefvANGL
  ANGLE_UTIL_EXPORT extern PFNGLSAMPLEMASKIANGLEPROC l_glSampleMaskiANGLE;
  ANGLE_UTIL_EXPORT extern PFNGLTEXSTORAGE2DMULTISAMPLEANGLEPROC l_glTexStorage2DMultisampleANGLE;
  ANGLE_UTIL_EXPORT extern PFNGLGETTRANSLATEDSHADERSOURCEANGLEPROC l_glGetTranslatedShaderSourceANGLE;
@@ -2232,3 +3592,12 @@ index 2ffeb4c8deebff80248ffc9c07230322c1a5e956..4369b668525fc6540e97cedfcc0e39cb
  ANGLE_UTIL_EXPORT extern PFNGLACQUIRETEXTURESANGLEPROC l_glAcquireTexturesANGLE;
  ANGLE_UTIL_EXPORT extern PFNGLRELEASETEXTURESANGLEPROC l_glReleaseTexturesANGLE;
  ANGLE_UTIL_EXPORT extern PFNGLBINDUNIFORMLOCATIONCHROMIUMPROC l_glBindUniformLocationCHROMIUM;
+@@ -1722,6 +1726,8 @@ ANGLE_UTIL_EXPORT extern PFNGLSHADINGRATEQCOMPROC l_glShadingRateQCOM;
+ ANGLE_UTIL_EXPORT extern PFNGLTEXTUREFOVEATIONPARAMETERSQCOMPROC l_glTextureFoveationParametersQCOM;
+ ANGLE_UTIL_EXPORT extern PFNGLENDTILINGQCOMPROC l_glEndTilingQCOM;
+ ANGLE_UTIL_EXPORT extern PFNGLSTARTTILINGQCOMPROC l_glStartTilingQCOM;
++ANGLE_UTIL_EXPORT extern PFNGLFRAMEBUFFERRESOLVERENDERBUFFERWEBKITPROC
++    l_glFramebufferResolveRenderbufferWEBKIT;
+ ANGLE_UTIL_EXPORT extern PFNGLDRAWTEXFOESPROC l_glDrawTexfOES;
+ ANGLE_UTIL_EXPORT extern PFNGLDRAWTEXFVOESPROC l_glDrawTexfvOES;
+ ANGLE_UTIL_EXPORT extern PFNGLDRAWTEXIOESPROC l_glDrawTexiOES;

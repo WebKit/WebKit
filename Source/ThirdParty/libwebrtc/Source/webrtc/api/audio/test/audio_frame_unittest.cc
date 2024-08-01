@@ -19,7 +19,7 @@ namespace webrtc {
 
 namespace {
 
-bool AllSamplesAre(int16_t sample, rtc::ArrayView<const int16_t> samples) {
+bool AllSamplesAre(int16_t sample, InterleavedView<const int16_t> samples) {
   for (const auto s : samples) {
     if (s != sample) {
       return false;
@@ -34,10 +34,11 @@ bool AllSamplesAre(int16_t sample, const AudioFrame& frame) {
 
 // Checks the values of samples in the AudioFrame buffer, regardless of whether
 // they're valid or not, and disregard the `muted()` state of the frame.
-// I.e. use `max_16bit_samples()` instead of the audio properties
-// `num_samples * samples_per_channel`.
+// I.e. use `max_16bit_samples()` instead of `data_view().size()`
 bool AllBufferSamplesAre(int16_t sample, const AudioFrame& frame) {
-  const auto* data = frame.data_view().data();
+  auto view = frame.data_view();
+  RTC_DCHECK(!view.empty());
+  const int16_t* data = &view.data()[0];
   for (size_t i = 0; i < frame.max_16bit_samples(); ++i) {
     if (data[i] != sample) {
       return false;
@@ -75,8 +76,9 @@ TEST(AudioFrameTest, UnmutedFrameIsInitiallyZeroed) {
   AudioFrame frame;
   auto data = frame.mutable_data(kSamplesPerChannel, kNumChannelsMono);
   EXPECT_FALSE(frame.muted());
+  EXPECT_TRUE(IsMono(data));
   EXPECT_EQ(frame.data_view().size(), kSamplesPerChannel);
-  EXPECT_EQ(data.size(), kSamplesPerChannel);
+  EXPECT_EQ(SamplesPerChannel(data), kSamplesPerChannel);
   EXPECT_TRUE(AllSamplesAre(0, frame));
 }
 

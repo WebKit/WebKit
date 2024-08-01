@@ -17,10 +17,8 @@ rtc_source_set("scalability_mode_util") {
     "../../../api/video_codecs:scalability_mode",
     "../../../api/video_codecs:video_codecs_api",
     "../../../rtc_base:checks",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/algorithm:container",
-    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/strings:string_view",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
@@ -36,10 +34,7 @@ rtc_source_set("scalable_video_controller") {
     "../../../api/video:video_bitrate_allocation",
     "../../../common_video/generic_frame_descriptor",
     "../../../rtc_base:checks",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/container:inlined_vector",
-    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
@@ -64,10 +59,8 @@ rtc_source_set("scalability_structures") {
     "../../../common_video/generic_frame_descriptor",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/base:core_headers",
-    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/strings:string_view",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
@@ -85,8 +78,8 @@ rtc_source_set("svc_rate_allocator") {
     "../../../api/video_codecs:video_codecs_api",
     "../../../rtc_base:checks",
     "../../../rtc_base/experiments:stable_target_rate_experiment",
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/container:inlined_vector" ]
 }
 
 if (rtc_include_tests) {
@@ -115,9 +108,7 @@ if (rtc_include_tests) {
       "../../../common_video/generic_frame_descriptor",
       "../../../rtc_base:stringutils",
       "../../../test:test_support",
-    ]
-    absl_deps = [
-      "//third_party/abseil-cpp/absl/strings",
+      "//third_party/abseil-cpp/absl/strings:string_view",
       "//third_party/abseil-cpp/absl/types:optional",
     ]
   }

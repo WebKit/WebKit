@@ -1,0 +1,27 @@
+syntax = "proto2";
+
+option optimize_for = LITE_RUNTIME;
+package webrtc.network_behaviour;
+
+message NetworkConfigScheduleItem {
+  // Time since the first sent packet when this item should be applied.
+  // This should typically be 0 for the first item in the schedule.
+  optional int64 time_since_first_sent_packet_ms = 1;
+
+  // Network parameters, See webrtc::BuiltInNetworkBehaviorConfig.
+  optional int64 queue_length_packets = 2;
+  optional int64 queue_delay_ms = 3;
+  optional int64 link_capacity_kbps = 4;
+  optional int64 loss_percent = 5;
+  optional int64 delay_standard_deviation_ms = 6;
+  optional bool allow_reordering = 7;
+  optional int64 avg_burst_loss_length = 8;
+  optional int64 packet_overhead = 9;
+}
+
+// Schedule describing network parameters in a simulated network.
+message NetworkConfigSchedule {
+  optional int64 repeat_schedule_after_last_ms = 1;
+  // Items should be sorted by time_since_first_sent_packet_ms.
+  repeated NetworkConfigScheduleItem item = 2;
+}

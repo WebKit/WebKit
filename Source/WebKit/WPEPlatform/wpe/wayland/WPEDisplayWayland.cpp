@@ -37,6 +37,7 @@
 #include "WPEWaylandCursor.h"
 #include "WPEWaylandSeat.h"
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
+#include "linux-explicit-synchronization-unstable-v1-client-protocol.h"
 #include "text-input-unstable-v1-client-protocol.h"
 #include "text-input-unstable-v3-client-protocol.h"
 #include "xdg-shell-client-protocol.h"
@@ -70,6 +71,7 @@ struct _WPEDisplayWaylandPrivate {
     struct xdg_wm_base* xdgWMBase;
     struct wl_shm* wlSHM;
     struct zwp_linux_dmabuf_v1* linuxDMABuf;
+    struct zwp_linux_explicit_synchronization_v1* linuxExplicitSync;
 #if USE(LIBDRM)
     struct zwp_linux_dmabuf_feedback_v1* dmabufFeedback;
 #endif
@@ -195,6 +197,7 @@ static void wpeDisplayWaylandDispose(GObject* object)
     g_clear_pointer(&priv->dmabufFeedback, zwp_linux_dmabuf_feedback_v1_destroy);
 #endif
     g_clear_pointer(&priv->linuxDMABuf, zwp_linux_dmabuf_v1_destroy);
+    g_clear_pointer(&priv->linuxExplicitSync, zwp_linux_explicit_synchronization_v1_destroy);
     g_clear_pointer(&priv->wlSHM, wl_shm_destroy);
     g_clear_pointer(&priv->xdgWMBase, xdg_wm_base_destroy);
     g_clear_pointer(&priv->wlCompositor, wl_compositor_destroy);
@@ -226,6 +229,8 @@ const struct wl_registry_listener registryListener = {
             priv->wlSHM = static_cast<struct wl_shm*>(wl_registry_bind(registry, name, &wl_shm_interface, 1));
         else if (!std::strcmp(interface, "zwp_linux_dmabuf_v1"))
             priv->linuxDMABuf = static_cast<struct zwp_linux_dmabuf_v1*>(wl_registry_bind(registry, name, &zwp_linux_dmabuf_v1_interface, std::min<uint32_t>(version, 4)));
+        else if (!std::strcmp(interface, "zwp_linux_explicit_synchronization_v1"))
+            priv->linuxExplicitSync = static_cast<struct zwp_linux_explicit_synchronization_v1*>(wl_registry_bind(registry, name, &zwp_linux_explicit_synchronization_v1_interface, 1));
         else if (!std::strcmp(interface, "zwp_text_input_manager_v1")) {
             priv->textInputManagerV1 = static_cast<struct zwp_text_input_manager_v1*>(wl_registry_bind(registry, name, &zwp_text_input_manager_v1_interface, 1));
             priv->textInputV1 = zwp_text_input_manager_v1_create_text_input(priv->textInputManagerV1);
@@ -497,6 +502,11 @@ static const char* wpeDisplayWaylandGetDRMRenderNode(WPEDisplay* display)
     return priv->drmDevice.data();
 }
 
+static gboolean wpeDisplayWaylandUseExplicitSync(WPEDisplay* display)
+{
+    return !!WPE_DISPLAY_WAYLAND(display)->priv->linuxExplicitSync;
+}
+
 struct xdg_wm_base* wpeDisplayWaylandGetXDGWMBase(WPEDisplayWayland* display)
 {
     return display->priv->xdgWMBase;
@@ -537,6 +547,11 @@ struct zwp_text_input_v3* wpeDisplayWaylandGetTextInputV3(WPEDisplayWayland* dis
     return display->priv->textInputV3;
 }
 
+struct zwp_linux_explicit_synchronization_v1* wpeDisplayWaylandGetLinuxExplicitSync(WPEDisplayWayland* display)
+{
+    return display->priv->linuxExplicitSync;
+}
+
 static void wpe_display_wayland_class_init(WPEDisplayWaylandClass* displayWaylandClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(displayWaylandClass);
@@ -553,6 +568,7 @@ static void wpe_display_wayland_class_init(WPEDisplayWaylandClass* displayWaylan
     displayClass->get_monitor = wpeDisplayWaylandGetMonitor;
     displayClass->get_drm_device = wpeDisplayWaylandGetDRMDevice;
     displayClass->get_drm_render_node = wpeDisplayWaylandGetDRMRenderNode;
+    displayClass->use_explicit_sync = wpeDisplayWaylandUseExplicitSync;
 }
 
 /**

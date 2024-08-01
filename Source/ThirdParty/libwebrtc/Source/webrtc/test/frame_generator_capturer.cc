@@ -47,7 +47,6 @@ FrameGeneratorCapturer::FrameGeneratorCapturer(
       frame_generator_(std::move(frame_generator)),
       source_fps_(target_fps),
       target_capture_fps_(target_fps),
-      first_frame_capture_time_(-1),
       task_queue_(task_queue_factory.CreateTaskQueue(
           "FrameGenCapQ",
           TaskQueueFactory::Priority::HIGH)) {
@@ -106,14 +105,9 @@ void FrameGeneratorCapturer::InsertFrame() {
                            .set_video_frame_buffer(frame_data.buffer)
                            .set_rotation(fake_rotation_)
                            .set_timestamp_us(clock_->TimeInMicroseconds())
-                           .set_ntp_time_ms(clock_->CurrentNtpInMilliseconds())
                            .set_update_rect(frame_data.update_rect)
                            .set_color_space(fake_color_space_)
                            .build();
-    if (first_frame_capture_time_ == -1) {
-      first_frame_capture_time_ = frame.ntp_time_ms();
-    }
-
     TestVideoCapturer::OnFrame(frame);
   }
 }

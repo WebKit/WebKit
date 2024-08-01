@@ -10,12 +10,17 @@
 
 #include "api/rtc_event_log_output_file.h"
 
+#include <cstddef>
+#include <cstdio>
 #include <limits>
+#include <string>
 #include <utility>
 
+#include "absl/strings/string_view.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/system/file_wrapper.h"
 
 namespace webrtc {
 

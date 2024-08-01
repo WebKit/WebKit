@@ -256,8 +256,11 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     WebKit::SandboxExtensionHandle machBootstrapHandle;
 #endif
 
-#if (PLATFORM(GTK) || PLATFORM(WPE)) && USE(GBM)
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#if USE(GBM)
     Vector<WebKit::DMABufRendererBufferFormat> preferredBufferFormats;
+#endif
+    bool useExplicitSync;
 #endif
 
 #if PLATFORM(VISION) && ENABLE(GAMEPAD)

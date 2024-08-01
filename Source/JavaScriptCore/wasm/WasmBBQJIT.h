@@ -1776,9 +1776,11 @@ public:
     template<typename Func, size_t N>
     void emitCCall(Func function, const Vector<Value, N>& arguments, Value& result);
 
+    void emitTailCall(unsigned functionIndex, const TypeDefinition& signature, Vector<Value>& arguments);
     PartialResult WARN_UNUSED_RETURN addCall(unsigned functionIndex, const TypeDefinition& signature, Vector<Value>& arguments, ResultList& results, CallType callType = CallType::Call);
 
-    void emitIndirectCall(const char* opcode, const Value& calleeIndex, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, Vector<Value>& arguments, ResultList& results, CallType callType = CallType::Call);
+    void emitIndirectCall(const char* opcode, const Value& calleeIndex, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, Vector<Value>& arguments, ResultList& results);
+    void emitIndirectTailCall(const Value& calleeIndex, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, Vector<Value>& arguments);
     void addRTTSlowPathJump(TypeIndex, GPRReg);
     void emitSlowPathRTTCheck(MacroAssembler::Label, TypeIndex, GPRReg);
 
@@ -1850,7 +1852,7 @@ public:
 
     void dump(const ControlStack&, const Stack*);
     void didFinishParsingLocals();
-    void didPopValueFromStack(ExpressionType, String);
+    void didPopValueFromStack(ExpressionType, ASCIILiteral);
 
     void finalize();
 
@@ -2173,17 +2175,22 @@ private:
         template<typename... Args>
         void initializedPreservedSet(RegisterSet registers, Args... args)
         {
-            for (JSC::Reg reg : registers) {
-                if (reg.isGPR())
-                    m_preserved.add(reg.gpr(), IgnoreVectors);
-                else
-                    m_preserved.add(reg.fpr(), Width::Width128);
-            }
+            for (JSC::Reg reg : registers)
+                initializedPreservedSet(reg);
             initializedPreservedSet(args...);
         }
 
-        inline void initializedPreservedSet()
-        { }
+        template<typename... Args>
+        void initializedPreservedSet(JSC::Reg reg, Args... args)
+        {
+            if (reg.isGPR())
+                m_preserved.add(reg.gpr(), IgnoreVectors);
+            else
+                m_preserved.add(reg.fpr(), Width::Width128);
+            initializedPreservedSet(args...);
+        }
+
+        inline void initializedPreservedSet() { }
 
         BBQJIT& m_generator;
         GPRReg m_tempGPRs[GPRs];
@@ -2239,6 +2246,7 @@ private:
     uint32_t m_lastUseTimestamp; // Monotonically increasing integer incrementing with each register use.
     Vector<RefPtr<SharedTask<void(BBQJIT&, CCallHelpers&)>>, 8> m_latePaths; // Late paths to emit after the rest of the function body.
 
+    // FIXME: All uses of this are to restore sp, so we should emit these as a patchable sub instruction rather than move.
     Vector<DataLabelPtr, 1> m_frameSizeLabels;
     int m_frameSize { 0 };
     int m_maxCalleeStackSize { 0 };

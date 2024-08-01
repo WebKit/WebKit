@@ -206,12 +206,8 @@ errors.
 
 OpenSSL has a number of different initialization functions for setting up error
 strings and loading algorithms, etc. All of these functions still exist in
-BoringSSL for convenience, but they do nothing and are not necessary.
-
-The one exception is `CRYPTO_library_init`. In `BORINGSSL_NO_STATIC_INITIALIZER`
-builds, it must be called to query CPU capabilities before the rest of the
-library. In the default configuration, this is done with a static initializer
-and is also unnecessary.
+BoringSSL for convenience, but they do nothing and are not necessary. BoringSSL
+internally initializes itself as needed.
 
 ### Threading
 

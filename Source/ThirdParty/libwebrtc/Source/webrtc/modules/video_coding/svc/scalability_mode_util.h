@@ -25,7 +25,7 @@ enum class ScalabilityModeResolutionRatio {
 
 static constexpr char kDefaultScalabilityModeStr[] = "L1T2";
 
-absl::optional<ScalabilityMode> MakeScalabilityMode(
+RTC_EXPORT absl::optional<ScalabilityMode> MakeScalabilityMode(
     int num_spatial_layers,
     int num_temporal_layers,
     InterLayerPredMode inter_layer_pred,

@@ -36,11 +36,9 @@ class TargetTransferRateObserver {
 // Configuration sent to factory create function. The parameters here are
 // optional to use for a network controller implementation.
 struct NetworkControllerConfig {
-  // TODO: bugs.webrtc.org/42220378 - Delete the default constructor and
-  // thus make Environment (including field trials) a required parameter.
-  [[deprecated]] NetworkControllerConfig() = default;
-  explicit NetworkControllerConfig(const Environment& env)
-      : key_value_config(&env.field_trials()), event_log(&env.event_log()) {}
+  explicit NetworkControllerConfig(const Environment& env) : env(env) {}
+
+  Environment env;
 
   // The initial constraints to start with, these can be changed at any later
   // time by calls to OnTargetRateConstraints. Note that the starting rate
@@ -50,12 +48,6 @@ struct NetworkControllerConfig {
   // Initial stream specific configuration, these are changed at any later time
   // by calls to OnStreamsConfig.
   StreamsConfig stream_based_config;
-
-  // Optional override of configuration of WebRTC internals. Using nullptr here
-  // indicates that the field trial API will be used.
-  const FieldTrialsView* key_value_config = nullptr;
-  // Optional override of event log.
-  RtcEventLog* event_log = nullptr;
 };
 
 // NetworkControllerInterface is implemented by network controllers. A network

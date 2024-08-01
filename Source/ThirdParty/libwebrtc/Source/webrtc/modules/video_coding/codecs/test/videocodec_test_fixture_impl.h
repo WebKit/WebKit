@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 
+#include "api/environment/environment.h"
 #include "api/test/videocodec_test_fixture.h"
 #include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder_factory.h"
@@ -92,6 +93,7 @@ class VideoCodecTestFixtureImpl : public VideoCodecTestFixture {
   VideoProcessor::VideoDecoderList decoders_;
 
   // Helper objects.
+  const Environment env_;
   Config config_;
   VideoCodecTestStatsImpl stats_;
   std::unique_ptr<FrameReader> source_frame_reader_;

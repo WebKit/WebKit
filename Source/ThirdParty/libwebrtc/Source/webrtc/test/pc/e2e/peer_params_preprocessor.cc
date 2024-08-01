@@ -10,17 +10,26 @@
 
 #include "test/pc/e2e/peer_params_preprocessor.h"
 
+#include <stddef.h>
+
+#include <optional>
 #include <set>
 #include <string>
+#include <utility>
+#include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/array_view.h"
+#include "api/rtp_parameters.h"
 #include "api/test/pclf/media_configuration.h"
 #include "api/test/pclf/media_quality_test_params.h"
 #include "api/test/pclf/peer_configurer.h"
-#include "api/test/peer_network_dependencies.h"
+#include "api/video_codecs/scalability_mode.h"
+#include "media/base/media_constants.h"
 #include "modules/video_coding/svc/create_scalability_structure.h"
 #include "modules/video_coding/svc/scalability_mode_util.h"
-#include "rtc_base/arraysize.h"
+#include "modules/video_coding/svc/scalable_video_controller.h"
+#include "rtc_base/checks.h"
 #include "test/testsupport/file_utils.h"
 
 namespace webrtc {

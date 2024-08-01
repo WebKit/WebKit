@@ -38,6 +38,9 @@ class PacketSocketFactory;
 
 namespace cricket {
 
+constexpr int kMinTurnChannelNumber = 0x4000;
+constexpr int kMaxTurnChannelNumber = 0x7FFF;
+
 class StunMessage;
 class TurnMessage;
 class TurnServer;

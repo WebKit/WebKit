@@ -4,16 +4,15 @@
 <script>
 window.addEventListener("message", receiveMessage, false);
 
-function receiveMessage(evt) {
+async function receiveMessage(evt) {
     if (evt.data == "done") {
         if (window.testRunner)
             testRunner.notifyDone();
     } else if (typeof(evt.data) == "object" && evt.data.action == "click")  {
         var link = document.getElementById("link");
-        eventSender.mouseMoveTo(link.offsetLeft + evt.data.offsetLeft + 2,
-                                link.offsetTop + evt.data.offsetTop + 2);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(link.offsetLeft + evt.data.offsetLeft + 2, link.offsetTop + evt.data.offsetTop + 2);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
     } else {
         document.getElementById("log").innerHTML += evt.data + "<br>";
     }

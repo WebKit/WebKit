@@ -274,6 +274,11 @@ GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads);
 
 template<typename T>
 std::optional<T> gstStructureGet(const GstStructure*, ASCIILiteral key);
+template<typename T>
+std::optional<T> gstStructureGet(const GstStructure*, StringView key);
+
+StringView gstStructureGetString(const GstStructure*, ASCIILiteral key);
+StringView gstStructureGetString(const GstStructure*, StringView key);
 
 String gstStructureToJSONString(const GstStructure*);
 

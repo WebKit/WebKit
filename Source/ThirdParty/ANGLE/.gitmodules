@@ -275,6 +275,10 @@
 	path = tools/python
 	url = https://chromium.googlesource.com/chromium/src/tools/python
 	gclient-condition = checkout_android and not build_with_chromium
+[submodule "tools/rust"]
+	path = tools/rust
+	url = https://chromium.googlesource.com/chromium/src/tools/rust
+	gclient-condition = not build_with_chromium
 [submodule "tools/valgrind"]
 	path = tools/valgrind
 	url = https://chromium.googlesource.com/chromium/src/tools/valgrind

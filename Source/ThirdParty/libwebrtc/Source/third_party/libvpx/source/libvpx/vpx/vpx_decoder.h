@@ -152,7 +152,7 @@ vpx_codec_err_t vpx_codec_dec_init_ver(vpx_codec_ctx_t *ctx,
  * \param[in]      iface   Pointer to the algorithm interface
  * \param[in]      data    Pointer to a block of data to parse
  * \param[in]      data_sz Size of the data buffer
- * \param[in,out]  si      Pointer to stream info to update. The size member
+ * \param[in,out]  si      Pointer to stream info to update. The sz member
  *                         \ref MUST be properly initialized, but \ref MAY be
  *                         clobbered by the algorithm. This parameter \ref MAY
  *                         be NULL.
@@ -170,7 +170,7 @@ vpx_codec_err_t vpx_codec_peek_stream_info(vpx_codec_iface_t *iface,
  * Returns information about the stream that has been parsed during decoding.
  *
  * \param[in]      ctx     Pointer to this instance's context
- * \param[in,out]  si      Pointer to stream info to update. The size member
+ * \param[in,out]  si      Pointer to stream info to update. The sz member
  *                         \ref MUST be properly initialized, but \ref MAY be
  *                         clobbered by the algorithm. This parameter \ref MAY
  *                         be NULL.

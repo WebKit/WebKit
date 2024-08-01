@@ -161,9 +161,6 @@ void RtpSenderEgress::SendPacket(std::unique_ptr<RtpPacketToSend> packet,
   }
 
   const Timestamp now = clock_->CurrentTime();
-#if BWE_TEST_LOGGING_COMPILE_TIME_ENABLE
-  BweTestLoggingPlot(now, packet->Ssrc());
-#endif
   if (need_rtp_packet_infos_ &&
       packet->packet_type() == RtpPacketToSend::Type::kVideo) {
     // Last packet of a frame, add it to sequence number info map.
@@ -501,25 +498,4 @@ void RtpSenderEgress::PeriodicUpdate() {
       send_rates.Sum().bps(),
       send_rates[RtpPacketMediaType::kRetransmission].bps(), ssrc_);
 }
-
-#if BWE_TEST_LOGGING_COMPILE_TIME_ENABLE
-void RtpSenderEgress::BweTestLoggingPlot(Timestamp now, uint32_t packet_ssrc) {
-  RTC_DCHECK_RUN_ON(worker_queue_);
-
-  const auto rates = GetSendRates(now);
-  if (is_audio_) {
-    BWE_TEST_LOGGING_PLOT_WITH_SSRC(1, "AudioTotBitrate_kbps", now.ms(),
-                                    rates.Sum().kbps(), packet_ssrc);
-    BWE_TEST_LOGGING_PLOT_WITH_SSRC(
-        1, "AudioNackBitrate_kbps", now.ms(),
-        rates[RtpPacketMediaType::kRetransmission].kbps(), packet_ssrc);
-  } else {
-    BWE_TEST_LOGGING_PLOT_WITH_SSRC(1, "VideoTotBitrate_kbps", now.ms(),
-                                    rates.Sum().kbps(), packet_ssrc);
-    BWE_TEST_LOGGING_PLOT_WITH_SSRC(
-        1, "VideoNackBitrate_kbps", now.ms(),
-        rates[RtpPacketMediaType::kRetransmission].kbps(), packet_ssrc);
-  }
-}
-#endif  // BWE_TEST_LOGGING_COMPILE_TIME_ENABLE
 }  // namespace webrtc

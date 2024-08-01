@@ -28,6 +28,7 @@
 #include "ArgumentCoders.h" // NOLINT
 #include "Decoder.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
+#include "SharedPreferencesForWebProcess.h" // NOLINT
 #include "TestWithEnabledIfMessages.h" // NOLINT
 #include <wtf/text/WTFString.h> // NOLINT
 
@@ -39,6 +40,14 @@ namespace WebKit {
 
 void TestWithEnabledIf::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
+    if (!sharedPreferencesForWebProcess().someFeature) {
+#if ENABLE(IPC_TESTING_API)
+        if (connection.ignoreInvalidMessageForTesting())
+            return;
+#endif // ENABLE(IPC_TESTING_API)
+        ASSERT_NOT_REACHED_WITH_MESSAGE("Message received by a disabled message receiver TestWithEnabledIf");
+        return;
+    }
     Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithEnabledIf::AlwaysEnabled::name())
         return IPC::handleMessage<Messages::TestWithEnabledIf::AlwaysEnabled>(connection, decoder, this, &TestWithEnabledIf::alwaysEnabled);

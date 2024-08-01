@@ -76,7 +76,10 @@ bool CompareDepthStencilRenderPassAttachments(
 }
 }  // namespace
 
-FramebufferWgpu::FramebufferWgpu(const gl::FramebufferState &state) : FramebufferImpl(state) {}
+FramebufferWgpu::FramebufferWgpu(const gl::FramebufferState &state) : FramebufferImpl(state)
+{
+    mCurrentColorAttachmentFormats.fill(wgpu::TextureFormat::Undefined);
+}
 
 FramebufferWgpu::~FramebufferWgpu() {}
 
@@ -123,7 +126,7 @@ angle::Result FramebufferWgpu::clear(const gl::Context *context, GLbitfield mask
     {
         colorAttachments.push_back(webgpu::CreateNewClearColorAttachment(
             clearValue, wgpu::kDepthSliceUndefined,
-            mRenderTargetCache.getColorDraw(mState, enabledDrawBuffer)->getTexture()));
+            mRenderTargetCache.getColorDraw(mState, enabledDrawBuffer)->getTextureView()));
     }
 
     // Attempt to end a render pass if one has already been started.
@@ -177,7 +180,6 @@ angle::Result FramebufferWgpu::clear(const gl::Context *context, GLbitfield mask
 
     ANGLE_TRY(contextWgpu->startRenderPass(mCurrentRenderPassDesc));
     ANGLE_TRY(contextWgpu->endRenderPass(webgpu::RenderPassClosureReason::NewRenderPass));
-    ANGLE_TRY(contextWgpu->flush());
     return angle::Result::Continue;
 }
 
@@ -247,6 +249,8 @@ angle::Result FramebufferWgpu::readPixels(const gl::Context *context,
 
     ANGLE_TRY(flushDeferredClears(contextWgpu));
 
+    ANGLE_TRY(contextWgpu->flush(webgpu::RenderPassClosureReason::GLReadPixels));
+
     GLuint outputSkipBytes = 0;
     PackPixelsParams params;
     const angle::Format &angleFormat = GetFormatFromFormatType(format, type);
@@ -281,6 +285,8 @@ angle::Result FramebufferWgpu::syncState(const gl::Context *context,
                                          const gl::Framebuffer::DirtyBits &dirtyBits,
                                          gl::Command command)
 {
+    ContextWgpu *contextWgpu = webgpu::GetImpl(context);
+
     ASSERT(dirtyBits.any());
 
     gl::DrawBufferMask dirtyColorAttachments;
@@ -292,8 +298,23 @@ angle::Result FramebufferWgpu::syncState(const gl::Context *context,
             case gl::Framebuffer::DIRTY_BIT_DEPTH_BUFFER_CONTENTS:
             case gl::Framebuffer::DIRTY_BIT_STENCIL_ATTACHMENT:
             case gl::Framebuffer::DIRTY_BIT_STENCIL_BUFFER_CONTENTS:
+            {
                 ANGLE_TRY(mRenderTargetCache.updateDepthStencilRenderTarget(context, mState));
+
+                // Update the current depth stencil texture format let the context know if this
+                // framebuffer is bound for draw
+                RenderTargetWgpu *rt       = mRenderTargetCache.getDepthStencil();
+                mCurrentDepthStencilFormat = (rt && rt->getImage())
+                                                 ? rt->getImage()->toWgpuTextureFormat()
+                                                 : wgpu::TextureFormat::Undefined;
+                if (binding == GL_DRAW_FRAMEBUFFER)
+                {
+                    contextWgpu->setDepthStencilFormat(mCurrentDepthStencilFormat);
+                }
+
                 break;
+            }
+
             case gl::Framebuffer::DIRTY_BIT_READ_BUFFER:
                 ANGLE_TRY(mRenderTargetCache.update(context, mState, dirtyBits));
                 break;
@@ -326,6 +347,18 @@ angle::Result FramebufferWgpu::syncState(const gl::Context *context,
                 ANGLE_TRY(
                     mRenderTargetCache.updateColorRenderTarget(context, mState, colorIndexGL));
 
+                // Update the current color texture formats let the context know if this framebuffer
+                // is bound for draw
+                RenderTargetWgpu *rt = mRenderTargetCache.getColorDraw(mState, colorIndexGL);
+                mCurrentColorAttachmentFormats[colorIndexGL] =
+                    (rt && rt->getImage()) ? rt->getImage()->toWgpuTextureFormat()
+                                           : wgpu::TextureFormat::Undefined;
+                if (binding == GL_DRAW_FRAMEBUFFER)
+                {
+                    contextWgpu->setColorAttachmentFormat(
+                        colorIndexGL, mCurrentColorAttachmentFormats[colorIndexGL]);
+                }
+
                 dirtyColorAttachments.set(colorIndexGL);
                 break;
             }
@@ -347,6 +380,10 @@ angle::Result FramebufferWgpu::syncState(const gl::Context *context,
     }
 
     ANGLE_TRY(flushColorAttachmentUpdates(context, dirtyColorAttachments, deferColorClears));
+
+    // Notify the ContextWgpu to update the pipeline desc or restart the renderpass
+    ANGLE_TRY(contextWgpu->onFramebufferChange(this, command));
+
     return angle::Result::Continue;
 }
 
@@ -423,7 +460,6 @@ angle::Result FramebufferWgpu::flushColorAttachmentUpdates(const gl::Context *co
         ContextWgpu *contextWgpu = GetImplAs<ContextWgpu>(context);
         // Flush out a render pass if there is an active one.
         ANGLE_TRY(contextWgpu->endRenderPass(webgpu::RenderPassClosureReason::NewRenderPass));
-        ANGLE_TRY(contextWgpu->flush());
 
         mCurrentColorAttachments = mNewColorAttachments;
         mNewColorAttachments.clear();
@@ -450,14 +486,37 @@ angle::Result FramebufferWgpu::flushDeferredClears(ContextWgpu *contextWgpu)
         }
         mCurrentColorAttachments.push_back(webgpu::CreateNewClearColorAttachment(
             mDeferredClears[colorIndexGL].clearColor, mDeferredClears[colorIndexGL].depthSlice,
-            mRenderTargetCache.getColorDraw(mState, colorIndexGL)->getTexture()));
+            mRenderTargetCache.getColorDraw(mState, colorIndexGL)->getTextureView()));
     }
     mCurrentRenderPassDesc.colorAttachmentCount = mCurrentColorAttachments.size();
     mCurrentRenderPassDesc.colorAttachments     = mCurrentColorAttachments.data();
     ANGLE_TRY(contextWgpu->startRenderPass(mCurrentRenderPassDesc));
     ANGLE_TRY(contextWgpu->endRenderPass(webgpu::RenderPassClosureReason::NewRenderPass));
-    ANGLE_TRY(contextWgpu->flush());
 
     return angle::Result::Continue;
 }
+
+angle::Result FramebufferWgpu::startNewRenderPass(ContextWgpu *contextWgpu)
+{
+    ANGLE_TRY(contextWgpu->endRenderPass(webgpu::RenderPassClosureReason::NewRenderPass));
+
+    mCurrentColorAttachments.clear();
+    for (size_t colorIndexGL : mState.getColorAttachmentsMask())
+    {
+        wgpu::RenderPassColorAttachment colorAttachment;
+        colorAttachment.view =
+            mRenderTargetCache.getColorDraw(mState, colorIndexGL)->getTextureView();
+        colorAttachment.depthSlice = wgpu::kDepthSliceUndefined;
+        colorAttachment.loadOp     = wgpu::LoadOp::Load;
+        colorAttachment.storeOp    = wgpu::StoreOp::Store;
+
+        mCurrentColorAttachments.push_back(colorAttachment);
+    }
+    mCurrentRenderPassDesc.colorAttachmentCount = mCurrentColorAttachments.size();
+    mCurrentRenderPassDesc.colorAttachments     = mCurrentColorAttachments.data();
+    ANGLE_TRY(contextWgpu->startRenderPass(mCurrentRenderPassDesc));
+
+    return angle::Result::Continue;
+}
+
 }  // namespace rx

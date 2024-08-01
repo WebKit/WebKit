@@ -10,14 +10,18 @@
 
 #include "api/sequence_checker.h"
 
+#include <functional>
 #include <memory>
-#include <utility>
 
+#include "absl/functional/any_invocable.h"
 #include "api/function_view.h"
 #include "api/units/time_delta.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/event.h"
 #include "rtc_base/platform_thread.h"
+#include "rtc_base/synchronization/sequence_checker_internal.h"
 #include "rtc_base/task_queue_for_test.h"
+#include "rtc_base/thread_annotations.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 

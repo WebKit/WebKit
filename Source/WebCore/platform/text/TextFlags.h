@@ -448,10 +448,12 @@ enum class Kerning : uint8_t {
 
 WTF::TextStream& operator<<(WTF::TextStream&, Kerning);
 
-enum class FontOpticalSizing : uint8_t {
+enum class FontOpticalSizing : bool {
     Enabled,
     Disabled
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, FontOpticalSizing);
 
 // https://www.microsoft.com/typography/otspec/fvar.htm#VAT
 enum class FontStyleAxis : uint8_t {

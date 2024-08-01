@@ -19,10 +19,15 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/network_state_predictor.h"
+#include "api/array_view.h"
 #include "api/rtc_event_log/rtc_event.h"
+#include "api/transport/bandwidth_usage.h"
 #include "api/units/timestamp.h"
 #include "logging/rtc_event_log/events/rtc_event_definition.h"
+#include "logging/rtc_event_log/events/rtc_event_field_encoding.h"
+#include "logging/rtc_event_log/events/rtc_event_field_extraction.h"
+#include "logging/rtc_event_log/events/rtc_event_log_parse_status.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

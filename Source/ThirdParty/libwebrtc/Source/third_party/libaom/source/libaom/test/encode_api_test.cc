@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -774,6 +774,76 @@ TEST(EncodeAPI, Buganizer339877165) {
   // Free resources.
   aom_img_free(image);
   aom_codec_destroy(&enc);
+}
+
+TEST(EncodeAPI, AomediaIssue3509VbrMinSection2Percent) {
+  // Initialize libaom encoder.
+  aom_codec_iface_t *const iface = aom_codec_av1_cx();
+  aom_codec_ctx_t enc;
+  aom_codec_enc_cfg_t cfg;
+
+  ASSERT_EQ(aom_codec_enc_config_default(iface, &cfg, AOM_USAGE_REALTIME),
+            AOM_CODEC_OK);
+
+  cfg.g_w = 1920;
+  cfg.g_h = 1080;
+  cfg.rc_target_bitrate = 1000000;
+  // Set this to more than 1 percent to cause a signed integer overflow in the
+  // multiplication rc->avg_frame_bandwidth * oxcf->rc_cfg.vbrmin_section in
+  // av1_rc_update_framerate() if the multiplication is done in the `int` type.
+  cfg.rc_2pass_vbr_minsection_pct = 2;
+
+  ASSERT_EQ(aom_codec_enc_init(&enc, iface, &cfg, 0), AOM_CODEC_OK);
+
+  // Create input image.
+  aom_image_t *const image =
+      CreateGrayImage(AOM_IMG_FMT_I420, cfg.g_w, cfg.g_h);
+  ASSERT_NE(image, nullptr);
+
+  // Encode frame.
+  // `duration` can go as high as 300, but the UBSan error is gone if
+  // `duration` is 301 or higher.
+  ASSERT_EQ(aom_codec_encode(&enc, image, 0, /*duration=*/300, 0),
+            AOM_CODEC_OK);
+
+  // Free resources.
+  aom_img_free(image);
+  ASSERT_EQ(aom_codec_destroy(&enc), AOM_CODEC_OK);
+}
+
+TEST(EncodeAPI, AomediaIssue3509VbrMinSection101Percent) {
+  // Initialize libaom encoder.
+  aom_codec_iface_t *const iface = aom_codec_av1_cx();
+  aom_codec_ctx_t enc;
+  aom_codec_enc_cfg_t cfg;
+
+  ASSERT_EQ(aom_codec_enc_config_default(iface, &cfg, AOM_USAGE_REALTIME),
+            AOM_CODEC_OK);
+
+  cfg.g_w = 1920;
+  cfg.g_h = 1080;
+  cfg.rc_target_bitrate = 1000000;
+  // Set this to more than 100 percent to cause an error when vbr_min_bits is
+  // cast to `int` in av1_rc_update_framerate() if vbr_min_bits is not clamped
+  // to INT_MAX.
+  cfg.rc_2pass_vbr_minsection_pct = 101;
+
+  ASSERT_EQ(aom_codec_enc_init(&enc, iface, &cfg, 0), AOM_CODEC_OK);
+
+  // Create input image.
+  aom_image_t *const image =
+      CreateGrayImage(AOM_IMG_FMT_I420, cfg.g_w, cfg.g_h);
+  ASSERT_NE(image, nullptr);
+
+  // Encode frame.
+  // `duration` can go as high as 300, but the UBSan error is gone if
+  // `duration` is 301 or higher.
+  ASSERT_EQ(aom_codec_encode(&enc, image, 0, /*duration=*/300, 0),
+            AOM_CODEC_OK);
+
+  // Free resources.
+  aom_img_free(image);
+  ASSERT_EQ(aom_codec_destroy(&enc), AOM_CODEC_OK);
 }
 
 class EncodeAPIParameterized

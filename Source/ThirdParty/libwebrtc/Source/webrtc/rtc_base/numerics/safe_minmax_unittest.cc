@@ -11,7 +11,9 @@
 #include "rtc_base/numerics/safe_minmax.h"
 
 #include <algorithm>
+#include <cstdint>
 #include <limits>
+#include <type_traits>
 
 #include "test/gtest.h"
 

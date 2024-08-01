@@ -10,12 +10,19 @@
 
 #include "audio/channel_receive_frame_transformer_delegate.h"
 
+#include <cstdint>
 #include <memory>
 #include <utility>
 
+#include "api/array_view.h"
+#include "api/frame_transformer_interface.h"
+#include "api/make_ref_counted.h"
+#include "api/rtp_headers.h"
+#include "api/scoped_refptr.h"
 #include "api/test/mock_frame_transformer.h"
 #include "api/test/mock_transformable_audio_frame.h"
 #include "audio/channel_send_frame_transformer_delegate.h"
+#include "rtc_base/thread.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 

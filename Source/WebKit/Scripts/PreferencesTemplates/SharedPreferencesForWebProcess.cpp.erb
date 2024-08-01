@@ -28,18 +28,19 @@
 #include "config.h"
 #include "SharedPreferencesForWebProcess.h"
 
-#include "WebPreferences.h"
+#include "WebPreferencesKeys.h"
+#include "WebPreferencesStore.h"
 
 namespace WebKit {
 
-SharedPreferencesForWebProcess sharedPreferencesForWebProcess(const WebPreferences& preferences)
+SharedPreferencesForWebProcess sharedPreferencesForWebProcess(const WebPreferencesStore& preferencesStore)
 {
     SharedPreferencesForWebProcess sharedPreferences;
 <% for @pref in @sharedPreferencesForWebProcess do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-        sharedPreferences.<%= @pref.nameLower %> = preferences.<%= @pref.nameLower %>();
+        sharedPreferences.<%= @pref.nameLower %> = preferencesStore.getBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key());
 <%- if @pref.condition -%>
 #endif
 <%- end -%>
@@ -47,14 +48,14 @@ SharedPreferencesForWebProcess sharedPreferencesForWebProcess(const WebPreferenc
     return sharedPreferences;
 }
 
-bool updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess& sharedPreferences, const WebPreferences& preferences)
+bool updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess& sharedPreferences, const WebPreferencesStore& preferencesStore)
 {
     bool didChange = false;
 <% for @pref in @sharedPreferencesForWebProcess do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-    if (preferences.<%= @pref.nameLower %>() && !sharedPreferences.<%= @pref.nameLower %>) {
+    if (preferencesStore.getBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key()) && !sharedPreferences.<%= @pref.nameLower %>) {
         sharedPreferences.<%= @pref.nameLower %> = true;
         didChange = true;
     }

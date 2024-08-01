@@ -365,6 +365,7 @@ void Buffer::unmap()
         return;
 
     decrementBufferMapCount();
+    indirectBufferInvalidated();
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if (m_buffer.storageMode == MTLStorageModeManaged) {
@@ -420,6 +421,32 @@ bool Buffer::indirectBufferRequiresRecomputation(uint32_t baseIndex, uint32_t in
     return baseIndex != rangeBegin || newRangeEnd != rangeEnd || minVertexCount != m_indirectCache.minVertexCount || minInstanceCount != m_indirectCache.minInstanceCount || m_indirectCache.indexType != indexType || m_indirectCache.firstInstance != firstInstance;
 }
 
+bool Buffer::indirectBufferRequiresRecomputation(uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount) const
+{
+    return m_indirectCache.indirectOffset != indirectOffset || m_indirectCache.minVertexCount != minVertexCount || m_indirectCache.minInstanceCount != minInstanceCount;
+}
+
+bool Buffer::indirectIndexedBufferRequiresRecomputation(MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount) const
+{
+    return m_indirectCache.indexType != indexType || m_indirectCache.indexBufferOffsetInBytes != indexBufferOffsetInBytes || m_indirectCache.indirectOffset != indirectOffset || m_indirectCache.minVertexCount != minVertexCount || m_indirectCache.minInstanceCount != minInstanceCount;
+}
+
+void Buffer::indirectBufferRecomputed(uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount)
+{
+    m_indirectCache.indirectOffset = indirectOffset;
+    m_indirectCache.minVertexCount = minVertexCount;
+    m_indirectCache.minInstanceCount = minInstanceCount;
+}
+
+void Buffer::indirectIndexedBufferRecomputed(MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount)
+{
+    m_indirectCache.indexType = indexType;
+    m_indirectCache.indexBufferOffsetInBytes = indexBufferOffsetInBytes;
+    m_indirectCache.indirectOffset = indirectOffset;
+    m_indirectCache.minVertexCount = minVertexCount;
+    m_indirectCache.minInstanceCount = minInstanceCount;
+}
+
 void Buffer::indirectBufferRecomputed(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, uint32_t minInstanceCount, MTLIndexType indexType, uint32_t firstInstance)
 {
     m_indirectCache.lastBaseIndex = baseIndex;
@@ -432,6 +459,8 @@ void Buffer::indirectBufferRecomputed(uint32_t baseIndex, uint32_t indexCount, u
 
 void Buffer::indirectBufferInvalidated()
 {
+    m_indirectCache.indirectOffset = UINT64_MAX;
+    m_indirectCache.indexBufferOffsetInBytes = UINT64_MAX;
     indirectBufferRecomputed(0, 0, 0, 0, MTLIndexTypeUInt16, 0);
 }
 

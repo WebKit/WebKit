@@ -1,0 +1,10 @@
+Tests that canvas context fillStyle (gradient) does not leak documents.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The iframe document didn't leak.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -282,10 +282,8 @@ class AudioDeviceMac : public AudioDeviceGeneric {
   uint16_t _outputDeviceIndex;
   AudioDeviceID _inputDeviceID;
   AudioDeviceID _outputDeviceID;
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 1050
   AudioDeviceIOProcID _inDeviceIOProcID;
   AudioDeviceIOProcID _deviceIOProcID;
-#endif
   bool _inputDeviceIsSpecified;
   bool _outputDeviceIsSpecified;
 

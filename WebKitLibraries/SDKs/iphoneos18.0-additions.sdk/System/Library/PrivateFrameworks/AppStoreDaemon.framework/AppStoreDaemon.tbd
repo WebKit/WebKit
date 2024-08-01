@@ -1,0 +1,9 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7-ios, armv7s-ios, arm64-ios, arm64e-ios]
+install-name: /System/Library/PrivateFrameworks/AppStoreDaemon.framework/AppStoreDaemon
+swift-abi-version: 7
+exports:
+-       targets: [armv7-ios, armv7s-ios, arm64-ios, arm64e-ios]
+        objc-classes: [ASDInstallWebAttributionParamsConfig, ASDInstallWebAttributionService]
+...

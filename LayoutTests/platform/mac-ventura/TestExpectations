@@ -4,8 +4,8 @@ webkit.org/b/268789 [ Debug ] imported/w3c/web-platform-tests/css/css-break/tabl
 
 # With CryptoKit, these tests start to work properly, but cryptoKit is macOS 14.5 or higher so we need to mark them fail for 13.X bots
 # This is to still test and have logs, because actually not all the tests are failing, it's a just a few of them.
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Pass Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker.html [ Failure ]
 
 # Skip these tests that enable UnifiedPDFPlugin, since it's only meaningful for macOS 14+.
 http/tests/pdf/linearized-pdf-in-iframe.html [ Skip ]

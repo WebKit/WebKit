@@ -2022,7 +2022,6 @@ fast/dom/DeviceOrientation/updates.html
 fast/dom/MutationObserver/inline-event-listener.html
 fast/dom/Window/open-window-min-size.html
 fast/dom/rtl-scroll-to-leftmost-and-resize.html
-fast/dynamic/paused-event-dispatch.html
 fast/events/resize-subframe.html
 fast/files/read-blob-async.html
 fast/files/read-file-async.html
@@ -2353,6 +2352,7 @@ accessibility/insert-text-into-password-field.html [ Pass ]
 accessibility/list-with-dynamically-changing-content.html [ Pass ]
 accessibility/live-region-attributes-update-after-dynamic-change.html [ Pass ]
 accessibility/menu-list-crash2.html [ Pass ]
+accessibility/menu-with-menuitem-grandchildren.html [ Pass ]
 # rdar://132587324 These two tests have been flakey on iOS since they were introduced — temporarily disable them for now.
 # accessibility/mixed-contenteditable-visible-character-range-hang.html [ Pass ]
 # accessibility/mixed-contenteditable-double-br-visible-character-range-hang.html [ Pass ]
@@ -3122,8 +3122,7 @@ editing/selection/character-granularity-rect.html [ Pass ]
 webkit.org/b/184783 compositing/ios/overflow-scroll-touch-tiles.html [ Pass Failure ]
 
 # Disabled globally.
-#http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Pass ]
-# FIXME: Uncomment above after webkit.org/b/277198 is resolved (new expectation set below).
+http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Pass ]
 
 webkit.org/b/173041 http/tests/websocket/tests/hybi/handshake-ok-with-legacy-sec-websocket-response-headers.html [ Pass Failure ]
 
@@ -3686,8 +3685,9 @@ webkit.org/b/238824 http/tests/workers/service/openwindow-from-notification-clic
 webkit.org/b/237433 editing/pasteboard/4076267-3.html [ Timeout Pass Failure ]
 webkit.org/b/237433 editing/pasteboard/paste-and-sanitize.html [ Timeout Pass Failure ]
 
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-anchor-positioning-007.html [ Failure ]
 webkit.org/b/237955 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-044.html [ Failure ]
-
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/pseudo-elements-009.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-002.html [ ImageOnlyFailure ]
@@ -4696,6 +4696,7 @@ imported/w3c/web-platform-tests/css/css-ruby/rt-display-blockified.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-bidi-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-text-combine-upright-001a.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-text-combine-upright-001b.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-align-001.html [ ImageOnlyFailure ]
 fast/ruby/annotation-with-line-gap.html [ ImageOnlyFailure ]
 fast/ruby/tight-line-spacing-with-line-height.html [ ImageOnlyFailure ]
 
@@ -7412,7 +7413,12 @@ webkit.org/b/277195 imported/w3c/web-platform-tests/html/semantics/interactive-e
 imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-dialog-behavior.tentative.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-popover-behavior.tentative.html [ Failure ]
 
-# webkit.org/b/277198 (REGRESSION (iOS 18): 2 http/tests/xmlhttprequests layout tests are constantly failing.)
-# FIXME: Uncomment explicit pass expectation above when this is resolved (search for bug link)
-http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html [ Failure ]
-http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Failure ]
+# webkit.org/b/277308 (webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html needs to be marked as slow.)
+webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Slow ]
+
+# webkit.org/b/27730 (REGRESSION (280752@main?): [ macOS iOS ] http/wpt/service-workers/fetch-service-worker-preload-cache.https.html is flaky failing.)
+http/wpt/service-workers/fetch-service-worker-preload-cache.https.html [ Pass Failure ]
+
+# webkit.org/b/277432 (REGRESSION (281139@main): [ Ventura iOS18 ] 2 WebCrypto layout tests failing after CryptoKit enablement.)
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker.html [ Failure ]

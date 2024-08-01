@@ -106,6 +106,9 @@ class AudioSendStream : public AudioSender {
 
       // RTCP CNAME, see RFC 3550.
       std::string c_name;
+
+      // Compound or reduced size RTCP.
+      RtcpMode rtcp_mode = RtcpMode::kCompound;
     } rtp;
 
     // Time interval between RTCP report for audio

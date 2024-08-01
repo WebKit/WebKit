@@ -701,7 +701,6 @@ ChaCha20_ctr32_ssse3_4x:
 	_CET_ENDBR
 	mov		%rsp,%r9		# frame pointer
 .cfi_def_cfa_register	r9
-	mov		%r10,%r11
 ___
 $code.=<<___;
 	sub		\$0x140+$xframe,%rsp

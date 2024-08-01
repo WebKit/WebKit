@@ -364,6 +364,10 @@ void CallClient::SendTask(std::function<void()> task) {
   task_queue_.SendTask(std::move(task));
 }
 
+void CallClient::UpdateNetworkAdapterId(int adapter_id) {
+  transport_->UpdateAdapterId(adapter_id);
+}
+
 int16_t CallClient::Bind(EmulatedEndpoint* endpoint) {
   uint16_t port = endpoint->BindReceiver(0, this).value();
   endpoints_.push_back({endpoint, port});

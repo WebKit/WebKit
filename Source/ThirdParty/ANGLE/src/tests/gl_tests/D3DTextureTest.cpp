@@ -1283,6 +1283,16 @@ class D3DTextureClearTest : public D3DTextureTest
             EXPECT_PIXEL_32F_EQ(static_cast<GLint>(bufferSize) / 2,
                                 static_cast<GLint>(bufferSize) / 2, 1.0f, 1.0f, 1.0f, 1.0f);
         }
+        else if (format == DXGI_FORMAT_R16_UNORM)
+        {
+            EXPECT_PIXEL_16_NEAR(static_cast<GLint>(bufferSize) / 2,
+                                 static_cast<GLint>(bufferSize) / 2, 65535, 0, 0, 65535, 0);
+        }
+        else if (format == DXGI_FORMAT_R16G16_UNORM)
+        {
+            EXPECT_PIXEL_16_NEAR(static_cast<GLint>(bufferSize) / 2,
+                                 static_cast<GLint>(bufferSize) / 2, 65535, 65535, 0, 65535, 0);
+        }
         else
         {
             GLuint readColor[4] = {0, 0, 0, 255};
@@ -1294,11 +1304,9 @@ class D3DTextureClearTest : public D3DTextureTest
                     readColor[0] = readColor[1] = readColor[2] = 255;
                     break;
                 case GL_RG_EXT:
-                case GL_RG16_EXT:
                     readColor[0] = readColor[1] = 255;
                     break;
                 case GL_RED_EXT:
-                case GL_R16_EXT:
                     readColor[0] = 255;
                     break;
             }
@@ -1780,8 +1788,8 @@ class D3DTextureYUVTest : public D3DTextureTest
         }
         else
         {
-            EXPECT_PIXEL_16UI(static_cast<GLint>(bufferSize) / 2,
-                              static_cast<GLint>(bufferSize) / 2, kYFillValue, 0, 0, 0xffff);
+            EXPECT_PIXEL_16_NEAR(static_cast<GLint>(bufferSize) / 2,
+                                 static_cast<GLint>(bufferSize) / 2, kYFillValue, 0, 0, 0xffff, 0);
         }
         ASSERT_GL_NO_ERROR();
 
@@ -1811,9 +1819,9 @@ class D3DTextureYUVTest : public D3DTextureTest
         }
         else
         {
-            EXPECT_PIXEL_16UI(static_cast<GLint>(bufferSize) / 4,
-                              static_cast<GLint>(bufferSize) / 4, kUFillValue, kVFillValue, 0,
-                              0xffff);
+            EXPECT_PIXEL_16_NEAR(static_cast<GLint>(bufferSize) / 4,
+                                 static_cast<GLint>(bufferSize) / 4, kUFillValue, kVFillValue, 0,
+                                 0xffff, 0);
         }
         ASSERT_GL_NO_ERROR();
 

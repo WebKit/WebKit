@@ -9,6 +9,12 @@
  */
 #include "rtc_base/numerics/sample_stats.h"
 
+#include <cmath>
+
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "rtc_base/checks.h"
+
 namespace webrtc {
 
 double SampleStats<double>::Max() {

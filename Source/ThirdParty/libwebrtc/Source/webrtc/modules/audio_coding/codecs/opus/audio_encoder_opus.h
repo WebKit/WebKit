@@ -21,6 +21,7 @@
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/opus/audio_encoder_opus_config.h"
+#include "api/environment/environment.h"
 #include "common_audio/smoothing_filter.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
 #include "modules/audio_coding/codecs/opus/opus_interface.h"
@@ -49,16 +50,21 @@ class AudioEncoderOpusImpl final : public AudioEncoder {
       std::function<std::unique_ptr<AudioNetworkAdaptor>(absl::string_view,
                                                          RtcEventLog*)>;
 
-  AudioEncoderOpusImpl(const AudioEncoderOpusConfig& config, int payload_type);
-
-  // Dependency injection for testing.
-  AudioEncoderOpusImpl(
+  static std::unique_ptr<AudioEncoderOpusImpl> CreateForTesting(
+      const Environment& env,
       const AudioEncoderOpusConfig& config,
       int payload_type,
       const AudioNetworkAdaptorCreator& audio_network_adaptor_creator,
       std::unique_ptr<SmoothingFilter> bitrate_smoother);
 
-  AudioEncoderOpusImpl(int payload_type, const SdpAudioFormat& format);
+  AudioEncoderOpusImpl(const Environment& env,
+                       const AudioEncoderOpusConfig& config,
+                       int payload_type);
+
+  [[deprecated("bugs.webrtc.org/343086059")]] AudioEncoderOpusImpl(
+      const AudioEncoderOpusConfig& config,
+      int payload_type);
+
   ~AudioEncoderOpusImpl() override;
 
   AudioEncoderOpusImpl(const AudioEncoderOpusImpl&) = delete;
@@ -120,13 +126,19 @@ class AudioEncoderOpusImpl final : public AudioEncoder {
  private:
   class PacketLossFractionSmoother;
 
+  // TODO: bugs.webrtc.org/343086059 - Replace field_trials with Environment
+  // when public constructors that do not provide the Environment are removed.
+  AudioEncoderOpusImpl(
+      const FieldTrialsView& field_trials,
+      const AudioEncoderOpusConfig& config,
+      int payload_type,
+      const AudioNetworkAdaptorCreator& audio_network_adaptor_creator,
+      std::unique_ptr<SmoothingFilter> bitrate_smoother);
+
   static absl::optional<AudioEncoderOpusConfig> SdpToConfig(
       const SdpAudioFormat& format);
   static void AppendSupportedEncoders(std::vector<AudioCodecSpec>* specs);
   static AudioCodecInfo QueryAudioEncoder(const AudioEncoderOpusConfig& config);
-  static std::unique_ptr<AudioEncoder> MakeAudioEncoder(
-      const AudioEncoderOpusConfig&,
-      int payload_type);
 
   size_t Num10msFramesPerPacket() const;
   size_t SamplesPer10msFrame() const;

@@ -70,7 +70,7 @@ absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessStapAOrSingleNalu(
   parsed_payload->video_header.height = 0;
   parsed_payload->video_header.codec = kVideoCodecH264;
   parsed_payload->video_header.simulcastIdx = 0;
-  parsed_payload->video_header.is_first_packet_in_frame = true;
+  parsed_payload->video_header.is_first_packet_in_frame = false;
   auto& h264_header = parsed_payload->video_header.video_type_header
                           .emplace<RTPVideoHeaderH264>();
 
@@ -116,12 +116,12 @@ absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessStapAOrSingleNalu(
     nalu.sps_id = -1;
     nalu.pps_id = -1;
     start_offset += H264::kNaluTypeSize;
-
+    rtc::ArrayView<const uint8_t> nalu_data(&payload_data[start_offset],
+                                            end_offset - start_offset);
     switch (nalu.type) {
       case H264::NaluType::kSps: {
         // Check if VUI is present in SPS and if it needs to be modified to
-        // avoid
-        // excessive decoder latency.
+        // avoid excessive decoder latency.
 
         // Copy any previous data first (likely just the first header).
         rtc::Buffer output_buffer;
@@ -131,8 +131,8 @@ absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessStapAOrSingleNalu(
         absl::optional<SpsParser::SpsState> sps;
 
         SpsVuiRewriter::ParseResult result = SpsVuiRewriter::ParseAndRewriteSps(
-            &payload_data[start_offset], end_offset - start_offset, &sps,
-            nullptr, &output_buffer, SpsVuiRewriter::Direction::kIncoming);
+            nalu_data, &sps, nullptr, &output_buffer,
+            SpsVuiRewriter::Direction::kIncoming);
         switch (result) {
           case SpsVuiRewriter::ParseResult::kFailure:
             RTC_LOG(LS_WARNING) << "Failed to parse SPS NAL unit.";
@@ -174,14 +174,13 @@ absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessStapAOrSingleNalu(
                 VideoFrameType::kVideoFrameKey;
             break;
         }
+        parsed_payload->video_header.is_first_packet_in_frame = true;
         break;
       }
       case H264::NaluType::kPps: {
         uint32_t pps_id;
         uint32_t sps_id;
-        if (PpsParser::ParsePpsIds(&payload_data[start_offset],
-                                   end_offset - start_offset, &pps_id,
-                                   &sps_id)) {
+        if (PpsParser::ParsePpsIds(nalu_data, &pps_id, &sps_id)) {
           nalu.pps_id = pps_id;
           nalu.sps_id = sps_id;
         } else {
@@ -196,10 +195,13 @@ absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessStapAOrSingleNalu(
             VideoFrameType::kVideoFrameKey;
         [[fallthrough]];
       case H264::NaluType::kSlice: {
-        absl::optional<uint32_t> pps_id = PpsParser::ParsePpsIdFromSlice(
-            &payload_data[start_offset], end_offset - start_offset);
-        if (pps_id) {
-          nalu.pps_id = *pps_id;
+        absl::optional<PpsParser::SliceHeader> slice_header =
+            PpsParser::ParseSliceHeader(nalu_data);
+        if (slice_header) {
+          nalu.pps_id = slice_header->pic_parameter_set_id;
+          if (slice_header->first_mb_in_slice == 0) {
+            parsed_payload->video_header.is_first_packet_in_frame = true;
+          }
         } else {
           RTC_LOG(LS_WARNING) << "Failed to parse PPS id from slice of type: "
                               << static_cast<int>(nalu.type);
@@ -220,13 +222,7 @@ absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessStapAOrSingleNalu(
         return absl::nullopt;
     }
 
-    if (h264_header.nalus_length == kMaxNalusPerPacket) {
-      RTC_LOG(LS_WARNING)
-          << "Received packet containing more than " << kMaxNalusPerPacket
-          << " NAL units. Will not keep track sps and pps ids for all of them.";
-    } else {
-      h264_header.nalus[h264_header.nalus_length++] = nalu;
-    }
+    h264_header.nalus.push_back(nalu);
   }
 
   return parsed_payload;
@@ -243,21 +239,26 @@ absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> ParseFuaNalu(
   uint8_t fnri = rtp_payload.cdata()[0] & (kH264FBit | kH264NriMask);
   uint8_t original_nal_type = rtp_payload.cdata()[1] & kH264TypeMask;
   bool first_fragment = (rtp_payload.cdata()[1] & kH264SBit) > 0;
+  bool is_first_packet_in_frame = false;
   NaluInfo nalu;
   nalu.type = original_nal_type;
   nalu.sps_id = -1;
   nalu.pps_id = -1;
   if (first_fragment) {
-    absl::optional<uint32_t> pps_id =
-        PpsParser::ParsePpsIdFromSlice(rtp_payload.cdata() + 2 * kNalHeaderSize,
-                                       rtp_payload.size() - 2 * kNalHeaderSize);
-    if (pps_id) {
-      nalu.pps_id = *pps_id;
-    } else {
-      RTC_LOG(LS_WARNING)
-          << "Failed to parse PPS from first fragment of FU-A NAL "
-             "unit with original type: "
-          << static_cast<int>(nalu.type);
+    if (original_nal_type == H264::NaluType::kIdr ||
+        original_nal_type == H264::NaluType::kSlice) {
+      absl::optional<PpsParser::SliceHeader> slice_header =
+          PpsParser::ParseSliceHeader(rtc::ArrayView<const uint8_t>(rtp_payload)
+                                          .subview(2 * kNalHeaderSize));
+      if (slice_header) {
+        nalu.pps_id = slice_header->pic_parameter_set_id;
+        is_first_packet_in_frame = slice_header->first_mb_in_slice == 0;
+      } else {
+        RTC_LOG(LS_WARNING)
+            << "Failed to parse PPS from first fragment of FU-A NAL "
+               "unit with original type: "
+            << static_cast<int>(nalu.type);
+      }
     }
     uint8_t original_nal_header = fnri | original_nal_type;
     rtp_payload =
@@ -278,14 +279,14 @@ absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> ParseFuaNalu(
   parsed_payload->video_header.height = 0;
   parsed_payload->video_header.codec = kVideoCodecH264;
   parsed_payload->video_header.simulcastIdx = 0;
-  parsed_payload->video_header.is_first_packet_in_frame = first_fragment;
+  parsed_payload->video_header.is_first_packet_in_frame =
+      is_first_packet_in_frame;
   auto& h264_header = parsed_payload->video_header.video_type_header
                           .emplace<RTPVideoHeaderH264>();
   h264_header.packetization_type = kH264FuA;
   h264_header.nalu_type = original_nal_type;
   if (first_fragment) {
-    h264_header.nalus[h264_header.nalus_length] = nalu;
-    h264_header.nalus_length = 1;
+    h264_header.nalus = {nalu};
   }
   return parsed_payload;
 }

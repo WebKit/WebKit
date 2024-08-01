@@ -76,7 +76,7 @@ class H264Packet {
   H264Packet& Marker();
   H264Packet& AsFirstFragment();
   H264Packet& Time(uint32_t rtp_timestamp);
-  H264Packet& SeqNum(uint16_t rtp_seq_num);
+  H264Packet& SeqNum(int64_t rtp_seq_num);
 
   std::unique_ptr<H26xPacketBuffer::Packet> Build();
 
@@ -97,7 +97,7 @@ class H264Packet {
   bool first_fragment_ = false;
   bool marker_bit_ = false;
   uint32_t rtp_timestamp_ = 0;
-  uint16_t rtp_seq_num_ = 0;
+  int64_t rtp_seq_num_ = 0;
   std::vector<std::vector<uint8_t>> nalu_payloads_;
 };
 
@@ -109,14 +109,14 @@ H264Packet& H264Packet::Idr(std::vector<uint8_t> payload, int pps_id) {
   auto& h264_header = H264Header();
   auto nalu_info = MakeNaluInfo(kIdr);
   nalu_info.pps_id = pps_id;
-  h264_header.nalus[h264_header.nalus_length++] = nalu_info;
+  h264_header.nalus.push_back(nalu_info);
   nalu_payloads_.push_back(std::move(payload));
   return *this;
 }
 
 H264Packet& H264Packet::Slice(std::vector<uint8_t> payload) {
   auto& h264_header = H264Header();
-  h264_header.nalus[h264_header.nalus_length++] = MakeNaluInfo(kSlice);
+  h264_header.nalus.push_back(MakeNaluInfo(kSlice));
   nalu_payloads_.push_back(std::move(payload));
   return *this;
 }
@@ -125,7 +125,7 @@ H264Packet& H264Packet::Sps(std::vector<uint8_t> payload, int sps_id) {
   auto& h264_header = H264Header();
   auto nalu_info = MakeNaluInfo(kSps);
   nalu_info.pps_id = sps_id;
-  h264_header.nalus[h264_header.nalus_length++] = nalu_info;
+  h264_header.nalus.push_back(nalu_info);
   nalu_payloads_.push_back(std::move(payload));
   return *this;
 }
@@ -133,7 +133,7 @@ H264Packet& H264Packet::Sps(std::vector<uint8_t> payload, int sps_id) {
 H264Packet& H264Packet::SpsWithResolution(RenderResolution resolution,
                                           std::vector<uint8_t> payload) {
   auto& h264_header = H264Header();
-  h264_header.nalus[h264_header.nalus_length++] = MakeNaluInfo(kSps);
+  h264_header.nalus.push_back(MakeNaluInfo(kSps));
   video_header_.width = resolution.Width();
   video_header_.height = resolution.Height();
   nalu_payloads_.push_back(std::move(payload));
@@ -147,14 +147,14 @@ H264Packet& H264Packet::Pps(std::vector<uint8_t> payload,
   auto nalu_info = MakeNaluInfo(kPps);
   nalu_info.pps_id = pps_id;
   nalu_info.sps_id = sps_id;
-  h264_header.nalus[h264_header.nalus_length++] = nalu_info;
+  h264_header.nalus.push_back(nalu_info);
   nalu_payloads_.push_back(std::move(payload));
   return *this;
 }
 
 H264Packet& H264Packet::Aud() {
   auto& h264_header = H264Header();
-  h264_header.nalus[h264_header.nalus_length++] = MakeNaluInfo(kAud);
+  h264_header.nalus.push_back(MakeNaluInfo(kAud));
   nalu_payloads_.push_back({});
   return *this;
 }
@@ -174,7 +174,7 @@ H264Packet& H264Packet::Time(uint32_t rtp_timestamp) {
   return *this;
 }
 
-H264Packet& H264Packet::SeqNum(uint16_t rtp_seq_num) {
+H264Packet& H264Packet::SeqNum(int64_t rtp_seq_num) {
   rtp_seq_num_ = rtp_seq_num;
   return *this;
 }
@@ -185,32 +185,31 @@ std::unique_ptr<H26xPacketBuffer::Packet> H264Packet::Build() {
   auto& h264_header = H264Header();
   switch (type_) {
     case kH264FuA: {
-      RTC_CHECK_EQ(h264_header.nalus_length, 1);
+      RTC_CHECK_EQ(h264_header.nalus.size(), 1);
       res->video_payload = BuildFuaPayload();
       break;
     }
     case kH264SingleNalu: {
-      RTC_CHECK_EQ(h264_header.nalus_length, 1);
+      RTC_CHECK_EQ(h264_header.nalus.size(), 1);
       res->video_payload = BuildSingleNaluPayload();
       break;
     }
     case kH264StapA: {
-      RTC_CHECK_GT(h264_header.nalus_length, 1);
-      RTC_CHECK_LE(h264_header.nalus_length, kMaxNalusPerPacket);
+      RTC_CHECK_GT(h264_header.nalus.size(), 1);
       res->video_payload = BuildStapAPayload();
       break;
     }
   }
 
   if (type_ == kH264FuA && !first_fragment_) {
-    h264_header.nalus_length = 0;
+    h264_header.nalus.clear();
   }
 
   h264_header.packetization_type = type_;
   res->marker_bit = marker_bit_;
   res->video_header = video_header_;
   res->timestamp = rtp_timestamp_;
-  res->seq_num = rtp_seq_num_;
+  res->sequence_number = rtp_seq_num_;
   res->video_header.codec = kVideoCodecH264;
 
   return res;
@@ -235,7 +234,7 @@ rtc::CopyOnWriteBuffer H264Packet::BuildStapAPayload() const {
   res.AppendData(&indicator, 1);
 
   auto& h264_header = H264Header();
-  for (size_t i = 0; i < h264_header.nalus_length; ++i) {
+  for (size_t i = 0; i < h264_header.nalus.size(); ++i) {
     // The two first bytes indicates the nalu segment size.
     uint8_t length_as_array[2] = {
         0, static_cast<uint8_t>(nalu_payloads_[i].size() + 1)};
@@ -264,7 +263,7 @@ class H265Packet {
   H265Packet& Marker();
   H265Packet& AsFirstFragment();
   H265Packet& Time(uint32_t rtp_timestamp);
-  H265Packet& SeqNum(uint16_t rtp_seq_num);
+  H265Packet& SeqNum(int64_t rtp_seq_num);
 
   std::unique_ptr<H26xPacketBuffer::Packet> Build();
 
@@ -330,7 +329,7 @@ std::unique_ptr<H26xPacketBuffer::Packet> H265Packet::Build() {
   res->marker_bit = marker_bit_;
   res->video_header = video_header_;
   res->timestamp = rtp_timestamp_;
-  res->seq_num = rtp_seq_num_;
+  res->sequence_number = rtp_seq_num_;
   res->video_header.codec = kVideoCodecH265;
   res->video_payload = rtc::CopyOnWriteBuffer();
   for (const auto& payload : nalu_payloads_) {
@@ -350,7 +349,7 @@ H265Packet& H265Packet::Time(uint32_t rtp_timestamp) {
   return *this;
 }
 
-H265Packet& H265Packet::SeqNum(uint16_t rtp_seq_num) {
+H265Packet& H265Packet::SeqNum(int64_t rtp_seq_num) {
   rtp_seq_num_ = rtp_seq_num;
   return *this;
 }
@@ -925,13 +924,16 @@ TEST(H26xPacketBufferTest, RtpSeqNumWrap) {
       H264Packet(kH264StapA).Sps().Pps().SeqNum(0xffff).Time(0).Build()));
 
   RTC_UNUSED(packet_buffer.InsertPacket(
-      H264Packet(kH264FuA).Idr().SeqNum(0).Time(0).Build()));
-  EXPECT_THAT(
-      packet_buffer
-          .InsertPacket(
-              H264Packet(kH264FuA).Idr().SeqNum(1).Time(0).Marker().Build())
-          .packets,
-      SizeIs(3));
+      H264Packet(kH264FuA).Idr().SeqNum(0x1'0000).Time(0).Build()));
+  EXPECT_THAT(packet_buffer
+                  .InsertPacket(H264Packet(kH264FuA)
+                                    .Idr()
+                                    .SeqNum(0x1'0001)
+                                    .Time(0)
+                                    .Marker()
+                                    .Build())
+                  .packets,
+              SizeIs(3));
 }
 
 TEST(H26xPacketBufferTest, StapAFixedBitstream) {

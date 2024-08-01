@@ -963,9 +963,22 @@ private:
             return;
         }
         case Load: {
-            if (m_value->type() != Int64)
-                return;
+            // Lower Int64 loads to Int32 loads.
+            //
+            // If loads of Doubles/Floats would fault on unaligned access,
+            // lower those to Int32 loads as well.
             MemoryValue* memory = m_value->as<MemoryValue>();
+            if (!hasUnalignedFPMemoryAccess() && m_value->type() == Float) {
+                MemoryValue* asInt32 = insert<MemoryValue>(m_index, Load, Int32, m_origin, memory->child(0));
+                asInt32->setOffset(memory->offset());
+                asInt32->setRange(memory->range());
+                asInt32->setFenceRange(memory->fenceRange());
+                Value* result = insert<Value>(m_index, BitwiseCast, m_origin, asInt32);
+                m_value->replaceWithIdentity(result);
+                return;
+            }
+            if (!(m_value->type() == Int64 || (!hasUnalignedFPMemoryAccess() && m_value->type() == Double)))
+                return;
             HeapRange rangeHi, rangeLo;
             splitRange(memory->range(), rangeHi, rangeLo);
 
@@ -985,14 +998,37 @@ private:
             lo->setOffset(memory->offset());
             lo->setRange(rangeLo);
             lo->setFenceRange(fenceRangeLo);
-            setMapping(m_value, hi, lo);
-            valueReplaced();
+            if (m_value->type() == Double) {
+                Value* result = insert<Value>(m_index, BitwiseCast, m_origin, valueHiLo(hi, lo));
+                m_value->replaceWithIdentity(result);
+            } else {
+                setMapping(m_value, hi, lo);
+                valueReplaced();
+            }
             return;
         }
         case Store: {
-            if (m_value->child(0)->type() != Int64)
-                return;
+            // Lower Int64 stores to Int32 stores.
+            //
+            // If stores of Doubles/Floats would fault on unaligned access,
+            // lower those to Int32 stores as well.
             MemoryValue* memory = m_value->as<MemoryValue>();
+            std::pair<Value*, Value*> value;
+            if (!hasUnalignedFPMemoryAccess() && m_value->child(0)->type() == Double) {
+                Value* asInt64 = insert<Value>(m_index, BitwiseCast, m_origin, m_value->child(0));
+                value = { valueHi(asInt64), valueLo(asInt64) };
+            } else if (!hasUnalignedFPMemoryAccess() && m_value->child(0)->type() == Float) {
+                Value* asInt32 = insert<Value>(m_index, BitwiseCast, m_origin, m_value->child(0));
+                MemoryValue* store = insert<MemoryValue>(m_index, Store, m_origin, asInt32, memory->child(1));
+                store->setOffset(memory->offset());
+                store->setRange(memory->range());
+                store->setFenceRange(memory->fenceRange());
+                valueReplaced();
+                return;
+            } else if (m_value->child(0)->type() == Int64)
+                value = getMapping(m_value->child(0));
+            else
+                return;
 
             HeapRange rangeHi, rangeLo;
             splitRange(memory->range(), rangeHi, rangeLo);
@@ -1000,7 +1036,6 @@ private:
             HeapRange fenceRangeHi, fenceRangeLo;
             splitRange(memory->fenceRange(), fenceRangeHi, fenceRangeLo);
 
-            auto value = getMapping(m_value->child(0));
 
             MemoryValue* hi = insert<MemoryValue>(m_index, Store, m_origin, value.first, memory->child(1));
             CheckedInt32 offsetHi = CheckedInt32(memory->offset()) + CheckedInt32(bytesForWidth(Width32));

@@ -10,13 +10,12 @@
 #include <cstdio>
 #include <string>
 #include "third_party/googletest/src/include/gtest/gtest.h"
-#include "./vpx_config.h"
-#include "./vpx_version.h"
 #include "test/codec_factory.h"
 #include "test/encode_test_driver.h"
 #include "test/i420_video_source.h"
 #include "test/util.h"
 #include "test/y4m_video_source.h"
+#include "vpx/vpx_codec.h"
 #include "vpx_ports/vpx_timer.h"
 
 namespace {
@@ -170,7 +169,7 @@ TEST_P(VP9EncodePerfTest, PerfTest) {
 
         printf("{\n");
         printf("\t\"type\" : \"encode_perf_test\",\n");
-        printf("\t\"version\" : \"%s\",\n", VERSION_STRING_NOSP);
+        printf("\t\"version\" : \"%s\",\n", vpx_codec_version_str());
         printf("\t\"videoName\" : \"%s\",\n", display_name.c_str());
         printf("\t\"encodeTimeSecs\" : %f,\n", elapsed_secs);
         printf("\t\"totalFrames\" : %u,\n", frames);

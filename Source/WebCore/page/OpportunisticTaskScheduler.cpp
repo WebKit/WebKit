@@ -30,6 +30,7 @@
 #include "GCController.h"
 #include "Page.h"
 #include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/JSGlobalObject.h>
 #include <wtf/DataLog.h>
 #include <wtf/SystemTracing.h>
 
@@ -155,7 +156,7 @@ ImminentlyScheduledWorkScope::~ImminentlyScheduledWorkScope()
         m_scheduler->m_imminentlyScheduledWorkCount--;
 }
 
-static bool isBusyForTimerBasedGC()
+static bool isBusyForTimerBasedGC(JSC::VM& vm)
 {
     bool isVisibleAndActive = false;
     bool hasPendingTasks = false;
@@ -166,6 +167,8 @@ static bool isBusyForTimerBasedGC()
         if (page.isWaitingForLoadToFinish())
             hasPendingTasks = true;
         if (page.opportunisticTaskScheduler().hasImminentlyScheduledWork())
+            hasPendingTasks = true;
+        if (vm.deferredWorkTimer->hasImminentlyScheduledWork())
             hasPendingTasks = true;
         if (page.settings().opportunisticSweepingAndGarbageCollectionEnabled())
             opportunisticSweepingAndGarbageCollectionEnabled = true;
@@ -194,7 +197,7 @@ void OpportunisticTaskScheduler::FullGCActivityCallback::doCollection(JSC::VM& v
     constexpr Seconds delay { 100_ms };
     constexpr unsigned deferCountThreshold = 3;
 
-    if (isBusyForTimerBasedGC()) {
+    if (isBusyForTimerBasedGC(vm)) {
         if (!m_version || m_version != vm.heap.objectSpace().markingVersion()) {
             m_version = vm.heap.objectSpace().markingVersion();
             m_deferCount = 0;
@@ -237,7 +240,7 @@ void OpportunisticTaskScheduler::EdenGCActivityCallback::doCollection(JSC::VM& v
     constexpr Seconds delay { 10_ms };
     constexpr unsigned deferCountThreshold = 5;
 
-    if (isBusyForTimerBasedGC()) {
+    if (isBusyForTimerBasedGC(vm)) {
         if (!m_version || m_version != vm.heap.objectSpace().edenVersion()) {
             m_version = vm.heap.objectSpace().edenVersion();
             m_deferCount = 0;

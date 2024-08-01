@@ -181,11 +181,7 @@ static LLIntOperations llintOperations()
             LLINT_OP(wasm_catch_all)
             LLINT_OP(llint_generic_return_point)
 
-            LLINT_RETURN_LOCATION(op_get_by_id)
-            LLINT_RETURN_LOCATION(op_get_length)
-            LLINT_RETURN_LOCATION(op_get_by_val)
-            LLINT_RETURN_LOCATION(op_put_by_id)
-            LLINT_RETURN_LOCATION(op_put_by_val)
+            FOR_EACH_LLINT_OPCODE_WITH_RETURN(LLINT_RETURN_LOCATION)
 
             JSC_JS_GATE_OPCODES(LLINT_RETURN_LOCATION)
             JSC_WASM_GATE_OPCODES(LLINT_RETURN_LOCATION)

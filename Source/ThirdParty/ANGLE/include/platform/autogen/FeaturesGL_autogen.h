@@ -739,6 +739,13 @@ struct FeaturesGL : FeatureSetBase
         &members, "https://crbug.com/40279678"
     };
 
+    FeatureInfo avoidBindFragDataLocation = {
+        "avoidBindFragDataLocation",
+        FeatureCategory::OpenGLWorkarounds,
+        "Qualcomm drivers fail to link after binding fragment data locations.",
+        &members, "https://anglebug.com/8646"
+    };
+
     FeatureInfo srgbBlendingBroken = {
         "srgbBlendingBroken",
         FeatureCategory::OpenGLWorkarounds,
@@ -761,6 +768,13 @@ struct FeaturesGL : FeatureSetBase
         FeatureCategory::OpenGLWorkarounds,
         "Disable QCOM_tiled_rendering on devices with rendering artifacts or which improperly expose the extension.",
         &members, "http://skbug.com/9491 https://github.com/flutter/flutter/issues/47164 https://github.com/flutter/flutter/issues/47804"
+    };
+
+    FeatureInfo disableBlendEquationAdvanced = {
+        "disableBlendEquationAdvanced",
+        FeatureCategory::OpenGLWorkarounds,
+        "Disable GL_KHR_blend_equation_advanced due to various driver issues.",
+        &members, "https://anglebug.com/42267098"
     };
 
 };

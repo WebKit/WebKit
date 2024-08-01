@@ -85,7 +85,8 @@ template<typename U> static bool sendNotificationMessage(U&& message, WebPage* p
     });
 }
 
-template<typename U> static bool sendNotificationMessageWithAsyncReply(U&& message, WebPage* page, CompletionHandler<void()>&& callback)
+template<typename U, typename C>
+static bool sendNotificationMessageWithAsyncReply(U&& message, WebPage* page, C&& callback)
 {
     return sendMessage(page, [&] (auto& connection, auto destinationIdentifier) {
         return !!connection.sendWithAsyncReply(std::forward<U>(message), WTFMove(callback), destinationIdentifier);
@@ -208,6 +209,18 @@ void WebNotificationManager::cancel(NotificationData&& notification, WebPage* pa
 #else
     UNUSED_PARAM(notification);
     UNUSED_PARAM(page);
+#endif
+}
+
+void WebNotificationManager::requestPermission(WebCore::SecurityOriginData&& origin, RefPtr<WebPage> page, CompletionHandler<void(bool)>&& callback)
+{
+    ASSERT(isMainRunLoop());
+
+#if ENABLE(NOTIFICATIONS)
+    sendNotificationMessageWithAsyncReply(Messages::NotificationManagerMessageHandler::RequestPermission(WTFMove(origin)), page.get(), WTFMove(callback));
+#else
+    UNUSED_PARAM(origin);
+    callback(false);
 #endif
 }
 

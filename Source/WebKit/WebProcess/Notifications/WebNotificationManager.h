@@ -40,6 +40,7 @@
 
 namespace WebCore {
 class SecurityOrigin;
+class SecurityOriginData;
 
 struct NotificationData;
 }
@@ -60,6 +61,8 @@ public:
     
     bool show(WebCore::NotificationData&&, RefPtr<WebCore::NotificationResources>&&, WebPage*, CompletionHandler<void()>&&);
     void cancel(WebCore::NotificationData&&, WebPage*);
+
+    void requestPermission(WebCore::SecurityOriginData&&, RefPtr<WebPage>, CompletionHandler<void(bool)>&&);
 
     // This callback comes from WebCore, not messaged from the UI process.
     void didDestroyNotification(WebCore::NotificationData&&, WebPage*);

@@ -35,7 +35,6 @@
 #include <stdint.h>
 
 #include <type_traits>
-#include <utility>
 
 #include "rtc_base/type_traits.h"
 

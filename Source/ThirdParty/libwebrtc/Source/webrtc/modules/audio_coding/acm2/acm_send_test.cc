@@ -18,6 +18,7 @@
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "api/environment/environment_factory.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "modules/audio_coding/neteq/tools/packet.h"
@@ -32,6 +33,7 @@ AcmSendTestOldApi::AcmSendTestOldApi(InputAudioFile* audio_source,
                                      int source_rate_hz,
                                      int test_duration_ms)
     : clock_(0),
+      env_(CreateEnvironment(&clock_)),
       acm_(webrtc::AudioCodingModule::Create()),
       audio_source_(audio_source),
       source_rate_hz_(source_rate_hz),
@@ -73,7 +75,7 @@ bool AcmSendTestOldApi::RegisterCodec(absl::string_view payload_name,
       frame_size_samples, rtc::CheckedDivExact(clockrate_hz, 1000)));
   auto factory = CreateBuiltinAudioEncoderFactory();
   acm_->SetEncoder(
-      factory->MakeAudioEncoder(payload_type, format, absl::nullopt));
+      factory->Create(env_, format, {.payload_type = payload_type}));
   codec_registered_ = true;
   input_frame_.num_channels_ = num_channels;
   RTC_DCHECK_LE(input_block_size_samples_ * input_frame_.num_channels_,

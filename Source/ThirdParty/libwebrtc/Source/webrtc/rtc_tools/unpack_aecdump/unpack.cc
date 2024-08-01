@@ -25,6 +25,7 @@
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
 #include "api/function_view.h"
+#include "common_audio/channel_buffer.h"
 #include "common_audio/include/audio_util.h"
 #include "common_audio/wav_file.h"
 #include "modules/audio_processing/test/protobuf_utils.h"
@@ -146,7 +147,8 @@ void WriteFloatData(const float* const* data,
                     RawFile* raw_file) {
   size_t length = num_channels * samples_per_channel;
   std::unique_ptr<float[]> buffer(new float[length]);
-  Interleave(data, samples_per_channel, num_channels, buffer.get());
+  InterleavedView<float> view(buffer.get(), samples_per_channel, num_channels);
+  Interleave(data, samples_per_channel, num_channels, view);
   if (raw_file) {
     raw_file->WriteSamples(buffer.get(), length);
   }

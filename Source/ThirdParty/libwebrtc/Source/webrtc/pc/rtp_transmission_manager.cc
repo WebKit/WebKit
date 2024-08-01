@@ -21,7 +21,7 @@
 #include "pc/legacy_stats_collector_interface.h"
 #include "pc/video_rtp_receiver.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/helpers.h"
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {

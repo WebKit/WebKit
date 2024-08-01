@@ -180,17 +180,29 @@ extern "C" {
 #endif
 
 
-#if defined(OPENSSL_X86) || defined(OPENSSL_X86_64) || defined(OPENSSL_ARM) || \
-    defined(OPENSSL_AARCH64)
-// OPENSSL_cpuid_setup initializes the platform-specific feature cache.
+#if !defined(OPENSSL_NO_ASM) && !defined(OPENSSL_STATIC_ARMCAP) && \
+    (defined(OPENSSL_X86) || defined(OPENSSL_X86_64) ||            \
+     defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64))
+// x86, x86_64, and the ARMs need to record the result of a cpuid/getauxval call
+// for the asm to work correctly, unless compiled without asm code.
+#define NEED_CPUID
+
+// OPENSSL_cpuid_setup initializes the platform-specific feature cache. This
+// function should not be called directly. Call |OPENSSL_init_cpuid| instead.
 void OPENSSL_cpuid_setup(void);
+
+// OPENSSL_init_cpuid initializes the platform-specific feature cache, if
+// needed. This function is idempotent and may be called concurrently.
+void OPENSSL_init_cpuid(void);
+#else
+OPENSSL_INLINE void OPENSSL_init_cpuid(void) {}
 #endif
 
 #if (defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64)) && \
     !defined(OPENSSL_STATIC_ARMCAP)
 // OPENSSL_get_armcap_pointer_for_test returns a pointer to |OPENSSL_armcap_P|
-// for unit tests. Any modifications to the value must be made after
-// |CRYPTO_library_init| but before any other function call in BoringSSL.
+// for unit tests. Any modifications to the value must be made before any other
+// function call in BoringSSL.
 OPENSSL_EXPORT uint32_t *OPENSSL_get_armcap_pointer_for_test(void);
 #endif
 
@@ -1175,6 +1187,11 @@ static inline uint64_t CRYPTO_rotr_u64(uint64_t value, int shift) {
 
 // Arithmetic functions.
 
+// The most efficient versions of these functions on GCC and Clang depend on C11
+// |_Generic|. If we ever need to call these from C++, we'll need to add a
+// variant that uses C++ overloads instead.
+#if !defined(__cplusplus)
+
 // CRYPTO_addc_* returns |x + y + carry|, and sets |*out_carry| to the carry
 // bit. |carry| must be zero or one.
 #if OPENSSL_HAS_BUILTIN(__builtin_addc)
@@ -1275,6 +1292,8 @@ static inline uint64_t CRYPTO_subc_u64(uint64_t x, uint64_t y, uint64_t borrow,
 #define CRYPTO_addc_w CRYPTO_addc_u32
 #define CRYPTO_subc_w CRYPTO_subc_u32
 #endif
+
+#endif  // !__cplusplus
 
 
 // FIPS functions.
@@ -1515,7 +1534,6 @@ OPENSSL_INLINE int CRYPTO_is_x86_SHA_capable(void) {
 // otherwise select. See chacha-x86_64.pl.
 //
 // Bonnell, Silvermont's predecessor in the Atom lineup, will also be matched by
-// this. |OPENSSL_cpuid_setup| forces Knights Landing to also be matched by
 // this. Goldmont (Silvermont's successor in the Atom lineup) added XSAVE so it
 // isn't matched by this. Various sources indicate AMD first implemented MOVBE
 // and XSAVE at the same time in Jaguar, so it seems like AMD chips will not be
@@ -1524,11 +1542,12 @@ OPENSSL_INLINE int CRYPTO_cpu_perf_is_like_silvermont(void) {
   // WARNING: This MUST NOT be used to guard the execution of the XSAVE
   // instruction. This is the "hardware supports XSAVE" bit, not the OSXSAVE bit
   // that indicates whether we can safely execute XSAVE. This bit may be set
-  // even when XSAVE is disabled (by the operating system). See the comment in
-  // cpu_intel.c and check how the users of this bit use it.
+  // even when XSAVE is disabled (by the operating system). See how the users of
+  // this bit use it.
   //
-  // We do not use |__XSAVE__| for static detection because the hack in
-  // |OPENSSL_cpuid_setup| for Knights Landing CPUs needs to override it.
+  // Historically, the XSAVE bit was artificially cleared on Knights Landing
+  // and Knights Mill chips, but as Intel has removed all support from GCC,
+  // LLVM, and SDE, we assume they are no longer worth special-casing.
   int hardware_supports_xsave = (OPENSSL_get_ia32cap(1) & (1u << 26)) != 0;
   return !hardware_supports_xsave && CRYPTO_is_MOVBE_capable();
 }

@@ -68,6 +68,7 @@ constexpr char kVp8ForcePartitionResilience[] =
 // bitstream range of [0, 127] and not the user-level range of [0,63].
 constexpr int kLowVp8QpThreshold = 29;
 constexpr int kHighVp8QpThreshold = 95;
+constexpr int kScreenshareMinQp = 15;
 
 constexpr int kTokenPartitions = VP8_ONE_TOKENPARTITION;
 constexpr uint32_t kVp832ByteAlign = 32u;
@@ -678,7 +679,7 @@ int LibvpxVp8Encoder::InitEncode(const VideoCodec* inst,
   // Note the order we use is different from webm, we have lowest resolution
   // at position 0 and they have highest resolution at position 0.
   const size_t stream_idx_cfg_0 = encoders_.size() - 1;
-  SimulcastRateAllocator init_allocator(codec_);
+  SimulcastRateAllocator init_allocator(env_, codec_);
   VideoBitrateAllocation allocation =
       init_allocator.Allocate(VideoBitrateAllocationParameters(
           inst->startBitrate * 1000, inst->maxFramerate));
@@ -1347,6 +1348,10 @@ VideoEncoder::EncoderInfo LibvpxVp8Encoder::GetEncoderInfo() const {
               0.5));
         }
       }
+    }
+
+    if (codec_.mode == VideoCodecMode::kScreensharing) {
+      info.min_qp = kScreenshareMinQp;
     }
   }
 

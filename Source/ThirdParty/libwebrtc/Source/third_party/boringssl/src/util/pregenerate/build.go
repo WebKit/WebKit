@@ -117,9 +117,9 @@ func (in *InputTarget) Pregenerate(name string) (out build.Target, tasks []Task,
 		addPerlasmTask(&out.Asm, &p, "-linux.S", []string{"linux32"})
 	}
 	for _, p := range in.PerlasmX86 {
-		addPerlasmTask(&out.Asm, &p, "-apple.S", []string{"macosx", "-fPIC", "-DOPENSSL_IA32_SSE2"})
-		addPerlasmTask(&out.Asm, &p, "-linux.S", []string{"elf", "-fPIC", "-DOPENSSL_IA32_SSE2"})
-		addPerlasmTask(&out.Nasm, &p, "-win.asm", []string{"win32n", "-fPIC", "-DOPENSSL_IA32_SSE2"})
+		addPerlasmTask(&out.Asm, &p, "-apple.S", []string{"macosx", "-fPIC"})
+		addPerlasmTask(&out.Asm, &p, "-linux.S", []string{"elf", "-fPIC"})
+		addPerlasmTask(&out.Nasm, &p, "-win.asm", []string{"win32n", "-fPIC"})
 	}
 	for _, p := range in.PerlasmX86_64 {
 		addPerlasmTask(&out.Asm, &p, "-apple.S", []string{"macosx"})
@@ -219,7 +219,7 @@ func buildVariablesTask(targets map[string]build.Target, dst, comment string, wr
 func writeBazelVariable(b *bytes.Buffer, name string, val []string) {
 	fmt.Fprintf(b, "\n%s = [\n", name)
 	for _, v := range val {
-		fmt.Fprintf(b, "  %q,\n", v)
+		fmt.Fprintf(b, "    %q,\n", v)
 	}
 	fmt.Fprintf(b, "]\n")
 }
@@ -245,8 +245,11 @@ func writeMakeVariable(b *bytes.Buffer, name string, val []string) {
 }
 
 func writeGNVariable(b *bytes.Buffer, name string, val []string) {
-	// Bazel and GN have the same syntax similar syntax.
-	writeBazelVariable(b, name, val)
+	fmt.Fprintf(b, "\n%s = [\n", name)
+	for _, v := range val {
+		fmt.Fprintf(b, "  %q,\n", v)
+	}
+	fmt.Fprintf(b, "]\n")
 }
 
 func jsonTask(targets map[string]build.Target, dst string) Task {

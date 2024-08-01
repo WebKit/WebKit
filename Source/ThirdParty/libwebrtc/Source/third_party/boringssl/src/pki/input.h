@@ -42,16 +42,14 @@ class OPENSSL_EXPORT Input {
 
   // Creates an Input from the given |data| and |len|.
   constexpr explicit Input(const uint8_t *data, size_t len)
-      : data_(MakeConstSpan(data, len)) {}
+      : data_(Span(data, len)) {}
 
   // Deprecated: Use StringAsBytes.
   //
   // Creates an Input from a std::string_view. The constructed Input is only
   // valid as long as |data| points to live memory. If constructed from, say, a
   // |std::string|, mutating the vector will invalidate the Input.
-  explicit Input(std::string_view str)
-      : data_(MakeConstSpan(reinterpret_cast<const uint8_t *>(str.data()),
-                            str.size())) {}
+  explicit Input(std::string_view str) : data_(StringAsBytes(str)) {}
 
   // The following APIs have the same semantics as in |bssl::Span|.
   constexpr Span<const uint8_t>::iterator begin() const {

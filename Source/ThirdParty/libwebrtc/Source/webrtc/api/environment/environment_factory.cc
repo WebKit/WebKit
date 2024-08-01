@@ -12,11 +12,16 @@
 
 #include <memory>
 #include <utility>
-#include <vector>
 
+#include "absl/base/nullability.h"
+#include "api/environment/environment.h"
+#include "api/field_trials_view.h"
 #include "api/make_ref_counted.h"
+#include "api/ref_counted_base.h"
 #include "api/rtc_event_log/rtc_event_log.h"
+#include "api/scoped_refptr.h"
 #include "api/task_queue/default_task_queue_factory.h"
+#include "api/task_queue/task_queue_factory.h"
 #include "api/transport/field_trial_based_config.h"
 #include "rtc_base/checks.h"
 #include "system_wrappers/include/clock.h"

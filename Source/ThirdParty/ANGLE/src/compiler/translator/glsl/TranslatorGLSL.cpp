@@ -208,6 +208,7 @@ bool TranslatorGLSL::translate(TIntermBlock *root,
         }
 
         EmitEarlyFragmentTestsGLSL(*this, sink);
+        WriteFragmentShaderLayoutQualifiers(sink, getAdvancedBlendEquations());
     }
 
     if (getShaderType() == GL_COMPUTE_SHADER)
@@ -325,6 +326,21 @@ void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root,
         {
             sink << "#extension GL_ARB_conservative_depth : " << GetBehaviorString(iter.second)
                  << "\n";
+        }
+
+        if (iter.first == TExtension::KHR_blend_equation_advanced)
+        {
+            sink << "#ifdef GL_KHR_blend_equation_advanced\n"
+                 << "#extension GL_KHR_blend_equation_advanced : " << GetBehaviorString(iter.second)
+                 << "\n"
+                 << "#elif defined GL_NV_blend_equation_advanced\n"
+                 << "#extension GL_NV_blend_equation_advanced : " << GetBehaviorString(iter.second)
+                 << "\n";
+            if (iter.second == EBhRequire)
+            {
+                sink << "#else\n" << "#error \"No advanced blend equation extensions available.\n";
+            }
+            sink << "#endif\n";
         }
 
         if ((iter.first == TExtension::OES_texture_cube_map_array ||

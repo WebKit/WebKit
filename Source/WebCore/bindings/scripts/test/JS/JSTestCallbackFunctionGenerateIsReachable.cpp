@@ -51,7 +51,7 @@ JSTestCallbackFunctionGenerateIsReachable::~JSTestCallbackFunctionGenerateIsReac
 #endif
 }
 
-CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunctionGenerateIsReachable::handleEvent(typename IDLLong::ParameterType argument)
+CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunctionGenerateIsReachable::handleEvent(typename IDLLong::ParameterType argument)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;

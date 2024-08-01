@@ -91,7 +91,7 @@ void WebExtensionContext::webNavigationGetFrame(WebExtensionTabIdentifier tabIde
         return;
     }
 
-    auto *webView = tab->mainWebView();
+    auto *webView = tab->webView();
     if (!webView) {
         completionHandler(toWebExtensionError(@"webNavigation.getFrame()", nil, @"tab not found"));
         return;
@@ -119,7 +119,7 @@ void WebExtensionContext::webNavigationGetAllFrames(WebExtensionTabIdentifier ta
         return;
     }
 
-    auto *webView = tab->mainWebView();
+    auto *webView = tab->webView();
     if (!webView) {
         completionHandler(toWebExtensionError(@"webNavigation.getAllFrames()", nil, @"tab not found"));
         return;

@@ -32,7 +32,6 @@
 #include "JSDOMExceptionHandling.h"
 #include "SubscriberCallback.h"
 #include "SubscriptionObserverCallback.h"
-#include "VoidCallback.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -69,7 +68,7 @@ void Subscriber::error(JSC::JSValue error)
     if (isInactiveDocument())
         return;
 
-    close(JSC::jsUndefined());
+    close(error);
 
     m_observer->error(error);
 }

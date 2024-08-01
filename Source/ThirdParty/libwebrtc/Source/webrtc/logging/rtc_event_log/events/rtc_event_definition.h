@@ -11,18 +11,16 @@
 #ifndef LOGGING_RTC_EVENT_LOG_EVENTS_RTC_EVENT_DEFINITION_H_
 #define LOGGING_RTC_EVENT_LOG_EVENTS_RTC_EVENT_DEFINITION_H_
 
-#include <memory>
+#include <cstdint>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "absl/types/optional.h"
 #include "api/array_view.h"
-#include "api/units/timestamp.h"
+#include "api/rtc_event_log/rtc_event.h"
 #include "logging/rtc_event_log/events/rtc_event_field_encoding.h"
 #include "logging/rtc_event_log/events/rtc_event_field_encoding_parser.h"
-#include "logging/rtc_event_log/events/rtc_event_field_extraction.h"
-#include "rtc_base/logging.h"
+#include "logging/rtc_event_log/events/rtc_event_log_parse_status.h"
 
 namespace webrtc {
 

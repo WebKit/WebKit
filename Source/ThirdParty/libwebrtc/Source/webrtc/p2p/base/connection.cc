@@ -26,7 +26,7 @@
 #include "p2p/base/p2p_constants.h"
 #include "rtc_base/byte_buffer.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/helpers.h"
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/net_helper.h"
 #include "rtc_base/network.h"
@@ -144,12 +144,6 @@ const int MINIMUM_RTT = 100;    // 0.1 seconds
 const int MAXIMUM_RTT = 60000;  // 60 seconds
 
 const int DEFAULT_RTT_ESTIMATE_HALF_TIME_MS = 500;
-
-// Computes our estimate of the RTT given the current estimate.
-inline int ConservativeRTTEstimate(int rtt) {
-  return rtc::SafeClamp(2 * rtt, MINIMUM_RTT, MAXIMUM_RTT);
-}
-
 // Weighting of the old rtt value to new data.
 const int RTT_RATIO = 3;  // 3 : 1
 
@@ -919,7 +913,8 @@ void Connection::UpdateState(int64_t now) {
   if (!port_)
     return;
 
-  int rtt = ConservativeRTTEstimate(rtt_);
+  // Computes our estimate of the RTT given the current estimate.
+  int rtt = rtc::SafeClamp(2 * rtt_, MINIMUM_RTT, MAXIMUM_RTT);
 
   if (RTC_LOG_CHECK_LEVEL(LS_VERBOSE)) {
     std::string pings;
@@ -1183,8 +1178,10 @@ void Connection::ReceivedPingResponse(
   UpdateReceiving(last_ping_response_received_);
   set_write_state(STATE_WRITABLE);
   set_state(IceCandidatePairState::SUCCEEDED);
+
+  // Smooth the RTT estimate using a moving average.
   if (rtt_samples_ > 0) {
-    rtt_ = rtc::GetNextMovingAverage(rtt_, rtt, RTT_RATIO);
+    rtt_ = (RTT_RATIO * rtt_ + rtt) / (RTT_RATIO + 1);
   } else {
     rtt_ = rtt;
   }

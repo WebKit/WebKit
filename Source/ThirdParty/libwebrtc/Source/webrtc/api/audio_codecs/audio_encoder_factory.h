@@ -18,13 +18,22 @@
 #include "api/audio_codecs/audio_codec_pair_id.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_format.h"
+#include "api/environment/environment.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/ref_count.h"
 
 namespace webrtc {
 
 // A factory that creates AudioEncoders.
-class AudioEncoderFactory : public rtc::RefCountInterface {
+class AudioEncoderFactory : public RefCountInterface {
  public:
+  struct Options {
+    // TODO(ossu): Try to avoid audio encoders having to know their payload
+    // type.
+    int payload_type = -1;
+    absl::optional<AudioCodecPairId> codec_pair_id;
+  };
+
   // Returns a prioritized list of audio codecs, to use for signaling etc.
   virtual std::vector<AudioCodecSpec> GetSupportedEncoders() = 0;
 
@@ -49,13 +58,39 @@ class AudioEncoderFactory : public rtc::RefCountInterface {
   // Note: Implementations need to be robust against combinations other than
   // one encoder, one decoder getting the same ID; such encoders must still
   // work.
-  //
-  // TODO(ossu): Try to avoid audio encoders having to know their payload type.
+  // TODO: bugs.webrtc.org/343086059 - make pure virtual when all
+  // implementations of the `AudioEncoderFactory` are updated.
+  virtual absl::Nullable<std::unique_ptr<AudioEncoder>>
+  Create(const Environment& env, const SdpAudioFormat& format, Options options);
+
+  // TODO: bugs.webrtc.org/343086059 - Update all callers to use `Create`
+  // instead, update implementations not to override it, then delete.
   virtual std::unique_ptr<AudioEncoder> MakeAudioEncoder(
       int payload_type,
       const SdpAudioFormat& format,
-      absl::optional<AudioCodecPairId> codec_pair_id) = 0;
+      absl::optional<AudioCodecPairId> codec_pair_id);
 };
+
+//------------------------------------------------------------------------------
+// Implementation details follow
+//------------------------------------------------------------------------------
+
+inline absl::Nullable<std::unique_ptr<AudioEncoder>>
+AudioEncoderFactory::Create(const Environment& env,
+                            const SdpAudioFormat& format,
+                            Options options) {
+  return MakeAudioEncoder(options.payload_type, format, options.codec_pair_id);
+}
+
+inline absl::Nullable<std::unique_ptr<AudioEncoder>>
+AudioEncoderFactory::MakeAudioEncoder(
+    int payload_type,
+    const SdpAudioFormat& format,
+    absl::optional<AudioCodecPairId> codec_pair_id) {
+  // Newer shouldn't call it.
+  // Older code should implement it.
+  RTC_CHECK_NOTREACHED();
+}
 
 }  // namespace webrtc
 

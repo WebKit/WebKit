@@ -27,6 +27,7 @@
 #include "PushMessageCrypto.h"
 
 #include "PushCrypto.h"
+#include <array>
 #include <wtf/ByteOrder.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 

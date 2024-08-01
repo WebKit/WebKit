@@ -38,10 +38,45 @@ egl::Error SurfaceImpl::swapWithDamage(const gl::Context *context,
     return egl::EglBadSurface() << "swapWithDamage implementation missing.";
 }
 
+egl::Error SurfaceImpl::swapWithFrameToken(const gl::Context *context,
+                                           EGLFrameTokenANGLE frameToken)
+{
+    UNREACHABLE();
+    return egl::EglBadDisplay();
+}
+
+egl::Error SurfaceImpl::postSubBuffer(const gl::Context *context,
+                                      EGLint x,
+                                      EGLint y,
+                                      EGLint width,
+                                      EGLint height)
+{
+    UNREACHABLE();
+    return egl::EglBadSurface() << "getMscRate implementation missing.";
+}
+
 egl::Error SurfaceImpl::setPresentationTime(EGLnsecsANDROID time)
 {
     UNREACHABLE();
     return egl::EglBadSurface() << "setPresentationTime implementation missing.";
+}
+
+egl::Error SurfaceImpl::querySurfacePointerANGLE(EGLint attribute, void **value)
+{
+    UNREACHABLE();
+    return egl::EglBadSurface() << "querySurfacePointerANGLE implementation missing.";
+}
+
+egl::Error SurfaceImpl::getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc)
+{
+    UNREACHABLE();
+    return egl::EglBadSurface() << "getSyncValues implementation missing.";
+}
+
+egl::Error SurfaceImpl::getMscRate(EGLint *numerator, EGLint *denominator)
+{
+    UNREACHABLE();
+    return egl::EglBadSurface() << "getMscRate implementation missing.";
 }
 
 void SurfaceImpl::setFixedWidth(EGLint width)
@@ -99,14 +134,6 @@ egl::Error SurfaceImpl::getFrameTimestamps(EGLuint64KHR frameId,
     UNREACHABLE();
     return egl::EglBadDisplay();
 }
-
-egl::Error SurfaceImpl::swapWithFrameToken(const gl::Context *context,
-                                           EGLFrameTokenANGLE frameToken)
-{
-    UNREACHABLE();
-    return egl::EglBadDisplay();
-}
-
 egl::Error SurfaceImpl::getUserWidth(const egl::Display *display, EGLint *value) const
 {
     *value = getWidth();
@@ -117,6 +144,12 @@ egl::Error SurfaceImpl::getUserHeight(const egl::Display *display, EGLint *value
 {
     *value = getHeight();
     return egl::NoError();
+}
+
+EGLint SurfaceImpl::isPostSubBufferSupported() const
+{
+    UNREACHABLE();
+    return EGL_FALSE;
 }
 
 egl::Error SurfaceImpl::getBufferAge(const gl::Context *context, EGLint *age)

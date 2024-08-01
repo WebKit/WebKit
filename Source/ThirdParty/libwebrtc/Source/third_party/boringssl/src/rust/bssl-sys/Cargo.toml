@@ -4,4 +4,8 @@ version = "0.1.0"
 authors = ["Benjamin Brittain <bwb@google.com>"]
 edition = "2018"
 publish = false
-license = "MIT"
+license = "ISC"
+
+# This exists to workaround a limitation in cargo:
+# https://github.com/rust-lang/cargo/issues/3544
+links = "bssl"

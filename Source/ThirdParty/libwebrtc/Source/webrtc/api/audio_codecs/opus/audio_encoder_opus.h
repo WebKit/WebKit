@@ -17,8 +17,10 @@
 #include "absl/types/optional.h"
 #include "api/audio_codecs/audio_codec_pair_id.h"
 #include "api/audio_codecs/audio_encoder.h"
+#include "api/audio_codecs/audio_encoder_factory.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/opus/audio_encoder_opus_config.h"
+#include "api/environment/environment.h"
 #include "api/field_trials_view.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -32,6 +34,10 @@ struct RTC_EXPORT AudioEncoderOpus {
       const SdpAudioFormat& audio_format);
   static void AppendSupportedEncoders(std::vector<AudioCodecSpec>* specs);
   static AudioCodecInfo QueryAudioEncoder(const AudioEncoderOpusConfig& config);
+  static std::unique_ptr<AudioEncoder> MakeAudioEncoder(
+      const Environment& env,
+      const AudioEncoderOpusConfig& config,
+      const AudioEncoderFactory::Options& options);
   static std::unique_ptr<AudioEncoder> MakeAudioEncoder(
       const AudioEncoderOpusConfig& config,
       int payload_type,

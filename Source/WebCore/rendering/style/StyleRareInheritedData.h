@@ -139,6 +139,7 @@ public:
     unsigned textJustify : 2; // TextJustify
     unsigned textDecorationSkipInk : 2; // TextDecorationSkipInk
     unsigned rubyPosition : 2; // RubyPosition
+    unsigned rubyAlign : 2; // RubyAlign
     unsigned textZoom: 1; // TextZoom
 
 #if PLATFORM(IOS_FAMILY)

@@ -1,0 +1,8 @@
+
+PASS horizontal-tb ltr
+PASS vertical-lr ltr
+PASS vertical-rl ltr
+PASS horizontal-tb rtl
+PASS vertical-lr rtl
+PASS vertical-rl rtl
+

@@ -41,6 +41,13 @@ static_assert(alignof(union evp_aead_ctx_st_state) >=
 
 static int aead_chacha20_poly1305_init(EVP_AEAD_CTX *ctx, const uint8_t *key,
                                        size_t key_len, size_t tag_len) {
+  // TODO(crbug.com/42290548): The x86_64 assembly depends on initializing
+  // |OPENSSL_ia32cap_P|. Move the dispatch to C. While we're here, it may be
+  // worth adjusting the assembly calling convention. The assembly functions do
+  // too much work right now. For now, explicitly initialize |OPENSSL_ia32cap_P|
+  // first.
+  OPENSSL_init_cpuid();
+
   struct aead_chacha20_poly1305_ctx *c20_ctx =
       (struct aead_chacha20_poly1305_ctx *)&ctx->state;
 

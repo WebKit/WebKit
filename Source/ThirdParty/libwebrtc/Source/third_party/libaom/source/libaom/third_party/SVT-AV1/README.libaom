@@ -12,3 +12,5 @@ Only ported the functions pertinent to single reference convolves.
 All functions are made static inline to avoid function call overheads.
 References to some arrays are changed to libaom version when applicable.
 Some extra intrinsic functions are added to support missing block sizes.
+Unaligned integer loads are changed to use functions from
+aom_dsp/x86/mem_sse2.h.

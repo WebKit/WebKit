@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -190,6 +190,7 @@ typedef struct {
   int sframe_due;
 
   int high_source_sad;
+  int high_motion_content_screen_rtc;
   uint64_t avg_source_sad;
   uint64_t prev_avg_source_sad;
   uint64_t frame_source_sad;
@@ -207,6 +208,8 @@ typedef struct {
   int prev_frame_is_dropped;
   int drop_count_consec;
   int max_consec_drop;
+  int force_max_q;
+  int postencode_drop;
 
   /*!
    * Frame number for encoded frames (non-dropped).
@@ -691,7 +694,7 @@ int av1_rc_bits_per_mb(const struct AV1_COMP *cpi, FRAME_TYPE frame_type,
 int av1_rc_clamp_iframe_target_size(const struct AV1_COMP *const cpi,
                                     int64_t target);
 int av1_rc_clamp_pframe_target_size(const struct AV1_COMP *const cpi,
-                                    int target, uint8_t frame_update_type);
+                                    int64_t target, uint8_t frame_update_type);
 
 // Find q_index corresponding to desired_q, within [best_qindex, worst_qindex].
 // To be precise, 'q_index' is the smallest integer, for which the corresponding
@@ -821,6 +824,19 @@ void av1_get_one_pass_rt_params(struct AV1_COMP *cpi,
  * \return q is returned, and updates are done to \c cpi->rc.
  */
 int av1_encodedframe_overshoot_cbr(struct AV1_COMP *cpi, int *q);
+
+/*!\brief Check if frame should be dropped, for RTC mode.
+ *
+ * \ingroup rate_control
+ * \param[in]       cpi          Top level encoder structure
+ * \param[in,out]       size         Size of encoded frame
+ *
+ * \return 1 if frame is to be dropped, 0 otherwise (no drop).
+ * Set cpi->rc.force_max_q if frame is to be dropped, and updates are
+ * made to rate control parameters. *size is set to 0 when this
+ * function returns 1 (frame is dropped).
+ */
+int av1_postencode_drop_cbr(struct AV1_COMP *cpi, size_t *size);
 
 /*!\brief Compute the q_indices for a single frame.
  *

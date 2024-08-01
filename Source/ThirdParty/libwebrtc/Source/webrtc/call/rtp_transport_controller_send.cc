@@ -95,6 +95,8 @@ RtpTransportControllerSend::RtpTransportControllerSend(
           !env_.field_trials().IsEnabled("WebRTC-Bwe-NoFeedbackReset")),
       add_pacing_to_cwin_(env_.field_trials().IsEnabled(
           "WebRTC-AddPacingToCongestionWindowPushback")),
+      reset_bwe_on_adapter_id_change_(
+          env_.field_trials().IsEnabled("WebRTC-Bwe-ResetOnAdapterIdChange")),
       relay_bandwidth_cap_("relay_cap", DataRate::PlusInfinity()),
       transport_overhead_bytes_per_packet_(0),
       network_available_(false),
@@ -295,18 +297,23 @@ void RtpTransportControllerSend::RegisterTargetTransferRateObserver(
 bool RtpTransportControllerSend::IsRelevantRouteChange(
     const rtc::NetworkRoute& old_route,
     const rtc::NetworkRoute& new_route) const {
-  // TODO(bugs.webrtc.org/11438): Experiment with using more information/
-  // other conditions.
   bool connected_changed = old_route.connected != new_route.connected;
-  bool route_ids_changed =
-      old_route.local.network_id() != new_route.local.network_id() ||
-      old_route.remote.network_id() != new_route.remote.network_id();
-  if (relay_bandwidth_cap_->IsFinite()) {
-    bool relaying_changed = IsRelayed(old_route) != IsRelayed(new_route);
-    return connected_changed || route_ids_changed || relaying_changed;
+  bool route_ids_changed = false;
+  bool relaying_changed = false;
+
+  if (reset_bwe_on_adapter_id_change_) {
+    route_ids_changed =
+        old_route.local.adapter_id() != new_route.local.adapter_id() ||
+        old_route.remote.adapter_id() != new_route.remote.adapter_id();
   } else {
-    return connected_changed || route_ids_changed;
+    route_ids_changed =
+        old_route.local.network_id() != new_route.local.network_id() ||
+        old_route.remote.network_id() != new_route.remote.network_id();
   }
+  if (relay_bandwidth_cap_->IsFinite()) {
+    relaying_changed = IsRelayed(old_route) != IsRelayed(new_route);
+  }
+  return connected_changed || route_ids_changed || relaying_changed;
 }
 
 void RtpTransportControllerSend::OnNetworkRouteChanged(
@@ -617,8 +624,6 @@ void RtpTransportControllerSend::OnTransportFeedback(
 void RtpTransportControllerSend::OnRemoteNetworkEstimate(
     NetworkStateEstimate estimate) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  env_.event_log().Log(std::make_unique<RtcEventRemoteEstimate>(
-      estimate.link_capacity_lower, estimate.link_capacity_upper));
   estimate.update_time = Timestamp::Millis(env_.clock().TimeInMilliseconds());
   if (controller_)
     PostUpdates(controller_->OnNetworkStateEstimate(estimate));

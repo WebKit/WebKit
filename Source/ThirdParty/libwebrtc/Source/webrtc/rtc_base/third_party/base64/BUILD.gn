@@ -16,6 +16,6 @@ rtc_library("base64") {
   deps = [
     "../..:checks",
     "../../system:rtc_export",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }

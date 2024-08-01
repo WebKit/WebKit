@@ -13,7 +13,7 @@
 
 #include <memory>
 
-#include "modules/audio_processing/include/audio_frame_view.h"
+#include "api/audio/audio_view.h"
 
 namespace webrtc {
 class ApmDataDumper;
@@ -24,7 +24,7 @@ class NoiseLevelEstimator {
   virtual ~NoiseLevelEstimator() = default;
   // Analyzes a 10 ms `frame`, updates the noise level estimation and returns
   // the value for the latter in dBFS.
-  virtual float Analyze(const AudioFrameView<const float>& frame) = 0;
+  virtual float Analyze(DeinterleavedView<const float> frame) = 0;
 };
 
 // Creates a noise level estimator based on noise floor detection.

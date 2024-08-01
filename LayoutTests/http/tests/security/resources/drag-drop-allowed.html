@@ -2,21 +2,21 @@
 <body onload="runTest()">
 <div contenteditable>drag<img src=abe.png id=dragme>me<span id=target>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
 <script>
-function moveToCenter(element) {
+async function moveToCenter(element) {
     var x, y;
     x = element.offsetLeft + element.offsetWidth / 2;
     y = element.offsetTop + element.offsetHeight / 2;
-    eventSender.mouseMoveTo(x, y);
+    await eventSender.asyncMouseMoveTo(x, y);
 }
 
-function runTest() {
+async function runTest() {
     e = document.getElementById("dragme");
     moveToCenter(e);
-    eventSender.mouseDown();
+    await eventSender.asyncMouseDown();
 
     e = document.getElementById("target");
     moveToCenter(e);
-    eventSender.mouseUp();
+    await eventSender.asyncMouseUp();
 
     if (document.getElementById("dragme").parentNode.tagName == "SPAN" && document.getElementById("dragme").src.length > 10)
         console.log("PASS");

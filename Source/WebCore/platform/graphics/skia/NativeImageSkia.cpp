@@ -74,10 +74,10 @@ std::optional<Color> NativeImage::singlePixelSolidColor() const
 
     auto platformImage = this->platformImage();
     if (platformImage->isTextureBacked()) {
-        if (!PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent())
+        if (!PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent())
             return std::nullopt;
 
-        GrDirectContext* grContext = PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
+        GrDirectContext* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
         const auto& imageInfo = platformImage->imageInfo();
         uint32_t pixel;
         SkPixmap pixmap(imageInfo, &pixel, imageInfo.minRowBytes());

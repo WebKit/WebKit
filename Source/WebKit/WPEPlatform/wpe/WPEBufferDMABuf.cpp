@@ -53,6 +53,8 @@ struct _WPEBufferDMABufPrivate {
     Vector<uint32_t> strides;
     uint64_t modifier;
     EGLImage eglImage;
+    UnixFileDescriptor renderingFence;
+    UnixFileDescriptor releaseFence;
 #if USE(GBM)
     UnixFileDescriptor deviceFD;
     std::optional<struct gbm_device*> device;
@@ -381,4 +383,102 @@ guint64 wpe_buffer_dma_buf_get_modifier(WPEBufferDMABuf* buffer)
     g_return_val_if_fail(WPE_IS_BUFFER_DMA_BUF(buffer), 0);
 
     return buffer->priv->modifier;
+}
+
+/**
+ * wpe_buffer_dma_buf_set_rendering_fence:
+ * @buffer: a #WPEBufferDMABuf
+ * @fd: a file descriptor, or -1
+ *
+ * Set the rendering fence file descriptor to use for the @buffer. The fence
+ * will be used to wait before rendering the buffer.
+ * The buffer takes the ownership of the file descriptor.
+ */
+void wpe_buffer_dma_buf_set_rendering_fence(WPEBufferDMABuf* buffer, int fd)
+{
+    g_return_if_fail(WPE_IS_BUFFER_DMA_BUF(buffer));
+
+    if (buffer->priv->renderingFence.value() == fd)
+        return;
+
+    buffer->priv->renderingFence = UnixFileDescriptor { fd, UnixFileDescriptor::Adopt };
+}
+
+/**
+ * wpe_buffer_dma_buf_get_rendering_fence:
+ * @buffer: a #WPEBufferDMABuf
+ *
+ * Get the rendering fence file descriptor of @buffer.
+ *
+ * Returns: a file descriptor, or -1
+ */
+int wpe_buffer_dma_buf_get_rendering_fence(WPEBufferDMABuf* buffer)
+{
+    g_return_val_if_fail(WPE_IS_BUFFER_DMA_BUF(buffer), -1);
+
+    return buffer->priv->renderingFence.value();
+}
+
+/**
+ * wpe_buffer_dma_buf_take_rendering_fence:
+ * @buffer: a #WPEBufferDMABuf
+ *
+ * Get the rendering fence file descriptor of @buffer and set it to -1.
+ *
+ * Returns: a file descriptor, or -1
+ */
+int wpe_buffer_dma_buf_take_rendering_fence(WPEBufferDMABuf* buffer)
+{
+    g_return_val_if_fail(WPE_IS_BUFFER_DMA_BUF(buffer), -1);
+
+    return buffer->priv->renderingFence.release();
+}
+
+ /**
+ * wpe_buffer_dma_buf_set_release_fence:
+ * @buffer: a #WPEBufferDMABuf
+ * @fd: a file descriptor, or -1
+ *
+ * Set the release fence file descriptor to use for the @buffer. The fence
+ * will be used to wait before releasing the buffer to be destroyed or reused.
+ * The buffer takes the ownership of the file descriptor.
+ */
+void wpe_buffer_dma_buf_set_release_fence(WPEBufferDMABuf* buffer, int fd)
+{
+    g_return_if_fail(WPE_IS_BUFFER_DMA_BUF(buffer));
+
+    if (buffer->priv->releaseFence.value() == fd)
+        return;
+
+    buffer->priv->releaseFence = UnixFileDescriptor { fd, UnixFileDescriptor::Adopt };
+}
+
+/**
+ * wpe_buffer_dma_buf_get_release_fence:
+ * @buffer: a #WPEBufferDMABuf
+ *
+ * Get the release fence file descriptor of @buffer.
+ *
+ * Returns: a file descriptor, or -1
+ */
+int wpe_buffer_dma_buf_get_release_fence(WPEBufferDMABuf* buffer)
+{
+    g_return_val_if_fail(WPE_IS_BUFFER_DMA_BUF(buffer), -1);
+
+    return buffer->priv->releaseFence.value();
+}
+
+/**
+ * wpe_buffer_dma_buf_take_release_fence:
+ * @buffer: a #WPEBufferDMABuf
+ *
+ * Get the release fence file descriptor of @buffer and set it to -1.
+ *
+ * Returns: a file descriptor, or -1
+ */
+int wpe_buffer_dma_buf_take_release_fence(WPEBufferDMABuf* buffer)
+{
+    g_return_val_if_fail(WPE_IS_BUFFER_DMA_BUF(buffer), -1);
+
+    return buffer->priv->releaseFence.release();
 }

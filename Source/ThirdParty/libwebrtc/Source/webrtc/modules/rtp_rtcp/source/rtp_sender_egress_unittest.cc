@@ -117,7 +117,8 @@ class RtpSenderEgressTest : public ::testing::Test {
       : time_controller_(kStartTime),
         clock_(time_controller_.GetClock()),
         transport_(&header_extensions_),
-        packet_history_(clock_, /*enable_rtx_padding_prioritization=*/true),
+        packet_history_(clock_,
+                        RtpPacketHistory::PaddingMode::kRecentLargePacket),
         trials_(""),
         sequence_number_(kStartSequenceNumber) {}
 

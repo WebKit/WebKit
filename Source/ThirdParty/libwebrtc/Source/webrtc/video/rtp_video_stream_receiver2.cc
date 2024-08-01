@@ -514,11 +514,11 @@ bool RtpVideoStreamReceiver2::OnReceivedPayloadData(
     int times_nacked) {
   RTC_DCHECK_RUN_ON(&packet_sequence_checker_);
 
-  auto packet =
-      std::make_unique<video_coding::PacketBuffer::Packet>(rtp_packet, video);
-
   int64_t unwrapped_rtp_seq_num =
       rtp_seq_num_unwrapper_.Unwrap(rtp_packet.SequenceNumber());
+
+  auto packet = std::make_unique<video_coding::PacketBuffer::Packet>(
+      rtp_packet, unwrapped_rtp_seq_num, video);
 
   RtpPacketInfo& packet_info =
       packet_infos_
@@ -638,7 +638,7 @@ bool RtpVideoStreamReceiver2::OnReceivedPayloadData(
   packet->times_nacked = times_nacked;
 
   if (codec_payload.size() == 0) {
-    NotifyReceiverOfEmptyPacket(packet->seq_num);
+    NotifyReceiverOfEmptyPacket(packet->seq_num());
     rtcp_feedback_buffer_.SendBufferedRtcpFeedback();
     return false;
   }
@@ -777,8 +777,7 @@ void RtpVideoStreamReceiver2::OnInsertedPacket(
     // PacketBuffer promisses frame boundaries are correctly set on each
     // packet. Document that assumption with the DCHECKs.
     RTC_DCHECK_EQ(frame_boundary, packet->is_first_packet_in_frame());
-    int64_t unwrapped_rtp_seq_num =
-        rtp_seq_num_unwrapper_.Unwrap(packet->seq_num);
+    int64_t unwrapped_rtp_seq_num = packet->sequence_number;
     RTC_DCHECK_GT(packet_infos_.count(unwrapped_rtp_seq_num), 0);
     RtpPacketInfo& packet_info = packet_infos_[unwrapped_rtp_seq_num];
     if (packet->is_first_packet_in_frame()) {
@@ -809,8 +808,8 @@ void RtpVideoStreamReceiver2::OnInsertedPacket(
 
       const video_coding::PacketBuffer::Packet& last_packet = *packet;
       OnAssembledFrame(std::make_unique<RtpFrameObject>(
-          first_packet->seq_num,                             //
-          last_packet.seq_num,                               //
+          first_packet->seq_num(),                           //
+          last_packet.seq_num(),                             //
           last_packet.marker_bit,                            //
           max_nack_count,                                    //
           min_recv_time,                                     //

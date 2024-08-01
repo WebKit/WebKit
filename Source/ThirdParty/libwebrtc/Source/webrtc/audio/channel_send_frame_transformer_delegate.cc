@@ -45,6 +45,7 @@ AudioFrameType InterfaceFrameTypeToInternalFrameType(
   RTC_DCHECK_NOTREACHED();
   return AudioFrameType::kEmptyFrame;
 }
+}  // namespace
 
 class TransformableOutgoingAudioFrame
     : public TransformableAudioFrameInterface {
@@ -61,7 +62,8 @@ class TransformableOutgoingAudioFrame
       const std::string& codec_mime_type,
       absl::optional<uint16_t> sequence_number,
       absl::optional<uint8_t> audio_level_dbov)
-      : frame_type_(frame_type),
+      : TransformableAudioFrameInterface(Passkey()),
+        frame_type_(frame_type),
         payload_type_(payload_type),
         rtp_timestamp_with_offset_(rtp_timestamp_with_offset),
         payload_(payload_data, payload_size),
@@ -119,7 +121,6 @@ class TransformableOutgoingAudioFrame
   absl::optional<uint16_t> sequence_number_;
   absl::optional<uint8_t> audio_level_dbov_;
 };
-}  // namespace
 
 ChannelSendFrameTransformerDelegate::ChannelSendFrameTransformerDelegate(
     SendFrameCallback send_frame_callback,

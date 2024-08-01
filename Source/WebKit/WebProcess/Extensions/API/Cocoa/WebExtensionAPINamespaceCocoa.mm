@@ -75,14 +75,14 @@ bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPa
         return !extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"page_action", false);
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
-    // FIXME: <https://webkit.org/b/276833> Check if the sidebar feature flag is enabled and if we have the sidePanel permission to determine if this property should be visible
+    // If the extension requests both sidePanel and sidebarAction, we will give them sidebarAction --
+    // we check in sidePanel that there is no sidebar_action key, but we do not check in sidebarAction
+    // that there is no sidePanel permission
     if (name == "sidePanel"_s)
-        return false;
-
-    // FIXME: <https://webkit.org/b/276833> Check if the sidebar feature flag is enabled and if we have a sidebarAction key in the manifest to determine if this property should be visible
+        return page->corePage()->settings().webExtensionSidebarEnabled() && extensionContext().hasPermission("sidePanel"_s) && !objectForKey<NSDictionary>(extensionContext().manifest(), @"sidebar_action", true);
     if (name == "sidebarAction"_s)
-        return false;
-#endif
+        return page->corePage()->settings().webExtensionSidebarEnabled() && objectForKey<NSDictionary>(extensionContext().manifest(), @"sidebar_action", true);
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
     if (name == "storage"_s)
         return extensionContext().hasPermission(name) || extensionContext().hasPermission("unlimitedStorage"_s);

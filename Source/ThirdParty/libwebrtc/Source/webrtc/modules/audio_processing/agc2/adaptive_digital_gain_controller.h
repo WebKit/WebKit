@@ -14,8 +14,8 @@
 #include <vector>
 
 #include "api/audio/audio_processing.h"
+#include "api/audio/audio_view.h"
 #include "modules/audio_processing/agc2/gain_applier.h"
-#include "modules/audio_processing/include/audio_frame_view.h"
 
 namespace webrtc {
 
@@ -46,7 +46,7 @@ class AdaptiveDigitalGainController {
 
   // Analyzes `info`, updates the digital gain and applies it to a 10 ms
   // `frame`. Supports any sample rate supported by APM.
-  void Process(const FrameInfo& info, AudioFrameView<float> frame);
+  void Process(const FrameInfo& info, DeinterleavedView<float> frame);
 
  private:
   ApmDataDumper* const apm_data_dumper_;

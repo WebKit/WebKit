@@ -257,7 +257,7 @@ public:
         return push(NoConsistencyCheck);
     }
 
-    void didPopValueFromStack(ExpressionType, String) { --m_stackSize; }
+    void didPopValueFromStack(ExpressionType, ASCIILiteral) { --m_stackSize; }
     bool usesSIMD() { return m_usesSIMD; }
     void notifyFunctionUsesSIMD() { ASSERT(Options::useWasmSIMD()); m_usesSIMD = true; }
 

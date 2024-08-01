@@ -15,6 +15,7 @@
 #include "absl/strings/match.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "api/environment/environment_factory.h"
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/include/module_common_types.h"
 #include "rtc_base/strings/string_builder.h"
@@ -61,7 +62,8 @@ int32_t TestPackStereo::SendData(const AudioFrameType frame_type,
 
   if (lost_packet_ == false) {
     status = receiver_acm_->InsertPacket(
-        rtp_header, rtc::ArrayView<const uint8_t>(payload_data, payload_size));
+        rtp_header, rtc::ArrayView<const uint8_t>(payload_data, payload_size),
+        /*receive_time=*/Timestamp::MinusInfinity());
 
     if (frame_type != AudioFrameType::kAudioFrameCN) {
       payload_size_ = static_cast<int>(payload_size);
@@ -97,7 +99,8 @@ void TestPackStereo::set_lost_packet(bool lost) {
 }
 
 TestStereo::TestStereo()
-    : acm_a_(AudioCodingModule::Create()),
+    : env_(CreateEnvironment()),
+      acm_a_(AudioCodingModule::Create()),
       acm_b_(std::make_unique<acm2::AcmReceiver>(
           acm2::AcmReceiver::Config(CreateBuiltinAudioDecoderFactory()))),
       channel_a2b_(NULL),
@@ -169,6 +172,8 @@ void TestStereo::Perform() {
   audio_channels = 2;
   codec_channels = 2;
 
+// TODO(bugs.webrtc.org/345525069): Either fix/enable or remove G722.
+#if defined(__has_feature) && !__has_feature(undefined_behavior_sanitizer)
   // All codecs are tested for all allowed sampling frequencies, rates and
   // packet sizes.
   channel_a2b_->set_codec_mode(kStereo);
@@ -188,6 +193,7 @@ void TestStereo::Perform() {
   RegisterSendCodec('A', codec_g722, 16000, 64000, 960, codec_channels);
   Run(channel_a2b_, audio_channels, codec_channels);
   out_file_.Close();
+#endif
 
   channel_a2b_->set_codec_mode(kStereo);
   test_cntr_++;
@@ -293,12 +299,15 @@ void TestStereo::Perform() {
   audio_channels = 1;
   codec_channels = 2;
 
+// TODO(bugs.webrtc.org/345525069): Either fix/enable or remove G722.
+#if defined(__has_feature) && !__has_feature(undefined_behavior_sanitizer)
   test_cntr_++;
   channel_a2b_->set_codec_mode(kStereo);
   OpenOutFile(test_cntr_);
   RegisterSendCodec('A', codec_g722, 16000, 64000, 160, codec_channels);
   Run(channel_a2b_, audio_channels, codec_channels);
   out_file_.Close();
+#endif
 
   test_cntr_++;
   channel_a2b_->set_codec_mode(kStereo);
@@ -349,12 +358,15 @@ void TestStereo::Perform() {
   codec_channels = 1;
   channel_a2b_->set_codec_mode(kMono);
 
+// TODO(bugs.webrtc.org/345525069): Either fix/enable or remove G722.
+#if defined(__has_feature) && !__has_feature(undefined_behavior_sanitizer)
   // Run stereo audio and mono codec.
   test_cntr_++;
   OpenOutFile(test_cntr_);
   RegisterSendCodec('A', codec_g722, 16000, 64000, 160, codec_channels);
   Run(channel_a2b_, audio_channels, codec_channels);
   out_file_.Close();
+#endif
 
   test_cntr_++;
   OpenOutFile(test_cntr_);
@@ -478,10 +490,9 @@ void TestStereo::RegisterSendCodec(char side,
     channels = 2;
     params["maxaveragebitrate"] = rtc::ToString(rate);
   }
-  constexpr int payload_type = 17;
-  auto encoder = encoder_factory->MakeAudioEncoder(
-      payload_type, SdpAudioFormat(codec_name, clockrate_hz, channels, params),
-      absl::nullopt);
+  auto encoder = encoder_factory->Create(
+      env_, SdpAudioFormat(codec_name, clockrate_hz, channels, params),
+      {.payload_type = 17});
   EXPECT_NE(nullptr, encoder);
   my_acm->SetEncoder(std::move(encoder));
 

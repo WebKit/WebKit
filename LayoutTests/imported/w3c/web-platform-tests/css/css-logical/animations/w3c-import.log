@@ -14,4 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/animations/caption-side-no-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/animations/float-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/animations/margin-block-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/animations/margin-inline-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/animations/padding-block-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/animations/padding-inline-interpolation.html

@@ -31,6 +31,7 @@
 #include "ArgumentCoders.h"
 #include "RemoteRenderingBackend.h"
 #include "RemoteResourceCache.h"
+#include "ShapeDetectionObjectHeap.h"
 #include <WebCore/BarcodeDetectorInterface.h>
 #include <WebCore/DetectedBarcodeInterface.h>
 #include <WebCore/ImageBuffer.h>

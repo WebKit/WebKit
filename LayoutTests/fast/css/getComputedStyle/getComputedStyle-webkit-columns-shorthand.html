@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html>
-<head>
 <meta charset="utf-8">
-<script src="../../../resources/js-test-pre.js"></script>
-</head>
 <body>
+<script src="../../../resources/js-test.js"></script>
 <script>
 
 description("Test to make sure -webkit-columns property returns CSSValueList properly.")
@@ -26,49 +24,33 @@ shouldBe("computedStyle.getPropertyCSSValue('-webkit-columns').item(0).getFloatV
 shouldBe("computedStyle.getPropertyCSSValue('-webkit-columns').item(1).getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "2");
 
 e.style.webkitColumns="10px";
-shouldBeEqualToString("computedStyle.getPropertyValue('-webkit-columns')", '10px auto');
-shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').toString()", '[object CSSValueList]');
-shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').cssText", '10px auto');
-shouldBe("computedStyle.getPropertyCSSValue('-webkit-columns').length", "2");
-shouldBe("computedStyle.getPropertyCSSValue('-webkit-columns').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX)", "10");
-shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').item(1).getStringValue()", "auto");
+shouldBeEqualToString("computedStyle.getPropertyValue('-webkit-columns')", '10px');
+shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').toString()", '[object CSSPrimitiveValue]');
+shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').cssText", '10px');
 
 e.style.webkitColumns=""
 e.style.webkitColumnCount="2"
-shouldBeEqualToString("computedStyle.getPropertyValue('-webkit-columns')", 'auto 2');
-shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').toString()", '[object CSSValueList]');
-shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').cssText", 'auto 2');
-shouldBe("computedStyle.getPropertyCSSValue('-webkit-columns').length", "2");
-shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').item(0).getStringValue()", 'auto');
-shouldBe("computedStyle.getPropertyCSSValue('-webkit-columns').item(1).getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "2");
+shouldBeEqualToString("computedStyle.getPropertyValue('-webkit-columns')", '2');
+shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').toString()", '[object CSSPrimitiveValue]');
+shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').cssText", '2');
 
 e.style.webkitColumns="auto 2"
-shouldBeEqualToString("computedStyle.getPropertyValue('-webkit-columns')", 'auto 2');
-shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').toString()", '[object CSSValueList]');
-shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').cssText", 'auto 2');
-shouldBe("computedStyle.getPropertyCSSValue('-webkit-columns').length", "2");
-shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').item(0).getStringValue()", 'auto');
-shouldBe("computedStyle.getPropertyCSSValue('-webkit-columns').item(1).getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "2");
+shouldBeEqualToString("computedStyle.getPropertyValue('-webkit-columns')", '2');
+shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').toString()", '[object CSSPrimitiveValue]');
+shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').cssText", '2');
 
 e.style.webkitColumnCount="auto";
-shouldBeEqualToString("computedStyle.getPropertyValue('-webkit-columns')", 'auto auto');
-shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').toString()", '[object CSSValueList]');
-shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').cssText", 'auto auto');
-shouldBe("computedStyle.getPropertyCSSValue('-webkit-columns').length", "2");
-shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').item(0).getStringValue()", 'auto');
-shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').item(1).getStringValue()", 'auto');
+shouldBeEqualToString("computedStyle.getPropertyValue('-webkit-columns')", 'auto');
+shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').toString()", '[object CSSPrimitiveValue]');
+shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').cssText", 'auto');
 
 e.style.webkitColumnWidth="10px";
-shouldBeEqualToString("computedStyle.getPropertyValue('-webkit-columns')", '10px auto');
-shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').toString()", '[object CSSValueList]');
-shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').cssText", '10px auto');
-shouldBe("computedStyle.getPropertyCSSValue('-webkit-columns').length", "2");
-shouldBe("computedStyle.getPropertyCSSValue('-webkit-columns').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX)", "10");
-shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').item(1).getStringValue()", 'auto');
+shouldBeEqualToString("computedStyle.getPropertyValue('-webkit-columns')", '10px');
+shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').toString()", '[object CSSPrimitiveValue]');
+shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-columns').cssText", '10px');
 
 document.body.removeChild(testContainer);
-
 </script>
-<script src="../../../resources/js-test-post.js"></script>
+
 </body>
 </html>

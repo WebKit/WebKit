@@ -116,10 +116,6 @@ typedef EGLBoolean (EGLAPIENTRYP PFNEGLDESTROYIMAGEKHRPROC) (EGLDisplay, EGLImag
 
 namespace WebCore {
 
-#if PLATFORM(WPE)
-bool PlatformDisplay::s_useDMABufForRendering = false;
-#endif
-
 std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
 {
 #if PLATFORM(GTK)
@@ -154,56 +150,41 @@ std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
     return PlatformDisplayX11::create(nullptr);
 #endif
 
-#if PLATFORM(WPE)
-    if (s_useDMABufForRendering) {
-#if USE(GBM)
-        if (DRMDeviceManager::singleton().isInitialized()) {
-            if (auto* device = DRMDeviceManager::singleton().mainGBMDeviceNode(DRMDeviceManager::NodeType::Render))
-                return PlatformDisplayGBM::create(device);
-        }
-#endif
-        return PlatformDisplaySurfaceless::create();
-    }
-#endif
-
 #if USE(WPE_RENDERER)
     return PlatformDisplayLibWPE::create();
-#elif PLATFORM(WIN)
-    return PlatformDisplayWin::create();
 #endif
 
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+#if PLATFORM(WIN)
 PlatformDisplay& PlatformDisplay::sharedDisplay()
 {
-#if PLATFORM(WIN)
     // ANGLE D3D renderer isn't thread-safe. Don't destruct it on non-main threads which calls _exit().
-    static PlatformDisplay* display = createPlatformDisplay().release();
+    static PlatformDisplay* display = PlatformDisplayWin::create().release();
     return *display;
+}
 #else
+IGNORE_CLANG_WARNINGS_BEGIN("exit-time-destructors")
+static std::unique_ptr<PlatformDisplay> s_sharedDisplay;
+IGNORE_CLANG_WARNINGS_END
+
+void PlatformDisplay::setSharedDisplay(std::unique_ptr<PlatformDisplay>&& display)
+{
+    RELEASE_ASSERT(!s_sharedDisplay);
+    s_sharedDisplay = WTFMove(display);
+}
+
+PlatformDisplay& PlatformDisplay::sharedDisplay()
+{
     static std::once_flag onceFlag;
-    IGNORE_CLANG_WARNINGS_BEGIN("exit-time-destructors")
-    static std::unique_ptr<PlatformDisplay> display;
-    IGNORE_CLANG_WARNINGS_END
-    std::call_once(onceFlag, []{
-        display = createPlatformDisplay();
+    std::call_once(onceFlag, [] {
+        if (!s_sharedDisplay)
+            setSharedDisplay(createPlatformDisplay());
     });
-    return *display;
+    return *s_sharedDisplay;
+}
 #endif
-}
-
-static PlatformDisplay* s_sharedDisplayForCompositing;
-
-PlatformDisplay& PlatformDisplay::sharedDisplayForCompositing()
-{
-    return s_sharedDisplayForCompositing ? *s_sharedDisplayForCompositing : sharedDisplay();
-}
-
-void PlatformDisplay::setSharedDisplayForCompositing(PlatformDisplay& display)
-{
-    s_sharedDisplayForCompositing = &display;
-}
 
 PlatformDisplay::PlatformDisplay()
     : m_eglDisplay(EGL_NO_DISPLAY)
@@ -249,8 +230,6 @@ PlatformDisplay::~PlatformDisplay()
     if (m_sharedDisplay)
         g_signal_handlers_disconnect_by_data(m_sharedDisplay.get(), this);
 #endif
-    if (s_sharedDisplayForCompositing == this)
-        s_sharedDisplayForCompositing = nullptr;
 }
 
 GLContext* PlatformDisplay::sharingGLContext()
@@ -331,6 +310,9 @@ void PlatformDisplay::initializeEGLDisplay()
 
         m_eglExtensions.KHR_image_base = findExtension("EGL_KHR_image_base"_s);
         m_eglExtensions.KHR_surfaceless_context = findExtension("EGL_KHR_surfaceless_context"_s);
+        m_eglExtensions.KHR_fence_sync = findExtension("EGL_KHR_fence_sync"_s);
+        m_eglExtensions.KHR_wait_sync = findExtension("EGL_KHR_wait_sync"_s);
+        m_eglExtensions.ANDROID_native_fence_sync = findExtension("EGL_ANDROID_native_fence_sync"_s);
         m_eglExtensions.EXT_image_dma_buf_import = findExtension("EGL_EXT_image_dma_buf_import"_s);
         m_eglExtensions.EXT_image_dma_buf_import_modifiers = findExtension("EGL_EXT_image_dma_buf_import_modifiers"_s);
         m_eglExtensions.MESA_image_dma_buf_export = findExtension("EGL_MESA_image_dma_buf_export"_s);

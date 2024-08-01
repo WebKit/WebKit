@@ -9,6 +9,7 @@
 #include "TestSuite.h"
 
 #include "common/debug.h"
+#include "common/hash_containers.h"
 #include "common/platform.h"
 #include "common/string_utils.h"
 #include "common/system_utils.h"

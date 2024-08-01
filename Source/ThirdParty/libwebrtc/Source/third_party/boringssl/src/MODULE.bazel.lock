@@ -1375,7 +1375,7 @@
     },
     "@@rules_foreign_cc~//foreign_cc:extensions.bzl%ext": {
       "general": {
-        "bzlTransitiveDigest": "QbxK92//k6c63fpMer2Lkk6224s9gwYoVFFS6mdkucI=",
+        "bzlTransitiveDigest": "0/GTFp9D0gb6hOu9jXXnaWa5hPbzPpIzLVxITdJTwvo=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -1646,7 +1646,7 @@
     },
     "@@rules_java~//java:extensions.bzl%toolchains": {
       "general": {
-        "bzlTransitiveDigest": "tJHbmWnq7m+9eUBnUdv7jZziQ26FmcGL9C5/hU3Q9UQ=",
+        "bzlTransitiveDigest": "0N5b5J9fUzo0sgvH4F3kIEaeXunz4Wy2/UtSFV/eXUY=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -2151,7 +2151,7 @@
     },
     "@@rules_python~//python/extensions:python.bzl%python": {
       "general": {
-        "bzlTransitiveDigest": "o0WIKfdQRSZd/9+sY+LDTrUuYozMBFuYsL85uwJYKk8=",
+        "bzlTransitiveDigest": "hcJ2K4XvZ3hi0G4g5MkUEs8xowZlCfrgq3JX4dyipWY=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},

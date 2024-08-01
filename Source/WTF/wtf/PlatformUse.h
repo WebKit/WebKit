@@ -319,10 +319,6 @@
 #endif
 #endif
 
-#if OS(DARWIN) && USE(APPLE_INTERNAL_SDK) && USE(TZONE_MALLOC)
-#define USE_DARWIN_TZONE_SEED 1
-#endif
-
 #if !defined(USE_WK_TZONE_MALLOC)
 #if USE(TZONE_MALLOC)
 // Separately control the use of TZone allocation in WebKit
@@ -363,6 +359,10 @@
 
 #if PLATFORM(COCOA) || USE(GSTREAMER)
 #define USE_CONCATENATED_IMPULSE_RESPONSES 1
+#endif
+
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(APPLETV)
+#define USE_UITOOLBAR_FOR_DATE_PICKER_ACCESSORY_VIEW 1
 #endif
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 150000) \

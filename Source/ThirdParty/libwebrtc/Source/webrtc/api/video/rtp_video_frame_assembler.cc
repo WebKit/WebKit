@@ -83,6 +83,7 @@ class RtpVideoFrameAssembler::Impl {
   void ClearOldData(uint16_t incoming_seq_num);
 
   std::unique_ptr<FrameDependencyStructure> video_structure_;
+  SeqNumUnwrapper<uint16_t> rtp_sequence_number_unwrapper_;
   SeqNumUnwrapper<uint16_t> frame_id_unwrapper_;
   absl::optional<int64_t> video_structure_frame_id_;
   std::unique_ptr<VideoRtpDepacketizer> depacketizer_;
@@ -124,7 +125,9 @@ RtpVideoFrameAssembler::FrameVector RtpVideoFrameAssembler::Impl::InsertPacket(
   parsed_payload->video_header.is_last_packet_in_frame |= rtp_packet.Marker();
 
   auto packet = std::make_unique<video_coding::PacketBuffer::Packet>(
-      rtp_packet, parsed_payload->video_header);
+      rtp_packet,
+      rtp_sequence_number_unwrapper_.Unwrap(rtp_packet.SequenceNumber()),
+      parsed_payload->video_header);
   packet->video_payload = std::move(parsed_payload->video_payload);
 
   ClearOldData(rtp_packet.SequenceNumber());
@@ -163,8 +166,8 @@ RtpVideoFrameAssembler::Impl::AssembleFrames(
 
       const video_coding::PacketBuffer::Packet& last_packet = *packet;
       result.push_back(std::make_unique<RtpFrameObject>(
-          first_packet->seq_num,                  //
-          last_packet.seq_num,                    //
+          first_packet->seq_num(),                //
+          last_packet.seq_num(),                  //
           last_packet.marker_bit,                 //
           /*times_nacked=*/0,                     //
           /*first_packet_received_time=*/0,       //

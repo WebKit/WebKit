@@ -757,10 +757,10 @@ webrtc::AudioSendStream* Call::CreateAudioSendStream(
     }
   }
 
-  AudioSendStream* send_stream = new AudioSendStream(
-      &env_.clock(), config, config_.audio_state, &env_.task_queue_factory(),
-      transport_send_.get(), bitrate_allocator_.get(), &env_.event_log(),
-      call_stats_->AsRtcpRttStats(), suspended_rtp_state, trials());
+  AudioSendStream* send_stream =
+      new AudioSendStream(env_, config, config_.audio_state,
+                          transport_send_.get(), bitrate_allocator_.get(),
+                          call_stats_->AsRtcpRttStats(), suspended_rtp_state);
   RTC_DCHECK(audio_send_ssrcs_.find(config.rtp.ssrc) ==
              audio_send_ssrcs_.end());
   audio_send_ssrcs_[config.rtp.ssrc] = send_stream;
@@ -1371,6 +1371,11 @@ void Call::DeliverRtpPacket(
   if (media_type != MediaType::AUDIO && media_type != MediaType::VIDEO) {
     return;
   }
+
+  const TimeDelta nw_to_deliver_delay =
+      env_.clock().CurrentTime() - packet.arrival_time();
+  RTC_HISTOGRAM_COUNTS_100000("WebRTC.TimeFromNetworkToDeliverRtpPacketUs",
+                              nw_to_deliver_delay.us());
 
   RtpStreamReceiverController& receiver_controller =
       media_type == MediaType::AUDIO ? audio_receiver_controller_

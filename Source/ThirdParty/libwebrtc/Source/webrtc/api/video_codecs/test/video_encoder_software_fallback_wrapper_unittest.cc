@@ -93,10 +93,11 @@ class VideoEncoderSoftwareFallbackWrapperTestBase : public ::testing::Test {
   VideoEncoderSoftwareFallbackWrapperTestBase(
       const Environment& env,
       std::unique_ptr<VideoEncoder> sw_encoder)
-      : fake_encoder_(new CountingFakeEncoder()),
+      : env_(env),
+        fake_encoder_(new CountingFakeEncoder()),
         wrapper_initialized_(false),
         fallback_wrapper_(CreateVideoEncoderSoftwareFallbackWrapper(
-            env,
+            env_,
             std::move(sw_encoder),
             std::unique_ptr<VideoEncoder>(fake_encoder_),
             false)) {}
@@ -172,6 +173,7 @@ class VideoEncoderSoftwareFallbackWrapperTestBase : public ::testing::Test {
               fallback_wrapper_->GetEncoderInfo().implementation_name);
   }
 
+  const Environment env_;
   FakeEncodedImageCallback callback_;
   // `fake_encoder_` is owned and released by `fallback_wrapper_`.
   CountingFakeEncoder* fake_encoder_;
@@ -232,7 +234,7 @@ void VideoEncoderSoftwareFallbackWrapperTestBase::InitEncode() {
   codec_.width = kWidth;
   codec_.height = kHeight;
   codec_.VP8()->numberOfTemporalLayers = 1;
-  rate_allocator_.reset(new SimulcastRateAllocator(codec_));
+  rate_allocator_ = std::make_unique<SimulcastRateAllocator>(env_, codec_);
 
   if (wrapper_initialized_) {
     fallback_wrapper_->Release();
@@ -263,7 +265,7 @@ void VideoEncoderSoftwareFallbackWrapperTestBase::UtilizeFallbackEncoder() {
   codec_.width = kWidth;
   codec_.height = kHeight;
   codec_.VP8()->numberOfTemporalLayers = 1;
-  rate_allocator_.reset(new SimulcastRateAllocator(codec_));
+  rate_allocator_ = std::make_unique<SimulcastRateAllocator>(env_, codec_);
 
   if (wrapper_initialized_) {
     fallback_wrapper_->Release();
@@ -291,7 +293,7 @@ void VideoEncoderSoftwareFallbackWrapperTestBase::FallbackFromEncodeRequest() {
   codec_.width = kWidth;
   codec_.height = kHeight;
   codec_.VP8()->numberOfTemporalLayers = 1;
-  rate_allocator_.reset(new SimulcastRateAllocator(codec_));
+  rate_allocator_ = std::make_unique<SimulcastRateAllocator>(env_, codec_);
   if (wrapper_initialized_) {
     fallback_wrapper_->Release();
   }
@@ -514,7 +516,7 @@ class ForcedFallbackTest : public VideoEncoderSoftwareFallbackWrapperTestBase {
     codec_.VP8()->numberOfTemporalLayers = 1;
     codec_.VP8()->automaticResizeOn = true;
     codec_.SetFrameDropEnabled(true);
-    rate_allocator_.reset(new SimulcastRateAllocator(codec_));
+    rate_allocator_ = std::make_unique<SimulcastRateAllocator>(env_, codec_);
   }
 
   void InitEncode(int width, int height) {

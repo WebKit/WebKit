@@ -101,7 +101,7 @@ private:
     bool ruleMatches(const RuleData&, unsigned& specificity, ScopeOrdinal, const ContainerNode* scopingRoot = nullptr);
     bool containerQueriesMatch(const RuleData&, const MatchRequest&);
     struct ScopingRootWithDistance {
-        const ContainerNode* scopingRoot { nullptr };
+        RefPtr<const ContainerNode> scopingRoot;
         unsigned distance { std::numeric_limits<unsigned>::max() };
     };
     std::pair<bool, std::optional<Vector<ScopingRootWithDistance>>> scopeRulesMatch(const RuleData&, const MatchRequest&);

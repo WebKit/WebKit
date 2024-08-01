@@ -37,6 +37,7 @@
     readonly attribute XRVisibilityState visibilityState;
     [SameObject] readonly attribute WebXRRenderState renderState;
     [SameObject] readonly attribute WebXRInputSourceArray inputSources;
+    [SameObject] readonly attribute sequence<DOMString> enabledFeatures;
 
     // Methods
     undefined updateRenderState(optional XRRenderStateInit stateInit);

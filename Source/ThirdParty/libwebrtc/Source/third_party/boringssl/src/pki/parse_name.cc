@@ -129,8 +129,7 @@ bool X509NameAttribute::AsRFC2253String(std::string *out) const {
         value_string += c;
       } else if (c < 32 || c > 126) {
         nonprintable = true;
-        value_string +=
-            "\\" + bssl::string_util::HexEncode(MakeConstSpan(&c, 1));
+        value_string += "\\" + bssl::string_util::HexEncode(Span(&c, 1));
       } else {
         value_string += c;
       }

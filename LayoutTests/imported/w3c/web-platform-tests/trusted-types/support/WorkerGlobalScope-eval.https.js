@@ -50,5 +50,4 @@ test(t => {
 test(t => {
   assert_throws_js(EvalError, _ => eval?.("2"));
 }, "indirect eval(string) with default policy mutation in " + worker_type);
-
 done();

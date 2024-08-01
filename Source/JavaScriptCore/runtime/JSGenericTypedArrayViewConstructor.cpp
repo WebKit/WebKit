@@ -28,6 +28,8 @@
 #include "JSGenericTypedArrayViewConstructor.h"
 #include "JSGenericTypedArrayViewConstructorInlines.h"
 
+#include "JSGenericTypedArrayView.h"
+#include "JSGlobalObjectInlines.h"
 #include "ParseInt.h"
 #include <wtf/text/Base64.h>
 

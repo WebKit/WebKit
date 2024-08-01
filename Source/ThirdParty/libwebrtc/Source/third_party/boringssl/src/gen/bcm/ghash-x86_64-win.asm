@@ -22,9 +22,10 @@ $L$SEH_begin_gcm_init_clmul_1:
 _CET_ENDBR
 $L$_init_clmul:
 	sub	rsp,0x18
-$L$SEH_prolog_gcm_init_clmul_2:
+$L$SEH_prologue_gcm_init_clmul_2:
 	movaps	XMMWORD[rsp],xmm6
-$L$SEH_prolog_gcm_init_clmul_3:
+$L$SEH_prologue_gcm_init_clmul_3:
+$L$SEH_endprologue_gcm_init_clmul_4:
 	movdqu	xmm2,XMMWORD[rdx]
 	pshufd	xmm2,xmm2,78
 
@@ -178,7 +179,7 @@ DB	102,15,58,15,227,8
 	lea	rsp,[24+rsp]
 	ret
 
-$L$SEH_end_gcm_init_clmul_4:
+$L$SEH_end_gcm_init_clmul_5:
 
 global	gcm_gmult_clmul
 
@@ -244,27 +245,28 @@ _CET_ENDBR
 $L$_ghash_clmul:
 	lea	rax,[((-136))+rsp]
 	lea	rsp,[((-32))+rax]
-$L$SEH_prolog_gcm_ghash_clmul_2:
+$L$SEH_prologue_gcm_ghash_clmul_2:
 	movaps	XMMWORD[(-32)+rax],xmm6
-$L$SEH_prolog_gcm_ghash_clmul_3:
+$L$SEH_prologue_gcm_ghash_clmul_3:
 	movaps	XMMWORD[(-16)+rax],xmm7
-$L$SEH_prolog_gcm_ghash_clmul_4:
+$L$SEH_prologue_gcm_ghash_clmul_4:
 	movaps	XMMWORD[rax],xmm8
-$L$SEH_prolog_gcm_ghash_clmul_5:
+$L$SEH_prologue_gcm_ghash_clmul_5:
 	movaps	XMMWORD[16+rax],xmm9
-$L$SEH_prolog_gcm_ghash_clmul_6:
+$L$SEH_prologue_gcm_ghash_clmul_6:
 	movaps	XMMWORD[32+rax],xmm10
-$L$SEH_prolog_gcm_ghash_clmul_7:
+$L$SEH_prologue_gcm_ghash_clmul_7:
 	movaps	XMMWORD[48+rax],xmm11
-$L$SEH_prolog_gcm_ghash_clmul_8:
+$L$SEH_prologue_gcm_ghash_clmul_8:
 	movaps	XMMWORD[64+rax],xmm12
-$L$SEH_prolog_gcm_ghash_clmul_9:
+$L$SEH_prologue_gcm_ghash_clmul_9:
 	movaps	XMMWORD[80+rax],xmm13
-$L$SEH_prolog_gcm_ghash_clmul_10:
+$L$SEH_prologue_gcm_ghash_clmul_10:
 	movaps	XMMWORD[96+rax],xmm14
-$L$SEH_prolog_gcm_ghash_clmul_11:
+$L$SEH_prologue_gcm_ghash_clmul_11:
 	movaps	XMMWORD[112+rax],xmm15
-$L$SEH_prolog_gcm_ghash_clmul_12:
+$L$SEH_prologue_gcm_ghash_clmul_12:
+$L$SEH_endprologue_gcm_ghash_clmul_13:
 	movdqa	xmm10,XMMWORD[$L$bswap_mask]
 
 	movdqu	xmm0,XMMWORD[rcx]
@@ -649,19 +651,20 @@ DB	102,65,15,56,0,194
 	lea	rsp,[168+rsp]
 	ret
 
-$L$SEH_end_gcm_ghash_clmul_13:
+$L$SEH_end_gcm_ghash_clmul_14:
 
 global	gcm_init_avx
 
 ALIGN	32
 gcm_init_avx:
 
-_CET_ENDBR
 $L$SEH_begin_gcm_init_avx_1:
+_CET_ENDBR
 	sub	rsp,0x18
-$L$SEH_prolog_gcm_init_avx_2:
+$L$SEH_prologue_gcm_init_avx_2:
 	movaps	XMMWORD[rsp],xmm6
-$L$SEH_prolog_gcm_init_avx_3:
+$L$SEH_prologue_gcm_init_avx_3:
+$L$SEH_endprologue_gcm_init_avx_4:
 	vzeroupper
 
 	vmovdqu	xmm2,XMMWORD[rdx]
@@ -766,7 +769,7 @@ $L$init_start_avx:
 	movaps	xmm6,XMMWORD[rsp]
 	lea	rsp,[24+rsp]
 	ret
-$L$SEH_end_gcm_init_avx_4:
+$L$SEH_end_gcm_init_avx_5:
 
 
 global	gcm_gmult_avx
@@ -783,31 +786,32 @@ global	gcm_ghash_avx
 ALIGN	32
 gcm_ghash_avx:
 
-_CET_ENDBR
 $L$SEH_begin_gcm_ghash_avx_1:
+_CET_ENDBR
 	lea	rax,[((-136))+rsp]
 	lea	rsp,[((-32))+rax]
-$L$SEH_prolog_gcm_ghash_avx_2:
+$L$SEH_prologue_gcm_ghash_avx_2:
 	movaps	XMMWORD[(-32)+rax],xmm6
-$L$SEH_prolog_gcm_ghash_avx_3:
+$L$SEH_prologue_gcm_ghash_avx_3:
 	movaps	XMMWORD[(-16)+rax],xmm7
-$L$SEH_prolog_gcm_ghash_avx_4:
+$L$SEH_prologue_gcm_ghash_avx_4:
 	movaps	XMMWORD[rax],xmm8
-$L$SEH_prolog_gcm_ghash_avx_5:
+$L$SEH_prologue_gcm_ghash_avx_5:
 	movaps	XMMWORD[16+rax],xmm9
-$L$SEH_prolog_gcm_ghash_avx_6:
+$L$SEH_prologue_gcm_ghash_avx_6:
 	movaps	XMMWORD[32+rax],xmm10
-$L$SEH_prolog_gcm_ghash_avx_7:
+$L$SEH_prologue_gcm_ghash_avx_7:
 	movaps	XMMWORD[48+rax],xmm11
-$L$SEH_prolog_gcm_ghash_avx_8:
+$L$SEH_prologue_gcm_ghash_avx_8:
 	movaps	XMMWORD[64+rax],xmm12
-$L$SEH_prolog_gcm_ghash_avx_9:
+$L$SEH_prologue_gcm_ghash_avx_9:
 	movaps	XMMWORD[80+rax],xmm13
-$L$SEH_prolog_gcm_ghash_avx_10:
+$L$SEH_prologue_gcm_ghash_avx_10:
 	movaps	XMMWORD[96+rax],xmm14
-$L$SEH_prolog_gcm_ghash_avx_11:
+$L$SEH_prologue_gcm_ghash_avx_11:
 	movaps	XMMWORD[112+rax],xmm15
-$L$SEH_prolog_gcm_ghash_avx_12:
+$L$SEH_prologue_gcm_ghash_avx_12:
+$L$SEH_endprologue_gcm_ghash_avx_13:
 	vzeroupper
 
 	vmovdqu	xmm10,XMMWORD[rcx]
@@ -1191,7 +1195,7 @@ $L$tail_no_xor_avx:
 	lea	rsp,[168+rsp]
 	ret
 
-$L$SEH_end_gcm_ghash_avx_13:
+$L$SEH_end_gcm_ghash_avx_14:
 
 section	.rdata rdata align=8
 ALIGN	64
@@ -1213,19 +1217,19 @@ section	.text
 section	.pdata rdata align=4
 ALIGN	4
 	DD	$L$SEH_begin_gcm_init_clmul_1 wrt ..imagebase
-	DD	$L$SEH_end_gcm_init_clmul_4 wrt ..imagebase
+	DD	$L$SEH_end_gcm_init_clmul_5 wrt ..imagebase
 	DD	$L$SEH_info_gcm_init_clmul_0 wrt ..imagebase
 
 	DD	$L$SEH_begin_gcm_ghash_clmul_1 wrt ..imagebase
-	DD	$L$SEH_end_gcm_ghash_clmul_13 wrt ..imagebase
+	DD	$L$SEH_end_gcm_ghash_clmul_14 wrt ..imagebase
 	DD	$L$SEH_info_gcm_ghash_clmul_0 wrt ..imagebase
 
 	DD	$L$SEH_begin_gcm_init_avx_1 wrt ..imagebase
-	DD	$L$SEH_end_gcm_init_avx_4 wrt ..imagebase
+	DD	$L$SEH_end_gcm_init_avx_5 wrt ..imagebase
 	DD	$L$SEH_info_gcm_init_avx_0 wrt ..imagebase
 
 	DD	$L$SEH_begin_gcm_ghash_avx_1 wrt ..imagebase
-	DD	$L$SEH_end_gcm_ghash_avx_13 wrt ..imagebase
+	DD	$L$SEH_end_gcm_ghash_avx_14 wrt ..imagebase
 	DD	$L$SEH_info_gcm_ghash_avx_0 wrt ..imagebase
 
 
@@ -1233,101 +1237,103 @@ section	.xdata rdata align=8
 ALIGN	4
 $L$SEH_info_gcm_init_clmul_0:
 	DB	1
-	DB	$L$SEH_prolog_gcm_init_clmul_3-$L$SEH_begin_gcm_init_clmul_1
+	DB	$L$SEH_endprologue_gcm_init_clmul_4-$L$SEH_begin_gcm_init_clmul_1
 	DB	3
 	DB	0
-	DB	$L$SEH_prolog_gcm_init_clmul_3-$L$SEH_begin_gcm_init_clmul_1
+	DB	$L$SEH_prologue_gcm_init_clmul_3-$L$SEH_begin_gcm_init_clmul_1
 	DB	104
 	DW	0
-	DB	$L$SEH_prolog_gcm_init_clmul_2-$L$SEH_begin_gcm_init_clmul_1
+	DB	$L$SEH_prologue_gcm_init_clmul_2-$L$SEH_begin_gcm_init_clmul_1
 	DB	34
 
+	DW	0
 $L$SEH_info_gcm_ghash_clmul_0:
 	DB	1
-	DB	$L$SEH_prolog_gcm_ghash_clmul_12-$L$SEH_begin_gcm_ghash_clmul_1
+	DB	$L$SEH_endprologue_gcm_ghash_clmul_13-$L$SEH_begin_gcm_ghash_clmul_1
 	DB	22
 	DB	0
-	DB	$L$SEH_prolog_gcm_ghash_clmul_12-$L$SEH_begin_gcm_ghash_clmul_1
+	DB	$L$SEH_prologue_gcm_ghash_clmul_12-$L$SEH_begin_gcm_ghash_clmul_1
 	DB	248
 	DW	9
-	DB	$L$SEH_prolog_gcm_ghash_clmul_11-$L$SEH_begin_gcm_ghash_clmul_1
+	DB	$L$SEH_prologue_gcm_ghash_clmul_11-$L$SEH_begin_gcm_ghash_clmul_1
 	DB	232
 	DW	8
-	DB	$L$SEH_prolog_gcm_ghash_clmul_10-$L$SEH_begin_gcm_ghash_clmul_1
+	DB	$L$SEH_prologue_gcm_ghash_clmul_10-$L$SEH_begin_gcm_ghash_clmul_1
 	DB	216
 	DW	7
-	DB	$L$SEH_prolog_gcm_ghash_clmul_9-$L$SEH_begin_gcm_ghash_clmul_1
+	DB	$L$SEH_prologue_gcm_ghash_clmul_9-$L$SEH_begin_gcm_ghash_clmul_1
 	DB	200
 	DW	6
-	DB	$L$SEH_prolog_gcm_ghash_clmul_8-$L$SEH_begin_gcm_ghash_clmul_1
+	DB	$L$SEH_prologue_gcm_ghash_clmul_8-$L$SEH_begin_gcm_ghash_clmul_1
 	DB	184
 	DW	5
-	DB	$L$SEH_prolog_gcm_ghash_clmul_7-$L$SEH_begin_gcm_ghash_clmul_1
+	DB	$L$SEH_prologue_gcm_ghash_clmul_7-$L$SEH_begin_gcm_ghash_clmul_1
 	DB	168
 	DW	4
-	DB	$L$SEH_prolog_gcm_ghash_clmul_6-$L$SEH_begin_gcm_ghash_clmul_1
+	DB	$L$SEH_prologue_gcm_ghash_clmul_6-$L$SEH_begin_gcm_ghash_clmul_1
 	DB	152
 	DW	3
-	DB	$L$SEH_prolog_gcm_ghash_clmul_5-$L$SEH_begin_gcm_ghash_clmul_1
+	DB	$L$SEH_prologue_gcm_ghash_clmul_5-$L$SEH_begin_gcm_ghash_clmul_1
 	DB	136
 	DW	2
-	DB	$L$SEH_prolog_gcm_ghash_clmul_4-$L$SEH_begin_gcm_ghash_clmul_1
+	DB	$L$SEH_prologue_gcm_ghash_clmul_4-$L$SEH_begin_gcm_ghash_clmul_1
 	DB	120
 	DW	1
-	DB	$L$SEH_prolog_gcm_ghash_clmul_3-$L$SEH_begin_gcm_ghash_clmul_1
+	DB	$L$SEH_prologue_gcm_ghash_clmul_3-$L$SEH_begin_gcm_ghash_clmul_1
 	DB	104
 	DW	0
-	DB	$L$SEH_prolog_gcm_ghash_clmul_2-$L$SEH_begin_gcm_ghash_clmul_1
+	DB	$L$SEH_prologue_gcm_ghash_clmul_2-$L$SEH_begin_gcm_ghash_clmul_1
 	DB	1
 	DW	21
 
 $L$SEH_info_gcm_init_avx_0:
 	DB	1
-	DB	$L$SEH_prolog_gcm_init_avx_3-$L$SEH_begin_gcm_init_avx_1
+	DB	$L$SEH_endprologue_gcm_init_avx_4-$L$SEH_begin_gcm_init_avx_1
 	DB	3
 	DB	0
-	DB	$L$SEH_prolog_gcm_init_avx_3-$L$SEH_begin_gcm_init_avx_1
+	DB	$L$SEH_prologue_gcm_init_avx_3-$L$SEH_begin_gcm_init_avx_1
 	DB	104
 	DW	0
-	DB	$L$SEH_prolog_gcm_init_avx_2-$L$SEH_begin_gcm_init_avx_1
+	DB	$L$SEH_prologue_gcm_init_avx_2-$L$SEH_begin_gcm_init_avx_1
 	DB	34
 
+	DW	0
 $L$SEH_info_gcm_ghash_avx_0:
 	DB	1
-	DB	$L$SEH_prolog_gcm_ghash_avx_12-$L$SEH_begin_gcm_ghash_avx_1
+	DB	$L$SEH_endprologue_gcm_ghash_avx_13-$L$SEH_begin_gcm_ghash_avx_1
 	DB	22
 	DB	0
-	DB	$L$SEH_prolog_gcm_ghash_avx_12-$L$SEH_begin_gcm_ghash_avx_1
+	DB	$L$SEH_prologue_gcm_ghash_avx_12-$L$SEH_begin_gcm_ghash_avx_1
 	DB	248
 	DW	9
-	DB	$L$SEH_prolog_gcm_ghash_avx_11-$L$SEH_begin_gcm_ghash_avx_1
+	DB	$L$SEH_prologue_gcm_ghash_avx_11-$L$SEH_begin_gcm_ghash_avx_1
 	DB	232
 	DW	8
-	DB	$L$SEH_prolog_gcm_ghash_avx_10-$L$SEH_begin_gcm_ghash_avx_1
+	DB	$L$SEH_prologue_gcm_ghash_avx_10-$L$SEH_begin_gcm_ghash_avx_1
 	DB	216
 	DW	7
-	DB	$L$SEH_prolog_gcm_ghash_avx_9-$L$SEH_begin_gcm_ghash_avx_1
+	DB	$L$SEH_prologue_gcm_ghash_avx_9-$L$SEH_begin_gcm_ghash_avx_1
 	DB	200
 	DW	6
-	DB	$L$SEH_prolog_gcm_ghash_avx_8-$L$SEH_begin_gcm_ghash_avx_1
+	DB	$L$SEH_prologue_gcm_ghash_avx_8-$L$SEH_begin_gcm_ghash_avx_1
 	DB	184
 	DW	5
-	DB	$L$SEH_prolog_gcm_ghash_avx_7-$L$SEH_begin_gcm_ghash_avx_1
+	DB	$L$SEH_prologue_gcm_ghash_avx_7-$L$SEH_begin_gcm_ghash_avx_1
 	DB	168
 	DW	4
-	DB	$L$SEH_prolog_gcm_ghash_avx_6-$L$SEH_begin_gcm_ghash_avx_1
+	DB	$L$SEH_prologue_gcm_ghash_avx_6-$L$SEH_begin_gcm_ghash_avx_1
 	DB	152
 	DW	3
-	DB	$L$SEH_prolog_gcm_ghash_avx_5-$L$SEH_begin_gcm_ghash_avx_1
+	DB	$L$SEH_prologue_gcm_ghash_avx_5-$L$SEH_begin_gcm_ghash_avx_1
 	DB	136
 	DW	2
-	DB	$L$SEH_prolog_gcm_ghash_avx_4-$L$SEH_begin_gcm_ghash_avx_1
+	DB	$L$SEH_prologue_gcm_ghash_avx_4-$L$SEH_begin_gcm_ghash_avx_1
 	DB	120
 	DW	1
-	DB	$L$SEH_prolog_gcm_ghash_avx_3-$L$SEH_begin_gcm_ghash_avx_1
+	DB	$L$SEH_prologue_gcm_ghash_avx_3-$L$SEH_begin_gcm_ghash_avx_1
 	DB	104
 	DW	0
-	DB	$L$SEH_prolog_gcm_ghash_avx_2-$L$SEH_begin_gcm_ghash_avx_1
+	DB	$L$SEH_prologue_gcm_ghash_avx_2-$L$SEH_begin_gcm_ghash_avx_1
 	DB	1
 	DW	21
 %else

@@ -84,6 +84,11 @@ void RenderBundle::replayCommands(RenderPassEncoder& renderPassEncoder) const
         m_renderBundleEncoder->replayCommands(renderPassEncoder);
 }
 
+bool RenderBundle::requiresCommandReplay() const
+{
+    return !!m_renderBundleEncoder.get();
+}
+
 void RenderBundle::updateMinMaxDepths(float minDepth, float maxDepth)
 {
     if (m_minDepth == minDepth && m_maxDepth == maxDepth)

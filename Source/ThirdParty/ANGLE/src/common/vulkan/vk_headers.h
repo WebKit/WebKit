@@ -136,6 +136,14 @@ extern PFN_vkCopyMemoryToImageEXT vkCopyMemoryToImageEXT;
 extern PFN_vkTransitionImageLayoutEXT vkTransitionImageLayoutEXT;
 extern PFN_vkGetImageSubresourceLayout2EXT vkGetImageSubresourceLayout2EXT;
 
+// VK_KHR_dynamic_rendering
+extern PFN_vkCmdBeginRenderingKHR vkCmdBeginRenderingKHR;
+extern PFN_vkCmdEndRenderingKHR vkCmdEndRenderingKHR;
+
+// VK_KHR_dynamic_rendering_local_read
+extern PFN_vkCmdSetRenderingAttachmentLocationsKHR vkCmdSetRenderingAttachmentLocationsKHR;
+extern PFN_vkCmdSetRenderingInputAttachmentIndicesKHR vkCmdSetRenderingInputAttachmentIndicesKHR;
+
 }  // namespace rx
 
 #endif  // ANGLE_SHARED_LIBVULKAN

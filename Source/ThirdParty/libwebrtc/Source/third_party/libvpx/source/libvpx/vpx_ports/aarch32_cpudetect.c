@@ -44,7 +44,7 @@ static int arm_get_cpu_caps(void) {
   return flags;
 }
 
-#elif defined(ANDROID_USE_CPU_FEATURES_LIB)
+#elif defined(VPX_USE_ANDROID_CPU_FEATURES)
 
 static int arm_get_cpu_caps(void) {
   int flags = 0;
@@ -57,7 +57,7 @@ static int arm_get_cpu_caps(void) {
   return flags;
 }
 
-#elif defined(__linux__)  // end defined(AOM_USE_ANDROID_CPU_FEATURES)
+#elif defined(__linux__)  // end defined(VPX_USE_ANDROID_CPU_FEATURES)
 
 #include <sys/auxv.h>
 

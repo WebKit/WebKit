@@ -2060,16 +2060,25 @@ class AudioProcessingTest
           StreamConfig(output_rate, num_output_channels), out_cb.channels()));
 
       // Dump forward output to file.
-      Interleave(out_cb.channels(), out_cb.num_frames(), out_cb.num_channels(),
-                 float_data.get());
+      RTC_DCHECK_EQ(out_cb.num_bands(), 1u);  // Assumes full frequency band.
+      DeinterleavedView<const float> deinterleaved_src(
+          out_cb.channels()[0], out_cb.num_frames(), out_cb.num_channels());
+      InterleavedView<float> interleaved_dst(
+          float_data.get(), out_cb.num_frames(), out_cb.num_channels());
+      Interleave(deinterleaved_src, interleaved_dst);
       size_t out_length = out_cb.num_channels() * out_cb.num_frames();
 
       ASSERT_EQ(out_length, fwrite(float_data.get(), sizeof(float_data[0]),
                                    out_length, out_file));
 
       // Dump reverse output to file.
-      Interleave(rev_out_cb.channels(), rev_out_cb.num_frames(),
-                 rev_out_cb.num_channels(), float_data.get());
+      RTC_DCHECK_EQ(rev_out_cb.num_bands(), 1u);
+      deinterleaved_src = DeinterleavedView<const float>(
+          rev_out_cb.channels()[0], rev_out_cb.num_frames(),
+          rev_out_cb.num_channels());
+      interleaved_dst = InterleavedView<float>(
+          float_data.get(), rev_out_cb.num_frames(), rev_out_cb.num_channels());
+      Interleave(deinterleaved_src, interleaved_dst);
       size_t rev_out_length =
           rev_out_cb.num_channels() * rev_out_cb.num_frames();
 
@@ -2150,10 +2159,12 @@ TEST_P(AudioProcessingTest, Formats) {
       ASSERT_TRUE(out_file != NULL);
       ASSERT_TRUE(ref_file != NULL);
 
-      const size_t ref_length =
-          AudioProcessing::GetFrameSize(ref_rate) * out_num;
-      const size_t out_length =
-          AudioProcessing::GetFrameSize(out_rate) * out_num;
+      const size_t ref_samples_per_channel =
+          AudioProcessing::GetFrameSize(ref_rate);
+      const size_t ref_length = ref_samples_per_channel * out_num;
+      const size_t out_samples_per_channel =
+          AudioProcessing::GetFrameSize(out_rate);
+      const size_t out_length = out_samples_per_channel * out_num;
       // Data from the reference file.
       std::unique_ptr<float[]> ref_data(new float[ref_length]);
       // Data from the output file.
@@ -2162,8 +2173,8 @@ TEST_P(AudioProcessingTest, Formats) {
       // don't match.
       std::unique_ptr<float[]> cmp_data(new float[ref_length]);
 
-      PushResampler<float> resampler;
-      resampler.InitializeIfNeeded(out_rate, ref_rate, out_num);
+      PushResampler<float> resampler(out_samples_per_channel,
+                                     ref_samples_per_channel, out_num);
 
       // Compute the resampling delay of the output relative to the reference,
       // to find the region over which we should search for the best SNR.
@@ -2196,10 +2207,12 @@ TEST_P(AudioProcessingTest, Formats) {
         if (out_rate != ref_rate) {
           // Resample the output back to its internal processing rate if
           // necessary.
+          InterleavedView<const float> src(out_ptr, out_samples_per_channel,
+                                           out_num);
+          InterleavedView<float> dst(cmp_data.get(), ref_samples_per_channel,
+                                     out_num);
           ASSERT_EQ(ref_length,
-                    static_cast<size_t>(resampler.Resample(
-                        rtc::ArrayView<const float>(out_ptr, out_length),
-                        rtc::ArrayView<float>(cmp_data.get(), ref_length))));
+                    static_cast<size_t>(resampler.Resample(src, dst)));
           out_ptr = cmp_data.get();
         }
 

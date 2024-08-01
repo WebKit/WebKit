@@ -25,8 +25,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define OPENSSL_I_UNDERSTAND_EXPERIMENTAL_FUNCTION_RISK
-
 #include <openssl/aead.h>
 #include <openssl/aes.h>
 #include <openssl/base64.h>
@@ -40,8 +38,11 @@
 #include <openssl/ecdsa.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
-#define OPENSSL_UNSTABLE_EXPERIMENTAL_SPX
+#define OPENSSL_UNSTABLE_EXPERIMENTAL_DILITHIUM
+#include <openssl/experimental/dilithium.h>
+#define OPENSSL_UNSTABLE_EXPERIMENTAL_KYBER
 #include <openssl/experimental/kyber.h>
+#define OPENSSL_UNSTABLE_EXPERIMENTAL_SPX
 #include <openssl/experimental/spx.h>
 #include <openssl/hrss.h>
 #include <openssl/mem.h>
@@ -1131,6 +1132,117 @@ static bool SpeedKyber(const std::string &selected) {
   return true;
 }
 
+static bool SpeedDilithium(const std::string &selected) {
+  if (!selected.empty() && selected != "Dilithium") {
+    return true;
+  }
+
+  TimeResults results;
+
+  auto encoded_public_key =
+      std::make_unique<uint8_t[]>(DILITHIUM_PUBLIC_KEY_BYTES);
+  auto priv = std::make_unique<DILITHIUM_private_key>();
+  if (!TimeFunctionParallel(&results, [&]() -> bool {
+        if (!DILITHIUM_generate_key(encoded_public_key.get(), priv.get())) {
+          fprintf(stderr, "Failure in DILITHIUM_generate_key.\n");
+          return false;
+        }
+        return true;
+      })) {
+    fprintf(stderr, "Failed to time DILITHIUM_generate_key.\n");
+    return false;
+  }
+
+  results.Print("Dilithium key generation");
+
+  auto encoded_private_key =
+      std::make_unique<uint8_t[]>(DILITHIUM_PRIVATE_KEY_BYTES);
+  CBB cbb;
+  CBB_init_fixed(&cbb, encoded_private_key.get(), DILITHIUM_PRIVATE_KEY_BYTES);
+  DILITHIUM_marshal_private_key(&cbb, priv.get());
+
+  if (!TimeFunctionParallel(&results, [&]() -> bool {
+        CBS cbs;
+        CBS_init(&cbs, encoded_private_key.get(), DILITHIUM_PRIVATE_KEY_BYTES);
+        if (!DILITHIUM_parse_private_key(priv.get(), &cbs)) {
+          fprintf(stderr, "Failure in DILITHIUM_parse_private_key.\n");
+          return false;
+        }
+        return true;
+      })) {
+    fprintf(stderr, "Failed to time DILITHIUM_parse_private_key.\n");
+    return false;
+  }
+
+  results.Print("Dilithium parse (valid) private key");
+
+  const char *message = "Hello world";
+  size_t message_len = strlen(message);
+  auto out_encoded_signature =
+      std::make_unique<uint8_t[]>(DILITHIUM_SIGNATURE_BYTES);
+  if (!TimeFunctionParallel(&results, [&]() -> bool {
+        if (!DILITHIUM_sign(out_encoded_signature.get(), priv.get(),
+                            (const uint8_t *)message, message_len)) {
+          fprintf(stderr, "Failure in DILITHIUM_sign.\n");
+          return false;
+        }
+        return true;
+      })) {
+    fprintf(stderr, "Failed to time DILITHIUM_sign.\n");
+    return false;
+  }
+
+  results.Print("Dilithium sign (randomized)");
+
+  auto pub = std::make_unique<DILITHIUM_public_key>();
+
+  if (!TimeFunctionParallel(&results, [&]() -> bool {
+        CBS cbs;
+        CBS_init(&cbs, encoded_public_key.get(), DILITHIUM_PUBLIC_KEY_BYTES);
+        if (!DILITHIUM_parse_public_key(pub.get(), &cbs)) {
+          fprintf(stderr, "Failure in DILITHIUM_parse_public_key.\n");
+          return false;
+        }
+        return true;
+      })) {
+    fprintf(stderr, "Failed to time DILITHIUM_parse_public_key.\n");
+    return false;
+  }
+
+  results.Print("Dilithium parse (valid) public key");
+
+  if (!TimeFunctionParallel(&results, [&]() -> bool {
+        if (!DILITHIUM_verify(pub.get(), out_encoded_signature.get(),
+                              (const uint8_t *)message, message_len)) {
+          fprintf(stderr, "Failed to verify Dilithium signature.\n");
+          return false;
+        }
+        return true;
+      })) {
+    fprintf(stderr, "Failed to time DILITHIUM_verify.\n");
+    return false;
+  }
+
+  results.Print("Dilithium verify (valid signature)");
+
+  out_encoded_signature[42] ^= 0x42;
+  if (!TimeFunctionParallel(&results, [&]() -> bool {
+        if (DILITHIUM_verify(pub.get(), out_encoded_signature.get(),
+                             (const uint8_t *)message, message_len)) {
+          fprintf(stderr, "Dilithium signature unexpectedly verified.\n");
+          return false;
+        }
+        return true;
+      })) {
+    fprintf(stderr, "Failed to time DILITHIUM_verify.\n");
+    return false;
+  }
+
+  results.Print("Dilithium verify (invalid signature)");
+
+  return true;
+}
+
 static bool SpeedSpx(const std::string &selected) {
   if (!selected.empty() && selected.find("spx") == std::string::npos) {
     return true;
@@ -1665,6 +1777,7 @@ bool Speed(const std::vector<std::string> &args) {
       !SpeedRSAKeyGen(selected) ||   //
       !SpeedHRSS(selected) ||        //
       !SpeedKyber(selected) ||       //
+      !SpeedDilithium(selected) ||   //
       !SpeedSpx(selected) ||         //
       !SpeedHashToCurve(selected) || //
       !SpeedTrustToken("TrustToken-Exp1-Batch1", TRUST_TOKEN_experiment_v1(), 1,

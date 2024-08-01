@@ -515,6 +515,10 @@ void AudioProcessingSimulator::ConfigureAudioProcessor() {
       apm_config.gain_controller2.adaptive_digital.enabled =
           *settings_.agc2_use_adaptive_gain;
     }
+    if (settings_.agc2_use_input_volume_controller) {
+      apm_config.gain_controller2.input_volume_controller.enabled =
+          *settings_.agc2_use_input_volume_controller;
+    }
   }
   if (settings_.use_pre_amplifier) {
     apm_config.pre_amplifier.enabled = *settings_.use_pre_amplifier;

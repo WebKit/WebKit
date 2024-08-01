@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,15 +31,14 @@
 
 namespace WebCore {
 
-class CanvasRenderingContext;
 class Gradient;
 class ScriptExecutionContext;
 
 class CanvasGradient : public RefCounted<CanvasGradient> {
 public:
-    static Ref<CanvasGradient> create(const FloatPoint& p0, const FloatPoint& p1, CanvasRenderingContext&);
-    static Ref<CanvasGradient> create(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, CanvasRenderingContext&);
-    static Ref<CanvasGradient> create(const FloatPoint& centerPoint, float angleInRadians, CanvasRenderingContext&);
+    static Ref<CanvasGradient> create(const FloatPoint& p0, const FloatPoint& p1);
+    static Ref<CanvasGradient> create(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1);
+    static Ref<CanvasGradient> create(const FloatPoint& centerPoint, float angleInRadians);
     ~CanvasGradient();
 
     Gradient& gradient() { return m_gradient; }
@@ -48,12 +47,11 @@ public:
     ExceptionOr<void> addColorStop(ScriptExecutionContext&, double value, const String& color);
 
 private:
-    CanvasGradient(const FloatPoint& p0, const FloatPoint& p1, CanvasRenderingContext&);
-    CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, CanvasRenderingContext&);
-    CanvasGradient(const FloatPoint& centerPoint, float angleInRadians, CanvasRenderingContext&);
+    CanvasGradient(const FloatPoint& p0, const FloatPoint& p1);
+    CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1);
+    CanvasGradient(const FloatPoint& centerPoint, float angleInRadians);
 
     Ref<Gradient> m_gradient;
-    WeakPtr<CanvasRenderingContext> m_context;
 };
 
-}
+} // namespace WebCore

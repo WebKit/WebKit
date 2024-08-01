@@ -2946,16 +2946,34 @@ TEST_F(BNTest, BNMulMont5ABI) {
     }
     CHECK_ABI(bn_gather5, r.data(), words, table.data(), 13);
 
-    CHECK_ABI(bn_mul_mont_gather5, r.data(), r.data(), table.data(), m->d,
+    if (bn_mulx4x_mont_gather5_capable(words)) {
+      CHECK_ABI(bn_mulx4x_mont_gather5, r.data(), r.data(), table.data(), m->d,
+                mont->n0, words, 13);
+      CHECK_ABI(bn_mulx4x_mont_gather5, r.data(), a.data(), table.data(), m->d,
+                mont->n0, words, 13);
+    }
+    if (bn_mul4x_mont_gather5_capable(words)) {
+      CHECK_ABI(bn_mul4x_mont_gather5, r.data(), r.data(), table.data(), m->d,
+                mont->n0, words, 13);
+      CHECK_ABI(bn_mul4x_mont_gather5, r.data(), a.data(), table.data(), m->d,
+                mont->n0, words, 13);
+    }
+    CHECK_ABI(bn_mul_mont_gather5_nohw, r.data(), r.data(), table.data(), m->d,
               mont->n0, words, 13);
-    CHECK_ABI(bn_mul_mont_gather5, r.data(), a.data(), table.data(), m->d,
+    CHECK_ABI(bn_mul_mont_gather5_nohw, r.data(), a.data(), table.data(), m->d,
               mont->n0, words, 13);
 
-    if (words % 8 == 0) {
-      CHECK_ABI(bn_power5, r.data(), r.data(), table.data(), m->d, mont->n0,
+    if (bn_powerx5_capable(words)) {
+      CHECK_ABI(bn_powerx5, r.data(), r.data(), table.data(), m->d, mont->n0,
                 words, 13);
-      CHECK_ABI(bn_power5, r.data(), a.data(), table.data(), m->d, mont->n0,
+      CHECK_ABI(bn_powerx5, r.data(), a.data(), table.data(), m->d, mont->n0,
                 words, 13);
+    }
+    if (bn_power5_capable(words)) {
+      CHECK_ABI(bn_power5_nohw, r.data(), r.data(), table.data(), m->d,
+                mont->n0, words, 13);
+      CHECK_ABI(bn_power5_nohw, r.data(), a.data(), table.data(), m->d,
+                mont->n0, words, 13);
     }
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -15,6 +15,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include <stdbool.h>
 
 #include "av1/common/av1_common_int.h"
 #include "av1/common/blockd.h"
@@ -89,9 +91,11 @@ uint32_t av1_write_sequence_header_obu(const SequenceHeader *seq_params,
                                        uint8_t *const dst);
 
 // Writes the OBU header byte, and the OBU header extension byte when
-// 'obu_extension' is non-zero. Returns number of bytes written to 'dst'.
+// has_nonzero_operating_point_idc is true and the OBU is part of a frame.
+// Returns number of bytes written to 'dst'.
 uint32_t av1_write_obu_header(AV1LevelParams *const level_params,
                               int *frame_header_count, OBU_TYPE obu_type,
+                              bool has_nonzero_operating_point_idc,
                               int obu_extension, uint8_t *const dst);
 
 int av1_write_uleb_obu_size(size_t obu_header_size, size_t obu_payload_size,

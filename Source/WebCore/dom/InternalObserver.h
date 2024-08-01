@@ -28,6 +28,12 @@
 #include "ActiveDOMObject.h"
 #include <wtf/RefCounted.h>
 
+namespace JSC {
+class AbstractSlotVisitor;
+class JSValue;
+class SlotVisitor;
+} // namespace JSC
+
 namespace WebCore {
 
 class InternalObserver : public ActiveDOMObject, public RefCounted<InternalObserver> {

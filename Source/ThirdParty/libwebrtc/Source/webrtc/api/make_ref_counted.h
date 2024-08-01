@@ -15,7 +15,7 @@
 
 #include "rtc_base/ref_counted_object.h"
 
-namespace rtc {
+namespace webrtc {
 
 namespace webrtc_make_ref_counted_internal {
 // Determines if the given class has AddRef and Release methods.
@@ -113,6 +113,56 @@ template <
 scoped_refptr<FinalRefCountedObject<T>> make_ref_counted(Args&&... args) {
   return scoped_refptr<FinalRefCountedObject<T>>(
       new FinalRefCountedObject<T>(std::forward<Args>(args)...));
+}
+
+}  // namespace webrtc
+
+// Backwards compatibe aliases.
+// TODO: https://issues.webrtc.org/42225969 - deprecate and remove.
+namespace rtc {
+// This doesn't work:
+// template <typename T, typename... Args>
+//    using make_ref_counted(Args&&... args) =
+//    webrtc::make_ref_counted<T>(Args&&... args);
+// Instead, reproduce the templates.
+template <typename T,
+          typename... Args,
+          typename std::enable_if<
+              std::is_convertible_v<T*, webrtc::RefCountInterface*> &&
+                  std::is_abstract_v<T>,
+              T>::type* = nullptr>
+scoped_refptr<T> make_ref_counted(Args&&... args) {
+  return webrtc::scoped_refptr<T>(
+      new webrtc::RefCountedObject<T>(std::forward<Args>(args)...));
+}
+
+// `make_ref_counted` for complete classes that are not convertible to
+// RefCountInterface and already carry a ref count.
+template <typename T,
+          typename... Args,
+          typename std::enable_if<
+              !std::is_convertible_v<T*, webrtc::RefCountInterface*> &&
+                  webrtc::webrtc_make_ref_counted_internal::HasAddRefAndRelease<
+                      T>::value,
+              T>::type* = nullptr>
+scoped_refptr<T> make_ref_counted(Args&&... args) {
+  return webrtc::scoped_refptr<T>(new T(std::forward<Args>(args)...));
+}
+
+// `make_ref_counted` for complete classes that are not convertible to
+// RefCountInterface and have no ref count of their own.
+template <typename T,
+          typename... Args,
+          typename std::enable_if<
+              !std::is_convertible_v<T*, webrtc::RefCountInterface*> &&
+                  !webrtc::webrtc_make_ref_counted_internal::
+                      HasAddRefAndRelease<T>::value,
+
+              T>::type* = nullptr>
+scoped_refptr<webrtc::FinalRefCountedObject<T>> make_ref_counted(
+    Args&&... args) {
+  return webrtc::scoped_refptr<FinalRefCountedObject<T>>(
+      new webrtc::FinalRefCountedObject<T>(std::forward<Args>(args)...));
 }
 
 }  // namespace rtc

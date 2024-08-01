@@ -13,6 +13,7 @@
 
 #include <memory>
 
+#include "api/neteq/neteq_controller.h"
 #include "api/neteq/neteq_controller_factory.h"
 
 namespace webrtc {

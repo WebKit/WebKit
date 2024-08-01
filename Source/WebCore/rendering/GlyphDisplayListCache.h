@@ -39,6 +39,7 @@
 namespace WebCore {
 
 class LegacyInlineTextBox;
+struct PaintInfo;
 
 namespace InlineDisplay {
 struct Box;

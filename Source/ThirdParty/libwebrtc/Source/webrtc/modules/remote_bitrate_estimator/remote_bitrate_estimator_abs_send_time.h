@@ -19,8 +19,9 @@
 #include <memory>
 #include <vector>
 
+#include "absl/base/nullability.h"
+#include "api/environment/environment.h"
 #include "api/rtp_headers.h"
-#include "api/transport/field_trial_based_config.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
@@ -32,14 +33,14 @@
 #include "modules/remote_bitrate_estimator/overuse_estimator.h"
 #include "rtc_base/bitrate_tracker.h"
 #include "rtc_base/checks.h"
-#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
 class RemoteBitrateEstimatorAbsSendTime : public RemoteBitrateEstimator {
  public:
-  RemoteBitrateEstimatorAbsSendTime(RemoteBitrateObserver* observer,
-                                    Clock* clock);
+  RemoteBitrateEstimatorAbsSendTime(
+      const Environment& env,
+      absl::Nonnull<RemoteBitrateObserver*> observer);
 
   RemoteBitrateEstimatorAbsSendTime() = delete;
   RemoteBitrateEstimatorAbsSendTime(const RemoteBitrateEstimatorAbsSendTime&) =
@@ -98,9 +99,8 @@ class RemoteBitrateEstimatorAbsSendTime : public RemoteBitrateEstimator {
 
   void TimeoutStreams(Timestamp now);
 
-  Clock* const clock_;
-  const FieldTrialBasedConfig field_trials_;
-  RemoteBitrateObserver* const observer_;
+  const Environment env_;
+  const absl::Nonnull<RemoteBitrateObserver*> observer_;
   std::unique_ptr<InterArrival> inter_arrival_;
   std::unique_ptr<OveruseEstimator> estimator_;
   OveruseDetector detector_;

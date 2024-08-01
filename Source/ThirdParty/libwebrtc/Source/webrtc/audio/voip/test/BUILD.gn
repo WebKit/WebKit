@@ -28,6 +28,7 @@ if (rtc_include_tests) {
         "..:voip_core",
         "../../../api/audio_codecs:builtin_audio_decoder_factory",
         "../../../api/audio_codecs:builtin_audio_encoder_factory",
+        "../../../api/environment:environment_factory",
         "../../../api/task_queue:default_task_queue_factory",
         "../../../modules/audio_device:mock_audio_device",
         "../../../modules/audio_processing:mocks",
@@ -48,6 +49,8 @@ if (rtc_include_tests) {
       "../../../api:transport_api",
       "../../../api/audio_codecs:builtin_audio_decoder_factory",
       "../../../api/audio_codecs:builtin_audio_encoder_factory",
+      "../../../api/environment",
+      "../../../api/environment:environment_factory",
       "../../../api/task_queue:task_queue",
       "../../../modules/audio_mixer:audio_mixer_impl",
       "../../../modules/audio_mixer:audio_mixer_test_utils",
@@ -56,8 +59,8 @@ if (rtc_include_tests) {
       "../../../rtc_base:logging",
       "../../../test:mock_transport",
       "../../../test:test_support",
+      "//third_party/abseil-cpp/absl/functional:any_invocable",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/functional:any_invocable" ]
   }
 
   rtc_library("audio_ingress_unittests") {
@@ -69,6 +72,8 @@ if (rtc_include_tests) {
       "../../../api:transport_api",
       "../../../api/audio_codecs:builtin_audio_decoder_factory",
       "../../../api/audio_codecs:builtin_audio_encoder_factory",
+      "../../../api/environment",
+      "../../../api/environment:environment_factory",
       "../../../api/task_queue:default_task_queue_factory",
       "../../../api/units:time_delta",
       "../../../api/units:timestamp",
@@ -90,6 +95,8 @@ if (rtc_include_tests) {
       "..:audio_egress",
       "../../../api:transport_api",
       "../../../api/audio_codecs:builtin_audio_encoder_factory",
+      "../../../api/environment",
+      "../../../api/environment:environment_factory",
       "../../../api/task_queue:default_task_queue_factory",
       "../../../api/units:time_delta",
       "../../../api/units:timestamp",

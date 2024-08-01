@@ -45,12 +45,16 @@ struct ProbeControllerConfig {
   FieldTrialParameter<bool> abort_further_probe_if_max_lower_than_current;
   // Duration of time from the first initial probe where repeated initial probes
   // are sent if repeated initial probing is enabled.
-  FieldTrialParameter<TimeDelta> repeated_initial_probing_duration;
-
+  FieldTrialParameter<TimeDelta> repeated_initial_probing_time_period;
+  // The minimum probing duration of an individual probe during
+  // the repeated_initial_probing_time_period.
+  FieldTrialParameter<TimeDelta> initial_probe_duration;
+  // Delta time between sent bursts of packets in a probe during
+  // the repeated_initial_probing_time_period.
+  FieldTrialParameter<TimeDelta> initial_min_probe_delta;
   // Configures how often we send ALR probes and how big they are.
   FieldTrialParameter<TimeDelta> alr_probing_interval;
   FieldTrialParameter<double> alr_probe_scale;
-
   // Configures how often we send probes if NetworkStateEstimate is available.
   FieldTrialParameter<TimeDelta> network_state_estimate_probing_interval;
   // Periodically probe as long as the ratio between current estimate and
@@ -74,6 +78,8 @@ struct ProbeControllerConfig {
   FieldTrialParameter<int> min_probe_packets_sent;
   // The minimum probing duration.
   FieldTrialParameter<TimeDelta> min_probe_duration;
+  // Delta time between sent bursts of packets in a probe.
+  FieldTrialParameter<TimeDelta> min_probe_delta;
   FieldTrialParameter<double> loss_limited_probe_scale;
   // Don't send a probe if min(estimate, network state estimate) is larger than
   // this fraction of the set max bitrate.
@@ -83,7 +89,7 @@ struct ProbeControllerConfig {
 // Reason that bandwidth estimate is limited. Bandwidth estimate can be limited
 // by either delay based bwe, or loss based bwe when it increases/decreases the
 // estimate.
-enum class BandwidthLimitedCause {
+enum class BandwidthLimitedCause : int {
   kLossLimitedBweIncreasing = 0,
   kLossLimitedBwe = 1,
   kDelayBasedLimited = 2,
@@ -126,8 +132,10 @@ class ProbeController {
   void EnablePeriodicAlrProbing(bool enable);
 
   // Probes are sent periodically every 1s during the first 5s after the network
-  // becomes available. The probes ignores allocated bitrate constraints and
-  // probe up to max configured bitrate configured via SetBitrates.
+  // becomes available or until OnMaxTotalAllocatedBitrate is invoked with a
+  // none zero max_total_allocated_bitrate (there are active streams being
+  // sent.) Probe rate is up to max configured bitrate configured via
+  // SetBitrates.
   void EnableRepeatedInitialProbing(bool enable);
 
   void SetAlrStartTimeMs(absl::optional<int64_t> alr_start_time);
@@ -139,8 +147,9 @@ class ProbeController {
   void SetNetworkStateEstimate(webrtc::NetworkStateEstimate estimate);
 
   // Resets the ProbeController to a state equivalent to as if it was just
-  // created EXCEPT for `enable_periodic_alr_probing_` and
-  // `network_available_`.
+  // created EXCEPT for configuration settings like
+  // `enable_periodic_alr_probing_` `network_available_` and
+  // `max_total_allocated_bitrate_`.
   void Reset(Timestamp at_time);
 
   ABSL_MUST_USE_RESULT std::vector<ProbeClusterConfig> Process(
@@ -166,9 +175,10 @@ class ProbeController {
   bool TimeForAlrProbe(Timestamp at_time) const;
   bool TimeForNetworkStateProbe(Timestamp at_time) const;
   bool TimeForNextRepeatedInitialProbe(Timestamp at_time) const;
+  ProbeClusterConfig CreateProbeClusterConfig(Timestamp at_time,
+                                              DataRate bitrate);
 
   bool network_available_;
-  bool waiting_for_initial_probe_result_ = false;
   bool repeated_initial_probing_enabled_ = false;
   Timestamp last_allowed_repeated_initial_probe_ = Timestamp::MinusInfinity();
   BandwidthLimitedCause bandwidth_limited_cause_ =

@@ -26,3 +26,11 @@ int ERR_GET_REASON_RUST(uint32_t packed_error) {
 int ERR_GET_FUNC_RUST(uint32_t packed_error) {
   return ERR_GET_FUNC(packed_error);
 }
+
+void CBS_init_RUST(CBS *cbs, const uint8_t *data, size_t len) {
+  CBS_init(cbs, data, len);
+}
+
+size_t CBS_len_RUST(const CBS *cbs) {
+  return CBS_len(cbs);
+}

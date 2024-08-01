@@ -1,0 +1,30 @@
+This test ensures that we compute the right final role for a role='menu' item with menuitem grandchildren.
+
+PASS: accessibilityController.accessibleElementById('menu').role.toLowerCase().includes('menu') === true
+
+{#menu AXRole: AXMenu}
+
+{AXRole: AXGroup}
+
+{AXRole: AXMenuItem}
+
+{AXRole: AXMenuItem}
+
+{AXRole: AXMenuItem}
+
+{AXRole: AXGroup}
+
+{AXRole: AXMenuItem}
+
+{AXRole: AXMenuItem}
+
+{AXRole: AXMenuItem}
+
+{AXRole: AXGroup}
+
+{AXRole: AXMenuItem}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Inbox Archive Trash Custom Folder 1 Custom Folder 2 Custom Folder 3 New Folder

@@ -11,10 +11,6 @@
 #ifndef API_UNITS_DATA_SIZE_H_
 #define API_UNITS_DATA_SIZE_H_
 
-#ifdef WEBRTC_UNIT_TEST
-#include <ostream>  // no-presubmit-check TODO(webrtc:8982)
-#endif              // WEBRTC_UNIT_TEST
-
 #include <string>
 #include <type_traits>
 
@@ -52,14 +48,6 @@ std::string ToString(DataSize value);
 inline std::string ToLogString(DataSize value) {
   return ToString(value);
 }
-
-#ifdef WEBRTC_UNIT_TEST
-inline std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
-    std::ostream& stream,         // no-presubmit-check TODO(webrtc:8982)
-    DataSize value) {
-  return stream << ToString(value);
-}
-#endif  // WEBRTC_UNIT_TEST
 
 }  // namespace webrtc
 

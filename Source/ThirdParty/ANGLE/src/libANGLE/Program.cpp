@@ -1243,6 +1243,16 @@ void Program::resolveLinkImpl(const Context *context)
     // Only successfully linked program can replace the executables.
     ASSERT(mLinked);
 
+    // In case of a successful link, it is no longer required for the attached shaders to hold on to
+    // the memory they have used. Therefore, the shader compilations are resolved to save memory.
+    for (Shader *shader : mAttachedShaders)
+    {
+        if (shader != nullptr)
+        {
+            shader->resolveCompile(context);
+        }
+    }
+
     // Mark implementation-specific unreferenced uniforms as ignored.
     std::vector<ImageBinding> *imageBindings = getExecutable().getImageBindings();
     mProgram->markUnusedUniformLocations(&mState.mExecutable->mUniformLocations,

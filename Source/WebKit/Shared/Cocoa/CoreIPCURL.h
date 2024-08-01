@@ -34,6 +34,7 @@ namespace WebKit {
 
 class CoreIPCURL {
 public:
+    CoreIPCURL() = default;
     CoreIPCURL(NSURL *url)
         : m_url(url)
     {

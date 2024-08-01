@@ -32,9 +32,9 @@ SpsParser::SpsState::~SpsState() = default;
 // http://www.itu.int/rec/T-REC-H.264
 
 // Unpack RBSP and parse SPS state from the supplied buffer.
-absl::optional<SpsParser::SpsState> SpsParser::ParseSps(const uint8_t* data,
-                                                        size_t length) {
-  std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(data, length);
+absl::optional<SpsParser::SpsState> SpsParser::ParseSps(
+    rtc::ArrayView<const uint8_t> data) {
+  std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(data);
   BitstreamReader reader(unpacked_buffer);
   return ParseSpsUpToVui(reader);
 }
@@ -56,7 +56,7 @@ absl::optional<SpsParser::SpsState> SpsParser::ParseSpsUpToVui(
 
   // chroma_format_idc will be ChromaArrayType if separate_colour_plane_flag is
   // 0. It defaults to 1, when not specified.
-  uint32_t chroma_format_idc = 1;
+  sps.chroma_format_idc = 1;
 
   // profile_idc: u(8). We need it to determine if we need to read/skip chroma
   // formats.
@@ -73,8 +73,8 @@ absl::optional<SpsParser::SpsState> SpsParser::ParseSpsUpToVui(
       profile_idc == 86 || profile_idc == 118 || profile_idc == 128 ||
       profile_idc == 138 || profile_idc == 139 || profile_idc == 134) {
     // chroma_format_idc: ue(v)
-    chroma_format_idc = reader.ReadExponentialGolomb();
-    if (chroma_format_idc == 3) {
+    sps.chroma_format_idc = reader.ReadExponentialGolomb();
+    if (sps.chroma_format_idc == 3) {
       // separate_colour_plane_flag: u(1)
       sps.separate_colour_plane_flag = reader.ReadBit();
     }
@@ -89,7 +89,7 @@ absl::optional<SpsParser::SpsState> SpsParser::ParseSpsUpToVui(
       // Process the scaling lists just enough to be able to properly
       // skip over them, so we can still read the resolution on streams
       // where this is included.
-      int scaling_list_count = (chroma_format_idc == 3 ? 12 : 8);
+      int scaling_list_count = (sps.chroma_format_idc == 3 ? 12 : 8);
       for (int i = 0; i < scaling_list_count; ++i) {
         // seq_scaling_list_present_flag[i]  : u(1)
         if (reader.Read<bool>()) {
@@ -210,17 +210,17 @@ absl::optional<SpsParser::SpsState> SpsParser::ParseSpsUpToVui(
 
   // Figure out the crop units in pixels. That's based on the chroma format's
   // sampling, which is indicated by chroma_format_idc.
-  if (sps.separate_colour_plane_flag || chroma_format_idc == 0) {
+  if (sps.separate_colour_plane_flag || sps.chroma_format_idc == 0) {
     frame_crop_bottom_offset *= (2 - sps.frame_mbs_only_flag);
     frame_crop_top_offset *= (2 - sps.frame_mbs_only_flag);
-  } else if (!sps.separate_colour_plane_flag && chroma_format_idc > 0) {
+  } else if (!sps.separate_colour_plane_flag && sps.chroma_format_idc > 0) {
     // Width multipliers for formats 1 (4:2:0) and 2 (4:2:2).
-    if (chroma_format_idc == 1 || chroma_format_idc == 2) {
+    if (sps.chroma_format_idc == 1 || sps.chroma_format_idc == 2) {
       frame_crop_left_offset *= 2;
       frame_crop_right_offset *= 2;
     }
     // Height multipliers for format 1 (4:2:0).
-    if (chroma_format_idc == 1) {
+    if (sps.chroma_format_idc == 1) {
       frame_crop_top_offset *= 2;
       frame_crop_bottom_offset *= 2;
     }

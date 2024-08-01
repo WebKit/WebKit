@@ -244,12 +244,23 @@ void PushClientConnection::didShowNotificationForTesting(URL&& scopeURL, Complet
     WebPushDaemon::singleton().didShowNotificationForTesting(*this, WTFMove(scopeURL), WTFMove(replySender));
 }
 
-void PushClientConnection::getPushPermissionState(URL&& scopeURL, CompletionHandler<void(WebCore::PushPermissionState)>&& replySender)
+void PushClientConnection::getPushPermissionState(WebCore::SecurityOriginData&& origin, CompletionHandler<void(WebCore::PushPermissionState)>&& replySender)
 {
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
-    WebPushDaemon::singleton().getPushPermissionState(*this, WTFMove(scopeURL), WTFMove(replySender));
+    WebPushDaemon::singleton().getPushPermissionState(*this, WTFMove(origin), WTFMove(replySender));
 #else
+    UNUSED_PARAM(origin);
     replySender({ });
+#endif
+}
+
+void PushClientConnection::requestPushPermission(WebCore::SecurityOriginData&& origin, CompletionHandler<void(bool)>&& replySender)
+{
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+    WebPushDaemon::singleton().requestPushPermission(*this, WTFMove(origin), WTFMove(replySender));
+#else
+    UNUSED_PARAM(origin);
+    replySender(false);
 #endif
 }
 
@@ -258,6 +269,8 @@ void PushClientConnection::showNotification(const WebCore::NotificationData& not
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
     WebPushDaemon::singleton().showNotification(*this, notificationData, notificationResources, WTFMove(completionHandler));
 #else
+    UNUSED_PARAM(notificationData);
+    UNUSED_PARAM(notificationResources);
     completionHandler();
 #endif
 }
@@ -267,6 +280,8 @@ void PushClientConnection::getNotifications(const URL& registrationURL, const St
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
     WebPushDaemon::singleton().getNotifications(*this, registrationURL, tag, WTFMove(completionHandler));
 #else
+    UNUSED_PARAM(registrationURL);
+    UNUSED_PARAM(tag);
     completionHandler({ });
 #endif
 }

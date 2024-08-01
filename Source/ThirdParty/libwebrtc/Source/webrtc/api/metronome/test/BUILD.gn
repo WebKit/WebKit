@@ -18,6 +18,6 @@ rtc_library("fake_metronome") {
     "..:metronome",
     "../../task_queue",
     "../../units:time_delta",
+    "//third_party/abseil-cpp/absl/functional:any_invocable",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/functional:any_invocable" ]
 }

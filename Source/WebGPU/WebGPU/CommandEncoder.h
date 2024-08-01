@@ -107,6 +107,8 @@ public:
     bool submitWillBeInvalid() const;
     void addBuffer(id<MTLBuffer>);
     void addTexture(id<MTLTexture>);
+    id<MTLCommandBuffer> commandBuffer() const;
+    void setExistingEncoder(id<MTLCommandEncoder>);
 
 private:
     CommandEncoder(id<MTLCommandBuffer>, id<MTLSharedEvent>, Device&);
@@ -120,7 +122,6 @@ private:
     NSString* errorValidatingRenderPassDescriptor(const WGPURenderPassDescriptor&) const;
 
     void clearTextureIfNeeded(const WGPUImageCopyTexture&, NSUInteger);
-    void setExistingEncoder(id<MTLCommandEncoder>);
     NSString* errorValidatingImageCopyBuffer(const WGPUImageCopyBuffer&) const;
     NSString* errorValidatingCopyBufferToTexture(const WGPUImageCopyBuffer&, const WGPUImageCopyTexture&, const WGPUExtent3D&) const;
     NSString* errorValidatingCopyTextureToBuffer(const WGPUImageCopyTexture&, const WGPUImageCopyBuffer&, const WGPUExtent3D&) const;

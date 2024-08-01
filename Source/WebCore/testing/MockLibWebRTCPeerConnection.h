@@ -324,6 +324,7 @@ private:
     absl::optional<bool> can_trickle_ice_candidates() final { return { }; }
     void AddAdaptationResource(rtc::scoped_refptr<webrtc::Resource>) final { }
     rtc::Thread* signaling_thread() const final { return nullptr; }
+    webrtc::NetworkControllerInterface* GetNetworkController() final { return nullptr; }
 
 protected:
     void SetRemoteDescription(webrtc::SetSessionDescriptionObserver*, webrtc::SessionDescriptionInterface*) final { ASSERT_NOT_REACHED(); }

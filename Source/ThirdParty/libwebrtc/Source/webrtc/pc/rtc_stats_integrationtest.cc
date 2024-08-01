@@ -608,6 +608,8 @@ class RTCStatsReportVerifier {
         inbound_stream.jitter_buffer_target_delay);
     verifier.TestAttributeIsNonNegative<double>(
         inbound_stream.jitter_buffer_minimum_delay);
+    verifier.TestAttributeIsNonNegative<double>(
+        inbound_stream.total_processing_delay);
     if (inbound_stream.kind.has_value() && *inbound_stream.kind == "video") {
       verifier.TestAttributeIsUndefined(inbound_stream.total_samples_received);
       verifier.TestAttributeIsUndefined(inbound_stream.concealed_samples);
@@ -682,8 +684,6 @@ class RTCStatsReportVerifier {
       verifier.TestAttributeIsNonNegative<double>(
           inbound_stream.total_decode_time);
       verifier.TestAttributeIsNonNegative<double>(
-          inbound_stream.total_processing_delay);
-      verifier.TestAttributeIsNonNegative<double>(
           inbound_stream.total_assembly_time);
       verifier.TestAttributeIsDefined(
           inbound_stream.frames_assembled_from_multiple_packets);
@@ -717,7 +717,6 @@ class RTCStatsReportVerifier {
       verifier.TestAttributeIsUndefined(inbound_stream.key_frames_decoded);
       verifier.TestAttributeIsUndefined(inbound_stream.frames_dropped);
       verifier.TestAttributeIsUndefined(inbound_stream.total_decode_time);
-      verifier.TestAttributeIsUndefined(inbound_stream.total_processing_delay);
       verifier.TestAttributeIsUndefined(inbound_stream.total_assembly_time);
       verifier.TestAttributeIsUndefined(
           inbound_stream.frames_assembled_from_multiple_packets);

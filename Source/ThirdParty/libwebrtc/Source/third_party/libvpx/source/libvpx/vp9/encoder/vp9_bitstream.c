@@ -996,6 +996,7 @@ static size_t encode_tiles_mt(VP9_COMP *cpi, uint8_t *data_ptr,
   const int num_workers = cpi->num_workers;
   size_t total_size = 0;
   int tile_col = 0;
+  int error = 0;
 
   const size_t buffer_alloc_size = encode_tiles_buffer_alloc_size(cpi);
   if (!cpi->vp9_bitstream_worker_data ||
@@ -1049,9 +1050,10 @@ static size_t encode_tiles_mt(VP9_COMP *cpi, uint8_t *data_ptr,
       int k;
 
       if (!winterface->sync(worker)) {
-        vpx_internal_error(&cm->error, VPX_CODEC_ERROR,
-                           "encode_tiles_mt: worker had error");
+        error = 1;
+        continue;
       }
+
       tile_size = data->bit_writer.pos;
 
       // Aggregate per-thread bitstream stats.
@@ -1064,20 +1066,24 @@ static size_t encode_tiles_mt(VP9_COMP *cpi, uint8_t *data_ptr,
       // Prefix the size of the tile on all but the last.
       if (tile_col != tile_cols || j < i - 1) {
         if (data_size - total_size < 4) {
-          vpx_internal_error(&cm->error, VPX_CODEC_ERROR,
-                             "encode_tiles_mt: output buffer full");
+          error = 1;
+          continue;
         }
         mem_put_be32(data_ptr + total_size, tile_size);
         total_size += 4;
       }
       if (j > 0) {
         if (data_size - total_size < tile_size) {
-          vpx_internal_error(&cm->error, VPX_CODEC_ERROR,
-                             "encode_tiles_mt: output buffer full");
+          error = 1;
+          continue;
         }
         memcpy(data_ptr + total_size, data->dest, tile_size);
       }
       total_size += tile_size;
+    }
+    if (error) {
+      vpx_internal_error(&cm->error, VPX_CODEC_ERROR,
+                         "encode_tiles_mt: output buffer full");
     }
   }
   return total_size;

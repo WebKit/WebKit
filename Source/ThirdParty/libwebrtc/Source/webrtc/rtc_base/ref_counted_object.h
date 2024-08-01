@@ -14,7 +14,7 @@
 #include "rtc_base/ref_count.h"
 #include "rtc_base/ref_counter.h"
 
-namespace rtc {
+namespace webrtc {
 
 template <class T>
 class RefCountedObject : public T {
@@ -84,6 +84,59 @@ class FinalRefCountedObject final : public T {
   mutable webrtc::webrtc_impl::RefCounter ref_count_{0};
 };
 
+}  // namespace webrtc
+
+// Backwards compatibe aliases.
+// TODO: https://issues.webrtc.org/42225969 - deprecate and remove.
+namespace rtc {
+// Because there are users of this template that use "friend
+// rtc::RefCountedObject<>" to give access to a private destructor, some
+// indirection is needed; "friend" declarations cannot span an "using"
+// declaration. Since a templated class on top of a templated class can't access
+// the subclass' protected members, we duplicate the entire class instead.
+template <class T>
+class RefCountedObject : public T {
+ public:
+  RefCountedObject() {}
+
+  RefCountedObject(const RefCountedObject&) = delete;
+  RefCountedObject& operator=(const RefCountedObject&) = delete;
+
+  template <class P0>
+  explicit RefCountedObject(P0&& p0) : T(std::forward<P0>(p0)) {}
+
+  template <class P0, class P1, class... Args>
+  RefCountedObject(P0&& p0, P1&& p1, Args&&... args)
+      : T(std::forward<P0>(p0),
+          std::forward<P1>(p1),
+          std::forward<Args>(args)...) {}
+
+  void AddRef() const override { ref_count_.IncRef(); }
+
+  webrtc::RefCountReleaseStatus Release() const override {
+    const auto status = ref_count_.DecRef();
+    if (status == webrtc::RefCountReleaseStatus::kDroppedLastRef) {
+      delete this;
+    }
+    return status;
+  }
+
+  // Return whether the reference count is one. If the reference count is used
+  // in the conventional way, a reference count of 1 implies that the current
+  // thread owns the reference and no other thread shares it. This call
+  // performs the test for a reference count of one, and performs the memory
+  // barrier needed for the owning thread to act on the object, knowing that it
+  // has exclusive access to the object.
+  virtual bool HasOneRef() const { return ref_count_.HasOneRef(); }
+
+ protected:
+  ~RefCountedObject() override {}
+
+  mutable webrtc::webrtc_impl::RefCounter ref_count_{0};
+};
+
+template <typename T>
+using FinalRefCountedObject = webrtc::FinalRefCountedObject<T>;
 }  // namespace rtc
 
 #endif  // RTC_BASE_REF_COUNTED_OBJECT_H_

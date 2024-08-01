@@ -17,6 +17,57 @@ use std::env;
 use std::path::Path;
 use std::path::PathBuf;
 
+// Keep in sync with the list in include/openssl/opensslconf.h
+const OSSL_CONF_DEFINES: &[&str] = &[
+    "OPENSSL_NO_ASYNC",
+    "OPENSSL_NO_BF",
+    "OPENSSL_NO_BLAKE2",
+    "OPENSSL_NO_BUF_FREELISTS",
+    "OPENSSL_NO_CAMELLIA",
+    "OPENSSL_NO_CAPIENG",
+    "OPENSSL_NO_CAST",
+    "OPENSSL_NO_CMS",
+    "OPENSSL_NO_COMP",
+    "OPENSSL_NO_CT",
+    "OPENSSL_NO_DANE",
+    "OPENSSL_NO_DEPRECATED",
+    "OPENSSL_NO_DGRAM",
+    "OPENSSL_NO_DYNAMIC_ENGINE",
+    "OPENSSL_NO_EC_NISTP_64_GCC_128",
+    "OPENSSL_NO_EC2M",
+    "OPENSSL_NO_EGD",
+    "OPENSSL_NO_ENGINE",
+    "OPENSSL_NO_GMP",
+    "OPENSSL_NO_GOST",
+    "OPENSSL_NO_HEARTBEATS",
+    "OPENSSL_NO_HW",
+    "OPENSSL_NO_IDEA",
+    "OPENSSL_NO_JPAKE",
+    "OPENSSL_NO_KRB5",
+    "OPENSSL_NO_MD2",
+    "OPENSSL_NO_MDC2",
+    "OPENSSL_NO_OCB",
+    "OPENSSL_NO_OCSP",
+    "OPENSSL_NO_RC2",
+    "OPENSSL_NO_RC5",
+    "OPENSSL_NO_RFC3779",
+    "OPENSSL_NO_RIPEMD",
+    "OPENSSL_NO_RMD160",
+    "OPENSSL_NO_SCTP",
+    "OPENSSL_NO_SEED",
+    "OPENSSL_NO_SM2",
+    "OPENSSL_NO_SM3",
+    "OPENSSL_NO_SM4",
+    "OPENSSL_NO_SRP",
+    "OPENSSL_NO_SSL_TRACE",
+    "OPENSSL_NO_SSL2",
+    "OPENSSL_NO_SSL3",
+    "OPENSSL_NO_SSL3_METHOD",
+    "OPENSSL_NO_STATIC_ENGINE",
+    "OPENSSL_NO_STORE",
+    "OPENSSL_NO_WHIRLPOOL",
+];
+
 fn get_bssl_build_dir() -> PathBuf {
     println!("cargo:rerun-if-env-changed=BORINGSSL_BUILD_DIR");
     if let Some(build_dir) = env::var_os("BORINGSSL_BUILD_DIR") {
@@ -25,6 +76,23 @@ fn get_bssl_build_dir() -> PathBuf {
 
     let crate_dir = env::var_os("CARGO_MANIFEST_DIR").unwrap();
     return Path::new(&crate_dir).join("../../build");
+}
+
+fn get_cpp_runtime_lib() -> Option<String> {
+    println!("cargo:rerun-if-env-changed=BORINGSSL_RUST_CPPLIB");
+
+    if let Ok(cpp_lib) = env::var("BORINGSSL_RUST_CPPLIB") {
+        return Some(cpp_lib);
+    }
+
+    if env::var_os("CARGO_CFG_UNIX").is_some() {
+        match env::var("CARGO_CFG_TARGET_OS").unwrap().as_ref() {
+            "macos" => Some("c++".into()),
+            _ => Some("stdc++".into()),
+        }
+    } else {
+        None
+    }
 }
 
 fn main() {
@@ -54,4 +122,10 @@ fn main() {
         bssl_sys_build_dir.display()
     );
     println!("cargo:rustc-link-lib=static=rust_wrapper");
+
+    if let Some(cpp_lib) = get_cpp_runtime_lib() {
+        println!("cargo:rustc-link-lib={}", cpp_lib);
+    }
+
+    println!("cargo:conf={}", OSSL_CONF_DEFINES.join(","));
 }

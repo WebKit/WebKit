@@ -13,6 +13,7 @@
 #include <stdint.h>
 
 #include <algorithm>
+#include <cstddef>
 
 #include "test/gtest.h"
 

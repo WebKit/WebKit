@@ -102,11 +102,6 @@ $code.=<<___	if ($flavour =~ /64/);
 	add	x29,sp,#0
 ___
 $code.=<<___;
-	mov	$ptr,#-1
-	cmp	$inp,#0
-	b.eq	.Lenc_key_abort
-	cmp	$out,#0
-	b.eq	.Lenc_key_abort
 	mov	$ptr,#-2
 	cmp	$bits,#128
 	b.lt	.Lenc_key_abort

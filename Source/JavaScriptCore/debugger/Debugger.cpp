@@ -950,12 +950,18 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
         return;
 
     SourceID sourceID = DebuggerCallFrame::sourceIDForCallFrame(m_currentCallFrame);
+    TextPosition position = DebuggerCallFrame::positionForCallFrame(vm, m_currentCallFrame);
 
-    auto blackboxTypeIterator = m_blackboxedScripts.find(sourceID);
-    if (blackboxTypeIterator != m_blackboxedScripts.end() && blackboxTypeIterator->value == BlackboxType::Ignored)
-        return;
-
-    DebuggerPausedScope debuggerPausedScope(*this);
+    BlackboxFlags relevantBlackboxFlags;
+    if (const auto it = m_blackboxConfigurations.find(sourceID); it != m_blackboxConfigurations.end()) {
+        for (const auto& [blackboxRange, blackboxFlags] : it->value) {
+            if (position < blackboxRange.first || position >= blackboxRange.second)
+                continue;
+            relevantBlackboxFlags.add(blackboxFlags);
+            if (relevantBlackboxFlags.contains(BlackboxFlag::Ignore))
+                return;
+        }
+    }
 
     bool afterBlackboxedScript = m_afterBlackboxedScript;
     bool pauseNow = false;
@@ -967,8 +973,6 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
         pauseNow = true;
         didPauseForStep = true;
     }
-
-    TextPosition position = DebuggerCallFrame::positionForCallFrame(vm, m_currentCallFrame);
 
     if (auto breakpoint = didHitBreakpoint(sourceID, position)) {
         pauseNow = true;
@@ -985,6 +989,8 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
     if (!pauseNow)
         return;
 
+    DebuggerPausedScope debuggerPausedScope(*this);
+
     resetImmediatePauseState();
 
     // Don't clear the `m_pauseOnCallFrame` if we've not hit it yet, as we may have encountered a breakpoint that won't pause.
@@ -997,10 +1003,7 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
     TemporaryPausedState pausedState(*this);
 
     auto shouldDeferPause = [&] () {
-        if (blackboxTypeIterator == m_blackboxedScripts.end())
-            return false;
-
-        if (blackboxTypeIterator->value != BlackboxType::Deferred)
+        if (!relevantBlackboxFlags.contains(BlackboxFlag::Defer))
             return false;
 
         m_afterBlackboxedScript = true;
@@ -1369,12 +1372,12 @@ DebuggerCallFrame& Debugger::currentDebuggerCallFrame()
     return *m_currentDebuggerCallFrame;
 }
 
-void Debugger::setBlackboxType(SourceID sourceID, std::optional<BlackboxType> type)
+void Debugger::setBlackboxConfiguration(SourceID sourceID, BlackboxConfiguration&& blackboxConfiguration)
 {
-    if (type)
-        m_blackboxedScripts.set(sourceID, type.value());
+    if (blackboxConfiguration.isEmpty())
+        m_blackboxConfigurations.remove(sourceID);
     else
-        m_blackboxedScripts.remove(sourceID);
+        m_blackboxConfigurations.set(sourceID, WTFMove(blackboxConfiguration));
 }
 
 void Debugger::setBlackboxBreakpointEvaluations(bool blackboxBreakpointEvaluations)
@@ -1384,7 +1387,7 @@ void Debugger::setBlackboxBreakpointEvaluations(bool blackboxBreakpointEvaluatio
 
 void Debugger::clearBlackbox()
 {
-    m_blackboxedScripts.clear();
+    m_blackboxConfigurations.clear();
 }
 
 } // namespace JSC

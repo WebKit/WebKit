@@ -17,10 +17,8 @@ rtc_source_set("aec_dump") {
     "../../../api/task_queue",
     "../../../rtc_base/system:file_wrapper",
     "../../../rtc_base/system:rtc_export",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/base:nullability",
-    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
 }
 
@@ -77,10 +75,8 @@ if (rtc_enable_protobuf) {
       "../../../rtc_base:rtc_event",
       "../../../rtc_base/system:file_wrapper",
       "../../../system_wrappers",
-    ]
-    absl_deps = [
       "//third_party/abseil-cpp/absl/base:nullability",
-      "//third_party/abseil-cpp/absl/strings",
+      "//third_party/abseil-cpp/absl/strings:string_view",
     ]
 
     deps += [ "../:audioproc_debug_proto" ]
@@ -113,9 +109,7 @@ rtc_library("null_aec_dump_factory") {
     ":aec_dump",
     "..:aec_dump_interface",
     "../../../api/task_queue",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/base:nullability",
-    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
 }

@@ -86,6 +86,7 @@ public:
     bool validatePipeline(const RenderPipeline*);
     uint64_t drawCount() const;
     NSString* lastError() const;
+    bool requiresCommandReplay() const;
 
 private:
     RenderBundle(NSArray<RenderBundleICBWithResources*> *, RefPtr<RenderBundleEncoder>, const WGPURenderBundleEncoderDescriptor&, uint64_t, Device&);

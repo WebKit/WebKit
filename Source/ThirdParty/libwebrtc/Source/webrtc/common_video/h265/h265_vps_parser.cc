@@ -29,10 +29,8 @@ H265VpsParser::VpsState::VpsState() = default;
 
 // Unpack RBSP and parse VPS state from the supplied buffer.
 absl::optional<H265VpsParser::VpsState> H265VpsParser::ParseVps(
-    const uint8_t* data,
-    size_t length) {
-  RTC_DCHECK(data);
-  return ParseInternal(H265::ParseRbsp(data, length));
+    rtc::ArrayView<const uint8_t> data) {
+  return ParseInternal(H265::ParseRbsp(data));
 }
 
 absl::optional<H265VpsParser::VpsState> H265VpsParser::ParseInternal(

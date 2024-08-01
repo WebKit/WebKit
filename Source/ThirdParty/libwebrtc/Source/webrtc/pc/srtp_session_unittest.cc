@@ -44,29 +44,30 @@ class SrtpSessionTest : public ::testing::Test {
     memcpy(rtp_packet_, kPcmuFrame, rtp_len_);
     memcpy(rtcp_packet_, kRtcpReport, rtcp_len_);
   }
-  void TestProtectRtp(const std::string& cs) {
+  void TestProtectRtp(int crypto_suite) {
     int out_len = 0;
     EXPECT_TRUE(
         s1_.ProtectRtp(rtp_packet_, rtp_len_, sizeof(rtp_packet_), &out_len));
-    EXPECT_EQ(out_len, rtp_len_ + rtp_auth_tag_len(cs));
+    EXPECT_EQ(out_len, rtp_len_ + rtp_auth_tag_len(crypto_suite));
     EXPECT_NE(0, memcmp(rtp_packet_, kPcmuFrame, rtp_len_));
     rtp_len_ = out_len;
   }
-  void TestProtectRtcp(const std::string& cs) {
+  void TestProtectRtcp(int crypto_suite) {
     int out_len = 0;
     EXPECT_TRUE(s1_.ProtectRtcp(rtcp_packet_, rtcp_len_, sizeof(rtcp_packet_),
                                 &out_len));
-    EXPECT_EQ(out_len, rtcp_len_ + 4 + rtcp_auth_tag_len(cs));  // NOLINT
+    EXPECT_EQ(out_len,
+              rtcp_len_ + 4 + rtcp_auth_tag_len(crypto_suite));  // NOLINT
     EXPECT_NE(0, memcmp(rtcp_packet_, kRtcpReport, rtcp_len_));
     rtcp_len_ = out_len;
   }
-  void TestUnprotectRtp(const std::string& cs) {
+  void TestUnprotectRtp(int crypto_suite) {
     int out_len = 0, expected_len = sizeof(kPcmuFrame);
     EXPECT_TRUE(s2_.UnprotectRtp(rtp_packet_, rtp_len_, &out_len));
     EXPECT_EQ(expected_len, out_len);
     EXPECT_EQ(0, memcmp(rtp_packet_, kPcmuFrame, out_len));
   }
-  void TestUnprotectRtcp(const std::string& cs) {
+  void TestUnprotectRtcp(int crypto_suite) {
     int out_len = 0, expected_len = sizeof(kRtcpReport);
     EXPECT_TRUE(s2_.UnprotectRtcp(rtcp_packet_, rtcp_len_, &out_len));
     EXPECT_EQ(expected_len, out_len);
@@ -115,10 +116,10 @@ TEST_F(SrtpSessionTest, TestProtect_AES_CM_128_HMAC_SHA1_80) {
                           kEncryptedHeaderExtensionIds));
   EXPECT_TRUE(s2_.SetRecv(kSrtpAes128CmSha1_80, kTestKey1, kTestKeyLen,
                           kEncryptedHeaderExtensionIds));
-  TestProtectRtp(kCsAesCm128HmacSha1_80);
-  TestProtectRtcp(kCsAesCm128HmacSha1_80);
-  TestUnprotectRtp(kCsAesCm128HmacSha1_80);
-  TestUnprotectRtcp(kCsAesCm128HmacSha1_80);
+  TestProtectRtp(kSrtpAes128CmSha1_80);
+  TestProtectRtcp(kSrtpAes128CmSha1_80);
+  TestUnprotectRtp(kSrtpAes128CmSha1_80);
+  TestUnprotectRtcp(kSrtpAes128CmSha1_80);
 }
 
 // Test that we can encrypt and decrypt RTP/RTCP using AES_CM_128_HMAC_SHA1_32.
@@ -127,10 +128,10 @@ TEST_F(SrtpSessionTest, TestProtect_AES_CM_128_HMAC_SHA1_32) {
                           kEncryptedHeaderExtensionIds));
   EXPECT_TRUE(s2_.SetRecv(kSrtpAes128CmSha1_32, kTestKey1, kTestKeyLen,
                           kEncryptedHeaderExtensionIds));
-  TestProtectRtp(kCsAesCm128HmacSha1_32);
-  TestProtectRtcp(kCsAesCm128HmacSha1_32);
-  TestUnprotectRtp(kCsAesCm128HmacSha1_32);
-  TestUnprotectRtcp(kCsAesCm128HmacSha1_32);
+  TestProtectRtp(kSrtpAes128CmSha1_32);
+  TestProtectRtcp(kSrtpAes128CmSha1_32);
+  TestUnprotectRtp(kSrtpAes128CmSha1_32);
+  TestUnprotectRtcp(kSrtpAes128CmSha1_32);
 }
 
 TEST_F(SrtpSessionTest, TestGetSendStreamPacketIndex) {
@@ -152,8 +153,8 @@ TEST_F(SrtpSessionTest, TestTamperReject) {
                           kEncryptedHeaderExtensionIds));
   EXPECT_TRUE(s2_.SetRecv(kSrtpAes128CmSha1_80, kTestKey1, kTestKeyLen,
                           kEncryptedHeaderExtensionIds));
-  TestProtectRtp(kCsAesCm128HmacSha1_80);
-  TestProtectRtcp(kCsAesCm128HmacSha1_80);
+  TestProtectRtp(kSrtpAes128CmSha1_80);
+  TestProtectRtcp(kSrtpAes128CmSha1_80);
   rtp_packet_[0] = 0x12;
   rtcp_packet_[1] = 0x34;
   EXPECT_FALSE(s2_.UnprotectRtp(rtp_packet_, rtp_len_, &out_len));

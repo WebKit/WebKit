@@ -181,7 +181,7 @@ bool InlineAccess::generateSelfPropertyAccess(StructureStubInfo& stubInfo, Struc
 
     if (stubInfo.useDataIC) {
         // These dynamic slots get filled in by StructureStubInfo. Nothing else to do.
-        return true;
+        return stubInfo.preconfiguredCacheType == CacheType::GetByIdSelf;
     }
 
     CCallHelpers jit;
@@ -239,7 +239,7 @@ bool InlineAccess::canGenerateSelfPropertyReplace(StructureStubInfo& stubInfo, P
         return false;
 
     if (stubInfo.useDataIC)
-        return true;
+        return stubInfo.preconfiguredCacheType == CacheType::PutByIdReplace;
 
     if (isInlineOffset(offset))
         return true;
@@ -256,7 +256,7 @@ bool InlineAccess::generateSelfPropertyReplace(StructureStubInfo& stubInfo, Stru
 
     if (stubInfo.useDataIC) {
         // These dynamic slots get filled in by StructureStubInfo. Nothing else to do.
-        return true;
+        return stubInfo.preconfiguredCacheType == CacheType::PutByIdReplace;
     }
 
     CCallHelpers jit;
@@ -292,7 +292,7 @@ bool InlineAccess::isCacheableArrayLength(StructureStubInfo& stubInfo, JSArray* 
         return false;
 
     if (stubInfo.useDataIC)
-        return false;
+        return stubInfo.preconfiguredCacheType == CacheType::ArrayLength;
 
     if (!hasFreeRegister(stubInfo))
         return false;
@@ -302,10 +302,13 @@ bool InlineAccess::isCacheableArrayLength(StructureStubInfo& stubInfo, JSArray* 
 
 bool InlineAccess::generateArrayLength(StructureStubInfo& stubInfo, JSArray* array)
 {
-    ASSERT(!stubInfo.useDataIC);
     ASSERT(isCacheableArrayLength(stubInfo, array));
 
     if (!hasConstantIdentifier(stubInfo.accessType))
+        return false;
+
+    // ArrayLength fast path does not need any modification.
+    if (stubInfo.useDataIC)
         return false;
 
     CCallHelpers jit;
@@ -331,18 +334,20 @@ bool InlineAccess::isCacheableStringLength(StructureStubInfo& stubInfo)
         return false;
 
     if (stubInfo.useDataIC)
-        return false;
+        return stubInfo.preconfiguredCacheType == CacheType::StringLength;
 
     return hasFreeRegister(stubInfo);
 }
 
 bool InlineAccess::generateStringLength(StructureStubInfo& stubInfo)
 {
-    ASSERT(!stubInfo.useDataIC);
     ASSERT(isCacheableStringLength(stubInfo));
 
     if (!hasConstantIdentifier(stubInfo.accessType))
         return false;
+
+    if (stubInfo.useDataIC)
+        return stubInfo.preconfiguredCacheType == CacheType::ArrayLength;
 
     CCallHelpers jit;
 
@@ -379,7 +384,7 @@ bool InlineAccess::generateSelfInAccess(StructureStubInfo& stubInfo, Structure* 
 
     if (stubInfo.useDataIC) {
         // These dynamic slots get filled in by StructureStubInfo. Nothing else to do.
-        return true;
+        return stubInfo.preconfiguredCacheType == CacheType::InByIdSelf;
     }
 
     GPRReg base = stubInfo.m_baseGPR;

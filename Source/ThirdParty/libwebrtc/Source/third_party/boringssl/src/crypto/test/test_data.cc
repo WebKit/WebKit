@@ -49,7 +49,7 @@ std::string GetTestData(const char *path) {
   full_path.append(path);
 #endif
 
-  ScopedFILE file(fopen(full_path.c_str(), "rb"));
+  bssl::ScopedFILE file(fopen(full_path.c_str(), "rb"));
   if (file == nullptr) {
     fprintf(stderr, "Could not open '%s'.\n", full_path.c_str());
     abort();

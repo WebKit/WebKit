@@ -11,17 +11,28 @@
 # For more info see Chromium's test_suite_exceptions.pyl in testing/buildbot.
 
 {
-  'angle_end2end_tests': {
+  'angle_deqp_gles2_d3d11_tests': {
     'modifications': {
-      # anglebug.com/40644897 suspecting device lost caused by multiprocess
+      # anglebug.com/352528974 suspecting OOM caused by multiprocess
       'win10-x64-exp-intel': {
         'args': [
-          '--max-processes=1',
+          '--max-processes=2',
+        ],
+      },
+    },
+  },
+  'angle_end2end_tests': {
+    'modifications': {
+      # anglebug.com/352528974 suspecting OOM caused by multiprocess
+      'win10-x64-exp-intel': {
+        'args': [
+          '--max-processes=2',
         ],
         'swarming': {
-          'shards': 4,
+          'shards': 3,
         },
       },
+      # anglebug.com/40644897 suspecting device lost caused by multiprocess
       'win10-x64-intel': {
         'args': [
           '--max-processes=1',
@@ -45,11 +56,6 @@
   'angle_restricted_trace_gold_tests': {
     'modifications': {
       # anglebug.com/42263955 flaky 4x8 pixel artifacts on Win Intel
-      'win10-x64-exp-intel': {
-        'args': [
-          '--flaky-retries=1',
-        ],
-      },
       'win10-x64-intel': {
         'args': [
           '--flaky-retries=1',
@@ -86,11 +92,6 @@
   'angle_white_box_tests': {
     'modifications': {
       # anglebug.com/40644897 suspecting device lost caused by multiprocess
-      'win10-x64-exp-intel': {
-        'args': [
-          '--max-processes=1',
-        ],
-      },
       'win10-x64-intel': {
         'args': [
           '--max-processes=1',

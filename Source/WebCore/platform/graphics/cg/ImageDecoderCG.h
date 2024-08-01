@@ -83,6 +83,8 @@ private:
     String decodeUTI(const SharedBuffer&) const;
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
+    bool isSpatial() const;
+    bool isPanoramic() const;
     bool shouldUseQuickLookForFullscreen() const;
 #endif
 

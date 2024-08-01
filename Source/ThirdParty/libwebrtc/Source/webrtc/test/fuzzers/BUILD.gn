@@ -44,7 +44,6 @@ rtc_library("fuzz_data_helper") {
 
 set_defaults("webrtc_fuzzer_test") {
   configs = rtc_add_configs
-  absl_deps = []
 }
 
 template("webrtc_fuzzer_test") {
@@ -56,17 +55,20 @@ template("webrtc_fuzzer_test") {
     ]
     additional_configs = configs
 
-    # If absl_deps is [], no action is needed. If not [], then it needs to be
-    # converted to //third_party/abseil-cpp:absl when build_with_chromium=true
-    # otherwise it just needs to be added to deps.
-    if (absl_deps != []) {
-      if (!defined(deps)) {
+    assert(
+        !defined(absl_deps),
+        "`absl_deps` has been deprecated, add your Abseil dependencies to the `deps` variable.")
+
+    # Abseil dependencies need to be converted to //third_party/abseil-cpp:absl when build_with_chromium=true
+    if (build_with_chromium) {
+      absl_dependencies =
+          filter_labels_include(deps, [ "//third_party/abseil-cpp/*" ])
+      if (absl_dependencies != []) {
+        filtered_deps =
+            filter_labels_exclude(deps, [ "//third_party/abseil-cpp/*" ])
         deps = []
-      }
-      if (build_with_chromium) {
+        deps = filtered_deps
         deps += [ "//third_party/abseil-cpp:absl" ]
-      } else {
-        deps += absl_deps
       }
     }
 
@@ -229,8 +231,10 @@ webrtc_fuzzer_test("rtcp_receiver_fuzzer") {
 
 webrtc_fuzzer_test("rtp_packet_fuzzer") {
   sources = [ "rtp_packet_fuzzer.cc" ]
-  deps = [ "../../modules/rtp_rtcp:rtp_rtcp_format" ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+  deps = [
+    "../../modules/rtp_rtcp:rtp_rtcp_format",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
   seed_corpus = "corpora/rtp-corpus"
 }
 
@@ -298,8 +302,8 @@ rtc_library("audio_decoder_fuzzer") {
     "../../api/audio_codecs:audio_codecs_api",
     "../../modules/rtp_rtcp:rtp_rtcp_format",
     "../../rtc_base:checks",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 webrtc_fuzzer_test("audio_decoder_g722_fuzzer") {
@@ -448,8 +452,8 @@ if (!build_with_chromium) {
       "../../pc:integration_test_helpers",
       "../../pc:libjingle_peerconnection",
       "../../test:test_support",
+      "//third_party/abseil-cpp/absl/strings",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
     seed_corpus = "corpora/sdp-corpus"
   }
 }
@@ -497,7 +501,6 @@ rtc_library("audio_processing_fuzzer_helper") {
     "../../modules/audio_processing:audio_frame_proxies",
     "../../rtc_base:checks",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 webrtc_fuzzer_test("audio_processing_fuzzer") {
@@ -519,8 +522,6 @@ webrtc_fuzzer_test("audio_processing_fuzzer") {
     "../../rtc_base:macromagic",
     "../../rtc_base:safe_minmax",
     "../../system_wrappers:field_trial",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/base:nullability",
     "//third_party/abseil-cpp/absl/memory",
   ]
@@ -580,8 +581,8 @@ webrtc_fuzzer_test("aec3_fuzzer") {
     "../../api/audio:audio_processing",
     "../../modules/audio_processing:audio_buffer",
     "../../modules/audio_processing/aec3",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 webrtc_fuzzer_test("comfort_noise_decoder_fuzzer") {
@@ -689,6 +690,7 @@ webrtc_fuzzer_test("ssl_certificate_fuzzer") {
   sources = [ "ssl_certificate_fuzzer.cc" ]
   deps = [
     "../:rtp_test_utils",
+    "../../rtc_base:digest",
     "../../rtc_base:ssl",
     "../../rtc_base:stringutils",
   ]
@@ -715,12 +717,10 @@ if (rtc_build_libvpx) {
       "../../modules/video_coding:webrtc_libvpx_interface",
       "../../modules/video_coding:webrtc_vp9",
       "../../rtc_base:safe_compare",
-      rtc_libvpx_dir,
-    ]
-    absl_deps = [
       "//third_party/abseil-cpp/absl/algorithm:container",
       "//third_party/abseil-cpp/absl/base:core_headers",
       "//third_party/abseil-cpp/absl/container:inlined_vector",
+      rtc_libvpx_dir,
     ]
     seed_corpus = "corpora/vp9-encoder-references-corpus"
     defines = [ "RTC_ENABLE_VP9" ]

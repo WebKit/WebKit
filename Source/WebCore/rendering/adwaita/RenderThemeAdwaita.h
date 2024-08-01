@@ -36,6 +36,8 @@ class RenderThemeAdwaita : public RenderTheme {
 public:
     virtual ~RenderThemeAdwaita();
 
+    bool isControlStyled(const RenderStyle&, const RenderStyle& userAgentStyle) const final;
+
     void setAccentColor(const Color&);
 
 private:

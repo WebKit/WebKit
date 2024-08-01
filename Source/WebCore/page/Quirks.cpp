@@ -642,7 +642,6 @@ bool Quirks::shouldSynthesizeTouchEvents() const
 
 // live.com rdar://52116170
 // sharepoint.com rdar://52116170
-// twitter.com rdar://59016252
 // maps.google.com https://bugs.webkit.org/show_bug.cgi?id=214945
 bool Quirks::shouldAvoidResizingWhenInputViewBoundsChange() const
 {
@@ -653,9 +652,6 @@ bool Quirks::shouldAvoidResizingWhenInputViewBoundsChange() const
     auto host = url.host();
 
     if (isDomain("live.com"_s))
-        return true;
-
-    if (isDomain("twitter.com"_s))
         return true;
 
     if (isDomain("google.com"_s) && url.path().startsWithIgnoringASCIICase("/maps/"_s))
@@ -709,6 +705,22 @@ bool Quirks::needsGMailOverflowScrollQuirk() const
         m_needsGMailOverflowScrollQuirk = m_document->url().host() == "mail.google.com"_s;
 
     return *m_needsGMailOverflowScrollQuirk;
+#else
+    return false;
+#endif
+}
+
+// web.skype.com webkit.org/b/275941
+bool Quirks::needsIPadSkypeOverflowScrollQuirk() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+
+    if (!m_needsIPadSkypeOverflowScrollQuirk)
+        m_needsIPadSkypeOverflowScrollQuirk = m_document->url().host() == "web.skype.com"_s;
+
+    return *m_needsIPadSkypeOverflowScrollQuirk;
 #else
     return false;
 #endif

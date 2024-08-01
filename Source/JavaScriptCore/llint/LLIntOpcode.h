@@ -51,3 +51,26 @@
 #define FOR_EACH_LLINT_OPCODE_EXTENSION(macro) \
     FOR_EACH_BYTECODE_HELPER_ID(macro) \
     FOR_EACH_LLINT_NATIVE_HELPER(macro)
+
+
+#define FOR_EACH_LLINT_OPCODE_WITH_RETURN(macro) \
+    macro(op_call) \
+    macro(op_call_ignore_result) \
+    macro(op_iterator_open) \
+    macro(op_iterator_next) \
+    macro(op_construct) \
+    macro(op_call_varargs) \
+    macro(op_construct_varargs) \
+    macro(op_get_by_id) \
+    macro(op_get_by_id_direct) \
+    macro(op_get_length) \
+    macro(op_get_by_val) \
+    macro(op_put_by_id) \
+    macro(op_put_by_val) \
+    macro(op_put_by_val_direct) \
+    macro(op_in_by_id) \
+    macro(op_in_by_val) \
+    macro(op_enumerator_get_by_val) \
+    macro(op_enumerator_put_by_val) \
+    macro(op_enumerator_in_by_val) \
+

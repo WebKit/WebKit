@@ -293,9 +293,13 @@ const Flag<TestConfig> *FindFlag(const char *name) {
         BoolFlag("-require-any-client-certificate",
                  &TestConfig::require_any_client_certificate),
         StringFlag("-advertise-npn", &TestConfig::advertise_npn),
+        BoolFlag("-advertise-empty-npn", &TestConfig::advertise_empty_npn),
         StringFlag("-expect-next-proto", &TestConfig::expect_next_proto),
+        BoolFlag("-expect-no-next-proto", &TestConfig::expect_no_next_proto),
         BoolFlag("-false-start", &TestConfig::false_start),
         StringFlag("-select-next-proto", &TestConfig::select_next_proto),
+        BoolFlag("-select-empty-next-proto",
+                 &TestConfig::select_empty_next_proto),
         BoolFlag("-async", &TestConfig::async),
         BoolFlag("-write-different-record-sizes",
                  &TestConfig::write_different_record_sizes),
@@ -713,10 +717,6 @@ static int NextProtoSelectCallback(SSL *ssl, uint8_t **out, uint8_t *outlen,
                                    const uint8_t *in, unsigned inlen,
                                    void *arg) {
   const TestConfig *config = GetTestConfig(ssl);
-  if (config->select_next_proto.empty()) {
-    return SSL_TLSEXT_ERR_NOACK;
-  }
-
   *out = (uint8_t *)config->select_next_proto.data();
   *outlen = config->select_next_proto.size();
   return SSL_TLSEXT_ERR_OK;
@@ -725,7 +725,7 @@ static int NextProtoSelectCallback(SSL *ssl, uint8_t **out, uint8_t *outlen,
 static int NextProtosAdvertisedCallback(SSL *ssl, const uint8_t **out,
                                         unsigned int *out_len, void *arg) {
   const TestConfig *config = GetTestConfig(ssl);
-  if (config->advertise_npn.empty()) {
+  if (config->advertise_npn.empty() && !config->advertise_empty_npn) {
     return SSL_TLSEXT_ERR_NOACK;
   }
 
@@ -1721,7 +1721,7 @@ bssl::UniquePtr<SSL_CTX> TestConfig::SetupCtx(SSL_CTX *old_ctx) const {
 
   SSL_CTX_set_next_protos_advertised_cb(ssl_ctx.get(),
                                         NextProtosAdvertisedCallback, NULL);
-  if (!select_next_proto.empty()) {
+  if (!select_next_proto.empty() || select_empty_next_proto) {
     SSL_CTX_set_next_proto_select_cb(ssl_ctx.get(), NextProtoSelectCallback,
                                      NULL);
   }
@@ -2171,6 +2171,14 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
   }
   if (enable_signed_cert_timestamps) {
     SSL_enable_signed_cert_timestamps(ssl.get());
+  }
+  // (D)TLS 1.0 and 1.1 are disabled by default, but the runner expects them to
+  // be enabled.
+  // TODO(davidben): Update the tests to explicitly enable the versions they
+  // need.
+  if (!SSL_set_min_proto_version(
+          ssl.get(), SSL_is_dtls(ssl.get()) ? DTLS1_VERSION : TLS1_VERSION)) {
+    return nullptr;
   }
   if (min_version != 0 &&
       !SSL_set_min_proto_version(ssl.get(), min_version)) {

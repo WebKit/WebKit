@@ -41,14 +41,12 @@
 #include "Options.h"
 #include "ProbeContext.h"
 #include "PureNaN.h"
-#include "RegisterTZoneTypes.h"
 #include <regex>
 #include <string>
 #include <wtf/DataLog.h>
 #include <wtf/Lock.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/StdMap.h>
-#include <wtf/TZoneMallocInitialization.h>
 #include <wtf/Threading.h>
 #include <wtf/WTFProcess.h>
 #include <wtf/text/StringCommon.h>
@@ -2778,15 +2776,8 @@ static void run(const char*)
 
 #endif // ENABLE(B3_JIT)
 
-int main(int argc, char** argv WTF_TZONE_EXTRA_MAIN_ARGS)
+int main(int argc, char** argv)
 {
-#if USE(TZONE_MALLOC)
-    const char* boothash = GET_TZONE_SEED_FROM_ENV(darwinEnvp);
-    WTF_TZONE_INIT(boothash);
-    JSC::registerTZoneTypes();
-    WTF_TZONE_REGISTRATION_DONE();
-#endif
-
     const char* filter = nullptr;
     switch (argc) {
     case 1:

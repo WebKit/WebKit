@@ -612,6 +612,11 @@ static int ecp_nistz256_cmp_x_coordinate(const EC_GROUP *group,
 }
 
 DEFINE_METHOD_FUNCTION(EC_METHOD, EC_GFp_nistz256_method) {
+  // TODO(crbug.com/42290548): The x86_64 assembly depends on initializing
+  // |OPENSSL_ia32cap_P|. Move the dispatch to C. For now, explicitly initialize
+  // things.
+  OPENSSL_init_cpuid();
+
   out->point_get_affine_coordinates = ecp_nistz256_get_affine;
   out->add = ecp_nistz256_add;
   out->dbl = ecp_nistz256_dbl;

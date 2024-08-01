@@ -46,10 +46,9 @@ class DeferredWorkTimer final : public JSRunLoopTimer {
 public:
     using Base = JSRunLoopTimer;
 
-    enum class WorkKind : uint8_t {
-        Other,
-        Atomics,
-        WebAssembly,
+    enum class WorkType : uint8_t {
+        ImminentlyScheduled,
+        AtSomePoint,
     };
 
     class TicketData : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<TicketData>  {
@@ -57,9 +56,9 @@ public:
         WTF_MAKE_TZONE_ALLOCATED(TicketData);
         WTF_MAKE_NONCOPYABLE(TicketData);
     public:
-        inline TicketData(JSGlobalObject*, JSObject* scriptExecutionOwner, Vector<Weak<JSCell>>&& dependencies);
-        inline static Ref<TicketData> create(JSGlobalObject*, JSObject* scriptExecutionOwner, Vector<Weak<JSCell>>&& dependencies);
+        inline static Ref<TicketData> create(WorkType, JSGlobalObject*, JSObject* scriptExecutionOwner, Vector<Weak<JSCell>>&& dependencies);
 
+        WorkType type() const { return m_type; }
         inline VM& vm();
         JSObject* target();
         inline bool hasValidTarget() const;
@@ -71,6 +70,9 @@ public:
         bool isCancelled() const { return !m_scriptExecutionOwner.get() || !m_globalObject.get() || !hasValidTarget(); }
 
     private:
+        inline TicketData(WorkType, JSGlobalObject*, JSObject* scriptExecutionOwner, Vector<Weak<JSCell>>&& dependencies);
+
+        WorkType m_type;
         FixedVector<Weak<JSCell>> m_dependencies;
         Weak<JSObject> m_scriptExecutionOwner;
         Weak<JSGlobalObject> m_globalObject;
@@ -80,8 +82,10 @@ public:
 
     void doWork(VM&) final;
 
-    JS_EXPORT_PRIVATE Ticket addPendingWork(VM&, JSObject* target, Vector<Weak<JSCell>>&& dependencies, WorkKind kind = WorkKind::Other);
-    bool hasAnyPendingWork() const;
+    JS_EXPORT_PRIVATE Ticket addPendingWork(WorkType, VM&, JSObject* target, Vector<Weak<JSCell>>&& dependencies);
+
+    JS_EXPORT_PRIVATE bool hasAnyPendingWork() const;
+    JS_EXPORT_PRIVATE bool hasImminentlyScheduledWork() const;
     bool hasPendingWork(Ticket);
     bool hasDependencyInPendingWork(Ticket, JSCell* dependency);
     bool cancelPendingWork(Ticket);
@@ -101,7 +105,7 @@ public:
 
     static Ref<DeferredWorkTimer> create(VM& vm) { return adoptRef(*new DeferredWorkTimer(vm)); }
 
-    WTF::Function<void(Ref<TicketData>, WorkKind)> onAddPendingWork;
+    WTF::Function<void(Ref<TicketData>, WorkType)> onAddPendingWork;
     WTF::Function<void(Ticket, Task&&)> onScheduleWorkSoon;
     WTF::Function<void(Ticket)> onCancelPendingWork;
 private:

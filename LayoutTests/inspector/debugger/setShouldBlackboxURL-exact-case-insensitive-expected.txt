@@ -1,0 +1,104 @@
+Tests Debugger.setShouldBlackboxURL.
+
+
+== Running test suite: Debugger.setShouldBlackboxURL
+-- Running test case: Debugger.setShouldBlackboxURL.ExactCaseInsensitive.stepOver
+Evaluating 'createScripts("ExactCaseInsensitive_StepOver")'...
+Blackboxing 'exactcaseinsensitive_stepover_middle.js'...
+Setting breakpoint in 'ExactCaseInsensitive_StepOver_Inner.js'...
+Evaluating 'ExactCaseInsensitive_StepOver_Outer(10)'...
+
+PAUSED: 'Breakpoint' at 'ExactCaseInsensitive_StepOver_Inner:3:1'.
+{
+  "breakpointId": "ExactCaseInsensitive_StepOver_Inner.js:3:0"
+}
+Stepping over...
+
+PAUSED: 'BlackboxedScript' at 'ExactCaseInsensitive_StepOver_Outer:3:1'.
+{
+  "originalReason": "other",
+  "originalData": {
+    "breakpointId": "ExactCaseInsensitive_StepOver_Inner.js:3:0"
+  }
+}
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should not pause in 'ExactCaseInsensitive_StepOver_Middle'.
+
+
+-- Running test case: Debugger.setShouldBlackboxURL.ExactCaseInsensitive.PauseInCaller
+Evaluating 'createScripts("ExactCaseInsensitive_PauseInCaller")'...
+Blackboxing 'exactcaseinsensitive_pauseincaller_inner.js'...
+Setting breakpoint in 'ExactCaseInsensitive_PauseInCaller_Inner.js'...
+Evaluating 'ExactCaseInsensitive_PauseInCaller_Outer(10)'...
+
+PAUSED: 'BlackboxedScript' at 'ExactCaseInsensitive_PauseInCaller_Middle:3:1'.
+{
+  "originalReason": "Breakpoint",
+  "originalData": {
+    "breakpointId": "ExactCaseInsensitive_PauseInCaller_Inner.js:2:0"
+  }
+}
+Stepping over...
+
+PAUSED: 'other' at 'ExactCaseInsensitive_PauseInCaller_Outer:3:1'.
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should not pause in 'ExactCaseInsensitive_PauseInCaller_Inner'.
+
+
+-- Running test case: Debugger.setShouldBlackboxURL.ExactCaseInsensitive.PauseInCallee
+Evaluating 'createScripts("ExactCaseInsensitive_PauseInCallee")'...
+Blackboxing 'exactcaseinsensitive_pauseincallee_outer.js'...
+Setting breakpoint in 'ExactCaseInsensitive_PauseInCallee_Outer.js'...
+Evaluating 'ExactCaseInsensitive_PauseInCallee_Outer(10)'...
+
+PAUSED: 'BlackboxedScript' at 'ExactCaseInsensitive_PauseInCallee_Middle:2:4'.
+{
+  "originalReason": "Breakpoint",
+  "originalData": {
+    "breakpointId": "ExactCaseInsensitive_PauseInCallee_Outer.js:2:0"
+  }
+}
+Stepping over...
+
+PAUSED: 'other' at 'ExactCaseInsensitive_PauseInCallee_Middle:3:1'.
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should not pause in 'ExactCaseInsensitive_PauseInCallee_Outer'.
+
+
+-- Running test case: Debugger.setShouldBlackboxURL.ExactCaseInsensitive.SourceRange
+Evaluating 'createScripts("ExactCaseInsensitive_Range")'...
+Blackboxing 'exactcaseinsensitive_range_multiple.js' 3:0-4:0...
+Blackboxing 'exactcaseinsensitive_range_multiple.js' 4:5-4:18...
+Blackboxing 'exactcaseinsensitive_range_multiple.js' 5:1-5:2...
+Setting breakpoint in 'ExactCaseInsensitive_Range_Multiple.js'...
+Evaluating 'ExactCaseInsensitive_Range_Multiple(10)'...
+
+PAUSED: 'Breakpoint' at 'ExactCaseInsensitive_Range_Multiple:2:4'.
+{
+  "breakpointId": "ExactCaseInsensitive_Range_Multiple.js:2:0"
+}
+Stepping over...
+
+PAUSED: 'BlackboxedScript' at 'ExactCaseInsensitive_Range_Multiple:4:4'.
+{
+  "originalReason": "other",
+  "originalData": {
+    "breakpointId": "ExactCaseInsensitive_Range_Multiple.js:2:0"
+  }
+}
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should pause in 'ExactCaseInsensitive_Range_Multiple'.
+
+

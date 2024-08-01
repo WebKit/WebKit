@@ -1,16 +1,9 @@
+CONSOLE MESSAGE: Error: error while filtering
 
-FAIL filter(): Returned Observable filters out results based on predicate source
-    .filter is not a function. (In 'source
-    .filter(value => value % 2 === 0)', 'source
-    .filter' is undefined)
-FAIL filter(): Errors thrown in filter predicate are emitted to Observer error() handler source
-    .filter is not a function. (In 'source
-    .filter(() => {
-      throw error;
-    })', 'source
-    .filter' is undefined)
-FAIL filter(): Passes complete() through from source Observable source.filter is not a function. (In 'source.filter(v => ++predicateCalls)', 'source.filter' is undefined)
-FAIL filter(): Passes error() through from source Observable source.map is not a function. (In 'source.map(v => ++predicateCalls)', 'source.map' is undefined)
-FAIL filter(): Upon source completion, source Observable teardown sequence happens after downstream filter complete() is called source.filter is not a function. (In 'source.filter(() => results.push('filter predicate called'))', 'source.filter' is undefined)
-FAIL filter(): Index is passed correctly to predicate source.filter is not a function. (In 'source.filter((value, index) => indices.push(index))', 'source.filter' is undefined)
+PASS filter(): Returned Observable filters out results based on predicate
+PASS filter(): Errors thrown in filter predicate are emitted to Observer error() handler
+PASS filter(): Passes complete() through from source Observable
+PASS filter(): Passes error() through from source Observable
+PASS filter(): Upon source completion, source Observable teardown sequence happens after downstream filter complete() is called
+PASS filter(): Index is passed correctly to predicate
 

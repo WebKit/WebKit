@@ -244,42 +244,6 @@ TEST_P(RtpPacketHistoryTest, RemovesOldestPacketWhenAtMaxCapacity) {
   EXPECT_TRUE(hist_.GetPacketState(To16u(kStartSeqNum + 1)));
 }
 
-TEST_P(RtpPacketHistoryTest, RemovesLowestPrioPaddingWhenAtMaxCapacity) {
-  if (GetParam() != RtpPacketHistory::PaddingMode::kPriority) {
-    GTEST_SKIP() << "Padding prioritization required for this test";
-  }
-
-  // Tests the absolute upper bound on number of packets in the prioritized
-  // set of potential padding packets.
-  const size_t kMaxNumPackets = RtpPacketHistory::kMaxPaddingHistory;
-  hist_.SetStorePacketsStatus(StorageMode::kStoreAndCull, kMaxNumPackets * 2);
-  hist_.SetRtt(TimeDelta::Millis(1));
-
-  // Add packets until the max is reached, and then yet another one.
-  for (size_t i = 0; i < kMaxNumPackets + 1; ++i) {
-    std::unique_ptr<RtpPacketToSend> packet =
-        CreateRtpPacket(To16u(kStartSeqNum + i));
-    // Don't mark packets as sent, preventing them from being removed.
-    hist_.PutRtpPacket(std::move(packet), fake_clock_.CurrentTime());
-  }
-
-  // Advance time to allow retransmission/padding.
-  fake_clock_.AdvanceTimeMilliseconds(1);
-
-  // The oldest packet will be least prioritized and has fallen out of the
-  // priority set.
-  for (size_t i = kMaxNumPackets - 1; i > 0; --i) {
-    auto packet = hist_.GetPayloadPaddingPacket();
-    ASSERT_TRUE(packet);
-    EXPECT_EQ(packet->SequenceNumber(), To16u(kStartSeqNum + i + 1));
-  }
-
-  // Wrap around to newest padding packet again.
-  auto packet = hist_.GetPayloadPaddingPacket();
-  ASSERT_TRUE(packet);
-  EXPECT_EQ(packet->SequenceNumber(), To16u(kStartSeqNum + kMaxNumPackets));
-}
-
 TEST_P(RtpPacketHistoryTest, DontRemoveTooRecentlyTransmittedPackets) {
   // Set size to remove old packets as soon as possible.
   hist_.SetStorePacketsStatus(StorageMode::kStoreAndCull, 1);
@@ -530,46 +494,6 @@ TEST_P(RtpPacketHistoryTest, DontRemovePendingTransmissions) {
   EXPECT_FALSE(hist_.GetPacketState(kStartSeqNum));
 }
 
-TEST_P(RtpPacketHistoryTest, PrioritizedPayloadPadding) {
-  if (GetParam() != RtpPacketHistory::PaddingMode::kPriority) {
-    GTEST_SKIP() << "Padding prioritization required for this test";
-  }
-
-  hist_.SetStorePacketsStatus(StorageMode::kStoreAndCull, 1);
-
-  // Add two sent packets, one millisecond apart.
-  hist_.PutRtpPacket(CreateRtpPacket(kStartSeqNum), fake_clock_.CurrentTime());
-  fake_clock_.AdvanceTimeMilliseconds(1);
-
-  hist_.PutRtpPacket(CreateRtpPacket(kStartSeqNum + 1),
-                     fake_clock_.CurrentTime());
-  fake_clock_.AdvanceTimeMilliseconds(1);
-
-  // Latest packet given equal retransmission count.
-  EXPECT_EQ(hist_.GetPayloadPaddingPacket()->SequenceNumber(),
-            kStartSeqNum + 1);
-
-  // Older packet has lower retransmission count.
-  EXPECT_EQ(hist_.GetPayloadPaddingPacket()->SequenceNumber(), kStartSeqNum);
-
-  // Equal retransmission count again, use newest packet.
-  EXPECT_EQ(hist_.GetPayloadPaddingPacket()->SequenceNumber(),
-            kStartSeqNum + 1);
-
-  // Older packet has lower retransmission count.
-  EXPECT_EQ(hist_.GetPayloadPaddingPacket()->SequenceNumber(), kStartSeqNum);
-
-  // Remove newest packet.
-  hist_.CullAcknowledgedPackets(std::vector<uint16_t>{kStartSeqNum + 1});
-
-  // Only older packet left.
-  EXPECT_EQ(hist_.GetPayloadPaddingPacket()->SequenceNumber(), kStartSeqNum);
-
-  hist_.CullAcknowledgedPackets(std::vector<uint16_t>{kStartSeqNum});
-
-  EXPECT_EQ(hist_.GetPayloadPaddingPacket(), nullptr);
-}
-
 TEST_P(RtpPacketHistoryTest, NoPendingPacketAsPadding) {
   hist_.SetStorePacketsStatus(StorageMode::kStoreAndCull, 1);
 
@@ -651,7 +575,7 @@ TEST_P(RtpPacketHistoryTest, OutOfOrderInsertRemoval) {
   }
 }
 
-TEST_P(RtpPacketHistoryTest, UsesLastPacketAsPaddingWithPrioOff) {
+TEST_P(RtpPacketHistoryTest, UsesLastPacketAsPaddingWithDefaultMode) {
   if (GetParam() != RtpPacketHistory::PaddingMode::kDefault) {
     GTEST_SKIP() << "Default padding prioritization required for this test";
   }
@@ -697,7 +621,6 @@ INSTANTIATE_TEST_SUITE_P(
     WithAndWithoutPaddingPrio,
     RtpPacketHistoryTest,
     ::testing::Values(RtpPacketHistory::PaddingMode::kDefault,
-                      RtpPacketHistory::PaddingMode::kPriority,
                       RtpPacketHistory::PaddingMode::kRecentLargePacket));
 
 TEST(RtpPacketHistoryRecentLargePacketMode,

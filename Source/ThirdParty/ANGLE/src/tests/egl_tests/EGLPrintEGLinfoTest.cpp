@@ -144,8 +144,11 @@ TEST_P(EGLPrintEGLinfoTest, PrintGLInfo)
 
     {
         std::vector<uint8_t> jsonData = json.getData();
-        SaveFileHelper saveFile(artifactPath);
-        saveFile.write(jsonData.data(), jsonData.size());
+
+        FILE *fp = fopen(artifactPath.c_str(), "wb");
+        ASSERT(fp);
+        fwrite(jsonData.data(), sizeof(uint8_t), jsonData.size(), fp);
+        fclose(fp);
     }
 #endif  // defined(ANGLE_HAS_RAPIDJSON)
 }

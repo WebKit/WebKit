@@ -114,18 +114,18 @@ int vp9_cyclic_refresh_estimate_bits_at_q(const VP9_COMP *cpi,
   double weight_segment1 = (double)cr->actual_num_seg1_blocks / num8x8bl;
   double weight_segment2 = (double)cr->actual_num_seg2_blocks / num8x8bl;
   // Take segment weighted average for estimated bits.
-  estimated_bits =
-      (int)((1.0 - weight_segment1 - weight_segment2) *
-                vp9_estimate_bits_at_q(cm->frame_type, cm->base_qindex, mbs,
-                                       correction_factor, cm->bit_depth) +
-            weight_segment1 *
-                vp9_estimate_bits_at_q(cm->frame_type,
-                                       cm->base_qindex + cr->qindex_delta[1],
-                                       mbs, correction_factor, cm->bit_depth) +
-            weight_segment2 *
-                vp9_estimate_bits_at_q(cm->frame_type,
-                                       cm->base_qindex + cr->qindex_delta[2],
-                                       mbs, correction_factor, cm->bit_depth));
+  estimated_bits = (int)round(
+      (1.0 - weight_segment1 - weight_segment2) *
+          vp9_estimate_bits_at_q(cm->frame_type, cm->base_qindex, mbs,
+                                 correction_factor, cm->bit_depth) +
+      weight_segment1 *
+          vp9_estimate_bits_at_q(cm->frame_type,
+                                 cm->base_qindex + cr->qindex_delta[1], mbs,
+                                 correction_factor, cm->bit_depth) +
+      weight_segment2 *
+          vp9_estimate_bits_at_q(cm->frame_type,
+                                 cm->base_qindex + cr->qindex_delta[2], mbs,
+                                 correction_factor, cm->bit_depth));
   return estimated_bits;
 }
 
@@ -145,12 +145,13 @@ int vp9_cyclic_refresh_rc_bits_per_mb(const VP9_COMP *cpi, int i,
   else
     deltaq = -(cr->max_qdelta_perc * i) / 200;
   // Take segment weighted average for bits per mb.
-  bits_per_mb = (int)((1.0 - cr->weight_segment) *
-                          vp9_rc_bits_per_mb(cm->frame_type, i,
-                                             correction_factor, cm->bit_depth) +
-                      cr->weight_segment *
-                          vp9_rc_bits_per_mb(cm->frame_type, i + deltaq,
-                                             correction_factor, cm->bit_depth));
+  bits_per_mb =
+      (int)round((1.0 - cr->weight_segment) *
+                     vp9_rc_bits_per_mb(cm->frame_type, i, correction_factor,
+                                        cm->bit_depth) +
+                 cr->weight_segment *
+                     vp9_rc_bits_per_mb(cm->frame_type, i + deltaq,
+                                        correction_factor, cm->bit_depth));
   return bits_per_mb;
 }
 

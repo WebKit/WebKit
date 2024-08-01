@@ -12,14 +12,14 @@ if (window.testRunner) {
     testRunner.setAlwaysAcceptCookies(false);
 }
 
-function runTest()
+async function runTest()
 {
     if (window.eventSender) {
         // Click somewhere on the button!
         var form = document.getElementById("form");
-        eventSender.mouseMoveTo(form.offsetLeft + 5, form.offsetTop + 5);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(form.offsetLeft + 5, form.offsetTop + 5);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
     }
 }
 </script>

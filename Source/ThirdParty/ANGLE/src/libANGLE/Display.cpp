@@ -2118,6 +2118,7 @@ static ClientExtensions GenerateClientExtensions()
 
 #if defined(ANGLE_ENABLE_D3D11)
     extensions.platformANGLED3D11ON12 = angle::IsWindows10OrLater();
+    extensions.platformANGLED3DLUID   = true;
     extensions.platformANGLEDeviceId  = true;
 #endif
 

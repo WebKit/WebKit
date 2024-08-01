@@ -10,7 +10,11 @@
 
 #include "api/rtc_event_log_output_file.h"
 
+#include <stdio.h>
+
+#include <cstddef>
 #include <fstream>
+#include <ios>
 #include <iterator>
 #include <memory>
 #include <string>

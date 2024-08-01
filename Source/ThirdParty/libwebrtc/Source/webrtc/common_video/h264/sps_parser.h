@@ -38,6 +38,7 @@ class RTC_EXPORT SpsParser {
     uint32_t width = 0;
     uint32_t height = 0;
     uint32_t delta_pic_order_always_zero_flag = 0;
+    uint32_t chroma_format_idc = 1;
     uint32_t separate_colour_plane_flag = 0;
     uint32_t frame_mbs_only_flag = 0;
     uint32_t log2_max_frame_num = 4;          // Smallest valid value.
@@ -49,7 +50,12 @@ class RTC_EXPORT SpsParser {
   };
 
   // Unpack RBSP and parse SPS state from the supplied buffer.
-  static absl::optional<SpsState> ParseSps(const uint8_t* data, size_t length);
+  static absl::optional<SpsState> ParseSps(rtc::ArrayView<const uint8_t> data);
+  // TODO: bugs.webrtc.org/42225170 - Deprecate.
+  static inline absl::optional<SpsState> ParseSps(const uint8_t* data,
+                                                  size_t length) {
+    return ParseSps(rtc::MakeArrayView(data, length));
+  }
 
  protected:
   // Parse the SPS state, up till the VUI part, for a buffer where RBSP

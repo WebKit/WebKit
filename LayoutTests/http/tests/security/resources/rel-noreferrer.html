@@ -2,13 +2,12 @@
 <head>
 <meta name="referrer" content="always" />
 <script>
-function runTest() {
+async function runTest() {
     var link = document.getElementById("link");
     var iframe = window.parent.document.getElementsByTagName("iframe")[0];
-    eventSender.mouseMoveTo(link.offsetLeft + iframe.offsetLeft + 2,
-                            link.offsetTop + iframe.offsetTop + 2);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(link.offsetLeft + iframe.offsetLeft + 2, link.offsetTop + iframe.offsetTop + 2);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
 }
 </script>
 </head>

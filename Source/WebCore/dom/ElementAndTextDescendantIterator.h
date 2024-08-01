@@ -34,7 +34,7 @@ namespace WebCore {
 
 class ElementAndTextDescendantIterator {
 public:
-    ElementAndTextDescendantIterator();
+    ElementAndTextDescendantIterator() = default;
     enum FirstChildTag { FirstChild };
     ElementAndTextDescendantIterator(const ContainerNode& root, FirstChildTag);
     ElementAndTextDescendantIterator(const ContainerNode& root, Node* current);
@@ -68,9 +68,9 @@ private:
 
     void popAncestorSiblingStack();
 
-    Node* m_current;
+    CheckedPtr<Node> m_current;
     struct AncestorSibling {
-        Node* node;
+        CheckedPtr<Node> node;
         unsigned depth;
     };
     Vector<AncestorSibling, 16> m_ancestorSiblingStack;
@@ -88,22 +88,17 @@ public:
     ElementAndTextDescendantIterator end() const;
 
 private:
-    const ContainerNode& m_root;
+    CheckedRef<const ContainerNode> m_root;
 };
 
 ElementAndTextDescendantRange elementAndTextDescendants(ContainerNode&);
 
 // ElementAndTextDescendantIterator
 
-inline ElementAndTextDescendantIterator::ElementAndTextDescendantIterator()
-    : m_current(nullptr)
-{
-}
-
 inline ElementAndTextDescendantIterator::ElementAndTextDescendantIterator(const ContainerNode& root, FirstChildTag)
     : m_current(firstChild(root))
 #if ASSERT_ENABLED
-    , m_assertions(m_current)
+    , m_assertions(m_current.get())
 #endif
 {
     if (!m_current)
@@ -115,7 +110,7 @@ inline ElementAndTextDescendantIterator::ElementAndTextDescendantIterator(const 
 inline ElementAndTextDescendantIterator::ElementAndTextDescendantIterator(const ContainerNode& root, Node* current)
     : m_current(current)
 #if ASSERT_ENABLED
-    , m_assertions(m_current)
+    , m_assertions(m_current.get())
 #endif
 {
     if (!m_current)
@@ -263,7 +258,7 @@ inline Node* ElementAndTextDescendantIterator::operator->()
     ASSERT(m_current);
     ASSERT(isElementOrText(*m_current));
     ASSERT(!m_assertions.domTreeHasMutated());
-    return m_current;
+    return m_current.get();
 }
 
 inline const Node& ElementAndTextDescendantIterator::operator*() const
@@ -279,7 +274,7 @@ inline const Node* ElementAndTextDescendantIterator::operator->() const
     ASSERT(m_current);
     ASSERT(isElementOrText(*m_current));
     ASSERT(!m_assertions.domTreeHasMutated());
-    return m_current;
+    return m_current.get();
 }
 
 inline bool ElementAndTextDescendantIterator::operator==(const ElementAndTextDescendantIterator& other) const
@@ -297,7 +292,7 @@ inline ElementAndTextDescendantRange::ElementAndTextDescendantRange(const Contai
 
 inline ElementAndTextDescendantIterator ElementAndTextDescendantRange::begin() const
 {
-    return ElementAndTextDescendantIterator(m_root, ElementAndTextDescendantIterator::FirstChild);
+    return ElementAndTextDescendantIterator(m_root.get(), ElementAndTextDescendantIterator::FirstChild);
 }
 
 inline ElementAndTextDescendantIterator ElementAndTextDescendantRange::end() const

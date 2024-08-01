@@ -37,12 +37,12 @@
 
 namespace WebKit {
 
-SpeechRecognitionServer::SpeechRecognitionServer(Ref<IPC::Connection>&& connection, SpeechRecognitionServerIdentifier identifier, SpeechRecognitionPermissionChecker&& permissionChecker, SpeechRecognitionCheckIfMockSpeechRecognitionEnabled&& checkIfEnabled
+SpeechRecognitionServer::SpeechRecognitionServer(WebProcessProxy& process, SpeechRecognitionServerIdentifier identifier, SpeechRecognitionPermissionChecker&& permissionChecker, SpeechRecognitionCheckIfMockSpeechRecognitionEnabled&& checkIfEnabled
 #if ENABLE(MEDIA_STREAM)
     , RealtimeMediaSourceCreateFunction&& function
 #endif
     )
-    : m_connection(WTFMove(connection))
+    : m_process(process)
     , m_identifier(identifier)
     , m_permissionChecker(WTFMove(permissionChecker))
     , m_checkIfMockSpeechRecognitionEnabled(WTFMove(checkIfEnabled))
@@ -50,6 +50,11 @@ SpeechRecognitionServer::SpeechRecognitionServer(Ref<IPC::Connection>&& connecti
     , m_realtimeMediaSourceCreateFunction(WTFMove(function))
 #endif
 {
+}
+
+const SharedPreferencesForWebProcess& SpeechRecognitionServer::sharedPreferencesForWebProcess() const
+{
+    return *m_process->sharedPreferencesForWebProcess();
 }
 
 void SpeechRecognitionServer::start(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&& origin, WebCore::FrameIdentifier frameIdentifier)
@@ -164,7 +169,7 @@ void SpeechRecognitionServer::sendUpdate(const WebCore::SpeechRecognitionUpdate&
 
 IPC::Connection* SpeechRecognitionServer::messageSenderConnection() const
 {
-    return m_connection.ptr();
+    return m_process->connection();
 }
 
 uint64_t SpeechRecognitionServer::messageSenderDestinationID() const

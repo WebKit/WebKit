@@ -112,8 +112,10 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     // FIXME: We use only the first structure of the caps. This not be the right approach specially
     // we don't have a payloader or encoder for that format.
     GUniquePtr<GstStructure> structure(gst_structure_copy(gst_caps_get_structure(caps.get(), 0)));
-    auto encoding = StringView::fromLatin1(gst_structure_get_string(structure.get(), "encoding-name")).convertToASCIILowercase();
-    if (encoding.isNull()) {
+    String encoding;
+    if (auto encodingName = gstStructureGetString(structure.get(), "encoding-name"_s))
+        encoding = encodingName.convertToASCIILowercase();
+    else {
         GST_ERROR_OBJECT(m_bin.get(), "encoding-name not found");
         return false;
     }
@@ -139,25 +141,25 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
 
         VPCodecConfigurationRecord record;
         record.codecName = "vp09"_s;
-        if (const char* vp9Profile = gst_structure_get_string(structure.get(), "vp9-profile-id"))
-            if (auto profile = parseInteger<uint8_t>(StringView::fromLatin1(vp9Profile)))
+        if (auto vp9Profile = gstStructureGetString(structure.get(), "vp9-profile-id"_s)) {
+            if (auto profile = parseInteger<uint8_t>(vp9Profile))
                 record.profile = *profile;
+        }
         codec = createVPCodecParametersString(record);
     } else if (encoding == "h264"_s) {
         gst_util_set_object_arg(G_OBJECT(m_payloader.get()), "aggregate-mode", "zero-latency");
         g_object_set(m_payloader.get(), "config-interval", -1, nullptr);
 
-        const char* profile = gst_structure_get_string(structure.get(), "profile");
-        if (!profile)
-            profile = "baseline";
+        auto profileValue = gstStructureGetString(structure.get(), "profile"_s);
+        auto profile = profileValue ? profileValue : "baseline"_s;
 
         AVCParameters parameters;
-        if (g_str_equal(profile, "baseline"))
+        if (profile == "baseline"_s)
             parameters.profileIDC = 66;
-        else if (g_str_equal(profile, "constrained-baseline")) {
+        else if (profile == "constrained-baseline"_s) {
             parameters.profileIDC = 66;
             parameters.constraintsFlags |= 0x40 << 6;
-        } else if (g_str_equal(profile, "main"))
+        } else if (profile == "main"_s)
             parameters.profileIDC = 77;
 
         codec = createAVCCodecParametersString(parameters);

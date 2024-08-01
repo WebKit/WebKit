@@ -612,6 +612,7 @@ L$done:
 .p2align	5
 _gcm_init_avx:
 
+
 _CET_ENDBR
 	vzeroupper
 
@@ -733,6 +734,7 @@ _CET_ENDBR
 
 .p2align	5
 _gcm_ghash_avx:
+
 
 _CET_ENDBR
 	vzeroupper

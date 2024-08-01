@@ -263,7 +263,7 @@ TEST(WKWebExtensionAPICookies, GetAllIncognito)
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     auto *privateWindow = [manager openNewWindowUsingPrivateBrowsing:YES];
-    auto *cookieStore = privateWindow.activeTab.mainWebView.configuration.websiteDataStore.httpCookieStore;
+    auto *cookieStore = privateWindow.activeTab.webView.configuration.websiteDataStore.httpCookieStore;
 
     auto *cookie1 = [NSHTTPCookie cookieWithProperties:@{
         NSHTTPCookieName: @"testCookie1",
@@ -339,7 +339,7 @@ TEST(WKWebExtensionAPICookies, GetAllIncognitoWithPrivateAccess)
     manager.get().context.hasAccessInPrivateBrowsing = YES;
 
     auto *privateWindow = [manager openNewWindowUsingPrivateBrowsing:YES];
-    auto *cookieStore = privateWindow.activeTab.mainWebView.configuration.websiteDataStore.httpCookieStore;
+    auto *cookieStore = privateWindow.activeTab.webView.configuration.websiteDataStore.httpCookieStore;
 
     auto *cookie1 = [NSHTTPCookie cookieWithProperties:@{
         NSHTTPCookieName: @"testCookie1",

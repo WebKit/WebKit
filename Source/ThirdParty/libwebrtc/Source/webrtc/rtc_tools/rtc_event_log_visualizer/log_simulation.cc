@@ -27,7 +27,7 @@
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "logging/rtc_event_log/rtc_event_processor.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "modules/rtp_rtcp/source/time_util.h"
+#include "modules/rtp_rtcp/source/ntp_time_util.h"
 #include "rtc_base/network/sent_packet.h"
 #include "system_wrappers/include/clock.h"
 

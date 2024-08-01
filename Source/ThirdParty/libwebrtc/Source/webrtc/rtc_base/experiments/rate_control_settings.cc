@@ -16,7 +16,6 @@
 #include <string>
 
 #include "absl/strings/match.h"
-#include "api/transport/field_trial_based_config.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
@@ -86,10 +85,6 @@ RateControlSettings::RateControlSettings(
 
 RateControlSettings::~RateControlSettings() = default;
 RateControlSettings::RateControlSettings(RateControlSettings&&) = default;
-
-RateControlSettings RateControlSettings::ParseFromFieldTrials() {
-  return RateControlSettings(FieldTrialBasedConfig());
-}
 
 bool RateControlSettings::UseCongestionWindow() const {
   return static_cast<bool>(congestion_window_config_.queue_size_ms);

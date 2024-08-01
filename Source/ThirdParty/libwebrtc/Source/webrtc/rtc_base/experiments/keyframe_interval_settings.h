@@ -17,20 +17,18 @@
 
 namespace webrtc {
 
-// TODO(bugs.webrtc.org/10427): Remove and replace with proper configuration
+// TODO: bugs.webrtc.org/42220470 - Remove and replace with proper configuration
 // parameter, or move to using FIR if intent is to avoid triggering multiple
 // times to PLIs corresponding to the same request when RTT is large.
 class KeyframeIntervalSettings final {
  public:
-  static KeyframeIntervalSettings ParseFromFieldTrials();
+  explicit KeyframeIntervalSettings(const FieldTrialsView& key_value_config);
 
   // Sender side.
   // The encoded keyframe send rate is <= 1/MinKeyframeSendIntervalMs().
   absl::optional<int> MinKeyframeSendIntervalMs() const;
 
  private:
-  explicit KeyframeIntervalSettings(const FieldTrialsView* key_value_config);
-
   FieldTrialOptional<int> min_keyframe_send_interval_ms_;
 };
 

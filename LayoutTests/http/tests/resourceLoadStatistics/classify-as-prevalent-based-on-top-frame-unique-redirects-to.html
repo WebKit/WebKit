@@ -28,7 +28,7 @@
         setEnableFeature(false, finishJSTest);
     }
 
-    function runTest() {
+    async function runTest() {
         testRunner.setStatisticsTopFrameUniqueRedirectTo(statisticsUrl, topFrameOrigin1);
         testRunner.setStatisticsTopFrameUniqueRedirectTo(statisticsUrl, topFrameOrigin2);
         testRunner.setStatisticsTopFrameUniqueRedirectTo(statisticsUrl, topFrameOrigin3);
@@ -36,7 +36,7 @@
 
         testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
 
-        testRunner.statisticsProcessStatisticsAndDataRecords();
+        await testRunner.statisticsProcessStatisticsAndDataRecords();
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {

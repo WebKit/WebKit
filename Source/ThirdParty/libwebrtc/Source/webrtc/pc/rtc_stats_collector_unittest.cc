@@ -2201,6 +2201,7 @@ TEST_F(RTCStatsCollectorTest, CollectRTCInboundRtpStreamStats_Audio) {
   voice_media_info.receivers[0].interruption_count = 7788;
   voice_media_info.receivers[0].total_interruption_duration_ms = 778899;
   voice_media_info.receivers[0].last_packet_received = absl::nullopt;
+  voice_media_info.receivers[0].total_processing_delay_seconds = 0.123;
 
   RtpCodecParameters codec_parameters;
   codec_parameters.payload_type = 42;
@@ -2258,6 +2259,7 @@ TEST_F(RTCStatsCollectorTest, CollectRTCInboundRtpStreamStats_Audio) {
   expected_audio.relative_packet_arrival_delay = 16;
   expected_audio.interruption_count = 7788;
   expected_audio.total_interruption_duration = 778.899;
+  expected_audio.total_processing_delay = 0.123;
   expected_audio.playout_id = "AP";
 
   ASSERT_TRUE(report->Get(expected_audio.id()));
@@ -3759,7 +3761,7 @@ class FakeRTCStatsCollector : public RTCStatsCollector,
   // Satisfying the implementation of these methods and associating them with a
   // reference counter, will be done by RefCountedObject.
   virtual void AddRef() const = 0;
-  virtual rtc::RefCountReleaseStatus Release() const = 0;
+  virtual RefCountReleaseStatus Release() const = 0;
 
   // RTCStatsCollectorCallback implementation.
   void OnStatsDelivered(

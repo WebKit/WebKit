@@ -80,6 +80,14 @@ static bool isWebKitInjectedScript(const String& sourceURL)
     return sourceURL.startsWith("__InjectedScript_"_s) && sourceURL.endsWith(".js"_s);
 }
 
+static JSC::Debugger::BlackboxRange blackboxRange(const JSC::Debugger::Script& script)
+{
+    return {
+        { OrdinalNumber::fromZeroBasedInt(script.startLine), OrdinalNumber::fromZeroBasedInt(script.startColumn) },
+        { OrdinalNumber::fromZeroBasedInt(script.endLine), OrdinalNumber::fromZeroBasedInt(script.endColumn) },
+    };
+}
+
 static std::optional<JSC::Breakpoint::Action::Type> breakpointActionTypeForString(Protocol::ErrorString& errorString, const String& typeString)
 {
     auto type = Protocol::Helpers::parseEnumValueFromString<Protocol::Debugger::BreakpointAction::Type>(typeString);
@@ -264,15 +272,8 @@ void InspectorDebuggerAgent::internalEnable()
     for (auto* listener : copyToVector(m_listeners))
         listener->debuggerWasEnabled();
 
-    for (auto& [sourceID, script] : m_scripts) {
-        std::optional<JSC::Debugger::BlackboxType> blackboxType;
-        if (isWebKitInjectedScript(script.sourceURL)) {
-            if (!m_pauseForInternalScripts)
-                blackboxType = JSC::Debugger::BlackboxType::Ignored;
-        } else if (shouldBlackboxURL(script.sourceURL) || shouldBlackboxURL(script.url))
-            blackboxType = JSC::Debugger::BlackboxType::Deferred;
-        m_debugger.setBlackboxType(sourceID, blackboxType);
-    }
+    for (auto& [sourceID, script] : m_scripts)
+        setBlackboxConfiguration(sourceID, script);
 }
 
 void InspectorDebuggerAgent::internalDisable(bool isBeingDestroyed)
@@ -1296,7 +1297,7 @@ Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::op
     return { { result.releaseNonNull(), WTFMove(wasThrown), WTFMove(savedResultIndex) } };
 }
 
-Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setShouldBlackboxURL(const String& url, bool shouldBlackbox, std::optional<bool>&& optionalCaseSensitive, std::optional<bool>&& optionalIsRegex)
+Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setShouldBlackboxURL(const String& url, bool shouldBlackbox, std::optional<bool>&& optionalCaseSensitive, std::optional<bool>&& optionalIsRegex, RefPtr<JSON::Array>&& protocolSourceRanges)
 {
     if (url.isEmpty())
         return makeUnexpected("URL must not be empty"_s);
@@ -1307,36 +1308,105 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setShouldBlackboxURL(const
     if (!caseSensitive && !isRegex && isWebKitInjectedScript(url))
         return makeUnexpected("Blackboxing of internal scripts is controlled by 'Debugger.setPauseForInternalScripts'"_s);
 
-    BlackboxConfig config { url, caseSensitive, isRegex };
-    if (shouldBlackbox)
-        m_blackboxedURLs.appendIfNotContains(config);
-    else
-        m_blackboxedURLs.removeAll(config);
+    if (shouldBlackbox) {
+        HashSet<JSC::Debugger::BlackboxRange> blackboxRanges;
+        if (protocolSourceRanges) {
+            if (protocolSourceRanges->length() % 4)
+                return makeUnexpected("Unexpected format for given sourceRanges"_s);
+
+            int startLine = -1;
+            int startColumn = -1;
+            int endLine = -1;
+            for (auto&& value : WTFMove(*protocolSourceRanges)) {
+                auto integer = value->asInteger();
+                if (!integer)
+                    return makeUnexpected("Unexpected non-integer item in given sourceRanges"_s);
+                if (*integer < 0)
+                    return makeUnexpected("Unexpected negative item in given sourceRanges"_s);
+
+                if (startLine == -1) {
+                    startLine = *integer;
+                    continue;
+                }
+                if (startColumn == -1) {
+                    startColumn = *integer;
+                    continue;
+                }
+                if (endLine == -1) {
+                    endLine = *integer;
+                    continue;
+                }
+                int endColumn = *integer;
+
+                if (startLine > endLine)
+                    return makeUnexpected("Unexpected endLine before startLine in given sourceRanges"_s);
+
+                if (startLine == endLine && startColumn >= endColumn)
+                    return makeUnexpected("Unexpected endColumn before startColumn in given sourceRanges"_s);
+
+                blackboxRanges.add({
+                    { OrdinalNumber::fromZeroBasedInt(startLine), OrdinalNumber::fromZeroBasedInt(startColumn) },
+                    { OrdinalNumber::fromZeroBasedInt(endLine), OrdinalNumber::fromZeroBasedInt(endColumn) },
+                });
+
+                startLine = -1;
+                startColumn = -1;
+                endLine = -1;
+            }
+            ASSERT(startLine == -1);
+            ASSERT(startColumn == -1);
+            ASSERT(endLine == -1);
+        }
+        m_blackboxedURLs.set({ url, caseSensitive, isRegex }, WTFMove(blackboxRanges));
+    } else
+        m_blackboxedURLs.remove({ url, caseSensitive, isRegex });
 
     for (auto& [sourceID, script] : m_scripts) {
         if (isWebKitInjectedScript(script.sourceURL))
             continue;
 
-        std::optional<JSC::Debugger::BlackboxType> blackboxType;
-        if (shouldBlackboxURL(script.sourceURL) || shouldBlackboxURL(script.url))
-            blackboxType = JSC::Debugger::BlackboxType::Deferred;
-        m_debugger.setBlackboxType(sourceID, blackboxType);
+        setBlackboxConfiguration(sourceID, script);
     }
 
     return { };
 }
 
-bool InspectorDebuggerAgent::shouldBlackboxURL(const String& url) const
+void InspectorDebuggerAgent::setBlackboxConfiguration(JSC::SourceID sourceID, const JSC::Debugger::Script& script)
 {
-    if (!url.isEmpty()) {
-        for (const auto& blackboxConfig : m_blackboxedURLs) {
-            auto searchStringType = blackboxConfig.isRegex ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ExactString;
-            auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(blackboxConfig.url, blackboxConfig.caseSensitive, searchStringType);
-            if (regex.match(url) != -1)
-                return true;
+    JSC::Debugger::BlackboxConfiguration blackboxConfiguration;
+
+    if (!m_pauseForInternalScripts && isWebKitInjectedScript(script.sourceURL)) {
+        auto& blackboxFlags = blackboxConfiguration.ensure(blackboxRange(script), [] {
+            return JSC::Debugger::BlackboxFlags();
+        }).iterator->value;
+        blackboxFlags.add(JSC::Debugger::BlackboxFlag::Ignore);
+    }
+
+    for (const auto& [blackboxParameters, blackboxRanges] : m_blackboxedURLs) {
+        const auto& [url, caseSensitive, isRegex] = blackboxParameters;
+
+        auto searchStringType = isRegex ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ExactString;
+        auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(url, caseSensitive, searchStringType);
+        if ((script.sourceURL.isEmpty() || regex.match(script.sourceURL) == -1) && (script.url.isEmpty() || regex.match(script.url) == -1))
+            continue;
+
+        if (blackboxRanges.isEmpty()) {
+            auto& blackboxFlags = blackboxConfiguration.ensure(blackboxRange(script), [] {
+                return JSC::Debugger::BlackboxFlags();
+            }).iterator->value;
+            blackboxFlags.add(JSC::Debugger::BlackboxFlag::Defer);
+            continue;
+        }
+
+        for (const auto& blackboxRange : blackboxRanges) {
+            auto& blackboxFlags = blackboxConfiguration.ensure(blackboxRange, [] {
+                return JSC::Debugger::BlackboxFlags();
+            }).iterator->value;
+            blackboxFlags.add(JSC::Debugger::BlackboxFlag::Defer);
         }
     }
-    return false;
+
+    m_debugger.setBlackboxConfiguration(sourceID, WTFMove(blackboxConfiguration));
 }
 
 Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setBlackboxBreakpointEvaluations(bool blackboxBreakpointEvaluations)
@@ -1373,11 +1443,11 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setPauseForInternalScripts
 
     m_pauseForInternalScripts = shouldPause;
 
-    auto blackboxType = !m_pauseForInternalScripts ? std::optional<JSC::Debugger::BlackboxType>(JSC::Debugger::BlackboxType::Ignored) : std::nullopt;
     for (auto& [sourceID, script] : m_scripts) {
         if (!isWebKitInjectedScript(script.sourceURL))
             continue;
-        m_debugger.setBlackboxType(sourceID, blackboxType);
+
+        setBlackboxConfiguration(sourceID, script);
     }
 
     return { };
@@ -1536,15 +1606,11 @@ void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const JSC::D
 
     m_scripts.set(sourceID, script);
 
-    if (isWebKitInjectedScript(sourceURL)) {
-        if (!m_pauseForInternalScripts)
-            m_debugger.setBlackboxType(sourceID, JSC::Debugger::BlackboxType::Ignored);
-    } else if (shouldBlackboxURL(sourceURL) || shouldBlackboxURL(script.url))
-        m_debugger.setBlackboxType(sourceID, JSC::Debugger::BlackboxType::Deferred);
-
     String scriptURLForBreakpoints = hasSourceURL ? script.sourceURL : script.url;
     if (scriptURLForBreakpoints.isEmpty())
         return;
+
+    setBlackboxConfiguration(sourceID, script);
 
     for (auto& protocolBreakpoint : m_protocolBreakpointForProtocolBreakpointID.values()) {
         if (!protocolBreakpoint.matchesScriptURL(scriptURLForBreakpoints))

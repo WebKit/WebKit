@@ -39,7 +39,8 @@ MemoryShaderCache::~MemoryShaderCache() {}
 
 egl::CacheGetResult MemoryShaderCache::getShader(const Context *context,
                                                  Shader *shader,
-                                                 const egl::BlobCache::Key &shaderHash)
+                                                 const egl::BlobCache::Key &shaderHash,
+                                                 angle::JobResultExpectancy resultExpectancy)
 {
     // If caching is effectively disabled, don't bother calculating the hash.
     if (!mBlobCache.isCachingEnabled())
@@ -63,7 +64,7 @@ egl::CacheGetResult MemoryShaderCache::getShader(const Context *context,
 
         case egl::BlobCache::GetAndDecompressResult::Success:
             if (shader->loadBinary(context, uncompressedData.data(),
-                                   static_cast<int>(uncompressedData.size())))
+                                   static_cast<int>(uncompressedData.size()), resultExpectancy))
             {
                 return egl::CacheGetResult::Success;
             }

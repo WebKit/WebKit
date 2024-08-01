@@ -28,11 +28,8 @@ namespace webrtc {
 TEST(AcmRemixing, DownMixFrame) {
   std::vector<int16_t> out(480, 0);
   AudioFrame in;
-  in.num_channels_ = 2;
-  in.samples_per_channel_ = 480;
-
-  int16_t* const in_data = in.mutable_data();
-  for (size_t k = 0; k < in.samples_per_channel_; ++k) {
+  InterleavedView<int16_t> const in_data = in.mutable_data(480, 2);
+  for (size_t k = 0; k < in_data.samples_per_channel(); ++k) {
     in_data[2 * k] = 2;
     in_data[2 * k + 1] = 0;
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -18,6 +18,7 @@ using std::make_tuple;
 using std::tuple;
 
 namespace libaom_test {
+namespace {
 
 int32_t random_warped_param(libaom_test::ACMRandom *rnd, int bits,
                             int rnd_gen_zeros) {
@@ -113,6 +114,8 @@ void generate_warped_model(libaom_test::ACMRandom *rnd, int32_t *mat,
     return;
   }
 }
+
+}  // namespace
 
 namespace AV1WarpFilter {
 ::testing::internal::ParamGenerator<WarpTestParams> BuildParams(

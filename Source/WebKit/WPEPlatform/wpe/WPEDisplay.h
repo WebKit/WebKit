@@ -62,6 +62,7 @@ struct _WPEDisplayClass
                                                                guint       index);
     const char             *(* get_drm_device)                (WPEDisplay *display);
     const char             *(* get_drm_render_node)           (WPEDisplay *display);
+    gboolean                (* use_explicit_sync)             (WPEDisplay *display);
 
     WPEInputMethodContext   *(* create_input_method_context)    (WPEDisplay *display);
 
@@ -102,6 +103,7 @@ WPE_API void                    wpe_display_monitor_removed               (WPEDi
                                                                            WPEMonitor *monitor);
 WPE_API const char             *wpe_display_get_drm_device                (WPEDisplay *display);
 WPE_API const char             *wpe_display_get_drm_render_node           (WPEDisplay *display);
+WPE_API gboolean                wpe_display_use_explicit_sync             (WPEDisplay *display);
 
 G_END_DECLS
 

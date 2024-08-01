@@ -251,20 +251,20 @@ sub originalFile($$$$)
 {
     my ($file, $gitCommit, $gitIndex, $mergeBase) = @_;
 
-    my $command;
+    my @command;
     if (isGit()) {
-        $command = GIT . " show ";
+        @command = (GIT, "show");
+        $file = unixPath($file);
         if ($gitCommit) {
-            $command .= "$gitCommit^";
+            push(@command, "$gitCommit^:$file");
         } elsif ($mergeBase) {
-            $command .= "$mergeBase";
+            push(@command, "$mergeBase:$file");
         } else {
-            $command .= "HEAD";
+            push(@command, "HEAD:$file");
         }
-        $command .= ":'$file'";
     }
 
-    return $command;
+    return @command;
 }
 
 sub generateFunctionLists($$$$$)
@@ -279,8 +279,9 @@ sub generateFunctionLists($$$$$)
         openFile => sub ($) {
             my ($file) = @_;
             if (isGit() && $gitCommit && !$gitIndex) {
-                my $command = GIT . " show " . "$gitCommit" . ":'$file'";
-                return unless open(SOURCE, "-|", $command);
+                $file = unixPath($file);
+                my @command = (GIT, "show", "$gitCommit:$file");
+                return unless open(SOURCE, "-|", @command);
             } else {
                 return unless open(SOURCE, "<", $file);
             }
@@ -688,8 +689,7 @@ sub printDiff($$$$)
 
     print STDERR "  Running diff to help you write the ChangeLog entries.\n";
     local $/ = undef; # local slurp mode
-    my $changedFilesString = "'" . join("' '", @$changedFiles) . "'";
-    open DIFF, "-|", createPatchCommand($changedFilesString, $gitCommit, $gitIndex, $mergeBase) or die "The diff failed: $!.\n";
+    open DIFF, "-|", createPatchCommand($changedFiles, $gitCommit, $gitIndex, $mergeBase) or die "The diff failed: $!.\n";
     print <DIFF>;
     close DIFF;
 }
@@ -2040,8 +2040,8 @@ sub diffFromToString($$$)
     my ($gitCommit, $gitIndex, $mergeBase) = @_;
 
     return $gitCommit if $gitCommit =~ m/.+\.\..+/;
-    return "--cached \"$gitCommit^\"" if $gitCommit && $gitIndex;
-    return "\"$gitCommit^\" \"$gitCommit\"" if $gitCommit;
+    return ("--cached", "$gitCommit^") if $gitCommit && $gitIndex;
+    return ("$gitCommit^", $gitCommit) if $gitCommit;
     return "--cached" if $gitIndex;
     return $mergeBase if $mergeBase;
     return "HEAD" if isGit();
@@ -2053,28 +2053,26 @@ sub diffCommand($$$$)
 
     # The function overlap detection logic in computeModifiedFunctions() assumes that its line
     # ranges were from a unified diff without any context lines.
-    my $command;
+    my @command;
     if (isGit()) {
-        my $pathsString = "'" . join("' '", @$paths) . "'"; 
-        $command = GIT . " diff --no-ext-diff -U0 " . diffFromToString($gitCommit, $gitIndex, $mergeBase);
-        $command .= " -- $pathsString" unless $gitCommit or $mergeBase;
+        push(@command, GIT, "diff", "--no-ext-diff", "-U0", diffFromToString($gitCommit, $gitIndex, $mergeBase));
+        push(@command, "--", @$paths) unless $gitCommit or $mergeBase;
     }
 
-    return $command;
+    return @command;
 }
 
 sub statusCommand($$$$)
 {
     my ($paths, $gitCommit, $gitIndex, $mergeBase) = @_;
 
-    my $command;
+    my @command;
     if (isGit()) {
-        my $filesString = '"' . join('" "', keys %$paths) . '"';
-        $command = GIT . " diff -r --name-status -M -C " . diffFromToString($gitCommit, $gitIndex, $mergeBase);
-        $command .= " -- $filesString" unless $gitCommit;
+        push(@command, GIT, "diff", "-r", "--name-status", "-M", "-C", diffFromToString($gitCommit, $gitIndex, $mergeBase));
+        push(@command, "--", keys %$paths) unless $gitCommit;
     }
 
-    return "$command 2>&1";
+    return @command;
 }
 
 sub attributeCommand($$$)
@@ -2095,15 +2093,15 @@ sub attributeCommand($$$)
 
 sub createPatchCommand($$$$)
 {
-    my ($changedFilesString, $gitCommit, $gitIndex, $mergeBase) = @_;
+    my ($changedFiles, $gitCommit, $gitIndex, $mergeBase) = @_;
 
-    my $command;
+    my @command;
     if (isGit()) {
-        $command = GIT . " diff -M -C " . diffFromToString($gitCommit, $gitIndex, $mergeBase);
-        $command .= " -- $changedFilesString" unless $gitCommit;
+        push(@command, GIT, "diff", "-M", "-C", diffFromToString($gitCommit, $gitIndex, $mergeBase));
+        push(@command, "--", @$changedFiles) unless $gitCommit;
     }
 
-    return $command;
+    return @command;
 }
 
 sub pluralizeAndList($$@)

@@ -14,6 +14,7 @@
 #include <memory>
 
 #include "api/audio_codecs/audio_decoder_factory.h"
+#include "api/neteq/neteq.h"
 #include "api/neteq/neteq_controller_factory.h"
 #include "api/neteq/neteq_factory.h"
 #include "api/scoped_refptr.h"

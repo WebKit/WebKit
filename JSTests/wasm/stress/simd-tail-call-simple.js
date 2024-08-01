@@ -1,4 +1,3 @@
-//@ skip
 //@ requireOptions("--useWasmTailCalls=1")
 //@ skip if !$isSIMDPlatform
 import { instantiate } from "../wabt-wrapper.js"

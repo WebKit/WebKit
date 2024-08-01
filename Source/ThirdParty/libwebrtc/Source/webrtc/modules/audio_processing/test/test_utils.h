@@ -16,7 +16,6 @@
 #include <iterator>
 #include <limits>
 #include <memory>
-#include <sstream>  // no-presubmit-check TODO(webrtc:8982)
 #include <string>
 #include <vector>
 
@@ -147,22 +146,6 @@ float ComputeSNR(const T* ref, const T* test, size_t length, float* variance) {
   if (mse > 0)
     snr = 10 * log10(*variance / mse);
   return snr;
-}
-
-// Returns a vector<T> parsed from whitespace delimited values in to_parse,
-// or an empty vector if the string could not be parsed.
-template <typename T>
-std::vector<T> ParseList(absl::string_view to_parse) {
-  std::vector<T> values;
-
-  std::istringstream str(  // no-presubmit-check TODO(webrtc:8982)
-      std::string{to_parse});
-  std::copy(
-      std::istream_iterator<T>(str),  // no-presubmit-check TODO(webrtc:8982)
-      std::istream_iterator<T>(),     // no-presubmit-check TODO(webrtc:8982)
-      std::back_inserter(values));
-
-  return values;
 }
 
 }  // namespace webrtc

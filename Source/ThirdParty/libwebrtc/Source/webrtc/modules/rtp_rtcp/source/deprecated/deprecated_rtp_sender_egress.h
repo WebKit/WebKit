@@ -106,7 +106,6 @@ class DEPRECATED_RtpSenderEgress {
   RtpPacketHistory* const packet_history_;
   Transport* const transport_;
   RtcEventLog* const event_log_;
-  const bool is_audio_;
   const bool need_rtp_packet_infos_;
 
   TransportFeedbackObserver* const transport_feedback_observer_;

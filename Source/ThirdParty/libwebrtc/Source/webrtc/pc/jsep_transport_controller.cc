@@ -58,7 +58,6 @@ JsepTransportController::JsepTransportController(
           }),
       config_(std::move(config)),
       active_reset_srtp_params_(config.active_reset_srtp_params),
-      ice_tiebreaker_(port_allocator ? port_allocator->ice_tiebreaker() : 0),
       bundles_(config.bundle_policy) {
   // The `transport_observer` is assumed to be non-null.
   RTC_DCHECK(config_.transport_observer);
@@ -416,7 +415,6 @@ JsepTransportController::CreateIceTransport(const std::string& transport_name,
       transport_name, component, std::move(init));
   RTC_DCHECK(transport);
   transport->internal()->SetIceRole(ice_role_);
-  transport->internal()->SetIceTiebreaker(ice_tiebreaker_);
   transport->internal()->SetIceConfig(ice_config_);
   return transport;
 }

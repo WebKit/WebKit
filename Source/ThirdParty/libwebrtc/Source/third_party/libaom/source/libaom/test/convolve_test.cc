@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -30,7 +30,12 @@
 namespace {
 
 static const unsigned int kMaxDimension = MAX_SB_SIZE;
-
+static const int kDataAlignment = 16;
+static const int kOuterBlockSize = 4 * kMaxDimension;
+static const int kInputStride = kOuterBlockSize;
+static const int kOutputStride = kOuterBlockSize;
+static const int kInputBufferSize = kOuterBlockSize * kOuterBlockSize;
+static const int kOutputBufferSize = kOuterBlockSize * kOuterBlockSize;
 static const int16_t kInvalidFilter[8] = {};
 static const int kNumFilterBanks = SWITCHABLE_FILTERS;
 static const int kNumFilters = 16;
@@ -321,13 +326,6 @@ class ConvolveTestBase : public ::testing::TestWithParam<ConvolveParam> {
   }
 
  protected:
-  static const int kDataAlignment = 16;
-  static const int kOuterBlockSize = 4 * kMaxDimension;
-  static const int kInputStride = kOuterBlockSize;
-  static const int kOutputStride = kOuterBlockSize;
-  static const int kInputBufferSize = kOuterBlockSize * kOuterBlockSize;
-  static const int kOutputBufferSize = kOuterBlockSize * kOuterBlockSize;
-
   int Width() const { return GET_PARAM(0); }
   int Height() const { return GET_PARAM(1); }
   int BorderLeft() const {
@@ -941,5 +939,206 @@ INSTANTIATE_TEST_SUITE_P(SVE, HighbdConvolveTest,
                          ::testing::ValuesIn(kArray_HighbdConvolve8_sve));
 #endif
 #endif  // HAVE_SVE
+
+typedef void (*ConvolveScale2DFunc)(const uint8_t *src, ptrdiff_t src_stride,
+                                    uint8_t *dst, ptrdiff_t dst_stride,
+                                    const InterpKernel *filter, int x0_q4,
+                                    int x_step_q4, int y0_q4, int y_step_q4,
+                                    int w, int h);
+
+typedef std::tuple<int, int, ConvolveScale2DFunc> ConvolveScale2DParam;
+
+class ConvolveScale2DTest
+    : public ::testing::TestWithParam<ConvolveScale2DParam> {
+ public:
+  int Width() const { return GET_PARAM(0); }
+  int Height() const { return GET_PARAM(1); }
+  int BorderLeft() const {
+    const int center = (kOuterBlockSize - Width()) / 2;
+    return (center + (kDataAlignment - 1)) & ~(kDataAlignment - 1);
+  }
+  int BorderTop() const { return (kOuterBlockSize - Height()) / 2; }
+
+  bool IsIndexInBorder(int i) {
+    return (i < BorderTop() * kOuterBlockSize ||
+            i >= (BorderTop() + Height()) * kOuterBlockSize ||
+            i % kOuterBlockSize < BorderLeft() ||
+            i % kOuterBlockSize >= (BorderLeft() + Width()));
+  }
+
+  void SetUp() override {
+    // Force input_ to be unaligned, output to be 16 byte aligned.
+    input_ = reinterpret_cast<uint8_t *>(
+                 aom_memalign(kDataAlignment, kInputBufferSize + 1)) +
+             1;
+    output_ = reinterpret_cast<uint8_t *>(
+        aom_memalign(kDataAlignment, kOutputBufferSize));
+    output_ref_ = reinterpret_cast<uint8_t *>(
+        aom_memalign(kDataAlignment, kOutputBufferSize));
+
+    ASSERT_NE(input_, nullptr);
+    ASSERT_NE(output_, nullptr);
+    ASSERT_NE(output_ref_, nullptr);
+
+    test_func_ = GET_PARAM(2);
+    /* Set up guard blocks for an inner block centered in the outer block */
+    for (int i = 0; i < kOutputBufferSize; ++i) {
+      if (IsIndexInBorder(i)) {
+        output_[i] = 255;
+      } else {
+        output_[i] = 0;
+      }
+    }
+
+    ::libaom_test::ACMRandom prng;
+    for (int i = 0; i < kInputBufferSize; ++i) {
+      if (i & 1) {
+        input_[i] = 255;
+      } else {
+        input_[i] = prng.Rand8Extremes();
+      }
+    }
+  }
+
+  void TearDown() override {
+    aom_free(input_ - 1);
+    input_ = nullptr;
+    aom_free(output_);
+    output_ = nullptr;
+    aom_free(output_ref_);
+    output_ref_ = nullptr;
+  }
+
+  void SetConstantInput(int value) { memset(input_, value, kInputBufferSize); }
+
+  void CopyOutputToRef() { memcpy(output_ref_, output_, kOutputBufferSize); }
+
+  void CheckGuardBlocks() {
+    for (int i = 0; i < kOutputBufferSize; ++i) {
+      if (IsIndexInBorder(i)) {
+        EXPECT_EQ(255, output_[i]);
+      }
+    }
+  }
+
+  uint8_t *input() const {
+    const int offset = BorderTop() * kOuterBlockSize + BorderLeft();
+    return input_ + offset;
+  }
+
+  uint8_t *output() const {
+    const int offset = BorderTop() * kOuterBlockSize + BorderLeft();
+    return output_ + offset;
+  }
+
+  uint8_t *output_ref() const {
+    const int offset = BorderTop() * kOuterBlockSize + BorderLeft();
+    return output_ref_ + offset;
+  }
+
+  uint16_t lookup(uint8_t *list, int index) const { return list[index]; }
+
+  void assign_val(uint8_t *list, int index, uint16_t val) const {
+    list[index] = (uint8_t)val;
+  }
+
+  ConvolveScale2DFunc test_func_;
+  uint8_t *input_;
+  uint8_t *output_;
+  uint8_t *output_ref_;
+};
+
+TEST_P(ConvolveScale2DTest, DISABLED_Speed) {
+  const uint8_t *const in = input();
+  uint8_t *const out = output();
+  const InterpKernel *const filter =
+      (const InterpKernel *)av1_get_interp_filter_kernel(EIGHTTAP_REGULAR,
+                                                         USE_8_TAPS);
+  const int kNumTests = 10000;
+  const int width = Width();
+  const int height = Height();
+  const int frac = 8;
+  const int step = 16;
+  aom_usec_timer timer;
+
+  aom_usec_timer_start(&timer);
+  for (int n = 0; n < kNumTests; ++n) {
+    test_func_(in, kInputStride, out, kOutputStride, filter, frac, step, frac,
+               step, width, height);
+  }
+  aom_usec_timer_mark(&timer);
+
+  const int elapsed_time = static_cast<int>(aom_usec_timer_elapsed(&timer));
+  printf("convolve_scale_2d_%dx%d_%d: %d us\n", width, height, 8, elapsed_time);
+}
+
+TEST_P(ConvolveScale2DTest, Correctness) {
+  uint8_t *const in = input();
+  uint8_t *const out = output();
+  uint8_t ref[kOutputStride * kMaxDimension];
+
+  ::libaom_test::ACMRandom prng;
+  for (int y = 0; y < Height(); ++y) {
+    for (int x = 0; x < Width(); ++x) {
+      const uint16_t r = prng.Rand8Extremes();
+      assign_val(in, y * kInputStride + x, r);
+    }
+  }
+
+  for (int subpel_search = USE_2_TAPS; subpel_search <= USE_8_TAPS;
+       ++subpel_search) {
+    for (int filter_bank = 0; filter_bank < kNumFilterBanks; ++filter_bank) {
+      const InterpFilter filter = static_cast<InterpFilter>(filter_bank);
+      const InterpKernel *filters =
+          (const InterpKernel *)av1_get_interp_filter_kernel(filter,
+                                                             subpel_search);
+      for (int frac = 0; frac < 16; ++frac) {
+        for (int step = 1; step <= 32; ++step) {
+          aom_scaled_2d_c(in, kInputStride, ref, kOutputStride, filters, frac,
+                          step, frac, step, Width(), Height());
+          API_REGISTER_STATE_CHECK(
+              test_func_(in, kInputStride, out, kOutputStride, filters, frac,
+                         step, frac, step, Width(), Height()));
+
+          CheckGuardBlocks();
+
+          for (int y = 0; y < Height(); ++y) {
+            for (int x = 0; x < Width(); ++x) {
+              ASSERT_EQ(lookup(ref, y * kOutputStride + x),
+                        lookup(out, y * kOutputStride + x))
+                  << "x == " << x << ", y == " << y << ", frac == " << frac
+                  << ", step == " << step;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+INSTANTIATE_TEST_SUITE_P(C, ConvolveScale2DTest,
+                         ::testing::Values(ALL_SIZES_64(aom_scaled_2d_c)));
+
+#if HAVE_NEON
+INSTANTIATE_TEST_SUITE_P(NEON, ConvolveScale2DTest,
+                         ::testing::Values(ALL_SIZES_64(aom_scaled_2d_neon)));
+#endif  // HAVE_NEON
+
+#if HAVE_NEON_DOTPROD
+INSTANTIATE_TEST_SUITE_P(
+    NEON_DOTPROD, ConvolveScale2DTest,
+    ::testing::Values(ALL_SIZES_64(aom_scaled_2d_neon_dotprod)));
+#endif  // HAVE_NEON_DOTPROD
+
+#if HAVE_NEON_I8MM
+INSTANTIATE_TEST_SUITE_P(
+    NEON_I8MM, ConvolveScale2DTest,
+    ::testing::Values(ALL_SIZES_64(aom_scaled_2d_neon_i8mm)));
+#endif  // HAVE_NEON_I8MM
+
+#if HAVE_SSSE3
+INSTANTIATE_TEST_SUITE_P(SSSE3, ConvolveScale2DTest,
+                         ::testing::Values(ALL_SIZES_64(aom_scaled_2d_ssse3)));
+#endif  // HAVE_SSSE3
 
 }  // namespace

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -116,7 +116,7 @@ void get_txfm1d_type(TX_TYPE txfm2d_type, TYPE_TXFM *type0, TYPE_TXFM *type1) {
 double Sqrt2 = pow(2, 0.5);
 double invSqrt2 = 1 / pow(2, 0.5);
 
-double dct_matrix(double n, double k, int size) {
+static double dct_matrix(double n, double k, int size) {
   return cos(PI * (2 * n + 1) * k / (2 * size));
 }
 
@@ -207,7 +207,7 @@ void reference_adst_1d(const double *in, double *out, int size) {
   }
 }
 
-void reference_idtx_1d(const double *in, double *out, int size) {
+static void reference_idtx_1d(const double *in, double *out, int size) {
   double scale = 0;
   if (size == 4)
     scale = Sqrt2;

@@ -57,7 +57,7 @@ public:
     inline ElementType* last() const;
 
 private:
-    const ContainerNode& m_parent;
+    CheckedRef<const ContainerNode> m_parent;
 };
 
 // ElementChildIterator

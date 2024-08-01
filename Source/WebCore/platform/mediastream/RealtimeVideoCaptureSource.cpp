@@ -445,10 +445,22 @@ void RealtimeVideoCaptureSource::setSizeFrameRateAndZoom(const VideoPresetConstr
     m_currentPreset = match->encodingPreset;
     auto newSize = match->encodingPreset->size();
 
-    setFrameRateAndZoomWithPreset(match->requestedFrameRate, match->requestedZoom, WTFMove(match->encodingPreset));
+    applyFrameRateAndZoomWithPreset(match->requestedFrameRate, match->requestedZoom, WTFMove(match->encodingPreset));
     setSize(newSize);
     setFrameRate(match->requestedFrameRate);
     setZoom(match->requestedZoom);
+}
+
+void RealtimeVideoCaptureSource::setSizeFrameRateAndZoomForPhoto(CaptureSizeFrameRateAndZoom&& preset)
+{
+    ASSERT(preset.encodingPreset);
+
+    m_currentPreset = preset.encodingPreset;
+    auto newSize = preset.encodingPreset->size();
+    startApplyingConstraints();
+    applyFrameRateAndZoomWithPreset(preset.requestedFrameRate, preset.requestedZoom, WTFMove(preset.encodingPreset));
+    setSize(newSize);
+    endApplyingConstraints();
 }
 
 auto RealtimeVideoCaptureSource::takePhotoInternal(PhotoSettings&&) -> Ref<TakePhotoNativePromise>
@@ -506,12 +518,7 @@ auto RealtimeVideoCaptureSource::takePhoto(PhotoSettings&& photoSettings) -> Ref
             m_mutedForPhotoCapture = true;
         }
 
-        m_currentPreset = newPresetForPhoto->encodingPreset;
-        auto newSize = newPresetForPhoto->encodingPreset->size();
-        startApplyingConstraints();
-        setFrameRateAndZoomWithPreset(newPresetForPhoto->requestedFrameRate, newPresetForPhoto->requestedZoom, WTFMove(newPresetForPhoto->encodingPreset));
-        setSize(newSize);
-        endApplyingConstraints();
+        setSizeFrameRateAndZoomForPhoto(WTFMove(*newPresetForPhoto));
     }
 
     return takePhotoInternal(WTFMove(photoSettings))->whenSettled(RunLoop::main(), [this, protectedThis = Ref { *this }, configurationToRestore = WTFMove(configurationToRestore)] (auto&& result) mutable {
@@ -519,12 +526,7 @@ auto RealtimeVideoCaptureSource::takePhoto(PhotoSettings&& photoSettings) -> Ref
         ASSERT(isMainThread());
 
         if (configurationToRestore) {
-            m_currentPreset = configurationToRestore->encodingPreset;
-            auto newSize = configurationToRestore->encodingPreset->size();
-            startApplyingConstraints();
-            setFrameRateAndZoomWithPreset(configurationToRestore->requestedFrameRate, configurationToRestore->requestedZoom, WTFMove(configurationToRestore->encodingPreset));
-            setSize(newSize);
-            endApplyingConstraints();
+            setSizeFrameRateAndZoomForPhoto(WTFMove(*configurationToRestore));
 
             if (m_mutedForPhotoCapture) {
                 m_mutedForPhotoCapture = false;

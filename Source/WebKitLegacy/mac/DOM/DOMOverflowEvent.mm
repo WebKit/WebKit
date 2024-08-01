@@ -29,7 +29,6 @@
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
 #import <WebCore/JSExecState.h>
-#import <WebCore/OverflowEvent.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
@@ -40,26 +39,21 @@
 
 - (unsigned short)orient
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->orient();
+    return NULL;
 }
 
 - (BOOL)horizontalOverflow
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->horizontalOverflow();
+    return false;
 }
 
 - (BOOL)verticalOverflow
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->verticalOverflow();
+    return false;
 }
 
 - (void)initOverflowEvent:(unsigned short)inOrient horizontalOverflow:(BOOL)inHorizontalOverflow verticalOverflow:(BOOL)inVerticalOverflow
 {
-    WebCore::JSMainThreadNullState state;
-    IMPL->initOverflowEvent(inOrient, inHorizontalOverflow, inVerticalOverflow);
 }
 
 @end

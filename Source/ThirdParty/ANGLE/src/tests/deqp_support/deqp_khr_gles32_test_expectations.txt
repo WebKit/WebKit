@@ -63,7 +63,7 @@
 42264094 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_shader_tessellation.TCS_TES = SKIP
 42264094 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_shader_quads_tessellation.inner_tessellation_level_rounding = SKIP
 42264094 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_invariance.invariance_rule3 = SKIP
-42264094 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_control_to_tessellation_evaluation.gl_MaxPatchVertices_Position_PointSize = SKIP
+42264094 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_control_to_tessellation_evaluation.gl_MaxPatchVertices_Position_PointSize* = SKIP
 42264094 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_shader_triangles_tessellation.identical_triangles = SKIP
 42264094 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_invariance.invariance_rule1 = SKIP
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2017, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -126,12 +126,15 @@ MASK_SUBPIX_VAR8XH_SSSE3(8)
 MASK_SUBPIX_VAR8XH_SSSE3(4)
 MASK_SUBPIX_VAR4XH_SSSE3(8)
 MASK_SUBPIX_VAR4XH_SSSE3(4)
+
+#if !CONFIG_REALTIME_ONLY
 MASK_SUBPIX_VAR4XH_SSSE3(16)
 MASK_SUBPIX_VAR_SSSE3(16, 4)
 MASK_SUBPIX_VAR8XH_SSSE3(32)
 MASK_SUBPIX_VAR_SSSE3(32, 8)
 MASK_SUBPIX_VAR_SSSE3(64, 16)
 MASK_SUBPIX_VAR_SSSE3(16, 64)
+#endif  // !CONFIG_REALTIME_ONLY
 
 static INLINE __m128i filter_block(const __m128i a, const __m128i b,
                                    const __m128i filter) {
@@ -704,12 +707,15 @@ HIGHBD_MASK_SUBPIX_VAR_SSSE3(8, 8)
 HIGHBD_MASK_SUBPIX_VAR_SSSE3(8, 4)
 HIGHBD_MASK_SUBPIX_VAR4XH_SSSE3(8)
 HIGHBD_MASK_SUBPIX_VAR4XH_SSSE3(4)
+
+#if !CONFIG_REALTIME_ONLY
 HIGHBD_MASK_SUBPIX_VAR4XH_SSSE3(16)
 HIGHBD_MASK_SUBPIX_VAR_SSSE3(16, 4)
 HIGHBD_MASK_SUBPIX_VAR_SSSE3(8, 32)
 HIGHBD_MASK_SUBPIX_VAR_SSSE3(32, 8)
 HIGHBD_MASK_SUBPIX_VAR_SSSE3(16, 64)
 HIGHBD_MASK_SUBPIX_VAR_SSSE3(64, 16)
+#endif  // !CONFIG_REALTIME_ONLY
 
 static INLINE __m128i highbd_filter_block(const __m128i a, const __m128i b,
                                           const __m128i filter) {

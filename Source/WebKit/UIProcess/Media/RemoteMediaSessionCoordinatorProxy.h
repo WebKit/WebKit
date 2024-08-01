@@ -39,6 +39,7 @@ struct ExceptionData;
 namespace WebKit {
 
 class WebPageProxy;
+struct SharedPreferencesForWebProcess;
 
 class RemoteMediaSessionCoordinatorProxy
     : private IPC::MessageReceiver
@@ -48,6 +49,8 @@ class RemoteMediaSessionCoordinatorProxy
 public:
     static Ref<RemoteMediaSessionCoordinatorProxy> create(WebPageProxy&, Ref<MediaSessionCoordinatorProxyPrivate>&&);
     ~RemoteMediaSessionCoordinatorProxy();
+
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
     void seekTo(double, CompletionHandler<void(bool)>&&);
     void play(CompletionHandler<void(bool)>&&);

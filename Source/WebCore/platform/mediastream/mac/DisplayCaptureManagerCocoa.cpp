@@ -33,10 +33,6 @@
 #include <wtf/Algorithms.h>
 #include <wtf/NeverDestroyed.h>
 
-#if PLATFORM(MAC)
-#include "CGDisplayStreamScreenCaptureSource.h"
-#endif
-
 #if PLATFORM(IOS) || PLATFORM(VISION)
 #include "ReplayKitCaptureSource.h"
 #endif
@@ -60,15 +56,11 @@ const Vector<CaptureDevice>& DisplayCaptureManagerCocoa::captureDevices()
 
 std::optional<CaptureDevice> DisplayCaptureManagerCocoa::screenCaptureDeviceWithPersistentID(const String& deviceID)
 {
-#if PLATFORM(MAC)
-
 #if HAVE(SCREEN_CAPTURE_KIT)
     if (ScreenCaptureKitCaptureSource::isAvailable())
         return ScreenCaptureKitCaptureSource::screenCaptureDeviceWithPersistentID(deviceID);
-#endif
-
-    return CGDisplayStreamScreenCaptureSource::screenCaptureDeviceWithPersistentID(deviceID);
-
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
 #else
     UNUSED_PARAM(deviceID);
     return std::nullopt;

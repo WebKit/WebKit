@@ -295,12 +295,19 @@ void WriteTypeInt(Blob *blob, IdResult idResult1, LiteralInteger width, LiteralI
     blob->push_back(signedness);
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpTypeInt);
 }
-void WriteTypeFloat(Blob *blob, IdResult idResult1, LiteralInteger width)
+void WriteTypeFloat(Blob *blob,
+                    IdResult idResult1,
+                    LiteralInteger width,
+                    const spv::FPEncoding *floatingPointEncoding)
 {
     const size_t startSize = blob->size();
     blob->push_back(0);
     blob->push_back(idResult1);
     blob->push_back(width);
+    if (floatingPointEncoding)
+    {
+        blob->push_back(*floatingPointEncoding);
+    }
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpTypeFloat);
 }
 void WriteTypeVector(Blob *blob,

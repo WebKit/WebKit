@@ -45,7 +45,6 @@ public:
     static Ref<CSSImageValue> create();
     static Ref<CSSImageValue> create(ResolvedURL, LoadedFromOpaqueSource, AtomString = { });
     static Ref<CSSImageValue> create(URL, LoadedFromOpaqueSource, AtomString = { });
-    static Ref<CSSImageValue> create(CachedImage&);
     ~CSSImageValue();
 
     bool isPending() const;
@@ -84,14 +83,13 @@ public:
     }
 
 private:
-    explicit CSSImageValue();
-    explicit CSSImageValue(ResolvedURL&&, LoadedFromOpaqueSource, AtomString&&);
-    explicit CSSImageValue(CachedImage&);
+    CSSImageValue();
+    CSSImageValue(ResolvedURL&&, LoadedFromOpaqueSource, AtomString&&);
 
     ResolvedURL m_location;
+    std::optional<CachedResourceHandle<CachedImage>> m_cachedImage;
     AtomString m_initiatorType;
     LoadedFromOpaqueSource m_loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
-    std::optional<CachedResourceHandle<CachedImage>> m_cachedImage;
     RefPtr<CSSImageValue> m_unresolvedValue;
     bool m_isInvalid { false };
     String m_replacementURLString;

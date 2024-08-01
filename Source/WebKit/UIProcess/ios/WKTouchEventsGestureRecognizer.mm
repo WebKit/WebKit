@@ -138,6 +138,7 @@ static double approximateWallTime(NSTimeInterval timestamp)
     _lastTouchEvent.rotation = NAN;
     _lastTouchEvent.inJavaScriptGesture = false;
     _lastTouchEvent.isPotentialTap = false;
+    _lastTouchEvent.coalescedEvents = { };
     _lastTouchesBeganTime = 0;
     _lastTouchesBeganLocation = std::nullopt;
 }
@@ -227,7 +228,40 @@ static unsigned nextTouchIdentifier()
     }
 }
 
-- (void)_recordTouches:(NSSet<UITouch *> *)touches type:(WebKit::WKTouchEventType)type
+- (WebKit::WKTouchEvent)_coalescedTouchEventForTouch:(UITouch *)touch
+{
+    auto locationInWindow = [touch locationInView:nil];
+    auto locationInViewport = [[self view] convertPoint:locationInWindow fromView:nil];
+
+    WebKit::WKTouchPoint touchPoint;
+    touchPoint.locationInDocumentCoordinates = locationInViewport;
+    touchPoint.locationInScreenCoordinates = locationInWindow;
+    touchPoint.identifier = 0;
+    touchPoint.phase = touch.phase;
+    touchPoint.majorRadiusInScreenCoordinates = touch.majorRadius;
+    touchPoint.force = touch.maximumPossibleForce > 0 ? touch.force / touch.maximumPossibleForce : 0;
+
+    if (touch.type == UITouchTypeStylus) {
+        touchPoint.touchType = WebKit::WKTouchPointType::Stylus;
+        touchPoint.altitudeAngle = touch.altitudeAngle;
+        touchPoint.azimuthAngle = [touch azimuthAngleInView:self.view.window];
+    } else {
+        touchPoint.touchType = WebKit::WKTouchPointType::Direct;
+        touchPoint.altitudeAngle = 0;
+        touchPoint.azimuthAngle = 0;
+    }
+
+    WebKit::WKTouchEvent event;
+    event.type = WebKit::WKTouchEventType::Change;
+    event.timestamp = approximateWallTime(touch.timestamp);
+    event.locationInDocumentCoordinates = locationInViewport;
+    event.locationInScreenCoordinates = locationInWindow;
+    event.touchPoints = { touchPoint };
+
+    return event;
+}
+
+- (void)_recordTouches:(NSSet<UITouch *> *)touches type:(WebKit::WKTouchEventType)type coalescedTouches:(NSArray<UITouch *> *)coalescedTouches
 {
     _lastTouchEvent.type = type;
     _lastTouchEvent.inJavaScriptGesture = false;
@@ -248,6 +282,13 @@ static unsigned nextTouchIdentifier()
         _lastTouchEvent.touchPoints.resize(touchCount);
 
     _lastTouchEvent.timestamp = approximateWallTime(touches.anyObject.timestamp);
+
+    _lastTouchEvent.coalescedEvents = { };
+
+    if (type == WebKit::WKTouchEventType::Change) {
+        for (UITouch *coalescedTouch in coalescedTouches)
+            _lastTouchEvent.coalescedEvents.append([self _coalescedTouchEventForTouch:coalescedTouch]);
+    }
 
     NSUInteger touchIndex = 0;
 
@@ -407,7 +448,7 @@ static WebKit::WKTouchEventType lastExpectedWKEventTypeForTouches(NSSet *touches
     return NO;
 }
 
-- (void)_processTouches:(NSSet *)touches withEvent:(UIEvent *)event type:(WebKit::WKTouchEventType)type
+- (void)_processTouches:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event type:(WebKit::WKTouchEventType)type
 {
     // WebCore expects only one event for each distinct set of touches. Gesture recognizer will call
     // all applicable touchesBegan:, touchesMoved: and so on. If two things happen simultaneously, like this:
@@ -419,7 +460,7 @@ static WebKit::WKTouchEventType lastExpectedWKEventTypeForTouches(NSSet *touches
     if (lastExpectedWKEventTypeForTouches(touches) != type)
         return;
 
-    [self _recordTouches:touches type:type];
+    [self _recordTouches:touches type:type coalescedTouches:[event coalescedTouchesForTouch:touches.anyObject]];
 
     [self performAction];
 

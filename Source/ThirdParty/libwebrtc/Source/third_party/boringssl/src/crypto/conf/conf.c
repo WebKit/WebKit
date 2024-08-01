@@ -56,6 +56,7 @@
 
 #include <openssl/conf.h>
 
+#include <assert.h>
 #include <string.h>
 #include <ctype.h>
 
@@ -65,7 +66,6 @@
 #include <openssl/lhash.h>
 #include <openssl/mem.h>
 
-#include "conf_def.h"
 #include "internal.h"
 #include "../internal.h"
 
@@ -183,6 +183,26 @@ err:
   return NULL;
 }
 
+static int is_comment(char c) { return c == '#'; }
+
+static int is_quote(char c) { return c == '"' || c == '\'' || c == '`'; }
+
+static int is_esc(char c) { return c == '\\'; }
+
+static int is_conf_ws(char c) {
+  // This differs from |OPENSSL_isspace| in that CONF does not accept '\v' and
+  // '\f' as whitespace.
+  return c == ' ' || c == '\t' || c == '\r' || c == '\n';
+}
+
+static int is_name_char(char c) {
+  // Alphanumeric characters, and a handful of symbols, may appear in value and
+  // section names without escaping.
+  return OPENSSL_isalnum(c) || c == '_' || c == '!' || c == '.' || c == '%' ||
+         c == '&' || c == '*' || c == '+' || c == ',' || c == '/' || c == ';' ||
+         c == '?' || c == '@' || c == '^' || c == '~' || c == '|' || c == '-';
+}
+
 static int str_copy(CONF *conf, char *section, char **pto, char *from) {
   int q, to = 0, len = 0;
   char v;
@@ -199,13 +219,13 @@ static int str_copy(CONF *conf, char *section, char **pto, char *from) {
   }
 
   for (;;) {
-    if (IS_QUOTE(conf, *from)) {
+    if (is_quote(*from)) {
       q = *from;
       from++;
-      while (!IS_EOF(conf, *from) && (*from != q)) {
-        if (IS_ESC(conf, *from)) {
+      while (*from != '\0' && *from != q) {
+        if (is_esc(*from)) {
           from++;
-          if (IS_EOF(conf, *from)) {
+          if (*from == '\0') {
             break;
           }
         }
@@ -214,10 +234,10 @@ static int str_copy(CONF *conf, char *section, char **pto, char *from) {
       if (*from == q) {
         from++;
       }
-    } else if (IS_ESC(conf, *from)) {
+    } else if (is_esc(*from)) {
       from++;
       v = *(from++);
-      if (IS_EOF(conf, v)) {
+      if (v == '\0') {
         break;
       } else if (v == 'r') {
         v = '\r';
@@ -229,11 +249,13 @@ static int str_copy(CONF *conf, char *section, char **pto, char *from) {
         v = '\t';
       }
       buf->data[to++] = v;
-    } else if (IS_EOF(conf, *from)) {
+    } else if (*from == '\0') {
       break;
     } else if (*from == '$') {
       // Historically, $foo would expand to a previously-parsed value. This
-      // feature has been removed as it was unused and is a DoS vector.
+      // feature has been removed as it was unused and is a DoS vector. If
+      // trying to embed '$' in a line, either escape it or wrap the value in
+      // quotes.
       OPENSSL_PUT_ERROR(CONF, CONF_R_VARIABLE_EXPANSION_NOT_SUPPORTED);
       goto err;
     } else {
@@ -312,36 +334,39 @@ static int add_string(const CONF *conf, CONF_SECTION *section,
   return 1;
 }
 
-static char *eat_ws(CONF *conf, char *p) {
-  while (IS_WS(conf, *p) && !IS_EOF(conf, *p)) {
+static char *eat_ws(char *p) {
+  while (*p != '\0' && is_conf_ws(*p)) {
     p++;
   }
   return p;
 }
 
-#define scan_esc(conf, p) (((IS_EOF((conf), (p)[1])) ? ((p) + 1) : ((p) + 2)))
+static char *scan_esc(char *p) {
+  assert(p[0] == '\\');
+  return p[1] == '\0' ? p + 1 : p + 2;
+}
 
-static char *eat_alpha_numeric(CONF *conf, char *p) {
+static char *eat_name(char *p) {
   for (;;) {
-    if (IS_ESC(conf, *p)) {
-      p = scan_esc(conf, p);
+    if (is_esc(*p)) {
+      p = scan_esc(p);
       continue;
     }
-    if (!IS_ALPHA_NUMERIC_PUNCT(conf, *p)) {
+    if (!is_name_char(*p)) {
       return p;
     }
     p++;
   }
 }
 
-static char *scan_quote(CONF *conf, char *p) {
+static char *scan_quote(char *p) {
   int q = *p;
 
   p++;
-  while (!IS_EOF(conf, *p) && *p != q) {
-    if (IS_ESC(conf, *p)) {
+  while (*p != '\0' && *p != q) {
+    if (is_esc(*p)) {
       p++;
-      if (IS_EOF(conf, *p)) {
+      if (*p == '\0') {
         return p;
       }
     }
@@ -353,28 +378,28 @@ static char *scan_quote(CONF *conf, char *p) {
   return p;
 }
 
-static void clear_comments(CONF *conf, char *p) {
+static void clear_comments(char *p) {
   for (;;) {
-    if (!IS_WS(conf, *p)) {
+    if (!is_conf_ws(*p)) {
       break;
     }
     p++;
   }
 
   for (;;) {
-    if (IS_COMMENT(conf, *p)) {
+    if (is_comment(*p)) {
       *p = '\0';
       return;
     }
-    if (IS_QUOTE(conf, *p)) {
-      p = scan_quote(conf, p);
+    if (is_quote(*p)) {
+      p = scan_quote(p);
       continue;
     }
-    if (IS_ESC(conf, *p)) {
-      p = scan_esc(conf, p);
+    if (is_esc(*p)) {
+      p = scan_esc(p);
       continue;
     }
-    if (IS_EOF(conf, *p)) {
+    if (*p == '\0') {
       return;
     } else {
       p++;
@@ -454,7 +479,7 @@ int NCONF_load_bio(CONF *conf, BIO *in, long *out_error_line) {
       // If we have bytes and the last char '\\' and
       // second last char is not '\\'
       p = &(buff->data[bufnum - 1]);
-      if (IS_ESC(conf, p[0]) && ((bufnum <= 1) || !IS_ESC(conf, p[-1]))) {
+      if (is_esc(p[0]) && ((bufnum <= 1) || !is_esc(p[-1]))) {
         bufnum--;
         again = 1;
       }
@@ -465,20 +490,20 @@ int NCONF_load_bio(CONF *conf, BIO *in, long *out_error_line) {
     bufnum = 0;
     buf = buff->data;
 
-    clear_comments(conf, buf);
-    s = eat_ws(conf, buf);
-    if (IS_EOF(conf, *s)) {
+    clear_comments(buf);
+    s = eat_ws(buf);
+    if (*s == '\0') {
       continue;  // blank line
     }
     if (*s == '[') {
       char *ss;
 
       s++;
-      start = eat_ws(conf, s);
+      start = eat_ws(s);
       ss = start;
     again:
-      end = eat_alpha_numeric(conf, ss);
-      p = eat_ws(conf, end);
+      end = eat_name(ss);
+      p = eat_ws(end);
       if (*p != ']') {
         if (*p != '\0' && ss != p) {
           ss = p;
@@ -502,27 +527,27 @@ int NCONF_load_bio(CONF *conf, BIO *in, long *out_error_line) {
     } else {
       pname = s;
       psection = NULL;
-      end = eat_alpha_numeric(conf, s);
+      end = eat_name(s);
       if ((end[0] == ':') && (end[1] == ':')) {
         *end = '\0';
         end += 2;
         psection = pname;
         pname = end;
-        end = eat_alpha_numeric(conf, end);
+        end = eat_name(end);
       }
-      p = eat_ws(conf, end);
+      p = eat_ws(end);
       if (*p != '=') {
         OPENSSL_PUT_ERROR(CONF, CONF_R_MISSING_EQUAL_SIGN);
         goto err;
       }
       *end = '\0';
       p++;
-      start = eat_ws(conf, p);
-      while (!IS_EOF(conf, *p)) {
+      start = eat_ws(p);
+      while (*p != '\0') {
         p++;
       }
       p--;
-      while ((p != start) && (IS_WS(conf, *p))) {
+      while (p != start && is_conf_ws(*p)) {
         p--;
       }
       p++;

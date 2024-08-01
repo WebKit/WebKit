@@ -23,7 +23,7 @@
 #include "api/array_view.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "logging/rtc_event_log/events/logged_rtp_rtcp.h"
-#include "logging/rtc_event_log/events/rtc_event_field_encoding_parser.h"
+#include "logging/rtc_event_log/events/rtc_event_log_parse_status.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
 
 namespace webrtc {

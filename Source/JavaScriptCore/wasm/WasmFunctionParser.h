@@ -187,10 +187,10 @@ private:
     PartialResult WARN_UNUSED_RETURN parseNestedBlocksEagerly(bool&);
     void switchToBlock(ControlType&&, Stack&&);
 
-#define WASM_TRY_POP_EXPRESSION_STACK_INTO(result, what) do {                               \
+#define WASM_TRY_POP_EXPRESSION_STACK_INTO(result, what) do { \
         WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't pop empty stack in "_s, what); \
-        result = m_expressionStack.takeLast();                                              \
-        m_context.didPopValueFromStack(result, WTF::makeString("WasmFunctionParser.h:"_s, (__LINE__)));                                                   \
+        result = m_expressionStack.takeLast(); \
+        m_context.didPopValueFromStack(result, "WasmFunctionParser.h " STRINGIZE(__LINE__) ""_s); \
     } while (0)
 
     using UnaryOperationHandler = PartialResult (Context::*)(ExpressionType, ExpressionType&);

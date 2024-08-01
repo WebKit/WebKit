@@ -15,6 +15,9 @@
 #include "image_util/loadimage.h"
 #include "libANGLE/renderer/ContextImpl.h"
 #include "libANGLE/renderer/wgpu/DisplayWgpu.h"
+#include "libANGLE/renderer/wgpu/wgpu_command_buffer.h"
+#include "libANGLE/renderer/wgpu/wgpu_format_utils.h"
+#include "libANGLE/renderer/wgpu/wgpu_pipeline_state.h"
 #include "libANGLE/renderer/wgpu/wgpu_utils.h"
 
 namespace rx
@@ -261,15 +264,77 @@ class ContextWgpu : public ContextImpl
     DisplayWgpu *getDisplay() { return mDisplay; }
     wgpu::Device &getDevice() { return mDisplay->getDevice(); }
     wgpu::Queue &getQueue() { return mDisplay->getQueue(); }
+    wgpu::Instance &getInstance() { return mDisplay->getInstance(); }
     angle::ImageLoadContext &getImageLoadContext() { return mImageLoadContext; }
+    const webgpu::Format &getFormat(GLenum internalFormat) const
+    {
+        return mDisplay->getFormat(internalFormat);
+    }
     angle::Result startRenderPass(const wgpu::RenderPassDescriptor &desc);
-    angle::Result endRenderPass(webgpu::RenderPassClosureReason closure_reason);
+    angle::Result endRenderPass(webgpu::RenderPassClosureReason closureReason);
 
     bool hasActiveRenderPass() { return mCurrentRenderPass != nullptr; }
 
-    angle::Result flush();
+    angle::Result onFramebufferChange(FramebufferWgpu *framebufferWgpu, gl::Command command);
+
+    angle::Result flush(webgpu::RenderPassClosureReason);
+
+    void setColorAttachmentFormat(size_t colorIndex, wgpu::TextureFormat format);
+    void setColorAttachmentFormats(const gl::DrawBuffersArray<wgpu::TextureFormat> &formats);
+    void setDepthStencilFormat(wgpu::TextureFormat format);
 
   private:
+    // Dirty bits.
+    enum DirtyBitType : size_t
+    {
+        // The pipeline has changed and needs to be recreated.
+        DIRTY_BIT_RENDER_PIPELINE_DESC,
+
+        DIRTY_BIT_RENDER_PASS,
+
+        DIRTY_BIT_RENDER_PIPELINE_BINDING,
+
+        DIRTY_BIT_MAX,
+    };
+
+    static_assert(DIRTY_BIT_RENDER_PIPELINE_BINDING > DIRTY_BIT_RENDER_PIPELINE_DESC,
+                  "Pipeline binding must be handled after the pipeline desc dirty bit");
+
+    // Dirty bit handlers that record commands or otherwise expect to manipulate the render pass
+    // that will be used for the draw call must be specified after DIRTY_BIT_RENDER_PASS.
+    static_assert(DIRTY_BIT_RENDER_PIPELINE_BINDING > DIRTY_BIT_RENDER_PASS,
+                  "Render pass using dirty bit must be handled after the render pass dirty bit");
+
+    using DirtyBits = angle::BitSet<DIRTY_BIT_MAX>;
+
+    DirtyBits mDirtyBits;
+
+    DirtyBits mNewRenderPassDirtyBits;
+
+    ANGLE_INLINE void invalidateCurrentRenderPipeline()
+    {
+        mDirtyBits.set(DIRTY_BIT_RENDER_PIPELINE_DESC);
+    }
+
+    angle::Result setupIndexedDraw(const gl::Context *context,
+                                   gl::PrimitiveMode mode,
+                                   GLsizei indexCount,
+                                   GLsizei instanceCount,
+                                   gl::DrawElementsType indexType,
+                                   const void *indices);
+    angle::Result setupDraw(const gl::Context *context,
+                            gl::PrimitiveMode mode,
+                            GLint firstVertexOrInvalid,
+                            GLsizei vertexOrIndexCount,
+                            GLsizei instanceCount,
+                            gl::DrawElementsType indexTypeOrInvalid,
+                            const void *indices);
+
+    angle::Result handleDirtyRenderPipelineDesc(DirtyBits::Iterator *dirtyBitsIterator);
+    angle::Result handleDirtyRenderPipelineBinding(DirtyBits::Iterator *dirtyBitsIterator);
+
+    angle::Result handleDirtyRenderPass(DirtyBits::Iterator *dirtyBitsIterator);
+
     gl::Caps mCaps;
     gl::TextureCapsMap mTextureCaps;
     gl::Extensions mExtensions;
@@ -282,6 +347,11 @@ class ContextWgpu : public ContextImpl
 
     wgpu::CommandEncoder mCurrentCommandEncoder;
     wgpu::RenderPassEncoder mCurrentRenderPass;
+
+    webgpu::CommandBuffer mCommandBuffer;
+
+    webgpu::RenderPipelineDesc mRenderPipelineDesc;
+    wgpu::RenderPipeline mCurrentGraphicsPipeline;
 };
 
 }  // namespace rx

@@ -123,6 +123,10 @@ static std::optional<std::pair<PlatformMediaSession::RemoteControlCommandType, P
     case MediaSessionAction::Settrack:
         // Not supported at present.
         break;
+    case MediaSessionAction::Togglecamera:
+    case MediaSessionAction::Togglemicrophone:
+    case MediaSessionAction::Togglescreenshare:
+        break;
     }
     if (command == PlatformMediaSession::RemoteControlCommandType::NoCommand)
         return { };
@@ -286,6 +290,7 @@ bool MediaSession::callActionHandler(const MediaSessionActionDetails& actionDeta
         Locker lock { m_actionHandlersLock };
         handler = m_actionHandlers.get(actionDetails.action);
     }
+
     if (handler) {
         std::optional<UserGestureIndicator> maybeGestureIndicator;
         if (triggerGestureIndicator == TriggerGestureIndicator::Yes)

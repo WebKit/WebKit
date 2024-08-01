@@ -75,7 +75,7 @@
 - (void)assignWindow:(TestWebExtensionWindow *)window;
 
 @property (nonatomic, weak) TestWebExtensionWindow *window;
-@property (nonatomic, strong) WKWebView *mainWebView;
+@property (nonatomic, strong) WKWebView *webView;
 
 - (void)changeWebViewIfNeededForURL:(NSURL *)url forExtensionContext:(_WKWebExtensionContext *)context;
 

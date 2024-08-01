@@ -139,10 +139,6 @@ config("common_inherited_config") {
   cflags = []
   ldflags = []
 
-  if (rtc_jni_generator_legacy_symbols) {
-    defines += [ "RTC_JNI_GENERATOR_LEGACY_SYMBOLS" ]
-  }
-
   if (rtc_objc_prefix != "") {
     defines += [ "RTC_OBJC_TYPE_PREFIX=${rtc_objc_prefix}" ]
   }
@@ -678,7 +674,10 @@ if (rtc_include_tests && !build_with_chromium) {
     data = rtc_unittests_resources
 
     if (rtc_enable_protobuf) {
-      deps += [ "logging:rtc_event_log_tests" ]
+      deps += [
+        "api/test/network_emulation:network_config_schedule_proto",
+        "logging:rtc_event_log_tests",
+      ]
     }
 
     if (is_ios) {

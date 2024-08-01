@@ -151,7 +151,7 @@ void JSFinalizationRegistry::finalizeUnconditionally(VM& vm, CollectionScope)
     });
 
     if (!m_hasAlreadyScheduledWork && (readiedCell || deadCount(locker))) {
-        auto ticket = vm.deferredWorkTimer->addPendingWork(vm, this, { });
+        auto ticket = vm.deferredWorkTimer->addPendingWork(DeferredWorkTimer::WorkType::ImminentlyScheduled, vm, this, { });
         #ifndef BUN_SKIP_FAILING_ASSERTIONS
         ASSERT(vm.deferredWorkTimer->hasPendingWork(ticket));
         #endif

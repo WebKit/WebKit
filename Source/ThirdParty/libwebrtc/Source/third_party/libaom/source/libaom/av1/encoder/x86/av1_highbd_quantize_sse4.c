@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -138,8 +138,9 @@ void av1_highbd_quantize_fp_sse4_1(
   const int round0 = ROUND_POWER_OF_TWO(round_ptr[0], log_scale);
 
   qparam[0] = _mm_set_epi32(round1, round1, round1, round0);
-  qparam[1] = xx_set_64_from_32i(quant_ptr[1], quant_ptr[0]);
-  qparam[2] = xx_set_64_from_32i(dequant_ptr[1], dequant_ptr[0]);
+  qparam[1] = _mm_set_epi64x((uint32_t)quant_ptr[1], (uint32_t)quant_ptr[0]);
+  qparam[2] =
+      _mm_set_epi64x((uint32_t)dequant_ptr[1], (uint32_t)dequant_ptr[0]);
   qparam[3] = _mm_set_epi32(dequant_ptr[1], dequant_ptr[1], dequant_ptr[1],
                             dequant_ptr[0]);
 
@@ -149,8 +150,8 @@ void av1_highbd_quantize_fp_sse4_1(
 
   // update round/quan/dquan for AC
   qparam[0] = _mm_unpackhi_epi64(qparam[0], qparam[0]);
-  qparam[1] = xx_set1_64_from_32i(quant_ptr[1]);
-  qparam[2] = xx_set1_64_from_32i(dequant_ptr[1]);
+  qparam[1] = _mm_set1_epi64x((uint32_t)quant_ptr[1]);
+  qparam[2] = _mm_set1_epi64x((uint32_t)dequant_ptr[1]);
   qparam[3] = _mm_set1_epi32(dequant_ptr[1]);
   quantize_coeff_phase2(qcoeff, dequant, &coeff_sign, qparam, shift, log_scale,
                         quanAddr, dquanAddr);

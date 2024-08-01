@@ -32,13 +32,13 @@
 #include "p2p/base/test_turn_server.h"
 #include "p2p/client/basic_port_allocator.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/dscp.h"
 #include "rtc_base/fake_clock.h"
 #include "rtc_base/fake_mdns_responder.h"
 #include "rtc_base/fake_network.h"
 #include "rtc_base/firewall_socket_server.h"
 #include "rtc_base/gunit.h"
-#include "rtc_base/helpers.h"
 #include "rtc_base/internal/default_socket_server.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/mdns_responder_interface.h"
@@ -133,9 +133,6 @@ const cricket::IceParameters kIceParams[4] = {
     {kIceUfrag[1], kIcePwd[1], false},
     {kIceUfrag[2], kIcePwd[2], false},
     {kIceUfrag[3], kIcePwd[3], false}};
-
-const uint64_t kLowTiebreaker = 11111;
-const uint64_t kHighTiebreaker = 22222;
 
 cricket::IceConfig CreateIceConfig(
     int receiving_timeout,
@@ -377,8 +374,6 @@ class P2PTransportChannelTestBase : public ::testing::Test,
 
     void SetIceRole(IceRole role) { role_ = role; }
     IceRole ice_role() { return role_; }
-    void SetIceTiebreaker(uint64_t tiebreaker) { tiebreaker_ = tiebreaker; }
-    uint64_t GetIceTiebreaker() { return tiebreaker_; }
     void OnRoleConflict(bool role_conflict) { role_conflict_ = role_conflict; }
     bool role_conflict() { return role_conflict_; }
     void SetAllocationStepDelay(uint32_t delay) {
@@ -487,7 +482,6 @@ class P2PTransportChannelTestBase : public ::testing::Test,
       channel->SetRemoteIceParameters(remote_ice);
     }
     channel->SetIceRole(GetEndpoint(endpoint)->ice_role());
-    channel->SetIceTiebreaker(GetEndpoint(endpoint)->GetIceTiebreaker());
     return channel;
   }
 
@@ -561,9 +555,6 @@ class P2PTransportChannelTestBase : public ::testing::Test,
   }
   void SetIceRole(int endpoint, IceRole role) {
     GetEndpoint(endpoint)->SetIceRole(role);
-  }
-  void SetIceTiebreaker(int endpoint, uint64_t tiebreaker) {
-    GetEndpoint(endpoint)->SetIceTiebreaker(tiebreaker);
   }
   bool GetRoleConflict(int endpoint) {
     return GetEndpoint(endpoint)->role_conflict();
@@ -776,31 +767,6 @@ class P2PTransportChannelTestBase : public ::testing::Test,
                                kMediumTimeout, clock);
     EXPECT_EQ(1u, RemoteCandidate(ep2_ch1())->generation());
     EXPECT_EQ(1u, RemoteCandidate(ep1_ch1())->generation());
-  }
-
-  void TestSignalRoleConflict() {
-    rtc::ScopedFakeClock clock;
-    // Default EP1 is in controlling state.
-    SetIceTiebreaker(0, kLowTiebreaker);
-
-    SetIceRole(1, ICEROLE_CONTROLLING);
-    SetIceTiebreaker(1, kHighTiebreaker);
-
-    // Creating channels with both channels role set to CONTROLLING.
-    CreateChannels();
-    // Since both the channels initiated with controlling state and channel2
-    // has higher tiebreaker value, channel1 should receive SignalRoleConflict.
-    EXPECT_TRUE_SIMULATED_WAIT(GetRoleConflict(0), kShortTimeout, clock);
-    EXPECT_FALSE(GetRoleConflict(1));
-
-    EXPECT_TRUE_SIMULATED_WAIT(CheckConnected(ep1_ch1(), ep2_ch1()),
-                               kShortTimeout, clock);
-
-    EXPECT_TRUE(ep1_ch1()->selected_connection() &&
-                ep2_ch1()->selected_connection());
-
-    TestSendRecv(&clock);
-    DestroyChannels();
   }
 
   void TestPacketInfoIsSet(rtc::PacketInfo info) {
@@ -1839,13 +1805,36 @@ TEST_F(P2PTransportChannelTest, TestTcpConnectionTcptypeSet) {
 }
 
 TEST_F(P2PTransportChannelTest, TestIceRoleConflict) {
+  rtc::ScopedFakeClock clock;
   AddAddress(0, kPublicAddrs[0]);
   AddAddress(1, kPublicAddrs[1]);
-  TestSignalRoleConflict();
+
+  // Creating channels with both channels role set to CONTROLLING.
+  SetIceRole(0, ICEROLE_CONTROLLING);
+  SetIceRole(1, ICEROLE_CONTROLLING);
+
+  CreateChannels();
+  bool first_endpoint_has_lower_tiebreaker =
+      GetEndpoint(0)->allocator_->ice_tiebreaker() <
+      GetEndpoint(1)->allocator_->ice_tiebreaker();
+  // Since both the channels initiated with controlling state, the channel with
+  // the lower tiebreaker should receive SignalRoleConflict.
+  EXPECT_TRUE_SIMULATED_WAIT(
+      GetRoleConflict(first_endpoint_has_lower_tiebreaker ? 0 : 1),
+      kShortTimeout, clock);
+  EXPECT_FALSE(GetRoleConflict(first_endpoint_has_lower_tiebreaker ? 1 : 0));
+
+  EXPECT_TRUE_SIMULATED_WAIT(CheckConnected(ep1_ch1(), ep2_ch1()),
+                             kShortTimeout, clock);
+
+  EXPECT_TRUE(ep1_ch1()->selected_connection() &&
+              ep2_ch1()->selected_connection());
+
+  TestSendRecv(&clock);
+  DestroyChannels();
 }
 
-// Tests that the ice configs (protocol, tiebreaker and role) can be passed
-// down to ports.
+// Tests that the ice configs (protocol and role) can be passed down to ports.
 TEST_F(P2PTransportChannelTest, TestIceConfigWillPassDownToPort) {
   rtc::ScopedFakeClock clock;
   AddAddress(0, kPublicAddrs[0]);
@@ -1854,9 +1843,7 @@ TEST_F(P2PTransportChannelTest, TestIceConfigWillPassDownToPort) {
   // Give the first connection the higher tiebreaker so its role won't
   // change unless we tell it to.
   SetIceRole(0, ICEROLE_CONTROLLING);
-  SetIceTiebreaker(0, kHighTiebreaker);
   SetIceRole(1, ICEROLE_CONTROLLING);
-  SetIceTiebreaker(1, kLowTiebreaker);
 
   CreateChannels();
 
@@ -1865,18 +1852,13 @@ TEST_F(P2PTransportChannelTest, TestIceConfigWillPassDownToPort) {
   const std::vector<PortInterface*> ports_before = ep1_ch1()->ports();
   for (size_t i = 0; i < ports_before.size(); ++i) {
     EXPECT_EQ(ICEROLE_CONTROLLING, ports_before[i]->GetIceRole());
-    EXPECT_EQ(kHighTiebreaker, ports_before[i]->IceTiebreaker());
   }
 
   ep1_ch1()->SetIceRole(ICEROLE_CONTROLLED);
-  ep1_ch1()->SetIceTiebreaker(kLowTiebreaker);
 
   const std::vector<PortInterface*> ports_after = ep1_ch1()->ports();
   for (size_t i = 0; i < ports_after.size(); ++i) {
     EXPECT_EQ(ICEROLE_CONTROLLED, ports_before[i]->GetIceRole());
-    // SetIceTiebreaker after ports have been created will fail. So expect the
-    // original value.
-    EXPECT_EQ(kHighTiebreaker, ports_before[i]->IceTiebreaker());
   }
 
   EXPECT_TRUE_SIMULATED_WAIT(CheckConnected(ep1_ch1(), ep2_ch1()),
@@ -2262,9 +2244,7 @@ TEST_F(P2PTransportChannelTest,
   // With conflicting ICE roles, endpoint 1 has the higher tie breaker and will
   // send a binding error response.
   SetIceRole(0, ICEROLE_CONTROLLING);
-  SetIceTiebreaker(0, kHighTiebreaker);
   SetIceRole(1, ICEROLE_CONTROLLING);
-  SetIceTiebreaker(1, kLowTiebreaker);
   // We want the remote TURN candidate to show up as prflx. To do this we need
   // to configure the server to accept packets from an address we haven't
   // explicitly installed permission for.

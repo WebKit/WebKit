@@ -42,10 +42,15 @@ class ShaderTranslateTask
 {
   public:
     virtual ~ShaderTranslateTask() = default;
+
+    // Used for compile()
     virtual bool translate(ShHandle compiler,
                            const ShCompileOptions &options,
                            const std::string &source);
     virtual void postTranslate(ShHandle compiler, const gl::CompiledShaderState &compiledState) {}
+
+    // Used for load()
+    virtual void load(const gl::CompiledShaderState &compiledState) {}
 
     // Used by the GL backend to query whether the driver is compiling in parallel internally.
     virtual bool isCompilingInternally() { return false; }
@@ -59,10 +64,12 @@ class ShaderImpl : angle::NonCopyable
     ShaderImpl(const gl::ShaderState &state) : mState(state) {}
     virtual ~ShaderImpl() {}
 
-    virtual void destroy() {}
+    virtual void onDestroy(const gl::Context *context) {}
 
     virtual std::shared_ptr<ShaderTranslateTask> compile(const gl::Context *context,
-                                                         ShCompileOptions *options) = 0;
+                                                         ShCompileOptions *options)  = 0;
+    virtual std::shared_ptr<ShaderTranslateTask> load(const gl::Context *context,
+                                                      gl::BinaryInputStream *stream) = 0;
 
     virtual std::string getDebugInfo() const = 0;
 

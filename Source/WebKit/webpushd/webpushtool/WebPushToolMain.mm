@@ -41,8 +41,9 @@ static void printUsageAndTerminate(NSString *message)
 {
     fprintf(stderr, "%s\n\n", message.UTF8String);
 
-    fprintf(stderr, "Usage: webpushtool [options]\n");
+    fprintf(stderr, "Usage: webpushtool [options] verb [verb_args]\n");
     fprintf(stderr, "\n");
+    fprintf(stderr, "options is one or more of:\n");
     fprintf(stderr, "  --development\n");
     fprintf(stderr, "    Connects to mach service \"org.webkit.webpushtestdaemon.service\" (Default)\n");
     fprintf(stderr, "  --production\n");
@@ -51,17 +52,21 @@ static void printUsageAndTerminate(NSString *message)
     fprintf(stderr, "    Sets connection config to use bundle identifier <bundleIdentifier>.\n");
     fprintf(stderr, "  --pushPartition <partition>\n");
     fprintf(stderr, "    Sets connection config to use push partition <partition>.\n");
+    fprintf(stderr, "\n");
+    fprintf(stderr, "verb is one of:\n");
 #if HAVE(OS_LAUNCHD_JOB)
-    fprintf(stderr, "  --host\n");
+    fprintf(stderr, "  host\n");
     fprintf(stderr, "    Dynamically registers the service with launchd so it is visible to other applications\n");
     fprintf(stderr, "    The service name of the registration depends on either the --development or --production option chosen\n");
 #endif
-    fprintf(stderr, "  --streamDebugMessages\n");
+    fprintf(stderr, "  streamDebugMessages\n");
     fprintf(stderr, "    Stream debug messages from webpushd\n");
-    fprintf(stderr, "  --push <target app identifier> <partition string> <registration URL> <message>\n");
+    fprintf(stderr, "  injectPushMessage <target app identifier> <partition string> <registration URL> <message>\n");
     fprintf(stderr, "    Inject a test push message to the target app, push partition, and registration URL\n");
-    fprintf(stderr, "  --getPushPermissionState <scope_url>\n");
-    fprintf(stderr, "    Gets the permission state for the given <scope_url>.");
+    fprintf(stderr, "  getPushPermissionState <scope URL>\n");
+    fprintf(stderr, "    Gets the permission state for the given service worker scope.\n");
+    fprintf(stderr, "  requestPushPermission <scope URL>\n");
+    fprintf(stderr, "    Requests permission state for the given service worker scope.\n");
     fprintf(stderr, "\n");
 
     exitProcess(-1);
@@ -156,16 +161,80 @@ static bool registerDaemonWithLaunchD(WebPushTool::PreferTestService preferTestS
 
 namespace WebKit {
 
+class WebPushToolVerb {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    virtual ~WebPushToolVerb() = default;
+    virtual void run(WebPushTool::Connection&) = 0;
+    virtual void done() { CFRunLoopStop(CFRunLoopGetMain()); }
+};
+
+class InjectPushMessageVerb : public WebPushToolVerb {
+public:
+    InjectPushMessageVerb(PushMessageForTesting&& message)
+        : m_pushMessage(WTFMove(message)) { }
+    ~InjectPushMessageVerb() = default;
+
+    void run(WebPushTool::Connection& connection) override
+    {
+        connection.sendPushMessage(WTFMove(m_pushMessage), [this](String error) mutable {
+            if (error.isEmpty())
+                printf("Successfully injected push message\n");
+            else
+                printf("Injected push message with error: %s\n", error.utf8().data());
+            done();
+        });
+    }
+
+private:
+    PushMessageForTesting m_pushMessage;
+};
+
+class GetPushPermissionStateVerb : public WebPushToolVerb {
+public:
+    GetPushPermissionStateVerb(const String& scope)
+        : m_scope(scope) { }
+    ~GetPushPermissionStateVerb() = default;
+
+    void run(WebPushTool::Connection& connection) override
+    {
+        connection.getPushPermissionState(m_scope, [this](WebCore::PushPermissionState state) mutable {
+            printf("Got push permission status: %u\n", static_cast<unsigned>(state));
+            done();
+        });
+    }
+
+private:
+    String m_scope;
+};
+
+class RequestPushPermissionVerb : public WebPushToolVerb {
+public:
+    RequestPushPermissionVerb(const String& scope)
+        : m_scope(scope) { }
+    ~RequestPushPermissionVerb() = default;
+
+    void run(WebPushTool::Connection& connection) override
+    {
+        connection.requestPushPermission(m_scope, [this](bool granted) mutable {
+            printf("Requested push permission with result: %d\n", granted);
+            done();
+        });
+    }
+
+private:
+    String m_scope;
+};
+
 int WebPushToolMain(int, char **)
 {
     WTF::initializeMainThread();
 
     auto preferTestService = WebPushTool::PreferTestService::Yes;
     bool host = false;
-    std::unique_ptr<PushMessageForTesting> pushMessage;
+    std::unique_ptr<WebPushToolVerb> verb;
     RetainPtr<NSString> bundleIdentifier;
     RetainPtr<NSString> pushPartition;
-    RetainPtr<NSString> scopeForGetPushPermissionState;
 
     @autoreleasepool {
         NSArray *arguments = [[NSProcessInfo processInfo] arguments];
@@ -183,16 +252,21 @@ int WebPushToolMain(int, char **)
                 bundleIdentifier = [enumerator nextObject];
             else if ([argument isEqualToString:@"--pushPartition"])
                 pushPartition = [enumerator nextObject];
-            else if ([argument isEqualToString:@"--streamDebugMessages"])
-                execl("/usr/bin/log", "log", "stream", "--debug", "--info", "--process", "webpushd");
-            else if ([argument isEqualToString:@"--host"])
+            else if ([argument isEqualToString:@"host"])
                 host = true;
-            else if ([argument isEqualToString:@"--push"]) {
-                pushMessage = pushMessageFromArguments(enumerator);
+            else if ([argument isEqualToString:@"streamDebugMessages"])
+                execl("/usr/bin/log", "log", "stream", "--debug", "--info", "--process", "webpushd");
+            else if ([argument isEqualToString:@"injectPushMessage"]) {
+                auto pushMessage = pushMessageFromArguments(enumerator);
                 if (!pushMessage)
                     printUsageAndTerminate([NSString stringWithFormat:@"Invalid push arguments specified"]);
-            } else if ([argument isEqualToString:@"--getPushPermissionState"]) {
-                scopeForGetPushPermissionState = [enumerator nextObject];
+                verb = makeUnique<InjectPushMessageVerb>(WTFMove(*pushMessage));
+            } else if ([argument isEqualToString:@"getPushPermissionState"]) {
+                String scope { [enumerator nextObject] };
+                verb = makeUnique<GetPushPermissionStateVerb>(scope);
+            } else if ([argument isEqualToString:@"requestPushPermission"]) {
+                String scope { [enumerator nextObject] };
+                verb = makeUnique<RequestPushPermissionVerb>(scope);
             } else
                 printUsageAndTerminate([NSString stringWithFormat:@"Invalid option provided: %@", argument]);
 
@@ -200,39 +274,22 @@ int WebPushToolMain(int, char **)
         }
     }
 
-    if (!pushMessage && !scopeForGetPushPermissionState)
+    if (host) {
+        if (!registerDaemonWithLaunchD(preferTestService)) {
+            NSLog(@"Failed to register webpushd with launchd");
+            exit(1);
+        }
+
+        NSLog(@"Registered webpushd with launchd");
+        exit(0);
+    }
+
+    if (!verb)
         printUsageAndTerminate(@"Nothing to do");
-
-    if (host && !registerDaemonWithLaunchD(preferTestService))
-        printUsageAndTerminate(@"Unable to install plist to host the service");
-
-    auto group = adoptNS(dispatch_group_create());
 
     auto connection = WebPushTool::Connection::create(preferTestService, bundleIdentifier.get(), pushPartition.get());
     connection->connectToService(host ? WebPushTool::WaitForServiceToExist::No : WebPushTool::WaitForServiceToExist::Yes);
-
-    if (pushMessage) {
-        dispatch_group_enter(group.get());
-        connection->sendPushMessage(WTFMove(*pushMessage), [group](String error) {
-            if (error.isEmpty())
-                printf("Successfully injected push message\n");
-            else
-                printf("Injected push message with error: %s\n", error.utf8().data());
-            dispatch_group_leave(group.get());
-        });
-    }
-
-    if (scopeForGetPushPermissionState) {
-        dispatch_group_enter(group.get());
-        connection->getPushPermissionState(scopeForGetPushPermissionState.get(), [group](WebCore::PushPermissionState state) {
-            printf("Got push permission status: %u\n", static_cast<unsigned>(state));
-            dispatch_group_leave(group.get());
-        });
-    }
-
-    dispatch_group_notify(group.get(), dispatch_get_main_queue(), ^{
-        CFRunLoopStop(CFRunLoopGetMain());
-    });
+    verb->run(*connection);
 
     CFRunLoopRun();
     return 0;

@@ -5123,3 +5123,24 @@ TEST_F(WebRtcSdpTest, BackfillsDefaultFmtpValues) {
   EXPECT_TRUE(codecs[3].GetParam("tx-mode", &value));
   EXPECT_EQ(value, "SRST");
 }
+
+TEST_F(WebRtcSdpTest, ParsesKeyValueFmtpParameterSet) {
+  std::string params = "key1=value1;key2=value2";
+  webrtc::CodecParameterMap codec_params;
+  SdpParseError error;
+
+  ASSERT_TRUE(webrtc::ParseFmtpParameterSet(params, codec_params, &error));
+  EXPECT_EQ(2U, codec_params.size());
+  EXPECT_EQ(codec_params["key1"], "value1");
+  EXPECT_EQ(codec_params["key2"], "value2");
+}
+
+TEST_F(WebRtcSdpTest, ParsesNonKeyValueFmtpParameterSet) {
+  std::string params = "not-in-key-value-format";
+  webrtc::CodecParameterMap codec_params;
+  SdpParseError error;
+
+  ASSERT_TRUE(webrtc::ParseFmtpParameterSet(params, codec_params, &error));
+  EXPECT_EQ(1U, codec_params.size());
+  EXPECT_EQ(codec_params[""], "not-in-key-value-format");
+}

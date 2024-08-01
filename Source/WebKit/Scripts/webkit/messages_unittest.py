@@ -53,6 +53,7 @@ _test_receiver_names = [
     'TestWithStreamBuffer',
     'TestWithCVPixelBuffer',
     'TestWithStreamServerConnectionHandle',
+    'TestWithEnabledBy',
     'TestWithEnabledIf',
 ]
 

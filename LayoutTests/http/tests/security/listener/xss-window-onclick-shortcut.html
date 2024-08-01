@@ -12,16 +12,16 @@
             targetChild.onload = start;
         }
 
-        function start() {
+        async function start() {
             var windowChild = window.frames[1];
 
             var x = document.getElementsByTagName('iframe')[1].offsetLeft + 50;
             var y = document.getElementsByTagName('iframe')[1].offsetTop + 50;
 
             if (window.eventSender) {
-                eventSender.mouseMoveTo(x, y);
-                eventSender.mouseDown();
-                eventSender.mouseUp();
+                await eventSender.asyncMouseMoveTo(x, y);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseUp();
             } else {
                 alert("To test you must click the iframe on the right.");
             }

@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourceFilter.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGFilterElement.h"
 
 namespace WebCore {

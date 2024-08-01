@@ -104,3 +104,24 @@ int AES_set_decrypt_key(const uint8_t *key, unsigned bits, AES_KEY *aeskey) {
     return aes_nohw_set_decrypt_key(key, bits, aeskey);
   }
 }
+
+#if defined(HWAES) && (defined(OPENSSL_X86) || defined(OPENSSL_X86_64))
+// On x86 and x86_64, |aes_hw_set_decrypt_key|, we implement
+// |aes_hw_encrypt_key_to_decrypt_key| in assembly and rely on C code to combine
+// the operations.
+int aes_hw_set_decrypt_key(const uint8_t *user_key, int bits, AES_KEY *key) {
+  int ret = aes_hw_set_encrypt_key(user_key, bits, key);
+  if (ret == 0) {
+    aes_hw_encrypt_key_to_decrypt_key(key);
+  }
+  return ret;
+}
+
+int aes_hw_set_encrypt_key(const uint8_t *user_key, int bits, AES_KEY *key) {
+  if (aes_hw_set_encrypt_key_alt_preferred()) {
+    return aes_hw_set_encrypt_key_alt(user_key, bits, key);
+  } else {
+    return aes_hw_set_encrypt_key_base(user_key, bits, key);
+  }
+}
+#endif

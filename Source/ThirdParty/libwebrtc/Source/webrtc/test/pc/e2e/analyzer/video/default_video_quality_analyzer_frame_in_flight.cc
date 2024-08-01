@@ -93,7 +93,7 @@ void FrameInFlight::OnFrameEncoded(
         *time_between_encoded_frames;
   }
   frame_type_ = frame_type;
-  encoded_image_size_ = encoded_image_size;
+  encoded_image_size_ += encoded_image_size;
   target_encode_bitrate_ += target_encode_bitrate;
   stream_layers_qp_[stream_index].AddSample(SamplesStatsCounter::StatsSample{
       .value = static_cast<double>(qp), .time = time});

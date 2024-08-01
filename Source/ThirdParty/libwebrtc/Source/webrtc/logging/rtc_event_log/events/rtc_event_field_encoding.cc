@@ -10,16 +10,21 @@
 
 #include "logging/rtc_event_log/events/rtc_event_field_encoding.h"
 
-#include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <limits>
-#include <memory>
-#include <utility>
+#include <string>
+#include <vector>
 
+#include "absl/strings/string_view.h"
+#include "absl/types/optional.h"
+#include "api/array_view.h"
+#include "api/rtc_event_log/rtc_event.h"
 #include "logging/rtc_event_log/encoder/bit_writer.h"
 #include "logging/rtc_event_log/encoder/var_int.h"
+#include "logging/rtc_event_log/events/fixed_length_encoding_parameters_v3.h"
 #include "logging/rtc_event_log/events/rtc_event_field_extraction.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 
 using webrtc_event_logging::UnsignedDelta;
 

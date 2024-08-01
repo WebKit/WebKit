@@ -85,6 +85,8 @@ rtc_library("common_video") {
     "../rtc_base/synchronization:mutex",
     "../rtc_base/system:rtc_export",
     "../system_wrappers:metrics",
+    "//third_party/abseil-cpp/absl/numeric:bits",
+    "//third_party/abseil-cpp/absl/types:optional",
     "//third_party/libyuv",
   ]
   if (rtc_use_h265) {
@@ -93,10 +95,6 @@ rtc_library("common_video") {
       "../rtc_base/containers:flat_map",
     ]
   }
-  absl_deps = [
-    "//third_party/abseil-cpp/absl/numeric:bits",
-    "//third_party/abseil-cpp/absl/types:optional",
-  ]
 }
 
 rtc_source_set("frame_counts") {
@@ -165,8 +163,6 @@ if (rtc_include_tests && !build_with_chromium) {
       "//testing/gtest",
       "//third_party/libyuv",
     ]
-
-    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 
     data = common_video_resources
     if (is_android) {

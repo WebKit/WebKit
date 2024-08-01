@@ -18,7 +18,9 @@
 #include <vector>
 
 #include "api/audio/audio_processing.h"
+#include "api/audio/audio_view.h"
 #include "common_audio/channel_buffer.h"
+#include "common_audio/include/audio_util.h"
 
 namespace webrtc {
 
@@ -32,7 +34,8 @@ enum Band { kBand0To8kHz = 0, kBand8To16kHz = 1, kBand16To24kHz = 2 };
 class AudioBuffer {
  public:
   static const int kSplitBandSize = 160;
-  static const int kMaxSampleRate = 384000;
+  // TODO(tommi): Remove this (`AudioBuffer::kMaxSampleRate`) constant.
+  static const int kMaxSampleRate = webrtc::kMaxSampleRateHz;
   AudioBuffer(size_t input_rate,
               size_t input_num_channels,
               size_t buffer_rate,
@@ -55,6 +58,13 @@ class AudioBuffer {
   // cannot be larger than the specified buffer_num_channels. The number is also
   // reset at each call to CopyFrom or InterleaveFrom.
   void set_num_channels(size_t num_channels);
+
+  // Returns a DeinterleavedView<> over the channel data.
+  DeinterleavedView<float> view() {
+    return DeinterleavedView<float>(
+        num_channels_ && buffer_num_frames_ ? channels()[0] : nullptr,
+        buffer_num_frames_, num_channels_);
+  }
 
   size_t num_channels() const { return num_channels_; }
   size_t num_frames() const { return buffer_num_frames_; }

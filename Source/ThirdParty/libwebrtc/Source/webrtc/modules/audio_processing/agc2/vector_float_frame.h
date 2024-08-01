@@ -13,6 +13,7 @@
 
 #include <vector>
 
+#include "api/audio/audio_view.h"
 #include "modules/audio_processing/include/audio_frame_view.h"
 
 namespace webrtc {
@@ -24,17 +25,17 @@ class VectorFloatFrame {
   VectorFloatFrame(int num_channels,
                    int samples_per_channel,
                    float start_value);
-  const AudioFrameView<float>& float_frame_view() { return float_frame_view_; }
-  AudioFrameView<const float> float_frame_view() const {
-    return float_frame_view_;
-  }
-
   ~VectorFloatFrame();
 
+  AudioFrameView<float> float_frame_view();
+  AudioFrameView<const float> float_frame_view() const;
+
+  DeinterleavedView<float> view() { return view_; }
+  DeinterleavedView<const float> view() const { return view_; }
+
  private:
-  std::vector<std::vector<float>> channels_;
-  std::vector<float*> channel_ptrs_;
-  AudioFrameView<float> float_frame_view_;
+  std::vector<float> channels_;
+  DeinterleavedView<float> view_;
 };
 
 }  // namespace webrtc

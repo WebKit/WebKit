@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -5125,9 +5125,9 @@ static void idct32x32_sse4_1(__m128i *in, __m128i *out, int bit, int do_cols,
   }
 }
 
-void av1_highbd_inv_txfm_add_8x8_sse4_1(const tran_low_t *input, uint8_t *dest,
-                                        int stride,
-                                        const TxfmParam *txfm_param) {
+static void av1_highbd_inv_txfm_add_8x8_sse4_1(const tran_low_t *input,
+                                               uint8_t *dest, int stride,
+                                               const TxfmParam *txfm_param) {
   int bd = txfm_param->bd;
   const TX_TYPE tx_type = txfm_param->tx_type;
   const int32_t *src = cast_to_int32(input);
@@ -5149,9 +5149,9 @@ void av1_highbd_inv_txfm_add_8x8_sse4_1(const tran_low_t *input, uint8_t *dest,
       break;
   }
 }
-void av1_highbd_inv_txfm_add_4x4_sse4_1(const tran_low_t *input, uint8_t *dest,
-                                        int stride,
-                                        const TxfmParam *txfm_param) {
+static void av1_highbd_inv_txfm_add_4x4_sse4_1(const tran_low_t *input,
+                                               uint8_t *dest, int stride,
+                                               const TxfmParam *txfm_param) {
   assert(av1_ext_tx_used[txfm_param->tx_set_type][txfm_param->tx_type]);
   int eob = txfm_param->eob;
   int bd = txfm_param->bd;
@@ -5754,9 +5754,9 @@ void av1_highbd_inv_txfm2d_add_universe_sse4_1(const int32_t *input,
   }
 }
 
-void av1_highbd_inv_txfm_add_4x8_sse4_1(const tran_low_t *input, uint8_t *dest,
-                                        int stride,
-                                        const TxfmParam *txfm_param) {
+static void av1_highbd_inv_txfm_add_4x8_sse4_1(const tran_low_t *input,
+                                               uint8_t *dest, int stride,
+                                               const TxfmParam *txfm_param) {
   int bd = txfm_param->bd;
   const TX_TYPE tx_type = txfm_param->tx_type;
   const TX_SIZE tx_size = txfm_param->tx_size;
@@ -5765,9 +5765,9 @@ void av1_highbd_inv_txfm_add_4x8_sse4_1(const tran_low_t *input, uint8_t *dest,
                                   tx_type, tx_size, eob, bd);
 }
 
-void av1_highbd_inv_txfm_add_8x4_sse4_1(const tran_low_t *input, uint8_t *dest,
-                                        int stride,
-                                        const TxfmParam *txfm_param) {
+static void av1_highbd_inv_txfm_add_8x4_sse4_1(const tran_low_t *input,
+                                               uint8_t *dest, int stride,
+                                               const TxfmParam *txfm_param) {
   int bd = txfm_param->bd;
   const TX_TYPE tx_type = txfm_param->tx_type;
   const TX_SIZE tx_size = txfm_param->tx_size;
@@ -5776,9 +5776,9 @@ void av1_highbd_inv_txfm_add_8x4_sse4_1(const tran_low_t *input, uint8_t *dest,
                                   tx_type, tx_size, eob, bd);
 }
 
-void av1_highbd_inv_txfm_add_4x16_sse4_1(const tran_low_t *input, uint8_t *dest,
-                                         int stride,
-                                         const TxfmParam *txfm_param) {
+static void av1_highbd_inv_txfm_add_4x16_sse4_1(const tran_low_t *input,
+                                                uint8_t *dest, int stride,
+                                                const TxfmParam *txfm_param) {
   int bd = txfm_param->bd;
   const TX_TYPE tx_type = txfm_param->tx_type;
   const TX_SIZE tx_size = txfm_param->tx_size;
@@ -5787,9 +5787,9 @@ void av1_highbd_inv_txfm_add_4x16_sse4_1(const tran_low_t *input, uint8_t *dest,
                                     tx_type, tx_size, eob, bd);
 }
 
-void av1_highbd_inv_txfm_add_16x4_sse4_1(const tran_low_t *input, uint8_t *dest,
-                                         int stride,
-                                         const TxfmParam *txfm_param) {
+static void av1_highbd_inv_txfm_add_16x4_sse4_1(const tran_low_t *input,
+                                                uint8_t *dest, int stride,
+                                                const TxfmParam *txfm_param) {
   int bd = txfm_param->bd;
   const TX_TYPE tx_type = txfm_param->tx_type;
   const TX_SIZE tx_size = txfm_param->tx_size;

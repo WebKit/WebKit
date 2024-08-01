@@ -875,6 +875,7 @@ const gchar* webkit_web_page_get_uri(WebKitWebPage* webPage)
  * Returns: (transfer none): the #WebKitFrame that is the main frame of @web_page
  *
  * Since: 2.2
+ * Deprecated: 2.46
  */
 WebKitFrame* webkit_web_page_get_main_frame(WebKitWebPage* webPage)
 {

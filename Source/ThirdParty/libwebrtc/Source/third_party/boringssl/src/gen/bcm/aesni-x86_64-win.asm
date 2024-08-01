@@ -13,7 +13,6 @@ default	rel
 %endif
 section	.text code align=64
 
-EXTERN	OPENSSL_ia32cap_P
 global	aes_hw_encrypt
 
 ALIGN	16
@@ -2012,74 +2011,61 @@ $L$cbc_ret:
 	ret
 
 $L$SEH_end_aes_hw_cbc_encrypt:
-global	aes_hw_set_decrypt_key
+global	aes_hw_encrypt_key_to_decrypt_key
 
 ALIGN	16
-aes_hw_set_decrypt_key:
+aes_hw_encrypt_key_to_decrypt_key:
 
 _CET_ENDBR
-	DB	0x48,0x83,0xEC,0x08
 
-	call	__aesni_set_encrypt_key
+	mov	edx,DWORD[240+rcx]
 	shl	edx,4
-	test	eax,eax
-	jnz	NEAR $L$dec_key_ret
-	lea	rcx,[16+rdx*1+r8]
 
-	movups	xmm0,XMMWORD[r8]
-	movups	xmm1,XMMWORD[rcx]
-	movups	XMMWORD[rcx],xmm0
-	movups	XMMWORD[r8],xmm1
-	lea	r8,[16+r8]
-	lea	rcx,[((-16))+rcx]
+	lea	r8,[16+rdx*1+rcx]
+
+	movups	xmm0,XMMWORD[rcx]
+	movups	xmm1,XMMWORD[r8]
+	movups	XMMWORD[r8],xmm0
+	movups	XMMWORD[rcx],xmm1
+	lea	rcx,[16+rcx]
+	lea	r8,[((-16))+r8]
 
 $L$dec_key_inverse:
-	movups	xmm0,XMMWORD[r8]
-	movups	xmm1,XMMWORD[rcx]
+	movups	xmm0,XMMWORD[rcx]
+	movups	xmm1,XMMWORD[r8]
 	DB	102,15,56,219,192
 	DB	102,15,56,219,201
-	lea	r8,[16+r8]
-	lea	rcx,[((-16))+rcx]
-	movups	XMMWORD[16+rcx],xmm0
-	movups	XMMWORD[(-16)+r8],xmm1
-	cmp	rcx,r8
+	lea	rcx,[16+rcx]
+	lea	r8,[((-16))+r8]
+	movups	XMMWORD[16+r8],xmm0
+	movups	XMMWORD[(-16)+rcx],xmm1
+	cmp	r8,rcx
 	ja	NEAR $L$dec_key_inverse
 
-	movups	xmm0,XMMWORD[r8]
+	movups	xmm0,XMMWORD[rcx]
 	DB	102,15,56,219,192
 	pxor	xmm1,xmm1
-	movups	XMMWORD[rcx],xmm0
+	movups	XMMWORD[r8],xmm0
 	pxor	xmm0,xmm0
-$L$dec_key_ret:
-	add	rsp,8
-
 	ret
 
-$L$SEH_end_set_decrypt_key:
 
-global	aes_hw_set_encrypt_key
+global	aes_hw_set_encrypt_key_base
 
 ALIGN	16
-aes_hw_set_encrypt_key:
-__aesni_set_encrypt_key:
+aes_hw_set_encrypt_key_base:
 
+$L$SEH_begin_aes_hw_set_encrypt_key_base_1:
 _CET_ENDBR
 %ifdef BORINGSSL_DISPATCH_TEST
 	mov	BYTE[((BORINGSSL_function_hit+3))],1
 %endif
-	DB	0x48,0x83,0xEC,0x08
+	sub	rsp,8
 
-	mov	rax,-1
-	test	rcx,rcx
-	jz	NEAR $L$enc_key_ret
-	test	r8,r8
-	jz	NEAR $L$enc_key_ret
-
+$L$SEH_prologue_aes_hw_set_encrypt_key_base_2:
+$L$SEH_endprologue_aes_hw_set_encrypt_key_base_3:
 	movups	xmm0,XMMWORD[rcx]
 	xorps	xmm4,xmm4
-	lea	r10,[OPENSSL_ia32cap_P]
-	mov	r10d,DWORD[4+r10]
-	and	r10d,268437504
 	lea	rax,[16+r8]
 	cmp	edx,256
 	je	NEAR $L$14rounds
@@ -2090,8 +2076,6 @@ _CET_ENDBR
 
 $L$10rounds:
 	mov	edx,9
-	cmp	r10d,268435456
-	je	NEAR $L$10rounds_alt
 
 	movups	XMMWORD[r8],xmm0
 	DB	102,15,58,223,200,1
@@ -2120,78 +2104,9 @@ $L$10rounds:
 	jmp	NEAR $L$enc_key_ret
 
 ALIGN	16
-$L$10rounds_alt:
-	movdqa	xmm5,XMMWORD[$L$key_rotate]
-	mov	r10d,8
-	movdqa	xmm4,XMMWORD[$L$key_rcon1]
-	movdqa	xmm2,xmm0
-	movdqu	XMMWORD[r8],xmm0
-	jmp	NEAR $L$oop_key128
-
-ALIGN	16
-$L$oop_key128:
-DB	102,15,56,0,197
-	DB	102,15,56,221,196
-	pslld	xmm4,1
-	lea	rax,[16+rax]
-
-	movdqa	xmm3,xmm2
-	pslldq	xmm2,4
-	pxor	xmm3,xmm2
-	pslldq	xmm2,4
-	pxor	xmm3,xmm2
-	pslldq	xmm2,4
-	pxor	xmm2,xmm3
-
-	pxor	xmm0,xmm2
-	movdqu	XMMWORD[(-16)+rax],xmm0
-	movdqa	xmm2,xmm0
-
-	dec	r10d
-	jnz	NEAR $L$oop_key128
-
-	movdqa	xmm4,XMMWORD[$L$key_rcon1b]
-
-DB	102,15,56,0,197
-	DB	102,15,56,221,196
-	pslld	xmm4,1
-
-	movdqa	xmm3,xmm2
-	pslldq	xmm2,4
-	pxor	xmm3,xmm2
-	pslldq	xmm2,4
-	pxor	xmm3,xmm2
-	pslldq	xmm2,4
-	pxor	xmm2,xmm3
-
-	pxor	xmm0,xmm2
-	movdqu	XMMWORD[rax],xmm0
-
-	movdqa	xmm2,xmm0
-DB	102,15,56,0,197
-	DB	102,15,56,221,196
-
-	movdqa	xmm3,xmm2
-	pslldq	xmm2,4
-	pxor	xmm3,xmm2
-	pslldq	xmm2,4
-	pxor	xmm3,xmm2
-	pslldq	xmm2,4
-	pxor	xmm2,xmm3
-
-	pxor	xmm0,xmm2
-	movdqu	XMMWORD[16+rax],xmm0
-
-	mov	DWORD[96+rax],edx
-	xor	eax,eax
-	jmp	NEAR $L$enc_key_ret
-
-ALIGN	16
 $L$12rounds:
 	movq	xmm2,QWORD[16+rcx]
 	mov	edx,11
-	cmp	r10d,268435456
-	je	NEAR $L$12rounds_alt
 
 	movups	XMMWORD[r8],xmm0
 	DB	102,15,58,223,202,1
@@ -2216,53 +2131,10 @@ $L$12rounds:
 	jmp	NEAR $L$enc_key_ret
 
 ALIGN	16
-$L$12rounds_alt:
-	movdqa	xmm5,XMMWORD[$L$key_rotate192]
-	movdqa	xmm4,XMMWORD[$L$key_rcon1]
-	mov	r10d,8
-	movdqu	XMMWORD[r8],xmm0
-	jmp	NEAR $L$oop_key192
-
-ALIGN	16
-$L$oop_key192:
-	movq	QWORD[rax],xmm2
-	movdqa	xmm1,xmm2
-DB	102,15,56,0,213
-	DB	102,15,56,221,212
-	pslld	xmm4,1
-	lea	rax,[24+rax]
-
-	movdqa	xmm3,xmm0
-	pslldq	xmm0,4
-	pxor	xmm3,xmm0
-	pslldq	xmm0,4
-	pxor	xmm3,xmm0
-	pslldq	xmm0,4
-	pxor	xmm0,xmm3
-
-	pshufd	xmm3,xmm0,0xff
-	pxor	xmm3,xmm1
-	pslldq	xmm1,4
-	pxor	xmm3,xmm1
-
-	pxor	xmm0,xmm2
-	pxor	xmm2,xmm3
-	movdqu	XMMWORD[(-16)+rax],xmm0
-
-	dec	r10d
-	jnz	NEAR $L$oop_key192
-
-	mov	DWORD[32+rax],edx
-	xor	eax,eax
-	jmp	NEAR $L$enc_key_ret
-
-ALIGN	16
 $L$14rounds:
 	movups	xmm2,XMMWORD[16+rcx]
 	mov	edx,13
 	lea	rax,[16+rax]
-	cmp	r10d,268435456
-	je	NEAR $L$14rounds_alt
 
 	movups	XMMWORD[r8],xmm0
 	movups	XMMWORD[16+r8],xmm2
@@ -2298,60 +2170,6 @@ $L$14rounds:
 	jmp	NEAR $L$enc_key_ret
 
 ALIGN	16
-$L$14rounds_alt:
-	movdqa	xmm5,XMMWORD[$L$key_rotate]
-	movdqa	xmm4,XMMWORD[$L$key_rcon1]
-	mov	r10d,7
-	movdqu	XMMWORD[r8],xmm0
-	movdqa	xmm1,xmm2
-	movdqu	XMMWORD[16+r8],xmm2
-	jmp	NEAR $L$oop_key256
-
-ALIGN	16
-$L$oop_key256:
-DB	102,15,56,0,213
-	DB	102,15,56,221,212
-
-	movdqa	xmm3,xmm0
-	pslldq	xmm0,4
-	pxor	xmm3,xmm0
-	pslldq	xmm0,4
-	pxor	xmm3,xmm0
-	pslldq	xmm0,4
-	pxor	xmm0,xmm3
-	pslld	xmm4,1
-
-	pxor	xmm0,xmm2
-	movdqu	XMMWORD[rax],xmm0
-
-	dec	r10d
-	jz	NEAR $L$done_key256
-
-	pshufd	xmm2,xmm0,0xff
-	pxor	xmm3,xmm3
-	DB	102,15,56,221,211
-
-	movdqa	xmm3,xmm1
-	pslldq	xmm1,4
-	pxor	xmm3,xmm1
-	pslldq	xmm1,4
-	pxor	xmm3,xmm1
-	pslldq	xmm1,4
-	pxor	xmm1,xmm3
-
-	pxor	xmm2,xmm1
-	movdqu	XMMWORD[16+rax],xmm2
-	lea	rax,[32+rax]
-	movdqa	xmm1,xmm2
-
-	jmp	NEAR $L$oop_key256
-
-$L$done_key256:
-	mov	DWORD[16+rax],edx
-	xor	eax,eax
-	jmp	NEAR $L$enc_key_ret
-
-ALIGN	16
 $L$bad_keybits:
 	mov	rax,-2
 $L$enc_key_ret:
@@ -2365,7 +2183,7 @@ $L$enc_key_ret:
 
 	ret
 
-$L$SEH_end_set_encrypt_key:
+$L$SEH_end_aes_hw_set_encrypt_key_base_4:
 
 ALIGN	16
 $L$key_expansion_128:
@@ -2436,6 +2254,212 @@ $L$key_expansion_256b:
 	xorps	xmm2,xmm1
 	ret
 
+
+global	aes_hw_set_encrypt_key_alt
+
+ALIGN	16
+aes_hw_set_encrypt_key_alt:
+
+$L$SEH_begin_aes_hw_set_encrypt_key_alt_1:
+_CET_ENDBR
+%ifdef BORINGSSL_DISPATCH_TEST
+	mov	BYTE[((BORINGSSL_function_hit+3))],1
+%endif
+	sub	rsp,8
+
+$L$SEH_prologue_aes_hw_set_encrypt_key_alt_2:
+$L$SEH_endprologue_aes_hw_set_encrypt_key_alt_3:
+	movups	xmm0,XMMWORD[rcx]
+	xorps	xmm4,xmm4
+	lea	rax,[16+r8]
+	cmp	edx,256
+	je	NEAR $L$14rounds_alt
+	cmp	edx,192
+	je	NEAR $L$12rounds_alt
+	cmp	edx,128
+	jne	NEAR $L$bad_keybits_alt
+
+	mov	edx,9
+	movdqa	xmm5,XMMWORD[$L$key_rotate]
+	mov	r10d,8
+	movdqa	xmm4,XMMWORD[$L$key_rcon1]
+	movdqa	xmm2,xmm0
+	movdqu	XMMWORD[r8],xmm0
+	jmp	NEAR $L$oop_key128
+
+ALIGN	16
+$L$oop_key128:
+DB	102,15,56,0,197
+	DB	102,15,56,221,196
+	pslld	xmm4,1
+	lea	rax,[16+rax]
+
+	movdqa	xmm3,xmm2
+	pslldq	xmm2,4
+	pxor	xmm3,xmm2
+	pslldq	xmm2,4
+	pxor	xmm3,xmm2
+	pslldq	xmm2,4
+	pxor	xmm2,xmm3
+
+	pxor	xmm0,xmm2
+	movdqu	XMMWORD[(-16)+rax],xmm0
+	movdqa	xmm2,xmm0
+
+	dec	r10d
+	jnz	NEAR $L$oop_key128
+
+	movdqa	xmm4,XMMWORD[$L$key_rcon1b]
+
+DB	102,15,56,0,197
+	DB	102,15,56,221,196
+	pslld	xmm4,1
+
+	movdqa	xmm3,xmm2
+	pslldq	xmm2,4
+	pxor	xmm3,xmm2
+	pslldq	xmm2,4
+	pxor	xmm3,xmm2
+	pslldq	xmm2,4
+	pxor	xmm2,xmm3
+
+	pxor	xmm0,xmm2
+	movdqu	XMMWORD[rax],xmm0
+
+	movdqa	xmm2,xmm0
+DB	102,15,56,0,197
+	DB	102,15,56,221,196
+
+	movdqa	xmm3,xmm2
+	pslldq	xmm2,4
+	pxor	xmm3,xmm2
+	pslldq	xmm2,4
+	pxor	xmm3,xmm2
+	pslldq	xmm2,4
+	pxor	xmm2,xmm3
+
+	pxor	xmm0,xmm2
+	movdqu	XMMWORD[16+rax],xmm0
+
+	mov	DWORD[96+rax],edx
+	xor	eax,eax
+	jmp	NEAR $L$enc_key_ret_alt
+
+ALIGN	16
+$L$12rounds_alt:
+	movq	xmm2,QWORD[16+rcx]
+	mov	edx,11
+	movdqa	xmm5,XMMWORD[$L$key_rotate192]
+	movdqa	xmm4,XMMWORD[$L$key_rcon1]
+	mov	r10d,8
+	movdqu	XMMWORD[r8],xmm0
+	jmp	NEAR $L$oop_key192
+
+ALIGN	16
+$L$oop_key192:
+	movq	QWORD[rax],xmm2
+	movdqa	xmm1,xmm2
+DB	102,15,56,0,213
+	DB	102,15,56,221,212
+	pslld	xmm4,1
+	lea	rax,[24+rax]
+
+	movdqa	xmm3,xmm0
+	pslldq	xmm0,4
+	pxor	xmm3,xmm0
+	pslldq	xmm0,4
+	pxor	xmm3,xmm0
+	pslldq	xmm0,4
+	pxor	xmm0,xmm3
+
+	pshufd	xmm3,xmm0,0xff
+	pxor	xmm3,xmm1
+	pslldq	xmm1,4
+	pxor	xmm3,xmm1
+
+	pxor	xmm0,xmm2
+	pxor	xmm2,xmm3
+	movdqu	XMMWORD[(-16)+rax],xmm0
+
+	dec	r10d
+	jnz	NEAR $L$oop_key192
+
+	mov	DWORD[32+rax],edx
+	xor	eax,eax
+	jmp	NEAR $L$enc_key_ret_alt
+
+ALIGN	16
+$L$14rounds_alt:
+	movups	xmm2,XMMWORD[16+rcx]
+	mov	edx,13
+	lea	rax,[16+rax]
+	movdqa	xmm5,XMMWORD[$L$key_rotate]
+	movdqa	xmm4,XMMWORD[$L$key_rcon1]
+	mov	r10d,7
+	movdqu	XMMWORD[r8],xmm0
+	movdqa	xmm1,xmm2
+	movdqu	XMMWORD[16+r8],xmm2
+	jmp	NEAR $L$oop_key256
+
+ALIGN	16
+$L$oop_key256:
+DB	102,15,56,0,213
+	DB	102,15,56,221,212
+
+	movdqa	xmm3,xmm0
+	pslldq	xmm0,4
+	pxor	xmm3,xmm0
+	pslldq	xmm0,4
+	pxor	xmm3,xmm0
+	pslldq	xmm0,4
+	pxor	xmm0,xmm3
+	pslld	xmm4,1
+
+	pxor	xmm0,xmm2
+	movdqu	XMMWORD[rax],xmm0
+
+	dec	r10d
+	jz	NEAR $L$done_key256
+
+	pshufd	xmm2,xmm0,0xff
+	pxor	xmm3,xmm3
+	DB	102,15,56,221,211
+
+	movdqa	xmm3,xmm1
+	pslldq	xmm1,4
+	pxor	xmm3,xmm1
+	pslldq	xmm1,4
+	pxor	xmm3,xmm1
+	pslldq	xmm1,4
+	pxor	xmm1,xmm3
+
+	pxor	xmm2,xmm1
+	movdqu	XMMWORD[16+rax],xmm2
+	lea	rax,[32+rax]
+	movdqa	xmm1,xmm2
+
+	jmp	NEAR $L$oop_key256
+
+$L$done_key256:
+	mov	DWORD[16+rax],edx
+	xor	eax,eax
+	jmp	NEAR $L$enc_key_ret_alt
+
+ALIGN	16
+$L$bad_keybits_alt:
+	mov	rax,-2
+$L$enc_key_ret_alt:
+	pxor	xmm0,xmm0
+	pxor	xmm1,xmm1
+	pxor	xmm2,xmm2
+	pxor	xmm3,xmm3
+	pxor	xmm4,xmm4
+	pxor	xmm5,xmm5
+	add	rsp,8
+
+	ret
+
+$L$SEH_end_aes_hw_set_encrypt_key_alt_4:
 
 section	.rdata rdata align=8
 ALIGN	64
@@ -2646,14 +2670,6 @@ ALIGN	4
 	DD	$L$SEH_begin_aes_hw_cbc_encrypt wrt ..imagebase
 	DD	$L$SEH_end_aes_hw_cbc_encrypt wrt ..imagebase
 	DD	$L$SEH_info_cbc wrt ..imagebase
-
-	DD	aes_hw_set_decrypt_key wrt ..imagebase
-	DD	$L$SEH_end_set_decrypt_key wrt ..imagebase
-	DD	$L$SEH_info_key wrt ..imagebase
-
-	DD	aes_hw_set_encrypt_key wrt ..imagebase
-	DD	$L$SEH_end_set_encrypt_key wrt ..imagebase
-	DD	$L$SEH_info_key wrt ..imagebase
 section	.xdata rdata align=8
 ALIGN	8
 $L$SEH_info_ecb:
@@ -2667,9 +2683,37 @@ $L$SEH_info_ctr32:
 $L$SEH_info_cbc:
 	DB	9,0,0,0
 	DD	cbc_se_handler wrt ..imagebase
-$L$SEH_info_key:
-	DB	0x01,0x04,0x01,0x00
-	DB	0x04,0x02,0x00,0x00
+section	.pdata
+ALIGN	4
+	DD	$L$SEH_begin_aes_hw_set_encrypt_key_base_1 wrt ..imagebase
+	DD	$L$SEH_end_aes_hw_set_encrypt_key_base_4 wrt ..imagebase
+	DD	$L$SEH_info_aes_hw_set_encrypt_key_base_0 wrt ..imagebase
+
+	DD	$L$SEH_begin_aes_hw_set_encrypt_key_alt_1 wrt ..imagebase
+	DD	$L$SEH_end_aes_hw_set_encrypt_key_alt_4 wrt ..imagebase
+	DD	$L$SEH_info_aes_hw_set_encrypt_key_alt_0 wrt ..imagebase
+
+
+section	.xdata
+ALIGN	4
+$L$SEH_info_aes_hw_set_encrypt_key_base_0:
+	DB	1
+	DB	$L$SEH_endprologue_aes_hw_set_encrypt_key_base_3-$L$SEH_begin_aes_hw_set_encrypt_key_base_1
+	DB	1
+	DB	0
+	DB	$L$SEH_prologue_aes_hw_set_encrypt_key_base_2-$L$SEH_begin_aes_hw_set_encrypt_key_base_1
+	DB	2
+
+	DW	0
+$L$SEH_info_aes_hw_set_encrypt_key_alt_0:
+	DB	1
+	DB	$L$SEH_endprologue_aes_hw_set_encrypt_key_alt_3-$L$SEH_begin_aes_hw_set_encrypt_key_alt_1
+	DB	1
+	DB	0
+	DB	$L$SEH_prologue_aes_hw_set_encrypt_key_alt_2-$L$SEH_begin_aes_hw_set_encrypt_key_alt_1
+	DB	2
+
+	DW	0
 %else
 ; Work around https://bugzilla.nasm.us/show_bug.cgi?id=3392738
 ret

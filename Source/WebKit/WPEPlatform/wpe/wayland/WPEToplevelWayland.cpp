@@ -39,6 +39,7 @@
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
+#include <wtf/unix/UnixFileDescriptor.h>
 
 #if USE(LIBDRM)
 #include <xf86drm.h>
@@ -224,6 +225,7 @@ struct _WPEToplevelWaylandPrivate {
     struct xdg_toplevel* xdgToplevel;
 
     struct zwp_linux_dmabuf_feedback_v1* dmabufFeedback;
+    struct zwp_linux_surface_synchronization_v1* surfaceSync;
     std::unique_ptr<DMABufFeedback> pendingDMABufFeedback;
     std::unique_ptr<DMABufFeedback> committedDMABufFeedback;
     GRefPtr<WPEBufferDMABufFormats> preferredDMABufFormats;
@@ -575,6 +577,9 @@ static void wpeToplevelWaylandConstructed(GObject *object)
             wl_surface_set_buffer_scale(priv->wlSurface, scale);
         wpe_toplevel_scale_changed(toplevel, scale);
     }
+
+    if (auto* explicitSync = wpeDisplayWaylandGetLinuxExplicitSync(display))
+        priv->surfaceSync = zwp_linux_explicit_synchronization_v1_get_synchronization(explicitSync, priv->wlSurface);
 }
 
 static void wpeToplevelWaylandDispose(GObject* object)
@@ -584,6 +589,7 @@ static void wpeToplevelWaylandDispose(GObject* object)
     priv->monitors.clear();
     g_clear_pointer(&priv->xdgToplevel, xdg_toplevel_destroy);
     g_clear_pointer(&priv->dmabufFeedback, zwp_linux_dmabuf_feedback_v1_destroy);
+    g_clear_pointer(&priv->surfaceSync, zwp_linux_surface_synchronization_v1_destroy);
     g_clear_pointer(&priv->xdgSurface, xdg_surface_destroy);
     g_clear_pointer(&priv->wlSurface, wl_surface_destroy);
 
@@ -866,6 +872,11 @@ void wpeToplevelWaylandViewVisibilityChanged(WPEToplevelWayland* toplevel, WPEVi
         }
         priv->visibleView.reset(visibleView);
     }
+}
+
+struct zwp_linux_surface_synchronization_v1* wpeToplevelWaylandGetSurfaceSync(WPEToplevelWayland* toplevel)
+{
+    return toplevel->priv->surfaceSync;
 }
 
 /**

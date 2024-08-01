@@ -101,6 +101,9 @@ bool PDFScrollingPresentationController::handleKeyboardCommand(const WebKeyboard
 
 PDFPageCoverage PDFScrollingPresentationController::pageCoverageForContentsRect(const FloatRect& contentsRect, std::optional<PDFLayoutRow>) const
 {
+    if (m_plugin->visibleOrDocumentSizeIsEmpty())
+        return { };
+
     auto drawingRect = IntRect { { }, m_plugin->documentSize() };
     drawingRect.intersect(enclosingIntRect(contentsRect));
     auto rectInPDFLayoutCoordinates = m_plugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Contents, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, FloatRect { drawingRect });
@@ -112,7 +115,7 @@ PDFPageCoverage PDFScrollingPresentationController::pageCoverageForContentsRect(
         if (!page)
             continue;
 
-        auto pageBounds = documentLayout.layoutBoundsForPageAtIndex(i);
+        auto pageBounds = layoutBoundsForPageAtIndex(i);
         if (!pageBounds.intersects(rectInPDFLayoutCoordinates))
             continue;
 
@@ -124,6 +127,9 @@ PDFPageCoverage PDFScrollingPresentationController::pageCoverageForContentsRect(
 
 PDFPageCoverageAndScales PDFScrollingPresentationController::pageCoverageAndScalesForContentsRect(const FloatRect& clipRect, std::optional<PDFLayoutRow> row, float tilingScaleFactor) const
 {
+    if (m_plugin->visibleOrDocumentSizeIsEmpty())
+        return { { }, { }, 1, 1, 1 };
+
     auto pageCoverageAndScales = PDFPageCoverageAndScales { pageCoverageForContentsRect(clipRect, row) };
 
     pageCoverageAndScales.deviceScaleFactor = m_plugin->deviceScaleFactor();
@@ -197,7 +203,7 @@ void PDFScrollingPresentationController::updatePageBackgroundLayers()
     // buffer of the same size. On zooming, this layer just gets scaled, to avoid repainting.
 
     for (PDFDocumentLayout::PageIndex i = 0; i < documentLayout.pageCount(); ++i) {
-        auto pageBoundsRect = documentLayout.layoutBoundsForPageAtIndex(i);
+        auto pageBoundsRect = layoutBoundsForPageAtIndex(i);
         auto destinationRect = pageBoundsRect;
         destinationRect.scale(documentLayout.scale());
 
@@ -335,8 +341,7 @@ void PDFScrollingPresentationController::setNeedsRepaintInDocumentRect(OptionSet
 
 void PDFScrollingPresentationController::paintBackgroundLayerForPage(const GraphicsLayer*, GraphicsContext& context, const FloatRect& clipRect, PDFDocumentLayout::PageIndex pageIndex)
 {
-    auto& documentLayout = m_plugin->documentLayout();
-    auto destinationRect = documentLayout.layoutBoundsForPageAtIndex(pageIndex);
+    auto destinationRect = layoutBoundsForPageAtIndex(pageIndex);
     destinationRect.setLocation({ });
 
     if (RefPtr asyncRenderer = asyncRendererIfExists())

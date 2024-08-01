@@ -799,6 +799,44 @@ TEST(GoogCcScenario, MaintainsLowRateInSafeResetTrial) {
   EXPECT_NEAR(client->send_bandwidth().kbps(), kLinkCapacity.kbps(), 50);
 }
 
+TEST(GoogCcScenario, DoNotResetBweUnlessNetworkAdapterChangeOnRoutChange) {
+  ScopedFieldTrials trial("WebRTC-Bwe-ResetOnAdapterIdChange/Enabled/");
+  Scenario s("googcc_unit/do_not_reset_bwe_unless_adapter_change");
+
+  const DataRate kLinkCapacity = DataRate::KilobitsPerSec(1000);
+  const DataRate kStartRate = DataRate::KilobitsPerSec(300);
+
+  auto send_net = s.CreateSimulationNode([&](NetworkSimulationConfig* c) {
+    c->bandwidth = kLinkCapacity;
+    c->delay = TimeDelta::Millis(50);
+  });
+  auto* client = s.CreateClient("send", [&](CallClientConfig* c) {
+    c->transport.rates.start_rate = kStartRate;
+  });
+  client->UpdateNetworkAdapterId(0);
+  auto* route = s.CreateRoutes(
+      client, {send_net}, s.CreateClient("return", CallClientConfig()),
+      {s.CreateSimulationNode(NetworkSimulationConfig())});
+  s.CreateVideoStream(route->forward(), VideoStreamConfig());
+  // Allow the controller to stabilize.
+  s.RunFor(TimeDelta::Millis(500));
+  EXPECT_NEAR(client->send_bandwidth().kbps(), kLinkCapacity.kbps(), 300);
+  s.ChangeRoute(route->forward(), {send_net});
+  // Allow new settings to propagate.
+  s.RunFor(TimeDelta::Millis(50));
+  // Under the trial, the target should not drop.
+  EXPECT_NEAR(client->send_bandwidth().kbps(), kLinkCapacity.kbps(), 300);
+
+  s.RunFor(TimeDelta::Millis(500));
+  // But if adapter id change, BWE should reset and start from the beginning if
+  // the network route changes.
+  client->UpdateNetworkAdapterId(1);
+  s.ChangeRoute(route->forward(), {send_net});
+  // Allow new settings to propagate.
+  s.RunFor(TimeDelta::Millis(50));
+  EXPECT_NEAR(client->send_bandwidth().kbps(), kStartRate.kbps(), 30);
+}
+
 TEST(GoogCcScenario, CutsHighRateInSafeResetTrial) {
   const DataRate kLinkCapacity = DataRate::KilobitsPerSec(1000);
   const DataRate kStartRate = DataRate::KilobitsPerSec(300);
@@ -819,6 +857,7 @@ TEST(GoogCcScenario, CutsHighRateInSafeResetTrial) {
   // Allow the controller to stabilize.
   s.RunFor(TimeDelta::Millis(500));
   EXPECT_NEAR(client->send_bandwidth().kbps(), kLinkCapacity.kbps(), 300);
+  client->UpdateNetworkAdapterId(1);
   s.ChangeRoute(route->forward(), {send_net});
   // Allow new settings to propagate.
   s.RunFor(TimeDelta::Millis(50));
@@ -851,6 +890,7 @@ TEST(GoogCcScenario, DetectsHighRateInSafeResetTrial) {
   // Allow the controller to stabilize.
   s.RunFor(TimeDelta::Millis(2000));
   EXPECT_NEAR(client->send_bandwidth().kbps(), kInitialLinkCapacity.kbps(), 50);
+  client->UpdateNetworkAdapterId(1);
   s.ChangeRoute(route->forward(), {new_net});
   // Allow new settings to propagate, but not probes to be received.
   s.RunFor(TimeDelta::Millis(50));

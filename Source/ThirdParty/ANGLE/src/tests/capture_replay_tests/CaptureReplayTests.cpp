@@ -33,7 +33,6 @@ namespace
 {
 EGLWindow *gEGLWindow                = nullptr;
 constexpr char kResultTag[]          = "*RESULT";
-constexpr char kTracePath[]          = ANGLE_CAPTURE_REPLAY_TEST_NAMES_PATH;
 constexpr int kInitializationFailure = -1;
 constexpr int kSerializationFailure  = -2;
 constexpr int kExitSuccess           = 0;
@@ -396,44 +395,30 @@ class CaptureReplayTests
         return kExitSuccess;
     }
 
-    int run()
+    int run(const char *trace)
     {
         std::string startingDirectory = angle::GetCWD().value();
 
         // Set CWD to executable directory.
         std::string exeDir = angle::GetExecutableDirectory();
 
-        std::vector<std::string> traces;
+        std::stringstream traceJsonPathStream;
+        traceJsonPathStream << exeDir << angle::GetPathSeparator()
+                            << ANGLE_CAPTURE_REPLAY_TEST_DATA_DIR << angle::GetPathSeparator()
+                            << trace << ".json";
+        std::string traceJsonPath = traceJsonPathStream.str();
 
-        std::stringstream tracePathStream;
-        tracePathStream << exeDir << angle::GetPathSeparator() << kTracePath;
-
-        if (!angle::LoadTraceNamesFromJSON(tracePathStream.str(), &traces))
+        int result                 = kInitializationFailure;
+        angle::TraceInfo traceInfo = {};
+        if (!angle::LoadTraceInfoFromJSON(trace, traceJsonPath, &traceInfo))
         {
-            std::cout << "Unable to load trace names from " << kTracePath << "\n";
-            return 1;
+            std::cout << "Unable to load trace data: " << traceJsonPath << "\n";
         }
-
-        for (const std::string &trace : traces)
+        else
         {
-            std::stringstream traceJsonPathStream;
-            traceJsonPathStream << exeDir << angle::GetPathSeparator()
-                                << ANGLE_CAPTURE_REPLAY_TEST_DATA_DIR << angle::GetPathSeparator()
-                                << trace << ".json";
-            std::string traceJsonPath = traceJsonPathStream.str();
-
-            int result                 = kInitializationFailure;
-            angle::TraceInfo traceInfo = {};
-            if (!angle::LoadTraceInfoFromJSON(trace, traceJsonPath, &traceInfo))
-            {
-                std::cout << "Unable to load trace data: " << traceJsonPath << "\n";
-            }
-            else
-            {
-                result = runTest(exeDir, traceInfo);
-            }
-            std::cout << kResultTag << " " << trace << " " << result << "\n";
+            result = runTest(exeDir, traceInfo);
         }
+        std::cout << kResultTag << " " << trace << " " << result << "\n";
 
         angle::SetCWD(startingDirectory.c_str());
         return kExitSuccess;
@@ -451,6 +436,11 @@ class CaptureReplayTests
 
 int main(int argc, char **argv)
 {
+    if (argc != 2)
+    {
+        printf("Usage: capture_replay_tests {trace_label}\n");
+        return -1;
+    }
     CaptureReplayTests app;
-    return app.run();
+    return app.run(argv[1]);
 }

@@ -119,6 +119,8 @@ public:
     {
     }
 
+    CoreIPCNumber(const CoreIPCNumber& other) = default;
+
     RetainPtr<CFNumberRef> createCFNumber() const
     {
         return WTF::switchOn(m_numberHolder,

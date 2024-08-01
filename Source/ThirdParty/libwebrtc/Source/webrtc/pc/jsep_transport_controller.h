@@ -61,7 +61,7 @@
 #include "rtc_base/callback_list.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/copy_on_write_buffer.h"
-#include "rtc_base/helpers.h"
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/rtc_certificate.h"
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_stream_adapter.h"
@@ -507,7 +507,6 @@ class JsepTransportController : public sigslot::has_slots<> {
 
   cricket::IceConfig ice_config_;
   cricket::IceRole ice_role_ = cricket::ICEROLE_CONTROLLING;
-  uint64_t ice_tiebreaker_;
   rtc::scoped_refptr<rtc::RTCCertificate> certificate_;
 
   BundleManager bundles_;

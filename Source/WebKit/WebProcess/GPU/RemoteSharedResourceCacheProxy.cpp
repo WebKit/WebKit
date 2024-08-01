@@ -29,7 +29,6 @@
 #include "RemoteSharedResourceCacheProxy.h"
 
 namespace WebKit {
-using namespace WebCore;
 
 Ref<RemoteSharedResourceCacheProxy> RemoteSharedResourceCacheProxy::create()
 {

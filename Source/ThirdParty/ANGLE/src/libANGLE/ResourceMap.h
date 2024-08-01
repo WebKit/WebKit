@@ -15,6 +15,7 @@
 #include <type_traits>
 
 #include "common/SimpleMutex.h"
+#include "common/hash_containers.h"
 #include "libANGLE/angletypes.h"
 
 namespace gl

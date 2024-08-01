@@ -12,7 +12,7 @@
 
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
-#include "api/task_queue/default_task_queue_factory.h"
+#include "api/environment/environment_factory.h"
 #include "modules/audio_device/include/mock_audio_device.h"
 #include "modules/audio_processing/include/mock_audio_processing.h"
 #include "test/gtest.h"
@@ -43,9 +43,8 @@ class VoipCoreTest : public ::testing::Test {
         rtc::make_ref_counted<NiceMock<test::MockAudioProcessing>>();
 
     voip_core_ = std::make_unique<VoipCore>(
-        std::move(encoder_factory), std::move(decoder_factory),
-        CreateDefaultTaskQueueFactory(), audio_device_,
-        std::move(audio_processing));
+        CreateEnvironment(), std::move(encoder_factory),
+        std::move(decoder_factory), audio_device_, std::move(audio_processing));
   }
 
   test::RunLoop run_loop_;

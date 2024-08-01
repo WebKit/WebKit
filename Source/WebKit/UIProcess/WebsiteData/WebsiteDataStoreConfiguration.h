@@ -46,6 +46,7 @@ public:
     enum class ShouldInitializePaths : bool { No, Yes };
     static Ref<WebsiteDataStoreConfiguration> create(IsPersistent isPersistent) { return adoptRef(*new WebsiteDataStoreConfiguration(isPersistent, ShouldInitializePaths::Yes)); }
     WebsiteDataStoreConfiguration(IsPersistent, ShouldInitializePaths = ShouldInitializePaths::Yes);
+    WebsiteDataStoreConfiguration(const String& baseCacheDirectory, const String& baseDataDirectory);
 
 #if PLATFORM(COCOA)
     static Ref<WebsiteDataStoreConfiguration> create(const WTF::UUID& identifier) { return adoptRef(*new WebsiteDataStoreConfiguration(identifier)); }
@@ -278,7 +279,6 @@ public:
     const Directories& directories() const { return m_directories; }
 
 private:
-    WebsiteDataStoreConfiguration(const String& baseCacheDirectory, const String& baseDataDirectory);
     static Ref<WebsiteDataStoreConfiguration> create(IsPersistent isPersistent, ShouldInitializePaths shouldInitializePaths) { return adoptRef(*new WebsiteDataStoreConfiguration(isPersistent, shouldInitializePaths)); }
 
     void initializePaths();

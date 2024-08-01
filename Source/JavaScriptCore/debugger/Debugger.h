@@ -119,8 +119,14 @@ public:
     void stepOverStatement();
     void stepOutOfFunction();
 
-    enum class BlackboxType { Deferred, Ignored };
-    void setBlackboxType(SourceID, std::optional<BlackboxType>);
+    using BlackboxRange = std::pair<TextPosition, TextPosition>;
+    enum class BlackboxFlag : uint8_t {
+        Ignore = 1 << 0,
+        Defer = 1 << 1,
+    };
+    using BlackboxFlags = OptionSet<BlackboxFlag>;
+    using BlackboxConfiguration = HashMap<BlackboxRange, BlackboxFlags>;
+    void setBlackboxConfiguration(SourceID, BlackboxConfiguration&&);
     void setBlackboxBreakpointEvaluations(bool);
     void clearBlackbox();
 
@@ -322,7 +328,7 @@ private:
     VM& m_vm;
     HashSet<JSGlobalObject*> m_globalObjects;
     HashMap<SourceID, DebuggerParseData, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_parseDataMap;
-    HashMap<SourceID, BlackboxType, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_blackboxedScripts;
+    HashMap<SourceID, BlackboxConfiguration, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_blackboxConfigurations;
     bool m_blackboxBreakpointEvaluations : 1;
 
     bool m_pauseAtNextOpportunity : 1;

@@ -11,12 +11,12 @@ var foundDifferentTextAtLeastOnce = false;
 
 function runIteration()
 {
-	setTimeout(function() {
+	setTimeout(async function() {
 		if (window.eventSender) { 
 			var el = document.getElementById("testLink");
-			eventSender.mouseMoveTo(el.offsetLeft + 5, el.offsetTop + 5); 
-			eventSender.mouseDown(); 
-			eventSender.mouseUp();
+			await eventSender.asyncMouseMoveTo(el.offsetLeft + 5, el.offsetTop + 5); 
+			await eventSender.asyncMouseDown(); 
+			await eventSender.asyncMouseUp();
 		}
 	}, 0);
 }

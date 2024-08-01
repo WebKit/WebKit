@@ -341,7 +341,7 @@ interface TestRunner {
     undefined setStatisticsCrossSiteLoadWithLinkDecoration(DOMString fromHost, DOMString toHost, boolean wasFiltered);
     undefined setStatisticsTimeToLiveUserInteraction(double seconds);
     boolean statisticsNotifyObserver();
-    undefined statisticsProcessStatisticsAndDataRecords();
+    Promise<undefined> statisticsProcessStatisticsAndDataRecords();
     undefined statisticsUpdateCookieBlocking(object completionHandler);
     undefined setStatisticsTimeAdvanceForTesting(double value);
     undefined setStatisticsIsRunningTest(boolean value);
@@ -353,7 +353,7 @@ interface TestRunner {
     undefined statisticsClearInMemoryAndPersistentStore(object callback);
     undefined statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned long hours, object callback);
     undefined statisticsClearThroughWebsiteDataRemoval(object callback);
-    undefined statisticsDeleteCookiesForHost(DOMString hostName, boolean includeHttpOnlyCookies);
+    Promise<undefined> statisticsDeleteCookiesForHost(DOMString hostName, boolean includeHttpOnlyCookies);
     boolean isStatisticsHasLocalStorage(DOMString hostName);
     undefined setStatisticsCacheMaxAgeCap(double seconds);
     undefined statisticsResetToConsistentState(object completionHandler);

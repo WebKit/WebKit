@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2019, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -27,6 +27,7 @@
 #include "av1/common/blockd.h"
 
 #include "av1/encoder/encodeframe.h"
+#include "av1/encoder/encodeframe_utils.h"
 #include "av1/encoder/var_based_part.h"
 #include "av1/encoder/reconinter_enc.h"
 #include "av1/encoder/rdopt_utils.h"
@@ -626,14 +627,12 @@ static AOM_INLINE void tune_thresh_based_on_resolution(
   }
 }
 
-// Increase partition thresholds for noisy content. Apply it only for
-// superblocks where sumdiff is low, as we assume the sumdiff of superblock
-// whose only change is due to noise will be low (i.e, noise will average
-// out over large block).
-static AOM_INLINE int64_t tune_thresh_noisy_content(AV1_COMP *cpi,
-                                                    int64_t threshold_base,
-                                                    int content_lowsumdiff,
-                                                    int num_pixels) {
+// Increase the base partition threshold, based on content and noise level.
+static AOM_INLINE int64_t tune_base_thresh_content(AV1_COMP *cpi,
+                                                   int64_t threshold_base,
+                                                   int content_lowsumdiff,
+                                                   int source_sad_nonrd,
+                                                   int num_pixels) {
   AV1_COMMON *const cm = &cpi->common;
   int64_t updated_thresh_base = threshold_base;
   if (cpi->noise_estimate.enabled && content_lowsumdiff &&
@@ -646,23 +645,12 @@ static AOM_INLINE int64_t tune_thresh_noisy_content(AV1_COMP *cpi,
              !cpi->sf.rt_sf.prefer_large_partition_blocks)
       updated_thresh_base = (5 * updated_thresh_base) >> 2;
   }
-  // TODO(kyslov) Enable var based partition adjusment on temporal denoising
-#if 0  // CONFIG_AV1_TEMPORAL_DENOISING
-  if (cpi->oxcf.noise_sensitivity > 0 && denoise_svc(cpi) &&
-      cpi->oxcf.speed > 5 && cpi->denoiser.denoising_level >= kDenLow)
-      updated_thresh_base =
-          av1_scale_part_thresh(updated_thresh_base, cpi->denoiser.denoising_level,
-                                content_state, cpi->svc.temporal_layer_id);
-  else
-    threshold_base =
-        scale_part_thresh_content(updated_thresh_base, cpi->oxcf.speed, cm->width,
-                                  cm->height, cpi->ppi->rtc_ref.non_reference_frame);
-#else
-  // Increase base variance threshold based on content_state/sum_diff level.
   updated_thresh_base = scale_part_thresh_content(
       updated_thresh_base, cpi->oxcf.speed, cm->width, cm->height,
       cpi->ppi->rtc_ref.non_reference_frame);
-#endif
+  if (cpi->oxcf.speed >= 11 && source_sad_nonrd > kLowSad &&
+      cpi->rc.high_motion_content_screen_rtc)
+    updated_thresh_base = updated_thresh_base << 5;
   return updated_thresh_base;
 }
 
@@ -685,8 +673,8 @@ static AOM_INLINE void set_vbp_thresholds(
     return;
   }
 
-  threshold_base = tune_thresh_noisy_content(cpi, threshold_base,
-                                             content_lowsumdiff, num_pixels);
+  threshold_base = tune_base_thresh_content(
+      cpi, threshold_base, content_lowsumdiff, source_sad_nonrd, num_pixels);
   thresholds[0] = threshold_base >> 1;
   thresholds[1] = threshold_base;
   thresholds[3] = threshold_base << threshold_left_shift;
@@ -1619,6 +1607,17 @@ int av1_choose_var_based_partitioning(AV1_COMP *cpi, const TileInfo *const tile,
   unsigned int y_sad_alt = UINT_MAX;
   unsigned int y_sad_last = UINT_MAX;
   BLOCK_SIZE bsize = is_small_sb ? BLOCK_64X64 : BLOCK_128X128;
+
+  // Force skip encoding for all superblocks on slide change for
+  // non_reference_frames.
+  if (cpi->sf.rt_sf.skip_encoding_non_reference_slide_change &&
+      cpi->rc.high_source_sad && cpi->ppi->rtc_ref.non_reference_frame) {
+    MB_MODE_INFO **mi = cm->mi_params.mi_grid_base +
+                        get_mi_grid_idx(&cm->mi_params, mi_row, mi_col);
+    av1_set_fixed_partitioning(cpi, tile, mi, mi_row, mi_col, bsize);
+    x->force_zeromv_skip_for_sb = 1;
+    return 0;
+  }
 
   // Ref frame used in partitioning.
   MV_REFERENCE_FRAME ref_frame_partition = LAST_FRAME;

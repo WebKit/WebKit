@@ -31,6 +31,12 @@ std::shared_ptr<ShaderTranslateTask> ShaderNULL::compile(const gl::Context *cont
     return std::shared_ptr<ShaderTranslateTask>(new ShaderTranslateTask);
 }
 
+std::shared_ptr<ShaderTranslateTask> ShaderNULL::load(const gl::Context *context,
+                                                      gl::BinaryInputStream *stream)
+{
+    return std::shared_ptr<ShaderTranslateTask>(new ShaderTranslateTask);
+}
+
 std::string ShaderNULL::getDebugInfo() const
 {
     return "";

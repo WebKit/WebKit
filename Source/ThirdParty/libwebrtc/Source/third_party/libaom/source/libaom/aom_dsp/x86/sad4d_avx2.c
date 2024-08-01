@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -142,18 +142,21 @@ static AOM_FORCE_INLINE void aom_sadMxNx3d_avx2(
     aom_sadMxNx3d_avx2(m, n, src, src_stride, ref, ref_stride, res);           \
   }
 
-SADMXN_AVX2(32, 8)
 SADMXN_AVX2(32, 16)
 SADMXN_AVX2(32, 32)
 SADMXN_AVX2(32, 64)
 
-SADMXN_AVX2(64, 16)
 SADMXN_AVX2(64, 32)
 SADMXN_AVX2(64, 64)
 SADMXN_AVX2(64, 128)
 
 SADMXN_AVX2(128, 64)
 SADMXN_AVX2(128, 128)
+
+#if !CONFIG_REALTIME_ONLY
+SADMXN_AVX2(32, 8)
+SADMXN_AVX2(64, 16)
+#endif  // !CONFIG_REALTIME_ONLY
 
 #define SAD_SKIP_MXN_AVX2(m, n)                                             \
   void aom_sad_skip_##m##x##n##x4d_avx2(const uint8_t *src, int src_stride, \
@@ -167,18 +170,21 @@ SADMXN_AVX2(128, 128)
     res[3] <<= 1;                                                           \
   }
 
-SAD_SKIP_MXN_AVX2(32, 8)
 SAD_SKIP_MXN_AVX2(32, 16)
 SAD_SKIP_MXN_AVX2(32, 32)
 SAD_SKIP_MXN_AVX2(32, 64)
 
-SAD_SKIP_MXN_AVX2(64, 16)
 SAD_SKIP_MXN_AVX2(64, 32)
 SAD_SKIP_MXN_AVX2(64, 64)
 SAD_SKIP_MXN_AVX2(64, 128)
 
 SAD_SKIP_MXN_AVX2(128, 64)
 SAD_SKIP_MXN_AVX2(128, 128)
+
+#if !CONFIG_REALTIME_ONLY
+SAD_SKIP_MXN_AVX2(32, 8)
+SAD_SKIP_MXN_AVX2(64, 16)
+#endif  // !CONFIG_REALTIME_ONLY
 
 static AOM_FORCE_INLINE void aom_sad16xNx3d_avx2(int N, const uint8_t *src,
                                                  int src_stride,

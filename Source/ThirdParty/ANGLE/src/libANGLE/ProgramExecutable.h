@@ -175,7 +175,9 @@ struct ProgramOutput
         uint32_t isBuiltIn : 1;
         uint32_t isArray : 1;
         uint32_t hasImplicitLocation : 1;
-        uint32_t pad : 27;
+        uint32_t hasShaderAssignedLocation : 1;
+        uint32_t hasApiAssignedLocation : 1;
+        uint32_t pad : 25;
     } pod;
 };
 ANGLE_DISABLE_STRUCT_PADDING_WARNINGS

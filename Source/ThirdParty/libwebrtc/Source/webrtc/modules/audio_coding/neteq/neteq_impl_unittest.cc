@@ -194,7 +194,9 @@ class NetEqImplTest : public ::testing::Test {
         kPayloadType, SdpAudioFormat("telephone-event", sample_rate_hz, 1)));
 
     // Insert first packet.
-    EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+    EXPECT_EQ(NetEq::kOK,
+              neteq_->InsertPacket(rtp_header, payload,
+                                   /*receive_time=*/clock_.CurrentTime()));
 
     // Pull audio once.
     const size_t kMaxOutputSize =
@@ -373,12 +375,14 @@ TEST_F(NetEqImplTest, InsertPacket) {
   }
 
   // Insert first packet.
-  neteq_->InsertPacket(rtp_header, payload);
+  neteq_->InsertPacket(rtp_header, payload,
+                       /*receive_time=*/clock_.CurrentTime());
 
   // Insert second packet.
   rtp_header.timestamp += 160;
   rtp_header.sequenceNumber += 1;
-  neteq_->InsertPacket(rtp_header, payload);
+  neteq_->InsertPacket(rtp_header, payload,
+                       /*receive_time=*/clock_.CurrentTime());
 }
 
 TEST_F(NetEqImplTest, InsertPacketsUntilBufferIsFull) {
@@ -400,7 +404,9 @@ TEST_F(NetEqImplTest, InsertPacketsUntilBufferIsFull) {
 
   // Insert packets. The buffer should not flush.
   for (size_t i = 1; i <= config_.max_packets_in_buffer; ++i) {
-    EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+    EXPECT_EQ(NetEq::kOK,
+              neteq_->InsertPacket(rtp_header, payload,
+                                   /*receive_time=*/clock_.CurrentTime()));
     rtp_header.timestamp += kPayloadLengthSamples;
     rtp_header.sequenceNumber += 1;
     EXPECT_EQ(i, packet_buffer_->NumPacketsInBuffer());
@@ -408,7 +414,9 @@ TEST_F(NetEqImplTest, InsertPacketsUntilBufferIsFull) {
 
   // Insert one more packet and make sure the buffer got flushed. That is, it
   // should only hold one single packet.
-  EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+  EXPECT_EQ(NetEq::kOK,
+            neteq_->InsertPacket(rtp_header, payload,
+                                 /*receive_time=*/clock_.CurrentTime()));
   EXPECT_EQ(1u, packet_buffer_->NumPacketsInBuffer());
   const Packet* test_packet = packet_buffer_->PeekNextPacket();
   EXPECT_EQ(rtp_header.timestamp, test_packet->timestamp);
@@ -494,7 +502,8 @@ TEST_F(NetEqImplTest, VerifyTimestampPropagation) {
   // Insert one packet.
   clock_.AdvanceTimeMilliseconds(123456);
   Timestamp expected_receive_time = clock_.CurrentTime();
-  EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+  EXPECT_EQ(NetEq::kOK,
+            neteq_->InsertPacket(rtp_header, payload, expected_receive_time));
 
   // Pull audio once.
   const size_t kMaxOutputSize = static_cast<size_t>(10 * kSampleRateHz / 1000);
@@ -588,7 +597,9 @@ TEST_F(NetEqImplTest, ReorderedPacket) {
   // Insert one packet.
   clock_.AdvanceTimeMilliseconds(123456);
   Timestamp expected_receive_time = clock_.CurrentTime();
-  EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+  EXPECT_EQ(NetEq::kOK,
+            neteq_->InsertPacket(rtp_header, payload,
+                                 /*receive_time=*/clock_.CurrentTime()));
 
   // Pull audio once.
   const size_t kMaxOutputSize = static_cast<size_t>(10 * kSampleRateHz / 1000);
@@ -618,14 +629,18 @@ TEST_F(NetEqImplTest, ReorderedPacket) {
   rtp_header.extension.set_audio_level(AudioLevel(/*voice_activity=*/false, 1));
   payload[0] = 1;
   clock_.AdvanceTimeMilliseconds(1000);
-  EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+  EXPECT_EQ(NetEq::kOK,
+            neteq_->InsertPacket(rtp_header, payload,
+                                 /*receive_time=*/clock_.CurrentTime()));
   rtp_header.sequenceNumber += 2;
   rtp_header.timestamp += 2 * kPayloadLengthSamples;
   rtp_header.extension.set_audio_level(AudioLevel(/*voice_activity=*/false, 2));
   payload[0] = 2;
   clock_.AdvanceTimeMilliseconds(2000);
   expected_receive_time = clock_.CurrentTime();
-  EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+  EXPECT_EQ(NetEq::kOK,
+            neteq_->InsertPacket(rtp_header, payload,
+                                 /*receive_time=*/clock_.CurrentTime()));
 
   // Expect only the second packet to be decoded (the one with "2" as the first
   // payload byte).
@@ -684,7 +699,9 @@ TEST_F(NetEqImplTest, FirstPacketUnknown) {
 
   // Insert one packet. Note that we have not registered any payload type, so
   // this packet will be rejected.
-  EXPECT_EQ(NetEq::kFail, neteq_->InsertPacket(rtp_header, payload));
+  EXPECT_EQ(NetEq::kFail,
+            neteq_->InsertPacket(rtp_header, payload,
+                                 /*receive_time=*/clock_.CurrentTime()));
 
   // Pull audio once.
   const size_t kMaxOutputSize = static_cast<size_t>(10 * kSampleRateHz / 1000);
@@ -705,7 +722,9 @@ TEST_F(NetEqImplTest, FirstPacketUnknown) {
   for (size_t i = 0; i < 10; ++i) {
     rtp_header.sequenceNumber++;
     rtp_header.timestamp += kPayloadLengthSamples;
-    EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+    EXPECT_EQ(NetEq::kOK,
+              neteq_->InsertPacket(rtp_header, payload,
+                                   /*receive_time=*/clock_.CurrentTime()));
     EXPECT_EQ(i + 1, packet_buffer_->NumPacketsInBuffer());
   }
 
@@ -777,7 +796,8 @@ TEST_F(NetEqImplTest, InsertRedPayload) {
   header.extension.set_audio_level(AudioLevel(/*voice_activity=*/false, 12));
   header.numCSRCs = 1;
   header.arrOfCSRCs[0] = 123;
-  neteq_->InsertPacket(header, payload);
+  neteq_->InsertPacket(header, payload,
+                       /*receive_time=*/clock_.CurrentTime());
   AudioFrame frame;
   bool muted;
   neteq_->GetAudio(&frame, &muted);
@@ -875,7 +895,9 @@ TEST_P(NetEqImplTestSampleRateParameter,
   auto insert_packet = [&]() {
     rtp_header.sequenceNumber++;
     rtp_header.timestamp += kPayloadLengthSamples;
-    EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+    EXPECT_EQ(NetEq::kOK,
+              neteq_->InsertPacket(rtp_header, payload,
+                                   /*receive_time=*/clock_.CurrentTime()));
   };
   // Insert 10 packets.
   for (size_t i = 0; i < 10; ++i) {
@@ -959,7 +981,9 @@ TEST_P(NetEqImplTestSampleRateParameter, AudioInterruptionLogged) {
   auto insert_packet = [&]() {
     rtp_header.sequenceNumber++;
     rtp_header.timestamp += kPayloadLengthSamples;
-    EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+    EXPECT_EQ(NetEq::kOK,
+              neteq_->InsertPacket(rtp_header, payload,
+                                   /*receive_time=*/clock_.CurrentTime()));
   };
   // Insert 10 packets.
   for (size_t i = 0; i < 10; ++i) {
@@ -1033,7 +1057,9 @@ TEST_P(NetEqImplTestSdpFormatParameter, GetNackListScaledTimestamp) {
     rtp_header.sequenceNumber++;
     rtp_header.timestamp += kPayloadLengthSamples;
     if (!lost)
-      EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+      EXPECT_EQ(NetEq::kOK,
+                neteq_->InsertPacket(rtp_header, payload,
+                                     /*receive_time=*/clock_.CurrentTime()));
   };
 
   // Insert and decode 10 packets.
@@ -1122,7 +1148,9 @@ TEST_F(NetEqImplTest, CodecInternalCng) {
     rtp_header.sequenceNumber += packets[i].sequence_number_delta;
     rtp_header.timestamp += packets[i].timestamp_delta;
     payload[0] = i;
-    EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+    EXPECT_EQ(NetEq::kOK,
+              neteq_->InsertPacket(rtp_header, payload,
+                                   /*receive_time=*/clock_.CurrentTime()));
 
     // Pointee(x) verifies that first byte of the payload equals x, this makes
     // it possible to verify that the correct payload is fed to Decode().
@@ -1220,7 +1248,9 @@ TEST_F(NetEqImplTest, UnsupportedDecoder) {
 
   // Insert one packet.
   payload[0] = kFirstPayloadValue;  // This will make Decode() fail.
-  EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+  EXPECT_EQ(NetEq::kOK,
+            neteq_->InsertPacket(rtp_header, payload,
+                                 /*receive_time=*/clock_.CurrentTime()));
 
   // Insert another packet.
   payload[0] = kSecondPayloadValue;  // This will make Decode() successful.
@@ -1228,7 +1258,9 @@ TEST_F(NetEqImplTest, UnsupportedDecoder) {
   // The second timestamp needs to be at least 30 ms after the first to make
   // the second packet get decoded.
   rtp_header.timestamp += 3 * kPayloadLengthSamples;
-  EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+  EXPECT_EQ(NetEq::kOK,
+            neteq_->InsertPacket(rtp_header, payload,
+                                 /*receive_time=*/clock_.CurrentTime()));
 
   AudioFrame output;
   bool muted;
@@ -1281,7 +1313,9 @@ TEST_F(NetEqImplTest, FloodBufferAndGetNetworkStats) {
   // Insert packets until the buffer flushes.
   for (size_t i = 0; i <= config_.max_packets_in_buffer; ++i) {
     EXPECT_EQ(i, packet_buffer_->NumPacketsInBuffer());
-    EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+    EXPECT_EQ(NetEq::kOK,
+              neteq_->InsertPacket(rtp_header, payload,
+                                   /*receive_time=*/clock_.CurrentTime()));
     rtp_header.timestamp += rtc::checked_cast<uint32_t>(kPayloadLengthSamples);
     ++rtp_header.sequenceNumber;
   }
@@ -1333,7 +1367,9 @@ TEST_F(NetEqImplTest, DecodedPayloadTooShort) {
                                           SdpAudioFormat("L16", 8000, 1)));
 
   // Insert one packet.
-  EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+  EXPECT_EQ(NetEq::kOK,
+            neteq_->InsertPacket(rtp_header, payload,
+                                 /*receive_time=*/clock_.CurrentTime()));
 
   EXPECT_EQ(5u, neteq_->sync_buffer_for_test()->FutureLength());
 
@@ -1425,7 +1461,9 @@ TEST_F(NetEqImplTest, DecodingError) {
   for (int i = 0; i < 20; ++i) {
     rtp_header.sequenceNumber += 1;
     rtp_header.timestamp += kFrameLengthSamples;
-    EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+    EXPECT_EQ(NetEq::kOK,
+              neteq_->InsertPacket(rtp_header, payload,
+                                   /*receive_time=*/clock_.CurrentTime()));
   }
 
   // Pull audio.
@@ -1550,7 +1588,9 @@ TEST_F(NetEqImplTest, NotifyControllerOfReorderedPacket) {
 
   EXPECT_TRUE(neteq_->RegisterPayloadType(kPayloadType,
                                           SdpAudioFormat("l16", 8000, 1)));
-  EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+  EXPECT_EQ(NetEq::kOK,
+            neteq_->InsertPacket(rtp_header, payload,
+                                 /*receive_time=*/clock_.CurrentTime()));
   AudioFrame output;
   bool muted;
   EXPECT_EQ(NetEq::kOK, neteq_->GetAudio(&output, &muted));
@@ -1572,7 +1612,9 @@ TEST_F(NetEqImplTest, NotifyControllerOfReorderedPacket) {
               Field(&NetEqController::PacketArrivedInfo::main_timestamp,
                     rtp_header.timestamp))));
 
-  EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+  EXPECT_EQ(NetEq::kOK,
+            neteq_->InsertPacket(rtp_header, payload,
+                                 /*receive_time=*/clock_.CurrentTime()));
 }
 
 // When using a codec with 1000 channels, there should be no crashes.
@@ -1626,7 +1668,8 @@ TEST_F(NetEqImplTest, NoCrashWith1000Channels) {
       }));
 
   // Insert first packet.
-  neteq_->InsertPacket(rtp_header, payload);
+  neteq_->InsertPacket(rtp_header, payload,
+                       /*receive_time=*/clock_.CurrentTime());
 
   AudioFrame audio_frame;
   bool muted;
@@ -1655,12 +1698,16 @@ TEST_F(NetEqImplTest, CngFirstThenSpeechWithNewSampleRate) {
   header.payloadType = kCnPayloadType;
   uint8_t payload[320] = {0};
 
-  EXPECT_EQ(neteq_->InsertPacket(header, payload), NetEq::kOK);
+  EXPECT_EQ(neteq_->InsertPacket(header, payload,
+                                 /*receive_time=*/clock_.CurrentTime()),
+            NetEq::kOK);
   EXPECT_EQ(neteq_->GetLifetimeStatistics().packets_discarded, 0u);
 
   header.payloadType = kSpeechPayloadType;
   header.timestamp += 160;
-  EXPECT_EQ(neteq_->InsertPacket(header, payload), NetEq::kOK);
+  EXPECT_EQ(neteq_->InsertPacket(header, payload,
+                                 /*receive_time=*/clock_.CurrentTime()),
+            NetEq::kOK);
   // CN packet should be discarded, since it does not match the
   // new speech sample rate.
   EXPECT_EQ(neteq_->GetLifetimeStatistics().packets_discarded, 1u);
@@ -1688,12 +1735,16 @@ TEST_F(NetEqImplTest, InsertPacketChangePayloadType) {
   header.timestamp = 1234;
   uint8_t payload[160] = {0};
 
-  EXPECT_EQ(neteq_->InsertPacket(header, payload), NetEq::kOK);
+  EXPECT_EQ(neteq_->InsertPacket(header, payload,
+                                 /*receive_time=*/clock_.CurrentTime()),
+            NetEq::kOK);
   EXPECT_EQ(neteq_->GetLifetimeStatistics().packets_discarded, 0u);
 
   header.payloadType = kPcmaPayloadType;
   header.timestamp += 80;
-  EXPECT_EQ(neteq_->InsertPacket(header, payload), NetEq::kOK);
+  EXPECT_EQ(neteq_->InsertPacket(header, payload,
+                                 /*receive_time=*/clock_.CurrentTime()),
+            NetEq::kOK);
   // The previous packet should be discarded since the codec changed.
   EXPECT_EQ(neteq_->GetLifetimeStatistics().packets_discarded, 1u);
 
@@ -1780,7 +1831,9 @@ class NetEqImplTest120ms : public NetEqImplTest {
     rtp_header.ssrc = 15;
     const size_t kPayloadLengthBytes = 1;  // This can be arbitrary.
     uint8_t payload[kPayloadLengthBytes] = {0};
-    EXPECT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header, payload));
+    EXPECT_EQ(NetEq::kOK,
+              neteq_->InsertPacket(rtp_header, payload,
+                                   /*receive_time=*/clock_.CurrentTime()));
     sequence_number_++;
   }
 

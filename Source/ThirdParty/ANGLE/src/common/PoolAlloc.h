@@ -56,6 +56,12 @@ class PageHeader;
 class PoolAllocator : angle::NonCopyable
 {
   public:
+    enum class ReleaseStrategy : uint8_t
+    {
+        OnlyMultiPage,
+        All,
+    };
+
     static const int kDefaultAlignment = sizeof(void *);
     //
     // Create PoolAllocator. If alignment is set to 1 byte then fastAllocate()
@@ -83,7 +89,7 @@ class PoolAllocator : angle::NonCopyable
     // Call pop() to free all memory allocated since the last call to push(),
     // or if no last call to push, frees all memory since first allocation.
     //
-    void pop();
+    void pop(ReleaseStrategy releaseStrategy = ReleaseStrategy::OnlyMultiPage);
 
     //
     // Call popAll() to free all memory allocated.

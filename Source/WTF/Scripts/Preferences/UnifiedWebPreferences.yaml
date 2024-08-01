@@ -1168,6 +1168,20 @@ CSSRhythmicSizingEnabled:
     WebCore:
       default: false
 
+CSSRubyAlignEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS ruby-align property"
+  humanReadableDescription: "Enable ruby-align"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSScopeAtRuleEnabled:
   type: bool
   status: stable
@@ -2726,6 +2740,7 @@ FullScreenEnabled:
     WebCore:
       "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
+  sharedPreferenceForWebProcess: true
 
 FullScreenKeyboardLock:
   type: bool
@@ -2837,6 +2852,7 @@ GamepadsEnabled:
       default: true
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 GenericCueAPIEnabled:
@@ -2855,17 +2871,17 @@ GenericCueAPIEnabled:
 
 GetCoalescedEventsEnabled:
   type: bool
-  status: testable
+  status: stable
   category: dom
   humanReadableName: "Pointer Events getCoalescedEvents API"
   humanReadableDescription: "Enable the `getCoalescedEvents` function of the Pointer Events API"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 GetUserMediaRequiresFocus:
   type: bool
@@ -4381,6 +4397,7 @@ MediaSessionCoordinatorEnabled:
       default: WebKit::defaultMediaSessionCoordinatorEnabled()
     WebCore:
       default: true
+  sharedPreferenceForWebProcess: true
 
 MediaSessionEnabled:
   type: bool
@@ -6456,6 +6473,7 @@ SpeechRecognitionEnabled:
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 SpeechSynthesisAPIEnabled:
   type: bool
@@ -7539,6 +7557,7 @@ WebAuthenticationEnabled:
       default: true
     WebCore:
       default: true
+  sharedPreferenceForWebProcess: true
 
 WebCodecsAV1Enabled:
   type: bool
@@ -7763,6 +7782,7 @@ WebLocksAPIEnabled:
       default: true
     WebCore:
       default: true
+  sharedPreferenceForWebProcess: true
 
 WebMFormatReaderEnabled:
   type: bool

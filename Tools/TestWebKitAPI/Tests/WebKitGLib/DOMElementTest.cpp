@@ -30,7 +30,9 @@ public:
 private:
     bool testAutoFill(WebKitWebPage* page)
     {
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
+        G_GNUC_END_IGNORE_DEPRECATIONS
         g_assert_true(WEBKIT_IS_FRAME(frame));
 
         GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context(frame));

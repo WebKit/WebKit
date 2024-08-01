@@ -30,10 +30,10 @@
 ] interface WebExtensionAPISidebarAction {
 
     [RaisesException] void open([Optional, CallbackHandler] function callback);
-    [RaisesException] void isOpen([Optional, CallbackHandler] function callback);
     [RaisesException] void close([Optional, CallbackHandler] function callback);
     [RaisesException] void toggle([Optional, CallbackHandler] function callback);
 
+    [RaisesException] void isOpen([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
     [RaisesException] void getPanel([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
     [RaisesException] void setPanel([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
     [RaisesException] void getTitle([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);

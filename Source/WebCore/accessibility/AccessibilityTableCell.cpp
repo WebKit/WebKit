@@ -71,9 +71,8 @@ bool AccessibilityTableCell::computeAccessibilityIsIgnored() const
         return true;
 
     // Ignore anonymous table cells as long as they're not in a table (ie. when display:table is used).
-    auto* renderTableCell = dynamicDowncast<RenderTableCell>(renderer());
-    auto* renderTable = renderTableCell ? renderTableCell->table() : nullptr;
-    bool inTable = renderTable && renderTable->element() && (renderTable->element()->hasTagName(tableTag) || nodeHasTableRole(renderTable->element()));
+    WeakPtr parentTable = this->parentTable();
+    bool inTable = parentTable && parentTable->element() && (parentTable->element()->hasTagName(tableTag) || nodeHasTableRole(parentTable->element()));
     if (!element() && !inTable)
         return true;
 
@@ -92,9 +91,9 @@ AccessibilityTable* AccessibilityTableCell::parentTable() const
     // By using only get() implies that the AXTable must be created before AXTableCells. This should
     // always be the case when AT clients access a table.
     // https://bugs.webkit.org/show_bug.cgi?id=42652
-    RefPtr<AccessibilityObject> tableFromRenderTree;
+    RefPtr<AccessibilityTable> tableFromRenderTree;
     if (auto* renderTableCell = dynamicDowncast<RenderTableCell>(renderer()))
-        tableFromRenderTree = cache->get(renderTableCell->table());
+        tableFromRenderTree = dynamicDowncast<AccessibilityTable>(cache->get(renderTableCell->table()));
 
     if (!tableFromRenderTree) {
         if (node()) {
@@ -121,7 +120,7 @@ AccessibilityTable* AccessibilityTableCell::parentTable() const
         return nullptr;
     }
     
-    return dynamicDowncast<AccessibilityTable>(tableFromRenderTree.get());
+    return tableFromRenderTree.get();
 }
     
 bool AccessibilityTableCell::isExposedTableCell() const

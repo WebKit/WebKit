@@ -11,7 +11,9 @@
 #ifndef LOGGING_RTC_EVENT_LOG_EVENTS_LOGGED_RTP_RTCP_H_
 #define LOGGING_RTC_EVENT_LOG_EVENTS_LOGGED_RTP_RTCP_H_
 
-#include <string>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 #include <vector>
 
 #include "absl/strings/string_view.h"

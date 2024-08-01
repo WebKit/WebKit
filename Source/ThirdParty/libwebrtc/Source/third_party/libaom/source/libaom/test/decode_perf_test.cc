@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -12,8 +12,7 @@
 #include <string>
 #include <tuple>
 
-#include "config/aom_version.h"
-
+#include "aom/aom_codec.h"
 #include "aom_ports/aom_timer.h"
 #include "common/ivfenc.h"
 #include "test/codec_factory.h"
@@ -82,7 +81,7 @@ TEST_P(DecodePerfTest, PerfTest) {
 
   printf("{\n");
   printf("\t\"type\" : \"decode_perf_test\",\n");
-  printf("\t\"version\" : \"%s\",\n", VERSION_STRING_NOSP);
+  printf("\t\"version\" : \"%s\",\n", aom_codec_version_str());
   printf("\t\"videoName\" : \"%s\",\n", video_name);
   printf("\t\"threadCount\" : %u,\n", threads);
   printf("\t\"decodeTimeSecs\" : %f,\n", elapsed_secs);
@@ -232,7 +231,7 @@ TEST_P(AV1NewEncodeDecodePerfTest, PerfTest) {
 
   printf("{\n");
   printf("\t\"type\" : \"decode_perf_test\",\n");
-  printf("\t\"version\" : \"%s\",\n", VERSION_STRING_NOSP);
+  printf("\t\"version\" : \"%s\",\n", aom_codec_version_str());
   printf("\t\"videoName\" : \"%s\",\n", kNewEncodeOutputFile);
   printf("\t\"threadCount\" : %u,\n", threads);
   printf("\t\"decodeTimeSecs\" : %f,\n", elapsed_secs);

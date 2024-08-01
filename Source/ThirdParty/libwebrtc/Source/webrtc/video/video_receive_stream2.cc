@@ -280,8 +280,7 @@ void VideoReceiveStream2::RegisterWithTransport(
   // Register with RtpStreamReceiverController.
   media_receiver_ = receiver_controller->CreateReceiver(
       remote_ssrc(), &rtp_video_stream_receiver_);
-  if (rtx_ssrc()) {
-    RTC_DCHECK(rtx_receive_stream_);
+  if (rtx_ssrc() && rtx_receive_stream_ != nullptr) {
     rtx_receiver_ = receiver_controller->CreateReceiver(
         rtx_ssrc(), rtx_receive_stream_.get());
   }
@@ -783,13 +782,14 @@ void VideoReceiveStream2::OnEncodedFrame(std::unique_ptr<EncodedFrame> frame) {
     RTC_DCHECK_RUN_ON(&decode_sequence_checker_);
     if (decoder_stopped_)
       return;
+    uint32_t rtp_timestamp = frame->RtpTimestamp();
     DecodeFrameResult result = HandleEncodedFrameOnDecodeQueue(
         std::move(frame), keyframe_request_is_due, keyframe_required);
 
     // TODO(bugs.webrtc.org/11993): Make this PostTask to the network thread.
     call_->worker_thread()->PostTask(
         SafeTask(task_safety_.flag(),
-                 [this, now, result = std::move(result),
+                 [this, now, rtp_timestamp, result = std::move(result),
                   received_frame_is_keyframe, keyframe_request_is_due]() {
                    RTC_DCHECK_RUN_ON(&packet_sequence_checker_);
                    keyframe_required_ = result.keyframe_required;
@@ -798,6 +798,7 @@ void VideoReceiveStream2::OnEncodedFrame(std::unique_ptr<EncodedFrame> frame) {
                      rtp_video_stream_receiver_.FrameDecoded(
                          *result.decoded_frame_picture_id);
                    }
+                   last_decoded_rtp_timestamp_ = rtp_timestamp;
 
                    HandleKeyFrameGeneration(received_frame_is_keyframe, now,
                                             result.force_request_key_frame,
@@ -832,6 +833,10 @@ void VideoReceiveStream2::OnDecodableFrameTimeout(TimeDelta wait) {
                         << " requesting keyframe. Last RTP timestamp "
                         << (last_timestamp ? rtc::ToString(*last_timestamp)
                                            : "<not set>")
+                        << ", last decoded frame RTP timestamp "
+                        << (last_decoded_rtp_timestamp_
+                                ? rtc::ToString(*last_decoded_rtp_timestamp_)
+                                : "<not set>")
                         << ".";
     RequestKeyFrame(now);
   }

@@ -61,15 +61,13 @@ class ChannelSendTest : public ::testing::Test {
         transport_controller_(
             RtpTransportConfig{.env = env_,
                                .bitrate_config = GetBitrateConfig()}) {
-    channel_ = voe::CreateChannelSend(
-        time_controller_.GetClock(), time_controller_.GetTaskQueueFactory(),
-        &transport_, nullptr, &env_.event_log(), nullptr, crypto_options_,
-        false, kRtcpIntervalMs, kSsrc, nullptr, &transport_controller_,
-        env_.field_trials());
+    channel_ = voe::CreateChannelSend(env_, &transport_, nullptr, nullptr,
+                                      crypto_options_, false, kRtcpIntervalMs,
+                                      kSsrc, nullptr, &transport_controller_);
     encoder_factory_ = CreateBuiltinAudioEncoderFactory();
     SdpAudioFormat opus = SdpAudioFormat("opus", kRtpRateHz, 2);
     std::unique_ptr<AudioEncoder> encoder =
-        encoder_factory_->MakeAudioEncoder(kPayloadType, opus, {});
+        encoder_factory_->Create(env_, opus, {.payload_type = kPayloadType});
     channel_->SetEncoder(kPayloadType, opus, std::move(encoder));
     transport_controller_.EnsureStarted();
     channel_->RegisterSenderCongestionControlObjects(&transport_controller_);

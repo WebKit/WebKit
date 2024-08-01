@@ -162,7 +162,6 @@ P2PTransportChannel::P2PTransportChannel(
       error_(0),
       remote_ice_mode_(ICEMODE_FULL),
       ice_role_(ICEROLE_UNKNOWN),
-      ice_tiebreaker_(0),
       gathering_state_(kIceGatheringNew),
       weak_ping_interval_(GetWeakPingIntervalInFieldTrial(field_trials)),
       config_(RECEIVING_TIMEOUT,
@@ -314,17 +313,6 @@ void P2PTransportChannel::SetIceRole(IceRole ice_role) {
 IceRole P2PTransportChannel::GetIceRole() const {
   RTC_DCHECK_RUN_ON(network_thread_);
   return ice_role_;
-}
-
-void P2PTransportChannel::SetIceTiebreaker(uint64_t tiebreaker) {
-  RTC_DCHECK_RUN_ON(network_thread_);
-  if (!ports_.empty() || !pruned_ports_.empty()) {
-    RTC_LOG(LS_ERROR)
-        << "Attempt to change tiebreaker after Port has been allocated.";
-    return;
-  }
-
-  ice_tiebreaker_ = tiebreaker;
 }
 
 IceTransportState P2PTransportChannel::GetState() const {
@@ -926,7 +914,7 @@ void P2PTransportChannel::OnPortReady(PortAllocatorSession* session,
   // if one is pending.
 
   port->SetIceRole(ice_role_);
-  port->SetIceTiebreaker(ice_tiebreaker_);
+  port->SetIceTiebreaker(allocator_->ice_tiebreaker());
   ports_.push_back(port);
   port->SignalUnknownAddress.connect(this,
                                      &P2PTransportChannel::OnUnknownAddress);

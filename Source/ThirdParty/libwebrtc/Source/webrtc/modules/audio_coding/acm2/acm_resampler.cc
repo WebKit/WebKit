@@ -12,6 +12,7 @@
 
 #include <string.h>
 
+#include "api/audio/audio_frame.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {
@@ -27,35 +28,32 @@ int ACMResampler::Resample10Msec(const int16_t* in_audio,
                                  size_t num_audio_channels,
                                  size_t out_capacity_samples,
                                  int16_t* out_audio) {
-  size_t in_length = in_freq_hz * num_audio_channels / 100;
+  InterleavedView<const int16_t> src(
+      in_audio, SampleRateToDefaultChannelSize(in_freq_hz), num_audio_channels);
+  InterleavedView<int16_t> dst(out_audio,
+                               SampleRateToDefaultChannelSize(out_freq_hz),
+                               num_audio_channels);
+  RTC_DCHECK_GE(out_capacity_samples, dst.size());
   if (in_freq_hz == out_freq_hz) {
-    if (out_capacity_samples < in_length) {
+    if (out_capacity_samples < src.data().size()) {
       RTC_DCHECK_NOTREACHED();
       return -1;
     }
-    memcpy(out_audio, in_audio, in_length * sizeof(int16_t));
-    return static_cast<int>(in_length / num_audio_channels);
+    CopySamples(dst, src);
+    RTC_DCHECK_EQ(dst.samples_per_channel(), src.samples_per_channel());
+    return static_cast<int>(dst.samples_per_channel());
   }
 
-  if (resampler_.InitializeIfNeeded(in_freq_hz, out_freq_hz,
-                                    num_audio_channels) != 0) {
-    RTC_LOG(LS_ERROR) << "InitializeIfNeeded(" << in_freq_hz << ", "
-                      << out_freq_hz << ", " << num_audio_channels
-                      << ") failed.";
-    return -1;
-  }
-
-  int out_length = resampler_.Resample(
-      rtc::ArrayView<const int16_t>(in_audio, in_length),
-      rtc::ArrayView<int16_t>(out_audio, out_capacity_samples));
+  int out_length = resampler_.Resample(src, dst);
   if (out_length == -1) {
-    RTC_LOG(LS_ERROR) << "Resample(" << in_audio << ", " << in_length << ", "
-                      << out_audio << ", " << out_capacity_samples
+    RTC_LOG(LS_ERROR) << "Resample(" << in_audio << ", " << src.data().size()
+                      << ", " << out_audio << ", " << out_capacity_samples
                       << ") failed.";
     return -1;
   }
-
-  return static_cast<int>(out_length / num_audio_channels);
+  RTC_DCHECK_EQ(out_length, dst.size());
+  RTC_DCHECK_EQ(out_length / num_audio_channels, dst.samples_per_channel());
+  return static_cast<int>(dst.samples_per_channel());
 }
 
 }  // namespace acm2

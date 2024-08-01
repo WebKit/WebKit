@@ -42,12 +42,13 @@ rtc_library("audio_codecs_api") {
     "../../rtc_base:refcount",
     "../../rtc_base:sanitizer",
     "../../rtc_base/system:rtc_export",
+    "../environment",
     "../units:data_rate",
     "../units:time_delta",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/base:nullability",
     "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/strings:string_view",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
@@ -65,6 +66,7 @@ rtc_library("builtin_audio_decoder_factory") {
     "L16:audio_decoder_L16",
     "g711:audio_decoder_g711",
     "g722:audio_decoder_g722",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
   defines = []
   if (rtc_include_ilbc) {
@@ -93,20 +95,27 @@ rtc_library("builtin_audio_encoder_factory") {
   ]
   deps = [
     ":audio_codecs_api",
+    "..:field_trials_view",
     "..:scoped_refptr",
     "L16:audio_encoder_L16",
     "g711:audio_encoder_g711",
     "g722:audio_encoder_g722",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
   defines = []
   if (rtc_include_ilbc) {
-    deps += [ "ilbc:audio_encoder_ilbc" ]
+    deps += [
+      "..:field_trials_view",
+      "ilbc:audio_encoder_ilbc",
+      "//third_party/abseil-cpp/absl/types:optional",
+    ]
     defines += [ "WEBRTC_USE_BUILTIN_ILBC=1" ]
   } else {
     defines += [ "WEBRTC_USE_BUILTIN_ILBC=0" ]
   }
   if (rtc_include_opus) {
     deps += [
+      "..:field_trials_view",
       "opus:audio_encoder_multiopus",
       "opus:audio_encoder_opus",
     ]
@@ -128,6 +137,7 @@ rtc_library("opus_audio_decoder_factory") {
     "..:scoped_refptr",
     "opus:audio_decoder_multiopus",
     "opus:audio_decoder_opus",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
@@ -140,8 +150,10 @@ rtc_library("opus_audio_encoder_factory") {
   ]
   deps = [
     ":audio_codecs_api",
+    "..:field_trials_view",
     "..:scoped_refptr",
     "opus:audio_encoder_multiopus",
     "opus:audio_encoder_opus",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }

@@ -39,6 +39,7 @@
 #import <WebCore/FontCocoa.h>
 #import <WebCore/IOSurface.h>
 #import <limits.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/ContactsSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -433,6 +434,7 @@ struct ObjCHolderForTesting {
         RetainPtr<NSPersonNameComponents>,
         RetainPtr<NSPresentationIntent>,
         RetainPtr<NSURLProtectionSpace>,
+        RetainPtr<NSURLRequest>,
         RetainPtr<NSURLCredential>,
 #if USE(PASSKIT)
         RetainPtr<CNContact>,
@@ -1377,6 +1379,26 @@ static RetainPtr<DDScannerResult> fakeDataDetectorResultForTesting()
 
 TEST(IPCSerialization, SecureCoding)
 {
+    // NSURLRequest
+    NSURL *url = [NSURL URLWithString:@"https://webkit.org/"];
+    NSURLRequest *urlRequest = [NSURLRequest requestWithURL:url];
+    runTestNS({ urlRequest });
+
+    NSDictionary *jsonDict = @{
+        @"a" : @1,
+        @"b" : @2
+    };
+    NSData *postData = [NSJSONSerialization dataWithJSONObject:jsonDict options:0 error:Nil];
+    NSMutableURLRequest *postRequest = [[NSMutableURLRequest alloc] initWithURL:url];
+
+    [postRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    [postRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [postRequest setHTTPMethod:@"POST"];
+    [postRequest setHTTPBody:postData];
+    [postRequest _setPrivacyProxyFailClosed:YES];
+
+    runTestNS({ postRequest });
+
     // DDScannerResult
     //   - Note: For now, there's no reasonable way to create anything but an empty DDScannerResult object
     auto scannerResult = fakeDataDetectorResultForTesting();

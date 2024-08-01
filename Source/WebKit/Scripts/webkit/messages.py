@@ -1235,6 +1235,9 @@ def collect_header_conditions_for_receiver(receiver, header_conditions):
         if not parameter.condition in type_conditions[parameter.type]:
             type_conditions[parameter.type].append(parameter.condition)
 
+    if receiver.receiver_enabled_by:
+        header_conditions['"SharedPreferencesForWebProcess.h"'] = [None]
+
     for parameter in receiver.iterparameters():
         type = parameter.type
         conditions = type_conditions[type]
@@ -1285,6 +1288,24 @@ def generate_header_includes_from_conditions(header_conditions):
         else:
             result += ['#include %s // NOLINT\n' % header]
     return result
+
+
+def generate_enabled_by_for_receiver(receiver, ignore_invalid_message_for_testing, return_value=None):
+    enabled_by = receiver.receiver_enabled_by
+    if not enabled_by:
+        return []
+    runtime_enablement = ' && '.join(['sharedPreferencesForWebProcess().' + preference[0].lower() + preference[1:] for preference in enabled_by])
+    return_statement_line = 'return %s' % return_value if return_value else 'return'
+    return [
+        '    if (!%s) {\n' % ('(%s)' % runtime_enablement if len(enabled_by) > 1 else runtime_enablement),
+        '#if ENABLE(IPC_TESTING_API)\n',
+        '        if (%s)\n' % ignore_invalid_message_for_testing,
+        '            %s;\n' % return_statement_line,
+        '#endif // ENABLE(IPC_TESTING_API)\n',
+        '        ASSERT_NOT_REACHED_WITH_MESSAGE("Message received by a disabled message receiver %s");\n' % receiver.name,
+        '        %s;\n' % return_statement_line,
+        '    }\n',
+    ]
 
 
 def generate_message_handler(receiver):
@@ -1339,6 +1360,7 @@ def generate_message_handler(receiver):
     if receiver.has_attribute(STREAM_ATTRIBUTE):
         result.append('void %s::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)\n' % (receiver.name))
         result.append('{\n')
+        result += generate_enabled_by_for_receiver(receiver, 'connection.protectedConnection()->ignoreInvalidMessageForTesting()')
         assert(receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE))
         assert(not receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE))
         assert(not receiver.has_attribute(WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE))
@@ -1362,6 +1384,7 @@ def generate_message_handler(receiver):
         else:
             result.append('void %s::didReceive%sMessage(IPC::Connection& connection, IPC::Decoder& decoder)\n' % (receiver.name, receive_variant))
         result.append('{\n')
+        result += generate_enabled_by_for_receiver(receiver, 'connection.ignoreInvalidMessageForTesting()')
         if not (receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE) or receiver.has_attribute(STREAM_ATTRIBUTE)):
             result.append('    Ref protectedThis { *this };\n')
         result += async_message_statements
@@ -1386,6 +1409,7 @@ def generate_message_handler(receiver):
         result.append('\n')
         result.append('bool %s::didReceiveSync%sMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)\n' % (receiver.name, receiver.name if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE) else ''))
         result.append('{\n')
+        result += generate_enabled_by_for_receiver(receiver, 'connection.ignoreInvalidMessageForTesting()', 'false')
         if not receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE):
             result.append('    Ref protectedThis { *this };\n')
         result += sync_message_statements

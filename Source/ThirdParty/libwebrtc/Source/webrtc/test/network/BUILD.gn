@@ -85,12 +85,10 @@ rtc_library("emulated_network") {
     "../../test:scoped_key_value_config",
     "../scenario:column_printer",
     "../time_controller",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/algorithm:container",
     "//third_party/abseil-cpp/absl/base:nullability",
     "//third_party/abseil-cpp/absl/memory",
-    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/strings:string_view",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
@@ -134,12 +132,11 @@ rtc_library("cross_traffic_unittest") {
     "../..//test/network:simulated_network",
     "../../api:network_emulation_manager_api",
     "../../api:simulated_network_api",
+    "../../api/units:data_rate",
     "../../rtc_base:logging",
     "../../rtc_base:network_constants",
     "../../rtc_base:rtc_event",
     "../time_controller",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -179,8 +176,8 @@ if (rtc_include_tests) {
       "../../api/transport:test_feedback_generator_interface",
       "../../rtc_base:checks",
       "../time_controller",
+      "//third_party/abseil-cpp/absl/memory",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/memory" ]
   }
 
   rtc_library("feedback_generator_unittest") {
@@ -202,6 +199,9 @@ if (rtc_include_tests) {
         ":network_emulation_unittest",
         ":simulated_network_unittest",
       ]
+      if (rtc_enable_protobuf) {
+        deps += [ ":schedulable_network_behavior_test" ]
+      }
     }
   }
 }
@@ -223,8 +223,8 @@ rtc_library("simulated_network") {
     "../../rtc_base:race_checker",
     "../../rtc_base:random",
     "../../rtc_base/synchronization:mutex",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 if (rtc_include_tests) {
@@ -240,7 +240,54 @@ if (rtc_include_tests) {
       "../../api/units:time_delta",
       "../../api/units:timestamp",
       "//testing/gtest",
+      "//third_party/abseil-cpp/absl/algorithm:container",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/algorithm:container" ]
+  }
+}
+
+if (rtc_enable_protobuf) {
+  rtc_library("schedulable_network_behavior") {
+    sources = [
+      "schedulable_network_behavior.cc",
+      "schedulable_network_behavior.h",
+    ]
+    deps = [
+      ":simulated_network",
+      "../../api:network_emulation_manager_api",
+      "../../api:sequence_checker",
+      "../../api:simulated_network_api",
+      "../../api/task_queue:task_queue",
+      "../../api/test/network_emulation:network_config_schedule_proto",
+      "../../api/units:data_rate",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../api/units:timestamp",
+      "../../rtc_base:macromagic",
+      "../../rtc_base/task_utils:repeating_task",
+      "../../system_wrappers",
+      "//third_party/abseil-cpp/absl/functional:any_invocable",
+    ]
+  }
+
+  if (rtc_include_tests) {
+    rtc_library("schedulable_network_behavior_test") {
+      testonly = true
+      sources = [ "schedulable_network_behavior_test.cc" ]
+      deps = [
+        ":schedulable_network_behavior",
+        "../:test_support",
+        "../../api:create_network_emulation_manager",
+        "../../api:network_emulation_manager_api",
+        "../../api:simulated_network_api",
+        "../../api/test/network_emulation:network_config_schedule_proto",
+        "../../api/units:data_rate",
+        "../../api/units:data_size",
+        "../../api/units:time_delta",
+        "../../api/units:timestamp",
+        "../../system_wrappers",
+        "//testing/gtest",
+        "//third_party/abseil-cpp/absl/algorithm:container",
+      ]
+    }
   }
 }

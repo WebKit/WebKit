@@ -112,6 +112,13 @@ std::shared_ptr<ShaderTranslateTask> ShaderMtl::compile(const gl::Context *conte
     return std::shared_ptr<ShaderTranslateTask>(new ShaderTranslateTaskMtl(mCompiledState));
 }
 
+std::shared_ptr<ShaderTranslateTask> ShaderMtl::load(const gl::Context *context,
+                                                     gl::BinaryInputStream *stream)
+{
+    UNREACHABLE();
+    return std::shared_ptr<ShaderTranslateTask>(new ShaderTranslateTask);
+}
+
 std::string ShaderMtl::getDebugInfo() const
 {
     return mState.getCompiledState()->translatedSource;

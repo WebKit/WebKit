@@ -1,8 +1,5 @@
 CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'SomeName' because it violates the following Content Security Policy directive: "trusted-types SomeName SomeOtherName"
-CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'unknown name' because it violates the following Content Security Policy directive: "trusted-types SomeName SomeOtherName"
-CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'SomeName' because it violates the following Content Security Policy directive: "trusted-types SomeName SomeOtherName"
 
 PASS policy.name = name
 PASS duplicate policy name attempt throws
-PASS Error messages for duplicates and unlisted policies should be different
 

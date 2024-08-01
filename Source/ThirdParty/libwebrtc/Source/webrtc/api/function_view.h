@@ -11,6 +11,7 @@
 #ifndef API_FUNCTION_VIEW_H_
 #define API_FUNCTION_VIEW_H_
 
+#include <cstddef>
 #include <type_traits>
 #include <utility>
 

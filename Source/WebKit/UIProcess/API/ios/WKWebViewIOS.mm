@@ -2050,6 +2050,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (![self usesStandardContentView])
         return;
 
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    _isScrollingWithOverlayRegion = NO;
+#endif
+
     [self _scheduleVisibleContentRectUpdate];
     [_contentView didFinishScrolling];
 
@@ -2126,9 +2130,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     if (update._scrollDeviceCategory == _UIScrollDeviceCategoryOverlayScroll) {
+        _isScrollingWithOverlayRegion = YES;
         completion(isHandledByDefault);
         return;
     }
+    _isScrollingWithOverlayRegion = NO;
 #endif
 
 #if !USE(BROWSERENGINEKIT)
@@ -2604,6 +2610,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         stabilityFlags.add(WebKit::ViewStabilityFlag::ScrollViewInteracting);
     if (scrollView.isDecelerating || scrollView._wk_isZoomAnimating || scrollView._wk_isScrollAnimating || scrollView.isZoomBouncing)
         stabilityFlags.add(WebKit::ViewStabilityFlag::ScrollViewAnimatedScrollOrZoom);
+
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    if (_isScrollingWithOverlayRegion)
+        stabilityFlags.add(WebKit::ViewStabilityFlag::ScrollViewAnimatedScrollOrZoom);
+#endif
 
     if (scrollView == _scrollView.get() && _isChangingObscuredInsetsInteractively)
         stabilityFlags.add(WebKit::ViewStabilityFlag::ChangingObscuredInsetsInteractively);

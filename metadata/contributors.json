@@ -2102,7 +2102,7 @@
       "nicks" : [
          "ddegazio"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    {
       "emails" : [
@@ -8105,6 +8105,13 @@
          "yoav@yoav.ws"
       ],
       "name" : "Yoav Weiss"
+   },
+   {
+      "emails" : [
+         "yoel@apple.com"
+      ],
+      "github" : "yoelhawa",
+      "name" : "Yoel Hawa"
    },
    {
       "emails" : [

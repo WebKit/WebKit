@@ -11,8 +11,14 @@
 #include "api/audio_codecs/L16/audio_decoder_L16.h"
 
 #include <memory>
+#include <vector>
 
 #include "absl/strings/match.h"
+#include "absl/types/optional.h"
+#include "api/audio_codecs/audio_codec_pair_id.h"
+#include "api/audio_codecs/audio_decoder.h"
+#include "api/audio_codecs/audio_format.h"
+#include "api/field_trials_view.h"
 #include "modules/audio_coding/codecs/pcm16b/audio_decoder_pcm16b.h"
 #include "modules/audio_coding/codecs/pcm16b/pcm16b_common.h"
 #include "rtc_base/numerics/safe_conversions.h"

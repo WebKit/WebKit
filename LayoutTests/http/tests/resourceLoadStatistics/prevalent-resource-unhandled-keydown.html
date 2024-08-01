@@ -18,7 +18,7 @@ onload = function() {
                 if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
                     testFailed("Host did not get set as prevalent resource.");
 
-                testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, false, function() {
+                testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, false, async function() {
                     if (testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
                         testFailed("Host did not get cleared of user interaction.");
 
@@ -36,7 +36,7 @@ onload = function() {
                     });
                     testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
                     testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
-                    testRunner.statisticsProcessStatisticsAndDataRecords();
+                    await testRunner.statisticsProcessStatisticsAndDataRecords();
 
                     debug("Simulate an unhandled user key press.");
                     if (window.eventSender)

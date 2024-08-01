@@ -867,6 +867,8 @@ deqp_egl_sources = [
 deqp_khr_common_sources = [
   "$deqp_path/external/openglcts/modules/common/glcAggressiveShaderOptimizationsTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcAggressiveShaderOptimizationsTests.hpp",
+  "$deqp_path/external/openglcts/modules/common/glcApiCoverageTests.cpp",
+  "$deqp_path/external/openglcts/modules/common/glcApiCoverageTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcBlendEquationAdvancedTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcBlendEquationAdvancedTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcBufferObjectsTests.cpp",

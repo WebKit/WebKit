@@ -166,6 +166,7 @@ PROXY_METHOD2(bool,
 PROXY_METHOD1(bool, StartRtcEventLog, std::unique_ptr<RtcEventLogOutput>)
 PROXY_METHOD0(void, StopRtcEventLog)
 PROXY_METHOD0(void, Close)
+PROXY_METHOD0(NetworkControllerInterface*, GetNetworkController)
 BYPASS_PROXY_CONSTMETHOD0(rtc::Thread*, signaling_thread)
 END_PROXY_MAP(PeerConnection)
 

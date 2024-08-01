@@ -651,7 +651,7 @@ private:
 
     bool isSeamlessSeekingEnabled() const { return m_seekFlags & (1 << GST_SEEK_FLAG_SEGMENT); }
 
-    RefPtr<PlatformMediaResourceLoader> m_loader;
+    Ref<PlatformMediaResourceLoader> m_loader;
 
     RefPtr<GStreamerQuirksManager> m_quirksManagerForTesting;
 };

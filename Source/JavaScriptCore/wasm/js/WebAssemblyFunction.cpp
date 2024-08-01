@@ -439,7 +439,7 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
     if (UNLIKELY(linkBuffer.didFailToAllocate()))
         return nullptr;
 
-    auto compilation = makeUnique<Compilation>(FINALIZE_WASM_CODE(linkBuffer, JITCompilationPtrTag, nullptr, "JS->Wasm IC"), nullptr);
+    auto compilation = makeUnique<Compilation>(FINALIZE_WASM_CODE(linkBuffer, JITCompilationPtrTag, nullptr, "JS->Wasm IC %s", signature.toString().ascii().data()), nullptr);
     jsToWasmICCallee->setEntrypoint({ WTFMove(compilation), WTFMove(registersToSpill) });
 
     // Successfully compiled and linked the IC.

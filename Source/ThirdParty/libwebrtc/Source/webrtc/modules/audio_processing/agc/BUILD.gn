@@ -38,8 +38,8 @@ rtc_library("agc") {
     "../agc2:gain_map",
     "../agc2:input_volume_stats_reporter",
     "../vad",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("level_estimation") {
@@ -117,10 +117,7 @@ if (rtc_include_tests) {
       "../../../test:fileutils",
       "../../../test:test_support",
       "//testing/gtest",
-    ]
-    absl_deps = [
-      "//third_party/abseil-cpp/absl/strings",
-      "//third_party/abseil-cpp/absl/types:optional",
+      "//third_party/abseil-cpp/absl/strings:string_view",
     ]
   }
 }

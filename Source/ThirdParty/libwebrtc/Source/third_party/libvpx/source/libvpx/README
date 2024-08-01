@@ -150,8 +150,8 @@ COMPILING THE APPLICATIONS/LIBRARIES:
     $ CROSS=mipsel-linux-uclibc- ../libvpx/configure
 
   In addition, the executables to be invoked can be overridden by specifying the
-  environment variables: CC, AR, LD, AS, STRIP, NM. Additional flags can be
-  passed to these executables with CFLAGS, LDFLAGS, and ASFLAGS.
+  environment variables: AR, AS, CC, CXX, LD, STRIP. Additional flags can be
+  passed to these executables with ASFLAGS, CFLAGS, CXXFLAGS, and LDFLAGS.
 
   6. Configuration errors
   If the configuration step fails, the first step is to look in the error log.
@@ -223,3 +223,6 @@ SUPPORT
   This library is an open source project supported by its community. Please
   email webm-discuss@webmproject.org for help.
 
+BUG REPORTS
+  Bug reports can be filed in the libvpx issue tracker:
+  https://issues.webmproject.org/.

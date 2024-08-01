@@ -24,6 +24,7 @@ import json
 
 
 PREFIX = None
+EMBED_TEST_DATA = False
 
 
 def PathOf(x):
@@ -190,6 +191,8 @@ class AndroidCMake(object):
                                 files['test_support'])
       self.PrintVariableSection(out, 'crypto_test_sources',
                                 files['crypto_test'])
+      self.PrintVariableSection(out, 'crypto_test_data',
+                                files['crypto_test_data'])
       self.PrintVariableSection(out, 'ssl_test_sources', files['ssl_test'])
 
 
@@ -637,6 +640,13 @@ def main(platforms):
   crypto_nasm = sorted(sources['bcm']['nasm'] + sources['crypto']['nasm'] +
                        sources['test_support']['nasm'])
 
+  if EMBED_TEST_DATA:
+    with open('crypto_test_data.cc', 'w+') as out:
+      subprocess.check_call(
+          ['go', 'run', 'util/embed_test_data.go'] + sources['crypto_test']['data'],
+          cwd='src',
+          stdout=out)
+
   files = {
       'bcm_crypto': PrefixWithSrc(sources['bcm']['srcs']),
       'crypto': PrefixWithSrc(crypto),
@@ -690,8 +700,14 @@ if __name__ == '__main__':
       '|'.join(sorted(ALL_PLATFORMS.keys())))
   parser.add_option('--prefix', dest='prefix',
       help='For Bazel, prepend argument to all source files')
+  parser.add_option(
+      '--embed_test_data', dest='embed_test_data', action='store_true',
+      help='Generates the legacy crypto_test_data.cc file. To use, build with' +
+           ' -DBORINGSSL_CUSTOM_GET_TEST_DATA and add this file to ' +
+           'crypto_test.')
   options, args = parser.parse_args(sys.argv[1:])
   PREFIX = options.prefix
+  EMBED_TEST_DATA = options.embed_test_data
 
   if not args:
     parser.print_help()

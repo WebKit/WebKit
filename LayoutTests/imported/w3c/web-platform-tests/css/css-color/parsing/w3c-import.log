@@ -15,7 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/WEB_FEATURES.yml
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-color-contrast-function.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-color-function.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-color-mix-function.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-hex-color.html
@@ -26,7 +25,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-relative-color.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-rgb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-computed.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-invalid-color-contrast-function.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-invalid-color-function.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-invalid-color-mix-function.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-invalid-hex-color.html
@@ -38,7 +36,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-invalid-rgb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-mix-out-of-gamut.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-color-contrast-function.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-color-function.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-color-mix-function.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-hsl.html

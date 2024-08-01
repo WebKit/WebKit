@@ -35,6 +35,7 @@ class Document;
 class Element;
 class EventTarget;
 class IntPoint;
+class MouseEvent;
 class Page;
 class PlatformTouchEvent;
 class PointerEvent;

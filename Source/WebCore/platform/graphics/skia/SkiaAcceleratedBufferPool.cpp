@@ -69,7 +69,7 @@ RefPtr<Nicosia::Buffer> SkiaAcceleratedBufferPool::acquireBuffer(const IntSize& 
 
 RefPtr<Nicosia::Buffer> SkiaAcceleratedBufferPool::createAcceleratedBuffer(const IntSize& size, bool supportsAlpha)
 {
-    auto* grContext = PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
+    auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
     RELEASE_ASSERT(grContext);
     auto imageInfo = SkImageInfo::MakeN32Premul(size.width(), size.height(), SkColorSpace::MakeSRGB());
     SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };

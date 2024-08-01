@@ -12,7 +12,10 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
+#include <cstdint>
 
+#include "absl/types/optional.h"
 #include "rtc_base/checks.h"
 
 namespace rtc {

@@ -60,7 +60,7 @@ class WrappedYuvBuffer : public Base {
   int StrideV() const override { return v_stride_; }
 
  private:
-  friend class rtc::RefCountedObject<WrappedYuvBuffer>;
+  friend class RefCountedObject<WrappedYuvBuffer>;
 
   const int width_;
   const int height_;
@@ -182,7 +182,7 @@ class WrappedYuv16BBuffer : public Base {
   int StrideV() const override { return v_stride_; }
 
  private:
-  friend class rtc::RefCountedObject<WrappedYuv16BBuffer>;
+  friend class RefCountedObject<WrappedYuv16BBuffer>;
 
   const int width_;
   const int height_;

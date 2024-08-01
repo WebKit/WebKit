@@ -367,8 +367,8 @@ protected:
     // The specific value of VarArgs does not matter, but the value of the others is assumed to match their meaning.
     enum NumChildren : uint8_t { Zero = 0, One = 1, Two = 2, Three = 3, VarArgs = 4};
 
-    char* childrenAlloc() { return bitwise_cast<char*>(this) + adjacencyListOffset(); }
-    const char* childrenAlloc() const { return bitwise_cast<const char*>(this) + adjacencyListOffset(); }
+    char* childrenAlloc() { return bitwise_cast<char*>(this) + m_adjacencyListOffset; }
+    const char* childrenAlloc() const { return bitwise_cast<const char*>(this) + m_adjacencyListOffset; }
     Vector<Value*, 3>& childrenVector()
     {
         ASSERT(m_numChildren == VarArgs);
@@ -602,7 +602,7 @@ protected:
     Value& operator=(const Value&) = delete;
     Value& operator=(Value&&) = delete;
     
-    size_t adjacencyListOffset() const;
+    size_t computeAdjacencyListOffset() const;
 
     friend class Procedure;
     friend class SparseCollection<Value>;
@@ -611,6 +611,10 @@ private:
     template<typename... Arguments>
     void buildAdjacencyList(NumChildren numChildren, Arguments... arguments)
     {
+        size_t offset = computeAdjacencyListOffset();
+        RELEASE_ASSERT(offset == static_cast<uint16_t>(offset));
+        m_adjacencyListOffset = offset;
+
         if (numChildren == VarArgs) {
             new (childrenAlloc()) Vector<Value*, 3> { arguments... };
             return;
@@ -620,6 +624,9 @@ private:
     }
     void buildAdjacencyList(size_t offset, const Value& valueToClone)
     {
+        RELEASE_ASSERT(offset == static_cast<uint16_t>(offset));
+        m_adjacencyListOffset = offset;
+
         switch (valueToClone.m_numChildren) {
         case VarArgs:
             new (bitwise_cast<char*>(this) + offset) Vector<Value*, 3> (valueToClone.childrenVector());
@@ -867,6 +874,7 @@ protected:
     unsigned m_index { UINT_MAX };
 private:
     Kind m_kind;
+    uint16_t m_adjacencyListOffset;
     Type m_type;
 protected:
     NumChildren m_numChildren;

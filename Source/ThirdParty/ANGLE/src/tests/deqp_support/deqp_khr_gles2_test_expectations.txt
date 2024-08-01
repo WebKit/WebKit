@@ -4,11 +4,6 @@
 
 // See README.md for format.
 
-42265173 UBSAN : KHR-GLES2.core.internalformat.texture2d.rgb_half_float_oes_rgb = SKIP
-42265173 UBSAN : KHR-GLES2.core.internalformat.texture2d.rgb_half_float_oes_rgb_linear = SKIP
-42265173 UBSAN : KHR-GLES2.core.internalformat.texture2d.rgba_half_float_oes_rgba = SKIP
-42265173 UBSAN : KHR-GLES2.core.internalformat.texture2d.rgba_half_float_oes_rgba_linear = SKIP
-
 42266826 VULKAN : KHR-GLES2.texture_3d.compressed_texture.negative_compressed_tex_image = FAIL
 42266826 VULKAN : KHR-GLES2.texture_3d.compressed_texture.negative_compressed_tex_sub_image = FAIL
 

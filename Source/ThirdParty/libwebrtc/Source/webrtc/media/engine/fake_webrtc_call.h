@@ -122,6 +122,7 @@ class FakeAudioReceiveStream final
   void SetDecoderMap(
       std::map<int, webrtc::SdpAudioFormat> decoder_map) override;
   void SetNackHistory(int history_ms) override;
+  void SetRtcpMode(webrtc::RtcpMode mode) override;
   void SetNonSenderRttMeasurement(bool enabled) override;
   void SetFrameDecryptor(rtc::scoped_refptr<webrtc::FrameDecryptorInterface>
                              frame_decryptor) override;

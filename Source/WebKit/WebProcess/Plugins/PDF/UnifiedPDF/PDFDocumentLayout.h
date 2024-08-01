@@ -80,7 +80,7 @@ public:
 
     RetainPtr<PDFPage> pageAtIndex(PageIndex) const;
     std::optional<PageIndex> indexForPage(RetainPtr<PDFPage>) const;
-    PageIndex nearestPageIndexForDocumentPoint(WebCore::FloatPoint, std::optional<PDFLayoutRow>) const;
+    PageIndex nearestPageIndexForDocumentPoint(WebCore::FloatPoint, const std::optional<PDFLayoutRow>&) const;
 
     // For the given Y offset, return a page index and page point for the page at this offset. Returns the leftmost
     // page if two-up and both pages intersect that offset, otherwise the right page if only it intersects the offset.

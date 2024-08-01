@@ -1,0 +1,104 @@
+Tests Debugger.setShouldBlackboxURL.
+
+
+== Running test suite: Debugger.setShouldBlackboxURL
+-- Running test case: Debugger.setShouldBlackboxURL.RegexCaseInsensitive.stepOver
+Evaluating 'createScripts("RegexCaseInsensitive_StepOver")'...
+Blackboxing (regex) 'regexcaseinsensitive[ -_]stepover[ -_]middle\.js$'...
+Setting breakpoint in 'RegexCaseInsensitive_StepOver_Inner.js'...
+Evaluating 'RegexCaseInsensitive_StepOver_Outer(10)'...
+
+PAUSED: 'Breakpoint' at 'RegexCaseInsensitive_StepOver_Inner:3:1'.
+{
+  "breakpointId": "RegexCaseInsensitive_StepOver_Inner.js:3:0"
+}
+Stepping over...
+
+PAUSED: 'BlackboxedScript' at 'RegexCaseInsensitive_StepOver_Outer:3:1'.
+{
+  "originalReason": "other",
+  "originalData": {
+    "breakpointId": "RegexCaseInsensitive_StepOver_Inner.js:3:0"
+  }
+}
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should not pause in 'RegexCaseInsensitive_StepOver_Middle'.
+
+
+-- Running test case: Debugger.setShouldBlackboxURL.RegexCaseInsensitive.PauseInCaller
+Evaluating 'createScripts("RegexCaseInsensitive_PauseInCaller")'...
+Blackboxing (regex) 'regexcaseinsensitive[ -_]pauseincaller[ -_]inner\.js$'...
+Setting breakpoint in 'RegexCaseInsensitive_PauseInCaller_Inner.js'...
+Evaluating 'RegexCaseInsensitive_PauseInCaller_Outer(10)'...
+
+PAUSED: 'BlackboxedScript' at 'RegexCaseInsensitive_PauseInCaller_Middle:3:1'.
+{
+  "originalReason": "Breakpoint",
+  "originalData": {
+    "breakpointId": "RegexCaseInsensitive_PauseInCaller_Inner.js:2:0"
+  }
+}
+Stepping over...
+
+PAUSED: 'other' at 'RegexCaseInsensitive_PauseInCaller_Outer:3:1'.
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should not pause in 'RegexCaseInsensitive_PauseInCaller_Inner'.
+
+
+-- Running test case: Debugger.setShouldBlackboxURL.RegexCaseInsensitive.PauseInCallee
+Evaluating 'createScripts("RegexCaseInsensitive_PauseInCallee")'...
+Blackboxing (regex) 'regexcaseinsensitive[ -_]pauseincallee[ -_]outer\.js$'...
+Setting breakpoint in 'RegexCaseInsensitive_PauseInCallee_Outer.js'...
+Evaluating 'RegexCaseInsensitive_PauseInCallee_Outer(10)'...
+
+PAUSED: 'BlackboxedScript' at 'RegexCaseInsensitive_PauseInCallee_Middle:2:4'.
+{
+  "originalReason": "Breakpoint",
+  "originalData": {
+    "breakpointId": "RegexCaseInsensitive_PauseInCallee_Outer.js:2:0"
+  }
+}
+Stepping over...
+
+PAUSED: 'other' at 'RegexCaseInsensitive_PauseInCallee_Middle:3:1'.
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should not pause in 'RegexCaseInsensitive_PauseInCallee_Outer'.
+
+
+-- Running test case: Debugger.setShouldBlackboxURL.RegexCaseInsensitive.SourceRange
+Evaluating 'createScripts("RegexCaseInsensitive_Range")'...
+Blackboxing (regex) 'regexcaseinsensitive[ -_]range[ -_]multiple\.js$' 3:0-4:0...
+Blackboxing (regex) 'regexcaseinsensitive[ -_]range[ -_]multiple\.js$' 4:5-4:18...
+Blackboxing (regex) 'regexcaseinsensitive[ -_]range[ -_]multiple\.js$' 5:1-5:2...
+Setting breakpoint in 'RegexCaseInsensitive_Range_Multiple.js'...
+Evaluating 'RegexCaseInsensitive_Range_Multiple(10)'...
+
+PAUSED: 'Breakpoint' at 'RegexCaseInsensitive_Range_Multiple:2:4'.
+{
+  "breakpointId": "RegexCaseInsensitive_Range_Multiple.js:2:0"
+}
+Stepping over...
+
+PAUSED: 'BlackboxedScript' at 'RegexCaseInsensitive_Range_Multiple:4:4'.
+{
+  "originalReason": "other",
+  "originalData": {
+    "breakpointId": "RegexCaseInsensitive_Range_Multiple.js:2:0"
+  }
+}
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should pause in 'RegexCaseInsensitive_Range_Multiple'.
+
+

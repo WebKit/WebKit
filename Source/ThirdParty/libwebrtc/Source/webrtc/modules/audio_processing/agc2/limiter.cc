@@ -46,22 +46,20 @@ void InterpolateFirstSubframe(float last_factor,
 
 void ComputePerSampleSubframeFactors(
     const std::array<float, kSubFramesInFrame + 1>& scaling_factors,
-    int samples_per_channel,
-    rtc::ArrayView<float> per_sample_scaling_factors) {
-  const int num_subframes = scaling_factors.size() - 1;
-  const int subframe_size =
-      rtc::CheckedDivExact(samples_per_channel, num_subframes);
+    MonoView<float> per_sample_scaling_factors) {
+  const size_t num_subframes = scaling_factors.size() - 1;
+  const int subframe_size = rtc::CheckedDivExact(
+      SamplesPerChannel(per_sample_scaling_factors), num_subframes);
 
   // Handle first sub-frame differently in case of attack.
   const bool is_attack = scaling_factors[0] > scaling_factors[1];
   if (is_attack) {
     InterpolateFirstSubframe(
         scaling_factors[0], scaling_factors[1],
-        rtc::ArrayView<float>(
-            per_sample_scaling_factors.subview(0, subframe_size)));
+        per_sample_scaling_factors.subview(0, subframe_size));
   }
 
-  for (int i = is_attack ? 1 : 0; i < num_subframes; ++i) {
+  for (size_t i = is_attack ? 1 : 0; i < num_subframes; ++i) {
     const int subframe_start = i * subframe_size;
     const float scaling_start = scaling_factors[i];
     const float scaling_end = scaling_factors[i + 1];
@@ -73,39 +71,36 @@ void ComputePerSampleSubframeFactors(
   }
 }
 
-void ScaleSamples(rtc::ArrayView<const float> per_sample_scaling_factors,
-                  AudioFrameView<float> signal) {
+void ScaleSamples(MonoView<const float> per_sample_scaling_factors,
+                  DeinterleavedView<float> signal) {
   const int samples_per_channel = signal.samples_per_channel();
-  RTC_DCHECK_EQ(samples_per_channel, per_sample_scaling_factors.size());
-  for (int i = 0; i < signal.num_channels(); ++i) {
-    rtc::ArrayView<float> channel = signal.channel(i);
+  RTC_DCHECK_EQ(samples_per_channel,
+                SamplesPerChannel(per_sample_scaling_factors));
+  for (size_t i = 0; i < signal.num_channels(); ++i) {
+    MonoView<float> channel = signal[i];
     for (int j = 0; j < samples_per_channel; ++j) {
       channel[j] = rtc::SafeClamp(channel[j] * per_sample_scaling_factors[j],
                                   kMinFloatS16Value, kMaxFloatS16Value);
     }
   }
 }
-
-void CheckLimiterSampleRate(int sample_rate_hz) {
-  // Check that per_sample_scaling_factors_ is large enough.
-  RTC_DCHECK_LE(sample_rate_hz,
-                kMaximalNumberOfSamplesPerChannel * 1000 / kFrameDurationMs);
-}
-
 }  // namespace
 
-Limiter::Limiter(int sample_rate_hz,
-                 ApmDataDumper* apm_data_dumper,
+Limiter::Limiter(ApmDataDumper* apm_data_dumper,
+                 size_t samples_per_channel,
                  absl::string_view histogram_name)
     : interp_gain_curve_(apm_data_dumper, histogram_name),
-      level_estimator_(sample_rate_hz, apm_data_dumper),
+      level_estimator_(samples_per_channel, apm_data_dumper),
       apm_data_dumper_(apm_data_dumper) {
-  CheckLimiterSampleRate(sample_rate_hz);
+  RTC_DCHECK_LE(samples_per_channel, kMaximalNumberOfSamplesPerChannel);
 }
 
 Limiter::~Limiter() = default;
 
-void Limiter::Process(AudioFrameView<float> signal) {
+void Limiter::Process(DeinterleavedView<float> signal) {
+  RTC_DCHECK_LE(signal.samples_per_channel(),
+                kMaximalNumberOfSamplesPerChannel);
+
   const std::array<float, kSubFramesInFrame> level_estimate =
       level_estimator_.ComputeLevel(signal);
 
@@ -116,13 +111,9 @@ void Limiter::Process(AudioFrameView<float> signal) {
                    return interp_gain_curve_.LookUpGainToApply(x);
                  });
 
-  const int samples_per_channel = signal.samples_per_channel();
-  RTC_DCHECK_LE(samples_per_channel, kMaximalNumberOfSamplesPerChannel);
-
-  auto per_sample_scaling_factors = rtc::ArrayView<float>(
-      &per_sample_scaling_factors_[0], samples_per_channel);
-  ComputePerSampleSubframeFactors(scaling_factors_, samples_per_channel,
-                                  per_sample_scaling_factors);
+  MonoView<float> per_sample_scaling_factors(&per_sample_scaling_factors_[0],
+                                             signal.samples_per_channel());
+  ComputePerSampleSubframeFactors(scaling_factors_, per_sample_scaling_factors);
   ScaleSamples(per_sample_scaling_factors, signal);
 
   last_scaling_factor_ = scaling_factors_.back();
@@ -139,9 +130,9 @@ InterpolatedGainCurve::Stats Limiter::GetGainCurveStats() const {
   return interp_gain_curve_.get_stats();
 }
 
-void Limiter::SetSampleRate(int sample_rate_hz) {
-  CheckLimiterSampleRate(sample_rate_hz);
-  level_estimator_.SetSampleRate(sample_rate_hz);
+void Limiter::SetSamplesPerChannel(size_t samples_per_channel) {
+  RTC_DCHECK_LE(samples_per_channel, kMaximalNumberOfSamplesPerChannel);
+  level_estimator_.SetSamplesPerChannel(samples_per_channel);
 }
 
 void Limiter::Reset() {

@@ -11,6 +11,7 @@
 #include "rtc_base/numerics/sequence_number_unwrapper.h"
 
 #include <cstdint>
+#include <limits>
 
 #include "test/gtest.h"
 

@@ -12,6 +12,7 @@
 
 #include <memory>
 
+#include "api/environment/environment_factory.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "video/test/mock_video_stream_encoder.h"
@@ -27,7 +28,7 @@ class VideoEncoderFeedbackKeyframeTestBase : public ::testing::Test {
                                        std::vector<uint32_t> ssrcs)
       : simulated_clock_(123456789),
         encoder_(),
-        encoder_rtcp_feedback_(&simulated_clock_,
+        encoder_rtcp_feedback_(CreateEnvironment(&simulated_clock_),
                                per_layer_pli_handling,
                                ssrcs,
                                &encoder_,

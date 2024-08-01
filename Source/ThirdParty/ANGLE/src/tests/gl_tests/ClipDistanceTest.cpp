@@ -866,7 +866,7 @@ TEST_P(ClipCullDistanceTest, StorageQualifiers)
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName));
 
     std::stringstream vertexSource;
-    auto vs = [=, &vertexSource](std::string name, std::string qualifier) {
+    auto vs = [this, &vertexSource](std::string name, std::string qualifier) {
         vertexSource.str(std::string());
         vertexSource.clear();
         vertexSource << "#version 300 es\n"
@@ -880,7 +880,7 @@ TEST_P(ClipCullDistanceTest, StorageQualifiers)
     };
 
     std::stringstream fragmentSource;
-    auto fs = [=, &fragmentSource](std::string name, std::string qualifier) {
+    auto fs = [this, &fragmentSource](std::string name, std::string qualifier) {
         fragmentSource.str(std::string());
         fragmentSource.clear();
         fragmentSource << "#version 300 es\n"
@@ -943,7 +943,7 @@ TEST_P(ClipCullDistanceTest, OutOfRangeArraySize)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName));
 
-    auto test = [=](std::string name, int maxSize) {
+    auto test = [this](std::string name, int maxSize) {
         std::stringstream vsImplicit;
         vsImplicit << R"(#version 300 es
         #extension )"
@@ -1013,7 +1013,7 @@ TEST_P(ClipCullDistanceTest, SizeCheck)
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName));
 
     std::stringstream vertexSource;
-    auto vs = [=, &vertexSource](std::string name, bool declare, int size) {
+    auto vs = [this, &vertexSource](std::string name, bool declare, int size) {
         vertexSource.str(std::string());
         vertexSource.clear();
         vertexSource << "#version 300 es\n";
@@ -1034,7 +1034,7 @@ TEST_P(ClipCullDistanceTest, SizeCheck)
     };
 
     std::stringstream fragmentSource;
-    auto fs = [=, &fragmentSource](std::string name, bool declare, int size) {
+    auto fs = [this, &fragmentSource](std::string name, bool declare, int size) {
         fragmentSource.str(std::string());
         fragmentSource.clear();
         fragmentSource << "#version 300 es\n";
@@ -1149,7 +1149,8 @@ TEST_P(ClipCullDistanceTest, SizeCheckCombined)
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName));
 
     std::stringstream vertexSource;
-    auto vs = [=, &vertexSource](bool declareClip, int sizeClip, bool declareCull, int sizeCull) {
+    auto vs = [this, &vertexSource](bool declareClip, int sizeClip, bool declareCull,
+                                    int sizeCull) {
         vertexSource.str(std::string());
         vertexSource.clear();
         vertexSource << "#version 300 es\n";
@@ -1173,7 +1174,8 @@ TEST_P(ClipCullDistanceTest, SizeCheckCombined)
     };
 
     std::stringstream fragmentSource;
-    auto fs = [=, &fragmentSource](bool declareClip, int sizeClip, bool declareCull, int sizeCull) {
+    auto fs = [this, &fragmentSource](bool declareClip, int sizeClip, bool declareCull,
+                                      int sizeCull) {
         fragmentSource.str(std::string());
         fragmentSource.clear();
         fragmentSource << "#version 300 es\n";
@@ -1269,7 +1271,7 @@ TEST_P(ClipCullDistanceTest, Unused)
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName));
 
     std::stringstream vertexSource;
-    auto vs = [=, &vertexSource](std::string name) {
+    auto vs = [this, &vertexSource](std::string name) {
         vertexSource.str(std::string());
         vertexSource.clear();
         vertexSource << "#version 300 es\n"
@@ -1279,7 +1281,7 @@ TEST_P(ClipCullDistanceTest, Unused)
     };
 
     std::stringstream fragmentSource;
-    auto fs = [=, &fragmentSource](std::string name, bool declare) {
+    auto fs = [this, &fragmentSource](std::string name, bool declare) {
         fragmentSource.str(std::string());
         fragmentSource.clear();
         fragmentSource << "#version 300 es\n";
@@ -1393,7 +1395,7 @@ TEST_P(ClipCullDistanceTest, SizedArrayLength)
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName));
 
     std::stringstream vertexSource;
-    auto vs = [=, &vertexSource](std::string name, bool declare, int size) {
+    auto vs = [this, &vertexSource](std::string name, bool declare, int size) {
         vertexSource.str(std::string());
         vertexSource.clear();
         vertexSource << "#version 300 es\n";
@@ -1426,7 +1428,7 @@ void main()
     my_FragColor = vec4(v_length, 0.0, 0.0, 1.0);
 })";
 
-    auto checkLength = [=, &vertexSource](std::string name, bool declare, int size) {
+    auto checkLength = [this, vs, kFS, &vertexSource](std::string name, bool declare, int size) {
         GLProgram program;
         vs(name, declare, size);
         program.makeRaster(vertexSource.str().c_str(), kFS.c_str());
@@ -1472,7 +1474,7 @@ TEST_P(ClipCullDistanceTest, Pruned)
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName));
 
     std::stringstream vertexSource;
-    auto vs = [=, &vertexSource](std::string name, bool doReturn) {
+    auto vs = [this, &vertexSource](std::string name, bool doReturn) {
         vertexSource.str(std::string());
         vertexSource.clear();
         vertexSource << "#version 300 es\n";
@@ -1484,7 +1486,7 @@ TEST_P(ClipCullDistanceTest, Pruned)
     };
 
     std::stringstream fragmentSource;
-    auto fs = [=, &fragmentSource](std::string name) {
+    auto fs = [this, &fragmentSource](std::string name) {
         fragmentSource.str(std::string());
         fragmentSource.clear();
         fragmentSource << "#version 300 es\n";
@@ -1496,7 +1498,7 @@ TEST_P(ClipCullDistanceTest, Pruned)
         fragmentSource << "}";
     };
 
-    auto checkPruning = [=, &vertexSource, &fragmentSource](std::string name, bool doReturn) {
+    auto checkPruning = [vs, fs, &vertexSource, &fragmentSource](std::string name, bool doReturn) {
         GLProgram program;
         vs(name, doReturn);
         fs(name);

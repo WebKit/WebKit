@@ -116,6 +116,19 @@ messages -> WebExtensionContext {
     [EnabledIf='isScriptingMessageAllowed()'] ScriptingGetRegisteredScripts(Vector<String> scriptIDs) -> (Expected<Vector<WebKit::WebExtensionRegisteredScriptParameters>, WebKit::WebExtensionError> result)
     [EnabledIf='isScriptingMessageAllowed()'] ScriptingUnregisterContentScripts(Vector<String> scriptIDs) -> (Expected<void, WebKit::WebExtensionError> result)
 
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    // Sidebar APIs
+    [EnabledIf='isSidebarMessageAllowed()'] SidebarOpen(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (Expected<void, WebKit::WebExtensionError> result)
+    [EnabledIf='isSidebarMessageAllowed()'] SidebarIsOpen(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier) -> (Expected<bool, WebKit::WebExtensionError> result)
+    [EnabledIf='isSidebarMessageAllowed()'] SidebarClose() -> (Expected<void, WebKit::WebExtensionError> result)
+    [EnabledIf='isSidebarMessageAllowed()'] SidebarToggle() -> (Expected<void, WebKit::WebExtensionError> result)
+    [EnabledIf='isSidebarMessageAllowed()'] SidebarGetOptions(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (Expected<WebKit::WebExtensionSidebarParameters, WebKit::WebExtensionError> result)
+    [EnabledIf='isSidebarMessageAllowed()'] SidebarSetOptions(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, std::optional<String> panelSourcePath, std::optional<bool> enabled) -> (Expected<void, WebKit::WebExtensionError> result)
+    [EnabledIf='isSidebarMessageAllowed()'] SidebarGetTitle(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (Expected<String, WebKit::WebExtensionError> result)
+    [EnabledIf='isSidebarMessageAllowed()'] SidebarSetTitle(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, std::optional<String> title) -> (Expected<void, WebKit::WebExtensionError> result)
+    [EnabledIf='isSidebarMessageAllowed()'] SidebarSetIcon(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, String iconDictionaryJSON) -> (Expected<void, WebKit::WebExtensionError> result)
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+
     // Storage APIs
     [EnabledIf='isStorageMessageAllowed()'] StorageGet(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, Vector<String> keys) -> (Expected<String, WebKit::WebExtensionError> result)
     [EnabledIf='isStorageMessageAllowed()'] StorageGetBytesInUse(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, Vector<String> keys) -> (Expected<size_t, WebKit::WebExtensionError> result)

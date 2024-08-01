@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -24,16 +24,19 @@
 #include "config/av1_rtcd.h"
 
 static AOM_FORCE_INLINE int16x8_t
-highbd_horizontal_filter_4x1_f4(uint16x8x2_t in, int bd, int sx, int alpha);
+highbd_horizontal_filter_4x1_f4(int16x8_t rv0, int16x8_t rv1, int16x8_t rv2,
+                                int16x8_t rv3, int bd, int sx, int alpha);
 
-static AOM_FORCE_INLINE int16x8_t
-highbd_horizontal_filter_8x1_f8(uint16x8x2_t in, int bd, int sx, int alpha);
+static AOM_FORCE_INLINE int16x8_t highbd_horizontal_filter_8x1_f8(
+    int16x8_t rv0, int16x8_t rv1, int16x8_t rv2, int16x8_t rv3, int16x8_t rv4,
+    int16x8_t rv5, int16x8_t rv6, int16x8_t rv7, int bd, int sx, int alpha);
 
-static AOM_FORCE_INLINE int16x8_t
-highbd_horizontal_filter_4x1_f1(uint16x8x2_t in, int bd, int sx);
+static AOM_FORCE_INLINE int16x8_t highbd_horizontal_filter_4x1_f1(
+    int16x8_t rv0, int16x8_t rv1, int16x8_t rv2, int16x8_t rv3, int bd, int sx);
 
-static AOM_FORCE_INLINE int16x8_t
-highbd_horizontal_filter_8x1_f1(uint16x8x2_t in, int bd, int sx);
+static AOM_FORCE_INLINE int16x8_t highbd_horizontal_filter_8x1_f1(
+    int16x8_t rv0, int16x8_t rv1, int16x8_t rv2, int16x8_t rv3, int16x8_t rv4,
+    int16x8_t rv5, int16x8_t rv6, int16x8_t rv7, int bd, int sx);
 
 static AOM_FORCE_INLINE int32x4_t vertical_filter_4x1_f1(const int16x8_t *tmp,
                                                          int sy);
@@ -99,6 +102,29 @@ static AOM_FORCE_INLINE uint16x4_t clip_pixel_highbd_vec(int32x4_t val,
   return vqmovun_s32(vminq_s32(val, vdupq_n_s32(limit)));
 }
 
+static AOM_FORCE_INLINE uint16x8x2_t clamp_horizontal(
+    uint16x8x2_t src_1, int out_of_boundary_left, int out_of_boundary_right,
+    const uint16_t *ref, int iy, int stride, int width, const uint16x8_t indx0,
+    const uint16x8_t indx1) {
+  if (out_of_boundary_left >= 0) {
+    uint16x8_t cmp_vec = vdupq_n_u16(out_of_boundary_left);
+    uint16x8_t vec_dup = vdupq_n_u16(ref[iy * stride]);
+    uint16x8_t mask0 = vcleq_u16(indx0, cmp_vec);
+    uint16x8_t mask1 = vcleq_u16(indx1, cmp_vec);
+    src_1.val[0] = vbslq_u16(mask0, vec_dup, src_1.val[0]);
+    src_1.val[1] = vbslq_u16(mask1, vec_dup, src_1.val[1]);
+  }
+  if (out_of_boundary_right >= 0) {
+    uint16x8_t cmp_vec = vdupq_n_u16(15 - out_of_boundary_right);
+    uint16x8_t vec_dup = vdupq_n_u16(ref[iy * stride + width - 1]);
+    uint16x8_t mask0 = vcgeq_u16(indx0, cmp_vec);
+    uint16x8_t mask1 = vcgeq_u16(indx1, cmp_vec);
+    src_1.val[0] = vbslq_u16(mask0, vec_dup, src_1.val[0]);
+    src_1.val[1] = vbslq_u16(mask1, vec_dup, src_1.val[1]);
+  }
+  return src_1;
+}
+
 static AOM_FORCE_INLINE void warp_affine_horizontal(const uint16_t *ref,
                                                     int width, int height,
                                                     int stride, int p_width,
@@ -134,73 +160,120 @@ static AOM_FORCE_INLINE void warp_affine_horizontal(const uint16_t *ref,
   const int out_of_boundary_left = -(ix4 - 6);
   const int out_of_boundary_right = (ix4 + 8) - width;
 
-#define APPLY_HORIZONTAL_SHIFT(fn, ...)                                   \
-  do {                                                                    \
-    if (out_of_boundary_left >= 0 || out_of_boundary_right >= 0) {        \
-      for (int k = 0; k < 15; ++k) {                                      \
-        const int iy = clamp(iy4 + k - 7, 0, height - 1);                 \
-        uint16x8x2_t src_1 = vld1q_u16_x2(ref + iy * stride + ix4 - 7);   \
-                                                                          \
-        if (out_of_boundary_left >= 0) {                                  \
-          uint16x8_t cmp_vec = vdupq_n_u16(out_of_boundary_left);         \
-          uint16x8_t vec_dup = vdupq_n_u16(ref[iy * stride]);             \
-          uint16x8_t mask0 = vcleq_u16(indx0, cmp_vec);                   \
-          uint16x8_t mask1 = vcleq_u16(indx1, cmp_vec);                   \
-          src_1.val[0] = vbslq_u16(mask0, vec_dup, src_1.val[0]);         \
-          src_1.val[1] = vbslq_u16(mask1, vec_dup, src_1.val[1]);         \
-        }                                                                 \
-        if (out_of_boundary_right >= 0) {                                 \
-          uint16x8_t cmp_vec = vdupq_n_u16(15 - out_of_boundary_right);   \
-          uint16x8_t vec_dup = vdupq_n_u16(ref[iy * stride + width - 1]); \
-          uint16x8_t mask0 = vcgeq_u16(indx0, cmp_vec);                   \
-          uint16x8_t mask1 = vcgeq_u16(indx1, cmp_vec);                   \
-          src_1.val[0] = vbslq_u16(mask0, vec_dup, src_1.val[0]);         \
-          src_1.val[1] = vbslq_u16(mask1, vec_dup, src_1.val[1]);         \
-        }                                                                 \
-        tmp[k] = (fn)(src_1, __VA_ARGS__);                                \
-      }                                                                   \
-    } else {                                                              \
-      for (int k = 0; k < 15; ++k) {                                      \
-        const int iy = clamp(iy4 + k - 7, 0, height - 1);                 \
-        uint16x8x2_t src_1 = vld1q_u16_x2(ref + iy * stride + ix4 - 7);   \
-        tmp[k] = (fn)(src_1, __VA_ARGS__);                                \
-      }                                                                   \
-    }                                                                     \
+#define APPLY_HORIZONTAL_SHIFT_4X1(fn, ...)                                \
+  do {                                                                     \
+    if (out_of_boundary_left >= 0 || out_of_boundary_right >= 0) {         \
+      for (int k = 0; k < 15; ++k) {                                       \
+        const int iy = clamp(iy4 + k - 7, 0, height - 1);                  \
+        uint16x8x2_t src_1 = vld1q_u16_x2(ref + iy * stride + ix4 - 7);    \
+        src_1 = clamp_horizontal(src_1, out_of_boundary_left,              \
+                                 out_of_boundary_right, ref, iy, stride,   \
+                                 width, indx0, indx1);                     \
+        int16x8_t rv0 = vextq_s16(vreinterpretq_s16_u16(src_1.val[0]),     \
+                                  vreinterpretq_s16_u16(src_1.val[1]), 0); \
+        int16x8_t rv1 = vextq_s16(vreinterpretq_s16_u16(src_1.val[0]),     \
+                                  vreinterpretq_s16_u16(src_1.val[1]), 1); \
+        int16x8_t rv2 = vextq_s16(vreinterpretq_s16_u16(src_1.val[0]),     \
+                                  vreinterpretq_s16_u16(src_1.val[1]), 2); \
+        int16x8_t rv3 = vextq_s16(vreinterpretq_s16_u16(src_1.val[0]),     \
+                                  vreinterpretq_s16_u16(src_1.val[1]), 3); \
+        tmp[k] = (fn)(rv0, rv1, rv2, rv3, __VA_ARGS__);                    \
+      }                                                                    \
+    } else {                                                               \
+      for (int k = 0; k < 15; ++k) {                                       \
+        const int iy = clamp(iy4 + k - 7, 0, height - 1);                  \
+        const uint16_t *src = ref + iy * stride + ix4;                     \
+        int16x8_t rv0 = vreinterpretq_s16_u16(vld1q_u16(src - 7));         \
+        int16x8_t rv1 = vreinterpretq_s16_u16(vld1q_u16(src - 6));         \
+        int16x8_t rv2 = vreinterpretq_s16_u16(vld1q_u16(src - 5));         \
+        int16x8_t rv3 = vreinterpretq_s16_u16(vld1q_u16(src - 4));         \
+        tmp[k] = (fn)(rv0, rv1, rv2, rv3, __VA_ARGS__);                    \
+      }                                                                    \
+    }                                                                      \
+  } while (0)
+
+#define APPLY_HORIZONTAL_SHIFT_8X1(fn, ...)                                 \
+  do {                                                                      \
+    if (out_of_boundary_left >= 0 || out_of_boundary_right >= 0) {          \
+      for (int k = 0; k < 15; ++k) {                                        \
+        const int iy = clamp(iy4 + k - 7, 0, height - 1);                   \
+        uint16x8x2_t src_1 = vld1q_u16_x2(ref + iy * stride + ix4 - 7);     \
+        src_1 = clamp_horizontal(src_1, out_of_boundary_left,               \
+                                 out_of_boundary_right, ref, iy, stride,    \
+                                 width, indx0, indx1);                      \
+        int16x8_t rv0 = vextq_s16(vreinterpretq_s16_u16(src_1.val[0]),      \
+                                  vreinterpretq_s16_u16(src_1.val[1]), 0);  \
+        int16x8_t rv1 = vextq_s16(vreinterpretq_s16_u16(src_1.val[0]),      \
+                                  vreinterpretq_s16_u16(src_1.val[1]), 1);  \
+        int16x8_t rv2 = vextq_s16(vreinterpretq_s16_u16(src_1.val[0]),      \
+                                  vreinterpretq_s16_u16(src_1.val[1]), 2);  \
+        int16x8_t rv3 = vextq_s16(vreinterpretq_s16_u16(src_1.val[0]),      \
+                                  vreinterpretq_s16_u16(src_1.val[1]), 3);  \
+        int16x8_t rv4 = vextq_s16(vreinterpretq_s16_u16(src_1.val[0]),      \
+                                  vreinterpretq_s16_u16(src_1.val[1]), 4);  \
+        int16x8_t rv5 = vextq_s16(vreinterpretq_s16_u16(src_1.val[0]),      \
+                                  vreinterpretq_s16_u16(src_1.val[1]), 5);  \
+        int16x8_t rv6 = vextq_s16(vreinterpretq_s16_u16(src_1.val[0]),      \
+                                  vreinterpretq_s16_u16(src_1.val[1]), 6);  \
+        int16x8_t rv7 = vextq_s16(vreinterpretq_s16_u16(src_1.val[0]),      \
+                                  vreinterpretq_s16_u16(src_1.val[1]), 7);  \
+        tmp[k] = (fn)(rv0, rv1, rv2, rv3, rv4, rv5, rv6, rv7, __VA_ARGS__); \
+      }                                                                     \
+    } else {                                                                \
+      for (int k = 0; k < 15; ++k) {                                        \
+        const int iy = clamp(iy4 + k - 7, 0, height - 1);                   \
+        const uint16_t *src = ref + iy * stride + ix4;                      \
+        int16x8_t rv0 = vreinterpretq_s16_u16(vld1q_u16(src - 7));          \
+        int16x8_t rv1 = vreinterpretq_s16_u16(vld1q_u16(src - 6));          \
+        int16x8_t rv2 = vreinterpretq_s16_u16(vld1q_u16(src - 5));          \
+        int16x8_t rv3 = vreinterpretq_s16_u16(vld1q_u16(src - 4));          \
+        int16x8_t rv4 = vreinterpretq_s16_u16(vld1q_u16(src - 3));          \
+        int16x8_t rv5 = vreinterpretq_s16_u16(vld1q_u16(src - 2));          \
+        int16x8_t rv6 = vreinterpretq_s16_u16(vld1q_u16(src - 1));          \
+        int16x8_t rv7 = vreinterpretq_s16_u16(vld1q_u16(src - 0));          \
+        tmp[k] = (fn)(rv0, rv1, rv2, rv3, rv4, rv5, rv6, rv7, __VA_ARGS__); \
+      }                                                                     \
+    }                                                                       \
   } while (0)
 
   if (p_width == 4) {
     if (beta == 0) {
       if (alpha == 0) {
-        APPLY_HORIZONTAL_SHIFT(highbd_horizontal_filter_4x1_f1, bd, sx4);
+        APPLY_HORIZONTAL_SHIFT_4X1(highbd_horizontal_filter_4x1_f1, bd, sx4);
       } else {
-        APPLY_HORIZONTAL_SHIFT(highbd_horizontal_filter_4x1_f4, bd, sx4, alpha);
+        APPLY_HORIZONTAL_SHIFT_4X1(highbd_horizontal_filter_4x1_f4, bd, sx4,
+                                   alpha);
       }
     } else {
       if (alpha == 0) {
-        APPLY_HORIZONTAL_SHIFT(highbd_horizontal_filter_4x1_f1, bd,
-                               (sx4 + beta * (k - 3)));
+        APPLY_HORIZONTAL_SHIFT_4X1(highbd_horizontal_filter_4x1_f1, bd,
+                                   (sx4 + beta * (k - 3)));
       } else {
-        APPLY_HORIZONTAL_SHIFT(highbd_horizontal_filter_4x1_f4, bd,
-                               (sx4 + beta * (k - 3)), alpha);
+        APPLY_HORIZONTAL_SHIFT_4X1(highbd_horizontal_filter_4x1_f4, bd,
+                                   (sx4 + beta * (k - 3)), alpha);
       }
     }
   } else {
     if (beta == 0) {
       if (alpha == 0) {
-        APPLY_HORIZONTAL_SHIFT(highbd_horizontal_filter_8x1_f1, bd, sx4);
+        APPLY_HORIZONTAL_SHIFT_8X1(highbd_horizontal_filter_8x1_f1, bd, sx4);
       } else {
-        APPLY_HORIZONTAL_SHIFT(highbd_horizontal_filter_8x1_f8, bd, sx4, alpha);
+        APPLY_HORIZONTAL_SHIFT_8X1(highbd_horizontal_filter_8x1_f8, bd, sx4,
+                                   alpha);
       }
     } else {
       if (alpha == 0) {
-        APPLY_HORIZONTAL_SHIFT(highbd_horizontal_filter_8x1_f1, bd,
-                               (sx4 + beta * (k - 3)));
+        APPLY_HORIZONTAL_SHIFT_8X1(highbd_horizontal_filter_8x1_f1, bd,
+                                   (sx4 + beta * (k - 3)));
       } else {
-        APPLY_HORIZONTAL_SHIFT(highbd_horizontal_filter_8x1_f8, bd,
-                               (sx4 + beta * (k - 3)), alpha);
+        APPLY_HORIZONTAL_SHIFT_8X1(highbd_horizontal_filter_8x1_f8, bd,
+                                   (sx4 + beta * (k - 3)), alpha);
       }
     }
   }
+
+#undef APPLY_HORIZONTAL_SHIFT_4X1
+#undef APPLY_HORIZONTAL_SHIFT_8X1
 }
 
 static AOM_FORCE_INLINE void highbd_vertical_filter_4x1_f4(

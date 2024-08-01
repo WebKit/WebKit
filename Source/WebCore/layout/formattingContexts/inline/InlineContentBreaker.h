@@ -99,19 +99,25 @@ public:
         void reset();
 
         struct Run {
-            Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
+            Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit offset, InlineLayoutUnit contentWidth);
             Run(const Run&);
             Run& operator=(const Run&);
 
+            InlineLayoutUnit spaceRequired() const { return offset + contentWidth(); }
+            InlineLayoutUnit contentWidth() const { return m_contentWidth; }
+
             const InlineItem& inlineItem;
             const RenderStyle& style;
-            InlineLayoutUnit logicalWidth { 0 };
+            InlineLayoutUnit offset { 0 };
+
+        private:
+            InlineLayoutUnit m_contentWidth { 0 };
         };
         using RunList = Vector<Run, 3>;
         const RunList& runs() const { return m_runs; }
 
     private:
-        void appendToRunList(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
+        void appendToRunList(const InlineItem&, const RenderStyle&, InlineLayoutUnit offset, InlineLayoutUnit contentWidth);
         void resetTrailingTrimmableContent();
 
         RunList m_runs;
@@ -123,6 +129,7 @@ public:
         bool m_hasTextContent { false };
         bool m_isTextOnlyContent { true };
         bool m_isFullyTrimmable { false };
+        bool m_hasTrailingWordSeparator { false };
     };
 
     struct LineStatus {
@@ -179,17 +186,19 @@ private:
     bool n_hyphenationIsDisabled { false };
 };
 
-inline InlineContentBreaker::ContinuousContent::Run::Run(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
+inline InlineContentBreaker::ContinuousContent::Run::Run(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit offset, InlineLayoutUnit contentWidth)
     : inlineItem(inlineItem)
     , style(style)
-    , logicalWidth(logicalWidth)
+    , offset(offset)
+    , m_contentWidth(contentWidth)
 {
 }
 
 inline InlineContentBreaker::ContinuousContent::Run::Run(const Run& other)
     : inlineItem(other.inlineItem)
     , style(other.style)
-    , logicalWidth(other.logicalWidth)
+    , offset(other.offset)
+    , m_contentWidth(other.contentWidth())
 {
 }
 

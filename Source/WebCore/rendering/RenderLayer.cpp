@@ -88,7 +88,6 @@
 #include "LocalFrameLoaderClient.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
-#include "OverflowEvent.h"
 #include "OverlapTestRequestClient.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
@@ -749,6 +748,7 @@ void RenderLayer::updateNormalFlowList()
             if (!m_normalFlowList)
                 m_normalFlowList = makeUnique<Vector<RenderLayer*>>();
             m_normalFlowList->append(child);
+            child->setWasIncludedInZOrderTree();
         }
     }
 
@@ -827,10 +827,31 @@ void RenderLayer::rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>& posZ
     }
 }
 
+void RenderLayer::removeSelfAndDescendantsFromCompositor()
+{
+    if (parent())
+        compositor().layerWillBeRemoved(*parent(), *this);
+    clearBacking();
+
+    for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
+        child->removeSelfAndDescendantsFromCompositor();
+}
+
+void RenderLayer::setWasOmittedFromZOrderTree()
+{
+    if (m_wasOmittedFromZOrderTree)
+        return;
+
+    removeSelfAndDescendantsFromCompositor();
+
+    if (compositor().hasContentCompositingLayers() && parent())
+        parent()->setDescendantsNeedCompositingRequirementsTraversal();
+
+    m_wasOmittedFromZOrderTree = true;
+}
+
 void RenderLayer::collectLayers(std::unique_ptr<Vector<RenderLayer*>>& positiveZOrderList, std::unique_ptr<Vector<RenderLayer*>>& negativeZOrderList, OptionSet<Compositing>& accumulatedDirtyFlags)
 {
-    updateDescendantDependentFlags();
-
     if (establishesTopLayer())
         return;
 
@@ -838,12 +859,16 @@ void RenderLayer::collectLayers(std::unique_ptr<Vector<RenderLayer*>>& positiveZ
     // Overflow layers are just painted by their enclosing layers, so they don't get put in zorder lists.
     bool includeHiddenLayer = (m_hasVisibleContent || m_intrinsicallyComposited) || ((m_hasVisibleDescendant || m_hasIntrinsicallyCompositedDescendants) && isStacking);
     includeHiddenLayer |= page().hasEverSetVisibilityAdjustment();
-    if (includeHiddenLayer && !isNormalFlowOnly()) {
-        auto& layerList = (zIndex() >= 0) ? positiveZOrderList : negativeZOrderList;
-        if (!layerList)
-            layerList = makeUnique<Vector<RenderLayer*>>();
-        layerList->append(this);
-        accumulatedDirtyFlags.add(m_compositingDirtyBits);
+    if (!isNormalFlowOnly()) {
+        if (includeHiddenLayer) {
+            auto& layerList = (zIndex() >= 0) ? positiveZOrderList : negativeZOrderList;
+            if (!layerList)
+                layerList = makeUnique<Vector<RenderLayer*>>();
+            layerList->append(this);
+            accumulatedDirtyFlags.add(m_compositingDirtyBits);
+            setWasIncludedInZOrderTree();
+        } else
+            setWasOmittedFromZOrderTree();
     }
 
     // Recur into our children to collect more layers, but only if we don't establish
@@ -868,6 +893,7 @@ void RenderLayer::setAncestorsHaveCompositingDirtyFlag(Compositing flag)
 
 void RenderLayer::updateLayerListsIfNeeded()
 {
+    updateDescendantDependentFlags();
     updateZOrderLists();
     updateNormalFlowList();
 
@@ -1660,7 +1686,16 @@ void RenderLayer::updateDescendantDependentFlags()
         //  We need the parent to know if we have skipped content or content-visibility root.
         if (renderer().style().hasSkippedContent() && !renderer().parent())
             return;
-        m_hasVisibleContent = computeHasVisibleContent();
+        bool hasVisibleContent = computeHasVisibleContent();
+        if (hasVisibleContent != m_hasVisibleContent) {
+            m_hasVisibleContent = hasVisibleContent;
+            if (!isNormalFlowOnly()) {
+                // We don't collect invisible layers in z-order lists if they are not composited.
+                // As we change visibility, we need to dirty our stacking containers ancestors to be properly
+                // collected.
+                dirtyHiddenStackingContextAncestorZOrderLists();
+            }
+        }
         m_visibleContentStatusDirty = false;
     }
 }

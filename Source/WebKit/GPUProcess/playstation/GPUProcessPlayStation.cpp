@@ -39,8 +39,7 @@ namespace WebKit {
 void GPUProcess::platformInitializeGPUProcess(GPUProcessCreationParameters&)
 {
 #if USE(WPE_RENDERER)
-    RELEASE_ASSERT(is<WebCore::PlatformDisplayLibWPE>(WebCore::PlatformDisplay::sharedDisplay()));
-    downcast<WebCore::PlatformDisplayLibWPE>(WebCore::PlatformDisplay::sharedDisplay()).initialize(0);
+    WebCore::PlatformDisplay::setSharedDisplay(WebCore::PlatformDisplayLibWPE::create(0));
 #endif
 }
 

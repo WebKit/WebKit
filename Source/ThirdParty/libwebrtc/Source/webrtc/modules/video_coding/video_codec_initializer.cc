@@ -301,6 +301,14 @@ VideoCodec VideoCodecInitializer::SetupCodec(
                           streams.back().num_temporal_layers.value_or(1),
                           /*num_spatial_layers=*/
                           std::max<int>(config.spatial_layers.size(), 1))) {
+        // If min bitrate is set via RtpEncodingParameters, use this value on
+        // lowest spatial layer.
+        if (!config.simulcast_layers.empty() &&
+            config.simulcast_layers[0].min_bitrate_bps > 0) {
+          video_codec.spatialLayers[0].minBitrate = std::min(
+              config.simulcast_layers[0].min_bitrate_bps / 1000,
+              static_cast<int>(video_codec.spatialLayers[0].targetBitrate));
+        }
         for (size_t i = 0; i < config.spatial_layers.size(); ++i) {
           video_codec.spatialLayers[i].active = config.spatial_layers[i].active;
         }
@@ -337,7 +345,8 @@ VideoCodec VideoCodecInitializer::SetupCodec(
         rtc::saturated_cast<int>(experimental_min_bitrate->kbps());
     video_codec.minBitrate = experimental_min_bitrate_kbps;
     video_codec.simulcastStream[0].minBitrate = experimental_min_bitrate_kbps;
-    if (video_codec.codecType == kVideoCodecVP9) {
+    if (video_codec.codecType == kVideoCodecVP9 ||
+        video_codec.codecType == kVideoCodecAV1) {
       video_codec.spatialLayers[0].minBitrate = experimental_min_bitrate_kbps;
     }
   }

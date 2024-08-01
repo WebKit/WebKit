@@ -8,7 +8,7 @@ if (window.testRunner) {
     if (testRunner.setShouldDownloadContentDispositionAttachments)
         testRunner.setShouldDownloadContentDispositionAttachments(false);
 
-    window.addEventListener('load', function() {
+    window.addEventListener('load', async function() {
         // Due to the sandbox, it's not possible to run script in the iframe or even access its contentDocument.
         // Submit the form by clicking its button with synthetic mouse events.
         var iframeRect = document.getElementsByTagName('iframe')[0].getClientRects()[0];
@@ -18,9 +18,9 @@ if (window.testRunner) {
         var x = iframeRect.left + submitButtonRect.width / 2;
         var y = iframeRect.top + submitButtonRect.height / 2;
 
-        eventSender.mouseMoveTo(x, y);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(x, y);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
         testRunner.notifyDone();
     });
 }

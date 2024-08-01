@@ -46,6 +46,7 @@ rtc_library("common_audio") {
     ":common_audio_c",
     ":sinc_resampler",
     "../api:array_view",
+    "../api/audio:audio_frame_api",
     "../rtc_base:checks",
     "../rtc_base:gtest_prod",
     "../rtc_base:logging",
@@ -57,8 +58,8 @@ rtc_library("common_audio") {
     "../rtc_base/system:file_wrapper",
     "../system_wrappers",
     "third_party/ooura:fft_size_256",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 
   defines = []
 

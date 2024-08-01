@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="resources/blackbox.js"></script>
+<script>
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Debugger.setShouldBlackboxURL");
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.ExactCaseInsensitive.stepOver",
+        description: "Check that stepping through a blackboxed script doesn't pause.",
+        async test() {
+            let resumePromise = new Promise((resolve, reject) => {
+                ProtocolTest.Blackbox.resumeCallback = function() {
+                    ProtocolTest.expectEqual(ProtocolTest.Blackbox.pauseCountForFunction("ExactCaseInsensitive_StepOver_Middle"), 0, "Should not pause in 'ExactCaseInsensitive_StepOver_Middle'.");
+                    resolve();
+                };
+            });
+
+            let [innerSourceURL, middleSourceURL, outerSourceURL] = await Promise.all([
+                ProtocolTest.Blackbox.listenForSourceParsed(/ExactCaseInsensitive_StepOver_Inner\.js$/),
+                ProtocolTest.Blackbox.listenForSourceParsed(/ExactCaseInsensitive_StepOver_Middle\.js$/),
+                ProtocolTest.Blackbox.listenForSourceParsed(/ExactCaseInsensitive_StepOver_Outer\.js$/),
+                ProtocolTest.Blackbox.evaluate(`createScripts("ExactCaseInsensitive_StepOver")`),
+            ]);
+
+            await ProtocolTest.Blackbox.setBlackbox(middleSourceURL);
+            await ProtocolTest.Blackbox.setBreakpoint(innerSourceURL, 3); // last line of function, so it only pauses once
+            await ProtocolTest.Blackbox.evaluate(`ExactCaseInsensitive_StepOver_Outer(10)`);
+
+            ProtocolTest.newline();
+
+            await resumePromise;
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.ExactCaseInsensitive.PauseInCaller",
+        description: "Check that the debugger will pause in the caller if a breakpoint is set in a blackboxed script.",
+        async test() {
+            let resumePromise = new Promise((resolve, reject) => {
+                ProtocolTest.Blackbox.resumeCallback = function() {
+                    ProtocolTest.expectEqual(ProtocolTest.Blackbox.pauseCountForFunction("ExactCaseInsensitive_PauseInCaller_Inner"), 0, "Should not pause in 'ExactCaseInsensitive_PauseInCaller_Inner'.");
+                    resolve();
+                };
+            });
+
+            let [innerSourceURL, middleSourceURL, outerSourceURL] = await Promise.all([
+                ProtocolTest.Blackbox.listenForSourceParsed(/ExactCaseInsensitive_PauseInCaller_Inner\.js$/),
+                ProtocolTest.Blackbox.listenForSourceParsed(/ExactCaseInsensitive_PauseInCaller_Middle\.js$/),
+                ProtocolTest.Blackbox.listenForSourceParsed(/ExactCaseInsensitive_PauseInCaller_Outer\.js$/),
+                ProtocolTest.Blackbox.evaluate(`createScripts("ExactCaseInsensitive_PauseInCaller")`),
+            ]);
+
+            await ProtocolTest.Blackbox.setBlackbox(innerSourceURL);
+            await ProtocolTest.Blackbox.setBreakpoint(innerSourceURL, 2);
+            await ProtocolTest.Blackbox.evaluate(`ExactCaseInsensitive_PauseInCaller_Outer(10)`);
+
+            ProtocolTest.newline();
+
+            await resumePromise;
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.ExactCaseInsensitive.PauseInCallee",
+        description: "Check that the debugger will pause in the callee if a breakpoint is set in a blackboxed script.",
+        async test() {
+            let resumePromise = new Promise((resolve, reject) => {
+                ProtocolTest.Blackbox.resumeCallback = function() {
+                    ProtocolTest.expectEqual(ProtocolTest.Blackbox.pauseCountForFunction("ExactCaseInsensitive_PauseInCallee_Outer"), 0, "Should not pause in 'ExactCaseInsensitive_PauseInCallee_Outer'.");
+                    resolve();
+                };
+            });
+
+            let [innerSourceURL, middleSourceURL, outerSourceURL] = await Promise.all([
+                ProtocolTest.Blackbox.listenForSourceParsed(/ExactCaseInsensitive_PauseInCallee_Inner\.js$/),
+                ProtocolTest.Blackbox.listenForSourceParsed(/ExactCaseInsensitive_PauseInCallee_Middle\.js$/),
+                ProtocolTest.Blackbox.listenForSourceParsed(/ExactCaseInsensitive_PauseInCallee_Outer\.js$/),
+                ProtocolTest.Blackbox.evaluate(`createScripts("ExactCaseInsensitive_PauseInCallee")`),
+            ]);
+
+            await ProtocolTest.Blackbox.setBlackbox(outerSourceURL);
+            await ProtocolTest.Blackbox.setBreakpoint(outerSourceURL, 2);
+            await ProtocolTest.Blackbox.evaluate(`ExactCaseInsensitive_PauseInCallee_Outer(10)`);
+
+            ProtocolTest.newline();
+
+            await resumePromise;
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.ExactCaseInsensitive.SourceRange",
+        description: "Check that the debugger will skip specific source ranges if a breakpoint is set in a blackboxed script.",
+        async test() {
+            let resumePromise = new Promise((resolve, reject) => {
+                ProtocolTest.Blackbox.resumeCallback = function() {
+                    ProtocolTest.expectEqual(ProtocolTest.Blackbox.pauseCountForFunction("ExactCaseInsensitive_Range_Multiple"), 2, "Should pause in 'ExactCaseInsensitive_Range_Multiple'.");
+                    resolve();
+                };
+            });
+
+            let [multipleSourceURL] = await Promise.all([
+                ProtocolTest.Blackbox.listenForSourceParsed(/ExactCaseInsensitive_Range_Multiple\.js$/),
+                ProtocolTest.Blackbox.evaluate(`createScripts("ExactCaseInsensitive_Range")`),
+            ]);
+
+            await ProtocolTest.Blackbox.setBlackbox(multipleSourceURL, {
+                sourceRanges: [
+                    3, 0, 4,  0, // whole line
+                    4, 5, 4, 18, // after pause position
+                    5, 1, 5,  2, // including pause position
+                ],
+            });
+            await ProtocolTest.Blackbox.setBreakpoint(multipleSourceURL, 2);
+            await ProtocolTest.Blackbox.evaluate(`ExactCaseInsensitive_Range_Multiple(10)`);
+
+            ProtocolTest.newline();
+
+            await resumePromise;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests Debugger.setShouldBlackboxURL.</p>
+</body>
+</html>

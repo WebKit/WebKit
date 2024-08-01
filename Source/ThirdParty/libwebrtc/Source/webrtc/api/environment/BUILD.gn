@@ -15,8 +15,8 @@ rtc_source_set("environment") {
     "..:refcountedbase",
     "..:scoped_refptr",
     "../../rtc_base/system:rtc_export",
+    "//third_party/abseil-cpp/absl/base:nullability",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/base:nullability" ]
 }
 
 rtc_library("environment_factory") {
@@ -28,6 +28,7 @@ rtc_library("environment_factory") {
   ]
   deps = [
     ":environment",
+    "..:field_trials_view",
     "..:make_ref_counted",
     "..:refcountedbase",
     "..:scoped_refptr",
@@ -36,9 +37,10 @@ rtc_library("environment_factory") {
     "../../system_wrappers",
     "../rtc_event_log",
     "../task_queue:default_task_queue_factory",
+    "../task_queue:task_queue",
     "../transport:field_trial_based_config",
+    "//third_party/abseil-cpp/absl/base:nullability",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/base:nullability" ]
 }
 
 if (rtc_include_tests) {
@@ -54,9 +56,8 @@ if (rtc_include_tests) {
       "../rtc_event_log",
       "../task_queue",
       "../units:timestamp",
-    ]
-    absl_deps = [
       "//third_party/abseil-cpp/absl/functional:any_invocable",
+      "//third_party/abseil-cpp/absl/strings:string_view",
       "//third_party/abseil-cpp/absl/types:optional",
     ]
   }

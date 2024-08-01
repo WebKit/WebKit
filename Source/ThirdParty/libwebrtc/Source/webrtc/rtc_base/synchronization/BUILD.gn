@@ -36,15 +36,18 @@ rtc_source_set("mutex") {
     "..:macromagic",
     "..:platform_thread_types",
     "../system:no_unique_address",
+    "//third_party/abseil-cpp/absl/base:core_headers",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/base:core_headers" ]
   if (rtc_use_absl_mutex) {
-    absl_deps += [ "//third_party/abseil-cpp/absl/synchronization" ]
+    deps += [ "//third_party/abseil-cpp/absl/synchronization" ]
   }
 }
 
 rtc_library("sequence_checker_internal") {
-  visibility = [ "../../api:sequence_checker" ]
+  visibility = [
+    "../../api:rtc_api_unittests",
+    "../../api:sequence_checker",
+  ]
   sources = [
     "sequence_checker_internal.cc",
     "sequence_checker_internal.h",
@@ -65,8 +68,8 @@ rtc_library("yield_policy") {
     "yield_policy.cc",
     "yield_policy.h",
   ]
-  deps = [ "..:checks" ]
-  absl_deps = [
+  deps = [
+    "..:checks",
     "//third_party/abseil-cpp/absl/base:config",
     "//third_party/abseil-cpp/absl/base:core_headers",
   ]

@@ -65,7 +65,10 @@ void ParseTypeInt(const uint32_t *_instruction,
                   IdResult *idResult1,
                   LiteralInteger *width,
                   LiteralInteger *signedness);
-void ParseTypeFloat(const uint32_t *_instruction, IdResult *idResult1, LiteralInteger *width);
+void ParseTypeFloat(const uint32_t *_instruction,
+                    IdResult *idResult1,
+                    LiteralInteger *width,
+                    spv::FPEncoding *floatingPointEncoding);
 void ParseTypeVector(const uint32_t *_instruction,
                      IdResult *idResult1,
                      IdRef *componentType,

@@ -53,7 +53,7 @@ public:
     {
         ASSERT(static_cast<uint32_t>(offset) == offset);
         ASSERT(static_cast<OpType>(static_cast<uint8_t>(prefix)) == prefix);
-        ASSERT(static_cast<uint8_t>(opcode) == opcode);
+        ASSERT((opcode & (1 << 24) - 1) == opcode);
         packedData = (static_cast<uint64_t>(opcode) << 40) | (static_cast<uint64_t>(prefix) << 32) | offset;
     }
     OpcodeOrigin(B3::Origin origin)
@@ -62,10 +62,10 @@ public:
     }
 
     OpType opcode() const { return static_cast<OpType>(packedData >> 32 & 0xff); }
-    Ext1OpType ext1Opcode() const { return static_cast<Ext1OpType>(packedData >> 40 & 0xff); }
-    ExtSIMDOpType simdOpcode() const { return static_cast<ExtSIMDOpType>(packedData >> 40 & 0xff); }
-    ExtGCOpType gcOpcode() const { return static_cast<ExtGCOpType>(packedData >> 40 & 0xff); }
-    ExtAtomicOpType atomicOpcode() const { return static_cast<ExtAtomicOpType>(packedData >> 40 & 0xff); }
+    Ext1OpType ext1Opcode() const { return static_cast<Ext1OpType>(packedData >> 40); }
+    ExtSIMDOpType simdOpcode() const { return static_cast<ExtSIMDOpType>(packedData >> 40); }
+    ExtGCOpType gcOpcode() const { return static_cast<ExtGCOpType>(packedData >> 40); }
+    ExtAtomicOpType atomicOpcode() const { return static_cast<ExtAtomicOpType>(packedData >> 40); }
     size_t location() const { return static_cast<uint32_t>(packedData); }
 
 private:

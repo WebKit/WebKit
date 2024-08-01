@@ -30,7 +30,7 @@ group("modules") {
 
 rtc_source_set("module_api_public") {
   sources = [ "include/module_common_types_public.h" ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+  deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_source_set("module_api") {
@@ -143,7 +143,6 @@ if (rtc_include_tests && !build_with_chromium) {
     "../resources/audio_processing/transient/wpd5.dat",
     "../resources/audio_processing/transient/wpd6.dat",
     "../resources/audio_processing/transient/wpd7.dat",
-    "../resources/deflicker_before_cif_short.yuv",
     "../resources/far16_stereo.pcm",
     "../resources/far176_stereo.pcm",
     "../resources/far192_stereo.pcm",
@@ -154,7 +153,6 @@ if (rtc_include_tests && !build_with_chromium) {
     "../resources/far88_stereo.pcm",
     "../resources/far8_stereo.pcm",
     "../resources/far96_stereo.pcm",
-    "../resources/foremanColorEnhanced_cif_short.yuv",
     "../resources/foreman_cif.yuv",
     "../resources/foreman_cif_short.yuv",
     "../resources/near16_stereo.pcm",

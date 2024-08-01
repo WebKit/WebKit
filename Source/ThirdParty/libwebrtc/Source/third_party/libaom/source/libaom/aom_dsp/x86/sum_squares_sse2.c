@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -84,7 +84,7 @@ uint64_t aom_sum_squares_2d_i16_4xn_sse2(const int16_t *src, int stride,
     src += stride << 2;
     r += 4;
   } while (r < height);
-  const __m128i v_zext_mask_q = xx_set1_64_from_32i(~0);
+  const __m128i v_zext_mask_q = _mm_set1_epi64x(~0u);
   __m128i v_acc_64 = _mm_add_epi64(_mm_srli_epi64(v_acc_q, 32),
                                    _mm_and_si128(v_acc_q, v_zext_mask_q));
   v_acc_64 = _mm_add_epi64(v_acc_64, _mm_srli_si128(v_acc_64, 8));
@@ -116,7 +116,7 @@ aom_sum_squares_2d_i16_nxn_sse2(const int16_t *src, int stride, int width,
                                 int height) {
   int r = 0;
 
-  const __m128i v_zext_mask_q = xx_set1_64_from_32i(~0);
+  const __m128i v_zext_mask_q = _mm_set1_epi64x(~0u);
   __m128i v_acc_q = _mm_setzero_si128();
 
   do {
@@ -254,7 +254,7 @@ uint64_t aom_sum_sse_2d_i16_sse2(const int16_t *src, int src_stride, int width,
 //////////////////////////////////////////////////////////////////////////////
 
 static uint64_t aom_sum_squares_i16_64n_sse2(const int16_t *src, uint32_t n) {
-  const __m128i v_zext_mask_q = xx_set1_64_from_32i(~0);
+  const __m128i v_zext_mask_q = _mm_set1_epi64x(~0u);
   __m128i v_acc0_q = _mm_setzero_si128();
   __m128i v_acc1_q = _mm_setzero_si128();
 

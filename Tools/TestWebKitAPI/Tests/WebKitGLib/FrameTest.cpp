@@ -30,7 +30,9 @@ public:
 private:
     bool testMainFrame(WebKitWebPage* page)
     {
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
+        G_GNUC_END_IGNORE_DEPRECATIONS
         g_assert_true(WEBKIT_IS_FRAME(frame));
         g_assert_true(webkit_frame_is_main_frame(frame));
 
@@ -39,7 +41,9 @@ private:
 
     bool testURI(WebKitWebPage* page)
     {
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
+        G_GNUC_END_IGNORE_DEPRECATIONS
         g_assert_true(WEBKIT_IS_FRAME(frame));
         g_assert_cmpstr(webkit_web_page_get_uri(page), ==, webkit_frame_get_uri(frame));
 
@@ -48,7 +52,9 @@ private:
 
     bool testJavaScriptContext(WebKitWebPage* page)
     {
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
+        G_GNUC_END_IGNORE_DEPRECATIONS
         g_assert_true(WEBKIT_IS_FRAME(frame));
 #if PLATFORM(GTK) && !USE(GTK4)
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
@@ -65,7 +71,9 @@ private:
 
     bool testJavaScriptValues(WebKitWebPage* page)
     {
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
+        G_GNUC_END_IGNORE_DEPRECATIONS
         g_assert_true(WEBKIT_IS_FRAME(frame));
 
         GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context(frame));
@@ -144,7 +152,9 @@ private:
 
     bool testSubframe(WebKitWebPage* page)
     {
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         WebKitFrame* mainFrame = webkit_web_page_get_main_frame(page);
+        G_GNUC_END_IGNORE_DEPRECATIONS
         g_assert_true(WEBKIT_IS_FRAME(mainFrame));
 
         GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context(mainFrame));

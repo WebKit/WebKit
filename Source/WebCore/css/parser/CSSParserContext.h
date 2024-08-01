@@ -44,7 +44,7 @@ struct ResolvedURL {
     bool isLocalURL() const;
 };
 
-inline ResolvedURL makeResolvedURL(URL resolvedURL)
+inline ResolvedURL makeResolvedURL(URL&& resolvedURL)
 {
     auto string = resolvedURL.string();
     return { WTFMove(string), WTFMove(resolvedURL) };

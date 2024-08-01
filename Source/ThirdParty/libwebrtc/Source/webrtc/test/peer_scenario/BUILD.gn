@@ -70,8 +70,6 @@ if (rtc_include_tests) {
       "../network:emulated_network",
       "../scenario",
       "../time_controller",
-    ]
-    absl_deps = [
       "//third_party/abseil-cpp/absl/flags:flag",
       "//third_party/abseil-cpp/absl/memory",
     ]

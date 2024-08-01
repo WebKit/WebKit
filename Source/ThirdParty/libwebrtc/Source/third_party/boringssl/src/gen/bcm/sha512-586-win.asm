@@ -13,11 +13,10 @@ section	.text	code align=64
 %else
 section	.text	code
 %endif
-;extern	_OPENSSL_ia32cap_P
-global	_sha512_block_data_order
+global	_sha512_block_data_order_nohw
 align	16
-_sha512_block_data_order:
-L$_sha512_block_data_order_begin:
+_sha512_block_data_order_nohw:
+L$_sha512_block_data_order_nohw_begin:
 	push	ebp
 	push	ebx
 	push	esi
@@ -29,7 +28,7 @@ L$_sha512_block_data_order_begin:
 	call	L$000pic_point
 L$000pic_point:
 	pop	ebp
-	lea	ebp,[(L$001K512-L$000pic_point)+ebp]
+	lea	ebp,[(L$K512-L$000pic_point)+ebp]
 	sub	esp,16
 	and	esp,-64
 	shl	eax,7
@@ -38,28 +37,18 @@ L$000pic_point:
 	mov	DWORD [4+esp],edi
 	mov	DWORD [8+esp],eax
 	mov	DWORD [12+esp],ebx
-	lea	edx,[_OPENSSL_ia32cap_P]
-	mov	ecx,DWORD [edx]
-	test	ecx,67108864
-	jz	NEAR L$002loop_x86
-	mov	edx,DWORD [4+edx]
 	movq	mm0,[esi]
-	and	ecx,16777216
 	movq	mm1,[8+esi]
-	and	edx,512
 	movq	mm2,[16+esi]
-	or	ecx,edx
 	movq	mm3,[24+esi]
 	movq	mm4,[32+esi]
 	movq	mm5,[40+esi]
 	movq	mm6,[48+esi]
 	movq	mm7,[56+esi]
-	cmp	ecx,16777728
-	je	NEAR L$003SSSE3
 	sub	esp,80
-	jmp	NEAR L$004loop_sse2
+	jmp	NEAR L$001loop_sse2
 align	16
-L$004loop_sse2:
+L$001loop_sse2:
 	movq	[8+esp],mm1
 	movq	[16+esp],mm2
 	movq	[24+esp],mm3
@@ -74,9 +63,9 @@ L$004loop_sse2:
 	mov	edx,15
 	bswap	eax
 	bswap	ebx
-	jmp	NEAR L$00500_14_sse2
+	jmp	NEAR L$00200_14_sse2
 align	16
-L$00500_14_sse2:
+L$00200_14_sse2:
 	movd	mm1,eax
 	mov	eax,DWORD [edi]
 	movd	mm7,ebx
@@ -137,7 +126,7 @@ L$00500_14_sse2:
 	paddq	mm3,mm6
 	movq	mm6,[48+esp]
 	dec	edx
-	jnz	NEAR L$00500_14_sse2
+	jnz	NEAR L$00200_14_sse2
 	movd	mm1,eax
 	movd	mm7,ebx
 	punpckldq	mm7,mm1
@@ -193,9 +182,9 @@ L$00500_14_sse2:
 	paddq	mm3,mm6
 	pxor	mm0,mm0
 	mov	edx,32
-	jmp	NEAR L$00616_79_sse2
+	jmp	NEAR L$00316_79_sse2
 align	16
-L$00616_79_sse2:
+L$00316_79_sse2:
 	movq	mm5,[88+esp]
 	movq	mm1,mm7
 	psrlq	mm7,1
@@ -349,7 +338,7 @@ L$00616_79_sse2:
 	paddq	mm0,mm6
 	add	ebp,8
 	dec	edx
-	jnz	NEAR L$00616_79_sse2
+	jnz	NEAR L$00316_79_sse2
 	paddq	mm0,mm3
 	movq	mm1,[8+esp]
 	movq	mm3,[24+esp]
@@ -377,7 +366,7 @@ L$00616_79_sse2:
 	lea	esp,[eax*1+esp]
 	sub	ebp,eax
 	cmp	edi,DWORD [88+esp]
-	jb	NEAR L$004loop_sse2
+	jb	NEAR L$001loop_sse2
 	mov	esp,DWORD [92+esp]
 	emms
 	pop	edi
@@ -385,8 +374,38 @@ L$00616_79_sse2:
 	pop	ebx
 	pop	ebp
 	ret
-align	32
-L$003SSSE3:
+global	_sha512_block_data_order_ssse3
+align	16
+_sha512_block_data_order_ssse3:
+L$_sha512_block_data_order_ssse3_begin:
+	push	ebp
+	push	ebx
+	push	esi
+	push	edi
+	mov	esi,DWORD [20+esp]
+	mov	edi,DWORD [24+esp]
+	mov	eax,DWORD [28+esp]
+	mov	ebx,esp
+	call	L$004pic_point
+L$004pic_point:
+	pop	ebp
+	lea	ebp,[(L$K512-L$004pic_point)+ebp]
+	sub	esp,16
+	and	esp,-64
+	shl	eax,7
+	add	eax,edi
+	mov	DWORD [esp],esi
+	mov	DWORD [4+esp],edi
+	mov	DWORD [8+esp],eax
+	mov	DWORD [12+esp],ebx
+	movq	mm0,[esi]
+	movq	mm1,[8+esi]
+	movq	mm2,[16+esi]
+	movq	mm3,[24+esi]
+	movq	mm4,[32+esi]
+	movq	mm5,[40+esi]
+	movq	mm6,[48+esi]
+	movq	mm7,[56+esi]
 	lea	edx,[esp-64]
 	sub	esp,256
 	movdqa	xmm1,[640+ebp]
@@ -443,7 +462,7 @@ db	102,15,56,0,248
 	movdqa	[edx-16],xmm2
 	nop
 align	32
-L$007loop_ssse3:
+L$005loop_ssse3:
 	movdqa	xmm2,[16+edx]
 	movdqa	[48+edx],xmm3
 	lea	ebp,[128+ebp]
@@ -460,9 +479,9 @@ L$007loop_ssse3:
 	pxor	mm2,mm1
 	movq	[56+esp],mm7
 	pxor	mm3,mm3
-	jmp	NEAR L$00800_47_ssse3
+	jmp	NEAR L$00600_47_ssse3
 align	32
-L$00800_47_ssse3:
+L$00600_47_ssse3:
 	movdqa	xmm3,xmm5
 	movdqa	xmm1,xmm2
 db	102,15,58,15,208,8
@@ -1481,7 +1500,7 @@ db	102,15,58,15,211,8
 	movdqa	[edx-16],xmm1
 	lea	ebp,[128+ebp]
 	dec	ecx
-	jnz	NEAR L$00800_47_ssse3
+	jnz	NEAR L$00600_47_ssse3
 	movdqa	xmm1,[ebp]
 	lea	ebp,[ebp-640]
 	movdqu	xmm0,[ebx]
@@ -2293,7 +2312,7 @@ db	102,15,56,0,248
 	movq	[48+esi],mm6
 	movq	[56+esi],mm7
 	cmp	edi,eax
-	jb	NEAR L$007loop_ssse3
+	jb	NEAR L$005loop_ssse3
 	mov	esp,DWORD [76+edx]
 	emms
 	pop	edi
@@ -2301,456 +2320,8 @@ db	102,15,56,0,248
 	pop	ebx
 	pop	ebp
 	ret
-align	16
-L$002loop_x86:
-	mov	eax,DWORD [edi]
-	mov	ebx,DWORD [4+edi]
-	mov	ecx,DWORD [8+edi]
-	mov	edx,DWORD [12+edi]
-	bswap	eax
-	bswap	ebx
-	bswap	ecx
-	bswap	edx
-	push	eax
-	push	ebx
-	push	ecx
-	push	edx
-	mov	eax,DWORD [16+edi]
-	mov	ebx,DWORD [20+edi]
-	mov	ecx,DWORD [24+edi]
-	mov	edx,DWORD [28+edi]
-	bswap	eax
-	bswap	ebx
-	bswap	ecx
-	bswap	edx
-	push	eax
-	push	ebx
-	push	ecx
-	push	edx
-	mov	eax,DWORD [32+edi]
-	mov	ebx,DWORD [36+edi]
-	mov	ecx,DWORD [40+edi]
-	mov	edx,DWORD [44+edi]
-	bswap	eax
-	bswap	ebx
-	bswap	ecx
-	bswap	edx
-	push	eax
-	push	ebx
-	push	ecx
-	push	edx
-	mov	eax,DWORD [48+edi]
-	mov	ebx,DWORD [52+edi]
-	mov	ecx,DWORD [56+edi]
-	mov	edx,DWORD [60+edi]
-	bswap	eax
-	bswap	ebx
-	bswap	ecx
-	bswap	edx
-	push	eax
-	push	ebx
-	push	ecx
-	push	edx
-	mov	eax,DWORD [64+edi]
-	mov	ebx,DWORD [68+edi]
-	mov	ecx,DWORD [72+edi]
-	mov	edx,DWORD [76+edi]
-	bswap	eax
-	bswap	ebx
-	bswap	ecx
-	bswap	edx
-	push	eax
-	push	ebx
-	push	ecx
-	push	edx
-	mov	eax,DWORD [80+edi]
-	mov	ebx,DWORD [84+edi]
-	mov	ecx,DWORD [88+edi]
-	mov	edx,DWORD [92+edi]
-	bswap	eax
-	bswap	ebx
-	bswap	ecx
-	bswap	edx
-	push	eax
-	push	ebx
-	push	ecx
-	push	edx
-	mov	eax,DWORD [96+edi]
-	mov	ebx,DWORD [100+edi]
-	mov	ecx,DWORD [104+edi]
-	mov	edx,DWORD [108+edi]
-	bswap	eax
-	bswap	ebx
-	bswap	ecx
-	bswap	edx
-	push	eax
-	push	ebx
-	push	ecx
-	push	edx
-	mov	eax,DWORD [112+edi]
-	mov	ebx,DWORD [116+edi]
-	mov	ecx,DWORD [120+edi]
-	mov	edx,DWORD [124+edi]
-	bswap	eax
-	bswap	ebx
-	bswap	ecx
-	bswap	edx
-	push	eax
-	push	ebx
-	push	ecx
-	push	edx
-	add	edi,128
-	sub	esp,72
-	mov	DWORD [204+esp],edi
-	lea	edi,[8+esp]
-	mov	ecx,16
-dd	2784229001
-align	16
-L$00900_15_x86:
-	mov	ecx,DWORD [40+esp]
-	mov	edx,DWORD [44+esp]
-	mov	esi,ecx
-	shr	ecx,9
-	mov	edi,edx
-	shr	edx,9
-	mov	ebx,ecx
-	shl	esi,14
-	mov	eax,edx
-	shl	edi,14
-	xor	ebx,esi
-	shr	ecx,5
-	xor	eax,edi
-	shr	edx,5
-	xor	eax,ecx
-	shl	esi,4
-	xor	ebx,edx
-	shl	edi,4
-	xor	ebx,esi
-	shr	ecx,4
-	xor	eax,edi
-	shr	edx,4
-	xor	eax,ecx
-	shl	esi,5
-	xor	ebx,edx
-	shl	edi,5
-	xor	eax,esi
-	xor	ebx,edi
-	mov	ecx,DWORD [48+esp]
-	mov	edx,DWORD [52+esp]
-	mov	esi,DWORD [56+esp]
-	mov	edi,DWORD [60+esp]
-	add	eax,DWORD [64+esp]
-	adc	ebx,DWORD [68+esp]
-	xor	ecx,esi
-	xor	edx,edi
-	and	ecx,DWORD [40+esp]
-	and	edx,DWORD [44+esp]
-	add	eax,DWORD [192+esp]
-	adc	ebx,DWORD [196+esp]
-	xor	ecx,esi
-	xor	edx,edi
-	mov	esi,DWORD [ebp]
-	mov	edi,DWORD [4+ebp]
-	add	eax,ecx
-	adc	ebx,edx
-	mov	ecx,DWORD [32+esp]
-	mov	edx,DWORD [36+esp]
-	add	eax,esi
-	adc	ebx,edi
-	mov	DWORD [esp],eax
-	mov	DWORD [4+esp],ebx
-	add	eax,ecx
-	adc	ebx,edx
-	mov	ecx,DWORD [8+esp]
-	mov	edx,DWORD [12+esp]
-	mov	DWORD [32+esp],eax
-	mov	DWORD [36+esp],ebx
-	mov	esi,ecx
-	shr	ecx,2
-	mov	edi,edx
-	shr	edx,2
-	mov	ebx,ecx
-	shl	esi,4
-	mov	eax,edx
-	shl	edi,4
-	xor	ebx,esi
-	shr	ecx,5
-	xor	eax,edi
-	shr	edx,5
-	xor	ebx,ecx
-	shl	esi,21
-	xor	eax,edx
-	shl	edi,21
-	xor	eax,esi
-	shr	ecx,21
-	xor	ebx,edi
-	shr	edx,21
-	xor	eax,ecx
-	shl	esi,5
-	xor	ebx,edx
-	shl	edi,5
-	xor	eax,esi
-	xor	ebx,edi
-	mov	ecx,DWORD [8+esp]
-	mov	edx,DWORD [12+esp]
-	mov	esi,DWORD [16+esp]
-	mov	edi,DWORD [20+esp]
-	add	eax,DWORD [esp]
-	adc	ebx,DWORD [4+esp]
-	or	ecx,esi
-	or	edx,edi
-	and	ecx,DWORD [24+esp]
-	and	edx,DWORD [28+esp]
-	and	esi,DWORD [8+esp]
-	and	edi,DWORD [12+esp]
-	or	ecx,esi
-	or	edx,edi
-	add	eax,ecx
-	adc	ebx,edx
-	mov	DWORD [esp],eax
-	mov	DWORD [4+esp],ebx
-	mov	dl,BYTE [ebp]
-	sub	esp,8
-	lea	ebp,[8+ebp]
-	cmp	dl,148
-	jne	NEAR L$00900_15_x86
-align	16
-L$01016_79_x86:
-	mov	ecx,DWORD [312+esp]
-	mov	edx,DWORD [316+esp]
-	mov	esi,ecx
-	shr	ecx,1
-	mov	edi,edx
-	shr	edx,1
-	mov	eax,ecx
-	shl	esi,24
-	mov	ebx,edx
-	shl	edi,24
-	xor	ebx,esi
-	shr	ecx,6
-	xor	eax,edi
-	shr	edx,6
-	xor	eax,ecx
-	shl	esi,7
-	xor	ebx,edx
-	shl	edi,1
-	xor	ebx,esi
-	shr	ecx,1
-	xor	eax,edi
-	shr	edx,1
-	xor	eax,ecx
-	shl	edi,6
-	xor	ebx,edx
-	xor	eax,edi
-	mov	DWORD [esp],eax
-	mov	DWORD [4+esp],ebx
-	mov	ecx,DWORD [208+esp]
-	mov	edx,DWORD [212+esp]
-	mov	esi,ecx
-	shr	ecx,6
-	mov	edi,edx
-	shr	edx,6
-	mov	eax,ecx
-	shl	esi,3
-	mov	ebx,edx
-	shl	edi,3
-	xor	eax,esi
-	shr	ecx,13
-	xor	ebx,edi
-	shr	edx,13
-	xor	eax,ecx
-	shl	esi,10
-	xor	ebx,edx
-	shl	edi,10
-	xor	ebx,esi
-	shr	ecx,10
-	xor	eax,edi
-	shr	edx,10
-	xor	ebx,ecx
-	shl	edi,13
-	xor	eax,edx
-	xor	eax,edi
-	mov	ecx,DWORD [320+esp]
-	mov	edx,DWORD [324+esp]
-	add	eax,DWORD [esp]
-	adc	ebx,DWORD [4+esp]
-	mov	esi,DWORD [248+esp]
-	mov	edi,DWORD [252+esp]
-	add	eax,ecx
-	adc	ebx,edx
-	add	eax,esi
-	adc	ebx,edi
-	mov	DWORD [192+esp],eax
-	mov	DWORD [196+esp],ebx
-	mov	ecx,DWORD [40+esp]
-	mov	edx,DWORD [44+esp]
-	mov	esi,ecx
-	shr	ecx,9
-	mov	edi,edx
-	shr	edx,9
-	mov	ebx,ecx
-	shl	esi,14
-	mov	eax,edx
-	shl	edi,14
-	xor	ebx,esi
-	shr	ecx,5
-	xor	eax,edi
-	shr	edx,5
-	xor	eax,ecx
-	shl	esi,4
-	xor	ebx,edx
-	shl	edi,4
-	xor	ebx,esi
-	shr	ecx,4
-	xor	eax,edi
-	shr	edx,4
-	xor	eax,ecx
-	shl	esi,5
-	xor	ebx,edx
-	shl	edi,5
-	xor	eax,esi
-	xor	ebx,edi
-	mov	ecx,DWORD [48+esp]
-	mov	edx,DWORD [52+esp]
-	mov	esi,DWORD [56+esp]
-	mov	edi,DWORD [60+esp]
-	add	eax,DWORD [64+esp]
-	adc	ebx,DWORD [68+esp]
-	xor	ecx,esi
-	xor	edx,edi
-	and	ecx,DWORD [40+esp]
-	and	edx,DWORD [44+esp]
-	add	eax,DWORD [192+esp]
-	adc	ebx,DWORD [196+esp]
-	xor	ecx,esi
-	xor	edx,edi
-	mov	esi,DWORD [ebp]
-	mov	edi,DWORD [4+ebp]
-	add	eax,ecx
-	adc	ebx,edx
-	mov	ecx,DWORD [32+esp]
-	mov	edx,DWORD [36+esp]
-	add	eax,esi
-	adc	ebx,edi
-	mov	DWORD [esp],eax
-	mov	DWORD [4+esp],ebx
-	add	eax,ecx
-	adc	ebx,edx
-	mov	ecx,DWORD [8+esp]
-	mov	edx,DWORD [12+esp]
-	mov	DWORD [32+esp],eax
-	mov	DWORD [36+esp],ebx
-	mov	esi,ecx
-	shr	ecx,2
-	mov	edi,edx
-	shr	edx,2
-	mov	ebx,ecx
-	shl	esi,4
-	mov	eax,edx
-	shl	edi,4
-	xor	ebx,esi
-	shr	ecx,5
-	xor	eax,edi
-	shr	edx,5
-	xor	ebx,ecx
-	shl	esi,21
-	xor	eax,edx
-	shl	edi,21
-	xor	eax,esi
-	shr	ecx,21
-	xor	ebx,edi
-	shr	edx,21
-	xor	eax,ecx
-	shl	esi,5
-	xor	ebx,edx
-	shl	edi,5
-	xor	eax,esi
-	xor	ebx,edi
-	mov	ecx,DWORD [8+esp]
-	mov	edx,DWORD [12+esp]
-	mov	esi,DWORD [16+esp]
-	mov	edi,DWORD [20+esp]
-	add	eax,DWORD [esp]
-	adc	ebx,DWORD [4+esp]
-	or	ecx,esi
-	or	edx,edi
-	and	ecx,DWORD [24+esp]
-	and	edx,DWORD [28+esp]
-	and	esi,DWORD [8+esp]
-	and	edi,DWORD [12+esp]
-	or	ecx,esi
-	or	edx,edi
-	add	eax,ecx
-	adc	ebx,edx
-	mov	DWORD [esp],eax
-	mov	DWORD [4+esp],ebx
-	mov	dl,BYTE [ebp]
-	sub	esp,8
-	lea	ebp,[8+ebp]
-	cmp	dl,23
-	jne	NEAR L$01016_79_x86
-	mov	esi,DWORD [840+esp]
-	mov	edi,DWORD [844+esp]
-	mov	eax,DWORD [esi]
-	mov	ebx,DWORD [4+esi]
-	mov	ecx,DWORD [8+esi]
-	mov	edx,DWORD [12+esi]
-	add	eax,DWORD [8+esp]
-	adc	ebx,DWORD [12+esp]
-	mov	DWORD [esi],eax
-	mov	DWORD [4+esi],ebx
-	add	ecx,DWORD [16+esp]
-	adc	edx,DWORD [20+esp]
-	mov	DWORD [8+esi],ecx
-	mov	DWORD [12+esi],edx
-	mov	eax,DWORD [16+esi]
-	mov	ebx,DWORD [20+esi]
-	mov	ecx,DWORD [24+esi]
-	mov	edx,DWORD [28+esi]
-	add	eax,DWORD [24+esp]
-	adc	ebx,DWORD [28+esp]
-	mov	DWORD [16+esi],eax
-	mov	DWORD [20+esi],ebx
-	add	ecx,DWORD [32+esp]
-	adc	edx,DWORD [36+esp]
-	mov	DWORD [24+esi],ecx
-	mov	DWORD [28+esi],edx
-	mov	eax,DWORD [32+esi]
-	mov	ebx,DWORD [36+esi]
-	mov	ecx,DWORD [40+esi]
-	mov	edx,DWORD [44+esi]
-	add	eax,DWORD [40+esp]
-	adc	ebx,DWORD [44+esp]
-	mov	DWORD [32+esi],eax
-	mov	DWORD [36+esi],ebx
-	add	ecx,DWORD [48+esp]
-	adc	edx,DWORD [52+esp]
-	mov	DWORD [40+esi],ecx
-	mov	DWORD [44+esi],edx
-	mov	eax,DWORD [48+esi]
-	mov	ebx,DWORD [52+esi]
-	mov	ecx,DWORD [56+esi]
-	mov	edx,DWORD [60+esi]
-	add	eax,DWORD [56+esp]
-	adc	ebx,DWORD [60+esp]
-	mov	DWORD [48+esi],eax
-	mov	DWORD [52+esi],ebx
-	add	ecx,DWORD [64+esp]
-	adc	edx,DWORD [68+esp]
-	mov	DWORD [56+esi],ecx
-	mov	DWORD [60+esi],edx
-	add	esp,840
-	sub	ebp,640
-	cmp	edi,DWORD [8+esp]
-	jb	NEAR L$002loop_x86
-	mov	esp,DWORD [12+esp]
-	pop	edi
-	pop	esi
-	pop	ebx
-	pop	ebp
-	ret
 align	64
-L$001K512:
+L$K512:
 dd	3609767458,1116352408
 dd	602891725,1899447441
 dd	3964484399,3049323471
@@ -2838,8 +2409,6 @@ db	110,115,102,111,114,109,32,102,111,114,32,120,56,54,44,32
 db	67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97
 db	112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103
 db	62,0
-segment	.bss
-common	_OPENSSL_ia32cap_P 16
 %else
 ; Work around https://bugzilla.nasm.us/show_bug.cgi?id=3392738
 ret

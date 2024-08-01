@@ -10,7 +10,7 @@
 
 #include "modules/desktop_capture/screen_capturer_fuchsia.h"
 
-#include <fuchsia/sysmem/cpp/fidl.h>
+#include <fuchsia/sysmem2/cpp/fidl.h>
 #include <fuchsia/ui/composition/cpp/fidl.h>
 #include <fuchsia/ui/display/singleton/cpp/fidl.h>
 #include <lib/sys/cpp/component_context.h>
@@ -42,10 +42,10 @@ static constexpr uint32_t kFuchsiaBytesPerPixel = 4;
 static constexpr DesktopCapturer::SourceId kFuchsiaScreenId = 1;
 // 500 milliseconds
 static constexpr zx::duration kEventDelay = zx::msec(500);
-static constexpr fuchsia::sysmem::ColorSpaceType kSRGBColorSpace =
-    fuchsia::sysmem::ColorSpaceType::SRGB;
-static constexpr fuchsia::sysmem::PixelFormatType kBGRA32PixelFormatType =
-    fuchsia::sysmem::PixelFormatType::BGRA32;
+static constexpr fuchsia::images2::ColorSpace kSRGBColorSpace =
+    fuchsia::images2::ColorSpace::SRGB;
+static constexpr fuchsia::images2::PixelFormat kBGRA32PixelFormatType =
+    fuchsia::images2::PixelFormat::B8G8R8A8;
 
 // Round |value| up to the closest multiple of |multiple|
 size_t RoundUpToMultiple(size_t value, size_t multiple) {
@@ -66,9 +66,10 @@ ScreenCapturerFuchsia::ScreenCapturerFuchsia()
 ScreenCapturerFuchsia::~ScreenCapturerFuchsia() {
   // unmap virtual memory mapped pointers
   uint32_t virt_mem_bytes =
-      buffer_collection_info_.settings.buffer_settings.size_bytes;
+      buffer_collection_info_.settings().buffer_settings().size_bytes();
   for (uint32_t buffer_index = 0;
-       buffer_index < buffer_collection_info_.buffer_count; buffer_index++) {
+       buffer_index < buffer_collection_info_.buffers().size();
+       buffer_index++) {
     uintptr_t address =
         reinterpret_cast<uintptr_t>(virtual_memory_mapped_addrs_[buffer_index]);
     zx_status_t status = zx::vmar::root_self()->unmap(address, virt_mem_bytes);
@@ -132,7 +133,7 @@ void ScreenCapturerFuchsia::CaptureFrame() {
       new BasicDesktopFrame(DesktopSize(width_, height_)));
 
   uint32_t pixels_per_row = GetPixelsPerRow(
-      buffer_collection_info_.settings.image_format_constraints);
+      buffer_collection_info_.settings().image_format_constraints());
   uint32_t stride = kFuchsiaBytesPerPixel * pixels_per_row;
   frame->CopyPixelsFrom(virtual_memory_mapped_addrs_[buffer_index], stride,
                         DesktopRect::MakeWH(width_, height_));
@@ -167,34 +168,27 @@ bool ScreenCapturerFuchsia::SelectSource(SourceId id) {
   return false;
 }
 
-fuchsia::sysmem::BufferCollectionConstraints
+fuchsia::sysmem2::BufferCollectionConstraints
 ScreenCapturerFuchsia::GetBufferConstraints() {
-  fuchsia::sysmem::BufferCollectionConstraints constraints;
-  constraints.usage.cpu =
-      fuchsia::sysmem::cpuUsageRead | fuchsia::sysmem::cpuUsageWrite;
-  constraints.min_buffer_count = kMinBufferCount;
+  fuchsia::sysmem2::BufferCollectionConstraints constraints;
+  constraints.mutable_usage()->set_cpu(fuchsia::sysmem2::CPU_USAGE_READ |
+                                       fuchsia::sysmem2::CPU_USAGE_WRITE);
+  constraints.set_min_buffer_count(kMinBufferCount);
 
-  constraints.has_buffer_memory_constraints = true;
-  constraints.buffer_memory_constraints.ram_domain_supported = true;
-  constraints.buffer_memory_constraints.cpu_domain_supported = true;
+  auto& bmc = *constraints.mutable_buffer_memory_constraints();
+  bmc.set_ram_domain_supported(true);
+  bmc.set_cpu_domain_supported(true);
 
-  constraints.image_format_constraints_count = 1;
-  fuchsia::sysmem::ImageFormatConstraints& image_constraints =
-      constraints.image_format_constraints[0];
-  image_constraints.color_spaces_count = 1;
-  image_constraints.color_space[0] =
-      fuchsia::sysmem::ColorSpace{.type = kSRGBColorSpace};
-  image_constraints.pixel_format.type = kBGRA32PixelFormatType;
-  image_constraints.pixel_format.has_format_modifier = true;
-  image_constraints.pixel_format.format_modifier.value =
-      fuchsia::sysmem::FORMAT_MODIFIER_LINEAR;
+  fuchsia::sysmem2::ImageFormatConstraints& ifc =
+      constraints.mutable_image_format_constraints()->emplace_back();
+  ifc.mutable_color_spaces()->emplace_back(kSRGBColorSpace);
+  ifc.set_pixel_format(kBGRA32PixelFormatType);
+  ifc.set_pixel_format_modifier(fuchsia::images2::PixelFormatModifier::LINEAR);
 
-  image_constraints.required_min_coded_width = width_;
-  image_constraints.required_min_coded_height = height_;
-  image_constraints.required_max_coded_width = width_;
-  image_constraints.required_max_coded_height = height_;
+  ifc.set_required_min_size(fuchsia::math::SizeU{width_, height_});
+  ifc.set_required_max_size(fuchsia::math::SizeU{width_, height_});
 
-  image_constraints.bytes_per_row_divisor = kFuchsiaBytesPerPixel;
+  ifc.set_bytes_per_row_divisor(kFuchsiaBytesPerPixel);
 
   return constraints;
 }
@@ -224,55 +218,62 @@ void ScreenCapturerFuchsia::SetupBuffers() {
   status = component_context_->svc()->Connect(sysmem_allocator_.NewRequest());
   if (status != ZX_OK) {
     fatal_error_ = true;
-    RTC_LOG(LS_ERROR) << "Failed to connect to Sysmem Allocator: " << status;
+    RTC_LOG(LS_ERROR) << "Failed to connect to fuchsia.sysmem2.Allocator: " << status;
     return;
   }
 
-  fuchsia::sysmem::BufferCollectionTokenSyncPtr sysmem_token;
-  status =
-      sysmem_allocator_->AllocateSharedCollection(sysmem_token.NewRequest());
+  fuchsia::sysmem2::BufferCollectionTokenSyncPtr sysmem_token;
+  status = sysmem_allocator_->AllocateSharedCollection(
+      std::move(fuchsia::sysmem2::AllocatorAllocateSharedCollectionRequest{}
+                    .set_token_request(sysmem_token.NewRequest())));
   if (status != ZX_OK) {
     fatal_error_ = true;
     RTC_LOG(LS_ERROR)
-        << "fuchsia.sysmem.Allocator.AllocateSharedCollection() failed: "
+        << "fuchsia.sysmem2.Allocator.AllocateSharedCollection() failed: "
         << status;
     return;
   }
 
-  fuchsia::sysmem::BufferCollectionTokenSyncPtr flatland_token;
-  status = sysmem_token->Duplicate(ZX_RIGHT_SAME_RIGHTS,
-                                   flatland_token.NewRequest());
+  fuchsia::sysmem2::BufferCollectionTokenSyncPtr flatland_token;
+  status = sysmem_token->Duplicate(
+      std::move(fuchsia::sysmem2::BufferCollectionTokenDuplicateRequest{}
+                    .set_rights_attenuation_mask(ZX_RIGHT_SAME_RIGHTS)
+                    .set_token_request(flatland_token.NewRequest())));
   if (status != ZX_OK) {
     fatal_error_ = true;
     RTC_LOG(LS_ERROR)
-        << "fuchsia.sysmem.BufferCollectionToken.Duplicate() failed: "
+        << "fuchsia.sysmem2.BufferCollectionToken.Duplicate() failed: "
         << status;
     return;
   }
 
-  status = sysmem_token->Sync();
+  fuchsia::sysmem2::Node_Sync_Result sync_result;
+  status = sysmem_token->Sync(&sync_result);
   if (status != ZX_OK) {
     fatal_error_ = true;
-    RTC_LOG(LS_ERROR) << "fuchsia.sysmem.BufferCollectionToken.Sync() failed: "
+    RTC_LOG(LS_ERROR) << "fuchsia.sysmem2.BufferCollectionToken.Sync() failed: "
                       << status;
     return;
   }
 
-  status = sysmem_allocator_->BindSharedCollection(std::move(sysmem_token),
-                                                   collection_.NewRequest());
+  status = sysmem_allocator_->BindSharedCollection(
+      std::move(fuchsia::sysmem2::AllocatorBindSharedCollectionRequest{}
+                    .set_token(std::move(sysmem_token))
+                    .set_buffer_collection_request(collection_.NewRequest())));
   if (status != ZX_OK) {
     fatal_error_ = true;
     RTC_LOG(LS_ERROR)
-        << "fuchsia.sysmem.Allocator.BindSharedCollection() failed: " << status;
+        << "fuchsia.sysmem2.Allocator.BindSharedCollection() failed: " << status;
     return;
   }
 
-  status = collection_->SetConstraints(/*has_constraints=*/true,
-                                       GetBufferConstraints());
+  status = collection_->SetConstraints(std::move(
+      fuchsia::sysmem2::BufferCollectionSetConstraintsRequest{}.set_constraints(
+          GetBufferConstraints())));
   if (status != ZX_OK) {
     fatal_error_ = true;
     RTC_LOG(LS_ERROR)
-        << "fuchsia.sysmem.BufferCollection.SetConstraints() failed: "
+        << "fuchsia.sysmem2.BufferCollection.SetConstraints() failed: "
         << status;
     return;
   }
@@ -297,7 +298,9 @@ void ScreenCapturerFuchsia::SetupBuffers() {
 
   fuchsia::ui::composition::RegisterBufferCollectionArgs buffer_collection_args;
   buffer_collection_args.set_export_token(std::move(export_token));
-  buffer_collection_args.set_buffer_collection_token(std::move(flatland_token));
+  buffer_collection_args.set_buffer_collection_token(
+      fuchsia::sysmem::BufferCollectionTokenHandle(
+          flatland_token.Unbind().TakeChannel()));
   buffer_collection_args.set_usage(
       fuchsia::ui::composition::RegisterBufferCollectionUsage::SCREENSHOT);
 
@@ -312,21 +315,31 @@ void ScreenCapturerFuchsia::SetupBuffers() {
     return;
   }
 
-  zx_status_t allocation_status;
-  status = collection_->WaitForBuffersAllocated(&allocation_status,
-                                                &buffer_collection_info_);
+  fuchsia::sysmem2::BufferCollection_WaitForAllBuffersAllocated_Result
+      wait_result;
+  status = collection_->WaitForAllBuffersAllocated(&wait_result);
   if (status != ZX_OK) {
     fatal_error_ = true;
     RTC_LOG(LS_ERROR) << "Failed to wait for buffer collection info: "
                       << status;
     return;
   }
-  if (allocation_status != ZX_OK) {
+  if (!wait_result.is_response()) {
+    if (wait_result.is_framework_err()) {
+      RTC_LOG(LS_ERROR)
+          << "Failed to allocate buffer collection (framework_err): "
+          << fidl::ToUnderlying(wait_result.framework_err());
+    } else {
+      RTC_LOG(LS_ERROR) << "Failed to allocate buffer collection (err): "
+                        << static_cast<uint32_t>(wait_result.err());
+    }
     fatal_error_ = true;
-    RTC_LOG(LS_ERROR) << "Failed to allocate buffer collection: " << status;
     return;
   }
-  status = collection_->Close();
+  buffer_collection_info_ =
+      std::move(*wait_result.response().mutable_buffer_collection_info());
+
+  status = collection_->Release();
   if (status != ZX_OK) {
     fatal_error_ = true;
     RTC_LOG(LS_ERROR) << "Failed to close buffer collection token: " << status;
@@ -343,7 +356,7 @@ void ScreenCapturerFuchsia::SetupBuffers() {
   // Configure buffers in ScreenCapture client.
   fuchsia::ui::composition::ScreenCaptureConfig configure_args;
   configure_args.set_import_token(std::move(import_token));
-  configure_args.set_buffer_count(buffer_collection_info_.buffer_count);
+  configure_args.set_buffer_count(buffer_collection_info_.buffers().size());
   configure_args.set_size({width_, height_});
 
   fuchsia::ui::composition::ScreenCapture_Configure_Result configure_result;
@@ -361,11 +374,13 @@ void ScreenCapturerFuchsia::SetupBuffers() {
   // onto a pointer stored in virtual_memory_mapped_addrs_ which we can use to
   // access this data.
   uint32_t virt_mem_bytes =
-      buffer_collection_info_.settings.buffer_settings.size_bytes;
+      buffer_collection_info_.settings().buffer_settings().size_bytes();
   RTC_DCHECK(virt_mem_bytes > 0);
   for (uint32_t buffer_index = 0;
-       buffer_index < buffer_collection_info_.buffer_count; buffer_index++) {
-    const zx::vmo& virt_mem = buffer_collection_info_.buffers[buffer_index].vmo;
+       buffer_index < buffer_collection_info_.buffers().size();
+       buffer_index++) {
+    const zx::vmo& virt_mem =
+        buffer_collection_info_.buffers()[buffer_index].vmo();
     virtual_memory_mapped_addrs_[buffer_index] = nullptr;
     auto status = zx::vmar::root_self()->map(
         ZX_VM_PERM_READ, /*vmar_offset*/ 0, virt_mem,
@@ -381,10 +396,10 @@ void ScreenCapturerFuchsia::SetupBuffers() {
 }
 
 uint32_t ScreenCapturerFuchsia::GetPixelsPerRow(
-    const fuchsia::sysmem::ImageFormatConstraints& constraints) {
+    const fuchsia::sysmem2::ImageFormatConstraints& constraints) {
   uint32_t stride = RoundUpToMultiple(
-      std::max(constraints.min_bytes_per_row, width_ * kFuchsiaBytesPerPixel),
-      constraints.bytes_per_row_divisor);
+      std::max(constraints.min_bytes_per_row(), width_ * kFuchsiaBytesPerPixel),
+      constraints.bytes_per_row_divisor());
   uint32_t pixels_per_row = stride / kFuchsiaBytesPerPixel;
 
   return pixels_per_row;

@@ -1,0 +1,47 @@
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'three' because it violates the following Content Security Policy directive: "trusted-types one"
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'three' because it violates the following Content Security Policy directive: "trusted-types two"
+CONSOLE MESSAGE: Refused to load http://web-platform.test:8800/trusted-types/dummy.webm because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'two' because it violates the following Content Security Policy directive: "trusted-types one"
+CONSOLE MESSAGE: Refused to load http://web-platform.test:8800/trusted-types/dummy.webm because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'one' because it violates the following Content Security Policy directive: "trusted-types two"
+CONSOLE MESSAGE: Refused to load http://web-platform.test:8800/trusted-types/dummy.webm because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Refused to load http://web-platform.test:8800/trusted-types/dummy.webm because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://web-platform.test:8800/trusted-types/dummy.webm because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Refused to load http://web-platform.test:8800/trusted-types/dummy.webm because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Refused to load http://web-platform.test:8800/trusted-types/dummy.webm because it does not appear in the object-src directive of the Content Security Policy.
+
+abc
+
+
+PASS Trusted Type violation report: creating a forbidden policy.
+PASS Trusted Type violation report: creating a report-only-forbidden policy.
+PASS Trusted Type violation report: creating a forbidden-but-not-reported policy.
+PASS Trusted Type violation report: assign string to script url
+PASS Trusted Type violation report: assign string to html
+PASS Trusted Type violation report: assign trusted script to script; no report
+PASS Trusted Type violation report: assign trusted HTML to html; no report
+PASS Trusted Type violation report: sample for innerHTML assignment
+PASS Trusted Type violation report: sample for text assignment
+PASS Trusted Type violation report: sample for script.src assignment
+PASS Trusted Type violation report: sample for script innerText assignment
+PASS Trusted Type violation report: sample for SVGScriptElement href assignment
+PASS Trusted Type violation report: sample for SVGScriptElement href assignment by setAttribute
+PASS Trusted Type violation report: sample for SVGScriptElement text assignment
+PASS Trusted Type violation report: sample for eval
+PASS Trusted Type violation report: large values should be handled sanely.
+PASS Trusted Type violation report: sample for custom element assignment
+PASS Trusted Type violation report: Worker constructor
+

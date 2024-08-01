@@ -30,6 +30,7 @@
 
 #import "CoreIPCNSCFObject.h"
 #import "CoreIPCNSURLCredential.h"
+#import "CoreIPCNSURLRequest.h"
 #import "CoreIPCTypes.h"
 #import "CoreTextHelpers.h"
 #import "LegacyGlobalSettings.h"
@@ -591,6 +592,7 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
         allowedClasses.add(NSMutableArray.class);
         allowedClasses.add(NSMutableDictionary.class);
         allowedClasses.add(NSMutableData.class);
+        allowedClasses.add(NSMutableURLRequest.class);
     }
 
     if (allowedClasses.contains(NSParagraphStyle.class))
@@ -645,7 +647,10 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
     return *result ? (*result)->toID() : nullptr; \
 }
 
+#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
 ENCODE_AS_SECURE_CODING(NSURLRequest);
+#endif
+
 ENCODE_AS_SECURE_CODING(NSParagraphStyle);
 #if USE(PASSKIT)
 ENCODE_AS_SECURE_CODING(PKSecureElementPass);

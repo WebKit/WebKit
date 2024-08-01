@@ -110,8 +110,13 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     data += IVF_FRAME_HDR_SZ;
     frame_size = std::min(size, frame_size);
 
-    const vpx_codec_err_t err =
-        vpx_codec_decode(&codec, data, frame_size, nullptr, 0);
+    vpx_codec_stream_info_t stream_info;
+    stream_info.sz = sizeof(stream_info);
+    vpx_codec_err_t err = vpx_codec_peek_stream_info(VPXD_INTERFACE(DECODER),
+                                                     data, size, &stream_info);
+    static_cast<void>(err);
+
+    err = vpx_codec_decode(&codec, data, frame_size, nullptr, 0);
     static_cast<void>(err);
     vpx_codec_iter_t iter = nullptr;
     vpx_image_t *img = nullptr;

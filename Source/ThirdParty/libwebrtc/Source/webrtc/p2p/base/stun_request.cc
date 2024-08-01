@@ -18,7 +18,7 @@
 #include "absl/memory/memory.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/helpers.h"
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/string_encode.h"
 #include "rtc_base/time_utils.h"  // For TimeMillis

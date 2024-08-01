@@ -24,6 +24,7 @@
 #include "common/Optional.h"
 #include "common/SimpleMutex.h"
 #include "common/angleutils.h"
+#include "common/hash_containers.h"
 #include "common/mathutil.h"
 #include "common/utilities.h"
 

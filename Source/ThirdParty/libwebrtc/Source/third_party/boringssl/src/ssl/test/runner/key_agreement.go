@@ -65,13 +65,13 @@ func (ka *rsaKeyAgreement) generateServerKeyExchange(config *Config, cert *Crede
 
 	var sigAlg signatureAlgorithm
 	if ka.version >= VersionTLS12 {
-		sigAlg, err = selectSignatureAlgorithm(ka.version, cert, config, clientHello.signatureAlgorithms)
+		sigAlg, err = selectSignatureAlgorithm(false /* server */, ka.version, cert, config, clientHello.signatureAlgorithms)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	sig, err := signMessage(ka.version, cert.PrivateKey, config, sigAlg, serverRSAParams)
+	sig, err := signMessage(false /* server */, ka.version, cert.PrivateKey, config, sigAlg, serverRSAParams)
 	if err != nil {
 		return nil, errors.New("failed to sign RSA parameters: " + err.Error())
 	}
@@ -489,13 +489,13 @@ func (ka *signedKeyAgreement) signParameters(config *Config, cert *Credential, c
 	var sigAlg signatureAlgorithm
 	var err error
 	if ka.version >= VersionTLS12 {
-		sigAlg, err = selectSignatureAlgorithm(ka.version, cert, config, clientHello.signatureAlgorithms)
+		sigAlg, err = selectSignatureAlgorithm(false /* server */, ka.version, cert, config, clientHello.signatureAlgorithms)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	sig, err := signMessage(ka.version, cert.PrivateKey, config, sigAlg, msg)
+	sig, err := signMessage(false /* server */, ka.version, cert.PrivateKey, config, sigAlg, msg)
 	if err != nil {
 		return nil, err
 	}
@@ -571,7 +571,7 @@ func (ka *signedKeyAgreement) verifyParameters(config *Config, clientHello *clie
 	}
 	sig = sig[2:]
 
-	return verifyMessage(ka.version, publicKey, config, sigAlg, msg, sig)
+	return verifyMessage(true /* client */, ka.version, publicKey, config, sigAlg, msg, sig)
 }
 
 // ecdheKeyAgreement implements a TLS key agreement where the server

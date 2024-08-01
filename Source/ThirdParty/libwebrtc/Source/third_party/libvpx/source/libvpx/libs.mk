@@ -315,7 +315,7 @@ $(BUILD_PFX)libvpx_g.a: $(LIBVPX_OBJS)
 # (c1, a1, r1) and set MAJOR to [c1-a1], MINOR to a1 and PATCH to r1
 SO_VERSION_MAJOR := 9
 SO_VERSION_MINOR := 0
-SO_VERSION_PATCH := 0
+SO_VERSION_PATCH := 1
 ifeq ($(filter darwin%,$(TGT_OS)),$(TGT_OS))
 LIBVPX_SO               := libvpx.$(SO_VERSION_MAJOR).dylib
 SHARED_LIB_SUF          := .dylib

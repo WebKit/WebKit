@@ -14,7 +14,7 @@
 #include <stdint.h>
 
 #include "absl/types/optional.h"
-#include "api/network_state_predictor.h"
+#include "api/transport/bandwidth_usage.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 

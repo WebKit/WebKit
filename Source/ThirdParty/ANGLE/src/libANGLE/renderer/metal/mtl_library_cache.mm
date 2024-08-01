@@ -20,8 +20,7 @@
 #include "common/string_utils.h"
 #include "common/system_utils.h"
 #include "libANGLE/histogram_macros.h"
-#include "libANGLE/renderer/metal/ContextMtl.h"
-#include "libANGLE/renderer/metal/mtl_context_device.h"
+#include "libANGLE/renderer/metal/DisplayMtl.h"
 #include "libANGLE/renderer/metal/process.h"
 #include "platform/PlatformMethods.h"
 
@@ -99,7 +98,7 @@ egl::BlobCache::Key GenerateBlobCacheKeyForShaderLibrary(
 }
 
 // Returns a new MTLLibrary from the specified data.
-AutoObjCPtr<id<MTLLibrary>> NewMetalLibraryFromMetallib(ContextMtl *context,
+AutoObjCPtr<id<MTLLibrary>> NewMetalLibraryFromMetallib(id<MTLDevice> metalDevice,
                                                         const uint8_t *data,
                                                         size_t size)
 {
@@ -111,25 +110,26 @@ AutoObjCPtr<id<MTLLibrary>> NewMetalLibraryFromMetallib(ContextMtl *context,
                                              DISPATCH_DATA_DESTRUCTOR_DEFAULT);
 
         NSError *nsError = nil;
-        return context->getMetalDevice().newLibraryWithData(mtl_data, &nsError);
+        return [metalDevice newLibraryWithData:mtl_data error:&nsError];
     }
 }
 
 }  // namespace
 
 AutoObjCPtr<id<MTLLibrary>> LibraryCache::getOrCompileShaderLibrary(
-    ContextMtl *context,
+    DisplayMtl *displayMtl,
     const std::shared_ptr<const std::string> &source,
     const std::map<std::string, std::string> &macros,
     bool disableFastMath,
     bool usesInvariance,
     AutoObjCPtr<NSError *> *errorOut)
 {
-    const angle::FeaturesMtl &features = context->getDisplay()->getFeatures();
+    id<MTLDevice> metalDevice          = displayMtl->getMetalDevice();
+    const angle::FeaturesMtl &features = displayMtl->getFeatures();
     if (!features.enableInMemoryMtlLibraryCache.enabled)
     {
-        return CreateShaderLibrary(context->getMetalDevice(), *source, macros, disableFastMath,
-                                   usesInvariance, errorOut);
+        return CreateShaderLibrary(metalDevice, *source, macros, disableFastMath, usesInvariance,
+                                   errorOut);
     }
 
     ASSERT(source != nullptr);
@@ -167,10 +167,10 @@ AutoObjCPtr<id<MTLLibrary>> LibraryCache::getOrCompileShaderLibrary(
             CompileShaderLibraryToFile(*source, macros, disableFastMath, usesInvariance);
         angle::MemoryBuffer memory_buffer = ReadMetallibFromFile(metallib_filename);
         entry.library =
-            NewMetalLibraryFromMetallib(context, memory_buffer.data(), memory_buffer.size());
+            NewMetalLibraryFromMetallib(metalDevice, memory_buffer.data(), memory_buffer.size());
         auto cache_key =
             GenerateBlobCacheKeyForShaderLibrary(source, macros, disableFastMath, usesInvariance);
-        context->getDisplay()->getBlobCache()->put(cache_key, std::move(memory_buffer));
+        displayMtl->getBlobCache()->put(cache_key, std::move(memory_buffer));
         return entry.library;
     }
 
@@ -180,9 +180,9 @@ AutoObjCPtr<id<MTLLibrary>> LibraryCache::getOrCompileShaderLibrary(
             GenerateBlobCacheKeyForShaderLibrary(source, macros, disableFastMath, usesInvariance);
         egl::BlobCache::Value value;
         angle::ScratchBuffer scratch_buffer;
-        if (context->getDisplay()->getBlobCache()->get(&scratch_buffer, cache_key, &value))
+        if (displayMtl->getBlobCache()->get(&scratch_buffer, cache_key, &value))
         {
-            entry.library = NewMetalLibraryFromMetallib(context, value.data(), value.size());
+            entry.library = NewMetalLibraryFromMetallib(metalDevice, value.data(), value.size());
         }
         ANGLE_HISTOGRAM_BOOLEAN("GPU.ANGLE.MetalShaderInBlobCache", entry.library);
         ANGLEPlatformCurrent()->recordShaderCacheUse(entry.library);
@@ -192,7 +192,7 @@ AutoObjCPtr<id<MTLLibrary>> LibraryCache::getOrCompileShaderLibrary(
         }
     }
 
-    entry.library = CreateShaderLibrary(context->getMetalDevice(), *source, macros, disableFastMath,
+    entry.library = CreateShaderLibrary(metalDevice, *source, macros, disableFastMath,
                                         usesInvariance, errorOut);
     return entry.library;
 }

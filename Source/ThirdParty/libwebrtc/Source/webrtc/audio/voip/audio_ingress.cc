@@ -11,6 +11,7 @@
 #include "audio/voip/audio_ingress.h"
 
 #include <algorithm>
+#include <ctime>
 #include <utility>
 #include <vector>
 
@@ -50,7 +51,8 @@ AudioIngress::AudioIngress(
       rtp_receive_statistics_(receive_statistics),
       rtp_rtcp_(rtp_rtcp),
       acm_receiver_(CreateAcmConfig(decoder_factory)),
-      ntp_estimator_(clock) {}
+      ntp_estimator_(clock),
+      clock_(clock) {}
 
 AudioIngress::~AudioIngress() = default;
 
@@ -184,7 +186,8 @@ void AudioIngress::ReceivedRTPPacket(rtc::ArrayView<const uint8_t> rtp_packet) {
   auto data_view = rtc::ArrayView<const uint8_t>(payload, payload_data_length);
 
   // Push the incoming payload (parsed and ready for decoding) into the ACM.
-  if (acm_receiver_.InsertPacket(header, data_view) != 0) {
+  if (acm_receiver_.InsertPacket(header, data_view, clock_->CurrentTime()) !=
+      0) {
     RTC_DLOG(LS_ERROR) << "AudioIngress::ReceivedRTPPacket() unable to "
                           "push data to the ACM";
   }

@@ -34,6 +34,7 @@
 
 #if BUSE(LIBPAS)
 #include "TZoneHeapManager.h"
+#include "TZoneLog.h"
 #include "bmalloc_heap_ref.h"
 #endif
 
@@ -62,8 +63,6 @@ BEXPORT void tzoneDeallocate(void* ptr);
 
 using TZoneAnnotation = bmalloc_type;
 
-#define HEAP_DESCRIPTION_SPACE  __attribute__((used, section("__DATA_CONST,__tzone_descs")))
-
 static inline constexpr size_t roundUpToMulipleOf8(size_t x) { return ((x + 7) / 8) * 8; }
 
 // The name "LibPasBmallocHeapType" is important for the pas_status_reporter to work right.
@@ -81,13 +80,23 @@ struct TZoneHeapBase {
 
     static pas_heap_ref& provideHeap()
     {
-        static bmalloc_type HEAP_DESCRIPTION_SPACE type = BMALLOC_TYPE_INITIALIZER(roundUpToMulipleOf8(sizeof(LibPasBmallocHeapType)), roundUpToMulipleOf8(alignof(LibPasBmallocHeapType)), __PRETTY_FUNCTION__);
+        static bmalloc_type type = BMALLOC_TYPE_INITIALIZER(roundUpToMulipleOf8(sizeof(LibPasBmallocHeapType)), roundUpToMulipleOf8(alignof(LibPasBmallocHeapType)), __PRETTY_FUNCTION__);
         static pas_heap_ref* heap = nullptr;
 
         if (!heap)
             heap = TZoneHeapManager::getInstance().heapRefForTZoneType(&type);
 
         return *heap;
+    }
+
+    static pas_heap_ref& provideHeap(size_t differentSize)
+    {
+        bmalloc_type type = BMALLOC_TYPE_INITIALIZER((unsigned)roundUpToMulipleOf8(differentSize), roundUpToMulipleOf8(alignof(LibPasBmallocHeapType)), __PRETTY_FUNCTION__);
+
+        TZONE_LOG_DEBUG("Unannotated TZone type %s:%d:%s\n", __FILE__, __LINE__, __PRETTY_FUNCTION__);
+
+        //  &&&& Should we figure out a way to cache this different sized heap?
+        return *TZoneHeapManager::getInstance().heapRefForTZoneType(&type);
     }
 };
 
@@ -100,6 +109,12 @@ struct TZoneHeap : public TZoneHeapBase<LibPasBmallocHeapType> {
     void* allocate()
     {
         return tzoneAllocate(provideHeap());
+    }
+
+    \
+    void* allocate(size_t differentSize)
+    {
+        return tzoneAllocate(provideHeap(differentSize));
     }
 
     void* tryAllocate()

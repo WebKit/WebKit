@@ -16,6 +16,7 @@
 
 #include "absl/flags/flag.h"
 #include "absl/strings/string_view.h"
+#include "api/units/timestamp.h"
 #include "modules/audio_coding/neteq/default_neteq_factory.h"
 #include "modules/audio_coding/neteq/tools/neteq_quality_test.h"
 #include "modules/audio_coding/neteq/tools/output_audio_file.h"
@@ -415,7 +416,8 @@ int NetEqQualityTest::Transmit() {
     if (!PacketLost()) {
       int ret = neteq_->InsertPacket(
           rtp_header_,
-          rtc::ArrayView<const uint8_t>(payload_.data(), payload_size_bytes_));
+          rtc::ArrayView<const uint8_t>(payload_.data(), payload_size_bytes_),
+          Timestamp::Millis(packet_input_time_ms));
       if (ret != NetEq::kOK)
         return -1;
       Log() << "was sent.";

@@ -53,10 +53,6 @@ declare_args() {
 }
 
 declare_args() {
-  # If set to true, C++ code will refer to the new JNI Generator symbols.
-  # If set to false the old ones will be used (to provide a nice update path).
-  rtc_jni_generator_legacy_symbols = false
-
   # Setting this to true, will make RTC_DLOG() expand to log statements instead
   # of being removed by the preprocessor.
   # This is useful for example to be able to get RTC_DLOGs on a release build.
@@ -135,9 +131,6 @@ declare_args() {
   # Selects whether the audio processing module should be excluded.
   rtc_exclude_audio_processing_module = false
 
-  # Set this to true to enable BWE test logging.
-  rtc_enable_bwe_test_logging = false
-
   # Set this to false to skip building examples.
   rtc_build_examples = true
 
@@ -192,6 +185,9 @@ declare_args() {
   # bugs.webrtc.org/9213#c13 for more info.
   rtc_use_h264 =
       proprietary_codecs && !is_android && !is_ios && !(is_win && !is_clang)
+
+  # Use system OpenH264
+  rtc_system_openh264 = false
 
   # Enable to use H265
   if (build_with_chromium) {
@@ -419,21 +415,18 @@ set_defaults("rtc_library") {
   configs = rtc_add_configs
   public_deps = rtc_common_public_deps  # no-presubmit-check TODO(webrtc:8603)
   suppressed_configs = []
-  absl_deps = []
 }
 
 set_defaults("rtc_source_set") {
   configs = rtc_add_configs
   public_deps = rtc_common_public_deps  # no-presubmit-check TODO(webrtc:8603)
   suppressed_configs = []
-  absl_deps = []
 }
 
 set_defaults("rtc_static_library") {
   configs = rtc_add_configs
   public_deps = rtc_common_public_deps  # no-presubmit-check TODO(webrtc:8603)
   suppressed_configs = []
-  absl_deps = []
 }
 
 set_defaults("rtc_executable") {
@@ -561,17 +554,20 @@ template("rtc_test") {
       }
     }
 
-    # If absl_deps is [], no action is needed. If not [], then it needs to be
-    # converted to //third_party/abseil-cpp:absl when build_with_chromium=true
-    # otherwise it just needs to be added to deps.
-    if (defined(absl_deps) && absl_deps != []) {
-      if (!defined(deps)) {
+    assert(
+        !defined(absl_deps),
+        "`absl_deps` has been deprecated, add your Abseil dependencies to the `deps` variable.")
+
+    # Abseil dependencies need to be converted to //third_party/abseil-cpp:absl when build_with_chromium=true
+    if (build_with_chromium && defined(deps)) {
+      absl_dependencies =
+          filter_labels_include(deps, [ "//third_party/abseil-cpp/*" ])
+      if (absl_dependencies != []) {
+        filtered_deps =
+            filter_labels_exclude(deps, [ "//third_party/abseil-cpp/*" ])
         deps = []
-      }
-      if (build_with_chromium) {
+        deps = filtered_deps
         deps += [ "//third_party/abseil-cpp:absl" ]
-      } else {
-        deps += absl_deps
       }
     }
 
@@ -675,17 +671,20 @@ template("rtc_source_set") {
       public_configs += invoker.public_configs
     }
 
-    # If absl_deps is [], no action is needed. If not [], then it needs to be
-    # converted to //third_party/abseil-cpp:absl when build_with_chromium=true
-    # otherwise it just needs to be added to deps.
-    if (absl_deps != []) {
-      if (!defined(deps)) {
+    assert(
+        !defined(absl_deps),
+        "`absl_deps` has been deprecated, add your Abseil dependencies to the `deps` variable.")
+
+    # Abseil dependencies need to be converted to //third_party/abseil-cpp:absl when build_with_chromium=true
+    if (build_with_chromium && defined(deps)) {
+      absl_dependencies =
+          filter_labels_include(deps, [ "//third_party/abseil-cpp/*" ])
+      if (absl_dependencies != []) {
+        filtered_deps =
+            filter_labels_exclude(deps, [ "//third_party/abseil-cpp/*" ])
         deps = []
-      }
-      if (build_with_chromium) {
+        deps = filtered_deps
         deps += [ "//third_party/abseil-cpp:absl" ]
-      } else {
-        deps += absl_deps
       }
     }
   }
@@ -764,17 +763,20 @@ template("rtc_static_library") {
       public_configs += invoker.public_configs
     }
 
-    # If absl_deps is [], no action is needed. If not [], then it needs to be
-    # converted to //third_party/abseil-cpp:absl when build_with_chromium=true
-    # otherwise it just needs to be added to deps.
-    if (absl_deps != []) {
-      if (!defined(deps)) {
+    assert(
+        !defined(absl_deps),
+        "`absl_deps` has been deprecated, add your Abseil dependencies to the `deps` variable.")
+
+    # Abseil dependencies need to be converted to //third_party/abseil-cpp:absl when build_with_chromium=true
+    if (build_with_chromium && defined(deps)) {
+      absl_dependencies =
+          filter_labels_include(deps, [ "//third_party/abseil-cpp/*" ])
+      if (absl_dependencies != []) {
+        filtered_deps =
+            filter_labels_exclude(deps, [ "//third_party/abseil-cpp/*" ])
         deps = []
-      }
-      if (build_with_chromium) {
+        deps = filtered_deps
         deps += [ "//third_party/abseil-cpp:absl" ]
-      } else {
-        deps += absl_deps
       }
     }
   }
@@ -903,17 +905,20 @@ template("rtc_library") {
       public_configs += invoker.public_configs
     }
 
-    # If absl_deps is [], no action is needed. If not [], then it needs to be
-    # converted to //third_party/abseil-cpp:absl when build_with_chromium=true
-    # otherwise it just needs to be added to deps.
-    if (absl_deps != []) {
-      if (!defined(deps)) {
+    assert(
+        !defined(absl_deps),
+        "`absl_deps` has been deprecated, add your Abseil dependencies to the `deps` variable.")
+
+    # Abseil dependencies need to be converted to //third_party/abseil-cpp:absl when build_with_chromium=true
+    if (build_with_chromium && defined(deps)) {
+      absl_dependencies =
+          filter_labels_include(deps, [ "//third_party/abseil-cpp/*" ])
+      if (absl_dependencies != []) {
+        filtered_deps =
+            filter_labels_exclude(deps, [ "//third_party/abseil-cpp/*" ])
         deps = []
-      }
-      if (build_with_chromium) {
+        deps = filtered_deps
         deps += [ "//third_party/abseil-cpp:absl" ]
-      } else {
-        deps += absl_deps
       }
     }
   }

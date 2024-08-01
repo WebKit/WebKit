@@ -37,7 +37,7 @@
 #import <wtf/cf/TypeCastsCF.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
-#import <webrtc/sdk/WebKit/WebKitUtilities.h>
+#import <webrtc/webkit_sdk/WebKit/WebKitUtilities.h>
 ALLOW_UNUSED_PARAMETERS_END
 
 #import "CoreVideoSoftLink.h"

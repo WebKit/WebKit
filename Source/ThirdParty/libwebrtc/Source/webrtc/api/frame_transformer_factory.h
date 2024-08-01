@@ -12,12 +12,9 @@
 #define API_FRAME_TRANSFORMER_FACTORY_H_
 
 #include <memory>
-#include <vector>
 
 #include "api/frame_transformer_interface.h"
-#include "api/scoped_refptr.h"
-#include "api/video/encoded_frame.h"
-#include "api/video/video_frame_metadata.h"
+#include "rtc_base/system/rtc_export.h"
 
 // This file contains EXPERIMENTAL functions to create video frames from
 // either an old video frame or directly from parameters.

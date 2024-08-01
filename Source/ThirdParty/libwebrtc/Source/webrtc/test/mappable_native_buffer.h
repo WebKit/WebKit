@@ -71,7 +71,7 @@ class MappableNativeBuffer : public VideoFrameBuffer {
   bool DidConvertToI420() const;
 
  private:
-  friend class rtc::RefCountedObject<MappableNativeBuffer>;
+  friend class RefCountedObject<MappableNativeBuffer>;
 
   class ScaledBuffer : public VideoFrameBuffer {
    public:
@@ -97,7 +97,7 @@ class MappableNativeBuffer : public VideoFrameBuffer {
         rtc::ArrayView<VideoFrameBuffer::Type> types) override;
 
    private:
-    friend class rtc::RefCountedObject<ScaledBuffer>;
+    friend class RefCountedObject<ScaledBuffer>;
 
     const rtc::scoped_refptr<MappableNativeBuffer> parent_;
     const int width_;

@@ -243,7 +243,7 @@ namespace JSC { namespace B3 {
         RELEASE_ASSERT_NOT_REACHED(); \
     }
 
-ALWAYS_INLINE size_t Value::adjacencyListOffset() const
+ALWAYS_INLINE size_t Value::computeAdjacencyListOffset() const
 {
 #define VALUE_TYPE_SIZE(ValueType) sizeof(ValueType)
     DISPATCH_ON_KIND(VALUE_TYPE_SIZE);

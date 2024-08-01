@@ -1,0 +1,3 @@
+
+FAIL CSS Content Visibility: auto still anchors even if the anchor and positioned element are both skipped by the same element assert_equals: #positioned should be anchored because they are both on-screen. expected 209 but got 9
+

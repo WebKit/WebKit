@@ -147,7 +147,6 @@ void SimpleEncoderWrapper::Encode(
       svc_controller_->NextFrameConfig(force_keyframe);
   std::vector<FrameEncodeSettings> encode_settings;
   std::vector<GenericFrameInfo> frame_infos;
-  bool include_dependency_structure = false;
 
   for (size_t s = 0; s < configs.size(); ++s) {
     const ScalableVideoController::LayerFrameConfig& config = configs[s];
@@ -176,36 +175,46 @@ void SimpleEncoderWrapper::Encode(
 
     if (settings.reference_buffers.empty()) {
       settings.frame_type = FrameType::kKeyframe;
-      include_dependency_structure = true;
     }
 
-    absl::optional<FrameDependencyStructure> dependency_structure;
-    if (include_dependency_structure) {
-      dependency_structure = svc_controller_->DependencyStructure();
-    }
+    struct FrameOut : public VideoEncoderInterface::FrameOutput {
+      rtc::ArrayView<uint8_t> GetBitstreamOutputBuffer(DataSize size) override {
+        bitstream.resize(size.bytes());
+        return bitstream;
+      }
 
-    settings.result_callback =
-        [cb = callback, ds = std::move(dependency_structure),
-         info = std::move(frame_infos[settings.spatial_id])](
-            const VideoEncoderInterface::EncodeResult& result) mutable {
-          auto* data =
-              absl::get_if<VideoEncoderInterface::EncodedData>(&result);
+      void EncodeComplete(
+          const VideoEncoderInterface::EncodeResult& result) override {
+        auto* data = absl::get_if<VideoEncoderInterface::EncodedData>(&result);
 
-          EncodeResult res;
-          if (!data) {
-            res.oh_no = true;
-            cb(res);
-            return;
-          }
+        SimpleEncoderWrapper::EncodeResult res;
+        if (!data) {
+          res.oh_no = true;
+          callback(res);
+          return;
+        }
 
-          res.frame_type = data->frame_type;
-          res.bitstream_data = std::move(data->bitstream_data);
-          res.generic_frame_info = info;
-          if (res.frame_type == FrameType::kKeyframe) {
-            res.dependency_structure = ds;
-          }
-          cb(res);
-        };
+        res.frame_type = data->frame_type;
+        res.bitstream_data = std::move(bitstream);
+        res.generic_frame_info = frame_info;
+        if (res.frame_type == FrameType::kKeyframe) {
+          res.dependency_structure = svc_controller->DependencyStructure();
+        }
+        callback(res);
+      }
+      std::vector<uint8_t> bitstream;
+      EncodeResultCallback callback;
+      GenericFrameInfo frame_info;
+      ScalableVideoController* svc_controller;
+    };
+
+    auto out = std::make_unique<FrameOut>();
+
+    out->callback = callback;
+    out->frame_info = std::move(frame_infos[settings.spatial_id]);
+    out->svc_controller = svc_controller_.get();
+
+    settings.frame_output = std::move(out);
   }
 
   encoder_->Encode(std::move(frame_buffer),

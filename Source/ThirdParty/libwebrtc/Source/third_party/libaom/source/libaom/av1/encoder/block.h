@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -1324,6 +1324,9 @@ typedef struct macroblock {
   uint8_t color_sensitivity[MAX_MB_PLANE - 1];
   //! Coding block distortion value for uv/color, minimum over the inter modes.
   int64_t min_dist_inter_uv;
+
+  //! Threshold on the number of colors for testing palette mode.
+  int color_palette_thresh;
 
   //! The buffer used by search_tx_type() to swap dqcoeff in macroblockd_plane
   // so we can keep dqcoeff of the best tx_type.

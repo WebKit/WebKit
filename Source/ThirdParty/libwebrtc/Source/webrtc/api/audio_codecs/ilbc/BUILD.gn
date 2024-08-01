@@ -29,11 +29,10 @@ rtc_library("audio_encoder_ilbc") {
     "..:audio_codecs_api",
     "../../../api:field_trials_view",
     "../../../modules/audio_coding:ilbc",
+    "../../../rtc_base:checks",
     "../../../rtc_base:safe_conversions",
     "../../../rtc_base:safe_minmax",
     "../../../rtc_base:stringutils",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -50,8 +49,6 @@ rtc_library("audio_decoder_ilbc") {
     "..:audio_codecs_api",
     "../../../api:field_trials_view",
     "../../../modules/audio_coding:ilbc",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]

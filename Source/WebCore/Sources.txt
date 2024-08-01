@@ -1179,6 +1179,8 @@ dom/InlineStyleSheetOwner.cpp
 dom/InputEvent.cpp
 dom/InternalObserver.cpp
 dom/InternalObserverFromScript.cpp
+dom/InternalObserverFilter.cpp
+dom/InternalObserverMap.cpp
 dom/InternalObserverTake.cpp
 dom/KeyboardEvent.cpp
 dom/LiveNodeList.cpp
@@ -1207,7 +1209,6 @@ dom/NodeList.cpp
 dom/NodeRareData.cpp
 dom/NodeTraversal.cpp
 dom/Observable.cpp
-dom/OverflowEvent.cpp
 dom/PageTransitionEvent.cpp
 dom/PendingScript.cpp
 dom/PointerEvent.cpp
@@ -2711,6 +2712,7 @@ rendering/RenderHighlight.cpp
 rendering/RenderIFrame.cpp
 rendering/RenderImage.cpp
 rendering/RenderImageResource.cpp
+rendering/RenderImageResourceStyleImage.cpp
 rendering/RenderInline.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerBacking.cpp
@@ -2846,6 +2848,7 @@ rendering/style/StyleNonInheritedData.cpp
 rendering/style/StylePaintImage.cpp
 rendering/style/StyleRareInheritedData.cpp
 rendering/style/StyleRareNonInheritedData.cpp
+rendering/style/StyleScrollSnapPoints.cpp
 rendering/style/StyleSelfAlignmentData.cpp
 rendering/style/StyleSurroundData.cpp
 rendering/style/StyleTextBoxEdge.cpp
@@ -3936,6 +3939,7 @@ JSLandmarkType.cpp
 JSLatencyMode.cpp
 JSLocation.cpp
 JSLongRange.cpp
+JSMapperCallback.cpp
 JSMathMLElement.cpp
 JSMathMLMathElement.cpp
 JSManagedMediaSource.cpp
@@ -4065,7 +4069,6 @@ JSOscillatorType.cpp
 JSOverSampleType.cpp
 JSOverconstrainedError.cpp
 JSOverconstrainedErrorEvent.cpp
-JSOverflowEvent.cpp
 JSPageTransitionEvent.cpp
 JSPaintRenderingContext2D.cpp
 JSPaintWorkletGlobalScope.cpp
@@ -4131,6 +4134,7 @@ JSPopStateEvent.cpp
 JSPositionCallback.cpp
 JSPositionErrorCallback.cpp
 JSPositionOptions.cpp
+JSPredicateCallback.cpp
 JSPredefinedColorSpace.cpp
 JSProcessingInstruction.cpp
 JSProgressEvent.cpp

@@ -40,10 +40,6 @@ std::unique_ptr<PlatformDisplayGBM> PlatformDisplayGBM::create(struct gbm_device
 
 PlatformDisplayGBM::PlatformDisplayGBM(struct gbm_device* device)
 {
-#if PLATFORM(GTK)
-    PlatformDisplay::setSharedDisplayForCompositing(*this);
-#endif
-
     const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
     if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
         m_eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_KHR, device, nullptr);

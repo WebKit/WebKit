@@ -2145,8 +2145,7 @@ angle::Result WindowSurfaceVk::prePresentSubmit(ContextVk *contextVk,
 {
     vk::Renderer *renderer = contextVk->getRenderer();
 
-    SwapchainImage &image               = mSwapchainImages[mCurrentSwapchainImageIndex];
-    vk::Framebuffer &currentFramebuffer = chooseFramebuffer();
+    SwapchainImage &image = mSwapchainImages[mCurrentSwapchainImageIndex];
 
     // Make sure deferred clears are applied, if any.
     if (mColorImageMS.valid())
@@ -2178,8 +2177,7 @@ angle::Result WindowSurfaceVk::prePresentSubmit(ContextVk *contextVk,
     // swapchain image. MSAA resolve and overlay will insert another renderpass which disqualifies
     // the optimization.
     bool imageResolved = false;
-    if (currentFramebuffer.valid() &&
-        contextVk->hasStartedRenderPassWithSwapchainFramebuffer(currentFramebuffer))
+    if (contextVk->hasStartedRenderPassWithDefaultFramebuffer())
     {
         ANGLE_TRY(contextVk->optimizeRenderPassForPresent(&image.imageViews, image.image.get(),
                                                           &mColorImageMS, mSwapchainPresentMode,
@@ -2218,20 +2216,19 @@ angle::Result WindowSurfaceVk::prePresentSubmit(ContextVk *contextVk,
         mColorImageMS.resolve(image.image.get(), resolveRegion,
                               &commandBufferHelper->getCommandBuffer());
 
-        contextVk->trackImagesWithOutsideRenderPassEvent(&mColorImageMS, image.image.get());
         contextVk->getPerfCounters().swapchainResolveOutsideSubpass++;
-    }
-
-    if (renderer->getFeatures().supportsPresentation.enabled)
-    {
-        // This does nothing if it's already in the requested layout
-        image.image->recordReadBarrier(contextVk, VK_IMAGE_ASPECT_COLOR_BIT,
-                                       vk::ImageLayout::Present, commandBufferHelper);
     }
 
     // The overlay is drawn after this.  This ensures that drawing the overlay does not interfere
     // with other functionality, especially counters used to validate said functionality.
     const bool shouldDrawOverlay = overlayHasEnabledWidget(contextVk);
+
+    if (renderer->getFeatures().supportsPresentation.enabled && !shouldDrawOverlay)
+    {
+        // This does nothing if it's already in the requested layout
+        image.image->recordReadBarrier(contextVk, VK_IMAGE_ASPECT_COLOR_BIT,
+                                       vk::ImageLayout::Present, commandBufferHelper);
+    }
 
     ANGLE_TRY(contextVk->flushImpl(shouldDrawOverlay ? nullptr : &presentSemaphore, nullptr,
                                    RenderPassClosureReason::EGLSwapBuffers));
@@ -2240,6 +2237,14 @@ angle::Result WindowSurfaceVk::prePresentSubmit(ContextVk *contextVk,
     {
         updateOverlay(contextVk);
         ANGLE_TRY(drawOverlay(contextVk, &image));
+
+        if (renderer->getFeatures().supportsPresentation.enabled)
+        {
+            ANGLE_TRY(contextVk->getOutsideRenderPassCommandBufferHelper({}, &commandBufferHelper));
+            image.image->recordReadBarrier(contextVk, VK_IMAGE_ASPECT_COLOR_BIT,
+                                           vk::ImageLayout::Present, commandBufferHelper);
+        }
+
         ANGLE_TRY(contextVk->flushImpl(&presentSemaphore, nullptr,
                                        RenderPassClosureReason::AlreadySpecifiedElsewhere));
     }
@@ -2354,8 +2359,18 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
 
     renderer->queuePresent(contextVk, contextVk->getPriority(), presentInfo, &mSwapchainStatus);
 
-    // Set FrameNumber for the presented image.
-    mSwapchainImages[mCurrentSwapchainImageIndex].frameNumber = mFrameCount++;
+    // EGL_EXT_buffer_age
+    // 4) What is the buffer age of a single buffered surface?
+    //     RESOLVED: 0.  This falls out implicitly from the buffer age
+    //     calculations, which dictate that a buffer's age starts at 0,
+    //     and is only incremented by frame boundaries.  Since frame
+    //     boundary functions do not affect single buffered surfaces,
+    //     their age will always be 0.
+    if (!isSharedPresentMode())
+    {
+        // Set FrameNumber for the presented image.
+        mSwapchainImages[mCurrentSwapchainImageIndex].frameNumber = mFrameCount++;
+    }
 
     // Place the semaphore in the present history.  Schedule pending old swapchains to be destroyed
     // at the same time the semaphore for this present can be destroyed.
@@ -2984,6 +2999,8 @@ angle::Result WindowSurfaceVk::getCurrentFramebuffer(ContextVk *contextVk,
                                                      const vk::RenderPass &compatibleRenderPass,
                                                      vk::Framebuffer *framebufferOut)
 {
+    ASSERT(!contextVk->getFeatures().preferDynamicRendering.enabled);
+
     // FramebufferVk dirty-bit processing should ensure that a new image was acquired.
     ASSERT(!needsAcquireImageOrProcessResult());
 

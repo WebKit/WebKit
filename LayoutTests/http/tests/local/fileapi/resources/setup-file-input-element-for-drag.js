@@ -49,11 +49,11 @@ function setFileInputChangeCallback(fileInputChangeCallbackFunc)
     fileInputChangeCallback = fileInputChangeCallbackFunc;
 }
 
-function moveMouseToCenterOfElement(element)
+async function moveMouseToCenterOfElement(element)
 {
     var centerX = element.offsetLeft + element.offsetWidth / 2;
     var centerY = element.offsetTop + element.offsetHeight / 2;
-    eventSender.mouseMoveTo(centerX, centerY);
+    await eventSender.asyncMouseMoveTo(centerX, centerY);
 }
 
 function removeFileInputElement()

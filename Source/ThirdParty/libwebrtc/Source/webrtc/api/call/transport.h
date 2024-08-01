@@ -11,7 +11,6 @@
 #ifndef API_CALL_TRANSPORT_H_
 #define API_CALL_TRANSPORT_H_
 
-#include <stddef.h>
 #include <stdint.h>
 
 #include "api/array_view.h"

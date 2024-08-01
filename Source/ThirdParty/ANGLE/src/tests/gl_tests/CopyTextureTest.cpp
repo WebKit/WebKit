@@ -3005,6 +3005,109 @@ TEST_P(CopyTextureTestES3, DrawThenCopyThenBlend)
                          GLColor::transparentBlack);
 }
 
+// Test that copy multiple slices between 2D_ARRAY and 3D textures work when their texture formats
+// are different.
+// Simplified from
+// dEQP-GLES31.functional.copy_image.non_compressed.viewclass_128_bits.rgba32f_rgba32i.texture2d_array_to_texture3d
+TEST_P(CopyTextureTestES3, TextureCopyMultipleSlicesBetween2DArrayAnd3D)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_copy_image"));
+
+    constexpr GLColor32F kFloatYellow          = {1.0f, 1.0f, 0.0f, 1.0f};
+    constexpr GLColor32I kIntBlue              = {0, 0, 255, 255};
+    constexpr GLColor32I kIntGreen             = {0, 255, 0, 255};
+    constexpr GLsizei kTexWidth                = 16;
+    constexpr GLsizei kTexHeight               = 16;
+    constexpr int32_t kIntEquivalentOfFloatOne = 1065353216;
+
+    GLTexture tex2DArray;
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    ASSERT_GL_NO_ERROR();
+    glBindTexture(GL_TEXTURE_2D_ARRAY, tex2DArray);
+    std::vector<GLColor32F> tex2DArraySlice0(kTexWidth * kTexHeight, kFloatRed);
+    std::vector<GLColor32F> tex2DArraySlice1(kTexWidth * kTexHeight, kFloatYellow);
+    std::vector<GLColor32F> tex2DArrayPixels(kTexWidth * kTexHeight * 2);
+    auto pos = tex2DArrayPixels.begin();
+    tex2DArrayPixels.insert(pos, tex2DArraySlice1.begin(), tex2DArraySlice1.end());
+    pos = tex2DArrayPixels.begin();
+    tex2DArrayPixels.insert(pos, tex2DArraySlice0.begin(), tex2DArraySlice0.end());
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA32F, kTexWidth, kTexHeight, 2, 0, GL_RGBA, GL_FLOAT,
+                 tex2DArrayPixels.data());
+    ASSERT_GL_NO_ERROR();
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+    glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+
+    GLTexture tex3D;
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    ASSERT_GL_NO_ERROR();
+    glBindTexture(GL_TEXTURE_3D, tex3D);
+    std::vector<GLColor32I> tex3DSlice0(kTexWidth * kTexHeight, kIntBlue);
+    std::vector<GLColor32I> tex3DSlice1(kTexWidth * kTexHeight, kIntGreen);
+    std::vector<GLColor32I> tex3DPixels(kTexWidth * kTexHeight * 2);
+    auto pos2 = tex3DPixels.begin();
+    tex3DPixels.insert(pos2, tex3DSlice1.begin(), tex3DSlice1.end());
+    pos2 = tex3DPixels.begin();
+    tex3DPixels.insert(pos2, tex3DSlice0.begin(), tex3DSlice0.end());
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA32I, kTexWidth, kTexHeight, 2, 0, GL_RGBA_INTEGER, GL_INT,
+                 tex3DPixels.data());
+    ASSERT_GL_NO_ERROR();
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+    glBindTexture(GL_TEXTURE_3D, 0);
+
+    // Verify color before copy
+    GLFramebuffer FBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex2DArray, 0, 0);
+    EXPECT_PIXEL_RECT32F_EQ(0, 0, kTexWidth, kTexHeight, kFloatRed);
+
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex2DArray, 0, 1);
+    EXPECT_PIXEL_RECT32F_EQ(0, 0, kTexWidth, kTexHeight, kFloatYellow);
+
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex3D, 0, 0);
+    EXPECT_PIXEL_RECT32I_EQ(0, 0, kTexWidth, kTexHeight, kIntBlue);
+
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex3D, 0, 1);
+    EXPECT_PIXEL_RECT32I_EQ(0, 0, kTexWidth, kTexHeight, kIntGreen);
+
+    // Copy GL_TEXTURE_2D_ARRAY to GL_TEXTURE_3D with copy size = (texWidth, texHeight/2, 2)
+    glCopyImageSubDataEXT(tex2DArray, GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, tex3D, GL_TEXTURE_3D, 0, 0,
+                          0, 0, kTexWidth, kTexHeight / 2, 2);
+
+    // Verify colors after copy
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    // verify tex2DArray
+    // layer 0 should remain unchanged
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex2DArray, 0, 0);
+    EXPECT_PIXEL_RECT32F_EQ(0, 0, kTexWidth, kTexHeight, kFloatRed);
+    // layer 1 should remain unchanged
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex2DArray, 0, 1);
+    EXPECT_PIXEL_RECT32F_EQ(0, 0, kTexWidth, kTexHeight, kFloatYellow);
+
+    // verify tex3D content
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex3D, 0, 0);
+    // part of tex3D slice 0 should contain the copied content from tex2DArray layer 0
+    EXPECT_PIXEL_RECT32I_EQ(0, 0, kTexWidth, kTexHeight / 2,
+                            GLColor32I(kIntEquivalentOfFloatOne, 0, 0, kIntEquivalentOfFloatOne));
+    // part of tex3D slice 0 should remain unchanged
+    EXPECT_PIXEL_RECT32I_EQ(0, kTexHeight / 2, kTexWidth, kTexHeight / 2, kIntBlue);
+    // verify slice 1
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex3D, 0, 1);
+    // part of tex3D slice 1 should contain the copied content from tex2DArray layer 1
+    EXPECT_PIXEL_RECT32I_EQ(0, 0, kTexWidth, kTexHeight / 2,
+                            GLColor32I(kIntEquivalentOfFloatOne, kIntEquivalentOfFloatOne, 0,
+                                       kIntEquivalentOfFloatOne));
+    // part of tex3D slice 1 should remain unchanged
+    EXPECT_PIXEL_RECT32I_EQ(0, kTexHeight / 2, kTexWidth, kTexHeight / 2, kIntGreen);
+}
+
 ANGLE_INSTANTIATE_TEST_ES2(CopyTextureTest);
 ANGLE_INSTANTIATE_TEST_COMBINE_6(CopyTextureVariationsTest,
                                  CopyTextureVariationsTestPrint,

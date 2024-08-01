@@ -80,6 +80,7 @@ OPENSSL_INLINE int sha512_hw_capable(void) {
 
 #define SHA1_ASM_NOHW
 #define SHA256_ASM_NOHW
+#define SHA512_ASM_NOHW
 
 #define SHA1_ASM_SSSE3
 OPENSSL_INLINE int sha1_ssse3_capable(void) {
@@ -127,10 +128,14 @@ OPENSSL_INLINE int sha256_avx_capable(void) {
 void sha256_block_data_order_avx(uint32_t state[8], const uint8_t *data,
                                  size_t num);
 
-// TODO(crbug.com/boringssl/673): Move the remaining CPU dispatch to C.
-#define SHA512_ASM
-void sha512_block_data_order(uint64_t state[8], const uint8_t *data,
-                             size_t num_blocks);
+#define SHA512_ASM_SSSE3
+OPENSSL_INLINE int sha512_ssse3_capable(void) {
+  // TODO(davidben): Do we need to check the FXSR bit? The Intel manual does not
+  // say to.
+  return CRYPTO_is_SSSE3_capable() && CRYPTO_is_FXSR_capable();
+}
+void sha512_block_data_order_ssse3(uint64_t state[8], const uint8_t *data,
+                                   size_t num);
 
 #elif !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64)
 

@@ -29,7 +29,7 @@
 #include "config.h"
 #include "NavigationAction.h"
 
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "FrameLoader.h"
 #include "HistoryItem.h"
 #include "LocalFrame.h"

@@ -41,7 +41,6 @@ class StyleCachedImage final : public StyleImage {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<StyleCachedImage> create(Ref<CSSImageValue>, float scaleFactor = 1);
-    static Ref<StyleCachedImage> create(CachedImage&, float scaleFactor = 1);
     static Ref<StyleCachedImage> copyOverridingScaleFactor(StyleCachedImage&, float scaleFactor);
     virtual ~StyleCachedImage();
 
@@ -59,12 +58,12 @@ public:
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     bool isLoaded(const RenderElement*) const final;
     bool errorOccurred() const final;
-    FloatSize imageSize(const RenderElement*, float multiplier, CachedImage::SizeType = CachedImage::UsedSize) const final;
+    FloatSize imageSize(const RenderElement*, float multiplier) const final;
     bool imageHasRelativeWidth() const final;
     bool imageHasRelativeHeight() const final;
     void computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) final;
     bool usesImageContainerSize() const final;
-    void setContainerContextForRenderer(const RenderElement&, const FloatSize&, float, const URL& = URL()) final;
+    void setContainerContextForRenderer(const RenderElement&, const FloatSize&, float) final;
     void addClient(RenderElement&) final;
     void removeClient(RenderElement&) final;
     bool hasClient(RenderElement&) const final;
@@ -80,7 +79,6 @@ public:
 
 private:
     StyleCachedImage(Ref<CSSImageValue>&&, float);
-    StyleCachedImage(CachedImage&, float);
 
     LegacyRenderSVGResourceContainer* uncheckedRenderSVGResource(TreeScope&, const AtomString& fragment) const;
     LegacyRenderSVGResourceContainer* uncheckedRenderSVGResource(const RenderElement*) const;

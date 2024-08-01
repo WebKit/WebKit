@@ -237,6 +237,45 @@ void main() {
         "cannot convert from 'void' to 'highp 3-component vector of float'"));
 }
 
+// Tests that usage of BuildIn struct type name does not crash during parsing.
+TEST_F(ParseTest, BuildInStructTypeNameDeclarationNoCrash)
+{
+    mCompileOptions.validateAST = 1;
+    const char kShader[]        = R"(
+void main() {
+gl_DepthRangeParameters testVariable;
+})";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("reserved built-in name"));
+}
+
+TEST_F(ParseTest, BuildInStructTypeNameFunctionArgumentNoCrash)
+{
+    mCompileOptions.validateAST = 1;
+    const char kShader[]        = R"(
+void testFunction(gl_DepthRangeParameters testParam){}
+void main() {
+testFunction(gl_DepthRange);
+})";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("reserved built-in name"));
+}
+
+TEST_F(ParseTest, BuildInStructTypeNameFunctionReturnValueNoCrash)
+{
+    mCompileOptions.validateAST = 1;
+    const char kShader[]        = R"(
+gl_DepthRangeParameters testFunction(){return gl_DepthRange;}
+void main() {
+testFunction();
+})";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("reserved built-in name"));
+}
+
 // Tests that imod of const void variable does not crash during parsing.
 TEST_F(ParseTest, ConstStructVoidAndImodAndNoCrash)
 {

@@ -359,6 +359,10 @@ public:
             return WebKit2PlatformTouchPoint(touchPoint);
         });
 
+        m_coalescedEvents = WTF::map(webEvent.coalescedEvents(), [&](auto& event) {
+            return platform(event);
+        });
+
         m_gestureScale = webEvent.gestureScale();
         m_gestureRotation = webEvent.gestureRotation();
         m_canPreventNativeGestures = webEvent.canPreventNativeGestures();

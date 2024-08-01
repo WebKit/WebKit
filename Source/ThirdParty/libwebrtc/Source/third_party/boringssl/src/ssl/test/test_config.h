@@ -67,9 +67,12 @@ struct TestConfig {
   std::string expect_certificate_types;
   bool require_any_client_certificate = false;
   std::string advertise_npn;
+  bool advertise_empty_npn = false;
   std::string expect_next_proto;
+  bool expect_no_next_proto = false;
   bool false_start = false;
   std::string select_next_proto;
+  bool select_empty_next_proto = false;
   bool async = false;
   bool write_different_record_sizes = false;
   bool cbc_record_splitting = false;

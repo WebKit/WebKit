@@ -1862,7 +1862,8 @@ group("angle_tests") {
   }
   if (build_angle_trace_tests) {
     deps += [ ":angle_trace_perf_tests" ]
-    deps += [ "capture_tests:angle_capture_tests_trace" ]
+    deps += [ "capture_tests:angle_capture_tests_multi_frame_trace" ]
+    deps += [ "capture_tests:angle_capture_tests_active_textures_trace" ]
   }
   if (is_clang) {
     deps += [ "capture_replay_tests" ]

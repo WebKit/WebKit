@@ -14,6 +14,8 @@
 #include <memory>
 #include <vector>
 
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -40,11 +42,12 @@ TEST_P(AudioEncoderFactoryTest, CanQueryAllSupportedFormats) {
 }
 
 TEST_P(AudioEncoderFactoryTest, CanConstructAllSupportedEncoders) {
+  const Environment env = CreateEnvironment();
   auto factory = GetParam();
   auto supported_encoders = factory->GetSupportedEncoders();
   for (const auto& spec : supported_encoders) {
     auto info = factory->QueryAudioEncoder(spec.format);
-    auto encoder = factory->MakeAudioEncoder(127, spec.format, absl::nullopt);
+    auto encoder = factory->Create(env, spec.format, {.payload_type = 127});
     EXPECT_TRUE(encoder);
     EXPECT_EQ(encoder->SampleRateHz(), info->sample_rate_hz);
     EXPECT_EQ(encoder->NumChannels(), info->num_channels);
@@ -54,11 +57,18 @@ TEST_P(AudioEncoderFactoryTest, CanConstructAllSupportedEncoders) {
 
 TEST_P(AudioEncoderFactoryTest, CanRunAllSupportedEncoders) {
   constexpr int kTestPayloadType = 127;
+  const Environment env = CreateEnvironment();
   auto factory = GetParam();
   auto supported_encoders = factory->GetSupportedEncoders();
   for (const auto& spec : supported_encoders) {
+// TODO(bugs.webrtc.org/345525069): Either fix/enable or remove G722.
+#if defined(__has_feature) && __has_feature(undefined_behavior_sanitizer)
+    if (spec.format.name == "G722") {
+      GTEST_SKIP() << "Skipping G722, see webrtc:345525069.";
+    }
+#endif
     auto encoder =
-        factory->MakeAudioEncoder(kTestPayloadType, spec.format, absl::nullopt);
+        factory->Create(env, spec.format, {.payload_type = kTestPayloadType});
     EXPECT_TRUE(encoder);
     encoder->Reset();
     const int num_samples = rtc::checked_cast<int>(
@@ -147,6 +157,7 @@ TEST(BuiltinAudioEncoderFactoryTest, SupportsTheExpectedFormats) {
 
 // Tests that using more channels than the maximum does not work.
 TEST(BuiltinAudioEncoderFactoryTest, MaxNrOfChannels) {
+  const Environment env = CreateEnvironment();
   rtc::scoped_refptr<AudioEncoderFactory> aef =
       CreateBuiltinAudioEncoderFactory();
   std::vector<std::string> codecs = {
@@ -167,11 +178,10 @@ TEST(BuiltinAudioEncoderFactoryTest, MaxNrOfChannels) {
   };
 
   for (auto codec : codecs) {
-    EXPECT_FALSE(aef->MakeAudioEncoder(
-        /*payload_type=*/111,
-        /*format=*/
+    EXPECT_FALSE(aef->Create(
+        env, /*format=*/
         SdpAudioFormat(codec, 32000, AudioEncoder::kMaxNumberOfChannels + 1),
-        /*codec_pair_id=*/absl::nullopt));
+        {.payload_type = 111}));
   }
 }
 

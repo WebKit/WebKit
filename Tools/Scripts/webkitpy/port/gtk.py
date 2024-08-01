@@ -181,17 +181,7 @@ class GtkPort(GLibPort):
         if os.environ.get("WEBKIT_MINI_BROWSER_PREFIX"):
             command = shlex.split(os.environ["WEBKIT_MINI_BROWSER_PREFIX"]) + command
 
-        env = self.setup_environ_for_minibrowser()
-        pass_fds = ()
-        if os.environ.get("SYSPROF_CONTROL_FD"):
-            try:
-                control_fd = int(os.environ.get("SYSPROF_CONTROL_FD"))
-                copy_fd = os.dup(control_fd)
-                pass_fds += (copy_fd, )
-                env["SYSPROF_CONTROL_FD"] = str(copy_fd)
-
-            except (ValueError):
-                pass
+        env, pass_fds = self.setup_sysprof_for_minibrowser()
 
         if self._should_use_jhbuild():
             command = self._jhbuild_wrapper + command

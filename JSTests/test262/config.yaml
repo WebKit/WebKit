@@ -14,6 +14,7 @@ flags:
   promise-with-resolvers: usePromiseWithResolversMethod
   promise-try: usePromiseTryMethod
   uint8array-base64: useUint8ArrayBase64Methods
+  RegExp.escape: useRegExpEscape
 skip:
   features:
     - callable-boundary-realms

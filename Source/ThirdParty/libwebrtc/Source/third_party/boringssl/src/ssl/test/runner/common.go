@@ -215,6 +215,9 @@ const (
 	signatureEd25519 signatureAlgorithm = 0x0807
 	signatureEd448   signatureAlgorithm = 0x0808
 
+	// draft-ietf-tls-tls13-pkcs1-00
+	signatureRSAPKCS1WithSHA256Legacy signatureAlgorithm = 0x0420
+
 	// signatureRSAPKCS1WithMD5AndSHA1 is the internal value BoringSSL uses to
 	// represent the TLS 1.0/1.1 RSA MD5/SHA1 concatenation. We define the
 	// constant here to test that this doesn't leak into the protocol.
@@ -454,6 +457,14 @@ type Config struct {
 
 	// NextProtos is a list of supported, application level protocols.
 	NextProtos []string
+
+	// NoFallbackNextProto, if true, causes the client to decline to pick an NPN
+	// protocol, instead of picking an opportunistic, fallback protocol.
+	NoFallbackNextProto bool
+
+	// NegotiateNPNWithNoProtos, if true, causes the server to negotiate NPN
+	// despite having no protocols configured.
+	NegotiateNPNWithNoProtos bool
 
 	// ApplicationSettings is a set of application settings to use which each
 	// application protocol.

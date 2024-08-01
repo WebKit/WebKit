@@ -32,6 +32,7 @@
 
 namespace WebCore {
 class NotificationResources;
+class SecurityOriginData;
 struct NotificationData;
 }
 
@@ -46,6 +47,7 @@ public:
     virtual void clearNotifications(const Vector<WTF::UUID>& notificationIDs) = 0;
     virtual void didDestroyNotification(const WTF::UUID& notificationID) = 0;
     virtual void pageWasNotifiedOfNotificationPermission() = 0;
+    virtual void requestPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&&) = 0;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);

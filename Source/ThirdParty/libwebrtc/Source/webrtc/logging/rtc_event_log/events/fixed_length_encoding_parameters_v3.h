@@ -11,6 +11,8 @@
 #ifndef LOGGING_RTC_EVENT_LOG_EVENTS_FIXED_LENGTH_ENCODING_PARAMETERS_V3_H_
 #define LOGGING_RTC_EVENT_LOG_EVENTS_FIXED_LENGTH_ENCODING_PARAMETERS_V3_H_
 
+#include <cstdint>
+
 #include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "logging/rtc_event_log/events/rtc_event_field_extraction.h"

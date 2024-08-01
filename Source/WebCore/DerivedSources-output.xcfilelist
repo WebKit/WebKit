@@ -1755,6 +1755,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSManagedMediaSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSManagedMediaSource.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSManagedSourceBuffer.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSManagedSourceBuffer.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMapperCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMapperCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMathMLElementWrapperFactory.cpp
@@ -2099,8 +2101,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOverconstrainedError.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOverconstrainedError.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOverconstrainedErrorEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOverconstrainedErrorEvent.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOverflowEvent.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOverflowEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPageTransitionEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPageTransitionEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPaintRenderingContext2D.cpp
@@ -2241,6 +2241,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPositionErrorCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPositionErrorCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPositionOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPositionOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPredicateCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPredicateCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPredefinedColorSpace.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPredefinedColorSpace.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSProcessingInstruction.cpp

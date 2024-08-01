@@ -14,6 +14,7 @@
 #include <stdint.h>
 
 #include <limits>
+#include <type_traits>
 
 #include "absl/types/optional.h"
 #include "rtc_base/numerics/sequence_number_util.h"

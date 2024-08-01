@@ -16,8 +16,8 @@ rtc_source_set("rtp_source") {
     "../../../api/units:time_delta",
     "../../../api/units:timestamp",
     "../../../rtc_base:checks",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_source_set("dependency_descriptor") {
@@ -29,10 +29,8 @@ rtc_source_set("dependency_descriptor") {
   deps = [
     "../../../rtc_base:checks",
     "../../video:render_resolution",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/container:inlined_vector",
-    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/strings:string_view",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }

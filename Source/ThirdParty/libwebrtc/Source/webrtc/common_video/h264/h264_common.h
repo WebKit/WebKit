@@ -33,6 +33,9 @@ const size_t kNaluShortStartSequenceSize = 3;
 // The size of the NALU type byte (1).
 const size_t kNaluTypeSize = 1;
 
+// Maximum reference index for reference pictures.
+constexpr int kMaxReferenceIndex = 31;
+
 enum NaluType : uint8_t {
   kSlice = 1,
   kIdr = 5,
@@ -60,8 +63,14 @@ struct NaluIndex {
 };
 
 // Returns a vector of the NALU indices in the given buffer.
-RTC_EXPORT std::vector<NaluIndex> FindNaluIndices(const uint8_t* buffer,
-                                                  size_t buffer_size);
+RTC_EXPORT std::vector<NaluIndex> FindNaluIndices(
+    rtc::ArrayView<const uint8_t> buffer);
+
+// TODO: bugs.webrtc.org/42225170 - Deprecate.
+inline std::vector<NaluIndex> FindNaluIndices(const uint8_t* buffer,
+                                              size_t buffer_size) {
+  return FindNaluIndices(rtc::MakeArrayView(buffer, buffer_size));
+}
 
 // Get the NAL type from the header byte immediately following start sequence.
 RTC_EXPORT NaluType ParseNaluType(uint8_t data);
@@ -80,12 +89,24 @@ RTC_EXPORT NaluType ParseNaluType(uint8_t data);
 // the 03 emulation byte.
 
 // Parse the given data and remove any emulation byte escaping.
-std::vector<uint8_t> ParseRbsp(const uint8_t* data, size_t length);
+std::vector<uint8_t> ParseRbsp(rtc::ArrayView<const uint8_t> data);
+
+// TODO: bugs.webrtc.org/42225170 - Deprecate.
+inline std::vector<uint8_t> ParseRbsp(const uint8_t* data, size_t length) {
+  return ParseRbsp(rtc::MakeArrayView(data, length));
+}
 
 // Write the given data to the destination buffer, inserting and emulation
 // bytes in order to escape any data the could be interpreted as a start
 // sequence.
-void WriteRbsp(const uint8_t* bytes, size_t length, rtc::Buffer* destination);
+void WriteRbsp(rtc::ArrayView<const uint8_t> bytes, rtc::Buffer* destination);
+
+// TODO: bugs.webrtc.org/42225170 - Deprecate.
+inline void WriteRbsp(const uint8_t* bytes,
+                      size_t length,
+                      rtc::Buffer* destination) {
+  WriteRbsp(rtc::MakeArrayView(bytes, length), destination);
+}
 }  // namespace H264
 }  // namespace webrtc
 

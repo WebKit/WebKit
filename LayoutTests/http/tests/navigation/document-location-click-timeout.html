@@ -2,14 +2,14 @@
 <head>
 <script src="resources/document-location.js"></script>
 <script>
-  function runTest() {
+  async function runTest() {
     // Simulate clicking the Navigate button.
     var button = document.getElementById("navigate");
     var x = button.offsetLeft + button.offsetWidth / 2;
     var y = button.offsetTop + button.offsetHeight / 2;
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown(); 
-    eventSender.mouseUp(); 
+    await eventSender.asyncMouseMoveTo(x, y);
+    await eventSender.asyncMouseDown(); 
+    await eventSender.asyncMouseUp(); 
   }
 </script>
 </head>

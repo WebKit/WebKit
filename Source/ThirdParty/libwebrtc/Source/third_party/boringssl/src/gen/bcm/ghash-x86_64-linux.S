@@ -612,6 +612,7 @@ _CET_ENDBR
 .align	32
 gcm_init_avx:
 .cfi_startproc	
+
 _CET_ENDBR
 	vzeroupper
 
@@ -734,6 +735,7 @@ _CET_ENDBR
 .align	32
 gcm_ghash_avx:
 .cfi_startproc	
+
 _CET_ENDBR
 	vzeroupper
 

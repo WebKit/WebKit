@@ -44,6 +44,7 @@ struct gbm_bo;
 #endif
 
 namespace WebCore {
+class GLFence;
 class Region;
 class ShareableBitmap;
 class ShareableBitmapHandle;
@@ -90,7 +91,7 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void releaseBuffer(uint64_t);
+    void releaseBuffer(uint64_t, WTF::UnixFileDescriptor&&);
     void frameDone();
     void releaseUnusedBuffersTimerFired();
 
@@ -104,12 +105,19 @@ private:
         virtual void willRenderFrame() const;
         virtual void didRenderFrame() { }
 
+        std::unique_ptr<WebCore::GLFence> createRenderingFence(bool) const;
+        void setReleaseFenceFD(UnixFileDescriptor&&);
+        void waitRelease();
+
     protected:
         RenderTarget(uint64_t, const WebCore::IntSize&);
+
+        virtual bool supportsExplicitSync() const = 0;
 
         uint64_t m_id { 0 };
         uint64_t m_surfaceID { 0 };
         unsigned m_depthStencilBuffer { 0 };
+        UnixFileDescriptor m_releaseFenceFD;
     };
 
     class RenderTargetColorBuffer : public RenderTarget {
@@ -161,6 +169,8 @@ private:
         ~RenderTargetEGLImage();
 
     private:
+        bool supportsExplicitSync() const override { return true; }
+
         EGLImage m_image { nullptr };
     };
 #endif
@@ -172,6 +182,7 @@ private:
         ~RenderTargetSHMImage() = default;
 
     private:
+        bool supportsExplicitSync() const override { return false; }
         void didRenderFrame() override;
 
         Ref<WebCore::ShareableBitmap> m_bitmap;
@@ -184,6 +195,7 @@ private:
         ~RenderTargetTexture();
 
     private:
+        bool supportsExplicitSync() const override { return true; }
         void willRenderFrame() const override;
 
         unsigned m_texture { 0 };
@@ -207,7 +219,7 @@ private:
         Type type() const { return m_type; }
         void resize(const WebCore::IntSize&);
         RenderTarget* nextTarget();
-        void releaseTarget(uint64_t);
+        void releaseTarget(uint64_t, UnixFileDescriptor&& releaseFence);
         void reset();
         void releaseUnusedBuffers();
 
@@ -239,6 +251,7 @@ private:
     SwapChain m_swapChain;
     RenderTarget* m_target { nullptr };
     bool m_isVisible { false };
+    bool m_useExplicitSync { false };
     std::unique_ptr<RunLoop::Timer> m_releaseUnusedBuffersTimer;
 };
 

@@ -307,6 +307,10 @@ static int base64_decode_quad(uint8_t *out, size_t *out_num_bytes,
                                    (in[2] == '=') << 1 |
                                    (in[3] == '=');
 
+  // In presence of padding, the lowest bits of v are unused. Canonical encoding
+  // (RFC 4648, section 3.5) requires that these bits all be set to zero. Common
+  // PEM parsers accept noncanonical base64, adding to the malleability of the
+  // format. This decoder follows OpenSSL's and Go's PEM parsers and accepts it.
   switch (padding_pattern) {
     case 0:
       // The common case of no padding.

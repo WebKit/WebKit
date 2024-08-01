@@ -63,17 +63,15 @@ namespace webrtc {
 // http://www.itu.int/rec/T-REC-H.265
 
 absl::optional<H265PpsParser::PpsState> H265PpsParser::ParsePps(
-    const uint8_t* data,
-    size_t length,
+    rtc::ArrayView<const uint8_t> data,
     const H265SpsParser::SpsState* sps) {
   // First, parse out rbsp, which is basically the source buffer minus emulation
   // bytes (the last byte of a 0x00 0x00 0x03 sequence). RBSP is defined in
   // section 7.3.1.1 of the H.265 standard.
-  return ParseInternal(H265::ParseRbsp(data, length), sps);
+  return ParseInternal(H265::ParseRbsp(data), sps);
 }
 
-bool H265PpsParser::ParsePpsIds(const uint8_t* data,
-                                size_t length,
+bool H265PpsParser::ParsePpsIds(rtc::ArrayView<const uint8_t> data,
                                 uint32_t* pps_id,
                                 uint32_t* sps_id) {
   RTC_DCHECK(pps_id);
@@ -81,7 +79,7 @@ bool H265PpsParser::ParsePpsIds(const uint8_t* data,
   // First, parse out rbsp, which is basically the source buffer minus emulation
   // bytes (the last byte of a 0x00 0x00 0x03 sequence). RBSP is defined in
   // section 7.3.1.1 of the H.265 standard.
-  std::vector<uint8_t> unpacked_buffer = H265::ParseRbsp(data, length);
+  std::vector<uint8_t> unpacked_buffer = H265::ParseRbsp(data);
   BitstreamReader reader(unpacked_buffer);
   *pps_id = reader.ReadExponentialGolomb();
   IN_RANGE_OR_RETURN_FALSE(*pps_id, 0, 63);

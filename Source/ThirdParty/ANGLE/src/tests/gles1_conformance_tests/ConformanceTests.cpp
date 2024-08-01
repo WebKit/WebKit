@@ -426,11 +426,17 @@ TEST_P(GLES1ConformanceTest, SpotPos)
 
 TEST_P(GLES1ConformanceTest, SpotExpPos)
 {
+    // Fails on UHD 770 driver 31.0.101.5333 http://anglebug.com/352085732
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsDesktopOpenGL());
+
     ASSERT_NE(CONFORMANCE_TEST_ERROR, SpotExpPosExec());
 }
 
 TEST_P(GLES1ConformanceTest, SpotExpDir)
 {
+    // Fails on UHD 770 driver 31.0.101.5333 http://anglebug.com/352085732
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsDesktopOpenGL());
+
     ASSERT_NE(CONFORMANCE_TEST_ERROR, SpotExpDirExec());
 }
 
@@ -507,6 +513,9 @@ TEST_P(GLES1ConformanceTest, ZBFunc)
 
 TEST_P(GLES1ConformanceTest, DrawTex)
 {
+    // Fails on UHD 770 driver 31.0.101.5333 http://anglebug.com/352085732
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsDesktopOpenGL());
+
     ASSERT_TRUE(IsGLExtensionEnabled("GL_OES_draw_texture"));
     ASSERT_NE(CONFORMANCE_TEST_ERROR, DrawTexExec());
 }
@@ -536,6 +545,9 @@ TEST_P(GLES1ConformanceTest, PointSprite)
 
 TEST_P(GLES1ConformanceTest, UserClip)
 {
+    // Fails on UHD 770 driver 31.0.101.5333 http://anglebug.com/352085732
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsDesktopOpenGL());
+
     // "2.11 Clipping" describes the complementarity criterion, where a
     // primitive drawn once with a particular clip plane and again with the
     // negated version of the clip plane must not overdraw for pixels where the

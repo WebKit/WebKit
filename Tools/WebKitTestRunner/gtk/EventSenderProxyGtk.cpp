@@ -412,4 +412,8 @@ void EventSenderProxy::setTouchModifier(WKEventModifiers, bool)
 }
 #endif // ENABLE(TOUCH_EVENTS)
 
+void EventSenderProxy::waitForPendingMouseEvents()
+{
+}
+
 } // namespace WTR

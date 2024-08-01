@@ -1045,6 +1045,7 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('gst_structure_get_uint(s, "foo", &bar)', error_message)
         self.assert_lint('gst_structure_get_double(s, "foo", &bar)', error_message)
         self.assert_lint('gst_structure_get_boolean(s, "foo", &bar)', error_message)
+        self.assert_lint('const char* foo = gst_structure_get_string(s, "foo")', 'Consider using gstStructureGetString() instead  [readability/check] [4]')
 
     # We cannot test this functionality because of difference of
     # function definitions.  Anyway, we may never enable this.

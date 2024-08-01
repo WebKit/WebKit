@@ -33,10 +33,7 @@ enum class WebCore::Kerning : uint8_t {
     NoShift
 };
 
-enum class WebCore::FontOpticalSizing : uint8_t {
-    Enabled,
-    Disabled
-};
+enum class WebCore::FontOpticalSizing : bool;
 
 enum class WebCore::FontStyleAxis : uint8_t {
     slnt,

@@ -43,6 +43,7 @@ NetEqController::NetEqStatus CreateNetEqStatus(NetEq::Mode last_mode,
       current_delay_ms * kSamplesPerMs;
   status.packet_buffer_info.dtx_or_cng = false;
   status.next_packet = {status.target_timestamp, false, false};
+  status.sync_buffer_samples = 0;
   return status;
 }
 

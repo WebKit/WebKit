@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::ProcessLauncher::LaunchOptions& launchOptions, char** argv, int childProcessSocket, GError** error)
+GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::ProcessLauncher::LaunchOptions& launchOptions, char** argv, int childProcessSocket, int pidSocket, GError** error)
 {
     ASSERT(launcher);
 
@@ -41,10 +41,13 @@ GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::P
     // bubblewrap sandbox we do outside but flatpak offers the ability to create new sandboxes
     // for us using flatpak-spawn.
 
-    GUniquePtr<gchar> childProcessSocketArg(g_strdup_printf("--forward-fd=%d", childProcessSocket));
+    GUniquePtr<char> childProcessSocketArg(g_strdup_printf("--forward-fd=%d", childProcessSocket));
+    GUniquePtr<char> pidSocketArg(g_strdup_printf("--forward-fd=%d", pidSocket));
     Vector<CString> flatpakArgs = {
         "flatpak-spawn",
         childProcessSocketArg.get(),
+        pidSocketArg.get(),
+        "--expose-pids",
         "--watch-bus"
     };
 

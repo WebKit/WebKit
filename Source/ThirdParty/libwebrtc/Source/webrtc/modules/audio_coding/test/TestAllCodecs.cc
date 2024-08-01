@@ -17,6 +17,7 @@
 #include "absl/strings/match.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "api/environment/environment_factory.h"
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/include/module_common_types.h"
 #include "rtc_base/logging.h"
@@ -84,7 +85,8 @@ int32_t TestPack::SendData(AudioFrameType frame_type,
   memcpy(payload_data_, payload_data, payload_size);
 
   status = receiver_acm_->InsertPacket(
-      rtp_header, rtc::ArrayView<const uint8_t>(payload_data_, payload_size));
+      rtp_header, rtc::ArrayView<const uint8_t>(payload_data_, payload_size),
+      /*receive_time=*/Timestamp::MinusInfinity());
 
   payload_size_ = payload_size;
   timestamp_diff_ = timestamp - last_in_timestamp_;
@@ -106,7 +108,8 @@ void TestPack::reset_payload_size() {
 }
 
 TestAllCodecs::TestAllCodecs()
-    : acm_a_(AudioCodingModule::Create()),
+    : env_(CreateEnvironment()),
+      acm_a_(AudioCodingModule::Create()),
       acm_b_(std::make_unique<acm2::AcmReceiver>(
           acm2::AcmReceiver::Config(CreateBuiltinAudioDecoderFactory()))),
       channel_a_to_b_(NULL),
@@ -151,6 +154,9 @@ void TestAllCodecs::Perform() {
 
   // All codecs are tested for all allowed sampling frequencies, rates and
   // packet sizes.
+
+// TODO(bugs.webrtc.org/345525069): Either fix/enable or remove G722.
+#if defined(__has_feature) && !__has_feature(undefined_behavior_sanitizer)
   test_count_++;
   OpenOutFile(test_count_);
   char codec_g722[] = "G722";
@@ -167,6 +173,9 @@ void TestAllCodecs::Perform() {
   RegisterSendCodec(codec_g722, 16000, 64000, 960, 0);
   Run(channel_a_to_b_);
   outfile_b_.Close();
+#endif
+// TODO(bugs.webrtc.org/345525069): Either fix/enable or remove iLBC.
+#if defined(__has_feature) && !__has_feature(undefined_behavior_sanitizer)
 #ifdef WEBRTC_CODEC_ILBC
   test_count_++;
   OpenOutFile(test_count_);
@@ -180,6 +189,7 @@ void TestAllCodecs::Perform() {
   RegisterSendCodec(codec_ilbc, 8000, 15200, 320, 0);
   Run(channel_a_to_b_);
   outfile_b_.Close();
+#endif
 #endif
   test_count_++;
   OpenOutFile(test_count_);
@@ -311,12 +321,10 @@ void TestAllCodecs::RegisterSendCodec(char* codec_name,
   }
 
   auto factory = CreateBuiltinAudioEncoderFactory();
-  constexpr int payload_type = 17;
   SdpAudioFormat format = {codec_name, clockrate_hz, num_channels};
   format.parameters["ptime"] = rtc::ToString(rtc::CheckedDivExact(
       packet_size, rtc::CheckedDivExact(sampling_freq_hz, 1000)));
-  acm_a_->SetEncoder(
-      factory->MakeAudioEncoder(payload_type, format, absl::nullopt));
+  acm_a_->SetEncoder(factory->Create(env_, format, {.payload_type = 17}));
 }
 
 void TestAllCodecs::Run(TestPack* channel) {

@@ -683,7 +683,9 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
         @"NSObject<NSSecureCoding>",
         @"PKSecureElementPass",
         @"GCGLErrorCodeSet",
+#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
         @"NSURLRequest",
+#endif
         @"MachSendRight",
         @"CGBitmapInfo",
         @"NSParagraphStyle",

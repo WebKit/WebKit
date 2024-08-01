@@ -43,6 +43,7 @@ def bracket_if_needed(condition):
 
 
 def parse(file):
+    receiver_enabled_by = None
     receiver_attributes = None
     destination = None
     messages = []
@@ -52,6 +53,10 @@ def parse(file):
     namespace = "WebKit"
     for line in file:
         line = line.strip()
+        match = re.search(r'\s*\[\s*EnabledBy\s*=\s*(?P<enabledby>.*?)\s*\]\s*', line)
+        if match and not destination:
+            receiver_enabled_by = match.group('enabledby').split(',')
+            continue
         match = re.search(r'messages -> (?P<namespace>[A-Za-z]+)::(?P<destination>[A-Za-z_0-9]+) \s*(?::\s*(?P<superclass>.*?) \s*)?(?:(?P<attributes>.*?)\s+)?{', line)
         if not match:
             match = re.search(r'messages -> (?P<destination>[A-Za-z_0-9]+) \s*(?::\s*(?P<superclass>.*?) \s*)?(?:(?P<attributes>.*?)\s+)?{', line)
@@ -62,6 +67,8 @@ def parse(file):
             receiver_attributes = parse_attributes_string(match.group('attributes'))
             if match.group('superclass'):
                 superclass = match.group('superclass')
+                if receiver_enabled_by:
+                    raise Exception("ERROR: EnabledBy is not supported for a message receiver with a superclass")
             if conditions:
                 master_condition = conditions
                 conditions = []
@@ -107,7 +114,7 @@ def parse(file):
                 reply_parameters = None
 
             messages.append(model.Message(name, parameters, reply_parameters, attributes, combine_condition(conditions), enabled_if, enabled_by))
-    return model.MessageReceiver(destination, superclass, receiver_attributes, messages, combine_condition(master_condition), namespace)
+    return model.MessageReceiver(destination, superclass, receiver_attributes, receiver_enabled_by, messages, combine_condition(master_condition), namespace)
 
 
 def parse_attributes_string(attributes_string):

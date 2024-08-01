@@ -178,6 +178,7 @@ angle_deqp_data_gles3 = [
   "$root_gen_dir/vk_gl_cts_data/data/gles3/graphicsfuzz/synthetic/variant_3.frag",
   "$root_gen_dir/vk_gl_cts_data/data/gles3/graphicsfuzz/synthetic/variant_4.frag",
   "$root_gen_dir/vk_gl_cts_data/data/gles3/graphicsfuzz/vertexShader.glsl",
+  "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/gles3/CoverageES30.test",
   "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/gles3/declarations.test",
   "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/gles3/literal_parsing.test",
   "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/gles3/name_hiding.test",
@@ -339,7 +340,18 @@ angle_deqp_external_graphicsfuzz_data_gles3 = [
   "$root_gen_dir/vk_gl_cts_data/data/gles3/graphicsfuzz/vertexShader.glsl",
 ]
 
+angle_deqp_external_openglcts_data_gl_cts_data_common = [
+  "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/common/CoverageGL21.test",
+  "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/common/CoverageGL30.test",
+  "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/common/CoverageGL31.test",
+  "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/common/CoverageGL32.test",
+  "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/common/CoverageGL33.test",
+  "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/common/CoverageGL40.test",
+  "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/common/CoverageGL43.test",
+]
+
 angle_deqp_external_openglcts_data_gl_cts_data_gles3 = [
+  "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/gles3/CoverageES30.test",
   "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/gles3/declarations.test",
   "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/gles3/literal_parsing.test",
   "$root_gen_dir/vk_gl_cts_data/data/gl_cts/data/gles3/name_hiding.test",
@@ -511,6 +523,7 @@ angle_deqp_data_copy_targets = [
   "deqp_support:vk_gl_cts_data_external_graphicsfuzz_data_gles3_graphicsfuzz",
   "deqp_support:vk_gl_cts_data_external_graphicsfuzz_data_gles3_graphicsfuzz_bubblesort_flag",
   "deqp_support:vk_gl_cts_data_external_graphicsfuzz_data_gles3_graphicsfuzz_synthetic",
+  "deqp_support:vk_gl_cts_data_external_openglcts_data_gl_cts_data_common",
   "deqp_support:vk_gl_cts_data_external_openglcts_data_gl_cts_data_gles3",
   "deqp_support:vk_gl_cts_data_external_openglcts_data_gl_cts_data_gles31_compressed_texture",
   "deqp_support:vk_gl_cts_data_external_openglcts_data_gl_cts_data_gles32_compressed_texture",

@@ -35,9 +35,6 @@ rtc_library("video_rtp_headers") {
     "../../rtc_base/system:rtc_export",
     "../units:data_rate",
     "../units:time_delta",
-  ]
-  absl_deps = [
-    "//third_party/abseil-cpp/absl/container:inlined_vector",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
@@ -76,9 +73,9 @@ rtc_library("video_frame") {
     "../../rtc_base:timeutils",
     "../../rtc_base/memory:aligned_malloc",
     "../../rtc_base/system:rtc_export",
+    "//third_party/abseil-cpp/absl/types:optional",
     "//third_party/libyuv",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 if (is_android) {
@@ -127,8 +124,10 @@ rtc_source_set("recordable_encoded_frame") {
 rtc_source_set("video_frame_type") {
   visibility = [ "*" ]
   sources = [ "video_frame_type.h" ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
-  deps = [ "../../rtc_base:checks" ]
+  deps = [
+    "../../rtc_base:checks",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
 }
 
 rtc_source_set("render_resolution") {
@@ -160,8 +159,8 @@ rtc_library("encoded_image") {
     "../../rtc_base:refcount",
     "../../rtc_base/system:rtc_export",
     "../units:timestamp",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("encoded_frame") {
@@ -177,8 +176,8 @@ rtc_library("encoded_frame") {
     "../../modules/rtp_rtcp:rtp_video_header",
     "../../modules/video_coding:video_codec_interface",
     "../units:timestamp",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("rtp_video_frame_assembler") {
@@ -196,9 +195,6 @@ rtc_library("rtp_video_frame_assembler") {
     "../../modules/video_coding:video_coding",
     "../../rtc_base:logging",
     "../../rtc_base:rtc_numerics",
-  ]
-
-  absl_deps = [
     "//third_party/abseil-cpp/absl/container:inlined_vector",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -236,15 +232,17 @@ rtc_library("video_bitrate_allocation") {
     "../../rtc_base:safe_conversions",
     "../../rtc_base:stringutils",
     "../../rtc_base/system:rtc_export",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_source_set("video_layers_allocation") {
   visibility = [ "*" ]
   sources = [ "video_layers_allocation.h" ]
-  deps = [ "../units:data_rate" ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/container:inlined_vector" ]
+  deps = [
+    "../units:data_rate",
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
+  ]
 }
 
 rtc_library("video_bitrate_allocator") {
@@ -264,6 +262,7 @@ rtc_source_set("video_bitrate_allocator_factory") {
   sources = [ "video_bitrate_allocator_factory.h" ]
   deps = [
     ":video_bitrate_allocator",
+    "../environment",
     "../video_codecs:video_codecs_api",
   ]
 }
@@ -302,7 +301,6 @@ rtc_source_set("video_stream_encoder") {
     "../units:data_rate",
     "../video_codecs:video_codecs_api",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_source_set("video_frame_metadata") {
@@ -319,8 +317,6 @@ rtc_source_set("video_frame_metadata") {
     "../../modules/video_coding:codec_globals_headers",
     "../../rtc_base/system:rtc_export",
     "../transport/rtp:dependency_descriptor",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/container:inlined_vector",
     "//third_party/abseil-cpp/absl/types:optional",
     "//third_party/abseil-cpp/absl/types:variant",
@@ -343,8 +339,8 @@ rtc_library("builtin_video_bitrate_allocator_factory") {
     "../../modules/video_coding:video_coding_utility",
     "../../modules/video_coding/svc:svc_rate_allocator",
     "../video_codecs:video_codecs_api",
+    "//third_party/abseil-cpp/absl/base:core_headers",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/base:core_headers" ]
 }
 
 rtc_library("frame_buffer") {
@@ -360,8 +356,6 @@ rtc_library("frame_buffer") {
     "../../modules/video_coding:video_coding_utility",
     "../../rtc_base:logging",
     "../../rtc_base:rtc_numerics",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/algorithm:container",
     "//third_party/abseil-cpp/absl/container:inlined_vector",
     "//third_party/abseil-cpp/absl/types:optional",

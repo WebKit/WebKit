@@ -24,6 +24,7 @@ class ACMResampler {
   ACMResampler();
   ~ACMResampler();
 
+  // TODO: b/335805780 - Change to accept InterleavedView<>.
   int Resample10Msec(const int16_t* in_audio,
                      int in_freq_hz,
                      int out_freq_hz,

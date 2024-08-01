@@ -1,0 +1,105 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-baseline-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-body-bg-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-body-overflow-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-body-t-o-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-body-w-m-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-content-011-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-020-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-021-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-baseline-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-baseline-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-breaks-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-button-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-button-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-cell-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-flexbox-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-grid-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-ifc-022-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-ink-overflow-013-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-ink-overflow-014-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-ink-overflow-015-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-ink-overflow-019-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-ink-overflow-020-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-size-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-paint-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-paint-007-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-paint-008-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-paint-022-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-paint-047-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-paint-clip-015-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-paint-clip-019-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-paint-ifc-011-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-paint-independent-formatting-context-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-paint-independent-formatting-context-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-paint-size-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-paint-size-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-021-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-022-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-023-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-025-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-027-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-051-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-056-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-061-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-062-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-063-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-064-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-breaks-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-button-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-fieldset-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-fieldset-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-flexbox-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-flexbox-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-grid-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-grid-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-monolithic-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-scrollbars-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-scrollbars-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-size-select-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-strict-011-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-style-breaks-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-style-breaks-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-style-counters-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-style-counters-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-style-counters-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-style-counters-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-style-counters-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-style-ol-ordinal-li-container-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-style-ol-ordinal-pseudo-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-style-ol-ordinal-pseudo-reversed-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-style-ol-ordinal-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-style-ol-ordinal-reversed-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-style-ol-ordinal-start-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-style-ol-ordinal-start-reversed-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/contain-subgrid-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/counter-scoping-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/counter-scoping-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/counter-scoping-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/pass_if_pass_below_clipped.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/quote-scoping-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/quote-scoping-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/quote-scoping-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/quote-scoping-empty-style-boundaries-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/quote-scoping-invalidation-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/quote-scoping-invalidation-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/quote-scoping-invalidation-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/quote-scoping-invalidation-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/reference/ref-if-there-is-no-red.xht

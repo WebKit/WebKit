@@ -120,6 +120,11 @@ class RtpTransportControllerSend final
   // Implements NetworkStateEstimateObserver interface
   void OnRemoteNetworkEstimate(NetworkStateEstimate estimate) override;
 
+  NetworkControllerInterface* GetNetworkController() override {
+    RTC_DCHECK_RUN_ON(&sequence_checker_);
+    return controller_.get();
+  }
+
  private:
   void MaybeCreateControllers() RTC_RUN_ON(sequence_checker_);
   void UpdateNetworkAvailability() RTC_RUN_ON(sequence_checker_);
@@ -152,6 +157,7 @@ class RtpTransportControllerSend final
   SequenceChecker sequence_checker_;
   TaskQueueBase* task_queue_;
   PacketRouter packet_router_;
+
   std::vector<std::unique_ptr<RtpVideoSenderInterface>> video_rtp_senders_
       RTC_GUARDED_BY(&sequence_checker_);
   RtpBitrateConfigurator bitrate_configurator_;
@@ -193,6 +199,8 @@ class RtpTransportControllerSend final
 
   const bool reset_feedback_on_route_change_;
   const bool add_pacing_to_cwin_;
+  const bool reset_bwe_on_adapter_id_change_;
+
   FieldTrialParameter<DataRate> relay_bandwidth_cap_;
 
   size_t transport_overhead_bytes_per_packet_ RTC_GUARDED_BY(sequence_checker_);

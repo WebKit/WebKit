@@ -13,13 +13,13 @@ rtc_source_set("types") {
     "../../../api:array_view",
     "../../../api/units:time_delta",
     "../../../rtc_base:strong_alias",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
   sources = [
     "dcsctp_message.h",
     "dcsctp_options.h",
     "types.h",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_source_set("socket") {
@@ -30,6 +30,8 @@ rtc_source_set("socket") {
     "../../../api/units:timestamp",
     "../../../rtc_base:checks",
     "../../../rtc_base:strong_alias",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
   sources = [
     "dcsctp_handover_state.cc",
@@ -38,10 +40,6 @@ rtc_source_set("socket") {
     "packet_observer.h",
     "timeout.h",
   ]
-  absl_deps = [
-    "//third_party/abseil-cpp/absl/strings",
-    "//third_party/abseil-cpp/absl/types:optional",
-  ]
 }
 
 rtc_source_set("factory") {
@@ -49,12 +47,12 @@ rtc_source_set("factory") {
     ":socket",
     ":types",
     "../socket:dcsctp_socket",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
   sources = [
     "dcsctp_socket_factory.cc",
     "dcsctp_socket_factory.h",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
 rtc_source_set("mocks") {
@@ -78,12 +76,12 @@ rtc_source_set("utils") {
     "../../../rtc_base:logging",
     "../../../rtc_base:stringutils",
     "../socket:dcsctp_socket",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
   sources = [
     "text_pcap_packet_observer.cc",
     "text_pcap_packet_observer.h",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
 if (rtc_include_tests) {

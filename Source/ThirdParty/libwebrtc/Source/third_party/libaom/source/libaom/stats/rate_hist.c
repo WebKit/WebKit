@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -12,10 +12,11 @@
 #include "stats/rate_hist.h"
 
 #include <assert.h>
-#include <stdlib.h>
 #include <limits.h>
-#include <stdio.h>
 #include <math.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define RATE_BINS 100
 #define HIST_BAR_MAX 40
@@ -48,7 +49,8 @@ struct rate_hist *init_rate_histogram(const aom_codec_enc_cfg_t *cfg,
   // Determine the number of samples in the buffer. Use the file's framerate
   // to determine the number of frames in rc_buf_sz milliseconds, with an
   // adjustment (5/4) to account for alt-refs
-  hist->samples = cfg->rc_buf_sz * 5 / 4 * fps->num / fps->den / 1000;
+  hist->samples =
+      (int)((int64_t)cfg->rc_buf_sz * 5 / 4 * fps->num / fps->den / 1000);
 
   // prevent division by zero
   if (hist->samples == 0) hist->samples = 1;

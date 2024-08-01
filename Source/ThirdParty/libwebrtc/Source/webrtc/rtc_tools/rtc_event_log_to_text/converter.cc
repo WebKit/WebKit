@@ -12,9 +12,15 @@
 
 #include <inttypes.h>
 
+#include <cstdio>
 #include <map>
+#include <string>
 #include <vector>
 
+#include "api/candidate.h"
+#include "api/rtp_parameters.h"
+#include "api/transport/bandwidth_usage.h"
+#include "api/video/video_codec_type.h"
 #include "logging/rtc_event_log/events/logged_rtp_rtcp.h"
 #include "logging/rtc_event_log/events/rtc_event_alr_state.h"
 #include "logging/rtc_event_log/events/rtc_event_audio_network_adaptation.h"

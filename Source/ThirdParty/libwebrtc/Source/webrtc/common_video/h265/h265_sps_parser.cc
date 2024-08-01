@@ -110,10 +110,8 @@ size_t H265SpsParser::GetDpbMaxPicBuf(int general_profile_idc) {
 
 // Unpack RBSP and parse SPS state from the supplied buffer.
 absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSps(
-    const uint8_t* data,
-    size_t length) {
-  RTC_DCHECK(data);
-  return ParseSpsInternal(H265::ParseRbsp(data, length));
+    rtc::ArrayView<const uint8_t> data) {
+  return ParseSpsInternal(H265::ParseRbsp(data));
 }
 
 bool H265SpsParser::ParseScalingListData(BitstreamReader& reader) {

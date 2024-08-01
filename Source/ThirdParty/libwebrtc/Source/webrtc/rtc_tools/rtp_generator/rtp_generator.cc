@@ -237,11 +237,6 @@ RtpGenerator::RtpGenerator(const RtpGeneratorOptions& options)
       encoder_config.simulcast_layers[i].max_framerate = send_config.video_fps;
     }
 
-    encoder_config.video_stream_factory =
-        rtc::make_ref_counted<cricket::EncoderStreamFactory>(
-            video_config.rtp.payload_name, /*max qp*/ 56, /*screencast*/ false,
-            /*screenshare enabled*/ false, encoder_info);
-
     // Setup the fake video stream for this.
     std::unique_ptr<test::FrameGeneratorCapturer> frame_generator =
         std::make_unique<test::FrameGeneratorCapturer>(

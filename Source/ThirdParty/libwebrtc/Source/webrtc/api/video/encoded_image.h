@@ -35,7 +35,7 @@ namespace webrtc {
 // Abstract interface for buffer storage. Intended to support buffers owned by
 // external encoders with special release requirements, e.g, java encoders with
 // releaseOutputBuffer.
-class EncodedImageBufferInterface : public rtc::RefCountInterface {
+class EncodedImageBufferInterface : public RefCountInterface {
  public:
   virtual const uint8_t* data() const = 0;
   // TODO(bugs.webrtc.org/9378): Make interface essentially read-only, delete
@@ -200,6 +200,16 @@ class RTC_EXPORT EncodedImage {
     at_target_quality_ = at_target_quality;
   }
 
+  // Returns whether the frame that was encoded is a steady-state refresh frame
+  // intended to improve the visual quality.
+  bool IsSteadyStateRefreshFrame() const {
+    return is_steady_state_refresh_frame_;
+  }
+
+  void SetIsSteadyStateRefreshFrame(bool refresh_frame) {
+    is_steady_state_refresh_frame_ = refresh_frame;
+  }
+
   webrtc::VideoFrameType FrameType() const { return _frameType; }
 
   void SetFrameType(webrtc::VideoFrameType frame_type) {
@@ -260,6 +270,9 @@ class RTC_EXPORT EncodedImage {
   bool retransmission_allowed_ = true;
   // True if the encoded image can be considered to be of target quality.
   bool at_target_quality_ = false;
+  // True if the frame that was encoded is a steady-state refresh frame intended
+  // to improve the visual quality.
+  bool is_steady_state_refresh_frame_ = false;
 };
 
 }  // namespace webrtc

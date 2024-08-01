@@ -41,6 +41,6 @@ rtc_library("rtp_replayer") {
     "../../../test:test_support",
     "../../../test:test_video_capturer",
     "../../../test:video_test_common",
+    "//third_party/abseil-cpp/absl/memory",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/memory:memory" ]
 }

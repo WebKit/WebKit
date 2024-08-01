@@ -25,7 +25,7 @@
     }
 
     function runTestRunnerTest() {
-        testRunner.setStatisticsPrevalentResource(statisticsUrl, false, function() {
+        testRunner.setStatisticsPrevalentResource(statisticsUrl, false, async function() {
             if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
                 testFailed("Host did not get set as non-prevalent resource.");
 
@@ -34,7 +34,7 @@
 
             testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
 
-            testRunner.statisticsProcessStatisticsAndDataRecords();
+            await testRunner.statisticsProcessStatisticsAndDataRecords();
         });
     }
 

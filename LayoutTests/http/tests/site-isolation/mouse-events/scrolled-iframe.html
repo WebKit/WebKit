@@ -6,11 +6,11 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
 }
 
-addEventListener("message", (event) => {
+addEventListener("message", async (event) => {
     if (event.data == "scrolled") {
-        eventSender.mouseMoveTo(100, 100);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(100, 100);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
         return;
     }
 

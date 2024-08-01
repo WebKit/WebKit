@@ -20,8 +20,8 @@ rtc_source_set("audio_device") {
     "../../rtc_base:checks",
     "../../rtc_base:stringutils",
     "../task_queue",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("audio_frame_api") {
@@ -29,6 +29,7 @@ rtc_library("audio_frame_api") {
   sources = [
     "audio_frame.cc",
     "audio_frame.h",
+    "audio_view.h",
     "channel_layout.cc",
     "channel_layout.h",
   ]
@@ -40,6 +41,7 @@ rtc_library("audio_frame_api") {
     "../../rtc_base:logging",
     "../../rtc_base:macromagic",
     "../../rtc_base:timeutils",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
@@ -79,8 +81,6 @@ rtc_source_set("audio_processing") {
     "../../rtc_base/system:file_wrapper",
     "../../rtc_base/system:rtc_export",
     "../task_queue",
-  ]
-  absl_deps = [
     "//third_party/abseil-cpp/absl/base:nullability",
     "//third_party/abseil-cpp/absl/strings:string_view",
     "//third_party/abseil-cpp/absl/types:optional",
@@ -93,8 +93,10 @@ rtc_source_set("audio_processing_statistics") {
     "audio_processing_statistics.cc",
     "audio_processing_statistics.h",
   ]
-  deps = [ "../../rtc_base/system:rtc_export" ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+  deps = [
+    "../../rtc_base/system:rtc_export",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
 }
 
 rtc_library("aec3_config") {
@@ -123,6 +125,7 @@ rtc_library("aec3_factory") {
     ":echo_control",
     "../../modules/audio_processing/aec3",
     "../../rtc_base/system:rtc_export",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 

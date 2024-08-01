@@ -30,19 +30,20 @@
 
 #include "AsyncPDFRenderer.h"
 #include "PDFDiscretePresentationController.h"
+#include "PDFKitSPI.h"
 #include "PDFScrollingPresentationController.h"
 #include <WebCore/GraphicsLayer.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-std::unique_ptr<PDFPresentationController> PDFPresentationController::createForMode(PDFDocumentLayout::DisplayMode mode, UnifiedPDFPlugin& plugin)
+RefPtr<PDFPresentationController> PDFPresentationController::createForMode(PDFDocumentLayout::DisplayMode mode, UnifiedPDFPlugin& plugin)
 {
     if (PDFDocumentLayout::isScrollingDisplayMode(mode))
-        return makeUnique<PDFScrollingPresentationController>(plugin);
+        return adoptRef(*new PDFScrollingPresentationController { plugin });
 
     if (PDFDocumentLayout::isDiscreteDisplayMode(mode))
-        return makeUnique<PDFDiscretePresentationController>(plugin);
+        return adoptRef(*new PDFDiscretePresentationController { plugin });
 
     ASSERT_NOT_REACHED();
     return nullptr;
@@ -66,7 +67,7 @@ Ref<AsyncPDFRenderer> PDFPresentationController::asyncRenderer()
     if (m_asyncRenderer)
         return *m_asyncRenderer;
 
-    m_asyncRenderer = AsyncPDFRenderer::create(m_plugin.get());
+    m_asyncRenderer = AsyncPDFRenderer::create(*this);
     return *m_asyncRenderer;
 }
 
@@ -149,6 +150,21 @@ void PDFPresentationController::releaseMemory()
 {
     if (RefPtr asyncRenderer = asyncRendererIfExists())
         asyncRenderer->releaseMemory();
+}
+
+RetainPtr<PDFDocument> PDFPresentationController::pluginPDFDocument() const
+{
+    return m_plugin->pdfDocument();
+}
+
+FloatRect PDFPresentationController::layoutBoundsForPageAtIndex(PDFDocumentLayout::PageIndex pageIndex) const
+{
+    return m_plugin->layoutBoundsForPageAtIndex(pageIndex);
+}
+
+bool PDFPresentationController::pluginShouldCachePagePreviews() const
+{
+    return m_plugin->shouldCachePagePreviews();
 }
 
 } // namespace WebKit

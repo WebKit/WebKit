@@ -31,6 +31,7 @@
 
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC { namespace Wasm {
 

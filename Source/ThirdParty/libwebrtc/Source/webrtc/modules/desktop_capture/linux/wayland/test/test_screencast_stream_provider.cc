@@ -131,7 +131,8 @@ TestScreenCastStreamProvider::~TestScreenCastStreamProvider() {
   }
 }
 
-void TestScreenCastStreamProvider::RecordFrame(RgbaColor rgba_color) {
+void TestScreenCastStreamProvider::RecordFrame(RgbaColor rgba_color,
+                                               FrameDefect frame_defect) {
   const char* error;
   if (pw_stream_get_state(pw_stream_, &error) != PW_STREAM_STATE_STREAMING) {
     if (error) {
@@ -163,13 +164,27 @@ void TestScreenCastStreamProvider::RecordFrame(RgbaColor rgba_color) {
   spa_data->chunk->size = height_ * stride;
   spa_data->chunk->stride = stride;
 
-  uint32_t color = rgba_color.ToUInt32();
-  for (uint32_t i = 0; i < height_; i++) {
-    uint32_t* column = reinterpret_cast<uint32_t*>(data);
-    for (uint32_t j = 0; j < width_; j++) {
-      column[j] = color;
+  // Produce a frame with given defect
+  if (frame_defect == EmptyData) {
+    spa_data->chunk->size = 0;
+  } else if (frame_defect == CorruptedData) {
+    spa_data->chunk->flags = SPA_CHUNK_FLAG_CORRUPTED;
+  } else if (frame_defect == CorruptedMetadata) {
+    struct spa_meta_header* spa_header =
+        static_cast<spa_meta_header*>(spa_buffer_find_meta_data(
+            spa_buffer, SPA_META_Header, sizeof(spa_meta_header)));
+    if (spa_header) {
+      spa_header->flags = SPA_META_HEADER_FLAG_CORRUPTED;
     }
-    data += stride;
+  } else {
+    uint32_t color = rgba_color.ToUInt32();
+    for (uint32_t i = 0; i < height_; i++) {
+      uint32_t* column = reinterpret_cast<uint32_t*>(data);
+      for (uint32_t j = 0; j < width_; j++) {
+        column[j] = color;
+      }
+      data += stride;
+    }
   }
 
   pw_stream_queue_buffer(pw_stream_, buffer);

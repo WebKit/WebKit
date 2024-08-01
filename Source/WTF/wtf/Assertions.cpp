@@ -124,10 +124,22 @@ void disableForwardingVPrintfStdErrToOSLog()
 
 extern "C" {
 
+#if PLATFORM(COCOA)
+static os_log_t webkitSubsystemForGenericOSLog()
+{
+    static dispatch_once_t once;
+    static os_log_t subsystem;
+    dispatch_once(&once, ^{
+        subsystem = os_log_create(LOG_CHANNEL_WEBKIT_SUBSYSTEM, "Generic");
+    });
+    return subsystem;
+}
+#endif
+
 static void logToStderr(const char* buffer)
 {
 #if PLATFORM(COCOA)
-    os_log(OS_LOG_DEFAULT, "%s", buffer);
+    os_log(webkitSubsystemForGenericOSLog(), "%s", buffer);
 #endif
     fputs(buffer, stderr);
 }
@@ -156,7 +168,7 @@ ALLOW_NONLITERAL_FORMAT_END
     if (!g_wtfConfig.disableForwardingVPrintfStdErrToOSLog) {
         va_list copyOfArgs;
         va_copy(copyOfArgs, args);
-        os_log_with_args(OS_LOG_DEFAULT, OS_LOG_TYPE_DEFAULT, format, copyOfArgs, __builtin_return_address(0));
+        os_log_with_args(webkitSubsystemForGenericOSLog(), OS_LOG_TYPE_DEFAULT, format, copyOfArgs, __builtin_return_address(0));
         va_end(copyOfArgs);
     }
 #endif

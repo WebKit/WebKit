@@ -43,14 +43,26 @@ class RTC_EXPORT H265PpsParser {
   };
 
   // Unpack RBSP and parse PPS state from the supplied buffer.
-  static absl::optional<PpsState> ParsePps(const uint8_t* data,
-                                           size_t length,
+  static absl::optional<PpsState> ParsePps(rtc::ArrayView<const uint8_t> data,
                                            const H265SpsParser::SpsState* sps);
+  // TODO: bugs.webrtc.org/42225170 - Deprecate.
+  static inline absl::optional<PpsState> ParsePps(
+      const uint8_t* data,
+      size_t length,
+      const H265SpsParser::SpsState* sps) {
+    return ParsePps(rtc::MakeArrayView(data, length), sps);
+  }
 
-  static bool ParsePpsIds(const uint8_t* data,
-                          size_t length,
+  static bool ParsePpsIds(rtc::ArrayView<const uint8_t> data,
                           uint32_t* pps_id,
                           uint32_t* sps_id);
+  // TODO: bugs.webrtc.org/42225170 - Deprecate.
+  static inline bool ParsePpsIds(const uint8_t* data,
+                                 size_t length,
+                                 uint32_t* pps_id,
+                                 uint32_t* sps_id) {
+    return ParsePpsIds(rtc::MakeArrayView(data, length), pps_id, sps_id);
+  }
 
  protected:
   // Parse the PPS state, for a bit buffer where RBSP decoding has already been

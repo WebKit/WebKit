@@ -39,9 +39,11 @@ def web_socket_do_extra_handshake(request):
 
     ONE_DAY_LIFE = 'Max-Age=86400'
     ROOT_PATH = 'path=/'
+    SAME_SITE_NONE = 'SameSite=None'
+    SECURE = 'Secure'
 
     if command == 'set':
-        _add_set_cookie(request, '; '.join(['foo=bar', ONE_DAY_LIFE, ROOT_PATH]))
+        _add_set_cookie(request, '; '.join(['foo=bar', ONE_DAY_LIFE, SAME_SITE_NONE, SECURE, ROOT_PATH]))
     elif command == 'set_httponly':
         _add_set_cookie(request,
             '; '.join(['httpOnlyFoo=bar', ONE_DAY_LIFE, ROOT_PATH, 'httpOnly']))

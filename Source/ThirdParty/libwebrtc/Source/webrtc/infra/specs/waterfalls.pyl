@@ -332,8 +332,8 @@
       },
       'iOS64 Perf': {
         'mixins': [
-          'ios-device-perf', 'webrtc-xctest', 'timeout-3h',
-          'chrome-tester-service-account', 'xcode_14_main', 'mac_toolchain',
+          'arm64', 'ios-device-perf', 'webrtc-xctest', 'timeout-3h',
+          'chrome-tester-service-account', 'xcode_15_main', 'mac_toolchain',
           'has_native_resultdb_integration', 'out_dir_arg'
         ],
         'test_suites': {
@@ -438,6 +438,7 @@
           'isolated_scripts': 'ios_simulator_tests_matrix',
         },
       },
+      'iwyu_verifier': {},
       'linux_asan': {
         'os_type': 'linux',
         'mixins': ['linux-focal', 'x86-64', 'resultdb-json-format'],
@@ -470,13 +471,6 @@
         },
       },
       'linux_libfuzzer_rel': {},
-      'linux_memcheck': {
-        'os_type': 'linux',
-        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
-        'test_suites': {
-          'isolated_scripts': 'linux_tests',
-        },
-      },
       'linux_more_configs': {
         'os_type': 'linux',
         'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],

@@ -26,7 +26,7 @@
 #include "p2p/base/transport_info.h"
 #include "pc/session_description.h"
 #include "pc/webrtc_sdp.h"
-#include "rtc_base/helpers.h"
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/net_helper.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/string_encode.h"

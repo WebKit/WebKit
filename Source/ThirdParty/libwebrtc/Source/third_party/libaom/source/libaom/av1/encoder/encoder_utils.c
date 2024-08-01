@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2020, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -561,6 +561,11 @@ void av1_set_size_dependent_vars(AV1_COMP *cpi, int *q, int *bottom_index,
   *q = av1_rc_pick_q_and_bounds(cpi, cm->width, cm->height, cpi->gf_frame_index,
                                 bottom_index, top_index);
 
+  if (cpi->oxcf.rc_cfg.mode == AOM_CBR && cpi->rc.force_max_q) {
+    *q = cpi->rc.worst_quality;
+    cpi->rc.force_max_q = 0;
+  }
+
 #if !CONFIG_REALTIME_ONLY
   if (cpi->oxcf.rc_cfg.mode == AOM_Q &&
       cpi->ppi->tpl_data.tpl_frame[cpi->gf_frame_index].is_valid &&
@@ -844,8 +849,8 @@ BLOCK_SIZE av1_select_sb_size(const AV1EncoderConfig *const oxcf, int width,
       // For multi-thread encode: if the number of (128x128) superblocks
       // per tile is low use 64X64 superblock.
       if (oxcf->row_mt == 1 && oxcf->max_threads >= 4 &&
-          oxcf->max_threads >= num_tiles && AOMMIN(width, height) > 720 &&
-          (width * height) / (128 * 128 * num_tiles) <= 38)
+          oxcf->max_threads >= num_tiles && AOMMIN(width, height) >= 720 &&
+          (width * height) / (128 * 128 * num_tiles) < 40)
         return BLOCK_64X64;
       else
         return AOMMIN(width, height) >= 720 ? BLOCK_128X128 : BLOCK_64X64;

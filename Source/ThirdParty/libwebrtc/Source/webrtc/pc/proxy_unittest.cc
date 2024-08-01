@@ -27,7 +27,7 @@ using ::testing::Return;
 namespace webrtc {
 
 // Interface used for testing here.
-class FakeInterface : public rtc::RefCountInterface {
+class FakeInterface : public RefCountInterface {
  public:
   virtual void VoidMethod0() = 0;
   virtual std::string Method0() = 0;

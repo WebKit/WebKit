@@ -67,10 +67,10 @@ public:
     MediaStreamTrackPrivate& source() const { return m_videoSource.get(); }
 
     void AddRef() const final { ref(); }
-    rtc::RefCountReleaseStatus Release() const final
+    webrtc::RefCountReleaseStatus Release() const final
     {
         deref();
-        return rtc::RefCountReleaseStatus::kOtherRefsRemained;
+        return webrtc::RefCountReleaseStatus::kOtherRefsRemained;
     }
 
     void applyRotation();

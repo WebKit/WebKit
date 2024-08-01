@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2021, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -283,8 +283,6 @@ FrameDropDecision AV1RateControlRTC::ComputeQP(
       cpi_->svc.layer_context[layer].is_key_frame = 0;
     }
   }
-  if (cpi_->svc.spatial_layer_id == cpi_->svc.number_spatial_layers - 1)
-    cpi_->rc.frames_since_key++;
   if (cpi_->svc.number_spatial_layers > 1 ||
       cpi_->svc.number_temporal_layers > 1) {
     av1_update_temporal_layer_framerate(cpi_);
@@ -311,6 +309,8 @@ FrameDropDecision AV1RateControlRTC::ComputeQP(
       av1_rc_drop_frame(cpi_)) {
     cpi_->is_dropped_frame = true;
     av1_rc_postencode_update_drop_frame(cpi_);
+    if (cpi_->svc.spatial_layer_id == cpi_->svc.number_spatial_layers - 1)
+      cpi_->rc.frames_since_key++;
     cpi_->frame_index_set.show_frame_count++;
     cpi_->common.current_frame.frame_number++;
     return FrameDropDecision::kDrop;
@@ -364,9 +364,11 @@ bool AV1RateControlRTC::GetSegmentationData(
 
 void AV1RateControlRTC::PostEncodeUpdate(uint64_t encoded_frame_size) {
   cpi_->common.current_frame.frame_number++;
-  if (cpi_->svc.spatial_layer_id == cpi_->svc.number_spatial_layers - 1)
-    cpi_->svc.prev_number_spatial_layers = cpi_->svc.number_spatial_layers;
   av1_rc_postencode_update(cpi_, encoded_frame_size);
+  if (cpi_->svc.spatial_layer_id == cpi_->svc.number_spatial_layers - 1) {
+    cpi_->svc.prev_number_spatial_layers = cpi_->svc.number_spatial_layers;
+    cpi_->rc.frames_since_key++;
+  }
   if (cpi_->svc.number_spatial_layers > 1 ||
       cpi_->svc.number_temporal_layers > 1)
     av1_save_layer_context(cpi_);

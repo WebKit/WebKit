@@ -173,7 +173,7 @@ RefPtr<ArrayBuffer> AuthenticatorAttestationResponse::getPublicKey() const
 
         if (!peerKey)
             return nullptr;
-        auto keySpki = peerKey->exportSpki(UseCryptoKit::No).releaseReturnValue();
+        auto keySpki = peerKey->exportSpki(UseCryptoKit::Yes).releaseReturnValue();
         return ArrayBuffer::tryCreate(keySpki);
     }
     default:

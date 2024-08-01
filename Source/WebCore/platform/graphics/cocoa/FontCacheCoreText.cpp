@@ -235,7 +235,7 @@ static CTFontSymbolicTraits computeTraits(const FontDescription& fontDescription
     return traits;
 }
 
-SynthesisPair computeNecessarySynthesis(CTFontRef font, const FontDescription& fontDescription, ShouldComputePhysicalTraits shouldComputePhysicalTraits, bool isPlatformFont)
+SynthesisPair computeNecessarySynthesis(CTFontRef font, const FontDescription& fontDescription, OptionSet<FontLookupOptions> synthesisOptions, ShouldComputePhysicalTraits shouldComputePhysicalTraits, bool isPlatformFont)
 {
     if (CTFontIsAppleColorEmoji(font))
         return SynthesisPair(false, false);
@@ -243,8 +243,15 @@ SynthesisPair computeNecessarySynthesis(CTFontRef font, const FontDescription& f
     if (isPlatformFont)
         return SynthesisPair(false, false);
 
-    CTFontSymbolicTraits desiredTraits = computeTraits(fontDescription);
+    bool needsSyntheticBold = fontDescription.hasAutoFontSynthesisWeight()
+        && !synthesisOptions.contains(FontLookupOptions::DisallowBoldSynthesis);
+    bool needsSyntheticOblique = fontDescription.hasAutoFontSynthesisStyle()
+        && !synthesisOptions.contains(FontLookupOptions::DisallowObliqueSynthesis);
 
+    if (!needsSyntheticBold && !needsSyntheticOblique)
+        return SynthesisPair(false, false);
+
+    CTFontSymbolicTraits desiredTraits = computeTraits(fontDescription);
     CTFontSymbolicTraits actualTraits = 0;
     if (isFontWeightBold(fontDescription.weight()) || isItalic(fontDescription.italic())) {
         if (shouldComputePhysicalTraits == ShouldComputePhysicalTraits::Yes)
@@ -253,8 +260,8 @@ SynthesisPair computeNecessarySynthesis(CTFontRef font, const FontDescription& f
             actualTraits = CTFontGetSymbolicTraits(font);
     }
 
-    bool needsSyntheticBold = fontDescription.hasAutoFontSynthesisWeight() && (desiredTraits & kCTFontTraitBold) && !(actualTraits & kCTFontTraitBold);
-    bool needsSyntheticOblique = fontDescription.hasAutoFontSynthesisStyle() && (desiredTraits & kCTFontTraitItalic) && !(actualTraits & kCTFontTraitItalic);
+    needsSyntheticBold = needsSyntheticBold && (desiredTraits & kCTFontTraitBold) && !(actualTraits & kCTFontTraitBold);
+    needsSyntheticOblique = needsSyntheticOblique && (desiredTraits & kCTFontTraitItalic) && !(actualTraits & kCTFontTraitItalic);
 
     return SynthesisPair(needsSyntheticBold, needsSyntheticOblique);
 }
@@ -482,7 +489,7 @@ static bool isAllowlistedFamily(const AtomString& family)
     return Allowlist::singleton().allows(family);
 }
 
-static FontLookup platformFontLookupWithFamily(FontDatabase& fontDatabase, const AtomString& family, FontSelectionRequest request)
+static FontLookup platformFontLookupWithFamily(FontDatabase& fontDatabase, const AtomString& family, FontSelectionRequest request, OptionSet<FontLookupOptions> options)
 {
     if (!isAllowlistedFamily(family))
         return { nullptr };
@@ -504,8 +511,9 @@ static FontLookup platformFontLookupWithFamily(FontDatabase& fontDatabase, const
         const auto& postScriptFont = fontDatabase.fontForPostScriptName(family);
         if (!postScriptFont.fontDescriptor)
             return { nullptr };
-        if ((isItalic(request.slope) && !isItalic(postScriptFont.capabilities.slope.maximum))
-            || (isFontWeightBold(request.weight) && !isFontWeightBold(postScriptFont.capabilities.weight.maximum))) {
+        if (!options.contains(FontLookupOptions::ExactFamilyNameMatch)
+            && ((isItalic(request.slope) && !isItalic(postScriptFont.capabilities.slope.maximum))
+            || (isFontWeightBold(request.weight) && !isFontWeightBold(postScriptFont.capabilities.weight.maximum)))) {
             auto postScriptFamilyName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(postScriptFont.fontDescriptor.get(), kCTFontFamilyNameAttribute)));
             if (!postScriptFamilyName)
                 return { nullptr };
@@ -610,7 +618,7 @@ static std::optional<SpecialCaseFontLookupResult> fontDescriptorWithFamilySpecia
     return std::nullopt;
 }
 
-static RetainPtr<CTFontRef> fontWithFamily(FontDatabase& fontDatabase, const AtomString& family, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, float size)
+static RetainPtr<CTFontRef> fontWithFamily(FontDatabase& fontDatabase, const AtomString& family, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, float size, OptionSet<FontLookupOptions> options)
 {
     ASSERT(fontDatabase.allowUserInstalledFonts() == fontDescription.shouldAllowUserInstalledFonts());
 
@@ -624,7 +632,7 @@ static RetainPtr<CTFontRef> fontWithFamily(FontDatabase& fontDatabase, const Ato
         });
         return preparePlatformFont(WTFMove(lookupResult->unrealizedCoreTextFont), fontDescription, fontCreationContext, lookupResult->fontTypeForPreparation);
     }
-    auto fontLookup = platformFontLookupWithFamily(fontDatabase, family, fontDescription.fontSelectionRequest());
+    auto fontLookup = platformFontLookupWithFamily(fontDatabase, family, fontDescription.fontSelectionRequest(), options);
     UnrealizedCoreTextFont unrealizedFont = { WTFMove(fontLookup.result) };
     unrealizedFont.setSize(size);
     ApplyTraitsVariations applyTraitsVariations = fontLookup.createdFromPostScriptName ? ApplyTraitsVariations::No : ApplyTraitsVariations::Yes;
@@ -657,11 +665,11 @@ static void autoActivateFont(const String& name, CGFloat size)
 }
 #endif
 
-std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext)
+std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
 {
     auto size = fontDescription.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
     auto& fontDatabase = database(fontDescription.shouldAllowUserInstalledFonts());
-    auto font = fontWithFamily(fontDatabase, family, fontDescription, fontCreationContext, size);
+    auto font = fontWithFamily(fontDatabase, family, fontDescription, fontCreationContext, size, options);
 
 #if PLATFORM(MAC)
     if (!font) {
@@ -672,7 +680,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
         // Ignore the result because we want to use our own algorithm to actually find the font.
         autoActivateFont(family.string(), size);
 
-        font = fontWithFamily(fontDatabase, family, fontDescription, fontCreationContext, size);
+        font = fontWithFamily(fontDatabase, family, fontDescription, fontCreationContext, size, options);
     }
 #endif
 
@@ -682,7 +690,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     if (fontDescription.shouldAllowUserInstalledFonts() == AllowUserInstalledFonts::No)
         m_seenFamiliesForPrewarming.add(FontCascadeDescription::foldedFamilyName(family));
 
-    auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(font.get(), fontDescription).boldObliquePair();
+    auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(font.get(), fontDescription, options).boldObliquePair();
 
     FontPlatformData platformData(font.get(), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
 
@@ -775,7 +783,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
     // font pointer.
     CTFontRef substituteFont = m_fallbackFonts.add(result).iterator->get();
 
-    auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(substituteFont, description, ShouldComputePhysicalTraits::No, isForPlatformFont == IsForPlatformFont::Yes).boldObliquePair();
+    auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(substituteFont, description, { }, ShouldComputePhysicalTraits::No, isForPlatformFont == IsForPlatformFont::Yes).boldObliquePair();
 
     const FontCustomPlatformData* customPlatformData = nullptr;
     if (safeCFEqual(platformData.ctFont(), substituteFont))

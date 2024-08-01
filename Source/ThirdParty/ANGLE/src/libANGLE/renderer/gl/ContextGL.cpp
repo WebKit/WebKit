@@ -83,7 +83,7 @@ ShaderImpl *ContextGL::createShader(const gl::ShaderState &data)
     const FunctionsGL *functions = getFunctions();
     GLuint shader                = functions->createShader(ToGLenum(data.getShaderType()));
 
-    return new ShaderGL(data, shader, mRenderer->getMultiviewImplementationType(), mRenderer);
+    return new ShaderGL(data, shader);
 }
 
 ProgramImpl *ContextGL::createProgram(const gl::ProgramState &data)
@@ -1040,6 +1040,16 @@ void ContextGL::flushIfNecessaryBeforeDeleteTextures()
 void ContextGL::markWorkSubmitted()
 {
     mRenderer->markWorkSubmitted();
+}
+
+MultiviewImplementationTypeGL ContextGL::getMultiviewImplementationType() const
+{
+    return mRenderer->getMultiviewImplementationType();
+}
+
+bool ContextGL::hasNativeParallelCompile()
+{
+    return mRenderer->hasNativeParallelCompile();
 }
 
 void ContextGL::resetDrawStateForPixelLocalStorageEXT(const gl::Context *context)

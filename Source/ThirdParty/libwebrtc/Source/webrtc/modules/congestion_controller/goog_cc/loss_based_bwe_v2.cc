@@ -52,37 +52,6 @@ bool IsValid(Timestamp timestamp) {
 
 double ToKiloBytes(DataSize datasize) { return datasize.bytes() / 1000.0; }
 
-struct PacketResultsSummary {
-  int num_packets = 0;
-  int num_lost_packets = 0;
-  DataSize total_size = DataSize::Zero();
-  DataSize lost_size = DataSize::Zero();
-  Timestamp first_send_time = Timestamp::PlusInfinity();
-  Timestamp last_send_time = Timestamp::MinusInfinity();
-};
-
-// Returns a `PacketResultsSummary` where `first_send_time` is `PlusInfinity,
-// and `last_send_time` is `MinusInfinity`, if `packet_results` is empty.
-PacketResultsSummary GetPacketResultsSummary(
-    rtc::ArrayView<const PacketResult> packet_results) {
-  PacketResultsSummary packet_results_summary;
-
-  packet_results_summary.num_packets = packet_results.size();
-  for (const PacketResult& packet : packet_results) {
-    if (!packet.IsReceived()) {
-      packet_results_summary.num_lost_packets++;
-      packet_results_summary.lost_size += packet.sent_packet.size;
-    }
-    packet_results_summary.total_size += packet.sent_packet.size;
-    packet_results_summary.first_send_time = std::min(
-        packet_results_summary.first_send_time, packet.sent_packet.send_time);
-    packet_results_summary.last_send_time = std::max(
-        packet_results_summary.last_send_time, packet.sent_packet.send_time);
-  }
-
-  return packet_results_summary;
-}
-
 double GetLossProbability(double inherent_loss,
                           DataRate loss_limited_bandwidth,
                           DataRate sending_rate) {
@@ -173,7 +142,6 @@ LossBasedBweV2::Result LossBasedBweV2::GetLossBasedResult() const {
                                       : DataRate::PlusInfinity(),
             .state = LossBasedState::kDelayBasedEstimate};
   }
-
   return loss_based_result_;
 }
 
@@ -545,73 +513,68 @@ absl::optional<LossBasedBweV2::Config> LossBasedBweV2::CreateConfig(
                     key_value_config->Lookup("WebRTC-Bwe-LossBasedBweV2"));
   }
 
-  absl::optional<Config> config;
   if (!enabled.Get()) {
-    return config;
+    return absl::nullopt;
   }
-#if defined(WEBRTC_WEBKIT_BUILD)
-  config = Config { };
-#else
-  config.emplace();
-#endif
-  config->bandwidth_rampup_upper_bound_factor =
+  Config config;
+  config.bandwidth_rampup_upper_bound_factor =
       bandwidth_rampup_upper_bound_factor.Get();
-  config->bandwidth_rampup_upper_bound_factor_in_hold =
+  config.bandwidth_rampup_upper_bound_factor_in_hold =
       bandwidth_rampup_upper_bound_factor_in_hold.Get();
-  config->bandwidth_rampup_hold_threshold =
+  config.bandwidth_rampup_hold_threshold =
       bandwidth_rampup_hold_threshold.Get();
-  config->rampup_acceleration_max_factor = rampup_acceleration_max_factor.Get();
-  config->rampup_acceleration_maxout_time =
+  config.rampup_acceleration_max_factor = rampup_acceleration_max_factor.Get();
+  config.rampup_acceleration_maxout_time =
       rampup_acceleration_maxout_time.Get();
-  config->candidate_factors = candidate_factors.Get();
-  config->higher_bandwidth_bias_factor = higher_bandwidth_bias_factor.Get();
-  config->higher_log_bandwidth_bias_factor =
+  config.candidate_factors = candidate_factors.Get();
+  config.higher_bandwidth_bias_factor = higher_bandwidth_bias_factor.Get();
+  config.higher_log_bandwidth_bias_factor =
       higher_log_bandwidth_bias_factor.Get();
-  config->inherent_loss_lower_bound = inherent_loss_lower_bound.Get();
-  config->loss_threshold_of_high_bandwidth_preference =
+  config.inherent_loss_lower_bound = inherent_loss_lower_bound.Get();
+  config.loss_threshold_of_high_bandwidth_preference =
       loss_threshold_of_high_bandwidth_preference.Get();
-  config->bandwidth_preference_smoothing_factor =
+  config.bandwidth_preference_smoothing_factor =
       bandwidth_preference_smoothing_factor.Get();
-  config->inherent_loss_upper_bound_bandwidth_balance =
+  config.inherent_loss_upper_bound_bandwidth_balance =
       inherent_loss_upper_bound_bandwidth_balance.Get();
-  config->inherent_loss_upper_bound_offset =
+  config.inherent_loss_upper_bound_offset =
       inherent_loss_upper_bound_offset.Get();
-  config->initial_inherent_loss_estimate = initial_inherent_loss_estimate.Get();
-  config->newton_iterations = newton_iterations.Get();
-  config->newton_step_size = newton_step_size.Get();
-  config->append_acknowledged_rate_candidate =
+  config.initial_inherent_loss_estimate = initial_inherent_loss_estimate.Get();
+  config.newton_iterations = newton_iterations.Get();
+  config.newton_step_size = newton_step_size.Get();
+  config.append_acknowledged_rate_candidate =
       append_acknowledged_rate_candidate.Get();
-  config->append_delay_based_estimate_candidate =
+  config.append_delay_based_estimate_candidate =
       append_delay_based_estimate_candidate.Get();
-  config->append_upper_bound_candidate_in_alr =
+  config.append_upper_bound_candidate_in_alr =
       append_upper_bound_candidate_in_alr.Get();
-  config->observation_duration_lower_bound =
+  config.observation_duration_lower_bound =
       observation_duration_lower_bound.Get();
-  config->observation_window_size = observation_window_size.Get();
-  config->sending_rate_smoothing_factor = sending_rate_smoothing_factor.Get();
-  config->instant_upper_bound_temporal_weight_factor =
+  config.observation_window_size = observation_window_size.Get();
+  config.sending_rate_smoothing_factor = sending_rate_smoothing_factor.Get();
+  config.instant_upper_bound_temporal_weight_factor =
       instant_upper_bound_temporal_weight_factor.Get();
-  config->instant_upper_bound_bandwidth_balance =
+  config.instant_upper_bound_bandwidth_balance =
       instant_upper_bound_bandwidth_balance.Get();
-  config->instant_upper_bound_loss_offset =
+  config.instant_upper_bound_loss_offset =
       instant_upper_bound_loss_offset.Get();
-  config->temporal_weight_factor = temporal_weight_factor.Get();
-  config->bandwidth_backoff_lower_bound_factor =
+  config.temporal_weight_factor = temporal_weight_factor.Get();
+  config.bandwidth_backoff_lower_bound_factor =
       bandwidth_backoff_lower_bound_factor.Get();
-  config->max_increase_factor = max_increase_factor.Get();
-  config->delayed_increase_window = delayed_increase_window.Get();
-  config->not_increase_if_inherent_loss_less_than_average_loss =
+  config.max_increase_factor = max_increase_factor.Get();
+  config.delayed_increase_window = delayed_increase_window.Get();
+  config.not_increase_if_inherent_loss_less_than_average_loss =
       not_increase_if_inherent_loss_less_than_average_loss.Get();
-  config->not_use_acked_rate_in_alr = not_use_acked_rate_in_alr.Get();
-  config->use_in_start_phase = use_in_start_phase.Get();
-  config->min_num_observations = min_num_observations.Get();
-  config->lower_bound_by_acked_rate_factor =
+  config.not_use_acked_rate_in_alr = not_use_acked_rate_in_alr.Get();
+  config.use_in_start_phase = use_in_start_phase.Get();
+  config.min_num_observations = min_num_observations.Get();
+  config.lower_bound_by_acked_rate_factor =
       lower_bound_by_acked_rate_factor.Get();
-  config->hold_duration_factor = hold_duration_factor.Get();
-  config->use_byte_loss_rate = use_byte_loss_rate.Get();
-  config->padding_duration = padding_duration.Get();
-  config->bound_best_candidate = bound_best_candidate.Get();
-  config->pace_at_loss_based_estimate = pace_at_loss_based_estimate.Get();
+  config.hold_duration_factor = hold_duration_factor.Get();
+  config.use_byte_loss_rate = use_byte_loss_rate.Get();
+  config.padding_duration = padding_duration.Get();
+  config.bound_best_candidate = bound_best_candidate.Get();
+  config.pace_at_loss_based_estimate = pace_at_loss_based_estimate.Get();
   return config;
 }
 
@@ -1145,22 +1108,27 @@ bool LossBasedBweV2::PushBackObservation(
     return false;
   }
 
-  PacketResultsSummary packet_results_summary =
-      GetPacketResultsSummary(packet_results);
-
-  partial_observation_.num_packets += packet_results_summary.num_packets;
-  partial_observation_.num_lost_packets +=
-      packet_results_summary.num_lost_packets;
-  partial_observation_.size += packet_results_summary.total_size;
-  partial_observation_.lost_size += packet_results_summary.lost_size;
+  partial_observation_.num_packets += packet_results.size();
+  Timestamp last_send_time = Timestamp::MinusInfinity();
+  Timestamp first_send_time = Timestamp::PlusInfinity();
+  for (const PacketResult& packet : packet_results) {
+    if (packet.IsReceived()) {
+      partial_observation_.lost_packets.erase(
+          packet.sent_packet.sequence_number);
+    } else {
+      partial_observation_.lost_packets.emplace(
+          packet.sent_packet.sequence_number, packet.sent_packet.size);
+    }
+    partial_observation_.size += packet.sent_packet.size;
+    last_send_time = std::max(last_send_time, packet.sent_packet.send_time);
+    first_send_time = std::min(first_send_time, packet.sent_packet.send_time);
+  }
 
   // This is the first packet report we have received.
   if (!IsValid(last_send_time_most_recent_observation_)) {
-    last_send_time_most_recent_observation_ =
-        packet_results_summary.first_send_time;
+    last_send_time_most_recent_observation_ = first_send_time;
   }
 
-  const Timestamp last_send_time = packet_results_summary.last_send_time;
   const TimeDelta observation_duration =
       last_send_time - last_send_time_most_recent_observation_;
   // Too small to be meaningful.
@@ -1173,12 +1141,14 @@ bool LossBasedBweV2::PushBackObservation(
 
   Observation observation;
   observation.num_packets = partial_observation_.num_packets;
-  observation.num_lost_packets = partial_observation_.num_lost_packets;
+  observation.num_lost_packets = partial_observation_.lost_packets.size();
   observation.num_received_packets =
       observation.num_packets - observation.num_lost_packets;
   observation.sending_rate =
       GetSendingRate(partial_observation_.size / observation_duration);
-  observation.lost_size = partial_observation_.lost_size;
+  for (auto const& [key, packet_size] : partial_observation_.lost_packets) {
+    observation.lost_size += packet_size;
+  }
   observation.size = partial_observation_.size;
   observation.id = num_observations_++;
   observations_[observation.id % config_->observation_window_size] =

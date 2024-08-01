@@ -28,7 +28,6 @@
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
 
-#include "CGDisplayStreamScreenCaptureSource.h"
 #include "ImageTransferSessionVT.h"
 #include "Logging.h"
 #include "MediaDeviceHashSalts.h"
@@ -67,12 +66,14 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& devi
     case CaptureDevice::DeviceType::Screen:
 #if HAVE(REPLAYKIT)
         return create(ReplayKitCaptureSource::create(device.persistentId()), device, WTFMove(hashSalts), constraints, pageIdentifier);
-#else
-#if HAVE(SCREEN_CAPTURE_KIT)
+#elif HAVE(SCREEN_CAPTURE_KIT)
         if (ScreenCaptureKitCaptureSource::isAvailable())
             return create(ScreenCaptureKitCaptureSource::create(device, constraints), device, WTFMove(hashSalts), constraints, pageIdentifier);
-#endif
-        return create(CGDisplayStreamScreenCaptureSource::create(device.persistentId()), device, WTFMove(hashSalts), constraints, pageIdentifier);
+        ASSERT_NOT_REACHED();
+        return { };
+#else
+        ASSERT_NOT_REACHED();
+        return { };
 #endif
     case CaptureDevice::DeviceType::Window:
 #if HAVE(SCREEN_CAPTURE_KIT)

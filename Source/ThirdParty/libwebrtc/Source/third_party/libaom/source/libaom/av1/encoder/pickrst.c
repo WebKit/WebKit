@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -498,6 +498,7 @@ static AOM_INLINE void calc_proj_params_r0_r1_c(
   C[1] /= size;
 }
 
+#if CONFIG_AV1_HIGHBITDEPTH
 static AOM_INLINE void calc_proj_params_r0_r1_high_bd_c(
     const uint8_t *src8, int width, int height, int src_stride,
     const uint8_t *dat8, int dat_stride, int32_t *flt0, int flt0_stride,
@@ -526,6 +527,7 @@ static AOM_INLINE void calc_proj_params_r0_r1_high_bd_c(
   C[0] /= size;
   C[1] /= size;
 }
+#endif  // CONFIG_AV1_HIGHBITDEPTH
 
 static AOM_INLINE void calc_proj_params_r0_c(const uint8_t *src8, int width,
                                              int height, int src_stride,
@@ -550,6 +552,7 @@ static AOM_INLINE void calc_proj_params_r0_c(const uint8_t *src8, int width,
   C[0] /= size;
 }
 
+#if CONFIG_AV1_HIGHBITDEPTH
 static AOM_INLINE void calc_proj_params_r0_high_bd_c(
     const uint8_t *src8, int width, int height, int src_stride,
     const uint8_t *dat8, int dat_stride, int32_t *flt0, int flt0_stride,
@@ -570,6 +573,7 @@ static AOM_INLINE void calc_proj_params_r0_high_bd_c(
   H[0][0] /= size;
   C[0] /= size;
 }
+#endif  // CONFIG_AV1_HIGHBITDEPTH
 
 static AOM_INLINE void calc_proj_params_r1_c(const uint8_t *src8, int width,
                                              int height, int src_stride,
@@ -594,6 +598,7 @@ static AOM_INLINE void calc_proj_params_r1_c(const uint8_t *src8, int width,
   C[1] /= size;
 }
 
+#if CONFIG_AV1_HIGHBITDEPTH
 static AOM_INLINE void calc_proj_params_r1_high_bd_c(
     const uint8_t *src8, int width, int height, int src_stride,
     const uint8_t *dat8, int dat_stride, int32_t *flt1, int flt1_stride,
@@ -614,6 +619,7 @@ static AOM_INLINE void calc_proj_params_r1_high_bd_c(
   H[1][1] /= size;
   C[1] /= size;
 }
+#endif  // CONFIG_AV1_HIGHBITDEPTH
 
 // The function calls 3 subfunctions for the following cases :
 // 1) When params->r[0] > 0 and params->r[1] > 0. In this case all elements
@@ -639,6 +645,7 @@ void av1_calc_proj_params_c(const uint8_t *src8, int width, int height,
   }
 }
 
+#if CONFIG_AV1_HIGHBITDEPTH
 void av1_calc_proj_params_high_bd_c(const uint8_t *src8, int width, int height,
                                     int src_stride, const uint8_t *dat8,
                                     int dat_stride, int32_t *flt0,
@@ -658,6 +665,7 @@ void av1_calc_proj_params_high_bd_c(const uint8_t *src8, int width, int height,
                                   dat_stride, flt1, flt1_stride, H, C);
   }
 }
+#endif  // CONFIG_AV1_HIGHBITDEPTH
 
 static AOM_INLINE void get_proj_subspace(const uint8_t *src8, int width,
                                          int height, int src_stride,
@@ -1127,15 +1135,6 @@ static INLINE int64_t multiply_and_scale(int64_t x, int32_t w1, int32_t w2) {
   // Let y = x * w / WIENER_TAP_SCALE_FACTOR
   //       = x * (w1 * WIENER_TAP_SCALE_FACTOR + w2) / WIENER_TAP_SCALE_FACTOR
   const int64_t y = x * w1 + x * w2 / WIENER_TAP_SCALE_FACTOR;
-  // Double-check the calculation using __int128.
-  // TODO(wtc): Remove after 2024-04-30.
-#if !defined(NDEBUG) && defined(__GNUC__) && defined(__LP64__)
-  const int32_t w = w1 * WIENER_TAP_SCALE_FACTOR + w2;
-  const __int128 z = (__int128)x * w / WIENER_TAP_SCALE_FACTOR;
-  assert(z >= INT64_MIN);
-  assert(z <= INT64_MAX);
-  assert(y == (int64_t)z);
-#endif
   return y;
 }
 

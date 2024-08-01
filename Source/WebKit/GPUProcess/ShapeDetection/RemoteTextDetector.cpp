@@ -30,6 +30,7 @@
 
 #include "ArgumentCoders.h"
 #include "RemoteRenderingBackend.h"
+#include "ShapeDetectionObjectHeap.h"
 #include <WebCore/DetectedTextInterface.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/TextDetectorInterface.h>

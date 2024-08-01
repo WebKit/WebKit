@@ -527,7 +527,7 @@ static inline float4 readR8_SNORM(COMMON_READ_FUNC_PARAMS)
 }
 static inline void writeR8_SNORM(COMMON_WRITE_FLOAT_FUNC_PARAMS)
 {
-    buffer[bufferOffset] = as_type<uchar>(floatToNormalized<7, char>(color.r));
+    buffer[bufferOffset] = as_type<uchar>(floatToNormalized<char>(color.r));
 }
 
 // R8_SINT
@@ -585,8 +585,8 @@ static inline float4 readR8G8_SNORM(COMMON_READ_FUNC_PARAMS)
 }
 static inline void writeR8G8_SNORM(COMMON_WRITE_FLOAT_FUNC_PARAMS)
 {
-    buffer[bufferOffset]     = as_type<uchar>(floatToNormalized<7, char>(color.r));
-    buffer[bufferOffset + 1] = as_type<uchar>(floatToNormalized<7, char>(color.g));
+    buffer[bufferOffset]     = as_type<uchar>(floatToNormalized<char>(color.r));
+    buffer[bufferOffset + 1] = as_type<uchar>(floatToNormalized<char>(color.g));
 }
 
 // RG8_SINT
@@ -705,6 +705,14 @@ static inline float4 readR16_NORM(COMMON_READ_FUNC_PARAMS)
 #define readR16_SNORM readR16_NORM<short>
 #define readR16_UNORM readR16_NORM<ushort>
 
+template<typename ShortType>
+static inline void writeR16_NORM(COMMON_WRITE_FLOAT_FUNC_PARAMS)
+{
+    shortToBytes(floatToNormalized<ShortType>(color.r), bufferOffset, buffer);
+}
+#define writeR16_SNORM writeR16_NORM<short>
+#define writeR16_UNORM writeR16_NORM<ushort>
+
 // R16_SINT
 static inline int4 readR16_SINT(COMMON_READ_FUNC_PARAMS)
 {
@@ -802,6 +810,15 @@ static inline float4 readR16G16_NORM(COMMON_READ_FUNC_PARAMS)
 }
 #define readR16G16_SNORM readR16G16_NORM<short>
 #define readR16G16_UNORM readR16G16_NORM<ushort>
+
+template<typename ShortType>
+static inline void writeR16G16_NORM(COMMON_WRITE_FLOAT_FUNC_PARAMS)
+{
+    shortToBytes(floatToNormalized<ShortType>(color.r), bufferOffset, buffer);
+    shortToBytes(floatToNormalized<ShortType>(color.g), bufferOffset + 2, buffer);
+}
+#define writeR16G16_SNORM writeR16G16_NORM<short>
+#define writeR16G16_UNORM writeR16G16_NORM<ushort>
 
 // R16G16_SINT
 static inline int4 readR16G16_SINT(COMMON_READ_FUNC_PARAMS)
@@ -912,6 +929,17 @@ static inline float4 readR16G16B16A16_NORM(COMMON_READ_FUNC_PARAMS)
 }
 #define readR16G16B16A16_SNORM readR16G16B16A16_NORM<short>
 #define readR16G16B16A16_UNORM readR16G16B16A16_NORM<ushort>
+
+template<typename ShortType>
+static inline void writeR16G16B16A16_NORM(COMMON_WRITE_FLOAT_FUNC_PARAMS)
+{
+    shortToBytes(floatToNormalized<ShortType>(color.r), bufferOffset, buffer);
+    shortToBytes(floatToNormalized<ShortType>(color.g), bufferOffset + 2, buffer);
+    shortToBytes(floatToNormalized<ShortType>(color.b), bufferOffset + 4, buffer);
+    shortToBytes(floatToNormalized<ShortType>(color.a), bufferOffset + 6, buffer);
+}
+#define writeR16G16B16A16_SNORM writeR16G16B16A16_NORM<short>
+#define writeR16G16B16A16_UNORM writeR16G16B16A16_NORM<ushort>
 
 // R16G16B16A16_SINT
 static inline int4 readR16G16B16A16_SINT(COMMON_READ_FUNC_PARAMS)
@@ -1319,12 +1347,20 @@ kernel void readFromBufferToFloatTexture(COMMON_READ_KERNEL_PARAMS(float))
     PROC(R8G8_UNORM)            \
     PROC(R8G8_SNORM)            \
     PROC(R16_FLOAT)             \
+    PROC(R16_SNORM)             \
+    PROC(R16_UNORM)             \
     PROC(A16_FLOAT)             \
     PROC(L16_FLOAT)             \
     PROC(L16A16_FLOAT)          \
     PROC(R16G16_FLOAT)          \
+    PROC(R16G16_SNORM)          \
+    PROC(R16G16_UNORM)          \
     PROC(R16G16B16_FLOAT)       \
+    PROC(R16G16B16_SNORM)       \
+    PROC(R16G16B16_UNORM)       \
     PROC(R16G16B16A16_FLOAT)    \
+    PROC(R16G16B16A16_SNORM)    \
+    PROC(R16G16B16A16_UNORM)    \
     PROC(R32_FLOAT)             \
     PROC(A32_FLOAT)             \
     PROC(L32_FLOAT)             \
@@ -1424,11 +1460,17 @@ kernel void writeFromFloatTextureToBuffer(COMMON_WRITE_KERNEL_PARAMS(float))
     PROC(R8G8_UNORM)            \
     PROC(R8G8_SNORM)            \
     PROC(R16_FLOAT)             \
+    PROC(R16_SNORM)             \
+    PROC(R16_UNORM)             \
     PROC(A16_FLOAT)             \
     PROC(L16_FLOAT)             \
     PROC(L16A16_FLOAT)          \
     PROC(R16G16_FLOAT)          \
+    PROC(R16G16_SNORM)          \
+    PROC(R16G16_UNORM)          \
     PROC(R16G16B16A16_FLOAT)    \
+    PROC(R16G16B16A16_SNORM)    \
+    PROC(R16G16B16A16_UNORM)    \
     PROC(R32_FLOAT)             \
     PROC(A32_FLOAT)             \
     PROC(L32_FLOAT)             \

@@ -245,6 +245,9 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
             || aSelector == @selector(rawKeyDown:withModifiers:withLocation:)
             || aSelector == @selector(rawKeyUp:withModifiers:withLocation:)
             || aSelector == @selector(leapForward:)
+            || aSelector == @selector(asyncMouseDown:withModifiers:)
+            || aSelector == @selector(asyncMouseMoveToX:Y:)
+            || aSelector == @selector(asyncMouseUp:withModifiers:)
             || aSelector == @selector(mouseDown:withModifiers:)
             || aSelector == @selector(mouseMoveToX:Y:)
             || aSelector == @selector(mouseUp:withModifiers:)
@@ -313,6 +316,12 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
         return @"scheduleAsynchronousKeyDown";
     if (aSelector == @selector(leapForward:))
         return @"leapForward";
+    if (aSelector == @selector(asyncMouseDown:withModifiers:))
+        return @"asyncMouseDown";
+    if (aSelector == @selector(asyncMouseUp:withModifiers:))
+        return @"asyncMouseUp";
+    if (aSelector == @selector(asyncMouseMoveToX:Y:))
+        return @"asyncMouseMoveTo";
     if (aSelector == @selector(mouseDown:withModifiers:))
         return @"mouseDown";
     if (aSelector == @selector(mouseUp:withModifiers:))
@@ -584,6 +593,11 @@ static NSUInteger swizzledEventPressedMouseButtons()
 }
 #endif
 
+- (void)asyncMouseDown:(int)buttonNumber withModifiers:(WebScriptObject*)modifiers
+{
+    [self mouseDown:buttonNumber withModifiers:modifiers];
+}
+
 - (void)mouseDown:(int)buttonNumber withModifiers:(WebScriptObject*)modifiers
 {
     mouseButtonsCurrentlyDown |= (1 << buttonNumber);
@@ -659,6 +673,11 @@ static NSUInteger swizzledEventPressedMouseButtons()
     // assert to not be used in iOS.
     [[mainFrame webView] _scaleWebView:scale atOrigin:NSMakePoint(x, y)];
 #endif
+}
+
+- (void)asyncMouseUp:(int)buttonNumber withModifiers:(WebScriptObject*)modifiers
+{
+    [self mouseUp:buttonNumber withModifiers:modifiers];
 }
 
 - (void)mouseUp:(int)buttonNumber withModifiers:(WebScriptObject*)modifiers
@@ -738,6 +757,11 @@ static NSUInteger swizzledEventPressedMouseButtons()
 - (void)mouseUp:(int)buttonNumber
 {
     [self mouseUp:buttonNumber withModifiers:nil];
+}
+
+- (void)asyncMouseMoveToX:(int)x Y:(int)y
+{
+    [self mouseMoveToX:x Y:y];
 }
 
 - (void)mouseMoveToX:(int)x Y:(int)y

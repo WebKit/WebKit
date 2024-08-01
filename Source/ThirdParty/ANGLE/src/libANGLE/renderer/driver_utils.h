@@ -194,6 +194,7 @@ bool IsBroxton(uint32_t DeviceId);
 bool IsKabyLake(uint32_t DeviceId);
 bool IsGeminiLake(uint32_t DeviceId);
 bool IsCoffeeLake(uint32_t DeviceId);
+bool IsMeteorLake(uint32_t DeviceId);
 bool Is9thGenIntel(uint32_t DeviceId);
 bool Is11thGenIntel(uint32_t DeviceId);
 bool Is12thGenIntel(uint32_t DeviceId);

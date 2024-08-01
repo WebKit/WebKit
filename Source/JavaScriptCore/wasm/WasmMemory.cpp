@@ -49,7 +49,11 @@
 #include <limits>
 #include <mutex>
 
-namespace JSC { namespace Wasm {
+namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED_TEMPLATE(MemoryJSWebAssemblyInstanceWeakCGSet, Wasm::Memory::JSWebAssemblyInstanceWeakCGSet);
+
+namespace Wasm {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Memory);
 
@@ -443,8 +447,8 @@ void Memory::dump(PrintStream& out) const
     out.print("Memory at ", RawPointer(handle->memory()), ", size ", handle->size(), "B capacity ", handle->mappedCapacity(), "B, initial ", handle->initial(), " maximum ", handle->maximum(), " mode ", handle->mode(), " sharingMode ", handle->sharingMode());
 }
 
-} // namespace JSC
-
 } // namespace Wasm
+
+} // namespace JSC
 
 #endif // ENABLE(WEBASSEMBLY)

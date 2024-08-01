@@ -621,8 +621,8 @@ void WebExtensionController::handleContentRuleListNotification(WebPageProxyIdent
     if (!savedMatchedRule || m_purgeOldMatchedRulesTimer)
         return;
 
-    m_purgeOldMatchedRulesTimer = makeUnique<WebCore::Timer>(*this, &WebExtensionController::purgeOldMatchedRules);
-    m_purgeOldMatchedRulesTimer->start(purgeMatchedRulesInterval, purgeMatchedRulesInterval);
+    m_purgeOldMatchedRulesTimer = makeUnique<RunLoop::Timer>(RunLoop::current(), this, &WebExtensionController::purgeOldMatchedRules);
+    m_purgeOldMatchedRulesTimer->startRepeating(purgeMatchedRulesInterval);
 }
 
 void WebExtensionController::purgeOldMatchedRules()

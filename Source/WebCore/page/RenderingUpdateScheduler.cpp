@@ -31,6 +31,7 @@
 #include "DisplayRefreshMonitorManager.h"
 #include "Logging.h"
 #include "Page.h"
+#include "Timer.h"
 #include <wtf/SystemTracing.h>
 #include <wtf/text/TextStream.h>
 
@@ -41,6 +42,8 @@ RenderingUpdateScheduler::RenderingUpdateScheduler(Page& page)
 {
     windowScreenDidChange(page.chrome().displayID());
 }
+
+RenderingUpdateScheduler::~RenderingUpdateScheduler() = default;
 
 bool RenderingUpdateScheduler::scheduleAnimation()
 {

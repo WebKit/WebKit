@@ -10,9 +10,11 @@
 
 #include "logging/rtc_event_log/encoder/optional_blob_encoding.h"
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 

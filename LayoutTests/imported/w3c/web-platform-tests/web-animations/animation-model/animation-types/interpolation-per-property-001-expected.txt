@@ -1,5 +1,9 @@
 
 PASS Setup
+PASS alignment-baseline (type: discrete) has testInterpolation function
+PASS alignment-baseline uses discrete animation when animating between "baseline" and "middle" with linear easing
+PASS alignment-baseline uses discrete animation when animating between "baseline" and "middle" with effect easing
+PASS alignment-baseline uses discrete animation when animating between "baseline" and "middle" with keyframe easing
 PASS align-content (type: discrete) has testInterpolation function
 PASS align-content uses discrete animation when animating between "flex-start" and "flex-end" with linear easing
 PASS align-content uses discrete animation when animating between "flex-start" and "flex-end" with effect easing
@@ -12,6 +16,10 @@ PASS align-self (type: discrete) has testInterpolation function
 PASS align-self uses discrete animation when animating between "flex-start" and "flex-end" with linear easing
 PASS align-self uses discrete animation when animating between "flex-start" and "flex-end" with effect easing
 PASS align-self uses discrete animation when animating between "flex-start" and "flex-end" with keyframe easing
+PASS appearance (type: discrete) has testInterpolation function
+PASS appearance uses discrete animation when animating between "auto" and "none" with linear easing
+PASS appearance uses discrete animation when animating between "auto" and "none" with effect easing
+PASS appearance uses discrete animation when animating between "auto" and "none" with keyframe easing
 PASS backface-visibility (type: discrete) has testInterpolation function
 PASS backface-visibility uses discrete animation when animating between "visible" and "hidden" with linear easing
 PASS backface-visibility uses discrete animation when animating between "visible" and "hidden" with effect easing
@@ -47,6 +55,13 @@ PASS background-repeat (type: discrete) has testInterpolation function
 PASS background-repeat uses discrete animation when animating between "space" and "round" with linear easing
 PASS background-repeat uses discrete animation when animating between "space" and "round" with effect easing
 PASS background-repeat uses discrete animation when animating between "space" and "round" with keyframe easing
+PASS block-step-insert (type: discrete) has testInterpolation function
+PASS block-step-insert uses discrete animation when animating between "margin" and "padding" with linear easing
+PASS block-step-insert uses discrete animation when animating between "margin" and "padding" with effect easing
+PASS block-step-insert uses discrete animation when animating between "margin" and "padding" with keyframe easing
+PASS block-step-size (type: length) has testInterpolation function
+PASS block-step-size supports animating as a length
+PASS block-step-size supports animating as a length of rem
 PASS border-bottom-color (type: color) has testInterpolation function
 PASS border-bottom-color supports animating as color of rgb()
 PASS border-bottom-color supports animating as color of #RGB
@@ -130,6 +145,10 @@ PASS box-sizing (type: discrete) has testInterpolation function
 PASS box-sizing uses discrete animation when animating between "content-box" and "border-box" with linear easing
 PASS box-sizing uses discrete animation when animating between "content-box" and "border-box" with effect easing
 PASS box-sizing uses discrete animation when animating between "content-box" and "border-box" with keyframe easing
+PASS buffered-rendering (type: discrete) has testInterpolation function
+PASS buffered-rendering uses discrete animation when animating between "auto" and "dynamic" with linear easing
+PASS buffered-rendering uses discrete animation when animating between "auto" and "dynamic" with effect easing
+PASS buffered-rendering uses discrete animation when animating between "auto" and "dynamic" with keyframe easing
 PASS caption-side (type: discrete) has testInterpolation function
 PASS caption-side uses discrete animation when animating between "top" and "bottom" with linear easing
 PASS caption-side uses discrete animation when animating between "top" and "bottom" with effect easing
@@ -173,6 +192,11 @@ PASS color-interpolation-filters (type: discrete) has testInterpolation function
 PASS color-interpolation-filters uses discrete animation when animating between "srgb" and "linearrgb" with linear easing
 PASS color-interpolation-filters uses discrete animation when animating between "srgb" and "linearrgb" with effect easing
 PASS color-interpolation-filters uses discrete animation when animating between "srgb" and "linearrgb" with keyframe easing
+PASS columns (type: positiveInteger) has testInterpolation function
+PASS columns supports animating as a positive integer
+PASS columns (type: length) has testInterpolation function
+PASS columns supports animating as a length
+PASS columns supports animating as a length of rem
 PASS column-count (type: positiveInteger) has testInterpolation function
 PASS column-count supports animating as a positive integer
 PASS column-count (type: discrete) has testInterpolation function
@@ -270,6 +294,10 @@ PASS flex-direction (type: discrete) has testInterpolation function
 PASS flex-direction uses discrete animation when animating between "row" and "row-reverse" with linear easing
 PASS flex-direction uses discrete animation when animating between "row" and "row-reverse" with effect easing
 PASS flex-direction uses discrete animation when animating between "row" and "row-reverse" with keyframe easing
+PASS flex-flow (type: discrete) has testInterpolation function
+PASS flex-flow uses discrete animation when animating between "row" and "row-reverse wrap" with linear easing
+PASS flex-flow uses discrete animation when animating between "row" and "row-reverse wrap" with effect easing
+PASS flex-flow uses discrete animation when animating between "row" and "row-reverse wrap" with keyframe easing
 PASS flex-grow (type: positiveNumber) has testInterpolation function
 PASS flex-grow supports animating as a positive number
 PASS flex-shrink (type: positiveNumber) has testInterpolation function
@@ -352,6 +380,17 @@ PASS font-variation-settings uses discrete animation when animating between ""wd
 PASS font-variation-settings uses discrete animation when animating between ""wdth" 5" and "normal" with linear easing
 PASS font-variation-settings uses discrete animation when animating between ""wdth" 5" and "normal" with effect easing
 PASS font-variation-settings uses discrete animation when animating between ""wdth" 5" and "normal" with keyframe easing
+PASS gap (type: length) has testInterpolation function
+PASS gap supports animating as a length
+PASS gap supports animating as a length of rem
+PASS gap (type: discrete) has testInterpolation function
+PASS gap uses discrete animation when animating between "normal" and "200px" with linear easing
+PASS gap uses discrete animation when animating between "normal" and "200px" with effect easing
+PASS gap uses discrete animation when animating between "normal" and "200px" with keyframe easing
+PASS grid-area (type: discrete) has testInterpolation function
+PASS grid-area uses discrete animation when animating between "1" and "5" with linear easing
+PASS grid-area uses discrete animation when animating between "1" and "5" with effect easing
+PASS grid-area uses discrete animation when animating between "1" and "5" with keyframe easing
 PASS grid-auto-columns (type: discrete) has testInterpolation function
 PASS grid-auto-columns uses discrete animation when animating between "1px" and "5px" with linear easing
 PASS grid-auto-columns uses discrete animation when animating between "1px" and "5px" with effect easing
@@ -364,6 +403,10 @@ PASS grid-auto-rows (type: discrete) has testInterpolation function
 PASS grid-auto-rows uses discrete animation when animating between "1px" and "5px" with linear easing
 PASS grid-auto-rows uses discrete animation when animating between "1px" and "5px" with effect easing
 PASS grid-auto-rows uses discrete animation when animating between "1px" and "5px" with keyframe easing
+PASS grid-column (type: discrete) has testInterpolation function
+PASS grid-column uses discrete animation when animating between "1" and "5" with linear easing
+PASS grid-column uses discrete animation when animating between "1" and "5" with effect easing
+PASS grid-column uses discrete animation when animating between "1" and "5" with keyframe easing
 PASS grid-column-end (type: discrete) has testInterpolation function
 PASS grid-column-end uses discrete animation when animating between "1" and "5" with linear easing
 PASS grid-column-end uses discrete animation when animating between "1" and "5" with effect easing
@@ -372,6 +415,10 @@ PASS grid-column-start (type: discrete) has testInterpolation function
 PASS grid-column-start uses discrete animation when animating between "1" and "5" with linear easing
 PASS grid-column-start uses discrete animation when animating between "1" and "5" with effect easing
 PASS grid-column-start uses discrete animation when animating between "1" and "5" with keyframe easing
+PASS grid-row (type: discrete) has testInterpolation function
+PASS grid-row uses discrete animation when animating between "1" and "5" with linear easing
+PASS grid-row uses discrete animation when animating between "1" and "5" with effect easing
+PASS grid-row uses discrete animation when animating between "1" and "5" with keyframe easing
 PASS grid-row-end (type: discrete) has testInterpolation function
 PASS grid-row-end uses discrete animation when animating between "1" and "5" with linear easing
 PASS grid-row-end uses discrete animation when animating between "1" and "5" with effect easing
@@ -380,10 +427,18 @@ PASS grid-row-start (type: discrete) has testInterpolation function
 PASS grid-row-start uses discrete animation when animating between "1" and "5" with linear easing
 PASS grid-row-start uses discrete animation when animating between "1" and "5" with effect easing
 PASS grid-row-start uses discrete animation when animating between "1" and "5" with keyframe easing
+PASS grid-template (type: discrete) has testInterpolation function
+PASS grid-template uses discrete animation when animating between "". . a b" ". . a b"" and "none" with linear easing
+PASS grid-template uses discrete animation when animating between "". . a b" ". . a b"" and "none" with effect easing
+PASS grid-template uses discrete animation when animating between "". . a b" ". . a b"" and "none" with keyframe easing
 PASS grid-template-areas (type: discrete) has testInterpolation function
 PASS grid-template-areas uses discrete animation when animating between "". . a b" ". . a b"" and "none" with linear easing
 PASS grid-template-areas uses discrete animation when animating between "". . a b" ". . a b"" and "none" with effect easing
 PASS grid-template-areas uses discrete animation when animating between "". . a b" ". . a b"" and "none" with keyframe easing
+PASS hanging-punctuation (type: discrete) has testInterpolation function
+PASS hanging-punctuation uses discrete animation when animating between "none" and "first last" with linear easing
+PASS hanging-punctuation uses discrete animation when animating between "none" and "first last" with effect easing
+PASS hanging-punctuation uses discrete animation when animating between "none" and "first last" with keyframe easing
 PASS hyphens (type: discrete) has testInterpolation function
 PASS hyphens uses discrete animation when animating between "manual" and "none" with linear easing
 PASS hyphens uses discrete animation when animating between "manual" and "none" with effect easing

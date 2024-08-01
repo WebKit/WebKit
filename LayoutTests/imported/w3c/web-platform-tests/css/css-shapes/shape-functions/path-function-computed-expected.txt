@@ -1,0 +1,5 @@
+
+PASS Property clip-path value 'path(nonzero, 'M10,10h80v80h-80zM25,25h50v50h-50z')'
+PASS Property clip-path value 'path(evenodd, 'M10,10h80v80h-80zM25,25h50v50h-50z')'
+PASS Property clip-path value 'path(evenodd, 'M10,10h80v80h-80zM25,25h50v50h-50')'
+

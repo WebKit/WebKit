@@ -69,6 +69,9 @@ class RTC_EXPORT SimulcastEncoderAdapter : public VideoEncoder {
 
   EncoderInfo GetEncoderInfo() const override;
 
+ protected:
+  void DestroyStoredEncoders();
+
  private:
   class EncoderContext {
    public:
@@ -145,8 +148,6 @@ class RTC_EXPORT SimulcastEncoderAdapter : public VideoEncoder {
   };
 
   bool Initialized() const;
-
-  void DestroyStoredEncoders();
 
   // This method creates encoder. May reuse previously created encoders from
   // `cached_encoder_contexts_`. It's const because it's used from

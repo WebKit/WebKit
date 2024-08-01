@@ -55,6 +55,7 @@ using FloatBoxExtent = RectEdges<float>;
 namespace WebKit {
 
 class WebPageProxy;
+struct SharedPreferencesForWebProcess;
 
 class WebFullScreenManagerProxyClient {
 public:
@@ -81,6 +82,8 @@ class WebFullScreenManagerProxy : public IPC::MessageReceiver, public CanMakeChe
 public:
     WebFullScreenManagerProxy(WebPageProxy&, WebFullScreenManagerProxyClient&);
     virtual ~WebFullScreenManagerProxy();
+
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
     bool isFullScreen();
     bool blocksReturnToFullscreenFromPictureInPicture() const;

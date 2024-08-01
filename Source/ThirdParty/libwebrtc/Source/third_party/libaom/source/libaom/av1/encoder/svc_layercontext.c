@@ -1,11 +1,12 @@
 /*
- *  Copyright (c) 2019, Alliance for Open Media. All Rights Reserved.
+ * Copyright (c) 2019, Alliance for Open Media. All rights reserved.
  *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree. An additional intellectual property rights grant can be found
- *  in the file PATENTS.  All contributing project authors may
- *  be found in the AUTHORS file in the root of the source tree.
+ * This source code is subject to the terms of the BSD 2 Clause License and
+ * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
+ * was not distributed with this source code in the LICENSE file, you can
+ * obtain it at www.aomedia.org/license/software. If the Alliance for Open
+ * Media Patent License 1.0 was not distributed with this source code in the
+ * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
 #include <assert.h>
@@ -225,6 +226,7 @@ void av1_restore_layer_context(AV1_COMP *const cpi) {
   const int old_frame_since_key = cpi->rc.frames_since_key;
   const int old_frame_to_key = cpi->rc.frames_to_key;
   const int max_consec_drop = cpi->rc.max_consec_drop;
+  const int postencode_drop = cpi->rc.postencode_drop;
   // Restore layer rate control.
   cpi->rc = lc->rc;
   cpi->ppi->p_rc = lc->p_rc;
@@ -239,6 +241,7 @@ void av1_restore_layer_context(AV1_COMP *const cpi) {
   cpi->rc.frames_to_key = old_frame_to_key;
   // Reset to value before the layer restore.
   cpi->rc.max_consec_drop = max_consec_drop;
+  cpi->rc.postencode_drop = postencode_drop;
   // For spatial-svc, allow cyclic-refresh to be applied on the spatial layers,
   // for the base temporal layer.
   if (cpi->oxcf.q_cfg.aq_mode == CYCLIC_REFRESH_AQ &&

@@ -1108,6 +1108,13 @@ bool DecompressBlob(const uint8_t *compressedData,
     uint32_t uncompressedSize =
         zlib_internal::GetGzipUncompressedSize(compressedData, compressedSize);
 
+    if (uncompressedSize == 0)
+    {
+        ERR() << "Decompressed data size is zero. Wrong or corrupted data? (compressed size is: "
+              << compressedSize << ")";
+        return false;
+    }
+
     if (uncompressedSize > maxUncompressedDataSize)
     {
         ERR() << "Decompressed data size is larger than the maximum supported (" << uncompressedSize

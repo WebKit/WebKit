@@ -608,15 +608,15 @@ bool ValidateES3TexImageParametersBase(const Context *context,
                 return false;
             }
 
-            if (width > (caps.maxCubeMapTextureSize >> level))
+            if (width > (caps.maxCubeMapTextureSize >> level) ||
+                height > (caps.maxCubeMapTextureSize >> level))
             {
                 ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kResourceMaxTextureSize);
                 return false;
             }
 
             if (width > (caps.max3DTextureSize >> level) ||
-                height > (caps.max3DTextureSize >> level) ||
-                depth > (caps.max3DTextureSize >> level))
+                height > (caps.max3DTextureSize >> level) || depth > caps.max3DTextureSize)
             {
                 ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kResourceMaxTextureSize);
                 return false;

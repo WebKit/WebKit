@@ -36,14 +36,14 @@
     }
 
 
-    function fireDataModificationHandlerAndContinue() {
+    async function fireDataModificationHandlerAndContinue() {
         console.log("In fireDataModificationHandlerAndContinue")
         testRunner.installStatisticsDidScanDataRecordsCallback(function() {
             console.log("In callback function for installStatisticsDidScanDataRecordsCallback")
             setTimeout(runTest, 500);
         });
-        console.log("Calling statisticsProcessStatisticsAndDataRecords")
-        testRunner.statisticsProcessStatisticsAndDataRecords();
+        console.log("Calling await statisticsProcessStatisticsAndDataRecords")
+        await testRunner.statisticsProcessStatisticsAndDataRecords();
     }
 
     function setAsNonPrevalentAndContinue() {

@@ -220,12 +220,6 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                           bool texelFetchStaticUse,
                                           bool samplerExternal2DY2YEXT) const;
 
-    // A special view for cube maps as a 2D array, used with shaders that do texelFetch() and for
-    // seamful cube map emulation.
-    const vk::ImageView &getFetchImageView(vk::Context *context,
-                                           GLenum srgbDecode,
-                                           bool texelFetchStaticUse) const;
-
     angle::Result getBufferViewAndRecordUse(vk::Context *context,
                                             const vk::Format *imageUniformFormat,
                                             const gl::SamplerBinding *samplerBinding,

@@ -11,7 +11,7 @@
 #ifndef MODULES_AUDIO_PROCESSING_INCLUDE_AUDIO_FRAME_VIEW_H_
 #define MODULES_AUDIO_PROCESSING_INCLUDE_AUDIO_FRAME_VIEW_H_
 
-#include "api/array_view.h"
+#include "api/audio/audio_view.h"
 
 namespace webrtc {
 
@@ -22,46 +22,44 @@ class AudioFrameView {
   // `num_channels` and `channel_size` describe the T**
   // `audio_samples`. `audio_samples` is assumed to point to a
   // two-dimensional |num_channels * channel_size| array of floats.
+  //
+  // Note: The implementation now only requires the first channel pointer.
+  // The previous implementation retained a pointer to externally owned array
+  // of channel pointers, but since the channel size and count are provided
+  // and the array is assumed to be a single two-dimensional array, the other
+  // channel pointers can be calculated based on that (which is what the class
+  // now uses `DeinterleavedView<>` internally for).
   AudioFrameView(T* const* audio_samples, int num_channels, int channel_size)
-      : audio_samples_(audio_samples),
-        num_channels_(num_channels),
-        channel_size_(channel_size) {
-    RTC_DCHECK_GE(num_channels_, 0);
-    RTC_DCHECK_GE(channel_size_, 0);
+      : view_(num_channels && channel_size ? audio_samples[0] : nullptr,
+              channel_size,
+              num_channels) {
+    RTC_DCHECK_GE(view_.num_channels(), 0);
+    RTC_DCHECK_GE(view_.samples_per_channel(), 0);
   }
 
-  // Implicit cast to allow converting Frame<float> to
-  // Frame<const float>.
+  // Implicit cast to allow converting AudioFrameView<float> to
+  // AudioFrameView<const float>.
   template <class U>
-  AudioFrameView(AudioFrameView<U> other)
-      : audio_samples_(other.data()),
-        num_channels_(other.num_channels()),
-        channel_size_(other.samples_per_channel()) {}
+  AudioFrameView(AudioFrameView<U> other) : view_(other.view()) {}
+
+  // Allow constructing AudioFrameView from a DeinterleavedView.
+  template <class U>
+  explicit AudioFrameView(DeinterleavedView<U> view) : view_(view) {}
 
   AudioFrameView() = delete;
 
-  int num_channels() const { return num_channels_; }
+  int num_channels() const { return view_.num_channels(); }
+  int samples_per_channel() const { return view_.samples_per_channel(); }
+  MonoView<T> channel(int idx) { return view_[idx]; }
+  MonoView<const T> channel(int idx) const { return view_[idx]; }
+  MonoView<T> operator[](int idx) { return view_[idx]; }
+  MonoView<const T> operator[](int idx) const { return view_[idx]; }
 
-  int samples_per_channel() const { return channel_size_; }
-
-  rtc::ArrayView<T> channel(int idx) {
-    RTC_DCHECK_LE(0, idx);
-    RTC_DCHECK_LE(idx, num_channels_);
-    return rtc::ArrayView<T>(audio_samples_[idx], channel_size_);
-  }
-
-  rtc::ArrayView<const T> channel(int idx) const {
-    RTC_DCHECK_LE(0, idx);
-    RTC_DCHECK_LE(idx, num_channels_);
-    return rtc::ArrayView<const T>(audio_samples_[idx], channel_size_);
-  }
-
-  T* const* data() { return audio_samples_; }
+  DeinterleavedView<T> view() { return view_; }
+  DeinterleavedView<const T> view() const { return view_; }
 
  private:
-  T* const* audio_samples_;
-  int num_channels_;
-  int channel_size_;
+  DeinterleavedView<T> view_;
 };
 }  // namespace webrtc
 

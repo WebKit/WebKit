@@ -10,9 +10,13 @@
 
 #include "api/audio_codecs/audio_format.h"
 
+#include <cstddef>
 #include <utility>
 
 #include "absl/strings/match.h"
+#include "absl/strings/string_view.h"
+#include "api/rtp_parameters.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

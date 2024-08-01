@@ -1,11 +1,12 @@
 /*
- *  Copyright (c) 2019, Alliance for Open Media. All Rights Reserved.
+ * Copyright (c) 2019, Alliance for Open Media. All rights reserved.
  *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree. An additional intellectual property rights grant can be found
- *  in the file PATENTS.  All contributing project authors may
- *  be found in the AUTHORS file in the root of the source tree.
+ * This source code is subject to the terms of the BSD 2 Clause License and
+ * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
+ * was not distributed with this source code in the LICENSE file, you can
+ * obtain it at www.aomedia.org/license/software. If the Alliance for Open
+ * Media Patent License 1.0 was not distributed with this source code in the
+ * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
 //  This is an example demonstrating how to implement a multi-layer AOM
@@ -1688,10 +1689,7 @@ int main(int argc, const char **argv) {
   aom_codec_control(&codec, AV1E_SET_ENABLE_FILTER_INTRA, 0);
   aom_codec_control(&codec, AV1E_SET_INTRA_DEFAULT_TX_ONLY, 1);
 
-  if (cfg.g_threads > 1) {
-    aom_codec_control(&codec, AV1E_SET_TILE_COLUMNS,
-                      (unsigned int)log2(cfg.g_threads));
-  }
+  aom_codec_control(&codec, AV1E_SET_AUTO_TILES, 1);
 
   aom_codec_control(&codec, AV1E_SET_TUNE_CONTENT, app_input.tune_content);
   if (app_input.tune_content == AOM_CONTENT_SCREEN) {
@@ -1709,6 +1707,8 @@ int main(int argc, const char **argv) {
 
   aom_codec_control(&codec, AV1E_SET_SVC_FRAME_DROP_MODE,
                     AOM_FULL_SUPERFRAME_DROP);
+
+  aom_codec_control(&codec, AV1E_SET_POSTENCODE_DROP_RTC, 1);
 
   svc_params.number_spatial_layers = ss_number_layers;
   svc_params.number_temporal_layers = ts_number_layers;
@@ -1916,6 +1916,13 @@ int main(int argc, const char **argv) {
       cx_time += aom_usec_timer_elapsed(&timer);
       cx_time_layer[layer] += aom_usec_timer_elapsed(&timer);
       frame_cnt_layer[layer] += 1;
+
+      // Get the high motion content flag.
+      int content_flag = 0;
+      if (aom_codec_control(&codec, AV1E_GET_HIGH_MOTION_CONTENT_SCREEN_RTC,
+                            &content_flag)) {
+        die_codec(&codec, "Failed to GET_HIGH_MOTION_CONTENT_SCREEN_RTC");
+      }
 
       got_data = 0;
       // For simulcast (mode 11): write out each spatial layer to the file.

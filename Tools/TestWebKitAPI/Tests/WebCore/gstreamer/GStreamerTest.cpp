@@ -52,7 +52,7 @@ void GStreamerTest::TearDownTestSuite()
 
 TEST_F(GStreamerTest, gstStructureGetters)
 {
-    GUniquePtr<GstStructure> structure(gst_structure_new("foo", "int-val", G_TYPE_INT, -5, "int64-val", G_TYPE_INT64, -10, "uint-val", G_TYPE_UINT, 5, "uint64-val", G_TYPE_UINT64, 18014398509481982, "double-val", G_TYPE_DOUBLE, 1.0, "bool-val", G_TYPE_BOOLEAN, TRUE, nullptr));
+    GUniquePtr<GstStructure> structure(gst_structure_new("foo", "int-val", G_TYPE_INT, -5, "int64-val", G_TYPE_INT64, -10, "uint-val", G_TYPE_UINT, 5, "uint64-val", G_TYPE_UINT64, 18014398509481982, "double-val", G_TYPE_DOUBLE, 1.0, "bool-val", G_TYPE_BOOLEAN, TRUE, "str-val", G_TYPE_STRING, "hello-world", nullptr));
     ASSERT_EQ(gstStructureGet<int>(structure.get(), "int-val"_s), -5);
     ASSERT_TRUE(!gstStructureGet<int>(structure.get(), "int-val-noexist"_s).has_value());
     ASSERT_EQ(gstStructureGet<int64_t>(structure.get(), "int64-val"_s), -10);
@@ -65,6 +65,8 @@ TEST_F(GStreamerTest, gstStructureGetters)
     ASSERT_TRUE(!gstStructureGet<double>(structure.get(), "double-val-noexist"_s).has_value());
     ASSERT_EQ(gstStructureGet<bool>(structure.get(), "bool-val"_s), true);
     ASSERT_TRUE(!gstStructureGet<bool>(structure.get(), "bool-val-noexist"_s).has_value());
+    ASSERT_EQ(gstStructureGetString(structure.get(), "str-val"_s), "hello-world"_s);
+    ASSERT_TRUE(!gstStructureGetString(structure.get(), "str-val-noexist"_s));
 
     // webkit.org/b/276224
     auto emptyIntOpt = gstStructureGet<int>(structure.get(), "int-val-noexist2"_s);

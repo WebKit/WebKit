@@ -10,6 +10,12 @@
 
 #include "api/dtls_transport_interface.h"
 
+#include <memory>
+#include <utility>
+
+#include "absl/types/optional.h"
+#include "rtc_base/ssl_certificate.h"
+
 namespace webrtc {
 
 DtlsTransportInformation::DtlsTransportInformation()

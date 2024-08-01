@@ -10,6 +10,11 @@
 <script>
     const hostUnderTest = "127.0.0.1:8000";
     const statisticsUrl = "http://" + hostUnderTest + "/temp";
+    
+    async function processStatistics() {
+        await testRunner.statisticsProcessStatisticsAndDataRecords()
+    }
+    
     function runTestRunnerTest() {
         if (document.cookie !== "")
             testFailed("document.cookie not empty.");
@@ -40,7 +45,7 @@
                 testRunner.setStatisticsTimeToLiveUserInteraction(0);
 
                 // This is to ensure the timeout we're testing.
-                setTimeout("testRunner.statisticsProcessStatisticsAndDataRecords()", 1000);
+                setTimeout(processStatistics, 1000);
             });
         });
     }

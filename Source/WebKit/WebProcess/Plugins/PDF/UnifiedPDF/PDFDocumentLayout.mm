@@ -88,7 +88,7 @@ auto PDFDocumentLayout::indexForPage(RetainPtr<PDFPage> page) const -> std::opti
     return std::nullopt;
 }
 
-PDFDocumentLayout::PageIndex PDFDocumentLayout::nearestPageIndexForDocumentPoint(FloatPoint documentSpacePoint, std::optional<PDFLayoutRow> visibleRow) const
+PDFDocumentLayout::PageIndex PDFDocumentLayout::nearestPageIndexForDocumentPoint(FloatPoint documentSpacePoint, const std::optional<PDFLayoutRow>& visibleRow) const
 {
     auto pageCount = this->pageCount();
     ASSERT(pageCount);

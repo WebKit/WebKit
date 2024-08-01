@@ -191,7 +191,7 @@ std::optional<ASCIILiteral> FontCache::alternateFamilyName(const String& familyN
     return std::nullopt;
 }
 
-FontPlatformData* FontCache::cachedFontPlatformData(const FontDescription& fontDescription, const String& passedFamilyName, const FontCreationContext& fontCreationContext, bool checkingAlternateName)
+FontPlatformData* FontCache::cachedFontPlatformData(const FontDescription& fontDescription, const String& passedFamilyName, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
 {
 #if PLATFORM(IOS_FAMILY)
     Locker locker { m_fontLock };
@@ -216,12 +216,12 @@ FontPlatformData* FontCache::cachedFontPlatformData(const FontDescription& fontD
     auto addResult = m_fontDataCaches->platformData.add(key, nullptr);
     FontPlatformDataCache::iterator it = addResult.iterator;
     if (addResult.isNewEntry) {
-        it->value = createFontPlatformData(fontDescription, familyName, fontCreationContext);
-        if (!it->value && !checkingAlternateName) {
+        it->value = createFontPlatformData(fontDescription, familyName, fontCreationContext, options);
+        if (!it->value && !options.contains(FontLookupOptions::ExactFamilyNameMatch)) {
             // We were unable to find a font. We have a small set of fonts that we alias to other names,
             // e.g., Arial/Helvetica, Courier/Courier New, etc. Try looking up the font under the aliased name.
             if (auto alternateName = alternateFamilyName(familyName)) {
-                auto* alternateData = cachedFontPlatformData(fontDescription, *alternateName, fontCreationContext, true);
+                auto* alternateData = cachedFontPlatformData(fontDescription, *alternateName, fontCreationContext, options | FontLookupOptions::ExactFamilyNameMatch);
                 // Look up the key in the hash table again as the previous iterator may have
                 // been invalidated by the recursive call to cachedFontPlatformData().
                 it = m_fontDataCaches->platformData.find(key);
@@ -246,12 +246,12 @@ const unsigned cTargetInactiveFontData = 200;
 const unsigned cMaxUnderMemoryPressureInactiveFontData = 50;
 const unsigned cTargetUnderMemoryPressureInactiveFontData = 30;
 
-RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, const String& family, const FontCreationContext& fontCreationContext, bool checkingAlternateName)
+RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, const String& family, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
 {
     if (!m_purgeTimer.isActive())
         m_purgeTimer.startOneShot(0_s);
 
-    if (auto* platformData = cachedFontPlatformData(fontDescription, family, fontCreationContext, checkingAlternateName))
+    if (auto* platformData = cachedFontPlatformData(fontDescription, family, fontCreationContext, options))
         return fontForPlatformData(*platformData);
 
     return nullptr;

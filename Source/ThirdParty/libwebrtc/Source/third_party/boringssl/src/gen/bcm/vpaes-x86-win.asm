@@ -470,10 +470,10 @@ L$_vpaes_set_encrypt_key_begin:
 %ifdef BORINGSSL_DISPATCH_TEST
 	push	ebx
 	push	edx
-	call	L$016pic
-L$016pic:
+	call	L$016pic_for_function_hit
+L$016pic_for_function_hit:
 	pop	ebx
-	lea	ebx,[(_BORINGSSL_function_hit+5-L$016pic)+ebx]
+	lea	ebx,[(_BORINGSSL_function_hit+5-L$016pic_for_function_hit)+ebx]
 	mov	edx,1
 	mov	BYTE [ebx],dl
 	pop	edx
@@ -549,10 +549,10 @@ L$_vpaes_encrypt_begin:
 %ifdef BORINGSSL_DISPATCH_TEST
 	push	ebx
 	push	edx
-	call	L$019pic
-L$019pic:
+	call	L$019pic_for_function_hit
+L$019pic_for_function_hit:
 	pop	ebx
-	lea	ebx,[(_BORINGSSL_function_hit+4-L$019pic)+ebx]
+	lea	ebx,[(_BORINGSSL_function_hit+4-L$019pic_for_function_hit)+ebx]
 	mov	edx,1
 	mov	BYTE [ebx],dl
 	pop	edx

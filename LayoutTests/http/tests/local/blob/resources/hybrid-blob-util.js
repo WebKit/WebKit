@@ -71,13 +71,13 @@ var HybridBlobTestUtil = function(testFunc, opt_filePaths, opt_useOpenPanel) {
         }
     };
 
-    this.runTestsWithDrag = function()
+    this.runTestsWithDrag = async function()
     {
         this.setupForTests();
 
         eventSender.beginDragWithFiles(this.testFilePaths);
-        eventSender.mouseMoveTo(10, 10);
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(10, 10);
+        await eventSender.asyncMouseUp();
     };
 
     this.runTestsWithOpenPanel = function()

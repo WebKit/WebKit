@@ -11,9 +11,8 @@
 #ifndef API_RTC_ERROR_H_
 #define API_RTC_ERROR_H_
 
-#ifdef WEBRTC_UNIT_TEST
-#include <ostream>
-#endif  // WEBRTC_UNIT_TEST
+#include <stdint.h>
+
 #include <string>
 #include <utility>  // For std::move.
 
@@ -161,20 +160,6 @@ class RTC_EXPORT RTCError {
 // to literal string that lives for the whole duration of the program.
 RTC_EXPORT absl::string_view ToString(RTCErrorType error);
 RTC_EXPORT absl::string_view ToString(RTCErrorDetailType error);
-
-#ifdef WEBRTC_UNIT_TEST
-inline std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
-    std::ostream& stream,         // no-presubmit-check TODO(webrtc:8982)
-    RTCErrorType error) {
-  return stream << ToString(error);
-}
-
-inline std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
-    std::ostream& stream,         // no-presubmit-check TODO(webrtc:8982)
-    RTCErrorDetailType error) {
-  return stream << ToString(error);
-}
-#endif  // WEBRTC_UNIT_TEST
 
 // Helper macro that can be used by implementations to create an error with a
 // message and log it. `message` should be a string literal or movable

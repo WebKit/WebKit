@@ -93,7 +93,7 @@ webkit_web_page_get_id                      (WebKitWebPage *web_page);
 WEBKIT_API const gchar *
 webkit_web_page_get_uri                     (WebKitWebPage *web_page);
 
-WEBKIT_API WebKitFrame *
+WEBKIT_DEPRECATED WebKitFrame *
 webkit_web_page_get_main_frame              (WebKitWebPage *web_page);
 
 WEBKIT_API WebKitWebEditor *

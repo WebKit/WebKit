@@ -84,7 +84,7 @@ using ::testing::Values;
 cricket::MediaSendChannelInterface* SendChannelInternal(
     rtc::scoped_refptr<RtpTransceiverInterface> transceiver) {
   auto transceiver_with_internal = static_cast<
-      rtc::RefCountedObject<RtpTransceiverProxyWithInternal<RtpTransceiver>>*>(
+      RefCountedObject<RtpTransceiverProxyWithInternal<RtpTransceiver>>*>(
       transceiver.get());
   auto transceiver_internal =
       static_cast<RtpTransceiver*>(transceiver_with_internal->internal());
@@ -94,7 +94,7 @@ cricket::MediaSendChannelInterface* SendChannelInternal(
 cricket::MediaReceiveChannelInterface* ReceiveChannelInternal(
     rtc::scoped_refptr<RtpTransceiverInterface> transceiver) {
   auto transceiver_with_internal = static_cast<
-      rtc::RefCountedObject<RtpTransceiverProxyWithInternal<RtpTransceiver>>*>(
+      RefCountedObject<RtpTransceiverProxyWithInternal<RtpTransceiver>>*>(
       transceiver.get());
   auto transceiver_internal =
       static_cast<RtpTransceiver*>(transceiver_with_internal->internal());

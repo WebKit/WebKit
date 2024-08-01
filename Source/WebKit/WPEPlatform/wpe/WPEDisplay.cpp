@@ -185,9 +185,10 @@ WPEDisplay* wpe_display_get_default(void)
                     s_defaultDisplay = WTFMove(display);
                     return;
                 }
-                g_warning("Failed to connect to display of type %s: %s", extensionName, error->message);
+                g_error("Failed to connect to display of type %s: %s", extensionName, error->message);
             } else
-                g_warning("Display of type %s was not found", extensionName);
+                g_error("Display of type %s was not found", extensionName);
+            return;
         }
 
         auto* extensionList = g_io_extension_point_get_extensions(extensionPoint);
@@ -537,3 +538,23 @@ const char* wpe_display_get_drm_render_node(WPEDisplay* display)
     return wpeDisplayClass->get_drm_render_node ? wpeDisplayClass->get_drm_render_node(display) : nullptr;
 }
 
+/**
+ * wpe_display_use_explicit_sync:
+ * @display: a #WPEDisplay
+ *
+ * Get whether explicit sync should be used with @display for
+ * supported buffers.
+ *
+ * Returns: %TRUE if explicit sync should be used, or %FALSE otherwise
+ */
+gboolean wpe_display_use_explicit_sync(WPEDisplay* display)
+{
+    g_return_val_if_fail(WPE_IS_DISPLAY(display), FALSE);
+
+    static const char* envExplicitSync = getenv("WPE_USE_EXPLICIT_SYNC");
+    if (envExplicitSync && !strcmp(envExplicitSync, "0"))
+        return false;
+
+    auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
+    return wpeDisplayClass->use_explicit_sync ? wpeDisplayClass->use_explicit_sync(display) : FALSE;
+}

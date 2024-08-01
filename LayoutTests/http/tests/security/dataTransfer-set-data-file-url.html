@@ -21,7 +21,7 @@ function onImgDragStart() {
     testRunner.notifyDone();
 }
 
-function runTest() {
+async function runTest() {
     if (!window.testRunner) {
         return;
     }
@@ -34,11 +34,11 @@ function runTest() {
     y1 = dragme.offsetTop + 20;
     
     // Drag abe
-    eventSender.mouseMoveTo(x1, y1);
-    eventSender.mouseDown();
+    await eventSender.asyncMouseMoveTo(x1, y1);
+    await eventSender.asyncMouseDown();
     eventSender.leapForward(500);
-    eventSender.mouseMoveTo(x1 + 20, y1);
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(x1 + 20, y1);
+    await eventSender.asyncMouseUp();
 }
 
 </script>

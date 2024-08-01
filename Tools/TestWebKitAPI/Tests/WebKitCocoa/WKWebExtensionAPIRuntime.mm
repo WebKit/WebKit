@@ -380,7 +380,7 @@ TEST(WKWebExtensionAPIRuntime, GetFrameId)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -450,7 +450,7 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScript)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -508,7 +508,7 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWithAsyncReply)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -564,7 +564,7 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWithPromiseReply)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -622,7 +622,7 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWithAsyncPromiseReply
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -678,7 +678,7 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWithNoReply)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -749,7 +749,7 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromSubframe)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequestMain];
+    [manager.get().defaultTab.webView loadRequest:urlRequestMain];
 
     [manager run];
 }
@@ -834,7 +834,7 @@ TEST(WKWebExtensionAPIRuntime, SendMessageWithTabFrameAndAsyncReply)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -881,7 +881,7 @@ TEST(WKWebExtensionAPIRuntime, SendMessageWithNaNValue)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
 
     [manager run];
 }
@@ -934,7 +934,7 @@ TEST(WKWebExtensionAPIRuntime, ConnectFromContentScript)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -1013,7 +1013,7 @@ TEST(WKWebExtensionAPIRuntime, ConnectFromSubframe)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequestMain];
+    [manager.get().defaultTab.webView loadRequest:urlRequestMain];
 
     [manager run];
 }
@@ -1086,7 +1086,7 @@ TEST(WKWebExtensionAPIRuntime, ConnectFromContentScriptWithMultipleListeners)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -1135,7 +1135,7 @@ TEST(WKWebExtensionAPIRuntime, PortDisconnectFromContentScript)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -1194,7 +1194,7 @@ TEST(WKWebExtensionAPIRuntime, PortDisconnectFromContentScriptWithMultipleListen
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }
@@ -1602,7 +1602,7 @@ TEST(WKWebExtensionAPIRuntime, ConnectFromWebPage)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -1647,7 +1647,7 @@ TEST(WKWebExtensionAPIRuntime, ConnectFromWebPageWithWrongIdentifier)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -1704,7 +1704,7 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromWebPage)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }
@@ -1803,10 +1803,10 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromWebPageWithTabFrameAndAsyncReply)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tabs");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     auto *secondTab = [manager.get().defaultWindow openNewTab];
-    [secondTab.mainWebView loadRequest:server.requestWithLocalhost("/second-tab.html"_s)];
+    [secondTab.webView loadRequest:server.requestWithLocalhost("/second-tab.html"_s)];
 
     [manager run];
 }
@@ -1849,7 +1849,7 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromWebPageWithWrongIdentifier)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
 }

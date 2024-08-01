@@ -285,6 +285,21 @@ void WriteParamValueReplay<ParamType::TGLsizeiPointer>(std::ostream &os,
 }
 
 template <>
+void WriteParamValueReplay<ParamType::TGLuintPointer>(std::ostream &os,
+                                                      const CallCapture &call,
+                                                      GLuint *value)
+{
+    if (value == 0)
+    {
+        os << kNullPointerString;
+    }
+    else
+    {
+        os << "(GLuint *)" << static_cast<int>(reinterpret_cast<uintptr_t>(value));
+    }
+}
+
+template <>
 void WriteParamValueReplay<ParamType::TGLuintConstPointer>(std::ostream &os,
                                                            const CallCapture &call,
                                                            const GLuint *value)
@@ -556,7 +571,22 @@ void WriteParamValueReplay<ParamType::Tegl_SyncID>(std::ostream &os,
 template <>
 void WriteParamValueReplay<ParamType::TEGLAttribPointer>(std::ostream &os,
                                                          const CallCapture &call,
-                                                         const EGLAttrib *value)
+                                                         EGLAttrib *value)
+{
+    if (value == 0)
+    {
+        os << kNullPointerString;
+    }
+    else
+    {
+        os << "(EGLAttrib *)" << static_cast<int>(reinterpret_cast<uintptr_t>(value));
+    }
+}
+
+template <>
+void WriteParamValueReplay<ParamType::TEGLAttribConstPointer>(std::ostream &os,
+                                                              const CallCapture &call,
+                                                              const EGLAttrib *value)
 {
     if (value == 0)
     {

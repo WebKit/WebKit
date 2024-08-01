@@ -21,33 +21,43 @@
 #include "GLFence.h"
 
 #include "GLContext.h"
+#include "GLFenceEGL.h"
+#include "GLFenceGL.h"
 
 #if USE(LIBEPOXY)
 #include <epoxy/gl.h>
 #else
-#include <GLES3/gl3.h>
+#include <GLES2/gl2.h>
 #endif
 
 namespace WebCore {
 
-bool GLFence::isSupported()
+const GLFence::Capabilities& GLFence::capabilities()
 {
     static std::once_flag onceFlag;
-    static bool supported = false;
-
-    std::call_once(onceFlag, [&]() {
-        auto version = GLContext::versionFromString(reinterpret_cast<const char*>(glGetString(GL_VERSION)));
-        if (version >= 300) {
-            supported = true;
-            return;
+    static Capabilities capabilities;
+    std::call_once(onceFlag, [] {
+        auto& display = PlatformDisplay::sharedDisplay();
+        const auto& extensions = display.eglExtensions();
+        if (display.eglCheckVersion(1, 5)) {
+            capabilities.eglSupported = true;
+            capabilities.eglServerWaitSupported = true;
+        } else {
+            capabilities.eglSupported = extensions.KHR_fence_sync;
+            capabilities.eglServerWaitSupported = extensions.KHR_wait_sync;
         }
-
-        const char* extensionsString = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
-        if (GLContext::isExtensionSupported(extensionsString, "GL_APPLE_sync"))
-            supported = true;
+#if OS(LINUX)
+        capabilities.eglExportableSupported = extensions.ANDROID_native_fence_sync;
+#endif
+        capabilities.glSupported = GLContext::versionFromString(reinterpret_cast<const char*>(glGetString(GL_VERSION))) >= 300;
     });
+    return capabilities;
+}
 
-    return supported;
+bool GLFence::isSupported()
+{
+    const auto& fenceCapabilities = capabilities();
+    return fenceCapabilities.eglSupported || fenceCapabilities.glSupported;
 }
 
 std::unique_ptr<GLFence> GLFence::create()
@@ -55,36 +65,43 @@ std::unique_ptr<GLFence> GLFence::create()
     if (!GLContextWrapper::currentContext())
         return nullptr;
 
-    if (isSupported()) {
-        if (auto* sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0)) {
-            glFlush();
-            return makeUnique<GLFence>(sync);
-        }
-        return nullptr;
-    }
+    const auto& fenceCapabilities = capabilities();
+    if (fenceCapabilities.eglSupported && fenceCapabilities.eglServerWaitSupported)
+        return GLFenceEGL::create();
+
+    if (fenceCapabilities.glSupported)
+        return GLFenceGL::create();
+
+    if (fenceCapabilities.eglSupported)
+        return GLFenceEGL::create();
 
     return nullptr;
 }
 
-GLFence::GLFence(GLsync sync)
-    : m_sync(sync)
+#if OS(LINUX)
+std::unique_ptr<GLFence> GLFence::createExportable()
 {
+    if (!GLContextWrapper::currentContext())
+        return nullptr;
+
+    const auto& fenceCapabilities = capabilities();
+    if (fenceCapabilities.eglSupported && fenceCapabilities.eglExportableSupported)
+        return GLFenceEGL::createExportable();
+
+    return nullptr;
 }
 
-GLFence::~GLFence()
+std::unique_ptr<GLFence> GLFence::importFD(UnixFileDescriptor&& fd)
 {
-    if (m_sync)
-        glDeleteSync(m_sync);
-}
+    if (!GLContextWrapper::currentContext())
+        return nullptr;
 
-void GLFence::serverWait()
-{
-    glWaitSync(m_sync, 0, GL_TIMEOUT_IGNORED);
-}
+    const auto& fenceCapabilities = capabilities();
+    if (fenceCapabilities.eglSupported && fenceCapabilities.eglExportableSupported)
+        return GLFenceEGL::importFD(WTFMove(fd));
 
-void GLFence::clientWait()
-{
-    glClientWaitSync(m_sync, 0, GL_TIMEOUT_IGNORED);
+    return nullptr;
 }
+#endif
 
 } // namespace WebCore

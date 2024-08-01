@@ -558,6 +558,7 @@ void Internals::resetToConsistentState(Page& page)
     page.setPagination(Pagination());
 
     page.setDefersLoading(false);
+    page.setResourceCachingDisabledByWebInspector(false);
 
     auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
     if (!localMainFrame)
@@ -3083,15 +3084,6 @@ uint64_t Internals::elementIdentifier(Element& element) const
 bool Internals::isElementAlive(uint64_t elementIdentifier) const
 {
     return Element::fromIdentifier(ObjectIdentifier<ElementIdentifierType>(elementIdentifier));
-}
-
-uint64_t Internals::frameIdentifier(const Document& document) const
-{
-    if (auto* page = document.page()) {
-        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame()))
-            return localMainFrame->loader().frameID().object().toUInt64();
-    }
-    return 0;
 }
 
 uint64_t Internals::pageIdentifier(const Document& document) const
@@ -7572,6 +7564,15 @@ void Internals::getImageBufferResourceLimits(ImageBufferResourceLimitsPromise&& 
         }
         promise.resolve(*limits);
     });
+}
+
+void Internals::setResourceCachingDisabledByWebInspector(bool disabled)
+{
+    RefPtr document = contextDocument();
+    if (!document || !document->page())
+        return;
+
+    document->page()->setResourceCachingDisabledByWebInspector(disabled);
 }
 
 } // namespace WebCore

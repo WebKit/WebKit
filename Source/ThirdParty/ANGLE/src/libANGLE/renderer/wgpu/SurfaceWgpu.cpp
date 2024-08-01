@@ -11,115 +11,309 @@
 
 #include "common/debug.h"
 
+#include "libANGLE/Display.h"
+#include "libANGLE/Surface.h"
+#include "libANGLE/renderer/wgpu/DisplayWgpu.h"
 #include "libANGLE/renderer/wgpu/FramebufferWgpu.h"
 
 namespace rx
 {
 
+constexpr wgpu::TextureUsage kSurfaceTextureUsage =
+    wgpu::TextureUsage::TextureBinding | wgpu::TextureUsage::RenderAttachment |
+    wgpu::TextureUsage::CopySrc | wgpu::TextureUsage::CopyDst;
+
 SurfaceWgpu::SurfaceWgpu(const egl::SurfaceState &surfaceState) : SurfaceImpl(surfaceState) {}
 
 SurfaceWgpu::~SurfaceWgpu() {}
 
-egl::Error SurfaceWgpu::initialize(const egl::Display *display)
+OffscreenSurfaceWgpu::OffscreenSurfaceWgpu(const egl::SurfaceState &surfaceState)
+    : SurfaceWgpu(surfaceState),
+      mWidth(surfaceState.attributes.getAsInt(EGL_WIDTH, 0)),
+      mHeight(surfaceState.attributes.getAsInt(EGL_HEIGHT, 0))
+{}
+
+OffscreenSurfaceWgpu::~OffscreenSurfaceWgpu() {}
+
+egl::Error OffscreenSurfaceWgpu::initialize(const egl::Display *display)
 {
-    return egl::NoError();
+    return angle::ResultToEGL(initializeImpl(display));
 }
 
-egl::Error SurfaceWgpu::swap(const gl::Context *context)
-{
-    return egl::NoError();
-}
-
-egl::Error SurfaceWgpu::postSubBuffer(const gl::Context *context,
-                                      EGLint x,
-                                      EGLint y,
-                                      EGLint width,
-                                      EGLint height)
-{
-    return egl::NoError();
-}
-
-egl::Error SurfaceWgpu::querySurfacePointerANGLE(EGLint attribute, void **value)
+egl::Error OffscreenSurfaceWgpu::swap(const gl::Context *context)
 {
     UNREACHABLE();
     return egl::NoError();
 }
 
-egl::Error SurfaceWgpu::bindTexImage(const gl::Context *context,
-                                     gl::Texture *texture,
-                                     EGLint buffer)
+egl::Error OffscreenSurfaceWgpu::bindTexImage(const gl::Context *context,
+                                              gl::Texture *texture,
+                                              EGLint buffer)
 {
+    UNIMPLEMENTED();
     return egl::NoError();
 }
 
-egl::Error SurfaceWgpu::releaseTexImage(const gl::Context *context, EGLint buffer)
+egl::Error OffscreenSurfaceWgpu::releaseTexImage(const gl::Context *context, EGLint buffer)
 {
+    UNIMPLEMENTED();
     return egl::NoError();
 }
 
-egl::Error SurfaceWgpu::getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc)
+void OffscreenSurfaceWgpu::setSwapInterval(EGLint interval) {}
+
+EGLint OffscreenSurfaceWgpu::getWidth() const
+{
+    return mWidth;
+}
+
+EGLint OffscreenSurfaceWgpu::getHeight() const
+{
+    return mHeight;
+}
+
+EGLint OffscreenSurfaceWgpu::getSwapBehavior() const
+{
+    return EGL_BUFFER_DESTROYED;
+}
+
+angle::Result OffscreenSurfaceWgpu::initializeContents(const gl::Context *context,
+                                                       GLenum binding,
+                                                       const gl::ImageIndex &imageIndex)
 {
     UNIMPLEMENTED();
-    return egl::EglBadAccess();
-}
-
-egl::Error SurfaceWgpu::getMscRate(EGLint *numerator, EGLint *denominator)
-{
-    UNIMPLEMENTED();
-    return egl::EglBadAccess();
-}
-
-void SurfaceWgpu::setSwapInterval(EGLint interval) {}
-
-EGLint SurfaceWgpu::getWidth() const
-{
-    // TODO(geofflang): Read from an actual window?
-    return 100;
-}
-
-EGLint SurfaceWgpu::getHeight() const
-{
-    // TODO(geofflang): Read from an actual window?
-    return 100;
-}
-
-EGLint SurfaceWgpu::isPostSubBufferSupported() const
-{
-    return EGL_TRUE;
-}
-
-EGLint SurfaceWgpu::getSwapBehavior() const
-{
-    return EGL_BUFFER_PRESERVED;
-}
-
-angle::Result SurfaceWgpu::initializeContents(const gl::Context *context,
-                                              GLenum binding,
-                                              const gl::ImageIndex &imageIndex)
-{
     return angle::Result::Continue;
 }
 
-egl::Error SurfaceWgpu::attachToFramebuffer(const gl::Context *context,
-                                            gl::Framebuffer *framebuffer)
-{
-    return egl::NoError();
-}
-
-egl::Error SurfaceWgpu::detachFromFramebuffer(const gl::Context *context,
-                                              gl::Framebuffer *framebuffer)
-{
-    return egl::NoError();
-}
-
-angle::Result SurfaceWgpu::getAttachmentRenderTarget(const gl::Context *context,
-                                                     GLenum binding,
-                                                     const gl::ImageIndex &imageIndex,
-                                                     GLsizei samples,
-                                                     FramebufferAttachmentRenderTarget **rtOut)
+egl::Error OffscreenSurfaceWgpu::attachToFramebuffer(const gl::Context *context,
+                                                     gl::Framebuffer *framebuffer)
 {
     UNIMPLEMENTED();
-    return angle::Result::Stop;
+    return egl::NoError();
+}
+
+egl::Error OffscreenSurfaceWgpu::detachFromFramebuffer(const gl::Context *context,
+                                                       gl::Framebuffer *framebuffer)
+{
+    UNIMPLEMENTED();
+    return egl::NoError();
+}
+
+angle::Result OffscreenSurfaceWgpu::getAttachmentRenderTarget(
+    const gl::Context *context,
+    GLenum binding,
+    const gl::ImageIndex &imageIndex,
+    GLsizei samples,
+    FramebufferAttachmentRenderTarget **rtOut)
+{
+    if (binding == GL_BACK)
+    {
+        *rtOut = &mColorAttachment.renderTarget;
+    }
+    else
+    {
+        ASSERT(binding == GL_DEPTH || binding == GL_STENCIL || binding == GL_DEPTH_STENCIL);
+        *rtOut = &mDepthStencilAttachment.renderTarget;
+    }
+
+    return angle::Result::Continue;
+}
+
+angle::Result OffscreenSurfaceWgpu::initializeImpl(const egl::Display *display)
+{
+    DisplayWgpu *displayWgpu = webgpu::GetImpl(display);
+    wgpu::Device &device     = displayWgpu->getDevice();
+
+    const egl::Config *config = mState.config;
+
+    if (config->renderTargetFormat != GL_NONE)
+    {
+        const webgpu::Format &webgpuFormat = displayWgpu->getFormat(config->renderTargetFormat);
+        wgpu::TextureDescriptor desc       = mColorAttachment.texture.createTextureDescriptor(
+            kSurfaceTextureUsage, wgpu::TextureDimension::e2D,
+            {static_cast<uint32_t>(mWidth), static_cast<uint32_t>(mHeight), 1},
+            webgpuFormat.getActualWgpuTextureFormat(), 1, 1);
+
+        constexpr uint32_t level = 0;
+        constexpr uint32_t layer = 0;
+
+        ANGLE_TRY(mColorAttachment.texture.initImage(webgpuFormat.getIntendedFormatID(),
+                                                     webgpuFormat.getActualImageFormatID(), device,
+                                                     gl::LevelIndex(level), desc));
+
+        wgpu::TextureView view;
+        ANGLE_TRY(mColorAttachment.texture.createTextureView(gl::LevelIndex(level), layer, view));
+        mColorAttachment.renderTarget.set(&mColorAttachment.texture, view,
+                                          webgpu::LevelIndex(level), layer,
+                                          mColorAttachment.texture.toWgpuTextureFormat());
+    }
+
+    if (config->depthStencilFormat != GL_NONE)
+    {
+        UNIMPLEMENTED();
+    }
+
+    return angle::Result::Continue;
+}
+
+WindowSurfaceWgpu::WindowSurfaceWgpu(const egl::SurfaceState &surfaceState,
+                                     EGLNativeWindowType window)
+    : SurfaceWgpu(surfaceState), mNativeWindow(window)
+{}
+
+WindowSurfaceWgpu::~WindowSurfaceWgpu() {}
+
+egl::Error WindowSurfaceWgpu::initialize(const egl::Display *display)
+{
+    return angle::ResultToEGL(initializeImpl(display));
+}
+
+void WindowSurfaceWgpu::destroy(const egl::Display *display)
+{
+    mSurface   = nullptr;
+    mSwapChain = nullptr;
+    mColorAttachment.renderTarget.reset();
+    mColorAttachment.texture.resetImage();
+}
+
+egl::Error WindowSurfaceWgpu::swap(const gl::Context *context)
+{
+    return angle::ResultToEGL(swapImpl(context));
+}
+
+egl::Error WindowSurfaceWgpu::bindTexImage(const gl::Context *context,
+                                           gl::Texture *texture,
+                                           EGLint buffer)
+{
+    UNIMPLEMENTED();
+    return egl::NoError();
+}
+
+egl::Error WindowSurfaceWgpu::releaseTexImage(const gl::Context *context, EGLint buffer)
+{
+    UNIMPLEMENTED();
+    return egl::NoError();
+}
+
+void WindowSurfaceWgpu::setSwapInterval(EGLint interval)
+{
+    UNIMPLEMENTED();
+}
+
+EGLint WindowSurfaceWgpu::getWidth() const
+{
+    return mCurrentSwapChainSize.width;
+}
+
+EGLint WindowSurfaceWgpu::getHeight() const
+{
+    return mCurrentSwapChainSize.height;
+}
+
+EGLint WindowSurfaceWgpu::getSwapBehavior() const
+{
+    UNIMPLEMENTED();
+    return 0;
+}
+
+angle::Result WindowSurfaceWgpu::initializeContents(const gl::Context *context,
+                                                    GLenum binding,
+                                                    const gl::ImageIndex &imageIndex)
+{
+    UNIMPLEMENTED();
+    return angle::Result::Continue;
+}
+
+egl::Error WindowSurfaceWgpu::attachToFramebuffer(const gl::Context *context,
+                                                  gl::Framebuffer *framebuffer)
+{
+    return egl::NoError();
+}
+
+egl::Error WindowSurfaceWgpu::detachFromFramebuffer(const gl::Context *context,
+                                                    gl::Framebuffer *framebuffer)
+{
+    return egl::NoError();
+}
+
+angle::Result WindowSurfaceWgpu::getAttachmentRenderTarget(
+    const gl::Context *context,
+    GLenum binding,
+    const gl::ImageIndex &imageIndex,
+    GLsizei samples,
+    FramebufferAttachmentRenderTarget **rtOut)
+{
+    if (binding == GL_BACK)
+    {
+        *rtOut = &mColorAttachment.renderTarget;
+    }
+    else
+    {
+        ASSERT(binding == GL_DEPTH || binding == GL_STENCIL || binding == GL_DEPTH_STENCIL);
+        *rtOut = &mDepthStencilAttachment.renderTarget;
+    }
+
+    return angle::Result::Continue;
+}
+
+angle::Result WindowSurfaceWgpu::initializeImpl(const egl::Display *display)
+{
+    DisplayWgpu *displayWgpu = webgpu::GetImpl(display);
+    wgpu::Device &device     = displayWgpu->getDevice();
+
+    ANGLE_TRY(createWgpuSurface(display, &mSurface));
+
+    const egl::Config *config = mState.config;
+    ASSERT(config->renderTargetFormat != GL_NONE);
+    if (config->depthStencilFormat != GL_NONE)
+    {
+        UNIMPLEMENTED();
+    }
+
+    gl::Extents size;
+    ANGLE_TRY(getCurrentWindowSize(display, &size));
+
+    wgpu::SwapChainDescriptor swapChainDesc = {};
+    swapChainDesc.usage                     = wgpu::TextureUsage::RenderAttachment;
+    swapChainDesc.format                    = wgpu::TextureFormat::BGRA8Unorm;
+    swapChainDesc.width                     = size.width;
+    swapChainDesc.height                    = size.height;
+    swapChainDesc.presentMode               = wgpu::PresentMode::Mailbox;
+    mSwapChain                              = device.CreateSwapChain(mSurface, &swapChainDesc);
+
+    mCurrentSwapChainSize = size;
+
+    ANGLE_TRY(updateCurrentTexture(display));
+
+    return angle::Result::Continue;
+}
+
+angle::Result WindowSurfaceWgpu::swapImpl(const gl::Context *context)
+{
+    const egl::Display *display = context->getDisplay();
+    ContextWgpu *contextWgpu    = webgpu::GetImpl(context);
+
+    ANGLE_TRY(contextWgpu->flush(webgpu::RenderPassClosureReason::EGLSwapBuffers));
+
+    mSwapChain.Present();
+
+    ANGLE_TRY(getCurrentWindowSize(display, &mCurrentSwapChainSize));
+    ANGLE_TRY(updateCurrentTexture(display));
+
+    return angle::Result::Continue;
+}
+
+angle::Result WindowSurfaceWgpu::updateCurrentTexture(const egl::Display *display)
+{
+    wgpu::Texture texture  = mSwapChain.GetCurrentTexture();
+    wgpu::TextureView view = mSwapChain.GetCurrentTextureView();
+
+    ANGLE_TRY(mColorAttachment.texture.initExternal(texture));
+
+    mColorAttachment.renderTarget.set(&mColorAttachment.texture, view, webgpu::LevelIndex(0), 0,
+                                      mColorAttachment.texture.toWgpuTextureFormat());
+
+    return angle::Result::Continue;
 }
 
 }  // namespace rx

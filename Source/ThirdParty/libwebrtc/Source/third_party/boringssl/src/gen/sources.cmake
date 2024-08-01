@@ -201,6 +201,8 @@ set(
   gen/bcm/x86_64-mont-linux.S
   gen/bcm/x86_64-mont5-apple.S
   gen/bcm/x86_64-mont5-linux.S
+  third_party/fiat/asm/fiat_p256_adx_mul.S
+  third_party/fiat/asm/fiat_p256_adx_sqr.S
 )
 
 set(
@@ -344,6 +346,7 @@ set(
   crypto/dh_extra/dh_asn1.c
   crypto/dh_extra/params.c
   crypto/digest_extra/digest_extra.c
+  crypto/dilithium/dilithium.c
   crypto/dsa/dsa.c
   crypto/dsa/dsa_asn1.c
   crypto/ec_extra/ec_asn1.c
@@ -543,6 +546,7 @@ set(
   include/openssl/evp.h
   include/openssl/evp_errors.h
   include/openssl/ex_data.h
+  include/openssl/experimental/dilithium.h
   include/openssl/experimental/kyber.h
   include/openssl/experimental/spx.h
   include/openssl/hkdf.h
@@ -598,12 +602,12 @@ set(
   crypto/bytestring/internal.h
   crypto/chacha/internal.h
   crypto/cipher_extra/internal.h
-  crypto/conf/conf_def.h
   crypto/conf/internal.h
   crypto/cpu_arm_linux.h
   crypto/curve25519/curve25519_tables.h
   crypto/curve25519/internal.h
   crypto/des/internal.h
+  crypto/dilithium/internal.h
   crypto/dsa/internal.h
   crypto/ec_extra/internal.h
   crypto/err/internal.h
@@ -684,8 +688,6 @@ set(
   gen/crypto/chacha20_poly1305_x86_64-linux.S
   third_party/fiat/asm/fiat_curve25519_adx_mul.S
   third_party/fiat/asm/fiat_curve25519_adx_square.S
-  third_party/fiat/asm/fiat_p256_adx_mul.S
-  third_party/fiat/asm/fiat_p256_adx_sqr.S
 )
 
 set(
@@ -720,6 +722,7 @@ set(
   crypto/curve25519/x25519_test.cc
   crypto/dh_extra/dh_test.cc
   crypto/digest_extra/digest_test.cc
+  crypto/dilithium/dilithium_test.cc
   crypto/dsa/dsa_test.cc
   crypto/ecdh_extra/ecdh_test.cc
   crypto/err/err_test.cc
@@ -807,6 +810,9 @@ set(
   crypto/cipher_extra/test/nist_cavp/tdes_ecb.txt
   crypto/cipher_extra/test/xchacha20_poly1305_tests.txt
   crypto/curve25519/ed25519_tests.txt
+  crypto/dilithium/dilithium_tests.txt
+  crypto/dilithium/edge_cases_draft_dilithium3_sign.txt
+  crypto/dilithium/edge_cases_draft_dilithium3_verify.txt
   crypto/ecdh_extra/ecdh_tests.txt
   crypto/evp/evp_tests.txt
   crypto/evp/scrypt_tests.txt
@@ -1089,6 +1095,7 @@ set(
   pki/trust_store.cc
   pki/trust_store_collection.cc
   pki/trust_store_in_memory.cc
+  pki/verify.cc
   pki/verify_certificate_chain.cc
   pki/verify_error.cc
   pki/verify_name_match.cc
@@ -1100,6 +1107,7 @@ set(
 
   include/openssl/pki/certificate.h
   include/openssl/pki/signature_verify_cache.h
+  include/openssl/pki/verify.h
   include/openssl/pki/verify_error.h
 )
 
@@ -1184,6 +1192,7 @@ set(
   pki/verify_certificate_chain_unittest.cc
   pki/verify_name_match_unittest.cc
   pki/verify_signed_data_unittest.cc
+  pki/verify_unittest.cc
 )
 
 set(
@@ -2596,7 +2605,15 @@ set(
   pki/testdata/verify_signed_data_unittest/rsa-pss-sha256.pem
   pki/testdata/verify_signed_data_unittest/rsa-using-ec-key.pem
   pki/testdata/verify_signed_data_unittest/rsa2048-pkcs1-sha512.pem
+  pki/testdata/verify_unittest/google-intermediate1.der
+  pki/testdata/verify_unittest/google-intermediate2.der
   pki/testdata/verify_unittest/google-leaf.der
+  pki/testdata/verify_unittest/lencr-intermediate-r3.der
+  pki/testdata/verify_unittest/lencr-leaf.der
+  pki/testdata/verify_unittest/lencr-root-dst-x3.der
+  pki/testdata/verify_unittest/lencr-root-x1-cross-signed.der
+  pki/testdata/verify_unittest/lencr-root-x1.der
+  pki/testdata/verify_unittest/mozilla_roots.der
   pki/testdata/verify_unittest/self-issued.pem
 )
 

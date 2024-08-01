@@ -423,6 +423,8 @@ void SetInboundRTPStreamStatsFromMediaReceiverInfo(
   if (media_receiver_info.fec_bytes_received.has_value()) {
     inbound_stats->fec_bytes_received = *media_receiver_info.fec_bytes_received;
   }
+  inbound_stats->total_processing_delay =
+      media_receiver_info.total_processing_delay_seconds;
 }
 
 std::unique_ptr<RTCInboundRtpStreamStats> CreateInboundAudioStreamStats(

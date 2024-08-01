@@ -463,6 +463,7 @@ void CompiledShaderState::serialize(gl::BinaryOutputStream &stream) const
             UNREACHABLE();
     }
 
+    stream.writeString(translatedSource);
     stream.writeVector(compiledBinary);
 }
 
@@ -645,6 +646,7 @@ void CompiledShaderState::deserialize(gl::BinaryInputStream &stream)
             UNREACHABLE();
     }
 
+    stream.readString(&translatedSource);
     stream.readVector(&compiledBinary);
 }
 }  // namespace gl

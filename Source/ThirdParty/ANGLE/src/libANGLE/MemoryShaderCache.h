@@ -39,7 +39,8 @@ class MemoryShaderCache final : angle::NonCopyable
     // fails.
     egl::CacheGetResult getShader(const Context *context,
                                   Shader *shader,
-                                  const egl::BlobCache::Key &shaderHash);
+                                  const egl::BlobCache::Key &shaderHash,
+                                  angle::JobResultExpectancy resultExpectancy);
 
     // Empty the cache.
     void clear();

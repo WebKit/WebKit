@@ -27,7 +27,7 @@
 
 #include <WebKit/WKMain.h>
 
-int main(int argc, const char** argv, const char**, const char** darwinEnvp)
+int main(int argc, const char** argv)
 {
-    return WKXPCServiceMain(argc, argv, nullptr, darwinEnvp);
+    return WKXPCServiceMain(argc, argv);
 }

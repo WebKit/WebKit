@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
  
+ [EnabledBy=SpeechRecognitionEnabled]
  messages -> SpeechRecognitionServer NotRefCounted {
     Start(WebCore::SpeechRecognitionConnectionClientIdentifier identifier, String lang, bool continuous, bool interimResults, uint64_t maxAlternatives, struct WebCore::ClientOrigin origin, WebCore::FrameIdentifier frameIdentifier)
     Stop(WebCore::SpeechRecognitionConnectionClientIdentifier identifier)

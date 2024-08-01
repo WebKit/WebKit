@@ -1303,6 +1303,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByMegamorphicReallocating, void, (VM* vmPoi
     baseObject->setStructure(vm, newStructure);
     ASSERT(newStructure == baseObject->structure());
     dataLogLnIf(verbose, JSValue(baseObject), " ", offset);
+
     ensureStillAliveHere(oldStructure);
     ensureStillAliveHere(newStructure);
     OPERATION_RETURN(scope);

@@ -246,7 +246,9 @@ void TestRunner::notifyDone()
     if (!injectedBundle.isTestRunning())
         return;
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     bool mainFrameIsRemote = WKBundleFrameIsRemote(WKBundlePageGetMainFrame(injectedBundle.pageRef()));
+    ALLOW_DEPRECATED_DECLARATIONS_END
     if (mainFrameIsRemote) {
         setWaitUntilDone(false);
         return postPageMessage("NotifyDone");
@@ -1440,9 +1442,9 @@ bool TestRunner::statisticsNotifyObserver()
     return InjectedBundle::singleton().statisticsNotifyObserver();
 }
 
-void TestRunner::statisticsProcessStatisticsAndDataRecords()
+void TestRunner::statisticsProcessStatisticsAndDataRecords(JSContextRef context, JSValueRef completionHandler)
 {
-    postSynchronousMessage("StatisticsProcessStatisticsAndDataRecords");
+    postMessageWithAsyncReply(context, "StatisticsProcessStatisticsAndDataRecords", completionHandler);
 }
 
 void TestRunner::statisticsUpdateCookieBlocking(JSContextRef context, JSValueRef completionHandler)
@@ -1505,12 +1507,12 @@ void TestRunner::statisticsClearThroughWebsiteDataRemoval(JSContextRef context, 
     postMessageWithAsyncReply(context, "StatisticsClearThroughWebsiteDataRemoval", callback);
 }
 
-void TestRunner::statisticsDeleteCookiesForHost(JSStringRef hostName, bool includeHttpOnlyCookies)
+void TestRunner::statisticsDeleteCookiesForHost(JSContextRef context, JSStringRef hostName, bool includeHttpOnlyCookies, JSValueRef callback)
 {
-    postSynchronousMessage("StatisticsDeleteCookiesForHost", createWKDictionary({
+    postMessageWithAsyncReply(context, "StatisticsDeleteCookiesForHost", createWKDictionary({
         { "HostName", toWK(hostName) },
         { "IncludeHttpOnlyCookies", adoptWK(WKBooleanCreate(includeHttpOnlyCookies)) },
-    }));
+    }), callback);
 }
 
 bool TestRunner::isStatisticsHasLocalStorage(JSStringRef hostName)

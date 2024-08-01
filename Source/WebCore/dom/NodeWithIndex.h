@@ -33,13 +33,12 @@ namespace WebCore {
 // only want to walk the child list to figure out the index once.
 class NodeWithIndex {
 public:
-    explicit NodeWithIndex(Node* node)
-        : m_node(node)
+    explicit NodeWithIndex(Node& node)
+        : m_node(&node)
     {
-        ASSERT(node);
     }
 
-    Node* node() const { return m_node; }
+    Node* node() const { return m_node.get(); }
 
     int index() const
     {
@@ -51,7 +50,7 @@ public:
     }
 
 private:
-    Node* m_node;
+    CheckedPtr<Node> m_node;
     mutable Markable<int, IntegralMarkableTraits<int, -1>> m_index;
 };
 

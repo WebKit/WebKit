@@ -179,7 +179,7 @@ my $caller_state_offset = $scratch_offset + 8;
 $code .= <<____;
 	subq	\$$stack_alloc_size, %rsp
 .cfi_adjust_cfa_offset	$stack_alloc_size
-.seh_allocstack	$stack_alloc_size
+.seh_stackalloc	$stack_alloc_size
 ____
 $code .= <<____ if (!$win64);
 	movq	$unwind, $unwind_offset(%rsp)
@@ -195,12 +195,13 @@ $code .= store_caller_state($caller_state_offset, "%rsp", sub {
   # pointer just before the call.
   my $cfi_off = $off - $stack_alloc_size - 8;
   my $seh_dir = ".seh_savereg";
-  $seh_dir = ".seh_savexmm128" if ($reg =~ /^xmm/);
+  $seh_dir = ".seh_savexmm" if ($reg =~ /^xmm/);
   return <<____;
 .cfi_offset	$reg, $cfi_off
 $seh_dir	\%$reg, $off
 ____
 });
+$code .= ".seh_endprologue\n";
 
 $code .= load_caller_state(0, $state);
 $code .= <<____;
@@ -342,6 +343,7 @@ abi_test_bad_unwind_wrong_register:
 	pushq	%r12
 .cfi_push	%r13	# This should be %r13
 .seh_pushreg	%r13	# This should be %r13
+.seh_endprologue
 	# Windows evaluates epilogs directly in the unwinder, rather than using
 	# unwind codes. Add a nop so there is one non-epilog point (immediately
 	# before the nop) where the unwinder can observe the mistake.
@@ -366,6 +368,7 @@ abi_test_bad_unwind_temporary:
 	pushq	%r12
 .cfi_push	%r12
 .seh_pushreg	%r12
+.seh_endprologue
 
 	movq	%r12, %rax
 	inc	%rax
@@ -422,6 +425,7 @@ abi_test_bad_unwind_epilog:
 .seh_startproc
 	pushq	%r12
 .seh_pushreg	%r12
+.seh_endprologue
 
 	nop
 

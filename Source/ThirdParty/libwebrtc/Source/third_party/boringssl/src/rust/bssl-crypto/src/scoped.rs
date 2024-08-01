@@ -69,6 +69,9 @@ impl Drop for EcKey {
 
 /// A scoped `EVP_HPKE_CTX`.
 pub struct EvpHpkeCtx(*mut bssl_sys::EVP_HPKE_CTX);
+// bssl_sys::EVP_HPKE_CTX is heap-allocated and safe to transfer
+// between threads.
+unsafe impl Send for EvpHpkeCtx {}
 
 impl EvpHpkeCtx {
     pub fn new() -> Self {

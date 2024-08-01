@@ -68,8 +68,6 @@ echo "test_libvpx, etc) to link the stack traces to source code lines."
 cflags="-fsanitize=${sanitizer}"
 ldflags="-fsanitize=${sanitizer}"
 
-# http://code.google.com/p/webm/issues/detail?id=570
-cflags="${cflags} -fno-strict-aliasing"
 # Useful backtraces.
 cflags="${cflags} -fno-omit-frame-pointer"
 # Exact backtraces.

@@ -7962,7 +7962,7 @@
           "17.4",
           "--xcodebuild-sim-runner",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -7970,7 +7970,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "apprtcmobile_tests iPhone 14 17.4",
+        "name": "apprtcmobile_tests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -7989,29 +7989,29 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "apprtcmobile_tests",
         "test_id_prefix": "ninja://examples:apprtcmobile_tests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcodebuild-sim-runner",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8019,7 +8019,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "apprtcmobile_tests iPhone X 15.5",
+        "name": "apprtcmobile_tests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -8038,19 +8038,19 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "apprtcmobile_tests",
         "test_id_prefix": "ninja://examples:apprtcmobile_tests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -8060,7 +8060,7 @@
           "16.4",
           "--xcodebuild-sim-runner",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8087,7 +8087,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
@@ -8108,7 +8108,7 @@
           "--version",
           "17.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8116,7 +8116,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "audio_decoder_unittests iPhone 14 17.4",
+        "name": "audio_decoder_unittests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -8135,28 +8135,28 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "audio_decoder_unittests",
         "test_id_prefix": "ninja://modules/audio_coding:audio_decoder_unittests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8164,7 +8164,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "audio_decoder_unittests iPhone X 15.5",
+        "name": "audio_decoder_unittests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -8183,19 +8183,19 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "audio_decoder_unittests",
         "test_id_prefix": "ninja://modules/audio_coding:audio_decoder_unittests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -8204,7 +8204,7 @@
           "--version",
           "16.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8231,7 +8231,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
@@ -8252,7 +8252,7 @@
           "--version",
           "17.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8260,7 +8260,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "common_audio_unittests iPhone 14 17.4",
+        "name": "common_audio_unittests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -8279,28 +8279,28 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "common_audio_unittests",
         "test_id_prefix": "ninja://common_audio:common_audio_unittests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8308,7 +8308,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "common_audio_unittests iPhone X 15.5",
+        "name": "common_audio_unittests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -8327,19 +8327,19 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "common_audio_unittests",
         "test_id_prefix": "ninja://common_audio:common_audio_unittests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -8348,7 +8348,7 @@
           "--version",
           "16.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8375,7 +8375,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
@@ -8396,7 +8396,7 @@
           "--version",
           "17.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8404,7 +8404,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "common_video_unittests iPhone 14 17.4",
+        "name": "common_video_unittests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -8423,28 +8423,28 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "common_video_unittests",
         "test_id_prefix": "ninja://common_video:common_video_unittests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8452,7 +8452,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "common_video_unittests iPhone X 15.5",
+        "name": "common_video_unittests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -8471,19 +8471,19 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "common_video_unittests",
         "test_id_prefix": "ninja://common_video:common_video_unittests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -8492,7 +8492,7 @@
           "--version",
           "16.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8519,7 +8519,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
@@ -8540,7 +8540,7 @@
           "--version",
           "17.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8548,7 +8548,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "dcsctp_unittests iPhone 14 17.4",
+        "name": "dcsctp_unittests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -8567,28 +8567,28 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "dcsctp_unittests",
         "test_id_prefix": "ninja://net/dcsctp:dcsctp_unittests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8596,7 +8596,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "dcsctp_unittests iPhone X 15.5",
+        "name": "dcsctp_unittests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -8615,19 +8615,19 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "dcsctp_unittests",
         "test_id_prefix": "ninja://net/dcsctp:dcsctp_unittests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -8636,7 +8636,7 @@
           "--version",
           "16.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8663,7 +8663,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
@@ -8684,7 +8684,7 @@
           "--version",
           "17.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8692,7 +8692,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "modules_tests iPhone 14 17.4",
+        "name": "modules_tests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -8711,12 +8711,12 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
@@ -8724,16 +8724,16 @@
         },
         "test": "modules_tests",
         "test_id_prefix": "ninja://modules:modules_tests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8741,7 +8741,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "modules_tests iPhone X 15.5",
+        "name": "modules_tests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -8760,12 +8760,12 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
@@ -8773,7 +8773,7 @@
         },
         "test": "modules_tests",
         "test_id_prefix": "ninja://modules:modules_tests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -8782,7 +8782,7 @@
           "--version",
           "16.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8809,7 +8809,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
@@ -8831,7 +8831,7 @@
           "--version",
           "17.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8839,7 +8839,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "modules_unittests iPhone 14 17.4",
+        "name": "modules_unittests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -8859,12 +8859,12 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
@@ -8872,16 +8872,16 @@
         },
         "test": "modules_unittests",
         "test_id_prefix": "ninja://modules:modules_unittests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8889,7 +8889,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "modules_unittests iPhone X 15.5",
+        "name": "modules_unittests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -8909,12 +8909,12 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
@@ -8922,7 +8922,7 @@
         },
         "test": "modules_unittests",
         "test_id_prefix": "ninja://modules:modules_unittests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -8931,7 +8931,7 @@
           "--version",
           "16.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8959,7 +8959,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
@@ -8981,7 +8981,7 @@
           "--version",
           "17.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -8989,7 +8989,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "rtc_media_unittests iPhone 14 17.4",
+        "name": "rtc_media_unittests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -9008,28 +9008,28 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "rtc_media_unittests",
         "test_id_prefix": "ninja://media:rtc_media_unittests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9037,7 +9037,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "rtc_media_unittests iPhone X 15.5",
+        "name": "rtc_media_unittests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -9056,19 +9056,19 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "rtc_media_unittests",
         "test_id_prefix": "ninja://media:rtc_media_unittests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -9077,7 +9077,7 @@
           "--version",
           "16.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9104,7 +9104,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
@@ -9125,7 +9125,7 @@
           "--version",
           "17.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9133,7 +9133,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "rtc_pc_unittests iPhone 14 17.4",
+        "name": "rtc_pc_unittests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -9152,28 +9152,28 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "rtc_pc_unittests",
         "test_id_prefix": "ninja://pc:rtc_pc_unittests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9181,7 +9181,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "rtc_pc_unittests iPhone X 15.5",
+        "name": "rtc_pc_unittests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -9200,19 +9200,19 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "rtc_pc_unittests",
         "test_id_prefix": "ninja://pc:rtc_pc_unittests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -9221,7 +9221,7 @@
           "--version",
           "16.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9248,7 +9248,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
@@ -9269,7 +9269,7 @@
           "--version",
           "17.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9277,7 +9277,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "rtc_stats_unittests iPhone 14 17.4",
+        "name": "rtc_stats_unittests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -9296,28 +9296,28 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "rtc_stats_unittests",
         "test_id_prefix": "ninja://stats:rtc_stats_unittests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9325,7 +9325,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "rtc_stats_unittests iPhone X 15.5",
+        "name": "rtc_stats_unittests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -9344,19 +9344,19 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "rtc_stats_unittests",
         "test_id_prefix": "ninja://stats:rtc_stats_unittests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -9365,7 +9365,7 @@
           "--version",
           "16.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9392,7 +9392,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
@@ -9413,7 +9413,7 @@
           "--version",
           "17.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9421,7 +9421,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "rtc_unittests iPhone 14 17.4",
+        "name": "rtc_unittests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -9440,12 +9440,12 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
@@ -9453,16 +9453,16 @@
         },
         "test": "rtc_unittests",
         "test_id_prefix": "ninja://:rtc_unittests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9470,7 +9470,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "rtc_unittests iPhone X 15.5",
+        "name": "rtc_unittests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -9489,12 +9489,12 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
@@ -9502,7 +9502,7 @@
         },
         "test": "rtc_unittests",
         "test_id_prefix": "ninja://:rtc_unittests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -9511,7 +9511,7 @@
           "--version",
           "16.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9538,7 +9538,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
@@ -9561,7 +9561,7 @@
           "17.4",
           "--xcodebuild-sim-runner",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9569,7 +9569,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "sdk_framework_unittests iPhone 14 17.4",
+        "name": "sdk_framework_unittests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -9588,29 +9588,29 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "sdk_framework_unittests",
         "test_id_prefix": "ninja://sdk:sdk_framework_unittests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcodebuild-sim-runner",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9618,7 +9618,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "sdk_framework_unittests iPhone X 15.5",
+        "name": "sdk_framework_unittests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -9637,19 +9637,19 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "sdk_framework_unittests",
         "test_id_prefix": "ninja://sdk:sdk_framework_unittests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -9659,7 +9659,7 @@
           "16.4",
           "--xcodebuild-sim-runner",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9686,7 +9686,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
@@ -9708,7 +9708,7 @@
           "17.4",
           "--xcodebuild-sim-runner",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9716,7 +9716,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "sdk_unittests iPhone 14 17.4",
+        "name": "sdk_unittests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -9735,29 +9735,29 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "sdk_unittests",
         "test_id_prefix": "ninja://sdk:sdk_unittests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcodebuild-sim-runner",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9765,7 +9765,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "sdk_unittests iPhone X 15.5",
+        "name": "sdk_unittests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -9784,19 +9784,19 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "sdk_unittests",
         "test_id_prefix": "ninja://sdk:sdk_unittests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -9806,7 +9806,7 @@
           "16.4",
           "--xcodebuild-sim-runner",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9833,7 +9833,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
@@ -9854,7 +9854,7 @@
           "--version",
           "17.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9862,7 +9862,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "svc_tests iPhone 14 17.4",
+        "name": "svc_tests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -9882,12 +9882,12 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
@@ -9895,16 +9895,16 @@
         },
         "test": "svc_tests",
         "test_id_prefix": "ninja://pc:svc_tests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9912,7 +9912,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "svc_tests iPhone X 15.5",
+        "name": "svc_tests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -9932,12 +9932,12 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
@@ -9945,7 +9945,7 @@
         },
         "test": "svc_tests",
         "test_id_prefix": "ninja://pc:svc_tests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -9954,7 +9954,7 @@
           "--version",
           "16.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -9982,7 +9982,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
@@ -10004,7 +10004,7 @@
           "--version",
           "17.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -10012,7 +10012,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "system_wrappers_unittests iPhone 14 17.4",
+        "name": "system_wrappers_unittests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -10031,28 +10031,28 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "system_wrappers_unittests",
         "test_id_prefix": "ninja://system_wrappers:system_wrappers_unittests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -10060,7 +10060,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "system_wrappers_unittests iPhone X 15.5",
+        "name": "system_wrappers_unittests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -10079,19 +10079,19 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "system_wrappers_unittests",
         "test_id_prefix": "ninja://system_wrappers:system_wrappers_unittests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -10100,7 +10100,7 @@
           "--version",
           "16.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -10127,7 +10127,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
@@ -10148,7 +10148,7 @@
           "--version",
           "17.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -10156,7 +10156,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "test_support_unittests iPhone 14 17.4",
+        "name": "test_support_unittests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -10175,28 +10175,28 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "test_support_unittests",
         "test_id_prefix": "ninja://test:test_support_unittests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -10204,7 +10204,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "test_support_unittests iPhone X 15.5",
+        "name": "test_support_unittests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -10223,19 +10223,19 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "test_support_unittests",
         "test_id_prefix": "ninja://test:test_support_unittests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -10244,7 +10244,7 @@
           "--version",
           "16.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -10271,7 +10271,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
@@ -10292,7 +10292,7 @@
           "--version",
           "17.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -10300,7 +10300,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "tools_unittests iPhone 14 17.4",
+        "name": "tools_unittests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -10319,28 +10319,28 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "tools_unittests",
         "test_id_prefix": "ninja://rtc_tools:tools_unittests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -10348,7 +10348,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "tools_unittests iPhone X 15.5",
+        "name": "tools_unittests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -10367,19 +10367,19 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "tools_unittests",
         "test_id_prefix": "ninja://rtc_tools:tools_unittests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -10388,7 +10388,7 @@
           "--version",
           "16.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -10415,7 +10415,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
@@ -10436,7 +10436,7 @@
           "--version",
           "17.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -10444,7 +10444,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "video_engine_tests iPhone 14 17.4",
+        "name": "video_engine_tests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -10463,12 +10463,12 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
@@ -10476,16 +10476,16 @@
         },
         "test": "video_engine_tests",
         "test_id_prefix": "ninja://:video_engine_tests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -10493,7 +10493,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "video_engine_tests iPhone X 15.5",
+        "name": "video_engine_tests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -10512,12 +10512,12 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
@@ -10525,7 +10525,7 @@
         },
         "test": "video_engine_tests",
         "test_id_prefix": "ninja://:video_engine_tests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -10534,7 +10534,7 @@
           "--version",
           "16.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -10561,7 +10561,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
@@ -10583,7 +10583,7 @@
           "--version",
           "17.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -10591,7 +10591,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "voip_unittests iPhone 14 17.4",
+        "name": "voip_unittests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -10610,28 +10610,28 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "voip_unittests",
         "test_id_prefix": "ninja://:voip_unittests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -10639,7 +10639,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "voip_unittests iPhone X 15.5",
+        "name": "voip_unittests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -10658,19 +10658,19 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "voip_unittests",
         "test_id_prefix": "ninja://:voip_unittests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -10679,7 +10679,7 @@
           "--version",
           "16.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -10706,7 +10706,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
@@ -10727,7 +10727,7 @@
           "--version",
           "17.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -10735,7 +10735,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "webrtc_nonparallel_tests iPhone 14 17.4",
+        "name": "webrtc_nonparallel_tests iPhone 14 17.5",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -10754,28 +10754,28 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_17_4",
-              "path": "Runtime-ios-17.4"
+              "name": "runtime_ios_17_5",
+              "path": "Runtime-ios-17.5"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "webrtc_nonparallel_tests",
         "test_id_prefix": "ninja://:webrtc_nonparallel_tests/",
-        "variant_id": "iPhone 14 17.4"
+        "variant_id": "iPhone 14 17.5"
       },
       {
         "args": [
           "--platform",
-          "iPhone X",
+          "iPhone 15",
           "--version",
-          "15.5",
+          "18.0",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -10783,7 +10783,7 @@
         "merge": {
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
-        "name": "webrtc_nonparallel_tests iPhone X 15.5",
+        "name": "webrtc_nonparallel_tests iPhone 15 18.0",
         "resultdb": {
           "enable": true,
           "has_native_resultdb_integration": true
@@ -10802,19 +10802,19 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {
-              "name": "runtime_ios_15_5",
-              "path": "Runtime-ios-15.5"
+              "name": "runtime_ios_18_0",
+              "path": "Runtime-ios-18.0"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
         },
         "test": "webrtc_nonparallel_tests",
         "test_id_prefix": "ninja://:webrtc_nonparallel_tests/",
-        "variant_id": "iPhone X 15.5"
+        "variant_id": "iPhone 15 18.0"
       },
       {
         "args": [
@@ -10823,7 +10823,7 @@
           "--version",
           "16.4",
           "--xcode-build-version",
-          "15c500b",
+          "15f31d",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--xctest"
@@ -10850,7 +10850,7 @@
           },
           "named_caches": [
             {
-              "name": "xcode_ios_15c500b",
+              "name": "xcode_ios_15f31d",
               "path": "Xcode.app"
             },
             {

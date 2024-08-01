@@ -20,9 +20,9 @@
 #include <tuple>
 #include <vector>
 
+#include "api/environment/environment.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/rate_control_settings.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 namespace {
@@ -58,10 +58,12 @@ float SimulcastRateAllocator::GetTemporalRateAllocation(
   return kLayerRateAllocation[num_layers - 1][temporal_id];
 }
 
-SimulcastRateAllocator::SimulcastRateAllocator(const VideoCodec& codec)
+SimulcastRateAllocator::SimulcastRateAllocator(const Environment& env,
+                                               const VideoCodec& codec)
     : codec_(codec),
-      stable_rate_settings_(StableTargetRateExperiment::ParseFromFieldTrials()),
-      rate_control_settings_(RateControlSettings::ParseFromFieldTrials()),
+      stable_rate_settings_(StableTargetRateExperiment::ParseFromKeyValueConfig(
+          &env.field_trials())),
+      rate_control_settings_(env.field_trials()),
       legacy_conference_mode_(false) {}
 
 SimulcastRateAllocator::~SimulcastRateAllocator() = default;

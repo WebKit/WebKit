@@ -92,6 +92,8 @@ public:
 
     bool multiThreaded() const override { return m_state >= State::Prepared; }
 
+    bool completeSyncIfPossible();
+
 private:
     class ThreadCountHolder;
     friend class ThreadCountHolder;

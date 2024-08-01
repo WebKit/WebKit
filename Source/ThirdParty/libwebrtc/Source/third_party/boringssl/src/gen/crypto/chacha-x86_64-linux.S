@@ -465,7 +465,6 @@ ChaCha20_ctr32_ssse3_4x:
 _CET_ENDBR
 	movq	%rsp,%r9
 .cfi_def_cfa_register	r9
-	movq	%r10,%r11
 	subq	$0x140+8,%rsp
 	movdqa	.Lsigma(%rip),%xmm11
 	movdqu	(%rcx),%xmm15

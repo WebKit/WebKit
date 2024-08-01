@@ -52,7 +52,8 @@ TEST(SimulatedNetworkTest, EnqueueFirstPacketOnNetworkWithInfiniteCapacity) {
 TEST(SimulatedNetworkTest, EnqueueFirstPacketOnNetworkWithLimitedCapacity) {
   // A packet of 125 bytes that gets enqueued on a network with 1 kbps capacity
   // should be ready to exit the network in 1 second.
-  SimulatedNetwork network = SimulatedNetwork({.link_capacity_kbps = 1});
+  SimulatedNetwork network =
+      SimulatedNetwork({.link_capacity = DataRate::KilobitsPerSec(1)});
   ASSERT_TRUE(network.EnqueuePacket(PacketWithSize(125)));
 
   EXPECT_EQ(network.NextDeliveryTimeUs(), TimeDelta::Seconds(1).us());
@@ -62,7 +63,8 @@ TEST(SimulatedNetworkTest,
      EnqueuePacketsButNextDeliveryIsBasedOnFirstEnqueuedPacket) {
   // A packet of 125 bytes that gets enqueued on a network with 1 kbps capacity
   // should be ready to exit the network in 1 second.
-  SimulatedNetwork network = SimulatedNetwork({.link_capacity_kbps = 1});
+  SimulatedNetwork network =
+      SimulatedNetwork({.link_capacity = DataRate::KilobitsPerSec(1)});
   ASSERT_TRUE(network.EnqueuePacket(
       PacketInFlightInfo(/*size=*/125, /*send_time_us=*/0, /*packet_id=*/1)));
   EXPECT_EQ(network.NextDeliveryTimeUs(), TimeDelta::Seconds(1).us());
@@ -83,7 +85,8 @@ TEST(SimulatedNetworkTest,
 
 TEST(SimulatedNetworkTest, EnqueueFailsWhenQueueLengthIsReached) {
   SimulatedNetwork network =
-      SimulatedNetwork({.queue_length_packets = 1, .link_capacity_kbps = 1});
+      SimulatedNetwork({.queue_length_packets = 1,
+                        .link_capacity = DataRate::KilobitsPerSec(1)});
   ASSERT_TRUE(network.EnqueuePacket(
       PacketInFlightInfo(/*size=*/125, /*send_time_us=*/0, /*packet_id=*/1)));
 
@@ -110,8 +113,8 @@ TEST(SimulatedNetworkTest, PacketOverhead) {
   // A packet of 125 bytes that gets enqueued on a network with 1 kbps capacity
   // should be ready to exit the network in 1 second, but since there is an
   // overhead per packet of 125 bytes, it will exit the network after 2 seconds.
-  SimulatedNetwork network =
-      SimulatedNetwork({.link_capacity_kbps = 1, .packet_overhead = 125});
+  SimulatedNetwork network = SimulatedNetwork(
+      {.link_capacity = DataRate::KilobitsPerSec(1), .packet_overhead = 125});
   ASSERT_TRUE(network.EnqueuePacket(PacketWithSize(125)));
 
   EXPECT_EQ(network.NextDeliveryTimeUs(), TimeDelta::Seconds(2).us());
@@ -121,7 +124,8 @@ TEST(SimulatedNetworkTest,
      DequeueDeliverablePacketsLeavesPacketsInCapacityLink) {
   // A packet of 125 bytes that gets enqueued on a network with 1 kbps capacity
   // should be ready to exit the network in 1 second.
-  SimulatedNetwork network = SimulatedNetwork({.link_capacity_kbps = 1});
+  SimulatedNetwork network =
+      SimulatedNetwork({.link_capacity = DataRate::KilobitsPerSec(1)});
   ASSERT_TRUE(network.EnqueuePacket(
       PacketInFlightInfo(/*size=*/125, /*send_time_us=*/0, /*packet_id=*/1)));
   // Enqueue another packet of 125 bytes (this one should exit after 2 seconds).
@@ -151,7 +155,8 @@ TEST(SimulatedNetworkTest,
      DequeueDeliverablePacketsAppliesConfigChangesToCapacityLink) {
   // A packet of 125 bytes that gets enqueued on a network with 1 kbps capacity
   // should be ready to exit the network in 1 second.
-  SimulatedNetwork network = SimulatedNetwork({.link_capacity_kbps = 1});
+  SimulatedNetwork network =
+      SimulatedNetwork({.link_capacity = DataRate::KilobitsPerSec(1)});
   const PacketInFlightInfo packet_1 =
       PacketInFlightInfo(/*size=*/125, /*send_time_us=*/0, /*packet_id=*/1);
   ASSERT_TRUE(network.EnqueuePacket(packet_1));
@@ -170,7 +175,7 @@ TEST(SimulatedNetworkTest,
 
   // Since the link capacity changes from 1 kbps to 10 kbps, packets will take
   // 100 ms each to leave the network.
-  network.SetConfig({.link_capacity_kbps = 10});
+  network.SetConfig({.link_capacity = DataRate::KilobitsPerSec(10)});
 
   // The next delivery time doesn't change (it will be updated, if needed at
   // DequeueDeliverablePackets time).
@@ -202,7 +207,8 @@ TEST(SimulatedNetworkTest,
      SetConfigUpdateNextDeliveryTimeIfLinkCapacityChange) {
   // A packet of 125 bytes that gets enqueued on a network with 1 kbps capacity
   // should be ready to exit the network in 1 second.
-  SimulatedNetwork network = SimulatedNetwork({.link_capacity_kbps = 1});
+  SimulatedNetwork network =
+      SimulatedNetwork({.link_capacity = DataRate::KilobitsPerSec(1)});
   MockFunction<void()> delivery_time_changed_callback;
   network.RegisterDeliveryTimeChangedCallback(
       delivery_time_changed_callback.AsStdFunction());
@@ -217,7 +223,7 @@ TEST(SimulatedNetworkTest,
   EXPECT_CALL(delivery_time_changed_callback, Call).WillOnce([&]() {
     EXPECT_EQ(network.NextDeliveryTimeUs(), TimeDelta::Millis(500 + 50).us());
   });
-  network.SetConfig({.link_capacity_kbps = 10},
+  network.SetConfig({.link_capacity = DataRate::KilobitsPerSec(10)},
                     /*config_update_time*/ Timestamp::Millis(500));
 }
 
@@ -268,7 +274,8 @@ TEST(SimulatedNetworkTest, SetConfigUpdateQueueDelayAfterDelivery) {
   // A packet of 125 bytes that gets enqueued on a network with 1000 kbps
   // capacity should be ready to exit the narrow section in 1 ms.
   SimulatedNetwork network =
-      SimulatedNetwork({.queue_delay_ms = 1000, .link_capacity_kbps = 1000});
+      SimulatedNetwork({.queue_delay_ms = 1000,
+                        .link_capacity = DataRate::KilobitsPerSec(1000)});
   MockFunction<void()> delivery_time_changed_callback;
   network.RegisterDeliveryTimeChangedCallback(
       delivery_time_changed_callback.AsStdFunction());
@@ -285,8 +292,9 @@ TEST(SimulatedNetworkTest, SetConfigUpdateQueueDelayAfterDelivery) {
   EXPECT_EQ(network.NextDeliveryTimeUs(), TimeDelta::Millis(1000 + 1).us());
 
   // Changing the queue time does not change the next delivery time.
-  network.SetConfig({.queue_delay_ms = 1, .link_capacity_kbps = 100},
-                    /*config_update_time*/ Timestamp::Millis(500));
+  network.SetConfig(
+      {.queue_delay_ms = 1, .link_capacity = DataRate::KilobitsPerSec(100)},
+      /*config_update_time*/ Timestamp::Millis(500));
   EXPECT_EQ(network.NextDeliveryTimeUs(), TimeDelta::Millis(1000 + 1).us());
 
   // A new packet require NextDeliveryTimeUs to change since the capacity
@@ -310,7 +318,8 @@ TEST(SimulatedNetworkTest, SetConfigUpdateQueueDelayAfterDelivery) {
 TEST(SimulatedNetworkTest, NetworkEmptyAfterLastPacketDequeued) {
   // A packet of 125 bytes that gets enqueued on a network with 1 kbps
   // capacity should be ready to exit the network in 1 second.
-  SimulatedNetwork network = SimulatedNetwork({.link_capacity_kbps = 1});
+  SimulatedNetwork network =
+      SimulatedNetwork({.link_capacity = DataRate::KilobitsPerSec(1)});
   ASSERT_TRUE(network.EnqueuePacket(PacketWithSize(125)));
 
   // Collecting all the delivered packets ...
@@ -326,7 +335,8 @@ TEST(SimulatedNetworkTest, NetworkEmptyAfterLastPacketDequeued) {
 TEST(SimulatedNetworkTest, DequeueDeliverablePacketsOnLateCall) {
   // A packet of 125 bytes that gets enqueued on a network with 1 kbps
   // capacity should be ready to exit the network in 1 second.
-  SimulatedNetwork network = SimulatedNetwork({.link_capacity_kbps = 1});
+  SimulatedNetwork network =
+      SimulatedNetwork({.link_capacity = DataRate::KilobitsPerSec(1)});
   ASSERT_TRUE(network.EnqueuePacket(
       PacketInFlightInfo(/*size=*/125, /*send_time_us=*/0, /*packet_id=*/1)));
 
@@ -349,7 +359,8 @@ TEST(SimulatedNetworkTest,
      DequeueDeliverablePacketsOnEarlyCallReturnsNoPackets) {
   // A packet of 125 bytes that gets enqueued on a network with 1 kbps
   // capacity should be ready to exit the network in 1 second.
-  SimulatedNetwork network = SimulatedNetwork({.link_capacity_kbps = 1});
+  SimulatedNetwork network =
+      SimulatedNetwork({.link_capacity = DataRate::KilobitsPerSec(1)});
   ASSERT_TRUE(network.EnqueuePacket(PacketWithSize(125)));
 
   // Collecting delivered packets after 0.5 seconds will result in the
@@ -366,8 +377,8 @@ TEST(SimulatedNetworkTest,
 TEST(SimulatedNetworkTest, QueueDelayMsWithoutStandardDeviation) {
   // A packet of 125 bytes that gets enqueued on a network with 1 kbps
   // capacity should be ready to exit the network in 1 second.
-  SimulatedNetwork network =
-      SimulatedNetwork({.queue_delay_ms = 100, .link_capacity_kbps = 1});
+  SimulatedNetwork network = SimulatedNetwork(
+      {.queue_delay_ms = 100, .link_capacity = DataRate::KilobitsPerSec(1)});
   ASSERT_TRUE(network.EnqueuePacket(PacketWithSize(125)));
   // The next delivery time is still 1 second even if there are 100 ms of
   // extra delay but this will be applied at DequeueDeliverablePackets time.
@@ -394,7 +405,7 @@ TEST(SimulatedNetworkTest,
   SimulatedNetwork network =
       SimulatedNetwork({.queue_delay_ms = 100,
                         .delay_standard_deviation_ms = 90,
-                        .link_capacity_kbps = 1,
+                        .link_capacity = DataRate::KilobitsPerSec(1),
                         .allow_reordering = false});
   // A packet of 125 bytes that gets enqueued on a network with 1 kbps
   // capacity should be ready to exit the network in 1 second.
@@ -432,7 +443,7 @@ TEST(SimulatedNetworkTest, QueueDelayMsWithStandardDeviationAndReorderAllowed) {
   SimulatedNetwork network =
       SimulatedNetwork({.queue_delay_ms = 100,
                         .delay_standard_deviation_ms = 90,
-                        .link_capacity_kbps = 1,
+                        .link_capacity = DataRate::KilobitsPerSec(1),
                         .allow_reordering = true},
                        /*random_seed=*/1);
   // A packet of 125 bytes that gets enqueued on a network with 1 kbps
@@ -494,10 +505,12 @@ TEST(SimulatedNetworkTest, PacketLoss) {
 }
 
 TEST(SimulatedNetworkTest, NextDeliveryTimeSetAfterLostPackets) {
-  // On a network with 50% probability of packet loss ...
-  SimulatedNetwork network = SimulatedNetwork(
-      {.queue_delay_ms = 10, .link_capacity_kbps = 1000, .loss_percent = 50},
-      /*random_seed =*/1);
+  // On a network with 50% probablility of packet loss ...
+  SimulatedNetwork network =
+      SimulatedNetwork({.queue_delay_ms = 10,
+                        .link_capacity = DataRate::KilobitsPerSec(1000),
+                        .loss_percent = 50},
+                       /*random_seed =*/1);
   // Enqueueing 8 packets at the same time. It should take 1ms to pass through
   // the capacity limited section per packet, it total adding 8ms delay to the
   // last packet. Since queue delay is 10ms, multiple packets will be in the
@@ -569,7 +582,8 @@ TEST(SimulatedNetworkTest, PauseTransmissionUntil) {
   // 3 packets of 125 bytes that gets enqueued on a network with 1 kbps
   // capacity should be ready to exit the network after 1, 2 and 3 seconds
   // respectively.
-  SimulatedNetwork network = SimulatedNetwork({.link_capacity_kbps = 1});
+  SimulatedNetwork network =
+      SimulatedNetwork({.link_capacity = DataRate::KilobitsPerSec(1)});
   ASSERT_TRUE(network.EnqueuePacket(
       PacketInFlightInfo(/*size=*/125, /*send_time_us=*/0, /*packet_id=*/1)));
   ASSERT_TRUE(network.EnqueuePacket(
@@ -606,7 +620,8 @@ TEST(SimulatedNetworkTest, PauseTransmissionUntil) {
 }
 
 TEST(SimulatedNetworkTest, CongestedNetworkRespectsLinkCapacity) {
-  SimulatedNetwork network = SimulatedNetwork({.link_capacity_kbps = 1});
+  SimulatedNetwork network =
+      SimulatedNetwork({.link_capacity = DataRate::KilobitsPerSec(1)});
   for (size_t i = 0; i < 1'000; ++i) {
     ASSERT_TRUE(network.EnqueuePacket(PacketInFlightInfo(
         /*size=*/125, /*send_time_us=*/0, /*packet_id=*/i)));
@@ -633,7 +648,8 @@ TEST(SimulatedNetworkTest, EnqueuePacketWithSubSecondNonMonotonicBehaviour) {
   // non monothonic behaviour when running on different cores. This test
   // checks that when a non monotonic packet enqueue, the network continues to
   // work and the out of order packet is sent anyway.
-  SimulatedNetwork network = SimulatedNetwork({.link_capacity_kbps = 1});
+  SimulatedNetwork network =
+      SimulatedNetwork({.link_capacity = DataRate::KilobitsPerSec(1)});
   ASSERT_TRUE(network.EnqueuePacket(PacketInFlightInfo(
       /*size=*/125, /*send_time_us=*/TimeDelta::Seconds(1).us(),
       /*packet_id=*/0)));
@@ -658,7 +674,8 @@ TEST(SimulatedNetworkTest, EnqueuePacketWithSubSecondNonMonotonicBehaviour) {
 // TODO(bugs.webrtc.org/14525): Re-enable when the DCHECK will be uncommented
 // and the non-monotonic events on real time clock tests is solved/understood.
 // TEST(SimulatedNetworkDeathTest, EnqueuePacketExpectMonotonicSendTime) {
-//   SimulatedNetwork network = SimulatedNetwork({.link_capacity_kbps = 1});
+//   SimulatedNetwork network = SimulatedNetwork({.link_capacity =
+//   DataRate::KilobitsPerSec(1)});
 //   ASSERT_TRUE(network.EnqueuePacket(PacketInFlightInfo(
 //       /*size=*/125, /*send_time_us=*/2'000'000, /*packet_id=*/0)));
 //   EXPECT_DEATH_IF_SUPPORTED(network.EnqueuePacket(PacketInFlightInfo(

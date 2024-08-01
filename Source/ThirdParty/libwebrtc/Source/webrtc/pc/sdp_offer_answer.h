@@ -55,7 +55,6 @@
 #include "pc/stream_collection.h"
 #include "pc/transceiver_list.h"
 #include "pc/webrtc_session_description_factory.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/operations_chain.h"
 #include "rtc_base/ssl_stream_adapter.h"
 #include "rtc_base/thread.h"

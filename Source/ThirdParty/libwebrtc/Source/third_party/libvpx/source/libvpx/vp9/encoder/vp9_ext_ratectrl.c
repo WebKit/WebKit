@@ -231,6 +231,18 @@ vpx_codec_err_t vp9_extrc_get_gop_decision(
   return VPX_CODEC_OK;
 }
 
+vpx_codec_err_t vp9_extrc_get_key_frame_decision(
+    EXT_RATECTRL *ext_ratectrl,
+    vpx_rc_key_frame_decision_t *key_frame_decision) {
+  if (ext_ratectrl == NULL || !ext_ratectrl->ready ||
+      (ext_ratectrl->funcs.rc_type & VPX_RC_GOP) == 0) {
+    return VPX_CODEC_INVALID_PARAM;
+  }
+  vpx_rc_status_t rc_status = ext_ratectrl->funcs.get_key_frame_decision(
+      ext_ratectrl->model, key_frame_decision);
+  return rc_status == VPX_RC_OK ? VPX_CODEC_OK : VPX_CODEC_ERROR;
+}
+
 vpx_codec_err_t vp9_extrc_get_frame_rdmult(
     EXT_RATECTRL *ext_ratectrl, int show_index, int coding_index, int gop_index,
     FRAME_UPDATE_TYPE update_type, int gop_size, int use_alt_ref,

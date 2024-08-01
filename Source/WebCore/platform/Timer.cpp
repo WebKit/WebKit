@@ -37,6 +37,10 @@
 #include <wtf/MainThread.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(IOS_FAMILY)
+#include "WebCoreThread.h"
+#endif
+
 #if PLATFORM(COCOA)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
@@ -280,6 +284,9 @@ static_assert(sizeof(DeferrableOneShotTimer) == sizeof(SameSizeAsDeferrableOneSh
 
 TimerBase::TimerBase()
 {
+#if USE(WEB_THREAD)
+    RELEASE_ASSERT(WebThreadIsLockedOrDisabled());
+#endif
 }
 
 TimerBase::~TimerBase()
@@ -499,6 +506,9 @@ void TimerBase::updateHeapIfNeeded(MonotonicTime oldTime)
 
 void TimerBase::setNextFireTime(MonotonicTime newTime)
 {
+#if USE(WEB_THREAD)
+    RELEASE_ASSERT(WebThreadIsLockedOrDisabled());
+#endif
     ASSERT(canCurrentThreadAccessThreadLocalData(m_thread));
     RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_thread) || shouldSuppressThreadSafetyCheck());
     bool timerHasBeenDeleted = m_unalignedNextFireTime.isNaN();

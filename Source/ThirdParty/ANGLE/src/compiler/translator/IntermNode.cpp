@@ -2179,12 +2179,23 @@ TIntermTyped *TIntermBinary::fold(TDiagnostics *diagnostics)
             if (mLeft->getAsConstantUnion() || getType().canReplaceWithConstantUnion())
             {
                 const TConstantUnion *constantValue = getConstantValue();
-                if (constantValue == nullptr)
+                if (constantValue != nullptr)
                 {
-                    return this;
+                    return CreateFoldedNode(constantValue, this);
                 }
-                return CreateFoldedNode(constantValue, this);
             }
+
+            // If the indexed value is a swizzle, then the swizzle can be adjusted instead.
+            TIntermSwizzle *leftSwizzle = mLeft->getAsSwizzleNode();
+            if (leftSwizzle != nullptr)
+            {
+                const TVector<int> &swizzleOffsets = leftSwizzle->getSwizzleOffsets();
+                ASSERT(index < swizzleOffsets.size());
+
+                int remappedIndex = swizzleOffsets[index];
+                return new TIntermSwizzle(leftSwizzle->getOperand(), {remappedIndex});
+            }
+
             return this;
         }
         case EOpIndexIndirect:

@@ -15,6 +15,7 @@
 #include <utility>
 
 #include "absl/strings/string_view.h"
+#include "api/environment/environment_factory.h"
 #include "common_audio/mocks/mock_smoothing_filter.h"
 #include "modules/audio_coding/audio_network_adaptor/mock/mock_audio_network_adaptor.h"
 #include "modules/audio_coding/codecs/opus/audio_encoder_opus.h"
@@ -22,16 +23,17 @@
 #include "modules/audio_coding/neteq/tools/audio_loop.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/fake_clock.h"
-#include "test/field_trial.h"
+#include "test/explicit_key_value_config.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/scoped_key_value_config.h"
 #include "test/testsupport/file_utils.h"
 
 namespace webrtc {
+namespace {
+using test::ExplicitKeyValueConfig;
 using ::testing::NiceMock;
 using ::testing::Return;
-
-namespace {
 
 constexpr int kDefaultOpusPayloadType = 105;
 constexpr int kDefaultOpusRate = 32000;
@@ -52,8 +54,10 @@ struct AudioEncoderOpusStates {
   AudioEncoderOpusConfig config;
 };
 
-std::unique_ptr<AudioEncoderOpusStates> CreateCodec(int sample_rate_hz,
-                                                    size_t num_channels) {
+std::unique_ptr<AudioEncoderOpusStates> CreateCodec(
+    int sample_rate_hz,
+    size_t num_channels,
+    const FieldTrialsView* field_trials = nullptr) {
   std::unique_ptr<AudioEncoderOpusStates> states =
       std::make_unique<AudioEncoderOpusStates>();
   states->mock_audio_network_adaptor = nullptr;
@@ -85,9 +89,9 @@ std::unique_ptr<AudioEncoderOpusStates> CreateCodec(int sample_rate_hz,
       new MockSmoothingFilter());
   states->mock_bitrate_smoother = bitrate_smoother.get();
 
-  states->encoder.reset(
-      new AudioEncoderOpusImpl(states->config, kDefaultOpusPayloadType, creator,
-                               std::move(bitrate_smoother)));
+  states->encoder = AudioEncoderOpusImpl::CreateForTesting(
+      CreateEnvironment(field_trials), states->config, kDefaultOpusPayloadType,
+      creator, std::move(bitrate_smoother));
   return states;
 }
 
@@ -264,9 +268,9 @@ TEST_P(AudioEncoderOpusTest,
 
 TEST_P(AudioEncoderOpusTest,
        InvokeAudioNetworkAdaptorOnReceivedUplinkBandwidth) {
-  test::ScopedFieldTrials override_field_trials(
+  ExplicitKeyValueConfig field_trials(
       "WebRTC-Audio-StableTargetAdaptation/Disabled/");
-  auto states = CreateCodec(sample_rate_hz_, 2);
+  auto states = CreateCodec(sample_rate_hz_, 2, &field_trials);
   states->encoder->EnableAudioNetworkAdaptor("", nullptr);
 
   auto config = CreateEncoderRuntimeConfig();
@@ -485,9 +489,9 @@ TEST_P(AudioEncoderOpusTest, EmptyConfigDoesNotAffectEncoderSettings) {
 }
 
 TEST_P(AudioEncoderOpusTest, UpdateUplinkBandwidthInAudioNetworkAdaptor) {
-  test::ScopedFieldTrials override_field_trials(
+  ExplicitKeyValueConfig field_trials(
       "WebRTC-Audio-StableTargetAdaptation/Disabled/");
-  auto states = CreateCodec(sample_rate_hz_, 2);
+  auto states = CreateCodec(sample_rate_hz_, 2, &field_trials);
   states->encoder->EnableAudioNetworkAdaptor("", nullptr);
   const size_t opus_rate_khz = rtc::CheckedDivExact(sample_rate_hz_, 1000);
   const std::vector<int16_t> audio(opus_rate_khz * 10 * 2, 0);
@@ -819,7 +823,16 @@ TEST_P(AudioEncoderOpusTest, OpusFlagDtxAsNonSpeech) {
 }
 
 TEST(AudioEncoderOpusTest, OpusDtxFilteringHighEnergyRefreshPackets) {
-  test::ScopedFieldTrials override_field_trials(
+  // TODO: bugs.webrtc.org/343086059 - Use `ExplicitKeyValueConfig` type to
+  // ensure global field trial string is not used when this field trial is
+  // queried from the passed Environment.
+  // There are currently two complications for that:
+  // - field trial is queried by WebRtcOpus_EncoderCreate that follows c-style
+  // interface, and thus is not ready to accept c++ interface FieldTrialsView
+  // - field trial is queried during `RecreateEncoderInstance`, i.e., opus
+  // encoder needs to save field trials passed at construction. That will be
+  // simpler once all public constructors accept webrtc::Environment.
+  test::ScopedKeyValueConfig field_trials(
       "WebRTC-Audio-OpusAvoidNoisePumpingDuringDtx/Enabled/");
   const std::string kInputFileName =
       webrtc::test::ResourcePath("audio_coding/testfile16kHz", "pcm");
@@ -828,7 +841,8 @@ TEST(AudioEncoderOpusTest, OpusDtxFilteringHighEnergyRefreshPackets) {
   config.dtx_enabled = true;
   config.sample_rate_hz = kSampleRateHz;
   constexpr int payload_type = 17;
-  const auto encoder = AudioEncoderOpus::MakeAudioEncoder(config, payload_type);
+  AudioEncoderOpusImpl encoder(CreateEnvironment(&field_trials), config,
+                               payload_type);
   test::AudioLoop audio_loop;
   constexpr size_t kMaxLoopLengthSaples = kSampleRateHz * 11.6f;
   constexpr size_t kInputBlockSizeSamples = kSampleRateHz / 100;
@@ -849,7 +863,7 @@ TEST(AudioEncoderOpusTest, OpusDtxFilteringHighEnergyRefreshPackets) {
     // Every second call to the encoder will generate an Opus packet.
     for (int j = 0; j < 2; j++) {
       auto next_frame = audio_loop.GetNextBlock();
-      info = encoder->Encode(rtp_timestamp, next_frame, &encoded);
+      info = encoder.Encode(rtp_timestamp, next_frame, &encoded);
       if (opus_entered_dtx) {
         size_t silence_frame_start = rtp_timestamp - timestamp_start_silence;
         silence_filled = silence_frame_start >= kSilenceDurationSamples;
@@ -890,7 +904,7 @@ TEST(AudioEncoderOpusTest, OpusDtxFilteringHighEnergyRefreshPackets) {
             silence.begin() + silence_frame_start,
             silence.begin() + silence_frame_start + kInputBlockSizeSamples,
             silence_frame.begin(), [gain](float s) { return gain * s; });
-        info = encoder->Encode(rtp_timestamp, silence_frame, &encoded);
+        info = encoder.Encode(rtp_timestamp, silence_frame, &encoded);
         rtp_timestamp += kInputBlockSizeSamples;
       }
       EXPECT_TRUE(info.encoded_bytes > 0 || last_packet_dtx_frame);

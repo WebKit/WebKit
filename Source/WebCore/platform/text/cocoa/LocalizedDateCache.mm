@@ -120,7 +120,7 @@ RetainPtr<NSDateFormatter> LocalizedDateCache::createFormatterForType(DateCompon
         [dateFormatter setDateStyle:NSDateFormatterNoStyle];
         break;
     case DateComponentsType::Week:
-#if HAVE(UI_CALENDAR_SELECTION_WEEK_OF_YEAR)
+#if ENABLE(INPUT_TYPE_WEEK_PICKER)
         [dateFormatter setDateFormat:[NSString stringWithFormat:@"'%@' w',' yyyy", (NSString *)inputWeekLabel()]];
 #else
         ASSERT_NOT_REACHED();

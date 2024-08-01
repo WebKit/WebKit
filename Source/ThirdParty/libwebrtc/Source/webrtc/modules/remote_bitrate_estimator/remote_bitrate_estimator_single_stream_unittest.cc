@@ -10,6 +10,9 @@
 
 #include "modules/remote_bitrate_estimator/remote_bitrate_estimator_single_stream.h"
 
+#include <memory>
+
+#include "api/environment/environment_factory.h"
 #include "modules/remote_bitrate_estimator/remote_bitrate_estimator_unittest_helper.h"
 #include "test/gtest.h"
 
@@ -24,12 +27,10 @@ class RemoteBitrateEstimatorSingleTest : public RemoteBitrateEstimatorTest {
   RemoteBitrateEstimatorSingleTest& operator=(
       const RemoteBitrateEstimatorSingleTest&) = delete;
 
-  virtual void SetUp() {
-    bitrate_estimator_.reset(new RemoteBitrateEstimatorSingleStream(
-        bitrate_observer_.get(), &clock_));
+  void SetUp() override {
+    bitrate_estimator_ = std::make_unique<RemoteBitrateEstimatorSingleStream>(
+        CreateEnvironment(&clock_), bitrate_observer_.get());
   }
-
- protected:
 };
 
 TEST_F(RemoteBitrateEstimatorSingleTest, InitialBehavior) {

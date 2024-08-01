@@ -1203,13 +1203,13 @@ TEST(WKWebExtensionAPIAction, ClearTabSpecificActionPropertiesOnNavigation)
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:localhostRequest.URL];
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:addressRequest.URL];
 
-    [manager.get().defaultTab.mainWebView loadRequest:localhostRequest];
+    [manager.get().defaultTab.webView loadRequest:localhostRequest];
 
     [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    [manager.get().defaultTab.mainWebView loadRequest:addressRequest];
+    [manager.get().defaultTab.webView loadRequest:addressRequest];
 
     [manager run];
 }

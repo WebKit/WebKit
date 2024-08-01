@@ -543,7 +543,7 @@ private:
     }
 };
 
-constexpr ptrdiff_t CachedPtrOffsets::offsetOffset()
+ptrdiff_t CachedPtrOffsets::offsetOffset()
 {
     return OBJECT_OFFSETOF(CachedPtr<void>, m_offset);
 }
@@ -609,7 +609,7 @@ private:
     CachedPtr<T, Source> m_ptr;
 };
 
-constexpr ptrdiff_t CachedWriteBarrierOffsets::ptrOffset()
+ptrdiff_t CachedWriteBarrierOffsets::ptrOffset()
 {
     return OBJECT_OFFSETOF(CachedWriteBarrier<void>, m_ptr);
 }
@@ -1929,17 +1929,17 @@ private:
     CachedWriteBarrier<CachedFunctionCodeBlock, UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForConstruct;
 };
 
-constexpr ptrdiff_t CachedFunctionExecutableOffsets::codeBlockForCallOffset()
+ptrdiff_t CachedFunctionExecutableOffsets::codeBlockForCallOffset()
 {
     return OBJECT_OFFSETOF(CachedFunctionExecutable, m_unlinkedCodeBlockForCall);
 }
 
-constexpr ptrdiff_t CachedFunctionExecutableOffsets::codeBlockForConstructOffset()
+ptrdiff_t CachedFunctionExecutableOffsets::codeBlockForConstructOffset()
 {
     return OBJECT_OFFSETOF(CachedFunctionExecutable, m_unlinkedCodeBlockForConstruct);
 }
 
-constexpr ptrdiff_t CachedFunctionExecutableOffsets::metadataOffset()
+ptrdiff_t CachedFunctionExecutableOffsets::metadataOffset()
 {
     return OBJECT_OFFSETOF(CachedFunctionExecutable, m_mutableMetadata);
 }

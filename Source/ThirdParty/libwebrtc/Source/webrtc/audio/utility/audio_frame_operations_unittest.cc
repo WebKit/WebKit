@@ -31,7 +31,7 @@ void SetFrameData(int16_t ch1,
                   int16_t ch3,
                   int16_t ch4,
                   AudioFrame* frame) {
-  rtc::ArrayView<int16_t> frame_data =
+  InterleavedView<int16_t> frame_data =
       frame->mutable_data(frame->samples_per_channel_, 4);
   for (size_t i = 0; i < frame->samples_per_channel_ * 4; i += 4) {
     frame_data[i] = ch1;
@@ -42,7 +42,7 @@ void SetFrameData(int16_t ch1,
 }
 
 void SetFrameData(int16_t left, int16_t right, AudioFrame* frame) {
-  rtc::ArrayView<int16_t> frame_data =
+  InterleavedView<int16_t> frame_data =
       frame->mutable_data(frame->samples_per_channel_, 2);
   for (size_t i = 0; i < frame->samples_per_channel_ * 2; i += 2) {
     frame_data[i] = left;
@@ -51,7 +51,7 @@ void SetFrameData(int16_t left, int16_t right, AudioFrame* frame) {
 }
 
 void SetFrameData(int16_t data, AudioFrame* frame) {
-  rtc::ArrayView<int16_t> frame_data =
+  InterleavedView<int16_t> frame_data =
       frame->mutable_data(frame->samples_per_channel_, 1);
   for (size_t i = 0; i < frame->samples_per_channel_ * frame->num_channels_;
        i++) {
@@ -167,7 +167,7 @@ TEST_F(AudioFrameOperationsTest, StereoToMonoBufferSucceeds) {
   SetFrameData(4, 2, &frame_);
 
   AudioFrameOperations::DownmixChannels(
-      frame_.data_view(), 2, frame_.samples_per_channel_, 1,
+      frame_.data_view(),
       target_frame.mutable_data(frame_.samples_per_channel_, 1));
 
   AudioFrame mono_frame;
@@ -211,7 +211,7 @@ TEST_F(AudioFrameOperationsTest, QuadToMonoBufferSucceeds) {
   SetFrameData(4, 2, 6, 8, &frame_);
 
   AudioFrameOperations::DownmixChannels(
-      frame_.data_view(), 4, frame_.samples_per_channel_, 1,
+      frame_.data_view(),
       target_frame.mutable_data(frame_.samples_per_channel_, 1));
   AudioFrame mono_frame;
   mono_frame.samples_per_channel_ = 320;
@@ -259,7 +259,7 @@ TEST_F(AudioFrameOperationsTest, QuadToStereoBufferSucceeds) {
   SetFrameData(4, 2, 6, 8, &frame_);
 
   AudioFrameOperations::QuadToStereo(
-      frame_.data_view(), frame_.samples_per_channel_,
+      frame_.data_view(),
       target_frame.mutable_data(frame_.samples_per_channel_, 2));
   AudioFrame stereo_frame;
   stereo_frame.samples_per_channel_ = 320;

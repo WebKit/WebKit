@@ -22,6 +22,7 @@
 #include "SVGFEDropShadowElement.h"
 
 #include "NodeName.h"
+#include "RenderElement.h"
 #include "RenderStyle.h"
 #include "SVGFilter.h"
 #include "SVGNames.h"

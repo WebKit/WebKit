@@ -27,7 +27,7 @@ namespace dcsctp {
 // Do not trust anything in it; no pointers or anything like that.
 class StateCookie {
  public:
-  static constexpr size_t kCookieSize = 45;
+  static constexpr size_t kCookieSize = 44;
 
   StateCookie(VerificationTag peer_tag,
               VerificationTag my_tag,

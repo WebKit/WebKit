@@ -158,12 +158,11 @@ private:
     MediaStream& mediaStreamFromRTCStreamId(const String&);
 
     void AddRef() const { ref(); }
-    rtc::RefCountReleaseStatus Release() const
+    webrtc::RefCountReleaseStatus Release() const
     {
         auto result = refCount() - 1;
         deref();
-        return result ? rtc::RefCountReleaseStatus::kOtherRefsRemained
-        : rtc::RefCountReleaseStatus::kDroppedLastRef;
+        return result ? webrtc::RefCountReleaseStatus::kOtherRefsRemained : webrtc::RefCountReleaseStatus::kDroppedLastRef;
     }
 
     std::pair<LibWebRTCRtpSenderBackend::Source, rtc::scoped_refptr<webrtc::MediaStreamTrackInterface>> createSourceAndRTCTrack(MediaStreamTrack&);

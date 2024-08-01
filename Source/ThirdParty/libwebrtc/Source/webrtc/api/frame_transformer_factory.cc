@@ -10,8 +10,12 @@
 
 #include "api/frame_transformer_factory.h"
 
+#include <memory>
+
+#include "api/frame_transformer_interface.h"
 #include "audio/channel_send_frame_transformer_delegate.h"
 #include "modules/rtp_rtcp/source/rtp_sender_video_frame_transformer_delegate.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

@@ -35,23 +35,29 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
+#if USE(UITOOLBAR_FOR_DATE_PICKER_ACCESSORY_VIEW)
+using WKDatePickerToolbarView = UIToolbar;
+#else
+using WKDatePickerToolbarView = UIView;
+#endif
+
 const CGFloat toolbarBottomMarginSmall = 2;
 
 @interface WKDatePickerPopoverView : UIView
 
 @property (readonly, nonatomic) UIDatePicker *datePicker;
-@property (readonly, nonatomic) UIToolbar *accessoryView;
+@property (readonly, nonatomic) WKDatePickerToolbarView *accessoryView;
 
 @end
 
 @implementation WKDatePickerPopoverView {
     RetainPtr<UIVisualEffectView> _backgroundView;
     __weak UIDatePicker *_datePicker;
-    __weak UICalendarView *_calendarView;
 #if HAVE(UI_CALENDAR_SELECTION_WEEK_OF_YEAR)
+    __weak UICalendarView *_calendarView;
     RetainPtr<UICalendarSelectionWeekOfYear> _selectionWeekOfYear;
 #endif
-    RetainPtr<UIToolbar> _accessoryView;
+    RetainPtr<WKDatePickerToolbarView> _accessoryView;
     CGSize _contentSize;
 }
 
@@ -62,7 +68,7 @@ const CGFloat toolbarBottomMarginSmall = 2;
     blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemMaterial];
 #endif
     _backgroundView = adoptNS([[UIVisualEffectView alloc] initWithEffect:blurEffect]);
-    _accessoryView = adoptNS([UIToolbar new]);
+    _accessoryView = adoptNS([WKDatePickerToolbarView new]);
     [_backgroundView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self addSubview:_backgroundView.get()];
     static constexpr auto marginSize = 16;
@@ -72,12 +78,14 @@ const CGFloat toolbarBottomMarginSmall = 2;
     [[_backgroundView contentView] addSubview:pickerView];
 
     [_accessoryView setTranslatesAutoresizingMaskIntoConstraints:NO];
+#if USE(UITOOLBAR_FOR_DATE_PICKER_ACCESSORY_VIEW)
     [_accessoryView setStandardAppearance:^{
         auto appearance = adoptNS([UIToolbarAppearance new]);
         [appearance setBackgroundEffect:nil];
         return appearance.autorelease();
     }()];
     [_accessoryView sizeToFit];
+#endif
     [[_backgroundView contentView] addSubview:_accessoryView.get()];
 
     auto pickerViewSize = [pickerView bounds].size;
@@ -102,7 +110,9 @@ const CGFloat toolbarBottomMarginSmall = 2;
         [[pickerView bottomAnchor] constraintEqualToSystemSpacingBelowAnchor:[_accessoryView topAnchor] multiplier:1],
         [[_accessoryView leadingAnchor] constraintEqualToAnchor:self.leadingAnchor constant:accessoryViewHorizontalMargin],
         [[_accessoryView trailingAnchor] constraintEqualToAnchor:self.trailingAnchor constant:-accessoryViewHorizontalMargin],
+#if USE(UITOOLBAR_FOR_DATE_PICKER_ACCESSORY_VIEW)
         [[_accessoryView heightAnchor] constraintEqualToConstant:accessoryViewSize.height],
+#endif
         [[_accessoryView bottomAnchor] constraintEqualToAnchor:[_backgroundView bottomAnchor]],
     ]];
 }
@@ -142,12 +152,16 @@ const CGFloat toolbarBottomMarginSmall = 2;
     return _datePicker;
 }
 
+#if HAVE(UI_CALENDAR_SELECTION_WEEK_OF_YEAR)
+
 - (UICalendarView *)calendarView
 {
     return _calendarView;
 }
 
-- (UIToolbar *)accessoryView
+#endif
+
+- (WKDatePickerToolbarView *)accessoryView
 {
     return _accessoryView.get();
 }
@@ -246,11 +260,36 @@ const CGFloat toolbarBottomMarginSmall = 2;
 {
     [super viewDidLoad];
 
+    [_contentView setTranslatesAutoresizingMaskIntoConstraints:NO];
+
+#if USE(UITOOLBAR_FOR_DATE_PICKER_ACCESSORY_VIEW)
     auto resetButton = adoptNS([[UIBarButtonItem alloc] initWithTitle:WEB_UI_STRING_KEY("Reset", "Reset Button Date/Time Context Menu", "Reset button in date input context menu") style:UIBarButtonItemStylePlain target:self action:@selector(resetDatePicker)]);
     auto doneButton = adoptNS([[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismissDatePicker)]);
 
-    [_contentView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [_contentView accessoryView].items = @[ resetButton.get(), UIBarButtonItem.flexibleSpaceItem, doneButton.get() ];
+#else
+    RetainPtr resetButton = [UIButton buttonWithType:UIButtonTypePlain];
+    [resetButton setTitle:WEB_UI_STRING_KEY("Reset", "Reset Button Date/Time Context Menu", "Reset button in date input context menu") forState:UIControlStateNormal];
+    [resetButton setTitleColor:UIColor.labelColor forState:UIControlStateNormal];
+    [resetButton addTarget:self action:@selector(resetDatePicker) forControlEvents:UIControlEventPrimaryActionTriggered];
+    [resetButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+
+    RetainPtr doneButton = [UIButton buttonWithType:UIButtonTypePlain];
+    [doneButton setTitle:WebCore::formControlDoneButtonTitle() forState:UIControlStateNormal];
+    [doneButton setTitleColor:UIColor.labelColor forState:UIControlStateNormal];
+    [doneButton addTarget:self action:@selector(dismissDatePicker) forControlEvents:UIControlEventPrimaryActionTriggered];
+    [doneButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+
+    [[_contentView accessoryView] addSubview:resetButton.get()];
+    [[_contentView accessoryView] addSubview:doneButton.get()];
+
+    CGFloat buttonHeight = [resetButton sizeThatFits:CGSizeZero].height;
+    [NSLayoutConstraint activateConstraints:@[
+        [[[_contentView accessoryView] heightAnchor] constraintEqualToConstant:buttonHeight],
+        [[resetButton leadingAnchor] constraintEqualToAnchor:[[_contentView accessoryView] leadingAnchor]],
+        [[doneButton trailingAnchor] constraintEqualToAnchor:[[_contentView accessoryView] trailingAnchor]],
+    ]];
+#endif
 
     [self.view addSubview:_contentView.get()];
 

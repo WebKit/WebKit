@@ -818,6 +818,9 @@ void OutputSPIRVTraverser::accessChainPushLiteral(NodeData *data,
     // Add the literal integer in the chain of indices.  Since this is an id list, fake it as an id.
     data->idList.emplace_back(index);
     data->accessChain.preSwizzleTypeId = typeId;
+
+    // Literal index of a swizzle must be already folded in the AST.
+    ASSERT(data->accessChain.swizzles.empty());
 }
 
 void OutputSPIRVTraverser::accessChainPushSwizzle(NodeData *data,
@@ -5428,6 +5431,17 @@ bool OutputSPIRVTraverser::visitSwitch(Visit visit, TIntermSwitch *node)
 
     if (visit == PreVisit)
     {
+        // Artificially add `if (true)` around switches as a driver bug workaround
+        if (mCompileOptions.wrapSwitchInIfTrue)
+        {
+            const spirv::IdRef conditionValue = mBuilder.getBoolConstant(true);
+            mBuilder.startConditional(2, false, false);
+            const SpirvConditional *conditional = mBuilder.getCurrentConditional();
+            const spirv::IdRef trueBlock        = conditional->blockIds[0];
+            const spirv::IdRef mergeBlock       = conditional->blockIds[1];
+            mBuilder.writeBranchConditional(conditionValue, trueBlock, mergeBlock, mergeBlock);
+        }
+
         // Don't add an entry to the stack.  The condition will create one, which we won't pop.
         return true;
     }
@@ -5529,6 +5543,12 @@ bool OutputSPIRVTraverser::visitSwitch(Visit visit, TIntermSwitch *node)
     // Terminate the last block if not already and end the conditional.
     mBuilder.writeSwitchCaseBlockEnd();
     mBuilder.endConditional();
+
+    if (mCompileOptions.wrapSwitchInIfTrue)
+    {
+        mBuilder.writeBranchConditionalBlockEnd();
+        mBuilder.endConditional();
+    }
 
     return true;
 }
@@ -6550,7 +6570,9 @@ spirv::Blob OutputSPIRVTraverser::getSpirv()
     spvtools::SpirvTools spirvTools(mCompileOptions.emitSPIRV14 ? SPV_ENV_VULKAN_1_1_SPIRV_1_4
                                                                 : SPV_ENV_VULKAN_1_1);
     std::string readableSpirv;
-    spirvTools.Disassemble(result, &readableSpirv, 0);
+    spirvTools.Disassemble(result, &readableSpirv,
+                           SPV_BINARY_TO_TEXT_OPTION_COMMENT | SPV_BINARY_TO_TEXT_OPTION_INDENT |
+                               SPV_BINARY_TO_TEXT_OPTION_NESTED_INDENT);
     fprintf(stderr, "%s\n", readableSpirv.c_str());
 #endif  // ANGLE_DEBUG_SPIRV_GENERATION
 

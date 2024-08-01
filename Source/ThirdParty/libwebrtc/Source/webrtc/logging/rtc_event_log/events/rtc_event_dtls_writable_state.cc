@@ -10,7 +10,10 @@
 
 #include "logging/rtc_event_log/events/rtc_event_dtls_writable_state.h"
 
+#include <memory>
+
 #include "absl/memory/memory.h"
+#include "api/rtc_event_log/rtc_event.h"
 
 namespace webrtc {
 

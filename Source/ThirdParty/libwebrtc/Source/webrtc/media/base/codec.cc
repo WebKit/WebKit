@@ -10,11 +10,21 @@
 
 #include "media/base/codec.h"
 
+#include <algorithm>
+#include <cstddef>
+#include <iterator>
+#include <string>
+#include <vector>
+
 #include "absl/algorithm/container.h"
 #include "absl/strings/match.h"
+#include "absl/types/optional.h"
 #include "api/audio_codecs/audio_format.h"
+#include "api/media_types.h"
+#include "api/rtp_parameters.h"
 #include "api/video_codecs/av1_profile.h"
 #include "api/video_codecs/h264_profile_level_id.h"
+#include "api/video_codecs/sdp_video_format.h"
 #ifdef RTC_ENABLE_H265
 #include "api/video_codecs/h265_profile_tier_level.h"
 #endif

@@ -105,6 +105,10 @@ class MockRtpTransportControllerSend
   MOCK_METHOD(void, IncludeOverheadInPacedSender, (), (override));
   MOCK_METHOD(void, OnReceivedPacket, (const ReceivedPacket&), (override));
   MOCK_METHOD(void, EnsureStarted, (), (override));
+  MOCK_METHOD(NetworkControllerInterface*,
+              GetNetworkController,
+              (),
+              (override));
 };
 }  // namespace webrtc
 #endif  // CALL_TEST_MOCK_RTP_TRANSPORT_CONTROLLER_SEND_H_

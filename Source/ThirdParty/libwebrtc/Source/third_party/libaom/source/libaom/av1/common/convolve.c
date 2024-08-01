@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2016, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -48,6 +48,7 @@ void av1_convolve_horiz_rs_c(const uint8_t *src, int src_stride, uint8_t *dst,
   }
 }
 
+#if CONFIG_AV1_HIGHBITDEPTH
 void av1_highbd_convolve_horiz_rs_c(const uint16_t *src, int src_stride,
                                     uint16_t *dst, int dst_stride, int w, int h,
                                     const int16_t *x_filters, int x0_qn,
@@ -72,6 +73,7 @@ void av1_highbd_convolve_horiz_rs_c(const uint16_t *src, int src_stride,
     dst += dst_stride;
   }
 }
+#endif  // CONFIG_AV1_HIGHBITDEPTH
 
 void av1_convolve_2d_sr_c(const uint8_t *src, int src_stride, uint8_t *dst,
                           int dst_stride, int w, int h,

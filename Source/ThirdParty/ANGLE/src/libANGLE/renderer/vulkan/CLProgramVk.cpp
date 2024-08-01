@@ -662,8 +662,8 @@ angle::Result CLProgramVk::createKernel(const cl::Kernel &kernel,
             default:
                 continue;
         }
-        descriptorSetLayoutDesc.update(arg.descriptorBinding, descType, 1,
-                                       VK_SHADER_STAGE_COMPUTE_BIT, nullptr);
+        descriptorSetLayoutDesc.addBinding(arg.descriptorBinding, descType, 1,
+                                           VK_SHADER_STAGE_COMPUTE_BIT, nullptr);
     }
 
     // Get descriptor set layout from cache (creates if missed)

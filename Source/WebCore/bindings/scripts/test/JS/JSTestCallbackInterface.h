@@ -45,16 +45,16 @@ public:
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
 
     // Functions
-    CallbackResult<typename IDLUndefined::ImplementationType> callbackWithNoParam() override;
-    CallbackResult<typename IDLUndefined::ImplementationType> callbackWithArrayParam(typename IDLFloat32Array::ParameterType arrayParam) override;
-    CallbackResult<typename IDLUndefined::ImplementationType> callbackWithSerializedScriptValueParam(typename IDLSerializedScriptValue<SerializedScriptValue>::ParameterType srzParam, typename IDLDOMString::ParameterType strParam) override;
-    CallbackResult<typename IDLLong::ImplementationType> customCallback(typename IDLInterface<TestObj>::ParameterType testObjParam, typename IDLInterface<TestNode>::ParameterType testNodeParam) override;
-    CallbackResult<typename IDLUndefined::ImplementationType> callbackWithStringList(typename IDLInterface<DOMStringList>::ParameterType listParam) override;
-    CallbackResult<typename IDLUndefined::ImplementationType> callbackWithBoolean(typename IDLBoolean::ParameterType boolParam) override;
-    CallbackResult<typename IDLUndefined::ImplementationType> callbackRequiresThisToPass(typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam) override;
-    CallbackResult<typename IDLDOMString::ImplementationType> callbackWithAReturnValue() override;
-    CallbackResult<typename IDLDOMString::ImplementationType> callbackThatRethrowsExceptions(typename IDLEnumeration<TestCallbackInterface::Enum>::ParameterType enumParam) override;
-    CallbackResult<typename IDLDOMString::ImplementationType> callbackWithThisObject(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLInterface<TestObj>::ParameterType testObjParam) override;
+    CallbackResult<typename IDLUndefined::CallbackReturnType> callbackWithNoParam() override;
+    CallbackResult<typename IDLUndefined::CallbackReturnType> callbackWithArrayParam(typename IDLFloat32Array::ParameterType arrayParam) override;
+    CallbackResult<typename IDLUndefined::CallbackReturnType> callbackWithSerializedScriptValueParam(typename IDLSerializedScriptValue<SerializedScriptValue>::ParameterType srzParam, typename IDLDOMString::ParameterType strParam) override;
+    CallbackResult<typename IDLLong::CallbackReturnType> customCallback(typename IDLInterface<TestObj>::ParameterType testObjParam, typename IDLInterface<TestNode>::ParameterType testNodeParam) override;
+    CallbackResult<typename IDLUndefined::CallbackReturnType> callbackWithStringList(typename IDLInterface<DOMStringList>::ParameterType listParam) override;
+    CallbackResult<typename IDLUndefined::CallbackReturnType> callbackWithBoolean(typename IDLBoolean::ParameterType boolParam) override;
+    CallbackResult<typename IDLUndefined::CallbackReturnType> callbackRequiresThisToPass(typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam) override;
+    CallbackResult<typename IDLDOMString::CallbackReturnType> callbackWithAReturnValue() override;
+    CallbackResult<typename IDLDOMString::CallbackReturnType> callbackThatRethrowsExceptions(typename IDLEnumeration<TestCallbackInterface::Enum>::ParameterType enumParam) override;
+    CallbackResult<typename IDLDOMString::CallbackReturnType> callbackWithThisObject(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLInterface<TestObj>::ParameterType testObjParam) override;
 
 private:
     JSTestCallbackInterface(JSC::JSObject*, JSDOMGlobalObject*);

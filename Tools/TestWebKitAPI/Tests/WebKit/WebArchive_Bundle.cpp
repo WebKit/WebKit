@@ -57,8 +57,10 @@ void WebArchiveTest::didReceiveMessage(WKBundleRef bundle, WKStringRef messageNa
 
     if (WKGetTypeID(body) != WKBundlePageGetTypeID())
         return;
-    
+
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKBundleFrameRef frame = WKBundlePageGetMainFrame(static_cast<WKBundlePageRef>(body));
+    ALLOW_DEPRECATED_DECLARATIONS_END
     if (!frame)
         return;
     WKBundlePostMessage(bundle, Util::toWK("DidGetWebArchive").get(), adoptWK(WKBundleFrameCopyWebArchive(frame)).get());

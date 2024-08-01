@@ -112,7 +112,8 @@ private:
     void removePushSubscriptionsForOrigin(WebCore::SecurityOriginData&&, CompletionHandler<void(unsigned)>&&);
     void setPublicTokenForTesting(const String& publicToken, CompletionHandler<void()>&&);
     void updateConnectionConfiguration(WebPushDaemonConnectionConfiguration&&);
-    void getPushPermissionState(URL&& scopeURL, CompletionHandler<void(WebCore::PushPermissionState)>&&);
+    void getPushPermissionState(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&);
+    void requestPushPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&&);
     void setHostAppAuditTokenData(const Vector<uint8_t>&);
     void getPushTopicsForTesting(CompletionHandler<void(Vector<String>, Vector<String>)>&&);
     void didShowNotificationForTesting(URL&& scopeURL, CompletionHandler<void()>&&);

@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 355
+#define ANGLE_SH_VERSION 357
 
 enum ShShaderSpec
 {
@@ -348,10 +348,8 @@ struct ShCompileOptions
     // Rewrite gl_BaseVertex and gl_BaseInstance as uniform int
     uint64_t emulateGLBaseVertexBaseInstance : 1;
 
-    // Emulate seamful cube map sampling for OpenGL ES2.0.  Currently only applies to the Vulkan
-    // backend, as is done after samplers are moved out of structs.  Can likely be made to work on
-    // the other backends as well.
-    uint64_t emulateSeamfulCubeMapSampling : 1;
+    // Workaround for a driver bug with nested switches.
+    uint64_t wrapSwitchInIfTrue : 1;
 
     // This flag controls how to translate WEBGL_video_texture sampling function.
     uint64_t takeVideoTextureAsExternalOES : 1;

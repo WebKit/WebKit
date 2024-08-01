@@ -187,9 +187,8 @@ const Vector<CaptureDevice>& GStreamerCaptureDeviceManager::captureDevices()
 void GStreamerCaptureDeviceManager::addDevice(GRefPtr<GstDevice>&& device)
 {
     GUniquePtr<GstStructure> properties(gst_device_get_properties(device.get()));
-    const char* klass = gst_structure_get_string(properties.get(), "device.class");
-
-    if (klass && !g_strcmp0(klass, "monitor"))
+    auto deviceClassString = gstStructureGetString(properties.get(), "device.class"_s);
+    if (deviceClassString == "monitor"_s)
         return;
 
     CaptureDevice::DeviceType type = deviceType();
@@ -209,8 +208,8 @@ void GStreamerCaptureDeviceManager::addDevice(GRefPtr<GstDevice>&& device)
 
     auto identifier = label;
     bool isMock = false;
-    if (const char* persistentId = gst_structure_get_string(properties.get(), "persistent-id")) {
-        identifier = String::fromLatin1(persistentId);
+    if (auto persistentId = gstStructureGetString(properties.get(), "persistent-id"_s)) {
+        identifier = makeString(persistentId);
         isMock = true;
     }
 

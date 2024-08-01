@@ -121,6 +121,21 @@ void NetworkNotificationManager::didDestroyNotification(const WTF::UUID&)
         return;
 }
 
+void NetworkNotificationManager::requestPermission(WebCore::SecurityOriginData&& origin, CompletionHandler<void(bool)>&& completionHandler)
+{
+    RELEASE_ASSERT(m_networkSession.networkProcess().builtInNotificationsEnabled());
+
+    if (m_networkSession.sessionID().isEphemeral())
+        return completionHandler(false);
+
+    if (!m_connection) {
+        RELEASE_LOG_ERROR(Push, "requestPermission failed: no active connection to webpushd");
+        return completionHandler(false);
+    }
+
+    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::RequestPushPermission { WTFMove(origin) }, WTFMove(completionHandler));
+}
+
 void NetworkNotificationManager::subscribeToPushService(URL&& scopeURL, Vector<uint8_t>&& applicationServerKey, CompletionHandler<void(Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&)>&& completionHandler)
 {
     if (!m_connection) {
@@ -168,7 +183,7 @@ void NetworkNotificationManager::getPushPermissionState(URL&& scopeURL, Completi
         return;
     }
 
-    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushPermissionState(WTFMove(scopeURL)), [completionHandler = WTFMove(completionHandler)](WebCore::PushPermissionState state) mutable {
+    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushPermissionState(WebCore::SecurityOriginData::fromURL(scopeURL)), [completionHandler = WTFMove(completionHandler)](WebCore::PushPermissionState state) mutable {
         completionHandler(static_cast<uint8_t>(state));
     });
 }

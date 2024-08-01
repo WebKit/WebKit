@@ -76,7 +76,7 @@ class ProgramGL : public ProgramImpl
     friend class LinkTaskGL;
     friend class PostLinkGL;
 
-    void linkJobImpl(const gl::Extensions &extensions);
+    angle::Result linkJobImpl(const gl::Extensions &extensions);
     angle::Result postLinkJobImpl(const gl::ProgramLinkedResources &resources);
 
     bool checkLinkStatus();

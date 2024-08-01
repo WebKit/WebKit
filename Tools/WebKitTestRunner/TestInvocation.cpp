@@ -1115,11 +1115,6 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().setStatisticsTimeToLiveUserInteraction(doubleValue(messageBody));
         return nullptr;
     }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsProcessStatisticsAndDataRecords")) {
-        TestController::singleton().statisticsProcessStatisticsAndDataRecords();
-        return nullptr;
-    }
 
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsNotifyPagesWhenDataRecordsWereScanned")) {
         TestController::singleton().setStatisticsNotifyPagesWhenDataRecordsWereScanned(booleanValue(messageBody));
@@ -1158,14 +1153,6 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     
     if (WKStringIsEqualToUTF8CString(messageName, "SetPruneEntriesDownTo")) {
         TestController::singleton().setStatisticsPruneEntriesDownTo(uint64Value(messageBody));
-        return nullptr;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsDeleteCookiesForHost")) {
-        auto messageBodyDictionary = dictionaryValue(messageBody);
-        auto hostName = stringValue(messageBodyDictionary, "HostName");
-        auto includeHttpOnlyCookies = booleanValue(messageBodyDictionary, "IncludeHttpOnlyCookies");
-        TestController::singleton().statisticsDeleteCookiesForHost(hostName, includeHttpOnlyCookies);
         return nullptr;
     }
 

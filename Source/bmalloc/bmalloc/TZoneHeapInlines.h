@@ -132,8 +132,9 @@ public: \
     \
     void* operator new(size_t size) \
     { \
-        RELEASE_BASSERT(size == sizeof(tzoneType)); \
-        return btzoneHeap().allocate(); \
+        if (size == sizeof(tzoneType)) \
+            return btzoneHeap().allocate(); \
+        return btzoneHeap().allocate(size); \
     } \
     \
     void operator delete(void* p) \
@@ -167,8 +168,9 @@ private: \
 \
 void* tzoneType::operator new(size_t size) \
 { \
-    RELEASE_BASSERT(size == sizeof(tzoneType)); \
-    return btzoneHeap().allocate(); \
+    if (size == sizeof(tzoneType)) \
+        return btzoneHeap().allocate(); \
+    return btzoneHeap().allocate(size); \
 } \
 \
 void tzoneType::operator delete(void* p) \
@@ -192,8 +194,9 @@ struct MakeBtzoneMallocedImplMacroSemicolonifier##tzoneType { }
 \
 void* tzoneType::operator new(size_t size) \
 { \
-    RELEASE_BASSERT(size == sizeof(tzoneType)); \
-    return btzoneHeap().allocate(); \
+    if (size == sizeof(tzoneType)) \
+        return btzoneHeap().allocate(); \
+    return btzoneHeap().allocate(size); \
 } \
 \
 void tzoneType::operator delete(void* p) \
@@ -219,8 +222,9 @@ template<> \
 template<> \
 void* tzoneType::operator new(size_t size) \
 { \
-    RELEASE_BASSERT(size == sizeof(tzoneType)); \
-    return btzoneHeap().allocate(); \
+    if (size == sizeof(tzoneType)) \
+        return btzoneHeap().allocate(); \
+    return btzoneHeap().allocate(size); \
 } \
 \
 template<> \
@@ -248,8 +252,9 @@ template<> \
 template<> \
 void* tzoneType::operator new(size_t size) \
 { \
-    RELEASE_BASSERT(size == sizeof(tzoneType)); \
-    return btzoneHeap().allocate(); \
+    if (size == sizeof(tzoneType)) \
+        return btzoneHeap().allocate(); \
+    return btzoneHeap().allocate(size); \
 } \
 \
 template<> \

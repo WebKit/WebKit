@@ -53,7 +53,7 @@
 42265150 : UniformTest.UnusedStructInlineUniformWithSampler/* = SKIP_FOR_CAPTURE
 
 # Fails because of unsupported combined depth/stencil GetImage.
-42263287 ASAN : DepthStencilTest.DepthOnlyEmulatedWithPacked/* = FAIL
+42263287 : DepthStencilTest.DepthOnlyEmulatedWithPacked/* = FAIL
 
 # ES3
 42264706 : BlitFramebufferTest.BlitDepthStencilPixelByPixel/* = NOT_RUN
@@ -94,8 +94,6 @@
 
 # ES3 Flaky
 42265129 : MultithreadingTest.MultiContextCreateAndDeleteResources/* = SKIP_FOR_CAPTURE
-42265129 WIN : MultithreadingTestES3.MultithreadFenceDraw/* = SKIP_FOR_CAPTURE
-42265129 WIN : MultithreadingTestES3.MultithreadFenceTexImage/* = SKIP_FOR_CAPTURE
 42265129 : MultithreadingTest.MultiContextDrawWithSwapBuffers/* = SKIP_FOR_CAPTURE
 
 # Uses multiple contexts, don't want to run
@@ -188,6 +186,15 @@
 42266040 : ImageTestES3.SourceCubeTargetExternalESSL3_Colorspace/* = SKIP_FOR_CAPTURE
 42266040 : ImageTestES3.SourceRenderbufferTargetTextureExternalESSL3_Colorspace/* = SKIP_FOR_CAPTURE
 
+353538491 : ImageTest.TargetTexture2DDeletedWhileInUse/* = SKIP_FOR_CAPTURE
+353538491 : ImageTest.TargetTexture2DDeletedWhileInUse2/* = SKIP_FOR_CAPTURE
+353538491 : ImageTest.TargetRenderbufferDeletedWhileInUse/* = SKIP_FOR_CAPTURE
+353538491 : ImageTest.TargetRenderbufferDeletedWhileInUse2/* = SKIP_FOR_CAPTURE
+353538491 : ImageTestES31.TargetTexture2DDeletedWhileInUseAsResolve/* = SKIP_FOR_CAPTURE
+353538491 : ImageTestES31.TargetTexture2DDeletedWhileInUseAsResolve2/* = SKIP_FOR_CAPTURE
+353538491 : ImageTestES31.TargetRenderbufferDeletedWhileInUseAsResolve/* = SKIP_FOR_CAPTURE
+353538491 : ImageTestES31.TargetRenderbufferDeletedWhileInUseAsResolve2/* = SKIP_FOR_CAPTURE
+
 42266048 : FramebufferTest_ES3.BlitWithDifferentPreRotations/* = SKIP_FOR_CAPTURE
 
 42266286 WIN : PBOExtensionTest.PBOWithExistingData/* = FLAKY
@@ -218,3 +225,20 @@
 
 # Capture not supported
 42267114 : EGLMultiContextTest.NonSharedContextsReuseDescritorSetLayoutHandle/* = SKIP_FOR_CAPTURE
+
+# Replay timeout
+42264614 LINUX : VulkanExternalImageTest.PreInitializedOnGLImport/* = SKIP_FOR_CAPTURE
+42264614 LINUX : VulkanExternalImageTest.PreInitializedOnGLImportWithFlags/* = SKIP_FOR_CAPTURE
+
+# Multiple tests, failures and timeout
+42264614 LINUX : VulkanExternalImageTest.UninitializedOnGLImport* = SKIP_FOR_CAPTURE
+
+# error: duplicate case value '1'
+42264614 : EGLSyncTest.GlobalFenceSync/* = COMPILE_FAIL
+
+# VVL error
+42264614 LINUX : VulkanExternalImageTestES31.UninitializedOnGLImportAndStorageWrite/* = SKIP_FOR_CAPTURE
+
+# CoherentBufferTracker deadlocks and flaky crashes
+42266529 LINUX : BufferDataTestES3.* = SKIP_FOR_CAPTURE
+42266529 LINUX : BufferStorageTestES3.* = SKIP_FOR_CAPTURE

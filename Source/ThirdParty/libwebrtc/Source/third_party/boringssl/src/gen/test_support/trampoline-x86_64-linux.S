@@ -52,6 +52,7 @@ _CET_ENDBR
 	movq	%r15,104(%rsp)
 .cfi_offset	r15, -24
 
+
 	movq	0(%rsi),%rbx
 	movq	8(%rsi),%rbp
 	movq	16(%rsi),%r12
@@ -474,6 +475,7 @@ _CET_ENDBR
 
 
 
+
 	nop
 	popq	%r12
 .cfi_adjust_cfa_offset	-8
@@ -497,6 +499,7 @@ _CET_ENDBR
 	pushq	%r12
 .cfi_adjust_cfa_offset	8
 .cfi_offset	%r12,-16
+
 
 
 	movq	%r12,%rax

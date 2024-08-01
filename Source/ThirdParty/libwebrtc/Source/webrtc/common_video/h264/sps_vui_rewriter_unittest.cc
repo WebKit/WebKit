@@ -297,7 +297,7 @@ void GenerateFakeSps(const VuiHeader& vui, rtc::Buffer* out_buffer) {
     byte_count++;
   }
 
-  H264::WriteRbsp(rbsp, byte_count, out_buffer);
+  H264::WriteRbsp(rtc::MakeArrayView(rbsp, byte_count), out_buffer);
 }
 
 void TestSps(const VuiHeader& vui,
@@ -310,8 +310,8 @@ void TestSps(const VuiHeader& vui,
   absl::optional<SpsParser::SpsState> sps;
   rtc::Buffer rewritten_sps;
   SpsVuiRewriter::ParseResult result = SpsVuiRewriter::ParseAndRewriteSps(
-      original_sps.data(), original_sps.size(), &sps, color_space,
-      &rewritten_sps, SpsVuiRewriter::Direction::kIncoming);
+      original_sps, &sps, color_space, &rewritten_sps,
+      SpsVuiRewriter::Direction::kIncoming);
   EXPECT_EQ(expected_parse_result, result);
   ASSERT_TRUE(sps);
   EXPECT_EQ(sps->width, kWidth);
@@ -324,7 +324,7 @@ void TestSps(const VuiHeader& vui,
     // Ensure that added/rewritten SPS is parsable.
     rtc::Buffer tmp;
     result = SpsVuiRewriter::ParseAndRewriteSps(
-        rewritten_sps.data(), rewritten_sps.size(), &sps, nullptr, &tmp,
+        rewritten_sps, &sps, nullptr, &tmp,
         SpsVuiRewriter::Direction::kIncoming);
     EXPECT_EQ(SpsVuiRewriter::ParseResult::kVuiOk, result);
     ASSERT_TRUE(sps);

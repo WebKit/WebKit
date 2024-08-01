@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -44,7 +44,7 @@ static int arm_get_cpu_caps(void) {
   return flags;
 }
 
-#elif defined(ANDROID_USE_CPU_FEATURES_LIB)
+#elif defined(AOM_USE_ANDROID_CPU_FEATURES)
 
 static int arm_get_cpu_caps(void) {
   int flags = 0;

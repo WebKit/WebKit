@@ -976,9 +976,13 @@ private:
         //     b = Op a
 
         ArgPromise addr = loadPromise(value);
-        if (isValidForm(opcode, addr.kind(), Arg::Tmp)) {
-            append(addr.inst(opcode, m_value, addr.consume(*this), result));
-            return;
+        // Don't use this form for FP loads/stores on on platforms where it may
+        // fault.
+        if (hasUnalignedFPMemoryAccess() || (opcode32 != Air::Move32ToFloat && opcodeFloat != Air::MoveFloatTo32)) {
+            if (isValidForm(opcode, addr.kind(), Arg::Tmp)) {
+                append(addr.inst(opcode, m_value, addr.consume(*this), result));
+                return;
+            }
         }
 
         if (isValidForm(opcode, Arg::Tmp, Arg::Tmp)) {
@@ -1677,10 +1681,17 @@ private:
                 arg = dstTmp;
                 break;
             }
-            case ValueRep::StackArgument:
+            case ValueRep::StackArgument: {
                 arg = Arg::callArg(value.rep().offsetFromSP());
-                append(trappingInst(m_value, createStore(moveForType(value.value()->type()), value.value(), arg)));
+                auto from = someArg(value.value());
+                if (value.value()->type() == Int64) {
+                    Arg hiArg = Arg::callArg(value.rep().offsetFromSP() + 4);
+                    append(trappingInst(m_value, moveForType(Int32), m_value, from.tmpHi(), hiArg));
+                    append(trappingInst(m_value, moveForType(Int32), m_value, from.tmpLo(), arg));
+                } else
+                    append(trappingInst(m_value, createStore(moveForType(value.value()->type()), value.value(), arg)));
                 break;
+            }
             case ValueRep::SomeRegisterPair:
             case ValueRep::SomeLateRegisterPair: {
                 RELEASE_ASSERT(value.value()->type() == Int64);

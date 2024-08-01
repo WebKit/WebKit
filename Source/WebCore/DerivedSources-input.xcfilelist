@@ -1416,6 +1416,7 @@ $(PROJECT_DIR)/dom/IdleRequestOptions.idl
 $(PROJECT_DIR)/dom/InnerHTML.idl
 $(PROJECT_DIR)/dom/InputEvent.idl
 $(PROJECT_DIR)/dom/KeyboardEvent.idl
+$(PROJECT_DIR)/dom/MapperCallback.idl
 $(PROJECT_DIR)/dom/MessageChannel.idl
 $(PROJECT_DIR)/dom/MessageEvent.idl
 $(PROJECT_DIR)/dom/MessagePort.idl
@@ -1434,12 +1435,12 @@ $(PROJECT_DIR)/dom/NodeList.idl
 $(PROJECT_DIR)/dom/NonDocumentTypeChildNode.idl
 $(PROJECT_DIR)/dom/NonElementParentNode.idl
 $(PROJECT_DIR)/dom/Observable.idl
-$(PROJECT_DIR)/dom/OverflowEvent.idl
 $(PROJECT_DIR)/dom/PageTransitionEvent.idl
 $(PROJECT_DIR)/dom/ParentNode.idl
 $(PROJECT_DIR)/dom/PointerEvent.idl
 $(PROJECT_DIR)/dom/PointerLockOptions.idl
 $(PROJECT_DIR)/dom/PopStateEvent.idl
+$(PROJECT_DIR)/dom/PredicateCallback.idl
 $(PROJECT_DIR)/dom/ProcessingInstruction.idl
 $(PROJECT_DIR)/dom/ProgressEvent.idl
 $(PROJECT_DIR)/dom/PromiseRejectionEvent.idl

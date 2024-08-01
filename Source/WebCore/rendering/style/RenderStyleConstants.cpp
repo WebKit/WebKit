@@ -82,6 +82,15 @@ TextStream& operator<<(TextStream& ts, BackfaceVisibility visibility)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, BlockStepInsert blockStepInsert)
+{
+    switch (blockStepInsert) {
+    case BlockStepInsert::Margin: ts << "margin"; break;
+    case BlockStepInsert::Padding: ts << "padding"; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, BorderCollapse collapse)
 {
     switch (collapse) {
@@ -929,6 +938,17 @@ TextStream& operator<<(TextStream& ts, RubyPosition position)
     case RubyPosition::Before: ts << "before"; break;
     case RubyPosition::After: ts << "after"; break;
     case RubyPosition::InterCharacter: ts << "inter-character"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, RubyAlign alignment)
+{
+    switch (alignment) {
+    case RubyAlign::Start: ts << "start"; break;
+    case RubyAlign::Center: ts << "center"; break;
+    case RubyAlign::SpaceBetween: ts << "space-between"; break;
+    case RubyAlign::SpaceAround: ts << "space-around"; break;
     }
     return ts;
 }

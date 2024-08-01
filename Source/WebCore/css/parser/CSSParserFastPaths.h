@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+enum class ValueRange : uint8_t;
 class CSSValue;
 
 struct CSSParserContext;

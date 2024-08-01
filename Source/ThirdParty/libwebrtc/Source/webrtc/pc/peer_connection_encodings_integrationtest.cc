@@ -8,40 +8,44 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <set>
 #include <string>
 #include <string_view>
 #include <vector>
 
 #include "absl/strings/match.h"
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
-#include "api/audio_codecs/opus_audio_decoder_factory.h"
-#include "api/audio_codecs/opus_audio_encoder_factory.h"
+#include "api/audio_options.h"
+#include "api/jsep.h"
+#include "api/make_ref_counted.h"
+#include "api/media_stream_interface.h"
 #include "api/media_types.h"
 #include "api/rtc_error.h"
 #include "api/rtp_parameters.h"
+#include "api/rtp_sender_interface.h"
 #include "api/rtp_transceiver_direction.h"
 #include "api/rtp_transceiver_interface.h"
+#include "api/scoped_refptr.h"
+#include "api/stats/rtc_stats_report.h"
 #include "api/stats/rtcstats_objects.h"
 #include "api/units/data_rate.h"
-#include "api/video_codecs/scalability_mode.h"
-#include "api/video_codecs/video_decoder_factory_template.h"
-#include "api/video_codecs/video_decoder_factory_template_dav1d_adapter.h"
-#include "api/video_codecs/video_decoder_factory_template_libvpx_vp8_adapter.h"
-#include "api/video_codecs/video_decoder_factory_template_libvpx_vp9_adapter.h"
-#include "api/video_codecs/video_decoder_factory_template_open_h264_adapter.h"
-#include "api/video_codecs/video_encoder_factory_template.h"
-#include "api/video_codecs/video_encoder_factory_template_libaom_av1_adapter.h"
-#include "api/video_codecs/video_encoder_factory_template_libvpx_vp8_adapter.h"
-#include "api/video_codecs/video_encoder_factory_template_libvpx_vp9_adapter.h"
-#include "api/video_codecs/video_encoder_factory_template_open_h264_adapter.h"
+#include "api/units/time_delta.h"
 #include "pc/sdp_utils.h"
+#include "pc/session_description.h"
 #include "pc/simulcast_description.h"
 #include "pc/test/mock_peer_connection_observers.h"
 #include "pc/test/peer_connection_test_wrapper.h"
 #include "pc/test/simulcast_layer_util.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/gunit.h"
+#include "rtc_base/logging.h"
 #include "rtc_base/physical_socket_server.h"
 #include "rtc_base/thread.h"
 #include "test/gmock.h"
@@ -838,6 +842,144 @@ TEST_F(PeerConnectionEncodingsIntegrationTest,
               Optional(std::string("L2T2_KEY")));
   EXPECT_FALSE(parameters.encodings[1].scalability_mode.has_value());
   EXPECT_FALSE(parameters.encodings[2].scalability_mode.has_value());
+}
+
+TEST_F(PeerConnectionEncodingsIntegrationTest,
+       VP9_SimulcastMultiplLayersActive_StandardSvc) {
+  rtc::scoped_refptr<PeerConnectionTestWrapper> local_pc_wrapper = CreatePc();
+  rtc::scoped_refptr<PeerConnectionTestWrapper> remote_pc_wrapper = CreatePc();
+  ExchangeIceCandidates(local_pc_wrapper, remote_pc_wrapper);
+
+  std::vector<cricket::SimulcastLayer> layers =
+      CreateLayers({"q", "h", "f"}, /*active=*/true);
+  rtc::scoped_refptr<RtpTransceiverInterface> transceiver =
+      AddTransceiverWithSimulcastLayers(local_pc_wrapper, remote_pc_wrapper,
+                                        layers);
+  std::vector<RtpCodecCapability> codecs =
+      GetCapabilitiesAndRestrictToCodec(remote_pc_wrapper, "VP9");
+  transceiver->SetCodecPreferences(codecs);
+
+  // Switch to the standard mode. Despite only having a single active stream in
+  // both cases, this internally reconfigures from 1 stream to 3 streams.
+  // Test coverage for https://crbug.com/webrtc/15016.
+  rtc::scoped_refptr<RtpSenderInterface> sender = transceiver->sender();
+  RtpParameters parameters = sender->GetParameters();
+  ASSERT_THAT(parameters.encodings, SizeIs(3));
+  parameters.encodings[0].active = true;
+  parameters.encodings[0].scalability_mode = "L1T3";
+  parameters.encodings[0].scale_resolution_down_by = 4.0;
+  parameters.encodings[1].active = true;
+  parameters.encodings[1].scalability_mode = "L1T1";
+  parameters.encodings[1].scale_resolution_down_by = 2.0;
+  parameters.encodings[2].active = false;
+  parameters.encodings[2].scalability_mode = absl::nullopt;
+  EXPECT_TRUE(sender->SetParameters(parameters).ok());
+
+  // The original negotiation triggers legacy SVC because we didn't specify
+  // any scalability mode.
+  NegotiateWithSimulcastTweaks(local_pc_wrapper, remote_pc_wrapper);
+  local_pc_wrapper->WaitForConnection();
+  remote_pc_wrapper->WaitForConnection();
+
+  // Since the standard API is configuring simulcast we get three outbound-rtps,
+  // and two are active.
+  ASSERT_TRUE_WAIT(HasOutboundRtpBytesSent(local_pc_wrapper, /*num_layers=*/3u,
+                                           /*num_active_layers=*/2u),
+                   kDefaultTimeout.ms());
+  // Wait until scalability mode is reported and expected resolution reached.
+  // Ramp up time may be significant.
+  ASSERT_TRUE_WAIT(HasOutboundRtpWithRidAndScalabilityMode(
+                       local_pc_wrapper, "q", "L1T3", 720 / 4),
+                   kLongTimeoutForRampingUp.ms() / 2);
+  ASSERT_TRUE_WAIT(HasOutboundRtpWithRidAndScalabilityMode(
+                       local_pc_wrapper, "h", "L1T1", 720 / 2),
+                   kLongTimeoutForRampingUp.ms() / 2);
+
+  // GetParameters() does not report any fallback.
+  parameters = sender->GetParameters();
+  ASSERT_THAT(parameters.encodings, SizeIs(3));
+  EXPECT_THAT(parameters.encodings[0].scalability_mode,
+              Optional(StrEq("L1T3")));
+  EXPECT_THAT(parameters.encodings[1].scalability_mode,
+              Optional(StrEq("L1T1")));
+  EXPECT_THAT(parameters.encodings[2].scalability_mode, Eq(absl::nullopt));
+}
+
+TEST_F(PeerConnectionEncodingsIntegrationTest,
+       VP9_Simulcast_SwitchToLegacySvc) {
+  rtc::scoped_refptr<PeerConnectionTestWrapper> local_pc_wrapper = CreatePc();
+  rtc::scoped_refptr<PeerConnectionTestWrapper> remote_pc_wrapper = CreatePc();
+  ExchangeIceCandidates(local_pc_wrapper, remote_pc_wrapper);
+
+  std::vector<cricket::SimulcastLayer> layers =
+      CreateLayers({"f", "h", "q"}, /*active=*/true);
+  rtc::scoped_refptr<RtpTransceiverInterface> transceiver =
+      AddTransceiverWithSimulcastLayers(local_pc_wrapper, remote_pc_wrapper,
+                                        layers);
+  std::vector<RtpCodecCapability> codecs =
+      GetCapabilitiesAndRestrictToCodec(remote_pc_wrapper, "VP9");
+  transceiver->SetCodecPreferences(codecs);
+
+  // Switch to the standard mode. Despite only having a single active stream in
+  // both cases, this internally reconfigures from 1 stream to 3 streams.
+  // Test coverage for https://crbug.com/webrtc/15016.
+  rtc::scoped_refptr<RtpSenderInterface> sender = transceiver->sender();
+  RtpParameters parameters = sender->GetParameters();
+  ASSERT_THAT(parameters.encodings, SizeIs(3));
+  parameters.encodings[0].active = false;
+  parameters.encodings[1].active = true;
+  parameters.encodings[1].scalability_mode = "L1T1";
+  parameters.encodings[1].scale_resolution_down_by = 2.0;
+  parameters.encodings[2].active = true;
+  parameters.encodings[2].scalability_mode = "L1T3";
+  parameters.encodings[2].scale_resolution_down_by = 4.0;
+  EXPECT_TRUE(sender->SetParameters(parameters).ok());
+
+  // The original negotiation triggers legacy SVC because we didn't specify
+  // any scalability mode.
+  NegotiateWithSimulcastTweaks(local_pc_wrapper, remote_pc_wrapper);
+  local_pc_wrapper->WaitForConnection();
+  remote_pc_wrapper->WaitForConnection();
+
+  // Since the standard API is configuring simulcast we get three outbound-rtps,
+  // and two are active.
+  ASSERT_TRUE_WAIT(HasOutboundRtpBytesSent(local_pc_wrapper, /*num_layers=*/3u,
+                                           /*num_active_layers=*/2u),
+                   kLongTimeoutForRampingUp.ms());
+  // Wait until scalability mode is reported and expected resolution reached.
+  // Ramp up time may be significant.
+  ASSERT_TRUE_WAIT(HasOutboundRtpWithRidAndScalabilityMode(
+                       local_pc_wrapper, "q", "L1T3", 720 / 4),
+                   kLongTimeoutForRampingUp.ms() / 2);
+  ASSERT_TRUE_WAIT(HasOutboundRtpWithRidAndScalabilityMode(
+                       local_pc_wrapper, "h", "L1T1", 720 / 2),
+                   kLongTimeoutForRampingUp.ms() / 2);
+
+  // GetParameters() does not report any fallback.
+  parameters = sender->GetParameters();
+  ASSERT_THAT(parameters.encodings, SizeIs(3));
+  EXPECT_THAT(parameters.encodings[0].scalability_mode, Eq(absl::nullopt));
+  EXPECT_THAT(parameters.encodings[1].scalability_mode,
+              Optional(StrEq("L1T1")));
+  EXPECT_THAT(parameters.encodings[2].scalability_mode,
+              Optional(StrEq("L1T3")));
+
+  // Switch to legacy SVC mode.
+  parameters.encodings[0].active = true;
+  parameters.encodings[0].scalability_mode = absl::nullopt;
+  parameters.encodings[0].scale_resolution_down_by = absl::nullopt;
+  parameters.encodings[1].active = true;
+  parameters.encodings[1].scalability_mode = absl::nullopt;
+  parameters.encodings[1].scale_resolution_down_by = absl::nullopt;
+  parameters.encodings[2].active = false;
+  parameters.encodings[2].scalability_mode = absl::nullopt;
+  parameters.encodings[2].scale_resolution_down_by = absl::nullopt;
+
+  EXPECT_TRUE(sender->SetParameters(parameters).ok());
+  // Ensure that we are getting VGA at L1T3 from the "f" rid.
+  ASSERT_TRUE_WAIT(HasOutboundRtpWithRidAndScalabilityMode(
+                       local_pc_wrapper, "f", "L2T3_KEY", 720 / 2),
+                   kLongTimeoutForRampingUp.ms());
 }
 
 TEST_F(PeerConnectionEncodingsIntegrationTest, VP9_OneLayerActive_LegacySvc) {

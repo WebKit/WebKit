@@ -34,7 +34,6 @@
       'Android32': 'android_release_bot_arm',
       'Android32 (dbg)': 'android_debug_static_bot_arm',
       'Android32 (more configs)': {
-        'bwe_test_logging': 'bwe_test_logging_android_arm',
         'dummy_audio_file_devices_no_protobuf':
         'dummy_audio_file_devices_no_protobuf_android_arm',
         'rtti_no_sctp': 'rtti_no_sctp_android_arm',
@@ -55,7 +54,6 @@
       # "More configs" bots will build all the following configs in sequence.
       # This is using MB's "phases" feature.
       'Linux (more configs)': {
-        'bwe_test_logging': 'bwe_test_logging_x64',
         'dummy_audio_file_devices_no_protobuf':
         'dummy_audio_file_devices_no_protobuf_x64',
         'rtti_no_sctp': 'rtti_no_sctp_x64',
@@ -86,7 +84,6 @@
 
       # Windows
       'Win (more configs)': {
-        'bwe_test_logging': 'bwe_test_logging_x86',
         'dummy_audio_file_devices_no_protobuf':
         'dummy_audio_file_devices_no_protobuf_x86',
         'rtti_no_sctp': 'rtti_no_sctp_no_unicode_win_x86',
@@ -142,7 +139,6 @@
       'android_arm64_rel': 'android_release_bot_arm64',
       'android_arm_dbg': 'android_debug_static_bot_arm',
       'android_arm_more_configs': {
-        'bwe_test_logging': 'bwe_test_logging_android_arm',
         'dummy_audio_file_devices_no_protobuf':
         'dummy_audio_file_devices_no_protobuf_android_arm',
         'rtti_no_sctp': 'rtti_no_sctp_android_arm',
@@ -167,6 +163,9 @@
       'ios_compile_arm64_rel': 'ios_release_bot_arm64',
       'ios_dbg_simulator': 'ios_debug_bot_x64',
 
+      # Include What You Use
+      'iwyu_verifier': 'release_bot_x64',
+
       # Linux
       'linux_asan': 'asan_lsan_clang_release_bot_x64',
       'linux_compile_arm64_dbg': 'debug_bot_arm64',
@@ -181,7 +180,6 @@
       'linux_dbg': 'debug_bot_x64',
       'linux_libfuzzer_rel': 'libfuzzer_asan_release_bot_x64',
       'linux_more_configs': {
-        'bwe_test_logging': 'bwe_test_logging_x64',
         'dummy_audio_file_devices_no_protobuf':
         'dummy_audio_file_devices_no_protobuf_x64',
         'rtti_no_sctp': 'rtti_no_sctp_x64',
@@ -218,7 +216,6 @@
       'win_x86_clang_dbg': 'win_clang_debug_bot_x86',
       'win_x86_clang_rel': 'win_clang_release_bot_x86',
       'win_x86_more_configs': {
-        'bwe_test_logging': 'bwe_test_logging_x86',
         'dummy_audio_file_devices_no_protobuf':
         'dummy_audio_file_devices_no_protobuf_x86',
         'rtti_no_sctp': 'rtti_no_sctp_no_unicode_win_x86',
@@ -294,10 +291,6 @@
       'x64',
       'h265',
     ],
-    'bwe_test_logging_android_arm':
-    ['android', 'debug_static_bot', 'arm', 'bwe_test_logging'],
-    'bwe_test_logging_x64': ['debug_bot', 'x64', 'bwe_test_logging'],
-    'bwe_test_logging_x86': ['debug_bot', 'x86', 'bwe_test_logging'],
     'code_coverage_bot_x64': [
       'openh264', 'release_bot', 'x64', 'code_coverage',
       'partial_code_coverage_instrumentation', 'h265'
@@ -441,9 +434,6 @@
     'asan': {
       'gn_args': 'is_asan=true',
     },
-    'bwe_test_logging': {
-      'gn_args': 'rtc_enable_bwe_test_logging=true',
-    },
     # is_clang=true by default, this is only to guard from upstream changes.
     'clang': {
       'gn_args': 'is_clang=true',
@@ -497,8 +487,7 @@
       'gn_args': 'symbol_level=1',
     },
     'msan': {
-      'gn_args': 'is_msan=true msan_track_origins=2'
-                 ' instrumented_libraries_release = "focal"',
+      'gn_args': 'is_msan=true msan_track_origins=2',
     },
     'no_ios_code_signing': {
       'gn_args': 'ios_enable_code_signing=false',

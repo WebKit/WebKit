@@ -108,11 +108,12 @@ gcm_gmult_ssse3:
 ____
 $code .= <<____ if ($win64);
 	subq	\$40, %rsp
-.seh_allocstack	40
+.seh_stackalloc	40
 	movdqa	%xmm6, (%rsp)
-.seh_savexmm128	%xmm6, 0
+.seh_savexmm	%xmm6, 0
 	movdqa	%xmm10, 16(%rsp)
-.seh_savexmm128	%xmm10, 16
+.seh_savexmm	%xmm10, 16
+.seh_endprologue
 ____
 $code .= <<____;
 	movdqu	($Xi), %xmm0
@@ -251,13 +252,14 @@ gcm_ghash_ssse3:
 ____
 $code .= <<____ if ($win64);
 	subq	\$56, %rsp
-.seh_allocstack	56
+.seh_stackalloc	56
 	movdqa	%xmm6, (%rsp)
-.seh_savexmm128	%xmm6, 0
+.seh_savexmm	%xmm6, 0
 	movdqa	%xmm10, 16(%rsp)
-.seh_savexmm128	%xmm10, 16
+.seh_savexmm	%xmm10, 16
 	movdqa	%xmm11, 32(%rsp)
-.seh_savexmm128	%xmm11, 32
+.seh_savexmm	%xmm11, 32
+.seh_endprologue
 ____
 $code .= <<____;
 	movdqu	($Xi), %xmm0

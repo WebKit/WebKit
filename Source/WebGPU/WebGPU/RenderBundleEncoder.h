@@ -121,11 +121,11 @@ private:
     id<MTLIndirectRenderCommand> currentRenderCommand();
 
     void makeInvalid(NSString* = nil);
-    bool executePreDrawCommands();
+    bool executePreDrawCommands(bool passWasSplit);
     void endCurrentICB();
-    void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, ResourceUsageAndRenderStage*);
-    void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, MTLRenderStages, const BindGroupEntryUsageData::Resource&);
-    void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, MTLRenderStages);
+    bool addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, ResourceUsageAndRenderStage*);
+    bool addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, MTLRenderStages, const BindGroupEntryUsageData::Resource&);
+    bool addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, MTLRenderStages);
     bool icbNeedsToBeSplit(const RenderPipeline& a, const RenderPipeline& b);
     FinalizeRenderCommand finalizeRenderCommand(MTLIndirectCommandType);
     FinalizeRenderCommand finalizeRenderCommand();

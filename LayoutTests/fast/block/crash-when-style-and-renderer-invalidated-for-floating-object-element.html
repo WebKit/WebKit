@@ -1,0 +1,38 @@
+<!DOCTYPE>
+<style>
+  .vrl {
+      writing-mode: vertical-rl;
+  }
+  #wide {
+      display: inline-block;
+      width: 100000000vmin;
+  }
+  #outer.flow {
+      display: flow;
+  }
+  #inner:before {
+      content: "A";
+  }
+  object {
+      float: inline-end;
+  }
+</style>
+<p>PASS if no crash or assert.</p>
+<div id="container" class="vrl">
+  <span>
+    <span id="wide"></span>
+    <span id="outer" class="flow">
+      <span id="inner"></span>
+    </span>
+    <object></object>
+  </span>
+  <div id="div"></div>
+</div>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  inner.append(div.cloneNode());
+  inner.scrollLeft;
+  outer.classList.remove("flow");
+  container.classList.remove("vrl");
+</script>

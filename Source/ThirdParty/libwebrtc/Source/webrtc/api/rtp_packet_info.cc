@@ -10,8 +10,15 @@
 
 #include "api/rtp_packet_info.h"
 
+#include <stddef.h>
+
 #include <algorithm>
+#include <cstdint>
 #include <utility>
+#include <vector>
+
+#include "api/rtp_headers.h"
+#include "api/units/timestamp.h"
 
 namespace webrtc {
 

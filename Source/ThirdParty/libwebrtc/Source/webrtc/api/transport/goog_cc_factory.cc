@@ -15,7 +15,6 @@
 
 #include "api/units/time_delta.h"
 #include "modules/congestion_controller/goog_cc/goog_cc_network_control.h"
-#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -28,10 +27,9 @@ GoogCcNetworkControllerFactory::Create(NetworkControllerConfig config) {
   GoogCcConfig goog_cc_config;
   goog_cc_config.feedback_only = factory_config_.feedback_only;
   if (factory_config_.network_state_estimator_factory) {
-    RTC_DCHECK(config.key_value_config);
     goog_cc_config.network_state_estimator =
         factory_config_.network_state_estimator_factory->Create(
-            config.key_value_config);
+            &config.env.field_trials());
   }
   if (factory_config_.network_state_predictor_factory) {
     goog_cc_config.network_state_predictor =

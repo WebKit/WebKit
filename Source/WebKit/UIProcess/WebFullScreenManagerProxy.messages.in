@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(FULLSCREEN_API)
+[EnabledBy=FullScreenEnabled]
 messages -> WebFullScreenManagerProxy NotRefCounted {
     SupportsFullScreen(bool withKeyboard) -> (bool supportsFullScreen) Synchronous
     EnterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, struct WebKit::FullScreenMediaDetails mediaDetails)

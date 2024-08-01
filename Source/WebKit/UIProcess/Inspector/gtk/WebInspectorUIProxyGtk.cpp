@@ -40,6 +40,7 @@
 #include "WebInspectorUIProxyClient.h"
 #include "WebKitInspectorWindow.h"
 #include "WebKitWebViewBasePrivate.h"
+#include "WebOpenPanelResultListenerProxy.h"
 #include "WebPageGroup.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
@@ -79,6 +80,32 @@ void WebInspectorUIProxy::updateInspectorWindowTitle() const
 static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef, WKStringRef, unsigned long long, unsigned long long, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, const void*)
 {
     return std::max<unsigned long long>(expectedUsage, currentDatabaseUsage * 1.25);
+}
+
+static void runOpenPanel(WKPageRef pageRef, WKFrameRef, WKOpenPanelParametersRef, WKOpenPanelResultListenerRef openPanelListener, const void *clientInfo)
+{
+    WebInspectorUIProxy* inspector = static_cast<WebInspectorUIProxy*>(const_cast<void*>(clientInfo));
+
+    GtkWidget* parent = gtk_widget_get_toplevel(gtk_widget_get_toplevel(inspector->inspectorView()));
+    if (!WebCore::widgetIsOnscreenToplevelWindow(parent))
+        return;
+
+    GRefPtr<GtkFileChooserNative> dialog = adoptGRef(gtk_file_chooser_native_new("Load File",
+        GTK_WINDOW(parent), GTK_FILE_CHOOSER_ACTION_OPEN, "Load", "Cancel"));
+
+    GtkFileChooser* chooser = GTK_FILE_CHOOSER(dialog.get());
+#if !USE(GTK4)
+    gtk_file_chooser_set_do_overwrite_confirmation(chooser, TRUE);
+#endif
+
+    if (gtk_native_dialog_run(GTK_NATIVE_DIALOG(dialog.get())) != GTK_RESPONSE_ACCEPT)
+        return;
+
+    GRefPtr<GFile> file = adoptGRef(gtk_file_chooser_get_file(chooser));
+    Vector<String> paths;
+    paths.append(String::fromUTF8(g_file_peek_path(file.get())));
+
+    toImpl(openPanelListener)->chooseFiles(paths);
 }
 
 static void webProcessDidCrash(WKPageRef, const void* clientInfo)
@@ -211,7 +238,7 @@ WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
         nullptr, // didDraw
         nullptr, // pageDidScroll
         exceededDatabaseQuota,
-        nullptr, // runOpenPanel,
+        runOpenPanel,
         nullptr, // decidePolicyForGeolocationPermissionRequest
         nullptr, // headerHeight
         nullptr, // footerHeight

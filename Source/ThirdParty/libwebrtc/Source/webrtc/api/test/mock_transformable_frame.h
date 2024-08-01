@@ -23,8 +23,10 @@
 
 namespace webrtc {
 
-class MockTransformableFrame : public webrtc::TransformableFrameInterface {
+class MockTransformableFrame : public TransformableFrameInterface {
  public:
+  MockTransformableFrame() : TransformableFrameInterface(Passkey()) {}
+
   MOCK_METHOD(rtc::ArrayView<const uint8_t>, GetData, (), (const, override));
   MOCK_METHOD(void, SetData, (rtc::ArrayView<const uint8_t>), (override));
   MOCK_METHOD(uint8_t, GetPayloadType, (), (const, override));

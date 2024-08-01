@@ -25,11 +25,11 @@
         });
     }
 
-    function fireDataModificationHandlerAndContinue() {
+    async function fireDataModificationHandlerAndContinue() {
         testRunner.installStatisticsDidScanDataRecordsCallback(function() {
             runTest();
         });
-        testRunner.statisticsProcessStatisticsAndDataRecords();
+        await testRunner.statisticsProcessStatisticsAndDataRecords();
     }
 
     function clearInMemoryAndPersistentStoreAndContinue() {

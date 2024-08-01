@@ -15,7 +15,7 @@ if (window.testRunner)
 description("Test that bundles are automatically zipped when uploaded with XMLHttpRequest. To test manually, please drag a file bundle to a \"Choose File\" input below.");
 jsTestIsAsync = true;
 
-window.onload = function()
+window.onload = async function()
 {
     var dropTarget = document.getElementById("dropTarget");
 
@@ -28,8 +28,8 @@ window.onload = function()
     var endX = dropTarget.offsetLeft + dropTarget.offsetWidth / 2;
     var endY = dropTarget.offsetTop + dropTarget.offsetHeight / 2
     eventSender.beginDragWithFiles(["resources/document.rtfd"]);
-    eventSender.mouseMoveTo(endX, endY);
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(endX, endY);
+    await eventSender.asyncMouseUp();
 }
 
 function ondrop(event)

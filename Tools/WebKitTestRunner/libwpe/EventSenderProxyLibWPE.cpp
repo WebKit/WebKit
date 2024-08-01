@@ -177,4 +177,8 @@ void EventSenderProxy::cancelTouchPoint(int index)
 
 #endif // ENABLE(TOUCH_EVENTS)
 
+void EventSenderProxy::waitForPendingMouseEvents()
+{
+}
+
 } // namespace WTR

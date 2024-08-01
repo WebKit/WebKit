@@ -148,11 +148,25 @@ PointerEvent::~PointerEvent() = default;
 Vector<Ref<PointerEvent>> PointerEvent::getCoalescedEvents() const
 {
 #if ASSERT_ENABLED
+    if (isTrusted()) {
+        auto& names = eventNames();
+        if (type() == names.pointermoveEvent)
+            ASSERT(m_coalescedEvents.size() >= 1, "Trusted pointermove events must have more than zero coalesced events.");
+        else
+            ASSERT(m_coalescedEvents.size() == 0, "Trusted non-pointermove events must have zero coalesced events.");
+    }
+
     auto timestampsAreMonotonicallyIncreasing = std::ranges::is_sorted(m_coalescedEvents, [](const auto& previousEvent, const auto& newEvent) {
         return previousEvent->timeStamp() <= newEvent->timeStamp();
     });
 
-    ASSERT(timestampsAreMonotonicallyIncreasing);
+    ASSERT(timestampsAreMonotonicallyIncreasing, "Coalesced event timestamps are not monotonically increasing.");
+
+    auto canBubbleOrIsCancelable = std::ranges::any_of(m_coalescedEvents, [](const auto& event) {
+        return event->bubbles() || event->cancelable();
+    });
+
+    ASSERT(!canBubbleOrIsCancelable, "Coalesced events must not bubble and must not be cancelable.");
 #endif
 
     return m_coalescedEvents;

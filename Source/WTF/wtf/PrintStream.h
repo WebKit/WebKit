@@ -54,8 +54,8 @@ inline const char* boolForPrinting(const std::optional<bool>& value)
 class PrintStream {
     WTF_MAKE_FAST_ALLOCATED; WTF_MAKE_NONCOPYABLE(PrintStream);
 public:
-    PrintStream();
-    virtual ~PrintStream();
+    WTF_EXPORT_PRIVATE PrintStream();
+    WTF_EXPORT_PRIVATE virtual ~PrintStream();
 
     WTF_EXPORT_PRIVATE void printf(const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
     WTF_EXPORT_PRIVATE void printfVariableFormat(const char* format, ...);
@@ -63,7 +63,7 @@ public:
 
     // Typically a no-op for many subclasses of PrintStream, this is a hint that
     // the implementation should flush its buffers if it had not done so already.
-    virtual void flush();
+    WTF_EXPORT_PRIVATE virtual void flush();
     
     template<typename Func>
     void atomically(const Func& func)

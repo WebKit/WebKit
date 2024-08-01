@@ -31,8 +31,8 @@
 #include "p2p/base/turn_port.h"
 #include "p2p/base/udp_port.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/crypto_random.h"
 #include "rtc_base/experiments/field_trial_parser.h"
-#include "rtc_base/helpers.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/network_constants.h"
 #include "rtc_base/strings/string_builder.h"
@@ -1484,19 +1484,25 @@ void AllocationSequence::CreateUDPPorts() {
       !IsFlagSet(PORTALLOCATOR_DISABLE_DEFAULT_LOCAL_CANDIDATE);
   if (IsFlagSet(PORTALLOCATOR_ENABLE_SHARED_SOCKET) && udp_socket_) {
     port = UDPPort::Create(
-        session_->network_thread(), session_->socket_factory(), network_,
-        udp_socket_.get(), session_->username(), session_->password(),
-        emit_local_candidate_for_anyaddress,
-        session_->allocator()->stun_candidate_keepalive_interval(),
-        session_->allocator()->field_trials());
+        {.network_thread = session_->network_thread(),
+         .socket_factory = session_->socket_factory(),
+         .network = network_,
+         .ice_username_fragment = session_->username(),
+         .ice_password = session_->password(),
+         .field_trials = session_->allocator()->field_trials()},
+        udp_socket_.get(), emit_local_candidate_for_anyaddress,
+        session_->allocator()->stun_candidate_keepalive_interval());
   } else {
     port = UDPPort::Create(
-        session_->network_thread(), session_->socket_factory(), network_,
+        {.network_thread = session_->network_thread(),
+         .socket_factory = session_->socket_factory(),
+         .network = network_,
+         .ice_username_fragment = session_->username(),
+         .ice_password = session_->password(),
+         .field_trials = session_->allocator()->field_trials()},
         session_->allocator()->min_port(), session_->allocator()->max_port(),
-        session_->username(), session_->password(),
         emit_local_candidate_for_anyaddress,
-        session_->allocator()->stun_candidate_keepalive_interval(),
-        session_->allocator()->field_trials());
+        session_->allocator()->stun_candidate_keepalive_interval());
   }
 
   if (port) {
@@ -1530,11 +1536,15 @@ void AllocationSequence::CreateTCPPorts() {
   }
 
   std::unique_ptr<Port> port = TCPPort::Create(
-      session_->network_thread(), session_->socket_factory(), network_,
+      {.network_thread = session_->network_thread(),
+       .socket_factory = session_->socket_factory(),
+       .network = network_,
+       .ice_username_fragment = session_->username(),
+       .ice_password = session_->password(),
+       .field_trials = session_->allocator()->field_trials()},
       session_->allocator()->min_port(), session_->allocator()->max_port(),
-      session_->username(), session_->password(),
-      session_->allocator()->allow_tcp_listen(),
-      session_->allocator()->field_trials());
+
+      session_->allocator()->allow_tcp_listen());
   if (port) {
     port->SetIceTiebreaker(session_->allocator()->ice_tiebreaker());
     session_->AddAllocatedPort(port.release(), this);
@@ -1560,11 +1570,15 @@ void AllocationSequence::CreateStunPorts() {
   }
 
   std::unique_ptr<StunPort> port = StunPort::Create(
-      session_->network_thread(), session_->socket_factory(), network_,
+      {.network_thread = session_->network_thread(),
+       .socket_factory = session_->socket_factory(),
+       .network = network_,
+       .ice_username_fragment = session_->username(),
+       .ice_password = session_->password(),
+       .field_trials = session_->allocator()->field_trials()},
       session_->allocator()->min_port(), session_->allocator()->max_port(),
-      session_->username(), session_->password(), config_->StunServers(),
-      session_->allocator()->stun_candidate_keepalive_interval(),
-      session_->allocator()->field_trials());
+      config_->StunServers(),
+      session_->allocator()->stun_candidate_keepalive_interval());
   if (port) {
     port->SetIceTiebreaker(session_->allocator()->ice_tiebreaker());
     session_->AddAllocatedPort(port.release(), this);

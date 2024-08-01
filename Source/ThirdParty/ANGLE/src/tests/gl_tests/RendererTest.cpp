@@ -208,6 +208,14 @@ TEST_P(RendererTest, LinkProgram)
     ANGLE_GL_PROGRAM(prog, essl1_shaders::vs::Zero(), essl1_shaders::fs::Red());
 }
 
+// Draw a triangle using no vertex attributes
+TEST_P(RendererTest, Draw)
+{
+    ANGLE_GL_PROGRAM(prog, essl1_shaders::vs::Zero(), essl1_shaders::fs::Red());
+    glUseProgram(prog);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+}
+
 // Select configurations (e.g. which renderer, which GLES major version) these tests should be run
 // against.
 // TODO(http://anglebug.com/42266907): move ES2_WEBGPU to the definition of

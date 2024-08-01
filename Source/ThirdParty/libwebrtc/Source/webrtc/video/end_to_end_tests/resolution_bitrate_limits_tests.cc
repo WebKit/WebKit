@@ -147,17 +147,13 @@ class InitEncodeTest : public test::EndToEndTest,
       VideoSendStream::Config* send_config,
       std::vector<VideoReceiveStreamInterface::Config>* receive_configs,
       VideoEncoderConfig* encoder_config) override {
-    webrtc::VideoEncoder::EncoderInfo encoder_info;
     send_config->encoder_settings.encoder_factory = &encoder_factory_;
     send_config->rtp.payload_name = payload_name_;
     send_config->rtp.payload_type =
         test::VideoTestConstants::kVideoSendPayloadType;
     const VideoCodecType codec_type = PayloadStringToCodecType(payload_name_);
     encoder_config->codec_type = codec_type;
-    encoder_config->video_stream_factory =
-        rtc::make_ref_counted<cricket::EncoderStreamFactory>(
-            payload_name_, /*max qp*/ 0, /*screencast*/ false,
-            /*screenshare enabled*/ false, encoder_info);
+    encoder_config->video_stream_factory = nullptr;
     encoder_config->max_bitrate_bps = -1;
     if (configs_.size() == 1 && configs_[0].bitrate.max)
       encoder_config->max_bitrate_bps = configs_[0].bitrate.max->bps();
@@ -348,7 +344,7 @@ TEST_P(ResolutionBitrateLimitsTest, LimitsAppliedMiddleActive) {
   RunBaseTest(&test);
 }
 
-TEST_P(ResolutionBitrateLimitsTest, IntersectionAppliedMiddleActive) {
+TEST_P(ResolutionBitrateLimitsTest, EncodingMinBitrateAppliedMiddleActive) {
   webrtc::test::ScopedFieldTrials field_trials(
       "WebRTC-GetEncoderInfoOverride/"
       "frame_size_pixels:230400|921600,"
@@ -356,15 +352,18 @@ TEST_P(ResolutionBitrateLimitsTest, IntersectionAppliedMiddleActive) {
       "min_bitrate_bps:31000|32000,"
       "max_bitrate_bps:2222000|3333000/");
 
+  // Max bitrate: min of encoding and bitrate limits used.
   InitEncodeTest test(env(), payload_name_,
-                      {{.active = false},
+                      {{.active = false,
+                        .bitrate = {DataRate::KilobitsPerSec(28),
+                                    DataRate::KilobitsPerSec(1000)}},
                        {.active = true,
-                        .bitrate = {DataRate::KilobitsPerSec(30),
+                        .bitrate = {DataRate::KilobitsPerSec(28),
                                     DataRate::KilobitsPerSec(1555)}},
                        {.active = false}},
                       // Expectations:
                       {{.pixels = 640 * 360,
-                        .eq_bitrate = {DataRate::KilobitsPerSec(31),
+                        .eq_bitrate = {DataRate::KilobitsPerSec(28),
                                        DataRate::KilobitsPerSec(1555)}}});
   RunBaseTest(&test);
 }
@@ -424,7 +423,7 @@ TEST_P(ResolutionBitrateLimitsTest, LimitsAppliedHighestActive) {
   RunBaseTest(&test);
 }
 
-TEST_P(ResolutionBitrateLimitsTest, IntersectionAppliedHighestActive) {
+TEST_P(ResolutionBitrateLimitsTest, EncodingMinBitrateAppliedHighestActive) {
   webrtc::test::ScopedFieldTrials field_trials(
       "WebRTC-GetEncoderInfoOverride/"
       "frame_size_pixels:230400|921600,"
@@ -432,15 +431,20 @@ TEST_P(ResolutionBitrateLimitsTest, IntersectionAppliedHighestActive) {
       "min_bitrate_bps:31000|32000,"
       "max_bitrate_bps:2222000|3333000/");
 
+  // Max bitrate: min of encoding and bitrate limits used.
   InitEncodeTest test(env(), payload_name_,
-                      {{.active = false},
-                       {.active = false},
+                      {{.active = false,
+                        .bitrate = {DataRate::KilobitsPerSec(28),
+                                    DataRate::KilobitsPerSec(500)}},
+                       {.active = false,
+                        .bitrate = {DataRate::KilobitsPerSec(28),
+                                    DataRate::KilobitsPerSec(1000)}},
                        {.active = true,
-                        .bitrate = {DataRate::KilobitsPerSec(30),
+                        .bitrate = {DataRate::KilobitsPerSec(28),
                                     DataRate::KilobitsPerSec(1555)}}},
                       // Expectations:
                       {{.pixels = 1280 * 720,
-                        .eq_bitrate = {DataRate::KilobitsPerSec(32),
+                        .eq_bitrate = {DataRate::KilobitsPerSec(28),
                                        DataRate::KilobitsPerSec(1555)}}});
   RunBaseTest(&test);
 }
@@ -528,7 +532,7 @@ TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
 }
 
 TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
-       LimitsAppliedForAv1Simulcast) {
+       LimitsAppliedForAv1SingleSpatialLayer) {
   webrtc::test::ScopedFieldTrials field_trials(
       "WebRTC-GetEncoderInfoOverride/"
       "frame_size_pixels:230400|921600,"
@@ -544,6 +548,29 @@ TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
       {{.pixels = 1280 * 720,
         .eq_bitrate = {DataRate::KilobitsPerSec(80),
                        DataRate::KilobitsPerSec(1200)}}});
+  RunBaseTest(&test);
+}
+
+TEST_F(ResolutionBitrateLimitsWithScalabilityModeTest,
+       EncodingMinBitrateAppliedForAv1SingleSpatialLayer) {
+  webrtc::test::ScopedFieldTrials field_trials(
+      "WebRTC-GetEncoderInfoOverride/"
+      "frame_size_pixels:921600,"
+      "min_start_bitrate_bps:0,"
+      "min_bitrate_bps:32000,"
+      "max_bitrate_bps:133000/");
+
+  // Max bitrate: min of encoding and bitrate limits used.
+  InitEncodeTest test(env(), "AV1",
+                      {{.active = true,
+                        .bitrate = {DataRate::KilobitsPerSec(28),
+                                    DataRate::KilobitsPerSec(100)},
+                        .scalability_mode = ScalabilityMode::kL1T1},
+                       {.active = false}},
+                      // Expectations:
+                      {{.pixels = 1280 * 720,
+                        .eq_bitrate = {DataRate::KilobitsPerSec(28),
+                                       DataRate::KilobitsPerSec(100)}}});
   RunBaseTest(&test);
 }
 

@@ -13,6 +13,7 @@
 #include "GLES1State.h"
 #include "angle_gl.h"
 #include "common/angleutils.h"
+#include "common/hash_containers.h"
 #include "libANGLE/angletypes.h"
 
 #include <memory>

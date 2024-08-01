@@ -401,7 +401,7 @@ RtpVideoSender::RtpVideoSender(
       codec_type_(GetVideoCodecType(rtp_config)),
       transport_(transport),
       independent_frame_ids_(
-          field_trials_.IsEnabled(
+          !field_trials_.IsDisabled(
               "WebRTC-Video-SimulcastIndependentFrameIds") &&
           field_trials_.IsDisabled("WebRTC-GenericDescriptorAuth")),
       transport_overhead_bytes_per_packet_(0),

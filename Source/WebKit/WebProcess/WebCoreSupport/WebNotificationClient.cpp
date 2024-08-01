@@ -32,6 +32,7 @@
 #include "WebNotificationManager.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/NotificationData.h>
 #include <WebCore/Page.h>
 #include <WebCore/ScriptExecutionContext.h>
@@ -91,7 +92,7 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext& context, P
     ASSERT(isMainRunLoop());
     ASSERT(m_page);
 
-    if (!context.isDocument() || WebProcess::singleton().sessionID().isEphemeral())
+    if (!isMainRunLoop() || !context.isDocument() || WebProcess::singleton().sessionID().isEphemeral())
         return permissionHandler(NotificationClient::Permission::Denied);
 
     RefPtr securityOrigin = context.securityOrigin();
@@ -100,6 +101,16 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext& context, P
 
     // Add origin to list of origins that have requested permission to use the Notifications API.
     m_notificationPermissionRequesters.add(securityOrigin->data());
+
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+    if (DeprecatedGlobalSettings::builtInNotificationsEnabled()) {
+        auto handler = [permissionHandler = WTFMove(permissionHandler)](bool granted) mutable {
+            permissionHandler(granted ? NotificationPermission::Granted : NotificationPermission::Denied);
+        };
+        WebProcess::singleton().supplement<WebNotificationManager>()->requestPermission(WebCore::SecurityOriginData { securityOrigin->data() }, RefPtr { m_page.get() }, WTFMove(handler));
+        return;
+    }
+#endif
 
     Ref { *m_page }->notificationPermissionRequestManager()->startRequest(securityOrigin->data(), WTFMove(permissionHandler));
 }

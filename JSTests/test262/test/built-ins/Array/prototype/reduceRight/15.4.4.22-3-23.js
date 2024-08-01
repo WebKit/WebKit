@@ -37,8 +37,8 @@ function callbackfn(prevVal, curVal, idx, obj) {
 
 Object.defineProperty(child, "toString", {
   value: function() {
-	  toStringAccessed = true;
-	  return '1';
+    toStringAccessed = true;
+    return '1';
   }
 });
 

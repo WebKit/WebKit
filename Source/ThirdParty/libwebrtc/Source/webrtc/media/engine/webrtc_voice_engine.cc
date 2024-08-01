@@ -283,6 +283,7 @@ webrtc::AudioReceiveStreamInterface::Config BuildReceiveStreamConfig(
   config.rtp.remote_ssrc = remote_ssrc;
   config.rtp.local_ssrc = local_ssrc;
   config.rtp.nack.rtp_history_ms = use_nack ? kNackRtpHistoryMs : 0;
+  config.rtp.rtcp_mode = webrtc::RtcpMode::kCompound;
   if (!stream_ids.empty()) {
     config.sync_group = stream_ids[0];
   }
@@ -879,6 +880,17 @@ class WebRtcVoiceSendChannel::WebRtcAudioSendStream : public AudioSource::Sink {
     ReconfigureAudioSendStream(nullptr);
   }
 
+  void SetRtcpMode(webrtc::RtcpMode mode) {
+    bool reduced_size = mode == webrtc::RtcpMode::kReducedSize;
+    if (rtp_parameters_.rtcp.reduced_size == reduced_size) {
+      return;
+    }
+    rtp_parameters_.rtcp.reduced_size = reduced_size;
+    // Note: this is not wired up beyond this point. For all audio
+    // RTCP packets sent by a sender there is no difference.
+    ReconfigureAudioSendStream(nullptr);
+  }
+
   void SetFrameEncryptor(
       rtc::scoped_refptr<webrtc::FrameEncryptorInterface> frame_encryptor) {
     RTC_DCHECK_RUN_ON(&worker_thread_checker_);
@@ -1075,7 +1087,8 @@ class WebRtcVoiceSendChannel::WebRtcAudioSendStream : public AudioSource::Sink {
     }
 
     rtp_parameters_.rtcp.cname = config_.rtp.c_name;
-    rtp_parameters_.rtcp.reduced_size = false;
+    rtp_parameters_.rtcp.reduced_size =
+        config_.rtp.rtcp_mode == webrtc::RtcpMode::kReducedSize;
 
     // parameters.encodings[0].active could have changed.
     UpdateSendState();
@@ -1321,6 +1334,11 @@ bool WebRtcVoiceSendChannel::SetSenderParameters(
 
   if (send_codec_spec_ && !SetMaxSendBitrate(params.max_bandwidth_bps)) {
     return false;
+  }
+  rtcp_mode_ = params.rtcp.reduced_size ? webrtc::RtcpMode::kReducedSize
+                                        : webrtc::RtcpMode::kCompound;
+  for (auto& it : send_streams_) {
+    it.second->SetRtcpMode(rtcp_mode_);
   }
   return SetOptions(params.options);
 }
@@ -1935,6 +1953,11 @@ class WebRtcVoiceReceiveChannel::WebRtcAudioReceiveStream {
     stream_->SetNackHistory(use_nack ? kNackRtpHistoryMs : 0);
   }
 
+  void SetRtcpMode(webrtc::RtcpMode mode) {
+    RTC_DCHECK_RUN_ON(&worker_thread_checker_);
+    stream_->SetRtcpMode(mode);
+  }
+
   void SetNonSenderRttMeasurement(bool enabled) {
     RTC_DCHECK_RUN_ON(&worker_thread_checker_);
     stream_->SetNonSenderRttMeasurement(enabled);
@@ -2065,6 +2088,8 @@ bool WebRtcVoiceReceiveChannel::SetReceiverParameters(
     recv_rtp_extension_map_ =
         webrtc::RtpHeaderExtensionMap(recv_rtp_extensions_);
   }
+  SetRtcpMode(params.rtcp.reduced_size ? webrtc::RtcpMode::kReducedSize
+                                       : webrtc::RtcpMode::kCompound);
   return true;
 }
 
@@ -2087,6 +2112,8 @@ webrtc::RtpParameters WebRtcVoiceReceiveChannel::GetRtpReceiverParameters(
   for (const Codec& codec : recv_codecs_) {
     rtp_params.codecs.push_back(codec.ToCodecParameters());
   }
+  rtp_params.rtcp.reduced_size =
+      recv_rtcp_mode_ == webrtc::RtcpMode::kReducedSize;
   return rtp_params;
 }
 
@@ -2208,6 +2235,18 @@ void WebRtcVoiceReceiveChannel::SetReceiveNackEnabled(bool enabled) {
     recv_nack_enabled_ = enabled;
     for (auto& kv : recv_streams_) {
       kv.second->SetUseNack(recv_nack_enabled_);
+    }
+  }
+}
+
+void WebRtcVoiceReceiveChannel::SetRtcpMode(webrtc::RtcpMode mode) {
+  // Check if the reduced size RTCP status changed on the
+  // preferred send codec, and in that case reconfigure all receive streams.
+  if (recv_rtcp_mode_ != mode) {
+    RTC_LOG(LS_INFO) << "Changing RTCP mode on receive streams.";
+    recv_rtcp_mode_ = mode;
+    for (auto& kv : recv_streams_) {
+      kv.second->SetRtcpMode(recv_rtcp_mode_);
     }
   }
 }
@@ -2613,7 +2652,7 @@ bool WebRtcVoiceReceiveChannel::GetStats(VoiceMediaReceiveInfo* info,
     rinfo.round_trip_time = stats.round_trip_time;
     rinfo.round_trip_time_measurements = stats.round_trip_time_measurements;
     rinfo.total_round_trip_time = stats.total_round_trip_time;
-
+    rinfo.total_processing_delay_seconds = stats.total_processing_delay_seconds;
     if (recv_nack_enabled_) {
       rinfo.nacks_sent = stats.nacks_sent;
     }

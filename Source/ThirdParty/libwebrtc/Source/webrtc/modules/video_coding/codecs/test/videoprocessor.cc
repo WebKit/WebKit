@@ -52,7 +52,7 @@ size_t GetMaxNaluSizeBytes(const EncodedImage& encoded_frame,
     return 0;
 
   std::vector<webrtc::H264::NaluIndex> nalu_indices =
-      webrtc::H264::FindNaluIndices(encoded_frame.data(), encoded_frame.size());
+      webrtc::H264::FindNaluIndices(encoded_frame);
 
   RTC_CHECK(!nalu_indices.empty());
 
@@ -135,7 +135,8 @@ void CalculateFrameQuality(const I420BufferInterface& ref_buffer,
 
 }  // namespace
 
-VideoProcessor::VideoProcessor(webrtc::VideoEncoder* encoder,
+VideoProcessor::VideoProcessor(const Environment& env,
+                               webrtc::VideoEncoder* encoder,
                                VideoDecoderList* decoders,
                                FrameReader* input_frame_reader,
                                const VideoCodecTestFixture::Config& config,
@@ -150,9 +151,9 @@ VideoProcessor::VideoProcessor(webrtc::VideoEncoder* encoder,
       stats_(stats),
       encoder_(encoder),
       decoders_(decoders),
-      bitrate_allocator_(
-          CreateBuiltinVideoBitrateAllocatorFactory()
-              ->CreateVideoBitrateAllocator(config_.codec_settings)),
+      bitrate_allocator_(CreateBuiltinVideoBitrateAllocatorFactory()->Create(
+          env,
+          config_.codec_settings)),
       encode_callback_(this),
       input_frame_reader_(input_frame_reader),
       merged_encoded_frames_(num_simulcast_or_spatial_layers_),

@@ -5,11 +5,11 @@
 
 #if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86) && defined(__APPLE__)
 .text
-.globl	_sha512_block_data_order
-.private_extern	_sha512_block_data_order
+.globl	_sha512_block_data_order_nohw
+.private_extern	_sha512_block_data_order_nohw
 .align	4
-_sha512_block_data_order:
-L_sha512_block_data_order_begin:
+_sha512_block_data_order_nohw:
+L_sha512_block_data_order_nohw_begin:
 	pushl	%ebp
 	pushl	%ebx
 	pushl	%esi
@@ -21,7 +21,7 @@ L_sha512_block_data_order_begin:
 	call	L000pic_point
 L000pic_point:
 	popl	%ebp
-	leal	L001K512-L000pic_point(%ebp),%ebp
+	leal	LK512-L000pic_point(%ebp),%ebp
 	subl	$16,%esp
 	andl	$-64,%esp
 	shll	$7,%eax
@@ -30,28 +30,18 @@ L000pic_point:
 	movl	%edi,4(%esp)
 	movl	%eax,8(%esp)
 	movl	%ebx,12(%esp)
-	movl	L_OPENSSL_ia32cap_P$non_lazy_ptr-L001K512(%ebp),%edx
-	movl	(%edx),%ecx
-	testl	$67108864,%ecx
-	jz	L002loop_x86
-	movl	4(%edx),%edx
 	movq	(%esi),%mm0
-	andl	$16777216,%ecx
 	movq	8(%esi),%mm1
-	andl	$512,%edx
 	movq	16(%esi),%mm2
-	orl	%edx,%ecx
 	movq	24(%esi),%mm3
 	movq	32(%esi),%mm4
 	movq	40(%esi),%mm5
 	movq	48(%esi),%mm6
 	movq	56(%esi),%mm7
-	cmpl	$16777728,%ecx
-	je	L003SSSE3
 	subl	$80,%esp
-	jmp	L004loop_sse2
+	jmp	L001loop_sse2
 .align	4,0x90
-L004loop_sse2:
+L001loop_sse2:
 	movq	%mm1,8(%esp)
 	movq	%mm2,16(%esp)
 	movq	%mm3,24(%esp)
@@ -66,9 +56,9 @@ L004loop_sse2:
 	movl	$15,%edx
 	bswap	%eax
 	bswap	%ebx
-	jmp	L00500_14_sse2
+	jmp	L00200_14_sse2
 .align	4,0x90
-L00500_14_sse2:
+L00200_14_sse2:
 	movd	%eax,%mm1
 	movl	(%edi),%eax
 	movd	%ebx,%mm7
@@ -129,7 +119,7 @@ L00500_14_sse2:
 	paddq	%mm6,%mm3
 	movq	48(%esp),%mm6
 	decl	%edx
-	jnz	L00500_14_sse2
+	jnz	L00200_14_sse2
 	movd	%eax,%mm1
 	movd	%ebx,%mm7
 	punpckldq	%mm1,%mm7
@@ -185,9 +175,9 @@ L00500_14_sse2:
 	paddq	%mm6,%mm3
 	pxor	%mm0,%mm0
 	movl	$32,%edx
-	jmp	L00616_79_sse2
+	jmp	L00316_79_sse2
 .align	4,0x90
-L00616_79_sse2:
+L00316_79_sse2:
 	movq	88(%esp),%mm5
 	movq	%mm7,%mm1
 	psrlq	$1,%mm7
@@ -341,7 +331,7 @@ L00616_79_sse2:
 	paddq	%mm6,%mm0
 	addl	$8,%ebp
 	decl	%edx
-	jnz	L00616_79_sse2
+	jnz	L00316_79_sse2
 	paddq	%mm3,%mm0
 	movq	8(%esp),%mm1
 	movq	24(%esp),%mm3
@@ -369,7 +359,7 @@ L00616_79_sse2:
 	leal	(%esp,%eax,1),%esp
 	subl	%eax,%ebp
 	cmpl	88(%esp),%edi
-	jb	L004loop_sse2
+	jb	L001loop_sse2
 	movl	92(%esp),%esp
 	emms
 	popl	%edi
@@ -377,8 +367,39 @@ L00616_79_sse2:
 	popl	%ebx
 	popl	%ebp
 	ret
-.align	5,0x90
-L003SSSE3:
+.globl	_sha512_block_data_order_ssse3
+.private_extern	_sha512_block_data_order_ssse3
+.align	4
+_sha512_block_data_order_ssse3:
+L_sha512_block_data_order_ssse3_begin:
+	pushl	%ebp
+	pushl	%ebx
+	pushl	%esi
+	pushl	%edi
+	movl	20(%esp),%esi
+	movl	24(%esp),%edi
+	movl	28(%esp),%eax
+	movl	%esp,%ebx
+	call	L004pic_point
+L004pic_point:
+	popl	%ebp
+	leal	LK512-L004pic_point(%ebp),%ebp
+	subl	$16,%esp
+	andl	$-64,%esp
+	shll	$7,%eax
+	addl	%edi,%eax
+	movl	%esi,(%esp)
+	movl	%edi,4(%esp)
+	movl	%eax,8(%esp)
+	movl	%ebx,12(%esp)
+	movq	(%esi),%mm0
+	movq	8(%esi),%mm1
+	movq	16(%esi),%mm2
+	movq	24(%esi),%mm3
+	movq	32(%esi),%mm4
+	movq	40(%esi),%mm5
+	movq	48(%esi),%mm6
+	movq	56(%esi),%mm7
 	leal	-64(%esp),%edx
 	subl	$256,%esp
 	movdqa	640(%ebp),%xmm1
@@ -435,7 +456,7 @@ L003SSSE3:
 	movdqa	%xmm2,-16(%edx)
 	nop
 .align	5,0x90
-L007loop_ssse3:
+L005loop_ssse3:
 	movdqa	16(%edx),%xmm2
 	movdqa	%xmm3,48(%edx)
 	leal	128(%ebp),%ebp
@@ -452,9 +473,9 @@ L007loop_ssse3:
 	pxor	%mm1,%mm2
 	movq	%mm7,56(%esp)
 	pxor	%mm3,%mm3
-	jmp	L00800_47_ssse3
+	jmp	L00600_47_ssse3
 .align	5,0x90
-L00800_47_ssse3:
+L00600_47_ssse3:
 	movdqa	%xmm5,%xmm3
 	movdqa	%xmm2,%xmm1
 .byte	102,15,58,15,208,8
@@ -1473,7 +1494,7 @@ L00800_47_ssse3:
 	movdqa	%xmm1,-16(%edx)
 	leal	128(%ebp),%ebp
 	decl	%ecx
-	jnz	L00800_47_ssse3
+	jnz	L00600_47_ssse3
 	movdqa	(%ebp),%xmm1
 	leal	-640(%ebp),%ebp
 	movdqu	(%ebx),%xmm0
@@ -2285,7 +2306,7 @@ L00800_47_ssse3:
 	movq	%mm6,48(%esi)
 	movq	%mm7,56(%esi)
 	cmpl	%eax,%edi
-	jb	L007loop_ssse3
+	jb	L005loop_ssse3
 	movl	76(%edx),%esp
 	emms
 	popl	%edi
@@ -2293,456 +2314,8 @@ L00800_47_ssse3:
 	popl	%ebx
 	popl	%ebp
 	ret
-.align	4,0x90
-L002loop_x86:
-	movl	(%edi),%eax
-	movl	4(%edi),%ebx
-	movl	8(%edi),%ecx
-	movl	12(%edi),%edx
-	bswap	%eax
-	bswap	%ebx
-	bswap	%ecx
-	bswap	%edx
-	pushl	%eax
-	pushl	%ebx
-	pushl	%ecx
-	pushl	%edx
-	movl	16(%edi),%eax
-	movl	20(%edi),%ebx
-	movl	24(%edi),%ecx
-	movl	28(%edi),%edx
-	bswap	%eax
-	bswap	%ebx
-	bswap	%ecx
-	bswap	%edx
-	pushl	%eax
-	pushl	%ebx
-	pushl	%ecx
-	pushl	%edx
-	movl	32(%edi),%eax
-	movl	36(%edi),%ebx
-	movl	40(%edi),%ecx
-	movl	44(%edi),%edx
-	bswap	%eax
-	bswap	%ebx
-	bswap	%ecx
-	bswap	%edx
-	pushl	%eax
-	pushl	%ebx
-	pushl	%ecx
-	pushl	%edx
-	movl	48(%edi),%eax
-	movl	52(%edi),%ebx
-	movl	56(%edi),%ecx
-	movl	60(%edi),%edx
-	bswap	%eax
-	bswap	%ebx
-	bswap	%ecx
-	bswap	%edx
-	pushl	%eax
-	pushl	%ebx
-	pushl	%ecx
-	pushl	%edx
-	movl	64(%edi),%eax
-	movl	68(%edi),%ebx
-	movl	72(%edi),%ecx
-	movl	76(%edi),%edx
-	bswap	%eax
-	bswap	%ebx
-	bswap	%ecx
-	bswap	%edx
-	pushl	%eax
-	pushl	%ebx
-	pushl	%ecx
-	pushl	%edx
-	movl	80(%edi),%eax
-	movl	84(%edi),%ebx
-	movl	88(%edi),%ecx
-	movl	92(%edi),%edx
-	bswap	%eax
-	bswap	%ebx
-	bswap	%ecx
-	bswap	%edx
-	pushl	%eax
-	pushl	%ebx
-	pushl	%ecx
-	pushl	%edx
-	movl	96(%edi),%eax
-	movl	100(%edi),%ebx
-	movl	104(%edi),%ecx
-	movl	108(%edi),%edx
-	bswap	%eax
-	bswap	%ebx
-	bswap	%ecx
-	bswap	%edx
-	pushl	%eax
-	pushl	%ebx
-	pushl	%ecx
-	pushl	%edx
-	movl	112(%edi),%eax
-	movl	116(%edi),%ebx
-	movl	120(%edi),%ecx
-	movl	124(%edi),%edx
-	bswap	%eax
-	bswap	%ebx
-	bswap	%ecx
-	bswap	%edx
-	pushl	%eax
-	pushl	%ebx
-	pushl	%ecx
-	pushl	%edx
-	addl	$128,%edi
-	subl	$72,%esp
-	movl	%edi,204(%esp)
-	leal	8(%esp),%edi
-	movl	$16,%ecx
-.long	2784229001
-.align	4,0x90
-L00900_15_x86:
-	movl	40(%esp),%ecx
-	movl	44(%esp),%edx
-	movl	%ecx,%esi
-	shrl	$9,%ecx
-	movl	%edx,%edi
-	shrl	$9,%edx
-	movl	%ecx,%ebx
-	shll	$14,%esi
-	movl	%edx,%eax
-	shll	$14,%edi
-	xorl	%esi,%ebx
-	shrl	$5,%ecx
-	xorl	%edi,%eax
-	shrl	$5,%edx
-	xorl	%ecx,%eax
-	shll	$4,%esi
-	xorl	%edx,%ebx
-	shll	$4,%edi
-	xorl	%esi,%ebx
-	shrl	$4,%ecx
-	xorl	%edi,%eax
-	shrl	$4,%edx
-	xorl	%ecx,%eax
-	shll	$5,%esi
-	xorl	%edx,%ebx
-	shll	$5,%edi
-	xorl	%esi,%eax
-	xorl	%edi,%ebx
-	movl	48(%esp),%ecx
-	movl	52(%esp),%edx
-	movl	56(%esp),%esi
-	movl	60(%esp),%edi
-	addl	64(%esp),%eax
-	adcl	68(%esp),%ebx
-	xorl	%esi,%ecx
-	xorl	%edi,%edx
-	andl	40(%esp),%ecx
-	andl	44(%esp),%edx
-	addl	192(%esp),%eax
-	adcl	196(%esp),%ebx
-	xorl	%esi,%ecx
-	xorl	%edi,%edx
-	movl	(%ebp),%esi
-	movl	4(%ebp),%edi
-	addl	%ecx,%eax
-	adcl	%edx,%ebx
-	movl	32(%esp),%ecx
-	movl	36(%esp),%edx
-	addl	%esi,%eax
-	adcl	%edi,%ebx
-	movl	%eax,(%esp)
-	movl	%ebx,4(%esp)
-	addl	%ecx,%eax
-	adcl	%edx,%ebx
-	movl	8(%esp),%ecx
-	movl	12(%esp),%edx
-	movl	%eax,32(%esp)
-	movl	%ebx,36(%esp)
-	movl	%ecx,%esi
-	shrl	$2,%ecx
-	movl	%edx,%edi
-	shrl	$2,%edx
-	movl	%ecx,%ebx
-	shll	$4,%esi
-	movl	%edx,%eax
-	shll	$4,%edi
-	xorl	%esi,%ebx
-	shrl	$5,%ecx
-	xorl	%edi,%eax
-	shrl	$5,%edx
-	xorl	%ecx,%ebx
-	shll	$21,%esi
-	xorl	%edx,%eax
-	shll	$21,%edi
-	xorl	%esi,%eax
-	shrl	$21,%ecx
-	xorl	%edi,%ebx
-	shrl	$21,%edx
-	xorl	%ecx,%eax
-	shll	$5,%esi
-	xorl	%edx,%ebx
-	shll	$5,%edi
-	xorl	%esi,%eax
-	xorl	%edi,%ebx
-	movl	8(%esp),%ecx
-	movl	12(%esp),%edx
-	movl	16(%esp),%esi
-	movl	20(%esp),%edi
-	addl	(%esp),%eax
-	adcl	4(%esp),%ebx
-	orl	%esi,%ecx
-	orl	%edi,%edx
-	andl	24(%esp),%ecx
-	andl	28(%esp),%edx
-	andl	8(%esp),%esi
-	andl	12(%esp),%edi
-	orl	%esi,%ecx
-	orl	%edi,%edx
-	addl	%ecx,%eax
-	adcl	%edx,%ebx
-	movl	%eax,(%esp)
-	movl	%ebx,4(%esp)
-	movb	(%ebp),%dl
-	subl	$8,%esp
-	leal	8(%ebp),%ebp
-	cmpb	$148,%dl
-	jne	L00900_15_x86
-.align	4,0x90
-L01016_79_x86:
-	movl	312(%esp),%ecx
-	movl	316(%esp),%edx
-	movl	%ecx,%esi
-	shrl	$1,%ecx
-	movl	%edx,%edi
-	shrl	$1,%edx
-	movl	%ecx,%eax
-	shll	$24,%esi
-	movl	%edx,%ebx
-	shll	$24,%edi
-	xorl	%esi,%ebx
-	shrl	$6,%ecx
-	xorl	%edi,%eax
-	shrl	$6,%edx
-	xorl	%ecx,%eax
-	shll	$7,%esi
-	xorl	%edx,%ebx
-	shll	$1,%edi
-	xorl	%esi,%ebx
-	shrl	$1,%ecx
-	xorl	%edi,%eax
-	shrl	$1,%edx
-	xorl	%ecx,%eax
-	shll	$6,%edi
-	xorl	%edx,%ebx
-	xorl	%edi,%eax
-	movl	%eax,(%esp)
-	movl	%ebx,4(%esp)
-	movl	208(%esp),%ecx
-	movl	212(%esp),%edx
-	movl	%ecx,%esi
-	shrl	$6,%ecx
-	movl	%edx,%edi
-	shrl	$6,%edx
-	movl	%ecx,%eax
-	shll	$3,%esi
-	movl	%edx,%ebx
-	shll	$3,%edi
-	xorl	%esi,%eax
-	shrl	$13,%ecx
-	xorl	%edi,%ebx
-	shrl	$13,%edx
-	xorl	%ecx,%eax
-	shll	$10,%esi
-	xorl	%edx,%ebx
-	shll	$10,%edi
-	xorl	%esi,%ebx
-	shrl	$10,%ecx
-	xorl	%edi,%eax
-	shrl	$10,%edx
-	xorl	%ecx,%ebx
-	shll	$13,%edi
-	xorl	%edx,%eax
-	xorl	%edi,%eax
-	movl	320(%esp),%ecx
-	movl	324(%esp),%edx
-	addl	(%esp),%eax
-	adcl	4(%esp),%ebx
-	movl	248(%esp),%esi
-	movl	252(%esp),%edi
-	addl	%ecx,%eax
-	adcl	%edx,%ebx
-	addl	%esi,%eax
-	adcl	%edi,%ebx
-	movl	%eax,192(%esp)
-	movl	%ebx,196(%esp)
-	movl	40(%esp),%ecx
-	movl	44(%esp),%edx
-	movl	%ecx,%esi
-	shrl	$9,%ecx
-	movl	%edx,%edi
-	shrl	$9,%edx
-	movl	%ecx,%ebx
-	shll	$14,%esi
-	movl	%edx,%eax
-	shll	$14,%edi
-	xorl	%esi,%ebx
-	shrl	$5,%ecx
-	xorl	%edi,%eax
-	shrl	$5,%edx
-	xorl	%ecx,%eax
-	shll	$4,%esi
-	xorl	%edx,%ebx
-	shll	$4,%edi
-	xorl	%esi,%ebx
-	shrl	$4,%ecx
-	xorl	%edi,%eax
-	shrl	$4,%edx
-	xorl	%ecx,%eax
-	shll	$5,%esi
-	xorl	%edx,%ebx
-	shll	$5,%edi
-	xorl	%esi,%eax
-	xorl	%edi,%ebx
-	movl	48(%esp),%ecx
-	movl	52(%esp),%edx
-	movl	56(%esp),%esi
-	movl	60(%esp),%edi
-	addl	64(%esp),%eax
-	adcl	68(%esp),%ebx
-	xorl	%esi,%ecx
-	xorl	%edi,%edx
-	andl	40(%esp),%ecx
-	andl	44(%esp),%edx
-	addl	192(%esp),%eax
-	adcl	196(%esp),%ebx
-	xorl	%esi,%ecx
-	xorl	%edi,%edx
-	movl	(%ebp),%esi
-	movl	4(%ebp),%edi
-	addl	%ecx,%eax
-	adcl	%edx,%ebx
-	movl	32(%esp),%ecx
-	movl	36(%esp),%edx
-	addl	%esi,%eax
-	adcl	%edi,%ebx
-	movl	%eax,(%esp)
-	movl	%ebx,4(%esp)
-	addl	%ecx,%eax
-	adcl	%edx,%ebx
-	movl	8(%esp),%ecx
-	movl	12(%esp),%edx
-	movl	%eax,32(%esp)
-	movl	%ebx,36(%esp)
-	movl	%ecx,%esi
-	shrl	$2,%ecx
-	movl	%edx,%edi
-	shrl	$2,%edx
-	movl	%ecx,%ebx
-	shll	$4,%esi
-	movl	%edx,%eax
-	shll	$4,%edi
-	xorl	%esi,%ebx
-	shrl	$5,%ecx
-	xorl	%edi,%eax
-	shrl	$5,%edx
-	xorl	%ecx,%ebx
-	shll	$21,%esi
-	xorl	%edx,%eax
-	shll	$21,%edi
-	xorl	%esi,%eax
-	shrl	$21,%ecx
-	xorl	%edi,%ebx
-	shrl	$21,%edx
-	xorl	%ecx,%eax
-	shll	$5,%esi
-	xorl	%edx,%ebx
-	shll	$5,%edi
-	xorl	%esi,%eax
-	xorl	%edi,%ebx
-	movl	8(%esp),%ecx
-	movl	12(%esp),%edx
-	movl	16(%esp),%esi
-	movl	20(%esp),%edi
-	addl	(%esp),%eax
-	adcl	4(%esp),%ebx
-	orl	%esi,%ecx
-	orl	%edi,%edx
-	andl	24(%esp),%ecx
-	andl	28(%esp),%edx
-	andl	8(%esp),%esi
-	andl	12(%esp),%edi
-	orl	%esi,%ecx
-	orl	%edi,%edx
-	addl	%ecx,%eax
-	adcl	%edx,%ebx
-	movl	%eax,(%esp)
-	movl	%ebx,4(%esp)
-	movb	(%ebp),%dl
-	subl	$8,%esp
-	leal	8(%ebp),%ebp
-	cmpb	$23,%dl
-	jne	L01016_79_x86
-	movl	840(%esp),%esi
-	movl	844(%esp),%edi
-	movl	(%esi),%eax
-	movl	4(%esi),%ebx
-	movl	8(%esi),%ecx
-	movl	12(%esi),%edx
-	addl	8(%esp),%eax
-	adcl	12(%esp),%ebx
-	movl	%eax,(%esi)
-	movl	%ebx,4(%esi)
-	addl	16(%esp),%ecx
-	adcl	20(%esp),%edx
-	movl	%ecx,8(%esi)
-	movl	%edx,12(%esi)
-	movl	16(%esi),%eax
-	movl	20(%esi),%ebx
-	movl	24(%esi),%ecx
-	movl	28(%esi),%edx
-	addl	24(%esp),%eax
-	adcl	28(%esp),%ebx
-	movl	%eax,16(%esi)
-	movl	%ebx,20(%esi)
-	addl	32(%esp),%ecx
-	adcl	36(%esp),%edx
-	movl	%ecx,24(%esi)
-	movl	%edx,28(%esi)
-	movl	32(%esi),%eax
-	movl	36(%esi),%ebx
-	movl	40(%esi),%ecx
-	movl	44(%esi),%edx
-	addl	40(%esp),%eax
-	adcl	44(%esp),%ebx
-	movl	%eax,32(%esi)
-	movl	%ebx,36(%esi)
-	addl	48(%esp),%ecx
-	adcl	52(%esp),%edx
-	movl	%ecx,40(%esi)
-	movl	%edx,44(%esi)
-	movl	48(%esi),%eax
-	movl	52(%esi),%ebx
-	movl	56(%esi),%ecx
-	movl	60(%esi),%edx
-	addl	56(%esp),%eax
-	adcl	60(%esp),%ebx
-	movl	%eax,48(%esi)
-	movl	%ebx,52(%esi)
-	addl	64(%esp),%ecx
-	adcl	68(%esp),%edx
-	movl	%ecx,56(%esi)
-	movl	%edx,60(%esi)
-	addl	$840,%esp
-	subl	$640,%ebp
-	cmpl	8(%esp),%edi
-	jb	L002loop_x86
-	movl	12(%esp),%esp
-	popl	%edi
-	popl	%esi
-	popl	%ebx
-	popl	%ebp
-	ret
 .align	6,0x90
-L001K512:
+LK512:
 .long	3609767458,1116352408
 .long	602891725,1899447441
 .long	3964484399,3049323471
@@ -2830,8 +2403,4 @@ L001K512:
 .byte	67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97
 .byte	112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103
 .byte	62,0
-.section __IMPORT,__pointers,non_lazy_symbol_pointers
-L_OPENSSL_ia32cap_P$non_lazy_ptr:
-.indirect_symbol	_OPENSSL_ia32cap_P
-.long	0
 #endif  // !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86) && defined(__APPLE__)

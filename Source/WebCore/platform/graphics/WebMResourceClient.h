@@ -40,6 +40,7 @@ public:
     virtual void dataReceived(const SharedBuffer&) = 0;
     virtual void loadFailed(const ResourceError&) = 0;
     virtual void loadFinished() = 0;
+    virtual void dataLengthReceived(size_t) = 0;
 };
 
 class WebMResourceClient final
@@ -54,6 +55,7 @@ public:
 private:
     WebMResourceClient(WebMResourceClientParent&, Ref<PlatformMediaResource>&&);
 
+    void responseReceived(PlatformMediaResource&, const ResourceResponse&, CompletionHandler<void(ShouldContinuePolicyCheck)>&&) final;
     void dataReceived(PlatformMediaResource&, const SharedBuffer&) final;
     void loadFailed(PlatformMediaResource&, const ResourceError&) final;
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) final;

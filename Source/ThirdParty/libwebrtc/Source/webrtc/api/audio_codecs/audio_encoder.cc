@@ -10,6 +10,15 @@
 
 #include "api/audio_codecs/audio_encoder.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <string>
+
+#include "absl/types/optional.h"
+#include "api/array_view.h"
+#include "api/call/bitrate_allocation.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/trace_event.h"
 

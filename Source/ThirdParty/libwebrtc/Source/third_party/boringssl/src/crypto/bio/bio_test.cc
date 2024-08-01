@@ -639,8 +639,8 @@ TEST(BIOTest, Gets) {
       check_bio_gets(bio.get());
     }
 
-    if (!SkipTempFileTests()) {
-      TemporaryFile file;
+    if (!bssl::SkipTempFileTests()) {
+      bssl::TemporaryFile file;
       ASSERT_TRUE(file.Init(t.bio));
 
       // TODO(crbug.com/boringssl/585): If the line has an embedded NUL, file
@@ -660,7 +660,7 @@ TEST(BIOTest, Gets) {
         check_bio_gets(bio.get());
 
         // Test |BIO_NOCLOSE|.
-        ScopedFILE file_obj = file.Open("rb");
+        bssl::ScopedFILE file_obj = file.Open("rb");
         ASSERT_TRUE(file_obj);
         bio.reset(BIO_new_fp(file_obj.get(), BIO_NOCLOSE));
         ASSERT_TRUE(bio);
@@ -679,7 +679,7 @@ TEST(BIOTest, Gets) {
         SCOPED_TRACE("fd");
 
         // Test |BIO_NOCLOSE|.
-        ScopedFD fd = file.OpenFD(kOpenReadOnlyBinary);
+        bssl::ScopedFD fd = file.OpenFD(kOpenReadOnlyBinary);
         ASSERT_TRUE(fd.is_valid());
         bssl::UniquePtr<BIO> bio(BIO_new_fd(fd.get(), BIO_NOCLOSE));
         ASSERT_TRUE(bio);
@@ -707,11 +707,11 @@ TEST(BIOTest, Gets) {
 
 // Test that, on Windows, file BIOs correctly handle text vs binary mode.
 TEST(BIOTest, FileMode) {
-  if (SkipTempFileTests()) {
+  if (bssl::SkipTempFileTests()) {
     GTEST_SKIP();
   }
 
-  TemporaryFile temp;
+  bssl::TemporaryFile temp;
   ASSERT_TRUE(temp.Init("hello\r\nworld"));
 
   auto expect_file_contents = [](BIO *bio, const std::string &str) {
@@ -748,7 +748,7 @@ TEST(BIOTest, FileMode) {
   expect_text_mode(bio.get());
 
   // |BIO_new_fp| inherits the file's existing mode by default.
-  ScopedFILE file = temp.Open("rb");
+  bssl::ScopedFILE file = temp.Open("rb");
   ASSERT_TRUE(file);
   bio.reset(BIO_new_fp(file.get(), BIO_NOCLOSE));
   ASSERT_TRUE(bio);
@@ -775,7 +775,7 @@ TEST(BIOTest, FileMode) {
   expect_text_mode(bio.get());
 
   // |BIO_new_fd| inherits the FD's existing mode.
-  ScopedFD fd = temp.OpenFD(kOpenReadOnlyBinary);
+  bssl::ScopedFD fd = temp.OpenFD(kOpenReadOnlyBinary);
   ASSERT_TRUE(fd.is_valid());
   bio.reset(BIO_new_fd(fd.get(), BIO_NOCLOSE));
   ASSERT_TRUE(bio);

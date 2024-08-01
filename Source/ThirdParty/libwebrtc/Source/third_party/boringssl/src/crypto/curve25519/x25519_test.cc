@@ -158,7 +158,13 @@ TEST(X25519Test, SmallOrder) {
 
 TEST(X25519Test, Iterated) {
   // Taken from https://tools.ietf.org/html/rfc7748#section-5.2.
-  uint8_t scalar[32] = {9}, point[32] = {9}, out[32];
+  uint8_t scalar[32], point[32], out[32];
+  // This could simply be `uint8_t scalar[32] = {9}`, but GCC's -Warray-bounds
+  // warning is broken. See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=114826.
+  OPENSSL_memset(scalar, 0, sizeof(scalar));
+  scalar[0] = 9;
+  OPENSSL_memset(point, 0, sizeof(point));
+  point[0] = 9;
 
   for (unsigned i = 0; i < 1000; i++) {
     EXPECT_TRUE(ctwrapX25519(out, scalar, point));
@@ -177,7 +183,13 @@ TEST(X25519Test, Iterated) {
 
 TEST(X25519Test, DISABLED_IteratedLarge) {
   // Taken from https://tools.ietf.org/html/rfc7748#section-5.2.
-  uint8_t scalar[32] = {9}, point[32] = {9}, out[32];
+  uint8_t scalar[32], point[32], out[32];
+  // This could simply be `uint8_t scalar[32] = {9}`, but GCC's -Warray-bounds
+  // warning is broken. See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=114826.
+  OPENSSL_memset(scalar, 0, sizeof(scalar));
+  scalar[0] = 9;
+  OPENSSL_memset(point, 0, sizeof(point));
+  point[0] = 9;
 
   for (unsigned i = 0; i < 1000000; i++) {
     EXPECT_TRUE(ctwrapX25519(out, scalar, point));

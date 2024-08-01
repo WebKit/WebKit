@@ -1,0 +1,13 @@
+
+PASS Property shape-outside value 'inset(100%)'
+PASS Property shape-outside value 'inset(0 1px)'
+PASS Property shape-outside value 'inset(0px 1px 2%)'
+PASS Property shape-outside value 'inset(-20px -20px 2%)'
+PASS Property shape-outside value 'inset(0px 1px 2% 3em)'
+PASS Property shape-outside value 'inset(0px calc(100% - 20px) 2% 3em)'
+PASS Property shape-outside value 'inset(0px round 100%)'
+PASS Property shape-outside value 'inset(0px round 0 1px)'
+PASS Property shape-outside value 'inset(0px round 0px 1px 2%)'
+PASS Property shape-outside value 'inset(0px round 0px 1px 2% 3em)'
+PASS Property shape-outside value 'inset(10px round 20% / 0px 1px 2% 3em)'
+

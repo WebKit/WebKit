@@ -12,6 +12,7 @@
 #ifndef COMPILER_TRANSLATOR_SPIRV_TRANSLATORSPIRV_H_
 #define COMPILER_TRANSLATOR_SPIRV_TRANSLATORSPIRV_H_
 
+#include "common/hash_containers.h"
 #include "compiler/translator/Compiler.h"
 
 namespace sh

@@ -68,8 +68,7 @@ static bool hasAtLeastFourCodepoints(const String& pin)
 // makePinAuth returns `LEFT(HMAC-SHA-256(secret, data), 16)`.
 static Vector<uint8_t> makePinAuth(const CryptoKeyHMAC& key, const Vector<uint8_t>& data)
 {
-    // FIXME: enable cryptoKit when it's enabled for SubtleCryptoAPI rdar://126352502
-    auto result = CryptoAlgorithmHMAC::platformSign(key, data, UseCryptoKit::No);
+    auto result = CryptoAlgorithmHMAC::platformSign(key, data, useCryptoKit);
     ASSERT(!result.hasException());
     auto pinAuth = result.releaseReturnValue();
     pinAuth.shrink(16);
@@ -345,8 +344,7 @@ std::optional<SetPinRequest> SetPinRequest::tryCreate(const String& inputPin, co
     auto newPinEnc = CryptoAlgorithmAESCBC::platformEncrypt({ }, *sharedKey, paddedPin, CryptoAlgorithmAESCBC::Padding::No);
     ASSERT(!newPinEnc.hasException());
 
-    // FIXME: enable cryptoKit when it's enabled for SubtleCryptoAPI rdar://126352502
-    auto pinUvAuthParam = CryptoAlgorithmHMAC::platformSign(*hmacKey, newPinEnc.returnValue(), UseCryptoKit::No);
+    auto pinUvAuthParam = CryptoAlgorithmHMAC::platformSign(*hmacKey, newPinEnc.returnValue(), useCryptoKit);
     ASSERT(!pinUvAuthParam.hasException());
 
     return SetPinRequest(sharedKey.releaseNonNull(), WTFMove(coseKey), newPinEnc.releaseReturnValue(), pinUvAuthParam.releaseReturnValue());

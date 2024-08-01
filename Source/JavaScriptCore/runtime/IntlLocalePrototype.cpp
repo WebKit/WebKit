@@ -47,6 +47,7 @@ static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterBaseName);
 static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterCalendar);
 static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterCaseFirst);
 static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterCollation);
+static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterFirstDayOfWeek);
 static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterHourCycle);
 static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterNumeric);
 static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterNumberingSystem);
@@ -78,6 +79,7 @@ const ClassInfo IntlLocalePrototype::s_info = { "Intl.Locale"_s, &Base::s_info, 
   calendar            intlLocalePrototypeGetterCalendar          DontEnum|ReadOnly|CustomAccessor
   caseFirst           intlLocalePrototypeGetterCaseFirst         DontEnum|ReadOnly|CustomAccessor
   collation           intlLocalePrototypeGetterCollation         DontEnum|ReadOnly|CustomAccessor
+  firstDayOfWeek      intlLocalePrototypeGetterFirstDayOfWeek    DontEnum|ReadOnly|CustomAccessor
   hourCycle           intlLocalePrototypeGetterHourCycle         DontEnum|ReadOnly|CustomAccessor
   numeric             intlLocalePrototypeGetterNumeric           DontEnum|ReadOnly|CustomAccessor
   numberingSystem     intlLocalePrototypeGetterNumberingSystem   DontEnum|ReadOnly|CustomAccessor
@@ -237,6 +239,20 @@ JSC_DEFINE_HOST_FUNCTION(intlLocalePrototypeFuncGetCollations, (JSGlobalObject* 
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.getCollations called on value that's not a Locale"_s);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(locale->collations(globalObject)));
+}
+
+// https://tc39.es/proposal-intl-locale-info/#sec-Intl.Locale.prototype.firstDayOfWeek
+JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterFirstDayOfWeek, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* locale = jsDynamicCast<IntlLocale*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!locale))
+        return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.firstDayOfWeek called on value that's not a Locale"_s);
+
+    const String& firstDayOfWeek = locale->firstDayOfWeek();
+    RELEASE_AND_RETURN(scope, JSValue::encode(firstDayOfWeek.isNull() ? jsUndefined() : jsString(vm, firstDayOfWeek)));
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.hourCycle

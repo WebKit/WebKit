@@ -10,6 +10,7 @@
 
 #include "api/stats/rtc_stats_collector_callback.h"
 #include "api/stats/rtcstats_objects.h"
+#include "api/units/data_rate.h"
 #include "pc/test/mock_peer_connection_observers.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
@@ -42,7 +43,7 @@ TEST(GoogCcPeerScenarioTest, MAYBE_NoBweChangeFromVideoUnmute) {
   auto* callee = s.CreateClient(PeerScenarioClient::Config());
 
   BuiltInNetworkBehaviorConfig net_conf;
-  net_conf.link_capacity_kbps = 350;
+  net_conf.link_capacity = DataRate::KilobitsPerSec(350);
   net_conf.queue_delay_ms = 50;
   auto send_node = s.net()->CreateEmulatedNode(net_conf);
   auto ret_node = s.net()->CreateEmulatedNode(net_conf);

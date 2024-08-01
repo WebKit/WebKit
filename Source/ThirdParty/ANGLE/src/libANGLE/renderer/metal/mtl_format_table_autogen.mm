@@ -655,7 +655,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             this->metalFormat    = MTLPixelFormatRGBA32Float;
             this->actualFormatId = angle::FormatID::R32G32B32A32_FLOAT;
             this->initFunction   = Initialize4ComponentData<GLfloat, 0x00000000, 0x00000000,
-                                                          0x00000000, gl::Float32One>;
+                                                            0x00000000, gl::Float32One>;
             break;
 
         case angle::FormatID::L8A8_UNORM:
@@ -712,7 +712,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             this->metalFormat    = MTLPixelFormatRGBA32Float;
             this->actualFormatId = angle::FormatID::R32G32B32A32_FLOAT;
             this->initFunction   = Initialize4ComponentData<GLfloat, 0x00000000, 0x00000000,
-                                                          0x00000000, gl::Float32One>;
+                                                            0x00000000, gl::Float32One>;
             break;
 
         case angle::FormatID::R32G32B32_SINT:

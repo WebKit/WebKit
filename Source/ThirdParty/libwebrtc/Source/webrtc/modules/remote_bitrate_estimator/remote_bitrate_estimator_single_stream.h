@@ -17,8 +17,9 @@
 #include <map>
 #include <vector>
 
+#include "absl/base/nullability.h"
 #include "absl/types/optional.h"
-#include "api/transport/field_trial_based_config.h"
+#include "api/environment/environment.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -31,13 +32,11 @@
 
 namespace webrtc {
 
-class Clock;
-struct RTPHeader;
-
 class RemoteBitrateEstimatorSingleStream : public RemoteBitrateEstimator {
  public:
-  RemoteBitrateEstimatorSingleStream(RemoteBitrateObserver* observer,
-                                     Clock* clock);
+  RemoteBitrateEstimatorSingleStream(
+      const Environment& env,
+      absl::Nonnull<RemoteBitrateObserver*> observer);
 
   RemoteBitrateEstimatorSingleStream() = delete;
   RemoteBitrateEstimatorSingleStream(
@@ -68,13 +67,12 @@ class RemoteBitrateEstimatorSingleStream : public RemoteBitrateEstimator {
 
   std::vector<uint32_t> GetSsrcs() const;
 
-  Clock* const clock_;
-  const FieldTrialBasedConfig field_trials_;
+  const Environment env_;
+  const absl::Nonnull<RemoteBitrateObserver*> observer_;
   std::map<uint32_t, Detector> overuse_detectors_;
   BitrateTracker incoming_bitrate_;
   DataRate last_valid_incoming_bitrate_;
   AimdRateControl remote_rate_;
-  RemoteBitrateObserver* const observer_;
   absl::optional<Timestamp> last_process_time_;
   TimeDelta process_interval_;
   bool uma_recorded_;

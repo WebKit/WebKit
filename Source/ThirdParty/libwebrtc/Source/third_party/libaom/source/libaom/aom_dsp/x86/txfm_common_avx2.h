@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2018, Alliance for Open Media. All rights reserved.
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -22,7 +22,7 @@ extern "C" {
 
 static INLINE __m256i pair_set_w16_epi16(int16_t a, int16_t b) {
   return _mm256_set1_epi32(
-      (int32_t)(((uint16_t)(a)) | (((uint32_t)(b)) << 16)));
+      (int32_t)(((uint16_t)(a)) | (((uint32_t)(uint16_t)(b)) << 16)));
 }
 
 static INLINE void btf_16_w16_avx2(const __m256i w0, const __m256i w1,

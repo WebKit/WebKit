@@ -41,8 +41,15 @@ static NSMutableArray *notificationsByBundleIdentifier(NSString *bundleIdentifie
     return notifications->get()[bundleIdentifier];
 }
 
+static NSMutableSet *notificationPermissions()
+{
+    static NeverDestroyed<RetainPtr<NSMutableSet>> permissions = adoptNS([NSMutableSet new]);
+    return permissions->get();
+}
+
 @implementation _WKMockUserNotificationCenter {
-    RetainPtr<NSMutableArray> notifications;
+    RetainPtr<NSString> m_bundleIdentifier;
+    RetainPtr<NSMutableArray> m_notifications;
 }
 
 - (instancetype)initWithBundleIdentifier:(NSString *)bundleIdentifier
@@ -51,7 +58,8 @@ static NSMutableArray *notificationsByBundleIdentifier(NSString *bundleIdentifie
     if (!self)
         return nil;
 
-    notifications = notificationsByBundleIdentifier(bundleIdentifier);
+    m_bundleIdentifier = bundleIdentifier;
+    m_notifications = notificationsByBundleIdentifier(bundleIdentifier);
     return self;
 }
 
@@ -59,7 +67,7 @@ static NSMutableArray *notificationsByBundleIdentifier(NSString *bundleIdentifie
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [notifications.get() addObject:[UNNotification notificationWithRequest:request date:[NSDate now]]];
+    [m_notifications.get() addObject:[UNNotification notificationWithRequest:request date:[NSDate now]]];
 #pragma clang diagnostic pop
 
     callOnMainRunLoop([completionHandler = makeBlockPtr(completionHandler)] mutable {
@@ -69,26 +77,44 @@ static NSMutableArray *notificationsByBundleIdentifier(NSString *bundleIdentifie
 
 - (void)getDeliveredNotificationsWithCompletionHandler:(void(^)(NSArray<UNNotification *> *notifications))completionHandler
 {
-    callOnMainRunLoop([completionHandler = makeBlockPtr(completionHandler), notifications = [notifications.get() copy]] mutable {
+    callOnMainRunLoop([completionHandler = makeBlockPtr(completionHandler), notifications = [m_notifications.get() copy]] mutable {
         completionHandler(notifications);
     });
 }
 
+
 - (void)removePendingNotificationRequestsWithIdentifiers:(NSArray<NSString *> *) identifiers
 {
     RetainPtr toRemove = adoptNS([NSMutableArray new]);
-    for (UNNotification *notification in notifications.get()) {
+    for (UNNotification *notification in m_notifications.get()) {
         if ([identifiers containsObject:notification.request.identifier])
             [toRemove addObject:notification];
     }
 
-    [notifications removeObjectsInArray:toRemove.get()];
+    [m_notifications removeObjectsInArray:toRemove.get()];
 }
 
 - (void)removeDeliveredNotificationsWithIdentifiers:(NSArray<NSString *> *) identifiers
 {
     // For now, the mock UNUserNotificationCenter doesn't distinguish between pending and delivered notifications.
     [self removePendingNotificationRequestsWithIdentifiers:identifiers];
+}
+
+- (void)getNotificationSettingsWithCompletionHandler:(void(^)(UNNotificationSettings *settings))completionHandler
+{
+    callOnMainRunLoop([completionHandler = makeBlockPtr(completionHandler), hasPermission = [notificationPermissions() containsObject:m_bundleIdentifier.get()]]() mutable {
+        RetainPtr settings = [UNMutableNotificationSettings emptySettings];
+        [settings setAuthorizationStatus:UNAuthorizationStatusAuthorized];
+        completionHandler(settings.get());
+    });
+}
+
+- (void)requestAuthorizationWithOptions:(UNAuthorizationOptions)options completionHandler:(void (^)(BOOL granted, NSError *))completionHandler
+{
+    [notificationPermissions() addObject:m_bundleIdentifier.get()];
+    callOnMainRunLoop([completionHandler = makeBlockPtr(completionHandler)] mutable {
+        completionHandler(YES, nil);
+    });
 }
 
 @end

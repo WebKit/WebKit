@@ -155,7 +155,8 @@ static inline RTCRtpEncodingParameters toRTCEncodingParameters(const GstStructur
     if (auto maxFramerate = gstStructureGet<uint64_t>(rtcParameters, "max-framerate"_s))
         parameters.maxFramerate = *maxFramerate;
 
-    parameters.rid = String::fromLatin1(gst_structure_get_string(rtcParameters, "rid"));
+    if (auto rid = gstStructureGetString(rtcParameters, "rid"_s))
+        parameters.rid = makeString(rid);
 
     if (auto scaleResolutionDownBy = gstStructureGet<double>(rtcParameters, "scale-resolution-down-by"_s))
         parameters.scaleResolutionDownBy = *scaleResolutionDownBy;
@@ -175,7 +176,8 @@ RTCRtpSendParameters toRTCRtpSendParameters(const GstStructure* rtcParameters)
         return { };
 
     RTCRtpSendParameters parameters;
-    parameters.transactionId = span(gst_structure_get_string(rtcParameters, "transaction-id"));
+    if (auto transactionId = gstStructureGetString(rtcParameters, "transaction-id"_s))
+        parameters.transactionId = makeString(transactionId);
 
     auto* encodings = gst_structure_get_value(rtcParameters, "encodings");
     unsigned size = gst_value_list_get_size(encodings);
@@ -484,7 +486,7 @@ uint32_t UniqueSSRCGenerator::generateSSRC()
     return std::numeric_limits<uint32_t>::max();
 }
 
-std::optional<int> payloadTypeForEncodingName(const char* encodingName)
+std::optional<int> payloadTypeForEncodingName(StringView encodingName)
 {
     static HashMap<String, int> staticPayloadTypes = {
         { "PCMU"_s, 0 },
@@ -492,7 +494,7 @@ std::optional<int> payloadTypeForEncodingName(const char* encodingName)
         { "G722"_s, 9 },
     };
 
-    auto key = String::fromLatin1(encodingName);
+    const auto key = encodingName.toStringWithoutCopying();
     if (staticPayloadTypes.contains(key))
         return staticPayloadTypes.get(key);
     return { };
@@ -520,9 +522,10 @@ GRefPtr<GstCaps> capsFromRtpCapabilities(RefPtr<UniqueSSRCGenerator> ssrcGenerat
         if (codec.channels && *codec.channels > 1)
             gst_structure_set(codecStructure, "encoding-params", G_TYPE_STRING, makeString(*codec.channels).ascii().data(), nullptr);
 
-        const char* encodingName = gst_structure_get_string(codecStructure, "encoding-name");
-        if (auto payloadType = payloadTypeForEncodingName(encodingName))
-            gst_structure_set(codecStructure, "payload", G_TYPE_INT, *payloadType, nullptr);
+        if (auto encodingName = gstStructureGetString(codecStructure, "encoding-name"_s)) {
+            if (auto payloadType = payloadTypeForEncodingName(encodingName))
+                gst_structure_set(codecStructure, "payload", G_TYPE_INT, *payloadType, nullptr);
+        }
 
         supplementCapsCallback(codecStructure);
 
@@ -592,8 +595,8 @@ GRefPtr<GstCaps> capsFromSDPMedia(const GstSDPMedia* media)
             gst_structure_remove_fields(structure, "a-setup", "a-ice-ufrag", "a-ice-pwd", "a-sendrecv", "a-inactive",
                 "a-sendonly", "a-recvonly", "a-end-of-candidates", nullptr);
 
-            if (const char* name = gst_structure_get_string(structure, "encoding-name")) {
-                auto encodingName = String(span(name)).convertToASCIIUppercase();
+            if (auto name = gstStructureGetString(structure, "encoding-name"_s)) {
+                auto encodingName = name.convertToASCIIUppercase();
                 gst_structure_set(structure, "encoding-name", G_TYPE_STRING, encodingName.ascii().data(), nullptr);
             }
 

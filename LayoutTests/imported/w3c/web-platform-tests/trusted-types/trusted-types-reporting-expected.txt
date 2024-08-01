@@ -1,14 +1,14 @@
 CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'three' because it violates the following Content Security Policy directive: "trusted-types one"
 CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'three' because it violates the following Content Security Policy directive: "trusted-types two"
-CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/trusted-types/dummy.webm because it does not appear in the object-src directive of the Content Security Policy.
 CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'two' because it violates the following Content Security Policy directive: "trusted-types one"
-CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/trusted-types/dummy.webm because it does not appear in the object-src directive of the Content Security Policy.
 CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'one' because it violates the following Content Security Policy directive: "trusted-types two"
-CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/trusted-types/dummy.webm because it does not appear in the object-src directive of the Content Security Policy.
 CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/trusted-types/dummy.webm because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/trusted-types/dummy.webm because it does not appear in the object-src directive of the Content Security Policy.
 CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
@@ -17,11 +17,11 @@ CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the fol
 CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/trusted-types/dummy.webm because it does not appear in the object-src directive of the Content Security Policy.
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/trusted-types/dummy.webm because it does not appear in the object-src directive of the Content Security Policy.
 
 abc
 

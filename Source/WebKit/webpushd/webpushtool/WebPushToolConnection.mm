@@ -32,6 +32,7 @@
 #import "PushClientConnectionMessages.h"
 #import "WebPushDaemonConnectionConfiguration.h"
 #import "WebPushDaemonConstants.h"
+#import <WebCore/SecurityOriginData.h>
 #import <mach/mach_init.h>
 #import <mach/task.h>
 #import <pal/spi/cocoa/ServersSPI.h>
@@ -112,7 +113,14 @@ void Connection::getPushPermissionState(const String& scope, CompletionHandler<v
 {
     printf("Getting push permission state\n");
 
-    sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushPermissionState(URL(scope)), WTFMove(completionHandler));
+    sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushPermissionState(WebCore::SecurityOriginData::fromURL(URL { scope })), WTFMove(completionHandler));
+}
+
+void Connection::requestPushPermission(const String& scope, CompletionHandler<void(bool)>&& completionHandler)
+{
+    printf("Request push permission state for %s\n", scope.utf8().data());
+
+    sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::RequestPushPermission(WebCore::SecurityOriginData::fromURL(URL { scope })), WTFMove(completionHandler));
 }
 
 void Connection::sendAuditToken()

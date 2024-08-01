@@ -20,6 +20,8 @@ namespace webrtc {
 
 class MockTransformableAudioFrame : public TransformableAudioFrameInterface {
  public:
+  MockTransformableAudioFrame() : TransformableAudioFrameInterface(Passkey()) {}
+
   MOCK_METHOD(rtc::ArrayView<const uint8_t>, GetData, (), (const, override));
   MOCK_METHOD(void, SetData, (rtc::ArrayView<const uint8_t>), (override));
   MOCK_METHOD(void, SetRTPTimestamp, (uint32_t), (override));

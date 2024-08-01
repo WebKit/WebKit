@@ -2520,51 +2520,6 @@ webkit.org/b/149828 imported/w3c/web-platform-tests/density-size-correction/dens
 webkit.org/b/149828 imported/w3c/web-platform-tests/density-size-correction/density-corrected-size-bg.html [ ImageOnlyFailure ]
 webkit.org/b/149828 imported/w3c/web-platform-tests/css/css-will-change/will-change-transform-zero-size-child-overflow-visible.html [ Pass ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-001.html
-imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-002.html
-imported/w3c/web-platform-tests/css/css-multicol/large-actual-column-count.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-000.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-004.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-005.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-000.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-004.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-005.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-auto-block-children-002.xht [ ImageOnlyFailure ] # only scrollbar webkit.org/b/148818
-imported/w3c/web-platform-tests/css/css-multicol/multicol-inherit-003.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-002.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-003.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-004.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-005.xht [ ImageOnlyFailure ]
-webkit.org/b/148816 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-004.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-001.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-002.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-003.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-004.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-004.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-010.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-button-001.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-button-002.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-button-003.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-height-005.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-height-008.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-002.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-001.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-002.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-rule-001.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-under-vertical-rl-scroll.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-width-004.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-width-005.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-width-ch-001.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/orthogonal-writing-mode-shrink-to-fit.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/with-custom-layout-on-same-element.https.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-height-003.html [ Skip ] # times out
-
 webkit.org/b/148884 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection.html [ Pass Failure ]
 
 # Tests require WTR and disabling of user installed fonts. Reenabling them in supported platforms
@@ -2784,7 +2739,6 @@ crypto/workers/subtle/rsa-pss-import-key-sign.html [ Skip ]
 crypto/workers/subtle/rsa-pss-import-key-verify.html [ Skip ]
 http/wpt/crypto/rsa-pss-crash.any.html [ Skip ]
 http/wpt/crypto/rsa-pss-crash.any.worker.html [ Skip ]
-editing/deleting/delete-emoji.html [ Slow ]
 
 # New emoji requires system support.
 webkit.org/b/159755 fast/text/emoji-num-glyphs.html [ Failure Timeout ]
@@ -3662,6 +3616,7 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping-2.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic.html [ ImageOnlyFailure ]
+webkit.org/b/277218 [ Debug ] imported/w3c/web-platform-tests/css/css-images/radial-gradient-transition-hint-crash.html [ Skip ]
 
 webkit.org/b/187773 http/tests/webAPIStatistics [ Skip ]
 
@@ -5220,9 +5175,138 @@ imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-match
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-latin.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-square.html [ ImageOnlyFailure ]
 
+# -- CSS multicol -- #
 webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-balance-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-balance-021.html [ Failure ]
 webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/multicol-list-item-002.html [ ImageOnlyFailure ]
 webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/nested-with-too-tall-line.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/abspos-after-spanner-static-pos.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/abspos-after-spanner.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/abspos-autopos-contained-by-viewport-000.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/abspos-autopos-contained-by-viewport-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/balance-break-avoidance-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/balance-break-avoidance-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/balance-orphans-widows-000.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/baseline-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/baseline-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/baseline-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/baseline-006.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/baseline-007.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/change-transform-in-nested.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/fixed-in-multicol-with-transform-container.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/fixed-in-nested-multicol-with-transform-container.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/fixedpos-static-pos-with-viewport-cb-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/fixedpos-static-pos-with-viewport-cb-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/fixedpos-static-pos-with-viewport-cb-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/intrinsic-size-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/intrinsic-size-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/intrinsic-size-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/intrinsic-size-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/large-actual-column-count.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-000.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-000.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-auto-block-children-002.xht [ ImageOnlyFailure ] # only scrollbar webkit.org/b/148818
+imported/w3c/web-platform-tests/css/css-multicol/multicol-inherit-003.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-002.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-003.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-004.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-005.xht [ ImageOnlyFailure ]
+webkit.org/b/148816 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-004.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-010.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-button-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-button-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-button-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-height-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-height-008.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-002.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-001.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-002.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-rule-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-under-vertical-rl-scroll.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-width-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-width-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/orthogonal-writing-mode-shrink-to-fit.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/with-custom-layout-on-same-element.https.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-height-003.html [ Skip ] # times out
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-006.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-balance-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-balance-029.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-balance-nested-000.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-007.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-008.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-009.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-010.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-011.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-013.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-014.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-015.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-016.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-017.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-018.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-019.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-020.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-021.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-022.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-023.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-024.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-026.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-030.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-031.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-column-rule-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-oof-inline-cb-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-overflow-clip-auto-sized.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-scroll-content.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-014.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-015.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-017.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-018.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-019.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-height-009.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-height-010.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-height-012.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-float-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-float-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-zero-height-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/nested-floated-multicol-with-monolithic-child.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/nested-past-fragmentation-line.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/overflow-unsplittable-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/overflow-unsplittable-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/overflow-unsplittable-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/spanner-fragmentation-009.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/spanner-fragmentation-011.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/spanner-in-child-after-parallel-flow-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/spanner-in-opacity.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/subpixel-column-rule-width.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/table/table-cell-multicol-nested-002.html [ ImageOnlyFailure ]
+
+# Crashes
+imported/w3c/web-platform-tests/css/css-multicol/crashtests/break-before-multicol-caption.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-multicol/crashtests/inline-float-parallel-flow.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-multicol/crashtests/multicol-table-caption-parallel-flow-after-spanner-in-inline.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-multicol/crashtests/nested-with-multicol-table-caption.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-multicol/crashtests/repeated-table-footer-in-caption-nested-multicol.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-multicol/crashtests/table-caption-in-clipped-overflow.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-multicol/crashtests/table-caption-inline-block-remove-child.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-004.html [ Skip ]
+
+# -- End CSS multicol -- #
 
 webkit.org/b/214459 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-editing-input.html [ ImageOnlyFailure ]
 webkit.org/b/214459 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-vertical-001.html [ ImageOnlyFailure ]
@@ -5402,8 +5486,27 @@ webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html
 webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer.html [ Skip ]
 webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Skip ]
 
+# Container queries
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/custom-layout-container-001.https.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/inline-size-bfc-floats.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/no-layout-containment-abspos-dynamic.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/no-layout-containment-abspos.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/no-layout-containment-baseline.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/no-layout-containment-fixedpos-dynamic.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/no-layout-containment-fixedpos.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/pseudo-elements-010.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/svg-foreignobject-no-size-container.html [ Crash ]
+
 # CSS containment tests that fail
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-contain/contain-layout-button-001.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-contain/contain-layout-button-002.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-contain/contain-style-counters-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-contain/contain-style-counters-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-contain/contain-style-counters-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-095.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-vs-scrollIntoView-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-vs-scrollIntoView-002.html [ ImageOnlyFailure ]
 
 # Style containment
 imported/w3c/web-platform-tests/css/css-contain/counter-scoping-001.html [ ImageOnlyFailure ]
@@ -5416,14 +5519,6 @@ imported/w3c/web-platform-tests/css/css-contain/quote-scoping-004.html [ ImageOn
 imported/w3c/web-platform-tests/css/css-contain/quote-scoping-invalidation-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/quote-scoping-invalidation-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/quote-scoping-invalidation-004.html [ ImageOnlyFailure ]
-
-# Container queries
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/custom-layout-container-001.https.html [ ImageOnlyFailure ]
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/inline-size-bfc-floats.html [ ImageOnlyFailure ]
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/container-for-cue.html [ Skip ]
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-009.html [ Pass ImageOnlyFailure ]
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-010.html [ ImageOnlyFailure ]
-webkit.org/b/241778 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/container-queries/svg-foreignobject-no-size-container.html [ Skip ]
 
 # Flaky css-contain test
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/animation-display-lock.html [ Failure Pass ]
@@ -5515,6 +5610,9 @@ webkit.org/b/234690 imported/w3c/web-platform-tests/css/css-color/inline-opacity
 
 # 1 difference in color (rounding error)
 webkit.org/b/256888 imported/w3c/web-platform-tests/css/css-color/color-mix-basic-001.html [ ImageOnlyFailure ]
+
+# ASSERT_NOT_REACHED in CSSCalcPrimitiveValueNode::doubleValue() after import webkit.org/b/277239
+webkit.org/b/277244 [ Debug ] imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-color-mix-function.html [ Skip ]
 
 # display-p3 canvas and ImageData are Cocoa only for now.
 fast/canvas/canvas-color-space-display-p3-ImageData.html [ Failure ]
@@ -5875,13 +5973,12 @@ webkit.org/b/261849 imported/w3c/web-platform-tests/css/css-scroll-anchoring/sta
 
 # Trusted Types aren't fully implemented yet
 webkit.org/b/272196 imported/w3c/web-platform-tests/trusted-types/trusted-types-createHTMLDocument.html [ Pass Failure ]
-webkit.org/b/274519 imported/w3c/web-platform-tests/trusted-types/HTMLScriptElement-in-xhtml-document.tentative.https.xhtml [ Skip ]
-webkit.org/b/274519 imported/w3c/web-platform-tests/trusted-types/Document-write-exception-order.xhtml [ Skip ]
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-importScripts.html [ Pass Failure ]
 webkit.org/b/274089 imported/w3c/web-platform-tests/trusted-types/trusted-types-from-literal.tentative.html [ Pass Failure ]
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-navigation.html [ Pass Failure ]
 webkit.org/b/274088 imported/w3c/web-platform-tests/trusted-types/Element-setAttribute-respects-Elements-node-documents-globals-CSP.html [ Pass Failure ]
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-eval.html [ Pass Failure ]
+webkit.org/b/277256 imported/w3c/web-platform-tests/trusted-types/block-text-node-insertion-into-svg-script-element.html [ Skip ]
 
 # Close watchers aren't implemented yet
 webkit.org/b/263305 imported/w3c/web-platform-tests/close-watcher/user-activation/n-activate-preventDefault.html?dialog [ Skip ]
@@ -6834,10 +6931,7 @@ imported/w3c/web-platform-tests/css/css-ruby/rbc-rtc-basic-001.html [ ImageOnlyF
 imported/w3c/web-platform-tests/css/css-ruby/root-block-ruby.xhtml [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/root-ruby.xhtml [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/rt-display-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ruby/ruby-align-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-align-001a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ruby/ruby-align-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ruby/ruby-align-002a.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-annotation-pairing-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-autohide-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-autohide-002.html [ ImageOnlyFailure ]
@@ -7009,11 +7103,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-top-navigation-child.tentative.sub.window.html [ DumpJSConsoleLogInStdErr Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-top-navigation-grandchild.tentative.sub.window.html [ DumpJSConsoleLogInStdErr Pass Failure ]
 
-
-# Skipping scrollbar-gutter tests until the feature gets implemented. webkit.org/b/167335
-imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrollbar-gutter-intrinsic-001.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrollbar-gutter-intrinsic-002.html [ Skip ]
-
 webkit.org/b/257336 imported/w3c/web-platform-tests/css/css-tables/visibility-collapse-row-003-dynamic.html [ Pass Failure ]
 
 # Only Sonoma+/iOS 17+ have support for auto word breaking. Skipped globally and re-enabled for each platform.
@@ -7159,11 +7248,7 @@ imported/w3c/web-platform-tests/css/css-inline/initial-letter/initial-letter-sun
 imported/w3c/web-platform-tests/css/css-inline/initial-letter/initial-letter-with-first-line.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-inline/initial-letter/initial-letter-with-tab-rtl.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-inline/initial-letter/initial-letter-with-tab.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-half-leading-block-box-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-atomic-inline-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-block-in-inline-start-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-block-in-inline-start-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-block-in-inline-start-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-end-empty-line-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-half-leading-block-box-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-initial-letter-start-001.html [ ImageOnlyFailure ]
@@ -7200,8 +7285,6 @@ imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-start
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-start-001.html?class=vrl,ex [ Skip ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-start-001.html?class=vrl,leading [ Skip ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-start-001.html?class=vrl,text [ Skip ]
-imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-dynamic-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-dynamic-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/245032 imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-004.html [ ImageOnlyFailure ]
 

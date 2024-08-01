@@ -5485,6 +5485,24 @@
                 "url": "https://www.w3.org/TR/CSS22/visuren.html#propdef-right"
             }
         },
+        "ruby-align": {
+            "inherited": true,
+            "values": [
+                "start",
+                "center",
+                "space-between",
+                "space-around"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssRubyAlignEnabled",
+                "parser-grammar": "<<values>>"
+            },
+            "specification": {
+                "category": "css-ruby",
+                "url": "https://www.w3.org/TR/css-ruby-1/#ruby-align-property"
+            },
+            "status": "in development"
+        },
         "rx": {
             "values": [
                 "auto"

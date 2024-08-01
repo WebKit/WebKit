@@ -90,6 +90,7 @@
 /third_party/r8/lib
 /third_party/rapidjson/src
 /third_party/requests/src
+/third_party/rust-toolchain
 /third_party/six
 /third_party/spirv-cross/src
 /third_party/spirv-headers/src
@@ -123,6 +124,7 @@
 /tools/perf
 /tools/protoc_wrapper
 /tools/python
+/tools/rust
 /tools/skia_goldctl
 /tools/valgrind
 angle.iml

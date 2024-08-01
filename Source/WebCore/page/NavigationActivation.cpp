@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NavigationActivation.h"
 
+#include "NavigationHistoryEntry.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

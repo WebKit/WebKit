@@ -52,8 +52,6 @@ class RateControlSettings final {
   RateControlSettings(RateControlSettings&&);
   ~RateControlSettings();
 
-  static RateControlSettings ParseFromFieldTrials();
-
   // When CongestionWindowPushback is enabled, the pacer is oblivious to
   // the congestion window. The relation between outstanding data and
   // the congestion window affects encoder allocations directly.

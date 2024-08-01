@@ -416,7 +416,7 @@ public:
     void statisticsDidModifyDataRecordsCallback();
     void statisticsDidScanDataRecordsCallback();
     bool statisticsNotifyObserver();
-    void statisticsProcessStatisticsAndDataRecords();
+    void statisticsProcessStatisticsAndDataRecords(JSContextRef, JSValueRef completionHandler);
     void statisticsUpdateCookieBlocking(JSContextRef, JSValueRef completionHandler);
     void setStatisticsDebugMode(JSContextRef, bool value, JSValueRef completionHandler);
     void setStatisticsPrevalentResourceForDebugMode(JSContextRef, JSStringRef hostName, JSValueRef completionHandler);
@@ -454,7 +454,7 @@ public:
     void statisticsClearInMemoryAndPersistentStore(JSContextRef, JSValueRef callback);
     void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(JSContextRef, unsigned hours, JSValueRef callback);
     void statisticsClearThroughWebsiteDataRemoval(JSContextRef, JSValueRef callback);
-    void statisticsDeleteCookiesForHost(JSStringRef hostName, bool includeHttpOnlyCookies);
+    void statisticsDeleteCookiesForHost(JSContextRef, JSStringRef hostName, bool includeHttpOnlyCookies, JSValueRef callback);
     bool isStatisticsHasLocalStorage(JSStringRef hostName);
     void setStatisticsCacheMaxAgeCap(double seconds);
     bool hasStatisticsIsolatedSession(JSStringRef hostName);

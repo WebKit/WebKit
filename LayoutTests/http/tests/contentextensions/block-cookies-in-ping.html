@@ -22,16 +22,16 @@ function loadLinkWithPing() {
     );
 }
 
-function clickOnLinkWithPing() {
+async function clickOnLinkWithPing() {
     var iframe = document.getElementById("link_frame");
     var iframeDoc = iframe.contentDocument;
     if (window.eventSender) {
         var a = iframeDoc.getElementById("a");
         var x = iframe.offsetLeft + a.offsetLeft + 2;
         var y = iframe.offsetTop + a.offsetTop + 2;
-        eventSender.mouseMoveTo(x, y);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(x, y);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
     }
 }
 

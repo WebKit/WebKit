@@ -1,0 +1,3 @@
+
+FAIL Ruby text should affect column height assert_equals: expected 100 but got 70
+

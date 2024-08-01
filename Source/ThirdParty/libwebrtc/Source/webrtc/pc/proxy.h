@@ -21,7 +21,7 @@
 //
 // Example usage:
 //
-// class TestInterface : public rtc::RefCountInterface {
+// class TestInterface : public RefCountInterface {
 //  public:
 //   std::string FooA() = 0;
 //   std::string FooB(bool arg1) const = 0;

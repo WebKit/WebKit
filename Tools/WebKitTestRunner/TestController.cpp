@@ -1073,7 +1073,6 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
         if (enableAllExperimentalFeatures) {
             WKPreferencesEnableAllExperimentalFeatures(preferences);
             WKPreferencesSetExperimentalFeatureForKey(preferences, false, toWK("SiteIsolationEnabled").get());
-            WKPreferencesSetExperimentalFeatureForKey(preferences, false, toWK("CFNetworkNetworkLoaderEnabled").get());
             WKPreferencesSetExperimentalFeatureForKey(preferences, true, toWK("WebGPUEnabled").get());
             WKPreferencesSetExperimentalFeatureForKey(preferences, false, toWK("HTTPSByDefaultEnabled").get());
         }
@@ -1967,6 +1966,25 @@ void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messag
         WKMessageListenerSendReply(listener.get(), reply);
     };
 
+    if (WKStringIsEqualToUTF8CString(messageName, "EventSender")) {
+        auto dictionary = dictionaryValue(messageBody);
+        auto subMessageName = stringValue(dictionary, "SubMessage");
+
+        if (WKStringIsEqualToUTF8CString(subMessageName, "MouseDown"))
+            m_eventSenderProxy->mouseDown(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"), stringValue(dictionary, "PointerType"));
+        else if (WKStringIsEqualToUTF8CString(subMessageName, "MouseUp"))
+            m_eventSenderProxy->mouseUp(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"), stringValue(dictionary, "PointerType"));
+        else if (WKStringIsEqualToUTF8CString(subMessageName, "MouseMoveTo"))
+            m_eventSenderProxy->mouseMoveTo(doubleValue(dictionary, "X"), doubleValue(dictionary, "Y"), stringValue(dictionary, "PointerType"));
+        else {
+            ASSERT_NOT_REACHED();
+            return completionHandler(nullptr);
+        }
+
+        m_eventSenderProxy->waitForPendingMouseEvents();
+        return completionHandler(nullptr);
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "FlushConsoleLogs"))
         return completionHandler(nullptr);
 
@@ -2093,6 +2111,16 @@ void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messag
         statisticsResetToConsistentState();
         return completionHandler(nullptr);
     }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsDeleteCookiesForHost")) {
+        auto messageBodyDictionary = dictionaryValue(messageBody);
+        auto hostName = stringValue(messageBodyDictionary, "HostName");
+        auto includeHttpOnlyCookies = booleanValue(messageBodyDictionary, "IncludeHttpOnlyCookies");
+        return TestController::singleton().statisticsDeleteCookiesForHost(hostName, includeHttpOnlyCookies, WTFMove(completionHandler));
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsProcessStatisticsAndDataRecords"))
+        return TestController::singleton().statisticsProcessStatisticsAndDataRecords(WTFMove(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(messageName, "AddChromeInputField")) {
         mainWebView()->addChromeInputField();
@@ -3928,11 +3956,9 @@ void TestController::setStatisticsTimeToLiveUserInteraction(double seconds)
     runUntil(context.done, noTimeout);
 }
 
-void TestController::statisticsProcessStatisticsAndDataRecords()
+void TestController::statisticsProcessStatisticsAndDataRecords(CompletionHandler<void(WKTypeRef)>&& completionHandler)
 {
-    ResourceStatisticsCallbackContext context(*this);
-    WKWebsiteDataStoreStatisticsProcessStatisticsAndDataRecords(websiteDataStore(), &context, resourceStatisticsVoidResultCallback);
-    runUntil(context.done, noTimeout);
+    WKWebsiteDataStoreStatisticsProcessStatisticsAndDataRecords(websiteDataStore(), completionHandler.leak(), adoptAndCallCompletionHandler);
 }
 
 void TestController::statisticsUpdateCookieBlocking(CompletionHandler<void(WKTypeRef)>&& completionHandler)
@@ -3999,11 +4025,9 @@ void TestController::statisticsClearThroughWebsiteDataRemoval(CompletionHandler<
     WKWebsiteDataStoreStatisticsClearThroughWebsiteDataRemoval(websiteDataStore(), completionHandler.leak(), adoptAndCallCompletionHandler);
 }
 
-void TestController::statisticsDeleteCookiesForHost(WKStringRef host, bool includeHttpOnlyCookies)
+void TestController::statisticsDeleteCookiesForHost(WKStringRef host, bool includeHttpOnlyCookies, CompletionHandler<void(WKTypeRef)>&& completionHandler)
 {
-    ResourceStatisticsCallbackContext context(*this);
-    WKWebsiteDataStoreStatisticsDeleteCookiesForTesting(websiteDataStore(), host, includeHttpOnlyCookies, &context, resourceStatisticsVoidResultCallback);
-    runUntil(context.done, noTimeout);
+    WKWebsiteDataStoreStatisticsDeleteCookiesForTesting(websiteDataStore(), host, includeHttpOnlyCookies, completionHandler.leak(), adoptAndCallCompletionHandler);
 }
 
 bool TestController::isStatisticsHasLocalStorage(WKStringRef host)

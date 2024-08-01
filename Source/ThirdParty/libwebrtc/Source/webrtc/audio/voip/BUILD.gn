@@ -20,6 +20,7 @@ rtc_library("voip_core") {
     "../../api/audio:audio_device",
     "../../api/audio:audio_processing",
     "../../api/audio_codecs:audio_codecs_api",
+    "../../api/environment",
     "../../api/task_queue",
     "../../api/voip:voip_api",
     "../../modules/audio_mixer:audio_mixer_impl",
@@ -27,7 +28,6 @@ rtc_library("voip_core") {
     "../../rtc_base:logging",
     "../../rtc_base/synchronization:mutex",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("audio_channel") {
@@ -74,8 +74,8 @@ rtc_library("audio_ingress") {
     "../../rtc_base:timeutils",
     "../../rtc_base/synchronization:mutex",
     "../utility:audio_frame_operations",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("audio_egress") {

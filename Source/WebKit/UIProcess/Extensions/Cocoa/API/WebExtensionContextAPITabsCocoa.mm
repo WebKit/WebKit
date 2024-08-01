@@ -578,7 +578,7 @@ void WebExtensionContext::tabsExecuteScript(WebPageProxyIdentifier webPageProxyI
             return;
         }
 
-        auto *webView = tab->mainWebView();
+        auto *webView = tab->webView();
         if (!webView) {
             completionHandler(toWebExtensionError(apiName, nil, @"could not execute script in tab"));
             return;
@@ -619,7 +619,7 @@ void WebExtensionContext::tabsInsertCSS(WebPageProxyIdentifier webPageProxyIdent
             return;
         }
 
-        auto *webView = tab->mainWebView();
+        auto *webView = tab->webView();
         if (!webView) {
             completionHandler(toWebExtensionError(apiName, nil, @"could not inject stylesheet on this tab"));
             return;
@@ -645,7 +645,7 @@ void WebExtensionContext::tabsRemoveCSS(WebPageProxyIdentifier webPageProxyIdent
         return;
     }
 
-    auto *webView = tab->mainWebView();
+    auto *webView = tab->webView();
     if (!webView) {
         completionHandler(toWebExtensionError(apiName, nil, @"could not remove stylesheet on this tab"));
         return;

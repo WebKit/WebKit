@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 
+#include "CSSParserIdioms.h"
 #include "CSSValuePool.h"
 
 namespace WebCore {

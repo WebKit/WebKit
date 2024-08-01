@@ -139,6 +139,8 @@
 		4426E2811C838EE0008EB042 /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 4426E27F1C838EE0008EB042 /* Logging.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52F47249210BA30200B730BB /* MemoryStatusSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 52F47248210BA2F500B730BB /* MemoryStatusSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65072AE72B6195B90065065C /* TZoneHeapManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65072AE52B6195B90065065C /* TZoneHeapManager.cpp */; };
+		652E16972C4869D000C377D7 /* TZoneLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652E16962C4869D000C377D7 /* TZoneLog.cpp */; };
+		652E16982C4869D000C377D7 /* TZoneLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 652E16952C4869D000C377D7 /* TZoneLog.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6599C5CC1EC3F15900A2F7BB /* AvailableMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6599C5CA1EC3F15900A2F7BB /* AvailableMemory.cpp */; };
 		6599C5CD1EC3F15900A2F7BB /* AvailableMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6599C5CB1EC3F15900A2F7BB /* AvailableMemory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65FE739D2B79E09800C5CDAF /* TZoneHeapManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 65072AE62B6195B90065065C /* TZoneHeapManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1361,6 +1363,8 @@
 		52F47248210BA2F500B730BB /* MemoryStatusSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MemoryStatusSPI.h; path = bmalloc/darwin/MemoryStatusSPI.h; sourceTree = "<group>"; };
 		65072AE52B6195B90065065C /* TZoneHeapManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TZoneHeapManager.cpp; path = bmalloc/TZoneHeapManager.cpp; sourceTree = "<group>"; };
 		65072AE62B6195B90065065C /* TZoneHeapManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TZoneHeapManager.h; path = bmalloc/TZoneHeapManager.h; sourceTree = "<group>"; };
+		652E16952C4869D000C377D7 /* TZoneLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TZoneLog.h; path = bmalloc/TZoneLog.h; sourceTree = "<group>"; };
+		652E16962C4869D000C377D7 /* TZoneLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TZoneLog.cpp; path = bmalloc/TZoneLog.cpp; sourceTree = "<group>"; };
 		6599C5CA1EC3F15900A2F7BB /* AvailableMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AvailableMemory.cpp; path = bmalloc/AvailableMemory.cpp; sourceTree = "<group>"; };
 		6599C5CB1EC3F15900A2F7BB /* AvailableMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AvailableMemory.h; path = bmalloc/AvailableMemory.h; sourceTree = "<group>"; };
 		7939885A2076EEB50074A2E7 /* BulkDecommit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BulkDecommit.h; path = bmalloc/BulkDecommit.h; sourceTree = "<group>"; };
@@ -1496,6 +1500,8 @@
 				FE0383222ABC988C00A576A2 /* TZoneHeapInlines.h */,
 				65072AE52B6195B90065065C /* TZoneHeapManager.cpp */,
 				65072AE62B6195B90065065C /* TZoneHeapManager.h */,
+				652E16962C4869D000C377D7 /* TZoneLog.cpp */,
+				652E16952C4869D000C377D7 /* TZoneLog.h */,
 			);
 			name = iso;
 			sourceTree = "<group>";
@@ -2312,6 +2318,7 @@
 				FE0383202ABC0E9F00A576A2 /* TZoneHeap.h in Headers */,
 				FE0383232ABC988C00A576A2 /* TZoneHeapInlines.h in Headers */,
 				65FE739D2B79E09800C5CDAF /* TZoneHeapManager.h in Headers */,
+				652E16982C4869D000C377D7 /* TZoneLog.h in Headers */,
 				14DD78CE18F48D7500950799 /* valgrind.h in Headers */,
 				14DD78CF18F48D7500950702 /* Vector.h in Headers */,
 				14DD78D018F48D7500950702 /* VMAllocate.h in Headers */,
@@ -2871,6 +2878,7 @@
 				0F5BF1521F22E1570029D91D /* Scavenger.cpp in Sources */,
 				FE0383212ABC0E9F00A576A2 /* TZoneHeap.cpp in Sources */,
 				65072AE72B6195B90065065C /* TZoneHeapManager.cpp in Sources */,
+				652E16972C4869D000C377D7 /* TZoneLog.cpp in Sources */,
 				1440AFCD1A9527AF00837FAA /* Zone.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

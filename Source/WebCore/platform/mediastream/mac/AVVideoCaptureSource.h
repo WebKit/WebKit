@@ -104,7 +104,7 @@ private:
     bool interrupted() const final;
 
     VideoFrameRotation videoFrameRotation() const final { return m_videoFrameRotation; }
-    void setFrameRateAndZoomWithPreset(double, double, std::optional<VideoPreset>&&) final;
+    void applyFrameRateAndZoomWithPreset(double, double, std::optional<VideoPreset>&&) final;
     void generatePresets() final;
     bool canResizeVideoFrames() const final { return true; }
 

@@ -42,6 +42,8 @@ struct dsa_st {
   CRYPTO_EX_DATA ex_data;
 };
 
+#define OPENSSL_DSA_MAX_MODULUS_BITS 10000
+
 // dsa_check_key performs cheap self-checks on |dsa|, and ensures it is within
 // DoS bounds. It returns one on success and zero on error.
 int dsa_check_key(const DSA *dsa);
