@@ -230,13 +230,13 @@ Write-Host ":: Packaging ${output}"
 
 Remove-Item -Recurse -ErrorAction SilentlyContinue $output
 $null = mkdir -ErrorAction SilentlyContinue $output
-$null = mkdir -ErrorAction SilentlyContinue $output/lib
 $null = mkdir -ErrorAction SilentlyContinue $output/include
 $null = mkdir -ErrorAction SilentlyContinue $output/include/JavaScriptCore
 $null = mkdir -ErrorAction SilentlyContinue $output/include/wtf
 
+Copy-Item -Recurse $WebKitBuild/lib $output
+
 Copy-Item $WebKitBuild/cmakeconfig.h $output/include/cmakeconfig.h
-Copy-Item -Recurse $WebKitBuild/lib $output/lib
 Copy-Item -Recurse $WebKitBuild/bin $output/bin
 
 if ($CMAKE_BUILD_TYPE -eq "Release") {
