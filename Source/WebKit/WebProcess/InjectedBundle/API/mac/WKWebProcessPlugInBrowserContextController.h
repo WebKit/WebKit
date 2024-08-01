@@ -39,7 +39,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 @property (readonly) WKDOMRange *selectedRange;
 
-@property (readonly) WKWebProcessPlugInFrame *mainFrame;
+@property (readonly) WKWebProcessPlugInFrame *mainFrame WK_API_DEPRECATED("With site isolation, the main frame is not necessarily local to the current bundle process.", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 
 @property (weak) id <WKWebProcessPlugInLoadDelegate> loadDelegate;
 

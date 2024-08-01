@@ -246,7 +246,9 @@ void TestRunner::notifyDone()
     if (!injectedBundle.isTestRunning())
         return;
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     bool mainFrameIsRemote = WKBundleFrameIsRemote(WKBundlePageGetMainFrame(injectedBundle.pageRef()));
+    ALLOW_DEPRECATED_DECLARATIONS_END
     if (mainFrameIsRemote) {
         setWaitUntilDone(false);
         return postPageMessage("NotifyDone");
