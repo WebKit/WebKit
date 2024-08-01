@@ -185,8 +185,8 @@ PlaybackSessionManager::PlaybackSessionManager(WebPage& page)
 PlaybackSessionManager::~PlaybackSessionManager()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    for (auto& [model, interface] : m_contextMap.values()) {
-        model->removeClient(*interface);
+    for (auto [model, interface] : m_contextMap.values()) {
+        model->removeClient(interface);
         model->setMediaElement(nullptr);
 
         interface->invalidate();
@@ -217,35 +217,34 @@ PlaybackSessionManager::ModelInterfaceTuple PlaybackSessionManager::createModelA
     return std::make_tuple(WTFMove(model), WTFMove(interface));
 }
 
-PlaybackSessionManager::ModelInterfaceTuple& PlaybackSessionManager::ensureModelAndInterface(PlaybackSessionContextIdentifier contextId)
+const PlaybackSessionManager::ModelInterfaceTuple& PlaybackSessionManager::ensureModelAndInterface(PlaybackSessionContextIdentifier contextId)
 {
-    auto addResult = m_contextMap.add(contextId, ModelInterfaceTuple());
-    if (addResult.isNewEntry)
-        addResult.iterator->value = createModelAndInterface(contextId);
+    auto addResult = m_contextMap.ensure(contextId, [&] {
+        return createModelAndInterface(contextId);
+    });
     return addResult.iterator->value;
 }
 
-WebCore::PlaybackSessionModelMediaElement& PlaybackSessionManager::ensureModel(PlaybackSessionContextIdentifier contextId)
+Ref<WebCore::PlaybackSessionModelMediaElement> PlaybackSessionManager::ensureModel(PlaybackSessionContextIdentifier contextId)
 {
-    return *std::get<0>(ensureModelAndInterface(contextId));
+    return std::get<0>(ensureModelAndInterface(contextId));
 }
 
-PlaybackSessionInterfaceContext& PlaybackSessionManager::ensureInterface(PlaybackSessionContextIdentifier contextId)
+Ref<PlaybackSessionInterfaceContext> PlaybackSessionManager::ensureInterface(PlaybackSessionContextIdentifier contextId)
 {
-    return *std::get<1>(ensureModelAndInterface(contextId));
+    return std::get<1>(ensureModelAndInterface(contextId));
 }
 
 void PlaybackSessionManager::removeContext(PlaybackSessionContextIdentifier contextId)
 {
-    auto [model, interface] = m_contextMap.get(contextId);
-    ASSERT(model);
-    ASSERT(interface);
-    if (!model || !interface)
+    auto it = m_contextMap.find(contextId);
+    if (it == m_contextMap.end())
         return;
+    auto [model, interface] = it->value;
 
-    model->removeClient(*interface);
+    model->removeClient(interface);
     interface->invalidate();
-    m_contextMap.remove(contextId);
+    m_contextMap.remove(it);
 
     RefPtr mediaElement = model->mediaElement();
     ASSERT(mediaElement);
@@ -273,7 +272,7 @@ void PlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaElem
     auto contextId = mediaElement.identifier();
     auto result = m_mediaElements.add(mediaElement);
     if (result.isNewEntry) {
-        ensureModel(contextId).setMediaElement(&mediaElement);
+        ensureModel(contextId)->setMediaElement(&mediaElement);
 #if !RELEASE_LOG_DISABLED
         sendLogIdentifierForMediaElement(mediaElement);
 #endif
@@ -334,7 +333,7 @@ void PlaybackSessionManager::mediaEngineChanged(HTMLMediaElement& mediaElement)
 PlaybackSessionContextIdentifier PlaybackSessionManager::contextIdForMediaElement(WebCore::HTMLMediaElement& mediaElement)
 {
     auto contextId = mediaElement.identifier();
-    ensureModel(contextId).setMediaElement(&mediaElement);
+    ensureModel(contextId)->setMediaElement(&mediaElement);
     return contextId;
 }
 
@@ -448,79 +447,79 @@ void PlaybackSessionManager::isInWindowFullscreenActiveChanged(PlaybackSessionCo
 void PlaybackSessionManager::play(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).play();
+    ensureModel(contextId)->play();
 }
 
 void PlaybackSessionManager::pause(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).pause();
+    ensureModel(contextId)->pause();
 }
 
 void PlaybackSessionManager::togglePlayState(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).togglePlayState();
+    ensureModel(contextId)->togglePlayState();
 }
 
 void PlaybackSessionManager::beginScrubbing(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).beginScrubbing();
+    ensureModel(contextId)->beginScrubbing();
 }
 
 void PlaybackSessionManager::endScrubbing(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).endScrubbing();
+    ensureModel(contextId)->endScrubbing();
 }
 
 void PlaybackSessionManager::seekToTime(PlaybackSessionContextIdentifier contextId, double time, double toleranceBefore, double toleranceAfter)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).seekToTime(time, toleranceBefore, toleranceAfter);
+    ensureModel(contextId)->seekToTime(time, toleranceBefore, toleranceAfter);
 }
 
 void PlaybackSessionManager::fastSeek(PlaybackSessionContextIdentifier contextId, double time)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).fastSeek(time);
+    ensureModel(contextId)->fastSeek(time);
 }
 
 void PlaybackSessionManager::beginScanningForward(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).beginScanningForward();
+    ensureModel(contextId)->beginScanningForward();
 }
 
 void PlaybackSessionManager::beginScanningBackward(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).beginScanningBackward();
+    ensureModel(contextId)->beginScanningBackward();
 }
 
 void PlaybackSessionManager::endScanning(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).endScanning();
+    ensureModel(contextId)->endScanning();
 }
 
 void PlaybackSessionManager::setDefaultPlaybackRate(PlaybackSessionContextIdentifier contextId, float defaultPlaybackRate)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).setDefaultPlaybackRate(defaultPlaybackRate);
+    ensureModel(contextId)->setDefaultPlaybackRate(defaultPlaybackRate);
 }
 
 void PlaybackSessionManager::setPlaybackRate(PlaybackSessionContextIdentifier contextId, float playbackRate)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).setPlaybackRate(playbackRate);
+    ensureModel(contextId)->setPlaybackRate(playbackRate);
 }
 
 void PlaybackSessionManager::selectAudioMediaOption(PlaybackSessionContextIdentifier contextId, uint64_t index)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).selectAudioMediaOption(index);
+    ensureModel(contextId)->selectAudioMediaOption(index);
 }
 
 void PlaybackSessionManager::selectLegibleMediaOption(PlaybackSessionContextIdentifier contextId, uint64_t index)
@@ -536,64 +535,64 @@ void PlaybackSessionManager::selectLegibleMediaOption(PlaybackSessionContextIden
 
 void PlaybackSessionManager::handleControlledElementIDRequest(PlaybackSessionContextIdentifier contextId)
 {
-    if (RefPtr element = ensureModel(contextId).mediaElement())
+    if (RefPtr element = ensureModel(contextId)->mediaElement())
         m_page->send(Messages::PlaybackSessionManagerProxy::HandleControlledElementIDResponse(contextId, element->getIdAttribute()));
 }
 
 void PlaybackSessionManager::togglePictureInPicture(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).togglePictureInPicture();
+    ensureModel(contextId)->togglePictureInPicture();
 }
 
 void PlaybackSessionManager::enterFullscreen(PlaybackSessionContextIdentifier contextId)
 {
-    ensureModel(contextId).enterFullscreen();
+    ensureModel(contextId)->enterFullscreen();
 }
 
 void PlaybackSessionManager::exitFullscreen(PlaybackSessionContextIdentifier contextId)
 {
-    ensureModel(contextId).exitFullscreen();
+    ensureModel(contextId)->exitFullscreen();
 }
 
 void PlaybackSessionManager::toggleInWindow(PlaybackSessionContextIdentifier contextId)
 {
-    ensureModel(contextId).toggleInWindowFullscreen();
+    ensureModel(contextId)->toggleInWindowFullscreen();
 }
 
 void PlaybackSessionManager::toggleMuted(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).toggleMuted();
+    ensureModel(contextId)->toggleMuted();
 }
 
 void PlaybackSessionManager::setMuted(PlaybackSessionContextIdentifier contextId, bool muted)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).setMuted(muted);
+    ensureModel(contextId)->setMuted(muted);
 }
 
 void PlaybackSessionManager::setVolume(PlaybackSessionContextIdentifier contextId, double volume)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).setVolume(volume);
+    ensureModel(contextId)->setVolume(volume);
 }
 
 void PlaybackSessionManager::setPlayingOnSecondScreen(PlaybackSessionContextIdentifier contextId, bool value)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).setPlayingOnSecondScreen(value);
+    ensureModel(contextId)->setPlayingOnSecondScreen(value);
 }
 
 void PlaybackSessionManager::sendRemoteCommand(PlaybackSessionContextIdentifier contextId, WebCore::PlatformMediaSession::RemoteControlCommandType command, const WebCore::PlatformMediaSession::RemoteCommandArgument& argument)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).sendRemoteCommand(command, argument);
+    ensureModel(contextId)->sendRemoteCommand(command, argument);
 }
 
 void PlaybackSessionManager::setSoundStageSize(PlaybackSessionContextIdentifier contextId, WebCore::AudioSessionSoundStageSize size)
 {
-    ensureModel(contextId).setSoundStageSize(size);
+    ensureModel(contextId)->setSoundStageSize(size);
     auto maxSize = size;
     forEachModel([&] (auto& model) {
         if (model.soundStageSize() > maxSize)
@@ -605,16 +604,15 @@ void PlaybackSessionManager::setSoundStageSize(PlaybackSessionContextIdentifier 
 #if HAVE(SPATIAL_TRACKING_LABEL)
 void PlaybackSessionManager::setSpatialTrackingLabel(PlaybackSessionContextIdentifier contextId, const String& label)
 {
-    ensureModel(contextId).setSpatialTrackingLabel(label);
+    ensureModel(contextId)->setSpatialTrackingLabel(label);
 }
 #endif
 
 void PlaybackSessionManager::forEachModel(Function<void(PlaybackSessionModel&)>&& callback)
 {
-    for (auto& [model, interface] : m_contextMap.values()) {
+    for (auto [model, interface] : m_contextMap.values()) {
         UNUSED_PARAM(interface);
-        if (model)
-            callback(*model);
+        callback(model);
     }
 }
 

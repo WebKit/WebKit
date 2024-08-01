@@ -535,25 +535,25 @@ PlaybackSessionManagerProxy::ModelInterfaceTuple PlaybackSessionManagerProxy::cr
     interface = PlatformPlaybackSessionInterface::create(model);
 #endif
 
-    return std::make_tuple(WTFMove(model), WTFMove(interface));
+    return std::make_tuple(WTFMove(model), interface.releaseNonNull());
 }
 
-PlaybackSessionManagerProxy::ModelInterfaceTuple& PlaybackSessionManagerProxy::ensureModelAndInterface(PlaybackSessionContextIdentifier contextId)
+const PlaybackSessionManagerProxy::ModelInterfaceTuple& PlaybackSessionManagerProxy::ensureModelAndInterface(PlaybackSessionContextIdentifier contextId)
 {
-    auto addResult = m_contextMap.add(contextId, ModelInterfaceTuple());
-    if (addResult.isNewEntry)
-        addResult.iterator->value = createModelAndInterface(contextId);
+    auto addResult = m_contextMap.ensure(contextId, [&] {
+        return createModelAndInterface(contextId);
+    });
     return addResult.iterator->value;
 }
 
-PlaybackSessionModelContext& PlaybackSessionManagerProxy::ensureModel(PlaybackSessionContextIdentifier contextId)
+Ref<PlaybackSessionModelContext> PlaybackSessionManagerProxy::ensureModel(PlaybackSessionContextIdentifier contextId)
 {
-    return *std::get<0>(ensureModelAndInterface(contextId));
+    return std::get<0>(ensureModelAndInterface(contextId));
 }
 
-PlatformPlaybackSessionInterface& PlaybackSessionManagerProxy::ensureInterface(PlaybackSessionContextIdentifier contextId)
+Ref<PlatformPlaybackSessionInterface> PlaybackSessionManagerProxy::ensureInterface(PlaybackSessionContextIdentifier contextId)
 {
-    return *std::get<1>(ensureModelAndInterface(contextId));
+    return std::get<1>(ensureModelAndInterface(contextId));
 }
 
 void PlaybackSessionManagerProxy::addClientForContext(PlaybackSessionContextIdentifier contextId)
@@ -566,7 +566,7 @@ void PlaybackSessionManagerProxy::removeClientForContext(PlaybackSessionContextI
     if (!m_clientCounts.remove(contextId))
         return;
 
-    ensureInterface(contextId).invalidate();
+    ensureInterface(contextId)->invalidate();
     m_contextMap.remove(contextId);
 }
 
@@ -581,7 +581,7 @@ void PlaybackSessionManagerProxy::setUpPlaybackControlsManagerWithID(PlaybackSes
         removeClientForContext(m_controlsManagerContextId);
 
     m_controlsManagerContextId = contextId;
-    ensureInterface(m_controlsManagerContextId).ensureControlsManager();
+    ensureInterface(m_controlsManagerContextId)->ensureControlsManager();
     addClientForContext(m_controlsManagerContextId);
 
     if (RefPtr page = m_page.get())
@@ -602,7 +602,7 @@ void PlaybackSessionManagerProxy::clearPlaybackControlsManager()
 
 void PlaybackSessionManagerProxy::currentTimeChanged(PlaybackSessionContextIdentifier contextId, double currentTime, double hostTime)
 {
-    ensureModel(contextId).currentTimeChanged(currentTime);
+    ensureModel(contextId)->currentTimeChanged(currentTime);
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     if (RefPtr page = m_page.get())
@@ -612,7 +612,7 @@ void PlaybackSessionManagerProxy::currentTimeChanged(PlaybackSessionContextIdent
 
 void PlaybackSessionManagerProxy::bufferedTimeChanged(PlaybackSessionContextIdentifier contextId, double bufferedTime)
 {
-    ensureModel(contextId).bufferedTimeChanged(bufferedTime);
+    ensureModel(contextId)->bufferedTimeChanged(bufferedTime);
 }
 
 void PlaybackSessionManagerProxy::seekableRangesVectorChanged(PlaybackSessionContextIdentifier contextId, Vector<std::pair<double, double>> ranges, double lastModifiedTime, double liveUpdateInterval)
@@ -624,67 +624,67 @@ void PlaybackSessionManagerProxy::seekableRangesVectorChanged(PlaybackSessionCon
         timeRanges->add(range.first, range.second);
     }
 
-    ensureModel(contextId).seekableRangesChanged(timeRanges, lastModifiedTime, liveUpdateInterval);
+    ensureModel(contextId)->seekableRangesChanged(timeRanges, lastModifiedTime, liveUpdateInterval);
 }
 
 void PlaybackSessionManagerProxy::canPlayFastReverseChanged(PlaybackSessionContextIdentifier contextId, bool value)
 {
-    ensureModel(contextId).canPlayFastReverseChanged(value);
+    ensureModel(contextId)->canPlayFastReverseChanged(value);
 }
 
 void PlaybackSessionManagerProxy::audioMediaSelectionOptionsChanged(PlaybackSessionContextIdentifier contextId, Vector<MediaSelectionOption> options, uint64_t selectedIndex)
 {
-    ensureModel(contextId).audioMediaSelectionOptionsChanged(options, selectedIndex);
+    ensureModel(contextId)->audioMediaSelectionOptionsChanged(options, selectedIndex);
 }
 
 void PlaybackSessionManagerProxy::legibleMediaSelectionOptionsChanged(PlaybackSessionContextIdentifier contextId, Vector<MediaSelectionOption> options, uint64_t selectedIndex)
 {
-    ensureModel(contextId).legibleMediaSelectionOptionsChanged(options, selectedIndex);
+    ensureModel(contextId)->legibleMediaSelectionOptionsChanged(options, selectedIndex);
 }
 
 void PlaybackSessionManagerProxy::audioMediaSelectionIndexChanged(PlaybackSessionContextIdentifier contextId, uint64_t selectedIndex)
 {
-    ensureModel(contextId).audioMediaSelectionIndexChanged(selectedIndex);
+    ensureModel(contextId)->audioMediaSelectionIndexChanged(selectedIndex);
 }
 
 void PlaybackSessionManagerProxy::legibleMediaSelectionIndexChanged(PlaybackSessionContextIdentifier contextId, uint64_t selectedIndex)
 {
-    ensureModel(contextId).legibleMediaSelectionIndexChanged(selectedIndex);
+    ensureModel(contextId)->legibleMediaSelectionIndexChanged(selectedIndex);
 }
 
 void PlaybackSessionManagerProxy::externalPlaybackPropertiesChanged(PlaybackSessionContextIdentifier contextId, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType targetType, String localizedDeviceName)
 {
-    ensureModel(contextId).externalPlaybackChanged(enabled, targetType, localizedDeviceName);
+    ensureModel(contextId)->externalPlaybackChanged(enabled, targetType, localizedDeviceName);
 }
 
 void PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabledChanged(PlaybackSessionContextIdentifier contextId, bool disabled)
 {
-    ensureModel(contextId).wirelessVideoPlaybackDisabledChanged(disabled);
+    ensureModel(contextId)->wirelessVideoPlaybackDisabledChanged(disabled);
 }
 
 void PlaybackSessionManagerProxy::mutedChanged(PlaybackSessionContextIdentifier contextId, bool muted)
 {
-    ensureModel(contextId).mutedChanged(muted);
+    ensureModel(contextId)->mutedChanged(muted);
 }
 
 void PlaybackSessionManagerProxy::volumeChanged(PlaybackSessionContextIdentifier contextId, double volume)
 {
-    ensureModel(contextId).volumeChanged(volume);
+    ensureModel(contextId)->volumeChanged(volume);
 }
 
 void PlaybackSessionManagerProxy::durationChanged(PlaybackSessionContextIdentifier contextId, double duration)
 {
-    ensureModel(contextId).durationChanged(duration);
+    ensureModel(contextId)->durationChanged(duration);
 }
 
 void PlaybackSessionManagerProxy::playbackStartedTimeChanged(PlaybackSessionContextIdentifier contextId, double playbackStartedTime)
 {
-    ensureModel(contextId).playbackStartedTimeChanged(playbackStartedTime);
+    ensureModel(contextId)->playbackStartedTimeChanged(playbackStartedTime);
 }
 
 void PlaybackSessionManagerProxy::rateChanged(PlaybackSessionContextIdentifier contextId, OptionSet<WebCore::PlaybackSessionModel::PlaybackState> playbackState, double rate, double defaultPlaybackRate)
 {
-    ensureModel(contextId).rateChanged(playbackState, rate, defaultPlaybackRate);
+    ensureModel(contextId)->rateChanged(playbackState, rate, defaultPlaybackRate);
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     if (RefPtr page = m_page.get())
@@ -694,18 +694,18 @@ void PlaybackSessionManagerProxy::rateChanged(PlaybackSessionContextIdentifier c
 
 void PlaybackSessionManagerProxy::pictureInPictureSupportedChanged(PlaybackSessionContextIdentifier contextId, bool supported)
 {
-    ensureModel(contextId).pictureInPictureSupportedChanged(supported);
+    ensureModel(contextId)->pictureInPictureSupportedChanged(supported);
 }
 
 void PlaybackSessionManagerProxy::isInWindowFullscreenActiveChanged(PlaybackSessionContextIdentifier contextId, bool active)
 {
-    ensureModel(contextId).isInWindowFullscreenActiveChanged(active);
+    ensureModel(contextId)->isInWindowFullscreenActiveChanged(active);
 }
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
 void PlaybackSessionManagerProxy::supportsLinearMediaPlayerChanged(PlaybackSessionContextIdentifier contextId, bool supportsLinearMediaPlayer)
 {
-    ensureModel(contextId).supportsLinearMediaPlayerChanged(supportsLinearMediaPlayer);
+    ensureModel(contextId)->supportsLinearMediaPlayerChanged(supportsLinearMediaPlayer);
 }
 #endif
 
@@ -870,13 +870,7 @@ void PlaybackSessionManagerProxy::setVideoReceiverEndpoint(PlaybackSessionContex
         return;
     }
 
-    RefPtr interface = std::get<1>(it->value);
-    if (!interface) {
-        ERROR_LOG(LOGIDENTIFIER, "no interface or model, ", contextId.loggingString());
-        ASSERT_NOT_REACHED("Should never have null values in context map");
-        return;
-    }
-
+    Ref interface = std::get<1>(it->value);
     if (!interface->playerIdentifier()) {
         ALWAYS_LOG(LOGIDENTIFIER, "no player identifier");
         return;
@@ -978,12 +972,12 @@ void PlaybackSessionManagerProxy::requestControlledElementID()
         page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::HandleControlledElementIDRequest(m_controlsManagerContextId), page->webPageIDInMainFrameProcess());
 }
 
-PlatformPlaybackSessionInterface* PlaybackSessionManagerProxy::controlsManagerInterface()
+RefPtr<PlatformPlaybackSessionInterface> PlaybackSessionManagerProxy::controlsManagerInterface()
 {
     if (!m_controlsManagerContextId)
         return nullptr;
 
-    return &ensureInterface(m_controlsManagerContextId);
+    return ensureInterface(m_controlsManagerContextId);
 }
 
 bool PlaybackSessionManagerProxy::isPaused(PlaybackSessionContextIdentifier identifier) const
@@ -992,7 +986,7 @@ bool PlaybackSessionManagerProxy::isPaused(PlaybackSessionContextIdentifier iden
     if (iterator == m_contextMap.end())
         return false;
 
-    Ref model = *std::get<0>(iterator->value);
+    Ref model = std::get<0>(iterator->value);
     return !model->isPlaying() && !model->isStalled();
 }
 
