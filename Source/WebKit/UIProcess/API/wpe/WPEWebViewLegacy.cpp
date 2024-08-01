@@ -384,12 +384,12 @@ WebKit::WebPageProxy* ViewLegacy::platformWebPageProxyForGamepadInput()
         index = views.findIf([&](ViewLegacy* view) {
             return view->backend() == viewBackend
                 && view->viewState().contains(WebCore::ActivityState::IsVisible)
-                && view->viewState().contains(WebCore::ActivityState::IsFocused);
+                && view->viewState().containsAny({ WebCore::ActivityState::IsFocused, WebCore::ActivityState::IsInWindow });
         });
     } else {
         index = views.findIf([](ViewLegacy* view) {
             return view->viewState().contains(WebCore::ActivityState::IsVisible)
-                && view->viewState().contains(WebCore::ActivityState::IsFocused);
+                && view->viewState().containsAny({ WebCore::ActivityState::IsFocused, WebCore::ActivityState::IsInWindow });
         });
     }
 
