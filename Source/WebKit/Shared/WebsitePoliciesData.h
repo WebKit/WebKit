@@ -81,6 +81,7 @@ public:
 #if ENABLE(DEVICE_ORIENTATION)
     WebCore::DeviceOrientationOrMotionPermissionState deviceOrientationAndMotionAccessState { WebCore::DeviceOrientationOrMotionPermissionState::Prompt };
 #endif
+    WebCore::HTTPSByDefaultMode httpsByDefaultMode { WebCore::HTTPSByDefaultMode::Disabled };
     bool idempotentModeAutosizingOnlyHonorsPercentages { false };
     bool allowPrivacyProxy { true };
     bool allowSiteSpecificQuirksToOverrideContentMode { false };

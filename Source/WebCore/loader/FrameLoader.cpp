@@ -2782,8 +2782,8 @@ void FrameLoader::checkLoadCompleteForThisFrame(LoadWillContinueInAnotherProcess
             isHTTPSByDefaultEnabled = page->protectedSettings()->httpsByDefault();
         }
 
-        bool isHTTPSFirstApplicable = (isHTTPSByDefaultEnabled || provisionalDocumentLoader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSFirst))
-            && !provisionalDocumentLoader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnly)
+        bool isHTTPSFirstApplicable = (isHTTPSByDefaultEnabled || provisionalDocumentLoader->httpsByDefaultMode() == HTTPSByDefaultMode::UpgradeWithHTTPFallback)
+            && provisionalDocumentLoader->httpsByDefaultMode() != HTTPSByDefaultMode::UpgradeAndFailClosed
             && !isHTTPFallbackInProgress()
             && (!provisionalDocumentLoader->mainResourceLoader() || !provisionalDocumentLoader->mainResourceLoader()->redirectCount());
 
