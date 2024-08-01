@@ -49,6 +49,7 @@
 {
     receivedScriptMessage = true;
     lastScriptMessage = message;
+    [receivedMessages addObject:message.body];
 }
 
 @end
@@ -84,13 +85,9 @@ TEST(IndexedDB, IndexedDBTempFileSize)
     RetainPtr request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBTempFileSize-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request.get()];
 
-    receivedScriptMessage = false;
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    RetainPtr<NSString> string1 = (NSString *)[lastScriptMessage body];
-
-    receivedScriptMessage = false;
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    RetainPtr<NSString> string2 = (NSString *)[lastScriptMessage body];
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] {
+        return [[lastScriptMessage body] isEqualToString:@"Success"];
+    }, 10, @"Warning: expected 'Success' message after initializing database");
 
     // Terminate network process to keep WAL on disk.
     webView = nil;
@@ -103,17 +100,17 @@ TEST(IndexedDB, IndexedDBTempFileSize)
     // Open the same database again.
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBTempFileSize-2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    [webView loadRequest:request.get()];
 
     receivedScriptMessage = false;
+    [webView loadRequest:request.get()];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
-    RetainPtr<NSString> string3 = (NSString *)[lastScriptMessage body];
 
     fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:walFilePath.get().path error:nil];
     RetainPtr fileSizeAfter = [fileAttributes objectForKey:NSFileSize];
     EXPECT_GT([fileSizeBefore longLongValue], [fileSizeAfter longLongValue]);
 
-    EXPECT_WK_STREQ(@"UpgradeNeeded", string1.get());
-    EXPECT_WK_STREQ(@"Success", string2.get());
-    EXPECT_WK_STREQ(@"Success", string3.get()); 
+    EXPECT_EQ([receivedMessages count], 3U);
+    EXPECT_WK_STREQ(@"UpgradeNeeded", [receivedMessages objectAtIndex:0]);
+    EXPECT_WK_STREQ(@"Success", [receivedMessages objectAtIndex:1]);
+    EXPECT_WK_STREQ(@"Success", [receivedMessages objectAtIndex:2]);
 }

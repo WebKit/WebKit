@@ -56,6 +56,7 @@ static RetainPtr<WKWebView> createdWebView;
 {
     receivedScriptMessage = true;
     lastScriptMessage = message;
+    [receivedMessages addObject:message.body];
 }
 
 @end
@@ -105,13 +106,12 @@ TEST(WKWebView, LocalStorageProcessCrashes)
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"local-storage-process-crashes" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
 
-    receivedScriptMessage = false;
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    EXPECT_WK_STREQ(@"local:storage", [lastScriptMessage body]);
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] {
+        return [[lastScriptMessage body] isEqualToString:@"session:storage"];
+    }, 10, @"Warning: expected 'session:storage' message after page load");
 
-    receivedScriptMessage = false;
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    EXPECT_WK_STREQ(@"session:storage", [lastScriptMessage body]);
+    EXPECT_EQ([receivedMessages count], 2U);
+    EXPECT_WK_STREQ(@"local:storage", [receivedMessages firstObject]);
 
     readyToContinue = false;
     WKWebsiteDataStoreSyncLocalStorage((WKWebsiteDataStoreRef)configuration.get().websiteDataStore, nullptr, [](void*) {
