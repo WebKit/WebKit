@@ -55,7 +55,7 @@ const invoke = instance => {
     return result;
 };
 
-while (failCount === 0) {
+while (failCount === 0 && callCount < 100) {
     if (verbose)
         print(`Trying...`);
 

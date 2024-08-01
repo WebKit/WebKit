@@ -218,7 +218,7 @@ void BBQPlan::work(CompilationEffort effort)
     // Replace the LLInt interpreted entry callee. Note that we can do this after we publish our
     // callee because calling into the LLInt should still work.
     auto* jsEntrypointCallee = m_calleeGroup->m_jsEntrypointCallees.get(m_functionIndex);
-    if (jsEntrypointCallee && jsEntrypointCallee->compilationMode() == CompilationMode::JSEntrypointInterpreterMode) {
+    if (jsEntrypointCallee && jsEntrypointCallee->compilationMode() == CompilationMode::JSEntrypointInterpreterMode && !static_cast<JSEntrypointInterpreterCallee*>(jsEntrypointCallee)->hasReplacement()) {
         Locker locker { m_lock };
         TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
         const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();

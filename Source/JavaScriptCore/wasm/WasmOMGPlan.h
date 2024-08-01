@@ -67,6 +67,7 @@ private:
     bool m_completed { false };
     std::optional<bool> m_hasExceptionHandlers;
     uint32_t m_functionIndex;
+    RefPtr<JSEntrypointCallee> m_entrypoint;
 };
 
 } } // namespace JSC::Wasm

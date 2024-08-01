@@ -76,6 +76,8 @@ public:
 #endif
     }
 
+    static constexpr ptrdiff_t offsetOfInterpreterCallee() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_jsToWasmInterpreterCallee); }
+
 private:
     DECLARE_VISIT_CHILDREN;
     WebAssemblyFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSWebAssemblyInstance*, Wasm::JSEntrypointCallee& jsEntrypoint, Wasm::Callee* wasmCallee, WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation, Wasm::TypeIndex, RefPtr<const Wasm::RTT>);
@@ -96,7 +98,6 @@ private:
     uintptr_t m_boxedWasmCallee;
     // This let's the JS->Wasm interpreter find its metadata
     RefPtr<Wasm::JSEntrypointInterpreterCallee> m_jsToWasmInterpreterCallee;
-    void* m_jsToWasmBoxedInterpreterCallee;
 #if ENABLE(JIT)
     RefPtr<Wasm::JSToWasmICCallee> m_jsToWasmICCallee;
 #endif

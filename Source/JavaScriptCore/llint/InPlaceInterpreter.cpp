@@ -141,14 +141,6 @@ void initialize()
     FOR_EACH_IPINT_SIMD_OPCODE(VALIDATE_IPINT_SIMD_OPCODE);
     FOR_EACH_IPINT_ATOMIC_OPCODE(VALIDATE_IPINT_ATOMIC_OPCODE);
 
-    if (Options::useInterpretedJSEntryWrappers()) {
-        FOR_EACH_JS_TO_WASM_WRAPPER_METADATA_OPCODE(VALIDATE_JS_TO_WASM_WRAPPER_ENTRY);
-        // Label after last defined opcode
-        VALIDATE_JS_TO_WASM_WRAPPER_ENTRY(static_cast<int>(Wasm::JSEntrypointInterpreterCalleeMetadata::InvalidRegister), invalidop);
-        // This is the label representing the farthest possible dispatch jump
-        VALIDATE_JS_TO_WASM_WRAPPER_ENTRY(static_cast<int>(Wasm::JSEntrypointInterpreterCalleeMetadata::OpcodeMask) + 1, afterops);
-    }
-
     FOR_EACH_IPINT_ARGUMINT_OPCODE(VALIDATE_IPINT_ARGUMINT_OPCODE);
     FOR_EACH_IPINT_SLOW_PATH(VALIDATE_IPINT_SLOW_PATH);
     FOR_EACH_IPINT_MINT_CALL_OPCODE(VALIDATE_IPINT_MINT_CALL_OPCODE);

@@ -635,7 +635,7 @@ static inline void disableAllJITOptions()
     Options::useJITCage() = false;
     Options::useConcurrentJIT() = false;
 
-    if (!OptionsHelper::wasOverridden(Options::useWasmID))
+    if (!Options::useInterpretedJSEntryWrappers())
         Options::useWasm() = false;
 
     Options::usePollingTraps() = true;
@@ -718,17 +718,12 @@ void Options::notifyOptionsChanged()
     Options::useConcurrentGC() = false;
     Options::forceUnlinkedDFG() = false;
     Options::useWasmSIMD() = false;
-    Options::useInterpretedJSEntryWrappers() = false;
 #if !CPU(ARM_THUMB2)
     Options::useBBQJIT() = false;
 #endif
 #if CPU(ARM_THUMB2)
     Options::useBBQTierUpChecks() = false;
 #endif
-#endif
-
-#if ENABLE(C_LOOP) || !CPU(ADDRESS64) || !(CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)))
-    Options::useInterpretedJSEntryWrappers() = false;
 #endif
 
 #if !CPU(ARM64)

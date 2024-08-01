@@ -1,6 +1,7 @@
 // FIXME: Consider making jump islands work with Options::jitMemoryReservationSize
 // https://bugs.webkit.org/show_bug.cgi?id=209037
 //@ skip if $architecture == "arm64"
+// This test will never fail to compile a module with this option enabled.
 
 import * as assert from '../assert.js'
 import Builder from '../Builder.js'
@@ -63,7 +64,7 @@ const invoke = (instance, count) => {
     ++callCount;
 };
 
-while (failCount === 0) {
+while (failCount === 0 && callCount < 100) {
     const instructionCount = (Math.random() * maxInstructionCount + 1) | 0;
 
     if (verbose)

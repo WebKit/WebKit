@@ -44,7 +44,9 @@ namespace Wasm {
 struct CallInformation;
 class JSEntrypointCallee;
 
-void marshallJSResult(CCallHelpers& jit, const TypeDefinition&, const CallInformation& wasmFrameConvention, const RegisterAtOffsetList& savedResultRegisters);
+void marshallJSResult(CCallHelpers& jit, const TypeDefinition&, const CallInformation& wasmFrameConvention, const RegisterAtOffsetList& savedResultRegisters, CCallHelpers::JumpList& exceptionChecks);
+std::shared_ptr<InternalFunction> createJSToWasmJITInterpreterCrashForSIMDParameters();
+std::shared_ptr<InternalFunction> createJSToWasmJITInterpreter();
 std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers&, JSEntrypointCallee&, Callee*, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>*, const ModuleInformation&, MemoryMode, uint32_t functionIndex);
 
 } } // namespace JSC::Wasm
