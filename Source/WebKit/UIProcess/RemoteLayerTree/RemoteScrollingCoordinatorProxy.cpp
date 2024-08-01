@@ -263,6 +263,11 @@ bool RemoteScrollingCoordinatorProxy::hasScrollableMainFrame() const
     return rootNode && rootNode->canHaveScrollbars();
 }
 
+WebCore::ScrollbarWidth RemoteScrollingCoordinatorProxy::mainFrameScrollbarWidth() const
+{
+    return m_scrollingTree->mainFrameScrollbarWidth();
+}
+
 OverscrollBehavior RemoteScrollingCoordinatorProxy::mainFrameHorizontalOverscrollBehavior() const
 {
     return m_scrollingTree->mainFrameHorizontalOverscrollBehavior();

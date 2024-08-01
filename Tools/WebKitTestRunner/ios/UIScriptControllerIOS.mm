@@ -1607,6 +1607,12 @@ UITextSelectionDisplayInteraction *UIScriptControllerIOS::textSelectionDisplayIn
 
 #endif
 
+
+JSRetainPtr<JSStringRef> UIScriptControllerIOS::scrollbarStateForScrollingNodeID(unsigned long long scrollingNodeID, unsigned long long processID, bool isVertical) const
+{
+    return adopt(JSStringCreateWithCFString((CFStringRef) [webView() _scrollbarState:scrollingNodeID processID:processID isVertical:isVertical]));
+}
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)

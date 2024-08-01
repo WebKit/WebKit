@@ -92,6 +92,15 @@ void ScrollingTreeOverflowScrollingNodeIOS::repositionScrollingLayers()
     delegate().repositionScrollingLayers();
 }
 
+String ScrollingTreeOverflowScrollingNodeIOS::scrollbarStateForOrientation(ScrollbarOrientation orientation) const
+{
+    if (auto* scrollView = this->scrollView()) {
+        auto showsScrollbar = orientation == ScrollbarOrientation::Horizontal ?  [scrollView showsHorizontalScrollIndicator] :  [scrollView showsVerticalScrollIndicator];
+        return showsScrollbar ? ""_s : "none"_s;
+    }
+    return ""_s;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(ASYNC_SCROLLING)

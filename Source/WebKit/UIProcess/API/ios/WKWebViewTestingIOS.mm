@@ -298,6 +298,19 @@ static void dumpUIView(TextStream& ts, UIView *view)
     return ts.release();
 }
 
+- (NSString *)_scrollbarState:(unsigned long long)scrollingNodeID processID:(unsigned long long)processID isVertical:(bool)isVertical
+{
+    if (_page->scrollingCoordinatorProxy()->rootScrollingNodeID() == WebCore::ScrollingNodeID(ObjectIdentifier<WebCore::ScrollingNodeIDType>(scrollingNodeID), ObjectIdentifier<WebCore::ProcessIdentifierType>(processID))) {
+        TextStream ts(TextStream::LineMode::MultipleLine);
+        {
+            TextStream::GroupScope scope(ts);
+            ts << ([_scrollView showsHorizontalScrollIndicator] ? ""_s : "none"_s);
+        }
+        return ts.release();
+    }
+    return _page->scrollbarStateForScrollingNodeID(WebCore::ScrollingNodeID(ObjectIdentifier<WebCore::ScrollingNodeIDType>(scrollingNodeID), ObjectIdentifier<WebCore::ProcessIdentifierType>(processID)), isVertical);
+}
+
 - (NSNumber *)_stableStateOverride
 {
     // For subclasses to override.

@@ -369,6 +369,18 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
         scrollingNode().handleScrollPositionRequest(scrollingStateNode.requestedScrollData());
         scrollingTree().setNeedsApplyLayerPositionsAfterCommit();
     }
+
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollbarWidth)) {
+        auto scrollbarWidth = scrollingStateNode.scrollbarWidth();
+
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        UIScrollView *scrollView = this->scrollView();
+
+        [scrollView setShowsHorizontalScrollIndicator:(scrollbarWidth != ScrollbarWidth::None && scrollingNode().horizontalNativeScrollbarVisibility() != NativeScrollbarVisibility::HiddenByStyle)];
+        [scrollView setShowsVerticalScrollIndicator:(scrollbarWidth != ScrollbarWidth::None && scrollingNode().horizontalNativeScrollbarVisibility() != NativeScrollbarVisibility::HiddenByStyle)];
+
+        END_BLOCK_OBJC_EXCEPTIONS
+    }
 }
 
 bool ScrollingTreeScrollingNodeDelegateIOS::startAnimatedScrollToPosition(FloatPoint scrollPosition)

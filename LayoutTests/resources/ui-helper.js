@@ -905,12 +905,12 @@ window.UIHelper = class UIHelper {
     static scrollbarState(scroller, isVertical)
     {
         var internalFunctions = scroller ? scroller.ownerDocument.defaultView.internals : internals;
-        if (!this.isWebKit2() || this.isIOSFamily())
+        if (!this.isWebKit2())
             return Promise.resolve();
 
-            if (internals.isUsingUISideCompositing() && (!scroller || scroller.nodeName != "SELECT")) {
-                var scrollingNodeID = internalFunctions.scrollingNodeIDForNode(scroller);
-                return new Promise(resolve => {
+        if (internals.isUsingUISideCompositing() && (!scroller || scroller.nodeName != "SELECT")) {
+            var scrollingNodeID = internalFunctions.scrollingNodeIDForNode(scroller);
+            return new Promise(resolve => {
                 testRunner.runUIScript(`(function() {
                     uiController.doAfterNextStablePresentationUpdate(function() {
                         uiController.uiScriptComplete(uiController.scrollbarStateForScrollingNodeID(${scrollingNodeID[0]}, ${scrollingNodeID[1]}, ${isVertical}));

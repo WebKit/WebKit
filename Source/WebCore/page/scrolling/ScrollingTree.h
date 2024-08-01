@@ -234,6 +234,8 @@ public:
 
     WEBCORE_EXPORT FloatPoint mainFrameScrollPosition() const;
 
+    WEBCORE_EXPORT ScrollbarWidth mainFrameScrollbarWidth() const;
+
     WEBCORE_EXPORT OverscrollBehavior mainFrameHorizontalOverscrollBehavior() const;
     WEBCORE_EXPORT OverscrollBehavior mainFrameVerticalOverscrollBehavior() const;
     

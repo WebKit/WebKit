@@ -1,0 +1,12 @@
+
+Test scrollbar-width on overflow in iframe
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Overflow in iframe should have scrollbar-width:none
+PASS Scrollbar state: none
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
