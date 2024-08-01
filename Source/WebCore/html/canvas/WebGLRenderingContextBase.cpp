@@ -1546,10 +1546,6 @@ void WebGLRenderingContextBase::depthRange(GCGLfloat zNear, GCGLfloat zFar)
 {
     if (isContextLost())
         return;
-    if (zNear > zFar) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "depthRange"_s, "zNear > zFar"_s);
-        return;
-    }
     m_context->depthRange(zNear, zFar);
 }
 
