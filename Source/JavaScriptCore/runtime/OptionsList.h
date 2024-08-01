@@ -97,7 +97,7 @@ bool hasCapacityToUseLargeGigacage();
     /* Bun Features */\
     v(Bool, useV8DateParser, false, Normal, nullptr) \
     v(Bool, showPrivateScriptsInStackTraces, false, Normal, "Show private scripts in stack traces."_s) \
-    v(Bool, evalMode, false, Normal, "Less aggressive function call completion value discarding."_s) \
+    v(Bool, evalMode, false, Normal, "Set to true for less aggressive function call completion value discarding."_s) \
     \
     v(Unsigned, maxPerThreadStackUsage, 5 * MB, Normal, "Max allowed stack usage by the VM"_s) \
     v(Unsigned, softReservedZoneSize, 128 * KB, Normal, "A buffer greater than reservedZoneSize that reserves space for stringifying exceptions."_s) \
