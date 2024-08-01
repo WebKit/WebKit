@@ -847,7 +847,7 @@ void RenderPassEncoder::drawIndexedIndirect(Buffer& indirectBuffer, uint64_t ind
     if (splitEncoder)
         splitRenderPass();
 
-    if (!executePreDrawCommands(splitEncoder, &indirectBuffer) || m_indexBuffer->isDestroyed())
+    if (!executePreDrawCommands(splitEncoder, &indirectBuffer) || m_indexBuffer->isDestroyed() || mtlIndirectBuffer.length < sizeof(MTLDrawIndexedPrimitivesIndirectArguments))
         return;
 
     [renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:mtlIndirectBuffer indirectBufferOffset:modifiedIndirectOffset];
@@ -910,7 +910,7 @@ void RenderPassEncoder::drawIndirect(Buffer& indirectBuffer, uint64_t indirectOf
     if (splitEncoder)
         splitRenderPass();
 
-    if (!executePreDrawCommands(splitEncoder, &indirectBuffer) || !mtlIndirectBuffer || indirectBuffer.isDestroyed())
+    if (!executePreDrawCommands(splitEncoder, &indirectBuffer) || mtlIndirectBuffer.length < sizeof(MTLDrawPrimitivesIndirectArguments) || indirectBuffer.isDestroyed())
         return;
 
     [renderCommandEncoder() drawPrimitives:m_primitiveType indirectBuffer:mtlIndirectBuffer indirectBufferOffset:0];
