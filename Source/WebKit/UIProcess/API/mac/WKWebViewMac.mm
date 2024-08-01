@@ -29,7 +29,6 @@
 #if PLATFORM(MAC)
 
 #import "AppKitSPI.h"
-#import "WKSafeBrowsingWarning.h"
 #import "WKTextAnimationType.h"
 #import "WKTextFinderClient.h"
 #import "WKWebViewConfigurationPrivate.h"
@@ -41,6 +40,7 @@
 #import "WebViewImpl.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKHitTestResultInternal.h"
+#import "_WKWarningView.h"
 #import <pal/spi/mac/NSTextFinderSPI.h>
 #import <pal/spi/mac/NSTextInputContextSPI.h>
 #import <pal/spi/mac/NSViewSPI.h>
@@ -171,7 +171,7 @@ std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayScr
     BOOL didCreateWindowSnapshotReadinessHandler = [self _holdWindowResizeSnapshotIfNeeded];
 
     [super setFrameSize:size];
-    [_safeBrowsingWarning setFrame:self.bounds];
+    [_warningView setFrame:self.bounds];
     if (_impl)
         _impl->setFrameSize(NSSizeToCGSize(size));
 
@@ -1374,7 +1374,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSView *)_safeBrowsingWarning
 {
-    return _impl->safeBrowsingWarning();
+    return _impl->warningView();
 }
 
 - (_WKRectEdge)_pinnedState

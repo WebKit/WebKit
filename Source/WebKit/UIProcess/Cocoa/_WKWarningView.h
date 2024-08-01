@@ -42,7 +42,7 @@ class SafeBrowsingWarning;
 enum class ContinueUnsafeLoad : bool;
 }
 
-OBJC_CLASS WKSafeBrowsingTextView;
+OBJC_CLASS _WKWarningViewTextView;
 
 #if PLATFORM(MAC)
 using ViewType = NSView;
@@ -52,26 +52,26 @@ using ViewType = UIView;
 using RectType = CGRect;
 #endif
 
-@interface WKSafeBrowsingBox : ViewType {
+@interface _WKWarningViewBox : ViewType {
 @package
 #if PLATFORM(MAC)
     RetainPtr<WebCore::CocoaColor> _backgroundColor;
 #endif
 }
-- (void)setSafeBrowsingBackgroundColor:(WebCore::CocoaColor *)color;
+- (void)setWarningViewBackgroundColor:(WebCore::CocoaColor *)color;
 @end
 
 #if PLATFORM(MAC)
-@interface WKSafeBrowsingWarning : WKSafeBrowsingBox<NSTextViewDelegate, NSAccessibilityGroup>
+@interface _WKWarningView : _WKWarningViewBox<NSTextViewDelegate, NSAccessibilityGroup>
 #else
-@interface WKSafeBrowsingWarning : UIScrollView<UITextViewDelegate>
+@interface _WKWarningView : UIScrollView<UITextViewDelegate>
 #endif
 {
 @package
     CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)> _completionHandler;
     RefPtr<const WebKit::SafeBrowsingWarning> _warning;
-    WeakObjCPtr<WKSafeBrowsingTextView> _details;
-    WeakObjCPtr<WKSafeBrowsingBox> _box;
+    WeakObjCPtr<_WKWarningViewTextView> _details;
+    WeakObjCPtr<_WKWarningViewBox> _box;
 #if PLATFORM(WATCHOS)
     WeakObjCPtr<UIResponder> _previousFirstResponder;
 #endif

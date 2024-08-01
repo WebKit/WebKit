@@ -550,24 +550,24 @@ void PageClientImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning,
 {
     if (!m_impl)
         return completionHandler(ContinueUnsafeLoad::Yes);
-    m_impl->showSafeBrowsingWarning(warning, WTFMove(completionHandler));
+    m_impl->showWarningView(warning, WTFMove(completionHandler));
 }
 
 bool PageClientImpl::hasSafeBrowsingWarning() const
 {
     if (!m_impl)
         return false;
-    return !!m_impl->safeBrowsingWarning();
+    return !!m_impl->warningView();
 }
 
 void PageClientImpl::clearSafeBrowsingWarning()
 {
-    m_impl->clearSafeBrowsingWarning();
+    m_impl->clearWarningView();
 }
 
 void PageClientImpl::clearSafeBrowsingWarningIfForMainFrameNavigation()
 {
-    m_impl->clearSafeBrowsingWarningIfForMainFrameNavigation();
+    m_impl->clearWarningViewIfForMainFrameNavigation();
 }
 
 void PageClientImpl::setTextIndicator(Ref<TextIndicator> textIndicator, WebCore::TextIndicatorLifetime lifetime)

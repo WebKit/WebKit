@@ -24,17 +24,17 @@
  */
 
 #import "config.h"
-#import "WKSafeBrowsingWarning.h"
+#import "_WKWarningView.h"
 
 #import "PageClient.h"
 #import "SafeBrowsingWarning.h"
 #import <WebCore/FontCocoa.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/WebCoreObjCExtras.h>
-#import <wtf/URL.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Language.h>
 #import <wtf/MainThread.h>
+#import <wtf/URL.h>
 
 #if PLATFORM(WATCHOS)
 #import "PepperUICoreSPI.h"
@@ -64,7 +64,7 @@ using SizeType = CGSize;
 #endif
 
 enum class WarningItem : uint8_t {
-    Background,
+    SafeBrowsingBackground,
     BoxBackground,
     ExclamationPoint,
     TitleText,
@@ -105,7 +105,7 @@ static WebCore::CocoaFont *fontOfSize(WarningTextSize size)
 
 static WebCore::CocoaColor *colorForItem(WarningItem item, ViewType *warning)
 {
-    ASSERT([warning isKindOfClass:[WKSafeBrowsingWarning class]]);
+    ASSERT([warning isKindOfClass:[_WKWarningView class]]);
 #if PLATFORM(MAC)
 
     auto colorNamed = [] (NSString *name) -> WebCore::CocoaColor * {
@@ -118,7 +118,7 @@ static WebCore::CocoaColor *colorForItem(WarningItem item, ViewType *warning)
     };
 
     switch (item) {
-    case WarningItem::Background:
+    case WarningItem::SafeBrowsingBackground:
         return colorNamed(@"WKSafeBrowsingWarningBackground");
     case WarningItem::BoxBackground:
         return [NSColor windowBackgroundColor];
@@ -138,7 +138,7 @@ static WebCore::CocoaColor *colorForItem(WarningItem item, ViewType *warning)
     bool narrow = warning.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
 
     switch (item) {
-    case WarningItem::Background:
+    case WarningItem::SafeBrowsingBackground:
         return red;
     case WarningItem::BoxBackground:
         return narrow ? red : white;
@@ -185,7 +185,7 @@ static WebCore::CocoaColor *colorForItem(WarningItem item, ViewType *warning)
     [colorForItem(WarningItem::BoxBackground, warning) set];
     auto square = CGRectMake(0, 0, exclamationPointSize, exclamationPointSize);
     [[UIBezierPath bezierPathWithRect:square] fill];
-    
+
     [colorForItem(WarningItem::ExclamationPoint, warning) set];
     UIBezierPath *exclamationPoint = [UIBezierPath bezierPathWithOvalInRect:square];
     [exclamationPoint addArcWithCenter: { centerX, flip(lineTopCenterY) } radius:lineRadius startAngle:2 * piDouble endAngle:piDouble clockwise:NO];
@@ -212,7 +212,7 @@ static WebCore::CocoaColor *colorForItem(WarningItem item, ViewType *warning)
 
 @end
 
-static ButtonType *makeButton(WarningItem item, WKSafeBrowsingWarning *warning, SEL action)
+static ButtonType *makeButton(WarningItem item, _WKWarningView *warning, SEL action)
 {
     NSString *title = nil;
     if (item == WarningItem::ShowDetailsButton)
@@ -260,9 +260,9 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
 #endif
 }
 
-@implementation WKSafeBrowsingBox
+@implementation _WKWarningViewBox
 
-- (void)setSafeBrowsingBackgroundColor:(WebCore::CocoaColor *)color
+- (void)setWarningViewBackgroundColor:(WebCore::CocoaColor *)color
 {
 #if PLATFORM(MAC)
     _backgroundColor = color;
@@ -281,14 +281,14 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
 
 @end
 
-@interface WKSafeBrowsingTextView : TextViewType {
+@interface _WKWarningViewTextView : TextViewType {
 @package
-    WeakObjCPtr<WKSafeBrowsingWarning> _warning;
+    WeakObjCPtr<_WKWarningView> _warning;
 }
-- (instancetype)initWithAttributedString:(NSAttributedString *)attributedString forWarning:(WKSafeBrowsingWarning *)warning;
+- (instancetype)initWithAttributedString:(NSAttributedString *)attributedString forWarning:(_WKWarningView *)warning;
 @end
 
-@implementation WKSafeBrowsingWarning
+@implementation _WKWarningView
 
 - (instancetype)initWithFrame:(RectType)frame safeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler
 {
@@ -296,7 +296,7 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
         completionHandler(WebKit::ContinueUnsafeLoad::Yes);
         return nil;
     }
-    _completionHandler = [weakSelf = WeakObjCPtr<WKSafeBrowsingWarning>(self), completionHandler = WTFMove(completionHandler)] (std::variant<WebKit::ContinueUnsafeLoad, URL>&& result) mutable {
+    _completionHandler = [weakSelf = WeakObjCPtr<_WKWarningView>(self), completionHandler = WTFMove(completionHandler)] (std::variant<WebKit::ContinueUnsafeLoad, URL>&& result) mutable {
 #if PLATFORM(WATCHOS)
         if (auto strongSelf = weakSelf.get())
             [strongSelf.get()->_previousFirstResponder becomeFirstResponder];
@@ -305,10 +305,10 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
     };
     _warning = &warning;
 #if PLATFORM(MAC)
-    [self setSafeBrowsingBackgroundColor:colorForItem(WarningItem::Background, self)];
+    [self setWarningViewBackgroundColor:colorForItem(WarningItem::SafeBrowsingBackground, self)];
     [self addContent];
 #else
-    [self setBackgroundColor:colorForItem(WarningItem::Background, self)];
+    [self setBackgroundColor:colorForItem(WarningItem::SafeBrowsingBackground, self)];
 #endif
 
 #if PLATFORM(WATCHOS)
@@ -336,9 +336,9 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
     }]).get());
     auto showDetails = makeButton(WarningItem::ShowDetailsButton, self, @selector(showDetailsClicked));
     auto goBack = makeButton(WarningItem::GoBackButton, self, @selector(goBackClicked));
-    auto box = adoptNS([WKSafeBrowsingBox new]);
+    auto box = adoptNS([_WKWarningViewBox new]);
     _box = box.get();
-    [box setSafeBrowsingBackgroundColor:colorForItem(WarningItem::BoxBackground, self)];
+    [box setWarningViewBackgroundColor:colorForItem(WarningItem::BoxBackground, self)];
     [box layer].cornerRadius = boxCornerRadius;
 
     for (ViewType *view in @[exclamationPoint.get(), title.get(), warning.get(), goBack, showDetails]) {
@@ -383,7 +383,7 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
 
         [[[warning bottomAnchor] anchorWithOffsetToAnchor:goBack.topAnchor] constraintEqualToConstant:marginSize],
     ]];
-    
+
     bool needsVerticalButtonLayout = buttonSize(showDetails).width + buttonSize(goBack).width + 3 * marginSize > self.frame.size.width;
     if (needsVerticalButtonLayout) {
         [NSLayoutConstraint activateConstraints:@[
@@ -402,7 +402,7 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
     [self updateContentSize];
 #endif
 #endif
-    
+
 #if PLATFORM(WATCHOS)
     self->_previousFirstResponder = [self firstResponder];
     [self becomeFirstResponder];
@@ -411,16 +411,16 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
 
 - (void)showDetailsClicked
 {
-    WKSafeBrowsingBox *box = _box.get().get();
+    _WKWarningViewBox *box = _box.get().get();
     ButtonType *showDetails = box.subviews.lastObject;
     [showDetails removeFromSuperview];
 
     auto text = adoptNS([_warning->details() mutableCopy]);
     [text addAttributes:@{ NSFontAttributeName:fontOfSize(WarningTextSize::Body) } range:NSMakeRange(0, [text length])];
-    auto details = adoptNS([[WKSafeBrowsingTextView alloc] initWithAttributedString:text.get() forWarning:self]);
+    auto details = adoptNS([[_WKWarningViewTextView alloc] initWithAttributedString:text.get() forWarning:self]);
     _details = details.get();
-    auto bottom = adoptNS([WKSafeBrowsingBox new]);
-    [bottom setSafeBrowsingBackgroundColor:colorForItem(WarningItem::BoxBackground, self)];
+    auto bottom = adoptNS([_WKWarningViewBox new]);
+    [bottom setWarningViewBackgroundColor:colorForItem(WarningItem::BoxBackground, self)];
     [bottom layer].cornerRadius = boxCornerRadius;
 
 #if HAVE(SAFE_BROWSING)
@@ -435,8 +435,8 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
 #endif
 #endif
 
-    auto line = adoptNS([WKSafeBrowsingBox new]);
-    [line setSafeBrowsingBackgroundColor:[WebCore::CocoaColor lightGrayColor]];
+    auto line = adoptNS([_WKWarningViewBox new]);
+    [line setWarningViewBackgroundColor:[WebCore::CocoaColor lightGrayColor]];
     for (ViewType *view in @[details.get(), bottom.get(), line.get()])
         view.translatesAutoresizingMaskIntoConstraints = NO;
 
@@ -545,7 +545,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [alert setInformativeText:WEB_UI_NSSTRING(@"Merely visiting a site is sufficient for malware to install itself and harm your computer.", "Malware confirmation dialog")];
         [alert addButtonWithTitle:WEB_UI_NSSTRING(@"Cancel", "Cancel")];
         [alert addButtonWithTitle:WEB_UI_NSSTRING(@"Continue", "Continue")];
-        [alert beginSheetModalForWindow:self.window completionHandler:makeBlockPtr([weakSelf = WeakObjCPtr<WKSafeBrowsingWarning>(self), alert](NSModalResponse returnCode) {
+        [alert beginSheetModalForWindow:self.window completionHandler:makeBlockPtr([weakSelf = WeakObjCPtr<_WKWarningView>(self), alert](NSModalResponse returnCode) {
             if (auto strongSelf = weakSelf.get()) {
                 if (returnCode == NSAlertSecondButtonReturn && strongSelf->_completionHandler)
                     strongSelf->_completionHandler(WebKit::ContinueUnsafeLoad::Yes);
@@ -568,9 +568,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end
 
-@implementation WKSafeBrowsingTextView
+@implementation _WKWarningViewTextView
 
-- (instancetype)initWithAttributedString:(NSAttributedString *)attributedString forWarning:(WKSafeBrowsingWarning *)warning
+- (instancetype)initWithAttributedString:(NSAttributedString *)attributedString forWarning:(_WKWarningView *)warning
 {
     if (!(self = [super init]))
         return nil;

@@ -48,7 +48,6 @@
 #import "WKDataDetectorTypesInternal.h"
 #import "WKPasswordView.h"
 #import "WKProcessPoolPrivate.h"
-#import "WKSafeBrowsingWarning.h"
 #import "WKScrollView.h"
 #import "WKTextAnimationType.h"
 #import "WKUIDelegatePrivate.h"
@@ -64,6 +63,7 @@
 #import "WebPreferences.h"
 #import "WebProcessPool.h"
 #import "_WKActivatedElementInfoInternal.h"
+#import "_WKWarningView.h"
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurfacePool.h>
@@ -177,7 +177,7 @@ static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfac
 
 - (void)layoutSubviews
 {
-    [_safeBrowsingWarning setFrame:self.bounds];
+    [_warningView setFrame:self.bounds];
     [super layoutSubviews];
     [self _frameOrBoundsMayHaveChanged];
 }
@@ -721,7 +721,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
     return _obscuredInsetEdgesAffectedBySafeArea;
 }
 
-- (UIEdgeInsets)_computedObscuredInsetForSafeBrowsingWarning
+- (UIEdgeInsets)_computedObscuredInsetForWarningView
 {
     if (_haveSetObscuredInsets)
         return _obscuredInsets;
@@ -2586,7 +2586,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [super safeAreaInsetsDidChange];
 
     [self _scheduleVisibleContentRectUpdate];
-    [_safeBrowsingWarning setContentInset:[self _computedObscuredInsetForSafeBrowsingWarning]];
+    [_warningView setContentInset:[self _computedObscuredInsetForWarningView]];
 }
 #endif
 
@@ -3894,7 +3894,7 @@ static bool isLockdownModeWarningNeeded()
     _obscuredInsets = obscuredInsets;
 
     [self _scheduleVisibleContentRectUpdate];
-    [_safeBrowsingWarning setContentInset:[self _computedObscuredInsetForSafeBrowsingWarning]];
+    [_warningView setContentInset:[self _computedObscuredInsetForWarningView]];
 }
 
 - (UIRectEdge)_obscuredInsetEdgesAffectedBySafeArea
@@ -4035,7 +4035,7 @@ static bool isLockdownModeWarningNeeded()
 
 - (UIView *)_safeBrowsingWarning
 {
-    return _safeBrowsingWarning.get();
+    return _warningView.get();
 }
 
 - (CGPoint)_convertPointFromContentsToView:(CGPoint)point

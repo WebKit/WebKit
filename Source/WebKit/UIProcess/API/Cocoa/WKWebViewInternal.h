@@ -118,12 +118,12 @@ class ViewGestureController;
 
 @class WKContentView;
 @class WKPasswordView;
-@class WKSafeBrowsingWarning;
 @class WKScrollView;
 @class WKTextExtractionItem;
 @class WKTextExtractionRequest;
 @class WKWebViewContentProviderRegistry;
 @class _WKFrameHandle;
+@class _WKWarningView;
 
 #if ENABLE(WRITING_TOOLS)
 @class WTTextSuggestion;
@@ -236,7 +236,7 @@ struct PerWebProcessState {
     WeakObjCPtr<id <_WKInputDelegate>> _inputDelegate;
     WeakObjCPtr<id <_WKAppHighlightDelegate>> _appHighlightDelegate;
 
-    RetainPtr<WKSafeBrowsingWarning> _safeBrowsingWarning;
+    RetainPtr<_WKWarningView> _warningView;
 
     std::optional<BOOL> _resolutionForShareSheetImmediateCompletionForTesting;
 
@@ -433,8 +433,11 @@ struct PerWebProcessState {
 
 - (void)_recalculateViewportSizesWithMinimumViewportInset:(CocoaEdgeInsets)minimumViewportInset maximumViewportInset:(CocoaEdgeInsets)maximumViewportInset throwOnInvalidInput:(BOOL)throwOnInvalidInput;
 
+- (void)_showWarningView:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
 - (void)_showSafeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
+- (void)_clearWarningView;
 - (void)_clearSafeBrowsingWarning;
+- (void)_clearWarningViewIfForMainFrameNavigation;
 - (void)_clearSafeBrowsingWarningIfForMainFrameNavigation;
 
 - (std::optional<BOOL>)_resolutionForShareSheetImmediateCompletionForTesting;
