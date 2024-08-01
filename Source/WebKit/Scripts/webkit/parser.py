@@ -54,7 +54,7 @@ def parse(file):
     for line in file:
         line = line.strip()
         match = re.search(r'\s*\[\s*EnabledBy\s*=\s*(?P<enabledby>.*?)\s*\]\s*', line)
-        if match and not receiver_attributes:
+        if match and not destination:
             receiver_enabled_by = match.group('enabledby').split(',')
             continue
         match = re.search(r'messages -> (?P<namespace>[A-Za-z]+)::(?P<destination>[A-Za-z_0-9]+) \s*(?::\s*(?P<superclass>.*?) \s*)?(?:(?P<attributes>.*?)\s+)?{', line)

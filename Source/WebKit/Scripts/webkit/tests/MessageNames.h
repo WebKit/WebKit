@@ -32,21 +32,22 @@ namespace IPC {
 
 enum class ReceiverName : uint8_t {
     TestWithCVPixelBuffer = 1
-    , TestWithEnabledIf = 2
-    , TestWithIfMessage = 3
-    , TestWithImageData = 4
-    , TestWithLegacyReceiver = 5
-    , TestWithSemaphore = 6
-    , TestWithStream = 7
-    , TestWithStreamBatched = 8
-    , TestWithStreamBuffer = 9
-    , TestWithStreamServerConnectionHandle = 10
-    , TestWithSuperclass = 11
-    , TestWithoutAttributes = 12
-    , TestWithoutUsingIPCConnection = 13
-    , IPC = 14
-    , AsyncReply = 15
-    , Invalid = 16
+    , TestWithEnabledBy = 2
+    , TestWithEnabledIf = 3
+    , TestWithIfMessage = 4
+    , TestWithImageData = 5
+    , TestWithLegacyReceiver = 6
+    , TestWithSemaphore = 7
+    , TestWithStream = 8
+    , TestWithStreamBatched = 9
+    , TestWithStreamBuffer = 10
+    , TestWithStreamServerConnectionHandle = 11
+    , TestWithSuperclass = 12
+    , TestWithoutAttributes = 13
+    , TestWithoutUsingIPCConnection = 14
+    , IPC = 15
+    , AsyncReply = 16
+    , Invalid = 17
 };
 
 enum class MessageName : uint16_t {
@@ -54,6 +55,8 @@ enum class MessageName : uint16_t {
     TestWithCVPixelBuffer_ReceiveCVPixelBuffer,
     TestWithCVPixelBuffer_SendCVPixelBuffer,
 #endif
+    TestWithEnabledBy_AlwaysEnabled,
+    TestWithEnabledBy_ConditionallyEnabled,
     TestWithEnabledIf_AlwaysEnabled,
     TestWithEnabledIf_OnlyEnabledIfFeatureEnabled,
 #if PLATFORM(COCOA) || PLATFORM(GTK)
