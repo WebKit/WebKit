@@ -72,10 +72,16 @@ bool PlaybackSessionInterfaceMac::isInWindowFullscreenActive() const
     return m_playbackSessionModel && m_playbackSessionModel->isInWindowFullscreenActive();
 }
 
-void PlaybackSessionInterfaceMac::toggleInWindowFullscreen()
+void PlaybackSessionInterfaceMac::enterInWindowFullscreen()
 {
     if (m_playbackSessionModel)
-        m_playbackSessionModel->toggleInWindowFullscreen();
+        m_playbackSessionModel->enterInWindowFullscreen();
+}
+
+void PlaybackSessionInterfaceMac::exitInWindowFullscreen()
+{
+    if (m_playbackSessionModel)
+        m_playbackSessionModel->exitInWindowFullscreen();
 }
 
 void PlaybackSessionInterfaceMac::durationChanged(double duration)

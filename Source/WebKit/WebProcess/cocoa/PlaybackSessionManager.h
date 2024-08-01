@@ -179,7 +179,8 @@ private:
     void togglePictureInPicture(PlaybackSessionContextIdentifier);
     void enterFullscreen(PlaybackSessionContextIdentifier);
     void exitFullscreen(PlaybackSessionContextIdentifier);
-    void toggleInWindow(PlaybackSessionContextIdentifier);
+    void enterInWindow(PlaybackSessionContextIdentifier);
+    void exitInWindow(PlaybackSessionContextIdentifier);
     void toggleMuted(PlaybackSessionContextIdentifier);
     void setMuted(PlaybackSessionContextIdentifier, bool muted);
     void setVolume(PlaybackSessionContextIdentifier, double volume);

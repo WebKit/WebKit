@@ -419,10 +419,16 @@ static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOptio
         model->togglePictureInPicture();
 }
 
-- (void)toggleInWindow
+- (void)enterInWindow
 {
     if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
-        model->toggleInWindowFullscreen();
+        model->enterInWindowFullscreen();
+}
+
+- (void)exitInWindow
+{
+    if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
+        model->exitInWindowFullscreen();
 }
 
 
