@@ -1628,7 +1628,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     [self addSubview:_warningView.get()];
 }
 
-- (void)_showSafeBrowsingWarning:(const WebKit::BrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler
+- (void)_showBrowsingWarning:(const WebKit::BrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler
 {
     [self _showWarningView:warning completionHandler:WTFMove(completionHandler)];
 }
@@ -1638,7 +1638,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     [std::exchange(_warningView, nullptr) removeFromSuperview];
 }
 
-- (void)_clearSafeBrowsingWarning
+- (void)_clearBrowsingWarning
 {
     [self _clearWarningView];
 }
@@ -1649,7 +1649,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
         [self _clearWarningView];
 }
 
-- (void)_clearSafeBrowsingWarningIfForMainFrameNavigation
+- (void)_clearBrowsingWarningIfForMainFrameNavigation
 {
     [self _clearWarningViewIfForMainFrameNavigation];
 }
