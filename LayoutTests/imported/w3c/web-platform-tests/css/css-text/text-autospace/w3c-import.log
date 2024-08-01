@@ -28,6 +28,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-dynamic-text-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-first-line-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-ligature-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-mixed-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-no-001-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-no-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-no-001-mismatch-ref.html

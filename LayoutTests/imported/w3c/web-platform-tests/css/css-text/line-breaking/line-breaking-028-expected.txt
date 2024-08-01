@@ -1,0 +1,10 @@
+X፡!
+X !
+X !
+X !
+
+PASS U+0x1361 (BA) and U+0x0021 (EX)
+PASS U+0x1680 (BA) and U+0x0021 (EX)
+PASS U+0x2009 (BA) and U+0x0021 (EX)
+PASS U+0x205F (BA) and U+0x0021 (EX)
+

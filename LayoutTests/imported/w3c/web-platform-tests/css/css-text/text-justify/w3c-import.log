@@ -47,3 +47,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-none-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-none-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-none-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-word-separators-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-word-separators-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-word-separators.html

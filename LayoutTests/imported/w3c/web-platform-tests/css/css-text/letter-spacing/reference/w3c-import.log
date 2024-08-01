@@ -1,0 +1,43 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-200-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-201-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-202-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-203-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-204-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-205-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-206-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-211-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-212-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-bengali-yaphala-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-bidi-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-bidi-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-bidi-003-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-bidi-004-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-bidi-005-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-control-chars-001.ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-end-of-line-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-end-of-line-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-ligatures-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-ligatures-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-ligatures-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-ligatures-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-nesting-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-nesting-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-nesting-003-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-percent-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-trim-start-001-ref.html

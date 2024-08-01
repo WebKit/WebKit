@@ -1,7 +1,11 @@
 
-PASS e.style['text-spacing-trim'] = "normal" should not set the property value
+PASS e.style['text-spacing-trim'] = "none" should not set the property value
 PASS e.style['text-spacing-trim'] = "normal space-all" should not set the property value
 PASS e.style['text-spacing-trim'] = "normal space-first" should not set the property value
 PASS e.style['text-spacing-trim'] = "auto space-all" should not set the property value
 PASS e.style['text-spacing-trim'] = "auto space-first" should not set the property value
+PASS e.style['text-spacing-trim'] = "allow-end" should not set the property value
+PASS e.style['text-spacing-trim'] = "trim-auto" should not set the property value
+PASS e.style['text-spacing-trim'] = "allow-end space-first" should not set the property value
+PASS e.style['text-spacing-trim'] = "space-first allow-end" should not set the property value
 

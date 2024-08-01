@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/anonymous-flex-item-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/anonymous-flex-item-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/anonymous-grid-item-001-expected.html
@@ -38,6 +39,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-percentage-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-percentage-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-percentage-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-ruby-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-tab-positions-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-tab-positions-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-text-align-end-expected.html

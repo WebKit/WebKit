@@ -1,0 +1,59 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphenate-character-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphenate-character-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphenate-character-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphenate-character-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphenate-limit-chars-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-auto-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-auto-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-auto-004H-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-auto-004M-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-auto-005H-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-auto-005M-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-auto-010H-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-auto-010M-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-auto-inline-010H-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-auto-inline-010M-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-auto-last-word-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-auto-last-word-001-ref2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-character-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-manual-010-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-manual-011H-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-manual-011M-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-manual-013H-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-manual-013M-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-manual-inline-010-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-manual-inline-011H-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-manual-inline-011M-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-manual-inline-012H-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-manual-inline-012M-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-none-shy-on-2nd-line-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-out-of-flow-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-overflow-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-punctuation-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-shaping-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-shaping-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-span-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-span-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-vertical-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-vertical-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-vertical-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-vertical-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-vs-float-clearance-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/shy-styling-001-alt-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/shy-styling-001-ref.html

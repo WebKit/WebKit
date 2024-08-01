@@ -1,0 +1,106 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-capitalize-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-capitalize-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-capitalize-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-capitalize-007-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-capitalize-009-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-capitalize-010-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-capitalize-011-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-capitalize-014-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-capitalize-016-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-capitalize-018-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-capitalize-020-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-capitalize-022-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-capitalize-024-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-capitalize-026-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-capitalize-028-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-capitalize-030-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-capitalize-031-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-capitalize-032-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-full-size-kana-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-full-size-kana-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-full-size-kana-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-full-size-kana-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-full-size-kana-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-full-size-kana-006-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-full-size-kana-007-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-full-size-kana-008-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-fullwidth-001-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-fullwidth-006-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-fullwidth-007-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-fullwidth-008-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-fullwidth-009-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-lowercase-101-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-multiple-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-none-001-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-shaping-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-tailoring-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-tailoring-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-tailoring-002a-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-tailoring-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-tailoring-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-tailoring-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-uppercase-101-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-uppercase-dynamic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-006-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-007-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-008-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-009-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-010-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-011-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-012-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-014-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-015-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-016-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-017-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-018-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-019-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-020-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-021-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-022-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-023-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-024-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-025-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-026-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-027-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-028-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-029-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-030-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-031-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-032-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-033-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-034-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-035-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-038-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-039-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-040-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-041-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-042-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-043-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-044-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-101-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-102-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-103-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-104-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-105-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-106-ref.html

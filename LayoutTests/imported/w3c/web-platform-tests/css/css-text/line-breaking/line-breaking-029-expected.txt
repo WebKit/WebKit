@@ -1,0 +1,10 @@
+1.”
+a.”
+1."
+a."
+
+PASS U+0x0031 (NU), U+0x002E (IS) and U+0x201D (QU)
+PASS U+0x0041 (AL), U+0x002E (IS) and U+0x201D (QU)
+PASS U+0x0031 (NU), U+0x002E (IS) and U+0x0022 (QU)
+PASS U+0x0041 (AL), U+0x002E (IS) and U+0x0022 (QU)
+

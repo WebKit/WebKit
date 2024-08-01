@@ -1,0 +1,71 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/break-boundary-2-chars-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/break-boundary-2-chars-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-010-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-014-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-020-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-062-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-ethiopic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-inline-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-inline-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-inline-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-inline-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-inline-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-inline-006-a-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-inline-006-b-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-inline-007-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-ref-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-ref-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-ref-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-ref-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-ref-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-ref-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-ref-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-ref-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-ref-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-ref-031.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-break-all-ref-032.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-keep-all-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-keep-all-063-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-keep-all-ref-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-keep-all-ref-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-keep-all-ref-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-keep-all-ref-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-keep-all-ref-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-keep-all-ref-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-manual-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-ar-ref-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-bo-ref-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-en-ref-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-ethiopic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-hi-ref-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-ja-ref-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-ja-ref-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-ja-ref-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-ja-ref-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-km-ref-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-ko-ref-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-lo-ref-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-my-ref-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-ref-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-tdd-ref-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-th-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-th-ref-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/reference/word-break-normal-zh-ref-000.html

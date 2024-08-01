@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-001.html
@@ -26,6 +27,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-dot-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-dynamic-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-dynamic-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-end-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-end-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-end-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-feature-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-feature-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-feature-001.html
@@ -38,11 +42,18 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-space-all-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-space-all-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-space-all-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-span-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-span-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-span-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-start-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-start-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-start-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-start-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-start-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-start-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-subset-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-subset-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-subset-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-trim-all-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-trim-all-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-trim-all-001.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-wrap-001-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-wrap-001-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-wrap-001.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-wrap-br-001-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-wrap-br-001.html

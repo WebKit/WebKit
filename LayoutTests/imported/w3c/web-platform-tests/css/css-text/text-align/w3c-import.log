@@ -87,6 +87,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-006-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-bidi-control-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-bidi-control-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-bidi-control.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-last-center-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-last-center.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-last-default-expected.html
@@ -99,6 +102,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-last-start.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-shy-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-shy-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-tabs-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-tabs-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-tabs-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-tabs-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-tabs-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-tabs-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-tabs-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-tabs-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-002-expected.html
@@ -139,6 +150,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-end-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-end.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-justify-br-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-justify-br-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-justify-br.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-justify-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-justify-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-justify-rtl-expected.html
