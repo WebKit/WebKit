@@ -382,6 +382,10 @@ struct PerWebProcessState {
 #if ENABLE(GAMEPAD)
     RetainPtr<id> _gamepadsRecentlyAccessedState;
 #endif
+
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    BOOL _isScrollingWithOverlayRegion;
+#endif
 }
 
 - (BOOL)_isValid;
