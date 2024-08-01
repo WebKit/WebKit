@@ -235,9 +235,9 @@ $null = mkdir -ErrorAction SilentlyContinue $output/include/JavaScriptCore
 $null = mkdir -ErrorAction SilentlyContinue $output/include/wtf
 
 Copy-Item -Recurse $WebKitBuild/lib $output
+Copy-Item -Recurse $WebKitBuild/bin $output
 
 Copy-Item $WebKitBuild/cmakeconfig.h $output/include/cmakeconfig.h
-Copy-Item -Recurse $WebKitBuild/bin $output/bin
 
 if ($CMAKE_BUILD_TYPE -eq "Release") {
     Move-Item $ICU_STATIC_LIBRARY/icudt.lib $ICU_STATIC_LIBRARY/sicudt.lib
