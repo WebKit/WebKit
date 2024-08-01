@@ -2039,7 +2039,6 @@ private:
         InsertionSet insertionSet(m_code);
         for (BasicBlock* block : m_code) {
             bool hasAliasedTmps = false;
-            bool hasDeletedInst = false;
 
             for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
                 Inst& inst = block->at(instIndex);
@@ -2071,14 +2070,6 @@ private:
                         auto stackSlotEntry = stackSlots.find(arg.tmp());
                         if (stackSlotEntry == stackSlots.end())
                             return;
-
-                        // If the Tmp holds a constant then we want to rematerialize its
-                        // value rather than loading it from the stack. In order for that
-                        // optimization to kick in, we need to avoid placing the Tmp's stack
-                        // address into the instruction.
-                        if (m_useCounts.isConstDef<bank>(AbsoluteTmpMapper<bank>::absoluteIndex(arg.tmp())))
-                            return;
-
                         bool needScratchIfSpilledInPlace = false;
                         if (!inst.admitsStack(arg)) {
                             if (traceDebug)
@@ -2103,7 +2094,14 @@ private:
                                 return;
                             }
                         }
-
+                        
+                        // If the Tmp holds a constant then we want to rematerialize its
+                        // value rather than loading it from the stack. In order for that
+                        // optimization to kick in, we need to avoid placing the Tmp's stack
+                        // address into the instruction.
+                        if (!Arg::isColdUse(role) && m_useCounts.isConstDef<bank>(AbsoluteTmpMapper<bank>::absoluteIndex(arg.tmp())))
+                            return;
+                        
                         Width spillWidth = m_tmpWidth.requiredWidth(arg.tmp());
                         if (Arg::isAnyDef(role) && width < spillWidth) {
                             // Either there are users of this tmp who will use more than width,
@@ -2172,8 +2170,7 @@ private:
                 }
                 
                 // For every other case, add Load/Store as needed.
-                bool willDeleteInst = false;
-                inst.forEachTmp([&](Tmp& tmp, Arg::Role role, Bank argBank, Width) {
+                inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Bank argBank, Width) {
                     if (tmp.isReg() || argBank != bank)
                         return;
 
@@ -2239,26 +2236,16 @@ private:
                     }
 
                     if (Arg::isAnyDef(role)) {
-                        if constexpr (bank == GP) {
-                            auto oldIndex = AbsoluteTmpMapper<bank>::absoluteIndex(oldTmp);
-                            if (m_useCounts.isConstDef<bank>(oldIndex)) {
-                                willDeleteInst = true;
-                                return;
-                            }
-                        }
+                        // FIXME: When nobody is using admitsStack's spill result, we can also skip def.
                         insertionSet.insert(instIndex + 1, move, inst.origin, tmp, arg);
                     }
                 });
-                if (willDeleteInst) {
-                    hasDeletedInst = true;
-                    inst = Inst();
-                }
             }
             insertionSet.execute(block);
 
-            if (hasAliasedTmps || hasDeletedInst) {
+            if (hasAliasedTmps) {
                 block->insts().removeAllMatching([&] (const Inst& inst) {
-                    return !inst || allocator.isUselessMove(inst);
+                    return allocator.isUselessMove(inst);
                 });
             }
         }
