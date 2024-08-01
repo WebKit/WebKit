@@ -976,9 +976,13 @@ private:
         //     b = Op a
 
         ArgPromise addr = loadPromise(value);
-        if (isValidForm(opcode, addr.kind(), Arg::Tmp)) {
-            append(addr.inst(opcode, m_value, addr.consume(*this), result));
-            return;
+        // Don't use this form for FP loads/stores on on platforms where it may
+        // fault.
+        if (hasUnalignedFPMemoryAccess() || (opcode32 != Air::Move32ToFloat && opcodeFloat != Air::MoveFloatTo32)) {
+            if (isValidForm(opcode, addr.kind(), Arg::Tmp)) {
+                append(addr.inst(opcode, m_value, addr.consume(*this), result));
+                return;
+            }
         }
 
         if (isValidForm(opcode, Arg::Tmp, Arg::Tmp)) {

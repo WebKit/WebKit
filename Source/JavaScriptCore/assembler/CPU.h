@@ -51,6 +51,11 @@ constexpr bool isARM_THUMB2()
 #endif
 }
 
+constexpr bool hasUnalignedFPMemoryAccess()
+{
+    return !isARM_THUMB2();
+}
+
 constexpr bool isARM64()
 {
 #if CPU(ARM64)
