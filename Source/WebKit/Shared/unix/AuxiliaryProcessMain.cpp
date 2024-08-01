@@ -38,6 +38,10 @@
 #include "unix/BreakpadExceptionHandler.h"
 #endif
 
+#if USE(LIBWPE)
+#include "ProcessProviderLibWPE.h"
+#endif
+
 namespace WebKit {
 
 AuxiliaryProcessMainCommon::AuxiliaryProcessMainCommon()
