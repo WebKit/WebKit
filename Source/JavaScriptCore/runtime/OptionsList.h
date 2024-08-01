@@ -604,7 +604,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useWasmGC, false, Normal, "Allow gc types from the wasm gc proposal."_s) \
     v(Bool, useWasmSIMD, true, Normal, "Allow the new simd instructions and types from the wasm simd spec."_s) \
     v(Bool, useWasmRelaxedSIMD, false, Normal, "Allow the relaxed simd instructions and types from the wasm relaxed simd spec."_s) \
-    v(Bool, useWasmTailCalls, false, Normal, "Allow the new instructions from the wasm tail calls spec."_s) \
+    v(Bool, useWasmTailCalls, true, Normal, "Allow the new instructions from the wasm tail calls spec."_s) \
     v(Bool, useWasmExtendedConstantExpressions, true, Normal, "Allow the use of global, element, and data init expressions from the extended constant expressions proposal."_s) \
 
 
