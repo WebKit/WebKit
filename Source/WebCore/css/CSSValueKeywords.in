@@ -1761,7 +1761,10 @@ false
 // text-spacing-trim
 space-all
 // text-autospace
+// normal
 no-autospace
+ideograph-alpha
+ideograph-numeric
 
 // scrollbar-gutter
 // auto

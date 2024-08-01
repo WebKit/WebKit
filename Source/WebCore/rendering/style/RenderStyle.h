@@ -267,7 +267,7 @@ struct ScrollbarColor;
 struct ViewTimelineInsets;
 
 struct TabSize;
-struct TextAutospace;
+class TextAutospace;
 struct TextBoxEdge;
 struct TextSpacingTrim;
 struct TransformOperationData;

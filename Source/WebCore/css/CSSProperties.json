@@ -1193,10 +1193,13 @@
             "inherited": true,
             "values": [
                 "auto",
-                "no-autospace"
+                "normal",
+                "no-autospace",
+                "ideograph-alpha",
+                "ideograph-numeric"
             ],
             "codegen-properties": {
-                "settings-flag": "cssTextSpacingEnabled",
+                "settings-flag": "cssTextAutospaceEnabled",
                 "font-property": true,
                 "high-priority": true,
                 "sink-priority": true,

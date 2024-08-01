@@ -2029,10 +2029,30 @@ inline TextSpacingTrim BuilderConverter::convertTextSpacingTrim(BuilderState&, c
 inline TextAutospace BuilderConverter::convertTextAutospace(BuilderState&, const CSSValue& value)
 {
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        if (primitiveValue->valueID() == CSSValueNoAutospace)
+            return { };
         if (primitiveValue->valueID() == CSSValueAuto)
-            return { .m_autoSpace = TextAutospace::TextAutospaceType::Auto };
+            return { TextAutospace::Type::Auto };
+        if (primitiveValue->valueID() == CSSValueNormal)
+            return { TextAutospace::Type::Normal };
     }
-    return { };
+
+    TextAutospace::Options options;
+    for (auto& item : downcast<CSSValueList>(value)) {
+        auto& value = downcast<CSSPrimitiveValue>(item);
+        switch (value.valueID()) {
+        case CSSValueIdeographAlpha:
+            options.add(TextAutospace::Type::IdeographAlpha);
+            break;
+        case CSSValueIdeographNumeric:
+            options.add(TextAutospace::Type::IdeographNumeric);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+    return options;
 }
 
 inline std::optional<Length> BuilderConverter::convertBlockStepSize(BuilderState& builderState, const CSSValue& value)

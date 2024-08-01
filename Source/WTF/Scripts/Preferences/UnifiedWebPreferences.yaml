@@ -1294,6 +1294,20 @@ CSSStyleQueriesEnabled:
     WebCore:
       default: true
 
+CSSTextAutospaceEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS text-autospace property"
+  humanReadableDescription: "Enable the property text-autospace, defined in CSS Text 4"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSTextBoxTrimEnabled:
   type: bool
   status: preview
