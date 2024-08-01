@@ -7232,12 +7232,12 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
             }
 
             auto transaction = internals().pageLoadState.transaction();
-            internals().pageLoadState.setTitleFromSafeBrowsingWarning(transaction, safeBrowsingWarning->title());
+            internals().pageLoadState.setTitleFromBrowsingWarning(transaction, safeBrowsingWarning->title());
 
             protectedPageClient->showSafeBrowsingWarning(*safeBrowsingWarning, [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandlerWrapper), policyAction, protectedPageClient] (auto&& result) mutable {
 
                 auto transaction = internals().pageLoadState.transaction();
-                internals().pageLoadState.setTitleFromSafeBrowsingWarning(transaction, { });
+                internals().pageLoadState.setTitleFromBrowsingWarning(transaction, { });
 
                 switchOn(result, [&] (const URL& url) {
                     completionHandler(PolicyAction::Ignore);
