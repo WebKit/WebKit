@@ -944,9 +944,6 @@ protected:
     // Generates GL error and returns false if the format is not settable.
     bool validateSettableTexInternalFormat(ASCIILiteral functionName, GCGLenum format);
 
-    // Helper function for validating compressed texture formats.
-    bool validateCompressedTexFormat(ASCIILiteral functionName, GCGLenum format);
-
     // Helper function for texParameterf and texParameteri.
     void texParameter(GCGLenum target, GCGLenum pname, GCGLfloat paramf, GCGLint parami, bool isFloat);
 

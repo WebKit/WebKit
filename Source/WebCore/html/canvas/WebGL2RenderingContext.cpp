@@ -1146,8 +1146,6 @@ void WebGL2RenderingContext::compressedTexImage2D(GCGLenum target, GCGLint level
     }
     if (!validateTexture2DBinding("compressedTexImage2D"_s, target))
         return;
-    if (!validateCompressedTexFormat("compressedTexImage2D"_s, internalformat))
-        return;
     m_context->compressedTexImage2D(target, level, internalformat, width, height, border, imageSize, offset);
 }
 
