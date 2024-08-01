@@ -1,4 +1,4 @@
-; Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+; Copyright (C) 2014-2024 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -110,6 +110,9 @@
 
 (with-filter (mac-policy-name "vnguard")
     (allow system-mac-syscall (mac-syscall-number 1)))
+
+(with-filter (mac-policy-name "Sandbox")
+    (allow system-mac-syscall (mac-syscall-number 5)))
 
 (allow file-link
     (subpath "/private/var/mobile/Containers/Data/Application"))
@@ -733,6 +736,7 @@
         SYS_dup
         SYS_dup2
         SYS_exit
+        SYS_faccessat
         SYS_fcntl
         SYS_fcntl_nocancel
         SYS_ffsctl
@@ -747,6 +751,7 @@
         SYS_fsync
         SYS_ftruncate
         SYS_getattrlist
+        SYS_getattrlistbulk
         SYS_getdirentries64
         SYS_getegid
         SYS_getentropy
@@ -978,3 +983,13 @@
     (global-name "com.apple.WebPrivacy.Service"))
 
 #endif
+
+#if ENABLE(SYSTEM_SERVICES_SANDBOX_RULES)
+#include <WebKitAdditions/SystemServicesSandbox-ios.defs>
+#endif
+
+;; Allow re-issuing file extensions we were vended
+(allow file-issue-extension
+        (require-all
+            (extension-class "com.apple.app-sandbox.read" "com.apple.app-sandbox.read-write")
+            (extension "com.apple.app-sandbox.read-write")))
