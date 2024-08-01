@@ -36,11 +36,11 @@
 #import "CocoaHelpers.h"
 #import "FoundationSPI.h"
 #import "Logging.h"
+#import "WKWebExtensionInternal.h"
+#import "WKWebExtensionPermissionPrivate.h"
 #import "WebExtensionConstants.h"
 #import "WebExtensionUtilities.h"
-#import "_WKWebExtensionInternal.h"
 #import "_WKWebExtensionLocalization.h"
-#import "_WKWebExtensionPermissionPrivate.h"
 #import <CoreFoundation/CFBundle.h>
 #import <UniformTypeIdentifiers/UTCoreTypes.h>
 #import <UniformTypeIdentifiers/UTType.h>
@@ -600,51 +600,51 @@ bool WebExtension::hasRequestedPermission(NSString *permission) const
     return m_permissions.contains(permission);
 }
 
-static _WKWebExtensionError toAPI(WebExtension::Error error)
+static WKWebExtensionError toAPI(WebExtension::Error error)
 {
     switch (error) {
     case WebExtension::Error::Unknown:
-        return _WKWebExtensionErrorUnknown;
+        return WKWebExtensionErrorUnknown;
     case WebExtension::Error::ResourceNotFound:
-        return _WKWebExtensionErrorResourceNotFound;
+        return WKWebExtensionErrorResourceNotFound;
     case WebExtension::Error::InvalidManifest:
-        return _WKWebExtensionErrorInvalidManifest;
+        return WKWebExtensionErrorInvalidManifest;
     case WebExtension::Error::UnsupportedManifestVersion:
-        return _WKWebExtensionErrorUnsupportedManifestVersion;
+        return WKWebExtensionErrorUnsupportedManifestVersion;
     case WebExtension::Error::InvalidAction:
-        return _WKWebExtensionErrorInvalidManifestEntry;
+        return WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidActionIcon:
-        return _WKWebExtensionErrorInvalidManifestEntry;
+        return WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidBackgroundContent:
-        return _WKWebExtensionErrorInvalidManifestEntry;
+        return WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidCommands:
-        return _WKWebExtensionErrorInvalidManifestEntry;
+        return WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidContentScripts:
-        return _WKWebExtensionErrorInvalidManifestEntry;
+        return WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidContentSecurityPolicy:
-        return _WKWebExtensionErrorInvalidManifestEntry;
+        return WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidDeclarativeNetRequest:
-        return _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry;
+        return WKWebExtensionErrorInvalidDeclarativeNetRequestEntry;
     case WebExtension::Error::InvalidDescription:
-        return _WKWebExtensionErrorInvalidManifestEntry;
+        return WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidExternallyConnectable:
-        return _WKWebExtensionErrorInvalidManifestEntry;
+        return WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidIcon:
-        return _WKWebExtensionErrorInvalidManifestEntry;
+        return WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidName:
-        return _WKWebExtensionErrorInvalidManifestEntry;
+        return WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidOptionsPage:
-        return _WKWebExtensionErrorInvalidManifestEntry;
+        return WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidURLOverrides:
-        return _WKWebExtensionErrorInvalidManifestEntry;
+        return WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidVersion:
-        return _WKWebExtensionErrorInvalidManifestEntry;
+        return WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidWebAccessibleResources:
-        return _WKWebExtensionErrorInvalidManifestEntry;
+        return WKWebExtensionErrorInvalidManifestEntry;
     case WebExtension::Error::InvalidBackgroundPersistence:
-        return _WKWebExtensionErrorInvalidBackgroundPersistence;
+        return WKWebExtensionErrorInvalidBackgroundPersistence;
     case WebExtension::Error::InvalidResourceCodeSignature:
-        return _WKWebExtensionErrorInvalidResourceCodeSignature;
+        return WKWebExtensionErrorInvalidResourceCodeSignature;
     }
 }
 
@@ -770,7 +770,7 @@ ALLOW_NONLITERAL_FORMAT_END
     else
         userInfo = @{ NSLocalizedDescriptionKey: localizedDescription };
 
-    return [[NSError alloc] initWithDomain:_WKWebExtensionErrorDomain code:errorCode userInfo:userInfo];
+    return [[NSError alloc] initWithDomain:WKWebExtensionErrorDomain code:errorCode userInfo:userInfo];
 }
 
 void WebExtension::removeError(Error error, SuppressNotification suppressNotification)
@@ -793,7 +793,7 @@ void WebExtension::removeError(Error error, SuppressNotification suppressNotific
         return;
 
     dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
-        [NSNotificationCenter.defaultCenter postNotificationName:_WKWebExtensionErrorsWereUpdatedNotification object:wrapper() userInfo:nil];
+        [NSNotificationCenter.defaultCenter postNotificationName:WKWebExtensionErrorsWereUpdatedNotification object:wrapper() userInfo:nil];
     }).get());
 }
 
@@ -812,7 +812,7 @@ void WebExtension::recordError(NSError *error, SuppressNotification suppressNoti
         return;
 
     dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
-        [NSNotificationCenter.defaultCenter postNotificationName:_WKWebExtensionErrorsWereUpdatedNotification object:wrapper() userInfo:nil];
+        [NSNotificationCenter.defaultCenter postNotificationName:WKWebExtensionErrorsWereUpdatedNotification object:wrapper() userInfo:nil];
     }).get());
 }
 
@@ -1459,7 +1459,7 @@ void WebExtension::populateBackgroundPropertiesIfNeeded()
         m_backgroundContentIsPersistent = false;
     }
 
-    if (!m_backgroundContentIsPersistent && hasRequestedPermission(_WKWebExtensionPermissionWebRequest))
+    if (!m_backgroundContentIsPersistent && hasRequestedPermission(WKWebExtensionPermissionWebRequest))
         recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Non-persistent background content cannot listen to `webRequest` events.", "WKWebExtensionErrorInvalidBackgroundPersistence description for webRequest events")));
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
@@ -1835,13 +1835,13 @@ std::optional<WebExtension::DeclarativeNetRequestRulesetData> WebExtension::pars
 
     NSString *rulesetID = objectForKey<NSString>(rulesetDictionary, declarativeNetRequestRulesetIDManifestKey);
     if (!rulesetID.length) {
-        *error = createError(WebExtension::Error::InvalidDeclarativeNetRequest, WEB_UI_STRING("Empty `declarative_net_request` ruleset id.", "_WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty ruleset id"));
+        *error = createError(WebExtension::Error::InvalidDeclarativeNetRequest, WEB_UI_STRING("Empty `declarative_net_request` ruleset id.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty ruleset id"));
         return std::nullopt;
     }
 
     NSString *jsonPath = objectForKey<NSString>(rulesetDictionary, declarativeNetRequestRulePathManifestKey);
     if (!jsonPath.length) {
-        *error = createError(WebExtension::Error::InvalidDeclarativeNetRequest, WEB_UI_STRING("Empty `declarative_net_request` JSON path.", "_WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty JSON path"));
+        *error = createError(WebExtension::Error::InvalidDeclarativeNetRequest, WEB_UI_STRING("Empty `declarative_net_request` JSON path.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty JSON path"));
         return std::nullopt;
 
     }
@@ -1867,8 +1867,8 @@ void WebExtension::populateDeclarativeNetRequestPropertiesIfNeeded()
 
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/declarative_net_request
 
-    if (!supportedPermissions().contains(_WKWebExtensionPermissionDeclarativeNetRequest) && !supportedPermissions().contains(_WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess)) {
-        recordError(createError(Error::InvalidDeclarativeNetRequest, WEB_UI_STRING("Manifest has no `declarativeNetRequest` permission.", "_WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for missing declarativeNetRequest permission")));
+    if (!supportedPermissions().contains(WKWebExtensionPermissionDeclarativeNetRequest) && !supportedPermissions().contains(WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess)) {
+        recordError(createError(Error::InvalidDeclarativeNetRequest, WEB_UI_STRING("Manifest has no `declarativeNetRequest` permission.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for missing declarativeNetRequest permission")));
         return;
     }
 
@@ -1887,7 +1887,7 @@ void WebExtension::populateDeclarativeNetRequestPropertiesIfNeeded()
     }
 
     if (declarativeNetRequestRulesets.count > webExtensionDeclarativeNetRequestMaximumNumberOfStaticRulesets)
-        recordError(createError(Error::InvalidDeclarativeNetRequest, WEB_UI_STRING("Exceeded maximum number of `declarative_net_request` rulesets. Ignoring extra rulesets.", "_WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many rulesets")));
+        recordError(createError(Error::InvalidDeclarativeNetRequest, WEB_UI_STRING("Exceeded maximum number of `declarative_net_request` rulesets. Ignoring extra rulesets.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many rulesets")));
 
     NSUInteger rulesetCount = 0;
     NSUInteger enabledRulesetCount = 0;
@@ -1906,12 +1906,12 @@ void WebExtension::populateDeclarativeNetRequestPropertiesIfNeeded()
 
         auto ruleset = optionalRuleset.value();
         if (seenRulesetIDs.contains(ruleset.rulesetID)) {
-            recordError(createError(Error::InvalidDeclarativeNetRequest, WEB_UI_FORMAT_STRING("`declarative_net_request` ruleset with id \"%@\" is invalid. Ruleset id must be unique.", "_WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for duplicate ruleset id", (NSString *)ruleset.rulesetID)));
+            recordError(createError(Error::InvalidDeclarativeNetRequest, WEB_UI_FORMAT_STRING("`declarative_net_request` ruleset with id \"%@\" is invalid. Ruleset id must be unique.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for duplicate ruleset id", (NSString *)ruleset.rulesetID)));
             continue;
         }
 
         if (ruleset.enabled && ++enabledRulesetCount > webExtensionDeclarativeNetRequestMaximumNumberOfEnabledRulesets && !recordedTooManyRulesetsManifestError) {
-            recordError(createError(Error::InvalidDeclarativeNetRequest, WEB_UI_FORMAT_STRING("Exceeded maximum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored.", "_WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many enabled static rulesets", webExtensionDeclarativeNetRequestMaximumNumberOfEnabledRulesets)));
+            recordError(createError(Error::InvalidDeclarativeNetRequest, WEB_UI_FORMAT_STRING("Exceeded maximum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many enabled static rulesets", webExtensionDeclarativeNetRequestMaximumNumberOfEnabledRulesets)));
             recordedTooManyRulesetsManifestError = true;
             continue;
         }
@@ -2100,12 +2100,12 @@ void WebExtension::populateContentScriptPropertiesIfNeeded()
 
 const WebExtension::PermissionsSet& WebExtension::supportedPermissions()
 {
-    static MainThreadNeverDestroyed<PermissionsSet> permissions = std::initializer_list<String> { _WKWebExtensionPermissionActiveTab, _WKWebExtensionPermissionAlarms, _WKWebExtensionPermissionClipboardWrite,
-        _WKWebExtensionPermissionContextMenus, _WKWebExtensionPermissionCookies, _WKWebExtensionPermissionDeclarativeNetRequest, _WKWebExtensionPermissionDeclarativeNetRequestFeedback,
-        _WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess, _WKWebExtensionPermissionMenus, _WKWebExtensionPermissionNativeMessaging, _WKWebExtensionPermissionNotifications, _WKWebExtensionPermissionScripting,
-        _WKWebExtensionPermissionStorage, _WKWebExtensionPermissionTabs, _WKWebExtensionPermissionUnlimitedStorage, _WKWebExtensionPermissionWebNavigation, _WKWebExtensionPermissionWebRequest,
+    static MainThreadNeverDestroyed<PermissionsSet> permissions = std::initializer_list<String> { WKWebExtensionPermissionActiveTab, WKWebExtensionPermissionAlarms, WKWebExtensionPermissionClipboardWrite,
+        WKWebExtensionPermissionContextMenus, WKWebExtensionPermissionCookies, WKWebExtensionPermissionDeclarativeNetRequest, WKWebExtensionPermissionDeclarativeNetRequestFeedback,
+        WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess, WKWebExtensionPermissionMenus, WKWebExtensionPermissionNativeMessaging, WKWebExtensionPermissionNotifications, WKWebExtensionPermissionScripting,
+        WKWebExtensionPermissionStorage, WKWebExtensionPermissionTabs, WKWebExtensionPermissionUnlimitedStorage, WKWebExtensionPermissionWebNavigation, WKWebExtensionPermissionWebRequest,
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
-        _WKWebExtensionPermissionSidePanel,
+        WKWebExtensionPermissionSidePanel,
 #endif
     };
     return permissions;

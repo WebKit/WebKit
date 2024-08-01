@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,10 +33,10 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "WKWebExtensionPermission.h"
 #import "WebExtensionConstants.h"
 #import "WebExtensionUtilities.h"
 #import "_WKWebExtensionDeclarativeNetRequestSQLiteStore.h"
-#import "_WKWebExtensionPermission.h"
 #import "_WKWebExtensionSQLiteStore.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -48,7 +48,7 @@ namespace WebKit {
 
 bool WebExtensionContext::isDeclarativeNetRequestMessageAllowed()
 {
-    return isLoaded() && (hasPermission(_WKWebExtensionPermissionDeclarativeNetRequest) || hasPermission(_WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess));
+    return isLoaded() && (hasPermission(WKWebExtensionPermissionDeclarativeNetRequest) || hasPermission(WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess));
 }
 
 void WebExtensionContext::declarativeNetRequestGetEnabledRulesets(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
@@ -237,7 +237,7 @@ void WebExtensionContext::declarativeNetRequestGetMatchedRules(std::optional<Web
         return;
     }
 
-    if (!hasPermission(_WKWebExtensionPermissionDeclarativeNetRequestFeedback)) {
+    if (!hasPermission(WKWebExtensionPermissionDeclarativeNetRequestFeedback)) {
         if (!tab->extensionHasTemporaryPermission()) {
             completionHandler(toWebExtensionError(apiName, nil, @"the 'activeTab' permission has not been granted by the user for the tab"));
             return;

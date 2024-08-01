@@ -36,6 +36,8 @@
 #import "WKNavigationActionPrivate.h"
 #import "WKNavigationDelegatePrivate.h"
 #import "WKUIDelegatePrivate.h"
+#import "WKWebExtensionActionInternal.h"
+#import "WKWebExtensionControllerDelegatePrivate.h"
 #import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewInternal.h"
 #import "WebExtensionContext.h"
@@ -46,8 +48,6 @@
 #import "WebExtensionTabParameters.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
-#import "_WKWebExtensionActionInternal.h"
-#import "_WKWebExtensionControllerDelegatePrivate.h"
 #import <wtf/BlockPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -565,7 +565,7 @@ void WebExtensionAction::clearBlockedResourceCount()
 void WebExtensionAction::propertiesDidChange()
 {
     dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
-        [NSNotificationCenter.defaultCenter postNotificationName:_WKWebExtensionActionPropertiesDidChangeNotification object:wrapper() userInfo:nil];
+        [NSNotificationCenter.defaultCenter postNotificationName:WKWebExtensionActionPropertiesDidChangeNotification object:wrapper() userInfo:nil];
     }).get());
 }
 

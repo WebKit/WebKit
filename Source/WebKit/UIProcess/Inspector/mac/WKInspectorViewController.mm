@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,8 +49,8 @@
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 #if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
+#import "WKWebExtensionController.h"
 #import "WebExtensionController.h"
-#import "_WKWebExtensionController.h"
 #endif
 
 static NSString * const WKInspectorResourceScheme = @"inspector-resource";
@@ -132,7 +132,7 @@ static NSString * const WKInspectorResourceScheme = @"inspector-resource";
 #if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
     if (RefPtr page = _inspectedPage.get()) {
         if (RefPtr webExtensionController = page->webExtensionController())
-            configuration.get()._webExtensionController = webExtensionController->wrapper();
+            configuration.get().webExtensionController = webExtensionController->wrapper();
     }
 #endif
 

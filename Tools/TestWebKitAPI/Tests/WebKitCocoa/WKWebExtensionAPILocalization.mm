@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -102,11 +102,11 @@ TEST(WKWebExtensionAPILocalization, Errors)
         @"browser.test.notifyPass()",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:localizationManifest resources:@{ @"background.js": backgroundScript, @"_locales/en/messages.json": messages }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:localizationManifest resources:@{ @"background.js": backgroundScript, @"_locales/en/messages.json": messages }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.
-    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
+    [WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
     manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
 
     [manager loadAndRun];
@@ -146,11 +146,11 @@ TEST(WKWebExtensionAPILocalization, i18n)
         @"browser.test.notifyPass()",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:localizationManifest resources:@{ @"background.js": backgroundScript, @"_locales/en/messages.json": messages }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:localizationManifest resources:@{ @"background.js": backgroundScript, @"_locales/en/messages.json": messages }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.
-    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
+    [WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
     manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
 
     [manager loadAndRun];
@@ -229,11 +229,11 @@ TEST(WKWebExtensionAPILocalization, i18nWithFallback)
         @"_locales/en_US/messages.json": regionalMessages,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.
-    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
+    [WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
     manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
 
     [manager loadAndRun];
@@ -268,11 +268,11 @@ TEST(WKWebExtensionAPILocalization, i18nWithoutMessages)
         @"browser.test.notifyPass()",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:localizationManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:localizationManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.
-    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
+    [WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
     manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
 
     [manager loadAndRun];
@@ -321,11 +321,11 @@ TEST(WKWebExtensionAPILocalization, i18nWithoutDefaultLocale)
         @"browser.test.notifyPass()",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifestWithoutLocale resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifestWithoutLocale resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.
-    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
+    [WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
     manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
 
     [manager loadAndRun];
@@ -431,11 +431,11 @@ TEST(WKWebExtensionAPILocalization, Placeholders)
         @"browser.test.notifyPass()",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:localizationManifest resources:@{ @"background.js": backgroundScript, @"_locales/en/messages.json": localizationDictionary }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:localizationManifest resources:@{ @"background.js": backgroundScript, @"_locales/en/messages.json": localizationDictionary }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.
-    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
+    [WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
     manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
 
     [manager loadAndRun];

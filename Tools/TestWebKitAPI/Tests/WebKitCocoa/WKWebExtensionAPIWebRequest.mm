@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,15 +82,15 @@ TEST(WKWebExtensionAPIWebRequest, EventFiringTest)
         @"browser.test.yield('Load Tab')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Grant the webRequest permission.
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
 
     auto *urlRequest = server.requestWithLocalhost();
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
@@ -118,15 +118,15 @@ TEST(WKWebExtensionAPIWebRequest, AllowedFilterTest)
         @"browser.test.yield('Load Tab')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Grant the webRequest permission.
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
 
     auto *urlRequest = server.requestWithLocalhost();
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
@@ -156,15 +156,15 @@ TEST(WKWebExtensionAPIWebRequest, DeniedFilterTest)
         @"browser.test.yield('Load Tab')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Grant the webRequest permission.
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
 
     auto *urlRequest = server.requestWithLocalhost();
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
@@ -210,15 +210,15 @@ TEST(WKWebExtensionAPIWebRequest, AllEventsFiredTest)
         @"browser.test.yield('Load Tab')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Grant the webRequest permission.
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
 
     auto *urlRequest = server.requestWithLocalhost();
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
@@ -246,15 +246,15 @@ TEST(WKWebExtensionAPIWebRequest, ErrorOccurred)
         @"browser.test.yield('Load Tab')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Grant the webRequest permission.
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
 
     auto *urlRequest = server.requestWithLocalhost();
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
@@ -282,15 +282,15 @@ TEST(WKWebExtensionAPIWebRequest, RedirectOccurred)
         @"browser.test.yield('Load Tab')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Grant the webRequest permission.
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
 
     auto *urlRequest = server.requestWithLocalhost();
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 

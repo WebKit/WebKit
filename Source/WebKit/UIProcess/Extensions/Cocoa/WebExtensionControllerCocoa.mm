@@ -642,7 +642,7 @@ void WebExtensionController::updateWebsitePoliciesForNavigation(API::WebsitePoli
     auto actionPatterns = websitePolicies.activeContentRuleListActionPatterns();
 
     for (Ref context : m_extensionContexts) {
-        if (!context->hasPermission(_WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess))
+        if (!context->hasPermission(WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess))
             continue;
 
         Vector<String> patterns;

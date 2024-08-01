@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,17 +24,3 @@
  */
 
 #import <WebKit/_WKWebExtensionContext.h>
-
-WK_HEADER_AUDIT_BEGIN(nullability, sendability)
-
-@interface _WKWebExtensionContext ()
-
-/*! @abstract The extension background view used for the extension, or `nil` if the extension does not have background content or it is currently unloaded. */
-@property (nonatomic, nullable, readonly) WKWebView *_backgroundWebView;
-
-/*! @abstract The extension background content URL for the extension, or `nil` if the extension does not have background content. */
-@property (nonatomic, nullable, readonly) NSURL *_backgroundContentURL;
-
-@end
-
-WK_HEADER_AUDIT_END(nullability, sendability)

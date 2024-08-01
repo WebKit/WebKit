@@ -2074,6 +2074,71 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module WKWebExtensionActionPrivate {
+    header "WKWebExtensionActionPrivate.h"
+    export *
+  }
+
+  explicit module WKWebExtensionCommandPrivate {
+    header "WKWebExtensionCommandPrivate.h"
+    export *
+  }
+
+  explicit module WKWebExtensionContextPrivate {
+    header "WKWebExtensionContextPrivate.h"
+    export *
+  }
+
+  explicit module WKWebExtensionControllerConfigurationPrivate {
+    header "WKWebExtensionControllerConfigurationPrivate.h"
+    export *
+  }
+
+  explicit module WKWebExtensionControllerDelegatePrivate {
+    header "WKWebExtensionControllerDelegatePrivate.h"
+    export *
+  }
+
+  explicit module WKWebExtensionControllerPrivate {
+    header "WKWebExtensionControllerPrivate.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionDeclarativeNetRequestRule {
+    header "_WKWebExtensionDeclarativeNetRequestRule.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionDeclarativeNetRequestTranslator {
+    header "_WKWebExtensionDeclarativeNetRequestTranslator.h"
+    export *
+  }
+
+  explicit module WKWebExtensionDataRecordPrivate {
+    header "WKWebExtensionDataRecordPrivate.h"
+    export *
+  }
+
+  explicit module WKWebExtensionMatchPatternPrivate {
+    header "WKWebExtensionMatchPatternPrivate.h"
+    export *
+  }
+
+  explicit module WKWebExtensionMessagePortPrivate {
+    header "WKWebExtensionMessagePortPrivate.h"
+    export *
+  }
+
+  explicit module WKWebExtensionPermissionPrivate {
+    header "WKWebExtensionPermissionPrivate.h"
+    export *
+  }
+
+  explicit module WKWebExtensionPrivate {
+    header "WKWebExtensionPrivate.h"
+    export *
+  }
+
   explicit module _WKWebExtension {
     header "_WKWebExtension.h"
     export *
@@ -2081,11 +2146,6 @@ framework module WebKit_Private [system] {
 
   explicit module _WKWebExtensionAction {
     header "_WKWebExtensionAction.h"
-    export *
-  }
-
-  explicit module _WKWebExtensionActionPrivate {
-    header "_WKWebExtensionActionPrivate.h"
     export *
   }
 
@@ -2124,38 +2184,13 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module _WKWebExtensionControllerDelegate {
-    header "_WKWebExtensionControllerDelegate.h"
-    export *
-  }
-
-  explicit module _WKWebExtensionControllerDelegatePrivate {
-    header "_WKWebExtensionControllerDelegatePrivate.h"
-    export *
-  }
-
   explicit module _WKWebExtensionControllerPrivate {
     header "_WKWebExtensionControllerPrivate.h"
     export *
   }
 
-  explicit module _WKWebExtensionDeclarativeNetRequestRule {
-    header "_WKWebExtensionDeclarativeNetRequestRule.h"
-    export *
-  }
-
-  explicit module _WKWebExtensionDeclarativeNetRequestTranslator {
-    header "_WKWebExtensionDeclarativeNetRequestTranslator.h"
-    export *
-  }
-
   explicit module _WKWebExtensionDataRecord {
     header "_WKWebExtensionDataRecord.h"
-    export *
-  }
-
-  explicit module _WKWebExtensionDataRecordPrivate {
-    header "_WKWebExtensionDataRecordPrivate.h"
     export *
   }
 
@@ -2184,16 +2219,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module _WKWebExtensionPermission {
-    header "_WKWebExtensionPermission.h"
-    export *
-  }
-
-  explicit module _WKWebExtensionPermissionPrivate {
-    header "_WKWebExtensionPermissionPrivate.h"
-    export *
-  }
-
   explicit module _WKWebExtensionPrivate {
     header "_WKWebExtensionPrivate.h"
     export *
@@ -2209,16 +2234,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module _WKWebExtensionWebNavigationURLFilter {
-    header "_WKWebExtensionWebNavigationURLFilter.h"
-    export *
-  }
-
-  explicit module _WKWebExtensionWebRequestFilter {
-    header "_WKWebExtensionWebRequestFilter.h"
-    export *
-  }
-
   explicit module _WKWebExtensionWindow {
     header "_WKWebExtensionWindow.h"
     export *
@@ -2226,6 +2241,16 @@ framework module WebKit_Private [system] {
 
   explicit module _WKWebExtensionWindowCreationOptions {
     header "_WKWebExtensionWindowCreationOptions.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionWebNavigationURLFilter {
+    header "_WKWebExtensionWebNavigationURLFilter.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionWebRequestFilter {
+    header "_WKWebExtensionWebRequestFilter.h"
     export *
   }
 

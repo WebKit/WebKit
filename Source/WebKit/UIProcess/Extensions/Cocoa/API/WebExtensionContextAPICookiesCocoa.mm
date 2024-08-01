@@ -71,7 +71,7 @@ static inline URL toURL(const WebCore::Cookie& cookie)
 
 bool WebExtensionContext::isCookiesMessageAllowed()
 {
-    return isLoaded() && hasPermission(_WKWebExtensionPermissionCookies);
+    return isLoaded() && hasPermission(WKWebExtensionPermissionCookies);
 }
 
 void WebExtensionContext::fetchCookies(WebsiteDataStore& dataStore, const URL& url, const WebExtensionCookieFilterParameters& filterParameters, CompletionHandler<void(Expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)

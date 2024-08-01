@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,10 +34,10 @@
 #include <wtf/Identified.h>
 #include <wtf/WeakObjCPtr.h>
 
-OBJC_PROTOCOL(_WKWebExtensionWindow);
+OBJC_PROTOCOL(WKWebExtensionWindow);
 
 #ifdef __OBJC__
-#import "_WKWebExtensionWindow.h"
+#import "WKWebExtensionWindow.h"
 #endif
 
 namespace WebKit {
@@ -71,7 +71,7 @@ public:
         return adoptRef(*new WebExtensionWindow(std::forward<Args>(args)...));
     }
 
-    explicit WebExtensionWindow(const WebExtensionContext&, _WKWebExtensionWindow*);
+    explicit WebExtensionWindow(const WebExtensionContext&, WKWebExtensionWindow*);
 
     enum class Type : uint8_t {
         Normal,
@@ -136,14 +136,14 @@ public:
     void close(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
 #ifdef __OBJC__
-    _WKWebExtensionWindow *delegate() const { return m_delegate.getAutoreleased(); }
+    WKWebExtensionWindow *delegate() const { return m_delegate.getAutoreleased(); }
 
     bool isValid() const { return m_extensionContext && m_delegate; }
 #endif
 
 private:
     WeakPtr<WebExtensionContext> m_extensionContext;
-    WeakObjCPtr<_WKWebExtensionWindow> m_delegate;
+    WeakObjCPtr<WKWebExtensionWindow> m_delegate;
     bool m_isOpen : 1 { false };
     mutable bool m_private : 1 { false };
     mutable bool m_cachedPrivate : 1 { false };
@@ -161,8 +161,8 @@ private:
 };
 
 #ifdef __OBJC__
-_WKWebExtensionWindowType toAPI(WebExtensionWindow::Type);
-_WKWebExtensionWindowState toAPI(WebExtensionWindow::State);
+WKWebExtensionWindowType toAPI(WebExtensionWindow::Type);
+WKWebExtensionWindowState toAPI(WebExtensionWindow::State);
 #endif
 
 } // namespace WebKit

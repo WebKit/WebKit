@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@ OBJC_CLASS NSArray;
 OBJC_CLASS NSError;
 OBJC_CLASS NSSet;
 OBJC_CLASS NSString;
-OBJC_CLASS _WKWebExtensionMatchPattern;
+OBJC_CLASS WKWebExtensionMatchPattern;
 
 namespace WebKit {
 
@@ -115,7 +115,7 @@ public:
     unsigned hash() const { return m_hash; }
 
 #ifdef __OBJC__
-    _WKWebExtensionMatchPattern *wrapper() const { return (_WKWebExtensionMatchPattern *)API::ObjectImpl<API::Object::Type::WebExtensionMatchPattern>::wrapper(); }
+    WKWebExtensionMatchPattern *wrapper() const { return (WKWebExtensionMatchPattern *)API::ObjectImpl<API::Object::Type::WebExtensionMatchPattern>::wrapper(); }
 #endif
 
 private:

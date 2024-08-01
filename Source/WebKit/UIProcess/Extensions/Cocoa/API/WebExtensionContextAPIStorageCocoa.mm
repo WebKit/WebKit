@@ -48,7 +48,7 @@ namespace WebKit {
 
 bool WebExtensionContext::isStorageMessageAllowed()
 {
-    return isLoaded() && (hasPermission(_WKWebExtensionPermissionStorage) || hasPermission(_WKWebExtensionPermissionUnlimitedStorage));
+    return isLoaded() && (hasPermission(WKWebExtensionPermissionStorage) || hasPermission(WKWebExtensionPermissionUnlimitedStorage));
 }
 
 void WebExtensionContext::storageGet(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const Vector<String>& keys, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)

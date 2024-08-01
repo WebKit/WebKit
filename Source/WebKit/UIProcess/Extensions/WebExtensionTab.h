@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@
 OBJC_CLASS NSArray;
 OBJC_CLASS NSLocale;
 OBJC_CLASS WKWebView;
-OBJC_PROTOCOL(_WKWebExtensionTab);
+OBJC_PROTOCOL(WKWebExtensionTab);
 
 namespace WebKit {
 
@@ -66,7 +66,7 @@ public:
         return adoptRef(*new WebExtensionTab(std::forward<Args>(args)...));
     }
 
-    explicit WebExtensionTab(const WebExtensionContext&, _WKWebExtensionTab *);
+    explicit WebExtensionTab(const WebExtensionContext&, WKWebExtensionTab *);
 
     enum class ChangedProperties : uint16_t {
         Audible    = 1 << 1,
@@ -200,14 +200,14 @@ public:
     WebProcessProxySet processes(WebExtensionEventListenerType, WebExtensionContentWorldType) const;
 
 #ifdef __OBJC__
-    _WKWebExtensionTab *delegate() const { return m_delegate.getAutoreleased(); }
+    WKWebExtensionTab *delegate() const { return m_delegate.getAutoreleased(); }
 
     bool isValid() const { return m_extensionContext && m_delegate; }
 #endif
 
 private:
     WeakPtr<WebExtensionContext> m_extensionContext;
-    WeakObjCPtr<_WKWebExtensionTab> m_delegate;
+    WeakObjCPtr<WKWebExtensionTab> m_delegate;
     RefPtr<WebExtensionMatchPattern> m_temporaryPermissionMatchPattern;
     OptionSet<ChangedProperties> m_changedProperties;
     bool m_activeUserGesture : 1 { false };

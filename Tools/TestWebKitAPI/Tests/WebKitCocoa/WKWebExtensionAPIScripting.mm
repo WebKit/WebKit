@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -196,15 +196,15 @@ TEST(WKWebExtensionAPIScripting, ExecuteScript)
 
     static auto *resources = @{ @"background.js": backgroundScript, @"backgroundColor.js": backgroundColor };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
@@ -244,12 +244,12 @@ TEST(WKWebExtensionAPIScripting, ExecuteScriptJSONTypes)
         @"browser.test.yield('Load Tab')",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 
@@ -317,15 +317,15 @@ TEST(WKWebExtensionAPIScripting, ExecuteScriptWithFrameIds)
         @"fontSize.js": fontSize,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
@@ -422,14 +422,14 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSS)
         @"fontSize.css": fontSize,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
@@ -498,14 +498,14 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSSWithFrameIds)
         @"fontSize.css": fontSize,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
@@ -541,12 +541,12 @@ TEST(WKWebExtensionAPIScripting, CSSUserOrigin)
         @"background.js": backgroundScript,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
 
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 
@@ -582,12 +582,12 @@ TEST(WKWebExtensionAPIScripting, CSSAuthorOrigin)
         @"background.js": backgroundScript,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
 
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 
@@ -630,12 +630,12 @@ TEST(WKWebExtensionAPIScripting, World)
         @"background.js": backgroundScript,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
 
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 
@@ -704,15 +704,15 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScripts)
         @"changeBackgroundFontScript.js": changeBackgroundFontScript,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
@@ -762,12 +762,12 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScriptsWithCSSUserOrigin)
         @"changeColor.css": css
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
 
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 
@@ -817,12 +817,12 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScriptsWithCSSAuthorOrigin)
         @"changeColor.css": css
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
 
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 
@@ -903,15 +903,15 @@ TEST(WKWebExtensionAPIScripting, UpdateContentScripts)
         @"changeBackgroundFontScript.js": changeBackgroundFontScript,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
@@ -975,15 +975,15 @@ TEST(WKWebExtensionAPIScripting, GetContentScripts)
         @"changeBackgroundFontScript.js": changeBackgroundFontScript,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
@@ -1050,15 +1050,15 @@ TEST(WKWebExtensionAPIScripting, UnregisterContentScripts)
         @"changeBackgroundFontScript.js": changeBackgroundFontScript,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 
@@ -1106,8 +1106,8 @@ TEST(WKWebExtensionAPIScripting, RegisteredScriptIsInjectedAfterContextReloads)
         @"changeBackgroundColorScript.js": changeBackgroundColorScript,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get() extensionControllerConfiguration:_WKWebExtensionControllerConfiguration._temporaryConfiguration]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get() extensionControllerConfiguration:WKWebExtensionControllerConfiguration._temporaryConfiguration]);
 
     // Give the extension a unique identifier so it opts into saving data in the temporary configuration.
     manager.get().context.uniqueIdentifier = @"org.webkit.test.extension (76C788B8)";
@@ -1131,7 +1131,7 @@ TEST(WKWebExtensionAPIScripting, RegisteredScriptIsInjectedAfterContextReloads)
     EXPECT_TRUE(manager.get().context.hasInjectedContent);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
@@ -1172,11 +1172,11 @@ TEST(WKWebExtensionAPIScripting, MainWorld)
         @"content_script.js": contentScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:contentScriptsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:contentScriptsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
@@ -1216,11 +1216,11 @@ TEST(WKWebExtensionAPIScripting, IsolatedWorld)
         @"content_script.js": contentScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:contentScriptsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:contentScriptsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];

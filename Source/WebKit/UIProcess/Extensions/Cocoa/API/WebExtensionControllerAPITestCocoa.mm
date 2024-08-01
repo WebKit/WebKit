@@ -33,8 +33,8 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "Logging.h"
-#import "_WKWebExtensionControllerDelegatePrivate.h"
-#import "_WKWebExtensionControllerInternal.h"
+#import "WKWebExtensionControllerDelegatePrivate.h"
+#import "WKWebExtensionControllerInternal.h"
 
 namespace WebKit {
 

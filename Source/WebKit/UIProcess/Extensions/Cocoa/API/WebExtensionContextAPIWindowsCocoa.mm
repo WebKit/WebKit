@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,12 +33,12 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "WKWebExtensionControllerDelegatePrivate.h"
+#import "WKWebExtensionWindowCreationOptionsInternal.h"
 #import "WebExtensionContextProxy.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionUtilities.h"
 #import "WebExtensionWindowIdentifier.h"
-#import "_WKWebExtensionControllerDelegatePrivate.h"
-#import "_WKWebExtensionWindowCreationOptionsInternal.h"
 #import <wtf/BlockPtr.h>
 
 namespace WebKit {
@@ -56,7 +56,7 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
     static constexpr CGFloat NaN = std::numeric_limits<CGFloat>::quiet_NaN();
     static constexpr CGRect CGRectNaN = { { NaN, NaN }, { NaN, NaN } };
 
-    auto *creationOptions = [[_WKWebExtensionWindowCreationOptions alloc] _init];
+    auto *creationOptions = [[WKWebExtensionWindowCreationOptions alloc] _init];
     creationOptions.windowType = toAPI(creationParameters.type.value_or(WebExtensionWindow::Type::Normal));
     creationOptions.windowState = toAPI(creationParameters.state.value_or(WebExtensionWindow::State::Normal));
     creationOptions.focused = creationParameters.focused.value_or(true);
@@ -81,7 +81,7 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
         creationOptions.frame = CGRectNaN;
 
     NSMutableArray<NSURL *> *urls = [NSMutableArray array];
-    NSMutableArray<id<_WKWebExtensionTab>> *tabs = [NSMutableArray array];
+    NSMutableArray<id<WKWebExtensionTab>> *tabs = [NSMutableArray array];
 
     if (creationParameters.tabs) {
         for (auto& tabParameters : creationParameters.tabs.value()) {
@@ -101,7 +101,7 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
     creationOptions.tabURLs = [urls copy];
     creationOptions.tabs = [tabs copy];
 
-    [delegate webExtensionController:extensionController()->wrapper() openNewWindowWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<_WKWebExtensionWindow> newWindow, NSError *error) mutable {
+    [delegate webExtensionController:extensionController()->wrapper() openNewWindowWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<WKWebExtensionWindow> newWindow, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for open new window: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));

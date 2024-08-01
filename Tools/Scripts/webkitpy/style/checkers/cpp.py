@@ -1395,8 +1395,8 @@ class _EnumState(object):
 
 
 def regex_for_lambdas_and_blocks(line, line_number, file_state, error):
-    cpp_result = search(r'\s\[.*?\]\s', line)
-    objc_result = search(r'(\s\^\s?\(.*?\)\s?|\^\s*\{|:\^(\s|\w+)?\(.*?\)\s\{)', line)
+    cpp_result = search(r'\[.*?\]\s*[\(\{]', line)
+    objc_result = search(r'(\^(.*)?\(.*?\)|\^\s*\{)', line)
     if cpp_result:
         group = cpp_result.group()
         targ_error = None
@@ -1420,7 +1420,7 @@ def regex_for_lambdas_and_blocks(line, line_number, file_state, error):
         if search(r'\^\s+\{', group):
             targ_error = [line_number, 'whitespace/brackets', 4,
               'Extra space between ^ and block definition.',line]
-        if search(r'\^\s\(', group):
+        if search(r'\^\s+\(', group):
             targ_error = [line_number, 'whitespace/brackets', 4,
               'Extra space between ^ and block arguments.',line]
 

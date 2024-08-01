@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,12 +50,12 @@ OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 OBJC_CLASS UTType;
-OBJC_CLASS _WKWebExtension;
+OBJC_CLASS WKWebExtension;
+OBJC_CLASS WKWebExtensionMatchPattern;
 OBJC_CLASS _WKWebExtensionLocalization;
-OBJC_CLASS _WKWebExtensionMatchPattern;
 
 #ifdef __OBJC__
-#include "_WKWebExtensionPermission.h"
+#include "WKWebExtensionPermission.h"
 #endif
 
 namespace API {
@@ -300,7 +300,7 @@ public:
     NSArray *errors();
 
 #ifdef __OBJC__
-    _WKWebExtension *wrapper() const { return (_WKWebExtension *)API::ObjectImpl<API::Object::Type::WebExtension>::wrapper(); }
+    WKWebExtension *wrapper() const { return (WKWebExtension *)API::ObjectImpl<API::Object::Type::WebExtension>::wrapper(); }
 #endif
 
 private:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,8 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "WKWebExtensionControllerDelegatePrivate.h"
+#import "WKWebExtensionTabCreationOptionsInternal.h"
 #import "WKWebViewInternal.h"
 #import "WKWebViewPrivate.h"
 #import "WebExtensionContextProxy.h"
@@ -43,8 +45,6 @@
 #import "WebExtensionUtilities.h"
 #import "WebExtensionWindowIdentifier.h"
 #import "WebPageProxy.h"
-#import "_WKWebExtensionControllerDelegatePrivate.h"
-#import "_WKWebExtensionTabCreationOptionsInternal.h"
 #import <WebCore/ImageBufferUtilitiesCG.h>
 #import <wtf/CallbackAggregator.h>
 
@@ -69,7 +69,7 @@ void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPa
         return;
     }
 
-    auto *creationOptions = [[_WKWebExtensionTabCreationOptions alloc] _init];
+    auto *creationOptions = [[WKWebExtensionTabCreationOptions alloc] _init];
     creationOptions.active = parameters.active.value_or(true);
     creationOptions.selected = creationOptions.active ?: parameters.selected.value_or(false);
     creationOptions.pinned = parameters.pinned.value_or(false);
@@ -98,7 +98,7 @@ void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPa
     if (parameters.url)
         creationOptions.url = parameters.url.value();
 
-    [delegate webExtensionController:extensionController()->wrapper() openNewTabWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<_WKWebExtensionTab> newTab, NSError *error) mutable {
+    [delegate webExtensionController:extensionController()->wrapper() openNewTabWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<WKWebExtensionTab> newTab, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for open new tab: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));

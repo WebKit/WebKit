@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,22 +31,22 @@
 #import "TestWebExtensionsDelegate.h"
 #import "WebExtensionUtilities.h"
 #import <WebKit/WKFoundation.h>
-#import <WebKit/_WKWebExtensionContextPrivate.h>
-#import <WebKit/_WKWebExtensionControllerPrivate.h>
-#import <WebKit/_WKWebExtensionMatchPatternPrivate.h>
-#import <WebKit/_WKWebExtensionPermission.h>
-#import <WebKit/_WKWebExtensionPrivate.h>
-#import <WebKit/_WKWebExtensionWindow.h>
+#import <WebKit/WKWebExtensionContextPrivate.h>
+#import <WebKit/WKWebExtensionControllerPrivate.h>
+#import <WebKit/WKWebExtensionMatchPatternPrivate.h>
+#import <WebKit/WKWebExtensionPermission.h>
+#import <WebKit/WKWebExtensionPrivate.h>
+#import <WebKit/WKWebExtensionWindow.h>
 
 namespace TestWebKitAPI {
 
 TEST(WKWebExtensionTab, OpenTabs)
 {
-    auto testExtensionOne = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:@{ @"manifest_version": @3 }]);
-    auto testContextOne = adoptNS([[_WKWebExtensionContext alloc] initForExtension:testExtensionOne.get()]);
+    auto testExtensionOne = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:@{ @"manifest_version": @3 }]);
+    auto testContextOne = adoptNS([[WKWebExtensionContext alloc] initForExtension:testExtensionOne.get()]);
 
-    auto testExtensionTwo = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:@{ @"manifest_version": @3 }]);
-    auto testContextTwo = adoptNS([[_WKWebExtensionContext alloc] initForExtension:testExtensionTwo.get()]);
+    auto testExtensionTwo = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:@{ @"manifest_version": @3 }]);
+    auto testContextTwo = adoptNS([[WKWebExtensionContext alloc] initForExtension:testExtensionTwo.get()]);
 
     auto testWindowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
     auto testWindowTwo = adoptNS([[TestWebExtensionWindow alloc] init]);
@@ -61,11 +61,11 @@ TEST(WKWebExtensionTab, OpenTabs)
 
     auto controllerDelegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
 
-    controllerDelegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *context) {
+    controllerDelegate.get().openWindows = ^NSArray<id<WKWebExtensionWindow>> *(WKWebExtensionContext *context) {
         return @[ testWindowOne.get(), testWindowTwo.get() ];
     };
 
-    auto testController = adoptNS([[_WKWebExtensionController alloc] init]);
+    auto testController = adoptNS([[WKWebExtensionController alloc] init]);
     testController.get().delegate = controllerDelegate.get();
 
     EXPECT_NS_EQUAL(testContextOne.get().openTabs, [NSSet set]);

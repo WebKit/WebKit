@@ -28,7 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "WebExtensionUtilities.h"
-#import <WebKit/_WKWebExtensionCommand.h>
+#import <WebKit/WKWebExtensionCommand.h>
 
 namespace TestWebKitAPI {
 
@@ -124,7 +124,7 @@ TEST(WKWebExtensionAPICookies, GetAllCookieStores)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     [manager openNewWindowUsingPrivateBrowsing:YES];
@@ -157,7 +157,7 @@ TEST(WKWebExtensionAPICookies, GetAllCookieStoresWithPrivateAccess)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     manager.get().context.hasAccessInPrivateBrowsing = YES;
@@ -191,11 +191,11 @@ TEST(WKWebExtensionAPICookies, GetAll)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     auto *cookieStore = WKWebsiteDataStore.defaultDataStore.httpCookieStore;
 
@@ -256,11 +256,11 @@ TEST(WKWebExtensionAPICookies, GetAllIncognito)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:@"*://*.private.com/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.private.com/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     auto *privateWindow = [manager openNewWindowUsingPrivateBrowsing:YES];
     auto *cookieStore = privateWindow.activeTab.webView.configuration.websiteDataStore.httpCookieStore;
@@ -330,11 +330,11 @@ TEST(WKWebExtensionAPICookies, GetAllIncognitoWithPrivateAccess)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:@"*://*.private.com/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.private.com/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     manager.get().context.hasAccessInPrivateBrowsing = YES;
 
@@ -421,11 +421,11 @@ TEST(WKWebExtensionAPICookies, GetAllWithFilters)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     auto *cookieStore = WKWebsiteDataStore.defaultDataStore.httpCookieStore;
 
@@ -511,11 +511,11 @@ TEST(WKWebExtensionAPICookies, RemoveCookie)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     auto *cookieStore = WKWebsiteDataStore.defaultDataStore.httpCookieStore;
 
@@ -549,11 +549,11 @@ TEST(WKWebExtensionAPICookies, RemoveCookieNotFound)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     auto *cookieStore = WKWebsiteDataStore.defaultDataStore.httpCookieStore;
 
@@ -597,11 +597,11 @@ TEST(WKWebExtensionAPICookies, SetCookie)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     auto *cookieStore = WKWebsiteDataStore.defaultDataStore.httpCookieStore;
 
@@ -637,11 +637,11 @@ TEST(WKWebExtensionAPICookies, GetCookie)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     auto *cookieStore = WKWebsiteDataStore.defaultDataStore.httpCookieStore;
 
@@ -672,11 +672,11 @@ TEST(WKWebExtensionAPICookies, ChangedEvent)
         @"await browser.test.assertSafeResolve(() => browser.cookies.set({ url: 'http://www.example.com/', name: 'testCookie', value: 'testValue' }))"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager loadAndRun];
 }

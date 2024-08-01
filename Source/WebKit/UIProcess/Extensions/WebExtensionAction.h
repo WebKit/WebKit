@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,8 @@
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS NSError;
+OBJC_CLASS WKWebExtensionAction;
 OBJC_CLASS WKWebView;
-OBJC_CLASS _WKWebExtensionAction;
 OBJC_CLASS _WKWebExtensionActionWebView;
 OBJC_CLASS _WKWebExtensionActionWebViewDelegate;
 
@@ -138,7 +138,7 @@ public:
     NSArray *platformMenuItems() const;
 
 #ifdef __OBJC__
-    _WKWebExtensionAction *wrapper() const { return (_WKWebExtensionAction *)API::ObjectImpl<API::Object::Type::WebExtensionAction>::wrapper(); }
+    WKWebExtensionAction *wrapper() const { return (WKWebExtensionAction *)API::ObjectImpl<API::Object::Type::WebExtensionAction>::wrapper(); }
 #endif
 
 private:

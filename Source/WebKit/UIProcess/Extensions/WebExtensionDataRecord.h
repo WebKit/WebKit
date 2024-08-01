@@ -33,7 +33,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
-OBJC_CLASS _WKWebExtensionDataRecord;
+OBJC_CLASS WKWebExtensionDataRecord;
 
 namespace WebKit {
 
@@ -66,7 +66,7 @@ public:
     void addError(NSString *debugDescription, Type);
 
 #ifdef __OBJC__
-    _WKWebExtensionDataRecord *wrapper() const { return (_WKWebExtensionDataRecord *)API::ObjectImpl<API::Object::Type::WebExtensionDataRecord>::wrapper(); }
+    WKWebExtensionDataRecord *wrapper() const { return (WKWebExtensionDataRecord *)API::ObjectImpl<API::Object::Type::WebExtensionDataRecord>::wrapper(); }
 #endif
 
     bool operator==(const WebExtensionDataRecord&) const;

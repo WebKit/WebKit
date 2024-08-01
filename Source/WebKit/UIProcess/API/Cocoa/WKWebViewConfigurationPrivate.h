@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,8 +65,8 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
 // When not set, the web view allows navigation to any URL that isn't a web extension URL. This is needed to ensure proper configuration of the web view.
 @property (nonatomic, strong, setter=_setRequiredWebExtensionBaseURL:) NSURL *_requiredWebExtensionBaseURL;
 
-@property (nonatomic, strong, readonly) _WKWebExtensionController *_strongWebExtensionController;
-@property (nonatomic, weak, setter=_setWeakWebExtensionController:) _WKWebExtensionController *_weakWebExtensionController;
+@property (nonatomic, strong, readonly) WKWebExtensionController *_strongWebExtensionController;
+@property (nonatomic, weak, setter=_setWeakWebExtensionController:) WKWebExtensionController *_weakWebExtensionController;
 @property (nonatomic, strong, setter=_setWebExtensionController:) _WKWebExtensionController *_webExtensionController;
 
 @property (nonatomic, weak, setter=_setAlternateWebViewForNavigationGestures:) WKWebView *_alternateWebViewForNavigationGestures;

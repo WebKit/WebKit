@@ -118,7 +118,7 @@ class WKWebExtensionAPISidebar : public testing::Test {
 protected:
     WKWebExtensionAPISidebar()
     {
-        sidebarConfig = _WKWebExtensionControllerConfiguration.defaultConfiguration;
+        sidebarConfig = WKWebExtensionControllerConfiguration.defaultConfiguration;
         if (!sidebarConfig.webViewConfiguration)
             sidebarConfig.webViewConfiguration = [[WKWebViewConfiguration alloc] init];
 
@@ -128,7 +128,7 @@ protected:
         }
     }
 
-    _WKWebExtensionControllerConfiguration *sidebarConfig;
+    WKWebExtensionControllerConfiguration *sidebarConfig;
 };
 
 TEST_F(WKWebExtensionAPISidebar, APISUnavailableWhenManifestDoesNotRequest)

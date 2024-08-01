@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,8 @@
 
 #import "CocoaHelpers.h"
 #import "Logging.h"
+#import "WKWebExtensionInternal.h"
 #import "WebExtension.h"
-#import <WebKit/_WKWebExtensionInternal.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>

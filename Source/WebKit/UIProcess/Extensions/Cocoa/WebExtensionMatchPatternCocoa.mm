@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,9 +32,9 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "WKWebExtensionMatchPatternInternal.h"
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
-#import "_WKWebExtensionMatchPatternInternal.h"
 #import <WebCore/PublicSuffixStore.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
@@ -169,9 +169,9 @@ bool WebExtensionMatchPattern::patternsMatchAllHosts(const MatchPatternSet& patt
     return false;
 }
 
-static inline NSError *error(_WKWebExtensionMatchPatternError code, NSString *debugDescription)
+static inline NSError *error(WKWebExtensionMatchPatternError code, NSString *debugDescription)
 {
-    return [NSError errorWithDomain:_WKWebExtensionMatchPatternErrorDomain code:code userInfo:@{ NSDebugDescriptionErrorKey: debugDescription }];
+    return [NSError errorWithDomain:WKWebExtensionMatchPatternErrorDomain code:code userInfo:@{ NSDebugDescriptionErrorKey: debugDescription }];
 }
 
 WebExtensionMatchPattern::WebExtensionMatchPattern(const String& patternString, NSError **outError)
@@ -195,7 +195,7 @@ WebExtensionMatchPattern::WebExtensionMatchPattern(const String& patternString, 
 
     if (!pattern.scheme().isEmpty() && !isValidScheme(pattern.scheme())) {
         if (outError)
-            *outError = error(_WKWebExtensionMatchPatternErrorInvalidScheme, [NSString stringWithFormat:@"\"%@\" cannot be parsed because the scheme \"%@\" is invalid.", (NSString *)patternString, (NSString *)pattern.scheme()]);
+            *outError = error(WKWebExtensionMatchPatternErrorInvalidScheme, [NSString stringWithFormat:@"\"%@\" cannot be parsed because the scheme \"%@\" is invalid.", (NSString *)patternString, (NSString *)pattern.scheme()]);
         return;
     }
 
@@ -208,22 +208,22 @@ WebExtensionMatchPattern::WebExtensionMatchPattern(const String& patternString, 
 
         case UserContentURLPattern::Error::MissingScheme:
             if (outError)
-                *outError = error(_WKWebExtensionMatchPatternErrorInvalidScheme, [NSString stringWithFormat:@"\"%@\" cannot be parsed because it doesn't have a scheme.", (NSString *)patternString]);
+                *outError = error(WKWebExtensionMatchPatternErrorInvalidScheme, [NSString stringWithFormat:@"\"%@\" cannot be parsed because it doesn't have a scheme.", (NSString *)patternString]);
             break;
 
         case UserContentURLPattern::Error::MissingHost:
             if (outError)
-                *outError = error(_WKWebExtensionMatchPatternErrorInvalidHost, [NSString stringWithFormat:@"\"%@\" cannot be parsed because it doesn't have a host.", (NSString *)patternString]);
+                *outError = error(WKWebExtensionMatchPatternErrorInvalidHost, [NSString stringWithFormat:@"\"%@\" cannot be parsed because it doesn't have a host.", (NSString *)patternString]);
             break;
 
         case UserContentURLPattern::Error::InvalidHost:
             if (outError)
-                *outError = error(_WKWebExtensionMatchPatternErrorInvalidHost, [NSString stringWithFormat:@"\"%@\" cannot be parsed because the host \"%@\" is invalid.", (NSString *)patternString, (NSString *)pattern.host()]);
+                *outError = error(WKWebExtensionMatchPatternErrorInvalidHost, [NSString stringWithFormat:@"\"%@\" cannot be parsed because the host \"%@\" is invalid.", (NSString *)patternString, (NSString *)pattern.host()]);
             break;
 
         case UserContentURLPattern::Error::MissingPath:
             if (outError)
-                *outError = error(_WKWebExtensionMatchPatternErrorInvalidPath, [NSString stringWithFormat:@"\"%@\" cannot be parsed because it doesn't have a path.", (NSString *)patternString]);
+                *outError = error(WKWebExtensionMatchPatternErrorInvalidPath, [NSString stringWithFormat:@"\"%@\" cannot be parsed because it doesn't have a path.", (NSString *)patternString]);
             break;
         }
 
@@ -250,7 +250,7 @@ WebExtensionMatchPattern::WebExtensionMatchPattern(const String& scheme, const S
 
     if (!isValidScheme(scheme)) {
         if (outError)
-            *outError = error(_WKWebExtensionMatchPatternErrorInvalidScheme, [NSString stringWithFormat:@"Scheme \"%@\" is invalid.", (NSString *)scheme]);
+            *outError = error(WKWebExtensionMatchPatternErrorInvalidScheme, [NSString stringWithFormat:@"Scheme \"%@\" is invalid.", (NSString *)scheme]);
         return;
     }
 
@@ -265,18 +265,18 @@ WebExtensionMatchPattern::WebExtensionMatchPattern(const String& scheme, const S
 
         case UserContentURLPattern::Error::MissingScheme:
             if (outError)
-                *outError = error(_WKWebExtensionMatchPatternErrorInvalidScheme, [NSString stringWithFormat:@"Scheme \"%@\" is invalid.", (NSString *)scheme]);
+                *outError = error(WKWebExtensionMatchPatternErrorInvalidScheme, [NSString stringWithFormat:@"Scheme \"%@\" is invalid.", (NSString *)scheme]);
             break;
 
         case UserContentURLPattern::Error::MissingHost:
         case UserContentURLPattern::Error::InvalidHost:
             if (outError)
-                *outError = error(_WKWebExtensionMatchPatternErrorInvalidHost, [NSString stringWithFormat:@"Host \"%@\" is invalid.", (NSString *)host]);
+                *outError = error(WKWebExtensionMatchPatternErrorInvalidHost, [NSString stringWithFormat:@"Host \"%@\" is invalid.", (NSString *)host]);
             break;
 
         case UserContentURLPattern::Error::MissingPath:
             if (outError)
-                *outError = error(_WKWebExtensionMatchPatternErrorInvalidPath, [NSString stringWithFormat:@"Path \"%@\" is invalid.", (NSString *)path]);
+                *outError = error(WKWebExtensionMatchPatternErrorInvalidPath, [NSString stringWithFormat:@"Path \"%@\" is invalid.", (NSString *)path]);
             break;
         }
 
@@ -486,7 +486,7 @@ MatchPatternSet toPatterns(NSSet *set)
     matchPatterns.reserveInitialCapacity(set.count);
 
     for (id object in set) {
-        if (auto *pattern = dynamic_objc_cast<_WKWebExtensionMatchPattern>(object))
+        if (auto *pattern = dynamic_objc_cast<WKWebExtensionMatchPattern>(object))
             matchPatterns.addVoid(pattern._webExtensionMatchPattern);
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -179,7 +179,7 @@
 #import <wtf/text/TextStream.h>
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-#import "_WKWebExtensionControllerInternal.h"
+#import "WKWebExtensionControllerInternal.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)
