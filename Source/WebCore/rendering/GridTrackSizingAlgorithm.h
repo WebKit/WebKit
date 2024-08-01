@@ -120,8 +120,7 @@ public:
     GridTrackSizingAlgorithm(const RenderGrid*, Grid&);
     ~GridTrackSizingAlgorithm();
 
-    void setup(GridTrackSizingDirection, unsigned numTracks, SizingOperation, std::optional<LayoutUnit> availableSpace);
-    void run(GridLayoutState&);
+    void run(GridTrackSizingDirection, unsigned numTracks, SizingOperation, std::optional<LayoutUnit> availableSpace, GridLayoutState&);
     void reset();
 
     // Required by RenderGrid. Try to minimize the exposed surface.
@@ -163,6 +162,8 @@ public:
 #endif
 
 private:
+    void setup(GridTrackSizingDirection, unsigned numTracks, SizingOperation, std::optional<LayoutUnit> availableSpace);
+
     struct MasonryIndefiniteItems {
         // Optimization: Masonry Indefinite Items
         // Indefinite items need to be considered in each track; this causes a runtime of O(N_track * M_items).

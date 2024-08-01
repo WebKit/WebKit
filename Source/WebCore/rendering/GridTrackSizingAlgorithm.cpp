@@ -1873,9 +1873,10 @@ bool GridTrackSizingAlgorithm::copyUsedTrackSizesForSubgrid()
     return true;
 }
 
-void GridTrackSizingAlgorithm::run(GridLayoutState& gridLayoutState)
+void GridTrackSizingAlgorithm::run(GridTrackSizingDirection direction, unsigned numTracks, SizingOperation sizingOperation, std::optional<LayoutUnit> availableSpace, GridLayoutState& gridLayoutState)
 {
-    ASSERT(wasSetup());
+    setup(direction, numTracks, sizingOperation, availableSpace);
+
     StateMachine stateMachine(*this);
 
     if (m_renderGrid->isMasonry(m_direction))
