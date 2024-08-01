@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "SafeBrowsingWarning.h"
+#import "BrowsingWarning.h"
 
 #import "SafeBrowsingSPI.h"
 #import <WebCore/LocalizedStrings.h>
@@ -106,7 +106,7 @@ static NSURL *malwareDetailsURL(const URL& url, SSBServiceLookupResult *result)
     return URL({ }, makeString(malwareDetailsBase(result), "&site="_s, url.host(), "&hl="_s, defaultLanguage()));
 }
 
-static NSString *safeBrowsingTitleText(SSBServiceLookupResult *result)
+static NSString *browsingTitleText(SSBServiceLookupResult *result)
 {
     if (result.isPhishing)
         return WEB_UI_NSSTRING(@"Deceptive Website Warning", "Phishing warning title");
@@ -116,7 +116,7 @@ static NSString *safeBrowsingTitleText(SSBServiceLookupResult *result)
     return WEB_UI_NSSTRING(@"Website With Harmful Software Warning", "Unwanted software warning title");
 }
 
-static NSString *safeBrowsingWarningText(SSBServiceLookupResult *result)
+static NSString *browsingWarningText(SSBServiceLookupResult *result)
 {
     if (result.isPhishing)
         return WEB_UI_NSSTRING(@"This website may try to trick you into doing something dangerous, like installing software or disclosing personal or financial information, like passwords, phone numbers, or credit cards.", "Phishing warning");
@@ -127,7 +127,7 @@ static NSString *safeBrowsingWarningText(SSBServiceLookupResult *result)
     return WEB_UI_NSSTRING(@"This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove.", "Unwanted software warning");
 }
 
-static NSMutableAttributedString *safeBrowsingDetailsText(const URL& url, SSBServiceLookupResult *result)
+static NSMutableAttributedString *browsingDetailsText(const URL& url, SSBServiceLookupResult *result)
 {
     if (result.isPhishing) {
         NSString *phishingDescription = WEB_UI_NSSTRING(@"Warnings are shown for websites that have been reported as deceptive. Deceptive websites try to trick you into believing they are legitimate websites you trust.", "Phishing warning description");
@@ -139,7 +139,7 @@ static NSMutableAttributedString *safeBrowsingDetailsText(const URL& url, SSBSer
         auto attributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@\n\n%@", phishingDescription, learnMore, phishingActions]]);
         addLinkAndReplace(attributedString.get(), learnMore, learnMore, learnMoreURL(result));
         addLinkAndReplace(attributedString.get(), @"%report-an-error%", reportAnError, reportAnErrorURL(url, result));
-        addLinkAndReplace(attributedString.get(), @"%bypass-link%", visitUnsafeWebsite, SafeBrowsingWarning::visitUnsafeWebsiteSentinel());
+        addLinkAndReplace(attributedString.get(), @"%bypass-link%", visitUnsafeWebsite, BrowsingWarning::visitUnsafeWebsiteSentinel());
         return attributedString.autorelease();
     }
 
@@ -151,7 +151,7 @@ static NSMutableAttributedString *safeBrowsingDetailsText(const URL& url, SSBSer
         addLinkAndReplace(malwareDescription.get(), statusStringToReplace, [statusLink string], malwareDetailsURL(url, result));
 
         auto ifYouUnderstand = adoptNS([[NSMutableAttributedString alloc] initWithString:WEB_UI_NSSTRING(@"If you understand the risks involved, you can %visit-this-unsafe-site-link%.", "Action from safe browsing warning")]);
-        addLinkAndReplace(ifYouUnderstand.get(), @"%visit-this-unsafe-site-link%", WEB_UI_NSSTRING(@"visit this unsafe website", "Action from safe browsing warning"), confirmMalware ? SafeBrowsingWarning::confirmMalwareSentinel() : SafeBrowsingWarning::visitUnsafeWebsiteSentinel());
+        addLinkAndReplace(ifYouUnderstand.get(), @"%visit-this-unsafe-site-link%", WEB_UI_NSSTRING(@"visit this unsafe website", "Action from safe browsing warning"), confirmMalware ? BrowsingWarning::confirmMalwareSentinel() : BrowsingWarning::visitUnsafeWebsiteSentinel());
 
         [malwareDescription appendAttributedString:adoptNS([[NSMutableAttributedString alloc] initWithString:@"\n\n"]).get()];
         [malwareDescription appendAttributedString:ifYouUnderstand.get()];
@@ -164,17 +164,17 @@ static NSMutableAttributedString *safeBrowsingDetailsText(const URL& url, SSBSer
     return malwareOrUnwantedSoftwareDetails(WEB_UI_NSSTRING(@"Warnings are shown for websites where harmful software has been detected. You can check %the-status-of-site% on the %safeBrowsingProvider% diagnostic page.", "Unwanted software warning description"), @"%the-status-of-site%", false);
 }
 
-SafeBrowsingWarning::SafeBrowsingWarning(const URL& url, bool forMainFrameNavigation, SSBServiceLookupResult *result)
+BrowsingWarning::BrowsingWarning(const URL& url, bool forMainFrameNavigation, SSBServiceLookupResult *result)
     : m_url(url)
-    , m_title(safeBrowsingTitleText(result))
-    , m_warning(safeBrowsingWarningText(result))
+    , m_title(browsingTitleText(result))
+    , m_warning(browsingWarningText(result))
     , m_forMainFrameNavigation(forMainFrameNavigation)
-    , m_details(safeBrowsingDetailsText(url, result))
+    , m_details(browsingDetailsText(url, result))
 {
 }
 #endif
 
-SafeBrowsingWarning::SafeBrowsingWarning(URL&& url, String&& title, String&& warning, RetainPtr<NSAttributedString>&& details)
+BrowsingWarning::BrowsingWarning(URL&& url, String&& title, String&& warning, RetainPtr<NSAttributedString>&& details)
     : m_url(WTFMove(url))
     , m_title(WTFMove(title))
     , m_warning(WTFMove(warning))
@@ -182,12 +182,12 @@ SafeBrowsingWarning::SafeBrowsingWarning(URL&& url, String&& title, String&& war
 {
 }
 
-NSURL *SafeBrowsingWarning::visitUnsafeWebsiteSentinel()
+NSURL *BrowsingWarning::visitUnsafeWebsiteSentinel()
 {
     return [NSURL URLWithString:@"WKVisitUnsafeWebsiteSentinel"];
 }
 
-NSURL *SafeBrowsingWarning::confirmMalwareSentinel()
+NSURL *BrowsingWarning::confirmMalwareSentinel()
 {
     return [NSURL URLWithString:@"WKConfirmMalwareSentinel"];
 }

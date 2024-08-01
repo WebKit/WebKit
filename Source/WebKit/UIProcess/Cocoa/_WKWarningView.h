@@ -38,7 +38,7 @@
 #endif
 
 namespace WebKit {
-class SafeBrowsingWarning;
+class BrowsingWarning;
 enum class ContinueUnsafeLoad : bool;
 }
 
@@ -69,7 +69,7 @@ using RectType = CGRect;
 {
 @package
     CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)> _completionHandler;
-    RefPtr<const WebKit::SafeBrowsingWarning> _warning;
+    RefPtr<const WebKit::BrowsingWarning> _warning;
     WeakObjCPtr<_WKWarningViewTextView> _details;
     WeakObjCPtr<_WKWarningViewBox> _box;
 #if PLATFORM(WATCHOS)
@@ -77,7 +77,7 @@ using RectType = CGRect;
 #endif
 }
 
-- (instancetype)initWithFrame:(RectType)frame safeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
+- (instancetype)initWithFrame:(RectType)frame browsingWarning:(const WebKit::BrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
 
 - (BOOL)forMainFrameNavigation;
 

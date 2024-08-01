@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include <wtf/URL.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS NSAttributedString;
@@ -36,18 +36,19 @@ OBJC_CLASS SSBServiceLookupResult;
 
 namespace WebKit {
 
-class SafeBrowsingWarning : public RefCounted<SafeBrowsingWarning> {
+class BrowsingWarning : public RefCounted<BrowsingWarning> {
 public:
+
 #if HAVE(SAFE_BROWSING)
-    static Ref<SafeBrowsingWarning> create(const URL& url, bool forMainFrameNavigation, SSBServiceLookupResult *result)
+    static Ref<BrowsingWarning> create(const URL& url, bool forMainFrameNavigation, SSBServiceLookupResult *result)
     {
-        return adoptRef(*new SafeBrowsingWarning(url, forMainFrameNavigation, result));
+        return adoptRef(*new BrowsingWarning(url, forMainFrameNavigation, result));
     }
 #endif
 #if PLATFORM(COCOA)
-    static Ref<SafeBrowsingWarning> create(URL&& url, String&& title, String&& warning, RetainPtr<NSAttributedString>&& details)
+    static Ref<BrowsingWarning> create(URL&& url, String&& title, String&& warning, RetainPtr<NSAttributedString>&& details)
     {
-        return adoptRef(*new SafeBrowsingWarning(WTFMove(url), WTFMove(title), WTFMove(warning), WTFMove(details)));
+        return adoptRef(*new BrowsingWarning(WTFMove(url), WTFMove(title), WTFMove(warning), WTFMove(details)));
     }
 #endif
 
@@ -61,13 +62,13 @@ public:
 
     static NSURL *visitUnsafeWebsiteSentinel();
     static NSURL *confirmMalwareSentinel();
-    
+
 private:
 #if HAVE(SAFE_BROWSING)
-    SafeBrowsingWarning(const URL&, bool, SSBServiceLookupResult *);
+    BrowsingWarning(const URL&, bool, SSBServiceLookupResult *);
 #endif
 #if PLATFORM(COCOA)
-    SafeBrowsingWarning(URL&&, String&&, String&&, RetainPtr<NSAttributedString>&&);
+    BrowsingWarning(URL&&, String&&, String&&, RetainPtr<NSAttributedString>&&);
 #endif
 
     URL m_url;

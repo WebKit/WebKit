@@ -1540,7 +1540,7 @@ void WebViewImpl::takeFocus(WebCore::FocusDirection direction)
         [webView.window selectKeyViewPrecedingView:webView];
 }
 
-void WebViewImpl::showWarningView(const SafeBrowsingWarning& warning, CompletionHandler<void(std::variant<ContinueUnsafeLoad, URL>&&)>&& completionHandler)
+void WebViewImpl::showWarningView(const BrowsingWarning& warning, CompletionHandler<void(std::variant<ContinueUnsafeLoad, URL>&&)>&& completionHandler)
 {
     if (!m_view)
         return completionHandler(ContinueUnsafeLoad::Yes);
@@ -1550,7 +1550,7 @@ void WebViewImpl::showWarningView(const SafeBrowsingWarning& warning, Completion
 
     m_page->logDiagnosticMessageWithValueDictionary("SafeBrowsing.ShowedWarning"_s, "Safari"_s, showedWarningDictionary, WebCore::ShouldSample::No);
 
-    m_warningView = adoptNS([[_WKWarningView alloc] initWithFrame:[m_view bounds] safeBrowsingWarning:warning completionHandler:[weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
+    m_warningView = adoptNS([[_WKWarningView alloc] initWithFrame:[m_view bounds] browsingWarning:warning completionHandler:[weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
         completionHandler(WTFMove(result));
         if (!weakThis)
             return;

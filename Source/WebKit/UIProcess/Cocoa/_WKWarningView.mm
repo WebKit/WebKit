@@ -26,8 +26,8 @@
 #import "config.h"
 #import "_WKWarningView.h"
 
+#import "BrowsingWarning.h"
 #import "PageClient.h"
-#import "SafeBrowsingWarning.h"
 #import <WebCore/FontCocoa.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -290,7 +290,7 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
 
 @implementation _WKWarningView
 
-- (instancetype)initWithFrame:(RectType)frame safeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler
+- (instancetype)initWithFrame:(RectType)frame browsingWarning:(const WebKit::BrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler
 {
     if (!(self = [super initWithFrame:frame])) {
         completionHandler(WebKit::ContinueUnsafeLoad::Yes);
@@ -535,10 +535,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_completionHandler)
         return;
 
-    if ([link isEqual:WebKit::SafeBrowsingWarning::visitUnsafeWebsiteSentinel()])
+    if ([link isEqual:WebKit::BrowsingWarning::visitUnsafeWebsiteSentinel()])
         return _completionHandler(WebKit::ContinueUnsafeLoad::Yes);
 
-    if ([link isEqual:WebKit::SafeBrowsingWarning::confirmMalwareSentinel()]) {
+    if ([link isEqual:WebKit::BrowsingWarning::confirmMalwareSentinel()]) {
 #if PLATFORM(MAC)
         auto alert = adoptNS([NSAlert new]);
         [alert setMessageText:WEB_UI_NSSTRING(@"Are you sure you wish to go to this site?", "Malware confirmation dialog title")];

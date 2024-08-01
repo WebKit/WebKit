@@ -103,7 +103,7 @@ enum class ContinueUnsafeLoad : bool;
 class IconLoadingDelegate;
 class NavigationState;
 class ResourceLoadDelegate;
-class SafeBrowsingWarning;
+class BrowsingWarning;
 class ViewSnapshot;
 class WebPageProxy;
 class UIDelegate;
@@ -433,8 +433,8 @@ struct PerWebProcessState {
 
 - (void)_recalculateViewportSizesWithMinimumViewportInset:(CocoaEdgeInsets)minimumViewportInset maximumViewportInset:(CocoaEdgeInsets)maximumViewportInset throwOnInvalidInput:(BOOL)throwOnInvalidInput;
 
-- (void)_showWarningView:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
-- (void)_showSafeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
+- (void)_showWarningView:(const WebKit::BrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
+- (void)_showSafeBrowsingWarning:(const WebKit::BrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
 - (void)_clearWarningView;
 - (void)_clearSafeBrowsingWarning;
 - (void)_clearWarningViewIfForMainFrameNavigation;

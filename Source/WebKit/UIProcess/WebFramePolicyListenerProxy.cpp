@@ -28,7 +28,7 @@
 
 #include "APINavigation.h"
 #include "APIWebsitePolicies.h"
-#include "SafeBrowsingWarning.h"
+#include "BrowsingWarning.h"
 #include "WebFrameProxy.h"
 #include "WebsiteDataStore.h"
 #include "WebsitePoliciesData.h"
@@ -59,7 +59,7 @@ void WebFramePolicyListenerProxy::didReceiveAppBoundDomainResult(std::optional<N
         m_isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
 }
 
-void WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults(RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning)
+void WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults(RefPtr<BrowsingWarning>&& safeBrowsingWarning)
 {
     ASSERT(isMainRunLoop());
     ASSERT(!m_safeBrowsingWarning);

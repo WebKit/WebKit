@@ -575,7 +575,7 @@ void PageClientImpl::makeViewBlank(bool makeBlank)
     [contentView() layer].opacity = makeBlank ? 0 : 1;
 }
 
-void PageClientImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&& completionHandler)
+void PageClientImpl::showSafeBrowsingWarning(const BrowsingWarning& warning, CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&& completionHandler)
 {
     if (auto webView = this->webView())
         [webView _showSafeBrowsingWarning:warning completionHandler:WTFMove(completionHandler)];

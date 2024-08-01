@@ -392,6 +392,7 @@ UIProcess/Cocoa/SOAuthorization/WKSOAuthorizationDelegate.mm
 
 UIProcess/Cocoa/AutomationClient.mm
 UIProcess/Cocoa/AutomationSessionClient.mm
+UIProcess/Cocoa/BrowsingWarningCocoa.mm
 UIProcess/Cocoa/CoreTelephonyUtilities.mm
 UIProcess/Cocoa/DiagnosticLoggingClient.mm
 UIProcess/Cocoa/DownloadProxyMapCocoa.mm
@@ -413,7 +414,6 @@ UIProcess/Cocoa/PlatformXRCoordinator.mm
 UIProcess/Cocoa/PlaybackSessionManagerProxy.mm
 UIProcess/Cocoa/ProcessAssertionCocoa.mm
 UIProcess/Cocoa/ResourceLoadDelegate.mm
-UIProcess/Cocoa/SafeBrowsingWarningCocoa.mm
 UIProcess/Cocoa/SessionStateCoding.mm
 UIProcess/Cocoa/SystemPreviewControllerCocoa.mm
 UIProcess/Cocoa/TextCheckingController.mm

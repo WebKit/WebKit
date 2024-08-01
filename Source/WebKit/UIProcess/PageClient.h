@@ -187,7 +187,7 @@ class NativeWebMouseEvent;
 class NativeWebWheelEvent;
 class RemoteLayerTreeNode;
 class RemoteLayerTreeTransaction;
-class SafeBrowsingWarning;
+class BrowsingWarning;
 class UserData;
 class ViewSnapshot;
 class WebBackForwardListItem;
@@ -325,7 +325,7 @@ public:
 
     virtual void topContentInsetDidChange() { }
 
-    virtual void showSafeBrowsingWarning(const SafeBrowsingWarning&, CompletionHandler<void(std::variant<ContinueUnsafeLoad, URL>&&)>&& completionHandler) { completionHandler(ContinueUnsafeLoad::Yes); }
+    virtual void showSafeBrowsingWarning(const BrowsingWarning&, CompletionHandler<void(std::variant<ContinueUnsafeLoad, URL>&&)>&& completionHandler) { completionHandler(ContinueUnsafeLoad::Yes); }
     virtual void clearSafeBrowsingWarning() { }
     virtual void clearSafeBrowsingWarningIfForMainFrameNavigation() { }
     

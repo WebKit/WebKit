@@ -178,7 +178,7 @@ class PageClient;
 class PageClientImpl;
 class DrawingAreaProxy;
 class MediaSessionCoordinatorProxyPrivate;
-class SafeBrowsingWarning;
+class BrowsingWarning;
 class ViewGestureController;
 class ViewSnapshot;
 class WebBackForwardListItem;
@@ -281,7 +281,7 @@ public:
     void setViewScale(CGFloat);
     CGFloat viewScale() const;
 
-    void showWarningView(const SafeBrowsingWarning&, CompletionHandler<void(std::variant<ContinueUnsafeLoad, URL>&&)>&&);
+    void showWarningView(const BrowsingWarning&, CompletionHandler<void(std::variant<ContinueUnsafeLoad, URL>&&)>&&);
     void clearWarningView();
     void clearWarningViewIfForMainFrameNavigation();
 
