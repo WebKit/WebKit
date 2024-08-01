@@ -1437,7 +1437,7 @@ bool GridTrackSizingAlgorithm::shouldExcludeGridItemForMasonryTrackSizing(const 
         shouldExcludeGridItemForMasonryTrackSizing = false;
 
     // If the item is going past the end of track do not consider it for inclusion.
-    if (itemSpan.integerSpan() + trackIndex > tracks(m_direction).size())
+    if (itemSpan.integerSpan() + itemSpan.startLine() > tracks(m_direction).size())
         shouldExcludeGridItemForMasonryTrackSizing = true;
 
     return shouldExcludeGridItemForMasonryTrackSizing;
@@ -1495,7 +1495,14 @@ void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrackMasonry(GridTrack
         isNewEntry = true;
 
         // Correct the span as the grid item is coming from another track.
-        span = GridSpan::translatedDefiniteGridSpan(trackIndex, trackIndex + span.integerSpan());
+        auto shift = 0u;
+        auto gridItemEndIndex = span.integerSpan() + trackIndex;
+        if (span.integerSpan() > 1 && (gridItemEndIndex > tracks(m_direction).size())) {
+            shift = gridItemEndIndex - tracks(m_direction).size();
+            shift = (shift > trackIndex) ? 0 : shift;
+        }
+
+        span = GridSpan::translatedDefiniteGridSpan(trackIndex - shift, trackIndex + span.integerSpan() - shift);
 
         if (shouldExcludeGridItemForMasonryTrackSizing(*gridItem, trackIndex, span))
             return;
