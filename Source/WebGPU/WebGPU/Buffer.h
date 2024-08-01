@@ -95,7 +95,12 @@ public:
     void setCommandEncoder(CommandEncoder&, bool mayModifyBuffer = false) const;
     uint8_t* getBufferContents();
     bool indirectBufferRequiresRecomputation(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, uint32_t minInstanceCount, MTLIndexType, uint32_t firstInstance) const;
+    bool indirectIndexedBufferRequiresRecomputation(MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount) const;
+    bool indirectBufferRequiresRecomputation(uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount) const;
+
     void indirectBufferRecomputed(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, uint32_t minInstanceCount, MTLIndexType, uint32_t firstInstance);
+    void indirectBufferRecomputed(uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount);
+    void indirectIndexedBufferRecomputed(MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount);
     void indirectBufferInvalidated();
 
 private:
@@ -124,6 +129,8 @@ private:
     MappedRanges m_mappedRanges;
     WGPUMapModeFlags m_mapMode { WGPUMapMode_None };
     struct IndirectArgsCache {
+        uint64_t indirectOffset { UINT64_MAX };
+        uint64_t indexBufferOffsetInBytes { UINT64_MAX };
         uint32_t lastBaseIndex { 0 };
         uint32_t indexCount { 0 };
         uint32_t minVertexCount { 0 };

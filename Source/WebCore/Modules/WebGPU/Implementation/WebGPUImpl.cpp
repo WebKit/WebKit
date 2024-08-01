@@ -61,7 +61,11 @@ void GPUImpl::requestAdapter(const RequestAdapterOptions& options, CompletionHan
     WGPURequestAdapterOptions backingOptions {
         nullptr,
         nullptr,
+#if CPU(X86_64)
+        WGPUPowerPreference_HighPerformance,
+#else
         options.powerPreference ? m_convertToBackingContext->convertToBacking(*options.powerPreference) : static_cast<WGPUPowerPreference>(WGPUPowerPreference_Undefined),
+#endif
         WGPUBackendType_Metal,
         options.forceFallbackAdapter,
     };

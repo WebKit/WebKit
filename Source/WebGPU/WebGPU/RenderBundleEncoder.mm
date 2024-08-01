@@ -288,7 +288,7 @@ bool RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resource
     return addResource(resources, mtlResource, [[ResourceUsageAndRenderStage alloc] initWithUsage:MTLResourceUsageRead renderStages:stage entryUsage:BindGroupEntryUsage::Input binding:BindGroupEntryUsageData::invalidBindingIndex resource:resource]);
 }
 
-bool RenderBundleEncoder::executePreDrawCommands()
+bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit)
 {
     auto vertexDynamicOffset = m_vertexDynamicOffset;
     auto fragmentDynamicOffset = m_fragmentDynamicOffset;
@@ -314,6 +314,37 @@ bool RenderBundleEncoder::executePreDrawCommands()
     id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand();
     if (!icbCommand)
         return true;
+
+#if CPU(X86_64)
+    if (m_renderPassEncoder && passWasSplit) {
+        id<MTLRenderCommandEncoder> commandEncoder = m_renderPassEncoder->renderCommandEncoder();
+        if (id<MTLRenderPipelineState> renderPipeline = m_currentPipelineState)
+            [commandEncoder setRenderPipelineState:renderPipeline];
+        if (id<MTLDepthStencilState> depthStencilState = m_depthStencilState)
+            [commandEncoder setDepthStencilState:depthStencilState];
+
+        [commandEncoder setCullMode:m_cullMode];
+        [commandEncoder setFrontFacingWinding:m_frontFace];
+        [commandEncoder setDepthClipMode:m_depthClipMode];
+        [commandEncoder setDepthBias:m_depthBias slopeScale:m_depthBiasSlopeScale clamp:m_depthBiasClamp];
+
+        for (auto& [groupIndex, weakBindGroup] : m_bindGroups) {
+            if (!weakBindGroup.get())
+                continue;
+
+            auto& group = *weakBindGroup.get();
+            for (const auto& resource : group.resources()) {
+                ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());
+                for (size_t i = 0, resourceCount = resource.resourceUsages.size(); i < resourceCount; ++i) {
+                    if (resource.renderStages && resource.mtlResources[i])
+                        [m_renderPassEncoder->renderCommandEncoder() useResource:resource.mtlResources[i] usage:resource.usage stages:resource.renderStages];
+                }
+            }
+        }
+    }
+#else
+    UNUSED_PARAM(passWasSplit);
+#endif
 
     if (NSString* error = m_pipeline->pipelineLayout().errorValidatingBindGroupCompatibility(m_bindGroups)) {
         makeInvalid(error);
@@ -405,7 +436,7 @@ bool RenderBundleEncoder::executePreDrawCommands()
 RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
 {
     RETURN_IF_FINISHED_RENDER_COMMAND();
-    if (!executePreDrawCommands())
+    if (!executePreDrawCommands(false))
         return finalizeRenderCommand();
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
         if (!runVertexBufferValidation(vertexCount, instanceCount, firstVertex, firstInstance))
@@ -624,8 +655,6 @@ void RenderBundleEncoder::storeVertexBufferCountsForValidation(uint32_t indexCou
 RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance)
 {
     RETURN_IF_FINISHED_RENDER_COMMAND();
-    if (!executePreDrawCommands())
-        return finalizeRenderCommand();
 
     auto indexSizeInBytes = (m_indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t));
     auto firstIndexOffsetInBytes = checkedProduct<NSUInteger>(firstIndex, indexSizeInBytes);
@@ -638,7 +667,12 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint
     if (m_renderPassEncoder) {
         auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount();
         useIndirectCall = RenderPassEncoder::clampIndexBufferToValidValues(indexCount, instanceCount, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes, m_indexBuffer.get(), minVertexCount, minInstanceCount, m_renderPassEncoder->renderCommandEncoder(), m_device.get(), m_descriptor.sampleCount, m_primitiveType);
+        if (useIndirectCall == RenderPassEncoder::IndexCall::IndirectDraw)
+            m_renderPassEncoder->splitRenderPass();
     }
+
+    if (!executePreDrawCommands(useIndirectCall == RenderPassEncoder::IndexCall::IndirectDraw))
+        return finalizeRenderCommand();
 
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
         if (NSString* error = errorValidatingDrawIndexed()) {
@@ -660,7 +694,7 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint
 
         storeVertexBufferCountsForValidation(indexCount, instanceCount, firstIndex, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes);
 
-        if (m_renderPassEncoder && useIndirectCall == RenderPassEncoder::IndexCall::IndirectDraw) {
+        if (m_renderPassEncoder && (useIndirectCall == RenderPassEncoder::IndexCall::IndirectDraw || useIndirectCall == RenderPassEncoder::IndexCall::CachedIndirectDraw)) {
             id<MTLBuffer> indirectBuffer = m_indexBuffer->indirectIndexedBuffer();
             [m_renderPassEncoder->renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:0 indirectBuffer:indirectBuffer indirectBufferOffset:0];
         } else if (useIndirectCall != RenderPassEncoder::IndexCall::Skip)
@@ -682,14 +716,17 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexedIndir
     m_requiresCommandReplay = true;
     id<MTLBuffer> mtlIndirectBuffer = nil;
     uint64_t modifiedIndirectOffset = 0;
+    bool splitPass = false;
     if (m_renderPassEncoder) {
         auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount();
-        auto result = RenderPassEncoder::clampIndirectIndexBufferToValidValues(m_indexBuffer.get(), indirectBuffer, m_indexType, m_indexBufferOffset, indirectOffset, minVertexCount, minInstanceCount, m_primitiveType, m_device.get(), m_descriptor.sampleCount, m_renderPassEncoder->renderCommandEncoder());
+        auto result = RenderPassEncoder::clampIndirectIndexBufferToValidValues(m_indexBuffer.get(), indirectBuffer, m_indexType, m_indexBufferOffset, indirectOffset, minVertexCount, minInstanceCount, m_primitiveType, m_device.get(), m_descriptor.sampleCount, m_renderPassEncoder->renderCommandEncoder(), splitPass);
+        if (splitPass)
+            m_renderPassEncoder->splitRenderPass();
         mtlIndirectBuffer = result.first;
         modifiedIndirectOffset = result.second;
     }
 
-    if (!executePreDrawCommands())
+    if (!executePreDrawCommands(splitPass))
         return finalizeRenderCommand();
     id<MTLBuffer> indexBuffer = m_indexBuffer ? m_indexBuffer->buffer() : nil;
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
@@ -743,12 +780,15 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndirect(Buf
 
     m_requiresCommandReplay = true;
     id<MTLBuffer> clampedIndirectBuffer = nil;
+    bool splitPass = false;
     if (m_renderPassEncoder) {
         auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount();
-        clampedIndirectBuffer = RenderPassEncoder::clampIndirectBufferToValidValues(indirectBuffer, indirectOffset, minVertexCount, minInstanceCount, m_device.get(), m_descriptor.sampleCount, m_renderPassEncoder->renderCommandEncoder());
+        clampedIndirectBuffer = RenderPassEncoder::clampIndirectBufferToValidValues(indirectBuffer, indirectOffset, minVertexCount, minInstanceCount, m_device.get(), m_descriptor.sampleCount, m_renderPassEncoder->renderCommandEncoder(), splitPass);
+        if (splitPass)
+            m_renderPassEncoder->splitRenderPass();
     }
 
-    if (!executePreDrawCommands())
+    if (!executePreDrawCommands(splitPass))
         return finalizeRenderCommand();
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
         if (m_renderPassEncoder) {
@@ -870,6 +910,7 @@ Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& 
         if (m_requiresCommandReplay)
             return RenderBundle::create(m_icbArray, this, m_descriptor, m_currentCommandIndex, m_device);
 
+        auto commandCount = m_currentCommandIndex;
         endCurrentICB();
         m_vertexBuffers.clear();
         m_fragmentBuffers.clear();
@@ -878,7 +919,7 @@ Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& 
 
         RELEASE_ASSERT(m_icbArray || m_lastErrorString);
         if (m_icbArray)
-            return RenderBundle::create(m_icbArray, nullptr, m_descriptor, m_currentCommandIndex, m_device);
+            return RenderBundle::create(m_icbArray, nullptr, m_descriptor, commandCount, m_device);
 
         m_device->generateAValidationError(m_lastErrorString);
         return RenderBundle::createInvalid(m_device, m_lastErrorString);
@@ -1154,22 +1195,22 @@ void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
                 return;
             }
 
-            id<MTLRenderCommandEncoder> commandEncoder = m_renderPassEncoder->renderCommandEncoder();
-            id<MTLRenderPipelineState> renderPipeline = m_currentPipelineState;
-            if (renderPipeline && previousRenderPipelineState != m_currentPipelineState)
-                [commandEncoder setRenderPipelineState:renderPipeline];
-            id<MTLDepthStencilState> depthStencilState = m_depthStencilState;
-            if (depthStencilState && previousDepthStencilState != depthStencilState)
-                [commandEncoder setDepthStencilState:depthStencilState];
+        id<MTLRenderCommandEncoder> commandEncoder = m_renderPassEncoder->renderCommandEncoder();
+        id<MTLRenderPipelineState> renderPipeline = m_currentPipelineState;
+        if (renderPipeline && previousRenderPipelineState != m_currentPipelineState)
+            [commandEncoder setRenderPipelineState:renderPipeline];
+        id<MTLDepthStencilState> depthStencilState = m_depthStencilState;
+        if (depthStencilState && previousDepthStencilState != depthStencilState)
+            [commandEncoder setDepthStencilState:depthStencilState];
 
-            if (previous_cullMode != m_cullMode)
-                [commandEncoder setCullMode:m_cullMode];
-            if (previous_frontFace != m_frontFace)
-                [commandEncoder setFrontFacingWinding:m_frontFace];
-            if (previous_depthClipmpde != m_depthClipMode)
-                [commandEncoder setDepthClipMode:m_depthClipMode];
-            if (previous_depthBias != m_depthBias || previous_depthBiasSlopeScale != m_depthBiasSlopeScale || previous_depthBiasClamp != m_depthBiasClamp)
-                [commandEncoder setDepthBias:m_depthBias slopeScale:m_depthBiasSlopeScale clamp:m_depthBiasClamp];
+        if (previous_cullMode != m_cullMode)
+            [commandEncoder setCullMode:m_cullMode];
+        if (previous_frontFace != m_frontFace)
+            [commandEncoder setFrontFacingWinding:m_frontFace];
+        if (previous_depthClipmpde != m_depthClipMode)
+            [commandEncoder setDepthClipMode:m_depthClipMode];
+        if (previous_depthBias != m_depthBias || previous_depthBiasSlopeScale != m_depthBiasSlopeScale || previous_depthBiasClamp != m_depthBiasClamp)
+            [commandEncoder setDepthBias:m_depthBias slopeScale:m_depthBiasSlopeScale clamp:m_depthBiasClamp];
         }
     } else {
         if (!isValidToUseWith(pipeline, *this)) {

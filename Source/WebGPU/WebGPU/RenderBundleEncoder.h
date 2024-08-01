@@ -121,7 +121,7 @@ private:
     id<MTLIndirectRenderCommand> currentRenderCommand();
 
     void makeInvalid(NSString* = nil);
-    bool executePreDrawCommands();
+    bool executePreDrawCommands(bool passWasSplit);
     void endCurrentICB();
     bool addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, ResourceUsageAndRenderStage*);
     bool addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, MTLRenderStages, const BindGroupEntryUsageData::Resource&);
