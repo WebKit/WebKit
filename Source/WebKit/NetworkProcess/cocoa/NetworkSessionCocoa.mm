@@ -897,10 +897,15 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
             newUserInfo[@"networkTaskMetricsPrivacyStance"] = privacyStanceToString(networkDataTask->networkLoadMetrics().privacyStance);
 #endif
 #if HAVE(NETWORK_RESOLUTION_FAILURE_REPORT) && defined(NW_CONNECTION_HAS_FAILED_RESOLUTION_REPORT)
-            for (NSError *underlyingError in error.underlyingErrors) {
-                if (auto report = extractResolutionReport(underlyingError)) {
-                    newUserInfo[@"networkResolutionReport"] = report;
-                    break;
+            if (auto report = extractResolutionReport(error))
+                newUserInfo[@"networkResolutionReport"] = report;
+            else {
+                // This can be removed when the CFNetwork loader is no longer in use
+                for (NSError *underlyingError in error.underlyingErrors) {
+                    if (auto report = extractResolutionReport(underlyingError)) {
+                        newUserInfo[@"networkResolutionReport"] = report;
+                        break;
+                    }
                 }
             }
 #endif
