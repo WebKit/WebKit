@@ -403,7 +403,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     , m_scopeNode(functionNode)
     , m_codeType(FunctionCode)
     , m_vm(vm)
-    , m_defaultAllowCallIgnoreResultOptimization(true)
+    , m_defaultAllowCallIgnoreResultOptimization(!Options::evalMode())
     // FIXME: This should be a flag
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
@@ -977,7 +977,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
     , m_thisRegister(CallFrame::thisArgumentOffset())
     , m_codeType(ModuleCode)
     , m_vm(vm)
-    , m_defaultAllowCallIgnoreResultOptimization(true)
+    , m_defaultAllowCallIgnoreResultOptimization(!Options::evalMode())
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
     , m_isBuiltinFunction(false)

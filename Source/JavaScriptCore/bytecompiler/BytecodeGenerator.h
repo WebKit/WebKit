@@ -1060,7 +1060,7 @@ namespace JSC {
 
         CodeType codeType() const { return m_codeType; }
 
-        bool shouldBeConcernedWithCompletionValue() const { return !m_defaultAllowCallIgnoreResultOptimization; }
+        bool shouldBeConcernedWithCompletionValue() const { return m_defaultAllowCallIgnoreResultOptimization ? m_codeType != FunctionCode : false; }
 
         bool shouldEmitDebugHooks() const { return m_codeGenerationMode.contains(CodeGenerationMode::Debugger) && !m_isBuiltinFunction; }
         bool shouldEmitTypeProfilerHooks() const { return m_codeGenerationMode.contains(CodeGenerationMode::TypeProfiler); }
