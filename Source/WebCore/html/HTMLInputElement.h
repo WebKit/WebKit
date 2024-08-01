@@ -350,6 +350,7 @@ public:
 
     void initializeInputTypeAfterParsingOrCloning();
 
+
 private:
     enum class CreationType : uint8_t { Normal, ByParser, ByCloning };
     HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, CreationType);
@@ -466,6 +467,8 @@ private:
     void updateUserAgentShadowTree() final;
 
     bool dirAutoUsesValue() const final;
+
+    RefPtr<InputType> protectedInputType() const;
 
     AtomString m_name;
     String m_valueIfDirty;
