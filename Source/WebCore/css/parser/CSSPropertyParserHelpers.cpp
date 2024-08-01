@@ -1203,13 +1203,13 @@ static RefPtr<CSSValue> consumePageSize(CSSParserTokenRange& range)
 RefPtr<CSSValue> consumeSize(CSSParserTokenRange& range, CSSParserMode mode)
 {
     if (consumeIdentRaw<CSSValueAuto>(range))
-        return CSSValueList::createSpaceSeparated(CSSPrimitiveValue::create(CSSValueAuto));
+        return CSSPrimitiveValue::create(CSSValueAuto);
 
     if (auto width = consumeLength(range, mode, ValueRange::NonNegative)) {
         auto height = consumeLength(range, mode, ValueRange::NonNegative);
         if (!height)
-            return CSSValueList::createSpaceSeparated(width.releaseNonNull());
-        return CSSValueList::createSpaceSeparated(width.releaseNonNull(), height.releaseNonNull());
+            return width;
+        return CSSValuePair::create(width.releaseNonNull(), height.releaseNonNull());
     }
 
     auto pageSize = consumePageSize(range);
@@ -1219,10 +1219,10 @@ RefPtr<CSSValue> consumeSize(CSSParserTokenRange& range, CSSParserMode mode)
     if (!orientation && !pageSize)
         return nullptr;
     if (pageSize && !orientation)
-        return CSSValueList::createSpaceSeparated(pageSize.releaseNonNull());
+        return pageSize;
     if (!pageSize)
-        return CSSValueList::createSpaceSeparated(orientation.releaseNonNull());
-    return CSSValueList::createSpaceSeparated(pageSize.releaseNonNull(), orientation.releaseNonNull());
+        return orientation;
+    return CSSValuePair::create(pageSize.releaseNonNull(), orientation.releaseNonNull());
 }
 
 RefPtr<CSSValue> consumeTextTransform(CSSParserTokenRange& range)

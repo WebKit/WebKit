@@ -56,7 +56,6 @@ public:
     static bool isValidCustomPropertyValueForSyntax(const CSSCustomPropertySyntax&, CSSParserTokenRange, const CSSParserContext&);
 
     static RefPtr<CSSValue> parseCounterStyleDescriptor(CSSPropertyID, CSSParserTokenRange&, const CSSParserContext&);
-    static RefPtr<CSSValue> parseViewTransitionDescriptor(CSSPropertyID, CSSParserTokenRange&, const CSSParserContext&);
 
 private:
     CSSPropertyParser(const CSSParserTokenRange&, const CSSParserContext&, Vector<CSSProperty, 256>*, bool consumeWhitespace = true);
@@ -84,6 +83,9 @@ private:
     
     // @keyframe descriptors.
     bool parseKeyframeDescriptor(CSSPropertyID, bool important);
+
+    // @page descriptors.
+    bool parsePageDescriptor(CSSPropertyID, bool important);
 
     // @property descriptors.
     bool parsePropertyDescriptor(CSSPropertyID);

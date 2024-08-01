@@ -5551,20 +5551,6 @@
                 "url": "https://www.w3.org/TR/SVG11/painting.html#ShapeRenderingProperty"
             }
         },
-        "size": {
-            "codegen-properties": {
-                "computable": false,
-                "custom": "All",
-                "parser-function": "consumeSize",
-                "parser-function-requires-context-mode": true,
-                "parser-grammar-unused": "<length>{1,2} | auto | [ <page-size> || [ portrait | landscape ] ]",
-                "parser-grammar-unused-reason": "Needs support for '||' groups and the '{A,B}' multiplier."
-            },
-            "specification": {
-                "category": "css-page",
-                "url": "https://www.w3.org/TR/css3-page/#page-size-prop"
-            }
-        },
         "stop-color": {
             "codegen-properties": {
                 "svg": true,
@@ -9927,22 +9913,19 @@
                 }
             }
         },
-        "@view-transition": {
-            "navigation": {
-                "values": [
-                    "none",
-                    "auto"
-                ],
+        "@page": {
+            "size": {
                 "codegen-properties": {
-                    "settings-flag": "crossDocumentViewTransitionsEnabled",
-                    "parser-grammar": "<<values>>",
-                    "parser-exported": true
+                    "parser-function": "consumeSize",
+                    "parser-function-requires-context-mode": true,
+                    "parser-grammar-unused": "<length>{1,2} | auto | [ <page-size> || [ portrait | landscape ] ]",
+                    "parser-grammar-unused-reason": "Needs support for '||' groups and the '{A,B}' multiplier."
                 },
-                 "specification": {
-                     "category": "css-view-transitions",
-                     "url": "https://www.w3.org/TR/css-view-transitions-2/#view-transition-navigation-descriptor"
-                 }
-             }
+                "specification": {
+                    "category": "css-page",
+                    "url": "https://www.w3.org/TR/css3-page/#page-size-prop"
+                }
+            }
         },
         "@property": {
             "syntax": {
@@ -9971,6 +9954,23 @@
                     "category": "css-properties-and-values",
                     "url": "https://drafts.css-houdini.org/css-properties-values-api/#initial-value-descriptor"
                 }
+            }
+        },
+        "@view-transition": {
+            "navigation": {
+                "values": [
+                    "none",
+                    "auto"
+                ],
+                "codegen-properties": {
+                    "settings-flag": "crossDocumentViewTransitionsEnabled",
+                    "parser-grammar": "<<values>>",
+                    "parser-exported": true
+                },
+                 "specification": {
+                     "category": "css-view-transitions",
+                     "url": "https://www.w3.org/TR/css-view-transitions-2/#view-transition-navigation-descriptor"
+                 }
             }
         }
     },

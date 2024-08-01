@@ -71,6 +71,8 @@ private:
     Ref<CSSValue> resolveVariableReferences(CSSPropertyID, CSSValue&);
     RefPtr<CSSCustomPropertyValue> resolveCustomPropertyValue(CSSCustomPropertyValue&);
 
+    void applyPageSizeDescriptor(CSSValue&);
+
     const PropertyCascade* ensureRollbackCascadeForRevert();
     const PropertyCascade* ensureRollbackCascadeForRevertLayer();
 

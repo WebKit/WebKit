@@ -212,20 +212,32 @@ bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, con
     CSSPropertyParser parser(range, context, &parsedProperties);
 
     bool parseSuccess;
-    if (ruleType == StyleRuleType::FontFace)
-        parseSuccess = parser.parseFontFaceDescriptor(propertyID);
-    else if (ruleType == StyleRuleType::FontPaletteValues)
-        parseSuccess = parser.parseFontPaletteValuesDescriptor(propertyID);
-    else if (ruleType == StyleRuleType::CounterStyle)
+    switch (ruleType) {
+    case StyleRuleType::CounterStyle:
         parseSuccess = parser.parseCounterStyleDescriptor(propertyID);
-    else if (ruleType == StyleRuleType::Keyframe)
+        break;
+    case StyleRuleType::FontFace:
+        parseSuccess = parser.parseFontFaceDescriptor(propertyID);
+        break;
+    case StyleRuleType::FontPaletteValues:
+        parseSuccess = parser.parseFontPaletteValuesDescriptor(propertyID);
+        break;
+    case StyleRuleType::Keyframe:
         parseSuccess = parser.parseKeyframeDescriptor(propertyID, important);
-    else if (ruleType == StyleRuleType::ViewTransition)
-        parseSuccess = parser.parseViewTransitionDescriptor(propertyID);
-    else if (ruleType == StyleRuleType::Property)
+        break;
+    case StyleRuleType::Page:
+        parseSuccess = parser.parsePageDescriptor(propertyID, important);
+        break;
+    case StyleRuleType::Property:
         parseSuccess = parser.parsePropertyDescriptor(propertyID);
-    else
+        break;
+    case StyleRuleType::ViewTransition:
+        parseSuccess = parser.parseViewTransitionDescriptor(propertyID);
+        break;
+    default:
         parseSuccess = parser.parseValueStart(propertyID, important);
+        break;
+    }
 
     if (!parseSuccess)
         parsedProperties.shrink(parsedPropertiesSize);
@@ -544,13 +556,6 @@ bool CSSPropertyParser::parseCounterStyleDescriptor(CSSPropertyID property)
     return true;
 }
 
-RefPtr<CSSValue> CSSPropertyParser::parseViewTransitionDescriptor(CSSPropertyID property, CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    ASSERT(context.propertySettings.crossDocumentViewTransitionsEnabled);
-
-    return CSSPropertyParsing::parseViewTransitionDescriptor(range, property, context);
-}
-
 bool CSSPropertyParser::parseViewTransitionDescriptor(CSSPropertyID property)
 {
     ASSERT(m_context.propertySettings.crossDocumentViewTransitionsEnabled);
@@ -562,7 +567,6 @@ bool CSSPropertyParser::parseViewTransitionDescriptor(CSSPropertyID property)
     addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), false);
     return true;
 }
-
 
 bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID property)
 {
@@ -624,6 +628,23 @@ bool CSSPropertyParser::parseFontPaletteValuesDescriptor(CSSPropertyID property)
 {
     RefPtr parsedValue = CSSPropertyParsing::parseFontPaletteValuesDescriptor(m_range, property, m_context);
     if (!parsedValue || !m_range.atEnd())
+        return false;
+
+    addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), false);
+    return true;
+}
+
+bool CSSPropertyParser::parsePageDescriptor(CSSPropertyID property, bool important)
+{
+    // Does not apply in @page per-spec.
+    if (property == CSSPropertyPage)
+        return false;
+
+    RefPtr parsedValue = CSSPropertyParsing::parsePageDescriptor(m_range, property, m_context);
+    if (!parsedValue)
+        return parseValueStart(property, important);
+
+    if (!m_range.atEnd())
         return false;
 
     addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), false);

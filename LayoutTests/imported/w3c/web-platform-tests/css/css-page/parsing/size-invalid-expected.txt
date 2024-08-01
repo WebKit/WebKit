@@ -1,0 +1,16 @@
+
+PASS e.style['size'] = "initial" should not set the property value
+PASS e.style['size'] = "inherit" should not set the property value
+PASS e.style['size'] = "revert" should not set the property value
+PASS e.style['size'] = "revert-layer" should not set the property value
+PASS e.style['size'] = "unset" should not set the property value
+PASS e.style['size'] = "640px 480px" should not set the property value
+PASS e.style['size'] = "8.5in 11in" should not set the property value
+PASS e.style['size'] = "a4" should not set the property value
+PASS e.style['size'] = "3in 10in" should not set the property value
+PASS e.style['size'] = "jis-b5" should not set the property value
+PASS e.style['size'] = "auto" should not set the property value
+PASS e.style['size'] = "landscape" should not set the property value
+PASS e.style['size'] = "letter" should not set the property value
+PASS e.style['size'] = "legal landscape" should not set the property value
+

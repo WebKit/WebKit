@@ -1323,7 +1323,7 @@ PASS shape-outside: _camel_cased_attribute v. CSS.supports
 PASS shape-outside: _dashed_attribute v. CSS.supports
 PASS shape-rendering: _camel_cased_attribute v. CSS.supports
 PASS shape-rendering: _dashed_attribute v. CSS.supports
-PASS size: _camel_cased_attribute v. CSS.supports
+FAIL size: _camel_cased_attribute v. CSS.supports assert_equals: expected true but got false
 PASS speak: _camel_cased_attribute v. CSS.supports
 PASS speak-as: _camel_cased_attribute v. CSS.supports
 PASS speak-as: _dashed_attribute v. CSS.supports

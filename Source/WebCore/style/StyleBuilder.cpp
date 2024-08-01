@@ -36,6 +36,7 @@
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPropertyParser.h"
 #include "CSSRegisteredCustomProperty.h"
+#include "CSSValuePair.h"
 #include "CSSValuePool.h"
 #include "CustomPropertyRegistry.h"
 #include "Document.h"
@@ -382,6 +383,11 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         return;
     }
 
+    if (UNLIKELY(id == CSSPropertySize && valueType == ApplyValueType::Value)) {
+        applyPageSizeDescriptor(valueToApply.get());
+        return;
+    }
+
     BuilderGenerated::applyProperty(id, m_state, valueToApply.get(), valueType);
 }
 
@@ -555,6 +561,146 @@ RefPtr<CSSCustomPropertyValue> Builder::resolveCustomPropertyValue(CSSCustomProp
         m_state.updateFont();
 
     return CSSPropertyParser::parseTypedCustomPropertyValue(name, registered->syntax, resolvedData->tokens(), m_state, resolvedData->context());
+}
+
+static bool pageSizeFromName(const CSSPrimitiveValue& pageSizeName, const CSSPrimitiveValue* pageOrientation, Length& width, Length& height)
+{
+    auto mmLength = [](double mm) {
+        return CSSPrimitiveValue::create(mm, CSSUnitType::CSS_MM).get().computeLength<Length>({ });
+    };
+
+    auto inchLength = [](double inch) {
+        return CSSPrimitiveValue::create(inch, CSSUnitType::CSS_IN).get().computeLength<Length>({ });
+    };
+
+    static NeverDestroyed<Length> a5Width(mmLength(148));
+    static NeverDestroyed<Length> a5Height(mmLength(210));
+    static NeverDestroyed<Length> a4Width(mmLength(210));
+    static NeverDestroyed<Length> a4Height(mmLength(297));
+    static NeverDestroyed<Length> a3Width(mmLength(297));
+    static NeverDestroyed<Length> a3Height(mmLength(420));
+    static NeverDestroyed<Length> b5Width(mmLength(176));
+    static NeverDestroyed<Length> b5Height(mmLength(250));
+    static NeverDestroyed<Length> b4Width(mmLength(250));
+    static NeverDestroyed<Length> b4Height(mmLength(353));
+    static NeverDestroyed<Length> letterWidth(inchLength(8.5));
+    static NeverDestroyed<Length> letterHeight(inchLength(11));
+    static NeverDestroyed<Length> legalWidth(inchLength(8.5));
+    static NeverDestroyed<Length> legalHeight(inchLength(14));
+    static NeverDestroyed<Length> ledgerWidth(inchLength(11));
+    static NeverDestroyed<Length> ledgerHeight(inchLength(17));
+
+    switch (pageSizeName.valueID()) {
+    case CSSValueA5:
+        width = a5Width;
+        height = a5Height;
+        break;
+    case CSSValueA4:
+        width = a4Width;
+        height = a4Height;
+        break;
+    case CSSValueA3:
+        width = a3Width;
+        height = a3Height;
+        break;
+    case CSSValueB5:
+        width = b5Width;
+        height = b5Height;
+        break;
+    case CSSValueB4:
+        width = b4Width;
+        height = b4Height;
+        break;
+    case CSSValueLetter:
+        width = letterWidth;
+        height = letterHeight;
+        break;
+    case CSSValueLegal:
+        width = legalWidth;
+        height = legalHeight;
+        break;
+    case CSSValueLedger:
+        width = ledgerWidth;
+        height = ledgerHeight;
+        break;
+    default:
+        return false;
+    }
+
+    if (pageOrientation) {
+        switch (pageOrientation->valueID()) {
+        case CSSValueLandscape:
+            std::swap(width, height);
+            break;
+        case CSSValuePortrait:
+            // Nothing to do.
+            break;
+        default:
+            return false;
+        }
+    }
+    return true;
+}
+
+void Builder::applyPageSizeDescriptor(CSSValue& value)
+{
+    m_state.style().resetPageSizeType();
+
+    Length width;
+    Length height;
+    auto pageSizeType = PAGE_SIZE_AUTO;
+
+    if (auto* pair = dynamicDowncast<CSSValuePair>(value)) {
+        // <length>{2} | <page-size> <orientation>
+        auto* first = dynamicDowncast<CSSPrimitiveValue>(pair->first());
+        auto* second = dynamicDowncast<CSSPrimitiveValue>(pair->second());
+        if (!first || !second)
+            return;
+        if (first->isLength()) {
+            // <length>{2}
+            if (!second->isLength())
+                return;
+            auto conversionData = m_state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f);
+            width = first->computeLength<Length>(conversionData);
+            height = second->computeLength<Length>(conversionData);
+        } else {
+            // <page-size> <orientation>
+            // The value order is guaranteed. See CSSParser::parseSizeParameter.
+            if (!pageSizeFromName(*first, second, width, height))
+                return;
+        }
+        pageSizeType = PAGE_SIZE_RESOLVED;
+    } else if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        // <length> | auto | <page-size> | [ portrait | landscape]
+        if (primitiveValue->isLength()) {
+            // <length>
+            pageSizeType = PAGE_SIZE_RESOLVED;
+            width = height = primitiveValue->computeLength<Length>(m_state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+        } else {
+            switch (primitiveValue->valueID()) {
+            case CSSValueInvalid:
+                return;
+            case CSSValueAuto:
+                pageSizeType = PAGE_SIZE_AUTO;
+                break;
+            case CSSValuePortrait:
+                pageSizeType = PAGE_SIZE_AUTO_PORTRAIT;
+                break;
+            case CSSValueLandscape:
+                pageSizeType = PAGE_SIZE_AUTO_LANDSCAPE;
+                break;
+            default:
+                // <page-size>
+                pageSizeType = PAGE_SIZE_RESOLVED;
+                if (!pageSizeFromName(*primitiveValue, nullptr, width, height))
+                    return;
+            }
+        }
+    } else
+        return;
+
+    m_state.style().setPageSizeType(pageSizeType);
+    m_state.style().setPageSize({ WTFMove(width), WTFMove(height) });
 }
 
 const PropertyCascade* Builder::ensureRollbackCascadeForRevert()
