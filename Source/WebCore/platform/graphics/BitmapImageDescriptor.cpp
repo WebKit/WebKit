@@ -57,12 +57,12 @@ MetadataType BitmapImageDescriptor::imageMetadata(MetadataType& cachedValue, con
 }
 
 template<typename MetadataType>
-MetadataType BitmapImageDescriptor::primaryImageFrameMetadata(MetadataType& cachedValue, CachedFlag cachedFlag, MetadataType (ImageFrame::*functor)() const) const
+MetadataType BitmapImageDescriptor::primaryImageFrameMetadata(MetadataType& cachedValue, CachedFlag cachedFlag, MetadataType (ImageFrame::*functor)() const, const std::optional<SubsamplingLevel>& subsamplingLevel) const
 {
     if (m_cachedFlags.contains(cachedFlag))
         return cachedValue;
 
-    auto& frame = const_cast<BitmapImageSource&>(m_source).primaryImageFrame();
+    auto& frame = const_cast<BitmapImageSource&>(m_source).primaryImageFrame(subsamplingLevel);
 
     // Don't cache any unavailable frame metadata. Just return the default metadata.
     if (!frame.hasMetadata())
@@ -117,7 +117,7 @@ IntSize BitmapImageDescriptor::sourceSize(ImageOrientation orientation) const
         size = decoder->size();
     else
 #endif
-        size = primaryImageFrameMetadata(m_size, CachedFlag::Size, &ImageFrame::size);
+        size = primaryImageFrameMetadata(m_size, CachedFlag::Size, &ImageFrame::size, SubsamplingLevel::Default);
 
     if (orientation == ImageOrientation::Orientation::FromImage)
         orientation = this->orientation();
@@ -127,7 +127,7 @@ IntSize BitmapImageDescriptor::sourceSize(ImageOrientation orientation) const
 
 std::optional<IntSize> BitmapImageDescriptor::densityCorrectedSize() const
 {
-    return primaryImageFrameMetadata(m_densityCorrectedSize, CachedFlag::DensityCorrectedSize, &ImageFrame::densityCorrectedSize);
+    return primaryImageFrameMetadata(m_densityCorrectedSize, CachedFlag::DensityCorrectedSize, &ImageFrame::densityCorrectedSize, SubsamplingLevel::Default);
 }
 
 ImageOrientation BitmapImageDescriptor::orientation() const
