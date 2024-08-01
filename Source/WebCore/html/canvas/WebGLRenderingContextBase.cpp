@@ -2774,20 +2774,6 @@ void WebGLRenderingContextBase::hint(GCGLenum target, GCGLenum mode)
 {
     if (isContextLost())
         return;
-    bool isValid = false;
-    switch (target) {
-    case GraphicsContextGL::GENERATE_MIPMAP_HINT:
-        isValid = true;
-        break;
-    case GraphicsContextGL::FRAGMENT_SHADER_DERIVATIVE_HINT_OES: // OES_standard_derivatives, or core in WebGL 2.0
-        if (m_oesStandardDerivatives || isWebGL2())
-            isValid = true;
-        break;
-    }
-    if (!isValid) {
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "hint"_s, "invalid target"_s);
-        return;
-    }
     m_context->hint(target, mode);
 }
 
