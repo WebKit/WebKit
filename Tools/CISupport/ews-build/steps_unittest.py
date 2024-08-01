@@ -2933,6 +2933,29 @@ class TestRunWebKitTestsRepeatFailuresRedTree(BuildStepMixinAdditions, unittest.
         self.expectOutcome(result=SUCCESS, state_string='layout-tests')
         return self.runStep()
 
+    def test_success_tests_names_with_shell_conflictive_chars(self):
+        self.configureStep()
+        first_run_failures = ['imported/w3c/web-platform-tests/html/dom/idlharness.https.html?exclude=(Document|Window|HTML.*)',
+                              'imported/w3c/web-platform-tests/html/dom/idlharness.https.html?include=HTML.*',
+                              'try/crash/for/test_with_brackets[]{}',
+                              'try/crash/for/test_with spaces " and \' quotes'
+                              ]
+        first_run_flakies = ['fast/css/flaky1.html', 'imported/test/flaky2.html', 'fast/svg/flaky3.svg']
+        self.setProperty('first_run_failures', first_run_failures)
+        self.setProperty('first_run_flakies', first_run_flakies)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        maxTime=18000,
+                        timeout=19800,
+                        command=['/bin/sh', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --wpe --results-directory layout-test-results --debug-rwt-logging --skip-failing-tests --fully-parallel --repeat-each=10 \'imported/w3c/web-platform-tests/html/dom/idlharness.https.html?exclude=(Document|Window|HTML.*)\' \'imported/w3c/web-platform-tests/html/dom/idlharness.https.html?include=HTML.*\' \'try/crash/for/test_with spaces " and \'"\'"\' quotes\' \'try/crash/for/test_with_brackets[]{}\' 2>&1 | Tools/Scripts/filter-test-logs layout']
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='layout-tests')
+        return self.runStep()
+
     def test_set_properties_when_executed_scope_this_class(self):
         self.configureStep()
         first_run_failures = ['fast/css/test1.html', 'imported/test/test2.html', 'fast/svg/test3.svg']

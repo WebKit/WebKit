@@ -26,6 +26,7 @@ from buildbot.process.results import Results, SUCCESS, FAILURE, CANCELLED, WARNI
 from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source import git
 from twisted.internet import defer
+from shlex import quote
 
 import json
 import os
@@ -768,7 +769,7 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
             self.command += ['--test-writer=ruby']
 
         self.appendCustomBuildFlags(platform, self.getProperty('fullPlatform'))
-        self.command = ['/bin/sh', '-c', ' '.join(self.command) + ' 2>&1 | python3 Tools/Scripts/filter-test-logs jsc']
+        self.command = ['/bin/sh', '-c', ' '.join(quote(str(c)) for c in self.command) + ' 2>&1 | python3 Tools/Scripts/filter-test-logs jsc']
 
         steps_to_add = [
             GenerateS3URL(

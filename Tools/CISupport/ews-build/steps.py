@@ -28,6 +28,7 @@ from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source import git
 from buildbot.steps.worker import CompositeStepMixin
 from datetime import date
+from shlex import quote
 
 from twisted.internet import defer, reactor, task
 
@@ -3616,7 +3617,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
 
         self.setCommand(self.command + customBuildFlag(self.getProperty('platform'), self.getProperty('fullPlatform')))
         self.command.extend(self.command_extra)
-        self.command = self.shell_command(' '.join(self.command) + ' 2>&1 | Tools/Scripts/filter-test-logs jsc')
+        self.command = self.shell_command(' '.join(quote(str(c)) for c in self.command) + ' 2>&1 | Tools/Scripts/filter-test-logs jsc')
         return super().start()
 
     def evaluateCommand(self, cmd):
@@ -3993,7 +3994,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
         self.addLogObserver('json', self.log_observer_json)
         self.setLayoutTestCommand()
         if self.getProperty('buildername', '').lower() != 'merge-queue':
-            self.command = self.shell_command(' '.join(str(c) for c in self.command) + ' 2>&1 | Tools/Scripts/filter-test-logs layout')
+            self.command = self.shell_command(' '.join(quote(str(c)) for c in self.command) + ' 2>&1 | Tools/Scripts/filter-test-logs layout')
         return super().start()
 
     # FIXME: This will break if run-webkit-tests changes its default log formatter.
