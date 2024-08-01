@@ -218,9 +218,9 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
 #endif
 
     WebProcessPool::platformInitializeNetworkProcess(parameters);
-    sendWithAsyncReply(Messages::NetworkProcess::InitializeNetworkProcess(WTFMove(parameters)), [weakThis = WeakPtr { *this }] {
-        if (weakThis)
-            weakThis->beginResponsivenessChecks();
+    sendWithAsyncReply(Messages::NetworkProcess::InitializeNetworkProcess(WTFMove(parameters)), [weakThis = WeakPtr { *this }, initializationActivityAndGrant = initializationActivityAndGrant()] {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->beginResponsivenessChecks();
     });
 }
 

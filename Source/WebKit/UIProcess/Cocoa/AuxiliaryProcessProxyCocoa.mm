@@ -87,6 +87,11 @@ std::optional<ExtensionProcess> AuxiliaryProcessProxy::extensionProcess() const
         return std::nullopt;
     return m_processLauncher->extensionProcess();
 }
+
+LaunchGrant* AuxiliaryProcessProxy::launchGrant() const
+{
+    return m_processLauncher ? m_processLauncher->launchGrant() : nullptr;
+}
 #endif
 
 std::optional<AuxiliaryProcessProxy::TaskInfo> AuxiliaryProcessProxy::taskInfo() const

@@ -466,7 +466,7 @@ void WebProcessProxy::updateRegistrationWithDataStore()
 
 void WebProcessProxy::initializeWebProcess(WebProcessCreationParameters&& parameters)
 {
-    sendWithAsyncReply(Messages::WebProcess::InitializeWebProcess(WTFMove(parameters)), [weakThis = WeakPtr { *this }] (ProcessIdentity processIdentity) {
+    sendWithAsyncReply(Messages::WebProcess::InitializeWebProcess(WTFMove(parameters)), [weakThis = WeakPtr { *this }, initializationActivityAndGrant = initializationActivityAndGrant()] (ProcessIdentity processIdentity) {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->m_processIdentity = WTFMove(processIdentity);
     }, 0);

@@ -87,7 +87,7 @@ ModelProcessProxy::ModelProcessProxy()
     parameters.parentPID = getCurrentProcessID();
 
     // Initialize the model process.
-    send(Messages::ModelProcess::InitializeModelProcess(WTFMove(parameters)), 0);
+    sendWithAsyncReply(Messages::ModelProcess::InitializeModelProcess(WTFMove(parameters)), [initializationActivityAndGrant = initializationActivityAndGrant()] () { }, 0);
 
     updateProcessAssertion();
 }

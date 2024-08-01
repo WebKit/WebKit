@@ -228,8 +228,10 @@ void GPUProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
     WebCore::releaseGraphicsMemory(critical, synchronous);
 }
 
-void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
+void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters, CompletionHandler<void()>&& completionHandler)
 {
+    CompletionHandlerCallingScope callCompletionHandler(WTFMove(completionHandler));
+
     applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
     RELEASE_LOG(Process, "%p - GPUProcess::initializeGPUProcess:", this);
     WTF::Thread::setCurrentThreadIsUserInitiated();

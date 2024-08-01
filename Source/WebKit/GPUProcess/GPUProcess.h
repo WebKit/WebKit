@@ -152,7 +152,7 @@ private:
     void didReceiveGPUProcessMessage(IPC::Connection&, IPC::Decoder&);
 
     // Message Handlers
-    void initializeGPUProcess(GPUProcessCreationParameters&&);
+    void initializeGPUProcess(GPUProcessCreationParameters&&, CompletionHandler<void()>&&);
     void platformInitializeGPUProcess(GPUProcessCreationParameters&);
     void updateGPUProcessPreferences(GPUProcessPreferences&&);
     void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&, CompletionHandler<void()>&&);

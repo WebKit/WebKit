@@ -23,7 +23,7 @@
 #if ENABLE(MODEL_PROCESS)
 
 messages -> ModelProcess LegacyReceiver {
-    InitializeModelProcess(struct WebKit::ModelProcessCreationParameters processCreationParameters)
+    InitializeModelProcess(struct WebKit::ModelProcessCreationParameters processCreationParameters) -> ()
 
     CreateModelConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, IPC::ConnectionHandle connectionHandle, struct WebKit::ModelProcessConnectionParameters parameters) -> () AllowedWhenWaitingForSyncReply
 

@@ -607,4 +607,14 @@ void AuxiliaryProcessProxy::didChangeThrottleState(ProcessThrottleState state)
 #endif
 }
 
+AuxiliaryProcessProxy::InitializationActivityAndGrant AuxiliaryProcessProxy::initializationActivityAndGrant()
+{
+    return {
+        throttler().foregroundActivity("Process initialization"_s)
+#if USE(EXTENSIONKIT)
+        , launchGrant()
+#endif
+    };
+}
+
 } // namespace WebKit
