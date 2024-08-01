@@ -732,20 +732,22 @@ public:
 
 #if ASSERT_ENABLED
     struct AutoPreventLayerAccess {
-        AutoPreventLayerAccess(LocalFrameView& view)
+        AutoPreventLayerAccess(LocalFrameView* view)
             : frameView(view)
-            , oldPreventLayerAccess(view.layerAccessPrevented())
+            , oldPreventLayerAccess(view ? view->layerAccessPrevented() : false)
         {
-            view.setLayerAcessPrevented(true);
+            if (view)
+                view->setLayerAcessPrevented(true);
         }
 
         ~AutoPreventLayerAccess()
         {
-            frameView->setLayerAcessPrevented(oldPreventLayerAccess);
+            if (frameView)
+                frameView->setLayerAcessPrevented(oldPreventLayerAccess);
         }
 
     private:
-        CheckedPtr<LocalFrameView> frameView;
+        SingleThreadWeakPtr<LocalFrameView> frameView;
         bool oldPreventLayerAccess { false };
     };
 
@@ -753,7 +755,7 @@ public:
     bool layerAccessPrevented() const { return m_layerAccessPrevented; }
 #else
     struct AutoPreventLayerAccess {
-        AutoPreventLayerAccess(LocalFrameView&) { }
+        AutoPreventLayerAccess(LocalFrameView*) { }
     };
 #endif
 

@@ -1913,7 +1913,7 @@ FloatRect Element::boundingClientRect()
 {
     Ref document = this->document();
     document->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout , LayoutOptions::CanDeferUpdateLayerPositions }, this);
-    LocalFrameView::AutoPreventLayerAccess preventAccess(*document->view());
+    LocalFrameView::AutoPreventLayerAccess preventAccess(document->view());
     auto pair = boundingAbsoluteRectWithoutLayout();
     if (!pair)
         return { };
