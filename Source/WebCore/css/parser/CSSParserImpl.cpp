@@ -671,8 +671,6 @@ Vector<Ref<StyleRuleBase>> CSSParserImpl::consumeNestedGroupRules(CSSParserToken
                 // property declarations.
                 rules.append(createNestingParentRule());
 
-                protectedStyleSheet()->setHasNestingRules();
-
                 if (m_observerWrapper)
                     m_observerWrapper->observer().markRuleBodyContainsImplicitlyNestedProperties();
             }
@@ -1312,6 +1310,7 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelud
     if (mutableSelectorList.isEmpty())
         return nullptr; // Parse error, invalid selector list
 
+    // FIXME: We should pass the ancestor rule type also for CSSSOM.
     if (!m_ancestorRuleTypeStack.isEmpty()) {
         // https://drafts.csswg.org/css-nesting/#cssom
         // Relative selector should be absolutized (only when not "nest-containing" for the descendant one),
@@ -1342,10 +1341,8 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelud
         // We save memory by creating a simple StyleRule instead of a heavier StyleRuleWithNesting when we don't need the CSS Nesting features.
         if (nestedRules.isEmpty() && !selectorList.hasExplicitNestingParent() && !isNestedContext())
             styleRule = StyleRule::create(WTFMove(properties), m_context.hasDocumentSecurityOrigin, WTFMove(selectorList));
-        else {
+        else
             styleRule = StyleRuleWithNesting::create(WTFMove(properties), m_context.hasDocumentSecurityOrigin, WTFMove(selectorList), WTFMove(nestedRules));
-            protectedStyleSheet()->setHasNestingRules();
-        }
     });
 
     return styleRule;

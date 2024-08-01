@@ -21,6 +21,7 @@
 #pragma once
 
 #include "CSSParserContext.h"
+#include <optional>
 #include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
@@ -145,8 +146,8 @@ public:
     bool isMutable() const { return m_isMutable; }
     void setMutable() { m_isMutable = true; }
 
-    bool hasNestingRules() const { return m_hasNestingRules; }
-    void setHasNestingRules() { m_hasNestingRules = true; }
+    bool hasNestingRules() const;
+    void clearHasNestingRulesCache() { m_hasNestingRulesCache = { }; }
 
     bool isInMemoryCache() const { return m_inMemoryCacheCount; }
     void addedToMemoryCache();
@@ -186,7 +187,7 @@ private:
     bool m_didLoadErrorOccur { false };
     bool m_usesStyleBasedEditability { false };
     bool m_isMutable { false };
-    bool m_hasNestingRules { false };
+    mutable std::optional<bool> m_hasNestingRulesCache;
     unsigned m_inMemoryCacheCount { 0 };
 
     CSSParserContext m_parserContext;
