@@ -6,6 +6,8 @@
 // Unit tests for HandleAllocator.
 //
 
+#include <unordered_set>
+
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

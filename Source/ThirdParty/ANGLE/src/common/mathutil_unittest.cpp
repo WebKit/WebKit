@@ -551,4 +551,210 @@ TEST(MathUtilTest, sRGB)
     }
 }
 
+// Test roundToNearest with boundary values
+TEST(MathUtilTest, RoundToNearest)
+{
+    EXPECT_EQ((roundToNearest<float, uint8_t>(0.00000000f)), 0u);
+    EXPECT_EQ((roundToNearest<float, uint8_t>(0.49999997f)), 0u);
+    EXPECT_EQ((roundToNearest<float, uint8_t>(0.50000000f)), 1u);
+
+    EXPECT_EQ((roundToNearest<float, int8_t>(-0.50000000f)), -1);
+    EXPECT_EQ((roundToNearest<float, int8_t>(-0.49999997f)), 0);
+    EXPECT_EQ((roundToNearest<float, int8_t>(-0.00000000f)), 0);
+    EXPECT_EQ((roundToNearest<float, int8_t>(+0.00000000f)), 0);
+    EXPECT_EQ((roundToNearest<float, int8_t>(+0.49999997f)), 0);
+    EXPECT_EQ((roundToNearest<float, int8_t>(+0.50000000f)), +1);
+
+    EXPECT_EQ((roundToNearest<double, uint8_t>(0.00000000000000000)), 0u);
+    EXPECT_EQ((roundToNearest<double, uint8_t>(0.49999999999999994)), 0u);
+    EXPECT_EQ((roundToNearest<double, uint8_t>(0.50000000000000000)), 1u);
+
+    EXPECT_EQ((roundToNearest<double, int8_t>(-0.50000000000000000)), -1);
+    EXPECT_EQ((roundToNearest<double, int8_t>(-0.49999999999999994)), 0);
+    EXPECT_EQ((roundToNearest<double, int8_t>(-0.00000000000000000)), 0);
+    EXPECT_EQ((roundToNearest<double, int8_t>(+0.00000000000000000)), 0);
+    EXPECT_EQ((roundToNearest<double, int8_t>(+0.49999999999999994)), 0);
+    EXPECT_EQ((roundToNearest<double, int8_t>(+0.50000000000000000)), +1);
+}
+
+// Test floatToNormalized conversions with uint8_t
+TEST(MathUtilTest, FloatToNormalizedUnorm8)
+{
+    // Check exact values
+    EXPECT_EQ(floatToNormalized<uint8_t>(0.00f), 0u);
+    EXPECT_EQ(floatToNormalized<uint8_t>(0.25f), 64u);
+    EXPECT_EQ(floatToNormalized<uint8_t>(0.75f), 191u);
+    EXPECT_EQ(floatToNormalized<uint8_t>(1.00f), 255u);
+
+    // Check near values
+    EXPECT_NEAR(floatToNormalized<uint8_t>(0.50f), 127u, 1);
+}
+
+// Test floatToNormalized conversions with int8_t
+TEST(MathUtilTest, FloatToNormalizedSnorm8)
+{
+    // Check exact values
+    EXPECT_EQ(floatToNormalized<int8_t>(-1.00f), -127);
+    EXPECT_EQ(floatToNormalized<int8_t>(-0.75f), -95);
+    EXPECT_EQ(floatToNormalized<int8_t>(-0.25f), -32);
+    EXPECT_EQ(floatToNormalized<int8_t>(+0.00f), 0);
+    EXPECT_EQ(floatToNormalized<int8_t>(+0.25f), +32);
+    EXPECT_EQ(floatToNormalized<int8_t>(+0.75f), +95);
+    EXPECT_EQ(floatToNormalized<int8_t>(+1.00f), +127);
+
+    // Check near values
+    EXPECT_NEAR(floatToNormalized<int8_t>(-0.50f), -63, 1);
+    EXPECT_NEAR(floatToNormalized<int8_t>(+0.50f), +63, 1);
+}
+
+// Test floatToNormalized conversions with uint16_t
+TEST(MathUtilTest, FloatToNormalizedUnorm16)
+{
+    // Check exact values
+    EXPECT_EQ(floatToNormalized<uint16_t>(0.00f), 0u);
+    EXPECT_EQ(floatToNormalized<uint16_t>(0.25f), 16384u);
+    EXPECT_EQ(floatToNormalized<uint16_t>(0.75f), 49151u);
+    EXPECT_EQ(floatToNormalized<uint16_t>(1.00f), 65535u);
+
+    // Check near values
+    EXPECT_NEAR(floatToNormalized<uint16_t>(0.50f), 32767u, 1);
+}
+
+// Test floatToNormalized conversions with int16_t
+TEST(MathUtilTest, FloatToNormalizedSnorm16)
+{
+    // Check exact values
+    EXPECT_EQ(floatToNormalized<int16_t>(-1.00f), -32767);
+    EXPECT_EQ(floatToNormalized<int16_t>(-0.75f), -24575);
+    EXPECT_EQ(floatToNormalized<int16_t>(-0.25f), -8192);
+    EXPECT_EQ(floatToNormalized<int16_t>(+0.00f), 0);
+    EXPECT_EQ(floatToNormalized<int16_t>(+0.25f), +8192);
+    EXPECT_EQ(floatToNormalized<int16_t>(+0.75f), +24575);
+    EXPECT_EQ(floatToNormalized<int16_t>(+1.00f), +32767);
+
+    // Check near values
+    EXPECT_NEAR(floatToNormalized<int16_t>(-0.50f), -16383, 1);
+    EXPECT_NEAR(floatToNormalized<int16_t>(+0.50f), +16383, 1);
+}
+
+// Test floatToNormalized conversions with uint32_t
+TEST(MathUtilTest, FloatToNormalizedUnorm32)
+{
+    // Check exact values
+    EXPECT_EQ(floatToNormalized<uint32_t>(0.00f), 0u);
+    EXPECT_EQ(floatToNormalized<uint32_t>(0.25f), 1073741824u);
+    EXPECT_EQ(floatToNormalized<uint32_t>(0.75f), 3221225471u);
+    EXPECT_EQ(floatToNormalized<uint32_t>(1.00f), 4294967295u);
+
+    // Check near values
+    EXPECT_NEAR(floatToNormalized<uint32_t>(0.50f), 2147483647u, 1);
+}
+
+// Test floatToNormalized conversions with int32_t
+TEST(MathUtilTest, FloatToNormalizedSnorm32)
+{
+    // Check exact values
+    EXPECT_EQ(floatToNormalized<int32_t>(-1.00f), -2147483647);
+    EXPECT_EQ(floatToNormalized<int32_t>(-0.75f), -1610612735);
+    EXPECT_EQ(floatToNormalized<int32_t>(-0.25f), -536870912);
+    EXPECT_EQ(floatToNormalized<int32_t>(+0.00f), 0);
+    EXPECT_EQ(floatToNormalized<int32_t>(+0.25f), +536870912);
+    EXPECT_EQ(floatToNormalized<int32_t>(+0.75f), +1610612735);
+    EXPECT_EQ(floatToNormalized<int32_t>(+1.00f), +2147483647);
+
+    // Check near values
+    EXPECT_NEAR(floatToNormalized<int32_t>(-0.50f), -1073741823, 1);
+    EXPECT_NEAR(floatToNormalized<int32_t>(+0.50f), +1073741823, 1);
+}
+
+// Test floatToNormalized conversions with 2-bit unsigned
+TEST(MathUtilTest, FloatToNormalizedUnorm2)
+{
+    // Check exact values
+    EXPECT_EQ((floatToNormalized<2, uint8_t>(0.00f)), 0u);
+    EXPECT_EQ((floatToNormalized<2, uint8_t>(0.25f)), 1u);
+    EXPECT_EQ((floatToNormalized<2, uint8_t>(0.75f)), 2u);
+    EXPECT_EQ((floatToNormalized<2, uint8_t>(1.00f)), 3u);
+
+    // Check near values
+    EXPECT_NEAR((floatToNormalized<2, uint8_t>(0.50f)), 1u, 1);
+}
+
+// Test floatToNormalized conversions with 2-bit signed
+TEST(MathUtilTest, FloatToNormalizedSnorm2)
+{
+    // Check exact values
+    EXPECT_EQ((floatToNormalized<2, int8_t>(-1.00f)), -1);
+    EXPECT_EQ((floatToNormalized<2, int8_t>(-0.75f)), -1);
+    EXPECT_EQ((floatToNormalized<2, int8_t>(-0.25f)), 0);
+    EXPECT_EQ((floatToNormalized<2, int8_t>(+0.00f)), 0);
+    EXPECT_EQ((floatToNormalized<2, int8_t>(+0.25f)), 0);
+    EXPECT_EQ((floatToNormalized<2, int8_t>(+0.75f)), +1);
+    EXPECT_EQ((floatToNormalized<2, int8_t>(+1.00f)), +1);
+
+    // Check near values
+    EXPECT_NEAR((floatToNormalized<2, int8_t>(-0.50f)), 0, 1);
+    EXPECT_NEAR((floatToNormalized<2, int8_t>(+0.50f)), 0, 1);
+}
+
+// Test floatToNormalized conversions with 10-bit unsigned
+TEST(MathUtilTest, FloatToNormalizedUnorm10)
+{
+    // Check exact values
+    EXPECT_EQ((floatToNormalized<10, uint16_t>(0.00f)), 0u);
+    EXPECT_EQ((floatToNormalized<10, uint16_t>(0.25f)), 256u);
+    EXPECT_EQ((floatToNormalized<10, uint16_t>(0.75f)), 767u);
+    EXPECT_EQ((floatToNormalized<10, uint16_t>(1.00f)), 1023u);
+
+    // Check near values
+    EXPECT_NEAR((floatToNormalized<10, uint16_t>(0.50f)), 511u, 1);
+}
+
+// Test floatToNormalized conversions with 10-bit signed
+TEST(MathUtilTest, FloatToNormalizedSnorm10)
+{
+    // Check exact values
+    EXPECT_EQ((floatToNormalized<10, int16_t>(-1.00f)), -511);
+    EXPECT_EQ((floatToNormalized<10, int16_t>(-0.75f)), -383);
+    EXPECT_EQ((floatToNormalized<10, int16_t>(-0.25f)), -128);
+    EXPECT_EQ((floatToNormalized<10, int16_t>(+0.00f)), 0);
+    EXPECT_EQ((floatToNormalized<10, int16_t>(+0.25f)), +128);
+    EXPECT_EQ((floatToNormalized<10, int16_t>(+0.75f)), +383);
+    EXPECT_EQ((floatToNormalized<10, int16_t>(+1.00f)), +511);
+
+    // Check near values
+    EXPECT_NEAR((floatToNormalized<10, int16_t>(-0.50f)), -255, 1);
+    EXPECT_NEAR((floatToNormalized<10, int16_t>(+0.50f)), +255, 1);
+}
+
+// Test floatToNormalized conversions with 30-bit unsigned
+TEST(MathUtilTest, FloatToNormalizedUnorm30)
+{
+    // Check exact values
+    EXPECT_EQ((floatToNormalized<30, uint32_t>(0.00f)), 0u);
+    EXPECT_EQ((floatToNormalized<30, uint32_t>(0.25f)), 268435456u);
+    EXPECT_EQ((floatToNormalized<30, uint32_t>(0.75f)), 805306367u);
+    EXPECT_EQ((floatToNormalized<30, uint32_t>(1.00f)), 1073741823u);
+
+    // Check near values
+    EXPECT_NEAR((floatToNormalized<30, uint32_t>(0.50f)), 536870911u, 1);
+}
+
+// Test floatToNormalized conversions with 30-bit signed
+TEST(MathUtilTest, FloatToNormalizedSnorm30)
+{
+    // Check exact values
+    EXPECT_EQ((floatToNormalized<30, int32_t>(-1.00f)), -536870911);
+    EXPECT_EQ((floatToNormalized<30, int32_t>(-0.75f)), -402653183);
+    EXPECT_EQ((floatToNormalized<30, int32_t>(-0.25f)), -134217728);
+    EXPECT_EQ((floatToNormalized<30, int32_t>(+0.00f)), 0);
+    EXPECT_EQ((floatToNormalized<30, int32_t>(+0.25f)), +134217728);
+    EXPECT_EQ((floatToNormalized<30, int32_t>(+0.75f)), +402653183);
+    EXPECT_EQ((floatToNormalized<30, int32_t>(+1.00f)), +536870911);
+
+    // Check near values
+    EXPECT_NEAR((floatToNormalized<30, int32_t>(-0.50f)), -268435455, 1);
+    EXPECT_NEAR((floatToNormalized<30, int32_t>(+0.50f)), +268435455, 1);
+}
+
 }  // anonymous namespace

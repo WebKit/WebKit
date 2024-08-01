@@ -51,6 +51,7 @@ libangle_common_headers = [
   "src/common/debug.h",
   "src/common/entry_points_enum_autogen.h",
   "src/common/event_tracer.h",
+  "src/common/hash_containers.h",
   "src/common/hash_utils.h",
   "src/common/log_utils.h",
   "src/common/mathutil.h",

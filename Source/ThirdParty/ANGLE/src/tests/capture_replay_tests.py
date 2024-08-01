@@ -22,38 +22,48 @@ Script testing capture_replay with angle_end2end_tests
 # Command line arguments: run with --help for a full list.
 
 import argparse
+import concurrent.futures
+import contextlib
 import difflib
 import distutils.util
-import fnmatch
 import getpass
+import glob
 import json
 import logging
-import math
-import multiprocessing
 import os
+import pathlib
 import queue
+import random
 import re
 import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import traceback
+
+SCRIPT_DIR = str(pathlib.Path(__file__).resolve().parent)
+PY_UTILS = str(pathlib.Path(SCRIPT_DIR) / 'py_utils')
+if PY_UTILS not in sys.path:
+    os.stat(PY_UTILS) and sys.path.insert(0, PY_UTILS)
+import angle_test_util
 
 PIPE_STDOUT = True
 DEFAULT_OUT_DIR = "out/CaptureReplayTest"  # relative to angle folder
 DEFAULT_FILTER = "*/ES2_Vulkan_SwiftShader"
 DEFAULT_TEST_SUITE = "angle_end2end_tests"
 REPLAY_SAMPLE_FOLDER = "src/tests/capture_replay_tests"  # relative to angle folder
-DEFAULT_BATCH_COUNT = 8  # number of tests batched together
+DEFAULT_BATCH_COUNT = 1  # number of tests batched together for capture
+CAPTURE_FRAME_END = 100
 TRACE_FILE_SUFFIX = "_context"  # because we only deal with 1 context right now
 RESULT_TAG = "*RESULT"
 STATUS_MESSAGE_PERIOD = 20  # in seconds
-SUBPROCESS_TIMEOUT = 600  # in seconds
+CAPTURE_SUBPROCESS_TIMEOUT = 600  # in seconds
+REPLAY_SUBPROCESS_TIMEOUT = 60  # in seconds
 DEFAULT_RESULT_FILE = "results.txt"
 DEFAULT_LOG_LEVEL = "info"
 DEFAULT_MAX_JOBS = 8
-DEFAULT_MAX_NINJA_JOBS = 1
 REPLAY_BINARY = "capture_replay_tests"
 if sys.platform == "win32":
     REPLAY_BINARY += ".exe"
@@ -86,149 +96,141 @@ default_case_with_return_template = """\
 def winext(name, ext):
     return ("%s.%s" % (name, ext)) if sys.platform == "win32" else name
 
-class SubProcess():
 
-    def __init__(self, command, logger, env=os.environ, pipe_stdout=PIPE_STDOUT):
-        # shell=False so that only 1 subprocess is spawned.
-        # if shell=True, a shell process is spawned, which in turn spawns the process running
-        # the command. Since we do not have a handle to the 2nd process, we cannot terminate it.
-        if pipe_stdout:
-            self.proc_handle = subprocess.Popen(
-                command, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False)
-        else:
-            self.proc_handle = subprocess.Popen(command, env=env, shell=False)
-        self._logger = logger
-
-    def Join(self, timeout):
-        self._logger.debug('Joining with subprocess %d, timeout %s' % (self.Pid(), str(timeout)))
-        output = self.proc_handle.communicate(timeout=timeout)[0]
-        if output:
-            output = output.decode('utf-8')
-        else:
-            output = ''
-        return self.proc_handle.returncode, output
-
-    def Pid(self):
-        return self.proc_handle.pid
-
-    def Kill(self):
-        self.proc_handle.terminate()
-        self.proc_handle.wait()
+GN_PATH = os.path.join('third_party', 'depot_tools', winext('gn', 'bat'))
+AUTONINJA_PATH = os.path.join('third_party', 'depot_tools', 'autoninja.py')
 
 
-# class that manages all child processes of a process. Any process thats spawns subprocesses
-# should have this. This object is created inside the main process, and each worker process.
-class ChildProcessesManager():
+def GetGnArgsStr(args, extra_gn_args=[]):
+    gn_args = [('angle_with_capture_by_default', 'true'),
+               ('angle_enable_vulkan_api_dump_layer', 'false'),
+               ('angle_enable_wgpu', 'false')] + extra_gn_args
+    if args.use_reclient:
+        gn_args.append(('use_remoteexec', 'true'))
+    if not args.debug:
+        gn_args.append(('is_debug', 'false'))
+        gn_args.append(('symbol_level', '1'))
+        gn_args.append(('angle_assert_always_on', 'true'))
+    if args.asan:
+        gn_args.append(('is_asan', 'true'))
+    return ' '.join(['%s=%s' % (k, v) for (k, v) in gn_args])
 
-    @classmethod
-    def _GetGnAbsolutePaths(self):
-        return os.path.join('third_party', 'depot_tools', winext('gn', 'bat'))
 
-    @classmethod
-    def _GetAutoNinjaAbsolutePaths(self):
-        return os.path.join('third_party', 'depot_tools', 'autoninja.py')
+class XvfbPool(object):
 
-    def __init__(self, args, logger, ninja_lock):
-        # a dictionary of Subprocess, with pid as key
-        self.subprocesses = {}
-        # list of Python multiprocess.Process handles
-        self.workers = []
+    def __init__(self, worker_count):
+        self.queue = queue.Queue()
 
-        self._gn_path = self._GetGnAbsolutePaths()
-        self._autoninja_path = self._GetAutoNinjaAbsolutePaths()
-        self._logger = logger
-        self._ninja_lock = ninja_lock
-        self.runtimes = {}
-        self._args = args
+        self.processes = []
+        displays = set()
+        tmp = tempfile.TemporaryDirectory()
 
-    def RunSubprocess(self, command, env=None, pipe_stdout=True, timeout=None):
-        proc = SubProcess(command, self._logger, env, pipe_stdout)
-        self._logger.debug('Created subprocess: %s with pid %d' % (' '.join(command), proc.Pid()))
-        self.subprocesses[proc.Pid()] = proc
-        start_time = time.time()
+        logging.info('Starting xvfb and openbox...')
+        # Based on the simplest case from testing/xvfb.py, with tweaks to minimize races.
         try:
-            returncode, output = self.subprocesses[proc.Pid()].Join(timeout)
-            elapsed_time = time.time() - start_time
-            cmd_name = os.path.basename(command[0])
-            self.runtimes.setdefault(cmd_name, 0.0)
-            self.runtimes[cmd_name] += elapsed_time
-            self.RemoveSubprocess(proc.Pid())
-            if returncode != 0:
-                return -1, output
-            return returncode, output
-        except KeyboardInterrupt:
+            for worker in range(worker_count):
+                while True:
+                    # Pick a set of random displays from a custom range to hopefully avoid
+                    # collisions with anything else that might be using xvfb.
+                    # Another option would be -displayfd but that has its quirks too.
+                    display = random.randint(7700000, 7800000)
+                    if display in displays:
+                        continue
+
+                    x11_display_file = '/tmp/.X11-unix/X%d' % display
+
+                    if not os.path.exists(x11_display_file):
+                        break
+
+                displays.add(display)
+
+                x11_proc = subprocess.Popen([
+                    'Xvfb',
+                    ':%d' % display, '-screen', '0', '1280x1024x24', '-ac', '-nolisten', 'tcp',
+                    '-dpi', '96', '+extension', 'RANDR', '-maxclients', '512'
+                ],
+                                            stderr=subprocess.STDOUT)
+                self.processes.append(x11_proc)
+
+                start_time = time.time()
+                while not os.path.exists(x11_display_file):
+                    if time.time() - start_time >= 30:
+                        raise Exception('X11 failed to start')
+                    time.sleep(0.1)
+
+                env = os.environ.copy()
+                env['DISPLAY'] = ':%d' % display
+
+                # testing/xvfb.py uses signals instead, which is tricky with multiple displays.
+                openbox_ready_file = os.path.join(tmp.name, str(display))
+                openbox_proc = subprocess.Popen(
+                    ['openbox', '--sm-disable', '--startup',
+                     'touch %s' % openbox_ready_file],
+                    stderr=subprocess.STDOUT,
+                    env=env)
+                self.processes.append(openbox_proc)
+
+                start_time = time.time()
+                while not os.path.exists(openbox_ready_file):
+                    if time.time() - start_time >= 30:
+                        raise Exception('Openbox failed to start')
+                    time.sleep(0.1)
+
+                self.queue.put(display)
+
+            logging.info('Started a pool of %d xvfb displays: %s', worker_count,
+                         ' '.join(str(d) for d in sorted(displays)))
+        except Exception:
+            self.Teardown()
             raise
-        except subprocess.TimeoutExpired as e:
-            self.RemoveSubprocess(proc.Pid())
-            return -2, str(e)
-        except Exception as e:
-            self.RemoveSubprocess(proc.Pid())
-            return -1, str(e)
+        finally:
+            tmp.cleanup()
 
-    def RemoveSubprocess(self, subprocess_id):
-        assert subprocess_id in self.subprocesses
-        self.subprocesses[subprocess_id].Kill()
-        del self.subprocesses[subprocess_id]
+    def GrabDisplay(self):
+        return self.queue.get()
 
-    def AddWorker(self, worker):
-        self.workers.append(worker)
+    def ReleaseDisplay(self, display):
+        self.queue.put(display)
 
-    def KillAll(self):
-        for subprocess_id in self.subprocesses:
-            self.subprocesses[subprocess_id].Kill()
-        for worker in self.workers:
-            worker.terminate()
-            worker.join()
-            worker.close()  # to release file descriptors immediately
-        self.subprocesses = {}
-        self.workers = []
-
-    def JoinWorkers(self):
-        for worker in self.workers:
-            worker.join()
-            worker.close()
-        self.workers = []
-
-    def IsAnyWorkerAlive(self):
-        return any([worker.is_alive() for worker in self.workers])
-
-    def GetRemainingWorkers(self):
-        count = 0
-        for worker in self.workers:
-            if worker.is_alive():
-                count += 1
-        return count
-
-    def RunGNGen(self, build_dir, pipe_stdout, extra_gn_args=[]):
-        gn_args = [('angle_with_capture_by_default', 'true')] + extra_gn_args
-        if self._args.use_reclient:
-            gn_args.append(('use_remoteexec', 'true'))
-        if not self._args.debug:
-            gn_args.append(('is_debug', 'false'))
-            gn_args.append(('symbol_level', '1'))
-            gn_args.append(('angle_assert_always_on', 'true'))
-        if self._args.asan:
-            gn_args.append(('is_asan', 'true'))
-        args_str = ' '.join(['%s=%s' % (k, v) for (k, v) in gn_args])
-        cmd = [self._gn_path, 'gen', '--args=%s' % args_str, build_dir]
-        self._logger.info(' '.join(cmd))
-        return self.RunSubprocess(cmd, pipe_stdout=pipe_stdout)
-
-    def RunAutoNinja(self, build_dir, target, pipe_stdout):
-        cmd = [sys.executable, self._autoninja_path, '-C', build_dir, target]
-        with self._ninja_lock:
-            self._logger.info(' '.join(cmd))
-            return self.RunSubprocess(cmd, pipe_stdout=pipe_stdout)
+    def Teardown(self):
+        logging.info('Stopping xvfb pool')
+        for p in reversed(self.processes):
+            p.kill()
+            p.wait()
+        self.processes = []
 
 
-def GetTestsListForFilter(args, test_path, filter, logger):
-    cmd = GetRunCommand(args, test_path) + ["--list-tests", "--gtest_filter=%s" % filter]
-    logger.info('Getting test list from "%s"' % " ".join(cmd))
-    return subprocess.check_output(cmd, text=True)
+@contextlib.contextmanager
+def MaybeXvfbPool(xvfb, worker_count):
+    if xvfb:
+        try:
+            xvfb_pool = XvfbPool(worker_count)
+            yield xvfb_pool
+        finally:
+            xvfb_pool.Teardown()
+    else:
+        yield None
 
 
-def ParseTestNamesFromTestList(output, test_expectation, also_run_skipped_for_capture_tests,
-                               logger):
+@contextlib.contextmanager
+def GetDisplayEnv(env, xvfb_pool):
+    if not xvfb_pool:
+        yield env
+        return
+
+    display = xvfb_pool.GrabDisplay()
+    display_var = ':%d' % display
+    try:
+        yield {**env, 'DISPLAY': display_var, 'XVFB_DISPLAY': display_var}
+    finally:
+        xvfb_pool.ReleaseDisplay(display)
+
+
+def TestLabel(test_name):
+    return test_name.replace(".", "_").replace("/", "_")
+
+
+def ParseTestNamesFromTestList(output, test_expectation, also_run_skipped_for_capture_tests):
     output_lines = output.splitlines()
     tests = []
     seen_start_of_tests = False
@@ -246,15 +248,8 @@ def ParseTestNamesFromTestList(output, test_expectation, also_run_skipped_for_ca
         else:
             disabled += 1
 
-    logger.info('Found %s tests and %d disabled tests.' % (len(tests), disabled))
+    logging.info('Found %s tests and %d disabled tests.' % (len(tests), disabled))
     return tests
-
-
-def GetRunCommand(args, command):
-    if args.xvfb:
-        return ['vpython', 'testing/xvfb.py', command]
-    else:
-        return [command]
 
 
 class GroupedResult():
@@ -281,358 +276,83 @@ class GroupedResult():
             self.tests.append(test)
 
 
-def BatchName(batch_or_result):
-    return 'batch_%03d' % batch_or_result.batch_index
+def CaptureProducedRequiredFiles(all_trace_files, test_name):
+    label = TestLabel(test_name)
+
+    test_files = [f for f in all_trace_files if f.startswith(label)]
+
+    frame_files_count = 0
+    context_header_count = 0
+    context_source_count = 0
+    source_json_count = 0
+    context_id = 0
+    for f in test_files:
+        # TODO: Consolidate. http://anglebug.com/42266223
+        if "_001.cpp" in f or "_001.c" in f:
+            frame_files_count += 1
+        elif f.endswith(".json"):
+            source_json_count += 1
+        elif f.endswith(".h"):
+            context_header_count += 1
+            if TRACE_FILE_SUFFIX in f:
+                context = f.split(TRACE_FILE_SUFFIX)[1][:-2]
+                context_id = int(context)
+        # TODO: Consolidate. http://anglebug.com/42266223
+        elif f.endswith(".cpp") or f.endswith(".c"):
+            context_source_count += 1
+    got_all_files = (
+        frame_files_count >= 1 and context_header_count >= 1 and context_source_count >= 1 and
+        source_json_count == 1)
+    return got_all_files
 
 
-class TestBatchResult():
+def GetCaptureEnv(args, trace_folder_path):
+    env = {
+        'ANGLE_CAPTURE_SERIALIZE_STATE': '1',
+        'ANGLE_FEATURE_OVERRIDES_ENABLED': 'forceRobustResourceInit:forceInitShaderVariables',
+        'ANGLE_FEATURE_OVERRIDES_DISABLED': 'supportsHostImageCopy',
+        'ANGLE_CAPTURE_ENABLED': '1',
+        'ANGLE_CAPTURE_OUT_DIR': trace_folder_path,
+    }
 
-    display_output_lines = 20
+    if args.mec > 0:
+        env['ANGLE_CAPTURE_FRAME_START'] = '{}'.format(args.mec)
+        env['ANGLE_CAPTURE_FRAME_END'] = '{}'.format(args.mec + 1)
+    else:
+        env['ANGLE_CAPTURE_FRAME_END'] = '{}'.format(CAPTURE_FRAME_END)
 
-    def __init__(self, batch_index, grouped_results, verbose):
-        self.batch_index = batch_index
-        self.results = {}
-        for result_type in GroupedResult.ResultTypes:
-            self.results[result_type] = []
+    if args.expose_nonconformant_features:
+        env['ANGLE_FEATURE_OVERRIDES_ENABLED'] += ':exposeNonConformantExtensionsAndVersions'
 
-        for grouped_result in grouped_results:
-            for test in grouped_result.tests:
-                self.results[grouped_result.resultcode].append(test.full_test_name)
-
-        self.repr_str = ""
-        self.GenerateRepresentationString(grouped_results, verbose)
-
-    def __str__(self):
-        return self.repr_str
-
-    def GenerateRepresentationString(self, grouped_results, verbose):
-        self.repr_str += BatchName(self) + "\n"
-        for grouped_result in grouped_results:
-            self.repr_str += grouped_result.resultcode + ": " + grouped_result.message + "\n"
-            for test in grouped_result.tests:
-                self.repr_str += "\t" + test.full_test_name + "\n"
-            if verbose:
-                self.repr_str += grouped_result.output
-            else:
-                if grouped_result.resultcode == GroupedResult.CompileFailed:
-                    self.repr_str += TestBatchResult.ExtractErrors(grouped_result.output)
-                elif grouped_result.resultcode != GroupedResult.Passed:
-                    self.repr_str += grouped_result.output
-
-    def ExtractErrors(output):
-        lines = output.splitlines()
-        error_lines = []
-        for i in range(len(lines)):
-            if ": error:" in lines[i]:
-                error_lines.append(lines[i] + "\n")
-                if i + 1 < len(lines):
-                    error_lines.append(lines[i + 1] + "\n")
-        return "".join(error_lines)
+    return env
 
 
-class Test():
-
-    def __init__(self, test_name):
-        self.full_test_name = test_name
-        self.params = test_name.split('/')[1]
-        self.context_id = 0
-        self.test_index = -1  # index of test within a test batch
-        self._label = self.full_test_name.replace(".", "_").replace("/", "_")
-        self.skipped_by_suite = False
-
-    def __str__(self):
-        return self.full_test_name + " Params: " + self.params
-
-    def GetLabel(self):
-        return self._label
-
-    def CanRunReplay(self, trace_folder_path):
-        test_files = []
-        label = self.GetLabel()
-        assert (self.context_id == 0)
-        for f in os.listdir(trace_folder_path):
-            if os.path.isfile(os.path.join(trace_folder_path, f)) and f.startswith(label):
-                test_files.append(f)
-        frame_files_count = 0
-        context_header_count = 0
-        context_source_count = 0
-        source_json_count = 0
-        context_id = 0
-        for f in test_files:
-            # TODO: Consolidate. http://anglebug.com/42266223
-            if "_001.cpp" in f or "_001.c" in f:
-                frame_files_count += 1
-            elif f.endswith(".json"):
-                source_json_count += 1
-            elif f.endswith(".h"):
-                context_header_count += 1
-                if TRACE_FILE_SUFFIX in f:
-                    context = f.split(TRACE_FILE_SUFFIX)[1][:-2]
-                    context_id = int(context)
-            # TODO: Consolidate. http://anglebug.com/42266223
-            elif f.endswith(".cpp") or f.endswith(".c"):
-                context_source_count += 1
-        can_run_replay = frame_files_count >= 1 and context_header_count >= 1 \
-            and context_source_count >= 1 and source_json_count == 1
-        if not can_run_replay:
-            return False
-        self.context_id = context_id
-        return True
-
-
-def _FormatEnv(env):
-    return ' '.join(['%s=%s' % (k, v) for (k, v) in env.items()])
-
-
-class TestBatch():
-
-    CAPTURE_FRAME_END = 100
-
-    def __init__(self, args, logger, batch_index):
-        self.args = args
-        self.tests = []
-        self.results = []
-        self.logger = logger
-        self.batch_index = batch_index
-
-    def SetWorkerId(self, worker_id):
-        self.trace_dir = "%s%d" % (TRACE_FOLDER, worker_id)
-        self.trace_folder_path = os.path.join(REPLAY_SAMPLE_FOLDER, self.trace_dir)
-
-    def RunWithCapture(self, args, child_processes_manager):
-        test_exe_path = os.path.join(args.out_dir, 'Capture', args.test_suite)
-
-        extra_env = {
-            'ANGLE_CAPTURE_SERIALIZE_STATE': '1',
-            'ANGLE_FEATURE_OVERRIDES_ENABLED': 'forceRobustResourceInit:forceInitShaderVariables',
-            'ANGLE_FEATURE_OVERRIDES_DISABLED': 'supportsHostImageCopy',
-            'ANGLE_CAPTURE_ENABLED': '1',
-            'ANGLE_CAPTURE_OUT_DIR': self.trace_folder_path,
-        }
-
-        if args.mec > 0:
-            extra_env['ANGLE_CAPTURE_FRAME_START'] = '{}'.format(args.mec)
-            extra_env['ANGLE_CAPTURE_FRAME_END'] = '{}'.format(args.mec + 1)
+def PrintContextDiff(replay_build_dir, test_name):
+    frame = 1
+    found = False
+    while True:
+        capture_file = "{}/{}_ContextCaptured{}.json".format(replay_build_dir, test_name, frame)
+        replay_file = "{}/{}_ContextReplayed{}.json".format(replay_build_dir, test_name, frame)
+        if os.path.exists(capture_file) and os.path.exists(replay_file):
+            found = True
+            captured_context = open(capture_file, "r").readlines()
+            replayed_context = open(replay_file, "r").readlines()
+            for line in difflib.unified_diff(
+                    captured_context, replayed_context, fromfile=capture_file, tofile=replay_file):
+                print(line, end="")
         else:
-            extra_env['ANGLE_CAPTURE_FRAME_END'] = '{}'.format(self.CAPTURE_FRAME_END)
-
-        if args.expose_nonconformant_features:
-            extra_env[
-                'ANGLE_FEATURE_OVERRIDES_ENABLED'] += ':exposeNonConformantExtensionsAndVersions'
-
-        env = {**os.environ.copy(), **extra_env}
-
-        if not self.args.keep_temp_files:
-            ClearFolderContent(self.trace_folder_path)
-        filt = ':'.join([test.full_test_name for test in self.tests])
-
-        cmd = GetRunCommand(args, test_exe_path)
-        results_file = tempfile.mktemp()
-        cmd += [
-            '--gtest_filter=%s' % filt,
-            '--angle-per-test-capture-label',
-            '--results-file=' + results_file,
-        ]
-        self.logger.info('%s %s' % (_FormatEnv(extra_env), ' '.join(cmd)))
-
-        returncode, output = child_processes_manager.RunSubprocess(
-            cmd, env, timeout=SUBPROCESS_TIMEOUT)
-
-        if args.show_capture_stdout:
-            self.logger.info("Capture stdout: %s" % output)
-
-        if returncode == -1:
-            self.results.append(GroupedResult(GroupedResult.CaptureFailed, "", output, self.tests))
-            return False
-        elif returncode == -2:
-            self.results.append(GroupedResult(GroupedResult.TimedOut, "", "", self.tests))
-            return False
-
-        with open(results_file) as f:
-            test_results = json.load(f)
-        os.unlink(results_file)
-        for test in self.tests:
-            test_result = test_results['tests'][test.full_test_name]
-            if test_result['actual'] == 'SKIP':
-                test.skipped_by_suite = True
-
-        return True
-
-    def RemoveTestsThatDoNotProduceAppropriateTraceFiles(self):
-        continued_tests = []
-        skipped_tests = []
-        failed_to_trace_tests = []
-        for test in self.tests:
-            if not test.CanRunReplay(self.trace_folder_path):
-                if test.skipped_by_suite:
-                    skipped_tests.append(test)
-                else:
-                    failed_to_trace_tests.append(test)
-            else:
-                continued_tests.append(test)
-        if len(skipped_tests) > 0:
-            self.results.append(
-                GroupedResult(GroupedResult.Skipped, "Skipping replay since test skipped by suite",
-                              "", skipped_tests))
-        if len(failed_to_trace_tests) > 0:
-            self.results.append(
-                GroupedResult(GroupedResult.FailedToTrace,
-                              "Test not skipped but failed to produce trace files", "",
-                              failed_to_trace_tests))
-
-        return continued_tests
-
-    def BuildReplay(self, replay_build_dir, composite_file_id, tests, child_processes_manager):
-        # write gni file that holds all the traces files in a list
-        self.CreateTestNamesFile(composite_file_id, tests)
-
-        gn_args = [('angle_build_capture_replay_tests', 'true'),
-                   ('angle_capture_replay_test_trace_dir', '"%s"' % self.trace_dir),
-                   ('angle_capture_replay_composite_file_id', str(composite_file_id))]
-        returncode, output = child_processes_manager.RunGNGen(replay_build_dir, True, gn_args)
-        if returncode != 0:
-            self.logger.warning('GN failure output: %s' % output)
-            self.results.append(
-                GroupedResult(GroupedResult.CompileFailed, "Build replay failed at gn generation",
-                              output, tests))
-            return False
-        returncode, output = child_processes_manager.RunAutoNinja(replay_build_dir, REPLAY_BINARY,
-                                                                  True)
-        if returncode != 0:
-            self.logger.warning('Ninja failure output: %s' % output)
-            self.results.append(
-                GroupedResult(GroupedResult.CompileFailed, "Build replay failed at ninja", output,
-                              tests))
-            return False
-        return True
-
-    def RunReplay(self, args, replay_build_dir, replay_exe_path, child_processes_manager, tests):
-        extra_env = {}
-        if args.expose_nonconformant_features:
-            extra_env[
-                'ANGLE_FEATURE_OVERRIDES_ENABLED'] = 'exposeNonConformantExtensionsAndVersions'
-
-        env = {**os.environ.copy(), **extra_env}
-
-        run_cmd = GetRunCommand(self.args, replay_exe_path)
-        self.logger.info('%s %s' % (_FormatEnv(extra_env), ' '.join(run_cmd)))
-
-        for test in tests:
-            self.UnlinkContextStateJsonFilesIfPresent(replay_build_dir, test.GetLabel())
-
-        returncode, output = child_processes_manager.RunSubprocess(
-            run_cmd, env, timeout=SUBPROCESS_TIMEOUT)
-        if returncode == -1:
-            cmd = replay_exe_path
-            self.results.append(
-                GroupedResult(GroupedResult.ReplayFailed, "Replay run failed (%s)" % cmd, output,
-                              tests))
-            return
-        elif returncode == -2:
-            self.results.append(
-                GroupedResult(GroupedResult.TimedOut, "Replay run timed out", output, tests))
-            return
-
-        if args.show_replay_stdout:
-            self.logger.info("Replay stdout: %s" % output)
-
-        output_lines = output.splitlines()
-        passes = []
-        fails = []
-        count = 0
-        for output_line in output_lines:
-            words = output_line.split(" ")
-            if len(words) == 3 and words[0] == RESULT_TAG:
-                test_name = self.FindTestByLabel(words[1])
-                result = int(words[2])
-                if result == 0:
-                    passes.append(test_name)
-                elif result == REPLAY_INITIALIZATION_FAILURE:
-                    fails.append(test_name)
-                    self.logger.info("Initialization failure: %s" % test_name)
-                elif result == REPLAY_SERIALIZATION_FAILURE:
-                    fails.append(test_name)
-                    self.logger.info("Context comparison failed: %s" % test_name)
-                    self.PrintContextDiff(replay_build_dir, words[1])
-                else:
-                    fails.append(test_name)
-                    self.logger.error("Unknown test result code: %s -> %d" % (test_name, result))
-                count += 1
-
-        if len(passes) > 0:
-            self.results.append(GroupedResult(GroupedResult.Passed, "", output, passes))
-        if len(fails) > 0:
-            self.results.append(GroupedResult(GroupedResult.Failed, "", output, fails))
-
-    def UnlinkContextStateJsonFilesIfPresent(self, replay_build_dir, test_name):
-        frame = 1
-        while True:
-            capture_file = "{}/{}_ContextCaptured{}.json".format(replay_build_dir, test_name,
-                                                                 frame)
-            replay_file = "{}/{}_ContextReplayed{}.json".format(replay_build_dir, test_name, frame)
-            if os.path.exists(capture_file):
-                os.unlink(capture_file)
-            if os.path.exists(replay_file):
-                os.unlink(replay_file)
-
-            if frame > self.CAPTURE_FRAME_END:
+            if frame > CAPTURE_FRAME_END:
                 break
-            frame = frame + 1
+        frame = frame + 1
+    if not found:
+        logging.error('Could not find serialization diff files for %s' % test_name)
 
-    def PrintContextDiff(self, replay_build_dir, test_name):
-        frame = 1
-        found = False
-        while True:
-            capture_file = "{}/{}_ContextCaptured{}.json".format(replay_build_dir, test_name,
-                                                                 frame)
-            replay_file = "{}/{}_ContextReplayed{}.json".format(replay_build_dir, test_name, frame)
-            if os.path.exists(capture_file) and os.path.exists(replay_file):
-                found = True
-                captured_context = open(capture_file, "r").readlines()
-                replayed_context = open(replay_file, "r").readlines()
-                for line in difflib.unified_diff(
-                        captured_context, replayed_context, fromfile=capture_file,
-                        tofile=replay_file):
-                    print(line, end="")
-            else:
-                if frame > self.CAPTURE_FRAME_END:
-                    break
-            frame = frame + 1
-        if not found:
-            self.logger.error("Could not find serialization diff files for %s" % test_name)
 
-    def FindTestByLabel(self, label):
-        for test in self.tests:
-            if test.GetLabel() == label:
-                return test
-        return None
-
-    def AddTest(self, test):
-        assert len(self.tests) <= self.args.batch_count
-        test.index = len(self.tests)
-        self.tests.append(test)
-
-    def CreateTestNamesFile(self, composite_file_id, tests):
-        data = {'traces': [test.GetLabel() for test in tests]}
-        names_path = os.path.join(self.trace_folder_path, 'test_names_%d.json' % composite_file_id)
-        with open(names_path, 'w') as f:
-            f.write(json.dumps(data))
-
-    def __str__(self):
-        repr_str = "TestBatch:\n"
-        for test in self.tests:
-            repr_str += ("\t" + str(test) + "\n")
-        return repr_str
-
-    def __getitem__(self, index):
-        assert index < len(self.tests)
-        return self.tests[index]
-
-    def __iter__(self):
-        return iter(self.tests)
-
-    def GetResults(self):
-        return TestBatchResult(self.batch_index, self.results, self.args.verbose)
+def UnlinkContextStateJsonFilesIfPresent(replay_build_dir):
+    for f in glob.glob(os.path.join(replay_build_dir, '*_ContextCaptured*.json')):
+        os.unlink(f)
+    for f in glob.glob(os.path.join(replay_build_dir, '*_ContextReplayed*.json')):
+        os.unlink(f)
 
 
 class TestExpectation():
@@ -643,9 +363,9 @@ class TestExpectation():
     # test expectations for tests that do not pass
     non_pass_results = {}
 
-    # tests that must run in a one-test batch
-    run_single = {}
-    run_single_re = {}
+    # COMPILE_FAIL
+    compile_fail_tests = {}
+    compile_fail_tests_re = {}
 
     flaky_tests = []
 
@@ -696,8 +416,8 @@ class TestExpectation():
         if self._CheckTagsWithConfig(tags, config_tags):
             test_name_regex = re.compile('^' + test_name.replace('*', '.*') + '$')
             if result_stripped == 'COMPILE_FAIL':
-                self.run_single[test_name] = self.result_map[result_stripped]
-                self.run_single_re[test_name] = test_name_regex
+                self.compile_fail_tests[test_name] = self.result_map[result_stripped]
+                self.compile_fail_tests_re[test_name] = test_name_regex
             if result_stripped == 'SKIP_FOR_CAPTURE' or result_stripped == 'TIMEOUT':
                 self.skipped_for_capture_tests[test_name] = self.result_map[result_stripped]
                 self.skipped_for_capture_tests_re[test_name] = test_name_regex
@@ -710,11 +430,8 @@ class TestExpectation():
     def TestIsSkippedForCapture(self, test_name):
         return any(p.match(test_name) for p in self.skipped_for_capture_tests_re.values())
 
-    def TestNeedsToRunSingle(self, test_name):
-        if any(p.match(test_name) for p in self.run_single_re.values()):
-            return True
-
-        return self.TestIsSkippedForCapture(test_name)
+    def TestIsCompileFail(self, test_name):
+        return any(p.match(test_name) for p in self.compile_fail_tests_re.values())
 
     def Filter(self, test_list, run_all_tests):
         result = {}
@@ -722,9 +439,9 @@ class TestExpectation():
             for key in self.non_pass_results.keys():
                 if self.non_pass_re[key].match(t) is not None:
                     result[t] = self.non_pass_results[key]
-            for key in self.run_single.keys():
-                if self.run_single_re[key].match(t) is not None:
-                    result[t] = self.run_single[key]
+            for key in self.compile_fail_tests.keys():
+                if self.compile_fail_tests_re[key].match(t) is not None:
+                    result[t] = self.compile_fail_tests[key]
             if run_all_tests:
                 for [key, r] in self.skipped_for_capture_tests.items():
                     if self.skipped_for_capture_tests_re[key].match(t) is not None:
@@ -738,115 +455,6 @@ class TestExpectation():
         return False
 
 
-def ClearFolderContent(path):
-    all_files = []
-    for f in os.listdir(path):
-        if os.path.isfile(os.path.join(path, f)):
-            os.remove(os.path.join(path, f))
-
-def SetCWDToAngleFolder():
-    cwd = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-    os.chdir(cwd)
-    return cwd
-
-
-def CleanupAfterReplay(replay_build_dir, tests):
-    # Remove files that have test labels in the file name, .e.g:
-    # ClearTest_ClearIsClamped_ES2_Vulkan_SwiftShader.dll.pdb
-    test_labels = [test.GetLabel() for test in tests]
-    for build_file in os.listdir(replay_build_dir):
-        if any(label in build_file for label in test_labels):
-            os.unlink(os.path.join(replay_build_dir, build_file))
-
-
-def RunTests(args, worker_id, job_queue, result_list, message_queue, logger, ninja_lock):
-    replay_build_dir = os.path.join(args.out_dir, 'Replay%d' % worker_id)
-    replay_exec_path = os.path.join(replay_build_dir, REPLAY_BINARY)
-
-    child_processes_manager = ChildProcessesManager(args, logger, ninja_lock)
-    # used to differentiate between multiple composite files when there are multiple test batchs
-    # running on the same worker and --deleted_trace is set to False
-    composite_file_id = 1
-    while not job_queue.empty():
-        try:
-            test_batch = job_queue.get()
-            logger.info('Starting {} ({} tests) on worker {}. Unstarted jobs: {}'.format(
-                BatchName(test_batch), len(test_batch.tests), worker_id, job_queue.qsize()))
-
-            test_batch.SetWorkerId(worker_id)
-
-            success = test_batch.RunWithCapture(args, child_processes_manager)
-            if not success:
-                result_list.append(test_batch.GetResults())
-                logger.error('Failed RunWithCapture: %s', str(test_batch.GetResults()))
-                continue
-            continued_tests = test_batch.RemoveTestsThatDoNotProduceAppropriateTraceFiles()
-            if len(continued_tests) == 0:
-                result_list.append(test_batch.GetResults())
-                logger.info('No tests to replay: %s', str(test_batch.GetResults()))
-                continue
-            success = test_batch.BuildReplay(replay_build_dir, composite_file_id, continued_tests,
-                                             child_processes_manager)
-            if args.keep_temp_files:
-                composite_file_id += 1
-            if not success:
-                result_list.append(test_batch.GetResults())
-                logger.error('Failed BuildReplay: %s', str(test_batch.GetResults()))
-                continue
-            test_batch.RunReplay(args, replay_build_dir, replay_exec_path, child_processes_manager,
-                                 continued_tests)
-            result_list.append(test_batch.GetResults())
-            if not args.keep_temp_files:
-                CleanupAfterReplay(replay_build_dir, continued_tests)
-            logger.info('Finished RunReplay: %s', str(test_batch.GetResults()))
-        except KeyboardInterrupt:
-            child_processes_manager.KillAll()
-            raise
-        except queue.Empty:
-            child_processes_manager.KillAll()
-            break
-        except Exception as e:
-            logger.error('RunTestsException: %s\n%s' % (repr(e), traceback.format_exc()))
-            child_processes_manager.KillAll()
-            pass
-    message_queue.put(child_processes_manager.runtimes)
-    child_processes_manager.KillAll()
-
-
-def SafeDeleteFolder(folder_name):
-    while os.path.isdir(folder_name):
-        try:
-            shutil.rmtree(folder_name)
-        except KeyboardInterrupt:
-            raise
-        except PermissionError:
-            pass
-
-
-def DeleteReplayBuildFolders(folder_num, replay_build_dir, trace_folder):
-    for i in range(folder_num):
-        folder_name = replay_build_dir + str(i)
-        if os.path.isdir(folder_name):
-            SafeDeleteFolder(folder_name)
-
-
-def CreateTraceFolders(folder_num):
-    for i in range(folder_num):
-        folder_name = TRACE_FOLDER + str(i)
-        folder_path = os.path.join(REPLAY_SAMPLE_FOLDER, folder_name)
-        if os.path.isdir(folder_path):
-            shutil.rmtree(folder_path)
-        os.makedirs(folder_path)
-
-
-def DeleteTraceFolders(folder_num):
-    for i in range(folder_num):
-        folder_name = TRACE_FOLDER + str(i)
-        folder_path = os.path.join(REPLAY_SAMPLE_FOLDER, folder_name)
-        if os.path.isdir(folder_path):
-            SafeDeleteFolder(folder_path)
-
-
 def GetPlatformForSkip():
     # yapf: disable
     # we want each pair on one line
@@ -856,13 +464,202 @@ def GetPlatformForSkip():
     return platform_map.get(sys.platform, 'UNKNOWN')
 
 
+def RunInParallel(f, lst, max_workers, stop_event):
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_to_arg = {executor.submit(f, arg): arg for arg in lst}
+        try:
+            for future in concurrent.futures.as_completed(future_to_arg):
+                yield future, future_to_arg[future]
+        except KeyboardInterrupt:
+            stop_event.set()
+            raise
+
+
+def RunProcess(cmd, env, xvfb_pool, stop_event, timeout):
+    stdout = [None]
+
+    def _Reader(process):
+        stdout[0] = process.stdout.read().decode()
+
+    with GetDisplayEnv(env, xvfb_pool) as run_env:
+        process = subprocess.Popen(
+            cmd, env=run_env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        t = threading.Thread(target=_Reader, args=(process,))
+        t.start()
+        time_start = time.time()
+
+        while True:
+            time.sleep(0.1)
+            if process.poll() is not None:
+                t.join()
+                return process.returncode, stdout[0]
+            if timeout is not None and time.time() - time_start > timeout:
+                process.kill()
+                t.join()
+                return subprocess.TimeoutExpired, stdout[0]
+            if stop_event.is_set():
+                process.kill()
+                t.join()
+                return None, stdout[0]
+
+
+def RunCaptureInParallel(args, trace_folder_path, test_names, worker_count, xvfb_pool):
+    n = args.batch_count
+    test_batches = [test_names[i:i + n] for i in range(0, len(test_names), n)]
+
+    extra_env = GetCaptureEnv(args, trace_folder_path)
+    env = {**os.environ.copy(), **extra_env}
+    test_exe_path = os.path.join(args.out_dir, 'Capture', args.test_suite)
+
+    stop_event = threading.Event()
+
+    def _RunCapture(tests):
+        filt = ':'.join(tests)
+
+        results_file = tempfile.mktemp()
+        cmd = [
+            test_exe_path,
+            '--gtest_filter=%s' % filt,
+            '--angle-per-test-capture-label',
+            '--results-file=' + results_file,
+        ]
+
+        # Add --use-config to avoid registering all test configurations
+        configs = set([t.split('/')[-1] for t in filt.split(':')])
+        if len(configs) == 1:
+            config, = configs
+            if '*' not in config:
+                cmd.append('--use-config=%s' % config)
+
+        test_results = None
+        try:
+            rc, stdout = RunProcess(cmd, env, xvfb_pool, stop_event, CAPTURE_SUBPROCESS_TIMEOUT)
+            if rc == 0:
+                with open(results_file) as f:
+                    test_results = json.load(f)
+        finally:
+            try:
+                os.unlink(results_file)
+            except Exception:
+                pass
+
+        return rc, test_results, stdout
+
+    skipped_by_suite = set()
+    capture_failed = False
+    for (future, tests) in RunInParallel(_RunCapture, test_batches, worker_count, stop_event):
+        rc, test_results, stdout = future.result()
+
+        if rc == subprocess.TimeoutExpired:
+            logging.error('Capture failed - timed out after %ss\nTests: %s\nPartial stdout:\n%s',
+                          CAPTURE_SUBPROCESS_TIMEOUT, ':'.join(tests), stdout)
+            capture_failed = True
+            continue
+
+        if rc != 0:
+            logging.error('Capture failed.\nTests: %s\nStdout:\n%s\n', ':'.join(tests), stdout)
+            capture_failed = True
+            continue
+
+        if args.show_capture_stdout:
+            logging.info('Capture test stdout:\n%s\n', stdout)
+
+        for test_name, res in test_results['tests'].items():
+            if res['actual'] == 'SKIP':
+                skipped_by_suite.add(test_name)
+
+    return not capture_failed, skipped_by_suite
+
+
+def RunReplayTestsInParallel(args, replay_build_dir, replay_tests, expected_results,
+                             labels_to_tests, worker_count, xvfb_pool):
+    extra_env = {}
+    if args.expose_nonconformant_features:
+        extra_env['ANGLE_FEATURE_OVERRIDES_ENABLED'] = 'exposeNonConformantExtensionsAndVersions'
+    env = {**os.environ.copy(), **extra_env}
+
+    stop_event = threading.Event()
+
+    def _RunReplay(test):
+        replay_exe_path = os.path.join(replay_build_dir, REPLAY_BINARY)
+        cmd = [replay_exe_path, TestLabel(test)]
+        return RunProcess(cmd, env, xvfb_pool, stop_event, REPLAY_SUBPROCESS_TIMEOUT)
+
+    replay_failed = False
+    for (future, test) in RunInParallel(_RunReplay, replay_tests, worker_count, stop_event):
+        expected_to_pass = expected_results[test] == GroupedResult.Passed
+        rc, stdout = future.result()
+        if rc == subprocess.TimeoutExpired:
+            if expected_to_pass:
+                logging.error('Replay failed - timed out after %ss\nTest: %s\nPartial stdout:\n%s',
+                              REPLAY_SUBPROCESS_TIMEOUT, test, stdout)
+                replay_failed = True
+            else:
+                logging.info('Ignoring replay timeout due to expectation: %s [expected %s]', test,
+                             expected_results[test])
+            continue
+
+        if rc != 0:
+            if expected_to_pass:
+                logging.error('Replay failed.\nTest: %s\nStdout:\n%s\n', test, p.stdout.decode())
+                replay_failed = True
+            else:
+                logging.info('Ignoring replay failure due to expectation: %s [expected %s]', test,
+                             expected_results[test])
+            continue
+
+        if args.show_replay_stdout:
+            logging.info('Replay test stdout:\n%s\n', stdout)
+
+        output_lines = stdout.splitlines()
+        for output_line in output_lines:
+            words = output_line.split(" ")
+            if len(words) == 3 and words[0] == RESULT_TAG:
+                test_name = labels_to_tests[words[1]]
+                result = int(words[2])
+
+                if result == 0:
+                    pass
+                elif result == REPLAY_INITIALIZATION_FAILURE:
+                    if expected_to_pass:
+                        replay_failed = True
+                        logging.error('Replay failed. Initialization failure: %s' % test_name)
+                    else:
+                        logging.info(
+                            'Ignoring replay failure due to expectation: %s [expected %s]', test,
+                            expected_results[test])
+                elif result == REPLAY_SERIALIZATION_FAILURE:
+                    if expected_to_pass:
+                        replay_failed = True
+                        logging.error('Replay failed. Context comparison failed: %s' % test_name)
+                        PrintContextDiff(replay_build_dir, words[1])
+                    else:
+                        logging.info(
+                            'Ignoring replay context diff due to expectation: %s [expected %s]',
+                            test, expected_results[test])
+                else:
+                    replay_failed = True
+                    logging.error('Replay failed. Unknown result code: %s -> %d' %
+                                  (test_name, result))
+
+    return not replay_failed
+
+
+def CleanupAfterReplay(replay_build_dir, test_labels):
+    # Remove files that have test labels in the file name, .e.g:
+    # ClearTest_ClearIsClamped_ES2_Vulkan_SwiftShader.dll.pdb
+    for build_file in os.listdir(replay_build_dir):
+        if any(label in build_file for label in test_labels):
+            os.unlink(os.path.join(replay_build_dir, build_file))
+
+
 def main(args):
-    logger = multiprocessing.log_to_stderr()
-    logger.setLevel(level=args.log.upper())
+    angle_test_util.SetupLogging(args.log.upper())
 
-    is_bot = getpass.getuser() == 'chrome-bot'
+    # Set cwd to ANGLE root
+    os.chdir(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-    if is_bot:
+    if getpass.getuser() == 'chrome-bot':
         # bots need different re-client auth settings than developers b/319246651
         os.environ["RBE_use_gce_credentials"] = "true"
         os.environ["RBE_use_application_default_credentials"] = "false"
@@ -870,197 +667,121 @@ def main(args):
         os.environ["RBE_experimental_credentials_helper"] = ""
         os.environ["RBE_experimental_credentials_helper_args"] = ""
 
-    if sys.platform == 'linux' and is_bot:
-        logger.warning('Test is currently a no-op https://anglebug.com/42264614')
-        return EXIT_SUCCESS
+    trace_dir = "%s%d" % (TRACE_FOLDER, 0)
+    trace_folder_path = os.path.join(REPLAY_SAMPLE_FOLDER, trace_dir)
+    if os.path.exists(trace_folder_path):
+        shutil.rmtree(trace_folder_path)
+    os.makedirs(trace_folder_path)
 
-    ninja_lock = multiprocessing.Semaphore(args.max_ninja_jobs)
-    child_processes_manager = ChildProcessesManager(args, logger, ninja_lock)
-    try:
-        start_time = time.time()
-        # set the number of workers to be cpu_count - 1 (since the main process already takes up a
-        # CPU core). Whenever a worker is available, it grabs the next job from the job queue and
-        # runs it. The worker closes down when there is no more job.
-        worker_count = min(multiprocessing.cpu_count() - 1, args.max_jobs)
-        cwd = SetCWDToAngleFolder()
+    capture_build_dir = os.path.join(args.out_dir, 'Capture')
+    replay_build_dir = os.path.join(args.out_dir, 'Replay%d' % 0)
 
-        CreateTraceFolders(worker_count)
-        capture_build_dir = os.path.normpath(r'%s/Capture' % args.out_dir)
-        returncode, output = child_processes_manager.RunGNGen(capture_build_dir, False)
-        if returncode != 0:
-            logger.error(output)
-            child_processes_manager.KillAll()
-            return EXIT_FAILURE
-        # run ninja to build all tests
-        returncode, output = child_processes_manager.RunAutoNinja(capture_build_dir,
-                                                                  args.test_suite, False)
-        if returncode != 0:
-            logger.error(output)
-            child_processes_manager.KillAll()
-            return EXIT_FAILURE
-        # get a list of tests
+    logging.info('Building capture tests')
+
+    subprocess.check_call([GN_PATH, 'gen', '--args=%s' % GetGnArgsStr(args), capture_build_dir])
+    subprocess.check_call(
+        [sys.executable, AUTONINJA_PATH, '-C', capture_build_dir, args.test_suite])
+
+    with MaybeXvfbPool(args.xvfb, 1) as xvfb_pool:
+        logging.info('Getting test list')
         test_path = os.path.join(capture_build_dir, args.test_suite)
-        test_list = GetTestsListForFilter(args, test_path, args.filter, logger)
-        test_expectation = TestExpectation(args)
-        test_names = ParseTestNamesFromTestList(test_list, test_expectation,
-                                                args.also_run_skipped_for_capture_tests, logger)
-        test_expectation_for_list = test_expectation.Filter(
-            test_names, args.also_run_skipped_for_capture_tests)
-        # objects created by manager can be shared by multiple processes. We use it to create
-        # collections that are shared by multiple processes such as job queue or result list.
-        manager = multiprocessing.Manager()
-        job_queue = manager.Queue()
-        test_batch_num = 0
+        with GetDisplayEnv(os.environ, xvfb_pool) as env:
+            test_list = subprocess.check_output(
+                [test_path, "--list-tests",
+                 "--gtest_filter=%s" % args.filter], env=env, text=True)
 
-        num_tests = len(test_names)
-        test_index = 0
+    test_expectation = TestExpectation(args)
+    test_names = ParseTestNamesFromTestList(test_list, test_expectation,
+                                            args.also_run_skipped_for_capture_tests)
+    test_expectation_for_list = test_expectation.Filter(test_names,
+                                                        args.also_run_skipped_for_capture_tests)
 
-        # Put the tests into batches and these into the job queue; jobs that areexpected to crash,
-        # timeout, or fail compilation will be run in batches of size one, because a crash or
-        # failing to compile brings down the whole batch, so that we would give false negatives if
-        # such a batch contains jobs that would otherwise poss or fail differently.
-        batch_index = 0
-        while test_index < num_tests:
-            batch = TestBatch(args, logger, batch_index)
-            batch_index += 1
+    test_names = [
+        t for t in test_names if (not test_expectation.TestIsCompileFail(t) and
+                                  not test_expectation.TestIsSkippedForCapture(t))
+    ]
 
-            while test_index < num_tests and len(batch.tests) < args.batch_count:
-                test_name = test_names[test_index]
-                test_obj = Test(test_name)
-
-                if test_expectation.TestNeedsToRunSingle(test_name):
-                    single_batch = TestBatch(args, logger, batch_index)
-                    batch_index += 1
-                    single_batch.AddTest(test_obj)
-                    job_queue.put(single_batch)
-                    test_batch_num += 1
-                else:
-                    batch.AddTest(test_obj)
-
-                test_index += 1
-
-            if len(batch.tests) > 0:
-                job_queue.put(batch)
-                test_batch_num += 1
-
-        unexpected_count = {}
-        unexpected_test_results = {}
-
-        for type in GroupedResult.ResultTypes:
-            unexpected_count[type] = 0
-            unexpected_test_results[type] = []
-
-        # result list is created by manager and can be shared by multiple processes. Each
-        # subprocess populates the result list with the results of its test runs. After all
-        # subprocesses finish, the main process processes the results in the result list.
-        # An item in the result list is a tuple with 3 values (testname, result, output).
-        # The "result" can take 3 values "Passed", "Failed", "Skipped". The output is the
-        # stdout and the stderr of the test appended together.
-        result_list = manager.list()
-        message_queue = manager.Queue()
-        # so that we do not spawn more processes than we actually need
-        worker_count = min(worker_count, test_batch_num)
-        # spawning and starting up workers
-        for worker_id in range(worker_count):
-            proc = multiprocessing.Process(
-                target=RunTests,
-                args=(args, worker_id, job_queue, result_list, message_queue, logger, ninja_lock))
-            child_processes_manager.AddWorker(proc)
-            proc.start()
-
-        # print out periodic status messages
-        while child_processes_manager.IsAnyWorkerAlive():
-            logger.info('%d workers running, %d jobs left.' %
-                        (child_processes_manager.GetRemainingWorkers(), (job_queue.qsize())))
-            # If only a few tests are run it is likely that the workers are finished before
-            # the STATUS_MESSAGE_PERIOD has passed, and the tests script sits idle for the
-            # reminder of the wait time. Therefore, limit waiting by the number of
-            # unfinished jobs.
-            unfinished_jobs = job_queue.qsize() + child_processes_manager.GetRemainingWorkers()
-            time.sleep(min(STATUS_MESSAGE_PERIOD, unfinished_jobs))
-
-        child_processes_manager.JoinWorkers()
-        end_time = time.time()
-
-        summed_runtimes = child_processes_manager.runtimes
-        while not message_queue.empty():
-            runtimes = message_queue.get()
-            for k, v in runtimes.items():
-                summed_runtimes.setdefault(k, 0.0)
-                summed_runtimes[k] += v
-
-        # print out results
-        logger.info('')
-        logger.info('Results:')
-
-        flaky_results = []
-
-        for test_batch in result_list:
-            test_batch_result = test_batch.results
-            logger.debug(str(test_batch_result))
-
-            for real_result, test_list in test_batch_result.items():
-                for test in test_list:
-                    if test_expectation.IsFlaky(test):
-                        flaky_results.append('{} ({})'.format(test, real_result))
-                        continue
-
-                    expected_result = test_expectation_for_list.get(test, GroupedResult.Passed)
-
-                    if real_result not in (GroupedResult.Passed, expected_result):
-                        unexpected_count[real_result] += 1
-                        unexpected_test_results[real_result].append('!= {}: {} {}'.format(
-                            expected_result, BatchName(test_batch), test))
-
-        logger.info('')
-        logger.info('Elapsed time: %.2lf seconds' % (end_time - start_time))
-        logger.info('')
-        logger.info('Runtimes by process:\n%s' %
-                    '\n'.join('%s: %.2lf seconds' % (k, v) for (k, v) in summed_runtimes.items()))
-
-        if len(flaky_results):
-            logger.info("Test(s) marked as flaky (not considered a failure):")
-            for line in flaky_results:
-                logger.info("    {}".format(line))
-            logger.info("")
-
-        retval = EXIT_SUCCESS
-
-        unexpected_test_results_count = 0
-        for result, count in unexpected_count.items():
-            if result != GroupedResult.Skipped:  # Suite skipping tests is ok
-                unexpected_test_results_count += count
-
-        if unexpected_test_results_count > 0:
-            retval = EXIT_FAILURE
-            logger.info('')
-            logger.info('Failure: Obtained {} results that differ from expectation:'.format(
-                unexpected_test_results_count))
-            logger.info('')
-            for result, count in unexpected_count.items():
-                if count > 0 and result != GroupedResult.Skipped:
-                    logger.info("Unexpected '{}' ({}):".format(result, count))
-                    for test_result in unexpected_test_results[result]:
-                        logger.info('     {}'.format(test_result))
-                    logger.info('')
-
-        logger.info('')
-
-        # delete generated folders if --keep-temp-files flag is set to false
-        if args.purge:
-            DeleteTraceFolders(worker_count)
-            if os.path.isdir(args.out_dir):
-                SafeDeleteFolder(args.out_dir)
-
-        # Try hard to ensure output is finished before ending the test.
-        logging.shutdown()
-        sys.stdout.flush()
-        time.sleep(2.0)
-        return retval
-
-    except KeyboardInterrupt:
-        child_processes_manager.KillAll()
+    if not test_names:
+        logging.error('No capture tests to run. Is everything skipped?')
         return EXIT_FAILURE
+
+    worker_count = min(args.max_jobs, os.cpu_count(), 1 + len(test_names) // 10)
+
+    logging.info('Running %d capture tests, worker_count=%d batch_count=%d', len(test_names),
+                 worker_count, args.batch_count)
+
+    with MaybeXvfbPool(args.xvfb, worker_count) as xvfb_pool:
+        success, skipped_by_suite = RunCaptureInParallel(args, trace_folder_path, test_names,
+                                                         worker_count, xvfb_pool)
+        if not success:
+            logging.error('Capture tests failed, see "Capture failed" errors above')
+            return EXIT_FAILURE
+
+        logging.info('RunCaptureInParallel finished')
+
+        labels_to_tests = {TestLabel(t): t for t in test_names}
+
+        all_trace_files = [f.name for f in os.scandir(trace_folder_path) if f.is_file()]
+
+        replay_tests = []
+        failed = False
+        for test_name in test_names:
+            if test_name not in skipped_by_suite:
+                if CaptureProducedRequiredFiles(all_trace_files, test_name):
+                    replay_tests.append(test_name)
+                else:
+                    logging.error('Capture failed: test missing replay files: %s', test_name)
+                    failed = True
+
+        if failed:
+            logging.error('Capture tests failed, see "Capture failed" errors above')
+            return EXIT_FAILURE
+
+        logging.info('CaptureProducedRequiredFiles finished')
+
+        composite_file_id = 1
+        names_path = os.path.join(trace_folder_path, 'test_names_%d.json' % composite_file_id)
+        with open(names_path, 'w') as f:
+            f.write(json.dumps({'traces': [TestLabel(t) for t in replay_tests]}))
+
+        replay_build_dir = os.path.join(args.out_dir, 'Replay%d' % 0)
+        UnlinkContextStateJsonFilesIfPresent(replay_build_dir)
+
+        logging.info('Building replay tests')
+
+        extra_gn_args = [('angle_build_capture_replay_tests', 'true'),
+                         ('angle_capture_replay_test_trace_dir', '"%s"' % trace_dir),
+                         ('angle_capture_replay_composite_file_id', str(composite_file_id))]
+        subprocess.check_call(
+            [GN_PATH, 'gen',
+             '--args=%s' % GetGnArgsStr(args, extra_gn_args), replay_build_dir])
+        subprocess.check_call(
+            [sys.executable, AUTONINJA_PATH, '-C', replay_build_dir, REPLAY_BINARY])
+
+        if not replay_tests:
+            logging.error('No replay tests to run. Is everything skipped?')
+            return EXIT_FAILURE
+        logging.info('Running %d replay tests', len(replay_tests))
+
+        expected_results = {}
+        for test in replay_tests:
+            expected_result = test_expectation_for_list.get(test, GroupedResult.Passed)
+            if test_expectation.IsFlaky(test):
+                expected_result = 'Flaky'
+            expected_results[test] = expected_result
+
+        if not RunReplayTestsInParallel(args, replay_build_dir, replay_tests, expected_results,
+                                        labels_to_tests, worker_count, xvfb_pool):
+            logging.error('Replay tests failed, see "Replay failed" errors above')
+            return EXIT_FAILURE
+
+        logging.info('Replay tests finished successfully')
+
+    if not args.keep_temp_files:
+        CleanupAfterReplay(replay_build_dir, list(labels_to_tests.keys()))
+        shutil.rmtree(trace_folder_path)
+
+    return EXIT_SUCCESS
 
 
 if __name__ == '__main__':
@@ -1084,21 +805,16 @@ if __name__ == '__main__':
         '--batch-count',
         default=DEFAULT_BATCH_COUNT,
         type=int,
-        help='Number of tests in a batch. Default is %d.' % DEFAULT_BATCH_COUNT)
+        help='Number of tests in a (capture) batch. Default is %d.' % DEFAULT_BATCH_COUNT)
     parser.add_argument(
         '--keep-temp-files',
         action='store_true',
         help='Whether to keep the temp files and folders. Off by default')
-    parser.add_argument('--purge', help='Purge all build directories on exit.')
     parser.add_argument(
         '--use-reclient',
         default=False,
         action='store_true',
         help='Set use_remoteexec=true in args.gn.')
-    parser.add_argument(
-        '--output-to-file',
-        action='store_true',
-        help='Whether to write output to a result file. Off by default')
     parser.add_argument(
         '--result-file',
         default=DEFAULT_RESULT_FILE,
@@ -1128,11 +844,6 @@ if __name__ == '__main__':
         '--also-run-skipped-for-capture-tests',
         action='store_true',
         help='Also run tests that are disabled in the expectations by SKIP_FOR_CAPTURE')
-    parser.add_argument(
-        '--max-ninja-jobs',
-        type=int,
-        default=DEFAULT_MAX_NINJA_JOBS,
-        help='Maximum number of concurrent ninja jobs to run at once.')
     parser.add_argument('--xvfb', action='store_true', help='Run with xvfb.')
     parser.add_argument('--asan', action='store_true', help='Build with ASAN.')
     parser.add_argument(
@@ -1151,9 +862,5 @@ if __name__ == '__main__':
 
     if sys.platform == "win32":
         args.test_suite += ".exe"
-    if args.output_to_file:
-        logging.basicConfig(level=args.log.upper(), filename=args.result_file)
-    else:
-        logging.basicConfig(level=args.log.upper())
 
     sys.exit(main(args))

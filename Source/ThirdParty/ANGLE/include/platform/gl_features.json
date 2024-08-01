@@ -803,6 +803,14 @@
             "issue": "https://crbug.com/40279678"
         },
         {
+            "name": "avoid_bind_frag_data_location",
+            "category": "Workarounds",
+            "description": [
+                "Qualcomm drivers fail to link after binding fragment data locations."
+            ],
+            "issue": "https://anglebug.com/8646"
+        },
+        {
             "name": "srgb_blending_broken",
             "category": "Workarounds",
             "description": [
@@ -828,6 +836,14 @@
                 "Disable QCOM_tiled_rendering on devices with rendering artifacts or which improperly expose the extension."
             ],
             "issue": "http://skbug.com/9491 https://github.com/flutter/flutter/issues/47164 https://github.com/flutter/flutter/issues/47804"
+        },
+        {
+            "name": "disable_blend_equation_advanced",
+            "category": "Workarounds",
+            "description": [
+                "Disable GL_KHR_blend_equation_advanced due to various driver issues."
+            ],
+            "issue": "https://anglebug.com/42267098"
         }
     ]
 }

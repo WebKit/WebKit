@@ -204,6 +204,11 @@ void ReplayFrame4(void)
     glGetError();
     // Skipping invalid call to glBindTexture with error: GL_INVALID_ENUM;
     glGetError();
+    glGenBuffers(1, (GLuint *)gReadBuffer);
+    UpdateBufferID(1, 0);
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, gBufferMap[1]);
+    UpdateResourceIDBuffer(0, gBufferMap[1]);
+glDeleteBuffers(1, gResourceIDBuffer);
 }
 
 // Public Functions
@@ -229,6 +234,8 @@ void ResetReplay(void)
     // Reset main context state
     glUseProgram(gShaderProgramMap[0]);
     UpdateCurrentProgram(0);
+    glBindBuffer(GL_ARRAY_BUFFER, gBufferMap[0]);
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, gBufferMap[0]);
     glBindTexture(GL_TEXTURE_2D, gTextureMap[2]);
 }
 

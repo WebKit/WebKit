@@ -394,7 +394,8 @@ angle::Result Image11::copyFromFramebuffer(const gl::Context *context,
         TextureHelper11 textureHelper  = rt11->getTexture();
         unsigned int sourceSubResource = rt11->getSubresourceIndex();
 
-        gl::Box sourceBox(sourceArea.x, sourceArea.y, 0, sourceArea.width, sourceArea.height, 1);
+        const int z = textureHelper.is3D() ? srcAttachment->layer() : 0;
+        gl::Box sourceBox(sourceArea.x, sourceArea.y, z, sourceArea.width, sourceArea.height, 1);
         return copyWithoutConversion(context, destOffset, sourceBox, textureHelper,
                                      sourceSubResource);
     }

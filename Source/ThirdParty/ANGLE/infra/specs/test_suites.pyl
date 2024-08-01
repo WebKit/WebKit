@@ -1105,6 +1105,9 @@
         'android_args': [
           '-v',
         ],
+        'linux_args': [
+          '--no-xvfb',
+        ],
         'use_isolated_scripts_api': True,
       },
     },

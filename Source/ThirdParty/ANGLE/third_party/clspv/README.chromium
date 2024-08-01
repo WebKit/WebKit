@@ -2,6 +2,7 @@ Name: clspv
 Short Name: clspv
 URL: https://github.com/google/clspv
 Version: a173c052455434a422bcfe5c12ffe44d574fd6e1
+Revision: a173c052455434a422bcfe5c12ffe44d574fd6e1
 Security Critical: no
 Shipped: no
 License: Apache-2.0

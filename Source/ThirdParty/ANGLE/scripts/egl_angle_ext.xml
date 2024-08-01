@@ -307,7 +307,7 @@
                 <enum name="EGL_D3D9_DEVICE_ANGLE"/>
             </require>
         </extension>
-        <extension name="EGL_ANGLE_device_d3d1" supported="egl">
+        <extension name="EGL_ANGLE_device_d3d11" supported="egl">
             <require>
                 <enum name="EGL_D3D11_DEVICE_ANGLE"/>
             </require>

@@ -60,6 +60,8 @@ class SamplerHelper;
 enum class ImageLayout;
 class PipelineCacheAccess;
 class RenderPassCommandBufferHelper;
+class PackedClearValuesArray;
+class AttachmentOpsArray;
 
 using RefCountedDescriptorSetLayout    = AtomicRefCounted<DescriptorSetLayout>;
 using RefCountedPipelineLayout         = AtomicRefCounted<PipelineLayout>;
@@ -132,6 +134,8 @@ template <typename T>
 using FramebufferNonResolveAttachmentArray = std::array<T, kMaxFramebufferNonResolveAttachments>;
 using FramebufferNonResolveAttachmentMask  = angle::BitSet16<kMaxFramebufferNonResolveAttachments>;
 
+class PackedAttachmentIndex;
+
 class alignas(4) RenderPassDesc final
 {
   public:
@@ -166,6 +170,8 @@ class alignas(4) RenderPassDesc final
     void packDepthUnresolveAttachment();
     void packStencilUnresolveAttachment();
     void removeDepthStencilUnresolveAttachment();
+
+    PackedAttachmentIndex getPackedColorAttachmentIndex(size_t colorIndexGL);
 
     void setWriteControlMode(gl::SrgbWriteControlMode mode);
 
@@ -236,6 +242,39 @@ class alignas(4) RenderPassDesc final
         ASSERT(index < gl::IMPLEMENTATION_MAX_DRAW_BUFFERS + 1);
         return static_cast<angle::FormatID>(mAttachmentFormats[index]);
     }
+
+    // Start a render pass with a render pass object.
+    void beginRenderPass(Context *context,
+                         PrimaryCommandBuffer *primary,
+                         const RenderPass &renderPass,
+                         VkFramebuffer framebuffer,
+                         const gl::Rectangle &renderArea,
+                         VkSubpassContents subpassContents,
+                         PackedClearValuesArray &clearValues,
+                         const VkRenderPassAttachmentBeginInfo *attachmentBeginInfo) const;
+
+    // Start a render pass with dynamic rendering.
+    void beginRendering(Context *context,
+                        PrimaryCommandBuffer *primary,
+                        const gl::Rectangle &renderArea,
+                        VkSubpassContents subpassContents,
+                        const FramebufferAttachmentsVector<VkImageView> &attachmentViews,
+                        const AttachmentOpsArray &ops,
+                        PackedClearValuesArray &clearValues,
+                        uint32_t layerCount) const;
+
+    void populateRenderingInheritanceInfo(
+        Renderer *renderer,
+        VkCommandBufferInheritanceRenderingInfo *infoOut,
+        gl::DrawBuffersArray<VkFormat> *colorFormatStorageOut) const;
+
+    // Calculate perf counters for a dynamic rendering render pass instance.  For render pass
+    // objects, the perf counters are updated when creating the render pass, where access to
+    // ContextVk is available.
+    void updatePerfCounters(Context *context,
+                            const FramebufferAttachmentsVector<VkImageView> &attachmentViews,
+                            const AttachmentOpsArray &ops,
+                            angle::VulkanPerfCounters *countersOut);
 
   private:
     uint8_t mSamples;
@@ -347,7 +386,7 @@ struct PackedAttachmentOpsDesc final
     // so that the resolve attachment's storeOp can be set to DONT_CARE if the attachment is
     // invalidated, and if possible removed from the list of resolve attachments altogether.  Note
     // that the latter may not be possible if the render pass has multiple subpasses due to Vulkan
-    // render pass compatibility rules.
+    // render pass compatibility rules (not an issue with dynamic rendering).
     uint16_t isInvalidated : 1;
     uint16_t isStencilInvalidated : 1;
     uint16_t padding1 : 6;
@@ -356,12 +395,11 @@ struct PackedAttachmentOpsDesc final
     // placed at the beginning of that enum.
     uint16_t initialLayout : 5;
     uint16_t finalLayout : 5;
-    uint16_t padding2 : 6;
+    uint16_t finalResolveLayout : 5;
+    uint16_t padding2 : 1;
 };
 
 static_assert(sizeof(PackedAttachmentOpsDesc) == 4, "Size check failed");
-
-class PackedAttachmentIndex;
 
 class AttachmentOpsArray final
 {
@@ -1005,11 +1043,11 @@ class DescriptorSetLayoutDesc final
     size_t hash() const;
     bool operator==(const DescriptorSetLayoutDesc &other) const;
 
-    void update(uint32_t bindingIndex,
-                VkDescriptorType descriptorType,
-                uint32_t count,
-                VkShaderStageFlags stages,
-                const Sampler *immutableSampler);
+    void addBinding(uint32_t bindingIndex,
+                    VkDescriptorType descriptorType,
+                    uint32_t count,
+                    VkShaderStageFlags stages,
+                    const Sampler *immutableSampler);
 
     void unpackBindings(DescriptorSetLayoutBindingVector *bindings) const;
 
@@ -1353,6 +1391,8 @@ class CreateMonolithicPipelineTask : public Context, public angle::Closure
     // render pass cache may have been cleared since the task was created (e.g. to accomodate
     // framebuffer fetch).  Such render pass cache clears ensure there are no active tasks, so it's
     // safe to hold on to this pointer for the brief period between task post and completion.
+    //
+    // Not applicable to dynamic rendering.
     const RenderPassDesc &getRenderPassDesc() const { return mDesc.getRenderPassDesc(); }
     void setCompatibleRenderPass(const RenderPass *compatibleRenderPass);
 
@@ -1873,7 +1913,6 @@ class DescriptorSetDescBuilder final
                                            const gl::ProgramExecutable &executable,
                                            const gl::ActiveTextureArray<TextureVk *> &textures,
                                            const gl::SamplerBindingVector &samplers,
-                                           bool emulateSeamfulCubeMapSampling,
                                            PipelineType pipelineType,
                                            const SharedDescriptorSetCacheKey &sharedCacheKey);
 
@@ -1980,6 +2019,8 @@ class FramebufferDesc
     // Note: this is an exclusive index. If there is one index it will be "1".
     // Maximum value is 18
     uint16_t mMaxIndex : 5;
+
+    // Whether the render pass has input attachments or not.
     uint16_t mHasFramebufferFetch : 1;
     static_assert(gl::IMPLEMENTATION_MAX_FRAMEBUFFER_LAYERS < (1 << 9) - 1,
                   "Not enough bits for mLayerCount");

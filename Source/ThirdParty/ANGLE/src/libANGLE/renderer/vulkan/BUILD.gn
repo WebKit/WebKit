@@ -87,6 +87,26 @@ config("angle_vulkan_backend_config") {
   }
 }
 
+if (is_android) {
+  # Used only in generated Android.bp file for DMA-BUF-enabled builds on Android.
+  # See b/353262025 for details.
+  angle_source_set("angle_android_vulkan_dma_buf") {
+    sources = vulkan_backend_dma_buf_sources
+    deps = [
+      ":angle_vulkan_backend",
+      "$angle_root/src/common/linux:angle_dma_buf",
+    ]
+    defines = [
+      "ANGLE_ANDROID_DMA_BUF",
+      "ANGLE_USE_VULKAN_DISPLAY",
+      "ANGLE_VULKAN_DISPLAY_MODE_OFFSCREEN",
+    ]
+    if (angle_use_gbm) {
+      deps += [ "//third_party/minigbm" ]
+    }
+  }
+}
+
 template("angle_vulkan_backend_template") {
   config("${target_name}_internal_config") {
     defines = []

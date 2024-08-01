@@ -5,6 +5,8 @@
 //
 // Test built-in variables added by OES_sample_variables
 
+#include <unordered_set>
+
 #include "common/mathutil.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"

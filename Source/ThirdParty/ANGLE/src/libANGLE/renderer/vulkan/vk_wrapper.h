@@ -195,6 +195,7 @@ class CommandBuffer : public WrappedObject<CommandBuffer, VkCommandBuffer>
     void beginQuery(const QueryPool &queryPool, uint32_t query, VkQueryControlFlags flags);
 
     void beginRenderPass(const VkRenderPassBeginInfo &beginInfo, VkSubpassContents subpassContents);
+    void beginRendering(const VkRenderingInfo &beginInfo);
 
     void bindDescriptorSets(const PipelineLayout &layout,
                             VkPipelineBindPoint pipelineBindPoint,
@@ -289,6 +290,7 @@ class CommandBuffer : public WrappedObject<CommandBuffer, VkCommandBuffer>
     VkResult end();
     void endQuery(const QueryPool &queryPool, uint32_t query);
     void endRenderPass();
+    void endRendering();
     void executeCommands(uint32_t commandBufferCount, const CommandBuffer *commandBuffers);
 
     void getMemoryUsageStats(size_t *usedMemoryOut, size_t *allocatedMemoryOut) const;
@@ -346,6 +348,8 @@ class CommandBuffer : public WrappedObject<CommandBuffer, VkCommandBuffer>
     void setLogicOp(VkLogicOp logicOp);
     void setPrimitiveRestartEnable(VkBool32 primitiveRestartEnable);
     void setRasterizerDiscardEnable(VkBool32 rasterizerDiscardEnable);
+    void setRenderingAttachmentLocations(const VkRenderingAttachmentLocationInfoKHR *info);
+    void setRenderingInputAttachmentIndicates(const VkRenderingInputAttachmentIndexInfoKHR *info);
     void setScissor(uint32_t firstScissor, uint32_t scissorCount, const VkRect2D *scissors);
     void setStencilCompareMask(uint32_t compareFrontMask, uint32_t compareBackMask);
     void setStencilOp(VkStencilFaceFlags faceMask,
@@ -936,10 +940,22 @@ ANGLE_INLINE void CommandBuffer::beginRenderPass(const VkRenderPassBeginInfo &be
     vkCmdBeginRenderPass(mHandle, &beginInfo, subpassContents);
 }
 
+ANGLE_INLINE void CommandBuffer::beginRendering(const VkRenderingInfo &beginInfo)
+{
+    ASSERT(valid());
+    vkCmdBeginRenderingKHR(mHandle, &beginInfo);
+}
+
 ANGLE_INLINE void CommandBuffer::endRenderPass()
 {
-    ASSERT(mHandle != VK_NULL_HANDLE);
+    ASSERT(valid());
     vkCmdEndRenderPass(mHandle);
+}
+
+ANGLE_INLINE void CommandBuffer::endRendering()
+{
+    ASSERT(valid());
+    vkCmdEndRenderingKHR(mHandle);
 }
 
 ANGLE_INLINE void CommandBuffer::bindIndexBuffer(const Buffer &buffer,
@@ -1084,6 +1100,20 @@ ANGLE_INLINE void CommandBuffer::setRasterizerDiscardEnable(VkBool32 rasterizerD
 {
     ASSERT(valid());
     vkCmdSetRasterizerDiscardEnableEXT(mHandle, rasterizerDiscardEnable);
+}
+
+ANGLE_INLINE void CommandBuffer::setRenderingAttachmentLocations(
+    const VkRenderingAttachmentLocationInfoKHR *info)
+{
+    ASSERT(valid());
+    vkCmdSetRenderingAttachmentLocationsKHR(mHandle, info);
+}
+
+ANGLE_INLINE void CommandBuffer::setRenderingInputAttachmentIndicates(
+    const VkRenderingInputAttachmentIndexInfoKHR *info)
+{
+    ASSERT(valid());
+    vkCmdSetRenderingInputAttachmentIndicesKHR(mHandle, info);
 }
 
 ANGLE_INLINE void CommandBuffer::setScissor(uint32_t firstScissor,

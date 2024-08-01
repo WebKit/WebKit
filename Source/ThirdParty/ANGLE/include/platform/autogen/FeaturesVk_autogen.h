@@ -1343,6 +1343,14 @@ struct FeaturesVk : FeatureSetBase
         &members, "http://anglebug.com/41493495"
     };
 
+    FeatureInfo wrapSwitchInIfTrue = {
+        "wrapSwitchInIfTrue",
+        FeatureCategory::VulkanWorkarounds,
+        "On some drivers, nested switch statements are mishandled which can be worked around "
+        "by wrapping them in if(true)",
+        &members, "http://crbug.com/350528343"
+    };
+
     FeatureInfo disableDepthStencilResolveThroughAttachment = {
         "disableDepthStencilResolveThroughAttachment",
         FeatureCategory::VulkanWorkarounds,
@@ -1470,6 +1478,13 @@ struct FeaturesVk : FeatureSetBase
         FeatureCategory::VulkanFeatures,
         "Whether dynamic rendering should be used instead of render pass objects",
         &members, "http://anglebug.com/42267038"
+    };
+
+    FeatureInfo preferCachedNoncoherentForDynamicStreamBufferUsage = {
+        "preferCachedNoncoherentForDynamicStreamBufferUsage",
+        FeatureCategory::VulkanFeatures,
+        "Prefer host cached + non-coherent memory for buffers with dynamic/stream usage.",
+        &members, "https://issuetracker.google.com/347601787"
     };
 
 };

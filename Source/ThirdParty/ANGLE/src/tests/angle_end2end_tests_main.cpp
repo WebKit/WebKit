@@ -46,6 +46,8 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
+    ANGLEProcessTestArgs(&argc, argv);
+
     auto registerTestsCallback = [] {
         if (!IsTSan())
         {
@@ -53,7 +55,6 @@ int main(int argc, char **argv)
         }
     };
     angle::TestSuite testSuite(&argc, argv, registerTestsCallback);
-    ANGLEProcessTestArgs(&argc, argv);
 
     constexpr size_t kMaxPath = 512;
     std::array<char, kMaxPath> foundDataPath;

@@ -144,15 +144,15 @@ class VulkanDescriptorSetLayoutDescTest : public ANGLETest<>
         {11, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1, VK_SHADER_STAGE_FRAGMENT_BIT},
     }};
 
-    void updateBindings(const std::vector<uint32_t> &bindingIndices,
-                        rx::vk::DescriptorSetLayoutDesc *desc)
+    void addBindings(const std::vector<uint32_t> &bindingIndices,
+                     rx::vk::DescriptorSetLayoutDesc *desc)
     {
         for (uint32_t index : bindingIndices)
         {
             ASSERT(index < mBindings.size());
             const DescriptorSetBinding &binding = mBindings[index];
-            desc->update(binding.bindingIndex, binding.type, binding.bindingCount,
-                         binding.shaderStage, nullptr);
+            desc->addBinding(binding.bindingIndex, binding.type, binding.bindingCount,
+                             binding.shaderStage, nullptr);
         }
     }
 
@@ -172,21 +172,21 @@ TEST_P(VulkanDescriptorSetLayoutDescTest, Basic)
     rx::vk::AtomicBindingPointer<rx::vk::DescriptorSetLayout> descriptorSetLayout;
 
     mDescriptorSetLayoutDesc = {};
-    updateBindings(bindingsPattern1, &mDescriptorSetLayoutDesc);
+    addBindings(bindingsPattern1, &mDescriptorSetLayoutDesc);
     result = mDescriptorSetLayoutCache.getDescriptorSetLayout(contextVk, mDescriptorSetLayoutDesc,
                                                               &descriptorSetLayout);
     EXPECT_EQ(result, angle::Result::Continue);
     EXPECT_EQ(mDescriptorSetLayoutCache.getCacheMissCount(), 1u);
 
     mDescriptorSetLayoutDesc = {};
-    updateBindings(bindingsPattern2, &mDescriptorSetLayoutDesc);
+    addBindings(bindingsPattern2, &mDescriptorSetLayoutDesc);
     result = mDescriptorSetLayoutCache.getDescriptorSetLayout(contextVk, mDescriptorSetLayoutDesc,
                                                               &descriptorSetLayout);
     EXPECT_EQ(result, angle::Result::Continue);
     EXPECT_EQ(mDescriptorSetLayoutCache.getCacheMissCount(), 2u);
 
     mDescriptorSetLayoutDesc = {};
-    updateBindings(bindingsPattern3, &mDescriptorSetLayoutDesc);
+    addBindings(bindingsPattern3, &mDescriptorSetLayoutDesc);
     size_t reusedDescHash = mDescriptorSetLayoutDesc.hash();
     result = mDescriptorSetLayoutCache.getDescriptorSetLayout(contextVk, mDescriptorSetLayoutDesc,
                                                               &descriptorSetLayout);
@@ -194,7 +194,7 @@ TEST_P(VulkanDescriptorSetLayoutDescTest, Basic)
     EXPECT_EQ(mDescriptorSetLayoutCache.getCacheMissCount(), 3u);
 
     rx::vk::DescriptorSetLayoutDesc desc;
-    updateBindings(bindingsPattern3, &desc);
+    addBindings(bindingsPattern3, &desc);
     size_t newDescHash = desc.hash();
     EXPECT_EQ(reusedDescHash, newDescHash);
 

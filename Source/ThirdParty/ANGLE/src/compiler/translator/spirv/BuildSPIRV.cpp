@@ -794,7 +794,7 @@ void SPIRVBuilder::predefineCommonTypes()
     type.type = EbtFloat;
     id        = spirv::IdRef(kIdFloat);
     mTypeMap.insert({type, {id}});
-    spirv::WriteTypeFloat(&mSpirvTypeAndConstantDecls, id, spirv::LiteralInteger(32));
+    spirv::WriteTypeFloat(&mSpirvTypeAndConstantDecls, id, spirv::LiteralInteger(32), nullptr);
 
     // vecN ids equal vec2 id + (vec size - 2)
     static_assert(kIdVec3 == kIdVec2 + 1);

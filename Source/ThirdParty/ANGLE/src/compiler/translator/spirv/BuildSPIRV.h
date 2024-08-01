@@ -12,6 +12,7 @@
 #include "common/FixedVector.h"
 #include "common/PackedEnums.h"
 #include "common/bitset_utils.h"
+#include "common/hash_containers.h"
 #include "common/hash_utils.h"
 #include "common/spirv/spirv_instruction_builder_autogen.h"
 #include "compiler/translator/Compiler.h"

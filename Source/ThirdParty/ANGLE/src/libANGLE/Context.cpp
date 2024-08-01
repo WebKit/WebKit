@@ -7264,7 +7264,8 @@ void Context::shaderBinary(GLsizei n,
 {
     Shader *shaderObject = getShaderNoResolveCompile(*shaders);
     ASSERT(shaderObject != nullptr);
-    ANGLE_CONTEXT_TRY(shaderObject->loadShaderBinary(this, binary, length));
+    ANGLE_CONTEXT_TRY(
+        shaderObject->loadShaderBinary(this, binary, length, angle::JobResultExpectancy::Future));
 }
 
 void Context::bindFragDataLocationIndexed(ShaderProgramID program,

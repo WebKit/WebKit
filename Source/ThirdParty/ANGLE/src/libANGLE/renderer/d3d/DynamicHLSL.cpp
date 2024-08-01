@@ -145,15 +145,15 @@ bool ReplaceShaderStorageDeclaration(const std::vector<ShaderStorageBlock> &shad
         {
             for (unsigned int arrayIndex = 0; arrayIndex < ssbo.arraySize; arrayIndex++)
             {
-                out << "RWByteAddressBuffer "
-                    << "dx_" << name << "_" << arrayIndex << ": register(u"
-                    << uavRegister + arrayIndex << ");\n";
+                out << "RWByteAddressBuffer ";
+                out << "dx_" << name << "_" << arrayIndex << ": register(u";
+                out << uavRegister + arrayIndex << ");\n";
             }
         }
         else
         {
-            out << "RWByteAddressBuffer "
-                << "_" << name << ": register(u" << uavRegister << ");\n";
+            out << "RWByteAddressBuffer ";
+            out << "_" << name << ": register(u" << uavRegister << ");\n";
         }
     }
     if (out.str().empty())
@@ -190,7 +190,7 @@ std::string DynamicHLSL::GenerateVertexShaderForInputLayout(
     std::ostringstream initStream;
 
     structStream << "struct VS_INPUT\n"
-                 << "{\n";
+                    "{\n";
 
     int semanticIndex       = 0;
     unsigned int inputIndex = 0;
@@ -456,8 +456,8 @@ void DynamicHLSL::GenerateVaryingLinkHLSL(RendererD3D *renderer,
                                           std::ostringstream &hlslStream)
 {
     ASSERT(builtins.dxPosition.enabled);
-    hlslStream << "{\n"
-               << "    float4 dx_Position : " << builtins.dxPosition.str() << ";\n";
+    hlslStream << "{\n";
+    hlslStream << "    float4 dx_Position : " << builtins.dxPosition.str() << ";\n";
 
     if (builtins.glPosition.enabled)
     {
@@ -858,7 +858,7 @@ void DynamicHLSL::GenerateShaderLinkHLSL(
         if (programMetadata.usesPointCoord())
         {
             vertexGenerateOutput << "\n"
-                                 << "    output.gl_PointCoord = input.spriteTexCoord;\n";
+                                    "    output.gl_PointCoord = input.spriteTexCoord;\n";
         }
     }
 
@@ -869,12 +869,12 @@ void DynamicHLSL::GenerateShaderLinkHLSL(
     {
         ASSERT(!useInstancedPointSpriteEmulation);
         vertexGenerateOutput << "\n"
-                             << "    output.gl_PointCoord = float2(0.5, 0.5);\n";
+                                "    output.gl_PointCoord = float2(0.5, 0.5);\n";
     }
 
     vertexGenerateOutput << "\n"
-                         << "    return output;\n"
-                         << "}";
+                            "    return output;\n"
+                            "}";
 
     if (vertexShader)
     {
@@ -977,9 +977,17 @@ void DynamicHLSL::GenerateShaderLinkHLSL(
             }
         }
 
-        pixelPrologue << "    gl_FragCoord.z = (input.gl_FragCoord.z * rhw) * dx_DepthFront.x + "
-                         "dx_DepthFront.y;\n"
-                      << "    gl_FragCoord.w = rhw;\n";
+        if (shaderModel >= 4 && renderer->getShaderModelSuffix() == "")
+        {
+            pixelPrologue << "    gl_FragCoord.z = input.dx_Position.z;\n";
+        }
+        else
+        {
+            pixelPrologue
+                << "    gl_FragCoord.z = (input.gl_FragCoord.z * rhw) * dx_DepthFront.x + "
+                   "dx_DepthFront.y;\n";
+        }
+        pixelPrologue << "    gl_FragCoord.w = rhw;\n";
     }
 
     if (pixelBuiltins.glPointCoord.enabled && shaderModel >= 3)
@@ -1220,7 +1228,7 @@ std::string DynamicHLSL::GenerateGeometryShaderPreamble(RendererD3D *renderer,
     GenerateVaryingLinkHLSL(renderer, varyingPacking, vertexBuiltins, builtinsD3D.usesPointSize(),
                             preambleStream);
     preambleStream << "\n"
-                   << "struct GS_OUTPUT\n";
+                      "struct GS_OUTPUT\n";
     GenerateVaryingLinkHLSL(renderer, varyingPacking, builtinsD3D[gl::ShaderType::Geometry],
                             builtinsD3D.usesPointSize(), preambleStream);
     preambleStream

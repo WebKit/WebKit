@@ -15,6 +15,7 @@
 
 #include "angle_gl.h"
 #include "common/android_util.h"
+#include "common/hash_containers.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/Config.h"
 #include "libANGLE/Error.h"

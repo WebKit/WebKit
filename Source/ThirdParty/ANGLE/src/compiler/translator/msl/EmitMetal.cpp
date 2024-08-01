@@ -1872,6 +1872,11 @@ bool GenMetalTraverser::visitUnary(Visit, TIntermUnary *unaryNode)
     TIntermTyped &arg    = *unaryNode->getOperand();
     const TType &argType = arg.getType();
 
+    if (op == TOperator::EOpIsnan || op == TOperator::EOpIsinf)
+    {
+        mtl::getTranslatorMetalReflection(&mCompiler)->hasIsnanOrIsinf = true;
+    }
+
     const char *name = GetOperatorString(op, resultType, &argType, nullptr, nullptr);
 
     if (IsSymbolicOperator(op, resultType, &argType, nullptr))

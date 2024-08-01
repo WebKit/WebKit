@@ -1804,7 +1804,8 @@ angle::Result FramebufferMtl::readPixelsToBuffer(const gl::Context *context,
 
     if (dstAngleFormat.id != readAngleFormat.id || texture->samples() > 1 ||
         (dstBufferOffset % dstAngleFormat.pixelBytes) ||
-        (dstBufferOffset % mtl::kTextureToBufferBlittingAlignment))
+        (dstBufferOffset % mtl::kTextureToBufferBlittingAlignment) ||
+        (dstBufferRowPitch < area.width * dstAngleFormat.pixelBytes))
     {
         const angle::Format *actualDstAngleFormat;
 

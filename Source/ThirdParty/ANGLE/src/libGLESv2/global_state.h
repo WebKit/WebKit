@@ -17,7 +17,7 @@
 #include "libANGLE/features.h"
 #include "libANGLE/validationEGL.h"
 
-#if defined(ANGLE_PLATFORM_APPLE) || (ANGLE_PLATFORM_ANDROID)
+#if defined(ANGLE_PLATFORM_APPLE) || (ANGLE_PLATFORM_ANDROID) || defined(ANGLE_USE_ANDROID_TLS_SLOT)
 #    include "common/tls.h"
 #endif
 

@@ -12,8 +12,8 @@
 #include "libANGLE/Compiler.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/ContextImpl.h"
+#include "libANGLE/renderer/gl/ContextGL.h"
 #include "libANGLE/renderer/gl/FunctionsGL.h"
-#include "libANGLE/renderer/gl/RendererGL.h"
 #include "libANGLE/trace.h"
 #include "platform/autogen/FeaturesGL_autogen.h"
 
@@ -37,9 +37,12 @@ class ShaderTranslateTaskGL final : public ShaderTranslateTask
 
     void postTranslate(ShHandle compiler, const gl::CompiledShaderState &compiledState) override
     {
-        const char *source = compiledState.translatedSource.c_str();
-        mFunctions->shaderSource(mShaderID, 1, &source, nullptr);
-        mFunctions->compileShader(mShaderID);
+        startCompile(compiledState);
+    }
+
+    void load(const gl::CompiledShaderState &compiledState) override
+    {
+        startCompile(compiledState);
     }
 
     bool isCompilingInternally() override
@@ -86,20 +89,21 @@ class ShaderTranslateTaskGL final : public ShaderTranslateTask
     }
 
   private:
+    void startCompile(const gl::CompiledShaderState &compiledState)
+    {
+        const char *source = compiledState.translatedSource.c_str();
+        mFunctions->shaderSource(mShaderID, 1, &source, nullptr);
+        mFunctions->compileShader(mShaderID);
+    }
+
     const FunctionsGL *mFunctions;
     GLuint mShaderID;
     bool mHasNativeParallelCompile;
 };
 }  // anonymous namespace
 
-ShaderGL::ShaderGL(const gl::ShaderState &data,
-                   GLuint shaderID,
-                   MultiviewImplementationTypeGL multiviewImplementationType,
-                   const std::shared_ptr<RendererGL> &renderer)
-    : ShaderImpl(data),
-      mShaderID(shaderID),
-      mMultiviewImplementationType(multiviewImplementationType),
-      mRenderer(renderer)
+ShaderGL::ShaderGL(const gl::ShaderState &data, GLuint shaderID)
+    : ShaderImpl(data), mShaderID(shaderID)
 {}
 
 ShaderGL::~ShaderGL()
@@ -107,15 +111,20 @@ ShaderGL::~ShaderGL()
     ASSERT(mShaderID == 0);
 }
 
-void ShaderGL::destroy()
+void ShaderGL::onDestroy(const gl::Context *context)
 {
-    mRenderer->getFunctions()->deleteShader(mShaderID);
+    const FunctionsGL *functions = GetFunctionsGL(context);
+
+    functions->deleteShader(mShaderID);
     mShaderID = 0;
 }
 
 std::shared_ptr<ShaderTranslateTask> ShaderGL::compile(const gl::Context *context,
                                                        ShCompileOptions *options)
 {
+    ContextGL *contextGL         = GetImplAs<ContextGL>(context);
+    const FunctionsGL *functions = GetFunctionsGL(context);
+
     options->initGLPosition = true;
 
     bool isWebGL = context->isWebGL();
@@ -206,7 +215,8 @@ std::shared_ptr<ShaderTranslateTask> ShaderGL::compile(const gl::Context *contex
         options->preTransformTextureCubeGradDerivatives = true;
     }
 
-    if (mMultiviewImplementationType == MultiviewImplementationTypeGL::NV_VIEWPORT_ARRAY2)
+    if (contextGL->getMultiviewImplementationType() ==
+        MultiviewImplementationTypeGL::NV_VIEWPORT_ARRAY2)
     {
         options->initializeBuiltinsForInstancedMultiview = true;
         options->selectViewInNvGLSLVertexShader          = true;
@@ -272,13 +282,23 @@ std::shared_ptr<ShaderTranslateTask> ShaderGL::compile(const gl::Context *contex
         options->explicitFragmentLocations = true;
     }
 
-    if (mRenderer->getNativeExtensions().shaderPixelLocalStorageANGLE)
+    if (contextGL->getNativeExtensions().shaderPixelLocalStorageANGLE)
     {
-        options->pls = mRenderer->getNativePixelLocalStorageOptions();
+        options->pls = contextGL->getNativePixelLocalStorageOptions();
     }
 
-    return std::shared_ptr<ShaderTranslateTask>(new ShaderTranslateTaskGL(
-        mRenderer->getFunctions(), mShaderID, mRenderer->hasNativeParallelCompile()));
+    return std::shared_ptr<ShaderTranslateTask>(
+        new ShaderTranslateTaskGL(functions, mShaderID, contextGL->hasNativeParallelCompile()));
+}
+
+std::shared_ptr<ShaderTranslateTask> ShaderGL::load(const gl::Context *context,
+                                                    gl::BinaryInputStream *stream)
+{
+    ContextGL *contextGL         = GetImplAs<ContextGL>(context);
+    const FunctionsGL *functions = GetFunctionsGL(context);
+
+    return std::shared_ptr<ShaderTranslateTask>(
+        new ShaderTranslateTaskGL(functions, mShaderID, contextGL->hasNativeParallelCompile()));
 }
 
 std::string ShaderGL::getDebugInfo() const

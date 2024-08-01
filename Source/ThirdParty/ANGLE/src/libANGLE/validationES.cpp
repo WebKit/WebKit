@@ -3117,6 +3117,15 @@ bool ValidateStateQuery(const Context *context,
             }
             break;
 
+        case GL_PRIMITIVE_RESTART_FOR_PATCHES_SUPPORTED:
+            if (context->getClientVersion() < Version(3, 2) &&
+                !context->getExtensions().tessellationShaderAny())
+            {
+                ANGLE_VALIDATION_ERRORF(GL_INVALID_ENUM, kEnumNotSupported, pname);
+                return false;
+            }
+            break;
+
         default:
             break;
     }

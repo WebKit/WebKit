@@ -77,6 +77,7 @@ const DisplayTypeInfo kDisplayTypes[] = {
     {"swiftshader", EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE},
     {"vulkan", EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE},
     {"vulkan-null", EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE},
+    {"webgpu", EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE},
 };
 }  // anonymous namespace
 

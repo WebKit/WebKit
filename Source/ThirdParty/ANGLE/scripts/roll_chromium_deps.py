@@ -92,6 +92,7 @@ ANGLE_CHROMIUM_DEPS = [
     'tools/perf',
     'tools/protoc_wrapper',
     'tools/python',
+    'tools/rust',
     'tools/skia_goldctl/linux',
     'tools/skia_goldctl/mac_amd64',
     'tools/skia_goldctl/mac_arm64',

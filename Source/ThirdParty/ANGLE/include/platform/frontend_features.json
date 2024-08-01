@@ -201,6 +201,14 @@
                 "Force the minimum GL_MAX_VERTEX_ATTRIBS that the context's client version allows."
             ],
             "issue": ""
+        },
+        {
+            "name": "force_flush_after_drawcall_using_shadowmap",
+            "category": "Workarounds",
+            "description": [
+                "Force flush after drawcall use shadow map for intel device."
+            ],
+            "issue": "https://issuetracker.google.com/349489248"
         }
     ]
 }

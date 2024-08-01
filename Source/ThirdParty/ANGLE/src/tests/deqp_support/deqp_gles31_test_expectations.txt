@@ -430,26 +430,9 @@ b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.debug.error_groups.case_9
 // This fails on pre-release Android T drivers as of 3/25/22:
 42263969 PIXEL6 VULKAN : dEQP-GLES31.functional.geometry_shading.query.primitives_generated_* = FAIL
 
-// ASAN Test bugs
-42265173 ASAN : dEQP-GLES31.functional.ssbo.array_length.* = SKIP
-42265173 ASAN : dEQP-GLES31.functional.debug.error_filters.case_11 = SKIP
-42265173 ASAN : dEQP-GLES31.functional.debug.error_filters.case_18 = SKIP
-42265173 ASAN : dEQP-GLES31.functional.debug.error_groups.case_11 = SKIP
-
-42265173 UBSAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_* = SKIP
-42265173 UBSAN : dEQP-GLES31.functional.texture.multisample.samples_* = SKIP
-42265173 UBSAN : dEQP-GLES31.functional.shaders.builtin_functions.precision.* = SKIP
-42265173 UBSAN : dEQP-GLES31.functional.shaders.builtin_functions.common.* = SKIP
-42265173 UBSAN : dEQP-GLES31.functional.draw_indirect.random.* = SKIP
-42265173 UBSAN : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfield* = SKIP
-42265173 UBSAN : dEQP-GLES31.functional.shaders.sample_variables.sample_pos.distribution.* = SKIP
-
-42265173 UBSAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.framebuffer_format.r8 = SKIP
-42265173 UBSAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.framebuffer_format.rg32i = SKIP
-42265173 UBSAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.framebuffer_format.rg8 = SKIP
-42265173 UBSAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.framebuffer_format.rgb565 = SKIP
-42265173 UBSAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.framebuffer_format.rgb8 = SKIP
-42265173 UBSAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.framebuffer_format.rgba32i = SKIP
+42265173 UBSAN : dEQP-GLES31.functional.texture.multisample.samples_*.sample_mask_non_effective_bits = SKIP
+42265173 UBSAN : dEQP-GLES31.functional.shaders.builtin_functions.common.abs.* = SKIP
+42265173 UBSAN : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfieldinsert.* = SKIP
 
 // Samsung Galaxy S22 (Xclipse)
 b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.darken = SKIP
@@ -488,3 +471,7 @@ b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.synchronization.in* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.texture.border_clamp.* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.texture.*cube_array* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.texture.gather.basic.cube* = SKIP
+
+// ~10% flaky specifically on Pixel 6, both ANGLE and native, only these but not other comp_swap tests
+352610491 PIXEL6 : dEQP-GLES31.functional.image_load_store.2d.atomic.comp_swap_r32i_return_value = SKIP
+352610491 PIXEL6 : dEQP-GLES31.functional.image_load_store.2d.atomic.comp_swap_r32ui_return_value = SKIP

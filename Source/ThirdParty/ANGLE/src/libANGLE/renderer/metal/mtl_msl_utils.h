@@ -44,6 +44,7 @@ struct TranslatedShaderInfo
     std::array<uint32_t, kMaxGLUBOBindings> actualUBOBindings;
     std::array<uint32_t, kMaxShaderXFBs> actualXFBBindings;
     bool hasUBOArgumentBuffer;
+    bool hasIsnanOrIsinf;
     bool hasInvariant;
 };
 
@@ -51,9 +52,8 @@ void MSLGetShaderSource(const gl::ProgramState &programState,
                         const gl::ProgramLinkedResources &resources,
                         gl::ShaderMap<std::string> *shaderSourcesOut);
 
-angle::Result MTLGetMSL(Context *context,
+angle::Result MTLGetMSL(const angle::FeaturesMtl &features,
                         const gl::ProgramExecutable &executable,
-                        const gl::Caps &glCaps,
                         const gl::ShaderMap<std::string> &shaderSources,
                         const gl::ShaderMap<SharedCompiledShaderStateMtl> &shadersState,
                         gl::ShaderMap<TranslatedShaderInfo> *mslShaderInfoOut);

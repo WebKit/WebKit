@@ -1403,6 +1403,7 @@ std::vector<std::string> ClientExtensions::getStrings() const
     InsertExtensionString("EGL_ANGLE_platform_angle",                         platformANGLE,                      &extensionStrings);
     InsertExtensionString("EGL_ANGLE_platform_angle_d3d",                     platformANGLED3D,                   &extensionStrings);
     InsertExtensionString("EGL_ANGLE_platform_angle_d3d11on12",               platformANGLED3D11ON12,             &extensionStrings);
+    InsertExtensionString("EGL_ANGLE_platform_angle_d3d_luid",                platformANGLED3DLUID,               &extensionStrings);
     InsertExtensionString("EGL_ANGLE_platform_angle_device_type_egl_angle",   platformANGLEDeviceTypeEGLANGLE,    &extensionStrings);
     InsertExtensionString("EGL_ANGLE_platform_angle_device_type_swiftshader", platformANGLEDeviceTypeSwiftShader, &extensionStrings);
     InsertExtensionString("EGL_ANGLE_platform_angle_opengl",                  platformANGLEOpenGL,                &extensionStrings);

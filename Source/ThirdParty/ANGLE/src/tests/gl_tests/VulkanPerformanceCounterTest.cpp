@@ -4815,9 +4815,9 @@ TEST_P(VulkanPerformanceCounterTest, ReadOnlyDepthBufferLayout)
     expected.readOnlyDepthStencilRenderPasses = getPerfCounters().readOnlyDepthStencilRenderPasses;
 
     // Expect rpCount+1, depth(Clears+0, Loads+0, LoadNones+0, Stores+1, StoreNones+0),
-    // stencil(Clears+0, Loads+0, LoadNones+1, Stores+0, StoreNones+1)
+    // stencil(Clears+0, Loads+0, LoadNones+0, Stores+0, StoreNones+0)
     setExpectedCountersForDepthOps(getPerfCounters(), 1, 0, 0, 0, 1, 0, &expected);
-    setExpectedCountersForStencilOps(getPerfCounters(), 0, 0, 1, 0, 1, &expected);
+    setExpectedCountersForStencilOps(getPerfCounters(), 0, 0, 0, 0, 0, &expected);
 
     GLTexture depthTexture;
     glBindTexture(GL_TEXTURE_2D, depthTexture);
@@ -4853,9 +4853,9 @@ TEST_P(VulkanPerformanceCounterTest, ReadOnlyDepthBufferLayout)
     // Create a color+depth FBO and use depth as read only. This should use read only layout
     ++expected.readOnlyDepthStencilRenderPasses;
     // Expect rpCount+1, depth(Clears+0, Loads+1, LoadNones+0, Stores+0, StoreNones+1),
-    // stencil(Clears+0, Loads+0, LoadNones+1, Stores+0, StoreNones+1)
+    // stencil(Clears+0, Loads+0, LoadNones+0, Stores+0, StoreNones+0)
     setExpectedCountersForDepthOps(getPerfCounters(), 1, 0, 1, 0, 0, 1, &expected);
-    setExpectedCountersForStencilOps(getPerfCounters(), 0, 0, 1, 0, 1, &expected);
+    setExpectedCountersForStencilOps(getPerfCounters(), 0, 0, 0, 0, 0, &expected);
 
     GLTexture colorTexture;
     glBindTexture(GL_TEXTURE_2D, colorTexture);

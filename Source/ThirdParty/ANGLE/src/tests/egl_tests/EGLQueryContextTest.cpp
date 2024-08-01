@@ -95,6 +95,24 @@ TEST_P(EGLQueryContextTest, GetClientVersion)
     EXPECT_GE(clientVersion, GetParam().majorVersion);
 }
 
+// Tests querying the client major version from the context.
+TEST_P(EGLQueryContextTest, GetClientMajorVersion)
+{
+    EGLint majorVersion;
+    EXPECT_TRUE(eglQueryContext(mDisplay, mContext, EGL_CONTEXT_MAJOR_VERSION, &majorVersion) !=
+                EGL_FALSE);
+    EXPECT_GE(majorVersion, GetParam().majorVersion);
+}
+
+// Tests querying the client minor version from the context.
+TEST_P(EGLQueryContextTest, GetClientMinorVersion)
+{
+    EGLint minorVersion;
+    EXPECT_TRUE(eglQueryContext(mDisplay, mContext, EGL_CONTEXT_MINOR_VERSION, &minorVersion) !=
+                EGL_FALSE);
+    EXPECT_GE(minorVersion, GetParam().minorVersion);
+}
+
 TEST_P(EGLQueryContextTest, GetRenderBufferNoSurface)
 {
     EGLint renderBuffer;

@@ -20,6 +20,11 @@ namespace angle
 namespace vk
 {
 
+// The minimum version of Vulkan that ANGLE requires.  If an instance or device below this version
+// is encountered, initialization will skip the device if possible, or if no other suitable device
+// is available then initialization will fail.
+constexpr uint32_t kMinimumVulkanAPIVersion = VK_API_VERSION_1_1;
+
 enum class ICD
 {
     Default,
@@ -36,16 +41,16 @@ struct SimpleDisplayWindow
 class [[nodiscard]] ScopedVkLoaderEnvironment : angle::NonCopyable
 {
   public:
-    ScopedVkLoaderEnvironment(bool enableValidationLayers, vk::ICD icd);
+    ScopedVkLoaderEnvironment(bool enableDebugLayers, vk::ICD icd);
     ~ScopedVkLoaderEnvironment();
 
-    bool canEnableValidationLayers() const { return mEnableValidationLayers; }
+    bool canEnableDebugLayers() const { return mEnableDebugLayers; }
     vk::ICD getEnabledICD() const { return mICD; }
 
   private:
     bool setICDEnvironment(const char *icd);
 
-    bool mEnableValidationLayers;
+    bool mEnableDebugLayers;
     vk::ICD mICD;
     bool mChangedCWD;
     Optional<std::string> mPreviousCWD;

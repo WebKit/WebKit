@@ -49,13 +49,6 @@ class ContextDevice final : public WrappedObject<id<MTLDevice>>, angle::NonCopya
         MTLRenderPipelineDescriptor *descriptor,
         __autoreleasing NSError **error) const;
 
-    AutoObjCPtr<id<MTLLibrary>> newLibraryWithSource(NSString *source,
-                                                     MTLCompileOptions *options,
-                                                     __autoreleasing NSError **error) const;
-
-    AutoObjCPtr<id<MTLLibrary>> newLibraryWithData(dispatch_data_t data,
-                                                   __autoreleasing NSError **error) const;
-
     AutoObjCPtr<id<MTLDepthStencilState>> newDepthStencilStateWithDescriptor(
         MTLDepthStencilDescriptor *descriptor) const;
 

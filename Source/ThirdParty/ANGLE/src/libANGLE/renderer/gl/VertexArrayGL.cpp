@@ -489,6 +489,15 @@ angle::Result VertexArrayGL::streamAttributes(
                     // The workaround is only for latest Mac Intel so glMapBufferRange should be
                     // supported
                     ASSERT(CanMapBufferForRead(functions));
+                    // Validate if there is OOB access of the input buffer.
+                    angle::CheckedNumeric<GLint64> inputRequiredSize;
+                    inputRequiredSize = copySize;
+                    inputRequiredSize += static_cast<unsigned int>(binding.getOffset());
+                    ANGLE_CHECK(GetImplAs<ContextGL>(context),
+                                inputRequiredSize.IsValid() && inputRequiredSize.ValueOrDie() <=
+                                                                   bindingBufferPointer->getSize(),
+                                "Failed to map buffer range of the attribute buffer.",
+                                GL_OUT_OF_MEMORY);
                     uint8_t *inputBufferPointer = MapBufferRangeWithFallback(
                         functions, GL_ARRAY_BUFFER, binding.getOffset(), copySize, GL_MAP_READ_BIT);
                     ASSERT(inputBufferPointer);

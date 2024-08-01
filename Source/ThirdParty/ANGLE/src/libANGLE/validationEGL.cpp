@@ -5771,7 +5771,8 @@ bool ValidateQueryContext(const ValidationContext *val,
     {
         case EGL_CONFIG_ID:
         case EGL_CONTEXT_CLIENT_TYPE:
-        case EGL_CONTEXT_CLIENT_VERSION:
+        case EGL_CONTEXT_MAJOR_VERSION:
+        case EGL_CONTEXT_MINOR_VERSION:
         case EGL_RENDER_BUFFER:
             break;
 

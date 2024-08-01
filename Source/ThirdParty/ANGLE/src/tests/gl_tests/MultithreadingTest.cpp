@@ -910,12 +910,15 @@ void MultithreadingTestES3::textureThreadFunction(bool useDraw)
 
     mSecondThreadSyncObj = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
     ASSERT_GL_NO_ERROR();
-    // Force the fence to be created
-    glFlush();
 
     // Draw something
     while (!mExitThread)
     {
+        if (mMainThreadSyncObj == nullptr)
+        {
+            angle::Sleep(0);
+        }
+
         std::lock_guard<decltype(mMutex)> lock(mMutex);
 
         if (mMainThreadSyncObj != nullptr)
@@ -930,6 +933,8 @@ void MultithreadingTestES3::textureThreadFunction(bool useDraw)
         {
             continue;
         }
+
+        mDrawGreen = !mDrawGreen;
 
         glBindTexture(GL_TEXTURE_2D, mTexture2D);
         ASSERT_GL_NO_ERROR();
@@ -966,10 +971,6 @@ void MultithreadingTestES3::textureThreadFunction(bool useDraw)
         ASSERT_EQ(mSecondThreadSyncObj.load(), nullptr);
         mSecondThreadSyncObj = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
         ASSERT_GL_NO_ERROR();
-        // Force the fence to be created
-        glFlush();
-
-        mDrawGreen = !mDrawGreen;
     }
 
     // Clean up
@@ -983,8 +984,6 @@ void MultithreadingTestES3::textureThreadFunction(bool useDraw)
 // Test fence sync with multiple threads drawing
 void MultithreadingTestES3::mainThreadDraw(bool useDraw)
 {
-    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
-
     EGLWindow *window  = getEGLWindow();
     EGLDisplay dpy     = window->getDisplay();
     EGLContext ctx     = window->getContext();
@@ -1001,8 +1000,15 @@ void MultithreadingTestES3::mainThreadDraw(bool useDraw)
 
     for (int iterations = 0; iterations < kNumIterations; ++iterations)
     {
+        GLColor expectedDrawColor;
+
         for (int draws = 0; draws < kNumDraws;)
         {
+            if (mSecondThreadSyncObj == nullptr)
+            {
+                angle::Sleep(0);
+            }
+
             std::lock_guard<decltype(mMutex)> lock(mMutex);
 
             if (mSecondThreadSyncObj != nullptr)
@@ -1020,38 +1026,29 @@ void MultithreadingTestES3::mainThreadDraw(bool useDraw)
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             glBindTexture(GL_TEXTURE_2D, mTexture2D);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glUseProgram(texProgram);
             drawQuad(texProgram, essl1_shaders::PositionAttrib(), 0.0f);
+
+            // mDrawGreen will be changed by the background thread past mMainThreadSyncObj
+            // as it will start drawing the next color to fbo. This shouldn't affect
+            // pixels of the current frame so save the expected color before unblocking the thread
+            expectedDrawColor = mDrawGreen ? GLColor::green : GLColor::red;
 
             ASSERT_EQ(mMainThreadSyncObj.load(), nullptr);
             mMainThreadSyncObj = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
             ASSERT_GL_NO_ERROR();
-            // Force the fence to be created
-            glFlush();
 
             ++draws;
         }
 
         ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, expectedDrawColor);
+
         swapBuffers();
     }
 
     mExitThread = true;
     textureThread.join();
-
-    ASSERT_GL_NO_ERROR();
-    GLColor color;
-    if (mDrawGreen)
-    {
-        color = GLColor::green;
-    }
-    else
-    {
-        color = GLColor::red;
-    }
-    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, color);
 
     // Re-make current the test window's context for teardown.
     EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, ctx));
@@ -1086,8 +1083,7 @@ void MultithreadingTestES3::mainThreadDraw(bool useDraw)
 // application.
 TEST_P(MultithreadingTestES3, MultithreadFenceDraw)
 {
-    // http://anglebug.com/40096752
-    ANGLE_SKIP_TEST_IF(IsLinux() && IsVulkan() && (IsIntel() || isSwiftshader()));
+    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
 
     // Have the secondary thread use glDrawArrays()
     mainThreadDraw(true);
@@ -1097,11 +1093,7 @@ TEST_P(MultithreadingTestES3, MultithreadFenceDraw)
 // glDrawArrays.
 TEST_P(MultithreadingTestES3, MultithreadFenceTexImage)
 {
-    // http://anglebug.com/40096752
-    ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsVulkan());
-
-    // http://anglebug.com/42263977
-    ANGLE_SKIP_TEST_IF(IsLinux() && isSwiftshader());
+    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
 
     // Have the secondary thread use glTexImage2D()
     mainThreadDraw(false);
@@ -3448,8 +3440,8 @@ void main()
 
         for (uint32_t x = 0; x < 8; ++x)
         {
-            // The compressed data is gibberish, just ensure it's not black.
-            EXPECT_PIXEL_COLOR_NEAR(x * w / 8, h / 4, GLColor(128, 128, 128, 128), 127);
+            // The compressed data is gibberish, just ensure it's not all black.
+            EXPECT_PIXEL_NE(x * w / 8, h / 4, 0, 0, 0, 0);
         }
         ASSERT_GL_NO_ERROR();
     };

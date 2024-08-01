@@ -368,6 +368,13 @@ std::shared_ptr<ShaderTranslateTask> ShaderD3D::compile(const gl::Context *conte
         new ShaderTranslateTaskD3D(mCompiledState, std::move(sourcePath)));
 }
 
+std::shared_ptr<ShaderTranslateTask> ShaderD3D::load(const gl::Context *context,
+                                                     gl::BinaryInputStream *stream)
+{
+    UNREACHABLE();
+    return std::shared_ptr<ShaderTranslateTask>(new ShaderTranslateTask);
+}
+
 bool CompiledShaderStateD3D::hasUniform(const std::string &name) const
 {
     return uniformRegisterMap.find(name) != uniformRegisterMap.end();

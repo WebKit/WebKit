@@ -446,10 +446,10 @@ class GPUPowerStats():
         # CH7(T=16086645)[S1M_VDD_MIF], 196512891
 
         id_map = {
-            'S2S_VDD_G3D': 'gpu',
-            'S2M_VDD_CPUCL2': 'big_cpu',
-            'S3M_VDD_CPUCL1': 'mid_cpu',
-            'S4M_VDD_CPUCL0': 'little_cpu',
+            r'\bS\d+S_VDD_G3D\b': 'gpu',
+            r'\bS\d+M_VDD_CPUCL2\b': 'big_cpu',
+            r'\bS\d+M_VDD_CPUCL1\b': 'mid_cpu',
+            r'\bS\d+M_VDD_CPUCL0\b': 'little_cpu',
         }
 
         for m in id_map.values():
@@ -457,7 +457,7 @@ class GPUPowerStats():
 
         for line in energy_value_result.stdout.splitlines():
             for mid, m in id_map.items():
-                if mid in line:
+                if re.search(mid, line):
                     value = int(line.split()[1])
                     logging.debug('Power metric %s (%s): %d', mid, m, value)
                     assert self.power[m] == 0, 'Duplicate power metric: %s (%s)' % (mid, m)

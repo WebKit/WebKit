@@ -262,7 +262,6 @@
 		31CDFF9B2491849800486F27 /* PruneEmptyCases.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D61B22826B9300B5BA2C /* PruneEmptyCases.h */; };
 		31CDFF9F2491849800486F27 /* RecordConstantPrecision.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D62022826B9400B5BA2C /* RecordConstantPrecision.h */; };
 		31CDFFA52491849800486F27 /* DeferGlobalInitializers.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D62D22826B9800B5BA2C /* DeferGlobalInitializers.h */; };
-		31CDFFA62491849800486F27 /* RewriteCubeMapSamplersAs2DArray.h in Headers */ = {isa = PBXBuildFile; fileRef = A30306F12305F5EE002DA972 /* RewriteCubeMapSamplersAs2DArray.h */; };
 		31CDFFAB2491849800486F27 /* RemoveUnreferencedVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D64B22826B9F00B5BA2C /* RemoveUnreferencedVariables.h */; };
 		31CDFFAC2491849800486F27 /* SimplifyLoopConditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D60522826B9000B5BA2C /* SimplifyLoopConditions.h */; };
 		31CDFFAD249184A100486F27 /* ReplaceShadowingVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307022305F636002DA972 /* ReplaceShadowingVariables.h */; };
@@ -493,6 +492,9 @@
 		7BD5BEE929F139F2003F2E53 /* process.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BD5BEE729F139F1003F2E53 /* process.cpp */; };
 		7BDC2D8129E9951900DF385C /* SourcesEAGL2-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BDC2D8029E9951900DF385C /* SourcesEAGL2-mm.mm */; };
 		7BDC8C7D2993A4E000C2BDDF /* mtl_library_cache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BDC8C7A2993A4CB00C2BDDF /* mtl_library_cache.mm */; };
+		7BF99CBD2C5A368800CEEA21 /* PruneInfiniteLoops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BF99CBC2C5A368800CEEA21 /* PruneInfiniteLoops.cpp */; };
+		7BF99CBE2C5A368800CEEA21 /* PruneInfiniteLoops.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BF99CBB2C5A368800CEEA21 /* PruneInfiniteLoops.h */; };
+		7BF99CC02C5A36BD00CEEA21 /* hash_containers.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BF99CBF2C5A36BD00CEEA21 /* hash_containers.h */; };
 		7BFF6EDD29E9908A009E1A57 /* SourcesEAGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B037F8F29E98CF100D23E74 /* SourcesEAGL.cpp */; };
 		7BFF6EDE29E9908A009E1A57 /* SourcesCGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B037F9329E98CF100D23E74 /* SourcesCGL.cpp */; };
 		7BFF6EDF29E9908A009E1A57 /* SourcesPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B037F9429E98CF200D23E74 /* SourcesPlatform.cpp */; };
@@ -570,7 +572,6 @@
 		DF83E26E2639FD33000825EF /* SplitSequenceOperator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D63422826B9900B5BA2C /* SplitSequenceOperator.cpp */; };
 		DF83E26F2639FD33000825EF /* RemoveArrayLengthMethod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D5FA22826B8F00B5BA2C /* RemoveArrayLengthMethod.cpp */; };
 		DF83E2702639FD33000825EF /* PruneEmptyCases.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D64A22826B9E00B5BA2C /* PruneEmptyCases.cpp */; };
-		DF83E2732639FD33000825EF /* RewriteCubeMapSamplersAs2DArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30306F52305F5EE002DA972 /* RewriteCubeMapSamplersAs2DArray.cpp */; };
 		DF83E2762639FD33000825EF /* RemoveUnreferencedVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D5F522826B8E00B5BA2C /* RemoveUnreferencedVariables.cpp */; };
 		DF83E27A2639FD33000825EF /* RecordConstantPrecision.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D64622826B9D00B5BA2C /* RecordConstantPrecision.cpp */; };
 		DF83E27B2639FD33000825EF /* RemoveDynamicIndexing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D60922826B9000B5BA2C /* RemoveDynamicIndexing.cpp */; };
@@ -1598,6 +1599,9 @@
 		7BDC8C792993A4B000C2BDDF /* FixedQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FixedQueue.h; sourceTree = "<group>"; };
 		7BDC8C7A2993A4CB00C2BDDF /* mtl_library_cache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mtl_library_cache.mm; sourceTree = "<group>"; };
 		7BDC8C7B2993A4CB00C2BDDF /* mtl_library_cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mtl_library_cache.h; sourceTree = "<group>"; };
+		7BF99CBB2C5A368800CEEA21 /* PruneInfiniteLoops.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PruneInfiniteLoops.h; sourceTree = "<group>"; };
+		7BF99CBC2C5A368800CEEA21 /* PruneInfiniteLoops.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PruneInfiniteLoops.cpp; sourceTree = "<group>"; };
+		7BF99CBF2C5A36BD00CEEA21 /* hash_containers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hash_containers.h; sourceTree = "<group>"; };
 		A264F89316974DED006FAA5A /* DiagnosticsBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DiagnosticsBase.cpp; sourceTree = "<group>"; };
 		A264F89416974DED006FAA5A /* DiagnosticsBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagnosticsBase.h; sourceTree = "<group>"; };
 		A264F89516974DED006FAA5A /* DirectiveHandlerBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectiveHandlerBase.cpp; sourceTree = "<group>"; };
@@ -1624,11 +1628,9 @@
 		A30306EE2305F5ED002DA972 /* RewriteAtomicCounters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RewriteAtomicCounters.h; sourceTree = "<group>"; };
 		A30306EF2305F5EE002DA972 /* EmulateMultiDrawShaderBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmulateMultiDrawShaderBuiltins.h; sourceTree = "<group>"; };
 		A30306F02305F5EE002DA972 /* RewriteDfdy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RewriteDfdy.h; sourceTree = "<group>"; };
-		A30306F12305F5EE002DA972 /* RewriteCubeMapSamplersAs2DArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RewriteCubeMapSamplersAs2DArray.h; sourceTree = "<group>"; };
 		A30306F22305F5EE002DA972 /* RewriteDfdy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RewriteDfdy.cpp; sourceTree = "<group>"; };
 		A30306F32305F5EE002DA972 /* RewriteAtomicCounters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RewriteAtomicCounters.cpp; sourceTree = "<group>"; };
 		A30306F42305F5EE002DA972 /* EmulateMultiDrawShaderBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmulateMultiDrawShaderBuiltins.cpp; sourceTree = "<group>"; };
-		A30306F52305F5EE002DA972 /* RewriteCubeMapSamplersAs2DArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RewriteCubeMapSamplersAs2DArray.cpp; sourceTree = "<group>"; };
 		A30306FE2305F636002DA972 /* FindFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FindFunction.cpp; sourceTree = "<group>"; };
 		A30306FF2305F636002DA972 /* FindFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindFunction.h; sourceTree = "<group>"; };
 		A30307002305F636002DA972 /* ReplaceShadowingVariables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReplaceShadowingVariables.cpp; sourceTree = "<group>"; };
@@ -2658,6 +2660,8 @@
 				7BB2CF202B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.h */,
 				5C55D64A22826B9E00B5BA2C /* PruneEmptyCases.cpp */,
 				5C55D61B22826B9300B5BA2C /* PruneEmptyCases.h */,
+				7BF99CBC2C5A368800CEEA21 /* PruneInfiniteLoops.cpp */,
+				7BF99CBB2C5A368800CEEA21 /* PruneInfiniteLoops.h */,
 				5C55D61222826B9100B5BA2C /* PruneNoOps.cpp */,
 				5C55D64922826B9E00B5BA2C /* PruneNoOps.h */,
 				5C55D64622826B9D00B5BA2C /* RecordConstantPrecision.cpp */,
@@ -2680,8 +2684,6 @@
 				FF194FD727432CC2006A97A3 /* RewriteArrayOfArrayOfOpaqueUniforms.h */,
 				A30306F32305F5EE002DA972 /* RewriteAtomicCounters.cpp */,
 				A30306EE2305F5ED002DA972 /* RewriteAtomicCounters.h */,
-				A30306F52305F5EE002DA972 /* RewriteCubeMapSamplersAs2DArray.cpp */,
-				A30306F12305F5EE002DA972 /* RewriteCubeMapSamplersAs2DArray.h */,
 				A30306F22305F5EE002DA972 /* RewriteDfdy.cpp */,
 				A30306F02305F5EE002DA972 /* RewriteDfdy.h */,
 				7B7608322898326C000012A1 /* RewritePixelLocalStorage.cpp */,
@@ -2741,6 +2743,7 @@
 				7BDC8C792993A4B000C2BDDF /* FixedQueue.h */,
 				5C55D7172282747600B5BA2C /* FixedVector.h */,
 				5CCD81891DBFEA10006066B8 /* Float16ToFloat32.cpp */,
+				7BF99CBF2C5A36BD00CEEA21 /* hash_containers.h */,
 				5C55D71B2282747700B5BA2C /* hash_utils.h */,
 				7BBC97D62BDB11C800628E74 /* log_utils.h */,
 				5CC7D46119102620000B8C1F /* mathutil.cpp */,
@@ -3482,6 +3485,7 @@
 				31CDFFC6249184A700486F27 /* glslang_tab_autogen.h in Headers */,
 				7B359DB72A7CEDAA0016DC59 /* GuardFragDepthWrite.h in Headers */,
 				31CD007A249184FD00486F27 /* HandleAllocator.h in Headers */,
+				7BF99CC02C5A36BD00CEEA21 /* hash_containers.h in Headers */,
 				31CDFF622491848C00486F27 /* hash_utils.h in Headers */,
 				31CDFFF6249184A700486F27 /* HashNames.h in Headers */,
 				31CD0057249184FC00486F27 /* histogram_macros.h in Headers */,
@@ -3580,6 +3584,7 @@
 				31CD0041249184F400486F27 /* ProgramPipelineImpl.h in Headers */,
 				FF582E1726544FC4006DA5B8 /* ProvokingVertexHelper.h in Headers */,
 				31CDFF9B2491849800486F27 /* PruneEmptyCases.h in Headers */,
+				7BF99CBE2C5A368800CEEA21 /* PruneInfiniteLoops.h in Headers */,
 				31CDFF862491849800486F27 /* PruneNoOps.h in Headers */,
 				31CDFFD6249184A700486F27 /* QualifierTypes.h in Headers */,
 				31CD00A5249184FD00486F27 /* Query.h in Headers */,
@@ -3618,7 +3623,6 @@
 				FF194FE527432CC3006A97A3 /* RewriteArrayOfArrayOfOpaqueUniforms.h in Headers */,
 				31CDFF7C2491849700486F27 /* RewriteAtomicCounters.h in Headers */,
 				7B359DA32A7CEDAA0016DC59 /* RewriteCaseDeclarations.h in Headers */,
-				31CDFFA62491849800486F27 /* RewriteCubeMapSamplersAs2DArray.h in Headers */,
 				31CDFF982491849800486F27 /* RewriteDfdy.h in Headers */,
 				7B359DA82A7CEDAA0016DC59 /* RewriteInterpolants.h in Headers */,
 				7B359D9F2A7CEDAA0016DC59 /* RewriteOutArgs.h in Headers */,
@@ -4115,6 +4119,7 @@
 				DF83E2392639FCD5000825EF /* ProgramPrelude.cpp in Sources */,
 				FF582E1626544FC4006DA5B8 /* ProvokingVertexHelper.mm in Sources */,
 				DF83E2702639FD33000825EF /* PruneEmptyCases.cpp in Sources */,
+				7BF99CBD2C5A368800CEEA21 /* PruneInfiniteLoops.cpp in Sources */,
 				DF83E27C2639FD33000825EF /* PruneNoOps.cpp in Sources */,
 				DF83E2A02639FD83000825EF /* QualifierTypes.cpp in Sources */,
 				DF83E3302639FE18000825EF /* Query.cpp in Sources */,
@@ -4149,7 +4154,6 @@
 				FF194FE127432CC3006A97A3 /* RewriteArrayOfArrayOfOpaqueUniforms.cpp in Sources */,
 				DF83E25F2639FD33000825EF /* RewriteAtomicCounters.cpp in Sources */,
 				7B359DA02A7CEDAA0016DC59 /* RewriteCaseDeclarations.cpp in Sources */,
-				DF83E2732639FD33000825EF /* RewriteCubeMapSamplersAs2DArray.cpp in Sources */,
 				DF83E2632639FD33000825EF /* RewriteDfdy.cpp in Sources */,
 				7B359DB02A7CEDAA0016DC59 /* RewriteInterpolants.cpp in Sources */,
 				7B359DB42A7CEDAA0016DC59 /* RewriteOutArgs.cpp in Sources */,

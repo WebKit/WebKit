@@ -179,6 +179,7 @@ bool TranslatorESSL::translate(TIntermBlock *root,
     if (getShaderType() == GL_FRAGMENT_SHADER)
     {
         EmitEarlyFragmentTestsGLSL(*this, sink);
+        WriteFragmentShaderLayoutQualifiers(sink, getAdvancedBlendEquations());
     }
 
     if (getShaderType() == GL_COMPUTE_SHADER)

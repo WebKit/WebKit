@@ -62,16 +62,16 @@ class SurfaceImpl : public FramebufferAttachmentObjectImpl
                                      EGLint x,
                                      EGLint y,
                                      EGLint width,
-                                     EGLint height) = 0;
+                                     EGLint height);
     virtual egl::Error setPresentationTime(EGLnsecsANDROID time);
-    virtual egl::Error querySurfacePointerANGLE(EGLint attribute, void **value)               = 0;
+    virtual egl::Error querySurfacePointerANGLE(EGLint attribute, void **value);
     virtual egl::Error bindTexImage(const gl::Context *context,
                                     gl::Texture *texture,
-                                    EGLint buffer)                                            = 0;
-    virtual egl::Error releaseTexImage(const gl::Context *context, EGLint buffer)             = 0;
-    virtual egl::Error getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc) = 0;
-    virtual egl::Error getMscRate(EGLint *numerator, EGLint *denominator)                     = 0;
-    virtual void setSwapInterval(EGLint interval)                                             = 0;
+                                    EGLint buffer)                                = 0;
+    virtual egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) = 0;
+    virtual egl::Error getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc);
+    virtual egl::Error getMscRate(EGLint *numerator, EGLint *denominator);
+    virtual void setSwapInterval(EGLint interval) = 0;
     virtual void setFixedWidth(EGLint width);
     virtual void setFixedHeight(EGLint height);
 
@@ -88,8 +88,8 @@ class SurfaceImpl : public FramebufferAttachmentObjectImpl
     virtual egl::Error getUserWidth(const egl::Display *display, EGLint *value) const;
     virtual egl::Error getUserHeight(const egl::Display *display, EGLint *value) const;
 
-    virtual EGLint isPostSubBufferSupported() const = 0;
-    virtual EGLint getSwapBehavior() const          = 0;
+    virtual EGLint isPostSubBufferSupported() const;
+    virtual EGLint getSwapBehavior() const = 0;
 
     virtual egl::Error attachToFramebuffer(const gl::Context *context,
                                            gl::Framebuffer *framebuffer)   = 0;

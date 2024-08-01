@@ -12,6 +12,7 @@
 
 #include <string.h>
 
+#include "common/hash_containers.h"
 #include "common/system_utils.h"
 #include "platform/Feature.h"
 #include "platform/PlatformMethods.h"

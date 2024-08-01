@@ -2974,7 +2974,7 @@ void GL_APIENTRY GL_ShaderBinary(GLsizei count,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_ShaderSource(GLuint shader,

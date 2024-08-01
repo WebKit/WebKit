@@ -15,6 +15,7 @@
 
 #include "libANGLE/renderer/DisplayImpl.h"
 #include "libANGLE/renderer/ShareGroupImpl.h"
+#include "libANGLE/renderer/wgpu/wgpu_format_utils.h"
 
 namespace rx
 {
@@ -90,9 +91,17 @@ class DisplayWgpu : public DisplayImpl
 
     void populateFeatureList(angle::FeatureList *features) override {}
 
+    wgpu::Adapter &getAdapter() { return mAdapter; }
     wgpu::Device &getDevice() { return mDevice; }
     wgpu::Queue &getQueue() { return mQueue; }
-    wgpu::Instance getInstance() const;
+    wgpu::Instance &getInstance() { return mInstance; }
+
+    std::map<EGLNativeWindowType, wgpu::Surface> &getSurfaceCache() { return mSurfaceCache; }
+
+    const webgpu::Format &getFormat(GLenum internalFormat) const
+    {
+        return mFormatTable[internalFormat];
+    }
 
   private:
     void generateExtensions(egl::DisplayExtensions *outExtensions) const override;
@@ -100,9 +109,19 @@ class DisplayWgpu : public DisplayImpl
 
     egl::Error createWgpuDevice();
 
-    std::unique_ptr<dawn::native::Instance> mInstance;
+    wgpu::Adapter mAdapter;
+    wgpu::Instance mInstance;
     wgpu::Device mDevice;
     wgpu::Queue mQueue;
+
+    // http://anglebug.com/342213844
+    // Dawn currently holds references to the internal swap chains for an unknown amount of time
+    // after destroying a surface and can fail to create a new swap chain for the same window.
+    // ANGLE tests re-create EGL surfaces for the same window each test. As a workaround, cache the
+    // wgpu::Surface created for each window for the lifetime of the display.
+    std::map<EGLNativeWindowType, wgpu::Surface> mSurfaceCache;
+
+    webgpu::FormatTable mFormatTable;
 };
 
 }  // namespace rx

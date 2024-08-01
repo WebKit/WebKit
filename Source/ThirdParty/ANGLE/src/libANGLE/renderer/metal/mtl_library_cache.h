@@ -29,7 +29,7 @@ class LibraryCache : angle::NonCopyable
                                     bool disableFastMath,
                                     bool usesInvariance);
     AutoObjCPtr<id<MTLLibrary>> getOrCompileShaderLibrary(
-        ContextMtl *context,
+        DisplayMtl *displayMtl,
         const std::shared_ptr<const std::string> &source,
         const std::map<std::string, std::string> &macros,
         bool disableFastMath,

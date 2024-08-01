@@ -250,16 +250,6 @@ void InitArgumentBufferEncoder(mtl::Context *context,
     }
 }
 
-bool DisableFastMathForShaderCompilation(mtl::Context *context)
-{
-    return context->getDisplay()->getFeatures().intelDisableFastMath.enabled;
-}
-
-bool UsesInvariance(const mtl::TranslatedShaderInfo *translatedMslInfo)
-{
-    return translatedMslInfo->hasInvariant;
-}
-
 template <typename T>
 void UpdateDefaultUniformBlockWithElementSize(GLsizei count,
                                               uint32_t arrayIndex,
@@ -351,7 +341,7 @@ class StdMTLBLockLayoutEncoderFactory : public gl::CustomBlockLayoutEncoderFacto
 };
 }  // anonymous namespace
 
-angle::Result CreateMslShaderLib(ContextMtl *context,
+angle::Result CreateMslShaderLib(mtl::Context *context,
                                  gl::InfoLog &infoLog,
                                  mtl::TranslatedShaderInfo *translatedMslInfo,
                                  const std::map<std::string, std::string> &substitutionMacros)
@@ -362,11 +352,13 @@ angle::Result CreateMslShaderLib(ContextMtl *context,
 
         // Convert to actual binary shader
         mtl::AutoObjCPtr<NSError *> err = nil;
-        bool disableFastMath            = DisableFastMathForShaderCompilation(context);
-        bool usesInvariance             = UsesInvariance(translatedMslInfo);
+        const bool disableFastMath =
+            context->getDisplay()->getFeatures().intelDisableFastMath.enabled ||
+            translatedMslInfo->hasIsnanOrIsinf;
+        const bool usesInvariance       = translatedMslInfo->hasInvariant;
         translatedMslInfo->metalLibrary = libraryCache.getOrCompileShaderLibrary(
-            context, translatedMslInfo->metalShaderSource, substitutionMacros, disableFastMath,
-            usesInvariance, &err);
+            context->getDisplay(), translatedMslInfo->metalShaderSource, substitutionMacros,
+            disableFastMath, usesInvariance, &err);
         if (err && !translatedMslInfo->metalLibrary)
         {
             std::ostringstream ss;
@@ -1319,7 +1311,10 @@ angle::Result ProgramExecutableMtl::legalizeUniformBufferOffsets(ContextMtl *con
         size_t srcOffset     = std::min<size_t>(bufferBinding.getOffset(), bufferMtl->size());
         ASSERT(mUniformBlockConversions.find(block.name) != mUniformBlockConversions.end());
         const UBOConversionInfo &conversionInfo = mUniformBlockConversions.at(block.name);
-        if (conversionInfo.needsConversion())
+
+        size_t spaceAvailable  = bufferMtl->size() - srcOffset;
+        bool haveSpaceInBuffer = conversionInfo.metalSize() <= spaceAvailable;
+        if (conversionInfo.needsConversion() || !haveSpaceInBuffer)
         {
 
             UniformConversionBufferMtl *conversion =

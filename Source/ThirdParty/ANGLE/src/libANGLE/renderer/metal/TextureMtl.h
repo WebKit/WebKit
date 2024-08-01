@@ -165,7 +165,7 @@ class TextureMtl : public TextureImpl
     // of images through glTexImage*/glCopyTex* calls. During draw calls, the caller must make sure
     // the actual texture is created by calling this method to transfer the stored images data
     // to the actual texture.
-    angle::Result ensureTextureCreated(const gl::Context *context);
+    angle::Result ensureNativeStorageCreated(const gl::Context *context);
 
     angle::Result bindToShader(const gl::Context *context,
                                mtl::RenderCommandEncoder *cmdEncoder,
@@ -185,9 +185,8 @@ class TextureMtl : public TextureImpl
     const mtl::Format &getFormat() const { return mFormat; }
 
   private:
-    void releaseTexture(bool releaseImages);
-    void releaseTexture(bool releaseImages, bool releaseTextureObjectsOnly);
-    angle::Result createNativeTexture(const gl::Context *context,
+    void deallocateNativeStorage(bool keepImages, bool keepSamplerStateAndFormat = false);
+    angle::Result createNativeStorage(const gl::Context *context,
                                       gl::TextureType type,
                                       GLuint mips,
                                       const gl::Extents &size);

@@ -15,10 +15,10 @@ declare_args() {
   angle_capture_replay_composite_file_id = 1
 }
 
-_test_names_file = "test_names_${angle_capture_replay_composite_file_id}.json"
-
 if (angle_build_capture_replay_tests) {
   assert(angle_with_capture_by_default, "Must build with capture by default.")
+
+  _test_names_file = "test_names_${angle_capture_replay_composite_file_id}.json"
 
   angle_trace_libs("angle_capture_replay_libs") {
     _tracedir = angle_capture_replay_test_trace_dir
@@ -61,7 +61,6 @@ angle_executable("capture_replay_tests") {
   _data_path = rebase_path(_trace_folder_relative_path, root_out_dir)
   defines = [
     "ANGLE_CAPTURE_REPLAY_TEST_DATA_DIR=\"${_data_path}\"",
-    "ANGLE_CAPTURE_REPLAY_TEST_NAMES_PATH=\"${_data_path}/${_test_names_file}\"",
     "ANGLE_REPLAY_EXPORT=",
   ]
   include_dirs = [ "." ]

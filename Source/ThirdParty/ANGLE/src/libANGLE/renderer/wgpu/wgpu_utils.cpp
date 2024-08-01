@@ -15,12 +15,6 @@ namespace rx
 
 namespace webgpu
 {
-
-ContextWgpu *GetImpl(const gl::Context *context)
-{
-    return GetImplAs<ContextWgpu>(context);
-}
-
 DisplayWgpu *GetDisplay(const gl::Context *context)
 {
     ContextWgpu *contextWgpu = GetImpl(context);
@@ -104,6 +98,20 @@ void EnsureCapsInitialized(const wgpu::Device &device, gl::Caps *nativeCaps)
 
     nativeCaps->maxTextureBufferSize = rx::LimitToInt(limitsWgpu.limits.maxBufferSize);
 }
+
+bool IsStripPrimitiveTopology(wgpu::PrimitiveTopology topology)
+{
+    switch (topology)
+    {
+        case wgpu::PrimitiveTopology::LineStrip:
+        case wgpu::PrimitiveTopology::TriangleStrip:
+            return true;
+
+        default:
+            return false;
+    }
+}
+
 }  // namespace webgpu
 
 namespace wgpu_gl
@@ -138,6 +146,95 @@ wgpu::Extent3D getExtent3D(const gl::Extents &glExtent)
     wgpuExtent.height             = glExtent.height;
     wgpuExtent.depthOrArrayLayers = glExtent.depth;
     return wgpuExtent;
+}
+
+wgpu::PrimitiveTopology GetPrimitiveTopology(gl::PrimitiveMode mode)
+{
+    switch (mode)
+    {
+        case gl::PrimitiveMode::Points:
+            return wgpu::PrimitiveTopology::PointList;
+        case gl::PrimitiveMode::Lines:
+            return wgpu::PrimitiveTopology::LineList;
+        case gl::PrimitiveMode::LineLoop:
+            UNIMPLEMENTED();
+            return wgpu::PrimitiveTopology::LineList;  // Emulated
+        case gl::PrimitiveMode::LineStrip:
+            return wgpu::PrimitiveTopology::LineStrip;
+        case gl::PrimitiveMode::Triangles:
+            return wgpu::PrimitiveTopology::TriangleList;
+        case gl::PrimitiveMode::TriangleStrip:
+            return wgpu::PrimitiveTopology::TriangleStrip;
+        case gl::PrimitiveMode::TriangleFan:
+            UNIMPLEMENTED();
+            return wgpu::PrimitiveTopology::TriangleList;  // Emulated
+        default:
+            UNREACHABLE();
+            return wgpu::PrimitiveTopology::Undefined;
+    }
+}
+
+wgpu::IndexFormat GetIndexFormat(gl::DrawElementsType drawElementsType)
+{
+    switch (drawElementsType)
+    {
+        case gl::DrawElementsType::UnsignedByte:
+            UNIMPLEMENTED();
+            return wgpu::IndexFormat::Uint16;  // Emulated
+        case gl::DrawElementsType::UnsignedShort:
+            return wgpu::IndexFormat::Uint16;
+        case gl::DrawElementsType::UnsignedInt:
+            return wgpu::IndexFormat::Uint32;
+
+        default:
+            UNREACHABLE();
+            return wgpu::IndexFormat::Undefined;
+    }
+}
+
+wgpu::FrontFace GetFrontFace(GLenum frontFace)
+{
+    switch (frontFace)
+    {
+        case GL_CW:
+            return wgpu::FrontFace::CW;
+        case GL_CCW:
+            return wgpu::FrontFace::CCW;
+
+        default:
+            UNREACHABLE();
+            return wgpu::FrontFace::Undefined;
+    }
+}
+
+wgpu::CullMode GetCullMode(gl::CullFaceMode mode, bool cullFaceEnabled)
+{
+    if (!cullFaceEnabled)
+    {
+        return wgpu::CullMode::None;
+    }
+
+    switch (mode)
+    {
+        case gl::CullFaceMode::Front:
+            return wgpu::CullMode::Front;
+        case gl::CullFaceMode::Back:
+            return wgpu::CullMode::Back;
+        case gl::CullFaceMode::FrontAndBack:
+            UNIMPLEMENTED();
+            return wgpu::CullMode::None;  // Emulated
+        default:
+            UNREACHABLE();
+            return wgpu::CullMode::None;
+    }
+}
+
+wgpu::ColorWriteMask GetColorWriteMask(bool r, bool g, bool b, bool a)
+{
+    return (r ? wgpu::ColorWriteMask::Red : wgpu::ColorWriteMask::None) |
+           (g ? wgpu::ColorWriteMask::Green : wgpu::ColorWriteMask::None) |
+           (b ? wgpu::ColorWriteMask::Blue : wgpu::ColorWriteMask::None) |
+           (a ? wgpu::ColorWriteMask::Alpha : wgpu::ColorWriteMask::None);
 }
 
 wgpu::TextureDimension getWgpuTextureDimension(gl::TextureType glTextureType)

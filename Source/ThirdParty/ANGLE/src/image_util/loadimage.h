@@ -457,6 +457,17 @@ void LoadRGB10A2ToRGB10X2(const ImageLoadContext &context,
                           size_t outputRowPitch,
                           size_t outputDepthPitch);
 
+void LoadBGR10A2ToRGB10A2(const ImageLoadContext &context,
+                          size_t width,
+                          size_t height,
+                          size_t depth,
+                          const uint8_t *input,
+                          size_t inputRowPitch,
+                          size_t inputDepthPitch,
+                          uint8_t *output,
+                          size_t outputRowPitch,
+                          size_t outputDepthPitch);
+
 void LoadRGB16FToRGB9E5(const ImageLoadContext &context,
                         size_t width,
                         size_t height,

@@ -14,12 +14,6 @@
 
 341780527 VULKAN PIXEL4ORXL : KHR-GLES3.clip_distance.coverage = FAIL
 
-// Test bug - fails in ASAN
-42265173 VULKAN ANDROID : KHR-GLES3.packed_pixels.varied_rectangle.* = SKIP
-42265173 VULKAN NVIDIA : KHR-GLES3.packed_pixels.varied_rectangle.r8_snorm = SKIP
-42265173 VULKAN NVIDIA : KHR-GLES3.packed_pixels.varied_rectangle.rg8_snorm = SKIP
-42265173 VULKAN NVIDIA : KHR-GLES3.packed_pixels.varied_rectangle.rgba8_snorm = SKIP
-
 42264508 LINUX VULKAN NVIDIA : KHR-GLES3.shaders.indexing.tmp_array.vertexid = FAIL
 
 341780527 LINUX VULKAN NVIDIA : KHR-GLES3.clip_distance.coverage = FAIL
@@ -91,8 +85,6 @@
 // New failures with latest dEQP roll (2020-04-28)
 42263198 SWIFTSHADER : KHR-GLES3.core.nearest_edge.offset_left = FAIL
 
-42265173 UBSAN : KHR-GLES3.core.internalformat.texture2d.*half_float* = SKIP
-42265173 UBSAN : KHR-GLES3.packed_pixels.* = SKIP
 42265173 UBSAN : KHR-GLES3.copy_tex_image_conversions.required.* = SKIP
 
 // Samsung Galaxy S23
@@ -117,3 +109,13 @@ b/332383430 PIXEL6 VULKAN : KHR-GLES3.texture_lod_bias.texture_lod_bias_all = FA
 
 // Flaky timeout
 332383430 SWIFTSHADER : KHR-GLES3.texture_lod_bias.texture_lod_bias_all = TIMEOUT
+
+353358652 SWIFTSHADER : KHR-GLES3.cull_distance.functional_test_item_*_primitive_mode_points_max_culldist_* = FAIL
+353358652 VULKAN : KHR-GLES3.cull_distance.functional_test_item_5_primitive_mode_lines_max_culldist* = FAIL
+353358652 VULKAN : KHR-GLES3.cull_distance.functional_test_item_5_primitive_mode_points_max_culldist* = FAIL
+353358652 VULKAN : KHR-GLES3.cull_distance.functional_test_item_5_primitive_mode_triangles_max_culldist* = FAIL
+353358652 VULKAN : KHR-GLES3.cull_distance.functional_test_item_6_primitive_mode_lines_max_culldist* = FAIL
+353358652 VULKAN : KHR-GLES3.cull_distance.functional_test_item_6_primitive_mode_points_max_culldist* = FAIL
+353358652 VULKAN : KHR-GLES3.cull_distance.functional_test_item_6_primitive_mode_triangles_max_culldist* = FAIL
+
+355292302 : KHR-GLES3.api.coverage* = FAIL

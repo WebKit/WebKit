@@ -58,7 +58,10 @@ void WriteCapability(Blob *blob, spv::Capability capability);
 void WriteTypeVoid(Blob *blob, IdResult idResult1);
 void WriteTypeBool(Blob *blob, IdResult idResult1);
 void WriteTypeInt(Blob *blob, IdResult idResult1, LiteralInteger width, LiteralInteger signedness);
-void WriteTypeFloat(Blob *blob, IdResult idResult1, LiteralInteger width);
+void WriteTypeFloat(Blob *blob,
+                    IdResult idResult1,
+                    LiteralInteger width,
+                    const spv::FPEncoding *floatingPointEncoding);
 void WriteTypeVector(Blob *blob,
                      IdResult idResult1,
                      IdRef componentType,

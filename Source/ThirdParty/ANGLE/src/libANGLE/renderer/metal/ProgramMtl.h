@@ -59,12 +59,12 @@ class ProgramMtl : public ProgramImpl
 
     friend class LinkTaskMtl;
 
-    angle::Result linkJobImpl(const gl::Context *context,
+    angle::Result linkJobImpl(mtl::Context *context,
                               const gl::ProgramLinkedResources &resources,
                               std::vector<std::shared_ptr<LinkSubTask>> *subTasksOut);
 
     void linkResources(const gl::ProgramLinkedResources &resources);
-    angle::Result compileMslShaderLibs(const gl::Context *context,
+    angle::Result compileMslShaderLibs(mtl::Context *context,
                                        std::vector<std::shared_ptr<LinkSubTask>> *subTasksOut);
 
     gl::ShaderMap<SharedCompiledShaderStateMtl> mAttachedShaders;

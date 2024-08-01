@@ -279,7 +279,10 @@ void ParseTypeInt(const uint32_t *_instruction,
     *width      = LiteralInteger(_instruction[_o++]);
     *signedness = LiteralInteger(_instruction[_o++]);
 }
-void ParseTypeFloat(const uint32_t *_instruction, IdResult *idResult1, LiteralInteger *width)
+void ParseTypeFloat(const uint32_t *_instruction,
+                    IdResult *idResult1,
+                    LiteralInteger *width,
+                    spv::FPEncoding *floatingPointEncoding)
 {
     spv::Op _op;
     uint32_t _length;
@@ -288,6 +291,10 @@ void ParseTypeFloat(const uint32_t *_instruction, IdResult *idResult1, LiteralIn
     uint32_t _o = 1;
     *idResult1  = IdResult(_instruction[_o++]);
     *width      = LiteralInteger(_instruction[_o++]);
+    if (floatingPointEncoding && _o < _length)
+    {
+        *floatingPointEncoding = spv::FPEncoding(_instruction[_o++]);
+    }
 }
 void ParseTypeVector(const uint32_t *_instruction,
                      IdResult *idResult1,

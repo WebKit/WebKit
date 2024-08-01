@@ -4358,66 +4358,74 @@ TEST_P(MultisampledRenderToTextureWithAdvancedBlendTest, RenderbufferClearThenDr
     drawTestCommon(true, InitMethod::Clear);
 }
 
-ANGLE_INSTANTIATE_TEST_COMBINE_1(
-    MultisampledRenderToTextureTest,
-    PrintToStringParamName,
-    testing::Bool(),
-    ANGLE_ALL_TEST_PLATFORMS_ES2,
-    ANGLE_ALL_TEST_PLATFORMS_ES3,
-    ANGLE_ALL_TEST_PLATFORMS_ES31,
-    ES3_VULKAN()
-        .disable(Feature::SupportsExtendedDynamicState)
-        .disable(Feature::SupportsExtendedDynamicState2),
-    ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
-    ES3_VULKAN().disable(Feature::SupportsSPIRV14),
-    ES3_VULKAN_SWIFTSHADER().enable(Feature::EnableMultisampledRenderToTexture),
-    ES3_VULKAN_SWIFTSHADER()
-        .enable(Feature::EnableMultisampledRenderToTexture)
-        .enable(Feature::AsyncCommandQueue));
+ANGLE_INSTANTIATE_TEST_COMBINE_1(MultisampledRenderToTextureTest,
+                                 PrintToStringParamName,
+                                 testing::Bool(),
+                                 ANGLE_ALL_TEST_PLATFORMS_ES2,
+                                 ANGLE_ALL_TEST_PLATFORMS_ES3,
+                                 ANGLE_ALL_TEST_PLATFORMS_ES31,
+                                 ES3_VULKAN()
+                                     .disable(Feature::SupportsExtendedDynamicState)
+                                     .disable(Feature::SupportsExtendedDynamicState2),
+                                 ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+                                 ES3_VULKAN().disable(Feature::SupportsSPIRV14),
+                                 ES3_VULKAN_SWIFTSHADER()
+                                     .enable(Feature::EnableMultisampledRenderToTexture)
+                                     .disable(Feature::PreferDynamicRendering),
+                                 ES3_VULKAN_SWIFTSHADER()
+                                     .enable(Feature::EnableMultisampledRenderToTexture)
+                                     .disable(Feature::PreferDynamicRendering)
+                                     .enable(Feature::AsyncCommandQueue));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultisampledRenderToTextureES3Test);
-ANGLE_INSTANTIATE_TEST_COMBINE_1(
-    MultisampledRenderToTextureES3Test,
-    PrintToStringParamName,
-    testing::Bool(),
-    ANGLE_ALL_TEST_PLATFORMS_ES3,
-    ANGLE_ALL_TEST_PLATFORMS_ES31,
-    ES3_VULKAN()
-        .disable(Feature::SupportsExtendedDynamicState)
-        .disable(Feature::SupportsExtendedDynamicState2),
-    ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
-    ES3_VULKAN().disable(Feature::SupportsSPIRV14),
-    ES3_VULKAN_SWIFTSHADER().enable(Feature::EnableMultisampledRenderToTexture),
-    ES3_VULKAN_SWIFTSHADER()
-        .enable(Feature::EnableMultisampledRenderToTexture)
-        .enable(Feature::AsyncCommandQueue));
+ANGLE_INSTANTIATE_TEST_COMBINE_1(MultisampledRenderToTextureES3Test,
+                                 PrintToStringParamName,
+                                 testing::Bool(),
+                                 ANGLE_ALL_TEST_PLATFORMS_ES3,
+                                 ANGLE_ALL_TEST_PLATFORMS_ES31,
+                                 ES3_VULKAN()
+                                     .disable(Feature::SupportsExtendedDynamicState)
+                                     .disable(Feature::SupportsExtendedDynamicState2),
+                                 ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+                                 ES3_VULKAN().disable(Feature::SupportsSPIRV14),
+                                 ES3_VULKAN_SWIFTSHADER()
+                                     .enable(Feature::EnableMultisampledRenderToTexture)
+                                     .disable(Feature::PreferDynamicRendering),
+                                 ES3_VULKAN_SWIFTSHADER()
+                                     .enable(Feature::EnableMultisampledRenderToTexture)
+                                     .disable(Feature::PreferDynamicRendering)
+                                     .enable(Feature::AsyncCommandQueue));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultisampledRenderToTextureES31Test);
-ANGLE_INSTANTIATE_TEST_COMBINE_1(
-    MultisampledRenderToTextureES31Test,
-    PrintToStringParamName,
-    testing::Bool(),
-    ANGLE_ALL_TEST_PLATFORMS_ES31,
-    ES31_VULKAN()
-        .disable(Feature::SupportsExtendedDynamicState)
-        .disable(Feature::SupportsExtendedDynamicState2),
-    ES31_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
-    ES31_VULKAN().disable(Feature::SupportsSPIRV14),
-    ES31_VULKAN_SWIFTSHADER().enable(Feature::EnableMultisampledRenderToTexture),
-    ES31_VULKAN_SWIFTSHADER()
-        .enable(Feature::EnableMultisampledRenderToTexture)
-        .enable(Feature::AsyncCommandQueue));
+ANGLE_INSTANTIATE_TEST_COMBINE_1(MultisampledRenderToTextureES31Test,
+                                 PrintToStringParamName,
+                                 testing::Bool(),
+                                 ANGLE_ALL_TEST_PLATFORMS_ES31,
+                                 ES31_VULKAN()
+                                     .disable(Feature::SupportsExtendedDynamicState)
+                                     .disable(Feature::SupportsExtendedDynamicState2),
+                                 ES31_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+                                 ES31_VULKAN().disable(Feature::SupportsSPIRV14),
+                                 ES31_VULKAN_SWIFTSHADER()
+                                     .enable(Feature::EnableMultisampledRenderToTexture)
+                                     .disable(Feature::PreferDynamicRendering),
+                                 ES31_VULKAN_SWIFTSHADER()
+                                     .enable(Feature::EnableMultisampledRenderToTexture)
+                                     .disable(Feature::PreferDynamicRendering)
+                                     .enable(Feature::AsyncCommandQueue));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultisampledRenderToTextureWithAdvancedBlendTest);
-ANGLE_INSTANTIATE_TEST_COMBINE_1(
-    MultisampledRenderToTextureWithAdvancedBlendTest,
-    PrintToStringParamName,
-    testing::Bool(),
-    ANGLE_ALL_TEST_PLATFORMS_ES3,
-    ANGLE_ALL_TEST_PLATFORMS_ES31,
-    ES3_VULKAN().disable(Feature::SupportsSPIRV14),
-    ES3_VULKAN_SWIFTSHADER().enable(Feature::EnableMultisampledRenderToTexture),
-    ES3_VULKAN_SWIFTSHADER()
-        .enable(Feature::EnableMultisampledRenderToTexture)
-        .enable(Feature::AsyncCommandQueue));
+ANGLE_INSTANTIATE_TEST_COMBINE_1(MultisampledRenderToTextureWithAdvancedBlendTest,
+                                 PrintToStringParamName,
+                                 testing::Bool(),
+                                 ANGLE_ALL_TEST_PLATFORMS_ES3,
+                                 ANGLE_ALL_TEST_PLATFORMS_ES31,
+                                 ES3_VULKAN().disable(Feature::SupportsSPIRV14),
+                                 ES3_VULKAN_SWIFTSHADER()
+                                     .enable(Feature::EnableMultisampledRenderToTexture)
+                                     .disable(Feature::PreferDynamicRendering),
+                                 ES3_VULKAN_SWIFTSHADER()
+                                     .enable(Feature::EnableMultisampledRenderToTexture)
+                                     .disable(Feature::PreferDynamicRendering)
+                                     .enable(Feature::AsyncCommandQueue));
 }  // namespace

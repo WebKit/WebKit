@@ -26,7 +26,6 @@
 #include "compiler/translator/tree_ops/RemoveInactiveInterfaceVariables.h"
 #include "compiler/translator/tree_ops/RewriteArrayOfArrayOfOpaqueUniforms.h"
 #include "compiler/translator/tree_ops/RewriteAtomicCounters.h"
-#include "compiler/translator/tree_ops/RewriteCubeMapSamplersAs2DArray.h"
 #include "compiler/translator/tree_ops/RewriteDfdy.h"
 #include "compiler/translator/tree_ops/RewriteStructSamplers.h"
 #include "compiler/translator/tree_ops/SeparateStructFromUniformDeclarations.h"
@@ -818,9 +817,8 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
     UnsupportedFunctionArgsBitSet args{UnsupportedFunctionArgs::StructContainingSamplers,
                                        UnsupportedFunctionArgs::ArrayOfArrayOfSamplerOrImage,
                                        UnsupportedFunctionArgs::AtomicCounter,
-                                       UnsupportedFunctionArgs::SamplerCubeEmulation,
                                        UnsupportedFunctionArgs::Image};
-    if (!MonomorphizeUnsupportedFunctions(this, root, &getSymbolTable(), compileOptions, args))
+    if (!MonomorphizeUnsupportedFunctions(this, root, &getSymbolTable(), args))
     {
         return false;
     }
@@ -847,17 +845,6 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
     if (!RewriteArrayOfArrayOfOpaqueUniforms(this, root, &getSymbolTable()))
     {
         return false;
-    }
-
-    // Rewrite samplerCubes as sampler2DArrays.  This must be done after rewriting struct samplers
-    // as it doesn't expect that.
-    if (compileOptions.emulateSeamfulCubeMapSampling)
-    {
-        if (!RewriteCubeMapSamplersAs2DArray(this, root, &getSymbolTable(),
-                                             getShaderType() == GL_FRAGMENT_SHADER))
-        {
-            return false;
-        }
     }
 
     if (!FlagSamplersForTexelFetch(this, root, &getSymbolTable(), &mUniforms))

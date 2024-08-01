@@ -262,6 +262,8 @@ IGNORED_INCLUDES = {
     b'my_custom_min.h',
     # https://bugs.chromium.org/p/gn/issues/detail?id=311
     b'spirv/unified1/spirv.hpp11',
+    # Behind #if defined(QAT_COMPRESSION_ENABLED) in third_party/zlib/deflate.c
+    b'contrib/qat/deflate_qat.h',
 }
 
 IGNORED_INCLUDE_PREFIXES = {

@@ -4252,7 +4252,7 @@ TEST_P(FramebufferTest_ES31, ClearWithColorMasksRGB5A1)
     glDisable(GL_DITHER);
 
     // Attach textures with internal format GL_RGB5_A1 to each framebuffer color attachment
-    GLTexture textures[maxDrawBuffers];
+    std::vector<GLTexture> textures(maxDrawBuffers);
     std::vector<unsigned char> pixelData(kSize * kSize * 4, 255);
     for (int i = 0; i < maxDrawBuffers; ++i)
     {
@@ -7866,6 +7866,72 @@ void main()
     EXPECT_PIXEL_RECT_EQ(0, 0, kWidth * 2, kHeight * 2, GLColor::yellow);
     ASSERT_GL_NO_ERROR();
 }
+
+// Test that invalidation tracking works when glBlitFramebuffer resolves into an invalidated
+// framebuffer.
+TEST_P(FramebufferTest_ES31, InvalidateThenResolve)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+    GLint colorLoc = glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorLoc, -1);
+
+    constexpr int kWidth  = 36;
+    constexpr int kHeight = 20;
+    glViewport(0, 0, kWidth, kHeight);
+
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+
+    GLFramebuffer FBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Initialize the single-sampled image but discard it right away.
+    glUniform4fv(colorLoc, 1, GLColor::green.toNormalizedVector().data());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    const GLenum discard[] = {GL_COLOR_ATTACHMENT0};
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, discard);
+
+    GLTexture msaaColor;
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaaColor);
+    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kWidth, kHeight, false);
+
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
+                           msaaColor, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Draw into the MSAA image
+    glUniform4fv(colorLoc, 1, GLColor::red.toNormalizedVector().data());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+
+    // Resolve into the single-sampled image
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FBO);
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // At this point, the contents of the single-sampled image must be considered well-defined (not
+    // invalidated).  Blend transparent blue in it for verification.
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    glUniform4f(colorLoc, 0, 0, 1, 0);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+
+    // Verify resolve results
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, FBO);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::magenta);
+    ASSERT_GL_NO_ERROR();
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND(AddMockTextureNoRenderTargetTest,
                                ES2_D3D9().enable(Feature::AddMockTextureNoRenderTarget),
                                ES2_D3D11().enable(Feature::AddMockTextureNoRenderTarget));

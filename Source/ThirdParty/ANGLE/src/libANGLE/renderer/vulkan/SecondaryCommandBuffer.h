@@ -804,8 +804,11 @@ class SecondaryCommandBuffer final : angle::NonCopyable
         ContextVk *contextVk,
         const Framebuffer &framebuffer,
         const RenderPassDesc &renderPassDesc,
-        VkCommandBufferInheritanceInfo *inheritanceInfoOut)
+        VkCommandBufferInheritanceInfo *inheritanceInfoOut,
+        VkCommandBufferInheritanceRenderingInfo *renderingInfoOut,
+        gl::DrawBuffersArray<VkFormat> *colorFormatStorageOut)
     {
+        *inheritanceInfoOut = {};
         return angle::Result::Continue;
     }
 

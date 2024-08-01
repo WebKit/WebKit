@@ -47,7 +47,7 @@ typedef pthread_key_t TLSIndex;
 #    error Unsupported platform.
 #endif
 
-#if defined(ANGLE_PLATFORM_ANDROID)
+#if defined(ANGLE_USE_ANDROID_TLS_SLOT)
 
 // TLS_SLOT_OPENGL and TLS_SLOT_OPENGL_API aren't used by bionic itself, but allow the graphics code
 // to access TLS directly rather than using the pthread API.
@@ -122,7 +122,7 @@ constexpr int kAndroidOpenGLTlsSlot = -5;
 #        error unsupported architecture
 #    endif
 
-#endif  // ANGLE_PLATFORM_ANDROID
+#endif  // ANGLE_USE_ANDROID_TLS_SLOT
 
 using PthreadKeyDestructor = void (*)(void *);
 TLSIndex CreateTLSIndex(PthreadKeyDestructor destructor);

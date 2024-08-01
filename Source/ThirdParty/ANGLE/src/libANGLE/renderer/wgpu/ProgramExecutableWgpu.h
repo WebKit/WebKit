@@ -11,16 +11,17 @@
 
 #include "libANGLE/ProgramExecutable.h"
 #include "libANGLE/renderer/ProgramExecutableImpl.h"
+#include "libANGLE/renderer/wgpu/wgpu_pipeline_state.h"
 
 #include <dawn/webgpu_cpp.h>
 
+namespace rx
+{
 struct TranslatedWGPUShaderModule
 {
     wgpu::ShaderModule module;
 };
 
-namespace rx
-{
 class ProgramExecutableWgpu : public ProgramExecutableImpl
 {
   public:
@@ -84,8 +85,13 @@ class ProgramExecutableWgpu : public ProgramExecutableImpl
 
     TranslatedWGPUShaderModule &getShaderModule(gl::ShaderType type);
 
+    angle::Result getRenderPipeline(ContextWgpu *context,
+                                    const webgpu::RenderPipelineDesc &desc,
+                                    wgpu::RenderPipeline *pipelineOut);
+
   private:
     gl::ShaderMap<TranslatedWGPUShaderModule> mShaderModules;
+    webgpu::PipelineCache mPipelineCache;
 };
 
 }  // namespace rx

@@ -770,17 +770,13 @@
 
 42265213 TSAN : dEQP-GLES3.functional.shaders.builtin_functions.precision.refract.* = SKIP
 
-42265173 UBSAN : dEQP-GLES3.functional.shaders.random.comparison_ops.fragment.* = SKIP
-42265173 UBSAN : dEQP-GLES3.functional.shaders.operator.binary_operator.* = SKIP
-42265173 UBSAN : dEQP-GLES3.functional.shaders.precision.int.* = SKIP
-42265173 UBSAN : dEQP-GLES3.functional.shaders.builtin_functions.* = SKIP
-42265173 UBSAN : dEQP-GLES3.functional.shaders.texture_functions.* = SKIP
+42265173 UBSAN : dEQP-GLES3.functional.shaders.operator.binary_operator.sub*.highp_uvec*_uint* = SKIP
+42265173 UBSAN : dEQP-GLES3.functional.shaders.builtin_functions.common.abs.i* = SKIP
 42265173 UBSAN : dEQP-GLES3.functional.shaders.random.* = SKIP
 42265173 UBSAN : dEQP-GLES3.functional.draw.random.* = SKIP
-42265173 UBSAN : dEQP-GLES3.functional.draw_buffers_indexed.random.*  = SKIP
-42265173 UBSAN : dEQP-GLES3.functional.fragment_ops.interaction.basic_shader.* = SKIP
-42265173 UBSAN : dEQP-GLES3.functional.fragment_out.* = SKIP
-42265173 UBSAN : dEQP-GLES3.functional.vertex_arrays.single_attribute.* = SKIP
+42265173 UBSAN : dEQP-GLES3.functional.fragment_out.*.int.* = SKIP
+42265173 UBSAN : dEQP-GLES3.functional.fragment_out.random.* = SKIP
+42265173 UBSAN : dEQP-GLES3.functional.vertex_arrays.single_attribute.strides.int2_10_10_10.user_ptr_stride17_components4_quads* = SKIP
 
 // Samsung Galaxy S22 (Xclipse)
 b/267953710 GALAXYS22 VULKAN : dEQP-GLES3.functional.draw.random.* = SKIP

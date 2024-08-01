@@ -38,7 +38,26 @@ class CapturedTest : public ANGLETest<>
 
         mFBOs.resize(2, 0);
         glGenFramebuffers(2, mFBOs.data());
+    }
 
+    void testTearDown() override
+    {
+        // Not reached during capture as we hit the End frame earlier.
+
+        if (!mFBOs.empty())
+        {
+            glDeleteFramebuffers(static_cast<GLsizei>(mFBOs.size()), mFBOs.data());
+        }
+    }
+
+    std::vector<GLuint> mFBOs;
+};
+
+class MultiFrame
+{
+  public:
+    void testSetUp()
+    {
         constexpr char kInactiveVS[] = R"(precision highp float;
 void main(void) {
    gl_Position = vec4(0.5, 0.5, 0.5, 1.0);
@@ -147,15 +166,8 @@ void main()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     }
 
-    void testTearDown() override
+    void testTearDown()
     {
-        // Not reached during capture as we hit the End frame earlier.
-
-        if (!mFBOs.empty())
-        {
-            glDeleteFramebuffers(static_cast<GLsizei>(mFBOs.size()), mFBOs.data());
-        }
-
         glDeleteTextures(1, &textureNeverBound);
         glDeleteTextures(1, &textureBoundBeforeCapture);
         glDeleteProgram(inactiveProgram);
@@ -192,8 +204,6 @@ void main()
     void frame3();
     void frame4();
 
-    std::vector<GLuint> mFBOs;
-
     // For testing deferred compile/link
     GLuint lateLinkTestVertShaderInactive;
     GLuint lateLinkTestFragShaderInactive;
@@ -215,7 +225,7 @@ void main()
     GLint mSamplerLoc;
 };
 
-void CapturedTest::frame1()
+void MultiFrame::frame1()
 {
     glClearColor(0.25f, 0.5f, 0.5f, 0.5f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -250,7 +260,7 @@ void CapturedTest::frame1()
     glDeleteVertexArrays(1, &mTexCoordLoc);
 }
 
-void CapturedTest::frame2()
+void MultiFrame::frame2()
 {
     // Draw using texture created and bound during capture
 
@@ -331,7 +341,7 @@ void CapturedTest::frame2()
     glDeleteShader(activeDuringFragShader);
 }
 
-void CapturedTest::frame3()
+void MultiFrame::frame3()
 {
     // TODO: using local objects (with RAII helpers) here that create and destroy objects within the
     // frame. Maybe move some of this to test Setup.
@@ -366,7 +376,7 @@ void main(void) {
     // Note: RAII destructors called here causing additional GL calls.
 }
 
-void CapturedTest::frame4()
+void MultiFrame::frame4()
 {
     GLuint positionLoc;
     GLuint texCoordLoc;
@@ -432,23 +442,31 @@ void CapturedTest::frame4()
     GLuint nonExistentTexture = 777;
     glBindTexture(nonExistentBinding, nonExistentTexture);
     glGetError();
+
+    // Another unrelated change
+    // Bind a PIXEL_UNPACK_BUFFER buffer so it gets cleared in Reset
+    GLBuffer unpackBuffer;
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, unpackBuffer);
 }
 
 // Test captured by capture_tests.py
 TEST_P(CapturedTest, MultiFrame)
 {
+    MultiFrame multiFrame;
+    multiFrame.testSetUp();
+
     // Swap before the first frame so that setup gets its own frame
     swapBuffers();
-    frame1();
+    multiFrame.frame1();
 
     swapBuffers();
-    frame2();
+    multiFrame.frame2();
 
     swapBuffers();
-    frame3();
+    multiFrame.frame3();
 
     swapBuffers();
-    frame4();
+    multiFrame.frame4();
 
     // Empty frames to reach capture end.
     for (int i = 0; i < 10; i++)
@@ -457,10 +475,119 @@ TEST_P(CapturedTest, MultiFrame)
     }
     // Note: test teardown adds an additonal swap in
     // ANGLETestBase::ANGLETestPreTearDown() when --angle-per-test-capture-label
+
+    multiFrame.testTearDown();
+}
+
+// Draw using two textures using multiple glActiveTexture calls, ensure they are correctly Reset
+TEST_P(CapturedTest, ActiveTextures)
+{
+    static constexpr char kVS[] = R"(attribute vec4 a_position;
+attribute vec2 a_texCoord;
+varying vec2 v_texCoord;
+void main()
+{
+    gl_Position = a_position;
+    v_texCoord = a_texCoord;
+})";
+
+    static constexpr char kFS[] = R"(precision mediump float;
+varying vec2 v_texCoord;
+uniform sampler2D s_texture1;
+uniform sampler2D s_texture2;
+void main()
+{
+    gl_FragColor = texture2D(s_texture1, v_texCoord) + texture2D(s_texture2, v_texCoord);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    ASSERT_GL_NO_ERROR();
+
+    glUseProgram(program);
+
+    // Set the sampler uniforms
+    GLint samplerLoc1 = glGetUniformLocation(program, "s_texture1");
+    GLint samplerLoc2 = glGetUniformLocation(program, "s_texture2");
+    glUniform1i(samplerLoc1, 0);
+    glUniform1i(samplerLoc2, 1);
+
+    // Bind the texture objects before capture begins
+    constexpr const GLsizei kSize = 4;
+
+    GLTexture redTexture;
+    GLTexture greenTexture;
+    GLTexture blueTexture;
+
+    const std::vector<GLColor> kRedData(kSize * kSize, GLColor::red);
+    const std::vector<GLColor> kGreenData(kSize * kSize, GLColor::green);
+    const std::vector<GLColor> kBlueData(kSize * kSize, GLColor::blue);
+
+    // Red texture
+    glBindTexture(GL_TEXTURE_2D, redTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kRedData.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Green texture
+    glBindTexture(GL_TEXTURE_2D, greenTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kGreenData.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Blue texture
+    glBindTexture(GL_TEXTURE_2D, blueTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kBlueData.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    ASSERT_GL_NO_ERROR();
+
+    // First run the program with red and green active
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, redTexture);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, greenTexture);
+
+    // Trigger MEC
+    swapBuffers();
+    ASSERT_GL_NO_ERROR();
+
+    // Draw and verify results
+    drawQuad(program, "a_position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_EQ(0, 0, 255, 255, 0, 255);
+
+    // Change the active textures to green and blue
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, greenTexture);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, blueTexture);
+
+    // Draw and verify results
+    drawQuad(program, "a_position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_EQ(0, 0, 0, 255, 255, 255);
+
+    // Modify the green texture to ensure we bind the right index in Reset
+    const std::vector<GLColor> kWhiteData(kSize * kSize, GLColor::white);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, greenTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kWhiteData.data());
+
+    // Empty frames to reach capture end.
+    for (int i = 0; i < 10; i++)
+    {
+        swapBuffers();
+    }
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CapturedTest);
 // Capture is only supported on the Vulkan backend
 ANGLE_INSTANTIATE_TEST(CapturedTest, ES3_VULKAN());
-
 }  // anonymous namespace

@@ -121,4 +121,17 @@ TranslatedWGPUShaderModule &ProgramExecutableWgpu::getShaderModule(gl::ShaderTyp
     return mShaderModules[type];
 }
 
+angle::Result ProgramExecutableWgpu::getRenderPipeline(ContextWgpu *context,
+                                                       const webgpu::RenderPipelineDesc &desc,
+                                                       wgpu::RenderPipeline *pipelineOut)
+{
+    gl::ShaderMap<wgpu::ShaderModule> shaders;
+    for (gl::ShaderType shaderType : gl::AllShaderTypes())
+    {
+        shaders[shaderType] = mShaderModules[shaderType].module;
+    }
+
+    return mPipelineCache.getRenderPipeline(context, desc, nullptr, shaders, pipelineOut);
+}
+
 }  // namespace rx

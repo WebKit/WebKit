@@ -346,6 +346,8 @@ struct Caps
     GLint maxTessEvaluationInputComponents  = 0;
     GLint maxTessEvaluationOutputComponents = 0;
 
+    bool primitiveRestartForPatchesSupported = false;
+
     GLuint subPixelBits = 4;
 
     // GL_EXT_blend_func_extended
@@ -764,6 +766,9 @@ struct ClientExtensions
 
     // EGL_ANGLE_platform_angle_d3d11on12
     bool platformANGLED3D11ON12 = false;
+
+    // EGL_ANGLE_platform_angle_d3d_luid
+    bool platformANGLED3DLUID = false;
 
     // EGL_ANGLE_platform_angle_opengl
     bool platformANGLEOpenGL = false;

@@ -986,6 +986,46 @@ TEST_P(CopyTexImageTestES3, CopyTexSubImageFromTexture3D)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that copying a 3D texture slice into another 3D texture slice via framebuffer works
+TEST_P(CopyTexImageTestES3, CopyTexSubImage3DFromTexture3D)
+{
+    constexpr GLsizei kTexSize = 4;
+    constexpr GLsizei kLayers  = 2;
+    std::vector<GLColor> red(kTexSize * kTexSize, GLColor::red);
+    std::vector<GLColor> green(kTexSize * kTexSize, GLColor::green);
+
+    GLTexture srcTex;
+    glBindTexture(GL_TEXTURE_3D, srcTex);
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, kTexSize, kTexSize, kLayers, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, kTexSize, kTexSize, 1, GL_RGBA, GL_UNSIGNED_BYTE,
+                    red.data());
+    glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 1, kTexSize, kTexSize, 1, GL_RGBA, GL_UNSIGNED_BYTE,
+                    green.data());
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+
+    GLTexture dstTex;
+    glBindTexture(GL_TEXTURE_3D, dstTex);
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, kTexSize, kTexSize, kLayers, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    // Copy while swapping the layers
+    glFramebufferTextureLayer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, srcTex, 0, 0);
+    glCopyTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 1, 0, 0, kTexSize, kTexSize);
+    glFramebufferTextureLayer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, srcTex, 0, 1);
+    glCopyTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, 0, 0, kTexSize, kTexSize);
+    ASSERT_GL_NO_ERROR();
+
+    glFramebufferTextureLayer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, dstTex, 0, 0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    glFramebufferTextureLayer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, dstTex, 0, 1);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
 // Test that copying from a non-zero base texture works.
 TEST_P(CopyTexImageTestES3, CopyTexSubImageFromNonZeroBase)
 {
@@ -1224,9 +1264,6 @@ TEST_P(CopyTexImageTestES3, 3DSubImageRawTextureData)
 // Test glCopyTexSubImage3D with initialized texture data that was drawn to
 TEST_P(CopyTexImageTestES3, 3DSubImageDrawTextureData)
 {
-    // TODO(anglebug.com/42262446)
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D11());
-
     GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
@@ -1271,9 +1308,6 @@ TEST_P(CopyTexImageTestES3, 3DSubImageDrawTextureData)
 // Test glCopyTexSubImage3D with mismatched texture formats
 TEST_P(CopyTexImageTestES3, 3DSubImageDrawMismatchedTextureTypes)
 {
-    // TODO(anglebug.com/42262446)
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D11());
-
     // TODO(anglebug.com/42264029)
     ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 

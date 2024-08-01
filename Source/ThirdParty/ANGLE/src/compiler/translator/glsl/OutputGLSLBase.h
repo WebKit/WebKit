@@ -141,6 +141,9 @@ void WriteTessEvaluationShaderLayoutQualifiers(TInfoSinkBase &out,
                                                sh::TLayoutTessEvaluationType inputOrdering,
                                                sh::TLayoutTessEvaluationType inputPoint);
 
+void WriteFragmentShaderLayoutQualifiers(TInfoSinkBase &out,
+                                         const AdvancedBlendEquations &advancedBlendEquations);
+
 void EmitEarlyFragmentTestsGLSL(const TCompiler &, TInfoSinkBase &sink);
 void EmitWorkGroupSizeGLSL(const TCompiler &, TInfoSinkBase &sink);
 void EmitMultiviewGLSL(const TCompiler &,

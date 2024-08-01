@@ -92,7 +92,7 @@ void GetSupportedFormatColorspaces(VkPhysicalDevice physicalDevice,
     }
 }
 
-vk::UseValidationLayers ShouldUseValidationLayers(const egl::AttributeMap &attribs)
+vk::UseDebugLayers ShouldLoadDebugLayers(const egl::AttributeMap &attribs)
 {
     EGLAttrib debugSetting =
         attribs.get(EGL_PLATFORM_ANGLE_DEBUG_LAYERS_ENABLED_ANGLE, EGL_DONT_CARE);
@@ -105,9 +105,9 @@ vk::UseValidationLayers ShouldUseValidationLayers(const egl::AttributeMap &attri
 
     const bool ifAvailable = debugSetting == EGL_DONT_CARE;
 
-    return yes && ifAvailable ? vk::UseValidationLayers::YesIfAvailable
-           : yes              ? vk::UseValidationLayers::Yes
-                              : vk::UseValidationLayers::No;
+    return yes && ifAvailable ? vk::UseDebugLayers::YesIfAvailable
+           : yes              ? vk::UseDebugLayers::Yes
+                              : vk::UseDebugLayers::No;
 }
 
 angle::vk::ICD ChooseICDFromAttribs(const egl::AttributeMap &attribs)
@@ -167,15 +167,15 @@ egl::Error DisplayVk::initialize(egl::Display *display)
     ASSERT(mRenderer != nullptr && display != nullptr);
     const egl::AttributeMap &attribs = display->getAttributeMap();
 
-    const vk::UseValidationLayers useValidationLayers = ShouldUseValidationLayers(attribs);
-    const angle::vk::ICD desiredICD                   = ChooseICDFromAttribs(attribs);
+    const vk::UseDebugLayers useDebugLayers = ShouldLoadDebugLayers(attribs);
+    const angle::vk::ICD desiredICD         = ChooseICDFromAttribs(attribs);
     const uint32_t preferredVendorId =
         static_cast<uint32_t>(attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0));
     const uint32_t preferredDeviceId =
         static_cast<uint32_t>(attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0));
 
     angle::Result result = mRenderer->initialize(
-        this, this, desiredICD, preferredVendorId, preferredDeviceId, useValidationLayers,
+        this, this, desiredICD, preferredVendorId, preferredDeviceId, useDebugLayers,
         getWSIExtension(), getWSILayer(), getWindowSystem(), mState.featureOverrides);
     ANGLE_TRY(angle::ToEGL(result, EGL_NOT_INITIALIZED));
 

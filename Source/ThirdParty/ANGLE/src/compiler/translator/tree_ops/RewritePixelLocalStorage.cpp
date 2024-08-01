@@ -970,7 +970,7 @@ bool RewritePixelLocalStorage(TCompiler *compiler,
     // instead of the function argument. This is necessary because function arguments don't carry
     // the necessary "binding" or "format" layout qualifiers.
     if (!MonomorphizeUnsupportedFunctions(
-            compiler, root, &symbolTable, compileOptions,
+            compiler, root, &symbolTable,
             UnsupportedFunctionArgsBitSet{UnsupportedFunctionArgs::PixelLocalStorage}))
     {
         return false;

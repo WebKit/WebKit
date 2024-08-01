@@ -102,6 +102,8 @@ const uint16_t CoffeeLake[] = {
     0x9BE6, 0x9BF6                                                                   // cfl_gt2
 };
 
+const uint16_t MeteorLake[] = {0x7d40, 0x7d45, 0x7d55, 0x7d60, 0x7dd5};
+
 const uint16_t IntelGen11[] = {
     // Ice Lake
     0x8A71,                                  // icl_gt0_5
@@ -239,6 +241,12 @@ bool IsCoffeeLake(uint32_t DeviceId)
 {
     return std::find(std::begin(CoffeeLake), std::end(CoffeeLake), DeviceId) !=
            std::end(CoffeeLake);
+}
+
+bool IsMeteorLake(uint32_t DeviceId)
+{
+    return std::find(std::begin(MeteorLake), std::end(MeteorLake), DeviceId) !=
+           std::end(MeteorLake);
 }
 
 bool Is9thGenIntel(uint32_t DeviceId)

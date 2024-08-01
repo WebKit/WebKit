@@ -1465,6 +1465,15 @@
             "issue": "http://anglebug.com/41493495"
         },
         {
+            "name": "wrap_switch_in_if_true",
+            "category": "Workarounds",
+            "description": [
+                "On some drivers, nested switch statements are mishandled which can be worked around ",
+                "by wrapping them in if(true)"
+            ],
+            "issue": "http://crbug.com/350528343"
+        },
+        {
             "name": "disable_depth_stencil_resolve_through_attachment",
             "category": "Workarounds",
             "description": [
@@ -1609,6 +1618,14 @@
                 "Whether dynamic rendering should be used instead of render pass objects"
             ],
             "issue": "http://anglebug.com/42267038"
+        },
+        {
+            "name": "prefer_cached_noncoherent_for_dynamic_stream_buffer_usage",
+            "category": "Features",
+            "description": [
+                "Prefer host cached + non-coherent memory for buffers with dynamic/stream usage."
+            ],
+            "issue": "https://issuetracker.google.com/347601787"
         }
     ]
 }

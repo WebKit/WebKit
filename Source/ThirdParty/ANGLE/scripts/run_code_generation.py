@@ -128,6 +128,8 @@ generators = {
         'src/libANGLE/renderer/vulkan/gen_vk_internal_shaders.py',
     'Vulkan mandatory format support table':
         'src/libANGLE/renderer/vulkan/gen_vk_mandatory_format_support_table.py',
+    'WebGPU format':
+        'src/libANGLE/renderer/wgpu/gen_wgpu_format_table.py',
 }
 
 

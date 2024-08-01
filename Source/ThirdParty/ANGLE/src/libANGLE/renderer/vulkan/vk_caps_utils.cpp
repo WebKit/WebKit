@@ -1151,6 +1151,9 @@ void Renderer::ensureCapsInitialized() const
                 maxCombinedAtomicCounterBuffers;
         }
 
+        mNativeCaps.primitiveRestartForPatchesSupported =
+            mPrimitiveTopologyListRestartFeatures.primitiveTopologyPatchListRestart == VK_TRUE;
+
         // Reserve a uniform buffer binding for each tessellation stage
         if (tessellationShaderEnabled)
         {
