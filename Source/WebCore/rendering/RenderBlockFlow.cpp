@@ -777,11 +777,8 @@ void RenderBlockFlow::layoutInFlowChildren(bool relayoutChildren, LayoutUnit& re
         return;
     }
 
-    if (childrenInline()) {
-        auto textBoxTrimmer = TextBoxTrimmer { *this, this };
-        layoutInlineChildren(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
-        return;
-    }
+    if (childrenInline())
+        return layoutInlineChildren(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
 
     {
         // With block children, there's no way to tell what the last formatted line is until after we finished laying out the subtree.
@@ -3971,6 +3968,7 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
     auto oldBorderBoxBottom = computeBorderBoxBottom();
     m_previousModernLineLayoutContentBoxLogicalHeight = { };
 
+    auto textBoxTrimmer = TextBoxTrimmer { *this, this };
     auto partialRepaintRect = layoutFormattingContextLineLayout.layout();
 
     auto newBorderBoxBottom = computeBorderBoxBottom();
