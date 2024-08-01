@@ -63,6 +63,7 @@ class StyleRuleNamespace;
 class StyleRulePage;
 class StyleRuleSupports;
 class StyleRuleViewport;
+class StyleRuleViewTransition;
 class StyleSheetContents;
 class ImmutableStyleProperties;
 class Element;
@@ -88,6 +89,7 @@ public:
         KeyframeRules,
         CounterStyleRules,
         FontFeatureValuesRules,
+        ViewTransitionRules,
         NoRules, // For parsing at-rules inside declaration lists (without nesting support)
     };
 
@@ -160,6 +162,7 @@ private:
     RefPtr<StyleRuleProperty> consumePropertyRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleScope> consumeScopeRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleStartingStyle> consumeStartingStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
+    RefPtr<StyleRuleViewTransition> consumeViewTransitionRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
 
     RefPtr<StyleRuleKeyframe> consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleBase> consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);

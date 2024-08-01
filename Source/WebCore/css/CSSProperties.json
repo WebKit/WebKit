@@ -9924,6 +9924,23 @@
                 }
             }
         },
+        "@view-transition": {
+            "navigation": {
+                "values": [
+                    "none",
+                    "auto"
+                ],
+                "codegen-properties": {
+                    "settings-flag": "crossDocumentViewTransitionsEnabled",
+                    "parser-grammar": "<<values>>",
+                    "parser-exported": true
+                },
+                 "specification": {
+                     "category": "css-view-transitions",
+                     "url": "https://www.w3.org/TR/css-view-transitions-2/#view-transition-navigation-descriptor"
+                 }
+             }
+        },
         "@property": {
             "syntax": {
                 "codegen-properties": {

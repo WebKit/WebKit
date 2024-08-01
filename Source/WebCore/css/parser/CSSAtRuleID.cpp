@@ -60,6 +60,7 @@ CSSAtRuleID cssAtRuleID(StringView name)
         { "stylistic",             CSSAtRuleStylistic },
         { "supports",              CSSAtRuleSupports },
         { "swash",                 CSSAtRuleSwash },
+        { "view-transition",       CSSAtRuleViewTransition },
     };
     static constexpr SortedArrayMap cssAtRules { mappings };
     return cssAtRules.get(name, CSSAtRuleInvalid);

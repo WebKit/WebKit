@@ -37,6 +37,7 @@ namespace WebCore {
 
 class CSSSelector;
 class StyleSheetContents;
+class StyleRuleViewTransition;
 
 namespace MQ {
 class MediaQueryEvaluator;
@@ -78,6 +79,8 @@ public:
 
     void addRule(const StyleRule&, unsigned selectorIndex, unsigned selectorListIndex);
     void addPageRule(StyleRulePage&);
+    void setViewTransitionRule(StyleRuleViewTransition&);
+    RefPtr<StyleRuleViewTransition> viewTransitionRule() const;
 
     void addToRuleSet(const AtomString& key, AtomRuleMap&, const RuleData&);
     void shrinkToFit();
@@ -203,6 +206,7 @@ private:
     RuleDataVector m_rootElementRules;
     RuleDataVector m_universalRules;
     Vector<StyleRulePage*> m_pageRules;
+    RefPtr<StyleRuleViewTransition> m_viewTransitionRule;
     RuleFeatureSet m_features;
     Vector<DynamicMediaQueryRules> m_dynamicMediaQueryRules;
     HashMap<Vector<size_t>, Ref<const RuleSet>> m_mediaQueryInvalidationRuleSetCache;

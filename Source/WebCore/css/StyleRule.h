@@ -78,6 +78,7 @@ public:
     bool isPropertyRule() const { return type() == StyleRuleType::Property; }
     bool isScopeRule() const { return type() == StyleRuleType::Scope; }
     bool isStartingStyleRule() const { return type() == StyleRuleType::StartingStyle; }
+    bool isViewTransitionRule() const { return type() == StyleRuleType::ViewTransition; }
 
     Ref<StyleRuleBase> copy() const;
 

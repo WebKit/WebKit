@@ -44,6 +44,7 @@
 #include "CSSStartingStyleRule.h"
 #include "CSSStyleRule.h"
 #include "CSSSupportsRule.h"
+#include "CSSViewTransitionRule.h"
 #include "JSCSSContainerRule.h"
 #include "JSCSSCounterStyleRule.h"
 #include "JSCSSFontFaceRule.h"
@@ -62,6 +63,7 @@
 #include "JSCSSStartingStyleRule.h"
 #include "JSCSSStyleRule.h"
 #include "JSCSSSupportsRule.h"
+#include "JSCSSViewTransitionRule.h"
 #include "JSNode.h"
 #include "JSStyleSheetCustom.h"
 #include "WebCoreOpaqueRootInlines.h"
@@ -119,6 +121,8 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
         return createWrapper<CSSScopeRule>(globalObject, WTFMove(rule));
     case StyleRuleType::StartingStyle:
         return createWrapper<CSSStartingStyleRule>(globalObject, WTFMove(rule));
+    case StyleRuleType::ViewTransition:
+        return createWrapper<CSSViewTransitionRule>(globalObject, WTFMove(rule));
     case StyleRuleType::Unknown:
     case StyleRuleType::Charset:
     case StyleRuleType::Margin:

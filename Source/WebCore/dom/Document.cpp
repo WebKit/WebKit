@@ -39,6 +39,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"
+#include "CSSViewTransitionRule.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedFontLoadRequest.h"
 #include "CachedFrame.h"
@@ -8065,6 +8066,18 @@ void Document::dispatchPagehideEvent(PageshowEventPersistence persisted)
         return;
     m_lastPageStatus = PageStatus::Hidden;
     dispatchWindowEvent(PageTransitionEvent::create(eventNames().pagehideEvent, persisted == PageshowEventPersistence::Persisted), this);
+}
+
+// https://www.w3.org/TR/css-view-transitions-2/#vt-rule-algo
+bool Document::resolveViewTransitionRule()
+{
+    if (visibilityState() == VisibilityState::Hidden)
+        return false;
+
+    auto rule = styleScope().resolver().viewTransitionRule();
+    if (rule)
+        return rule->computedNavigation() == ViewTransitionNavigation::Auto;
+    return false;
 }
 
 void Document::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&& eventInit)

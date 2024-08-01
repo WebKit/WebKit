@@ -1834,6 +1834,20 @@ CoreMathMLEnabled:
     WebCore:
       default: false
 
+CrossDocumentViewTransitionsEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "Cross document view-transitions"
+  humanReadableDescription: "Enable support for view-transitions cross-document"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CrossOriginEmbedderPolicyEnabled:
   type: bool
   status: stable

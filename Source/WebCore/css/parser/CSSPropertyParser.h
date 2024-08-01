@@ -56,6 +56,7 @@ public:
     static bool isValidCustomPropertyValueForSyntax(const CSSCustomPropertySyntax&, CSSParserTokenRange, const CSSParserContext&);
 
     static RefPtr<CSSValue> parseCounterStyleDescriptor(CSSPropertyID, CSSParserTokenRange&, const CSSParserContext&);
+    static RefPtr<CSSValue> parseViewTransitionDescriptor(CSSPropertyID, CSSParserTokenRange&, const CSSParserContext&);
 
 private:
     CSSPropertyParser(const CSSParserTokenRange&, const CSSParserContext&, Vector<CSSProperty, 256>*, bool consumeWhitespace = true);
@@ -86,6 +87,9 @@ private:
 
     // @property descriptors.
     bool parsePropertyDescriptor(CSSPropertyID);
+
+    // @view-transition descriptors.
+    bool parseViewTransitionDescriptor(CSSPropertyID);
 
     void addProperty(CSSPropertyID longhand, CSSPropertyID shorthand, RefPtr<CSSValue>&&, bool important, bool implicit = false);
     void addExpandedProperty(CSSPropertyID shorthand, RefPtr<CSSValue>&&, bool important, bool implicit = false);

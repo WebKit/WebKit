@@ -220,6 +220,8 @@ bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, con
         parseSuccess = parser.parseCounterStyleDescriptor(propertyID);
     else if (ruleType == StyleRuleType::Keyframe)
         parseSuccess = parser.parseKeyframeDescriptor(propertyID, important);
+    else if (ruleType == StyleRuleType::ViewTransition)
+        parseSuccess = parser.parseViewTransitionDescriptor(propertyID);
     else if (ruleType == StyleRuleType::Property)
         parseSuccess = parser.parsePropertyDescriptor(propertyID);
     else
@@ -541,6 +543,26 @@ bool CSSPropertyParser::parseCounterStyleDescriptor(CSSPropertyID property)
     addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), false);
     return true;
 }
+
+RefPtr<CSSValue> CSSPropertyParser::parseViewTransitionDescriptor(CSSPropertyID property, CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    ASSERT(context.propertySettings.crossDocumentViewTransitionsEnabled);
+
+    return CSSPropertyParsing::parseViewTransitionDescriptor(range, property, context);
+}
+
+bool CSSPropertyParser::parseViewTransitionDescriptor(CSSPropertyID property)
+{
+    ASSERT(m_context.propertySettings.crossDocumentViewTransitionsEnabled);
+
+    RefPtr parsedValue = CSSPropertyParsing::parseViewTransitionDescriptor(m_range, property, m_context);
+    if (!parsedValue || !m_range.atEnd())
+        return false;
+
+    addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), false);
+    return true;
+}
+
 
 bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID property)
 {

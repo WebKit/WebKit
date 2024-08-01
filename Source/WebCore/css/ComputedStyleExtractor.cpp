@@ -4778,6 +4778,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertySizeAdjust:
         return nullptr;
 
+    // @view-transition descriptors.
+    case CSSPropertyNavigation:
+        return nullptr;
+
     // Unimplemented @font-palette-values properties
     case CSSPropertyBasePalette:
     case CSSPropertyOverrideColors:

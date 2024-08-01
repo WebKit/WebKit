@@ -7529,6 +7529,7 @@ imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-vie
 
 # View transitions Level 2 - cross document transitions.
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-cssom.html [ Pass ]
 
 # View transitions Level 2 - types.
 imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-match-early-mutation.html [ Skip ]

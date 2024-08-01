@@ -566,6 +566,7 @@ bool StyleSheetContents::traverseSubresources(const Function<bool(const CachedRe
         case StyleRuleType::Property:
         case StyleRuleType::Scope:
         case StyleRuleType::StartingStyle:
+        case StyleRuleType::ViewTransition:
             return false;
         };
         ASSERT_NOT_REACHED();
@@ -638,6 +639,7 @@ bool StyleSheetContents::mayDependOnBaseURL() const
         case StyleRuleType::Property:
         case StyleRuleType::Scope:
         case StyleRuleType::StartingStyle:
+        case StyleRuleType::ViewTransition:
             return false;
         };
         ASSERT_NOT_REACHED();

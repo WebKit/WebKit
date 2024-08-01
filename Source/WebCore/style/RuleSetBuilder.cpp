@@ -219,6 +219,11 @@ void RuleSetBuilder::addChildRule(Ref<StyleRuleBase> rule)
             addChildRules(supportsRule->childRules());
         return;
     }
+    case StyleRuleType::ViewTransition:
+        if (m_ruleSet)
+            m_ruleSet->setViewTransitionRule(uncheckedDowncast<StyleRuleViewTransition>(rule));
+        return;
+
     case StyleRuleType::Import:
     case StyleRuleType::Margin:
     case StyleRuleType::Namespace:

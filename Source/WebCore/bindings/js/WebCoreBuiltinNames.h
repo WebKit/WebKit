@@ -168,6 +168,7 @@ namespace WebCore {
     macro(CSSUnitValue) \
     macro(CSSUnparsedValue) \
     macro(CSSVariableReferenceValue) \
+    macro(CSSViewTransitionRule) \
     macro(CommandEvent) \
     macro(CookieChangeEvent) \
     macro(CookieStore) \

@@ -93,6 +93,8 @@ public:
     bool hasContainerQueries() const;
     bool hasScopeRules() const;
 
+    RefPtr<StyleRuleViewTransition> viewTransitionRule() const;
+
     std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueryRules(const MQ::MediaQueryEvaluator&);
 
     RuleFeatureSet& mutableFeatures();
