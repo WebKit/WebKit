@@ -70,10 +70,11 @@ void ModelProcessModelPlayer::didCreateLayer(LayerHostingContextIdentifier ident
     m_client->didUpdateLayerHostingContextIdentifier(*this, identifier);
 }
 
-void ModelProcessModelPlayer::didFinishLoading()
+void ModelProcessModelPlayer::didFinishLoading(const WebCore::FloatPoint3D& boundingBoxCenter, const WebCore::FloatPoint3D& boundingBoxExtents)
 {
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer didFinishLoading id=%" PRIu64, this, m_id.toUInt64());
     m_client->didFinishLoading(*this);
+    m_client->didUpdateBoundingBox(*this, boundingBoxCenter, boundingBoxExtents);
 }
 
 /// This comes from Model Process side, so that Web Process has the most up-to-date knowledge about the transform actually applied to the entity.

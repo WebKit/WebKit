@@ -40,6 +40,9 @@
 
     [Reflect] attribute boolean interactive;
 
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled, CEReactions=NotNeeded] readonly attribute DOMPointReadOnly boundingBoxCenter;
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled, CEReactions=NotNeeded] readonly attribute DOMPointReadOnly boundingBoxExtents;
+
     [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled, CEReactions=NotNeeded] attribute DOMMatrixReadOnly entityTransform;
 
     undefined enterFullscreen();

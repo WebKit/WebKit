@@ -31,6 +31,7 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+class FloatPoint3D;
 class ModelPlayerClient;
 }
 
@@ -53,6 +54,7 @@ public:
     virtual void didFailLoading(ModelPlayer&, const ResourceError&) = 0;
 #if ENABLE(MODEL_PROCESS)
     virtual void didUpdateEntityTransform(ModelPlayer&, const TransformationMatrix&) = 0;
+    virtual void didUpdateBoundingBox(ModelPlayer&, const FloatPoint3D&, const FloatPoint3D&) = 0;
 #endif
     virtual PlatformLayerIdentifier platformLayerID() = 0;
 };

@@ -337,6 +337,7 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
 
     auto modelBoundingBox = REEntityComputeMeshBounds(m_model->rootEntity(), true, matrix_identity_float4x4, kREEntityStatusNone);
     m_originalBoundingBoxExtents = REAABBExtents(modelBoundingBox);
+    m_originalBoundingBoxCenter = REAABBCenter(modelBoundingBox);
 
     REPtr<REEntityRef> hostingEntity = adoptRE(REEntityCreate());
     REEntitySetName(hostingEntity.get(), "WebKit:EntityWithRootComponent");
@@ -383,7 +384,7 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
     updateOpacity();
     startAnimating();
 
-    send(Messages::ModelProcessModelPlayer::DidFinishLoading());
+    send(Messages::ModelProcessModelPlayer::DidFinishLoading(WebCore::FloatPoint3D(m_originalBoundingBoxCenter.x, m_originalBoundingBoxCenter.y, m_originalBoundingBoxCenter.z), WebCore::FloatPoint3D(m_originalBoundingBoxExtents.x, m_originalBoundingBoxExtents.y, m_originalBoundingBoxExtents.z)));
 }
 
 void ModelProcessModelPlayerProxy::didFailLoading(WebCore::REModelLoader& loader, const WebCore::ResourceError& error)
