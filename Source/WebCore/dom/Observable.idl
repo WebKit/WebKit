@@ -38,4 +38,6 @@ interface Observable {
   [CallWith=CurrentScriptExecutionContext] Observable filter(PredicateCallback predicate);
 
   [CallWith=CurrentScriptExecutionContext] Observable take(unsigned long long amount);
+
+  [CallWith=CurrentScriptExecutionContext] Observable drop(unsigned long long amount);
 };

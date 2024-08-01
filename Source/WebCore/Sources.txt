@@ -1183,6 +1183,7 @@ dom/InternalObserverFromScript.cpp
 dom/InternalObserverFilter.cpp
 dom/InternalObserverMap.cpp
 dom/InternalObserverTake.cpp
+dom/InternalObserverDrop.cpp
 dom/KeyboardEvent.cpp
 dom/LiveNodeList.cpp
 dom/LoadableClassicScript.cpp
