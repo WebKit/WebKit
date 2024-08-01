@@ -438,13 +438,6 @@ void UnifiedPDFPlugin::setNeedsRepaintInDocumentRect(RepaintRequirements repaint
     m_presentationController->setNeedsRepaintInDocumentRect(repaintRequirements, rectInDocumentCoordinates, layoutRow);
 }
 
-void UnifiedPDFPlugin::setNeedsRepaintInDocumentRects(RepaintRequirements repaintRequirements, const Vector<FloatRect>& rectsInDocumentCoordinates)
-{
-    // FIXME: <https://webkit.org/b/276981> Pass row.
-    for (auto& rectInDocumentCoordinates : rectsInDocumentCoordinates)
-        setNeedsRepaintInDocumentRect(repaintRequirements, rectInDocumentCoordinates, { });
-}
-
 void UnifiedPDFPlugin::scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedSteps)
 {
     RefPtr page = this->page();

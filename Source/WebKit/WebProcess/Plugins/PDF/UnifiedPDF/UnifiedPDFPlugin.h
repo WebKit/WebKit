@@ -520,8 +520,6 @@ private:
 
     void setNeedsRepaintForAnnotation(PDFAnnotation *, RepaintRequirements);
     void setNeedsRepaintInDocumentRect(RepaintRequirements, const WebCore::FloatRect&, std::optional<PDFLayoutRow>);
-    // FIXME: <https://webkit.org/b/276981> Maybe this is not needed?
-    void setNeedsRepaintInDocumentRects(RepaintRequirements, const Vector<WebCore::FloatRect>&);
 
     // "Up" is inside-out.
     template <typename T>
