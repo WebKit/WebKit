@@ -143,7 +143,9 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             return;
         }
 
+#if USE(EXIT_XPC_MESSAGE_WORKAROUND)
         handleXPCExitMessage(event);
+#endif
 
         auto* messageName = xpc_dictionary_get_string(event, "message-name");
         if (!messageName) {
