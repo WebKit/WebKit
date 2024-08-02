@@ -168,11 +168,11 @@ protected:
 
     explicit VideoPresentationManager(WebPage&, PlaybackSessionManager&);
 
-    typedef std::tuple<RefPtr<WebCore::VideoPresentationModelVideoElement>, RefPtr<VideoPresentationInterfaceContext>> ModelInterfaceTuple;
+    typedef std::tuple<Ref<WebCore::VideoPresentationModelVideoElement>, Ref<VideoPresentationInterfaceContext>> ModelInterfaceTuple;
     ModelInterfaceTuple createModelAndInterface(PlaybackSessionContextIdentifier, bool createLayerHostingContext);
-    ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier, bool createLayerHostingContext = true);
-    WebCore::VideoPresentationModelVideoElement& ensureModel(PlaybackSessionContextIdentifier);
-    VideoPresentationInterfaceContext& ensureInterface(PlaybackSessionContextIdentifier);
+    const ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier, bool createLayerHostingContext = true);
+    Ref<WebCore::VideoPresentationModelVideoElement> ensureModel(PlaybackSessionContextIdentifier);
+    Ref<VideoPresentationInterfaceContext> ensureInterface(PlaybackSessionContextIdentifier);
     void removeContext(PlaybackSessionContextIdentifier);
     void addClientForContext(PlaybackSessionContextIdentifier);
     void removeClientForContext(PlaybackSessionContextIdentifier);

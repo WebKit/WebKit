@@ -132,11 +132,11 @@ private:
 
     explicit PlaybackSessionManager(WebPage&);
 
-    typedef std::tuple<RefPtr<WebCore::PlaybackSessionModelMediaElement>, RefPtr<PlaybackSessionInterfaceContext>> ModelInterfaceTuple;
+    typedef std::tuple<Ref<WebCore::PlaybackSessionModelMediaElement>, Ref<PlaybackSessionInterfaceContext>> ModelInterfaceTuple;
     ModelInterfaceTuple createModelAndInterface(PlaybackSessionContextIdentifier);
-    ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier);
-    WebCore::PlaybackSessionModelMediaElement& ensureModel(PlaybackSessionContextIdentifier);
-    PlaybackSessionInterfaceContext& ensureInterface(PlaybackSessionContextIdentifier);
+    const ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier);
+    Ref<WebCore::PlaybackSessionModelMediaElement> ensureModel(PlaybackSessionContextIdentifier);
+    Ref<PlaybackSessionInterfaceContext> ensureInterface(PlaybackSessionContextIdentifier);
     void removeContext(PlaybackSessionContextIdentifier);
     void addClientForContext(PlaybackSessionContextIdentifier);
     void removeClientForContext(PlaybackSessionContextIdentifier);
