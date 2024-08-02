@@ -224,18 +224,25 @@ void DeferredWorkTimer::scheduleWorkSoon(Ticket ticket, Task&& task)
 // https://bugs.webkit.org/show_bug.cgi?id=276538
 bool DeferredWorkTimer::cancelPendingWork(Ticket ticket)
 {
-    ASSERT(m_pendingTickets.contains(ticket));
+#if ASSERT_ENABLED
+    if (!onCancelPendingWork) {
+        ASSERT(m_pendingTickets.contains(ticket));
+    }
+#endif
+
     ASSERT(ticket->isCancelled() || ticket->vm().currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && ticket->vm().heap.worldIsStopped()));
 
     bool result = false;
     if (!ticket->isCancelled()) {
+        // Script execution context is cleared in ->cancel().
+        // So we have to call onCancelPendingWork before canceling the ticket.
+        if (onCancelPendingWork) {
+            onCancelPendingWork(ticket);
+        }
+
         dataLogLnIf(DeferredWorkTimerInternal::verbose, "Canceling ticket: ", RawPointer(ticket));
         ticket->cancel();
         result = true;
-    }
-
-     if (onCancelPendingWork) {
-        onCancelPendingWork(ticket);
     }
 
     return result;
