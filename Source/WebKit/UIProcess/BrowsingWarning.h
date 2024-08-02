@@ -38,11 +38,20 @@ namespace WebKit {
 
 class BrowsingWarning : public RefCounted<BrowsingWarning> {
 public:
+    struct HTTPSNavigationFailureData { };
+
+    struct SafeBrowsingWarningData {
+#if PLATFORM(COCOA)
+        RetainPtr<SSBServiceLookupResult> result;
+#endif
+    };
+
+    using Data = std::variant<SafeBrowsingWarningData, HTTPSNavigationFailureData>;
 
 #if HAVE(SAFE_BROWSING)
-    static Ref<BrowsingWarning> create(const URL& url, bool forMainFrameNavigation, SSBServiceLookupResult *result)
+    static Ref<BrowsingWarning> create(const URL& url, bool forMainFrameNavigation, Data&& data)
     {
-        return adoptRef(*new BrowsingWarning(url, forMainFrameNavigation, result));
+        return adoptRef(*new BrowsingWarning(url, forMainFrameNavigation, WTFMove(data)));
     }
 #endif
 #if PLATFORM(COCOA)
@@ -65,7 +74,7 @@ public:
 
 private:
 #if HAVE(SAFE_BROWSING)
-    BrowsingWarning(const URL&, bool, SSBServiceLookupResult *);
+    BrowsingWarning(const URL&, bool, Data&&);
 #endif
 #if PLATFORM(COCOA)
     BrowsingWarning(URL&&, String&&, String&&, RetainPtr<NSAttributedString>&&);

@@ -30,6 +30,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/Language.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/text/MakeString.h>
 
 namespace WebKit {
@@ -106,7 +107,7 @@ static NSURL *malwareDetailsURL(const URL& url, SSBServiceLookupResult *result)
     return URL({ }, makeString(malwareDetailsBase(result), "&site="_s, url.host(), "&hl="_s, defaultLanguage()));
 }
 
-static NSString *browsingTitleText(SSBServiceLookupResult *result)
+static NSString *browsingWarningTitleText(SSBServiceLookupResult *result)
 {
     if (result.isPhishing)
         return WEB_UI_NSSTRING(@"Deceptive Website Warning", "Phishing warning title");
@@ -114,6 +115,15 @@ static NSString *browsingTitleText(SSBServiceLookupResult *result)
         return WEB_UI_NSSTRING(@"Malware Website Warning", "Malware warning title");
     ASSERT(result.isUnwantedSoftware);
     return WEB_UI_NSSTRING(@"Website With Harmful Software Warning", "Unwanted software warning title");
+}
+
+static NSString *browsingWarningTitleText(BrowsingWarning::Data data)
+{
+    return WTF::switchOn(data, [&] (BrowsingWarning::SafeBrowsingWarningData data) {
+        return browsingWarningTitleText(data.result.get());
+    }, [&] (BrowsingWarning::HTTPSNavigationFailureData) {
+        return WEB_UI_NSSTRING(@"This Connection Is Not Secure", "Not Secure Connection warning page title");
+    });
 }
 
 static NSString *browsingWarningText(SSBServiceLookupResult *result)
@@ -125,6 +135,15 @@ static NSString *browsingWarningText(SSBServiceLookupResult *result)
 
     ASSERT(result.isUnwantedSoftware);
     return WEB_UI_NSSTRING(@"This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove.", "Unwanted software warning");
+}
+
+static NSString *browsingWarningText(BrowsingWarning::Data data)
+{
+    return WTF::switchOn(data, [&] (BrowsingWarning::SafeBrowsingWarningData data) {
+        return browsingWarningText(data.result.get());
+    }, [&] (BrowsingWarning::HTTPSNavigationFailureData) {
+        return WEB_UI_NSSTRING(@"This website does not support connecting securely. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people.", "Not Secure Connection warning text");
+    });
 }
 
 static NSMutableAttributedString *browsingDetailsText(const URL& url, SSBServiceLookupResult *result)
@@ -164,12 +183,19 @@ static NSMutableAttributedString *browsingDetailsText(const URL& url, SSBService
     return malwareOrUnwantedSoftwareDetails(WEB_UI_NSSTRING(@"Warnings are shown for websites where harmful software has been detected. You can check %the-status-of-site% on the %safeBrowsingProvider% diagnostic page.", "Unwanted software warning description"), @"%the-status-of-site%", false);
 }
 
-BrowsingWarning::BrowsingWarning(const URL& url, bool forMainFrameNavigation, SSBServiceLookupResult *result)
+static NSMutableAttributedString *browsingDetailsText(const URL& url, BrowsingWarning::Data data)
+{
+    if (auto* safeBrowsingData = std::get_if<BrowsingWarning::SafeBrowsingWarningData>(&data))
+        return browsingDetailsText(url, safeBrowsingData->result.get());
+    return nil;
+}
+
+BrowsingWarning::BrowsingWarning(const URL& url, bool forMainFrameNavigation, Data&& data)
     : m_url(url)
-    , m_title(browsingTitleText(result))
-    , m_warning(browsingWarningText(result))
+    , m_title(browsingWarningTitleText(data))
+    , m_warning(browsingWarningText(data))
     , m_forMainFrameNavigation(forMainFrameNavigation)
-    , m_details(browsingDetailsText(url, result))
+    , m_details(browsingDetailsText(url, data))
 {
 }
 #endif
