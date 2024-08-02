@@ -56,12 +56,16 @@ public:
 
     SimpleRange endingContextRange() const { return m_endingContextRange; }
 
+    // FIXME: Remove this when WritingToolsController no longer needs to support `contextRangeForSessionWithID`.
+    SimpleRange currentContextRange() const { return m_currentContextRange; }
+
 private:
     WritingToolsCompositionCommand(Ref<Document>&&, const SimpleRange&);
 
     void doApply() override { }
 
     SimpleRange m_endingContextRange;
+    SimpleRange m_currentContextRange;
 };
 
 } // namespace WebCore

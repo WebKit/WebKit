@@ -46,6 +46,8 @@ class Page;
 
 struct SimpleRange;
 
+enum class TextAnimationRunMode : uint8_t;
+
 class WritingToolsController final : public CanMakeWeakPtr<WritingToolsController>, public CanMakeCheckedPtr<WritingToolsController> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WritingToolsController);
@@ -144,6 +146,8 @@ private:
 
     void replaceContentsOfRangeInSession(ProofreadingState&, const SimpleRange&, const String&);
     void replaceContentsOfRangeInSession(CompositionState&, const SimpleRange&, const AttributedString&, WritingToolsCompositionCommand::State);
+
+    void compositionSessionDidReceiveTextWithReplacementRangeAsync(const WritingTools::Session&, const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished, TextAnimationRunMode);
 
     void showOriginalCompositionForSession(const WritingTools::Session&);
     void showRewrittenCompositionForSession(const WritingTools::Session&);
