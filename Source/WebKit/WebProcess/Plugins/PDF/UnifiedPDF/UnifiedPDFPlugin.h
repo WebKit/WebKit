@@ -286,8 +286,6 @@ private:
     WebCore::DelegatedScrollingMode scrollingMode() const;
     bool isFullMainFramePlugin() const;
 
-    OptionSet<WebCore::TiledBackingScrollability> computeScrollability() const;
-
     void scrollbarStyleChanged(WebCore::ScrollbarStyle, bool forceUpdate) override;
     void updateScrollbars() override;
     void willAttachScrollingNode() final;
@@ -485,6 +483,8 @@ private:
 
     // Only use this if some other function has ensured that the correct page is visible.
     void scrollToPointInContentsSpace(WebCore::FloatPoint);
+
+    OptionSet<WebCore::TiledBackingScrollability> computeScrollability() const;
 
     // ScrollableArea
     bool requestScrollToPosition(const WebCore::ScrollPosition&, const WebCore::ScrollPositionChangeOptions& = WebCore::ScrollPositionChangeOptions::createProgrammatic()) override;

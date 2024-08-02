@@ -1333,6 +1333,8 @@ void UnifiedPDFPlugin::didChangeVisibleRow()
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
     didInvalidateDataDetectorHighlightOverlayRects();
 #endif
+
+    m_presentationController->updateForCurrentScrollability(computeScrollability());
 }
 
 bool UnifiedPDFPlugin::updateOverflowControlsLayers(bool needsHorizontalScrollbarLayer, bool needsVerticalScrollbarLayer, bool needsScrollCornerLayer)

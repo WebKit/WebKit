@@ -311,10 +311,10 @@ void PDFScrollingPresentationController::updateDebugBorders(bool showDebugBorder
         asyncRenderer->setShowDebugBorders(showDebugBorders);
 }
 
-void PDFScrollingPresentationController::updateForCurrentScrollability(OptionSet<TiledBackingScrollability>)
+void PDFScrollingPresentationController::updateForCurrentScrollability(OptionSet<TiledBackingScrollability> scrollability)
 {
     if (auto* tiledBacking = m_contentsLayer->tiledBacking())
-        tiledBacking->setScrollability(m_plugin->computeScrollability());
+        tiledBacking->setScrollability(scrollability);
 }
 
 void PDFScrollingPresentationController::setNeedsRepaintInDocumentRect(OptionSet<RepaintRequirement> repaintRequirements, const FloatRect& rectInDocumentCoordinates, std::optional<PDFLayoutRow> layoutRow)

@@ -1306,9 +1306,14 @@ void PDFDiscretePresentationController::updateDebugBorders(bool showDebugBorders
         asyncRenderer->setShowDebugBorders(showDebugBorders);
 }
 
-void PDFDiscretePresentationController::updateForCurrentScrollability(OptionSet<TiledBackingScrollability>)
+void PDFDiscretePresentationController::updateForCurrentScrollability(OptionSet<TiledBackingScrollability> scrollability)
 {
+    if (m_visibleRowIndex >= m_rows.size())
+        return;
 
+    auto& visibleRow = m_rows[m_visibleRowIndex];
+    if (auto* tiledBacking = visibleRow.contentsLayer->tiledBacking())
+        tiledBacking->setScrollability(scrollability);
 }
 
 void PDFDiscretePresentationController::repaintForIncrementalLoad()
