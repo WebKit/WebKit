@@ -260,6 +260,17 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
 #endif
 }
 
+static WarningItem backgroundColorForWarningType(const WebKit::BrowsingWarning& warning)
+{
+    switch (warning.type()) {
+    case WebKit::BrowsingWarning::WarningType::SafeBrowsing:
+    case WebKit::BrowsingWarning::WarningType::HTTPSNavigationFailure:
+        return WarningItem::SafeBrowsingBackground;
+    }
+    ASSERT_NOT_REACHED();
+    return WarningItem::SafeBrowsingBackground;
+}
+
 @implementation _WKWarningViewBox
 
 - (void)setWarningViewBackgroundColor:(WebCore::CocoaColor *)color
@@ -304,11 +315,12 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
         completionHandler(WTFMove(result));
     };
     _warning = &warning;
+    auto backgroundColor = backgroundColorForWarningType(warning);
 #if PLATFORM(MAC)
-    [self setWarningViewBackgroundColor:colorForItem(WarningItem::SafeBrowsingBackground, self)];
+    [self setWarningViewBackgroundColor:colorForItem(backgroundColor, self)];
     [self addContent];
 #else
-    [self setBackgroundColor:colorForItem(WarningItem::SafeBrowsingBackground, self)];
+    [self setBackgroundColor:colorForItem(backgroundColor, self)];
 #endif
 
 #if PLATFORM(WATCHOS)
