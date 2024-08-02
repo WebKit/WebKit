@@ -42,8 +42,6 @@ public:
     WebCore::IDBServer::IDBConnectionToClient& connectionToClient();
 
 private:
-    template<class MessageType> void didGetResult(const WebCore::IDBResultData&);
-
     // IDBConnectionToClientDelegate
     void didDeleteDatabase(const WebCore::IDBResultData&) final;
     void didOpenDatabase(const WebCore::IDBResultData&) final;

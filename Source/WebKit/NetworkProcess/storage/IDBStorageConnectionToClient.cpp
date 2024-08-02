@@ -52,27 +52,6 @@ WebCore::IDBServer::IDBConnectionToClient& IDBStorageConnectionToClient::connect
     return m_connectionToClient;
 }
 
-template<class MessageType> void IDBStorageConnectionToClient::didGetResult(const WebCore::IDBResultData& resultData)
-{
-    if (resultData.type() == WebCore::IDBResultType::Error) {
-        IPC::Connection::send(m_connection, MessageType(resultData), 0);
-        return;
-    }
-
-    if (resultData.type() == WebCore::IDBResultType::GetAllRecordsSuccess && resultData.getAllResult().type() == WebCore::IndexedDB::GetAllType::Keys) {
-        IPC::Connection::send(m_connection, MessageType(resultData), 0);
-        return;
-    }
-
-    auto blobFilePaths = resultData.type() == WebCore::IDBResultType::GetAllRecordsSuccess ? resultData.getAllResult().allBlobFilePaths() : resultData.getResult().value().blobFilePaths();
-    if (blobFilePaths.isEmpty()) {
-        IPC::Connection::send(m_connection, MessageType(resultData), 0);
-        return;
-    }
-
-    IPC::Connection::send(m_connection, MessageType(resultData), 0);
-}
-
 void IDBStorageConnectionToClient::didDeleteDatabase(const WebCore::IDBResultData& resultData)
 {
     IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidDeleteDatabase(resultData), 0);
@@ -140,12 +119,12 @@ void IDBStorageConnectionToClient::didPutOrAdd(const WebCore::IDBResultData& res
 
 void IDBStorageConnectionToClient::didGetRecord(const WebCore::IDBResultData& resultData)
 {
-    didGetResult<Messages::WebIDBConnectionToServer::DidGetRecord>(resultData);
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidGetRecord(resultData), 0);
 }
 
 void IDBStorageConnectionToClient::didGetAllRecords(const WebCore::IDBResultData& resultData)
 {
-    didGetResult<Messages::WebIDBConnectionToServer::DidGetAllRecords>(resultData);
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidGetAllRecords(resultData), 0);
 }
 
 void IDBStorageConnectionToClient::didGetCount(const WebCore::IDBResultData& resultData)
@@ -160,12 +139,12 @@ void IDBStorageConnectionToClient::didDeleteRecord(const WebCore::IDBResultData&
 
 void IDBStorageConnectionToClient::didOpenCursor(const WebCore::IDBResultData& resultData)
 {
-    didGetResult<Messages::WebIDBConnectionToServer::DidOpenCursor>(resultData);
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidOpenCursor(resultData), 0);
 }
 
 void IDBStorageConnectionToClient::didIterateCursor(const WebCore::IDBResultData& resultData)
 {
-    didGetResult<Messages::WebIDBConnectionToServer::DidIterateCursor>(resultData);
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidIterateCursor(resultData), 0);
 }
 
 void IDBStorageConnectionToClient::didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier& requestIdentifier, Vector<WebCore::IDBDatabaseNameAndVersion>&& databases)
