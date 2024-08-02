@@ -278,6 +278,9 @@ ResourceError::operator CFErrorRef() const
 
 bool ResourceError::blockedKnownTracker() const
 {
+    if (id blockedTrackerFailure = nsError().userInfo[@"_NSURLErrorBlockedTrackerFailureKey"])
+        return [blockedTrackerFailure boolValue];
+    // This loop can be removed when the CFNetwork loader is no longer in use
     for (NSError *underlyingError in nsError().underlyingErrors) {
         if ([underlyingError.userInfo[@"_NSURLErrorBlockedTrackerFailureKey"] boolValue])
             return true;
@@ -289,6 +292,13 @@ String ResourceError::blockedTrackerHostName() const
 {
     ASSERT(blockedKnownTracker());
 
+    if (id failingPath = nsError().userInfo[@"_NSURLErrorNWPathKey"]) {
+        auto failingEndpoint = adoptNS(nw_path_copy_effective_remote_endpoint(failingPath));
+        if (auto* hostName = nw_endpoint_get_known_tracker_name(failingEndpoint.get()))
+            return String::fromUTF8(hostName);
+        return { };
+    }
+    // This loop can be removed when the CFNetwork loader is no longer in use
     for (NSError *underlyingError in nsError().underlyingErrors) {
         if (id failingPath = underlyingError.userInfo[@"_NSURLErrorNWPathKey"]) {
             auto failingEndpoint = adoptNS(nw_path_copy_effective_remote_endpoint(failingPath));
