@@ -78,6 +78,7 @@ private:
 #if PLATFORM(IOS_FAMILY) && defined(__OBJC__)
     Vector<WebPlatformTouchPoint> extractWebTouchPoints(const WKTouchEvent&);
     Vector<WebTouchEvent> extractCoalescedWebTouchEvents(const WKTouchEvent&, UIKeyModifierFlags);
+    Vector<WebTouchEvent> extractPredictedWebTouchEvents(const WKTouchEvent&, UIKeyModifierFlags);
 #endif
 
 #if PLATFORM(GTK) && USE(GTK4)

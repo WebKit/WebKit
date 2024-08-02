@@ -347,7 +347,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(struct wpe_input_touch_event*
                 pointCoordinates, pointCoordinates));
     }
 
-    return WebTouchEvent({ type, OptionSet<WebEventModifier> { }, wallTimeForEventTime(event->time) }, WTFMove(touchPoints), { });
+    return WebTouchEvent({ type, OptionSet<WebEventModifier> { }, wallTimeForEventTime(event->time) }, WTFMove(touchPoints), { }, { });
 }
 #endif // ENABLE(TOUCH_EVENTS)
 

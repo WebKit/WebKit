@@ -231,7 +231,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(WPEEvent* event, Vector<WebPl
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    return WebTouchEvent({ type.value(), modifiersFromWPEModifiers(wpe_event_get_modifiers(event)), wallTimeForEvent(event) }, WTFMove(touchPoints), { });
+    return WebTouchEvent({ type.value(), modifiersFromWPEModifiers(wpe_event_get_modifiers(event)), wallTimeForEvent(event) }, WTFMove(touchPoints), { }, { });
 }
 #endif // ENABLE(TOUCH_EVENTS)
 

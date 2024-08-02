@@ -961,7 +961,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         // FIXME: Use createPlatformMouseEvent instead.
         event = WebCore::MouseEvent::create(WebCore::eventNames().clickEvent, WebCore::Event::CanBubble::Yes, WebCore::Event::IsCancelable::Yes, WebCore::Event::IsComposed::Yes,
             MonotonicTime::now(), nullptr, [nsEvent clickCount], { }, { }, 0, 0, WebCore::modifiersForEvent(nsEvent),
-            button, [NSEvent pressedMouseButtons], nullptr, WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap, { }, WebCore::MouseEvent::IsSimulated::Yes);
+            button, [NSEvent pressedMouseButtons], nullptr, WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap, { }, { }, WebCore::MouseEvent::IsSimulated::Yes);
     }
 
     // Call to the frame loader because this is where our security checks are made.

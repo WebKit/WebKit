@@ -210,7 +210,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
     RELEASE_ASSERT(is<Element>(target));
 
     auto dispatchOverOrOutEvent = [&](const AtomString& type, EventTarget* target) {
-        dispatchEvent(PointerEvent::create(type, platformTouchEvent, { }, index, isPrimary, view, touchDelta), target);
+        dispatchEvent(PointerEvent::create(type, platformTouchEvent, { }, { }, index, isPrimary, view, touchDelta), target);
     };
 
     auto dispatchEnterOrLeaveEvent = [&](const AtomString& type, Element& targetElement) {
@@ -230,23 +230,26 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
 
         if (type == eventNames().pointerenterEvent) {
             for (auto& element : makeReversedRange(targetChain))
-                dispatchEvent(PointerEvent::create(type, platformTouchEvent, { }, index, isPrimary, view, touchDelta), element.ptr());
+                dispatchEvent(PointerEvent::create(type, platformTouchEvent, { }, { }, index, isPrimary, view, touchDelta), element.ptr());
         } else {
             for (auto& element : targetChain)
-                dispatchEvent(PointerEvent::create(type, platformTouchEvent, { }, index, isPrimary, view, touchDelta), element.ptr());
+                dispatchEvent(PointerEvent::create(type, platformTouchEvent, { }, { }, index, isPrimary, view, touchDelta), element.ptr());
         }
     };
 
-    auto coalescedEvents = [&] -> Vector<Ref<PointerEvent>> {
+    auto mapToPointerEvents = [&](const Vector<PlatformTouchEvent>& events) -> Vector<Ref<PointerEvent>> {
         if (index)
-            return { PointerEvent::create(platformTouchEvent, { }, Event::CanBubble::No, Event::IsCancelable::No, index, isPrimary, view, touchDelta) };
+            return { PointerEvent::create(platformTouchEvent, { }, { }, Event::CanBubble::No, Event::IsCancelable::No, index, isPrimary, view, touchDelta) };
 
-        return WTF::map(platformTouchEvent.coalescedEvents(), [&](const auto& event) {
-            return PointerEvent::create(event, { }, Event::CanBubble::No, Event::IsCancelable::No, index, isPrimary, view, touchDelta);
+        return WTF::map(events, [&](const auto& event) {
+            return PointerEvent::create(event, { }, { }, Event::CanBubble::No, Event::IsCancelable::No, index, isPrimary, view, touchDelta);
         });
-    }();
+    };
 
-    auto pointerEvent = PointerEvent::create(platformTouchEvent, coalescedEvents, index, isPrimary, view, touchDelta);
+    auto coalescedEvents = mapToPointerEvents(platformTouchEvent.coalescedEvents());
+    auto predictedEvents = mapToPointerEvents(platformTouchEvent.predictedEvents());
+
+    auto pointerEvent = PointerEvent::create(platformTouchEvent, coalescedEvents, predictedEvents, index, isPrimary, view, touchDelta);
 
     Ref capturingData = ensureCapturingDataForPointerEvent(pointerEvent);
 
@@ -287,7 +290,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
 
         for (auto& chain : leftElementsChain) {
             if (hasCapturingPointerLeaveListener || chain->hasEventListeners(eventNames().pointerleaveEvent))
-                dispatchEvent(PointerEvent::create(eventNames().pointerleaveEvent, platformTouchEvent, coalescedEvents, index, isPrimary, view, touchDelta), chain.ptr());
+                dispatchEvent(PointerEvent::create(eventNames().pointerleaveEvent, platformTouchEvent, coalescedEvents, predictedEvents, index, isPrimary, view, touchDelta), chain.ptr());
         }
 
         if (currentTarget)
@@ -295,7 +298,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
 
         for (auto& chain : makeReversedRange(enteredElementsChain)) {
             if (hasCapturingPointerEnterListener || chain->hasEventListeners(eventNames().pointerenterEvent))
-                dispatchEvent(PointerEvent::create(eventNames().pointerenterEvent, platformTouchEvent, coalescedEvents, index, isPrimary, view, touchDelta), chain.ptr());
+                dispatchEvent(PointerEvent::create(eventNames().pointerenterEvent, platformTouchEvent, coalescedEvents, predictedEvents, index, isPrimary, view, touchDelta), chain.ptr());
         }
     }
 

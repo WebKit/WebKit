@@ -62,7 +62,7 @@ DragEvent::DragEvent(const AtomString& eventType, CanBubble canBubble, IsCancela
     MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
     const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers, MouseButton button, unsigned short buttons,
     EventTarget* relatedTarget, double force, SyntheticClickType syntheticClickType, DataTransfer* dataTransfer, IsSimulated isSimulated, IsTrusted isTrusted)
-    : MouseEvent(EventInterfaceType::DragEvent, eventType, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail, screenLocation, windowLocation, movementX, movementY, modifiers, button, buttons, relatedTarget, force, syntheticClickType, { }, isSimulated, isTrusted)
+    : MouseEvent(EventInterfaceType::DragEvent, eventType, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail, screenLocation, windowLocation, movementX, movementY, modifiers, button, buttons, relatedTarget, force, syntheticClickType, { }, { }, isSimulated, isTrusted)
     , m_dataTransfer(dataTransfer)
 {
 }

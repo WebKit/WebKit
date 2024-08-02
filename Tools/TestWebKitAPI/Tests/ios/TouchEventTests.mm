@@ -90,7 +90,7 @@ static Class touchEventsGestureRecognizerClass()
 namespace TestWebKitAPI {
 
 static WebKit::WKTouchPoint globalTouchPoint { CGPointZero, CGPointZero, 100, UITouchPhaseBegan, 1, 0, 0, 0, WebKit::WKTouchPointType::Direct };
-static WebKit::WKTouchEvent globalTouchEvent { WebKit::WKTouchEventType::Begin, CACurrentMediaTime(), CGPointZero, CGPointZero, 1, 0, false, { globalTouchPoint }, { }, true };
+static WebKit::WKTouchEvent globalTouchEvent { WebKit::WKTouchEventType::Begin, CACurrentMediaTime(), CGPointZero, CGPointZero, 1, 0, false, { globalTouchPoint }, { }, { }, true };
 static void updateSimulatedTouchEvent(CGPoint location, UITouchPhase phase)
 {
     globalTouchPoint.locationInScreenCoordinates = location;

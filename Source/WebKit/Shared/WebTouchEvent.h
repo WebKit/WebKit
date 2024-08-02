@@ -114,10 +114,11 @@ private:
 
 class WebTouchEvent : public WebEvent {
 public:
-    WebTouchEvent(WebEvent&& event, const Vector<WebPlatformTouchPoint>& touchPoints, const Vector<WebTouchEvent>& coalescedEvents, WebCore::IntPoint position, bool isPotentialTap, bool isGesture, float gestureScale, float gestureRotation, bool canPreventNativeGestures = true)
+    WebTouchEvent(WebEvent&& event, const Vector<WebPlatformTouchPoint>& touchPoints, const Vector<WebTouchEvent>& coalescedEvents, const Vector<WebTouchEvent>& predictedEvents, WebCore::IntPoint position, bool isPotentialTap, bool isGesture, float gestureScale, float gestureRotation, bool canPreventNativeGestures = true)
         : WebEvent(WTFMove(event))
         , m_touchPoints(touchPoints)
         , m_coalescedEvents(coalescedEvents)
+        , m_predictedEvents(predictedEvents)
         , m_position(position)
         , m_canPreventNativeGestures(canPreventNativeGestures)
         , m_isPotentialTap(isPotentialTap)
@@ -132,6 +133,9 @@ public:
 
     const Vector<WebTouchEvent>& coalescedEvents() const { return m_coalescedEvents; }
     void setCoalescedEvents(const Vector<WebTouchEvent>& coalescedEvents) { m_coalescedEvents = coalescedEvents; }
+
+    const Vector<WebTouchEvent>& predictedEvents() const { return m_predictedEvents; }
+    void setPredictedEvents(const Vector<WebTouchEvent>& predictedEvents) { m_predictedEvents = predictedEvents; }
 
     WebCore::IntPoint position() const { return m_position; }
     void setPosition(WebCore::IntPoint position) { m_position = position; }
@@ -150,6 +154,7 @@ public:
 private:
     Vector<WebPlatformTouchPoint> m_touchPoints;
     Vector<WebTouchEvent> m_coalescedEvents;
+    Vector<WebTouchEvent> m_predictedEvents;
 
     WebCore::IntPoint m_position;
     bool m_canPreventNativeGestures { false };
@@ -201,11 +206,13 @@ private:
 
 class WebTouchEvent : public WebEvent {
 public:
-    WebTouchEvent(WebEvent&&, Vector<WebPlatformTouchPoint>&&, Vector<WebTouchEvent>&&);
+    WebTouchEvent(WebEvent&&, Vector<WebPlatformTouchPoint>&&, Vector<WebTouchEvent>&&, Vector<WebTouchEvent>&&);
 
     const Vector<WebPlatformTouchPoint>& touchPoints() const { return m_touchPoints; }
 
     const Vector<WebTouchEvent>& coalescedEvents() const { return m_coalescedEvents; }
+
+    const Vector<WebTouchEvent>& predictedEvents() const { return m_predictedEvents; }
 
     bool allTouchPointsAreReleased() const;
 
@@ -214,6 +221,7 @@ private:
 
     Vector<WebPlatformTouchPoint> m_touchPoints;
     Vector<WebTouchEvent> m_coalescedEvents;
+    Vector<WebTouchEvent> m_predictedEvents;
 };
 
 #endif // PLATFORM(IOS_FAMILY)

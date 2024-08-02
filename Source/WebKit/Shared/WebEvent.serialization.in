@@ -101,6 +101,7 @@ class WebKit::WebKeyboardEvent : WebKit::WebEvent {
 class WebKit::WebTouchEvent : WebKit::WebEvent {
     Vector<WebKit::WebPlatformTouchPoint> touchPoints();
     Vector<WebKit::WebTouchEvent> coalescedEvents();
+    Vector<WebKit::WebTouchEvent> predictedEvents();
 #if PLATFORM(IOS_FAMILY)
     WebCore::IntPoint position();
     bool isPotentialTap();

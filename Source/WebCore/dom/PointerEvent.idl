@@ -34,7 +34,8 @@ dictionary PointerEventInit : MouseEventInit {
     long twist = 0;
     DOMString pointerType = "";
     boolean isPrimary = false;
-    sequence<PointerEvent> coalescedEvents = [];
+    [EnabledBySetting=GetCoalescedEventsEnabled] sequence<PointerEvent> coalescedEvents = [];
+    [EnabledBySetting=GetPredictedEventsEnabled] sequence<PointerEvent> predictedEvents = [];
 };
 
 [
@@ -57,5 +58,6 @@ dictionary PointerEventInit : MouseEventInit {
     readonly attribute boolean isPrimary;
 
     [SecureContext, EnabledBySetting=GetCoalescedEventsEnabled] sequence<PointerEvent> getCoalescedEvents();
+    [EnabledBySetting=GetPredictedEventsEnabled] sequence<PointerEvent> getPredictedEvents();
 };
 

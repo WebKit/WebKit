@@ -120,6 +120,9 @@ public:
         m_coalescedEvents = WTF::map(webEvent.coalescedEvents(), [&](const auto& event) {
             return platform(event);
         });
+        m_predictedEvents = WTF::map(webEvent.predictedEvents(), [&](const auto& event) {
+            return platform(event);
+        });
 #if PLATFORM(MAC)
         m_eventNumber = webEvent.eventNumber();
         m_menuTypeForEvent = webEvent.menuTypeForEvent();
@@ -360,6 +363,10 @@ public:
         });
 
         m_coalescedEvents = WTF::map(webEvent.coalescedEvents(), [&](auto& event) {
+            return platform(event);
+        });
+
+        m_predictedEvents = WTF::map(webEvent.predictedEvents(), [&](auto& event) {
             return platform(event);
         });
 

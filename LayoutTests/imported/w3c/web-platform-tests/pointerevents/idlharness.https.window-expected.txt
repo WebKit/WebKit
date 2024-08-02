@@ -60,7 +60,7 @@ FAIL PointerEvent interface: attribute azimuthAngle assert_true: The prototype o
 PASS PointerEvent interface: attribute pointerType
 PASS PointerEvent interface: attribute isPrimary
 PASS PointerEvent interface: operation getCoalescedEvents()
-FAIL PointerEvent interface: operation getPredictedEvents() assert_own_property: interface prototype object missing non-static operation expected property "getPredictedEvents" missing
+PASS PointerEvent interface: operation getPredictedEvents()
 PASS PointerEvent must be primary interface of new PointerEvent("type")
 PASS Stringification of new PointerEvent("type")
 PASS PointerEvent interface: new PointerEvent("type") must inherit property "pointerId" with the proper type
@@ -76,7 +76,7 @@ FAIL PointerEvent interface: new PointerEvent("type") must inherit property "azi
 PASS PointerEvent interface: new PointerEvent("type") must inherit property "pointerType" with the proper type
 PASS PointerEvent interface: new PointerEvent("type") must inherit property "isPrimary" with the proper type
 PASS PointerEvent interface: new PointerEvent("type") must inherit property "getCoalescedEvents()" with the proper type
-FAIL PointerEvent interface: new PointerEvent("type") must inherit property "getPredictedEvents()" with the proper type assert_inherits: property "getPredictedEvents" not found in prototype chain
+PASS PointerEvent interface: new PointerEvent("type") must inherit property "getPredictedEvents()" with the proper type
 PASS HTMLElement interface: attribute ongotpointercapture
 PASS HTMLElement interface: attribute onlostpointercapture
 PASS HTMLElement interface: attribute onpointerdown

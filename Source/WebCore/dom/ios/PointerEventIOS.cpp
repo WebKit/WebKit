@@ -51,28 +51,28 @@ static const AtomString& pointerEventType(PlatformTouchPoint::TouchPhaseType pha
     return nullAtom();
 }
 
-Ref<PointerEvent> PointerEvent::create(const PlatformTouchEvent& event, const Vector<Ref<PointerEvent>>& coalescedEvents, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const IntPoint& touchDelta)
+Ref<PointerEvent> PointerEvent::create(const PlatformTouchEvent& event, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const IntPoint& touchDelta)
 {
     const auto& type = pointerEventType(event.touchPhaseAtIndex(index));
 
-    return adoptRef(*new PointerEvent(type, event, coalescedEvents, typeCanBubble(type), typeIsCancelable(type), index, isPrimary, WTFMove(view), touchDelta));
+    return adoptRef(*new PointerEvent(type, event, coalescedEvents, predictedEvents, typeCanBubble(type), typeIsCancelable(type), index, isPrimary, WTFMove(view), touchDelta));
 }
 
-Ref<PointerEvent> PointerEvent::create(const PlatformTouchEvent& event, const Vector<Ref<PointerEvent>>& coalescedEvents, CanBubble canBubble, IsCancelable isCancelable, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const IntPoint& touchDelta)
+Ref<PointerEvent> PointerEvent::create(const PlatformTouchEvent& event, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, CanBubble canBubble, IsCancelable isCancelable, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const IntPoint& touchDelta)
 {
     const auto& type = pointerEventType(event.touchPhaseAtIndex(index));
 
-    return adoptRef(*new PointerEvent(type, event, coalescedEvents, canBubble, isCancelable, index, isPrimary, WTFMove(view), touchDelta));
+    return adoptRef(*new PointerEvent(type, event, coalescedEvents, predictedEvents, canBubble, isCancelable, index, isPrimary, WTFMove(view), touchDelta));
 }
 
-Ref<PointerEvent> PointerEvent::create(const AtomString& type, const PlatformTouchEvent& event, const Vector<Ref<PointerEvent>>& coalescedEvents, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const IntPoint& touchDelta)
+Ref<PointerEvent> PointerEvent::create(const AtomString& type, const PlatformTouchEvent& event, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const IntPoint& touchDelta)
 {
-    return adoptRef(*new PointerEvent(type, event, coalescedEvents, typeCanBubble(type), typeIsCancelable(type), index, isPrimary, WTFMove(view), touchDelta));
+    return adoptRef(*new PointerEvent(type, event, coalescedEvents, predictedEvents, typeCanBubble(type), typeIsCancelable(type), index, isPrimary, WTFMove(view), touchDelta));
 }
 
-PointerEvent::PointerEvent(const AtomString& type, const PlatformTouchEvent& event, const Vector<Ref<PointerEvent>>& coalescedEvents, CanBubble canBubble, IsCancelable isCancelable, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const IntPoint& touchDelta)
+PointerEvent::PointerEvent(const AtomString& type, const PlatformTouchEvent& event, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, CanBubble canBubble, IsCancelable isCancelable, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const IntPoint& touchDelta)
     : MouseEvent(EventInterfaceType::PointerEvent, type, canBubble, isCancelable, typeIsComposed(type), event.timestamp().approximateMonotonicTime(), WTFMove(view), 0,
-        event.touchLocationAtIndex(index), event.touchLocationAtIndex(index), touchDelta.x(), touchDelta.y(), event.modifiers(), buttonForType(type), buttonsForType(type), nullptr, 0, SyntheticClickType::NoTap, { }, IsSimulated::No, IsTrusted::Yes)
+        event.touchLocationAtIndex(index), event.touchLocationAtIndex(index), touchDelta.x(), touchDelta.y(), event.modifiers(), buttonForType(type), buttonsForType(type), nullptr, 0, SyntheticClickType::NoTap, { }, { }, IsSimulated::No, IsTrusted::Yes)
     , m_pointerId(event.touchIdentifierAtIndex(index))
     , m_width(2 * event.radiusXAtIndex(index))
     , m_height(2 * event.radiusYAtIndex(index))
@@ -80,6 +80,7 @@ PointerEvent::PointerEvent(const AtomString& type, const PlatformTouchEvent& eve
     , m_pointerType(event.touchTypeAtIndex(index) == PlatformTouchPoint::TouchType::Stylus ? penPointerEventType() : touchPointerEventType())
     , m_isPrimary(isPrimary)
     , m_coalescedEvents(coalescedEvents)
+    , m_predictedEvents(predictedEvents)
 {
     // See https://github.com/w3c/pointerevents/issues/274. We might expose the azimuth and altitude
     // directly as well as the tilt.

@@ -2911,6 +2911,20 @@ GetCoalescedEventsEnabled:
     WebCore:
       default: true
 
+GetPredictedEventsEnabled:
+  type: bool
+  status: stable
+  category: dom
+  humanReadableName: "Pointer Events getPredictedEvents API"
+  humanReadableDescription: "Enable the `getPredictedEvents` function of the Pointer Events API"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 GetUserMediaRequiresFocus:
   type: bool
   status: internal

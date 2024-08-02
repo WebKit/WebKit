@@ -56,7 +56,7 @@ Ref<MouseEvent> MouseEvent::create(const AtomString& type, const MouseEventInit&
     return adoptRef(*new MouseEvent(EventInterfaceType::MouseEvent, type, initializer));
 }
 
-Ref<MouseEvent> MouseEvent::create(const AtomString& eventType, RefPtr<WindowProxy>&& view, const PlatformMouseEvent& event, const Vector<Ref<MouseEvent>>& coalescedEvents, int detail, Node* relatedTarget)
+Ref<MouseEvent> MouseEvent::create(const AtomString& eventType, RefPtr<WindowProxy>&& view, const PlatformMouseEvent& event, const Vector<Ref<MouseEvent>>& coalescedEvents, const Vector<Ref<MouseEvent>>& predictedEvents, int detail, Node* relatedTarget)
 {
     auto& eventNames = WebCore::eventNames();
     bool isMouseEnterOrLeave = eventType == eventNames.mouseenterEvent || eventType == eventNames.mouseleaveEvent;
@@ -66,15 +66,15 @@ Ref<MouseEvent> MouseEvent::create(const AtomString& eventType, RefPtr<WindowPro
 
     return MouseEvent::create(eventType, canBubble, isCancelable, isComposed, event.timestamp().approximateMonotonicTime(), WTFMove(view), detail,
         event.globalPosition(), event.position(), event.movementDelta().x(), event.movementDelta().y(),
-        event.modifiers(), event.button(), event.buttons(), relatedTarget, event.force(), event.syntheticClickType(), coalescedEvents);
+        event.modifiers(), event.button(), event.buttons(), relatedTarget, event.force(), event.syntheticClickType(), coalescedEvents, predictedEvents);
 }
 
 Ref<MouseEvent> MouseEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
     const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers, MouseButton button, unsigned short buttons,
-    EventTarget* relatedTarget, double force, SyntheticClickType syntheticClickType, const Vector<Ref<MouseEvent>>& coalescedEvents, IsSimulated isSimulated, IsTrusted isTrusted)
+    EventTarget* relatedTarget, double force, SyntheticClickType syntheticClickType, const Vector<Ref<MouseEvent>>& coalescedEvents, const Vector<Ref<MouseEvent>>& predictedEvents, IsSimulated isSimulated, IsTrusted isTrusted)
 {
     return adoptRef(*new MouseEvent(EventInterfaceType::MouseEvent, type, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail,
-        screenLocation, windowLocation, movementX, movementY, modifiers, button, buttons, relatedTarget, force, syntheticClickType, coalescedEvents, isSimulated, isTrusted));
+        screenLocation, windowLocation, movementX, movementY, modifiers, button, buttons, relatedTarget, force, syntheticClickType, coalescedEvents, predictedEvents, isSimulated, isTrusted));
 }
 
 Ref<MouseEvent> MouseEvent::create(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
@@ -98,7 +98,7 @@ MouseEvent::MouseEvent(enum EventInterfaceType eventInterface)
 MouseEvent::MouseEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
     MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
     const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers, MouseButton button, unsigned short buttons,
-    EventTarget* relatedTarget, double force, SyntheticClickType syntheticClickType, const Vector<Ref<MouseEvent>>& coalescedEvents, IsSimulated isSimulated, IsTrusted isTrusted)
+    EventTarget* relatedTarget, double force, SyntheticClickType syntheticClickType, const Vector<Ref<MouseEvent>>& coalescedEvents, const Vector<Ref<MouseEvent>>& predictedEvents, IsSimulated isSimulated, IsTrusted isTrusted)
     : MouseRelatedEvent(eventInterface, eventType, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail, screenLocation, windowLocation, movementX, movementY, modifiers, isSimulated, isTrusted)
     , m_button(enumToUnderlyingType(button == MouseButton::None ? MouseButton::Left : button))
     , m_buttons(buttons)
@@ -107,6 +107,7 @@ MouseEvent::MouseEvent(enum EventInterfaceType eventInterface, const AtomString&
     , m_relatedTarget(relatedTarget)
     , m_force(force)
     , m_coalescedEvents(coalescedEvents)
+    , m_predictedEvents(predictedEvents)
 {
 }
 
