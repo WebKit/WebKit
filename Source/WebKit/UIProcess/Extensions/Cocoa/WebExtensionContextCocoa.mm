@@ -3102,8 +3102,8 @@ NSArray *WebExtensionContext::corsDisablingPatterns()
 
     // Include manifest optional permission origins here, these should be dynamically added when the are granted
     // but we need SPI to update corsDisablingPatterns outside of the WKWebViewConfiguration to do that.
-    // FIXME: <rdar://problem/61837474> Web Extensions: Need the ability to update corsDisablingPatterns on WKWebView
-    auto optionalPermissionMatchPatterns = m_extension->allRequestedMatchPatterns();
+    // FIXME: rdar://102912898 (CORS for Web Extension pages should respect granted per-site permissions)
+    auto optionalPermissionMatchPatterns = m_extension->optionalPermissionMatchPatterns();
     for (auto& optionalMatchPattern : optionalPermissionMatchPatterns)
         [patterns addObjectsFromArray:optionalMatchPattern->expandedStrings()];
 
