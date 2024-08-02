@@ -38,17 +38,23 @@ namespace WebKit {
 
 class BrowsingWarning : public RefCounted<BrowsingWarning> {
 public:
+    enum class WarningType : uint8_t { SafeBrowsing, HTTPSNavigationFailure };
 
 #if HAVE(SAFE_BROWSING)
     static Ref<BrowsingWarning> create(const URL& url, bool forMainFrameNavigation, SSBServiceLookupResult *result)
     {
         return adoptRef(*new BrowsingWarning(url, forMainFrameNavigation, result));
     }
+
+    static Ref<BrowsingWarning> create(const URL& url, bool forMainFrameNavigation, WarningType type)
+    {
+        return adoptRef(*new BrowsingWarning(url, forMainFrameNavigation, type));
+    }
 #endif
 #if PLATFORM(COCOA)
-    static Ref<BrowsingWarning> create(URL&& url, String&& title, String&& warning, RetainPtr<NSAttributedString>&& details)
+    static Ref<BrowsingWarning> create(URL&& url, String&& title, String&& warning, RetainPtr<NSAttributedString>&& details, WarningType type)
     {
-        return adoptRef(*new BrowsingWarning(WTFMove(url), WTFMove(title), WTFMove(warning), WTFMove(details)));
+        return adoptRef(*new BrowsingWarning(WTFMove(url), WTFMove(title), WTFMove(warning), WTFMove(details), type));
     }
 #endif
 
@@ -59,6 +65,7 @@ public:
 #if PLATFORM(COCOA)
     RetainPtr<NSAttributedString> details() const { return m_details; }
 #endif
+    WarningType type() const { return m_type; };
 
     static NSURL *visitUnsafeWebsiteSentinel();
     static NSURL *confirmMalwareSentinel();
@@ -66,9 +73,10 @@ public:
 private:
 #if HAVE(SAFE_BROWSING)
     BrowsingWarning(const URL&, bool, SSBServiceLookupResult *);
+    BrowsingWarning(const URL&, bool, WarningType);
 #endif
 #if PLATFORM(COCOA)
-    BrowsingWarning(URL&&, String&&, String&&, RetainPtr<NSAttributedString>&&);
+    BrowsingWarning(URL&&, String&&, String&&, RetainPtr<NSAttributedString>&&, WarningType);
 #endif
 
     URL m_url;
@@ -78,6 +86,7 @@ private:
 #if PLATFORM(COCOA)
     RetainPtr<NSAttributedString> m_details;
 #endif
+    WarningType m_type;
 };
 
 } // namespace WebKit
