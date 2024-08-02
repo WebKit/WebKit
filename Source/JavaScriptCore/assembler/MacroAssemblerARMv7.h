@@ -1315,6 +1315,8 @@ public:
 
     void transfer32(Address src, Address dest)
     {
+        if (src == dest)
+            return;
         load32(src, dataTempRegister);
         store32(dataTempRegister, dest);
     }
@@ -1333,6 +1335,46 @@ public:
     void transferPtr(BaseIndex src, BaseIndex dest)
     {
         transfer32(src, dest);
+    }
+
+    void transferFloat(Address src, Address dest)
+    {
+        transfer32(src, dest);
+    }
+
+    void transferDouble(Address src, Address dest)
+    {
+        if (src == dest)
+            return;
+        loadDouble(src, fpTempRegister);
+        storeDouble(fpTempRegister, dest);
+    }
+
+    void transferVector(Address src, Address dest)
+    {
+        if (src == dest)
+            return;
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void transferFloat(BaseIndex src, BaseIndex dest)
+    {
+        transfer32(src, dest);
+    }
+
+    void transferDouble(BaseIndex src, BaseIndex dest)
+    {
+        if (src == dest)
+            return;
+        loadDouble(src, fpTempRegister);
+        storeDouble(fpTempRegister, dest);
+    }
+
+    void transferVector(BaseIndex src, BaseIndex dest)
+    {
+        if (src == dest)
+            return;
+        UNREACHABLE_FOR_PLATFORM();
     }
 
     void storeCond8(RegisterID src, Address addr, RegisterID result)

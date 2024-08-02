@@ -1239,6 +1239,8 @@ public:
 
     void transfer32(Address src, Address dest)
     {
+        if (src == dest)
+            return;
         auto temp = temps<Data>();
         load32(src, temp.data());
         store32(temp.data(), dest);
@@ -1246,13 +1248,27 @@ public:
 
     void transfer64(Address src, Address dest)
     {
+        if (src == dest)
+            return;
         auto temp = temps<Data>();
         load64(src, temp.data());
         store64(temp.data(), dest);
     }
 
+    void transferFloat(Address src, Address dest)
+    {
+        transfer32(src, dest);
+    }
+
+    void transferDouble(Address src, Address dest)
+    {
+        transfer64(src, dest);
+    }
+
     void transferVector(Address src, Address dest)
     {
+        if (src == dest)
+            return;
         loadVector(src, fpTempRegister);
         storeVector(fpTempRegister, dest);
     }
@@ -1264,6 +1280,8 @@ public:
 
     void transfer32(BaseIndex src, BaseIndex dest)
     {
+        if (src == dest)
+            return;
         auto temp = temps<Data>();
         load32(src, temp.data());
         store32(temp.data(), dest);
@@ -1271,13 +1289,27 @@ public:
 
     void transfer64(BaseIndex src, BaseIndex dest)
     {
+        if (src == dest)
+            return;
         auto temp = temps<Data>();
         load64(src, temp.data());
         store64(temp.data(), dest);
     }
 
+    void transferFloat(BaseIndex src, BaseIndex dest)
+    {
+        transfer32(src, dest);
+    }
+
+    void transferDouble(BaseIndex src, BaseIndex dest)
+    {
+        transfer64(src, dest);
+    }
+
     void transferVector(BaseIndex src, BaseIndex dest)
     {
+        if (src == dest)
+            return;
         loadVector(src, fpTempRegister);
         storeVector(fpTempRegister, dest);
     }
