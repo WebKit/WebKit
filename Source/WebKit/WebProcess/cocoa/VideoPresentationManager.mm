@@ -152,9 +152,9 @@ VideoPresentationManager::VideoPresentationManager(WebPage& page, PlaybackSessio
 VideoPresentationManager::~VideoPresentationManager()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    for (auto& [model, interface] : m_contextMap.values()) {
+    for (auto [model, interface] : m_contextMap.values()) {
         model->setVideoElement(nullptr);
-        model->removeClient(*interface);
+        model->removeClient(interface);
     }
 
     m_contextMap.clear();
@@ -192,36 +192,36 @@ VideoPresentationManager::ModelInterfaceTuple VideoPresentationManager::createMo
     return std::make_tuple(WTFMove(model), WTFMove(interface));
 }
 
-VideoPresentationManager::ModelInterfaceTuple& VideoPresentationManager::ensureModelAndInterface(PlaybackSessionContextIdentifier contextId, bool createlayerHostingContext)
+const VideoPresentationManager::ModelInterfaceTuple& VideoPresentationManager::ensureModelAndInterface(PlaybackSessionContextIdentifier contextId, bool createlayerHostingContext)
 {
-    auto addResult = m_contextMap.add(contextId, ModelInterfaceTuple());
-    if (addResult.isNewEntry)
-        addResult.iterator->value = createModelAndInterface(contextId, createlayerHostingContext);
+    auto addResult = m_contextMap.ensure(contextId, [&] {
+        return createModelAndInterface(contextId, createlayerHostingContext);
+    });
     return addResult.iterator->value;
 }
 
-WebCore::VideoPresentationModelVideoElement& VideoPresentationManager::ensureModel(PlaybackSessionContextIdentifier contextId)
+Ref<WebCore::VideoPresentationModelVideoElement> VideoPresentationManager::ensureModel(PlaybackSessionContextIdentifier contextId)
 {
-    return *std::get<0>(ensureModelAndInterface(contextId));
+    return std::get<0>(ensureModelAndInterface(contextId));
 }
 
-VideoPresentationInterfaceContext& VideoPresentationManager::ensureInterface(PlaybackSessionContextIdentifier contextId)
+Ref<VideoPresentationInterfaceContext> VideoPresentationManager::ensureInterface(PlaybackSessionContextIdentifier contextId)
 {
-    return *std::get<1>(ensureModelAndInterface(contextId));
+    return std::get<1>(ensureModelAndInterface(contextId));
 }
 
 void VideoPresentationManager::removeContext(PlaybackSessionContextIdentifier contextId)
 {
+    ASSERT(m_contextMap.contains(contextId));
     m_playbackSessionManager->removeClientForContext(contextId);
 
-    auto [model, interface] = m_contextMap.get(contextId);
-    ASSERT(model);
-    ASSERT(interface);
-    if (!model || !interface)
+    auto it = m_contextMap.find(contextId);
+    if (it == m_contextMap.end())
         return;
+    auto [model, interface] = it->value;
 
-    model->removeClient(*interface);
-    m_contextMap.remove(contextId);
+    model->removeClient(interface);
+    m_contextMap.remove(it);
 
     RefPtr videoElement = model->videoElement();
     ASSERT(videoElement);
@@ -242,18 +242,19 @@ void VideoPresentationManager::addClientForContext(PlaybackSessionContextIdentif
 void VideoPresentationManager::removeClientForContext(PlaybackSessionContextIdentifier contextId)
 {
     ASSERT(m_clientCounts.contains(contextId));
+    auto it = m_clientCounts.find(contextId);
+    if (it == m_clientCounts.end())
+        return;
 
-    int clientCount = m_clientCounts.get(contextId);
+    auto& clientCount = it->value;
     ASSERT(clientCount > 0);
     clientCount--;
 
     if (clientCount <= 0) {
-        m_clientCounts.remove(contextId);
+        m_clientCounts.remove(it);
         removeContext(contextId);
         return;
     }
-
-    m_clientCounts.set(contextId, clientCount);
 }
 
 #pragma mark Interface to ChromeClient:
@@ -363,7 +364,7 @@ void VideoPresentationManager::enterVideoFullscreenForVideoElement(HTMLVideoElem
         interface->setTargetIsFullscreen(mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
     else
 #endif
-        setCurrentlyInFullscreen(*interface, mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
+        setCurrentlyInFullscreen(interface, mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
 
     if (mode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)
         m_videoElementInPictureInPicture = videoElement;
@@ -432,13 +433,13 @@ void VideoPresentationManager::exitVideoFullscreenForVideoElement(HTMLVideoEleme
     }
 
     auto contextId = m_videoElements.get(videoElement);
-    auto& interface = ensureInterface(contextId);
-    if (interface.animationState() != VideoPresentationInterfaceContext::AnimationType::None) {
+    auto interface = ensureInterface(contextId);
+    if (interface->animationState() != VideoPresentationInterfaceContext::AnimationType::None) {
         completionHandler(false);
         return;
     }
 
-    m_page->sendWithAsyncReply(Messages::VideoPresentationManagerProxy::ExitFullscreen(contextId, inlineVideoFrame(videoElement)), [protectedThis = Ref { *this }, this, contextId, videoElementPtr = &videoElement, completionHandler = WTFMove(completionHandler)](auto success) mutable {
+    m_page->sendWithAsyncReply(Messages::VideoPresentationManagerProxy::ExitFullscreen(contextId, inlineVideoFrame(videoElement)), [protectedThis = Ref { *this }, this, videoElementPtr = &videoElement, interface = WTFMove(interface), completionHandler = WTFMove(completionHandler)](auto success) mutable {
         if (!success) {
             completionHandler(false);
             return;
@@ -447,9 +448,8 @@ void VideoPresentationManager::exitVideoFullscreenForVideoElement(HTMLVideoEleme
         if (m_videoElementInPictureInPicture == videoElementPtr)
             m_videoElementInPictureInPicture = nullptr;
 
-        auto& interface = ensureInterface(contextId);
         protectedThis->setCurrentlyInFullscreen(interface, false);
-        interface.setAnimationState(VideoPresentationInterfaceContext::AnimationType::FromFullscreen);
+        interface->setAnimationState(VideoPresentationInterfaceContext::AnimationType::FromFullscreen);
         completionHandler(true);
     });
 }
@@ -474,9 +474,8 @@ void VideoPresentationManager::exitVideoFullscreenToModeWithoutAnimation(HTMLVid
         ASSERT_NOT_REACHED();
         return;
     }
-    auto& interface = ensureInterface(contextId);
 
-    setCurrentlyInFullscreen(interface, false);
+    setCurrentlyInFullscreen(ensureInterface(contextId), false);
 
     m_page->send(Messages::VideoPresentationManagerProxy::ExitFullscreenWithoutAnimationToMode(contextId, targetMode));
 }
@@ -549,7 +548,7 @@ void VideoPresentationManager::setPlayerIdentifier(PlaybackSessionContextIdentif
 
 void VideoPresentationManager::requestFullscreenMode(PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
 {
-    ensureModel(contextId).requestFullscreenMode(mode, finishedWithMedia);
+    ensureModel(contextId)->requestFullscreenMode(mode, finishedWithMedia);
 }
 
 void VideoPresentationManager::fullscreenModeChanged(PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
@@ -587,13 +586,12 @@ void VideoPresentationManager::requestVideoContentLayer(PlaybackSessionContextId
 
 void VideoPresentationManager::returnVideoContentLayer(PlaybackSessionContextIdentifier contextId)
 {
-    RefPtr<VideoPresentationModelVideoElement> model;
-    RefPtr<VideoPresentationInterfaceContext> interface;
-    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    auto [model, interface] = ensureModelAndInterface(contextId);
     INFO_LOG(LOGIDENTIFIER, model->logIdentifier());
 
-    model->waitForPreparedForInlineThen([protectedThis = Ref { *this }, contextId, model] () mutable { // need this for return video layer
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), contextId, model] () mutable {
+    // FIXME: Capturing structured bindings is a C++20 feature, only supported from clangd >= 16
+    model->waitForPreparedForInlineThen([protectedThis = Ref { *this }, contextId, model = model] () mutable { // need this for return video layer
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), contextId, model = WTFMove(model)] () mutable {
             model->setVideoFullscreenLayer(nil, [protectedThis = WTFMove(protectedThis), contextId] () mutable {
                 RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), contextId] {
                     if (RefPtr page = protectedThis->m_page.get())
@@ -667,12 +665,10 @@ void VideoPresentationManager::didEnterFullscreen(PlaybackSessionContextIdentifi
 void VideoPresentationManager::failedToEnterFullscreen(PlaybackSessionContextIdentifier contextId)
 {
 #if PLATFORM(IOS_FAMILY)
-    RefPtr<VideoPresentationModelVideoElement> model;
-    RefPtr<VideoPresentationInterfaceContext> interface;
-    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    Ref model = ensureModel(contextId);
     INFO_LOG(LOGIDENTIFIER, model->logIdentifier());
 
-    RunLoop::main().dispatch([protectedThis = Ref { *this }, contextId, interface] {
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, contextId] {
         if (RefPtr page = protectedThis->m_page.get())
             page->send(Messages::VideoPresentationManagerProxy::CleanupFullscreen(contextId));
     });
@@ -683,20 +679,19 @@ void VideoPresentationManager::didExitFullscreen(PlaybackSessionContextIdentifie
 {
     INFO_LOG(LOGIDENTIFIER, contextId.toUInt64());
 
-    RefPtr<VideoPresentationModelVideoElement> model;
-    RefPtr<VideoPresentationInterfaceContext> interface;
-    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    auto [model, interface] = ensureModelAndInterface(contextId);
 
 #if PLATFORM(IOS_FAMILY)
-    RunLoop::main().dispatch([protectedThis = Ref { *this }, contextId, interface] {
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, contextId] {
         if (RefPtr page = protectedThis->m_page.get())
             page->send(Messages::VideoPresentationManagerProxy::CleanupFullscreen(contextId));
     });
 #else
-    model->waitForPreparedForInlineThen([protectedThis = Ref { *this }, contextId, interface, model]() mutable {
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), contextId, interface, model] () mutable {
-            model->setVideoFullscreenLayer(nil, [protectedThis = WTFMove(protectedThis), contextId, interface] () mutable {
-                RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), contextId, interface] {
+    // FIXME: Capturing structured bindings is a C++20 feature, only supported from clangd >= 16
+    model->waitForPreparedForInlineThen([protectedThis = Ref { *this }, contextId, interface = WTFMove(interface), model = model]() mutable {
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), contextId, interface = WTFMove(interface), model = WTFMove(model)] () mutable {
+            model->setVideoFullscreenLayer(nil, [protectedThis = WTFMove(protectedThis), contextId, interface = WTFMove(interface)] () mutable {
+                RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), contextId, interface = WTFMove(interface)] {
                     if (interface->rootLayer()) {
                         interface->setRootLayer(nullptr);
                         interface->setLayerHostingContext(nullptr);
@@ -739,13 +734,13 @@ void VideoPresentationManager::didCleanupFullscreen(PlaybackSessionContextIdenti
     }
 
     if (!videoElement || !targetIsFullscreen || mode == HTMLMediaElementEnums::VideoFullscreenModeNone || mode == HTMLMediaElementEnums::VideoFullscreenModeInWindow) {
-        setCurrentlyInFullscreen(*interface, false);
+        setCurrentlyInFullscreen(interface, false);
         return;
     }
 
-    RunLoop::main().dispatch([protectedThis = Ref { *this }, videoElement, mode, standby] {
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, videoElement, mode, standby] mutable {
         if (protectedThis->m_page)
-            protectedThis->enterVideoFullscreenForVideoElement(*videoElement, mode, standby);
+            protectedThis->enterVideoFullscreenForVideoElement(*videoElement, WTFMove(mode), standby);
     });
 }
 
@@ -772,7 +767,7 @@ void VideoPresentationManager::fullscreenMayReturnToInline(PlaybackSessionContex
 
 void VideoPresentationManager::requestRouteSharingPolicyAndContextUID(PlaybackSessionContextIdentifier contextId, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&& reply)
 {
-    ensureModel(contextId).requestRouteSharingPolicyAndContextUID(WTFMove(reply));
+    ensureModel(contextId)->requestRouteSharingPolicyAndContextUID(WTFMove(reply));
 }
 
 void VideoPresentationManager::ensureUpdatedVideoDimensions(PlaybackSessionContextIdentifier contextId, WebCore::FloatSize existingVideoDimensions)
@@ -781,9 +776,10 @@ void VideoPresentationManager::ensureUpdatedVideoDimensions(PlaybackSessionConte
     if (!page)
         return;
 
-    auto model = std::get<0>(m_contextMap.get(contextId));
-    if (!model)
+    auto it = m_contextMap.find(contextId);
+    if (it == m_contextMap.end())
         return;
+    Ref model = std::get<0>(it->value);
 
     auto videoDimensions = model->videoDimensions();
     if (videoDimensions == existingVideoDimensions)
@@ -823,7 +819,7 @@ void VideoPresentationManager::setVideoLayerFrameFenced(PlaybackSessionContextId
 void VideoPresentationManager::setVideoFullscreenFrame(PlaybackSessionContextIdentifier contextId, WebCore::FloatRect frame)
 {
     INFO_LOG(LOGIDENTIFIER, contextId.toUInt64());
-    ensureModel(contextId).setVideoFullscreenFrame(frame);
+    ensureModel(contextId)->setVideoFullscreenFrame(frame);
 }
 
 void VideoPresentationManager::updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement& videoElement, ShareableBitmap::Handle&& textTrack)
@@ -854,12 +850,12 @@ void VideoPresentationManager::setTextTrackRepresentationIsHiddenForVideoElement
 
 void VideoPresentationManager::setRequiresTextTrackRepresentation(PlaybackSessionContextIdentifier contextId, bool requiresTextTrackRepresentation)
 {
-    ensureModel(contextId).setRequiresTextTrackRepresentation(requiresTextTrackRepresentation);
+    ensureModel(contextId)->setRequiresTextTrackRepresentation(requiresTextTrackRepresentation);
 }
 
 void VideoPresentationManager::setTextTrackRepresentationBounds(PlaybackSessionContextIdentifier contextId, const IntRect& bounds)
 {
-    ensureModel(contextId).setTextTrackRepresentationBounds(bounds);
+    ensureModel(contextId)->setTextTrackRepresentationBounds(bounds);
 }
 
 #if !RELEASE_LOG_DISABLED

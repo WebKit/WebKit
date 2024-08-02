@@ -365,11 +365,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     ASSERT(_valid);
     auto page = [self._webView _page];
-    auto* videoPresentationManager = page ? page->videoPresentationManager() : nullptr;
-    auto* videoPresentationInterface = videoPresentationManager ? videoPresentationManager->controlsManagerInterface() : nullptr;
-    auto* playbackSessionInterface = videoPresentationInterface ? &videoPresentationInterface->playbackSessionInterface() : nullptr;
+    RefPtr videoPresentationManager = page ? page->videoPresentationManager() : nullptr;
+    RefPtr videoPresentationInterface = videoPresentationManager ? videoPresentationManager->controlsManagerInterface() : nullptr;
+    RefPtr playbackSessionInterface = videoPresentationInterface ? &videoPresentationInterface->playbackSessionInterface() : nullptr;
 
-    _playbackClient.setInterface(playbackSessionInterface);
+    _playbackClient.setInterface(playbackSessionInterface.get());
 
     WebCore::PlaybackSessionModel* playbackSessionModel = playbackSessionInterface ? playbackSessionInterface->playbackSessionModel() : nullptr;
     self.playing = playbackSessionModel ? playbackSessionModel->isPlaying() : NO;
@@ -854,15 +854,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!playbackSessionManager)
         return;
 
-    WebCore::PlatformPlaybackSessionInterface* playbackSessionInterface = playbackSessionManager->controlsManagerInterface();
+    RefPtr playbackSessionInterface = playbackSessionManager->controlsManagerInterface();
     if (!playbackSessionInterface)
         return;
 
-    WebCore::PlaybackSessionModel* playbackSessionModel = playbackSessionInterface->playbackSessionModel();
-    if (!playbackSessionModel)
-        return;
-
-    playbackSessionModel->togglePictureInPicture();
+    if (auto* playbackSessionModel = playbackSessionInterface->playbackSessionModel())
+        playbackSessionModel->togglePictureInPicture();
 }
 
 - (void)_touchDetected:(id)sender

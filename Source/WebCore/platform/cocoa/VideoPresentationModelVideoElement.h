@@ -50,7 +50,7 @@ class PlaybackSessionModelMediaElement;
 
 class VideoPresentationModelVideoElement final : public VideoPresentationModel {
 public:
-    static RefPtr<VideoPresentationModelVideoElement> create()
+    static Ref<VideoPresentationModelVideoElement> create()
     {
         return adoptRef(*new VideoPresentationModelVideoElement());
     }
