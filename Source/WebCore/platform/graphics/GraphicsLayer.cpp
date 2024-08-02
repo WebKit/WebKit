@@ -1122,5 +1122,15 @@ void showGraphicsLayerTree(const WebCore::GraphicsLayer* layer)
 
     String output = layer->layerTreeAsText(WebCore::AllLayerTreeAsTextOptions);
     WTFLogAlways("%s\n", output.utf8().data());
+
+    // The tree is too large to print to the os log so save the tree output
+    // to a file in case we don't have easy access to stderr.
+    auto [tempFilePath, fileHandle] = FileSystem::openTemporaryFile("GraphicsLayerTree"_s);
+    if (FileSystem::isHandleValid(fileHandle)) {
+        FileSystem::writeToFile(fileHandle, output.utf8().span());
+        FileSystem::closeFile(fileHandle);
+        WTFLogAlways("Saved GraphicsLayer Tree to %s", tempFilePath.utf8().data());
+    } else
+        WTFLogAlways("Failed to open temporary file for saving the GraphicsLayer Tree.");
 }
 #endif
