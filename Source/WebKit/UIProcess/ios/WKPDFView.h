@@ -30,7 +30,7 @@
 #import "WKWebViewContentProvider.h"
 
 @interface WKPDFView : WKApplicationStateTrackingView <WKWebViewContentProvider
-#if HAVE(SHARE_SHEET)
+#if HAVE(SHARE_SHEET_UI)
     , WKShareSheetDelegate
 #endif
 >

@@ -135,7 +135,7 @@
     RetainPtr<NSString> _suggestedFilename;
     WeakObjCPtr<WKWebView> _webView;
     RetainPtr<WKKeyboardScrollViewAnimator> _keyboardScrollingAnimator;
-#if HAVE(SHARE_SHEET)
+#if HAVE(SHARE_SHEET_UI)
     RetainPtr<WKShareSheet> _shareSheet;
 #endif
     BOOL _isShowingPasswordView;
@@ -147,7 +147,7 @@
 
 - (void)dealloc
 {
-#if HAVE(SHARE_SHEET)
+#if HAVE(SHARE_SHEET_UI)
     if (_shareSheet) {
         [_shareSheet dismissIfNeededWithReason:WebKit::PickerDismissalReason::ProcessExited];
         _shareSheet = nil;
@@ -675,7 +675,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     shareData.url = { url };
     shareData.originator = WebCore::ShareDataOriginator::User;
 
-#if HAVE(SHARE_SHEET)
+#if HAVE(SHARE_SHEET_UI)
     [_shareSheet dismissIfNeededWithReason:WebKit::PickerDismissalReason::ResetState];
 
     _shareSheet = adoptNS([[WKShareSheet alloc] initWithView:webView]);
@@ -684,7 +684,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 
-#if HAVE(SHARE_SHEET)
+#if HAVE(SHARE_SHEET_UI)
 - (void)shareSheetDidDismiss:(WKShareSheet *)shareSheet
 {
     ASSERT(_shareSheet == shareSheet);

@@ -393,7 +393,7 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<WKFormInputSession> _formInputSession;
     RetainPtr<WKFileUploadPanel> _fileUploadPanel;
     WebKit::FrameInfoData _frameInfoForFileUploadPanel;
-#if HAVE(SHARE_SHEET)
+#if HAVE(SHARE_SHEET_UI)
     RetainPtr<WKShareSheet> _shareSheet;
 #endif
 #if HAVE(CONTACTSUI)
@@ -617,7 +617,7 @@ struct ImageAnalysisContextMenuActionData {
 #if HAVE(CONTACTSUI)
     , WKContactPickerDelegate
 #endif
-#if HAVE(SHARE_SHEET)
+#if HAVE(SHARE_SHEET_UI)
     , WKShareSheetDelegate
 #endif
 #if ENABLE(DRAG_SUPPORT)
