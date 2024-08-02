@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
+box-decoration-break
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -198,6 +198,24 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-collapsed-borders-paint-vrl-ltr-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-collapsed-borders-paint-vrl-ltr-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-collapsed-borders-paint-vrl-ltr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-fragmentation-001a-print-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-fragmentation-001a-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-fragmentation-001b-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-fragmentation-001c-print-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-fragmentation-001c-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-fragmentation-001d-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-fragmentation-002a-print-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-fragmentation-002a-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-fragmentation-002b-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-fragmentation-002c-print-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-fragmentation-002c-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-fragmentation-002d-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-fragmentation-003a-print-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-fragmentation-003a-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-fragmentation-003b-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-fragmentation-003c-print-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-fragmentation-003c-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-fragmentation-003d-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-grid-paint-htb-ltr-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-grid-paint-htb-ltr-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/table-grid-paint-htb-ltr.html
