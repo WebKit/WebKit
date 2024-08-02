@@ -56,7 +56,7 @@ class Memory final : public RefCounted<Memory> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(Memory, JS_EXPORT_PRIVATE);
     friend LLIntOffsetsExtractor;
 public:
-    using JSWebAssemblyInstanceWeakCGSet = WeakGCSet<JSWebAssemblyInstance>;
+    using JSWebAssemblyInstanceWeakCGSet = WeakGCSet<JSCell>;
 
     void dump(WTF::PrintStream&) const;
 
