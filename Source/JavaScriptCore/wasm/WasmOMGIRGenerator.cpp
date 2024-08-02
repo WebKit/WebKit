@@ -1966,7 +1966,7 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
 
     if (isTailCall) {
         const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
-        const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
+        const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex).expand();
         CallInformation wasmCallerInfoAsCallee = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
 
         auto [patchpoint, _, prepareForCall] = createTailCallPatchpoint(m_currentBlock, wasmCallerInfoAsCallee, wasmCalleeInfoAsCallee, args, { { calleeCode, ValueRep(GPRInfo::wasmScratchGPR0) } });
@@ -5542,7 +5542,7 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
     if (isTailCall)
         calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCalleeInfo.headerAndArgumentStackSizeInBytes * 2 + sizeof(Register));
     const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
-    const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
+    const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex).expand();
     CallInformation wasmCallerInfoAsCallee = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
 
     B3::Type returnType = toB3ResultType(&signature);

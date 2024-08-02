@@ -1503,7 +1503,7 @@ auto LLIntGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
 
         const auto& callingConvention = wasmCallingConvention();
         const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
-        const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
+        const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex).expand();
         uint32_t callerStackArgs = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), callingConvention.numberOfStackValues(*callerTypeDefinition.as<FunctionSignature>()));
 
         WasmTailCall::emit(this, functionIndex, wasmCalleeInfo.stackOffset, wasmCalleeInfo.numberOfStackArguments, callerStackArgs);
@@ -1535,7 +1535,7 @@ auto LLIntGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& 
 
         const auto& callingConvention = wasmCallingConvention();
         const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
-        const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
+        const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex).expand();
         uint32_t callerStackArgs = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), callingConvention.numberOfStackValues(*callerTypeDefinition.as<FunctionSignature>()));
 
         WasmTailCallIndirect::emit(this, calleeIndex, m_codeBlock->addSignature(signature), calleeInfo.stackOffset, calleeInfo.numberOfStackArguments, callerStackArgs, tableIndex);

@@ -1704,7 +1704,7 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
         m_makesTailCalls = true;
 
         const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
-        const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
+        const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex).expand();
         CallInformation wasmCallerInfoAsCallee = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
 
         auto [patchpoint, _, prepareForCall] = createTailCallPatchpoint(m_currentBlock, wasmCallerInfoAsCallee, wasmCalleeInfoAsCallee, args, { { calleeCode, ValueRep(GPRInfo::wasmScratchGPR0) } });
@@ -4901,7 +4901,7 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
     CallInformation wasmCalleeInfoAsCallee = callingConvention.callInformationFor(signature, CallRole::Callee);
     Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCalleeInfo.headerAndArgumentStackSizeInBytes);
     const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
-    const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
+    const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex).expand();
     CallInformation wasmCallerInfoAsCallee = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
 
     B3::Type returnType;
@@ -4911,7 +4911,7 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
         m_makesTailCalls = true;
 
         const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
-        const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
+        const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex).expand();
         CallInformation wasmCallerInfo = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
         Checked<int32_t> callerStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCallerInfo.headerAndArgumentStackSizeInBytes);
         tailCallStackOffsetFromFP = callerStackSize - calleeStackSize;

@@ -4021,7 +4021,7 @@ void BBQJIT::emitTailCall(unsigned functionIndex, const TypeDefinition& signatur
     m_maxCalleeStackSize = std::max<int>(calleeStackSize, m_maxCalleeStackSize);
 
     const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
-    const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
+    const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex).expand();
     CallInformation wasmCallerInfo = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
     Checked<int32_t> callerStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCallerInfo.headerAndArgumentStackSizeInBytes);
     Checked<int32_t> tailCallStackOffsetFromFP = callerStackSize - calleeStackSize;
@@ -4214,7 +4214,7 @@ void BBQJIT::emitIndirectTailCall(const Value& calleeIndex, GPRReg calleeInstanc
     m_maxCalleeStackSize = std::max<int>(calleeStackSize, m_maxCalleeStackSize);
 
     const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
-    const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
+    const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex).expand();
     CallInformation wasmCallerInfo = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
     Checked<int32_t> callerStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCallerInfo.headerAndArgumentStackSizeInBytes);
     Checked<int32_t> tailCallStackOffsetFromFP = callerStackSize - calleeStackSize;
