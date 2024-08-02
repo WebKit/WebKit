@@ -529,11 +529,9 @@ private:
         return true;
     }
 
-    bool isMergeableValue(Value* v, B3::Opcode b3Opcode, bool checkCanBeInternal = false)
+    bool isMergeableValue(Value* v, B3::Opcode b3Opcode)
     { 
         if (v->opcode() != b3Opcode)
-            return false;
-        if (checkCanBeInternal && !canBeInternal(v))
             return false;
         if (m_locked.contains(v->child(0)))
             return false;
