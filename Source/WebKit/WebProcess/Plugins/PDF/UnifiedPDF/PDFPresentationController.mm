@@ -167,6 +167,34 @@ bool PDFPresentationController::pluginShouldCachePagePreviews() const
     return m_plugin->shouldCachePagePreviews();
 }
 
+PDFDocumentLayout::PageIndex PDFPresentationController::nearestPageIndexForDocumentPoint(const FloatPoint& point) const
+{
+    return m_plugin->documentLayout().nearestPageIndexForDocumentPoint(point, visibleRow());
+}
+
+std::optional<PDFDocumentLayout::PageIndex> PDFPresentationController::pageIndexForDocumentPoint(const FloatPoint& point) const
+{
+    auto& documentLayout = m_plugin->documentLayout();
+
+    if (auto row = visibleRow()) {
+        for (auto pageIndex : row->pages) {
+            auto pageBounds = documentLayout.layoutBoundsForPageAtIndex(pageIndex);
+            if (pageBounds.contains(point))
+                return pageIndex;
+        }
+
+        return { };
+    }
+
+    for (PDFDocumentLayout::PageIndex pageIndex = 0; pageIndex < documentLayout.pageCount(); ++pageIndex) {
+        auto pageBounds = documentLayout.layoutBoundsForPageAtIndex(pageIndex);
+        if (pageBounds.contains(point))
+            return pageIndex;
+    }
+
+    return { };
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(UNIFIED_PDF)

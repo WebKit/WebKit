@@ -104,6 +104,9 @@ public:
 
     WebCore::FloatRect layoutBoundsForPageAtIndex(PDFDocumentLayout::PageIndex) const;
 
+    PDFDocumentLayout::PageIndex nearestPageIndexForDocumentPoint(const WebCore::FloatPoint&) const;
+    std::optional<PDFDocumentLayout::PageIndex> pageIndexForDocumentPoint(const WebCore::FloatPoint&) const;
+
     // Event handling.
     virtual bool handleKeyboardEvent(const WebKeyboardEvent&) = 0;
     virtual bool wantsWheelEvents() const { return false; }

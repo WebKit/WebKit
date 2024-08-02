@@ -533,9 +533,6 @@ private:
     WebCore::FloatRect convertFromContentsToPainting(const WebCore::FloatRect&, std::optional<PDFDocumentLayout::PageIndex> = { }) const;
     WebCore::FloatRect convertFromPaintingToContents(const WebCore::FloatRect&, std::optional<PDFDocumentLayout::PageIndex> = { }) const;
 
-    PDFDocumentLayout::PageIndex nearestPageIndexForDocumentPoint(const WebCore::FloatPoint&) const;
-    std::optional<PDFDocumentLayout::PageIndex> pageIndexForDocumentPoint(const WebCore::FloatPoint&) const;
-
     PDFDocumentLayout::PageIndex indexForCurrentPageInView() const;
 
     RetainPtr<PDFAnnotation> annotationForRootViewPoint(const WebCore::IntPoint&) const;
