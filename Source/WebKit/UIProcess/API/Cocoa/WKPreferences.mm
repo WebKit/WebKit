@@ -702,14 +702,14 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
     _preferences->setMediaCaptureRequiresSecureConnection(requiresSecureConnection);
 }
 
-- (double)_inactiveMediaCaptureSteamRepromptIntervalInMinutes
+- (double)_inactiveMediaCaptureStreamRepromptIntervalInMinutes
 {
-    return _preferences->inactiveMediaCaptureSteamRepromptIntervalInMinutes();
+    return _preferences->inactiveMediaCaptureStreamRepromptIntervalInMinutes();
 }
 
-- (void)_setInactiveMediaCaptureSteamRepromptIntervalInMinutes:(double)interval
+- (void)_setInactiveMediaCaptureStreamRepromptIntervalInMinutes:(double)interval
 {
-    _preferences->setInactiveMediaCaptureSteamRepromptIntervalInMinutes(interval);
+    _preferences->setInactiveMediaCaptureStreamRepromptIntervalInMinutes(interval);
 }
 
 - (BOOL)_interruptAudioOnPageVisibilityChangeEnabled

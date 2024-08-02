@@ -1380,7 +1380,7 @@ TEST(WebKit2, CapturePermissionChangedFromDenyToGrant)
 TEST(WebKit2, EnumerateDevicesAfterMuting)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration preferences]._inactiveMediaCaptureSteamRepromptIntervalInMinutes = .5 / 60;
+    [configuration preferences]._inactiveMediaCaptureStreamRepromptIntervalInMinutes = .5 / 60;
 
     initializeMediaCaptureConfiguration(configuration.get());
 

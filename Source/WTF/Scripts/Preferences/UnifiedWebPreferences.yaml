@@ -3195,7 +3195,7 @@ InWindowFullscreenEnabled:
     WebCore:
       default: false
 
-InactiveMediaCaptureSteamRepromptIntervalInMinutes:
+InactiveMediaCaptureStreamRepromptIntervalInMinutes:
   type: double
   status: embedder
   webcoreBinding: none

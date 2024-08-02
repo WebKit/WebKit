@@ -1049,7 +1049,7 @@ void UserMediaPermissionRequestManagerProxy::captureStateChanged(MediaProducerMe
     if (m_captureState & activeCaptureMask)
         interval = Seconds::fromHours(page->preferences().longRunningMediaCaptureStreamRepromptIntervalInHours());
     else
-        interval = Seconds::fromMinutes(page->preferences().inactiveMediaCaptureSteamRepromptIntervalInMinutes());
+        interval = Seconds::fromMinutes(page->preferences().inactiveMediaCaptureStreamRepromptIntervalInMinutes());
 
     if (interval == m_currentWatchdogInterval)
         return;

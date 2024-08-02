@@ -93,7 +93,7 @@ TEST(WebKit2, GetUserMediaReprompt)
     EXPECT_TRUE([webView haveStream:YES]);
     EXPECT_FALSE([delegate wasPrompted]);
 
-    preferences._inactiveMediaCaptureSteamRepromptIntervalInMinutes = .5 / 60;
+    preferences._inactiveMediaCaptureStreamRepromptIntervalInMinutes = .5 / 60;
     [webView stringByEvaluatingJavaScript:@"stop()"];
     EXPECT_TRUE([webView haveStream:NO]);
 

@@ -1368,14 +1368,14 @@ bool WKPreferencesGetMediaCaptureRequiresSecureConnection(WKPreferencesRef prefe
     return toImpl(preferencesRef)->mediaCaptureRequiresSecureConnection();
 }
 
-void WKPreferencesSetInactiveMediaCaptureSteamRepromptIntervalInMinutes(WKPreferencesRef preferencesRef, double interval)
+void WKPreferencesSetInactiveMediaCaptureStreamRepromptIntervalInMinutes(WKPreferencesRef preferencesRef, double interval)
 {
-    toImpl(preferencesRef)->setInactiveMediaCaptureSteamRepromptIntervalInMinutes(interval);
+    toImpl(preferencesRef)->setInactiveMediaCaptureStreamRepromptIntervalInMinutes(interval);
 }
 
-double WKPreferencesGetInactiveMediaCaptureSteamRepromptIntervalInMinutes(WKPreferencesRef preferencesRef)
+double WKPreferencesGetInactiveMediaCaptureStreamRepromptIntervalInMinutes(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->inactiveMediaCaptureSteamRepromptIntervalInMinutes();
+    return toImpl(preferencesRef)->inactiveMediaCaptureStreamRepromptIntervalInMinutes();
 }
 
 void WKPreferencesSetDataTransferItemsEnabled(WKPreferencesRef preferencesRef, bool flag)
