@@ -40,7 +40,7 @@ private:
     DestinationColorSpace colorSpace() const final { return m_frame.nativeImage()->colorSpace(); }
     std::optional<Color> singlePixelSolidColor() const final { return m_frame.nativeImage()->singlePixelSolidColor(); }
 
-    const ImageFrame& primaryImageFrame() final { return m_frame; }
+    const ImageFrame& primaryImageFrame(const std::optional<SubsamplingLevel>& = std::nullopt) final { return m_frame; }
 
     RefPtr<NativeImage> primaryNativeImage() final { return m_frame.nativeImage(); }
 
