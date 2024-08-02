@@ -4868,7 +4868,6 @@
         "orphans": {
             "inherited": true,
             "codegen-properties": {
-                "auto-functions": true,
                 "parser-grammar": "<integer [1,inf]>"
             },
             "specification": {
@@ -6254,7 +6253,6 @@
         "widows": {
             "inherited": true,
             "codegen-properties": {
-                "auto-functions": true,
                 "parser-grammar": "<integer [1,inf]>"
             },
             "specification": {

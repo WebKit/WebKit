@@ -7708,7 +7708,6 @@ imported/w3c/web-platform-tests/css/css-break/transform-021.html [ ImageOnlyFail
 imported/w3c/web-platform-tests/css/css-break/underflow-from-next-page-print.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/widows-orphans-006.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/widows-orphans-007.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-break/widows-orphans-015.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/widows-orphans-017.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/will-change-filter.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/flexbox/flex-container-fragmentation-003.html [ ImageOnlyFailure ]
