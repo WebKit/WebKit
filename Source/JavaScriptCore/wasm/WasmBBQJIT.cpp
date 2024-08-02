@@ -983,6 +983,30 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::setLocal(uint32_t localIndex, Value val
     return { };
 }
 
+PartialResult WARN_UNUSED_RETURN BBQJIT::teeLocal(uint32_t localIndex, Value value, Value& result)
+{
+    auto type = m_parser->typeOfLocal(localIndex);
+    Value local = Value::fromLocal(type.kind, localIndex);
+    if (value.isConst()) {
+        Location localLocation = locationOf(local);
+        emitStore(value, localLocation);
+        consume(value);
+        result = topValue(type.kind);
+        Location resultLocation = allocate(result);
+        emitMoveConst(value, resultLocation);
+    } else {
+        Location srcLocation = loadIfNecessary(value);
+        Location localLocation = locationOf(local);
+        emitStore(value, localLocation);
+        consume(value);
+        result = topValue(type.kind);
+        Location resultLocation = allocate(result);
+        emitMove(type.kind, srcLocation, resultLocation);
+    }
+    LOG_INSTRUCTION("TeeLocal", localIndex, value, RESULT(result));
+    return { };
+}
+
 // Globals
 
 Value BBQJIT::topValue(TypeKind type)

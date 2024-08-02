@@ -253,6 +253,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addTableCopy(unsigned, unsigned, ExpressionType, ExpressionType, ExpressionType) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN getLocal(uint32_t, ExpressionType&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN setLocal(uint32_t, ExpressionType) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN teeLocal(uint32_t, ExpressionType, ExpressionType&) CONST_EXPR_STUB
 
     PartialResult WARN_UNUSED_RETURN getGlobal(uint32_t index, ExpressionType& result)
     {

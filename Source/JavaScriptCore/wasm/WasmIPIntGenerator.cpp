@@ -255,6 +255,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN setLocal(uint32_t, ExpressionType);
+    PartialResult WARN_UNUSED_RETURN teeLocal(uint32_t, ExpressionType, ExpressionType& result);
 
     // Globals
 
@@ -733,11 +734,17 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::getLocal(uint32_t, ExpressionTy
     changeStackSize(1);
     return { };
 }
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::setLocal(uint32_t, ExpressionType)
 {
     // Local indices are usually very small, so we decode them on the fly
     // instead of generating metadata.
     changeStackSize(-1);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::teeLocal(uint32_t, ExpressionType, ExpressionType&)
+{
     return { };
 }
 
