@@ -4411,6 +4411,20 @@ MediaRecorderEnabled:
     WebCore:
       default: false
 
+MediaSessionCaptureToggleAPIEnabled:
+  type: bool
+  status: testable
+  category: media
+  humanReadableName: "MediaSession capture related API"
+  humanReadableDescription: "Enable MediaSession capture related API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 MediaSessionCoordinatorEnabled:
   type: bool
   status: stable

@@ -1,0 +1,3 @@
+
+PASS setting toggle actions should fail if mediaSessionCaptureToggleAPIEnabled is false
+

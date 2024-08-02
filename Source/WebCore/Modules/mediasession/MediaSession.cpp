@@ -245,8 +245,14 @@ void MediaSession::setPlaybackState(MediaSessionPlaybackState state)
     notifyPlaybackStateObservers();
 }
 
-void MediaSession::setActionHandler(MediaSessionAction action, RefPtr<MediaSessionActionHandler>&& handler)
+ExceptionOr<void> MediaSession::setActionHandler(MediaSessionAction action, RefPtr<MediaSessionActionHandler>&& handler)
 {
+#if ENABLE(MEDIA_STREAM)
+    RefPtr document = this->document();
+    if (document && !document->settings().mediaSessionCaptureToggleAPIEnabled() && (action == MediaSessionAction::Togglecamera || action == MediaSessionAction::Togglemicrophone || action == MediaSessionAction::Togglescreenshare))
+        return Exception { ExceptionCode::TypeError, makeString("Argument 1 ('action') to MediaSession.setActionHandler must be a value other than '"_s, convertEnumerationToString(action), "'"_s) };
+#endif
+
     if (handler) {
         ALWAYS_LOG(LOGIDENTIFIER, "adding ", action);
         {
@@ -269,6 +275,7 @@ void MediaSession::setActionHandler(MediaSessionAction action, RefPtr<MediaSessi
     }
 
     notifyActionHandlerObservers();
+    return { };
 }
 
 void MediaSession::callActionHandler(const MediaSessionActionDetails& actionDetails, DOMPromiseDeferred<void>&& promise)
