@@ -84,13 +84,6 @@ bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, v
     return containsWebCoreOpaqueRoot(visitor, node);
 }
 
-JSScope* JSNode::pushEventHandlerScope(JSGlobalObject* lexicalGlobalObject, JSScope* node) const
-{
-    if (inherits<JSHTMLElement>())
-        return jsCast<const JSHTMLElement*>(this)->pushEventHandlerScope(lexicalGlobalObject, node);
-    return node;
-}
-
 template<typename Visitor>
 void JSNode::visitAdditionalChildren(Visitor& visitor)
 {

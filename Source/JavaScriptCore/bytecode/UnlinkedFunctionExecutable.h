@@ -121,7 +121,7 @@ public:
         ParserError&, SourceParseMode);
 
     static UnlinkedFunctionExecutable* fromGlobalCode(
-        const Identifier&, JSGlobalObject*, const SourceCode&, JSObject*& exception, 
+        const Identifier&, JSGlobalObject*, const SourceCode&, LexicallyScopedFeatures, JSObject*& exception,
         int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition);
 
     SourceCode linkedSourceCode(const SourceCode&) const;
