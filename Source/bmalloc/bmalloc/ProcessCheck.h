@@ -44,7 +44,7 @@ const char* processNameString();
 bool shouldAllowMiniMode();
 #elif BOS(DARWIN)
 inline const char* processNameString() { return "bmalloc"; }
-inline bool shouldAllowMiniMode() { return false; }
+inline bool shouldAllowMiniMode() { return true; }
 #else 
 inline bool shouldAllowMiniMode() { return true; }
 #endif
