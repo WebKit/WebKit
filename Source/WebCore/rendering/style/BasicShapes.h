@@ -196,7 +196,8 @@ public:
     const BasicShapeCenterCoordinate& centerX() const { return m_centerX; }
     const BasicShapeCenterCoordinate& centerY() const { return m_centerY; }
     const BasicShapeRadius& radius() const { return m_radius; }
-    float floatValueForRadiusInBox(float boxWidth, float boxHeight, FloatPoint) const;
+
+    float floatValueForRadiusInBox(FloatSize boxSize, FloatPoint center) const;
 
     void setCenterX(BasicShapeCenterCoordinate centerX) { m_centerX = WTFMove(centerX); }
     void setCenterY(BasicShapeCenterCoordinate centerY) { m_centerY = WTFMove(centerY); }
@@ -234,7 +235,8 @@ public:
     const BasicShapeCenterCoordinate& centerY() const { return m_centerY; }
     const BasicShapeRadius& radiusX() const { return m_radiusX; }
     const BasicShapeRadius& radiusY() const { return m_radiusY; }
-    float floatValueForRadiusInBox(const BasicShapeRadius&, float center, float boxWidthOrHeight) const;
+
+    FloatSize floatSizeForRadiusInBox(FloatSize boxSize, FloatPoint center) const;
 
     void setCenterX(BasicShapeCenterCoordinate centerX) { m_centerX = WTFMove(centerX); }
     void setCenterY(BasicShapeCenterCoordinate centerY) { m_centerY = WTFMove(centerY); }

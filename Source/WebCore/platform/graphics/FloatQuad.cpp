@@ -32,6 +32,7 @@
 #include "config.h"
 #include "FloatQuad.h"
 
+#include "GeometryUtilities.h"
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -39,16 +40,6 @@
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
-
-static inline float min4(float a, float b, float c, float d)
-{
-    return std::min(std::min(a, b), std::min(c, d));
-}
-
-static inline float max4(float a, float b, float c, float d)
-{
-    return std::max(std::max(a, b), std::max(c, d));
-}
 
 inline float dot(const FloatSize& a, const FloatSize& b)
 {

@@ -35,6 +35,7 @@
 #include "CalculationValue.h"
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
+#include "GeometryUtilities.h"
 #include "LengthFunctions.h"
 #include "Path.h"
 #include "RenderBox.h"
@@ -173,23 +174,24 @@ bool BasicShapeCircle::operator==(const BasicShape& other) const
         && positionWasOmitted() == otherCircle.positionWasOmitted();
 }
 
-float BasicShapeCircle::floatValueForRadiusInBox(float boxWidth, float boxHeight, FloatPoint center) const
+float BasicShapeCircle::floatValueForRadiusInBox(FloatSize boxSize, FloatPoint center) const
 {
-    if (m_radius.type() == BasicShapeRadius::Type::Value)
-        return floatValueForLength(m_radius.value(), std::hypot(boxWidth, boxHeight) / sqrtOfTwoFloat);
+    switch (m_radius.type()) {
+    case BasicShapeRadius::Type::Value:
+        return floatValueForLength(m_radius.value(), boxSize.diagonalLength() / sqrtOfTwoFloat);
 
-    float widthDelta = std::abs(boxWidth - center.x());
-    float heightDelta = std::abs(boxHeight - center.y());
-    if (m_radius.type() == BasicShapeRadius::Type::ClosestSide)
-        return std::min(std::min(std::abs(center.x()), widthDelta), std::min(std::abs(center.y()), heightDelta));
+    case BasicShapeRadius::Type::ClosestSide:
+        return distanceToClosestSide(center, boxSize);
 
-    // If radius.type() == BasicShapeRadius::Type::FarthestSide.
-    return std::max(std::max(std::abs(center.x()), widthDelta), std::max(std::abs(center.y()), heightDelta));
+    case BasicShapeRadius::Type::FarthestSide:
+        return distanceToFarthestSide(center, boxSize);
+    }
+    return 0;
 }
 
 Path BasicShapeCircle::pathForCenterCoordinate(const FloatRect& boundingBox, FloatPoint center) const
 {
-    float radius = floatValueForRadiusInBox(boundingBox.width(), boundingBox.height(),  center);
+    float radius = floatValueForRadiusInBox(boundingBox.size(), center);
     return cachedEllipsePath(FloatRect(center.x() - radius + boundingBox.x(), center.y() - radius + boundingBox.y(), radius * 2, radius * 2));
 }
 
@@ -261,25 +263,29 @@ bool BasicShapeEllipse::operator==(const BasicShape& other) const
         && positionWasOmitted() == otherEllipse.positionWasOmitted();
 }
 
-float BasicShapeEllipse::floatValueForRadiusInBox(const BasicShapeRadius& radius, float center, float boxWidthOrHeight) const
+FloatSize BasicShapeEllipse::floatSizeForRadiusInBox(FloatSize boxSize, FloatPoint center) const
 {
-    if (radius.type() == BasicShapeRadius::Type::Value)
-        return floatValueForLength(radius.value(), std::abs(boxWidthOrHeight));
+    auto sizeForAxis = [&](const BasicShapeRadius& radius, float center, float dimensionSize) {
+        switch (radius.type()) {
+        case BasicShapeRadius::Type::Value:
+            return floatValueForLength(radius.value(), std::abs(dimensionSize));
 
-    float widthOrHeightDelta = std::abs(boxWidthOrHeight - center);
-    if (radius.type() == BasicShapeRadius::Type::ClosestSide)
-        return std::min(std::abs(center), widthOrHeightDelta);
+        case BasicShapeRadius::Type::ClosestSide:
+            return std::min(std::abs(center), std::abs(dimensionSize - center));
 
-    ASSERT(radius.type() == BasicShapeRadius::Type::FarthestSide);
-    return std::max(std::abs(center), widthOrHeightDelta);
+        case BasicShapeRadius::Type::FarthestSide:
+            return std::max(std::abs(center), std::abs(dimensionSize - center));
+        }
+        return 0.0f;
+    };
+
+    return { sizeForAxis(m_radiusX, center.x(), boxSize.width()), sizeForAxis(m_radiusY, center.y(), boxSize.height()) };
 }
 
 Path BasicShapeEllipse::pathForCenterCoordinate(const FloatRect& boundingBox, FloatPoint center) const
 {
-    float radiusX = floatValueForRadiusInBox(m_radiusX, center.x(), boundingBox.width());
-    float radiusY = floatValueForRadiusInBox(m_radiusY, center.y(), boundingBox.height());
-
-    return cachedEllipsePath(FloatRect(center.x() - radiusX + boundingBox.x(), center.y() - radiusY + boundingBox.y(), radiusX * 2, radiusY * 2));
+    auto radius = floatSizeForRadiusInBox(boundingBox.size(), center);
+    return cachedEllipsePath(FloatRect(center.x() - radius.width() + boundingBox.x(), center.y() - radius.height() + boundingBox.y(), radius.width() * 2, radius.height() * 2));
 }
 
 Path BasicShapeEllipse::path(const FloatRect& boundingBox) const

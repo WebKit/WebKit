@@ -105,7 +105,7 @@ Ref<const Shape> Shape::createShape(const BasicShape& basicShape, const LayoutPo
         const auto& circle = uncheckedDowncast<BasicShapeCircle>(basicShape);
         float centerX = floatValueForCenterCoordinate(circle.centerX(), boxWidth);
         float centerY = floatValueForCenterCoordinate(circle.centerY(), boxHeight);
-        float radius = circle.floatValueForRadiusInBox(boxWidth, boxHeight, { centerX, centerY });
+        float radius = circle.floatValueForRadiusInBox({ boxWidth, boxHeight }, { centerX, centerY });
         FloatPoint logicalCenter = physicalPointToLogical(FloatPoint(centerX, centerY), logicalBoxSize.height(), writingMode);
         logicalCenter.moveBy(borderBoxOffset);
 
@@ -117,12 +117,11 @@ Ref<const Shape> Shape::createShape(const BasicShape& basicShape, const LayoutPo
         const auto& ellipse = uncheckedDowncast<BasicShapeEllipse>(basicShape);
         float centerX = floatValueForCenterCoordinate(ellipse.centerX(), boxWidth);
         float centerY = floatValueForCenterCoordinate(ellipse.centerY(), boxHeight);
-        float radiusX = ellipse.floatValueForRadiusInBox(ellipse.radiusX(), centerX, boxWidth);
-        float radiusY = ellipse.floatValueForRadiusInBox(ellipse.radiusY(), centerY, boxHeight);
-        FloatPoint logicalCenter = physicalPointToLogical(FloatPoint(centerX, centerY), logicalBoxSize.height(), writingMode);
+        auto center = FloatPoint { centerX, centerY };
+        auto radius = ellipse.floatSizeForRadiusInBox({ boxWidth, boxHeight }, center);
+        FloatPoint logicalCenter = physicalPointToLogical(center, logicalBoxSize.height(), writingMode);
         logicalCenter.moveBy(borderBoxOffset);
-
-        shape = createEllipseShape(logicalCenter, FloatSize(radiusX, radiusY));
+        shape = createEllipseShape(logicalCenter, radius);
         break;
     }
 
