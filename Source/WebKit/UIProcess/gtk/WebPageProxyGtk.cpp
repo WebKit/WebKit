@@ -153,8 +153,7 @@ void WebPageProxy::callAfterNextPresentationUpdate(CompletionHandler<void()>&& c
 
 bool WebPageProxy::useExplicitSync() const
 {
-    // FIXME: implement explicit sync.
-    return false;
+    return true;
 }
 
 } // namespace WebKit

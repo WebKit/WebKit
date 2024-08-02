@@ -143,6 +143,7 @@ std::unique_ptr<AcceleratedBackingStoreDMABuf> AcceleratedBackingStoreDMABuf::cr
 
 AcceleratedBackingStoreDMABuf::AcceleratedBackingStoreDMABuf(WebPageProxy& webPage)
     : AcceleratedBackingStore(webPage)
+    , m_fenceMonitor([this] { gtk_widget_queue_draw(m_webPage.viewWidget()); })
 {
 }
 
@@ -548,7 +549,7 @@ void AcceleratedBackingStoreDMABuf::didDestroyBuffer(uint64_t id)
     m_buffers.remove(id);
 }
 
-void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID, WebCore::Region&& damageRegion, WTF::UnixFileDescriptor&&)
+void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID, WebCore::Region&& damageRegion, WTF::UnixFileDescriptor&& renderingFenceFD)
 {
     ASSERT(!m_pendingBuffer);
     auto* buffer = m_buffers.get(bufferID);
@@ -559,7 +560,7 @@ void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID, WebCore::Region&& d
 
     m_pendingBuffer = buffer;
     m_pendingDamageRegion = WTFMove(damageRegion);
-    gtk_widget_queue_draw(m_webPage.viewWidget());
+    m_fenceMonitor.addFileDescriptor(WTFMove(renderingFenceFD));
 }
 
 void AcceleratedBackingStoreDMABuf::frameDone()

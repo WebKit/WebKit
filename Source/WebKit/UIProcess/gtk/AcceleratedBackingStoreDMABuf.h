@@ -27,6 +27,7 @@
 
 #include "AcceleratedBackingStore.h"
 #include "DMABufRendererBufferFormat.h"
+#include "FenceMonitor.h"
 #include "MessageReceiver.h"
 #include "RendererBufferFormat.h"
 #include <WebCore/IntSize.h>
@@ -238,6 +239,7 @@ private:
         RefPtr<Buffer> m_buffer;
     };
 
+    FenceMonitor m_fenceMonitor;
     GRefPtr<GdkGLContext> m_gdkGLContext;
     bool m_glContextInitialized { false };
     uint64_t m_surfaceID { 0 };
