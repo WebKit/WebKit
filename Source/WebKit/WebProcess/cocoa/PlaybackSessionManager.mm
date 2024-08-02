@@ -555,9 +555,14 @@ void PlaybackSessionManager::exitFullscreen(PlaybackSessionContextIdentifier con
     ensureModel(contextId)->exitFullscreen();
 }
 
-void PlaybackSessionManager::toggleInWindow(PlaybackSessionContextIdentifier contextId)
+void PlaybackSessionManager::enterInWindow(PlaybackSessionContextIdentifier contextId)
 {
-    ensureModel(contextId)->toggleInWindowFullscreen();
+    ensureModel(contextId)->enterInWindowFullscreen();
+}
+
+void PlaybackSessionManager::exitInWindow(PlaybackSessionContextIdentifier contextId)
+{
+    ensureModel(contextId)->exitInWindowFullscreen();
 }
 
 void PlaybackSessionManager::toggleMuted(PlaybackSessionContextIdentifier contextId)

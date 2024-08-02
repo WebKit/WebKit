@@ -2915,7 +2915,23 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 {
     THROW_IF_SUSPENDED;
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-    _impl->toggleInWindowFullscreen();
+    _impl->isInWindowFullscreenActive() ? _impl->exitInWindowFullscreen() : _impl->enterInWindowFullscreen();
+#endif
+}
+
+- (void)_enterInWindow
+{
+    THROW_IF_SUSPENDED;
+#if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    _impl->enterInWindowFullscreen();
+#endif
+}
+
+- (void)_exitInWindow
+{
+    THROW_IF_SUSPENDED;
+#if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    _impl->exitInWindowFullscreen();
 #endif
 }
 

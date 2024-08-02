@@ -256,11 +256,18 @@ void PlaybackSessionModelContext::exitFullscreen()
         manager->exitFullscreen(m_contextId);
 }
 
-void PlaybackSessionModelContext::toggleInWindowFullscreen()
+void PlaybackSessionModelContext::enterInWindowFullscreen()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (m_manager)
-        m_manager->toggleInWindow(m_contextId);
+        m_manager->enterInWindow(m_contextId);
+}
+
+void PlaybackSessionModelContext::exitInWindowFullscreen()
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    if (m_manager)
+        m_manager->exitInWindow(m_contextId);
 }
 
 void PlaybackSessionModelContext::toggleMuted()
@@ -825,10 +832,16 @@ void PlaybackSessionManagerProxy::exitFullscreen(PlaybackSessionContextIdentifie
         page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::ExitFullscreen(contextId), page->webPageIDInMainFrameProcess());
 }
 
-void PlaybackSessionManagerProxy::toggleInWindow(PlaybackSessionContextIdentifier contextId)
+void PlaybackSessionManagerProxy::enterInWindow(PlaybackSessionContextIdentifier contextId)
 {
     if (RefPtr page = m_page.get())
-        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::ToggleInWindow(contextId), page->webPageIDInMainFrameProcess());
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::EnterInWindow(contextId), page->webPageIDInMainFrameProcess());
+}
+
+void PlaybackSessionManagerProxy::exitInWindow(PlaybackSessionContextIdentifier contextId)
+{
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::ExitInWindow(contextId), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::toggleMuted(PlaybackSessionContextIdentifier contextId)

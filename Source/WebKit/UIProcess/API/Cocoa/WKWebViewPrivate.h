@@ -385,6 +385,8 @@ for this property.
 - (void)_updateMediaPlaybackControlsManager;
 - (void)_togglePictureInPicture;
 - (void)_toggleInWindow;
+- (void)_enterInWindow;
+- (void)_exitInWindow;
 - (void)_enterFullscreen WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 - (void)_stopAllMediaPlayback;
 - (void)_suspendAllMediaPlayback;

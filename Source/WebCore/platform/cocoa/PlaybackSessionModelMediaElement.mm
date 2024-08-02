@@ -360,7 +360,22 @@ void PlaybackSessionModelMediaElement::togglePictureInPicture()
 #endif
 }
 
-void PlaybackSessionModelMediaElement::toggleInWindowFullscreen()
+void PlaybackSessionModelMediaElement::enterInWindowFullscreen()
+{
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    RefPtr element = dynamicDowncast<HTMLVideoElement>(m_mediaElement);
+    ASSERT(element);
+    if (!element)
+        return;
+
+    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, &element->document() };
+
+    if (element->fullscreenMode() != MediaPlayerEnums::VideoFullscreenModeInWindow)
+        element->setPresentationMode(HTMLVideoElement::VideoPresentationMode::InWindow);
+#endif
+}
+
+void PlaybackSessionModelMediaElement::exitInWindowFullscreen()
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     RefPtr element = dynamicDowncast<HTMLVideoElement>(m_mediaElement);
@@ -372,8 +387,6 @@ void PlaybackSessionModelMediaElement::toggleInWindowFullscreen()
 
     if (element->fullscreenMode() == MediaPlayerEnums::VideoFullscreenModeInWindow)
         element->setPresentationMode(HTMLVideoElement::VideoPresentationMode::Inline);
-    else
-        element->setPresentationMode(HTMLVideoElement::VideoPresentationMode::InWindow);
 #endif
 }
 

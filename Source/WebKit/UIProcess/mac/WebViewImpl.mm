@@ -6202,10 +6202,16 @@ bool WebViewImpl::isInWindowFullscreenActive() const
     return false;
 }
 
-void WebViewImpl::toggleInWindowFullscreen()
+void WebViewImpl::enterInWindowFullscreen()
 {
     if (RefPtr interface = protectedPlaybackSessionInterface())
-        return interface->toggleInWindowFullscreen();
+        return interface->enterInWindowFullscreen();
+}
+
+void WebViewImpl::exitInWindowFullscreen()
+{
+    if (RefPtr interface = protectedPlaybackSessionInterface())
+        return interface->exitInWindowFullscreen();
 }
 
 void WebViewImpl::updateMediaPlaybackControlsManager()

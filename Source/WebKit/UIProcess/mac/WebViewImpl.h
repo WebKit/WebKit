@@ -667,7 +667,8 @@ public:
     bool isPictureInPictureActive();
     void togglePictureInPicture();
     bool isInWindowFullscreenActive() const;
-    void toggleInWindowFullscreen();
+    void enterInWindowFullscreen();
+    void exitInWindowFullscreen();
     void updateMediaPlaybackControlsManager();
 
     AVTouchBarScrubber *mediaPlaybackControlsView() const;

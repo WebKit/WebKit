@@ -120,7 +120,8 @@ private:
     void selectAudioMediaOption(uint64_t) final;
     void selectLegibleMediaOption(uint64_t) final;
     void togglePictureInPicture() final;
-    void toggleInWindowFullscreen() final;
+    void enterInWindowFullscreen() final;
+    void exitInWindowFullscreen() final;
     void enterFullscreen() final;
     void exitFullscreen() final;
     void toggleMuted() final;
@@ -299,7 +300,8 @@ private:
     void togglePictureInPicture(PlaybackSessionContextIdentifier);
     void enterFullscreen(PlaybackSessionContextIdentifier);
     void exitFullscreen(PlaybackSessionContextIdentifier);
-    void toggleInWindow(PlaybackSessionContextIdentifier);
+    void enterInWindow(PlaybackSessionContextIdentifier);
+    void exitInWindow(PlaybackSessionContextIdentifier);
     void toggleMuted(PlaybackSessionContextIdentifier);
     void setMuted(PlaybackSessionContextIdentifier, bool);
     void setVolume(PlaybackSessionContextIdentifier, double);
