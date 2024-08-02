@@ -1205,6 +1205,9 @@ static _WKProcessTerminationReason wkProcessTerminationReason(ProcessTermination
     case ProcessTerminationReason::RequestedByGPUProcess:
     case ProcessTerminationReason::Crash:
         return _WKProcessTerminationReasonCrash;
+    case ProcessTerminationReason::GPUProcessCrashedTooManyTimes:
+    case ProcessTerminationReason::ModelProcessCrashedTooManyTimes:
+        return _WKProcessTerminationReasonExceededSharedProcessCrashLimit;
     }
     ASSERT_NOT_REACHED();
     return _WKProcessTerminationReasonCrash;

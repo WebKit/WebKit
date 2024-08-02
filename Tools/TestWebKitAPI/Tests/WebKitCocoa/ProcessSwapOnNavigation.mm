@@ -3859,7 +3859,7 @@ TEST(ProcessSwap, UseWebProcessCacheAfterTermination)
     EXPECT_EQ(2U, [processPool _webProcessCountIgnoringPrewarmed]);
 
     __block bool webProcessTerminated = false;
-    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *) {
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *, _WKProcessTerminationReason) {
         webProcessTerminated = true;
     }];
 
@@ -5502,7 +5502,7 @@ TEST(ProcessSwap, ReloadRelatedWebViewAfterCrash)
     auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webView1Configuration.get()]);
     auto delegate = adoptNS([[TestNavigationDelegate alloc] init]);
     __block bool didCrash = false;
-    [delegate setWebContentProcessDidTerminate:^(WKWebView *view) {
+    [delegate setWebContentProcessDidTerminate:^(WKWebView *view, _WKProcessTerminationReason) {
         [view reload];
         didCrash = true;
     }];
@@ -6060,7 +6060,7 @@ TEST(ProcessSwap, TerminateProcessAfterProcessSwap)
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:navigationDelegate.get()];
     __block bool webProcessTerminated = false;
-    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *) {
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *, _WKProcessTerminationReason) {
         webProcessTerminated = true;
     }];
     [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
@@ -6168,7 +6168,7 @@ TEST(ProcessSwap, CrashWithGestureController)
         auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
         [webView setNavigationDelegate:navigationDelegate.get()];
         __block bool webProcessTerminated = false;
-        [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *) {
+        [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *, _WKProcessTerminationReason) {
             webProcessTerminated = true;
         }];
         [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {

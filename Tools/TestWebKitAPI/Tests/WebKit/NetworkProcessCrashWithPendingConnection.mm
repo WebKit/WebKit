@@ -114,7 +114,7 @@ TEST(WebKit, NetworkProcessCrashWithPendingConnection)
         loadedOrCrashed = true;
         loaded = true;
     }];
-    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *) {
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *, _WKProcessTerminationReason) {
         loadedOrCrashed = true;
         webProcessCrashed = true;
     }];

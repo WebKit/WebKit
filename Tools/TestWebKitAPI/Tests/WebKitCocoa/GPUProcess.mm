@@ -165,7 +165,8 @@ TEST(GPUProcess, WebProcessTerminationAfterTooManyGPUProcessCrashes)
     kill(gpuProcessPID, 9);
 
     // The WebView's WebProcess should get killed this time.
-    [webView _test_waitForWebContentProcessDidTerminate];
+    auto crashReason = [webView _test_waitForWebContentProcessDidTerminate];
+    EXPECT_EQ(crashReason, _WKProcessTerminationReasonExceededSharedProcessCrashLimit);
 
     EXPECT_EQ(0, [webView _webProcessIdentifier]);
 

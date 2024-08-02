@@ -2063,7 +2063,7 @@ TEST(WritingTools, NoCrashWhenWebProcessTerminates)
     __block bool webProcessTerminated = false;
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:navigationDelegate.get()];
-    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *) {
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *, _WKProcessTerminationReason) {
         webProcessTerminated = true;
     }];
 

@@ -615,7 +615,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (void)_terminateAllWebContentProcesses
 {
-    _processPool->terminateAllWebContentProcesses();
+    _processPool->terminateAllWebContentProcesses(WebKit::ProcessTerminationReason::RequestedByClient);
 }
 
 - (WKNotificationManagerRef)_notificationManagerForTesting

@@ -105,7 +105,7 @@ TEST(WebKit, LoadInvalidURLRequestNonASCII)
 {
     __block bool done = false;
     auto delegate = adoptNS([TestNavigationDelegate new]);
-    delegate.get().webContentProcessDidTerminate = ^(WKWebView *) {
+    delegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
         ASSERT_NOT_REACHED();
     };
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {

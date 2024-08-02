@@ -124,7 +124,7 @@ TEST(ActionSheetTests, DISABLED_DismissingActionSheetShouldNotDismissPresentingV
     }];
 
     __block bool done = false;
-    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *) {
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *, _WKProcessTerminationReason) {
         dispatch_async(dispatch_get_main_queue(), ^{
             done = true;
         });

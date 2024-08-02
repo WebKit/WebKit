@@ -42,7 +42,7 @@
 @property (nonatomic, copy) void (^didFinishNavigation)(WKWebView *, WKNavigation *);
 @property (nonatomic, copy) void (^didSameDocumentNavigation)(WKWebView *, WKNavigation *);
 @property (nonatomic, copy) void (^renderingProgressDidChange)(WKWebView *, _WKRenderingProgressEvents);
-@property (nonatomic, copy) void (^webContentProcessDidTerminate)(WKWebView *);
+@property (nonatomic, copy) void (^webContentProcessDidTerminate)(WKWebView *, _WKProcessTerminationReason);
 @property (nonatomic, copy) void (^didReceiveAuthenticationChallenge)(WKWebView *, NSURLAuthenticationChallenge *, void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *));
 @property (nonatomic, copy) void (^contentRuleListPerformedAction)(WKWebView *, NSString *, _WKContentRuleListAction *, NSURL *);
 @property (nonatomic, copy) void (^didChangeLookalikeCharactersFromURL)(WKWebView *, NSURL *, NSURL *);
@@ -67,5 +67,5 @@
 - (void)_test_waitForDidFinishNavigationWithoutPresentationUpdate;
 - (void)_test_waitForDidFinishNavigationWhileIgnoringSSLErrors;
 - (void)_test_waitForDidFailProvisionalNavigation;
-- (void)_test_waitForWebContentProcessDidTerminate;
+- (_WKProcessTerminationReason)_test_waitForWebContentProcessDidTerminate;
 @end

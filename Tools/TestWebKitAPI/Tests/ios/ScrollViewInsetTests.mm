@@ -175,7 +175,7 @@ TEST(ScrollViewInsetTests, RestoreInitialContentOffsetAfterCrash)
     CGPoint initialContentOffset = [webView scrollView].contentOffset;
     __block CGPoint contentOffsetAfterCrash = CGPointZero;
     __block bool done = false;
-    [delegate setWebContentProcessDidTerminate:^(WKWebView *webView) {
+    [delegate setWebContentProcessDidTerminate:^(WKWebView *webView, _WKProcessTerminationReason) {
         contentOffsetAfterCrash = webView.scrollView.contentOffset;
         done = true;
     }];

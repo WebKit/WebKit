@@ -131,6 +131,8 @@ private:
         case ProcessTerminationReason::ExceededProcessCountLimit:
         case ProcessTerminationReason::IdleExit:
         case ProcessTerminationReason::Unresponsive:
+        case ProcessTerminationReason::GPUProcessCrashedTooManyTimes:
+        case ProcessTerminationReason::ModelProcessCrashedTooManyTimes:
             break;
         }
         return false;
