@@ -61,12 +61,12 @@
         checkForScroll();
     }
 
-    function setupTopLevel() 
+    async function setupTopLevel() 
     {
         description("Tests that a select doesn't pass wheel events to main frame when scrolling at bottom");
 
-        if (window.internals)
-            window.internals.setTopContentInset(clientInset);
+        if (window.testRunner)
+            await testRunner.setTopContentInset(clientInset);
 
         if (window.eventSender) {
             setTimeout(scrollTest, 0);
@@ -83,8 +83,8 @@
         finishJSTest();
     }
 
-    window.addEventListener('load', () => {
-        setupTopLevel();
+    window.addEventListener('load', async () => {
+        await setupTopLevel();
     }, false);
 </script>
 </head>

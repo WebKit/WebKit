@@ -15,14 +15,14 @@
     <script src="../../../resources/ui-helper.js"></script>
     <script src="resources/wheel-handler-region-helper.js"></script>
     <script>
-        if (window.internals) {
-            internals.setTopContentInset(60);
+        if (window.internals)
             internals.setHeaderHeight(23);
-        }
 
         function doTest()
         {
             window.setTimeout(async () => {
+                if (window.testRunner)
+                    await testRunner.setTopContentInset(60);
                 // Scroll to test the mapping from document to view coords.
                 document.scrollingElement.scrollTop = 195;
                 dumpRegionAndNotifyDone();

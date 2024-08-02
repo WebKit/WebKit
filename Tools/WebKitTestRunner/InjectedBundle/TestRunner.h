@@ -563,6 +563,8 @@ public:
 
     void getAndClearReportedWindowProxyAccessDomains(JSContextRef, JSValueRef);
 
+    void setTopContentInset(JSContextRef, double, JSValueRef);
+
 private:
     TestRunner();
 

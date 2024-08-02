@@ -1785,6 +1785,16 @@ static JSValueRef forceImmediateCompletionCallback(JSContextRef context, JSObjec
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef setTopContentInsetCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount != 1)
+        return JSValueMakeUndefined(context);
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
+    double contentInset = JSValueToNumber(context, arguments[0], exception);
+    controller->setTopContentInset(contentInset);
+    return JSValueMakeUndefined(context);
+}
+
 static JSValueRef failNextNewCodeBlock(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount < 1)
@@ -2089,6 +2099,7 @@ const JSStaticFunction* TestRunner::staticFunctions()
         { "setOpenPanelFilesMediaIcon", SetOpenPanelFilesMediaIconCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "stopLoading", stopLoadingCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "forceImmediateCompletion", forceImmediateCompletionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setTopContentInset", setTopContentInsetCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #if PLATFORM(IOS_FAMILY)
         { "setPagePaused", setPagePausedCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #endif

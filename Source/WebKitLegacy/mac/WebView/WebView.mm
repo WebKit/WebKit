@@ -4164,6 +4164,12 @@ IGNORE_WARNINGS_END
     return nil;
 }
 
+- (void)_setTopContentInsetForTesting:(float)contentInset
+{
+    if (_private && _private->page)
+        _private->page->setTopContentInset(contentInset);
+}
+
 - (BOOL)_isSoftwareRenderable
 {
     auto* coreFrame = [self _mainCoreFrame];

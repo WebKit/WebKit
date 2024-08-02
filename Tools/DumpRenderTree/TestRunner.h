@@ -396,6 +396,8 @@ public:
 
     void generateTestReport(JSStringRef message, JSStringRef group);
 
+    void setTopContentInset(double);
+
 private:
     TestRunner(const std::string& testURL, const std::string& expectedPixelHash);
 

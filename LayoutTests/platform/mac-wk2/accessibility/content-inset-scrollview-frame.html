@@ -26,10 +26,11 @@ if (window.accessibilityController) {
     output += expect("webX == scrollViewX && webY == scrollViewY", "true")
 
     output += "\nSetting the main-frame top content inset to 100px.\n";
-    window.internals.setTopContentInset(100);
 
     var newScrollViewHeight, newScrollViewY;
     setTimeout(async function() {
+        if (window.testRunner)
+            await testRunner.setTopContentInset(100);
         await waitFor(() => {
             newScrollViewY =  scrollView.y - scrollView.height;
             return newScrollViewY - scrollViewY === 100;

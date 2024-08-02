@@ -1,17 +1,21 @@
 <html>
 <head>
 <script>
-    function runTest() {
+    async function runTest() {
         if (!window.eventSender)
             return;
-        if (window.internals)
-            window.internals.setTopContentInset(100);
-        if (window.testRunner)
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            await testRunner.setTopContentInset(100);
             testRunner.dumpAsText();
+        }
 
         eventSender.mouseMoveTo(20, 120);
         eventSender.mouseDown();
         eventSender.mouseUp();
+
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 </script>
 </head>

@@ -31,4 +31,6 @@ messages -> WebPageTesting NotRefCounted {
 #endif
 
     ClearWheelEventTestMonitor()
+
+    SetTopContentInset(float contentInset) -> ()
 }

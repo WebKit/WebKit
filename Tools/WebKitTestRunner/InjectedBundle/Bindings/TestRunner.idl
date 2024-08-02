@@ -461,4 +461,6 @@ interface TestRunner {
 
     undefined getAndClearReportedWindowProxyAccessDomains(object callback);
     Promise<undefined> flushConsoleLogs();
+
+    Promise<undefined> setTopContentInset(double contentInset);
 };

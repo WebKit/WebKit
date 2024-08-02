@@ -1809,6 +1809,8 @@ public:
     void showContextMenuFromFrame(const WebCore::FrameIdentifier&, const ContextMenuContextData&, const UserData&);
 #endif
 
+    void setTopContentInset(float);
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -2006,7 +2008,6 @@ private:
 #if PLATFORM(COCOA)
     void setTopContentInsetFenced(float, const WTF::MachSendRight&);
 #endif
-    void setTopContentInset(float);
 
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();

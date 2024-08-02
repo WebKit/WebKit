@@ -38,7 +38,9 @@ messages -> WebPage LegacyReceiver {
 #if PLATFORM(COCOA)
     SetTopContentInsetFenced(float contentInset, MachSendRight machSendRight)
 #endif
+#if !PLATFORM(COCOA)
     SetTopContentInset(float contentInset)
+#endif
 
     SetUnderlayColor(WebCore::Color color)
     SetUnderPageBackgroundColorOverride(WebCore::Color underPageBackgroundColorOverride)

@@ -2142,6 +2142,11 @@ bool TestRunner::shouldDumpBackForwardListsForAllWindows() const
     return postSynchronousPageMessageReturningBoolean("ShouldDumpBackForwardListsForAllWindows");
 }
 
+void TestRunner::setTopContentInset(JSContextRef context, double contentInset, JSValueRef callback)
+{
+    postMessageWithAsyncReply(context, "SetTopContentInset", adoptWK(WKDoubleCreate(contentInset)), callback);
+}
+
 ALLOW_DEPRECATED_DECLARATIONS_END
 
 } // namespace WTR
