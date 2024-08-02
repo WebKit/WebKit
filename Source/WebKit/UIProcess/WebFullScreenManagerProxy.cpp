@@ -74,7 +74,7 @@ WebFullScreenManagerProxy::~WebFullScreenManagerProxy()
 
 const SharedPreferencesForWebProcess& WebFullScreenManagerProxy::sharedPreferencesForWebProcess() const
 {
-    return *m_page.legacyMainFrameProcess().sharedPreferencesForWebProcess();
+    return m_page.legacyMainFrameProcess().sharedPreferencesForWebProcess();
 }
 
 void WebFullScreenManagerProxy::willEnterFullScreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)

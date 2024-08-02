@@ -474,12 +474,12 @@ void WebProcessProxy::initializeWebProcess(WebProcessCreationParameters&& parame
 
 void WebProcessProxy::initializePreferencesForGPUAndNetworkProcesses(const WebPageProxy& page)
 {
-    if (!m_sharedPreferencesForWebProcess) {
+    if (!m_sharedPreferencesForWebProcess.version) {
         updateSharedPreferencesForWebProcess(page.preferences().store());
-        ASSERT(m_sharedPreferencesForWebProcess);
+        ASSERT(m_sharedPreferencesForWebProcess.version);
     } else {
 #if ASSERT_ENABLED
-        auto sharedPreferencesForWebProcess = *m_sharedPreferencesForWebProcess;
+        auto sharedPreferencesForWebProcess = m_sharedPreferencesForWebProcess;
         ASSERT(!WebKit::updateSharedPreferencesForWebProcess(sharedPreferencesForWebProcess, page.preferences().store()));
 #endif
     }
@@ -488,8 +488,8 @@ void WebProcessProxy::initializePreferencesForGPUAndNetworkProcesses(const WebPa
 
 bool WebProcessProxy::hasSameGPUAndNetworkProcessPreferencesAs(const API::PageConfiguration& pageConfiguration) const
 {
-    if (m_sharedPreferencesForWebProcess) {
-        auto sharedPreferencesForWebProcess = *m_sharedPreferencesForWebProcess;
+    if (m_sharedPreferencesForWebProcess.version) {
+        auto sharedPreferencesForWebProcess = m_sharedPreferencesForWebProcess;
         if (WebKit::updateSharedPreferencesForWebProcess(sharedPreferencesForWebProcess, pageConfiguration.preferences().store()))
             return false;
     }
@@ -1067,9 +1067,7 @@ void WebProcessProxy::createGPUProcessConnection(GPUProcessConnectionIdentifier 
     ASSERT(m_processIdentity);
 #endif
     parameters.webProcessIdentity = m_processIdentity;
-    ASSERT(m_sharedPreferencesForWebProcess);
-    if (m_sharedPreferencesForWebProcess)
-        parameters.sharedPreferencesForWebProcess = *m_sharedPreferencesForWebProcess;
+    parameters.sharedPreferencesForWebProcess = m_sharedPreferencesForWebProcess;
 #if ENABLE(IPC_TESTING_API)
     parameters.ignoreInvalidMessageForTesting = ignoreInvalidMessageForTesting();
 #endif
@@ -2185,13 +2183,8 @@ Ref<WebProcessPool> WebProcessProxy::protectedProcessPool() const
 
 std::optional<SharedPreferencesForWebProcess> WebProcessProxy::updateSharedPreferencesForWebProcess(const WebPreferencesStore& preferencesStore)
 {
-    if (!m_sharedPreferencesForWebProcess) {
-        m_sharedPreferencesForWebProcess = WebKit::sharedPreferencesForWebProcess(preferencesStore);
-        m_sharedPreferencesForWebProcess->version = 1;
-        return m_sharedPreferencesForWebProcess;
-    }
-    if (WebKit::updateSharedPreferencesForWebProcess(*m_sharedPreferencesForWebProcess, preferencesStore)) {
-        ++m_sharedPreferencesForWebProcess->version;
+    if (WebKit::updateSharedPreferencesForWebProcess(m_sharedPreferencesForWebProcess, preferencesStore)) {
+        ++m_sharedPreferencesForWebProcess.version;
         return m_sharedPreferencesForWebProcess;
     }
     return std::nullopt;
@@ -2367,8 +2360,7 @@ void WebProcessProxy::endBackgroundActivityForFullscreenInput()
 
 void WebProcessProxy::establishRemoteWorkerContext(RemoteWorkerType workerType, const WebPreferencesStore& store, const RegistrableDomain& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&& completionHandler)
 {
-    if (!m_sharedPreferencesForWebProcess)
-        updateSharedPreferencesForWebProcess(store);
+    updateSharedPreferencesForWebProcess(store);
     WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishRemoteWorkerContext: Started (workerType=%" PUBLIC_LOG_STRING ")", workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared");
     markProcessAsRecentlyUsed();
     auto& remoteWorkerInformation = workerType == RemoteWorkerType::ServiceWorker ? m_serviceWorkerInformation : m_sharedWorkerInformation;

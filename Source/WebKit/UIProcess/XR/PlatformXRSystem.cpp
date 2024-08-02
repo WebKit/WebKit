@@ -52,7 +52,7 @@ PlatformXRSystem::~PlatformXRSystem()
 
 const SharedPreferencesForWebProcess& PlatformXRSystem::sharedPreferencesForWebProcess() const
 {
-    return *m_page.legacyMainFrameProcess().sharedPreferencesForWebProcess();
+    return m_page.legacyMainFrameProcess().sharedPreferencesForWebProcess();
 }
 
 void PlatformXRSystem::invalidate()

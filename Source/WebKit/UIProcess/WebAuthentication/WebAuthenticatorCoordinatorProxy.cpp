@@ -63,7 +63,7 @@ WebAuthenticatorCoordinatorProxy::~WebAuthenticatorCoordinatorProxy()
 
 const SharedPreferencesForWebProcess& WebAuthenticatorCoordinatorProxy::sharedPreferencesForWebProcess() const
 {
-    return *m_webPageProxy.legacyMainFrameProcess().sharedPreferencesForWebProcess();
+    return m_webPageProxy.legacyMainFrameProcess().sharedPreferencesForWebProcess();
 }
 
 void WebAuthenticatorCoordinatorProxy::makeCredential(FrameIdentifier frameId, FrameInfoData&& frameInfo, PublicKeyCredentialCreationOptions&& options, MediationRequirement mediation, RequestCompletionHandler&& handler)
