@@ -52,14 +52,37 @@ static ManetteGamepad::StandardGamepadAxis toStandardGamepadAxis(uint16_t axis)
     return ManetteGamepad::StandardGamepadAxis::Unknown;
 }
 
-static void onAbsoluteAxisEvent(ManetteDevice* device, ManetteEvent* event, ManetteGamepad* gamepad)
+// Gamepads like the Xbox Series S|X Controller have Left and Right triggers with
+// double values, so they are mapped as absolute axes in libmanette.
+static void handleAlternativeAbsoluteAxis(ManetteGamepad* gamepad, uint16_t axis, double value)
+{
+    ManetteGamepad::StandardGamepadButton mappedButon;
+    switch (axis) {
+    case ABS_Z:
+        mappedButon = ManetteGamepad::StandardGamepadButton::LeftTrigger;
+        break;
+    case ABS_RZ:
+        mappedButon = ManetteGamepad::StandardGamepadButton::RightTrigger;
+        break;
+    default:
+        return;
+    }
+    const auto mappedButtonValue = (value + 1) / 2;
+    gamepad->buttonChanged(mappedButon, mappedButtonValue);
+}
+
+static void onAbsoluteAxisEvent(ManetteDevice*, ManetteEvent* event, ManetteGamepad* gamepad)
 {
     uint16_t axis;
     double value;
     if (!manette_event_get_absolute(event, &axis, &value))
         return;
 
-    gamepad->absoluteAxisChanged(device, toStandardGamepadAxis(axis), value);
+    auto standardGamepadAxis = toStandardGamepadAxis(axis);
+    if (standardGamepadAxis != ManetteGamepad::StandardGamepadAxis::Unknown)
+        gamepad->absoluteAxisChanged(standardGamepadAxis, value);
+    else
+        handleAlternativeAbsoluteAxis(gamepad, axis, value);
 }
 
 static ManetteGamepad::StandardGamepadButton toStandardGamepadButton(uint16_t manetteButton)
@@ -105,22 +128,64 @@ static ManetteGamepad::StandardGamepadButton toStandardGamepadButton(uint16_t ma
     return ManetteGamepad::StandardGamepadButton::Unknown;
 }
 
-static void onButtonPressEvent(ManetteDevice* device, ManetteEvent* event, ManetteGamepad* gamepad)
+static void onButtonPressEvent(ManetteDevice*, ManetteEvent* event, ManetteGamepad* gamepad)
 {
     uint16_t button;
     if (!manette_event_get_button(event, &button))
         return;
 
-    gamepad->buttonPressedOrReleased(device, toStandardGamepadButton(button), true);
+    gamepad->buttonPressedOrReleased(toStandardGamepadButton(button), true);
 }
 
-static void onButtonReleaseEvent(ManetteDevice* device, ManetteEvent* event, ManetteGamepad* gamepad)
+static void onButtonReleaseEvent(ManetteDevice*, ManetteEvent* event, ManetteGamepad* gamepad)
 {
     uint16_t button;
     if (!manette_event_get_button(event, &button))
         return;
 
-    gamepad->buttonPressedOrReleased(device, toStandardGamepadButton(button), false);
+    gamepad->buttonPressedOrReleased(toStandardGamepadButton(button), false);
+}
+
+struct ButtonPressedOrReleased {
+    ManetteGamepad::StandardGamepadButton button;
+    bool pressed;
+};
+
+// There are no "hat axes" in https://www.w3.org/TR/gamepad/, but that exists in libmanette and is used by e.g.
+// the Xbox Series S|X Controller. We map those events to the standard directional buttons.
+static ButtonPressedOrReleased hatAxisToStandardGamepadButton(uint16_t axis, int8_t value)
+{
+    const bool pressed = value;
+    // We need to keep the lastPressed states here because we can't know which button was released
+    // only from the hat axis event. We need to know which button had been pressed beforehand.
+    if (axis == ABS_HAT0X) {
+        static ManetteGamepad::StandardGamepadButton lastPressed;
+        if (value < 0)
+            lastPressed = ManetteGamepad::StandardGamepadButton::DPadLeft;
+        else if (value > 0)
+            lastPressed = ManetteGamepad::StandardGamepadButton::DPadRight;
+        return { lastPressed, pressed };
+    }
+    if (axis == ABS_HAT0Y) {
+        static ManetteGamepad::StandardGamepadButton lastPressed;
+        if (value < 0)
+            lastPressed = ManetteGamepad::StandardGamepadButton::DPadUp;
+        else if (value > 0)
+            lastPressed = ManetteGamepad::StandardGamepadButton::DPadDown;
+        return { lastPressed, pressed };
+    }
+    return { ManetteGamepad::StandardGamepadButton::Unknown, false };
+}
+
+static void onHatAxisEvent(ManetteDevice*, ManetteEvent* event, ManetteGamepad* gamepad)
+{
+    uint16_t axis;
+    int8_t value;
+    if (!manette_event_get_hat(event, &axis, &value))
+        return;
+
+    auto [button, pressed] = hatAxisToStandardGamepadButton(axis, value);
+    gamepad->buttonPressedOrReleased(button, pressed);
 }
 
 ManetteGamepad::ManetteGamepad(ManetteDevice* device, unsigned index)
@@ -145,6 +210,7 @@ ManetteGamepad::ManetteGamepad(ManetteDevice* device, unsigned index)
     g_signal_connect(device, "button-press-event", G_CALLBACK(onButtonPressEvent), this);
     g_signal_connect(device, "button-release-event", G_CALLBACK(onButtonReleaseEvent), this);
     g_signal_connect(device, "absolute-axis-event", G_CALLBACK(onAbsoluteAxisEvent), this);
+    g_signal_connect(device, "hat-axis-event", G_CALLBACK(onHatAxisEvent), this);
 }
 
 ManetteGamepad::~ManetteGamepad()
@@ -152,7 +218,7 @@ ManetteGamepad::~ManetteGamepad()
     g_signal_handlers_disconnect_by_data(m_device.get(), this);
 }
 
-void ManetteGamepad::buttonPressedOrReleased(ManetteDevice*, StandardGamepadButton button, bool pressed)
+void ManetteGamepad::buttonPressedOrReleased(StandardGamepadButton button, bool pressed)
 {
     if (button == StandardGamepadButton::Unknown)
         return;
@@ -163,7 +229,20 @@ void ManetteGamepad::buttonPressedOrReleased(ManetteDevice*, StandardGamepadButt
     ManetteGamepadProvider::singleton().gamepadHadInput(*this, pressed ? ManetteGamepadProvider::ShouldMakeGamepadsVisible::Yes : ManetteGamepadProvider::ShouldMakeGamepadsVisible::No);
 }
 
-void ManetteGamepad::absoluteAxisChanged(ManetteDevice*, StandardGamepadAxis axis, double value)
+
+void ManetteGamepad::buttonChanged(StandardGamepadButton button, double value)
+{
+    if (button == StandardGamepadButton::Unknown)
+        return;
+
+    m_lastUpdateTime = MonotonicTime::now();
+    m_buttonValues[static_cast<int>(button)].setValue(value);
+
+    ManetteGamepadProvider::singleton().gamepadHadInput(*this, ManetteGamepadProvider::ShouldMakeGamepadsVisible::Yes);
+}
+
+
+void ManetteGamepad::absoluteAxisChanged(StandardGamepadAxis axis, double value)
 {
     if (axis == StandardGamepadAxis::Unknown)
         return;
