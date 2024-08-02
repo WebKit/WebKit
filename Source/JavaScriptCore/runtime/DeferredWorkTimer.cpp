@@ -234,15 +234,16 @@ bool DeferredWorkTimer::cancelPendingWork(Ticket ticket)
 
     bool result = false;
     if (!ticket->isCancelled()) {
-        // Script execution context is cleared in ->cancel().
-        // So we have to call onCancelPendingWork before canceling the ticket.
-        if (onCancelPendingWork) {
-            onCancelPendingWork(ticket);
-        }
-
         dataLogLnIf(DeferredWorkTimerInternal::verbose, "Canceling ticket: ", RawPointer(ticket));
         ticket->cancel();
         result = true;
+
+        // Script execution context is cleared in ->cancel().
+        // But, onCancelPendingWork may dereference the ticket.
+        // So your WTF::Function has to be careful about the ticket.
+        if (onCancelPendingWork) {
+            onCancelPendingWork(ticket);
+        }
     }
 
     return result;
