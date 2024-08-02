@@ -39,11 +39,13 @@ bool gigacageEnabledForProcess();
 inline bool gigacageEnabledForProcess() { return true; }
 #endif
 
-#if BOS(DARWIN)
+#if BPLATFORM(COCOA)
 const char* processNameString();
-
 bool shouldAllowMiniMode();
-#else
+#elif BOS(DARWIN)
+inline const char* processNameString() { return "bmalloc"; }
+inline bool shouldAllowMiniMode() { return false; }
+#else 
 inline bool shouldAllowMiniMode() { return true; }
 #endif
 
