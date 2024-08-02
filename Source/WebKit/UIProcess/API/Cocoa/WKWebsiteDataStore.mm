@@ -1270,4 +1270,14 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     _websiteDataStore->setRestrictedOpenerTypeForDomainForTesting(WebCore::RegistrableDomain::fromRawString(domain), static_cast<WebKit::RestrictedOpenerType>(openerType));
 }
 
+-(void)_getAppBadgeForTesting:(void(^)(NSNumber *))completionHandler
+{
+    _websiteDataStore->getAppBadgeForTesting([completionHandlerCopy = makeBlockPtr(completionHandler)] (std::optional<uint64_t> badge) {
+        if (badge)
+            completionHandlerCopy([NSNumber numberWithUnsignedLongLong:*badge]);
+        else
+            completionHandlerCopy(nil);
+    });
+}
+
 @end

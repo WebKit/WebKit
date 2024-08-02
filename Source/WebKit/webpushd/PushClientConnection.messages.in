@@ -44,6 +44,8 @@ messages -> WebPushD::PushClientConnection NotUsingIPCConnection {
     EnableMockUserNotificationCenterForTesting() -> ()
     CancelNotification(WTF::UUID notificationID)
     RequestPushPermission(WebCore::SecurityOriginData origin) -> (bool granted)
+    SetAppBadge(WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
+    GetAppBadgeForTesting() -> (std::optional<uint64_t> badge)
 }
 
 #endif // ENABLE(WEB_PUSH_NOTIFICATIONS)

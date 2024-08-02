@@ -45,6 +45,7 @@ public:
     void didDestroyNotification(const WTF::UUID& notificationID) final;
     void pageWasNotifiedOfNotificationPermission() final { }
     void requestPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&&) final;
+    void setAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t> badge) final { }
 
     bool handlesNotification(WTF::UUID value) const { return m_notificationToSessionMap.contains(value); }
 

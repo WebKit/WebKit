@@ -475,6 +475,8 @@ public:
     const HashSet<URL>& persistedSiteURLs() const { return m_persistedSiteURLs; }
     void setPersistedSiteURLs(HashSet<URL>&&);
 
+    void getAppBadgeForTesting(CompletionHandler<void(std::optional<uint64_t>)>&&);
+
 private:
     enum class ForceReinitialization : bool { No, Yes };
 #if ENABLE(APP_BOUND_DOMAINS)

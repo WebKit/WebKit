@@ -425,6 +425,8 @@ public:
     void setStorageSiteValidationEnabled(PAL::SessionID, bool);
     void setPersistedDomains(PAL::SessionID, HashSet<RegistrableDomain>&&);
 
+    void getAppBadgeForTesting(PAL::SessionID, CompletionHandler<void(std::optional<uint64_t>)>&&);
+
 private:
     // CheckedPtr interface
     uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }

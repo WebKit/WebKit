@@ -136,6 +136,14 @@ void NetworkNotificationManager::requestPermission(WebCore::SecurityOriginData&&
     m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::RequestPushPermission { WTFMove(origin) }, WTFMove(completionHandler));
 }
 
+void NetworkNotificationManager::setAppBadge(const WebCore::SecurityOriginData& origin, std::optional<uint64_t> badge)
+{
+    if (!m_connection)
+        return;
+
+    m_connection->sendWithoutUsingIPCConnection(Messages::PushClientConnection::SetAppBadge { origin, badge });
+}
+
 void NetworkNotificationManager::subscribeToPushService(URL&& scopeURL, Vector<uint8_t>&& applicationServerKey, CompletionHandler<void(Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&)>&& completionHandler)
 {
     if (!m_connection) {
@@ -216,6 +224,16 @@ void NetworkNotificationManager::removePushSubscriptionsForOrigin(WebCore::Secur
     }
 
     m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::RemovePushSubscriptionsForOrigin(WTFMove(origin)), WTFMove(completionHandler));
+}
+
+void NetworkNotificationManager::getAppBadgeForTesting(CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler)
+{
+    if (!m_connection) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetAppBadgeForTesting(), WTFMove(completionHandler));
 }
 
 } // namespace WebKit

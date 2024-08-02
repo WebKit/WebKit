@@ -2626,6 +2626,18 @@ void NetworkProcess::hasPushSubscriptionForTesting(PAL::SessionID sessionID, URL
     callback(false);
 }
 
+void NetworkProcess::getAppBadgeForTesting(PAL::SessionID sessionID, CompletionHandler<void(std::optional<uint64_t>)>&& callback)
+{
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+    if (auto* session = networkSession(sessionID)) {
+        session->notificationManager().getAppBadgeForTesting(WTFMove(callback));
+        return;
+    }
+#endif
+
+    callback(std::nullopt);
+}
+
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
 void NetworkProcess::setEmulatedConditions(PAL::SessionID sessionID, std::optional<int64_t>&& bytesPerSecondLimit)

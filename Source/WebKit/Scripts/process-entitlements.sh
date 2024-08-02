@@ -276,6 +276,7 @@ function mac_process_webpushd_entitlements()
 {
     plistbuddy Add :com.apple.private.aps-connection-initiate bool YES
     plistbuddy Add :com.apple.private.launchservices.entitledtoaccessothersessions bool YES
+    plistbuddy Add :com.apple.usernotification.notificationschedulerproxy bool YES
 }
 
 # ========================================

@@ -122,6 +122,8 @@ private:
     void getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
     void cancelNotification(const WTF::UUID& notificationID);
     void enableMockUserNotificationCenterForTesting(CompletionHandler<void()>&&);
+    void setAppBadge(WebCore::SecurityOriginData&&, std::optional<uint64_t>);
+    void getAppBadgeForTesting(CompletionHandler<void(std::optional<uint64_t>)>&&);
 
     String bundleIdentifierFromAuditToken(audit_token_t);
     bool hostHasEntitlement(ASCIILiteral);

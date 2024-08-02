@@ -103,6 +103,9 @@ public:
     void enableMockUserNotificationCenterForTesting(PushClientConnection&);
 #endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
 
+    void setAppBadge(PushClientConnection&, WebCore::SecurityOriginData&&, std::optional<uint64_t>);
+    void getAppBadgeForTesting(PushClientConnection&, CompletionHandler<void(std::optional<uint64_t>)>&&);
+
 private:
     WebPushDaemon();
 

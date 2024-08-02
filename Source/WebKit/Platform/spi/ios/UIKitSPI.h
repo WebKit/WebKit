@@ -94,6 +94,7 @@
 #import <UIKit/_UINavigationInteractiveTransition.h>
 #import <UIKit/_UINavigationParallaxTransition.h>
 #import <UIKit/_UISheetPresentationController.h>
+#import <UIKitServices/UISApplicationState.h>
 
 #if HAVE(LINK_PREVIEW)
 #import <UIKit/UIPreviewAction_Private.h>
@@ -1023,6 +1024,11 @@ extern NSNotificationName const _UIWindowSceneDidEndLiveResizeNotification;
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
 extern void _UIApplicationCatalystRequestViewServiceIdiomAndScaleFactor(UIUserInterfaceIdiom, CGFloat scaleFactor);
 #endif
+
+@interface UISApplicationState : NSObject
+- (instancetype)initWithBundleIdentifier:(NSString *)bundleIdentifier;
+@property (nonatomic, copy) id badgeValue;
+@end
 
 #endif // USE(APPLE_INTERNAL_SDK)
 

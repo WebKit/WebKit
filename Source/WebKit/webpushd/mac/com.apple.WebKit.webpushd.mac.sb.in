@@ -293,3 +293,7 @@
 (allow file-read* file-write*
     (with telemetry)
     (mount-relative-regex #"^/\.TemporaryItems/"))
+
+;;; Allow interfacing with UNUserNotificationCenter
+(allow mach-lookup
+    (global-name "com.apple.usernotifications.listener"))

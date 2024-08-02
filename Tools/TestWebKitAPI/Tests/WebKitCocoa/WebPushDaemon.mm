@@ -587,6 +587,7 @@ self.addEventListener("push", async (event) => {
     try {
         if (showNotifications) {
             await self.registration.showNotification("notification");
+            navigator.setAppBadge(42);
         }
         if (!event.data) {
             globalPort.postMessage("Received: null data");
@@ -785,6 +786,19 @@ public:
         NSError *error = nil;
         id obj = [m_webView objectByCallingAsyncFunction:@"return await getNotifications()" withArguments:@{ } error:&error];
         return error ?: obj;
+    }
+
+    NSNumber *getAppBadge()
+    {
+        __block bool done = false;
+        __block NSNumber *result = nil;
+        [m_webView.get().configuration.websiteDataStore _getAppBadgeForTesting:^(NSNumber *badge) {
+            result = badge;
+            done = true;
+        }];
+
+        TestWebKitAPI::Util::run(&done);
+        return result;
     }
 
     void closeAllNotifications()
@@ -1598,6 +1612,9 @@ TEST_F(WebPushDBuiltInTest, ShowAndGetNotifications)
     });
     TestWebKitAPI::Util::run(&done);
 
+    // No badge had been set, so confirm its `nil`
+    EXPECT_FALSE(view->getAppBadge());
+
     done = false;
     sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), ^(const String& error) {
         if (!error.isEmpty())
@@ -1625,6 +1642,10 @@ TEST_F(WebPushDBuiltInTest, ShowAndGetNotifications)
 
     result = view->getNotifications();
     EXPECT_TRUE([result isEqualToString:@""]);
+
+    // The push message handler should set the app badge to 42
+    EXPECT_TRUE([view->getAppBadge() isEqual:@42]);
+
 }
 #endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
 

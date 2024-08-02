@@ -48,6 +48,7 @@ public:
     virtual void didDestroyNotification(const WTF::UUID& notificationID) = 0;
     virtual void pageWasNotifiedOfNotificationPermission() = 0;
     virtual void requestPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&&) = 0;
+    virtual void setAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t> badge) = 0;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
