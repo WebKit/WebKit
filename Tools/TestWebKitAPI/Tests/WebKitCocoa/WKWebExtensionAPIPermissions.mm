@@ -706,6 +706,49 @@ TEST(WKWebExtensionAPIPermissions, ClipboardWriteWithRequest)
     EXPECT_NS_EQUAL(clipboardContent, @"Test Clipboard Write After Permission");
 }
 
+TEST(WKWebExtensionAPIPermissions, CORS)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/subresource"_s, { {{ "Content-Type"_s, "application/json"_s }, { "headerName"_s, "headerValue"_s }}, "{ \"testKey\": \"testValue\" }"_s } }
+    });
+
+    static auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Permissions Test",
+        @"description": @"Permissions Test",
+        @"version": @"1",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"optional_host_permissions": @[ @"*://*/*" ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const subresourceURL = 'http://127.0.0.1:%d/subresource'", server.port()],
+
+        @"try {",
+        @"  const response = await fetch(subresourceURL)",
+        @"  if (response.headers.get('headerName') !== 'headerValue')",
+        @"    throw new Error('CORS failed: Incorrect header value')",
+
+        @"  const json = await response.json()",
+        @"  if (json.testKey !== 'testValue')",
+        @"    throw new Error('CORS failed: Incorrect JSON value')",
+
+        @"  browser.test.notifyPass('CORS disabled: Fetch succeeded')",
+        @"} catch (error) {",
+        @"  browser.test.notifyFail(error.message)",
+        @"}"
+    ]);
+
+    Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
