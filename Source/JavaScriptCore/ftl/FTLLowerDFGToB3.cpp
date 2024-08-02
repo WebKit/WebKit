@@ -10988,7 +10988,7 @@ IGNORE_CLANG_WARNINGS_END
             return;
         }
 
-        if (m_node->isReflexiveBinaryUseKind(SymbolUse, UntypedUse)) {
+        if (m_node->isSymmetricBinaryUseKind(SymbolUse, UntypedUse)) {
             Edge symbolEdge = m_node->child1();
             Edge untypedEdge = m_node->child2();
             if (symbolEdge.useKind() != SymbolUse)
@@ -11002,13 +11002,13 @@ IGNORE_CLANG_WARNINGS_END
         }
 
         if (m_node->isBinaryUseKind(MiscUse)
-            || m_node->isReflexiveBinaryUseKind(MiscUse, UntypedUse)
+            || m_node->isSymmetricBinaryUseKind(MiscUse, UntypedUse)
             || m_node->isBinaryUseKind(OtherUse)
-            || m_node->isReflexiveBinaryUseKind(OtherUse, UntypedUse)
+            || m_node->isSymmetricBinaryUseKind(OtherUse, UntypedUse)
             || m_node->isBinaryUseKind(BooleanUse)
-            || m_node->isReflexiveBinaryUseKind(BooleanUse, UntypedUse)
+            || m_node->isSymmetricBinaryUseKind(BooleanUse, UntypedUse)
 #if !USE(BIGINT32)
-            || m_node->isReflexiveBinaryUseKind(NotDoubleUse, NeitherDoubleNorHeapBigIntNorStringUse)) {
+            || m_node->isSymmetricBinaryUseKind(NotDoubleUse, NeitherDoubleNorHeapBigIntNorStringUse)) {
 #else
             ) {
 #endif

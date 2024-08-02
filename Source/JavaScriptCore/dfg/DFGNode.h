@@ -2802,7 +2802,7 @@ public:
         return isBinaryUseKind(useKind, useKind);
     }
 
-    bool isReflexiveBinaryUseKind(UseKind left, UseKind right)
+    bool isSymmetricBinaryUseKind(UseKind left, UseKind right)
     {
         return isBinaryUseKind(left, right) || isBinaryUseKind(right, left);
     }

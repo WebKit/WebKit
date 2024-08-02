@@ -520,30 +520,30 @@ bool doesGC(Graph& graph, Node* node)
             if (node->isBinaryUseKind(BooleanUse)
                 || node->isBinaryUseKind(SymbolUse)
                 || node->isBinaryUseKind(ObjectUse)
-                || node->isReflexiveBinaryUseKind(ObjectUse, ObjectOrOtherUse))
+                || node->isSymmetricBinaryUseKind(ObjectUse, ObjectOrOtherUse))
                 return false;
         }
         return true;
 
     case CompareStrictEq:
         if (node->isBinaryUseKind(BooleanUse)
-            || node->isReflexiveBinaryUseKind(BooleanUse, UntypedUse)
+            || node->isSymmetricBinaryUseKind(BooleanUse, UntypedUse)
             || node->isBinaryUseKind(Int32Use)
 #if USE(JSVALUE64)
             || node->isBinaryUseKind(Int52RepUse)
 #endif
             || node->isBinaryUseKind(DoubleRepUse)
             || node->isBinaryUseKind(SymbolUse)
-            || node->isReflexiveBinaryUseKind(SymbolUse, UntypedUse)
+            || node->isSymmetricBinaryUseKind(SymbolUse, UntypedUse)
             || node->isBinaryUseKind(StringIdentUse)
-            || node->isReflexiveBinaryUseKind(ObjectUse, UntypedUse)
+            || node->isSymmetricBinaryUseKind(ObjectUse, UntypedUse)
             || node->isBinaryUseKind(ObjectUse)
             || node->isBinaryUseKind(OtherUse)
-            || node->isReflexiveBinaryUseKind(OtherUse, UntypedUse)
+            || node->isSymmetricBinaryUseKind(OtherUse, UntypedUse)
             || node->isBinaryUseKind(MiscUse)
-            || node->isReflexiveBinaryUseKind(MiscUse, UntypedUse)
-            || node->isReflexiveBinaryUseKind(StringIdentUse, NotStringVarUse)
-            || node->isReflexiveBinaryUseKind(NotDoubleUse, NeitherDoubleNorHeapBigIntNorStringUse))
+            || node->isSymmetricBinaryUseKind(MiscUse, UntypedUse)
+            || node->isSymmetricBinaryUseKind(StringIdentUse, NotStringVarUse)
+            || node->isSymmetricBinaryUseKind(NotDoubleUse, NeitherDoubleNorHeapBigIntNorStringUse))
             return false;
         return true;
 

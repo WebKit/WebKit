@@ -6997,11 +6997,11 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         return false;
     }
 
-    if (node->isReflexiveBinaryUseKind(BooleanUse, UntypedUse)
+    if (node->isSymmetricBinaryUseKind(BooleanUse, UntypedUse)
         || node->isBinaryUseKind(OtherUse)
-        || node->isReflexiveBinaryUseKind(OtherUse, UntypedUse)
+        || node->isSymmetricBinaryUseKind(OtherUse, UntypedUse)
         || node->isBinaryUseKind(MiscUse)
-        || node->isReflexiveBinaryUseKind(MiscUse, UntypedUse)) {
+        || node->isSymmetricBinaryUseKind(MiscUse, UntypedUse)) {
         compileBitwiseStrictEq(node);
         return false;
     }
