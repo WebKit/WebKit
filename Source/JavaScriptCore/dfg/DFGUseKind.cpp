@@ -116,12 +116,6 @@ void printInternal(PrintStream& out, UseKind useKind)
     case SetObjectUse:
         out.print("SetObject");
         return;
-    case MapIteratorObjectUse:
-        out.print("MapIteratorObject");
-        return;
-    case SetIteratorObjectUse:
-        out.print("SetIteratorObject");
-        return;
     case WeakMapObjectUse:
         out.print("WeakMapObject");
         return;

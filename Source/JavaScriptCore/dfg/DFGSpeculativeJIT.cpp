@@ -11327,34 +11327,6 @@ void SpeculativeJIT::speculateSetObject(Edge edge)
     speculateSetObject(edge, operand.gpr());
 }
 
-void SpeculativeJIT::speculateMapIteratorObject(Edge edge, GPRReg cell)
-{
-    speculateCellType(edge, cell, SpecObjectOther, JSMapIteratorType);
-}
-
-void SpeculativeJIT::speculateMapIteratorObject(Edge edge)
-{
-    if (!needsTypeCheck(edge, SpecObjectOther))
-        return;
-
-    SpeculateCellOperand operand(this, edge);
-    speculateMapIteratorObject(edge, operand.gpr());
-}
-
-void SpeculativeJIT::speculateSetIteratorObject(Edge edge, GPRReg cell)
-{
-    speculateCellType(edge, cell, SpecObjectOther, JSSetIteratorType);
-}
-
-void SpeculativeJIT::speculateSetIteratorObject(Edge edge)
-{
-    if (!needsTypeCheck(edge, SpecObjectOther))
-        return;
-
-    SpeculateCellOperand operand(this, edge);
-    speculateSetIteratorObject(edge, operand.gpr());
-}
-
 void SpeculativeJIT::speculateWeakMapObject(Edge edge, GPRReg cell)
 {
     speculateCellType(edge, cell, SpecWeakMapObject, JSWeakMapType);
@@ -11863,12 +11835,6 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case SetObjectUse:
         speculateSetObject(edge);
-        break;
-    case MapIteratorObjectUse:
-        speculateMapIteratorObject(edge);
-        break;
-    case SetIteratorObjectUse:
-        speculateSetIteratorObject(edge);
         break;
     case WeakMapObjectUse:
         speculateWeakMapObject(edge);
@@ -13354,17 +13320,10 @@ void SpeculativeJIT::compileMapIteratorNext(Node* node)
     SpeculateCellOperand mapIterator(this, node->child1());
     GPRReg mapIteratorGPR = mapIterator.gpr();
 
-    if (node->child1().useKind() == MapIteratorObjectUse)
-        speculateMapIteratorObject(node->child1(), mapIteratorGPR);
-    else if (node->child1().useKind() == SetIteratorObjectUse)
-        speculateSetIteratorObject(node->child1(), mapIteratorGPR);
-    else
-        RELEASE_ASSERT_NOT_REACHED();
-
     flushRegisters();
     JSValueRegsFlushedCallResult result(this);
     JSValueRegs resultRegs = result.regs();
-    callOperation(node->child1().useKind() == MapIteratorObjectUse ? operationMapIteratorNext : operationSetIteratorNext, resultRegs, LinkableConstant::globalObject(*this, node), mapIteratorGPR);
+    callOperation(node->bucketOwnerType() == BucketOwnerType::Map ? operationMapIteratorNext : operationSetIteratorNext, resultRegs, LinkableConstant::globalObject(*this, node), mapIteratorGPR);
     jsValueResult(resultRegs, node);
 }
 
@@ -13373,18 +13332,10 @@ void SpeculativeJIT::compileMapIteratorKey(Node* node)
     SpeculateCellOperand mapIterator(this, node->child1());
     GPRReg mapIteratorGPR = mapIterator.gpr();
 
-    if (node->child1().useKind() == MapIteratorObjectUse)
-        speculateMapIteratorObject(node->child1(), mapIteratorGPR);
-    else if (node->child1().useKind() == SetIteratorObjectUse)
-        speculateSetIteratorObject(node->child1(), mapIteratorGPR);
-    else
-        RELEASE_ASSERT_NOT_REACHED();
-
     flushRegisters();
     JSValueRegsFlushedCallResult result(this);
     JSValueRegs resultRegs = result.regs();
-    auto operation = node->child1().useKind() == MapIteratorObjectUse ? operationMapIteratorKey : operationSetIteratorKey;
-    callOperation(operation, resultRegs, LinkableConstant::globalObject(*this, node), mapIteratorGPR);
+    callOperation(node->bucketOwnerType() == BucketOwnerType::Map ? operationMapIteratorKey : operationSetIteratorKey, resultRegs, LinkableConstant::globalObject(*this, node), mapIteratorGPR);
     jsValueResult(resultRegs, node);
 }
 
@@ -13392,8 +13343,7 @@ void SpeculativeJIT::compileMapIteratorValue(Node* node)
 {
     SpeculateCellOperand mapIterator(this, node->child1());
     GPRReg mapIteratorGPR = mapIterator.gpr();
-    ASSERT(node->child1().useKind() == MapIteratorObjectUse);
-    speculateMapIteratorObject(node->child1(), mapIteratorGPR);
+    ASSERT(node->bucketOwnerType() == BucketOwnerType::Map);
 
     flushRegisters();
     JSValueRegsFlushedCallResult result(this);

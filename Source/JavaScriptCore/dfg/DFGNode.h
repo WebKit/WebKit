@@ -3413,7 +3413,18 @@ public:
 
     bool hasBucketOwnerType()
     {
-        return op() == MapIterationNext || op() == MapIterationEntry || op() == MapIterationEntryKey || op() == MapIterationEntryValue || op() == MapStorage;
+        switch (op()) {
+        case MapIteratorNext:
+        case MapIteratorKey:
+        case MapIteratorValue:
+        case MapIterationNext:
+        case MapIterationEntry:
+        case MapIterationEntryKey:
+        case MapIterationEntryValue:
+            return true;
+        default:
+            return false;
+        }
     }
 
     unsigned numberOfBoundArguments()

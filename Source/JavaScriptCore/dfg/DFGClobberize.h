@@ -2108,7 +2108,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case MapIteratorNext: {
         Edge& mapIteratorEdge = node->child1();
-        AbstractHeapKind heap = (mapIteratorEdge.useKind() == MapIteratorObjectUse) ? JSMapIteratorFields : JSSetIteratorFields;
+        AbstractHeapKind heap = node->bucketOwnerType() == BucketOwnerType::Map ? JSMapIteratorFields : JSSetIteratorFields;
         read(heap);
         write(heap);
         def(HeapLocation(MapIteratorNextLoc, heap, mapIteratorEdge), LazyNode(node));
@@ -2116,14 +2116,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     }
     case MapIteratorKey: {
         Edge& mapIteratorEdge = node->child1();
-        AbstractHeapKind heap = (mapIteratorEdge.useKind() == MapIteratorObjectUse) ? JSMapIteratorFields : JSSetIteratorFields;
+        AbstractHeapKind heap = node->bucketOwnerType() == BucketOwnerType::Map ? JSMapIteratorFields : JSSetIteratorFields;
         read(heap);
         def(HeapLocation(MapIteratorKeyLoc, heap, mapIteratorEdge), LazyNode(node));
         return;
     }
     case MapIteratorValue: {
         Edge& mapIteratorEdge = node->child1();
-        AbstractHeapKind heap = (mapIteratorEdge.useKind() == MapIteratorObjectUse) ? JSMapIteratorFields : JSSetIteratorFields;
+        AbstractHeapKind heap = node->bucketOwnerType() == BucketOwnerType::Map ? JSMapIteratorFields : JSSetIteratorFields;
         read(heap);
         def(HeapLocation(MapIteratorValueLoc, heap, mapIteratorEdge), LazyNode(node));
         return;

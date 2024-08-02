@@ -2785,17 +2785,6 @@ private:
             fixEdge<CellUse>(node->child1());
             break;
 
-        case MapIteratorNext:
-        case MapIteratorKey:
-        case MapIteratorValue:
-            if (node->child1().useKind() == MapIteratorObjectUse)
-                fixEdge<MapIteratorObjectUse>(node->child1());
-            else if (node->child1().useKind() == SetIteratorObjectUse)
-                fixEdge<SetIteratorObjectUse>(node->child1());
-            else
-                RELEASE_ASSERT_NOT_REACHED();
-            break;
-
         case MapHash: {
 #if USE(JSVALUE64)
             if (node->child1()->shouldSpeculateBoolean()) {
@@ -3279,6 +3268,9 @@ private:
         case MakeAtomString:
         case CallCustomAccessorGetter:
         case CallCustomAccessorSetter:
+        case MapIteratorNext:
+        case MapIteratorKey:
+        case MapIteratorValue:
             break;
 #else // not ASSERT_ENABLED
         default:

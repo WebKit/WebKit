@@ -555,9 +555,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case HeapBigIntUse:
                 case DateObjectUse:
                 case MapObjectUse:
-                case MapIteratorObjectUse:
                 case SetObjectUse:
-                case SetIteratorObjectUse:
                 case WeakMapObjectUse:
                 case WeakSetObjectUse:
                 case DataViewObjectUse:

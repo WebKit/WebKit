@@ -1918,10 +1918,6 @@ public:
     void speculateMapObject(Edge, GPRReg cell);
     void speculateSetObject(Edge);
     void speculateSetObject(Edge, GPRReg cell);
-    void speculateMapIteratorObject(Edge);
-    void speculateMapIteratorObject(Edge, GPRReg cell);
-    void speculateSetIteratorObject(Edge);
-    void speculateSetIteratorObject(Edge, GPRReg cell);
     void speculateWeakMapObject(Edge);
     void speculateWeakMapObject(Edge, GPRReg cell);
     void speculateWeakSetObject(Edge);

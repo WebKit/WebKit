@@ -14031,16 +14031,8 @@ IGNORE_CLANG_WARNINGS_END
     void compileMapIteratorNext()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-
-        LValue mapIterator;
-        if (m_node->child1().useKind() == MapIteratorObjectUse)
-            mapIterator = lowMapIteratorObject(m_node->child1());
-        else if (m_node->child1().useKind() == SetIteratorObjectUse)
-            mapIterator = lowSetIteratorObject(m_node->child1());
-        else
-            RELEASE_ASSERT_NOT_REACHED();
-
-        auto operation = m_node->child1().useKind() == MapIteratorObjectUse ? operationMapIteratorNext : operationSetIteratorNext;
+        LValue mapIterator = lowCell(m_node->child1());
+        auto operation = m_node->bucketOwnerType() == BucketOwnerType::Map ? operationMapIteratorNext : operationSetIteratorNext;
         LValue result = vmCall(Int64, operation, weakPointer(globalObject), mapIterator);
         setJSValue(result);
     }
@@ -14048,16 +14040,8 @@ IGNORE_CLANG_WARNINGS_END
     void compileMapIteratorKey()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-
-        LValue mapIterator;
-        if (m_node->child1().useKind() == MapIteratorObjectUse)
-            mapIterator = lowMapIteratorObject(m_node->child1());
-        else if (m_node->child1().useKind() == SetIteratorObjectUse)
-            mapIterator = lowSetIteratorObject(m_node->child1());
-        else
-            RELEASE_ASSERT_NOT_REACHED();
-
-        auto operation = m_node->child1().useKind() == MapIteratorObjectUse ? operationMapIteratorKey : operationSetIteratorKey;
+        LValue mapIterator = lowCell(m_node->child1());
+        auto operation = m_node->bucketOwnerType() == BucketOwnerType::Map ? operationMapIteratorKey : operationSetIteratorKey;
         LValue result = vmCall(Int64, operation, weakPointer(globalObject), mapIterator);
         setJSValue(result);
     }
@@ -14065,8 +14049,8 @@ IGNORE_CLANG_WARNINGS_END
     void compileMapIteratorValue()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        ASSERT(m_node->child1().useKind() == MapIteratorObjectUse);
-        LValue mapIterator = lowMapIteratorObject(m_node->child1());
+        ASSERT(m_node->bucketOwnerType() == BucketOwnerType::Map);
+        LValue mapIterator = lowCell(m_node->child1());
         LValue result = vmCall(Int64, operationMapIteratorValue, weakPointer(globalObject), mapIterator);
         setJSValue(result);
     }
@@ -20825,24 +20809,10 @@ IGNORE_CLANG_WARNINGS_END
         return result;
     }
 
-    LValue lowMapIteratorObject(Edge edge)
-    {
-        LValue result = lowCell(edge);
-        speculateMapIteratorObject(edge, result);
-        return result;
-    }
-
     LValue lowSetObject(Edge edge)
     {
         LValue result = lowCell(edge);
         speculateSetObject(edge, result);
-        return result;
-    }
-
-    LValue lowSetIteratorObject(Edge edge)
-    {
-        LValue result = lowCell(edge);
-        speculateSetIteratorObject(edge, result);
         return result;
     }
 
@@ -22152,17 +22122,6 @@ IGNORE_CLANG_WARNINGS_END
         speculateMapObject(edge, lowCell(edge));
     }
 
-    void speculateMapIteratorObject(Edge edge, LValue cell)
-    {
-        FTL_TYPE_CHECK(
-            jsValueValue(cell), edge, SpecObjectOther, isNotType(cell, JSMapIteratorType));
-    }
-
-    void speculateMapIteratorObject(Edge edge)
-    {
-        speculateMapObject(edge, lowCell(edge));
-    }
-
     void speculateSetObject(Edge edge, LValue cell)
     {
         FTL_TYPE_CHECK(
@@ -22172,17 +22131,6 @@ IGNORE_CLANG_WARNINGS_END
     void speculateSetObject(Edge edge)
     {
         speculateSetObject(edge, lowCell(edge));
-    }
-
-    void speculateSetIteratorObject(Edge edge, LValue cell)
-    {
-        FTL_TYPE_CHECK(
-            jsValueValue(cell), edge, SpecObjectOther, isNotType(cell, JSSetIteratorType));
-    }
-
-    void speculateSetIteratorObject(Edge edge)
-    {
-        speculateMapObject(edge, lowCell(edge));
     }
 
     void speculateWeakMapObject(Edge edge, LValue cell)

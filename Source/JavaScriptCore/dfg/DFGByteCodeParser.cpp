@@ -3591,8 +3591,8 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
 
             insertChecks();
             Node* mapIterator = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
-            UseKind useKind = intrinsic == JSMapIteratorNextIntrinsic ? MapIteratorObjectUse : SetIteratorObjectUse;
-            Node* storage = addToGraph(MapIteratorNext, Edge(mapIterator, useKind));
+            BucketOwnerType type = intrinsic == JSMapIteratorNextIntrinsic ? BucketOwnerType::Map : BucketOwnerType::Set;
+            Node* storage = addToGraph(MapIteratorNext, OpInfo(type), Edge(mapIterator, CellUse));
             setResult(storage);
             return CallOptimizationResult::Inlined;
         }
@@ -3603,8 +3603,8 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
 
             insertChecks();
             Node* mapIterator = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
-            UseKind useKind = intrinsic == JSMapIteratorKeyIntrinsic ? MapIteratorObjectUse : SetIteratorObjectUse;
-            Node* storage = addToGraph(MapIteratorKey, OpInfo(0), OpInfo(prediction), Edge(mapIterator, useKind));
+            BucketOwnerType type = intrinsic == JSMapIteratorKeyIntrinsic ? BucketOwnerType::Map : BucketOwnerType::Set;
+            Node* storage = addToGraph(MapIteratorKey, OpInfo(type), OpInfo(prediction), Edge(mapIterator, CellUse));
             setResult(storage);
             return CallOptimizationResult::Inlined;
         }
@@ -3614,7 +3614,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
 
             insertChecks();
             Node* mapIterator = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
-            Node* storage = addToGraph(MapIteratorValue, OpInfo(0), OpInfo(prediction), Edge(mapIterator, MapIteratorObjectUse));
+            Node* storage = addToGraph(MapIteratorValue, OpInfo(BucketOwnerType::Map), OpInfo(prediction), Edge(mapIterator, CellUse));
             setResult(storage);
             return CallOptimizationResult::Inlined;
         }

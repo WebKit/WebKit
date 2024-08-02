@@ -72,8 +72,6 @@ public:
         case DateObjectUse:
         case MapObjectUse:
         case SetObjectUse:
-        case MapIteratorObjectUse:
-        case SetIteratorObjectUse:
         case WeakMapObjectUse:
         case WeakSetObjectUse:
         case DataViewObjectUse:
