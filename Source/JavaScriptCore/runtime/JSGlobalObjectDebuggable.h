@@ -66,10 +66,7 @@ public:
 private:
     JSGlobalObjectDebuggable(JSGlobalObject&);
 
-    void callOnGlobalObjectRunLoopAndWait(Function<void()>&&) const;
-
     JSGlobalObject* m_globalObject;
-    Ref<RunLoop> m_globalObjectRunLoop;
     Inspector::RemoteControllableTarget::Type m_type { Inspector::RemoteControllableTarget::Type::JavaScript };
 };
 
