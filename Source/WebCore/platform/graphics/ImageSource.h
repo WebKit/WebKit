@@ -58,8 +58,8 @@ public:
     // ImageFrame
     virtual unsigned currentFrameIndex() const { return primaryFrameIndex(); }
 
-    virtual const ImageFrame& primaryImageFrame() = 0;
-    virtual const ImageFrame& currentImageFrame() { return primaryImageFrame(); }
+    virtual const ImageFrame& primaryImageFrame(const std::optional<SubsamplingLevel>& = std::nullopt) = 0;
+    virtual const ImageFrame& currentImageFrame(const std::optional<SubsamplingLevel>& subsamplingLevel = std::nullopt) { return primaryImageFrame(subsamplingLevel); }
 
     // NativeImage
     virtual RefPtr<NativeImage> primaryNativeImage() = 0;
