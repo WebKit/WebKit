@@ -1344,7 +1344,7 @@ void PDFDiscretePresentationController::setNeedsRepaintInDocumentRect(OptionSet<
 
     if (repaintRequirements.contains(RepaintRequirement::PDFContent)) {
         if (RefPtr asyncRenderer = asyncRendererIfExists())
-            asyncRenderer->pdfContentChangedInRect(row.contentsLayer.get(), m_plugin->nonNormalizedScaleFactor(), contentsRect);
+            asyncRenderer->pdfContentChangedInRect(row.contentsLayer.get(), m_plugin->nonNormalizedScaleFactor(), contentsRect, layoutRow);
     }
 
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)

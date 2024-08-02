@@ -734,7 +734,7 @@ void AsyncPDFRenderer::invalidateTilesForPaintingRect(float pageScaleFactor, con
     });
 }
 
-void AsyncPDFRenderer::pdfContentChangedInRect(const GraphicsLayer* layer, float pageScaleFactor, const FloatRect& paintingRect)
+void AsyncPDFRenderer::pdfContentChangedInRect(const GraphicsLayer* layer, float pageScaleFactor, const FloatRect& paintingRect, std::optional<PDFLayoutRow> layoutRow)
 {
     // FIXME: If our platform does not support partial updates (supportsPartialRepaint() is false) then this should behave
     // identically to invalidateTilesForPaintingRect().
@@ -753,12 +753,6 @@ void AsyncPDFRenderer::pdfContentChangedInRect(const GraphicsLayer* layer, float
         ASSERT_NOT_REACHED();
         return;
     }
-
-    // FIXME: <https://webkit.org/b/276981> Pass in row?
-    std::optional<PDFLayoutRow> layoutRow;
-    auto layerID = m_tileGridToLayerIDMap.getOptional(tiledBacking->primaryGridIdentifier());
-    if (layerID)
-        layoutRow = presentationController->rowForLayerID(*layerID);
 
     auto pageCoverage = presentationController->pageCoverageForContentsRect(paintingRect, layoutRow);
     if (pageCoverage.isEmpty())
