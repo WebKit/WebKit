@@ -491,8 +491,6 @@ private:
     bool requestStartKeyboardScrollAnimation(const WebCore::KeyboardScroll& scrollData) override;
     bool requestStopKeyboardScrollAnimation(bool immediate) override;
 
-    std::optional<PDFLayoutRow> visibleRow() const;
-
     WebCore::FloatSize centeringOffset() const;
 
     // HUD Actions.
