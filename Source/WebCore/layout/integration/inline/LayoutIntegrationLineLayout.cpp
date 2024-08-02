@@ -307,10 +307,11 @@ static inline Layout::BlockLayoutState::TextBoxTrim textBoxTrim(const RenderBloc
     if (!layoutState)
         return { };
     auto textBoxTrimForIFC = Layout::BlockLayoutState::TextBoxTrim { };
+    auto isFlippedLinesWritingMode = rootRenderer.style().isFlippedLinesWritingMode();
     if (layoutState->hasTextBoxTrimStart())
-        textBoxTrimForIFC.add(Layout::BlockLayoutState::TextBoxTrimSide::Start);
+        textBoxTrimForIFC.add(isFlippedLinesWritingMode ? Layout::BlockLayoutState::TextBoxTrimSide::End : Layout::BlockLayoutState::TextBoxTrimSide::Start);
     if (layoutState->hasTextBoxTrimEnd(rootRenderer))
-        textBoxTrimForIFC.add(Layout::BlockLayoutState::TextBoxTrimSide::End);
+        textBoxTrimForIFC.add(isFlippedLinesWritingMode ? Layout::BlockLayoutState::TextBoxTrimSide::Start : Layout::BlockLayoutState::TextBoxTrimSide::End);
     return textBoxTrimForIFC;
 }
 
