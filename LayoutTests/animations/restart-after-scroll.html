@@ -30,17 +30,17 @@ function sawIteration(event) {
     }
 }
 
-function startScroll() {
+async function startScroll() {
     if (window.eventSender) {
-        eventSender.mouseMoveTo(200, 200);
-        eventSender.mouseDown();
-        eventSender.mouseMoveTo(200, 300);
+        await eventSender.asyncMouseMoveTo(200, 200);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseMoveTo(200, 300);
         setTimeout(endScroll, 100);
     }
 }
 
-function endScroll() {
-    eventSender.mouseUp();
+async function endScroll() {
+    await eventSender.asyncMouseUp();
     hasScrolled = true;
 }
 

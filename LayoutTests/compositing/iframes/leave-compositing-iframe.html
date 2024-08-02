@@ -29,7 +29,7 @@
     }
 
     // Called from subframe.
-    function testDone()
+    async function testDone()
     {
       document.getElementById('parent-iframe').contentDocument.body.offsetWidth; // work around bug 41999.
       if (window.testRunner)

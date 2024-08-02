@@ -11,7 +11,7 @@
 
 'use strict';
 
-target_test((target, test) => {
+target_test(async (target, test) => {
     target.addEventListener("pointerdown", event => {
         assert_equals(event.pointerId, 1, "The pointer's identifier is 1.");
         assert_equals(event.pointerType, "mouse", "The pointer type is 'mouse'.");
@@ -20,8 +20,8 @@ target_test((target, test) => {
         test.done();
     });
 
-    eventSender.mouseMoveTo(50, 50);
-    eventSender.mouseDown();
+    await eventSender.asyncMouseMoveTo(50, 50);
+    await eventSender.asyncMouseDown();
 }, `Testing the basic properties of a pointer event triggered by a mouse.`);
 
 </script>

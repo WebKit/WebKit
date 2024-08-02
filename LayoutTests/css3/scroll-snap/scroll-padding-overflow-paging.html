@@ -16,10 +16,10 @@
         <script>
         window.jsTestIsAsync = true;
 
-        function clickOnElement(targetElement) {
+        async function clickOnElement(targetElement) {
             var clientRect = targetElement.getBoundingClientRect();
-            eventSender.mouseMoveTo(clientRect.x + 5, clientRect.y + 5);
-            eventSender.mouseDown();
+            await eventSender.asyncMouseMoveTo(clientRect.x + 5, clientRect.y + 5);
+            await eventSender.asyncMouseDown();
         }
 
         async function runTests()
@@ -27,7 +27,7 @@
             try {
                 var container = document.getElementById("container");
 
-                clickOnElement(container);
+                await clickOnElement(container);
                 await UIHelper.keyDown("pageDown");
                 await UIHelper.waitForTargetScrollAnimationToSettle(container);
 

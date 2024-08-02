@@ -73,17 +73,17 @@
                 return;
             }
             try {
-                eventSender.mouseMoveTo(175, 190);
-                eventSender.mouseDown();
-                eventSender.mouseUp();
+                await eventSender.asyncMouseMoveTo(175, 190);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseUp();
 
                 let horizontalContainer = document.getElementById("horizontal-container");
                 await UIHelper.waitForTargetScrollAnimationToSettle(horizontalContainer);
                 expectTrue(horizontalContainer.scrollLeft == 1000, "clicking the horizontal scrollbar gutter snapped");
 
-                eventSender.mouseMoveTo(190, 370);
-                eventSender.mouseDown();
-                eventSender.mouseUp();
+                await eventSender.asyncMouseMoveTo(190, 370);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseUp();
                 let verticalContainer = document.getElementById("vertical-container");
                 await UIHelper.waitForTargetScrollAnimationToSettle(verticalContainer);
                 expectTrue(verticalContainer.scrollTop == 1000, "dragging the vertical scrollbar thumb snapped");

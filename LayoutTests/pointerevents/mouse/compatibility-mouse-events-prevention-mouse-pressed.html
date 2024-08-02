@@ -11,23 +11,23 @@
 
 'use strict';
 
-function runMouseSequence()
+async function runMouseSequence()
 {
-    eventSender.mouseDown();
-    eventSender.mouseMoveTo(25, 25);
-    eventSender.mouseMoveTo(75, 75);
-    eventSender.mouseUp();
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseMoveTo(25, 25);
+    await eventSender.asyncMouseMoveTo(75, 75);
+    await eventSender.asyncMouseUp();
 }
 
-target_test({ x: "50px", y: "50px", width: "100px", height: "100px" }, (target, test) => {
+target_test({ x: "50px", y: "50px", width: "100px", height: "100px" }, async (target, test) => {
     const eventTracker = new EventTracker(target, ["mousedown", "mouseover", "mouseenter", "mousemove", "mouseout", "mouseleave", "mouseup"]);
 
     // First, move the mouse over the element to start in that state.
-    eventSender.mouseMoveTo(75, 75);
+    await eventSender.asyncMouseMoveTo(75, 75);
     eventTracker.clear();
     
     // Then, press the mouse, don't call preventDefault() while handling "pointerdown", move the mouse out, then back over and finally release.
-    runMouseSequence();
+    await runMouseSequence();
 
     eventTracker.assertMatchesEvents([
         {"type": "mousedown" },
@@ -43,7 +43,7 @@ target_test({ x: "50px", y: "50px", width: "100px", height: "100px" }, (target, 
 
     // Then do the same thing but calling preventDefault() while handling "pointerdown".
     target.addEventListener("pointerdown", event => event.preventDefault());
-    runMouseSequence();
+    await runMouseSequence();
 
     eventTracker.assertMatchesEvents([
         {"type": "mouseout" },

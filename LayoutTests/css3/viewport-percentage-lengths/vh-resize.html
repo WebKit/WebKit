@@ -2,20 +2,22 @@
 <html>
 <head>
 <script>
-function init() {
+async function init() {
       if (!window.testRunner)
           return;
+      testRunner.waitUntilDone();
       // Move the resizer 400 pixels down.
-      eventSender.mouseMoveTo(100, 400);
-      eventSender.mouseDown();
-      eventSender.mouseMoveTo(100, 200);
-      eventSender.mouseUp();
+      await eventSender.asyncMouseMoveTo(100, 400);
+      await eventSender.asyncMouseDown();
+      await eventSender.asyncMouseMoveTo(100, 200);
+      await eventSender.asyncMouseUp();
 
       // Also test when frame height is increased.
-      eventSender.mouseMoveTo(100, 200);
-      eventSender.mouseDown();
-      eventSender.mouseMoveTo(100, 300);
-      eventSender.mouseUp();
+      await eventSender.asyncMouseMoveTo(100, 200);
+      await eventSender.asyncMouseDown();
+      await eventSender.asyncMouseMoveTo(100, 300);
+      await eventSender.asyncMouseUp();
+      testRunner.notifyDone();
 }
 window.onload = init;
 </script>

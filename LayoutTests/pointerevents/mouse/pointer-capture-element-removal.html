@@ -24,8 +24,7 @@
 
 'use strict';
 
-test(() => {
-
+promise_test(async () => {
     let numberOfPointerDownEvents = 0;
     document.body.addEventListener("pointerdown", event => {
         numberOfPointerDownEvents++;
@@ -41,15 +40,15 @@ test(() => {
     document.body.addEventListener("pointerup", event => event.target.remove(), { once: true });
 
     // Move the mouse pointer over both of the stacked targets.
-    eventSender.mouseMoveTo(50, 50);
+    await eventSender.asyncMouseMoveTo(50, 50);
 
     // Click once, this will set pointer capture on "first" and then remove it when the pointer is released.
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
 
     // Click a second time, this should target "second".
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
 
     assert_equals(numberOfPointerDownEvents, 2, "There were two pointerdown events dispatched.");
 }, `Testing that removing the capture element from the DOM doesn't prevent future pointer events to be dispatched.`);
