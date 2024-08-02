@@ -39,7 +39,7 @@ class LayoutState;
 
 class LineBoxBuilder {
 public:
-    LineBoxBuilder(const InlineFormattingContext&, const LineLayoutResult&);
+    LineBoxBuilder(const InlineFormattingContext&, LineLayoutResult&);
 
     LineBox build(size_t lineIndex);
 
@@ -70,7 +70,7 @@ private:
 
 private:
     const InlineFormattingContext& m_inlineFormattingContext;
-    const LineLayoutResult& m_lineLayoutResult;
+    LineLayoutResult& m_lineLayoutResult;
     bool m_fallbackFontRequiresIdeographicBaseline { false };
     bool m_lineHasNonLineSpanningRubyContent { false };
     HashMap<const InlineLevelBox*, TextUtil::FallbackFontList> m_fallbackFontsForInlineBoxes;

@@ -290,6 +290,7 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
         , lineContent.endsWithHyphen
         , result.nonSpanningInlineLevelBoxCount
         , { }
+        , { }
         , lineContent.range.isEmpty() ? std::make_optional(m_lineLogicalRect.top() + m_candidateContentMaximumHeight) : std::nullopt
     };
 }
