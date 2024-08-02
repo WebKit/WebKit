@@ -9102,7 +9102,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
 - (void)_showShareSheet:(const WebCore::ShareDataWithParsedURL&)data inRect:(std::optional<WebCore::FloatRect>)rect completionHandler:(CompletionHandler<void(bool)>&&)completionHandler
 {
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#if HAVE(SHARE_SHEET)
     if (_shareSheet)
         [_shareSheet dismissIfNeededWithReason:WebKit::PickerDismissalReason::ResetState];
 
@@ -9119,10 +9119,11 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 #endif
     
     [_shareSheet presentWithParameters:data inRect:rect completionHandler:WTFMove(completionHandler)];
-#endif
+#endif // HAVE(SHARE_SHEET)
 }
 
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#if HAVE(SHARE_SHEET)
+
 - (void)shareSheetDidDismiss:(WKShareSheet *)shareSheet
 {
     ASSERT(_shareSheet == shareSheet);
@@ -9140,7 +9141,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         [uiDelegate _webView:self.webView willShareActivityItems:activityItems];
 }
 
-#endif
+#endif // HAVE(SHARE_SHEET)
 
 - (void)_showContactPicker:(const WebCore::ContactsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&&)completionHandler
 {
