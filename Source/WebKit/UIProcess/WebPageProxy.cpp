@@ -12822,6 +12822,9 @@ void WebPageProxy::serializedAttachmentDataForIdentifiers(const Vector<String>& 
 
     MESSAGE_CHECK_COMPLETION(m_legacyMainFrameProcess, m_preferences->attachmentElementEnabled(), completionHandler(WTFMove(serializedData)));
 
+    for (const auto& identifier : identifiers)
+        MESSAGE_CHECK_COMPLETION(m_legacyMainFrameProcess, IdentifierToAttachmentMap::isValidKey(identifier), completionHandler(WTFMove(serializedData)));
+
     for (const auto& identifier : identifiers) {
         RefPtr attachment = attachmentForIdentifier(identifier);
         if (!attachment)
