@@ -5331,6 +5331,16 @@
    },
    {
       "emails" : [
+         "me@marais.co"
+      ],
+      "github" : "maraisr",
+      "name" : "Marais Rossouw",
+      "nicks" : [
+         "slightlycode"
+      ]
+   },
+   {
+      "emails" : [
          "marcelo.lira@openbossa.org",
          "setanta@gmail.com"
       ],
