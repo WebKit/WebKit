@@ -121,7 +121,7 @@ public:
 
     bool hadRulesMutation() const { return m_mutatedRules; }
     void clearHadRulesMutation() { m_mutatedRules = false; }
-    RefPtr<StyleRuleWithNesting> prepareChildStyleRuleForNesting(StyleRule&&);
+    RefPtr<StyleRuleWithNesting> prepareChildStyleRuleForNesting(StyleRule&);
 
     enum RuleMutationType { OtherMutation, RuleInsertion, KeyframesRuleMutation, RuleReplace };
     enum class ContentsClonedForMutation : bool { No, Yes };
