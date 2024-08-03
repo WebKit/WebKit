@@ -109,13 +109,13 @@ layer at (0,0) size 800x600
           RenderBlock {RT} at (3,118) size 10x50 [color=#C0C0C0]
             RenderText {#text} at (0,0) size 10x50
               text run at (0,0) width 50: "yy yy"
-        RenderInline {SPAN} at (5,168) size 30x30
-          RenderText {#text} at (5,168) size 30x30
-            text run at (5,168) width 30: "d"
-      RenderBlock {DIV} at (468,0) size 36x206 [color=#4B0082] [border: (3px solid #000000)]
+        RenderInline {SPAN} at (4,168) size 31x30
+          RenderText {#text} at (4,168) size 31x30
+            text run at (4,168) width 31: "d"
+      RenderBlock {DIV} at (467,0) size 37x206 [color=#4B0082] [border: (3px solid #000000)]
         RenderInline {SPAN} at (21,3) size 10x20
-          RenderText {#text} at (21,3) size 10x20
-            text run at (21,3) width 20: "cb"
+          RenderText {#text} at (21,3) size 11x20
+            text run at (21,3) width 21: "cb"
         RenderInline {RUBY} at (13,23) size 20x50 [color=#0000FF]
           RenderInline (generated) at (13,18) size 20x50
             RenderText {#text} at (13,23) size 20x40
@@ -125,10 +125,10 @@ layer at (0,0) size 800x600
               text run at (0,0) width 50: "yy yy"
         RenderText {#text} at (13,63) size 20x40
           text run at (13,63) width 40: "ij"
-      RenderBlock {DIV} at (512,0) size 38x206 [color=#4B0082] [border: (3px solid #000000)]
-        RenderInline {SPAN} at (5,3) size 30x30
-          RenderText {#text} at (5,3) size 30x30
-            text run at (5,3) width 30: "c"
+      RenderBlock {DIV} at (511,0) size 39x206 [color=#4B0082] [border: (3px solid #000000)]
+        RenderInline {SPAN} at (4,3) size 31x30
+          RenderText {#text} at (4,3) size 31x30
+            text run at (4,3) width 31: "c"
         RenderInline {RUBY} at (13,33) size 20x50 [color=#0000FF]
           RenderInline (generated) at (13,33) size 20x50
             RenderText {#text} at (13,38) size 20x40

@@ -17,11 +17,11 @@ layer at (0,0) size 800x600
         RenderText {#text} at (575,18) size 5x18
           text run at (575,18) width 5: "."
       RenderBlock {DIV} at (0,52) size 784x33
-        RenderInline (generated) at (0,4) size 47x28
+        RenderInline (generated) at (0,3) size 47x29
           RenderInline (generated) at (0,0) size 18x33 [color=#008000]
             RenderText at (0,0) size 18x33
               text run at (0,0) width 18: "T"
-          RenderText at (17,4) size 30x28
-            text run at (17,4) width 30: "he "
-        RenderText {#text} at (46,4) size 406x28
-          text run at (46,4) width 406: "first letter is green and larger than the rest."
+          RenderText at (17,3) size 30x29
+            text run at (17,3) width 30: "he "
+        RenderText {#text} at (46,3) size 406x29
+          text run at (46,3) width 406: "first letter is green and larger than the rest."

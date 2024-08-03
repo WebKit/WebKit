@@ -39,6 +39,7 @@ public:
     ASCIILiteral renderName() const final { return isWBR() ? "RenderWordBreak"_s : "RenderBR"_s; }
 
     IntRect linesBoundingBox() const;
+    LayoutUnit linesHeight() const;
 
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const final;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed = nullptr) const final;

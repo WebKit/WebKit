@@ -23,8 +23,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,104) size 784x18
         RenderText {#text} at (0,0) size 266x18
           text run at (0,0) width 266: "The following blocks should be identical."
-      RenderBlock (floating) {DIV} at (4,142) size 300x163 [bgcolor=#FFFFE0]
-        RenderText {#text} at (0,0) size 298x163
+      RenderBlock (floating) {DIV} at (4,142) size 300x164 [bgcolor=#FFFFE0]
+        RenderText {#text} at (0,0) size 298x164
           text run at (0,0) width 191: "Curabiturpretium,quamquiss?"
           text run at (0,18) width 295: "empermalesuada,estliberofeugiatlibero,velfrin"
           text run at (0,36) width 147: "gillaorcinibhsedneque-"

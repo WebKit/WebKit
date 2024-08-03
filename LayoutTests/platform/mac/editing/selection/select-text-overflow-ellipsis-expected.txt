@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
             text run at (65,0) width 150: "WebKit bug 29968"
         RenderText {#text} at (214,0) size 551x22
           text run at (214,0) width 551: ": Selecting text with text-overflow ellipsis should not show cut off text"
-layer at (8,49) size 95x18 scrollWidth 124
+layer at (8,48) size 95x18 scrollWidth 124
   RenderBlock {DIV} at (0,40) size 95x19
     RenderText {#text} at (0,0) size 124x18
       text run at (0,0) width 124: "Lorem ipsum dolor"

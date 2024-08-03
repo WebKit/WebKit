@@ -9,28 +9,28 @@ layer at (0,0) size 800x268
       RenderBlock {P} at (0,58) size 784x37
         RenderText {#text} at (0,0) size 289x18
           text run at (0,0) width 289: "This example demonstrates that text inside a "
-        RenderInline {CODE} at (288,2) size 9x15
-          RenderText {#text} at (288,2) size 9x15
+        RenderInline {CODE} at (288,2) size 9x16
+          RenderText {#text} at (288,2) size 9x16
             text run at (288,2) width 9: "b"
         RenderText {#text} at (296,0) size 9x18
           text run at (296,0) width 9: ", "
-        RenderInline {CODE} at (304,2) size 8x15
-          RenderText {#text} at (304,2) size 8x15
+        RenderInline {CODE} at (304,2) size 8x16
+          RenderText {#text} at (304,2) size 8x16
             text run at (304,2) width 8: "i"
         RenderText {#text} at (311,0) size 9x18
           text run at (311,0) width 9: ", "
-        RenderInline {CODE} at (319,2) size 48x15
-          RenderText {#text} at (319,2) size 48x15
+        RenderInline {CODE} at (319,2) size 48x16
+          RenderText {#text} at (319,2) size 48x16
             text run at (319,2) width 48: "strong"
         RenderText {#text} at (366,0) size 23x18
           text run at (366,0) width 23: " or "
-        RenderInline {CODE} at (388,2) size 16x15
-          RenderText {#text} at (388,2) size 16x15
+        RenderInline {CODE} at (388,2) size 16x16
+          RenderText {#text} at (388,2) size 16x16
             text run at (388,2) width 16: "em"
         RenderText {#text} at (403,0) size 115x18
           text run at (403,0) width 115: " element loses its "
-        RenderInline {CODE} at (517,2) size 110x15
-          RenderText {#text} at (517,2) size 110x15
+        RenderInline {CODE} at (517,2) size 110x16
+          RenderText {#text} at (517,2) size 110x16
             text run at (517,2) width 110: "letter-spacing"
         RenderText {#text} at (0,0) size 745x36
           text run at (626,0) width 119: " CSS attribute that"

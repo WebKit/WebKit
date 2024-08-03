@@ -6,8 +6,8 @@ layer at (0,0) size 785x912
       RenderBlock {P} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 137x18
           text run at (0,0) width 137: "This is a table with a "
-        RenderInline {CODE} at (136,2) size 118x15
-          RenderText {#text} at (136,2) size 118x15
+        RenderInline {CODE} at (136,2) size 118x16
+          RenderText {#text} at (136,2) size 118x16
             text run at (136,2) width 118: "td align=center"
         RenderText {#text} at (253,0) size 186x18
           text run at (253,0) width 186: " that has a p, a table, and a p."
@@ -30,8 +30,8 @@ layer at (0,0) size 785x912
       RenderBlock {P} at (0,156) size 769x72
         RenderText {#text} at (0,0) size 186x18
           text run at (0,0) width 186: "This time the inner table has "
-        RenderInline {CODE} at (185,2) size 95x15
-          RenderText {#text} at (185,2) size 95x15
+        RenderInline {CODE} at (185,2) size 95x16
+          RenderText {#text} at (185,2) size 95x16
             text run at (185,2) width 95: "width=\"100%\""
         RenderText {#text} at (0,0) size 766x72
           text run at (279,0) width 393: ", so you can see that the CSS spec isn't quite being followed. "

@@ -1847,7 +1847,7 @@ LayoutUnit RenderGrid::baselinePosition(FontBaseline, bool, LineDirectionMode di
     if (!baseline)
         return synthesizedBaseline(*this, *parentStyle(), direction, BorderBox) + marginLogicalHeight();
 
-    return baseline.value() + (direction == HorizontalLine ? marginTop() : marginRight()).toInt();
+    return baseline.value() + (direction == HorizontalLine ? marginTop() : marginRight());
 }
 
 std::optional<LayoutUnit> RenderGrid::firstLineBaseline() const
@@ -1869,7 +1869,7 @@ std::optional<LayoutUnit> RenderGrid::firstLineBaseline() const
         LineDirectionMode direction = isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
         return synthesizedBaseline(*baselineGridItem, style(), direction, BorderBox) + logicalTopForChild(*baselineGridItem);
     }
-    return baseline.value() + baselineGridItem->logicalTop().toInt();
+    return baseline.value() + baselineGridItem->logicalTop();
 }
 
 std::optional<LayoutUnit> RenderGrid::lastLineBaseline() const
@@ -1888,7 +1888,7 @@ std::optional<LayoutUnit> RenderGrid::lastLineBaseline() const
 
     }
 
-    return baseline.value() + baselineGridItem->logicalTop().toInt();
+    return baseline.value() + baselineGridItem->logicalTop();
 }
 
 SingleThreadWeakPtr<RenderBox> RenderGrid::getBaselineGridItem(ItemPosition alignment) const

@@ -109,11 +109,11 @@ std::optional<LayoutUnit> InlineQuirks::initialLetterAlignmentOffset(const Box& 
     auto& primaryFontMetrics = lineBoxStyle.fontCascade().metricsOfPrimaryFont();
     auto lineHeight = [&]() -> InlineLayoutUnit {
         if (lineBoxStyle.lineHeight().isNegative())
-            return primaryFontMetrics.intAscent() + primaryFontMetrics.intDescent();
+            return primaryFontMetrics.ascent() + primaryFontMetrics.descent();
         return lineBoxStyle.computedLineHeight();
     };
     auto& floatBoxGeometry = formattingContext().geometryForBox(floatBox);
-    return LayoutUnit { primaryFontMetrics.intAscent() + (lineHeight() - primaryFontMetrics.intHeight()) / 2 - primaryFontMetrics.intCapHeight() - floatBoxGeometry.marginBorderAndPaddingBefore() };
+    return LayoutUnit { primaryFontMetrics.ascent() + (lineHeight() - primaryFontMetrics.height()) / 2 - *primaryFontMetrics.capHeight() - floatBoxGeometry.marginBorderAndPaddingBefore() };
 }
 
 std::optional<InlineRect> InlineQuirks::adjustedRectForLineGridLineAlign(const InlineRect& rect) const
@@ -164,8 +164,8 @@ std::optional<InlineLayoutUnit> InlineQuirks::adjustmentForLineGridLineSnap(cons
         return { };
 
     auto& gridFontMetrics = lineGrid.primaryFont->fontMetrics();
-    auto lineGridFontAscent = gridFontMetrics.intAscent(lineBox.baselineType());
-    auto lineGridFontHeight = gridFontMetrics.intHeight();
+    auto lineGridFontAscent = gridFontMetrics.ascent(lineBox.baselineType());
+    auto lineGridFontHeight = gridFontMetrics.height();
     auto lineGridHalfLeading = (gridLineHeight - lineGridFontHeight) / 2;
 
     auto firstLineTop = lineGrid.topRowOffset + lineGrid.gridOffset.height();
@@ -187,7 +187,7 @@ std::optional<InlineLayoutUnit> InlineQuirks::adjustmentForLineGridLineSnap(cons
             firstTextTop += (lineGridFontHeight - logicalHeight) / 2;
         else {
             LayoutUnit numberOfLinesWithLeading { ceilf(static_cast<float>(logicalHeight - lineGridFontHeight) / gridLineHeight) };
-            LayoutUnit totalHeight = lineGridFontHeight + numberOfLinesWithLeading * gridLineHeight;
+            auto totalHeight = LayoutUnit { lineGridFontHeight + numberOfLinesWithLeading * gridLineHeight };
             firstTextTop += (totalHeight - logicalHeight) / 2;
         }
         firstBaselinePosition = firstTextTop + ascent;

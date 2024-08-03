@@ -217,7 +217,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         context.translate(-markerRect.x(), -markerRect.maxY());
     }
 
-    FloatPoint textOrigin = FloatPoint(markerRect.x(), markerRect.y() + style().metricsOfPrimaryFont().intAscent());
+    auto textOrigin = FloatPoint { markerRect.x(), markerRect.y() + style().metricsOfPrimaryFont().ascent() };
     textOrigin = roundPointToDevicePixels(LayoutPoint(textOrigin), document().deviceScaleFactor(), style().isLeftToRightDirection());
     context.drawText(style().fontCascade(), textRun(), textOrigin);
 }
@@ -250,7 +250,7 @@ void RenderListMarker::layout()
         setHeight(m_image->imageSize(this, style().usedZoom()).height());
     } else {
         setLogicalWidth(minPreferredLogicalWidth());
-        setLogicalHeight(style().metricsOfPrimaryFont().intHeight());
+        setLogicalHeight(LayoutUnit::fromFloatCeil(style().metricsOfPrimaryFont().height()));
     }
 
     setMarginStart(0);

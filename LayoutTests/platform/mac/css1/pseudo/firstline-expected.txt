@@ -34,8 +34,8 @@ layer at (0,0) size 785x655
           text run at (607,0) width 155: "Thus, if the first line is"
           text run at (0,18) width 717: "not in small-caps style, OR if the entire paragraph turns out in small-caps, then the user agent has failed this test"
           text run at (0,36) width 235: "(although the problem might be that "
-        RenderInline {CODE} at (234,38) size 79x15
-          RenderText {#text} at (234,38) size 79x15
+        RenderInline {CODE} at (234,38) size 79x16
+          RenderText {#text} at (234,38) size 79x16
             text run at (234,38) width 79: "small-caps"
         RenderText {#text} at (0,36) size 754x36
           text run at (312,36) width 230: " is not supported by your browser). "
@@ -73,8 +73,8 @@ layer at (0,0) size 785x655
                   text run at (607,0) width 111: "Thus, if the first"
                   text run at (0,18) width 733: "line is not in small-caps style, OR if the entire paragraph turns out in small-caps, then the user agent has failed this"
                   text run at (0,36) width 261: "test (although the problem might be that "
-                RenderInline {CODE} at (260,38) size 79x15
-                  RenderText {#text} at (260,38) size 79x15
+                RenderInline {CODE} at (260,38) size 79x16
+                  RenderText {#text} at (260,38) size 79x16
                     text run at (260,38) width 79: "small-caps"
                 RenderText {#text} at (0,36) size 734x36
                   text run at (338,36) width 230: " is not supported by your browser). "

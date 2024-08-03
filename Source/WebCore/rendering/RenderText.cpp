@@ -1848,6 +1848,19 @@ float RenderText::width(unsigned from, unsigned length, const FontCascade& fontC
     return clampTo(width, 0.f);
 }
 
+LayoutUnit RenderText::linesHeight() const
+{
+    auto firstTextBox = InlineIterator::firstTextBoxFor(*this);
+    if (!firstTextBox)
+        return { };
+
+    auto boundingBox = firstTextBox->visualRectIgnoringBlockDirection();
+    for (auto textBox = firstTextBox; ++textBox;)
+        boundingBox.uniteEvenIfEmpty(textBox->visualRectIgnoringBlockDirection());
+
+    return LayoutUnit::fromFloatCeil(boundingBox.height());
+}
+
 IntRect RenderText::linesBoundingBox() const
 {
     auto firstTextBox = InlineIterator::firstTextBoxFor(*this);

@@ -15,30 +15,30 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (22,1) size 21x45
       RenderBlock (anonymous) at (0,59) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderTable {TABLE} at (0,77) size 468x74 [bgcolor=#F7D68C]
-        RenderTableSection {TBODY} at (0,0) size 468x74
-          RenderTableRow {TR} at (0,0) size 468x44
-            RenderTableCell {TD} at (0,0) size 326x22 [r=0 c=0 rs=1 cs=1]
-              RenderInline {FONT} at (0,0) size 261x22
-                RenderInline {B} at (0,0) size 261x22
-                  RenderText {#text} at (0,0) size 261x22
+      RenderTable {TABLE} at (0,77) size 468x72 [bgcolor=#F7D68C]
+        RenderTableSection {TBODY} at (0,0) size 468x72
+          RenderTableRow {TR} at (0,0) size 468x42
+            RenderTableCell {TD} at (0,0) size 326x21 [r=0 c=0 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 261x21
+                RenderInline {B} at (0,0) size 261x21
+                  RenderText {#text} at (0,0) size 261x21
                     text run at (0,0) width 261: " 25 offres d'emploi des entreprises"
-            RenderTableCell {TD} at (326,0) size 100x44 [bgcolor=#EE9E02] [r=0 c=1 rs=1 cs=1]
-              RenderImage {IMG} at (18,16) size 21x1
-              RenderText {#text} at (38,3) size 35x18
-                text run at (38,3) width 35: "page "
-              RenderInline {FONT} at (72,0) size 28x44
-                RenderInline {B} at (72,0) size 28x44
-                  RenderText {#text} at (72,0) size 28x44
+            RenderTableCell {TD} at (326,0) size 100x42 [bgcolor=#EE9E02] [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (18,15) size 21x2
+              RenderText {#text} at (38,2) size 35x19
+                text run at (38,2) width 35: "page "
+              RenderInline {FONT} at (72,0) size 28x42
+                RenderInline {B} at (72,0) size 28x42
+                  RenderText {#text} at (72,0) size 28x42
                     text run at (72,0) width 28: "12 /"
-                    text run at (82,22) width 18: "13"
+                    text run at (82,21) width 18: "13"
             RenderTableCell {TD} at (426,0) size 42x45 [r=0 c=2 rs=2 cs=1]
               RenderImage {IMG} at (0,0) size 21x45
               RenderImage {IMG} at (21,0) size 21x45
-          RenderTableRow {TR} at (0,44) size 468x30
-            RenderTableCell {TD} at (0,44) size 326x30 [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,42) size 468x30
+            RenderTableCell {TD} at (0,42) size 326x30 [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 326x30
-            RenderTableCell {TD} at (326,44) size 100x30 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (326,42) size 100x30 [r=1 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 100x30
 layer at (8,8) size 152x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,0) size 152x2 [color=#808080] [border: (1px inset #808080)]

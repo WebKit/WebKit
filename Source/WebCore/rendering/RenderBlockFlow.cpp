@@ -3252,7 +3252,7 @@ std::optional<LayoutUnit> RenderBlockFlow::firstLineBaseline() const
         return { };
 
     if (auto* lineLayout = this->modernLineLayout())
-        return LayoutUnit { floorToInt(lineLayout->firstLinePhysicalBaseline()) };
+        return LayoutUnit { lineLayout->firstLinePhysicalBaseline() };
 
     ASSERT_NOT_REACHED();
     return { };
@@ -3273,7 +3273,7 @@ std::optional<LayoutUnit> RenderBlockFlow::lastLineBaseline() const
         return { };
 
     if (auto* lineLayout = modernLineLayout())
-        return LayoutUnit { floorToInt(lineLayout->lastLinePhysicalBaseline()) };
+        return LayoutUnit { lineLayout->lastLinePhysicalBaseline() };
 
     ASSERT_NOT_REACHED();
     return { };
@@ -3307,20 +3307,20 @@ std::optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode
             if (!hasLineIfEmpty())
                 return std::nullopt;
             const auto& fontMetrics = firstLineStyle().metricsOfPrimaryFont();
-            return LayoutUnit { LayoutUnit(fontMetrics.intAscent()
-                + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.intHeight()) / 2
-                + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight())).toInt() };
+            return LayoutUnit { fontMetrics.ascent()
+                + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.height()) / 2
+                + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight()) };
         }
 
         if (legacyLineLayout()) {
             bool isFirstLine = lastRootBox() == firstRootBox();
             const auto& style = isFirstLine ? firstLineStyle() : this->style();
             // LegacyInlineFlowBox::placeBoxesInBlockDirection will flip lines in case of verticalLR mode, so we can assume verticalRL for now.
-            lastBaseline = style.metricsOfPrimaryFont().intAscent(lastRootBox()->baselineType())
+            lastBaseline = style.metricsOfPrimaryFont().ascent(lastRootBox()->baselineType())
                 + (style.isFlippedLinesWritingMode() ? logicalHeight() - lastRootBox()->logicalBottom() : lastRootBox()->logicalTop());
         }
         else if (modernLineLayout())
-            lastBaseline = floorToInt(modernLineLayout()->lastLineLogicalBaseline());
+            lastBaseline = modernLineLayout()->lastLineLogicalBaseline();
     }
     // According to the CSS spec http://www.w3.org/TR/CSS21/visudet.html, we shouldn't be performing this min, but should
     // instead be returning boxHeight directly. However, we feel that a min here is better behavior (and is consistent

@@ -8,15 +8,15 @@ layer at (0,0) size 458x600
           RenderText {#text} at (0,0) size 36x331
             text run at (0,0) width 331: "This test case illustrates incorrect positioning of list"
             text run at (18,0) width 95: "items within a "
-          RenderInline {CODE} at (20,94) size 15x134
-            RenderText {#text} at (19,94) size 15x134
-              text run at (19,94) width 133: "text-align: right"
+          RenderInline {CODE} at (20,94) size 16x134
+            RenderText {#text} at (18,94) size 16x134
+              text run at (18,94) width 134: "text-align: right"
           RenderText {#text} at (18,227) size 18x74
             text run at (18,227) width 73: " div after a "
-          RenderInline {CODE} at (20,0) size 33x347
-            RenderText {#text} at (19,0) size 33x347
-              text run at (19,300) width 47: "float:"
-              text run at (37,0) width 32: "left"
+          RenderInline {CODE} at (20,0) size 34x347
+            RenderText {#text} at (18,0) size 34x347
+              text run at (18,300) width 48: "float:"
+              text run at (36,0) width 33: "left"
           RenderText {#text} at (36,31) size 18x32
             text run at (36,31) width 32: " div. "
           RenderInline {A} at (36,62) size 18x197 [color=#0000EE]

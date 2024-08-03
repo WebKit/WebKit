@@ -268,7 +268,7 @@ LayoutUnit RenderFlexibleBox::baselinePosition(FontBaseline, bool, LineDirection
     if (!baseline)
         return synthesizedBaseline(*this, *parentStyle(), direction, BorderBox) + marginLogicalHeight();
 
-    return baseline.value() + (direction == HorizontalLine ? marginTop() : marginRight()).toInt();
+    return baseline.value() + (direction == HorizontalLine ? marginTop() : marginRight());
 }
 
 std::optional<LayoutUnit> RenderFlexibleBox::firstLineBaseline() const
@@ -281,9 +281,9 @@ std::optional<LayoutUnit> RenderFlexibleBox::firstLineBaseline() const
         return { };
 
     if (!isColumnFlow() && !mainAxisIsFlexItemInlineAxis(*baselineFlexItem))
-        return LayoutUnit { (crossAxisExtentForFlexItem(*baselineFlexItem) + baselineFlexItem->logicalTop()).toInt() };
+        return LayoutUnit { crossAxisExtentForFlexItem(*baselineFlexItem) + baselineFlexItem->logicalTop() };
     if (isColumnFlow() && mainAxisIsFlexItemInlineAxis(*baselineFlexItem))
-        return LayoutUnit { (mainAxisExtentForFlexItem(*baselineFlexItem) + baselineFlexItem->logicalTop()).toInt() };
+        return LayoutUnit { mainAxisExtentForFlexItem(*baselineFlexItem) + baselineFlexItem->logicalTop() };
 
     std::optional<LayoutUnit> baseline = baselineFlexItem->firstLineBaseline();
     if (!baseline) {
@@ -293,7 +293,7 @@ std::optional<LayoutUnit> RenderFlexibleBox::firstLineBaseline() const
         return synthesizedBaseline(*baselineFlexItem, style(), direction, BorderBox) + baselineFlexItem->logicalTop();
     }
 
-    return LayoutUnit { (baseline.value() + baselineFlexItem->logicalTop()).toInt() };
+    return LayoutUnit { baseline.value() + baselineFlexItem->logicalTop() };
 }
 
 std::optional <LayoutUnit> RenderFlexibleBox::lastLineBaseline() const
@@ -306,9 +306,9 @@ std::optional <LayoutUnit> RenderFlexibleBox::lastLineBaseline() const
         return { };
 
     if (!isColumnFlow() && !mainAxisIsFlexItemInlineAxis(*baselineFlexItem))
-        return LayoutUnit { (crossAxisExtentForFlexItem(*baselineFlexItem) + baselineFlexItem->logicalTop()).toInt() };
+        return LayoutUnit { crossAxisExtentForFlexItem(*baselineFlexItem) + baselineFlexItem->logicalTop() };
     if (isColumnFlow() && mainAxisIsFlexItemInlineAxis(*baselineFlexItem))
-        return LayoutUnit { (mainAxisExtentForFlexItem(*baselineFlexItem) + baselineFlexItem->logicalTop()).toInt() };
+        return LayoutUnit { mainAxisExtentForFlexItem(*baselineFlexItem) + baselineFlexItem->logicalTop() };
 
     auto baseline = baselineFlexItem->lastLineBaseline();
     if (!baseline) {
@@ -318,7 +318,7 @@ std::optional <LayoutUnit> RenderFlexibleBox::lastLineBaseline() const
         return synthesizedBaseline(*baselineFlexItem, style(), direction, BorderBox) + baselineFlexItem->logicalTop();
     }
 
-    return LayoutUnit { (baseline.value() + baselineFlexItem->logicalTop()).toInt() };
+    return LayoutUnit { baseline.value() + baselineFlexItem->logicalTop() };
 }
 
 std::optional<LayoutUnit> RenderFlexibleBox::inlineBlockBaseline(LineDirectionMode) const

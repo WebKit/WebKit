@@ -55,9 +55,6 @@ public:
 
         InlineLayoutUnit height() const { return ascent + descent; }
         friend bool operator==(const AscentAndDescent&, const AscentAndDescent&) = default;
-        // FIXME: Remove this.
-        // We need floor/ceil to match legacy layout integral positioning.
-        void round();
     };
     InlineLayoutUnit ascent() const { return m_ascentAndDescent.ascent; }
     InlineLayoutUnit descent() const { return m_ascentAndDescent.descent; }
@@ -135,7 +132,6 @@ private:
     InlineLayoutUnit logicalWidth() const { return m_logicalRect.width(); }
     InlineLayoutUnit logicalHeight() const { return m_logicalRect.height(); }
 
-    // FIXME: Remove legacy rounding.
     void setLogicalWidth(InlineLayoutUnit logicalWidth) { m_logicalRect.setWidth(logicalWidth); }
     void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(logicalHeight); }
     void setLogicalTop(InlineLayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
@@ -201,12 +197,6 @@ inline bool InlineLevelBox::hasLineBoxRelativeAlignment() const
 {
     auto verticalAlignment = verticalAlign().type;
     return verticalAlignment == VerticalAlign::Top || verticalAlignment == VerticalAlign::Bottom;
-}
-
-inline void InlineLevelBox::AscentAndDescent::round()
-{
-    ascent = floorf(ascent);
-    descent = ceilf(descent);
 }
 
 }

@@ -10,17 +10,17 @@ layer at (0,0) size 800x600
           text run at (0,18) width 685: "glyphs of U+845B should be different. On platforms which don't support UVSes, they should be identical. "
           text run at (684,18) width 75: "In addition,"
           text run at (0,36) width 619: "any glyphs (including the last resort glyph) should not appear after the U+845B on all platforms."
-      RenderBlock {DIV} at (0,70) size 784x18
-        RenderText {#text} at (0,0) size 291x18
+      RenderBlock {DIV} at (0,70) size 784x19
+        RenderText {#text} at (0,0) size 291x19
           text run at (0,0) width 291: "Glyph for code point U+845B without UVS: "
-        RenderInline {SPAN} at (290,0) size 17x15
-          RenderText {#text} at (290,0) size 17x15
+        RenderInline {SPAN} at (290,0) size 17x16
+          RenderText {#text} at (290,0) size 17x16
             text run at (290,0) width 17: "\x{845B}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,88) size 784x18
-        RenderText {#text} at (0,0) size 270x18
+      RenderBlock {DIV} at (0,88) size 784x19
+        RenderText {#text} at (0,0) size 270x19
           text run at (0,0) width 270: "Glyph for code point U+845B with UVS: "
-        RenderInline {SPAN} at (269,0) size 17x15
-          RenderText {#text} at (269,0) size 17x15
+        RenderInline {SPAN} at (269,0) size 17x16
+          RenderText {#text} at (269,0) size 17x16
             text run at (269,0) width 17: "\x{845B}\x{DB40}\x{DD00}"
         RenderText {#text} at (0,0) size 0x0

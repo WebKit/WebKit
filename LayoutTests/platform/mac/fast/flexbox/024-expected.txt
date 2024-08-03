@@ -10,8 +10,8 @@ layer at (0,0) size 800x600
           text run at (248,18) width 275: "If you see any red, then the test has failed. "
           text run at (522,18) width 218: "This test is checking to make sure"
           text run at (0,36) width 327: "replaced elements inside boxes get stretched when "
-        RenderInline {CODE} at (326,38) size 141x15
-          RenderText {#text} at (326,38) size 141x15
+        RenderInline {CODE} at (326,38) size 141x16
+          RenderText {#text} at (326,38) size 141x16
             text run at (326,38) width 141: "box-align: stretch"
         RenderText {#text} at (466,36) size 81x18
           text run at (466,36) width 81: " is specified."

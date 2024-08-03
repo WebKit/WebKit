@@ -13,28 +13,28 @@ layer at (8,26) size 161x84 clip at (9,27) size 144x82 scrollHeight 121
       RenderText {#text} at (0,0) size 8x52
         text run at (0,0) width 6: "1"
         text run at (5,0) width 1: " "
-        text run at (0,13) width 7: "2"
-        text run at (6,13) width 1: " "
-        text run at (0,26) width 7: "3"
-        text run at (6,26) width 1: " "
-        text run at (0,39) width 8: "4"
-        text run at (7,39) width 1: " "
-      RenderText {#text} at (0,52) size 7x13
-        text run at (0,52) width 7: "5"
-      RenderText {#text} at (6,52) size 1x13
-        text run at (6,52) width 1: " "
-      RenderText {#text} at (0,65) size 8x13
-        text run at (0,65) width 8: "6"
-      RenderText {#text} at (7,65) size 1x13
-        text run at (7,65) width 1: " "
-      RenderText {#text} at (0,78) size 7x13
-        text run at (0,78) width 7: "7"
-      RenderText {#text} at (6,78) size 1x13
-        text run at (6,78) width 1: " "
-      RenderText {#text} at (0,91) size 8x13
-        text run at (0,91) width 8: "8"
-      RenderText {#text} at (7,91) size 1x13
-        text run at (7,91) width 1: " "
-      RenderText {#text} at (0,104) size 0x13
-        text run at (0,104) width 0: " "
+        text run at (0,12) width 7: "2"
+        text run at (6,12) width 1: " "
+        text run at (0,25) width 7: "3"
+        text run at (6,25) width 1: " "
+        text run at (0,38) width 8: "4"
+        text run at (7,38) width 1: " "
+      RenderText {#text} at (0,51) size 7x14
+        text run at (0,51) width 7: "5"
+      RenderText {#text} at (6,51) size 1x14
+        text run at (6,51) width 1: " "
+      RenderText {#text} at (0,64) size 8x14
+        text run at (0,64) width 8: "6"
+      RenderText {#text} at (7,64) size 1x14
+        text run at (7,64) width 1: " "
+      RenderText {#text} at (0,77) size 7x14
+        text run at (0,77) width 7: "7"
+      RenderText {#text} at (6,77) size 1x14
+        text run at (6,77) width 1: " "
+      RenderText {#text} at (0,90) size 8x14
+        text run at (0,90) width 8: "8"
+      RenderText {#text} at (7,90) size 1x14
+        text run at (7,90) width 1: " "
+      RenderText {#text} at (0,103) size 0x14
+        text run at (0,103) width 0: " "
 caret: position 0 of child 9 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {TEXTAREA} of body

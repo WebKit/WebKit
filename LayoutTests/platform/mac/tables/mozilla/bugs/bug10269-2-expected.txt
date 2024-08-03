@@ -9,9 +9,9 @@ layer at (0,0) size 785x6848
       RenderBlock {P} at (0,58) size 769x19
         RenderText {#text} at (0,0) size 575x18
           text run at (0,0) width 575: "The following tables should be laid out in the traditional manner because their widths are "
-        RenderInline {CODE} at (574,2) size 32x15
-          RenderText {#text} at (574,2) size 32x15
-            text run at (574,2) width 32: "auto"
+        RenderInline {CODE} at (574,1) size 32x17
+          RenderText {#text} at (574,1) size 32x17
+            text run at (574,1) width 32: "auto"
         RenderText {#text} at (605,0) size 6x18
           text run at (605,0) width 6: ":"
       RenderTable {TABLE} at (0,92) size 111x51

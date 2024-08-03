@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
       RenderBlock {DIV} at (16,0) size 400x144
-        RenderBlock (floating) at (2,3) size 48x81
+        RenderBlock (floating) at (2,3) size 48x82
           RenderText at (0,-45) size 48x198
-            text run at (0,-45) width 48: "J"
+            text run at (0,-44) width 48: "J"
         RenderText {#text} at (0,36) size 397x108
           text run at (51,36) width 346: "ust an example of first-letter. This letter should span 3"
           text run at (51,54) width 340: "lines of text, and so it should align itself cleanly with"

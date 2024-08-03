@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 84x18
             RenderText {#text} at (0,0) size 84x18
               text run at (0,0) width 84: "Content after"
-      RenderBlock {DIV} at (0,148) size 784x59
+      RenderBlock {DIV} at (0,147) size 784x60
         RenderBlock (anonymous) at (0,0) size 784x0
           RenderInline {SPAN} at (0,0) size 0x0
         RenderBlock (anonymous) at (0,0) size 784x22
@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 88x18
             RenderText {#text} at (0,0) size 88x18
               text run at (0,0) width 88: "Content after."
-      RenderBlock {DIV} at (0,222) size 784x60
+      RenderBlock {DIV} at (0,222) size 784x59
         RenderBlock (anonymous) at (0,0) size 784x18
           RenderInline {SPAN} at (0,0) size 96x18
             RenderText {#text} at (0,0) size 96x18
@@ -41,7 +41,7 @@ layer at (0,0) size 800x600
               text run at (0,0) width 174: "But No Content After"
         RenderBlock (anonymous) at (0,77) size 784x0
           RenderInline {SPAN} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,300) size 784x23
+      RenderBlock {DIV} at (0,299) size 784x23
         RenderBlock (anonymous) at (0,0) size 784x0
           RenderInline {SPAN} at (0,0) size 0x0
         RenderBlock (anonymous) at (0,0) size 784x22

@@ -39,8 +39,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 10x80
               text run at (0,0) width 80: "xxxxxxxx"
         RenderInline {SPAN} at (21,78) size 10x20
-          RenderText {#text} at (21,78) size 10x20
-            text run at (21,78) width 20: "ll"
+          RenderText {#text} at (21,78) size 11x20
+            text run at (21,78) width 21: "ll"
         RenderInline {RUBY} at (13,98) size 20x80 [color=#0000FF]
           RenderInline (generated) at (13,93) size 20x80
             RenderText {#text} at (13,113) size 20x40
@@ -49,8 +49,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 10x80
               text run at (0,0) width 80: "yyyyyyyy"
         RenderInline {SPAN} at (21,168) size 10x20
-          RenderText {#text} at (21,168) size 10x20
-            text run at (21,168) width 20: "ll"
+          RenderText {#text} at (21,168) size 11x20
+            text run at (21,168) width 21: "ll"
         RenderInline {RUBY} at (13,188) size 20x80 [color=#0000FF]
           RenderInline (generated) at (13,183) size 20x80
             RenderText {#text} at (13,203) size 20x40
@@ -96,9 +96,9 @@ layer at (0,0) size 800x600
           RenderBlock {RT} at (3,3) size 10x80 [color=#C0C0C0]
             RenderText {#text} at (0,0) size 10x80
               text run at (0,0) width 80: "xxxxxxxx"
-        RenderInline {SPAN} at (5,83) size 30x60
-          RenderText {#text} at (5,83) size 30x60
-            text run at (5,83) width 60: "ll"
+        RenderInline {SPAN} at (4,83) size 31x60
+          RenderText {#text} at (4,83) size 31x60
+            text run at (4,83) width 61: "ll"
         RenderInline {RUBY} at (13,143) size 20x80 [color=#0000FF]
           RenderInline (generated) at (13,143) size 20x80
             RenderText {#text} at (13,163) size 20x40
@@ -106,9 +106,9 @@ layer at (0,0) size 800x600
           RenderBlock {RT} at (3,143) size 10x80 [color=#C0C0C0]
             RenderText {#text} at (0,0) size 10x80
               text run at (0,0) width 80: "yyyyyyyy"
-        RenderInline {SPAN} at (5,223) size 30x60
-          RenderText {#text} at (5,223) size 30x60
-            text run at (5,223) width 60: "ll"
+        RenderInline {SPAN} at (4,223) size 31x60
+          RenderText {#text} at (4,223) size 31x60
+            text run at (4,223) width 61: "ll"
         RenderInline {RUBY} at (13,283) size 20x80 [color=#0000FF]
           RenderInline (generated) at (13,283) size 20x80
             RenderText {#text} at (13,303) size 20x40

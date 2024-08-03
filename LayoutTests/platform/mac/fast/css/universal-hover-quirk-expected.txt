@@ -19,8 +19,8 @@ layer at (0,0) size 800x600
             text run at (405,0) width 202: " Text underlined on mouse over"
         RenderText {#text} at (606,0) size 102x18
           text run at (606,0) width 102: ". This tests that "
-        RenderInline {CODE} at (707,2) size 56x15
-          RenderText {#text} at (707,2) size 56x15
+        RenderInline {CODE} at (707,2) size 56x16
+          RenderText {#text} at (707,2) size 56x16
             text run at (707,2) width 56: "*:hover"
         RenderText {#text} at (0,18) size 261x18
           text run at (0,18) width 261: "does not match anything in quirks mode."

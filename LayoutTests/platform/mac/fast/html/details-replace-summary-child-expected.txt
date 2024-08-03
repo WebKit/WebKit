@@ -8,12 +8,12 @@ layer at (0,0) size 800x600
           RenderDetailsMarker {DIV} at (0,3) size 11x11: down
           RenderText {#text} at (16,0) size 5x18
             text run at (16,0) width 5: " "
-          RenderBlock {SPAN} at (20,2) size 64x15
+          RenderBlock {SPAN} at (20,2) size 64x16
             RenderText {#text} at (0,0) size 63x15
               text run at (0,0) width 63: "Details1"
           RenderText {#text} at (83,0) size 5x18
             text run at (83,0) width 5: " "
-          RenderBlock {SPAN} at (87,2) size 63x15
+          RenderBlock {SPAN} at (87,2) size 63x16
             RenderText {#text} at (0,0) size 63x15
               text run at (0,0) width 63: "Details3"
           RenderText {#text} at (0,0) size 0x0

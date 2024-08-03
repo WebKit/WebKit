@@ -6,7 +6,7 @@ layer at (0,0) size 785x1715
       RenderBlock {H1} at (0,0) size 769x30
         RenderText {#text} at (0,0) size 515x30
           text run at (0,0) width 515: "CSS2 Table Backgrounds Test Suite"
-      RenderBlock {H2} at (0,47) size 769x24
+      RenderBlock {H2} at (0,47) size 769x23
         RenderText {#text} at (0,0) size 59x23
           text run at (0,0) width 59: "Notes"
       RenderBlock {P} at (0,86) size 769x76
@@ -30,16 +30,16 @@ layer at (0,0) size 785x1715
         RenderText {#text} at (0,0) size 383x15
           text run at (0,0) width 383: "The images used as backgrounds are the following:"
       RenderBlock {UL} at (0,260) size 769x731
-        RenderListItem {LI} at (40,0) size 729x33
-          RenderListMarker at (-16,18) size 6x15: bullet
+        RenderListItem {LI} at (40,0) size 729x34
+          RenderListMarker at (-16,18) size 6x16: bullet
           RenderImage {IMG} at (0,0) size 80x30
           RenderText {#text} at (0,0) size 0x0
-        RenderListItem {LI} at (40,33) size 729x83
-          RenderListMarker at (-16,68) size 6x15: bullet
+        RenderListItem {LI} at (40,33) size 729x84
+          RenderListMarker at (-16,68) size 6x16: bullet
           RenderImage {IMG} at (0,0) size 30x80
           RenderText {#text} at (0,0) size 0x0
-        RenderListItem {LI} at (40,116) size 729x614
-          RenderListMarker at (-16,599) size 6x15: bullet
+        RenderListItem {LI} at (40,116) size 729x615
+          RenderListMarker at (-16,599) size 6x16: bullet
           RenderImage {IMG} at (0,0) size 779x611
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,1003) size 769x16
@@ -181,7 +181,7 @@ layer at (0,0) size 785x1715
                 RenderText {#text} at (0,0) size 133x15
                   text run at (0,0) width 133: "empty-cells: hide"
               RenderText {#text} at (0,0) size 0x0
-        RenderListItem {LI} at (40,255) size 729x199
+        RenderListItem {LI} at (40,255) size 729x200
           RenderBlock (anonymous) at (0,0) size 729x15
             RenderListMarker at (-28,0) size 24x15: "D"
             RenderText {#text} at (0,0) size 180x15
@@ -241,10 +241,10 @@ layer at (0,0) size 785x1715
                     RenderText {#text} at (0,0) size 133x15
                       text run at (0,0) width 133: "Fixed Backgrounds"
                   RenderText {#text} at (0,0) size 0x0
-          RenderBlock {DIV} at (0,150) size 729x34
-            RenderInline {A} at (0,19) size 88x15 [color=#FFFF00]
+          RenderBlock {DIV} at (0,150) size 729x35
+            RenderInline {A} at (0,19) size 88x16 [color=#FFFF00]
               RenderImage {IMG} at (0,0) size 88x31
             RenderText {#text} at (0,0) size 0x0
-          RenderBlock {ADDRESS} at (0,184) size 729x15
+          RenderBlock {ADDRESS} at (0,184) size 729x16
             RenderText {#text} at (0,0) size 687x15
               text run at (0,0) width 687: "CSS2 Table Backgrounds Test Suite designed and written by fantasai <fantasai@escape.com>"

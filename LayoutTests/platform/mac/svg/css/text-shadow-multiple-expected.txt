@@ -49,39 +49,39 @@ layer at (0,0) size 800x408
               chunk 1 text run 1 at (525.71,66.21) startOffset 0 endOffset 1 width 13.89: " "
               chunk 1 text run 1 at (539.60,66.21) startOffset 0 endOffset 7 width 197.34: "shadows"
         RenderText {#text} at (0,0) size 0x0
-layer at (20,50) size 717x58
+layer at (20,50) size 717x57
   RenderBlock (positioned) {div} at (20,50) size 717x58
-    RenderInline {span} at (0,1) size 95x56 [textStrokeWidth=1.00]
-      RenderText {#text} at (0,1) size 95x56
-        text run at (0,1) width 95: "This"
-    RenderText {#text} at (94,1) size 15x56
-      text run at (94,1) width 15: " "
-    RenderInline {span} at (108,1) size 81x56 [textFillColor=#FFFFFF] [textStrokeWidth=1.00]
-      RenderText {#text} at (108,1) size 81x56
-        text run at (108,1) width 81: "text"
-    RenderText {#text} at (188,1) size 15x56
-      text run at (188,1) width 15: " "
-    RenderInline {span} at (202,1) size 304x56
-      RenderText {#text} at (202,1) size 304x56
-        text run at (202,1) width 304: "casts multiple"
-    RenderText {#text} at (505,1) size 212x56
-      text run at (505,1) width 15: " "
-      text run at (519,1) width 198: "shadows"
-layer at (20,254) size 717x58
+    RenderInline {span} at (0,0) size 95x57 [textStrokeWidth=1.00]
+      RenderText {#text} at (0,0) size 95x57
+        text run at (0,0) width 95: "This"
+    RenderText {#text} at (94,0) size 15x57
+      text run at (94,0) width 15: " "
+    RenderInline {span} at (108,0) size 81x57 [textFillColor=#FFFFFF] [textStrokeWidth=1.00]
+      RenderText {#text} at (108,0) size 81x57
+        text run at (108,0) width 81: "text"
+    RenderText {#text} at (188,0) size 15x57
+      text run at (188,0) width 15: " "
+    RenderInline {span} at (202,0) size 304x57
+      RenderText {#text} at (202,0) size 304x57
+        text run at (202,0) width 304: "casts multiple"
+    RenderText {#text} at (505,0) size 212x57
+      text run at (505,0) width 15: " "
+      text run at (519,0) width 198: "shadows"
+layer at (20,254) size 717x57
   RenderBlock (positioned) {div} at (20,254) size 717x58
-    RenderInline {span} at (0,1) size 95x56 [textStrokeWidth=1.00]
-      RenderText {#text} at (0,1) size 95x56
-        text run at (0,1) width 95: "This"
-    RenderText {#text} at (94,1) size 15x56
-      text run at (94,1) width 15: " "
-    RenderInline {span} at (108,1) size 81x56 [textFillColor=#FFFFFF] [textStrokeWidth=1.00]
-      RenderText {#text} at (108,1) size 81x56
-        text run at (108,1) width 81: "text"
-    RenderText {#text} at (188,1) size 15x56
-      text run at (188,1) width 15: " "
-    RenderInline {span} at (202,1) size 304x56
-      RenderText {#text} at (202,1) size 304x56
-        text run at (202,1) width 304: "casts multiple"
-    RenderText {#text} at (505,1) size 212x56
-      text run at (505,1) width 15: " "
-      text run at (519,1) width 198: "shadows"
+    RenderInline {span} at (0,0) size 95x57 [textStrokeWidth=1.00]
+      RenderText {#text} at (0,0) size 95x57
+        text run at (0,0) width 95: "This"
+    RenderText {#text} at (94,0) size 15x57
+      text run at (94,0) width 15: " "
+    RenderInline {span} at (108,0) size 81x57 [textFillColor=#FFFFFF] [textStrokeWidth=1.00]
+      RenderText {#text} at (108,0) size 81x57
+        text run at (108,0) width 81: "text"
+    RenderText {#text} at (188,0) size 15x57
+      text run at (188,0) width 15: " "
+    RenderInline {span} at (202,0) size 304x57
+      RenderText {#text} at (202,0) size 304x57
+        text run at (202,0) width 304: "casts multiple"
+    RenderText {#text} at (505,0) size 212x57
+      text run at (505,0) width 15: " "
+      text run at (519,0) width 198: "shadows"

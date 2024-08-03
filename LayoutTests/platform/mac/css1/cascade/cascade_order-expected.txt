@@ -70,8 +70,8 @@ layer at (0,0) size 785x790
       RenderBlock {P} at (0,424) size 769x18 [color=#800080]
         RenderText {#text} at (0,0) size 208x18
           text run at (0,0) width 208: "This sentence should be purple ["
-        RenderInline {CODE} at (207,2) size 95x15
-          RenderText {#text} at (207,2) size 95x15
+        RenderInline {CODE} at (207,2) size 95x16
+          RenderText {#text} at (207,2) size 95x16
             text run at (207,2) width 95: "class=\"test\""
         RenderText {#text} at (301,0) size 10x18
           text run at (301,0) width 10: "]."
@@ -131,8 +131,8 @@ layer at (0,0) size 785x790
               RenderBlock {P} at (4,198) size 697x18 [color=#800080]
                 RenderText {#text} at (0,0) size 208x18
                   text run at (0,0) width 208: "This sentence should be purple ["
-                RenderInline {CODE} at (207,2) size 95x15
-                  RenderText {#text} at (207,2) size 95x15
+                RenderInline {CODE} at (207,2) size 95x16
+                  RenderText {#text} at (207,2) size 95x16
                     text run at (207,2) width 95: "class=\"test\""
                 RenderText {#text} at (301,0) size 10x18
                   text run at (301,0) width 10: "]."

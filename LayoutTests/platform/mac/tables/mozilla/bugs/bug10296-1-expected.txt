@@ -9,19 +9,19 @@ layer at (0,0) size 785x5950
       RenderBlock {P} at (0,58) size 769x55
         RenderText {#text} at (0,0) size 275x18
           text run at (0,0) width 275: "The following three tables have heights of "
-        RenderInline {CODE} at (274,2) size 32x15
-          RenderText {#text} at (274,2) size 32x15
-            text run at (274,2) width 32: "auto"
+        RenderInline {CODE} at (274,1) size 32x17
+          RenderText {#text} at (274,1) size 32x17
+            text run at (274,1) width 32: "auto"
         RenderText {#text} at (305,0) size 9x18
           text run at (305,0) width 9: ", "
-        RenderInline {CODE} at (313,2) size 32x15
-          RenderText {#text} at (313,2) size 32x15
-            text run at (313,2) width 32: "30px"
+        RenderInline {CODE} at (313,1) size 32x17
+          RenderText {#text} at (313,1) size 32x17
+            text run at (313,1) width 32: "30px"
         RenderText {#text} at (344,0) size 36x18
           text run at (344,0) width 36: ", and "
-        RenderInline {CODE} at (379,2) size 40x15
-          RenderText {#text} at (379,2) size 40x15
-            text run at (379,2) width 40: "500px"
+        RenderInline {CODE} at (379,1) size 40x17
+          RenderText {#text} at (379,1) size 40x17
+            text run at (379,1) width 40: "500px"
         RenderText {#text} at (0,0) size 765x54
           text run at (418,0) width 9: ". "
           text run at (426,0) width 339: "The first one should have the height of the sum of its"
@@ -347,14 +347,14 @@ layer at (0,0) size 785x5950
       RenderBlock {P} at (0,1756) size 769x55
         RenderText {#text} at (0,0) size 154x18
           text run at (0,0) width 154: "The following tests test "
-        RenderInline {CODE} at (153,2) size 48x15
-          RenderText {#text} at (153,2) size 48x15
-            text run at (153,2) width 48: "height"
+        RenderInline {CODE} at (153,1) size 48x17
+          RenderText {#text} at (153,1) size 48x17
+            text run at (153,1) width 48: "height"
         RenderText {#text} at (200,0) size 170x18
           text run at (200,0) width 170: " on table rows. A value of "
-        RenderInline {CODE} at (369,2) size 32x15
-          RenderText {#text} at (369,2) size 32x15
-            text run at (369,2) width 32: "auto"
+        RenderInline {CODE} at (369,1) size 32x17
+          RenderText {#text} at (369,1) size 32x17
+            text run at (369,1) width 32: "auto"
         RenderText {#text} at (0,0) size 761x54
           text run at (400,0) width 325: " requires the minimum height needed by the cells. "
           text run at (724,0) width 25: "In a"
@@ -378,9 +378,9 @@ layer at (0,0) size 785x5950
       RenderBlock {P} at (0,1886) size 769x37
         RenderText {#text} at (0,0) size 218x18
           text run at (0,0) width 218: "However, vertical-align values of "
-        RenderInline {CODE} at (217,2) size 64x15
-          RenderText {#text} at (217,2) size 64x15
-            text run at (217,2) width 64: "baseline"
+        RenderInline {CODE} at (217,1) size 64x17
+          RenderText {#text} at (217,1) size 64x17
+            text run at (217,1) width 64: "baseline"
         RenderText {#text} at (0,0) size 759x36
           text run at (280,0) width 479: " (the default, but could be overridden in a UA stylesheet) can make it taller"
           text run at (0,18) width 60: "than that:"

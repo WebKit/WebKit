@@ -20,8 +20,8 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (550,0) size 197x18 [bgcolor=#00FFFF]
           RenderText {#text} at (550,0) size 149x18
             text run at (550,0) width 149: "inline element of class "
-          RenderInline {TT} at (698,2) size 24x15
-            RenderText {#text} at (698,2) size 24x15
+          RenderInline {TT} at (698,2) size 24x16
+            RenderText {#text} at (698,2) size 24x16
               text run at (698,2) width 24: "one"
         RenderText {#text} at (0,0) size 751x36
           text run at (746,0) width 5: ","
@@ -39,8 +39,8 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (550,0) size 172x18 [bgcolor=#00FFFF]
           RenderText {#text} at (550,0) size 149x18
             text run at (550,0) width 149: "inline element of class "
-          RenderInline {TT} at (698,2) size 24x15
-            RenderText {#text} at (698,2) size 24x15
+          RenderInline {TT} at (698,2) size 24x16
+            RenderText {#text} at (698,2) size 24x16
               text run at (698,2) width 24: "two"
         RenderText {#text} at (0,0) size 769x36
           text run at (721,0) width 48: ", which"
@@ -70,8 +70,8 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (550,0) size 197x18 [bgcolor=#00FFFF]
                   RenderText {#text} at (550,0) size 149x18
                     text run at (550,0) width 149: "inline element of class "
-                  RenderInline {TT} at (698,2) size 24x15
-                    RenderText {#text} at (698,2) size 24x15
+                  RenderInline {TT} at (698,2) size 24x16
+                    RenderText {#text} at (698,2) size 24x16
                       text run at (698,2) width 24: "one"
                 RenderText {#text} at (0,0) size 751x36
                   text run at (746,0) width 5: ","
@@ -89,8 +89,8 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (550,0) size 172x18 [bgcolor=#00FFFF]
                   RenderText {#text} at (550,0) size 149x18
                     text run at (550,0) width 149: "inline element of class "
-                  RenderInline {TT} at (698,2) size 24x15
-                    RenderText {#text} at (698,2) size 24x15
+                  RenderInline {TT} at (698,2) size 24x16
+                    RenderText {#text} at (698,2) size 24x16
                       text run at (698,2) width 24: "two"
                 RenderText {#text} at (0,0) size 726x36
                   text run at (721,0) width 5: ","

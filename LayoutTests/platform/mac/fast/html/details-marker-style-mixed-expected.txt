@@ -13,8 +13,8 @@ layer at (0,0) size 800x474
         RenderBlock {DETAILS} at (0,0) size 112x183
           RenderBlock {SUMMARY} at (0,0) size 112x183
             RenderDetailsMarker {DIV} at (0,0) size 112x80 [border: (8px solid #00FF00) (16px solid #00FF00) (24px solid #00FF00) (32px solid #00FF00)]: down
-            RenderText {#text} at (42,89) size 28x94
-              text run at (42,89) width 94: "Summary"
+            RenderText {#text} at (41,89) size 29x94
+              text run at (41,89) width 95: "Summary"
       RenderBlock {DIV} at (0,268) size 784x47
         RenderBlock {DETAILS} at (0,0) size 784x46
           RenderBlock {SUMMARY} at (0,0) size 784x46

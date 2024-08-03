@@ -1,23 +1,23 @@
-layer at (0,0) size 785x644
+layer at (0,0) size 785x640
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x644
-  RenderBlock {HTML} at (0,0) size 785x644
-    RenderBody {BODY} at (8,21) size 769x615
-      RenderBlock {P} at (0,0) size 769x33
+layer at (0,0) size 785x640
+  RenderBlock {HTML} at (0,0) size 785x640
+    RenderBody {BODY} at (8,21) size 769x611
+      RenderBlock {P} at (0,0) size 769x32
         RenderText {#text} at (0,5) size 165x22
           text run at (0,5) width 165: "Simple text path"
-      RenderBlock (anonymous) at (0,54) size 769x237
-        RenderBlock {SPAN} at (0,0) size 33x227
+      RenderBlock (anonymous) at (0,53) size 769x236
+        RenderBlock {SPAN} at (0,0) size 32x227
           RenderText {#text} at (5,0) size 22x227
-            text run at (5,0) width 227: "string\x{300C}\x{3042}\x{3001}\x{5909}\x{3063}\x{FF01}\x{300D}\x{3002}"
+            text run at (5,0) width 228: "string\x{300C}\x{3042}\x{3001}\x{5909}\x{3063}\x{FF01}\x{300D}\x{3002}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,324) size 769x34
+      RenderBlock {P} at (0,322) size 769x33
         RenderText {#text} at (0,5) size 185x22
           text run at (0,5) width 185: "Complex text path"
-      RenderBlock (anonymous) at (0,378) size 769x237
-        RenderBlock {SPAN} at (0,0) size 33x227
+      RenderBlock (anonymous) at (0,375) size 769x236
+        RenderBlock {SPAN} at (0,0) size 32x227
           RenderText {#text} at (5,0) size 22x227
-            text run at (5,0) width 227: "string\x{300C}\x{3042}\x{3001}\x{5909}\x{3063}\x{FF01}\x{300D}\x{3002}"
+            text run at (5,0) width 228: "string\x{300C}\x{3042}\x{3001}\x{5909}\x{3063}\x{FF01}\x{300D}\x{3002}"
         RenderText {#text} at (0,0) size 0x0
-layer at (8,322) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,300) size 769x3 [color=#808080] [border: (1px inset #808080)]
+layer at (8,320) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,299) size 769x2 [color=#808080] [border: (1px inset #808080)]

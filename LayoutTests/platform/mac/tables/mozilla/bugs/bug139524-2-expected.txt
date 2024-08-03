@@ -1,6 +1,6 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x357
+layer at (0,0) size 800x358
   RenderBlock {HTML} at (0,0) size 800x358
     RenderBody {BODY} at (8,18) size 784x332
       RenderBlock {H3} at (0,0) size 784x22
@@ -14,7 +14,7 @@ layer at (0,0) size 800x357
         RenderText {#text} at (0,0) size 354x18
           text run at (0,0) width 354: "The following TABLE has a COLGROUP structure of:"
       RenderBlock {PRE} at (15,126) size 769x61 [color=#000066]
-        RenderText {#text} at (0,0) size 212x60
+        RenderText {#text} at (0,0) size 212x61
           text run at (0,0) width 79: "<colgroup>"
           text run at (78,0) width 1: " "
           text run at (0,15) width 212: " <col width=\"100\" span=\"2\">"

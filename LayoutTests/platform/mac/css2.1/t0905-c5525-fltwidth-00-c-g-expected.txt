@@ -4,7 +4,7 @@ layer at (0,0) size 785x794
   RenderBlock {HTML} at (0,0) size 785x794
     RenderBody {BODY} at (8,32) size 769x730
       RenderBlock {P} at (32,0) size 705x122 [color=#000080]
-        RenderText {#text} at (0,7) size 679x115
+        RenderText {#text} at (0,7) size 679x116
           text run at (0,7) width 679: "\x{21E9} The following blue box should be exactly half the"
           text run at (0,48) width 81: "width "
           text run at (80,48) width 559: "of the viewport, on the left of the 50% ruler"
@@ -102,4 +102,4 @@ layer at (0,0) size 785x794
       RenderBlock {P} at (32,654) size 705x76 [color=#000080]
         RenderText {#text} at (20,0) size 685x76
           text run at (20,0) width 685: "The above gray text should flow around the blue box."
-          text run at (673,39) width 32: "\x{21E7}"
+          text run at (673,38) width 32: "\x{21E7}"

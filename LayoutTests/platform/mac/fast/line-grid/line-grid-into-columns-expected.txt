@@ -3,45 +3,45 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600 layerType: background only
 layer at (0,0) size 800x540 scrollWidth 1216
   RenderBlock (positioned) zI: -1 {DIV} at (0,0) size 800x540 [color=#00FF00]
-    RenderText zI: -1 {#text} at (0,6) size 1216x32
+    RenderText zI: -1 {#text} at (0,6) size 1216x33
       text run at (0,6) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,6) size 0x32
-    RenderText zI: -1 {#text} at (0,47) size 1216x32
+    RenderBR {BR} at (1216,6) size 0x33
+    RenderText zI: -1 {#text} at (0,47) size 1216x33
       text run at (0,47) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,47) size 0x32
-    RenderText zI: -1 {#text} at (0,88) size 1216x32
+    RenderBR {BR} at (1216,47) size 0x33
+    RenderText zI: -1 {#text} at (0,88) size 1216x33
       text run at (0,88) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,88) size 0x32
-    RenderText zI: -1 {#text} at (0,129) size 1216x32
+    RenderBR {BR} at (1216,88) size 0x33
+    RenderText zI: -1 {#text} at (0,129) size 1216x33
       text run at (0,129) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,129) size 0x32
-    RenderText zI: -1 {#text} at (0,170) size 1216x32
+    RenderBR {BR} at (1216,129) size 0x33
+    RenderText zI: -1 {#text} at (0,170) size 1216x33
       text run at (0,170) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,170) size 0x32
-    RenderText zI: -1 {#text} at (0,211) size 1216x32
+    RenderBR {BR} at (1216,170) size 0x33
+    RenderText zI: -1 {#text} at (0,211) size 1216x33
       text run at (0,211) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,211) size 0x32
-    RenderText zI: -1 {#text} at (0,252) size 1216x32
+    RenderBR {BR} at (1216,211) size 0x33
+    RenderText zI: -1 {#text} at (0,252) size 1216x33
       text run at (0,252) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,252) size 0x32
-    RenderText zI: -1 {#text} at (0,293) size 1216x32
+    RenderBR {BR} at (1216,252) size 0x33
+    RenderText zI: -1 {#text} at (0,293) size 1216x33
       text run at (0,293) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,293) size 0x32
-    RenderText zI: -1 {#text} at (0,334) size 1216x32
+    RenderBR {BR} at (1216,293) size 0x33
+    RenderText zI: -1 {#text} at (0,334) size 1216x33
       text run at (0,334) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,334) size 0x32
-    RenderText zI: -1 {#text} at (0,375) size 1216x32
+    RenderBR {BR} at (1216,334) size 0x33
+    RenderText zI: -1 {#text} at (0,375) size 1216x33
       text run at (0,375) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,375) size 0x32
-    RenderText zI: -1 {#text} at (0,416) size 1216x32
+    RenderBR {BR} at (1216,375) size 0x33
+    RenderText zI: -1 {#text} at (0,416) size 1216x33
       text run at (0,416) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,416) size 0x32
-    RenderText zI: -1 {#text} at (0,457) size 1216x32
+    RenderBR {BR} at (1216,416) size 0x33
+    RenderText zI: -1 {#text} at (0,457) size 1216x33
       text run at (0,457) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,457) size 0x32
-    RenderText zI: -1 {#text} at (0,498) size 1216x32
+    RenderBR {BR} at (1216,457) size 0x33
+    RenderText zI: -1 {#text} at (0,498) size 1216x33
       text run at (0,498) width 1216: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    RenderBR {BR} at (1216,498) size 0x32
+    RenderBR {BR} at (1216,498) size 0x33
 layer at (0,0) size 800x600 layerType: foreground only
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
@@ -50,8 +50,8 @@ layer at (0,0) size 800x540
 layer at (0,0) size 800x540
   RenderBlock {DIV} at (0,0) size 800x540
     RenderMultiColumnSet at (20,20) size 760x500
-layer at (20,20) size 362x966 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderMultiColumnFlowThread at (20,20) size 362x966
+layer at (20,20) size 362x965 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderMultiColumnFlowThread at (20,20) size 362x965
     RenderBlock {DIV} at (0,0) size 362x385
       RenderText {#text} at (0,39) size 359x100
         text run at (0,39) width 358: "All of this text even though it's smaller should be on the"
@@ -87,6 +87,6 @@ layer at (20,20) size 362x966 backgroundClip at (0,0) size 800x600 clip at (0,0)
         text run at (0,474) width 360: "The grid should reset at the top of the"
         text run at (0,515) width 151: "second column."
       RenderBR {BR} at (150,515) size 1x28
-    RenderBlock {DIV} at (0,928) size 362x38
-      RenderText {#text} at (0,25) size 268x13
+    RenderBlock {DIV} at (0,928) size 362x37
+      RenderText {#text} at (0,25) size 268x12
         text run at (0,25) width 268: "All of this text even though it's smaller should be on the 36px grid."

@@ -17,8 +17,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,110) size 784x78 [border: (3px solid #000000) (25px solid #000000)]
         RenderText {#text} at (25,3) size 176x18
           text run at (25,3) width 176: "This element has a class of "
-        RenderInline {TT} at (200,5) size 25x15
-          RenderText {#text} at (200,5) size 25x15
+        RenderInline {TT} at (200,5) size 25x16
+          RenderText {#text} at (200,5) size 25x16
             text run at (200,5) width 25: "one"
         RenderText {#text} at (224,3) size 164x18
           text run at (224,3) width 9: ". "
@@ -26,8 +26,8 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (387,0) size 176x24 [border: (3px solid #000000) (1px solid #000000)]
           RenderText {#text} at (388,3) size 149x18
             text run at (388,3) width 149: "inline element of class "
-          RenderInline {TT} at (536,5) size 24x15
-            RenderText {#text} at (536,5) size 24x15
+          RenderInline {TT} at (536,5) size 24x16
+            RenderText {#text} at (536,5) size 24x16
               text run at (536,5) width 24: "two"
         RenderText {#text} at (25,3) size 728x36
           text run at (562,3) width 191: ", which should result in a thin"
@@ -42,8 +42,8 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (175,39) size 187x18
           RenderText {#text} at (175,39) size 148x18
             text run at (175,39) width 148: "inline element of class "
-          RenderInline {TT} at (322,41) size 40x15
-            RenderText {#text} at (322,41) size 40x15
+          RenderInline {TT} at (322,41) size 40x16
+            RenderText {#text} at (322,41) size 40x16
               text run at (322,41) width 40: "three"
         RenderText {#text} at (25,39) size 706x36
           text run at (361,39) width 370: ", which should have no left border width or visible border"
@@ -63,8 +63,8 @@ layer at (0,0) size 800x600
               RenderBlock {P} at (4,4) size 762x78 [border: (3px solid #000000) (25px solid #000000)]
                 RenderText {#text} at (25,3) size 176x18
                   text run at (25,3) width 176: "This element has a class of "
-                RenderInline {TT} at (200,5) size 25x15
-                  RenderText {#text} at (200,5) size 25x15
+                RenderInline {TT} at (200,5) size 25x16
+                  RenderText {#text} at (200,5) size 25x16
                     text run at (200,5) width 25: "one"
                 RenderText {#text} at (224,3) size 164x18
                   text run at (224,3) width 9: ". "
@@ -72,8 +72,8 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (387,0) size 176x24 [border: (3px solid #000000) (1px solid #000000)]
                   RenderText {#text} at (388,3) size 149x18
                     text run at (388,3) width 149: "inline element of class "
-                  RenderInline {TT} at (536,5) size 24x15
-                    RenderText {#text} at (536,5) size 24x15
+                  RenderInline {TT} at (536,5) size 24x16
+                    RenderText {#text} at (536,5) size 24x16
                       text run at (536,5) width 24: "two"
                 RenderText {#text} at (25,3) size 728x36
                   text run at (562,3) width 191: ", which should result in a thin"
@@ -88,8 +88,8 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (175,39) size 187x18
                   RenderText {#text} at (175,39) size 148x18
                     text run at (175,39) width 148: "inline element of class "
-                  RenderInline {TT} at (322,41) size 40x15
-                    RenderText {#text} at (322,41) size 40x15
+                  RenderInline {TT} at (322,41) size 40x16
+                    RenderText {#text} at (322,41) size 40x16
                       text run at (322,41) width 40: "three"
                 RenderText {#text} at (25,39) size 706x36
                   text run at (361,39) width 370: ", which should have no left border width or visible border"

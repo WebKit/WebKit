@@ -17,9 +17,7 @@ PASS .target > * 15
 PASS .target > * 16
 PASS .target > * 17
 PASS .target > * 18
-FAIL .target > * 19 assert_equals:
-<div data-offset-x="33"><span></span></div>
-offsetLeft expected 33 but got 32
+PASS .target > * 19
 PASS .target > * 20
 PASS .target > * 21
 PASS .target > * 22
@@ -27,9 +25,7 @@ PASS .target > * 23
 PASS .target > * 24
 PASS .target > * 25
 PASS .target > * 26
-FAIL .target > * 27 assert_equals:
-<div data-offset-x="38"><span></span></div>
-offsetLeft expected 38 but got 37
+PASS .target > * 27
 PASS .target > * 28
 PASS .target > * 29
 PASS .target > * 30
@@ -39,9 +35,7 @@ PASS .target > * 33
 PASS .target > * 34
 PASS .target > * 35
 PASS .target > * 36
-FAIL .target > * 37 assert_equals:
-<div data-offset-x="63"><span></span></div>
-offsetLeft expected 63 but got 62
+PASS .target > * 37
 PASS .target > * 38
 PASS .target > * 39
 PASS .target > * 40
@@ -49,9 +43,7 @@ PASS .target > * 41
 PASS .target > * 42
 PASS .target > * 43
 PASS .target > * 44
-FAIL .target > * 45 assert_equals:
-<div data-offset-x="43"><span></span></div>
-offsetLeft expected 43 but got 42
+PASS .target > * 45
 PASS .target > * 46
 PASS .target > * 47
 PASS .target > * 48

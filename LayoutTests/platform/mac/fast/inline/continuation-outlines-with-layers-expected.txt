@@ -9,20 +9,20 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,34) size 784x96
         RenderBlock (anonymous) at (0,0) size 784x18
         RenderBlock (anonymous) at (0,77) size 784x19
-      RenderBlock {DIV} at (0,148) size 784x59
+      RenderBlock {DIV} at (0,147) size 784x60
         RenderBlock (anonymous) at (0,0) size 784x0
         RenderBlock (anonymous) at (0,40) size 784x19
-      RenderBlock {DIV} at (0,222) size 784x60
+      RenderBlock {DIV} at (0,222) size 784x59
         RenderBlock (anonymous) at (0,0) size 784x18
         RenderBlock (anonymous) at (0,77) size 784x0
-      RenderBlock {DIV} at (0,300) size 784x23
+      RenderBlock {DIV} at (0,299) size 784x23
         RenderBlock (anonymous) at (0,0) size 784x0
         RenderBlock (anonymous) at (0,40) size 784x0
 layer at (8,50) size 100x18
   RenderInline (relative positioned) {SPAN} at (0,0) size 100x18
     RenderText {#text} at (0,0) size 100x18
       text run at (0,0) width 100: "Content before."
-layer at (8,87) size 784x22
+layer at (8,87) size 784x21
   RenderBlock (anonymous) at (0,36) size 784x23
     RenderBlock {H3} at (0,0) size 784x22
       RenderText {#text} at (0,0) size 146x22
@@ -36,20 +36,20 @@ layer at (8,164) size 784x22
     RenderBlock {H3} at (0,0) size 784x22
       RenderText {#text} at (0,0) size 147x22
         text run at (0,0) width 147: "No content before."
-layer at (8,205) size 88x18
+layer at (8,204) size 88x18
   RenderInline (relative positioned) {SPAN} at (0,0) size 88x18
     RenderText {#text} at (0,0) size 88x18
       text run at (0,0) width 88: "Content after."
-layer at (8,239) size 96x18
+layer at (8,238) size 96x18
   RenderInline (relative positioned) {SPAN} at (0,0) size 96x18
     RenderText {#text} at (0,0) size 96x18
       text run at (0,0) width 96: "Content before"
-layer at (8,276) size 784x22
+layer at (8,275) size 784x21
   RenderBlock (anonymous) at (0,36) size 784x23
     RenderBlock {H3} at (0,0) size 784x22
       RenderText {#text} at (0,0) size 174x22
         text run at (0,0) width 174: "But No Content After"
-layer at (8,316) size 784x22
+layer at (8,315) size 784x22
   RenderBlock (anonymous) at (0,0) size 784x22
     RenderBlock {H3} at (0,0) size 784x22
       RenderText {#text} at (0,0) size 211x22

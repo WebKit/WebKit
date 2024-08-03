@@ -1,6 +1,6 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x440
+layer at (0,0) size 800x439
   RenderBlock {HTML} at (0,0) size 800x440
     RenderBody {BODY} at (8,8) size 784x424
       RenderBlock {H3} at (0,20) size 784x23
@@ -51,7 +51,7 @@ layer at (0,0) size 800x440
             RenderTableCell {TD} at (334,50) size 163x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 36x18
                 text run at (2,2) width 36: "Cell I"
-      RenderBlock {H3} at (0,239) size 784x23
+      RenderBlock {H3} at (0,238) size 784x23
         RenderText {#text} at (0,0) size 59x22
           text run at (0,0) width 59: "Table 2"
       RenderBlock {PRE} at (0,279) size 784x46
@@ -100,5 +100,5 @@ layer at (8,8) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,0) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,226) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,218) size 784x3 [color=#808080] [border: (1px inset #808080)]
-layer at (8,430) size 784x2 clip at (0,0) size 0x0
+layer at (8,429) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,421) size 784x3 [color=#808080] [border: (1px inset #808080)]

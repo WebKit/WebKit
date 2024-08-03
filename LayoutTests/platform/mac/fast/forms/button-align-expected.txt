@@ -11,24 +11,24 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (8,2) size 284x13
             RenderText {#text} at (55,0) size 174x13
               text run at (55,0) width 174: "This is should be center justified."
-        RenderBR {BR} at (300,-1) size 0x18
-        RenderButton {BUTTON} at (0,18) size 300x18 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+        RenderBR {BR} at (300,-2) size 0x19
+        RenderButton {BUTTON} at (0,17) size 300x19 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,2) size 284x13
             RenderText {#text} at (55,0) size 174x13
               text run at (55,0) width 174: "This is should be center justified."
-        RenderBR {BR} at (300,17) size 0x18
-        RenderButton {BUTTON} at (0,36) size 300x18 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+        RenderBR {BR} at (300,16) size 0x19
+        RenderButton {BUTTON} at (0,35) size 300x19 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,2) size 284x13
             RenderText {#text} at (55,0) size 174x13
               text run at (55,0) width 174: "This is should be center justified."
-        RenderBR {BR} at (300,35) size 0x18
-        RenderButton {BUTTON} at (0,54) size 300x18 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+        RenderBR {BR} at (300,34) size 0x19
+        RenderButton {BUTTON} at (0,53) size 300x19 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,2) size 284x13
             RenderText {#text} at (55,0) size 174x13
               text run at (55,0) width 174: "This is should be center justified."
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,106) size 784x18
+      RenderBlock {DIV} at (0,105) size 784x19
         RenderButton {BUTTON} at (0,0) size 300x18 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,2) size 284x13
             RenderText {#text} at (55,0) size 174x13

@@ -7,14 +7,14 @@ layer at (0,0) size 800x368
         RenderBlock {P} at (0,16) size 471x54
           RenderText {#text} at (0,0) size 429x18
             text run at (0,0) width 429: "This test case illustrates incorrect positioning of list items within a "
-          RenderInline {CODE} at (0,2) size 468x33
-            RenderText {#text} at (0,2) size 468x33
+          RenderInline {CODE} at (0,2) size 468x34
+            RenderText {#text} at (0,2) size 468x34
               text run at (428,2) width 40: "text-"
               text run at (0,20) width 94: "align: right"
           RenderText {#text} at (93,18) size 74x18
             text run at (93,18) width 74: " div after a "
-          RenderInline {CODE} at (166,20) size 87x15
-            RenderText {#text} at (166,20) size 87x15
+          RenderInline {CODE} at (166,20) size 87x16
+            RenderText {#text} at (166,20) size 87x16
               text run at (166,20) width 87: "float: left"
           RenderText {#text} at (252,18) size 32x18
             text run at (252,18) width 32: " div. "
