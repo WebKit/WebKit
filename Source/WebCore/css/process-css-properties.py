@@ -493,7 +493,6 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("skip-parser", allowed_types=[bool], default_value=False),
         Schema.Entry("status", allowed_types=[str]),
         Schema.Entry("svg", allowed_types=[bool], default_value=False),
-        Schema.Entry("synonym", allowed_types=[str]),
         Schema.Entry("top-priority", allowed_types=[bool], default_value=False),
         Schema.Entry("url", allowed_types=[str]),
         Schema.Entry("visited-link-color-support", allowed_types=[bool], default_value=False),
@@ -647,7 +646,6 @@ class StyleProperty:
     def __init__(self, **dictionary):
         StyleProperty.schema.set_attributes_from_dictionary(dictionary, instance=self)
         self.property_name = self.codegen_properties.property_name
-        self.synonymous_properties = []
 
     def __str__(self):
         return self.name
@@ -691,17 +689,6 @@ class StyleProperty:
                     codegen_properties.parser_grammar_unused.check_against_values(json_value.get("values", []))
 
         return StyleProperty(**json_value)
-
-    def perform_fixups_for_synonyms(self, all_properties):
-        # If 'synonym' was specified, replace the name with references to the Property object, and vice-versa a back-reference on that Property object back to this.
-        if self.codegen_properties.synonym:
-            if self.codegen_properties.synonym not in all_properties.all_by_name:
-                raise Exception(f"Property {self.name} has an unknown synonym: {self.codegen_properties.synonym}.")
-
-            original = all_properties.all_by_name[self.codegen_properties.synonym]
-            original.synonymous_properties.append(self)
-
-            self.codegen_properties.synonym = original
 
     def perform_fixups_for_longhands(self, all_properties):
         # If 'longhands' was specified, replace the names with references to the Property objects.
@@ -757,7 +744,6 @@ class StyleProperty:
             all_properties.logical_property_groups[group_name][logic][resolver] = self
 
     def perform_fixups(self, all_properties):
-        self.perform_fixups_for_synonyms(all_properties)
         self.perform_fixups_for_longhands(all_properties)
         self.perform_fixups_for_related_properties(all_properties)
         self.perform_fixups_for_cascade_alias_properties(all_properties)
@@ -3632,8 +3618,6 @@ class GenerateStyleBuilderGenerated:
                     continue
                 if property.codegen_properties.skip_builder:
                     continue
-                if property.codegen_properties.synonym:
-                    continue
 
                 if property.codegen_properties.is_logical:
                     raise Exception(f"Property '{property.name}' is logical but doesn't have skip-builder.")
@@ -3670,14 +3654,8 @@ class GenerateStyleBuilderGenerated:
                     with to.indent():
                         to.write(f"break;")
                     continue
-                
-                if property.codegen_properties.synonym:
-                    continue
 
                 to.write(f"case {property.id}:")
-
-                for synonymous_property in property.synonymous_properties:
-                    to.write(f"case {synonymous_property.id}:")
 
                 with to.indent():
                     if property.codegen_properties.longhands:
