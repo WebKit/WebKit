@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,14 +30,21 @@
 
 #pragma once
 
+#include <optional>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
+namespace Style {
+class BuilderState;
+}
+
 class BasicShape;
 class BasicShapeCenterCoordinate;
 class BasicShapePath;
+class BasicShapeShape;
 class CSSPathValue;
+class CSSShapeValue;
 class CSSToLengthConversionData;
 class CSSValue;
 class RenderStyle;
@@ -46,8 +54,9 @@ enum class SVGPathConversion : bool { None, ForceAbsolute };
 Ref<CSSValue> valueForBasicShape(const RenderStyle&, const BasicShape&, SVGPathConversion = SVGPathConversion::None);
 Ref<CSSValue> valueForSVGPath(const BasicShapePath&, SVGPathConversion = SVGPathConversion::None);
 
-Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData&, const CSSValue&, float zoom = 1);
-Ref<BasicShapePath> basicShapePathForValue(const CSSPathValue&, float zoom = 1);
+Ref<BasicShape> basicShapeForValue(const CSSValue&, const Style::BuilderState&, std::optional<float> zoom = std::nullopt);
+Ref<BasicShapePath> basicShapePathForValue(const CSSPathValue&, const Style::BuilderState&, std::optional<float> zoom = std::nullopt);
+Ref<BasicShapeShape> basicShapeShapeForValue(const CSSShapeValue&, const Style::BuilderState&);
 
 float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate&, float);
 

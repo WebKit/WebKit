@@ -29,8 +29,9 @@
 
 #include "BasicShapes.h"
 #include "CSSPrimitiveValue.h"
-#include "CSSToLengthConversionData.h"
 #include "CSSValuePair.h"
+#include "CalculationValue.h"
+#include "StyleBuilderState.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
@@ -117,7 +118,7 @@ String CSSShapeSegmentValue::customCSSText() const
 
     ASSERT(m_data);
 
-    const auto command = [&]() {
+    const auto segmentName = [&]() {
         switch (type()) {
         case SegmentType::Move:
             return "move"_s;
@@ -152,7 +153,7 @@ String CSSShapeSegmentValue::customCSSText() const
         case SegmentType::CubicCurve:
         case SegmentType::QuadraticCurve:
         case SegmentType::SmoothCubicCurve:
-            return " via "_s;
+            return " using "_s;
         case SegmentType::Arc:
             return " of "_s;
         default:
@@ -163,7 +164,7 @@ String CSSShapeSegmentValue::customCSSText() const
 
     StringBuilder builder;
     auto byTo = m_data->affinity == CoordinateAffinity::Absolute ? " to "_s : " by "_s;
-    builder.append(command(), byTo, m_data->offset->cssText(), conjunction());
+    builder.append(segmentName(), byTo, m_data->offset->cssText(), conjunction());
 
     switch (m_data->type) {
     case SegmentDataType::Base:
@@ -199,5 +200,75 @@ String CSSShapeSegmentValue::customCSSText() const
     return builder.toString();
 }
 
-} // namespace WebCore
+BasicShapeShape::ShapeSegment CSSShapeSegmentValue::toShapeSegment(const Style::BuilderState& builderState) const
+{
+    auto toLength = [&](const CSSValue& value) -> Length {
+        RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
+        if (!primitiveValue)
+            return Length(0, LengthType::Fixed);
 
+        return primitiveValue->convertToLength<FixedIntegerConversion | FixedFloatConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData());
+    };
+
+    auto toLengthPoint = [&](const CSSValue& value) -> LengthPoint {
+        RefPtr pairValue = dynamicDowncast<CSSValuePair>(value);
+        if (!pairValue)
+            return { };
+
+        return LengthPoint { toLength(pairValue->first()), toLength(pairValue->second()) };
+    };
+
+    auto toLengthSize = [&](const CSSValue& value) -> LengthSize {
+        RefPtr pairValue = dynamicDowncast<CSSValuePair>(value);
+        if (!pairValue)
+            return { };
+        return LengthSize { toLength(pairValue->first()), toLength(pairValue->second()) };
+    };
+
+    auto toDegrees = [](const CSSValue& value) {
+        RefPtr angleValue = dynamicDowncast<CSSPrimitiveValue>(value);
+        if (!angleValue || !angleValue->isAngle())
+            return 0.0;
+
+        return angleValue->computeDegrees();
+    };
+
+    switch (type()) {
+    case SegmentType::Move:
+        return ShapeMoveSegment(m_data->affinity, toLengthPoint(m_data->offset));
+    case SegmentType::Line:
+        return ShapeLineSegment(m_data->affinity, toLengthPoint(m_data->offset));
+    case SegmentType::HorizontalLine:
+        return ShapeHorizontalLineSegment(m_data->affinity, toLength(m_data->offset));
+    case SegmentType::VerticalLine:
+        return ShapeVerticalLineSegment(m_data->affinity, toLength(m_data->offset));
+    case SegmentType::CubicCurve: {
+        auto& twoPointData = static_cast<const TwoPointData&>(*m_data);
+        return ShapeCurveSegment(twoPointData.affinity, toLengthPoint(twoPointData.offset), toLengthPoint(twoPointData.p1), toLengthPoint(twoPointData.p2));
+    }
+    case SegmentType::QuadraticCurve: {
+        auto& onePointData = static_cast<const OnePointData&>(*m_data);
+        return ShapeCurveSegment(onePointData.affinity, toLengthPoint(onePointData.offset), toLengthPoint(onePointData.p1));
+    }
+    case SegmentType::SmoothCubicCurve: {
+        auto& onePointData = static_cast<const OnePointData&>(*m_data);
+        return ShapeSmoothSegment(onePointData.affinity, toLengthPoint(onePointData.offset), toLengthPoint(onePointData.p1));
+    }
+    case SegmentType::SmoothQuadraticCurve:
+        return ShapeSmoothSegment(m_data->affinity, toLengthPoint(m_data->offset));
+    case SegmentType::Arc: {
+        auto& arcData = static_cast<const ArcData&>(*m_data);
+
+        auto arcSweep = arcData.arcSweep == CSSValueCcw ? RotationDirection::Counterclockwise : RotationDirection::Clockwise;
+        auto arcSize = arcData.arcSize == CSSValueLarge ? ShapeArcSegment::ArcSize::Large : ShapeArcSegment::ArcSize::Small;
+        return ShapeArcSegment(m_data->affinity, toLengthPoint(arcData.offset), toLengthSize(arcData.radius), arcSweep, arcSize, toDegrees(arcData.angle));
+    }
+    case SegmentType::Close:
+        return ShapeCloseSegment();
+    }
+
+    ASSERT_NOT_REACHED();
+    return ShapeCloseSegment();
+}
+
+} // namespace WebCore

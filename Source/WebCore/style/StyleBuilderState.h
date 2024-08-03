@@ -68,6 +68,8 @@ public:
     Builder& builder() { return m_builder; }
 
     RenderStyle& style() { return m_style; }
+    const RenderStyle& style() const { return m_style; }
+
     const RenderStyle& parentStyle() const { return m_context.parentStyle; }
     const RenderStyle* rootElementStyle() const { return m_context.rootElementStyle; }
 

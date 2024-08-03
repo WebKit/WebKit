@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "BasicShapesShape.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
@@ -35,6 +36,10 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+namespace Style {
+class BuilderState;
+}
 
 class CSSToLengthConversionData;
 
@@ -73,6 +78,8 @@ public:
     static Ref<CSSShapeSegmentValue> createSmoothQuadraticCurve(CoordinateAffinity, Ref<CSSValue>&& offset);
 
     static Ref<CSSShapeSegmentValue> createArc(CoordinateAffinity, Ref<CSSValue>&& offset, Ref<CSSValue>&& radius, CSSValueID sweep, CSSValueID size, Ref<CSSValue>&& angle);
+
+    BasicShapeShape::ShapeSegment toShapeSegment(const Style::BuilderState&) const;
 
 private:
     enum class SegmentDataType : uint8_t { Base, OnePoint, TwoPoint, Arc };

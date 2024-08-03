@@ -86,6 +86,7 @@
 #include "CSSRectValue.h"
 #include "CSSReflectValue.h"
 #include "CSSScrollValue.h"
+#include "CSSShapeSegmentValue.h"
 #include "CSSSubgridValue.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSTransformListValue.h"
@@ -99,6 +100,7 @@
 #include "ColorInterpolation.h"
 #include "FontCustomPlatformData.h"
 #include "FontFace.h"
+#include "LengthPoint.h"
 #include "Logging.h"
 #include "RenderStyleConstants.h"
 #include "SVGPathByteStream.h"
@@ -2561,7 +2563,7 @@ static RefPtr<CSSEllipseValue> consumeBasicShapeEllipse(CSSParserTokenRange& arg
 
 static RefPtr<CSSPolygonValue> consumeBasicShapePolygon(CSSParserTokenRange& args, const CSSParserContext& context)
 {
-    WindRule rule = WindRule::NonZero;
+    auto rule = WindRule::NonZero;
     if (identMatches<CSSValueEvenodd, CSSValueNonzero>(args.peek().id())) {
         if (args.consumeIncludingWhitespace().id() == CSSValueEvenodd)
             rule = WindRule::EvenOdd;
@@ -2586,7 +2588,7 @@ static RefPtr<CSSPolygonValue> consumeBasicShapePolygon(CSSParserTokenRange& arg
 
 static RefPtr<CSSPathValue> consumeBasicShapePath(CSSParserTokenRange& args, OptionSet<PathParsingOption> options)
 {
-    WindRule rule = WindRule::NonZero;
+    auto rule = WindRule::NonZero;
     if (identMatches<CSSValueEvenodd, CSSValueNonzero>(args.peek().id())) {
         if (options.contains(RejectFillRule))
             return nullptr;
@@ -2604,6 +2606,228 @@ static RefPtr<CSSPathValue> consumeBasicShapePath(CSSParserTokenRange& args, Opt
         return nullptr;
 
     return CSSPathValue::create(WTFMove(byteStream), rule);
+}
+
+static RefPtr<CSSValuePair> consumeCoordinatePair(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    auto xDimension = consumeLengthOrPercent(range, context.mode);
+    if (!xDimension)
+        return nullptr;
+
+    auto yDimension = consumeLengthOrPercent(range, context.mode);
+    if (!yDimension)
+        return nullptr;
+
+    return CSSValuePair::createNoncoalescing(xDimension.releaseNonNull(), yDimension.releaseNonNull());
+}
+
+static RefPtr<CSSValue> consumeShapeCommand(CSSParserTokenRange& range, const CSSParserContext& context, OptionSet<PathParsingOption>)
+{
+    if (range.peek().type() != IdentToken)
+        return nullptr;
+
+    auto consumeAffinity = [&]() -> std::optional<CoordinateAffinity> {
+        if (range.peek().type() != IdentToken)
+            return std::nullopt;
+
+        CSSValueID token = range.peek().id();
+        if (token != CSSValueBy && token != CSSValueTo)
+            return std::nullopt;
+
+        if (!consumeIdent(range))
+            return std::nullopt;
+
+        return token == CSSValueBy ? CoordinateAffinity::Relative : CoordinateAffinity::Absolute;
+    };
+
+    auto atEndOfCommand = [&] () {
+        return range.atEnd() || range.peek().type() == CommaToken;
+    };
+
+    auto id = range.consumeIncludingWhitespace().id();
+    switch (id) {
+    case CSSValueMove: {
+        // <move-command> = move <by-to> <coordinate-pair>
+        auto affinityValue = consumeAffinity();
+        if (!affinityValue)
+            return nullptr;
+
+        auto toCoordinates = consumeCoordinatePair(range, context);
+        if (!toCoordinates)
+            return nullptr;
+
+        return CSSShapeSegmentValue::createMove(*affinityValue, toCoordinates.releaseNonNull());
+    }
+    case CSSValueLine: {
+        // <line-command> = line <by-to> <coordinate-pair>
+        auto affinityValue = consumeAffinity();
+        if (!affinityValue)
+            return nullptr;
+
+        auto toCoordinates = consumeCoordinatePair(range, context);
+        if (!toCoordinates)
+            return nullptr;
+
+        return CSSShapeSegmentValue::createLine(*affinityValue, toCoordinates.releaseNonNull());
+    }
+    case CSSValueHline:
+    case CSSValueVline: {
+        // <hv-line-command> = [hline | vline] <by-to> <length-percentage>
+        auto affinityValue = consumeAffinity();
+        if (!affinityValue)
+            return nullptr;
+
+        auto length = consumeLengthOrPercent(range, context.mode);
+        if (!length)
+            return nullptr;
+
+        if (id == CSSValueHline)
+            return CSSShapeSegmentValue::createHorizontalLine(*affinityValue, length.releaseNonNull());
+
+        return CSSShapeSegmentValue::createVerticalLine(*affinityValue, length.releaseNonNull());
+    }
+    case CSSValueCurve: {
+        // <curve-command> = curve <by-to> <coordinate-pair> using <coordinate-pair>{1,2}
+        auto affinityValue = consumeAffinity();
+        if (!affinityValue)
+            return nullptr;
+
+        auto toCoordinates = consumeCoordinatePair(range, context);
+        if (!toCoordinates)
+            return nullptr;
+
+        if (!consumeIdent<CSSValueUsing>(range))
+            return nullptr;
+
+        auto controlPoint1 = consumeCoordinatePair(range, context);
+        if (!controlPoint1)
+            return nullptr;
+
+        auto controlPoint2 = consumeCoordinatePair(range, context);
+        if (controlPoint2)
+            return CSSShapeSegmentValue::createCubicCurve(*affinityValue, toCoordinates.releaseNonNull(), controlPoint1.releaseNonNull(), controlPoint2.releaseNonNull());
+
+        return CSSShapeSegmentValue::createQuadraticCurve(*affinityValue, toCoordinates.releaseNonNull(), controlPoint1.releaseNonNull());
+    }
+    case CSSValueSmooth: {
+        // <smooth-command> = smooth <by-to> <coordinate-pair> [using <coordinate-pair>]?
+        auto affinityValue = consumeAffinity();
+        if (!affinityValue)
+            return nullptr;
+
+        auto toCoordinates = consumeCoordinatePair(range, context);
+        if (!toCoordinates)
+            return nullptr;
+
+        if (consumeIdent<CSSValueUsing>(range)) {
+            auto controlPoint = consumeCoordinatePair(range, context);
+            if (!controlPoint)
+                return nullptr;
+
+            return CSSShapeSegmentValue::createSmoothCubicCurve(*affinityValue, toCoordinates.releaseNonNull(), controlPoint.releaseNonNull());
+        }
+
+        return CSSShapeSegmentValue::createSmoothQuadraticCurve(*affinityValue, toCoordinates.releaseNonNull());
+    }
+    case CSSValueArc: {
+        // arc <by-to> <coordinate-pair> of <length-percentage>{1,2} [ <arc-sweep> || <arc-size> || rotate <angle> ]?
+        auto affinityValue = consumeAffinity();
+        if (!affinityValue)
+            return nullptr;
+
+        auto toCoordinates = consumeCoordinatePair(range, context);
+        if (!toCoordinates)
+            return nullptr;
+
+        if (!consumeIdent<CSSValueOf>(range))
+            return nullptr;
+
+        auto radiusX = consumeLengthOrPercent(range, context.mode);
+        auto radiusY = radiusX;
+        if (auto value = consumeLengthOrPercent(range, context.mode))
+            radiusY = value;
+
+        std::optional<CSSValueID> sweep;
+        std::optional<CSSValueID> size;
+        RefPtr<CSSValue> angle;
+
+        while (!atEndOfCommand()) {
+            auto ident = consumeIdent<CSSValueCw, CSSValueCcw, CSSValueLarge, CSSValueSmall, CSSValueRotate>(range);
+            if (!ident)
+                return nullptr;
+
+            switch (ident->valueID()) {
+            case CSSValueCw:
+            case CSSValueCcw:
+                if (sweep)
+                    return nullptr;
+                sweep = ident->valueID();
+                break;
+            case CSSValueLarge:
+            case CSSValueSmall:
+                if (size)
+                    return nullptr;
+                size = ident->valueID();
+                break;
+            case CSSValueRotate:
+                if (angle)
+                    return nullptr;
+                angle = consumeAngle(range, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+                break;
+            default:
+                break;
+            }
+        }
+
+        if (!angle)
+            angle = CSSPrimitiveValue::create(0, CSSUnitType::CSS_DEG);
+
+        auto radius = CSSValuePair::create(radiusX.releaseNonNull(), radiusY.releaseNonNull());
+        return CSSShapeSegmentValue::createArc(*affinityValue, toCoordinates.releaseNonNull(), WTFMove(radius), sweep.value_or(CSSValueCcw), size.value_or(CSSValueSmall), angle.releaseNonNull());
+    }
+    case CSSValueClose:
+        return CSSShapeSegmentValue::createClose();
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return nullptr;
+}
+
+// https://drafts.csswg.org/css-shapes-2/#shape-function
+static RefPtr<CSSShapeValue> consumeBasicShapeShape(CSSParserTokenRange& range, const CSSParserContext& context, OptionSet<PathParsingOption> options)
+{
+    if (!context.cssShapeFunctionEnabled)
+        return nullptr;
+
+    // shape() = shape( <'fill-rule'>? from <coordinate-pair>, <shape-command>#)
+    auto rule = WindRule::NonZero;
+    if (identMatches<CSSValueEvenodd, CSSValueNonzero>(range.peek().id())) {
+        if (range.consumeIncludingWhitespace().id() == CSSValueEvenodd)
+            rule = WindRule::EvenOdd;
+    }
+
+    if (!consumeIdent<CSSValueFrom>(range))
+        return nullptr;
+
+    auto fromCoordinates = consumeCoordinatePair(range, context);
+    if (!fromCoordinates)
+        return nullptr;
+
+    if (!consumeCommaIncludingWhitespace(range))
+        return nullptr;
+
+    CSSValueListBuilder commands;
+    do {
+        auto command = consumeShapeCommand(range, context, options);
+        if (!command)
+            return nullptr;
+
+        commands.append(command.releaseNonNull());
+    } while (consumeCommaIncludingWhitespace(range));
+
+    return CSSShapeValue::create(rule, fromCoordinates.releaseNonNull(), WTFMove(commands));
 }
 
 template<typename ElementType> static void complete4Sides(std::array<ElementType, 4>& sides)
@@ -2745,6 +2969,9 @@ static RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange& range, const CSSP
         result = consumeBasicShapeXywh(args, context);
     else if (id == CSSValuePath)
         result = consumeBasicShapePath(args, options);
+    else if (id == CSSValueShape)
+        result = consumeBasicShapeShape(args, context, options);
+
     if (!result || !args.atEnd())
         return nullptr;
 

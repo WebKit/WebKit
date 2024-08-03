@@ -55,17 +55,19 @@ enum class CoordinateAffinity : uint8_t {
 };
 
 class BasicShape : public RefCounted<BasicShape> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~BasicShape() = default;
 
-    enum class Type {
+    enum class Type : uint8_t {
         Polygon,
         Path,
         Circle,
         Ellipse,
         Inset,
         Rect,
-        Xywh
+        Xywh,
+        Shape
     };
 
     virtual Ref<BasicShape> clone() const = 0;
@@ -497,6 +499,7 @@ private:
     LengthSize m_bottomLeftRadius;
 };
 
+WTF::TextStream& operator<<(WTF::TextStream&, CoordinateAffinity);
 WTF::TextStream& operator<<(WTF::TextStream&, const BasicShapeRadius&);
 WTF::TextStream& operator<<(WTF::TextStream&, const BasicShapeCenterCoordinate&);
 WTF::TextStream& operator<<(WTF::TextStream&, const BasicShape&);

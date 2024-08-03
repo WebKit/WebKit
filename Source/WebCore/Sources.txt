@@ -827,6 +827,7 @@ crypto/keys/CryptoKeyRSA.cpp
 crypto/keys/CryptoKeyRSAComponents.cpp
 crypto/keys/CryptoKeyRaw.cpp
 css/BasicShapeConversion.cpp
+css/BasicShapesShapeSegmentConversion.cpp
 css/CSSAnchorValue.cpp
 css/CSSAspectRatioValue.cpp
 css/CSSBackgroundRepeatValue.cpp
@@ -2803,6 +2804,7 @@ rendering/shapes/RectangleShape.cpp
 rendering/shapes/Shape.cpp
 rendering/shapes/ShapeOutsideInfo.cpp
 rendering/style/BasicShapes.cpp
+rendering/style/BasicShapesShape.cpp
 rendering/style/BorderData.cpp
 rendering/style/BorderValue.cpp
 rendering/style/ContentData.cpp
