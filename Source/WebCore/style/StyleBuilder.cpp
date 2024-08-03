@@ -114,6 +114,8 @@ void Builder::applyHighPriorityProperties()
 {
     applyProperties(firstHighPriorityProperty, lastHighPriorityProperty);
     m_state.updateFont();
+    // This needs to apply before other properties for the `lh` unit, but after updating the font.
+    applyProperties(CSSPropertyLineHeight, CSSPropertyLineHeight);
 }
 
 void Builder::applyNonHighPriorityProperties()
