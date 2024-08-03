@@ -4208,6 +4208,7 @@
 		1C9F4C2929E5384D0015819E /* RemoteFaceDetectorProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteFaceDetectorProxy.h; sourceTree = "<group>"; };
 		1C9F4C2A29E538550015819E /* RemoteTextDetectorProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteTextDetectorProxy.cpp; sourceTree = "<group>"; };
 		1C9F4C2B29E538550015819E /* RemoteTextDetectorProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteTextDetectorProxy.h; sourceTree = "<group>"; };
+		1CA45DF62C5D7375003A3F52 /* _WKWebExtension.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebExtension.mm; sourceTree = "<group>"; };
 		1CA8B935127C774E00576C2B /* WebInspectorUIProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorUIProxyMac.mm; sourceTree = "<group>"; };
 		1CA8B943127C882A00576C2B /* WebInspectorUIProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorUIProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		1CA8B944127C882A00576C2B /* WebInspectorUIProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorUIProxyMessages.h; sourceTree = "<group>"; };
@@ -8928,6 +8929,7 @@
 			isa = PBXGroup;
 			children = (
 				1CC5CA4D2C5ACB7400DF3B94 /* _WKWebExtension.h */,
+				1CA45DF62C5D7375003A3F52 /* _WKWebExtension.mm */,
 				1CC5CA4F2C5ACB7400DF3B94 /* _WKWebExtensionAction.h */,
 				1CC5CA522C5ACB7400DF3B94 /* _WKWebExtensionCommand.h */,
 				1CC5CA912C5ACD5700DF3B94 /* _WKWebExtensionCommandPrivate.h */,

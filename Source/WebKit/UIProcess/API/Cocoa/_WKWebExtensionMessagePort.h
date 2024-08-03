@@ -25,4 +25,10 @@
 
 #import <WebKit/WKWebExtensionMessagePortPrivate.h>
 
+WK_EXTERN
+@interface _WKWebExtensionMessagePort : WKWebExtensionMessagePort
+@end
+
 #define _WKWebExtensionMessagePort WKWebExtensionMessagePort
+
+WK_EXTERN NSErrorDomain const _WKWebExtensionMessagePortErrorDomain;

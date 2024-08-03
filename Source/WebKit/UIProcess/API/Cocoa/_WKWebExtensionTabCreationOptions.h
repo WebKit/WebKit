@@ -25,4 +25,8 @@
 
 #import <WebKit/WKWebExtensionTabCreationOptions.h>
 
+WK_EXTERN
+@interface _WKWebExtensionTabCreationOptions : WKWebExtensionTabCreationOptions
+@end
+
 #define _WKWebExtensionTabCreationOptions WKWebExtensionTabCreationOptions

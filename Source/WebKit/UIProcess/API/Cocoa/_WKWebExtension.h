@@ -25,4 +25,12 @@
 
 #import <WebKit/WKWebExtensionPrivate.h>
 
+WK_EXTERN
+@interface _WKWebExtension : WKWebExtension
+@end
+
 #define _WKWebExtension WKWebExtension
+
+WK_EXTERN NSErrorDomain const _WKWebExtensionErrorDomain;
+
+WK_EXTERN NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification;

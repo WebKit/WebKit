@@ -25,4 +25,10 @@
 
 #import <WebKit/WKWebExtensionDataRecordPrivate.h>
 
+WK_EXTERN
+@interface _WKWebExtensionDataRecord : WKWebExtensionDataRecord
+@end
+
 #define _WKWebExtensionDataRecord WKWebExtensionDataRecord
+
+WK_EXTERN NSErrorDomain const _WKWebExtensionDataRecordErrorDomain;

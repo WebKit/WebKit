@@ -25,4 +25,8 @@
 
 #import <WebKit/WKWebExtensionWindowCreationOptions.h>
 
+WK_EXTERN
+@interface _WKWebExtensionWindowCreationOptions : WKWebExtensionWindowCreationOptions
+@end
+
 #define _WKWebExtensionWindowCreationOptions WKWebExtensionWindowCreationOptions

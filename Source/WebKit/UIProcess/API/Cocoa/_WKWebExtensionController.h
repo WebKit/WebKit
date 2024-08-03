@@ -24,9 +24,12 @@
  */
 
 #import <WebKit/WKWebExtensionControllerPrivate.h>
+#import <WebKit/_WKWebExtensionWindowCreationOptions.h>
+
+WK_EXTERN
+@interface _WKWebExtensionController : WKWebExtensionController
+@end
 
 #define _WKWebExtensionController WKWebExtensionController
 
 #define _WKWebExtensionControllerDelegate WKWebExtensionControllerDelegate
-
-#define _WKWebExtensionWindowCreationOptions WKWebExtensionWindowCreationOptions

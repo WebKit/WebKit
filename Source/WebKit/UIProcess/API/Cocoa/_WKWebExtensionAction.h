@@ -25,6 +25,10 @@
 
 #import <WebKit/WKWebExtensionActionPrivate.h>
 
+WK_EXTERN
+@interface _WKWebExtensionAction : WKWebExtensionAction
+@end
+
 #define _WKWebExtensionAction WKWebExtensionAction
 
-#define _WKWebExtensionActionPropertiesDidChangeNotification WKWebExtensionActionPropertiesDidChangeNotification
+WK_EXTERN NSNotificationName const _WKWebExtensionActionPropertiesDidChangeNotification;

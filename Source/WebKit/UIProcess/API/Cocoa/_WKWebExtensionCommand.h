@@ -25,4 +25,8 @@
 
 #import <WebKit/WKWebExtensionCommandPrivate.h>
 
+WK_EXTERN
+@interface _WKWebExtensionCommand : WKWebExtensionCommand
+@end
+
 #define _WKWebExtensionCommand WKWebExtensionCommand

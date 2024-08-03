@@ -25,6 +25,10 @@
 
 #import <WebKit/WKWebExtensionMatchPatternPrivate.h>
 
+WK_EXTERN
+@interface _WKWebExtensionMatchPattern : WKWebExtensionMatchPattern
+@end
+
 #define _WKWebExtensionMatchPattern WKWebExtensionMatchPattern
 
 #define _WKWebExtensionMatchPatternOptions WKWebExtensionMatchPatternOptions
@@ -32,3 +36,5 @@
 #define _WKWebExtensionMatchPatternOptionsIgnoreSchemes WKWebExtensionMatchPatternOptionsIgnoreSchemes
 #define _WKWebExtensionMatchPatternOptionsIgnorePaths WKWebExtensionMatchPatternOptionsIgnorePaths
 #define _WKWebExtensionMatchPatternOptionsMatchBidirectionally WKWebExtensionMatchPatternOptionsMatchBidirectionally
+
+WK_EXTERN NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain;
