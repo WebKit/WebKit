@@ -30,6 +30,12 @@ if (self.testRunner) {
         }
     }
 
+    // Treat localhost as insecure only for WPT tests loaded from localhost
+    // over HTTP (and not other tests using testharness.js); other tests using
+    // testharness.js are loaded from a different port.
+    if (location.origin === "http://localhost:8800")
+        internals.markContextAsInsecure();
+
     if (testRunner.setStatisticsShouldDowngradeReferrer) 
        testRunner.setStatisticsShouldDowngradeReferrer(false, function() { });
 }
