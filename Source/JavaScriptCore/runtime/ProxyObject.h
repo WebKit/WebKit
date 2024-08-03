@@ -54,9 +54,10 @@ public:
         GetOwnPropertyDescriptor,
         OwnKeys,
         Set,
+        Apply,
     };
 
-    static constexpr unsigned numberOfCachedHandlerTrapsOffsets = 5;
+    static constexpr unsigned numberOfCachedHandlerTrapsOffsets = 6;
 
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)

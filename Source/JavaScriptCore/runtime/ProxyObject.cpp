@@ -26,11 +26,12 @@
 #include "config.h"
 #include "ProxyObject.h"
 
-#include <algorithm>
+#include "BuiltinNames.h"
 #include "JSCInlines.h"
 #include "JSInternalFieldObjectImplInlines.h"
 #include "ObjectConstructor.h"
 #include "VMInlines.h"
+#include <algorithm>
 #include <wtf/NoTailCalls.h>
 #include <wtf/text/MakeString.h>
 
@@ -606,17 +607,17 @@ JSC_DEFINE_HOST_FUNCTION(performProxyCall, (JSGlobalObject* globalObject, CallFr
         throwStackOverflowError(globalObject, scope);
         return encodedJSValue();
     }
-    ProxyObject* proxy = jsCast<ProxyObject*>(callFrame->jsCallee());
-    JSValue handlerValue = proxy->handler();
+    ProxyObject* proxyObject = jsCast<ProxyObject*>(callFrame->jsCallee());
+    JSValue handlerValue = proxyObject->handler();
     if (handlerValue.isNull())
         return throwVMTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
 
     JSObject* handler = jsCast<JSObject*>(handlerValue);
     CallData callData;
-    JSValue applyMethod = handler->getMethod(globalObject, callData, makeIdentifier(vm, "apply"_s), "'apply' property of a Proxy's handler should be callable"_s);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    JSObject* target = proxy->target();
-    if (applyMethod.isUndefined()) {
+    JSObject* applyHandler = proxyObject->getHandlerTrap(globalObject, handler, callData, vm.propertyNames->builtinNames().applyPublicName(), ProxyObject::HandlerTrap::Apply);
+    RETURN_IF_EXCEPTION(scope, { });
+    JSObject* target = proxyObject->target();
+    if (!applyHandler) {
         auto callData = JSC::getCallData(target);
         RELEASE_ASSERT(callData.type != CallData::Type::None);
         RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, target, callData, callFrame->thisValue(), ArgList(callFrame))));
@@ -629,7 +630,7 @@ JSC_DEFINE_HOST_FUNCTION(performProxyCall, (JSGlobalObject* globalObject, CallFr
     arguments.append(callFrame->thisValue().toThis(globalObject, ECMAMode::strict()));
     arguments.append(argArray);
     ASSERT(!arguments.hasOverflowed());
-    RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, applyMethod, callData, handler, arguments)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, applyHandler, callData, handler, arguments)));
 }
 
 CallData ProxyObject::getCallData(JSCell* cell)
