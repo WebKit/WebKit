@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <script src="../resources/js-test-pre.js"></script>
+    <script src="resources/audio-testing.js"></script>
+    </head>
+    <body>
+        <script>
+            description("Attempting to create a AudioBufferSourceNode with a large negative detune value should not crash.");
+
+            jsTestIsAsync = true;
+
+            var context = new AudioContext();
+            var src = context.createBufferSource();
+            var buffer = context.createBuffer(1, 256, 44100);
+            src.buffer = buffer;
+            src.start(undefined, 1);
+            src.connect(context.listener.positionX, 0);
+            var panner = context.createPanner();
+            src.detune.value = -0xffffff;
+            panner.connect(context.destination);
+            setTimeout(() => {
+                testPassed("Test passed because it did not crash.");
+                finishJSTest();
+            }, 100);
+        </script>
+
+        <script src="../resources/js-test-post.js"></script>
+    </body>
+</html>
