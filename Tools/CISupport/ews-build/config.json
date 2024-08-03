@@ -427,13 +427,13 @@
     {
       "name": "Commit-Queue", "shortname": "commit", "icon": "buildAndTest",
       "factory": "CommitQueueFactory", "platform": "mac-monterey",
-      "configuration": "release", "architectures": ["x86_64"],
+      "configuration": "release", "architectures": ["arm64"],
       "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-05"]
     },
     {
       "name": "Merge-Queue", "shortname": "merge", "icon": "buildAndTest",
       "factory": "MergeQueueFactory", "platform": "mac-monterey",
-      "configuration": "release", "architectures": ["x86_64"],
+      "configuration": "release", "architectures": ["arm64"],
       "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-05"]
     },
     {
