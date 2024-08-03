@@ -588,7 +588,7 @@ std::pair<InlineLayoutUnit, InlineLayoutUnit> InlineFormattingUtils::textEmphasi
     };
     if (auto* rubyBase = enclosingRubyBase(); rubyBase && RubyFormattingContext::hasInterlinearAnnotation(*rubyBase)) {
         auto annotationPosition = rubyBase->style().rubyPosition();
-        if ((hasAboveTextEmphasis && annotationPosition == RubyPosition::Before) || (hasUnderTextEmphasis && annotationPosition == RubyPosition::After)) {
+        if ((hasAboveTextEmphasis && annotationPosition == RubyPosition::Over) || (hasUnderTextEmphasis && annotationPosition == RubyPosition::Under)) {
             // FIXME: Check if annotation box has content.
             return { };
         }

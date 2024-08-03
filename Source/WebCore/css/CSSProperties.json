@@ -161,10 +161,11 @@
         "An array of the alternative names for this property. Aliases are folded at",
         "parse time and don't have their own CSSPropertyID.",
         "",
-        "* synonym:",
+        "* cascade-alias:",
         "An alternative name for this property that gets its own CSSPropertyID.",
         "This allows parsing code to handle differences in allowed values.",
-        "Style builder code is shared with the original property.",
+        "In terms of cascade they behave like the same property.",
+        "Must also set skip-builder.",
         "",
         "* enable-if:",
         "Indicates that code should only be generated for this property/value if the",
@@ -1305,6 +1306,27 @@
                 "url": "https://msdn.microsoft.com/en-us/library/ms531189(v=vs.85).aspx"
             }
         },
+        "ruby-position": {
+            "inherited": true,
+            "values": [
+                "over",
+                "under",
+                "inter-character",
+                {
+                    "value": "alternate",
+                    "status": "unimplemented"
+                }
+            ],
+            "codegen-properties": {
+                "top-priority": true,
+                "comment": "This is a top priority property to ensure that its value can be checked when determining a smart default font size', (<https://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog?rev=172861>).",
+                "parser-grammar": "<<values>>"
+            },
+            "specification": {
+                "category": "css-ruby",
+                "url": "https://www.w3.org/TR/css-ruby-1/#rubypos"
+            }
+        },
         "-webkit-ruby-position": {
             "inherited": true,
             "values": [
@@ -1316,22 +1338,13 @@
                     "value": "after",
                     "status": "deprecated"
                 },
-                "inter-character",
-                {
-                    "value": "over",
-                    "status": "unimplemented"
-                },
-                {
-                    "value": "under",
-                    "status": "unimplemented"
-                }
+                "inter-character"
             ],
             "codegen-properties": {
-                "top-priority": true,
-                "comment": "This is a top priority property to ensure that its value can be checked when determining a smart default font size', (<https://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog?rev=172861>).",
-                "parser-grammar": "<<values>>"
+                "cascade-alias": "ruby-position",
+                "parser-grammar": "<<values>>",
+                "skip-builder": true
             },
-            "status": "experimental",
             "specification": {
                 "category": "css-ruby",
                 "url": "https://www.w3.org/TR/css-ruby-1/#rubypos"
@@ -4448,7 +4461,6 @@
         },
         "mask-mode": {
             "codegen-properties": {
-                "related-property": "-webkit-mask-source-type",
                 "name-for-methods": "MaskMode",
                 "fill-layer-property": true,
                 "parser-grammar": "<single-mask-mode>#"
@@ -8019,10 +8031,10 @@
         },
         "-webkit-mask-source-type": {
             "codegen-properties": {
-                "related-property": "mask-mode",
-                "synonym": "mask-mode",
+                "cascade-alias": "mask-mode",
                 "comment": "Deprecated alias for mask-mode, supports an 'auto' value, does not support 'match-source'",
-                "parser-grammar": "<single-webkit-mask-source-type>#"
+                "parser-grammar": "<single-webkit-mask-source-type>#",
+                "skip-builder": true
             },
             "status": "non-standard",
             "specification": {

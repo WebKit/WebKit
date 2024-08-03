@@ -1019,8 +1019,8 @@ enum class LineAlign : bool {
 };
 
 enum class RubyPosition : uint8_t {
-    Before,
-    After,
+    Over,
+    Under,
     InterCharacter
 };
 

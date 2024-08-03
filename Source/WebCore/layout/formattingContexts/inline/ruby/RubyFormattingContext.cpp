@@ -54,7 +54,7 @@ static RubyPosition rubyPosition(const Box& rubyBaseLayoutBox)
     if (rubyBaseLayoutBox.style().isHorizontalWritingMode())
         return computedRubyPosition;
     // inter-character: If the writing mode of the enclosing ruby container is vertical, this value has the same effect as over.
-    return computedRubyPosition == RubyPosition::InterCharacter ? RubyPosition::Before : computedRubyPosition;
+    return computedRubyPosition == RubyPosition::InterCharacter ? RubyPosition::Over : computedRubyPosition;
 }
 
 static inline InlineRect annotationMarginBoxVisualRect(const Box& annotationBox, InlineLayoutUnit lineHeight, const InlineFormattingContext& inlineFormattingContext)
@@ -356,7 +356,7 @@ InlineLayoutPoint RubyFormattingContext::placeAnnotationBox(const Box& rubyBaseL
     if (hasInterlinearAnnotation(rubyBaseLayoutBox)) {
         // Move it over/under the base and make it border box positioned.
         auto leftOffset = annotationBoxLogicalGeometry.marginStart();
-        auto topOffset = rubyPosition(rubyBaseLayoutBox) == RubyPosition::Before ? -annotationBoxLogicalGeometry.marginBoxHeight() : rubyBaseMarginBoxLogicalRect.height();
+        auto topOffset = rubyPosition(rubyBaseLayoutBox) == RubyPosition::Over ? -annotationBoxLogicalGeometry.marginBoxHeight() : rubyBaseMarginBoxLogicalRect.height();
         auto logicalTopLeft = rubyBaseMarginBoxLogicalRect.topLeft();
         logicalTopLeft.move(LayoutSize { leftOffset, topOffset });
         return logicalTopLeft;
@@ -415,7 +415,7 @@ void RubyFormattingContext::adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox
     auto over = InlineLayoutUnit { };
     auto under = InlineLayoutUnit { };
     auto annotationBoxLogicalHeight = InlineLayoutUnit { inlineFormattingContext.geometryForBox(*annotationBox).marginBoxHeight() };
-    auto isAnnotationBefore = rubyPosition(rubyBaseLayoutBox) == RubyPosition::Before;
+    auto isAnnotationBefore = rubyPosition(rubyBaseLayoutBox) == RubyPosition::Over;
     if (isAnnotationBefore)
         over = annotationBoxLogicalHeight;
     else

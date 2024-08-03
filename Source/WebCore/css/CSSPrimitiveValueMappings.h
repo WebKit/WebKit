@@ -1526,11 +1526,37 @@ template<> constexpr TextCombine fromCSSValueID(CSSValueID valueID)
     return TextCombine::None;
 }
 
-#define TYPE RubyPosition
-#define FOR_EACH(CASE) CASE(Before) CASE(After) CASE(InterCharacter)
-DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
-#undef TYPE
-#undef FOR_EACH
+constexpr CSSValueID toCSSValueID(RubyPosition e)
+{
+    switch (e) {
+    case RubyPosition::Over:
+        return CSSValueOver;
+    case RubyPosition::Under:
+        return CSSValueUnder;
+    case RubyPosition::InterCharacter:
+        return CSSValueInterCharacter;
+    }
+    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+    return CSSValueInvalid;
+}
+
+template<> constexpr RubyPosition fromCSSValueID(CSSValueID valueID)
+{
+    switch (valueID) {
+    case CSSValueOver:
+    case CSSValueBefore: // -webkit-ruby-position only
+        return RubyPosition::Over;
+    case CSSValueUnder:
+    case CSSValueAfter: // -webkit-ruby-position only
+        return RubyPosition::Under;
+    case CSSValueInterCharacter:
+        return RubyPosition::InterCharacter;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+    return RubyPosition::Over;
+}
 
 #define TYPE RubyAlign
 #define FOR_EACH(CASE) CASE(Start) CASE(Center) CASE(SpaceBetween) CASE(SpaceAround)

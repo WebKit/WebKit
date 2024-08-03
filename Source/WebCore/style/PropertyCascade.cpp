@@ -207,7 +207,7 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
         if ((important == IsImportant::No && current.isImportant()) || (important == IsImportant::Yes && !current.isImportant()))
             continue;
 
-        auto propertyID = current.id();
+        auto propertyID = cascadeAliasProperty(current.id());
 
         auto shouldIncludeProperty = [&] {
 #if ENABLE(VIDEO)

@@ -276,8 +276,7 @@ void CSSToStyleMap::mapFillMaskMode(CSSPropertyID propertyID, FillLayer& layer, 
         ASSERT(propertyID == CSSPropertyMaskMode);
         maskMode = MaskMode::MatchSource;
         break;
-    case CSSValueAuto:
-        ASSERT(propertyID == CSSPropertyWebkitMaskSourceType);
+    case CSSValueAuto: // -webkit-mask-source-type
         break;
     default:
         ASSERT_NOT_REACHED();

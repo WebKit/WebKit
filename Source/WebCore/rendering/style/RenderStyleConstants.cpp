@@ -935,8 +935,8 @@ TextStream& operator<<(TextStream& ts, Resize resize)
 TextStream& operator<<(TextStream& ts, RubyPosition position)
 {
     switch (position) {
-    case RubyPosition::Before: ts << "before"; break;
-    case RubyPosition::After: ts << "after"; break;
+    case RubyPosition::Over: ts << "over"; break;
+    case RubyPosition::Under: ts << "under"; break;
     case RubyPosition::InterCharacter: ts << "inter-character"; break;
     }
     return ts;
