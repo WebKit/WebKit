@@ -25,6 +25,7 @@
 
 #include "HTMLMetaCharsetParser.h"
 #include "HTMLNames.h"
+#include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include <pal/text/TextCodec.h>
 #include <pal/text/TextEncoding.h>
@@ -664,7 +665,10 @@ String TextResourceDecoder::flush()
 String TextResourceDecoder::decodeAndFlush(std::span<const uint8_t> data)
 {
     auto decoded = decode(data);
-    return makeString(decoded, flush());
+    auto result = tryMakeString(decoded, flush());
+    if (result.isNull())
+        RELEASE_LOG_ERROR(TextDecoding, "TextResourceDecoder::decodeAndFlush() failed, size too large (%zu)", data.size());
+    return result;
 }
 
 const PAL::TextEncoding* TextResourceDecoder::encodingForURLParsing()
