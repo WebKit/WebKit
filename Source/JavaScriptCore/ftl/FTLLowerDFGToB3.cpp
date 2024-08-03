@@ -21535,6 +21535,12 @@ IGNORE_CLANG_WARNINGS_END
         case MiscUse:
             speculateMisc(edge);
             break;
+        case MapIteratorObjectUse:
+            speculateMapIteratorObject(edge);
+            break;
+        case SetIteratorObjectUse:
+            speculateSetIteratorObject(edge);
+            break;
         default:
             DFG_CRASH(m_graph, m_node, "Unsupported speculation use kind");
         }
@@ -22160,7 +22166,7 @@ IGNORE_CLANG_WARNINGS_END
 
     void speculateMapIteratorObject(Edge edge)
     {
-        speculateMapObject(edge, lowCell(edge));
+        speculateMapIteratorObject(edge, lowCell(edge));
     }
 
     void speculateSetObject(Edge edge, LValue cell)
@@ -22182,7 +22188,7 @@ IGNORE_CLANG_WARNINGS_END
 
     void speculateSetIteratorObject(Edge edge)
     {
-        speculateMapObject(edge, lowCell(edge));
+        speculateSetIteratorObject(edge, lowCell(edge));
     }
 
     void speculateWeakMapObject(Edge edge, LValue cell)
