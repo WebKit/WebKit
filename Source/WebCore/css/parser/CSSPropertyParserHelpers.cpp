@@ -2518,8 +2518,9 @@ RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange& range, CSSParser
 
 static RefPtr<CSSPrimitiveValue> consumeShapeRadius(CSSParserTokenRange& args, CSSParserMode mode)
 {
-    if (identMatches<CSSValueClosestSide, CSSValueFarthestSide>(args.peek().id()))
+    if (identMatches<CSSValueClosestSide, CSSValueFarthestSide, CSSValueClosestCorner, CSSValueFarthestCorner>(args.peek().id()))
         return consumeIdent(args);
+
     return consumeLengthOrPercent(args, mode, ValueRange::NonNegative);
 }
 

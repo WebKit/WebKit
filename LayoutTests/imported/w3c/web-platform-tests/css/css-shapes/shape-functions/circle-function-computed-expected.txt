@@ -5,12 +5,12 @@ PASS Property shape-outside value 'circle(20px at center)'
 PASS Property shape-outside value 'circle(at 10% 20%)'
 PASS Property shape-outside value 'circle(4% at top right)'
 PASS Property shape-outside value 'circle(calc(100% - 20px) at calc(100% - 20px) calc(100% / 4))'
-FAIL Property shape-outside value 'circle(closest-corner at center)' assert_true: 'circle(closest-corner at center)' is a supported value for shape-outside. expected true got false
-FAIL Property shape-outside value 'circle(closest-corner at 20px 50px)' assert_true: 'circle(closest-corner at 20px 50px)' is a supported value for shape-outside. expected true got false
+PASS Property shape-outside value 'circle(closest-corner at center)'
+PASS Property shape-outside value 'circle(closest-corner at 20px 50px)'
 PASS Property shape-outside value 'circle(closest-side at center)'
 PASS Property shape-outside value 'circle(closest-side at 20px 30%)'
-FAIL Property shape-outside value 'circle(farthest-corner at center top)' assert_true: 'circle(farthest-corner at center top)' is a supported value for shape-outside. expected true got false
-FAIL Property shape-outside value 'circle(farthest-corner at center)' assert_true: 'circle(farthest-corner at center)' is a supported value for shape-outside. expected true got false
+PASS Property shape-outside value 'circle(farthest-corner at center top)'
+PASS Property shape-outside value 'circle(farthest-corner at center)'
 PASS Property shape-outside value 'circle(farthest-side at center top)'
 PASS Property shape-outside value 'circle(farthest-side at center)'
 

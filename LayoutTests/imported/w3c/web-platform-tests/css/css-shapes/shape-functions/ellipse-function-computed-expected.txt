@@ -4,8 +4,8 @@ PASS Property shape-outside value 'ellipse(1px 2px)'
 PASS Property shape-outside value 'ellipse(20px 40px at center)'
 PASS Property shape-outside value 'ellipse(closest-side 20%)'
 PASS Property shape-outside value 'ellipse(farthest-side 20%)'
-FAIL Property shape-outside value 'ellipse(closest-corner 20%)' assert_true: 'ellipse(closest-corner 20%)' is a supported value for shape-outside. expected true got false
-FAIL Property shape-outside value 'ellipse(farthest-corner 20%)' assert_true: 'ellipse(farthest-corner 20%)' is a supported value for shape-outside. expected true got false
+PASS Property shape-outside value 'ellipse(closest-corner 20%)'
+PASS Property shape-outside value 'ellipse(farthest-corner 20%)'
 PASS Property shape-outside value 'ellipse(at 10% 20%)'
 PASS Property shape-outside value 'ellipse(at -10px -20%)'
 PASS Property shape-outside value 'ellipse(4% 20% at top right)'

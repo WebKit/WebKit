@@ -2999,7 +2999,9 @@ header: <WebCore/BasicShapes.h>
 [Nested, CustomHeader] enum class WebCore::BasicShapeRadius::Type : uint8_t {
     Value,
     ClosestSide,
-    FarthestSide
+    FarthestSide,
+    ClosestCorner,
+    FarthestCorner
 };
 
 [CustomHeader] class WebCore::BasicShapeRadius {

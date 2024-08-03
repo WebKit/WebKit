@@ -187,6 +187,12 @@ float BasicShapeCircle::floatValueForRadiusInBox(FloatSize boxSize, FloatPoint c
 
     case BasicShapeRadius::Type::FarthestSide:
         return distanceToFarthestSide(center, boxSize);
+
+    case BasicShapeRadius::Type::ClosestCorner:
+        return distanceToClosestCorner(center, boxSize);
+
+    case BasicShapeRadius::Type::FarthestCorner:
+        return distanceToFarthestCorner(center, boxSize);
     }
     return 0;
 }
@@ -269,16 +275,22 @@ bool BasicShapeEllipse::operator==(const BasicShape& other) const
 
 FloatSize BasicShapeEllipse::floatSizeForRadiusInBox(FloatSize boxSize, FloatPoint center) const
 {
-    auto sizeForAxis = [&](const BasicShapeRadius& radius, float center, float dimensionSize) {
+    auto sizeForAxis = [&](const BasicShapeRadius& radius, float centerValue, float dimensionSize) {
         switch (radius.type()) {
         case BasicShapeRadius::Type::Value:
             return floatValueForLength(radius.value(), std::abs(dimensionSize));
 
         case BasicShapeRadius::Type::ClosestSide:
-            return std::min(std::abs(center), std::abs(dimensionSize - center));
+            return std::min(std::abs(centerValue), std::abs(dimensionSize - centerValue));
 
         case BasicShapeRadius::Type::FarthestSide:
-            return std::max(std::abs(center), std::abs(dimensionSize - center));
+            return std::max(std::abs(centerValue), std::abs(dimensionSize - centerValue));
+
+        case BasicShapeRadius::Type::ClosestCorner:
+            return distanceToClosestCorner(center, boxSize);
+
+        case BasicShapeRadius::Type::FarthestCorner:
+            return distanceToFarthestCorner(center, boxSize);
         }
         return 0.0f;
     };
@@ -810,6 +822,8 @@ static TextStream& operator<<(TextStream& ts, BasicShapeRadius::Type radiusType)
     case BasicShapeRadius::Type::Value: ts << "value"; break;
     case BasicShapeRadius::Type::ClosestSide: ts << "closest-side"; break;
     case BasicShapeRadius::Type::FarthestSide: ts << "farthest-side"; break;
+    case BasicShapeRadius::Type::ClosestCorner: ts << "closest-corner"; break;
+    case BasicShapeRadius::Type::FarthestCorner: ts << "farthest-corner"; break;
     }
     return ts;
 }

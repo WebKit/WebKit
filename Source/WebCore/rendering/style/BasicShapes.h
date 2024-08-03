@@ -133,7 +133,9 @@ public:
     enum class Type : uint8_t {
         Value,
         ClosestSide,
-        FarthestSide
+        FarthestSide,
+        ClosestCorner,
+        FarthestCorner
     };
 
     BasicShapeRadius() = default;
@@ -197,12 +199,14 @@ public:
 
     const BasicShapeCenterCoordinate& centerX() const { return m_centerX; }
     const BasicShapeCenterCoordinate& centerY() const { return m_centerY; }
+
     const BasicShapeRadius& radius() const { return m_radius; }
 
     float floatValueForRadiusInBox(FloatSize boxSize, FloatPoint center) const;
 
     void setCenterX(BasicShapeCenterCoordinate centerX) { m_centerX = WTFMove(centerX); }
     void setCenterY(BasicShapeCenterCoordinate centerY) { m_centerY = WTFMove(centerY); }
+
     void setRadius(BasicShapeRadius radius) { m_radius = WTFMove(radius); }
 
 private:

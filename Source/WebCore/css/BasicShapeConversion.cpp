@@ -70,6 +70,10 @@ static Ref<CSSPrimitiveValue> basicShapeRadiusToCSSValue(const RenderStyle& styl
         return CSSPrimitiveValue::create(CSSValueClosestSide);
     case BasicShapeRadius::Type::FarthestSide:
         return CSSPrimitiveValue::create(CSSValueFarthestSide);
+    case BasicShapeRadius::Type::ClosestCorner:
+        return CSSPrimitiveValue::create(CSSValueClosestCorner);
+    case BasicShapeRadius::Type::FarthestCorner:
+        return CSSPrimitiveValue::create(CSSValueFarthestCorner);
     }
 
     ASSERT_NOT_REACHED();
@@ -260,6 +264,10 @@ static BasicShapeRadius cssValueToBasicShapeRadius(const CSSToLengthConversionDa
             return BasicShapeRadius(BasicShapeRadius::Type::ClosestSide);
         case CSSValueFarthestSide:
             return BasicShapeRadius(BasicShapeRadius::Type::FarthestSide);
+        case CSSValueClosestCorner:
+            return BasicShapeRadius(BasicShapeRadius::Type::ClosestCorner);
+        case CSSValueFarthestCorner:
+            return BasicShapeRadius(BasicShapeRadius::Type::FarthestCorner);
         default:
             ASSERT_NOT_REACHED();
             break;
