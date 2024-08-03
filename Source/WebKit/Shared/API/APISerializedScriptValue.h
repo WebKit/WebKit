@@ -26,7 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
-
+#include "WKRetainPtr.h"
 #include <WebCore/SerializedScriptValue.h>
 #include <wtf/RefPtr.h>
 
@@ -37,6 +37,8 @@ typedef struct _GVariant GVariant;
 typedef struct _JSCContext JSCContext;
 typedef struct _JSCValue JSCValue;
 #endif
+
+typedef const void* WKTypeRef;
 
 namespace API {
 
@@ -64,9 +66,11 @@ public:
     {
         return m_serializedScriptValue->deserialize(context, exception);
     }
-    
+
+    static WKRetainPtr<WKTypeRef> deserializeWK(WebCore::SerializedScriptValue&);
+
 #if PLATFORM(COCOA) && defined(__OBJC__)
-    static id deserialize(WebCore::SerializedScriptValue&, JSValueRef* exception);
+    static id deserialize(WebCore::SerializedScriptValue&);
     static RefPtr<SerializedScriptValue> createFromNSObject(id);
 #endif
 

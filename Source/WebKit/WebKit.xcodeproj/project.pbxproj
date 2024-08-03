@@ -8329,6 +8329,7 @@
 		FA39AE662B23972A008F93CD /* CoreIPCAuditToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreIPCAuditToken.h; sourceTree = "<group>"; };
 		FA39AE672B23972A008F93CD /* CoreIPCAuditToken.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CoreIPCAuditToken.serialization.in; sourceTree = "<group>"; };
 		FA4368C62B811BA3001B993D /* CoreIPCNSURLCredential.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CoreIPCNSURLCredential.serialization.in; sourceTree = "<group>"; };
+		FA4899BD2C5C56E800B04660 /* APISerializedScriptValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = APISerializedScriptValue.cpp; sourceTree = "<group>"; };
 		FA4FE2642B75EAFF0016E671 /* CoreIPCNull.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCNull.mm; sourceTree = "<group>"; };
 		FA651BA42AA3CBB500747576 /* NetworkTransportBidirectionalStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkTransportBidirectionalStream.h; sourceTree = "<group>"; };
 		FA651BA52AA3CBB500747576 /* NetworkTransportBidirectionalStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkTransportBidirectionalStream.cpp; sourceTree = "<group>"; };
@@ -15008,6 +15009,7 @@
 				1AC1336B18565C7A00F3EC05 /* APIPageHandle.h */,
 				7AE42B452954EDC200B20510 /* APIPageHandle.serialization.in */,
 				F634445512A885C8000612D8 /* APISecurityOrigin.h */,
+				FA4899BD2C5C56E800B04660 /* APISerializedScriptValue.cpp */,
 				A72D5D7F1236CBA800A88B15 /* APISerializedScriptValue.h */,
 				FA9AFA662B2250E600953DC5 /* APISerializedScriptValue.serialization.in */,
 				BCF04C8E11FF9F6E00F86A58 /* APIString.h */,

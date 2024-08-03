@@ -40,6 +40,13 @@ Ref<Array> Array::create(Vector<RefPtr<Object>>&& elements)
     return adoptRef(*new Array(WTFMove(elements)));
 }
 
+Ref<Array> Array::createWithCapacity(size_t capacity)
+{
+    auto array = create(Vector<RefPtr<Object>>());
+    array->m_elements.reserveInitialCapacity(capacity);
+    return array;
+}
+
 Ref<Array> Array::createStringArray(const Vector<WTF::String>& strings)
 {
     auto elements = strings.map([](auto& string) -> RefPtr<Object> {

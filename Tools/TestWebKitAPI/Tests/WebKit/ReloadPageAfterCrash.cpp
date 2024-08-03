@@ -101,10 +101,6 @@ TEST(WebKit, ReloadPageAfterCrash)
 
 static bool calledCrashHandler = false;
 
-static void nullJavaScriptCallback(WKSerializedScriptValueRef, WKErrorRef, void*)
-{
-}
-
 static void didCrashCheckFrames(WKPageRef page, const void*)
 {
     // Test if first load actually worked.
@@ -140,7 +136,7 @@ TEST(WebKit, FocusedFrameAfterCrash)
     EXPECT_FALSE(!WKPageGetMainFrame(webView.page()));
 
     WKRetainPtr<WKStringRef> javaScriptString = adoptWK(WKStringCreateWithUTF8CString("frames[2].focus()"));
-    WKPageRunJavaScriptInMainFrame(webView.page(), javaScriptString.get(), 0, nullJavaScriptCallback);
+    WKPageEvaluateJavaScriptInMainFrame(webView.page(), javaScriptString.get(), nullptr, nullptr);
 
     while (!WKPageGetFocusedFrame(webView.page()))
         Util::spinRunLoop(10);

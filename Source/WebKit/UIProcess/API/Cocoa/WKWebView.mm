@@ -1208,7 +1208,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
             return;
         }
 
-        id body = API::SerializedScriptValue::deserialize(result.value()->internalRepresentation(), 0);
+        id body = API::SerializedScriptValue::deserialize(result.value()->internalRepresentation());
         rawHandler(body, nil);
     });
 }

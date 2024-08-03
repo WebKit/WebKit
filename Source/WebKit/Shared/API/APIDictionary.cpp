@@ -36,6 +36,13 @@ Ref<Dictionary> Dictionary::create()
     return create({ });
 }
 
+Ref<Dictionary> Dictionary::createWithCapacity(size_t capacity)
+{
+    auto dictionary = create();
+    dictionary->m_map.reserveInitialCapacity(capacity);
+    return dictionary;
+}
+
 Ref<Dictionary> Dictionary::create(MapType&& map)
 {
     return adoptRef(*new Dictionary(WTFMove(map)));

@@ -47,6 +47,7 @@ extern "C" {
 WK_EXPORT WKTypeID WKStringGetTypeID(void);
 
 WK_EXPORT WKStringRef WKStringCreateWithUTF8CString(const char* string);
+WK_EXPORT WKStringRef WKStringCreateWithUTF8CStringWithLength(const char* string, size_t stringLength);
 
 WK_EXPORT bool WKStringIsEmpty(WKStringRef string);
 

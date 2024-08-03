@@ -50,19 +50,13 @@ static bool hasVideoInPictureInPictureCalled;
 static bool onLoadCompleted = false;
 static bool fetchOnLoadedCompletedDone = false;
 
-static void onLoadedCompletedCallback(WKSerializedScriptValueRef serializedResultValue, WKErrorRef error, void*)
+static void onLoadedCompletedCallback(WKTypeRef result, WKErrorRef error, void*)
 {
     EXPECT_NULL(error);
-    
-    JSGlobalContextRef scriptContext = JSGlobalContextCreate(0);
-    
-    JSValueRef resultValue = WKSerializedScriptValueDeserialize(serializedResultValue, scriptContext, 0);
-    EXPECT_TRUE(JSValueIsBoolean(scriptContext, resultValue));
+    EXPECT_EQ(WKGetTypeID(result), WKBooleanGetTypeID());
     
     fetchOnLoadedCompletedDone = true;
-    onLoadCompleted = JSValueToBoolean(scriptContext, resultValue);
-    
-    JSGlobalContextRelease(scriptContext);
+    onLoadCompleted = WKBooleanGetValue((WKBooleanRef)result);
 }
 
 static void waitUntilOnLoadIsCompleted(WKPageRef page)
@@ -70,7 +64,7 @@ static void waitUntilOnLoadIsCompleted(WKPageRef page)
     onLoadCompleted = false;
     while (!onLoadCompleted) {
         fetchOnLoadedCompletedDone = false;
-        WKPageRunJavaScriptInMainFrame(page, TestWebKitAPI::Util::toWK("window.onloadcompleted !== undefined").get(), 0, onLoadedCompletedCallback);
+        WKPageEvaluateJavaScriptInMainFrame(page, TestWebKitAPI::Util::toWK("window.onloadcompleted !== undefined").get(), 0, onLoadedCompletedCallback);
         TestWebKitAPI::Util::run(&fetchOnLoadedCompletedDone);
     }
 }

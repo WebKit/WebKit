@@ -2591,37 +2591,19 @@ void WKPageSetPageStateClient(WKPageRef pageRef, WKPageStateClientBase* client)
         toImpl(pageRef)->setPageLoadStateObserver(nullptr);
 }
 
-void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageRunJavaScriptFunction callback)
+void WKPageEvaluateJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageEvaluateJavaScriptFunction callback)
 {
     CRASH_IF_SUSPENDED;
-#if PLATFORM(COCOA)
-    auto removeTransientActivation = shouldEvaluateJavaScriptWithoutTransientActivation() ? RemoveTransientActivation::Yes : RemoveTransientActivation::No;
-#else
-    auto removeTransientActivation = RemoveTransientActivation::Yes;
-#endif
 
-    toImpl(pageRef)->runJavaScriptInMainFrame({ toImpl(scriptRef)->string(), JSC::SourceTaintedOrigin::Untainted, URL { }, false, std::nullopt, true, removeTransientActivation }, [context, callback] (auto&& result) {
+    toImpl(pageRef)->runJavaScriptInMainFrame({ toImpl(scriptRef)->string(), JSC::SourceTaintedOrigin::Untainted, URL { }, false, std::nullopt, true, RemoveTransientActivation::Yes }, [context, callback] (auto&& result) {
+        if (!callback)
+            return;
         if (result.has_value())
-            callback(toAPI(result.value().get()), nullptr, context);
+            callback(API::SerializedScriptValue::deserializeWK(result.value()->internalRepresentation()).get(), nullptr, context);
         else
             callback(nullptr, nullptr, context);
     });
 }
-
-#ifdef __BLOCKS__
-static void callRunJavaScriptBlockAndRelease(WKSerializedScriptValueRef resultValue, WKErrorRef error, void* context)
-{
-    WKPageRunJavaScriptBlock block = (WKPageRunJavaScriptBlock)context;
-    block(resultValue, error);
-    Block_release(block);
-}
-
-void WKPageRunJavaScriptInMainFrame_b(WKPageRef pageRef, WKStringRef scriptRef, WKPageRunJavaScriptBlock block)
-{
-    CRASH_IF_SUSPENDED;
-    WKPageRunJavaScriptInMainFrame(pageRef, scriptRef, Block_copy(block), callRunJavaScriptBlockAndRelease);
-}
-#endif
 
 static CompletionHandler<void(const String&)> toStringCallback(void* context, void(*callback)(WKStringRef, WKErrorRef, void*))
 {

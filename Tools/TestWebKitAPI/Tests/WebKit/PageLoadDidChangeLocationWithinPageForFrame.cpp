@@ -33,10 +33,6 @@
 
 namespace TestWebKitAPI {
 
-static void nullJavaScriptCallback(WKSerializedScriptValueRef, WKErrorRef error, void*)
-{
-}
-
 static bool didFinishLoad;
 static bool didPopStateWithinPage;
 static bool didChangeLocationWithinPage;
@@ -76,7 +72,7 @@ TEST(WebKit, PageLoadDidChangeLocationWithinPage)
 
     WKRetainPtr<WKURLRef> initialURL = adoptWK(WKFrameCopyURL(WKPageGetMainFrame(webView.page())));
 
-    WKPageRunJavaScriptInMainFrame(webView.page(), Util::toWK("clickLink()").get(), 0, nullJavaScriptCallback);
+    WKPageEvaluateJavaScriptInMainFrame(webView.page(), Util::toWK("clickLink()").get(), nullptr, nullptr);
     Util::run(&didChangeLocationWithinPage);
 
     WKRetainPtr<WKURLRef> urlAfterAnchorClick = adoptWK(WKFrameCopyURL(WKPageGetMainFrame(webView.page())));

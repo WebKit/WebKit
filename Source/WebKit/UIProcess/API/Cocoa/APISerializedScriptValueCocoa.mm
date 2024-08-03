@@ -93,13 +93,13 @@ static SharedJSContext& sharedContext()
     return sharedContext.get();
 }
 
-id SerializedScriptValue::deserialize(WebCore::SerializedScriptValue& serializedScriptValue, JSValueRef* exception)
+id SerializedScriptValue::deserialize(WebCore::SerializedScriptValue& serializedScriptValue)
 {
     ASSERT(RunLoop::isMain());
     RetainPtr context = sharedContext().ensureContext();
     JSRetainPtr globalContextRef = [context JSGlobalContextRef];
 
-    JSValueRef valueRef = serializedScriptValue.deserialize(globalContextRef.get(), exception);
+    JSValueRef valueRef = serializedScriptValue.deserialize(globalContextRef.get(), nullptr);
     if (!valueRef)
         return nil;
 

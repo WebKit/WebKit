@@ -48,21 +48,11 @@ static bool isMSEEnabled;
 static bool didFinishLoad;
 static bool isPlayingAudioChanged;
 
-static void nullJavaScriptCallback(WKSerializedScriptValueRef, WKErrorRef error, void*)
+static void isMSEEnabledCallback(WKTypeRef result, WKErrorRef error, void*)
 {
-}
-
-static void isMSEEnabledCallback(WKSerializedScriptValueRef serializedResultValue, WKErrorRef error, void*)
-{
-    JSGlobalContextRef scriptContext = JSGlobalContextCreate(0);
-
-    JSValueRef resultValue = WKSerializedScriptValueDeserialize(serializedResultValue, scriptContext, 0);
-    EXPECT_TRUE(JSValueIsBoolean(scriptContext, resultValue));
-
+    EXPECT_EQ(WKGetTypeID(result), WKBooleanGetTypeID());
     isMSEEnabledChanged = true;
-    isMSEEnabled = JSValueToBoolean(scriptContext, resultValue);
-
-    JSGlobalContextRelease(scriptContext);
+    isMSEEnabled = WKBooleanGetValue((WKBooleanRef)result);
 }
 
 static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef, const void*)
@@ -107,7 +97,7 @@ TEST(WebKit, WKPageIsPlayingAudio)
     Util::run(&didFinishLoad);
 
     EXPECT_FALSE(WKPageIsPlayingAudio(webView.page()));
-    WKPageRunJavaScriptInMainFrame(webView.page(), Util::toWK("playVideo()").get(), 0, nullJavaScriptCallback);
+    WKPageEvaluateJavaScriptInMainFrame(webView.page(), Util::toWK("playVideo()").get(), nullptr, nullptr);
 
     Util::run(&isPlayingAudioChanged);
     EXPECT_TRUE(WKPageIsPlayingAudio(webView.page()));
@@ -133,14 +123,14 @@ TEST(WebKit, MSEIsPlayingAudio)
 
     // Bail out of the test early if the platform does not support MSE.
     isMSEEnabledChanged = false;
-    WKPageRunJavaScriptInMainFrame(webView.page(), Util::toWK("window.MediaSource !== undefined").get(), 0, isMSEEnabledCallback);
+    WKPageEvaluateJavaScriptInMainFrame(webView.page(), Util::toWK("window.MediaSource !== undefined").get(), 0, isMSEEnabledCallback);
     Util::run(&isMSEEnabledChanged);
     if (!isMSEEnabled)
         return;
 
     EXPECT_FALSE(WKPageIsPlayingAudio(webView.page()));
     isPlayingAudioChanged = false;
-    WKPageRunJavaScriptInMainFrame(webView.page(), Util::toWK("playVideo()").get(), 0, nullJavaScriptCallback);
+    WKPageEvaluateJavaScriptInMainFrame(webView.page(), Util::toWK("playVideo()").get(), nullptr, nullptr);
 
     Util::run(&isPlayingAudioChanged);
     EXPECT_TRUE(WKPageIsPlayingAudio(webView.page()));

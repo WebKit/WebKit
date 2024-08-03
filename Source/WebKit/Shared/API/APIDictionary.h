@@ -39,6 +39,7 @@ public:
     using MapType = HashMap<WTF::String, RefPtr<Object>>;
 
     static Ref<Dictionary> create();
+    static Ref<Dictionary> createWithCapacity(size_t);
     static Ref<Dictionary> create(MapType&&);
 
     virtual ~Dictionary();

@@ -98,7 +98,7 @@
             return;
         }
 
-        id body = API::SerializedScriptValue::deserialize(valueOrException.value()->internalRepresentation(), 0);
+        id body = API::SerializedScriptValue::deserialize(valueOrException.value()->internalRepresentation());
         capturedBlock(nil, body);
     });
 }
@@ -117,7 +117,7 @@
             return;
         }
 
-        id body = API::SerializedScriptValue::deserialize(valueOrException.value()->internalRepresentation(), 0);
+        id body = API::SerializedScriptValue::deserialize(valueOrException.value()->internalRepresentation());
         capturedBlock(nil, body);
     });
 }

@@ -43,6 +43,11 @@ WKStringRef WKStringCreateWithUTF8CString(const char* string)
     return WebKit::toAPI(&API::String::create(WTF::String::fromUTF8(string)).leakRef());
 }
 
+WKStringRef WKStringCreateWithUTF8CStringWithLength(const char* string, size_t stringLength)
+{
+    return WebKit::toAPI(&API::String::create(WTF::String::fromUTF8({ string, stringLength })).leakRef());
+}
+
 bool WKStringIsEmpty(WKStringRef stringRef)
 {
     return WebKit::toImpl(stringRef)->stringView().isEmpty();

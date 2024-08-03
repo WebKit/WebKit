@@ -152,7 +152,7 @@ public:
             if (!webView)
                 return;
             RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(WTFMove(frameInfoData), &page));
-            id body = API::SerializedScriptValue::deserialize(serializedScriptValue, 0);
+            id body = API::SerializedScriptValue::deserialize(serializedScriptValue);
             auto message = adoptNS([[WKScriptMessage alloc] _initWithBody:body webView:webView.get() frameInfo:frameInfo.get() name:m_name.get() world:wrapper(world)]);
         
             [(id<WKScriptMessageHandler>)m_handler.get() userContentController:m_controller.get() didReceiveScriptMessage:message.get()];
@@ -181,7 +181,7 @@ public:
 
         @autoreleasepool {
             RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(WTFMove(frameInfoData), &page));
-            id body = API::SerializedScriptValue::deserialize(serializedScriptValue, 0);
+            id body = API::SerializedScriptValue::deserialize(serializedScriptValue);
             auto message = adoptNS([[WKScriptMessage alloc] _initWithBody:body webView:webView.get() frameInfo:frameInfo.get() name:m_name.get() world:wrapper(world)]);
 
             [(id<WKScriptMessageHandlerWithReply>)m_handler.get() userContentController:m_controller.get() didReceiveScriptMessage:message.get() replyHandler:^(id result, NSString *errorMessage) {

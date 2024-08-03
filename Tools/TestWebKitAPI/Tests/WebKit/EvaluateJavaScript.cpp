@@ -37,10 +37,10 @@ namespace TestWebKitAPI {
 
 static bool testDone;
 
-static void didRunJavaScript(WKSerializedScriptValueRef resultSerializedScriptValue, WKErrorRef error, void* context)
+static void didRunJavaScript(WKTypeRef result, WKErrorRef error, void* context)
 {
     EXPECT_EQ(reinterpret_cast<void*>(0x1234578), context);
-    EXPECT_NULL(resultSerializedScriptValue);
+    EXPECT_NULL(result);
 
     // FIXME: We should also check the error, but right now it's always null.
     // Assert that it's null so we can revisit when this changes.
@@ -55,19 +55,14 @@ TEST(WebKit, EvaluateJavaScriptThatThrowsAnException)
     PlatformWebView webView(context.get());
 
     WKRetainPtr<WKStringRef> javaScriptString = adoptWK(WKStringCreateWithUTF8CString("throw 'Hello'"));
-    WKPageRunJavaScriptInMainFrame(webView.page(), javaScriptString.get(), reinterpret_cast<void*>(0x1234578), didRunJavaScript);
+    WKPageEvaluateJavaScriptInMainFrame(webView.page(), javaScriptString.get(), reinterpret_cast<void*>(0x1234578), didRunJavaScript);
 
     Util::run(&testDone);
 }
 
-static void didCreateBlob(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error, void* context)
+static void didCreateBlob(WKTypeRef result, WKErrorRef error, void* context)
 {
-    EXPECT_NOT_NULL(serializedScriptValue);
-    JSGlobalContextRef jsContext = JSGlobalContextCreate(0);
-    EXPECT_NOT_NULL(jsContext);
-    auto jsValue = WKSerializedScriptValueDeserialize(serializedScriptValue, jsContext, 0);
-    EXPECT_NOT_NULL(jsValue);
-
+    EXPECT_NULL(result);
     testDone = true;
 }
 
@@ -77,7 +72,7 @@ TEST(WebKit, EvaluateJavaScriptThatCreatesBlob)
     PlatformWebView webView(context.get());
 
     WKRetainPtr<WKStringRef> javaScriptString = adoptWK(WKStringCreateWithUTF8CString("new Blob(['this is a test blob'])"));
-    WKPageRunJavaScriptInMainFrame(webView.page(), javaScriptString.get(), 0, didCreateBlob);
+    WKPageEvaluateJavaScriptInMainFrame(webView.page(), javaScriptString.get(), 0, didCreateBlob);
 
     Util::run(&testDone);
 }

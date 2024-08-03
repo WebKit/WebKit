@@ -34,6 +34,11 @@ WKMutableArrayRef WKMutableArrayCreate()
     return const_cast<WKMutableArrayRef>(WebKit::toAPI(&API::Array::create().leakRef()));
 }
 
+WKMutableArrayRef WKMutableArrayCreateWithCapacity(size_t capacity)
+{
+    return const_cast<WKMutableArrayRef>(WebKit::toAPI(&API::Array::create().leakRef()));
+}
+
 void WKArrayAppendItem(WKMutableArrayRef arrayRef, WKTypeRef itemRef)
 {
     WebKit::toImpl(arrayRef)->elements().append(WebKit::toImpl(itemRef));

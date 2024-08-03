@@ -79,14 +79,10 @@ struct WebKit2TextFieldBeginAndEditEditingTest : public ::testing::Test {
         WKPageSetPageNavigationClient(page, &loaderClient.base);
     }
 
-    static void nullJavaScriptCallback(WKSerializedScriptValueRef, WKErrorRef, void*)
-    {
-    }
-
     void executeJavaScriptAndCheckDidReceiveMessage(const char* javaScriptCode, const char* expectedMessageName)
     {
         didReceiveMessage = false;
-        WKPageRunJavaScriptInMainFrame(webView->page(), Util::toWK(javaScriptCode).get(), 0, nullJavaScriptCallback);
+        WKPageEvaluateJavaScriptInMainFrame(webView->page(), Util::toWK(javaScriptCode).get(), nullptr, nullptr);
         Util::run(&didReceiveMessage);
         EXPECT_WK_STREQ(expectedMessageName, messageName);
     }

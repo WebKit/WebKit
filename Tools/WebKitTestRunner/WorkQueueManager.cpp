@@ -68,11 +68,6 @@ public:
     virtual Type invoke() const = 0;
 };
 
-// Required by WKPageRunJavaScriptInMainFrame().
-static void runJavaScriptFunction(WKSerializedScriptValueRef, WKErrorRef, void*)
-{
-}
-
 template <WorkQueueItem::Type type>
 class ScriptItem : public WorkQueueItem {
 public:
@@ -83,7 +78,7 @@ public:
 
     WorkQueueItem::Type invoke() const
     {
-        WKPageRunJavaScriptInMainFrame(mainPage(), m_script.get(), 0, runJavaScriptFunction);
+        WKPageEvaluateJavaScriptInMainFrame(mainPage(), m_script.get(), nullptr, nullptr);
         return type;
     }
 
