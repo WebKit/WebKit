@@ -70,7 +70,8 @@ enum class WarningItem : uint8_t {
     TitleText,
     MessageText,
     ShowDetailsButton,
-    GoBackButton
+    GoBackButton,
+    ContinueButton
 };
 
 enum class WarningTextSize : uint8_t {
@@ -129,6 +130,7 @@ static WebCore::CocoaColor *colorForItem(WarningItem item, ViewType *warning)
         return colorNamed(@"WKSafeBrowsingWarningText");
     case WarningItem::ShowDetailsButton:
     case WarningItem::GoBackButton:
+    case WarningItem::ContinueButton:
         ASSERT_NOT_REACHED();
         return nil;
     }
@@ -147,6 +149,7 @@ static WebCore::CocoaColor *colorForItem(WarningItem item, ViewType *warning)
         return narrow ? white : red;
     case WarningItem::MessageText:
     case WarningItem::ShowDetailsButton:
+    case WarningItem::ContinueButton:
         return narrow ? white : [UIColor darkTextColor];
     case WarningItem::GoBackButton:
         return narrow ? white : warning.tintColor;
@@ -217,6 +220,8 @@ static ButtonType *makeButton(WarningItem item, _WKWarningView *warning, SEL act
     NSString *title = nil;
     if (item == WarningItem::ShowDetailsButton)
         title = WEB_UI_NSSTRING(@"Show Details", "Action from safe browsing warning");
+    else if (item == WarningItem::ContinueButton)
+        title = WEB_UI_NSSTRING(@"Continue", "Continue");
     else
         title = WEB_UI_NSSTRING(@"Go Back", "Action from safe browsing warning");
 #if PLATFORM(MAC)
@@ -334,14 +339,19 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
         , NSHyphenationFactorDocumentAttribute:@1
 #endif
     }]).get());
-    auto showDetails = makeButton(WarningItem::ShowDetailsButton, self, @selector(showDetailsClicked));
+
+    auto primaryButton = WTF::switchOn(_warning->data(), [&] (WebKit::BrowsingWarning::SafeBrowsingWarningData) {
+        return makeButton(WarningItem::ShowDetailsButton, self, @selector(showDetailsClicked));
+    }, [&] (WebKit::BrowsingWarning::HTTPSNavigationFailureData) {
+        return makeButton(WarningItem::ContinueButton, self, @selector(continueClicked));
+    });
     auto goBack = makeButton(WarningItem::GoBackButton, self, @selector(goBackClicked));
     auto box = adoptNS([_WKWarningViewBox new]);
     _box = box.get();
     [box setWarningViewBackgroundColor:colorForItem(WarningItem::BoxBackground, self)];
     [box layer].cornerRadius = boxCornerRadius;
 
-    for (ViewType *view in @[exclamationPoint.get(), title.get(), warning.get(), goBack, showDetails]) {
+    for (ViewType *view in @[exclamationPoint.get(), title.get(), warning.get(), goBack, primaryButton]) {
         view.translatesAutoresizingMaskIntoConstraints = NO;
         [box addSubview:view];
     }
@@ -384,17 +394,17 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
         [[[warning bottomAnchor] anchorWithOffsetToAnchor:goBack.topAnchor] constraintEqualToConstant:marginSize],
     ]];
 
-    bool needsVerticalButtonLayout = buttonSize(showDetails).width + buttonSize(goBack).width + 3 * marginSize > self.frame.size.width;
+    bool needsVerticalButtonLayout = buttonSize(primaryButton).width + buttonSize(goBack).width + 3 * marginSize > self.frame.size.width;
     if (needsVerticalButtonLayout) {
         [NSLayoutConstraint activateConstraints:@[
-            [[showDetails.trailingAnchor anchorWithOffsetToAnchor:[box trailingAnchor]] constraintEqualToConstant:marginSize],
-            [[goBack.bottomAnchor anchorWithOffsetToAnchor:showDetails.topAnchor] constraintEqualToConstant:marginSize],
-            [[goBack.bottomAnchor anchorWithOffsetToAnchor:[box bottomAnchor]] constraintEqualToConstant:marginSize * 2 + buttonSize(showDetails).height],
+            [[primaryButton.trailingAnchor anchorWithOffsetToAnchor:[box trailingAnchor]] constraintEqualToConstant:marginSize],
+            [[goBack.bottomAnchor anchorWithOffsetToAnchor:primaryButton.topAnchor] constraintEqualToConstant:marginSize],
+            [[goBack.bottomAnchor anchorWithOffsetToAnchor:[box bottomAnchor]] constraintEqualToConstant:marginSize * 2 + buttonSize(primaryButton).height],
         ]];
     } else {
         [NSLayoutConstraint activateConstraints:@[
-            [[showDetails.trailingAnchor anchorWithOffsetToAnchor:goBack.leadingAnchor] constraintEqualToConstant:marginSize],
-            [goBack.topAnchor constraintEqualToAnchor:showDetails.topAnchor],
+            [[primaryButton.trailingAnchor anchorWithOffsetToAnchor:goBack.leadingAnchor] constraintEqualToConstant:marginSize],
+            [goBack.topAnchor constraintEqualToAnchor:primaryButton.topAnchor],
             [[goBack.bottomAnchor anchorWithOffsetToAnchor:[box bottomAnchor]] constraintEqualToConstant:marginSize],
         ]];
     }
@@ -528,6 +538,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     if (_completionHandler)
         _completionHandler(WebKit::ContinueUnsafeLoad::No);
+}
+
+- (void)continueClicked
+{
+    if (_completionHandler)
+        _completionHandler(WebKit::ContinueUnsafeLoad::Yes);
 }
 
 - (void)clickedOnLink:(NSURL *)link

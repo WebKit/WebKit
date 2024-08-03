@@ -55,9 +55,9 @@ public:
     }
 #endif
 #if PLATFORM(COCOA)
-    static Ref<BrowsingWarning> create(URL&& url, String&& title, String&& warning, RetainPtr<NSAttributedString>&& details)
+    static Ref<BrowsingWarning> create(URL&& url, String&& title, String&& warning, RetainPtr<NSAttributedString>&& details, Data&& data)
     {
-        return adoptRef(*new BrowsingWarning(WTFMove(url), WTFMove(title), WTFMove(warning), WTFMove(details)));
+        return adoptRef(*new BrowsingWarning(WTFMove(url), WTFMove(title), WTFMove(warning), WTFMove(details), WTFMove(data)));
     }
 #endif
 
@@ -68,6 +68,7 @@ public:
 #if PLATFORM(COCOA)
     RetainPtr<NSAttributedString> details() const { return m_details; }
 #endif
+    const Data& data() const { return m_data; }
 
     static NSURL *visitUnsafeWebsiteSentinel();
     static NSURL *confirmMalwareSentinel();
@@ -77,7 +78,7 @@ private:
     BrowsingWarning(const URL&, bool, Data&&);
 #endif
 #if PLATFORM(COCOA)
-    BrowsingWarning(URL&&, String&&, String&&, RetainPtr<NSAttributedString>&&);
+    BrowsingWarning(URL&&, String&&, String&&, RetainPtr<NSAttributedString>&&, Data&&);
 #endif
 
     URL m_url;
@@ -87,6 +88,7 @@ private:
 #if PLATFORM(COCOA)
     RetainPtr<NSAttributedString> m_details;
 #endif
+    const Data m_data;
 };
 
 } // namespace WebKit

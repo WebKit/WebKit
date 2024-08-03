@@ -196,15 +196,17 @@ BrowsingWarning::BrowsingWarning(const URL& url, bool forMainFrameNavigation, Da
     , m_warning(browsingWarningText(data))
     , m_forMainFrameNavigation(forMainFrameNavigation)
     , m_details(browsingDetailsText(url, data))
+    , m_data(WTFMove(data))
 {
 }
 #endif
 
-BrowsingWarning::BrowsingWarning(URL&& url, String&& title, String&& warning, RetainPtr<NSAttributedString>&& details)
+BrowsingWarning::BrowsingWarning(URL&& url, String&& title, String&& warning, RetainPtr<NSAttributedString>&& details, Data&& data)
     : m_url(WTFMove(url))
     , m_title(WTFMove(title))
     , m_warning(WTFMove(warning))
     , m_details(WTFMove(details))
+    , m_data(WTFMove(data))
 {
 }
 
