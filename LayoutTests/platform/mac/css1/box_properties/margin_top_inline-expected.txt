@@ -22,8 +22,8 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 772x36 [bgcolor=#00FFFF]
           RenderText {#text} at (485,0) size 148x18
             text run at (485,0) width 148: "inline element of class "
-          RenderInline {TT} at (632,2) size 25x15
-            RenderText {#text} at (632,2) size 25x15
+          RenderInline {TT} at (632,2) size 25x16
+            RenderText {#text} at (632,2) size 25x16
               text run at (632,2) width 25: "one"
           RenderText {#text} at (0,0) size 772x36
             text run at (656,0) width 116: ", giving it an aqua"
@@ -39,8 +39,8 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 770x36 [bgcolor=#00FFFF]
           RenderText {#text} at (485,0) size 148x18
             text run at (485,0) width 148: "inline element of class "
-          RenderInline {TT} at (632,2) size 25x15
-            RenderText {#text} at (632,2) size 25x15
+          RenderInline {TT} at (632,2) size 25x16
+            RenderText {#text} at (632,2) size 25x16
               text run at (632,2) width 25: "two"
           RenderText {#text} at (0,0) size 770x36
             text run at (656,0) width 114: ", giving the inline"
@@ -68,8 +68,8 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (0,0) size 738x36 [bgcolor=#00FFFF]
                   RenderText {#text} at (485,0) size 148x18
                     text run at (485,0) width 148: "inline element of class "
-                  RenderInline {TT} at (632,2) size 25x15
-                    RenderText {#text} at (632,2) size 25x15
+                  RenderInline {TT} at (632,2) size 25x16
+                    RenderText {#text} at (632,2) size 25x16
                       text run at (632,2) width 25: "one"
                   RenderText {#text} at (0,0) size 738x36
                     text run at (656,0) width 82: ", giving it an"
@@ -85,8 +85,8 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (0,0) size 729x36 [bgcolor=#00FFFF]
                   RenderText {#text} at (485,0) size 148x18
                     text run at (485,0) width 148: "inline element of class "
-                  RenderInline {TT} at (632,2) size 25x15
-                    RenderText {#text} at (632,2) size 25x15
+                  RenderInline {TT} at (632,2) size 25x16
+                    RenderText {#text} at (632,2) size 25x16
                       text run at (632,2) width 25: "two"
                   RenderText {#text} at (0,0) size 729x36
                     text run at (656,0) width 73: ", giving the"

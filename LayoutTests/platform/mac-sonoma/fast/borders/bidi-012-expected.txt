@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x447
-  RenderBlock {HTML} at (0,0) size 800x447
-    RenderBody {BODY} at (8,16) size 784x19
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,1) size 521x18
+  RenderBlock {HTML} at (0,0) size 800x448
+    RenderBody {BODY} at (8,16) size 784x20
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,1) size 521x19
           text run at (0,1) width 506: "The following two blocks should be identical, including overflow. (Force bidi: "
           text run at (505,1) width 11 RTL: "\x{5D0}"
           text run at (515,1) width 6: ")"

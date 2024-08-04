@@ -69,7 +69,8 @@ void EllipsisBoxPainter::paint()
     
     auto visualRect = m_lineBox.ellipsisVisualRect();
     auto textOrigin = visualRect.location();
-    textOrigin.move(m_paintOffset.x(), m_paintOffset.y() + style.metricsOfPrimaryFont().intAscent());
+    textOrigin.move(m_paintOffset.x(), m_paintOffset.y() + style.metricsOfPrimaryFont().ascent());
+    textOrigin.setY(roundToDevicePixel(LayoutUnit { textOrigin.y() }, m_lineBox.formattingContextRoot().document().deviceScaleFactor()));
     context.drawBidiText(style.fontCascade(), m_lineBox.ellipsisText(), textOrigin);
 
     if (textColor != context.fillColor())

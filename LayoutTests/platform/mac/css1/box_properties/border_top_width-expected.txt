@@ -23,8 +23,8 @@ layer at (0,0) size 785x759
       RenderBlock {P} at (0,155) size 769x18
         RenderText {#text} at (0,0) size 160x18
           text run at (0,0) width 160: "(These will only work if "
-        RenderInline {CODE} at (159,2) size 95x15
-          RenderText {#text} at (159,2) size 95x15
+        RenderInline {CODE} at (159,2) size 95x16
+          RenderText {#text} at (159,2) size 95x16
             text run at (159,2) width 95: "border-style"
         RenderText {#text} at (253,0) size 92x18
           text run at (253,0) width 92: " is supported.)"
@@ -46,8 +46,8 @@ layer at (0,0) size 785x759
       RenderBlock {P} at (0,405) size 769x18
         RenderText {#text} at (0,0) size 534x18
           text run at (0,0) width 534: "This paragraph should have no border and no extra \"padding\" on its top side, as no "
-        RenderInline {CODE} at (533,2) size 95x15
-          RenderText {#text} at (533,2) size 95x15
+        RenderInline {CODE} at (533,2) size 95x16
+          RenderText {#text} at (533,2) size 95x16
             text run at (533,2) width 95: "border-style"
         RenderText {#text} at (627,0) size 55x18
           text run at (627,0) width 55: " was set."
@@ -66,8 +66,8 @@ layer at (0,0) size 785x759
               RenderBlock {P} at (4,4) size 682x18
                 RenderText {#text} at (0,0) size 160x18
                   text run at (0,0) width 160: "(These will only work if "
-                RenderInline {CODE} at (159,2) size 95x15
-                  RenderText {#text} at (159,2) size 95x15
+                RenderInline {CODE} at (159,2) size 95x16
+                  RenderText {#text} at (159,2) size 95x16
                     text run at (159,2) width 95: "border-style"
                 RenderText {#text} at (253,0) size 92x18
                   text run at (253,0) width 92: " is supported.)"
@@ -89,8 +89,8 @@ layer at (0,0) size 785x759
               RenderBlock {P} at (4,254) size 682x18
                 RenderText {#text} at (0,0) size 534x18
                   text run at (0,0) width 534: "This paragraph should have no border and no extra \"padding\" on its top side, as no "
-                RenderInline {CODE} at (533,2) size 95x15
-                  RenderText {#text} at (533,2) size 95x15
+                RenderInline {CODE} at (533,2) size 95x16
+                  RenderText {#text} at (533,2) size 95x16
                     text run at (533,2) width 95: "border-style"
                 RenderText {#text} at (627,0) size 55x18
                   text run at (627,0) width 55: " was set."

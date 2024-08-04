@@ -42,15 +42,15 @@ static LayoutUnit computeFirstLineSnapAdjustment(const InlineDisplay::Line& line
     auto gridLineHeight = lineGrid.rowHeight;
 
     auto& gridFontMetrics = lineGrid.primaryFont->fontMetrics();
-    auto lineGridFontAscent = gridFontMetrics.intAscent(line.baselineType());
-    auto lineGridFontHeight = gridFontMetrics.intHeight();
+    auto lineGridFontAscent = gridFontMetrics.ascent(line.baselineType());
+    auto lineGridFontHeight = gridFontMetrics.height();
     auto lineGridHalfLeading = (gridLineHeight - lineGridFontHeight) / 2;
     auto firstLineTop = lineGrid.topRowOffset;
     auto firstTextTop = firstLineTop + lineGridHalfLeading;
     auto firstBaselinePosition = firstTextTop + lineGridFontAscent;
 
     auto baseline =  LayoutUnit { line.baseline() };
-    return lineGrid.paginationOrigin.value_or(LayoutSize { }).height() + firstBaselinePosition - baseline;
+    return LayoutUnit { lineGrid.paginationOrigin.value_or(LayoutSize { }).height() + firstBaselinePosition - baseline };
 }
 
 std::pair<Vector<LineAdjustment>, std::optional<LayoutRestartLine>> computeAdjustmentsForPagination(const InlineContent& inlineContent, const Layout::PlacedFloats& placedFloats, bool allowLayoutRestart, const Layout::BlockLayoutState& blockLayoutState, RenderBlockFlow& flow)

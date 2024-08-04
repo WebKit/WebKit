@@ -19,13 +19,13 @@ layer at (0,0) size 785x781
       RenderBlock {P} at (0,70) size 769x18
         RenderText {#text} at (0,0) size 36x18
           text run at (0,0) width 36: "Here "
-        RenderInline {CODE} at (35,2) size 24x15
-          RenderText {#text} at (35,2) size 24x15
+        RenderInline {CODE} at (35,2) size 24x16
+          RenderText {#text} at (35,2) size 24x16
             text run at (35,2) width 24: "bar"
         RenderText {#text} at (58,0) size 145x18
           text run at (58,0) width 145: " should be right under "
-        RenderInline {CODE} at (202,2) size 25x15
-          RenderText {#text} at (202,2) size 25x15
+        RenderInline {CODE} at (202,2) size 25x16
+          RenderText {#text} at (202,2) size 25x16
             text run at (202,2) width 25: "foo"
         RenderText {#text} at (226,0) size 5x18
           text run at (226,0) width 5: ":"
@@ -36,8 +36,8 @@ layer at (0,0) size 785x781
       RenderBlock {P} at (0,150) size 769x18
         RenderText {#text} at (0,0) size 36x18
           text run at (0,0) width 36: "Here "
-        RenderInline {CODE} at (35,2) size 24x15
-          RenderText {#text} at (35,2) size 24x15
+        RenderInline {CODE} at (35,2) size 24x16
+          RenderText {#text} at (35,2) size 24x16
             text run at (35,2) width 24: "bar"
         RenderText {#text} at (58,0) size 331x18
           text run at (58,0) width 331: " should be on the right hand side of the second line:"
@@ -88,8 +88,8 @@ layer at (0,0) size 785x781
       RenderBlock {P} at (0,593) size 769x18
         RenderText {#text} at (0,0) size 36x18
           text run at (0,0) width 36: "Here "
-        RenderInline {CODE} at (35,2) size 24x15
-          RenderText {#text} at (35,2) size 24x15
+        RenderInline {CODE} at (35,2) size 24x16
+          RenderText {#text} at (35,2) size 24x16
             text run at (35,2) width 24: "bar"
         RenderText {#text} at (58,0) size 317x18
           text run at (58,0) width 317: " should be on the right hand side of the third line:"

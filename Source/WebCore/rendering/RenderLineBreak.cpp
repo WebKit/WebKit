@@ -97,6 +97,15 @@ VisiblePosition RenderLineBreak::positionForPoint(const LayoutPoint&, HitTestSou
     return createVisiblePosition(0, Affinity::Downstream);
 }
 
+LayoutUnit RenderLineBreak::linesHeight() const
+{
+    auto run = InlineIterator::boxFor(*this);
+    if (!run)
+        return { };
+
+    return LayoutUnit::fromFloatCeil(run->visualRectIgnoringBlockDirection().height());
+}
+
 IntRect RenderLineBreak::linesBoundingBox() const
 {
     auto run = InlineIterator::boxFor(*this);

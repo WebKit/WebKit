@@ -46,8 +46,8 @@ layer at (0,0) size 785x1432
       RenderBlock {P} at (0,436) size 769x36
         RenderText {#text} at (0,0) size 354x18
           text run at (0,0) width 354: "This paragraph should have no border around it, as the "
-        RenderInline {TT} at (353,2) size 94x15
-          RenderText {#text} at (353,2) size 94x15
+        RenderInline {TT} at (353,2) size 94x16
+          RenderText {#text} at (353,2) size 94x16
             text run at (353,2) width 94: "border-style"
         RenderText {#text} at (0,0) size 740x36
           text run at (446,0) width 294: " was not set, and it should not be offset in any"
@@ -55,8 +55,8 @@ layer at (0,0) size 785x1432
       RenderBlock {P} at (0,488) size 769x42 [border: (3px double #800000)]
         RenderText {#text} at (3,3) size 543x18
           text run at (3,3) width 543: "This paragraph should have a medium maroon double border around it, even though "
-        RenderInline {CODE} at (545,5) size 95x15
-          RenderText {#text} at (545,5) size 95x15
+        RenderInline {CODE} at (545,5) size 95x16
+          RenderText {#text} at (545,5) size 95x16
             text run at (545,5) width 95: "border-width"
         RenderText {#text} at (3,3) size 755x36
           text run at (639,3) width 119: " was not explicitly"
@@ -131,8 +131,8 @@ layer at (0,0) size 785x1432
               RenderBlock {P} at (5,241) size 743x36
                 RenderText {#text} at (0,0) size 354x18
                   text run at (0,0) width 354: "This paragraph should have no border around it, as the "
-                RenderInline {TT} at (353,2) size 94x15
-                  RenderText {#text} at (353,2) size 94x15
+                RenderInline {TT} at (353,2) size 94x16
+                  RenderText {#text} at (353,2) size 94x16
                     text run at (353,2) width 94: "border-style"
                 RenderText {#text} at (0,0) size 740x36
                   text run at (446,0) width 294: " was not set, and it should not be offset in any"
@@ -140,8 +140,8 @@ layer at (0,0) size 785x1432
               RenderBlock {P} at (5,293) size 743x42 [border: (3px double #800000)]
                 RenderText {#text} at (3,3) size 543x18
                   text run at (3,3) width 543: "This paragraph should have a medium maroon double border around it, even though "
-                RenderInline {CODE} at (545,5) size 95x15
-                  RenderText {#text} at (545,5) size 95x15
+                RenderInline {CODE} at (545,5) size 95x16
+                  RenderText {#text} at (545,5) size 95x16
                     text run at (545,5) width 95: "border-width"
                 RenderText {#text} at (3,3) size 690x36
                   text run at (639,3) width 54: " was not"

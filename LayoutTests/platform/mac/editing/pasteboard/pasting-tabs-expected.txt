@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
           text run at (0,18) width 67: "preserved."
       RenderBlock (anonymous) at (0,52) size 784x32
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,84) size 784x18
+      RenderBlock {DIV} at (0,83) size 784x19
         RenderText {#text} at (0,0) size 39x18
           text run at (0,0) width 39: "Tab->"
         RenderInline {SPAN} at (38,0) size 26x18

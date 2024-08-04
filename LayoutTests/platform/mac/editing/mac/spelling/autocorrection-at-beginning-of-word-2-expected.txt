@@ -35,6 +35,6 @@ layer at (8,130) size 581x136 clip at (9,131) size 579x134
         text run at (0,0) width 45: "mesage "
       RenderText {#text} at (44,0) size 1x13
         text run at (44,0) width 1: " "
-      RenderText {#text} at (0,13) size 0x13
-        text run at (0,13) width 0: " "
+      RenderText {#text} at (0,12) size 0x14
+        text run at (0,12) width 0: " "
 caret: position 0 of child 2 {#text} of child 0 {DIV} of {#document-fragment} of child 5 {TEXTAREA} of body
