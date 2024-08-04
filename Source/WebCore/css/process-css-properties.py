@@ -793,7 +793,7 @@ class StyleProperty:
         if not self.codegen_properties.computable:
             return True
 
-        if self.codegen_properties.skip_builder and not self.codegen_properties.is_logical:
+        if self.codegen_properties.skip_builder and not self.codegen_properties.is_logical and not self.codegen_properties.cascade_alias:
             return True
 
         if self.codegen_properties.longhands is not None:

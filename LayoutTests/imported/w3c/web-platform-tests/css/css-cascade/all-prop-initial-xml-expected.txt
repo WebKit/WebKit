@@ -378,9 +378,6 @@ PASS z-index
 PASS zoom
 PASS -apple-pay-button-style
 PASS -apple-pay-button-type
-PASS -webkit-backdrop-filter
-PASS -webkit-background-clip
-PASS -webkit-background-origin
 PASS -webkit-border-horizontal-spacing
 PASS -webkit-border-vertical-spacing
 PASS -webkit-box-align
@@ -408,13 +405,10 @@ PASS -webkit-line-clamp
 PASS -webkit-line-grid
 PASS -webkit-line-snap
 PASS -webkit-locale
-PASS -webkit-mask-clip
-PASS -webkit-mask-composite
 PASS -webkit-mask-position-x
 PASS -webkit-mask-position-y
 PASS -webkit-nbsp-mode
 PASS -webkit-rtl-ordering
-PASS -webkit-text-combine
 PASS -webkit-text-fill-color
 PASS -webkit-text-security
 PASS -webkit-text-stroke-color

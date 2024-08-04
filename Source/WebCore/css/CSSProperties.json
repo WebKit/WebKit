@@ -1675,7 +1675,6 @@
                 }
             ],
             "codegen-properties": {
-                "related-property": "-webkit-background-clip",
                 "name-for-methods": "Clip",
                 "fill-layer-property": true,
                 "separator": " ",
@@ -1711,7 +1710,6 @@
         },
         "background-origin": {
             "codegen-properties": {
-                "related-property": "-webkit-background-origin",
                 "name-for-methods": "Origin",
                 "fill-layer-property": true,
                 "separator": " ",
@@ -4423,7 +4421,6 @@
         },
         "mask-clip": {
             "codegen-properties": {
-                "related-property": "-webkit-mask-clip",
                 "name-for-methods": "Clip",
                 "fill-layer-property": true,
                 "parser-grammar": "<single-mask-clip>#"
@@ -4435,7 +4432,6 @@
         },
         "mask-composite": {
             "codegen-properties": {
-                "related-property": "-webkit-mask-composite",
                 "name-for-methods": "Composite",
                 "fill-layer-property": true,
                 "parser-grammar": "<single-mask-composite>#"
@@ -6613,17 +6609,15 @@
         },
         "-webkit-background-clip": {
             "codegen-properties": {
-                "related-property": "background-clip",
-                "name-for-methods": "Clip",
-                "fill-layer-property": true,
+                "cascade-alias": "background-clip",
+                "skip-builder": true,
                 "parser-grammar": "<single-webkit-background-clip>#"
             }
         },
         "-webkit-background-origin": {
             "codegen-properties": {
-                "related-property": "background-origin",
-                "name-for-methods": "Origin",
-                "fill-layer-property": true,
+                "cascade-alias": "background-origin",
+                "skip-builder": true,
                 "parser-grammar": "<single-webkit-background-origin>#"
             }
         },
@@ -7414,8 +7408,8 @@
         },
         "-webkit-backdrop-filter": {
             "codegen-properties": {
-                "related-property": "backdrop-filter",
-                "conditional-converter": "FilterOperations",
+                "cascade-alias": "backdrop-filter",
+                "skip-builder": true,
                 "parser-function": "consumeFilter",
                 "parser-function-requires-context": true,
                 "parser-function-requires-additional-parameters": ["AllowedFilterFunctions::PixelFilters"],
@@ -7432,7 +7426,6 @@
         },
         "backdrop-filter": {
             "codegen-properties": {
-                "related-property": "-webkit-backdrop-filter",
                 "conditional-converter": "FilterOperations",
                 "parser-function": "consumeFilter",
                 "parser-function-requires-context": true,
@@ -8001,9 +7994,8 @@
         },
         "-webkit-mask-clip": {
             "codegen-properties": {
-                "related-property": "mask-clip",
-                "name-for-methods": "Clip",
-                "fill-layer-property": true,
+                "cascade-alias": "mask-clip",
+                "skip-builder": true,
                 "parser-grammar": "<single-webkit-mask-clip>#"
             },
             "status": {
@@ -8016,9 +8008,8 @@
         },
         "-webkit-mask-composite": {
             "codegen-properties": {
-                "related-property": "mask-composite",
-                "name-for-methods": "Composite",
-                "fill-layer-property": true,
+                "cascade-alias": "mask-composite",
+                "skip-builder": true,
                 "parser-grammar": "<single-webkit-mask-composite>#"
             },
             "status": {
@@ -8202,7 +8193,8 @@
                 "horizontal"
             ],
             "codegen-properties": {
-                "related-property": "text-combine-upright",
+                "cascade-alias": "text-combine-upright",
+                "skip-builder": true,
                 "aliases": [
                     "-epub-text-combine"
                 ],
@@ -8220,7 +8212,6 @@
                 "all"
             ],
             "codegen-properties": {
-                "related-property": "-webkit-text-combine",
                 "name-for-methods": "TextCombine",
                 "parser-grammar": "<<values>>"
             },

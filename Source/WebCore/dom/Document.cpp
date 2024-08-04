@@ -10201,7 +10201,12 @@ const FixedVector<CSSPropertyID>& Document::exposedComputedCSSPropertyIDs()
     if (!m_exposedComputedCSSPropertyIDs.has_value()) {
         std::remove_const_t<decltype(computedPropertyIDs)> exposed;
         auto end = std::copy_if(computedPropertyIDs.begin(), computedPropertyIDs.end(), exposed.begin(), [&](auto property) {
-            return isExposed(property, m_settings.ptr());
+            if (!isExposed(property, m_settings.ptr()))
+                return false;
+            // If the standard property is exposed no need to expose the alias.
+            if (auto standard = cascadeAliasProperty(property); standard != property && isExposed(standard, m_settings.ptr()))
+                return false;
+            return true;
         });
         m_exposedComputedCSSPropertyIDs.emplace(exposed.begin(), end);
     }
