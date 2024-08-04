@@ -55,4 +55,9 @@ ResourceError fileDoesNotExistError(const ResourceResponse& response)
     return ResourceError(createNSError(NSURLErrorDomain, NSURLErrorFileDoesNotExist, response.url()).get());
 }
 
+ResourceError decodeError(const URL& url)
+{
+    return ResourceError(createNSError(NSURLErrorDomain, NSURLErrorCannotDecodeContentData, url).get());
+}
+
 } // namespace WebKit

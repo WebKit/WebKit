@@ -99,6 +99,11 @@ ResourceError fileDoesNotExistError(const ResourceResponse& response)
 {
     return ResourceError(API::Error::webKitNetworkErrorDomain(), API::Error::Network::FileDoesNotExist, response.url(), WEB_UI_STRING("File does not exist", "The requested file doesn't exist"));
 }
+
+ResourceError decodeError(const URL&)
+{
+    return { };
+}
 #endif
 
 ResourceError httpsUpgradeRedirectLoopError(const ResourceRequest& request)
