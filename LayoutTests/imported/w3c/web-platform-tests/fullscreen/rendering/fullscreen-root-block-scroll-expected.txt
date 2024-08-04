@@ -1,6 +1,4 @@
 This page tests that entering fullscreen doesn't adjust the scroll offset
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT fullscreen root block scrolling Test timed out
+PASS fullscreen root block scrolling
 

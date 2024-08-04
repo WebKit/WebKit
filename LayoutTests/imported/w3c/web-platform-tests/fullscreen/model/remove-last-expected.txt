@@ -1,0 +1,5 @@
+
+FAIL Remove the last element on the fullscreen element stack assert_equals: expected Document node with 2 children but got Element node <div id="first">
+
+</div>
+

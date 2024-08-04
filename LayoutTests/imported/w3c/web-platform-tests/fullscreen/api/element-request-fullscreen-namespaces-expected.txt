@@ -1,5 +1,5 @@
 
-FAIL requestFullscreen() fails for an element in null namespace assert_unreached: fullscreenchange event Reached unreachable code
+FAIL requestFullscreen() fails for an element in null namespace assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL requestFullscreen() fails for an element in https://unknown.namespace namespace promise_rejects_js: function "function() { throw e }" threw object "Error: element click intercepted error" ("Error") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")

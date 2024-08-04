@@ -1462,23 +1462,6 @@ bool Quirks::shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFull
 #endif
 }
 
-bool Quirks::shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk() const
-{
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-    // This quirk delay the "webkitstartfullscreen" and "fullscreenchange" event when a video exits picture-in-picture
-    // to fullscreen.
-    if (!needsQuirks())
-        return false;
-
-    if (!m_shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk)
-        m_shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk = isDomain("bbc.com"_s);
-
-    return *m_shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk;
-#else
-    return false;
-#endif
-}
-
 // teams.live.com rdar://88678598
 // teams.microsoft.com rdar://90434296
 bool Quirks::shouldAllowNavigationToCustomProtocolWithoutUserGesture(StringView protocol, const SecurityOriginData& requesterOrigin)
