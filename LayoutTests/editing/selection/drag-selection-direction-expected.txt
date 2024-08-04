@@ -1,0 +1,14 @@
+PASS testSelectionDirection('mac', 'first', 'second') is "forward"
+PASS testSelectionDirection('windows', 'first', 'second') is "forward"
+PASS testSelectionDirection('unix', 'first', 'second') is "forward"
+PASS testSelectionDirection('mac', 'second', 'first') is "backward"
+PASS testSelectionDirection('windows', 'second', 'first') is "backward"
+PASS testSelectionDirection('unix', 'second', 'first') is "backward"
+PASS testSelectionDirection('mac', 'first', 'first') is "none"
+FAIL testSelectionDirection('windows', 'first', 'first') should be none. Was forward.
+FAIL testSelectionDirection('unix', 'first', 'first') should be none. Was forward.
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

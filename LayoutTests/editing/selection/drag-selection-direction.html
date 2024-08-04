@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+function moveToElement(id)
+{
+    let rect = document.getElementById(id).getBoundingClientRect()
+    let x = rect.x + rect.width / 2
+    let y = rect.y + rect.height / 2
+    eventSender.mouseMoveTo(x, y)
+}
+
+function testSelectionDirection(behavior, start, end)
+{
+    internals.settings.setEditingBehavior(behavior);
+    moveToElement(start)
+    eventSender.mouseDown()
+    moveToElement(end)
+    eventSender.mouseUp()
+    return window.getSelection().direction
+}
+
+function runTest()
+{
+    testRunner.dumpAsText()
+
+    shouldBeEqualToString("testSelectionDirection('mac', 'first', 'second')", "forward")
+    shouldBeEqualToString("testSelectionDirection('windows', 'first', 'second')", "forward")
+    shouldBeEqualToString("testSelectionDirection('unix', 'first', 'second')", "forward")
+
+    shouldBeEqualToString("testSelectionDirection('mac', 'second', 'first')", "backward")
+    shouldBeEqualToString("testSelectionDirection('windows', 'second', 'first')", "backward")
+    shouldBeEqualToString("testSelectionDirection('unix', 'second', 'first')", "backward")
+
+    shouldBeEqualToString("testSelectionDirection('mac', 'first', 'first')", "none")
+    shouldBeEqualToString("testSelectionDirection('windows', 'first', 'first')", "none")
+    shouldBeEqualToString("testSelectionDirection('unix', 'first', 'first')", "none")
+
+    let element = document.getElementById("test")
+    element.parentNode.removeChild(element)
+}
+
+var successfullyParsed = true
+
+</script></head>
+
+<body onload="runTest()">
+<div id="test"><span id="first">first</span> <span id="second">second</span></div>
+</body>

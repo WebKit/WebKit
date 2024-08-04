@@ -250,7 +250,7 @@ void DeleteSelectionCommand::setStartingSelectionOnSmartDelete(const Position& s
         newBase = end;
         newExtent = start;        
     }
-    setStartingSelection(VisibleSelection(newBase, newExtent, startingSelection().isDirectional())); 
+    setStartingSelection(VisibleSelection(newBase, newExtent, startingSelection().directionality()));
 }
     
 bool DeleteSelectionCommand::shouldSmartDeleteParagraphSpacers()
@@ -1026,7 +1026,7 @@ void DeleteSelectionCommand::doApply()
     // want to replace it with a placeholder BR!
     if (handleSpecialCaseBRDelete()) {
         calculateTypingStyleAfterDelete();
-        setEndingSelection(VisibleSelection(m_endingPosition, affinity, endingSelection().isDirectional()));
+        setEndingSelection(VisibleSelection(m_endingPosition, affinity, endingSelection().directionality()));
         clearTransientState();
         rebalanceWhitespace();
         return;
@@ -1069,7 +1069,7 @@ void DeleteSelectionCommand::doApply()
     if (!originalString.isEmpty())
         document->editor().deletedAutocorrectionAtPosition(m_endingPosition, originalString);
 
-    setEndingSelection(VisibleSelection(VisiblePosition(m_endingPosition, affinity), endingSelection().isDirectional()));
+    setEndingSelection(VisibleSelection(VisiblePosition(m_endingPosition, affinity), endingSelection().directionality()));
     clearTransientState();
 }
 

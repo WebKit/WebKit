@@ -76,7 +76,7 @@ void MoveSelectionCommand::doApply()
 
     cleanupAfterDeletion(pos);
 
-    setEndingSelection(VisibleSelection(pos, endingSelection().affinity(), endingSelection().isDirectional()));
+    setEndingSelection(VisibleSelection(pos, endingSelection().affinity(), endingSelection().directionality()));
     setStartingSelection(endingSelection());
     if (!pos.anchorNode()->isConnected()) {
         // Document was modified out from under us.

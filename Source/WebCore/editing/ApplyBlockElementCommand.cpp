@@ -71,7 +71,7 @@ void ApplyBlockElementCommand::doApply()
     // margin/padding, but not others.  We should make the gap painting more consistent and 
     // then use a left margin/padding rule here.
     if (visibleEnd != visibleStart && isStartOfParagraph(visibleEnd)) {
-        VisibleSelection newSelection(visibleStart, visibleEnd.previous(CannotCrossEditingBoundary), endingSelection().isDirectional());
+        VisibleSelection newSelection(visibleStart, visibleEnd.previous(CannotCrossEditingBoundary), endingSelection().directionality());
         if (newSelection.isNone())
             return;
         setEndingSelection(newSelection);
@@ -106,9 +106,9 @@ void ApplyBlockElementCommand::doApply()
         if (start.isNotNull() && end.isNull())
             end = lastPositionInNode(endScope.get());
         if (start.isNotNull() && end.isNotNull()) {
-            VisibleSelection selection { start, end, endingSelection().isDirectional() };
+            VisibleSelection selection { start, end, endingSelection().directionality() };
             // Use canonicalized positions for start & end.
-            setEndingSelection(VisibleSelection(selection.start(), selection.end(), selection.isDirectional()));
+            setEndingSelection(VisibleSelection(selection.start(), selection.end(), selection.directionality()));
         }
     }
 }
@@ -123,7 +123,7 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
         insertNodeAt(blockquote.copyRef(), start);
         auto placeholder = HTMLBRElement::create(protectedDocument());
         appendNode(placeholder.copyRef(), WTFMove(blockquote));
-        setEndingSelection(VisibleSelection(positionBeforeNode(placeholder.ptr()), Affinity::Downstream, endingSelection().isDirectional()));
+        setEndingSelection(VisibleSelection(positionBeforeNode(placeholder.ptr()), Affinity::Downstream, endingSelection().directionality()));
         return;
     }
 

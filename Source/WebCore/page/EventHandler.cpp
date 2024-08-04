@@ -742,7 +742,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
             else
                 newSelection = VisibleSelection(start, pos);
         } else {
-            if (newSelection.isDirectional()) {
+            if (newSelection.directionality() == Directionality::Strong) {
                 RefPtr baseNode = newSelection.isBaseFirst() ? newSelection.base().computeNodeAfterPosition() : newSelection.base().computeNodeBeforePosition();
                 if (!baseNode)
                     baseNode = newSelection.base().containerNode();
@@ -1042,11 +1042,10 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
     // Restart the selection if this is the first mouse move. This work is usually
     // done in handleMousePressEvent, but not if the mouse press was on an existing selection.
     VisibleSelection oldSelection = m_frame->selection().selection();
-    auto newSelection = oldSelection;
 
     // Special case to limit selection to the containing block for SVG text.
     // FIXME: Isn't there a better non-SVG-specific way to do this?
-    if (RefPtr selectionBaseNode = newSelection.base().deprecatedNode()) {
+    if (RefPtr selectionBaseNode = oldSelection.base().deprecatedNode()) {
         if (RenderObject* selectionBaseRenderer = selectionBaseNode->renderer()) {
             if (selectionBaseRenderer->isRenderSVGText()) {
                 if (target->renderer()->containingBlock() != selectionBaseRenderer->containingBlock())
@@ -1060,6 +1059,8 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
         m_mouseDownMayStartSelect = false;
         return;
     }
+
+    auto newSelection = oldSelection;
 
     bool shouldSetDragStartSelection = false;
     if (m_selectionInitiationState != ExtendedSelection) {
@@ -1077,14 +1078,18 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
         // Reset base for user select all when base is inside user-select-all area and extent < base.
         if (rootUserSelectAllForMousePressNode && target->renderer()->positionForPoint(hitTestResult.localPoint(), HitTestSource::User, nullptr) < m_mousePressNode->renderer()->positionForPoint(m_dragStartPosition, HitTestSource::User, nullptr))
             newSelection.setBase(positionAfterNode(rootUserSelectAllForMousePressNode.get()).downstream(CanCrossEditingBoundary));
-        
+
+        Position newExtent;
         RefPtr rootUserSelectAllForTarget = Position::rootUserSelectAllForNode(target.get());
         if (rootUserSelectAllForTarget && m_mousePressNode->renderer() && target->renderer()->positionForPoint(hitTestResult.localPoint(), HitTestSource::User, nullptr) < m_mousePressNode->renderer()->positionForPoint(m_dragStartPosition, HitTestSource::User, nullptr))
-            newSelection.setExtent(positionBeforeNode(rootUserSelectAllForTarget.get()).upstream(CanCrossEditingBoundary));
+            newExtent = positionBeforeNode(rootUserSelectAllForTarget.get()).upstream(CanCrossEditingBoundary);
         else if (rootUserSelectAllForTarget && m_mousePressNode->renderer())
-            newSelection.setExtent(positionAfterNode(rootUserSelectAllForTarget.get()).downstream(CanCrossEditingBoundary));
+            newExtent = positionAfterNode(rootUserSelectAllForTarget.get()).downstream(CanCrossEditingBoundary);
         else
-            newSelection.setExtent(targetPosition);
+            newExtent = targetPosition.deepEquivalent();
+        if (newSelection.directionality() == Directionality::None && newExtent != newSelection.extent() && m_frame->selection().granularity() == TextGranularity::CharacterGranularity)
+            newSelection.setDirectionality(Directionality::Weak);
+        newSelection.setExtent(newExtent);
     }
 
     if (m_frame->selection().granularity() != TextGranularity::CharacterGranularity) {
@@ -1108,6 +1113,7 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
     if (oldSelection != newSelection && ImageOverlay::isOverlayText(newSelection.start().protectedContainerNode().get()) && ImageOverlay::isOverlayText(newSelection.end().protectedContainerNode().get()))
         invalidateClick();
 }
+
 #endif // ENABLE(DRAG_SUPPORT)
 
 void EventHandler::lostMouseCapture()
