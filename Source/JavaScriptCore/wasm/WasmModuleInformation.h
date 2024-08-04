@@ -81,8 +81,8 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     uint32_t importExceptionCount() const { return importExceptionTypeIndices.size(); }
     uint32_t internalExceptionCount() const { return internalExceptionTypeIndices.size(); }
 
-    // Currently, our wasm implementation allows only one memory and table.
-    // If we need to remove this limitation, we would have MemoryInformation and TableInformation in the Vectors.
+    // Currently, our wasm implementation allows only one memory.
+    // If we need to remove this limitation, we would have MemoryInformation in the Vectors.
     uint32_t memoryCount() const { return memory ? 1 : 0; }
     uint32_t tableCount() const { return tables.size(); }
     uint32_t elementCount() const { return elements.size(); }
