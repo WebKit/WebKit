@@ -10767,9 +10767,8 @@
             }
         },
         "<page-size>": {
-            "grammar": "A5 | A4 | A3 | B5 | B4 | letter | legal | ledger",
+            "grammar": "A5 | A4 | A3 | B5 | B4 | jis-B5 | jis-B4 | letter | legal | ledger",
             "exported": true,
-            "comment": "FIXME: missing JIS-B5 and JIS-B4",
             "specification": {
                 "category": "css-page",
                 "url": "https://www.w3.org/TR/css-page-3/#typedef-page-size-page-size"

@@ -585,6 +585,10 @@ static bool pageSizeFromName(const CSSPrimitiveValue& pageSizeName, const CSSPri
     static NeverDestroyed<Length> b5Height(mmLength(250));
     static NeverDestroyed<Length> b4Width(mmLength(250));
     static NeverDestroyed<Length> b4Height(mmLength(353));
+    static NeverDestroyed<Length> jisB5Width(mmLength(182));
+    static NeverDestroyed<Length> jisB5Height(mmLength(257));
+    static NeverDestroyed<Length> jisB4Width(mmLength(257));
+    static NeverDestroyed<Length> jisB4Height(mmLength(364));
     static NeverDestroyed<Length> letterWidth(inchLength(8.5));
     static NeverDestroyed<Length> letterHeight(inchLength(11));
     static NeverDestroyed<Length> legalWidth(inchLength(8.5));
@@ -612,6 +616,14 @@ static bool pageSizeFromName(const CSSPrimitiveValue& pageSizeName, const CSSPri
     case CSSValueB4:
         width = b4Width;
         height = b4Height;
+        break;
+    case CSSValueJisB5:
+        width = jisB5Width;
+        height = jisB5Height;
+        break;
+    case CSSValueJisB4:
+        width = jisB4Width;
+        height = jisB4Height;
         break;
     case CSSValueLetter:
         width = letterWidth;

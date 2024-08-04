@@ -1197,11 +1197,6 @@ RefPtr<CSSValue> consumeCounterSet(CSSParserTokenRange& range)
     return consumeCounter(range, 0);
 }
 
-static RefPtr<CSSValue> consumePageSize(CSSParserTokenRange& range)
-{
-    return consumeIdent<CSSValueA3, CSSValueA4, CSSValueA5, CSSValueB4, CSSValueB5, CSSValueLedger, CSSValueLegal, CSSValueLetter>(range);
-}
-
 RefPtr<CSSValue> consumeSize(CSSParserTokenRange& range, CSSParserMode mode)
 {
     if (consumeIdentRaw<CSSValueAuto>(range))
@@ -1214,10 +1209,10 @@ RefPtr<CSSValue> consumeSize(CSSParserTokenRange& range, CSSParserMode mode)
         return CSSValuePair::create(width.releaseNonNull(), height.releaseNonNull());
     }
 
-    auto pageSize = consumePageSize(range);
+    auto pageSize = CSSPropertyParsing::consumePageSize(range);
     auto orientation = consumeIdent<CSSValuePortrait, CSSValueLandscape>(range);
     if (!pageSize)
-        pageSize = consumePageSize(range);
+        pageSize = CSSPropertyParsing::consumePageSize(range);
     if (!orientation && !pageSize)
         return nullptr;
     if (pageSize && !orientation)
