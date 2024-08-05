@@ -93,14 +93,15 @@ std::optional<FilterOperations> CanvasRenderingContext2D::setFilterStringWithout
     if (!document->settings().canvasFiltersEnabled())
         return std::nullopt;
 
+    auto& parserContext = canvas().cssParserContext();
+    auto allowedFilterFunctions = CSSPropertyParserHelpers::AllowedFilterFunctions::PixelFilters;
+    auto allowedColorTypes = canvasAllowedColorTypes(document.ptr());
+
     document->updateStyleIfNeeded();
-
     const auto* style = canvas().computedStyle();
-    if (!style)
-        return std::nullopt;
+    CSSToLengthConversionData conversionData = style ? CSSToLengthConversionData(*style, nullptr, nullptr, nullptr, nullptr) : CSSToLengthConversionData();
 
-    auto parserContext = CSSParserContext(strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
-    return CSSPropertyParserHelpers::parseFilterValueListOrNoneRaw(filterString, parserContext, CSSPropertyParserHelpers::AllowedFilterFunctions::PixelFilters, document, const_cast<RenderStyle&>(*style));
+    return CSSPropertyParserHelpers::parseFilterValueListOrNoneRaw(filterString, parserContext, allowedFilterFunctions, allowedColorTypes, conversionData, document);
 }
 
 RefPtr<Filter> CanvasRenderingContext2D::createFilter(const FloatRect& bounds) const
@@ -112,16 +113,12 @@ RefPtr<Filter> CanvasRenderingContext2D::createFilter(const FloatRect& bounds) c
     if (!context)
         return nullptr;
 
-    CheckedPtr renderer = canvas().renderer();
-    if (!renderer)
-        return nullptr;
-
     RefPtr page = canvas().document().page();
     if (!page)
         return nullptr;
 
     auto preferredFilterRenderingModes = page->preferredFilterRenderingModes();
-    auto filter = CSSFilter::create(*renderer, state().filterOperations, preferredFilterRenderingModes, { 1, 1 }, bounds, *context);
+    auto filter = CSSFilter::create(state().filterOperations, preferredFilterRenderingModes, { 1, 1 }, canvas(), bounds, *context);
     if (!filter)
         return nullptr;
 
@@ -136,11 +133,7 @@ IntOutsets CanvasRenderingContext2D::calculateFilterOutsets(const FloatRect& bou
     if (state().filterOperations.isEmpty())
         return { };
 
-    CheckedPtr renderer = canvas().renderer();
-    if (!renderer)
-        return { };
-
-    return CSSFilter::calculateOutsets(*renderer, state().filterOperations, bounds);
+    return CSSFilter::calculateOutsets(state().filterOperations, canvas(), bounds);
 }
 
 void CanvasRenderingContext2D::drawFocusIfNeeded(Element& element)

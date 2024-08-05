@@ -1,0 +1,35 @@
+<style>
+     canvas {
+         width: 700px;
+         height: 400px;
+     }
+ </style>
+ <body>
+    <h3>This tests the layer with filter is drawn to the detached canvas.</h3>
+    <canvas id="canvas"></canvas>
+    <script>
+        const detachedCanvas = document.createElement('canvas');
+        detachedCanvas.width  = 700;
+        detachedCanvas.height = 400;
+        const detachedContext = detachedCanvas.getContext("2d");
+
+        detachedContext.filter = 'drop-shadow(10px 10px 0 rgb(128, 128, 128))';
+
+        detachedContext.beginLayer();
+            detachedContext.fillStyle = 'Beige';
+            detachedContext.fillRect(120, 120, 200, 200);
+            detachedContext.fillRect(20, 20, 200, 200);
+
+            detachedContext.fillStyle = 'Salmon';
+            detachedContext.fillRect(480, 120, 200, 200);
+            detachedContext.fillRect(360, 20, 200, 200);
+        detachedContext.endLayer();
+
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = 700;
+        canvas.height = 400;
+
+        context.drawImage(detachedCanvas, 0, 0);
+    </script>
+</body>

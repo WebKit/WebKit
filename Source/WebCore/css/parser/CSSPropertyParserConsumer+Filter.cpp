@@ -366,7 +366,7 @@ RefPtr<CSSValue> consumeFilterValueListOrNone(CSSParserTokenRange& range, const 
     return consumeFilterValueList(range, context, allowedFunctions);
 }
 
-std::optional<FilterOperations> parseFilterValueListOrNoneRaw(const String& string, const CSSParserContext& context, AllowedFilterFunctions allowedFunctions, const Document& document, RenderStyle& style)
+RefPtr<CSSValue> consumeFilterValueListOrNone(const String& string, const CSSParserContext& context, AllowedFilterFunctions allowedFunctions)
 {
     CSSTokenizer tokenizer(string);
     CSSParserTokenRange range(tokenizer.tokenRange());
@@ -376,16 +376,33 @@ std::optional<FilterOperations> parseFilterValueListOrNoneRaw(const String& stri
 
     auto parsedValue = consumeFilterValueListOrNone(range, context, allowedFunctions);
     if (!parsedValue)
-        return { };
+        return nullptr;
 
     // Handle trailing whitespace.
     range.consumeWhitespace();
 
     if (!range.atEnd())
+        return nullptr;
+
+    return parsedValue;
+}
+
+std::optional<FilterOperations> parseFilterValueListOrNoneRaw(const String& string, const CSSParserContext& context, AllowedFilterFunctions allowedFunctions, const CSSToLengthConversionData& conversionData, const Document& document, RenderStyle& style)
+{
+    auto parsedValue = consumeFilterValueListOrNone(string, context, allowedFunctions);
+    if (!parsedValue)
         return { };
 
-    CSSToLengthConversionData conversionData { style, nullptr, nullptr, nullptr };
-    return Style::createFilterOperations(document, style, conversionData, *parsedValue);
+    return Style::createFilterOperations(*parsedValue, conversionData, document, style);
+}
+
+std::optional<FilterOperations> parseFilterValueListOrNoneRaw(const String& string, const CSSParserContext& context, AllowedFilterFunctions allowedFunctions, AllowedColorTypes allowedColorTypes, const CSSToLengthConversionData& conversionData, const Document& document)
+{
+    auto parsedValue = consumeFilterValueListOrNone(string, context, allowedFunctions);
+    if (!parsedValue)
+        return { };
+
+    return Style::createFilterOperations(*parsedValue, context, allowedColorTypes, conversionData, document);
 }
 
 } // namespace CSSPropertyParserHelpers

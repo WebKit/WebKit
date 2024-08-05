@@ -135,7 +135,7 @@ RefPtr<StyleImage> BuilderState::createStyleImage(const CSSValue& value)
 
 FilterOperations BuilderState::createFilterOperations(const CSSValue& inValue)
 {
-    return WebCore::Style::createFilterOperations(document(), m_style, m_cssToLengthConversionData, inValue);
+    return WebCore::Style::createFilterOperations(inValue, m_cssToLengthConversionData, document(), m_style);
 }
 
 bool BuilderState::isColorFromPrimitiveValueDerivedFromElement(const CSSPrimitiveValue& value)

@@ -40,12 +40,14 @@ class CSSUnresolvedColor;
 
 struct CSSParserContext;
 
+using AllowedColorTypes = OptionSet<StyleColor::CSSColorType>;
+
 namespace CSSPropertyParserHelpers {
 
 // Options to augment color parsing.
 struct CSSColorParsingOptions {
     bool acceptQuirkyColors = false;
-    OptionSet<StyleColor::CSSColorType> allowedColorTypes = { StyleColor::CSSColorType::Absolute, StyleColor::CSSColorType::Current, StyleColor::CSSColorType::System };
+    AllowedColorTypes allowedColorTypes = { StyleColor::CSSColorType::Absolute, StyleColor::CSSColorType::Current, StyleColor::CSSColorType::System };
 };
 
 // MARK: <color> consuming (unresolved)

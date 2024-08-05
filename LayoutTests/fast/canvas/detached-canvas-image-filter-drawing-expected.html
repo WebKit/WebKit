@@ -1,0 +1,38 @@
+<style>
+     canvas {
+         width: 300px;
+         height: 300px;
+     }
+ </style>
+ <body>
+    <h3>This tests the filter is drawn to the detached canvas.</h3>
+    <canvas id="canvas"></canvas>
+    <script>
+        function createPatternCanvas() {
+            const patternCanvas = document.createElement('canvas');
+            patternCanvas.width = 80;
+            patternCanvas.height = 80;
+            const patternCtx = patternCanvas.getContext('2d');
+            patternCtx.fillStyle = '#A00';
+            patternCtx.fillRect(0, 0, 40, 40);
+            patternCtx.fillStyle = '#0A0';
+            patternCtx.fillRect(40, 0, 40, 40);
+            patternCtx.fillStyle = '#00A';
+            patternCtx.fillRect(0, 40, 40, 40);
+            patternCtx.fillStyle = "#AA0";
+            patternCtx.fillRect(40, 40, 40, 40);
+            return patternCanvas;
+        }
+
+        const context = canvas.getContext('2d');
+        canvas.width = 300;
+        canvas.height = 300;
+
+        context.filter = 'drop-shadow(40px 40px 0 #666)';
+        const pattern = createPatternCanvas();
+
+        context.drawImage(pattern, 0, 0);
+        context.drawImage(pattern, 80, 80);
+        context.drawImage(pattern, 160, 160);
+    </script>
+</body>

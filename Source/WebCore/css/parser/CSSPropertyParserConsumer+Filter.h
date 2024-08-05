@@ -45,9 +45,11 @@ enum class AllowedFilterFunctions : bool { PixelFilters, ColorFilters };
 // MARK: <filter> consuming (CSSValue)
 RefPtr<CSSValue> consumeFilterValueList(CSSParserTokenRange&, const CSSParserContext&, AllowedFilterFunctions);
 RefPtr<CSSValue> consumeFilterValueListOrNone(CSSParserTokenRange&, const CSSParserContext&, AllowedFilterFunctions);
+RefPtr<CSSValue> consumeFilterValueListOrNone(const String&, const CSSParserContext&, AllowedFilterFunctions);
 
 // MARK: <filter> parsing (raw)
-std::optional<FilterOperations> parseFilterValueListOrNoneRaw(const String&, const CSSParserContext&, AllowedFilterFunctions, const Document&, RenderStyle&);
+std::optional<FilterOperations> parseFilterValueListOrNoneRaw(const String&, const CSSParserContext&, AllowedFilterFunctions, const CSSToLengthConversionData&, const Document&, RenderStyle&);
+std::optional<FilterOperations> parseFilterValueListOrNoneRaw(const String&, const CSSParserContext&, AllowedFilterFunctions, AllowedColorTypes, const CSSToLengthConversionData&, const Document&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore
