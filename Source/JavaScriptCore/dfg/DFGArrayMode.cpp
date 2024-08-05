@@ -662,134 +662,6 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& va
     return false;
 }
 
-const char* arrayActionToString(Array::Action action)
-{
-    switch (action) {
-    case Array::Read:
-        return "Read";
-    case Array::Write:
-        return "Write";
-    default:
-        return "Unknown!";
-    }
-}
-
-const char* arrayTypeToString(Array::Type type)
-{
-    switch (type) {
-    case Array::SelectUsingPredictions:
-        return "SelectUsingPredictions";
-    case Array::SelectUsingArguments:
-        return "SelectUsingArguments";
-    case Array::Unprofiled:
-        return "Unprofiled";
-    case Array::Generic:
-        return "Generic";
-    case Array::ForceExit:
-        return "ForceExit";
-    case Array::String:
-        return "String";
-    case Array::Undecided:
-        return "Undecided";
-    case Array::Int32:
-        return "Int32";
-    case Array::Double:
-        return "Double";
-    case Array::Contiguous:
-        return "Contiguous";
-    case Array::ArrayStorage:
-        return "ArrayStorage";
-    case Array::SlowPutArrayStorage:
-        return "SlowPutArrayStorage";
-    case Array::DirectArguments:
-        return "DirectArguments";
-    case Array::ScopedArguments:
-        return "ScopedArguments";
-    case Array::Int8Array:
-        return "Int8Array";
-    case Array::Int16Array:
-        return "Int16Array";
-    case Array::Int32Array:
-        return "Int32Array";
-    case Array::Uint8Array:
-        return "Uint8Array";
-    case Array::Uint8ClampedArray:
-        return "Uint8ClampedArray";
-    case Array::Uint16Array:
-        return "Uint16Array";
-    case Array::Uint32Array:
-        return "Uint32Array";
-    case Array::Float32Array:
-        return "Float32Array";
-    case Array::Float64Array:
-        return "Float64Array";
-    case Array::BigInt64Array:
-        return "BigInt64Array";
-    case Array::BigUint64Array:
-        return "BigUint64Array";
-    case Array::AnyTypedArray:
-        return "AnyTypedArray";
-    default:
-        // Better to return something then it is to crash. Remember, this method
-        // is being called from our main diagnostic tool, the IR dumper. It's like
-        // a stack trace. So if we get here then probably something has already
-        // gone wrong.
-        return "Unknown!";
-    }
-}
-
-const char* arrayClassToString(Array::Class arrayClass)
-{
-    switch (arrayClass) {
-    case Array::Array:
-        return "Array";
-    case Array::OriginalArray:
-        return "OriginalArray";
-    case Array::OriginalNonCopyOnWriteArray:
-        return "OriginalNonCopyOnWriteArray";
-    case Array::OriginalCopyOnWriteArray:
-        return "OriginalCopyOnWriteArray";
-    case Array::NonArray:
-        return "NonArray";
-    case Array::OriginalNonArray:
-        return "OriginalNonArray";
-    case Array::PossiblyArray:
-        return "PossiblyArray";
-    default:
-        return "Unknown!";
-    }
-}
-
-const char* arraySpeculationToString(Array::Speculation speculation)
-{
-    switch (speculation) {
-    case Array::InBoundsSaneChain:
-        return "InBoundsSaneChain";
-    case Array::InBounds:
-        return "InBounds";
-    case Array::ToHole:
-        return "ToHole";
-    case Array::OutOfBounds:
-        return "OutOfBounds";
-    case Array::OutOfBoundsSaneChain:
-        return "OutOfBoundsSaneChain";
-    default:
-        return "Unknown!";
-    }
-}
-
-const char* arrayConversionToString(Array::Conversion conversion)
-{
-    switch (conversion) {
-    case Array::AsIs:
-        return "AsIs";
-    case Array::Convert:
-        return "Convert";
-    default:
-        return "Unknown!";
-    }
-}
-
 IndexingType toIndexingShape(Array::Type type)
 {
     switch (type) {
@@ -933,29 +805,34 @@ void ArrayMode::dump(PrintStream& out) const
 
 namespace WTF {
 
+// Better to return something then it is to crash. Remember, these methods
+// are being called from our main diagnostic tool, the IR dumper. It's like
+// a stack trace. So if we get here then probably something has already
+// gone wrong.
+
 void printInternal(PrintStream& out, JSC::DFG::Array::Action action)
 {
-    out.print(JSC::DFG::arrayActionToString(action));
+    out.print(EnumDumpWithDefault(action, "Unknown!"));
 }
 
 void printInternal(PrintStream& out, JSC::DFG::Array::Type type)
 {
-    out.print(JSC::DFG::arrayTypeToString(type));
+    out.print(EnumDumpWithDefault(type, "Unknown!"));
 }
 
 void printInternal(PrintStream& out, JSC::DFG::Array::Class arrayClass)
 {
-    out.print(JSC::DFG::arrayClassToString(arrayClass));
+    out.print(EnumDumpWithDefault(arrayClass, "Unknown!"));
 }
 
 void printInternal(PrintStream& out, JSC::DFG::Array::Speculation speculation)
 {
-    out.print(JSC::DFG::arraySpeculationToString(speculation));
+    out.print(EnumDumpWithDefault(speculation, "Unknown!"));
 }
 
 void printInternal(PrintStream& out, JSC::DFG::Array::Conversion conversion)
 {
-    out.print(JSC::DFG::arrayConversionToString(conversion));
+    out.print(EnumDumpWithDefault(conversion, "Unknown!"));
 }
 
 } // namespace WTF

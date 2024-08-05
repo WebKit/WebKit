@@ -32,74 +32,6 @@
 
 namespace JSC {
 
-ASCIILiteral exitKindToString(ExitKind kind)
-{
-    switch (kind) {
-    case ExitKindUnset:
-        return "Unset"_s;
-    case BadType:
-        return "BadType"_s;
-    case BadConstantValue:
-        return "BadConstantValue"_s;
-    case BadIdent:
-        return "BadIdent"_s;
-    case BadExecutable:
-        return "BadExecutable"_s;
-    case BadCache:
-        return "BadCache"_s;
-    case BadConstantCache:
-        return "BadConstantCache"_s;
-    case BadIndexingType:
-        return "BadIndexingType"_s;
-    case BadTypeInfoFlags:
-        return "BadTypeInfoFlags"_s;
-    case Overflow:
-        return "Overflow"_s;
-    case NegativeZero:
-        return "NegativeZero"_s;
-    case NegativeIndex:
-        return "NegativeIndex"_s;
-    case Int52Overflow:
-        return "Int52Overflow"_s;
-    case StoreToHole:
-        return "StoreToHole"_s;
-    case LoadFromHole:
-        return "LoadFromHole"_s;
-    case OutOfBounds:
-        return "OutOfBounds"_s;
-    case InadequateCoverage:
-        return "InadequateCoverage"_s;
-    case ArgumentsEscaped:
-        return "ArgumentsEscaped"_s;
-    case ExoticObjectMode:
-        return "ExoticObjectMode"_s;
-    case VarargsOverflow:
-        return "VarargsOverflow"_s;
-    case TDZFailure:
-        return "TDZFailure"_s;
-    case HoistingFailed:
-        return "HoistingFailed"_s;
-    case Uncountable:
-        return "Uncountable"_s;
-    case UncountableInvalidation:
-        return "UncountableInvalidation"_s;
-    case WatchdogTimerFired:
-        return "WatchdogTimerFired"_s;
-    case DebuggerEvent:
-        return "DebuggerEvent"_s;
-    case ExceptionCheck:
-        return "ExceptionCheck"_s;
-    case GenericUnwind:
-        return "GenericUnwind"_s;
-    case BigInt32Overflow:
-        return "BigInt32Overflow"_s;
-    case UnexpectedResizableArrayBufferView:
-        return "UnexpectedResizableArrayBufferView"_s;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return "Unknown"_s;
-}
-
 bool exitKindMayJettison(ExitKind kind)
 {
     switch (kind) {
@@ -112,13 +44,3 @@ bool exitKindMayJettison(ExitKind kind)
 }
 
 } // namespace JSC
-
-namespace WTF {
-
-void printInternal(PrintStream& out, JSC::ExitKind kind)
-{
-    out.print(exitKindToString(kind));
-}
-
-} // namespace WTF
-

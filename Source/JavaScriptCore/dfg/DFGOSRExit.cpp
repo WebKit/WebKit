@@ -207,7 +207,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* cal
             patchBuffer, OSRExitPtrTag, nullptr,
             "DFG OSR exit #%u (D@%u, %s, %s) from %s, with operands = %s",
                 exitIndex, exit.m_dfgNodeIndex, toCString(exit.m_codeOrigin).data(),
-                exitKindToString(exit.m_kind).characters(), toCString(*codeBlock).data(),
+                exit.m_kind, toCString(*codeBlock).data(),
                 toCString(ignoringContext<DumpContext>(operands)).data());
         codeBlock->dfgJITData()->setExitCode(exitIndex, exitCode);
     }
@@ -881,7 +881,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (
     NativeCallFrameTracer tracer(vm, callFrame);
 
     dataLog("Speculation failure in ", *codeBlock);
-    dataLog(" @ exit #", debugInfo->exitIndex, " (", debugInfo->bytecodeIndex, ", ", exitKindToString(debugInfo->kind), ") with ");
+    dataLog(" @ exit #", debugInfo->exitIndex, " (", debugInfo->bytecodeIndex, ", ", debugInfo->kind, ") with ");
     if (alternative) {
         dataLog(
             "executeCounter = ", alternative->jitExecuteCounter(),

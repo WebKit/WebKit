@@ -106,12 +106,6 @@ enum Conversion : uint8_t {
 };
 } // namespace Array
 
-const char* arrayActionToString(Array::Action);
-const char* arrayTypeToString(Array::Type);
-const char* arrayClassToString(Array::Class);
-const char* arraySpeculationToString(Array::Speculation);
-const char* arrayConversionToString(Array::Conversion);
-
 IndexingType toIndexingShape(Array::Type);
 
 TypedArrayType toTypedArrayType(Array::Type);

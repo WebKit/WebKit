@@ -332,9 +332,3 @@ private:
 static_assert(roundUpToMultipleOf<sizeof(unsigned)>(sizeof(ExpressionInfo)) == sizeof(ExpressionInfo), "CachedExpressionInfo relies on this invariant");
 
 } // namespace JSC
-
-namespace WTF {
-
-JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::ExpressionInfo::FieldID);
-
-} // namespace WTF

@@ -44,7 +44,9 @@ public:
     virtual void* tryAllocateAlignedMemory(size_t alignment, size_t size) = 0;
     virtual void freeAlignedMemory(void*) = 0;
     
-    virtual void dump(PrintStream&) const = 0;
+    // This can't be pure virtual as it breaks our Dumpable concept.
+    // FIXME: Make this virtual after we stop suppporting the Montery Clang.
+    virtual void dump(PrintStream&) const { }
 
     void registerDirectory(Heap&, BlockDirectory*);
     BlockDirectory* firstDirectory() const { return m_directories.first(); }

@@ -4024,8 +4024,8 @@ void CommandLine::parseArguments(int argc, char** argv)
         }
         if (!strcmp(arg, "--signal-expected")) {
 #if OS(UNIX)
-            SignalAction (*exit)(Signal, SigInfo&, PlatformRegisters&) = [] (Signal, SigInfo&, PlatformRegisters&) {
-                dataLogLn("Signal handler hit. Exiting with status 137");
+            SignalAction (*exit)(Signal, SigInfo&, PlatformRegisters&) = [] (Signal signal, SigInfo&, PlatformRegisters&) {
+                dataLogLn("Signal handler for ", ScopedEnumDump(signal), " hit. Exiting with status 137");
                 // Deliberate exit with a SIGKILL code greater than 130.
                 terminateProcess(137);
                 return SignalAction::ForceDefault;

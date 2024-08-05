@@ -1,4 +1,4 @@
-load("../libwabt.js");
+load("libwabt.js", "caller relative");
 
 export async function compile(wat, options = {}) {
     const wabtModule = await WabtModule();

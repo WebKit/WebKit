@@ -48,7 +48,9 @@ class FireDetail {
 public:
     FireDetail() = default;
     virtual ~FireDetail() = default;
-    virtual void dump(PrintStream&) const = 0;
+    // This can't be pure virtual as it breaks our Dumpable concept.
+    // FIXME: Make this virtual after we stop suppporting the Montery Clang.
+    virtual void dump(PrintStream&) const { }
 };
 
 class StringFireDetail final : public FireDetail {

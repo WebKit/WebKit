@@ -52,18 +52,6 @@ inline void removePrimitiveDisableCallback(void (*)(void*), void*) { }
 
 inline void forbidDisablingPrimitiveGigacage() { }
 
-ALWAYS_INLINE ASCIILiteral name(Kind kind)
-{
-    switch (kind) {
-    case Primitive:
-        return "Primitive"_s;
-    case NumberOfKinds:
-        break;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return { };
-}
-
 ALWAYS_INLINE bool contains(const void*) { return false; }
 ALWAYS_INLINE bool disablingPrimitiveGigacageIsForbidden() { return false; }
 ALWAYS_INLINE bool isEnabled() { return false; }
