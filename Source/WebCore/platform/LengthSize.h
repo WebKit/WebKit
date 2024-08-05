@@ -27,7 +27,7 @@ namespace WebCore {
 struct BlendingContext;
 
 class LengthSize {
-    public: 
+    public:
         Length width;
         Length height;
 
