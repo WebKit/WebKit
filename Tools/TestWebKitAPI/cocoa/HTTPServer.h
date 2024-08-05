@@ -129,6 +129,7 @@ public:
     void send(RetainPtr<dispatch_data_t>&&, CompletionHandler<void(bool)>&& = nullptr) const;
     SendOperation awaitableSend(Vector<uint8_t>&&);
     SendOperation awaitableSend(String&&);
+    SendOperation awaitableSend(RetainPtr<dispatch_data_t>&&);
     void sendAndReportError(Vector<uint8_t>&&, CompletionHandler<void(bool)>&&) const;
     void receiveBytes(CompletionHandler<void(Vector<uint8_t>&&)>&&, size_t minimumSize = 1) const;
     void receiveHTTPRequest(CompletionHandler<void(Vector<char>&&)>&&, Vector<char>&& buffer = { }) const;
@@ -261,6 +262,8 @@ private:
 };
 
 } // namespace H2
+
+RetainPtr<dispatch_data_t> dataFromVector(Vector<uint8_t>&&);
 
 } // namespace TestWebKitAPI
 
