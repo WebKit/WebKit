@@ -77,8 +77,13 @@ int wmain()
         std::wcout << L"CreateProcess failed: " << GetLastError() << std::endl;
         return EXIT_FAILURE;
     }
+    DWORD pid = GetProcessId(processInformation.hProcess);
     WaitForSingleObject(processInformation.hProcess, INFINITE);
     DWORD exitCode;
     GetExitCodeProcess(processInformation.hProcess, &exitCode);
+
+    if (0xC0000000 <= exitCode)
+        fprintf(stderr, "#CRASHED - WebKitTestRunner (pid %lu)\n", pid);
+
     return exitCode;
 }

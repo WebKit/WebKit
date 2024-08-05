@@ -51,13 +51,6 @@ static const char webProcessCrashingEventName[] = "WebKitTestRunner.WebProcessCr
 static const double maximumWaitForWebProcessToCrash = 60;
 
 
-static LONG WINAPI exceptionFilter(EXCEPTION_POINTERS*)
-{
-    fprintf(stderr, "#CRASHED - WebKitTestRunner (pid %lu)\n", GetCurrentProcessId());
-    fflush(stderr);
-    return EXCEPTION_CONTINUE_SEARCH;
-}
-
 enum RunLoopResult { TimedOut, ObjectSignaled, ConditionSatisfied };
 
 static RunLoopResult runRunLoopUntil(bool& condition, HANDLE object, double timeout)
@@ -112,8 +105,6 @@ void TestController::platformInitialize(const Options&)
     // testing/debugging, as it causes the post-mortem debugger not to be invoked. We reset the
     // error mode here to work around Cygwin's behavior. See <http://webkit.org/b/55222>.
     ::SetErrorMode(0);
-
-    ::SetUnhandledExceptionFilter(exceptionFilter);
 
     _setmode(1, _O_BINARY);
     _setmode(2, _O_BINARY);
