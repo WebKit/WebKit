@@ -52,12 +52,12 @@ private:
     CSSImportRule(StyleRuleImport&, CSSStyleSheet*);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Import; }
-    String cssText() const final;
-    String cssTextWithReplacementURLs(const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const final;
+    void cssText(StringBuilder&) const final;
+    void cssTextWithReplacementURLs(StringBuilder&, const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const final;
     void reattach(StyleRuleBase&) final;
     void getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>&) final;
 
-    String cssTextInternal(const String& urlString) const;
+    void cssTextInternal(StringBuilder&, const String& urlString) const;
     const MQ::MediaQueryList& mediaQueries() const;
     void setMediaQueries(MQ::MediaQueryList&&);
 

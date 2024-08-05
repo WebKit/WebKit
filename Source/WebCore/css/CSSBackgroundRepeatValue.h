@@ -36,6 +36,8 @@ public:
     static Ref<CSSBackgroundRepeatValue> create(CSSValueID repeatXValue, CSSValueID repeatYValue);
 
     String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSBackgroundRepeatValue&) const;
 
     CSSValueID xValue() const { return m_xValue; }
@@ -43,6 +45,8 @@ public:
 
 private:
     CSSBackgroundRepeatValue(CSSValueID repeatXValue, CSSValueID repeatYValue);
+
+    template<typename Maker> decltype(auto) serialize(Maker&&) const;
 
     CSSValueID m_xValue;
     CSSValueID m_yValue;

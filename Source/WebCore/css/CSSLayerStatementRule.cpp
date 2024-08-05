@@ -51,31 +51,16 @@ Ref<CSSLayerStatementRule> CSSLayerStatementRule::create(StyleRuleLayer& rule, C
 
 CSSLayerStatementRule::~CSSLayerStatementRule() = default;
 
-String CSSLayerStatementRule::cssText() const
+void CSSLayerStatementRule::cssText(StringBuilder& builder) const
 {
-    StringBuilder result;
-
-    result.append("@layer "_s);
-
-    auto nameList = this->nameList();
-    for (auto& name : nameList) {
-        result.append(name);
-        if (&name != &nameList.last())
-            result.append(", "_s);
-    }
-    result.append(';');
-
-    return result.toString();
+    builder.append("@layer "_s, interleave(m_layerRule->nameList(), serializedCascadeLayerName, ", "_s), ';');
 }
 
 Vector<String> CSSLayerStatementRule::nameList() const
 {
-    Vector<String> result;
-
-    for (auto& name : m_layerRule.get().nameList())
-        result.append(stringFromCascadeLayerName(name));
-
-    return result;
+    return WTF::map(m_layerRule->nameList(), [](auto& name) {
+        return serializedCascadeLayerName(name);
+    });
 }
 
 void CSSLayerStatementRule::reattach(StyleRuleBase& rule)

@@ -36,24 +36,22 @@ CSSLineBoxContainValue::CSSLineBoxContainValue(OptionSet<LineBoxContain> value)
 {
 }
 
-String CSSLineBoxContainValue::customCSSText() const
+void CSSLineBoxContainValue::customCSSText(StringBuilder& builder) const
 {
-    StringBuilder text;
-    if (m_value.contains(LineBoxContain::Block))
-        text.append("block"_s);
-    if (m_value.contains(LineBoxContain::Inline))
-        text.append(text.isEmpty() ? ""_s : " "_s, "inline"_s);
-    if (m_value.contains(LineBoxContain::Font))
-        text.append(text.isEmpty() ? ""_s : " "_s, "font"_s);
-    if (m_value.contains(LineBoxContain::Glyphs))
-        text.append(text.isEmpty() ? ""_s : " "_s, "glyphs"_s);
-    if (m_value.contains(LineBoxContain::Replaced))
-        text.append(text.isEmpty() ? ""_s : " "_s, "replaced"_s);
-    if (m_value.contains(LineBoxContain::InlineBox))
-        text.append(text.isEmpty() ? ""_s : " "_s, "inline-box"_s);
-    if (m_value.contains(LineBoxContain::InitialLetter))
-        text.append(text.isEmpty() ? ""_s : " "_s, "initial-letter"_s);
-    return text.toString();
+    auto initialLengthOfBuilder = builder.length();
+
+    auto append = [&](LineBoxContain option, ASCIILiteral literal) {
+        if (m_value.contains(option))
+            builder.append(initialLengthOfBuilder != builder.length() ? " "_s : ""_s, literal);
+    };
+
+    append(LineBoxContain::Block, "block"_s);
+    append(LineBoxContain::Inline, "inline"_s);
+    append(LineBoxContain::Font, "font"_s);
+    append(LineBoxContain::Glyphs, "glyphs"_s);
+    append(LineBoxContain::Replaced, "replaced"_s);
+    append(LineBoxContain::InlineBox, "inline-box"_s);
+    append(LineBoxContain::InitialLetter, "initial-letter"_s);
 }
 
 }

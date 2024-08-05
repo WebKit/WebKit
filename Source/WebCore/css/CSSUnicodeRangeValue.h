@@ -41,6 +41,7 @@ public:
     char32_t to() const { return m_to; }
 
     String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
 
     bool equals(const CSSUnicodeRangeValue&) const;
 

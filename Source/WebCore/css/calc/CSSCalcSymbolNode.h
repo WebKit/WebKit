@@ -35,7 +35,8 @@ class CSSCalcSymbolNode final : public CSSCalcExpressionNode {
 public:
     static Ref<CSSCalcSymbolNode> create(CSSValueID, CSSUnitType);
 
-    String customCSSText() const;
+    ASCIILiteral customCSSText() const;
+    void customCSSText(StringBuilder&) const;
 
 private:
     CSSCalcSymbolNode(CSSValueID, CSSUnitType);

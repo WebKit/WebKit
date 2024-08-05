@@ -239,14 +239,14 @@ void PageSerializer::serializeFrame(LocalFrame* frame)
 
 void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const URL& url)
 {
-    StringBuilder cssText;
+    StringBuilder builder;
     for (unsigned i = 0; i < styleSheet->length(); ++i) {
         CSSRule* rule = styleSheet->item(i);
-        String itemText = rule->cssText();
-        if (!itemText.isEmpty()) {
-            cssText.append(itemText);
+        auto lengthOfBuilderBefore = builder.length();
+        rule->cssText(builder);
+        if (lengthOfBuilderBefore != builder.length()) {
             if (i < styleSheet->length() - 1)
-                cssText.append("\n\n"_s);
+                builder.append("\n\n"_s);
         }
         Document* document = styleSheet->ownerDocument();
         // Some rules have resources associated with them that we need to retrieve.
@@ -266,7 +266,7 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const URL
         // FIXME: We should check whether a charset has been specified and if none was found add one.
         PAL::TextEncoding textEncoding(styleSheet->contents().charset());
         ASSERT(textEncoding.isValid());
-        m_resources.append({ url, cssContentTypeAtom(), SharedBuffer::create(textEncoding.encode(cssText.toString(), PAL::UnencodableHandling::Entities)) });
+        m_resources.append({ url, cssContentTypeAtom(), SharedBuffer::create(textEncoding.encode(builder.toString(), PAL::UnencodableHandling::Entities)) });
         m_resourceURLs.add(url);
     }
 }

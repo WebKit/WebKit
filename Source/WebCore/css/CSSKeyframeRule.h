@@ -44,6 +44,7 @@ public:
     Ref<StyleRuleKeyframe> copy() const { RELEASE_ASSERT_NOT_REACHED(); }
 
     String keyText() const;
+    void keyText(StringBuilder&) const;
     bool setKeyText(const String&);
     void setKey(double key)
     {
@@ -57,7 +58,7 @@ public:
     const StyleProperties& properties() const { return m_properties; }
     MutableStyleProperties& mutableProperties();
 
-    String cssText() const;
+    void cssText(StringBuilder&) const;
 
 private:
     explicit StyleRuleKeyframe(Ref<StyleProperties>&&);
@@ -71,7 +72,7 @@ class CSSKeyframeRule final : public CSSRule {
 public:
     virtual ~CSSKeyframeRule();
 
-    String cssText() const final { return m_keyframe->cssText(); }
+    void cssText(StringBuilder& builder) const final { return m_keyframe->cssText(builder); }
     void reattach(StyleRuleBase&) final;
 
     String keyText() const { return m_keyframe->keyText(); }

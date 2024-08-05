@@ -89,6 +89,7 @@ public:
     }
 
     String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
 
     const AtomString& name() const { return m_name; }
     bool isResolved() const { return !std::holds_alternative<Ref<CSSVariableReferenceValue>>(m_value); }

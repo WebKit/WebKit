@@ -50,14 +50,19 @@ void CSSAnchorValue::collectComputedStyleDependencies(ComputedStyleDependencies&
         m_fallback->collectComputedStyleDependencies(dependencies);
 }
 
-String CSSAnchorValue::customCSSText() const
+void CSSAnchorValue::customCSSText(StringBuilder& builder) const
 {
-    auto element = m_anchorElement ? m_anchorElement->cssText() : String { };
-    auto side = m_anchorSide->cssText();
-    auto fallback = m_fallback ? m_fallback->cssText() : String { };
-    auto optionalSpace = element.isEmpty() ? ""_s : " "_s;
-    auto optionalComma = fallback.isEmpty() ? ""_s : ", "_s;
-    return makeString("anchor("_s, element, optionalSpace, side, optionalComma, fallback, ')');
+    builder.append("anchor("_s);
+    if (m_anchorElement) {
+        m_anchorElement->cssText(builder);
+        builder.append(' ');
+    }
+    m_anchorSide->cssText(builder);
+    if (m_fallback) {
+        builder.append(", "_s);
+        m_fallback->cssText(builder);
+    }
+    builder.append(')');
 }
 
 bool CSSAnchorValue::equals(const CSSAnchorValue& other) const

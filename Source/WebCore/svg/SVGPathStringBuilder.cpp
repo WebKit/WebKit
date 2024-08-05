@@ -25,19 +25,27 @@
 
 namespace WebCore {
 
-SVGPathStringBuilder::SVGPathStringBuilder() = default;
+SVGPathStringBuilder::SVGPathStringBuilder(StringBuilder& stringBuilder)
+    : m_stringBuilder { stringBuilder }
+{
+}
 
 SVGPathStringBuilder::~SVGPathStringBuilder() = default;
 
 String SVGPathStringBuilder::result()
 {
+    finalize();
+    return m_stringBuilder.toString();
+}
+
+void SVGPathStringBuilder::finalize()
+{
     unsigned size = m_stringBuilder.length();
     if (!size)
-        return String();
+        return;
 
     // Remove trailing space.
     m_stringBuilder.shrink(size - 1);
-    return m_stringBuilder.toString();
 }
 
 void SVGPathStringBuilder::incrementPathSegmentCount()

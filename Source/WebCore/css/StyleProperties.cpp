@@ -60,6 +60,13 @@ Ref<ImmutableStyleProperties> StyleProperties::immutableCopyIfNeeded() const
 
 String serializeLonghandValue(CSSPropertyID property, const CSSValue& value)
 {
+    StringBuilder builder;
+    serializeLonghandValue(builder, property, value);
+    return builder.toString();
+}
+
+void serializeLonghandValue(StringBuilder& builder, CSSPropertyID property, const CSSValue& value)
+{
     switch (property) {
     case CSSPropertyFillOpacity:
     case CSSPropertyFloodOpacity:
@@ -68,24 +75,30 @@ String serializeLonghandValue(CSSPropertyID property, const CSSValue& value)
     case CSSPropertyStrokeOpacity:
         // FIXME: Handle this when creating the CSSValue for opacity, to be consistent with other CSS value serialization quirks.
         // Opacity percentage values serialize as a fraction in the range 0-1, not "%".
-        if (auto* primitive = dynamicDowncast<CSSPrimitiveValue>(value); primitive && primitive->isPercentage())
-            return makeString(primitive->doubleValue() / 100);
+        if (auto* primitive = dynamicDowncast<CSSPrimitiveValue>(value); primitive && primitive->isPercentage()) {
+            builder.append(primitive->doubleValue() / 100);
+            return;
+        }
         break;
     default:
         break;
     }
+
     // Longhands set by mask and background shorthands can have comma-separated lists with implicit initial values in them.
     // We need to serialize those lists with the actual values, not as "initial".
     // Doing this for all CSSValueList with comma separators is better than checking the property is one of those longhands.
     // Serializing this way is harmless for other properties; those won't have any implicit initial values.
     if (auto* list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::CommaSeparator) {
-        StringBuilder result;
-        auto separator = ""_s;
-        for (auto& individualValue : *list)
-            result.append(std::exchange(separator, ", "_s), serializeLonghandValue(property, individualValue));
-        return result.toString();
+        builder.append(interleave(*list, [&](auto& builder, auto& individualValue) { serializeLonghandValue(builder, property, individualValue); }, ", "_s));
+        return;
     }
-    return value.isImplicitInitialValue() ? initialValueTextForLonghand(property) : value.cssText();
+
+    if (value.isImplicitInitialValue()) {
+        builder.append(initialValueTextForLonghand(property));
+        return;
+    }
+
+    value.cssText(builder);
 }
 
 inline String StyleProperties::serializeLonghandValue(CSSPropertyID propertyID) const
@@ -93,9 +106,19 @@ inline String StyleProperties::serializeLonghandValue(CSSPropertyID propertyID) 
     return WebCore::serializeLonghandValue(propertyID, getPropertyCSSValue(propertyID).get());
 }
 
+inline void StyleProperties::serializeLonghandValue(StringBuilder& builder, CSSPropertyID propertyID) const
+{
+    WebCore::serializeLonghandValue(builder, propertyID, getPropertyCSSValue(propertyID).get());
+}
+
 inline String StyleProperties::serializeShorthandValue(CSSPropertyID propertyID) const
 {
     return WebCore::serializeShorthandValue(*this, propertyID);
+}
+
+inline void StyleProperties::serializeShorthandValue(StringBuilder& builder, CSSPropertyID propertyID) const
+{
+    WebCore::serializeShorthandValue(builder, *this, propertyID);
 }
 
 String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
@@ -190,12 +213,16 @@ bool StyleProperties::isPropertyImplicit(CSSPropertyID propertyID) const
 
 String StyleProperties::asText() const
 {
-    return asTextInternal().toString();
+    StringBuilder builder;
+    asText(builder);
+    return builder.toString();
 }
 
 AtomString StyleProperties::asTextAtom() const
 {
-    return asTextInternal().toAtomString();
+    StringBuilder builder;
+    asText(builder);
+    return builder.toAtomString();
 }
 
 static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSPropertyID longhandID)
@@ -265,10 +292,8 @@ static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSP
     }
 }
 
-StringBuilder StyleProperties::asTextInternal() const
+void StyleProperties::asText(StringBuilder& result) const
 {
-    StringBuilder result;
-
     constexpr unsigned shorthandPropertyCount = lastShorthandProperty - firstShorthandProperty + 1;
     std::bitset<shorthandPropertyCount> shorthandPropertyUsed;
     std::bitset<shorthandPropertyCount> shorthandPropertyAppeared;
@@ -328,7 +353,6 @@ StringBuilder StyleProperties::asTextInternal() const
     }
 
     ASSERT(!numDecls ^ !result.isEmpty());
-    return result;
 }
 
 bool StyleProperties::hasCSSOMWrapper() const
@@ -443,7 +467,16 @@ String StyleProperties::PropertyReference::cssName() const
 
 String StyleProperties::PropertyReference::cssText() const
 {
-    return makeString(cssName(), ": "_s, WebCore::serializeLonghandValue(id(), *m_value), isImportant() ? " !important;"_s : ";"_s);
+    StringBuilder builder;
+    cssText(builder);
+    return builder.toString();
+}
+
+void StyleProperties::PropertyReference::cssText(StringBuilder& builder) const
+{
+    builder.append(cssName(), ": "_s);
+    WebCore::serializeLonghandValue(builder, id(), *m_value);
+    builder.append(isImportant() ? " !important;"_s : ";"_s);
 }
 
 } // namespace WebCore

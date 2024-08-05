@@ -34,6 +34,8 @@ class StyleProperties;
 enum CSSPropertyID : uint16_t;
 
 String serializeShorthandValue(const ComputedStyleExtractor&, CSSPropertyID);
+void serializeShorthandValue(StringBuilder&, const ComputedStyleExtractor&, CSSPropertyID);
 String serializeShorthandValue(const StyleProperties&, CSSPropertyID);
+void serializeShorthandValue(StringBuilder&, const StyleProperties&, CSSPropertyID);
 
 }

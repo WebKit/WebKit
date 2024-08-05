@@ -38,6 +38,7 @@ public:
 
     static bool parseToByteStream(SVGPathSource&, SVGPathByteStream&, PathParsingMode = NormalizedParsing, bool checkForInitialMoveTo = true);
     static bool parseToString(SVGPathSource&, String& result, PathParsingMode = NormalizedParsing, bool checkForInitialMoveTo = true);
+    static bool parseToString(SVGPathSource&, StringBuilder&, PathParsingMode = NormalizedParsing, bool checkForInitialMoveTo = true);
 
 private:
     SVGPathParser(SVGPathConsumer&, SVGPathSource&, PathParsingMode);

@@ -37,9 +37,12 @@ public:
     const AtomString& identifier() const { return m_identifier; }
     const AtomString& separator() const { return m_separator; }
     RefPtr<CSSValue> counterStyle() const { return m_counterStyle; }
-    String counterStyleCSSText() const;
 
-    String customCSSText() const;
+    String counterStyleCSSText() const;
+    void counterStyleCSSText(StringBuilder&) const;
+
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSCounterValue&) const;
 
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const

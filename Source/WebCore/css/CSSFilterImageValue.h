@@ -49,7 +49,7 @@ public:
     bool equals(const CSSFilterImageValue&) const;
     bool equalInputImages(const CSSFilterImageValue&) const;
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
 
     RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 

@@ -48,6 +48,7 @@ public:
 
     bool equals(const CSSPendingSubstitutionValue& other) const { return m_shorthandValue.ptr() == other.m_shorthandValue.ptr(); }
     static String customCSSText() { return emptyString(); }
+    static void customCSSText(StringBuilder&) { }
 
     RefPtr<CSSValue> resolveValue(Style::BuilderState&, CSSPropertyID) const;
 

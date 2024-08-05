@@ -57,6 +57,7 @@ public:
     URL reresolvedURL(const Document&) const;
 
     String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
 
     Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 

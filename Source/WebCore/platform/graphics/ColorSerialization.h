@@ -37,9 +37,13 @@ enum class ColorSpace : uint8_t;
 // serializationForRenderTreeAsText returns the color serialized for DumpRenderTree, #RRGGBB, #RRGGBBAA or the CSS serialization.
 
 WEBCORE_EXPORT String serializationForCSS(const Color&);
+void serializationForCSS(StringBuilder&, const Color&);
 WEBCORE_EXPORT String serializationForHTML(const Color&);
+void serializationForHTML(StringBuilder&, const Color&);
 WEBCORE_EXPORT String serializationForRenderTreeAsText(const Color&);
+void serializationForRenderTreeAsText(StringBuilder&, const Color&);
 
 ASCIILiteral serialization(ColorSpace);
+void serialization(StringBuilder&, ColorSpace);
 
 }

@@ -50,10 +50,18 @@ bool SVGPathParser::parseToByteStream(SVGPathSource& source, SVGPathByteStream& 
 
 bool SVGPathParser::parseToString(SVGPathSource& source, String& result, PathParsingMode mode, bool checkForInitialMoveTo)
 {
-    SVGPathStringBuilder builder;
-    SVGPathParser parser(builder, source, mode);
+    StringBuilder stringBuilder;
+    bool ok = parseToString(source, stringBuilder, mode, checkForInitialMoveTo);
+    result = stringBuilder.toString();
+    return ok;
+}
+
+bool SVGPathParser::parseToString(SVGPathSource& source, StringBuilder& stringBuilder, PathParsingMode mode, bool checkForInitialMoveTo)
+{
+    SVGPathStringBuilder pathBuilder { stringBuilder };
+    SVGPathParser parser(pathBuilder, source, mode);
     bool ok = parser.parsePathData(checkForInitialMoveTo);
-    result = builder.result();
+    pathBuilder.finalize();
     return ok;
 }
 

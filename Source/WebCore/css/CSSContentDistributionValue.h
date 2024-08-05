@@ -40,10 +40,14 @@ public:
     CSSValueID overflow() const { return m_overflow; }
 
     String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSContentDistributionValue&) const;
 
 private:
     CSSContentDistributionValue(CSSValueID distribution, CSSValueID position, CSSValueID overflow);
+
+    template<typename Maker> decltype(auto) serialize(Maker&&) const;
 
     CSSValueID m_distribution;
     CSSValueID m_position;

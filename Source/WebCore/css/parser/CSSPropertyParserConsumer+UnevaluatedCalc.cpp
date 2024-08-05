@@ -38,7 +38,7 @@ bool unevaluatedCalcEqual(const Ref<CSSCalcValue>& a, const Ref<CSSCalcValue>& b
 
 void unevaluatedCalcSerialization(StringBuilder& builder, const Ref<CSSCalcValue>& calc)
 {
-    builder.append(calc->customCSSText());
+    calc->customCSSText(builder);
 }
 
 AngleRaw evaluateCalc(const UnevaluatedCalc<AngleRaw>& calc, const CSSCalcSymbolTable& symbolTable)

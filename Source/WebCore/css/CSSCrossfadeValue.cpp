@@ -59,9 +59,15 @@ bool CSSCrossfadeValue::equalInputImages(const CSSCrossfadeValue& other) const
     return compareCSSValue(m_fromValueOrNone, other.m_fromValueOrNone) && compareCSSValue(m_toValueOrNone, other.m_toValueOrNone);
 }
 
-String CSSCrossfadeValue::customCSSText() const
+void CSSCrossfadeValue::customCSSText(StringBuilder& builder) const
 {
-    return makeString(m_isPrefixed ? "-webkit-"_s : ""_s, "cross-fade("_s, m_fromValueOrNone->cssText(), ", "_s, m_toValueOrNone->cssText(), ", "_s, m_percentageValue->cssText(), ')');
+    builder.append(m_isPrefixed ? "-webkit-"_s : ""_s, "cross-fade("_s);
+    m_fromValueOrNone->cssText(builder);
+    builder.append(", "_s);
+    m_toValueOrNone->cssText(builder);
+    builder.append(", "_s);
+    m_percentageValue->cssText(builder);
+    builder.append(')');
 }
 
 RefPtr<StyleImage> CSSCrossfadeValue::createStyleImage(Style::BuilderState& state) const

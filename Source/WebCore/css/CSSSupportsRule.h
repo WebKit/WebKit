@@ -40,8 +40,8 @@ class CSSSupportsRule final : public CSSConditionRule {
 public:
     static Ref<CSSSupportsRule> create(StyleRuleSupports&, CSSStyleSheet* parent);
 
-    String cssText() const final;
-    String cssTextWithReplacementURLs(const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const final;
+    void cssText(StringBuilder&) const final;
+    void cssTextWithReplacementURLs(StringBuilder&, const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const final;
     String conditionText() const final;
 
 private:

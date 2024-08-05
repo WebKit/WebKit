@@ -123,9 +123,14 @@ const CSSParserToken& CSSParserTokenRange::consumeLast()
 String CSSParserTokenRange::serialize(CSSParserToken::SerializationMode mode) const
 {
     StringBuilder builder;
+    serialize(builder, mode);
+    return builder.toString();
+}
+
+void CSSParserTokenRange::serialize(StringBuilder& builder, CSSParserToken::SerializationMode mode) const
+{
     for (const CSSParserToken* it = m_first; it < m_last; ++it)
         it->serialize(builder, it + 1 == m_last ? nullptr : it + 1, mode);
-    return builder.toString();
 }
 
 } // namespace WebCore

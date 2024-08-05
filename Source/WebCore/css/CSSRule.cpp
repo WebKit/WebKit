@@ -47,6 +47,25 @@ unsigned short CSSRule::typeForCSSOM() const
     return enumToUnderlyingType(styleRuleType());
 }
 
+String CSSRule::cssText() const
+{
+    StringBuilder builder;
+    cssText(builder);
+    return builder.toString();
+}
+
+String CSSRule::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
+{
+    StringBuilder builder;
+    cssTextWithReplacementURLs(builder, replacementURLStrings, replacementURLStringsForCSSStyleSheet);
+    return builder.toString();
+}
+
+void CSSRule::cssTextWithReplacementURLs(StringBuilder& builder, const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const
+{
+    return cssText(builder);
+}
+
 ExceptionOr<void> CSSRule::setCssText(const String&)
 {
     return { };

@@ -40,7 +40,7 @@ public:
     static Ref<CSSTransformListValue> create(CSSValueListBuilder);
     static Ref<CSSTransformListValue> create(Ref<CSSValue>);
 
-    String customCSSText() const { return serializeItems(); }
+    void customCSSText(StringBuilder& builder) const { serializeItems(builder); }
     bool equals(const CSSTransformListValue& other) const { return itemsEqual(other); }
 
 private:

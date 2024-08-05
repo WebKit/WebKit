@@ -41,7 +41,7 @@ public:
     bool inherits() const;
     String initialValue() const;
 
-    String cssText() const final;
+    void cssText(StringBuilder&) const final;
 
 private:
     CSSPropertyRule(StyleRuleProperty&, CSSStyleSheet*);

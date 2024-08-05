@@ -344,23 +344,23 @@ String CanvasRenderingContext2DBase::State::fontString() const
     if (!font.realized())
         return DefaultFont;
 
-    StringBuilder serializedFont;
+    StringBuilder builder;
     const auto& font = this->font.fontDescription();
 
     auto italic = font.italic() ? "italic "_s : ""_s;
     auto smallCaps = font.variantCaps() == FontVariantCaps::Small ? "small-caps "_s : ""_s;
-    serializedFont.append(italic, smallCaps, font.computedSize(), "px"_s);
+    builder.append(italic, smallCaps, font.computedSize(), "px"_s);
 
     for (unsigned i = 0; i < font.familyCount(); ++i) {
         StringView family = font.familyAt(i);
         if (family.startsWith("-webkit-"_s))
             family = family.substring(8);
 
-        auto separator = i ? ", "_s : " "_s;
-        serializedFont.append(separator, serializeFontFamily(family.toString()));
+        builder.append(i ? ", "_s : " "_s);
+        serializeFontFamily(builder, family.toString());
     }
 
-    return serializedFont.toString();
+    return builder.toString();
 }
 
 CanvasLineCap CanvasRenderingContext2DBase::State::canvasLineCap() const

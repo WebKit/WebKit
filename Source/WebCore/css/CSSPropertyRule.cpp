@@ -70,19 +70,17 @@ String CSSPropertyRule::initialValue() const
     return m_propertyRule->descriptor().initialValue->serialize();
 }
 
-String CSSPropertyRule::cssText() const
+void CSSPropertyRule::cssText(StringBuilder& builder) const
 {
-    StringBuilder builder;
-
     auto& descriptor = m_propertyRule->descriptor();
 
     builder.append("@property "_s);
-    serializeIdentifier(descriptor.name, builder);
+    serializeIdentifier(builder, descriptor.name);
     builder.append(" { "_s);
 
     if (!descriptor.syntax.isNull()) {
         builder.append("syntax: "_s);
-        serializeString(syntax(), builder);
+        serializeString(builder, syntax());
         builder.append("; "_s);
     }
 
@@ -93,8 +91,6 @@ String CSSPropertyRule::cssText() const
         builder.append("initial-value: "_s, initialValue(), "; "_s);
 
     builder.append('}');
-
-    return builder.toString();
 }
 
 void CSSPropertyRule::reattach(StyleRuleBase& rule)

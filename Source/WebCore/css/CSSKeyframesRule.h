@@ -72,7 +72,7 @@ public:
     virtual ~CSSKeyframesRule();
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Keyframes; }
-    String cssText() const final;
+    void cssText(StringBuilder&) const final;
     void reattach(StyleRuleBase&) final;
 
     const AtomString& name() const { return m_keyframesRule->name(); }

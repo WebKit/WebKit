@@ -38,8 +38,9 @@ public:
     static Ref<CSSImageSetOptionValue> create(Ref<CSSValue>&&, Ref<CSSPrimitiveValue>&&);
     static Ref<CSSImageSetOptionValue> create(Ref<CSSValue>&&, Ref<CSSPrimitiveValue>&&, String);
 
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSImageSetOptionValue&) const;
-    String customCSSText() const;
 
     Ref<CSSValue> image() const { return m_image; }
 

@@ -29,10 +29,17 @@
 namespace WebCore {
 
 // Common serializing methods. See: http://dev.w3.org/csswg/cssom/#common-serializing-idioms
-void serializeIdentifier(const String& identifier, StringBuilder& appendTo, bool skipStartChecks = false);
-void serializeString(const String&, StringBuilder& appendTo);
+
+void serializeIdentifier(StringBuilder&, const String& identifier, bool skipStartChecks = false);
+String serializeIdentifier(const String& identifier, bool skipStartChecks = false);
+
+void serializeString(StringBuilder&, const String&);
 String serializeString(const String&);
+
+void serializeURL(StringBuilder&, const String&);
 String serializeURL(const String&);
+
+void serializeFontFamily(StringBuilder&, const String&);
 String serializeFontFamily(const String&);
 
 } // namespace WebCore

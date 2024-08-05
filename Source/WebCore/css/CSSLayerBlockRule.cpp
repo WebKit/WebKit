@@ -48,15 +48,16 @@ Ref<CSSLayerBlockRule> CSSLayerBlockRule::create(StyleRuleLayer& rule, CSSStyleS
     return adoptRef(*new CSSLayerBlockRule(rule, parent));
 }
 
-String CSSLayerBlockRule::cssText() const
+void CSSLayerBlockRule::cssText(StringBuilder& builder) const
 {
-    StringBuilder builder;
-
     builder.append("@layer"_s);
-    if (auto name = this->name(); !name.isEmpty())
-        builder.append(' ', name);
+
+    auto& layer = downcast<StyleRuleLayer>(groupRule());
+    if (!layer.name().isEmpty()) {
+        builder.append(' ');
+        serializedCascadeLayerName(builder, layer.name());
+    }
     appendCSSTextForItems(builder);
-    return builder.toString();
 }
 
 String CSSLayerBlockRule::name() const
@@ -66,18 +67,17 @@ String CSSLayerBlockRule::name() const
     if (layer.name().isEmpty())
         return emptyString();
 
-    return stringFromCascadeLayerName(layer.name());
+    return serializedCascadeLayerName(layer.name());
 }
 
-String stringFromCascadeLayerName(const CascadeLayerName& name)
+String serializedCascadeLayerName(const CascadeLayerName& name)
 {
-    StringBuilder result;
-    for (auto& segment : name) {
-        serializeIdentifier(segment, result);
-        if (&segment != &name.last())
-            result.append('.');
-    }
-    return result.toString();
+    return makeString(interleave(name, [](auto& builder, auto& name) { serializeIdentifier(builder, name); }, '.'));
+}
+
+void serializedCascadeLayerName(StringBuilder& builder, const CascadeLayerName& name)
+{
+    builder.append(interleave(name, [](auto& builder, auto& name) { serializeIdentifier(builder, name); }, '.'));
 }
 
 } // namespace WebCore

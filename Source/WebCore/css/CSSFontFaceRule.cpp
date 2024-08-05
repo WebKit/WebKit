@@ -50,27 +50,35 @@ CSSStyleDeclaration& CSSFontFaceRule::style()
     return *m_propertiesCSSOMWrapper;
 }
 
-String CSSFontFaceRule::cssText() const
+template<typename DeclarationsFunctor> void CSSFontFaceRule::cssTextInternal(StringBuilder& builder, bool hasDeclarations, DeclarationsFunctor&& declarations) const
 {
-    return cssTextInternal(m_fontFaceRule->properties().asText());
+    builder.append("@font-face { "_s);
+    if (!hasDeclarations) {
+        builder.append('}');
+        return;
+    }
+
+    declarations(builder);
+
+    builder.append(" }"_s);
 }
 
-String CSSFontFaceRule::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>&) const
+void CSSFontFaceRule::cssText(StringBuilder& builder) const
+{
+    return cssTextInternal(builder, !m_fontFaceRule->properties().isEmpty(), [&](auto& builder) {
+        m_fontFaceRule->properties().asText(builder);
+    });
+}
+
+void CSSFontFaceRule::cssTextWithReplacementURLs(StringBuilder& builder, const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>&) const
 {
     auto mutableStyleProperties = m_fontFaceRule->properties().mutableCopy();
-    mutableStyleProperties->setReplacementURLForSubresources(replacementURLStrings);
-    auto declarations = mutableStyleProperties->asText();
-    mutableStyleProperties->clearReplacementURLForSubresources();
 
-    return cssTextInternal(declarations);
-}
-
-String CSSFontFaceRule::cssTextInternal(const String& declarations) const
-{
-    if (declarations.isEmpty())
-        return "@font-face { }"_s;
-
-    return makeString("@font-face { "_s, declarations, " }"_s);
+    return cssTextInternal(builder, !mutableStyleProperties->isEmpty(), [&](auto& builder) {
+        mutableStyleProperties->setReplacementURLForSubresources(replacementURLStrings);
+        mutableStyleProperties->asText(builder);
+        mutableStyleProperties->clearReplacementURLForSubresources();
+    });
 }
 
 void CSSFontFaceRule::reattach(StyleRuleBase& rule)

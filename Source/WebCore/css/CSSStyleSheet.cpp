@@ -489,23 +489,28 @@ String CSSStyleSheet::debugDescription() const
 
 String CSSStyleSheet::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet)
 {
+    StringBuilder builder;
+    cssTextWithReplacementURLs(builder, replacementURLStrings, replacementURLStringsForCSSStyleSheet);
+    return builder.toString();
+}
+
+void CSSStyleSheet::cssTextWithReplacementURLs(StringBuilder& builder, const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet)
+{
     auto ruleList = cssRulesSkippingAccessCheck();
     if (!ruleList)
-        return { };
+        return;
 
-    StringBuilder result;
+    auto initialLengthOfBuilder = builder.length();
+
     for (unsigned index = 0; index < ruleList->length(); ++index) {
         auto rule = ruleList->item(index);
         if (!rule)
             continue;
 
-        auto ruleText = rule->cssTextWithReplacementURLs(replacementURLStrings, replacementURLStringsForCSSStyleSheet);
-        if (!result.isEmpty() && !ruleText.isEmpty())
-            result.append(' ');
-
-        result.append(ruleText);
+        if (initialLengthOfBuilder != builder.length())
+            builder.append(' ');
+        rule->cssTextWithReplacementURLs(builder, replacementURLStrings, replacementURLStringsForCSSStyleSheet);
     }
-    return result.toString();
 }
 
 // https://w3c.github.io/csswg-drafts/cssom-1/#dom-cssstylesheet-replace

@@ -36,7 +36,8 @@ public:
 
     const CSSPrimitiveValue& obliqueAngle() const { return m_obliqueAngle; }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSFontStyleWithAngleValue&) const;
 
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const

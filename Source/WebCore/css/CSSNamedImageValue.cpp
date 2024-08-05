@@ -44,6 +44,11 @@ String CSSNamedImageValue::customCSSText() const
     return makeString("-webkit-named-image("_s, m_name, ')');
 }
 
+void CSSNamedImageValue::customCSSText(StringBuilder& builder) const
+{
+    builder.append("-webkit-named-image("_s, m_name, ')');
+}
+
 bool CSSNamedImageValue::equals(const CSSNamedImageValue& other) const
 {
     return m_name == other.m_name;

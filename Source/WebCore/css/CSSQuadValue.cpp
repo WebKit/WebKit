@@ -39,9 +39,9 @@ Ref<CSSQuadValue> CSSQuadValue::create(Quad quad)
     return adoptRef(*new CSSQuadValue(WTFMove(quad)));
 }
 
-String CSSQuadValue::customCSSText() const
+void CSSQuadValue::customCSSText(StringBuilder& builder) const
 {
-    return m_quad.cssText();
+    m_quad.cssText(builder);
 }
 
 bool CSSQuadValue::equals(const CSSQuadValue& other) const

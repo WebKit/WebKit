@@ -161,6 +161,24 @@ String CSSImageValue::customCSSText() const
     return serializeURL(m_location.specifiedURLString);
 }
 
+void CSSImageValue::customCSSText(StringBuilder& builder) const
+{
+    if (m_isInvalid)
+        return;
+
+    if (!m_replacementURLString.isEmpty()) {
+        serializeURL(builder, m_replacementURLString);
+        return;
+    }
+
+    if (m_shouldUseResolvedURLInCSSText) {
+        serializeURL(builder, m_location.resolvedURL.string());
+        return;
+    }
+
+    serializeURL(builder, m_location.specifiedURLString);
+}
+
 Ref<DeprecatedCSSOMValue> CSSImageValue::createDeprecatedCSSOMWrapper(CSSStyleDeclaration& styleDeclaration) const
 {
     // We expose CSSImageValues as URI primitive values in CSSOM to maintain old behavior.

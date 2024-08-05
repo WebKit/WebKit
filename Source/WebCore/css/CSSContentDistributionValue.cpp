@@ -45,32 +45,38 @@ Ref<CSSContentDistributionValue> CSSContentDistributionValue::create(CSSValueID 
     return adoptRef(*new CSSContentDistributionValue(distribution, position, overflow));
 }
 
-String CSSContentDistributionValue::customCSSText() const
+static std::tuple<CSSValueID, CSSValueID, CSSValueID> wordsForSerialization(CSSValueID distribution, CSSValueID position, CSSValueID overflow)
 {
-    auto word1 = m_distribution;
-    CSSValueID word2;
-    CSSValueID word3;
-    switch (m_position) {
+    switch (position) {
     case CSSValueFirstBaseline:
-        word2 = CSSValueFirst;
-        word3 = CSSValueBaseline;
-        break;
+        return { distribution, CSSValueFirst, CSSValueBaseline };
     case CSSValueLastBaseline:
-        word2 = CSSValueLast;
-        word3 = CSSValueBaseline;
-        break;
+        return { distribution, CSSValueLast, CSSValueBaseline };
     default:
-        word2 = m_overflow;
-        word3 = m_position;
-        break;
+        return { distribution, overflow, position };
     }
-    return makeString(
+}
+
+template<typename Maker> decltype(auto) CSSContentDistributionValue::serialize(Maker&& maker) const
+{
+    auto [word1, word2, word3] = wordsForSerialization(m_distribution, m_position, m_overflow);
+    return maker(
         word1 == CSSValueInvalid ? ""_s : nameLiteral(word1),
         word1 != CSSValueInvalid && word2 != CSSValueInvalid ? " "_s : ""_s,
         word2 == CSSValueInvalid ? ""_s : nameLiteral(word2),
         word2 != CSSValueInvalid && word3 != CSSValueInvalid ? " "_s : ""_s,
         word3 == CSSValueInvalid ? ""_s : nameLiteral(word3)
     );
+}
+
+String CSSContentDistributionValue::customCSSText() const
+{
+    return serialize(SerializeUsingMakeString { });
+}
+
+void CSSContentDistributionValue::customCSSText(StringBuilder& builder) const
+{
+    serialize(SerializeUsingStringBuilder { builder });
 }
 
 bool CSSContentDistributionValue::equals(const CSSContentDistributionValue& other) const

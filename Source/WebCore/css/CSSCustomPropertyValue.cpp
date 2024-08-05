@@ -128,6 +128,14 @@ String CSSCustomPropertyValue::customCSSText() const
     return m_cachedCSSText;
 }
 
+void CSSCustomPropertyValue::customCSSText(StringBuilder& builder) const
+{
+    // FIXME: This is implemented in the opposite way from other CSSValue subclasses, which usually
+    // have the non-builder `customCSSText` call the builder one, because for CSSCustomPropertyValue
+    // the css text is being cached. If we ever decide that caching is not needed, we should reverse it.
+    builder.append(customCSSText());
+}
+
 const Vector<CSSParserToken>& CSSCustomPropertyValue::tokens() const
 {
     static NeverDestroyed<Vector<CSSParserToken>> emptyTokens;

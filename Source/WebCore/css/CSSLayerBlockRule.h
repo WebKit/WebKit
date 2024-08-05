@@ -42,7 +42,7 @@ class CSSLayerBlockRule final : public CSSGroupingRule {
 public:
     static Ref<CSSLayerBlockRule> create(StyleRuleLayer&, CSSStyleSheet* parent);
 
-    String cssText() const final;
+    void cssText(StringBuilder&) const final;
     String name() const;
 
 private:
@@ -50,7 +50,8 @@ private:
     StyleRuleType styleRuleType() const final { return StyleRuleType::LayerBlock; }
 };
 
-String stringFromCascadeLayerName(const CascadeLayerName&);
+String serializedCascadeLayerName(const CascadeLayerName&);
+void serializedCascadeLayerName(StringBuilder&, const CascadeLayerName&);
 
 } // namespace WebCore
 

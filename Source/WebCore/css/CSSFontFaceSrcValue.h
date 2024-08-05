@@ -50,7 +50,8 @@ public:
     SVGFontFaceElement* svgFontFaceElement() const;
     void setSVGFontFaceElement(SVGFontFaceElement&);
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSFontFaceSrcLocalValue&) const;
 
 private:
@@ -114,7 +115,8 @@ public:
     bool isEmpty() const { return m_location.specifiedURLString.isEmpty(); }
     std::unique_ptr<FontLoadRequest> fontLoadRequest(ScriptExecutionContext&, bool isInitiatingElementInUserAgentShadowTree);
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
     void customSetReplacementURLForSubresources(const HashMap<String, String>&);
     void customClearReplacementURLForSubresources();

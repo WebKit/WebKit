@@ -50,14 +50,14 @@ AtomString CSSNamespaceRule::prefix() const
     return m_namespaceRule->prefix();
 }
 
-String CSSNamespaceRule::cssText() const
+void CSSNamespaceRule::cssText(StringBuilder& builder) const
 {
     auto prefix = this->prefix();
-    StringBuilder result;
-    result.append("@namespace "_s);
-    serializeIdentifier(prefix, result);
-    result.append(prefix.isEmpty() ? ""_s : " "_s, "url("_s, serializeString(namespaceURI()), ");"_s);
-    return result.toString();
+    builder.append("@namespace "_s);
+    serializeIdentifier(builder, prefix);
+    builder.append(prefix.isEmpty() ? ""_s : " "_s, "url("_s);
+    serializeString(builder, namespaceURI());
+    builder.append(");"_s);
 }
 
 void CSSNamespaceRule::reattach(StyleRuleBase&)

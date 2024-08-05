@@ -59,12 +59,14 @@ CSSCursorImageValue::CSSCursorImageValue(Ref<CSSValue>&& imageValue, const std::
 
 CSSCursorImageValue::~CSSCursorImageValue() = default;
 
-String CSSCursorImageValue::customCSSText() const
+void CSSCursorImageValue::customCSSText(StringBuilder& builder) const
 {
-    auto text = m_imageValue.get().cssText();
+    m_imageValue->cssText(builder);
+
     if (!m_hotSpot)
-        return text;
-    return makeString(text, ' ', m_hotSpot->x(), ' ', m_hotSpot->y());
+        return;
+
+    builder.append(' ', m_hotSpot->x(), ' ', m_hotSpot->y());
 }
 
 bool CSSCursorImageValue::equals(const CSSCursorImageValue& other) const

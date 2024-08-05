@@ -34,7 +34,7 @@ public:
 
     virtual ~CSSUnknownRule() = default;
 
-    String cssText() const final { return String(); }
+    void cssText(StringBuilder&) const final { }
     void reattach(StyleRuleBase&) final { }
 
 private:

@@ -48,20 +48,16 @@ Ref<CSSSupportsRule> CSSSupportsRule::create(StyleRuleSupports& rule, CSSStyleSh
     return adoptRef(*new CSSSupportsRule(rule, parent));
 }
 
-String CSSSupportsRule::cssText() const
+void CSSSupportsRule::cssText(StringBuilder& builder) const
 {
-    StringBuilder builder;
     builder.append("@supports "_s, conditionText());
     appendCSSTextForItems(builder);
-    return builder.toString();
 }
 
-String CSSSupportsRule::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
+void CSSSupportsRule::cssTextWithReplacementURLs(StringBuilder& builder, const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
 {
-    StringBuilder builder;
     builder.append("@supports "_s, conditionText());
     appendCSSTextWithReplacementURLsForItems(builder, replacementURLStrings, replacementURLStringsForCSSStyleSheet);
-    return builder.toString();
 }
 
 String CSSSupportsRule::conditionText() const

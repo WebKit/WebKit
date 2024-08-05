@@ -40,7 +40,8 @@ public:
 
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const;
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSAnchorValue&) const;
 
 private:

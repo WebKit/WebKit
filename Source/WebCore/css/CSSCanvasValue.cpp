@@ -44,6 +44,11 @@ String CSSCanvasValue::customCSSText() const
     return makeString("-webkit-canvas("_s, m_name, ')');
 }
 
+void CSSCanvasValue::customCSSText(StringBuilder& builder) const
+{
+    return builder.append("-webkit-canvas("_s, m_name, ')');
+}
+
 bool CSSCanvasValue::equals(const CSSCanvasValue& other) const
 {
     return m_name == other.m_name;

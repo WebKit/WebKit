@@ -40,7 +40,8 @@ public:
     const Quad& widths() const { return m_widths; }
     bool overridesBorderWidths() const { return m_overridesBorderWidths; }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSBorderImageWidthValue&) const;
 
 private:

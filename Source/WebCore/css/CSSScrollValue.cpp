@@ -34,18 +34,19 @@
 
 namespace WebCore {
 
-String CSSScrollValue::customCSSText() const
+void CSSScrollValue::customCSSText(StringBuilder& builder) const
 {
     auto hasScroller = m_scroller && m_scroller->valueID() != CSSValueNearest;
     auto hasAxis = m_axis && m_axis->valueID() != CSSValueBlock;
 
-    return makeString(
-        "scroll("_s,
-        hasScroller ? m_scroller->cssText() : ""_s,
-        hasScroller && hasAxis ? " "_s : ""_s,
-        hasAxis ? m_axis->cssText() : ""_s,
-        ")"_s
-    );
+    builder.append("scroll("_s);
+    if (hasScroller)
+        m_scroller->cssText(builder);
+    if (hasScroller && hasAxis)
+        builder.append(' ');
+    if (hasAxis)
+        m_axis->cssText(builder);
+    builder.append(')');
 }
 
 bool CSSScrollValue::equals(const CSSScrollValue& other) const

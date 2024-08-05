@@ -65,7 +65,7 @@ String CSSImportRule::layerName() const
     if (!name)
         return { };
 
-    return stringFromCascadeLayerName(*name);
+    return serializedCascadeLayerName(*name);
 }
 
 String CSSImportRule::supportsText() const
@@ -73,10 +73,10 @@ String CSSImportRule::supportsText() const
     return m_importRule->supportsText();
 }
 
-String CSSImportRule::cssTextInternal(const String& urlString) const
+void CSSImportRule::cssTextInternal(StringBuilder& builder, const String& urlString) const
 {
-    StringBuilder builder;
-    builder.append("@import "_s, serializeURL(urlString));
+    builder.append("@import "_s);
+    serializeURL(builder, urlString);
 
     if (auto layerName = this->layerName(); !layerName.isNull()) {
         if (layerName.isEmpty())
@@ -95,25 +95,32 @@ String CSSImportRule::cssTextInternal(const String& urlString) const
     }
 
     builder.append(';');
-    return builder.toString();
 }
 
-String CSSImportRule::cssText() const
+void CSSImportRule::cssText(StringBuilder& builder) const
 {
-    return cssTextInternal(m_importRule->href());
+    cssTextInternal(builder, m_importRule->href());
 }
 
-String CSSImportRule::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
+void CSSImportRule::cssTextWithReplacementURLs(StringBuilder& builder, const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
 {
     if (RefPtr sheet = styleSheet()) {
         auto urlString = replacementURLStringsForCSSStyleSheet.get(sheet);
-        if (!urlString.isEmpty())
-            return cssTextInternal(urlString);
+        if (!urlString.isEmpty()) {
+            cssTextInternal(builder, urlString);
+            return;
+        }
     }
 
     auto urlString = m_importRule->href();
     auto replacementURLString = replacementURLStrings.get(urlString);
-    return replacementURLString.isEmpty() ? cssTextInternal(urlString) : cssTextInternal(replacementURLString);
+
+    if (replacementURLString.isEmpty()) {
+        cssTextInternal(builder, urlString);
+        return;
+    }
+
+    cssTextInternal(builder, replacementURLString);
 }
 
 CSSStyleSheet* CSSImportRule::styleSheet() const

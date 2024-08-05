@@ -48,8 +48,10 @@ public:
 
     const String& name() const { return m_name; }
 
-    bool equals(const CSSPaintImageValue& other) const { return m_name == other.m_name; }
     String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
+    bool equals(const CSSPaintImageValue& other) const { return m_name == other.m_name; }
 
     RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 

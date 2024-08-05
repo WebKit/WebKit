@@ -35,7 +35,8 @@ public:
 
     const Rect& rect() const { return m_rect; }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSRectValue&) const;
 
 private:

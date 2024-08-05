@@ -154,15 +154,15 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Animation::Keyframe>> buildObjectF
             for (auto property : properties) {
                 --count;
                 WTF::switchOn(property,
-                    [&] (CSSPropertyID cssPropertyId) {
+                    [&](CSSPropertyID cssPropertyId) {
                         stylePayloadBuilder.append(nameString(cssPropertyId), ": "_s);
                         if (auto value = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, renderer))
-                            stylePayloadBuilder.append(value->cssText());
+                            value->cssText(stylePayloadBuilder);
                     },
-                    [&] (const AtomString& customProperty) {
+                    [&](const AtomString& customProperty) {
                         stylePayloadBuilder.append(customProperty, ": "_s);
                         if (auto value = computedStyleExtractor.customPropertyValue(customProperty))
-                            stylePayloadBuilder.append(value->cssText());
+                            value->cssText(stylePayloadBuilder);
                     }
                 );
                 stylePayloadBuilder.append(';');

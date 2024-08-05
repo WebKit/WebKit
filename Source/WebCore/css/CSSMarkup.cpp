@@ -66,17 +66,17 @@ static bool isCSSTokenizerIdentifier(const String& string)
     return isCSSTokenizerIdentifier(string.span16());
 }
 
-static void serializeCharacter(char32_t c, StringBuilder& appendTo)
+static void serializeCharacter(StringBuilder& builder, char32_t c)
 {
-    appendTo.append('\\', c);
+    builder.append('\\', c);
 }
 
-static void serializeCharacterAsCodePoint(char32_t c, StringBuilder& appendTo)
+static void serializeCharacterAsCodePoint(StringBuilder& builder, char32_t c)
 {
-    appendTo.append('\\', hex(c, Lowercase), ' ');
+    builder.append('\\', hex(c, Lowercase), ' ');
 }
 
-void serializeIdentifier(const String& identifier, StringBuilder& appendTo, bool skipStartChecks)
+void serializeIdentifier(StringBuilder& builder, const String& identifier, bool skipStartChecks)
 {
     bool isFirst = !skipStartChecks;
     bool isSecond = false;
@@ -92,15 +92,15 @@ void serializeIdentifier(const String& identifier, StringBuilder& appendTo, bool
         index += U16_LENGTH(c);
 
         if (!c)
-            appendTo.append(replacementCharacter);
+            builder.append(replacementCharacter);
         else if (c <= 0x1f || c == deleteCharacter || (0x30 <= c && c <= 0x39 && (isFirst || (isSecond && isFirstCharHyphen))))
-            serializeCharacterAsCodePoint(c, appendTo);
+            serializeCharacterAsCodePoint(builder, c);
         else if (c == hyphenMinus && isFirst && index == identifier.length())
-            serializeCharacter(c, appendTo);
+            serializeCharacter(builder, c);
         else if (0x80 <= c || c == hyphenMinus || c == lowLine || (0x30 <= c && c <= 0x39) || (0x41 <= c && c <= 0x5a) || (0x61 <= c && c <= 0x7a))
-            appendTo.append(c);
+            builder.append(c);
         else
-            serializeCharacter(c, appendTo);
+            serializeCharacter(builder, c);
 
         if (isFirst) {
             isFirst = false;
@@ -111,9 +111,16 @@ void serializeIdentifier(const String& identifier, StringBuilder& appendTo, bool
     }
 }
 
-void serializeString(const String& string, StringBuilder& appendTo)
+String serializeIdentifier(const String& identifier, bool skipStartChecks)
 {
-    appendTo.append('"');
+    StringBuilder builder;
+    serializeIdentifier(builder, identifier, skipStartChecks);
+    return builder.toString();
+}
+
+void serializeString(StringBuilder& builder, const String& string)
+{
+    builder.append('"');
 
     unsigned index = 0;
     while (index < string.length()) {
@@ -121,30 +128,45 @@ void serializeString(const String& string, StringBuilder& appendTo)
         index += U16_LENGTH(c);
 
         if (c <= 0x1f || c == deleteCharacter)
-            serializeCharacterAsCodePoint(c, appendTo);
+            serializeCharacterAsCodePoint(builder, c);
         else if (c == quotationMark || c == reverseSolidus)
-            serializeCharacter(c, appendTo);
+            serializeCharacter(builder, c);
         else
-            appendTo.append(c);
+            builder.append(c);
     }
 
-    appendTo.append('"');
+    builder.append('"');
 }
 
 String serializeString(const String& string)
 {
     StringBuilder builder;
-    serializeString(string, builder);
+    serializeString(builder, string);
     return builder.toString();
+}
+
+void serializeURL(StringBuilder& builder, const String& string)
+{
+    builder.append("url("_s);
+    serializeString(builder, string);
+    builder.append(')');
 }
 
 String serializeURL(const String& string)
 {
     StringBuilder builder;
-    builder.append("url("_s);
-    serializeString(string, builder);
-    builder.append(')');
+    serializeURL(builder, string);
     return builder.toString();
+}
+
+void serializeFontFamily(StringBuilder& builder, const String& string)
+{
+    if (isCSSTokenizerIdentifier(string)) {
+        builder.append(string);
+        return;
+    }
+
+    serializeString(builder, string);
 }
 
 String serializeFontFamily(const String& string)

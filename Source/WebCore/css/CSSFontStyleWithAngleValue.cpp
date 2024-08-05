@@ -41,9 +41,10 @@ Ref<CSSFontStyleWithAngleValue> CSSFontStyleWithAngleValue::create(Ref<CSSPrimit
     return adoptRef(*new CSSFontStyleWithAngleValue(WTFMove(obliqueAngle)));
 }
 
-String CSSFontStyleWithAngleValue::customCSSText() const
+void CSSFontStyleWithAngleValue::customCSSText(StringBuilder& builder) const
 {
-    return makeString("oblique "_s, m_obliqueAngle->cssText());
+    builder.append("oblique "_s);
+    m_obliqueAngle->cssText(builder);
 }
 
 bool CSSFontStyleWithAngleValue::equals(const CSSFontStyleWithAngleValue& other) const

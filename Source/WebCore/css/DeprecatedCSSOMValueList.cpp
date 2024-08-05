@@ -26,19 +26,15 @@
 #include "config.h"
 #include "DeprecatedCSSOMValueList.h"
 
-#include <wtf/text/StringBuilder.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
 String DeprecatedCSSOMValueList::cssText() const
 {
     // FIXME: Clearly wrong for cases like CSSSubgridValue. Change to call cssText on m_value instead.
-    auto prefix = ""_s;
     auto separator = CSSValueList::separatorCSSText(static_cast<CSSValueList::ValueSeparator>(m_valueSeparator));
-    StringBuilder result;
-    for (auto& value : m_values)
-        result.append(std::exchange(prefix, separator), value.get().cssText());
-    return result.toString();
+    return makeString(interleave(m_values, [](auto& value) { return value->cssText(); }, separator));
 }
 
 }

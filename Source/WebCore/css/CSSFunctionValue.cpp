@@ -99,13 +99,11 @@ Ref<CSSFunctionValue> CSSFunctionValue::create(CSSValueID name, Ref<CSSValue> ar
     return adoptRef(*new CSSFunctionValue(name, WTFMove(argument1), WTFMove(argument2), WTFMove(argument3), WTFMove(argument4)));
 }
 
-String CSSFunctionValue::customCSSText() const
+void CSSFunctionValue::customCSSText(StringBuilder& builder) const
 {
-    StringBuilder result;
-    result.append(nameLiteral(m_name), '(');
-    serializeItems(result);
-    result.append(')');
-    return result.toString();
+    builder.append(nameLiteral(m_name), '(');
+    serializeItems(builder);
+    builder.append(')');
 }
 
 bool CSSFunctionValue::addDerivedHash(Hasher& hasher) const

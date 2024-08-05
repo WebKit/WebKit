@@ -668,18 +668,13 @@ String HTMLImageElement::completeURLsInAttributeValue(const URL& base, const Att
                 return attribute.value();
         }
 
-        StringBuilder result;
-        for (const auto& candidate : imageCandidates) {
-            if (&candidate != &imageCandidates[0])
-                result.append(", "_s);
-            result.append(resolveURLStringIfNeeded(candidate.string.toString(), resolveURLs, base));
+        return makeString(interleave(imageCandidates, [&](auto& builder, auto& candidate) {
+            builder.append(resolveURLStringIfNeeded(candidate.string.toString(), resolveURLs, base));
             if (candidate.density != UninitializedDescriptor)
-                result.append(' ', candidate.density, 'x');
+                builder.append(' ', candidate.density, 'x');
             if (candidate.resourceWidth != UninitializedDescriptor)
-                result.append(' ', candidate.resourceWidth, 'w');
-        }
-
-        return result.toString();
+                builder.append(' ', candidate.resourceWidth, 'w');
+        }, ", "_s));
     }
 
     return HTMLElement::completeURLsInAttributeValue(base, attribute, resolveURLs);

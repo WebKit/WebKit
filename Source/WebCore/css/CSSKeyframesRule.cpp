@@ -157,14 +157,15 @@ CSSKeyframeRule* CSSKeyframesRule::findRule(const String& s)
     return i ? item(*i) : nullptr;
 }
 
-String CSSKeyframesRule::cssText() const
+void CSSKeyframesRule::cssText(StringBuilder& builder) const
 {
-    StringBuilder result;
-    result.append("@keyframes "_s, name(), " { \n"_s);
-    for (unsigned i = 0, size = length(); i < size; ++i)
-        result.append("  "_s, m_keyframesRule->keyframes()[i]->cssText(), '\n');
-    result.append('}');
-    return result.toString();
+    builder.append("@keyframes "_s, name(), " { \n"_s);
+    for (unsigned i = 0, size = length(); i < size; ++i) {
+        builder.append("  "_s);
+        m_keyframesRule->keyframes()[i]->cssText(builder);
+        builder.append('\n');
+    }
+    builder.append('}');
 }
 
 unsigned CSSKeyframesRule::length() const

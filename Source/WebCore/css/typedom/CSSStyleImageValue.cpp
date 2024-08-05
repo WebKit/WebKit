@@ -46,7 +46,7 @@ CSSStyleImageValue::CSSStyleImageValue(Ref<CSSImageValue>&& cssValue, Document* 
 
 void CSSStyleImageValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments>) const
 {
-    builder.append(m_cssValue->cssText());
+    m_cssValue->cssText(builder);
 }
 
 Document* CSSStyleImageValue::document() const

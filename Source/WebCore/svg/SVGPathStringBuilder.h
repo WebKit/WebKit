@@ -27,10 +27,11 @@ namespace WebCore {
 
 class SVGPathStringBuilder final : public SVGPathConsumer {
 public:
-    WEBCORE_EXPORT SVGPathStringBuilder();
+    WEBCORE_EXPORT SVGPathStringBuilder(StringBuilder&);
     WEBCORE_EXPORT virtual ~SVGPathStringBuilder();
 
     WEBCORE_EXPORT String result();
+    void finalize();
 
     void incrementPathSegmentCount() final;
     bool continueConsuming() final;
@@ -50,7 +51,7 @@ public:
     void arcTo(float, float, float, bool largeArcFlag, bool sweepFlag, const FloatPoint&, PathCoordinateMode) final;
 
 private:
-    StringBuilder m_stringBuilder;
+    StringBuilder& m_stringBuilder;
 };
 
 } // namespace WebCore

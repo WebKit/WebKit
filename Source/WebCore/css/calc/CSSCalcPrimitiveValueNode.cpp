@@ -56,6 +56,11 @@ String CSSCalcPrimitiveValueNode::customCSSText() const
     return protectedValue()->cssText();
 }
 
+void CSSCalcPrimitiveValueNode::customCSSText(StringBuilder& result) const
+{
+    protectedValue()->cssText(result);
+}
+
 CSSUnitType CSSCalcPrimitiveValueNode::primitiveType() const
 {
     return protectedValue()->primitiveType();

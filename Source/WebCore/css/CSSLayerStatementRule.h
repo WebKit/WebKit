@@ -40,7 +40,7 @@ public:
     static Ref<CSSLayerStatementRule> create(StyleRuleLayer&, CSSStyleSheet* parent);
     virtual ~CSSLayerStatementRule();
 
-    String cssText() const final;
+    void cssText(StringBuilder&) const final;
     Vector<String> nameList() const;
 
 private:

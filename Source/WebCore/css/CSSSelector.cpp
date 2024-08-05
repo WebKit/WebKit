@@ -377,9 +377,9 @@ static void appendPseudoClassFunctionTail(StringBuilder& builder, const CSSSelec
 static void appendLangArgument(StringBuilder& builder, const PossiblyQuotedIdentifier& langArgument)
 {
     if (!langArgument.wasQuoted)
-        serializeIdentifier(langArgument.identifier, builder);
+        serializeIdentifier(builder, langArgument.identifier);
     else
-        serializeString(langArgument.identifier, builder);
+        serializeString(builder, langArgument.identifier);
 }
 
 static void appendLangArgumentList(StringBuilder& builder, const FixedVector<PossiblyQuotedIdentifier>& list)
@@ -431,7 +431,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
         if (identifier == starAtom())
             builder.append('*');
         else
-            serializeIdentifier(identifier, builder);
+            serializeIdentifier(builder, identifier);
     };
 
     if (match() == Match::Tag && !m_tagIsForNamespaceRule) {
@@ -451,12 +451,12 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
         }
         if (cs->match() == Match::Id) {
             builder.append('#');
-            serializeIdentifier(cs->serializingValue(), builder);
+            serializeIdentifier(builder, cs->serializingValue());
         } else if (cs->match() == Match::NestingParent) {
             builder.append('&');
         } else if (cs->match() == Match::Class) {
             builder.append('.');
-            serializeIdentifier(cs->serializingValue(), builder);
+            serializeIdentifier(builder, cs->serializingValue());
         } else if (cs->match() == Match::ForgivingUnknown || cs->match() == Match::ForgivingUnknownNestContaining) {
             builder.append(cs->value());
         } else if (cs->match() == Match::HasScope) {
@@ -508,7 +508,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             }
             case PseudoClass::State:
                 builder.append('(');
-                serializeIdentifier(cs->argument(), builder);
+                serializeIdentifier(builder, cs->argument());
                 builder.append(')');
                 break;
             default:
@@ -533,15 +533,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
                 break;
             }
             case PseudoElement::Part: {
-                builder.append("::part("_s);
-                bool isFirst = true;
-                for (auto& partName : *cs->argumentList()) {
-                    if (!isFirst)
-                        builder.append(' ');
-                    isFirst = false;
-                    serializeIdentifier(partName.identifier, builder);
-                }
-                builder.append(')');
+                builder.append("::part("_s, interleave(*cs->argumentList(), [](auto& builder, auto& partName) { serializeIdentifier(builder, partName.identifier); }, ' '), ')');
                 break;
             }
 #if ENABLE(VIDEO)
@@ -558,7 +550,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             default:
                 ASSERT(!pseudoElementMayHaveArgument(cs->pseudoElement()), "Missing serialization for pseudo-element argument");
                 builder.append("::"_s);
-                serializeIdentifier(cs->serializingValue(), builder);
+                serializeIdentifier(builder, cs->serializingValue());
             }
         } else if (cs->isAttributeSelector()) {
             builder.append('[');
@@ -594,7 +586,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
                 break;
             }
             if (cs->match() != Match::Set) {
-                serializeString(cs->serializingValue(), builder);
+                serializeString(builder, cs->serializingValue());
                 if (cs->attributeValueMatchingIsCaseInsensitive())
                     builder.append(" i]"_s);
                 else

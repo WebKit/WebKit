@@ -44,7 +44,7 @@ private:
     CSSNamespaceRule(StyleRuleNamespace&, CSSStyleSheet*);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Namespace; }
-    String cssText() const final;
+    void cssText(StringBuilder&) const final;
     void reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleNamespace> m_namespaceRule;

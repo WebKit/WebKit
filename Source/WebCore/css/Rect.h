@@ -33,11 +33,23 @@ public:
 
     String cssText() const
     {
-        return generateCSSString(top().cssText(), right().cssText(), bottom().cssText(), left().cssText());
+        return serialize(top().cssText(), right().cssText(), bottom().cssText(), left().cssText());
     }
 
-private:
-    static String generateCSSString(const String& top, const String& right, const String& bottom, const String& left)
+    void cssText(StringBuilder& builder) const
+    {
+        builder.append("rect("_s);
+        top().cssText(builder);
+        builder.append(", "_s);
+        right().cssText(builder);
+        builder.append(", "_s);
+        bottom().cssText(builder);
+        builder.append(", "_s);
+        left().cssText(builder);
+        builder.append(')');
+    }
+
+    static String serialize(const String& top, const String& right, const String& bottom, const String& left)
     {
         return makeString("rect("_s, top, ", "_s, right, ", "_s, bottom, ", "_s, left, ')');
     }

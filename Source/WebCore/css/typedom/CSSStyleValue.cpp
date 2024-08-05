@@ -90,7 +90,7 @@ String CSSStyleValue::toString() const
 void CSSStyleValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments>) const
 {
     if (m_propertyValue)
-        builder.append(m_propertyValue->cssText());
+        m_propertyValue->cssText(builder);
 }
 
 } // namespace WebCore

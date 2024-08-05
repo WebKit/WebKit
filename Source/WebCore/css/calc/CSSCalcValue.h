@@ -68,9 +68,10 @@ public:
 
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const;
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSCalcValue&) const;
-    
+
     static bool isCalcFunction(CSSValueID);
 
     void dump(TextStream&) const;

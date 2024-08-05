@@ -99,6 +99,12 @@ inline String serializeLonghandValue(CSSPropertyID property, const CSSValue* val
     return value ? serializeLonghandValue(property, *value) : String();
 }
 
+inline void serializeLonghandValue(StringBuilder& builder, CSSPropertyID property, const CSSValue* value)
+{
+    if (value)
+        serializeLonghandValue(builder, property, *value);
+}
+
 inline CSSValueID longhandValueID(CSSPropertyID property, const CSSValue& value)
 {
     return value.isImplicitInitialValue() ? initialValueIDForLonghand(property) : valueID(value);

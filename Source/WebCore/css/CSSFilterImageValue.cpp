@@ -53,9 +53,13 @@ bool CSSFilterImageValue::equalInputImages(const CSSFilterImageValue& other) con
     return compareCSSValue(m_imageValueOrNone, other.m_imageValueOrNone);
 }
 
-String CSSFilterImageValue::customCSSText() const
+void CSSFilterImageValue::customCSSText(StringBuilder& builder) const
 {
-    return makeString("filter("_s, m_imageValueOrNone->cssText(), ", "_s, m_filterValue->cssText(), ')');
+    builder.append("filter("_s);
+    m_imageValueOrNone->cssText(builder);
+    builder.append(", "_s);
+    m_filterValue->cssText(builder);
+    builder.append(')');
 }
 
 RefPtr<StyleImage> CSSFilterImageValue::createStyleImage(Style::BuilderState& state) const

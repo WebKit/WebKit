@@ -35,7 +35,7 @@ class CSSScopeRule final : public CSSGroupingRule {
 public:
     static Ref<CSSScopeRule> create(StyleRuleScope&, CSSStyleSheet* parent);
 
-    String cssText() const final;
+    void cssText(StringBuilder&) const final;
     String start() const;
     String end() const;
 

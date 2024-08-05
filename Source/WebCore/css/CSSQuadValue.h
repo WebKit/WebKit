@@ -35,7 +35,8 @@ public:
 
     const Quad& quad() const { return m_quad; }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSQuadValue&) const;
 
 private:

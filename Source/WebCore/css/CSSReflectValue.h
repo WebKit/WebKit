@@ -39,7 +39,8 @@ public:
     const CSSPrimitiveValue& offset() const { return m_offset.get(); }
     const CSSValue* mask() const { return m_mask.get(); }
 
-    String customCSSText() const;
+    void customCSSText(StringBuilder&) const;
+
     bool equals(const CSSReflectValue&) const;
 
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const

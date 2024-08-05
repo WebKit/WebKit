@@ -33,18 +33,18 @@ namespace MQ {
 
 static void serialize(StringBuilder& builder, const QueryInParens& queryInParens)
 {
-    WTF::switchOn(queryInParens, [&](auto& node) {
-        if (node.functionId)
-            builder.append(nameString(*node.functionId));
-        builder.append('(');
-        serialize(builder, node);
-        builder.append(')');
-    }, [&](const GeneralEnclosed& generalEnclosed) {
-        builder.append(generalEnclosed.name);
-        builder.append('(');
-        builder.append(generalEnclosed.text);
-        builder.append(')');
-    });
+    WTF::switchOn(queryInParens,
+        [&](auto& node) {
+            if (node.functionId)
+                builder.append(nameString(*node.functionId));
+            builder.append('(');
+            serialize(builder, node);
+            builder.append(')');
+        },
+        [&](const GeneralEnclosed& generalEnclosed) {
+            builder.append(generalEnclosed.name, '(', generalEnclosed.text, ')');
+        }
+    );
 }
 
 void serialize(StringBuilder& builder, const Condition& condition)
@@ -88,7 +88,7 @@ void serialize(StringBuilder& builder, const Feature& feature)
 
     switch (feature.syntax) {
     case Syntax::Boolean:
-        serializeIdentifier(feature.name, builder);
+        serializeIdentifier(builder, feature.name);
         break;
 
     case Syntax::Plain:
@@ -106,22 +106,23 @@ void serialize(StringBuilder& builder, const Feature& feature)
             ASSERT_NOT_REACHED();
             break;
         }
-        serializeIdentifier(feature.name, builder);
+        serializeIdentifier(builder, feature.name);
 
-        builder.append(": "_s, feature.rightComparison->value->cssText());
+        builder.append(": "_s);
+        feature.rightComparison->value->cssText(builder);
         break;
 
     case Syntax::Range:
         if (feature.leftComparison) {
-            builder.append(feature.leftComparison->value->cssText());
+            feature.leftComparison->value->cssText(builder);
             serializeRangeComparisonOperator(feature.leftComparison->op);
         }
 
-        serializeIdentifier(feature.name, builder);
+        serializeIdentifier(builder, feature.name);
 
         if (feature.rightComparison) {
             serializeRangeComparisonOperator(feature.rightComparison->op);
-            builder.append(feature.rightComparison->value->cssText());
+            feature.rightComparison->value->cssText(builder);
         }
         break;
     }

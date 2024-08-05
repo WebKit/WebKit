@@ -1170,11 +1170,11 @@ void CSSCalcOperationNode::buildCSSTextRecursive(const CSSCalcExpressionNode& no
 {
     // If root is a numeric value, or a non-math function, serialize root per the normal rules for it and return the result.
     if (auto* valueNode = dynamicDowncast<CSSCalcPrimitiveValueNode>(node)) {
-        builder.append(valueNode->customCSSText());
+        valueNode->customCSSText(builder);
         return;
     }
     if (auto* symbolNode = dynamicDowncast<CSSCalcSymbolNode>(node)) {
-        builder.append(symbolNode->customCSSText());
+        symbolNode->customCSSText(builder);
         return;
     }
 

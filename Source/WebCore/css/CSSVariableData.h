@@ -49,9 +49,10 @@ public:
 
     const Vector<CSSParserToken>& tokens() const { return m_tokens; }
 
-    bool operator==(const CSSVariableData& other) const;
+    bool operator==(const CSSVariableData&) const;
 
     String serialize() const;
+    void serialize(StringBuilder&) const;
 
 private:
     CSSVariableData(const CSSParserTokenRange&, const CSSParserContext&);

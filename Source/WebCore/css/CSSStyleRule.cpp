@@ -145,73 +145,79 @@ Vector<Ref<StyleRuleBase>> CSSStyleRule::nestedRules() const
 }
 
 // https://w3c.github.io/csswg-drafts/cssom-1/#serialize-a-css-rule
-String CSSStyleRule::cssText() const
-{
-    auto declarationsString = m_styleRule->properties().asText();
-    StringBuilder declarations;
-    StringBuilder rules;
-    declarations.append(declarationsString);
-    cssTextForRules(rules);
 
-    return cssTextInternal(declarations, rules);
+template<typename F> void CSSStyleRule::cssTextForRules(StringBuilder& builder, F&& appender) const
+{
+    for (unsigned index = 0; index < length(); index++) {
+        builder.append("\n  "_s);
+        appender(builder, *item(index));
+    }
 }
 
-void CSSStyleRule::cssTextForRules(StringBuilder& rules) const
+template<typename DeclarationsFunctor, typename RulesFunctor> void CSSStyleRule::cssTextInternal(StringBuilder& builder, bool hasDeclarations, DeclarationsFunctor&& declarations, bool hasRules, RulesFunctor&& rules) const
 {
-    for (unsigned index = 0; index < length(); index++)
-        rules.append("\n  "_s, item(index)->cssText());
-}
-
-String CSSStyleRule::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
-{
-    StringBuilder declarations;
-    StringBuilder rules;
-
-    auto mutableStyleProperties = m_styleRule->properties().mutableCopy();
-    mutableStyleProperties->setReplacementURLForSubresources(replacementURLStrings);
-    auto declarationsString = mutableStyleProperties->asText();
-    mutableStyleProperties->clearReplacementURLForSubresources();
-
-    declarations.append(declarationsString);
-    cssTextForRulesWithReplacementURLs(rules, replacementURLStrings, replacementURLStringsForCSSStyleSheet);
-
-    return cssTextInternal(declarations, rules);
-}
-
-void CSSStyleRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
-{
-    for (unsigned index = 0; index < length(); index++)
-        rules.append("\n  "_s, item(index)->cssTextWithReplacementURLs(replacementURLStrings, replacementURLStringsForCSSStyleSheet));
-}
-
-String CSSStyleRule::cssTextInternal(StringBuilder& declarations, StringBuilder& rules) const
-{
-    StringBuilder builder;
     builder.append(selectorText(), " {"_s);
 
-    if (declarations.isEmpty() && rules.isEmpty()) {
+    if (!hasDeclarations && !hasRules) {
         builder.append(" }"_s);
-        return builder.toString();
+        return;
     }
 
-    if (rules.isEmpty()) {
+    if (!hasRules) {
         builder.append(' ');
-        builder.append(declarations);
+        declarations(builder);
         builder.append(" }"_s);
-        return builder.toString();
+        return;
     }
 
-    if (declarations.isEmpty()) {
-        builder.append(rules);
+    if (!hasDeclarations) {
+        rules(builder);
         builder.append("\n}"_s);
-        return builder.toString();
+        return;
     }
 
     builder.append("\n  "_s);
-    builder.append(declarations);
-    builder.append(rules);
+    declarations(builder);
+    rules(builder);
     builder.append("\n}"_s);
-    return builder.toString();
+}
+
+void CSSStyleRule::cssText(StringBuilder& builder) const
+{
+    bool hasDeclarations = !m_styleRule->properties().isEmpty();
+    auto declarations = [this](StringBuilder& builder) {
+        m_styleRule->properties().asText(builder);
+    };
+
+    bool hasRules = length() != 0;
+    auto rules = [&](StringBuilder& builder) {
+        cssTextForRules(builder, [&](StringBuilder& builder, CSSRule& rule) {
+            rule.cssText(builder);
+        });
+    };
+
+    cssTextInternal(builder, hasDeclarations, declarations, hasRules, rules);
+}
+
+void CSSStyleRule::cssTextWithReplacementURLs(StringBuilder& builder, const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
+{
+    auto mutableStyleProperties = m_styleRule->properties().mutableCopy();
+
+    bool hasDeclarations = !mutableStyleProperties->isEmpty();
+    auto declarations = [&](StringBuilder& builder) {
+        mutableStyleProperties->setReplacementURLForSubresources(replacementURLStrings);
+        mutableStyleProperties->asText(builder);
+        mutableStyleProperties->clearReplacementURLForSubresources();
+    };
+
+    bool hasRules = length() != 0;
+    auto rules = [&](StringBuilder& builder) {
+        cssTextForRules(builder, [&](StringBuilder& builder, CSSRule& rule) {
+            rule.cssTextWithReplacementURLs(builder, replacementURLStrings, replacementURLStringsForCSSStyleSheet);
+        });
+    };
+
+    cssTextInternal(builder, hasDeclarations, declarations, hasRules, rules);
 }
 
 // FIXME: share all methods below with CSSGroupingRule.

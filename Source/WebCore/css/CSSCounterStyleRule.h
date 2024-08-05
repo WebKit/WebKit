@@ -32,6 +32,7 @@
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
+
 class StyleRuleCounterStyle final : public StyleRuleBase {
 public:
     static Ref<StyleRuleCounterStyle> create(const AtomString&, CSSCounterStyleDescriptors&&);
@@ -70,7 +71,7 @@ public:
     static Ref<CSSCounterStyleRule> create(StyleRuleCounterStyle&, CSSStyleSheet*);
     virtual ~CSSCounterStyleRule();
 
-    String cssText() const final;
+    void cssText(StringBuilder&) const final;
     void reattach(StyleRuleBase&) final;
     StyleRuleType styleRuleType() const final { return StyleRuleType::CounterStyle; }
 
