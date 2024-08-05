@@ -220,7 +220,6 @@ rect: style.getPropertyValue(-webkit-box-ordinal-group) : 1
 rect: style.getPropertyValue(-webkit-box-orient) : horizontal
 rect: style.getPropertyValue(-webkit-box-pack) : start
 rect: style.getPropertyValue(-webkit-box-reflect) : none
-rect: style.getPropertyValue(-webkit-box-shadow) : none
 rect: style.getPropertyValue(-webkit-column-axis) : auto
 rect: style.getPropertyValue(-webkit-font-smoothing) : auto
 rect: style.getPropertyValue(-webkit-hyphenate-limit-after) : auto
@@ -463,7 +462,6 @@ g: style.getPropertyValue(-webkit-box-ordinal-group) : 1
 g: style.getPropertyValue(-webkit-box-orient) : horizontal
 g: style.getPropertyValue(-webkit-box-pack) : start
 g: style.getPropertyValue(-webkit-box-reflect) : none
-g: style.getPropertyValue(-webkit-box-shadow) : none
 g: style.getPropertyValue(-webkit-column-axis) : auto
 g: style.getPropertyValue(-webkit-font-smoothing) : auto
 g: style.getPropertyValue(-webkit-hyphenate-limit-after) : auto

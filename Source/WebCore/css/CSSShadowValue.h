@@ -35,9 +35,10 @@ public:
         RefPtr<CSSPrimitiveValue>&& blur,
         RefPtr<CSSPrimitiveValue>&& spread,
         RefPtr<CSSPrimitiveValue>&& style,
-        RefPtr<CSSPrimitiveValue>&& color)
+        RefPtr<CSSPrimitiveValue>&& color,
+        bool isWebkitBoxShadow = false)
     {
-        return adoptRef(*new CSSShadowValue(WTFMove(x), WTFMove(y), WTFMove(blur), WTFMove(spread), WTFMove(style), WTFMove(color)));
+        return adoptRef(*new CSSShadowValue(WTFMove(x), WTFMove(y), WTFMove(blur), WTFMove(spread), WTFMove(style), WTFMove(color), isWebkitBoxShadow));
     }
 
     String customCSSText() const;
@@ -79,6 +80,7 @@ public:
     RefPtr<CSSPrimitiveValue> spread;
     RefPtr<CSSPrimitiveValue> style;
     RefPtr<CSSPrimitiveValue> color;
+    bool isWebkitBoxShadow { false };
 
 private:
     CSSShadowValue(RefPtr<CSSPrimitiveValue>&& x,
@@ -86,7 +88,8 @@ private:
         RefPtr<CSSPrimitiveValue>&& blur,
         RefPtr<CSSPrimitiveValue>&& spread,
         RefPtr<CSSPrimitiveValue>&& style,
-        RefPtr<CSSPrimitiveValue>&& color);
+        RefPtr<CSSPrimitiveValue>&& color,
+        bool isWebkitBoxShadow);
 };
 
 } // namespace WebCore

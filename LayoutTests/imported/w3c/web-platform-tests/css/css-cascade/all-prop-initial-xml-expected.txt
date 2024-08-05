@@ -390,7 +390,6 @@ PASS -webkit-box-ordinal-group
 PASS -webkit-box-orient
 PASS -webkit-box-pack
 PASS -webkit-box-reflect
-PASS -webkit-box-shadow
 PASS -webkit-column-axis
 PASS -webkit-column-progression
 PASS -webkit-cursor-visibility

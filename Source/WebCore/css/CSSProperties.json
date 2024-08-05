@@ -148,15 +148,6 @@
         "Whether the property needs to be applied at the end of its priority bucket",
         "in CSS cascading order.",
         "",
-        "* related-property:",
-        "Indicates another property which shares a computed style with the current one.",
-        "Typically used for the prefixed or unprefixed version of the same property, e.g.",
-        "-webkit-box-shadow has box-shadow as the related property, and vice versa.",
-        "Properties with this flag can't be high-priority, they are deferred to be applied",
-        "after low-priority ones, and they are specially handled to apply in parse order.",
-        "So if a declaration block contains both properties, they will be applied in the",
-        "specified order, not alphabetically within their priority bucket as usual.",
-        "",
         "* aliases:",
         "An array of the alternative names for this property. Aliases are folded at",
         "parse time and don't have their own CSSPropertyID.",
@@ -2965,7 +2956,6 @@
                 "inset"
             ],
             "codegen-properties": {
-                "related-property": "-webkit-box-shadow",
                 "custom": "All",
                 "parser-function": "consumeBoxShadow",
                 "parser-function-requires-context": true,
@@ -6797,8 +6787,8 @@
         },
         "-webkit-box-shadow": {
             "codegen-properties": {
-                "related-property": "box-shadow",
-                "custom": "All",
+                "cascade-alias": "box-shadow",
+                "skip-builder": true,
                 "parser-function": "consumeWebkitBoxShadow",
                 "parser-function-requires-context": true,
                 "parser-grammar-unused": "none | <shadow>#",

@@ -289,7 +289,7 @@ RefPtr<CSSValue> consumeFilter(CSSParserTokenRange& range, const CSSParserContex
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, const CSSParserContext& context, bool allowInset, bool allowSpread)
+RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, const CSSParserContext& context, bool allowInset, bool allowSpread, bool isWebkitBoxShadow)
 {
     RefPtr<CSSPrimitiveValue> style;
     RefPtr<CSSPrimitiveValue> color;
@@ -350,7 +350,7 @@ RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, const CSS
     // In order for this to be a valid <shadow>, at least these lengths must be present.
     if (!horizontalOffset || !verticalOffset)
         return nullptr;
-    return CSSShadowValue::create(WTFMove(horizontalOffset), WTFMove(verticalOffset), WTFMove(blurRadius), WTFMove(spreadDistance), WTFMove(style), WTFMove(color));
+    return CSSShadowValue::create(WTFMove(horizontalOffset), WTFMove(verticalOffset), WTFMove(blurRadius), WTFMove(spreadDistance), WTFMove(style), WTFMove(color), isWebkitBoxShadow);
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#predefined-counters
@@ -1766,27 +1766,27 @@ RefPtr<CSSValue> consumeTimingFunction(CSSParserTokenRange& range, const CSSPars
     return nullptr;
 }
 
-static RefPtr<CSSValue> consumeShadow(CSSParserTokenRange& range, const CSSParserContext& context, bool isBoxShadowProperty)
+static RefPtr<CSSValue> consumeShadow(CSSParserTokenRange& range, const CSSParserContext& context, bool isBoxShadowProperty, bool isWebkitBoxShadow)
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
 
-    return consumeCommaSeparatedListWithoutSingleValueOptimization(range, consumeSingleShadow, context, isBoxShadowProperty, isBoxShadowProperty);
+    return consumeCommaSeparatedListWithoutSingleValueOptimization(range, consumeSingleShadow, context, isBoxShadowProperty, isBoxShadowProperty, isWebkitBoxShadow);
 }
 
 RefPtr<CSSValue> consumeTextShadow(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeShadow(range, context, false);
+    return consumeShadow(range, context, false, false);
 }
 
 RefPtr<CSSValue> consumeBoxShadow(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeShadow(range, context, true);
+    return consumeShadow(range, context, true, false);
 }
 
 RefPtr<CSSValue> consumeWebkitBoxShadow(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeShadow(range, context, true);
+    return consumeShadow(range, context, true, true);
 }
 
 RefPtr<CSSValue> consumeTextDecorationLine(CSSParserTokenRange& range)

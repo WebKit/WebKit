@@ -701,7 +701,7 @@ inline void BuilderCustom::applyTextOrBoxShadowValue(BuilderState& builderState,
         if (shadowValue.color)
             color = builderState.colorFromPrimitiveValue(*shadowValue.color);
 
-        auto shadowData = makeUnique<ShadowData>(LengthPoint(x, y), blur, spread, shadowStyle, property == CSSPropertyWebkitBoxShadow, color);
+        auto shadowData = makeUnique<ShadowData>(LengthPoint(x, y), blur, spread, shadowStyle, shadowValue.isWebkitBoxShadow, color);
         if (property == CSSPropertyTextShadow)
             builderState.style().setTextShadow(WTFMove(shadowData), !isFirstEntry); // add to the list if this is not the first entry
         else
@@ -738,21 +738,6 @@ inline void BuilderCustom::applyInheritBoxShadow(BuilderState& builderState)
 inline void BuilderCustom::applyValueBoxShadow(BuilderState& builderState, CSSValue& value)
 {
     applyTextOrBoxShadowValue<CSSPropertyBoxShadow>(builderState, value);
-}
-
-inline void BuilderCustom::applyInitialWebkitBoxShadow(BuilderState& builderState)
-{
-    applyInitialBoxShadow(builderState);
-}
-
-inline void BuilderCustom::applyInheritWebkitBoxShadow(BuilderState& builderState)
-{
-    applyInheritBoxShadow(builderState);
-}
-
-inline void BuilderCustom::applyValueWebkitBoxShadow(BuilderState& builderState, CSSValue& value)
-{
-    applyTextOrBoxShadowValue<CSSPropertyWebkitBoxShadow>(builderState, value);
 }
 
 inline void BuilderCustom::applyInitialFontFamily(BuilderState& builderState)
