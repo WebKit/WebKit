@@ -105,7 +105,7 @@ id<MTLBuffer> Device::safeCreateBuffer(NSUInteger length, MTLStorageMode storage
     return buffer;
 }
 
-Ref<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
+Ref<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor, std::span<uint8_t>&& data)
 {
     if (descriptor.nextInChain || !isValid())
         return Buffer::createInvalid(*this);
@@ -121,7 +121,13 @@ Ref<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
     // FIXME(PERFORMANCE): Consider write-combining CPU cache mode.
     // FIXME(PERFORMANCE): Consider implementing hazard tracking ourself.
     MTLStorageMode storageMode = WebGPU::storageMode(hasUnifiedMemory(), descriptor.usage, descriptor.mappedAtCreation);
-    auto buffer = safeCreateBuffer(static_cast<NSUInteger>(descriptor.size), storageMode);
+    id<MTLBuffer> buffer;
+    if (data.size()) {
+        MTLResourceOptions resourceOptions = (MTLCPUCacheModeDefaultCache << MTLResourceCPUCacheModeShift) | (storageMode << MTLResourceStorageModeShift) | (MTLHazardTrackingModeDefault << MTLResourceHazardTrackingModeShift);
+        buffer = newBufferWithBytesNoCopy(data.data(), data.size(), resourceOptions);
+    } else
+        buffer = safeCreateBuffer(descriptor.size, storageMode);
+
     if (!buffer) {
         generateAnOutOfMemoryError("Allocation failure."_s);
 

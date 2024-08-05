@@ -87,7 +87,7 @@ static GPUSize64 computeElementSize(const BufferSource& data)
 }
 
 ExceptionOr<void> GPUQueue::writeBuffer(
-    const GPUBuffer& buffer,
+    GPUBuffer& buffer,
     GPUSize64 bufferOffset,
     BufferSource&& data,
     std::optional<GPUSize64> optionalDataOffset,

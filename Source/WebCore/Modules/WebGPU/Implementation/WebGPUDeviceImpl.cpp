@@ -96,7 +96,7 @@ void DeviceImpl::destroy()
     wgpuDeviceDestroy(m_backing.get());
 }
 
-RefPtr<Buffer> DeviceImpl::createBuffer(const BufferDescriptor& descriptor)
+RefPtr<Buffer> DeviceImpl::createBuffer(const BufferDescriptor& descriptor, std::span<uint8_t>&& data)
 {
     auto label = descriptor.label.utf8();
 
@@ -108,7 +108,7 @@ RefPtr<Buffer> DeviceImpl::createBuffer(const BufferDescriptor& descriptor)
         descriptor.mappedAtCreation,
     };
 
-    return BufferImpl::create(adoptWebGPU(wgpuDeviceCreateBuffer(m_backing.get(), &backingDescriptor)), m_convertToBackingContext);
+    return BufferImpl::create(adoptWebGPU(wgpuDeviceCreateBuffer(m_backing.get(), &backingDescriptor, WTFMove(data))), m_convertToBackingContext);
 }
 
 RefPtr<Texture> DeviceImpl::createTexture(const TextureDescriptor& descriptor)

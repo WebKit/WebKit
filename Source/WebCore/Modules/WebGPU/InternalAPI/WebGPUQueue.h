@@ -62,7 +62,7 @@ public:
     virtual void onSubmittedWorkDone(CompletionHandler<void()>&&) = 0;
 
     virtual void writeBuffer(
-        const Buffer&,
+        Buffer&,
         Size64 bufferOffset,
         std::span<const uint8_t> source,
         Size64 dataOffset = 0,

@@ -70,11 +70,19 @@ void RemoteBuffer::mapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, WebCore:
     });
 }
 
-void RemoteBuffer::getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& callback)
+void RemoteBuffer::getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, CompletionHandler<void(std::pair<uint64_t, uint64_t>&&)>&& callback)
 {
     m_backing->getMappedRange(offset, size, [&] (auto mappedRange) {
         m_isMapped = true;
-        callback(mappedRange);
+        callback(WTFMove(mappedRange));
+    });
+}
+
+void RemoteBuffer::getMappedRangeData(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& callback)
+{
+    m_backing->getMappedRangeData(offset, size, [&] (auto mappedRange) {
+        m_isMapped = true;
+        callback(WTFMove(mappedRange));
     });
 }
 

@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteBufferProxy.h"
 #include "RemoteQueueMessages.h"
 #include "WebGPUConvertToBackingContext.h"
 
@@ -69,12 +70,24 @@ void RemoteQueueProxy::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
 }
 
 void RemoteQueueProxy::writeBuffer(
-    const WebCore::WebGPU::Buffer& buffer,
+    WebCore::WebGPU::Buffer& buffer,
     WebCore::WebGPU::Size64 bufferOffset,
     std::span<const uint8_t> source,
     WebCore::WebGPU::Size64 dataOffset,
     std::optional<WebCore::WebGPU::Size64> size)
 {
+    RemoteBufferProxy& remoteBufferProxy = static_cast<RemoteBufferProxy&>(buffer);
+    if (auto mutableSpan = remoteBufferProxy.mutableSpan()) {
+        if (remoteBufferProxy.usage() & (static_cast<uint16_t>(WebCore::WebGPU::BufferUsage::Storage) | static_cast<uint16_t>(WebCore::WebGPU::BufferUsage::QueryResolve))) {
+            auto sendResult = sendSync(Messages::RemoteQueue::OnSubmittedWorkDoneSync());
+            UNUSED_PARAM(sendResult);
+        }
+
+        auto newSize = static_cast<size_t>(size.value_or(source.size() - dataOffset));
+        memcpySpan(mutableSpan->subspan(bufferOffset, newSize), source.subspan(dataOffset, newSize));
+        return;
+    }
+
     auto convertedBuffer = m_convertToBackingContext->convertToBacking(buffer);
     ASSERT(convertedBuffer);
     if (!convertedBuffer)

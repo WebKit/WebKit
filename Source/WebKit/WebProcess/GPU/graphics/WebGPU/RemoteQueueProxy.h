@@ -72,13 +72,18 @@ private:
     {
         return root().streamClientConnection().sendWithAsyncReply(WTFMove(message), completionHandler, backing(), defaultSendTimeout);
     }
+    template<typename T>
+    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
+    {
+        return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
+    }
 
     void submit(Vector<std::reference_wrapper<WebCore::WebGPU::CommandBuffer>>&&) final;
 
     void onSubmittedWorkDone(CompletionHandler<void()>&&) final;
 
     void writeBuffer(
-        const WebCore::WebGPU::Buffer&,
+        WebCore::WebGPU::Buffer&,
         WebCore::WebGPU::Size64 bufferOffset,
         std::span<const uint8_t> source,
         WebCore::WebGPU::Size64 dataOffset = 0,

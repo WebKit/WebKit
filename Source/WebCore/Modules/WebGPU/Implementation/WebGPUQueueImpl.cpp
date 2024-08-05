@@ -70,7 +70,7 @@ void QueueImpl::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
 }
 
 void QueueImpl::writeBuffer(
-    const Buffer&,
+    Buffer&,
     Size64,
     std::span<const uint8_t>,
     Size64,

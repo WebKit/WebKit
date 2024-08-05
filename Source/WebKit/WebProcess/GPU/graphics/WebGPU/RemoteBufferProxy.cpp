@@ -33,11 +33,13 @@
 
 namespace WebKit::WebGPU {
 
-RemoteBufferProxy::RemoteBufferProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, bool mappedAtCreation)
+RemoteBufferProxy::RemoteBufferProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, bool mappedAtCreation, RefPtr<WebCore::SharedMemory>&& handle, WebCore::WebGPU::BufferUsageFlags usage)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
     , m_mapModeFlags(mappedAtCreation ? WebCore::WebGPU::MapModeFlags(WebCore::WebGPU::MapMode::Write) : WebCore::WebGPU::MapModeFlags())
+    , m_bufferMemory(WTFMove(handle))
+    , m_usage(usage)
 {
 }
 
@@ -63,18 +65,60 @@ static bool offsetOrSizeExceedsBounds(size_t dataSize, WebCore::WebGPU::Size64 o
     return offset >= dataSize || (requestedSize.has_value() && requestedSize.value() + offset > dataSize);
 }
 
-void RemoteBufferProxy::getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, Function<void(std::span<uint8_t>)>&& callback)
+WebCore::WebGPU::BufferUsageFlags RemoteBufferProxy::usage() const
 {
-    // FIXME: Implement error handling.
-    auto sendResult = sendSync(Messages::RemoteBuffer::GetMappedRange(offset, size));
-    auto [data] = sendResult.takeReplyOr(std::nullopt);
+    return m_usage;
+}
 
-    if (!data || !data->data() || offsetOrSizeExceedsBounds(data->size(), offset, size)) {
+void RemoteBufferProxy::getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, Function<void(std::pair<uint64_t, uint64_t>)>&& callback)
+{
+    if (!m_bufferMemory) {
         callback({ });
         return;
     }
 
-    callback(data->mutableSpan().subspan(offset));
+    auto sendResult = sendSync(Messages::RemoteBuffer::GetMappedRange(offset, size));
+    auto [dataOffsetAndSize] = sendResult.takeReplyOr(std::make_pair(0ull, 0ull));
+    auto dataOffset = dataOffsetAndSize.first;
+    auto dataSize = dataOffsetAndSize.second;
+
+    auto data = m_bufferMemory->mutableSpan();
+    if (!data.data() || offsetOrSizeExceedsBounds(data.size(), offset, size)) {
+        callback({ });
+        return;
+    }
+
+    callback(std::make_pair(dataOffset, dataSize));
+}
+
+std::optional<std::span<uint8_t>> RemoteBufferProxy::mutableSpan()
+{
+    std::optional<std::span<uint8_t>> result;
+    if (m_bufferMemory)
+        result = m_bufferMemory->mutableSpan();
+
+    return result;
+}
+
+void RemoteBufferProxy::getMappedRangeData(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, Function<void(std::span<uint8_t>)>&& callback)
+{
+    if (!m_bufferMemory) {
+        auto sendResult = sendSync(Messages::RemoteBuffer::GetMappedRangeData(offset, size));
+        auto [data] = sendResult.takeReplyOr(std::nullopt);
+
+        if (!data || !data->data() || offsetOrSizeExceedsBounds(data->size(), offset, size)) {
+            callback({ });
+            return;
+        }
+
+        callback(data->mutableSpan().subspan(offset));
+        return;
+    }
+
+    std::span<uint8_t> data = m_bufferMemory->mutableSpan();
+    getMappedRange(offset, WTFMove(size), [&] (auto mappedRangeData) {
+        callback(data.subspan(mappedRangeData.first, mappedRangeData.second));
+    });
 }
 
 std::span<uint8_t> RemoteBufferProxy::getBufferContents()
@@ -86,6 +130,12 @@ void RemoteBufferProxy::copy(std::span<const uint8_t> span, size_t offset)
 {
     if (!m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write))
         return;
+
+    auto sharedSpan = mutableSpan();
+    if (sharedSpan) {
+        memcpySpan(sharedSpan->subspan(offset, span.size()), span);
+        return;
+    }
 
     auto sharedMemory = WebCore::SharedMemory::copySpan(span);
     std::optional<WebCore::SharedMemoryHandle> handle;

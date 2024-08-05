@@ -79,7 +79,7 @@ public:
 
     Ref<BindGroup> createBindGroup(const WGPUBindGroupDescriptor&);
     Ref<BindGroupLayout> createBindGroupLayout(const WGPUBindGroupLayoutDescriptor&, bool isGeneratedLayout = false);
-    Ref<Buffer> createBuffer(const WGPUBufferDescriptor&);
+    Ref<Buffer> createBuffer(const WGPUBufferDescriptor&, std::span<uint8_t>&&);
     Ref<CommandEncoder> createCommandEncoder(const WGPUCommandEncoderDescriptor&);
     std::pair<Ref<ComputePipeline>, NSString*> createComputePipeline(const WGPUComputePipelineDescriptor&, bool isAsync = false);
     void createComputePipelineAsync(const WGPUComputePipelineDescriptor&, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, String&& message)>&& callback);
@@ -119,7 +119,7 @@ public:
     void generateAnInternalError(String&& message);
 
     Instance& instance() const { return m_adapter->instance(); }
-    bool hasUnifiedMemory() const { return m_device.hasUnifiedMemory; }
+    bool hasUnifiedMemory() const;
 
     uint32_t maxBuffersPlusVertexBuffersForVertexStage() const;
     uint32_t maxBuffersForFragmentStage() const;

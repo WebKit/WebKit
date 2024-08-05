@@ -26,7 +26,7 @@
 messages -> RemoteDevice NotRefCounted Stream {
     void Destroy()
     void Destruct()
-    void CreateBuffer(WebKit::WebGPU::BufferDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
+    void CreateBuffer(WebKit::WebGPU::BufferDescriptor descriptor, std::optional<WebCore::SharedMemory::Handle> dataHandle, WebKit::WebGPUIdentifier identifier) NotStreamEncodable
     void CreateTexture(WebKit::WebGPU::TextureDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
     void CreateSampler(WebKit::WebGPU::SamplerDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
     void CreateBindGroupLayout(WebKit::WebGPU::BindGroupLayoutDescriptor descriptor, WebKit::WebGPUIdentifier identifier)

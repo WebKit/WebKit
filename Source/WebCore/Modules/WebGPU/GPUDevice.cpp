@@ -158,7 +158,7 @@ ExceptionOr<Ref<GPUBuffer>> GPUDevice::createBuffer(const GPUBufferDescriptor& b
 
     auto usage = bufferDescriptor.usage;
     auto mappedAtCreation = bufferDescriptor.mappedAtCreation;
-    RefPtr buffer = m_backing->createBuffer(bufferDescriptor.convertToBacking());
+    RefPtr buffer = m_backing->createBuffer(bufferDescriptor.convertToBacking(), { });
     if (!buffer)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.createBuffer: Unable to create buffer."_s };
 

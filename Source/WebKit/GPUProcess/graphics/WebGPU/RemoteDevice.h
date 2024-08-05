@@ -117,7 +117,7 @@ private:
     void destroy();
     void destruct();
 
-    void createBuffer(const WebGPU::BufferDescriptor&, WebGPUIdentifier);
+    void createBuffer(const WebGPU::BufferDescriptor&, std::optional<WebCore::SharedMemory::Handle>&&, WebGPUIdentifier);
     void createTexture(const WebGPU::TextureDescriptor&, WebGPUIdentifier);
     void createSampler(const WebGPU::SamplerDescriptor&, WebGPUIdentifier);
 #if PLATFORM(COCOA) && ENABLE(VIDEO)

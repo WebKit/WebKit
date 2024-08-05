@@ -75,18 +75,27 @@ void RemoteDeviceProxy::destroy()
     UNUSED_PARAM(sendResult);
 }
 
-RefPtr<WebCore::WebGPU::Buffer> RemoteDeviceProxy::createBuffer(const WebCore::WebGPU::BufferDescriptor& descriptor)
+RefPtr<WebCore::WebGPU::Buffer> RemoteDeviceProxy::createBuffer(const WebCore::WebGPU::BufferDescriptor& descriptor, std::span<uint8_t>&&)
 {
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     if (!convertedDescriptor)
         return nullptr;
 
     auto identifier = WebGPUIdentifier::generate();
-    auto sendResult = send(Messages::RemoteDevice::CreateBuffer(*convertedDescriptor, identifier));
+#if CPU(X86_64)
+    RefPtr<WebCore::SharedMemory> sharedMemory { nullptr };
+#else
+    auto sharedMemory = convertedDescriptor->size <= limits().maxBufferSize() ? WebCore::SharedMemory::allocate(convertedDescriptor->size) : nullptr;
+#endif
+    std::optional<WebCore::SharedMemoryHandle> handle;
+    if (sharedMemory)
+        handle = sharedMemory->createHandle(WebCore::SharedMemory::Protection::ReadWrite);
+
+    auto sendResult = send(Messages::RemoteDevice::CreateBuffer(*convertedDescriptor, WTFMove(handle), identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteBufferProxy::create(*this, m_convertToBackingContext, identifier, convertedDescriptor->mappedAtCreation);
+    auto result = RemoteBufferProxy::create(*this, m_convertToBackingContext, identifier, convertedDescriptor->mappedAtCreation, WTFMove(sharedMemory), convertedDescriptor->usage);
     result->setLabel(WTFMove(convertedDescriptor->label));
     return result;
 }

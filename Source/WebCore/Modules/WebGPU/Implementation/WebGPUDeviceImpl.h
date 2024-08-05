@@ -65,7 +65,7 @@ private:
 
     void destroy() final;
 
-    RefPtr<Buffer> createBuffer(const BufferDescriptor&) final;
+    RefPtr<Buffer> createBuffer(const BufferDescriptor&, std::span<uint8_t>&&) final;
     RefPtr<Texture> createTexture(const TextureDescriptor&) final;
     RefPtr<Sampler> createSampler(const SamplerDescriptor&) final;
     RefPtr<ExternalTexture> importExternalTexture(const ExternalTextureDescriptor&) final;
