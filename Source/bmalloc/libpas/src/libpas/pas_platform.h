@@ -176,6 +176,10 @@
 #define PAS_PLATFORM_APPLETV 1
 #endif
 
+#if defined(TARGET_OS_VISION) && TARGET_OS_VISION
+#define PAS_PLATFORM_VISION 1
+#endif
+
 #if defined(__SCE__)
 #define PAS_PLATFORM_PLAYSTATION 1
 #endif
