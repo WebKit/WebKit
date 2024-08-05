@@ -60,8 +60,17 @@ TEST(WebCore, SerializedScriptValueReadRTCCertificate)
     WTF::initializeMainThread();
     JSC::initialize();
     WebCore::Process::identifier();
+    Vector<uint8_t> vector { std::span<uint8_t>(bytes) };
+    const WebCore::ThreadSafeDataBuffer value = WebCore::ThreadSafeDataBuffer::create(WTFMove(vector));
+    WebCore::callOnIDBSerializationThreadAndWait([&](auto& globalObject) {
+        auto jsValue = WebCore::deserializeIDBValueToJSValue(globalObject, value);
+        UNUSED_PARAM(jsValue);
+    });
+}
 
-    std::array<uint8_t, 149> bytes {
+TEST(WebCore, SerializedScriptValueReadRTCCertificate)
+{
+    constexpr auto bytes = std::to_array<uint8_t>({
         0x0d, 0x00, 0x00, 0x00, 0x2c, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0xe7, 0x1b, 0x86, 0xc8, 0xd0, 0xdb, 0x71, 0x6a, 0xac, 0x80, 0xf4,
@@ -75,14 +84,8 @@ TEST(WebCore, SerializedScriptValueReadRTCCertificate)
         0xa8, 0x9f, 0x07, 0xd2, 0x50, 0x03, 0x5e, 0x05, 0x77, 0x4a, 0x56, 0xdd,
         0x1e, 0x68, 0xd3, 0x62, 0x8f, 0x58, 0x7e, 0x7c, 0x1e, 0xc6, 0x0f, 0xcc,
         0x01, 0x6e, 0x88, 0x4b, 0x32
-    };
-
-    Vector<uint8_t> vector { std::span<uint8_t>(bytes) };
-    const WebCore::ThreadSafeDataBuffer value = WebCore::ThreadSafeDataBuffer::create(WTFMove(vector));
-    WebCore::callOnIDBSerializationThreadAndWait([&](auto& globalObject) {
-        auto jsValue = WebCore::deserializeIDBValueToJSValue(globalObject, value);
-        UNUSED_VARIABLE(jsValue);
     });
+    deserializeJSValue(bytes);
 }
 
 TEST(WebCore, SerializedScriptValueArgListMarkedVectorAt)
