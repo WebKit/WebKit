@@ -203,6 +203,8 @@ public:
     Ref<BasicShape> clone() const final;
 
     Type type() const final { return Type::Shape; }
+    WindRule windRule() const final { return m_windRule; }
+
     const CoordinatePair& startPoint() const { return m_startPoint; }
 
     Path path(const FloatRect&) const final;

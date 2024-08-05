@@ -38,11 +38,180 @@
 #include "LengthFunctions.h"
 #include "Path.h"
 #include "RenderBox.h"
+#include "SVGPathBuilder.h"
+#include "SVGPathParser.h"
+#include "SVGPathSource.h"
 #include <wtf/MathExtras.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+class ShapeSVGPathSource final : public SVGPathSource {
+public:
+    explicit ShapeSVGPathSource(const LengthPoint& startPoint, const BasicShapeShape& shape, const FloatSize& boxSize)
+        : m_start(startPoint)
+        , m_shape(shape)
+        , m_boxSize(boxSize)
+        , m_endIndex(shape.segments().size())
+        {
+        }
+
+private:
+    bool hasMoreData() const override
+    {
+        return m_nextIndex < m_endIndex;
+    }
+
+    bool moveToNextToken() override { return true; }
+
+    SVGPathSegType nextCommand(SVGPathSegType) override
+    {
+        auto type = segmentTypeAtIndex(m_nextIndex);
+        ++m_nextIndex;
+        return type;
+    }
+
+    std::optional<SVGPathSegType> parseSVGSegmentType() override
+    {
+        // This represents the initial move to to set the "from" position.
+        ASSERT(!m_nextIndex);
+        return SVGPathSegType::MoveToAbs;
+    }
+
+    std::optional<MoveToSegment> parseMoveToSegment() override
+    {
+        if (!m_nextIndex)
+            return MoveToSegment { floatPointForLengthPoint(m_start, m_boxSize) };
+
+        auto& moveSegment = currentValue<ShapeMoveSegment>();
+        return MoveToSegment { floatPointForLengthPoint(moveSegment.offset(), m_boxSize) };
+    }
+
+    std::optional<LineToSegment> parseLineToSegment() override
+    {
+        auto& lineSegment = currentValue<ShapeLineSegment>();
+        return LineToSegment { floatPointForLengthPoint(lineSegment.offset(), m_boxSize) };
+    }
+
+    std::optional<LineToHorizontalSegment> parseLineToHorizontalSegment() override
+    {
+        auto& lineSegment = currentValue<ShapeHorizontalLineSegment>();
+        return LineToHorizontalSegment { floatValueForLength(lineSegment.length(), m_boxSize.width()) };
+    }
+
+    std::optional<LineToVerticalSegment> parseLineToVerticalSegment() override
+    {
+        auto& lineSegment = currentValue<ShapeVerticalLineSegment>();
+        return LineToVerticalSegment { floatValueForLength(lineSegment.length(), m_boxSize.height()) };
+    }
+
+    std::optional<CurveToCubicSegment> parseCurveToCubicSegment() override
+    {
+        auto& curveSegment = currentValue<ShapeCurveSegment>();
+        ASSERT(curveSegment.controlPoint2());
+        return CurveToCubicSegment {
+            floatPointForLengthPoint(curveSegment.controlPoint1(), m_boxSize),
+            floatPointForLengthPoint(curveSegment.controlPoint2().value(), m_boxSize),
+            floatPointForLengthPoint(curveSegment.offset(), m_boxSize)
+        };
+    }
+
+    std::optional<CurveToQuadraticSegment> parseCurveToQuadraticSegment() override
+    {
+        auto& curveSegment = currentValue<ShapeCurveSegment>();
+        ASSERT(!curveSegment.controlPoint2());
+        return CurveToQuadraticSegment {
+            floatPointForLengthPoint(curveSegment.controlPoint1(), m_boxSize),
+            floatPointForLengthPoint(curveSegment.offset(), m_boxSize)
+        };
+    }
+
+    std::optional<CurveToCubicSmoothSegment> parseCurveToCubicSmoothSegment() override
+    {
+        auto& smoothSegment = currentValue<ShapeSmoothSegment>();
+        ASSERT(smoothSegment.intermediatePoint());
+        return CurveToCubicSmoothSegment {
+            floatPointForLengthPoint(smoothSegment.intermediatePoint().value(), m_boxSize),
+            floatPointForLengthPoint(smoothSegment.offset(), m_boxSize)
+        };
+    }
+
+    std::optional<CurveToQuadraticSmoothSegment> parseCurveToQuadraticSmoothSegment() override
+    {
+        auto& smoothSegment = currentValue<ShapeSmoothSegment>();
+        return CurveToQuadraticSmoothSegment { floatPointForLengthPoint(smoothSegment.offset(), m_boxSize) };
+    }
+
+    std::optional<ArcToSegment> parseArcToSegment() override
+    {
+        auto& arcSegment = currentValue<ShapeArcSegment>();
+        auto radius = floatSizeForLengthSize(arcSegment.ellipseSize(), m_boxSize);
+        return ArcToSegment {
+            .rx = radius.width(),
+            .ry = radius.height(),
+            .angle = narrowPrecisionToFloat(arcSegment.angle()),
+            .largeArc = arcSegment.arcSize() == ShapeArcSegment::ArcSize::Large,
+            .sweep = arcSegment.sweep() == RotationDirection::Clockwise,
+            .targetPoint = floatPointForLengthPoint(arcSegment.offset(), m_boxSize)
+        };
+    }
+
+    SVGPathSegType segmentTypeAtIndex(size_t index) const
+    {
+        if (index >= m_shape.segments().size())
+            return SVGPathSegType::Unknown;
+
+        auto& segment = m_shape.segments()[index];
+        return WTF::switchOn(segment,
+            [&](const ShapeMoveSegment& segment) {
+                return segment.affinity() == CoordinateAffinity::Absolute ? SVGPathSegType::MoveToAbs : SVGPathSegType::MoveToRel;
+            },
+            [&](const ShapeLineSegment& segment) {
+                return segment.affinity() == CoordinateAffinity::Absolute ? SVGPathSegType::LineToAbs : SVGPathSegType::LineToRel;
+            },
+            [&](const ShapeHorizontalLineSegment& segment) {
+                return segment.affinity() == CoordinateAffinity::Absolute ? SVGPathSegType::LineToHorizontalAbs : SVGPathSegType::LineToHorizontalRel;
+            },
+            [&](const ShapeVerticalLineSegment& segment) {
+                return segment.affinity() == CoordinateAffinity::Absolute ? SVGPathSegType::LineToVerticalAbs : SVGPathSegType::LineToVerticalRel;
+            },
+            [&](const ShapeCurveSegment& segment) {
+                if (segment.controlPoint2())
+                    return segment.affinity() == CoordinateAffinity::Absolute ? SVGPathSegType::CurveToCubicAbs : SVGPathSegType::CurveToCubicRel;
+
+                return segment.affinity() == CoordinateAffinity::Absolute ? SVGPathSegType::CurveToQuadraticAbs : SVGPathSegType::CurveToQuadraticRel;
+            },
+            [&](const ShapeSmoothSegment& segment) {
+                if (segment.intermediatePoint())
+                    return segment.affinity() == CoordinateAffinity::Absolute ? SVGPathSegType::CurveToCubicSmoothAbs : SVGPathSegType::CurveToCubicSmoothRel;
+
+                return segment.affinity() == CoordinateAffinity::Absolute ? SVGPathSegType::CurveToQuadraticSmoothAbs : SVGPathSegType::CurveToQuadraticSmoothRel;
+            },
+            [&](const ShapeArcSegment& segment) {
+                return segment.affinity() == CoordinateAffinity::Absolute ? SVGPathSegType::ArcAbs : SVGPathSegType::ArcRel;
+            },
+            [&](const ShapeCloseSegment&) {
+                return SVGPathSegType::ClosePath;
+            }
+        );
+    }
+
+    template<typename T>
+    const T& currentValue() const
+    {
+        ASSERT(m_nextIndex);
+        ASSERT(m_nextIndex <= m_shape.segments().size());
+        return std::get<T>(m_shape.segments()[m_nextIndex - 1]);
+    }
+
+    const LengthPoint& m_start;
+    const BasicShapeShape& m_shape;
+    FloatSize m_boxSize;
+    size_t m_endIndex { 0 };
+    size_t m_nextIndex { 0 };
+};
+
+// MARK: -
 
 Ref<BasicShapeShape> BasicShapeShape::create(WindRule windRule, const CoordinatePair& startPoint, Vector<ShapeSegment>&& commands)
 {
@@ -62,10 +231,15 @@ Ref<BasicShape> BasicShapeShape::clone() const
     return BasicShapeShape::create(windRule(), startPoint(), WTFMove(segmentsCopy));
 }
 
-Path BasicShapeShape::path(const FloatRect&) const
+Path BasicShapeShape::path(const FloatRect& referenceRect) const
 {
-    // Not yet implemented.
-    return Path();
+    // FIXME: We should do some caching here.
+    auto pathSource = ShapeSVGPathSource(m_startPoint, *this, referenceRect.size());
+    Path path;
+    SVGPathBuilder builder(path);
+    SVGPathParser::parse(pathSource, builder);
+    path.translate(toFloatSize(referenceRect.location()));
+    return path;
 }
 
 bool BasicShapeShape::canBlend(const BasicShape&) const

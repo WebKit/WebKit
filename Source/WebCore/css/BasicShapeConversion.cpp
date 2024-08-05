@@ -362,7 +362,6 @@ Ref<BasicShapePath> basicShapePathForValue(const CSSPathValue& value, const Styl
 {
     auto path = BasicShapePath::create(value.pathData().copy());
     path->setWindRule(value.windRule());
-    WTF_ALWAYS_LOG("basicShapePathForValue - used zoom " << builderState.style().usedZoom());
     path->setZoom(zoom.value_or(builderState.style().usedZoom()));
     return path;
 }
