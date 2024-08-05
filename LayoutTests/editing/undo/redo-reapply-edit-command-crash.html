@@ -1,0 +1,39 @@
+<style>
+*:read-only,*::cue,#x49:only-child { border-bottom-left-radius: 100% 0.16em;-webkit-user-modify: read-write-plaintext-only;caret-color: auto;column-break-after: auto;justify-self: last baseline;border-top-color: green;border-image-source: conic-gradient(at 100% 0.04em,transparent);font-variant: small-caps;padding-top: auto;image-rendering: smooth;border-right-width: var(--css-line-width);border-bottom-width: thick;grid-row-start: auto;overflow-x: hidden;user-zoom: fixed;text-decoration-style: dotted;outline-offset: 10px;-webkit-shape-outside: repeating-linear-gradient(rgba(215,83,81,206));position: fixed;-webkit-box-lines: single }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function main() {
+    try { document.execCommand("redo",false,null); } catch (e) { }
+    document.write('Test passes if it does not crash.');
+}
+function f1() {
+    var x6 = document.getElementById("x9");
+    try { x29.before(x6); } catch (e) { }
+    try { document.execCommand("undo",false,null); } catch (e) { }
+}
+function f4() {
+try { document.onreadystatechange = f4; } catch (e) { }
+try { document.execCommand("forwardDelete",false,null); } catch (e) { }
+try { document.execCommand("selectAll",false,null); } catch (e) { }
+try { x20.toBlob(f1); } catch (e) { }
+try { document.execCommand("insertText",false," "); } catch (e) { }
+}
+</script>
+<body onload="main()">
+<img id="x6" importance="low" align="left" src="x">
+<link id="x29" href="">
+<template id="x9" onclick="f4()">
+</template>
+<cite id="x5" translate="yes" accesskey="1" dir="rtl" onfocusin="f1()">
+</cite>
+<h3 id="x10">
+<iframe id="x27" align="left" importance="auto" src="x" hidden="" marginwidth="0" loading="lazy">
+</iframe>
+<canvas id="x20" onfocusin="f1()" onfocus="f4()"></canvas>
+</h3>
+<pre id="x1">
+<details open="" ontoggle="f4()">
+</body>
