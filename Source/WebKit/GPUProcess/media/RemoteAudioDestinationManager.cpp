@@ -99,7 +99,6 @@ public:
 
     void audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle)
     {
-        bool wasPlaying = m_isPlaying;
         if (m_isPlaying) {
             stop();
             ASSERT(!m_isPlaying);
@@ -109,10 +108,8 @@ public:
         m_ringBuffer = ConsumerSharedCARingBuffer::map(sizeof(Float32), m_numOutputChannels, WTFMove(handle));
         if (!m_ringBuffer)
             return;
-        if (wasPlaying) {
-            start();
-            ASSERT(m_isPlaying);
-        }
+        start();
+        ASSERT(m_isPlaying);
     }
 #endif
 
