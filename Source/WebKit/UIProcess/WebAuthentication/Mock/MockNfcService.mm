@@ -258,7 +258,8 @@ void MockNfcService::detectTags() const
         if (configuration.nfc->multiplePhysicalTags)
             [tags addObject:adoptNS([[WKMockNFTag alloc] initWithType:NFTagTypeGeneric4A tagID:adoptNS([[NSData alloc] initWithBytes:tagID2 length:sizeof(tagID2)]).get()]).get()];
 
-        [globalNFReaderSessionDelegate readerSession:nil didDetectTags:tags.get()];
+        auto readerSession = adoptNS([allocNFReaderSessionInstance() init]);
+        [globalNFReaderSessionDelegate readerSession:readerSession.get() didDetectTags:tags.get()];
     });
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), callback.get());
 #endif // HAVE(NEAR_FIELD)
