@@ -70,17 +70,25 @@ void BufferImpl::mapAsync(MapModeFlags mapModeFlags, Size64 offset, std::optiona
     wgpuBufferMapAsync(m_backing.get(), backingMapModeFlags, static_cast<size_t>(offset), static_cast<size_t>(usedSize), &mapAsyncCallback, Block_copy(blockPtr.get())); // Block_copy is matched with Block_release above in mapAsyncCallback().
 }
 
-void BufferImpl::getMappedRange(Size64 offset, std::optional<Size64> size, Function<void(std::span<uint8_t>)>&& callback)
+
+void BufferImpl::getMappedRangeData(Size64 offset, std::optional<Size64> size, Function<void(std::span<uint8_t>)>&& callback)
 {
     auto usedSize = getMappedSize(m_backing.get(), size, offset);
-
-    // FIXME: Check the casts.
     auto* pointer = wgpuBufferGetMappedRange(m_backing.get(), static_cast<size_t>(offset), static_cast<size_t>(usedSize));
-    // FIXME: Check the type narrowing.
     auto bufferSize = wgpuBufferGetInitialSize(m_backing.get());
     size_t actualSize = pointer ? static_cast<size_t>(bufferSize) : 0;
     size_t actualOffset = pointer ? static_cast<size_t>(offset) : 0;
+
     callback({ static_cast<uint8_t*>(pointer) - actualOffset, actualSize });
+}
+
+void BufferImpl::getMappedRange(Size64 offset, std::optional<Size64> size, Function<void(std::pair<uint64_t, uint64_t>)>&& callback)
+{
+    auto usedSize = getMappedSize(m_backing.get(), size, offset);
+
+    auto* pointer = wgpuBufferGetMappedRange(m_backing.get(), static_cast<size_t>(offset), static_cast<size_t>(usedSize));
+    size_t actualOffset = pointer ? static_cast<size_t>(offset) : 0;
+    callback({ actualOffset, usedSize });
 }
 
 std::span<uint8_t> BufferImpl::getBufferContents()

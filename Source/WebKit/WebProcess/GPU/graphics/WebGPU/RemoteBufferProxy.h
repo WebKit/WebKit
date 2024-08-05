@@ -30,6 +30,7 @@
 #include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUBuffer.h>
+#include <WebCore/WebGPUBufferUsage.h>
 #include <wtf/Deque.h>
 
 namespace WebKit::WebGPU {
@@ -39,9 +40,9 @@ class ConvertToBackingContext;
 class RemoteBufferProxy final : public WebCore::WebGPU::Buffer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteBufferProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, bool mappedAtCreation)
+    static Ref<RemoteBufferProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, bool mappedAtCreation, RefPtr<WebCore::SharedMemory>&& handle, WebCore::WebGPU::BufferUsageFlags usage)
     {
-        return adoptRef(*new RemoteBufferProxy(parent, convertToBackingContext, identifier, mappedAtCreation));
+        return adoptRef(*new RemoteBufferProxy(parent, convertToBackingContext, identifier, mappedAtCreation, WTFMove(handle), usage));
     }
 
     virtual ~RemoteBufferProxy();
@@ -49,10 +50,13 @@ public:
     RemoteDeviceProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
 
+    std::optional<std::span<uint8_t>> mutableSpan();
+    WebCore::WebGPU::BufferUsageFlags usage() const;
+
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteBufferProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier, bool mappedAtCreation);
+    RemoteBufferProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier, bool mappedAtCreation, RefPtr<WebCore::SharedMemory>&&, WebCore::WebGPU::BufferUsageFlags);
 
     RemoteBufferProxy(const RemoteBufferProxy&) = delete;
     RemoteBufferProxy(RemoteBufferProxy&&) = delete;
@@ -79,7 +83,8 @@ private:
     }
 
     void mapAsync(WebCore::WebGPU::MapModeFlags, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> sizeForMap, CompletionHandler<void(bool)>&&) final;
-    void getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64>, Function<void(std::span<uint8_t>)>&&) final;
+    void getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64>, Function<void(std::pair<uint64_t, uint64_t>)>&&) final;
+    void getMappedRangeData(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64>, Function<void(std::span<uint8_t>)>&&) final;
     std::span<uint8_t> getBufferContents() final;
     void unmap() final;
     void copy(std::span<const uint8_t>, size_t offset) final;
@@ -94,6 +99,8 @@ private:
     Ref<ConvertToBackingContext> m_convertToBackingContext;
     Ref<RemoteDeviceProxy> m_parent;
     WebCore::WebGPU::MapModeFlags m_mapModeFlags;
+    RefPtr<WebCore::SharedMemory> m_bufferMemory;
+    WebCore::WebGPU::BufferUsageFlags m_usage;
 };
 
 } // namespace WebKit::WebGPU

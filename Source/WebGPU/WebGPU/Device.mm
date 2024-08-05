@@ -209,6 +209,15 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
     m_placeholderDepthStencilTexture = [m_device newTextureWithDescriptor:desc];
 }
 
+bool Device::hasUnifiedMemory() const
+{
+#if CPU(X86_64)
+    return false;
+#else
+    return m_device.hasUnifiedMemory;
+#endif
+}
+
 Device::Device(Adapter& adapter)
     : m_defaultQueue(Queue::createInvalid(*this))
     , m_adapter(adapter)
@@ -902,9 +911,9 @@ WGPUBindGroupLayout wgpuDeviceCreateBindGroupLayout(WGPUDevice device, const WGP
     return WebGPU::releaseToAPI(WebGPU::fromAPI(device).createBindGroupLayout(*descriptor));
 }
 
-WGPUBuffer wgpuDeviceCreateBuffer(WGPUDevice device, const WGPUBufferDescriptor* descriptor)
+WGPUBuffer wgpuDeviceCreateBuffer(WGPUDevice device, const WGPUBufferDescriptor* descriptor, std::span<uint8_t>&& span)
 {
-    return WebGPU::releaseToAPI(WebGPU::fromAPI(device).createBuffer(*descriptor));
+    return WebGPU::releaseToAPI(WebGPU::fromAPI(device).createBuffer(*descriptor, WTFMove(span)));
 }
 
 WGPUCommandEncoder wgpuDeviceCreateCommandEncoder(WGPUDevice device, const WGPUCommandEncoderDescriptor* descriptor)

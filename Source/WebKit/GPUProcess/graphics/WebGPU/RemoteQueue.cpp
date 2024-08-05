@@ -78,6 +78,11 @@ void RemoteQueue::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
     });
 }
 
+void RemoteQueue::onSubmittedWorkDoneSync(CompletionHandler<void()>&& callback)
+{
+    return onSubmittedWorkDone(WTFMove(callback));
+}
+
 void RemoteQueue::writeBuffer(
     WebGPUIdentifier buffer,
     WebCore::WebGPU::Size64 bufferOffset,

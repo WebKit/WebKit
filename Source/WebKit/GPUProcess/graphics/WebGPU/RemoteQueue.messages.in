@@ -27,6 +27,7 @@ messages -> RemoteQueue NotRefCounted Stream {
     void Destruct()
     void Submit(Vector<WebKit::WebGPUIdentifier> commandBuffers)
     void OnSubmittedWorkDone() -> ()
+    void OnSubmittedWorkDoneSync() -> () Synchronous
     void WriteBuffer(WebKit::WebGPUIdentifier identifier, WebCore::WebGPU::Size64 bufferOffset, std::optional<WebCore::SharedMemory::Handle> data) -> (bool success) NotStreamEncodable
     void WriteTexture(WebKit::WebGPU::ImageCopyTexture destination, std::optional<WebCore::SharedMemory::Handle> dataHandle, WebKit::WebGPU::ImageDataLayout imageDataLayout, WebKit::WebGPU::Extent3D size) -> (bool success) NotStreamEncodable
     void CopyExternalImageToTexture(WebKit::WebGPU::ImageCopyExternalImage source, WebKit::WebGPU::ImageCopyTextureTagged destination, WebKit::WebGPU::Extent3D copySize)

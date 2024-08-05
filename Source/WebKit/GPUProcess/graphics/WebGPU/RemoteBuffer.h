@@ -82,7 +82,8 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
-    void getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> sizeForMap, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
+    void getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> sizeForMap, CompletionHandler<void(std::pair<uint64_t, uint64_t>&&)>&&);
+    void getMappedRangeData(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> sizeForMap, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
     void mapAsync(WebCore::WebGPU::MapModeFlags, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> sizeForMap, CompletionHandler<void(bool)>&&);
     void copy(std::optional<WebCore::SharedMemoryHandle>&&, size_t offset, CompletionHandler<void(bool)>&&);
     void unmap();

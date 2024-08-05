@@ -904,7 +904,7 @@ Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& 
         return RenderBundle::createInvalid(m_device, m_lastErrorString);
     }
 
-    m_requiresCommandReplay = m_requiresCommandReplay ?: (m_requiresMetalWorkaround || !m_currentCommandIndex);
+    m_requiresCommandReplay = m_requiresCommandReplay ?: (m_requiresMetalWorkaround || m_currentCommandIndex < 32);
 
     auto createRenderBundle = ^{
         if (m_requiresCommandReplay)
@@ -1142,6 +1142,9 @@ bool RenderBundleEncoder::icbNeedsToBeSplit(const RenderPipeline& a, const Rende
         return true;
 
     if (a.depthClipMode() != b.depthClipMode())
+        return true;
+
+    if (![a.renderPipelineState() isEqual:b.renderPipelineState()])
         return true;
 
     if (![a.depthStencilDescriptor() isEqual:b.depthStencilDescriptor()])

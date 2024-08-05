@@ -135,12 +135,14 @@ void RemoteDevice::destruct()
     m_objectHeap->removeObject(m_identifier);
 }
 
-void RemoteDevice::createBuffer(const WebGPU::BufferDescriptor& descriptor, WebGPUIdentifier identifier)
+void RemoteDevice::createBuffer(const WebGPU::BufferDescriptor& descriptor, std::optional<WebCore::SharedMemory::Handle>&& dataHandle, WebGPUIdentifier identifier)
 {
     auto convertedDescriptor = m_objectHeap->convertFromBacking(descriptor);
     MESSAGE_CHECK(convertedDescriptor);
+    auto sharedData = dataHandle ? WebCore::SharedMemory::map(WTFMove(*dataHandle), WebCore::SharedMemory::Protection::ReadWrite) : nullptr;
+    auto data = sharedData ? sharedData->mutableSpan() : std::span<uint8_t> { };
 
-    auto buffer = m_backing->createBuffer(*convertedDescriptor);
+    auto buffer = m_backing->createBuffer(*convertedDescriptor, WTFMove(data));
     MESSAGE_CHECK(buffer);
     auto remoteBuffer = RemoteBuffer::create(*buffer, m_objectHeap, m_streamConnection.copyRef(), descriptor.mappedAtCreation, identifier);
     m_objectHeap->addObject(identifier, remoteBuffer);

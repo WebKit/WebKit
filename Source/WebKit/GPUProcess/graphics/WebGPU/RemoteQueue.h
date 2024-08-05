@@ -89,6 +89,7 @@ private:
     void submit(Vector<WebGPUIdentifier>&&);
 
     void onSubmittedWorkDone(CompletionHandler<void()>&&);
+    void onSubmittedWorkDoneSync(CompletionHandler<void()>&&);
 
     void writeBuffer(
         WebGPUIdentifier,

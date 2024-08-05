@@ -61,7 +61,7 @@ public:
     void onSubmittedWorkDone(OnSubmittedWorkDonePromise&&);
 
     ExceptionOr<void> writeBuffer(
-        const GPUBuffer&,
+        GPUBuffer&,
         GPUSize64 bufferOffset,
         BufferSource&& data,
         std::optional<GPUSize64> dataOffset,

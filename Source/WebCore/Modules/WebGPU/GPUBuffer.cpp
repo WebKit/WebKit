@@ -171,7 +171,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> GPUBuffer::getMappedRange(std::optional<GPUSi
     }
 
     RefPtr<JSC::ArrayBuffer> result;
-    m_backing->getMappedRange(offset, size, [&] (auto mappedRange) {
+    m_backing->getMappedRangeData(offset, size, [&] (auto mappedRange) {
         if (!mappedRange.data()) {
             m_arrayBuffers.clear();
             if (m_mappedAtCreation || !size)

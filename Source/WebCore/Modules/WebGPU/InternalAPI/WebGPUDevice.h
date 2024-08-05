@@ -98,7 +98,7 @@ public:
 
     virtual void destroy() = 0;
 
-    virtual RefPtr<Buffer> createBuffer(const BufferDescriptor&) = 0;
+    virtual RefPtr<Buffer> createBuffer(const BufferDescriptor&, std::span<uint8_t>&&) = 0;
     virtual RefPtr<Texture> createTexture(const TextureDescriptor&) = 0;
     virtual RefPtr<Sampler> createSampler(const SamplerDescriptor&) = 0;
     virtual RefPtr<ExternalTexture> importExternalTexture(const ExternalTextureDescriptor&) = 0;

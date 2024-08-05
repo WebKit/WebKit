@@ -50,7 +50,8 @@ public:
     }
 
     virtual void mapAsync(MapModeFlags, Size64 offset, std::optional<Size64>, CompletionHandler<void(bool)>&&) = 0;
-    virtual void getMappedRange(Size64 offset, std::optional<Size64>, Function<void(std::span<uint8_t>)>&&) = 0;
+    virtual void getMappedRange(Size64 offset, std::optional<Size64>, Function<void(std::pair<uint64_t, uint64_t>)>&&) = 0;
+    virtual void getMappedRangeData(Size64 offset, std::optional<Size64>, Function<void(std::span<uint8_t>)>&&) = 0;
     virtual void unmap() = 0;
 
     virtual void destroy() = 0;
