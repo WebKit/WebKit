@@ -170,10 +170,8 @@ inline void RenderStyle::setHasAutoAccentColor() { SET_PAIR(m_rareInheritedData,
 inline void RenderStyle::setHasAutoCaretColor() { SET_PAIR(m_rareInheritedData, hasAutoCaretColor, true, caretColor, StyleColor::currentColor()); }
 inline void RenderStyle::setHasAutoColumnCount() { SET_DOUBLY_NESTED_PAIR(m_nonInheritedData, miscData, multiCol, autoCount, true, count, initialColumnCount()); }
 inline void RenderStyle::setHasAutoColumnWidth() { SET_DOUBLY_NESTED_PAIR(m_nonInheritedData, miscData, multiCol, autoWidth, true, width, 0); }
-inline void RenderStyle::setHasAutoOrphans() { SET_PAIR(m_rareInheritedData, hasAutoOrphans, true, orphans, initialOrphans()); }
 inline void RenderStyle::setHasAutoSpecifiedZIndex() { SET_NESTED_PAIR(m_nonInheritedData, boxData, m_hasAutoSpecifiedZIndex, true, m_specifiedZIndex, 0); }
 inline void RenderStyle::setHasAutoUsedZIndex() { SET_NESTED_PAIR(m_nonInheritedData, boxData, m_hasAutoUsedZIndex, true, m_usedZIndex, 0); }
-inline void RenderStyle::setHasAutoWidows() { SET_PAIR(m_rareInheritedData, hasAutoWidows, true, widows, initialWidows()); }
 inline void RenderStyle::setHasClip(bool hasClip) { SET_NESTED(m_nonInheritedData, rareData, hasClip, hasClip); }
 inline void RenderStyle::setHasContentNone(bool value) { m_nonInheritedFlags.hasContentNone = value; }
 inline void RenderStyle::setHasDisplayAffectedByAnimations() { SET_NESTED(m_nonInheritedData, miscData, hasDisplayAffectedByAnimations, true); }
@@ -555,7 +553,7 @@ inline void RenderStyle::setOpacity(float opacity)
 inline void RenderStyle::setOrphans(unsigned short count)
 {
     unsigned short clampedCount = std::max<unsigned short>(count, 1);
-    SET_PAIR(m_rareInheritedData, orphans, clampedCount, hasAutoOrphans, false);
+    SET(m_rareInheritedData, orphans, clampedCount);
 }
 
 inline void RenderStyle::setShapeImageThreshold(float shapeImageThreshold)
@@ -593,7 +591,7 @@ inline void RenderStyle::setVerticalAlignLength(Length&& length)
 inline void RenderStyle::setWidows(unsigned short count)
 {
     auto clampedCount = std::max<unsigned short>(count, 1);
-    SET_PAIR(m_rareInheritedData, widows, clampedCount, hasAutoWidows, false);
+    SET(m_rareInheritedData, widows, clampedCount);
 }
 
 inline bool RenderStyle::setWritingMode(WritingMode mode)

@@ -700,8 +700,6 @@ public:
 
     inline unsigned short widows() const;
     inline unsigned short orphans() const;
-    inline bool hasAutoWidows() const;
-    inline bool hasAutoOrphans() const;
 
     inline BreakInside breakInside() const;
     inline BreakBetween breakBefore() const;
@@ -1400,10 +1398,7 @@ public:
     inline void setUsedZIndex(int);
     inline void setHasAutoUsedZIndex();
 
-    inline void setHasAutoWidows();
     inline void setWidows(unsigned short);
-
-    inline void setHasAutoOrphans();
     inline void setOrphans(unsigned short);
 
     inline void setOutlineOffset(float);

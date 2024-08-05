@@ -3955,8 +3955,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyOpacity:
         return CSSPrimitiveValue::create(style.opacity());
     case CSSPropertyOrphans:
-        if (style.hasAutoOrphans())
-            return CSSPrimitiveValue::create(CSSValueAuto);
         return CSSPrimitiveValue::createInteger(style.orphans());
     case CSSPropertyOutlineColor:
         return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyOutlineColor)) : currentColorOrValidColor(style, style.outlineColor());
@@ -4149,8 +4147,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyWhiteSpaceCollapse:
         return createConvertingToCSSValueID(style.whiteSpaceCollapse());
     case CSSPropertyWidows:
-        if (style.hasAutoWidows())
-            return CSSPrimitiveValue::create(CSSValueAuto);
         return CSSPrimitiveValue::createInteger(style.widows());
     case CSSPropertyWidth:
         if (renderer && !renderer->isRenderOrLegacyRenderSVGModelObject()) {

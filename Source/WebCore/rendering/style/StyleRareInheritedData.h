@@ -105,9 +105,7 @@ public:
     // Paged media properties.
     unsigned short widows;
     unsigned short orphans;
-    unsigned hasAutoWidows : 1;
-    unsigned hasAutoOrphans : 1;
-    
+
     unsigned textSecurity : 2; // TextSecurity
     unsigned userModify : 2; // UserModify (editing)
     unsigned wordBreak : 3; // WordBreak

@@ -2031,9 +2031,9 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyWordSpacing);
         if (first.miterLimit != second.miterLimit)
             changingProperties.m_properties.set(CSSPropertyStrokeMiterlimit);
-        if (first.widows != second.widows || first.hasAutoWidows != second.hasAutoWidows)
+        if (first.widows != second.widows)
             changingProperties.m_properties.set(CSSPropertyWidows);
-        if (first.orphans != second.orphans || first.hasAutoOrphans != second.hasAutoOrphans)
+        if (first.orphans != second.orphans)
             changingProperties.m_properties.set(CSSPropertyOrphans);
         if (first.wordBreak != second.wordBreak)
             changingProperties.m_properties.set(CSSPropertyWordBreak);

@@ -5,9 +5,13 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>CSS3 Multi-column Layout: Single line test</title>
     <style type="text/css">
+      body {
+        widows: 1;
+        orphans: 1;
+      }
       .multicol {
-        -webkit-columns: 4;
-        -webkit-column-gap: 0;
+        columns: 4;
+        column-gap: 0;
         background-color: #eee;
         width: 600px;
       }

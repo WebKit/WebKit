@@ -265,11 +265,9 @@ inline bool RenderStyle::hasAutoColumnCount() const { return m_nonInheritedData-
 inline bool RenderStyle::hasAutoColumnWidth() const { return m_nonInheritedData->miscData->multiCol->autoWidth; }
 inline bool RenderStyle::hasAutoLeftAndRight() const { return left().isAuto() && right().isAuto(); }
 inline bool RenderStyle::hasAutoLengthContainIntrinsicSize() const { return containIntrinsicWidthHasAuto() || containIntrinsicHeightHasAuto(); }
-inline bool RenderStyle::hasAutoOrphans() const { return m_rareInheritedData->hasAutoOrphans; }
 inline bool RenderStyle::hasAutoSpecifiedZIndex() const { return m_nonInheritedData->boxData->hasAutoSpecifiedZIndex(); }
 inline bool RenderStyle::hasAutoTopAndBottom() const { return top().isAuto() && bottom().isAuto(); }
 inline bool RenderStyle::hasAutoUsedZIndex() const { return m_nonInheritedData->boxData->hasAutoUsedZIndex(); }
-inline bool RenderStyle::hasAutoWidows() const { return m_rareInheritedData->hasAutoWidows; }
 inline bool RenderStyle::hasBackground() const { return visitedDependentColor(CSSPropertyBackgroundColor).isVisible() || hasBackgroundImage(); }
 inline bool RenderStyle::hasBackgroundImage() const { return backgroundLayers().hasImage(); }
 inline bool RenderStyle::hasBlendMode() const { return blendMode() != BlendMode::Normal; }
