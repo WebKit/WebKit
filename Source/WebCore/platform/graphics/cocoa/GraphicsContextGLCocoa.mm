@@ -180,10 +180,11 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
                 displayAttributes.append(static_cast<EGLAttrib>(attrs.windowGPUID));
             }
 #endif
-            ASSERT(strstr(clientExtensions, "EGL_ANGLE_feature_control"));
-            displayAttributes.append(EGL_FEATURE_OVERRIDES_DISABLED_ANGLE);
-            displayAttributes.append(reinterpret_cast<EGLAttrib>(disabledANGLEMetalFeatures));
         }
+
+        ASSERT(strstr(clientExtensions, "EGL_ANGLE_feature_control"));
+        displayAttributes.append(EGL_FEATURE_OVERRIDES_DISABLED_ANGLE);
+        displayAttributes.append(reinterpret_cast<EGLAttrib>(disabledANGLEMetalFeatures));
     }
     displayAttributes.append(EGL_NONE);
 
