@@ -32,6 +32,7 @@
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/SetForScope.h>
+#include <wtf/SystemTracing.h>
 
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/RunLoopSourcePriority.h>
@@ -220,6 +221,8 @@ void ThreadedCompositor::forceRepaint()
 
 void ThreadedCompositor::renderLayerTree()
 {
+    TraceScope traceScope(FrameCompositionStart, FrameCompositionEnd);
+
     if (!m_scene || !m_scene->isActive())
         return;
 

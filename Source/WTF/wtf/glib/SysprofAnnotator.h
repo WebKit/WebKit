@@ -135,6 +135,9 @@ public:
         case WebHTMLViewPaintStart:
         case BackingStoreFlushStart:
         case BuildTransactionStart:
+        case WaitForCompositionCompletionStart:
+        case FrameCompositionStart:
+        case LayerFlushStart:
         case SyncMessageStart:
         case SyncTouchEventStart:
         case InitializeWebProcessStart:
@@ -189,6 +192,9 @@ public:
         case WebXRSessionFrameCallbacksEnd:
         case WebHTMLViewPaintEnd:
         case BackingStoreFlushEnd:
+        case WaitForCompositionCompletionEnd:
+        case FrameCompositionEnd:
+        case LayerFlushEnd:
         case BuildTransactionEnd:
         case SyncMessageEnd:
         case SyncTouchEventEnd:
@@ -217,6 +223,7 @@ public:
         case ScrollingTreeDisplayDidRefresh:
         case SyntheticMomentumEvent:
         case RemoteLayerTreeScheduleRenderingUpdate:
+        case DisplayLinkUpdate:
             instantMark(tracePointCodeName(code).spanIncludingNullTerminator(), "%s", "");
             break;
 
@@ -227,6 +234,7 @@ public:
         case WebKit2Range:
         case UIProcessRange:
         case GPUProcessRange:
+        case GTKWPEPortRange:
             break;
         }
     }
@@ -399,6 +407,8 @@ private:
             return "SyntheticMomentumEvent"_s;
         case RemoteLayerTreeScheduleRenderingUpdate:
             return "RemoteLayerTreeScheduleRenderingUpdate"_s;
+        case DisplayLinkUpdate:
+            return "DisplayLinkUpdate"_s;
 
         case CommitLayerTreeStart:
         case CommitLayerTreeEnd:
@@ -423,6 +433,16 @@ private:
         case WakeUpAndApplyDisplayListEnd:
             return "WakeUpAndApplyDisplayList"_s;
 
+        case WaitForCompositionCompletionStart:
+        case WaitForCompositionCompletionEnd:
+            return "WaitForCompositionCompletion"_s;
+        case FrameCompositionStart:
+        case FrameCompositionEnd:
+            return "FrameComposition"_s;
+        case LayerFlushStart:
+        case LayerFlushEnd:
+            return "LayerFlush"_s;
+
         case WTFRange:
         case JavaScriptRange:
         case WebCoreRange:
@@ -430,6 +450,7 @@ private:
         case WebKit2Range:
         case UIProcessRange:
         case GPUProcessRange:
+        case GTKWPEPortRange:
             return nullptr;
         }
 

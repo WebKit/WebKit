@@ -41,6 +41,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <wtf/SafeStrerror.h>
+#include <wtf/SystemTracing.h>
 
 #if USE(GBM)
 #include <WebCore/DRMDeviceManager.h>
@@ -635,6 +636,8 @@ void AcceleratedSurfaceDMABuf::willRenderFrame()
 
 void AcceleratedSurfaceDMABuf::didRenderFrame(WebCore::Region&& damage)
 {
+    TraceScope traceScope(WaitForCompositionCompletionStart, WaitForCompositionCompletionEnd);
+
     if (!m_target)
         return;
 
