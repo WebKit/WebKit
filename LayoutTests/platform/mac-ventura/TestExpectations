@@ -2,8 +2,8 @@
 
 webkit.org/b/268789 [ Debug ] imported/w3c/web-platform-tests/css/css-break/table/repeated-section/special-elements-crash.html [ Skip ]
 
-# With CryptoKit, these tests start to work properly, but cryptoKit is macOS 14.5 or higher so we need to mark them fail for 13.X bots
-# This is to still test and have logs, because actually not all the tests are failing, it's a just a few of them.
+# With CryptoKit, these tests start to work properly, but cryptoKit enablement is macOS 14.5 or higher so we need to mark them fail for 13.X  and < 14.5 bots
+# Instead of skipping them, we let them run atleast so that we have logs for the test cases in those logs that do actually work correctly.
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker.html [ Failure ]
 

@@ -7418,7 +7418,3 @@ webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Slow 
 
 # webkit.org/b/27730 (REGRESSION (280752@main?): [ macOS iOS ] http/wpt/service-workers/fetch-service-worker-preload-cache.https.html is flaky failing.)
 http/wpt/service-workers/fetch-service-worker-preload-cache.https.html [ Pass Failure ]
-
-# webkit.org/b/277432 (REGRESSION (281139@main): [ Ventura iOS18 ] 2 WebCrypto layout tests failing after CryptoKit enablement.)
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker.html [ Failure ]
