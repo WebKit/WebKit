@@ -77,11 +77,11 @@ struct StyleMarqueeData;
 // Page size type.
 // StyleRareNonInheritedData::pageSize is meaningful only when
 // StyleRareNonInheritedData::pageSizeType is PAGE_SIZE_RESOLVED.
-enum PageSizeType : uint8_t {
-    PAGE_SIZE_AUTO, // size: auto
-    PAGE_SIZE_AUTO_LANDSCAPE, // size: landscape
-    PAGE_SIZE_AUTO_PORTRAIT, // size: portrait
-    PAGE_SIZE_RESOLVED // Size is fully resolved.
+enum class PageSizeType : uint8_t {
+    AUTO, // size: auto
+    AUTO_LANDSCAPE, // size: landscape
+    AUTO_PORTRAIT, // size: portrait
+    RESOLVED // Size is fully resolved.
 };
 
 // This struct is for rarely used non-inherited CSS3, CSS2, and WebKit-specific properties.
