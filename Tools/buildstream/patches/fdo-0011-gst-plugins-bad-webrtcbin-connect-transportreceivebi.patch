@@ -1,0 +1,238 @@
+From 598ffa01c23589d409d57aa11891caacb3be1f9a Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Mon, 5 Aug 2024 11:34:55 +0100
+Subject: [PATCH] gst-plugins-bad: webrtcbin: connect transportreceivebin after
+ recv transceiver creation
+
+Backport of https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7294
+---
+ ...-reverse-direction-from-remote-media.patch |  87 +++++++++++++
+ ...t-output-stream-on-recv-transceivers.patch | 122 ++++++++++++++++++
+ 2 files changed, 209 insertions(+)
+ create mode 100644 patches/gstreamer/gst-plugins-bad-0002-webrtcbin-reverse-direction-from-remote-media.patch
+ create mode 100644 patches/gstreamer/gst-plugins-bad-0003-webrtcbin-connect-output-stream-on-recv-transceivers.patch
+
+diff --git a/patches/gstreamer/gst-plugins-bad-0002-webrtcbin-reverse-direction-from-remote-media.patch b/patches/gstreamer/gst-plugins-bad-0002-webrtcbin-reverse-direction-from-remote-media.patch
+new file mode 100644
+index 0000000..1e7d066
+--- /dev/null
++++ b/patches/gstreamer/gst-plugins-bad-0002-webrtcbin-reverse-direction-from-remote-media.patch
+@@ -0,0 +1,87 @@
++From cad3e63546b17570e284b544afebb5566d75c6d7 Mon Sep 17 00:00:00 2001
++From: Carlos Bentzen <cadubentzen@igalia.com>
++Date: Fri, 2 Aug 2024 11:19:56 +0200
++Subject: [PATCH 1/2] webrtcbin: reverse direction from remote media
++
++This had been overlooked from the spec. We need to reverse
++the remote media direction when setting the transceiver direction.
++
++Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7294>
++---
++ .../gst-plugins-bad/ext/webrtc/gstwebrtcbin.c | 29 +++++++++++++++++--
++ 1 file changed, 26 insertions(+), 3 deletions(-)
++
++diff --git a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
++index 7cb0eb6ffc..6433d123b2 100644
++--- a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
+++++ b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
++@@ -6280,6 +6280,22 @@ get_last_generated_description (GstWebRTCBin * webrtc, SDPSource source,
++   return NULL;
++ }
++ 
+++static GstWebRTCRTPTransceiverDirection
+++_reverse_direction (GstWebRTCRTPTransceiverDirection direction)
+++{
+++  switch (direction) {
+++    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_NONE:
+++    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_INACTIVE:
+++    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDRECV:
+++      return direction;
+++    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDONLY:
+++      return GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_RECVONLY;
+++    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_RECVONLY:
+++      return GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDONLY;
+++  }
+++  return GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_NONE;
+++}
+++
++ /* https://w3c.github.io/webrtc-pc/#set-description (steps in 4.6.10.) */
++ static gboolean
++ _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
++@@ -6328,12 +6344,14 @@ _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
++     const gchar *mid;
++     guint transport_idx;
++     TransportStream *stream;
+++    GstWebRTCRTPTransceiverDirection direction;
++ 
++     if (_message_media_is_datachannel (sd->sdp->sdp, i))
++       continue;
++ 
++     media = gst_sdp_message_get_media (sd->sdp->sdp, i);
++     mid = gst_sdp_media_get_attribute_val (media, "mid");
+++    direction = _get_direction_from_media (media);
++ 
++     /* XXX: not strictly required but a lot of functionality requires a mid */
++     if (!mid) {
++@@ -6390,8 +6408,6 @@ _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
++          * that were added to the PeerConnection by addTrack and are not associated with any "m=" section
++          * and are not stopped, find the first (according to the canonical order described in Section 5.2.1)
++          * such RtpTransceiver. */
++-        GstWebRTCRTPTransceiverDirection direction =
++-            _get_direction_from_media (media);
++         if (direction == GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDRECV
++             || direction == GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_RECVONLY) {
++           int j;
++@@ -6464,11 +6480,18 @@ _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
++       trans->mid = g_strdup (mid);
++       g_object_notify (G_OBJECT (trans), "mid");
++ 
+++      /* Let direction be an RTCRtpTransceiverDirection value representing the direction from the media
+++         description, but with the send and receive directions reversed to represent this peer's point of view. */
+++      direction = _reverse_direction (direction);
+++      /* If the media description is rejected, set direction to "inactive". */
+++      if (gst_sdp_media_get_port (media) == 0)
+++        direction = GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_INACTIVE;
+++
++       /* If description is of type "answer" or "pranswer", then run the following steps: */
++       if (sd->sdp->type == GST_WEBRTC_SDP_TYPE_ANSWER
++           || sd->sdp->type == GST_WEBRTC_SDP_TYPE_PRANSWER) {
++         /* Set transceiver.[[CurrentDirection]] to direction. */
++-        trans->current_direction = _get_direction_from_media (media);
+++        trans->current_direction = direction;
++       }
++       /* Let transport be the RTCDtlsTransport object representing the RTP/RTCP component of the media transport
++        * used by transceiver's associated media description, according to [RFC8843]. */
++-- 
++2.45.2
++
+diff --git a/patches/gstreamer/gst-plugins-bad-0003-webrtcbin-connect-output-stream-on-recv-transceivers.patch b/patches/gstreamer/gst-plugins-bad-0003-webrtcbin-connect-output-stream-on-recv-transceivers.patch
+new file mode 100644
+index 0000000..83557b0
+--- /dev/null
++++ b/patches/gstreamer/gst-plugins-bad-0003-webrtcbin-connect-output-stream-on-recv-transceivers.patch
+@@ -0,0 +1,122 @@
++From efa0a3ec6a5f8277d16f0cb46e3528be931f7859 Mon Sep 17 00:00:00 2001
++From: Carlos Bentzen <cadubentzen@igalia.com>
++Date: Fri, 2 Aug 2024 11:21:13 +0200
++Subject: [PATCH 2/2] webrtcbin: connect output stream on recv transceivers
++
++With MR 7156, transceivers and transports are created earlier,
++but for sendrecv media we could get `not-linked` errors due to
++transportreceivebin not being connected to rtpbin yet when incoming
++data arrives.
++
++This condition wasn't being tested in elements_webrtcbin, but could be
++reproduced in the webrtcbidirectional example. This commit now also
++adds a test for this, so that this doesn't regress anymore.
++
++Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7294>
++---
++ .../gst-plugins-bad/ext/webrtc/gstwebrtcbin.c |  6 ++
++ .../tests/check/elements/webrtcbin.c          | 64 +++++++++++++++++++
++ 2 files changed, 70 insertions(+)
++
++diff --git a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
++index 6433d123b2..c4954e4bfe 100644
++--- a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
+++++ b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
++@@ -6500,6 +6500,12 @@ _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
++         webrtc_transceiver_set_transport (wtrans, stream);
++       }
++     }
+++
+++    wtrans = WEBRTC_TRANSCEIVER (trans);
+++    if (wtrans->stream
+++        && (direction == GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDRECV
+++            || direction == GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_RECVONLY))
+++      _connect_output_stream (webrtc, wtrans->stream, transport_idx);
++   }
++ 
++   ret = TRUE;
++diff --git a/subprojects/gst-plugins-bad/tests/check/elements/webrtcbin.c b/subprojects/gst-plugins-bad/tests/check/elements/webrtcbin.c
++index 1dd2ddf3c2..6ba8315f87 100644
++--- a/subprojects/gst-plugins-bad/tests/check/elements/webrtcbin.c
+++++ b/subprojects/gst-plugins-bad/tests/check/elements/webrtcbin.c
++@@ -4601,6 +4601,69 @@ _pad_added_harness (struct test_webrtc *t, GstElement * element,
++   }
++ }
++ 
+++GST_START_TEST (test_audio_sendrecv)
+++{
+++  struct test_webrtc *t = test_webrtc_new ();
+++  GstHarness *h1, *h2;
+++
+++  t->on_negotiation_needed = NULL;
+++  t->on_ice_candidate = NULL;
+++  t->on_pad_added = _pad_added_fakesink;
+++
+++  h1 = gst_harness_new_with_element (t->webrtc1, "sink_0", NULL);
+++  add_audio_test_src_harness (h1, 0xDEADBEEF);
+++  t->harnesses = g_list_prepend (t->harnesses, h1);
+++
+++  h2 = gst_harness_new_with_element (t->webrtc2, "sink_0", NULL);
+++  add_audio_test_src_harness (h2, 0xBEEFDEAD);
+++  t->harnesses = g_list_prepend (t->harnesses, h2);
+++
+++  VAL_SDP_INIT (no_duplicate_payloads, on_sdp_media_no_duplicate_payloads,
+++      NULL, NULL);
+++  guint media_format_count[] = { 1 };
+++  VAL_SDP_INIT (media_formats, on_sdp_media_count_formats,
+++      media_format_count, &no_duplicate_payloads);
+++  VAL_SDP_INIT (count, _count_num_sdp_media, GUINT_TO_POINTER (1),
+++      &media_formats);
+++  const gchar *expected_offer_setup[] = { "actpass", };
+++  VAL_SDP_INIT (offer_setup, on_sdp_media_setup, expected_offer_setup, &count);
+++  const gchar *expected_answer_setup[] = { "active", };
+++  VAL_SDP_INIT (answer_setup, on_sdp_media_setup, expected_answer_setup,
+++      &count);
+++  const gchar *expected_offer_direction[] = { "sendrecv", };
+++  VAL_SDP_INIT (offer, on_sdp_media_direction, expected_offer_direction,
+++      &offer_setup);
+++  const gchar *expected_answer_direction[] = { "sendrecv", };
+++  VAL_SDP_INIT (answer, on_sdp_media_direction, expected_answer_direction,
+++      &answer_setup);
+++  GstWebRTCKind expected_kind = GST_WEBRTC_KIND_AUDIO;
+++
+++  g_signal_connect (t->webrtc1, "on-new-transceiver",
+++      G_CALLBACK (on_new_transceiver_expected_kind),
+++      GUINT_TO_POINTER (expected_kind));
+++  g_signal_connect (t->webrtc2, "on-new-transceiver",
+++      G_CALLBACK (on_new_transceiver_expected_kind),
+++      GUINT_TO_POINTER (expected_kind));
+++
+++  test_validate_sdp (t, &offer, &answer);
+++
+++  fail_if (gst_element_set_state (t->webrtc1,
+++          GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE);
+++  fail_if (gst_element_set_state (t->webrtc2,
+++          GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE);
+++
+++  /* Exchange a few buffers between webrtcbin1 and webrtcbin2 to check
+++     that they can handle incoming data and we get no errors on the bus. */
+++  for (int i = 0; i < 5; i++) {
+++    gst_harness_push_from_src (h1);
+++    gst_harness_push_from_src (h2);
+++  }
+++
+++  test_webrtc_free (t);
+++}
+++
+++GST_END_TEST;
+++
++ static void
++ new_jitterbuffer_set_fast_start (GstElement * rtpbin,
++     GstElement * rtpjitterbuffer, guint session_id, guint ssrc,
++@@ -6001,6 +6064,7 @@ webrtcbin_suite (void)
++     tcase_add_test (tc, test_session_stats);
++     tcase_add_test (tc, test_stats_with_stream);
++     tcase_add_test (tc, test_audio);
+++    tcase_add_test (tc, test_audio_sendrecv);
++     tcase_add_test (tc, test_ice_port_restriction);
++     tcase_add_test (tc, test_audio_video);
++     tcase_add_test (tc, test_media_direction);
++-- 
++2.45.2
++
+-- 
+2.45.2
+
