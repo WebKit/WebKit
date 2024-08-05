@@ -1056,7 +1056,3 @@
 #if __has_include(<os/lock.h>) && !defined(ENABLE_UNFAIR_LOCK)
 #define ENABLE_UNFAIR_LOCK 1
 #endif
-
-#if !defined(ENABLE_UNIFIED_PDF_AS_PREVIEW) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
-#define ENABLE_UNIFIED_PDF_AS_PREVIEW 1
-#endif
