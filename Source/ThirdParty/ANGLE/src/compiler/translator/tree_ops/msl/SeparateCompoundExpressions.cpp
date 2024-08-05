@@ -262,8 +262,10 @@ class Separator : public TIntermRebuild
         }
         auto &bindingMap = getCurrBindingMap();
         const Name name  = mIdGen.createNewName();
-        auto *var =
-            new TVariable(&mSymbolTable, name.rawName(), &newExpr.getType(), name.symbolType());
+        TType *newType   = new TType(newExpr.getType());
+        newType->setQualifier(EvqTemporary);
+        newType->setInterfaceBlock(nullptr);
+        auto *var  = new TVariable(&mSymbolTable, name.rawName(), newType, name.symbolType());
         auto *decl = new TIntermDeclaration(var, &newExpr);
         pushStmt(*decl);
         mExprMap[&oldExpr] = new TIntermSymbol(var);
