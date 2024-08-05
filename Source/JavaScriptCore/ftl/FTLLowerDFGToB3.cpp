@@ -12712,26 +12712,39 @@ IGNORE_CLANG_WARNINGS_END
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LoadVarargsData* data = m_node->loadVarargsData();
-        LValue jsArguments = lowJSValue(m_node->argumentsChild());
+        LValue jsArguments = lowJSValue(m_node->argumentsChild(), ManualOperandSpeculation);
         LValue lengthIncludingThis = lowInt32(m_node->child1());
 
-        speculate(
-            VarargsOverflow, noValue(), nullptr,
-            m_out.bitOr(m_out.isZero32(lengthIncludingThis), m_out.above(lengthIncludingThis, m_out.constInt32(data->limit))));
+        speculate(m_node->argumentsChild());
 
-        m_out.store32(lengthIncludingThis, payloadFor(data->machineCount));
-
-        // FIXME: This computation is rather silly. If operationLoadVarargs just took a pointer instead
-        // of a VirtualRegister, we wouldn't have to do this.
-        // https://bugs.webkit.org/show_bug.cgi?id=141660
-        LValue machineStart = m_out.lShr(
-            m_out.sub(addressFor(data->machineStart).value(), m_callFrame),
-            m_out.constIntPtr(3));
-
-        vmCall(
-            Void, operationLoadVarargs, weakPointer(globalObject),
-            m_out.castToInt32(machineStart), jsArguments, m_out.constInt32(data->offset),
-            lengthIncludingThis, m_out.constInt32(data->mandatoryMinimum));
+        switch (m_node->argumentsChild().useKind()) {
+        case UntypedUse: {
+            speculate(VarargsOverflow, noValue(), nullptr, m_out.bitOr(m_out.isZero32(lengthIncludingThis), m_out.above(lengthIncludingThis, m_out.constInt32(data->limit))));
+            m_out.store32(lengthIncludingThis, payloadFor(data->machineCount));
+            // FIXME: This computation is rather silly. If operationLoadVarargs just took a pointer instead
+            // of a VirtualRegister, we wouldn't have to do this.
+            // https://bugs.webkit.org/show_bug.cgi?id=141660
+            LValue machineStart = m_out.lShr(m_out.sub(addressFor(data->machineStart).value(), m_callFrame), m_out.constIntPtr(3));
+            vmCall(Void, operationLoadVarargs, weakPointer(globalObject), m_out.castToInt32(machineStart), jsArguments, m_out.constInt32(data->offset), lengthIncludingThis, m_out.constInt32(data->mandatoryMinimum));
+            break;
+        }
+        case OtherUse: {
+            // lengthIncludingThis is 1
+            if (!data->limit) {
+                terminate(VarargsOverflow);
+                break;
+            }
+            m_out.store32(lengthIncludingThis, payloadFor(data->machineCount));
+            if (data->mandatoryMinimum) {
+                LValue machineStart = m_out.lShr(m_out.sub(addressFor(data->machineStart).value(), m_callFrame), m_out.constIntPtr(3));
+                vmCall(Void, operationLoadVarargs, weakPointer(globalObject), m_out.castToInt32(machineStart), jsArguments, m_out.constInt32(data->offset), lengthIncludingThis, m_out.constInt32(data->mandatoryMinimum));
+            }
+            break;
+        }
+        default:
+            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            break;
+        }
     }
 
     void compileForwardVarargs()

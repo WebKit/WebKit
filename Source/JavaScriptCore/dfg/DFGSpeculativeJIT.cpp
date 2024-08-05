@@ -8215,29 +8215,49 @@ void SpeculativeJIT::compileLoadVarargs(Node* node)
 {
     LoadVarargsData* data = node->loadVarargsData();
 
-    SpeculateStrictInt32Operand argumentCount(this, node->child1());    
-    JSValueOperand arguments(this, node->argumentsChild());
+    SpeculateStrictInt32Operand argumentCount(this, node->child1());
+    JSValueOperand arguments(this, node->argumentsChild(), ManualOperandSpeculation);
+
     GPRReg argumentCountIncludingThis = argumentCount.gpr();
     JSValueRegs argumentsRegs = arguments.jsValueRegs();
 
-    speculationCheck(
-        VarargsOverflow, JSValueSource(), Edge(), branchTest32(
-            Zero,
-            argumentCountIncludingThis));
+    speculate(node, node->argumentsChild());
 
-    speculationCheck(
-        VarargsOverflow, JSValueSource(), Edge(), branch32(
-            Above,
-            argumentCountIncludingThis,
-            TrustedImm32(data->limit)));
+    switch (node->argumentsChild().useKind()) {
+    case UntypedUse: {
+        speculationCheck(VarargsOverflow, JSValueSource(), Edge(), branchTest32(Zero, argumentCountIncludingThis));
+        speculationCheck(VarargsOverflow, JSValueSource(), Edge(), branch32(Above, argumentCountIncludingThis, TrustedImm32(data->limit)));
 
-    flushRegisters();
+        flushRegisters();
+        store32(argumentCountIncludingThis, payloadFor(data->machineCount));
+        callOperation(operationLoadVarargs, LinkableConstant::globalObject(*this, node), data->machineStart.offset(), argumentsRegs, data->offset, argumentCountIncludingThis, data->mandatoryMinimum);
+        noResult(node);
+        break;
+    }
+    case OtherUse: {
+        // argumentCountIncludingThis is 1
+        if (!data->limit) {
+            terminateSpeculativeExecution(VarargsOverflow, JSValueRegs(), nullptr);
+            break;
+        }
 
-    store32(argumentCountIncludingThis, payloadFor(data->machineCount));
+        if (data->mandatoryMinimum) {
+            flushRegisters();
+            store32(argumentCountIncludingThis, payloadFor(data->machineCount));
+            callOperation(operationLoadVarargs, LinkableConstant::globalObject(*this, node), data->machineStart.offset(), argumentsRegs, data->offset, argumentCountIncludingThis, data->mandatoryMinimum);
+            noResult(node);
+        } else {
+            store32(argumentCountIncludingThis, payloadFor(data->machineCount));
+            noResult(node);
+        }
+        break;
+    }
+    default:
+        DFG_CRASH(m_graph, node, "Bad use kind");
+        break;
+    }
 
-    callOperation(operationLoadVarargs, LinkableConstant::globalObject(*this, node), data->machineStart.offset(), argumentsRegs, data->offset, argumentCountIncludingThis, data->mandatoryMinimum);
 
-    noResult(node);
 }
 
 void SpeculativeJIT::compileForwardVarargs(Node* node)

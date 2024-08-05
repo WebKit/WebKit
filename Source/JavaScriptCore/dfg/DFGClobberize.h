@@ -971,7 +971,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     }
 
     case LoadVarargs: {
-        clobberTop();
+        if (node->argumentsChild().useKind() != OtherUse)
+            clobberTop();
         LoadVarargsData* data = node->loadVarargsData();
         write(AbstractHeap(Stack, data->count));
         for (unsigned i = data->limit; i--;)
