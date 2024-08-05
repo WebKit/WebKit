@@ -271,7 +271,7 @@
 /* MUST_TAIL_CALL */
 
 #if !defined(MUST_TAIL_CALL) && defined(__cplusplus) && defined(__has_cpp_attribute)
-#if __has_cpp_attribute(clang::musttail)
+#if __has_cpp_attribute(clang::musttail) && !defined(__arm__)
 #define MUST_TAIL_CALL [[clang::musttail]]
 #endif
 #endif
