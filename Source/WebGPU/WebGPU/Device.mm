@@ -495,8 +495,10 @@ id<MTLBuffer> Device::dispatchCallBuffer()
     if (!m_device)
         return nil;
 
-    if (!m_dispatchCallBuffer)
+    if (!m_dispatchCallBuffer) {
         m_dispatchCallBuffer = [m_device newBufferWithLength:sizeof(MTLDispatchThreadgroupsIndirectArguments) options:MTLResourceStorageModePrivate];
+        setOwnerWithIdentity(m_dispatchCallBuffer);
+    }
     return m_dispatchCallBuffer;
 }
 

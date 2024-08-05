@@ -156,6 +156,14 @@ RefPtr<WebCore::WebGPU::ExternalTexture> RemoteDeviceProxy::importExternalTextur
     return result;
 }
 
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+void RemoteDeviceProxy::updateExternalTexture(const WebCore::WebGPU::ExternalTexture& externalTexture, const WebCore::MediaPlayerIdentifier& mediaPlayerIdentifier)
+{
+    auto sendResult = send(Messages::RemoteDevice::UpdateExternalTexture(m_convertToBackingContext->convertToBacking(externalTexture), mediaPlayerIdentifier));
+    UNUSED_PARAM(sendResult);
+}
+#endif
+
 RefPtr<WebCore::WebGPU::BindGroupLayout> RemoteDeviceProxy::createBindGroupLayout(const WebCore::WebGPU::BindGroupLayoutDescriptor& descriptor)
 {
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);

@@ -27,6 +27,7 @@
 
 #import "BindableResource.h"
 #import "ShaderStage.h"
+#import <wtf/EnumeratedArray.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
@@ -40,7 +41,14 @@ namespace WebGPU {
 
 class BindGroupLayout;
 class Device;
+class ExternalTexture;
 class Sampler;
+
+struct ExternalTextureIndices {
+    NSUInteger containerIndex { NSNotFound };
+    NSUInteger resourceIndex { NSNotFound };
+    NSUInteger argumentBufferIndex { NSNotFound };
+};
 
 // https://gpuweb.github.io/gpuweb/#gpubindgroup
 class BindGroup : public WGPUBindGroupImpl, public RefCounted<BindGroup>, public CanMakeWeakPtr<BindGroup> {
@@ -59,9 +67,9 @@ public:
 
     static constexpr MTLRenderStages MTLRenderStageCompute = static_cast<MTLRenderStages>(0);
     static constexpr MTLRenderStages MTLRenderStageUndefined = static_cast<MTLRenderStages>(MTLRenderStageFragment + 1);
-    static Ref<BindGroup> create(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&& resources, const BindGroupLayout& bindGroupLayout, DynamicBuffersContainer&& dynamicBuffers, SamplersContainer&& samplers, Device& device)
+    static Ref<BindGroup> create(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&& resources, const BindGroupLayout& bindGroupLayout, DynamicBuffersContainer&& dynamicBuffers, SamplersContainer&& samplers, ShaderStageArray<ExternalTextureIndices>&& externalTextureIndices, Device& device)
     {
-        return adoptRef(*new BindGroup(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, WTFMove(resources), bindGroupLayout, WTFMove(dynamicBuffers), WTFMove(samplers), device));
+        return adoptRef(*new BindGroup(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, WTFMove(resources), bindGroupLayout, WTFMove(dynamicBuffers), WTFMove(samplers), WTFMove(externalTextureIndices), device));
     }
     static Ref<BindGroup> createInvalid(Device& device)
     {
@@ -89,9 +97,10 @@ public:
     const BufferAndType* dynamicBuffer(uint32_t) const;
     uint32_t dynamicOffset(uint32_t bindingIndex, const Vector<uint32_t>*) const;
     void rebindSamplersIfNeeded() const;
+    void updateExternalTextures(const ExternalTexture&);
 
 private:
-    BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&&, const BindGroupLayout&, DynamicBuffersContainer&&, SamplersContainer&&, Device&);
+    BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&&, const BindGroupLayout&, DynamicBuffersContainer&&, SamplersContainer&&, ShaderStageArray<ExternalTextureIndices>&&, Device&);
     BindGroup(Device&);
 
     const id<MTLBuffer> m_vertexArgumentBuffer { nil };
@@ -104,6 +113,7 @@ private:
     DynamicBuffersContainer m_dynamicBuffers;
     HashMap<uint32_t, uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_dynamicOffsetsIndices;
     SamplersContainer m_samplers;
+    ShaderStageArray<ExternalTextureIndices> m_externalTextureIndices;
 };
 
 } // namespace WebGPU

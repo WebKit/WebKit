@@ -30,6 +30,7 @@
 #include "WebGPUDevice.h"
 #include "WebGPUPtr.h"
 #include "WebGPUQueueImpl.h"
+#include <WebCore/MediaPlayerIdentifier.h>
 #include <WebGPU/WebGPU.h>
 #include <wtf/Deque.h>
 
@@ -69,6 +70,7 @@ private:
     RefPtr<Texture> createTexture(const TextureDescriptor&) final;
     RefPtr<Sampler> createSampler(const SamplerDescriptor&) final;
     RefPtr<ExternalTexture> importExternalTexture(const ExternalTextureDescriptor&) final;
+    void updateExternalTexture(const WebCore::WebGPU::ExternalTexture&, const WebCore::MediaPlayerIdentifier&) final;
 
     RefPtr<BindGroupLayout> createBindGroupLayout(const BindGroupLayoutDescriptor&) final;
     RefPtr<PipelineLayout> createPipelineLayout(const PipelineLayoutDescriptor&) final;

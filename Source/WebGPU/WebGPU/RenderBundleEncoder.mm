@@ -861,8 +861,10 @@ void RenderBundleEncoder::endCurrentICB()
     }
     m_fragmentDynamicOffset = 0;
 
-    if (!m_renderPassEncoder)
+    if (!m_renderPassEncoder) {
         m_indirectCommandBuffer = [m_device->device() newIndirectCommandBufferWithDescriptor:m_icbDescriptor maxCommandCount:commandCount options:0];
+        m_device->setOwnerWithIdentity(m_indirectCommandBuffer);
+    }
 
     uint64_t completedDraws = 0, lastIndexOfRecordedCommand = 0;
     for (auto& command : m_recordedCommands) {

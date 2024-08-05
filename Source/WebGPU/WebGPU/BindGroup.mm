@@ -30,10 +30,12 @@
 #import "BindGroupLayout.h"
 #import "Buffer.h"
 #import "Device.h"
+#import "ExternalTexture.h"
 #import "MetalSPI.h"
 #import "Sampler.h"
 #import "TextureView.h"
 #import <wtf/EnumeratedArray.h>
+#import <wtf/spi/cocoa/IOSurfaceSPI.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <CoreVideo/CVPixelBufferPrivate.h>
@@ -437,7 +439,8 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
     };
 
     const bool supportsExtendedFormats = [m_device supportsFamily:MTLGPUFamilyApple4];
-    if (!CVPixelBufferGetIOSurface(pixelBuffer)) {
+    IOSurfaceRef ioSurface = CVPixelBufferGetIOSurface(pixelBuffer);
+    if (!ioSurface) {
         auto planeCount = std::max<size_t>(CVPixelBufferGetPlaneCount(pixelBuffer), 1);
         if (planeCount > 2) {
             ASSERT_NOT_REACHED("non-IOSurface CVPixelBuffer instances with more than two planes are not supported");
@@ -494,6 +497,11 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
         return { mtlTextures[0], mtlTextures[1], simd::float3x2(1.f), colorSpaceConversionMatrix };
     }
 
+    if (auto optionalWebProcessID = instance().webProcessID()) {
+        if (auto webProcessID = optionalWebProcessID->sendRight())
+            IOSurfaceSetOwnershipIdentity(ioSurface, webProcessID, kIOSurfaceMemoryLedgerTagGraphics, 0);
+    }
+
     id<MTLTexture> baseTexture = nil;
     id<MTLTexture> mtlTexture0 = nil;
     id<MTLTexture> mtlTexture1 = nil;
@@ -521,6 +529,7 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
 
     if (status1 == kCVReturnSuccess) {
         baseTexture = mtlTexture0 = CVMetalTextureGetTexture(plane0);
+        setOwnerWithIdentity(mtlTexture0);
         CVMetalTextureGetCleanTexCoords(plane0, lowerLeft, lowerRight, upperRight, upperLeft);
         if (firstPlaneSwizzle)
             mtlTexture0 = [mtlTexture0 newTextureViewWithPixelFormat:mtlTexture0.pixelFormat textureType:mtlTexture0.textureType levels:NSMakeRange(0, mtlTexture0.mipmapLevelCount) slices:NSMakeRange(0, mtlTexture0.arrayLength) swizzle:*firstPlaneSwizzle];
@@ -532,6 +541,7 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
 
     if (status2 == kCVReturnSuccess) {
         mtlTexture1 = CVMetalTextureGetTexture(plane1);
+        setOwnerWithIdentity(mtlTexture1);
         if (secondPlaneSwizzle)
             mtlTexture1 = [mtlTexture1 newTextureViewWithPixelFormat:mtlTexture1.pixelFormat textureType:mtlTexture1.textureType levels:NSMakeRange(0, mtlTexture1.mipmapLevelCount) slices:NSMakeRange(0, mtlTexture1.arrayLength) swizzle:*secondPlaneSwizzle];
     }
@@ -901,6 +911,8 @@ static BindGroupEntryUsageData makeBindGroupEntryUsageData(BindGroupEntryUsage u
     return BindGroupEntryUsageData { .usage = usage, .binding = bindingIndex, .resource = &resource, .entryOffset = entryOffset };
 }
 
+constexpr ShaderStage stages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute };
+
 Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor)
 {
 #define INTERNAL_ERROR_STRING(x) [NSString stringWithFormat:@"GPUDevice.createBindGroup: %@", x]
@@ -908,7 +920,6 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     if (descriptor.nextInChain || !descriptor.layout || !isValid())
         return BindGroup::createInvalid(*this);
 
-    constexpr ShaderStage stages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute };
     constexpr ShaderStage stagesPlusUndefined[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute, ShaderStage::Undefined };
     constexpr size_t stageCount = std::size(stages);
     constexpr size_t stagesPlusUndefinedCount = std::size(stagesPlusUndefined);
@@ -919,6 +930,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     }
 
     BindGroup::ShaderStageArray<id<MTLArgumentEncoder>> argumentEncoder = std::array<id<MTLArgumentEncoder>, stageCount>({ bindGroupLayout.vertexArgumentEncoder(), bindGroupLayout.fragmentArgumentEncoder(), bindGroupLayout.computeArgumentEncoder() });
+    BindGroup::ShaderStageArray<ExternalTextureIndices> externalTextureIndices = std::array<ExternalTextureIndices, stageCount>({ ExternalTextureIndices(), ExternalTextureIndices(), ExternalTextureIndices() });
     BindGroup::ShaderStageArray<id<MTLBuffer>> argumentBuffer;
     for (ShaderStage stage : stages) {
         auto encodedLength = bindGroupLayout.encodedLength(stage);
@@ -1135,14 +1147,19 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 auto& externalTexture = WebGPU::fromAPI(wgpuExternalTexture);
                 auto textureData = createExternalTextureFromPixelBuffer(externalTexture.pixelBuffer(), externalTexture.colorSpace());
                 id<MTLTexture> texture0 = textureData.texture0 ?: placeholderTexture(WGPUTextureFormat_BGRA8Unorm);
+                auto metalStage = metalRenderStage(stage);
+                if (stage != ShaderStage::Undefined) {
+                    externalTextureIndices[stage].argumentBufferIndex = index;
+                    externalTextureIndices[stage].resourceIndex = stageResources[metalStage][resourceUsage - 1].size();
+                }
                 if (texture0) {
-                    stageResources[metalRenderStage(stage)][resourceUsage - 1].append(texture0);
-                    stageResourceUsages[metalRenderStage(stage)][resourceUsage - 1].append(makeBindGroupEntryUsageData(BindGroupEntryUsage::ConstantTexture, entry.binding, externalTexture));
+                    stageResources[metalStage][resourceUsage - 1].append(texture0);
+                    stageResourceUsages[metalStage][resourceUsage - 1].append(makeBindGroupEntryUsageData(BindGroupEntryUsage::ConstantTexture, entry.binding, externalTexture));
                 }
                 id<MTLTexture> texture1 = textureData.texture1 ?: placeholderTexture(WGPUTextureFormat_BGRA8Unorm);
                 if (texture1) {
-                    stageResources[metalRenderStage(stage)][resourceUsage - 1].append(texture1);
-                    stageResourceUsages[metalRenderStage(stage)][resourceUsage - 1].append(makeBindGroupEntryUsageData(BindGroupEntryUsage::ConstantTexture, entry.binding, externalTexture));
+                    stageResources[metalStage][resourceUsage - 1].append(texture1);
+                    stageResourceUsages[metalStage][resourceUsage - 1].append(makeBindGroupEntryUsageData(BindGroupEntryUsage::ConstantTexture, entry.binding, externalTexture));
                 }
 
                 if (stage != ShaderStage::Undefined) {
@@ -1171,6 +1188,8 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
             auto &v = stageResources[renderStage][i];
             auto &u = stageResourceUsages[renderStage][i];
             if (v.size()) {
+                if (stage != ShaderStage::Undefined)
+                    externalTextureIndices[stage].containerIndex = resources.size();
                 resources.append(BindableResources {
                     .mtlResources = WTFMove(v),
                     .resourceUsages = WTFMove(u),
@@ -1185,7 +1204,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     argumentBuffer[ShaderStage::Fragment].label = bindGroupLayout.fragmentArgumentEncoder().label;
     argumentBuffer[ShaderStage::Compute].label = bindGroupLayout.computeArgumentEncoder().label;
 
-    return BindGroup::create(argumentBuffer[ShaderStage::Vertex], argumentBuffer[ShaderStage::Fragment], argumentBuffer[ShaderStage::Compute], WTFMove(resources), bindGroupLayout, WTFMove(dynamicBuffers), WTFMove(samplersSet), *this);
+    return BindGroup::create(argumentBuffer[ShaderStage::Vertex], argumentBuffer[ShaderStage::Fragment], argumentBuffer[ShaderStage::Compute], WTFMove(resources), bindGroupLayout, WTFMove(dynamicBuffers), WTFMove(samplersSet), WTFMove(externalTextureIndices), *this);
 #undef VALIDATION_ERROR
 #undef INTERNAL_ERROR_STRING
 }
@@ -1200,7 +1219,7 @@ const BindGroupLayout* BindGroup::bindGroupLayout() const
     return m_bindGroupLayout.get();
 }
 
-BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&& resources, const BindGroupLayout& bindGroupLayout, DynamicBuffersContainer&& dynamicBuffers, SamplersContainer&& samplers, Device& device)
+BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&& resources, const BindGroupLayout& bindGroupLayout, DynamicBuffersContainer&& dynamicBuffers, SamplersContainer&& samplers, ShaderStageArray<ExternalTextureIndices>&& externalTextureIndices, Device& device)
     : m_vertexArgumentBuffer(vertexArgumentBuffer)
     , m_fragmentArgumentBuffer(fragmentArgumentBuffer)
     , m_computeArgumentBuffer(computeArgumentBuffer)
@@ -1209,6 +1228,7 @@ BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentA
     , m_bindGroupLayout(&bindGroupLayout)
     , m_dynamicBuffers(WTFMove(dynamicBuffers))
     , m_samplers(WTFMove(samplers))
+    , m_externalTextureIndices(WTFMove(externalTextureIndices))
 {
     for (size_t index = 0, maxIndex = m_dynamicBuffers.size(); index < maxIndex; ++index)
         m_dynamicOffsetsIndices.add(m_dynamicBuffers[index].bindingIndex, index);
@@ -1318,6 +1338,41 @@ void BindGroup::rebindSamplersIfNeeded() const
     }
 }
 
+void BindGroup::updateExternalTextures(const ExternalTexture& externalTexture)
+{
+    auto textureData = m_device->createExternalTextureFromPixelBuffer(externalTexture.pixelBuffer(), externalTexture.colorSpace());
+    id<MTLTexture> texture0 = textureData.texture0 ?: m_device->placeholderTexture(WGPUTextureFormat_BGRA8Unorm);
+    id<MTLTexture> texture1 = textureData.texture1 ?: m_device->placeholderTexture(WGPUTextureFormat_BGRA8Unorm);
+    if (!texture0 || !texture1)
+        return;
+
+    BindGroup::ShaderStageArray<id<MTLBuffer>> argumentBuffers = std::array<id<MTLBuffer>, 3>({ vertexArgumentBuffer(), fragmentArgumentBuffer(), computeArgumentBuffer() });
+    BindGroup::ShaderStageArray<id<MTLArgumentEncoder>> argumentEncoders = std::array<id<MTLArgumentEncoder>, 3>({ m_bindGroupLayout->vertexArgumentEncoder(), m_bindGroupLayout->fragmentArgumentEncoder(), m_bindGroupLayout->computeArgumentEncoder() });
+    for (ShaderStage stage : stages) {
+        auto& indices = m_externalTextureIndices[stage];
+        auto index = indices.argumentBufferIndex;
+        auto resourceIndex = indices.resourceIndex;
+        auto containerIndex = indices.containerIndex;
+        if (index == NSNotFound || containerIndex >= m_resources.size() || resourceIndex >= m_resources[containerIndex].mtlResources.size() || (resourceIndex + 1) >= m_resources[containerIndex].mtlResources.size())
+            continue;
+
+        m_resources[containerIndex].mtlResources[resourceIndex] = texture0;
+        m_resources[containerIndex].mtlResources[resourceIndex + 1] = texture1;
+
+        id<MTLArgumentEncoder> argumentEncoder = argumentEncoders[stage];
+        [argumentEncoder setArgumentBuffer:argumentBuffers[stage] offset:0];
+
+        [argumentEncoder setTexture:texture0 atIndex:index++];
+        [argumentEncoder setTexture:texture1 atIndex:index++];
+
+        auto* uvRemapAddress = static_cast<simd::float3x2*>([argumentEncoder constantDataAtIndex:index++]);
+        *uvRemapAddress = textureData.uvRemappingMatrix;
+
+        auto* cscMatrixAddress = static_cast<simd::float4x3*>([argumentEncoder constantDataAtIndex:index++]);
+        *cscMatrixAddress = textureData.colorSpaceConversionMatrix;
+    }
+}
+
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
@@ -1335,4 +1390,9 @@ void wgpuBindGroupRelease(WGPUBindGroup bindGroup)
 void wgpuBindGroupSetLabel(WGPUBindGroup bindGroup, const char* label)
 {
     WebGPU::fromAPI(bindGroup).setLabel(WebGPU::fromAPI(label));
+}
+
+void wgpuBindGroupUpdateExternalTextures(WGPUBindGroup bindGroup, WGPUExternalTexture externalTexture)
+{
+    WebGPU::fromAPI(bindGroup).updateExternalTextures(WebGPU::fromAPI(externalTexture));
 }

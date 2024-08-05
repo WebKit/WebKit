@@ -31,6 +31,10 @@
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUBindGroup.h>
 
+namespace WebCore::WebGPU {
+class ExternalTexture;
+}
+
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
@@ -73,6 +77,7 @@ private:
     }
 
     void setLabelInternal(const String&) final;
+    void updateExternalTextures(const WebCore::WebGPU::ExternalTexture&) final;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

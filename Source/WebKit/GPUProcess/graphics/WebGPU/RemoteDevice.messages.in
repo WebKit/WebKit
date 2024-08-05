@@ -49,6 +49,7 @@ messages -> RemoteDevice NotRefCounted Stream {
     void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
     void SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable
     void ImportExternalTextureFromVideoFrame(WebKit::WebGPU::ExternalTextureDescriptor descriptor, WebKit::WebGPUIdentifier identifier) NotStreamEncodable
+    void UpdateExternalTexture(WebKit::WebGPUIdentifier externalTextureIdentifier, WebCore::MediaPlayerIdentifier mediaIdentifier)
 #endif
 }
 

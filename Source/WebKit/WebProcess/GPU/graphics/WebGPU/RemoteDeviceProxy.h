@@ -34,6 +34,10 @@
 #include <WebCore/WebGPUDevice.h>
 #include <wtf/Deque.h>
 
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+#include <WebCore/MediaPlayerIdentifier.h>
+#endif
+
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
@@ -83,6 +87,9 @@ private:
     RefPtr<WebCore::WebGPU::Texture> createTexture(const WebCore::WebGPU::TextureDescriptor&) final;
     RefPtr<WebCore::WebGPU::Sampler> createSampler(const WebCore::WebGPU::SamplerDescriptor&) final;
     RefPtr<WebCore::WebGPU::ExternalTexture> importExternalTexture(const WebCore::WebGPU::ExternalTextureDescriptor&) final;
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    void updateExternalTexture(const WebCore::WebGPU::ExternalTexture&, const WebCore::MediaPlayerIdentifier&) final;
+#endif
 
     RefPtr<WebCore::WebGPU::BindGroupLayout> createBindGroupLayout(const WebCore::WebGPU::BindGroupLayoutDescriptor&) final;
     RefPtr<WebCore::WebGPU::PipelineLayout> createPipelineLayout(const WebCore::WebGPU::PipelineLayoutDescriptor&) final;

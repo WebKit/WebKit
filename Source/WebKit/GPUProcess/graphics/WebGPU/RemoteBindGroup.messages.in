@@ -26,6 +26,7 @@
 messages -> RemoteBindGroup NotRefCounted Stream {
     void Destruct()
     void SetLabel(String label)
+    void UpdateExternalTextures(WebKit::WebGPUIdentifier externalTextureIdentifier)
 }
 
 #endif

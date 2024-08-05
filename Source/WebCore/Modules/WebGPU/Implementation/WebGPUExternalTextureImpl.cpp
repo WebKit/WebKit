@@ -59,6 +59,11 @@ void ExternalTextureImpl::undestroy()
     wgpuExternalTextureUndestroy(m_backing.get());
 }
 
+void ExternalTextureImpl::updateExternalTexture(CVPixelBufferRef pixelBuffer)
+{
+    wgpuExternalTextureUpdate(m_backing.get(), pixelBuffer);
+}
+
 } // namespace WebCore::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)
