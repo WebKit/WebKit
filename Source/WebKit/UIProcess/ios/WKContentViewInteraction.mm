@@ -3261,7 +3261,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     CGPoint point = [gestureRecognizer locationInView:self];
 
-    auto shouldAcknowledgeTap = [&](WKScrollViewTrackingTapGestureRecognizer *tapGesture) {
+    auto shouldAcknowledgeTap = [&](WKScrollViewTrackingTapGestureRecognizer *tapGesture) -> BOOL {
         if ([self _shouldToggleSelectionCommandsAfterTapAt:point])
             return NO;
         auto scrollView = tapGesture.lastTouchedScrollView;
