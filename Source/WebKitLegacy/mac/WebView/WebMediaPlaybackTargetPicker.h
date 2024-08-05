@@ -68,7 +68,7 @@ private:
     void playbackTargetPickerWasDismissed(WebCore::PlaybackTargetClientContextIdentifier) final;
     RetainPtr<PlatformView> platformView() const final;
 
-    SingleThreadWeakPtr<WebCore::Page> m_page;
+    WeakPtr<WebCore::Page> m_page;
     WeakObjCPtr<WebView> m_webView;
 };
 

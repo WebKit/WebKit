@@ -161,7 +161,7 @@ private:
 
     RefPtr<Document> document() const;
 
-    SingleThreadWeakPtr<Page> m_page;
+    WeakPtr<Page> m_page;
 
     HashMap<WritingTools::Session::ID, std::variant<std::monostate, ProofreadingState, CompositionState>> m_states;
 };
