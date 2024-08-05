@@ -36,7 +36,7 @@ public:
     using DOMSource = GraphicsContextGL::DOMSource;
     using DataFormat = GraphicsContextGL::DataFormat;
     using AlphaOp = GraphicsContextGL::AlphaOp;
-    GraphicsContextGLImageExtractor(Image*, DOMSource, bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication);
+    GraphicsContextGLImageExtractor(Image&, DOMSource, bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication);
 
     // Each platform must provide an implementation of this method to deallocate or release resources
     // associated with the image if needed.
@@ -65,7 +65,7 @@ private:
     sk_sp<SkData> m_pixelData;
     sk_sp<SkImage> m_skImage;
 #endif
-    Image* m_image;
+    Ref<Image> m_image;
     DOMSource m_imageHtmlDomSource;
     bool m_extractSucceeded;
     const void* m_imagePixelData;

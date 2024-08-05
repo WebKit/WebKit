@@ -852,12 +852,11 @@ protected:
     bool validateTexImageSubRectangle(TexImageFunctionID, const IntRect& imageSize, const IntRect& subRect, GCGLsizei depth, GCGLint unpackImageHeight, bool* selectingSubRectangle);
 
     IntRect sentinelEmptyRect();
-    IntRect safeGetImageSize(Image*);
     IntRect getImageDataSize(ImageData*);
 
     ExceptionOr<void> texImageSourceHelper(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& sourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, TexImageSource&&);
     void texImageArrayBufferViewHelper(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, RefPtr<ArrayBufferView>&& pixels, NullDisposition, GCGLuint srcOffset);
-    void texImageImpl(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLenum format, GCGLenum type, Image*, GraphicsContextGL::DOMSource, bool flipY, bool premultiplyAlpha, bool ignoreNativeImageAlphaPremultiplication, const IntRect&, GCGLsizei depth, GCGLint unpackImageHeight);
+    void texImageImpl(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLenum format, GCGLenum type, Image&, GraphicsContextGL::DOMSource, bool flipY, bool premultiplyAlpha, bool ignoreNativeImageAlphaPremultiplication, const IntRect&, GCGLsizei depth, GCGLint unpackImageHeight);
     void texImage2DBase(GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels);
     void texSubImage2DBase(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum internalFormat, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels);
     static ASCIILiteral texImageFunctionName(TexImageFunctionID);
@@ -981,12 +980,12 @@ protected:
 
     // Helper function for tex{Sub}Image2D to make sure image is ready.
     ExceptionOr<bool> validateHTMLImageElement(ASCIILiteral functionName, HTMLImageElement&);
-    ExceptionOr<bool> validateHTMLCanvasElement(ASCIILiteral functionName, HTMLCanvasElement&);
+    ExceptionOr<bool> validateHTMLCanvasElement(HTMLCanvasElement&);
 #if ENABLE(VIDEO)
     ExceptionOr<bool> validateHTMLVideoElement(ASCIILiteral functionName, HTMLVideoElement&);
 #endif
 #if ENABLE(OFFSCREEN_CANVAS)
-    ExceptionOr<bool> validateOffscreenCanvas(ASCIILiteral functionName, OffscreenCanvas&);
+    ExceptionOr<bool> validateOffscreenCanvas(OffscreenCanvas&);
 #endif
     ExceptionOr<bool> validateImageBitmap(ASCIILiteral functionName, ImageBitmap&);
 

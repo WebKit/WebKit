@@ -3159,13 +3159,6 @@ IntRect WebGLRenderingContextBase::sentinelEmptyRect()
     return IntRect(0, 0, -1, -1);
 }
 
-IntRect WebGLRenderingContextBase::safeGetImageSize(Image* image)
-{
-    if (!image)
-        return { };
-    return texImageSourceSize(*image);
-}
-
 IntRect WebGLRenderingContextBase::getImageDataSize(ImageData* pixels)
 {
     ASSERT(pixels);
@@ -3223,10 +3216,11 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
         return { };
 
     // Fallback pure SW path.
-    RefPtr<Image> image = BitmapImage::create(buffer->createNativeImageReference());
+    RefPtr image = BitmapImage::create(buffer->createNativeImageReference());
+    if (!image)
+        return { };
     // The premultiplyAlpha and flipY pixel unpack parameters are ignored for ImageBitmaps.
-    if (image)
-        texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, image.get(), GraphicsContextGL::DOMSource::Image, false, source.premultiplyAlpha(), source.forciblyPremultiplyAlpha(), sourceImageRect, depth, unpackImageHeight);
+    texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, *image, GraphicsContextGL::DOMSource::Image, false, source.premultiplyAlpha(), source.forciblyPremultiplyAlpha(), sourceImageRect, depth, unpackImageHeight);
     return { };
 }
 
@@ -3319,15 +3313,13 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     // Pass along inputSourceImageRect unchanged. HTMLImageElements are unique in that their
     // size may differ from that of the Image obtained from them (because of devicePixelRatio),
     // so for WebGL 1.0 uploads, defer measuring their rectangle as long as possible.
-    texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, imageForRender.get(), GraphicsContextGL::DOMSource::Image, m_unpackFlipY, m_unpackPremultiplyAlpha, false, inputSourceImageRect, depth, unpackImageHeight);
+    texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, *imageForRender, GraphicsContextGL::DOMSource::Image, m_unpackFlipY, m_unpackPremultiplyAlpha, false, inputSourceImageRect, depth, unpackImageHeight);
     return { };
 }
 
 ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, HTMLCanvasElement& source)
 {
-    auto functionName = texImageFunctionName(functionID);
-
-    auto validationResult = validateHTMLCanvasElement(functionName, source);
+    auto validationResult = validateHTMLCanvasElement(source);
     if (validationResult.hasException())
         return validationResult.releaseException();
     if (!validationResult.returnValue())
@@ -3344,10 +3336,14 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
         return { };
 
     RefPtr<ImageData> imageData = source.getImageData();
-    if (imageData)
+    if (imageData) {
         texImageSourceHelper(functionID, target, level, internalformat, border, format, type, xoffset, yoffset, zoffset, sourceImageRect, depth, unpackImageHeight, TexImageSource(imageData.get()));
-    else
-        texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, source.copiedImage(), GraphicsContextGL::DOMSource::Canvas, m_unpackFlipY, m_unpackPremultiplyAlpha, false, sourceImageRect, depth, unpackImageHeight);
+        return { };
+    }
+    RefPtr image = source.copiedImage();
+    if (!image)
+        return { };
+    texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, *image, GraphicsContextGL::DOMSource::Canvas, m_unpackFlipY, m_unpackPremultiplyAlpha, false, sourceImageRect, depth, unpackImageHeight);
     return { };
 }
 
@@ -3396,7 +3392,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     RefPtr<Image> image = videoFrameToImage(source, functionName);
     if (!image)
         return { };
-    texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, image.get(), GraphicsContextGL::DOMSource::Video, m_unpackFlipY, m_unpackPremultiplyAlpha, false, inputSourceImageRect, depth, unpackImageHeight);
+    texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, *image, GraphicsContextGL::DOMSource::Video, m_unpackFlipY, m_unpackPremultiplyAlpha, false, inputSourceImageRect, depth, unpackImageHeight);
     return { };
 }
 #endif
@@ -3404,9 +3400,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
 #if ENABLE(OFFSCREEN_CANVAS)
 ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, OffscreenCanvas& source)
 {
-    auto functionName = texImageFunctionName(functionID);
-
-    auto validationResult = validateOffscreenCanvas(functionName, source);
+    auto validationResult = validateOffscreenCanvas(source);
     if (validationResult.hasException())
         return validationResult.releaseException();
     if (!validationResult.returnValue())
@@ -3422,7 +3416,10 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     if (!validateTexFunc(functionID, SourceOffscreenCanvas, target, level, internalformat, sourceImageRect.width(), sourceImageRect.height(), depth, border, format, type, xoffset, yoffset, zoffset))
         return { };
 
-    texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, source.copiedImage(), GraphicsContextGL::DOMSource::Canvas, m_unpackFlipY, m_unpackPremultiplyAlpha, false, sourceImageRect, depth, unpackImageHeight);
+    RefPtr image = source.copiedImage();
+    if (!image)
+        return { };
+    texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, *image, GraphicsContextGL::DOMSource::Canvas, m_unpackFlipY, m_unpackPremultiplyAlpha, false, sourceImageRect, depth, unpackImageHeight);
     return { };
 }
 #endif
@@ -3459,7 +3456,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     if (!image)
         return { };
 
-    texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, image.get(), GraphicsContextGL::DOMSource::Video, m_unpackFlipY, m_unpackPremultiplyAlpha, false, inputSourceImageRect, depth, unpackImageHeight);
+    texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, *image, GraphicsContextGL::DOMSource::Video, m_unpackFlipY, m_unpackPremultiplyAlpha, false, inputSourceImageRect, depth, unpackImageHeight);
     return { };
 }
 #endif
@@ -3519,7 +3516,7 @@ void WebGLRenderingContextBase::texImageArrayBufferViewHelper(TexImageFunctionID
     }
 }
 
-void WebGLRenderingContextBase::texImageImpl(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLenum format, GCGLenum type, Image* image, GraphicsContextGL::DOMSource domSource, bool flipY, bool premultiplyAlpha, bool ignoreNativeImageAlphaPremultiplication, const IntRect& sourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight)
+void WebGLRenderingContextBase::texImageImpl(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLenum format, GCGLenum type, Image& image, GraphicsContextGL::DOMSource domSource, bool flipY, bool premultiplyAlpha, bool ignoreNativeImageAlphaPremultiplication, const IntRect& sourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight)
 {
     auto functionName = texImageFunctionName(functionID);
     // All calling functions check isContextLost, so a duplicate check is not
@@ -3528,27 +3525,22 @@ void WebGLRenderingContextBase::texImageImpl(TexImageFunctionID functionID, GCGL
         // The UNSIGNED_INT_10F_11F_11F_REV type pack/unpack isn't implemented.
         type = GraphicsContextGL::FLOAT;
     }
-    if (!image) {
-        // Probably indicates a failure to allocate the image.
-        synthesizeGLError(GraphicsContextGL::OUT_OF_MEMORY, functionName, "out of memory"_s);
-        return;
-    }
     Vector<uint8_t> data;
 
     IntRect subRect = sourceImageRect;
     if (subRect.isValid() && subRect == sentinelEmptyRect()) {
         // Recalculate based on the size of the Image.
-        subRect = safeGetImageSize(image);
+        subRect = texImageSourceSize(image);
     }
 
     bool selectingSubRectangle = false;
-    if (!validateTexImageSubRectangle(functionID, safeGetImageSize(image), subRect, depth, unpackImageHeight, &selectingSubRectangle))
+    if (!validateTexImageSubRectangle(functionID, texImageSourceSize(image), subRect, depth, unpackImageHeight, &selectingSubRectangle))
         return;
 
     // Adjust the source image rectangle if doing a y-flip.
     IntRect adjustedSourceImageRect = subRect;
     if (m_unpackFlipY)
-        adjustedSourceImageRect.setY(image->height() - adjustedSourceImageRect.maxY());
+        adjustedSourceImageRect.setY(image.height() - adjustedSourceImageRect.maxY());
 
     GraphicsContextGLImageExtractor imageExtractor(image, domSource, premultiplyAlpha, m_unpackColorspaceConversion == GraphicsContextGL::NONE, ignoreNativeImageAlphaPremultiplication);
     if (!imageExtractor.extractSucceeded()) {
@@ -3569,7 +3561,7 @@ void WebGLRenderingContextBase::texImageImpl(TexImageFunctionID functionID, GCGL
 
     std::span pixels { imagePixelData, imagePixelByteLength };
     if (type != GraphicsContextGL::UNSIGNED_BYTE || sourceDataFormat != GraphicsContextGL::DataFormat::RGBA8 || format != GraphicsContextGL::RGBA || alphaOp != GraphicsContextGL::AlphaOp::DoNothing || flipY || selectingSubRectangle || depth != 1) {
-        if (!m_context->packImageData(image, imagePixelData, format, type, flipY, alphaOp, sourceDataFormat, imageExtractor.imageWidth(), imageExtractor.imageHeight(), adjustedSourceImageRect, depth, imageExtractor.imageSourceUnpackAlignment(), unpackImageHeight, data)) {
+        if (!m_context->packImageData(&image, imagePixelData, format, type, flipY, alphaOp, sourceDataFormat, imageExtractor.imageWidth(), imageExtractor.imageHeight(), adjustedSourceImageRect, depth, imageExtractor.imageSourceUnpackAlignment(), unpackImageHeight, data)) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "packImage error"_s);
             return;
         }
@@ -5104,12 +5096,8 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLImageElement(ASCIILiter
     return true;
 }
 
-ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLCanvasElement(ASCIILiteral functionName, HTMLCanvasElement& canvas)
+ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLCanvasElement(HTMLCanvasElement& canvas)
 {
-    if (!canvas.buffer()) {
-        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "no canvas"_s);
-        return false;
-    }
     if (taintsOrigin(&canvas))
         return Exception { ExceptionCode::SecurityError };
     return true;
@@ -5129,12 +5117,8 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLVideoElement(ASCIILiter
 #endif
 
 #if ENABLE(OFFSCREEN_CANVAS)
-ExceptionOr<bool> WebGLRenderingContextBase::validateOffscreenCanvas(ASCIILiteral functionName, OffscreenCanvas& canvas)
+ExceptionOr<bool> WebGLRenderingContextBase::validateOffscreenCanvas(OffscreenCanvas& canvas)
 {
-    if (!canvas.buffer()) {
-        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "no canvas"_s);
-        return false;
-    }
     if (taintsOrigin(&canvas))
         return Exception { ExceptionCode::SecurityError };
     return true;

@@ -322,9 +322,6 @@ GraphicsContextGLImageExtractor::~GraphicsContextGLImageExtractor() = default;
 
 bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication)
 {
-    if (!m_image)
-        return false;
-
     RefPtr<NativeImage> decodedImage;
     bool hasAlpha = !m_image->currentFrameKnownToBeOpaque();
 

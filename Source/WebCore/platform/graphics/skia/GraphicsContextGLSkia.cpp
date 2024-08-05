@@ -47,9 +47,6 @@ GraphicsContextGLImageExtractor::~GraphicsContextGLImageExtractor() = default;
 
 bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication)
 {
-    if (!m_image)
-        return false;
-
     PlatformImagePtr platformImage;
     bool hasAlpha = !m_image->currentFrameKnownToBeOpaque();
     if ((ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) && m_image->data()) {
