@@ -562,8 +562,6 @@ void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVe
         auto& rule = ruleData.styleRule();
 
         // If the rule has no properties to apply, then ignore it in the non-debug mode.
-        // Note that if we get null back here, it means we have a rule with deferred properties,
-        // and that means we always have to consider it.
         if (rule.properties().isEmpty() && !m_shouldIncludeEmptyRules)
             continue;
 

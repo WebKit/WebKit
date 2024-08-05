@@ -132,8 +132,8 @@ void Builder::applyNonHighPriorityProperties()
 
 void Builder::applyDeferredProperties()
 {
-    for (auto id : m_cascade.deferredPropertyIDs())
-        applyCascadeProperty(m_cascade.deferredProperty(id));
+    for (auto id : m_cascade.logicalGroupPropertyIDs())
+        applyCascadeProperty(m_cascade.logicalGroupProperty(id));
 }
 
 void Builder::applyProperties(int firstProperty, int lastProperty)
@@ -335,13 +335,13 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
                         return;
                     }
                 }
-            } else if (id < firstDeferredProperty) {
+            } else if (id < firstLogicalGroupProperty) {
                 if (rollbackCascade->hasNormalProperty(id)) {
                     auto& property = rollbackCascade->normalProperty(id);
                     applyRollbackCascadeProperty(property, linkMatchMask);
                     return;
                 }
-            } else if (auto* property = rollbackCascade->lastDeferredPropertyResolvingRelated(id, style.direction(), style.writingMode())) {
+            } else if (auto* property = rollbackCascade->lastPropertyResolvingLogicalPropertyPair(id, style.direction(), style.writingMode())) {
                 applyRollbackCascadeProperty(*property, linkMatchMask);
                 return;
             }
