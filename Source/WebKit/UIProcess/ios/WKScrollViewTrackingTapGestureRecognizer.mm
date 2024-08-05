@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 - 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS_FAMILY)
-
+#import "config.h"
 #import "WKScrollViewTrackingTapGestureRecognizer.h"
 
-@class WKTouchEventsGestureRecognizer;
+#if PLATFORM(IOS_FAMILY)
 
-// The purpose of this class is to call a target/action when
-// the gesture is recognized, as well as the typical time when
-// a gesture should be handled. This allows it to be used while
-// it is waiting for another gesture recognizer to fail.
-@interface WKSyntheticTapGestureRecognizer : WKScrollViewTrackingTapGestureRecognizer
-- (void)setGestureIdentifiedTarget:(id)target action:(SEL)action;
-- (void)setGestureFailedTarget:(id)target action:(SEL)action;
-- (void)setResetTarget:(id)target action:(SEL)action;
-@property (nonatomic, weak) WKTouchEventsGestureRecognizer *supportingTouchEventsGestureRecognizer;
-@property (nonatomic, readonly) NSNumber *lastActiveTouchIdentifier;
+#import "UIKitUtilities.h"
+
+@implementation WKScrollViewTrackingTapGestureRecognizer
+
+- (void)reset
+{
+    [super reset];
+
+    _lastTouchedScrollView = nil;
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [super touchesBegan:touches withEvent:event];
+
+    if (auto scrollView = WebKit::scrollViewForTouches(touches))
+        _lastTouchedScrollView = scrollView;
+}
+
 @end
 
-#endif
+#endif // PLATFORM(IOS_FAMILY)

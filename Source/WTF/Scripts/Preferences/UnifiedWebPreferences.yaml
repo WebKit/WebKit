@@ -3699,6 +3699,18 @@ JavaScriptRuntimeFlags:
     WebCore:
       default: '{ }'
 
+KeyboardDismissalGestureEnabled:
+  type: bool
+  status: internal
+  webcoreBinding: none
+  condition: PLATFORM(IOS_FAMILY)
+  humanReadableName: "Keyboard Dismissal Gesture"
+  humanReadableDescription: "Enable the keyboard dismissal gesture"
+  defaultValue:
+    WebKit:
+      "PLATFORM(APPLETV)" : true
+      default: false
+
 LargeImageAsyncDecodingEnabled:
   type: bool
   status: embedder
