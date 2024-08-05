@@ -419,10 +419,10 @@ bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit)
         }
     }
 
-    if (m_dynamicOffsetsVertexBuffer)
+    if (m_dynamicOffsetsVertexBuffer && vertexDynamicOffset < m_dynamicOffsetsVertexBuffer.length)
         [icbCommand setVertexBuffer:m_dynamicOffsetsVertexBuffer offset:vertexDynamicOffset atIndex:m_device->maxBuffersPlusVertexBuffersForVertexStage()];
 
-    if (m_dynamicOffsetsFragmentBuffer) {
+    if (m_dynamicOffsetsFragmentBuffer && fragmentDynamicOffset < m_dynamicOffsetsFragmentBuffer.length) {
         RELEASE_ASSERT(m_fragmentBuffers.size());
         [icbCommand setFragmentBuffer:m_dynamicOffsetsFragmentBuffer offset:fragmentDynamicOffset atIndex:m_fragmentBuffers.size() - 1];
     }
