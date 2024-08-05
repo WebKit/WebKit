@@ -7855,7 +7855,7 @@
         },
         "-webkit-line-clamp": {
             "codegen-properties": {
-                "parser-grammar": "<percentage [0,inf]> | <integer [1,inf]>"
+                "parser-grammar": "none | <percentage [0,inf]> | <integer [1,inf]>"
             },
             "status": "non-standard"
         },

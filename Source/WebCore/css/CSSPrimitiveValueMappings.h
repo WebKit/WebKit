@@ -150,7 +150,7 @@ template<> inline LineClampValue fromCSSValue(const CSSValue& value)
     if (primitiveValue.primitiveType() == CSSUnitType::CSS_PERCENTAGE)
         return LineClampValue(primitiveValue.value<int>(), LineClamp::Percentage);
 
-    ASSERT_NOT_REACHED();
+    ASSERT(primitiveValue.valueID() == CSSValueNone);
     return LineClampValue();
 }
 
