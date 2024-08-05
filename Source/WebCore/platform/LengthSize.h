@@ -26,14 +26,16 @@ namespace WebCore {
 
 struct BlendingContext;
 
-struct LengthSize {
-    Length width;
-    Length height;
+class LengthSize {
+    public: 
+        Length width;
+        Length height;
 
-    ALWAYS_INLINE friend bool operator==(const LengthSize&, const LengthSize&) = default;
+        ALWAYS_INLINE friend bool operator==(const LengthSize&, const LengthSize&) = default;
 
-    bool isEmpty() const { return width.isZero() || height.isZero(); }
-    bool isZero() const { return width.isZero() && height.isZero(); }
+        bool isEmpty() const { return width.isZero() || height.isZero(); }
+        bool isZero() const { return width.isZero() && height.isZero(); }
+    private:
 };
 
 inline LengthSize blend(const LengthSize& from, const LengthSize& to, const BlendingContext& context)

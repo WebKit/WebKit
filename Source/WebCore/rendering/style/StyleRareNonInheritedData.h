@@ -70,8 +70,8 @@ class StyleMultiColData;
 class StyleReflection;
 class StyleResolver;
 class StyleTransformData;
+class LengthSize;
 
-struct LengthSize;
 struct StyleMarqueeData;
 
 // Page size type.

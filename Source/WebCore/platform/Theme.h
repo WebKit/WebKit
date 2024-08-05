@@ -38,8 +38,7 @@ class FontCascade;
 class FontCascadeDescription;
 class GraphicsContext;
 class ScrollView;
-
-struct LengthSize;
+class LengthSize;
 
 class Theme {
 public:

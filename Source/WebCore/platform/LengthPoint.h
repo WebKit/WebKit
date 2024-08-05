@@ -31,7 +31,7 @@ namespace WebCore {
 
 struct BlendingContext;
 
-struct LengthPoint {
+class LengthPoint {
 public:
     LengthPoint()
     {

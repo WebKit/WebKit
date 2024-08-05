@@ -33,8 +33,8 @@ class FloatPoint;
 class LayoutSize;
 
 struct Length;
-struct LengthSize;
-struct LengthPoint;
+class LengthSize;
+class LengthPoint;
 
 int intValueForLength(const Length&, LayoutUnit maximumValue);
 float floatValueForLength(const Length&, LayoutUnit maximumValue);

@@ -99,6 +99,8 @@ class TransformationMatrix;
 class TranslateTransformOperation;
 class ViewTimeline;
 class WillChangeData;
+class LengthPoint;
+class LengthSize;
 
 enum CSSPropertyID : uint16_t;
 enum GridAutoFlow : uint8_t;
@@ -252,8 +254,6 @@ struct FontSizeAdjust;
 struct GridTrackList;
 struct ImageOrientation;
 struct Length;
-struct LengthPoint;
-struct LengthSize;
 struct ListStyleType;
 struct MasonryAutoFlow;
 struct NamedGridAreaMap;
