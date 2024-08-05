@@ -325,7 +325,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Int32, executionCounterIncrementForLoop, 1, Normal, nullptr) \
     v(Int32, executionCounterIncrementForEntry, 15, Normal, nullptr) \
     \
-    v(Int32, thresholdForFTLOptimizeAfterWarmUp, 100000, Normal, nullptr) \
+    v(Int32, thresholdForFTLOptimizeAfterWarmUp, 60000, Normal, nullptr) \
     v(Int32, thresholdForFTLOptimizeSoon, 1000, Normal, nullptr) \
     v(Int32, ftlTierUpCounterIncrementForLoop, 1, Normal, nullptr) \
     v(Int32, ftlTierUpCounterIncrementForReturn, 15, Normal, nullptr) \
@@ -336,7 +336,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Unsigned, maximumEvalCacheableSourceLength, 256, Normal, nullptr) \
     \
     v(Int32, maximumExecutionCountsBetweenCheckpointsForBaseline, 1000, Normal, nullptr) \
-    v(Int32, maximumExecutionCountsBetweenCheckpointsForUpperTiers, 50000, Normal, nullptr) \
+    v(Int32, maximumExecutionCountsBetweenCheckpointsForUpperTiers, 30000, Normal, nullptr) \
     v(Int32, highCostBaselineProfilingFunctionBytecodeCost, 10000, Normal, nullptr) \
     \
     v(Unsigned, likelyToTakeSlowCaseMinimumCount, 20, Normal, nullptr) \
