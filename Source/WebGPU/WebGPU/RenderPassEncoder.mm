@@ -594,7 +594,7 @@ void RenderPassEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint3
     if (!executePreDrawCommands())
         return;
     runVertexBufferValidation(vertexCount, instanceCount, firstVertex, firstInstance);
-    if (!instanceCount || !vertexCount)
+    if (!instanceCount || !vertexCount || instanceCount + firstInstance < firstInstance || vertexCount + firstVertex < firstVertex)
         return;
 
     [renderCommandEncoder()
