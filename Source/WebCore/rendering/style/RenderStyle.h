@@ -2268,43 +2268,46 @@ private:
     struct InheritedFlags {
         friend bool operator==(const InheritedFlags&, const InheritedFlags&) = default;
 
-        unsigned emptyCells : 1; // EmptyCell
-        unsigned captionSide : 2; // CaptionSide
-        unsigned listStylePosition : 1; // ListStylePosition
-        unsigned visibility : 2; // Visibility
+        // Writing Mode = 4 bits
+        unsigned writingMode : 3; // WritingMode
+        unsigned direction : 1; // TextDirection
+
+        // Text Formatting = 19 bits
+        unsigned whiteSpaceCollapse : 3; // WhiteSpaceCollapse
+        unsigned textWrapMode : 1; // TextWrapMode
         unsigned textAlign : 4; // TextAlignMode
+        unsigned textWrapStyle : 2; // TextWrapStyle
         unsigned textTransform : TextTransformBits; // OptionSet<TextTransform>
         unsigned textDecorationLines : TextDecorationLineBits;
+
+        // Cursors and Visibility = 13 bits
+        unsigned pointerEvents : 4; // PointerEvents
+        unsigned visibility : 2; // Visibility
         unsigned cursor : 6; // CursorType
 #if ENABLE(CURSOR_VISIBILITY)
         unsigned cursorVisibility : 1; // CursorVisibility
 #endif
-        unsigned direction : 1; // TextDirection
-        unsigned whiteSpaceCollapse : 3; // WhiteSpaceCollapse
-        unsigned textWrapMode : 1; // TextWrapMode
-        unsigned textWrapStyle : 2; // TextWrapStyle
-        // 33 bits
-        unsigned borderCollapse : 1; // BorderCollapse
-        unsigned boxDirection : 1; // BoxDirection
 
-        // non CSS2 inherited
+        // Display Type-Specific = 5 bits
+        unsigned listStylePosition : 1; // ListStylePosition
+        unsigned emptyCells : 1; // EmptyCell
+        unsigned borderCollapse : 1; // BorderCollapse
+        unsigned captionSide : 2; // CaptionSide
+
+        // -webkit- Stuff = 2 bits
+        unsigned boxDirection : 1; // BoxDirection
         unsigned rtlOrdering : 1; // Order
+
+        // Color Stuff = 5 bits
+        unsigned hasExplicitlySetColor : 1;
         unsigned printColorAdjust : 1; // PrintColorAdjust
-        unsigned pointerEvents : 4; // PointerEvents
         unsigned insideLink : 2; // InsideLink
         unsigned insideDefaultButton : 1;
-        // 44 bits
-
-        // CSS Text Layout Module Level 3: Vertical writing support
-        unsigned writingMode : 3; // WritingMode
-        // 47 bits
 
 #if ENABLE(TEXT_AUTOSIZING)
         unsigned autosizeStatus : 5;
 #endif
-        // 52 bits
-        unsigned hasExplicitlySetColor : 1;
-        // 53 bits
+        // Total = 53 bits (fits in 8 bytes)
     };
 
     // This constructor is used to implement the replace operation.
