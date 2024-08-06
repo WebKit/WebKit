@@ -242,16 +242,199 @@ Path BasicShapeShape::path(const FloatRect& referenceRect) const
     return path;
 }
 
-bool BasicShapeShape::canBlend(const BasicShape&) const
+// https://drafts.csswg.org/css-shapes-2/#interpolating-shape
+bool BasicShapeShape::canBlend(const ShapeSegment& segment1, const ShapeSegment& segment2)
 {
-    // Not yet implemented.
+    // For now, just check the types. There's some discussion about allowing blending between different segment types.
+    if (segment1.index() != segment2.index())
+        return false;
+
+    return WTF::switchOn(segment1,
+        [&](const ShapeMoveSegment& segment) {
+            const auto& otherSegment = get<ShapeMoveSegment>(segment2);
+            return segment.affinity() == otherSegment.affinity();
+        },
+        [&](const ShapeLineSegment& segment) {
+            const auto& otherSegment = get<ShapeLineSegment>(segment2);
+            return segment.affinity() == otherSegment.affinity();
+        },
+        [&](const ShapeHorizontalLineSegment& segment) {
+            const auto& otherSegment = get<ShapeHorizontalLineSegment>(segment2);
+            return segment.affinity() == otherSegment.affinity();
+        },
+        [&](const ShapeVerticalLineSegment& segment) {
+            const auto& otherSegment = get<ShapeVerticalLineSegment>(segment2);
+            return segment.affinity() == otherSegment.affinity();
+        },
+        [&](const ShapeCurveSegment& segment) {
+            const auto& otherSegment = get<ShapeCurveSegment>(segment2);
+            if (segment.affinity() != otherSegment.affinity())
+                return false;
+            return segment.controlPoint2().has_value() == otherSegment.controlPoint2().has_value();
+        },
+        [&](const ShapeSmoothSegment& segment) {
+            const auto& otherSegment = get<ShapeSmoothSegment>(segment2);
+            return segment.intermediatePoint().has_value() == otherSegment.intermediatePoint().has_value();
+        },
+        [&](const ShapeArcSegment& segment) {
+            const auto& otherSegment = get<ShapeArcSegment>(segment2);
+            return segment.affinity() == otherSegment.affinity();
+        },
+        [&](const ShapeCloseSegment&) {
+            return true;
+        }
+    );
+
+    ASSERT_NOT_REACHED();
     return false;
 }
 
-Ref<BasicShape> BasicShapeShape::blend(const BasicShape&, const BlendingContext&) const
+template <typename T>
+T blendWithPreferredValue(const T& from, const T& to, const T& preferredValue, const BlendingContext& context)
 {
-    // Not yet implemented.
-    return BasicShapeShape::clone(); // FIXME wrong.
+    if (context.progress <= 0)
+        return from;
+
+    if (context.progress >= 1)
+        return to;
+
+    if (from == to)
+        return from;
+
+    return preferredValue;
+}
+
+auto BasicShapeShape::blend(const ShapeSegment& fromSegment, const ShapeSegment& toSegment, const BlendingContext& context) -> ShapeSegment
+{
+    ASSERT(fromSegment.index() == toSegment.index());
+    ASSERT(canBlend(fromSegment, toSegment));
+
+    return WTF::switchOn(fromSegment,
+        [&](const ShapeMoveSegment& fromSegment) {
+            const auto& toMoveSegment = get<ShapeMoveSegment>(toSegment);
+            auto result = fromSegment;
+            result.setOffset(WebCore::blend(fromSegment.offset(), toMoveSegment.offset(), context));
+            return ShapeSegment(result);
+        },
+        [&](const ShapeLineSegment& fromSegment) {
+            const auto& toLineSegment = get<ShapeLineSegment>(toSegment);
+            auto result = fromSegment;
+            result.setOffset(WebCore::blend(fromSegment.offset(), toLineSegment.offset(), context));
+            return ShapeSegment(result);
+        },
+        [&](const ShapeHorizontalLineSegment& fromSegment) {
+            const auto& toHLineSegment = get<ShapeHorizontalLineSegment>(toSegment);
+            auto result = fromSegment;
+            result.setLength(WebCore::blend(fromSegment.length(), toHLineSegment.length(), context));
+            return ShapeSegment(result);
+        },
+        [&](const ShapeVerticalLineSegment& fromSegment) {
+            const auto& toVLineSegment = get<ShapeVerticalLineSegment>(toSegment);
+            auto result = fromSegment;
+            result.setLength(WebCore::blend(fromSegment.length(), toVLineSegment.length(), context));
+            return ShapeSegment(result);
+        },
+        [&](const ShapeCurveSegment& fromSegment) {
+            const auto& toCurveSegment = get<ShapeCurveSegment>(toSegment);
+            auto result = fromSegment;
+
+            result.setOffset(WebCore::blend(fromSegment.offset(), toCurveSegment.offset(), context));
+            result.setControlPoint1(WebCore::blend(fromSegment.controlPoint1(), toCurveSegment.controlPoint1(), context));
+            if (fromSegment.controlPoint2()) {
+                ASSERT(toCurveSegment.controlPoint2().has_value());
+                result.setControlPoint2(WebCore::blend(fromSegment.controlPoint2().value(), toCurveSegment.controlPoint2().value(), context));
+            }
+
+            return ShapeSegment(result);
+        },
+        [&](const ShapeSmoothSegment& fromSegment) {
+            const auto& toSmoothSegment = get<ShapeSmoothSegment>(toSegment);
+            auto result = fromSegment;
+
+            result.setOffset(WebCore::blend(fromSegment.offset(), toSmoothSegment.offset(), context));
+            if (fromSegment.intermediatePoint()) {
+                ASSERT(toSmoothSegment.intermediatePoint().has_value());
+                result.setIntermediatePoint(WebCore::blend(fromSegment.intermediatePoint().value(), toSmoothSegment.intermediatePoint().value(), context));
+            }
+
+            return ShapeSegment(result);
+        },
+        [&](const ShapeArcSegment& fromSegment) {
+            const auto& toArcSegment = get<ShapeArcSegment>(toSegment);
+            auto result = fromSegment;
+
+            result.setOffset(WebCore::blend(fromSegment.offset(), toArcSegment.offset(), context));
+            result.setEllipseSize(WebCore::blend(fromSegment.ellipseSize(), toArcSegment.ellipseSize(), context));
+            result.setAngle(WebCore::blend(fromSegment.angle(), toArcSegment.angle(), context));
+
+            // /If an arc command has different <arc-sweep> between its starting and ending list,
+            // then the interpolated result uses cw for any progress value between 0 and 1.
+            // If it has different <arc-size> keywords, then the interpolated result uses large
+            // for any progress value between 0 and 1.
+            result.setSweep(blendWithPreferredValue(fromSegment.sweep(), toArcSegment.sweep(), RotationDirection::Clockwise, context));
+            result.setArcSize(blendWithPreferredValue(fromSegment.arcSize(), toArcSegment.arcSize(), ShapeArcSegment::ArcSize::Large, context));
+
+            return ShapeSegment(result);
+
+        },
+        [&](const ShapeCloseSegment& fromSegment) {
+            return ShapeSegment(fromSegment);
+        }
+    );
+
+    ASSERT_NOT_REACHED();
+    return ShapeCloseSegment();
+}
+
+bool BasicShapeShape::canBlend(const BasicShape& other) const
+{
+    // FIXME: https://drafts.csswg.org/css-shapes-2/#interpolating-shape says we should interpolate with path(),
+    // but that will get increasingly untenable as the shape commands evolve.
+    if (other.type() != type())
+        return false;
+
+    const auto& otherShape = downcast<BasicShapeShape>(other);
+
+    if (otherShape.windRule() != windRule())
+        return false;
+
+    if (otherShape.segments().size() != segments().size())
+        return false;
+
+    for (size_t i = 0; i < segments().size(); ++i) {
+        const auto& thisSegment = segments()[i];
+        const auto& otherSegment = otherShape.segments()[i];
+
+        if (!canBlend(thisSegment, otherSegment))
+            return false;
+    }
+
+    return true;
+}
+
+Ref<BasicShape> BasicShapeShape::blend(const BasicShape& from, const BlendingContext& context) const
+{
+    ASSERT(type() == from.type());
+    const auto& fromShape = downcast<BasicShapeShape>(from);
+
+    auto startPoint = WebCore::blend(fromShape.startPoint(), this->startPoint(), context);
+    auto segmentsCopy = m_segments;
+
+    Ref result = BasicShapeShape::create(windRule(), startPoint, WTFMove(segmentsCopy));
+
+    ASSERT(fromShape.segments().size() == segments().size());
+
+    for (size_t i = 0; i < segments().size(); ++i) {
+        const auto& toSegment = result->segments()[i];
+        const auto& fromSegment = fromShape.segments()[i];
+
+        ShapeSegment theSegment = blend(fromSegment, toSegment, context);
+        UNUSED_PARAM(theSegment);
+
+        result->segments()[i] = theSegment;
+    }
+
+    return result;
 }
 
 bool BasicShapeShape::operator==(const BasicShape& other) const

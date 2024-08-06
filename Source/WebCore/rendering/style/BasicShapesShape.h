@@ -48,12 +48,14 @@ public:
         : m_affinity(affinity)
     { }
 
+    ShapeSegmentBase(const ShapeSegmentBase&) = default;
+    ShapeSegmentBase& operator=(const ShapeSegmentBase&) = default;
     bool operator==(const ShapeSegmentBase&) const = default;
 
     CoordinateAffinity affinity() const { return m_affinity; }
 
 private:
-    const CoordinateAffinity m_affinity;
+    CoordinateAffinity m_affinity;
 };
 
 class ShapeMoveSegment final : public ShapeSegmentBase {
@@ -65,7 +67,10 @@ public:
     }
 
     const CoordinatePair& offset() const { return m_offset; }
+    void setOffset(const CoordinatePair& offset) { m_offset = offset; }
 
+    ShapeMoveSegment(const ShapeMoveSegment&) = default;
+    ShapeMoveSegment& operator=(const ShapeMoveSegment&) = default;
     bool operator==(const ShapeMoveSegment&) const = default;
 
 private:
@@ -81,7 +86,10 @@ public:
     }
 
     const CoordinatePair& offset() const { return m_offset; }
+    void setOffset(const CoordinatePair& offset) { m_offset = offset; }
 
+    ShapeLineSegment(const ShapeLineSegment&) = default;
+    ShapeLineSegment& operator=(const ShapeLineSegment&) = default;
     bool operator==(const ShapeLineSegment&) const = default;
 
 private:
@@ -97,7 +105,10 @@ public:
     }
 
     Length length() const { return m_length; }
+    void setLength(Length length) { m_length = length; }
 
+    ShapeHorizontalLineSegment(const ShapeHorizontalLineSegment&) = default;
+    ShapeHorizontalLineSegment& operator=(const ShapeHorizontalLineSegment&) = default;
     bool operator==(const ShapeHorizontalLineSegment&) const = default;
 
 private:
@@ -113,7 +124,10 @@ public:
     }
 
     Length length() const { return m_length; }
+    void setLength(Length length) { m_length = length; }
 
+    ShapeVerticalLineSegment(const ShapeVerticalLineSegment&) = default;
+    ShapeVerticalLineSegment& operator=(const ShapeVerticalLineSegment&) = default;
     bool operator==(const ShapeVerticalLineSegment&) const = default;
 
 private:
@@ -131,9 +145,16 @@ public:
     }
 
     const CoordinatePair& offset() const { return m_offset; }
-    const CoordinatePair& controlPoint1() const { return m_controlPoint1; }
-    const std::optional<CoordinatePair>& controlPoint2() const { return m_controlPoint2; };
+    void setOffset(const CoordinatePair& offset) { m_offset = offset; }
 
+    const CoordinatePair& controlPoint1() const { return m_controlPoint1; }
+    void setControlPoint1(const CoordinatePair& p) { m_controlPoint1 = p; }
+
+    const std::optional<CoordinatePair>& controlPoint2() const { return m_controlPoint2; };
+    void setControlPoint2(const CoordinatePair& p) { m_controlPoint2 = p; }
+
+    ShapeCurveSegment(const ShapeCurveSegment&) = default;
+    ShapeCurveSegment& operator=(const ShapeCurveSegment&) = default;
     bool operator==(const ShapeCurveSegment&) const = default;
 
 private:
@@ -152,8 +173,13 @@ public:
     }
 
     const CoordinatePair& offset() const { return m_offset; }
-    const std::optional<CoordinatePair>& intermediatePoint() const { return m_intermediatePoint; };
+    void setOffset(const CoordinatePair& offset) { m_offset = offset; }
 
+    const std::optional<CoordinatePair>& intermediatePoint() const { return m_intermediatePoint; };
+    void setIntermediatePoint(const CoordinatePair& p) { m_intermediatePoint = p; }
+
+    ShapeSmoothSegment(const ShapeSmoothSegment&) = default;
+    ShapeSmoothSegment& operator=(const ShapeSmoothSegment&) = default;
     bool operator==(const ShapeSmoothSegment&) const = default;
 
 private:
@@ -177,11 +203,22 @@ public:
     }
 
     const CoordinatePair& offset() const { return m_offset; }
-    const LengthSize& ellipseSize() const { return m_ellipseSize; }
-    RotationDirection sweep() const { return m_arcSweep; }
-    ArcSize arcSize() const { return m_arcSize; }
-    AngleDegrees angle() const { return m_angle; }
+    void setOffset(const CoordinatePair& offset) { m_offset = offset; }
 
+    const LengthSize& ellipseSize() const { return m_ellipseSize; }
+    void setEllipseSize(const LengthSize& size) { m_ellipseSize = size; }
+
+    RotationDirection sweep() const { return m_arcSweep; }
+    void setSweep(RotationDirection direction) { m_arcSweep = direction; }
+
+    ArcSize arcSize() const { return m_arcSize; }
+    void setArcSize(ArcSize size) { m_arcSize = size; }
+
+    AngleDegrees angle() const { return m_angle; }
+    void setAngle(AngleDegrees degrees) { m_angle = degrees; }
+
+    ShapeArcSegment(const ShapeArcSegment&) = default;
+    ShapeArcSegment& operator=(const ShapeArcSegment&) = default;
     bool operator==(const ShapeArcSegment&) const = default;
 
 private:
@@ -194,6 +231,9 @@ private:
 
 class ShapeCloseSegment {
 public:
+    ShapeCloseSegment() = default;
+    ShapeCloseSegment(const ShapeCloseSegment&) = default;
+    ShapeCloseSegment& operator=(const ShapeCloseSegment&) = default;
     bool operator==(const ShapeCloseSegment&) const = default;
 };
 
@@ -233,6 +273,11 @@ public:
 
 private:
     BasicShapeShape(WindRule, const CoordinatePair&, Vector<ShapeSegment>&&);
+
+    static bool canBlend(const ShapeSegment&, const ShapeSegment&);
+    static ShapeSegment blend(const ShapeSegment& from, const ShapeSegment& to, const BlendingContext&);
+
+    Vector<ShapeSegment>& segments() { return m_segments; }
 
     CoordinatePair m_startPoint;
     const WindRule m_windRule { WindRule::NonZero };
