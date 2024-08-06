@@ -221,7 +221,9 @@ void ThreadedCompositor::forceRepaint()
 
 void ThreadedCompositor::renderLayerTree()
 {
+#if PLATFORM(GTK) || PLATFORM(WPE)
     TraceScope traceScope(FrameCompositionStart, FrameCompositionEnd);
+#endif
 
     if (!m_scene || !m_scene->isActive())
         return;
