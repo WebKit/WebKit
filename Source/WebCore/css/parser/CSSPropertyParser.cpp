@@ -57,6 +57,7 @@
 #include "CSSPropertyParserConsumer+Percent.h"
 #include "CSSPropertyParserConsumer+Position.h"
 #include "CSSPropertyParserConsumer+Resolution.h"
+#include "CSSPropertyParserConsumer+String.h"
 #include "CSSPropertyParserConsumer+Time.h"
 #include "CSSPropertyParserConsumer+URL.h"
 #include "CSSPropertyParsing.h"
@@ -402,6 +403,8 @@ std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> CSSPropertyParser::co
             return consumeImage(range, m_context, { AllowedImageType::URLFunction, AllowedImageType::GeneratedImage });
         case CSSCustomPropertySyntax::Type::URL:
             return consumeURL(range);
+        case CSSCustomPropertySyntax::Type::String:
+            return consumeString(range);
         case CSSCustomPropertySyntax::Type::TransformFunction:
             return consumeTransformFunction(m_range, m_context);
         case CSSCustomPropertySyntax::Type::TransformList:
@@ -506,7 +509,8 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
         }
         case CSSCustomPropertySyntax::Type::CustomIdent:
             return { downcast<CSSPrimitiveValue>(value).stringValue() };
-
+        case CSSCustomPropertySyntax::Type::String:
+            return { serializeString(downcast<CSSPrimitiveValue>(value).stringValue()) };
         case CSSCustomPropertySyntax::Type::TransformFunction:
         case CSSCustomPropertySyntax::Type::TransformList:
             if (RefPtr transform = transformForValue(value, builderState.cssToLengthConversionData()))

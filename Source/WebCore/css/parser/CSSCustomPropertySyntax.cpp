@@ -149,6 +149,7 @@ auto CSSCustomPropertySyntax::typeForTypeName(StringView dataTypeName) -> Type
         { "number", Type::Number },
         { "percentage", Type::Percentage },
         { "resolution", Type::Resolution },
+        { "string", Type::String },
         { "time", Type::Time },
         { "transform-function", Type::TransformFunction },
         { "transform-list", Type::TransformList },
