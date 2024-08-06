@@ -2942,17 +2942,17 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
     int width = pageSize.width();
     int height = pageSize.height();
     switch (style->pageSizeType()) {
-    case PageSizeType::AUTO:
+    case PageSizeType::Auto:
         break;
-    case PageSizeType::AUTO_LANDSCAPE:
+    case PageSizeType::AutoLandscape:
         if (width < height)
             std::swap(width, height);
         break;
-    case PageSizeType::AUTO_PORTRAIT:
+    case PageSizeType::AutoPortrait:
         if (width > height)
             std::swap(width, height);
         break;
-    case PageSizeType::RESOLVED: {
+    case PageSizeType::Resolved: {
         auto& size = style->pageSize();
         ASSERT(size.width.isFixed());
         ASSERT(size.height.isFixed());
