@@ -7419,3 +7419,6 @@ webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Slow 
 
 # webkit.org/b/27730 (REGRESSION (280752@main?): [ macOS iOS ] http/wpt/service-workers/fetch-service-worker-preload-cache.https.html is flaky failing.)
 http/wpt/service-workers/fetch-service-worker-preload-cache.https.html [ Pass Failure ]
+
+# webkit.org/b/277710 [ iOS ] [ Release ] editing/execCommand/insert-ordered-list-and-delete.html is a flaky text failure
+editing/execCommand/insert-ordered-list-and-delete.html [ Pass Failure ]
