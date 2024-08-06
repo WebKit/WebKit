@@ -138,9 +138,6 @@ void initialize()
         WTF::compilerFence();
         RELEASE_ASSERT(!g_jscConfig.initializeHasBeenCalled);
         g_jscConfig.initializeHasBeenCalled = true;
-#if OS(WINDOWS) && ENABLE(WEBASSEMBLY)
-        g_wtfConfigForLLInt = g_wtfConfig;
-#endif
     });
 }
 

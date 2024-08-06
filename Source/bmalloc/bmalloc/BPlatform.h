@@ -365,24 +365,6 @@
 #define BUSE_PRECOMPUTED_CONSTANTS_VMPAGE16K 1
 #endif
 
-/* The unified Config record feature is not available for Windows because the
-   Windows port puts WTF in a separate DLL, and the offlineasm code accessing
-   the config record expects the config record to be directly accessible like
-   a global variable (and not have to go thru DLL shenanigans). C++ code would
-   resolve these DLL bindings automatically, but offlineasm does not.
-
-   The permanently freezing feature also currently relies on the Config records
-   being unified, and the Windows port also does not currently have an
-   implementation for the freezing mechanism anyway. For simplicity, we just
-   disable both the use of unified Config record and config freezing for the
-   Windows port.
-*/
-#if BOS(WINDOWS)
-#define BENABLE_UNIFIED_AND_FREEZABLE_CONFIG_RECORD 0
-#else
-#define BENABLE_UNIFIED_AND_FREEZABLE_CONFIG_RECORD 1
-#endif
-
 /* We only export the mallocSize and mallocGoodSize APIs if they're supported by the DebugHeap allocator (currently only Darwin) and the current bmalloc allocator (currently only libpas). */
 #if BUSE(LIBPAS) && BOS(DARWIN)
 #define BENABLE_MALLOC_SIZE 1

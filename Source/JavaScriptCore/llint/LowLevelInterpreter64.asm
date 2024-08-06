@@ -693,13 +693,8 @@ macro structureIDToStructureWithScratch(structureIDThenStructure, scratch)
         lshiftp (constexpr StructureID::encodeShiftAmount), structureIDThenStructure
     elsif ADDRESS64
         andq (constexpr StructureID::structureIDMask), structureIDThenStructure
-        if X86_64_WIN or C_LOOP_WIN
-            leap JSCConfig + constexpr JSC::offsetOfJSCConfigStartOfStructureHeap, scratch
-            loadp [scratch], scratch
-        else
-            leap _g_config, scratch
-            loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigStartOfStructureHeap[scratch], scratch
-        end
+        leap _g_config, scratch
+        loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigStartOfStructureHeap[scratch], scratch
         addp scratch, structureIDThenStructure
     end
 end
@@ -2531,13 +2526,8 @@ macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, 
         storep 0, address
     end)
     addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
-    if X86_64_WIN or C_LOOP_WIN
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigDefaultCallThunk, t5
-        loadp [t5], t5
-    else
-        leap _g_config, t5
-        loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigDefaultCallThunk[t5], t5
-    end
+    leap _g_config, t5
+    loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigDefaultCallThunk[t5], t5
     jmp .dispatch
 end
 
@@ -2620,13 +2610,8 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
                 storep 0, address
             end)
             addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
-            if X86_64_WIN or C_LOOP_WIN
-                leap JSCConfig + constexpr JSC::offsetOfJSCConfigDefaultCallThunk, t5
-                loadp [t5], t5
-            else
-                leap _g_config, t5
-                loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigDefaultCallThunk[t5], t5
-            end
+            leap _g_config, t5
+            loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigDefaultCallThunk[t5], t5
             jmp .dispatch
         .dontUpdateSP:
             jmp _llint_throw_from_slow_path_trampoline

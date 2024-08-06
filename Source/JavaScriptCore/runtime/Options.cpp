@@ -924,10 +924,8 @@ void Options::notifyOptionsChanged()
     Options::useWasmFastMemory() = false;
 #endif
 
-#if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
     uint8_t* reservedConfigBytes = reinterpret_cast_ptr<uint8_t*>(WebConfig::g_config + WebConfig::reservedSlotsForExecutableAllocator);
     reservedConfigBytes[WebConfig::ReservedByteForAllocationProfiling] = Options::useAllocationProfiling() ? 1 : 0;
-#endif
 
     // Do range checks where needed and make corrections to the options:
     ASSERT(Options::thresholdForOptimizeAfterLongWarmUp() >= Options::thresholdForOptimizeAfterWarmUp());

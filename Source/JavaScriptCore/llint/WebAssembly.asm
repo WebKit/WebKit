@@ -653,7 +653,7 @@ end
         if ARM64 or ARM64E
             storepairq memoryBase, boundsCheckingSize, -2 * SlotSize[cfr]
             storep wasmInstance, -3 * SlotSize[cfr]
-        elsif X86_64
+        elsif X86_64 or X86_64_WIN
             # These must match the wasmToJS thunk, since the unwinder won't be able to tell who made this frame.
             storep boundsCheckingSize, -1 * SlotSize[cfr]
             storep memoryBase, -2 * SlotSize[cfr]
@@ -667,7 +667,7 @@ end
         if ARM64 or ARM64E
             loadpairq -2 * SlotSize[cfr], memoryBase, boundsCheckingSize
             loadp -3 * SlotSize[cfr], wasmInstance
-        elsif X86_64
+        elsif X86_64 or X86_64_WIN
             loadp -1 * SlotSize[cfr], boundsCheckingSize
             loadp -2 * SlotSize[cfr], memoryBase
             loadp -3 * SlotSize[cfr], wasmInstance
@@ -716,7 +716,7 @@ end
     # Memory
     if ARM64 or ARM64E
         loadpairq JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase, boundsCheckingSize
-    elsif X86_64
+    elsif X86_64 or X86_64_WIN
         loadp JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase
         loadp JSWebAssemblyInstance::m_cachedBoundsCheckingSize[wasmInstance], boundsCheckingSize
     end
