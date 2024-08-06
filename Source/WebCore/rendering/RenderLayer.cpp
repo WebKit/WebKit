@@ -3137,10 +3137,6 @@ void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSa
     if (!renderer().hasClipPath() || (context.paintingDisabled() && !isCollectingRegions) || paintingInfo.paintDirtyRect.isEmpty())
         return;
 
-    // SVG elements get clipped in SVG code.
-    if (is<LegacyRenderSVGRoot>(renderer()))
-        return;
-
     // Applying clip-path on <clipPath> enforces us to use mask based clipping, so return false here to disable path based clipping.
     // Furthermore if we're the child of a resource container (<clipPath> / <mask> / ...) disabled path based clipping.
     if (is<RenderSVGResourceClipper>(m_enclosingSVGHiddenOrResourceContainer)) {

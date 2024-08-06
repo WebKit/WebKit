@@ -2472,7 +2472,6 @@ imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-002.h
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-reference-box-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-borderBox-1c.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-contentBox-1c.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-fillBox-1a.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-paddingBox-1c.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-strokeBox-1a.html [ ImageOnlyFailure ]
@@ -2483,7 +2482,6 @@ imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-scaled-video
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-007.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-009.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-010.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-marginBox-1d.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-fixed-position-rounding-error.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-003.html [ ImageOnlyFailure ]
