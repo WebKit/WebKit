@@ -3710,18 +3710,24 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addSwitch(Value condition, const Vector
         fallThrough.link(&m_jit);
     } else {
         Vector<int64_t, 16> cases(targets.size(), [](size_t i) { return i; });
+        for (unsigned i = 0; i < targets.size(); ++i) {
+            for (unsigned j = 0; j < i; ++j) {
+                if (cases[j] == j && targets[i] == targets[j])
+                    cases[i] = j;
+            }
+        }
 
-        BinarySwitch binarySwitch(wasmScratchGPR, cases.span(), BinarySwitch::Int32);
-        while (binarySwitch.advance(m_jit)) {
-            unsigned value = binarySwitch.caseValue();
-            unsigned index = binarySwitch.caseIndex();
-            ASSERT_UNUSED(value, value == index);
+        BinarySwitch wasmSwitch(wasmScratchGPR, cases.span(), BinarySwitch::Type::Int32CheckRuns);
+        while (wasmSwitch.advance(m_jit)) {
+            unsigned value = wasmSwitch.caseValue();
+            unsigned index = wasmSwitch.caseIndex();
+            UNUSED_VARIABLE(value);
             ASSERT(index < targets.size());
             currentControlData().addExit(*this, targets[index]->targetLocations(), results);
             targets[index]->addBranch(m_jit.jump());
         }
 
-        binarySwitch.fallThrough().link(&m_jit);
+        wasmSwitch.fallThrough().link(&m_jit);
     }
     currentControlData().addExit(*this, defaultTarget.targetLocations(), results);
     defaultTarget.addBranch(m_jit.jump());

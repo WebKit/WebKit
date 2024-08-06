@@ -62,7 +62,9 @@ class BinarySwitch {
 public:
     enum Type {
         Int32,
-        IntPtr
+        IntPtr,
+        Int32CheckRuns,
+        IntPtrCheckRuns,
     };
     
     BinarySwitch(GPRReg value, std::span<const int64_t> cases, Type);
@@ -77,6 +79,7 @@ public:
     
 private:
     void build(unsigned start, bool hardStart, unsigned end);
+    void buildCheckRuns(unsigned start, unsigned end);
     
     struct Case {
         Case() { }
@@ -99,6 +102,8 @@ private:
     };
     
     enum BranchKind {
+        NegativeToFallThrough,
+        NotLessThanToFallThrough,
         NotEqualToFallThrough,
         NotEqualToPush,
         LessThanToPush,
@@ -109,9 +114,10 @@ private:
     struct BranchCode {
         BranchCode() { }
         
-        BranchCode(BranchKind kind, unsigned index = UINT_MAX)
+        BranchCode(BranchKind kind, unsigned index = UINT_MAX, unsigned value = UINT_MAX)
             : kind(kind)
             , index(index)
+            , value(value)
         {
         }
 
@@ -119,6 +125,7 @@ private:
         
         BranchKind kind;
         unsigned index;
+        unsigned value;
     };
 
     WeakRandom m_weakRandom;
@@ -130,6 +137,7 @@ private:
     GPRReg m_value;
     unsigned m_index { 0 };
     unsigned m_caseIndex { UINT_MAX };
+    unsigned m_totalCases;
 };
 
 } // namespace JSC
