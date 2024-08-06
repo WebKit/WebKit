@@ -1451,11 +1451,9 @@ struct FocalPoint
                gainY == other.gainY && foveaArea == other.foveaArea;
     }
     bool operator!=(const FocalPoint &other) const { return !(*this == other); }
-
-    bool valid() const { return gainX > 0 && gainY > 0; }
 };
 
-constexpr FocalPoint kDefaultFocalPoint = FocalPoint();
+constexpr FocalPoint kInvalidFocalPoint = FocalPoint();
 
 class FoveationState
 {
@@ -1465,7 +1463,7 @@ class FoveationState
         mConfigured          = false;
         mFoveatedFeatureBits = 0;
         mMinPixelDensity     = 0.0f;
-        mFocalPoints.fill(kDefaultFocalPoint);
+        mFocalPoints.fill(kInvalidFocalPoint);
     }
     FoveationState &operator=(const FoveationState &other) = default;
 
@@ -1473,9 +1471,10 @@ class FoveationState
     bool isConfigured() const { return mConfigured; }
     bool isFoveated() const
     {
-        // Consider foveated if at least 1 focal point is valid
-        return std::any_of(mFocalPoints.begin(), mFocalPoints.end(),
-                           [](const FocalPoint &focalPoint) { return focalPoint.valid(); });
+        // Consider foveated if ANY focal point is valid
+        return std::any_of(
+            mFocalPoints.begin(), mFocalPoints.end(),
+            [](const FocalPoint &focalPoint) { return (focalPoint != kInvalidFocalPoint); });
     }
     bool operator==(const FoveationState &other) const
     {

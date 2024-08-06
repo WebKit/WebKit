@@ -144,14 +144,7 @@ class ClearValuesArray final
     gl::AttachmentsMask mEnabled;
 };
 
-void GenerateCaps(const wgpu::Device &device,
-                  gl::Caps *glCaps,
-                  gl::TextureCapsMap *glTextureCapsMap,
-                  gl::Extensions *glExtensions,
-                  gl::Limitations *glLimitations,
-                  egl::Caps *eglCaps,
-                  egl::DisplayExtensions *eglExtensions,
-                  gl::Version *maxSupportedESVersion);
+void EnsureCapsInitialized(const wgpu::Device &device, gl::Caps *nativeCaps);
 
 DisplayWgpu *GetDisplay(const gl::Context *context);
 wgpu::Device GetDevice(const gl::Context *context);
@@ -164,15 +157,6 @@ bool IsWgpuError(wgpu::WaitStatus waitStatus);
 bool IsWgpuError(WGPUBufferMapAsyncStatus mapBufferStatus);
 
 bool IsStripPrimitiveTopology(wgpu::PrimitiveTopology topology);
-
-// Required alignments for buffer sizes and mapping
-constexpr size_t kBufferSizeAlignment      = 4;
-constexpr size_t kBufferMapSizeAlignment   = kBufferSizeAlignment;
-constexpr size_t kBufferMapOffsetAlignment = 8;
-
-// Required alignments for texture row uploads
-constexpr size_t kTextureRowSizeAlignment = 256;
-
 }  // namespace webgpu
 
 namespace wgpu_gl

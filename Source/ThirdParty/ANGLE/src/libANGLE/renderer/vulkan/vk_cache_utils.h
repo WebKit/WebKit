@@ -1868,8 +1868,7 @@ class DescriptorSetDescBuilder final
                                VkDescriptorType descriptorType,
                                VkDeviceSize maxBoundBufferRange,
                                const BufferHelper &emptyBuffer,
-                               const WriteDescriptorDescs &writeDescriptorDescs,
-                               const GLbitfield memoryBarrierBits);
+                               const WriteDescriptorDescs &writeDescriptorDescs);
     template <typename CommandBufferT>
     void updateShaderBuffers(ContextVk *contextVk,
                              CommandBufferT *commandBufferHelper,
@@ -1880,8 +1879,7 @@ class DescriptorSetDescBuilder final
                              VkDescriptorType descriptorType,
                              VkDeviceSize maxBoundBufferRange,
                              const BufferHelper &emptyBuffer,
-                             const WriteDescriptorDescs &writeDescriptorDescs,
-                             const GLbitfield memoryBarrierBits);
+                             const WriteDescriptorDescs &writeDescriptorDescs);
     template <typename CommandBufferT>
     void updateAtomicCounters(ContextVk *contextVk,
                               CommandBufferT *commandBufferHelper,

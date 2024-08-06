@@ -78,9 +78,7 @@ class ImageHelper
                             wgpu::Device &device,
                             gl::LevelIndex firstAllocatedLevel,
                             wgpu::TextureDescriptor textureDescriptor);
-    angle::Result initExternal(angle::FormatID intendedFormatID,
-                               angle::FormatID actualFormatID,
-                               wgpu::Texture externalTexture);
+    angle::Result initExternal(wgpu::Texture externalTexture);
 
     angle::Result flushStagedUpdates(ContextWgpu *contextWgpu,
                                      ClearValuesArray *deferredClears = nullptr,
@@ -124,6 +122,7 @@ class ImageHelper
     angle::Result readPixels(rx::ContextWgpu *contextWgpu,
                              const gl::Rectangle &area,
                              const rx::PackPixelsParams &packPixelsParams,
+                             const angle::Format &aspectFormat,
                              void *pixels);
 
     angle::Result createTextureView(gl::LevelIndex targetLevel,
@@ -196,12 +195,10 @@ class BufferHelper : public angle::NonCopyable
     bool canMapForWrite() const;
 
     wgpu::Buffer &getBuffer();
-    uint64_t requestedSize() const;
-    uint64_t actualSize() const;
+    uint64_t size() const;
 
   private:
     wgpu::Buffer mBuffer;
-    size_t mRequestedSize = 0;
 
     std::optional<BufferMapState> mMappedState;
 };

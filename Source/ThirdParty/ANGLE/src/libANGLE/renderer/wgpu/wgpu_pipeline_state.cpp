@@ -79,8 +79,7 @@ bool RenderPipelineDesc::setPrimitiveMode(gl::PrimitiveMode primitiveMode,
         changed = true;
     }
 
-    uint32_t indexFormat = webgpu::IsStripPrimitiveTopology(topology) &&
-                                   indexTypeOrInvalid != gl::DrawElementsType::InvalidEnum
+    uint32_t indexFormat = webgpu::IsStripPrimitiveTopology(topology)
                                ? PackIndexFormat(gl_wgpu::GetIndexFormat(indexTypeOrInvalid))
                                : 0;
     if (mPrimitiveState.stripIndexFormat != static_cast<uint8_t>(indexFormat))

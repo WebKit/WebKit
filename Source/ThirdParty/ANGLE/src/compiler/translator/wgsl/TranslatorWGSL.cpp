@@ -210,9 +210,6 @@ void OutputWGSLTraverser::emitNameOf(SymbolType symbolType, const ImmutableStrin
         }
         break;
         case SymbolType::AngleInternal:
-            // TODO(anglebug.com/42267100): support these if necessary
-            UNIMPLEMENTED();
-            break;
         case SymbolType::Empty:
             // TODO(anglebug.com/42267100): support these if necessary
             UNREACHABLE();
@@ -413,8 +410,8 @@ const char *GetOperatorString(TOperator op,
         case TOperator::EOpComma:
             // WGSL does not have a comma operator or any other way to implement "statement list as
             // an expression", so nested expressions will have to be pulled out into statements.
-            UNIMPLEMENTED();
-            return "TODO_operator";
+            UNREACHABLE();
+            return "UNREACHABLE_operator";
         case TOperator::EOpAssign:
             return "=";
         case TOperator::EOpInitialize:
@@ -514,7 +511,7 @@ const char *GetOperatorString(TOperator op,
         case TOperator::EOpPreIncrement:
         case TOperator::EOpPreDecrement:
             // TODO(anglebug.com/42267100): pre increments and decrements do not exist in WGSL.
-            UNIMPLEMENTED();
+            UNREACHABLE();
             return "TODO_operator";
         case TOperator::EOpVectorTimesScalarAssign:
             return "*=";
@@ -550,7 +547,7 @@ const char *GetOperatorString(TOperator op,
                 (argType0->isMatrix() && argType1->isMatrix()))
 
             {
-                UNIMPLEMENTED();
+                UNREACHABLE();
                 return "TODO_operator";
             }
 
@@ -562,7 +559,7 @@ const char *GetOperatorString(TOperator op,
                 (argType0->isArray() && argType1->isArray()) ||
                 (argType0->isMatrix() && argType1->isMatrix()))
             {
-                UNIMPLEMENTED();
+                UNREACHABLE();
                 return "TODO_operator";
             }
             return "!=";
@@ -681,13 +678,13 @@ const char *GetOperatorString(TOperator op,
         case TOperator::EOpSmoothstep:
             return "smoothstep";
         case TOperator::EOpModf:
-            UNIMPLEMENTED();  // TODO(anglebug.com/42267100): in WGSL this returns a struct, GLSL it
-                              // uses a return value and an outparam
+            UNREACHABLE();  // TODO(anglebug.com/42267100): in WGSL this returns a struct, GLSL it
+                            // uses a return value and an outparam
             return "modf";
         case TOperator::EOpIsnan:
         case TOperator::EOpIsinf:
-            UNIMPLEMENTED();  // TODO(anglebug.com/42267100): WGSL does not allow NaNs or infinity.
-                              // What to do about shaders that require this?
+            UNREACHABLE();  // TODO(anglebug.com/42267100): WGSL does not allow NaNs or infinity.
+                            // What to do about shaders that require this?
             // Implementations are allowed to assume overflow, infinities, and NaNs are not present
             // at runtime, however. https://www.w3.org/TR/WGSL/#floating-point-evaluation
             return "TODO_Operator";

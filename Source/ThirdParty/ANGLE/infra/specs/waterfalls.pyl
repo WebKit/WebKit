@@ -240,7 +240,6 @@
           'mac_mini_intel_gpu_experimental',
         ],
         'test_suites': {
-          'gtest_tests': 'mac_amd_and_intel_gtests',
         },
       },
       'mac-exp-nvidia': {

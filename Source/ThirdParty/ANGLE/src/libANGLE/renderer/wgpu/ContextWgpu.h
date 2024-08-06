@@ -335,6 +335,12 @@ class ContextWgpu : public ContextImpl
 
     angle::Result handleDirtyRenderPass(DirtyBits::Iterator *dirtyBitsIterator);
 
+    gl::Caps mCaps;
+    gl::TextureCapsMap mTextureCaps;
+    gl::Extensions mExtensions;
+    gl::Limitations mLimitations;
+    ShPixelLocalStorageOptions mPLSOptions;
+
     angle::ImageLoadContext mImageLoadContext;
 
     DisplayWgpu *mDisplay;

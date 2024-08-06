@@ -78,7 +78,7 @@ class FramebufferWgpu : public FramebufferImpl
                                     size_t index,
                                     GLfloat *xy) const override;
 
-    RenderTargetWgpu *getReadPixelsRenderTarget() const;
+    RenderTargetWgpu *getReadPixelsRenderTarget(const angle::Format &format) const;
 
     void addNewColorAttachments(std::vector<wgpu::RenderPassColorAttachment> newColorAttachments);
 
