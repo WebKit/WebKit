@@ -38,6 +38,7 @@ using JSUint8ArrayConstructor = JSGenericTypedArrayViewConstructor<JSUint8Array>
 using JSUint8ClampedArrayConstructor = JSGenericTypedArrayViewConstructor<JSUint8ClampedArray>;
 using JSUint16ArrayConstructor = JSGenericTypedArrayViewConstructor<JSUint16Array>;
 using JSUint32ArrayConstructor = JSGenericTypedArrayViewConstructor<JSUint32Array>;
+using JSFloat16ArrayConstructor = JSGenericTypedArrayViewConstructor<JSFloat16Array>;
 using JSFloat32ArrayConstructor = JSGenericTypedArrayViewConstructor<JSFloat32Array>;
 using JSFloat64ArrayConstructor = JSGenericTypedArrayViewConstructor<JSFloat64Array>;
 using JSBigInt64ArrayConstructor = JSGenericTypedArrayViewConstructor<JSBigInt64Array>;
@@ -50,6 +51,7 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSUint8ArrayConstructor, InternalFunction);
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSUint8ClampedArrayConstructor, InternalFunction);
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSUint16ArrayConstructor, InternalFunction);
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSUint32ArrayConstructor, InternalFunction);
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSFloat16ArrayConstructor, InternalFunction);
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSFloat32ArrayConstructor, InternalFunction);
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSFloat64ArrayConstructor, InternalFunction);
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSBigInt64ArrayConstructor, InternalFunction);

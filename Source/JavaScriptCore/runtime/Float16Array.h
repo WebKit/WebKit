@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,35 +20,11 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSTypedArrayPrototypes.h"
+#pragma once
 
-#include "JSCInlines.h"
-#include "JSTypedArrayViewPrototype.h"
+#include "TypedArrays.h"
 
-namespace JSC {
-
-const ClassInfo JSTypedArrayViewPrototype::s_info = { "Prototype"_s, &JSTypedArrayViewPrototype::Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTypedArrayViewPrototype) };
-
-#undef MAKE_S_INFO
-#define MAKE_S_INFO(type) \
-    template<> const ClassInfo JS##type##Prototype::s_info = { #type "Prototype"_s, &JS##type##Prototype::Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JS##type##Prototype) }
-
-MAKE_S_INFO(Int8Array);
-MAKE_S_INFO(Int16Array);
-MAKE_S_INFO(Int32Array);
-MAKE_S_INFO(Uint8Array);
-MAKE_S_INFO(Uint8ClampedArray);
-MAKE_S_INFO(Uint16Array);
-MAKE_S_INFO(Uint32Array);
-MAKE_S_INFO(Float16Array);
-MAKE_S_INFO(Float32Array);
-MAKE_S_INFO(Float64Array);
-MAKE_S_INFO(BigInt64Array);
-MAKE_S_INFO(BigUint64Array);
-
-} // namespace JSC
-
+using JSC::Float16Array;

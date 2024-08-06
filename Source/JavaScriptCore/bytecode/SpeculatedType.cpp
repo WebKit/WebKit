@@ -147,12 +147,17 @@ void dumpSpeculation(PrintStream& outStream, SpeculatedType value)
                 strOut.print("Uint32Array");
             else
                 isTop = false;
-    
+
+            if (value & SpecFloat16Array)
+                strOut.print("Float16array");
+            else
+                isTop = false;
+
             if (value & SpecFloat32Array)
                 strOut.print("Float32array");
             else
                 isTop = false;
-    
+
             if (value & SpecFloat64Array)
                 strOut.print("Float64Array");
             else
@@ -375,6 +380,8 @@ static const char* speculationToAbbreviatedString(SpeculatedType prediction)
         return "<Uint16array>";
     if (isUint32ArraySpeculation(prediction))
         return "<Uint32array>";
+    if (isFloat16ArraySpeculation(prediction))
+        return "<Float16array>";
     if (isFloat32ArraySpeculation(prediction))
         return "<Float32array>";
     if (isFloat64ArraySpeculation(prediction))
@@ -444,6 +451,8 @@ SpeculatedType speculationFromTypedArrayType(TypedArrayType type)
         return SpecUint16Array;
     case TypeUint32:
         return SpecUint32Array;
+    case TypeFloat16:
+        return SpecFloat16Array;
     case TypeFloat32:
         return SpecFloat32Array;
     case TypeFloat64:
@@ -657,10 +666,13 @@ TypedArrayType typedArrayTypeFromSpeculation(SpeculatedType type)
         
     if (isUint32ArraySpeculation(type))
         return TypeUint32;
-        
+
+    if (isFloat16ArraySpeculation(type))
+        return TypeFloat16;
+
     if (isFloat32ArraySpeculation(type))
         return TypeFloat32;
-        
+
     if (isFloat64ArraySpeculation(type))
         return TypeFloat64;
 
@@ -916,6 +928,8 @@ SpeculatedType speculationFromString(const char* speculation)
         return SpecUint16Array;
     if (!strncmp(speculation, "SpecUint32Array", strlen("SpecUint32Array")))
         return SpecUint32Array;
+    if (!strncmp(speculation, "SpecFloat16Array", strlen("SpecFloat16Array")))
+        return SpecFloat16Array;
     if (!strncmp(speculation, "SpecFloat32Array", strlen("SpecFloat32Array")))
         return SpecFloat32Array;
     if (!strncmp(speculation, "SpecFloat64Array", strlen("SpecFloat64Array")))

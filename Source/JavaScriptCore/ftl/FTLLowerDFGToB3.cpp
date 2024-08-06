@@ -6050,6 +6050,7 @@ IGNORE_CLANG_WARNINGS_END
 
         case Array::BigInt64Array:
         case Array::BigUint64Array:
+        case Array::Float16Array:
         case Array::Generic: {
             if (m_graph.m_slowGetByVal.contains(m_node)) {
                 if (m_graph.varArgChild(m_node, 0).useKind() == ObjectUse) {
@@ -6410,6 +6411,7 @@ IGNORE_CLANG_WARNINGS_END
         switch (arrayMode.type()) {
         case Array::BigInt64Array:
         case Array::BigUint64Array:
+        case Array::Float16Array:
         case Array::Generic: {
             if (m_graph.m_slowPutByVal.contains(m_node) || (child1.useKind() != CellUse && child1.useKind() != KnownCellUse)) {
                 if (child1.useKind() == CellUse || child1.useKind() == KnownCellUse) {
@@ -6815,6 +6817,7 @@ IGNORE_CLANG_WARNINGS_END
         case Array::Unprofiled:
         case Array::BigInt64Array:
         case Array::BigUint64Array:
+        case Array::Float16Array:
             DFG_CRASH(m_graph, m_node, "Bad array type");
             break;
         }

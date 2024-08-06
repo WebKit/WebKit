@@ -141,6 +141,8 @@ ArrayMode ArrayMode::fromObserved(const ConcurrentJSLocker& locker, ArrayProfile
         return ArrayMode(Array::Uint16Array, nonArray, Array::AsIs, action).withProfile(locker, profile, makeSafe);
     case Uint32ArrayMode:
         return ArrayMode(Array::Uint32Array, nonArray, Array::AsIs, action).withProfile(locker, profile, makeSafe);
+    case Float16ArrayMode:
+        return ArrayMode(Array::Float16Array, nonArray, Array::AsIs, action).withProfile(locker, profile, makeSafe);
     case Float32ArrayMode:
         return ArrayMode(Array::Float32Array, nonArray, Array::AsIs, action).withProfile(locker, profile, makeSafe);
     case Float64ArrayMode:
@@ -285,6 +287,7 @@ ArrayMode ArrayMode::refine(
     case Array::Uint8ClampedArray:
     case Array::Uint16Array:
     case Array::Uint32Array:
+    case Array::Float16Array:
     case Array::Float32Array:
     case Array::Float64Array:
     case Array::BigInt64Array:
@@ -341,6 +344,9 @@ ArrayMode ArrayMode::refine(
         
         if (isUint32ArraySpeculation(base))
             return typedArrayResult(result.withType(Array::Uint32Array));
+
+        if (isFloat16ArraySpeculation(base))
+            return typedArrayResult(result.withType(Array::Float16Array));
         
         if (isFloat32ArraySpeculation(base))
             return typedArrayResult(result.withType(Array::Float32Array));
@@ -637,6 +643,9 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& va
     case Array::Uint32Array:
         return speculationChecked(value.m_type, SpecUint32Array);
 
+    case Array::Float16Array:
+        return speculationChecked(value.m_type, SpecFloat16Array);
+
     case Array::Float32Array:
         return speculationChecked(value.m_type, SpecFloat32Array);
 
@@ -700,6 +709,8 @@ TypedArrayType toTypedArrayType(Array::Type type)
         return TypeUint16;
     case Array::Uint32Array:
         return TypeUint32;
+    case Array::Float16Array:
+        return TypeFloat16;
     case Array::Float32Array:
         return TypeFloat32;
     case Array::Float64Array:
@@ -733,6 +744,8 @@ Array::Type toArrayType(TypedArrayType type)
         return Array::Uint16Array;
     case TypeUint32:
         return Array::Uint32Array;
+    case TypeFloat16:
+        return Array::Float16Array;
     case TypeFloat32:
         return Array::Float32Array;
     case TypeFloat64:
@@ -774,6 +787,7 @@ bool permitsBoundsCheckLowering(Array::Type type)
     case Array::Uint8ClampedArray:
     case Array::Uint16Array:
     case Array::Uint32Array:
+    case Array::Float16Array:
     case Array::Float32Array:
     case Array::Float64Array:
     case Array::BigInt64Array:

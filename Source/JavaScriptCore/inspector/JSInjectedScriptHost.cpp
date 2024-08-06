@@ -227,6 +227,7 @@ JSValue JSInjectedScriptHost::subtype(JSGlobalObject* globalObject, CallFrame* c
             || object->inherits<JSUint8ClampedArray>()
             || object->inherits<JSUint16Array>()
             || object->inherits<JSUint32Array>()
+            || object->inherits<JSFloat16Array>()
             || object->inherits<JSFloat32Array>()
             || object->inherits<JSFloat64Array>()
             || object->inherits<JSBigInt64Array>()

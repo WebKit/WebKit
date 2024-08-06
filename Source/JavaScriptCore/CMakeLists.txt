@@ -1009,6 +1009,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ExceptionScope.h
     runtime/ExecutableBase.h
     runtime/ExecutableBaseInlines.h
+    runtime/Float16Array.h
     runtime/Float32Array.h
     runtime/Float64Array.h
     runtime/Forward.h

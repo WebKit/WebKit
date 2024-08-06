@@ -587,6 +587,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useArrayFromAsync, true, Normal, "Expose the Array.fromAsync."_s) \
     v(Bool, useArrayGroupMethod, true, Normal, "Expose the Object.groupBy() and Map.groupBy() methods."_s) \
     v(Bool, useAtomicsWaitAsync, true, Normal, "Expose the waitAsync() methods on Atomics."_s) \
+    v(Bool, useFloat16Array, true, Normal, "Expose Float16Array."_s) \
     v(Bool, useSetMethods, true, Normal, "Expose the various Set.prototype methods for handling combinations of sets"_s) \
     v(Bool, useImportAttributes, true, Normal, "Enable import attributes."_s) \
     v(Bool, useIntlDurationFormat, true, Normal, "Expose the Intl DurationFormat."_s) \

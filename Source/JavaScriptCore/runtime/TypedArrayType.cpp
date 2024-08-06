@@ -55,6 +55,8 @@ const ClassInfo* constructorClassInfoForType(TypedArrayType type)
         return JSInt32ArrayConstructor::info();
     case TypeUint32:
         return JSUint32ArrayConstructor::info();
+    case TypeFloat16:
+        return JSFloat16ArrayConstructor::info();
     case TypeFloat32:
         return JSFloat32ArrayConstructor::info();
     case TypeFloat64:
@@ -102,6 +104,9 @@ void printInternal(PrintStream& out, TypedArrayType type)
         return;
     case TypeUint32:
         out.print("TypeUint32");
+        return;
+    case TypeFloat16:
+        out.print("TypeFloat16");
         return;
     case TypeFloat32:
         out.print("TypeFloat32");

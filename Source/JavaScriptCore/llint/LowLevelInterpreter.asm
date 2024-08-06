@@ -574,6 +574,7 @@ const Int16ArrayType = constexpr Int16ArrayType
 const Uint16ArrayType = constexpr Uint16ArrayType
 const Int32ArrayType = constexpr Int32ArrayType
 const Uint32ArrayType = constexpr Uint32ArrayType
+const Float16ArrayType = constexpr Float16ArrayType
 const Float32ArrayType = constexpr Float32ArrayType
 const Float64ArrayType = constexpr Float64ArrayType
 
@@ -1290,6 +1291,7 @@ macro getByValTypedArray(base, index, finishIntGetByVal, finishDoubleGetByVal, s
     #    Uint16ArrayType,
     #    Int32ArrayType,
     #    Uint32ArrayType,
+    #    Float16ArrayType,
     #    Float32ArrayType,
     #    Float64ArrayType,
     #
@@ -1334,7 +1336,7 @@ macro getByValTypedArray(base, index, finishIntGetByVal, finishDoubleGetByVal, s
 
 .opGetByValAboveUint16Array:
     # We have one of Int32ArrayType .. Float64ArrayType.
-    bia t2, Uint32ArrayType - FirstTypedArrayType, .opGetByValFloat32ArrayOrFloat64Array
+    bia t2, Uint32ArrayType - FirstTypedArrayType, .opGetByValFloat16OrFloat32ArrayOrFloat64Array
 
     # We have either Int32ArrayType or Uint32ArrayType
     bia t2, Int32ArrayType - FirstTypedArrayType, .opGetByValUint32Array
@@ -1350,10 +1352,10 @@ macro getByValTypedArray(base, index, finishIntGetByVal, finishDoubleGetByVal, s
     bilt t0, 0, slowPath # This case is still awkward to implement in LLInt.
     finishIntGetByVal(t0, t1)
 
-.opGetByValFloat32ArrayOrFloat64Array:
-    # We have one of Float32ArrayType or Float64ArrayType. Sadly, we cannot handle Float32Array
+.opGetByValFloat16OrFloat32ArrayOrFloat64Array:
+    # We have one of Float16ArrayType, Float32ArrayType, or Float64ArrayType. Sadly, we cannot handle Float16Array and Float32Array
     # inline yet. That would require some offlineasm changes.
-    bieq t2, Float32ArrayType - FirstTypedArrayType, slowPath
+    bineq t2, Float64ArrayType - FirstTypedArrayType, slowPath
 
     # We have Float64ArrayType.
     loadd [t3, index, 8], ft0

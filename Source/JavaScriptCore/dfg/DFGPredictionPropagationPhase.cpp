@@ -592,6 +592,7 @@ private:
                 else
                     changed |= mergePrediction(SpecAnyIntAsDouble);
                 break;
+            case Array::Float16Array:
             case Array::Float32Array:
             case Array::Float64Array:
                 if (node->op() == GetByVal && arrayMode.isOutOfBounds())

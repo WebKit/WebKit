@@ -1013,6 +1013,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             return;
             
         case Array::Generic:
+        case Array::Float16Array:
         case Array::BigInt64Array:
         case Array::BigUint64Array:
             clobberTop();
@@ -1158,6 +1159,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             return;
             
         case Array::Generic:
+        case Array::Float16Array:
         case Array::BigInt64Array:
         case Array::BigUint64Array:
             clobberTop();

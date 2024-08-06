@@ -2650,6 +2650,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
         jsValueResult(resultRegs, node);
         break;
     }
+    case Array::Float16Array:
     case Array::BigInt64Array:
     case Array::BigUint64Array:
     case Array::Generic: {
@@ -7139,6 +7140,7 @@ void SpeculativeJIT::compilePutByVal(Node* node)
     case Array::Undecided:
         DFG_CRASH(m_graph, node, "Bad array mode type");
         break;
+    case Array::Float16Array:
     case Array::BigInt64Array:
     case Array::BigUint64Array:
     case Array::Generic: {

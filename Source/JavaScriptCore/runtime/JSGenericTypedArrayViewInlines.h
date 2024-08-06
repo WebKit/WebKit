@@ -320,6 +320,9 @@ bool JSGenericTypedArrayView<Adaptor>::setFromTypedArray(JSGlobalObject* globalO
     case TypeUint32:
         RELEASE_AND_RETURN(scope, setWithSpecificType<Uint32Adaptor>(
             globalObject, offset, jsCast<JSUint32Array*>(object), objectOffset, length, type));
+    case TypeFloat16:
+        RELEASE_AND_RETURN(scope, setWithSpecificType<Float16Adaptor>(
+            globalObject, offset, jsCast<JSFloat16Array*>(object), objectOffset, length, type));
     case TypeFloat32:
         RELEASE_AND_RETURN(scope, setWithSpecificType<Float32Adaptor>(
             globalObject, offset, jsCast<JSFloat32Array*>(object), objectOffset, length, type));
@@ -877,6 +880,9 @@ template<typename Adaptor> inline auto JSGenericTypedArrayView<Adaptor>::sort() 
     }
 
     switch (Adaptor::typeValue) {
+    case TypeFloat16:
+        sortFloat<int16_t>(array, array + length);
+        break;
     case TypeFloat32:
         sortFloat<int32_t>(array, array + length);
         break;
@@ -934,6 +940,8 @@ inline GCClient::IsoSubspace* JSGenericTypedArrayView<Adaptor>::subspaceFor(VM& 
         return vm.uint16ArraySpace<access>();
     case TypeUint32:
         return vm.uint32ArraySpace<access>();
+    case TypeFloat16:
+        return vm.float16ArraySpace<access>();
     case TypeFloat32:
         return vm.float32ArraySpace<access>();
     case TypeFloat64:

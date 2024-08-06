@@ -21,7 +21,6 @@ skip:
     - FinalizationRegistry.prototype.cleanupSome
     - decorators
     - iterator-helpers
-    - Float16Array
     - explicit-resource-management
     - regexp-modifiers
     - source-phase-imports
