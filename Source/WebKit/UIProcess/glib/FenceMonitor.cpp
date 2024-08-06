@@ -49,15 +49,8 @@ FenceMonitor::~FenceMonitor()
 struct FenceSource {
     static GSourceFuncs sourceFuncs;
 
-    ~FenceSource()
-    {
-        if (tag)
-            g_source_remove_unix_fd(&base, tag);
-    }
-
     GSource base;
-    UnixFileDescriptor fd;
-    gpointer tag { nullptr };
+    gpointer tag;
 };
 
 GSourceFuncs FenceSource::sourceFuncs = {
@@ -69,16 +62,11 @@ GSourceFuncs FenceSource::sourceFuncs = {
         auto& source = *reinterpret_cast<FenceSource*>(base);
         g_source_remove_unix_fd(&source.base, source.tag);
         source.tag = nullptr;
-        source.fd = { };
 
         callback(userData);
         return G_SOURCE_CONTINUE;
     },
-    // finalize
-    [](GSource* base) {
-        auto* source = reinterpret_cast<FenceSource*>(base);
-        source->~FenceSource();
-    },
+    nullptr, // finalize
     nullptr, // closure_callback
     nullptr, // closure_marshall
 };
@@ -95,6 +83,7 @@ void FenceMonitor::ensureSource()
 #endif
     g_source_set_callback(m_source.get(), [](gpointer userData) -> gboolean {
         auto& monitor = *static_cast<FenceMonitor*>(userData);
+        monitor.m_fd = { };
         monitor.m_callback();
         return G_SOURCE_CONTINUE;
     }, this, nullptr);
@@ -112,17 +101,20 @@ static bool isFileDescriptorReadable(int fd)
 
 void FenceMonitor::addFileDescriptor(UnixFileDescriptor&& fd)
 {
+    RELEASE_ASSERT(!m_fd);
+
     if (!fd || isFileDescriptorReadable(fd.value())) {
         m_callback();
         return;
     }
 
+    m_fd = WTFMove(fd);
+
     ensureSource();
     auto& source = *reinterpret_cast<FenceSource*>(m_source.get());
     if (source.tag)
         g_source_remove_unix_fd(&source.base, source.tag);
-    source.tag = g_source_add_unix_fd(&source.base, fd.value(), G_IO_IN);
-    source.fd = WTFMove(fd);
+    source.tag = g_source_add_unix_fd(&source.base, m_fd.value(), G_IO_IN);
 }
 
 } // namespace WebKit

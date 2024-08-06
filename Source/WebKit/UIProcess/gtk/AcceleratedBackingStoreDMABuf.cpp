@@ -623,7 +623,7 @@ void AcceleratedBackingStoreDMABuf::update(const LayerTreeContext& context)
 
 bool AcceleratedBackingStoreDMABuf::prepareForRendering()
 {
-    if (m_pendingBuffer) {
+    if (m_pendingBuffer && !m_fenceMonitor.hasFileDescriptor()) {
         if (m_pendingBuffer->type() == Buffer::Type::EglImage) {
             ensureGLContext();
             gdk_gl_context_make_current(m_gdkGLContext.get());

@@ -40,11 +40,13 @@ public:
     ~FenceMonitor();
 
     void addFileDescriptor(WTF::UnixFileDescriptor&&);
+    bool hasFileDescriptor() const { return !!m_fd; }
 
 private:
     void ensureSource();
 
     Function<void()> m_callback;
+    WTF::UnixFileDescriptor m_fd;
     GRefPtr<GSource> m_source;
 };
 
