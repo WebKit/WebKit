@@ -8,16 +8,16 @@ PASS mouse got/lost pointercapture: subsequent events to target
 PASS mouse pointerover/enter should be received before the target receives gotpointercapture even when the pointer is not over it.
 PASS mouse gotpointercapture.pointerType is correct.
 PASS mouse gotpointercapture event is a PointerEvent event
-FAIL mouse gotpointercapture.isTrusted value is true assert_equals: expected true but got false
-FAIL mouse gotpointercapture.composed value is valid assert_equals: expected true but got false
+PASS mouse gotpointercapture.isTrusted value is true
+PASS mouse gotpointercapture.composed value is valid
 PASS mouse gotpointercapture.bubbles value is valid
 PASS mouse gotpointercapture.cancelable value is valid
 PASS mouse gotpointercapture.pressure value is valid
 PASS mouse gotpointercapture properties for pointerType = mouse
 PASS mouse lostpointercapture.pointerType is correct.
 PASS mouse lostpointercapture event is a PointerEvent event
-FAIL mouse lostpointercapture.isTrusted value is true assert_equals: expected true but got false
-FAIL mouse lostpointercapture.composed value is valid assert_equals: expected true but got false
+PASS mouse lostpointercapture.isTrusted value is true
+PASS mouse lostpointercapture.composed value is valid
 PASS mouse lostpointercapture.bubbles value is valid
 PASS mouse lostpointercapture.cancelable value is valid
 PASS mouse lostpointercapture.pressure value is valid

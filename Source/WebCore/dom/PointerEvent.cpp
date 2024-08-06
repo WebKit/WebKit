@@ -86,8 +86,8 @@ PointerEvent::PointerEvent()
 {
 }
 
-PointerEvent::PointerEvent(const AtomString& type, Init&& initializer)
-    : MouseEvent(EventInterfaceType::PointerEvent, type, initializer)
+PointerEvent::PointerEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+    : MouseEvent(EventInterfaceType::PointerEvent, type, initializer, isTrusted)
     , m_pointerId(initializer.pointerId)
     , m_width(initializer.width)
     , m_height(initializer.height)

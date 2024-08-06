@@ -54,7 +54,7 @@ inline WheelEvent::WheelEvent()
 }
 
 inline WheelEvent::WheelEvent(const AtomString& type, const Init& initializer)
-    : MouseEvent(EventInterfaceType::WheelEvent, type, initializer)
+    : MouseEvent(EventInterfaceType::WheelEvent, type, initializer, IsTrusted::No)
     , m_wheelDelta(initializer.wheelDeltaX ? initializer.wheelDeltaX : clampTo<int>(-initializer.deltaX), initializer.wheelDeltaY ? initializer.wheelDeltaY : clampTo<int>(-initializer.deltaY))
     , m_deltaX(initializer.deltaX ? initializer.deltaX : wheelDeltaToDelta(initializer.wheelDeltaX))
     , m_deltaY(initializer.deltaY ? initializer.deltaY : wheelDeltaToDelta(initializer.wheelDeltaY))

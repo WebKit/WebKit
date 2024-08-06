@@ -53,7 +53,7 @@ Ref<DragEvent> DragEvent::create(const AtomString& type, CanBubble canBubble, Is
 }
 
 DragEvent::DragEvent(const AtomString& eventType, DragEventInit&& init)
-    : MouseEvent(EventInterfaceType::DragEvent, eventType, init)
+    : MouseEvent(EventInterfaceType::DragEvent, eventType, init, IsTrusted::No)
     , m_dataTransfer(WTFMove(init.dataTransfer))
 {
 }

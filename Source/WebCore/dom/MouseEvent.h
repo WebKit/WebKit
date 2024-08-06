@@ -104,7 +104,7 @@ protected:
         const IntPoint& screenLocation, const IntPoint& clientLocation, double movementX, double movementY, OptionSet<Modifier>, MouseButton, unsigned short buttons,
         SyntheticClickType, EventTarget* relatedTarget);
 
-    MouseEvent(enum EventInterfaceType, const AtomString& type, const MouseEventInit&);
+    MouseEvent(enum EventInterfaceType, const AtomString& type, const MouseEventInit&, IsTrusted);
 
     MouseEvent(enum EventInterfaceType);
 

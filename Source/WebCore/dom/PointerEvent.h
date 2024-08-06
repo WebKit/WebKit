@@ -66,7 +66,7 @@ public:
 
     static Ref<PointerEvent> create(const AtomString& type, Init&& initializer)
     {
-        return adoptRef(*new PointerEvent(type, WTFMove(initializer)));
+        return adoptRef(*new PointerEvent(type, WTFMove(initializer), IsTrusted::No));
     }
 
     static Ref<PointerEvent> createForPointerCapture(const AtomString& type, PointerID pointerId, bool isPrimary, String pointerType)
@@ -76,7 +76,8 @@ public:
         initializer.pointerId = pointerId;
         initializer.isPrimary = isPrimary;
         initializer.pointerType = pointerType;
-        return adoptRef(*new PointerEvent(type, WTFMove(initializer)));
+        initializer.composed = true;
+        return adoptRef(*new PointerEvent(type, WTFMove(initializer), IsTrusted::Yes));
     }
 
     static Ref<PointerEvent> createForBindings()
@@ -147,7 +148,7 @@ private:
     }
 
     PointerEvent();
-    PointerEvent(const AtomString&, Init&&);
+    PointerEvent(const AtomString&, Init&&, IsTrusted);
     PointerEvent(const AtomString& type, MouseButton, const MouseEvent&, PointerID, const String& pointerType, CanBubble, IsCancelable);
     PointerEvent(const AtomString& type, PointerID, const String& pointerType, IsPrimary);
 #if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE))
