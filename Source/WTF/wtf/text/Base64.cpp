@@ -1,7 +1,7 @@
 /*
    Copyright (C) 2000-2001 Dawit Alemayehu <adawit@kde.org>
    Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
-   Copyright (C) 2007-2021, 2023 Apple Inc. All rights reserved.
+   Copyright (C) 2007-2024 Apple Inc. All rights reserved.
    Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
 
    This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@
 #include <wtf/SIMDUTF.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/StringCommon.h>
 
 namespace WTF {
 
@@ -310,6 +311,182 @@ String base64DecodeToString(StringView input, OptionSet<Base64DecodeOption> opti
     if (input.is8Bit())
         return toString(base64DecodeInternal<LChar, StringImplMalloc>(input.span8(), options));
     return toString(base64DecodeInternal<UChar, StringImplMalloc>(input.span16(), options));
+}
+
+template<typename CharacterType>
+static std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64SlowImpl(std::span<const CharacterType> span, std::span<uint8_t> output, Alphabet alphabet, LastChunkHandling lastChunkHandling)
+{
+    size_t read = 0;
+    size_t write = 0;
+    size_t length = span.size();
+
+    if (!output.size())
+        return { FromBase64ShouldThrowError::No, 0, 0 };
+
+    UChar chunk[4] = { 0, 0, 0, 0 };
+    size_t chunkLength = 0;
+
+    for (size_t i = 0; i < length;) {
+        UChar c = span[i++];
+
+        if (isASCIIWhitespace(c))
+            continue;
+
+        if (c == '=') {
+            if (chunkLength < 2)
+                return { FromBase64ShouldThrowError::Yes, read, write };
+
+            while (i < length && isASCIIWhitespace(span[i]))
+                ++i;
+
+            if (chunkLength == 2) {
+                if (i == length) {
+                    if (lastChunkHandling == LastChunkHandling::StopBeforePartial)
+                        return { FromBase64ShouldThrowError::No, read, write };
+
+                    return { FromBase64ShouldThrowError::Yes, read, write };
+                }
+
+                if (span[i] == '=') {
+                    do {
+                        ++i;
+                    } while (i < length && isASCIIWhitespace(span[i]));
+                }
+            }
+
+            if (i < length)
+                return { FromBase64ShouldThrowError::Yes, read, write };
+
+            for (size_t j = chunkLength; j < 4; ++j)
+                chunk[j] = 'A';
+
+            auto decodedVector = base64Decode(StringView(std::span(chunk, 4)));
+            if (!decodedVector)
+                return { FromBase64ShouldThrowError::Yes, read, write };
+            auto decoded = decodedVector->span();
+
+            ASSERT(chunkLength >= 2);
+            ASSERT(chunkLength <= 4);
+            if (chunkLength == 2 || chunkLength == 3) {
+                if (lastChunkHandling == LastChunkHandling::Strict && decoded[chunkLength - 1])
+                    return { FromBase64ShouldThrowError::Yes, read, write };
+
+                decoded = decoded.subspan(0, chunkLength - 1);
+            }
+
+            memcpySpan(output.subspan(write), decoded);
+            write += decoded.size();
+            return { FromBase64ShouldThrowError::No, length, write };
+        }
+
+        if (alphabet == Alphabet::Base64URL) {
+            if (c == '+' || c == '/')
+                return { FromBase64ShouldThrowError::Yes, read, write };
+
+            if (c == '-')
+                c = '+';
+            else if (c == '_')
+                c = '/';
+        }
+
+        if (!StringView("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"_s).contains(c))
+            return { FromBase64ShouldThrowError::Yes, read, write };
+
+        auto remaining = output.size() - write;
+        if ((remaining == 1 && chunkLength == 2) || (remaining == 2 && chunkLength == 3))
+            return { FromBase64ShouldThrowError::No, read, write };
+
+        chunk[chunkLength++] = c;
+        if (chunkLength != 4)
+            continue;
+
+        auto decodedVector = base64Decode(StringView(std::span(chunk, chunkLength)));
+        ASSERT(decodedVector);
+        if (!decodedVector)
+            return { FromBase64ShouldThrowError::Yes, read, write };
+        auto decoded = decodedVector->span();
+
+        read = i;
+        memcpySpan(output.subspan(write), decoded);
+        write += decoded.size();
+        if (write == output.size())
+            return { FromBase64ShouldThrowError::No, read, write };
+
+        for (size_t j = 0; j < 4; ++j)
+            chunk[j] = 0;
+        chunkLength = 0;
+    }
+
+    if (chunkLength) {
+        if (lastChunkHandling == LastChunkHandling::StopBeforePartial)
+            return { FromBase64ShouldThrowError::No, read, write };
+
+        if (lastChunkHandling == LastChunkHandling::Strict || chunkLength == 1)
+            return { FromBase64ShouldThrowError::Yes, read, write };
+
+        for (size_t j = chunkLength; j < 4; ++j)
+            chunk[j] = 'A';
+
+        auto decodedVector = base64Decode(StringView(std::span(chunk, chunkLength)));
+        ASSERT(decodedVector);
+        if (!decodedVector)
+            return { FromBase64ShouldThrowError::Yes, read, write };
+        auto decoded = decodedVector->span();
+
+        if (chunkLength == 2 || chunkLength == 3)
+            decoded = decoded.subspan(0, chunkLength - 1);
+
+        memcpySpan(output.subspan(write), decoded);
+        write += decoded.size();
+    }
+
+    return { FromBase64ShouldThrowError::No, length, write };
+}
+
+template<typename CharacterType>
+static std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64Impl(std::span<const CharacterType> span, std::span<uint8_t> output, Alphabet alphabet, LastChunkHandling lastChunkHandling)
+{
+    if (lastChunkHandling != LastChunkHandling::Loose)
+        return fromBase64SlowImpl(span, output, alphabet, lastChunkHandling);
+
+    using UTFType = std::conditional_t<sizeof(CharacterType) == 1, char, char16_t>;
+    auto options = alphabet == Alphabet::Base64URL ? simdutf::base64_url : simdutf::base64_default;
+    if (!output.size())
+        return { FromBase64ShouldThrowError::No, 0, 0 };
+
+    size_t outputLength = output.size();
+    auto result = simdutf::base64_to_binary_safe(bitwise_cast<const UTFType*>(span.data()), span.size(), bitwise_cast<char*>(output.data()), outputLength, options);
+    switch (result.error) {
+    case simdutf::error_code::INVALID_BASE64_CHARACTER:
+        return { FromBase64ShouldThrowError::Yes, result.count, outputLength };
+
+    case simdutf::error_code::BASE64_INPUT_REMAINDER:
+        return { FromBase64ShouldThrowError::No, result.count, outputLength };
+
+    case simdutf::error_code::OUTPUT_BUFFER_TOO_SMALL:
+        return { FromBase64ShouldThrowError::No, result.count, outputLength };
+
+    case simdutf::error_code::SUCCESS:
+        return { FromBase64ShouldThrowError::No, span.size(), outputLength };
+
+    default:
+        return { FromBase64ShouldThrowError::Yes, result.count, outputLength };
+    }
+}
+
+std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64(StringView string, std::span<uint8_t> output, Alphabet alphabet, LastChunkHandling lastChunkHandling)
+{
+    if (string.is8Bit())
+        return fromBase64Impl(string.span8(), output, alphabet, lastChunkHandling);
+    return fromBase64Impl(string.span16(), output, alphabet, lastChunkHandling);
+}
+
+size_t maxLengthFromBase64(StringView string)
+{
+    size_t length = string.length();
+    if (string.is8Bit())
+        return simdutf::maximal_binary_length_from_base64(bitwise_cast<const char*>(string.span8().data()), length);
+    return simdutf::maximal_binary_length_from_base64(bitwise_cast<const char16_t*>(string.span16().data()), length);
 }
 
 } // namespace WTF

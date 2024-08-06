@@ -42,8 +42,8 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromBase64, (JSGlobalObject* globa
     if (UNLIKELY(!jsString))
         return throwVMTypeError(globalObject, scope, "Uint8Array.fromBase64 requires a string"_s);
 
-    auto alphabet = Alphabet::Base64;
-    auto lastChunkHandling = LastChunkHandling::Loose;
+    auto alphabet = WTF::Alphabet::Base64;
+    auto lastChunkHandling = WTF::LastChunkHandling::Loose;
 
     JSValue optionsValue = callFrame->argument(1);
     if (!optionsValue.isUndefined()) {
@@ -61,7 +61,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromBase64, (JSGlobalObject* globa
             StringView alphabetStringView = alphabetString->view(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
             if (alphabetStringView == "base64url"_s)
-                alphabet = Alphabet::Base64URL;
+                alphabet = WTF::Alphabet::Base64URL;
             else if (alphabetStringView != "base64"_s)
                 return throwVMTypeError(globalObject, scope, "Uint8Array.fromBase64 requires that alphabet be \"base64\" or \"base64url\""_s);
         }
@@ -76,9 +76,9 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromBase64, (JSGlobalObject* globa
             StringView lastChunkHandlingStringView = lastChunkHandlingString->view(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
             if (lastChunkHandlingStringView == "strict"_s)
-                lastChunkHandling = LastChunkHandling::Strict;
+                lastChunkHandling = WTF::LastChunkHandling::Strict;
             else if (lastChunkHandlingStringView == "stop-before-partial"_s)
-                lastChunkHandling = LastChunkHandling::StopBeforePartial;
+                lastChunkHandling = WTF::LastChunkHandling::StopBeforePartial;
             else if (lastChunkHandlingStringView != "loose"_s)
                 return throwVMTypeError(globalObject, scope, "Uint8Array.fromBase64 requires that lastChunkHandling be \"loose\", \"strict\", or \"stop-before-partial\""_s);
         }
@@ -87,18 +87,18 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromBase64, (JSGlobalObject* globa
     StringView view = jsString->view(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto [shouldThrowError, readLength, writeData] = fromBase64(view, std::numeric_limits<size_t>::max(), alphabet, lastChunkHandling);
-    if (shouldThrowError == FromBase64ShouldThrowError::Yes)
+    Vector<uint8_t, 128> output;
+    output.grow(maxLengthFromBase64(view));
+    auto [shouldThrowError, readLength, writeLength] = fromBase64(view, output.mutableSpan(), alphabet, lastChunkHandling);
+    if (UNLIKELY(shouldThrowError == WTF::FromBase64ShouldThrowError::Yes))
         return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.fromBase64 requires a valid base64 string"_s));
 
     ASSERT(readLength <= view.length());
-
-    size_t length = writeData.size();
-    JSUint8Array* uint8Array = JSUint8Array::createUninitialized(globalObject, globalObject->typedArrayStructure(TypeUint8, false), length);
+    JSUint8Array* uint8Array = JSUint8Array::createUninitialized(globalObject, globalObject->typedArrayStructure(TypeUint8, false), writeLength);
     RETURN_IF_EXCEPTION(scope, { });
 
     uint8_t* data = uint8Array->typedVector();
-    memcpySpan(std::span { data, data + length }, writeData.span());
+    memcpySpan(std::span { data, data + writeLength }, output.span().subspan(0, writeLength));
     return JSValue::encode(uint8Array);
 }
 
