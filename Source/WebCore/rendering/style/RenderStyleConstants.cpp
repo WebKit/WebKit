@@ -489,9 +489,9 @@ TextStream& operator<<(TextStream& ts, FillAttachment attachment)
 TextStream& operator<<(TextStream& ts, FillBox fill)
 {
     switch (fill) {
-    case FillBox::Border: ts << "border"; break;
-    case FillBox::Padding: ts << "padding"; break;
-    case FillBox::Content: ts << "content"; break;
+    case FillBox::BorderBox: ts << "border-box"; break;
+    case FillBox::PaddingBox: ts << "padding-box"; break;
+    case FillBox::ContentBox: ts << "content-box"; break;
     case FillBox::Text: ts << "text"; break;
     case FillBox::NoClip: ts << "no-clip"; break;
     }

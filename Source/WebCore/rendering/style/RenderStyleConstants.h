@@ -341,9 +341,9 @@ enum class FillAttachment : uint8_t {
 };
 
 enum class FillBox : uint8_t {
-    Border,
-    Padding,
-    Content,
+    BorderBox,
+    PaddingBox,
+    ContentBox,
     Text,
     NoClip
 };

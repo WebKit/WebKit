@@ -3307,11 +3307,11 @@ LayoutRect RenderLayerBacking::contentsBox() const
 static LayoutRect backgroundRectForBox(const RenderBox& box)
 {
     switch (box.style().backgroundClip()) {
-    case FillBox::Border:
+    case FillBox::BorderBox:
         return box.borderBoxRect();
-    case FillBox::Padding:
+    case FillBox::PaddingBox:
         return box.paddingBoxRect();
-    case FillBox::Content:
+    case FillBox::ContentBox:
         return box.contentBoxRect();
     default:
         break;

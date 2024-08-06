@@ -449,11 +449,11 @@ template<> constexpr FillAttachment fromCSSValueID(CSSValueID valueID)
 constexpr CSSValueID toCSSValueID(FillBox e)
 {
     switch (e) {
-    case FillBox::Border:
+    case FillBox::BorderBox:
         return CSSValueBorderBox;
-    case FillBox::Padding:
+    case FillBox::PaddingBox:
         return CSSValuePaddingBox;
-    case FillBox::Content:
+    case FillBox::ContentBox:
         return CSSValueContentBox;
     case FillBox::Text:
         return CSSValueText;
@@ -469,13 +469,13 @@ template<> constexpr FillBox fromCSSValueID(CSSValueID valueID)
     switch (valueID) {
     case CSSValueBorder:
     case CSSValueBorderBox:
-        return FillBox::Border;
+        return FillBox::BorderBox;
     case CSSValuePadding:
     case CSSValuePaddingBox:
-        return FillBox::Padding;
+        return FillBox::PaddingBox;
     case CSSValueContent:
     case CSSValueContentBox:
-        return FillBox::Content;
+        return FillBox::ContentBox;
     case CSSValueText:
     case CSSValueWebkitText:
         return FillBox::Text;
@@ -485,7 +485,7 @@ template<> constexpr FillBox fromCSSValueID(CSSValueID valueID)
         break;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return FillBox::Border;
+    return FillBox::BorderBox;
 }
 
 #define TYPE FillRepeat
