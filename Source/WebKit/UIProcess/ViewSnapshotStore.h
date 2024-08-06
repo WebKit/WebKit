@@ -50,6 +50,8 @@ namespace WebKit {
 class WebBackForwardListItem;
 class WebPageProxy;
 
+enum class ForceSoftwareCapturingViewportSnapshot : bool { No, Yes };
+
 class ViewSnapshot : public RefCounted<ViewSnapshot>, public CanMakeWeakPtr<ViewSnapshot> {
 public:
 #if HAVE(IOSURFACE)

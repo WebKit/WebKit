@@ -11678,7 +11678,16 @@ RefPtr<ViewSnapshot> WebPageProxy::takeViewSnapshot(std::optional<WebCore::IntRe
     return protectedPageClient()->takeViewSnapshot(WTFMove(clipRect));
 }
 
+RefPtr<ViewSnapshot> WebPageProxy::takeViewSnapshot(std::optional<WebCore::IntRect>&& clipRect, ForceSoftwareCapturingViewportSnapshot forceSoftwareCapturing)
+{
+#if PLATFORM(MAC)
+    return protectedPageClient()->takeViewSnapshot(WTFMove(clipRect), forceSoftwareCapturing);
+#else
+    return protectedPageClient()->takeViewSnapshot(WTFMove(clipRect));
 #endif
+}
+
+#endif // PLATFORM(COCOA) || PLATFORM(GTK)
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
 

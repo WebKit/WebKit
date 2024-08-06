@@ -644,6 +644,11 @@ RefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot(std::optional<WebCore::Int
     return m_impl->takeViewSnapshot();
 }
 
+RefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot(std::optional<WebCore::IntRect>&&, ForceSoftwareCapturingViewportSnapshot forceSoftwareCapturing)
+{
+    return m_impl->takeViewSnapshot(forceSoftwareCapturing);
+}
+
 void PageClientImpl::selectionDidChange()
 {
     m_impl->selectionDidChange();
