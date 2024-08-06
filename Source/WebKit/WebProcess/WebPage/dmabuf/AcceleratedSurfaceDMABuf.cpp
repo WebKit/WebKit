@@ -66,21 +66,24 @@ std::unique_ptr<AcceleratedSurfaceDMABuf> AcceleratedSurfaceDMABuf::create(WebPa
     return std::unique_ptr<AcceleratedSurfaceDMABuf>(new AcceleratedSurfaceDMABuf(webPage, client));
 }
 
+static bool useExplicitSync()
+{
+    auto& display = WebCore::PlatformDisplay::sharedDisplay();
+    auto& extensions = display.eglExtensions();
+    return extensions.ANDROID_native_fence_sync && (display.eglCheckVersion(1, 5) || extensions.KHR_fence_sync);
+}
+
 AcceleratedSurfaceDMABuf::AcceleratedSurfaceDMABuf(WebPage& webPage, Client& client)
     : AcceleratedSurface(webPage, client)
     , m_id(generateID())
     , m_swapChain(m_id)
     , m_isVisible(webPage.activityState().contains(WebCore::ActivityState::IsVisible))
+    , m_useExplicitSync(useExplicitSync())
 {
 #if USE(GBM)
     if (m_swapChain.type() == SwapChain::Type::EGLImage)
         m_swapChain.setupBufferFormat(m_webPage.preferredBufferFormats(), m_isOpaque);
 #endif
-    if (webPage.useExplicitSync()) {
-        auto& display = WebCore::PlatformDisplay::sharedDisplay();
-        auto& extensions = display.eglExtensions();
-        m_useExplicitSync = extensions.ANDROID_native_fence_sync && (display.eglCheckVersion(1, 5) || extensions.KHR_fence_sync);
-    }
 }
 
 AcceleratedSurfaceDMABuf::~AcceleratedSurfaceDMABuf()

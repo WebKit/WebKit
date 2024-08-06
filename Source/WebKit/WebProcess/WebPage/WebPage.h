@@ -1763,7 +1763,6 @@ public:
 #if USE(GBM)
     const Vector<DMABufRendererBufferFormat>& preferredBufferFormats() const { return m_preferredBufferFormats; }
 #endif
-    bool useExplicitSync() const { return m_useExplicitSync; }
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
@@ -2789,7 +2788,6 @@ private:
 #if USE(GBM)
     Vector<DMABufRendererBufferFormat> m_preferredBufferFormats;
 #endif
-    bool m_useExplicitSync { false };
 #endif
 
 #if ENABLE(APP_BOUND_DOMAINS)

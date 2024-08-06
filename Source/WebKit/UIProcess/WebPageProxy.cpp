@@ -10621,10 +10621,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #endif
 #endif
 
-#if PLATFORM(GTK) || PLATFORM(WPE)
-    parameters.useExplicitSync = useExplicitSync();
-#endif
-
     return parameters;
 }
 
