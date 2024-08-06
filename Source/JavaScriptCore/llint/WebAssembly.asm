@@ -32,7 +32,7 @@ if HAVE_FAST_TLS
 end
 
 # Must match GPRInfo.h
-if X86_64 or X86_64_WIN
+if X86_64
     const NumberOfWasmArgumentJSRs = 6
 elsif ARM64 or ARM64E or RISCV64
     const NumberOfWasmArgumentJSRs = 8
@@ -49,7 +49,7 @@ const NumberOfWasmArguments = NumberOfWasmArgumentJSRs + NumberOfWasmArgumentFPR
 # All callee saves must match the definition in WasmCallee.cpp
 
 # These must match the definition in GPRInfo.h
-if X86_64 or X86_64_WIN or ARM64 or ARM64E or RISCV64
+if X86_64 or ARM64 or ARM64E or RISCV64
     const wasmInstance = csr0
     const memoryBase = csr3
     const boundsCheckingSize = csr4
@@ -62,7 +62,7 @@ else
 end
 
 # This must match the definition in LowLevelInterpreter.asm
-if X86_64 or X86_64_WIN
+if X86_64
     const PB = csr2
 elsif ARM64 or ARM64E or RISCV64
     const PB = csr7
@@ -247,7 +247,7 @@ macro preserveCalleeSavesUsedByWasm()
     subp CalleeSaveSpaceStackAligned, sp
     if ARM64 or ARM64E
         storepairq wasmInstance, PB, -16[cfr]
-    elsif X86_64 or X86_64_WIN or RISCV64
+    elsif X86_64 or RISCV64
         storep PB, -0x8[cfr]
         storep wasmInstance, -0x10[cfr]
     elsif ARMv7
@@ -264,7 +264,7 @@ macro restoreCalleeSavesUsedByWasm()
     # to be observable within the same Wasm module.
     if ARM64 or ARM64E
         loadpairq -16[cfr], wasmInstance, PB
-    elsif X86_64 or X86_64_WIN or RISCV64
+    elsif X86_64 or RISCV64
         loadp -0x8[cfr], PB
         loadp -0x10[cfr], wasmInstance
     elsif ARMv7
@@ -286,7 +286,7 @@ macro restoreGPRsUsedByTailCall(gpr0, gpr1)
 end
 
 macro preserveReturnAddress(scratch)
-if X86_64 or X86_64_WIN
+if X86_64
     loadp ReturnPC[cfr], scratch
     storep scratch, ReturnPC[sp]
 elsif ARM64 or ARM64E or ARMv7 or RISCV64
@@ -297,7 +297,7 @@ end
 macro usePreviousFrame()
     if ARM64 or ARM64E
         loadpairq -PtrSize[cfr], PB, cfr
-    elsif ARMv7 or X86_64 or X86_64_WIN or RISCV64
+    elsif ARMv7 or X86_64 or RISCV64
         loadp -PtrSize[cfr], PB
         loadp [cfr], cfr
     else
@@ -563,7 +563,7 @@ end
 
 // This is the interpreted analogue to createJSToWasmJITInterpreterCrashForSIMDParameters
 op(js_to_wasm_wrapper_entry_crash_for_simd_parameters, macro()
-    if not WEBASSEMBLY or C_LOOP or C_LOOP_WIN
+    if not WEBASSEMBLY or C_LOOP
         error
     end
     tagReturnAddress sp
@@ -580,7 +580,7 @@ end)
 // This is the interpreted analogue to createJSToWasmWrapper
 // If you change this, make sure to modify JSToWasm.cpp:createJSToWasmJITInterpreter
 op(js_to_wasm_wrapper_entry, macro ()
-    if not WEBASSEMBLY or C_LOOP or C_LOOP_WIN
+    if not WEBASSEMBLY or C_LOOP
         error
     end
 
@@ -653,7 +653,7 @@ end
         if ARM64 or ARM64E
             storepairq memoryBase, boundsCheckingSize, -2 * SlotSize[cfr]
             storep wasmInstance, -3 * SlotSize[cfr]
-        elsif X86_64 or X86_64_WIN
+        elsif X86_64
             # These must match the wasmToJS thunk, since the unwinder won't be able to tell who made this frame.
             storep boundsCheckingSize, -1 * SlotSize[cfr]
             storep memoryBase, -2 * SlotSize[cfr]
@@ -667,7 +667,7 @@ end
         if ARM64 or ARM64E
             loadpairq -2 * SlotSize[cfr], memoryBase, boundsCheckingSize
             loadp -3 * SlotSize[cfr], wasmInstance
-        elsif X86_64 or X86_64_WIN
+        elsif X86_64
             loadp -1 * SlotSize[cfr], boundsCheckingSize
             loadp -2 * SlotSize[cfr], memoryBase
             loadp -3 * SlotSize[cfr], wasmInstance
@@ -716,7 +716,7 @@ end
     # Memory
     if ARM64 or ARM64E
         loadpairq JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase, boundsCheckingSize
-    elsif X86_64 or X86_64_WIN
+    elsif X86_64
         loadp JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase
         loadp JSWebAssemblyInstance::m_cachedBoundsCheckingSize[wasmInstance], boundsCheckingSize
     end
@@ -810,7 +810,7 @@ end
             fn(2 * 8, wa2, wa3)
             fn(4 * 8, wa4, wa5)
             fn(6 * 8, wa6, wa7)
-        elsif X86_64 or X86_64_WIN
+        elsif X86_64
             fn(0 * 8, wa0)
             fn(1 * 8, wa1)
             fn(2 * 8, wa2)
@@ -832,7 +832,7 @@ end
     macro forEachReturnJSJSR(fn)
         if ARM64 or ARM64E
             fn(0 * 8, r0, r1)
-        elsif X86_64 or X86_64_WIN
+        elsif X86_64
             fn(0 * 8, r0)
             fn(1 * 8, r1)
         elsif JSVALUE64
@@ -1091,7 +1091,7 @@ op(wasm_function_prologue_trampoline, macro ()
 end)
 
 op(wasm_function_prologue, macro ()
-    if not WEBASSEMBLY or C_LOOP or C_LOOP_WIN
+    if not WEBASSEMBLY or C_LOOP
         error
     end
 
@@ -1105,7 +1105,7 @@ op(wasm_function_prologue_simd_trampoline, macro ()
 end)
 
 op(wasm_function_prologue_simd, macro ()
-    if not WEBASSEMBLY or C_LOOP or C_LOOP_WIN
+    if not WEBASSEMBLY or C_LOOP
         error
     end
 
@@ -1615,7 +1615,7 @@ end
             # ws1 is the new stack pointer.
             # cfr is the caller's caller's frame pointer.
 
-if X86_64 or X86_64_WIN
+if X86_64
             addp PtrSize, ws1, sp
 elsif ARMv7
             addp CallerFrameAndPCSize, ws1
@@ -1832,7 +1832,7 @@ end)
 
 wasmI64ToFOp(f32_convert_u_i64, WasmF32ConvertUI64, macro (ctx)
     mloadq(ctx, m_operand, t0)
-    if X86_64 or X86_64_WIN
+    if X86_64
         cq2f t0, t1, ft0
     else
         cq2f t0, ft0
@@ -1842,7 +1842,7 @@ end)
 
 wasmI64ToFOp(f64_convert_u_i64, WasmF64ConvertUI64, macro (ctx)
     mloadq(ctx, m_operand, t0)
-    if X86_64 or X86_64_WIN
+    if X86_64
         cq2d t0, t1, ft0
     else
         cq2d t0, ft0

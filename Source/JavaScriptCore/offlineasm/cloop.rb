@@ -1212,10 +1212,6 @@ class Instruction
         end
     end
 
-    def lowerC_LOOP_WIN
-        lowerC_LOOP
-    end
-
     def recordMetaDataC_LOOP
         $asm.codeOrigin codeOriginString if $enableCodeOriginComments
         $asm.annotation annotation if $enableInstrAnnotations && (opcode != "cloopDo")

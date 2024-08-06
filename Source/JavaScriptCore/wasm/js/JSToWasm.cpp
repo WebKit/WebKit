@@ -316,7 +316,7 @@ std::shared_ptr<InternalFunction> createJSToWasmJITInterpreter()
             jit.loadPtr(CCallHelpers::Address { GPRInfo::wasmBoundsCheckingSizeRegister, JSWebAssemblyInstance::offsetOfCachedBoundsCheckingSize() }, GPRInfo::wasmContextInstancePointer);
 #endif
 #if !CPU(ARMv7)
-#if GIGACAGE_ENABLED && !(ENABLE(C_LOOP)|| ENABLE(C_LOOP_WIN))
+#if GIGACAGE_ENABLED && !ENABLE(C_LOOP)
             // cagePrimitive(GigacageConfig + Gigacage::Config::basePtrs + GigacagePrimitiveBasePtrOffset, constexpr Gigacage::primitiveGigacageMask, ptr, scratch)
             auto gigacageConfig = bitwise_cast<uint8_t*>(&WebConfig::g_config) + static_cast<ptrdiff_t>(Gigacage::startOffsetOfGigacageConfig);
             auto gigacageDisablingPrimitiveIsForbidden = gigacageConfig + OBJECT_OFFSETOF(Gigacage::Config, disablingPrimitiveGigacageIsForbidden);
@@ -343,7 +343,7 @@ std::shared_ptr<InternalFunction> createJSToWasmJITInterpreter()
         jit.loadPair64(CCallHelpers::Address { CCallHelpers::stackPointerRegister, 2 * 8 }, GPRInfo::regWA2, GPRInfo::regWA3);
         jit.loadPair64(CCallHelpers::Address { CCallHelpers::stackPointerRegister, 4 * 8 }, GPRInfo::regWA4, GPRInfo::regWA5);
         jit.loadPair64(CCallHelpers::Address { CCallHelpers::stackPointerRegister, 6 * 8 }, GPRInfo::regWA6, GPRInfo::regWA7);
-#elif CPU(X86_64) || CPU(X86_64_WIN)
+#elif CPU(X86_64)
         jit.loadPair64(CCallHelpers::Address { CCallHelpers::stackPointerRegister, 0 * 8 }, GPRInfo::regWA0, GPRInfo::regWA1);
         jit.loadPair64(CCallHelpers::Address { CCallHelpers::stackPointerRegister, 2 * 8 }, GPRInfo::regWA2, GPRInfo::regWA3);
         jit.loadPair64(CCallHelpers::Address { CCallHelpers::stackPointerRegister, 4 * 8 }, GPRInfo::regWA4, GPRInfo::regWA5);
@@ -364,7 +364,7 @@ std::shared_ptr<InternalFunction> createJSToWasmJITInterpreter()
         jit.loadPairDouble(CCallHelpers::Address { CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters + 2) * 8 }, FPRInfo::argumentFPR2, FPRInfo::argumentFPR3);
         jit.loadPairDouble(CCallHelpers::Address { CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters + 4) * 8 }, FPRInfo::argumentFPR4, FPRInfo::argumentFPR5);
         jit.loadPairDouble(CCallHelpers::Address { CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters + 6) * 8 }, FPRInfo::argumentFPR6, FPRInfo::argumentFPR7);
-#elif CPU(X86_64) || CPU(X86_64_WIN) || CPU(RISCV64)
+#elif CPU(X86_64) || CPU(RISCV64)
         jit.loadDouble(CCallHelpers::Address { CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters + 0) * 8 }, FPRInfo::argumentFPR0);
         jit.loadDouble(CCallHelpers::Address { CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters + 1) * 8 }, FPRInfo::argumentFPR1);
         jit.loadDouble(CCallHelpers::Address { CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters + 2) * 8 }, FPRInfo::argumentFPR2);
@@ -439,7 +439,7 @@ std::shared_ptr<InternalFunction> createJSToWasmJITInterpreter()
         jit.storePair64(GPRInfo::regWA2, GPRInfo::regWA3, CCallHelpers::Address { CCallHelpers::stackPointerRegister, 2 * 8 });
         jit.storePair64(GPRInfo::regWA4, GPRInfo::regWA5, CCallHelpers::Address { CCallHelpers::stackPointerRegister, 4 * 8 });
         jit.storePair64(GPRInfo::regWA6, GPRInfo::regWA7, CCallHelpers::Address { CCallHelpers::stackPointerRegister, 6 * 8 });
-#elif CPU(X86_64) || CPU(X86_64_WIN)
+#elif CPU(X86_64)
         jit.storePair64(GPRInfo::regWA0, GPRInfo::regWA1, CCallHelpers::Address { CCallHelpers::stackPointerRegister, 0 * 8 });
         jit.storePair64(GPRInfo::regWA2, GPRInfo::regWA3, CCallHelpers::Address { CCallHelpers::stackPointerRegister, 2 * 8 });
         jit.storePair64(GPRInfo::regWA4, GPRInfo::regWA5, CCallHelpers::Address { CCallHelpers::stackPointerRegister, 4 * 8 });
@@ -459,7 +459,7 @@ std::shared_ptr<InternalFunction> createJSToWasmJITInterpreter()
         jit.storePairDouble(FPRInfo::argumentFPR2, FPRInfo::argumentFPR3, CCallHelpers::Address { CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters +  2) * 8 });
         jit.storePairDouble(FPRInfo::argumentFPR4, FPRInfo::argumentFPR5, CCallHelpers::Address { CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters +  4) * 8 });
         jit.storePairDouble(FPRInfo::argumentFPR6, FPRInfo::argumentFPR7, CCallHelpers::Address { CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters +  6) * 8 });
-#elif CPU(X86_64) || CPU(X86_64_WIN) || CPU(RISCV64)
+#elif CPU(X86_64) || CPU(RISCV64)
         jit.storeDouble(FPRInfo::argumentFPR0, CCallHelpers::Address { CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters +  0) * 8 });
         jit.storeDouble(FPRInfo::argumentFPR1, CCallHelpers::Address { CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters +  1) * 8 });
         jit.storeDouble(FPRInfo::argumentFPR2, CCallHelpers::Address { CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters +  2) * 8 });
