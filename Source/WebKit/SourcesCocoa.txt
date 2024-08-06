@@ -541,7 +541,6 @@ UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm
 UIProcess/mac/CorrectionPanel.mm
 UIProcess/mac/DisplayCaptureSessionManager.mm
 UIProcess/mac/DisplayLinkMac.cpp
-UIProcess/mac/HighPerformanceGPUManager.mm
 UIProcess/mac/LegacySessionStateCoding.cpp
 UIProcess/mac/PageClientImplMac.mm
 UIProcess/mac/SecItemShimProxy.cpp
@@ -732,7 +731,6 @@ WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm
 WebProcess/WebCoreSupport/mac/WebDragClientMac.mm
 WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm
 WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm
-WebProcess/WebCoreSupport/mac/WebSwitchingGPUClient.cpp
 WebProcess/WebCoreSupport/mac/WebPopupMenuMac.mm
 
 WebProcess/WebPage/ViewGestureGeometryCollector.cpp

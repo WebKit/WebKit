@@ -59,9 +59,6 @@ struct GraphicsContextGLAttributes {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     PlatformGPUID windowGPUID { 0 };
 #endif
-#if PLATFORM(COCOA)
-    bool useMetal { true };
-#endif
 #if ENABLE(WEBXR)
     bool xrCompatible { false };
 #endif

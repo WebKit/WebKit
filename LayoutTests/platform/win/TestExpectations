@@ -2158,8 +2158,6 @@ fast/gradients/alpha-premultiplied.html [ ImageOnlyFailure ]
 fast/js-promise/js-promise-invalid-context-access.html [ Failure ]
 
 # Not applicable.
-webgl/webgl-via-metal-flag-on.html [ Skip ]
-webgl/webgl-via-metal-flag-off.html [ Skip ]
 webgl/webgl-backend-type.html [ Skip ]
 
 fast/text/text-overflow-over-64k.html [ ImageOnlyFailure ]

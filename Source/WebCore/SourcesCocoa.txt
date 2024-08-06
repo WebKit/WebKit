@@ -485,7 +485,6 @@ platform/graphics/ios/controls/ControlFactoryIOS.mm
 platform/graphics/mac/AppKitControlSystemImage.mm
 platform/graphics/mac/ColorMac.mm
 platform/graphics/mac/ComplexTextControllerCoreText.mm
-platform/graphics/mac/DisplayConfigurationMonitor.cpp
 platform/graphics/mac/FloatPointMac.mm
 platform/graphics/mac/FloatSizeMac.mm
 platform/graphics/mac/GraphicsChecksMac.cpp
@@ -497,7 +496,6 @@ platform/graphics/mac/LegacyDisplayRefreshMonitorMac.cpp
 platform/graphics/mac/PDFDocumentImageMac.mm
 platform/graphics/mac/ScrollbarTrackCornerSystemImageMac.mm
 platform/graphics/mac/SimpleFontDataCoreText.cpp
-platform/graphics/mac/SwitchingGPUClient.cpp
 platform/graphics/mac/WebKitNSImageExtras.mm
 platform/graphics/mac/WebLayer.mm
 platform/graphics/mac/controls/ButtonMac.mm

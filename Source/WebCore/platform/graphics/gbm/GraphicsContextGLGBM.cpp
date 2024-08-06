@@ -93,10 +93,6 @@ RefPtr<PixelBuffer> GraphicsContextGLGBM::readCompositedResults()
     return readRenderingResults();
 }
 
-void GraphicsContextGLGBM::setContextVisibility(bool)
-{
-}
-
 void GraphicsContextGLGBM::prepareForDisplay()
 {
     if (!makeContextCurrent())

@@ -2094,8 +2094,6 @@ webkit.org/b/251195 webgl/1.0.x/conformance/extensions/ext-color-buffer-half-flo
 # No colorspaces in non-Cocoa WebGL.
 
 # Not applicable.
-webgl/webgl-via-metal-flag-on.html [ Skip ]
-webgl/webgl-via-metal-flag-off.html [ Skip ]
 webgl/webgl-backend-type.html [ Skip ]
 ipc/restrictedendpoints/allow-access-webGPU.html  [ Skip ]
 

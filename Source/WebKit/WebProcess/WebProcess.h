@@ -596,7 +596,6 @@ private:
 
 #if PLATFORM(MAC)
     void scrollerStylePreferenceChanged(bool useOverlayScrollbars);
-    void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)

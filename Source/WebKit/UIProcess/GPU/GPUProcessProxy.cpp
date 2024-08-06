@@ -757,11 +757,6 @@ void GPUProcessProxy::didCreateContextForVisibilityPropagation(WebPageProxyIdent
 #endif
 
 #if PLATFORM(MAC)
-void GPUProcessProxy::displayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
-{
-    send(Messages::GPUProcess::DisplayConfigurationChanged { displayID, flags }, 0);
-}
-
 void GPUProcessProxy::setScreenProperties(const WebCore::ScreenProperties& properties)
 {
     send(Messages::GPUProcess::SetScreenProperties { properties }, 0);

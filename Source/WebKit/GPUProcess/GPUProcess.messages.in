@@ -54,7 +54,6 @@ messages -> GPUProcess LegacyReceiver {
     SetUseSCContentSharingPicker(bool use)
 #endif
 #if PLATFORM(MAC)
-    DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
     SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
 #endif
 

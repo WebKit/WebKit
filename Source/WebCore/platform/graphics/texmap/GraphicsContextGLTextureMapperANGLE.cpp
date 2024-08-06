@@ -126,7 +126,7 @@ RefPtr<PixelBuffer> GraphicsContextGLTextureMapperANGLE::readCompositedResults()
     return readRenderingResults();
 }
 
-RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes, SerialFunctionDispatcher*)
+RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes)
 {
 #if USE(ANGLE_GBM)
     auto& eglExtensions = PlatformDisplay::sharedDisplay().eglExtensions();
@@ -335,10 +335,6 @@ void GraphicsContextGLTextureMapperANGLE::swapCompositorTexture()
 
     if (m_state.boundDrawFBO != m_fbo)
         GL_BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_state.boundDrawFBO);
-}
-
-void GraphicsContextGLTextureMapperANGLE::setContextVisibility(bool)
-{
 }
 
 bool GraphicsContextGLTextureMapperANGLE::reshapeDrawingBuffer()

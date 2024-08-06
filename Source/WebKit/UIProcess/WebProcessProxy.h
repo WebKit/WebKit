@@ -349,11 +349,6 @@ public:
     void cacheMediaMIMETypes(const Vector<String>&);
 #endif
 
-#if PLATFORM(MAC)
-    void requestHighPerformanceGPU();
-    void releaseHighPerformanceGPU();
-#endif
-
 #if HAVE(DISPLAY_LINK)
     DisplayLink::Client& displayLinkClient() { return m_displayLinkClient; }
     std::optional<unsigned> nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID);

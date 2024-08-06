@@ -940,7 +940,6 @@
 		2ECF66CE21D6B77E009E5C3F /* WKEditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 2ECF66CC21D6B77E009E5C3F /* WKEditCommand.h */; };
 		310999C7146C9E3D0029DEB9 /* WebNotificationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31099968146C71F50029DEB9 /* WebNotificationClient.h */; };
 		312C0C4A146DDC8A0016C911 /* WKNotificationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 312C0C49146DDC8A0016C911 /* WKNotificationProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		312CC9F2215B06F100DE40CA /* HighPerformanceGPUManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 31ABA79C215AF9E000C90E31 /* HighPerformanceGPUManager.h */; };
 		3131261F148FF82C00BA2A39 /* NotificationPermissionRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3131261A148FF82B00BA2A39 /* NotificationPermissionRequestManager.h */; };
 		31312621148FF82C00BA2A39 /* WebNotificationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3131261C148FF82B00BA2A39 /* WebNotificationManager.h */; };
 		3157135F2040A9B20084F9CF /* SystemPreviewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3157135D2040A9B20084F9CF /* SystemPreviewController.h */; };
@@ -2282,7 +2281,6 @@
 		C0CE72A11A47E71D00BC0EC4 /* WebPageTestingMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = C0CE729F1347E71D00BC0EC4 /* WebPageTestingMessages.h */; };
 		C0CE72AD1247E78D00BC0EC4 /* HandleMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = C0CE72AC1247E78D00BC0EC4 /* HandleMessage.h */; };
 		C0E3AA7C1209E83C00A49D01 /* Module.h in Headers */ = {isa = PBXBuildFile; fileRef = C0E3AA441209E2BA00A49D01 /* Module.h */; };
-		C11A9ECC214035F800CFB20A /* WebSwitchingGPUClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C11A9ECB214035F800CFB20A /* WebSwitchingGPUClient.h */; };
 		C149380922347104000CD707 /* WebSpeechSynthesisClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C149380222341C60000CD707 /* WebSpeechSynthesisClient.h */; };
 		C14D306924B79BE000480387 /* XPCEndpoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = C14D306524B794E700480387 /* XPCEndpoint.mm */; };
 		C14D306A24B79BE400480387 /* XPCEndpointClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = C14D306624B794E700480387 /* XPCEndpointClient.mm */; };
@@ -4987,8 +4985,6 @@
 		31A2EC75148D65BB00810D71 /* WKNotificationPermissionRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKNotificationPermissionRequest.cpp; sourceTree = "<group>"; };
 		31A505F71680025500A930EB /* WebContextClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextClient.cpp; sourceTree = "<group>"; };
 		31A505F81680025500A930EB /* WebContextClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextClient.h; sourceTree = "<group>"; };
-		31ABA79C215AF9E000C90E31 /* HighPerformanceGPUManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HighPerformanceGPUManager.h; sourceTree = "<group>"; };
-		31ABA79D215AF9E000C90E31 /* HighPerformanceGPUManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HighPerformanceGPUManager.mm; sourceTree = "<group>"; };
 		31B362922141EBAC007BFA53 /* _WKInternalDebugFeature.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKInternalDebugFeature.mm; sourceTree = "<group>"; };
 		31B362942141EBAD007BFA53 /* _WKInternalDebugFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInternalDebugFeature.h; sourceTree = "<group>"; };
 		31BA9248148830810062EDB5 /* WebNotificationManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNotificationManagerMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -7700,8 +7696,6 @@
 		C0E3AA441209E2BA00A49D01 /* Module.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Module.h; sourceTree = "<group>"; };
 		C0E3AA451209E2BA00A49D01 /* Module.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Module.cpp; sourceTree = "<group>"; };
 		C0E3AA481209E45000A49D01 /* ModuleCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleCF.cpp; sourceTree = "<group>"; };
-		C11A9ECB214035F800CFB20A /* WebSwitchingGPUClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSwitchingGPUClient.h; sourceTree = "<group>"; };
-		C11A9ED021403B4000CFB20A /* WebSwitchingGPUClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSwitchingGPUClient.cpp; sourceTree = "<group>"; };
 		C145CC0E23DCA427003A5EEB /* PreferenceObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PreferenceObserver.h; sourceTree = "<group>"; };
 		C149380222341C60000CD707 /* WebSpeechSynthesisClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSpeechSynthesisClient.h; sourceTree = "<group>"; };
 		C149380322341DF7000CD707 /* WebSpeechSynthesisClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSpeechSynthesisClient.cpp; sourceTree = "<group>"; };
@@ -14501,8 +14495,6 @@
 				9391F283121B38F500EBF7E8 /* WebFrameNetworkingContext.h */,
 				9391F284121B38F500EBF7E8 /* WebFrameNetworkingContext.mm */,
 				BCC43AC6127B99DE00317F16 /* WebPopupMenuMac.mm */,
-				C11A9ED021403B4000CFB20A /* WebSwitchingGPUClient.cpp */,
-				C11A9ECB214035F800CFB20A /* WebSwitchingGPUClient.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -14923,8 +14915,6 @@
 				07EF07592745A8160066EA04 /* DisplayCaptureSessionManager.h */,
 				07EF07582745A8160066EA04 /* DisplayCaptureSessionManager.mm */,
 				7AFA6F682A9F57C50055322A /* DisplayLinkMac.cpp */,
-				31ABA79C215AF9E000C90E31 /* HighPerformanceGPUManager.h */,
-				31ABA79D215AF9E000C90E31 /* HighPerformanceGPUManager.mm */,
 				1AFDE65B1954E8D500C48FFA /* LegacySessionStateCoding.cpp */,
 				0FCB4E5818BBE3D9000FCFC9 /* PageClientImplMac.h */,
 				0FCB4E5918BBE3D9000FCFC9 /* PageClientImplMac.mm */,
@@ -16432,7 +16422,6 @@
 				57AC8F50217FEED90055438C /* HidConnection.h in Headers */,
 				2DD5A72B1EBF09A7009BA597 /* HiddenPageThrottlingAutoIncreasesCounter.h in Headers */,
 				5772F206217DBD6A0056BF2C /* HidService.h in Headers */,
-				312CC9F2215B06F100DE40CA /* HighPerformanceGPUManager.h in Headers */,
 				51C0C9741DDD76000032CAD3 /* IconLoadingDelegate.h in Headers */,
 				93B631E527ABA62800443A44 /* IDBStorageConnectionToClient.h in Headers */,
 				93B631E827ABA65D00443A44 /* IDBStorageManager.h in Headers */,
@@ -17216,7 +17205,6 @@
 				517A53101F47A86200DCDC0A /* WebSWClientConnectionMessages.h in Headers */,
 				466BC03C1FA266DA002FA9C1 /* WebSWContextManagerConnection.h in Headers */,
 				460F48901F996F7100CF4B87 /* WebSWContextManagerConnectionMessages.h in Headers */,
-				C11A9ECC214035F800CFB20A /* WebSwitchingGPUClient.h in Headers */,
 				9356F2DE2152B71000E6D5DF /* WebSWOriginStore.h in Headers */,
 				83F1A07A1F96E7790045B94E /* WebSWOriginTable.h in Headers */,
 				3A12CDBB29D4D30200D57EAE /* WebSWRegistrationStore.h in Headers */,

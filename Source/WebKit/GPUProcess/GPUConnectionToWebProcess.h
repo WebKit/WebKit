@@ -203,13 +203,6 @@ public:
     void setTCCIdentity();
 #endif
 
-#if PLATFORM(MAC)
-    void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
-#endif
-#if PLATFORM(MAC) && ENABLE(WEBGL)
-    void dispatchDisplayWasReconfiguredForTesting() { dispatchDisplayWasReconfigured(); };
-#endif
-
     const WebCore::ProcessIdentity& webProcessIdentity() const { return m_webProcessIdentity; }
 #if ENABLE(ENCRYPTED_MEDIA)
     RemoteCDMFactoryProxy& cdmFactoryProxy();

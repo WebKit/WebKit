@@ -72,7 +72,6 @@ public:
     // WebCore::GraphicsContextGL overrides.
     std::tuple<GCGLenum, GCGLenum> externalImageTextureBindingPoint() final;
     void reshape(int width, int height) final;
-    void setContextVisibility(bool) final;
     bool supportsExtension(const String&) final;
     void ensureExtensionEnabled(const String&) final;
     bool isExtensionEnabled(const String&) final;

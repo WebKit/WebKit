@@ -115,10 +115,6 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
-#if PLATFORM(MAC)
-#include "HighPerformanceGPUManager.h"
-#endif
-
 #if ENABLE(GPU_PROCESS)
 #include "APIPageConfiguration.h"
 #endif
@@ -383,10 +379,6 @@ WebProcessProxy::~WebProcessProxy()
 
     while (m_numberOfTimesSuddenTerminationWasDisabled-- > 0)
         WebCore::enableSuddenTermination();
-
-#if PLATFORM(MAC)
-    HighPerformanceGPUManager::singleton().removeProcessRequiringHighPerformance(*this);
-#endif
 
     platformDestroy();
 }

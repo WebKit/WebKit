@@ -438,9 +438,6 @@ static GraphicsContextGLAttributes resolveGraphicsContextGLAttributes(const WebG
     if (graphicsClient)
         glAttributes.windowGPUID = gpuIDForDisplay(graphicsClient->displayID());
 #endif
-#if PLATFORM(COCOA)
-    glAttributes.useMetal = scriptExecutionContext.settingsValues().webGLUsingMetal;
-#endif
 #if ENABLE(WEBXR)
     glAttributes.xrCompatible = attributes.xrCompatible;
 #endif
@@ -526,7 +523,6 @@ void WebGLRenderingContextBase::initializeNewContext(Ref<GraphicsContextGL> cont
     updateActiveOrdinal();
     if (!wasActive)
         addActiveContext(*this);
-    addActivityStateChangeObserverIfNecessary();
     initializeContextState();
     initializeDefaultObjects();
     // Next calls will receive the context lost callback.
@@ -628,34 +624,6 @@ void WebGLRenderingContextBase::addCompressedTextureFormat(GCGLenum format)
         m_compressedTextureFormats.append(format);
 }
 
-void WebGLRenderingContextBase::addActivityStateChangeObserverIfNecessary()
-{
-    // We are only interested in visibility changes for contexts
-    // that are using the high-performance GPU.
-    if (m_attributes.powerPreference != WebGLPowerPreference::HighPerformance)
-        return;
-
-    auto* canvas = htmlCanvas();
-    if (!canvas)
-        return;
-
-    RefPtr page = canvas->document().page();
-    if (!page)
-        return;
-
-    page->addActivityStateChangeObserver(*this);
-
-    // We won't get a state change right away, so
-    // make sure the context knows if it visible or not.
-    protectedGraphicsContextGL()->setContextVisibility(page->isVisible());
-}
-
-void WebGLRenderingContextBase::removeActivityStateChangeObserver()
-{
-    auto* canvas = htmlCanvas();
-    if (RefPtr page = canvas ? canvas->document().page() : nullptr)
-        page->removeActivityStateChangeObserver(*this);
-}
 
 WebGLRenderingContextBase::~WebGLRenderingContextBase()
 {
@@ -691,8 +659,6 @@ WebGLRenderingContextBase::~WebGLRenderingContextBase()
 
 void WebGLRenderingContextBase::destroyGraphicsContextGL()
 {
-    removeActivityStateChangeObserver();
-
     if (m_context) {
         m_context->setClient(nullptr);
         m_context = nullptr;
@@ -5526,16 +5492,6 @@ void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
 
     if (mode == LostContextMode::RealLostContext)
         loseExtension(WTFMove(m_webglLoseContext));
-}
-
-void WebGLRenderingContextBase::activityStateDidChange(OptionSet<ActivityState> oldActivityState, OptionSet<ActivityState> newActivityState)
-{
-    if (!m_context)
-        return;
-
-    auto changed = oldActivityState ^ newActivityState;
-    if (changed & ActivityState::IsVisible)
-        m_context->setContextVisibility(newActivityState.contains(ActivityState::IsVisible));
 }
 
 void WebGLRenderingContextBase::forceContextLost()

@@ -2942,9 +2942,6 @@ struct WebCore::GraphicsContextGLAttributes {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     uint64_t windowGPUID;
 #endif
-#if PLATFORM(COCOA)
-    bool useMetal;
-#endif
 #if ENABLE(WEBXR)
     bool xrCompatible;
 #endif

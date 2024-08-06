@@ -82,11 +82,10 @@ private:
     std::optional<ScopedSetAuxiliaryProcessTypeForTesting> m_scopedProcessType;
 };
 
-class AnyContextAttributeTest : public testing::TestWithParam<std::tuple<bool, bool, bool>> {
+class AnyContextAttributeTest : public testing::TestWithParam<std::tuple<bool, bool>> {
 protected:
-    bool useMetal() const { return std::get<0>(GetParam()); }
-    bool antialias() const { return std::get<1>(GetParam()); }
-    bool preserveDrawingBuffer() const { return std::get<2>(GetParam()); }
+    bool antialias() const { return std::get<0>(GetParam()); }
+    bool preserveDrawingBuffer() const { return std::get<1>(GetParam()); }
     WebCore::GraphicsContextGLAttributes attributes();
     RefPtr<TestedGraphicsContextGLCocoa> createTestContext(WebCore::IntSize contextSize);
 
@@ -106,7 +105,6 @@ private:
 WebCore::GraphicsContextGLAttributes AnyContextAttributeTest::attributes()
 {
     WebCore::GraphicsContextGLAttributes attributes;
-    attributes.useMetal = useMetal();
     attributes.antialias = antialias();
     attributes.depth = false;
     attributes.stencil = false;
@@ -196,7 +194,6 @@ TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsDifferentPowerPreferenceMetal)
     if (!hasMultipleGPUs())
         return;
     WebCore::GraphicsContextGLAttributes attributes;
-    attributes.useMetal = true;
     EXPECT_EQ(attributes.powerPreference, WebCore::GraphicsContextGLPowerPreference::Default);
     auto defaultContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes });
     ASSERT_NE(defaultContext, nullptr);
@@ -221,13 +218,11 @@ TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsExplicitLowPowerDeviceMetal)
     if (!hasMultipleGPUs())
         return;
     WebCore::GraphicsContextGLAttributes attributes1;
-    attributes1.useMetal = true;
     attributes1.powerPreference = WebCore::GraphicsContextGLPowerPreference::LowPower;
     auto lowPowerContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes1 });
     ASSERT_NE(lowPowerContext, nullptr);
 
     WebCore::GraphicsContextGLAttributes attributes2;
-    attributes2.useMetal = true;
     attributes2.windowGPUID = [lowPowerDevice() registryID];
     auto explicitDeviceContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes2 });
     ASSERT_NE(explicitDeviceContext.get(), nullptr);
@@ -251,13 +246,11 @@ TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsExplicitHighPerformanceDeviceMeta
     if (!hasMultipleGPUs())
         return;
     WebCore::GraphicsContextGLAttributes attributes1;
-    attributes1.useMetal = true;
     attributes1.powerPreference = WebCore::GraphicsContextGLPowerPreference::HighPerformance;
     auto highPerformanceContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes1 });
     ASSERT_NE(highPerformanceContext, nullptr);
 
     WebCore::GraphicsContextGLAttributes attributes2;
-    attributes2.useMetal = true;
     attributes2.windowGPUID = [highPerformanceDevice() registryID];
     auto explicitDeviceContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes2 });
     ASSERT_NE(explicitDeviceContext.get(), nullptr);
@@ -282,7 +275,6 @@ TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsDifferentGPUIDsMetal)
     auto devices = allDevices();
     for (id<MTLDevice> device in devices.get()) {
         WebCore::GraphicsContextGLAttributes attributes;
-        attributes.useMetal = true;
         attributes.windowGPUID = [device registryID];
         auto context = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes });
         EXPECT_NE(context.get(), nullptr);
@@ -304,7 +296,6 @@ TEST_F(GraphicsContextGLCocoaTest, ClearBufferIncorrectSizes)
 {
     using GL = WebCore::GraphicsContextGL;
     WebCore::GraphicsContextGLAttributes attributes;
-    attributes.useMetal = true;
     attributes.isWebGL2 = true;
     attributes.depth = true;
     attributes.stencil = true;
@@ -390,7 +381,6 @@ TEST_F(GraphicsContextGLCocoaTest, ClearBufferIncorrectSizes)
 TEST_F(GraphicsContextGLCocoaTest, TwoLinks)
 {
     WebCore::GraphicsContextGLAttributes attributes;
-    attributes.useMetal = true;
     auto gl = TestedGraphicsContextGLCocoa::create(WTFMove(attributes));
     auto vs = gl->createShader(WebCore::GraphicsContextGL::VERTEX_SHADER);
     gl->shaderSource(vs, "void main() { }"_s);
@@ -538,27 +528,15 @@ TEST_P(AnyContextAttributeTest, FinishIsSignaled)
     while (!signalled)
         sleep(.1_s);
     EXPECT_TRUE(signalled);
-    if (context->contextAttributes().useMetal)
-        EXPECT_NE(Thread::current().uid(), signalThreadUID);
-    else
-        EXPECT_EQ(Thread::current().uid(), signalThreadUID);
+    EXPECT_NE(Thread::current().uid(), signalThreadUID);
 }
-
-#if PLATFORM(IOS_FAMILY) || PLATFORM(IOS_FAMILY_SIMULATOR)
-#define USE_METAL_TESTING_VALUES testing::Values(true)
-#else
-#define USE_METAL_TESTING_VALUES testing::Values(true, false)
-#endif
 
 INSTANTIATE_TEST_SUITE_P(GraphicsContextGLCocoaTest,
     AnyContextAttributeTest,
     testing::Combine(
-        USE_METAL_TESTING_VALUES,
         testing::Values(true, false),
         testing::Values(true, false)),
     TestParametersToStringFormatter());
-
-#undef USE_METAL_TESTING_VALUES
 
 }
 

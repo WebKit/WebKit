@@ -27,7 +27,6 @@
 
 #if ENABLE(WEBGL)
 
-#include "ActivityStateChangeObserver.h"
 #include "EventLoop.h"
 #include "ExceptionOr.h"
 #include "GPUBasedCanvasRenderingContext.h"
@@ -168,7 +167,7 @@ using WebGLCanvas = std::variant<RefPtr<HTMLCanvasElement>>;
 class VideoFrame;
 #endif
 
-class WebGLRenderingContextBase : public GraphicsContextGL::Client, public GPUBasedCanvasRenderingContext, private ActivityStateChangeObserver {
+class WebGLRenderingContextBase : public GraphicsContextGL::Client, public GPUBasedCanvasRenderingContext {
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContextBase);
 public:
     using GPUBasedCanvasRenderingContext::weakPtrFactory;
@@ -1036,8 +1035,6 @@ private:
     // Helper for restoration after context lost.
     void maybeRestoreContextSoon(Seconds timeout = 0_s);
     void maybeRestoreContext();
-
-    void activityStateDidChange(OptionSet<ActivityState> oldActivityState, OptionSet<ActivityState> newActivityState) override;
 
     ExceptionOr<void> texImageSource(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, ImageBitmap& source);
     ExceptionOr<void> texImageSource(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, ImageData& source);

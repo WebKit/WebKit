@@ -748,7 +748,6 @@ WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm
 WebProcess/WebCoreSupport/mac/WebDragClientMac.mm
 WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm
 WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm
-WebProcess/WebCoreSupport/mac/WebSwitchingGPUClient.cpp
 WebProcess/WebPage/Cocoa/WebPageCocoa.mm
 WebProcess/WebPage/DrawingArea.cpp
 WebProcess/WebPage/EventDispatcher.cpp

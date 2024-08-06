@@ -183,7 +183,6 @@ private:
     void cancelGetDisplayMediaPrompt();
 #endif
 #if PLATFORM(MAC)
-    void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
     void setScreenProperties(const WebCore::ScreenProperties&);
     void updateProcessName();
 #endif

@@ -7790,24 +7790,6 @@ WebGLTimerQueriesEnabled:
     WebCore:
       default: false
 
-WebGLUsingMetal:
-  type: bool
-  status: internal
-  category: dom
-  humanReadableName: "WebGL via Metal"
-  humanReadableDescription: "Use the Metal backend for ANGLE"
-  condition: ENABLE(WEBGL) && PLATFORM(COCOA)
-  defaultValue:
-    WebKitLegacy:
-      "HAVE(WEBGL_COMPATIBLE_METAL)": true
-      default: false
-    WebKit:
-      "HAVE(WEBGL_COMPATIBLE_METAL)": true
-      default: false
-    WebCore:
-      "HAVE(WEBGL_COMPATIBLE_METAL)": true
-      default: false
-
 WebGPUEnabled:
   type: bool
   status: Webgpu_feature_status

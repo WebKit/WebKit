@@ -60,11 +60,6 @@ messages -> WebProcessProxy LegacyReceiver {
     CacheMediaMIMETypes(Vector<String> types)
 #endif
 
-#if PLATFORM(MAC)
-    [EnabledBy=WebGLEnabled] RequestHighPerformanceGPU()
-    [EnabledBy=WebGLEnabled] ReleaseHighPerformanceGPU()
-#endif
-
 #if HAVE(DISPLAY_LINK)
     StartDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID, unsigned preferredFramesPerSecond)
     StopDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID)

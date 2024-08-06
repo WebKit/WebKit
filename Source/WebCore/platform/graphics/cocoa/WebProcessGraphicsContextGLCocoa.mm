@@ -37,10 +37,6 @@
 #import <wtf/Lock.h>
 #import <wtf/Noncopyable.h>
 
-#if PLATFORM(MAC)
-#import "DisplayConfigurationMonitor.h"
-#endif
-
 namespace WebCore {
 
 constexpr Seconds frameFinishedTimeout = 5_s;
@@ -134,9 +130,6 @@ private:
 
 // GraphicsContextGL type that is used when WebGL is run in-process in WebContent process.
 class WebProcessGraphicsContextGLCocoa final : public GraphicsContextGLCocoa
-#if PLATFORM(MAC)
-    , private DisplayConfigurationMonitor::Client
-#endif
 {
 public:
     ~WebProcessGraphicsContextGLCocoa();
@@ -145,34 +138,20 @@ public:
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.ptr(); }
     void prepareForDisplay() final;
 private:
-#if PLATFORM(MAC)
-    // DisplayConfigurationMonitor::Client overrides.
-    void displayWasReconfigured() final;
-#endif
-    WebProcessGraphicsContextGLCocoa(GraphicsContextGLAttributes&&, SerialFunctionDispatcher*);
+    WebProcessGraphicsContextGLCocoa(GraphicsContextGLAttributes&&);
     Ref<DisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
 
-    friend RefPtr<GraphicsContextGL> WebCore::createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes&, SerialFunctionDispatcher*);
+    friend RefPtr<GraphicsContextGL> WebCore::createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes&);
     friend class GraphicsContextGLOpenGL;
 };
 
-WebProcessGraphicsContextGLCocoa::WebProcessGraphicsContextGLCocoa(GraphicsContextGLAttributes&& attributes, SerialFunctionDispatcher* dispatcher)
+WebProcessGraphicsContextGLCocoa::WebProcessGraphicsContextGLCocoa(GraphicsContextGLAttributes&& attributes)
     : GraphicsContextGLCocoa(WTFMove(attributes), { })
     , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create(!attributes.alpha))
 {
-#if PLATFORM(MAC)
-    DisplayConfigurationMonitor::singleton().addClient(*this, dispatcher);
-#else
-    UNUSED_PARAM(dispatcher);
-#endif
 }
 
-WebProcessGraphicsContextGLCocoa::~WebProcessGraphicsContextGLCocoa()
-{
-#if PLATFORM(MAC)
-    DisplayConfigurationMonitor::singleton().removeClient(*this);
-#endif
-}
+WebProcessGraphicsContextGLCocoa::~WebProcessGraphicsContextGLCocoa() = default;
 
 void WebProcessGraphicsContextGLCocoa::prepareForDisplay()
 {
@@ -187,18 +166,11 @@ void WebProcessGraphicsContextGLCocoa::prepareForDisplay()
     m_layerContentsDisplayDelegate->setDisplayBuffer(displayBufferSurface(), WTFMove(finishedFence));
 }
 
-#if PLATFORM(MAC)
-void WebProcessGraphicsContextGLCocoa::displayWasReconfigured()
-{
-    updateContextOnDisplayReconfiguration();
-}
-#endif
-
 }
 
-RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes, SerialFunctionDispatcher* dispatcher)
+RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes)
 {
-    auto context = adoptRef(new WebProcessGraphicsContextGLCocoa(GraphicsContextGLAttributes { attributes }, dispatcher));
+    auto context = adoptRef(new WebProcessGraphicsContextGLCocoa(GraphicsContextGLAttributes { attributes }));
     if (!context->initialize())
         return nullptr;
     return context;

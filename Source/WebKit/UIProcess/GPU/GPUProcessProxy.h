@@ -107,7 +107,6 @@ public:
     void removeSession(PAL::SessionID);
 
 #if PLATFORM(MAC)
-    void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
     void setScreenProperties(const WebCore::ScreenProperties&);
 #endif
 

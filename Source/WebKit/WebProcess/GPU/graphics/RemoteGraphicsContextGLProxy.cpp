@@ -123,11 +123,6 @@ void RemoteGraphicsContextGLProxy::initializeIPC(Ref<IPC::StreamClientConnection
 
 }
 
-void RemoteGraphicsContextGLProxy::setContextVisibility(bool)
-{
-    notImplemented();
-}
-
 bool RemoteGraphicsContextGLProxy::supportsExtension(const String& name)
 {
     waitUntilInitialized();
