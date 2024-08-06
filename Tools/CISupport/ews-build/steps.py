@@ -541,10 +541,19 @@ class ShellMixin(object):
     def has_windows_shell(self):
         return self.getProperty('platform', '*') in self.WINDOWS_SHELL_PLATFORMS
 
-    def shell_command(self, command):
+    def shell_command(self, command, pipefail=True):
         if self.has_windows_shell():
-            return ['sh', '-c', command]
-        return ['/bin/sh', '-c', command]
+            shell = 'sh'
+        else:
+            shell = '/bin/sh'
+
+        if pipefail:
+            # -o pipefail is new in POSIX 2024, but commonly `sh` is provided by `bash`
+            # or `zsh` which have long supported the `pipefail` option, even when
+            # invoked as `sh` (and in POSIX-compliant mode).
+            return [shell, '-o', 'pipefail', '-c', command]
+        else:
+            return [shell, '-c', command]
 
     def shell_exit_0(self):
         if self.has_windows_shell():
