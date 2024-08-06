@@ -929,6 +929,20 @@ CSSAnchorPositioningEnabled:
     WebCore:
       default: false
 
+CSSBackgroundClipBorderAreaEnabled:
+  type: bool
+  status: unstable
+  category: css
+  humanReadableName: "CSS background-clip: border-area"
+  humanReadableDescription: "Enable the border-area value for background-clip"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSColorContrastEnabled:
   type: bool
   status: testable
