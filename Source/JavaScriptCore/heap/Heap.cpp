@@ -696,11 +696,12 @@ bool Heap::unprotect(JSValue k)
     return m_protectedValues.remove(k.asCell());
 }
 
-void Heap::addReference(JSCell* cell, ArrayBuffer* buffer)
+void Heap::addReference(JSCell* cell, ArrayBuffer* buffer, bool reportDidAllocate)
 {
     if (m_arrayBuffers.addReference(cell, buffer)) {
         collectIfNecessaryOrDefer();
-        didAllocate(buffer->gcSizeEstimateInBytes());
+        if (reportDidAllocate)
+            didAllocate(buffer->gcSizeEstimateInBytes());
     }
 }
 

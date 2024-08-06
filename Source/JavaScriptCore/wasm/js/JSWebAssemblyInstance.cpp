@@ -201,6 +201,9 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObjec
         UNUSED_PARAM(startResult);
         RETURN_IF_EXCEPTION(scope, void());
     }
+
+    // We tell the memory here that it's been attached since if we told it at the actual time it got attached it would trigger a GC before wasm compilation happens.
+    memory()->didAttachToInstance(vm);
 }
 
 Identifier JSWebAssemblyInstance::createPrivateModuleKey()

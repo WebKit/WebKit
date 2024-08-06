@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,7 +100,7 @@ JSArrayBuffer* JSWebAssemblyMemory::buffer(JSGlobalObject* globalObject)
             m_buffer->makeShared();
     }
 
-    auto* arrayBuffer = JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(m_buffer->sharingMode()), m_buffer.get());
+    auto* arrayBuffer = JSArrayBuffer::createForWasmMemory(vm, globalObject->arrayBufferStructure(m_buffer->sharingMode()), m_buffer.get());
     if (m_memory->sharingMode() == MemorySharingMode::Shared) {
         objectConstructorFreeze(globalObject, arrayBuffer);
         RETURN_IF_EXCEPTION(throwScope, { });
@@ -173,14 +173,22 @@ void JSWebAssemblyMemory::growSuccessCallback(VM& vm, PageCount oldPageCount, Pa
     
     memory().checkLifetime();
     
-    vm.heap.reportExtraMemoryAllocated(this, newPageCount.bytes() - oldPageCount.bytes());
+    if (m_hasBeenAttachedToInstance)
+        vm.heap.reportExtraMemoryAllocated(this, newPageCount.bytes() - oldPageCount.bytes());
 }
 
 void JSWebAssemblyMemory::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    vm.heap.reportExtraMemoryAllocated(this, memory().size());
+    // We don't report reportExtraMemoryAllocated here but rather when didAttachToInstance is called.
+}
+
+void JSWebAssemblyMemory::didAttachToInstance(VM& vm)
+{
+    if (!m_hasBeenAttachedToInstance)
+        vm.heap.reportExtraMemoryAllocated(this, memory().size());
+    m_hasBeenAttachedToInstance = true;
 }
 
 void JSWebAssemblyMemory::destroy(JSCell* cell)

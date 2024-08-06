@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@ public:
 
     // This function will register the new wrapper with the vm's TypedArrayController.
     JS_EXPORT_PRIVATE static JSArrayBuffer* create(VM&, Structure*, RefPtr<ArrayBuffer>&&);
+    static JSArrayBuffer* createForWasmMemory(VM&, Structure*, RefPtr<ArrayBuffer>&&);
 
     ArrayBuffer* impl() const { return m_impl; }
     
@@ -60,7 +61,7 @@ public:
     
 private:
     JSArrayBuffer(VM&, Structure*, RefPtr<ArrayBuffer>&&);
-    void finishCreation(VM&, JSGlobalObject*);
+    void finishCreation(VM&, JSGlobalObject*, bool shouldReportAllocation = true);
 
     static size_t estimatedSize(JSCell*, VM&);
 

@@ -70,6 +70,8 @@ public:
 
     static constexpr ptrdiff_t offsetOfMemory() { return OBJECT_OFFSETOF(JSWebAssemblyMemory, m_memory); }
 
+    void didAttachToInstance(VM&);
+
 private:
     JSWebAssemblyMemory(VM&, Structure*);
     void finishCreation(VM&);
@@ -78,6 +80,7 @@ private:
     Ref<Wasm::Memory> m_memory;
     WriteBarrier<JSArrayBuffer> m_bufferWrapper;
     RefPtr<ArrayBuffer> m_buffer;
+    bool m_hasBeenAttachedToInstance { false };
 };
 
 } // namespace JSC

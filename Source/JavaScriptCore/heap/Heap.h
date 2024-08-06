@@ -452,7 +452,7 @@ public:
     
     const JITStubRoutineSet& jitStubRoutines() { return *m_jitStubRoutines; }
     
-    void addReference(JSCell*, ArrayBuffer*);
+    void addReference(JSCell*, ArrayBuffer*, bool reportDidAllocate = true);
     
     bool isDeferred() const { return !!m_deferralDepth; }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,11 +39,11 @@ JSArrayBuffer::JSArrayBuffer(VM& vm, Structure* structure, RefPtr<ArrayBuffer>&&
 {
 }
 
-void JSArrayBuffer::finishCreation(VM& vm, JSGlobalObject* globalObject)
+void JSArrayBuffer::finishCreation(VM& vm, JSGlobalObject* globalObject, bool shouldReportAllocation)
 {
     Base::finishCreation(vm);
     // This probably causes GCs in the various VMs to overcount the impact of the array buffer.
-    vm.heap.addReference(this, impl());
+    vm.heap.addReference(this, impl(), shouldReportAllocation);
     vm.m_typedArrayController->registerWrapper(globalObject, impl(), this);
 }
 
@@ -54,6 +54,18 @@ JSArrayBuffer* JSArrayBuffer::create(
         new (NotNull, allocateCell<JSArrayBuffer>(vm))
         JSArrayBuffer(vm, structure, WTFMove(buffer));
     result->finishCreation(vm, structure->globalObject());
+    return result;
+}
+
+// FIXME: This is a hack and we should have a more robust mechanism to keep track of these huge allocations.
+JSArrayBuffer* JSArrayBuffer::createForWasmMemory(
+    VM& vm, Structure* structure, RefPtr<ArrayBuffer>&& buffer)
+{
+    JSArrayBuffer* result =
+        new (NotNull, allocateCell<JSArrayBuffer>(vm))
+        JSArrayBuffer(vm, structure, WTFMove(buffer));
+    constexpr bool shouldReportAllocation = false;
+    result->finishCreation(vm, structure->globalObject(), shouldReportAllocation);
     return result;
 }
 
