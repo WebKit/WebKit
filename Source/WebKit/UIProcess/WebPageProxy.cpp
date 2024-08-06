@@ -6319,12 +6319,36 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
     m_failingProvisionalLoadURL = provisionalURL;
 
     if (willInternallyHandleFailure == WillInternallyHandleFailure::No) {
-        if (m_loaderClient)
-            m_loaderClient->didFailProvisionalLoadWithErrorForFrame(*this, frame, navigation.get(), error, process->transformHandlesToObjects(userData.protectedObject().get()).get());
-        else {
-            m_navigationClient->didFailProvisionalNavigationWithError(*this, FrameInfoData { frameInfo }, navigation.get(), request.url(), error, process->transformHandlesToObjects(userData.protectedObject().get()).get());
-            m_navigationClient->didFailProvisionalLoadWithErrorForFrame(*this, WTFMove(request), error, WTFMove(frameInfo));
-        }
+        auto callClientFunctions = [this, protectedThis = Ref { *this }, frame = Ref { frame }, navigation, error, process, request = WTFMove(request), frameInfo = WTFMove(frameInfo), protectedObject = userData.protectedObject()]() mutable {
+            if (m_loaderClient)
+                m_loaderClient->didFailProvisionalLoadWithErrorForFrame(*this, frame, navigation.get(), error, process->transformHandlesToObjects(protectedObject.get()).get());
+            else {
+                m_navigationClient->didFailProvisionalNavigationWithError(*this, FrameInfoData { frameInfo }, navigation.get(), request.url(), error, process->transformHandlesToObjects(protectedObject.get()).get());
+                m_navigationClient->didFailProvisionalLoadWithErrorForFrame(*this, WTFMove(request), error, WTFMove(frameInfo));
+            }
+        };
+#if HAVE(SAFE_BROWSING)
+        URL failedURL { provisionalURL };
+        bool canFallbackToHTTP = frame.isMainFrame() && error.errorRecoveryMethod() == ResourceError::ErrorRecoveryMethod::HTTPFallback && failedURL.protocolIs("https"_s);
+        if (auto* websitePolicies = navigation ? navigation->websitePolicies() : nullptr; websitePolicies
+            && websitePolicies->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnly)
+            && !websitePolicies->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain)
+            && canFallbackToHTTP) {
+            protectedPageClient->clearBrowsingWarning();
+
+            Ref httpFallbackBrowsingWarning = BrowsingWarning::create(failedURL, frame.isMainFrame(), BrowsingWarning::HTTPSNavigationFailureData { });
+            internals().pageLoadState.setTitleFromBrowsingWarning(transaction, httpFallbackBrowsingWarning->title());
+            protectedPageClient = Ref { pageClient() };
+            protectedPageClient->showBrowsingWarning(httpFallbackBrowsingWarning, [this, protectedThis = Ref { *this }, protectedPageClient, failedURL, callClientFunctions] (auto&&) mutable {
+                auto transaction = internals().pageLoadState.transaction();
+                internals().pageLoadState.setTitleFromBrowsingWarning(transaction, { });
+                callClientFunctions();
+            });
+            // FIXME: We need a new delegate that uses a more generic name.
+            m_uiClient->didShowSafeBrowsingWarning();
+        } else
+#endif
+            callClientFunctions();
     }
 
     m_failingProvisionalLoadURL = { };
