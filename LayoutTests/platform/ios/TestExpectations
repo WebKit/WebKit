@@ -2851,7 +2851,7 @@ http/tests/storageAccess/has-storage-access-false-by-default-ephemeral.html [ Pa
 http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies.html [ Pass Timeout ]
 
 # Enable again when fixing https://bugs.webkit.org/show_bug.cgi?id=208400.
-http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.html [ Skip ]
+http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.https.html [ Skip ]
 
 # Skipped in general expectations since they only work on iOS and Mac, WK2.
 http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode.html [ Pass ]

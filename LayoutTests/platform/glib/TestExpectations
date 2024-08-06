@@ -126,7 +126,7 @@ http/tests/preload/onload_event.html [ Pass Failure ]
 
 http/tests/storageAccess/ [ Pass ]
 http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture.html [ Skip ]
-webkit.org/b/208400 http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.html [ Failure ]
+webkit.org/b/208400 http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.https.html [ Failure ]
 
 # Failures from upgrading mixed-content
 imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/video-tag.https.html [ Failure ]
