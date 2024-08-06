@@ -44,6 +44,7 @@
 #include <WebCore/Notification.h>
 #include <WebCore/NotificationData.h>
 #include <WebCore/Page.h>
+#include <WebCore/PushPermissionState.h>
 #include <WebCore/SWContextManager.h>
 #include <WebCore/ScriptExecutionContext.h>
 #include <WebCore/SecurityOrigin.h>
@@ -144,6 +145,28 @@ void WebNotificationManager::didRemoveNotificationDecisions(const Vector<String>
 
 NotificationClient::Permission WebNotificationManager::policyForOrigin(const String& originString, WebPage* page) const
 {
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+    if (DeprecatedGlobalSettings::builtInNotificationsEnabled()) {
+        Ref connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+        auto origin = SecurityOriginData::fromURL(URL { originString });
+        auto result = connection->sendSync(Messages::NotificationManagerMessageHandler::GetPermissionStateSync(WTFMove(origin)), WebProcess::singleton().sessionID().toUInt64());
+        if (!result.succeeded())
+            RELEASE_LOG_ERROR(Notifications, "Could not look up notification permission for origin %" SENSITIVE_LOG_STRING": %u", originString.utf8().data(), static_cast<unsigned>(result.error()));
+
+        auto [pushPermission] = result.takeReplyOr(PushPermissionState::Denied);
+        switch (pushPermission) {
+        case PushPermissionState::Denied:
+            return NotificationPermission::Denied;
+        case PushPermissionState::Granted:
+            return NotificationPermission::Granted;
+        case PushPermissionState::Prompt:
+            return NotificationPermission::Default;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+#endif
+
 #if ENABLE(NOTIFICATIONS)
     if (originString.isEmpty())
         return NotificationClient::Permission::Default;

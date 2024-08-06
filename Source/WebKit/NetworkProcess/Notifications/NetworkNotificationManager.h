@@ -80,6 +80,8 @@ private:
     void pageWasNotifiedOfNotificationPermission() final { }
     void requestPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&&) final;
     void setAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t> badge) final;
+    void getPermissionState(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&) final;
+    void getPermissionStateSync(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&) final;
 
     NetworkSession& m_networkSession;
     std::unique_ptr<WebPushD::Connection> m_connection;

@@ -318,16 +318,6 @@ String PushClientConnection::associatedWebClipTitle() const
 }
 #endif // PLATFORM(IOS)
 
-void PushClientConnection::enableMockUserNotificationCenterForTesting(CompletionHandler<void()>&& completionHandler)
-{
-#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
-    WebPushDaemon::singleton().enableMockUserNotificationCenterForTesting(*this);
-    completionHandler();
-#else
-    completionHandler();
-#endif
-}
-
 } // namespace WebPushD
 
 #endif // ENABLE(WEB_PUSH_NOTIFICATIONS)

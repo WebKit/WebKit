@@ -87,6 +87,11 @@ WebPushDaemon::WebPushDaemon()
 void WebPushDaemon::startMockPushService()
 {
     m_usingMockPushService = true;
+
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+    m_userNotificationCenterClass = [_WKMockUserNotificationCenter class];
+#endif
+
     auto messageHandler = [this](const PushSubscriptionSetIdentifier& identifier, WebKit::WebPushMessage&& message) {
         handleIncomingPush(identifier, WTFMove(message));
     };
@@ -632,12 +637,6 @@ static NSString *platformNotificationSourceForDisplay(PushClientConnection& conn
     // FIXME: Calculate appropriate value on macOS
     return nil;
 #endif
-}
-
-void WebPushDaemon::enableMockUserNotificationCenterForTesting(PushClientConnection& connection)
-{
-    RELEASE_ASSERT(connection.hostAppCodeSigningIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s);
-    m_userNotificationCenterClass = [_WKMockUserNotificationCenter class];
 }
 
 void WebPushDaemon::showNotification(PushClientConnection& connection, const WebCore::NotificationData& notificationData, RefPtr<WebCore::NotificationResources> resources, CompletionHandler<void()>&& completionHandler)

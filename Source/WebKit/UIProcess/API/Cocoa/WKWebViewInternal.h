@@ -374,6 +374,7 @@ struct PerWebProcessState {
 #endif
 
     BOOL _didAccessBackForwardList;
+    BOOL _dontResetTransientActivationAfterRunJavaScript;
 
 #if ENABLE(PAGE_LOAD_OBSERVER)
     RetainPtr<NSString> _pendingPageLoadObserverHost;
