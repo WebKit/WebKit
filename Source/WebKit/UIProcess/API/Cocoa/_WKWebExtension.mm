@@ -30,6 +30,7 @@
 #import "_WKWebExtensionCommand.h"
 #import "_WKWebExtensionContext.h"
 #import "_WKWebExtensionController.h"
+#import "_WKWebExtensionControllerConfiguration.h"
 #import "_WKWebExtensionDataRecord.h"
 #import "_WKWebExtensionMatchPattern.h"
 #import "_WKWebExtensionMessagePort.h"
@@ -75,6 +76,10 @@ NSString * const _WKWebExtensionContextNotificationUserInfoKeyMatchPatterns = @"
 
 #undef _WKWebExtensionController
 @implementation _WKWebExtensionController
+@end
+
+#undef _WKWebExtensionControllerConfiguration
+@implementation _WKWebExtensionControllerConfiguration
 @end
 
 NSErrorDomain const _WKWebExtensionDataRecordErrorDomain = @"WKWebExtensionDataRecordErrorDomain";

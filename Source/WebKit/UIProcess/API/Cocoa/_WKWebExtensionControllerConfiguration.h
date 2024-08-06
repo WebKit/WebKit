@@ -25,4 +25,8 @@
 
 #import <WebKit/WKWebExtensionControllerConfigurationPrivate.h>
 
+WK_EXTERN
+@interface _WKWebExtensionControllerConfiguration : WKWebExtensionControllerConfiguration
+@end
+
 #define _WKWebExtensionControllerConfiguration WKWebExtensionControllerConfiguration
