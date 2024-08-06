@@ -257,7 +257,7 @@ namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
 
-WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebProcess);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebProcess);
 
 #if !PLATFORM(GTK) && !PLATFORM(WPE)
 NO_RETURN static void callExit(IPC::Connection*)

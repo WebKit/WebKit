@@ -319,15 +319,6 @@
 #endif
 #endif
 
-#if !defined(USE_WK_TZONE_MALLOC)
-#if USE(TZONE_MALLOC)
-// Separately control the use of TZone allocation in WebKit
-#define USE_WK_TZONE_MALLOC 1
-#else
-#define USE_WK_TZONE_MALLOC 0
-#endif
-#endif
-
 #if !PLATFORM(WATCHOS)
 #define USE_GLYPH_DISPLAY_LIST_CACHE 1
 #endif
