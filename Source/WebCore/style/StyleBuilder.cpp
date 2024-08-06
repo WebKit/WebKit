@@ -662,7 +662,7 @@ void Builder::applyPageSizeDescriptor(CSSValue& value)
 
     Length width;
     Length height;
-    auto pageSizeType = PAGE_SIZE_AUTO;
+    auto pageSizeType = PageSizeType::Auto;
 
     if (auto* pair = dynamicDowncast<CSSValuePair>(value)) {
         // <length>{2} | <page-size> <orientation>
@@ -683,29 +683,29 @@ void Builder::applyPageSizeDescriptor(CSSValue& value)
             if (!pageSizeFromName(*first, second, width, height))
                 return;
         }
-        pageSizeType = PAGE_SIZE_RESOLVED;
+        pageSizeType = PageSizeType::Resolved;
     } else if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         // <length> | auto | <page-size> | [ portrait | landscape]
         if (primitiveValue->isLength()) {
             // <length>
-            pageSizeType = PAGE_SIZE_RESOLVED;
+            pageSizeType = PageSizeType::Resolved;
             width = height = primitiveValue->computeLength<Length>(m_state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
         } else {
             switch (primitiveValue->valueID()) {
             case CSSValueInvalid:
                 return;
             case CSSValueAuto:
-                pageSizeType = PAGE_SIZE_AUTO;
+                pageSizeType = PageSizeType::Auto;
                 break;
             case CSSValuePortrait:
-                pageSizeType = PAGE_SIZE_AUTO_PORTRAIT;
+                pageSizeType = PageSizeType::AutoPortrait;
                 break;
             case CSSValueLandscape:
-                pageSizeType = PAGE_SIZE_AUTO_LANDSCAPE;
+                pageSizeType = PageSizeType::AutoLandscape;
                 break;
             default:
                 // <page-size>
-                pageSizeType = PAGE_SIZE_RESOLVED;
+                pageSizeType = PageSizeType::Resolved;
                 if (!pageSizeFromName(*primitiveValue, nullptr, width, height))
                     return;
             }

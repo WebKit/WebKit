@@ -102,7 +102,7 @@ class WillChangeData;
 
 enum CSSPropertyID : uint16_t;
 enum GridAutoFlow : uint8_t;
-enum PageSizeType : uint8_t;
+enum class PageSizeType : uint8_t;
 enum class PaginationMode : uint8_t;
 
 enum class ApplePayButtonStyle : uint8_t;
