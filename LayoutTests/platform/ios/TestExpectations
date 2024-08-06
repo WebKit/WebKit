@@ -7425,3 +7425,6 @@ editing/execCommand/insert-ordered-list-and-delete.html [ Pass Failure ]
 
 # webkit.org/b/277715 [ iOS ] fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html is a flaky text failure
 fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html [ Pass Failure ]
+
+# webkit.org/b/277717 [ iOS ] fast/forms/ios/show-software-keyboard-on-programmatic-focus-during-dblclick.html is a flaky timeout
+fast/forms/ios/show-software-keyboard-on-programmatic-focus-during-dblclick.html [ Pass Timeout ]
