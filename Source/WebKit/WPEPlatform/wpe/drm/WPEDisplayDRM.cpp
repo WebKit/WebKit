@@ -355,6 +355,11 @@ static const char* wpeDisplayDRMGetDRMRenderNode(WPEDisplay* display)
     return priv->drmDevice.data();
 }
 
+static gboolean wpeDisplayDRMUseExplicitSync(WPEDisplay* display)
+{
+    return WPE_DISPLAY_DRM(display)->priv->atomicSupported;
+}
+
 static void wpe_display_drm_class_init(WPEDisplayDRMClass* displayDRMClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(displayDRMClass);
@@ -368,6 +373,7 @@ static void wpe_display_drm_class_init(WPEDisplayDRMClass* displayDRMClass)
     displayClass->get_monitor = wpeDisplayDRMGetMonitor;
     displayClass->get_drm_device = wpeDisplayDRMGetDRMDevice;
     displayClass->get_drm_render_node = wpeDisplayDRMGetDRMRenderNode;
+    displayClass->use_explicit_sync = wpeDisplayDRMUseExplicitSync;
 }
 
 const WPE::DRM::Connector& wpeDisplayDRMGetConnector(WPEDisplayDRM* display)

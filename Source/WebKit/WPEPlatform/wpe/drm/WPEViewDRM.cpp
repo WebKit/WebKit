@@ -268,6 +268,10 @@ WPE::DRM::Plane::Properties primaryPlaneProperties(const WPE::DRM::Plane& plane,
     properties.srcH.second = (static_cast<uint64_t>(gbm_bo_get_height(buffer.bufferObject())) << 16);
     if (properties.fbDamageClips.first && damageID)
         properties.fbDamageClips.second = damageID.value();
+    if (properties.inFenceFD.first) {
+        if (const auto& inFenceFD = buffer.fenceFD())
+            properties.inFenceFD.second = inFenceFD.value();
+    }
     return properties;
 }
 
@@ -449,6 +453,10 @@ static gboolean wpeViewDRMRenderBuffer(WPEView* view, WPEBuffer* buffer, const W
         if (!drmBuffer)
             return FALSE;
     }
+
+    if (WPE_IS_BUFFER_DMA_BUF(buffer))
+        drmBuffer->setFenceFD(UnixFileDescriptor { wpe_buffer_dma_buf_take_rendering_fence(WPE_BUFFER_DMA_BUF(buffer)), UnixFileDescriptor::Adopt });
+
     auto* priv = WPE_VIEW_DRM(view)->priv;
     priv->pendingBuffer = buffer;
     priv->damageRects.clear();

@@ -29,6 +29,7 @@
 #include <optional>
 #include <wtf/FastMalloc.h>
 #include <wtf/Vector.h>
+#include <wtf/unix/UnixFileDescriptor.h>
 #include <xf86drmMode.h>
 
 namespace WPE {
@@ -122,6 +123,7 @@ public:
         Property srcW { 0, 0 };
         Property srcH { 0, 0 };
         Property fbDamageClips { 0, 0 };
+        Property inFenceFD { 0, 0 };
     };
 
     struct Format {
@@ -156,10 +158,13 @@ public:
 
     struct gbm_bo* bufferObject() const { return m_bufferObject; }
     uint32_t frameBufferID() const { return m_frameBufferID; }
+    void setFenceFD(WTF::UnixFileDescriptor&& fenceFD) { m_fenceFD = WTFMove(fenceFD); }
+    const WTF::UnixFileDescriptor& fenceFD() const { return m_fenceFD; }
 
 private:
     struct gbm_bo* m_bufferObject { nullptr };
     uint32_t m_frameBufferID { 0 };
+    mutable WTF::UnixFileDescriptor m_fenceFD;
 };
 
 } // namespace DRM
