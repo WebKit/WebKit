@@ -143,6 +143,17 @@ def detailedJetStream2Breakdown(jsonObject):
             result[test + "-" + subtest] = breakdown._results["JetStream2.0"]["tests"][test]["tests"][subtest]["metrics"]["Time"][None]["current"]
     return result
 
+def categoryJetStream2Breakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "ms"
+    for test in breakdown._results["JetStream2.0"]["tests"].keys():
+        for category in breakdown._results["JetStream2.0"]["tests"][test]["tests"]:
+            if not category in result:
+                result[category] = []
+            result[category] += breakdown._results["JetStream2.0"]["tests"][test]["tests"][category]["metrics"]["Time"][None]["current"]
+    return result
+
 def jetStream3Breakdown(jsonObject):
     breakdown = BenchmarkResults(jsonObject)
     result = {}
@@ -158,6 +169,17 @@ def detailedJetStream3Breakdown(jsonObject):
     for test in breakdown._results["JetStream3.0"]["tests"].keys():
         for subtest in breakdown._results["JetStream3.0"]["tests"][test]["tests"]:
             result[test + "-" + subtest] = breakdown._results["JetStream3.0"]["tests"][test]["tests"][subtest]["metrics"]["Time"][None]["current"]
+    return result
+
+def categoryJetStream3Breakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "ms"
+    for test in breakdown._results["JetStream3.0"]["tests"].keys():
+        for category in breakdown._results["JetStream3.0"]["tests"][test]["tests"]:
+            if not category in result:
+                result[category] = []
+            result[category] += breakdown._results["JetStream3.0"]["tests"][test]["tests"][category]["metrics"]["Time"][None]["current"]
     return result
 
 def motionMarkBreakdown(jsonObject):
@@ -635,13 +657,14 @@ def getOptions():
     parser.add_argument("--detailed-breakdown", action="store_true",
         default=False, help="Print a detailed breakdown per subtest.")
 
+    parser.add_argument("--category-breakdown", action="store_true",
+        default=False, help="Print a breakdown per category. (e.g. startup, average, worst)")
+
     return parser.parse_known_args()[0]
 
 
 def main():
     args = getOptions()
-    if args.detailed_breakdown:
-        args.breakdown = True
 
     # Flatten the list of lists of JSON files.
     a = itertools.chain.from_iterable(args.a)
@@ -662,33 +685,34 @@ def main():
         sys.exit(1)
     
     if typeA == JetStream2:
+        if args.detailed_breakdown:
+            dumpBreakdowns(detailedJetStream2Breakdown(a), detailedJetStream2Breakdown(b))
+        if args.category_breakdown:
+            dumpBreakdowns(categoryJetStream2Breakdown(a), categoryJetStream2Breakdown(b))
         if args.breakdown:
-            if args.detailed_breakdown:
-                dumpBreakdowns(detailedJetStream2Breakdown(a), detailedJetStream2Breakdown(b))
-            else:
-                dumpBreakdowns(jetStream2Breakdown(a), jetStream2Breakdown(b))
+            dumpBreakdowns(jetStream2Breakdown(a), jetStream2Breakdown(b))
 
         ttest(typeA, JetStream2Results(a), JetStream2Results(b))
 
         if args.csv:
             writeCSV(jetStream2Breakdown(a), jetStream2Breakdown(b), args.csv)
     elif typeA == JetStream3:
+        if args.detailed_breakdown:
+            dumpBreakdowns(detailedJetStream3Breakdown(a), detailedJetStream3Breakdown(b))
+        if args.category_breakdown:
+            dumpBreakdowns(categoryJetStream3Breakdown(a), categoryJetStream3Breakdown(b))
         if args.breakdown:
-            if args.detailed_breakdown:
-                dumpBreakdowns(detailedJetStream3Breakdown(a), detailedJetStream3Breakdown(b))
-            else:
-                dumpBreakdowns(jetStream3Breakdown(a), jetStream3Breakdown(b))
+            dumpBreakdowns(jetStream3Breakdown(a), jetStream3Breakdown(b))
 
         ttest(typeA, JetStream3Results(a), JetStream3Results(b))
 
         if args.csv:
             writeCSV(jetStream3Breakdown(a), jetStream3Breakdown(b), args.csv)
     elif typeA == Speedometer2:
+        if args.detailed_breakdown:
+            dumpBreakdowns(speedometer2BreakdownSyncAsync(a), speedometer2BreakdownSyncAsync(b))
         if args.breakdown:
-            if args.detailed_breakdown:
-                dumpBreakdowns(speedometer2BreakdownSyncAsync(a), speedometer2BreakdownSyncAsync(b))
-            else:
-                dumpBreakdowns(speedometer2Breakdown(a), speedometer2Breakdown(b))
+            dumpBreakdowns(speedometer2Breakdown(a), speedometer2Breakdown(b))
 
         ttest(typeA, Speedometer2Results(a), Speedometer2Results(b))
 
@@ -696,11 +720,10 @@ def main():
             writeCSV(speedometer2Breakdown(a), speedometer2Breakdown(b), args.csv)
 
     elif typeA == Speedometer3:
+        if args.detailed_breakdown:
+            dumpBreakdowns(speedometer3BreakdownSyncAsync(a), speedometer3BreakdownSyncAsync(b))
         if args.breakdown:
-            if args.detailed_breakdown:
-                dumpBreakdowns(speedometer3BreakdownSyncAsync(a), speedometer3BreakdownSyncAsync(b))
-            else:
-                dumpBreakdowns(speedometer3Breakdown(a), speedometer3Breakdown(b))
+            dumpBreakdowns(speedometer3Breakdown(a), speedometer3Breakdown(b))
 
         ttest(typeA, Speedometer3Results(a), Speedometer3Results(b))
 
