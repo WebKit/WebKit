@@ -26,6 +26,7 @@
 
 #include "FloatPoint.h"
 #include "GlyphBuffer.h"
+#include "TextSpacing.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
@@ -118,6 +119,7 @@ public:
         bool isLTR() const { return m_isLTR; }
         bool isMonotonic() const { return m_isMonotonic; }
         void setIsNonMonotonic();
+        float measuredTextSpacing() const { return m_measuredTextSpacing; }
 
     private:
         ComplexTextRun(CTRunRef, const Font&, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd);
@@ -144,6 +146,7 @@ public:
         unsigned m_stringLocation;
         bool m_isLTR;
         bool m_isMonotonic { true };
+        float m_measuredTextSpacing { 0 };
     };
 private:
     void computeExpansionOpportunity();
@@ -169,6 +172,7 @@ private:
     Vector<FloatSize, 256> m_adjustedBaseAdvances;
     Vector<FloatPoint, 256> m_glyphOrigins;
     Vector<CGGlyph, 256> m_adjustedGlyphs;
+    Vector<float, 256> m_textAutoSpaceSpacings;
 
     Vector<UChar, 256> m_smallCapsBuffer;
 
@@ -217,6 +221,7 @@ private:
     bool m_isLTROnly { true };
     bool m_mayUseNaturalWritingDirection { false };
     bool m_forTextEmphasis { false };
+    TextSpacing::SpacingState m_textSpacingState;
 };
 
 } // namespace WebCore

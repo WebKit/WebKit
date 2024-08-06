@@ -24,10 +24,36 @@
  */
 
 #pragma once
+#include <unicode/umachine.h>
 #include <wtf/Forward.h>
+#include <wtf/text/CharacterProperties.h>
 #include <wtf/text/TextStream.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
+namespace TextSpacing {
+
+enum class CharacterClass {
+    Other = 0,
+    Ideograph,
+    NonIdeographLetter,
+    NonIdeographNumeral,
+    FullWidthOpeningPunctuation,
+    FullWidthClosingPunctuation,
+    FullWidthMiddleDotPunctuation,
+    FullWidthColonPunctuation,
+    FullWidthDotPunctuation
+};
+
+// Classes are defined at https://www.w3.org/TR/css-text-4/#text-spacing-classes
+CharacterClass characterClass(char32_t character);
+struct SpacingState {
+    char32_t lastCharacterFromPreviousRun { 0 };
+};
+
+bool isIdeograph(char32_t character);
+
+} // namespace TextSpacing
 
 struct TextSpacingTrim {
     enum class TrimType : bool {
@@ -72,10 +98,13 @@ public:
     bool isAuto() const { return m_options.contains(Type::Auto); }
     bool isNoAutospace() const { return m_options.isEmpty(); }
     bool isNormal() const { return m_options.contains(Type::Normal); }
-    bool hasIdeographAlpha() const { return m_options.contains(Type::IdeographAlpha); }
-    bool hasIdeographNumeric() const { return m_options.contains(Type::IdeographNumeric); }
+    bool hasIdeographAlpha() const { return m_options.containsAny({ Type::IdeographAlpha, Type::Normal }); }
+    bool hasIdeographNumeric() const { return m_options.containsAny({ Type::IdeographNumeric, Type::Normal }); }
     Options options() { return m_options; }
     friend bool operator==(const TextAutospace&, const TextAutospace&) = default;
+
+    bool shouldApplySpacing(char32_t firstCharacter, char32_t secondCharacter) const;
+
 private:
     Options m_options { };
 };
@@ -95,4 +124,5 @@ inline WTF::TextStream& operator<<(WTF::TextStream& ts, const TextAutospace& val
         ts << "ideograph-numeric";
     return ts;
 }
+
 } // namespace WebCore

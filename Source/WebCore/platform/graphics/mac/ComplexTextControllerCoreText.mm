@@ -45,6 +45,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
     , m_glyphCount(CTRunGetGlyphCount(ctRun))
     , m_stringLocation(stringLocation)
     , m_isLTR(!(CTRunGetStatus(ctRun) & kCTRunStatusRightToLeft))
+    , m_measuredTextSpacing(0.125 * font.fontMetrics().ideogramWidth().value_or(0))
 {
     const CFIndex* coreTextIndicesPtr = CTRunGetStringIndicesPtr(ctRun);
     Vector<CFIndex> coreTextIndices;

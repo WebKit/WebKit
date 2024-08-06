@@ -112,6 +112,15 @@ public:
         m_offsetsInString.append(offsetInString);
     }
 
+    void add(Glyph glyph, const Font& font, GlyphBufferAdvance advance, FloatPoint origin, GlyphBufferStringOffset offsetInString)
+    {
+        m_fonts.append(&font);
+        m_glyphs.append(glyph);
+        m_advances.append(advance);
+        m_origins.append(makeGlyphBufferOrigin(origin));
+        m_offsetsInString.append(offsetInString);
+    }
+
     void remove(unsigned location, unsigned length)
     {
         m_fonts.remove(location, length);

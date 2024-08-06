@@ -32,6 +32,7 @@
 
 #include "FontCascadeDescription.h"
 #include "LocaleToScriptMapping.h"
+#include "platform/text/TextSpacing.h"
 #include <wtf/Language.h>
 
 namespace WebCore {
