@@ -93,6 +93,21 @@ inline bool boolForKey(NSDictionary *dictionary, id key, bool defaultValue)
     return value ? value.boolValue : defaultValue;
 }
 
+template<typename T>
+inline std::optional<RetainPtr<T>> toOptional(T *maybeNil)
+{
+    if (maybeNil)
+        return maybeNil;
+    return std::nullopt;
+}
+
+inline std::optional<String> toOptional(NSString *maybeNil)
+{
+    if (maybeNil)
+        return maybeNil;
+    return std::nullopt;
+}
+
 enum class JSONOptions {
     FragmentsAllowed = 1 << 0, /// Allows for top-level scalar types, in addition to arrays and dictionaries.
 };

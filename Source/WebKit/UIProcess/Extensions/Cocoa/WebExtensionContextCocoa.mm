@@ -355,6 +355,9 @@ bool WebExtensionContext::unload(NSError **outError)
     m_actionWindowMap.clear();
     m_actionTabMap.clear();
     m_defaultAction = nullptr;
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    m_defaultSidebar = nullptr;
+#endif
     m_popupPageActionMap.clear();
 
     m_ports.clear();
@@ -2621,6 +2624,46 @@ void WebExtensionContext::performAction(WebExtensionTab* tab, UserTriggered user
 
     fireActionClickedEventIfNeeded(tab);
 }
+
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+WebExtensionSidebar& WebExtensionContext::defaultSidebar()
+{
+    if (!m_defaultSidebar)
+        m_defaultSidebar = WebExtensionSidebar::create(*this, WebExtensionSidebar::IsDefault::Yes);
+
+    return *m_defaultSidebar;
+}
+
+std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getSidebar(WebExtensionWindow const& window)
+{
+    if (auto *windowAction = m_sidebarWindowMap.get(window))
+        return *windowAction;
+
+    return Ref { defaultSidebar() };
+}
+
+std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getSidebar(WebExtensionTab const& tab)
+{
+    if (auto *tabAction = m_sidebarTabMap.get(tab))
+        return *tabAction;
+
+    return Ref { defaultSidebar() };
+}
+
+std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getOrCreateSidebar(WebExtensionWindow& window)
+{
+    return m_sidebarWindowMap.ensure(window, [&] {
+        return WebExtensionSidebar::create(*this, window);
+    }).iterator->value;
+}
+
+std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getOrCreateSidebar(WebExtensionTab& tab)
+{
+    return m_sidebarTabMap.ensure(tab, [&] {
+        return WebExtensionSidebar::create(*this, tab);
+    }).iterator->value;
+}
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
 const WebExtensionContext::CommandsVector& WebExtensionContext::commands()
 {

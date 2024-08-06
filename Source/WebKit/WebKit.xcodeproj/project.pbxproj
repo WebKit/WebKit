@@ -125,7 +125,9 @@
 		0250C2512B5DCB2000D05C0B /* FindStringCallbackAggregator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0250C24F2B5DCB0100D05C0B /* FindStringCallbackAggregator.h */; };
 		02660A7C2C4099370074EDC5 /* WebExtensionAPISidebarActionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 02660A7B2C40992C0074EDC5 /* WebExtensionAPISidebarActionCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		02660A7E2C4099B50074EDC5 /* WebExtensionAPISidePanelCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 02660A7D2C4099AD0074EDC5 /* WebExtensionAPISidePanelCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		02673A312C583239002878FB /* WebExtensionSidebarCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 02673A302C583232002878FB /* WebExtensionSidebarCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		028648C62C3F5A3A00E474D4 /* WebExtensionAPISidePanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 028648C52C3F5A2E00E474D4 /* WebExtensionAPISidePanel.h */; };
+		028D30772C616E8A004F4FC6 /* WebExtensionSidebar.h in Headers */ = {isa = PBXBuildFile; fileRef = 028D30762C616E8A004F4FC6 /* WebExtensionSidebar.h */; };
 		029D6BAC2C40609D0068CF99 /* WebExtensionAPISidebarAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 029D6BAB2C4060920068CF99 /* WebExtensionAPISidebarAction.h */; };
 		029D6BB12C407AA30068CF99 /* JSWebExtensionAPISidePanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = 029D6BB02C407AA30068CF99 /* JSWebExtensionAPISidePanel.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		029D6BB22C407AA30068CF99 /* JSWebExtensionAPISidebarAction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 029D6BAE2C407AA30068CF99 /* JSWebExtensionAPISidebarAction.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
@@ -3171,6 +3173,7 @@
 		0250C24F2B5DCB0100D05C0B /* FindStringCallbackAggregator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FindStringCallbackAggregator.h; sourceTree = "<group>"; };
 		02660A7B2C40992C0074EDC5 /* WebExtensionAPISidebarActionCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPISidebarActionCocoa.mm; sourceTree = "<group>"; };
 		02660A7D2C4099AD0074EDC5 /* WebExtensionAPISidePanelCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPISidePanelCocoa.mm; sourceTree = "<group>"; };
+		02673A302C583232002878FB /* WebExtensionSidebarCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionSidebarCocoa.mm; sourceTree = "<group>"; };
 		02789EF628D3FC3200F77E40 /* WebGPUBufferBindingLayout.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUBufferBindingLayout.serialization.in; sourceTree = "<group>"; };
 		02789EF728D3FF4800F77E40 /* WebGPUCanvasConfiguration.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUCanvasConfiguration.serialization.in; sourceTree = "<group>"; };
 		02789EF828D4026000F77E40 /* WebGPUColor.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUColor.serialization.in; sourceTree = "<group>"; };
@@ -3186,6 +3189,7 @@
 		02789F0428D44EC800F77E40 /* WebGPUVertexAttribute.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUVertexAttribute.serialization.in; sourceTree = "<group>"; };
 		02789F0528D44ED800F77E40 /* WebGPUVertexBufferLayout.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUVertexBufferLayout.serialization.in; sourceTree = "<group>"; };
 		028648C52C3F5A2E00E474D4 /* WebExtensionAPISidePanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPISidePanel.h; sourceTree = "<group>"; };
+		028D30762C616E8A004F4FC6 /* WebExtensionSidebar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionSidebar.h; sourceTree = "<group>"; };
 		029D6BAB2C4060920068CF99 /* WebExtensionAPISidebarAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPISidebarAction.h; sourceTree = "<group>"; };
 		029D6BAD2C407AA30068CF99 /* JSWebExtensionAPISidebarAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPISidebarAction.h; sourceTree = "<group>"; };
 		029D6BAE2C407AA30068CF99 /* JSWebExtensionAPISidebarAction.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPISidebarAction.mm; sourceTree = "<group>"; };
@@ -9947,6 +9951,7 @@
 				1C1CE96C288DF46C0098D3A1 /* WebExtensionMatchPatternCocoa.mm */,
 				1CC1A36D2B0DCEC900373759 /* WebExtensionMenuItemCocoa.mm */,
 				1C73167E2AC1EA27007FADA4 /* WebExtensionMessagePortCocoa.mm */,
+				02673A302C583232002878FB /* WebExtensionSidebarCocoa.mm */,
 				1C66BDE02A8C282F009D4452 /* WebExtensionTabCocoa.mm */,
 				1CAB9B8528F743DB00E6C77E /* WebExtensionURLSchemeHandlerCocoa.mm */,
 				1C66BDDF2A8C282F009D4452 /* WebExtensionWindowCocoa.mm */,
@@ -10399,6 +10404,7 @@
 				1C6B84C92B0D6CDF00E885DD /* WebExtensionMenuItem.cpp */,
 				1C6B84CB2B0D6CF500E885DD /* WebExtensionMenuItem.h */,
 				1C73167A2AC1E676007FADA4 /* WebExtensionMessagePort.h */,
+				028D30762C616E8A004F4FC6 /* WebExtensionSidebar.h */,
 				1C66BDD72A8AD957009D4452 /* WebExtensionTab.h */,
 				1CAB9B8428F7427F00E6C77E /* WebExtensionURLSchemeHandler.h */,
 				1C66BDDD2A8AEADD009D4452 /* WebExtensionWindow.h */,
@@ -17023,6 +17029,7 @@
 				B69E1A682AFF5F0C000FB98E /* WebExtensionRegisteredScriptParameters.h in Headers */,
 				B6D0310A2AC1F631006C8E0B /* WebExtensionScriptInjectionParameters.h in Headers */,
 				B624FF1B2ABE503000F6EDF6 /* WebExtensionScriptInjectionResultParameters.h in Headers */,
+				028D30772C616E8A004F4FC6 /* WebExtensionSidebar.h in Headers */,
 				0237F5EA2C4B40E800AD23EF /* WebExtensionSidebarParameters.h in Headers */,
 				B6B1565E2B5E177A004F9894 /* WebExtensionStorageAccessLevel.h in Headers */,
 				1C66BDDC2A8ADB94009D4452 /* WebExtensionTab.h in Headers */,
@@ -19975,6 +19982,7 @@
 				1CC1A36C2B0D9A0900373759 /* WebExtensionMenuItem.cpp in Sources */,
 				1CC1A36E2B0DCEC900373759 /* WebExtensionMenuItemCocoa.mm in Sources */,
 				1C73167F2AC1EA27007FADA4 /* WebExtensionMessagePortCocoa.mm in Sources */,
+				02673A312C583239002878FB /* WebExtensionSidebarCocoa.mm in Sources */,
 				1C66BDE22A8C2830009D4452 /* WebExtensionTabCocoa.mm in Sources */,
 				1CAB9B8628F743DB00E6C77E /* WebExtensionURLSchemeHandlerCocoa.mm in Sources */,
 				337822482947FBA5002106BB /* WebExtensionUtilities.mm in Sources */,

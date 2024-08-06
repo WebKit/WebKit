@@ -237,6 +237,12 @@ public:
     bool hasBrowserAction();
     bool hasPageAction();
 
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    CocoaImage *sidebarIcon(CGSize idealSize);
+    NSString *sidebarDocumentPath();
+    NSString *sidebarTitle();
+#endif
+
     CocoaImage *imageForPath(NSString *);
 
     NSString *pathForBestImageInIconsDictionary(NSDictionary *, size_t idealPixelSize);
@@ -318,6 +324,11 @@ private:
     void populateCommandsIfNeeded();
     void populateDeclarativeNetRequestPropertiesIfNeeded();
     void populateExternallyConnectableIfNeeded();
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    void populateSidebarPropertiesIfNeeded();
+    void populateSidebarActionProperties(RetainPtr<NSDictionary>);
+    void populateSidePanelProperties(RetainPtr<NSDictionary>);
+#endif
 
     std::optional<WebExtension::DeclarativeNetRequestRulesetData> parseDeclarativeNetRequestRulesetDictionary(NSDictionary *, NSError **);
 
@@ -358,6 +369,12 @@ private:
     RetainPtr<NSString> m_displayActionLabel;
     RetainPtr<NSString> m_actionPopupPath;
 
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    RetainPtr<CocoaImage> m_sidebarIcon;
+    RetainPtr<NSString> m_sidebarDocumentPath;
+    RetainPtr<NSString> m_sidebarTitle;
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+
     RetainPtr<NSString> m_contentSecurityPolicy;
 
     RetainPtr<NSArray> m_backgroundScriptPaths;
@@ -386,6 +403,9 @@ private:
     bool m_parsedManifestCommands : 1 { false };
     bool m_parsedManifestDeclarativeNetRequestRulesets : 1 { false };
     bool m_parsedExternallyConnectable : 1 { false };
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    bool m_parsedManifestSidebarProperties : 1 { false };
+#endif
 };
 
 } // namespace WebKit

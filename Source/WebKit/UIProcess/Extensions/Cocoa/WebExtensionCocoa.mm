@@ -155,6 +155,14 @@ static NSString * const externallyConnectableManifestKey = @"externally_connecta
 static NSString * const externallyConnectableMatchesManifestKey = @"matches";
 static NSString * const externallyConnectableIDsManifestKey = @"ids";
 
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+static NSString * const sidebarActionManifestKey = @"sidebar_action";
+static NSString * const sidePanelManifestKey = @"side_panel";
+static NSString * const sidebarActionTitleManifestKey = @"default_title";
+static NSString * const sidebarActionPathManifestKey = @"default_panel";
+static NSString * const sidePanelPathManifestKey = @"default_path";
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+
 static const size_t maximumNumberOfShortcutCommands = 4;
 
 WebExtension::WebExtension(NSBundle *appExtensionBundle, NSError **outError)
@@ -1113,6 +1121,65 @@ void WebExtension::populateActionPropertiesIfNeeded()
     m_displayActionLabel = objectForKey<NSString>(m_actionDictionary, defaultTitleManifestKey);
     m_actionPopupPath = objectForKey<NSString>(m_actionDictionary, defaultPopupManifestKey);
 }
+
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+CocoaImage *WebExtension::sidebarIcon(CGSize idealSize)
+{
+    // FIXME: <https://webkit.org/b/276833> implement this
+    return nil;
+}
+
+NSString *WebExtension::sidebarDocumentPath()
+{
+    populateSidebarPropertiesIfNeeded();
+    return m_sidebarDocumentPath.get();
+}
+
+NSString *WebExtension::sidebarTitle()
+{
+    populateSidebarPropertiesIfNeeded();
+    return m_sidebarTitle.get();
+}
+
+void WebExtension::populateSidebarPropertiesIfNeeded()
+{
+    if (!manifestParsedSuccessfully())
+        return;
+
+    if (m_parsedManifestSidebarProperties)
+        return;
+
+    // sidePanel documentation: https://developer.chrome.com/docs/extensions/reference/manifest#side-panel
+    // see "Examples" header -> "Side Panel" tab (doesn't mention `default_path` key elsewhere)
+    // sidebarAction documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/sidebar_action
+
+    auto sidebarActionDictionary = objectForKey<NSDictionary>(m_manifest, sidebarActionManifestKey);
+    if (sidebarActionDictionary) {
+        populateSidebarActionProperties(sidebarActionDictionary);
+        return;
+    }
+
+    auto sidePanelDictionary = objectForKey<NSDictionary>(m_manifest, sidePanelManifestKey);
+    if (sidePanelDictionary)
+        populateSidePanelProperties(sidePanelDictionary);
+}
+
+void WebExtension::populateSidebarActionProperties(RetainPtr<NSDictionary> sidebarActionDictionary)
+{
+    // FIXME: <https://webkit.org/b/276833> implement sidebar icon parsing
+    m_sidebarIcon = nil;
+    m_sidebarTitle = objectForKey<NSString>(sidebarActionDictionary, sidebarActionTitleManifestKey);
+    m_sidebarDocumentPath = objectForKey<NSString>(sidebarActionDictionary, sidebarActionPathManifestKey);
+}
+
+void WebExtension::populateSidePanelProperties(RetainPtr<NSDictionary> sidePanelDictionary)
+{
+    // Since sidePanel cannot set a default title or icon from the manifest, setting these nil here is intentional
+    m_sidebarIcon = nil;
+    m_sidebarTitle = nil;
+    m_sidebarDocumentPath = objectForKey<NSString>(sidePanelDictionary, sidePanelPathManifestKey);
+}
+#endif
 
 CocoaImage *WebExtension::imageForPath(NSString *imagePath)
 {

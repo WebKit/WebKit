@@ -81,6 +81,7 @@
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+#include "WebExtensionSidebar.h"
 #include "WebExtensionSidebarParameters.h"
 #endif
 
@@ -436,6 +437,14 @@ public:
     Ref<WebExtensionAction> getOrCreateAction(WebExtensionWindow*);
     Ref<WebExtensionAction> getOrCreateAction(WebExtensionTab*);
     void performAction(WebExtensionTab*, UserTriggered = UserTriggered::No);
+
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    WebExtensionSidebar& defaultSidebar();
+    std::optional<Ref<WebExtensionSidebar>> getSidebar(WebExtensionWindow const&);
+    std::optional<Ref<WebExtensionSidebar>> getSidebar(WebExtensionTab const&);
+    std::optional<Ref<WebExtensionSidebar>> getOrCreateSidebar(WebExtensionWindow&);
+    std::optional<Ref<WebExtensionSidebar>> getOrCreateSidebar(WebExtensionTab&);
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
     const CommandsVector& commands();
     WebExtensionCommand* command(const String& identifier);
@@ -954,6 +963,12 @@ private:
     WeakHashMap<WebExtensionWindow, Ref<WebExtensionAction>> m_actionWindowMap;
     WeakHashMap<WebExtensionTab, Ref<WebExtensionAction>> m_actionTabMap;
     RefPtr<WebExtensionAction> m_defaultAction;
+
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    WeakHashMap<WebExtensionWindow, Ref<WebExtensionSidebar>> m_sidebarWindowMap;
+    WeakHashMap<WebExtensionTab, Ref<WebExtensionSidebar>> m_sidebarTabMap;
+    RefPtr<WebExtensionSidebar> m_defaultSidebar;
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
     PortCountedSet m_ports;
     PageProxyIdentifierPortMap m_pagePortMap;
