@@ -25,6 +25,9 @@
 
 #import <WebKit/WKWebExtensionWindow.h>
 
+@protocol _WKWebExtensionWindow <WKWebExtensionWindow>
+@end
+
 #define _WKWebExtensionWindow WKWebExtensionWindow
 
 #define _WKWebExtensionWindowType WKWebExtensionWindowType

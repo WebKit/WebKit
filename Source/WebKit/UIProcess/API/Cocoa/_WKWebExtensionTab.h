@@ -26,6 +26,9 @@
 #import <WebKit/WKWebExtensionTab.h>
 #import <WebKit/_WKWebExtensionTabCreationOptions.h>
 
+@protocol _WKWebExtensionTab <WKWebExtensionTab>
+@end
+
 #define _WKWebExtensionTab WKWebExtensionTab
 
 #define _WKWebExtensionTabChangedProperties WKWebExtensionTabChangedProperties
