@@ -819,7 +819,7 @@ webkit.org/b/264558 fast/forms/vertical-writing-mode/listbox-horizontal-scrollba
 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-vs-float-clearance-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-ligatures-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-015.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-023.html [ ImageOnlyFailure ] 
+imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-023.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-justify-br.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-mixed-001.html [ Failure ]
 webkit.org/b/229389 imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-001.html [ ImageOnlyFailure ]
@@ -2217,6 +2217,9 @@ webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-encoded-transform/scr
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-metadata-transform.https.html [ Skip ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform.https.html [ Skip ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-write-twice-transform.https.html [ Skip ]
+webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-encoded-transform/RTCRtpScriptTransform-bad-chunk.https.html [ Skip ]
+webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform-generateKeyFrame.https.html [ Skip ]
+webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform-sendKeyFrameRequest.https.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-in-worker.https.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-keys.https.html [ Skip ]
@@ -2241,6 +2244,7 @@ webkit.org/b/235885 webrtc/remove-track.html [ Failure ]
 # Specific to LibWebRTC:
 webkit.org/b/235885 webrtc/disable-encryption.html [ Skip ]
 webkit.org/b/235885 webrtc/libwebrtc/release-while-getting-stats.html [ Skip ]
+webkit.org/b/235885 webrtc/libwebrtc/descriptionGetters.html [ Skip ]
 
 # This test is flaky because sometimes the onnegotiationneeded event is not fired fast enough after
 # the addTrack() call.
@@ -2268,7 +2272,7 @@ webkit.org/b/235885 fast/mediastream/RTCPeerConnection-setLocalDescription-offer
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-priority/RTCRtpParameters-encodings.html [ Failure ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/mst-content-hint/RTCRtpSendParameters-degradationPreference.html [ Failure ]
 webkit.org/b/235885 webrtc/addTransceiver-then-addTrack.html [ Failure ]
-webkit.org/b/235885 webrtc/audio-video-element-playing.html [ Timeout ]
+webkit.org/b/235885 webrtc/audio-video-element-playing.html [ Failure ]
 webkit.org/b/235885 webrtc/ephemeral-certificates-and-cnames.html [ Failure ]
 webkit.org/b/235885 webrtc/filtering-ice-candidate-after-reload.html [ Failure ]
 webkit.org/b/235885 webrtc/peer-connection-track-end.html [ Failure ]
@@ -2372,6 +2376,9 @@ webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Skip ]
 
 # Flakes moved from wpe/TestExpectations -- if they're flaky in WPE they're very likely to be flaky in GTK
 http/tests/webrtc/muted-video-mediastream-invisible-autoplay.html [ Failure Timeout Pass ]
+
+# webrtcbin doesn't emit "outbound-rtp" stats until it's in connected state
+webrtc/audio-muted-stats.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
@@ -3732,7 +3739,7 @@ webkit.org/b/252878 imported/w3c/web-platform-tests/wasm/webapi/instantiateStrea
 webkit.org/b/252878 imported/w3c/web-platform-tests/wasm/webapi/instantiateStreaming.any.sharedworker.html [ Failure Pass ]
 webkit.org/b/252878 loader/navigation-policy/should-open-external-urls/subframe-navigated-programatically-by-main-frame.html [ Failure Pass ]
 webkit.org/b/252878 webrtc/multi-video.html [ Failure Pass Timeout ]
-webkit.org/b/252878 webrtc/peer-connection-remote-audio-mute2.html [ Pass Timeout ]
+webkit.org/b/252878 webrtc/peer-connection-remote-audio-mute2.html [ Pass Failure ]
 
 # Missing support for UIScriptController.paste()
 fast/forms/input-text-max-length-emojis.html [ Failure ]

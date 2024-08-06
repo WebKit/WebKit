@@ -329,7 +329,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
         DEBUG_LOG(LOGIDENTIFIER, "Transceiver states: ", *transceiverStates);
     ASSERT(m_setDescriptionCallback);
 
-    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, callback = WTFMove(m_setDescriptionCallback), descriptionStates = WTFMove(descriptionStates), transceiverStates = WTFMove(transceiverStates), sctpBackend = WTFMove(sctpBackend), maxMessageSize, events = WTFMove(m_pendingTrackEvents)]() mutable {
+    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, callback = WTFMove(m_setDescriptionCallback), descriptionStates = WTFMove(descriptionStates), transceiverStates = WTFMove(transceiverStates), sctpBackend = WTFMove(sctpBackend), maxMessageSize]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
@@ -419,37 +419,16 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
 
                 track->source().setMuted(false);
             }
-        } else {
-            // FIXME: Move ports out of m_pendingTrackEvents.
-            for (auto& event : events)
-                dispatchTrackEvent(event);
         }
 
         callback({ });
     });
 }
 
-void PeerConnectionBackend::dispatchTrackEvent(PendingTrackEvent& event)
-{
-    auto& track = event.track.get();
-
-    m_peerConnection.dispatchEvent(RTCTrackEvent::create(eventNames().trackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(event.receiver), WTFMove(event.track), WTFMove(event.streams), WTFMove(event.transceiver)));
-    ALWAYS_LOG(LOGIDENTIFIER, "Dispatched if feasible track of type ", track.source().type());
-
-    if (m_peerConnection.isClosed())
-        return;
-
-    // FIXME: As per spec, we should set muted to 'false' when starting to receive the content from network.
-    track.source().setMuted(false);
-}
-
 void PeerConnectionBackend::setRemoteDescriptionFailed(Exception&& exception)
 {
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Set remote description failed:", exception.message());
-
-    ASSERT(m_pendingTrackEvents.isEmpty());
-    m_pendingTrackEvents.clear();
 
     ASSERT(m_setDescriptionCallback);
     m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, callback = WTFMove(m_setDescriptionCallback), exception = WTFMove(exception)]() mutable {
@@ -469,12 +448,6 @@ void PeerConnectionBackend::iceGatheringStateChanged(RTCIceGatheringState state)
         }
         m_peerConnection.updateIceGatheringState(state);
     });
-}
-
-void PeerConnectionBackend::addPendingTrackEvent(PendingTrackEvent&& event)
-{
-    ASSERT(!m_peerConnection.isStopped());
-    m_pendingTrackEvents.append(WTFMove(event));
 }
 
 static String extractIPAddress(StringView sdp)
@@ -607,8 +580,6 @@ void PeerConnectionBackend::stop()
 {
     m_offerAnswerCallback = nullptr;
     m_setDescriptionCallback = nullptr;
-
-    m_pendingTrackEvents.clear();
 
     doStop();
 }
