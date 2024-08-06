@@ -905,11 +905,6 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
     webkit_web_context_register_uri_scheme(webContext, BROWSER_ABOUT_SCHEME, (WebKitURISchemeRequestCallback)aboutURISchemeRequestCallback, NULL, NULL);
 
     WebKitUserContentManager *userContentManager = webkit_user_content_manager_new();
-#if GTK_CHECK_VERSION(3, 98, 0)
-    webkit_user_content_manager_register_script_message_handler(userContentManager, "aboutData", NULL);
-#else
-    webkit_user_content_manager_register_script_message_handler(userContentManager, "aboutData");
-#endif
     WebKitWebsiteDataManager *dataManager;
 #if GTK_CHECK_VERSION(3, 98, 0)
     dataManager = webkit_network_session_get_website_data_manager(networkSession);

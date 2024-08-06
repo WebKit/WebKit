@@ -141,8 +141,29 @@ static void removeChildIfInfoBar(GtkWidget *child, GtkContainer *tab)
 }
 #endif
 
+static void toggleAboutDataScriptMessageHandler(WebKitWebView *webView)
+{
+    WebKitUserContentManager *userContentManager = webkit_web_view_get_user_content_manager(webView);
+    if (g_str_has_prefix(webkit_web_view_get_uri(webView), BROWSER_ABOUT_SCHEME)) {
+#if GTK_CHECK_VERSION(3, 98, 0)
+        webkit_user_content_manager_register_script_message_handler(userContentManager, "aboutData", NULL);
+#else
+        webkit_user_content_manager_register_script_message_handler(userContentManager, "aboutData");
+#endif
+    } else {
+#if GTK_CHECK_VERSION(3, 98, 0)
+        webkit_user_content_manager_unregister_script_message_handler(userContentManager, "aboutData", NULL);
+#else
+        webkit_user_content_manager_unregister_script_message_handler(userContentManager, "aboutData");
+#endif
+    }
+}
+
 static void loadChanged(WebKitWebView *webView, WebKitLoadEvent loadEvent, BrowserTab *tab)
 {
+    if (loadEvent == WEBKIT_LOAD_COMMITTED)
+        toggleAboutDataScriptMessageHandler(webView);
+
     if (loadEvent != WEBKIT_LOAD_STARTED)
         return;
 
