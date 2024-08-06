@@ -695,6 +695,19 @@ JSC_DEFINE_JIT_OPERATION(operationArithFRound, double, (JSGlobalObject* globalOb
     OPERATION_RETURN(scope, static_cast<float>(a));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationArithF16Round, double, (JSGlobalObject* globalObject, EncodedJSValue encodedOp1))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue op1 = JSValue::decode(encodedOp1);
+    double a = op1.toNumber(globalObject);
+    OPERATION_RETURN_IF_EXCEPTION(scope, PNaN);
+    OPERATION_RETURN(scope, static_cast<double>(Float16 { a }));
+}
+
 #define DFG_ARITH_UNARY(capitalizedName, lowerName) \
 JSC_DEFINE_JIT_OPERATION(operationArith##capitalizedName, double, (JSGlobalObject* globalObject, EncodedJSValue encodedOp1)) \
 { \

@@ -1177,6 +1177,7 @@ private:
         case ArithPow:
         case ArithSqrt:
         case ArithFRound:
+        case ArithF16Round:
         case ArithUnary: {
             setPrediction(SpecBytecodeDouble);
             break;

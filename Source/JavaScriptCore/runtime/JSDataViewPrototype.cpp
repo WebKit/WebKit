@@ -43,7 +43,7 @@ namespace JSC {
   getUint16             dataViewProtoFuncGetUint16           DontEnum|Function       1  DataViewGetUint16
   getInt32              dataViewProtoFuncGetInt32            DontEnum|Function       1  DataViewGetInt32
   getUint32             dataViewProtoFuncGetUint32           DontEnum|Function       1  DataViewGetUint32
-  getFloat16            dataViewProtoFuncGetFloat16          DontEnum|Function       1
+  getFloat16            dataViewProtoFuncGetFloat16          DontEnum|Function       1  DataViewGetFloat16
   getFloat32            dataViewProtoFuncGetFloat32          DontEnum|Function       1  DataViewGetFloat32
   getFloat64            dataViewProtoFuncGetFloat64          DontEnum|Function       1  DataViewGetFloat64
   getBigInt64           dataViewProtoFuncGetBigInt64         DontEnum|Function       1
@@ -54,7 +54,7 @@ namespace JSC {
   setUint16             dataViewProtoFuncSetUint16           DontEnum|Function       2  DataViewSetUint16
   setInt32              dataViewProtoFuncSetInt32            DontEnum|Function       2  DataViewSetInt32
   setUint32             dataViewProtoFuncSetUint32           DontEnum|Function       2  DataViewSetUint32
-  setFloat16            dataViewProtoFuncSetFloat16          DontEnum|Function       2
+  setFloat16            dataViewProtoFuncSetFloat16          DontEnum|Function       2  DataViewSetFloat16
   setFloat32            dataViewProtoFuncSetFloat32          DontEnum|Function       2  DataViewSetFloat32
   setFloat64            dataViewProtoFuncSetFloat64          DontEnum|Function       2  DataViewSetFloat64
   setBigInt64           dataViewProtoFuncSetBigInt64         DontEnum|Function       2

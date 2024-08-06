@@ -118,6 +118,7 @@ public:
     static bool supportsFloatingPointSqrt() { return true; }
     static bool supportsFloatingPointAbs() { return true; }
     static bool supportsFloatingPointRounding() { return true; }
+    static bool supportsFloat16() { return false; }
 
     enum RelationalCondition {
         Equal = Assembler::ConditionEQ,
@@ -4717,6 +4718,82 @@ private:
         }
 
         end.link(this);
+    }
+
+    void convertDoubleToFloat16(FPRegisterID src, FPRegisterID dest)
+    {
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void convertFloat16ToDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void loadFloat16(Address address, FPRegisterID dest)
+    {
+        UNUSED_PARAM(address);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void loadFloat16(BaseIndex address, FPRegisterID dest)
+    {
+        UNUSED_PARAM(address);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void loadFloat16(TrustedImmPtr address, FPRegisterID dest)
+    {
+        UNUSED_PARAM(address);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void moveZeroToFloat16(FPRegisterID reg)
+    {
+        UNUSED_PARAM(reg);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void move16ToFloat16(RegisterID src, FPRegisterID dest)
+    {
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void move16ToFloat16(TrustedImm32 imm, FPRegisterID dest)
+    {
+        UNUSED_PARAM(imm);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void moveFloat16To16(FPRegisterID src, RegisterID dest)
+    {
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void storeFloat16(FPRegisterID src, Address address)
+    {
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(address);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void storeFloat16(FPRegisterID src, BaseIndex address)
+    {
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(address);
+        UNREACHABLE_FOR_PLATFORM();
     }
 };
 

@@ -2650,7 +2650,6 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
         jsValueResult(resultRegs, node);
         break;
     }
-    case Array::Float16Array:
     case Array::BigInt64Array:
     case Array::BigUint64Array:
     case Array::Generic: {
@@ -2976,6 +2975,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
     case Array::Uint8ClampedArray:
     case Array::Uint16Array:
     case Array::Uint32Array:
+    case Array::Float16Array:
     case Array::Float32Array:
     case Array::Float64Array: {
         TypedArrayType type = node->arrayMode().typedArrayType();
@@ -3600,6 +3600,10 @@ void SpeculativeJIT::compile(Node* node)
 
     case ArithFRound:
         compileArithFRound(node);
+        break;
+
+    case ArithF16Round:
+        compileArithF16Round(node);
         break;
 
     case ArithRandom:
@@ -5992,6 +5996,35 @@ void SpeculativeJIT::compile(Node* node)
             FPRReg resultFPR = result.fpr();
 
             switch (data.byteSize) {
+            case 2: {
+                auto emitLittleEndianCode = [&] {
+                    loadFloat16(baseIndex, resultFPR);
+                    convertFloat16ToDouble(resultFPR, resultFPR);
+                };
+
+                auto emitBigEndianCode = [&] {
+                    load16(baseIndex, t2);
+                    byteSwap16(t2);
+                    move16ToFloat16(t2, resultFPR);
+                    convertFloat16ToDouble(resultFPR, resultFPR);
+                };
+
+                if (data.isLittleEndian == TriState::True)
+                    emitLittleEndianCode();
+                else if (data.isLittleEndian == TriState::False)
+                    emitBigEndianCode();
+                else {
+                    RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);
+                    auto isBigEndian = branchTest32(Zero, isLittleEndianGPR, TrustedImm32(1));
+                    emitLittleEndianCode();
+                    auto done = jump();
+                    isBigEndian.link(this);
+                    emitBigEndianCode();
+                    done.link(this);
+                }
+
+                break;
+            }
             case 4: {
                 auto emitLittleEndianCode = [&] {
                     loadFloat(baseIndex, resultFPR);
@@ -6147,7 +6180,34 @@ void SpeculativeJIT::compile(Node* node)
 
         if (data.isFloatingPoint) {
             RELEASE_ASSERT(valueFPR != InvalidFPRReg);
-            if (data.byteSize == 4) {
+            if (data.byteSize == 2) {
+                RELEASE_ASSERT(tempFPR != InvalidFPRReg);
+                convertDoubleToFloat16(valueFPR, tempFPR);
+
+                auto emitLittleEndianCode = [&] {
+                    storeFloat16(tempFPR, baseIndex);
+                };
+
+                auto emitBigEndianCode = [&] {
+                    moveFloat16To16(tempFPR, t3);
+                    byteSwap16(t3);
+                    store16(t3, baseIndex);
+                };
+
+                if (data.isLittleEndian == TriState::False)
+                    emitBigEndianCode();
+                else if (data.isLittleEndian == TriState::True)
+                    emitLittleEndianCode();
+                else {
+                    RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);
+                    auto isBigEndian = branchTest32(Zero, isLittleEndianGPR, TrustedImm32(1));
+                    emitLittleEndianCode();
+                    auto done = jump();
+                    isBigEndian.link(this);
+                    emitBigEndianCode();
+                    done.link(this);
+                }
+            } else if (data.byteSize == 4) {
                 RELEASE_ASSERT(tempFPR != InvalidFPRReg);
                 convertDoubleToFloat(valueFPR, tempFPR);
 
@@ -7140,7 +7200,6 @@ void SpeculativeJIT::compilePutByVal(Node* node)
     case Array::Undecided:
         DFG_CRASH(m_graph, node, "Bad array mode type");
         break;
-    case Array::Float16Array:
     case Array::BigInt64Array:
     case Array::BigUint64Array:
     case Array::Generic: {
@@ -7328,6 +7387,7 @@ void SpeculativeJIT::compilePutByVal(Node* node)
     case Array::Uint8ClampedArray:
     case Array::Uint16Array:
     case Array::Uint32Array:
+    case Array::Float16Array:
     case Array::Float32Array:
     case Array::Float64Array: {
         TypedArrayType type = arrayMode.typedArrayType();

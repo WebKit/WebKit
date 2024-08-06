@@ -179,6 +179,7 @@ var basicBufferTypes = [
     ["Uint8Clamped", Uint8ClampedArray, 1],
     ["Int16", Int16Array, 2],
     ["Uint16", Uint16Array, 2],
+    ["Float16", Float16Array, 2],
     ["Float32", Float32Array, 4],
     ["Float64", Float64Array, 8]
 ];

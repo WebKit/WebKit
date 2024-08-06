@@ -170,6 +170,7 @@ namespace JSC { namespace DFG {
     macro(ArithMin, NodeResultNumber | NodeHasVarArgs) \
     macro(ArithMax, NodeResultNumber | NodeHasVarArgs) \
     macro(ArithFRound, NodeResultDouble | NodeMustGenerate) \
+    macro(ArithF16Round, NodeResultDouble | NodeMustGenerate) \
     macro(ArithPow, NodeResultDouble) \
     macro(ArithRandom, NodeResultDouble | NodeMustGenerate) \
     macro(ArithRound, NodeResultNumber | NodeMustGenerate) \

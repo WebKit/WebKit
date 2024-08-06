@@ -122,7 +122,7 @@ void MathObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "tanh"_s), 1, mathProtoFuncTanh, ImplementationVisibility::Public, TanhIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "trunc"_s), 1, mathProtoFuncTrunc, ImplementationVisibility::Public, TruncIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "imul"_s), 2, mathProtoFuncIMul, ImplementationVisibility::Public, IMulIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "f16round"_s), 1, mathProtoFuncF16Round, ImplementationVisibility::Public, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "f16round"_s), 1, mathProtoFuncF16Round, ImplementationVisibility::Public, F16RoundIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 // ------------------------------ Functions --------------------------------
@@ -394,15 +394,7 @@ JSC_DEFINE_HOST_FUNCTION(mathProtoFuncTrunc, (JSGlobalObject* globalObject, Call
 
 JSC_DEFINE_HOST_FUNCTION(mathProtoFuncF16Round, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    double value = callFrame->argument(0).toNumber(globalObject);
-
-    if (std::isnan(value))
-        return JSValue::encode(jsNaN());
-
-    if (value == 0 || !std::isfinite(value))
-        return JSValue::encode(jsDoubleNumber(value));
-
-    return JSValue::encode(jsDoubleNumber(Float16 { value }));
+    return JSValue::encode(jsDoubleNumber(Float16 { callFrame->argument(0).toNumber(globalObject) }));
 }
 
 } // namespace JSC

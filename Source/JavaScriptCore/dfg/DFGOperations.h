@@ -98,6 +98,7 @@ JSC_DECLARE_JIT_OPERATION(operationDec, EncodedJSValue, (JSGlobalObject*, Encode
 JSC_DECLARE_JIT_OPERATION(operationArithAbs, double, (JSGlobalObject*, EncodedJSValue encodedOp1));
 JSC_DECLARE_JIT_OPERATION(operationArithClz32, UCPUStrictInt32, (JSGlobalObject*, EncodedJSValue encodedOp1));
 JSC_DECLARE_JIT_OPERATION(operationArithFRound, double, (JSGlobalObject*, EncodedJSValue encodedOp1));
+JSC_DECLARE_JIT_OPERATION(operationArithF16Round, double, (JSGlobalObject*, EncodedJSValue encodedOp1));
 JSC_DECLARE_JIT_OPERATION(operationArithSqrt, double, (JSGlobalObject*, EncodedJSValue encodedOp1));
 
 #define DFG_ARITH_UNARY(capitalizedName, lowerName) \

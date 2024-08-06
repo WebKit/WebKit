@@ -311,6 +311,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case ArithFRound:
+    case ArithF16Round:
     case ArithSqrt:
         if (node->child1().useKind() == DoubleRepUse)
             def(PureValue(node));
@@ -1013,7 +1014,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             return;
             
         case Array::Generic:
-        case Array::Float16Array:
         case Array::BigInt64Array:
         case Array::BigUint64Array:
             clobberTop();
@@ -1106,6 +1106,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case Array::Uint8ClampedArray:
         case Array::Uint16Array:
         case Array::Uint32Array:
+        case Array::Float16Array:
         case Array::Float32Array:
         case Array::Float64Array:
             // Even if we hit out-of-bounds, this is fine. TypedArray does not propagate access to its [[Prototype]] when out-of-bounds access happens.
@@ -1159,7 +1160,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             return;
             
         case Array::Generic:
-        case Array::Float16Array:
         case Array::BigInt64Array:
         case Array::BigUint64Array:
             clobberTop();
@@ -1242,6 +1242,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case Array::Uint8ClampedArray:
         case Array::Uint16Array:
         case Array::Uint32Array:
+        case Array::Float16Array:
         case Array::Float32Array:
         case Array::Float64Array:
             if (node->arrayMode().mayBeResizableOrGrowableSharedTypedArray()) {

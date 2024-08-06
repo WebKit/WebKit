@@ -875,12 +875,21 @@ void MacroAssemblerARM64::collectCPUFeatures()
 #define HWCAP_ATOMICS (1 << 8)
 #endif
 
+#if !defined(HWCAP_FPHP)
+#define HWCAP_FPHP (1 << 9)
+#endif
+
+#if !defined(HWCAP_ASIMDHP)
+#define HWCAP_ASIMDHP (1 << 10)
+#endif
+
 #if !defined(HWCAP_JSCVT)
 #define HWCAP_JSCVT (1 << 13)
 #endif
 
         s_lseCheckState = (hwcaps & HWCAP_ATOMICS) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
         s_jscvtCheckState = (hwcaps & HWCAP_JSCVT) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        s_float16CheckState = ((hwcaps & HWCAP_FPHP) && (hwcaps & HWCAP_ASIMDHP)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
     });
 #endif
 
@@ -899,10 +908,19 @@ void MacroAssemblerARM64::collectCPUFeatures()
         s_jscvtCheckState = CPUIDCheckState::Clear;
 #endif
     }
+
+    if (s_float16CheckState == CPUIDCheckState::NotChecked) {
+#if HAVE(FLOAT16_INSTRUCTION)
+        s_float16CheckState = CPUIDCheckState::Set;
+#else
+        s_float16CheckState = CPUIDCheckState::Clear;
+#endif
+    }
 }
 
 MacroAssemblerARM64::CPUIDCheckState MacroAssemblerARM64::s_lseCheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerARM64::CPUIDCheckState MacroAssemblerARM64::s_jscvtCheckState = CPUIDCheckState::NotChecked;
+MacroAssemblerARM64::CPUIDCheckState MacroAssemblerARM64::s_float16CheckState = CPUIDCheckState::NotChecked;
 
 } // namespace JSC
 

@@ -1,12 +1,12 @@
 load("./standalone-pre.js", "caller relative");
 
-var typedArrays = [Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array];
+var typedArrays = [Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float16Array, Float32Array, Float64Array];
 
-var signedArrays = [Int8Array, Int16Array, Int32Array, Float32Array, Float64Array];
+var signedArrays = [Int8Array, Int16Array, Int32Array, Float16Array, Float32Array, Float64Array];
 
 var intArrays = [Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array];
 
-var floatArrays = [Float32Array, Float64Array];
+var floatArrays = [Float16Array, Float32Array, Float64Array];
 
 function forEachTypedArray(constructors, testFunction /* , initialValues */ ) {
     let initialValues = arguments[2];

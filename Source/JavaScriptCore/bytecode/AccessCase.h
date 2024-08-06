@@ -104,6 +104,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IndexedTypedArrayUint16Load) \
     macro(IndexedTypedArrayInt32Load) \
     macro(IndexedTypedArrayUint32Load) \
+    macro(IndexedTypedArrayFloat16Load) \
     macro(IndexedTypedArrayFloat32Load) \
     macro(IndexedTypedArrayFloat64Load) \
     macro(IndexedResizableTypedArrayInt8Load) \
@@ -113,6 +114,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IndexedResizableTypedArrayUint16Load) \
     macro(IndexedResizableTypedArrayInt32Load) \
     macro(IndexedResizableTypedArrayUint32Load) \
+    macro(IndexedResizableTypedArrayFloat16Load) \
     macro(IndexedResizableTypedArrayFloat32Load) \
     macro(IndexedResizableTypedArrayFloat64Load) \
     macro(IndexedStringLoad) \
@@ -130,6 +132,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IndexedTypedArrayUint16Store) \
     macro(IndexedTypedArrayInt32Store) \
     macro(IndexedTypedArrayUint32Store) \
+    macro(IndexedTypedArrayFloat16Store) \
     macro(IndexedTypedArrayFloat32Store) \
     macro(IndexedTypedArrayFloat64Store) \
     macro(IndexedResizableTypedArrayInt8Store) \
@@ -139,6 +142,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IndexedResizableTypedArrayUint16Store) \
     macro(IndexedResizableTypedArrayInt32Store) \
     macro(IndexedResizableTypedArrayUint32Store) \
+    macro(IndexedResizableTypedArrayFloat16Store) \
     macro(IndexedResizableTypedArrayFloat32Store) \
     macro(IndexedResizableTypedArrayFloat64Store) \
     macro(IndexedInt32InHit) \
@@ -154,6 +158,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IndexedTypedArrayUint16InHit) \
     macro(IndexedTypedArrayInt32InHit) \
     macro(IndexedTypedArrayUint32InHit) \
+    macro(IndexedTypedArrayFloat16InHit) \
     macro(IndexedTypedArrayFloat32InHit) \
     macro(IndexedTypedArrayFloat64InHit) \
     macro(IndexedResizableTypedArrayInt8InHit) \
@@ -163,6 +168,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IndexedResizableTypedArrayUint16InHit) \
     macro(IndexedResizableTypedArrayInt32InHit) \
     macro(IndexedResizableTypedArrayUint32InHit) \
+    macro(IndexedResizableTypedArrayFloat16InHit) \
     macro(IndexedResizableTypedArrayFloat32InHit) \
     macro(IndexedResizableTypedArrayFloat64InHit) \
     macro(IndexedStringInHit) \

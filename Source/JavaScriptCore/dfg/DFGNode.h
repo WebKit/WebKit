@@ -3084,6 +3084,11 @@ public:
         return isUint32ArraySpeculation(prediction());
     }
     
+    bool shouldSpeculateFloat16Array()
+    {
+        return isFloat16ArraySpeculation(prediction());
+    }
+
     bool shouldSpeculateFloat32Array()
     {
         return isFloat32ArraySpeculation(prediction());

@@ -880,6 +880,7 @@ private:
         }
 
         case ArithFRound:
+        case ArithF16Round:
         case ArithSqrt:
         case ArithUnary: {
             Edge& child1 = node->child1();
@@ -1138,11 +1139,15 @@ private:
             switch (node->arrayMode().type()) {
             case Array::BigInt64Array:
             case Array::BigUint64Array:
-            case Array::Float16Array:
                 // Make it Array::Generic.
-                // FIXME: Add BigInt64Array / BigUint64Array / Float16Array support.
+                // FIXME: Add BigInt64Array / BigUint64Array support.
                 // https://bugs.webkit.org/show_bug.cgi?id=221172
                 node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
+                break;
+
+            case Array::Float16Array:
+                if (!CCallHelpers::supportsFloat16())
+                    node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
                 break;
 
 
@@ -1224,6 +1229,7 @@ private:
             case Array::Uint8ClampedArray:
             case Array::Uint16Array:
             case Array::Uint32Array:
+            case Array::Float16Array:
             case Array::Float32Array:
             case Array::Float64Array:
                 fixEdge<KnownCellUse>(m_graph.varArgChild(node, 0));
@@ -1245,13 +1251,14 @@ private:
                     || (arrayMode.isOutOfBoundsSaneChain() && !(node->flags() & NodeBytecodeUsesAsOther)))
                     node->setResult(NodeResultDouble);
                 break;
-                
+
+            case Array::Float16Array:
             case Array::Float32Array:
             case Array::Float64Array:
                 if (!(node->op() == GetByVal && arrayMode.isOutOfBounds()))
                     node->setResult(NodeResultDouble);
                 break;
-                
+
             case Array::Uint32Array:
                 if (node->shouldSpeculateInt32())
                     break;
@@ -1328,12 +1335,16 @@ private:
             switch (node->arrayMode().type()) {
             case Array::BigInt64Array:
             case Array::BigUint64Array:
-            case Array::Float16Array:
                 // Make it Array::Generic.
-                // FIXME: Add BigInt64Array / BigUint64Array / Float16Array support.
+                // FIXME: Add BigInt64Array / BigUint64Array support.
                 // https://bugs.webkit.org/show_bug.cgi?id=221172
                 node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
                 break;
+            case Array::Float16Array: {
+                if (!CCallHelpers::supportsFloat16())
+                    node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
+                break;
+            }
             default:
                 break;
             }
@@ -1393,6 +1404,7 @@ private:
                 else
                     fixDoubleOrBooleanEdge(child3);
                 break;
+            case Array::Float16Array:
             case Array::Float32Array:
             case Array::Float64Array:
                 fixEdge<KnownCellUse>(child1);

@@ -265,6 +265,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case ArithSqrt:
     case ArithUnary:
     case ArithFRound:
+    case ArithF16Round:
         if (node->child1().useKind() == DoubleRepUse)
             break;
         return Exits;

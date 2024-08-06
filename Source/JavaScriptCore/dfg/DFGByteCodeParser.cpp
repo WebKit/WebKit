@@ -2514,6 +2514,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
         }
 
         case FRoundIntrinsic:
+        case F16RoundIntrinsic:
         case SqrtIntrinsic: {
             if (argumentCountIncludingThis == 1) {
                 insertChecks();
@@ -2525,6 +2526,11 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             switch (intrinsic) {
             case FRoundIntrinsic:
                 nodeType = ArithFRound;
+                break;
+            case F16RoundIntrinsic:
+                nodeType = ArithF16Round;
+                if (!CCallHelpers::supportsFloat16())
+                    return CallOptimizationResult::DidNothing;
                 break;
             case SqrtIntrinsic:
                 nodeType = ArithSqrt;
@@ -3788,6 +3794,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
         case DataViewGetUint16:
         case DataViewGetInt32:
         case DataViewGetUint32:
+        case DataViewGetFloat16:
         case DataViewGetFloat32:
         case DataViewGetFloat64: {
             if (!is64Bit())
@@ -3800,6 +3807,9 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             if (argumentCountIncludingThis < 2)
                 return CallOptimizationResult::DidNothing;
             if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return CallOptimizationResult::DidNothing;
+
+            if (intrinsic == DataViewGetFloat16 && !CCallHelpers::supportsFloat16())
                 return CallOptimizationResult::DidNothing;
 
             insertChecks();
@@ -3830,6 +3840,10 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
                 byteSize = 4;
                 break;
 
+            case DataViewGetFloat16:
+                byteSize = 2;
+                op = DataViewGetFloat;
+                break;
             case DataViewGetFloat32:
                 byteSize = 4;
                 op = DataViewGetFloat;
@@ -3883,6 +3897,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
         case DataViewSetUint16:
         case DataViewSetInt32:
         case DataViewSetUint32:
+        case DataViewSetFloat16:
         case DataViewSetFloat32:
         case DataViewSetFloat64: {
             if (!is64Bit())
@@ -3892,6 +3907,9 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
                 return CallOptimizationResult::DidNothing;
 
             if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return CallOptimizationResult::DidNothing;
+
+            if (intrinsic == DataViewSetFloat16 && !CCallHelpers::supportsFloat16())
                 return CallOptimizationResult::DidNothing;
 
             insertChecks();
@@ -3922,6 +3940,10 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
                 byteSize = 4;
                 break;
 
+            case DataViewSetFloat16:
+                isFloatingPoint = true;
+                byteSize = 2;
+                break;
             case DataViewSetFloat32:
                 isFloatingPoint = true;
                 byteSize = 4;

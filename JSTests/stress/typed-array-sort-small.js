@@ -32,6 +32,10 @@ function shouldBe(actual, expected) {
     shouldBe(array.sort(), array);
 }
 {
+    let array = new Float16Array([]);
+    shouldBe(array.sort(), array);
+}
+{
     let array = new Float32Array([]);
     shouldBe(array.sort(), array);
 }
@@ -76,6 +80,10 @@ function shouldBe(actual, expected) {
     shouldBe(array.sort(), array);
 }
 {
+    let array = new Float16Array([1]);
+    shouldBe(array.sort(), array);
+}
+{
     let array = new Float32Array([1]);
     shouldBe(array.sort(), array);
 }
@@ -117,6 +125,10 @@ function shouldBe(actual, expected) {
 }
 {
     let array = new Uint8ClampedArray([1, 2]);
+    shouldBe(array.sort(), array);
+}
+{
+    let array = new Float16Array([1, 2]);
     shouldBe(array.sort(), array);
 }
 {

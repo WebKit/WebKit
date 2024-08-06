@@ -3650,6 +3650,10 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(Node* node, TypedArrayType
     }
 
     switch (elementSize(type)) {
+    case 2:
+        loadFloat16(BaseIndex(storageReg, propertyReg, TimesTwo), resultReg);
+        convertFloat16ToDouble(resultReg, resultReg);
+        break;
     case 4:
         loadFloat(BaseIndex(storageReg, propertyReg, TimesFour), resultReg);
         convertFloatToDouble(resultReg, resultReg);
@@ -3704,8 +3708,12 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(Node* node, TypedArrayTyp
 
     Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, baseReg, propertyReg, scratchGPR, scratch2GPR);
     switch (elementSize(type)) {
+    case 2: {
+        convertDoubleToFloat16(valueFPR, scratchFPR);
+        storeFloat16(scratchFPR, BaseIndex(storageReg, propertyReg, TimesTwo));
+        break;
+    }
     case 4: {
-        moveDouble(valueFPR, scratchFPR);
         convertDoubleToFloat(valueFPR, scratchFPR);
         storeFloat(scratchFPR, BaseIndex(storageReg, propertyReg, TimesFour));
         break;
@@ -5869,6 +5877,25 @@ void SpeculativeJIT::compileArithFRound(Node* node)
     flushRegisters();
     FPRResult result(this);
     callOperation(operationArithFRound, result.fpr(), LinkableConstant::globalObject(*this, node), op1Regs);
+    doubleResult(result.fpr(), node);
+}
+
+void SpeculativeJIT::compileArithF16Round(Node* node)
+{
+    if (node->child1().useKind() == DoubleRepUse) {
+        SpeculateDoubleOperand op1(this, node->child1());
+        FPRTemporary result(this, op1);
+        convertDoubleToFloat16(op1.fpr(), result.fpr());
+        convertFloat16ToDouble(result.fpr(), result.fpr());
+        doubleResult(result.fpr(), node);
+        return;
+    }
+
+    JSValueOperand op1(this, node->child1());
+    JSValueRegs op1Regs = op1.jsValueRegs();
+    flushRegisters();
+    FPRResult result(this);
+    callOperation(operationArithF16Round, result.fpr(), LinkableConstant::globalObject(*this, node), op1Regs);
     doubleResult(result.fpr(), node);
 }
 

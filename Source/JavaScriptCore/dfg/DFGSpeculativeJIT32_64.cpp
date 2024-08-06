@@ -1789,7 +1789,6 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
     case Array::Unprofiled:
     case Array::BigInt64Array:
     case Array::BigUint64Array:
-    case Array::Float16Array:
         DFG_CRASH(m_graph, node, "Bad array mode type");
         break;
     case Array::Undecided: {
@@ -2123,6 +2122,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
     case Array::Uint8ClampedArray:
     case Array::Uint16Array:
     case Array::Uint32Array:
+    case Array::Float16Array:
     case Array::Float32Array:
     case Array::Float64Array: {
         TypedArrayType type = node->arrayMode().typedArrayType();
@@ -2483,6 +2483,10 @@ void SpeculativeJIT::compile(Node* node)
 
     case ArithFRound:
         compileArithFRound(node);
+        break;
+
+    case ArithF16Round:
+        compileArithF16Round(node);
         break;
 
     case ArithRandom:
@@ -4803,7 +4807,6 @@ void SpeculativeJIT::compilePutByVal(Node* node)
     case Array::DirectArguments:
     case Array::ScopedArguments:
     case Array::Undecided:
-    case Array::Float16Array:
     case Array::BigInt64Array:
     case Array::BigUint64Array:
         DFG_CRASH(m_graph, node, "Bad array mode type");
@@ -4981,6 +4984,7 @@ void SpeculativeJIT::compilePutByVal(Node* node)
     case Array::Uint8ClampedArray:
     case Array::Uint16Array:
     case Array::Uint32Array:
+    case Array::Float16Array:
     case Array::Float32Array:
     case Array::Float64Array: {
         TypedArrayType type = arrayMode.typedArrayType();

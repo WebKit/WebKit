@@ -108,6 +108,7 @@ bool doesGC(Graph& graph, Node* node)
     case ArithCeil:
     case ArithTrunc:
     case ArithFRound:
+    case ArithF16Round:
     case ArithUnary:
     case CheckStructure:
     case CheckStructureOrEmpty:
