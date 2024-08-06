@@ -200,6 +200,10 @@ PASS ruby-align (type: discrete) has testInterpolation function
 PASS ruby-align uses discrete animation when animating between "start" and "center" with linear easing
 PASS ruby-align uses discrete animation when animating between "start" and "center" with effect easing
 PASS ruby-align uses discrete animation when animating between "start" and "center" with keyframe easing
+PASS ruby-position (type: discrete) has testInterpolation function
+PASS ruby-position uses discrete animation when animating between "under" and "over" with linear easing
+PASS ruby-position uses discrete animation when animating between "under" and "over" with effect easing
+PASS ruby-position uses discrete animation when animating between "under" and "over" with keyframe easing
 PASS scroll-snap-align (type: discrete) has testInterpolation function
 PASS scroll-snap-align uses discrete animation when animating between "none" and "start" with linear easing
 PASS scroll-snap-align uses discrete animation when animating between "none" and "start" with effect easing
