@@ -361,8 +361,7 @@ bool WebCoreAVFResourceLoader::responseReceived(const String& mimeType, int stat
         return true;
     }
 
-    if (contentRange.isValid())
-        m_responseOffset = static_cast<NSUInteger>(contentRange.firstBytePosition());
+    m_responseOffset = contentRange.isValid() ? static_cast<NSUInteger>(contentRange.firstBytePosition()) : 0;
 
     if (AVAssetResourceLoadingContentInformationRequest* contentInfo = [m_avRequest contentInformationRequest]) {
         String uti = UTIFromMIMEType(mimeType);
@@ -430,42 +429,40 @@ bool WebCoreAVFResourceLoader::newDataStoredInSharedBuffer(const FragmentedShare
     auto bytesToSkip = m_currentOffset - m_responseOffset;
     auto array = data.createNSDataArray();
     for (NSData* segment in array.get()) {
+        if (!remainingLength)
+            break;
+        NSUInteger usableBytes = segment.length;
+        NSUInteger bytesOffset = 0;
         if (bytesToSkip) {
             if (bytesToSkip > segment.length) {
                 bytesToSkip -= segment.length;
                 continue;
             }
-            auto bytesToUse = segment.length - bytesToSkip;
-            [dataRequest respondWithData:[segment subdataWithRange:NSMakeRange(static_cast<NSUInteger>(bytesToSkip), static_cast<NSUInteger>(bytesToUse))]];
+            usableBytes = segment.length - bytesToSkip;
+            bytesOffset = bytesToSkip;
             bytesToSkip = 0;
-            remainingLength -= bytesToUse;
-            m_currentOffset += bytesToUse;
-            continue;
         }
-        if (segment.length <= remainingLength) {
+        m_currentOffset += usableBytes;
+        if (!bytesOffset && usableBytes <= remainingLength)
             [dataRequest respondWithData:segment];
-            remainingLength -= segment.length;
-            m_currentOffset += segment.length;
-            continue;
+        else {
+            usableBytes = std::min(usableBytes, remainingLength);
+            [dataRequest respondWithData:[segment subdataWithRange:NSMakeRange(bytesOffset, usableBytes)]];
         }
-        [dataRequest respondWithData:[segment subdataWithRange:NSMakeRange(0, remainingLength)]];
-        m_currentOffset += remainingLength;
-        remainingLength = 0;
-        break;
+        remainingLength -= usableBytes;
     }
 
     // There was not enough data in the buffer to satisfy the data request.
     if (remainingLength)
         return false;
 
-    if (m_currentOffset >= m_requestedOffset + m_requestedLength) {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS
-        [m_avRequest finishLoading];
-        END_BLOCK_OBJC_EXCEPTIONS
-        stopLoading();
-        return true;
-    }
-    return false;
+    ASSERT(m_currentOffset >= m_requestedOffset + m_requestedLength);
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [m_avRequest finishLoading];
+    END_BLOCK_OBJC_EXCEPTIONS
+    stopLoading();
+    return true;
 }
 
 }
