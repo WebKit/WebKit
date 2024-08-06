@@ -72,6 +72,10 @@ void ParentalControlsContentFilter::responseReceived(const ResourceResponse& res
     }
 
     m_webFilterEvaluator = adoptNS([allocWebFilterEvaluatorInstance() initWithResponse:response.nsURLResponse()]);
+#if HAVE(WEBFILTEREVALUATOR_AUDIT_TOKEN)
+    if (m_hostProcessAuditToken)
+        m_webFilterEvaluator.get().browserAuditToken = *m_hostProcessAuditToken;
+#endif
     updateFilterState();
 }
 
