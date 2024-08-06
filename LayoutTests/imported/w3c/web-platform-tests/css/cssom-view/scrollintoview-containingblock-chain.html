@@ -1,14 +1,13 @@
-<!DOCTYPE HTML>
-<script src="/resources/testharness.js"></script>
-<script src="/resources/testharnessreport.js"></script>
+<!DOCTYPE html>
 <title>scrollIntoView should only adjust scrollers in the containing block chain</title>
+<link rel="help" href="https://drafts.csswg.org/cssom-view/#dom-element-scrollintoview">
 <style>
     .scroller {
         width: 300px;
         height: 300px;
         overflow: scroll;
     }
-    
+
     .contents {
         width: 200%;
         height: 300%;
@@ -20,11 +19,11 @@
         margin-left: 100px;
         width: 400px
     }
-    
+
     #reveal {
         margin-top: 400px;
         background-color: blue;
-    }    
+    }
 </style>
 <div id="container">
     <div id="outer" class="scroller">
@@ -41,6 +40,8 @@
         </div>
 </div>
 </div>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
 <script>
 add_completion_callback(() => document.getElementById("container").remove());
 
