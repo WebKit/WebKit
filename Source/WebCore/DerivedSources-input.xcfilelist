@@ -706,6 +706,8 @@ $(PROJECT_DIR)/Modules/modern-media-controls/controls/macos-layout-traits.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/media-controls.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/media-controls.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/media-document.css
+$(PROJECT_DIR)/Modules/modern-media-controls/controls/metadata-container.css
+$(PROJECT_DIR)/Modules/modern-media-controls/controls/metadata-container.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/mute-button.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/overflow-button.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/pip-button.js
@@ -755,6 +757,7 @@ $(PROJECT_DIR)/Modules/modern-media-controls/media/fullscreen-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/media-controller-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/media-controller.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/media-document-controller.js
+$(PROJECT_DIR)/Modules/modern-media-controls/media/metadata-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/mute-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/overflow-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/pip-support.js
@@ -1458,8 +1461,8 @@ $(PROJECT_DIR)/dom/SlotAssignmentMode.idl
 $(PROJECT_DIR)/dom/Slotable.idl
 $(PROJECT_DIR)/dom/StaticRange.idl
 $(PROJECT_DIR)/dom/StringCallback.idl
-$(PROJECT_DIR)/dom/Subscriber.idl
 $(PROJECT_DIR)/dom/SubscribeOptions.idl
+$(PROJECT_DIR)/dom/Subscriber.idl
 $(PROJECT_DIR)/dom/SubscriberCallback.idl
 $(PROJECT_DIR)/dom/SubscriptionObserver.idl
 $(PROJECT_DIR)/dom/SubscriptionObserverCallback.idl
@@ -1780,10 +1783,10 @@ $(PROJECT_DIR)/page/DOMWindow.idl
 $(PROJECT_DIR)/page/EventSource.idl
 $(PROJECT_DIR)/page/FragmentDirective.idl
 $(PROJECT_DIR)/page/History.idl
-$(PROJECT_DIR)/page/IsLoggedIn.idl
 $(PROJECT_DIR)/page/IntersectionObserver.idl
 $(PROJECT_DIR)/page/IntersectionObserverCallback.idl
 $(PROJECT_DIR)/page/IntersectionObserverEntry.idl
+$(PROJECT_DIR)/page/IsLoggedIn.idl
 $(PROJECT_DIR)/page/Location.idl
 $(PROJECT_DIR)/page/NavigateEvent.idl
 $(PROJECT_DIR)/page/Navigation.idl

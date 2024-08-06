@@ -368,6 +368,12 @@ void MediaSession::metadataUpdated()
     notifyMetadataObservers();
 }
 
+bool MediaSession::hasObserver(MediaSessionObserver& observer) const
+{
+    ASSERT(isMainThread());
+    return m_observers.contains(observer);
+}
+
 void MediaSession::addObserver(MediaSessionObserver& observer)
 {
     ASSERT(isMainThread());

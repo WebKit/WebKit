@@ -301,6 +301,7 @@
     "webkitkeyadded": { },
     "webkitkeyerror": { },
     "webkitkeymessage": { },
+    "webkitmediasessionmetadatachanged": { },
     "webkitmouseforcechanged": { },
     "webkitmouseforcedown": { },
     "webkitmouseforcewillbegin": { },

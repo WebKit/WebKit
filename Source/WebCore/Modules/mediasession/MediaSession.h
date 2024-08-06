@@ -130,6 +130,7 @@ public:
     const Logger& logger() const { return *m_logger.get(); }
 #endif
 
+    bool hasObserver(MediaSessionObserver&) const;
     void addObserver(MediaSessionObserver&);
     void removeObserver(MediaSessionObserver&);
 

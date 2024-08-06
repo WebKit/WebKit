@@ -83,4 +83,6 @@ enum DeviceType {
     [Conditional=MODERN_MEDIA_CONTROLS] DOMString base64StringForIconNameAndType(DOMString iconName, DOMString iconType);
     [Conditional=MODERN_MEDIA_CONTROLS] DOMString formattedStringForDuration(unrestricted double durationInSeconds);
     [Conditional=MODERN_MEDIA_CONTROLS&MEDIA_CONTROLS_CONTEXT_MENUS, EnabledBySetting=MediaControlsContextMenusEnabled] boolean showMediaControlsContextMenu(HTMLElement target, JSON options, VoidCallback callback);
+
+    [Conditional=MEDIA_SESSION] undefined ensureMediaSessionObserver();
 };

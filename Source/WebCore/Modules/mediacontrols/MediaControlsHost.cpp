@@ -47,14 +47,17 @@
 #include "HTMLMediaElement.h"
 #include "HTMLVideoElement.h"
 #include "InspectorController.h"
+#include "LocalDOMWindow.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "MediaControlTextTrackContainerElement.h"
 #include "MediaControlsContextMenuItem.h"
+#include "NavigatorMediaSession.h"
 #include "Node.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "RenderTheme.h"
+#include "ShadowRoot.h"
 #include "TextTrack.h"
 #include "TextTrackCueList.h"
 #include "TextTrackList.h"
@@ -878,6 +881,43 @@ void MediaControlsHost::restorePreviouslySelectedTextTrackIfNecessary()
     m_previouslySelectedTextTrack->setMode(TextTrack::Mode::Showing);
     m_previouslySelectedTextTrack = nullptr;
 }
+
+#if ENABLE(MEDIA_SESSION)
+RefPtr<MediaSession> MediaControlsHost::mediaSession() const
+{
+    RefPtr mediaElement = m_mediaElement.get();
+    if (!mediaElement)
+        return { };
+
+    RefPtr window = mediaElement->document().domWindow();
+    if (!window)
+        return { };
+
+    return NavigatorMediaSession::mediaSessionIfExists(window->protectedNavigator().get());
+}
+
+void MediaControlsHost::ensureMediaSessionObserver()
+{
+    RefPtr mediaSession = this->mediaSession();
+    if (!mediaSession || mediaSession->hasObserver(*this))
+        return;
+
+    mediaSession->addObserver(*this);
+}
+
+void MediaControlsHost::metadataChanged(const RefPtr<MediaMetadata>&)
+{
+    RefPtr mediaElement = m_mediaElement.get();
+    if (!mediaElement)
+        return;
+
+    RefPtr shadowRoot = m_mediaElement->userAgentShadowRoot();
+    if (!shadowRoot)
+        return;
+
+    shadowRoot->dispatchEvent(Event::create(eventNames().webkitmediasessionmetadatachangedEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+#endif // ENABLE(MEDIA_SESSION)
 
 } // namespace WebCore
 

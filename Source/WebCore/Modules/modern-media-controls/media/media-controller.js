@@ -308,15 +308,6 @@ class MediaController
 
     // Private
 
-    _supportingObjectClasses()
-    {
-        let overridenSupportingObjectClasses = this.layoutTraits.overridenSupportingObjectClasses();
-        if (overridenSupportingObjectClasses)
-            return overridenSupportingObjectClasses;
-
-        return [AirplaySupport, AudioSupport, CloseSupport, ControlsVisibilitySupport, FullscreenSupport, MuteSupport, OverflowSupport, PiPSupport, PlacardSupport, PlaybackSupport, ScrubbingSupport, SeekBackwardSupport, SeekForwardSupport, SkipBackSupport, SkipForwardSupport, StartSupport, StatusSupport, TimeControlSupport, TracksSupport, VolumeSupport];
-    }
-
     _updateControlsIfNeeded()
     {
         const layoutTraits = this.layoutTraits;
@@ -354,7 +345,7 @@ class MediaController
         this._updateTextTracksClassList();
         this._updateControlsSize();
 
-        this._supportingObjects = this._supportingObjectClasses().map(SupportClass => new SupportClass(this), this);
+        this._supportingObjects = layoutTraits.supportingObjectClasses().map(SupportClass => new SupportClass(this), this);
 
         this.controls.shouldUseSingleBarLayout = this.controls instanceof InlineMediaControls && this.isYouTubeEmbedWithTitle;
 

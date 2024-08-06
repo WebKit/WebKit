@@ -2009,6 +2009,7 @@ MODERN_MEDIA_CONTROLS_STYLE_SHEETS = \
     $(WebCore)/Modules/modern-media-controls/controls/macos-inline-media-controls.css \
     $(WebCore)/Modules/modern-media-controls/controls/media-controls.css \
     $(WebCore)/Modules/modern-media-controls/controls/media-document.css \
+    $(WebCore)/Modules/modern-media-controls/controls/metadata-container.css \
     $(WebCore)/Modules/modern-media-controls/controls/placard.css \
     $(WebCore)/Modules/modern-media-controls/controls/slider-base.css \
     $(WebCore)/Modules/modern-media-controls/controls/slider.css \
@@ -2112,6 +2113,7 @@ MODERN_MEDIA_CONTROLS_SCRIPTS = \
     $(WebCore)/Modules/modern-media-controls/controls/macos-inline-media-controls.js \
     $(WebCore)/Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js \
     $(WebCore)/Modules/modern-media-controls/controls/macos-layout-traits.js \
+    $(WebCore)/Modules/modern-media-controls/controls/metadata-container.js \
     $(WebCore)/Modules/modern-media-controls/controls/placard.js \
     $(WebCore)/Modules/modern-media-controls/controls/airplay-placard.js \
     $(WebCore)/Modules/modern-media-controls/controls/invalid-placard.js \
@@ -2131,6 +2133,7 @@ MODERN_MEDIA_CONTROLS_SCRIPTS = \
     $(WebCore)/Modules/modern-media-controls/media/close-support.js \
     $(WebCore)/Modules/modern-media-controls/media/controls-visibility-support.js \
     $(WebCore)/Modules/modern-media-controls/media/fullscreen-support.js \
+    $(WebCore)/Modules/modern-media-controls/media/metadata-support.js \
     $(WebCore)/Modules/modern-media-controls/media/mute-support.js \
     $(WebCore)/Modules/modern-media-controls/media/overflow-support.js \
     $(WebCore)/Modules/modern-media-controls/media/pip-support.js \

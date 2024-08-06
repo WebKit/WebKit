@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO)
 
 #include "HTMLMediaElement.h"
+#include "MediaSession.h"
 #include <variant>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -48,9 +49,18 @@ class TextTrackList;
 class TextTrackRepresentation;
 class VoidCallback;
 
-class MediaControlsHost final : public RefCounted<MediaControlsHost>, public CanMakeWeakPtr<MediaControlsHost> {
+class MediaControlsHost final
+    : public RefCounted<MediaControlsHost>
+#if ENABLE(MEDIA_SESSION)
+    , private MediaSessionObserver
+#endif
+    , public CanMakeWeakPtr<MediaControlsHost> {
     WTF_MAKE_FAST_ALLOCATED(MediaControlsHost);
 public:
+    using CanMakeWeakPtr<MediaControlsHost>::weakPtrFactory;
+    using CanMakeWeakPtr<MediaControlsHost>::WeakValueType;
+    using CanMakeWeakPtr<MediaControlsHost>::WeakPtrImplType;
+
     static Ref<MediaControlsHost> create(HTMLMediaElement&);
     ~MediaControlsHost();
 
@@ -117,11 +127,22 @@ public:
 
     void presentationModeChanged();
 
+#if ENABLE(MEDIA_SESSION)
+    void ensureMediaSessionObserver();
+#endif
+
 private:
     explicit MediaControlsHost(HTMLMediaElement&);
 
     void savePreviouslySelectedTextTrackIfNecessary();
     void restorePreviouslySelectedTextTrackIfNecessary();
+
+#if ENABLE(MEDIA_SESSION)
+    RefPtr<MediaSession> mediaSession() const;
+
+    // MediaSessionObserver
+    void metadataChanged(const RefPtr<MediaMetadata>&) final;
+#endif
 
     WeakPtr<HTMLMediaElement> m_mediaElement;
     RefPtr<MediaControlTextTrackContainerElement> m_textTrackContainer;
