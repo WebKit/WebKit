@@ -763,7 +763,7 @@ void TestAPI::testBigInt()
                 check(JSValueCompareDouble(context, bigint, number, exception) == kJSRelationConditionEqual, description, ", should kJSRelationConditionEqual to number"_s);
                 check(JSValueCompareDouble(context, bigint, number + 1, exception) == kJSRelationConditionLessThan, description, ", should kJSRelationConditionLessThan number + 1"_s);
                 check(JSValueCompareDouble(context, bigint, number - 1, exception) == kJSRelationConditionGreaterThan, description, ", should kJSRelationConditionGreaterThan number - 1"_s);
-                check(JSValueCompareDouble(context, bigint, JSC::pureNaN(), exception) == kJSRelationConditionUndefined, description, ", should equal to kJSRelationConditionUndefined"_s);
+                check(JSValueCompareDouble(context, bigint, JSC::PNaN, exception) == kJSRelationConditionUndefined, description, ", should equal to kJSRelationConditionUndefined"_s);
                 return bigint;
             }, description);
     }
@@ -787,7 +787,7 @@ void TestAPI::testBigInt()
     }
 
     {
-        double number = JSC::pureNaN();
+        double number = JSC::PNaN;
         const char* description = "checking JSValueMakeBigIntFromNumber with NaN";
         checkJSAndAPIMatch(
             [&] {
