@@ -857,6 +857,7 @@ void RenderLayer::setWasOmittedFromZOrderTree()
 
 void RenderLayer::collectLayers(std::unique_ptr<Vector<RenderLayer*>>& positiveZOrderList, std::unique_ptr<Vector<RenderLayer*>>& negativeZOrderList, OptionSet<Compositing>& accumulatedDirtyFlags)
 {
+    ASSERT(!descendantDependentFlagsAreDirty());
     if (establishesTopLayer())
         return;
 
@@ -1178,13 +1179,10 @@ void RenderLayer::setAncestorChainHasSelfPaintingLayerDescendant()
 void RenderLayer::dirtyAncestorChainHasSelfPaintingLayerDescendantStatus()
 {
     for (RenderLayer* layer = this; layer; layer = layer->parent()) {
-        layer->m_hasSelfPaintingLayerDescendantDirty = true;
-        // If we have reached a self-painting layer, we know our parent should have a self-painting descendant
-        // in this case, there is no need to dirty our ancestors further.
-        if (layer->isSelfPaintingLayer()) {
-            ASSERT(!parent() || parent()->m_hasSelfPaintingLayerDescendantDirty || parent()->hasSelfPaintingLayerDescendant());
+        if (layer->m_hasSelfPaintingLayerDescendantDirty)
             break;
-        }
+
+        layer->m_hasSelfPaintingLayerDescendantDirty = true;
     }
 }
 
@@ -1336,9 +1334,6 @@ void RenderLayer::dirtyAncestorChainHasBlendingDescendants()
             break;
         
         layer->m_hasNotIsolatedBlendingDescendantsStatusDirty = true;
-
-        if (layer->isCSSStackingContext())
-            break;
     }
 }
 
@@ -1648,29 +1643,24 @@ void RenderLayer::updateAncestorDependentState()
 
 void RenderLayer::updateDescendantDependentFlags()
 {
-    if (m_visibleDescendantStatusDirty || m_hasSelfPaintingLayerDescendantDirty || hasNotIsolatedBlendingDescendantsStatusDirty()) {
+    if (m_visibleDescendantStatusDirty || m_hasSelfPaintingLayerDescendantDirty || hasNotIsolatedBlendingDescendantsStatusDirty() || m_hasIntrinsicallyCompositedDescendantsStatusDirty) {
         bool hasVisibleDescendant = false;
         bool hasSelfPaintingLayerDescendant = false;
         bool hasNotIsolatedBlendingDescendants = false;
         bool hasIntrinsicallyCompositedDescendants = false;
 
-        auto firstLayerChild = [&] () -> RenderLayer* {
-            if (renderer().isSkippedContentRoot())
-                return nullptr;
-            return firstChild();
-        }();
-        for (RenderLayer* child = firstLayerChild; child; child = child->nextSibling()) {
+        if (m_hasNotIsolatedBlendingDescendantsStatusDirty) {
+            m_hasNotIsolatedBlendingDescendantsStatusDirty = false;
+            updateSelfPaintingLayer();
+        }
+
+        for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
             child->updateDescendantDependentFlags();
 
             hasVisibleDescendant |= child->m_hasVisibleContent || child->m_hasVisibleDescendant;
             hasSelfPaintingLayerDescendant |= child->isSelfPaintingLayer() || child->hasSelfPaintingLayerDescendant();
             hasNotIsolatedBlendingDescendants |= child->hasBlendMode() || (child->hasNotIsolatedBlendingDescendants() && !child->isolatesBlending());
             hasIntrinsicallyCompositedDescendants |= child->isIntrinsicallyComposited() || child->m_hasIntrinsicallyCompositedDescendants;
-
-            bool allFlagsSet = hasVisibleDescendant && hasSelfPaintingLayerDescendant;
-            allFlagsSet &= hasNotIsolatedBlendingDescendants;
-            if (allFlagsSet)
-                break;
         }
 
         m_hasVisibleDescendant = hasVisibleDescendant;
@@ -1681,10 +1671,6 @@ void RenderLayer::updateDescendantDependentFlags()
         m_hasIntrinsicallyCompositedDescendantsStatusDirty = false;
 
         m_hasNotIsolatedBlendingDescendants = hasNotIsolatedBlendingDescendants;
-        if (m_hasNotIsolatedBlendingDescendantsStatusDirty) {
-            m_hasNotIsolatedBlendingDescendantsStatusDirty = false;
-            updateSelfPaintingLayer();
-        }
     }
 
     if (m_visibleContentStatusDirty) {
@@ -1703,6 +1689,8 @@ void RenderLayer::updateDescendantDependentFlags()
         }
         m_visibleContentStatusDirty = false;
     }
+
+    ASSERT(!descendantDependentFlagsAreDirty());
 }
 
 bool RenderLayer::computeHasVisibleContent() const
