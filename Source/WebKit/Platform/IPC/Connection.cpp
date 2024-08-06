@@ -1335,7 +1335,7 @@ void Connection::enqueueIncomingMessage(UniqueRef<Decoder> incomingMessage)
             return;
 
         if (isIncomingMessagesThrottlingEnabled() && m_incomingMessages.size() >= maxPendingIncomingMessagesKillingThreshold) {
-            dispatchToClientWithIncomingMessagesLock([protectedThis = Ref { *this }] {
+            dispatchToClient([protectedThis = Ref { *this }] {
                 if (!protectedThis->m_client)
                     return;
                 protectedThis->m_client->requestRemoteProcessTermination();
@@ -1648,12 +1648,6 @@ template<typename F>
 void Connection::dispatchToClient(F&& clientRunLoopTask)
 {
     Locker lock { m_incomingMessagesLock };
-    dispatchToClientWithIncomingMessagesLock(std::forward<F>(clientRunLoopTask));
-}
-
-template<typename F>
-void Connection::dispatchToClientWithIncomingMessagesLock(F&& clientRunLoopTask)
-{
     if (!m_syncState)
         return;
     dispatcher().dispatch(WTFMove(clientRunLoopTask));

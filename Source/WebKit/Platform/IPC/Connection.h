@@ -536,10 +536,7 @@ private:
     bool sendMessage(std::unique_ptr<MachMessage>);
 #endif
     template<typename F>
-    void dispatchToClient(F&& clientRunLoopTask) WTF_EXCLUDES_LOCK(m_incomingMessagesLock);
-
-    template<typename F>
-    void dispatchToClientWithIncomingMessagesLock(F&& clientRunLoopTask) WTF_REQUIRES_LOCK(m_incomingMessagesLock);
+    void dispatchToClient(F&& clientRunLoopTask);
 
     size_t numberOfMessagesToProcess(size_t totalMessages);
     bool isThrottlingIncomingMessages() const { return *m_incomingMessagesThrottlingLevel > 0; }
